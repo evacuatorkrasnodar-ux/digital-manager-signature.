@@ -97,7 +97,7 @@ test('HTTPS reverse proxy is only exposed port; backend and admin are not public
   const compose=await read('compose.yaml');
   const caddy=await read('Caddyfile');
   const gitignore=await read('.gitignore');
-  assert.match(compose,/quay\.io\/keycloak\/keycloak:26\.8\.1/);
+  assert.match(compose,/quay\.io\/keycloak\/keycloak:26\.8\.2/);
   assert.match(compose,/image: postgres:17/);
   assert.match(compose,/KC_HOSTNAME_STRICT: "true"/);
   assert.match(compose,/KC_HTTP_ENABLED: "true"/);
