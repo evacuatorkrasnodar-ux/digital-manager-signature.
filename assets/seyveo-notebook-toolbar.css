@@ -129,3 +129,50 @@
   --sv-paper-tool-size:clamp(27px,8.9vw,31px);gap:1px!important;padding:2px!important;
  }
 }
+
+/* Ink thickness · right-hand track with a live white numbered thumb. */
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size{
+ left:auto!important;
+ right:max(5px,env(safe-area-inset-right,0px))!important;
+ top:50%!important;
+ transform:translateY(-50%)!important;
+ z-index:8!important;
+ width:44px!important;
+ height:min(200px,38dvh)!important;
+ overflow:visible!important;
+ pointer-events:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input[type="range"]{
+ left:50%!important;top:50%!important;
+ transform:translate(-50%,-50%) rotate(-90deg)!important;
+ width:min(190px,36dvh)!important;height:30px!important;
+ background:transparent!important;
+ pointer-events:auto!important;touch-action:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size::after{
+ content:attr(data-width);
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ position:absolute!important;
+ left:50%!important;top:calc(50% + var(--sv-thumb-offset,0px))!important;
+ transform:translate(-50%,-50%) scale(.88)!important;
+ width:28px!important;height:28px!important;
+ min-width:28px!important;min-height:28px!important;
+ padding:0!important;margin:0!important;
+ background:#fff!important;color:#252b32!important;
+ border:1px solid rgba(38,42,48,.11)!important;
+ border-radius:50%!important;
+ box-shadow:0 2px 7px rgba(0,0,0,.22)!important;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ font-size:11px!important;font-weight:700!important;font-variant-numeric:tabular-nums!important;
+ line-height:1!important;text-align:center!important;
+ opacity:0!important;pointer-events:none!important;
+ transition:opacity .13s ease,transform .13s ease!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size.sv-paper-size-active::after{
+ opacity:1!important;transform:translate(-50%,-50%) scale(1)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size::after{
+  transition:none!important;
+ }
+}
