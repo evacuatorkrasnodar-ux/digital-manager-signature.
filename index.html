@@ -1660,9 +1660,8 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 /* Shared actual SEYVEO dock surface: the same .sv-shared-dock pseudo-panes
    used by Home, with note-specific tool content and approved graphite tint. */
 #noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock{
- --sv-liquid-nav-material:#38383a;
- --sv-liquid-nav-blur:blur(16px);
- --sv-liquid-nav-shadow:none;
+ /* Inherit the identical theme-aware liquid glass variables from the Home dock.
+    Do not pin a flat graphite color here: it blocks the real Home material. */
  position:relative!important;
  isolation:isolate!important;
  background:transparent!important;
