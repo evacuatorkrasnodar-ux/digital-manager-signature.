@@ -355,7 +355,8 @@
  border-color:color-mix(in srgb,var(--soft-line) 66%,transparent);
 }
 #sayviSurfacePage .svdf-record-icon{
- width:32px;height:32px;flex-basis:32px;color:var(--text);font-size:17px;
+ display:grid;place-items:center;flex:0 0 40px;width:40px;height:44px;
+ color:var(--text);border-radius:12px;background:var(--sv-doc-picked,var(--card2));
 }
 #sayviSurfacePage .svdf-record-name strong{
  font-size:14px;line-height:1.35;font-weight:610;
@@ -401,4 +402,175 @@
  margin:13px 0 0;padding-top:13px;
  border-top:1px solid var(--sv-doc-line,var(--soft-line));
  color:var(--secondary);font-size:11.5px;line-height:1.6;
+}
+
+
+/* SEYVEO DOCS · original pictorial approvals, single frosted journey.
+   All selectors belong to the document surface; no global dock changes. */
+#sayviSurfacePage .svdf-pictogram{
+ display:grid;place-items:center;flex:none;
+ width:39px;height:39px;color:var(--text);
+}
+#sayviSurfacePage .svdf-pictogram svg{
+ display:block;width:100%;height:100%;
+}
+#sayviSurfacePage .svdf-record-icon>.svdf-pictogram{
+ width:33px;height:33px;
+}
+#sayviSurfacePage .svdf-journey{
+ box-sizing:border-box;display:grid;gap:13px;min-width:0;
+ margin:1px 0 14px;padding:15px 11px 12px;
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:22px;background:var(--sv-doc-wash,var(--card));
+ -webkit-backdrop-filter:blur(18px) saturate(1.1);
+ backdrop-filter:blur(18px) saturate(1.1);
+}
+#sayviSurfacePage .svdf-journey-head{
+ display:flex;justify-content:space-between;align-items:center;gap:9px;
+ min-width:0;padding:0 3px;
+}
+#sayviSurfacePage .svdf-journey-head strong{
+ font-size:13px;font-weight:610;color:var(--text);
+}
+#sayviSurfacePage .svdf-journey-head small{
+ color:var(--secondary);font-size:10.5px;
+ min-width:0;overflow-wrap:anywhere;text-align:right;
+}
+#sayviSurfacePage .svdf-journey-line{
+ display:grid;align-items:start;
+ grid-template-columns:minmax(0,1fr) 8px minmax(0,1fr) 8px minmax(0,1fr) 8px minmax(0,1fr);
+ gap:2px;min-width:0;
+}
+#sayviSurfacePage .svdf-journey-step{
+ display:flex;flex-direction:column;align-items:center;gap:7px;
+ min-width:0;text-align:center;opacity:.52;
+}
+#sayviSurfacePage .svdf-journey-step>.svdf-pictogram{
+ width:43px;height:43px;
+ padding:7px;box-sizing:border-box;
+ border-radius:14px;
+ background:var(--sv-doc-picked,var(--card2));
+}
+#sayviSurfacePage .svdf-journey-step small{
+ color:var(--secondary);font-size:10.5px;
+ font-weight:500;line-height:1.32;
+ overflow-wrap:anywhere;
+}
+#sayviSurfacePage .svdf-journey-step[data-phase="done"],
+#sayviSurfacePage .svdf-journey-step[data-phase="active"],
+#sayviSurfacePage .svdf-journey-step[data-phase="returned"]{opacity:1}
+#sayviSurfacePage .svdf-journey-step[data-phase="active"]>.svdf-pictogram{
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--text) 32%,transparent);
+}
+#sayviSurfacePage .svdf-journey-step[data-phase="returned"]>.svdf-pictogram{
+ border:1px dashed color-mix(in srgb,var(--text) 38%,transparent);
+}
+#sayviSurfacePage .svdf-journey-connector{
+ align-self:center;justify-self:center;line-height:1;
+ font-size:20px;font-weight:300;color:var(--secondary);opacity:.5;
+ margin-top:2px;
+}
+#sayviSurfacePage .svdf-journey-caption{
+ margin:0;padding:0 2px;
+ font-size:11.5px;line-height:1.45;color:var(--secondary);
+}
+#sayviSurfacePage .svdf-template-gallery{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:7px;min-width:0;margin:1px 0 0;
+}
+#sayviSurfacePage .svdf-template-gallery>.svdf-template-card{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;
+ gap:8px;min-width:0;min-height:135px;
+ padding:9px 5px!important;
+ border:1px solid var(--sv-doc-line,var(--soft-line))!important;
+ border-radius:18px!important;
+ background:var(--sv-doc-wash,var(--card))!important;
+ text-align:center;color:var(--text)!important;
+}
+#sayviSurfacePage .svdf-template-gallery>.svdf-template-card[aria-pressed="true"]{
+ border-color:color-mix(in srgb,var(--text) 36%,transparent)!important;
+ background:var(--sv-doc-picked,var(--card2))!important;
+}
+#sayviSurfacePage .svdf-template-card>strong{
+ color:var(--text);font-size:11.5px;
+ line-height:1.32;font-weight:600;
+}
+#sayviSurfacePage .svdf-template-paper{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ gap:6px;width:61px;height:80px;
+ overflow:hidden;border-radius:3px;
+ padding:12px 9px 7px;background:#fff;
+ box-shadow:0 3px 9px rgba(0,0,0,.11);
+}
+#sayviSurfacePage .svdf-template-mini-title{
+ font-size:7.5px;line-height:1.2;
+ font-weight:700;color:#43535d;
+ margin-bottom:2px;
+}
+#sayviSurfacePage .svdf-template-line{
+ width:100%;height:2px;display:block;flex:none;
+ border-radius:6px;background:#d9e0e4;
+}
+#sayviSurfacePage .svdf-template-line-medium{width:76%}
+#sayviSurfacePage .svdf-template-line-short{width:48%}
+#sayviSurfacePage .svdf-template-mini-sign{
+ display:block;align-self:flex-end;margin-top:auto;
+ width:25px;height:8px;transform:rotate(-7deg);
+ border-bottom:1px solid #8f9da5;border-radius:50%;
+}
+#sayviSurfacePage .svdf-recipient{
+ box-sizing:border-box;display:flex;align-items:center;gap:8px;
+ padding:4px 3px;min-height:44px;
+ font-size:12px;color:var(--secondary);
+}
+#sayviSurfacePage .svdf-recipient>.svdf-pictogram{
+ width:24px;height:24px;
+}
+#sayviSurfacePage .svdf-paper{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ gap:12px;min-width:0;
+ padding:22px 19px 19px;
+ margin:3px 0 13px;
+ border:1px solid rgba(30,45,53,.10);
+ border-radius:4px;background:#fff;
+ color:#24323b;box-shadow:0 5px 18px rgba(0,0,0,.11);
+}
+#sayviSurfacePage .svdf-paper-brand{
+ font-size:9px;line-height:1.4;color:#74818b;
+ letter-spacing:.12em;font-weight:630;
+}
+#sayviSurfacePage .svdf-paper-title{
+ color:#24323b;font-size:17px;line-height:1.4;
+ font-weight:640;letter-spacing:-.018em;
+}
+#sayviSurfacePage .svdf-paper .svdf-document-body{
+ margin:0;white-space:pre-wrap;
+ color:#263640;font-size:13px;line-height:1.65;
+ font-weight:430;overflow-wrap:anywhere;
+}
+#sayviSurfacePage .svdf-paper-version{
+ display:block;margin-top:6px;
+ font-size:10.5px;color:#72818a;
+}
+#sayviSurfacePage .svdf-detail>.svdf-disclaimer{
+ color:var(--secondary);font-size:11px;
+ line-height:1.45;margin:0 0 10px;
+}
+#sayviSurfacePage .svdf-record-state[data-state="approved"],
+#sayviSurfacePage .svdf-record-state[data-state="returned"]{
+ color:var(--text);
+}
+#sayviSurfacePage .svdf-root .svdf-create-simple>strong{
+ font-size:14px;font-weight:610;
+}
+@media(max-width:355px){
+ #sayviSurfacePage .svdf-journey{padding:13px 8px 11px}
+ #sayviSurfacePage .svdf-journey-line{gap:0}
+ #sayviSurfacePage .svdf-journey-step>.svdf-pictogram{width:38px;height:38px;padding:6px}
+ #sayviSurfacePage .svdf-journey-step small{font-size:9.5px}
+ #sayviSurfacePage .svdf-template-gallery{gap:5px}
+ #sayviSurfacePage .svdf-template-gallery>.svdf-template-card{padding:8px 2px!important;min-height:124px}
+ #sayviSurfacePage .svdf-template-paper{width:55px;height:75px}
+ #sayviSurfacePage .svdf-paper{padding:17px 14px}
 }
