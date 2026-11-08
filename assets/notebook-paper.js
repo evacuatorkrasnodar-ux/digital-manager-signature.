@@ -99,6 +99,7 @@ function render(){
  if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
  if($('notePaperRemovePhoto'))$('notePaperRemovePhoto').hidden=!data.photo;
  paint(canvas,data);$('notePaperUndo').disabled=!data.strokes.length;
+ const duplicate=$('notePaperDuplicate');if(duplicate)duplicate.disabled=!data.strokes.length||data.strokes.length>=MAX_STROKES;
 }
 function report(text){status.textContent=text||''}
 function currentTool(){return document.querySelector('[data-paper-tool][aria-pressed=true]')?.dataset.paperTool||'pen'}
@@ -140,7 +141,7 @@ function up(e){
 canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);
 canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
-document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.addEventListener('click',()=>selectTool(btn.dataset.paperTool)));
+document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.addEventListener('click',()=>{selectTool(btn.dataset.paperTool);if(btn.closest('.sv-paper-extras-panel'))closeExtras();}));
 pattern.addEventListener('change',()=>{if(!patterns.includes(pattern.value))return;data.pattern=pattern.value;changed=true;render()});
 /* Glass-pattern picker. The original hidden select remains the only paper
    template value so saved notes and rendering logic stay unchanged. */
@@ -241,6 +242,12 @@ document.addEventListener('pointerdown',event=>{
 });
 
 $('notePaperUndo').addEventListener('click',()=>{if(!data.strokes.length)return;data.strokes.pop();changed=true;render();report('Последний штрих отменён.')});
+$('notePaperDuplicate')?.addEventListener('click',()=>{
+ if(!data.strokes.length||data.strokes.length>=MAX_STROKES)return;
+ const last=data.strokes[data.strokes.length-1];
+ const copy={...last,points:last.points.map(([x,y,p])=>[clamp(x+25,W),clamp(y+25,H),p])};
+ data.strokes.push(copy);changed=true;render();report('Последний штрих дублирован.');
+});
 function open(note=null){
  data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
  closePatternMenu();closeColorMenu();
