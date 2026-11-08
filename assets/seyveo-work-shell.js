@@ -22,8 +22,8 @@
  shell.append(calendar,tasks);
  const nav=document.createElement('nav');
  nav.id='svWorkTabs';
- nav.setAttribute('aria-label','Мои дела, календарь и кабинет');
- const choices=[['personal','Мои дела'],['calendar','Календарь'],['business','Кабинет']];
+ nav.setAttribute('aria-label','Мои дела, календарь, кабинет и моя работа');
+ const choices=[['personal','Мои дела'],['calendar','Календарь'],['business','Кабинет'],['employee','Моя работа']];
  for(const [id,label] of choices){
   const button=document.createElement('button');
   button.type='button';
@@ -105,13 +105,17 @@
  const oldTab=(parent,attribute,name)=>parent.querySelector('['+attribute+'="'+name+'"]');
  function activeSection(){
   if(!calendar.hidden)return 'calendar';
-  return tasks.dataset.workView==='business'?'business':'personal';
+  return tasks.dataset.workView==='business'?'business':tasks.dataset.workView==='employee'?'employee':'personal';
  }
  function sync(){
   const active=activeSection();
   const managerTasks=!tasks.hidden&&oldTasks.dataset.manager==='true';
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
-  const visible=managerTasks||managerCal;
+  // The employee's existing workspace is a top-level Tasks view.
+  // Old tabs are deliberately hidden, so this shared bar must show it.
+  const employeeTasks=!tasks.hidden&&
+   (tasks.dataset.employeeMode==='true'||window.SEYVEO_PREVIEW?.isEmployee?.()===true);
+  const visible=managerTasks||managerCal||employeeTasks;
   const history=visible&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
   parkCalendarMenu(visible&&!history&&active==='calendar');
   if(active!=='calendar'||history){
@@ -119,15 +123,23 @@
    if(calendarAdd?.getAttribute('aria-expanded')!=='false')calendarAdd?.setAttribute('aria-expanded','false');
   }
   nav.hidden=!visible||history;
+  nav.dataset.employee=String(employeeTasks);
+  for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
+   tab.hidden=employeeTasks
+    ? !['personal','employee'].includes(tab.dataset.svWorkTab)
+    : tab.dataset.svWorkTab==='employee';
+  }
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
-  title.textContent=history?'История действий':active==='calendar'?'Календарь':active==='business'?'Кабинет':'Мои дела';
+  title.textContent=history?'История действий':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // Root destinations are already navigable through the bottom dock.
   // Do not show a redundant Back control beside each top-level title.
   back.hidden=!history;
   back.setAttribute('aria-label',history?'Вернуться к моим делам':'Вернуться назад');
-  add.hidden=history;
+  // The employee home has contextual controls inside its own dashboard.
+  // Do not show an empty + action in the shared header.
+  add.hidden=history||active==='employee';
   add.setAttribute('aria-label',active==='personal'?'Добавить дело':active==='calendar'?'Создать событие или дело':'Настроить инструменты кабинета');
   add.setAttribute('aria-haspopup',String(active==='calendar'));
   add.setAttribute('aria-controls',active==='calendar'?'calendarCreateMenu':'');
@@ -164,6 +176,7 @@
  if(createMenu)observer.observe(createMenu,{attributes:true,attributeFilter:['hidden']});
  window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
+ window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
- window.SEYVEO_WORK_SHELL=Object.freeze({version:8,sync});
+ window.SEYVEO_WORK_SHELL=Object.freeze({version:9,sync});
 })();
