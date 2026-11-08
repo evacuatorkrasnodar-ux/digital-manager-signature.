@@ -1831,3 +1831,49 @@ svg.sv-paper-signature .sv-paper-icon-core{
   transition:none!important;
  }
 }
+
+
+/* v24 · Safari button hard reset, including ID-specific legacy rules.
+   Existing #notePaperSettings[aria-expanded] and #notePaperPatternTrigger
+   selectors were more specific than the new class-based component. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar
+> :is(#notePaperSettings,#notePaperPatternTrigger,[data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperDuplicate,#notePaperAddPhoto,#notePaperSayvi){
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;
+ position:relative!important;
+ display:grid!important;place-items:center!important;
+ width:var(--sv-ink-size)!important;height:var(--sv-ink-size)!important;
+ min-width:var(--sv-ink-size)!important;min-height:var(--sv-ink-size)!important;
+ max-width:var(--sv-ink-size)!important;max-height:var(--sv-ink-size)!important;
+ aspect-ratio:1/1!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ outline:0!important;outline-offset:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:none!important;
+ overflow:hidden!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar
+> :is(#notePaperSettings,#notePaperPatternTrigger,[data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperDuplicate,#notePaperAddPhoto,#notePaperSayvi)::before,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar
+> :is(#notePaperSettings,#notePaperPatternTrigger,[data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperDuplicate,#notePaperAddPhoto,#notePaperSayvi)::after{
+ content:none!important;display:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar
+> :is(#notePaperSettings,#notePaperPatternTrigger,[data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperDuplicate,#notePaperAddPhoto,#notePaperSayvi)[data-sv-selected="true"]{
+ background:rgba(212,223,237,.22)!important;
+ border-radius:50%!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar
+> :is(#notePaperSettings,#notePaperPatternTrigger,[data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperDuplicate,#notePaperAddPhoto,#notePaperSayvi)[data-sv-selected="false"],
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar
+> :is(#notePaperSettings,#notePaperPatternTrigger)[aria-expanded="true"]:not([data-sv-selected="true"]){
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar
+> :is(#notePaperSettings,#notePaperPatternTrigger,[data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperDuplicate,#notePaperAddPhoto,#notePaperSayvi):focus:not(:focus-visible){
+ outline:0!important;box-shadow:none!important;
+}
