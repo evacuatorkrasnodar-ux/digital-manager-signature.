@@ -489,7 +489,7 @@ test('printer has large illustrated stage and honest sample sheet before file se
  assert.equal(stage.length,1);
  assert.equal(find(f.root,n=>n.className==='sv-doc-print-device').length,1);
  assert.equal(find(f.root,n=>n.className==='sv-doc-print-paper-example').length,1);
- assert.equal(find(f.root,n=>n.className==='sv-doc-print-faux-line').length,5);
+ assert.equal(find(f.root,n=>n.className?.split(' ').includes('sv-doc-print-faux-line')).length,5);
  assert.ok(find(f.root,n=>n.textContent==='Пример листа').length);
  assert.equal(find(f.root,n=>n.tagName==='IFRAME').length,0);
  assert.equal(find(f.root,n=>n.className==='sv-doc-print-image').length,0);
