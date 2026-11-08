@@ -576,6 +576,20 @@ $('notePaperRemovePhoto')?.addEventListener('click',()=>{
  data.photo='';changed=true;render();report('Фотография убрана.');
 });
 window.SEYVEO_PAPER=Object.freeze({
+ clearSheet:()=>{
+  if(pending)return false;
+  const hasContent=Boolean(data.strokes.length||data.photo);
+  if(hasContent&&!window.confirm('Очистить весь лист? Рисунок и фото будут удалены. Это действие нельзя отменить.'))return false;
+  if(!hasContent&&data.pattern==='blank'){report('Лист уже чистый.');return true}
+  data.strokes=[];data.photo='';data.pattern='blank';
+  changed=true;render();
+  report('Лист очищен.');return true;
+ },
+ blankPaper:()=>{
+  if(pending)return false;
+  if(data.pattern==='blank'){report('Уже выбран чистый лист.');return true}
+  data.pattern='blank';changed=true;render();report('Выбрана чистая бумага.');return true;
+ },
  getBackground:()=>data.background,
  setBackground:(background)=>{
   if(background!=='dark'&&background!=='light')return;
