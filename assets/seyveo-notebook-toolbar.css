@@ -1076,7 +1076,7 @@ svg.sv-paper-signature .sv-paper-icon-core{
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-live-preview{
  display:block!important;height:25px!important;border-radius:10px!important;
- background:linear-gradient(115deg,#e9eff8,#809ebd)!important;
+ background:var(--sv-gradient-preview,linear-gradient(115deg,#e9eff8,#809ebd))!important;
  background-clip:padding-box!important;
  border:1px solid rgba(235,244,255,.10)!important;
 }
