@@ -337,7 +337,7 @@ function renderRecord(node,x){
    versions.append(section);
   }
   detail.append(versions);
-  const log=$('div','svdf-log');log.append($('strong','','История действий'));
+  const log=$('details','svdf-log');log.append($('summary','','История действий'));
   const timeline=$('ol','');
   for(const item of x.log)timeline.append($('li','',stamp(item.at)+' · '+item.text));
   log.append(timeline);detail.append(log);card.append(detail);
