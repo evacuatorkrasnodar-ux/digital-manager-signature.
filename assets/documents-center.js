@@ -26,12 +26,14 @@ function clearPreview(){
  if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null;}
 }
 function reset(){
+ window.SEYVEO_DOCS_STUDIO?.reset?.();
  clearPreview();
  files={personal:null,business:null};stored={personal:false,business:false};
  view='archive';showPreview=false;archiveExpanded=false;
 }
 function setArea(next){
  if(!names[next])return false;
+ if(next!==area)window.SEYVEO_DOCS_STUDIO?.reset?.();
  area=next;view=next==='business'&&employeePreview()?'flow':'archive';
  showPreview=false;
  if(next==='business'&&employeePreview()){
@@ -167,7 +169,7 @@ function draw(){
   el('small','','Личные и деловые файлы раздельно. Шифрование на этом устройстве.'));
  intro.append(introCopy);
  const safeArea=el('section','sv-doc-safe-area');
- safeArea.append(intro);host.append(safeArea);
+ safeArea.append(intro);
  const selected=files[area];
  const picker=document.createElement('input');
  picker.type='file';picker.hidden=true;
@@ -184,10 +186,30 @@ function draw(){
   files[area]=file;stored[area]=false;archiveExpanded=true;showPreview=false;
   draw();
  });
- const storeActions=el('div','sv-doc-store-actions');
- storeActions.append(button('Добавить документ',()=>picker.click(),'sv-doc-primary'));
- storeActions.append(picker);
- safeArea.append(storeActions);
+ // One working developer tool surface (scan, file, create, signature,
+ // print). Existing archive file picker and encryption remain authoritative.
+ const tools=el('section','sv-doc-tools-slot');
+ const studioReady=window.SEYVEO_DOCS_STUDIO?.mount?.(tools,{
+  area,
+  getCurrentFile:()=>files[area]||null,
+  onPick:()=>picker.click(),
+  onSayvi:goSayvi,
+  onImport:file=>{
+   if(!(file instanceof File)||file.size>MAX_FILE||!allowed.test(file.name))
+    throw Error('Unsupported generated document');
+   files[area]=file;stored[area]=false;
+   archiveExpanded=true;showPreview=true;draw();
+  }
+ })===true;
+ if(studioReady)host.append(tools);
+ else{
+  // Functional fallback if the studio script has not loaded.
+  const storeActions=el('div','sv-doc-store-actions');
+  storeActions.append(button('Добавить документ',()=>picker.click(),'sv-doc-primary'));
+  safeArea.append(storeActions);
+ }
+ safeArea.append(picker);
+ host.append(safeArea);
  const feedback=el('p','sv-doc-selection-status');
  feedback.setAttribute('role','status');
  if(selected&&!stored[area])feedback.textContent='Выбран «'+selected.name+'». Откройте архив и подтвердите сохранение.';
@@ -260,8 +282,9 @@ function syncPreviewRole(){
  const current=previewRole();
  if(current===lastPreviewRole)return;
  lastPreviewRole=current;
- // Clear unlocked keys and any decrypted file preview on perspective changes.
+ // Clear unlocked keys, scanned pages and decrypted previews across roles.
  // This is hygiene on a shared demo browser, not security enforcement.
+ window.SEYVEO_DOCS_STUDIO?.reset?.();
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
  clearPreview();
  archiveExpanded=false;showPreview=false;
