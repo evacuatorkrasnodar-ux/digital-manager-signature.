@@ -170,7 +170,8 @@ test('all five controls mount and each action opens an actual tool',()=>{
  assert.equal(f.picked,1);
  label(f.root,'Создать').click();
  assert.ok(find(f.root,n=>n.tagName==='TEXTAREA').length);
- assert.ok(label(f.root,'Сохранить Word'));
+ assert.ok(label(f.root,'Сохранить PDF'));
+ assert.equal(find(f.root,n=>n.className?.split(' ').includes('sv-doc-template-card')).length,4);
  label(f.root,'Подписать').click();
  assert.ok(find(f.root,n=>n.tagName==='CANVAS').length);
  assert.ok(label(f.root,'Сохранить PNG'));
@@ -189,6 +190,11 @@ test('developer creates actual Word from editable text and can draw a PNG',()=>{
  label(f.root,'Создать').click();
  const textarea=find(f.root,n=>n.tagName==='TEXTAREA')[0];
  textarea.value='Свой документ. Проверка редактора.';
+ textarea.emit('input');
+ const word=find(f.root,n=>n.tagName==='BUTTON'&&
+  n.attributes['aria-label']==='Word · Для правок')[0];
+ assert.ok(word);
+ word.click();
  label(f.root,'Сохранить Word').click();
  assert.ok(f.created.some(x=>x.blob.type.includes('wordprocessingml.document')));
  label(f.root,'Подписать').click();
@@ -330,9 +336,14 @@ test('visual-first Apple-inspired Docs controls show unique icons and short step
  assert.ok(artworks.every(n=>n.innerHTML?.startsWith('<svg')));
  for(const tool of ['Сканировать','Создать','Подписать','Печать']){
   label(f.root,tool).click();
-  const steps=find(f.root,n=>n.className==='sv-doc-tool-step');
-  assert.equal(steps.length,3);
-  assert.equal(find(f.root,n=>n.className==='sv-doc-tool-step-arrow').length,2);
+  if(tool==='Создать'){
+   assert.equal(find(f.root,n=>n.className?.split(' ').includes('sv-doc-template-card')).length,4);
+   assert.equal(find(f.root,n=>n.className==='sv-doc-create-formats').length,1);
+  }else{
+   const steps=find(f.root,n=>n.className==='sv-doc-tool-step');
+   assert.equal(steps.length,3);
+   assert.equal(find(f.root,n=>n.className==='sv-doc-tool-step-arrow').length,2);
+  }
  }
  const css=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
  assert.match(css,/\.sv-doc-tool-grid \.sv-doc-tool-button\{\s*display:flex;flex-direction:column-reverse/);
@@ -546,4 +557,90 @@ test('printer look remains scoped and never simulates selected printer or comple
  assert.doesNotMatch(css,/navHome|navManage|homeDock|sayviChatComposer/);
  assert.doesNotMatch(studioCode,/печать выполнена|успешно распечатан|printerConnected/i);
  assert.match(studioCode,/Принтер и параметры выбираются в системе/);
+});
+
+test('four document templates display real miniature pages and fill editable draft',()=>{
+ const f=fixture();
+ label(f.root,'Создать').click();
+ const types=[
+  ['Заявление','ЗАЯВЛЕНИЕ'],
+  ['Договор','ДОГОВОР'],
+  ['Акт','АКТ'],
+  ['Расписка','РАСПИСКА']
+ ];
+ for(const [name,content] of types){
+  const card=find(f.root,n=>n.tagName==='BUTTON'&&
+   n.attributes['aria-label']==='Выбрать шаблон: '+name)[0];
+  assert.ok(card,'Missing visual template '+name);
+  assert.ok(find(card,n=>n.className==='sv-doc-template-paper').length===1);
+  assert.ok(find(card,n=>n.className==='sv-doc-template-paper-lines').length===1);
+  card.click();
+  const textarea=find(f.root,n=>n.tagName==='TEXTAREA')[0];
+  assert.ok(textarea.value.includes(content));
+  assert.equal(card.attributes['aria-pressed'],'true');
+ }
+ assert.equal(find(f.root,n=>n.className==='sv-doc-create-editor').length,1);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-create-editor-heading').length,1);
+ assert.equal(f.saved.length,0);
+});
+test('format choice changes real generated document from PDF to editable DOCX',async()=>{
+ const f=fixture();
+ label(f.root,'Создать').click();
+ const body=find(f.root,n=>n.tagName==='TEXTAREA')[0];
+ body.value='Реальный черновик';body.emit('input');
+ const pdf=find(f.root,n=>n.tagName==='BUTTON'&&
+  n.attributes['aria-label']==='PDF · Для просмотра')[0];
+ const word=find(f.root,n=>n.tagName==='BUTTON'&&
+  n.attributes['aria-label']==='Word · Для правок')[0];
+ assert.equal(pdf.attributes['aria-pressed'],'true');
+ assert.equal(word.attributes['aria-pressed'],'false');
+ label(f.root,'Сохранить PDF').click();
+ const pdfOutput=f.created.find(x=>x.blob.type==='application/pdf');
+ assert.ok(pdfOutput);
+ word.click();
+ assert.equal(word.attributes['aria-pressed'],'true');
+ assert.equal(pdf.attributes['aria-pressed'],'false');
+ assert.equal(find(f.root,n=>n.tagName==='BUTTON'&&n.textContent==='Сохранить PDF').length,0);
+ label(f.root,'Сохранить Word').click();
+ const docx=f.created.find(x=>x.blob.type.includes('wordprocessingml.document'));
+ assert.ok(docx);
+ const result=Buffer.from(await docx.blob.arrayBuffer()).toString('utf8');
+ assert.match(result,/Реальный черновик/);
+});
+test('unsaved draft and chosen Word format survive switching tools',()=>{
+ const f=fixture();
+ label(f.root,'Создать').click();
+ const body=find(f.root,n=>n.tagName==='TEXTAREA')[0];
+ body.value='Важный незавершённый текст';body.emit('input');
+ const word=find(f.root,n=>n.tagName==='BUTTON'&&
+  n.attributes['aria-label']==='Word · Для правок')[0];
+ word.click();
+ label(f.root,'Печать').click();
+ label(f.root,'Создать').click();
+ const restored=find(f.root,n=>n.tagName==='TEXTAREA')[0];
+ assert.equal(restored.value,'Важный незавершённый текст');
+ assert.ok(label(f.root,'Сохранить Word'));
+});
+test('choosing a template never overwrites written content when confirmation is rejected',()=>{
+ const f=fixture();
+ label(f.root,'Создать').click();
+ const textarea=find(f.root,n=>n.tagName==='TEXTAREA')[0];
+ textarea.value='Не терять мой текст';textarea.emit('input');
+ f.window.confirm=()=>false;
+ const card=find(f.root,n=>n.tagName==='BUTTON'&&
+  n.attributes['aria-label']==='Выбрать шаблон: Договор')[0];
+ card.click();
+ assert.equal(textarea.value,'Не терять мой текст');
+ assert.equal(card.attributes['aria-pressed'],'false');
+});
+test('Apple-like create cards remain scoped to Docs without fake office suite',()=>{
+ const css=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
+ for(const cls of ['sv-doc-tool-templates','sv-doc-template-paper','sv-doc-template-card',
+ 'sv-doc-create-editor','sv-doc-create-formats','sv-doc-create-format',
+ 'sv-doc-create-sayvi'])
+  assert.ok(css.includes('#sayviSurfacePage .'+cls));
+ assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(css,/font-size:16px/);
+ assert.doesNotMatch(css,/navHome|navManage|homeDock|sayviChatComposer/);
+ assert.match(studioCode,/Это простой текстовый редактор, не проверка договора/);
 });
