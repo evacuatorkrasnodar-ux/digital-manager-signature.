@@ -165,8 +165,9 @@ function mount(target,{
 }={}){
  if(!target)return false;
  const editor=$('section','sv-doc-tools');
+ editor.append($('h2','sv-doc-tools-heading','Быстрые действия'));
  const wide=button('Сканировать',()=>open('scan'),'sv-doc-tool-scan');
- wide.append($('span','sv-doc-tool-scan-desc','Лист → готовый PDF'),art('scan'));
+ wide.append($('span','sv-doc-tool-scan-desc','Фото и страницы в PDF'),art('scan'));
  wide.setAttribute('aria-label','Сканировать документ: сфотографировать страницы и сохранить PDF');
  const grid=$('div','sv-doc-tool-grid');
  const items=[
