@@ -4971,9 +4971,9 @@ let editingNoteID=null,reviewPreserveLines=false;
 let noteAutosaveTimer=0,noteSavedSnapshot='',noteAutosaveFailed=false;
 function noteReviewValues(){
  const raw=$('noteReviewText').value;
- const title=$('svNoteTitle').value.trim().replace(/\\s+/g,' ').slice(0,120);
- const body=reviewPreserveLines?raw.replace(/^\\n+|\\n+$/g,''):raw.trim();
- return (title?title+'\\n\\n'+body:body).slice(0,8000);
+ const title=$('svNoteTitle').value.trim().replace(/\s+/g,' ').slice(0,120);
+ const body=reviewPreserveLines?raw.replace(/^\n+|\n+$/g,''):raw.trim();
+ return (title?title+'\n\n'+body:body).slice(0,8000);
 }
 function noteReviewStatus(message){
  const el=$('noteReviewStatus');el.textContent=message||'';el.hidden=!message;
@@ -5018,7 +5018,7 @@ function openNoteReview(value,id=null,options=null){
  $('noteReviewTitle').textContent=id?'Изменить запись':value?'Запомнить мысль':'Новая заметка';
  dlg.dataset.noteMode=id?'edit':String(value||'').length>150?'draft':'new';
  const noteValue=String(value||'').slice(0,8000);
- const titleMatch=noteValue.match(/^([^\\n]{1,120})\\n\\n([\\s\\S]+)$/);
+ const titleMatch=noteValue.match(/^([^\n]{1,120})\n\n([\s\S]+)$/);
  $('svNoteTitle').value=titleMatch?titleMatch[1]:'';
  $('noteReviewText').value=titleMatch?titleMatch[2]:noteValue;
  $('noteReviewText').wrap='soft';
