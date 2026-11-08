@@ -9,6 +9,9 @@
 #managePage .sv-fan-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 0 24px}
 #managePage .sv-fan-top small{font-size:10px;letter-spacing:.09em;color:var(--secondary)}
 #managePage .sv-fan-back{padding:8px 4px;min-height:42px;border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;cursor:pointer}
+#managePage .sv-fan-back.sv-nav-back{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:50%}
+#managePage .sv-fan-back.sv-nav-back svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+
 #managePage .sv-fan-workshop h1{font-size:25px;font-weight:620;letter-spacing:-.035em;line-height:1.12;margin:0 0 10px}
 #managePage .sv-fan-intro{font-size:13px;color:var(--secondary);line-height:1.5;margin:0 0 19px}
 #managePage .sv-fan-form{display:grid;gap:13px;padding:17px 15px 14px;border:0;border-radius:21px;background:var(--sv-velvet-panel-quiet,var(--card2))}
