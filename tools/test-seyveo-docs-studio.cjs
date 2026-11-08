@@ -86,6 +86,7 @@ class FakeNode {
    fillStyle:'#fff',font:'28px Arial',strokeStyle:'#222',
    lineWidth:3.5,lineCap:'round',lineJoin:'round',
    fillRect(){},drawImage(){},fillText(){},clearRect(){},
+   translate(){},rotate(){},
    beginPath(){},moveTo(){},lineTo(){},stroke(){},
    measureText:t=>({width:t.length*20})
   };
@@ -114,8 +115,8 @@ function label(root,text){
  assert.ok(hits.length,'Missing action '+text);
  return hits.at(-1);
 }
-function fixture(){
- let picked=0,created=[],saved=[],revoked=[];
+function fixture({shareNavigator=null,deferImageLoad=false}={}){
+ let picked=0,created=[],saved=[],revoked=[],pendingImages=[];
  const document={
   createElement:tag=>new FakeNode(tag),
   body:new FakeNode('body')
@@ -127,7 +128,11 @@ function fixture(){
  };
  class FakeImage{
   constructor(){this.naturalWidth=800;this.naturalHeight=1100;}
-  set src(value){if(value)this.onload?.();}
+  set src(value){
+   if(!value)return;
+   if(deferImageLoad)pendingImages.push(this);
+   else this.onload?.();
+  }
  }
  const window={
   setTimeout:callback=>callback(),
@@ -136,7 +141,7 @@ function fixture(){
  const context={
   document,window,URL:mockUrl,Image:FakeImage,
   Blob,File,TextEncoder,Uint8Array,atob:globalThis.atob,
-  Date,Error
+  navigator:shareNavigator,Date,Error
  };
  vm.runInNewContext(studioCode,context,{filename:'seyveo-docs-studio.js'});
  const root=new FakeNode('main');
@@ -147,7 +152,14 @@ function fixture(){
   onImport:file=>{saved.push(file);},
   onSayvi:()=>{}
  });
- return {root,window,created,saved,revoked,get picked(){return picked;}};
+ return {
+  root,window,created,saved,revoked,
+  resumeImages:()=>{
+   const queued=pendingImages.splice(0);
+   for(const img of queued)img.onload?.();
+  },
+  get picked(){return picked;}
+ };
 }
 test('all five controls mount and each action opens an actual tool',()=>{
  const f=fixture();
@@ -209,4 +221,82 @@ test('staging tool has no network APIs, fake OCR or legally binding signature cl
  assert.match(studioCode,/не утверждает, что принтер найден/);
  assert.match(studioCode,/SEYVEO_DOCS_EXPORT\.pdfFromJpegs/);
  assert.match(studioCode,/SEYVEO_DOCS_EXPORT\.docxFromText/);
+});
+
+test('scanner can rotate and reorder real multi-page photos, and sign chosen page',async()=>{
+ const f=fixture();
+ label(f.root,'Сканировать').click();
+ const input=find(f.root,n=>n.tagName==='INPUT'&&n.multiple)[0];
+ input.files=[
+  new File([tinyJpeg],'one.jpg',{type:'image/jpeg'}),
+  new File([tinyJpeg],'two.jpg',{type:'image/jpeg'})
+ ];
+ input.emit('change');
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.ok(find(f.root,n=>n.textContent==='Страниц: 2').length);
+ assert.equal(find(f.root,n=>n.tagName==='BUTTON'&&n.textContent==='↻').length,2);
+ const moves=find(f.root,n=>n.tagName==='BUTTON'&&n.textContent==='→');
+ assert.equal(moves.length,2);
+ assert.equal(moves[0].disabled,false);
+ assert.equal(moves[1].disabled,true);
+ moves[0].click();
+ assert.ok(find(f.root,n=>n.textContent==='Изменён порядок страниц.').length);
+ label(f.root,'↻').click();
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.ok(find(f.root,n=>n.textContent.includes('повёрнута на 90°')).length);
+ label(f.root,'Подписать').click();
+ const selector=find(f.root,n=>n.tagName==='SELECT')[0];
+ assert.ok(selector);
+ assert.equal(selector.children.length,2);
+ selector.value='0';
+ const canvas=find(f.root,n=>n.tagName==='CANVAS')[0];
+ canvas.emit('pointerdown');canvas.emit('pointermove');canvas.emit('pointerup');
+ label(f.root,'Добавить подпись в PDF').click();
+ await new Promise(resolve=>setImmediate(resolve));
+ const pdfs=f.created.filter(x=>x.blob.type==='application/pdf');
+ assert.equal(pdfs.length,1);
+ const pdf=Buffer.from(await pdfs[0].blob.arrayBuffer()).toString('latin1');
+ assert.match(pdf,/\/Count 2\b/);
+ assert.ok(find(f.root,n=>n.textContent.includes('странице 1')).length);
+});
+test('system Save to Files / Share is triggered directly on tap with PDF File',async()=>{
+ const sent=[];
+ const navigator={
+  canShare(data){return data.files?.[0]?.type==='application/pdf';},
+  share(data){sent.push(data);return Promise.resolve();}
+ };
+ const f=fixture({shareNavigator:navigator});
+ label(f.root,'Сканировать').click();
+ const input=find(f.root,n=>n.tagName==='INPUT'&&n.multiple)[0];
+ input.files=[new File([tinyJpeg],'photo.jpg',{type:'image/jpeg'})];
+ input.emit('change');
+ await new Promise(resolve=>setImmediate(resolve));
+ label(f.root,'В Файлы / поделиться').click();
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(sent.length,1);
+ assert.equal(sent[0].files[0].type,'application/pdf');
+ assert.equal(sent[0].files[0].name,'SEYVEO-скан.pdf');
+ assert.ok(find(f.root,n=>n.textContent.includes('системное меню')).length);
+});
+test('late photo capture cannot appear after role change or closing Docs',async()=>{
+ const f=fixture({deferImageLoad:true});
+ label(f.root,'Сканировать').click();
+ const input=find(f.root,n=>n.tagName==='INPUT'&&n.multiple)[0];
+ input.files=[new File([tinyJpeg],'photo.jpg',{type:'image/jpeg'})];
+ input.emit('change');
+ f.window.SEYVEO_DOCS_STUDIO.reset();
+ f.resumeImages();
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(find(f.root,n=>n.tagName==='BUTTON'&&n.textContent==='Сохранить PDF').length,0);
+ assert.ok(f.revoked.length>=1);
+});
+test('studio iPhone controls retain minimum touch targets and honest capability labels',()=>{
+ const css=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
+ assert.match(css,/sv-doc-tool-thumb-actions/);
+ assert.match(css,/min-width:44px;min-height:44px/);
+ assert.match(css,/sv-doc-tool-page-select/);
+ assert.match(css,/font-size:16px/);
+ assert.match(studioCode,/подпись.*не КЭП/i);
+ assert.match(studioCode,/navigator\.canShare/);
+ assert.doesNotMatch(studioCode,/\bfetch\s*\(/);
 });
