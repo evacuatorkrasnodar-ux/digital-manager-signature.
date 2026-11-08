@@ -1,0 +1,292 @@
+/* SEYVEO Notebook · Documents reference finish
+   Own inline Notebook page, existing editors, approved Liquid Glass colors.
+   Strict scope: neither dock nor the persistent Work header/capsule is changed. */
+#svWorkShell[data-active="notes"] #svWorkNotebook{
+ --sv-note-border:color-mix(in srgb,var(--text) 12%,transparent);
+ --sv-note-glass:var(--sv-ui-quiet-surface,rgba(154,184,199,.065));
+ --sv-note-raised:var(--sv-ui-selected-surface,rgba(174,198,214,.115));
+ --sv-note-sky:#92c9e8;
+ --sv-note-warm:#dec49a;
+ --sv-note-mint:#a7d6d1;
+ padding-top:1px!important;
+}
+
+/* Three clear, illustrative tools — all wired to the original editors. */
+#svWorkShell #svWorkNotebook .sv-notebook-tools{
+ box-sizing:border-box;width:100%;min-width:0;
+ margin:0 0 15px;padding:0 2px;
+}
+#svWorkShell #svWorkNotebook .sv-note-tools-intro{
+ box-sizing:border-box;
+ display:flex;justify-content:space-between;align-items:baseline;gap:7px;
+ margin:0 2px 9px;
+}
+#svWorkShell #svWorkNotebook .sv-note-tools-intro>span{
+ color:var(--secondary);font-size:10px;font-weight:650;letter-spacing:.095em;
+}
+#svWorkShell #svWorkNotebook .sv-note-tools-intro>small{
+ color:var(--secondary);font-size:10.5px;font-weight:440;line-height:1.4;
+}
+#svWorkShell #svWorkNotebook .sv-note-tools-grid{
+ box-sizing:border-box;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:8px;width:100%;min-width:0;
+}
+#svWorkShell #svWorkNotebook .sv-note-tool{
+ -webkit-appearance:none;appearance:none;box-sizing:border-box;
+ display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+ gap:3px;min-width:0;min-height:124px;
+ padding:10px 5px 9px;
+ border:1px solid var(--sv-note-border);
+ border-radius:19px;
+ background:linear-gradient(146deg,rgba(181,209,223,.075),transparent 80%),var(--sv-note-glass);
+ -webkit-backdrop-filter:blur(16px) saturate(108%);
+ backdrop-filter:blur(16px) saturate(108%);
+ color:var(--text);text-align:center;font:inherit;
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 5%,transparent);
+ cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+ transition:border-color .16s ease,background-color .16s ease;
+}
+#svWorkShell #svWorkNotebook .sv-note-tool:active{
+ background:var(--sv-note-raised);
+ border-color:color-mix(in srgb,var(--text) 22%,transparent);
+}
+#svWorkShell #svWorkNotebook .sv-note-tool:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+#svWorkShell #svWorkNotebook .sv-note-tool-art{
+ box-sizing:border-box;flex:none;
+ display:grid;place-items:center;
+ width:clamp(50px,15vw,61px);height:clamp(50px,15vw,61px);
+ max-width:100%;margin-bottom:3px;
+ border:1px solid color-mix(in srgb,var(--text) 11%,transparent);
+ border-radius:17px;
+ background:linear-gradient(155deg,rgba(206,229,241,.12),rgba(153,185,202,.035)),var(--sv-note-raised);
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 7%,transparent);
+ color:var(--sv-note-sky);
+}
+#svWorkShell #svWorkNotebook .sv-note-tool-paper .sv-note-tool-art{color:var(--sv-note-warm)}
+#svWorkShell #svWorkNotebook .sv-note-tool-scan .sv-note-tool-art{color:var(--sv-note-mint)}
+#svWorkShell #svWorkNotebook .sv-note-tool-art svg{
+ display:block;width:52px;height:52px;max-width:100%;max-height:100%;
+ fill:none;stroke:currentColor;stroke-width:2;
+ stroke-linecap:round;stroke-linejoin:round;overflow:visible;
+}
+#svWorkShell #svWorkNotebook .sv-note-tool-art .sv-note-sheet{
+ fill:color-mix(in srgb,currentColor 11%,transparent);
+ stroke-width:1.6;
+}
+#svWorkShell #svWorkNotebook .sv-note-tool-art .sv-note-pen{stroke-width:2.4}
+#svWorkShell #svWorkNotebook .sv-note-tool-art .sv-note-spark{
+ stroke-width:1.5;opacity:.65;
+}
+#svWorkShell #svWorkNotebook .sv-note-tool>strong{
+ display:block;max-width:100%;
+ color:var(--text);font-size:11.5px;font-weight:620;
+ line-height:1.25;letter-spacing:-.016em;
+ white-space:nowrap;
+}
+#svWorkShell #svWorkNotebook .sv-note-tool>small{
+ display:block;max-width:100%;color:var(--secondary);
+ font-size:9.5px;font-weight:440;line-height:1.35;
+}
+
+/* The shelf begins directly under the tools. Its title belongs to the same
+   existing Notes head, not a second floating header or another plus. */
+#svWorkShell[data-active="notes"] #svWorkNotebook>.notes-head{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-height:29px!important;margin:3px 2px 10px!important;
+ padding:0 1px!important;gap:10px!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook>.notes-head>#notesTitle{
+ display:block!important;margin:0!important;
+ color:var(--text)!important;font-size:16px!important;font-weight:630!important;
+ line-height:1.3!important;letter-spacing:-.035em!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook>.notes-head>#notesCount{
+ margin:0!important;color:var(--secondary)!important;
+ font-size:10.5px!important;line-height:1.35!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook>.notes-head>#notesNew{
+ display:none!important;
+}
+/* When no files exist, omit the unused shelf header and show a helpful hero. */
+#svWorkShell[data-active="notes"] #svWorkNotebook:has(#notesList.is-empty)>.notes-head{
+ display:none!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook #notesList.is-empty{
+ box-sizing:border-box;display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:flex-start!important;
+ gap:0!important;min-height:0!important;
+ padding:16px 10px 23px!important;margin:0!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook #notesList .note-empty{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:center!important;gap:8px!important;
+ width:min(100%,320px)!important;
+ max-width:320px!important;
+ margin:0 auto!important;padding:0 8px!important;
+ text-align:center!important;line-height:1.5!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook #notesList .note-empty-mark{
+ display:grid!important;place-items:center!important;
+ width:56px!important;height:56px!important;
+ max-width:56px!important;max-height:56px!important;flex:none!important;
+ margin:0 0 5px!important;padding:0!important;
+ border-radius:18px!important;
+ border:1px solid color-mix(in srgb,var(--text) 13%,transparent)!important;
+ background:linear-gradient(145deg,rgba(147,193,214,.11),transparent 90%),var(--sv-note-glass)!important;
+ color:var(--sv-note-sky)!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook #notesList .note-empty-mark svg{
+ width:30px!important;height:30px!important;
+ min-width:30px!important;min-height:30px!important;
+ max-width:30px!important;max-height:30px!important;
+ display:block!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook #notesList .note-empty>strong{
+ display:block!important;color:var(--text)!important;
+ font-size:16px!important;font-weight:620!important;line-height:1.3!important;
+ letter-spacing:-.03em!important;margin:0!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook #notesList .note-empty>span:last-child{
+ display:block!important;
+ max-width:255px!important;color:var(--secondary)!important;
+ font-size:11.5px!important;line-height:1.5!important;
+ margin:0!important;white-space:normal!important;
+}
+/* Primary first-time action deliberately reuses the same + menu. */
+#svWorkShell[data-active="notes"] #svWorkNotebook #notesList.is-empty>.sv-note-first-action{
+ margin:17px auto 0!important;min-height:42px!important;
+ padding:0 18px!important;
+ border:1px solid var(--sv-note-border)!important;
+ border-radius:999px!important;
+ background:var(--sv-note-raised)!important;
+ color:var(--text)!important;
+ font-size:12px!important;font-weight:600!important;
+ box-shadow:none!important;
+}
+
+/* Existing notes are real, editable items. No fake sample cards. */
+#svWorkShell[data-active="notes"] #svWorkNotebook #notesList:not(.is-empty){
+ display:flex!important;flex-direction:column!important;gap:9px!important;
+ margin:0!important;padding:0 2px 4px!important;
+ overflow:visible!important;max-height:none!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-item{
+ box-sizing:border-box;position:relative;min-width:0;width:100%;
+ margin:0!important;padding:13px 13px 11px!important;
+ border:1px solid var(--sv-note-border)!important;border-radius:19px!important;
+ background:linear-gradient(150deg,rgba(154,193,211,.075),transparent 72%),var(--sv-note-glass)!important;
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 4%,transparent)!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-item>small{
+ display:block;margin:0 0 7px;color:var(--secondary);
+ font-size:10px!important;font-weight:470;line-height:1.4;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-item-actions{
+ display:flex!important;align-items:center!important;gap:8px!important;
+ margin:0!important;padding:0!important;min-width:0;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-item-actions>.note-open{
+ display:block!important;flex:1 1 auto!important;min-width:0!important;
+ width:auto!important;max-width:none!important;min-height:46px!important;
+ margin:0!important;padding:0 4px 0 0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;text-align:left!important;
+ color:var(--text)!important;box-shadow:none!important;
+ cursor:pointer;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-item-actions>.note-open p{
+ display:-webkit-box!important;-webkit-box-orient:vertical!important;
+ -webkit-line-clamp:3!important;line-clamp:3!important;
+ overflow:hidden!important;white-space:pre-wrap!important;
+ margin:0!important;max-height:none!important;
+ color:var(--text)!important;font-size:13px!important;font-weight:490!important;
+ line-height:1.5!important;overflow-wrap:anywhere!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-item-actions>.note-more-button{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;flex:0 0 40px!important;
+ width:40px!important;height:40px!important;min-height:40px!important;
+ margin:0!important;padding:0!important;
+ border:1px solid var(--sv-note-border)!important;border-radius:50%!important;
+ background:var(--sv-note-raised)!important;box-shadow:none!important;
+ color:var(--text)!important;
+ font-size:18px!important;letter-spacing:1px!important;line-height:1!important;
+ cursor:pointer;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-item .note-paper-preview{
+ display:block;max-width:100%;width:auto;height:auto;max-height:138px;
+ margin:10px 0 2px;border-radius:9px;background:#fff;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-more-options[hidden]{
+ display:none!important;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-more-options:not([hidden]){
+ box-sizing:border-box;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:6px;margin-top:11px!important;padding:10px 0 1px!important;
+ border-top:1px solid var(--sv-note-border);min-width:0;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook .note-more-options button{
+ min-width:0;min-height:37px;padding:8px 6px;
+ border:1px solid var(--sv-note-border);border-radius:12px;
+ background:var(--sv-note-raised);box-shadow:none;
+ color:var(--text);font:inherit;font-size:11px;font-weight:540;line-height:1.35;
+ cursor:pointer;
+}
+#svWorkShell[data-active="notes"] #svWorkNotebook #notesStatus:not([hidden]){
+ display:block;margin:10px 2px 0!important;
+ color:var(--secondary);font-size:11px;line-height:1.4;
+}
+/* Choice sheets inherit the same quiet visual vocabulary as Documents. */
+#noteModeDialog.paper-choice-dialog[open]{
+ box-sizing:border-box;
+ width:min(450px,calc(100vw - 24px));
+ padding:22px 17px 16px;
+ border:1px solid color-mix(in srgb,var(--text) 12%,transparent);
+ border-radius:24px;
+ background:var(--sv-ui-sheet,var(--card));
+ color:var(--text);
+}
+#noteModeDialog .paper-choice-list{display:grid;gap:8px!important;margin:14px 0 2px!important}
+#noteModeDialog .paper-choice-item{
+ box-sizing:border-box;min-height:76px!important;
+ display:flex;align-items:center;gap:12px;
+ padding:10px 11px!important;
+ border:1px solid color-mix(in srgb,var(--text) 12%,transparent)!important;
+ border-radius:18px!important;
+ background:var(--sv-ui-quiet-surface,rgba(157,185,200,.085))!important;
+ box-shadow:none!important;
+}
+#noteModeDialog .paper-choice-item .paper-choice-icon{
+ box-sizing:border-box;
+ display:grid;place-items:center;flex:0 0 48px;
+ width:48px;height:48px;
+ border:1px solid color-mix(in srgb,var(--text) 11%,transparent);
+ border-radius:15px;
+ background:var(--sv-ui-selected-surface,var(--card2));
+ color:#a3cee2;
+}
+#noteModeDialog #noteModePaper .paper-choice-icon{color:#d9c39e}
+#noteModeDialog #noteModeScan .paper-choice-icon{color:#a0d0ca}
+#noteModeDialog .paper-choice-item .paper-choice-icon svg{
+ width:24px;height:24px;fill:none;stroke:currentColor;
+ stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+}
+#noteModeDialog .paper-choice-copy strong{
+ font-size:13px;font-weight:610;line-height:1.3;
+}
+#noteModeDialog .paper-choice-copy small{
+ font-size:11px;line-height:1.4;color:var(--secondary);
+}
+@media(max-width:365px){
+ #svWorkShell #svWorkNotebook .sv-note-tools-grid{gap:5px}
+ #svWorkShell #svWorkNotebook .sv-note-tool{min-height:117px;padding:9px 3px 8px}
+ #svWorkShell #svWorkNotebook .sv-note-tool>strong{font-size:10.5px}
+ #svWorkShell #svWorkNotebook .sv-note-tool>small{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ #svWorkShell #svWorkNotebook .sv-note-tool{transition:none!important}
+}
