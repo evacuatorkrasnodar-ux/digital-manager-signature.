@@ -5235,6 +5235,35 @@ window.addEventListener('pagehide',()=>{
  const dlg=$('noteReviewDialog');
  if(dlg.open){clearTimeout(noteAutosaveTimer);persistNoteReview()}
 });
+/* Safe bridge from the Notebook toolbar script to this private autosave scope.
+   Only these intentional editor actions are exposed; no UI geometry changes. */
+window.SEYVEO_NOTES_EDITOR=Object.freeze({
+ newNote(){
+  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+  if(!persistNoteReview())return false;
+  noteEditFromTask=false;
+  openNoteReview('');
+  $('svNoteTitle').focus();
+  return true;
+ },
+ openDrawing(){
+  if(!window.SEYVEO_PAPER?.open){
+   noteReviewStatus('Рисование пока недоступно.');
+   return false;
+  }
+  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+  if(!persistNoteReview())return false;
+  noteSkipListOnClose=true;
+  $('noteReviewDialog').close();
+  try{window.SEYVEO_PAPER.open();return true}
+  catch{
+   noteSkipListOnClose=false;
+   openNotes();
+   notesMessage('Не удалось открыть рисование.');
+   return false;
+  }
+ }
+});
 function composerText(){const v=question.value.trim();if(!v)composerMessage('Сначала напишите текст');return v}
 $('saveNote').addEventListener('click',()=>{
  const value=composerText();if(!value)return;
@@ -6100,13 +6129,7 @@ window.addEventListener('load',()=>{
   document.getElementById('svNoteFormatMenu').hidden=true;
  });
  document.getElementById('svNoteNewStandalone')?.addEventListener('click',()=>{
-  // Autosave immediately before switching to a fresh sheet, avoiding the
-  // debounce window silently losing the last typed characters.
-  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
-  if(!persistNoteReview())return;
-  noteEditFromTask=false;
-  if(typeof openNoteReview==='function')openNoteReview('');
-  document.getElementById('svNoteTitle')?.focus();
+  window.SEYVEO_NOTES_EDITOR?.newNote();
  });
  document.getElementById('svNoteAttachmentMenu')?.addEventListener('click',e=>{
   const option=e.target.closest('[data-note-attachment]');if(!option)return;
@@ -6147,13 +6170,8 @@ window.addEventListener('load',()=>{
   status('Вложения пока не сохраняются в текстовой заметке. Для распознавания фото откройте «Фото → текст» через «+» в Блокноте.');
  }
  if(action==='draw'){
-  if(!window.SEYVEO_PAPER?.open){status('Рисование пока недоступно.');return}
-  // Save the current text first. The drawing editor opens as its own
-  // document, without putting the Notes list on top of it.
-  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
-  if(!persistNoteReview())return;
-  noteSkipListOnClose=true;
-  dlg.close();window.SEYVEO_PAPER.open();return;
+  window.SEYVEO_NOTES_EDITOR?.openDrawing();
+  return;
  }
  
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
