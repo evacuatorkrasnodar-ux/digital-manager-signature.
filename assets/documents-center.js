@@ -85,13 +85,14 @@ function connectorsPanel(){
  const panel=el('details','sv-doc-integrations');
  panel.open=integrationsOpen;
  const title=el('summary','sv-doc-integrations-title');
- title.append(el('span','','ЭДО и электронная подпись'),
-  el('small','','Подключения для юридически значимого обмена'));
+ title.append(el('span','','Подключения документов'),
+  el('small','','Сервер компании · 1С · ЭДО · подпись'));
  panel.append(title);
  const body=el('div','sv-doc-integrations-body');
  body.append(note('SEYVEO Docs сможет вести внутренние согласования самостоятельно. Для обмена с контрагентами, ФНС и подписания КЭП понадобятся официальные сервисы, сертификаты и отдельное подключение. Сейчас ничего не подключено.'));
  const list=el('div','sv-doc-connectors');
  list.append(
+  connectorRow('Сервер компании','Гибридный доступ к корпоративному архиву и системам через защищённый шлюз',null),
   connectorRow('Электронная подпись и МЧД','Сертификаты, полномочия, подтверждение подписанта',
    'https://www.nalog.gov.ru/rn77/related_activities/el_doc/use_electronic_sign/'),
   connectorRow('ЭДО с контрагентами','Диадок или другой оператор из реестра ФНС',
@@ -103,10 +104,6 @@ function connectorsPanel(){
   connectorRow('1С и бухгалтерия','Сверка реквизитов, учёт, обмен документами и статусами',null)
  );
  body.append(list,note('Важное ограничение: учебные согласования в прототипе пока не являются защищённым юридически значимым ЭДО.'));
- if(area==='business'){
-  const demo=button('Согласования · учебный режим',()=>{view='flow';draw();},'sv-doc-workflow-demo');
-  body.append(demo);
- }
  panel.append(body);
  panel.addEventListener('toggle',()=>{if(panel.isConnected)integrationsOpen=panel.open});
  return panel;
