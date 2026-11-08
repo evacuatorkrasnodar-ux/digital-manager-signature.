@@ -131,9 +131,16 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  background:transparent;
 }
 #sayviSurfacePage .sv-doc-vault-summary{
- box-sizing:border-box;position:relative;display:flex;flex-direction:column;
- justify-content:center;gap:5px;padding:12px 34px 12px 2px;min-height:66px;
- cursor:pointer;list-style:none;
+ box-sizing:border-box;position:relative;display:flex;align-items:center;
+ justify-content:flex-start;gap:12px;padding:10px 35px 10px 2px;
+ min-height:68px;cursor:pointer;list-style:none;
+}
+#sayviSurfacePage .sv-doc-vault-summary>.sv-doc-symbol{
+ flex:0 0 39px;width:39px;height:39px;border:0;
+ background:var(--sv-doc-wash,var(--card));border-radius:12px;
+}
+#sayviSurfacePage .sv-doc-vault-copy{
+ display:flex;flex-direction:column;gap:4px;min-width:0;
 }
 #sayviSurfacePage .sv-doc-vault-summary::marker{content:""}
 #sayviSurfacePage .sv-doc-vault-summary::-webkit-details-marker{display:none}
@@ -150,7 +157,7 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  font-size:14px;font-weight:590;letter-spacing:-.013em;
 }
 #sayviSurfacePage .sv-doc-vault-summary small{
- font-size:11px;line-height:1.4;
+ font-size:11px;line-height:1.4;color:var(--secondary);
 }
 #sayviSurfacePage .sv-doc-vault{
  padding-bottom:16px;
@@ -203,6 +210,24 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  margin:12px 1px;color:var(--secondary);
  font-size:11px;line-height:1.5;overflow-wrap:anywhere;
 }
+/* Details stay available without burying the main screen in paragraphs. */
+#sayviSurfacePage .sv-doc-safety{
+ margin:6px 1px 13px;border-top:1px solid var(--sv-doc-line);
+ color:var(--secondary);
+}
+#sayviSurfacePage .sv-doc-safety summary{
+ box-sizing:border-box;display:flex;align-items:center;gap:8px;
+ min-height:44px;cursor:pointer;list-style:none;
+ font-size:11.5px;color:var(--secondary);
+}
+#sayviSurfacePage .sv-doc-safety summary::-webkit-details-marker{display:none}
+#sayviSurfacePage .sv-doc-safety summary::after{
+ content:"⌄";margin-left:auto;font-size:18px;opacity:.7;
+}
+#sayviSurfacePage .sv-doc-safety[open] summary::after{transform:rotate(180deg)}
+#sayviSurfacePage .sv-doc-safety .sv-doc-note{
+ font-size:11.5px;line-height:1.55;padding:0 1px 10px;margin:0;
+}
 #sayviSurfacePage .sv-doc-file-review{
  margin:11px 0 18px;padding:0 2px;border-bottom:1px solid var(--sv-doc-line);
 }
@@ -243,7 +268,9 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
 /* The approvals training mode has its OWN specific safety explanation.
    Hide the generic encrypted archive footer only in this nested view;
    never suggest that unencrypted training drafts are in the AES vault. */
-#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="flow"]
+/* The summary above contains the relevant local-vault warning. No
+   repeated 5-line footer under the approved global dock. */
+#sayviSurfacePage[data-sv-subject="contract"]
  #sayviSurfaceFootnote{display:none!important}
 @media(max-width:375px){
  #sayviSurfacePage .sv-doc-store-actions{gap:6px}
