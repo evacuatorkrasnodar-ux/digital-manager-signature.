@@ -38,13 +38,13 @@ function validIssuer(value){
       (u.href===value||u.origin===value);
   }catch{return false;}
 }
-function validMetadata(m,issuer,clientId,now){
+function validMetadata(m,issuer,clientId,now,allowExpired=false){
   return m&&typeof m==='object'&&!Array.isArray(m)&&
     Object.keys(m).length===6&&m.version===1&&
     m.issuer===issuer&&m.clientId===clientId&&
     SUBJECT.test(m.subject)&&
-    validTime(m.accessExpiresAt)&&m.accessExpiresAt>now&&
-    validTime(m.idTokenExpiresAt)&&m.idTokenExpiresAt>now;
+    validTime(m.accessExpiresAt)&&validTime(m.idTokenExpiresAt)&&
+    (allowExpired||(m.accessExpiresAt>now&&m.idTokenExpiresAt>now));
 }
 /**
  * Inject an actual device-only secure store (Expo adapter), never web storage.
@@ -73,13 +73,13 @@ export function createNativeCredentialVault({
     await secureStore.delete(ACCESS);
     await secureStore.delete(REFRESH);
   }
-  async function inspect(){
+  async function inspect(allowExpired=false){
     const raw=await secureStore.get(META);
     if(raw===null)return null;
     if(!safeString(raw))return null;
     let meta;
     try{meta=JSON.parse(raw);}catch{return null;}
-    if(!validMetadata(meta,issuer,clientId,now()))return null;
+    if(!validMetadata(meta,issuer,clientId,now(),allowExpired))return null;
     return meta;
   }
   async function saveVerifiedSession(input){
@@ -149,11 +149,15 @@ export function createNativeCredentialVault({
   async function getRefreshCredential(){
     return run(async()=>{
       try{
-        const meta=await inspect();
+        // An expired access/ID token is never an authenticated session.
+        // Its opaque refresh credential can still be sent to the REAL OIDC
+        // token endpoint, which must validate and rotate it; it never grants
+        // a local role or access without a newly verified login.
+        const meta=await inspect(true);
         if(!meta)return null;
         const token=await secureStore.get(REFRESH);
         if(typeof token!=='string'||!TOKEN.test(token))return null;
-        const after=await inspect();
+        const after=await inspect(true);
         if(!after||JSON.stringify(after)!==JSON.stringify(meta))return null;
         return clone({
           refreshToken:token,issuer:meta.issuer,
