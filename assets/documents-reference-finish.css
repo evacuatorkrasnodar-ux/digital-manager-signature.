@@ -964,9 +964,4 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-head
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-search-toggle:focus-visible{
  outline:2px solid var(--text)!important;outline-offset:2px!important;
 }
-@media(max-width:370px){
- #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools{width:40px!important;min-width:40px!important}
- #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-doc-search-toggle{
-  width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;
- }
-}
+/* Documents search keeps its standard 44px header touch area, including small iPhones. */
