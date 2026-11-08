@@ -22,7 +22,7 @@ const button=(label,action,cls='')=>{const e=$('button','svdf-button '+cls,label
 let host=null,role='manager',selected='',kind='schedule',info='',listFilter='active';
 const centralPreviewRole=()=>window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':'manager';
 let returnDraft={id:'',text:''},revisionDraft={id:'',body:'',note:''};
-const isActive=x=>x.state==='sent'||x.state==='read'||x.state==='signing'||(role==='manager'&&x.state==='returned');
+const isActive=x=>x.state==='sent'||x.state==='read'||x.state==='signing'||(role==='manager'&&(x.state==='returned'||(x.state==='approved'&&TYPES[x.kind].type==='Согласование')));
 function safeRevisions(x){
  const fallback={number:1,body:TYPES[x.kind].body,at:Number.isFinite(x.created)?x.created:Date.now(),note:'Исходный учебный текст'};
  if(!Array.isArray(x.revisions)||!x.revisions.length)return [fallback];
