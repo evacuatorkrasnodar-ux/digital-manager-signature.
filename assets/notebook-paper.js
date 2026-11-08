@@ -2,14 +2,14 @@
    Basic stroke smoothing only; handwriting correction needs a future AI service. */
 (function(){
 'use strict';
-const W=840,H=1188,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000,MAX_PHOTO=155000;
+const W=840,H=1188,MAX_PAGE_HEIGHT=2600,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000,MAX_PHOTO=155000;
 const tools=['pen','pencil','eraser'],patterns=['blank','lines','dots'];
 const COLORS=['#171e29','#556174','#27609b','#c54a51','#258463','#7954a3','#f6f7fb','#8e99aa','#aa5c22','#e73b39','#ff7a27','#ffb525','#2fb35f','#0c9999','#14b4cd','#3b77df','#6650d2','#983cde','#bd397b'];
 const $=id=>document.getElementById(id);
 const dialog=$('notePaperDialog'),canvas=$('notePaperCanvas');
 if(!dialog||!canvas||!canvas.getContext('2d'))return;
 const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
-let data={pattern:'blank',background:'dark',strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
+let data={pattern:'blank',background:'dark',height:H,strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
 let activeColor='#f6f7fb',brushSize=5;
 const brushControl=$('notePaperWidth'),moreButton=$('notePaperMore'),extras=$('notePaperExtras');
 const photoView=$('notePaperPhotoPreview'),photoFile=$('notePaperPhotoFile');
@@ -31,13 +31,16 @@ function photoImage(photo,redraw){
 const clamp=(n,max)=>Math.max(0,Math.min(max,Math.round(Number(n)||0)));
 function normalize(obj){
  const p=obj&&typeof obj==='object'?obj:{};
- return{pattern:patterns.includes(p.pattern)?p.pattern:'blank',background:p.background==='dark'?'dark':'light',
+ // Older pages were 840 x 1188. New fullscreen pages store a taller virtual
+ // canvas so strokes remain circular instead of being stretched on iPhone.
+ const height=Number.isFinite(Number(p.height))&&Number(p.height)>=H?Math.min(MAX_PAGE_HEIGHT,Math.round(Number(p.height))):H;
+ return{pattern:patterns.includes(p.pattern)?p.pattern:'blank',background:p.background==='dark'?'dark':'light',height,
  photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
  .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(28,stroke.width)):undefined,points:stroke.points.slice(0,MAX_POINTS)
  .filter(point=>Array.isArray(point)&&point.length>=2&&Number.isFinite(Number(point[0]))&&Number.isFinite(Number(point[1])))
- .map(point=>[clamp(point[0],W),clamp(point[1],H),clamp(point.length>2?point[2]:50,100)])}))};
+ .map(point=>[clamp(point[0],W),clamp(point[1],height),clamp(point.length>2?point[2]:50,100)])}))};
 }
 function paintStroke(ctx,s){
  if(!s.points.length)return;
@@ -60,24 +63,24 @@ function paintStroke(ctx,s){
 }
 function paint(target,obj,background=false){
  const ctx=target.getContext('2d');if(!ctx)return;
- const p=normalize(obj);
- ctx.save();ctx.setTransform(target.width/W,0,0,target.height/H,0,0);
- ctx.clearRect(0,0,W,H);for(const s of p.strokes)paintStroke(ctx,s);
+ const p=normalize(obj),pageH=p.height;
+ ctx.save();ctx.setTransform(target.width/W,0,0,target.height/pageH,0,0);
+ ctx.clearRect(0,0,W,pageH);for(const s of p.strokes)paintStroke(ctx,s);
  if(background){
   const photo=p.photo;
   const bitmap=photoImage(photo,()=>paint(target,p,true));
   if(bitmap){
    ctx.save();ctx.globalCompositeOperation='destination-over';
-   const scale=Math.min(W/bitmap.naturalWidth,H/bitmap.naturalHeight);
+   const scale=Math.min(W/bitmap.naturalWidth,pageH/bitmap.naturalHeight);
    const w=bitmap.naturalWidth*scale,h=bitmap.naturalHeight*scale;
-   ctx.drawImage(bitmap,(W-w)/2,(H-h)/2,w,h);ctx.restore();
+   ctx.drawImage(bitmap,(W-w)/2,(pageH-h)/2,w,h);ctx.restore();
   }
   // Add the template beneath strokes so the eraser never damages the paper.
   ctx.save();ctx.globalCompositeOperation='destination-over';
   ctx.strokeStyle=p.background==='dark'?'rgba(220,228,238,.14)':'rgba(95,110,136,.18)';ctx.fillStyle=p.background==='dark'?'rgba(220,228,238,.17)':'rgba(95,110,136,.22)';
-  if(p.pattern==='lines')for(let y=66;y<H;y+=66){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
-  if(p.pattern==='dots')for(let y=35;y<H;y+=45)for(let x=35;x<W;x+=45){ctx.beginPath();ctx.arc(x,y,1.6,0,2*Math.PI);ctx.fill()}
-  ctx.fillStyle=p.background==='dark'?'#202124':'#fff';ctx.fillRect(0,0,W,H);ctx.restore();
+  if(p.pattern==='lines')for(let y=66;y<pageH;y+=66){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  if(p.pattern==='dots')for(let y=35;y<pageH;y+=45)for(let x=35;x<W;x+=45){ctx.beginPath();ctx.arc(x,y,1.6,0,2*Math.PI);ctx.fill()}
+  ctx.fillStyle=p.background==='dark'?'#202124':'#fff';ctx.fillRect(0,0,W,pageH);ctx.restore();
  }
  ctx.restore();
 }
@@ -85,8 +88,14 @@ function fitPaper(){
  if(!dialog.open||!stage||!sheet)return;
  const rect=stage.getBoundingClientRect();
  if(rect.width<100||rect.height<100)return;
- const width=Math.max(90,Math.floor(Math.min(rect.width-46,(rect.height-6)*W/H)));
- const height=Math.floor(width*H/W);
+ // Fill the WHOLE stage instead of forcing A4 into a small centered rectangle.
+ // Extend the virtual page proportionally so circles and brush widths are not
+ // distorted on-screen. Never shrink a page and crop existing strokes.
+ const width=Math.max(90,Math.floor(rect.width-2));
+ const height=Math.max(120,Math.floor(rect.height-2));
+ const logicalHeight=Math.max(H,Math.min(MAX_PAGE_HEIGHT,Math.round(W*height/width)));
+ if((data.height||H)<logicalHeight)data.height=logicalHeight;
+ if(canvas.height!==data.height){canvas.height=data.height;paint(canvas,data)}
  sheet.style.width=width+'px';sheet.style.height=height+'px';
 }
 window.addEventListener('resize',()=>{if(dialog.open)requestAnimationFrame(fitPaper)});
@@ -108,7 +117,7 @@ function selectTool(name){if(!tools.includes(name))return;
 }
 function point(e){
  const box=canvas.getBoundingClientRect();
- return [clamp((e.clientX-box.left)/box.width*W,W),clamp((e.clientY-box.top)/box.height*H,H),clamp((e.pointerType==='pen'?e.pressure:.5)*100,100)];
+ return [clamp((e.clientX-box.left)/box.width*W,W),clamp((e.clientY-box.top)/box.height*(data.height||H),data.height||H),clamp((e.pointerType==='pen'?e.pressure:.5)*100,100)];
 }
 function down(e){
  if(e.button!==0||e.isPrimary===false)return;
@@ -250,7 +259,7 @@ $('notePaperDuplicate')?.addEventListener('click',()=>{
  data.strokes.push(copy);changed=true;render();report('Последний штрих дублирован.');
 });
 function open(note=null){
- data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
+ data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
  closePatternMenu();closeColorMenu();
  activeColor=[...data.strokes].reverse().find(stroke=>COLORS.includes(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
  brushSize=[...data.strokes].reverse().find(stroke=>Number.isFinite(stroke.width))?.width||5;
@@ -286,7 +295,7 @@ $('notePaperSave').addEventListener('click',()=>{
 });
 async function png(p){
  if(p?.photo)await new Promise(resolve=>{const image=photoImage(p.photo,resolve);if(image)resolve()});
- const out=document.createElement('canvas');out.width=W;out.height=H;
+ const out=document.createElement('canvas');out.width=W;out.height=normalize(p).height;
  paint(out,p,true);return out.toDataURL('image/png');
 }
 async function share(note){
@@ -366,5 +375,5 @@ $('notePaperRemovePhoto')?.addEventListener('click',()=>{
  if(!window.confirm('Убрать фотографию с листа? Штрихи останутся.'))return;
  data.photo='';changed=true;render();report('Фотография убрана.');
 });
-window.SEYVEO_PAPER=Object.freeze({open,preview:(target,p)=>paint(target,p,true),share,print,normalize,importPhoto,compressPhoto});
+window.SEYVEO_PAPER=Object.freeze({open,preview:(target,p)=>{target.height=Math.round(target.width*normalize(p).height/W);paint(target,p,true)},share,print,normalize,importPhoto,compressPhoto});
 })();
