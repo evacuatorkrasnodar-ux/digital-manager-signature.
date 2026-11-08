@@ -212,6 +212,21 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
 #sayviSurfacePage .sv-doc-chat-action .sv-doc-symbol{
  flex:0 0 32px;width:32px;height:32px;border:0;background:transparent;
 }
+
+#sayviSurfacePage .sv-doc-chat-action .sv-doc-symbol.sv-sayvi-symbol{
+ /* Keep the real approved SEYVEO mark visible. The generic icon reset
+    must never paint over its image on Safari. */
+ background:url("./sayvi-core-mark.svg") center / 25px 25px no-repeat;
+ border:0;opacity:.96;
+}
+#sayviSurfacePage .sv-doc-chat-action .sv-doc-symbol:not(.sv-sayvi-symbol){
+ background:var(--sv-doc-picked,var(--card2));
+ border-radius:10px;
+}
+#sayviSurfacePage .sv-doc-chat-action .sv-doc-symbol:not(.sv-sayvi-symbol) svg{
+ width:20px;height:20px;stroke-width:1.55;
+}
+
 #sayviSurfacePage .sv-doc-chat-copy{
  display:flex;flex-direction:column;gap:4px;flex:1 1 auto;min-width:0;
 }
@@ -244,6 +259,10 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  content:"⌄";margin-left:auto;font-size:18px;opacity:.7;
 }
 #sayviSurfacePage .sv-doc-safety[open] summary::after{transform:rotate(180deg)}
+#sayviSurfacePage .sv-doc-safety:not([open]) .sv-doc-note{display:none}
+#sayviSurfacePage .sv-doc-safety[open] .sv-doc-note{
+ max-width:46rem;color:var(--secondary);
+}
 #sayviSurfacePage .sv-doc-safety .sv-doc-note{
  font-size:11.5px;line-height:1.55;padding:0 1px 10px;margin:0;
 }
