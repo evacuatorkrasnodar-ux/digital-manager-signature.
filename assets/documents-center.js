@@ -139,7 +139,10 @@ function draw(){
   const records=window.SEYVEO_DOCUMENT_FLOW?.getRecords?.()||[];
   const working=records.filter(x=>['sent','read','returned'].includes(x.state)).length;
   const onSignature=records.filter(x=>x.state==='signing').length;
-  const flowCard=button('',()=>{view='flow';draw()},'sv-doc-flow-card');
+  const flowCard=button('',()=>{
+   window.SEYVEO_DOCS_STUDIO?.reset?.();
+   view='flow';draw();
+  },'sv-doc-flow-card');
   flowCard.setAttribute('aria-label','Согласования документов, учебный режим');
   const flowCopy=el('span','sv-doc-flow-copy');
   flowCopy.append(el('strong','','Согласования'),
@@ -273,6 +276,7 @@ function backFromNested(){
  view='archive';draw();return true;
 }
 function openApprovals(recordId){
+ window.SEYVEO_DOCS_STUDIO?.reset?.();
  area='business';view='flow';
  if(host)draw();
  if(typeof recordId==='string')window.SEYVEO_DOCUMENT_FLOW?.select?.(recordId);
