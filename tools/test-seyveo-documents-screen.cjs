@@ -167,9 +167,10 @@ test('employee Back exits normally; never exposes owner archive on a nested flow
  assert.equal(f.window.SEYVEO_DOCUMENT_CENTER.backFromNested(),false);
  assert.equal(elements(f.host,'sv-doc-vault-shell').length,0);
 });
-test('only approvals view hides misleading generic encrypted archive footnote',()=>{
- assert.match(css,/data-sv-doc-view="flow"[\s\S]*#sayviSurfaceFootnote\{display:none!important\}/);
- assert.doesNotMatch(css,/data-sv-doc-view="archive"[\s\S]*#sayviSurfaceFootnote\{display:none!important\}/);
+test('Docs fold storage notes into one disclosure without duplicate global footer',()=>{
+ assert.match(css,/data-sv-subject="contract"[\s\S]*#sayviSurfaceFootnote\{display:none!important\}/);
+ assert.match(css,/\.sv-doc-safety\{/);
+ assert.match(code,/О хранении документов/);
  assert.doesNotMatch(code,/Вернуться в хранилище/);
 });
 test('approval workflow keeps warning visible and avoids duplicate numeric scorecards',()=>{
@@ -197,4 +198,11 @@ test('Docs quick actions are mounted by the studio when installed, not duplicate
  assert.match(stub,/Добавить подпись в PDF/);
  assert.match(stub,/Открыть для печати/);
  assert.match(code,/SEYVEO_DOCS_STUDIO\?\.reset\?\.\(\)/);
+});
+
+test('compact Documents home has one locked archive row, no duplicate protection intro',()=>{
+ assert.match(code,/summary\.append\(makeIcon\('lock'\),archiveTitle\)/);
+ assert.match(code,/sv-doc-vault-copy/);
+ assert.doesNotMatch(code,/introCopy\.append\(el\('strong','','Защищённые документы'\)/);
+ assert.match(code,/safety\.append\(el\('summary','','О хранении документов'\)/);
 });
