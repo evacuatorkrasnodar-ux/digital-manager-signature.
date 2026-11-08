@@ -22,8 +22,8 @@
  shell.append(calendar,tasks);
  const nav=document.createElement('nav');
  nav.id='svWorkTabs';
- nav.setAttribute('aria-label','Мои дела, календарь и личное или рабочее пространство');
- const choices=[['personal','Мои дела'],['calendar','Календарь'],['business','Кабинет'],['notes','Блокнот'],['employee','Моя работа']];
+ nav.setAttribute('aria-label','Мои дела, календарь, блокнот и кабинет');
+ const choices=[['personal','Мои дела'],['calendar','Календарь'],['notes','Блокнот'],['business','Кабинет'],['employee','Моя работа']];
  for(const [id,label] of choices){
   const button=document.createElement('button');
   button.type='button';
@@ -170,16 +170,17 @@
   nav.hidden=!visible||history;
   nav.dataset.employee=String(employeeMode);
   nav.dataset.one=String(!managerPreview&&!employeeMode);
+  nav.dataset.business=String(managerPreview&&!employeeMode);
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
    const name=tab.dataset.svWorkTab;
    tab.hidden=employeeMode
     ? name==='business'||name==='notes'
     : managerPreview
-     ? name==='employee'||name==='notes'
+     ? name==='employee'
      : name==='business'||name==='employee';
    tab.textContent=employeeMode
-    ? (name==='personal'?'Дела':name==='employee'?'Работа':name==='calendar'?'Календарь':'Кабинет')
-    : (name==='personal'?'Мои дела':name==='business'?'Кабинет':name==='calendar'?'Календарь':'Моя работа');
+    ? (name==='personal'?'Дела':name==='employee'?'Работа':name==='calendar'?'Календарь':'Блокнот')
+    : (name==='personal'?'Мои дела':name==='calendar'?'Календарь':name==='notes'?'Блокнот':name==='business'?'Кабинет':'Моя работа');
   }
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
@@ -250,5 +251,5 @@
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
- window.SEYVEO_WORK_SHELL=Object.freeze({version:11,sync});
+ window.SEYVEO_WORK_SHELL=Object.freeze({version:12,sync});
 })();
