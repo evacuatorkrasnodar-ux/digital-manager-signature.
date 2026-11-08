@@ -207,6 +207,8 @@ function mount(slot,api){
   }
   slot.append(list,$('p','sv-doc-note',
    'Содержимое и названия шифруются AES-GCM. Пароль не хранится. Защита действует для архива на этом устройстве — это ещё не системный защищённый сейф iOS/Android.'));
+  // Read-only UI update; never broadcast document contents or filenames.
+  document.dispatchEvent(new CustomEvent('seyveo:documents-vault-changed',{detail:{area}}));
  }
  run(async()=>{
   const state=await vault.status();
