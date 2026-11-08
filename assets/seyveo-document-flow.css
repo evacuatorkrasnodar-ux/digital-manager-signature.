@@ -135,7 +135,7 @@
 #sayviSurfacePage .svdf-return-editor strong{font-size:12px;font-weight:600}
 #sayviSurfacePage .svdf-return-input{width:100%;min-height:82px;max-height:160px;
  padding:12px 13px;resize:vertical;border:1px solid var(--soft-line);border-radius:13px;
- background:var(--card);color:var(--text);font:inherit;font-size:13px;line-height:1.5;
+ background:var(--card);color:var(--text);font:inherit;font-size:16px;line-height:1.5;
  box-sizing:border-box}
 #sayviSurfacePage .svdf-return-input:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 #sayviSurfacePage .svdf-return-editor .svdf-actions{margin:0}
@@ -156,7 +156,7 @@
 #sayviSurfacePage :is(.svdf-revision-body,.svdf-revision-note){
  width:100%;min-width:0;box-sizing:border-box;resize:vertical;
  padding:11px 12px;border:1px solid var(--soft-line);border-radius:12px;
- color:var(--text);background:var(--card);font:inherit;font-size:13px;
+ color:var(--text);background:var(--card);font:inherit;font-size:16px;
  line-height:1.55;max-height:250px
 }
 #sayviSurfacePage :is(.svdf-revision-body,.svdf-revision-note):focus-visible{
