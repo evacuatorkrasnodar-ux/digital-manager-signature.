@@ -6,7 +6,7 @@
  if(window.SEYVEO_NAVIGATION)return;
  const $=id=>document.getElementById(id);
  const redundant=new Set([
-  'personalTaskDialog','calendarEventDialog','noteReviewDialog',
+  'personalTaskDialog','calendarEventDialog',
   'notePaperDialog','noteReadDialog','assistantChatHistoryDialog',
   'wakeVoiceConsent','homeWidgetsManageDialog','homeWidgetDetails',
   'seyveoAvatarDialog'
@@ -28,6 +28,14 @@
  document.querySelectorAll('dialog > button.seyveo-dialog-close').forEach(button=>{
   const dialog=button.parentElement;
   if(!dialog)return;
+  // The notebook editor owns a visible Back arrow. Never mark a focused,
+  // actionable control aria-hidden or replace its approved appearance.
+  if(button.id==='noteReviewBack'){
+   button.classList.remove('sv-nav-redundant');
+   button.removeAttribute('aria-hidden');
+   button.removeAttribute('tabindex');
+   return;
+  }
   if(redundant.has(dialog.id)){
    button.classList.add('sv-nav-redundant');
    button.setAttribute('aria-hidden','true');
@@ -89,7 +97,6 @@
  // We snapshot only fields after a dialog actually opens; saving uses the
  // original app submit handler untouched.
  const guarded=[
-  ['noteReviewDialog','noteReviewForm',['noteReviewCancel']],
   ['personalTaskDialog','personalTaskForm',['personalTaskCancel']],
   ['calendarEventDialog','calendarEventForm',['calendarEventCancel']]
  ];
@@ -136,5 +143,5 @@
     confirmLeaving(event);
   },true);
  });
- window.SEYVEO_NAVIGATION=Object.freeze({version:6});
+ window.SEYVEO_NAVIGATION=Object.freeze({version:7});
 })();
