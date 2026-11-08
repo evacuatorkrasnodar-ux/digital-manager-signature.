@@ -440,3 +440,55 @@ svg.sv-paper-signature .sv-paper-icon-core{
 @media(prefers-reduced-motion:reduce){
  #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary button::before{transition:none!important}
 }
+
+
+/* SEYVEO Paper v10 · seamless full-bleed drawing.
+   Only controls fade one after another during a stroke. Ink is preserved,
+   layouts never jump, and everything returns when the finger lifts. */
+#notePaperDialog.sv-paper-studio[open]>#notePaperStage.sv-paper-stage{
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ outline:0!important;box-shadow:none!important;
+ background:#202124!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>#notePaperSheet.paper-sheet{
+ width:100%!important;height:100%!important;
+ border:0!important;border-radius:0!important;
+ outline:0!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>#notePaperSheet>#notePaperCanvas{
+ width:100%!important;height:100%!important;
+ border:0!important;outline:0!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open]>.sv-paper-top,
+#notePaperDialog.sv-paper-studio[open]>.sv-paper-bottom,
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size{
+ transition:opacity .16s ease,visibility .16s ease,transform .16s ease!important;
+}
+#notePaperDialog.sv-paper-studio[open].sv-paper-inking>.sv-paper-top{
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+ transform:translateY(-5px)!important;transition-delay:0ms!important;
+}
+#notePaperDialog.sv-paper-studio[open].sv-paper-inking #notePaperStage>.sv-paper-size{
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+ transition-delay:60ms!important;
+}
+#notePaperDialog.sv-paper-studio[open].sv-paper-inking #notePaperStage>.sv-paper-size input{
+ pointer-events:none!important;
+}
+#notePaperDialog.sv-paper-studio[open].sv-paper-inking>.sv-paper-bottom{
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+ transform:translateY(5px)!important;transition-delay:115ms!important;
+}
+#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-inking)>.sv-paper-top,
+#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-inking)>.sv-paper-bottom,
+#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-inking) #notePaperStage>.sv-paper-size{
+ opacity:1!important;visibility:visible!important;transition-delay:0ms!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #notePaperDialog.sv-paper-studio[open]>.sv-paper-top,
+ #notePaperDialog.sv-paper-studio[open]>.sv-paper-bottom,
+ #notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size{
+  transition:none!important;
+ }
+}
