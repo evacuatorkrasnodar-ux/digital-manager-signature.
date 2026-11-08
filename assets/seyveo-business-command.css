@@ -2295,3 +2295,110 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  fill:none;stroke:currentColor;
  stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;
 }
+
+/* SEYVEO cabinet chooser · Documents thin-glass standard · 2026-11-08.
+   Style only: keep independent guide and selection tap targets and save handlers. */
+#svCabinetDialog{
+ --sv-cabinet-hairline:color-mix(in srgb,var(--text) 11%,transparent);
+ --sv-cabinet-matte:color-mix(in srgb,var(--text) 4%,transparent);
+ --sv-cabinet-picked:color-mix(in srgb,var(--text) 10%,transparent);
+}
+#svCabinetDialog .sv-cabinet-search{
+ min-height:44px!important;
+ padding:0 12px!important;
+ margin:0 0 12px!important;
+ border:1px solid var(--sv-cabinet-hairline)!important;
+ border-radius:19px!important;
+ background:var(--sv-cabinet-matte)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(15px) saturate(1.05)!important;
+ backdrop-filter:blur(15px) saturate(1.05)!important;
+}
+#svCabinetDialog .sv-cabinet-search svg{
+ width:17px!important;height:17px!important;
+ stroke-width:1.45!important;
+}
+#svCabinetDialog .sv-cabinet-search:focus-within{
+ outline:2px solid var(--text)!important;
+ outline-offset:2px!important;
+}
+#svCabinetDialog .sv-cabinet-goal-row{
+ min-height:59px!important;
+ border-bottom:1px solid var(--sv-cabinet-hairline)!important;
+}
+#svCabinetDialog .sv-cabinet-goal-detail{
+ gap:9px!important;
+ padding:8px 2px!important;
+ border-radius:12px!important;
+}
+#svCabinetDialog .sv-cabinet-goal-info svg{
+ width:17px!important;height:17px!important;
+ stroke-width:1.4!important;
+}
+#svCabinetDialog .sv-cabinet-goal-mark{
+ width:44px!important;height:44px!important;
+ min-height:44px!important;min-width:44px!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+}
+#svCabinetDialog .sv-cabinet-goal-mark::before{
+ width:28px!important;height:28px!important;
+ border:1px solid var(--sv-cabinet-hairline)!important;
+ border-radius:50%!important;
+ background:var(--sv-cabinet-matte)!important;
+ box-shadow:none!important;
+}
+#svCabinetDialog .sv-cabinet-goal-mark.is-selected::before{
+ background:var(--sv-cabinet-picked)!important;
+ border-color:color-mix(in srgb,var(--text) 17%,transparent)!important;
+}
+#svCabinetDialog .sv-cabinet-goal-mark svg{
+ width:15px!important;height:15px!important;
+ stroke-width:1.45!important;
+}
+#svCabinetDialog[open] .sv-cabinet-footer{
+ border-top:1px solid var(--sv-cabinet-hairline)!important;
+ gap:8px!important;
+}
+#svCabinetDialog[open] .sv-cabinet-footer button,
+#svCabinetDialog[open] .sv-cabinet-guide-action{
+ min-height:36px!important;
+ height:auto!important;
+ padding:8px 13px!important;
+ border:1px solid var(--sv-cabinet-hairline)!important;
+ border-radius:999px!important;
+ background:var(--sv-cabinet-matte)!important;
+ box-shadow:none!important;
+ font-size:11.5px!important;
+ font-weight:550!important;
+}
+#svCabinetDialog[open] .sv-cabinet-footer .sv-cabinet-save{
+ background:var(--sv-cabinet-picked)!important;
+}
+#svCabinetDialog[open] .sv-cabinet-source{
+ border:1px solid var(--sv-cabinet-hairline)!important;
+ border-radius:16px!important;
+ background:var(--sv-cabinet-matte)!important;
+ box-shadow:none!important;
+}
+#svCabinetDialog[open] .sv-cabinet-source.is-current{
+ background:var(--sv-cabinet-picked)!important;
+ outline:none!important;
+}
+#svCabinetDialog .sv-cabinet-guide,
+#svCabinetDialog .sv-cabinet-catalog{
+ min-width:0!important;
+}
+@media(max-width:370px){
+ #svCabinetDialog .sv-cabinet-dialog-body{
+  padding-inline:13px!important;
+ }
+ #svCabinetDialog[open] .sv-cabinet-footer button{
+  padding-inline:11px!important;
+ }
+}
+@media(prefers-reduced-transparency:reduce){
+ #svCabinetDialog .sv-cabinet-search{
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
