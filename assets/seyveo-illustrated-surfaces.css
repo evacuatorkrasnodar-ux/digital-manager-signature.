@@ -128,3 +128,87 @@ html[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sayv
    background:color-mix(in srgb,var(--sv-art-accent) 10%,var(--card))!important;
  }
 }
+
+/* 4 · My World: pictograms are small colored objects, not rainbow page tiles.
+   These are the EXISTING SVGs in the original navigation buttons. */
+html.sv-space-active #lifePage .calendar-space-button {
+  --sv-world-accent:#9ec8d6;
+}
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="calendar"],
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="mail"],
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="browser"],
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="contacts"]{
+  --sv-world-accent:#92c7d9;
+}
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="notes"],
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="documents"],
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="music"]{
+  --sv-world-accent:#dcc097;
+}
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="health"],
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="care"],
+html.sv-space-active #lifePage .calendar-space-button[data-calendar-space="smart-home"]{
+  --sv-world-accent:#97cbb5;
+}
+html.sv-space-active #lifePage .calendar-space-button svg {
+  box-sizing:border-box!important;
+  padding:8px!important;
+  border:1px solid color-mix(in srgb,var(--sv-world-accent) 22%,transparent)!important;
+  border-radius:14px!important;
+  background:
+    radial-gradient(ellipse at 29% 18%,color-mix(in srgb,var(--sv-world-accent) 16%,transparent),transparent 80%),
+    color-mix(in srgb,var(--sv-world-accent) 7%,transparent)!important;
+  stroke:currentColor!important;
+  color:var(--sv-world-accent)!important;
+  opacity:1!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="calendar"],
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="mail"],
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="browser"],
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="contacts"]{
+  --sv-world-accent:#457e96;
+}
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="notes"],
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="documents"],
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="music"]{
+  --sv-world-accent:#9a7544;
+}
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="health"],
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="care"],
+html[data-theme="light"].sv-space-active #lifePage .calendar-space-button[data-calendar-space="smart-home"]{
+  --sv-world-accent:#4b836b;
+}
+
+/* 5 · Business Pulse: meaningful chroma on numbers and charts only.
+   Preserves the neutral background, layout and all data calculations. */
+#picturePage #pictureBusinessCharts .picture-kpis .picture-kpi:nth-child(1) strong{
+  color:#a5d2bc!important;
+}
+#picturePage #pictureBusinessCharts .picture-kpis .picture-kpi:nth-child(2) strong{
+  color:#d9b996!important;
+}
+#picturePage #pictureBusinessCharts .picture-kpis .picture-kpi:nth-child(3) strong{
+  color:#bad1da!important;
+}
+#picturePage #pictureBusinessCharts .picture-kpis .picture-kpi:nth-child(4) strong{
+  color:#bdb6d9!important;
+}
+#picturePage #pictureBusinessCharts .picture-bin-bar{
+  background:linear-gradient(180deg,#abcbdc,#7daea6)!important;
+}
+html[data-theme="light"] #picturePage #pictureBusinessCharts .picture-kpis .picture-kpi:nth-child(1) strong{
+  color:#3a8164!important;
+}
+html[data-theme="light"] #picturePage #pictureBusinessCharts .picture-kpis .picture-kpi:nth-child(2) strong{
+  color:#936d3b!important;
+}
+html[data-theme="light"] #picturePage #pictureBusinessCharts .picture-kpis .picture-kpi:nth-child(3) strong{
+  color:#437f97!important;
+}
+html[data-theme="light"] #picturePage #pictureBusinessCharts .picture-kpis .picture-kpi:nth-child(4) strong{
+  color:#75699f!important;
+}
+html[data-theme="light"] #picturePage #pictureBusinessCharts .picture-bin-bar{
+  background:linear-gradient(180deg,#669bb0,#538a77)!important;
+}
