@@ -975,3 +975,56 @@
   gap:8px!important;
  }
 }
+
+/* Documents / Approvals: "Дополнительно" actions use the approved
+   Home-card pill language, not two full-width rectangular settings rows. */
+#sayviSurfacePage[data-sv-subject="contract"] .svdf-optional-actions{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ align-items:stretch!important;
+ gap:8px!important;
+ width:100%!important;
+ min-width:0!important;
+ padding:3px 0 8px!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .svdf-optional-actions>.svdf-button{
+ box-sizing:border-box!important;
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:100%!important;
+ max-width:none!important;
+ min-width:0!important;
+ min-height:44px!important;
+ height:auto!important;
+ margin:0!important;
+ padding:8px 10px!important;
+ border:1px solid var(--sv-doc-final-stroke)!important;
+ border-radius:var(--seyveo-radius-action,999px)!important;
+ background:var(--sv-doc-final-press)!important;
+ color:var(--text)!important;
+ box-shadow:none!important;
+ font-size:11px!important;
+ font-weight:550!important;
+ line-height:1.25!important;
+ text-align:center!important;
+ white-space:normal!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .svdf-optional-actions>.svdf-reset{
+ background:transparent!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .svdf-optional-actions>.svdf-button:only-child{
+ grid-column:1/-1;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .svdf-optional-actions>.svdf-button:focus-visible{
+ outline:1.5px solid var(--text)!important;
+ outline-offset:2px!important;
+}
+@media(max-width:350px){
+ #sayviSurfacePage[data-sv-subject="contract"] .svdf-optional-actions{
+  grid-template-columns:1fr!important;
+ }
+ #sayviSurfacePage[data-sv-subject="contract"] .svdf-optional-actions>.svdf-button{
+  min-height:42px!important;
+ }
+}
