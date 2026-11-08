@@ -65,7 +65,7 @@
  // would be lost. Preserves all existing editing/navigation controls.
  const blankButton=document.createElement('button');
  blankButton.type='button';blankButton.id='notePaperBlankSheet';
- blankButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.4"/></svg><span>Чистая бумага</span>';
+ blankButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.4"/></svg><span>Без разлиновки</span>';
  const clearButton=document.createElement('button');
  clearButton.type='button';clearButton.id='notePaperClearSheet';
  clearButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M7 7l.8 13h8.4L17 7M10 10.5v6M14 10.5v6"/></svg><span>Очистить весь лист</span>';
