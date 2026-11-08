@@ -5128,7 +5128,7 @@ window.addEventListener('seyveo:note-open-source',event=>{
 });
 window.SEYVEO_NOTES_API=Object.freeze({getNotes,putNotes,openNotes,message:notesMessage,reviewText:(value,options)=>openNoteReview(value,null,options)});
 /* Note review: real autosave, same existing local notes format and stable IDs. */
-let editingNoteID=null,reviewPreserveLines=false;
+let editingNoteID=null,reviewPreserveLines=false,noteSkipListOnClose=false;
 let noteAutosaveTimer=0,noteSavedSnapshot='',noteAutosaveFailed=false;
 function noteReviewValues(){
  const raw=$('noteReviewText').value;
@@ -5179,7 +5179,7 @@ function openNoteReview(value,id=null,options=null){
  $('noteReviewTitle').textContent=id?'Изменить запись':value?'Запомнить мысль':'Новая заметка';
  dlg.dataset.noteMode=id?'edit':String(value||'').length>150?'draft':'new';
  const noteValue=String(value||'').slice(0,8000);
- const titleMatch=noteValue.match(/^([^\n]{1,120})\n\n([\s\S]+)$/);
+ const titleMatch=noteValue.match(/^([^\n]{1,120})\n\n([\s\S]*)$/);
  $('svNoteTitle').value=titleMatch?titleMatch[1]:'';
  $('noteReviewText').value=titleMatch?titleMatch[2]:noteValue;
  $('noteReviewText').wrap='soft';
@@ -5201,10 +5201,11 @@ $('noteReviewDialog').addEventListener('click',event=>{
 $('noteReviewDialog').addEventListener('close',()=>{
  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
  // The close event follows the native dialog closing (back, Escape, etc.).
- const fromTask=noteEditFromTask;
+ const fromTask=noteEditFromTask,skipList=noteSkipListOnClose;
+ noteSkipListOnClose=false;
  persistClosedNoteReview();
  editingNoteID=null;noteEditFromTask=false;
- if(!fromTask)openNotes();
+ if(!fromTask&&!skipList)openNotes();
 });
 function persistClosedNoteReview(){
  // Reuse the same persistence path by allowing the closed dialog's populated values.
@@ -6099,9 +6100,11 @@ window.addEventListener('load',()=>{
   document.getElementById('svNoteFormatMenu').hidden=true;
  });
  document.getElementById('svNoteNewStandalone')?.addEventListener('click',()=>{
-  const title=document.getElementById('svNoteTitle').value.trim();
-  const text=field.value.trim();
-  if((title||text)&&!window.confirm('Создать новую заметку? Несохранённый текст текущей заметки будет потерян.'))return;
+  // Autosave immediately before switching to a fresh sheet, avoiding the
+  // debounce window silently losing the last typed characters.
+  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+  if(!persistNoteReview())return;
+  noteEditFromTask=false;
   if(typeof openNoteReview==='function')openNoteReview('');
   document.getElementById('svNoteTitle')?.focus();
  });
@@ -6144,9 +6147,12 @@ window.addEventListener('load',()=>{
   status('Вложения пока не сохраняются в текстовой заметке. Для распознавания фото откройте «Фото → текст» через «+» в Блокноте.');
  }
  if(action==='draw'){
-  const hasDraft=Boolean(field.value.trim()||document.getElementById('svNoteTitle').value.trim());
-  if(hasDraft&&!window.confirm('Открыть рисование? Несохранённые изменения текстовой заметки останутся только в редакторе и могут быть потеряны.'))return;
   if(!window.SEYVEO_PAPER?.open){status('Рисование пока недоступно.');return}
+  // Save the current text first. The drawing editor opens as its own
+  // document, without putting the Notes list on top of it.
+  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+  if(!persistNoteReview())return;
+  noteSkipListOnClose=true;
   dlg.close();window.SEYVEO_PAPER.open();return;
  }
  
