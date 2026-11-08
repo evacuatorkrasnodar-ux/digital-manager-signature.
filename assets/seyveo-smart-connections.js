@@ -1,4 +1,4 @@
-/* SEYVEO Smart Connections: ONE hub, reachable from Management and My World.
+/* SEYVEO Smart Connections: one hub in Management only.
  * Navigation and preview only. No pairing, account linking or permission grant.
  */
 (()=>{
@@ -30,19 +30,10 @@
   });
  }
  manageOpen.addEventListener('click',()=>select('people'));
- function open(section='people',fromWorld=false){
-  // Use the original connection dialog and its existing, checked handlers.
-  // No duplicate modal and no route to the legacy all-in-one management page.
-  if(fromWorld){
-   // Avoid stacking the connections modal over the personal-space modal.
-   const personal=document.getElementById('calendarSpaceDialog');
-   if(personal?.open)personal.close();
-  }
+ function open(section='people'){
+  // The one entry point is Management; reuse its existing dialog and handlers.
   if(!dialog.open)manageOpen.click();
   select(section);
- }
- for(const id of ['lifeSmartConnectEntry','worldSmartConnectEntry']){
-  document.getElementById(id)?.addEventListener('click',()=>open('devices',true));
  }
  // Business/connection help is always surfaced inside the same Services fold.
  window.addEventListener('seyveo:connection-help',()=>select('services'));
