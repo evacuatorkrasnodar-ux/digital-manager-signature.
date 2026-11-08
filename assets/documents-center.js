@@ -5,7 +5,7 @@
 const MAX_FILE=20*1024*1024;
 const names={personal:'Личное',business:'Бизнес'};
 const allowed=/\.(?:pdf|txt|md|docx|xlsx|pptx|png|jpe?g|webp)$/i;
-let area='personal',host=null,view='archive',archiveExpanded=false,readerToken=0,previewUrl=null,integrationsOpen=false;
+let area='personal',host=null,view='archive',archiveExpanded=false,readerToken=0,previewUrl=null;
 const previewRole=()=>window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':window.SEYVEO_PREVIEW?.isManager?.()===true?'manager':'personal';
 const employeePreview=()=>previewRole()==='employee';
 let lastPreviewRole=null;
@@ -28,7 +28,7 @@ function clearPreview(){
 function reset(){
  clearPreview();
  files={personal:null,business:null};stored={personal:false,business:false};
- view='archive';showPreview=false;archiveExpanded=false;integrationsOpen=false;
+ view='archive';showPreview=false;archiveExpanded=false;
 }
 function setArea(next){
  if(!names[next])return false;
@@ -68,45 +68,25 @@ function chatAction(label,subtitle,intent,primary=false){
  const chevron=el('span','sv-doc-chat-chevron','›');chevron.setAttribute('aria-hidden','true');
  action.append(copy,chevron);return action;
 }
-function connectorRow(label,description,link){
- const row=el('div','sv-doc-connector-row');
- const copy=el('div','sv-doc-connector-copy');
- copy.append(el('strong','',label),el('small','',description));
- const badge=el('span','sv-doc-connector-state','Не подключено');
- row.append(copy,badge);
- if(link){
-  const a=el('a','sv-doc-connector-link','Открыть справку ↗');
-  a.href=link;a.target='_blank';a.rel='noopener noreferrer';
-  row.append(a);
- }
- return row;
+function openDocumentConnections(){
+ // One approved connection hub: Management → Smart Connections → Services.
+ // No local fake connectors or app permissions on the Documents screen.
+ const hub=window.SEYVEO_SMART_CONNECTIONS;
+ if(typeof hub?.open==='function'){hub.open('services');return;}
+ const trigger=document.getElementById('openManageConnections');
+ if(trigger){trigger.click();return;}
+ location.hash='#manage';
 }
-function connectorsPanel(){
- const panel=el('details','sv-doc-integrations');
- panel.open=integrationsOpen;
- const title=el('summary','sv-doc-integrations-title');
- title.append(el('span','','Подключения документов'),
+function connectionsEntry(){
+ const action=button('',openDocumentConnections,'sv-doc-connections-entry');
+ action.setAttribute('aria-label','Открыть умные подключения документов');
+ const copy=el('span','sv-doc-connections-copy');
+ copy.append(el('strong','','Подключения документов'),
   el('small','','Сервер компании · 1С · ЭДО · подпись'));
- panel.append(title);
- const body=el('div','sv-doc-integrations-body');
- body.append(note('SEYVEO Docs сможет вести внутренние согласования самостоятельно. Для обмена с контрагентами, ФНС и подписания КЭП понадобятся официальные сервисы, сертификаты и отдельное подключение. Сейчас ничего не подключено.'));
- const list=el('div','sv-doc-connectors');
- list.append(
-  connectorRow('Сервер компании','Гибридный доступ к корпоративному архиву и системам через защищённый шлюз',null),
-  connectorRow('Электронная подпись и МЧД','Сертификаты, полномочия, подтверждение подписанта',
-   'https://www.nalog.gov.ru/rn77/related_activities/el_doc/use_electronic_sign/'),
-  connectorRow('ЭДО с контрагентами','Диадок или другой оператор из реестра ФНС',
-   'https://www.nalog.gov.ru/rn77/oedo/search_edo/'),
-  connectorRow('Интеграция Диадок API','Юридически значимые документы через API оператора',
-   'https://developer.kontur.ru/doc/diadoc-api/index.html'),
-  connectorRow('ФНС и отчётность','Передача отчётности через поддерживаемые официальные каналы',
-   'https://www.nalog.gov.ru/rn77/related_activities/el_doc/ed_interaction/'),
-  connectorRow('1С и бухгалтерия','Сверка реквизитов, учёт, обмен документами и статусами',null)
- );
- body.append(list,note('Важное ограничение: учебные согласования в прототипе пока не являются защищённым юридически значимым ЭДО.'));
- panel.append(body);
- panel.addEventListener('toggle',()=>{if(panel.isConnected)integrationsOpen=panel.open});
- return panel;
+ const chevron=el('span','sv-doc-chat-chevron','›');
+ chevron.setAttribute('aria-hidden','true');
+ action.append(copy,chevron);
+ return action;
 }
 function renderPreview(parent,file){
  clearPreview();
@@ -186,7 +166,8 @@ function draw(){
  introCopy.append(el('strong','','Защищённые документы'),
   el('small','','Личные и деловые файлы раздельно. Шифрование на этом устройстве.'));
  intro.append(introCopy);
- host.append(intro);
+ const safeArea=el('section','sv-doc-safe-area');
+ safeArea.append(intro);host.append(safeArea);
  const selected=files[area];
  const picker=document.createElement('input');
  picker.type='file';picker.hidden=true;
@@ -206,7 +187,7 @@ function draw(){
  const storeActions=el('div','sv-doc-store-actions');
  storeActions.append(button('Добавить документ',()=>picker.click(),'sv-doc-primary'));
  storeActions.append(picker);
- host.append(storeActions);
+ safeArea.append(storeActions);
  const feedback=el('p','sv-doc-selection-status');
  feedback.setAttribute('role','status');
  if(selected&&!stored[area])feedback.textContent='Выбран «'+selected.name+'». Откройте архив и подтвердите сохранение.';
@@ -226,11 +207,7 @@ function draw(){
    selectedFile:()=>stored[area]?null:files[area],
    savedFile(file){if(files[area]===file)stored[area]=true;},
    toSayvi:intent=>goSayvi(intent),
-   showIntegrations(){
-    integrationsOpen=true;
-    const integration=host?.querySelector('.sv-doc-integrations');
-    if(integration){integration.open=true;integration.scrollIntoView({block:'nearest',behavior:'smooth'});}
-   },
+   showIntegrations:openDocumentConnections,
    draft:()=>({title:'',text:''}),
    openFile(file,target){
     if(!names[target])return;
@@ -259,11 +236,12 @@ function draw(){
  }
  const assistant=el('section','sv-doc-assistant');
  assistant.append(el('h2','sv-doc-assistant-title','Работа с документами — с Сэйви'));
- assistant.append(
+ const chatList=el('div','sv-doc-chat-list');
+ chatList.append(
   chatAction('Создать с Сэйви','Подготовить новый документ в чате','create',true),
   chatAction('Проверить или исправить','Откройте чат и приложите документ','review'));
- host.append(assistant);
- if(area==='business')host.append(connectorsPanel());
+ assistant.append(chatList);host.append(assistant);
+ if(area==='business')host.append(connectionsEntry());
  host.append(note('Архив хранится только в браузере на этом устройстве. При удалении данных браузера документы могут исчезнуть. Передача файлов в чат, печать и системная отправка — только по вашему действию.'));
 }
 function openApprovals(recordId){
