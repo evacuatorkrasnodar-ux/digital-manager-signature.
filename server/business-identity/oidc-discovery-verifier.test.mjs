@@ -27,7 +27,8 @@ const metadata=()=>({
   token_endpoint:tokenEndpoint,jwks_uri:jwksUri,
   response_types_supported:['code'],
   code_challenge_methods_supported:['S256'],
-  id_token_signing_alg_values_supported:['RS256']
+  id_token_signing_alg_values_supported:['RS256'],
+  authorization_response_iss_parameter_supported:true
 });
 const json=x=>Buffer.from(JSON.stringify(x)).toString('base64url');
 function jwt({kid='provider-key-1',key=key1,head={},claims={}}={}){
@@ -94,7 +95,8 @@ test('discovers only configured issuer, bounded JSON and keys then verifies real
   }
   assert.deepEqual(await f.adapter.getTrustedProviderConfig(),{
     issuer,authorizationEndpoint:authorization,
-    tokenEndpoint,jwksUri
+    tokenEndpoint,jwksUri,
+    authorizationResponseIssuerSupported:true
   });
   assert.equal(f.calls.length,2);
   assert.equal(Object.isFrozen(checked),true);
