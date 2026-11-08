@@ -50,14 +50,14 @@ function pictorialSteps(steps){
  });
  return group;
 }
-let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false;
+let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false,selectedScan=0;
 function cleanUrls(){
  for(const url of temporaryUrls)URL.revokeObjectURL(url);
  temporaryUrls=[];
 }
 function reset(){
  generation++;operationEpoch++;importBusy=false;
- cleanUrls();scans=[];mode='';
+ cleanUrls();scans=[];mode='';selectedScan=0;
 }
 const fromBase64=data=>{
  const b64=data.split(',')[1];
@@ -237,7 +237,8 @@ function mount(target,{
     processed.push(jpegOf(canvasOf(image)));
    }
    if(generationAtStart!==generation||epoch!==operationEpoch)return;
-   scans.push(...processed);renderScan();
+   const firstNew=scans.length;
+   scans.push(...processed);selectedScan=firstNew;renderScan();
    message('Добавлено страниц: '+scans.length+'. Можно собрать настоящий PDF.');
   }catch{
    if(generationAtStart===generation&&epoch===operationEpoch)
@@ -261,7 +262,7 @@ function mount(target,{
    ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
    ctx.translate(canvas.width,0);ctx.rotate(Math.PI/2);
    ctx.drawImage(image,0,0,page.width,page.height);
-   scans[index]=jpegOf(canvas);renderScan();
+   scans[index]=jpegOf(canvas);selectedScan=index;renderScan();
    message('Страница '+(index+1)+' повёрнута на 90°.');
   }catch{
    if(at===generation&&epoch===operationEpoch)
@@ -273,12 +274,72 @@ function mount(target,{
   if(index<0||next<0||next>=scans.length)return;
   const [page]=scans.splice(index,1);
   scans.splice(next,0,page);
+  if(selectedScan===index)selectedScan=next;
+  else if(selectedScan===next)selectedScan=index;
   renderScan();message('Изменён порядок страниц.');
+ }
+ function scannerStage(){
+  const stage=$('div','sv-doc-scan-stage');
+  stage.setAttribute('aria-label',scans.length?'Предпросмотр отсканированной страницы':'Пример расположения листа для сканирования');
+  const board=$('div','sv-doc-scan-board');
+  const guide=$('div','sv-doc-scan-guide');
+  const sheet=$('div','sv-doc-scan-sheet');
+  if(scans.length){
+   selectedScan=Math.min(Math.max(0,selectedScan),scans.length-1);
+   const url=URL.createObjectURL(new Blob(
+    [scans[selectedScan].jpegBytes],{type:'image/jpeg'}
+   ));
+   temporaryUrls.push(url);
+   const image=$('img','sv-doc-scan-sheet-image');
+   image.src=url;image.alt='Страница '+(selectedScan+1)+' из '+scans.length;
+   sheet.append(image);
+  }else{
+   const sample=$('div','sv-doc-scan-sheet-sample');
+   sample.append($('span','sv-doc-scan-sheet-stamp','SEYVEO'));
+   for(const width of ['long','long','medium','long','short']){
+    sample.append($('span','sv-doc-scan-faux-line sv-doc-scan-line-'+width));
+   }
+   sample.append($('span','sv-doc-scan-faux-sign'));
+   sheet.append(sample);
+  }
+  guide.append(sheet);
+  for(const position of ['tl','tr','bl','br']){
+   const corner=$('span','sv-doc-scan-corner sv-doc-scan-corner-'+position);
+   corner.setAttribute('aria-hidden','true');guide.append(corner);
+  }
+  board.append(guide);
+  const footer=$('div','sv-doc-scan-stage-meta');
+  footer.append(
+   $('span','',scans.length?'Страница '+(selectedScan+1)+' из '+scans.length:'Пример листа'),
+   $('span','',scans.length?'Ваше фото':'Направляющие · пример')
+  );
+  stage.append(board,footer);
+  return stage;
+ }
+ function pdfPreviewCard(){
+  const card=$('div','sv-doc-tool-pdf-card');
+  const image=art('pdf');
+  const copy=$('div','sv-doc-tool-pdf-copy');
+  copy.append($('strong','','PDF из сканов'),
+   $('small','',scans.length+' стр. · будет создан по нажатию'));
+  const preview=button('Посмотреть',()=>{
+   try{
+    const blob=window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans);
+    const url=URL.createObjectURL(blob);
+    temporaryUrls.push(url);
+    const link=$('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';
+    document.body.append(link);link.click();link.remove();
+    message('Предпросмотр PDF открыт, если это разрешает браузер.');
+   }catch{message('Не удалось открыть предпросмотр PDF.');}
+  },'sv-doc-tool-pdf-preview');
+  preview.setAttribute('aria-label','Посмотреть собранный PDF в отдельном окне');
+  card.append(image,copy,preview);return card;
  }
  function renderScan(){
   clear();
   panel.append(heading('Сканер','Фото → PDF'));
-  panel.append(pictorialSteps([['camera','Снять'],['pages','Собрать'],['pdf','PDF']]));
+  panel.append(scannerStage());
+  panel.append(pictorialSteps([['camera','Фото'],['pages','Страницы'],['pdf','PDF']]));
   const camera=$('input');camera.type='file';camera.accept='image/*';
   camera.setAttribute('capture','environment');camera.hidden=true;
   const library=$('input');library.type='file';library.accept='image/jpeg,image/png,image/webp';
@@ -291,13 +352,18 @@ function mount(target,{
   ));
   const counter=$('div','sv-doc-tool-pages');
   if(scans.length){
-   counter.append($('strong','','Страниц: '+scans.length));
+   counter.append($('strong','','Страницы · '+scans.length));
    const thumbs=$('div','sv-doc-tool-thumbs');
    scans.forEach((page,index)=>{
     const wrap=$('div','sv-doc-tool-thumb');
     const url=URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'}));
     temporaryUrls.push(url);
     const img=$('img');img.src=url;img.alt='Страница '+(index+1);
+    const select=button('',()=>{selectedScan=index;renderScan();},
+     'sv-doc-tool-thumb-select');
+    select.setAttribute('aria-label','Просмотреть страницу '+(index+1));
+    select.setAttribute('aria-pressed',String(index===selectedScan));
+    select.append(img);
     const actions=$('div','sv-doc-tool-thumb-actions');
     const turn=button('↻',()=>{void rotatePage(index);});
     turn.setAttribute('aria-label','Повернуть страницу '+(index+1));
@@ -308,11 +374,16 @@ function mount(target,{
     after.setAttribute('aria-label','Переместить страницу '+(index+1)+' вперёд');
     after.disabled=index===scans.length-1;
     actions.append(turn,before,after);
-    const del=button('Удалить '+(index+1),()=>{scans.splice(index,1);renderScan();});
+    const del=button('Удалить '+(index+1),()=>{
+     scans.splice(index,1);
+     if(selectedScan>index)selectedScan--;
+     selectedScan=Math.min(selectedScan,Math.max(0,scans.length-1));
+     renderScan();
+    });
     del.setAttribute('aria-label','Удалить страницу '+(index+1));
-    wrap.append(img,actions,del);thumbs.append(wrap);
+    wrap.append(select,actions,del);thumbs.append(wrap);
    });
-   counter.append(thumbs);
+   counter.append(thumbs,pdfPreviewCard());
    counter.append(controls(
     button('Сохранить PDF',()=>{
      try{save(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf');
@@ -332,7 +403,7 @@ function mount(target,{
       onImport(asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf'));
      }catch{message('Не удалось передать PDF в архив.');}
     }),
-    button('Очистить страницы',()=>{scans=[];renderScan();})
+    button('Очистить страницы',()=>{scans=[];selectedScan=0;renderScan();})
    ));
   }else counter.append($('small','','Сфотографируйте лист или выберите фото.'));
   const info=$('details','sv-doc-tool-help');
