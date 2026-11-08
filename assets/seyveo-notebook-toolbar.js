@@ -139,60 +139,67 @@
   });
  }
 
- // The native crosshair was misleading for erasing. One decorative,
- // pointer-events-free ring follows the actual pointer on the canvas.
- // The drawing engine and its pointer capture stay untouched.
+ // One custom SEYVEO circle for brush, eraser and shape tools.
+ // No native crosshair/plus; it never intercepts canvas gestures.
  const previewCanvas=$('notePaperCanvas');
  const previewStage=$('notePaperStage');
  const previewSheet=$('notePaperSheet');
- if(previewCanvas&&previewStage&&eraser){
+ if(previewCanvas&&previewStage){
   const ring=document.createElement('div');
-  ring.className='sv-paper-eraser-ring';
+  ring.className='sv-paper-eraser-ring sv-paper-cursor-brush';
   ring.setAttribute('aria-hidden','true');
   previewStage.appendChild(ring);
-  const erasing=()=>eraser.getAttribute('aria-pressed')==='true'&&dialog.open;
-  const hideRing=()=>{ring.classList.remove('is-visible')};
-  const syncEraser=()=>{
-   const active=erasing();
-   dialog.classList.toggle('sv-paper-eraser-mode',active);
-   if(!active)hideRing();
+  const activeTool=()=>dialog.querySelector('[data-paper-tool][aria-pressed="true"]')?.dataset.paperTool||'pen';
+  const hideRing=()=>ring.classList.remove('is-visible');
+  const syncCursor=()=>{
+   const erasing=activeTool()==='eraser';
+   dialog.classList.toggle('sv-paper-eraser-mode',erasing);
+   dialog.classList.toggle('sv-paper-cursor-mode',dialog.open);
+   ring.classList.toggle('sv-paper-cursor-brush',!erasing);
+   ring.classList.toggle('sv-paper-cursor-eraser',erasing);
   };
   const positionRing=event=>{
-   if(!erasing())return;
+   if(!dialog.open)return;
    if(event.pointerType==='touch'&&event.buttons===0)return;
    const box=previewCanvas.getBoundingClientRect();
    if(!box.width||!box.height)return;
-   const x=Math.min(box.right,Math.max(box.left,event.clientX));
-   const y=Math.min(box.bottom,Math.max(box.top,event.clientY));
+   const x=Math.max(box.left,Math.min(box.right,event.clientX));
+   const y=Math.max(box.top,Math.min(box.bottom,event.clientY));
    const stageBox=previewStage.getBoundingClientRect();
    ring.style.left=(x-stageBox.left)+'px';
    ring.style.top=(y-stageBox.top)+'px';
-   const width=Number(thickness?.value)||5;
-   const rendered=width*box.width/840;
-   const diameter=Math.max(20,Math.min(46,18+rendered*1.45));
-   ring.style.width=diameter+'px';
-   ring.style.height=diameter+'px';
+   const erasing=activeTool()==='eraser';
+   const size=Number(thickness?.value)||5;
+   const actual=size*box.width/840;
+   const diameter=Math.max(erasing?19:15,Math.min(44,(erasing?15:12)+actual*1.4));
+   ring.style.width=diameter+'px';ring.style.height=diameter+'px';
    ring.classList.toggle('on-light',previewSheet?.dataset.inkBackground==='light');
    ring.classList.add('is-visible');
   };
-  eraser.addEventListener('click',syncEraser);
-  pen?.addEventListener('click',syncEraser);
-  new MutationObserver(syncEraser).observe(eraser,{attributes:true,attributeFilter:['aria-pressed']});
+  for(const button of [pen,eraser,...shapeTools]){
+   button?.addEventListener('click',()=>{syncCursor();hideRing()});
+  }
+  const observation=new MutationObserver(syncCursor);
+  for(const button of [pen,eraser,...shapeTools]){
+   if(button)observation.observe(button,{attributes:true,attributeFilter:['aria-pressed']});
+  }
   previewCanvas.addEventListener('pointerenter',positionRing,{passive:true});
   previewCanvas.addEventListener('pointerdown',positionRing,{passive:true});
   previewCanvas.addEventListener('pointermove',positionRing,{passive:true});
   previewCanvas.addEventListener('pointerleave',hideRing,{passive:true});
   previewCanvas.addEventListener('pointerup',event=>{
-   if(event.pointerType==='touch'||event.pointerType==='pen')hideRing();
+   if(event.pointerType!=='mouse')hideRing();
   },{passive:true});
   previewCanvas.addEventListener('pointercancel',hideRing,{passive:true});
-  previewStage.addEventListener('pointerdown',event=>{
-   if(!previewCanvas.contains(event.target))hideRing();
+  previewCanvas.addEventListener('lostpointercapture',event=>{
+   if(event.pointerType!=='mouse')hideRing();
   },{passive:true});
-  dialog.addEventListener('close',()=>{hideRing();dialog.classList.remove('sv-paper-eraser-mode')});
-  syncEraser();
+  dialog.addEventListener('close',()=>{
+   hideRing();dialog.classList.remove('sv-paper-cursor-mode','sv-paper-eraser-mode');
+  });
+  new MutationObserver(syncCursor).observe(dialog,{attributes:true,attributeFilter:['open']});
+  syncCursor();
  }
-
 
  bar.setAttribute('role','toolbar');bar.setAttribute('aria-label','Инструменты листа');
  dialog.querySelector('.paper-toolbar')?.setAttribute('aria-label','Инструменты и параметры листа');
