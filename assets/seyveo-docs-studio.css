@@ -73,7 +73,7 @@
  border-radius:14px;background:var(--sv-doc-picked,var(--card2));
 }
 #sayviSurfacePage .sv-doc-tool-grid{
- display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
  gap:2px;min-width:0;width:100%;padding:0 0 1px;
 }
 #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button{
@@ -83,15 +83,15 @@
  padding:6px 1px 8px;
  border:0;border-radius:14px;background:transparent;
  box-shadow:none;color:var(--text);
- font-size:11.5px;line-height:1.28;font-weight:530;
+ font-size:clamp(9px,2.65vw,11.5px);line-height:1.28;font-weight:530;
  text-align:center;
  -webkit-backdrop-filter:none;backdrop-filter:none;
 }
 #sayviSurfacePage .sv-doc-tool-grid .sv-doc-art,
 #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-print .sv-doc-art{
  align-self:center;flex:none;
- width:55px;height:55px;
- padding:12px;border-radius:18px;
+ width:clamp(43px,12vw,55px);height:clamp(43px,12vw,55px);
+ padding:clamp(9px,2.7vw,12px);border-radius:16px;
  border:1px solid var(--sv-doc-line,var(--soft-line));
  background:var(--sv-doc-picked,var(--card2));
 }
@@ -745,4 +745,18 @@
 }
 @media(prefers-reduced-motion:reduce){
  #sayviSurfacePage .sv-doc-tool-button{transition:none;animation:none}
+}
+
+/* Five balanced glass destinations, including the PDF / Word format selector.
+   Keep all five in one line on small iPhones without horizontal scrolling. */
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-convert .sv-doc-art{
+ border-radius:16px;
+ background:var(--sv-doc-picked,var(--card2));
+}
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-convert{
+ white-space:nowrap;letter-spacing:-.03em;
+}
+@media(max-width:360px){
+ #sayviSurfacePage .sv-doc-tool-grid{gap:0}
+ #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button{padding-inline:0;font-size:9px}
 }
