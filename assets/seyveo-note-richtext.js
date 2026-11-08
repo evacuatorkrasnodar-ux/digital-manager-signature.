@@ -17,7 +17,7 @@
  rich.setAttribute('spellcheck','true');
  rich.hidden=true;
  textarea.after(rich);
- let active=false,savedRange=null,locked=false;
+ let active=false,savedRange=null,locked=false,plainSelection=null;
  const allowed=new Set(['B','STRONG','EM','I','U','DIV','P','BR','H2','H3']);
  function cleanup(node,into){
   if(node.nodeType===Node.TEXT_NODE){into.append(document.createTextNode(node.nodeValue||''));return;}
@@ -70,19 +70,33 @@
  }
  function activate(){
   if(active)return;
+  // Transfer the native textarea selection into the rich editor before
+  // hiding it; otherwise iPhone Safari formats at the end of the note.
+  let start=plainSelection?.start??textarea.selectionStart??textarea.value.length;
+  let end=plainSelection?.end??textarea.selectionEnd??start;
+  start=Math.max(0,Math.min(start,textarea.value.length));
+  end=Math.max(start,Math.min(end,textarea.value.length));
   locked=true;
   rich.textContent=textarea.value;
   textarea.hidden=true;
   rich.hidden=false;
   active=true;
   savedRange=null;
+  const textNode=rich.firstChild;
+  if(textNode?.nodeType===Node.TEXT_NODE){
+   const range=document.createRange();
+   range.setStart(textNode,start);
+   range.setEnd(textNode,end);
+   savedRange=range.cloneRange();
+  }
+  plainSelection=null;
   locked=false;
  }
  function load(html){
   const clean=safeHTML(html);
   locked=true;
   active=Boolean(clean);
-  savedRange=null;
+  savedRange=null;plainSelection=null;
   textarea.hidden=active;
   rich.hidden=!active;
   if(active){rich.innerHTML=clean;textarea.value=plainValue();}
@@ -116,6 +130,12 @@
   catch{const sel=getSelection();if(sel?.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(document.createTextNode(String(text)));r.collapse(false);}}
   remember();sync();return true;
  }
+ textarea.addEventListener('select',()=>{
+  if(!active)plainSelection={start:textarea.selectionStart,end:textarea.selectionEnd};
+ });
+ textarea.addEventListener('keyup',()=>{
+  if(!active)plainSelection={start:textarea.selectionStart,end:textarea.selectionEnd};
+ });
  rich.addEventListener('input',()=>{remember();sync()});
  rich.addEventListener('keyup',remember);
  rich.addEventListener('mouseup',remember);
@@ -129,7 +149,7 @@
  });
  dialog.addEventListener('close',()=>{savedRange=null});
  window.SEYVEO_NOTE_RICH=Object.freeze({
-  load,format:applyFormat,getHTML,isActive:()=>active,
+  load,format:applyFormat,getHTML,safeHTML,isActive:()=>active,
   sync,insertText,rememberSelection:remember,
   focus:()=>active&&rich.focus({preventScroll:true})
  });
