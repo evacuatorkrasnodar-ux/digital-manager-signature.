@@ -122,6 +122,8 @@ function draw(){
   view='flow';showPreview=false;archiveExpanded=false;
  }
  clearPreview();host.replaceChildren();
+ const page=document.getElementById('sayviSurfacePage');
+ if(page)page.dataset.svDocView=view==='flow'?'flow':'archive';
  const switcher=el('div','sv-doc-switch');
  switcher.setAttribute('role','group');switcher.setAttribute('aria-label','Пространство документов');
  for(const key of ['personal','business']){
@@ -152,8 +154,6 @@ function draw(){
    limit.append(el('strong','','Доступ сотрудника · учебный режим'),
     el('small','','Учебный доступ: мои входящие, ознакомление, согласование и возврат с замечанием. Архив компании и настройки КЭП доступны руководителю.'));
    host.append(limit);
-  }else{
-   host.append(button('Вернуться в хранилище',()=>{view='archive';draw();},'sv-doc-flow-back'));
   }
   const flow=el('section','sv-doc-workspace');
   host.append(flow);
@@ -244,6 +244,12 @@ function draw(){
  if(area==='business')host.append(connectionsEntry());
  host.append(note('Архив хранится только в браузере на этом устройстве. При удалении данных браузера документы могут исчезнуть. Передача файлов в чат, печать и системная отправка — только по вашему действию.'));
 }
+function backFromNested(){
+ // Shared titlebar Back navigates within Documents first.
+ // An employee has no business vault, so their Back exits normally.
+ if(area!=='business'||view!=='flow'||employeePreview())return false;
+ view='archive';draw();return true;
+}
 function openApprovals(recordId){
  area='business';view='flow';
  if(host)draw();
@@ -273,5 +279,5 @@ function destroy(){
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
  reset();host=null;
 }
-window.SEYVEO_DOCUMENT_CENTER=Object.freeze({mount,destroy,setArea,openApprovals});
+window.SEYVEO_DOCUMENT_CENTER=Object.freeze({mount,destroy,setArea,openApprovals,backFromNested});
 })();
