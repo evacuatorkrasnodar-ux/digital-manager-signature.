@@ -1319,3 +1319,103 @@ svg.sv-paper-signature .sv-paper-icon-core{
   min-width:19px!important;min-height:19px!important;max-width:19px!important;max-height:19px!important;
  }
 }
+
+
+/* v20 · Sheet control structural repair. The old pattern wrapper created
+   its own box inside a grid cell; it must NOT participate in layout.
+   The actual sheet button now occupies the same grid slot as other tools. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top
+.paper-toolbar-primary > .paper-pattern-control{
+ display:contents!important;
+ width:auto!important;min-width:0!important;max-width:none!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;
+ box-shadow:none!important;transform:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top
+.paper-toolbar-primary > .paper-pattern-control > #notePaperPatternTrigger{
+ box-sizing:border-box!important;
+ position:relative!important;isolation:isolate!important;
+ justify-self:center!important;align-self:center!important;
+ display:grid!important;place-items:center!important;
+ grid-column:auto!important;grid-row:auto!important;
+ width:33px!important;height:34px!important;
+ min-width:33px!important;min-height:34px!important;
+ max-width:33px!important;max-height:34px!important;
+ flex:none!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
+ outline:0!important;box-shadow:none!important;
+ text-shadow:none!important;transform:none!important;
+ overflow:visible!important;
+ font-size:0!important;line-height:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top
+.paper-toolbar-primary #notePaperPatternTrigger::before{
+ content:""!important;display:block!important;
+ position:absolute!important;
+ top:50%!important;left:50%!important;
+ inset:auto!important;
+ width:31px!important;height:31px!important;
+ min-width:31px!important;min-height:31px!important;
+ box-sizing:border-box!important;
+ transform:translate(-50%,-50%)!important;
+ border-radius:50%!important;
+ border:0!important;outline:0!important;
+ background:rgba(204,215,230,.185)!important;
+ box-shadow:none!important;
+ opacity:0!important;pointer-events:none!important;z-index:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top
+.paper-toolbar-primary #notePaperPatternTrigger[data-sv-selected="true"]::before,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top
+.paper-toolbar-primary #notePaperPatternTrigger[aria-expanded="true"]::before{
+ opacity:1!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top
+.paper-toolbar-primary #notePaperPatternTrigger[data-sv-selected="false"]:not([aria-expanded="true"])::before{
+ opacity:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top
+.paper-toolbar-primary #notePaperPatternTrigger::after{
+ content:none!important;display:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top
+.paper-toolbar-primary #notePaperPatternTrigger>svg.sv-paper-signature{
+ position:relative!important;z-index:1!important;
+ display:block!important;
+ width:21px!important;height:21px!important;
+ min-width:21px!important;min-height:21px!important;
+ max-width:21px!important;max-height:21px!important;
+ margin:0!important;padding:0!important;transform:none!important;
+ color:#e4e8ed!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top
+.paper-toolbar-primary #notePaperPatternTrigger #notePaperPatternLabel{
+ position:absolute!important;
+ width:1px!important;height:1px!important;
+ margin:-1px!important;padding:0!important;
+ overflow:hidden!important;
+ clip-path:inset(50%)!important;
+ white-space:nowrap!important;
+}
+@media(max-width:370px){
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top
+ .paper-toolbar-primary > .paper-pattern-control > #notePaperPatternTrigger{
+  width:28px!important;min-width:28px!important;max-width:28px!important;
+  height:32px!important;min-height:32px!important;max-height:32px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top
+ .paper-toolbar-primary #notePaperPatternTrigger::before{
+  width:27px!important;height:27px!important;
+  min-width:27px!important;min-height:27px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top
+ .paper-toolbar-primary #notePaperPatternTrigger>svg.sv-paper-signature{
+  width:19px!important;height:19px!important;
+  min-width:19px!important;min-height:19px!important;
+  max-width:19px!important;max-height:19px!important;
+ }
+}
