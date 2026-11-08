@@ -482,16 +482,70 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
  max-height:none!important;overflow:visible!important;
  margin:0!important;padding:0!important;
 }
+/* Empty Notebook: apply the original dialog's typography and icon rules
+   explicitly to the in-page workspace. The icon must never grow to the
+   width of its parent, and its two text lines must remain separate. */
+#svWorkShell #svWorkNotebook:has(#notesList.is-empty) > .notes-head{
+ display:none!important;
+}
 #svWorkShell #svWorkNotebook #notesList.is-empty{
- display:flex;flex-direction:column;align-items:center;
- justify-content:flex-start;
- padding-top:clamp(28px,7dvh,85px)!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:flex-start!important;
+ min-height:0!important;
+ padding:clamp(38px,10dvh,100px) 12px 24px!important;
 }
 #svWorkShell #svWorkNotebook #notesList .note-empty{
- width:100%;max-width:340px;box-sizing:border-box;
- margin:0 auto!important;
- text-align:center;
+ box-sizing:border-box!important;
+ width:min(100%,320px)!important;max-width:320px!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:9px!important;
+ margin:0 auto!important;padding:0 10px!important;
+ color:var(--text)!important;text-align:center!important;
+ font-size:13px!important;line-height:1.5!important;
 }
+#svWorkShell #svWorkNotebook #notesList .note-empty .note-empty-mark{
+ box-sizing:border-box!important;flex:none!important;
+ display:grid!important;place-items:center!important;
+ width:66px!important;height:66px!important;
+ max-width:66px!important;max-height:66px!important;
+ margin:0 0 9px!important;padding:0!important;
+ border:1px solid color-mix(in srgb,var(--text) 13%,transparent)!important;
+ border-radius:20px!important;
+ background:color-mix(in srgb,var(--text) 5%,transparent)!important;
+ box-shadow:none!important;
+ color:var(--secondary)!important;
+}
+#svWorkShell #svWorkNotebook #notesList .note-empty .note-empty-mark svg{
+ box-sizing:border-box!important;display:block!important;
+ width:32px!important;height:32px!important;
+ min-width:32px!important;min-height:32px!important;
+ max-width:32px!important;max-height:32px!important;
+ margin:0!important;padding:0!important;overflow:visible!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.45!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#svWorkShell #svWorkNotebook #notesList .note-empty .note-empty-mark svg *{
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.45!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+}
+#svWorkShell #svWorkNotebook #notesList .note-empty > strong{
+ display:block!important;
+ margin:0!important;padding:0!important;
+ font-size:16px!important;font-weight:600!important;
+ line-height:1.35!important;letter-spacing:-.025em!important;
+ color:var(--text)!important;
+}
+#svWorkShell #svWorkNotebook #notesList .note-empty > span:last-child{
+ display:block!important;width:100%!important;
+ max-width:290px!important;margin:0!important;padding:0!important;
+ color:var(--secondary)!important;
+ font-size:12px!important;font-weight:440!important;
+ line-height:1.55!important;letter-spacing:0!important;
+ white-space:normal!important;overflow-wrap:break-word!important;
+}
+
 #svWorkShell #svWorkNotebook #notesStatus{
  margin:9px 5px 0!important;
 }
