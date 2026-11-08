@@ -1899,7 +1899,8 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
    used by .dock>.nav-item svg. No multiple contours, halo or blur. */
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]),
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
- color:var(--seyveo-engrave-ink)!important;
+ /* Slightly stronger legibility while retaining the Home etched palette. */
+ color:var(--seyveo-engrave-active)!important;
  background:transparent!important;
  background-image:none!important;
  border:0!important;
@@ -1915,7 +1916,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  width:var(--seyveo-dock-icon-size,22px)!important;
  height:var(--seyveo-dock-icon-size,22px)!important;
  stroke:currentColor!important;
- stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
+ stroke-width:1.03!important;
  stroke-linecap:round!important;
  stroke-linejoin:round!important;
  fill:none!important;
