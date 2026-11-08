@@ -6,6 +6,8 @@ on:
     paths:
       - 'server/business-identity/workspace-manifest.mjs'
       - 'server/business-identity/workspace-manifest.test.mjs'
+      - 'server/business-identity/single-account-api.mjs'
+      - 'server/business-identity/single-account-api.test.mjs'
       - 'mobile/src/business/workspace-navigation.mjs'
       - 'mobile/tests/workspace-navigation.test.mjs'
       - 'mobile/src/business/verified-workspace-client.mjs'
@@ -15,6 +17,8 @@ on:
     paths:
       - 'server/business-identity/workspace-manifest.mjs'
       - 'server/business-identity/workspace-manifest.test.mjs'
+      - 'server/business-identity/single-account-api.mjs'
+      - 'server/business-identity/single-account-api.test.mjs'
       - 'mobile/src/business/workspace-navigation.mjs'
       - 'mobile/tests/workspace-navigation.test.mjs'
       - 'mobile/src/business/verified-workspace-client.mjs'
@@ -36,4 +40,4 @@ jobs:
         with:
           node-version: '22'
       - name: Test server manifest and native ONE navigation
-        run: node --test server/business-identity/workspace-manifest.test.mjs mobile/tests/workspace-navigation.test.mjs mobile/tests/verified-workspace-client.test.mjs
+        run: node --test server/business-identity/workspace-manifest.test.mjs server/business-identity/single-account-api.test.mjs mobile/tests/workspace-navigation.test.mjs mobile/tests/verified-workspace-client.test.mjs
