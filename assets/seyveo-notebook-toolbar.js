@@ -127,8 +127,15 @@
  duplicate.innerHTML=glyph('<rect x="10" y="9.5" width="13.5" height="13.5" rx="2.8"/><path d="M18.5 9.5V7a2.5 2.5 0 0 0-2.5-2.5H7A2.5 2.5 0 0 0 4.5 7v9A2.5 2.5 0 0 0 7 18.5h3"/>');
  applyGlyph(trigger,'settings');
  const sheetTrigger=paper.querySelector('#notePaperPatternTrigger');
+ // One canonical icon class is applied to every direct toolbar button.
+ // Old pseudo-elements are disabled in CSS; selected fill is on its own box.
+ for(const button of [pen,eraser,duplicate,trigger,photo,sayvi]){
+  button?.classList.add('sv-ink-direct-tool');
+ }
+
  const cachedPatternLabel=$('notePaperPatternLabel');
  applyGlyph(sheetTrigger,'sheet');
+ sheetTrigger?.classList.add('sv-ink-direct-tool');
  // Retain the exact label element referenced by notebook-paper.js.
  // Keep it in the DOM for template syncing, never show text in the capsule.
  if(cachedPatternLabel){
