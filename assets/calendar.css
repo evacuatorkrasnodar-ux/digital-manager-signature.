@@ -1524,11 +1524,6 @@
  #calendarPage .cal-scope{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 }
 
-/* SEYVEO Calendar / Work: four calendar modes in one slim segmented capsule.
-   Only the period row changes. Manager tabs, date grid, dock and events stay as-is. */
-@media(prefers-reduced-transparency:reduce){
-}
-
 
 /* SEYVEO Calendar · one canonical period switch for Life and Work.
    All legacy period-tab overrides above were removed. Four modes, one capsule,
