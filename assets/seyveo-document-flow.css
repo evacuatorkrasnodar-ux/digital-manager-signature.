@@ -284,8 +284,8 @@
  margin:4px 0 16px;padding:13px 14px;
  border:1px solid var(--sv-doc-line,var(--soft-line));
  border-radius:var(--sv-doc-radius-card,22px);background:var(--sv-doc-wash,var(--card));
- -webkit-backdrop-filter:var(--sv-doc-frost,var(--sv-doc-frost,blur(18px) saturate(1.1)));
- backdrop-filter:var(--sv-doc-frost,var(--sv-doc-frost,blur(18px) saturate(1.1)));
+ -webkit-backdrop-filter:var(--sv-doc-frost,blur(18px) saturate(1.1));
+ backdrop-filter:var(--sv-doc-frost,blur(18px) saturate(1.1));
  box-shadow:none;
 }
 #sayviSurfacePage .svdf-create-simple >strong{
