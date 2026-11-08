@@ -195,7 +195,7 @@ test('Docs quick actions are mounted by the studio when installed, not duplicate
  assert.match(stub,/Добавить файл/);
  assert.match(stub,/Сохранить PDF/);
  assert.match(stub,/Сохранить Word/);
- assert.match(stub,/Добавить подпись в PDF/);
+ assert.match(stub,/Подписать копию PDF/);
  assert.match(stub,/Открыть для печати/);
  assert.match(code,/SEYVEO_DOCS_STUDIO\?\.reset\?\.\(\)/);
 });
