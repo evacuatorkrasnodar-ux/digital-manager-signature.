@@ -356,7 +356,7 @@ const gradientHexStart=$('noteGradientStartHex'),gradientHexEnd=$('noteGradientE
 const gradientPreview=$('noteGradientPreview');
 function updateGradientEditor(){
  const a=gradientColorStart?.value||'#e9eff8',b=gradientColorEnd?.value||'#809ebd';
- if(gradientPreview)gradientPreview.style.background='linear-gradient(115deg,'+a+','+b+')';
+ if(gradientPreview)gradientPreview.style.setProperty('--sv-gradient-preview','linear-gradient(115deg,'+a+','+b+')');
 }
 function syncColorMenu(){
  colorDot.style.setProperty('--sv-active-ink',activeGradient?'linear-gradient(115deg,'+activeGradient[0]+','+activeGradient[1]+')':'conic-gradient(#e73b39,#ffb525,#2fb35f,#14b4cd,#6650d2,#bd397b,#e73b39)');
