@@ -302,7 +302,7 @@ test('late photo capture cannot appear after role change or closing Docs',async(
 test('studio iPhone controls retain minimum touch targets and honest capability labels',()=>{
  const css=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
  assert.match(css,/sv-doc-tool-thumb-actions/);
- assert.match(css,/min-width:44px;min-height:44px/);
+ assert.match(css,/min-width:44px;min-height:var\(--sv-doc-touch,44px\)/);
  assert.match(css,/sv-doc-tool-page-select/);
  assert.match(css,/font-size:16px/);
  assert.match(studioCode,/Рукописная отметка не является КЭП/i);
