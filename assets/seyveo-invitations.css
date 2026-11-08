@@ -1,0 +1,74 @@
+/* SEYVEO · universal invitations (future server entry)
+   Uses the approved iOS 26 Liquid Glass management language.
+   No role switch, navigation duplicate or fake activation button. */
+#seyveoInvitationsPanel[hidden]{display:none!important}
+#seyveoInvitationsPanel{
+ box-sizing:border-box;width:100%;min-width:0;
+ display:grid;gap:14px;margin:0;padding:0 1px 16px;
+ color:var(--text);
+}
+#seyveoInvitationsPanel .sv-invitations-intro{
+ margin:0;padding:0 1px;
+ font-size:12.5px;font-weight:420;line-height:1.6;
+ color:var(--secondary);text-wrap:pretty;
+}
+#seyveoInvitationsPanel .sv-invitations-empty{
+ box-sizing:border-box;display:grid;align-items:center;justify-items:center;
+ gap:5px;min-width:0;margin:0;padding:19px 14px 18px;
+ border-radius:20px;
+ border:1px solid color-mix(in srgb,var(--soft-line,rgba(128,128,128,.28)) 48%,transparent);
+ background:color-mix(in srgb,var(--card,rgba(153,176,186,.13)) 39%,transparent);
+ -webkit-backdrop-filter:blur(16px) saturate(110%);
+ backdrop-filter:blur(16px) saturate(110%);
+ box-shadow:none;
+ text-align:center;
+}
+#seyveoInvitationsPanel .sv-invitations-empty-icon{
+ display:flex;align-items:center;justify-content:center;
+ width:39px;height:39px;margin:0 0 4px;
+ border-radius:50%;color:var(--text);
+ background:var(--sv-ui-quiet-surface,rgba(160,184,193,.075));
+}
+#seyveoInvitationsPanel .sv-invitations-empty-icon svg{
+ width:21px;height:21px;fill:none;stroke:currentColor;
+ stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;
+}
+#seyveoInvitationsPanel .sv-invitations-empty strong{
+ color:var(--text);font-size:13px;font-weight:590;line-height:1.4;
+}
+#seyveoInvitationsPanel .sv-invitations-empty small{
+ max-width:280px;font-size:11px;line-height:1.48;
+ font-weight:430;color:var(--secondary);
+}
+#seyveoInvitationsPanel .sv-invitations-code{
+ display:grid;gap:7px;min-width:0;margin:0;
+}
+#seyveoInvitationsPanel .sv-invitations-code h3{
+ margin:0;padding:0 1px;color:var(--text);
+ font-size:13px;line-height:1.45;font-weight:550;
+}
+#seyveoInvitationsPanel #seyveoInvitationCode{
+ box-sizing:border-box;display:block;width:100%;height:45px;min-height:45px;
+ margin:0;padding:0 13px;
+ border:1px solid color-mix(in srgb,var(--soft-line,rgba(128,128,128,.28)) 52%,transparent);
+ border-radius:16px;outline:none;
+ color:var(--secondary);
+ background:color-mix(in srgb,var(--card,rgba(153,176,186,.13)) 24%,transparent);
+ box-shadow:none;font:inherit;font-size:12.5px;
+ -webkit-appearance:none;appearance:none;
+}
+#seyveoInvitationsPanel #seyveoInvitationCode:disabled{
+ opacity:.73;-webkit-text-fill-color:var(--secondary);
+}
+#seyveoInvitationsPanel .sv-invitations-code p,
+#seyveoInvitationsPanel .sv-invitations-footnote{
+ margin:0;padding:0 1px;font-size:11px;line-height:1.55;
+ font-weight:420;color:var(--secondary);text-wrap:pretty;
+}
+#seyveoInvitationsPanel .sv-invitations-footnote{
+ padding:8px 1px 0;
+ border-top:1px solid color-mix(in srgb,var(--soft-line,rgba(128,128,128,.28)) 43%,transparent);
+}
+@media(prefers-reduced-motion:reduce){
+ #seyveoInvitationsPanel *{transition:none!important;animation:none!important}
+}
