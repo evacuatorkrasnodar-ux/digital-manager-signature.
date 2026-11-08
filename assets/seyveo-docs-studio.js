@@ -147,7 +147,7 @@ function mount(target,{
  const panel=$('section','sv-doc-tool-panel');panel.hidden=true;
  panel.setAttribute('aria-label','Инструменты документов');
  editor.append(wide,grid,panel);target.append(editor);
- let currentPrint=null;
+ let currentPrint=null,documentDraft='';
  const clear=()=>{
   panel.replaceChildren();cleanUrls();
  };
@@ -307,6 +307,8 @@ function mount(target,{
   panel.append(heading('Создать документ','Текст → настоящий PDF или редактируемый Word.'));
   const examples=$('div','sv-doc-tool-templates');
   const body=$('textarea','sv-doc-tool-text');body.rows=7;body.maxLength=12000;
+  body.value=documentDraft;
+  body.addEventListener('input',()=>{documentDraft=body.value;});
   body.placeholder='Напишите текст документа…';
   const templates=[
    ['Заявление','Заявление\n\nПрошу рассмотреть моё обращение.\n\nДата: __________\nПодпись: __________'],
@@ -314,7 +316,10 @@ function mount(target,{
    ['Расписка','Расписка\n\nЯ, __________, подтверждаю получение __________.\n\nДата: __________']
   ];
   for(const [label,example] of templates){
-   examples.append(button(label,()=>{body.value=example;message('Учебный шаблон. Замените пример своим текстом.');}));
+   examples.append(button(label,()=>{
+    body.value=example;documentDraft=example;
+    message('Учебный шаблон. Замените пример своим текстом.');
+   }));
   }
   const check=()=>body.value.trim().length>0&&body.value.length<=12000;
   panel.append(examples,body);
@@ -393,6 +398,7 @@ function mount(target,{
    choosePage
   );
   const onScan=button('Добавить подпись в PDF',async()=>{
+   const generationAtStart=generation,epoch=operationEpoch;
    if(!marks||!scans.length){message('Нужен рисунок подписи и хотя бы одна отсканированная страница.');return;}
    try{
     const pageIndex=Number(choosePage.value);
@@ -401,6 +407,8 @@ function mount(target,{
     }
     const selectedPage=scans[pageIndex];
     const image=await imageOf(new Blob([selectedPage.jpegBytes],{type:'image/jpeg'}));
+    if(generationAtStart!==generation||epoch!==operationEpoch||
+       scans[pageIndex]!==selectedPage||mode!=='sign')return;
     const dest=canvasOf(image,1600),g=dest.getContext('2d');
     const width=dest.width*.4;
     const height=width*canvas.height/canvas.width;
