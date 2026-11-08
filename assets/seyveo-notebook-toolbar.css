@@ -1189,3 +1189,41 @@ svg.sv-paper-signature .sv-paper-icon-core{
   min-width:0!important;height:calc(var(--sv-paper-tool-size) - 2px)!important;min-height:0!important;
  }
 }
+
+
+/* v18 · Flat Save action: one quiet surface, no stacked pseudo layers. */
+#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save{
+ -webkit-appearance:none!important;
+ appearance:none!important;
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ width:47px!important;height:47px!important;
+ min-width:47px!important;min-height:47px!important;
+ border:0!important;outline:0!important;border-radius:50%!important;
+ background:#373b42!important;
+ background-image:none!important;
+ color:#e9edf2!important;
+ box-shadow:none!important;
+ filter:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ text-shadow:none!important;
+ transform:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save::before,
+#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save::after{
+ content:none!important;display:none!important;
+ background:none!important;border:0!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save svg{
+ display:block!important;
+ width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.7!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ filter:none!important;box-shadow:none!important;transform:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save:active{
+ background:#454a52!important;
+ box-shadow:none!important;transform:none!important;
+}
