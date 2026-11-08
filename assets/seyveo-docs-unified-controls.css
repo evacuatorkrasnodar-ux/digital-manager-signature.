@@ -1118,3 +1118,21 @@
   transform:none;
  }
 }
+
+/* Specificity bridge for the earlier vault form and tool-specific overrides.
+   Keep a minimum 36px visual while surrounding rows preserve accessible spacing. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-file-actions>.sv-doc-action.sv-doc-primary,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-file-actions>.sv-doc-action,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-controls>.sv-doc-action,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-panel .sv-doc-tool-controls>.sv-doc-tool-button,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-panel .sv-doc-print-controls>.sv-doc-tool-button,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-panel .sv-doc-print-controls>.sv-doc-tool-print-link{
+ min-height:36px!important;
+ padding:8px 12px!important;
+ border:1px solid var(--sv-doc-action-edge)!important;
+ border-radius:999px!important;
+ background:var(--sv-doc-action-fill)!important;
+ box-shadow:none!important;
+ font-size:11.5px!important;
+ font-weight:550!important;
+}
