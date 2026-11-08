@@ -277,27 +277,27 @@ function draw(){
  const lead=$('div','svdf-lead');
  lead.append($('span','svdf-kicker','SEYVEO BUSINESS · ДОКУМЕНТЫ'),
   $('h2','','Согласования'),
-  $('p','','Документ → сотрудник → ознакомление или согласование → история действий.'));
+  $('p','','Создавайте запросы и отслеживайте решения в одном месте.'));
  host.append(lead);
  const safety=$('details','svdf-safety');
- safety.append($('summary','','Учебный режим · настоящие документы не загружать'));
+ safety.append($('summary','','Демо · не загружайте настоящие документы'));
  safety.append($('p','','Данные согласований хранятся в браузере без шифрования. Реальных учётных записей, доставки между сотрудниками и электронной подписи здесь нет. Используйте только вымышленные примеры.'));
  host.append(safety);
  host.append($('p','svdf-role-inline',
   (role==='employee'?'Елена · сотрудник':'Руководитель')+' · роль из кабинета'));
  if(role==='manager'){
   const form=$('section','svdf-create svdf-create-simple');
-  form.append($('strong','','Документ на согласование'));
+  form.append($('strong','','Новый запрос'));
   const picker=$('details','svdf-kind-choices');
   const sendLabel=()=>TYPES[kind].type==='Ознакомление'?'Передать на ознакомление · демо':'Передать на согласование · демо';
   const submit=button(sendLabel(),create,'svdf-primary');
-  const summary=$('summary','','Тип: '+TYPES[kind].title);
+  const summary=$('summary','','Документ: '+TYPES[kind].title);
   picker.append(summary);
   const choices=$('div','svdf-kind-options');
   for(const [key,type] of Object.entries(TYPES)){
    const option=button(type.title,()=>{
     kind=key;
-    summary.textContent='Тип: '+type.title;
+    summary.textContent='Документ: '+type.title;
     submit.textContent=sendLabel();
     for(const item of choices.children)
      item.setAttribute('aria-pressed',String(item.dataset.kind===kind));
@@ -309,18 +309,14 @@ function draw(){
   }
   picker.append(choices);
   form.append(picker,
-   $('small','','Елена · учебный сотрудник · только этот браузер'),
+   $('small','','Получатель: Елена · данные остаются в этом браузере'),
    submit);
   host.append(form);
  }else host.append($('p','svdf-hint svdf-staff-instruction','Открой документ и выбери: согласовать или вернуть с замечанием.'));
  const active=records.filter(isActive).length,completed=records.length-active;
- const signing=records.filter(x=>x.state==='signing').length;
- const inReview=records.filter(x=>['sent','read','returned'].includes(x.state)).length;
- host.append($('p','svdf-compact-status',
-  inReview+' на согласовании · '+signing+' на подпись · '+completed+' завершено'));
+ // Filter counters are the ONE queue scorecard. No duplicate thin bar.
  const title=$('div','svdf-list-header');
- title.append($('strong','',role==='employee'?'Мои входящие':'Отправленные документы'),
-  $('span','',active+' в работе · '+completed+' завершены'));
+ title.append($('strong','',role==='employee'?'Мои входящие':'Отправленные документы'));
  host.append(title);
  const filters=$('div','svdf-list-filters');
  filters.setAttribute('role','group');filters.setAttribute('aria-label','Фильтр учебных документов');
@@ -347,7 +343,7 @@ function draw(){
  },'svdf-chat-link');
  more.append(chat);
  host.append(more);
- host.append($('p','svdf-footnote','Настоящее внедрение потребует учётных записей, прав доступа, серверной доставки, журналирования, хранения в подходящем контуре и интеграции с оператором ЭДО/ЭП.'));
+ host.append($('p','svdf-footnote','Это учебный маршрут только в вашем браузере: без серверной отправки, проверки ролей и юридически значимой подписи. Реальная работа с документами потребует защищённого сервера и официальных подключений.'));
 }
 function mount(parent){
  if(!parent)return false;
