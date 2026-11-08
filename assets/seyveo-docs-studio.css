@@ -2,8 +2,8 @@
  * Uses approved Documents/SEYVEO Liquid Glass tokens, not a second dock.
  */
 #sayviSurfacePage .sv-doc-tools{
- display:grid;gap:9px;min-width:0;box-sizing:border-box;
- margin:0 0 19px;
+ display:grid;gap:10px;min-width:0;box-sizing:border-box;
+ margin:0 0 17px;
 }
 #sayviSurfacePage .sv-doc-tool-button{
  box-sizing:border-box;display:flex;align-items:center;justify-content:center;
@@ -22,32 +22,57 @@
 }
 #sayviSurfacePage .sv-doc-tool-button:active{opacity:.75}
 #sayviSurfacePage .sv-doc-tool-scan{
- display:flex;flex-direction:column;align-items:flex-start;
- justify-content:center;gap:5px;min-height:64px;
- width:100%;padding:11px 17px;text-align:left;
- border:1px solid var(--sv-doc-line,var(--soft-line));border-radius:20px;
- background:var(--sv-doc-picked,var(--card2));
- font-size:15px;font-weight:620;letter-spacing:-.018em;
+ display:grid;grid-template-columns:minmax(0,1fr) 102px;
+ grid-template-rows:auto auto;align-content:center;
+ justify-items:start;column-gap:8px;row-gap:3px;
+ position:relative;min-height:105px;width:100%;
+ padding:13px 15px 13px 19px;text-align:left;
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:23px;background:var(--sv-doc-picked,var(--card2));
+ font-size:17px;font-weight:625;letter-spacing:-.025em;
 }
 #sayviSurfacePage .sv-doc-tool-scan-desc{
- display:block;font-size:11px;color:var(--secondary);
+ grid-column:1;grid-row:2;display:block;
+ font-size:11.5px;color:var(--secondary);
  font-weight:430;letter-spacing:normal;
+}
+#sayviSurfacePage .sv-doc-tool-scan>.sv-doc-art{
+ grid-column:2;grid-row:1/span 2;align-self:center;justify-self:end;
+ width:93px;height:77px;
 }
 #sayviSurfacePage .sv-doc-tool-grid{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
  gap:8px;width:100%;min-width:0;
 }
 #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button{
- min-height:54px;justify-content:flex-start;text-align:left;
- padding:12px 15px;border:1px solid var(--sv-doc-line,var(--soft-line));
- border-radius:18px;background:var(--sv-doc-wash,var(--card));
- font-size:13px;box-shadow:none;
+ display:flex;flex-direction:column-reverse;align-items:flex-start;
+ justify-content:space-between;gap:6px;
+ min-height:112px;padding:12px 14px;text-align:left;
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:21px;background:var(--sv-doc-wash,var(--card));
+ font-size:13.5px;font-weight:580;box-shadow:none;
+}
+#sayviSurfacePage .sv-doc-art{
+ display:grid;place-items:center;flex:none;min-width:0;
+ width:49px;height:49px;color:var(--text);opacity:.94;
+}
+#sayviSurfacePage .sv-doc-art svg{
+ display:block;width:100%;height:100%;overflow:visible;
+}
+#sayviSurfacePage .sv-doc-art .sv-doc-art-accent{
+ stroke:var(--sv-ui-action-ink,var(--text));stroke-width:2.9;
+}
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-art{
+ align-self:flex-start;width:52px;height:51px;
+}
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-print .sv-doc-art{
+ width:57px;height:53px;
 }
 #sayviSurfacePage .sv-doc-tool-panel{
  box-sizing:border-box;min-width:0;display:grid;gap:12px;
- margin:4px 0 1px;padding:15px 13px;
+ margin:4px 0 1px;padding:16px 14px;
  border:1px solid var(--sv-doc-line,var(--soft-line));
- border-radius:22px;background:var(--sv-doc-wash,var(--card));
+ border-radius:23px;background:var(--sv-doc-wash,var(--card));
  -webkit-backdrop-filter:blur(22px) saturate(1.1);
  backdrop-filter:blur(22px) saturate(1.1);
 }
@@ -68,6 +93,44 @@
 #sayviSurfacePage .sv-doc-tool-close{
  flex:none;min-height:44px;padding:9px;
  background:transparent;color:var(--secondary);font-size:11.5px;
+}
+/* One small visual instruction rail, not a wall of paragraphs. */
+#sayviSurfacePage .sv-doc-tool-steps{
+ display:grid;grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr) 12px minmax(0,1fr);
+ gap:4px;align-items:center;min-width:0;padding:10px 3px 13px;
+ border-bottom:1px solid var(--sv-doc-line,var(--soft-line));
+}
+#sayviSurfacePage .sv-doc-tool-step{
+ display:flex;flex-direction:column;align-items:center;gap:5px;
+ min-width:0;text-align:center;
+}
+#sayviSurfacePage .sv-doc-tool-step>.sv-doc-art-small{
+ width:48px;height:48px;opacity:.86;
+}
+#sayviSurfacePage .sv-doc-tool-step small{
+ color:var(--secondary);font-size:11px;line-height:1.35;
+ white-space:normal;
+}
+#sayviSurfacePage .sv-doc-tool-step-arrow{
+ justify-self:center;align-self:center;color:var(--secondary);
+ font-size:22px;font-weight:300;
+}
+#sayviSurfacePage .sv-doc-tool-help{
+ box-sizing:border-box;width:100%;padding:0;
+ border-top:1px solid var(--sv-doc-line,var(--soft-line));
+ color:var(--secondary);font-size:11.5px;
+}
+#sayviSurfacePage .sv-doc-tool-help summary{
+ display:flex;align-items:center;min-height:44px;cursor:pointer;
+ list-style:none;font-size:12px;line-height:1.4;color:var(--secondary);
+}
+#sayviSurfacePage .sv-doc-tool-help summary::-webkit-details-marker{display:none}
+#sayviSurfacePage .sv-doc-tool-help summary::after{
+ content:"⌄";font-size:18px;margin-left:auto;opacity:.78;
+}
+#sayviSurfacePage .sv-doc-tool-help[open] summary::after{transform:rotate(180deg)}
+#sayviSurfacePage .sv-doc-tool-help .sv-doc-tool-warning{
+ padding:0 2px 12px;font-size:11.5px;
 }
 #sayviSurfacePage .sv-doc-tool-warning{
  margin:0;font-size:11.5px;line-height:1.55;color:var(--secondary);
@@ -167,7 +230,7 @@
 }
 @media(max-width:355px){
  #sayviSurfacePage .sv-doc-tool-grid{gap:6px}
- #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button{padding:10px 11px;font-size:12px}
+ #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button{padding:10px 11px;font-size:12px;min-height:105px}
  #sayviSurfacePage .sv-doc-tool-panel{padding:12px 10px}
 }
 @media(prefers-reduced-motion:reduce){
