@@ -83,14 +83,19 @@ function paint(state){
   empty.append(documentArt('empty',''));
   const copy=el('span','sv-doc-recents-empty-copy');
   const filteredName=categories.find(x=>x.id===state.filter)?.title;
-  copy.append(el('strong','',filteredName?'В подборке «'+filteredName+'» пока пусто':'Здесь будут ваши документы'),
-   el('small','',state.unlocked
-    ?'Добавьте файл или создайте документ.'
-    :'Файлы защищённого архива видны после ввода пароля.'));
+  // A locked vault has unknown contents: never falsely say a folder is empty.
+  const locked=!state.unlocked;
+  copy.append(el('strong','',locked
+   ?'Документы под защитой'
+   :filteredName?'В подборке «'+filteredName+'» пока пусто':'Здесь будут ваши документы'),
+   el('small','',locked
+    ?'Откройте архив, чтобы увидеть сохранённые файлы.'
+    :'Добавьте файл или создайте документ.'));
   empty.append(copy);
-  const act=el('button','sv-doc-shelf-add','Добавить');
+  const act=el('button','sv-doc-shelf-add',locked?'Открыть':'Добавить');
   act.type='button';
-  act.addEventListener('click',()=>state.options.onPick?.());
+  act.setAttribute('aria-label',locked?'Открыть защищённый архив':'Добавить документ');
+  act.addEventListener('click',()=>locked?openArchive(state):state.options.onPick?.());
   empty.append(act);
   state.recentGrid.append(empty);
  }else{
