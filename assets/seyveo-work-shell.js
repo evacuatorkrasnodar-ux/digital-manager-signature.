@@ -67,30 +67,30 @@
  const createMenu=document.getElementById('calendarCreateMenu');
  const menuHome=createMenu?.parentElement;
  const noteDialog=document.getElementById('notesDialog');
- const noteOriginalParent=noteDialog?.parentNode||null;
- const noteOriginalNext=noteDialog?.nextSibling||null;
+ // Only the notebook's body goes into the normal Work document flow.
+ // Keep the <dialog> itself outside the shell: non-modal dialog rendering
+ // inside a flex scene can change positioning/stacking on mobile Safari.
+ const noteParts=noteDialog?[
+  noteDialog.querySelector('.notes-head'),
+  document.getElementById('notesList'),
+  document.getElementById('notesStatus')
+ ].filter(Boolean):[];
  function restoreNotebook(){
   notebookActive=false;notebookPending=false;
-  if(noteDialog?.parentNode===notebookHost){
-   if(noteDialog.open)noteDialog.close();
-   if(noteOriginalParent){
-    if(noteOriginalNext?.parentNode===noteOriginalParent)
-     noteOriginalParent.insertBefore(noteDialog,noteOriginalNext);
-    else noteOriginalParent.append(noteDialog);
-   }
+  if(noteDialog&&noteParts.length){
+   noteDialog.append(...noteParts);
   }
   notebookHost.hidden=true;
  }
  function enterNotebook(){
-  if(tasks.hidden)return;
+  if(tasks.hidden||!noteDialog||noteParts.length<3)return;
   notebookPending=false;notebookActive=true;
-  if(noteDialog?.parentNode!==notebookHost){
-   if(noteDialog?.open)noteDialog.close();
-   notebookHost.append(noteDialog);
-  }
+  if(noteDialog.open)noteDialog.close();
+  notebookHost.replaceChildren(...noteParts);
   notebookHost.hidden=false;
   sync();
-  // One existing renderer/store; only the presentation mode changes.
+  // Use the one original notes renderer and store, without displaying
+  // a modal at the list level.
   window.dispatchEvent(new Event('seyveo:notes-open'));
   resetWorkScroll();
  }
@@ -304,7 +304,7 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:13,sync,
+  version:14,sync,
   isNotesInline:()=>notebookActive&&!notebookHost.hidden
  });
 })();
