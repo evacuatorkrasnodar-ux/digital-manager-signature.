@@ -244,19 +244,29 @@ function syncRole(){
 }
 function renderRecord(node,x){
  const card=$('article','svdf-record');
- if(x.id===selected)card.classList.add('is-current');
- const header=$('div','svdf-record-heading');
+ const expanded=x.id===selected;
+ if(expanded)card.classList.add('is-current');
+ // A single accessible title-row button handles both expand and collapse.
+ const header=$('button','svdf-button svdf-record-heading svdf-record-toggle');
+ header.type='button';
+ header.setAttribute('aria-expanded',String(expanded));
+ header.setAttribute('aria-label',(expanded?'Свернуть':'Открыть')+' '+TYPES[x.kind].title);
+ header.addEventListener('click',()=>openRecord(x));
  const symbol=$('span','svdf-record-icon');
  symbol.append(pictogram(x.kind));header.append(symbol);
- const body=$('div','svdf-record-name');
- body.append($('strong','',TYPES[x.kind].title),$('small','',TYPES[x.kind].type+' · Елена · редакция №'+latestRevision(x).number));
- header.append(body);card.append(header);
- const state=$('div','svdf-record-state',status(x));state.dataset.state=x.state;card.append(state);
- card.append($('small','svdf-date','Создано '+stamp(x.created)));
- const controls=$('div','svdf-actions');
- controls.append(button(x.id===selected?'Свернуть':'Открыть документ',()=>openRecord(x),'svdf-quiet'));
- card.append(controls);
- if(x.id===selected){
+ const body=$('span','svdf-record-name');
+ body.append($('strong','',TYPES[x.kind].title),
+  $('small','',TYPES[x.kind].type+' · Елена · №'+latestRevision(x).number));
+ const meta=$('span','svdf-record-meta');
+ const state=$('span','svdf-record-state',status(x));
+ state.dataset.state=x.state;
+ meta.append(state,$('time','svdf-date',stamp(x.created)));
+ body.append(meta);
+ const chevron=$('span','svdf-record-chevron');
+ chevron.setAttribute('aria-hidden','true');
+ header.append(body,chevron);
+ card.append(header);
+ if(expanded){
   const detail=$('div','svdf-detail');
   const paper=$('div','svdf-paper');
   paper.append($('span','svdf-paper-brand','SEYVEO · УЧЕБНЫЙ ОБРАЗЕЦ'),
@@ -327,17 +337,16 @@ function renderRecord(node,x){
    editor.append(buttons);detail.append(editor);
   }
   const versions=$('details','svdf-versions');
-  const summary=$('summary','','Редакции документа · '+x.revisions.length);
-  versions.append(summary);
+  versions.append($('summary','','Редакции · '+x.revisions.length));
   for(const rev of x.revisions.slice().reverse()){
-   const section=$('div','svdf-revision-item');
-   section.append($('strong','','Редакция №'+rev.number+' · '+stamp(rev.at)));
-   section.append($('small','',rev.note));
-   section.append($('p','',rev.body));
+   // Historical text is available on demand, never repeated in full by default.
+   const section=$('details','svdf-revision-item');
+   section.append($('summary','','№'+rev.number+' · '+stamp(rev.at)),
+    $('small','',rev.note),$('p','',rev.body));
    versions.append(section);
   }
   detail.append(versions);
-  const log=$('details','svdf-log');log.append($('summary','','История действий'));
+  const log=$('details','svdf-log');log.append($('summary','','История действий · '+x.log.length));
   const timeline=$('ol','');
   for(const item of x.log)timeline.append($('li','',stamp(item.at)+' · '+item.text));
   log.append(timeline);detail.append(log);card.append(detail);
