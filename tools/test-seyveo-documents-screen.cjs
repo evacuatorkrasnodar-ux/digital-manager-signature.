@@ -172,7 +172,7 @@ test('employee Back exits normally; never exposes owner archive on a nested flow
 test('Docs fold storage notes into one disclosure without duplicate global footer',()=>{
  assert.match(css,/data-sv-subject="contract"[\s\S]*#sayviSurfaceFootnote\{display:none!important\}/);
  assert.match(css,/\.sv-doc-safety\{/);
- assert.match(code,/О хранении документов/);
+ assert.match(code,/Безопасность и хранение/);
  assert.doesNotMatch(code,/Вернуться в хранилище/);
 });
 test('approval workflow keeps warning visible and avoids duplicate numeric scorecards',()=>{
