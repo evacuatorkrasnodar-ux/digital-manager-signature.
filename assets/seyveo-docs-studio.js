@@ -65,6 +65,32 @@ function save(blob,name){
  // Safari needs the blob URL to outlive the current click.
  window.setTimeout(()=>URL.revokeObjectURL(url),20000);
 }
+/**
+ * On iPhone, native Share exposes "Save to Files"; desktop keeps a direct
+ * download. This is a user-initiated export, never an automatic upload.
+ * navigator.share() must be invoked in the original tap activation.
+ */
+function shareExport(blob,name){
+ try{
+  if(typeof navigator!=='undefined'&&
+     typeof navigator.canShare==='function'&&
+     typeof navigator.share==='function'){
+   const file=asFile(blob,name),data={files:[file],title:name};
+   if(navigator.canShare(data)){
+    return navigator.share(data).then(()=> 'shared',error=>
+     error?.name==='AbortError'?'cancelled':'failed');
+   }
+  }
+ }catch{}
+ save(blob,name);
+ return Promise.resolve('download');
+}
+function shareMessage(status,format){
+ if(status==='shared')return format+' передан в системное меню. Сохранение зависит от выбранного приложения.';
+ if(status==='cancelled')return 'Действие отменено. Исходный файл не изменён.';
+ if(status==='download')return format+' подготовлен для загрузки. Проверьте файлы браузера.';
+ return 'Системное меню недоступно. Воспользуйтесь обычным сохранением файла.';
+}
 function textPdf(text){
  if(typeof text!=='string'||!text.trim())throw Error('Введите текст');
  const lines=[],limit=70;
@@ -259,6 +285,14 @@ function mount(target,{
       message('PDF подготовлен для сохранения. Проверьте загрузки.');
      }catch{message('Не удалось собрать PDF.');}
     },'sv-doc-tool-primary'),
+    button('В Файлы / поделиться',()=>{
+     try{
+      const pdf=window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans);
+      void shareExport(pdf,'SEYVEO-скан.pdf').then(
+       result=>message(shareMessage(result,'PDF'))
+      );
+     }catch{message('Не удалось подготовить PDF.');}
+    }),
     button('В архив',()=>{
      try{
       onImport(asFile(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf'));
@@ -296,6 +330,13 @@ function mount(target,{
     try{save(window.SEYVEO_DOCS_EXPORT.docxFromText(body.value),'SEYVEO-документ.docx');
      message('Word подготовлен для сохранения.');
     }catch{message('Не удалось создать Word.');}
+   }),
+   button('В Файлы / поделиться',()=>{
+    if(!check()){message('Введите текст документа.');return;}
+    try{
+     void shareExport(window.SEYVEO_DOCS_EXPORT.docxFromText(body.value),
+      'SEYVEO-документ.docx').then(result=>message(shareMessage(result,'Word')));
+    }catch{message('Не удалось подготовить Word.');}
    }),
    button('Создать с Сэйви',()=>onSayvi('create'))
   ));
