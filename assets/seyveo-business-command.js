@@ -2440,4 +2440,34 @@ window.addEventListener('storage',event=>{
   if(historyQuery.trim())renderHistorySearch();
  }
 });
+}
+/* Messages: compact header search. The global dock search remains app-wide. */
+(function installDirectorySearch(){
+ const screen=$('svcpWorkChatScreen');
+ const trailing=screen?.querySelector('.svcp-work-chat-trailing');
+ const field=$('svcpHistorySearch');
+ if(!screen||!trailing||!field||trailing.querySelector('.svcp-directory-search-toggle'))return;
+ trailing.removeAttribute('aria-hidden');
+ const toggle=document.createElement('button');
+ toggle.type='button';
+ toggle.className='svcp-directory-search-toggle';
+ toggle.setAttribute('aria-label','Поиск в сообщениях');
+ toggle.setAttribute('aria-controls','svcpHistorySearch');
+ toggle.setAttribute('aria-expanded','false');
+ toggle.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg>';
+ trailing.append(toggle);
+ function setOpen(open){
+  screen.classList.toggle('svcp-directory-search-open',open);
+  toggle.setAttribute('aria-expanded',String(open));
+  toggle.setAttribute('aria-label',open?'Закрыть поиск в сообщениях':'Поиск в сообщениях');
+  if(open){field.focus({preventScroll:true});}
+  else if(field.value){field.value='';field.dispatchEvent(new Event('input',{bubbles:true}));}
+ }
+ toggle.addEventListener('click',()=>setOpen(!screen.classList.contains('svcp-directory-search-open')));
+ field.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){
+   event.preventDefault();setOpen(false);toggle.focus({preventScroll:true});
+  }
+ });
+})();
 })();
