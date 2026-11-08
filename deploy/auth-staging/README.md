@@ -105,6 +105,25 @@ automatically a Keycloak SMTP sender.
    exercises, host firewall, OS patches, private-network isolation and
    service upgrades before considering real users.
 
+## Проверка работающего сервера авторизации (после запуска владельцем)
+
+Команда выполняется **только оператором на сервере** и не активируется автоматически в CI. Сначала владелец проверяет приватный `.env`, запускает staging и убеждается, что TLS/DNS настроены. Затем в папке `deploy/auth-staging`:
+
+```sh
+node validate-staging.mjs .env
+node check-oidc-ready.mjs .env
+```
+
+Второй шаг использует только доверенный `SEYVEO_AUTH_HOST` из уже проверенного приватного файла. Он обращается к **публичным** OIDC metadata и JWKS через HTTPS, без токенов, паролей, пользовательских аккаунтов и записи на сервер. Проверяется точный `issuer` для `/realms/seyveo`, доступность подписывающих RSA-ключей, поддержка Authorization Code, PKCE S256 и `authorization_response_iss_parameter_supported=true` (RFC 9207), необходимая нашему строгому нативному callback. При ошибке команда завершается с кодом 1 и не печатает значения из `.env` или ответы сервера.
+
+**PASS ≠ готовая регистрация.** После него всё ещё обязательны: реальная доставка проверочных писем, настройка нативного клиента и проверенных callback, токены подходящего формата для API, защищённое хранение на iPhone/Android, синхронизация подтверждённых членов организаций, журналирование отзывов, мобильные испытания, резервное копирование и аудит безопасности. Нельзя выдавать реальные права только по наличию OIDC metadata или QR-коду.
+
+Офлайн-тест без подключения к интернету/живому Keycloak:
+
+```sh
+node --test check-oidc-ready.test.mjs
+```
+
 ## Limits / security notes
 
 - **No production deployment, live users, active public URLs or email
