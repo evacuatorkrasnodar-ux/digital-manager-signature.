@@ -362,29 +362,33 @@ function draw(){
  if(role==='manager'){
   const form=$('section','svdf-create svdf-create-simple');
   form.append($('strong','','Новый запрос'));
-  const picker=$('details','svdf-kind-choices');
   const sendLabel=()=>TYPES[kind].type==='Ознакомление'?'Передать на ознакомление · демо':'Передать на согласование · демо';
   const submit=button(sendLabel(),create,'svdf-primary');
-  const summary=$('summary','','Документ: '+TYPES[kind].title);
-  picker.append(summary);
-  const choices=$('div','svdf-kind-options');
+  const choices=$('div','svdf-template-gallery');
+  choices.setAttribute('role','group');
+  choices.setAttribute('aria-label','Выберите учебный документ');
   for(const [key,type] of Object.entries(TYPES)){
-   const option=button(type.title,()=>{
-    kind=key;
-    summary.textContent='Документ: '+type.title;
-    submit.textContent=sendLabel();
+   const option=button('',()=>{
+    kind=key;submit.textContent=sendLabel();
     for(const item of choices.children)
      item.setAttribute('aria-pressed',String(item.dataset.kind===kind));
-    picker.open=false;
-   },'svdf-kind-option');
+   },'svdf-template-card');
    option.dataset.kind=key;
+   option.setAttribute('aria-label','Выбрать учебный документ: '+type.title);
    option.setAttribute('aria-pressed',String(key===kind));
+   const thumbnail=$('span','svdf-template-paper');
+   thumbnail.setAttribute('aria-hidden','true');
+   thumbnail.append($('span','svdf-template-mini-title',
+    key==='schedule'?'Приказ':key==='equipment'?'Акт':'Договор'));
+   for(const width of ['long','long','medium','short'])
+    thumbnail.append($('i','svdf-template-line svdf-template-line-'+width));
+   thumbnail.append($('span','svdf-template-mini-sign'));
+   option.append(thumbnail,$('strong','',key==='schedule'?'Приказ':key==='equipment'?'Акт':'Договор'));
    choices.append(option);
   }
-  picker.append(choices);
-  form.append(picker,
-   $('small','','Получатель: Елена · данные остаются в этом браузере'),
-   submit);
+  const recipient=$('div','svdf-recipient');
+  recipient.append(pictogram('person'),$('span','','Елена · учебный получатель'));
+  form.append(choices,recipient,submit);
   host.append(form);
  }else host.append($('p','svdf-hint svdf-staff-instruction','Выберите входящий документ для решения.'));
  const active=records.filter(isActive).length,completed=records.length-active;
