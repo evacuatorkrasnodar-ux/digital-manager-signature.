@@ -243,7 +243,7 @@ patternChoices.forEach(item=>item.addEventListener('click',()=>{
  closeExtras();
 }));
 document.addEventListener('pointerdown',event=>{
- if(!patternMenu.hidden&&!event.target.closest('.paper-pattern-control'))closePatternMenu();
+ if(!patternMenu.hidden&&!event.target.closest('.paper-pattern-control')&&!patternMenu.contains(event.target))closePatternMenu();
 });
 dialog.addEventListener('keydown',event=>{
  if(event.key==='Escape'&&!colorMenu.hidden){
