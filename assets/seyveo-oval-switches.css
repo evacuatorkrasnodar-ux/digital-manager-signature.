@@ -5,7 +5,7 @@
 /* The Documents titlebar has only Back + centered title.
    Balanced outer grid columns ensure the heading is truly centered. */
 html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{
- grid-template-columns:40px minmax(0,1fr) 40px!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
  min-height:44px!important;
  gap:4px!important;
  margin:0 2px 17px!important;
@@ -18,8 +18,8 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-head
 }
 html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack{
  grid-column:1!important;grid-row:1!important;
- width:40px!important;height:40px!important;
- min-width:40px!important;min-height:40px!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
  padding:0!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
@@ -28,8 +28,8 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  filter:none!important;
 }
 html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack svg{
- width:18px!important;height:18px!important;
- stroke-width:1.45!important;
+ width:19px!important;height:19px!important;
+ stroke-width:1.55!important;
 }
 
 /* One exact material for all top-level oval switches. */
@@ -170,10 +170,109 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
 }
 
 /* Compact Documents titlebar spacing on iPhone.
-   The actual back-arrow hit area remains 40px, still without a circle. */
+   The back-arrow hit area is the common 44px control, without a painted circle. */
 @media(max-width:430px){
  html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{
   margin:0 2px 9px!important;
   min-height:44px!important;
  }
+}
+
+
+/* SEYVEO · shared navigation geometry (Documents reference).
+   This is the final owner of header icon-only controls. The approved dock,
+   Sayvi chat composer, modal actions and page route handlers are excluded.
+   An arrow is transparent; an Add control is a subtle glass circle.
+   Hit target 44px, vector 19px, stroke 1.55px; capsule 44px/36px. */
+:root {
+ --sv-nav-hit:44px;
+ --sv-nav-glyph:19px;
+ --sv-nav-weight:1.55;
+ --sv-nav-capsule:44px;
+ --sv-nav-segment:36px;
+}
+:is(
+ .sv-continuity-titlebar > button:is(.seyveo-picture-back,.life-back,.sv-deep-back,.manage-theme-back),
+ #svWorkShell #svWorkBack:not([hidden]),
+ #svWorkShell #calendarPage #calendarBack:not([hidden]),
+ #svWorkShell #tasksPage #unifiedTasksBack:not([hidden]),
+ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack,
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack
+){
+ box-sizing:border-box!important;
+ flex:0 0 var(--sv-nav-hit)!important;
+ width:var(--sv-nav-hit)!important;min-width:var(--sv-nav-hit)!important;max-width:var(--sv-nav-hit)!important;
+ height:var(--sv-nav-hit)!important;min-height:var(--sv-nav-hit)!important;max-height:var(--sv-nav-hit)!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--text)!important;
+}
+:is(
+ .sv-continuity-titlebar > button:is(.seyveo-picture-back,.life-back,.sv-deep-back,.manage-theme-back),
+ #svWorkShell #svWorkBack,
+ #svWorkShell #calendarPage #calendarBack,
+ #svWorkShell #tasksPage #unifiedTasksBack,
+ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBack,
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack
+) svg {
+ display:block!important;
+ width:var(--sv-nav-glyph)!important;height:var(--sv-nav-glyph)!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:var(--sv-nav-weight)!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+/* One shared Add geometry; retain original page-specific click handlers.
+   Hidden placeholders remain hidden and untouchable. */
+#svWorkShell #svWorkAdd:not([hidden]),
+#calendarPage #calendarAdd:not([hidden]) {
+ box-sizing:border-box!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 var(--sv-nav-hit)!important;
+ width:var(--sv-nav-hit)!important;min-width:var(--sv-nav-hit)!important;max-width:var(--sv-nav-hit)!important;
+ height:var(--sv-nav-hit)!important;min-height:var(--sv-nav-hit)!important;max-height:var(--sv-nav-hit)!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:var(--sv-ui-quiet-surface,rgba(160,184,193,.075))!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+}
+#svWorkShell #svWorkAdd:not([hidden]) svg,
+#calendarPage #calendarAdd:not([hidden]) svg {
+ display:block!important;
+ width:var(--sv-nav-glyph)!important;height:var(--sv-nav-glyph)!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:var(--sv-nav-weight)!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-icon-button {
+ min-width:var(--sv-nav-hit)!important;min-height:var(--sv-nav-hit)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-icon-button svg {
+ width:var(--sv-nav-glyph)!important;height:var(--sv-nav-glyph)!important;
+ stroke-width:var(--sv-nav-weight)!important;
+}
+/* Align approved top-level switch geometry without moving its container. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch,
+#svWorkShell #svWorkTabs {
+ height:var(--sv-nav-capsule)!important;min-height:var(--sv-nav-capsule)!important;
+ border-radius:999px!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab,
+#svWorkShell #svWorkTabs button:not([hidden]) {
+ height:var(--sv-nav-segment)!important;min-height:var(--sv-nav-segment)!important;
+ border-radius:999px!important;
+}
+:is(
+ .sv-continuity-titlebar > button:is(.seyveo-picture-back,.life-back,.sv-deep-back,.manage-theme-back),
+ #svWorkShell #svWorkBack,
+ #svWorkShell #calendarPage #calendarBack,
+ #svWorkShell #tasksPage #unifiedTasksBack,
+ #sayviSurfacePage #sayviSurfaceBack,
+ #svWorkShell #svWorkAdd,
+ #calendarPage #calendarAdd
+):focus-visible {
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
 }
