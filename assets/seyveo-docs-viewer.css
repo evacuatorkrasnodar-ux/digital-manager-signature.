@@ -2,11 +2,11 @@
  * Scoped to Documents; NEVER changes the approved home dock/chat/navigation. */
 #sayviSurfacePage .svdv-viewer{
  box-sizing:border-box;display:grid;gap:13px;min-width:0;
- margin:0 0 15px;padding:14px 12px;
+ margin:0 0 15px;padding:14px 13px;
  border:1px solid var(--sv-doc-line,var(--soft-line));
- border-radius:23px;background:var(--sv-doc-wash,var(--card));
- -webkit-backdrop-filter:blur(18px) saturate(1.12);
- backdrop-filter:blur(18px) saturate(1.12);
+ border-radius:var(--sv-doc-radius-card,22px);background:var(--sv-doc-wash,var(--card));
+ -webkit-backdrop-filter:var(--sv-doc-frost,blur(18px) saturate(1.1));
+ backdrop-filter:var(--sv-doc-frost,blur(18px) saturate(1.1));
 }
 #sayviSurfacePage .svdv-header{
  display:flex;align-items:center;gap:12px;min-width:0;
@@ -15,7 +15,7 @@
 #sayviSurfacePage .svdv-file-icon{
  flex:0 0 43px;width:43px;height:47px;
  display:grid;place-items:center;
- border-radius:12px;background:var(--sv-doc-picked,var(--card2));
+ border-radius:13px;background:var(--sv-doc-picked,var(--card2));
 }
 #sayviSurfacePage .svdv-file-icon svg{
  width:25px;height:29px;
@@ -34,14 +34,14 @@
  box-sizing:border-box;min-width:0;overflow:hidden;
  display:grid;place-items:center;
  min-height:310px;padding:12px 8px;
- border-radius:18px;
- background:color-mix(in srgb,var(--text) 5%,transparent);
+ border-radius:var(--sv-doc-radius-tile,19px);
+ background:color-mix(in srgb,var(--text) 4%,transparent);
 }
 #sayviSurfacePage .svdv-picture{
  display:block;max-width:100%;width:auto;height:auto;
  max-height:510px;object-fit:contain;
  background:#fff;border-radius:3px;
- box-shadow:0 5px 19px rgba(0,0,0,.16);
+ box-shadow:var(--sv-doc-paper-shadow,0 6px 19px rgba(0,0,0,.12));
 }
 #sayviSurfacePage .svdv-frame{
  box-sizing:border-box;display:block;width:100%;
@@ -56,7 +56,7 @@
  background:#fff;color:#232e35;font-family:inherit;
  font-size:13px;line-height:1.6;white-space:pre-wrap;
  overflow-wrap:anywhere;
- box-shadow:0 4px 18px rgba(0,0,0,.11);
+ box-shadow:var(--sv-doc-paper-shadow,0 6px 19px rgba(0,0,0,.12));
 }
 #sayviSurfacePage .svdv-fallback{
  box-sizing:border-box;display:flex;flex-direction:column;
@@ -82,7 +82,7 @@
  display:flex;flex-direction:column;align-items:center;
  justify-content:center;gap:6px;min-width:0;min-height:68px;
  box-sizing:border-box;padding:8px 4px;
- border:0;border-radius:16px;
+ border:0;border-radius:var(--sv-doc-radius-control,17px);
  background:var(--sv-doc-picked,var(--card2));
  color:var(--text);font:inherit;font-size:11px;line-height:1.25;
  font-weight:550;text-align:center;cursor:pointer;
@@ -114,7 +114,7 @@
  display:grid;gap:1px;min-width:188px;
  max-width:min(250px,80vw);
  padding:6px;
- border-radius:17px;border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:var(--sv-doc-radius-control,17px);border:1px solid var(--sv-doc-line,var(--soft-line));
  background:var(--sv-doc-picked,var(--card2));
  -webkit-backdrop-filter:blur(26px) saturate(1.12);
  backdrop-filter:blur(26px) saturate(1.12);
@@ -125,7 +125,7 @@
  display:flex;flex-direction:row;justify-content:flex-start;
  align-items:center;gap:10px;
  min-height:44px;padding:10px 11px;
- border-radius:12px;
+ border-radius:13px;
  background:transparent;color:var(--text);
  text-align:left;font:inherit;font-size:12px;font-weight:530;
  text-decoration:none;box-shadow:none;cursor:pointer;
