@@ -6,7 +6,7 @@ or live login have been provisioned through this repository.
 
 ## Architecture and scope
 
-`compose.yaml` defines **Keycloak 26.8.1**, a private PostgreSQL 17
+`compose.yaml` defines **Keycloak 26.8.2** (security patch released 5 November 2026), a private PostgreSQL 17
 database and a public **Caddy** reverse proxy that obtains HTTPS certificates
 using ACME. Keycloak runs with `start` (NOT `start-dev`), a fixed
 `KC_HOSTNAME=https://...`, `KC_HOSTNAME_STRICT=true`, and
