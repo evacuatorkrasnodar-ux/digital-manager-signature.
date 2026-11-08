@@ -178,7 +178,25 @@ function render(redrawInk=true){
  if(redrawInk)paint(canvas,data);$('notePaperUndo').disabled=!data.strokes.length;
  const duplicate=$('notePaperDuplicate');if(duplicate)duplicate.disabled=!data.strokes.length||data.strokes.length>=MAX_STROKES;
 }
-function report(text){status.textContent=text||''}
+// Status notices are temporary. Cancel the previous timer so repeated
+// actions cannot leave an old message stuck on the canvas.
+let statusTimer=null;
+function report(message){
+ if(statusTimer!==null){clearTimeout(statusTimer);statusTimer=null}
+ const value=String(message||'');
+ status.textContent=value;
+ if(!value)return;
+ const duration=/Готовлю|Сохраняю|Загружаю/.test(value)?6500:2400;
+ statusTimer=window.setTimeout(()=>{
+  status.textContent='';
+  statusTimer=null;
+ },duration);
+}
+dialog.addEventListener('close',()=>report(''));
+dialog.addEventListener('pointerdown',event=>{
+ // Tapping the drawing surface dismisses a stale tip immediately.
+ if(event.target===canvas&&status.textContent)report('');
+},{passive:true});
 function currentTool(){return document.querySelector('[data-paper-tool][aria-pressed=true]')?.dataset.paperTool||'pen'}
 function selectTool(name){if(!tools.includes(name))return;
  document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.paperTool===name)));
