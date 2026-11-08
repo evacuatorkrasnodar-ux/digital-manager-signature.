@@ -5122,7 +5122,7 @@ window.addEventListener('load',()=>{
   const list=document.getElementById('svNoteSearchResults');list.replaceChildren();
   const items=(typeof getNotes==='function'?getNotes():[]).filter(n=>!query||n.text.toLocaleLowerCase('ru').includes(query)).slice(0,12);
   if(!items.length){const p=document.createElement('p');p.textContent='Записи не найдены';list.append(p);return}
-  for(const n of items){const b=document.createElement('button');b.type='button';b.textContent=n.text.split('\\n')[0].slice(0,90)||'Заметка';b.addEventListener('click',()=>{setPanel('close');if(field.value.trim()||document.getElementById('svNoteTitle').value.trim()){if(!window.confirm('Открыть сохранённую заметку? Несохранённый текст останется без изменений только до закрытия редактора.'))return}dlg.close();if(typeof openNoteRead==='function')openNoteRead(n)});list.append(b)}
+  for(const n of items){const b=document.createElement('button');b.type='button';b.textContent=n.text.split(String.fromCharCode(10))[0].slice(0,90)||'Заметка';b.addEventListener('click',()=>{setPanel('close');if(field.value.trim()||document.getElementById('svNoteTitle').value.trim()){if(!window.confirm('Открыть сохранённую заметку? Несохранённый текст останется без изменений только до закрытия редактора.'))return}dlg.close();if(typeof openNoteRead==='function')openNoteRead(n)});list.append(b)}
  }
  document.getElementById('svNoteSearchInput')?.addEventListener('input',renderNoteSearch);
  topMenu?.addEventListener('click',async e=>{
