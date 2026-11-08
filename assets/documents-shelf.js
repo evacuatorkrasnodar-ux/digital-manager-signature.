@@ -91,13 +91,15 @@ function paint(state){
  const filtered=all.filter(item=>(state.filter==='all'||inFolder(item.name,state.filter))&&
   (!state.query||item.name.toLocaleLowerCase('ru-RU').includes(state.query.toLocaleLowerCase('ru-RU'))));
  const subset=state.expanded?filtered:filtered.slice(0,4);
+ const recentScroll=state.recentGrid.scrollLeft;
  state.recentGrid.replaceChildren();
+ // Sample icons are a format picker, not invented 'recent documents'.
+ const showingFormats=!subset.length&&!state.query&&state.filter==='all'&&(!state.unlocked||all.length===0);
+ state.recentTitle.textContent=showingFormats?'Форматы':'Недавние';
  const hasMore=filtered.length>4;
  state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
  state.showAll.setAttribute('aria-label',state.expanded?'Свернуть список документов':'Показать все документы');
  if(!subset.length&&state.unlocked&&all.length===0&&!state.query&&state.filter==='all'){
-  const caption=el('p','sv-doc-example-note','Примеры форматов · откройте архив или добавьте документ');
-  state.recentGrid.append(caption);
   for(const example of examples){
    const card=el('button','sv-doc-recent-card sv-doc-example-card');
    card.type='button';
@@ -108,7 +110,6 @@ function paint(state){
    state.recentGrid.append(card);
   }
  }else if(!subset.length&&!state.unlocked&&!state.query&&state.filter==='all'){
-  state.recentGrid.append(el('p','sv-doc-example-note','Примеры форматов · защищённые файлы появятся после ввода пароля'));
   for(const example of examples){
    const card=el('button','sv-doc-recent-card sv-doc-example-card');
    card.type='button';card.setAttribute('aria-label','Открыть архив для '+example.format);
@@ -168,6 +169,7 @@ function paint(state){
    state.recentGrid.append(card);
   }
  }
+ state.recentGrid.scrollLeft=recentScroll;
  // Keep a stable «Все файлы» destination even with just one document.
  // It opens the protected archive when there are no more tiles to expand.
  state.showAll.hidden=false;
@@ -220,7 +222,8 @@ function mount(parent,options={}){
  active=state;
  const recent=el('section','sv-doc-shelf sv-doc-recents');
  const header=el('div','sv-doc-shelf-heading');
- header.append(el('h2','','Недавние'));
+ const recentTitle=el('h2','','Недавние');
+ header.append(recentTitle);
  const showAll=el('button','sv-doc-shelf-more','Все файлы ›');
  showAll.type='button';
  showAll.addEventListener('click',()=>{
@@ -232,6 +235,9 @@ function mount(parent,options={}){
  });
  header.append(showAll);
  const recentGrid=el('div','sv-doc-recent-grid');
+ recentGrid.setAttribute('role','region');
+ recentGrid.setAttribute('aria-label','Карточки форматов и документы, листайте горизонтально');
+ recentGrid.tabIndex=0;
  const status=el('p','sv-doc-recent-status');status.setAttribute('role','status');
  recent.append(header,recentGrid,status);
  const folders=el('section','sv-doc-shelf sv-doc-folders');
@@ -245,7 +251,7 @@ function mount(parent,options={}){
  foldersGrid.tabIndex=0;
  folders.append(folderHeader,foldersGrid);
  parent.append(recent,folders);
- Object.assign(state,{showAll,recentGrid,status,foldersGrid,folderCaption});
+ Object.assign(state,{recentTitle,showAll,recentGrid,status,foldersGrid,folderCaption});
  refresh();
  return true;
 }
