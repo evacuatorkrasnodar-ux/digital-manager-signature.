@@ -786,6 +786,10 @@ function openPersonal(kind){
  return false;
 }
 back.addEventListener('click',()=>{
+ // One visible Back: inside Business Documents, leave approvals first.
+ // Employees cannot enter the owner vault, so their Back exits normally.
+ if(currentKind()==='contract'&&
+    window.SEYVEO_DOCUMENT_CENTER?.backFromNested?.())return;
  if(currentKind()==='mail'){
   if(typeof mailEditorExitHandler==='function'){mailEditorExitHandler();return}
   if(mailCurrent){mailCurrent=null;sync();return}
