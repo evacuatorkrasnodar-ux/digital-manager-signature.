@@ -250,3 +250,109 @@
   width:190px!important;min-width:0!important;
  }
 }
+
+/* SEYVEO Notebook formatting menu v3 · same restrained action-sheet language as attachments.
+   Does not touch the four-button dock, icons, colors or their geometry. */
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu[hidden]{
+ display:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu:not([hidden]){
+ box-sizing:border-box!important;
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:stretch!important;
+ justify-content:flex-start!important;
+ position:absolute!important;
+ left:24px!important;
+ right:auto!important;
+ bottom:calc(100% + 11px)!important;
+ width:202px!important;
+ min-width:202px!important;
+ max-width:calc(100vw - 48px)!important;
+ height:auto!important;
+ min-height:0!important;
+ margin:0!important;
+ padding:7px!important;
+ gap:1px!important;
+ border:1px solid rgba(214,233,242,.10)!important;
+ border-radius:19px!important;
+ background:var(--sv-liquid-nav-material)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
+ backdrop-filter:var(--sv-liquid-nav-blur)!important;
+ box-shadow:0 10px 27px rgba(0,0,0,.14),inset 0 1px 0 rgba(244,253,255,.06)!important;
+ z-index:50!important;
+ overflow:hidden!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button{
+ box-sizing:border-box!important;
+ -webkit-appearance:none!important;
+ appearance:none!important;
+ display:flex!important;
+ flex-direction:row!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ flex:0 0 40px!important;
+ place-items:initial!important;
+ width:100%!important;
+ max-width:none!important;
+ min-width:0!important;
+ height:40px!important;
+ min-height:40px!important;
+ max-height:40px!important;
+ margin:0!important;
+ padding:0 11px!important;
+ gap:12px!important;
+ border:0!important;
+ border-radius:11px!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ color:rgba(237,245,248,.91)!important;
+ text-align:left!important;
+ font:500 13px/1.1 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+ letter-spacing:0!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button::before{
+ box-sizing:border-box!important;
+ display:grid!important;
+ place-items:center!important;
+ flex:0 0 19px!important;
+ width:19px!important;
+ height:19px!important;
+ font:500 16px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+ color:rgba(212,230,237,.77)!important;
+ text-align:center!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button[data-note-format="heading"]::before{content:"A"!important;font-size:19px!important;font-weight:650!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button[data-note-format="bold"]::before{content:"B"!important;font-weight:750!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button[data-note-format="italic"]::before{content:"I"!important;font-family:Georgia,serif!important;font-style:italic!important;font-weight:700!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button[data-note-format="underline"]::before{content:"U"!important;text-decoration:underline!important;text-underline-offset:3px!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button:is(:active,:focus-visible){
+ background:rgba(212,230,239,.13)!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button:focus-visible{
+ outline:1px solid rgba(226,241,246,.28)!important;
+ outline-offset:-1px!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button :is(b,i,u){
+ font:inherit!important;
+ color:inherit!important;
+ text-decoration:none!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu:not([hidden]){
+ border-color:rgba(40,63,79,.13)!important;
+ box-shadow:0 10px 28px rgba(43,66,77,.12),inset 0 1px 0 rgba(255,255,255,.38)!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button{
+ color:rgba(38,55,65,.91)!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button::before{
+ color:rgba(47,73,84,.79)!important;
+}
+@media(max-width:355px){
+ #noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu:not([hidden]){
+  left:12px!important;width:190px!important;min-width:0!important;
+ }
+}
