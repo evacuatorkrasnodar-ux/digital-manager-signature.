@@ -1,0 +1,172 @@
+/* SEYVEO Documents · native recents and smart folders.
+   No fabricated examples; protected names appear only when vault is unlocked.
+   Scoped strictly to the Documents surface, not the global navigation/dock. */
+#sayviSurfacePage .sv-doc-shelf-slot{display:grid;gap:18px;min-width:0;margin:7px 0 14px;}
+#sayviSurfacePage .sv-doc-shelf{min-width:0;}
+#sayviSurfacePage .sv-doc-shelf-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ min-height:30px;margin:0 2px 8px;
+}
+#sayviSurfacePage .sv-doc-shelf-heading h2{
+ margin:0;color:var(--text);font-size:15px;font-weight:640;
+ line-height:1.25;letter-spacing:-.03em;
+}
+#sayviSurfacePage .sv-doc-shelf-more{
+ display:inline-flex;align-items:center;justify-content:flex-end;
+ min-height:36px;padding:4px 2px 4px 9px;
+ border:0;border-radius:10px;background:transparent;box-shadow:none;
+ color:var(--secondary);font:inherit;font-size:11.5px;font-weight:500;
+ white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#sayviSurfacePage .sv-doc-shelf-more[hidden]{display:none!important;}
+#sayviSurfacePage .sv-doc-folder-caption{
+ max-width:65%;color:var(--secondary);font-size:10.5px;line-height:1.3;
+ font-weight:440;text-align:right;
+}
+#sayviSurfacePage .sv-doc-recent-grid,#sayviSurfacePage .sv-doc-folders-grid{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:clamp(5px,1.8vw,11px);min-width:0;
+}
+#sayviSurfacePage .sv-doc-recent-card,#sayviSurfacePage .sv-doc-folder-card{
+ -webkit-appearance:none;appearance:none;box-sizing:border-box;
+ display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+ min-width:0;width:100%;padding:11px 4px 10px;gap:4px;
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:19px;color:var(--text);font:inherit;text-align:center;
+ background:linear-gradient(156deg,
+  color-mix(in srgb,var(--text) 7%,transparent) 0%,
+  var(--sv-doc-wash,var(--card)) 52%,
+  color-mix(in srgb,var(--text) 2%,transparent) 100%);
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 9%,transparent);
+ -webkit-backdrop-filter:var(--sv-doc-frost,blur(18px) saturate(1.1));
+ backdrop-filter:var(--sv-doc-frost,blur(18px) saturate(1.1));
+ cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#sayviSurfacePage .sv-doc-recent-card{
+ min-height:141px;gap:6px;padding:11px 3px 9px;
+}
+#sayviSurfacePage .sv-doc-recent-card:disabled{opacity:.65;cursor:progress;}
+#sayviSurfacePage .sv-doc-recent-name{
+ box-sizing:border-box;display:block;max-width:100%;padding:0 2px;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:10.5px;line-height:1.35;font-weight:580;
+}
+#sayviSurfacePage .sv-doc-recent-date{
+ display:block;max-width:100%;font-size:9.5px;color:var(--secondary);
+ line-height:1.28;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#sayviSurfacePage .sv-doc-file-art{
+ --file-tone:#8796a5;
+ display:grid;place-items:center;position:relative;isolation:isolate;
+ width:57px;height:73px;flex:none;
+}
+#sayviSurfacePage .sv-doc-file-art svg{
+ display:block;position:absolute;inset:0;width:100%;height:100%;
+ overflow:visible;filter:drop-shadow(0 3px 5px rgba(0,0,0,.11));
+}
+#sayviSurfacePage .sv-doc-paper{
+ fill:color-mix(in srgb,var(--text) 86%,var(--card) 14%);
+ stroke:color-mix(in srgb,var(--text) 24%,transparent);stroke-width:1.5;
+}
+#sayviSurfacePage .sv-doc-fold{
+ fill:none;stroke:color-mix(in srgb,var(--card) 42%,transparent);
+ stroke-width:2;stroke-linejoin:round;
+}
+#sayviSurfacePage .sv-doc-lines{
+ fill:none;stroke:color-mix(in srgb,var(--card) 52%,transparent);
+ stroke-width:1.8;stroke-linecap:round;
+}
+#sayviSurfacePage .sv-doc-file-art-pdf{--file-tone:#d5585d;}
+#sayviSurfacePage .sv-doc-file-art-word{--file-tone:#4e91dd;}
+#sayviSurfacePage .sv-doc-file-art-images{--file-tone:#4caf99;}
+#sayviSurfacePage .sv-doc-file-art-sheets{--file-tone:#3eac76;}
+#sayviSurfacePage .sv-doc-file-art-other{--file-tone:#88909e;}
+#sayviSurfacePage .sv-doc-format-label{
+ box-sizing:border-box;position:absolute;z-index:1;bottom:14px;left:1px;
+ width:55px;padding:3px 2px 4px;border-radius:5px;
+ background:var(--file-tone);color:#fff;
+ font-size:10px;font-weight:750;line-height:1.1;
+ letter-spacing:-.025em;box-shadow:0 2px 5px rgba(0,0,0,.10);
+}
+#sayviSurfacePage .sv-doc-file-art-empty .sv-doc-format-label{display:none;}
+#sayviSurfacePage .sv-doc-recents-empty{
+ grid-column:1 / -1;box-sizing:border-box;display:flex;align-items:center;
+ gap:11px;min-height:95px;padding:12px;
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:19px;background:var(--sv-doc-wash,var(--card));
+ -webkit-backdrop-filter:var(--sv-doc-frost);
+ backdrop-filter:var(--sv-doc-frost);
+}
+#sayviSurfacePage .sv-doc-recents-empty .sv-doc-file-art{
+ width:42px;height:58px;flex:0 0 42px;
+}
+#sayviSurfacePage .sv-doc-recents-empty .sv-doc-file-art svg{
+ width:100%;height:100%;
+}
+#sayviSurfacePage .sv-doc-recents-empty-copy{
+ display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 auto;
+ text-align:left;
+}
+#sayviSurfacePage .sv-doc-recents-empty-copy strong{
+ font-size:12px;font-weight:590;line-height:1.3;color:var(--text);
+}
+#sayviSurfacePage .sv-doc-recents-empty-copy small{
+ font-size:10.5px;font-weight:430;line-height:1.4;color:var(--secondary);
+}
+#sayviSurfacePage .sv-doc-shelf-add{
+ -webkit-appearance:none;appearance:none;min-width:60px;min-height:35px;
+ padding:5px 9px;border:1px solid var(--sv-doc-line);
+ border-radius:999px;background:var(--sv-doc-picked);color:var(--text);
+ font:inherit;font-size:10.5px;font-weight:570;cursor:pointer;
+}
+#sayviSurfacePage .sv-doc-folder-card{
+ min-height:105px;gap:3px;padding:10px 2px 8px;
+}
+#sayviSurfacePage .sv-doc-folder-art{
+ display:grid;place-items:center;width:59px;height:56px;flex:none;
+}
+#sayviSurfacePage .sv-doc-folder-art svg{
+ display:block;width:100%;height:100%;overflow:visible;
+ filter:drop-shadow(0 5px 7px rgba(12,50,75,.15));
+}
+#sayviSurfacePage .sv-doc-folder-back{fill:#398fd2;stroke:#67bae9;stroke-width:1.25;}
+#sayviSurfacePage .sv-doc-folder-front{fill:#69b4ea;stroke:#92cef4;stroke-width:1.25;}
+#sayviSurfacePage .sv-doc-folder-card strong{
+ max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:10.5px;line-height:1.25;font-weight:580;
+}
+#sayviSurfacePage .sv-doc-folder-card small{
+ color:var(--secondary);font-size:9.5px;line-height:1.3;
+}
+#sayviSurfacePage .sv-doc-folder-card[aria-pressed="true"]{
+ border-color:var(--sv-doc-selected-line,var(--text));
+ background:var(--sv-doc-picked,var(--card2));
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 16%,transparent);
+}
+#sayviSurfacePage .sv-doc-recent-status{
+ margin:4px 2px 0;color:var(--secondary);font-size:11px;line-height:1.4;
+}
+#sayviSurfacePage .sv-doc-recent-status:empty{display:none;}
+#sayviSurfacePage .sv-doc-shelf button:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+#sayviSurfacePage .sv-doc-recent-card:active,
+#sayviSurfacePage .sv-doc-folder-card:active{
+ opacity:.78;
+}
+@media(max-width:375px){
+ #sayviSurfacePage .sv-doc-file-art{width:49px;height:68px;}
+ #sayviSurfacePage .sv-doc-format-label{left:1px;bottom:12px;width:47px;font-size:9px;}
+ #sayviSurfacePage .sv-doc-folder-art{width:50px;height:51px;}
+ #sayviSurfacePage .sv-doc-recent-card{min-height:137px;padding-inline:2px;}
+ #sayviSurfacePage .sv-doc-recent-name{font-size:10px;}
+ #sayviSurfacePage .sv-doc-folder-card{min-height:100px;}
+}
+@media(max-width:335px){
+ #sayviSurfacePage .sv-doc-recent-grid,#sayviSurfacePage .sv-doc-folders-grid{gap:4px;}
+ #sayviSurfacePage .sv-doc-recent-name,#sayviSurfacePage .sv-doc-folder-card strong{font-size:9px;}
+ #sayviSurfacePage .sv-doc-shelf-add{min-width:54px;padding-inline:6px;}
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviSurfacePage .sv-doc-recent-card,#sayviSurfacePage .sv-doc-folder-card{transition:none;}
+}
