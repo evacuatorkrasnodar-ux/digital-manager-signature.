@@ -15,6 +15,41 @@ const button=(label,action,className='')=>{
  const n=$('button','sv-doc-tool-button '+className,label);
  n.type='button';n.addEventListener('click',action);return n;
 };
+/* SEYVEO-owned line pictograms: tiny visual instructions, no icon library
+ * download, no emoji substitution, no Apple proprietary assets. */
+const PICTOGRAMS=Object.freeze({
+ scan:'<path d="M11 21V10a5 5 0 0 1 5-5h22l10 10v30a5 5 0 0 1-5 5H25"/><path d="M38 5v12h10M23 29h18M23 36h12"/><path d="M7 16V7h9M48 52h9v-9M7 43v9h9M57 16V7h-9"/><path d="m21 46 4 4 9-11" class="sv-doc-art-accent"/>',
+ file:'<path d="M14 16h23l11 11v22a5 5 0 0 1-5 5H14a5 5 0 0 1-5-5V21a5 5 0 0 1 5-5Z"/><path d="M37 16v12h11"/><path d="M29 34v15M22 41.5h14" class="sv-doc-art-accent"/>',
+ create:'<path d="M17 9h21l10 10v29a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V14a5 5 0 0 1 5-5Z"/><path d="M38 9v11h10M21 29h18M21 36h11"/><path d="m30 50 15-15 4 4-15 15-8 2Z" class="sv-doc-art-accent"/>',
+ sign:'<path d="M12 12h35a5 5 0 0 1 5 5v28a5 5 0 0 1-5 5H12a5 5 0 0 1-5-5V17a5 5 0 0 1 5-5Z"/><path d="M16 22h20M16 29h12M16 42c7-13 8 6 14-2 5-9 2 8 11-3" class="sv-doc-art-accent"/>',
+ print:'<path d="M18 23V9h28v14M18 47H9a5 5 0 0 1-5-5V28a5 5 0 0 1 5-5h46a5 5 0 0 1 5 5v14a5 5 0 0 1-5 5h-9"/><path d="M15 37h34v20H15zM22 44h20M22 50h14"/><circle cx="51" cy="31" r="2" class="sv-doc-art-accent"/>',
+ camera:'<path d="M9 19h12l5-6h13l5 6h11v31H9z"/><circle cx="32" cy="34" r="10"/><path d="m47 23 4 0" class="sv-doc-art-accent"/>',
+ pages:'<path d="M16 10h27l9 9v31H16zM43 10v10h9M9 18v36h33"/><path d="M24 29h18M24 37h14" class="sv-doc-art-accent"/>',
+ pdf:'<path d="M16 8h28l11 11v39H16zM44 8v12h11M23 30h24M23 38h18"/><path d="m23 49 7 5 13-12" class="sv-doc-art-accent"/>',
+ finger:'<path d="M17 43c3-4 5-7 8-6V18a4 4 0 0 1 8 0v15a4 4 0 0 1 8-1l1 3c5-2 9 4 7 10l-5 13H25Z"/><path d="M16 29c0-11 5-17 13-17" class="sv-doc-art-accent"/>',
+ folder:'<path d="M8 17h19l6 7h23v27H8z"/><path d="M8 29h48M24 38h17" class="sv-doc-art-accent"/>',
+ export:'<path d="M16 24v29h34V24M33 7v31M23 17l10-10 10 10" class="sv-doc-art-accent"/>',
+ check:'<path d="M14 32l12 12 24-25" class="sv-doc-art-accent"/><circle cx="32" cy="32" r="25"/>'
+});
+function art(kind,small=false){
+ const node=$('span','sv-doc-art'+(small?' sv-doc-art-small':''));
+ node.setAttribute('aria-hidden','true');
+ const paths=PICTOGRAMS[kind]||PICTOGRAMS.file;
+ node.innerHTML='<svg viewBox="0 0 64 64" focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+
+  '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.7">'+paths+'</g></svg>';
+ return node;
+}
+function pictorialSteps(steps){
+ const group=$('div','sv-doc-tool-steps');
+ group.setAttribute('aria-label','Как это работает');
+ steps.forEach(([kind,title],index)=>{
+  if(index)group.append($('span','sv-doc-tool-step-arrow','›'));
+  const step=$('div','sv-doc-tool-step');
+  step.append(art(kind,true),$('small','',title));
+  group.append(step);
+ });
+ return group;
+}
 let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false;
 function cleanUrls(){
  for(const url of temporaryUrls)URL.revokeObjectURL(url);
@@ -131,8 +166,8 @@ function mount(target,{
  if(!target)return false;
  const editor=$('section','sv-doc-tools');
  const wide=button('Сканировать',()=>open('scan'),'sv-doc-tool-scan');
- wide.append($('span','sv-doc-tool-scan-desc','Фото и страницы → PDF'));
- wide.setAttribute('aria-label','Сканировать документ: фото и страницы в PDF');
+ wide.append($('span','sv-doc-tool-scan-desc','Лист → готовый PDF'),art('scan'));
+ wide.setAttribute('aria-label','Сканировать документ: сфотографировать страницы и сохранить PDF');
  const grid=$('div','sv-doc-tool-grid');
  const items=[
   ['Добавить файл','file',()=>onPick()],
@@ -142,7 +177,7 @@ function mount(target,{
  ];
  for(const [label,key,action] of items){
   const el=button(label,action,'sv-doc-tool-'+key);
-  el.dataset.action=key;grid.append(el);
+  el.dataset.action=key;el.append(art(key));grid.append(el);
  }
  const panel=$('section','sv-doc-tool-panel');panel.hidden=true;
  panel.setAttribute('aria-label','Инструменты документов');
@@ -242,9 +277,8 @@ function mount(target,{
  }
  function renderScan(){
   clear();
-  panel.append(heading('Умный сканер · пробная версия',
-    'Захват фото работает. Автоуглы и OCR добавим после нативных тестов.'));
-  panel.append(warn('Фото обрабатывается локально, без отправки в интернет. Снимки хранятся только до ухода со страницы.'));
+  panel.append(heading('Сканер','Фото → PDF'));
+  panel.append(pictorialSteps([['camera','Снять'],['pages','Собрать'],['pdf','PDF']]));
   const camera=$('input');camera.type='file';camera.accept='image/*';
   camera.setAttribute('capture','environment');camera.hidden=true;
   const library=$('input');library.type='file';library.accept='image/jpeg,image/png,image/webp';
@@ -300,11 +334,14 @@ function mount(target,{
     }),
     button('Очистить страницы',()=>{scans=[];renderScan();})
    ));
-  }else counter.append($('small','','Добавьте первую страницу камерой или из галереи.'));
-  panel.append(counter,status(''));
+  }else counter.append($('small','','Сфотографируйте лист или выберите фото.'));
+  const info=$('details','sv-doc-tool-help');
+  info.append($('summary','','О сканировании'),warn('Фото остаются на устройстве. Автоматическая обрезка и распознавание текста ещё не подключены.'));
+  panel.append(counter,info,status(''));
  }
  function renderCreate(){
-  panel.append(heading('Создать документ','Текст → настоящий PDF или редактируемый Word.'));
+  panel.append(heading('Создать','Текст → PDF или Word'));
+  panel.append(pictorialSteps([['create','Написать'],['pages','Оформить'],['pdf','Сохранить']]));
   const examples=$('div','sv-doc-tool-templates');
   const body=$('textarea','sv-doc-tool-text');body.rows=7;body.maxLength=12000;
   body.value=documentDraft;
@@ -345,10 +382,13 @@ function mount(target,{
    }),
    button('Создать с Сэйви',()=>onSayvi('create'))
   ));
-  panel.append(warn('Это локальный редактор простого текста, не юридическая проверка. Образцы не являются готовыми договорами.'),status(''));
+  const info=$('details','sv-doc-tool-help');
+  info.append($('summary','','О шаблонах'),warn('Это простой редактор. Шаблоны учебные, текст требует проверки.'));
+  panel.append(info,status(''));
  }
  function renderSign(){
-  panel.append(heading('Подпись пальцем','Рукописная отметка, не КЭП и не юридическое подписание.'));
+  panel.append(heading('Подпись','Нарисуйте пальцем'));
+  panel.append(pictorialSteps([['finger','Нарисовать'],['sign','На страницу'],['pdf','Сохранить']]));
   const paper=$('div','sv-doc-tool-sign-paper');
   const canvas=$('canvas');canvas.width=650;canvas.height=240;
   canvas.setAttribute('aria-label','Поле подписи пальцем или стилусом');
@@ -418,12 +458,14 @@ function mount(target,{
     message('Подготовлена копия PDF с подписью на странице '+(pageIndex+1)+'. Это не КЭП.');
    }catch{message('Не удалось собрать копию с подписью.');}
   });
-  panel.append(controls(pngButton,clearButton,onScan),
-   warn('Подпись на экране не равна электронной подписи. Для готовых PDF потребуется отдельный редактор; официальная КЭП подключается через «Умные подключения».'),
-   status(scans.length?'Выберите страницу скана, чтобы добавить подпись.':'Для вставки в PDF сначала отсканируйте страницу.'));
+  const info=$('details','sv-doc-tool-help');
+  info.append($('summary','','О подписи'),warn('Рисунок подписи не является КЭП. Для официального подписания потребуется подключение через «Умные подключения».'));
+  panel.append(controls(pngButton,clearButton,onScan),info,
+   status(scans.length?'Выберите страницу скана для подписи.':'Для вставки подписи сначала сделайте скан.'));
  }
  function renderPrint(){
-  panel.append(heading('Печать','Открытие файла в системном просмотрщике; принтер выбирает ОС.'));
+  panel.append(heading('Печать','Файл → принтер'));
+  panel.append(pictorialSteps([['file','Выбрать'],['print','Печать'],['check','Готово']]));
   const filePicker=$('input');filePicker.type='file';
   filePicker.accept='.pdf,.jpg,.jpeg,.png,.webp';
   filePicker.hidden=true;
@@ -463,8 +505,9 @@ function mount(target,{
   });
   panel.append(filePicker,controls(button('Выбрать файл',()=>filePicker.click())),slot);
   update();
-  panel.append(warn('После открытия файла выберите системное «Поделиться → Печать». SEYVEO не утверждает, что принтер найден или печать завершена.'),
-   status(''));
+  const info=$('details','sv-doc-tool-help');
+  info.append($('summary','','Как печатать'),warn('Откройте файл и выберите системное «Поделиться → Печать». Принтер и параметры выбираются в системе.'));
+  panel.append(info,status(''));
  }
  return true;
 }
