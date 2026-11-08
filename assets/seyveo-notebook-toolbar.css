@@ -207,3 +207,41 @@
 #notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size::after{
  transition:none!important;
 }
+
+/* SEYVEO signature icons v6 · one optical grid, stroke and ink. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
+ --sv-ink-icons:#dde5ec;
+ --sv-ink-icons-active:#f5f8fb;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi){
+ color:var(--sv-ink-icons)!important;
+ font-size:0!important;line-height:0!important;
+ padding:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi)
+>svg{
+ display:block!important;flex:none!important;
+ box-sizing:content-box!important;
+ width:20px!important;height:20px!important;
+ min-width:20px!important;min-height:20px!important;
+ max-width:20px!important;max-height:20px!important;
+ padding:0!important;margin:0!important;
+ color:inherit!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;filter:none!important;transform:none!important;
+ pointer-events:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi)
+>svg circle[fill="currentColor"]{
+ fill:currentColor!important;stroke:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"])[aria-pressed="true"],
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is(#notePaperSettings,#notePaperPatternTrigger)[aria-expanded="true"]{
+ color:var(--sv-ink-icons-active)!important;
+}
