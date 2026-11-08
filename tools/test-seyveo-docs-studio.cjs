@@ -257,7 +257,7 @@ test('scanner can rotate and reorder real multi-page photos, and sign chosen pag
  assert.equal(pdfs.length,1);
  const pdf=Buffer.from(await pdfs[0].blob.arrayBuffer()).toString('latin1');
  assert.match(pdf,/\/Count 2\b/);
- assert.ok(find(f.root,n=>n.textContent.includes('странице 1')).length);
+ assert.ok(find(f.root,n=>n.textContent.includes('страница 1')).length);
 });
 test('system Save to Files / Share is triggered directly on tap with PDF File',async()=>{
  const sent=[];
