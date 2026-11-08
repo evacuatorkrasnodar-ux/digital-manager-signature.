@@ -1115,6 +1115,34 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  #noteReviewDialog.note-review-dialog[open] .sv-note-document-capsule{height:58px!important;min-height:58px!important;flex-basis:58px!important;margin-bottom:4px!important}
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom{gap:4px!important}
 }
+/* SEYVEO notebook vNext: single upper printer, oval branded back control. */
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools{
+ grid-template-columns:repeat(6,minmax(0,1fr))!important;
+}
+#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-pill{
+ box-sizing:border-box!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:7px!important;
+ width:104px!important;min-width:104px!important;max-width:104px!important;
+ height:43px!important;min-height:43px!important;max-height:43px!important;
+ padding:0 13px!important;
+ border-radius:999px!important;
+ border:1px solid rgba(229,242,249,.17)!important;
+ background:linear-gradient(145deg,rgba(212,233,243,.17),rgba(163,198,215,.11))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(125%)!important;
+ backdrop-filter:blur(22px) saturate(125%)!important;
+ color:#eef5f8!important;font:500 14px/1 -apple-system,BlinkMacSystemFont,sans-serif!important;
+}
+#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-pill svg{
+ display:block!important;flex:none!important;
+ width:19px!important;height:19px!important;
+ stroke:currentColor!important;stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+ fill:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-pill span{
+ display:inline!important;font:inherit!important;white-space:nowrap!important;
+}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=3" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-company-avatar" aria-hidden="true"><img src="assets/company-building-avatar.svg?v=1" alt="" width="44" height="44" draggable="false"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="contacts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Контакты</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="smart-home" aria-label="Открыть Умный дом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg><span>Умный дом</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="documents" aria-label="Открыть Личные документы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/></svg><span>Личные документы</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="mail" aria-label="Открыть Почту SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.6"/><path d="m4 7 8 6 8-6"/></svg><span>Почта</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="browser" aria-label="Открыть Браузер SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 4-5 14 0 18M12 3c5 4 5 14 0 18"/></svg><span>Браузер</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="play" hidden style="display:none!important" aria-label="Открыть YouTube"><svg class="seyveo-youtube-white" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="stroke:none;fill:none;opacity:1;display:block;width:26px;height:23px;flex:none;"><path fill="#fff" fill-rule="evenodd" clip-rule="evenodd" stroke="none" d="M5.7 5H18.3C20.9 5 22.5 6.6 22.5 9.1V14.9C22.5 17.4 20.9 19 18.3 19H5.7C3.1 19 1.5 17.4 1.5 14.9V9.1C1.5 6.6 3.1 5 5.7 5ZM9.85 8.45V15.55L16.5 12Z"/></svg><span>YouTube</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
@@ -2750,7 +2778,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <p>Фразы до обращения по имени наше приложение не сохраняет. Микрофон включится после вашего согласия, и его можно выключить в любой момент.</p>
 <div class="info-actions"><button id="wakeVoiceCancel" type="button" class="btn">Отмена</button><button id="wakeVoiceConfirm" type="button" class="btn primary">Включить</button></div>
 </dialog><dialog id="notesDialog" class="notes-dialog" aria-labelledby="notesTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" aria-label="Вернуться из блокнота"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><div class="notes-head"><h2 id="notesTitle">Блокнот</h2><p id="notesCount" class="notes-count" aria-live="polite"></p><button id="notesNew" type="button" class="notes-new" aria-label="Создать новую заметку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Новая заметка</span></button></div><div id="notesList" class="notes-list"></div><p id="notesStatus" role="status" aria-live="polite" hidden></p></dialog><dialog id="noteReviewDialog" class="notes-dialog note-review-dialog" aria-labelledby="noteReviewTitle">
-<button id="noteReviewBack" type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Отменить запись"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
+<button id="noteReviewBack" type="button" class="seyveo-close-control seyveo-dialog-close sv-note-back-pill" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Назад</span></button>
 <div class="sv-note-header">
  <div class="sv-note-nav-brand"><strong>Блокнот</strong><small>SEYVEO</small></div>
  <div class="sv-note-nav-actions">
@@ -2784,7 +2812,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <button type="button" data-note-tool="checklist" title="Добавить пункт списка" aria-label="Список"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.2" cy="6.2" r="2.7"/><path d="m3.9 6.1 1 1 1.6-1.8M11 6.2h10"/><circle cx="5.2" cy="17.8" r="2.7"/><path d="m3.9 17.7 1 1 1.6-1.8M11 17.8h10"/></svg></button>
 <button type="button" data-note-tool="photo" title="Добавить фотографию" aria-label="Фото"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.6" y="3.3" width="18.8" height="17.4" rx="2.6"/><circle cx="8.3" cy="8.7" r="1.5"/><path d="m3.8 17 5.4-5.2 3.4 3 3.4-4 4.7 5.3"/></svg></button>
 <button type="button" data-note-tool="camera" title="Сделать фото" aria-label="Камера"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h4l1.6-2.7h6.8L17 7h4v12H3z"/><circle cx="12" cy="12.8" r="3.6"/></svg></button>
-<button type="button" data-note-tool="print" title="Печать" aria-label="Печать"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8V3h12v5M6 17H4V9h16v8h-2M6 14h12v7H6zM17 11.7h.01"/></svg></button>
+
 
 <button type="button" data-note-tool="voice" title="Голосовой ввод" aria-label="Микрофон"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5.2 11.2a6.8 6.8 0 0 0 13.6 0M12 18v4M8 22h8"/></svg></button>
 <button type="button" data-note-tool="draw" title="Рисование" aria-label="Рисование"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19c2-2 3-11 5-11s-1 10 2 10 3-10 5-10-2 11 2 11 2-4 4-4M18 5l2 2"/></svg></button>
