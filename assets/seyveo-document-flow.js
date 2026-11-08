@@ -246,7 +246,8 @@ function renderRecord(node,x){
  const card=$('article','svdf-record');
  if(x.id===selected)card.classList.add('is-current');
  const header=$('div','svdf-record-heading');
- header.append($('span','svdf-record-icon','▤'));
+ const symbol=$('span','svdf-record-icon');
+ symbol.append(pictogram(x.kind));header.append(symbol);
  const body=$('div','svdf-record-name');
  body.append($('strong','',TYPES[x.kind].title),$('small','',TYPES[x.kind].type+' · Елена · редакция №'+latestRevision(x).number));
  header.append(body);card.append(header);
@@ -257,8 +258,13 @@ function renderRecord(node,x){
  card.append(controls);
  if(x.id===selected){
   const detail=$('div','svdf-detail');
-  detail.append($('p','svdf-document-body',latestRevision(x).body));
-  detail.append($('p','svdf-disclaimer','Учебный текст. Редакции сохраняются только в этом браузере, без шифрования и подписи.'));
+  const paper=$('div','svdf-paper');
+  paper.append($('span','svdf-paper-brand','SEYVEO · УЧЕБНЫЙ ОБРАЗЕЦ'),
+   $('strong','svdf-paper-title',TYPES[x.kind].title),
+   $('p','svdf-document-body',latestRevision(x).body),
+   $('small','svdf-paper-version','Редакция №'+latestRevision(x).number));
+  detail.append(paper);
+  detail.append($('p','svdf-disclaimer','Демо · без шифрования и подписи.'));
   const actions=$('div','svdf-actions');
   if(role==='employee'){
    if(x.state==='sent'){
@@ -344,14 +350,15 @@ function draw(){
  const lead=$('div','svdf-lead');
  lead.append($('span','svdf-kicker','SEYVEO BUSINESS · ДОКУМЕНТЫ'),
   $('h2','','Согласования'),
-  $('p','','Создавайте запросы и отслеживайте решения в одном месте.'));
+  $('p','','Документ → решение → результат'));
  host.append(lead);
  const safety=$('details','svdf-safety');
  safety.append($('summary','','Демо · не загружайте настоящие документы'));
- safety.append($('p','','Данные согласований хранятся в браузере без шифрования. Реальных учётных записей, доставки между сотрудниками и электронной подписи здесь нет. Используйте только вымышленные примеры.'));
+ safety.append($('p','','Учебные записи хранятся в браузере без шифрования, без серверной отправки, проверки ролей и электронной подписи. Используйте только вымышленные документы.'));
  host.append(safety);
  host.append($('p','svdf-role-inline',
   (role==='employee'?'Елена · сотрудник':'Руководитель')+' · роль из кабинета'));
+ host.append(journey(get(selected)));
  if(role==='manager'){
   const form=$('section','svdf-create svdf-create-simple');
   form.append($('strong','','Новый запрос'));
@@ -379,7 +386,7 @@ function draw(){
    $('small','','Получатель: Елена · данные остаются в этом браузере'),
    submit);
   host.append(form);
- }else host.append($('p','svdf-hint svdf-staff-instruction','Открой документ и выбери: согласовать или вернуть с замечанием.'));
+ }else host.append($('p','svdf-hint svdf-staff-instruction','Выберите входящий документ для решения.'));
  const active=records.filter(isActive).length,completed=records.length-active;
  // Filter counters are the ONE queue scorecard. No duplicate thin bar.
  const title=$('div','svdf-list-header');
@@ -397,7 +404,7 @@ function draw(){
  const visible=records.filter(x=>listFilter==='all'||(listFilter==='active'?isActive(x):!isActive(x)));
  for(const x of visible.slice().reverse())renderRecord(list,x);
  if(!visible.length)list.append($('div','svdf-empty',
-  records.length?'В этой категории пока нет документов.':'Пока нет запросов. Руководитель может создать учебный документ, а Елена — подтвердить ознакомление.'));
+  records.length?'Здесь пока пусто.':role==='employee'?'Входящих пока нет.':'Создайте первый учебный запрос.'));
  host.append(list);
  const live=$('p','svdf-feedback',info);live.setAttribute('role','status');host.append(live);
  const more=$('details','svdf-optional');
@@ -410,7 +417,7 @@ function draw(){
  },'svdf-chat-link');
  more.append(chat);
  host.append(more);
- host.append($('p','svdf-footnote','Это учебный маршрут только в вашем браузере: без серверной отправки, проверки ролей и юридически значимой подписи. Реальная работа с документами потребует защищённого сервера и официальных подключений.'));
+ // The safety disclosure above is the single owner of demo/privacy warnings.
 }
 function mount(parent){
  if(!parent)return false;
