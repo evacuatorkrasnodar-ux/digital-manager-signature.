@@ -443,3 +443,64 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
   letter-spacing:-.025em!important;
  }
 }
+
+/* SEYVEO Notebook · same in-page scene as Cabinet, NOT a fullscreen modal.
+   Move the one original Notebook dialog into the shared work shell in
+   nonmodal mode. Every editor and the local note store stay authoritative. */
+#svWorkShell > #svWorkNotebook{
+ order:2;box-sizing:border-box;
+ width:100%;min-width:0;max-width:100%;
+ margin:0;padding:3px 1px calc(112px + env(safe-area-inset-bottom,0px));
+ color:var(--text);
+}
+#svWorkShell > #svWorkNotebook[hidden]{display:none!important}
+/* Hide the prior Tasks contents ONLY while Notebook is the active section.
+   The persistent work header and capsule remain visible and stationary. */
+#svWorkShell[data-active="notes"] #tasksPage > *{
+ display:none!important;
+}
+#svWorkShell #svWorkNotebook #notesDialog[open]{
+ display:block!important;box-sizing:border-box!important;
+ position:relative!important;inset:auto!important;
+ top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;transform:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ overflow:visible!important;color:var(--text)!important;
+}
+#svWorkShell #svWorkNotebook #notesDialog::backdrop{
+ display:none!important;background:transparent!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svWorkShell #svWorkNotebook #notesDialog > .seyveo-dialog-close,
+#svWorkShell #svWorkNotebook #notesDialog .notes-head > #notesNew,
+#svWorkShell #svWorkNotebook #notesDialog .notes-head > h2{
+ display:none!important;
+}
+#svWorkShell #svWorkNotebook #notesDialog .notes-head{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ min-height:29px!important;
+ padding:2px 5px 9px!important;margin:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+#svWorkShell #svWorkNotebook #notesDialog #notesCount{
+ font-size:11.5px!important;line-height:1.4!important;
+ font-weight:450!important;color:var(--secondary)!important;
+}
+#svWorkShell #svWorkNotebook #notesDialog #notesList{
+ box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;
+ max-height:none!important;overflow:visible!important;
+ margin:0!important;padding:0!important;
+}
+#svWorkShell #svWorkNotebook #notesDialog #notesStatus{
+ margin:9px 5px 0!important;
+}
+@media(max-width:375px){
+ #svWorkShell > #svWorkNotebook{padding-inline:0!important}
+}
