@@ -371,7 +371,9 @@ function draw(){
  const safety=el('details','sv-doc-safety');
  safety.append(el('summary','','Безопасность и хранение'),
   note('Архив зашифрован на устройстве. Облачного восстановления нет: при очистке браузера файлы могут исчезнуть. Передача и печать — только по вашему действию. Демо-согласования не предназначены для конфиденциальных документов.'));
- host.append(safety);
+ // Keep the legal/storage explanation accessible when the vault opens,
+ // without a second visual section under the collapsed archive card.
+ archive.append(safety);
 }
 function backFromNested(){
  // Shared titlebar Back navigates within Documents first.
