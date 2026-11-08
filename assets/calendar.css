@@ -1491,15 +1491,6 @@
  font-weight:610!important;
  letter-spacing:-.024em!important;
 }
-#calendarPage .cal-weekdays{
- border-bottom:0!important;
- background:transparent!important;
-}
-#calendarPage .cal-month-grid{
- border:0!important;
- background:transparent!important;
- box-shadow:none!important;
-}
 /* Preserve calendar's 7-column layout, 44px rows, and date markers. */
 #calendarPage .cal-day[data-selected="true"] .cal-day-number{
  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--text) 19%,transparent)!important;
@@ -1522,4 +1513,35 @@
 }
 @media(prefers-reduced-transparency:reduce){
  #calendarPage .cal-scope{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
+
+/* SEYVEO Calendar · one calm framed month, shared between Life and Work.
+   Only the month body is framed; month navigation, agenda, dock stay unchanged. */
+#calendarPage .cal-month{
+ box-sizing:border-box!important;
+ margin:6px 0 0!important;
+ padding:10px 8px 8px!important;
+ border:1px solid color-mix(in srgb,var(--text) 10%,transparent)!important;
+ border-radius:22px!important;
+ background:color-mix(in srgb,var(--text) 4%,transparent)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
+ backdrop-filter:blur(16px) saturate(105%)!important;
+ overflow:hidden!important;
+}
+#calendarPage .cal-month > .cal-weekdays{
+ margin:0!important;
+ padding:0 4px 9px!important;
+ border-bottom:1px solid color-mix(in srgb,var(--text) 8%,transparent)!important;
+ background:transparent!important;
+}
+#calendarPage .cal-month > .cal-month-grid{
+ padding:8px 4px 2px!important;
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] #calendarPage .cal-month{
+ border-color:color-mix(in srgb,var(--text) 8%,transparent)!important;
+ background:rgba(255,255,255,.48)!important;
 }
