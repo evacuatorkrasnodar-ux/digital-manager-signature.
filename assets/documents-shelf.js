@@ -171,6 +171,8 @@ function paint(state){
  // Keep a stable «Все файлы» destination even with just one document.
  // It opens the protected archive when there are no more tiles to expand.
  state.showAll.hidden=false;
+ // Repainting after selecting a folder must not jump the swipe row back to start.
+ const folderScroll=state.foldersGrid.scrollLeft;
  state.foldersGrid.replaceChildren();
  for(const category of categories){
   const count=all.filter(item=>inFolder(item.name,category.id)).length;
@@ -187,6 +189,7 @@ function paint(state){
   });
   state.foldersGrid.append(entry);
  }
+ state.foldersGrid.scrollLeft=folderScroll;
  state.folderCaption.textContent=state.filter==='all'?'Умные подборки по названиям':'Нажмите ещё раз для отмены';
 }
 async function refresh(){
@@ -237,6 +240,9 @@ function mount(parent,options={}){
  const folderCaption=el('small','sv-doc-folder-caption','Умные подборки по названиям');
  folderHeader.append(folderCaption);
  const foldersGrid=el('div','sv-doc-folders-grid');
+ foldersGrid.setAttribute('role','region');
+ foldersGrid.setAttribute('aria-label','Папки документов, листайте горизонтально');
+ foldersGrid.tabIndex=0;
  folders.append(folderHeader,foldersGrid);
  parent.append(recent,folders);
  Object.assign(state,{showAll,recentGrid,status,foldersGrid,folderCaption});
