@@ -1713,6 +1713,9 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  background:rgba(240,243,247,.14)!important;
 }
 
+/* Notes autosave: top action is removed, the back arrow remains. */
+#noteReviewDialog #noteReviewSave.sv-note-done[hidden]{display:none!important}
+#noteReviewDialog .sv-note-nav-actions:has(> #noteReviewSave[hidden]){pointer-events:none!important}
 /* Notebook typography polish · 2026-11-08.
    Deliberately excludes the approved shared dock, button geometry and theme material. */
 #noteReviewDialog.note-review-dialog[open] .sv-note-editor{
@@ -3427,7 +3430,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  <div class="sv-note-nav-actions">
  <button id="svNoteSearch" class="sv-note-nav-circle" type="button" aria-label="Поиск заметок" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.3"/><path d="m15.2 15.2 5.1 5.1"/></svg></button>
  <button id="svNoteMore" class="sv-note-nav-circle" type="button" aria-label="Действия с заметкой" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>
- <button id="noteReviewSave" class="sv-note-done" type="submit" form="noteReviewForm">Готово</button>
+ <button id="noteReviewSave" class="sv-note-done" type="submit" form="noteReviewForm" hidden aria-hidden="true" tabindex="-1">Сохранить</button>
  </div>
 </div>
 <div id="svNoteTopMenu" class="sv-note-top-menu" hidden>
@@ -4963,23 +4966,69 @@ window.addEventListener('seyveo:note-open-source',event=>{
  detail.result={status:'opened'};
 });
 window.SEYVEO_NOTES_API=Object.freeze({getNotes,putNotes,openNotes,message:notesMessage,reviewText:(value,options)=>openNoteReview(value,null,options)});
-/* Note review: editing keeps its original ID, date and place in the list. */
+/* Note review: real autosave, same existing local notes format and stable IDs. */
 let editingNoteID=null,reviewPreserveLines=false;
+let noteAutosaveTimer=0,noteSavedSnapshot='',noteAutosaveFailed=false;
+function noteReviewValues(){
+ const raw=$('noteReviewText').value;
+ const title=$('svNoteTitle').value.trim().replace(/\\s+/g,' ').slice(0,120);
+ const body=reviewPreserveLines?raw.replace(/^\\n+|\\n+$/g,''):raw.trim();
+ return (title?title+'\\n\\n'+body:body).slice(0,8000);
+}
+function noteReviewStatus(message){
+ const el=$('noteReviewStatus');el.textContent=message||'';el.hidden=!message;
+}
+function persistNoteReview(){
+ const dlg=$('noteReviewDialog');
+ if(!dlg.open)return true;
+ const text=noteReviewValues();
+ if(text===noteSavedSnapshot)return true;
+ // Blank newly opened sheets are not records. Never delete an existing note implicitly.
+ if(!text.trim())return true;
+ const old=getNotes();let next;
+ if(editingNoteID){
+  if(!old.some(note=>note.id===editingNoteID)){
+   noteReviewStatus('Запись не найдена. Скопируйте текст перед выходом.');
+   noteAutosaveFailed=true;return false;
+  }
+  next=old.map(note=>note.id===editingNoteID?{...note,text,updatedAt:Date.now()}:note);
+ }else{
+  const created={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text,createdAt:Date.now(),...(reviewPreserveLines?{preserveLines:true}:{})};
+  next=[created,...old];
+  if(putNotes(next)){editingNoteID=created.id;noteSavedSnapshot=text;noteAutosaveFailed=false;noteReviewStatus('');return true}
+  noteReviewStatus('Не удалось сохранить. Проверьте память устройства.');
+  noteAutosaveFailed=true;return false;
+ }
+ if(!putNotes(next)){
+  noteReviewStatus('Не удалось сохранить. Проверьте память устройства.');
+  noteAutosaveFailed=true;return false;
+ }
+ noteSavedSnapshot=text;noteAutosaveFailed=false;noteReviewStatus('');
+ return true;
+}
+function scheduleNoteAutosave(){
+ clearTimeout(noteAutosaveTimer);
+ noteAutosaveTimer=setTimeout(()=>{noteAutosaveTimer=0;persistNoteReview()},650);
+}
 function openNoteReview(value,id=null,options=null){
- const dlg=$('noteReviewDialog');editingNoteID=id;
+ const dlg=$('noteReviewDialog');
+ clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+ editingNoteID=id;noteAutosaveFailed=false;
  reviewPreserveLines=id?getNotes().some(note=>note.id===id&&note.preserveLines===true):options?.preserveLines===true;
  $('noteReviewTitle').textContent=id?'Изменить запись':value?'Запомнить мысль':'Новая заметка';
  dlg.dataset.noteMode=id?'edit':String(value||'').length>150?'draft':'new';
  const noteValue=String(value||'').slice(0,8000);
- // The title is stored as the first line, keeping the existing text-only notes format.
- const titleMatch=noteValue.match(/^([^\n]{1,120})\n\n([\s\S]+)$/);
+ const titleMatch=noteValue.match(/^([^\\n]{1,120})\\n\\n([\\s\\S]+)$/);
  $('svNoteTitle').value=titleMatch?titleMatch[1]:'';
  $('noteReviewText').value=titleMatch?titleMatch[2]:noteValue;
- // Soft wrapping affects only display; existing paragraph breaks are preserved.
  $('noteReviewText').wrap='soft';
- $('noteReviewStatus').textContent='';$('noteReviewStatus').hidden=true;
+ noteSavedSnapshot=id?noteReviewValues():'';
+ noteReviewStatus('');
  if(!dlg.open)dlg.showModal();
+ if(!id&&noteValue.trim())scheduleNoteAutosave();
 }
+$('svNoteTitle').addEventListener('input',scheduleNoteAutosave);
+$('noteReviewText').addEventListener('input',scheduleNoteAutosave);
 $('noteReviewCancel').addEventListener('click',()=>$('noteReviewDialog').close());
 $('noteReviewBack').addEventListener('click',()=>$('noteReviewDialog').close());
 $('noteReviewDialog').addEventListener('click',event=>{
@@ -4989,37 +5038,40 @@ $('noteReviewDialog').addEventListener('click',event=>{
  event.clientY<bounds.top||event.clientY>bounds.bottom)dlg.close();
 });
 $('noteReviewDialog').addEventListener('close',()=>{
- const back=Boolean(editingNoteID),fromTask=noteEditFromTask;
+ clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+ // The close event follows the native dialog closing (back, Escape, etc.).
+ const fromTask=noteEditFromTask;
+ persistClosedNoteReview();
  editingNoteID=null;noteEditFromTask=false;
- if(back&&!fromTask)openNotes();
+ if(!fromTask)openNotes();
 });
-$('noteReviewForm').addEventListener('submit',event=>{
- event.preventDefault();const raw=$('noteReviewText').value;
- const title=$('svNoteTitle').value.trim().replace(/\s+/g,' ').slice(0,120);
- const body=(reviewPreserveLines?raw.replace(/^\n+|\n+$/g,''):raw.trim());
- const text=(title?title+'\n\n'+body:body).slice(0,8000);
- if(!text.trim()){$('noteReviewStatus').textContent='Напишите, какую мысль сохранить.';$('noteReviewStatus').hidden=false;return}
- const old=getNotes();let next,created=null;
- const showAfterSave=!editingNoteID&&$('noteReviewDialog').dataset.noteMode==='draft';
- if(editingNoteID){
-  if(!old.some(note=>note.id===editingNoteID)){
-   $('noteReviewStatus').textContent='Эта запись больше не найдена.';$('noteReviewStatus').hidden=false;return;
+function persistClosedNoteReview(){
+ // Reuse the same persistence path by allowing the closed dialog's populated values.
+ const dlg=$('noteReviewDialog');
+ if(!dlg.open&&noteReviewValues()!==noteSavedSnapshot){
+  const text=noteReviewValues();
+  if(!text.trim())return;
+  const old=getNotes();let next;
+  if(editingNoteID){
+   if(!old.some(note=>note.id===editingNoteID))return;
+   next=old.map(note=>note.id===editingNoteID?{...note,text,updatedAt:Date.now()}:note);
+  }else{
+   const created={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text,createdAt:Date.now(),...(reviewPreserveLines?{preserveLines:true}:{})};
+   next=[created,...old];
   }
-  next=old.map(note=>note.id===editingNoteID?{...note,text,updatedAt:Date.now()}:note);
- }else{
-  created={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text,createdAt:Date.now(),...(reviewPreserveLines?{preserveLines:true}:{})};
-  next=[created,...old];
+  if(putNotes(next)){noteSavedSnapshot=text;noteAutosaveFailed=false}
+  else noteAutosaveFailed=true;
  }
- if(!putNotes(next)){
-  $('noteReviewStatus').textContent='Не удалось сохранить. Проверьте память устройства.';
-  $('noteReviewStatus').hidden=false;return;
- }
- playFeedback('confirm');
- const savedFromTask=Boolean(editingNoteID&&noteEditFromTask);
- editingNoteID=null;noteEditFromTask=false;
+}
+$('noteReviewForm').addEventListener('submit',event=>{
+ event.preventDefault();
+ clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+ if(!persistNoteReview())return;
  $('noteReviewDialog').close();
- if(showAfterSave&&created)openNoteRead(created);
- else if(!savedFromTask)openNotes();
+});
+window.addEventListener('pagehide',()=>{
+ const dlg=$('noteReviewDialog');
+ if(dlg.open){clearTimeout(noteAutosaveTimer);persistNoteReview()}
 });
 function composerText(){const v=question.value.trim();if(!v)composerMessage('Сначала напишите текст');return v}
 $('saveNote').addEventListener('click',()=>{
