@@ -2440,7 +2440,6 @@ window.addEventListener('storage',event=>{
   if(historyQuery.trim())renderHistorySearch();
  }
 });
-}
 /* Messages: compact header search. The global dock search remains app-wide. */
 (function installDirectorySearch(){
  const screen=$('svcpWorkChatScreen');
