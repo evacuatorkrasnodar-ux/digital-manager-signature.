@@ -136,7 +136,7 @@ function move(e){
   const now=point(ev),last=pending.points[pending.points.length-1];
   if(Math.hypot(now[0]-last[0],now[1]-last[1])>=2)pending.points.push(now);
  }
- paint(canvas,{pattern:data.pattern,background:data.background,strokes:[...data.strokes,pending]});
+ paint(canvas,{pattern:data.pattern,background:data.background,height:data.height,strokes:[...data.strokes,pending]});
 }
 function up(e){
  if(!pending||e.pointerId!==pointerID)return;
