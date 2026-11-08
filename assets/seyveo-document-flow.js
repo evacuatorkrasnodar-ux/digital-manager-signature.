@@ -289,6 +289,8 @@ function draw(){
   const form=$('section','svdf-create svdf-create-simple');
   form.append($('strong','','Документ на согласование'));
   const picker=$('details','svdf-kind-choices');
+  const sendLabel=()=>TYPES[kind].type==='Ознакомление'?'Передать на ознакомление · демо':'Передать на согласование · демо';
+  const submit=button(sendLabel(),create,'svdf-primary');
   const summary=$('summary','','Тип: '+TYPES[kind].title);
   picker.append(summary);
   const choices=$('div','svdf-kind-options');
@@ -296,6 +298,7 @@ function draw(){
    const option=button(type.title,()=>{
     kind=key;
     summary.textContent='Тип: '+type.title;
+    submit.textContent=sendLabel();
     for(const item of choices.children)
      item.setAttribute('aria-pressed',String(item.dataset.kind===kind));
     picker.open=false;
@@ -307,7 +310,7 @@ function draw(){
   picker.append(choices);
   form.append(picker,
    $('small','','Елена · учебный сотрудник · только этот браузер'),
-   button('Передать на согласование · демо',create,'svdf-primary'));
+   submit);
   host.append(form);
  }else host.append($('p','svdf-hint svdf-staff-instruction','Открой документ и выбери: согласовать или вернуть с замечанием.'));
  const active=records.filter(isActive).length,completed=records.length-active;
