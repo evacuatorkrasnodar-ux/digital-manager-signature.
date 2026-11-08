@@ -20,6 +20,14 @@
  shell.setAttribute('aria-label','Дела и календарь');
  app.insertBefore(shell,calendar);
  shell.append(calendar,tasks);
+ // The Notebook is a peer of Tasks and Calendar, not a modal floating above them.
+ const notebookHost=document.createElement('section');
+ notebookHost.id='svWorkNotebook';
+ notebookHost.hidden=true;
+ notebookHost.setAttribute('aria-label','Блокнот');
+ shell.append(notebookHost);
+ let notebookActive=false;
+ let notebookPending=false;
  const nav=document.createElement('nav');
  nav.id='svWorkTabs';
  nav.setAttribute('aria-label','Мои дела, календарь, блокнот и кабинет');
@@ -59,6 +67,33 @@
  const createMenu=document.getElementById('calendarCreateMenu');
  const menuHome=createMenu?.parentElement;
  const noteDialog=document.getElementById('notesDialog');
+ const noteOriginalParent=noteDialog?.parentNode||null;
+ const noteOriginalNext=noteDialog?.nextSibling||null;
+ function restoreNotebook(){
+  notebookActive=false;notebookPending=false;
+  if(noteDialog?.parentNode===notebookHost){
+   if(noteDialog.open)noteDialog.close();
+   if(noteOriginalParent){
+    if(noteOriginalNext?.parentNode===noteOriginalParent)
+     noteOriginalParent.insertBefore(noteDialog,noteOriginalNext);
+    else noteOriginalParent.append(noteDialog);
+   }
+  }
+  notebookHost.hidden=true;
+ }
+ function enterNotebook(){
+  if(tasks.hidden)return;
+  notebookPending=false;notebookActive=true;
+  if(noteDialog?.parentNode!==notebookHost){
+   if(noteDialog?.open)noteDialog.close();
+   notebookHost.append(noteDialog);
+  }
+  notebookHost.hidden=false;
+  sync();
+  // One existing renderer/store; only the presentation mode changes.
+  window.dispatchEvent(new Event('seyveo:notes-open'));
+  resetWorkScroll();
+ }
  // ONE uses the existing Notebook. Business keeps its cabinet configuration,
  // with a single + that offers both actions and creates no duplicate notes.
  const businessCreate=document.createElement('div');
@@ -78,7 +113,13 @@
  }
  function openNotebook(){
   closeBusinessCreate();
-  window.dispatchEvent(new Event('seyveo:notes-open'));
+  if(tasks.hidden){
+   notebookPending=true;
+   window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
+   requestAnimationFrame(()=>{if(notebookPending&&!tasks.hidden)enterNotebook()});
+   return;
+  }
+  enterNotebook();
  }
  newNoteChoice.addEventListener('click',()=>{
   closeBusinessCreate();
@@ -127,6 +168,7 @@
    calendarAdd?.click();
    add.setAttribute('aria-expanded',String(calendarAdd?.getAttribute('aria-expanded')==='true'));
   }else if(section==='personal')personalAdd?.click();
+  else if(section==='notes')document.getElementById('notesNew')?.click();
   else if(section==='business'){
    if(!window.SEYVEO_PREVIEW?.isManager?.())return;
    businessCreate.hidden=!businessCreate.hidden;
@@ -143,10 +185,16 @@
  }
  const oldTab=(parent,attribute,name)=>parent.querySelector('['+attribute+'="'+name+'"]');
  function activeSection(){
+  if(notebookActive&&!tasks.hidden)return 'notes';
   if(!calendar.hidden)return 'calendar';
   return tasks.dataset.workView==='business'?'business':tasks.dataset.workView==='employee'?'employee':'personal';
  }
  function sync(){
+  if(notebookPending&&!tasks.hidden&&location.hash==='#tasks'){
+   enterNotebook();
+   return;
+  }
+  if(notebookActive&&(tasks.hidden||location.hash!=='#tasks'))restoreNotebook();
   const active=activeSection();
   const managerTasks=!tasks.hidden&&oldTasks.dataset.manager==='true';
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
@@ -185,7 +233,7 @@
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
-  title.textContent=history?'История действий':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
+  title.textContent=history?'История действий':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // Root destinations are already navigable through the bottom dock.
   // Do not show a redundant Back control beside each top-level title.
   back.hidden=!history;
@@ -193,7 +241,7 @@
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
   add.hidden=history||active==='employee';
-  add.setAttribute('aria-label',active==='personal'?'Добавить дело':active==='calendar'?'Создать событие или дело':'Создать заметку или настроить кабинет');
+  add.setAttribute('aria-label',active==='notes'?'Новая заметка':active==='personal'?'Добавить дело':active==='calendar'?'Создать событие или дело':'Создать заметку или настроить кабинет');
   add.setAttribute('aria-haspopup',String(active==='calendar'||active==='business'));
   add.setAttribute('aria-controls',active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
   add.setAttribute('aria-expanded',active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
@@ -208,6 +256,7 @@
   const target=button.dataset.svWorkTab;
   if(target==='notes'){openNotebook();return}
   if(target===activeSection())return;
+  if(notebookActive)restoreNotebook();
   if(createMenu){createMenu.hidden=true;calendarAdd?.setAttribute('aria-expanded','false');add.setAttribute('aria-expanded','false');}
   closeBusinessCreate();
   const fromCalendar=!calendar.hidden;
@@ -247,9 +296,15 @@
  // calendar handlers close their menu (choice, outside tap or Escape).
  if(calendarAdd)observer.observe(calendarAdd,{attributes:true,attributeFilter:['aria-expanded']});
  if(createMenu)observer.observe(createMenu,{attributes:true,attributeFilter:['hidden']});
- window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
+ window.addEventListener('hashchange',()=>{
+  if(notebookActive&&location.hash!=='#tasks')restoreNotebook();
+  requestAnimationFrame(sync);
+ });
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
- window.SEYVEO_WORK_SHELL=Object.freeze({version:12,sync});
+ window.SEYVEO_WORK_SHELL=Object.freeze({
+  version:13,sync,
+  isNotesInline:()=>notebookActive&&!notebookHost.hidden
+ });
 })();
