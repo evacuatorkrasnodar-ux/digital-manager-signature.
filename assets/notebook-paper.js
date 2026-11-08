@@ -91,8 +91,8 @@ function fitPaper(){
  // Fill the WHOLE stage instead of forcing A4 into a small centered rectangle.
  // Extend the virtual page proportionally so circles and brush widths are not
  // distorted on-screen. Never shrink a page and crop existing strokes.
- const width=Math.max(90,Math.floor(rect.width-2));
- const height=Math.max(120,Math.floor(rect.height-2));
+ const width=Math.max(90,Math.floor(rect.width));
+ const height=Math.max(120,Math.floor(rect.height));
  const logicalHeight=Math.max(H,Math.min(MAX_PAGE_HEIGHT,Math.round(W*height/width)));
  if((data.height||H)<logicalHeight)data.height=logicalHeight;
  if(canvas.height!==data.height){canvas.height=data.height;paint(canvas,data)}
@@ -120,11 +120,13 @@ function point(e){
  return [clamp((e.clientX-box.left)/box.width*W,W),clamp((e.clientY-box.top)/box.height*(data.height||H),data.height||H),clamp((e.pointerType==='pen'?e.pressure:.5)*100,100)];
 }
 function down(e){
+ if(pending||pointerID!==null)return; // Keep existing stroke on a second finger.
  if(e.button!==0||e.isPrimary===false)return;
  if(e.pointerType==='pen')penTime=Date.now()+2800;
  if(e.pointerType==='touch'&&Date.now()<penTime)return;
  if(data.strokes.length>=MAX_STROKES){report('Лист заполнен. Начните следующий.');return}
  e.preventDefault();pointerID=e.pointerId;pending={tool:currentTool(),color:activeColor,width:brushSize,points:[point(e)]};
+ dialog.classList.add('sv-paper-inking');
  try{canvas.setPointerCapture(e.pointerId)}catch{}
 }
 function move(e){
@@ -138,17 +140,25 @@ function move(e){
  }
  paint(canvas,{pattern:data.pattern,background:data.background,height:data.height,strokes:[...data.strokes,pending]});
 }
-function up(e){
- if(!pending||e.pointerId!==pointerID)return;
- e.preventDefault();
- if(pending.points.length<MAX_POINTS){
+// Commit every stroke, including on pointercancel, lost capture, or tab hide.
+ // Mobile Safari may interrupt a touch without delivering a normal pointerup.
+function finishStroke(e,addEndpoint=true){
+ if(!pending||(e&&e.pointerId!==pointerID))return;
+ if(e?.cancelable)e.preventDefault();
+ if(addEndpoint&&e&&pending.points.length<MAX_POINTS){
   const now=point(e),last=pending.points[pending.points.length-1];
   if(Math.hypot(now[0]-last[0],now[1]-last[1])>=1)pending.points.push(now);
  }
- data.strokes.push(pending);pending=null;pointerID=null;changed=true;render();
+ data.strokes.push(pending);pending=null;pointerID=null;changed=true;
+ dialog.classList.remove('sv-paper-inking');render();
 }
 canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);
-canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
+canvas.addEventListener('pointerup',e=>finishStroke(e,true));
+canvas.addEventListener('pointercancel',e=>finishStroke(e,false));
+canvas.addEventListener('lostpointercapture',e=>finishStroke(e,false));
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden&&dialog.open)finishStroke(null,false);
+});
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.addEventListener('click',()=>{selectTool(btn.dataset.paperTool);if(btn.closest('.sv-paper-extras-panel'))closeExtras();}));
 pattern.addEventListener('change',()=>{if(!patterns.includes(pattern.value))return;data.pattern=pattern.value;changed=true;render()});
@@ -259,6 +269,7 @@ $('notePaperDuplicate')?.addEventListener('click',()=>{
  data.strokes.push(copy);changed=true;render();report('Последний штрих дублирован.');
 });
 function open(note=null){
+ dialog.classList.remove('sv-paper-inking');
  data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
  closePatternMenu();closeColorMenu();
  activeColor=[...data.strokes].reverse().find(stroke=>COLORS.includes(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
@@ -277,7 +288,7 @@ function discard(){
 }
 $('notePaperCancel').addEventListener('click',discard);$('notePaperBack').addEventListener('click',discard);
 dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть лист без сохранения?'))e.preventDefault()});
-dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
+dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
  if(!data.strokes.length&&!data.photo){report('Напишите, нарисуйте или добавьте фотографию.');return}
