@@ -1227,3 +1227,95 @@ svg.sv-paper-signature .sv-paper-icon-core{
  background:#454a52!important;
  box-shadow:none!important;transform:none!important;
 }
+
+
+/* v19 · Seven precisely spaced tools, including Duplicate Stroke.
+   7 × 33px + 6 × 3px + 10px padding = 259px at standard widths.
+   On 320px screens: 7 × 28px + 6 × 2px + 8px = 216px. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
+ --sv-paper-tool-size:33px!important;
+ display:grid!important;
+ grid-template-columns:repeat(7,33px)!important;
+ grid-template-rows:34px!important;
+ justify-content:center!important;align-items:center!important;justify-items:center!important;
+ gap:3px!important;
+ box-sizing:border-box!important;
+ width:259px!important;min-width:0!important;max-width:100%!important;
+ height:44px!important;
+ padding:4px 5px!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is(.sv-paper-settings,.paper-pattern-control){
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ flex:none!important;
+ width:33px!important;min-width:33px!important;max-width:33px!important;
+ height:34px!important;min-height:34px!important;max-height:34px!important;
+ padding:0!important;margin:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperDuplicate,#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi){
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ flex:0 0 33px!important;
+ width:33px!important;min-width:33px!important;max-width:33px!important;
+ height:34px!important;min-height:34px!important;max-height:34px!important;
+ padding:0!important;margin:0!important;
+ justify-self:center!important;align-self:center!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;transform:none!important;
+ color:#e4e8ed!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary #notePaperDuplicate::before,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary #notePaperDuplicate::after{
+ content:none!important;display:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi)::before{
+ width:31px!important;height:31px!important;min-width:31px!important;min-height:31px!important;
+ left:50%!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+#notePaperDuplicate>svg.sv-paper-signature{
+ display:block!important;width:21px!important;height:21px!important;
+ min-width:21px!important;min-height:21px!important;
+ max-width:21px!important;max-height:21px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;filter:none!important;pointer-events:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary #notePaperDuplicate:disabled{
+ opacity:.40!important;color:#b8c2cd!important;cursor:default!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary #notePaperDuplicate:not(:disabled):active{
+ background:rgba(211,224,239,.17)!important;
+}
+@media(max-width:370px){
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
+  --sv-paper-tool-size:28px!important;
+  grid-template-columns:repeat(7,28px)!important;
+  grid-template-rows:32px!important;
+  gap:2px!important;
+  width:216px!important;max-width:100%!important;
+  height:40px!important;padding:4px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+ :is(.sv-paper-settings,.paper-pattern-control){
+  width:28px!important;min-width:28px!important;max-width:28px!important;
+  height:32px!important;min-height:32px!important;max-height:32px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+ :is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperDuplicate,#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi){
+  flex:0 0 28px!important;width:28px!important;min-width:28px!important;max-width:28px!important;
+  height:32px!important;min-height:32px!important;max-height:32px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+ :is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi)::before{
+  width:27px!important;height:27px!important;min-width:27px!important;min-height:27px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary #notePaperDuplicate>svg.sv-paper-signature{
+  width:19px!important;height:19px!important;
+  min-width:19px!important;min-height:19px!important;max-width:19px!important;max-height:19px!important;
+ }
+}
