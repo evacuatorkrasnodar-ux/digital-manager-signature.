@@ -12,6 +12,10 @@ if(!dialog||!canvas||!canvas.getContext('2d'))return;
 const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
 let data={pattern:'blank',background:'dark',height:H,strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
 let activeColor='#f6f7fb',brushSize=5;
+// Live strokes paint incrementally; old strokes are not recomputed per pointer event.
+let liveTail=null,liveMid=null,shapeFrame=0;
+const shapeSnapshot=document.createElement('canvas');
+const shapeSnapshotCtx=shapeSnapshot.getContext('2d');
 const brushControl=$('notePaperWidth'),moreButton=$('notePaperMore'),extras=$('notePaperExtras');
 const photoView=$('notePaperPhotoPreview'),photoFile=$('notePaperPhotoFile');
 const photoCache=new Map();
@@ -78,20 +82,29 @@ function paintStroke(ctx,s){
   }
   ctx.stroke();ctx.restore();return;
  }
- const erase=s.tool==='eraser',base=Number.isFinite(s.width)?Math.max(1,Math.min(28,s.width)):(erase?28:s.tool==='pencil'?3.5:4.8);
- ctx.save();ctx.globalCompositeOperation=erase?'destination-out':'source-over';
- ctx.lineJoin='round';ctx.lineCap='round';
+ const erase=s.tool==='eraser';
+ const base=Number.isFinite(s.width)?Math.max(1,Math.min(28,s.width)):(erase?28:s.tool==='pencil'?3.5:4.8);
  const chosen=COLORS.includes(s.color)?s.color:null;
- ctx.strokeStyle=ctx.fillStyle=erase?'#111':chosen?(s.tool==='pencil'?chosen+'a3':chosen):s.tool==='pencil'?'rgba(32,39,52,.62)':'#171e29';
- const width=p=>base*(erase?1:.65+.007*p);
+ const width=base*(erase?1:1); // consistent width independent of frame frequency
+ ctx.save();ctx.globalCompositeOperation=erase?'destination-out':'source-over';
+ ctx.strokeStyle=ctx.fillStyle=erase?'#000':chosen?(s.tool==='pencil'?chosen+'a3':chosen):'#171e29';
+ ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';
  const pts=s.points;
  if(pts.length===1){
-  const [x,y,p]=pts[0];ctx.beginPath();ctx.arc(x,y,width(p)/2,0,2*Math.PI);ctx.fill();
- }else for(let i=1;i<pts.length;i++){
-  const a=pts[i-1],b=pts[i];
-  // Smooth joins without replacing the user's actual handwriting.
-  ctx.beginPath();ctx.lineWidth=width((a[2]+b[2])/2);
-  ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+  ctx.beginPath();ctx.arc(pts[0][0],pts[0][1],width/2,0,2*Math.PI);ctx.fill();
+ }else{
+  const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+  ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+  if(pts.length===2)ctx.lineTo(pts[1][0],pts[1][1]);
+  else{
+   const first=mid(pts[0],pts[1]);ctx.lineTo(first[0],first[1]);
+   for(let i=1;i<pts.length-1;i++){
+    const m=mid(pts[i],pts[i+1]);
+    ctx.quadraticCurveTo(pts[i][0],pts[i][1],m[0],m[1]);
+   }
+   ctx.lineTo(pts[pts.length-1][0],pts[pts.length-1][1]);
+  }
+  ctx.stroke();
  }
  ctx.restore();
 }
@@ -141,11 +154,11 @@ if(typeof ResizeObserver!=='undefined'&&stage){
  const observer=new ResizeObserver(()=>{if(dialog.open)fitPaper()});
  observer.observe(stage);
 }
-function render(){
+function render(redrawInk=true){
  sheet.dataset.pattern=data.pattern;sheet.dataset.inkBackground=data.background;pattern.value=data.pattern;syncPatternMenu();
  if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
  if($('notePaperRemovePhoto'))$('notePaperRemovePhoto').hidden=!data.photo;
- paint(canvas,data);$('notePaperUndo').disabled=!data.strokes.length;
+ if(redrawInk)paint(canvas,data);$('notePaperUndo').disabled=!data.strokes.length;
  const duplicate=$('notePaperDuplicate');if(duplicate)duplicate.disabled=!data.strokes.length||data.strokes.length>=MAX_STROKES;
 }
 function report(text){status.textContent=text||''}
@@ -157,13 +170,83 @@ function point(e){
  const box=canvas.getBoundingClientRect();
  return [clamp((e.clientX-box.left)/box.width*W,W),clamp((e.clientY-box.top)/box.height*(data.height||H),data.height||H),clamp((e.pointerType==='pen'?e.pressure:.5)*100,100)];
 }
+// Live ink pipeline: draw ONLY the new Bézier segment, keeping previously
+// painted pixels intact. Historic strokes are replayed for Undo/export only.
+const midpoint=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+function drawLivePart(kind,from,to,control=null,dot=false){
+ const ctx=canvas.getContext('2d');if(!ctx||!pending)return;
+ ctx.save();ctx.setTransform(canvas.width/W,0,0,canvas.height/(data.height||H),0,0);
+ const erase=pending.tool==='eraser';
+ ctx.globalCompositeOperation=erase?'destination-out':'source-over';
+ ctx.fillStyle=ctx.strokeStyle=erase?'#000':pending.tool==='pencil'?pending.color+'a3':pending.color;
+ ctx.lineWidth=pending.width;ctx.lineJoin='round';ctx.lineCap='round';
+ ctx.beginPath();
+ if(dot){ctx.arc(from[0],from[1],pending.width/2,0,2*Math.PI);ctx.fill()}
+ else {
+  ctx.moveTo(from[0],from[1]);
+  if(control)ctx.quadraticCurveTo(control[0],control[1],to[0],to[1]);
+  else ctx.lineTo(to[0],to[1]);
+  ctx.stroke();
+ }
+ ctx.restore();
+}
+function addInkPoint(next,force=false){
+ if(!pending||SHAPE_TOOLS.has(pending.tool))return;
+ const prev=liveTail;
+ if(!prev)return;
+ const distance=Math.hypot(next[0]-prev[0],next[1]-prev[1]);
+ if(distance<(force?0.65:1.4))return;
+ // Reconstruct sparse Safari moves; the spline now stays gap-free even
+ // when coalesced events arrive after a dropped frame.
+ const count=Math.max(1,Math.min(42,Math.ceil(distance/12)));
+ for(let step=1;step<=count;step++){
+  const p=[prev[0]+(next[0]-prev[0])*step/count,
+           prev[1]+(next[1]-prev[1])*step/count,next[2]];
+  const points=pending.points;
+  const last=liveTail;
+  const middle=midpoint(last,p);
+  if(liveMid)drawLivePart('curve',liveMid,middle,last);
+  else drawLivePart('line',last,middle);
+  liveMid=middle;liveTail=p;
+  if(points.length>=MAX_POINTS){
+   // Progressive history simplification avoids a hard 1300-point cut-off.
+   const reduced=[points[0]];
+   for(let j=2;j<points.length-3;j+=2)reduced.push(points[j]);
+   reduced.push(...points.slice(-3));
+   pending.points=reduced;
+  }
+  pending.points.push(p);
+ }
+}
+function redrawShapePreview(){
+ shapeFrame=0;
+ if(!pending||!SHAPE_TOOLS.has(pending.tool)||!shapeSnapshotCtx)return;
+ const ctx=canvas.getContext('2d');if(!ctx)return;
+ ctx.save();ctx.setTransform(1,0,0,1,0,0);
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ ctx.drawImage(shapeSnapshot,0,0);
+ ctx.setTransform(canvas.width/W,0,0,canvas.height/(data.height||H),0,0);
+ paintStroke(ctx,pending);
+ ctx.restore();
+}
+function queueShapePreview(){
+ if(shapeFrame)return;
+ shapeFrame=requestAnimationFrame(redrawShapePreview);
+}
 function down(e){
- if(pending||pointerID!==null)return; // Keep existing stroke on a second finger.
- if(e.button!==0||e.isPrimary===false)return;
+ if(pending||pointerID!==null||e.button!==0||e.isPrimary===false)return;
  if(e.pointerType==='pen')penTime=Date.now()+2800;
  if(e.pointerType==='touch'&&Date.now()<penTime)return;
  if(data.strokes.length>=MAX_STROKES){report('Лист заполнен. Начните следующий.');return}
- e.preventDefault();pointerID=e.pointerId;pending={tool:currentTool(),color:activeColor,width:brushSize,points:[point(e)]};
+ e.preventDefault();pointerID=e.pointerId;
+ pending={tool:currentTool(),color:activeColor,width:brushSize,points:[point(e)]};
+ liveTail=pending.points[0];liveMid=null;
+ if(SHAPE_TOOLS.has(pending.tool)&&shapeSnapshotCtx){
+  if(shapeSnapshot.width!==canvas.width)shapeSnapshot.width=canvas.width;
+  if(shapeSnapshot.height!==canvas.height)shapeSnapshot.height=canvas.height;
+  shapeSnapshotCtx.clearRect(0,0,shapeSnapshot.width,shapeSnapshot.height);
+  shapeSnapshotCtx.drawImage(canvas,0,0);
+ }else drawLivePart('dot',liveTail,liveTail,null,true);
  dialog.classList.add('sv-paper-inking');
  try{canvas.setPointerCapture(e.pointerId)}catch{}
 }
@@ -171,36 +254,36 @@ function move(e){
  if(!pending||e.pointerId!==pointerID)return;
  e.preventDefault();
  if(SHAPE_TOOLS.has(pending.tool)){
-  pending.points[1]=point(e);
-  paint(canvas,{pattern:data.pattern,background:data.background,height:data.height,strokes:[...data.strokes,pending]});
-  return;
+  pending.points[1]=point(e);queueShapePreview();return;
  }
  const batches=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[e];
- for(const ev of batches){
-  if(pending.points.length>=MAX_POINTS)break;
-  const now=point(ev),last=pending.points[pending.points.length-1];
-  if(Math.hypot(now[0]-last[0],now[1]-last[1])>=2)pending.points.push(now);
- }
- paint(canvas,{pattern:data.pattern,background:data.background,height:data.height,strokes:[...data.strokes,pending]});
+ const events=batches&&batches.length?batches:[e];
+ for(const ev of events)addInkPoint(point(ev));
+ // Some WebKit versions omit the parent event from the coalesced set.
+ if(events[events.length-1]!==e)addInkPoint(point(e));
 }
-// Commit every stroke, including on pointercancel, lost capture, or tab hide.
- // Mobile Safari may interrupt a touch without delivering a normal pointerup.
 function finishStroke(e,addEndpoint=true){
  if(!pending||(e&&e.pointerId!==pointerID))return;
  if(e?.cancelable)e.preventDefault();
  if(SHAPE_TOOLS.has(pending.tool)){
   if(addEndpoint&&e)pending.points[1]=point(e);
+  if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
   if(pending.points.length<2){
-   pending=null;pointerID=null;dialog.classList.remove('sv-paper-inking');render();return;
+   pending=null;pointerID=null;dialog.classList.remove('sv-paper-inking');
+   render();return;
   }
- }else if(addEndpoint&&e&&pending.points.length<MAX_POINTS){
-  const now=point(e),last=pending.points[pending.points.length-1];
-  if(Math.hypot(now[0]-last[0],now[1]-last[1])>=1)pending.points.push(now);
+  redrawShapePreview();
+ }else{
+  if(addEndpoint&&e)addInkPoint(point(e),true);
+  if(liveMid&&liveTail)drawLivePart('end',liveMid,liveTail);
  }
- data.strokes.push(pending);pending=null;pointerID=null;changed=true;
- dialog.classList.remove('sv-paper-inking');render();
+ data.strokes.push(pending);
+ pending=null;pointerID=null;liveTail=null;liveMid=null;changed=true;
+ dialog.classList.remove('sv-paper-inking');
+ render(false); // only refresh controls, not the full history on every stroke
 }
-canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);
+canvas.addEventListener('pointerdown',down);
+canvas.addEventListener('pointermove',move);
 canvas.addEventListener('pointerup',e=>finishStroke(e,true));
 canvas.addEventListener('pointercancel',e=>finishStroke(e,false));
 canvas.addEventListener('lostpointercapture',e=>finishStroke(e,false));
@@ -318,6 +401,8 @@ $('notePaperDuplicate')?.addEventListener('click',()=>{
 });
 function open(note=null){
  dialog.classList.remove('sv-paper-inking');
+ if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
+ liveTail=null;liveMid=null;
  data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
  closePatternMenu();closeColorMenu();
  activeColor=[...data.strokes].reverse().find(stroke=>COLORS.includes(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
@@ -336,7 +421,7 @@ function discard(){
 }
 $('notePaperCancel').addEventListener('click',discard);$('notePaperBack').addEventListener('click',discard);
 dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть лист без сохранения?'))e.preventDefault()});
-dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
+dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');dialog.classList.remove('sv-paper-inking');if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}liveTail=null;liveMid=null;closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
  if(!data.strokes.length&&!data.photo){report('Напишите, нарисуйте или добавьте фотографию.');return}
