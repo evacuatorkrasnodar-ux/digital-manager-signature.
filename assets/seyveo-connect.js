@@ -3,20 +3,16 @@
    Actual audio test uses system selected output with explicit user gesture. */
 (()=>{
 'use strict';
-const life=document.getElementById('lifePage');
-const group=life?.querySelector('.sv-life-category[aria-labelledby="svLifeServicesTitle"] .sv-life-category-grid');
-if(!life||!group)return;
-const button=document.createElement('button');
-button.type='button';button.className='calendar-space-button sv-connect-tile';
-button.setAttribute('aria-label','Открыть SEYVEO CONNECT — устройства и звук');
-button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 8.4a6.8 6.8 0 0 1 9.6 0M4.3 5.5a10.9 10.9 0 0 1 15.4 0M9.9 11.1a3 3 0 0 1 4.2 0"/><circle cx="12" cy="16.4" r="1.5"/></svg><span>CONNECT</span>';
-group.append(button);
+// Keep the existing audio-test and manual device list, but expose them only
+// from Management → Smart Connections → Devices, never as a My World tile.
+const button=document.getElementById('svSmartConnectAudio');
+if(!button)return;
 const dialog=document.createElement('dialog');
 dialog.id='svConnectDialog';dialog.className='sv-connect-dialog';
 dialog.setAttribute('aria-labelledby','svConnectHeading');
 dialog.innerHTML=[
 '<div class="sv-connect-sheet">',
-'<header class="sv-connect-header"><button id="svConnectBack" class="sv-connect-back" type="button" aria-label="Назад в Мой мир"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Мой мир</span></button><span class="sv-connect-mark">SEYVEO CONNECT</span></header>',
+'<header class="sv-connect-header"><button id="svConnectBack" class="sv-connect-back" type="button" aria-label="Вернуться к умным подключениям"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Подключения</span></button><span class="sv-connect-mark">SEYVEO · УСТРОЙСТВА</span></header>',
 '<h2 id="svConnectHeading">Сэйви рядом. На любом устройстве.</h2>',
 '<p class="sv-connect-intro">Пока у SEYVEO нет собственной колонки, можно использовать устройства, которые у тебя уже есть. Начнём со звука — без лишних разрешений.</p>',
 '<div class="sv-connect-category" role="group" aria-label="Тип устройства">',
