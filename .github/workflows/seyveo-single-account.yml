@@ -12,6 +12,10 @@ on:
       - 'mobile/tests/workspace-navigation.test.mjs'
       - 'mobile/src/business/verified-workspace-client.mjs'
       - 'mobile/tests/verified-workspace-client.test.mjs'
+      - 'mobile/src/auth/native-credential-vault.mjs'
+      - 'mobile/src/auth/native-credential-vault.d.mts'
+      - 'mobile/src/auth/ExpoNativeCredentialVault.ts'
+      - 'mobile/tests/native-credential-vault.test.mjs'
       - '.github/workflows/seyveo-single-account.yml'
   pull_request:
     paths:
@@ -23,6 +27,10 @@ on:
       - 'mobile/tests/workspace-navigation.test.mjs'
       - 'mobile/src/business/verified-workspace-client.mjs'
       - 'mobile/tests/verified-workspace-client.test.mjs'
+      - 'mobile/src/auth/native-credential-vault.mjs'
+      - 'mobile/src/auth/native-credential-vault.d.mts'
+      - 'mobile/src/auth/ExpoNativeCredentialVault.ts'
+      - 'mobile/tests/native-credential-vault.test.mjs'
       - '.github/workflows/seyveo-single-account.yml'
   workflow_dispatch:
 
@@ -40,4 +48,4 @@ jobs:
         with:
           node-version: '22'
       - name: Test server manifest and native ONE navigation
-        run: node --test server/business-identity/workspace-manifest.test.mjs server/business-identity/single-account-api.test.mjs mobile/tests/workspace-navigation.test.mjs mobile/tests/verified-workspace-client.test.mjs
+        run: node --test server/business-identity/workspace-manifest.test.mjs server/business-identity/single-account-api.test.mjs mobile/tests/workspace-navigation.test.mjs mobile/tests/verified-workspace-client.test.mjs mobile/tests/native-credential-vault.test.mjs
