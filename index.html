@@ -1892,68 +1892,57 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{padding-inline:6px!important}
 }
 
-/* SEYVEO notebook recessed laser engraving v2.
-   A narrow carved channel surrounds a Home-weight luminous inner line,
-   not an outer drop-shadow glow. The approved dock surface is untouched. */
+/* SEYVEO Notebook · true Home Dock engraving v3.
+   Single-stroke SVG glyphs, the SAME dimensions, color and stroke token
+   used by .dock>.nav-item svg. No multiple contours, halo or blur. */
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]),
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
  color:var(--seyveo-engrave-ink)!important;
- background:transparent!important;box-shadow:none!important;filter:none!important;
- transition:opacity .18s ease,color .18s ease!important;
-}
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button svg,
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone svg{
- overflow:visible!important;
- shape-rendering:geometricPrecision!important;
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ box-shadow:none!important;
  filter:none!important;
-}
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-depth,
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-edge,
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-core{
- fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important;
- filter:none!important;opacity:1!important;
-}
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-depth{
- stroke:rgba(2,10,14,.20)!important;stroke-width:1.45!important;
- transform:translateY(.12px);
-}
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-edge{
- stroke:var(--seyveo-engrave-ink)!important;stroke-width:1.05!important;
- opacity:.22!important;
-}
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-core{
- stroke:var(--seyveo-engrave-ink)!important;stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
  opacity:1!important;
+ -webkit-tap-highlight-color:transparent!important;
+ transition:color .22s ease,opacity .22s ease!important;
 }
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:is(:active,[aria-expanded="true"]),
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]) svg,
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone svg{
+ display:block!important;
+ width:var(--seyveo-dock-icon-size,22px)!important;
+ height:var(--seyveo-dock-icon-size,22px)!important;
+ stroke:currentColor!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ fill:none!important;
+ filter:none!important;
+ box-shadow:none!important;
+ shape-rendering:geometricPrecision!important;
+ transform:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]):active,
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone:active{
+ background:transparent!important;
+ opacity:.79!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button[aria-expanded="true"]{
  color:var(--seyveo-engrave-active)!important;
- background:transparent!important;opacity:.86!important;
+ background:transparent!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]),
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
+ color:#465466!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:focus-visible,
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone:focus-visible{
- outline:2px solid var(--seyveo-engrave-active)!important;outline-offset:1px!important;
-}
-:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-depth{
- stroke:rgba(255,255,255,.30)!important;
-}
-:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-edge{
- stroke:var(--seyveo-engrave-ink)!important;opacity:.22!important;
-}
-:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-core{
- stroke:var(--seyveo-engrave-ink)!important;opacity:1!important;
+ outline:2px solid var(--seyveo-engrave-active)!important;
+ outline-offset:2px!important;
 }
 @media(prefers-reduced-motion:reduce){
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]),
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{transition:none!important}
-}
-
-/* Match the actual Home dock glyph size and flat no-halo rendering. */
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button svg,
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone svg{
- width:var(--seyveo-dock-icon-size,22px)!important;
- height:var(--seyveo-dock-icon-size,22px)!important;
- filter:none!important;
 }
 </style></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=3" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-company-avatar" aria-hidden="true"><img src="assets/company-building-avatar.svg?v=1" alt="" width="44" height="44" draggable="false"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="contacts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Контакты</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="smart-home" aria-label="Открыть Умный дом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg><span>Умный дом</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="documents" aria-label="Открыть Личные документы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/></svg><span>Личные документы</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="mail" aria-label="Открыть Почту SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.6"/><path d="m4 7 8 6 8-6"/></svg><span>Почта</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="browser" aria-label="Открыть Браузер SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 4-5 14 0 18M12 3c5 4 5 14 0 18"/></svg><span>Браузер</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="play" hidden style="display:none!important" aria-label="Открыть YouTube"><svg class="seyveo-youtube-white" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="stroke:none;fill:none;opacity:1;display:block;width:26px;height:23px;flex:none;"><path fill="#fff" fill-rule="evenodd" clip-rule="evenodd" stroke="none" d="M5.7 5H18.3C20.9 5 22.5 6.6 22.5 9.1V14.9C22.5 17.4 20.9 19 18.3 19H5.7C3.1 19 1.5 17.4 1.5 14.9V9.1C1.5 6.6 3.1 5 5.7 5ZM9.85 8.45V15.55L16.5 12Z"/></svg><span>YouTube</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
@@ -3627,10 +3616,10 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div class="sv-note-bottom">
 <div class="sv-note-tool-row sv-shared-dock">
 <div class="sv-note-tools sv-note-tools-compact" role="toolbar" aria-label="Инструменты заметки">
-<button type="button" data-note-tool="checklist" title="Контрольный список" aria-label="Список"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><circle cx="5" cy="7" r="2.7"/><path d="m3.9 7 .8.85 1.5-1.7M10.2 7h10.2M5 17h.01M10.2 17h10.2"/></g><g class="sv-etched-edge"><circle cx="5" cy="7" r="2.7"/><path d="m3.9 7 .8.85 1.5-1.7M10.2 7h10.2M5 17h.01M10.2 17h10.2"/></g><g class="sv-etched-core"><circle cx="5" cy="7" r="2.7"/><path d="m3.9 7 .8.85 1.5-1.7M10.2 7h10.2M5 17h.01M10.2 17h10.2"/></g></svg></button>
-<button type="button" data-note-tool="attachment" title="Вложения" aria-label="Вложения" aria-expanded="false" aria-controls="svNoteAttachmentMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></g><g class="sv-etched-edge"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></g><g class="sv-etched-core"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></g></svg></button>
-<button type="button" data-note-tool="heading" title="Оформление текста" aria-label="Оформление текста" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><circle cx="12" cy="12" r="9.2"/><path d="m7.8 17 4.2-10 4.2 10M9.3 13.5h5.4"/></g><g class="sv-etched-edge"><circle cx="12" cy="12" r="9.2"/><path d="m7.8 17 4.2-10 4.2 10M9.3 13.5h5.4"/></g><g class="sv-etched-core"><circle cx="12" cy="12" r="9.2"/><path d="m7.8 17 4.2-10 4.2 10M9.3 13.5h5.4"/></g></svg></button>
-<button type="button" data-note-tool="draw" title="Рисование" aria-label="Рисование"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></g><g class="sv-etched-edge"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></g><g class="sv-etched-core"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></g></svg></button>
+<button type="button" data-note-tool="checklist" title="Контрольный список" aria-label="Список"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="7" r="2.7"/><path d="m3.9 7 .8.85 1.5-1.7M10.2 7h10.2M5 17h.01M10.2 17h10.2"/></svg></button>
+<button type="button" data-note-tool="attachment" title="Вложения" aria-label="Вложения" aria-expanded="false" aria-controls="svNoteAttachmentMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></svg></button>
+<button type="button" data-note-tool="heading" title="Оформление текста" aria-label="Оформление текста" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="m7.8 17 4.2-10 4.2 10M9.3 13.5h5.4"/></svg></button>
+<button type="button" data-note-tool="draw" title="Рисование" aria-label="Рисование"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></svg></button>
 <div id="svNoteAttachmentMenu" class="sv-note-attachment-menu" hidden role="group" aria-label="Добавить в заметку">
 <button type="button" data-note-attachment="photo">Фото</button>
 <button type="button" data-note-attachment="camera">Камера</button>
@@ -3646,7 +3635,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <button type="button" data-note-tool="voice" hidden tabindex="-1" aria-hidden="true"></button>
 </div>
 <button id="svNoteNewStandalone" class="sv-note-draw-standalone" type="button" title="Новая заметка" aria-label="Создать новую заметку">
-<svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></g><g class="sv-etched-edge"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></g><g class="sv-etched-core"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></g></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></svg>
 </button>
 </div>
 <button id="noteReviewCancel" type="button" hidden aria-hidden="true" tabindex="-1">Отмена</button>
