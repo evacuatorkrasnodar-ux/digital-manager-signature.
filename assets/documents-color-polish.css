@@ -109,8 +109,11 @@
  background:linear-gradient(90deg,rgba(86,173,164,.05),transparent 67%);
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-chat-action .sv-doc-symbol.sv-sayvi-symbol{
- background:url("./sayvi-core-mark.svg") center / 25px 25px no-repeat;
- filter:drop-shadow(0 0 4px rgba(116,214,185,.14));
+ background-color:currentColor;
+ background-image:none;
+ -webkit-mask:url("./sayvi-mark.svg?v=1") center / 25px 25px no-repeat;
+ mask:url("./sayvi-mark.svg?v=1") center / 25px 25px no-repeat;
+ filter:none;
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-chat-action .sv-doc-symbol:not(.sv-sayvi-symbol){
  color:var(--doc-ice);
@@ -177,4 +180,43 @@ html[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-t
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-chat-list{
   transition:none;
  }
+}
+
+/* SEYVEO Docs · no backlit buttons, no glowy icons.
+   Keep native matte glass and the approved restrained blue folders. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-button .sv-doc-art,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-scan>.sv-doc-art,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-chat-action .sv-doc-symbol:not(.sv-sayvi-symbol),
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-vault-summary>.sv-doc-symbol{
+ color:var(--text);
+ border-color:var(--sv-doc-line);
+ background:var(--sv-doc-picked);
+ box-shadow:none;
+ filter:none;
+ text-shadow:none;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-scan,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-shelf-add,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tab[aria-pressed="true"],
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-recent-card,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-chat-list,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-panel,
+#sayviSurfacePage[data-sv-subject="contract"] .svdv-viewer{
+ box-shadow:none;
+ text-shadow:none;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-art svg,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-scan>.sv-doc-art svg,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-chat-action .sv-doc-symbol.sv-sayvi-symbol{
+ filter:none;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-chat-action .sv-doc-symbol.sv-sayvi-symbol{
+ color:var(--text);
+ border:0;
+ background-color:currentColor;
+ background-image:none;
+ -webkit-mask:url("./sayvi-mark.svg?v=1") center / 25px 25px no-repeat;
+ mask:url("./sayvi-mark.svg?v=1") center / 25px 25px no-repeat;
+ box-shadow:none;
 }
