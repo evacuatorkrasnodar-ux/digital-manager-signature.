@@ -480,67 +480,63 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-head
  }
 }
 
-/* SEYVEO Docs · large native swipeable folder carousel.
-   Matches the wide glass folder cards from the reference image, while
-   the row remains scrollable with a finger on narrow iPhone screens. */
+/* SEYVEO Documents · four compact folders visible across an iPhone.
+   Native horizontal scroll still works if more folders are added later. */
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folders-grid{
  box-sizing:border-box;
  display:grid!important;
  grid-template-columns:none!important;
  grid-template-rows:1fr;
  grid-auto-flow:column;
- grid-auto-columns:clamp(158px,43vw,205px);
+ grid-auto-columns:calc((100% - 18px) / 4)!important;
  align-items:stretch;
- gap:clamp(8px,1.5vw,13px)!important;
+ gap:6px!important;
  width:100%;
  min-width:0;
- padding:2px 1px 7px;
+ padding:1px 0 5px;
  overflow-x:auto;
  overflow-y:hidden;
- scroll-snap-type:x mandatory;
- scroll-padding-inline:1px;
+ scroll-snap-type:x proximity;
+ scroll-padding-inline:0;
  overscroll-behavior-x:contain;
  -webkit-overflow-scrolling:touch;
  scrollbar-width:none;
  touch-action:pan-x pan-y;
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folders-grid::-webkit-scrollbar{
- display:none;
- width:0;height:0;
+ display:none;width:0;height:0;
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card{
  box-sizing:border-box;
  display:flex;
- flex-direction:row!important;
- justify-content:flex-start!important;
+ flex-direction:column!important;
+ justify-content:center!important;
  align-items:center!important;
  flex-wrap:nowrap;
- width:100%;
- min-width:0;
- height:clamp(86px,10.2vw,99px);
- min-height:86px!important;
- padding:12px 11px!important;
- gap:9px!important;
- border-radius:20px;
- text-align:left;
+ width:100%!important;
+ min-width:0!important;
+ height:76px!important;
+ min-height:76px!important;
+ padding:7px 2px!important;
+ gap:2px!important;
+ border-radius:16px;
+ text-align:center!important;
  scroll-snap-align:start;
- scroll-snap-stop:normal;
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card .sv-doc-folder-art{
- display:grid;
- place-items:center;
- flex:0 0 43px!important;
- width:43px!important;
- height:48px!important;
+ display:grid;place-items:center;
+ flex:0 0 40px!important;
+ width:42px!important;
+ height:40px!important;
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card strong{
  display:block;
- flex:1 1 auto;
+ flex:0 0 auto;
  min-width:0;
  max-width:100%;
- font-size:clamp(12px,2.65vw,14px)!important;
+ font-size:clamp(9px,2.35vw,11px)!important;
  font-weight:560!important;
- line-height:1.25;
+ line-height:1.2;
  letter-spacing:-.02em;
  white-space:nowrap;
  overflow:hidden;
@@ -548,19 +544,18 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-head
 }
 @media(max-width:370px){
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folders-grid{
-  grid-auto-columns:156px;
-  gap:8px!important;
+  grid-auto-columns:calc((100% - 15px) / 4)!important;
+  gap:5px!important;
  }
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card{
-  padding:10px 9px!important;
-  gap:8px!important;
+  height:72px!important;min-height:72px!important;
+  padding:6px 1px!important;gap:1px!important;
  }
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card .sv-doc-folder-art{
-  flex-basis:42px!important;
-  width:42px!important;
+  flex-basis:38px!important;width:39px!important;height:38px!important;
  }
  #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card strong{
-  font-size:12px!important;
+  font-size:9px!important;
  }
 }
 
