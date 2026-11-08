@@ -15,7 +15,7 @@ const categories=[
  {id:'contracts',title:'Договоры'},
  {id:'projects',title:'Проекты'},
  {id:'clients',title:'Клиенты'},
- {id:'all',title:'Архив'}
+ {id:'archive',title:'Архив'}
 ];
 const examples=[
  {type:'pdf',format:'PDF',name:'Документ PDF'},
@@ -24,7 +24,7 @@ const examples=[
  {type:'sheets',format:'XLSX',name:'Таблица'}
 ];
 const inFolder=(name,id)=>{
- if(id==='all')return true;
+ if(id==='archive')return true;
  const value=String(name||'').toLocaleLowerCase('ru-RU');
  if(id==='contracts')return /договор|контракт|соглашен|contract|agreement/.test(value);
  if(id==='projects')return /проект|project|бриф|brief|задач/.test(value);
@@ -96,7 +96,6 @@ function paint(state){
  state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
  state.showAll.setAttribute('aria-label',state.expanded?'Свернуть список документов':'Показать все документы');
  if(!subset.length&&state.unlocked&&all.length===0&&!state.query&&state.filter==='all'){
-  const samples=el('div','sv-doc-format-examples');
   const caption=el('p','sv-doc-example-note','Примеры форматов · откройте архив или добавьте документ');
   state.recentGrid.append(caption);
   for(const example of examples){
