@@ -182,7 +182,7 @@ function mount(target,{
  const panel=$('section','sv-doc-tool-panel');panel.hidden=true;
  panel.setAttribute('aria-label','Инструменты документов');
  editor.append(wide,grid,panel);target.append(editor);
- let currentPrint=null,documentDraft='';
+ let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='';
  const clear=()=>{
   panel.replaceChildren();cleanUrls();
  };
@@ -411,50 +411,145 @@ function mount(target,{
   panel.append(counter,info,status(''));
  }
  function renderCreate(){
-  panel.append(heading('Создать','Текст → PDF или Word'));
-  panel.append(pictorialSteps([['create','Написать'],['pages','Оформить'],['pdf','Сохранить']]));
-  const examples=$('div','sv-doc-tool-templates');
-  const body=$('textarea','sv-doc-tool-text');body.rows=7;body.maxLength=12000;
-  body.value=documentDraft;
-  body.addEventListener('input',()=>{documentDraft=body.value;});
-  body.placeholder='Напишите текст документа…';
+  panel.append(heading('Создать документ','Начните с шаблона или чистого листа'));
+
   const templates=[
-   ['Заявление','Заявление\n\nПрошу рассмотреть моё обращение.\n\nДата: __________\nПодпись: __________'],
-   ['Акт','Акт\n\nСтороны составили настоящий акт о следующем:\n\nПредмет: __________\nДата: __________'],
-   ['Расписка','Расписка\n\nЯ, __________, подтверждаю получение __________.\n\nДата: __________']
+   {
+    id:'statement',name:'Заявление',label:'Обращение',
+    content:'ЗАЯВЛЕНИЕ\n\nКому: __________________\nОт кого: _______________\n\nПрошу рассмотреть следующее обращение:\n\n________________________\n________________________\n\nДата: __________\nПодпись: __________'
+   },
+   {
+    id:'contract',name:'Договор',label:'Соглашение',
+    content:'ДОГОВОР · УЧЕБНЫЙ ОБРАЗЕЦ\n\nМесто и дата: __________\n\nСторона 1: __________\nСторона 2: __________\n\nПредмет соглашения:\n________________________\n\nУсловия:\n________________________\n\nПодписи сторон:\n________________________'
+   },
+   {
+    id:'act',name:'Акт',label:'Подтверждение',
+    content:'АКТ · УЧЕБНЫЙ ОБРАЗЕЦ\n\nДата и место: __________\n\nСтороны: __________________\n\nСоставили настоящий акт о следующем:\n________________________\n\nЗамечания:\n________________________\n\nПодписи:\n________________________'
+   },
+   {
+    id:'receipt',name:'Расписка',label:'Получение',
+    content:'РАСПИСКА · УЧЕБНЫЙ ОБРАЗЕЦ\n\nЯ, __________________,\nподтверждаю получение:\n\n________________________\n\nОт: __________________\n\nДата: __________\nПодпись: __________'
+   }
   ];
-  for(const [label,example] of templates){
-   examples.append(button(label,()=>{
-    body.value=example;documentDraft=example;
-    message('Учебный шаблон. Замените пример своим текстом.');
-   }));
+
+  const sectionTitle=$('div','sv-doc-create-subhead');
+  sectionTitle.append($('strong','','Шаблоны'),
+   $('small','','Выберите образец'));
+  const examples=$('div','sv-doc-tool-templates');
+  const body=$('textarea','sv-doc-tool-text');
+  body.rows=9;body.maxLength=12000;
+  body.value=documentDraft;
+  body.placeholder='Ваш текст документа…';
+  body.setAttribute('aria-label','Текст создаваемого документа');
+  const cards=[];
+
+  function selectTemplate(id,content){
+   // A new template replaces an existing draft only after confirmation.
+   // Never silently discard text the person has already typed.
+   if(body.value.trim()&&body.value!==content&&
+      typeof window.confirm==='function'&&
+      !window.confirm('Заменить текущий текст выбранным шаблоном?'))return;
+   body.value=content;documentDraft=content;documentTemplate=id;
+   syncTemplate();
+   message('Шаблон открыт. Заполните поля своими данными.');
   }
-  const check=()=>body.value.trim().length>0&&body.value.length<=12000;
-  panel.append(examples,body);
-  panel.append(controls(
-   button('Сохранить PDF',()=>{
-    if(!check()){message('Введите текст документа.');return;}
-    try{save(textPdf(body.value),'SEYVEO-документ.pdf');
-     message('PDF подготовлен. Он содержит страницы-картинки текста.');
-    }catch(e){message(e.message||'Ошибка подготовки PDF');}
-   },'sv-doc-tool-primary'),
-   button('Сохранить Word',()=>{
-    if(!check()){message('Введите текст документа.');return;}
-    try{save(window.SEYVEO_DOCS_EXPORT.docxFromText(body.value),'SEYVEO-документ.docx');
-     message('Word подготовлен для сохранения.');
-    }catch{message('Не удалось создать Word.');}
-   }),
-   button('В Файлы / поделиться',()=>{
-    if(!check()){message('Введите текст документа.');return;}
-    try{
-     void shareExport(window.SEYVEO_DOCS_EXPORT.docxFromText(body.value),
-      'SEYVEO-документ.docx').then(result=>message(shareMessage(result,'Word')));
-    }catch{message('Не удалось подготовить Word.');}
-   }),
-   button('Создать с Сэйви',()=>onSayvi('create'))
-  ));
+  function syncTemplate(){
+   cards.forEach(({id,button})=>
+    button.setAttribute('aria-pressed',String(documentTemplate===id)));
+  }
+  for(const item of templates){
+   const card=button(item.name,()=>selectTemplate(item.id,item.content),
+    'sv-doc-template-card sv-doc-template-'+item.id);
+   card.setAttribute('aria-label','Выбрать шаблон: '+item.name);
+   card.setAttribute('aria-pressed',String(documentTemplate===item.id));
+   const paper=$('span','sv-doc-template-paper');
+   paper.setAttribute('aria-hidden','true');
+   paper.append($('span','sv-doc-template-paper-title',item.name));
+   const lines=$('span','sv-doc-template-paper-lines');
+   for(const key of ['wide','wide','medium','short']){
+    lines.append($('i','sv-doc-template-line sv-doc-template-line-'+key));
+   }
+   paper.append(lines,$('span','sv-doc-template-paper-sign'));
+   card.append(paper,$('small','sv-doc-template-subtitle',item.label));
+   cards.push({id:item.id,button:card});
+   examples.append(card);
+  }
+
+  body.addEventListener('input',()=>{
+   documentDraft=body.value;
+   documentTemplate='';syncTemplate();
+  });
+  const editing=$('div','sv-doc-create-editor');
+  const editorTop=$('div','sv-doc-create-editor-heading');
+  editorTop.append($('strong','','Ваш документ'),
+   $('small','','Редактируемый текст'));
+  editing.append(editorTop,body);
+
+  const formatLabel=$('div','sv-doc-create-subhead');
+  formatLabel.append($('strong','','Формат'),
+   $('small','','Как сохранить'));
+  const formatSwitch=$('div','sv-doc-create-formats');
+  formatSwitch.setAttribute('role','group');
+  formatSwitch.setAttribute('aria-label','Выбор формата документа');
+  const saveButton=button('Сохранить PDF',saveSelected,'sv-doc-tool-primary sv-doc-create-save');
+  const shareButton=button('В Файлы / поделиться',shareSelected,'sv-doc-create-share');
+  const selectedFormat=[];
+  for(const option of [
+   {id:'pdf',label:'PDF',caption:'Для просмотра',art:'pdf'},
+   {id:'docx',label:'Word',caption:'Для правок',art:'file'}
+  ]){
+   const optionButton=button(option.label,()=>{
+    documentFormat=option.id;syncFormat();
+   },'sv-doc-create-format sv-doc-create-format-'+option.id);
+   optionButton.append(art(option.art,true),
+    $('small','sv-doc-create-format-caption',option.caption));
+   optionButton.setAttribute('aria-pressed',String(documentFormat===option.id));
+   optionButton.setAttribute('aria-label',option.label+' · '+option.caption);
+   selectedFormat.push({id:option.id,button:optionButton});
+   formatSwitch.append(optionButton);
+  }
+  function syncFormat(){
+   selectedFormat.forEach(({id,button})=>
+    button.setAttribute('aria-pressed',String(id===documentFormat)));
+   saveButton.textContent=documentFormat==='pdf'?'Сохранить PDF':'Сохранить Word';
+  }
+  function preparedFile(){
+   if(!body.value.trim()||body.value.length>12000){
+    message('Напишите текст документа.');return null;
+   }
+   try{
+    if(documentFormat==='pdf'){
+     return {blob:textPdf(body.value),name:'SEYVEO-документ.pdf',label:'PDF'};
+    }
+    return {blob:window.SEYVEO_DOCS_EXPORT.docxFromText(body.value),
+     name:'SEYVEO-документ.docx',label:'Word'};
+   }catch(error){
+    message(error?.message||'Не удалось подготовить документ.');
+    return null;
+   }
+  }
+  function saveSelected(){
+   const ready=preparedFile();if(!ready)return;
+   try{
+    save(ready.blob,ready.name);
+    message(ready.label+' подготовлен. Проверьте загрузки.');
+   }catch{message('Не удалось сохранить документ.');}
+  }
+  function shareSelected(){
+   const ready=preparedFile();if(!ready)return;
+   void shareExport(ready.blob,ready.name).then(
+    result=>message(shareMessage(result,ready.label)),
+    ()=>message('Не удалось открыть системное меню.')
+   );
+  }
+  syncFormat();
+  const footer=controls(saveButton,shareButton);
+  const sayvi=button('Создать с Сэйви',()=>onSayvi('create'),'sv-doc-create-sayvi');
+  sayvi.append(art('create',true));
+  panel.append(sectionTitle,examples,editing,formatLabel,formatSwitch,footer,sayvi);
   const info=$('details','sv-doc-tool-help');
-  info.append($('summary','','О шаблонах'),warn('Это простой редактор. Шаблоны учебные, текст требует проверки.'));
+  info.append($('summary','','О шаблонах'),
+   warn('Шаблоны учебные. Это простой текстовый редактор, не проверка договора. PDF сохраняется как изображение текста на страницах, Word — редактируемый DOCX.'));
   panel.append(info,status(''));
  }
  function renderSign(){
