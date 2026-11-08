@@ -334,3 +334,24 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
  fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
  stroke-linecap:round!important;stroke-linejoin:round!important
 }
+
+
+/* Employee workspace: restore the existing Elena dashboard within the same
+   permanent navigation. Two calm tabs, no duplicate cabinet or calendar. */
+#svWorkTabs button[hidden]{display:none!important}
+#svWorkShell[data-shared-work="true"] #svWorkTabs[data-employee="true"]{
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+#svWorkTabs[data-employee="true"]::before{
+ width:calc((100% - 6px)/2);
+ transform:translateX(0);
+}
+#svWorkShell[data-active="employee"] #svWorkTabs[data-employee="true"]::before{
+ transform:translateX(100%);
+}
+#svWorkShell[data-active="employee"] #svWorkTitle{
+ color:var(--text);
+}
+#svWorkShell[data-active="employee"] #svWorkAdd{
+ visibility:hidden!important;pointer-events:none!important;
+}
