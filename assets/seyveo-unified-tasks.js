@@ -93,7 +93,7 @@
  function updatePulseAccess(){
   // UI preview only. Real access will require verified roles and server authorization.
   if(businessTab)businessTab.hidden=!isManager();
-  if(calendarTab)calendarTab.hidden=!isManager();
+  if(calendarTab)calendarTab.hidden=!(isManager()||isEmployee());
   if(taskTabs)taskTabs.dataset.manager=String(isManager());
   if(managerCalendarContext&&!isManager()){
    managerCalendarContext=false;
@@ -674,15 +674,15 @@
   syncBack();
  }
  function openManagerCalendar(){
-  if(!isManager())return;
+  if(!isManager()&&!isEmployee())return;
   if(page.dataset.workChatOpen==='true')closeWorkChat({restoreFocus:false});
-  managerCalendarContext=true;
-  if(managerCalendarTabs)managerCalendarTabs.hidden=false;
-  // Reuse the ONE existing Calendar page, never clone it into a work panel.
-  // A preview-role check is still required; native server roles come later.
+  // Reuse the same Calendar. Elena sees its existing personal scope,
+  // while manager calendar controls remain hidden from staff previews.
+  managerCalendarContext=isManager();
+  if(managerCalendarTabs)managerCalendarTabs.hidden=!managerCalendarContext;
   if(location.hash!=='#calendar')location.hash='#calendar';
   window.dispatchEvent(new CustomEvent('seyveo:calendar-manager-context',
-   {detail:{active:true}}));
+   {detail:{active:managerCalendarContext}}));
  }
  function showChat(roomId,viewpoint,filter){
   if(isEmployee()){
@@ -723,6 +723,10 @@
  function openPersonal(){
   businessFromPersonal=false;
   exitTarget='home';syncBack();navigate('personal');
+ }
+ function openEmployee(){
+  if(!isEmployee())return;
+  exitTarget='home';syncBack();navigate('employee');
  }
  function resetViewportAtWorkEntry(){
   // #tasks is shared by several preview modes; its prior scroll location
@@ -887,7 +891,7 @@
   applyPreviewSelection();
  }
  window.SEYVEO_UNIFIED_TASKS=Object.freeze({
-  openBusiness,openPersonal,openChat,openPulse,returnFromPulse,openPeople,previewRole:switchPreviewRole
+  openBusiness,openPersonal,openEmployee,openChat,openPulse,returnFromPulse,openPeople,previewRole:switchPreviewRole
  });
  window.SEYVEO_PREVIEW=Object.freeze({getMode:()=>previewMode,isManager,isEmployee});
  syncBack();updatePulseAccess();select(isEmployee()?'employee':'personal');
