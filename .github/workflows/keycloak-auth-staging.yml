@@ -4,10 +4,14 @@ on:
   push:
     paths:
       - 'deploy/auth-staging/**'
+      - 'server/business-identity/oidc-discovery-verifier.mjs'
+      - 'server/business-identity/oidc-discovery-verifier.test.mjs'
       - '.github/workflows/keycloak-auth-staging.yml'
   pull_request:
     paths:
       - 'deploy/auth-staging/**'
+      - 'server/business-identity/oidc-discovery-verifier.mjs'
+      - 'server/business-identity/oidc-discovery-verifier.test.mjs'
       - '.github/workflows/keycloak-auth-staging.yml'
   workflow_dispatch:
 
@@ -24,7 +28,7 @@ jobs:
         with:
           node-version: '22'
       - name: Check template configuration, secret validation, and native redirect policy
-        run: node --test deploy/auth-staging/staging-config.test.mjs
+        run: node --test deploy/auth-staging/staging-config.test.mjs deploy/auth-staging/check-oidc-ready.test.mjs server/business-identity/oidc-discovery-verifier.test.mjs
       - name: Verify Docker Compose syntax without running any server
         run: docker compose --env-file deploy/auth-staging/.env.example -f deploy/auth-staging/compose.yaml config --quiet
       - name: Confirm example secrets intentionally fail operator preflight
