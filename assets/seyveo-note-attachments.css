@@ -356,3 +356,69 @@
   left:12px!important;width:190px!important;min-width:0!important;
  }
 }
+
+
+/* SEYVEO native rich-text writing surface. Matches the current textarea;
+   no changes to approved dock, tool icons, menus or navigation. */
+#noteReviewDialog.note-review-dialog[open] #noteReviewText[hidden]{display:none!important}
+#noteReviewDialog.note-review-dialog[open] #svNoteRichEditor[hidden]{display:none!important}
+#noteReviewDialog.note-review-dialog[open] #svNoteRichEditor{
+ box-sizing:border-box!important;
+ display:block!important;
+ flex:1 1 0!important;
+ width:100%!important;
+ min-width:0!important;
+ min-height:44px!important;
+ overflow:auto!important;
+ margin:0!important;
+ padding:4px 5px 12px!important;
+ border:0!important;
+ border-radius:0!important;
+ outline:none!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ color:rgba(238,243,246,.94)!important;
+ font:400 17px/1.48 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif!important;
+ letter-spacing:-.012em!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;
+ word-break:normal!important;
+ -webkit-overflow-scrolling:touch;
+ -webkit-user-select:text!important;
+ user-select:text!important;
+}
+#noteReviewDialog.note-review-dialog[open] #svNoteRichEditor:empty::before{
+ content:attr(data-placeholder);
+ color:rgba(212,223,230,.49);
+ pointer-events:none;
+}
+#noteReviewDialog.note-review-dialog[open] #svNoteRichEditor :is(strong,b){
+ font-weight:700!important;
+}
+#noteReviewDialog.note-review-dialog[open] #svNoteRichEditor :is(em,i){
+ font-style:italic!important;
+}
+#noteReviewDialog.note-review-dialog[open] #svNoteRichEditor u{
+ text-decoration:underline!important;
+ text-underline-offset:.14em!important;
+}
+#noteReviewDialog.note-review-dialog[open] #svNoteRichEditor :is(h2,h3){
+ font:600 22px/1.36 -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif!important;
+ letter-spacing:-.027em!important;
+ margin:8px 0 5px!important;
+}
+#noteReadDialog #noteReadContent.sv-note-has-rich :is(strong,b){font-weight:700!important}
+#noteReadDialog #noteReadContent.sv-note-has-rich :is(em,i){font-style:italic!important}
+#noteReadDialog #noteReadContent.sv-note-has-rich u{text-decoration:underline!important;text-underline-offset:.14em!important}
+#noteReadDialog #noteReadContent.sv-note-has-rich :is(h2,h3){
+ font:600 22px/1.36 -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif!important;
+ letter-spacing:-.027em!important;
+ margin:8px 0 5px!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteRichEditor{
+ color:#242a31!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteRichEditor:empty::before{
+ color:rgba(51,64,75,.50);
+}
