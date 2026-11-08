@@ -1,319 +1,196 @@
-/* SEYVEO Paper · top glass controls. Reuses existing live notebook handlers. */
-(function(){
+/* SEYVEO Paper · NEW top toolbar, November 2026.
+   Independent seven-button component; no legacy toolbar markup, wrappers,
+   pseudo-selection circles, or accumulated toolbar event handlers.
+   Existing notebook-paper.js retains ownership of drawing and saving. */
+(()=>{
  'use strict';
  const $=id=>document.getElementById(id);
- const dialog=$('notePaperDialog');
- if(!dialog)return;
+ const dialog=$('notePaperDialog'),dock=$('svPaperNewDock');
+ if(!dialog||!dock)return;
 
- // Keep the white thumb visually clean at rest. When moving, show its
- // exact line width on top of the knob, including on iPhone touch events.
- const thickness=$('notePaperWidth');
- const thicknessWrap=thickness?.closest('.sv-paper-size');
- if(thickness&&thicknessWrap){
-  const syncThickness=()=>{
-   const n=Math.max(Number(thickness.min)||1,Math.min(Number(thickness.max)||28,Number(thickness.value)||5));
-   const max=Number(thickness.max)||28,min=Number(thickness.min)||1;
-   const fraction=max===min ? 0.5 : (n-min)/(max-min);
-   // Exact native slider travel (thumb 28 px). No tweening between steps.
-   const track=Math.min(190,window.innerHeight*.36);
-   thicknessWrap.style.setProperty('--sv-thumb-offset',((.5-fraction)*(track-28))+'px');
-   thicknessWrap.dataset.width=String(n);
-   thickness.setAttribute('aria-valuetext',String(n));
-  };
-  let lastDetent=Number(thickness.value);
-  let dragging=false;
-  const reveal=()=>{dragging=true;syncThickness();thicknessWrap.classList.add('sv-paper-size-active')};
-  const hide=()=>{dragging=false;thicknessWrap.classList.remove('sv-paper-size-active')};
-  thickness.addEventListener('pointerdown',reveal);
-  thickness.addEventListener('input',()=>{
-   const current=Number(thickness.value);
-   if(current!==lastDetent){
-    lastDetent=current;
-    // Tiny haptic tick where the browser supports it; iOS Safari ignores it.
-    if(dragging&&typeof navigator.vibrate==='function')navigator.vibrate(5);
-   }
-   syncThickness();
-  });
-  thickness.addEventListener('pointerup',hide);
-  thickness.addEventListener('pointercancel',hide);
-  thickness.addEventListener('change',hide);
-  thickness.addEventListener('blur',hide);
-  window.addEventListener('resize',syncThickness,{passive:true});
-  new MutationObserver(()=>{if(dialog.open)syncThickness();else hide()})
-   .observe(dialog,{attributes:true,attributeFilter:['open']});
-  syncThickness();
- }
+ const pen=dock.querySelector('[data-paper-tool="pen"]');
+ const eraser=dock.querySelector('[data-paper-tool="eraser"]');
+ const duplicate=$('notePaperDuplicate');
+ const sheet=$('notePaperPatternTrigger');
+ const paperMenu=$('notePaperPatternMenu');
+ const patternLabel=$('notePaperPatternLabel');
+ const photo=$('notePaperAddPhoto');
+ const removePhoto=$('notePaperRemovePhoto');
+ if(!pen||!eraser||!duplicate||!sheet||!paperMenu||!photo||!removePhoto)return;
 
- const bar=dialog.querySelector('.paper-toolbar-primary');
- if(!dialog||!bar||$('notePaperSettings'))return;
- const pencil=dialog.querySelector('[data-paper-tool="pencil"]');
- pencil?.remove();
- const duplicate=$('notePaperDuplicate'),paper=dialog.querySelector('.paper-pattern-control');
- const photo=$('notePaperAddPhoto'),file=$('notePaperPhotoFile'),removePhoto=$('notePaperRemovePhoto');
- if(!duplicate||!paper||!photo||!file||!removePhoto)return;
- duplicate.remove();
- const settings=document.createElement('div');
- settings.className='sv-paper-settings';
- settings.innerHTML='<button id="notePaperSettings" type="button" title="Настройки" aria-label="Настройки листа" aria-expanded="false" aria-controls="notePaperSettingsMenu" aria-haspopup="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.1"/><path d="M10.1 2.9h3.8l.6 2.2 1.7.8 2.1-1.1 2.7 2.7-1.1 2.1.8 1.7 2.2.6v3.8l-2.2.6-.8 1.7 1.1 2.1-2.7 2.7-2.1-1.1-1.7.8-.6 2.2h-3.8l-.6-2.2-1.7-.8-2.1 1.1-2.7-2.7 1.1-2.1-.8-1.7-2.2-.6v-3.8l2.2-.6.8-1.7-1.1-2.1 2.7-2.7 2.1 1.1 1.7-.8Z"/></svg></button><div id="notePaperSettingsMenu" class="sv-paper-settings-menu" role="group" aria-label="Настройки листа" hidden><span class="sv-paper-settings-title">Фон листа</span><div class="sv-paper-backgrounds" role="group" aria-label="Цвет бумаги"><button type="button" data-paper-background="dark" aria-pressed="true">Тёмный</button><button type="button" data-paper-background="light" aria-pressed="false">Светлый</button></div></div>';
- const trigger=settings.querySelector('#notePaperSettings'),menu=settings.querySelector('#notePaperSettingsMenu');
- // Duplicate belongs in the TOP capsule, not in Settings or the popup.
- duplicate.setAttribute('title','Дублировать последний штрих');
- duplicate.setAttribute('aria-label','Дублировать последний штрих');
- removePhoto.querySelector('span')?.replaceChildren(document.createTextNode('Убрать фото'));
- menu.append(removePhoto);
- // One-step sheet actions, with confirmation only when actual content
- // would be lost. Preserves all existing editing/navigation controls.
- const blankButton=document.createElement('button');
- blankButton.type='button';blankButton.id='notePaperBlankSheet';
- blankButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.4"/></svg><span>Без разлиновки</span>';
- const clearButton=document.createElement('button');
- clearButton.type='button';clearButton.id='notePaperClearSheet';
- clearButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M7 7l.8 13h8.4L17 7M10 10.5v6M14 10.5v6"/></svg><span>Очистить весь лист</span>';
- clearButton.className='sv-paper-clear-action';
- menu.append(blankButton,clearButton);
- blankButton.addEventListener('click',()=>{if(window.SEYVEO_PAPER?.blankPaper?.())close()});
- clearButton.addEventListener('click',()=>{if(window.SEYVEO_PAPER?.clearSheet?.())close()});
-
+ // One fresh icon language: every path shares a 24x24 grid and 1.7px stroke.
+ const icon=paths=>'<svg class="sv-newdock-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
+ const icons={
+  pen:'<path d="m4.6 19.1 11.1-11.2a2.3 2.3 0 0 1 3.3 3.3L7.9 22.3 3 23l1.6-3.9Z"/><path d="m13.6 10 3.3 3.3M4.8 19.1l3.1 3.2"/>',
+  eraser:'<path d="m4.5 14.1 9-9a2.2 2.2 0 0 1 3.1 0l3.3 3.3a2.2 2.2 0 0 1 0 3.1L11.6 20H8.2l-3.7-3.7a1.6 1.6 0 0 1 0-2.2Z"/><path d="m10.5 8.2 6 6M11.6 20h9.2"/>',
+  duplicate:'<rect x="8.8" y="8.6" width="12" height="12" rx="2.5"/><path d="M16.8 8.6V6.2a2.4 2.4 0 0 0-2.4-2.4H6.2a2.4 2.4 0 0 0-2.4 2.4v8.2a2.4 2.4 0 0 0 2.4 2.4h2.6"/>',
+  settings:'<path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="2.5" fill="#202124"/><circle cx="16" cy="12" r="2.5" fill="#202124"/><circle cx="10" cy="18" r="2.5" fill="#202124"/>',
+  sheet:'<rect x="5.5" y="3" width="13" height="18" rx="2"/><path d="M9 8.2h6M9 11.7h6M9 15.2h4"/>',
+  photo:'<rect x="2.8" y="4" width="18.4" height="16" rx="2.6"/><circle cx="8" cy="9" r="1.4"/><path d="m4.8 17.4 4.5-4.8 3.3 3.2 2.6-3 3.5 4.6"/>',
+  sayvi:'<path d="M12 2.5c1.7 0 2.1 4.6 3.7 6.1s5.7 2 5.7 3.4-4.1 2-5.7 3.5-2 6.1-3.7 6.1-2.1-4.6-3.7-6.1S2.6 13.5 2.6 12s4.1-1.9 5.7-3.4S10.3 2.5 12 2.5Z"/><circle cx="12" cy="12" r="1.35" fill="currentColor" stroke="none"/>'
+ };
+ const settings=document.createElement('button');
+ settings.type='button';settings.id='notePaperSettings';
+ settings.setAttribute('aria-label','Настройки листа');
+ settings.title='Настройки';
+ settings.setAttribute('aria-controls','notePaperSettingsMenu');
+ settings.setAttribute('aria-haspopup','true');
+ settings.setAttribute('aria-expanded','false');
  const sayvi=document.createElement('button');
- sayvi.type='button';sayvi.id='notePaperSayvi';sayvi.title='Сэйви';
- sayvi.setAttribute('aria-label','Открыть чат Сэйви');
- sayvi.innerHTML='<img src="assets/sayvi-mark.svg" alt="" aria-hidden="true">';
- const pen=bar.querySelector('[data-paper-tool="pen"]');
- const eraser=bar.querySelector('[data-paper-tool="eraser"]');
- // Seven DIRECT children. Menus stay outside the layout, so nothing
- // from old wrappers can stretch or displace the selected circle.
- const sheetButton=paper.querySelector('#notePaperPatternTrigger');
- dialog.appendChild(settings);
- dialog.appendChild(paper);
- bar.replaceChildren(pen,eraser,duplicate,trigger,sheetButton,photo,sayvi);
- // V23: wholly new isolated seven-button layout. Remove the old toolbar
- // and old sheet-trigger classes so years of legacy selectors cannot
- // reposition a glyph or draw phantom circles during a long press.
- bar.classList.remove('paper-toolbar-primary');
- bar.classList.add('sv-inkbar');
- sheetButton.classList.remove('paper-pattern-trigger');
- for(const button of [pen,eraser,duplicate,trigger,sheetButton,photo,sayvi]){
-  button.classList.add('sv-inkbar-tool');
-  button.style.removeProperty('transform');
- }
-
- dialog.appendChild(file);
-
- // SEYVEO signature ink · intentionally drawn as one six-symbol family.
- // All marks share a 28-unit optical grid and polished silver linework.
- const glyph=(content)=>'<svg class="sv-paper-signature" viewBox="0 0 28 28" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">'+content+'</svg>';
- const artwork={
-  pen:
-    '<path class="sv-paper-icon-shade" d="m5.3 20.7 12-12 3 3-12 12-3.8 1Z"/>'+
-    '<path d="m4.4 24.7 1.2-4.6L17.3 8.4a3.0 3.0 0 0 1 4.3 4.3L9.8 24.4l-5.4.3Z"/>'+
-    '<path d="m15.1 10.6 4.3 4.3M5.8 20.6l3.5 3.5"/>'+
-    '<path d="m17.8 7.8 2.4-2.4a1.6 1.6 0 0 1 2.2 2.2l-.9.9"/>',
-  eraser:
-    '<path class="sv-paper-icon-shade" d="m5.5 16.5 10-10 6.1 6.1-10 10H9.1Z"/>'+
-    '<path d="M5.7 16.7 15.6 6.8a2.6 2.6 0 0 1 3.7 0l2.5 2.5a2.6 2.6 0 0 1 0 3.7l-9.9 9.9H9.1l-3.4-3.4a2 2 0 0 1 0-2.8Z"/>'+
-    '<path d="m11.4 11.1 6.2 6.2M11.9 22.9h11.9"/>',
-  settings:
-    '<path d="M4.3 7.2h8.3m5.7 0h5.4M4.3 14h3.8m5.7 0h9.9M4.3 20.8h12.3m5.5 0h1.6"/>'+
-    '<circle class="sv-paper-icon-knob" cx="15.4" cy="7.2" r="2.8"/>'+
-    '<circle class="sv-paper-icon-knob" cx="10.9" cy="14" r="2.8"/>'+
-    '<circle class="sv-paper-icon-knob" cx="19.3" cy="20.8" r="2.8"/>',
-  sheet:
-    '<path class="sv-paper-icon-shade" d="M17.5 3.2v5.1h5.1Z"/>'+
-    '<path d="M7.6 3.2h9.9l5.1 5.1v14.2a2.4 2.4 0 0 1-2.4 2.4H7.6a2.4 2.4 0 0 1-2.4-2.4V5.6a2.4 2.4 0 0 1 2.4-2.4Z"/>'+
-    '<path d="M17.5 3.4v5h5M9.5 12.5h8.5M9.5 16.4h8.5M9.5 20.3h5.5"/>',
-  photo:
-    '<rect class="sv-paper-icon-shade" x="3.4" y="4.5" width="21.2" height="19.1" rx="3.1"/>'+
-    '<rect x="3.4" y="4.5" width="21.2" height="19.1" rx="3.1"/>'+
-    '<circle cx="9.2" cy="10.4" r="1.65"/>'+
-    '<path d="m5.4 20.5 5.3-5.7 3.8 3.8 3.1-3.4 5 5.3"/>',
-  sayvi:
-    '<path class="sv-paper-icon-shade" d="M14 2.5c1.8 0 2.4 5.5 4.5 7s7 2.7 7 4.5-4.9 2.9-7 4.5-2.7 7-4.5 7-2.4-5.5-4.5-7-7-2.7-7-4.5 4.9-2.9 7-4.5 2.7-7 4.5-7Z"/>'+
-    '<path d="M14 2.5c1.8 0 2.4 5.5 4.5 7s7 2.7 7 4.5-4.9 2.9-7 4.5-2.7 7-4.5 7-2.4-5.5-4.5-7-7-2.7-7-4.5 4.9-2.9 7-4.5 2.7-7 4.5-7Z"/>'+
-    '<circle class="sv-paper-icon-core" cx="14" cy="14" r="1.65"/>'
- };
- const applyGlyph=(button,kind)=>{if(button)button.innerHTML=glyph(artwork[kind])};
- applyGlyph(pen,'pen');
- applyGlyph(eraser,'eraser');
- // Same 28-unit silver glyph grid as the other capsule controls.
- duplicate.innerHTML=glyph('<rect x="10" y="9.5" width="13.5" height="13.5" rx="2.8"/><path d="M18.5 9.5V7a2.5 2.5 0 0 0-2.5-2.5H7A2.5 2.5 0 0 0 4.5 7v9A2.5 2.5 0 0 0 7 18.5h3"/>');
- applyGlyph(trigger,'settings');
- const sheetTrigger=paper.querySelector('#notePaperPatternTrigger');
- // One canonical icon class is applied to every direct toolbar button.
- // Old pseudo-elements are disabled in CSS; selected fill is on its own box.
- for(const button of [pen,eraser,duplicate,trigger,photo,sayvi]){
-  button?.classList.add('sv-ink-direct-tool');
- }
-
- const cachedPatternLabel=$('notePaperPatternLabel');
- applyGlyph(sheetTrigger,'sheet');
- sheetTrigger?.classList.add('sv-ink-direct-tool');
- // Retain the exact label element referenced by notebook-paper.js.
- // Keep it in the DOM for template syncing, never show text in the capsule.
- if(cachedPatternLabel){
-  cachedPatternLabel.classList.add('sv-paper-visually-hidden');
-  sheetTrigger?.append(cachedPatternLabel);
- }
- // Move the large popup out of the 6-button glass strip. Otherwise
- // iOS Safari clips it against the toolbar backdrop-filter bounds.
- const paperPopup=$('notePaperPatternMenu');
- if(paperPopup&&paperPopup.parentElement!==dialog)dialog.appendChild(paperPopup);
- applyGlyph(photo,'photo');
- applyGlyph(sayvi,'sayvi');
- // A REAL centered silver selection plate, child of each tool.
- // Its dimensions are independent of all legacy button/pseudo-element rules.
- const inkButtons=[pen,eraser,duplicate,trigger,sheetTrigger,photo,sayvi].filter(Boolean);
- for(const button of inkButtons){
-  let plate=button.querySelector(':scope > .sv-inkbar-selection');
-  if(!plate){
-   plate=document.createElement('span');
-   plate.className='sv-inkbar-selection';
-   plate.setAttribute('aria-hidden','true');
-   button.prepend(plate);
-  }
- }
-
- // A single persistent selected disc for the actual editing mode.
- // Selecting a paper template highlights Sheet until another tool is chosen.
- const shapeTools=[...dialog.querySelectorAll('#notePaperPatternMenu [data-paper-tool]')];
- const paperChoices=[...dialog.querySelectorAll('#notePaperPatternMenu [data-paper-pattern]')];
- let chosenPaper=false;
- const activeTool=()=>dialog.querySelector('[data-paper-tool][aria-pressed="true"]')?.dataset.paperTool||'pen';
- const syncSelectedTool=()=>{
-  const kind=activeTool(),shape=shapeTools.some(b=>b.dataset.paperTool===kind);
-  const current=shape||chosenPaper?'sheet':kind==='eraser'?'eraser':'pen';
-  for(const [button,key] of [[pen,'pen'],[eraser,'eraser'],[sheetTrigger,'sheet']]){
-   if(!button)continue;
-   const selected=current===key;
-   button.classList.toggle('sv-paper-tool-selected',selected);
-   button.setAttribute('data-sv-selected',String(selected));
-   button.querySelector('.sv-inkbar-selection')?.classList.toggle('is-selected',selected);
-   button.style.setProperty('background','transparent','important');
-   button.style.setProperty('border-radius','50%','important');
-   button.style.setProperty('box-shadow','none','important');
-  }
-  sheetTrigger?.classList.toggle('sv-paper-shape-selected',shape);
-  const chosen=shapeTools.find(b=>b.dataset.paperTool===kind);
-  sheetTrigger?.setAttribute('aria-label',chosen?'Фигура: '+(chosen.title||'Инструмент'):'Лист и фигуры');
- };
- for(const button of [pen,eraser,...shapeTools]){
-  button?.addEventListener('click',()=>{chosenPaper=false;syncSelectedTool()});
- }
- for(const button of paperChoices){
-  button.addEventListener('click',()=>{chosenPaper=true;syncSelectedTool()});
- }
- dialog.addEventListener('close',()=>{chosenPaper=false;syncSelectedTool()});
- new MutationObserver(syncSelectedTool).observe(dialog,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
- dialog.addEventListener('click',event=>{
-  if(event.target.closest('.sv-inkbar-tool,#notePaperPatternMenu [data-paper-tool],#notePaperPatternMenu [data-paper-pattern]'))
-   requestAnimationFrame(syncSelectedTool);
+ sayvi.type='button';sayvi.id='notePaperSayvi';
+ sayvi.setAttribute('aria-label','Открыть Сэйви');sayvi.title='Сэйви';
+ const buttons=[pen,eraser,duplicate,settings,sheet,photo,sayvi];
+ const names=['pen','eraser','duplicate','settings','sheet','photo','sayvi'];
+ buttons.forEach((button,index)=>{
+  button.className='sv-newdock-button';
+  const key=names[index];
+  button.innerHTML=icon(icons[key]);
+  button.dataset.svAction=key;
+  button.setAttribute('data-sv-active','false');
  });
- new MutationObserver(()=>{if(dialog.open)requestAnimationFrame(syncSelectedTool)})
-  .observe(dialog,{attributes:true,attributeFilter:['open']});
-
- syncSelectedTool();
-
- // One custom SEYVEO circle for brush, eraser and shape tools.
- // No native crosshair/plus; it never intercepts canvas gestures.
- const previewCanvas=$('notePaperCanvas');
- const previewStage=$('notePaperStage');
- const previewSheet=$('notePaperSheet');
- if(previewCanvas&&previewStage){
-  const ring=document.createElement('div');
-  ring.className='sv-paper-eraser-ring sv-paper-cursor-brush';
-  ring.setAttribute('aria-hidden','true');
-  previewStage.appendChild(ring);
-  const hideRing=()=>ring.classList.remove('is-visible');
-  const syncCursor=()=>{
-   const erasing=activeTool()==='eraser';
-   dialog.classList.toggle('sv-paper-eraser-mode',erasing);
-   dialog.classList.toggle('sv-paper-cursor-mode',dialog.open);
-   ring.classList.toggle('sv-paper-cursor-brush',!erasing);
-   ring.classList.toggle('sv-paper-cursor-eraser',erasing);
+ // notebook-paper.js holds the original pattern-label DOM node, retain it.
+ patternLabel.className='sv-paper-visually-hidden';
+ sheet.append(patternLabel);
+ sheet.setAttribute('aria-label','Лист и фигуры');
+ sheet.setAttribute('aria-haspopup','true');
+ sheet.setAttribute('aria-controls','notePaperPatternMenu');
+ sheet.setAttribute('aria-expanded','false');
+ dock.replaceChildren(...buttons);
+ // All old actions live elsewhere; the new dock has exactly seven buttons.
+ dialog.append(paperMenu);
+ const settingsHost=document.createElement('div');
+ settingsHost.className='sv-newdock-settings-host';
+ settingsHost.innerHTML='<div id="notePaperSettingsMenu" class="sv-newdock-settings-panel" role="group" aria-label="Настройки листа" hidden><span class="sv-newdock-menu-title">Фон листа</span><div class="sv-newdock-backgrounds"><button type="button" data-paper-background="dark" aria-pressed="true">Тёмный</button><button type="button" data-paper-background="light" aria-pressed="false">Светлый</button></div></div>';
+ dialog.append(settingsHost);
+ const settingsMenu=$('notePaperSettingsMenu');
+ const plain=document.createElement('button');
+ plain.type='button';plain.id='notePaperBlankSheet';
+ plain.innerHTML=icon('<rect x="5" y="3" width="14" height="18" rx="2.4"/>')+'<span>Без разлиновки</span>';
+ const clear=document.createElement('button');
+ clear.type='button';clear.id='notePaperClearSheet';clear.className='sv-newdock-clear';
+ clear.innerHTML=icon('<path d="M4 7h16M9 7V4.5h6V7M7 7l.8 13h8.4L17 7M10 10.5v6M14 10.5v6"/>')+'<span>Очистить весь лист</span>';
+ removePhoto.querySelector('span')?.replaceChildren(document.createTextNode('Убрать фото'));
+ settingsMenu.append(plain,clear,removePhoto);
+ const backgroundButtons=[...settingsMenu.querySelectorAll('[data-paper-background]')];
+ const syncBackground=()=>{
+  const value=window.SEYVEO_PAPER?.getBackground?.();
+  backgroundButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.paperBackground===value)));
+ };
+ const closeSettings=(focus=false)=>{
+  settingsMenu.hidden=true;settings.setAttribute('aria-expanded','false');
+  if(focus)settings.focus({preventScroll:true});
+ };
+ const closePaper=()=>{
+  paperMenu.hidden=true;sheet.setAttribute('aria-expanded','false');
+ };
+ settings.addEventListener('click',()=>{
+  closePaper();
+  const opening=settingsMenu.hidden;
+  settingsMenu.hidden=!opening;settings.setAttribute('aria-expanded',String(opening));
+  if(opening)syncBackground();
+  syncActive();
+ });
+ sheet.addEventListener('click',()=>{closeSettings();requestAnimationFrame(syncActive)});
+ backgroundButtons.forEach(b=>b.addEventListener('click',()=>{
+  window.SEYVEO_PAPER?.setBackground?.(b.dataset.paperBackground);
+  syncBackground();closeSettings();syncActive();
+ }));
+ plain.addEventListener('click',()=>{if(window.SEYVEO_PAPER?.blankPaper?.())closeSettings()});
+ clear.addEventListener('click',()=>{if(window.SEYVEO_PAPER?.clearSheet?.())closeSettings()});
+ removePhoto.addEventListener('click',()=>closeSettings());
+ duplicate.addEventListener('click',()=>closeSettings());
+ photo.addEventListener('click',()=>closeSettings());
+ sayvi.addEventListener('click',()=>window.SEYVEO_PAPER?.openSayvi?.());
+ const activeTool=()=>dialog.querySelector('[data-paper-tool][aria-pressed="true"]')?.dataset.paperTool||'pen';
+ const shapeNames=new Set(['line','arrow','rect','circle','triangle','diamond']);
+ const paperChoices=[...paperMenu.querySelectorAll('[data-paper-pattern]')];
+ let pickedPaper=false;
+ function syncActive(){
+  const tool=activeTool();
+  const current=settingsMenu.hidden
+   ?(!paperMenu.hidden||pickedPaper||shapeNames.has(tool)?'sheet':tool==='eraser'?'eraser':'pen')
+   :'settings';
+  buttons.forEach(b=>{
+   b.setAttribute('data-sv-active',String(b.dataset.svAction===current));
+  });
+ }
+ [pen,eraser].forEach(b=>b.addEventListener('click',()=>{
+  pickedPaper=false;closeSettings();requestAnimationFrame(syncActive);
+ }));
+ paperMenu.querySelectorAll('[data-paper-tool]').forEach(b=>b.addEventListener('click',()=>{
+  pickedPaper=false;requestAnimationFrame(syncActive);
+ }));
+ paperChoices.forEach(b=>b.addEventListener('click',()=>{
+  pickedPaper=true;requestAnimationFrame(syncActive);
+ }));
+ // The drawing engine changes aria-pressed on these existing nodes.
+ const observer=new MutationObserver(()=>syncActive());
+ [pen,eraser,...paperMenu.querySelectorAll('[data-paper-tool]')].forEach(b=>
+  observer.observe(b,{attributes:true,attributeFilter:['aria-pressed']}));
+ observer.observe(settings,{attributes:true,attributeFilter:['aria-expanded']});
+ observer.observe(sheet,{attributes:true,attributeFilter:['aria-expanded']});
+ observer.observe(dialog,{attributes:true,attributeFilter:['open']});
+ dock.addEventListener('click',()=>requestAnimationFrame(syncActive));
+ document.addEventListener('pointerdown',event=>{
+  if(!settingsMenu.hidden&&!settingsMenu.contains(event.target)&&!settings.contains(event.target)){
+   closeSettings();syncActive();
+  }
+ },{passive:true});
+ dialog.addEventListener('close',()=>{closeSettings();pickedPaper=false});
+ syncActive();
+ // Retain existing thickness mechanics and the drawing-engine input.
+ const range=$('notePaperWidth'),wrap=range?.closest('.sv-paper-size');
+ if(range&&wrap){
+  const syncWidth=()=>{
+   const n=Number(range.value)||5,min=Number(range.min)||1,max=Number(range.max)||28;
+   const travel=Math.min(190,window.innerHeight*.36)-28;
+   wrap.style.setProperty('--sv-thumb-offset',((.5-(n-min)/(max-min))*travel)+'px');
+   wrap.dataset.width=String(n);range.setAttribute('aria-valuetext',String(n));
   };
-  const positionRing=event=>{
+  let last=Number(range.value);
+  range.addEventListener('input',()=>{
+   const now=Number(range.value);
+   if(now!==last&&typeof navigator.vibrate==='function')navigator.vibrate(5);
+   last=now;syncWidth();
+  });
+  range.addEventListener('pointerdown',()=>wrap.classList.add('sv-paper-size-active'));
+  for(const name of ['pointerup','pointercancel','blur','change'])
+   range.addEventListener(name,()=>wrap.classList.remove('sv-paper-size-active'));
+  window.addEventListener('resize',syncWidth,{passive:true});
+  new MutationObserver(syncWidth).observe(dialog,{attributes:true,attributeFilter:['open']});
+  syncWidth();
+ }
+ // Separate circular canvas cursor; never interferes with pointer drawing.
+ const canvas=$('notePaperCanvas'),stage=$('notePaperStage'),paper=$('notePaperSheet');
+ if(canvas&&stage){
+  const ring=document.createElement('div');ring.className='sv-paper-eraser-ring';
+  ring.setAttribute('aria-hidden','true');stage.append(ring);
+  const hide=()=>ring.classList.remove('is-visible');
+  const update=e=>{
    if(!dialog.open)return;
-   if(event.pointerType==='touch'&&event.buttons===0)return;
-   const box=previewCanvas.getBoundingClientRect();
-   if(!box.width||!box.height)return;
-   const x=Math.max(box.left,Math.min(box.right,event.clientX));
-   const y=Math.max(box.top,Math.min(box.bottom,event.clientY));
-   const stageBox=previewStage.getBoundingClientRect();
-   ring.style.left=(x-stageBox.left)+'px';
-   ring.style.top=(y-stageBox.top)+'px';
-   const erasing=activeTool()==='eraser';
-   const size=Number(thickness?.value)||5;
-   const actual=size*box.width/840;
-   const diameter=Math.max(erasing?19:15,Math.min(44,(erasing?15:12)+actual*1.4));
-   ring.style.width=diameter+'px';ring.style.height=diameter+'px';
-   ring.classList.toggle('on-light',previewSheet?.dataset.inkBackground==='light');
+   if(e.pointerType==='touch'&&e.buttons===0)return;
+   const box=canvas.getBoundingClientRect(),root=stage.getBoundingClientRect();
+   if(!box.width)return;
+   const x=Math.max(box.left,Math.min(box.right,e.clientX));
+   const y=Math.max(box.top,Math.min(box.bottom,e.clientY));
+   ring.style.left=(x-root.left)+'px';ring.style.top=(y-root.top)+'px';
+   const erase=activeTool()==='eraser';
+   const px=(Number(range?.value)||5)*box.width/840;
+   const dia=Math.max(erase?19:15,Math.min(44,(erase?15:12)+px*1.4));
+   ring.style.width=dia+'px';ring.style.height=dia+'px';
+   ring.classList.toggle('sv-paper-cursor-brush',!erase);
+   ring.classList.toggle('sv-paper-cursor-eraser',erase);
+   ring.classList.toggle('on-light',paper?.dataset.inkBackground==='light');
    ring.classList.add('is-visible');
   };
-  for(const button of [pen,eraser,...shapeTools]){
-   button?.addEventListener('click',()=>{syncCursor();hideRing()});
-  }
-  const observation=new MutationObserver(syncCursor);
-  for(const button of [pen,eraser,...shapeTools]){
-   if(button)observation.observe(button,{attributes:true,attributeFilter:['aria-pressed']});
-  }
-  previewCanvas.addEventListener('pointerenter',positionRing,{passive:true});
-  previewCanvas.addEventListener('pointerdown',positionRing,{passive:true});
-  previewCanvas.addEventListener('pointermove',positionRing,{passive:true});
-  previewCanvas.addEventListener('pointerleave',hideRing,{passive:true});
-  previewCanvas.addEventListener('pointerup',event=>{
-   if(event.pointerType!=='mouse')hideRing();
-  },{passive:true});
-  previewCanvas.addEventListener('pointercancel',hideRing,{passive:true});
-  previewCanvas.addEventListener('lostpointercapture',event=>{
-   if(event.pointerType!=='mouse')hideRing();
-  },{passive:true});
-  dialog.addEventListener('close',()=>{
-   hideRing();dialog.classList.remove('sv-paper-cursor-mode','sv-paper-eraser-mode');
-  });
-  new MutationObserver(syncCursor).observe(dialog,{attributes:true,attributeFilter:['open']});
-  syncCursor();
+  for(const ev of ['pointerenter','pointerdown','pointermove'])
+   canvas.addEventListener(ev,update,{passive:true});
+  for(const ev of ['pointerleave','pointercancel'])
+   canvas.addEventListener(ev,hide,{passive:true});
+  canvas.addEventListener('pointerup',e=>{if(e.pointerType!=='mouse')hide()},{passive:true});
+  canvas.addEventListener('lostpointercapture',hide,{passive:true});
+  dialog.addEventListener('close',hide);
+  dock.addEventListener('click',hide);
+  dialog.classList.add('sv-paper-cursor-mode');
  }
-
- bar.setAttribute('role','toolbar');bar.setAttribute('aria-label','Инструменты листа');
- dialog.querySelector('.paper-toolbar')?.setAttribute('aria-label','Инструменты и параметры листа');
- sheetTrigger?.setAttribute('title','Лист');
- sheetTrigger?.setAttribute('aria-label','Лист и фигуры');
- // Only icons in the capsule. Legacy captions/carets belong to old menus.
- $('notePaperPatternTrigger')?.querySelectorAll('span:not(#notePaperPatternLabel):not(.sv-inkbar-selection),.sv-paper-caret').forEach(node=>node.remove());
- photo.querySelectorAll('span:not(.sv-inkbar-selection)').forEach(node=>node.remove());
- file.hidden=true;
- // The old floating ellipsis is removed, never duplicated in the top controls.
- dialog.querySelector('.sv-paper-extras')?.remove();
- const choices=[...settings.querySelectorAll('[data-paper-background]')];
- function sync(){
-  const current=window.SEYVEO_PAPER?.getBackground?.();
-  choices.forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.paperBackground===current)));
- }
- function close(focus=false){
-  menu.hidden=true;trigger.setAttribute('aria-expanded','false');
-  if(focus)trigger.focus({preventScroll:true});
- }
- trigger.addEventListener('click',()=>{
-  $('notePaperPatternMenu')?.setAttribute('hidden','');
-  $('notePaperPatternTrigger')?.setAttribute('aria-expanded','false');
-  const opening=menu.hidden;menu.hidden=!opening;
-  trigger.setAttribute('aria-expanded',String(opening));
-  if(opening)sync();
- });
- choices.forEach(btn=>btn.addEventListener('click',()=>{
-  window.SEYVEO_PAPER?.setBackground?.(btn.dataset.paperBackground);
-  sync();close(true);
- }));
- sheetTrigger?.addEventListener('click',()=>close());
- photo.addEventListener('click',()=>close());
- duplicate.addEventListener('click',()=>close());
- removePhoto.addEventListener('click',()=>close());
- sayvi.addEventListener('click',()=>window.SEYVEO_PAPER?.openSayvi?.());
- document.addEventListener('pointerdown',event=>{
-  if(!menu.hidden&&!settings.contains(event.target)&&event.target!==trigger&&!trigger.contains(event.target))close();
- });
- dialog.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&!menu.hidden){event.preventDefault();event.stopPropagation();close(true);}
- });
- dialog.addEventListener('close',()=>close());
- new MutationObserver(()=>{if(dialog.open)sync()}).observe(dialog,{attributes:true,attributeFilter:['open']});
 })();
