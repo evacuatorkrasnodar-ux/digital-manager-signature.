@@ -8,6 +8,8 @@ on:
       - 'server/business-identity/workspace-manifest.test.mjs'
       - 'mobile/src/business/workspace-navigation.mjs'
       - 'mobile/tests/workspace-navigation.test.mjs'
+      - 'mobile/src/business/verified-workspace-client.mjs'
+      - 'mobile/tests/verified-workspace-client.test.mjs'
       - '.github/workflows/seyveo-single-account.yml'
   pull_request:
     paths:
@@ -15,6 +17,8 @@ on:
       - 'server/business-identity/workspace-manifest.test.mjs'
       - 'mobile/src/business/workspace-navigation.mjs'
       - 'mobile/tests/workspace-navigation.test.mjs'
+      - 'mobile/src/business/verified-workspace-client.mjs'
+      - 'mobile/tests/verified-workspace-client.test.mjs'
       - '.github/workflows/seyveo-single-account.yml'
   workflow_dispatch:
 
@@ -32,4 +36,4 @@ jobs:
         with:
           node-version: '22'
       - name: Test server manifest and native ONE navigation
-        run: node --test server/business-identity/workspace-manifest.test.mjs mobile/tests/workspace-navigation.test.mjs
+        run: node --test server/business-identity/workspace-manifest.test.mjs mobile/tests/workspace-navigation.test.mjs mobile/tests/verified-workspace-client.test.mjs
