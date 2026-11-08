@@ -80,7 +80,13 @@
  sayvi.innerHTML='<img src="assets/sayvi-mark.svg" alt="" aria-hidden="true">';
  const pen=bar.querySelector('[data-paper-tool="pen"]');
  const eraser=bar.querySelector('[data-paper-tool="eraser"]');
- bar.replaceChildren(pen,eraser,duplicate,settings,paper,photo,file,sayvi);
+ // Seven DIRECT children. Menus stay outside the layout, so nothing
+ // from old wrappers can stretch or displace the selected circle.
+ const sheetButton=paper.querySelector('#notePaperPatternTrigger');
+ dialog.appendChild(settings);
+ dialog.appendChild(paper);
+ bar.replaceChildren(pen,eraser,duplicate,trigger,sheetButton,photo,sayvi);
+ dialog.appendChild(file);
 
  // SEYVEO signature ink · intentionally drawn as one six-symbol family.
  // All marks share a 28-unit optical grid and polished silver linework.
@@ -261,7 +267,7 @@
  removePhoto.addEventListener('click',()=>close());
  sayvi.addEventListener('click',()=>window.SEYVEO_PAPER?.openSayvi?.());
  document.addEventListener('pointerdown',event=>{
-  if(!menu.hidden&&!settings.contains(event.target))close();
+  if(!menu.hidden&&!settings.contains(event.target)&&event.target!==trigger&&!trigger.contains(event.target))close();
  });
  dialog.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&!menu.hidden){event.preventDefault();event.stopPropagation();close(true);}
