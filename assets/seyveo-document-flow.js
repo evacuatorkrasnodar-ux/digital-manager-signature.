@@ -19,6 +19,73 @@ const $=(tag,cls,label)=>{
  if(label!==undefined)e.textContent=label;return e;
 };
 const button=(label,action,cls='')=>{const e=$('button','svdf-button '+cls,label);e.type='button';e.addEventListener('click',action);return e;};
+/* Original SEYVEO line illustrations, no third-party assets or document HTML. */
+const DRAWINGS=Object.freeze({
+ schedule:'<path d="M14 8h34v48H14zM14 19h34M24 4v8M38 4v8M21 31h5M32 31h5M21 41h5M32 41h5"/>',
+ equipment:'<path d="M11 17h42v37H11zM11 29h42M21 10h22v7M27 37l6 6 10-12"/>',
+ supplier:'<path d="M16 7h25l9 9v40H16zM41 7v11h9M23 29h20M23 38h20M23 47h11"/>',
+ person:'<circle cx="32" cy="20" r="9"/><path d="M14 54v-5c0-13 8-19 18-19s18 6 18 19v5"/>',
+ decision:'<circle cx="32" cy="32" r="23"/><path d="m21 32 8 8 16-19"/>',
+ signature:'<path d="M10 12h44v40H10zM17 23h25M17 31h16M17 45c7-13 9 5 14-3 5-8 4 5 15-4"/>',
+ file:'<path d="M16 8h27l10 10v38H16zM43 8v11h10M23 29h20M23 38h15"/>'
+});
+function pictogram(kind){
+ const node=$('span','svdf-pictogram');
+ node.setAttribute('aria-hidden','true');
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 64 64');
+ svg.setAttribute('focusable','false');
+ svg.innerHTML='<g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">'+
+  (DRAWINGS[kind]||DRAWINGS.file)+'</g>';
+ node.append(svg);return node;
+}
+function journey(record){
+ const wrap=$('section','svdf-journey');
+ const top=$('div','svdf-journey-head');
+ top.append($('strong','',record?'Путь документа':'Как это работает'),
+  $('small','',record?'Демо · '+TYPES[record.kind].title:'Учебный маршрут'));
+ wrap.append(top);
+ const approval=record&&TYPES[record.kind].type==='Согласование';
+ const state=record?.state||'sample';
+ const stages=state==='sample'?['sample','sample','sample','sample']:
+  state==='sent'?['done','active','pending','pending']:
+  state==='read'?['done','done','active','pending']:
+  state==='returned'?['done','done','returned','pending']:
+  state==='approved'?['done','done','done',approval?'pending':'done']:
+  state==='signing'?['done','done','done','active']:
+  ['done','stopped','stopped','stopped'];
+ const steps=[
+  ['file','Документ'],
+  ['person','Елена'],
+  ['decision',state==='returned'?'Замечание':'Решение'],
+  [approval?'signature':'decision',approval?'КЭП':'Итог']
+ ];
+ const line=$('div','svdf-journey-line');
+ line.setAttribute('aria-label','Состояние учебных этапов документа');
+ const labels={done:'Пройден',active:'Текущий этап',pending:'Ожидает',
+  returned:'Возвращён',stopped:'Отозван',sample:'Пример этапа'};
+ steps.forEach(([icon,label],index)=>{
+  const step=$('div','svdf-journey-step');
+  step.dataset.phase=stages[index];
+  step.setAttribute('aria-label',label+' · '+labels[stages[index]]);
+  step.append(pictogram(icon),$('small','',label));
+  line.append(step);
+  if(index<steps.length-1){
+   const arrow=$('span','svdf-journey-connector','›');
+   arrow.setAttribute('aria-hidden','true');line.append(arrow);
+  }
+ });
+ wrap.append(line);
+ const caption=!record?'Пример: документ → сотрудник → решение → итог':
+  state==='signing'?'КЭП пока не выполнена':
+  state==='approved'?(approval?'Согласовано · подпись не выполнена':'Ознакомление отмечено · демо'):
+  state==='returned'?'Елена вернула с замечанием':
+  state==='revoked'?'Запрос отозван':
+  state==='read'?'Документ открыт · ожидает решения':'Запрос создан только в браузере';
+ wrap.append($('p','svdf-journey-caption',caption));
+ return wrap;
+}
+
 let host=null,role='manager',selected='',kind='schedule',info='',listFilter='active';
 const centralPreviewRole=()=>window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':'manager';
 let returnDraft={id:'',text:''},revisionDraft={id:'',body:'',note:''};
