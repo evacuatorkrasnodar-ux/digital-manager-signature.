@@ -278,8 +278,8 @@
  sheetTrigger?.setAttribute('title','Лист');
  sheetTrigger?.setAttribute('aria-label','Лист и фигуры');
  // Only icons in the capsule. Legacy captions/carets belong to old menus.
- $('notePaperPatternTrigger')?.querySelectorAll('span:not(#notePaperPatternLabel),.sv-paper-caret').forEach(node=>node.remove());
- photo.querySelectorAll('span').forEach(node=>node.remove());
+ $('notePaperPatternTrigger')?.querySelectorAll('span:not(#notePaperPatternLabel):not(.sv-inkbar-selection),.sv-paper-caret').forEach(node=>node.remove());
+ photo.querySelectorAll('span:not(.sv-inkbar-selection)').forEach(node=>node.remove());
  file.hidden=true;
  // The old floating ellipsis is removed, never duplicated in the top controls.
  dialog.querySelector('.sv-paper-extras')?.remove();
