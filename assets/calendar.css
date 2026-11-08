@@ -1513,7 +1513,7 @@
  height:1.5px!important;width:38px!important;max-width:62%!important;
 }
 #calendarPage .cal-nav{
- border-bottom:1px solid var(--cal-thin-line);
+ border-bottom:0;
  padding-bottom:6px;
 }
 #calendarPage .cal-nav h2{
