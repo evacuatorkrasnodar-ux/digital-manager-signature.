@@ -154,7 +154,7 @@
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  position:absolute!important;
  left:50%!important;top:calc(50% + var(--sv-thumb-offset,0px))!important;
- transform:translate(-50%,-50%) scale(.88)!important;
+ transform:translate(-50%,-50%) scale(1)!important;
  width:28px!important;height:28px!important;
  min-width:28px!important;min-height:28px!important;
  padding:0!important;margin:0!important;
@@ -165,11 +165,8 @@
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
  font-size:11px!important;font-weight:700!important;font-variant-numeric:tabular-nums!important;
  line-height:1!important;text-align:center!important;
- opacity:0!important;pointer-events:none!important;
- transition:opacity .13s ease,transform .13s ease!important;
-}
-#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size.sv-paper-size-active::after{
- opacity:1!important;transform:translate(-50%,-50%) scale(1)!important;
+ opacity:1!important;pointer-events:none!important;
+ transition:top .08s linear!important;
 }
 @media(prefers-reduced-motion:reduce){
  #notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size::after{
