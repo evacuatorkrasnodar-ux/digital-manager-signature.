@@ -1,0 +1,37 @@
+name: SEYVEO Documents · UI contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/documents-center.js'
+      - 'assets/documents-center.css'
+      - 'tools/test-seyveo-documents-screen.cjs'
+      - 'index.html'
+      - '.github/workflows/seyveo-documents-polish.yml'
+  pull_request:
+    paths:
+      - 'assets/documents-center.js'
+      - 'assets/documents-center.css'
+      - 'tools/test-seyveo-documents-screen.cjs'
+      - 'index.html'
+      - '.github/workflows/seyveo-documents-polish.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  documents:
+    name: One hub, secure archive, Sayvi actions, employee preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify Documents JavaScript syntax
+        run: node --check assets/documents-center.js
+      - name: Verify Documents real render actions and CSS scope
+        run: node --test tools/test-seyveo-documents-screen.cjs
