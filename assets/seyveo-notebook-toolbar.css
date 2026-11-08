@@ -1596,3 +1596,99 @@ svg.sv-paper-signature .sv-paper-icon-core{
   max-width:19px!important;max-height:19px!important;
  }
 }
+
+
+/* v22 · SINGLE SOURCE for toolbar geometry, disabling all old circles.
+   No pseudo circle can ever float outside its own button. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
+ display:grid!important;
+ grid-template-columns:repeat(7,minmax(0,1fr))!important;
+ grid-template-rows:34px!important;
+ gap:3px!important;
+ width:261px!important;min-width:261px!important;max-width:261px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ box-sizing:border-box!important;
+ padding:4px 5px!important;margin:0 auto!important;
+ align-items:center!important;justify-items:center!important;
+ background:rgba(26,28,32,.93)!important;
+ border:1px solid rgba(223,235,246,.11)!important;
+ border-radius:999px!important;
+ box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool{
+ all:unset!important;
+ box-sizing:border-box!important;
+ position:relative!important;
+ display:grid!important;place-items:center!important;
+ width:33px!important;height:33px!important;
+ min-width:33px!important;min-height:33px!important;
+ max-width:33px!important;max-height:33px!important;
+ padding:0!important;margin:0!important;
+ align-self:center!important;justify-self:center!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;
+ color:#e5ebf2!important;
+ box-shadow:none!important;filter:none!important;
+ font-size:0!important;line-height:0!important;
+ isolation:isolate!important;transform:none!important;
+ -webkit-appearance:none!important;appearance:none!important;
+ cursor:pointer!important;-webkit-tap-highlight-color:transparent!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool::before,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool::after,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > #notePaperPatternTrigger::before,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > #notePaperPatternTrigger::after{
+ content:none!important;display:none!important;
+ width:0!important;height:0!important;
+ background:none!important;box-shadow:none!important;opacity:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool[data-sv-selected="true"]{
+ background:rgba(211,223,238,.20)!important;
+ color:#fff!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool[data-sv-selected="false"]{
+ background:transparent!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool:not([data-sv-selected]):active{
+ background:rgba(211,223,238,.14)!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool:disabled{
+ color:#8b949f!important;opacity:.42!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool > svg.sv-paper-signature{
+ box-sizing:border-box!important;display:block!important;
+ width:21px!important;height:21px!important;
+ min-width:21px!important;min-height:21px!important;
+ max-width:21px!important;max-height:21px!important;
+ padding:0!important;margin:0!important;
+ position:static!important;top:auto!important;left:auto!important;
+ transform:none!important;filter:none!important;
+ stroke-width:1.7!important;color:inherit!important;
+ pointer-events:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool #notePaperPatternLabel{
+ position:absolute!important;width:1px!important;height:1px!important;
+ overflow:hidden!important;clip-path:inset(50%)!important;
+ white-space:nowrap!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool:focus-visible{
+ outline:2px solid rgba(225,235,248,.8)!important;outline-offset:2px!important;
+}
+@media(max-width:370px){
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
+  grid-template-rows:28px!important;gap:2px!important;
+  width:218px!important;min-width:218px!important;max-width:218px!important;
+  height:38px!important;min-height:38px!important;max-height:38px!important;
+  padding:4px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool{
+  width:28px!important;height:28px!important;
+  min-width:28px!important;min-height:28px!important;
+  max-width:28px!important;max-height:28px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary > button.sv-ink-direct-tool > svg.sv-paper-signature{
+  width:19px!important;height:19px!important;
+  min-width:19px!important;min-height:19px!important;
+  max-width:19px!important;max-height:19px!important;
+ }
+}
