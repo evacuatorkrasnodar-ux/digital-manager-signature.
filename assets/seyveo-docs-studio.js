@@ -198,7 +198,7 @@ function mount(target,{
   const bar=$('div','sv-doc-tool-head');
   const copy=labelRow(title,detail);
   const close=button('Свернуть',()=>{
-  operationEpoch++;importBusy=false;panel.hidden=true;mode='';clear();
+  operationEpoch++;importBusy=false;panel.hidden=true;delete panel.dataset.mode;mode='';clear();
  },'sv-doc-tool-close');
   bar.append(copy,close);return bar;
  };
@@ -209,7 +209,7 @@ function mount(target,{
  };
  function open(name){
   if(mode!==name){operationEpoch++;importBusy=false;}
-  mode=name;panel.hidden=false;render();
+  mode=name;panel.dataset.mode=name;panel.hidden=false;render();
   // Keep the controls immediately next to their triggering actions.
  }
  function render(){
