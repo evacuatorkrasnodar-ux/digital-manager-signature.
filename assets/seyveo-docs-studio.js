@@ -15,12 +15,15 @@ const button=(label,action,className='')=>{
  const n=$('button','sv-doc-tool-button '+className,label);
  n.type='button';n.addEventListener('click',action);return n;
 };
-let scans=[],mode='',temporaryUrls=[];
+let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false;
 function cleanUrls(){
  for(const url of temporaryUrls)URL.revokeObjectURL(url);
  temporaryUrls=[];
 }
-function reset(){cleanUrls();scans=[];mode='';}
+function reset(){
+ generation++;operationEpoch++;importBusy=false;
+ cleanUrls();scans=[];mode='';
+}
 const fromBase64=data=>{
  const b64=data.split(',')[1];
  if(!b64)throw Error('Не удалось обработать изображение');
@@ -129,7 +132,9 @@ function mount(target,{
  const heading=(title,detail)=>{
   const bar=$('div','sv-doc-tool-head');
   const copy=labelRow(title,detail);
-  const close=button('Свернуть',()=>{panel.hidden=true;mode='';clear();},'sv-doc-tool-close');
+  const close=button('Свернуть',()=>{
+  operationEpoch++;importBusy=false;panel.hidden=true;mode='';clear();
+ },'sv-doc-tool-close');
   bar.append(copy,close);return bar;
  };
  const warn=(text)=>$('p','sv-doc-tool-warning',text);
@@ -138,6 +143,7 @@ function mount(target,{
   if(target)target.textContent=text;
  };
  function open(name){
+  if(mode!==name){operationEpoch++;importBusy=false;}
   mode=name;panel.hidden=false;render();
   // Keep the controls immediately next to their triggering actions.
  }
@@ -151,21 +157,62 @@ function mount(target,{
  async function ingest(list){
   const files=Array.from(list||[]);
   if(!files.length)return;
+  if(importBusy){message('Предыдущие фотографии ещё обрабатываются.');return;}
   if(files.length+scans.length>12){message('Максимум 12 страниц.');return;}
   for(const f of files){
    if(!/^image\/(jpeg|png|webp)$/i.test(f.type)||f.size>12*1024*1024||
       f.size<1){message('Выберите JPEG, PNG или WebP до 12 МБ.');return;}
   }
+  const generationAtStart=generation,epoch=operationEpoch;
+  importBusy=true;
   try{
    const processed=[];
    for(const file of files){
     const image=await imageOf(file);
-    const page=jpegOf(canvasOf(image));
-    processed.push(page);
+    // If a person left Docs, switched roles, or changed the open
+    // tool while camera/library was loading, discard the result.
+    if(generationAtStart!==generation||epoch!==operationEpoch||
+       mode!=='scan')return;
+    processed.push(jpegOf(canvasOf(image)));
    }
+   if(generationAtStart!==generation||epoch!==operationEpoch)return;
    scans.push(...processed);renderScan();
    message('Добавлено страниц: '+scans.length+'. Можно собрать настоящий PDF.');
-  }catch{message('Не удалось обработать фото. Попробуйте другой файл.');}
+  }catch{
+   if(generationAtStart===generation&&epoch===operationEpoch)
+    message('Не удалось обработать фото. Попробуйте другой файл.');
+  }finally{
+   if(generationAtStart===generation&&epoch===operationEpoch)
+    importBusy=false;
+  }
+ }
+ async function rotatePage(index){
+  const page=scans[index],at=generation,epoch=operationEpoch;
+  if(!page)return;
+  try{
+   const image=await imageOf(new Blob([page.jpegBytes],{type:'image/jpeg'}));
+   if(at!==generation||epoch!==operationEpoch||mode!=='scan'||
+      scans[index]!==page)return;
+   const canvas=$('canvas');
+   canvas.width=page.height;canvas.height=page.width;
+   const ctx=canvas.getContext('2d');
+   if(!ctx)throw Error('Нет обработки изображения');
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+   ctx.translate(canvas.width,0);ctx.rotate(Math.PI/2);
+   ctx.drawImage(image,0,0,page.width,page.height);
+   scans[index]=jpegOf(canvas);renderScan();
+   message('Страница '+(index+1)+' повёрнута на 90°.');
+  }catch{
+   if(at===generation&&epoch===operationEpoch)
+    message('Не удалось повернуть страницу.');
+  }
+ }
+ function movePage(index,offset){
+  const next=index+offset;
+  if(index<0||next<0||next>=scans.length)return;
+  const [page]=scans.splice(index,1);
+  scans.splice(next,0,page);
+  renderScan();message('Изменён порядок страниц.');
  }
  function renderScan(){
   clear();
@@ -191,9 +238,19 @@ function mount(target,{
     const url=URL.createObjectURL(new Blob([page.jpegBytes],{type:'image/jpeg'}));
     temporaryUrls.push(url);
     const img=$('img');img.src=url;img.alt='Страница '+(index+1);
+    const actions=$('div','sv-doc-tool-thumb-actions');
+    const turn=button('↻',()=>{void rotatePage(index);});
+    turn.setAttribute('aria-label','Повернуть страницу '+(index+1));
+    const before=button('←',()=>movePage(index,-1));
+    before.setAttribute('aria-label','Переместить страницу '+(index+1)+' назад');
+    before.disabled=index===0;
+    const after=button('→',()=>movePage(index,1));
+    after.setAttribute('aria-label','Переместить страницу '+(index+1)+' вперёд');
+    after.disabled=index===scans.length-1;
+    actions.append(turn,before,after);
     const del=button('Удалить '+(index+1),()=>{scans.splice(index,1);renderScan();});
     del.setAttribute('aria-label','Удалить страницу '+(index+1));
-    wrap.append(img,del);thumbs.append(wrap);
+    wrap.append(img,actions,del);thumbs.append(wrap);
    });
    counter.append(thumbs);
    counter.append(controls(
@@ -283,23 +340,38 @@ function mount(target,{
     else message('Не удалось сохранить подпись.');
    },'image/png');
   },'sv-doc-tool-primary');
-  const onScan=button('Подписать последний скан',async()=>{
+  const choosePage=$('select','sv-doc-tool-page-select');
+  choosePage.setAttribute('aria-label','Страница для подписи');
+  scans.forEach((_,index)=>{
+   const option=$('option','', 'Страница '+(index+1));
+   option.value=String(index);choosePage.append(option);
+  });
+  choosePage.value=String(Math.max(0,scans.length-1));
+  if(scans.length)panel.append(
+   $('label','sv-doc-tool-select-label','Подпись на странице'),
+   choosePage
+  );
+  const onScan=button('Добавить подпись в PDF',async()=>{
    if(!marks||!scans.length){message('Нужен рисунок подписи и хотя бы одна отсканированная страница.');return;}
    try{
-    const last=scans.at(-1);
-    const image=await imageOf(new Blob([last.jpegBytes],{type:'image/jpeg'}));
+    const pageIndex=Number(choosePage.value);
+    if(!Number.isSafeInteger(pageIndex)||pageIndex<0||pageIndex>=scans.length){
+     message('Выберите страницу для подписи.');return;
+    }
+    const selectedPage=scans[pageIndex];
+    const image=await imageOf(new Blob([selectedPage.jpegBytes],{type:'image/jpeg'}));
     const dest=canvasOf(image,1600),g=dest.getContext('2d');
     const width=dest.width*.4;
     const height=width*canvas.height/canvas.width;
     g.drawImage(canvas,dest.width-width-40,dest.height-height-40,width,height);
-    const updated=scans.slice(0,-1).concat(jpegOf(dest));
+    const updated=scans.slice();updated[pageIndex]=jpegOf(dest);
     save(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(updated),'SEYVEO-скан-с-подписью.pdf');
-    message('Подготовлена копия скана с нарисованной подписью. Это не КЭП.');
+    message('Подготовлена копия PDF с подписью на странице '+(pageIndex+1)+'. Это не КЭП.');
    }catch{message('Не удалось собрать копию с подписью.');}
   });
   panel.append(controls(pngButton,clearButton,onScan),
    warn('Подпись на экране не равна электронной подписи. Для готовых PDF потребуется отдельный редактор; официальная КЭП подключается через «Умные подключения».'),
-   status(scans.length?'Доступен последний скан из этой сессии.':'Для вставки в PDF сначала отсканируйте страницу.'));
+   status(scans.length?'Выберите страницу скана, чтобы добавить подпись.':'Для вставки в PDF сначала отсканируйте страницу.'));
  }
  function renderPrint(){
   panel.append(heading('Печать','Открытие файла в системном просмотрщике; принтер выбирает ОС.'));
