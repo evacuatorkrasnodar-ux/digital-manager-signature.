@@ -3735,3 +3735,110 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  overflow-wrap:anywhere!important;
  white-space:pre-wrap!important;
 }
+
+/* SEYVEO Messages · Documents / Mail visual parity · 2026-11-08.
+   Directory only: room composer, pinned dock, and canonical back are untouched. */
+#svcpWorkChatScreen #svcpChatDirectory{
+ --sv-msg-line:color-mix(in srgb,var(--text) 10%,transparent);
+ --sv-msg-fill:color-mix(in srgb,var(--text) 4%,transparent);
+ --sv-msg-picked:color-mix(in srgb,var(--text) 10%,transparent);
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-search-field{
+ min-height:43px!important;
+ margin:10px 13px 8px!important;
+ padding:0 12px!important;
+ border:1px solid var(--sv-msg-line)!important;
+ border-radius:20px!important;
+ background:var(--sv-msg-fill)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(16px) saturate(1.05)!important;
+ backdrop-filter:blur(16px) saturate(1.05)!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-search-field svg{
+ stroke-width:1.5!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters{
+ gap:5px!important;
+ padding:2px 13px 9px!important;
+ border-bottom:1px solid var(--sv-msg-line)!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters button{
+ min-height:35px!important;
+ padding:6px 12px!important;
+ border:1px solid transparent!important;
+ border-radius:999px!important;
+ background:transparent!important;
+ color:var(--secondary)!important;
+ font-size:11.5px!important;
+ font-weight:550!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters button[aria-pressed="true"]{
+ border-color:var(--sv-msg-line)!important;
+ background:var(--sv-msg-picked)!important;
+ color:var(--text)!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory #svcpConversationList{
+ padding:7px 9px calc(90px + env(safe-area-inset-bottom,0px))!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-directory-item{
+ box-sizing:border-box!important;
+ min-height:61px!important;
+ width:100%!important;
+ margin:0 0 4px!important;
+ padding:8px 10px!important;
+ gap:10px!important;
+ border:1px solid var(--sv-msg-line)!important;
+ border-radius:16px!important;
+ background:var(--sv-msg-fill)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(13px) saturate(1.04);
+ backdrop-filter:blur(13px) saturate(1.04);
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-directory-item:active{
+ background:var(--sv-msg-picked)!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-directory-avatar{
+ flex-basis:37px!important;
+ width:37px!important;
+ min-width:37px!important;
+ height:37px!important;
+ border:1px solid var(--sv-msg-line)!important;
+ background:var(--sv-msg-fill)!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-directory-item-body strong{
+ font-size:13px!important;
+ font-weight:600!important;
+ letter-spacing:-.013em!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-directory-preview{
+ font-size:11px!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-directory-time{
+ font-size:10.5px!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-directory-chevron{
+ opacity:.55!important;
+ font-weight:300!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-search-result{
+ border-bottom-color:var(--sv-msg-line)!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory :is(.svcp-directory-item,.svcp-chat-filters button):focus-visible{
+ outline:2px solid var(--text)!important;
+ outline-offset:2px!important;
+}
+@media(max-width:375px){
+ #svcpWorkChatScreen #svcpChatDirectory .svcp-directory-item{
+  padding:8px!important;gap:8px!important;
+ }
+ #svcpWorkChatScreen #svcpChatDirectory .svcp-directory-avatar{
+  flex-basis:35px!important;width:35px!important;min-width:35px!important;height:35px!important;
+ }
+}
+@media(prefers-reduced-transparency:reduce){
+ #svcpWorkChatScreen #svcpChatDirectory :is(.svcp-directory-item,.svcp-search-field){
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
