@@ -92,9 +92,11 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;
 }
 #sayviSurfacePage .sv-doc-symbol.sv-sayvi-symbol{
- -webkit-mask:url("./sayvi-mark.svg?v=1") center / 22px 22px no-repeat;
- mask:url("./sayvi-mark.svg?v=1") center / 22px 22px no-repeat;
- background:currentColor;border:0;border-radius:0;opacity:.82;
+ /* The approved two-sweep Sayvi core, not the old generic sparkle mask.
+    Render the actual color mark to avoid a blank mask on older Safari. */
+ -webkit-mask:none;mask:none;
+ background:url("./sayvi-core-mark.svg") center / 25px 25px no-repeat;
+ border:0;border-radius:0;opacity:.92;
 }
 #sayviSurfacePage .sv-doc-intro-copy{
  display:flex;flex-direction:column;gap:4px;min-width:0;padding-top:2px;
