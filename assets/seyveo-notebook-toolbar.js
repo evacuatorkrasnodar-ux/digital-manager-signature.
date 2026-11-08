@@ -233,7 +233,7 @@
 
  bar.setAttribute('role','toolbar');bar.setAttribute('aria-label','Инструменты листа');
  dialog.querySelector('.paper-toolbar')?.setAttribute('aria-label','Инструменты и параметры листа');
- paper.querySelector('#notePaperPatternTrigger')?.setAttribute('title','Лист');
+ sheetTrigger?.setAttribute('title','Лист');
  sheetTrigger?.setAttribute('aria-label','Лист и фигуры');
  // Only icons in the capsule. Legacy captions/carets belong to old menus.
  $('notePaperPatternTrigger')?.querySelectorAll('span:not(#notePaperPatternLabel),.sv-paper-caret').forEach(node=>node.remove());
@@ -261,7 +261,7 @@
   window.SEYVEO_PAPER?.setBackground?.(btn.dataset.paperBackground);
   sync();close(true);
  }));
- paper.querySelector('#notePaperPatternTrigger')?.addEventListener('click',()=>close());
+ sheetTrigger?.addEventListener('click',()=>close());
  photo.addEventListener('click',()=>close());
  duplicate.addEventListener('click',()=>close());
  removePhoto.addEventListener('click',()=>close());
