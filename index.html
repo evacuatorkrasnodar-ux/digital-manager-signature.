@@ -1828,6 +1828,64 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 @media(prefers-reduced-motion:reduce){
  #noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-tools>button{transition:none!important}
 }
+
+/* Compact four-action Notes dock · same exact shared Home glass, just smaller. */
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
+ box-sizing:border-box!important;
+ width:min(100%,280px)!important;
+ margin:0 auto!important;
+ height:48px!important;min-height:48px!important;
+ grid-template-columns:minmax(0,1fr) 45px!important;
+ column-gap:12px!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+ left:0!important;right:57px!important;top:0!important;bottom:0!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ width:45px!important;height:45px!important;top:1.5px!important;right:0!important;bottom:auto!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
+ display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:0!important;
+ height:48px!important;min-height:48px!important;max-height:48px!important;
+ padding:2px 8px!important;
+ overflow:visible!important;
+ background:transparent!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]){
+ width:40px!important;max-width:100%!important;height:40px!important;min-height:40px!important;
+ border:0!important;border-radius:50%!important;display:grid!important;place-items:center!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button[hidden]{
+ display:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button svg{
+ width:23px!important;height:23px!important;
+ stroke-width:1.65!important;fill:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
+ width:45px!important;height:45px!important;min-width:45px!important;min-height:45px!important;
+ max-width:45px!important;max-height:45px!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact .sv-note-attachment-menu[hidden]{display:none!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact .sv-note-attachment-menu:not([hidden]){
+ display:grid!important;position:absolute!important;bottom:calc(100% + 10px)!important;
+ left:0!important;width:170px!important;grid-template-columns:1fr!important;
+ gap:4px!important;padding:9px!important;border-radius:18px!important;
+ background:var(--sv-liquid-nav-material)!important;
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;backdrop-filter:var(--sv-liquid-nav-blur)!important;
+ box-shadow:0 12px 30px rgba(0,0,0,.18)!important;z-index:42!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact .sv-note-attachment-menu>button{
+ min-height:36px!important;padding:7px 10px!important;
+ font:500 13px -apple-system,BlinkMacSystemFont,sans-serif!important;
+ text-align:left!important;background:transparent!important;color:var(--text)!important;
+ border:0!important;border-radius:11px!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact .sv-note-attachment-menu>button:active{
+ background:rgba(220,231,240,.12)!important;
+}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=3" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-company-avatar" aria-hidden="true"><img src="assets/company-building-avatar.svg?v=1" alt="" width="44" height="44" draggable="false"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="contacts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Контакты</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="smart-home" aria-label="Открыть Умный дом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg><span>Умный дом</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="documents" aria-label="Открыть Личные документы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/></svg><span>Личные документы</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="mail" aria-label="Открыть Почту SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.6"/><path d="m4 7 8 6 8-6"/></svg><span>Почта</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="browser" aria-label="Открыть Браузер SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 4-5 14 0 18M12 3c5 4 5 14 0 18"/></svg><span>Браузер</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="play" hidden style="display:none!important" aria-label="Открыть YouTube"><svg class="seyveo-youtube-white" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="stroke:none;fill:none;opacity:1;display:block;width:26px;height:23px;flex:none;"><path fill="#fff" fill-rule="evenodd" clip-rule="evenodd" stroke="none" d="M5.7 5H18.3C20.9 5 22.5 6.6 22.5 9.1V14.9C22.5 17.4 20.9 19 18.3 19H5.7C3.1 19 1.5 17.4 1.5 14.9V9.1C1.5 6.6 3.1 5 5.7 5ZM9.85 8.45V15.55L16.5 12Z"/></svg><span>YouTube</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
@@ -3499,21 +3557,24 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <small id="noteReviewStatus" role="status" aria-live="polite" hidden></small>
 <div class="sv-note-bottom">
 <div class="sv-note-tool-row sv-shared-dock">
-<div class="sv-note-tools" role="toolbar" aria-label="Инструменты заметки">
-<button type="button" data-note-tool="heading" title="Оформить заголовок" aria-label="Заголовок"><span class="sv-note-aa" aria-hidden="true">Aa</span></button>
-<button type="button" data-note-tool="checklist" title="Добавить пункт списка" aria-label="Список"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.7" cy="7.1" r="2.55"/><path d="m4.6 7.1.75.75 1.25-1.5M10.8 7.1H20.5M3.4 16.8h4.6m2.8 0h9.7"/></svg></button>
-<button type="button" data-note-tool="photo" title="Добавить фотографию" aria-label="Фото"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="3.4"/><circle cx="8.6" cy="8.5" r="1.45"/><path d="m4.4 17 5.1-4.9 3.3 3.1 3.1-3.4 3.5 3.8"/></svg></button>
-<button type="button" data-note-tool="camera" title="Сделать фото" aria-label="Камера"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.1 8.4a2.1 2.1 0 0 1 2.1-2.1h2.4l1.5-2h5.8l1.5 2h2.4a2.1 2.1 0 0 1 2.1 2.1v9.2a2.1 2.1 0 0 1-2.1 2.1H5.2a2.1 2.1 0 0 1-2.1-2.1Z"/><circle cx="12" cy="13" r="3.15"/></svg></button>
-
-
-<button type="button" data-note-tool="voice" title="Голосовой ввод" aria-label="Микрофон"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.2" y="2.8" width="5.6" height="12.5" rx="2.8"/><path d="M5.7 11.6a6.3 6.3 0 0 0 12.6 0M12 18v3.1m-3.7 0h7.4"/></svg></button>
-
+<div class="sv-note-tools sv-note-tools-compact" role="toolbar" aria-label="Инструменты заметки">
+<button type="button" data-note-tool="checklist" title="Контрольный список" aria-label="Список"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="7" r="2.7"/><path d="m3.9 7 .8.85 1.5-1.7M10.2 7h10.2M5 17h.01M10.2 17h10.2"/></svg></button>
+<button type="button" data-note-tool="attachment" title="Вложения" aria-label="Вложения" aria-expanded="false" aria-controls="svNoteAttachmentMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></svg></button>
+<button type="button" data-note-tool="heading" title="Оформление текста" aria-label="Оформление текста" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="m7.8 17 4.2-10 4.2 10M9.3 13.5h5.4"/></svg></button>
+<button type="button" data-note-tool="draw" title="Рисование" aria-label="Рисование"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></svg></button>
+<div id="svNoteAttachmentMenu" class="sv-note-attachment-menu" hidden role="group" aria-label="Добавить в заметку">
+<button type="button" data-note-attachment="photo">Фото</button>
+<button type="button" data-note-attachment="camera">Камера</button>
+<button type="button" data-note-attachment="voice">Диктовка</button>
+</div>
 <div id="svNoteFormatMenu" class="sv-note-format-menu" hidden role="group" aria-label="Оформление текста">
 <button type="button" data-note-format="heading">Заголовок</button><button type="button" data-note-format="bold"><b>Жирный</b></button><button type="button" data-note-format="italic"><i>Курсив</i></button><button type="button" data-note-format="underline"><u>Подчеркнуть</u></button>
 </div>
 <input id="svNotePhotoInput" type="file" accept="image/*" hidden>
 <input id="svNoteCameraInput" type="file" accept="image/*" capture="environment" hidden>
-<button type="button" data-note-tool="draw" title="Рисование" aria-label="Рисование"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.3 18.4 15.9 6.8a2.2 2.2 0 0 1 3.1 3.1L7.4 21.5l-4 .8z"/><path d="m14.5 8.2 3.1 3.1M4.3 18.4l3.1 3.1"/></svg></button>
+<button type="button" data-note-tool="photo" hidden tabindex="-1" aria-hidden="true"></button>
+<button type="button" data-note-tool="camera" hidden tabindex="-1" aria-hidden="true"></button>
+<button type="button" data-note-tool="voice" hidden tabindex="-1" aria-hidden="true"></button>
 </div>
 <button id="svNoteNewStandalone" class="sv-note-draw-standalone" type="button" title="Новая заметка" aria-label="Создать новую заметку">
 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></svg>
@@ -5983,11 +6044,34 @@ window.addEventListener('load',()=>{
   if(typeof openNoteReview==='function')openNoteReview('');
   document.getElementById('svNoteTitle')?.focus();
  });
- dlg.querySelector('.sv-note-tool-row')?.addEventListener('click',async(e)=>{
+ document.getElementById('svNoteAttachmentMenu')?.addEventListener('click',e=>{
+  const option=e.target.closest('[data-note-attachment]');if(!option)return;
+  const menu=document.getElementById('svNoteAttachmentMenu');
+  menu.hidden=true;
+  dlg.querySelector('[data-note-tool="attachment"]')?.setAttribute('aria-expanded','false');
+  const action=option.dataset.noteAttachment;
+  if(action==='photo'||action==='camera'){
+   status('Вложения пока не сохраняются в текстовой заметке. Для распознавания фото откройте «Фото → текст» через «+» в Блокноте.');
+   return;
+  }
+  dlg.querySelector('[data-note-tool="voice"]')?.click();
+ });
+  dlg.querySelector('.sv-note-tool-row')?.addEventListener('click',async(e)=>{
  const btn=e.target.closest('[data-note-tool]');if(!btn)return;
  const action=btn.dataset.noteTool;
  if(action==='print'){printCurrent();return}
- if(action==='heading'){const menu=document.getElementById('svNoteFormatMenu');menu.hidden=!menu.hidden;btn.setAttribute('aria-expanded',String(!menu.hidden))}
+ if(action==='attachment'){
+  const menu=document.getElementById('svNoteAttachmentMenu'),format=document.getElementById('svNoteFormatMenu');
+  format.hidden=true;
+  const heading=dlg.querySelector('[data-note-tool="heading"]');heading?.setAttribute('aria-expanded','false');
+  menu.hidden=!menu.hidden;btn.setAttribute('aria-expanded',String(!menu.hidden));return;
+ }
+ if(action==='heading'){
+  const menu=document.getElementById('svNoteFormatMenu'),attachments=document.getElementById('svNoteAttachmentMenu');
+  attachments.hidden=true;
+  dlg.querySelector('[data-note-tool="attachment"]')?.setAttribute('aria-expanded','false');
+  menu.hidden=!menu.hidden;btn.setAttribute('aria-expanded',String(!menu.hidden));return;
+ }
  if(action==='checklist'){
   const a=field.selectionStart,b=field.selectionEnd,begin=field.value.lastIndexOf('\n',a-1)+1;
   const endIndex=field.value.indexOf('\n',b),end=endIndex<0?field.value.length:endIndex;
