@@ -452,3 +452,31 @@ test('signature design is scoped to Docs and respects the original global dock',
  assert.match(studioCode,/placement\.x\*dest\.width-width\/2/);
  assert.match(studioCode,/placement\.y\*dest\.height-height\/2/);
 });
+
+test('opened JPEG from file viewer enters the real handwritten tool and keeps original untouched',async()=>{
+ const f=fixture();
+ const original=new File([tinyJpeg],'portrait.jpg',{type:'image/jpeg'});
+ assert.equal(typeof f.window.SEYVEO_DOCS_STUDIO.openImageForSignature,'function');
+ const result=await f.window.SEYVEO_DOCS_STUDIO.openImageForSignature(original);
+ assert.equal(result,true);
+ const panel=find(f.root,n=>n.className==='sv-doc-tool-panel')[0];
+ assert.equal(panel.hidden,false);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-sign-stage').length,1);
+ const preview=find(f.root,n=>n.className==='sv-doc-sign-page-image');
+ assert.equal(preview.length,1);
+ assert.ok(label(f.root,'Подписать копию PDF'));
+ assert.equal(f.saved.length,0);
+ // No implicit upload, vault save, or signature generation.
+ assert.equal(f.created.some(x=>x.blob.type==='application/pdf'),false);
+});
+test('signature import refuses unsupported PDF and stale pending photo after leaving Documents',async()=>{
+ const f=fixture({deferImageLoad:true});
+ const pdf=new File(['%PDF-1.4'],'report.pdf',{type:'application/pdf'});
+ assert.equal(await f.window.SEYVEO_DOCS_STUDIO.openImageForSignature(pdf),false);
+ const importing=f.window.SEYVEO_DOCS_STUDIO.openImageForSignature(
+  new File([tinyJpeg],'photo.png',{type:'image/png'}));
+ f.window.SEYVEO_DOCS_STUDIO.reset();
+ f.resumeImages();
+ assert.equal(await importing,false);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-sign-page-image').length,0);
+});
