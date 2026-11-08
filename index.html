@@ -1892,43 +1892,56 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{padding-inline:6px!important}
 }
 
-/* SEYVEO notebook laser-etched controls v1.
-   Exactly the Home dock engraving palette and fine glyph contour.
-   Only applies to the note icons; shared glass and its geometry are untouched. */
+/* SEYVEO notebook recessed laser engraving v2.
+   Three concentric strokes form a carved channel with its light INSIDE,
+   not an outer drop-shadow glow. The approved dock surface is untouched. */
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]),
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
  color:var(--seyveo-engrave-ink)!important;
- background:transparent!important;
- box-shadow:none!important;
- filter:none!important;
+ background:transparent!important;box-shadow:none!important;filter:none!important;
  transition:opacity .18s ease,color .18s ease!important;
 }
-#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]) svg,
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button svg,
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone svg{
- display:block!important;
- fill:none!important;
- stroke:currentColor!important;
- stroke-width:1.22!important;
- stroke-linecap:round!important;
- stroke-linejoin:round!important;
+ overflow:visible!important;
  shape-rendering:geometricPrecision!important;
- filter:drop-shadow(0 0 .55px var(--seyveo-etch-core))
-        drop-shadow(0 0 1.7px var(--seyveo-etch-halo))!important;
+ filter:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-depth,
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-edge,
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-core{
+ fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+ filter:none!important;opacity:1!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-depth{
+ stroke:rgba(1,9,13,.52)!important;stroke-width:2.35!important;
+ transform:translateY(.24px);
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-edge{
+ stroke:var(--seyveo-engrave-ink)!important;stroke-width:1.32!important;
+ opacity:.58!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-core{
+ stroke:rgba(250,255,252,.82)!important;stroke-width:.65!important;
+ opacity:.78!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:is(:active,[aria-expanded="true"]),
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone:active{
  color:var(--seyveo-engrave-active)!important;
- background:transparent!important;
- opacity:.83!important;
+ background:transparent!important;opacity:.86!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:focus-visible,
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone:focus-visible{
- outline:2px solid var(--seyveo-engrave-active)!important;
- outline-offset:1px!important;
+ outline:2px solid var(--seyveo-engrave-active)!important;outline-offset:1px!important;
 }
-:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]),
-:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
- color:var(--seyveo-engrave-ink)!important;
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-depth{
+ stroke:rgba(255,255,255,.56)!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-edge{
+ stroke:var(--seyveo-engrave-ink)!important;opacity:.78!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock svg .sv-etched-core{
+ stroke:rgba(31,51,51,.83)!important;opacity:.74!important;
 }
 @media(prefers-reduced-motion:reduce){
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]),
@@ -3606,10 +3619,10 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div class="sv-note-bottom">
 <div class="sv-note-tool-row sv-shared-dock">
 <div class="sv-note-tools sv-note-tools-compact" role="toolbar" aria-label="Инструменты заметки">
-<button type="button" data-note-tool="checklist" title="Контрольный список" aria-label="Список"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="7" r="2.7"/><path d="m3.9 7 .8.85 1.5-1.7M10.2 7h10.2M5 17h.01M10.2 17h10.2"/></svg></button>
-<button type="button" data-note-tool="attachment" title="Вложения" aria-label="Вложения" aria-expanded="false" aria-controls="svNoteAttachmentMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></svg></button>
-<button type="button" data-note-tool="heading" title="Оформление текста" aria-label="Оформление текста" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="m7.8 17 4.2-10 4.2 10M9.3 13.5h5.4"/></svg></button>
-<button type="button" data-note-tool="draw" title="Рисование" aria-label="Рисование"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></svg></button>
+<button type="button" data-note-tool="checklist" title="Контрольный список" aria-label="Список"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><circle cx="5" cy="7" r="2.7"/><path d="m3.9 7 .8.85 1.5-1.7M10.2 7h10.2M5 17h.01M10.2 17h10.2"/></g><g class="sv-etched-edge"><circle cx="5" cy="7" r="2.7"/><path d="m3.9 7 .8.85 1.5-1.7M10.2 7h10.2M5 17h.01M10.2 17h10.2"/></g><g class="sv-etched-core"><circle cx="5" cy="7" r="2.7"/><path d="m3.9 7 .8.85 1.5-1.7M10.2 7h10.2M5 17h.01M10.2 17h10.2"/></g></svg></button>
+<button type="button" data-note-tool="attachment" title="Вложения" aria-label="Вложения" aria-expanded="false" aria-controls="svNoteAttachmentMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></g><g class="sv-etched-edge"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></g><g class="sv-etched-core"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></g></svg></button>
+<button type="button" data-note-tool="heading" title="Оформление текста" aria-label="Оформление текста" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><circle cx="12" cy="12" r="9.2"/><path d="m7.8 17 4.2-10 4.2 10M9.3 13.5h5.4"/></g><g class="sv-etched-edge"><circle cx="12" cy="12" r="9.2"/><path d="m7.8 17 4.2-10 4.2 10M9.3 13.5h5.4"/></g><g class="sv-etched-core"><circle cx="12" cy="12" r="9.2"/><path d="m7.8 17 4.2-10 4.2 10M9.3 13.5h5.4"/></g></svg></button>
+<button type="button" data-note-tool="draw" title="Рисование" aria-label="Рисование"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></g><g class="sv-etched-edge"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></g><g class="sv-etched-core"><path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/></g></svg></button>
 <div id="svNoteAttachmentMenu" class="sv-note-attachment-menu" hidden role="group" aria-label="Добавить в заметку">
 <button type="button" data-note-attachment="photo">Фото</button>
 <button type="button" data-note-attachment="camera">Камера</button>
@@ -3625,7 +3638,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <button type="button" data-note-tool="voice" hidden tabindex="-1" aria-hidden="true"></button>
 </div>
 <button id="svNoteNewStandalone" class="sv-note-draw-standalone" type="button" title="Новая заметка" aria-label="Создать новую заметку">
-<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true"><g class="sv-etched-depth"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></g><g class="sv-etched-edge"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></g><g class="sv-etched-core"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></g></svg>
 </button>
 </div>
 <button id="noteReviewCancel" type="button" hidden aria-hidden="true" tabindex="-1">Отмена</button>
