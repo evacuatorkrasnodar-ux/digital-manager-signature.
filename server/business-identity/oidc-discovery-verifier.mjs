@@ -151,7 +151,11 @@ export function createDiscoveredOidcAccessVerifier({
       keyIds:Object.freeze(jwks.keys.map(k=>k.kid)),
       metadata:Object.freeze({
         issuer,authorizationEndpoint:authorization.href,
-        tokenEndpoint:token.href,jwksUri:keysUrl.href
+        tokenEndpoint:token.href,jwksUri:keysUrl.href,
+        // Exposed for the operator's RFC 9207 compatibility gate. A strict
+        // native callback must refuse deployments that omit this support.
+        authorizationResponseIssuerSupported:
+          metadata.authorization_response_iss_parameter_supported===true
       })
     });
   }
