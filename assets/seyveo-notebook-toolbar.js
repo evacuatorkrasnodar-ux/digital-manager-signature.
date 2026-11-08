@@ -120,24 +120,34 @@
  if(paperPopup&&paperPopup.parentElement!==dialog)dialog.appendChild(paperPopup);
  applyGlyph(photo,'photo');
  applyGlyph(sayvi,'sayvi');
- // One selection at a time: the pen, eraser or active shape.
- // Shape highlighting is reflected on the fixed sheet icon, not on
- // individual poorly aligned circles in the top glass capsule.
+ // A single persistent selected disc for the actual editing mode.
+ // Selecting a paper template highlights Sheet until another tool is chosen.
  const shapeTools=[...dialog.querySelectorAll('#notePaperPatternMenu [data-paper-tool]')];
+ const paperChoices=[...dialog.querySelectorAll('#notePaperPatternMenu [data-paper-pattern]')];
+ let chosenPaper=false;
+ const activeTool=()=>dialog.querySelector('[data-paper-tool][aria-pressed="true"]')?.dataset.paperTool||'pen';
  const syncSelectedTool=()=>{
-  for(const button of [pen,eraser]){
-   button?.classList.toggle('sv-paper-tool-selected',button.getAttribute('aria-pressed')==='true');
+  const kind=activeTool(),shape=shapeTools.some(b=>b.dataset.paperTool===kind);
+  const current=shape||chosenPaper?'sheet':kind==='eraser'?'eraser':'pen';
+  for(const [button,key] of [[pen,'pen'],[eraser,'eraser'],[sheetTrigger,'sheet']]){
+   if(!button)continue;
+   const selected=current===key;
+   button.classList.toggle('sv-paper-tool-selected',selected);
+   button.setAttribute('data-sv-selected',String(selected));
   }
-  const chosen=shapeTools.find(b=>b.getAttribute('aria-pressed')==='true');
-  sheetTrigger?.classList.toggle('sv-paper-shape-selected',Boolean(chosen));
+  sheetTrigger?.classList.toggle('sv-paper-shape-selected',shape);
+  const chosen=shapeTools.find(b=>b.dataset.paperTool===kind);
   sheetTrigger?.setAttribute('aria-label',chosen?'Фигура: '+(chosen.title||'Инструмент'):'Лист и фигуры');
  };
- syncSelectedTool();
  for(const button of [pen,eraser,...shapeTools]){
-  if(button)new MutationObserver(syncSelectedTool).observe(button,{
-   attributes:true,attributeFilter:['aria-pressed']
-  });
+  button?.addEventListener('click',()=>{chosenPaper=false;syncSelectedTool()});
  }
+ for(const button of paperChoices){
+  button.addEventListener('click',()=>{chosenPaper=true;syncSelectedTool()});
+ }
+ dialog.addEventListener('close',()=>{chosenPaper=false;syncSelectedTool()});
+ new MutationObserver(syncSelectedTool).observe(dialog,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
+ syncSelectedTool();
 
  // One custom SEYVEO circle for brush, eraser and shape tools.
  // No native crosshair/plus; it never intercepts canvas gestures.
@@ -149,7 +159,6 @@
   ring.className='sv-paper-eraser-ring sv-paper-cursor-brush';
   ring.setAttribute('aria-hidden','true');
   previewStage.appendChild(ring);
-  const activeTool=()=>dialog.querySelector('[data-paper-tool][aria-pressed="true"]')?.dataset.paperTool||'pen';
   const hideRing=()=>ring.classList.remove('is-visible');
   const syncCursor=()=>{
    const erasing=activeTool()==='eraser';
