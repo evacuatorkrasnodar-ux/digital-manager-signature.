@@ -356,7 +356,8 @@ function draw(){
  assistant.append(el('h2','sv-doc-assistant-title','Сэйви поможет'));
  const hero=el('details','sv-doc-assistant-hero');
  const intro=el('summary','sv-doc-assistant-summary');
- intro.append(makeIcon('sayvi'));
+ const markBox=el('span','sv-doc-assistant-mark-box');
+ markBox.append(makeIcon('sayvi'));intro.append(markBox);
  const copy=el('span','sv-doc-assistant-hero-copy');
  copy.append(el('strong','','Составить договор, проверить документ и исправить ошибки.'));
  intro.append(copy,el('span','sv-doc-chat-chevron','›'));
