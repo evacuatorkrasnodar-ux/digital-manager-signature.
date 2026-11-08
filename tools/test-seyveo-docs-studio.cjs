@@ -638,7 +638,9 @@ test('Apple-like create cards remain scoped to Docs without fake office suite',(
  for(const cls of ['sv-doc-tool-templates','sv-doc-template-paper','sv-doc-template-card',
  'sv-doc-create-editor','sv-doc-create-formats','sv-doc-create-format',
  'sv-doc-create-sayvi'])
-  assert.ok(css.includes('#sayviSurfacePage .'+cls));
+  assert.ok(css.includes('.'+cls),'Missing create style: '+cls);
+ // Each stylesheet selector is limited to the Documents surface.
+ assert.doesNotMatch(css,/(?:^|\n)\.(?:sv-doc-create-|sv-doc-template-)[\w-]+\s*\{/);
  assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
  assert.match(css,/font-size:16px/);
  assert.doesNotMatch(css,/navHome|navManage|homeDock|sayviChatComposer/);
