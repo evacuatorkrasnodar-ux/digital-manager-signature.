@@ -458,19 +458,120 @@ function mount(target,{
   panel.append(info,status(''));
  }
  function renderSign(){
-  panel.append(heading('Подпись','Нарисуйте пальцем'));
-  panel.append(pictorialSteps([['finger','Нарисовать'],['sign','На страницу'],['pdf','Сохранить']]));
+  panel.append(heading('Подпись','Документ · подпись пальцем'));
+  panel.append(pictorialSteps([['file','Страница'],['finger','Подпись'],['pdf','Копия PDF']]));
+  const pageIndexDefault=Math.max(0,scans.length-1);
+  let placement={x:.70,y:.83};
+  let pageIndex=pageIndexDefault;
+  const preview=$('div','sv-doc-sign-stage');
+  const pageBar=$('div','sv-doc-sign-stage-top');
+  pageBar.append($('strong','','Документ'),$('small','',
+   scans.length?'Страница '+(pageIndex+1)+' из '+scans.length:'Лист-пример'));
+  const pageBody=$('div','sv-doc-sign-document');
+  pageBody.setAttribute('aria-label',scans.length?
+   'Коснитесь документа, чтобы выбрать место подписи':'Пример документа без загруженного скана');
+  const overlay=$('img','sv-doc-sign-stroke');
+  overlay.alt='Предпросмотр нарисованной подписи';
+  overlay.hidden=true;
+  const target=$('span','sv-doc-sign-target');
+  target.setAttribute('aria-hidden','true');
+  const stageHint=$('small','sv-doc-sign-stage-hint',
+   scans.length?'Нажмите на лист, чтобы выбрать место':'Сначала добавьте скан');
+  const choosePage=$('select','sv-doc-tool-page-select');
+  choosePage.setAttribute('aria-label','Страница для подписи');
+  scans.forEach((_,index)=>{
+   const option=$('option','','Страница '+(index+1));
+   option.value=String(index);choosePage.append(option);
+  });
+  choosePage.value=String(pageIndexDefault);
+  const pageRail=$('div','sv-doc-sign-pages');
+  pageRail.setAttribute('aria-label','Выбор страницы документа');
+  const pageButtons=[];
+  if(scans.length){
+   scans.forEach((p,index)=>{
+    const url=URL.createObjectURL(new Blob([p.jpegBytes],{type:'image/jpeg'}));
+    temporaryUrls.push(url);
+    const thumb=button('',()=>{
+     pageIndex=index;choosePage.value=String(index);
+     updatePreview();
+    },'sv-doc-sign-page-button');
+    thumb.setAttribute('aria-label','Страница '+(index+1));
+    const picture=$('img');picture.src=url;picture.alt='';
+    const badge=$('small','',String(index+1));
+    thumb.append(picture,badge);
+    pageRail.append(thumb);pageButtons.push(thumb);
+   });
+  }
   const paper=$('div','sv-doc-tool-sign-paper');
-  const canvas=$('canvas');canvas.width=650;canvas.height=240;
+  const canvas=$('canvas');
+  canvas.width=650;canvas.height=240;
   canvas.setAttribute('aria-label','Поле подписи пальцем или стилусом');
-  paper.append(canvas);panel.append(paper);
+  paper.append($('span','sv-doc-sign-paper-caption','Нарисуйте подпись'),canvas);
   const ctx=canvas.getContext('2d');
   if(!ctx){panel.append(status('Подпись на этом устройстве недоступна.'));return;}
   ctx.strokeStyle='#1b2a31';ctx.lineWidth=3.5;
   ctx.lineCap='round';ctx.lineJoin='round';
   let drawing=false,marks=0;
+  function paintPlacement(){
+   for(const element of [target,overlay]){
+    element.style.left=(placement.x*100)+'%';
+    element.style.top=(placement.y*100)+'%';
+   }
+   target.hidden=!scans.length;
+   overlay.hidden=!scans.length||!marks;
+   if(marks&&scans.length)overlay.src=canvas.toDataURL('image/png');
+  }
+  function updatePreview(){
+   if(!scans.length)return;
+   // The actual selected scan is displayed here; the PDF exporter uses
+   // precisely this selection and the chosen relative signature position.
+   const file=scans[pageIndex];
+   if(!file)return;
+   pageBar.replaceChildren(
+    $('strong','','Документ'),
+    $('small','','Страница '+(pageIndex+1)+' из '+scans.length));
+   pageBody.replaceChildren();
+   const pageUrl=URL.createObjectURL(new Blob([file.jpegBytes],{type:'image/jpeg'}));
+   temporaryUrls.push(pageUrl);
+   const image=$('img','sv-doc-sign-page-image');
+   image.src=pageUrl;image.alt='Просмотр страницы '+(pageIndex+1);
+   pageBody.append(image,target,overlay);
+   pageButtons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===pageIndex)));
+   paintPlacement();
+  }
+  pageBody.addEventListener('click',event=>{
+   if(!scans.length)return;
+   const rect=pageBody.getBoundingClientRect();
+   if(!rect.width||!rect.height)return;
+   const x=(event.clientX-rect.left)/rect.width;
+   const y=(event.clientY-rect.top)/rect.height;
+   placement={
+    x:Math.min(.80,Math.max(.20,x)),
+    y:Math.min(.92,Math.max(.08,y))
+   };
+   paintPlacement();
+  });
+  choosePage.addEventListener('change',()=>{
+   const next=Number(choosePage.value);
+   if(Number.isSafeInteger(next)&&next>=0&&next<scans.length){
+    pageIndex=next;updatePreview();
+   }
+  });
+  if(scans.length){
+   updatePreview();
+   preview.append(pageBar,pageBody,stageHint,choosePage,pageRail);
+  }else{
+   const sample=$('div','sv-doc-sign-page-sample');
+   sample.append($('span','','SEYVEO'));
+   for(let i=0;i<5;i++)sample.append($('i'));
+   sample.append($('em','','Место подписи'));
+   pageBody.append(sample);
+   preview.append(pageBar,pageBody,stageHint);
+  }
+  panel.append(preview,paper);
   const point=e=>{
    const bounds=canvas.getBoundingClientRect();
+   if(!bounds.width||!bounds.height)return {x:0,y:0};
    return{x:(e.clientX-bounds.left)*canvas.width/bounds.width,
     y:(e.clientY-bounds.top)*canvas.height/bounds.height};
   };
@@ -479,16 +580,20 @@ function mount(target,{
    canvas.setPointerCapture?.(e.pointerId);
    const p=point(e);ctx.beginPath();ctx.moveTo(p.x,p.y);
    ctx.lineTo(p.x+.1,p.y+.1);ctx.stroke();marks++;
+   paintPlacement();
   });
   canvas.addEventListener('pointermove',e=>{
    if(!drawing)return;e.preventDefault();
    const p=point(e);ctx.lineTo(p.x,p.y);ctx.stroke();
   });
-  const stop=()=>{drawing=false;};
+  const stop=()=>{
+   if(drawing){drawing=false;paintPlacement();}
+  };
   canvas.addEventListener('pointerup',stop);
   canvas.addEventListener('pointercancel',stop);
   const clearButton=button('Очистить',()=>{
    ctx.clearRect(0,0,canvas.width,canvas.height);marks=0;
+   paintPlacement();
   });
   const pngButton=button('Сохранить PNG',()=>{
    if(!marks){message('Сначала нарисуйте подпись.');return;}
@@ -496,43 +601,47 @@ function mount(target,{
     if(blob)save(blob,'SEYVEO-рукописная-подпись.png');
     else message('Не удалось сохранить подпись.');
    },'image/png');
-  },'sv-doc-tool-primary');
-  const choosePage=$('select','sv-doc-tool-page-select');
-  choosePage.setAttribute('aria-label','Страница для подписи');
-  scans.forEach((_,index)=>{
-   const option=$('option','', 'Страница '+(index+1));
-   option.value=String(index);choosePage.append(option);
   });
-  choosePage.value=String(Math.max(0,scans.length-1));
-  if(scans.length)panel.append(
-   $('label','sv-doc-tool-select-label','Подпись на странице'),
-   choosePage
-  );
-  const onScan=button('Добавить подпись в PDF',async()=>{
+  const onScan=button('Подписать копию PDF',async()=>{
    const generationAtStart=generation,epoch=operationEpoch;
-   if(!marks||!scans.length){message('Нужен рисунок подписи и хотя бы одна отсканированная страница.');return;}
+   if(!marks||!scans.length){
+    message('Сначала сделайте скан и нарисуйте подпись.');return;
+   }
    try{
-    const pageIndex=Number(choosePage.value);
-    if(!Number.isSafeInteger(pageIndex)||pageIndex<0||pageIndex>=scans.length){
+    // Read directly from the accessible selector too, to ensure its value
+    // stays authoritative for assistive technology and programmatic input.
+    const index=Number(choosePage.value);
+    if(!Number.isSafeInteger(index)||index<0||index>=scans.length){
      message('Выберите страницу для подписи.');return;
     }
-    const selectedPage=scans[pageIndex];
+    const selectedPage=scans[index];
     const image=await imageOf(new Blob([selectedPage.jpegBytes],{type:'image/jpeg'}));
     if(generationAtStart!==generation||epoch!==operationEpoch||
-       scans[pageIndex]!==selectedPage||mode!=='sign')return;
+       scans[index]!==selectedPage||mode!=='sign')return;
     const dest=canvasOf(image,1600),g=dest.getContext('2d');
     const width=dest.width*.4;
     const height=width*canvas.height/canvas.width;
-    g.drawImage(canvas,dest.width-width-40,dest.height-height-40,width,height);
-    const updated=scans.slice();updated[pageIndex]=jpegOf(dest);
-    save(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(updated),'SEYVEO-скан-с-подписью.pdf');
-    message('Подготовлена копия PDF с подписью на странице '+(pageIndex+1)+'. Это не КЭП.');
-   }catch{message('Не удалось собрать копию с подписью.');}
+    // Same document-relative placement as the on-screen preview;
+    // prevent spilling the handwritten mark outside the page.
+    const left=Math.max(0,Math.min(dest.width-width,
+     placement.x*dest.width-width/2));
+    const top=Math.max(0,Math.min(dest.height-height,
+     placement.y*dest.height-height/2));
+    g.drawImage(canvas,left,top,width,height);
+    const updated=scans.slice();updated[index]=jpegOf(dest);
+    save(window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(updated),
+     'SEYVEO-скан-с-подписью.pdf');
+    message('Сохранена отдельная копия: страница '+(index+1)+'. Это не КЭП.');
+   }catch{message('Не удалось создать копию с подписью.');}
   });
+  const actions=controls(onScan,pngButton,clearButton);
+  onScan.classList.add('sv-doc-tool-primary');
+  panel.append(actions);
   const info=$('details','sv-doc-tool-help');
-  info.append($('summary','','О подписи'),warn('Рисунок подписи не является КЭП. Для официального подписания потребуется подключение через «Умные подключения».'));
-  panel.append(controls(pngButton,clearButton,onScan),info,
-   status(scans.length?'Выберите страницу скана для подписи.':'Для вставки подписи сначала сделайте скан.'));
+  info.append($('summary','','О подписи'),
+   warn('Рукописная отметка не является КЭП. Для официальной электронной подписи нужно подключение через «Умные подключения».'));
+  panel.append(info,status(scans.length?
+   'Подпись появится на выбранном листе.':'Для PDF сначала добавьте скан в инструменте «Сканировать».'));
  }
  function renderPrint(){
   panel.append(heading('Печать','Файл → принтер'));
