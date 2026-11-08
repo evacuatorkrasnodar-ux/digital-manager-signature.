@@ -105,21 +105,39 @@
  applyGlyph(pen,'pen');
  applyGlyph(eraser,'eraser');
  applyGlyph(trigger,'settings');
- applyGlyph(paper.querySelector('#notePaperPatternTrigger'),'sheet');
+ const sheetTrigger=paper.querySelector('#notePaperPatternTrigger');
+ const cachedPatternLabel=$('notePaperPatternLabel');
+ applyGlyph(sheetTrigger,'sheet');
+ // Retain the exact label element referenced by notebook-paper.js.
+ // Keep it in the DOM for template syncing, never show text in the capsule.
+ if(cachedPatternLabel){
+  cachedPatternLabel.classList.add('sv-paper-visually-hidden');
+  sheetTrigger?.append(cachedPatternLabel);
+ }
+ // Move the large popup out of the 6-button glass strip. Otherwise
+ // iOS Safari clips it against the toolbar backdrop-filter bounds.
+ const paperPopup=$('notePaperPatternMenu');
+ if(paperPopup&&paperPopup.parentElement!==dialog)dialog.appendChild(paperPopup);
  applyGlyph(photo,'photo');
  applyGlyph(sayvi,'sayvi');
-  // Mirror the real tool state even after programmatic mode changes.
-  const syncSelectedTool=()=>{
-    for(const button of [pen,eraser]){
-      if(button)button.classList.toggle('sv-paper-tool-selected',button.getAttribute('aria-pressed')==='true');
-    }
-  };
-  syncSelectedTool();
+ // One selection at a time: the pen, eraser or active shape.
+ // Shape highlighting is reflected on the fixed sheet icon, not on
+ // individual poorly aligned circles in the top glass capsule.
+ const shapeTools=[...dialog.querySelectorAll('#notePaperPatternMenu [data-paper-tool]')];
+ const syncSelectedTool=()=>{
   for(const button of [pen,eraser]){
-    if(button)new MutationObserver(syncSelectedTool).observe(button,{
-      attributes:true,attributeFilter:['aria-pressed']
-    });
+   button?.classList.toggle('sv-paper-tool-selected',button.getAttribute('aria-pressed')==='true');
   }
+  const chosen=shapeTools.find(b=>b.getAttribute('aria-pressed')==='true');
+  sheetTrigger?.classList.toggle('sv-paper-shape-selected',Boolean(chosen));
+  sheetTrigger?.setAttribute('aria-label',chosen?'Фигура: '+(chosen.title||'Инструмент'):'Лист и фигуры');
+ };
+ syncSelectedTool();
+ for(const button of [pen,eraser,...shapeTools]){
+  if(button)new MutationObserver(syncSelectedTool).observe(button,{
+   attributes:true,attributeFilter:['aria-pressed']
+  });
+ }
 
  // The native crosshair was misleading for erasing. One decorative,
  // pointer-events-free ring follows the actual pointer on the canvas.
@@ -179,9 +197,9 @@
  bar.setAttribute('role','toolbar');bar.setAttribute('aria-label','Инструменты листа');
  dialog.querySelector('.paper-toolbar')?.setAttribute('aria-label','Инструменты и параметры листа');
  paper.querySelector('#notePaperPatternTrigger')?.setAttribute('title','Лист');
- paper.querySelector('#notePaperPatternTrigger')?.setAttribute('aria-label','Лист: выбрать тип бумаги');
+ sheetTrigger?.setAttribute('aria-label','Лист и фигуры');
  // Only icons in the capsule. Legacy captions/carets belong to old menus.
- $('notePaperPatternTrigger')?.querySelectorAll('span,.sv-paper-caret').forEach(node=>node.remove());
+ $('notePaperPatternTrigger')?.querySelectorAll('span:not(#notePaperPatternLabel),.sv-paper-caret').forEach(node=>node.remove());
  photo.querySelectorAll('span').forEach(node=>node.remove());
  file.hidden=true;
  // The old floating ellipsis is removed, never duplicated in the top controls.
