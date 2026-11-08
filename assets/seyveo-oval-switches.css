@@ -20,10 +20,12 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  grid-column:1!important;grid-row:1!important;
  width:40px!important;height:40px!important;
  min-width:40px!important;min-height:40px!important;
- border-radius:50%!important;
- border:1px solid color-mix(in srgb,var(--text) 12%,transparent)!important;
- background:var(--sv-ui-quiet-surface,var(--sv-doc-wash))!important;
+ padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
  box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;
 }
 html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack svg{
  width:18px!important;height:18px!important;
@@ -143,4 +145,26 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  #calendarPage #managerCalendarTabs button{
   transition:none!important;
  }
+}
+
+/* Approved universal Back behavior in Documents and unified Work:
+   the 40-44px invisible hit target remains accessible;
+   only a hairline chevron is painted, never a circular chip. */
+#svWorkShell #svWorkBack{
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;
+}
+#svWorkShell #svWorkBack svg{
+ width:19px!important;height:19px!important;
+ stroke-width:1.5!important;fill:none!important;
+}
+/* Mail already used arrow-only, keep it consistent if themes change. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack{
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
