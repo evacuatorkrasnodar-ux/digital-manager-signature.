@@ -233,7 +233,7 @@ test('scanner can rotate and reorder real multi-page photos, and sign chosen pag
  ];
  input.emit('change');
  await new Promise(resolve=>setImmediate(resolve));
- assert.ok(find(f.root,n=>n.textContent==='Страниц: 2').length);
+ assert.ok(find(f.root,n=>n.textContent==='Страницы · 2').length);
  assert.equal(find(f.root,n=>n.tagName==='BUTTON'&&n.textContent==='↻').length,2);
  const moves=find(f.root,n=>n.tagName==='BUTTON'&&n.textContent==='→');
  assert.equal(moves.length,2);
@@ -356,15 +356,15 @@ test('scanner design has sample paper guides before capture and real image after
  const preview=find(f.root,n=>n.className==='sv-doc-scan-sheet-image');
  assert.equal(preview.length,1);
  assert.equal(preview[0].alt,'Страница 1 из 2');
- assert.equal(find(f.root,n=>n.className==='sv-doc-tool-thumb-select').length,2);
+ assert.equal(find(f.root,n=>n.className?.split(' ').includes('sv-doc-tool-thumb-select')).length,2);
  assert.equal(find(f.root,n=>n.className==='sv-doc-tool-pdf-card').length,1);
- const choose=find(f.root,n=>n.className==='sv-doc-tool-thumb-select')[1];
+ const choose=find(f.root,n=>n.className?.split(' ').includes('sv-doc-tool-thumb-select'))[1];
  choose.click();
  const after=find(f.root,n=>n.className==='sv-doc-scan-sheet-image');
  assert.equal(after.length,1);
  assert.equal(after[0].alt,'Страница 2 из 2');
- assert.equal(find(f.root,n=>n.className==='sv-doc-tool-thumb-select')[1].attributes['aria-pressed'],'true');
- assert.equal(find(f.root,n=>n.className==='sv-doc-tool-thumb-select')[0].attributes['aria-pressed'],'false');
+ assert.equal(find(f.root,n=>n.className?.split(' ').includes('sv-doc-tool-thumb-select'))[1].attributes['aria-pressed'],'true');
+ assert.equal(find(f.root,n=>n.className?.split(' ').includes('sv-doc-tool-thumb-select'))[0].attributes['aria-pressed'],'false');
  label(f.root,'Посмотреть').click();
  assert.ok(f.created.some(x=>x.blob.type==='application/pdf'));
  assert.ok(find(f.root,n=>n.textContent?.includes('Предпросмотр PDF открыт')).length);
