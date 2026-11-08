@@ -101,19 +101,40 @@
 }
 #sayviSurfacePage .sv-doc-tool-thumbs::-webkit-scrollbar{display:none}
 #sayviSurfacePage .sv-doc-tool-thumb{
- flex:0 0 110px;width:110px;display:grid;gap:5px;
+ flex:0 0 150px;width:150px;display:grid;gap:6px;
 }
 #sayviSurfacePage .sv-doc-tool-thumb img{
- display:block;width:110px;height:145px;object-fit:contain;
+ display:block;width:150px;height:184px;object-fit:contain;
  background:white;border-radius:10px;
 }
-#sayviSurfacePage .sv-doc-tool-thumb .sv-doc-tool-button{
- min-height:38px;font-size:10px;padding:5px;background:transparent;
+#sayviSurfacePage .sv-doc-tool-thumb-actions{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;
+}
+#sayviSurfacePage .sv-doc-tool-thumb-actions .sv-doc-tool-button{
+ min-width:44px;min-height:44px;padding:5px;
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:13px;font-size:18px;font-weight:400;background:transparent;
+}
+#sayviSurfacePage .sv-doc-tool-thumb-actions .sv-doc-tool-button:disabled{
+ opacity:.28;cursor:default;
+}
+#sayviSurfacePage .sv-doc-tool-thumb>.sv-doc-tool-button{
+ min-height:44px;font-size:11px;padding:6px;background:transparent;
 }
 #sayviSurfacePage .sv-doc-tool-templates{display:flex;gap:6px;flex-wrap:wrap}
 #sayviSurfacePage .sv-doc-tool-templates .sv-doc-tool-button{
- min-height:40px;padding:8px 12px;font-size:11px;
+ min-height:44px;padding:8px 12px;font-size:12px;
  background:var(--sv-doc-picked,var(--card2));
+}
+#sayviSurfacePage .sv-doc-tool-select-label{
+ display:block;color:var(--secondary);font-size:12px;line-height:1.45;
+}
+#sayviSurfacePage .sv-doc-tool-page-select{
+ box-sizing:border-box;display:block;min-height:46px;width:100%;
+ padding:10px 14px;border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:16px;background:var(--sv-doc-picked,var(--card2));
+ color:var(--text);font:inherit;font-size:16px;
+ -webkit-appearance:none;appearance:none;
 }
 #sayviSurfacePage .sv-doc-tool-text{
  box-sizing:border-box;display:block;width:100%;min-width:0;
