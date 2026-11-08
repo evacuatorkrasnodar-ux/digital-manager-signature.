@@ -159,6 +159,19 @@
  if(paperPopup&&paperPopup.parentElement!==dialog)dialog.appendChild(paperPopup);
  applyGlyph(photo,'photo');
  applyGlyph(sayvi,'sayvi');
+ // A REAL centered silver selection plate, child of each tool.
+ // Its dimensions are independent of all legacy button/pseudo-element rules.
+ const inkButtons=[pen,eraser,duplicate,trigger,sheetTrigger,photo,sayvi].filter(Boolean);
+ for(const button of inkButtons){
+  let plate=button.querySelector(':scope > .sv-inkbar-selection');
+  if(!plate){
+   plate=document.createElement('span');
+   plate.className='sv-inkbar-selection';
+   plate.setAttribute('aria-hidden','true');
+   button.prepend(plate);
+  }
+ }
+
  // A single persistent selected disc for the actual editing mode.
  // Selecting a paper template highlights Sheet until another tool is chosen.
  const shapeTools=[...dialog.querySelectorAll('#notePaperPatternMenu [data-paper-tool]')];
@@ -173,9 +186,8 @@
    const selected=current===key;
    button.classList.toggle('sv-paper-tool-selected',selected);
    button.setAttribute('data-sv-selected',String(selected));
-   // iOS Safari: enforce the active circle on the element itself, above
-   // legacy !important background styles. Never draw a pseudo circle.
-   button.style.setProperty('background',selected?'rgba(212,223,237,.24)':'transparent','important');
+   button.querySelector('.sv-inkbar-selection')?.classList.toggle('is-selected',selected);
+   button.style.setProperty('background','transparent','important');
    button.style.setProperty('border-radius','50%','important');
    button.style.setProperty('box-shadow','none','important');
   }
@@ -191,6 +203,13 @@
  }
  dialog.addEventListener('close',()=>{chosenPaper=false;syncSelectedTool()});
  new MutationObserver(syncSelectedTool).observe(dialog,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
+ dialog.addEventListener('click',event=>{
+  if(event.target.closest('.sv-inkbar-tool,#notePaperPatternMenu [data-paper-tool],#notePaperPatternMenu [data-paper-pattern]'))
+   requestAnimationFrame(syncSelectedTool);
+ });
+ new MutationObserver(()=>{if(dialog.open)requestAnimationFrame(syncSelectedTool)})
+  .observe(dialog,{attributes:true,attributeFilter:['open']});
+
  syncSelectedTool();
 
  // One custom SEYVEO circle for brush, eraser and shape tools.
