@@ -6,12 +6,19 @@ const W=840,H=1188,MAX_PAGE_HEIGHT=2600,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTE
 const tools=['pen','pencil','eraser','line','arrow','rect','circle','triangle','diamond'],patterns=['blank','lines','dots','grid'];
 const SHAPE_TOOLS=new Set(['line','arrow','rect','circle','triangle','diamond']);
 const COLORS=['#171e29','#556174','#27609b','#c54a51','#258463','#7954a3','#f6f7fb','#8e99aa','#aa5c22','#e73b39','#ff7a27','#ffb525','#2fb35f','#0c9999','#14b4cd','#3b77df','#6650d2','#983cde','#bd397b'];
+const HEX_RE=/^#[0-9a-fA-F]{6}$/;
+const validGradient=g=>Array.isArray(g)&&g.length===2&&g.every(c=>typeof c==='string'&&HEX_RE.test(c));
+const gradientPaint=(ctx,g)=>{
+ const paint=ctx.createLinearGradient(0,0,W,0);
+ paint.addColorStop(0,g[0]);paint.addColorStop(1,g[1]);
+ return paint;
+};
 const $=id=>document.getElementById(id);
 const dialog=$('notePaperDialog'),canvas=$('notePaperCanvas');
 if(!dialog||!canvas||!canvas.getContext('2d'))return;
 const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
 let data={pattern:'blank',background:'dark',height:H,strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
-let activeColor='#f6f7fb',brushSize=5;
+let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
 // Live strokes paint incrementally; old strokes are not recomputed per pointer event.
 let liveTail=null,liveMid=null,shapeFrame=0;
 const shapeSnapshot=document.createElement('canvas');
@@ -43,7 +50,7 @@ function normalize(obj){
  photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
- .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(28,stroke.width)):undefined,points:stroke.points.slice(0,MAX_POINTS)
+ .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(28,stroke.width)):undefined,points:stroke.points.slice(0,MAX_POINTS)
  .filter(point=>Array.isArray(point)&&point.length>=2&&Number.isFinite(Number(point[0]))&&Number.isFinite(Number(point[1])))
  .map(point=>[clamp(point[0],W),clamp(point[1],height),clamp(point.length>2?point[2]:50,100)])}))};
 }
@@ -56,7 +63,7 @@ function paintStroke(ctx,s){
   const [x,y]=s.points[0],[u,v]=s.points[1],dx=u-x,dy=v-y;
   const weight=Number.isFinite(s.width)?Math.max(1,Math.min(28,s.width)):5;
   ctx.save();ctx.globalCompositeOperation='source-over';
-  ctx.strokeStyle=ctx.fillStyle=COLORS.includes(s.color)?s.color:'#f6f7fb';
+  ctx.strokeStyle=ctx.fillStyle=validGradient(s.gradient)?gradientPaint(ctx,s.gradient):COLORS.includes(s.color)?s.color:'#f6f7fb';
   ctx.lineWidth=weight;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();
   if(s.tool==='line'||s.tool==='arrow'){
    ctx.moveTo(x,y);ctx.lineTo(u,v);
@@ -87,7 +94,7 @@ function paintStroke(ctx,s){
  const chosen=COLORS.includes(s.color)?s.color:null;
  const width=base*(erase?1:1); // consistent width independent of frame frequency
  ctx.save();ctx.globalCompositeOperation=erase?'destination-out':'source-over';
- ctx.strokeStyle=ctx.fillStyle=erase?'#000':chosen?(s.tool==='pencil'?chosen+'a3':chosen):'#171e29';
+ ctx.strokeStyle=ctx.fillStyle=erase?'#000':validGradient(s.gradient)?gradientPaint(ctx,s.gradient):chosen?(s.tool==='pencil'?chosen+'a3':chosen):'#171e29';
  ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';
  const pts=s.points;
  if(pts.length===1){
@@ -178,7 +185,7 @@ function drawLivePart(kind,from,to,control=null,dot=false){
  ctx.save();ctx.setTransform(canvas.width/W,0,0,canvas.height/(data.height||H),0,0);
  const erase=pending.tool==='eraser';
  ctx.globalCompositeOperation=erase?'destination-out':'source-over';
- ctx.fillStyle=ctx.strokeStyle=erase?'#000':pending.tool==='pencil'?pending.color+'a3':pending.color;
+ ctx.fillStyle=ctx.strokeStyle=erase?'#000':validGradient(pending.gradient)?gradientPaint(ctx,pending.gradient):pending.tool==='pencil'?pending.color+'a3':pending.color;
  ctx.lineWidth=pending.width;ctx.lineJoin='round';ctx.lineCap='round';
  ctx.beginPath();
  if(dot){ctx.arc(from[0],from[1],pending.width/2,0,2*Math.PI);ctx.fill()}
@@ -239,7 +246,7 @@ function down(e){
  if(e.pointerType==='touch'&&Date.now()<penTime)return;
  if(data.strokes.length>=MAX_STROKES){report('Лист заполнен. Начните следующий.');return}
  e.preventDefault();pointerID=e.pointerId;
- pending={tool:currentTool(),color:activeColor,width:brushSize,points:[point(e)]};
+ pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,points:[point(e)]};
  liveTail=pending.points[0];liveMid=null;
  if(SHAPE_TOOLS.has(pending.tool)&&shapeSnapshotCtx){
   if(shapeSnapshot.width!==canvas.width)shapeSnapshot.width=canvas.width;
@@ -343,9 +350,22 @@ const colorTrigger=$('notePaperColorTrigger');
 const colorMenu=$('notePaperColorMenu');
 const colorDot=$('notePaperColorDot');
 const colorChoices=Array.from(dialog.querySelectorAll('[data-paper-color]'));
+const gradientPresets=[...dialog.querySelectorAll('[data-paper-gradient]')];
+const gradientColorStart=$('noteGradientStartColor'),gradientColorEnd=$('noteGradientEndColor');
+const gradientHexStart=$('noteGradientStartHex'),gradientHexEnd=$('noteGradientEndHex');
+const gradientPreview=$('noteGradientPreview');
+function updateGradientEditor(){
+ const a=gradientColorStart?.value||'#e9eff8',b=gradientColorEnd?.value||'#809ebd';
+ if(gradientPreview)gradientPreview.style.background='linear-gradient(115deg,'+a+','+b+')';
+}
 function syncColorMenu(){
- colorDot.style.backgroundColor=activeColor;
- colorChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.paperColor===activeColor)));
+ colorDot.style.removeProperty('background-color');
+ colorDot.style.background=activeGradient?'linear-gradient(115deg,'+activeGradient[0]+','+activeGradient[1]+')':'conic-gradient(#e73b39,#ffb525,#2fb35f,#14b4cd,#6650d2,#bd397b,#e73b39)';
+ colorChoices.forEach(button=>button.setAttribute('aria-pressed',String(!activeGradient&&button.dataset.paperColor===activeColor)));
+ gradientPresets.forEach(button=>{
+  const colors=button.dataset.paperGradient.split(',');
+  button.setAttribute('aria-pressed',String(Boolean(activeGradient)&&activeGradient[0]===colors[0]&&activeGradient[1]===colors[1]));
+ });
 }
 function closeColorMenu(restoreFocus=false){
  colorMenu.hidden=true;
@@ -362,10 +382,46 @@ colorTrigger.addEventListener('click',()=>{
 colorChoices.forEach(button=>button.addEventListener('click',()=>{
  if(!COLORS.includes(button.dataset.paperColor))return;
  activeColor=button.dataset.paperColor;
+ activeGradient=null;
  syncColorMenu();
  if(currentTool()==='eraser')selectTool('pen');
  closeColorMenu(Boolean(button.closest('.paper-color-menu')));
 }));
+const gradientControls=[[gradientColorStart,gradientHexStart],[gradientColorEnd,gradientHexEnd]];
+for(const [picker,hex] of gradientControls){
+ if(!picker||!hex)continue;
+ picker.addEventListener('input',()=>{hex.value=picker.value.toUpperCase();updateGradientEditor()});
+ hex.addEventListener('input',()=>{
+  const value=hex.value.trim();
+  if(HEX_RE.test(value)){picker.value=value;hex.setCustomValidity('');updateGradientEditor()}
+  else hex.setCustomValidity('Введите HEX, например #AABBCC');
+ });
+ hex.addEventListener('blur',()=>{
+  if(!HEX_RE.test(hex.value.trim())){hex.value=picker.value.toUpperCase();hex.setCustomValidity('')}
+ });
+}
+function applyGradient(colors,focus=false){
+ if(!validGradient(colors))return;
+ activeGradient=colors.map(v=>v.toLowerCase());
+ if(currentTool()==='eraser')selectTool('pen');
+ syncColorMenu();closeColorMenu(focus);
+}
+gradientPresets.forEach(button=>button.addEventListener('click',()=>{
+ const pair=button.dataset.paperGradient.split(',');
+ if(!validGradient(pair))return;
+ gradientColorStart.value=pair[0];gradientColorEnd.value=pair[1];
+ gradientHexStart.value=pair[0].toUpperCase();gradientHexEnd.value=pair[1].toUpperCase();
+ updateGradientEditor();applyGradient(pair,true);
+}));
+$('noteGradientApply')?.addEventListener('click',()=>{
+ const a=gradientHexStart.value.trim(),b=gradientHexEnd.value.trim();
+ if(!validGradient([a,b])){
+  if(!HEX_RE.test(a))gradientHexStart.focus();else gradientHexEnd.focus();
+  return;
+ }
+ applyGradient([a,b],true);
+});
+updateGradientEditor();
 if(brushControl)brushControl.addEventListener('input',()=>{
  brushSize=Math.max(1,Math.min(28,Number(brushControl.value)||5));
  brushControl.setAttribute('aria-valuetext',String(brushSize));
@@ -406,6 +462,7 @@ function open(note=null){
  data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
  closePatternMenu();closeColorMenu();
  activeColor=[...data.strokes].reverse().find(stroke=>COLORS.includes(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
+ activeGradient=null;
  brushSize=[...data.strokes].reverse().find(stroke=>Number.isFinite(stroke.width))?.width||5;
  if(brushControl){brushControl.value=String(brushSize);brushControl.setAttribute('aria-valuetext',String(brushSize));}
  if(extras)extras.hidden=true;if(moreButton)moreButton.setAttribute('aria-expanded','false');
