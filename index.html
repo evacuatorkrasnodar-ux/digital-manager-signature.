@@ -955,6 +955,104 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 /* Print returned to the seven-icon editing capsule; header remains uncluttered. */
 #noteReviewDialog.note-review-dialog[open] .sv-note-tools{grid-template-columns:repeat(7,minmax(0,1fr))!important}
 #noteReviewDialog.note-review-dialog[open] .sv-note-heading-row{justify-content:flex-start!important}
+/* SEYVEO Notes · Documents-style top navigation and document capsule */
+#noteReviewDialog.note-review-dialog[open]{
+ padding-top:max(83px,calc(env(safe-area-inset-top,0px) + 53px))!important;
+ background:radial-gradient(ellipse 65% 43% at 75% 4%,rgba(31,157,117,.22),transparent 85%),linear-gradient(160deg,#0b1a24,#0c2229 55%,#0d1a23)!important;
+}
+#noteReviewDialog.note-review-dialog[open] #noteReviewBack{
+ top:max(22px,calc(env(safe-area-inset-top,0px) + 5px))!important;
+ left:17px!important; width:43px!important;height:43px!important;min-width:43px!important;min-height:43px!important;
+ border:1px solid rgba(239,248,252,.075)!important;
+ background:rgba(223,237,245,.115)!important;
+ -webkit-backdrop-filter:blur(20px)!important;backdrop-filter:blur(20px)!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-header{
+ display:flex!important;justify-content:center!important;align-items:flex-start!important;
+ position:relative!important;min-height:102px!important;padding:0!important;margin:0!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-brand{
+ display:flex!important;flex-direction:column!important;align-items:center!important;gap:3px!important;
+ text-align:center!important;line-height:1.1!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-brand strong{font:600 22px/1.18 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;color:#f1f5f8!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-brand small{font:500 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;color:rgba(226,236,242,.59)!important;letter-spacing:.09em!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions{position:absolute!important;right:0!important;top:-49px!important;display:flex!important;gap:6px!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-circle{
+ display:grid!important;place-items:center!important;box-sizing:border-box!important;
+ width:43px!important;min-width:43px!important;height:43px!important;min-height:43px!important;
+ padding:0!important;border:1px solid rgba(235,248,252,.075)!important;border-radius:50%!important;
+ background:rgba(222,239,248,.115)!important;color:#eff5f8!important;box-shadow:none!important;
+ -webkit-backdrop-filter:blur(20px)!important;backdrop-filter:blur(20px)!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-circle svg{
+ display:block!important;width:20px!important;height:20px!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.75!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-circle circle[r="1.2"]{fill:currentColor!important;stroke:none!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-editor{position:relative!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-visually-hidden{
+ position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;
+ white-space:nowrap!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-document-capsule{
+ display:flex!important;align-items:center!important;gap:10px!important;box-sizing:border-box!important;
+ flex:0 0 73px!important;height:73px!important;width:100%!important;min-width:0!important;
+ padding:8px 11px!important;margin:0 0 13px!important;
+ border:1px solid rgba(229,243,248,.25)!important;border-radius:28px!important;
+ background:linear-gradient(140deg,rgba(212,236,247,.19),rgba(128,188,192,.10))!important;
+ -webkit-backdrop-filter:blur(25px) saturate(125%)!important;backdrop-filter:blur(25px) saturate(125%)!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.15)!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-document-icon{
+ display:grid!important;place-items:center!important;flex:0 0 47px!important;width:47px!important;height:47px!important;
+ border-radius:16px!important;background:rgba(229,241,249,.10)!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.10)!important;color:#edf5f8!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-document-icon svg{
+ width:29px!important;height:29px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-document-capsule .sv-note-title-input{
+ display:block!important;flex:1 1 auto!important;min-width:0!important;width:1px!important;
+ height:48px!important;min-height:48px!important;max-height:48px!important;
+ margin:0!important;padding:0 1px!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#f4f7fa!important;font:600 clamp(16px,4.3vw,21px)/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-document-capsule .sv-note-title-input::placeholder{color:#eff5f7!important;opacity:1!important}
+#noteReviewDialog.note-review-dialog[open] #svNotePrintTop{
+ display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;
+ flex:0 0 auto!important;min-width:0!important;width:auto!important;height:34px!important;min-height:34px!important;
+ padding:0 10px!important;margin:0!important;border:1px solid rgba(236,249,249,.19)!important;border-radius:999px!important;
+ background:rgba(206,234,238,.13)!important;color:#f1f7f8!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
+ font:500 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+#noteReviewDialog.note-review-dialog[open] #svNotePrintTop svg{width:17px!important;height:17px!important;display:block!important;fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+#noteReviewDialog.note-review-dialog[open] #noteReviewText{border-top:0!important;padding:9px 6px!important;font-size:17px!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-top-menu:not([hidden]),
+#noteReviewDialog.note-review-dialog[open] .sv-note-search-panel:not([hidden]){
+ display:flex!important;flex-direction:column!important;position:absolute!important;z-index:41!important;
+ top:133px!important;right:20px!important;left:auto!important;min-width:205px!important;max-width:calc(100vw - 40px)!important;
+ gap:5px!important;padding:9px!important;border:1px solid rgba(233,245,249,.19)!important;border-radius:18px!important;
+ background:rgba(24,43,51,.97)!important;box-shadow:0 15px 35px rgba(0,0,0,.3)!important;
+ -webkit-backdrop-filter:blur(24px)!important;backdrop-filter:blur(24px)!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-search-panel:not([hidden]){left:20px!important;right:20px!important;max-width:none!important}
+#noteReviewDialog.note-review-dialog[open] :is(.sv-note-top-menu,.sv-note-search-panel)[hidden]{display:none!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-top-menu button,
+#noteReviewDialog.note-review-dialog[open] .sv-note-search-results button{
+ display:block!important;text-align:left!important;width:100%!important;min-height:37px!important;border:0!important;
+ border-radius:10px!important;background:rgba(222,240,247,.065)!important;color:#f0f6f8!important;padding:8px 11px!important;font-size:13px!important;
+}
+#noteReviewDialog.note-review-dialog[open] #svNoteSearchInput{
+ display:block!important;width:100%!important;height:40px!important;min-height:40px!important;
+ border:1px solid rgba(228,245,249,.18)!important;border-radius:12px!important;
+ background:rgba(218,236,242,.08)!important;color:#f4f7f9!important;padding:0 12px!important;font-size:14px!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-search-results{display:flex!important;flex-direction:column!important;gap:4px!important;max-height:140px!important;overflow-y:auto!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-search-results p{margin:8px!important;color:#bfcdd3!important;font-size:12px!important}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=3" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-company-avatar" aria-hidden="true"><img src="assets/company-building-avatar.svg?v=1" alt="" width="44" height="44" draggable="false"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="contacts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Контакты</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="smart-home" aria-label="Открыть Умный дом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg><span>Умный дом</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="documents" aria-label="Открыть Личные документы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/></svg><span>Личные документы</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="mail" aria-label="Открыть Почту SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.6"/><path d="m4 7 8 6 8-6"/></svg><span>Почта</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="browser" aria-label="Открыть Браузер SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 4-5 14 0 18M12 3c5 4 5 14 0 18"/></svg><span>Браузер</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="play" hidden style="display:none!important" aria-label="Открыть YouTube"><svg class="seyveo-youtube-white" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="stroke:none;fill:none;opacity:1;display:block;width:26px;height:23px;flex:none;"><path fill="#fff" fill-rule="evenodd" clip-rule="evenodd" stroke="none" d="M5.7 5H18.3C20.9 5 22.5 6.6 22.5 9.1V14.9C22.5 17.4 20.9 19 18.3 19H5.7C3.1 19 1.5 17.4 1.5 14.9V9.1C1.5 6.6 3.1 5 5.7 5ZM9.85 8.45V15.55L16.5 12Z"/></svg><span>YouTube</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
@@ -2591,10 +2689,30 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div class="info-actions"><button id="wakeVoiceCancel" type="button" class="btn">Отмена</button><button id="wakeVoiceConfirm" type="button" class="btn primary">Включить</button></div>
 </dialog><dialog id="notesDialog" class="notes-dialog" aria-labelledby="notesTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" aria-label="Вернуться из блокнота"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><div class="notes-head"><h2 id="notesTitle">Блокнот</h2><p id="notesCount" class="notes-count" aria-live="polite"></p><button id="notesNew" type="button" class="notes-new" aria-label="Создать новую заметку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Новая заметка</span></button></div><div id="notesList" class="notes-list"></div><p id="notesStatus" role="status" aria-live="polite" hidden></p></dialog><dialog id="noteReviewDialog" class="notes-dialog note-review-dialog" aria-labelledby="noteReviewTitle">
 <button id="noteReviewBack" type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Отменить запись"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
-<div class="sv-note-header"><span class="sv-note-eyebrow">SEYVEO · БЛОКНОТ</span><div class="sv-note-heading-row"><h2 id="noteReviewTitle">Новая заметка</h2></div></div>
+<div class="sv-note-header">
+ <div class="sv-note-nav-brand"><strong>Блокнот</strong><small>SEYVEO</small></div>
+ <div class="sv-note-nav-actions">
+ <button id="svNoteSearch" class="sv-note-nav-circle" type="button" aria-label="Поиск заметок" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.3"/><path d="m15.2 15.2 5.1 5.1"/></svg></button>
+ <button id="svNoteMore" class="sv-note-nav-circle" type="button" aria-label="Действия с заметкой" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>
+ </div>
+</div>
+<div id="svNoteTopMenu" class="sv-note-top-menu" hidden>
+ <button type="button" data-sv-note-menu="copy">Копировать текст</button>
+ <button type="button" data-sv-note-menu="notes">Мои записи</button>
+ <button type="button" data-sv-note-menu="clear">Очистить текст</button>
+</div>
+<div id="svNoteSearchPanel" class="sv-note-search-panel" hidden>
+ <input id="svNoteSearchInput" type="search" placeholder="Найти сохранённую заметку…" aria-label="Поиск заметок">
+ <div id="svNoteSearchResults" class="sv-note-search-results"></div>
+</div>
 <form id="noteReviewForm" class="sv-note-editor">
-<label for="svNoteTitle" class="sv-note-title-label">Название заметки</label>
-<input id="svNoteTitle" class="sv-note-title-input" type="text" maxlength="120" placeholder="Название заметки" autocomplete="off">
+<h2 id="noteReviewTitle" class="sv-note-visually-hidden">Новая заметка</h2>
+<div class="sv-note-document-capsule">
+ <span class="sv-note-document-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="8" y="3" width="20" height="26" rx="3"/><path d="M13 10h10M13 16h10M13 22h8M5 10h6M5 16h6M5 22h6"/></svg></span>
+ <label for="svNoteTitle" class="sv-note-title-label">Название заметки</label>
+ <input id="svNoteTitle" class="sv-note-title-input" type="text" maxlength="120" placeholder="Новая заметка" autocomplete="off">
+ <button id="svNotePrintTop" type="button" aria-label="Распечатать заметку" title="Печать"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8V3h12v5M6 17H4V9h16v8h-2M6 14h12v7H6zM17 11.7h.01"/></svg><span>Печать</span></button>
+</div>
 <label for="noteReviewText" class="sv-note-label">Текст заметки</label>
 <textarea id="noteReviewText" maxlength="8000" rows="4" required placeholder="Что нужно запомнить?" spellcheck="true" autocorrect="on" autocapitalize="sentences"></textarea>
 <small id="noteReviewStatus" role="status" aria-live="polite" hidden></small>
@@ -4986,6 +5104,34 @@ window.addEventListener('load',()=>{
   w.document.body.append(head,pre);w.focus();w.print();
  };
  
+ document.getElementById('svNotePrintTop')?.addEventListener('click',printCurrent);
+ const topMenu=document.getElementById('svNoteTopMenu');
+ const searchPanel=document.getElementById('svNoteSearchPanel');
+ const setPanel=(which)=>{
+  const menuOpen=which==='menu'&&topMenu.hidden;
+  const searchOpen=which==='search'&&searchPanel.hidden;
+  topMenu.hidden=!menuOpen;searchPanel.hidden=!searchOpen;
+  document.getElementById('svNoteMore').setAttribute('aria-expanded',String(menuOpen));
+  document.getElementById('svNoteSearch').setAttribute('aria-expanded',String(searchOpen));
+  if(searchOpen){document.getElementById('svNoteSearchInput').focus();renderNoteSearch()}
+ };
+ document.getElementById('svNoteMore')?.addEventListener('click',()=>setPanel('menu'));
+ document.getElementById('svNoteSearch')?.addEventListener('click',()=>setPanel('search'));
+ function renderNoteSearch(){
+  const query=document.getElementById('svNoteSearchInput').value.trim().toLocaleLowerCase('ru');
+  const list=document.getElementById('svNoteSearchResults');list.replaceChildren();
+  const items=(typeof getNotes==='function'?getNotes():[]).filter(n=>!query||n.text.toLocaleLowerCase('ru').includes(query)).slice(0,12);
+  if(!items.length){const p=document.createElement('p');p.textContent='Записи не найдены';list.append(p);return}
+  for(const n of items){const b=document.createElement('button');b.type='button';b.textContent=n.text.split('\\n')[0].slice(0,90)||'Заметка';b.addEventListener('click',()=>{setPanel('close');if(field.value.trim()||document.getElementById('svNoteTitle').value.trim()){if(!window.confirm('Открыть сохранённую заметку? Несохранённый текст останется без изменений только до закрытия редактора.'))return}dlg.close();if(typeof openNoteRead==='function')openNoteRead(n)});list.append(b)}
+ }
+ document.getElementById('svNoteSearchInput')?.addEventListener('input',renderNoteSearch);
+ topMenu?.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-sv-note-menu]');if(!b)return;
+  const a=b.dataset.svNoteMenu;setPanel('close');
+  if(a==='copy'){try{await navigator.clipboard.writeText(field.value);status('Текст скопирован.')}catch{field.select();status('Текст выделен для копирования.')}}
+  if(a==='clear'){if(field.value&&window.confirm('Очистить текст этой заметки?')){field.value='';field.focus()}}
+  if(a==='notes'){if(field.value.trim()||document.getElementById('svNoteTitle').value.trim()){if(!window.confirm('Вернуться к списку? Несохранённые изменения могут быть потеряны.'))return}dlg.close();if(typeof openNotes==='function')openNotes()}
+ });
  document.getElementById('svNoteFormatMenu')?.addEventListener('click',e=>{
   const btn=e.target.closest('[data-note-format]');if(!btn)return;
   const kind=btn.dataset.noteFormat,a=field.selectionStart,b=field.selectionEnd,selected=field.value.slice(a,b);
