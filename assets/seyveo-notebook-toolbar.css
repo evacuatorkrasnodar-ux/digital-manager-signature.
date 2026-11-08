@@ -178,3 +178,32 @@
 #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary :is(#notePaperPatternTrigger,#notePaperAddPhoto)>span,
 #notePaperDialog.sv-paper-studio[open] .sv-paper-top #notePaperPatternTrigger .sv-paper-caret{display:none!important}
 #notePaperDialog.sv-paper-studio[open] .sv-paper-top :is(#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSettings){font-size:0!important;line-height:0!important;white-space:nowrap!important;overflow:hidden!important}
+
+/* v5: one thumb only. The native input still owns touch & keyboard input,
+   but its thumb is visually transparent; the numbered thumb is the sole UI. */
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input[type="range"]{
+ -webkit-appearance:none!important;appearance:none!important;
+ border-radius:0!important;box-shadow:none!important;
+ outline-offset:5px!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-webkit-slider-runnable-track{
+ height:2px!important;background:rgba(235,240,245,.46)!important;
+ border-radius:99px!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-webkit-slider-thumb{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;width:28px!important;height:28px!important;
+ margin-top:-13px!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-moz-range-track{
+ height:2px!important;background:rgba(235,240,245,.46)!important;
+ border-radius:99px!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-moz-range-thumb{
+ width:28px!important;height:28px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size::after{
+ transition:none!important;
+}
