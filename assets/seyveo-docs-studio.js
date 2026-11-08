@@ -22,6 +22,7 @@ const PICTOGRAMS=Object.freeze({
  file:'<path d="M14 16h23l11 11v22a5 5 0 0 1-5 5H14a5 5 0 0 1-5-5V21a5 5 0 0 1 5-5Z"/><path d="M37 16v12h11"/><path d="M29 34v15M22 41.5h14" class="sv-doc-art-accent"/>',
  create:'<path d="M17 9h21l10 10v29a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V14a5 5 0 0 1 5-5Z"/><path d="M38 9v11h10M21 29h18M21 36h11"/><path d="m30 50 15-15 4 4-15 15-8 2Z" class="sv-doc-art-accent"/>',
  sign:'<path d="M12 12h35a5 5 0 0 1 5 5v28a5 5 0 0 1-5 5H12a5 5 0 0 1-5-5V17a5 5 0 0 1 5-5Z"/><path d="M16 22h20M16 29h12M16 42c7-13 8 6 14-2 5-9 2 8 11-3" class="sv-doc-art-accent"/>',
+ convert:'<path d="M18 14a19 19 0 0 1 31 9M49 13v10H39M46 50a19 19 0 0 1-31-9M15 51V41h10"/><path d="M22 28h20M22 36h20" class="sv-doc-art-accent"/>',
  print:'<path d="M18 23V9h28v14M18 47H9a5 5 0 0 1-5-5V28a5 5 0 0 1 5-5h46a5 5 0 0 1 5 5v14a5 5 0 0 1-5 5h-9"/><path d="M15 37h34v20H15zM22 44h20M22 50h14"/><circle cx="51" cy="31" r="2" class="sv-doc-art-accent"/>',
  camera:'<path d="M9 19h12l5-6h13l5 6h11v31H9z"/><circle cx="32" cy="34" r="10"/><path d="m47 23 4 0" class="sv-doc-art-accent"/>',
  pages:'<path d="M16 10h27l9 9v31H16zM43 10v10h9M9 18v36h33"/><path d="M24 29h18M24 37h14" class="sv-doc-art-accent"/>',
@@ -174,7 +175,9 @@ function mount(target,{
   ['Добавить файл','file',()=>onPick()],
   ['Создать','create',()=>open('create')],
   ['Подписать','sign',()=>open('sign')],
-  ['Печать','print',()=>open('print')]
+  ['Печать','print',()=>open('print')],
+  // Uses the existing PDF/Word creator; file-to-file conversion is not claimed.
+  ['PDF ⇄ Word','convert',()=>open('create')]
  ];
  for(const [label,key,action] of items){
   const el=button(label,action,'sv-doc-tool-'+key);
