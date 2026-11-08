@@ -1829,17 +1829,19 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  #noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-tools>button{transition:none!important}
 }
 
-/* Compact four-action Notes dock · same exact shared Home glass, just smaller. */
+/* Compact four-action Notes dock. Four ~40px touch targets, 226px glass capsule
+   + 39px breathing room + 50px trailing circle = 315px total.
+   Shared Home material and laser-etched glyphs are intentionally unchanged. */
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
  box-sizing:border-box!important;
- width:min(100%,355px)!important;
+ width:min(100%,315px)!important;
  margin:0 auto!important;
  height:50px!important;min-height:50px!important;
  grid-template-columns:minmax(0,1fr) 50px!important;
- column-gap:36px!important;
+ column-gap:39px!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
- left:0!important;right:86px!important;top:0!important;bottom:0!important;
+ left:0!important;right:89px!important;top:0!important;bottom:0!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
  width:50px!important;height:50px!important;top:0!important;right:0!important;bottom:auto!important;
