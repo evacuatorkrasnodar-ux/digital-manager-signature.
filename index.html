@@ -5190,8 +5190,23 @@ function openNoteReview(value,id=null,options=null){
 }
 $('svNoteTitle').addEventListener('input',scheduleNoteAutosave);
 $('noteReviewText').addEventListener('input',scheduleNoteAutosave);
-$('noteReviewCancel').addEventListener('click',()=>$('noteReviewDialog').close());
-$('noteReviewBack').addEventListener('click',()=>$('noteReviewDialog').close());
+function closeNoteReviewSafely(){
+ clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+ if(!persistNoteReview())return false;
+ $('noteReviewDialog').close();
+ return true;
+}
+$('noteReviewCancel').addEventListener('click',closeNoteReviewSafely);
+// Capture first: the generic dialog-close listener otherwise closes the modal
+// before localStorage can report a failed autosave.
+$('noteReviewBack').addEventListener('click',event=>{
+ event.stopImmediatePropagation();
+ closeNoteReviewSafely();
+},true);
+$('noteReviewDialog').addEventListener('cancel',event=>{
+ clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
+ if(!persistNoteReview())event.preventDefault();
+});
 $('noteReviewDialog').addEventListener('click',event=>{
  const dlg=$('noteReviewDialog');if(event.target!==dlg)return;
  const bounds=dlg.getBoundingClientRect();
