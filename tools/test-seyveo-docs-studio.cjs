@@ -216,9 +216,9 @@ test('photos make a real local PDF, permit explicit import to the vault',async()
 });
 test('staging tool has no network APIs, fake OCR or legally binding signature claim',()=>{
  assert.doesNotMatch(studioCode,/\bfetch\s*\(|XMLHttpRequest|sendBeacon/);
- assert.match(studioCode,/Автоуглы и OCR добавим/);
+ assert.match(studioCode,/Автоматическая обрезка и OCR пока не подключены/);
  assert.match(studioCode,/не КЭП/);
- assert.match(studioCode,/не утверждает, что принтер найден/);
+ assert.match(studioCode,/Принтер и параметры выбираются в системе/);
  assert.match(studioCode,/SEYVEO_DOCS_EXPORT\.pdfFromJpegs/);
  assert.match(studioCode,/SEYVEO_DOCS_EXPORT\.docxFromText/);
 });
@@ -296,7 +296,7 @@ test('studio iPhone controls retain minimum touch targets and honest capability 
  assert.match(css,/min-width:44px;min-height:44px/);
  assert.match(css,/sv-doc-tool-page-select/);
  assert.match(css,/font-size:16px/);
- assert.match(studioCode,/подпись.*не КЭП/i);
+ assert.match(studioCode,/подписи не является КЭП/i);
  assert.match(studioCode,/navigator\.canShare/);
  assert.doesNotMatch(studioCode,/\bfetch\s*\(/);
 });
@@ -315,4 +315,24 @@ test('fresh scan can be printed directly without saving or importing first',asyn
  assert.equal(open[0].target,'_blank');
  assert.ok(f.created.some(x=>x.blob.type==='application/pdf'));
  assert.equal(f.saved.length,0);
+});
+
+test('visual-first Apple-inspired Docs controls show unique icons and short step diagrams',()=>{
+ const f=fixture();
+ const artKinds=['scan','file','create','sign','print'];
+ assert.ok(artKinds.every(name=>studioCode.includes(name+":'")));
+ assert.match(studioCode,/PICTOGRAMS=Object\.freeze/);
+ const artworks=find(f.root,n=>n.className?.split(' ').includes('sv-doc-art'));
+ assert.equal(artworks.length,5);
+ assert.ok(artworks.every(n=>n.innerHTML?.startsWith('<svg')));
+ for(const tool of ['Сканировать','Создать','Подписать','Печать']){
+  label(f.root,tool).click();
+  const steps=find(f.root,n=>n.className==='sv-doc-tool-step');
+  assert.equal(steps.length,3);
+  assert.equal(find(f.root,n=>n.className==='sv-doc-tool-step-arrow').length,2);
+ }
+ const css=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
+ assert.match(css,/\.sv-doc-tool-grid \.sv-doc-tool-button\{\s*display:flex;flex-direction:column-reverse/);
+ assert.match(css,/\.sv-doc-tool-scan\{\s*display:grid;grid-template-columns/);
+ assert.match(css,/\.sv-doc-tool-help summary/);
 });
