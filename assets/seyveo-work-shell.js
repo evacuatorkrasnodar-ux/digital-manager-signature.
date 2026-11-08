@@ -75,8 +75,37 @@
   document.getElementById('notesList'),
   document.getElementById('notesStatus')
  ].filter(Boolean):[];
+ const noteTitle=document.getElementById('notesTitle');
+ // Illustrated actions use the existing mode chooser and editor.
+ // No extra document store, modal or artificial demo actions.
+ const notebookTools=document.createElement('section');
+ notebookTools.className='sv-notebook-tools';
+ notebookTools.setAttribute('aria-label','Способы создания записи');
+ notebookTools.innerHTML=`
+  <div class="sv-note-tools-intro"><span>БЫСТРЫЙ СТАРТ</span><small>Выберите способ записи</small></div>
+  <div class="sv-note-tools-grid">
+   <button type="button" class="sv-note-tool sv-note-tool-text" data-note-choice="noteModeText" aria-label="Создать текстовую заметку">
+    <span class="sv-note-tool-art" aria-hidden="true"><svg viewBox="0 0 64 64"><rect class="sv-note-sheet" x="17" y="8" width="32" height="47" rx="5"/><path d="M25 22h16M25 29h16M25 36h12M25 43h9"/><path class="sv-note-spark" d="M43 7v7M39.5 10.5h7"/></svg></span><strong>Текст</strong><small>Написать</small>
+   </button>
+   <button type="button" class="sv-note-tool sv-note-tool-paper" data-note-choice="noteModePaper" aria-label="Создать рукописную заметку">
+    <span class="sv-note-tool-art" aria-hidden="true"><svg viewBox="0 0 64 64"><rect class="sv-note-sheet" x="12" y="12" width="39" height="38" rx="5"/><path d="M20 24h18M20 31h11"/><path class="sv-note-pen" d="M24 45l4.7-1.2L48 24.5 43.5 20 24.2 39.2 24 45ZM41.5 22l4.5 4.5"/></svg></span><strong>От руки</strong><small>Нарисовать</small>
+   </button>
+   <button type="button" class="sv-note-tool sv-note-tool-scan" data-note-choice="noteModeScan" aria-label="Создать заметку из фотографии">
+    <span class="sv-note-tool-art" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M19 14h-6v11M45 14h6v11M13 40v10h11M51 40v10H40"/><rect class="sv-note-sheet" x="20" y="20" width="24" height="24" rx="4"/><path d="M26 29h12M26 34h12M26 39h8"/><path class="sv-note-spark" d="M45 9v7M41.5 12.5h7"/></svg></span><strong>Фото → текст</strong><small>Распознать</small>
+   </button>
+  </div>`;
+ notebookTools.addEventListener('click',event=>{
+  const tool=event.target.closest('[data-note-choice]');
+  if(!tool||!notebookTools.contains(tool)||!notebookActive)return;
+  const mode=tool.dataset.noteChoice;
+  if(!['noteModeText','noteModePaper','noteModeScan'].includes(mode))return;
+  document.getElementById('notesNew')?.click();
+  if(document.getElementById('noteModeDialog')?.open)
+   document.getElementById(mode)?.click();
+ });
  function restoreNotebook(){
   notebookActive=false;notebookPending=false;
+  if(noteTitle)noteTitle.textContent='Блокнот';
   if(noteDialog&&noteParts.length){
    noteDialog.append(...noteParts);
   }
@@ -86,7 +115,8 @@
   if(tasks.hidden||!noteDialog||noteParts.length<3)return;
   notebookPending=false;notebookActive=true;
   if(noteDialog.open)noteDialog.close();
-  notebookHost.replaceChildren(...noteParts);
+  if(noteTitle)noteTitle.textContent='Мои записи';
+  notebookHost.replaceChildren(notebookTools,...noteParts);
   notebookHost.hidden=false;
   sync();
   // Use the one original notes renderer and store, without displaying
@@ -304,7 +334,7 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:14,sync,
+  version:15,sync,
   isNotesInline:()=>notebookActive&&!notebookHost.hidden
  });
 })();
