@@ -12,11 +12,25 @@ const el=(tag,cls,value)=>{
  return n;
 };
 const categories=[
- {id:'pdf',title:'PDF'},
- {id:'word',title:'Word'},
- {id:'images',title:'Фото'},
- {id:'sheets',title:'Таблицы'}
+ {id:'contracts',title:'Договоры'},
+ {id:'projects',title:'Проекты'},
+ {id:'clients',title:'Клиенты'},
+ {id:'all',title:'Архив'}
 ];
+const examples=[
+ {type:'pdf',format:'PDF',name:'Документ PDF'},
+ {type:'word',format:'DOCX',name:'Документ Word'},
+ {type:'images',format:'JPG',name:'Фотография'},
+ {type:'sheets',format:'XLSX',name:'Таблица'}
+];
+const inFolder=(name,id)=>{
+ if(id==='all')return true;
+ const value=String(name||'').toLocaleLowerCase('ru-RU');
+ if(id==='contracts')return /договор|контракт|соглашен|contract|agreement/.test(value);
+ if(id==='projects')return /проект|project|бриф|brief|задач/.test(value);
+ if(id==='clients')return /клиент|customer|client|заказчик/.test(value);
+ return false;
+};
 const classify=name=>{
  const ext=String(name||'').split('.').pop().toLowerCase();
  if(ext==='pdf')return 'pdf';
@@ -33,7 +47,9 @@ const dateOf=stamp=>{
  const d=new Date(Number(stamp)||0);
  if(!Number.isFinite(d.getTime())||d.getTime()===0)return 'Документ';
  const today=new Date();
- if(d.toDateString()===today.toDateString())return 'Сегодня';
+ if(d.toDateString()===today.toDateString())return 'Сегодня, '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+ const yesterday=new Date(today);yesterday.setDate(today.getDate()-1);
+ if(d.toDateString()===yesterday.toDateString())return 'Вчера, '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
  return d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
 };
 const svg=(paths,viewBox='0 0 64 72')=>{
@@ -72,13 +88,39 @@ function itemsFor(state){
 function paint(state){
  if(state!==active)return;
  const all=itemsFor(state);
- const filtered=state.filter==='all'?all:all.filter(item=>classify(item.name)===state.filter);
+ const filtered=all.filter(item=>(state.filter==='all'||inFolder(item.name,state.filter))&&
+  (!state.query||item.name.toLocaleLowerCase('ru-RU').includes(state.query.toLocaleLowerCase('ru-RU'))));
  const subset=state.expanded?filtered:filtered.slice(0,4);
  state.recentGrid.replaceChildren();
  const hasMore=filtered.length>4;
  state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
  state.showAll.setAttribute('aria-label',state.expanded?'Свернуть список документов':'Показать все документы');
- if(!subset.length){
+ if(!subset.length&&state.unlocked&&all.length===0&&!state.query&&state.filter==='all'){
+  const samples=el('div','sv-doc-format-examples');
+  const caption=el('p','sv-doc-example-note','Примеры форматов · откройте архив или добавьте документ');
+  state.recentGrid.append(caption);
+  for(const example of examples){
+   const card=el('button','sv-doc-recent-card sv-doc-example-card');
+   card.type='button';
+   card.setAttribute('aria-label','Добавить '+example.format);
+   card.append(documentArt(example.type,example.format),
+    el('strong','sv-doc-recent-name',example.name),
+    el('small','sv-doc-recent-date','Добавить файл'));
+   card.addEventListener('click',()=>state.options.onPick?.());
+   state.recentGrid.append(card);
+  }
+ }else if(!subset.length&&!state.unlocked&&!state.query&&state.filter==='all'){
+  state.recentGrid.append(el('p','sv-doc-example-note','Примеры форматов · защищённые файлы появятся после ввода пароля'));
+  for(const example of examples){
+   const card=el('button','sv-doc-recent-card sv-doc-example-card');
+   card.type='button';card.setAttribute('aria-label','Открыть архив для '+example.format);
+   card.append(documentArt(example.type,example.format),
+    el('strong','sv-doc-recent-name',example.name),
+    el('small','sv-doc-recent-date','Пример · открыть'));
+   card.addEventListener('click',()=>openArchive(state));
+   state.recentGrid.append(card);
+  }
+ }else if(!subset.length){
   const empty=el('div','sv-doc-recents-empty');
   empty.append(documentArt('empty',''));
   const copy=el('span','sv-doc-recents-empty-copy');
@@ -134,13 +176,12 @@ function paint(state){
  state.showAll.hidden=false;
  state.foldersGrid.replaceChildren();
  for(const category of categories){
-  const count=all.filter(item=>classify(item.name)===category.id).length;
+  const count=all.filter(item=>inFolder(item.name,category.id)).length;
   const entry=el('button','sv-doc-folder-card sv-doc-folder-'+category.id);
   entry.type='button';entry.setAttribute('aria-pressed',String(state.filter===category.id));
   entry.setAttribute('aria-label','Подборка '+category.title+(state.unlocked?', '+count+' файлов':''));
   entry.append(folderArt(),el('strong','',category.title));
-  if(state.unlocked)entry.append(el('small','',count+' '+(count===1?'файл':count>=2&&count<=4?'файла':'файлов')));
-  else entry.append(el('small','','По типу'));
+  if(state.unlocked)entry.title=count+' '+(count===1?'файл':count>=2&&count<=4?'файла':'файлов');
   entry.addEventListener('click',()=>{
    if(state!==active)return;
    state.filter=state.filter===category.id?'all':category.id;
@@ -149,7 +190,7 @@ function paint(state){
   });
   state.foldersGrid.append(entry);
  }
- state.folderCaption.textContent=state.filter==='all'?'Автоматически по типу файла':'Нажмите на папку ещё раз, чтобы убрать фильтр';
+ state.folderCaption.textContent=state.filter==='all'?'Умные подборки по названиям':'Нажмите ещё раз для отмены';
 }
 async function refresh(){
  const state=active;if(!state)return;
@@ -175,7 +216,7 @@ async function refresh(){
 function mount(parent,options={}){
  if(!parent)return false;
  destroy();
- const state={options,token:0,filter:'all',expanded:false,unlocked:false,records:[]};
+ const state={options,token:0,filter:'all',query:'',expanded:false,unlocked:false,records:[]};
  active=state;
  const recent=el('section','sv-doc-shelf sv-doc-recents');
  const header=el('div','sv-doc-shelf-heading');
@@ -196,7 +237,7 @@ function mount(parent,options={}){
  const folders=el('section','sv-doc-shelf sv-doc-folders');
  const folderHeader=el('div','sv-doc-shelf-heading');
  folderHeader.append(el('h2','','Папки'));
- const folderCaption=el('small','sv-doc-folder-caption','Автоматически по типу файла');
+ const folderCaption=el('small','sv-doc-folder-caption','Умные подборки по названиям');
  folderHeader.append(folderCaption);
  const foldersGrid=el('div','sv-doc-folders-grid');
  folders.append(folderHeader,foldersGrid);
@@ -217,5 +258,11 @@ window.addEventListener('pagehide',()=>{
  active.token++;active.records=[];active.unlocked=false;paint(active);
 });
 window.addEventListener('pageshow',()=>{if(active)refresh();});
-window.SEYVEO_DOCUMENT_SHELF=Object.freeze({mount,refresh,destroy});
+function search(query){
+ const state=active;if(!state)return;
+ state.query=String(query||'').trim();
+ state.expanded=false;paint(state);
+ if(state.query)state.recentGrid.scrollIntoView?.({block:'nearest',behavior:'smooth'});
+}
+window.SEYVEO_DOCUMENT_SHELF=Object.freeze({mount,refresh,destroy,search});
 })();
