@@ -754,7 +754,7 @@ function mount(target,{
   update();
   const info=$('details','sv-doc-tool-help');
   info.append($('summary','','Как распечатать'),
-   warn('Нажмите «Открыть для печати», затем выберите системное «Поделиться → Печать». Принтер и параметры печати выбираются на устройстве.'));
+   warn('Нажмите «Открыть для печати», затем системное «Поделиться → Печать». Принтер и параметры выбираются в системе.'));
   panel.append(info,status(''));
  }
  // The document viewer can hand an explicitly opened JPEG/PNG/WebP to
