@@ -199,6 +199,7 @@ test('photos make a real local PDF, permit explicit import to the vault',async()
  assert.equal(f.saved.length,1);
  assert.equal(f.saved[0].type,'application/pdf');
  assert.match(f.saved[0].name,/скан\.pdf/);
+ f.window.SEYVEO_DOCS_STUDIO.reset();
  assert.ok(f.revoked.length>=1);
 });
 test('staging tool has no network APIs, fake OCR or legally binding signature claim',()=>{
