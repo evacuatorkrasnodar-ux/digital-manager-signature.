@@ -891,6 +891,21 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 2px 8px rgba(15,119,75,.14)!important;
 }
 @media(max-width:350px){#noteReviewDialog.note-review-dialog[open] .sv-note-tools svg{width:19px!important;height:19px!important}}
+/* SEYVEO notes title field: true editable title, stored with note text. */
+#noteReviewDialog.note-review-dialog[open] .sv-note-title-label{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-title-input{
+ -webkit-appearance:none!important;appearance:none!important;display:block!important;
+ box-sizing:border-box!important;flex:0 0 47px!important;width:100%!important;min-height:47px!important;height:47px!important;
+ padding:0 15px!important;margin:4px 0 13px!important;border:1px solid rgba(221,239,246,.24)!important;
+ border-radius:999px!important;outline:none!important;background:rgba(203,225,235,.10)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(120%)!important;backdrop-filter:blur(22px) saturate(120%)!important;
+ color:#f0f7f9!important;box-shadow:inset 0 1px rgba(255,255,255,.11)!important;
+ font:400 17px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-title-input::placeholder{color:rgba(225,238,242,.51)!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-title-input:focus{border-color:rgba(96,227,163,.46)!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-label{display:none!important}
+#noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tools{scrollbar-width:none!important}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=3" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-company-avatar" aria-hidden="true"><img src="assets/company-building-avatar.svg?v=1" alt="" width="44" height="44" draggable="false"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="contacts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Контакты</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="smart-home" aria-label="Открыть Умный дом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg><span>Умный дом</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="documents" aria-label="Открыть Личные документы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/></svg><span>Личные документы</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="mail" aria-label="Открыть Почту SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.6"/><path d="m4 7 8 6 8-6"/></svg><span>Почта</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="browser" aria-label="Открыть Браузер SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 4-5 14 0 18M12 3c5 4 5 14 0 18"/></svg><span>Браузер</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="play" hidden style="display:none!important" aria-label="Открыть YouTube"><svg class="seyveo-youtube-white" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="stroke:none;fill:none;opacity:1;display:block;width:26px;height:23px;flex:none;"><path fill="#fff" fill-rule="evenodd" clip-rule="evenodd" stroke="none" d="M5.7 5H18.3C20.9 5 22.5 6.6 22.5 9.1V14.9C22.5 17.4 20.9 19 18.3 19H5.7C3.1 19 1.5 17.4 1.5 14.9V9.1C1.5 6.6 3.1 5 5.7 5ZM9.85 8.45V15.55L16.5 12Z"/></svg><span>YouTube</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
@@ -2529,6 +2544,8 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <button id="noteReviewBack" type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Отменить запись"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
 <div class="sv-note-header"><span class="sv-note-eyebrow">SEYVEO · БЛОКНОТ</span><h2 id="noteReviewTitle">Новая заметка</h2></div>
 <form id="noteReviewForm" class="sv-note-editor">
+<label for="svNoteTitle" class="sv-note-title-label">Название заметки</label>
+<input id="svNoteTitle" class="sv-note-title-input" type="text" maxlength="120" placeholder="Название заметки" autocomplete="off">
 <label for="noteReviewText" class="sv-note-label">Текст заметки</label>
 <textarea id="noteReviewText" maxlength="8000" rows="4" required placeholder="Что нужно запомнить?" spellcheck="true" autocorrect="on" autocapitalize="sentences"></textarea>
 <small id="noteReviewStatus" role="status" aria-live="polite" hidden></small>
@@ -4037,7 +4054,11 @@ function openNoteReview(value,id=null,options=null){
  reviewPreserveLines=id?getNotes().some(note=>note.id===id&&note.preserveLines===true):options?.preserveLines===true;
  $('noteReviewTitle').textContent=id?'Изменить запись':value?'Запомнить мысль':'Новая заметка';
  dlg.dataset.noteMode=id?'edit':String(value||'').length>150?'draft':'new';
- $('noteReviewText').value=String(value||'').slice(0,8000);
+ const noteValue=String(value||'').slice(0,8000);
+ // The title is stored as the first line, keeping the existing text-only notes format.
+ const titleMatch=noteValue.match(/^([^\n]{1,120})\n\n([\s\S]+)$/);
+ $('svNoteTitle').value=titleMatch?titleMatch[1]:'';
+ $('noteReviewText').value=titleMatch?titleMatch[2]:noteValue;
  // Soft wrapping affects only display; existing paragraph breaks are preserved.
  $('noteReviewText').wrap='soft';
  $('noteReviewStatus').textContent='';$('noteReviewStatus').hidden=true;
@@ -4058,7 +4079,9 @@ $('noteReviewDialog').addEventListener('close',()=>{
 });
 $('noteReviewForm').addEventListener('submit',event=>{
  event.preventDefault();const raw=$('noteReviewText').value;
- const text=(reviewPreserveLines?raw.replace(/^\n+|\n+$/g,''):raw.trim()).slice(0,8000);
+ const title=$('svNoteTitle').value.trim().replace(/\s+/g,' ').slice(0,120);
+ const body=(reviewPreserveLines?raw.replace(/^\n+|\n+$/g,''):raw.trim());
+ const text=(title?title+'\n\n'+body:body).slice(0,8000);
  if(!text.trim()){$('noteReviewStatus').textContent='Напишите, какую мысль сохранить.';$('noteReviewStatus').hidden=false;return}
  const old=getNotes();let next,created=null;
  const showAfterSave=!editingNoteID&&$('noteReviewDialog').dataset.noteMode==='draft';
