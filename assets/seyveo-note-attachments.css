@@ -424,11 +424,11 @@
 }
 
 
-/* SEYVEO note popovers · soft seamless dock edges v4 */
-/* Override legacy heavy 1px borders and dark rectangular shadows.
-   Approved main dock surface and its glyphs are NOT modified. */
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu:not([hidden]),
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-attachment-menu:not([hidden]){
+/* SEYVEO Notes popovers v5 — feathered glass, no drawn frame.
+   Scoped ONLY to the two dropdown surfaces and their menu entries.
+   No modifications to .sv-shared-dock, its ::before/::after, or dock icons. */
+#noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu:not([hidden]),
+#noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu:not([hidden]){
  border:0!important;
  outline:0!important;
  border-radius:22px!important;
@@ -436,40 +436,48 @@
  background-image:none!important;
  -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(16px))!important;
  backdrop-filter:var(--sv-liquid-nav-blur,blur(16px))!important;
- box-shadow:inset 0 .5px 0 rgba(244,253,255,.055),
-            0 7px 20px rgba(0,0,0,.095)!important;
+ box-shadow:0 9px 24px rgba(0,0,0,.095)!important;
+ overflow:hidden!important;
 }
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button,
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-attachment-menu>button{
+#noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu:not([hidden])::before,
+#noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu:not([hidden])::before{
+ content:none!important;
+ display:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu:not([hidden])::after,
+#noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu:not([hidden])::after{
+ content:none!important;
+ display:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu>button,
+#noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu>button{
  border:0!important;
  outline:0!important;
  box-shadow:none!important;
  background:transparent!important;
- background-image:none!important;
  color:var(--seyveo-engrave-ink)!important;
 }
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button::before{
+#noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu>button::before,
+#noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu>button svg{
  color:var(--seyveo-engrave-ink)!important;
- opacity:.88!important;
+ filter:none!important;
  text-shadow:none!important;
 }
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-attachment-menu>button svg{
- color:var(--seyveo-engrave-ink)!important;
- stroke-width:1.15!important;
- filter:none!important;
+#noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu>button svg{
+ stroke-width:1.1!important;
 }
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button:is(:active,:hover),
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-attachment-menu>button:is(:active,:hover){
- background:rgba(204,226,237,.075)!important;
+#noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu>button:is(:active,:hover),
+#noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu>button:is(:active,:hover){
+ background:rgba(199,219,228,.07)!important;
 }
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu>button:focus-visible,
-#noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-attachment-menu>button:focus-visible{
+#noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu>button:focus-visible,
+#noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu>button:focus-visible{
  outline:1px solid var(--seyveo-engrave-ink)!important;
  outline-offset:-2px!important;
 }
-:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-format-menu:not([hidden]),
-:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact>.sv-note-attachment-menu:not([hidden]){
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu:not([hidden]),
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu:not([hidden]){
  border:0!important;
- box-shadow:inset 0 .5px 0 rgba(255,255,255,.27),
-            0 7px 20px rgba(27,53,68,.075)!important;
+ outline:0!important;
+ box-shadow:0 9px 24px rgba(36,56,68,.075)!important;
 }
