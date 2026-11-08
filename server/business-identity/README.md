@@ -6,6 +6,14 @@ anything. Its separate offline JWT adapter verifies signed tokens against
 preconfigured public keys and injected identity/revocation callbacks but does
 not discover or operate a real provider. No real user data should be supplied.
 
+## Проверка личного сеанса перед корпоративным доступом
+
+`personal-session-http.mjs` добавляет к `single-account-api.mjs` запрос **`GET /v1/me/session`**. Подлинность и отзыв личного Bearer-токена подтверждает исключительно доверенная серверная `identity.identifyVerifiedPerson`, как минимум до и после подготовки ответа. API возвращает только `kind`, `userId`, `sessionId` и `expiresAt` — срок **следующей обязательной проверки**, а не настоящий срок JWT. Роль, компания, email, ФИО или личные документы в ответ не включаются. Ответ всегда `no-store` и `Vary: Authorization`.
+
+Мобильный `mobile/src/auth/verified-account-bridge.mjs` использует этот запрос перед доступом к `GET /v1/me/workspaces` и после каждой смены OAuth-сеанса. Любой корпоративный API обязан повторно проверить токен, активное членство и свою организацию: `GET /v1/me/session` **не является авторизацией на рабочие данные**.
+
+Тесты: `node --test server/business-identity/personal-session-http.test.mjs server/business-identity/single-account-api.test.mjs`. **Операционный сервер не запущен**, OIDC-провайдер и доверенная база не подключены; эти маршруты пока интеграционные контракты с тестовыми identity-поставщиками.
+
 ## Единый аккаунт и настоящее рабочее подключение · интеграционный контур (8 ноября 2026)
 
 В проект добавлена связка **без второй регистрации и без локальной выдачи ролей**:
