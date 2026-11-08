@@ -2,7 +2,8 @@
    Shared typography, one navigation row, one glass palette. No duplicate editor. */
 #sayviSurfacePage[data-sv-subject="contract"]{
  box-sizing:border-box;min-width:0;overflow-x:clip;
- padding-bottom:calc(145px + env(safe-area-inset-bottom,0px));
+ padding-bottom:calc(150px + env(safe-area-inset-bottom,0px));
+ scroll-padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-hero,
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-kicker,
@@ -40,12 +41,12 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
 #sayviSurfacePage .sv-doc-center{
  box-sizing:border-box;width:100%;max-width:680px;min-width:0;
  margin:0 auto;--sv-doc-line:color-mix(in srgb,var(--soft-line) 65%,transparent);
- --sv-doc-wash:color-mix(in srgb,var(--card) 34%,transparent);
- --sv-doc-picked:color-mix(in srgb,var(--card) 65%,var(--text) 5%);
+ --sv-doc-wash:var(--sv-lg26-surface,color-mix(in srgb,var(--card) 34%,transparent));
+ --sv-doc-picked:var(--sv-lg26-control,color-mix(in srgb,var(--card) 65%,var(--text) 5%));
 }
 #sayviSurfacePage .sv-doc-switch{
  box-sizing:border-box;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
- gap:3px;min-height:49px;padding:3px;margin:0 0 18px;
+ gap:3px;min-height:47px;padding:3px;margin:0 0 16px;
  border:1px solid var(--sv-doc-line);border-radius:24px;
  background:var(--sv-doc-wash);
  -webkit-backdrop-filter:blur(20px) saturate(1.12);
@@ -73,9 +74,13 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
 #sayviSurfacePage .sv-doc-tab[aria-pressed="true"]{
  color:var(--text);background:var(--sv-doc-picked);font-weight:610;
 }
+#sayviSurfacePage .sv-doc-safe-area{
+ box-sizing:border-box;padding:2px 0 13px;margin:0 0 5px;
+ border-bottom:1px solid var(--sv-doc-line);min-width:0;
+}
 #sayviSurfacePage .sv-doc-intro{
  display:flex;align-items:flex-start;gap:12px;min-width:0;
- margin:0 1px 15px;
+ margin:0 1px 10px;
 }
 #sayviSurfacePage .sv-doc-symbol{
  display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;
@@ -95,19 +100,20 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  display:flex;flex-direction:column;gap:4px;min-width:0;padding-top:2px;
 }
 #sayviSurfacePage .sv-doc-intro-copy strong{
- font-size:18px;font-weight:610;line-height:1.3;letter-spacing:-.027em;
+ font-size:17px;font-weight:610;line-height:1.3;letter-spacing:-.027em;
 }
 #sayviSurfacePage .sv-doc-intro-copy small{
  color:var(--secondary);font-size:12px;line-height:1.48;max-width:33rem;
 }
 #sayviSurfacePage .sv-doc-store-actions{
- display:flex;gap:9px;flex-wrap:wrap;margin:0 1px 11px;
+ display:flex;gap:8px;flex-wrap:wrap;margin:0 1px 0 54px;
 }
 #sayviSurfacePage .sv-doc-primary{
- min-height:44px!important;padding:9px 15px!important;
- border:1px solid var(--sv-doc-line)!important;
- border-radius:999px!important;background:var(--sv-doc-picked)!important;
- color:var(--text)!important;box-shadow:none!important;font-weight:590!important;
+ min-height:44px!important;padding:8px 15px!important;
+ border:0!important;border-radius:999px!important;
+ background:var(--sv-doc-picked)!important;color:var(--text)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(1.15);backdrop-filter:blur(18px) saturate(1.15);
+ box-shadow:none!important;font-size:12px!important;font-weight:590!important;
 }
 #sayviSurfacePage .sv-doc-open-archive{
  border-radius:999px;border:1px solid var(--sv-doc-line);
@@ -119,11 +125,24 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
 }
 #sayviSurfacePage .sv-doc-selection-status:empty{display:none}
 #sayviSurfacePage .sv-doc-vault-shell{
- margin:9px 0 19px;border-top:1px solid var(--sv-doc-line);
- border-bottom:1px solid var(--sv-doc-line);background:transparent;
+ margin:7px 0 16px;border-bottom:1px solid var(--sv-doc-line);
+ background:transparent;
 }
 #sayviSurfacePage .sv-doc-vault-summary{
- box-sizing:border-box;padding:12px 29px 12px 2px;min-height:65px;
+ box-sizing:border-box;position:relative;display:flex;flex-direction:column;
+ justify-content:center;gap:5px;padding:12px 34px 12px 2px;min-height:66px;
+ cursor:pointer;list-style:none;
+}
+#sayviSurfacePage .sv-doc-vault-summary::marker{content:""}
+#sayviSurfacePage .sv-doc-vault-summary::-webkit-details-marker{display:none}
+#sayviSurfacePage .sv-doc-vault-summary::after{
+ content:"";position:absolute;right:10px;top:calc(50% - 6px);
+ width:8px;height:8px;border-right:1.5px solid currentColor;
+ border-bottom:1.5px solid currentColor;transform:rotate(45deg);
+ color:var(--secondary);transition:transform .18s ease;
+}
+#sayviSurfacePage .sv-doc-vault-shell[open] .sv-doc-vault-summary::after{
+ transform:rotate(225deg);
 }
 #sayviSurfacePage .sv-doc-vault-title{
  font-size:14px;font-weight:590;letter-spacing:-.013em;
@@ -135,24 +154,33 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  padding-bottom:16px;
 }
 #sayviSurfacePage .sv-doc-assistant{
- margin:15px 0 15px;display:flex;flex-direction:column;gap:9px;
+ margin:11px 0 15px;display:flex;flex-direction:column;gap:10px;
 }
 #sayviSurfacePage .sv-doc-assistant-title{
  margin:0 0 2px 1px;font-size:16px;font-weight:590;
  line-height:1.35;letter-spacing:-.025em;color:var(--text);
 }
+#sayviSurfacePage .sv-doc-chat-list{
+ box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;
+ border:1px solid var(--sv-doc-line);border-radius:21px;
+ background:var(--sv-doc-wash);
+ -webkit-backdrop-filter:blur(18px) saturate(1.12);
+ backdrop-filter:blur(18px) saturate(1.12);
+}
 #sayviSurfacePage .sv-doc-chat-action{
  display:flex!important;align-items:center!important;justify-content:flex-start!important;
- gap:12px;width:100%;min-height:66px;padding:10px 12px;
- border:1px solid var(--sv-doc-line);border-radius:22px;
- text-align:left;color:var(--text);background:var(--sv-doc-wash);
- -webkit-backdrop-filter:blur(18px) saturate(1.1);
- backdrop-filter:blur(18px) saturate(1.1);
- box-shadow:none;
+ gap:12px;width:100%;min-height:64px;padding:10px 13px;
+ border:0;border-radius:0;text-align:left;color:var(--text);
+ background:transparent;box-shadow:none;
+ -webkit-backdrop-filter:none;backdrop-filter:none;
 }
-#sayviSurfacePage .sv-doc-chat-main{
- background:color-mix(in srgb,var(--card) 43%,transparent);
+#sayviSurfacePage .sv-doc-chat-action+.sv-doc-chat-action{
+ border-top:1px solid var(--sv-doc-line);
 }
+#sayviSurfacePage .sv-doc-chat-action:active{
+ background:color-mix(in srgb,var(--text) 5%,transparent);
+}
+#sayviSurfacePage .sv-doc-chat-main{background:transparent;}
 #sayviSurfacePage .sv-doc-chat-action .sv-doc-symbol{
  flex:0 0 28px;width:28px;height:28px;border:0;background:transparent;
 }
@@ -276,67 +304,26 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  margin:7px 2px 0;font-size:11px;line-height:1.4;
 }
 #sayviSurfacePage .sv-vault-status:empty{display:none}
-#sayviSurfacePage .sv-doc-integrations{
- margin:13px 0 18px;min-width:0;
- border-top:1px solid var(--sv-doc-line);
- border-bottom:1px solid var(--sv-doc-line);
+/* Document integrations live in Management -> Smart Connections -> Services.
+   Here only one calm entry stays; no duplicated status badges or service tiles. */
+#sayviSurfacePage .sv-doc-connections-entry{
+ display:flex;align-items:center;justify-content:space-between;
+ box-sizing:border-box;gap:12px;width:100%;min-height:67px;
+ margin:8px 0 10px;padding:10px 5px 10px 2px;
+ border:0;border-top:1px solid var(--sv-doc-line);
+ border-bottom:1px solid var(--sv-doc-line);border-radius:0;
+ background:transparent;color:var(--text);text-align:left;box-shadow:none;
 }
-#sayviSurfacePage .sv-doc-integrations-title{
- box-sizing:border-box;display:flex;flex-direction:column;
- justify-content:center;gap:5px;position:relative;
- min-height:68px;padding:12px 34px 12px 2px;list-style:none;
- cursor:pointer;color:var(--text);
+#sayviSurfacePage .sv-doc-connections-copy{
+ display:flex;flex:1 1 auto;flex-direction:column;gap:4px;min-width:0;
 }
-#sayviSurfacePage .sv-doc-integrations-title::-webkit-details-marker{display:none}
-#sayviSurfacePage .sv-doc-integrations-title:after{
- content:"";width:8px;height:8px;position:absolute;top:27px;right:10px;
- border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
- transform:rotate(45deg);
+#sayviSurfacePage .sv-doc-connections-copy strong{
+ font-size:14px;line-height:1.3;font-weight:590;letter-spacing:-.017em;
 }
-#sayviSurfacePage .sv-doc-integrations[open] .sv-doc-integrations-title:after{
- transform:rotate(225deg);top:30px;
+#sayviSurfacePage .sv-doc-connections-copy small{
+ font-size:11px;line-height:1.4;color:var(--secondary);
 }
-#sayviSurfacePage .sv-doc-integrations-title span{
- font-size:16px;line-height:1.25;font-weight:600;letter-spacing:-.023em;
-}
-#sayviSurfacePage .sv-doc-integrations-title small{
- font-size:11px;line-height:1.45;color:var(--secondary);
-}
-#sayviSurfacePage .sv-doc-integrations-body{
- padding:0 0 16px;
-}
-#sayviSurfacePage .sv-doc-connectors{
- display:flex;flex-direction:column;
- border:1px solid var(--sv-doc-line);border-radius:19px;
- background:var(--sv-doc-wash);overflow:hidden;
- -webkit-backdrop-filter:blur(18px) saturate(1.08);
- backdrop-filter:blur(18px) saturate(1.08);
-}
-#sayviSurfacePage .sv-doc-connector-row{
- box-sizing:border-box;display:flex;align-items:center;gap:7px 12px;
- justify-content:space-between;flex-wrap:wrap;
- padding:12px 13px;border-bottom:1px solid var(--sv-doc-line);
-}
-#sayviSurfacePage .sv-doc-connector-row:last-child{border-bottom:0}
-#sayviSurfacePage .sv-doc-connector-copy{
- flex:1 1 180px;display:flex;flex-direction:column;gap:5px;min-width:0;
-}
-#sayviSurfacePage .sv-doc-connector-copy strong{
- font-size:13px;line-height:1.3;font-weight:600;color:var(--text);
-}
-#sayviSurfacePage .sv-doc-connector-copy small{
- font-size:11px;line-height:1.42;color:var(--secondary);
-}
-#sayviSurfacePage .sv-doc-connector-state{
- flex:0 0 auto;padding:5px 7px;border-radius:999px;
- font-size:10px;line-height:1.2;color:var(--secondary);
- background:color-mix(in srgb,var(--text) 7%,transparent);
-}
-#sayviSurfacePage .sv-doc-connector-link{
- display:inline-flex;min-height:35px;align-items:center;
- color:var(--text);font-size:11px;text-decoration:underline;
- text-underline-offset:3px;
-}
+#sayviSurfacePage .sv-doc-connections-entry:active{opacity:.76}
 #sayviSurfacePage .sv-doc-workflow-demo{
  margin:10px 0 0;padding:8px 3px;
  background:transparent;border:0;text-decoration:underline;
@@ -388,7 +375,7 @@ html body #sayviSurfacePage .sv-vault-row-options{
 }
 #sayviSurfacePage .sv-doc-flow-stats{
  flex:0 0 auto;white-space:nowrap;max-width:38%;
- color:var(--secondary);font-size:10px;line-height:1.35;
+ color:var(--secondary);font-size:11px;line-height:1.35;
 }
 #sayviSurfacePage .sv-doc-flow-chevron{
  flex:0 0 auto;color:var(--secondary);font-size:23px;font-weight:280;
@@ -413,4 +400,13 @@ html body #sayviSurfacePage .sv-vault-row-options{
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-role-info small{
  color:var(--secondary);font-size:11px;line-height:1.5;
+}
+
+/* Documents-only small-phone rhythm. Never alter the approved dock. */
+@media(max-width:375px){
+ #sayviSurfacePage .sv-doc-store-actions{margin-left:52px}
+ #sayviSurfacePage .sv-doc-chat-action{gap:9px;padding-inline:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviSurfacePage .sv-doc-vault-summary::after{transition:none}
 }
