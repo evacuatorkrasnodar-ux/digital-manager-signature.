@@ -61,7 +61,9 @@
  dialog.querySelector('.paper-toolbar')?.setAttribute('aria-label','Инструменты и параметры листа');
  paper.querySelector('#notePaperPatternTrigger')?.setAttribute('title','Лист');
  paper.querySelector('#notePaperPatternTrigger')?.setAttribute('aria-label','Лист: выбрать тип бумаги');
- const label=$('notePaperPatternLabel');if(label)label.classList.add('sv-paper-visually-hidden');
+ // Only icons in the capsule. Legacy captions/carets belong to old menus.
+ $('notePaperPatternTrigger')?.querySelectorAll('span,.sv-paper-caret').forEach(node=>node.remove());
+ photo.querySelectorAll('span').forEach(node=>node.remove());
  file.hidden=true;
  // The old floating ellipsis is removed, never duplicated in the top controls.
  dialog.querySelector('.sv-paper-extras')?.remove();
