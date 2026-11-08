@@ -421,13 +421,15 @@ function draw(){
  const live=$('p','svdf-feedback',info);live.setAttribute('role','status');host.append(live);
  const more=$('details','svdf-optional');
  more.append($('summary','','Дополнительно'));
- if(records.length)more.append(button('Очистить учебную историю',reset,'svdf-reset'));
+ const moreActions=$('div','svdf-optional-actions');
  const chat=button('Обсудить в рабочем чате',()=>{
   const open=window.SEYVEO_UNIFIED_TASKS?.openChat;
   if(typeof open==='function')open('manage','docs',role==='employee'?'elena':'manager');
   else{info='Рабочий чат пока недоступен.';draw();}
  },'svdf-chat-link');
- more.append(chat);
+ moreActions.append(chat);
+ if(records.length)moreActions.append(button('Очистить учебную историю',reset,'svdf-reset'));
+ more.append(moreActions);
  host.append(more);
  // The safety disclosure above is the single owner of demo/privacy warnings.
 }
