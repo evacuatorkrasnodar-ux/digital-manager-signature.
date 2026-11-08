@@ -136,9 +136,9 @@ test('approved glass and core mark are scoped: no dock edits, no duplicate conne
  assert.match(html,/assets\/seyveo-document-flow\.css\?v=11/);
  assert.match(html,/assets\/seyveo-document-flow\.js\?v=8/);
  assert.match(html,/assets\/sayvi-surfaces\.js\?v=44/);
- assert.match(html,/assets\/seyveo-docs-studio\.css\?v=1/);
+ assert.match(html,/assets\/seyveo-docs-studio\.css\?v=2/);
  assert.match(html,/assets\/seyveo-docs-export\.js\?v=1/);
- assert.match(html,/assets\/seyveo-docs-studio\.js\?v=2/);
+ assert.match(html,/assets\/seyveo-docs-studio\.js\?v=3/);
  assert.match(html,/assets\/seyveo-smart-connections\.js/);
 });
 
@@ -189,7 +189,7 @@ test('Docs quick actions are mounted by the studio when installed, not duplicate
  assert.match(stub,/Добавить файл/);
  assert.match(stub,/Сохранить PDF/);
  assert.match(stub,/Сохранить Word/);
- assert.match(stub,/Подписать последний скан/);
+ assert.match(stub,/Добавить подпись в PDF/);
  assert.match(stub,/Открыть для печати/);
  assert.match(code,/SEYVEO_DOCS_STUDIO\?\.reset\?\.\(\)/);
 });
