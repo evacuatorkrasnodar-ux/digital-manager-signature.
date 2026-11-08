@@ -45,7 +45,8 @@ assert.match(workCss,/#svWorkShell > #calendarCreateMenu\{order:0!important\}/,
  'Calendar creation choices must remain in the shared work shell flow, directly beneath the stable header');
 assert.doesNotMatch(workCss,/top:calc\(100% \+ 70px\)/,
  'The popover must remain anchored to the real shared header');
-assert.match(workCss,/--sv-ui-glass/);
+assert.match(workCss,/--sv-ui-quiet-surface/,
+ 'The single work header must retain the approved quiet flat action surface');
 
 for (const file of [
  'assets/dialog-velvet.css', 'assets/calendar.css',
