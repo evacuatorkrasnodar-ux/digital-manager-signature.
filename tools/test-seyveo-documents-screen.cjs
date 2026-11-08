@@ -139,9 +139,9 @@ test('approved glass and core mark are scoped: no dock edits, no duplicate conne
  assert.match(html,/assets\/seyveo-document-flow\.css\?v=11/);
  assert.match(html,/assets\/seyveo-document-flow\.js\?v=8/);
  assert.match(html,/assets\/sayvi-surfaces\.js\?v=44/);
- assert.match(html,/assets\/seyveo-docs-studio\.css\?v=4/);
+ assert.match(html,/assets\/seyveo-docs-studio\.css\?v=5/);
  assert.match(html,/assets\/seyveo-docs-export\.js\?v=1/);
- assert.match(html,/assets\/seyveo-docs-studio\.js\?v=6/);
+ assert.match(html,/assets\/seyveo-docs-studio\.js\?v=7/);
  assert.match(html,/assets\/seyveo-smart-connections\.js/);
 });
 
