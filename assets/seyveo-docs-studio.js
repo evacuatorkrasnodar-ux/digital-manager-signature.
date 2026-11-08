@@ -458,7 +458,7 @@ function mount(target,{
     button.setAttribute('aria-pressed',String(documentTemplate===id)));
   }
   for(const item of templates){
-   const card=button(item.name,()=>selectTemplate(item.id,item.content),
+   const card=button('',()=>selectTemplate(item.id,item.content),
     'sv-doc-template-card sv-doc-template-'+item.id);
    card.setAttribute('aria-label','Выбрать шаблон: '+item.name);
    card.setAttribute('aria-pressed',String(documentTemplate===item.id));
@@ -470,7 +470,8 @@ function mount(target,{
     lines.append($('i','sv-doc-template-line sv-doc-template-line-'+key));
    }
    paper.append(lines,$('span','sv-doc-template-paper-sign'));
-   card.append(paper,$('small','sv-doc-template-subtitle',item.label));
+   card.append(paper,$('strong','sv-doc-template-name',item.name),
+    $('small','sv-doc-template-subtitle',item.label));
    cards.push({id:item.id,button:card});
    examples.append(card);
   }
@@ -498,10 +499,11 @@ function mount(target,{
    {id:'pdf',label:'PDF',caption:'Для просмотра',art:'pdf'},
    {id:'docx',label:'Word',caption:'Для правок',art:'file'}
   ]){
-   const optionButton=button(option.label,()=>{
+   const optionButton=button('',()=>{
     documentFormat=option.id;syncFormat();
    },'sv-doc-create-format sv-doc-create-format-'+option.id);
    optionButton.append(art(option.art,true),
+    $('span','sv-doc-create-format-name',option.label),
     $('small','sv-doc-create-format-caption',option.caption));
    optionButton.setAttribute('aria-pressed',String(documentFormat===option.id));
    optionButton.setAttribute('aria-label',option.label+' · '+option.caption);
@@ -544,8 +546,8 @@ function mount(target,{
   }
   syncFormat();
   const footer=controls(saveButton,shareButton);
-  const sayvi=button('Создать с Сэйви',()=>onSayvi('create'),'sv-doc-create-sayvi');
-  sayvi.append(art('create',true));
+  const sayvi=button('',()=>onSayvi('create'),'sv-doc-create-sayvi');
+  sayvi.append(art('create',true),$('span','','Создать с Сэйви'));
   panel.append(sectionTitle,examples,editing,formatLabel,formatSwitch,footer,sayvi);
   const info=$('details','sv-doc-tool-help');
   info.append($('summary','','О шаблонах'),
