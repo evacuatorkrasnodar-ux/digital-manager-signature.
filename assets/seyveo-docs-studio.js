@@ -629,7 +629,7 @@ function mount(target,{
   }
   const paper=$('div','sv-doc-tool-sign-paper');
   const canvas=$('canvas');
-  canvas.width=720;canvas.height=190;
+  canvas.width=720;canvas.height=225;
   canvas.setAttribute('aria-label','Поле подписи пальцем или стилусом');
   paper.append($('span','sv-doc-sign-paper-caption','Нарисуйте подпись'),canvas);
   const ctx=canvas.getContext('2d');
@@ -834,6 +834,7 @@ function mount(target,{
     activeUrl=null;
    }
    paper.replaceChildren();meta.replaceChildren();
+   controlsRow.dataset.hasFile=currentPrint?'true':'false';
    if(!currentPrint){
     showExample();openLink.hidden=true;openLink.removeAttribute('href');
     meta.append($('strong','','Пример листа'),
@@ -845,7 +846,8 @@ function mount(target,{
     activeUrl=URL.createObjectURL(currentPrint);
     temporaryUrls.push(activeUrl);
    }catch{
-    currentPrint=null;showExample();openLink.hidden=true;
+    currentPrint=null;controlsRow.dataset.hasFile='false';
+    showExample();openLink.hidden=true;openLink.removeAttribute('href');
     meta.append($('strong','','Файл недоступен'));
     return;
    }
