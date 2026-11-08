@@ -3,7 +3,8 @@
 (function(){
 'use strict';
 const W=840,H=1188,MAX_PAGE_HEIGHT=2600,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000,MAX_PHOTO=155000;
-const tools=['pen','pencil','eraser'],patterns=['blank','lines','dots'];
+const tools=['pen','pencil','eraser','line','arrow','rect','circle','triangle','diamond'],patterns=['blank','lines','dots','grid'];
+const SHAPE_TOOLS=new Set(['line','arrow','rect','circle','triangle','diamond']);
 const COLORS=['#171e29','#556174','#27609b','#c54a51','#258463','#7954a3','#f6f7fb','#8e99aa','#aa5c22','#e73b39','#ff7a27','#ffb525','#2fb35f','#0c9999','#14b4cd','#3b77df','#6650d2','#983cde','#bd397b'];
 const $=id=>document.getElementById(id);
 const dialog=$('notePaperDialog'),canvas=$('notePaperCanvas');
@@ -44,6 +45,39 @@ function normalize(obj){
 }
 function paintStroke(ctx,s){
  if(!s.points.length)return;
+ // Store geometric figures as precise two-point strokes; their coordinates
+ // survive note saving, undo, duplication, rendering and PNG export.
+ if(SHAPE_TOOLS.has(s.tool)){
+  if(s.points.length<2)return;
+  const [x,y]=s.points[0],[u,v]=s.points[1],dx=u-x,dy=v-y;
+  const weight=Number.isFinite(s.width)?Math.max(1,Math.min(28,s.width)):5;
+  ctx.save();ctx.globalCompositeOperation='source-over';
+  ctx.strokeStyle=ctx.fillStyle=COLORS.includes(s.color)?s.color:'#f6f7fb';
+  ctx.lineWidth=weight;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();
+  if(s.tool==='line'||s.tool==='arrow'){
+   ctx.moveTo(x,y);ctx.lineTo(u,v);
+   if(s.tool==='arrow'){
+    const angle=Math.atan2(dy,dx);
+    const tip=Math.min(38,Math.max(12,Math.hypot(dx,dy)*.22,weight*2.5));
+    ctx.moveTo(u-tip*Math.cos(angle-.55),v-tip*Math.sin(angle-.55));
+    ctx.lineTo(u,v);
+    ctx.lineTo(u-tip*Math.cos(angle+.55),v-tip*Math.sin(angle+.55));
+   }
+  }else if(s.tool==='rect'){
+   ctx.rect(Math.min(x,u),Math.min(y,v),Math.abs(dx),Math.abs(dy));
+  }else if(s.tool==='circle'){
+   ctx.arc((x+u)/2,(y+v)/2,Math.hypot(dx,dy)/2,0,2*Math.PI);
+  }else if(s.tool==='triangle'){
+   ctx.moveTo((x+u)/2,Math.min(y,v));
+   ctx.lineTo(Math.max(x,u),Math.max(y,v));
+   ctx.lineTo(Math.min(x,u),Math.max(y,v));ctx.closePath();
+  }else if(s.tool==='diamond'){
+   const cx=(x+u)/2,cy=(y+v)/2,rx=Math.abs(dx)/2,ry=Math.abs(dy)/2;
+   ctx.moveTo(cx,cy-ry);ctx.lineTo(cx+rx,cy);
+   ctx.lineTo(cx,cy+ry);ctx.lineTo(cx-rx,cy);ctx.closePath();
+  }
+  ctx.stroke();ctx.restore();return;
+ }
  const erase=s.tool==='eraser',base=Number.isFinite(s.width)?Math.max(1,Math.min(28,s.width)):(erase?28:s.tool==='pencil'?3.5:4.8);
  ctx.save();ctx.globalCompositeOperation=erase?'destination-out':'source-over';
  ctx.lineJoin='round';ctx.lineCap='round';
@@ -80,6 +114,10 @@ function paint(target,obj,background=false){
   ctx.strokeStyle=p.background==='dark'?'rgba(220,228,238,.14)':'rgba(95,110,136,.18)';ctx.fillStyle=p.background==='dark'?'rgba(220,228,238,.17)':'rgba(95,110,136,.22)';
   if(p.pattern==='lines')for(let y=66;y<pageH;y+=66){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
   if(p.pattern==='dots')for(let y=35;y<pageH;y+=45)for(let x=35;x<W;x+=45){ctx.beginPath();ctx.arc(x,y,1.6,0,2*Math.PI);ctx.fill()}
+  if(p.pattern==='grid'){
+   for(let y=0;y<pageH;y+=52){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+   for(let x=0;x<W;x+=52){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,pageH);ctx.stroke()}
+  }
   ctx.fillStyle=p.background==='dark'?'#202124':'#fff';ctx.fillRect(0,0,W,pageH);ctx.restore();
  }
  ctx.restore();
@@ -132,6 +170,11 @@ function down(e){
 function move(e){
  if(!pending||e.pointerId!==pointerID)return;
  e.preventDefault();
+ if(SHAPE_TOOLS.has(pending.tool)){
+  pending.points[1]=point(e);
+  paint(canvas,{pattern:data.pattern,background:data.background,height:data.height,strokes:[...data.strokes,pending]});
+  return;
+ }
  const batches=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[e];
  for(const ev of batches){
   if(pending.points.length>=MAX_POINTS)break;
@@ -145,7 +188,12 @@ function move(e){
 function finishStroke(e,addEndpoint=true){
  if(!pending||(e&&e.pointerId!==pointerID))return;
  if(e?.cancelable)e.preventDefault();
- if(addEndpoint&&e&&pending.points.length<MAX_POINTS){
+ if(SHAPE_TOOLS.has(pending.tool)){
+  if(addEndpoint&&e)pending.points[1]=point(e);
+  if(pending.points.length<2){
+   pending=null;pointerID=null;dialog.classList.remove('sv-paper-inking');render();return;
+  }
+ }else if(addEndpoint&&e&&pending.points.length<MAX_POINTS){
   const now=point(e),last=pending.points[pending.points.length-1];
   if(Math.hypot(now[0]-last[0],now[1]-last[1])>=1)pending.points.push(now);
  }
@@ -160,7 +208,7 @@ document.addEventListener('visibilitychange',()=>{
  if(document.hidden&&dialog.open)finishStroke(null,false);
 });
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
-document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.addEventListener('click',()=>{selectTool(btn.dataset.paperTool);if(btn.closest('.sv-paper-extras-panel'))closeExtras();}));
+document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.addEventListener('click',()=>{selectTool(btn.dataset.paperTool);if(btn.closest('.sv-paper-extras-panel'))closeExtras();if(btn.closest('#notePaperPatternMenu'))closePatternMenu(true);}));
 pattern.addEventListener('change',()=>{if(!patterns.includes(pattern.value))return;data.pattern=pattern.value;changed=true;render()});
 /* Glass-pattern picker. The original hidden select remains the only paper
    template value so saved notes and rendering logic stay unchanged. */
