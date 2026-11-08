@@ -421,3 +421,25 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
   -webkit-backdrop-filter:none;backdrop-filter:none;
  }
 }
+
+/* SEYVEO shared work selector: ONE = 3 equal slots, manager = 4.
+   Do not modify the agreed 44px outer capsule, dock or chat input. */
+#svWorkShell #svWorkTabs[data-business="true"]{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+#svWorkShell #svWorkTabs[data-one="true"],
+#svWorkShell #svWorkTabs[data-employee="true"]{
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+#svWorkShell #svWorkTabs[data-business="true"] button:not([hidden]){
+ min-width:0!important;
+ padding-inline:2px!important;
+ white-space:nowrap!important;
+ text-overflow:clip!important;
+}
+@media(max-width:375px){
+ #svWorkShell #svWorkTabs[data-business="true"] button:not([hidden]){
+  font-size:clamp(10px,2.9vw,11.5px)!important;
+  letter-spacing:-.025em!important;
+ }
+}
