@@ -125,7 +125,7 @@ test('return with remarks is displayed as a distinct illustrated decision state'
 test('approval illustration remains scoped and explicitly discloses demo limitations',()=>{
  for(const name of ['svdf-journey','svdf-journey-step','svdf-template-gallery',
   'svdf-template-paper','svdf-paper','svdf-recipient'])
-  assert.match(css,new RegExp('#sayviSurfacePage \\\\.'+name));
+  assert.ok(css.includes('#sayviSurfacePage .'+name));
  assert.doesNotMatch(css,/#(?:navHome|navTasks|navManage)|footer\.dock/);
  assert.match(code,/Демо · не загружайте настоящие документы/);
  assert.match(code,/без шифрования, без серверной отправки, проверки ролей/);
