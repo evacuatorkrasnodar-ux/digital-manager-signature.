@@ -6,6 +6,26 @@ anything. Its separate offline JWT adapter verifies signed tokens against
 preconfigured public keys and injected identity/revocation callbacks but does
 not discover or operate a real provider. No real user data should be supplied.
 
+## Единый аккаунт и настоящее рабочее подключение · интеграционный контур (8 ноября 2026)
+
+В проект добавлена связка **без второй регистрации и без локальной выдачи ролей**:
+
+- `workspace-manifest.mjs` — проверенный список членств для уже вошедшего человека, `GET /v1/me/workspaces`.
+- `owner-invitation-http.mjs` — выдача индивидуального приглашения уполномоченным владельцем и одноразовое принятие `POST /v1/invitations/accept`.
+- `single-account-api.mjs` — один серверный Fetch Request-обработчик, объединяющий эти операции; сам сервер и TLS **не запускает**.
+- `mobile/src/business/verified-workspace-client.mjs` — нативный клиент, берущий только защищённую личную сессию, проверяющий членства **до и после** принятия кода. Успех показывается только после нового подтверждённого ответа сервера с дополнительным рабочим пространством.
+- `mobile/src/business/workspace-navigation.mjs` — представление ONE / Работа / Кабинет, но **не** проверка разрешений на серверные операции.
+
+Протокол: личная сессия → `GET /v1/me/workspaces` → одноразовый код по приглашению → `POST /v1/invitations/accept` → свежий `GET /v1/me/workspaces` → рабочая навигация только при подтверждённом членстве. Семья не оформляется как роль сотрудника; для неё потребуется независимый проверенный семейный backend. Обмен токенов и кодов запрещено писать в логи, URL, буфер обмена и базу личных заметок.
+
+Всё это **тестируемые адаптеры**, а не действующий облачный сервис. Для реальных пользователей необходимы: развернуть и защитить Keycloak (или совместимый аудированный OIDC-провайдер), зарегистрировать публичный мобильный OAuth-клиент и его точный callback, подготовить HTTPS API с проверкой подписи и отзывов токенов, подключить доверенную транзакционную базу личностей/членств/приглашений, зарегистрировать App Links/Universal Links, написать защищённый адаптер хранения сессий и связать его с нативным интерфейсом. Нельзя использовать тестовые `verifySession`/аккаунты или `server/secure-documents/dev-server.mjs` как публичную авторизацию.
+
+Проверка нового сквозного сценария на вымышленных аккаунтах:
+
+```bash
+node --test server/business-identity/workspace-manifest.test.mjs server/business-identity/single-account-api.test.mjs mobile/tests/workspace-navigation.test.mjs mobile/tests/verified-workspace-client.test.mjs
+```
+
 ## Привязка к настоящему OIDC-провайдеру — серверная проверка ключей
 
 `oidc-discovery-verifier.mjs` — следующий шаг к реальной регистрации.
