@@ -47,11 +47,8 @@ function mount(slot,api){
   // The parent disclosure already names the archive. Keep its inner view
   // focused on the password operation rather than repeating another heading.
   slot.replaceChildren();
-  const notice=message(initialized
-   ?'Архив заблокирован. Введите пароль, чтобы открыть личные и деловые документы.'
-   :'Создайте пароль архива. При утере пароля восстановить сохранённые документы нельзя.');
   const form=$('form','sv-vault-form');
-  const pass=passwordInput(initialized?'Пароль архива':'Новый пароль · минимум 12 символов');
+  const pass=passwordInput(initialized?'Пароль архива':'Новый пароль · от 12 символов');
   form.append(pass);
   let confirmation=null;
   if(!initialized){
@@ -74,8 +71,7 @@ function mount(slot,api){
     if(valid())await unlockedView();
    }).finally(()=>{submit.disabled=false;});
   });
-  slot.append(form,$('p','sv-doc-note',
-   'В браузерной версии пароль не восстанавливается. Данные могут пропасть при очистке браузера или удалении приложения. Для важных документов пока необходима отдельная резервная копия.'));
+  slot.append(form);
  }
  function downloadLocal(file){
   // Decrypt only after the user requests an action. The copied file leaves
@@ -205,8 +201,7 @@ function mount(slot,api){
    details.append(summary,options,actionStatus);actions.append(details);
    entry.append(text,actions);list.append(entry);
   }
-  slot.append(list,$('p','sv-doc-note',
-   'Содержимое и названия шифруются AES-GCM. Пароль не хранится. Защита действует для архива на этом устройстве — это ещё не системный защищённый сейф iOS/Android.'));
+  slot.append(list);
   // Read-only UI update; never broadcast document contents or filenames.
   document.dispatchEvent(new CustomEvent('seyveo:documents-vault-changed',{detail:{area}}));
  }
