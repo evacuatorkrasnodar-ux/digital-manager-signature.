@@ -123,16 +123,14 @@ function paint(state){
   empty.append(documentArt('empty',''));
   const copy=el('span','sv-doc-recents-empty-copy');
   const filteredName=categories.find(x=>x.id===state.filter)?.title;
-  // A locked vault has unknown contents: never falsely say a folder is empty.
+  // The locked vault does not reveal whether files exist.
   const locked=!state.unlocked;
-  copy.append(el('strong','',locked
-   ?'Документы под защитой'
-   :filteredName?'В подборке «'+filteredName+'» пока пусто':'Здесь будут ваши документы'),
-   el('small','',locked
-    ?'Откройте архив, чтобы увидеть сохранённые файлы.'
-    :'Добавьте файл или создайте документ.'));
+  if(locked)empty.classList.add('sv-doc-recents-locked');
+  copy.append(el('strong','',locked?'Архив закрыт'
+   :filteredName?'В папке «'+filteredName+'» пусто':'Пока нет документов'));
+  if(!locked)copy.append(el('small','','Добавьте файл'));
   empty.append(copy);
-  const act=el('button','sv-doc-shelf-add',locked?'Открыть':'Добавить');
+  const act=el('button','sv-doc-shelf-add',locked?'Открыть архив':'Добавить');
   act.type='button';
   act.setAttribute('aria-label',locked?'Открыть защищённый архив':'Добавить документ');
   act.addEventListener('click',()=>locked?openArchive(state):state.options.onPick?.());
@@ -192,7 +190,7 @@ function paint(state){
   state.foldersGrid.append(entry);
  }
  state.foldersGrid.scrollLeft=folderScroll;
- state.folderCaption.textContent=state.filter==='all'?'Умные подборки по названиям':'Нажмите ещё раз для отмены';
+ state.folderCaption.textContent='';
 }
 async function refresh(){
  const state=active;if(!state)return;
@@ -243,7 +241,7 @@ function mount(parent,options={}){
  const folders=el('section','sv-doc-shelf sv-doc-folders');
  const folderHeader=el('div','sv-doc-shelf-heading');
  folderHeader.append(el('h2','','Папки'));
- const folderCaption=el('small','sv-doc-folder-caption','Умные подборки по названиям');
+ const folderCaption=el('small','sv-doc-folder-caption','');
  folderHeader.append(folderCaption);
  const foldersGrid=el('div','sv-doc-folders-grid');
  foldersGrid.setAttribute('role','region');
