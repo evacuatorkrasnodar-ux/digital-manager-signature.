@@ -546,6 +546,31 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
  white-space:normal!important;overflow-wrap:break-word!important;
 }
 
+
+/* Quiet first action: only the empty Notebook gets this control.
+   Same + handler as the header; no alternate editor or additional modal. */
+#svWorkShell #svWorkNotebook #notesList.is-empty > .sv-note-first-action{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;
+ min-height:40px!important;
+ margin:12px 0 0!important;padding:0 18px!important;
+ border:1px solid color-mix(in srgb,var(--text) 12%,transparent)!important;
+ border-radius:999px!important;
+ background:var(--sv-ui-selected-surface,rgba(165,187,194,.11))!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+ font:inherit!important;font-size:12px!important;font-weight:580!important;
+ letter-spacing:-.01em!important;line-height:1.25!important;
+ cursor:pointer!important;-webkit-tap-highlight-color:transparent;
+}
+#svWorkShell #svWorkNotebook #notesList.is-empty > .sv-note-first-action:active{
+ opacity:.78!important;
+}
+#svWorkShell #svWorkNotebook #notesList.is-empty > .sv-note-first-action:focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
+
 #svWorkShell #svWorkNotebook #notesStatus{
  margin:9px 5px 0!important;
 }
