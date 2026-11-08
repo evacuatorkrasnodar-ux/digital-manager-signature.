@@ -42,8 +42,8 @@ function pictogram(kind){
 function journey(record){
  const wrap=$('section','svdf-journey');
  const top=$('div','svdf-journey-head');
- top.append($('strong','',record?'Путь документа':'Как это работает'),
-  $('small','',record?'Демо · '+TYPES[record.kind].title:'Учебный маршрут'));
+ top.append($('strong','',record?'Этапы документа':'Как проходит согласование'),
+  $('small','',record?TYPES[record.kind].title:''));
  wrap.append(top);
  const approval=record&&TYPES[record.kind].type==='Согласование';
  const state=record?.state||'sample';
@@ -76,13 +76,13 @@ function journey(record){
   }
  });
  wrap.append(line);
- const caption=!record?'Пример: документ → сотрудник → решение → итог':
+ const caption=!record?'':
   state==='signing'?'КЭП пока не выполнена':
   state==='approved'?(approval?'Согласовано · подпись не выполнена':'Ознакомление отмечено · демо'):
   state==='returned'?'Елена вернула с замечанием':
   state==='revoked'?'Запрос отозван':
   state==='read'?'Документ открыт · ожидает решения':'Запрос создан только в браузере';
- wrap.append($('p','svdf-journey-caption',caption));
+ if(caption)wrap.append($('p','svdf-journey-caption',caption));
  return wrap;
 }
 
@@ -264,7 +264,7 @@ function renderRecord(node,x){
    $('p','svdf-document-body',latestRevision(x).body),
    $('small','svdf-paper-version','Редакция №'+latestRevision(x).number));
   detail.append(paper);
-  detail.append($('p','svdf-disclaimer','Демо · без шифрования и подписи.'));
+  
   const actions=$('div','svdf-actions');
   if(role==='employee'){
    if(x.state==='sent'){
@@ -279,11 +279,11 @@ function renderRecord(node,x){
   }else if(x.state==='sent'||x.state==='read'){
    actions.append(button('Отозвать',()=>updateRecord(x.id,'revoked'),'svdf-quiet'));
   }else if(x.state==='approved'&&TYPES[x.kind].type==='Согласование'){
-   actions.append(button('Подготовить к КЭП · демо',()=>updateRecord(x.id,'signing'),'svdf-primary'));
+   actions.append(button('Подготовить к КЭП',()=>updateRecord(x.id,'signing'),'svdf-primary'));
   }else if(x.state==='signing'){
    detail.append($('p','svdf-signing-notice',
     'Документ согласован, но не подписан. Для реальной КЭП потребуется подключить сервис подписания, проверить сертификат и полномочия подписанта.'));
-   actions.append(button('Отозвать запрос · демо',()=>updateRecord(x.id,'revoked'),'svdf-quiet'));
+   actions.append(button('Отозвать запрос',()=>updateRecord(x.id,'revoked'),'svdf-quiet'));
   }else if(x.state==='returned'){
    actions.append(button('Исправить и отправить повторно',()=>{
     revisionDraft={id:x.id,body:latestRevision(x).body,note:''};draw();
@@ -322,7 +322,7 @@ function renderRecord(node,x){
    noteField.addEventListener('input',()=>revisionDraft.note=noteField.value);
    editor.append(bodyField,noteField);
    const buttons=$('div','svdf-actions');
-   buttons.append(button('Отправить новую редакцию · демо',()=>resubmit(x.id,bodyField.value,noteField.value),'svdf-primary'));
+   buttons.append(button('Отправить редакцию',()=>resubmit(x.id,bodyField.value,noteField.value),'svdf-primary'));
    buttons.append(button('Отмена',()=>{revisionDraft={id:'',body:'',note:''};draw();},'svdf-quiet'));
    editor.append(buttons);detail.append(editor);
   }
@@ -350,19 +350,18 @@ function draw(){
  const lead=$('div','svdf-lead');
  lead.append($('span','svdf-kicker','SEYVEO BUSINESS · ДОКУМЕНТЫ'),
   $('h2','','Согласования'),
-  $('p','','Документ → решение → результат'));
+  $('p','',''));
  host.append(lead);
  const safety=$('details','svdf-safety');
- safety.append($('summary','','Демо · не загружайте настоящие документы'));
+ safety.append($('summary','','Демо · только примеры'));
  safety.append($('p','','Учебные записи хранятся в браузере без шифрования, без серверной отправки, проверки ролей и электронной подписи. Используйте только вымышленные документы.'));
  host.append(safety);
- host.append($('p','svdf-role-inline',
-  (role==='employee'?'Елена · сотрудник':'Руководитель')+' · роль из кабинета'));
+ 
  host.append(journey(get(selected)));
  if(role==='manager'){
   const form=$('section','svdf-create svdf-create-simple');
   form.append($('strong','','Новый запрос'));
-  const sendLabel=()=>TYPES[kind].type==='Ознакомление'?'Передать на ознакомление · демо':'Передать на согласование · демо';
+  const sendLabel=()=>TYPES[kind].type==='Ознакомление'?'На ознакомление':'На согласование';
   const submit=button(sendLabel(),create,'svdf-primary');
   const choices=$('div','svdf-template-gallery');
   choices.setAttribute('role','group');
@@ -387,7 +386,7 @@ function draw(){
    choices.append(option);
   }
   const recipient=$('div','svdf-recipient');
-  recipient.append(pictogram('person'),$('span','','Елена · учебный получатель'));
+  recipient.append(pictogram('person'),$('span','','Елена'));
   form.append(choices,recipient,submit);
   host.append(form);
  }else host.append($('p','svdf-hint svdf-staff-instruction','Выберите входящий документ для решения.'));
@@ -408,7 +407,7 @@ function draw(){
  const visible=records.filter(x=>listFilter==='all'||(listFilter==='active'?isActive(x):!isActive(x)));
  for(const x of visible.slice().reverse())renderRecord(list,x);
  if(!visible.length)list.append($('div','svdf-empty',
-  records.length?'Здесь пока пусто.':role==='employee'?'Входящих пока нет.':'Создайте первый учебный запрос.'));
+  records.length?'Здесь пока пусто.':role==='employee'?'Входящих пока нет.':'Создайте первый запрос.'));
  host.append(list);
  const live=$('p','svdf-feedback',info);live.setAttribute('role','status');host.append(live);
  const more=$('details','svdf-optional');
