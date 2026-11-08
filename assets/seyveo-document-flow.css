@@ -238,21 +238,22 @@
 /* SEYVEO DOCS · simpler decisions: one primary action at each step.
    No redundant modal picker, extra role control or status tile dashboard. */
 #sayviSurfacePage .svdf-root{padding-top:0}
-#sayviSurfacePage .svdf-lead{margin:0 0 8px;gap:3px}
-#sayviSurfacePage .svdf-lead h2{font-size:19px;font-weight:590}
-#sayviSurfacePage .svdf-lead p{font-size:11px;line-height:1.42}
+#sayviSurfacePage .svdf-lead{margin:0 0 11px;gap:5px}
+#sayviSurfacePage .svdf-lead h2{font-size:21px;font-weight:610;line-height:1.25}
+#sayviSurfacePage .svdf-lead p{font-size:12px;line-height:1.5;max-width:37rem}
 #sayviSurfacePage .svdf-role-inline{
- margin:0 0 10px;padding:0 1px;min-height:0;
- color:var(--secondary);font-size:11px;line-height:1.4;
+ margin:2px 0 10px;padding:0 2px;min-height:0;
+ color:var(--secondary);font-size:11.5px;line-height:1.5;
 }
 #sayviSurfacePage .svdf-safety{
- margin:0 0 9px;color:var(--secondary);min-width:0;
- border-bottom:1px solid color-mix(in srgb,var(--soft-line) 47%,transparent);
+ margin:0 0 10px;color:var(--secondary);min-width:0;
+ border-top:1px solid var(--sv-doc-line,var(--soft-line));
+ border-bottom:1px solid var(--sv-doc-line,var(--soft-line));
 }
 #sayviSurfacePage .svdf-safety summary{
  box-sizing:border-box;display:flex;align-items:center;
- min-height:36px;padding:5px 2px;list-style:none;cursor:pointer;
- font-size:11px;line-height:1.4;font-weight:490;
+ min-height:44px;padding:7px 3px;list-style:none;cursor:pointer;
+ font-size:12px;line-height:1.45;font-weight:530;
 }
 #sayviSurfacePage .svdf-safety summary::-webkit-details-marker{display:none}
 #sayviSurfacePage .svdf-safety summary:before{
@@ -262,18 +263,20 @@
 }
 #sayviSurfacePage .svdf-safety[open] summary:before{transform:rotate(225deg)}
 #sayviSurfacePage .svdf-safety p{
- margin:3px 2px 10px;font-size:11px;line-height:1.48;
+ margin:3px 3px 12px;font-size:12px;line-height:1.55;
  color:var(--secondary);overflow-wrap:anywhere;
 }
 #sayviSurfacePage .svdf-create-simple{
- box-sizing:border-box;display:grid;gap:7px;
- margin:4px 0 12px;padding:12px 13px;
- border:1px solid color-mix(in srgb,var(--soft-line) 45%,transparent);
- border-radius:20px;background:color-mix(in srgb,var(--card) 30%,transparent);
+ box-sizing:border-box;display:grid;gap:9px;
+ margin:4px 0 16px;padding:13px 14px;
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:21px;background:var(--sv-doc-wash,var(--card));
+ -webkit-backdrop-filter:blur(18px) saturate(1.12);
+ backdrop-filter:blur(18px) saturate(1.12);
  box-shadow:none;
 }
 #sayviSurfacePage .svdf-create-simple >strong{
- font-size:13px;font-weight:590;
+ font-size:14px;font-weight:610;line-height:1.35;
 }
 #sayviSurfacePage .svdf-kind-choices{
  min-width:0;position:relative;
@@ -281,9 +284,9 @@
 }
 #sayviSurfacePage .svdf-kind-choices summary{
  position:relative;box-sizing:border-box;
- display:flex;align-items:center;min-height:42px;padding:7px 20px 7px 1px;
- list-style:none;cursor:pointer;font-size:12px;
- line-height:1.42;color:var(--secondary);
+ display:flex;align-items:center;min-height:44px;padding:8px 20px 8px 1px;
+ list-style:none;cursor:pointer;font-size:13px;
+ line-height:1.42;color:var(--text);
 }
 #sayviSurfacePage .svdf-kind-choices summary::-webkit-details-marker{display:none}
 #sayviSurfacePage .svdf-kind-choices summary:after{
@@ -309,15 +312,17 @@
  font-weight:610!important;
 }
 #sayviSurfacePage .svdf-create-simple >small{
- line-height:1.35;font-size:10.5px;
+ line-height:1.45;font-size:11.5px;color:var(--secondary);
 }
 #sayviSurfacePage .svdf-create-simple .svdf-primary{
  display:flex!important;justify-content:center!important;
  width:100%;min-height:44px!important;padding:10px 13px!important;
- border:1px solid color-mix(in srgb,var(--soft-line) 55%,transparent)!important;
- border-radius:20px!important;
- background:color-mix(in srgb,var(--card) 52%,transparent)!important;
- box-shadow:none!important;font-size:12.5px!important;
+ border:0!important;border-radius:18px!important;
+ background:var(--sv-doc-picked,var(--card2))!important;
+ -webkit-backdrop-filter:blur(18px) saturate(1.15);
+ backdrop-filter:blur(18px) saturate(1.15);
+ color:var(--text)!important;box-shadow:none!important;
+ font-size:13px!important;font-weight:590!important;
 }
 #sayviSurfacePage .svdf-staff-instruction{
  margin:3px 0 10px!important;
@@ -327,19 +332,24 @@
  color:var(--secondary);line-height:1.4;
 }
 #sayviSurfacePage .svdf-list-header{
- margin:0 0 5px;gap:7px;flex-wrap:wrap;
+ margin:1px 0 10px;gap:7px;flex-wrap:wrap;
 }
-#sayviSurfacePage .svdf-list-header strong{font-weight:570}
-#sayviSurfacePage .svdf-list-header span{font-size:10.5px}
-#sayviSurfacePage .svdf-list-filters{gap:7px;margin:0 0 5px;padding:0 0 6px}
+#sayviSurfacePage .svdf-list-header strong{
+ font-weight:610;font-size:15px;line-height:1.4;
+}
+#sayviSurfacePage .svdf-list-header span{font-size:11px}
+#sayviSurfacePage .svdf-list-filters{gap:7px;margin:0 0 9px;padding:0 0 5px}
 #sayviSurfacePage .svdf-list-filter{
- min-height:36px!important;padding:7px 12px!important;
- border-radius:17px!important;
+ min-height:44px!important;padding:8px 14px!important;
+ border-radius:19px!important;font-size:12px!important;
 }
 #sayviSurfacePage .svdf-record{
- border-radius:19px;padding:11px 12px;
- background:color-mix(in srgb,var(--card) 26%,transparent);
- border:1px solid color-mix(in srgb,var(--soft-line) 42%,transparent);
+ border-radius:21px;padding:13px 14px;
+ background:var(--sv-doc-wash,var(--card));
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ -webkit-backdrop-filter:blur(18px) saturate(1.1);
+ backdrop-filter:blur(18px) saturate(1.1);
+ box-shadow:none;
 }
 #sayviSurfacePage .svdf-record.is-current{
  border-color:color-mix(in srgb,var(--soft-line) 66%,transparent);
@@ -347,17 +357,20 @@
 #sayviSurfacePage .svdf-record-icon{
  width:32px;height:32px;flex-basis:32px;color:var(--text);font-size:17px;
 }
-#sayviSurfacePage .svdf-record-name strong{font-size:13px}
+#sayviSurfacePage .svdf-record-name strong{
+ font-size:14px;line-height:1.35;font-weight:610;
+}
 #sayviSurfacePage .svdf-record-state{
- margin-top:6px;padding:0;color:var(--secondary);font-size:11px;
+ margin-top:8px;padding:0;color:var(--secondary);
+ font-size:12px;line-height:1.4;
 }
 #sayviSurfacePage .svdf-record-state[data-state="approved"],
 #sayviSurfacePage .svdf-record-state[data-state="returned"]{color:var(--text)}
 #sayviSurfacePage .svdf-actions{gap:7px 13px;margin:9px 0 0}
 #sayviSurfacePage .svdf-actions .svdf-primary{
- min-height:44px!important;border:1px solid color-mix(in srgb,var(--soft-line) 56%,transparent)!important;
- border-radius:18px!important;background:color-mix(in srgb,var(--card) 48%,transparent)!important;
- font-size:12px!important;box-shadow:none!important;
+ min-height:44px!important;border:0!important;border-radius:18px!important;
+ background:var(--sv-doc-picked,var(--card2))!important;
+ font-size:12.5px!important;box-shadow:none!important;
 }
 #sayviSurfacePage .svdf-actions .svdf-quiet{
  min-height:42px!important;
@@ -366,9 +379,9 @@
  margin:13px 0 0;border-top:1px solid color-mix(in srgb,var(--soft-line) 44%,transparent);
 }
 #sayviSurfacePage .svdf-optional summary{
- min-height:43px;display:flex;align-items:center;
- list-style:none;cursor:pointer;color:var(--secondary);
- font-size:11px;
+ min-height:44px;display:flex;align-items:center;
+ list-style:none;cursor:pointer;color:var(--text);
+ font-size:12px;font-weight:540;
 }
 #sayviSurfacePage .svdf-optional summary::-webkit-details-marker{display:none}
 #sayviSurfacePage .svdf-optional summary:after{
@@ -385,5 +398,7 @@
 }
 #sayviSurfacePage .svdf-optional .svdf-reset{display:block;min-height:42px;margin:0}
 #sayviSurfacePage .svdf-footnote{
- margin:8px 0 0;padding-top:10px;line-height:1.5;
+ margin:13px 0 0;padding-top:13px;
+ border-top:1px solid var(--sv-doc-line,var(--soft-line));
+ color:var(--secondary);font-size:11.5px;line-height:1.6;
 }
