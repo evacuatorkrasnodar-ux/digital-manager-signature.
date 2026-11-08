@@ -428,7 +428,17 @@ function mount(target,{
   filePicker.accept='.pdf,.jpg,.jpeg,.png,.webp';
   filePicker.hidden=true;
   const picked=getCurrentFile();
-  if(picked&&/\.(?:pdf|jpe?g|png|webp)$/i.test(picked.name||''))currentPrint=picked;
+  if(picked&&/\.(?:pdf|jpe?g|png|webp)$/i.test(picked.name||'')){
+   currentPrint=picked;
+  }else if(scans.length){
+   // A just-scanned document is printable immediately without a second
+   // import or duplicated archive entry. This is a local preview only.
+   try{
+    currentPrint=asFile(
+     window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf'
+    );
+   }catch{currentPrint=null;}
+  }else currentPrint=null;
   const slot=$('div','sv-doc-tool-print-file');
   const update=()=>{
    slot.replaceChildren();
