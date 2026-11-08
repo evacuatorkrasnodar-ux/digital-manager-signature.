@@ -527,6 +527,7 @@ function mount(target,{
    // precisely this selection and the chosen relative signature position.
    const file=scans[pageIndex];
    if(!file)return;
+   pageBody.style.aspectRatio=file.width+' / '+file.height;
    pageBar.replaceChildren(
     $('strong','','Документ'),
     $('small','','Страница '+(pageIndex+1)+' из '+scans.length));
@@ -635,7 +636,7 @@ function mount(target,{
    }catch{message('Не удалось создать копию с подписью.');}
   });
   const actions=controls(onScan,pngButton,clearButton);
-  onScan.classList.add('sv-doc-tool-primary');
+  onScan.className+=' sv-doc-tool-primary';
   panel.append(actions);
   const info=$('details','sv-doc-tool-help');
   info.append($('summary','','О подписи'),
