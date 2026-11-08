@@ -300,3 +300,19 @@ test('studio iPhone controls retain minimum touch targets and honest capability 
  assert.match(studioCode,/navigator\.canShare/);
  assert.doesNotMatch(studioCode,/\bfetch\s*\(/);
 });
+
+test('fresh scan can be printed directly without saving or importing first',async()=>{
+ const f=fixture();
+ label(f.root,'Сканировать').click();
+ const input=find(f.root,n=>n.tagName==='INPUT'&&n.multiple)[0];
+ input.files=[new File([tinyJpeg],'letter.jpg',{type:'image/jpeg'})];
+ input.emit('change');
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(f.saved.length,0);
+ label(f.root,'Печать').click();
+ const open=find(f.root,n=>n.tagName==='A'&&n.textContent==='Открыть для печати');
+ assert.equal(open.length,1);
+ assert.equal(open[0].target,'_blank');
+ assert.ok(f.created.some(x=>x.blob.type==='application/pdf'));
+ assert.equal(f.saved.length,0);
+});
