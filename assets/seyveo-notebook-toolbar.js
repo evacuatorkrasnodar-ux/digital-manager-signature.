@@ -2,6 +2,35 @@
 (function(){
  'use strict';
  const $=id=>document.getElementById(id);
+
+ // Keep the white thumb visually clean at rest. When moving, show its
+ // exact line width on top of the knob, including on iPhone touch events.
+ const thickness=$('notePaperWidth');
+ const thicknessWrap=thickness?.closest('.sv-paper-size');
+ if(thickness&&thicknessWrap){
+  const syncThickness=()=>{
+   const n=Math.max(Number(thickness.min)||1,Math.min(Number(thickness.max)||28,Number(thickness.value)||5));
+   const max=Number(thickness.max)||28,min=Number(thickness.min)||1;
+   const fraction=max===min?.5:(n-min)/(max-min);
+   const track=Math.min(190,window.innerHeight*.36);
+   thicknessWrap.style.setProperty('--sv-thumb-offset',((.5-fraction)*(track-20))+'px');
+   thicknessWrap.dataset.width=String(n);
+   thickness.setAttribute('aria-valuetext',String(n));
+  };
+  const reveal=()=>{syncThickness();thicknessWrap.classList.add('sv-paper-size-active')};
+  const hide=()=>thicknessWrap.classList.remove('sv-paper-size-active');
+  thickness.addEventListener('pointerdown',reveal);
+  thickness.addEventListener('input',reveal);
+  thickness.addEventListener('pointerup',hide);
+  thickness.addEventListener('pointercancel',hide);
+  thickness.addEventListener('change',hide);
+  thickness.addEventListener('blur',hide);
+  window.addEventListener('resize',syncThickness,{passive:true});
+  new MutationObserver(()=>{if(dialog.open)syncThickness();else hide()})
+   .observe(dialog,{attributes:true,attributeFilter:['open']});
+  syncThickness();
+ }
+
  const dialog=$('notePaperDialog'),bar=dialog?.querySelector('.paper-toolbar-primary');
  if(!dialog||!bar||$('notePaperSettings'))return;
  const pencil=dialog.querySelector('[data-paper-tool="pencil"]');
