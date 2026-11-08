@@ -176,7 +176,9 @@ test('all five controls mount and each action opens an actual tool',()=>{
  assert.ok(label(f.root,'Сохранить PNG'));
  label(f.root,'Печать').click();
  assert.ok(label(f.root,'Выбрать файл'));
- assert.ok(find(f.root,n=>n.tagName==='A'&&n.textContent==='Открыть для печати').length===0);
+ const dormant=find(f.root,n=>n.tagName==='A'&&n.textContent==='Открыть для печати');
+ assert.equal(dormant.length,1);
+ assert.equal(dormant[0].hidden,true);
  label(f.root,'Сканировать').click();
  assert.ok(label(f.root,'Камера'));
  assert.ok(label(f.root,'Фото из галереи'));
