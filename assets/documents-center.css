@@ -238,12 +238,13 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:8px 0;
 }
 #sayviSurfacePage .sv-doc-workspace{
- box-sizing:border-box;min-width:0;padding:12px 0;
+ box-sizing:border-box;min-width:0;padding:4px 0 10px;
 }
-#sayviSurfacePage .sv-doc-flow-back{
- border:1px solid var(--sv-doc-line);border-radius:999px;
- margin-bottom:10px;
-}
+/* The approvals training mode has its OWN specific safety explanation.
+   Hide the generic encrypted archive footer only in this nested view;
+   never suggest that unencrypted training drafts are in the AES vault. */
+#sayviSurfacePage[data-sv-subject="contract"][data-sv-doc-view="flow"]
+ #sayviSurfaceFootnote{display:none!important}
 @media(max-width:375px){
  #sayviSurfacePage .sv-doc-store-actions{gap:6px}
  #sayviSurfacePage .sv-doc-store-actions .sv-doc-action{padding-inline:12px;font-size:12px}
