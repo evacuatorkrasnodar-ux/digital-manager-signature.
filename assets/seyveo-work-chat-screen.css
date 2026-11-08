@@ -3842,3 +3842,77 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* Messages inbox · compact header search + one four-part segmented glass control.
+   Stable inbox only; does not affect room composer or global dock. */
+#svcpWorkChatScreen[data-view="inbox"] .svcp-work-chat-trailing{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ pointer-events:auto!important;
+}
+#svcpWorkChatScreen[data-view="inbox"] .svcp-directory-search-toggle{
+ display:grid;place-items:center;
+ width:44px;height:44px;min-width:44px;min-height:44px;padding:0;
+ border:0;border-radius:50%;
+ background:transparent;color:var(--text);box-shadow:none;cursor:pointer;
+}
+#svcpWorkChatScreen[data-view="inbox"] .svcp-directory-search-toggle svg{
+ width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.55;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#svcpWorkChatScreen[data-view="inbox"] .svcp-directory-search-toggle[aria-expanded="true"]{
+ color:var(--text);
+}
+#svcpWorkChatScreen[data-view="inbox"] .svcp-directory-search-toggle:focus-visible{
+ outline:2px solid var(--text);outline-offset:1px;
+}
+#svcpWorkChatScreen[data-view="inbox"]:not(.svcp-directory-search-open) #svcpChatDirectory .svcp-search-field{
+ display:none!important;
+}
+#svcpWorkChatScreen[data-view="inbox"].svcp-directory-search-open #svcpChatDirectory .svcp-search-field{
+ display:flex!important;margin-top:5px!important;
+}
+#svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters{
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:3px!important;
+ flex:0 0 auto!important;
+ width:calc(100% - 26px)!important;
+ min-width:0!important;
+ margin:8px 13px 9px!important;
+ padding:3px!important;
+ overflow:visible!important;
+ border:1px solid var(--sv-msg-line,color-mix(in srgb,var(--text) 11%,transparent))!important;
+ border-radius:24px!important;
+ background:var(--sv-msg-fill,color-mix(in srgb,var(--text) 4%,transparent))!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(16px) saturate(1.05);
+ backdrop-filter:blur(16px) saturate(1.05);
+}
+#svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters button{
+ min-width:0!important;
+ min-height:36px!important;
+ padding:6px 3px!important;
+ border:1px solid transparent!important;
+ border-radius:20px!important;
+ white-space:nowrap!important;
+ text-align:center!important;
+ font-size:clamp(10px,2.6vw,12px)!important;
+ letter-spacing:-.02em!important;
+}
+#svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters button[aria-pressed="true"]{
+ border-color:var(--sv-msg-line,color-mix(in srgb,var(--text) 11%,transparent))!important;
+ background:var(--sv-msg-picked,color-mix(in srgb,var(--text) 10%,transparent))!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory #svcpConversationList{
+ padding-top:4px!important;
+}
+@media(max-width:355px){
+ #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters{
+  margin-inline:9px!important;width:calc(100% - 18px)!important;
+ }
+ #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters button{
+  font-size:10px!important;padding-inline:1px!important;
+ }
+}
