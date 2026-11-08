@@ -134,14 +134,14 @@ test('approved glass and core mark are scoped: no dock edits, no duplicate conne
  assert.doesNotMatch(css,/#(?:navHome|navTasks|navManage)|footer\.dock/);
  assert.doesNotMatch(code,/function connectorsPanel\(|function connectorRow\(|integrationsOpen/);
  assert.match(code,/hub\.open\('services'\)/);
- assert.match(html,/assets\/documents-center\.css\?v=14/);
- assert.match(html,/assets\/documents-center\.js\?v=16/);
+ assert.match(html,/assets\/documents-center\.css\?v=15/);
+ assert.match(html,/assets\/documents-center\.js\?v=17/);
  assert.match(html,/assets\/seyveo-document-flow\.css\?v=11/);
  assert.match(html,/assets\/seyveo-document-flow\.js\?v=8/);
  assert.match(html,/assets\/sayvi-surfaces\.js\?v=44/);
- assert.match(html,/assets\/seyveo-docs-studio\.css\?v=2/);
+ assert.match(html,/assets\/seyveo-docs-studio\.css\?v=3/);
  assert.match(html,/assets\/seyveo-docs-export\.js\?v=1/);
- assert.match(html,/assets\/seyveo-docs-studio\.js\?v=4/);
+ assert.match(html,/assets\/seyveo-docs-studio\.js\?v=5/);
  assert.match(html,/assets\/seyveo-smart-connections\.js/);
 });
 
