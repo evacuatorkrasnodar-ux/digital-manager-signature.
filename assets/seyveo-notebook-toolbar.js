@@ -108,6 +108,19 @@
  applyGlyph(paper.querySelector('#notePaperPatternTrigger'),'sheet');
  applyGlyph(photo,'photo');
  applyGlyph(sayvi,'sayvi');
+  // Mirror the real tool state even after programmatic mode changes.
+  const syncSelectedTool=()=>{
+    for(const button of [pen,eraser]){
+      if(button)button.classList.toggle('sv-paper-tool-selected',button.getAttribute('aria-pressed')==='true');
+    }
+  };
+  syncSelectedTool();
+  for(const button of [pen,eraser]){
+    if(button)new MutationObserver(syncSelectedTool).observe(button,{
+      attributes:true,attributeFilter:['aria-pressed']
+    });
+  }
+
  // The native crosshair was misleading for erasing. One decorative,
  // pointer-events-free ring follows the actual pointer on the canvas.
  // The drawing engine and its pointer capture stay untouched.
