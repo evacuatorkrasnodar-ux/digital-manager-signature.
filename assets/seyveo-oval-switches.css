@@ -1,0 +1,146 @@
+/* SEYVEO navigation contract · Slim Oval v1
+   Shared only by Documents and the approved Tasks / Calendar / Cabinet tabs.
+   Pure styling: event handlers, page hierarchy, and the global dock stay intact. */
+
+/* The Documents titlebar has only Back + centered title.
+   Balanced outer grid columns ensure the heading is truly centered. */
+html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{
+ grid-template-columns:40px minmax(0,1fr) 40px!important;
+ min-height:44px!important;
+ gap:4px!important;
+ margin:0 2px 17px!important;
+ padding:0!important;
+}
+html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-heading{
+ grid-column:2!important;
+ grid-row:1!important;
+ font-weight:600!important;
+}
+html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack{
+ grid-column:1!important;grid-row:1!important;
+ width:40px!important;height:40px!important;
+ min-width:40px!important;min-height:40px!important;
+ border-radius:50%!important;
+ border:1px solid color-mix(in srgb,var(--text) 12%,transparent)!important;
+ background:var(--sv-ui-quiet-surface,var(--sv-doc-wash))!important;
+ box-shadow:none!important;
+}
+html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack svg{
+ width:18px!important;height:18px!important;
+ stroke-width:1.45!important;
+}
+
+/* One exact material for all top-level oval switches. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch,
+#svWorkShell #svWorkTabs,
+#tasksPage #unifiedTasksTabs:not([hidden]),
+#calendarPage #managerCalendarTabs:not([hidden]){
+ box-sizing:border-box!important;
+ height:44px!important;min-height:44px!important;
+ padding:3px!important;
+ gap:2px!important;
+ border-radius:999px!important;
+ border:1px solid color-mix(in srgb,var(--text) 12%,transparent)!important;
+ background:var(--sv-ui-quiet-surface,var(--sv-doc-wash,var(--card)))!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(17px) saturate(1.08)!important;
+ backdrop-filter:blur(17px) saturate(1.08)!important;
+ isolation:isolate;
+ overflow:hidden;
+}
+/* Work tabs once used a sliding background plate.
+   Direct selected styling matches Documents and avoids dark strips or jumps. */
+#svWorkShell #svWorkTabs::before{
+ display:none!important;
+ content:none!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab,
+#svWorkShell #svWorkTabs button,
+#tasksPage #unifiedTasksTabs:not([hidden]) button:not([hidden]),
+#calendarPage #managerCalendarTabs:not([hidden]) button:not([hidden]){
+ box-sizing:border-box!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ min-width:0!important;
+ height:36px!important;min-height:36px!important;
+ margin:0!important;
+ padding:0 6px!important;
+ border:1px solid transparent!important;
+ border-radius:999px!important;
+ background:transparent!important;
+ color:var(--secondary)!important;
+ box-shadow:none!important;
+ font-size:clamp(11px,3vw,13px)!important;
+ font-weight:500!important;
+ line-height:1.25!important;
+ letter-spacing:-.015em!important;
+ text-align:center!important;
+ transform:none!important;
+ transition:background-color .16s ease,color .16s ease!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab[aria-pressed="true"],
+#svWorkShell #svWorkTabs button[aria-pressed="true"],
+#tasksPage #unifiedTasksTabs:not([hidden]) button[aria-pressed="true"],
+#calendarPage #managerCalendarTabs:not([hidden]) button[aria-pressed="true"]{
+ color:var(--text)!important;
+ font-weight:580!important;
+ border-color:color-mix(in srgb,var(--text) 9%,transparent)!important;
+ background:var(--sv-ui-selected-surface,var(--sv-doc-picked,var(--card2)))!important;
+ box-shadow:none!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab:focus-visible,
+#svWorkShell #svWorkTabs button:focus-visible,
+#tasksPage #unifiedTasksTabs:not([hidden]) button:focus-visible,
+#calendarPage #managerCalendarTabs:not([hidden]) button:focus-visible{
+ outline:1.5px solid var(--text)!important;
+ outline-offset:-2px!important;
+}
+/* Do not re-expose legacy nested tab bars in the unified work shell. */
+#svWorkShell #unifiedTasksTabs,
+#svWorkShell #managerCalendarTabs{
+ display:none!important;
+}
+
+/* The password action is a *slim pill*, not a chunky glass slab.
+   Keep its native submit handler and accessible touch area. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-file-actions{
+ justify-content:flex-start!important;
+ margin:3px 0 0!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-action.sv-doc-primary{
+ display:inline-flex!important;
+ box-sizing:border-box!important;
+ align-items:center!important;
+ justify-content:center!important;
+ flex:0 0 auto!important;
+ min-width:0!important;
+ min-height:40px!important;height:40px!important;
+ padding:0 16px!important;
+ border:1px solid color-mix(in srgb,var(--text) 10%,transparent)!important;
+ border-radius:999px!important;
+ background:var(--sv-ui-selected-surface,var(--sv-doc-picked))!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(15px)!important;
+ backdrop-filter:blur(15px)!important;
+ color:var(--text)!important;
+ font-size:12px!important;
+ font-weight:560!important;
+ letter-spacing:-.01em!important;
+ line-height:1!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-action.sv-doc-primary:disabled{
+ opacity:.6;
+}
+@media(max-width:340px){
+ #svWorkShell #svWorkTabs button{font-size:10.5px!important;padding-inline:2px!important}
+ #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab{font-size:12px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab,
+ #svWorkShell #svWorkTabs button,
+ #tasksPage #unifiedTasksTabs button,
+ #calendarPage #managerCalendarTabs button{
+  transition:none!important;
+ }
+}
