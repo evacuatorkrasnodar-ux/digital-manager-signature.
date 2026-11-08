@@ -1545,3 +1545,21 @@
  border-color:color-mix(in srgb,var(--text) 8%,transparent)!important;
  background:rgba(255,255,255,.48)!important;
 }
+
+/* SEYVEO · weekend ink, shared calendar in Life and Work.
+   Respect existing today/selected dates and public-holiday indicators. */
+#calendarPage .cal-weekdays span:nth-child(6),
+#calendarPage .cal-weekdays span:nth-child(7){
+ color:#b8c9e5!important;
+ opacity:1!important;
+ font-weight:620;
+}
+#calendarPage .cal-day[data-weekend="true"]:not([data-today="true"]):not([data-selected="true"]):not([data-holiday]) .cal-day-number{
+ color:#b8c9e5!important;
+}
+:root[data-theme="light"] #calendarPage .cal-weekdays span:nth-child(n+6){
+ color:#537195!important;
+}
+:root[data-theme="light"] #calendarPage .cal-day[data-weekend="true"]:not([data-today="true"]):not([data-selected="true"]):not([data-holiday]) .cal-day-number{
+ color:#537195!important;
+}
