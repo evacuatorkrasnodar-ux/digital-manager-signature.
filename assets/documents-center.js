@@ -10,7 +10,7 @@ const previewRole=()=>window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':wi
 const employeePreview=()=>previewRole()==='employee';
 let lastPreviewRole=null;
 let files={personal:null,business:null},stored={personal:false,business:false},showPreview=false;
-let docsSearchOpen=false,docsSearchValue='';
+
 const el=(tag,cls,value)=>{
  const n=document.createElement(tag);
  if(cls)n.className=cls;
@@ -129,51 +129,6 @@ function renderPreview(parent,file){
  }else preview.append(note('Предварительный просмотр этого формата не поддерживается браузером. Откройте оригинал.'));
  parent.append(preview);
 }
-function ensureDocumentHeader(){
- const page=document.getElementById('sayviSurfacePage');
- const header=page?.querySelector('.sv-deep-top');
- if(!header||header.querySelector('.sv-doc-head-tools'))return;
- const bar=el('div','sv-doc-head-tools');
- const searchBtn=el('button','sv-doc-head-icon');
- searchBtn.type='button';searchBtn.setAttribute('aria-label','Поиск документов');
- searchBtn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 5 5"/></svg>';
- searchBtn.addEventListener('click',()=>{
-  docsSearchOpen=!docsSearchOpen;
-  const row=host?.querySelector('.sv-doc-search-row');
-  if(row){
-   row.hidden=!docsSearchOpen;
-   const input=row.querySelector('input');
-   if(docsSearchOpen)input?.focus();
-   else{
-    docsSearchValue='';
-    if(input)input.value='';
-    window.SEYVEO_DOCUMENT_SHELF?.search?.('');
-   }
-  }
- });
- const menu=el('details','sv-doc-head-menu');
- const dots=el('summary','sv-doc-head-icon');
- dots.setAttribute('aria-label','Действия с документами');
- dots.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
- const actions=el('div','sv-doc-head-options');
- const menuAction=(label,fn)=>{
-  const b=el('button','sv-doc-head-option',label);
-  b.type='button';
-  b.addEventListener('click',()=>{menu.open=false;fn();});
-  actions.append(b);
- };
- menuAction('Добавить файл',()=>host?.querySelector('input[type="file"]')?.click());
- menuAction('Создать документ',()=>{
-  const b=host?.querySelector('.sv-doc-tool-create');
-  b?.click();b?.scrollIntoView?.({block:'nearest',behavior:'smooth'});
- });
- menuAction('Мой архив',()=>{
-  const details=host?.querySelector('.sv-doc-vault-shell');
-  if(details){details.open=true;details.scrollIntoView?.({block:'nearest',behavior:'smooth'});}
- });
- menu.append(dots,actions);
- bar.append(searchBtn,menu);header.append(bar);
-}
 function draw(){
  if(!host)return;
  // Employee perspective is inherited from the business cabinet.
@@ -183,7 +138,7 @@ function draw(){
  }
  window.SEYVEO_DOCUMENT_SHELF?.destroy?.();
  clearPreview();host.replaceChildren();
- ensureDocumentHeader();
+
  const page=document.getElementById('sayviSurfacePage');
  if(page)page.dataset.svDocView=view==='flow'?'flow':'archive';
  const switcher=el('div','sv-doc-switch');
@@ -193,19 +148,7 @@ function draw(){
   b.setAttribute('aria-pressed',String(area===key));switcher.append(b);
  }
  host.append(switcher);
- const searchRow=el('label','sv-doc-search-row');
- searchRow.hidden=!docsSearchOpen;
- searchRow.append(el('span','', 'Поиск'));
- const searchInput=el('input','sv-doc-search-field');
- searchInput.type='search';searchInput.autocomplete='off';
- searchInput.placeholder='Найти документ';
- searchInput.setAttribute('aria-label','Найти документ по названию');
- searchInput.value=docsSearchValue;
- searchInput.addEventListener('input',()=>{
-  docsSearchValue=searchInput.value;
-  window.SEYVEO_DOCUMENT_SHELF?.search?.(docsSearchValue);
- });
- searchRow.append(searchInput);host.append(searchRow);
+
  if(area==='business'&&!employeePreview()&&view!=='flow'){
   // Show approvals entry in the archive, not again inside approvals.
   // Status counts refer only to the local training scenario.
@@ -308,7 +251,7 @@ function draw(){
    showPreview=true;archiveExpanded=true;draw();
   }
  });
- if(docsSearchValue)window.SEYVEO_DOCUMENT_SHELF?.search?.(docsSearchValue);
+
  const archive=el('details','sv-doc-vault-shell');
  const summary=el('summary','sv-doc-vault-summary');
  const archiveTitle=el('span','sv-doc-vault-copy');
@@ -409,8 +352,7 @@ function mount(parent){
  host=el('div','sv-doc-center');parent.append(host);draw();return true;
 }
 function destroy(){
- document.querySelector('#sayviSurfacePage .sv-doc-head-tools')?.remove();
- docsSearchOpen=false;docsSearchValue='';
+
  window.SEYVEO_DOCUMENT_SHELF?.destroy?.();
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
  reset();host=null;
