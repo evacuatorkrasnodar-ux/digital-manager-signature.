@@ -518,3 +518,10 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-stage{
 #notePaperDialog.sv-paper-studio .sv-paper-extras-panel #notePaperPatternMenu button[aria-pressed="true"]{
  background:rgba(218,234,245,.10)!important;
 }
+
+/* A hidden destructive action must NEVER inherit the visible row layout. */
+#notePaperDialog.sv-paper-studio .sv-paper-extras-panel .paper-toolbar-secondary > button[hidden],
+#notePaperDialog.sv-paper-studio .sv-paper-extras-panel .paper-toolbar-secondary > input[hidden],
+#notePaperDialog.sv-paper-studio .sv-paper-extras-panel .paper-toolbar-secondary > select[hidden]{
+ display:none!important;
+}
