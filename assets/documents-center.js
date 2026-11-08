@@ -65,6 +65,8 @@ function makeIcon(kind){
     ? 'M5 3.5h9l5 5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2ZM14 3.5v5h5M7 14l2.5 2.5 5-5'
   : kind==='review'
     ? 'M4 3h11l4 4v5M15 3v5h4M4 3v18h10M7 12h8M7 16h5M19 19l3 3M21 16a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z'
+    : kind==='connection'
+    ? 'M9 8.5h-2a4.5 4.5 0 0 0 0 9h3m4-9h3a4.5 4.5 0 0 1 0 9h-3M8.5 13h7'
     : 'M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4');
  svg.append(p);wrap.append(svg);return wrap;
 }
@@ -88,12 +90,14 @@ function openDocumentConnections(){
 function connectionsEntry(){
  const action=button('',openDocumentConnections,'sv-doc-connections-entry');
  action.setAttribute('aria-label','Открыть умные подключения документов');
+ const icon=el('span','sv-doc-connections-icon');
+ icon.append(makeIcon('connection'));
  const copy=el('span','sv-doc-connections-copy');
  copy.append(el('strong','','Подключения документов'),
-  el('small','','Сервер компании · 1С · ЭДО · подпись'));
+  el('small','','1С · ЭДО · серверы'));
  const chevron=el('span','sv-doc-chat-chevron','›');
  chevron.setAttribute('aria-hidden','true');
- action.append(copy,chevron);
+ action.append(icon,copy,chevron);
  return action;
 }
 function renderPreview(parent,file){
@@ -258,7 +262,7 @@ function draw(){
  const summary=el('summary','sv-doc-vault-summary');
  const archiveTitle=el('span','sv-doc-vault-copy');
  archiveTitle.append(el('span','sv-doc-vault-title',area==='personal'?'Мой архив':'Архив компании'),
-  el('small','','Локальное хранилище'));
+  el('small','','Защищённый сейф · пароль'));
  summary.append(makeIcon('lock'),archiveTitle);
  const contents=el('div','sv-doc-vault');
  archive.append(summary,contents);
@@ -304,7 +308,7 @@ function draw(){
  const markBox=el('span','sv-doc-assistant-mark-box');
  markBox.append(makeIcon('sayvi'));intro.append(markBox);
  const copy=el('span','sv-doc-assistant-hero-copy');
- copy.append(el('strong','','Создать или проверить документ'));
+ copy.append(el('strong','','Составить договор, проверить документ и исправить ошибки.'));
  intro.append(copy,el('span','sv-doc-chat-chevron','›'));
  const actions=el('div','sv-doc-assistant-actions');
  actions.append(
