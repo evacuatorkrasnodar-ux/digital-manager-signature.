@@ -72,3 +72,71 @@
 @media(prefers-reduced-motion:reduce){
  #seyveoInvitationsPanel *{transition:none!important;animation:none!important}
 }
+
+
+/* Smart Connections · one hub with three quiet foldable categories.
+   Keep existing service coach and invitations design, never duplicate panels. */
+#manageConnectionsDialog .sv-smart-hub{display:grid;gap:8px;margin:14px 0 16px;min-width:0}
+#manageConnectionsDialog .sv-smart-fold{
+ margin:0;padding:0;min-width:0;overflow:hidden;
+ border:1px solid color-mix(in srgb,var(--soft-line,rgba(128,128,128,.28)) 48%,transparent);
+ border-radius:17px;
+ background:color-mix(in srgb,var(--card,rgba(153,176,186,.13)) 28%,transparent);
+ box-shadow:none;
+}
+#manageConnectionsDialog .sv-smart-fold>summary{
+ display:grid;grid-template-columns:33px minmax(0,1fr) 14px;align-items:center;
+ gap:10px;min-height:55px;padding:8px 12px;box-sizing:border-box;
+ cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent;
+}
+#manageConnectionsDialog .sv-smart-fold>summary::-webkit-details-marker{display:none}
+#manageConnectionsDialog .sv-smart-fold>summary::marker{content:""}
+#manageConnectionsDialog .sv-smart-fold-icon{
+ display:flex;align-items:center;justify-content:center;
+ width:31px;height:31px;border-radius:50%;
+ background:var(--sv-ui-quiet-surface,rgba(160,184,193,.075));
+ color:var(--text);font-size:19px;font-weight:380;
+}
+#manageConnectionsDialog .sv-smart-fold>summary strong{
+ display:block;font-size:13px;font-weight:580;line-height:1.42;color:var(--text);
+}
+#manageConnectionsDialog .sv-smart-fold>summary small{
+ display:block;font-size:10.5px;font-weight:420;line-height:1.45;color:var(--secondary);
+}
+#manageConnectionsDialog .sv-smart-fold-chevron{
+ color:var(--secondary);font-size:19px;transform:rotate(0);
+ transition:transform .2s ease;
+}
+#manageConnectionsDialog .sv-smart-fold[open] .sv-smart-fold-chevron{transform:rotate(90deg)}
+#manageConnectionsDialog .sv-smart-fold-body{
+ display:grid;gap:11px;padding:0 12px 14px;min-width:0;
+}
+#manageConnectionsDialog .sv-smart-services-body{display:block}
+#manageConnectionsDialog .sv-smart-fold-body #seyveoInvitationsPanel{
+ padding:0;width:100%;margin:0;
+}
+#manageConnectionsDialog .sv-smart-fold-body .sv-invitations-intro{font-size:11.5px}
+#manageConnectionsDialog .sv-smart-device-row{
+ display:grid;gap:3px;padding:10px 2px;
+ border-bottom:1px solid color-mix(in srgb,var(--soft-line,rgba(128,128,128,.28)) 35%,transparent);
+}
+#manageConnectionsDialog .sv-smart-device-row strong{
+ font-size:12.5px;font-weight:550;line-height:1.4;color:var(--text);
+}
+#manageConnectionsDialog .sv-smart-device-row small{
+ font-size:11px;line-height:1.5;color:var(--secondary);
+}
+#manageConnectionsDialog .sv-smart-device-note{
+ margin:1px 0 0;color:var(--secondary);font-size:11px;line-height:1.55;
+}
+#lifeSmartConnectEntry{margin-top:5px}
+#worldSmartConnectEntry{
+ box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;
+ min-height:40px;margin:7px 0 0;padding:0 10px;
+ border:0;border-radius:13px;
+ background:var(--sv-ui-quiet-surface,rgba(160,184,193,.075));
+ color:var(--text);font:inherit;font-size:12px;font-weight:520;
+}
+@media(prefers-reduced-motion:reduce){
+ #manageConnectionsDialog .sv-smart-fold-chevron{transition:none!important}
+}
