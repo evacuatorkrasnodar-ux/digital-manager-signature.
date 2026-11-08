@@ -1877,3 +1877,14 @@ svg.sv-paper-signature .sv-paper-icon-core{
 > :is(#notePaperSettings,#notePaperPatternTrigger,[data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperDuplicate,#notePaperAddPhoto,#notePaperSayvi):focus:not(:focus-visible){
  outline:0!important;box-shadow:none!important;
 }
+
+/* v25 · keep the selected-tool disc visible at all times.
+   It must be a fill on the *real* square button; no nested or floating disc. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > button.sv-inkbar-tool[data-sv-selected="true"]{
+ background:rgba(212,223,237,.24)!important;
+ border-radius:50%!important;
+ aspect-ratio:1/1!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > button.sv-inkbar-tool[data-sv-selected="false"]{
+ background:transparent!important;
+}
