@@ -68,17 +68,38 @@
  const pen=bar.querySelector('[data-paper-tool="pen"]');
  const eraser=bar.querySelector('[data-paper-tool="eraser"]');
  bar.replaceChildren(pen,eraser,settings,paper,photo,file,sayvi);
- // SEYVEO signature icon family: consistent 24x24 drawing grid,
- // rounded 1.7px stroke and a single inherited silver-white ink color.
- // Keep all existing buttons/IDs/listeners and only replace their artwork.
- const glyph=(paths)=>'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
+
+ // SEYVEO signature ink · intentionally drawn as one six-symbol family.
+ // All marks share a 28-unit optical grid and polished silver linework.
+ const glyph=(content)=>'<svg class="sv-paper-signature" viewBox="0 0 28 28" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">'+content+'</svg>';
  const artwork={
-  pen:'<path d="m5 16.8 10.5-10.5a2.1 2.1 0 0 1 3 3L8 19.8l-4 1 1-4Z"/><path d="m13.5 8.3 2.2 2.2"/>',
-  eraser:'<path d="m5 14.2 8.3-8.3a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.8 19H8L5 16a1.3 1.3 0 0 1 0-1.8Z"/><path d="m10.7 8.5 5 5"/><path d="M11.8 19H20"/>',
-  settings:'<circle cx="12" cy="12" r="2.8"/><path d="M10 3.2h4l.5 2 1.65.7 1.8-1.05 2.75 2.75-1.05 1.8.7 1.65 2 .5v4l-2 .5-.7 1.65 1.05 1.8-2.75 2.75-1.8-1.05-1.65.7-.5 2h-4l-.5-2-1.65-.7-1.8 1.05-2.75-2.75 1.05-1.8-.7-1.65-2-.5v-4l2-.5.7-1.65-1.05-1.8L6.1 4.85l1.8 1.05 1.65-.7.45-2Z"/>',
-  sheet:'<rect x="5.3" y="3.4" width="13.4" height="17.2" rx="2.1"/><path d="M8.7 9.2h6.6M8.7 12.6h6.6M8.7 16h4.1"/>',
-  photo:'<rect x="3.2" y="4.3" width="17.6" height="15.4" rx="2.5"/><circle cx="8.4" cy="9.2" r="1.35"/><path d="m5.4 17.2 4.7-4.8 3.1 3.1 2.7-3.2 3.1 4"/>',
-  sayvi:'<path d="M12 2.9c1.54 0 2.15 4.14 4.05 5.65 1.54 1.4 5.05 1.78 5.05 3.45s-3.51 2.05-5.05 3.45c-1.9 1.51-2.51 5.65-4.05 5.65s-2.15-4.14-4.05-5.65C6.41 14.05 2.9 13.67 2.9 12s3.51-2.05 5.05-3.45C9.85 7.04 10.46 2.9 12 2.9Z"/><circle cx="12" cy="12" r="1.55" fill="currentColor" stroke="none"/>'
+  pen:
+    '<path class="sv-paper-icon-shade" d="m5.3 20.7 12-12 3 3-12 12-3.8 1Z"/>'+
+    '<path d="m4.4 24.7 1.2-4.6L17.3 8.4a3.0 3.0 0 0 1 4.3 4.3L9.8 24.4l-5.4.3Z"/>'+
+    '<path d="m15.1 10.6 4.3 4.3M5.8 20.6l3.5 3.5"/>'+
+    '<path d="m17.8 7.8 2.4-2.4a1.6 1.6 0 0 1 2.2 2.2l-.9.9"/>',
+  eraser:
+    '<path class="sv-paper-icon-shade" d="m5.5 16.5 10-10 6.1 6.1-10 10H9.1Z"/>'+
+    '<path d="M5.7 16.7 15.6 6.8a2.6 2.6 0 0 1 3.7 0l2.5 2.5a2.6 2.6 0 0 1 0 3.7l-9.9 9.9H9.1l-3.4-3.4a2 2 0 0 1 0-2.8Z"/>'+
+    '<path d="m11.4 11.1 6.2 6.2M11.9 22.9h11.9"/>',
+  settings:
+    '<path d="M4.3 7.2h8.3m5.7 0h5.4M4.3 14h3.8m5.7 0h9.9M4.3 20.8h12.3m5.5 0h1.6"/>'+
+    '<circle class="sv-paper-icon-knob" cx="15.4" cy="7.2" r="2.8"/>'+
+    '<circle class="sv-paper-icon-knob" cx="10.9" cy="14" r="2.8"/>'+
+    '<circle class="sv-paper-icon-knob" cx="19.3" cy="20.8" r="2.8"/>',
+  sheet:
+    '<path class="sv-paper-icon-shade" d="M17.5 3.2v5.1h5.1Z"/>'+
+    '<path d="M7.6 3.2h9.9l5.1 5.1v14.2a2.4 2.4 0 0 1-2.4 2.4H7.6a2.4 2.4 0 0 1-2.4-2.4V5.6a2.4 2.4 0 0 1 2.4-2.4Z"/>'+
+    '<path d="M17.5 3.4v5h5M9.5 12.5h8.5M9.5 16.4h8.5M9.5 20.3h5.5"/>',
+  photo:
+    '<rect class="sv-paper-icon-shade" x="3.4" y="4.5" width="21.2" height="19.1" rx="3.1"/>'+
+    '<rect x="3.4" y="4.5" width="21.2" height="19.1" rx="3.1"/>'+
+    '<circle cx="9.2" cy="10.4" r="1.65"/>'+
+    '<path d="m5.4 20.5 5.3-5.7 3.8 3.8 3.1-3.4 5 5.3"/>',
+  sayvi:
+    '<path class="sv-paper-icon-shade" d="M14 2.5c1.8 0 2.4 5.5 4.5 7s7 2.7 7 4.5-4.9 2.9-7 4.5-2.7 7-4.5 7-2.4-5.5-4.5-7-7-2.7-7-4.5 4.9-2.9 7-4.5 2.7-7 4.5-7Z"/>'+
+    '<path d="M14 2.5c1.8 0 2.4 5.5 4.5 7s7 2.7 7 4.5-4.9 2.9-7 4.5-2.7 7-4.5 7-2.4-5.5-4.5-7-7-2.7-7-4.5 4.9-2.9 7-4.5 2.7-7 4.5-7Z"/>'+
+    '<circle class="sv-paper-icon-core" cx="14" cy="14" r="1.65"/>'
  };
  const applyGlyph=(button,kind)=>{if(button)button.innerHTML=glyph(artwork[kind])};
  applyGlyph(pen,'pen');
