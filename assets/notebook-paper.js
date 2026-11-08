@@ -255,7 +255,7 @@ $('notePaperUndo').addEventListener('click',()=>{if(!data.strokes.length)return;
 $('notePaperDuplicate')?.addEventListener('click',()=>{
  if(!data.strokes.length||data.strokes.length>=MAX_STROKES)return;
  const last=data.strokes[data.strokes.length-1];
- const copy={...last,points:last.points.map(([x,y,p])=>[clamp(x+25,W),clamp(y+25,H),p])};
+ const copy={...last,points:last.points.map(([x,y,p])=>[clamp(x+25,W),clamp(y+25,data.height||H),p])};
  data.strokes.push(copy);changed=true;render();report('Последний штрих дублирован.');
 });
 function open(note=null){
