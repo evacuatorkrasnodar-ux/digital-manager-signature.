@@ -22,8 +22,8 @@
  shell.append(calendar,tasks);
  const nav=document.createElement('nav');
  nav.id='svWorkTabs';
- nav.setAttribute('aria-label','Мои дела, календарь, кабинет и моя работа');
- const choices=[['personal','Мои дела'],['calendar','Календарь'],['business','Кабинет'],['employee','Моя работа']];
+ nav.setAttribute('aria-label','Мои дела, календарь и личное или рабочее пространство');
+ const choices=[['personal','Мои дела'],['calendar','Календарь'],['business','Кабинет'],['notes','Блокнот'],['employee','Моя работа']];
  for(const [id,label] of choices){
   const button=document.createElement('button');
   button.type='button';
@@ -58,6 +58,41 @@
  const cabinetAdd=document.getElementById('svCabinetConfigure');
  const createMenu=document.getElementById('calendarCreateMenu');
  const menuHome=createMenu?.parentElement;
+ const noteDialog=document.getElementById('notesDialog');
+ // ONE uses the existing Notebook. Business keeps its cabinet configuration,
+ // with a single + that offers both actions and creates no duplicate notes.
+ const businessCreate=document.createElement('div');
+ businessCreate.id='svWorkCreateChoices';
+ businessCreate.hidden=true;
+ businessCreate.setAttribute('role','group');
+ businessCreate.setAttribute('aria-label','Действия кабинета');
+ const newNoteChoice=document.createElement('button');
+ newNoteChoice.type='button';newNoteChoice.textContent='Новая заметка';
+ const cabinetChoice=document.createElement('button');
+ cabinetChoice.type='button';cabinetChoice.textContent='Настроить кабинет';
+ businessCreate.append(newNoteChoice,cabinetChoice);
+ shell.append(businessCreate);
+ function closeBusinessCreate(){
+  businessCreate.hidden=true;
+  if(add.getAttribute('aria-controls')==='svWorkCreateChoices')add.setAttribute('aria-expanded','false');
+ }
+ function openNotebook(){
+  closeBusinessCreate();
+  window.dispatchEvent(new Event('seyveo:notes-open'));
+ }
+ newNoteChoice.addEventListener('click',()=>{
+  closeBusinessCreate();
+  openNotebook();
+  document.getElementById('notesNew')?.click();
+ });
+ cabinetChoice.addEventListener('click',()=>{closeBusinessCreate();cabinetAdd?.click()});
+ document.addEventListener('pointerdown',event=>{
+  if(!businessCreate.hidden&&!businessCreate.contains(event.target)&&!add.contains(event.target))closeBusinessCreate();
+ });
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!businessCreate.hidden){closeBusinessCreate();add.focus({preventScroll:true})}
+ });
+ noteDialog?.addEventListener('close',()=>requestAnimationFrame(sync));
  // Keep one visible + in the permanent work header. The original
  // calendar button remains the logic controller; its chooser sits in flow
  // between the header and tabs rather than covering the screen.
@@ -92,7 +127,11 @@
    calendarAdd?.click();
    add.setAttribute('aria-expanded',String(calendarAdd?.getAttribute('aria-expanded')==='true'));
   }else if(section==='personal')personalAdd?.click();
-  else if(section==='business')cabinetAdd?.click();
+  else if(section==='business'){
+   if(!window.SEYVEO_PREVIEW?.isManager?.())return;
+   businessCreate.hidden=!businessCreate.hidden;
+   add.setAttribute('aria-expanded',String(!businessCreate.hidden));
+  }
  });
 
  // Route switches always start at the same stable viewport origin.
@@ -114,23 +153,30 @@
   // The employee's existing workspace is a top-level Tasks view.
   // Old tabs are deliberately hidden, so this shared bar must show it.
   const employeePreview=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
+  const managerPreview=window.SEYVEO_PREVIEW?.isManager?.()===true;
   const employeeTasks=!tasks.hidden&&(tasks.dataset.employeeMode==='true'||employeePreview);
   const employeeCalendar=!calendar.hidden&&employeePreview;
   const employeeMode=employeeTasks||employeeCalendar;
-  const visible=managerTasks||managerCal||employeeMode;
+  // The same three-position shell also belongs to ONE.
+  // Preview roles are an interface demo, not verified company authorization.
+  const visible=!tasks.hidden||!calendar.hidden;
   const history=visible&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
   parkCalendarMenu(visible&&!history&&active==='calendar');
+  if(active!=='business'||!managerPreview||history)closeBusinessCreate();
   if(active!=='calendar'||history){
    if(createMenu&&!createMenu.hidden)createMenu.hidden=true;
    if(calendarAdd?.getAttribute('aria-expanded')!=='false')calendarAdd?.setAttribute('aria-expanded','false');
   }
   nav.hidden=!visible||history;
   nav.dataset.employee=String(employeeMode);
+  nav.dataset.one=String(!managerPreview&&!employeeMode);
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
    const name=tab.dataset.svWorkTab;
    tab.hidden=employeeMode
-    ? name==='business'
-    : name==='employee';
+    ? name==='business'||name==='notes'
+    : managerPreview
+     ? name==='employee'||name==='notes'
+     : name==='business'||name==='employee';
    tab.textContent=employeeMode
     ? (name==='personal'?'Дела':name==='employee'?'Работа':name==='calendar'?'Календарь':'Кабинет')
     : (name==='personal'?'Мои дела':name==='business'?'Кабинет':name==='calendar'?'Календарь':'Моя работа');
@@ -146,10 +192,10 @@
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
   add.hidden=history||active==='employee';
-  add.setAttribute('aria-label',active==='personal'?'Добавить дело':active==='calendar'?'Создать событие или дело':'Настроить инструменты кабинета');
-  add.setAttribute('aria-haspopup',String(active==='calendar'));
-  add.setAttribute('aria-controls',active==='calendar'?'calendarCreateMenu':'');
-  add.setAttribute('aria-expanded',active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):'false');
+  add.setAttribute('aria-label',active==='personal'?'Добавить дело':active==='calendar'?'Создать событие или дело':'Создать заметку или настроить кабинет');
+  add.setAttribute('aria-haspopup',String(active==='calendar'||active==='business'));
+  add.setAttribute('aria-controls',active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
+  add.setAttribute('aria-expanded',active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
   shell.dataset.active=active;
   for(const button of nav.querySelectorAll('button')){
    button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===active));
@@ -159,9 +205,19 @@
   const button=event.target.closest('[data-sv-work-tab]');
   if(!button||nav.hidden)return;
   const target=button.dataset.svWorkTab;
+  if(target==='notes'){openNotebook();return}
   if(target===activeSection())return;
   if(createMenu){createMenu.hidden=true;calendarAdd?.setAttribute('aria-expanded','false');add.setAttribute('aria-expanded','false');}
+  closeBusinessCreate();
   const fromCalendar=!calendar.hidden;
+  // ONE has no manager-calendar legacy tabs, so use the original routes.
+  if(!window.SEYVEO_PREVIEW?.isManager?.()&&!window.SEYVEO_PREVIEW?.isEmployee?.()){
+   if(target==='calendar')location.hash='#calendar';
+   else if(target==='personal')window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
+   resetWorkScroll();
+   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+   return;
+  }
   const employeePreview=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
   if(employeePreview&&fromCalendar&&target!=='calendar'){
    // Manager calendar tabs cannot navigate to an employee workspace.
@@ -194,5 +250,5 @@
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
- window.SEYVEO_WORK_SHELL=Object.freeze({version:10,sync});
+ window.SEYVEO_WORK_SHELL=Object.freeze({version:11,sync});
 })();
