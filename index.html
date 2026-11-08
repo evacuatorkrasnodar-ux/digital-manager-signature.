@@ -2521,9 +2521,9 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <button id="notePaperMore" type="button" class="sv-paper-more" aria-label="Дополнительные инструменты листа" aria-controls="notePaperExtras" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button>
  <div id="notePaperExtras" class="sv-paper-extras-panel" hidden>
   <div class="paper-toolbar-secondary">
-   <button type="button" data-paper-tool="pencil" aria-pressed="false" aria-label="Карандаш">Карандаш</button>
+   <button type="button" data-paper-tool="pencil" aria-pressed="false" aria-label="Карандаш"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19l3.5-1.5L18 8 15 5 5.5 14.5 5 19Z"/><path d="m13 7 3 3"/></svg><span>Карандаш</span></button>
    <div class="paper-pattern-control">
-    <button id="notePaperPatternTrigger" class="paper-pattern-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="notePaperPatternMenu" aria-label="Выбрать тип листа"><span id="notePaperPatternLabel">Чистая</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 9.5 5.5 5 5.5-5"/></svg></button>
+    <button id="notePaperPatternTrigger" class="paper-pattern-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="notePaperPatternMenu" aria-label="Выбрать тип листа"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2.5"/><path d="M8.5 10h7M8.5 14h5"/></svg><span class="sv-paper-pattern-name">Лист</span><span id="notePaperPatternLabel">Чистая</span><svg class="sv-paper-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
     <div id="notePaperPatternMenu" class="paper-pattern-menu" role="group" aria-label="Тип листа" hidden>
      <button type="button" data-paper-pattern="blank" aria-pressed="true">Чистая</button>
      <button type="button" data-paper-pattern="lines" aria-pressed="false">Линейка</button>
@@ -2531,9 +2531,9 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
     </div>
     <select id="notePaperPattern" aria-label="Тип бумаги" hidden tabindex="-1"><option value="blank">Чистая</option><option value="lines">Линейка</option><option value="dots">Точки</option></select>
    </div>
-   <button id="notePaperAddPhoto" type="button" aria-label="Вставить фотографию на лист" title="Вставить фото"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.6"/><path d="m5 18 5-5 3 3 3-4 4 5"/></svg></button>
+   <button id="notePaperAddPhoto" type="button" aria-label="Добавить фото на лист" title="Добавить фото"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.6"/><path d="m5 18 5-5 3 3 3-4 4 5"/></svg><span>Добавить фото</span></button>
    <input id="notePaperPhotoFile" class="paper-photo-input" type="file" accept="image/*" aria-label="Выбрать фотографию">
-   <button id="notePaperRemovePhoto" type="button" hidden aria-label="Убрать фотографию с листа" title="Убрать фото"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9 7V4.5h6V7M7 7l.8 12.5h8.4L17 7M10 10.5v6M14 10.5v6"/></svg></button>
+   <button id="notePaperRemovePhoto" type="button" hidden aria-label="Убрать фотографию с листа" title="Убрать фото"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9 7V4.5h6V7M7 7l.8 12.5h8.4L17 7M10 10.5v6M14 10.5v6"/></svg><span>Убрать фото</span></button>
   </div>
  </div>
 </div>
