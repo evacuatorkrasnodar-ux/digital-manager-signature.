@@ -889,3 +889,10 @@ svg.sv-paper-signature .sv-paper-icon-core{
   height:calc(var(--sv-paper-tool-size) - 2px)!important;
  }
 }
+
+/* Persist exactly one disc: old aria-pressed effects cannot show
+   a second ring when the Paper/Shapes control is the selected one. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperPatternTrigger)[data-sv-selected="false"]::before{
+ opacity:0!important;
+}
