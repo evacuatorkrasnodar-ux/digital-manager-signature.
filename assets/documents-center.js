@@ -164,7 +164,7 @@ function draw(){
   flowCard.setAttribute('aria-label','Согласования документов, учебный режим');
   const flowCopy=el('span','sv-doc-flow-copy');
   flowCopy.append(el('strong','','Согласования'),
-   el('small','','Руководитель и сотрудник · учебный маршрут'));
+   el('small','','Маршрут документа'));
   const flowStats=el('span','sv-doc-flow-stats',
    working+' в работе'+(onSignature?' · '+onSignature+' на подпись':''));
   const arrow=el('span','sv-doc-flow-chevron','›');arrow.setAttribute('aria-hidden','true');
@@ -174,8 +174,8 @@ function draw(){
  if(view==='flow'){
   if(employeePreview()){
    const limit=el('div','sv-doc-role-info');
-   limit.append(el('strong','','Доступ сотрудника · учебный режим'),
-    el('small','','Учебный доступ: мои входящие, ознакомление, согласование и возврат с замечанием. Архив компании и настройки КЭП доступны руководителю.'));
+   limit.append(el('strong','','Входящие документы'),
+    el('small','','Доступ сотрудника'));
    host.append(limit);
   }
   const flow=el('section','sv-doc-workspace');
@@ -258,7 +258,7 @@ function draw(){
  const summary=el('summary','sv-doc-vault-summary');
  const archiveTitle=el('span','sv-doc-vault-copy');
  archiveTitle.append(el('span','sv-doc-vault-title',area==='personal'?'Мой архив':'Архив компании'),
-  el('small','','Защищённый сейф · пароль'));
+  el('small','','Локальное хранилище'));
  summary.append(makeIcon('lock'),archiveTitle);
  const contents=el('div','sv-doc-vault');
  archive.append(summary,contents);
@@ -304,7 +304,7 @@ function draw(){
  const markBox=el('span','sv-doc-assistant-mark-box');
  markBox.append(makeIcon('sayvi'));intro.append(markBox);
  const copy=el('span','sv-doc-assistant-hero-copy');
- copy.append(el('strong','','Составить договор, проверить документ и исправить ошибки.'));
+ copy.append(el('strong','','Создать или проверить документ'));
  intro.append(copy,el('span','sv-doc-chat-chevron','›'));
  const actions=el('div','sv-doc-assistant-actions');
  actions.append(
@@ -314,8 +314,8 @@ function draw(){
  host.append(archive);
  if(area==='business')host.append(connectionsEntry());
  const safety=el('details','sv-doc-safety');
- safety.append(el('summary','','Безопасность и хранение'),
-  note('Архив зашифрован на устройстве. Облачного восстановления нет: при очистке браузера файлы могут исчезнуть. Передача и печать — только по вашему действию. Демо-согласования не предназначены для конфиденциальных документов.'));
+ safety.append(el('summary','','О защите данных'),
+  note('Архив шифруется на этом устройстве. Пароль нельзя восстановить; очистка браузера может удалить файлы. Сохраните важные документы отдельно. Учебные согласования не шифруются — не используйте в них реальные данные.'));
  // Keep the legal/storage explanation accessible when the vault opens,
  // without a second visual section under the collapsed archive card.
  archive.append(safety);
