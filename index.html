@@ -2471,7 +2471,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <div class="paper-toolbar" aria-label="Инструменты рисования">
   <div class="paper-toolbar-primary" role="group" aria-label="Инструмент">
    <button type="button" data-paper-tool="pen" aria-pressed="true" aria-label="Ручка" title="Ручка"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 17 10-10a2.4 2.4 0 0 1 3.4 3.4l-10 10-5 1 1.6-4.4Z"/><path d="m13 9 3.7 3.7"/></svg></button>
-   <button type="button" data-paper-tool="pencil" aria-pressed="false" aria-label="Карандаш" title="Карандаш"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19l3.5-1L18 7.5 15 4.5 4.5 15 4 19Z"/><path d="M13 6.5 16 9.5M4 21h16"/></svg></button>
+   <button id="notePaperDuplicate" type="button" disabled aria-label="Дублировать последний штрих" title="Дублировать последний штрих"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h2"/></svg></button>
    <button type="button" data-paper-tool="eraser" aria-pressed="false" aria-label="Ластик" title="Ластик"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 14 8-8a2 2 0 0 1 2.8 0l4.2 4.2a2 2 0 0 1 0 2.8L13 20H9l-4-4a1.5 1.5 0 0 1 0-2Z"/><path d="m9 19 7-7"/></svg></button>
   </div>
  </div>
@@ -2521,6 +2521,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <button id="notePaperMore" type="button" class="sv-paper-more" aria-label="Дополнительные инструменты листа" aria-controls="notePaperExtras" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button>
  <div id="notePaperExtras" class="sv-paper-extras-panel" hidden>
   <div class="paper-toolbar-secondary">
+   <button type="button" data-paper-tool="pencil" aria-pressed="false" aria-label="Карандаш">Карандаш</button>
    <div class="paper-pattern-control">
     <button id="notePaperPatternTrigger" class="paper-pattern-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="notePaperPatternMenu" aria-label="Выбрать тип листа"><span id="notePaperPatternLabel">Чистая</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 9.5 5.5 5 5.5-5"/></svg></button>
     <div id="notePaperPatternMenu" class="paper-pattern-menu" role="group" aria-label="Тип листа" hidden>
