@@ -251,7 +251,7 @@ test('scanner can rotate and reorder real multi-page photos, and sign chosen pag
  selector.value='0';
  const canvas=find(f.root,n=>n.tagName==='CANVAS')[0];
  canvas.emit('pointerdown');canvas.emit('pointermove');canvas.emit('pointerup');
- label(f.root,'Добавить подпись в PDF').click();
+ label(f.root,'Подписать копию PDF').click();
  await new Promise(resolve=>setImmediate(resolve));
  const pdfs=f.created.filter(x=>x.blob.type==='application/pdf');
  assert.equal(pdfs.length,1);
@@ -296,7 +296,7 @@ test('studio iPhone controls retain minimum touch targets and honest capability 
  assert.match(css,/min-width:44px;min-height:44px/);
  assert.match(css,/sv-doc-tool-page-select/);
  assert.match(css,/font-size:16px/);
- assert.match(studioCode,/подписи не является КЭП/i);
+ assert.match(studioCode,/Рукописная отметка не является КЭП/i);
  assert.match(studioCode,/navigator\.canShare/);
  assert.doesNotMatch(studioCode,/\bfetch\s*\(/);
 });
@@ -382,4 +382,73 @@ test('scanner style never changes global home dock, assistant chat or false OCR 
  assert.doesNotMatch(css,/navHome|navManage|homeDock|sayviChatComposer/);
  assert.match(studioCode,/Направляющие · пример/);
  assert.match(studioCode,/Автоматическая обрезка и OCR пока не подключены/);
+});
+
+test('signature paper preview, real page thumbnails and touch placement feed signed PDF',async()=>{
+ const f=fixture();
+ label(f.root,'Сканировать').click();
+ const input=find(f.root,n=>n.tagName==='INPUT'&&n.multiple)[0];
+ input.files=[
+  new File([tinyJpeg],'letter1.jpg',{type:'image/jpeg'}),
+  new File([tinyJpeg],'letter2.jpg',{type:'image/jpeg'})
+ ];
+ input.emit('change');
+ await new Promise(resolve=>setImmediate(resolve));
+ label(f.root,'Подписать').click();
+ const stage=find(f.root,n=>n.className==='sv-doc-sign-stage');
+ assert.equal(stage.length,1);
+ const document=find(f.root,n=>n.className==='sv-doc-sign-document')[0];
+ assert.ok(document);
+ const picture=find(f.root,n=>n.className==='sv-doc-sign-page-image');
+ assert.equal(picture.length,1);
+ assert.equal(picture[0].alt,'Просмотр страницы 2');
+ const thumbs=find(f.root,n=>n.className?.includes('sv-doc-sign-page-button'));
+ assert.equal(thumbs.length,2);
+ thumbs[0].click();
+ assert.equal(find(f.root,n=>n.className==='sv-doc-sign-page-image')[0].alt,'Просмотр страницы 1');
+ assert.equal(thumbs[0].attributes['aria-pressed'],'true');
+ document.emit('click',{clientX:250,clientY:160});
+ const placement=find(f.root,n=>n.className==='sv-doc-sign-target')[0];
+ assert.ok(placement.style.left.endsWith('%'));
+ assert.ok(placement.style.top.endsWith('%'));
+ const x=Number(placement.style.left.slice(0,-1));
+ const y=Number(placement.style.top.slice(0,-1));
+ assert.ok(x>20&&x<80&&y>8&&y<92);
+ const canvas=find(f.root,n=>n.tagName==='CANVAS')[0];
+ canvas.emit('pointerdown');canvas.emit('pointermove');canvas.emit('pointerup');
+ const overlay=find(f.root,n=>n.className==='sv-doc-sign-stroke')[0];
+ assert.equal(overlay.hidden,false);
+ assert.ok(overlay.src.startsWith('data:image/'));
+ label(f.root,'Подписать копию PDF').click();
+ await new Promise(resolve=>setImmediate(resolve));
+ const pdfs=f.created.filter(x=>x.blob.type==='application/pdf');
+ assert.equal(pdfs.length,1);
+ const pdf=Buffer.from(await pdfs[0].blob.arrayBuffer()).toString('latin1');
+ assert.match(pdf,/\/Count 2\b/);
+ assert.ok(find(f.root,n=>n.textContent?.includes('страница 1')).length);
+ label(f.root,'Очистить').click();
+ assert.equal(find(f.root,n=>n.className==='sv-doc-sign-stroke')[0].hidden,true);
+});
+test('no scanned document is clearly labeled as example, never fake signed PDF',()=>{
+ const f=fixture();
+ label(f.root,'Подписать').click();
+ assert.ok(find(f.root,n=>n.className==='sv-doc-sign-page-sample').length);
+ assert.ok(find(f.root,n=>n.textContent==='Лист-пример').length);
+ const mark=find(f.root,n=>n.className==='sv-doc-sign-target')[0];
+ assert.equal(mark,undefined);
+ const canvas=find(f.root,n=>n.tagName==='CANVAS')[0];
+ canvas.emit('pointerdown');canvas.emit('pointerup');
+ label(f.root,'Подписать копию PDF').click();
+ assert.equal(f.created.filter(x=>x.blob.type==='application/pdf').length,0);
+ assert.ok(find(f.root,n=>n.textContent?.includes('Сначала сделайте скан')).length);
+});
+test('signature design is scoped to Docs and respects the original global dock',()=>{
+ const css=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
+ for(const cls of ['sv-doc-sign-stage','sv-doc-sign-document','sv-doc-sign-page-button',
+                   'sv-doc-sign-page-image','sv-doc-sign-stroke','sv-doc-sign-target'])
+  assert.ok(css.includes('#sayviSurfacePage .'+cls));
+ assert.doesNotMatch(css,/navHome|navManage|homeDock|sayviChatComposer/);
+ assert.match(studioCode,/Рукописная отметка не является КЭП/);
+ assert.match(studioCode,/placement\.x\*dest\.width-width\/2/);
+ assert.match(studioCode,/placement\.y\*dest\.height-height\/2/);
 });
