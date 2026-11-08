@@ -73,6 +73,9 @@ test('expired access token is not returned as a session',async()=>{
   await f.vault.saveVerifiedSession(verified);
   f.setTime(t+300_001);
   assert.equal(await f.vault.getAccessCredential(),null);
+  // An expired access token is not an active session; refresh is a
+  // credential for the trusted provider only, not offline authorization.
+  assert.equal((await f.vault.getRefreshCredential()).refreshToken,refresh);
 });
 test('a failed Keychain write cannot leave a valid session even after previous login',async()=>{
   let fail=false;
