@@ -41,6 +41,8 @@ function photoImage(photo,redraw){
  return entry.ready?entry.image:null;
 }
 const clamp=(n,max)=>Math.max(0,Math.min(max,Math.round(Number(n)||0)));
+// Preserve subpixel positions while keeping saved strokes compact.
+const inkCoord=(n,max)=>Math.max(0,Math.min(max,Math.round((Number(n)||0)*10)/10));
 function normalize(obj){
  const p=obj&&typeof obj==='object'?obj:{};
  // Older pages were 840 x 1188. New fullscreen pages store a taller virtual
@@ -52,7 +54,7 @@ function normalize(obj){
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
  .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(28,stroke.width)):undefined,points:stroke.points.slice(0,MAX_POINTS)
  .filter(point=>Array.isArray(point)&&point.length>=2&&Number.isFinite(Number(point[0]))&&Number.isFinite(Number(point[1])))
- .map(point=>[clamp(point[0],W),clamp(point[1],height),clamp(point.length>2?point[2]:50,100)])}))};
+ .map(point=>[inkCoord(point[0],W),inkCoord(point[1],height),clamp(point.length>2?point[2]:50,100)])}))};
 }
 function paintStroke(ctx,s){
  if(!s.points.length)return;
@@ -153,8 +155,16 @@ function fitPaper(){
  const height=Math.max(120,Math.floor(rect.height));
  const logicalHeight=Math.max(H,Math.min(MAX_PAGE_HEIGHT,Math.round(W*height/width)));
  if((data.height||H)<logicalHeight)data.height=logicalHeight;
- if(canvas.height!==data.height){canvas.height=data.height;paint(canvas,data)}
  sheet.style.width=width+'px';sheet.style.height=height+'px';
+ // Retina: the old fixed-size bitmap was stretched across physical pixels.
+ // Keep the original world coordinates, but rasterise at display resolution.
+ const dpr=Math.min(3,Math.max(1,window.devicePixelRatio||1));
+ const backingWidth=Math.max(1,Math.round(width*dpr));
+ const backingHeight=Math.max(1,Math.round(height*dpr));
+ if(canvas.width!==backingWidth||canvas.height!==backingHeight){
+  canvas.width=backingWidth;canvas.height=backingHeight;
+  paint(canvas,data);
+ }
 }
 window.addEventListener('resize',()=>{if(dialog.open)requestAnimationFrame(fitPaper)});
 if(typeof ResizeObserver!=='undefined'&&stage){
@@ -175,7 +185,7 @@ function selectTool(name){if(!tools.includes(name))return;
 }
 function point(e){
  const box=canvas.getBoundingClientRect();
- return [clamp((e.clientX-box.left)/box.width*W,W),clamp((e.clientY-box.top)/box.height*(data.height||H),data.height||H),clamp((e.pointerType==='pen'?e.pressure:.5)*100,100)];
+ return [inkCoord((e.clientX-box.left)/box.width*W,W),inkCoord((e.clientY-box.top)/box.height*(data.height||H),data.height||H),clamp((e.pointerType==='pen'?e.pressure:.5)*100,100)];
 }
 // Live ink pipeline: draw ONLY the new Bézier segment, keeping previously
 // painted pixels intact. Historic strokes are replayed for Undo/export only.
