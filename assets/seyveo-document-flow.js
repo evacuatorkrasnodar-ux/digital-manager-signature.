@@ -57,7 +57,7 @@ function persist(){
 function stamp(t){return new Date(t).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
 function status(x){
  if(x.state==='sent')return 'Ожидает Елену';
- if(x.state==='read')return 'Елена просмотрела · ждём подтверждения';
+ if(x.state==='read')return 'Открыт Еленой · ожидает решения';
  if(x.state==='approved')return TYPES[x.kind].type==='Ознакомление'?'Ознакомление подтверждено · демо':'Согласовано · ожидает оформления подписи';
  if(x.state==='signing')return 'Ожидает КЭП · подпись не выполнена';
  if(x.state==='returned')return 'Нужна новая редакция · замечание Елены';
@@ -84,7 +84,7 @@ function updateRecord(id,next,reason=''){
  const oldState=x.state,oldLog=x.log.slice();
  x.state=next;
  const label={
-  read:'Елена отметила прочтение · учебный режим',
+  read:'Елена открыла документ · ожидается решение · учебный режим',
   approved:'Елена подтвердила '+(TYPES[x.kind].type==='Ознакомление'?'ознакомление':'согласование')+' · учебный режим',
   returned:'Елена вернула с замечанием: '+remark+' · учебный режим',
   signing:'Руководитель направил согласованный документ на этап КЭП · подпись ещё не выполнена',
@@ -145,7 +145,21 @@ function reset(){
  emit('reset');draw();
 }
 function get(id){return records.find(r=>r.id===id)||null;}
-function select(id){if(!get(id))return false;selected=id;listFilter='all';revisionDraft={id:'',body:'',note:''};draw();return true;}
+function select(id){
+ const record=get(id);if(!record)return false;
+ selected=id;listFilter=isActive(record)?'active':'completed';
+ revisionDraft={id:'',body:'',note:''};draw();return true;
+}
+function openRecord(x){
+ if(selected===x.id){selected='';draw();return;}
+ selected=x.id;
+ // In the training flow, opening the document is one action. It records
+ // "opened" but NEVER confirms consent, agreement, or a legal signature.
+ if(role==='employee'&&x.state==='sent'){
+  updateRecord(x.id,'read');return;
+ }
+ draw();
+}
 // There is only ONE role preview in SEYVEO: owned by the working cabinet.
 function setRole(which){
  if(which!=='manager'&&which!=='employee')return false;
@@ -172,7 +186,7 @@ function renderRecord(node,x){
  const state=$('div','svdf-record-state',status(x));state.dataset.state=x.state;card.append(state);
  card.append($('small','svdf-date','Создано '+stamp(x.created)));
  const controls=$('div','svdf-actions');
- controls.append(button(x.id===selected?'Свернуть':'Просмотреть',()=>{selected=x.id===selected?'':x.id;draw();},'svdf-quiet'));
+ controls.append(button(x.id===selected?'Свернуть':'Открыть документ',()=>openRecord(x),'svdf-quiet'));
  card.append(controls);
  if(x.id===selected){
   const detail=$('div','svdf-detail');
@@ -181,8 +195,7 @@ function renderRecord(node,x){
   const actions=$('div','svdf-actions');
   if(role==='employee'){
    if(x.state==='sent'){
-    actions.append(button('Отметить как прочитанное',()=>updateRecord(x.id,'read'),'svdf-primary'));
-    detail.append($('p','svdf-hint','Сначала ознакомься с текстом. Подтверждение станет доступно после прочтения.'));
+    detail.append($('p','svdf-hint','Документ пока не открыт в учебном маршруте. Открой его, чтобы перейти к решению.'));
    }
    if(x.state==='read'){
     actions.append(button(TYPES[x.kind].type==='Ознакомление'?'Подтвердить ознакомление':'Согласовать',()=>updateRecord(x.id,'approved'),'svdf-primary'));
@@ -266,70 +279,49 @@ function draw(){
   $('h2','','Согласования'),
   $('p','','Документ → сотрудник → ознакомление или согласование → история действий.'));
  host.append(lead);
- host.append($('p','svdf-warning','УЧЕБНЫЙ РЕЖИМ · Все данные этого экрана хранятся без шифрования только в браузере. Не используйте реальные документы, личные данные и секреты. Переключение ролей не является авторизацией, подтверждение — не подписью, а запрос не доставляется сотруднику на другое устройство.'));
- const roleCaption=$('div','svdf-role-current');
- roleCaption.append($('span','','Роль из рабочего кабинета'),
-  $('strong','',role==='employee'?'Елена · сотрудник':'Руководитель'));
- host.append(roleCaption);
+ const safety=$('details','svdf-safety');
+ safety.append($('summary','','Учебный режим · настоящие документы не загружать'));
+ safety.append($('p','','Данные согласований хранятся в браузере без шифрования. Реальных учётных записей, доставки между сотрудниками и электронной подписи здесь нет. Используйте только вымышленные примеры.'));
+ host.append(safety);
+ host.append($('p','svdf-role-inline',
+  (role==='employee'?'Елена · сотрудник':'Руководитель')+' · роль из кабинета'));
  if(role==='manager'){
-  const form=$('section','svdf-create');
-  form.append($('strong','','Подготовить запрос'));
-  const picker=button(TYPES[kind].title,()=>{if(!sheet.open)sheet.showModal();},'svdf-picker');
-  picker.setAttribute('aria-label','Выбрать учебный документ');
-  picker.setAttribute('aria-haspopup','dialog');
-  picker.setAttribute('aria-controls','svdfDocumentPicker');
-  picker.append($('span','svdf-picker-chevron'));
-  const sheet=$('dialog','svdf-picker-sheet');
-  sheet.id='svdfDocumentPicker';
-  sheet.setAttribute('aria-label','Выбор учебного документа');
-  const handle=$('div','svdf-sheet-handle');handle.setAttribute('aria-hidden','true');
-  const sheetTop=$('div','svdf-sheet-head');
-  sheetTop.append($('strong','','Выберите документ'));
-  const close=button('Готово',()=>sheet.close(),'svdf-sheet-close');
-  sheetTop.append(close);
-  const choices=$('div','svdf-sheet-options');choices.setAttribute('role','radiogroup');choices.setAttribute('aria-label','Учебные документы');
+  const form=$('section','svdf-create svdf-create-simple');
+  form.append($('strong','','Документ на согласование'));
+  const picker=$('details','svdf-kind-choices');
+  const summary=$('summary','','Тип: '+TYPES[kind].title);
+  picker.append(summary);
+  const choices=$('div','svdf-kind-options');
   for(const [key,type] of Object.entries(TYPES)){
    const option=button(type.title,()=>{
     kind=key;
-    picker.firstChild.textContent=type.title;
-    for(const child of choices.children)child.setAttribute('aria-checked',String(child.dataset.kind===key));
-    sheet.close();
-    picker.focus({preventScroll:true});
-   },'svdf-sheet-option');
+    summary.textContent='Тип: '+type.title;
+    for(const item of choices.children)
+     item.setAttribute('aria-pressed',String(item.dataset.kind===kind));
+    picker.open=false;
+   },'svdf-kind-option');
    option.dataset.kind=key;
-   option.setAttribute('role','radio');
-   option.setAttribute('aria-checked',String(key===kind));
-   option.append($('span','svdf-sheet-check',key===kind?'✓':''));
+   option.setAttribute('aria-pressed',String(key===kind));
    choices.append(option);
   }
-  sheet.addEventListener('close',()=>{
-   for(const option of choices.children){
-    option.setAttribute('aria-checked',String(option.dataset.kind===kind));
-    option.lastChild.textContent=option.dataset.kind===kind?'✓':'';
-   }
-  });
-  sheet.addEventListener('click',event=>{if(event.target===sheet)sheet.close();});
-  sheet.append(handle,sheetTop,choices);
-  form.append(picker,sheet,$('small','','Получатель: Елена · учебный сотрудник'));
-  form.append(button('Передать Елене · демо',create,'svdf-primary'));
+  picker.append(choices);
+  form.append(picker,
+   $('small','','Елена · учебный сотрудник · только этот браузер'),
+   button('Передать на согласование · демо',create,'svdf-primary'));
   host.append(form);
- }else host.append($('p','svdf-hint','Ты видишь учебную роль Елены. Открой запрос, прочитай содержание и выбери действие.'));
+ }else host.append($('p','svdf-hint svdf-staff-instruction','Открой документ и выбери: согласовать или вернуть с замечанием.'));
  const active=records.filter(isActive).length,completed=records.length-active;
  const signing=records.filter(x=>x.state==='signing').length;
  const inReview=records.filter(x=>['sent','read','returned'].includes(x.state)).length;
- const pulse=$('div','svdf-pulse');
- for(const [name,count] of [['На согласовании',inReview],['На подписи',signing],['Завершено',completed]]){
-  const tile=$('div','svdf-pulse-tile');
-  tile.append($('strong','',String(count)),$('small','',name));pulse.append(tile);
- }
- host.append(pulse);
+ host.append($('p','svdf-compact-status',
+  inReview+' на согласовании · '+signing+' на подпись · '+completed+' завершено'));
  const title=$('div','svdf-list-header');
  title.append($('strong','',role==='employee'?'Мои входящие':'Отправленные документы'),
   $('span','',active+' в работе · '+completed+' завершены'));
  host.append(title);
  const filters=$('div','svdf-list-filters');
  filters.setAttribute('role','group');filters.setAttribute('aria-label','Фильтр учебных документов');
- for(const [value,label] of [['active','В работе · '+active],['completed','Завершены · '+completed],['all','Все · '+records.length]]){
+ for(const [value,label] of [['active','В работе · '+active],['completed','История · '+completed]]){
   const tab=button(label,()=>{listFilter=value;selected='';returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};draw();},'svdf-list-filter');
   tab.setAttribute('aria-pressed',String(listFilter===value));
   filters.append(tab);
@@ -342,13 +334,16 @@ function draw(){
   records.length?'В этой категории пока нет документов.':'Пока нет запросов. Руководитель может создать учебный документ, а Елена — подтвердить ознакомление.'));
  host.append(list);
  const live=$('p','svdf-feedback',info);live.setAttribute('role','status');host.append(live);
- if(records.length)host.append(button('Очистить учебную историю',reset,'svdf-reset'));
- const chat=button('Обсудить документы в рабочем чате',()=>{
+ const more=$('details','svdf-optional');
+ more.append($('summary','','Дополнительно'));
+ if(records.length)more.append(button('Очистить учебную историю',reset,'svdf-reset'));
+ const chat=button('Обсудить в рабочем чате',()=>{
   const open=window.SEYVEO_UNIFIED_TASKS?.openChat;
   if(typeof open==='function')open('manage','docs',role==='employee'?'elena':'manager');
   else{info='Рабочий чат пока недоступен.';draw();}
  },'svdf-chat-link');
- host.append(chat);
+ more.append(chat);
+ host.append(more);
  host.append($('p','svdf-footnote','Настоящее внедрение потребует учётных записей, прав доступа, серверной доставки, журналирования, хранения в подходящем контуре и интеграции с оператором ЭДО/ЭП.'));
 }
 function mount(parent){
