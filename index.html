@@ -1832,24 +1832,24 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 /* Compact four-action Notes dock · same exact shared Home glass, just smaller. */
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
  box-sizing:border-box!important;
- width:min(100%,280px)!important;
+ width:min(100%,355px)!important;
  margin:0 auto!important;
- height:48px!important;min-height:48px!important;
- grid-template-columns:minmax(0,1fr) 45px!important;
- column-gap:12px!important;
+ height:50px!important;min-height:50px!important;
+ grid-template-columns:minmax(0,1fr) 50px!important;
+ column-gap:36px!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
- left:0!important;right:57px!important;top:0!important;bottom:0!important;
+ left:0!important;right:86px!important;top:0!important;bottom:0!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
- width:45px!important;height:45px!important;top:1.5px!important;right:0!important;bottom:auto!important;
+ width:50px!important;height:50px!important;top:0!important;right:0!important;bottom:auto!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
  display:grid!important;
  grid-template-columns:repeat(4,minmax(0,1fr))!important;
  gap:0!important;
- height:48px!important;min-height:48px!important;max-height:48px!important;
- padding:2px 8px!important;
+ height:50px!important;min-height:50px!important;max-height:50px!important;
+ padding:2px 12px!important;
  overflow:visible!important;
  background:transparent!important;
 }
@@ -1861,12 +1861,12 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  display:none!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button svg{
- width:23px!important;height:23px!important;
- stroke-width:1.65!important;fill:none!important;
+ width:25px!important;height:25px!important;
+ stroke-width:1.7!important;fill:none!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
- width:45px!important;height:45px!important;min-width:45px!important;min-height:45px!important;
- max-width:45px!important;max-height:45px!important;
+ width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;
+ max-width:50px!important;max-height:50px!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact .sv-note-attachment-menu[hidden]{display:none!important}
 #noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact .sv-note-attachment-menu:not([hidden]){
@@ -1885,6 +1885,11 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-tools-compact .sv-note-attachment-menu>button:active{
  background:rgba(220,231,240,.12)!important;
+}
+@media(max-width:355px){
+ #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{column-gap:24px!important}
+ #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{right:74px!important}
+ #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{padding-inline:6px!important}
 }
 </style></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=3" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-company-avatar" aria-hidden="true"><img src="assets/company-building-avatar.svg?v=1" alt="" width="44" height="44" draggable="false"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="contacts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Контакты</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="smart-home" aria-label="Открыть Умный дом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg><span>Умный дом</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="documents" aria-label="Открыть Личные документы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/></svg><span>Личные документы</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="mail" aria-label="Открыть Почту SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.6"/><path d="m4 7 8 6 8-6"/></svg><span>Почта</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="browser" aria-label="Открыть Браузер SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 4-5 14 0 18M12 3c5 4 5 14 0 18"/></svg><span>Браузер</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="play" hidden style="display:none!important" aria-label="Открыть YouTube"><svg class="seyveo-youtube-white" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="stroke:none;fill:none;opacity:1;display:block;width:26px;height:23px;flex:none;"><path fill="#fff" fill-rule="evenodd" clip-rule="evenodd" stroke="none" d="M5.7 5H18.3C20.9 5 22.5 6.6 22.5 9.1V14.9C22.5 17.4 20.9 19 18.3 19H5.7C3.1 19 1.5 17.4 1.5 14.9V9.1C1.5 6.6 3.1 5 5.7 5ZM9.85 8.45V15.55L16.5 12Z"/></svg><span>YouTube</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
