@@ -83,3 +83,63 @@
 .picture-date-footer [data-cancel]{color:var(--secondary)}
 @media(max-width:360px){.picture-date-dialog{padding:15px 13px 13px}.picture-date-days{row-gap:2px}}
 @media(prefers-reduced-motion:reduce){.picture-date-dialog{scroll-behavior:auto}}
+
+/* Business Pulse operations · the same restrained SEYVEO action grammar. */
+#picturePage .picture-operations{
+ border:1px solid var(--picture-fine-edge,color-mix(in srgb,var(--text) 11%,transparent))!important;
+ border-radius:18px!important;
+ background:var(--picture-fine-glass,color-mix(in srgb,var(--text) 4%,transparent))!important;
+ box-shadow:none!important;
+}
+#picturePage .picture-operation-kind-options{
+ border:1px solid var(--picture-fine-edge)!important;
+ border-radius:21px!important;
+ padding:3px!important;
+ background:var(--picture-fine-glass)!important;
+ box-shadow:none!important;
+}
+#picturePage .picture-operation-kind-options button{
+ min-height:36px!important;
+ border:1px solid transparent!important;
+ border-radius:18px!important;
+ font-size:11px!important;
+ font-weight:550!important;
+ box-shadow:none!important;
+}
+#picturePage .picture-operation-kind-options button[aria-pressed="true"]{
+ border-color:var(--picture-fine-edge)!important;
+ background:var(--picture-fine-active)!important;
+ color:var(--text)!important;
+ box-shadow:none!important;
+}
+#picturePage .picture-operation-actions button,
+#picturePage .picture-operations-head button{
+ min-height:36px!important;
+ padding:8px 13px!important;
+ border:1px solid var(--picture-fine-edge)!important;
+ border-radius:999px!important;
+ background:var(--picture-fine-glass)!important;
+ box-shadow:none!important;
+ font-size:11.5px!important;
+ font-weight:550!important;
+ color:var(--text)!important;
+}
+#picturePage .picture-operation-actions button+button{
+ background:transparent!important;
+ color:var(--secondary)!important;
+}
+#picturePage .picture-operation-form :is(input,select),
+#picturePage .picture-operation-date-trigger{
+ border:1px solid var(--picture-fine-edge)!important;
+ border-radius:14px!important;
+ background:var(--picture-fine-glass)!important;
+ box-shadow:none!important;
+}
+#picturePage .picture-operation-row{
+ border-top:1px solid var(--picture-fine-edge)!important;
+}
+#picturePage .picture-operation-kind-options button:focus-visible,
+#picturePage .picture-operation-actions button:focus-visible{
+ outline:2px solid var(--text)!important;
+ outline-offset:2px!important;
+}
