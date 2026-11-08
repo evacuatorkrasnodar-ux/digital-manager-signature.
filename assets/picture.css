@@ -333,3 +333,92 @@
 #picturePage .sv-pulse-inbox .sv-pulse-inbox-panel{background:transparent}
 #picturePage .sv-pulse-demo, #picturePage .sv-pulse-inbox{max-width:100%}
 
+
+/* SEYVEO Business Pulse · unified Documents slim glass · 2026-11-08.
+   Scoped to the analytics view: preserve working chart bars, back nav and dock. */
+#picturePage{
+ --picture-fine-edge:color-mix(in srgb,var(--text) 11%,transparent);
+ --picture-fine-glass:color-mix(in srgb,var(--text) 4%,transparent);
+ --picture-fine-active:color-mix(in srgb,var(--text) 10%,transparent);
+}
+#picturePage .picture-tabs{
+ gap:3px!important;
+ padding:3px!important;
+ border:1px solid var(--picture-fine-edge)!important;
+ border-radius:23px!important;
+ background:var(--picture-fine-glass)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(17px) saturate(1.05)!important;
+ backdrop-filter:blur(17px) saturate(1.05)!important;
+}
+#picturePage .picture-tabs button{
+ min-height:38px!important;
+ padding:6px 4px!important;
+ border:1px solid transparent!important;
+ border-radius:20px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:var(--secondary)!important;
+ font-size:11.5px!important;
+ font-weight:550!important;
+}
+#picturePage .picture-tabs button[aria-pressed="true"]{
+ border-color:var(--picture-fine-edge)!important;
+ background:var(--picture-fine-active)!important;
+ color:var(--text)!important;
+ box-shadow:none!important;
+}
+#picturePage :is(.picture-chart-box,.picture-insight,.picture-full-report){
+ border:1px solid var(--picture-fine-edge)!important;
+ border-radius:18px!important;
+ background:var(--picture-fine-glass)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(15px) saturate(1.04);
+ backdrop-filter:blur(15px) saturate(1.04);
+}
+#picturePage .picture-chart-box{
+ padding:13px 12px 12px!important;
+}
+#picturePage .picture-insight{
+ padding:12px 13px!important;
+}
+#picturePage .picture-breakdown{
+ border:1px solid var(--picture-fine-edge)!important;
+ border-radius:18px!important;
+ background:var(--picture-fine-glass)!important;
+ padding:3px 13px!important;
+ box-shadow:none!important;
+}
+#picturePage .picture-split-row+.picture-split-row{
+ border-top:1px solid var(--picture-fine-edge)!important;
+}
+#picturePage .picture-split-track{
+ background:color-mix(in srgb,var(--text) 9%,transparent)!important;
+}
+#picturePage .picture-full-report{
+ min-height:58px!important;
+ padding:10px 13px!important;
+}
+#picturePage .picture-full-report .picture-report-text strong{
+ font-weight:590!important;
+ letter-spacing:-.012em;
+}
+#picturePage .picture-chart-total strong{
+ font-weight:630!important;
+}
+#picturePage .picture-section h2{
+ font-weight:600!important;
+}
+#picturePage :is(.picture-full-report,.picture-tabs button,.picture-split-row):focus-visible{
+ outline:2px solid var(--text)!important;
+ outline-offset:2px!important;
+}
+@media(max-width:370px){
+ #picturePage .picture-tabs button{font-size:10.5px!important;padding-inline:2px!important}
+ #picturePage .picture-chart-box{padding-inline:9px!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ #picturePage :is(.picture-tabs,.picture-chart-box,.picture-insight,.picture-full-report){
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
