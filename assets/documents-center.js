@@ -60,12 +60,14 @@ function makeIcon(kind){
  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
  p.setAttribute('d',kind==='lock'
   ? 'M5.5 10V7.5a6.5 6.5 0 0 1 13 0V10M5 10h14v11H5zM12 14v3'
-  : 'M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4');
+  : kind==='review'
+    ? 'M4 3h11l4 4v5M15 3v5h4M4 3v18h10M7 12h8M7 16h5M19 19l3 3M21 16a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z'
+    : 'M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4');
  svg.append(p);wrap.append(svg);return wrap;
 }
 function chatAction(label,subtitle,intent,primary=false){
  const action=button('',()=>goSayvi(intent),'sv-doc-chat-action'+(primary?' sv-doc-chat-main':''));
- action.append(makeIcon(primary?'sayvi':'lock'));
+ action.append(makeIcon(primary?'sayvi':'review'));
  const copy=el('span','sv-doc-chat-copy');
  copy.append(el('strong','',label),el('small','',subtitle));
  const chevron=el('span','sv-doc-chat-chevron','›');chevron.setAttribute('aria-hidden','true');
@@ -270,16 +272,16 @@ function draw(){
  }
  host.append(archive);
  const assistant=el('section','sv-doc-assistant');
- assistant.append(el('h2','sv-doc-assistant-title','Работа с документами — с Сэйви'));
+ assistant.append(el('h2','sv-doc-assistant-title','Сэйви поможет'));
  const chatList=el('div','sv-doc-chat-list');
  chatList.append(
-  chatAction('Создать с Сэйви','Подготовить новый документ в чате','create',true),
-  chatAction('Проверить или исправить','Откройте чат и приложите документ','review'));
+  chatAction('Создать с Сэйви','Подготовить черновик','create',true),
+  chatAction('Проверить документ','Объяснить или исправить','review'));
  assistant.append(chatList);host.append(assistant);
  if(area==='business')host.append(connectionsEntry());
  const safety=el('details','sv-doc-safety');
- safety.append(el('summary','','О хранении документов'),
-  note('Архив зашифрован на этом устройстве и не имеет облачного восстановления. Если очистить данные браузера, файлы могут исчезнуть. Передача в Сэйви, почту и печать — только по вашему действию. Учебные согласования не подходят для конфиденциальных документов.'));
+ safety.append(el('summary','','Безопасность и хранение'),
+  note('Архив зашифрован на устройстве. Облачного восстановления нет: при очистке браузера файлы могут исчезнуть. Передача и печать — только по вашему действию. Демо-согласования не предназначены для конфиденциальных документов.'));
  host.append(safety);
 }
 function backFromNested(){
