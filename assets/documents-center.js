@@ -152,8 +152,8 @@ function draw(){
   b.setAttribute('aria-pressed',String(area===key));switcher.append(b);
  }
  host.append(switcher);
- if(area==='business'&&!employeePreview()){
-  // Prominent business approval entry, not buried inside integrations.
+ if(area==='business'&&!employeePreview()&&view!=='flow'){
+  // Show approvals entry in the archive, not again inside approvals.
   // Status counts refer only to the local training scenario.
   const records=window.SEYVEO_DOCUMENT_FLOW?.getRecords?.()||[];
   const working=records.filter(x=>['sent','read','returned'].includes(x.state)).length;
