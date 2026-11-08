@@ -1789,6 +1789,45 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #noteReviewText::placeholder{
  color:rgba(51,64,75,.50)!important;
 }
+
+/* SEYVEO Notebook · native Notes-style icon drawing, no change to dock material. */
+#noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-tools>button{
+ color:rgba(241,245,248,.92)!important;
+ -webkit-appearance:none!important;appearance:none!important;
+ transition:background-color .15s ease,opacity .15s ease!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-tools>button svg{
+ display:block!important;
+ width:21px!important;height:21px!important;
+ stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ fill:none!important;
+ overflow:visible!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-tools .sv-note-aa{
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+ font-size:19px!important;font-weight:550!important;
+ line-height:1!important;letter-spacing:-.06em!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-tools>button:active,
+#noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-tools>button[aria-pressed="true"]{
+ background:rgba(230,240,248,.13)!important;
+ border-radius:50%!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone svg{
+ width:22px!important;height:22px!important;
+ stroke-width:1.65!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-tools>button{
+ color:rgba(33,44,53,.90)!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
+ color:rgba(33,44,53,.90)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #noteReviewDialog.note-review-dialog[open] .sv-note-tool-row.sv-shared-dock>.sv-note-tools>button{transition:none!important}
+}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=3" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-company-avatar" aria-hidden="true"><img src="assets/company-building-avatar.svg?v=1" alt="" width="44" height="44" draggable="false"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="contacts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Контакты</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="smart-home" aria-label="Открыть Умный дом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7v9H3zM9 20v-7h6v7"/></svg><span>Умный дом</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="documents" aria-label="Открыть Личные документы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/></svg><span>Личные документы</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="mail" aria-label="Открыть Почту SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.6"/><path d="m4 7 8 6 8-6"/></svg><span>Почта</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="browser" aria-label="Открыть Браузер SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 4-5 14 0 18M12 3c5 4 5 14 0 18"/></svg><span>Браузер</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="play" hidden style="display:none!important" aria-label="Открыть YouTube"><svg class="seyveo-youtube-white" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="stroke:none;fill:none;opacity:1;display:block;width:26px;height:23px;flex:none;"><path fill="#fff" fill-rule="evenodd" clip-rule="evenodd" stroke="none" d="M5.7 5H18.3C20.9 5 22.5 6.6 22.5 9.1V14.9C22.5 17.4 20.9 19 18.3 19H5.7C3.1 19 1.5 17.4 1.5 14.9V9.1C1.5 6.6 3.1 5 5.7 5ZM9.85 8.45V15.55L16.5 12Z"/></svg><span>YouTube</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
@@ -3461,23 +3500,23 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div class="sv-note-bottom">
 <div class="sv-note-tool-row sv-shared-dock">
 <div class="sv-note-tools" role="toolbar" aria-label="Инструменты заметки">
-<button type="button" data-note-tool="heading" title="Оформить заголовок" aria-label="Заголовок"><span class="sv-note-aa">Aa</span></button>
-<button type="button" data-note-tool="checklist" title="Добавить пункт списка" aria-label="Список"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="3.15"/><path d="m4.65 7 1 1.05 1.85-2M12.3 7H21"/><circle cx="6" cy="17" r="3.15"/><path d="m4.65 17 1 1.05L7.5 16M12.3 17H21"/></svg></button>
-<button type="button" data-note-tool="photo" title="Добавить фотографию" aria-label="Фото"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="3" width="19" height="18" rx="3"/><circle cx="8.2" cy="8.3" r="1.45"/><path d="m3.6 17 5.5-5.2 3.3 3.1 3.5-4 4.7 5.5"/></svg></button>
-<button type="button" data-note-tool="camera" title="Сделать фото" aria-label="Камера"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.2h3.5L9 5h6l1.5 2.2H20a1.6 1.6 0 0 1 1.6 1.6v9.6A1.6 1.6 0 0 1 20 20H4a1.6 1.6 0 0 1-1.6-1.6V8.8A1.6 1.6 0 0 1 4 7.2Z"/><circle cx="12" cy="13.3" r="3.25"/></svg></button>
+<button type="button" data-note-tool="heading" title="Оформить заголовок" aria-label="Заголовок"><span class="sv-note-aa" aria-hidden="true">Aa</span></button>
+<button type="button" data-note-tool="checklist" title="Добавить пункт списка" aria-label="Список"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.7" cy="7.1" r="2.55"/><path d="m4.6 7.1.75.75 1.25-1.5M10.8 7.1H20.5M3.4 16.8h4.6m2.8 0h9.7"/></svg></button>
+<button type="button" data-note-tool="photo" title="Добавить фотографию" aria-label="Фото"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="3.4"/><circle cx="8.6" cy="8.5" r="1.45"/><path d="m4.4 17 5.1-4.9 3.3 3.1 3.1-3.4 3.5 3.8"/></svg></button>
+<button type="button" data-note-tool="camera" title="Сделать фото" aria-label="Камера"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.1 8.4a2.1 2.1 0 0 1 2.1-2.1h2.4l1.5-2h5.8l1.5 2h2.4a2.1 2.1 0 0 1 2.1 2.1v9.2a2.1 2.1 0 0 1-2.1 2.1H5.2a2.1 2.1 0 0 1-2.1-2.1Z"/><circle cx="12" cy="13" r="3.15"/></svg></button>
 
 
-<button type="button" data-note-tool="voice" title="Голосовой ввод" aria-label="Микрофон"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12.5" rx="3"/><path d="M5.25 11.4a6.75 6.75 0 0 0 13.5 0M12 18.2V22m-4 0h8"/></svg></button>
+<button type="button" data-note-tool="voice" title="Голосовой ввод" aria-label="Микрофон"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.2" y="2.8" width="5.6" height="12.5" rx="2.8"/><path d="M5.7 11.6a6.3 6.3 0 0 0 12.6 0M12 18v3.1m-3.7 0h7.4"/></svg></button>
 
 <div id="svNoteFormatMenu" class="sv-note-format-menu" hidden role="group" aria-label="Оформление текста">
 <button type="button" data-note-format="heading">Заголовок</button><button type="button" data-note-format="bold"><b>Жирный</b></button><button type="button" data-note-format="italic"><i>Курсив</i></button><button type="button" data-note-format="underline"><u>Подчеркнуть</u></button>
 </div>
 <input id="svNotePhotoInput" type="file" accept="image/*" hidden>
 <input id="svNoteCameraInput" type="file" accept="image/*" capture="environment" hidden>
-<button type="button" data-note-tool="draw" title="Рисование" aria-label="Рисование"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18.1c2.9-2.2 4.3-11.5 6.2-11.5 2 0-2 11.8.7 11.8 2.5 0 4.6-10.4 6.4-10.4 2.1 0-1.4 10.6 1.5 10.6 1.1 0 2.1-1 3.2-2.5"/><path d="m18.1 5.1 1.8 1.8"/></svg></button>
+<button type="button" data-note-tool="draw" title="Рисование" aria-label="Рисование"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.3 18.4 15.9 6.8a2.2 2.2 0 0 1 3.1 3.1L7.4 21.5l-4 .8z"/><path d="m14.5 8.2 3.1 3.1M4.3 18.4l3.1 3.1"/></svg></button>
 </div>
 <button id="svNoteNewStandalone" class="sv-note-draw-standalone" type="button" title="Новая заметка" aria-label="Создать новую заметку">
-<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 4.5H5.7A2.7 2.7 0 0 0 3 7.2v11.1A2.7 2.7 0 0 0 5.7 21h11.1a2.7 2.7 0 0 0 2.7-2.7v-7.8"/><path d="m11 13 8.1-8.1a2 2 0 0 1 2.8 2.8L13.8 15.8 10 17z"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></svg>
 </button>
 </div>
 <button id="noteReviewCancel" type="button" hidden aria-hidden="true" tabindex="-1">Отмена</button>
