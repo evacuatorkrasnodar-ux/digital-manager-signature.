@@ -102,7 +102,14 @@ test('if a token is replaced while identity response is pending, deny the entire
       expiresAt:now+30_000});
   }});
   assert.equal(await f.bridge.getPersonalSession(),null);
-  const result=await f.bridge.workspaces.load();
+  // Repeat with a fresh fixture: a logout during the request must also
+  // leave the workspace client in personal ONE mode.
+  const g=fixture({customFetch:async({signOut})=>{
+    signOut();
+    return json({kind:'verified-person-session',
+      userId:'elena',sessionId:'verified-session-1',expiresAt:now+30_000});
+  }});
+  const result=await g.bridge.workspaces.load();
   assert.equal(result.status,'sign-in-required');
 });
 test('remote server refusal never turns into an offline workspace',async()=>{
