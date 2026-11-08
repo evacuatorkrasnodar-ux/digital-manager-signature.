@@ -72,6 +72,7 @@ class FakeNode {
  replaceChildren(...nodes){for(const c of this.children)c.parentNode=null;
   this.children=[];this.append(...nodes);}
  setAttribute(name,value){this.attributes[name]=value;}
+  removeAttribute(name){delete this.attributes[name];}
  addEventListener(key,fn){(this.listeners[key]??=[]).push(fn);}
  click(){for(const fn of this.listeners.click??[])fn({target:this});}
  remove(){if(!this.parentNode)return;const p=this.parentNode;
@@ -115,7 +116,7 @@ function label(root,text){
  assert.ok(hits.length,'Missing action '+text);
  return hits.at(-1);
 }
-function fixture({shareNavigator=null,deferImageLoad=false}={}){
+function fixture({shareNavigator=null,deferImageLoad=false,currentFile=null}={}){
  let picked=0,created=[],saved=[],revoked=[],pendingImages=[];
  const document={
   createElement:tag=>new FakeNode(tag),
@@ -147,7 +148,7 @@ function fixture({shareNavigator=null,deferImageLoad=false}={}){
  const root=new FakeNode('main');
  window.SEYVEO_DOCS_STUDIO.mount(root,{
   area:'personal',
-  getCurrentFile:()=>null,
+  getCurrentFile:()=>currentFile,
   onPick:()=>{picked++;},
   onImport:file=>{saved.push(file);},
   onSayvi:()=>{}
@@ -479,4 +480,68 @@ test('signature import refuses unsupported PDF and stale pending photo after lea
  f.resumeImages();
  assert.equal(await importing,false);
  assert.equal(find(f.root,n=>n.className==='sv-doc-sign-page-image').length,0);
+});
+
+test('printer has large illustrated stage and honest sample sheet before file selection',()=>{
+ const f=fixture();
+ label(f.root,'Печать').click();
+ const stage=find(f.root,n=>n.className==='sv-doc-print-stage');
+ assert.equal(stage.length,1);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-print-device').length,1);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-print-paper-example').length,1);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-print-faux-line').length,5);
+ assert.ok(find(f.root,n=>n.textContent==='Пример листа').length);
+ assert.equal(find(f.root,n=>n.tagName==='IFRAME').length,0);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-print-image').length,0);
+ const link=find(f.root,n=>n.tagName==='A'&&n.textContent==='Открыть для печати')[0];
+ assert.ok(link);
+ assert.equal(link.hidden,true);
+ assert.equal(link.attributes.href,undefined);
+ assert.equal(f.created.some(x=>x.blob.type==='application/pdf'),false);
+ assert.equal(f.saved.length,0);
+});
+test('the selected PDF replaces sample with an actual local preview and direct print link',()=>{
+ const file=new File(['%PDF-1.4\n1 0 obj\n'], 'report.pdf',{type:'application/pdf'});
+ const f=fixture({currentFile:file});
+ label(f.root,'Печать').click();
+ assert.equal(find(f.root,n=>n.className==='sv-doc-print-paper-example').length,0);
+ const preview=find(f.root,n=>n.className==='sv-doc-print-pdf');
+ assert.equal(preview.length,1);
+ assert.match(preview[0].src,/^blob:studio-/);
+ assert.equal(preview[0].title,'Предпросмотр PDF report.pdf');
+ const link=find(f.root,n=>n.tagName==='A'&&n.textContent==='Открыть для печати')[0];
+ assert.equal(link.hidden,false);
+ assert.equal(link.target,'_blank');
+ assert.equal(link.rel,'noopener noreferrer');
+ assert.equal(link.href,preview[0].src);
+ assert.ok(find(f.root,n=>n.textContent==='report.pdf').length);
+ assert.equal(f.saved.length,0);
+});
+test('choosing another image gives a true image preview and releases old decrypted preview URL',()=>{
+ const pdf=new File(['%PDF-1.4'], 'report.pdf',{type:'application/pdf'});
+ const f=fixture({currentFile:pdf});
+ label(f.root,'Печать').click();
+ const previous=find(f.root,n=>n.className==='sv-doc-print-pdf')[0].src;
+ const picker=find(f.root,n=>n.tagName==='INPUT'&&n.type==='file')[0];
+ picker.files=[new File([tinyJpeg],'photo.jpg',{type:'image/jpeg'})];
+ picker.emit('change');
+ const shown=find(f.root,n=>n.className==='sv-doc-print-image');
+ assert.equal(shown.length,1);
+ assert.equal(shown[0].alt,'Предпросмотр изображения photo.jpg');
+ assert.ok(f.revoked.includes(previous));
+ const link=find(f.root,n=>n.tagName==='A'&&n.textContent==='Открыть для печати')[0];
+ assert.equal(link.href,shown[0].src);
+ const status=find(f.root,n=>n.className==='sv-doc-tool-status');
+ assert.ok(status.some(x=>x.textContent.includes('системную печать')));
+});
+test('printer look remains scoped and never simulates selected printer or completed job',()=>{
+ const css=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
+ for(const cls of ['sv-doc-print-stage','sv-doc-print-device','sv-doc-print-paper',
+  'sv-doc-print-paper-example','sv-doc-print-paper-meta','sv-doc-print-controls',
+  'sv-doc-print-open'])
+  assert.ok(css.includes('#sayviSurfacePage .'+cls));
+ assert.match(css,/\.sv-doc-print-open\[hidden\]\{display:none!important\}/);
+ assert.doesNotMatch(css,/navHome|navManage|homeDock|sayviChatComposer/);
+ assert.doesNotMatch(studioCode,/печать выполнена|успешно распечатан|printerConnected/i);
+ assert.match(studioCode,/Принтер и параметры выбираются в системе/);
 });
