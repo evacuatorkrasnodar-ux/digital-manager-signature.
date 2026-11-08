@@ -375,5 +375,21 @@ $('notePaperRemovePhoto')?.addEventListener('click',()=>{
  if(!window.confirm('Убрать фотографию с листа? Штрихи останутся.'))return;
  data.photo='';changed=true;render();report('Фотография убрана.');
 });
-window.SEYVEO_PAPER=Object.freeze({open,preview:(target,p)=>{target.height=Math.round(target.width*normalize(p).height/W);paint(target,p,true)},share,print,normalize,importPhoto,compressPhoto});
+window.SEYVEO_PAPER=Object.freeze({
+ getBackground:()=>data.background,
+ setBackground:(background)=>{
+  if(background!=='dark'&&background!=='light')return;
+  if(data.background===background)return;
+  data.background=background;
+  if(background==='light'&&activeColor==='#f6f7fb')activeColor='#171e29';
+  else if(background==='dark'&&activeColor==='#171e29')activeColor='#f6f7fb';
+  changed=true;syncColorMenu();render();
+ },
+ openSayvi:()=>{
+  const chat=window.SEYVEO_CONVERSATION;
+  if(typeof chat?.open!=='function'){report('Сэйви пока недоступна.');return}
+  if(changed&&!window.confirm('Открыть Сэйви? Несохранённые изменения листа будут потеряны.'))return;
+  returnToList=false;dialog.close();chat.open();
+ },
+ open,preview:(target,p)=>{target.height=Math.round(target.width*normalize(p).height/W);paint(target,p,true)},share,print,normalize,importPhoto,compressPhoto});
 })();
