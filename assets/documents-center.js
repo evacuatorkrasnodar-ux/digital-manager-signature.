@@ -61,6 +61,8 @@ function makeIcon(kind){
  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
  p.setAttribute('d',kind==='lock'
   ? 'M5.5 10V7.5a6.5 6.5 0 0 1 13 0V10M5 10h14v11H5zM12 14v3'
+  : kind==='approval'
+    ? 'M5 3.5h9l5 5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2ZM14 3.5v5h5M7 14l2.5 2.5 5-5'
   : kind==='review'
     ? 'M4 3h11l4 4v5M15 3v5h4M4 3v18h10M7 12h8M7 16h5M19 19l3 3M21 16a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z'
     : 'M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4');
@@ -166,7 +168,7 @@ function draw(){
   const flowStats=el('span','sv-doc-flow-stats',
    working+' в работе'+(onSignature?' · '+onSignature+' на подпись':''));
   const arrow=el('span','sv-doc-flow-chevron','›');arrow.setAttribute('aria-hidden','true');
-  flowCard.append(flowCopy,flowStats,arrow);
+  flowCard.append(makeIcon('approval'),flowCopy,flowStats,arrow);
   host.append(flowCard);
  }
  if(view==='flow'){
