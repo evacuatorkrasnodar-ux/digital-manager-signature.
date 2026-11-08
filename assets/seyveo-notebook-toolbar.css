@@ -598,3 +598,162 @@ svg.sv-paper-signature .sv-paper-icon-core{
 #notePaperDialog.sv-paper-studio[open]:has(#notePaperSheet[data-ink-background="light"]) > .sv-paper-top > button{
  color:#202936!important;
 }
+
+
+/* SEYVEO Paper v12 · geometric studio.
+   Glass menu floats OUTSIDE the toolbar (the JS portals it to the dialog).
+   Balanced graphical controls replace the old flat three-row list. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
+ background:rgba(29,31,35,.82)!important;
+ border:1px solid rgba(232,241,252,.11)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi)::before{
+ width:34px!important;height:34px!important;border-radius:50%!important;
+ border:0!important;
+ background:rgba(224,230,240,.18)!important;
+ box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top #notePaperPatternTrigger.sv-paper-shape-selected::before{
+ opacity:1!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top #notePaperPatternTrigger.sv-paper-shape-selected{
+ color:#f8fbff!important;
+}
+#notePaperDialog.sv-paper-studio[open] > #notePaperPatternMenu.sv-paper-tool-menu:not([hidden]){
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ position:fixed!important;
+ left:50%!important;right:auto!important;bottom:auto!important;
+ top:calc(65px + env(safe-area-inset-top,0px))!important;
+ transform:translateX(-50%)!important;
+ z-index:100!important;
+ width:min(334px,calc(100vw - 24px))!important;
+ min-width:0!important;max-width:calc(100vw - 24px)!important;
+ max-height:calc(100dvh - 142px - env(safe-area-inset-top,0px))!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ gap:0!important;margin:0!important;padding:13px!important;
+ border:1px solid rgba(223,236,249,.14)!important;
+ border-radius:24px!important;
+ color:#ecf2f9!important;
+ background:linear-gradient(150deg,rgba(51,57,65,.96),rgba(27,31,37,.98))!important;
+ -webkit-backdrop-filter:blur(28px) saturate(120%)!important;
+ backdrop-filter:blur(28px) saturate(120%)!important;
+ box-shadow:0 18px 46px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.075)!important;
+ overscroll-behavior:contain!important;
+ scrollbar-width:none;
+}
+#notePaperDialog.sv-paper-studio[open] > #notePaperPatternMenu::-webkit-scrollbar{display:none!important}
+#notePaperDialog.sv-paper-studio[open] > #notePaperPatternMenu.sv-paper-tool-menu[hidden]{
+ display:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-head{
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ gap:4px!important;padding:0 5px 13px!important;margin:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-head>span{
+ display:block!important;font-size:9px!important;font-weight:700!important;
+ color:#9baebf!important;letter-spacing:.12em!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-head>strong{
+ display:block!important;font-size:16px!important;font-weight:620!important;
+ color:#f3f6fb!important;letter-spacing:-.02em!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-section{
+ display:block!important;padding:10px 0 12px!important;
+ border-top:1px solid rgba(227,237,248,.09)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-section-label{
+ display:block!important;margin:0 5px 9px!important;
+ color:#bdc9d6!important;font-size:10px!important;
+ font-weight:625!important;letter-spacing:.04em!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid){
+ box-sizing:border-box!important;display:grid!important;align-items:stretch!important;
+ width:100%!important;min-width:0!important;
+ grid-auto-flow:row!important;gap:7px!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-layouts{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-shape-grid{
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:6px!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ height:70px!important;min-height:70px!important;
+ margin:0!important;padding:7px 1px!important;
+ border:1px solid rgba(235,243,252,.045)!important;
+ border-radius:15px!important;
+ background:rgba(215,228,246,.055)!important;
+ box-shadow:none!important;
+ color:#d9e3ef!important;
+ font:inherit!important;font-size:10px!important;font-weight:540!important;
+ line-height:1.1!important;white-space:nowrap!important;
+ -webkit-tap-highlight-color:transparent!important;
+ transition:background .14s ease,border-color .14s ease!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button>svg{
+ box-sizing:border-box!important;display:block!important;flex:0 0 24px!important;
+ width:24px!important;height:24px!important;
+ min-width:24px!important;min-height:24px!important;
+ max-width:24px!important;max-height:24px!important;
+ margin:0!important;padding:0!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;pointer-events:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button svg [fill="currentColor"]{
+ fill:currentColor!important;stroke:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button span{
+ display:block!important;width:auto!important;max-width:100%!important;
+ margin:0!important;padding:0!important;
+ font-size:10px!important;font-weight:540!important;line-height:1.1!important;
+ color:inherit!important;white-space:nowrap!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button[aria-pressed="true"]{
+ background:rgba(218,232,249,.16)!important;
+ border-color:rgba(240,246,252,.16)!important;
+ color:#fff!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.05)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button:active{
+ background:rgba(221,235,249,.22)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-hint{
+ display:block!important;margin:0!important;padding:2px 5px 3px!important;
+ color:#a3b2c2!important;font-size:10px!important;line-height:1.5!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage #notePaperSheet[data-pattern="grid"]{
+ background-image:linear-gradient(to right,rgba(225,233,244,.10) 1px,transparent 1px),
+                  linear-gradient(to bottom,rgba(225,233,244,.10) 1px,transparent 1px)!important;
+ background-size:24px 24px!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage #notePaperSheet[data-pattern="grid"][data-ink-background="light"]{
+ background-image:linear-gradient(to right,rgba(70,90,115,.15) 1px,transparent 1px),
+                  linear-gradient(to bottom,rgba(70,90,115,.15) 1px,transparent 1px)!important;
+}
+@media(max-width:355px){
+ #notePaperDialog.sv-paper-studio[open] > #notePaperPatternMenu.sv-paper-tool-menu:not([hidden]){
+  width:calc(100vw - 18px)!important;max-width:calc(100vw - 18px)!important;
+  padding:10px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button{
+  height:64px!important;min-height:64px!important;padding:6px 0!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button span{
+  font-size:9px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button{
+  transition:none!important;
+ }
+}
