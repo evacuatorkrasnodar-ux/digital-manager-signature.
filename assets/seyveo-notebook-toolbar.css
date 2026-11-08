@@ -896,3 +896,202 @@ svg.sv-paper-signature .sv-paper-icon-core{
 :is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperPatternTrigger)[data-sv-selected="false"]::before{
  opacity:0!important;
 }
+
+
+/* v16 · SEYVEO Paper Color Lab, numbered gradient and HEX composer.
+   Calm Black Velvet finish; no white halos on color-chip selection. */
+#notePaperDialog.sv-paper-studio[open] #notePaperColorTrigger{
+ border:0!important;background:transparent!important;
+ box-shadow:none!important;
+ width:36px!important;height:36px!important;
+ min-width:36px!important;min-height:36px!important;
+ padding:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorTrigger .paper-color-dot{
+ width:27px!important;height:27px!important;
+ border:1px solid rgba(236,242,248,.10)!important;
+ border-radius:50%!important;
+ outline:0!important;
+ background:var(--sv-active-ink,conic-gradient(#e73b39,#ffb525,#2fb35f,#14b4cd,#6650d2,#bd397b,#e73b39))!important;
+ background-clip:padding-box!important;
+ box-shadow:none!important;
+ transform:none!important;
+ filter:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorTrigger :is(::before,::after){box-shadow:none!important}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-swatches>button{
+ background:transparent!important;
+ border:0!important;outline:0!important;
+ box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-swatches>button::before{
+ width:25px!important;height:25px!important;
+ outline:0!important;
+ border:1px solid rgba(16,24,33,.12)!important;
+ border-radius:50%!important;
+ box-shadow:none!important;transform:none!important;filter:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-swatches>button[aria-pressed="true"]::before{
+ width:25px!important;height:25px!important;
+ border:1px solid rgba(30,36,46,.28)!important;
+ outline:0!important;outline-offset:0!important;
+ box-shadow:0 0 0 1.4px rgba(213,222,233,.54)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save{
+ box-sizing:border-box!important;
+ width:47px!important;height:47px!important;
+ min-width:47px!important;min-height:47px!important;
+ border:1px solid rgba(235,241,248,.10)!important;
+ border-radius:50%!important;
+ background:rgba(155,169,187,.21)!important;
+ color:#f1f5f9!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save:active{
+ background:rgba(173,187,202,.32)!important;
+}
+#notePaperDialog.sv-paper-studio[open] .paper-color-control #notePaperColorMenu:not([hidden]){
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ gap:0!important;
+ position:absolute!important;
+ bottom:calc(100% + 9px)!important;
+ top:auto!important;left:0!important;right:auto!important;
+ width:min(310px,calc(100vw - 23px))!important;
+ min-width:0!important;max-width:calc(100vw - 23px)!important;
+ max-height:min(480px,calc(100dvh - 115px))!important;
+ overflow:auto!important;
+ padding:14px!important;margin:0!important;
+ border:1px solid rgba(224,234,245,.12)!important;
+ border-radius:23px!important;
+ background:linear-gradient(145deg,rgba(48,53,61,.98),rgba(27,31,37,.985))!important;
+ -webkit-backdrop-filter:blur(28px) saturate(115%)!important;
+ backdrop-filter:blur(28px) saturate(115%)!important;
+ box-shadow:0 18px 45px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.07)!important;
+ color:#e8eff7!important;
+ z-index:80!important;
+ scrollbar-width:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .paper-color-control #notePaperColorMenu::-webkit-scrollbar{
+ display:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-head{
+ display:flex!important;flex-direction:column!important;gap:4px!important;
+ padding:2px 3px 12px!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-head span{
+ color:#a5b5c6!important;font-size:9px!important;font-weight:700!important;letter-spacing:.12em!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-head strong{
+ color:#f3f7fb!important;font-size:16px!important;font-weight:610!important;letter-spacing:-.02em!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-section-caption{
+ display:block!important;align-self:stretch!important;
+ border-top:1px solid rgba(228,237,247,.075)!important;
+ padding:12px 3px 8px!important;
+ font-size:10px!important;font-weight:630!important;
+ color:#b9c6d4!important;letter-spacing:.035em!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid{
+ display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;
+ gap:4px!important;width:100%!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid>button{
+ width:100%!important;max-width:100%!important;
+ min-width:0!important;height:36px!important;min-height:36px!important;
+ padding:0!important;border-radius:12px!important;
+ display:grid!important;place-items:center!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid>button[aria-pressed="true"]{
+ background:rgba(219,231,246,.12)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid .paper-swatch{
+ width:24px!important;height:24px!important;
+ border-radius:50%!important;border:1px solid rgba(245,248,251,.10)!important;
+ box-shadow:none!important;outline:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets{
+ width:100%!important;display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets>button{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;gap:6px!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ height:68px!important;min-height:68px!important;margin:0!important;padding:7px 5px!important;
+ background:rgba(215,229,247,.065)!important;
+ border:1px solid transparent!important;border-radius:14px!important;
+ color:#e2e9f2!important;box-shadow:none!important;
+ font:inherit!important;font-size:10px!important;font-weight:610!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets>button[aria-pressed="true"]{
+ background:rgba(214,229,246,.14)!important;
+ border-color:rgba(236,246,252,.18)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-chip{
+ display:block!important;width:51px!important;height:27px!important;
+ border-radius:9px!important;
+ background:linear-gradient(115deg,var(--grad-a),var(--grad-b))!important;
+ box-shadow:none!important;border:1px solid rgba(255,255,255,.08)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets>button>span:last-child{
+ display:block!important;color:inherit!important;font-size:10px!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-manual{
+ display:flex!important;flex-direction:column!important;gap:8px!important;
+ align-items:stretch!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field{
+ display:grid!important;grid-template-columns:56px 34px minmax(0,1fr)!important;
+ align-items:center!important;gap:8px!important;
+ width:100%!important;min-height:37px!important;color:#c6d2df!important;
+ font:inherit!important;font-size:11px!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field>span{
+ font-size:11px!important;color:#c6d2df!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field input[type=color]{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;
+ display:block!important;width:33px!important;height:33px!important;
+ padding:3px!important;margin:0!important;
+ border:1px solid rgba(238,246,254,.13)!important;
+ border-radius:10px!important;background:rgba(232,241,252,.08)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field input[type=color]::-webkit-color-swatch-wrapper{
+ padding:0!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field input[type=color]::-webkit-color-swatch{
+ border:0!important;border-radius:6px!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field input[type=text]{
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;
+ height:34px!important;padding:0 10px!important;
+ border:1px solid rgba(227,238,248,.10)!important;
+ border-radius:10px!important;background:rgba(8,15,23,.25)!important;
+ color:#f3f7fb!important;outline:0!important;
+ font:inherit!important;font-size:12px!important;font-variant-numeric:tabular-nums!important;
+ letter-spacing:.025em!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-live-preview{
+ display:block!important;height:25px!important;border-radius:10px!important;
+ background:linear-gradient(115deg,#e9eff8,#809ebd)!important;
+ background-clip:padding-box!important;
+ border:1px solid rgba(235,244,255,.10)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperColorMenu #noteGradientApply.sv-gradient-apply{
+ box-sizing:border-box!important;width:100%!important;
+ height:40px!important;min-height:40px!important;
+ margin:0!important;padding:0 10px!important;
+ border:1px solid rgba(225,239,251,.15)!important;
+ border-radius:13px!important;background:rgba(211,226,242,.17)!important;
+ color:#f4f8fc!important;font:inherit!important;
+ font-size:12px!important;font-weight:610!important;
+ box-shadow:none!important;
+}
+@media(max-width:355px){
+ #notePaperDialog.sv-paper-studio[open] .paper-color-control #notePaperColorMenu:not([hidden]){
+  width:calc(100vw - 16px)!important;max-width:calc(100vw - 16px)!important;
+ }
+}
