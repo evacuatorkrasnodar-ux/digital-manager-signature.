@@ -135,7 +135,7 @@ test('approved glass and core mark are scoped: no dock edits, no duplicate conne
  assert.doesNotMatch(code,/function connectorsPanel\(|function connectorRow\(|integrationsOpen/);
  assert.match(code,/hub\.open\('services'\)/);
  assert.match(html,/assets\/documents-center\.css\?v=15/);
- assert.match(html,/assets\/documents-center\.js\?v=17/);
+ assert.match(html,/assets\/documents-center\.js\?v=18/);
  assert.match(html,/assets\/seyveo-document-flow\.css\?v=11/);
  assert.match(html,/assets\/seyveo-document-flow\.js\?v=8/);
  assert.match(html,/assets\/sayvi-surfaces\.js\?v=44/);
