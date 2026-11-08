@@ -2464,44 +2464,79 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <button id="noteModeScan" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M7 3.5h7l4 4V13M7 3.5a2 2 0 0 0-2 2V18a2 2 0 0 0 2 2h5M14 3.5v4h4M8.5 11h5M8.5 14.5h3"/><circle cx="17" cy="17" r="3.5"/><path d="m19.7 19.7 2 2"/></svg></span><span class="paper-choice-copy"><strong>Фото → текст</strong><small>Сфотографировать или выбрать файл</small></span></button>
 </div>
 </dialog>
-<dialog id="notePaperDialog" class="notes-dialog paper-editor-dialog" aria-labelledby="notePaperTitle">
-<button id="notePaperBack" type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Вернуться к записям"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
-<div class="paper-head"><h2 id="notePaperTitle">Чистый лист</h2></div>
-<div class="paper-toolbar" aria-label="Инструменты письма">
-<div class="paper-toolbar-primary">
-<button type="button" data-paper-tool="pen" aria-pressed="true" aria-label="Ручка" title="Ручка"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.7-1 10.2-10.2-3.7-3.7L5 15.3 4 20Z"/><path d="m13.8 6.6 3.7 3.7"/></svg></button>
-<button type="button" data-paper-tool="pencil" aria-pressed="false" aria-label="Карандаш" title="Карандаш"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16 10.8-10.8 4 4L8 20l-4 1 0-5Z"/><path d="m12 8 4 4M4 21l4-1"/></svg></button>
-<button type="button" data-paper-tool="eraser" aria-pressed="false" aria-label="Ластик" title="Ластик"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 14 8-8a2 2 0 0 1 3 0l5 5a2 2 0 0 1 0 3l-6 6H9L4 15.5a1 1 0 0 1 0-1.5Z"/><path d="m9 19 6-6"/></svg></button>
-<button id="notePaperUndo" type="button" aria-label="Отменить последний штрих" title="Отменить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8 5 12l4 4"/><path d="M5 12h10a4 4 0 1 1 0 8"/></svg></button>
-<div class="paper-pattern-control">
-<button id="notePaperPatternTrigger" class="paper-pattern-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="notePaperPatternMenu" aria-label="Выбрать тип листа"><span id="notePaperPatternLabel">Чистая</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 9.5 5.5 5 5.5-5"/></svg></button>
-<div id="notePaperPatternMenu" class="paper-pattern-menu" role="group" aria-label="Тип листа" hidden>
-<button type="button" data-paper-pattern="blank" aria-pressed="true">Чистая</button>
-<button type="button" data-paper-pattern="lines" aria-pressed="false">Линейка</button>
-<button type="button" data-paper-pattern="dots" aria-pressed="false">Точки</button>
+<dialog id="notePaperDialog" class="notes-dialog paper-editor-dialog sv-paper-studio" aria-labelledby="notePaperTitle">
+<h2 id="notePaperTitle" class="sv-paper-visually-hidden">Чистый лист</h2>
+<header class="sv-paper-top">
+ <button id="notePaperBack" type="button" class="sv-paper-back sv-nav-back" aria-label="Вернуться в Блокнот"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+ <div class="paper-toolbar" aria-label="Инструменты рисования">
+  <div class="paper-toolbar-primary" role="group" aria-label="Инструмент">
+   <button type="button" data-paper-tool="pen" aria-pressed="true" aria-label="Ручка" title="Ручка"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 17 10-10a2.4 2.4 0 0 1 3.4 3.4l-10 10-5 1 1.6-4.4Z"/><path d="m13 9 3.7 3.7"/></svg></button>
+   <button type="button" data-paper-tool="pencil" aria-pressed="false" aria-label="Карандаш" title="Карандаш"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19l3.5-1L18 7.5 15 4.5 4.5 15 4 19Z"/><path d="M13 6.5 16 9.5M4 21h16"/></svg></button>
+   <button type="button" data-paper-tool="eraser" aria-pressed="false" aria-label="Ластик" title="Ластик"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 14 8-8a2 2 0 0 1 2.8 0l4.2 4.2a2 2 0 0 1 0 2.8L13 20H9l-4-4a1.5 1.5 0 0 1 0-2Z"/><path d="m9 19 7-7"/></svg></button>
+  </div>
+ </div>
+ <button id="notePaperUndo" type="button" class="sv-paper-undo" aria-label="Отменить последний штрих" title="Отменить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8 5 12l4 4"/><path d="M5 12h10a4 4 0 1 1 0 8"/></svg></button>
+</header>
+<div id="notePaperStage" class="paper-stage sv-paper-stage">
+ <div class="sv-paper-size" role="group" aria-label="Толщина кисти">
+  <input id="notePaperWidth" type="range" min="1" max="28" value="5" step="1" orient="vertical" aria-label="Толщина линии" aria-valuetext="5">
+ </div>
+ <div id="notePaperSheet" class="paper-sheet" data-pattern="blank" data-ink-background="dark">
+  <img id="notePaperPhotoPreview" class="paper-photo-image" alt="" hidden>
+  <canvas id="notePaperCanvas" width="840" height="1188" aria-label="Холст для рисования пальцем или стилусом"></canvas>
+ </div>
 </div>
-<select id="notePaperPattern" aria-label="Тип бумаги" hidden tabindex="-1"><option value="blank">Чистая</option><option value="lines">Линейка</option><option value="dots">Точки</option></select>
+<footer class="sv-paper-bottom">
+ <div class="sv-paper-palette" role="group" aria-label="Цвет рисования">
+  <div class="paper-color-control">
+   <button id="notePaperColorTrigger" type="button" aria-label="Дополнительные цвета" aria-expanded="false" aria-controls="notePaperColorMenu" aria-haspopup="true" title="Цвета"><span id="notePaperColorDot" class="paper-color-dot" aria-hidden="true"></span></button>
+   <div id="notePaperColorMenu" class="paper-color-menu" role="group" aria-label="Дополнительные цвета" hidden>
+    <button type="button" data-paper-color="#171e29" aria-label="Чёрный" aria-pressed="false"><span class="paper-swatch" style="--swatch:#171e29"></span></button>
+    <button type="button" data-paper-color="#556174" aria-label="Графит" aria-pressed="false"><span class="paper-swatch" style="--swatch:#556174"></span></button>
+    <button type="button" data-paper-color="#27609b" aria-label="Тёмно-синий" aria-pressed="false"><span class="paper-swatch" style="--swatch:#27609b"></span></button>
+    <button type="button" data-paper-color="#c54a51" aria-label="Малиновый" aria-pressed="false"><span class="paper-swatch" style="--swatch:#c54a51"></span></button>
+    <button type="button" data-paper-color="#258463" aria-label="Зелёный" aria-pressed="false"><span class="paper-swatch" style="--swatch:#258463"></span></button>
+    <button type="button" data-paper-color="#7954a3" aria-label="Фиолетовый" aria-pressed="false"><span class="paper-swatch" style="--swatch:#7954a3"></span></button>
+   </div>
+  </div>
+  <div class="sv-paper-swatches">
+   <button type="button" data-paper-color="#f6f7fb" aria-pressed="true" aria-label="Белый" style="--swatch:#f6f7fb"></button>
+   <button type="button" data-paper-color="#8e99aa" aria-pressed="false" aria-label="Серый" style="--swatch:#8e99aa"></button>
+   <button type="button" data-paper-color="#aa5c22" aria-pressed="false" aria-label="Коричневый" style="--swatch:#aa5c22"></button>
+   <button type="button" data-paper-color="#e73b39" aria-pressed="false" aria-label="Красный" style="--swatch:#e73b39"></button>
+   <button type="button" data-paper-color="#ff7a27" aria-pressed="false" aria-label="Оранжевый" style="--swatch:#ff7a27"></button>
+   <button type="button" data-paper-color="#ffb525" aria-pressed="false" aria-label="Жёлтый" style="--swatch:#ffb525"></button>
+   <button type="button" data-paper-color="#2fb35f" aria-pressed="false" aria-label="Зелёный" style="--swatch:#2fb35f"></button>
+   <button type="button" data-paper-color="#0c9999" aria-pressed="false" aria-label="Бирюзовый" style="--swatch:#0c9999"></button>
+   <button type="button" data-paper-color="#14b4cd" aria-pressed="false" aria-label="Голубой" style="--swatch:#14b4cd"></button>
+   <button type="button" data-paper-color="#3b77df" aria-pressed="false" aria-label="Синий" style="--swatch:#3b77df"></button>
+   <button type="button" data-paper-color="#6650d2" aria-pressed="false" aria-label="Индиго" style="--swatch:#6650d2"></button>
+   <button type="button" data-paper-color="#983cde" aria-pressed="false" aria-label="Фиолетовый" style="--swatch:#983cde"></button>
+   <button type="button" data-paper-color="#bd397b" aria-pressed="false" aria-label="Розовый" style="--swatch:#bd397b"></button>
+  </div>
+  <button id="notePaperSave" type="button" class="sv-paper-save" aria-label="Сохранить рисунок" title="Сохранить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5.5 12.2 4.3 4.3 8.7-9"/></svg></button>
+ </div>
+</footer>
+<div class="sv-paper-extras">
+ <button id="notePaperMore" type="button" class="sv-paper-more" aria-label="Дополнительные инструменты листа" aria-controls="notePaperExtras" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button>
+ <div id="notePaperExtras" class="sv-paper-extras-panel" hidden>
+  <div class="paper-toolbar-secondary">
+   <div class="paper-pattern-control">
+    <button id="notePaperPatternTrigger" class="paper-pattern-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="notePaperPatternMenu" aria-label="Выбрать тип листа"><span id="notePaperPatternLabel">Чистая</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 9.5 5.5 5 5.5-5"/></svg></button>
+    <div id="notePaperPatternMenu" class="paper-pattern-menu" role="group" aria-label="Тип листа" hidden>
+     <button type="button" data-paper-pattern="blank" aria-pressed="true">Чистая</button>
+     <button type="button" data-paper-pattern="lines" aria-pressed="false">Линейка</button>
+     <button type="button" data-paper-pattern="dots" aria-pressed="false">Точки</button>
+    </div>
+    <select id="notePaperPattern" aria-label="Тип бумаги" hidden tabindex="-1"><option value="blank">Чистая</option><option value="lines">Линейка</option><option value="dots">Точки</option></select>
+   </div>
+   <button id="notePaperAddPhoto" type="button" aria-label="Вставить фотографию на лист" title="Вставить фото"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.6"/><path d="m5 18 5-5 3 3 3-4 4 5"/></svg></button>
+   <input id="notePaperPhotoFile" class="paper-photo-input" type="file" accept="image/*" aria-label="Выбрать фотографию">
+   <button id="notePaperRemovePhoto" type="button" hidden aria-label="Убрать фотографию с листа" title="Убрать фото"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9 7V4.5h6V7M7 7l.8 12.5h8.4L17 7M10 10.5v6M14 10.5v6"/></svg></button>
+  </div>
+ </div>
 </div>
-</div>
-<div class="paper-toolbar-secondary">
-<button id="notePaperAddPhoto" type="button" aria-label="Вставить фотографию на лист" title="Вставить фото"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.6"/><path d="m5 18 5-5 3 3 3-4 4 5"/></svg></button>
-<input id="notePaperPhotoFile" class="paper-photo-input" type="file" accept="image/*" aria-label="Выбрать фотографию">
-<div class="paper-color-control">
-<button id="notePaperColorTrigger" type="button" aria-label="Выбрать цвет пера" aria-expanded="false" aria-controls="notePaperColorMenu" aria-haspopup="true" title="Цвет пера"><span id="notePaperColorDot" class="paper-color-dot" aria-hidden="true"></span></button>
-<div id="notePaperColorMenu" class="paper-color-menu" role="group" aria-label="Цвет пера" hidden>
-<button type="button" data-paper-color="#171e29" aria-label="Чёрный" aria-pressed="true"><span class="paper-swatch" style="--swatch:#171e29"></span></button>
-<button type="button" data-paper-color="#556174" aria-label="Графит" aria-pressed="false"><span class="paper-swatch" style="--swatch:#556174"></span></button>
-<button type="button" data-paper-color="#27609b" aria-label="Синий" aria-pressed="false"><span class="paper-swatch" style="--swatch:#27609b"></span></button>
-<button type="button" data-paper-color="#c54a51" aria-label="Красный" aria-pressed="false"><span class="paper-swatch" style="--swatch:#c54a51"></span></button>
-<button type="button" data-paper-color="#258463" aria-label="Зелёный" aria-pressed="false"><span class="paper-swatch" style="--swatch:#258463"></span></button>
-<button type="button" data-paper-color="#7954a3" aria-label="Фиолетовый" aria-pressed="false"><span class="paper-swatch" style="--swatch:#7954a3"></span></button>
-</div>
-</div>
-<button id="notePaperRemovePhoto" type="button" hidden aria-label="Убрать фотографию с листа" title="Убрать фото"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9 7V4.5h6V7M7 7l.8 12.5h8.4L17 7M10 10.5v6M14 10.5v6"/></svg></button>
-</div>
-</div>
-<div id="notePaperStage" class="paper-stage"><div id="notePaperSheet" class="paper-sheet" data-pattern="blank"><img id="notePaperPhotoPreview" class="paper-photo-image" alt="" hidden><canvas id="notePaperCanvas" width="840" height="1188" aria-label="Лист для письма пальцем или стилусом"></canvas></div></div>
-<div class="paper-actions"><button id="notePaperCancel" class="btn" type="button">Отмена</button><button id="notePaperSave" class="btn primary" type="button">Сохранить</button></div>
+<button id="notePaperCancel" type="button" hidden>Отмена</button>
 <div id="notePaperStatus" class="paper-status" role="status" aria-live="polite"></div>
 </dialog>
 <dialog id="noteScanDialog" class="notes-dialog paper-scan-dialog" aria-labelledby="noteScanTitle">
