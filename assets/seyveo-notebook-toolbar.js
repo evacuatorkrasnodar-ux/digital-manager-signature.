@@ -86,6 +86,17 @@
  dialog.appendChild(settings);
  dialog.appendChild(paper);
  bar.replaceChildren(pen,eraser,duplicate,trigger,sheetButton,photo,sayvi);
+ // V23: wholly new isolated seven-button layout. Remove the old toolbar
+ // and old sheet-trigger classes so years of legacy selectors cannot
+ // reposition a glyph or draw phantom circles during a long press.
+ bar.classList.remove('paper-toolbar-primary');
+ bar.classList.add('sv-inkbar');
+ sheetButton.classList.remove('paper-pattern-trigger');
+ for(const button of [pen,eraser,duplicate,trigger,sheetButton,photo,sayvi]){
+  button.classList.add('sv-inkbar-tool');
+  button.style.removeProperty('transform');
+ }
+
  dialog.appendChild(file);
 
  // SEYVEO signature ink · intentionally drawn as one six-symbol family.
