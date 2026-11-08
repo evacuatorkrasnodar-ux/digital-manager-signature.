@@ -41,7 +41,8 @@ assert.match(workJs,/const heading=document\.createElement\('header'\)/);
 assert.match(workJs,/const createMenu=document\.getElementById\('calendarCreateMenu'\)/);
 assert.match(workJs,/calendarAdd\?\.click\(\)/,
  'The single visible + delegates calendar actions to the original controller');
-assert.match(workCss,/#svWorkHeader #calendarCreateMenu:not\(\[hidden\]\)/);
+assert.match(workCss,/#svWorkShell > #calendarCreateMenu\{order:0!important\}/,
+ 'Calendar creation choices must remain in the shared work shell flow, directly beneath the stable header');
 assert.doesNotMatch(workCss,/top:calc\(100% \+ 70px\)/,
  'The popover must remain anchored to the real shared header');
 assert.match(workCss,/--sv-ui-glass/);
