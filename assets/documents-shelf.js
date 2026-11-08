@@ -65,7 +65,7 @@ function itemsFor(state){
  })):[];
  const selected=state.options.getSelected?.();
  if(selected instanceof File){
-  records.unshift({id:'selected',name:selected.name,createdAt:selected.lastModified||Date.now(),saved:false,file:selected});
+  records.unshift({id:'selected',name:selected.name,createdAt:Date.now(),saved:false,file:selected});
  }
  return records.sort((a,b)=>b.createdAt-a.createdAt);
 }
@@ -124,9 +124,9 @@ function paint(state){
    state.recentGrid.append(card);
   }
  }
- state.showAll.hidden=!hasMore&&state.filter==='all'&&!state.expanded&&state.unlocked;
- // In a locked archive, "Все файлы" opens the existing password screen.
- if(!state.unlocked)state.showAll.hidden=false;
+ // Keep a stable «Все файлы» destination even with just one document.
+ // It opens the protected archive when there are no more tiles to expand.
+ state.showAll.hidden=false;
  state.foldersGrid.replaceChildren();
  for(const category of categories){
   const count=all.filter(item=>classify(item.name)===category.id).length;
@@ -180,7 +180,9 @@ function mount(parent,options={}){
  showAll.addEventListener('click',()=>{
   if(state!==active)return;
   if(!state.unlocked){openArchive(state);return;}
-  state.filter='all';state.expanded=!state.expanded;paint(state);
+  if(state.filter!=='all'){state.filter='all';state.expanded=false;paint(state);return;}
+  if(itemsFor(state).length<=4&&!state.expanded){openArchive(state);return;}
+  state.expanded=!state.expanded;paint(state);
  });
  header.append(showAll);
  const recentGrid=el('div','sv-doc-recent-grid');
@@ -205,6 +207,10 @@ function destroy(){
 document.addEventListener('seyveo:documents-vault-changed',event=>{
  if(active&&(!event.detail?.area||event.detail.area===active.options.area))refresh();
 });
-window.addEventListener('pagehide',destroy);
+window.addEventListener('pagehide',()=>{
+ if(!active)return;
+ active.token++;active.records=[];active.unlocked=false;paint(active);
+});
+window.addEventListener('pageshow',()=>{if(active)refresh();});
 window.SEYVEO_DOCUMENT_SHELF=Object.freeze({mount,refresh,destroy});
 })();
