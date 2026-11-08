@@ -131,11 +131,14 @@ test('approved glass and core mark are scoped: no dock edits, no duplicate conne
  assert.doesNotMatch(css,/#(?:navHome|navTasks|navManage)|footer\.dock/);
  assert.doesNotMatch(code,/function connectorsPanel\(|function connectorRow\(|integrationsOpen/);
  assert.match(code,/hub\.open\('services'\)/);
- assert.match(html,/assets\/documents-center\.css\?v=13/);
- assert.match(html,/assets\/documents-center\.js\?v=14/);
+ assert.match(html,/assets\/documents-center\.css\?v=14/);
+ assert.match(html,/assets\/documents-center\.js\?v=15/);
  assert.match(html,/assets\/seyveo-document-flow\.css\?v=11/);
  assert.match(html,/assets\/seyveo-document-flow\.js\?v=8/);
  assert.match(html,/assets\/sayvi-surfaces\.js\?v=44/);
+ assert.match(html,/assets\/seyveo-docs-studio\.css\?v=1/);
+ assert.match(html,/assets\/seyveo-docs-export\.js\?v=1/);
+ assert.match(html,/assets\/seyveo-docs-studio\.js\?v=2/);
  assert.match(html,/assets\/seyveo-smart-connections\.js/);
 });
 
@@ -174,4 +177,19 @@ test('approval workflow keeps warning visible and avoids duplicate numeric score
  assert.doesNotMatch(flow,/host\.append\(\$\('p','svdf-compact-status'/);
  assert.match(flowCss,/var\(--sv-doc-wash,var\(--card\)\)/);
  assert.match(flowCss,/svdf-lead h2\{font-size:21px/);
+});
+
+test('Docs quick actions are mounted by the studio when installed, not duplicated',()=>{
+ const stub=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.js'),'utf8');
+ assert.match(code,/SEYVEO_DOCS_STUDIO\?\.mount\?\./);
+ assert.match(code,/onPick:\(\)=>picker\.click\(\)/);
+ assert.match(code,/onImport:file=>/);
+ assert.match(code,/studioReady\)host\.append\(tools\)/);
+ assert.match(stub,/Сканировать/);
+ assert.match(stub,/Добавить файл/);
+ assert.match(stub,/Сохранить PDF/);
+ assert.match(stub,/Сохранить Word/);
+ assert.match(stub,/Подписать последний скан/);
+ assert.match(stub,/Открыть для печати/);
+ assert.match(code,/SEYVEO_DOCS_STUDIO\?\.reset\?\.\(\)/);
 });
