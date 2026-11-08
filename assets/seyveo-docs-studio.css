@@ -760,3 +760,85 @@
  #sayviSurfacePage .sv-doc-tool-grid{gap:0}
  #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button{padding-inline:0;font-size:9px}
 }
+
+/* SEYVEO Docs / unified fine-line pictograms.
+   Glass is confined to these quick actions; never repaint the global dock. */
+#sayviSurfacePage .sv-doc-tool-grid{
+ grid-template-columns:repeat(5,minmax(0,1fr));
+ column-gap:clamp(1px,.7vw,6px);
+ align-items:start;
+ padding-inline:2px;
+}
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button{
+ align-items:center;
+ gap:9px;
+ min-width:0;
+ min-height:103px;
+ font-size:clamp(9px,2.55vw,11px);
+ line-height:1.25;
+ font-weight:560;
+ letter-spacing:-.016em;
+ text-wrap:balance;
+}
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button .sv-doc-art{
+ width:clamp(44px,12.9vw,57px);
+ height:clamp(44px,12.9vw,57px);
+ padding:clamp(9px,2.5vw,12px);
+ border-radius:17px;
+ border:1px solid color-mix(in srgb,var(--text) 12%,var(--soft-line) 38%);
+ background:linear-gradient(152deg,
+  color-mix(in srgb,var(--text) 11%,transparent) 0%,
+  var(--sv-doc-picked,var(--card2)) 44%,
+  color-mix(in srgb,var(--text) 4%,transparent) 100%);
+ box-shadow:
+  inset 0 1px 0 color-mix(in srgb,var(--text) 15%,transparent),
+  inset 0 -1px 0 color-mix(in srgb,var(--text) 3%,transparent),
+  0 5px 16px rgba(0,0,0,.08);
+ -webkit-backdrop-filter:blur(15px) saturate(1.1);
+ backdrop-filter:blur(15px) saturate(1.1);
+ opacity:1;
+}
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-art svg,
+#sayviSurfacePage .sv-doc-tool-scan>.sv-doc-art svg{
+ overflow:visible;
+ stroke:currentColor;
+ filter:drop-shadow(0 0 1px color-mix(in srgb,var(--text) 22%,transparent));
+}
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-art svg g{
+ stroke-width:2.65;
+}
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-art .sv-doc-art-accent{
+ stroke-width:2.65;
+ stroke:currentColor;
+}
+#sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button:active .sv-doc-art{
+ transform:scale(.96);
+ opacity:.88;
+}
+#sayviSurfacePage .sv-doc-tool-scan{
+ background:linear-gradient(145deg,
+  color-mix(in srgb,var(--text) 7%,transparent),
+  var(--sv-doc-wash,var(--card)) 62%,
+  color-mix(in srgb,var(--text) 3%,transparent));
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 10%,transparent);
+}
+#sayviSurfacePage .sv-doc-tool-scan>.sv-doc-art{
+ background:linear-gradient(155deg,
+  color-mix(in srgb,var(--text) 13%,transparent),
+  var(--sv-doc-picked,var(--card2)) 88%);
+ border:1px solid color-mix(in srgb,var(--text) 9%,transparent);
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 10%,transparent);
+}
+@media(max-width:355px){
+ #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button{
+  padding-inline:0;font-size:9px;gap:7px;min-height:95px;
+ }
+ #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button .sv-doc-art{
+  width:44px;height:44px;padding:9px;border-radius:14px;
+ }
+}
+@media(prefers-reduced-motion:no-preference){
+ #sayviSurfacePage .sv-doc-tool-grid .sv-doc-art{
+  transition:transform .15s ease,opacity .15s ease;
+ }
+}
