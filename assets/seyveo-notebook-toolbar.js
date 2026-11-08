@@ -56,9 +56,9 @@
  settings.className='sv-paper-settings';
  settings.innerHTML='<button id="notePaperSettings" type="button" title="Настройки" aria-label="Настройки листа" aria-expanded="false" aria-controls="notePaperSettingsMenu" aria-haspopup="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.1"/><path d="M10.1 2.9h3.8l.6 2.2 1.7.8 2.1-1.1 2.7 2.7-1.1 2.1.8 1.7 2.2.6v3.8l-2.2.6-.8 1.7 1.1 2.1-2.7 2.7-2.1-1.1-1.7.8-.6 2.2h-3.8l-.6-2.2-1.7-.8-2.1 1.1-2.7-2.7 1.1-2.1-.8-1.7-2.2-.6v-3.8l2.2-.6.8-1.7-1.1-2.1 2.7-2.7 2.1 1.1 1.7-.8Z"/></svg></button><div id="notePaperSettingsMenu" class="sv-paper-settings-menu" role="group" aria-label="Настройки листа" hidden><span class="sv-paper-settings-title">Фон листа</span><div class="sv-paper-backgrounds" role="group" aria-label="Цвет бумаги"><button type="button" data-paper-background="dark" aria-pressed="true">Тёмный</button><button type="button" data-paper-background="light" aria-pressed="false">Светлый</button></div></div>';
  const trigger=settings.querySelector('#notePaperSettings'),menu=settings.querySelector('#notePaperSettingsMenu');
- duplicate.innerHTML+='<span>Дублировать штрих</span>';
- duplicate.removeAttribute('title');
- menu.append(duplicate);
+ // Duplicate belongs in the TOP capsule, not in Settings or the popup.
+ duplicate.setAttribute('title','Дублировать последний штрих');
+ duplicate.setAttribute('aria-label','Дублировать последний штрих');
  removePhoto.querySelector('span')?.replaceChildren(document.createTextNode('Убрать фото'));
  menu.append(removePhoto);
  // One-step sheet actions, with confirmation only when actual content
@@ -80,7 +80,7 @@
  sayvi.innerHTML='<img src="assets/sayvi-mark.svg" alt="" aria-hidden="true">';
  const pen=bar.querySelector('[data-paper-tool="pen"]');
  const eraser=bar.querySelector('[data-paper-tool="eraser"]');
- bar.replaceChildren(pen,eraser,settings,paper,photo,file,sayvi);
+ bar.replaceChildren(pen,eraser,duplicate,settings,paper,photo,file,sayvi);
 
  // SEYVEO signature ink · intentionally drawn as one six-symbol family.
  // All marks share a 28-unit optical grid and polished silver linework.
@@ -117,6 +117,8 @@
  const applyGlyph=(button,kind)=>{if(button)button.innerHTML=glyph(artwork[kind])};
  applyGlyph(pen,'pen');
  applyGlyph(eraser,'eraser');
+ // Same 28-unit silver glyph grid as the other capsule controls.
+ duplicate.innerHTML=glyph('<rect x="10" y="9.5" width="13.5" height="13.5" rx="2.8"/><path d="M18.5 9.5V7a2.5 2.5 0 0 0-2.5-2.5H7A2.5 2.5 0 0 0 4.5 7v9A2.5 2.5 0 0 0 7 18.5h3"/>');
  applyGlyph(trigger,'settings');
  const sheetTrigger=paper.querySelector('#notePaperPatternTrigger');
  const cachedPatternLabel=$('notePaperPatternLabel');
