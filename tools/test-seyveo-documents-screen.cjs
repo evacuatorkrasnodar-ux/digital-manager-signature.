@@ -190,7 +190,7 @@ test('Docs quick actions are mounted by the studio when installed, not duplicate
  assert.match(code,/SEYVEO_DOCS_STUDIO\?\.mount\?\./);
  assert.match(code,/onPick:\(\)=>picker\.click\(\)/);
  assert.match(code,/onImport:file=>/);
- assert.match(code,/studioReady\)host\.append\(tools\)/);
+ assert.match(code,/if\(studioReady\)\{\s*host\.append\(tools\)/);
  assert.match(stub,/Сканировать/);
  assert.match(stub,/Добавить файл/);
  assert.match(stub,/Сохранить PDF/);
