@@ -160,3 +160,51 @@
 @media(prefers-reduced-motion:reduce){
  .seyveo-pulse-dialog .pulse-chart-bar{transition:none}
 }
+
+/* Business Pulse detail · match slim Documents and main Pulse controls. */
+.seyveo-pulse-dialog{
+ --pulse-fine-edge:color-mix(in srgb,var(--text) 11%,transparent);
+ --pulse-fine-glass:color-mix(in srgb,var(--text) 4%,transparent);
+ --pulse-fine-active:color-mix(in srgb,var(--text) 10%,transparent);
+}
+.seyveo-pulse-dialog .pulse-periods{
+ padding:3px!important;
+ gap:3px!important;
+ border:1px solid var(--pulse-fine-edge)!important;
+ border-radius:23px!important;
+ background:var(--pulse-fine-glass)!important;
+ box-shadow:none!important;
+}
+.seyveo-pulse-dialog .pulse-periods::before{display:none!important}
+.seyveo-pulse-dialog .pulse-periods>button{
+ min-height:37px!important;
+ padding:6px 4px!important;
+ border:1px solid transparent!important;
+ border-radius:20px!important;
+ background:transparent!important;
+ font-size:11.5px!important;
+ font-weight:550!important;
+}
+.seyveo-pulse-dialog .pulse-periods>button[aria-pressed="true"]{
+ border-color:var(--pulse-fine-edge)!important;
+ background:var(--pulse-fine-active)!important;
+ color:var(--text)!important;
+ box-shadow:none!important;
+}
+.seyveo-pulse-dialog .pulse-periods>button::after{content:none!important;display:none!important}
+.seyveo-pulse-dialog :is(.pulse-grid,.pulse-chart-box,.pulse-insight){
+ border:1px solid var(--pulse-fine-edge)!important;
+ border-radius:18px!important;
+ background:var(--pulse-fine-glass)!important;
+ box-shadow:none!important;
+}
+.seyveo-pulse-dialog .pulse-stat:nth-child(odd){border-right-color:var(--pulse-fine-edge)!important}
+.seyveo-pulse-dialog .pulse-stat:nth-child(-n+4){border-bottom-color:var(--pulse-fine-edge)!important}
+.seyveo-pulse-dialog .pulse-data-status{
+ border:1px solid var(--pulse-fine-edge)!important;
+ background:var(--pulse-fine-glass)!important;
+ box-shadow:none!important;
+}
+.seyveo-pulse-dialog .pulse-periods>button:focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
