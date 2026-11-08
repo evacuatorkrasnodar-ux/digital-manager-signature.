@@ -23,7 +23,7 @@ services:
       - no-new-privileges:true
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.8.1
+    image: quay.io/keycloak/keycloak:26.8.2
     restart: unless-stopped
     command: ["start", "--import-realm"]
     depends_on:
