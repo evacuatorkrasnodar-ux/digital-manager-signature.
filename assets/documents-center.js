@@ -168,7 +168,6 @@ function draw(){
  // One real archive row replaces the duplicate "protected documents"
  // intro. Keep the file picker hidden and bound to its original handler.
  const safeArea=el('section','sv-doc-safe-area');
- safeArea.hidden=true;
  const selected=files[area];
  const picker=document.createElement('input');
  picker.type='file';picker.hidden=true;
@@ -200,15 +199,18 @@ function draw(){
    archiveExpanded=true;showPreview=true;draw();
   }
  })===true;
- if(studioReady)host.append(tools);
- else{
-  // Functional fallback if the studio script has not loaded.
+ if(studioReady){
+  host.append(tools);
+  // The native file picker stays in the DOM, even though it is hidden,
+  // and is invoked directly from the visible user gesture.
+  host.append(picker);
+ }else{
+  // Fallback stays visible when the illustrated studio is unavailable.
   const storeActions=el('div','sv-doc-store-actions');
   storeActions.append(button('Добавить документ',()=>picker.click(),'sv-doc-primary'));
-  safeArea.append(storeActions);
+  safeArea.append(storeActions,picker);
+  host.append(safeArea);
  }
- safeArea.append(picker);
- host.append(safeArea);
  const feedback=el('p','sv-doc-selection-status');
  feedback.setAttribute('role','status');
  if(selected&&!stored[area])feedback.textContent='Выбран «'+selected.name+'». Откройте архив и подтвердите сохранение.';
