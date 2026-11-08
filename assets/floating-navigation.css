@@ -50,7 +50,7 @@
  isolation:isolate;
 }
 /* Two low, fully rounded floating panes; no extra markup. */
-.dock::before,.dock::after{
+.sv-shared-dock::before,.sv-shared-dock::after{
  content:""!important;display:block!important;
  position:absolute!important;top:1px!important;bottom:1px!important;
  z-index:0!important;pointer-events:none!important;
@@ -60,10 +60,10 @@
  backdrop-filter:var(--sv-liquid-nav-blur)!important;
  box-shadow:var(--sv-liquid-nav-shadow)!important;
 }
-.dock::before{left:0!important;right:58px!important}
+.sv-shared-dock.dock::before{left:0!important;right:58px!important}
 /* Search: its glass backdrop must match the 50x50 button exactly.
    The older 1px top/bottom inset made a 50x54 oval. */
-.dock::after{right:0!important;width:50px!important;top:3px!important;bottom:3px!important}
+.sv-shared-dock.dock::after{right:0!important;width:50px!important;top:3px!important;bottom:3px!important}
 .dock>.nav-item{
  position:relative!important;z-index:1!important;
  left:auto!important;top:auto!important;bottom:auto!important;
