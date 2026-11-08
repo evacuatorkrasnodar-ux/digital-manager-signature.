@@ -61,6 +61,7 @@ function fixture({employee=false,records=[]}={}){
   },
   SEYVEO_SMART_CONNECTIONS:{open:section=>opened.push(section)},
   SEYVEO_DOCUMENT_VAULT:{lock:()=>calls.push('lock')},
+  SEYVEO_DOCS_STUDIO:{reset:()=>calls.push('scan-reset')},
   SEYVEO_DOCUMENT_VAULT_UI:{mount:(_el,api)=>{panel=api;return true}},
   SEYVEO_CONVERSATION:{open:()=>messages.push('chat')}
  };
@@ -117,7 +118,9 @@ test('business employee preview only sees approvals, not owner encrypted archive
 });
 test('approval route, distinct personal and business tabs, and original scroll padding survive',()=>{
  const f=fixture();
+ const count=f.calls.filter(x=>x==='scan-reset').length;
  f.window.SEYVEO_DOCUMENT_CENTER.openApprovals('approval-1');
+ assert.ok(f.calls.filter(x=>x==='scan-reset').length>count);
  assert.deepEqual(f.selected,['approval-1']);
  assert.equal(elements(f.host,'sv-doc-workspace').length,1);
  assert.equal(f.page.dataset.svDocView,'flow');
@@ -132,13 +135,13 @@ test('approved glass and core mark are scoped: no dock edits, no duplicate conne
  assert.doesNotMatch(code,/function connectorsPanel\(|function connectorRow\(|integrationsOpen/);
  assert.match(code,/hub\.open\('services'\)/);
  assert.match(html,/assets\/documents-center\.css\?v=14/);
- assert.match(html,/assets\/documents-center\.js\?v=15/);
+ assert.match(html,/assets\/documents-center\.js\?v=16/);
  assert.match(html,/assets\/seyveo-document-flow\.css\?v=11/);
  assert.match(html,/assets\/seyveo-document-flow\.js\?v=8/);
  assert.match(html,/assets\/sayvi-surfaces\.js\?v=44/);
  assert.match(html,/assets\/seyveo-docs-studio\.css\?v=2/);
  assert.match(html,/assets\/seyveo-docs-export\.js\?v=1/);
- assert.match(html,/assets\/seyveo-docs-studio\.js\?v=3/);
+ assert.match(html,/assets\/seyveo-docs-studio\.js\?v=4/);
  assert.match(html,/assets\/seyveo-smart-connections\.js/);
 });
 
@@ -146,7 +149,9 @@ test('one header Back returns director to encrypted archive before leaving Docum
  const f=fixture();
  f.window.SEYVEO_DOCUMENT_CENTER.setArea('business');
  assert.equal(f.page.dataset.svDocView,'archive');
+ const count=f.calls.filter(x=>x==='scan-reset').length;
  elements(f.host,'sv-doc-flow-card')[0].click();
+ assert.ok(f.calls.filter(x=>x==='scan-reset').length>count);
  assert.equal(f.page.dataset.svDocView,'flow');
  assert.equal(elements(f.host,'sv-doc-flow-back').length,0);
  assert.equal(f.window.SEYVEO_DOCUMENT_CENTER.backFromNested(),true);
