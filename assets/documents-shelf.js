@@ -130,7 +130,7 @@ function paint(state){
  state.foldersGrid.replaceChildren();
  for(const category of categories){
   const count=all.filter(item=>classify(item.name)===category.id).length;
-  const entry=el('button','sv-doc-folder-card');
+  const entry=el('button','sv-doc-folder-card sv-doc-folder-'+category.id);
   entry.type='button';entry.setAttribute('aria-pressed',String(state.filter===category.id));
   entry.setAttribute('aria-label','Подборка '+category.title+(state.unlocked?', '+count+' файлов':''));
   entry.append(folderArt(),el('strong','',category.title));
