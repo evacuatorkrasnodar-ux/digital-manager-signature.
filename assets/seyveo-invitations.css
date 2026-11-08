@@ -140,3 +140,16 @@
 @media(prefers-reduced-motion:reduce){
  #manageConnectionsDialog .sv-smart-fold-chevron{transition:none!important}
 }
+
+/* Reuse the CONNECT device guide only from the Management hub.
+   It is an original row, not an extra tile in My World. */
+#manageConnectionsDialog .sv-smart-device-action{
+ box-sizing:border-box;width:100%;text-align:left;
+ margin:0;padding:10px 2px;
+ border:0;border-bottom:1px solid color-mix(in srgb,var(--soft-line,rgba(128,128,128,.28)) 35%,transparent);
+ border-radius:0;background:transparent;color:var(--text);font:inherit;cursor:pointer;
+ -webkit-appearance:none;appearance:none;box-shadow:none;
+}
+#manageConnectionsDialog .sv-smart-device-action:focus-visible{
+ outline:2px solid currentColor;outline-offset:2px;border-radius:8px;
+}
