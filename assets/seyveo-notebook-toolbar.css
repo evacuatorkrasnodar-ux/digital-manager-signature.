@@ -173,3 +173,8 @@
   transition:none!important;
  }
 }
+
+/* Icon-only controls: override all legacy caption styles. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary :is(#notePaperPatternTrigger,#notePaperAddPhoto)>span,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top #notePaperPatternTrigger .sv-paper-caret{display:none!important}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top :is(#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSettings){font-size:0!important;line-height:0!important;white-space:nowrap!important;overflow:hidden!important}
