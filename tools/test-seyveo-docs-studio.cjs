@@ -336,3 +336,50 @@ test('visual-first Apple-inspired Docs controls show unique icons and short step
  assert.match(css,/\.sv-doc-tool-scan\{\s*display:grid;grid-template-columns/);
  assert.match(css,/\.sv-doc-tool-help summary/);
 });
+
+test('scanner design has sample paper guides before capture and real image after capture',async()=>{
+ const f=fixture();
+ label(f.root,'Сканировать').click();
+ assert.equal(find(f.root,n=>n.className==='sv-doc-scan-stage').length,1);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-scan-sheet-sample').length,1);
+ assert.equal(find(f.root,n=>n.className?.startsWith('sv-doc-scan-corner ')).length,4);
+ assert.ok(find(f.root,n=>n.textContent==='Пример листа').length);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-scan-sheet-image').length,0);
+ const input=find(f.root,n=>n.tagName==='INPUT'&&n.multiple)[0];
+ input.files=[
+  new File([tinyJpeg],'photo1.jpg',{type:'image/jpeg'}),
+  new File([tinyJpeg],'photo2.jpg',{type:'image/jpeg'})
+ ];
+ input.emit('change');
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(find(f.root,n=>n.className==='sv-doc-scan-sheet-sample').length,0);
+ const preview=find(f.root,n=>n.className==='sv-doc-scan-sheet-image');
+ assert.equal(preview.length,1);
+ assert.equal(preview[0].alt,'Страница 1 из 2');
+ assert.equal(find(f.root,n=>n.className==='sv-doc-tool-thumb-select').length,2);
+ assert.equal(find(f.root,n=>n.className==='sv-doc-tool-pdf-card').length,1);
+ const choose=find(f.root,n=>n.className==='sv-doc-tool-thumb-select')[1];
+ choose.click();
+ const after=find(f.root,n=>n.className==='sv-doc-scan-sheet-image');
+ assert.equal(after.length,1);
+ assert.equal(after[0].alt,'Страница 2 из 2');
+ assert.equal(find(f.root,n=>n.className==='sv-doc-tool-thumb-select')[1].attributes['aria-pressed'],'true');
+ assert.equal(find(f.root,n=>n.className==='sv-doc-tool-thumb-select')[0].attributes['aria-pressed'],'false');
+ label(f.root,'Посмотреть').click();
+ assert.ok(f.created.some(x=>x.blob.type==='application/pdf'));
+ assert.ok(find(f.root,n=>n.textContent?.includes('Предпросмотр PDF открыт')).length);
+ f.window.SEYVEO_DOCS_STUDIO.reset();
+ assert.ok(f.revoked.length>=1);
+});
+test('scanner style never changes global home dock, assistant chat or false OCR status',()=>{
+ const css=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
+ assert.match(css,/\.sv-doc-scan-stage\{/);
+ assert.match(css,/\.sv-doc-scan-guide\{/);
+ assert.match(css,/\.sv-doc-scan-corner-tl\{/);
+ assert.match(css,/\.sv-doc-scan-sheet-image\{/);
+ assert.match(css,/\.sv-doc-tool-thumb-select\[aria-pressed="true"\]/);
+ assert.match(css,/\.sv-doc-tool-pdf-card\{/);
+ assert.doesNotMatch(css,/navHome|navManage|homeDock|sayviChatComposer/);
+ assert.match(studioCode,/Направляющие · пример/);
+ assert.match(studioCode,/Автоматическая обрезка и OCR пока не подключены/);
+});
