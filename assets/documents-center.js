@@ -135,6 +135,7 @@ function draw(){
  if(area==='business'&&employeePreview()){
   view='flow';showPreview=false;archiveExpanded=false;
  }
+ window.SEYVEO_DOCUMENT_SHELF?.destroy?.();
  clearPreview();host.replaceChildren();
  const page=document.getElementById('sayviSurfacePage');
  if(page)page.dataset.svDocView=view==='flow'?'flow':'archive';
@@ -227,6 +228,26 @@ function draw(){
  feedback.setAttribute('role','status');
  if(selected&&!stored[area])feedback.textContent='Выбран «'+selected.name+'». Откройте архив и подтвердите сохранение.';
  host.append(feedback);
+ // Recent files and type folders use existing selected files and decrypted
+ // vault metadata only while the password-protected vault is unlocked.
+ const shelf=el('div','sv-doc-shelf-slot');
+ host.append(shelf);
+ window.SEYVEO_DOCUMENT_SHELF?.mount?.(shelf,{
+  area,
+  getSelected:()=>stored[area]?null:files[area],
+  onPick:()=>picker.click(),
+  onArchive(){
+   const details=host?.querySelector('.sv-doc-vault-shell');
+   if(!details)return;
+   details.open=true;
+   details.scrollIntoView?.({block:'nearest',behavior:'smooth'});
+  },
+  onOpenFile(file,fromVault){
+   if(!(file instanceof File))return;
+   files[area]=file;stored[area]=!!fromVault;
+   showPreview=true;archiveExpanded=true;draw();
+  }
+ });
  const archive=el('details','sv-doc-vault-shell');
  const summary=el('summary','sv-doc-vault-summary');
  const archiveTitle=el('span','sv-doc-vault-copy');
@@ -270,7 +291,6 @@ function draw(){
   });
   host.append(preview);
  }
- host.append(archive);
  const assistant=el('section','sv-doc-assistant');
  assistant.append(el('h2','sv-doc-assistant-title','Сэйви поможет'));
  const chatList=el('div','sv-doc-chat-list');
@@ -278,6 +298,7 @@ function draw(){
   chatAction('Создать с Сэйви','Подготовить черновик','create',true),
   chatAction('Проверить документ','Объяснить или исправить','review'));
  assistant.append(chatList);host.append(assistant);
+ host.append(archive);
  if(area==='business')host.append(connectionsEntry());
  const safety=el('details','sv-doc-safety');
  safety.append(el('summary','','Безопасность и хранение'),
@@ -318,6 +339,7 @@ function mount(parent){
  host=el('div','sv-doc-center');parent.append(host);draw();return true;
 }
 function destroy(){
+ window.SEYVEO_DOCUMENT_SHELF?.destroy?.();
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
  reset();host=null;
 }
