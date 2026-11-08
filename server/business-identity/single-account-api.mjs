@@ -11,6 +11,7 @@
  */
 import {createWorkspaceManifestContract} from './workspace-manifest.mjs';
 import {createOwnerInvitationHttpContract} from './owner-invitation-http.mjs';
+import {createPersonalSessionHttpContract} from './personal-session-http.mjs';
 
 const NOT_FOUND=Object.freeze({
   'Content-Type':'application/json; charset=utf-8',
@@ -27,6 +28,7 @@ export function createSingleAccountApi({
   const spaces=createWorkspaceManifestContract({
     apiOrigin,identity,listCurrentMemberships,now
   });
+  const personSession=createPersonalSessionHttpContract({apiOrigin,identity,now});
   const invitations=createOwnerInvitationHttpContract({
     apiOrigin,identity,resolveVerifiedRecipient,
     issueInvitationAtomic,revokeInvitationAtomic,now,
@@ -43,6 +45,7 @@ export function createSingleAccountApi({
     catch{return new Response('{"error":"invalid-request"}',{
       status:400,headers:NOT_FOUND
     });}
+    if(url.pathname==='/v1/me/session')return personSession.handle(request);
     if(url.pathname==='/v1/me/workspaces')return spaces.handle(request);
     if(url.pathname==='/v1/invitations/accept'||INVITATIONS.test(url.pathname))
       return invitations.handle(request);
