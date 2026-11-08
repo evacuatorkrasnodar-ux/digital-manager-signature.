@@ -5,7 +5,7 @@
 const MAX_FILE=20*1024*1024;
 const names={personal:'Личное',business:'Бизнес'};
 const allowed=/\.(?:pdf|txt|md|docx|xlsx|pptx|png|jpe?g|webp)$/i;
-let area='personal',host=null,view='archive',archiveExpanded=false,readerToken=0,previewUrl=null;
+let area='personal',host=null,view='archive',archiveExpanded=false,readerToken=0,previewUrl=null,viewerSession=null;
 const previewRole=()=>window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':window.SEYVEO_PREVIEW?.isManager?.()===true?'manager':'personal';
 const employeePreview=()=>previewRole()==='employee';
 let lastPreviewRole=null;
@@ -23,6 +23,7 @@ const button=(label,fn,cls='')=>{
 const note=value=>el('p','sv-doc-note',value);
 function clearPreview(){
  ++readerToken;
+ if(viewerSession){viewerSession.destroy();viewerSession=null;}
  if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null;}
 }
 function reset(){
@@ -92,6 +93,15 @@ function connectionsEntry(){
 }
 function renderPreview(parent,file){
  clearPreview();
+ // One visual-first viewer for imported and decrypted files. It owns and
+ // revokes only its own local blob URL. Keep the existing browser fallback.
+ const opened=window.SEYVEO_DOCS_VIEWER?.mount?.(parent,file,{
+  onSignImage:image=>window.SEYVEO_DOCS_STUDIO?.openImageForSignature?.(image),
+  onSayvi:intent=>goSayvi(intent)
+ });
+ if(opened&&typeof opened.destroy==='function'){
+  viewerSession=opened;return;
+ }
  const preview=el('div','sv-doc-preview');
  const ext=(file.name.split('.').pop()||'').toLowerCase();
  const status=el('p','sv-doc-status','Выбран файл: '+file.name);
@@ -242,12 +252,11 @@ function draw(){
    clearSession(){reset();draw();}
   });
  });
- host.append(archive);
  archive.open=archiveExpanded;
  if(selected){
   const preview=el('details','sv-doc-file-review');
   preview.open=showPreview;
-  const sum=el('summary','','Посмотреть выбранный файл');
+  const sum=el('summary','','Просмотр документа');
   preview.append(sum);
   const holder=el('div','sv-doc-file-review-body');
   preview.append(holder);
@@ -259,6 +268,7 @@ function draw(){
   });
   host.append(preview);
  }
+ host.append(archive);
  const assistant=el('section','sv-doc-assistant');
  assistant.append(el('h2','sv-doc-assistant-title','Работа с документами — с Сэйви'));
  const chatList=el('div','sv-doc-chat-list');
