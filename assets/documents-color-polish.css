@@ -220,3 +220,50 @@ html[data-theme="light"] #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-t
  mask:url("./sayvi-mark.svg?v=1") center / 25px 25px no-repeat;
  box-shadow:none;
 }
+
+/* Secure archive form: legible and calm, like the matte document controls.
+   Not a floating panel, no illumination and no colored fill. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form{
+ display:grid;
+ gap:9px;
+ margin:8px 0 12px;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-input{
+ display:block;
+ width:100%;
+ min-height:46px;
+ margin:0;
+ padding:11px 13px;
+ border:1px solid var(--sv-doc-line);
+ border-radius:15px;
+ background:var(--sv-doc-wash);
+ color:var(--text);
+ box-shadow:none;
+ outline:0;
+ font-size:16px;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-input::placeholder{
+ color:var(--secondary);
+ opacity:.85;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-input:focus-visible{
+ border-color:var(--doc-fine-line);
+ outline:1px solid color-mix(in srgb,var(--text) 24%,transparent);
+ outline-offset:1px;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-file-actions{
+ margin:1px 0 0;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-vault-form .sv-doc-primary{
+ border-radius:16px!important;
+ border:1px solid var(--sv-doc-line)!important;
+ background:var(--sv-doc-picked)!important;
+ color:var(--text)!important;
+ box-shadow:none!important;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-vault .sv-doc-note{
+ max-width:41rem;
+ margin:8px 1px 3px;
+ font-size:10.5px;
+ line-height:1.5;
+}
