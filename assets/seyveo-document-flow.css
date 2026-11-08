@@ -95,7 +95,20 @@
 #sayviSurfacePage .svdf-detail>p{font-size:13px;line-height:1.6;margin:0 0 10px}
 #sayviSurfacePage .svdf-detail>.svdf-disclaimer{font-size:11px;color:var(--secondary)}
 #sayviSurfacePage .svdf-log{margin:17px 0 0;border-top:1px solid var(--soft-line);padding:12px 0 0}
-#sayviSurfacePage .svdf-log>strong{font-size:12px;font-weight:620}
+#sayviSurfacePage .svdf-log>summary{
+ display:flex;align-items:center;justify-content:space-between;
+ min-height:44px;cursor:pointer;list-style:none;
+ color:var(--text);font-size:12px;font-weight:570;
+}
+#sayviSurfacePage .svdf-log>summary::-webkit-details-marker{display:none}
+#sayviSurfacePage .svdf-log>summary::after{
+ content:"";flex:none;width:7px;height:7px;margin:0 5px 3px 10px;
+ border-right:1px solid currentColor;border-bottom:1px solid currentColor;
+ transform:rotate(45deg);color:var(--secondary);
+}
+#sayviSurfacePage .svdf-log[open]>summary::after{
+ transform:rotate(225deg);margin-top:5px;
+}
 #sayviSurfacePage .svdf-log ol{display:grid;gap:7px;margin:8px 0 0;padding:0;list-style:none}
 #sayviSurfacePage .svdf-log li{color:var(--secondary);font-size:11px;line-height:1.45}
 #sayviSurfacePage .svdf-empty{font-size:12px;line-height:1.6;color:var(--secondary);padding:17px 0}
