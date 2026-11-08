@@ -12,9 +12,13 @@ const root=path.resolve(__dirname,'..');
 const code=fs.readFileSync(path.join(root,'assets/documents-center.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'assets/documents-center.css'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const surfaces=fs.readFileSync(path.join(root,'assets/sayvi-surfaces.js'),'utf8');
+const flow=fs.readFileSync(path.join(root,'assets/seyveo-document-flow.js'),'utf8');
+const flowCss=fs.readFileSync(path.join(root,'assets/seyveo-document-flow.css'),'utf8');
 
 class Node {
  constructor(tag='div'){
+  this.dataset={};
   this.tagName=tag.toUpperCase();
   this.className='';this.textContent='';this.children=[];this.listeners={};
   this.attrs={};this.open=false;this.parentNode=null;
@@ -37,10 +41,11 @@ function elements(start,className){
 }
 function fixture({employee=false,records=[]}={}){
  const messages=[],opened=[],selected=[],calls=[];
+ const page=new Node('main');page.dataset.svSubject='contract';
  const doc={
   createElement:tag=>new Node(tag),
   createElementNS:(_url,tag)=>new Node(tag),
-  getElementById:()=>null
+  getElementById:id=>id==='sayviSurfacePage'?page:null
  };
  let panel;
  const window={
@@ -64,7 +69,7 @@ function fixture({employee=false,records=[]}={}){
  vm.runInNewContext(code,context,{filename:'documents-center.js'});
  const host=new Node('main');host._root=true;
  assert.equal(window.SEYVEO_DOCUMENT_CENTER.mount(host),true);
- return {host,window,messages,opened,selected,calls,location,
+ return {host,page,window,messages,opened,selected,calls,location,
   get vaultPanel(){return panel}};
 }
 test('documents page preserves personal archive, file picker, and both chat actions',()=>{
@@ -115,6 +120,7 @@ test('approval route, distinct personal and business tabs, and original scroll p
  f.window.SEYVEO_DOCUMENT_CENTER.openApprovals('approval-1');
  assert.deepEqual(f.selected,['approval-1']);
  assert.equal(elements(f.host,'sv-doc-workspace').length,1);
+ assert.equal(f.page.dataset.svDocView,'flow');
  assert.match(css,/padding-bottom:calc\(150px \+ env\(safe-area-inset-bottom,0px\)\)/);
  assert.match(css,/scroll-padding-bottom/);
 });
@@ -125,7 +131,47 @@ test('approved glass and core mark are scoped: no dock edits, no duplicate conne
  assert.doesNotMatch(css,/#(?:navHome|navTasks|navManage)|footer\.dock/);
  assert.doesNotMatch(code,/function connectorsPanel\(|function connectorRow\(|integrationsOpen/);
  assert.match(code,/hub\.open\('services'\)/);
- assert.match(html,/assets\/documents-center\.css\?v=12/);
- assert.match(html,/assets\/documents-center\.js\?v=13/);
+ assert.match(html,/assets\/documents-center\.css\?v=13/);
+ assert.match(html,/assets\/documents-center\.js\?v=14/);
+ assert.match(html,/assets\/seyveo-document-flow\.css\?v=11/);
+ assert.match(html,/assets\/seyveo-document-flow\.js\?v=8/);
+ assert.match(html,/assets\/sayvi-surfaces\.js\?v=44/);
  assert.match(html,/assets\/seyveo-smart-connections\.js/);
+});
+
+test('one header Back returns director to encrypted archive before leaving Documents',()=>{
+ const f=fixture();
+ f.window.SEYVEO_DOCUMENT_CENTER.setArea('business');
+ assert.equal(f.page.dataset.svDocView,'archive');
+ elements(f.host,'sv-doc-flow-card')[0].click();
+ assert.equal(f.page.dataset.svDocView,'flow');
+ assert.equal(elements(f.host,'sv-doc-flow-back').length,0);
+ assert.equal(f.window.SEYVEO_DOCUMENT_CENTER.backFromNested(),true);
+ assert.equal(f.page.dataset.svDocView,'archive');
+ assert.equal(elements(f.host,'sv-doc-vault-shell').length,1);
+ assert.equal(f.window.SEYVEO_DOCUMENT_CENTER.backFromNested(),false);
+ assert.match(surfaces,/currentKind\(\)==='contract'&&[\s\S]{0,80}backFromNested\?\.\(\)/);
+});
+test('employee Back exits normally; never exposes owner archive on a nested flow',()=>{
+ const f=fixture({employee:true});
+ f.window.SEYVEO_DOCUMENT_CENTER.setArea('business');
+ assert.equal(f.page.dataset.svDocView,'flow');
+ assert.equal(f.window.SEYVEO_DOCUMENT_CENTER.backFromNested(),false);
+ assert.equal(elements(f.host,'sv-doc-vault-shell').length,0);
+});
+test('only approvals view hides misleading generic encrypted archive footnote',()=>{
+ assert.match(css,/data-sv-doc-view="flow"[\s\S]*#sayviSurfaceFootnote\{display:none!important\}/);
+ assert.doesNotMatch(css,/data-sv-doc-view="archive"[\s\S]*#sayviSurfaceFootnote\{display:none!important\}/);
+ assert.doesNotMatch(code,/Вернуться в хранилище/);
+});
+test('approval workflow keeps warning visible and avoids duplicate numeric scorecards',()=>{
+ assert.match(flow,/Демо · не загружайте настоящие документы/);
+ assert.match(flow,/без шифрования/);
+ assert.match(flow,/без серверной отправки, проверки ролей/);
+ assert.match(flow,/Мои входящие/);
+ assert.match(flow,/Отправленные документы/);
+ assert.match(flow,/История ·/);
+ assert.doesNotMatch(flow,/host\.append\(\$\('p','svdf-compact-status'/);
+ assert.match(flowCss,/var\(--sv-doc-wash,var\(--card\)\)/);
+ assert.match(flowCss,/svdf-lead h2\{font-size:21px/);
 });
