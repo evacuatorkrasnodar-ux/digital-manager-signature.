@@ -933,6 +933,10 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 }
 :is(#calendarPage #managerCalendarTabs,#tasksPage #unifiedTasksTabs,#svWorkShell #svWorkTabs)[hidden],
 #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts[hidden]{display:none!important}
+/* Documents has exactly two spaces; preserve its two equal halves. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch{
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
 @media(max-width:350px){
  :root{--sv-segment-side:9px}
 }
