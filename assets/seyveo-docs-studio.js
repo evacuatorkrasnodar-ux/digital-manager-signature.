@@ -645,49 +645,116 @@ function mount(target,{
    'Подпись появится на выбранном листе.':'Для PDF сначала добавьте скан в инструменте «Сканировать».'));
  }
  function renderPrint(){
-  panel.append(heading('Печать','Файл → принтер'));
-  panel.append(pictorialSteps([['file','Выбрать'],['print','Печать'],['check','Готово']]));
-  const filePicker=$('input');filePicker.type='file';
-  filePicker.accept='.pdf,.jpg,.jpeg,.png,.webp';
+  panel.append(heading('Печать','Документ → системный принтер'));
+  panel.append(pictorialSteps([['file','Файл'],['print','Принтер'],['pages','Листы']]));
+  const filePicker=$('input');
+  filePicker.type='file';filePicker.accept='.pdf,.jpg,.jpeg,.png,.webp';
+  filePicker.setAttribute('aria-label','Выбрать документ для печати');
   filePicker.hidden=true;
   const picked=getCurrentFile();
   if(picked&&/\.(?:pdf|jpe?g|png|webp)$/i.test(picked.name||'')){
    currentPrint=picked;
   }else if(scans.length){
-   // A just-scanned document is printable immediately without a second
-   // import or duplicated archive entry. This is a local preview only.
+   // A scanned PDF can be printed without first adding it to the vault.
+   // This is a private browser preview, never a print-success signal.
    try{
     currentPrint=asFile(
      window.SEYVEO_DOCS_EXPORT.pdfFromJpegs(scans),'SEYVEO-скан.pdf'
     );
    }catch{currentPrint=null;}
   }else currentPrint=null;
-  const slot=$('div','sv-doc-tool-print-file');
-  const update=()=>{
-   slot.replaceChildren();
+
+  const stage=$('div','sv-doc-print-stage');
+  const device=$('div','sv-doc-print-device');
+  const copy=$('div','sv-doc-print-device-copy');
+  copy.append($('strong','','Печать документа'),
+   $('small','','Принтер выбирается в системе'));
+  device.append(art('print'),copy);
+
+  const frame=$('div','sv-doc-print-paper-frame');
+  const paper=$('div','sv-doc-print-paper');
+  paper.setAttribute('aria-label','Предпросмотр листа для печати');
+  const meta=$('div','sv-doc-print-paper-meta');
+  frame.append(paper);
+  const controlsRow=$('div','sv-doc-print-controls');
+  const choose=button('Выбрать файл',()=>filePicker.click());
+  choose.className+=' sv-doc-print-choose';
+  const openLink=$('a','sv-doc-tool-print-link sv-doc-print-open','Открыть для печати');
+  openLink.target='_blank';openLink.rel='noopener noreferrer';
+  openLink.setAttribute('aria-label','Открыть выбранный документ для системной печати');
+  openLink.hidden=true;
+  controlsRow.append(choose,openLink);
+  stage.append(device,frame,meta);
+  let activeUrl=null;
+
+  function showExample(){
+   const example=$('div','sv-doc-print-paper-example');
+   example.append($('strong','','SEYVEO'));
+   for(let i=0;i<5;i++){
+    const line=$('span','sv-doc-print-faux-line');
+    if(i===2)line.className+=' sv-doc-print-faux-medium';
+    if(i===4)line.className+=' sv-doc-print-faux-short';
+    example.append(line);
+   }
+   const marker=$('span','sv-doc-print-faux-sign');
+   marker.setAttribute('aria-hidden','true');
+   example.append(marker);paper.append(example);
+  }
+  function update(){
+   // Each selected file owns exactly one live blob URL. Revoking the
+   // previous URL releases a decrypted in-memory copy on file switch.
+   if(activeUrl){
+    URL.revokeObjectURL(activeUrl);
+    temporaryUrls=temporaryUrls.filter(u=>u!==activeUrl);
+    activeUrl=null;
+   }
+   paper.replaceChildren();meta.replaceChildren();
    if(!currentPrint){
-    slot.append($('p','','Выберите PDF или изображение для печати.'));
+    showExample();openLink.hidden=true;openLink.removeAttribute('href');
+    meta.append($('strong','','Пример листа'),
+     $('small','','Выберите PDF или фотографию'));
     return;
    }
-   slot.append($('strong','',currentPrint.name));
-   const url=URL.createObjectURL(currentPrint);temporaryUrls.push(url);
-   const link=$('a','sv-doc-tool-print-link','Открыть для печати');
-   link.href=url;link.target='_blank';link.rel='noopener noreferrer';
-   slot.append(link);
-  };
-  filePicker.addEventListener('change',()=>{
-   if(filePicker.files?.[0]){
-    const f=filePicker.files[0];
-    if(f.size>20*1024*1024||f.size===0||!/\.(pdf|jpe?g|png|webp)$/i.test(f.name)){
-     message('Выберите PDF или фото до 20 МБ.');return;
-    }
-    currentPrint=f;cleanUrls();update();
+   const ext=String(currentPrint.name||'').split('.').pop().toLowerCase();
+   try{
+    activeUrl=URL.createObjectURL(currentPrint);
+    temporaryUrls.push(activeUrl);
+   }catch{
+    currentPrint=null;showExample();openLink.hidden=true;
+    meta.append($('strong','','Файл недоступен'));
+    return;
    }
+   if(ext==='pdf'){
+    // Browser-native PDF display; Safari can instead use the actual
+    // "Open for printing" action if the embedded renderer is unavailable.
+    const preview=$('iframe','sv-doc-print-pdf');
+    preview.src=activeUrl;preview.title='Предпросмотр PDF '+currentPrint.name;
+    preview.setAttribute('loading','lazy');
+    paper.append(preview);
+   }else{
+    const image=$('img','sv-doc-print-image');
+    image.src=activeUrl;image.alt='Предпросмотр изображения '+currentPrint.name;
+    paper.append(image);
+   }
+   meta.append($('strong','',currentPrint.name),
+    $('small','',ext==='pdf'?'PDF · оригинал':'Фото · оригинал'));
+   openLink.href=activeUrl;openLink.hidden=false;
+  }
+  filePicker.addEventListener('change',()=>{
+   const f=filePicker.files?.[0];
+   if(!f)return;
+   if(f.size>20*1024*1024||f.size<1||
+      !/\.(?:pdf|jpe?g|png|webp)$/i.test(f.name)){
+    message('Выберите PDF или фото до 20 МБ.');return;
+   }
+   currentPrint=f;update();
+   message('Файл выбран. Теперь можно открыть системную печать.');
   });
-  panel.append(filePicker,controls(button('Выбрать файл',()=>filePicker.click())),slot);
+  panel.append(filePicker,stage,controlsRow);
   update();
   const info=$('details','sv-doc-tool-help');
-  info.append($('summary','','Как печатать'),warn('Откройте файл и выберите системное «Поделиться → Печать». Принтер и параметры выбираются в системе.'));
+  info.append($('summary','','Как распечатать'),
+   warn('Нажмите «Открыть для печати», затем выберите системное «Поделиться → Печать». Принтер и параметры печати выбираются на устройстве.'));
   panel.append(info,status(''));
  }
  // The document viewer can hand an explicitly opened JPEG/PNG/WebP to
