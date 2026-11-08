@@ -95,6 +95,10 @@
   if(!note || (note.attachmentsCount||0)===count)return;
   api.putNotes(notes.map(n=>n.id===noteId?{...n,attachmentsCount:count,updatedAt:Date.now()}:n));
  }
+ function previewableImage(type){
+  // SVG and HTML must never be opened as active documents on this origin.
+  return ['image/jpeg','image/png','image/webp','image/gif','image/avif','image/heic','image/heif'].includes(type);
+ }
  function sizeLabel(size){
   if(size<1024)return size+' Б';
   if(size<1024*1024)return Math.max(1,Math.round(size/1024))+' КБ';
@@ -143,7 +147,7 @@
   const url=URL.createObjectURL(item.blob);
   const link=document.createElement('a');
   link.href=url;link.rel='noopener';
-  const preview=item.type.startsWith('image/')||item.type==='application/pdf';
+  const preview=previewableImage(item.type)||item.type==='application/pdf';
   if(preview)link.target='_blank';
   else link.download=item.name||'Вложение';
   document.body.append(link);link.click();link.remove();
@@ -152,7 +156,7 @@
  function fileCard(item,canRemove,urls){
   const card=document.createElement('div');card.className='sv-note-file';
   let icon;
-  if(item.type.startsWith('image/')){
+  if(previewableImage(item.type)){
    icon=document.createElement('img');icon.alt='';
    const url=URL.createObjectURL(item.blob);
    urls.push(url);icon.src=url;icon.loading='lazy';
@@ -167,7 +171,7 @@
   info.append(name,size);card.append(info);
   const open=document.createElement('button');open.type='button';
   open.className='sv-note-file-action';
-  open.textContent=item.type.startsWith('image/')||item.type==='application/pdf'?'Открыть':'Скачать';
+  open.textContent=previewableImage(item.type)||item.type==='application/pdf'?'Открыть':'Скачать';
   open.setAttribute('aria-label',open.textContent+': '+item.name);
   open.addEventListener('click',()=>fileAction(item));card.append(open);
   if(canRemove){
@@ -224,6 +228,11 @@
   if(!files.length)return;
   const tooLarge=files.find(file=>file.size>MAX_FILE);
   if(tooLarge){tell('Файл «'+tooLarge.name+'» слишком большой. Максимум 10 МБ.');return;}
+  try{await openDatabase()}catch{
+   tell('Хранилище файлов недоступно. Проверьте настройки Safari и свободное место.');
+   return;
+  }
+  if(!editor.open)return;
   let noteId=editor.dataset.noteId;
   if(!noteId){
    noteId=window.SEYVEO_NOTES_EDITOR?.ensureRecord?.();
