@@ -1,0 +1,136 @@
+/* SEYVEO Notebook · attachment rows. The approved Liquid Glass dock is untouched. */
+#noteReviewDialog .sv-note-attachments,
+#noteReadDialog .sv-note-attachments{
+ box-sizing:border-box;
+ width:100%;
+ min-width:0;
+ margin:6px 0 7px;
+ padding:2px 0;
+ display:grid;
+ gap:5px;
+ color:var(--text,#e7edf1);
+}
+#noteReviewDialog .sv-note-attachments[hidden],
+#noteReadDialog .sv-note-attachments[hidden],
+#noteReviewDialog .sv-note-attachment-status[hidden],
+#noteReadDialog .sv-note-attachment-status[hidden]{display:none!important}
+#noteReviewDialog .sv-note-attachments{
+ flex:0 1 auto;
+ max-height:min(27dvh,160px);
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ scrollbar-width:none;
+}
+#noteReviewDialog .sv-note-attachments::-webkit-scrollbar{display:none}
+#noteReadDialog .sv-note-reader-files{
+ max-height:unset;
+ overflow:visible;
+ margin:11px 0;
+}
+#noteReviewDialog .sv-note-file,
+#noteReadDialog .sv-note-file{
+ box-sizing:border-box;
+ display:flex;
+ align-items:center;
+ min-width:0;
+ min-height:53px;
+ gap:9px;
+ padding:6px 8px;
+ border-radius:15px;
+ border:1px solid rgba(202,218,228,.09);
+ background:rgba(171,192,206,.06);
+}
+#noteReviewDialog .sv-note-file-icon,
+#noteReadDialog .sv-note-file-icon{
+ display:grid;
+ place-items:center;
+ box-sizing:border-box;
+ width:40px;
+ min-width:40px;
+ height:40px;
+ border-radius:10px;
+ object-fit:cover;
+ background:rgba(189,209,222,.09);
+ color:rgba(224,236,242,.66);
+ font-size:23px;
+}
+#noteReviewDialog .sv-note-file-info,
+#noteReadDialog .sv-note-file-info{
+ display:flex;
+ flex:1 1 auto;
+ flex-direction:column;
+ gap:3px;
+ min-width:0;
+ overflow:hidden;
+}
+#noteReviewDialog .sv-note-file-info strong,
+#noteReadDialog .sv-note-file-info strong{
+ display:block;
+ font:500 12.5px/1.23 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
+ text-overflow:ellipsis;
+ overflow:hidden;
+ white-space:nowrap;
+}
+#noteReviewDialog .sv-note-file-info small,
+#noteReadDialog .sv-note-file-info small{
+ font:400 11px/1.2 -apple-system,BlinkMacSystemFont,sans-serif;
+ color:rgba(180,198,211,.66);
+}
+#noteReviewDialog button.sv-note-file-action,
+#noteReadDialog button.sv-note-file-action,
+#noteReviewDialog button.sv-note-file-remove{
+ -webkit-appearance:none!important;
+ appearance:none!important;
+ box-sizing:border-box!important;
+ flex:0 0 auto!important;
+ width:auto!important;
+ min-width:0!important;
+ min-height:34px!important;
+ height:34px!important;
+ margin:0!important;
+ padding:0 7px!important;
+ border:0!important;
+ border-radius:10px!important;
+ background:rgba(177,201,217,.11)!important;
+ box-shadow:none!important;
+ color:rgba(230,240,245,.88)!important;
+ font:500 11px/1 -apple-system,BlinkMacSystemFont,sans-serif!important;
+}
+#noteReviewDialog button.sv-note-file-remove{
+ width:31px!important;
+ padding:0!important;
+ font-size:20px!important;
+ font-weight:300!important;
+}
+#noteReviewDialog .sv-note-attachment-status,
+#noteReadDialog .sv-note-attachment-status{
+ flex:none;
+ display:block;
+ margin:2px 0 5px;
+ padding:0 5px;
+ color:rgba(189,210,220,.85);
+ font:400 12px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;
+}
+:root[data-theme="light"] #noteReviewDialog .sv-note-file,
+:root[data-theme="light"] #noteReadDialog .sv-note-file{
+ background:rgba(64,91,112,.055);
+ border-color:rgba(37,55,67,.09);
+}
+:root[data-theme="light"] #noteReviewDialog .sv-note-file-info small,
+:root[data-theme="light"] #noteReadDialog .sv-note-file-info small{
+ color:rgba(38,62,78,.62);
+}
+:root[data-theme="light"] #noteReviewDialog .sv-note-file-info strong,
+:root[data-theme="light"] #noteReadDialog .sv-note-file-info strong{
+ color:#25333c;
+}
+:root[data-theme="light"] #noteReviewDialog button.sv-note-file-action,
+:root[data-theme="light"] #noteReadDialog button.sv-note-file-action,
+:root[data-theme="light"] #noteReviewDialog button.sv-note-file-remove{
+ background:rgba(52,79,97,.09)!important;
+ color:#273b47!important;
+}
+:root[data-theme="light"] #noteReviewDialog .sv-note-attachment-status,
+:root[data-theme="light"] #noteReadDialog .sv-note-attachment-status{
+ color:rgba(43,71,89,.80);
+}
