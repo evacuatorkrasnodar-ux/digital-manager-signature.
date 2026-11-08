@@ -447,6 +447,20 @@
  }
  function showEmployee(){
   if(!isEmployee()||!employee)return;
+  // The employee identity and company membership are NOT yet connected.
+  // Keep the familiar Elena demo fully usable while clearly distinguishing
+  // it from an invitation-verified, server-authorized work account.
+  if(!employee.querySelector('.svcp-invite-explanation')){
+   const notice=document.createElement('section');
+   notice.className='svcp-invite-explanation';
+   notice.setAttribute('aria-label','Подключение сотрудника к компании');
+   const heading=document.createElement('strong');
+   heading.textContent='Работа по приглашению';
+   const description=document.createElement('small');
+   description.textContent='В рабочем SEYVEO кабинет откроется после подтверждения приглашения компании. Сэйви покажет его на Главной и в чате. Пока ниже — учебный кабинет Елены; реальные приглашения не подключены.';
+   notice.append(heading,description);
+   employee.insertBefore(notice,workDashboard||employee.firstChild);
+  }
   // Chat stays outside the employee's card layout until its full-size screen opens.
   renderEmployeeTasks();
   renderEmployeeClock();
