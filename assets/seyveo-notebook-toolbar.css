@@ -374,3 +374,69 @@ svg.sv-paper-signature .sv-paper-icon-core{
   transition:none!important;
  }
 }
+
+
+/* v9 · Approved compact SEYVEO selection circle.
+   A separate round disc appears behind the active icon, surviving older
+   background declarations and switching instantly with the drawing tool. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
+ --sv-ink-selected-size:calc(var(--sv-paper-tool-size) - 2px);
+ border:1px solid rgba(231,236,242,.14)!important;
+ background:rgba(24,26,29,.93)!important;
+ box-shadow:inset 0 1px 0 rgba(250,252,255,.055),0 2px 7px rgba(0,0,0,.12)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(105%)!important;
+ backdrop-filter:blur(18px) saturate(105%)!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi){
+ position:relative!important;
+ isolation:isolate!important;
+ color:#d9dde3!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ overflow:hidden!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi)::before{
+ content:""!important;
+ position:absolute!important;top:50%!important;left:50%!important;
+ width:min(36px,var(--sv-ink-selected-size))!important;
+ height:min(36px,var(--sv-ink-selected-size))!important;
+ border-radius:50%!important;box-sizing:border-box!important;
+ transform:translate(-50%,-50%)!important;
+ background:rgba(215,222,231,.18)!important;
+ border:1px solid rgba(235,241,248,.09)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.075)!important;
+ opacity:0!important;pointer-events:none!important;
+ z-index:0!important;
+ transition:opacity .14s ease!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi)
+>svg.sv-paper-signature{
+ position:relative!important;z-index:1!important;color:inherit!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"]).sv-paper-tool-selected::before,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"])[aria-pressed="true"]::before,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is(#notePaperSettings,#notePaperPatternTrigger)[aria-expanded="true"]::before{
+ opacity:1!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"]).sv-paper-tool-selected,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"])[aria-pressed="true"],
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is(#notePaperSettings,#notePaperPatternTrigger)[aria-expanded="true"]{
+ color:#f6f7fa!important;background:transparent!important;
+ border-color:transparent!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi):active::before{
+ opacity:1!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary button::before{transition:none!important}
+}
