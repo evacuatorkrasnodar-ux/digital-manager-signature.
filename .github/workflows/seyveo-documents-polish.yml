@@ -7,6 +7,9 @@ on:
       - 'assets/seyveo-docs-export.js'
       - 'assets/seyveo-docs-studio.js'
       - 'assets/seyveo-docs-studio.css'
+      - 'assets/seyveo-docs-viewer.js'
+      - 'assets/seyveo-docs-viewer.css'
+      - 'tools/test-seyveo-docs-viewer.cjs'
       - 'tools/test-seyveo-docs-studio.cjs'
       - 'docs/SEYVEO-DOCS-PRODUCT-SPEC.md'
       - 'assets/documents-center.js'
@@ -19,6 +22,9 @@ on:
       - 'assets/seyveo-docs-export.js'
       - 'assets/seyveo-docs-studio.js'
       - 'assets/seyveo-docs-studio.css'
+      - 'assets/seyveo-docs-viewer.js'
+      - 'assets/seyveo-docs-viewer.css'
+      - 'tools/test-seyveo-docs-viewer.cjs'
       - 'tools/test-seyveo-docs-studio.cjs'
       - 'docs/SEYVEO-DOCS-PRODUCT-SPEC.md'
       - 'assets/documents-center.js'
@@ -42,6 +48,6 @@ jobs:
         with:
           node-version: '22'
       - name: Verify Documents JavaScript syntax
-        run: node --check assets/documents-center.js && node --check assets/seyveo-docs-export.js && node --check assets/seyveo-docs-studio.js
+        run: node --check assets/documents-center.js && node --check assets/seyveo-docs-export.js && node --check assets/seyveo-docs-studio.js && node --check assets/seyveo-docs-viewer.js
       - name: Verify Documents real render actions and CSS scope
-        run: node --test tools/test-seyveo-documents-screen.cjs tools/test-seyveo-docs-studio.cjs
+        run: node --test tools/test-seyveo-documents-screen.cjs tools/test-seyveo-docs-studio.cjs tools/test-seyveo-docs-viewer.cjs
