@@ -134,14 +134,14 @@ test('approved glass and core mark are scoped: no dock edits, no duplicate conne
  assert.doesNotMatch(css,/#(?:navHome|navTasks|navManage)|footer\.dock/);
  assert.doesNotMatch(code,/function connectorsPanel\(|function connectorRow\(|integrationsOpen/);
  assert.match(code,/hub\.open\('services'\)/);
- assert.match(html,/assets\/documents-center\.css\?v=17/);
- assert.match(html,/assets\/documents-center\.js\?v=19/);
+ assert.match(html,/assets\/documents-center\.css\?v=18/);
+ assert.match(html,/assets\/documents-center\.js\?v=20/);
  assert.match(html,/assets\/seyveo-document-flow\.css\?v=14/);
  assert.match(html,/assets\/seyveo-document-flow\.js\?v=10/);
  assert.match(html,/assets\/sayvi-surfaces\.js\?v=44/);
- assert.match(html,/assets\/seyveo-docs-studio\.css\?v=8/);
+ assert.match(html,/assets\/seyveo-docs-studio\.css\?v=9/);
  assert.match(html,/assets\/seyveo-docs-export\.js\?v=1/);
- assert.match(html,/assets\/seyveo-docs-studio\.js\?v=10/);
+ assert.match(html,/assets\/seyveo-docs-studio\.js\?v=11/);
  assert.match(html,/assets\/seyveo-docs-viewer\.js\?v=1/);
  assert.match(html,/assets\/seyveo-docs-viewer\.css\?v=2/);
  assert.match(html,/assets\/seyveo-smart-connections\.js/);
@@ -206,7 +206,7 @@ test('compact Documents home has one locked archive row, no duplicate protection
  assert.match(code,/summary\.append\(makeIcon\('lock'\),archiveTitle\)/);
  assert.match(code,/sv-doc-vault-copy/);
  assert.doesNotMatch(code,/introCopy\.append\(el\('strong','','Защищённые документы'\)/);
- assert.match(code,/safety\.append\(el\('summary','','О хранении документов'\)/);
+ assert.match(code,/safety\.append\(el\('summary','','Безопасность и хранение'\)/);
 });
 
 test('new local file viewer takes priority over legacy fallback and self-revokes on unmount',()=>{
@@ -229,8 +229,8 @@ test('all six Docs surfaces consume one Liquid Glass geometry and colour contrac
   '--sv-doc-touch:44px',
   '--sv-doc-frost:blur(18px) saturate(1.1)'
  ])assert.ok(css.includes(token),'Documents token missing: '+token);
- assert.match(css,/min-height:52px;padding:3px;margin:0 0 16px/);
- assert.match(css,/width:100%;min-height:44px;border-radius:var\(--sv-doc-radius-card\)/);
+ assert.match(css,/min-height:44px;padding:2px;margin:0 0 19px/);
+ assert.match(css,/width:100%;min-height:39px;border-radius:13px/);
  assert.match(css,/sv-vault-row-actions>.*sv-doc-action/s);
  assert.match(studioCss,/var\(--sv-doc-radius-card,22px\)/);
  assert.match(studioCss,/var\(--sv-doc-radius-tile,19px\)/);
@@ -256,4 +256,21 @@ test('light-mode approvals use neutral glass; iPhone editing avoids automatic Sa
  assert.match(flowCss,/#sayviSurfacePage \.svdf-log summary:focus-visible/);
  assert.match(flowCss,/\.svdf-actions \.svdf-quiet\{[\s\S]{0,100}min-height:var\(--sv-doc-touch,44px\)/);
  assert.match(flowCss,/@media\(max-width:355px\)/);
+});
+
+test('Documents Home is a light Apple-style hierarchy instead of five large blocks',()=>{
+ const studioCss=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
+ const studioJs=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.js'),'utf8');
+ assert.match(studioJs,/sv-doc-tools-heading','Быстрые действия'/);
+ assert.match(studioCss,/\.sv-doc-tool-grid\{\s*display:grid;grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+ assert.match(studioCss,/\.sv-doc-tool-grid \.sv-doc-tool-button\{[\s\S]{0,300}background:transparent/);
+ assert.match(studioCss,/\.sv-doc-tool-scan\{[\s\S]{0,125}grid-template-columns:56px minmax\(0,1fr\) 12px/);
+ assert.match(studioCss,/\.sv-doc-tool-grid \.sv-doc-art,[\s\S]{0,160}width:55px;height:55px/);
+ assert.match(css,/\.sv-doc-vault-summary\{[\s\S]{0,230}grid-template-columns:42px minmax\(0,1fr\) 12px/);
+ assert.match(css,/\.sv-doc-vault-copy\{[\s\S]{0,200}grid-column:2;grid-row:1/);
+ assert.match(css,/\.sv-doc-chat-action \.sv-doc-symbol\.sv-sayvi-symbol\{[\s\S]{0,240}sayvi-core-mark\.svg/);
+ assert.match(code,/makeIcon\(primary\?'sayvi':'review'\)/);
+ assert.match(css,/\.sv-doc-safety:not\(\[open\]\) \.sv-doc-note\{display:none\}/);
+ assert.match(code,/Демо-согласования не предназначены для конфиденциальных документов/);
+ assert.doesNotMatch(studioCss,/#(?:navHome|navManage|navTasks)|footer\.dock/);
 });
