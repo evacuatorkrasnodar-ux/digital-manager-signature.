@@ -422,7 +422,7 @@ function mount(target,{
     }),
     button('Очистить страницы',()=>{scans=[];selectedScan=0;renderScan();})
    ));
-  }else counter.append($('small','','Сфотографируйте лист или выберите фото.'));
+  }
   const info=$('details','sv-doc-tool-help');
   info.append($('summary','','О сканировании'),warn('Фото остаются на устройстве, без отправки в интернет. Автоматическая обрезка и OCR пока не подключены.'));
   panel.append(counter,info,status(''));
@@ -453,8 +453,11 @@ function mount(target,{
   sectionTitle.append($('strong','','Шаблоны'),
    $('small','','Выберите образец'));
   const examples=$('div','sv-doc-tool-templates');
+  examples.setAttribute('role','region');
+  examples.setAttribute('aria-label','Шаблоны документов, листайте горизонтально');
+  examples.tabIndex=0;
   const body=$('textarea','sv-doc-tool-text');
-  body.rows=9;body.maxLength=12000;
+  body.rows=6;body.maxLength=12000;
   body.value=documentDraft;
   body.placeholder='Ваш текст документа…';
   body.setAttribute('aria-label','Текст создаваемого документа');
@@ -579,8 +582,16 @@ function mount(target,{
   let pageIndex=pageIndexDefault;
   const preview=$('div','sv-doc-sign-stage');
   const pageBar=$('div','sv-doc-sign-stage-top');
+  const zoom=button('Увеличить',()=>{
+   const expanded=preview.dataset.expanded==='true';
+   preview.dataset.expanded=String(!expanded);
+   zoom.textContent=expanded?'Увеличить':'Уменьшить';
+   zoom.setAttribute('aria-pressed',String(!expanded));
+  },'sv-doc-sign-zoom');
+  zoom.setAttribute('aria-pressed','false');
   pageBar.append($('strong','','Документ'),$('small','',
    scans.length?'Страница '+(pageIndex+1)+' из '+scans.length:'Лист-пример'));
+  if(scans.length)pageBar.append(zoom);
   const pageBody=$('div','sv-doc-sign-document');
   pageBody.setAttribute('aria-label',scans.length?
    'Коснитесь документа, чтобы выбрать место подписи':'Пример документа без загруженного скана');
@@ -618,7 +629,7 @@ function mount(target,{
   }
   const paper=$('div','sv-doc-tool-sign-paper');
   const canvas=$('canvas');
-  canvas.width=650;canvas.height=240;
+  canvas.width=720;canvas.height=190;
   canvas.setAttribute('aria-label','Поле подписи пальцем или стилусом');
   paper.append($('span','sv-doc-sign-paper-caption','Нарисуйте подпись'),canvas);
   const ctx=canvas.getContext('2d');
@@ -644,7 +655,7 @@ function mount(target,{
    pageBody.style.aspectRatio=file.width+' / '+file.height;
    pageBar.replaceChildren(
     $('strong','','Документ'),
-    $('small','','Страница '+(pageIndex+1)+' из '+scans.length));
+    $('small','','Страница '+(pageIndex+1)+' из '+scans.length),zoom);
    pageBody.replaceChildren();
    const pageUrl=URL.createObjectURL(new Blob([file.jpegBytes],{type:'image/jpeg'}));
    temporaryUrls.push(pageUrl);
@@ -888,7 +899,7 @@ function mount(target,{
     return false;
    operationEpoch++;importBusy=false;
    scans=[page];selectedScan=0;
-   mode='sign';panel.hidden=false;render();
+   mode='sign';panel.dataset.mode='sign';panel.hidden=false;render();
    panel.scrollIntoView?.({block:'nearest',behavior:'smooth'});
    return true;
   }catch{return false;}
