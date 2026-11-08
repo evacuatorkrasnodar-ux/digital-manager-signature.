@@ -1,0 +1,35 @@
+name: SEYVEO Single Account · trusted workspaces
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/business-identity/workspace-manifest.mjs'
+      - 'server/business-identity/workspace-manifest.test.mjs'
+      - 'mobile/src/business/workspace-navigation.mjs'
+      - 'mobile/tests/workspace-navigation.test.mjs'
+      - '.github/workflows/seyveo-single-account.yml'
+  pull_request:
+    paths:
+      - 'server/business-identity/workspace-manifest.mjs'
+      - 'server/business-identity/workspace-manifest.test.mjs'
+      - 'mobile/src/business/workspace-navigation.mjs'
+      - 'mobile/tests/workspace-navigation.test.mjs'
+      - '.github/workflows/seyveo-single-account.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verified-workspaces:
+    name: One account, isolated workspaces, fail-closed access
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test server manifest and native ONE navigation
+        run: node --test server/business-identity/workspace-manifest.test.mjs mobile/tests/workspace-navigation.test.mjs
