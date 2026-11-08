@@ -50,13 +50,13 @@ function pictorialSteps(steps){
  });
  return group;
 }
-let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false,selectedScan=0;
+let scans=[],mode='',temporaryUrls=[],generation=0,operationEpoch=0,importBusy=false,selectedScan=0,activeStudio=null;
 function cleanUrls(){
  for(const url of temporaryUrls)URL.revokeObjectURL(url);
  temporaryUrls=[];
 }
 function reset(){
- generation++;operationEpoch++;importBusy=false;
+ generation++;operationEpoch++;importBusy=false;activeStudio=null;
  cleanUrls();scans=[];mode='';selectedScan=0;
 }
 const fromBase64=data=>{
@@ -690,7 +690,33 @@ function mount(target,{
   info.append($('summary','','Как печатать'),warn('Откройте файл и выберите системное «Поделиться → Печать». Принтер и параметры выбираются в системе.'));
   panel.append(info,status(''));
  }
+ // The document viewer can hand an explicitly opened JPEG/PNG/WebP to
+ // this existing signing tool. PDF editing is NOT implemented: no silent
+ // conversion, no replacement of the encrypted original.
+ async function openSignImage(file){
+  if(!file||!/^\s*image\/(jpeg|png|webp)\s*$/i.test(file.type||'')||
+     !Number.isSafeInteger(file.size)||file.size<1||
+     file.size>12*1024*1024)return false;
+  const instance=openSignImage,at=generation,epoch=operationEpoch;
+  try{
+   const image=await imageOf(file);
+   if(activeStudio!==instance||at!==generation||epoch!==operationEpoch)
+    return false;
+   const page=jpegOf(canvasOf(image));
+   if(activeStudio!==instance||at!==generation||epoch!==operationEpoch)
+    return false;
+   operationEpoch++;importBusy=false;
+   scans=[page];selectedScan=0;
+   mode='sign';panel.hidden=false;render();
+   panel.scrollIntoView?.({block:'nearest',behavior:'smooth'});
+   return true;
+  }catch{return false;}
+ }
+ activeStudio=openSignImage;
  return true;
 }
-window.SEYVEO_DOCS_STUDIO=Object.freeze({mount,reset});
+function openImageForSignature(file){
+ return activeStudio?activeStudio(file):Promise.resolve(false);
+}
+window.SEYVEO_DOCS_STUDIO=Object.freeze({mount,reset,openImageForSignature});
 })();
