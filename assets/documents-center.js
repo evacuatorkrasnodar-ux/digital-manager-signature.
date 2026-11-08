@@ -165,14 +165,10 @@ function draw(){
   if(!window.SEYVEO_DOCUMENT_FLOW?.mount?.(flow))flow.append(note('Согласования пока недоступны.'));
   return;
  }
- const intro=el('section','sv-doc-intro');
- intro.append(makeIcon('lock'));
- const introCopy=el('div','sv-doc-intro-copy');
- introCopy.append(el('strong','','Защищённые документы'),
-  el('small','','Личные и деловые файлы раздельно. Шифрование на этом устройстве.'));
- intro.append(introCopy);
+ // One real archive row replaces the duplicate "protected documents"
+ // intro. Keep the file picker hidden and bound to its original handler.
  const safeArea=el('section','sv-doc-safe-area');
- safeArea.append(intro);
+ safeArea.hidden=true;
  const selected=files[area];
  const picker=document.createElement('input');
  picker.type='file';picker.hidden=true;
@@ -219,8 +215,10 @@ function draw(){
  host.append(feedback);
  const archive=el('details','sv-doc-vault-shell');
  const summary=el('summary','sv-doc-vault-summary');
- summary.append(el('span','sv-doc-vault-title','Мой защищённый архив'),
-  el('small','','Доступ по паролю · файлы зашифрованы'));
+ const archiveTitle=el('span','sv-doc-vault-copy');
+ archiveTitle.append(el('span','sv-doc-vault-title',area==='personal'?'Мой архив':'Архив компании'),
+  el('small','','Защищённый сейф · пароль'));
+ summary.append(makeIcon('lock'),archiveTitle);
  const contents=el('div','sv-doc-vault');
  archive.append(summary,contents);
  archive.addEventListener('toggle',()=>{
@@ -267,7 +265,10 @@ function draw(){
   chatAction('Проверить или исправить','Откройте чат и приложите документ','review'));
  assistant.append(chatList);host.append(assistant);
  if(area==='business')host.append(connectionsEntry());
- host.append(note('Архив хранится только в браузере на этом устройстве. При удалении данных браузера документы могут исчезнуть. Передача файлов в чат, печать и системная отправка — только по вашему действию.'));
+ const safety=el('details','sv-doc-safety');
+ safety.append(el('summary','','О хранении документов'),
+  note('Архив зашифрован на этом устройстве и не имеет облачного восстановления. Если очистить данные браузера, файлы могут исчезнуть. Передача в Сэйви, почту и печать — только по вашему действию. Учебные согласования не подходят для конфиденциальных документов.'));
+ host.append(safety);
 }
 function backFromNested(){
  // Shared titlebar Back navigates within Documents first.
