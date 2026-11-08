@@ -173,6 +173,7 @@ patternChoices.forEach(item=>item.addEventListener('click',()=>{
  pattern.value=choice;
  pattern.dispatchEvent(new Event('change',{bubbles:true}));
  closePatternMenu(true);
+ closeExtras();
 }));
 document.addEventListener('pointerdown',event=>{
  if(!patternMenu.hidden&&!event.target.closest('.paper-pattern-control'))closePatternMenu();
@@ -355,7 +356,7 @@ async function importPhoto(file){
   report('Фото добавлено. Можно писать поверх и сохранить лист.');
  }catch(error){report(error?.message||'Не получилось добавить фотографию.')}
 }
-$('notePaperAddPhoto')?.addEventListener('click',()=>photoFile?.click());
+$('notePaperAddPhoto')?.addEventListener('click',()=>{closeExtras();photoFile?.click()});
 photoFile?.addEventListener('change',()=>{
  const file=photoFile.files?.[0];photoFile.value='';
  if(file)importPhoto(file);
