@@ -217,3 +217,43 @@ test('new local file viewer takes priority over legacy fallback and self-revokes
  assert.match(code,/archive\.open=archiveExpanded;[\s\S]*host\.append\(preview\);[\s\S]*host\.append\(archive\)/);
  assert.match(code,/const sum=el\('summary','','Просмотр документа'\)/);
 });
+
+
+test('all six Docs surfaces consume one Liquid Glass geometry and colour contract',()=>{
+ const studioCss=fs.readFileSync(path.join(root,'assets/seyveo-docs-studio.css'),'utf8');
+ const viewerCss=fs.readFileSync(path.join(root,'assets/seyveo-docs-viewer.css'),'utf8');
+ for(const token of [
+  '--sv-doc-radius-card:22px',
+  '--sv-doc-radius-tile:19px',
+  '--sv-doc-radius-control:17px',
+  '--sv-doc-touch:44px',
+  '--sv-doc-frost:blur(18px) saturate(1.1)'
+ ])assert.ok(css.includes(token),'Documents token missing: '+token);
+ assert.match(css,/min-height:52px;padding:3px;margin:0 0 16px/);
+ assert.match(css,/width:100%;min-height:44px;border-radius:var\(--sv-doc-radius-card\)/);
+ assert.match(css,/sv-vault-row-actions>.*sv-doc-action/s);
+ assert.match(studioCss,/var\(--sv-doc-radius-card,22px\)/);
+ assert.match(studioCss,/var\(--sv-doc-radius-tile,19px\)/);
+ assert.match(studioCss,/var\(--sv-doc-frost,blur\(18px\) saturate\(1\.1\)\)/);
+ assert.match(studioCss,/var\(--sv-doc-touch,44px\)/);
+ assert.match(viewerCss,/var\(--sv-doc-radius-card,22px\)/);
+ assert.match(viewerCss,/var\(--sv-doc-radius-control,17px\)/);
+ assert.match(viewerCss,/var\(--sv-doc-paper-shadow,/);
+ assert.match(flowCss,/var\(--sv-doc-radius-card,22px\)/);
+ assert.match(flowCss,/var\(--sv-doc-radius-tile,19px\)/);
+ assert.match(flowCss,/var\(--sv-doc-frost,blur\(18px\) saturate\(1\.1\)\)/);
+ assert.doesNotMatch(flowCss,/var\(--sv-doc-frost,var\(--sv-doc-frost/);
+ for(const stylesheet of [css,studioCss,viewerCss,flowCss]){
+  assert.doesNotMatch(stylesheet,/#(?:navHome|navTasks|navManage)|footer\.dock|sayviChatComposer/);
+ }
+});
+
+test('light-mode approvals use neutral glass; iPhone editing avoids automatic Safari zoom',()=>{
+ assert.match(flowCss,/:root\[data-theme="light"\] #sayviSurfacePage \.svdf-primary\{[\s\S]{0,155}background:var\(--sv-doc-picked,var\(--card2\)\)/);
+ assert.match(flowCss,/#sayviSurfacePage \.svdf-feedback\{color:var\(--secondary\)/);
+ assert.match(flowCss,/#sayviSurfacePage \.svdf-return-input\{[\s\S]{0,350}font-size:16px/);
+ assert.match(flowCss,/#sayviSurfacePage :is\(\.svdf-revision-body,\.svdf-revision-note\)\{[\s\S]{0,300}font-size:16px/);
+ assert.match(flowCss,/#sayviSurfacePage \.svdf-log summary:focus-visible/);
+ assert.match(flowCss,/\.svdf-actions \.svdf-quiet\{[\s\S]{0,100}min-height:var\(--sv-doc-touch,44px\)/);
+ assert.match(flowCss,/@media\(max-width:355px\)/);
+});
