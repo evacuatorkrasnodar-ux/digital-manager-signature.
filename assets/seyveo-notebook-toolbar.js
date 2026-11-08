@@ -14,15 +14,26 @@
    const n=Math.max(Number(thickness.min)||1,Math.min(Number(thickness.max)||28,Number(thickness.value)||5));
    const max=Number(thickness.max)||28,min=Number(thickness.min)||1;
    const fraction=max===min ? 0.5 : (n-min)/(max-min);
+   // Exact native slider travel (thumb 28 px). No tweening between steps.
    const track=Math.min(190,window.innerHeight*.36);
-   thicknessWrap.style.setProperty('--sv-thumb-offset',((.5-fraction)*(track-20))+'px');
+   thicknessWrap.style.setProperty('--sv-thumb-offset',((.5-fraction)*(track-28))+'px');
    thicknessWrap.dataset.width=String(n);
    thickness.setAttribute('aria-valuetext',String(n));
   };
-  const reveal=()=>{syncThickness();thicknessWrap.classList.add('sv-paper-size-active')};
-  const hide=()=>thicknessWrap.classList.remove('sv-paper-size-active');
+  let lastDetent=Number(thickness.value);
+  let dragging=false;
+  const reveal=()=>{dragging=true;syncThickness();thicknessWrap.classList.add('sv-paper-size-active')};
+  const hide=()=>{dragging=false;thicknessWrap.classList.remove('sv-paper-size-active')};
   thickness.addEventListener('pointerdown',reveal);
-  thickness.addEventListener('input',reveal);
+  thickness.addEventListener('input',()=>{
+   const current=Number(thickness.value);
+   if(current!==lastDetent){
+    lastDetent=current;
+    // Tiny haptic tick where the browser supports it; iOS Safari ignores it.
+    if(dragging&&typeof navigator.vibrate==='function')navigator.vibrate(5);
+   }
+   syncThickness();
+  });
   thickness.addEventListener('pointerup',hide);
   thickness.addEventListener('pointercancel',hide);
   thickness.addEventListener('change',hide);
