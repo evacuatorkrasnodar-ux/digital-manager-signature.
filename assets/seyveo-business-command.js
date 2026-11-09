@@ -1513,26 +1513,9 @@ function renderChat(){
      helper.setAttribute('aria-label','Сэйви поможет выполнить это задание');
      bubble.append(helper);
     }
-    // One unobtrusive, dismissible suggestion next to evidence in the chat.
-    // Never award automatically and never show this to an employee.
-    if(state.viewpoint==='manager'&&msg.role==='demo-elena'){
-     const proposal=pendingRecognitionSuggestions().find(x=>x.sourceKey===recognitionSourceKey(msg));
-     if(proposal){
-      const prompt=el('div','svcp-smart-award-suggestion');
-      const label=el('small','svcp-smart-award-label','⭐ Сэйви: '+proposal.reason+'. Можно поблагодарить Елену.');
-      const controls=el('div','svcp-smart-award-actions');
-      const award=btn('Поощрить',()=>{
-       if(awardRecognitionSuggestion(proposal.sourceKey))renderChat();
-      },'svcp-smart-award-confirm');
-      const later=btn('Позже',()=>{
-       dismissRecognitionSuggestion(proposal.sourceKey);
-       prompt.remove();
-      },'svcp-smart-award-later');
-      controls.append(award,later);
-      prompt.append(label,controls);
-      bubble.append(prompt);
-     }
-    }
+    // Sayvi recognition suggestions are a small contextual star UNDER
+    // the relevant message, not a bulky prompt inside its bubble.
+    // The manager must tap and confirm before any recognition is awarded.
     const actions=el('div','svcp-message-actions');
     const menu=el('div','svcp-message-menu');menu.hidden=true;
     menu.setAttribute('role','group');menu.setAttribute('aria-label','Действия с сообщением');
@@ -1679,6 +1662,40 @@ function renderChat(){
      }
     });
     bubble.append(actions,menu);
+    // Compact contextual actions below the bubble, not inside the writing dock.
+    // Only the manager sees "Assign". Recognition appears only when Sayvi
+    // identifies a specific, still-pending reason to thank a colleague.
+    if(state.viewpoint==='manager'&&!employeePreviewActive()){
+     const canAssign=!msg.taskId&&!msg.mediaId&&
+      (!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&
+      String(msg.text||'').trim().length>0;
+     const recognitionProposal=msg.role==='demo-elena'
+      ?pendingRecognitionSuggestions().find(x=>x.sourceKey===recognitionSourceKey(msg))
+      :null;
+     if(canAssign||recognitionProposal){
+      const quick=el('div','svcp-message-quick-actions');
+      quick.setAttribute('role','group');
+      quick.setAttribute('aria-label','Быстрые действия с сообщением');
+      const makeQuick=(kind,label,path,callback)=>{
+       const control=btn('',callback,'svcp-message-quick-action svcp-quick-'+kind);
+       control.setAttribute('aria-label',label);
+       control.title=label;
+       const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+       svg.setAttribute('viewBox','0 0 24 24');
+       svg.setAttribute('aria-hidden','true');
+       svg.innerHTML=path;
+       control.append(svg);quick.append(control);
+      };
+      if(canAssign)makeQuick('task','Поручить по этому сообщению',
+       '<rect x="4.5" y="4" width="15" height="17" rx="2"/><path d="M8 9h8M8 13h5M14.5 18h5M17 15.5v5"/>',
+       ()=>{closeMessageMenus();prepareTask(msg,index)});
+      if(recognitionProposal)makeQuick('award','Сэйви предлагает наградить: '+recognitionProposal.reason,
+       '<path d="m12 2.8 2.85 5.77 6.37.93-4.61 4.5 1.09 6.35L12 17.35l-5.7 3 1.09-6.35-4.61-4.5 6.37-.93Z"/>',
+       ()=>{if(awardRecognitionSuggestion(recognitionProposal.sourceKey))renderChat()});
+      bubble.classList.add('svcp-has-quick-actions');
+      bubble.append(quick);
+     }
+    }
    }
    thread.append(bubble);
   }
