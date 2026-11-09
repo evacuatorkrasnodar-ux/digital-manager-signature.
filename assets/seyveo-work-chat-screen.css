@@ -2610,53 +2610,78 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  content:none!important;
  display:none!important;
 }
-/* Work Chat icon parity | Home dock + Notebook.
-   Home: 22px laser-etched glyph, .8px stroke, quiet white core.
-   Notebook: clean neutral silver, not green or colored glass.
-   Keep the approved separate Plus untouched. */
-#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile svg{
- display:block!important;width:22px!important;height:22px!important;
- min-width:0!important;
- color:var(--seyveo-engrave-ink,rgba(183,212,205,.75))!important;
- stroke:currentColor!important;
- stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
- shape-rendering:geometricPrecision;filter:none!important;
+/* SEYVEO Work Chat · TRUE HOME DOCK ENGRAVING.
+   Exact technique from Notebook "true Home Dock engraving v3":
+   shared dock variables, one SVG outline, no halo/filter/blur, no added contour.
+   Preserve the existing 36px touch targets and approved separate Plus. */
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
+ color:var(--seyveo-engrave-ink)!important;
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ box-shadow:none!important;
+ filter:none!important;
+ opacity:1!important;
+ -webkit-tap-highlight-color:transparent!important;
+ transition:color .22s ease,opacity .22s ease!important;
 }
-#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile svg path{
+/* Plus icon remains the approved unchanged dock icon. */
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile svg{
+ display:block!important;
+ width:var(--seyveo-dock-icon-size,22px)!important;
+ height:var(--seyveo-dock-icon-size,22px)!important;
  stroke:currentColor!important;
  stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
+ fill:none!important;
+ filter:none!important;
+ shape-rendering:geometricPrecision!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle svg,
 #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark{
  display:block!important;
- width:22px!important;height:22px!important;
- min-width:22px!important;max-width:22px!important;
- color:#E4E7EB!important;
+ width:var(--seyveo-dock-icon-size,22px)!important;
+ height:var(--seyveo-dock-icon-size,22px)!important;
+ min-width:var(--seyveo-dock-icon-size,22px)!important;
+ max-width:var(--seyveo-dock-icon-size,22px)!important;
+ flex:0 0 var(--seyveo-dock-icon-size,22px)!important;
+ color:inherit!important;
  stroke:currentColor!important;
  stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ fill:none!important;
+ filter:none!important;
+ box-shadow:none!important;
  shape-rendering:geometricPrecision!important;
- filter:drop-shadow(0 0 .55px rgba(255,255,255,.35))
-        drop-shadow(0 0 1.7px rgba(255,255,255,.15))!important;
  transform:none!important;
-}
-#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark{
- flex:0 0 22px!important;fill:none!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle svg :is(circle,path),
 #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark path{
  stroke:currentColor!important;
  stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ fill:none!important;
+ filter:none!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark circle{
- fill:currentColor!important;stroke:none!important;
+ fill:currentColor!important;
+ stroke:none!important;
 }
-/* Keep form functionality and accessible focus indication intact. */
-#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle):focus-visible{
- outline:2px solid var(--seyveo-engrave-active,rgba(218,235,229,.88))!important;
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
+ color:#465466!important;
+}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle):active{
+ opacity:.79!important;
+}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle):focus-visible{
+ outline:2px solid var(--seyveo-engrave-active)!important;
+ outline-offset:2px!important;
+}
+/* Keep the Plus accessibility focus ring, identical to the Home dock. */
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:focus-visible{
+ outline:2px solid var(--seyveo-engrave-active)!important;
  outline-offset:2px!important;
 }
 @media(prefers-reduced-transparency:reduce){
