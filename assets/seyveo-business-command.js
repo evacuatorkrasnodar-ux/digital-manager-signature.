@@ -265,7 +265,8 @@ function svcpOpenDocument(file){
   say(popup?'В системном меню документа выбери «Печать».':'Разреши открытие окна для печати.');
  }));
  const doc= pill('В Документы · подпись','pen',()=>{
-  if(!window.SEYVEO_DOCUMENT_CENTER?.importFromChat?.(file)){
+  if(typeof window.SEYVEO_SAYVI_SURFACES?.open!=='function'||
+     !window.SEYVEO_DOCUMENT_CENTER?.importFromChat?.(file)){
    say('Передача в рабочие Документы сейчас недоступна.');return
   }
   close();
@@ -354,7 +355,8 @@ function restoreStoredMedia(container,message){
    const timestamp=container.querySelector('.svcp-bubble-meta .svcp-time');
    const filename=record.name||message.mediaName||'Вложение';
    const localFile=record.blob instanceof File?record.blob:new File([record.blob],filename,{type:record.type||message.mediaType||''});
-   slot.append(svcpFileCard(filename,record.type||message.mediaType||'',url,timestamp,()=>svcpOpenDocument(localFile)));
+   const previewable=['pdf','word','text'].includes(svcpFileKind(filename,record.type||message.mediaType||'').kind);
+   slot.append(svcpFileCard(filename,record.type||message.mediaType||'',url,timestamp,previewable?()=>svcpOpenDocument(localFile):null));
    if(timestamp)container.classList.add('svcp-file-time-inside');
   }
   // The file card itself is sufficient. Delivery limitations remain in
