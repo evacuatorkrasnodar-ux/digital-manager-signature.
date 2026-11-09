@@ -4793,3 +4793,16 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] .svcp-chat-day{
  margin-top:6px!important;margin-bottom:3px!important;
 }
+
+
+/* SEYVEO · standalone emoji: actions by gesture, no visible row.
+   Scope limited to emoji-only messages; the standard chat dock is unchanged. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only{
+ margin-bottom:2px!important;
+ -webkit-touch-callout:none!important;
+ -webkit-user-select:none!important;
+ user-select:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only > .svcp-message-inline-actions{
+ display:none!important;
+}
