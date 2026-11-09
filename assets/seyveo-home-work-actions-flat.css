@@ -1,0 +1,84 @@
+/* SEYVEO Home · work message action polish · 2026-11-09
+ * Local to the employee-message card; preserves all real handlers,
+ * queue rows, orb, Home background, approved dock and voice action.
+ * Primary matte material inherits the approved Notebook Dock #38383A.
+ * No glass, blur, bevel, gradients or duplicate star pseudo-elements.
+ */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-start;
+  column-gap:8px;
+  row-gap:0;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant:not([hidden]){
+  box-sizing:border-box!important;
+  min-height:44px!important;
+  padding:8px 11px!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:var(--sv-flat-panel,#38383A)!important;
+  background-image:none!important;
+  color:var(--text)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  font-weight:580!important;
+  white-space:nowrap;
+  gap:0!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant:not([hidden])::before,
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant:not([hidden])::after{
+  content:none!important;
+  display:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant:not([hidden]):active{
+  background:var(--sv-flat-panel-raised,#464649)!important;
+  opacity:1!important;
+}
+/* Two auxiliary routes remain text controls with full-size touch targets.
+   "Ответить" opens the editable composer; "В чат" opens the employee chat. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-own:not([hidden]),
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-ref-card-details:not([hidden]){
+  box-sizing:border-box!important;
+  min-height:44px!important;
+  padding:8px 3px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  color:var(--text)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  font-weight:500!important;
+  white-space:nowrap;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-own:not([hidden])::before,
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-own:not([hidden])::after,
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-ref-card-details:not([hidden])::before{
+  content:none!important;
+  display:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-ref-card-details:not([hidden]){
+  color:var(--secondary)!important;
+}
+/* Keyboard focus remains visible, including on light theme. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer:focus-visible{
+  outline:2px solid var(--text)!important;
+  outline-offset:2px!important;
+}
