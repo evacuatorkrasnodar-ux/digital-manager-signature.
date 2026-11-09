@@ -127,3 +127,22 @@ assert.match(homeSceneSource,/open\.textContent='Перейти'/,'third choice 
 assert.match(homeSceneSource,/function syncDocumentTitleTap\(\)/,'title navigation is preserved');
 assert.ok(!homeSceneSource.includes("documentStep==='review'?'Ознакомлен'"),'no fake acknowledgement button');
 console.log('SEYVEO canonical Home three-button Send/Save flow: tests passed');
+
+// iPhone-style icon contract: all new cards share the same five symbols,
+// and the official Sayvi emblem has a circular orb at its centre.
+const iconEngineSource=readFileSync(new URL('../assets/seyveo-card-engine.js',import.meta.url),'utf8');
+const iconHomeSource=readFileSync(new URL('../assets/living-moment.js',import.meta.url),'utf8');
+const iconSharedStyles=readFileSync(new URL('../assets/seyveo-card-system.css',import.meta.url),'utf8');
+const iconHomeStyles=readFileSync(new URL('../assets/seyveo-home-work-actions-flat.css',import.meta.url),'utf8');
+assert.equal(typeof browserEngine.decorateActionButton,'function');
+for(const kind of ['sayvi','edit','navigate','send','save'])
+ assert.match(iconEngineSource,new RegExp('\\b'+kind+':'),kind+' icon is available');
+assert.match(iconEngineSource,/<circle cx="12" cy="12" r="1\.7"/,'the official Sayvi mark retains its central sphere');
+assert.match(iconEngineSource,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg'/,'native vector icons');
+assert.match(iconEngineSource,/decorateActionButton\(button,action\.id\)/,'new cards receive icons automatically');
+assert.match(iconHomeSource,/cardIconize\(mailSave,'send'\)/,'mail Send has paper-plane icon');
+assert.match(iconHomeSource,/cardIconize\(execute,'send'\)/,'Sayvi draft Send has paper-plane icon');
+assert.match(iconHomeSource,/\[documentSave,'save'\]/,'document Save icon is wired');
+assert.match(iconSharedStyles,/min-height:48px!important/,'regular card targets are >=44px');
+assert.match(iconHomeStyles,/min-height:48px!important/,'Home card targets are >=44px');
+console.log('SEYVEO official Sayvi-orb and iPhone action icon contract: tests passed');
