@@ -476,13 +476,11 @@ function syncComposerActions(){
  const form=$('svcpChatForm');if(!form)return;
  const text=$('svcpChatInput')?.value.trim()||'';
  form.dataset.hasContent=String(!!(text||state.file||state.scanCode));
- // A command is offered only while composing text to a specific employee.
- // Do not show a second-row empty action, during message edits, or to Elena.
+ // "Поручить" belongs to the manager's action menu on a sent message,
+ // not the cramped writing dock. Preserve the original task review workflow.
  const task=$('svcpComposerDirectTask');
- const ready=!!(privateAssignmentRecipient()&&text&&
-  !state.file&&!state.scanCode&&editingMessageIndex===null);
- if(task)task.hidden=!ready;
- form.classList.toggle('svcp-can-assign',ready);
+ if(task)task.hidden=true;
+ form.classList.remove('svcp-can-assign');
 }
 $('svcpChatInput')?.addEventListener('input',syncComposerActions);
 /* The single-line input must never be temporarily resized to measure its text:
@@ -516,9 +514,9 @@ function resizeWorkComposer(){
  const compact=window.matchMedia('(max-width:390px)').matches;
  const base=compact?38:40;
  const formWidth=form.getBoundingClientRect().width||Math.max(240,window.innerWidth-12);
- // 132px are the approved Plus / Sayvi / emoji grid tracks.
- // In the short form 15px left and 154px right remain for the task and send.
- const shortWidth=formWidth-132-15-(form.classList.contains('svcp-can-assign')?154:54);
+ // The writing dock no longer reserves space for "Поручить".
+ // Keep enough room for the send icon, without stealing emoji/input width.
+ const shortWidth=formWidth-132-15-54;
  const hasNewline=value.includes('\n');
  const textHeight=measuredComposeHeight(value,shortWidth);
  const wraps=!!value&&(hasNewline||textHeight>24);
@@ -1987,23 +1985,6 @@ $('svcpFile')?.addEventListener('change',()=>{
 function btn(text,action,cls){
  const button=el('button',cls,text);button.type='button';button.addEventListener('click',action);return button;
 }
-/* Direct assignment while composing in a personal chat:
-   text is the task, the current employee is the recipient. No extra form. */
-$('svcpComposerDirectTask')?.addEventListener('click',()=>{
- const person=privateAssignmentRecipient(),input=$('svcpChatInput');
- const text=input?.value.trim()||'';
- if(!person){setStatus('Поручение напрямую доступно в личном чате сотрудника.');return}
- if(!text){setStatus('Напишите поручение и нажмите «Поручить».');input?.focus({preventScroll:true});return}
- if(text.length>140){setStatus('Для поручения нужно не более 140 символов.');return}
- if(state.file||state.scanCode){setStatus('Для поручения нужен только текст без вложений.');return}
- state.draftSource={room:state.room,assigneeId:person};
- setTaskRecipient(person);
- closeTaskRecipientPicker();
- $('svcpChatTaskTitle').value=text;
- $('svcpChatTaskDraft').hidden=false;
- // Leave the task review visible before opening the iPhone keyboard.
- document.activeElement?.blur?.();
-});
 $('svcpChatForm')?.addEventListener('submit',async event=>{
  event.preventDefault();
  if(cameraBusy)return;
