@@ -2506,3 +2506,50 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBac
   width:calc(100% - 16px)!important;
  }
 }
+
+
+/* SEYVEO Ink Studio · compact settings v35 · 2026-11-09.
+   Actions stay finger-friendly; redundant "Без разлиновки" was removed in JS.
+   Popover stays flat graphite and keeps its existing anchored position. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-newdock-settings-panel:not([hidden]){
+ width:min(238px,calc(100vw - 28px))!important;
+ max-width:calc(100vw - 28px)!important;
+ padding:9px!important;
+ gap:2px!important;
+ border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;
+ box-shadow:0 10px 25px rgba(0,0,0,.20)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-newdock-menu-title{
+ margin:0 2px 3px!important;
+ font-size:10px!important;
+ font-weight:640!important;
+ line-height:16px!important;
+ letter-spacing:.015em!important;
+ color:#C7C7CB!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-newdock-backgrounds{
+ gap:5px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu button{
+ box-sizing:border-box!important;
+ height:42px!important;min-height:42px!important;
+ padding:7px 9px!important;
+ border-radius:9px!important;
+ font-size:12px!important;line-height:1.25!important;
+ color:#F3F3F4!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-newdock-actions-heading{
+ margin-top:2px!important;
+ padding-top:6px!important;
+ border-top:1px solid rgba(255,255,255,.10)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu button .sv-newdock-glyph{
+ width:17px!important;height:17px!important;
+ flex:0 0 17px!important;
+ margin-right:8px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu #notePaperDuplicate:disabled{
+ display:none!important;
+}
