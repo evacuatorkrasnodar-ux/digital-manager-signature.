@@ -120,6 +120,50 @@ async function localVoiceAmplitudes(blob,count=25){
   try{await context.close()}catch{}
  }
 }
+
+/* SEYVEO · one type-aware attachment vocabulary for chat, drafts and tasks.
+   Original files remain in the existing IndexedDB, never in task localStorage. */
+function svcpFileKind(name='',mime=''){
+ const value=String(name||'').toLowerCase();
+ const type=String(mime||'').toLowerCase();
+ const suffix=value.match(/\.([a-z0-9]+)$/i)?.[1]||'';
+ if(suffix==='pdf'||type.includes('application/pdf'))return {kind:'pdf',mark:'PDF',label:'Документ PDF'};
+ if(['doc','docx','rtf','odt'].includes(suffix)||type.includes('wordprocessingml')||type.includes('msword'))
+  return {kind:'word',mark:'DOC',label:'Документ Word'};
+ if(['xls','xlsx','csv','ods'].includes(suffix)||type.includes('spreadsheetml')||type.includes('ms-excel'))
+  return {kind:'sheet',mark:'XLS',label:'Таблица'};
+ if(['jpg','jpeg','png','webp','heic','heif','gif'].includes(suffix)||type.startsWith('image/'))
+  return {kind:'image',mark:'IMG',label:'Изображение'};
+ if(['mp4','mov','webm','m4v'].includes(suffix)||type.startsWith('video/'))
+  return {kind:'video',mark:'VID',label:'Видео'};
+ if(['txt','md'].includes(suffix)||type.startsWith('text/'))
+  return {kind:'text',mark:'TXT',label:'Текстовый файл'};
+ return {kind:'other',mark:'FILE',label:'Файл'};
+}
+function svcpFileBadge(name,type){
+ const meta=svcpFileKind(name,type);
+ const badge=el('span','svcp-file-badge svcp-file-badge--'+meta.kind,meta.mark);
+ badge.setAttribute('aria-hidden','true');
+ return badge;
+}
+function svcpFileCard(name,type,url){
+ const displayName=String(name||'Вложение');
+ const node=el(url?'a':'div','svcp-file-card');
+ const detail=svcpFileKind(displayName,type);
+ node.append(svcpFileBadge(displayName,type));
+ const body=el('span','svcp-file-card-copy');
+ body.append(el('strong','svcp-file-card-name',displayName),el('small','svcp-file-card-type',detail.label));
+ node.append(body);
+ if(url){
+  node.href=url;
+  node.download=displayName;
+  node.setAttribute('aria-label','Открыть или сохранить файл: '+displayName);
+  const arrow=el('span','svcp-file-card-arrow','↗');arrow.setAttribute('aria-hidden','true');
+  node.append(arrow);
+ }
+ return node;
+}
+
 function restoreStoredMedia(container,message){
  if(!message.mediaId)return;
  const slot=el('div','svcp-media-slot','Открываю вложение…');
@@ -185,8 +229,7 @@ function restoreStoredMedia(container,message){
    video.src=url;video.controls=true;video.playsInline=true;video.preload='metadata';
    video.setAttribute('aria-label','Рабочее видео: '+(record.name||''));slot.append(video);
   }else{
-   const link=el('a','svcp-chat-media-file','Открыть файл · '+(record.name||'вложение'));
-   link.href=url;link.download=record.name||'seyveo-file';slot.append(link);
+   slot.append(svcpFileCard(record.name||message.mediaName||'Вложение',record.type||message.mediaType||'',url));
   }
   if(!slot.classList.contains('svcp-voice-message')){
    const note=el('small','svcp-chat-media-local','Только на этом устройстве · без отправки');
@@ -1483,9 +1526,11 @@ function renderChat(){
     bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
    }
    if(msg.mediaPurpose!=='voice'){
-    const taskText=msg.taskId?String(msg.text||'').replace(/^\s*📌\s*Поручение:\s*/u,''):msg.text;
+    let taskText=msg.taskId?String(msg.text||'').replace(/^\s*📌\s*Поручение:\s*/u,''):msg.text;
+    if(msg.mediaId&&msg.mediaPurpose!=='voice')
+     taskText=String(taskText||'').replace(/(?:^|\n)\s*(?:📎\s*Вложение|🎬\s*Видео|📷\s*Фото (?:выкладки|ценника)|▥\s*Фото штрихкода)\s*$/gmu,'').trim();
     if(msg.taskId)bubble.append(el('small','svcp-task-message-label','Поручение'));
-    bubble.append(el('span','svcp-message-text',taskText));
+    if(taskText)bubble.append(el('span','svcp-message-text',taskText));
    }
    if(msg.documentFlowId&&window.SEYVEO_DOCUMENT_FLOW?.get?.(msg.documentFlowId)){
     const doc=window.SEYVEO_DOCUMENT_FLOW.get(msg.documentFlowId);
@@ -1680,18 +1725,54 @@ function suggestFromChat(message){
   task:''
  };
 }
+function svcpShowDraftAttachment(){
+ const host=$('svcpTaskAttachment');if(!host)return;
+ host.replaceChildren();
+ const source=state.draftSource;
+ if(!source?.attachmentMediaId){host.hidden=true;return}
+ host.hidden=false;
+ const card=svcpFileCard(source.attachmentName||'Вложение',source.attachmentType||'');
+ card.classList.add('svcp-task-file-card');
+ const remove=btn('×',()=>{
+  if(!state.draftSource)return;
+  delete state.draftSource.attachmentMediaId;
+  delete state.draftSource.attachmentName;
+  delete state.draftSource.attachmentType;
+  svcpShowDraftAttachment();
+ },'svcp-task-file-remove');
+ remove.setAttribute('aria-label','Убрать вложение из поручения');
+ card.append(remove);
+ host.append(card);
+ if(!source.attachmentName||source.attachmentName==='Вложение'){
+  const wanted=source.attachmentMediaId;
+  loadMediaLocally(wanted).then(record=>{
+   if(!record?.name||state.draftSource?.attachmentMediaId!==wanted)return;
+   state.draftSource.attachmentName=record.name;
+   state.draftSource.attachmentType=record.type||'';
+   svcpShowDraftAttachment();
+  }).catch(()=>{});
+ }
+}
 function prepareTask(msg,index=null){
  const proposed=typeof msg.suggestTask==='string'&&msg.suggestTask.trim()?msg.suggestTask:msg.text;
- // Images and file names are never promoted to tasks automatically.
- const clean=String(proposed||'').replace(/@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)\s*[,—:-]?\s*/gi,'').replace(/\[Выбран файл:[\s\S]*$/,'').trim().slice(0,140);
- if(!clean){setStatus('В этом сообщении нет текста для поручения.');return}
+ const hasFile=!!msg.mediaId&&msg.mediaPurpose!=='voice';
+ const clean=String(proposed||'')
+  .replace(/@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)\s*[,—:-]?\s*/gi,'')
+  .replace(/\[Выбран файл:[\s\S]*$/,'')
+  .replace(/(?:^|\n)\s*(?:📎\s*Вложение|🎬\s*Видео|📷\s*Фото (?:выкладки|ценника)|▥\s*Фото штрихкода)\s*$/gmu,'')
+  .trim().slice(0,140);
+ if(!clean&&!hasFile){setStatus('В этом сообщении нет текста для поручения.');return}
  const room=ROOMS.find(x=>x.id===msg.room);
- state.draftSource={room:msg.room,assigneeId:room?.person&&room.person!=='sayvi'?room.person:'',...(Number.isInteger(index)?{messageIndex:index}:{})};
+ state.draftSource={room:msg.room,assigneeId:room?.person&&room.person!=='sayvi'?room.person:'',
+  ...(Number.isInteger(index)?{messageIndex:index}:{}),
+  ...(hasFile?{attachmentMediaId:msg.mediaId,attachmentName:msg.mediaName||'Вложение',attachmentType:msg.mediaType||''}:{})};
  setTaskRecipient(state.draftSource.assigneeId);
  closeTaskRecipientPicker();
- $('svcpChatTaskTitle').value=clean;
+ const title=$('svcpChatTaskTitle');
+ title.value=clean;
+ title.placeholder=hasFile?'Что нужно сделать с файлом?':'Что нужно сделать?';
+ svcpShowDraftAttachment();
  $('svcpChatTaskDraft').hidden=false;
- // Leave the task review visible before opening the iPhone keyboard.
  document.activeElement?.blur?.();
 }
 function setTaskRecipient(id){
@@ -1734,6 +1815,7 @@ document.addEventListener('keydown',event=>{
 function cancelTaskDraft(){
  state.draftSource=null;
  $('svcpChatTaskDraft').hidden=true;
+ svcpShowDraftAttachment();
  closeTaskRecipientPicker();
 }
 $('svcpChatTaskCancel')?.addEventListener('click',cancelTaskDraft);
@@ -1768,6 +1850,11 @@ function storeTask(text,source){
  const created=fresh.map((assigneeId,i)=>({
   id:'chat-'+Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2,7),
   text:title,done:false,assigneeId,createdAt:Date.now(),
+  ...(source?.attachmentMediaId?{
+   attachmentMediaId:source.attachmentMediaId,
+   attachmentName:String(source.attachmentName||'Вложение').slice(0,160),
+   attachmentType:String(source.attachmentType||'').slice(0,120)
+  }:{}),
   ...(source?.room==='business-mail'?{mailHistory:[{event:'assigned',at:Date.now()}]}:{}),
   ...(source?.approvalFlow?{approvalFlow:true,reviewStatus:'assigned'}:{}),
   ...(source?.room?{source:source.room==='business-mail'?'business-mail':'chat',room:source.room}:{}),
@@ -1902,13 +1989,22 @@ function renderCapturePreview(){
    display.append(video);
   }
  }
+ if(state.file&&!state.file.type.startsWith('image/')&&!state.file.type.startsWith('video/'))
+  display.append(svcpFileBadge(state.file.name,state.file.type));
  const info=el('div','svcp-selected-info');
- info.append(el('strong',null,cameraPurposeNames[state.filePurpose]||'Вложение'));
- if(state.file)info.append(el('small',null,state.file.name+' · сохранится в этом браузере после отправки'));
- if(state.scanCode)info.append(el('small','svcp-scanned-code','Код: '+state.scanCode+' · товар по базе не проверен'));
- else if(state.filePurpose==='photo')info.append(el('small',null,'Снимок прикреплён. Автоматический анализ ценников и выкладки пока не подключён.'));
+ if(state.file){
+  info.append(el('strong',null,state.file.name));
+  info.append(el('small',null,svcpFileKind(state.file.name,state.file.type).label+' · Только на этом устройстве'));
+ }else if(state.scanCode){
+  info.append(el('strong',null,'Штрихкод'));
+  info.append(el('small','svcp-scanned-code',state.scanCode+' · каталог не проверен'));
+ }
  display.append(info);
- display.append(btn('Убрать',()=>{cleanupPreview();setStatus('Вложение убрано.')},'svcp-ghost svcp-selected-remove'));
+ const remove=btn('',()=>{cleanupPreview();setStatus('Вложение убрано.')},'svcp-ghost svcp-selected-remove');
+ remove.setAttribute('aria-label','Убрать вложение');
+ remove.title='Убрать вложение';
+ remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M9 7V5h6v2M7 7l1 12h8l1-12M10 10v6M14 10v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+ display.append(remove);
 }
 function pickCaptureFile(file,purpose){
  cleanupPreview();
@@ -1970,7 +2066,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   }
   const entry={room:state.room,text:message,at:Date.now(),
    role:state.viewpoint==='elena'?'demo-elena':'self',
-   ...(mediaId?{mediaId,mediaType:type,mediaPurpose:purpose}:{}),
+   ...(mediaId?{mediaId,mediaType:type,mediaName:file.name,mediaPurpose:purpose}:{}),
    ...(state.replyTo?{replyTo:state.replyTo}:{})};
   const callSayvi=state.room==='dm-sayvi'||/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
   const messages=[entry];
@@ -2044,6 +2140,25 @@ function renderTasks(){
   // Legacy demo records remain stored, but assignees are chosen in chat.
   if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
    copy.append(el('small','svcp-task-assignee',STAFF[t.assigneeId]));
+  if(t.attachmentMediaId){
+   const fileButton=el('button','svcp-task-file-open');
+   fileButton.type='button';
+   fileButton.setAttribute('aria-label','Открыть локальное вложение: '+(t.attachmentName||'Вложение'));
+   fileButton.append(svcpFileBadge(t.attachmentName,t.attachmentType));
+   const text=el('span','svcp-task-file-name',t.attachmentName||'Вложение');
+   fileButton.append(text);
+   fileButton.addEventListener('click',async()=>{
+    try{
+     const record=await loadMediaLocally(t.attachmentMediaId);
+     if(!record?.blob){setStatus('Файл не найден на этом устройстве.');return}
+     const url=URL.createObjectURL(record.blob),link=el('a');
+     link.href=url;link.download=record.name||t.attachmentName||'seyveo-file';
+     document.body.append(link);link.click();link.remove();
+     setTimeout(()=>URL.revokeObjectURL(url),30000);
+    }catch{setStatus('Не удалось открыть вложение на этом устройстве.')}
+   });
+   copy.append(fileButton);
+  }
   if(approval){
    const employee=STAFF[t.assigneeId]||'сотрудника';
    const statusNames={assigned:'Ожидает: '+employee,review:'Ожидает проверки',rework:'Возвращено на доработку',approved:'Принято руководителем'};
