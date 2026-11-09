@@ -965,6 +965,7 @@ function showInbox(){
  if(container)container.dataset.view='inbox';
  const info=$('svcpRoomInfo');if(info)info.hidden=true;
  $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','false');
+ $('svcpConversationHeading')?.setAttribute('aria-expanded','false');
  closeRecognition();
  closeComposerEmoji();
  setCameraTray(false);
@@ -988,6 +989,7 @@ function openRoom(roomId){
  if(container)container.dataset.view='room';
  const info=$('svcpRoomInfo');if(info)info.hidden=true;
  $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','false');
+ $('svcpConversationHeading')?.setAttribute('aria-expanded','false');
  closeRecognition();
  closeComposerEmoji();
  setCameraTray(false);
@@ -1045,10 +1047,15 @@ function updatePerspective(){
  window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:state.viewpoint==='elena'?'employee':'manager'}}));
  updateWorkTypingIndicator();
 }
-$('svcpRoomInfoToggle')?.addEventListener('click',()=>{
- const panel=$('svcpRoomInfo'),button=$('svcpRoomInfoToggle');if(!panel)return;
- panel.hidden=!panel.hidden;button?.setAttribute('aria-expanded',String(!panel.hidden));
-});
+function toggleRoomInformation(){
+ const panel=$('svcpRoomInfo');if(!panel)return;
+ panel.hidden=!panel.hidden;
+ const expanded=String(!panel.hidden);
+ $('svcpRoomInfoToggle')?.setAttribute('aria-expanded',expanded);
+ $('svcpConversationHeading')?.setAttribute('aria-expanded',expanded);
+}
+$('svcpRoomInfoToggle')?.addEventListener('click',toggleRoomInformation);
+$('svcpConversationHeading')?.addEventListener('click',toggleRoomInformation);
 $('svcpConversationBack')?.addEventListener('click',showInbox);
 $('svcpConversationSearch')?.addEventListener('click',()=>{
  showInbox();
