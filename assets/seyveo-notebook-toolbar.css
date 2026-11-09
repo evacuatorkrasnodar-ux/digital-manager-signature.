@@ -2214,3 +2214,63 @@ svg.sv-paper-signature .sv-paper-icon-core{
   max-width:20px!important;max-height:20px!important;
  }
 }
+
+
+/* SEYVEO · Ink Studio balanced single-row controls.
+   One centered composition instead of pushing Undo to the far screen edge.
+   Preserve original button nodes, click handlers, canvas and bottom palette. */
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+ --sv-paper-center-width:226px;
+ position:absolute!important;
+ left:50%!important;right:auto!important;
+ transform:translateX(-50%)!important;
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:44px var(--sv-paper-center-width) 44px!important;
+ column-gap:6px!important;
+ align-items:center!important;justify-content:center!important;
+ width:326px!important;min-width:0!important;max-width:calc(100vw - 8px)!important;
+ padding:calc(7px + env(safe-area-inset-top,0px)) 0 6px!important;
+ margin:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > :is(#notePaperBack,#notePaperUndo){
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ position:relative!important;
+ justify-self:center!important;align-self:center!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ max-width:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F3F5F7!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:none!important;
+ opacity:1!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > :is(#notePaperBack,#notePaperUndo) svg{
+ width:19px!important;height:19px!important;
+ display:block!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUndo:disabled{
+ opacity:1!important;background:#38383A!important;cursor:default!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUndo:disabled svg{
+ opacity:.36!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > :is(#notePaperBack,#notePaperUndo):not(:disabled):active{
+ background:#49494B!important;
+}
+/* The existing five-tool dock is 208px below 371px. Keep equal 4px
+   spaces on both sides there too, including a narrow iPhone SE. */
+@media(max-width:370px){
+ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+  --sv-paper-center-width:208px;
+  width:304px!important;
+  grid-template-columns:44px var(--sv-paper-center-width) 44px!important;
+  column-gap:4px!important;
+ }
+}
