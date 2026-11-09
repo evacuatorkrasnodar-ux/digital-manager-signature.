@@ -276,6 +276,16 @@
   // Do not show a redundant Back control beside each top-level title.
   back.hidden=!history;
   back.setAttribute('aria-label',history?'Вернуться к моим делам':'Вернуться назад');
+  // Keep both History controls as identical graphite circles even if an
+  // older theme stylesheet overrides the shared Back class on mobile Safari.
+  if(history){
+   back.style.setProperty('background-color','#38383A','important');
+   back.style.setProperty('color','#F6F7F8','important');
+   back.style.setProperty('border-radius','50%','important');
+   back.style.setProperty('box-shadow','none','important');
+  }else{
+   for(const name of ['background-color','color','border-radius','box-shadow'])back.style.removeProperty(name);
+  }
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
   add.hidden=active==='employee'&&!history;
