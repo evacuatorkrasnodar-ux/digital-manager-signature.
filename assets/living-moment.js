@@ -245,15 +245,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function workActive(){return !real&&shown.kind==='work'}
  function updateWork(){
   const active=workActive();workDetails.hidden=!active;
-  // Mail and Document already show Sayvi's proposal above the actions.
-  // Their first concrete button performs the same step; hide this duplicate.
-  // Work keeps its separate functional Sayvi draft action.
-  sayviAction.hidden=active||mailActive()||documentActive();
+  // The three decisions stay on the initial card, the final Send is next.
+  sayviAction.hidden=active||(mailActive()&&mailStep!=='draft')||
+   (documentActive()&&documentStep!=='summary');
   workSayvi.hidden=!active||workMode!=='choose';
   workOwn.hidden=!active||workMode!=='choose';
-  workBack.hidden=!active||workMode==='choose';
+  workBack.hidden=true;
   workSend.hidden=!active||workMode==='choose'||workMode==='done';
-  workBack.textContent=workMode==='sayvi'?'Изменить':workMode==='done'?'Новый ответ':'Назад';
+  if(active)open.hidden=workMode!=='choose';
   execute.hidden=active;
   workDetails.replaceChildren();
   if(!active)return;
@@ -276,7 +275,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  mailDetails.hidden=true;
  // The original document scene uses the SAME field, artwork, actions and motion.
  let documentStep='summary';
- const documentDefault='Уточнить конкретный срок поставки и порядок уведомления о задержке.';
+ const documentDefault='Срок поставки: [указать согласованную сторонами дату или период]. При риске задержки поставщик письменно уведомляет покупателя в согласованном сторонами порядке. Проект редакции требует проверки человеком.';
  let documentNote=documentDefault;
  let documentSource='Поставка товара осуществляется в согласованные сторонами сроки.';
  let documentAnalysis='';
@@ -293,24 +292,17 @@ function createSurface(primary,other=[],real=false,taskId=''){
   const active=documentActive();
   syncActionHierarchy();
   documentDetails.hidden=!active;
-  // One primary action per stage: open review -> check -> edit result -> save.
-  const reviewed=active&&documentParts.length>0;
-  documentEdit.hidden=!active||documentStep!=='review'||!reviewed;
-  documentLater.hidden=true; // Gestures manage the queue, not visible buttons.
-  documentSave.hidden=!active||documentStep!=='edit';
-  documentCancel.hidden=!active||documentStep!=='edit';
-  documentAnalyze.hidden=!active||documentStep!=='review'||reviewed;
-  documentAnalyze.disabled=documentAnalyzing;
-  documentAnalyze.textContent=documentAnalyzing?'Проверяю…':'Проверить с Сэйви';
-  documentAnalyze.setAttribute('aria-label','Проверить пункт договора с Сэйви');
+  // Initial: Sayvi · Edit · Navigate. Then one Save button.
+  documentEdit.hidden=!active||documentStep!=='summary';
+  documentLater.hidden=true;
+  documentSave.hidden=!active||!['preview','edit'].includes(documentStep);
+  documentCancel.hidden=true;
+  documentAnalyze.hidden=true; // Advanced file parsing stays in Documents.
   if(active){
-   execute.hidden=documentStep!=='summary';
-   open.hidden=true; // Title tap opens documents without a fourth button.
-   execute.textContent='К проверке';
-   execute.setAttribute('aria-label','Перейти к проверке договора');
-   execute.dataset.cardRole='primary';
-   documentAnalyze.dataset.cardRole='primary';
-   documentEdit.dataset.cardRole='primary';
+   execute.hidden=true;
+   open.hidden=documentStep!=='summary';
+   documentEdit.dataset.cardRole='secondary';
+   documentSave.dataset.cardRole='primary';
   }
   documentDetails.replaceChildren();
   if(!active)return;
@@ -488,14 +480,15 @@ function createSurface(primary,other=[],real=false,taskId=''){
     documentDetails.append(create('p','lm-mail-note','Разбор сохранён как учебный черновик на этом устройстве. Оригинал не меняется.'));
    }
   }
-  if(documentStep==='edit'){
-   const label=create('label','lm-mail-edit-label','Предложение к исправлению');
+  if(documentStep==='edit'||documentStep==='preview'){
+   const label=create('label','lm-mail-edit-label',documentStep==='preview'?'Предложение Сэйви · можно поправить':'Исправить самостоятельно');
    const input=create('textarea','lm-mail-edit-input');
-   input.rows=3;input.maxLength=1200;input.value=documentNote;
+   input.rows=4;input.maxLength=1200;input.value=documentNote;
    label.append(input);documentDetails.append(label);
+   documentDetails.append(create('p','lm-mail-note','Учебная редакция. Исходный договор не изменяется.'));
   }else{
-   const sayviText=documentStep==='done'
-    ?'Это только учебный пример. Настоящий договор не изменён.'
+   const sayviText=documentStep==='saved'
+    ?'Учебный черновик сохранён на этом устройстве. Исходный договор не изменён.'
     :documentStep==='summary'
      ?'В договоре не указан срок поставки. Предлагаю уточнить его.'
      :'Предлагаю: '+documentNote;
@@ -510,17 +503,21 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function updateMail(){
   const active=mailActive();
   syncActionHierarchy();
-  mailDetails.hidden=!active;
-  realLater.hidden=true; // The Home task stays in its source list
-  mailEdit.hidden=!active||mailStep!=='confirm';
-  mailLater.hidden=true; // Both horizontal swipes defer this card
+  mailDetails.hidden=!active||mailStep==='draft';
+  realLater.hidden=true;
+  mailEdit.hidden=!active||mailStep!=='draft';
+  mailLater.hidden=true;
   mailSave.hidden=!active||mailStep!=='edit';
-  mailCancel.hidden=!active||mailStep!=='edit';
-  open.hidden=active&&mailStep==='edit';
-  execute.hidden=active&&mailStep==='edit';
-  execute.textContent=real?'Продолжить дело':active
-    ?(mailStep==='done'?'Готово':mailStep==='confirm'?'Завершить':'Продолжить')
-    :'Исполнить';
+  mailSave.textContent='Отправить';
+  mailCancel.hidden=true;
+  if(active){
+   open.hidden=mailStep!=='draft';
+   execute.hidden=mailStep!=='confirm';
+   execute.textContent='Отправить';
+   execute.dataset.cardRole='primary';
+   mailEdit.dataset.cardRole='secondary';
+   mailSave.dataset.cardRole='primary';
+  }else execute.textContent=real?'Продолжить дело':'Исполнить';
   mailDetails.replaceChildren();
   if(!active)return;
   // Source -> Sayvi draft -> actions. This message is explicitly a local
@@ -531,7 +528,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    create('p','lm-section-label','Сэйви предлагает черновик')
   );
   if(mailStep==='edit'){
-   const field=create('label','lm-mail-edit-label','Исправить черновик');
+   const field=create('label','lm-mail-edit-label','Исправить и отправить');
    const input=create('textarea','lm-mail-edit-input');
    input.rows=3;input.maxLength=1200;input.value=mailDraft;
    field.append(input);mailDetails.append(field);
@@ -544,9 +541,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
    // The Home draft is fully readable, not buried beneath duplicate status text.
    // A real sending confirmation remains explicit and cannot transmit a message.
    if(mailStep!=='draft'){
-    mailDetails.append(create('p','lm-mail-note',mailStep==='done'
-     ?'Письмо не отправлялось.'
-     :'Черновик · отправка отключена.'));
+    mailDetails.append(create('p','lm-mail-note',mailStep==='sent-demo'
+     ?'Демо: нажато «Отправить». Почта не подключена — письмо не отправлено.'
+     :'Предпросмотр готов. Для отправки нажмите «Отправить».'));
    }
   }
  }
