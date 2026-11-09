@@ -201,14 +201,11 @@ function svcpOpenDocument(file){
  sheet.setAttribute('aria-label','Просмотр документа '+file.name);
  const top=el('header','svcp-doc-top'),back=el('button','svcp-doc-back');
  back.type='button';back.setAttribute('aria-label','Назад к чату');
- back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';
+ back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5.5-6.5 6.5 6.5 6.5"/></svg>';
  const heading=el('div','svcp-doc-heading');
  heading.append(el('strong','svcp-doc-title',file.name),el('small','svcp-doc-size',svcpFileSize(file.size)));
- const menuButton=el('button','svcp-doc-more');menuButton.type='button';
- menuButton.setAttribute('aria-label','Действия с документом');
- menuButton.setAttribute('aria-expanded','false');
- menuButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.25"/><circle cx="12" cy="12" r="1.25"/><circle cx="19" cy="12" r="1.25"/></svg>';
- top.append(back,heading,menuButton);
+ // One unified back arrow. Overflow menu has no other commands once Share moves below.
+ top.append(back,heading);
  const body=el('div','svcp-doc-body');
  const info=el('p','svcp-doc-info');info.setAttribute('role','status');
  const say=value=>{if(live)info.textContent=value};
@@ -247,12 +244,7 @@ function svcpOpenDocument(file){
  }else if(kind!=='pdf'&&kind!=='image'){
   preview.textContent='Оригинал файла можно открыть в подходящем приложении.';
  }
- const tools=el('div','svcp-doc-tools');
- tools.hidden=true;
- const toggleMenu=show=>{tools.hidden=!show;menuButton.setAttribute('aria-expanded',String(show));};
- menuButton.addEventListener('click',()=>toggleMenu(tools.hidden));
  const icons={
-  download:'<path d="M12 3v12m-5-5 5 5 5-5M4 18v3h16v-3"/>',
   share:'<path d="M12 16V3m-5 5 5-5 5 5M4 14v7h16v-7"/>',
   eye:'<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.2"/>',
   word:'<path d="M7 3h8l4 4v14H7zM15 3v4h4M9 12l2 5 2-5 2 5 2-5"/>',
@@ -294,9 +286,20 @@ function svcpOpenDocument(file){
   const popup=window.open(url,'_blank');
   say(popup?'В системном меню документа выбери «Печать».':'Разреши открытие окна для печати.');
  }));
- actionRail.append(pill('Скачать','download',()=>{
-  save(file,file.name);
-  say('Оригинал файла передан в загрузки без изменений.');
+ actionRail.append(pill('Поделиться','share',()=>{
+  // Web Share has to start inside the tap handler to preserve user activation.
+  const payload={files:[file],title:file.name};
+  const fallback=()=>{
+   save(file,file.name);
+   say('Системное меню недоступно. Оригинал сохранён — его можно отправить из «Файлов».');
+  };
+  if(typeof navigator.share!=='function'){fallback();return}
+  try{
+   if(typeof navigator.canShare==='function'&&!navigator.canShare(payload)){fallback();return}
+   Promise.resolve(navigator.share(payload)).catch(error=>{
+    if(error?.name!=='AbortError')fallback();
+   });
+  }catch{fallback()}
  }));
  const doc=pill('Подпись','pen',()=>{
   if(typeof window.SEYVEO_SAYVI_SURFACES?.open!=='function'||
@@ -309,34 +312,19 @@ function svcpOpenDocument(file){
  doc.classList.add('svcp-doc-to-documents');
  doc.setAttribute('aria-label','Открыть в Документах для подписи');
  doc.title='В Документы · подпись';
- const share=pill('Поделиться','share',()=>{
-  const payload={files:[file],title:file.name};
-  if(typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare(payload)){
-   navigator.share(payload).catch(error=>{
-    if(error?.name!=='AbortError')say('Не удалось открыть системное меню. Оригинал можно сохранить через кнопку PDF или Word.');
-   });
-  }else{
-   save(file,file.name);
-   say('Оригинал сохранён. Его можно отправить через системное меню Файлов.');
-  }
- });
- tools.append(share);
  actionRail.append(doc);
  const bottom=el('footer','svcp-doc-bottom');bottom.append(actionRail,info);
- sheet.append(top,body,tools,bottom);
- const onOutside=e=>{if(!tools.hidden&&!tools.contains(e.target)&&!menuButton.contains(e.target))toggleMenu(false)};
- const onKey=e=>{if(e.key==='Escape'){e.preventDefault();if(!tools.hidden){toggleMenu(false);return}close()}};
+ sheet.append(top,body,bottom);
+ const onKey=e=>{if(e.key==='Escape'){e.preventDefault();close()}};
  function close(){
   if(!live)return;live=false;
   document.removeEventListener('keydown',onKey);
-  document.removeEventListener('pointerdown',onOutside);
   sheet.remove();URL.revokeObjectURL(url);
   svcpCurrentDocClose=null;
   if(last?.isConnected)last.focus({preventScroll:true});
  }
  back.addEventListener('click',close);
  document.addEventListener('keydown',onKey);
- document.addEventListener('pointerdown',onOutside);
  document.body.append(sheet);
  svcpCurrentDocClose=close;back.focus({preventScroll:true});
 }
