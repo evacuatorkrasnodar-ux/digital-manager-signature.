@@ -1375,7 +1375,7 @@ function applyMessageEmoji(index,emoji){
   if(existing){
    const chip=btn(existing+' 1',()=>applyMessageEmoji(index,existing),'svcp-bubble-reaction');
    chip.setAttribute('aria-label','Убрать реакцию '+existing);
-   const actions=bubble.querySelector('.svcp-message-actions');
+   const actions=bubble.querySelector('.svcp-message-inline-actions');
    if(actions)bubble.insertBefore(chip,actions);else bubble.append(chip);
   }
  }else renderChat();
@@ -1516,19 +1516,11 @@ function renderChat(){
     // Sayvi recognition suggestions are a small contextual star UNDER
     // the relevant message, not a bulky prompt inside its bubble.
     // The manager must tap and confirm before any recognition is awarded.
-    const actions=el('div','svcp-message-actions');
-    const menu=el('div','svcp-message-menu');menu.hidden=true;
-    menu.setAttribute('role','group');menu.setAttribute('aria-label','Действия с сообщением');
-    const moreButton=btn('',()=>toggleMessageMenu(menu,moreButton),'svcp-message-action svcp-more-trigger');
-    moreButton.setAttribute('aria-label','Действия с сообщением');
-    moreButton.setAttribute('aria-expanded','false');
-    moreButton.title='Действия с сообщением';
-    const dots=document.createElementNS('http://www.w3.org/2000/svg','svg');
-    dots.setAttribute('viewBox','0 0 24 24');
-    dots.setAttribute('aria-hidden','true');
-    dots.innerHTML='<circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/>';
-    moreButton.append(dots);
-    actions.append(moreButton);
+    // One quiet row of actions is always available UNDER the message.
+    // No ellipsis, dropdown or long-press-only controls.
+    const menu=el('div','svcp-message-inline-actions');
+    menu.setAttribute('role','group');
+    menu.setAttribute('aria-label','Действия с сообщением');
     function svcpActionIcon(title,kind,callback,className){
      const control=btn('',callback,className+' svcp-icon-action svcp-action-'+kind);
      control.setAttribute('aria-label',title);
@@ -1552,14 +1544,14 @@ function renderChat(){
      return control;
     }
     menu.append(svcpActionIcon('Ответить','reply',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
-    const employee=roomDetails().kind==='personal'?roomDetails().person:(msg.role==='demo-elena'?'elena':null);
-     if(state.viewpoint==='manager'&&employee&&STAFF[employee]&&!isOwn&&!isSayvi){
-      menu.append(svcpActionIcon('Поощрить сотрудника','award',()=>{
-       closeMessageMenus();
-       if(!window.confirm('Подтвердить золотую звезду для '+STAFF[employee]+'? Награда сохранится в личном деле сотрудника (демо).'))return;
-       applyPersonReaction(employee,'help',suggestedRecognition(msg,employee)?.reason||'Благодарность за работу');
-      },'svcp-message-menu-item'));
-     }
+    const recognitionProposal=state.viewpoint==='manager'&&!employeePreviewActive()&&msg.role==='demo-elena'
+     ?pendingRecognitionSuggestions().find(x=>x.sourceKey===recognitionSourceKey(msg))
+     :null;
+    if(recognitionProposal){
+     menu.append(svcpActionIcon('Сэйви предлагает награду: '+recognitionProposal.reason,'award',()=>{
+      if(awardRecognitionSuggestion(recognitionProposal.sourceKey))renderChat();
+     },'svcp-message-menu-item'));
+    }
     // HR appreciation is NOT a bookmark. Only an identifiable colleague earns
     // a golden recognition event, recorded by the existing staff-card ledger.
     const starControl=svcpActionIcon(msg.starred?'Убрать из избранного':'В избранное','star',()=>{
@@ -1619,83 +1611,23 @@ function renderChat(){
       prepareTask(msg,index);
      },'svcp-message-menu-item'));
     }
-    bubble.tabIndex=0;
-    bubble.setAttribute('aria-description','Свайп вправо — ответ. Долгое нажатие или Enter — доступные действия.');
-    let longPressTimer=null,pressStartX=0,pressStartY=0,swipeEligible=false,holdOpened=false;
-    const clearHold=()=>{clearTimeout(longPressTimer);longPressTimer=null};
+    // Keep swipe-to-reply; the action icons below are visible without any
+    // hidden gesture, and keyboard users can tab to each labeled button.
+    let pressStartX=0,pressStartY=0,swipeEligible=false;
     bubble.addEventListener('pointerdown',event=>{
-     swipeEligible=false;holdOpened=false;clearHold();
-     if(event.target.closest('button,audio,video,a,input,textarea,.svcp-media-slot,.svcp-message-menu'))return;
-     if(event.button!==0&&event.pointerType==='mouse')return;
+     if(event.target.closest('button,audio,video,a,input,textarea,.svcp-media-slot,.svcp-message-inline-actions'))return;
      pressStartX=event.clientX;pressStartY=event.clientY;
      swipeEligible=event.pointerType==='touch'||event.pointerType==='pen';
-     longPressTimer=setTimeout(()=>{
-      longPressTimer=null;holdOpened=true;swipeEligible=false;
-      toggleMessageMenu(menu,moreButton);
-      if(navigator.vibrate)navigator.vibrate(12);
-     },480);
-    });
-    bubble.addEventListener('pointermove',event=>{
-     if(!longPressTimer&&!swipeEligible)return;
-     if(Math.hypot(event.clientX-pressStartX,event.clientY-pressStartY)>12)clearHold();
-     if(Math.abs(event.clientY-pressStartY)>45)swipeEligible=false;
     });
     bubble.addEventListener('pointerup',event=>{
      const dx=event.clientX-pressStartX,dy=event.clientY-pressStartY;
-     const reply=swipeEligible&&!holdOpened&&dx>65&&Math.abs(dy)<45;
-     clearHold();swipeEligible=false;
-     if(reply){closeMessageMenus();startReply(msg);if(navigator.vibrate)navigator.vibrate(8)}
+     if(swipeEligible&&dx>65&&Math.abs(dy)<45){startReply(msg);if(navigator.vibrate)navigator.vibrate(8)}
+     swipeEligible=false;
     });
-    bubble.addEventListener('pointercancel',()=>{clearHold();swipeEligible=false});
-    bubble.addEventListener('contextmenu',event=>{
-     event.preventDefault();clearHold();swipeEligible=false;
-     if(!holdOpened)toggleMessageMenu(menu,moreButton);
-    });
-    bubble.addEventListener('click',event=>{
-     if(event.target.closest('button,audio,.svcp-media-slot'))return;
-     if(event.target.closest('.svcp-message-menu'))return;
-     // Ordinary tap reads the message; hold or swipe opens the actions.
-    });
-    bubble.addEventListener('keydown',event=>{
-     if((event.key==='Enter'||event.key===' ')&&event.target===bubble){
-      event.preventDefault();toggleMessageMenu(menu,moreButton);
-     }
-    });
-    bubble.append(actions,menu);
-    // Compact contextual actions below the bubble, not inside the writing dock.
-    // Only the manager sees "Assign". Recognition appears only when Sayvi
-    // identifies a specific, still-pending reason to thank a colleague.
-    if(state.viewpoint==='manager'&&!employeePreviewActive()){
-     const canAssign=!msg.taskId&&!msg.mediaId&&
-      (!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&
-      String(msg.text||'').trim().length>0;
-     const recognitionProposal=msg.role==='demo-elena'
-      ?pendingRecognitionSuggestions().find(x=>x.sourceKey===recognitionSourceKey(msg))
-      :null;
-     if(canAssign||recognitionProposal){
-      const quick=el('div','svcp-message-quick-actions');
-      quick.setAttribute('role','group');
-      quick.setAttribute('aria-label','Быстрые действия с сообщением');
-      const makeQuick=(kind,label,path,callback)=>{
-       const control=btn('',callback,'svcp-message-quick-action svcp-quick-'+kind);
-       control.setAttribute('aria-label',label);
-       control.title=label;
-       const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-       svg.setAttribute('viewBox','0 0 24 24');
-       svg.setAttribute('aria-hidden','true');
-       svg.innerHTML=path;
-       control.append(svg);quick.append(control);
-      };
-      if(canAssign)makeQuick('task','Поручить по этому сообщению',
-       '<rect x="4.5" y="4" width="15" height="17" rx="2"/><path d="M8 9h8M8 13h5M14.5 18h5M17 15.5v5"/>',
-       ()=>{closeMessageMenus();prepareTask(msg,index)});
-      if(recognitionProposal)makeQuick('award','Сэйви предлагает наградить: '+recognitionProposal.reason,
-       '<path d="m12 2.8 2.85 5.77 6.37.93-4.61 4.5 1.09 6.35L12 17.35l-5.7 3 1.09-6.35-4.61-4.5 6.37-.93Z"/>',
-       ()=>{if(awardRecognitionSuggestion(recognitionProposal.sourceKey))renderChat()});
-      bubble.classList.add('svcp-has-quick-actions');
-      bubble.append(quick);
-     }
-    }
+    bubble.addEventListener('pointercancel',()=>{swipeEligible=false});
+    // All actions formerly in the three-dot menu now sit below the message.
+    bubble.classList.add('svcp-has-inline-actions');
+    bubble.append(menu);
    }
    thread.append(bubble);
   }
