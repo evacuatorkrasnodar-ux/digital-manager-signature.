@@ -16,31 +16,51 @@
  .lm-polymer.sv-work-assistant:not([hidden]){
   box-sizing:border-box!important;
   min-height:44px!important;
-  padding:8px 11px!important;
+  padding:8px 10px!important;
   border:0!important;
   border-radius:999px!important;
-  background:var(--sv-flat-panel,#38383A)!important;
+  background:transparent!important;
   background-image:none!important;
   color:var(--text)!important;
   box-shadow:none!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
-  font-weight:580!important;
+  font-weight:550!important;
+  font-size:12px!important;
+  position:relative!important;
+  isolation:isolate!important;
   white-space:nowrap;
   gap:0!important;
 }
 #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
- .lm-polymer.sv-work-assistant:not([hidden])::before,
-#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
- .lm-polymer.sv-work-assistant:not([hidden])::after{
+ .lm-polymer.sv-work-assistant:not([hidden])::before{
   content:none!important;
   display:none!important;
+}
+/* Visual graphite pill only 32px high. The actual accessible tap target
+   remains >=44px to prevent missed taps on older iPhones. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant:not([hidden])::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:6px 0!important;
+  z-index:-1!important;
+  pointer-events:none!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:var(--sv-flat-panel,#38383A)!important;
+  background-image:none!important;
+  box-shadow:none!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
 #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
- .lm-polymer.sv-work-assistant:not([hidden]):active{
+ .lm-polymer.sv-work-assistant:not([hidden]):active::after{
   background:var(--sv-flat-panel-raised,#464649)!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant:not([hidden]):active{
   opacity:1!important;
 }
 /* Two auxiliary routes remain text controls with full-size touch targets.
@@ -83,8 +103,11 @@
   outline-offset:2px!important;
 }
 
-/* The Home employee avatar is an identity mark, not a green CTA.
-   Use the same neutral silver ink as other monochrome line icons. */
+/* A restrained mint accent marks a person/message, not a call-to-action.
+   Keep useful colored icon categories; do not turn all SEYVEO glyphs gray. */
 #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-hero-art{
-  --lm-soft-glow:var(--secondary);
+  --lm-soft-glow:#92B8AD;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-hero-art{
+  --lm-soft-glow:#508276;
 }
