@@ -78,6 +78,13 @@ function renderGallery(){
   sample.dataset.previewTheme=previewTheme;
   const surface=engine.renderCard(card,{onAction:id=>{
    const note=sample.querySelector('.scs-gallery-feedback');
+   if(id==='later'){
+    sample.dataset.cardState='deferred';
+    const row=sample.querySelector('.sv-card-actions');
+    if(row)row.hidden=true;
+    if(note)note.textContent='Позже · карточка отложена свайпом. Источник не удалён.';
+    return;
+   }
    if(note)note.textContent='Действие «'+(engine.actionLabels[id]||id)+'» показано только в мастерской.';
   }});
   const label=document.createElement('p');label.className='scs-gallery-name';
@@ -141,6 +148,12 @@ function render(){
   const surface=engine.renderCard(card,{onAction:id=>{
    // Studio actions only preview the intended action. No real send/payment/
    // signature/task resolution, even if a developer taps "Подтвердить".
+   if(id==='later'){
+    surface.dataset.cardState='deferred';
+    const row=surface.querySelector('.sv-card-actions');if(row)row.hidden=true;
+    studioAction.textContent='Позже · карточка отложена свайпом. Данные не удалены.';
+    return;
+   }
    studioAction.textContent='Выбрано действие: '+(engine.actionLabels[id]||id)+
     ' · Только демонстрация, ничего не выполнено.';
   }});
