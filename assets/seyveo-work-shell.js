@@ -142,7 +142,11 @@
  cabinetChoice.type='button';
  cabinetChoice.setAttribute('aria-label','Настроить кабинет');
  cabinetChoice.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 6h17M3.5 12h17M3.5 18h17"/><circle cx="9" cy="6" r="2.1"/><circle cx="15" cy="12" r="2.1"/><circle cx="10" cy="18" r="2.1"/></svg><span>Настроить кабинет</span>';
- businessCreate.append(newNoteChoice,cabinetChoice);
+ const assignChoice=document.createElement('button');
+ assignChoice.type='button';
+ assignChoice.setAttribute('aria-label','Создать поручение');
+ assignChoice.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h11M8 12h6M8 18h5M3 6h1M3 12h1M3 18h1"/><path d="m16 17 2 2 4-5"/></svg><span>Поручить</span>';
+ businessCreate.append(assignChoice,newNoteChoice,cabinetChoice);
  shell.append(businessCreate);
  function closeBusinessCreate(){
   businessCreate.hidden=true;
@@ -164,6 +168,12 @@
   document.getElementById('notesNew')?.click();
  });
  cabinetChoice.addEventListener('click',()=>{closeBusinessCreate();cabinetAdd?.click()});
+ assignChoice.addEventListener('click',()=>{
+  closeBusinessCreate();
+  const openChat=window.SEYVEO_UNIFIED_TASKS?.openChat;
+  if(typeof openChat==='function')openChat('tasks');
+  else window.alert('Рабочий чат сейчас недоступен. Поручение не создано.');
+ });
  document.addEventListener('pointerdown',event=>{
   if(!businessCreate.hidden&&!businessCreate.contains(event.target)&&!add.contains(event.target))closeBusinessCreate();
  });
@@ -298,7 +308,7 @@
    add.innerHTML=history?searchIcon:plusIcon;
    add.dataset.svHeaderIcon=nextIcon;
   }
-  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='notes'?'Новая заметка':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Создать заметку или настроить кабинет');
+  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='notes'?'Новая заметка':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
   add.title=history?'Поиск по истории':'';
   add.setAttribute('aria-haspopup',String(!history&&(active==='calendar'||active==='business')));
   add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
