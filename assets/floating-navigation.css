@@ -510,26 +510,20 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
 @media (max-width:389px){
  .dock{left:calc(50% - 35.714286vw + .857143px)!important}
 }
-/* Center the independent 50px Search circle IN THE EMPTY SPACE
-   between the capsule edge and the physical screen's right edge.
-   Gap on both sides of the Search circle is mathematically identical.
-   Widths, icons, 50px controls and Sayvi's centered position are unchanged.
-   When capsule = 226px, free-space gap = 25vw - 68.875px.
-   Below 390px, responsive capsule gives gap = 14.285714vw - 27.142857px. */
+/* Apple Notes reference: the space BETWEEN capsule and search circle is
+   about 1.7x the outer margin to the phone's right edge (not 1:1).
+   Preserve 226px capsule, 50px Search, exact Sayvi screen center and ink.
+   Split the leftover space 63% before Search, 37% after Search. */
 @media (min-width:390px) and (max-width:699px){
- .dock{--sv-split-gap:calc(25vw - 68.875px)}
+ .dock{--sv-split-gap:calc(31.5vw - 86.7825px)}
 }
 @media (max-width:389px){
- .dock{--sv-split-gap:calc(14.285714vw - 27.142857px)}
+ .dock{--sv-split-gap:calc(18vw - 34.2px)}
 }
-/* Final Search positioning — independent of grid tracks.
-   Position the CIRCLE by the actual midpoint of the interval from the
-   right edge of the capsule to the right edge of the phone. This avoids
-   stale grid auto-placement or column-gap changes shifting the circle.
-   Compact capsule: dock left = 1/7 vw + 6/7px, capsule = 4/7 vw + 24/7px.
-   Normal capsule: dock left = 50vw - 138.25px, capsule = 226px. */
+/* Explicit Search circle coordinate moves circle AND its backing disc
+   together, independent of grid-auto-placement on older iOS Safari. */
 @media (max-width:699px){
- .dock{--sv-search-center-left:calc(25vw + 157.125px)}
+ .dock{--sv-search-center-left:calc(31.5vw + 139.2175px)}
  .dock>#navManage{
   position:absolute!important;
   grid-column:auto!important;grid-row:auto!important;
@@ -546,7 +540,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  }
 }
 @media (max-width:389px){
- .dock{--sv-search-center-left:calc(71.428571vw - 23.714286px)}
+ .dock{--sv-search-center-left:calc(75.142857vw - 30.771429px)}
 }
 /* Compact iPhone geometry uses the very same six-column split layout. */
 @media (max-width:699px){
