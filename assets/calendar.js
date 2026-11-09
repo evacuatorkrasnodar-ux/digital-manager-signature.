@@ -630,6 +630,8 @@ function closeCreateMenu(){
  if(!createMenu)return;
  createMenu.hidden=true;
  createToggle?.setAttribute('aria-expanded','false');
+ const shared=document.getElementById('svWorkAdd');
+ if(shared?.getAttribute('aria-controls')==='calendarCreateMenu')shared.setAttribute('aria-expanded','false');
 }
 function toggleCreateMenu(){
  if(!createMenu)return;
