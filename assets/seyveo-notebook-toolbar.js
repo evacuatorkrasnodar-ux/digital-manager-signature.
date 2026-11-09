@@ -66,9 +66,6 @@
  settingsHost.innerHTML='<div id="notePaperSettingsMenu" class="sv-newdock-settings-panel" role="group" aria-label="Настройки листа" hidden><span class="sv-newdock-menu-title">Фон листа</span><div class="sv-newdock-backgrounds"><button type="button" data-paper-background="dark" aria-pressed="true">Тёмный</button><button type="button" data-paper-background="light" aria-pressed="false">Светлый</button></div></div>';
  dialog.append(settingsHost);
  const settingsMenu=$('notePaperSettingsMenu');
- const plain=document.createElement('button');
- plain.type='button';plain.id='notePaperBlankSheet';
- plain.innerHTML=icon('<rect x="5" y="3" width="14" height="18" rx="2.4"/>')+'<span>Без разлиновки</span>';
  const clear=document.createElement('button');
  clear.type='button';clear.id='notePaperClearSheet';clear.className='sv-newdock-clear';
  clear.innerHTML=icon('<path d="M4 7h16M9 7V4.5h6V7M7 7l.8 13h8.4L17 7M10 10.5v6M14 10.5v6"/>')+'<span>Очистить весь лист</span>';
@@ -82,7 +79,7 @@
  photo.className='sv-newdock-menu-action';
  photo.innerHTML=icon(icons.photo)+'<span>Добавить фото</span>';
  photo.title='Добавить фото';
- settingsMenu.append(actionHeading,photo,duplicate,plain,removePhoto,clear);
+ settingsMenu.append(actionHeading,photo,duplicate,removePhoto,clear);
  const backgroundButtons=[...settingsMenu.querySelectorAll('[data-paper-background]')];
  const syncBackground=()=>{
   const value=window.SEYVEO_PAPER?.getBackground?.();
@@ -107,7 +104,6 @@
   window.SEYVEO_PAPER?.setBackground?.(b.dataset.paperBackground);
   syncBackground();closeSettings();syncActive();
  }));
- plain.addEventListener('click',()=>{if(window.SEYVEO_PAPER?.blankPaper?.())closeSettings()});
  clear.addEventListener('click',()=>{if(window.SEYVEO_PAPER?.clearSheet?.())closeSettings()});
  removePhoto.addEventListener('click',()=>closeSettings());
  duplicate.addEventListener('click',()=>closeSettings());
@@ -143,11 +139,41 @@
  observer.observe(sheet,{attributes:true,attributeFilter:['aria-expanded']});
  observer.observe(dialog,{attributes:true,attributeFilter:['open']});
  dock.addEventListener('click',()=>requestAnimationFrame(syncActive));
- document.addEventListener('pointerdown',event=>{
-  if(!settingsMenu.hidden&&!settingsMenu.contains(event.target)&&!settings.contains(event.target)){
-   closeSettings();syncActive();
+ // Dismissal must never create a dot on the canvas. Use capture phase so
+ // this runs before the handwriting engine's canvas pointerdown listener.
+ const colorMenu=$('notePaperColorMenu'),colorTrigger=$('notePaperColorTrigger');
+ const dismissOpenMenus=()=>{
+  if(!settingsMenu.hidden)closeSettings();
+  if(!paperMenu.hidden)closePaper();
+  if(colorMenu&&!colorMenu.hidden){
+   colorMenu.hidden=true;
+   colorTrigger?.setAttribute('aria-expanded','false');
   }
- },{passive:true});
+  syncActive();
+ };
+ document.addEventListener('pointerdown',event=>{
+  if(!dialog.open)return;
+  const colorOpen=Boolean(colorMenu&&!colorMenu.hidden);
+  if(settingsMenu.hidden&&paperMenu.hidden&&!colorOpen)return;
+  const target=event.target;
+  if(!(target instanceof Element))return;
+  // A click inside the active menu or on its own trigger is not a dismissal.
+  if((!settingsMenu.hidden&&(settingsMenu.contains(target)||settings.contains(target)))
+   ||(!paperMenu.hidden&&(paperMenu.contains(target)||sheet.contains(target)))
+   ||(colorOpen&&(colorMenu.contains(target)||colorTrigger?.contains(target))))return;
+  dismissOpenMenus();
+  // First tap on drawing area ONLY dismisses. Do not deliver it to the
+  // canvas pen listener, regardless of touch, mouse or stylus.
+  if(target.closest('#notePaperStage')&&!target.closest('.sv-paper-size')){
+   if(event.cancelable)event.preventDefault();
+   event.stopImmediatePropagation();
+  }
+ },{capture:true});
+ dialog.addEventListener('keydown',event=>{
+  if(event.key!=='Escape'||settingsMenu.hidden)return;
+  event.preventDefault();event.stopImmediatePropagation();
+  closeSettings();syncActive();
+ });
  dialog.addEventListener('close',()=>{closeSettings();pickedPaper=false});
  syncActive();
  // Retain existing thickness mechanics and the drawing-engine input.
