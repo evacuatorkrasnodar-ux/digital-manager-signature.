@@ -655,7 +655,12 @@ document.addEventListener('click',event=>{
  if(!createMenu?.hidden&&!createMenu.contains(event.target)&&!createToggle.contains(event.target))closeCreateMenu();
 });
 document.addEventListener('keydown',event=>{
- if(event.key==='Escape'&&!createMenu?.hidden){event.preventDefault();closeCreateMenu();createToggle.focus();}
+ if(event.key==='Escape'&&!createMenu?.hidden){
+  event.preventDefault();closeCreateMenu();
+  const shared=document.getElementById('svWorkAdd');
+  const trigger=shared?.getAttribute('aria-controls')==='calendarCreateMenu'&&!shared.hidden?shared:createToggle;
+  trigger?.focus({preventScroll:true});
+ }
 });
 window.addEventListener('hashchange',closeCreateMenu);
 $('calendarAddInline').addEventListener('click',()=>openEvent());
