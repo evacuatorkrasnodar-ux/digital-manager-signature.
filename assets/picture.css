@@ -92,7 +92,7 @@
 .picture-bin{
  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
  gap:8px;height:100%;min-width:0;margin:0;padding:0 2px;border:0;border-radius:10px;
- background:transparent;color:var(--secondary);cursor:pointer
+ background:transparent;color:var(--secondary);cursor:default
 }
 .picture-bin-track{
  width:100%;height:96px;display:flex;align-items:flex-end;justify-content:center;
@@ -1043,3 +1043,8 @@ html[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods 
 @media(max-width:350px){
  html body #picturePage #pictureBusiness > .sv-pulse-periods > button{font-size:11px!important}
 }
+
+
+/* Chart columns are visual data, not a route to a redundant detail screen. */
+#picturePage .picture-bin{cursor:default!important;pointer-events:none!important}
+#picturePage .picture-bin:active .picture-bin-bar{filter:none!important}
