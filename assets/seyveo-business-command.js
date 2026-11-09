@@ -156,7 +156,9 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
  const displayName=String(name||'Вложение');
  const node=el(onOpen?'button':url?'a':'div','svcp-file-card');
  const detail=svcpFileKind(displayName,type);
- node.append(svcpFileBadge(displayName,type));
+ const badge=svcpFileBadge(displayName,type);
+ if(detail.kind==='pdf')badge.textContent='pdf';
+ node.append(badge);
  const body=el('span','svcp-file-card-copy');
  const heading=el('span','svcp-file-card-heading');
  heading.append(el('strong','svcp-file-card-name',displayName));
@@ -399,8 +401,34 @@ function restoreStoredMedia(container,message){
    const filename=record.name||message.mediaName||'Вложение';
    const localFile=record.blob instanceof File?record.blob:new File([record.blob],filename,{type:record.type||message.mediaType||''});
    const previewable=['pdf','word','text'].includes(svcpFileKind(filename,record.type||message.mediaType||'').kind);
-   slot.append(svcpFileCard(filename,record.type||message.mediaType||'',url,timestamp,
-    previewable?()=>svcpOpenDocument(localFile):null,record.blob.size,container.classList.contains('is-self')));
+   const tile=svcpFileCard(filename,record.type||message.mediaType||'',url,timestamp,
+    previewable?()=>svcpOpenDocument(localFile):null,record.blob.size,container.classList.contains('is-self'));
+   if(container.classList.contains('svcp-document-only')){
+    let hold=null,blocked=false,startX=0,startY=0;
+    const clear=()=>{if(hold!==null){clearTimeout(hold);hold=null}};
+    tile.addEventListener('pointerdown',e=>{
+     if(e.pointerType!=='touch'&&e.pointerType!=='pen')return;
+     blocked=false;startX=e.clientX;startY=e.clientY;clear();
+     hold=setTimeout(()=>{
+      hold=null;blocked=true;
+      container.dispatchEvent(new Event('svcp:document-context'));
+     },490);
+    });
+    tile.addEventListener('pointermove',e=>{
+     if(Math.abs(e.clientX-startX)>10||Math.abs(e.clientY-startY)>10)clear();
+    });
+    tile.addEventListener('pointerup',clear);
+    tile.addEventListener('pointercancel',()=>{clear();blocked=false});
+    tile.addEventListener('click',e=>{
+     if(!blocked)return;
+     e.preventDefault();e.stopImmediatePropagation();blocked=false;
+    },true);
+    tile.addEventListener('contextmenu',e=>{
+     e.preventDefault();clear();blocked=true;
+     container.dispatchEvent(new Event('svcp:document-context'));
+    });
+   }
+   slot.append(tile);
    if(timestamp)container.classList.add('svcp-file-time-inside');
   }
   // The file card itself is sufficient. Delivery limitations remain in
@@ -1733,8 +1761,11 @@ function renderChat(){
     if(taskText)bubble.append(el('span','svcp-message-text',taskText));
     // A file without a caption should be a single card, never a card inside
     // another painted message bubble. Keep quotes and tasks unchanged.
-    if(msg.mediaId&&!msg.replyTo&&!msg.taskId&&!msg.documentFlowId&&!taskText)
+    if(msg.mediaId&&!msg.replyTo&&!msg.taskId&&!msg.documentFlowId&&!taskText){
      bubble.classList.add('svcp-file-only');
+     if(['pdf','word','sheet','text','other'].includes(svcpFileKind(msg.mediaName,msg.mediaType).kind))
+      bubble.classList.add('svcp-document-only');
+    }
    }
    if(msg.documentFlowId&&window.SEYVEO_DOCUMENT_FLOW?.get?.(msg.documentFlowId)){
     const doc=window.SEYVEO_DOCUMENT_FLOW.get(msg.documentFlowId);
@@ -1864,7 +1895,7 @@ function renderChat(){
     }
     // Single standalone emoji: no visible action rail. The same actions stay
     // available through the long-press / right-click / keyboard context menu.
-    if(emojiOnly||bubble.classList.contains('svcp-file-only')){
+    if(emojiOnly||bubble.classList.contains('svcp-document-only')){
      secondary.unshift(
       {title:'Ответить',kind:'reply',run:()=>{closeMessageMenus();startReply(msg)}},
       {title:msg.starred?'Убрать из избранного':'В избранное',kind:'star',
@@ -1898,6 +1929,8 @@ function renderChat(){
      panel.style.top=top+'px';
      panel.querySelector('[role="menuitem"]')?.focus({preventScroll:true});
     };
+    // Tap opens the file; long press opens reply, bookmark and assign.
+    bubble.addEventListener('svcp:document-context',openContextActions);
     // A bubble remains keyboard-discoverable, without another visible button.
     bubble.tabIndex=0;
     bubble.setAttribute('aria-keyshortcuts','Shift+F10');
