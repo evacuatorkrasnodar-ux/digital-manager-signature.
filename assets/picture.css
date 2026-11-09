@@ -742,3 +742,61 @@ html body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusin
 html body #picturePage #pictureMoneyDifference{
  display:none!important;
 }
+
+
+/* SEYVEO Pulse · inline details instead of six screens · v28.
+   Source and cost rows expand in place; chart column drill-down remains. */
+html body #picturePage :is(#pictureSources,#pictureExpenses) > .picture-split-row{
+ min-height:48px!important;
+ cursor:pointer!important;
+}
+html body #picturePage :is(#pictureSources,#pictureExpenses) > .picture-split-row[aria-expanded="true"]{
+ color:var(--text)!important;
+}
+html body #picturePage :is(#pictureSources,#pictureExpenses) > .picture-split-row::after{
+ transition:transform .16s ease!important;
+ transform-origin:center!important;
+}
+html body #picturePage :is(#pictureSources,#pictureExpenses) > .picture-split-row[aria-expanded="true"]::after{
+ transform:rotate(90deg)!important;
+}
+html body #picturePage .picture-split-inline{
+ box-sizing:border-box!important;
+ display:grid!important;
+ width:100%!important;
+ margin:0 0 8px!important;
+ padding:5px 12px!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:#38383A!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:#F7F7F8!important;
+}
+html body #picturePage .picture-split-inline-row{
+ display:flex!important;justify-content:space-between!important;align-items:baseline!important;
+ gap:12px!important;
+ min-height:36px!important;
+ padding:10px 0!important;
+ font-size:12px!important;
+ line-height:1.35!important;
+}
+html body #picturePage .picture-split-inline-row + .picture-split-inline-row{
+ border-top:1px solid rgba(255,255,255,.1)!important;
+}
+html body #picturePage .picture-split-inline-row > span{
+ min-width:0!important;color:#CED0D3!important;
+}
+html body #picturePage .picture-split-inline-row > strong{
+ flex:none!important;
+ text-align:right!important;
+ font-variant-numeric:tabular-nums!important;
+ font-size:12.5px!important;
+ font-weight:650!important;
+ color:#FFFFFF!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html body #picturePage .picture-split-row::after{transition:none!important}
+}
