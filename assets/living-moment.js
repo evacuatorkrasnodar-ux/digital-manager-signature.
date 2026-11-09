@@ -1144,9 +1144,9 @@ function installLivingCardSwipe(field,onLater,onRemoved,getCard){
    b.addEventListener('click',event=>{event.stopPropagation();menu.hidden=true;cb()});
    menu.append(b);return b;
   };
-  choice('Напомнить позже',onLater);
+  
   const muteButton=choice('Не показывать такие',mute);
-  const hideButton=choice('Удалить карточку',hide);
+  const hideButton=choice('Убрать карточку',hide);
   choice('Отмена',()=>{});
   const openMenu=()=>{
    const blocked=!!engine?.isProtected?.(identity());
@@ -1185,7 +1185,7 @@ function installLivingCardSwipe(field,onLater,onRemoved,getCard){
   if(!start||event.changedTouches.length!==1)return;
   const last=event.changedTouches[0],dx=last.clientX-start.x,dy=last.clientY-start.y;
   start=null;
-  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6){if(dx>0)onLater();else hide()}
+  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6)onLater();
  },{passive:true});
  field.addEventListener('touchcancel',()=>{start=null},{passive:true});
  // Desktop preview: mouse drag is equivalent to a finger swipe.
@@ -1200,7 +1200,7 @@ function installLivingCardSwipe(field,onLater,onRemoved,getCard){
   if(!mouseStart)return;
   const dx=event.clientX-mouseStart.x,dy=event.clientY-mouseStart.y;
   mouseStart=null;
-  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6){if(dx>0)onLater();else hide()}
+  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6)onLater();
  });
  field.addEventListener('pointercancel',()=>{mouseStart=null});
 }
