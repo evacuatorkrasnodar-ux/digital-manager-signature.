@@ -4177,3 +4177,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] .svcp-bubble.svcp-has-inline-actions{
  overflow:visible!important;
 }
+
+/* SEYVEO 2026-11-09: Sayvi is accessed from the composer, never duplicated in the room header. */
+#svcpWorkChatScreen[data-view="room"] .svcp-conversation-bar > #svcpCallSayvi{
+ display:none!important;
+}
