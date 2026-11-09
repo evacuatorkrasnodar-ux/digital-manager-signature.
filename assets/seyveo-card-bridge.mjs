@@ -11,8 +11,31 @@ import {createCard,transition,visible,ingest} from './seyveo-card-engine.mjs';
 import {validateMailReceipt} from './seyveo-mail-receipt.mjs';
 // Main UI integration layer. Opt-in event API; legacy home rendering is untouched.
 const cards=new Map(),trace=[];const scope={accountId:'demo-account',workspaceId:'demo-workspace'};
+/* Preserve action HISTORY across reloads on this browser and origin.
+   This is a local audit view, not restored permission to execute a card. */
+const ACTION_HISTORY_KEY='seyveo-card-action-history-v1';
+const ACTION_HISTORY_LIMIT=180;
+function storedActionHistory(){
+ try{
+  const rows=JSON.parse(localStorage.getItem(ACTION_HISTORY_KEY)||'[]');
+  if(!Array.isArray(rows))return [];
+  return rows.filter(row=>row&&typeof row.eventId==='string'&&typeof row.at==='string')
+    .slice(0,ACTION_HISTORY_LIMIT).map(row=>({
+     eventId:row.eventId.slice(0,180),cardType:String(row.cardType||'').slice(0,45),
+     title:String(row.title||'').slice(0,140),
+     from:String(row.from||'').slice(0,35),to:String(row.to||'').slice(0,35),
+     at:row.at.slice(0,36),reason:String(row.reason||'').slice(0,220)
+    }));
+ }catch{return []}
+}
+function saveActionHistory(){
+ try{
+  const rows=history();
+  if(rows.length)localStorage.setItem(ACTION_HISTORY_KEY,JSON.stringify(rows));
+ }catch{/* Browser storage is optional; never interrupt card actions. */}
+}
 function log(type,detail){trace.push({at:new Date().toISOString(),type,detail});if(trace.length>100)trace.shift();}
-function notify(){window.dispatchEvent(new CustomEvent('seyveo:cards-changed',{detail:{count:visible([...cards.values()]).length}}));}
+function notify(){saveActionHistory();window.dispatchEvent(new CustomEvent('seyveo:cards-changed',{detail:{count:visible([...cards.values()]).length}}));}
 function receive(event,context=scope){
  const card=createCard(event,context);
  if(cards.has(card.dedupeKey)){log('duplicate',card.eventId);return cards.get(card.dedupeKey);}
@@ -64,7 +87,19 @@ function orderPreview(items){
    (rank[a.item.kind]??3)-(rank[b.item.kind]??3)||
    a.index-b.index).map(entry=>entry.item);
 }
-function history(){return [...cards.values()].flatMap(card=>card.history.map(step=>({eventId:card.eventId,cardType:card.cardType,title:card.title,from:step.from,to:step.to,at:step.at,reason:step.reason}))).sort((a,b)=>b.at.localeCompare(a.at));}
+function history(){
+ const live=[...cards.values()].flatMap(card=>card.history.map(step=>({
+  eventId:card.eventId,cardType:card.cardType,title:card.title,
+  from:step.from,to:step.to,at:step.at,reason:step.reason
+ })));
+ const unique=new Map();
+ for(const row of [...storedActionHistory(),...live]){
+  if(!row||typeof row.eventId!=='string'||typeof row.at!=='string')continue;
+  unique.set([row.eventId,row.at,row.to].join('|'),row);
+ }
+ return [...unique.values()].sort((a,b)=>String(b.at).localeCompare(String(a.at)))
+  .slice(0,ACTION_HISTORY_LIMIT);
+}
 function inspect(){return {cards:[...cards.values()].map(c=>({id:c.id,eventId:c.eventId,type:c.cardType,status:c.status,priority:c.priority})),trace:trace.slice()};}
 // The bridge never sends messages or signs documents. It only records the
 // outcome AFTER an external integration or explicit local demo confirms it.
