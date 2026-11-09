@@ -1440,7 +1440,13 @@ window.addEventListener('seyveo:life-events-changed',scheduleRefresh);
 window.addEventListener('seyveo:fan-workshop-changed',scheduleRefresh);
 window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:card-visibility-changed',scheduleRefresh);
-window.addEventListener('seyveo:card-snoozes-changed',scheduleRefresh);
+window.addEventListener('seyveo:card-snoozes-changed',()=>{
+ // When the user restores paused cards manually, restore the demo queue too.
+ if(!(window.SEYVEO_CARD_ENGINE?.getSnoozes?.()||[]).length){
+  previewRearmAt=0;previewSeen=false;
+ }
+ scheduleRefresh();
+});
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
