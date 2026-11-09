@@ -294,7 +294,7 @@
    add.innerHTML=history?searchIcon:plusIcon;
    add.dataset.svHeaderIcon=nextIcon;
   }
-  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='notes'?'Новая заметка':active==='personal'?'Добавить дело':active==='calendar'?'Создать событие или дело':'Создать заметку или настроить кабинет');
+  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='notes'?'Новая заметка':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Создать заметку или настроить кабинет');
   add.title=history?'Поиск по истории':'';
   add.setAttribute('aria-haspopup',String(!history&&(active==='calendar'||active==='business')));
   add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
