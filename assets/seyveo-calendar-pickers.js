@@ -313,7 +313,26 @@ if(taskDialog&&taskDate&&taskControl){
    renderDateCalendar(taskMonth,taskDate,heading,gridDays);
   });
   today.addEventListener('click',()=>pickTask(new Date()));
+  // Swipe months on touch phones, with click suppression after a swipe.
+  // Fine-pointer desktop keeps the visible month arrows even in narrow windows.
+  let touchStart=null,lastTaskSwipe=0;
+  gridDays.addEventListener('touchstart',event=>{
+   if(event.touches.length!==1){touchStart=null;return}
+   const touch=event.touches[0];
+   touchStart={x:touch.clientX,y:touch.clientY};
+  },{passive:true});
+  gridDays.addEventListener('touchcancel',()=>{touchStart=null},{passive:true});
+  gridDays.addEventListener('touchend',event=>{
+   if(!touchStart||!event.changedTouches.length)return;
+   const touch=event.changedTouches[0],dx=touch.clientX-touchStart.x,dy=touch.clientY-touchStart.y;
+   touchStart=null;
+   if(Math.abs(dx)<42||Math.abs(dx)<Math.abs(dy)*1.35)return;
+   lastTaskSwipe=Date.now();
+   taskMonth=new Date(taskMonth.getFullYear(),taskMonth.getMonth()+(dx<0?1:-1),1);
+   renderDateCalendar(taskMonth,taskDate,heading,gridDays);
+  },{passive:true});
   gridDays.addEventListener('click',event=>{
+   if(Date.now()-lastTaskSwipe<450)return;
    const button=event.target.closest('[data-cal-pick-day]');
    const selected=button?parse(button.dataset.calPickDay):null;
    if(selected)pickTask(selected);
