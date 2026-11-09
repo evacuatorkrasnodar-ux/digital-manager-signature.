@@ -91,8 +91,6 @@ const pictograms=Object.freeze({
  clients:['M16 19c0-3 3-5 5-5s5 2 5 5','M21 10a3 3 0 1 0-6 0','M4 19c0-3 3-5 8-5s8 2 8 5','M12 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7'],
  orders:['M6 7h12l1 14H5L6 7Z','M9 8V6a3 3 0 0 1 6 0v2','M9 14l2 2 4-4'],
  money:['M4 19V5','M4 19h16','M7 15l4-4 3 2 5-6','M16 7h3v3'],
- plan:['M7 5h11v16H6V5','M9 5V3h6v2','M9 11h6','M9 15l2 2 4-5'],
- notes:['M7 3.5h9l3 3V21H7Z','M16 3.5V7h3','M10 11h6','M10 15h6','M10 19h4'],
  attention:['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18','M12 8v5','M12 17h.01'],
  operations:['M6 4h12v17H6z','M9 8h6','M9 12h6','M9 16h4']
 });
@@ -105,7 +103,7 @@ function sceneArtwork(id){
  svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
  svg.setAttribute('stroke-width','1.12');
  svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
- for(const d of pictograms[id]||pictograms.notes){
+ for(const d of pictograms[id]||pictograms.operations){
   const path=document.createElementNS(ns,'path');
   path.setAttribute('d',d);svg.append(path);
  }
@@ -118,7 +116,7 @@ function renderHome(){
   const data=info(id);
   const button=create('button','home-widget-card picture-metric');
   button.type='button';button.dataset.homeWidget=id;
-  button.setAttribute('aria-label',data.label+'. '+data.value+'. '+data.hint+'. Открыть раздел');
+  button.setAttribute('aria-label',data.label+'. '+data.value+'. '+data.hint+(id==='attention'||id==='operations'?'. Показать на этой странице':'. Подробнее'));
   const copy=create('span','picture-metric-copy');
   const label=create('span','home-widget-label',data.label);
   const hint=create('small','home-widget-note',data.hint);
