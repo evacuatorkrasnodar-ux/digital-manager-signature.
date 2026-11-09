@@ -221,3 +221,21 @@ assert.match(iconHomeStyles,/max-height:250px!important/,
 assert.match(iconHomeStyles,/min-height:88px!important/,
  'empty work reply no longer occupies a tall block');
 console.log('SEYVEO focused Home card editors, safe queue and textarea sizing: tests passed');
+
+// Production Home only displays user-sourced events; tutorial warnings belong
+// in the developer Studio, not the Home queue.
+assert.match(homeSceneSource,/const sample=\[\];/,
+ 'no mock mail, document or Elena chat is in the Home queue');
+assert.match(homeSceneSource,/function startPreview\(\)\{return false\}/,
+ 'retired sample warnings cannot be started on Home');
+assert.match(homeSceneSource,/preview:\(\)=>false,state:\(\)=>mode/,
+ 'external preview trigger cannot revive sample cards');
+assert.match(homeSceneSource,/function deferredPreview\(\)\{return \[\]\}/,
+ 'old deferred fake email/contract notices are gone');
+assert.ok(!homeSceneSource.includes("JSON.parse(localStorage.getItem('seyveo-business-command-tasks-demo-v1')"),
+ 'fake manager task data cannot become a real Home alert');
+assert.match(homeSceneSource,/window\.SEYVEO_LIFE_EVENTS\?\.attentionTasks\?\.\(\)/,
+ 'genuine personal deadlines still display');
+assert.match(homeSceneSource,/function showExistingAdvice\(\)/,
+ 'verified source recommendations remain supported');
+console.log('SEYVEO live Home has no training mail, mock documents or fake warnings: tests passed');
