@@ -282,7 +282,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   syncActionHierarchy();
   documentDetails.hidden=!active;
   documentEdit.hidden=!active||documentStep!=='review';
-  documentLater.hidden=!active||documentStep==='edit'||documentStep==='done';
+  documentLater.hidden=true; // Both horizontal swipes defer this card
   documentSave.hidden=!active||documentStep!=='edit';
   documentCancel.hidden=!active||documentStep!=='edit';
   documentAnalyze.hidden=!active||documentStep!=='review';
@@ -484,9 +484,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
   const active=mailActive();
   syncActionHierarchy();
   mailDetails.hidden=!active;
-  realLater.hidden=!real;
+  realLater.hidden=true; // The Home task stays in its source list
   mailEdit.hidden=!active||mailStep!=='confirm';
-  mailLater.hidden=!active||mailStep==='edit'||mailStep==='done';
+  mailLater.hidden=true; // Both horizontal swipes defer this card
   mailSave.hidden=!active||mailStep!=='edit';
   mailCancel.hidden=!active||mailStep!=='edit';
   open.hidden=active&&mailStep==='edit';
@@ -883,6 +883,15 @@ function createSurface(primary,other=[],real=false,taskId=''){
  scene.append(main,secondary,explanation);
  field.append(scene);
  tiles.append(field);
+ // Both swipe directions mean Later on this original Home Living Moment.
+ // Reuse the existing defer callbacks, not a separate destructive action.
+ installLivingCardSwipe(field,()=>{
+  if(morphLocked)return;
+  if(real)realLater.click();
+  else if(mailActive())mailLater.click();
+  else if(documentActive())documentLater.click();
+  else if(workActive())finishPreviewItem();
+ });
  announceRecommendation(primary);
  return {field,changeFeatured,updateCount};
 }
