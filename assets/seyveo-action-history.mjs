@@ -84,7 +84,7 @@ if(personal&&head){
 .sah-inline-panel.is-empty-history .sah-inline-note{
  display:flex;flex-direction:column;align-items:center;justify-content:center;
  width:100%;max-width:330px;min-height:0;
- margin:clamp(48px,9dvh,90px) auto 0;padding:0 16px 12px;box-sizing:border-box;
+ margin:clamp(124px,20dvh,206px) auto 0;padding:0 16px 12px;box-sizing:border-box;
  background:transparent;border:0;text-align:center;
  color:var(--secondary);font-size:13.5px;line-height:1.55;
 }
