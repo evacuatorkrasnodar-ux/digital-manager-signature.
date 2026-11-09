@@ -538,3 +538,18 @@
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu>button:is(:active,:hover){
   background:rgba(67,81,91,.075)!important;
 }
+
+/* SEYVEO Notes bottom baseline v1 — pixel-aligned with the original Home dock.
+   Home: 56px track, circle inset 3px. Notes: 50px track, no circle inset.
+   Adding 3px to Notes' safe-area anchor makes both circles share the same Y.
+   Leave glass, widths, icon spacing and popovers unchanged. */
+@media (max-width:720px){
+  html body dialog#noteReviewDialog.note-review-dialog[open]{
+    padding-bottom:calc(var(--seyveo-dock-bottom,7px) + 3px)!important;
+  }
+  html body #noteReviewDialog.note-review-dialog[open] > .sv-note-editor > .sv-note-bottom,
+  html body #noteReviewDialog.note-review-dialog[open] .sv-note-bottom{
+    margin-bottom:0!important;
+    padding-bottom:0!important;
+  }
+}
