@@ -343,7 +343,7 @@
   caption.textContent=cardIconLabels[kind];
   button.replaceChildren(svg,caption);
   button.dataset.svCardIcon=kind;
-  button.setAttribute('aria-label',cardIconLabels[kind]);
+  if(!button.getAttribute?.('aria-label'))button.setAttribute('aria-label',cardIconLabels[kind]);
   button.setAttribute('title',cardIconLabels[kind]);
   button.classList.add('sv-card-icon-button');
   return button;
