@@ -832,10 +832,14 @@ html body #picturePage .picture-sayvi-symbol{
  border:1px solid rgba(255,255,255,.15)!important;border-radius:50%!important;
  color:#F3F3F4!important;
 }
-html body #picturePage .picture-sayvi-symbol svg{
- width:15px!important;height:15px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
+html body #picturePage .picture-sayvi-symbol .sv-sayvi-symbol{
+ display:block!important;
+ flex:none!important;
+ width:17px!important;height:17px!important;
+ margin:0!important;padding:0!important;
+ font-size:17px!important;
+ color:#F3F3F4!important;
+ background-color:currentColor!important;
 }
 html body #picturePage .picture-sayvi-heading strong{
  color:#FFF!important;font-size:14px!important;font-weight:670!important;
