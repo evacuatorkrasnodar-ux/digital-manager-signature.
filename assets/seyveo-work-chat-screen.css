@@ -4134,7 +4134,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 /* SEYVEO messages: three visible actions only — Reply, Bookmark, Assign.
    The other actions live in a deliberate flat-graphite long-press menu. */
 #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-has-inline-actions{
- margin-bottom:42px!important;
+ margin-bottom:39px!important;
  -webkit-touch-callout:none!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-bubble .svcp-message-inline-actions{
@@ -4733,4 +4733,63 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-media-slot .svcp-file-card{
  background:#E4E4E6!important;
+}
+
+
+/* SEYVEO 2026-11-09 · concise task headers and single-word messages.
+   Only private chat task headings are merged; team/group sender names remain. */
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.is-short-text:not(.is-emoji-only){
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:row-reverse!important;
+ align-items:baseline!important;justify-content:flex-end!important;
+ gap:9px!important;
+ width:max-content!important;min-width:76px!important;max-width:min(88%,410px)!important;
+ min-height:0!important;
+ padding:7px 10px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.is-short-text .svcp-bubble-meta{
+ box-sizing:border-box!important;
+ display:flex!important;flex:0 0 auto!important;
+ align-items:baseline!important;justify-content:flex-end!important;
+ min-height:0!important;width:auto!important;height:auto!important;
+ margin:0!important;padding:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.is-short-text .svcp-time{
+ display:block!important;flex:0 0 auto!important;
+ margin:0!important;padding:0!important;
+ font-size:9px!important;line-height:16px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.is-short-text .svcp-message-text{
+ box-sizing:border-box!important;display:block!important;
+ flex:0 0 auto!important;min-width:0!important;
+ margin:0!important;padding:0!important;
+ line-height:20px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.is-task.svcp-task-inline-label{
+ box-sizing:border-box!important;min-width:126px!important;
+ padding:7px 11px 8px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.svcp-task-inline-label .svcp-bubble-meta{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-height:15px!important;margin:0 0 3px!important;padding:0!important;gap:8px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.svcp-task-inline-label .svcp-task-message-label{
+ display:block!important;flex:0 1 auto!important;min-width:0!important;
+ margin:0!important;padding:0!important;
+ font-size:10px!important;line-height:15px!important;font-weight:600!important;
+ letter-spacing:0!important;white-space:nowrap!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.svcp-task-inline-label .svcp-bubble-meta .svcp-time{
+ margin-left:auto!important;font-size:9px!important;line-height:15px!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-chat-day{
+ margin-top:6px!important;margin-bottom:3px!important;
 }
