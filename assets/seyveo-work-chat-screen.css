@@ -2610,7 +2610,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  content:none!important;
  display:none!important;
 }
-/* Keep the approved Plus glyph unchanged; enlarge only Sayvi and Emoji. */
+/* Work Chat icon parity | Home dock + Notebook.
+   Home: 22px laser-etched glyph, .8px stroke, quiet white core.
+   Notebook: clean neutral silver, not green or colored glass.
+   Keep the approved separate Plus untouched. */
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile svg{
  display:block!important;width:22px!important;height:22px!important;
  min-width:0!important;
@@ -2628,25 +2631,28 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle svg,
 #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark{
  display:block!important;
- width:26px!important;height:26px!important;min-width:26px!important;
- color:#D0D7DB!important;
+ width:22px!important;height:22px!important;
+ min-width:22px!important;max-width:22px!important;
+ color:#E4E7EB!important;
  stroke:currentColor!important;
- stroke-width:1.35!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
- shape-rendering:geometricPrecision;
- filter:none!important;
+ shape-rendering:geometricPrecision!important;
+ filter:drop-shadow(0 0 .55px rgba(255,255,255,.35))
+        drop-shadow(0 0 1.7px rgba(255,255,255,.15))!important;
+ transform:none!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark{
- flex:0 0 26px!important;fill:none!important;
+ flex:0 0 22px!important;fill:none!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle svg :is(circle,path),
 #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark path{
- stroke:currentColor!important;stroke-width:1.35!important;
+ stroke:currentColor!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark circle{
- fill:currentColor!important;
- stroke:none!important;
+ fill:currentColor!important;stroke:none!important;
 }
 /* Keep form functionality and accessible focus indication intact. */
 #svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle):focus-visible{
@@ -2868,8 +2874,24 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  backdrop-filter:none!important;
  filter:none!important;
 }
+/* Mathematically centered in the 38/40px message capsule:
+   circular touch target 38px, its center is half-height, right inset 1px.
+   No inherited bottom offsets or glyph-specific +3px nudges. */
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
- right:2px!important;
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ position:absolute!important;
+ width:38px!important;min-width:38px!important;max-width:38px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ top:50%!important;bottom:auto!important;right:1px!important;left:auto!important;
+ margin:0!important;padding:0!important;
+ transform:translateY(-50%)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send) svg{
+ position:static!important;top:auto!important;bottom:auto!important;
+ margin:0!important;display:block!important;
+ transform:none!important;translate:none!important;
+ width:21px!important;height:21px!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field #svcpChatInput{
  color:#fff!important;
@@ -2884,10 +2906,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 /* v185 · Shift the microphone GLYPH, not its touch target.
    The preceding bottom:4px duplicated an older declaration and changed
    nothing visually. Keep the 38px tappable area and composer geometry. */
+/* Mic icon is already centered by its grid target; no visual offset. */
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) #svcpVoiceRecord svg{
- position:relative!important;
- top:3px!important;
- transform:none!important;
+ position:static!important;top:auto!important;bottom:auto!important;
+ transform:none!important;translate:none!important;
 }
 
 /* v186 · Compact voice strip aligned to the Home/Work dock baseline.
