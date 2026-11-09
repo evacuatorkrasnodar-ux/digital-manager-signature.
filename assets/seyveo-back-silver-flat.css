@@ -2,9 +2,9 @@
    Presentation only: preserve each screen's geometry, handlers, dock and header.
    Matte silver-graphite, no glass/blur, barely-there pressure feedback. */
 :root{
-  --sv-back-flat:#30363b;
-  --sv-back-flat-ink:#eef2f4;
-  --sv-back-flat-pressed:#3b4248;
+  --sv-back-flat:#38383A;
+  --sv-back-flat-ink:#EEF2F4;
+  --sv-back-flat-pressed:#48484B;
 }
 :root[data-theme="light"]{
   --sv-back-flat:#e4e7e9;
@@ -55,6 +55,30 @@ html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack
   stroke-linejoin:round!important;
   filter:none!important;
 }
+/* Full-page returns live outside dialogs. Keep the existing position,
+   42–44px tap geometry and individual click handlers untouched. */
+html body #svWorkShell #svWorkBack,
+html body #sayviSurfacePage #sayviSurfaceBack{
+  border:0!important;
+  border-radius:50%!important;
+  background:var(--sv-back-flat)!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:var(--sv-back-flat-ink)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html body #svWorkShell #svWorkBack:active,
+html body #sayviSurfacePage #sayviSurfaceBack:active{
+  background:var(--sv-back-flat-pressed)!important;
+}
+html body #svWorkShell #svWorkBack svg,
+html body #sayviSurfacePage #sayviSurfaceBack svg{
+  stroke:currentColor!important;
+  stroke-width:1.45!important;
+  fill:none!important;
+}
+
 /* Do not turn text-only Done/Cancel actions or generic Close/X buttons into circles. */
 
 /* Separate Sayvi chat page: only the Back arrow, not history or composer. */
