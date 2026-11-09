@@ -234,7 +234,10 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function workActive(){return !real&&shown.kind==='work'}
  function updateWork(){
   const active=workActive();workDetails.hidden=!active;
-  sayviAction.hidden=active;
+  // Mail and Document already show Sayvi's proposal above the actions.
+  // Their first concrete button performs the same step; hide this duplicate.
+  // Work keeps its separate functional Sayvi draft action.
+  sayviAction.hidden=active||mailActive()||documentActive();
   workSayvi.hidden=!active||workMode!=='choose';
   workOwn.hidden=!active||workMode!=='choose';
   workBack.hidden=!active||workMode==='choose';
