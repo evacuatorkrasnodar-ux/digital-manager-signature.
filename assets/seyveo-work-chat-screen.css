@@ -3083,8 +3083,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  }
 }
 
-/* Emoji choices in expanded composer: inline within its lower action row.
-   Never cover the multiline draft or grow/shift the approved composer. */
+/* Multiline emojis sit directly on the lower dock row: no second capsule.
+   Keep the full written draft visible; 36px choice targets and send remain intact. */
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-emoji-inline-open
  .svcp-chat-compose-field > #svcpComposerEmojiStrip:not([hidden]){
  box-sizing:border-box!important;
@@ -3092,12 +3092,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  top:auto!important;bottom:8px!important;
  left:146px!important;right:52px!important;inset-block-start:auto!important;
  display:flex!important;align-items:center!important;justify-content:space-between!important;
- flex-flow:row nowrap!important;gap:1px!important;
+ flex-flow:row nowrap!important;gap:2px!important;
  width:auto!important;max-width:none!important;min-width:0!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
  margin:0!important;padding:0!important;
- border:0!important;border-radius:10px!important;
- background:#38383A!important;background-image:none!important;box-shadow:none!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  overflow-x:auto!important;overflow-y:hidden!important;
  scrollbar-width:none!important;pointer-events:auto!important;
@@ -3106,11 +3106,22 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  .svcp-chat-compose-field > #svcpComposerEmojiStrip .svcp-composer-emoji-choice{
  flex:1 0 28px!important;min-width:28px!important;max-width:34px!important;
  width:auto!important;height:36px!important;min-height:36px!important;
+ padding:0!important;display:grid!important;place-items:center!important;
+ border:0!important;border-radius:9px!important;
+ background:transparent!important;box-shadow:none!important;
  font-size:22px!important;line-height:1!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-emoji-inline-open
+ .svcp-chat-compose-field > #svcpComposerEmojiStrip .svcp-composer-emoji-choice:active{
+ background:rgba(255,255,255,.08)!important;
 }
 @media(max-width:350px){
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-emoji-inline-open
   .svcp-chat-compose-field > #svcpComposerEmojiStrip:not([hidden]){left:133px!important;right:49px!important}
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-emoji-inline-open
+  .svcp-chat-compose-field > #svcpComposerEmojiStrip .svcp-composer-emoji-choice{
+  flex-basis:25px!important;min-width:25px!important;font-size:20px!important;
+ }
 }
 
 /* v189 · An entered message shows SEND or ASSIGN, never a microphone layered
