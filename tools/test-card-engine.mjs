@@ -185,3 +185,18 @@ assert.match(iconHomeStyles,/min-width:116px!important/,
 assert.match(iconHomeStyles,/font-size:12px!important/,
  'the Send/Save text remains readable on iPhone');
 console.log('SEYVEO Home incoming email and final Send/Save labels: tests passed');
+
+// Mail Editor polish: one heading, auto-fit to the entire reply on iPhone.
+assert.match(homeSceneSource,/function prepareMailReply\(input\)/,
+ 'both mail reply paths use auto-fitting editor');
+assert.match(homeSceneSource,/input\.style\.height=Math\.min\(260,Math\.max\(112,natural\)\)/,
+ 'editor grows with text until a safe 260px limit');
+assert.match(homeSceneSource,/input\.style\.overflowY=natural>260\?'auto':'hidden'/,
+ 'ordinary drafts are never visually clipped');
+assert.match(homeSceneSource,/prepareMailReply\(preview\)/,
+ 'Sayvi proposal preview grows to reveal its text');
+assert.match(homeSceneSource,/prepareMailReply\(input\)/,
+ 'manual edit grows to reveal its text');
+assert.ok(!homeSceneSource.includes("create('label','lm-mail-edit-label','Исправить и отправить')"),
+ 'removed redundant Edit and Send heading');
+console.log('SEYVEO Home mail editor auto-fit and compact heading: tests passed');
