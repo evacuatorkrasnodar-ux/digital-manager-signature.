@@ -200,3 +200,24 @@ assert.match(homeSceneSource,/prepareMailReply\(input\)/,
 assert.ok(!homeSceneSource.includes("create('label','lm-mail-edit-label','Исправить и отправить')"),
  'removed redundant Edit and Send heading');
 console.log('SEYVEO Home mail editor auto-fit and compact heading: tests passed');
+
+// Focused composition avoids sliding secondary cards beneath the fixed dock.
+// These rules cover manual work replies, Sayvi reply drafts and document edits.
+assert.match(homeSceneSource,/function syncComposeFocus\(\)/,'one shared expanded-card focus state');
+assert.match(homeSceneSource,/field\.dataset\.lmComposing=composing\?'true':'false'/,
+ 'composition state resets when Save/Send closes the editor');
+assert.match(homeSceneSource,/function prepareDocumentReply\(input\)/,
+ 'document proposal editor sizes to its text');
+assert.match(homeSceneSource,/input\.style\.height=Math\.min\(250,Math\.max\(112,natural\)\)/,
+ 'longer contract proposals grow up to safe editor height');
+assert.match(homeSceneSource,/input\.addEventListener\('input',\(\)=>\{documentNote=input\.value;fit\(\)\}\)/,
+ 'document changes stay in draft state until the user Saves');
+assert.match(homeSceneSource,/input\.placeholder=workMode==='own'\?'Напишите ответ Елене/,
+ 'manual work editor explains the blank input without an extra button');
+assert.match(iconHomeStyles,/\.lm-field\[data-lm-composing="true"\] \.lm-secondary\{/,
+ 'secondary queue folds while the card editor is active');
+assert.match(iconHomeStyles,/max-height:250px!important/,
+ 'document editor can show the whole ordinary proposal');
+assert.match(iconHomeStyles,/min-height:88px!important/,
+ 'empty work reply no longer occupies a tall block');
+console.log('SEYVEO focused Home card editors, safe queue and textarea sizing: tests passed');
