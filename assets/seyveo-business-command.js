@@ -146,13 +146,17 @@ function svcpFileBadge(name,type){
  badge.setAttribute('aria-hidden','true');
  return badge;
 }
-function svcpFileCard(name,type,url){
+function svcpFileCard(name,type,url,timeNode=null){
  const displayName=String(name||'Вложение');
  const node=el(url?'a':'div','svcp-file-card');
  const detail=svcpFileKind(displayName,type);
  node.append(svcpFileBadge(displayName,type));
  const body=el('span','svcp-file-card-copy');
- body.append(el('strong','svcp-file-card-name',displayName),el('small','svcp-file-card-type',detail.label));
+ const heading=el('span','svcp-file-card-heading');
+ heading.append(el('strong','svcp-file-card-name',displayName));
+ // Move the existing <time> node: do not display a second timestamp row.
+ if(timeNode)heading.append(timeNode);
+ body.append(heading,el('small','svcp-file-card-type',detail.label));
  node.append(body);
  if(url){
   node.href=url;
@@ -229,7 +233,9 @@ function restoreStoredMedia(container,message){
    video.src=url;video.controls=true;video.playsInline=true;video.preload='metadata';
    video.setAttribute('aria-label','Рабочее видео: '+(record.name||''));slot.append(video);
   }else{
-   slot.append(svcpFileCard(record.name||message.mediaName||'Вложение',record.type||message.mediaType||'',url));
+   const timestamp=container.querySelector('.svcp-bubble-meta .svcp-time');
+   slot.append(svcpFileCard(record.name||message.mediaName||'Вложение',record.type||message.mediaType||'',url,timestamp));
+   if(timestamp)container.classList.add('svcp-file-time-inside');
   }
   // The file card itself is sufficient. Delivery limitations remain in
   // the send-status feedback, not repeated beneath every chat attachment.
@@ -1518,7 +1524,7 @@ function renderChat(){
    // Short emoji-only messages use a compact bubble, not the 104px text minimum.
    // The time, bookmark, reply and assignment actions remain accessible.
    const emojiOnly=!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&
-    /^[\p{Extended_Pictographic}\uFE0F\u200D\u{1F3FB}-\u{1F3FF}]{1,14}$/u.test(String(msg.text||'').trim());
+    !msg.demoReaction&&/^[\p{Extended_Pictographic}\uFE0F\u200D\u{1F3FB}-\u{1F3FF}]{1,14}$/u.test(String(msg.text||'').trim());
    const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
    bubble.dataset.chatIndex=String(index);
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
@@ -1526,7 +1532,15 @@ function renderChat(){
    meta.append(el('strong','svcp-sender',senderName(msg)),el('time','svcp-time',formatTime(msg.at)));
    bubble.append(meta);
    if(msg.replyTo&&typeof msg.replyTo.text==='string'){
-    bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
+    // Reply sender and message time share one compact heading.
+    const quote=el('div','svcp-quote');
+    const heading=el('div','svcp-quote-heading');
+    heading.append(el('strong','svcp-quote-sender',msg.replyTo.sender||'Сообщение'));
+    const time=meta.querySelector('.svcp-time');
+    if(time)heading.append(time);
+    quote.append(heading,el('span','svcp-quote-excerpt',msg.replyTo.text.slice(0,160)));
+    bubble.append(quote);
+    bubble.classList.add('svcp-has-quote-time');
    }
    if(msg.mediaPurpose!=='voice'){
     let taskText=msg.taskId?String(msg.text||'').replace(/^\s*📌\s*Поручение:\s*/u,''):msg.text;
