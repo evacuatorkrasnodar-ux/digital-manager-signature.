@@ -94,8 +94,19 @@ function renderMessages(){
   thread.append(empty);
  }else{
   for(const msg of messages){
-   const bubble=make('div','svf-msg');
-   bubble.append(make('strong',null,'Вы · только у вас'),make('span',null,msg.text.slice(0,1150)));
+   const value=msg.text.slice(0,1150),bubble=make('div','svf-msg');
+   const emojiOnly=/^[\p{Extended_Pictographic}\uFE0F\u200D\u{1F3FB}-\u{1F3FF}]{1,14}$/u.test(value.trim());
+   if(emojiOnly)bubble.classList.add('svf-emoji-only');
+   bubble.append(make('span','svf-message-text',value));
+   const when=new Date(msg.at);
+   if(Number.isFinite(when.getTime())){
+    const stamp=make('span','svf-message-stamp');
+    const time=make('time','svf-message-time',when.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}));
+    time.dateTime=when.toISOString();
+    const saved=make('span','svf-message-local-check','✓');
+    saved.setAttribute('aria-hidden','true');saved.title='Сохранено в этой вкладке · доставка не подтверждена';
+    stamp.append(time,saved);bubble.append(stamp);
+   }
    thread.append(bubble);
   }
  }
