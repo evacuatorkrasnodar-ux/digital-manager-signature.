@@ -13,8 +13,8 @@ const CATALOG=Object.freeze([
  {id:'clients',label:'Клиенты',desc:'Сколько человек обратилось'},
  {id:'orders',label:'Заказы',desc:'Сколько договорённостей о покупке'},
  {id:'money',label:'Деньги',desc:'На какую сумму продажи и расходы'},
- {id:'plan',label:'Ближайшие дела',desc:'Ваши личные дела и сроки'},
- {id:'notes',label:'Записи',desc:'Блокнот и сохранённые мысли'}
+ {id:'attention',label:'Обращения без заказа',desc:'Обращения, которые ещё не стали заказами'},
+ {id:'operations',label:'Операции',desc:'Записи в журнале бизнеса'}
 ]);
 const BY_ID=Object.fromEntries(CATALOG.map(x=>[x.id,x]));
 const num=new Intl.NumberFormat('ru-RU');
@@ -31,12 +31,14 @@ const pref=()=>{
  const raw=readable(safeRead(PROFILE));
  return raw?.focus==='life'?'life':'business';
 };
-const defaults=()=>['plan','notes'];
+const defaults=()=>['attention','operations'];
 function selection(){
  const data=readable(safeRead(KEY));
  if(data&&data.version===1&&Array.isArray(data.ids)){
   const ids=[...new Set(data.ids)].filter(id=>typeof id==='string'&&BY_ID[id]);
-  return ids.slice(0,CATALOG.length);
+  // A saved legacy selection of personal Notes/Tasks must not leak
+  // into the business Pulse. Respect an intentionally empty selection.
+  return (ids.length||data.ids.length===0?ids:defaults()).slice(0,CATALOG.length);
  }
  return defaults();
 }
@@ -58,23 +60,25 @@ function update(next){
  renderHome();renderCatalog();
 }
 let picturePeriod='today';
-function connectedMetrics(){return window.SEYVEO_PULSE_DEMO?.snapshot?.(picturePeriod)||null;}
-function tasks(){
- const data=readable(safeRead('seyveo-personal-tasks-v1'));
- return Array.isArray(data)?data.filter(x=>x&&typeof x.title==='string'&&!x.done):[];
-}
-function notes(){
- const data=readable(safeRead('seyveo-notes-v1'));
- return Array.isArray(data)?data.length:0;
+// Same source as the actual Pulse chart and KPI cards; demo values are
+// already clearly marked by the Pulse header.
+function connectedMetrics(){return window.SEYVEO_PULSE_VIEW?.get?.(picturePeriod)?.total||null;}
+function ledgerCount(){
+ const rows=window.SEYVEO_PULSE_LEDGER?.list?.();
+ return Array.isArray(rows)?rows.length:0;
 }
 function info(id){
  const item=BY_ID[id];
- const data=connectedMetrics(),count=tasks().length;
- if(id==='clients')return {label:item.label,value:Number.isFinite(data?.leads)?num.format(data.leads):'—',hint:'Источник обращений пока не подключён'};
- if(id==='orders')return {label:item.label,value:Number.isFinite(data?.sales)?num.format(data.sales):'—',hint:'Источник заказов пока не подключён'};
- if(id==='money')return {label:item.label,value:Number.isFinite(data?.revenue)?rub(data.revenue):'—',hint:'Источник финансов пока не подключён'};
- if(id==='plan')return {label:item.label,value:String(count),hint:count?'Нужно сделать · на устройстве':'Пока всё спокойно'};
- return {label:item.label,value:String(notes()),hint:'Сохранено на устройстве'};
+ const data=connectedMetrics();
+ if(id==='clients')return {label:item.label,value:Number.isFinite(data?.leads)?num.format(data.leads):'—',hint:'Обращения за выбранный период'};
+ if(id==='orders')return {label:item.label,value:Number.isFinite(data?.sales)?num.format(data.sales):'—',hint:'Заказы за выбранный период'};
+ if(id==='money')return {label:item.label,value:Number.isFinite(data?.revenue)?rub(data.revenue):'—',hint:'Продажи за выбранный период'};
+ if(id==='attention'){
+  const pending=Number.isFinite(data?.leads)&&Number.isFinite(data?.sales)?Math.max(0,data.leads-data.sales):null;
+  return {label:item.label,value:pending===null?'—':num.format(pending),hint:'Пока не оформлены как заказы'};
+ }
+ if(id==='operations')return {label:item.label,value:num.format(ledgerCount()),hint:'Сохранено в журнале бизнеса'};
+ return {label:item.label,value:'—',hint:''};
 }
 const moneyCompact=value=>{
  if(value>=1000000)return (value/1000000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' млн ₽';
@@ -88,7 +92,9 @@ const pictograms=Object.freeze({
  orders:['M6 7h12l1 14H5L6 7Z','M9 8V6a3 3 0 0 1 6 0v2','M9 14l2 2 4-4'],
  money:['M4 19V5','M4 19h16','M7 15l4-4 3 2 5-6','M16 7h3v3'],
  plan:['M7 5h11v16H6V5','M9 5V3h6v2','M9 11h6','M9 15l2 2 4-5'],
- notes:['M7 3.5h9l3 3V21H7Z','M16 3.5V7h3','M10 11h6','M10 15h6','M10 19h4']
+ notes:['M7 3.5h9l3 3V21H7Z','M16 3.5V7h3','M10 11h6','M10 15h6','M10 19h4'],
+ attention:['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18','M12 8v5','M12 17h.01'],
+ operations:['M6 4h12v17H6z','M9 8h6','M9 12h6','M9 16h4']
 });
 function sceneArtwork(id){
  const ns='http://www.w3.org/2000/svg';
@@ -215,8 +221,16 @@ function detail(id){
  if(!details.open)details.showModal();
 }
 function cardAction(id){
- if(id==='plan'){$('navTasks')?.click();return}
- if(id==='notes'){$('viewNotes')?.click();return}
+ // No personal Notebook or Tasks routes may open from Business Pulse.
+ // Business shortcuts remain within this same analytics workspace.
+ if(id==='attention'){
+  $('pictureSources')?.scrollIntoView({behavior:'smooth',block:'center'});
+  return;
+ }
+ if(id==='operations'){
+  $('pictureOperations')?.scrollIntoView({behavior:'smooth',block:'center'});
+  return;
+ }
  detail(id);
 }
 grid.addEventListener('click',event=>{
@@ -295,15 +309,14 @@ catalog.addEventListener('pointerup',event=>{
 });
 catalog.addEventListener('pointercancel',clearDrag);
 window.addEventListener('seyveo:picture-period',event=>{picturePeriod=event.detail?.period||'today';renderHome()});
-window.addEventListener('seyveo:tasks-changed',renderHome);
-window.addEventListener('seyveo:notes-changed',renderHome);
+window.addEventListener('seyveo:pulse-ledger-changed',renderHome);
 window.addEventListener('seyveo:profile-changed',()=>{
  if(safeRead(KEY)===null)selected=defaults();
  renderHome();renderCatalog();
 });
 window.addEventListener('storage',event=>{
  if(event.key===KEY){selected=selection();renderHome();renderCatalog()}
- if(event.key==='seyveo-personal-tasks-v1'||event.key==='seyveo-notes-v1')renderHome();
+ if(event.key==='seyveo-pulse-ledger-v1')renderHome();
  if(event.key===PROFILE&&safeRead(KEY)===null){selected=defaults();renderHome();renderCatalog()}
 });
 renderHome();
