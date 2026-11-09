@@ -14,7 +14,7 @@ const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:redu
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
 // Restore the original rising three-card introduction when no real item needs attention.
-let previewArmed=true,previewSeen=false;
+let previewArmed=true,previewSeen=false,previewRearmAt=0;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
  timers.push(id);return id;
@@ -209,7 +209,10 @@ function homeCard(item){
  return {id:String(item?.eventId||item?.id||'preview:'+item?.kind),family,
   priority:item?.businessTask?'urgent':'normal',protected:!!item?.businessTask};
 }
-function mayShow(item){return !window.SEYVEO_CARD_ENGINE?.isSuppressed?.(homeCard(item))}
+function mayShow(item){
+ const engine=window.SEYVEO_CARD_ENGINE,card=homeCard(item);
+ return !engine?.isSuppressed?.(card)&&!engine?.isSnoozed?.(card);
+}
 function createSurface(primary,other=[],real=false,taskId=''){
  tiles.replaceChildren();
  const field=create('div','lm-field');
@@ -230,6 +233,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  hero.append(artwork,copy);
  const controls=create('div','lm-actions');
  let remaining=[primary,...other],shown=primary,morphLocked=false;
+ const swipedInRound=new Set();
  const seenQueueRows=new Set(real&&primary.eventId?[primary.eventId]:[]);
  let queueRendered=false;
  // Only the ORIGINAL Quiet Cinema Mail item gains actions; no new card.
@@ -826,6 +830,25 @@ function createSurface(primary,other=[],real=false,taskId=''){
    later(()=>{morphLocked=false},reduced()?0:500);
   },reduced()?0:400);
  }
+ function cycleFeatured(){
+  if(morphLocked||!['task','preview'].includes(mode))return;
+  const engine=window.SEYVEO_CARD_ENGINE;
+  swipedInRound.add(homeCard(shown).id);
+  // A single card pauses; a complete pass pauses the queue without endless cycling.
+  if(remaining.length<=1||remaining.every(item=>swipedInRound.has(homeCard(item).id))){
+   engine?.snoozeCards?.(remaining.map(homeCard));
+   if(!real){
+    previewRearmAt=Date.now()+(engine?.cardPolicy?.singleCardSnoozeMs||3600000);
+    previewSeen=true;
+   }
+   space.classList.add('lm-disappear');
+   later(()=>rest(),reduced()?0:TIMING.close);
+   return;
+  }
+  const current=remaining.indexOf(shown);
+  if(current>=0)remaining.push(remaining.splice(current,1)[0]);
+  changeFeatured(remaining[0]);
+ }
  function finishPreviewItem(){
   if(real||morphLocked||mode!=='preview'||!remaining.includes(shown))return;
   morphLocked=true;
@@ -837,7 +860,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
     scene.classList.remove('lm-scene--changing');
     return;
    }
-   remaining=remaining.filter(item=>item!==shown);
+   remaining=remaining.filter(item=>item!==shown&&mayShow(item));
    if(!remaining.length){
     tip.textContent='';
     space.classList.add('lm-disappear');
@@ -890,15 +913,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
  scene.append(main,secondary,explanation);
  field.append(scene);
  tiles.append(field);
- // Both swipe directions mean Later on this original Home Living Moment.
- // Reuse the existing defer callbacks, not a separate destructive action.
- installLivingCardSwipe(field,()=>{
-  if(morphLocked)return;
-  if(real)realLater.click();
-  else if(mailActive())mailLater.click();
-  else if(documentActive())documentLater.click();
-  else if(workActive())finishPreviewItem();
- },()=>{if(real)finishRealItem();else finishPreviewItem()},()=>homeCard(shown));
+ // Both directions rotate to the end; only long hold removes a card.
+ installLivingCardSwipe(field,cycleFeatured,
+  ()=>{if(real)finishRealItem();else finishPreviewItem()},()=>homeCard(shown));
  announceRecommendation(primary);
  return {field,changeFeatured,updateCount};
 }
@@ -982,7 +999,7 @@ function startPreview(){
  if(mode!=='idle')rest();
  mode='preview';key='preview';previewSeen=true;
  dynamic.hidden=true;
- if(!buildExamples()){rest();return false}
+ if(!buildExamples()){previewSeen=true;rest();return false}
  tip.textContent='';
  space.hidden=false;space.classList.add('lm-preview');
  focus(true);
@@ -1065,7 +1082,8 @@ function showDiscovery(card){
  if(!card||!available()||window.SEYVEO_CARD_ENGINE?.isSuppressed?.(card))return false;
  const engine=window.SEYVEO_CARD_ENGINE;
  const surface=engine?.renderCard?.(card,{onAction:id=>{
-  if(id==='later')window.SEYVEO_DISCOVERY?.postpone?.(card.releaseId);
+  if(id==='cycle')window.SEYVEO_CARD_ENGINE?.snoozeCards?.(card);
+   else if(id==='later')window.SEYVEO_DISCOVERY?.postpone?.(card.releaseId);
   else if(id==='not-interested')window.SEYVEO_DISCOVERY?.dismiss?.(card.releaseId);
   else if(id==='open-release'){
    const opened=window.SEYVEO_BROWSER?.open?.(card.releaseUrl);
@@ -1225,7 +1243,7 @@ function showCalendar(item){
   location.hash='#calendar';
  });
  const postpone=()=>{
-  quiet.add(key);
+  window.SEYVEO_CARD_ENGINE?.snoozeCards?.({id:key,family:'calendar'});
   space.classList.add('lm-disappear');
   later(()=>rest(),reduced()?0:TIMING.close);
  };
@@ -1288,7 +1306,7 @@ function showWorkshop(item){
   window.SEYVEO_FAN_WORKSHOP?.open?.();
  });
  const postpone=()=>{
-  quiet.add(key);
+  window.SEYVEO_CARD_ENGINE?.snoozeCards?.({id:key,family:'care'});
   space.classList.add('lm-disappear');
   later(()=>rest(),reduced()?0:TIMING.close);
  };
@@ -1345,6 +1363,7 @@ function showExistingAdvice(){
  return true;
 }
 function refresh(){
+ if(previewRearmAt&&Date.now()>=previewRearmAt){previewSeen=false;previewRearmAt=0}
  if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=adviceIdentity(pending);
@@ -1421,6 +1440,7 @@ window.addEventListener('seyveo:life-events-changed',scheduleRefresh);
 window.addEventListener('seyveo:fan-workshop-changed',scheduleRefresh);
 window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:card-visibility-changed',scheduleRefresh);
+window.addEventListener('seyveo:card-snoozes-changed',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
