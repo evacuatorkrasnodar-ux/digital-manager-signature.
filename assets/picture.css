@@ -551,36 +551,48 @@ html body #picturePage #pictureLead{
 html body #picturePage #pictureDataStatus:not([hidden]){
  display:none!important;
 }
+/* Single flat segmented control: neutralize legacy glass & raised layers. */
 html body #picturePage #pictureBusiness > .picture-tabs{
  box-sizing:border-box!important;
- display:grid!important;
- grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ position:relative!important;isolation:isolate!important;
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-items:stretch!important;
  width:calc(100% - 12px)!important;
- min-height:48px!important;
+ height:46px!important;min-height:46px!important;
  margin:7px 6px 13px!important;
- padding:2px!important;gap:2px!important;
- border:0!important;border-radius:14px!important;
+ padding:3px!important;gap:3px!important;
+ border:0!important;outline:0!important;border-radius:14px!important;
  background:#29292B!important;background-image:none!important;
- box-shadow:none!important;
+ box-shadow:none!important;filter:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  overflow:hidden!important;
 }
+html body #picturePage #pictureBusiness > .picture-tabs::before,
+html body #picturePage #pictureBusiness > .picture-tabs::after{
+ content:none!important;display:none!important;
+ background:none!important;box-shadow:none!important;border:0!important;
+}
 html body #picturePage #pictureBusiness > .picture-tabs > button{
  box-sizing:border-box!important;
- display:grid!important;place-items:center!important;
- min-height:44px!important;height:44px!important;
- min-width:0!important;margin:0!important;
+ position:relative!important;z-index:1!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-height:40px!important;height:40px!important;
+ width:100%!important;min-width:0!important;margin:0!important;
  padding:0 2px!important;
- border:0!important;border-radius:12px!important;
- background:transparent!important;
- box-shadow:none!important;
+ border:0!important;outline:0!important;border-radius:11px!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;transform:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  color:#D1D2D5!important;
- font-size:12px!important;font-weight:540!important;
+ font-size:12px!important;font-weight:550!important;
 }
 html body #picturePage #pictureBusiness > .picture-tabs > button[aria-pressed="true"]{
- background:#38383A!important;color:#FFF!important;
- font-weight:650!important;border:0!important;
- box-shadow:none!important;
+ background:#38383A!important;background-image:none!important;
+ color:#FFF!important;font-weight:650!important;
+ border:0!important;box-shadow:none!important;
+}
+html body #picturePage #pictureBusiness > .picture-tabs > button:focus-visible{
+ outline:2px solid #ddd!important;outline-offset:-2px!important;
 }
 html body #picturePage :is(#pictureWidgetArea,#pictureBusinessCharts){
  background:transparent!important;background-image:none!important;
