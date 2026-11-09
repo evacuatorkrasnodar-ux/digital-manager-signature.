@@ -37,9 +37,11 @@
 .dock{
  position:fixed!important;
  z-index:30!important;
- left:var(--sv-split-left)!important;right:auto!important;
+ /* Shift the WHOLE dock as-is; the separate right Sayvi circle is at screen center.
+    No resizing of the capsule, button slots, SVG icons, or gaps. */
+ left:var(--sv-split-center)!important;right:auto!important;
  bottom:var(--seyveo-dock-bottom)!important;
- transform:none!important;
+ transform:translateX(calc(-100% + 25px))!important;
  display:grid!important;
  grid-template-columns:repeat(4,minmax(0,1fr)) var(--sv-split-gap) var(--sv-split-sayvi)!important;
  align-items:center!important;
