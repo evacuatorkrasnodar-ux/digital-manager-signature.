@@ -56,3 +56,23 @@ html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack
   filter:none!important;
 }
 /* Do not turn text-only Done/Cancel actions or generic Close/X buttons into circles. */
+
+/* Separate Sayvi chat page: only the Back arrow, not history or composer. */
+html body #sayviTopActions a#sayviBack.sv-top-action{
+  background:var(--sv-back-flat)!important;
+  background-image:none!important;
+  color:var(--sv-back-flat-ink)!important;
+  border:0!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+}
+html body #sayviTopActions a#sayviBack.sv-top-action:active{
+  background:var(--sv-back-flat-pressed)!important;
+}
+html body #sayviTopActions a#sayviBack.sv-top-action svg{
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.45!important;
+}
