@@ -1145,8 +1145,8 @@ function installLivingCardSwipe(field,onLater,onRemoved,getCard){
    menu.append(b);return b;
   };
   
-  const muteButton=choice('Не показывать такие',mute);
   const hideButton=choice('Убрать карточку',hide);
+  const muteButton=choice('Не показывать такие',mute);
   choice('Отмена',()=>{});
   const openMenu=()=>{
    const blocked=!!engine?.isProtected?.(identity());
