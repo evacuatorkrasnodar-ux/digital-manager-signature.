@@ -96,7 +96,7 @@
  box-sizing:border-box;
  width:max-content;min-width:70px;max-width:90%;
  align-self:flex-end;
- padding:8px 11px 23px;
+ padding:8px 11px;
  border:0;
  border-radius:15px 15px 6px 15px;
  background:#38383A;
@@ -112,12 +112,14 @@
  white-space:pre-wrap;overflow-wrap:anywhere;
 }
 .svf-dialog .svf-msg > .svf-message-stamp{
- position:absolute;right:9px;bottom:5px;
+ position:absolute;right:8px;bottom:3px;
  display:inline-flex;align-items:center;justify-content:flex-end;gap:4px;
  margin:0;padding:0;
  font:500 10px/13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
- color:#C6C6CA;
- background:none;
+ color:#D1D1D5;
+ background:transparent;
+ opacity:.84;
+ text-shadow:0 1px 3px rgba(0,0,0,.52);
  white-space:nowrap;pointer-events:none;
 }
 .svf-dialog .svf-message-time{font:inherit;color:inherit;font-variant-numeric:tabular-nums}
