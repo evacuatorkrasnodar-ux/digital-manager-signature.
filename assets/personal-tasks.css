@@ -1275,3 +1275,18 @@ html body #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick > button:
 :root[data-theme=light] body #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
  border-color:rgba(33,48,57,.42)!important;background:rgba(33,48,57,.08)!important;
 }
+
+/* SEYVEO · Empty task has no valid save action. Do not change the
+   approved graphite circles or their 44px hit geometry. */
+html body #personalTaskDialog .sv-task-page-header > #personalTaskSave:disabled{
+ background:#38383A!important;
+ color:#F5F6F7!important;
+ opacity:1!important;
+ cursor:default!important;
+}
+html body #personalTaskDialog .sv-task-page-header > #personalTaskSave:disabled svg{
+ opacity:.32!important;
+}
+html body #personalTaskDialog .sv-task-page-header > #personalTaskSave:disabled:active{
+ background:#38383A!important;
+}
