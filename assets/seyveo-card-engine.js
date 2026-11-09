@@ -53,7 +53,7 @@
   id:'silver-flat-v1',
   darkMaterial:'#38383A',lightMaterial:'#E4E7E9',
   primaryActionsMax:1,primaryPillsMax:1,visibleActionLimit:3,secondaryPresentation:'text',
-  deferGesture:'swipe-both',deferMinPixels:75,
+  deferGesture:'swipe-right',dismissGesture:'swipe-left',contextGesture:'long-press',deferMinPixels:75,
   redundantAdviceActions:Object.freeze(['show-sayvi','show-sayvi-advice','show-suggestion','show-advice']),
   preserveDistinctAssistantActions:true
  });
@@ -124,7 +124,7 @@
    seen.add(card.id);out.push(card);
   }
   const ranks={urgent:0,important:1,normal:2};
-  return out.sort((a,b)=>ranks[a.priority]-ranks[b.priority]);
+  return visibleCards(out.sort((a,b)=>ranks[a.priority]-ranks[b.priority]));
  }
  function demoEvents(){
   return Object.entries(eventType).map(([type,family],index)=>{
@@ -146,6 +146,47 @@
   field.dataset.svCardVersion='2';
   return family;
  }
+ // Visibility applies ONLY to the Home presentation, never the source.
+ // Store identifiers and categories locally, never task/mail/document content.
+ const visibilityKey='seyveo-card-visibility-v1';
+ const protectedFamilies=new Set(['security','finance','secureFlow']);
+ const validFamilies=new Set(Object.keys(catalog));
+ function getVisibility(){
+  try{
+   const data=JSON.parse(window.localStorage?.getItem(visibilityKey)||'{}');
+   return {hidden:Array.isArray(data.hidden)?data.hidden.filter(v=>v&&typeof v.key==='string'&&validFamilies.has(v.family)).slice(-500):[],
+    muted:Array.isArray(data.muted)?data.muted.filter(v=>validFamilies.has(v)&&!protectedFamilies.has(v)):[]};
+  }catch{return {hidden:[],muted:[]}}
+ }
+ function saveVisibility(data){
+  try{window.localStorage?.setItem(visibilityKey,JSON.stringify({hidden:data.hidden.slice(-500),muted:data.muted}));return true;}
+  catch{return false;}
+ }
+ const cardVisibilityKey=card=>[card?.accountId||'local',card?.workspaceId||'personal',card?.family||'',card?.id||''].join('::');
+ function isProtected(card){
+  return !!card&&(card.protected===true||card.requiresAttention===true||card.priority==='urgent'||
+   protectedFamilies.has(card.family)||(card.priority==='important'&&card.family==='task'));
+ }
+ function isSuppressed(card){
+  if(!card||isProtected(card))return false;
+  const state=getVisibility();
+  return state.muted.includes(card.family)||state.hidden.some(v=>v.key===cardVisibilityKey(card));
+ }
+ function hideCard(card,hide=true){
+  if(!card?.id||isProtected(card))return false;
+  const state=getVisibility(),key=cardVisibilityKey(card);
+  state.hidden=state.hidden.filter(v=>v.key!==key);
+  if(hide)state.hidden.push({key,family:card.family});
+  return saveVisibility(state);
+ }
+ function muteFamily(family,mute=true){
+  if(!validFamilies.has(family)||protectedFamilies.has(family))return false;
+  const state=getVisibility();state.muted=state.muted.filter(v=>v!==family);
+  if(mute)state.muted.push(family);
+  return saveVisibility(state);
+ }
+ function restoreVisibility(){return saveVisibility({hidden:[],muted:[]})}
+ function visibleCards(cards){return Array.isArray(cards)?cards.filter(c=>!isSuppressed(c)):[]}
  // Horizontal swipe to defer (both directions). A directional gesture must
  // be substantially longer than vertical movement so scrolling stays native.
  // Pointer events cover iOS 13+/Android/desktop; touch fallback covers old WebKit.
@@ -156,7 +197,8 @@
  }
  function installDeferSwipe(node,card,onAction){
   if(!card.actions.includes('later')||typeof onAction!=='function')return;
-  node.dataset.svSwipeLater='both';
+  node.dataset.svSwipeLater='right';
+  node.dataset.svSwipeHide=isProtected(card)?'blocked':'left';
   const interactive=target=>target?.closest?.('button,a,input,textarea,select,[contenteditable="true"],[role="button"]');
   let start=null;
   const begin=(x,y,id,target)=>{
@@ -165,7 +207,10 @@
   const finish=(x,y,id)=>{
    if(!start||start.id!==id){start=null;return;}
    const point=start;start=null;
-   if(isDeferSwipe(x-point.x,y-point.y))onAction('later',card);
+   if(isDeferSwipe(x-point.x,y-point.y)){
+    if(x>point.x)onAction('later',card);
+    else if(hideCard(card)){node.hidden=true;onAction('hide',card)}
+   }
   };
   if(typeof window.PointerEvent==='function'){
    node.addEventListener('pointerdown',event=>{
@@ -186,7 +231,65 @@
    node.addEventListener('touchcancel',()=>{start=null;},{passive:true});
   }
  }
- const el=(tag,klass,content)=>{
+  // Hold to open a small native-feeling Silver Flat menu. No permanent buttons.
+ function installCardContextMenu(node,card,onAction){
+  if(typeof onAction!=='function')return;
+  const menu=document.createElement('div');
+  menu.className='sv-card-context';menu.hidden=true;
+  menu.setAttribute('role','group');menu.setAttribute('aria-label','Управление карточкой');
+  let timer=null,start=null;
+  const clear=()=>{if(timer!==null){window.clearTimeout(timer);timer=null}};
+  const outside=event=>{if(!node.contains(event.target))close()};
+  const close=()=>{clear();menu.hidden=true;node.removeAttribute('data-card-menu-open');document.removeEventListener('pointerdown',outside,true)};
+  const open=()=>{
+   clear();start=null;menu.hidden=false;node.dataset.cardMenuOpen='true';
+   document.addEventListener('pointerdown',outside,true);
+   menu.querySelector('button:not(:disabled)')?.focus({preventScroll:true});
+  };
+  const option=(title,action,disabled=false)=>{
+   const button=document.createElement('button');button.type='button';button.className='sv-card-context-item';
+   button.textContent=title;button.disabled=disabled;
+   button.addEventListener('click',()=>{
+    close();
+    if(action==='cancel')return;
+    if(action==='hide'){if(!hideCard(card))return;node.hidden=true;}
+    if(action==='mute-family'){if(!muteFamily(card.family))return;node.hidden=true;}
+    onAction(action,card);
+   });
+   menu.append(button);
+  };
+  option('Напомнить позже','later');
+  option('Не показывать такие','mute-family',isProtected(card));
+  option('Удалить карточку','hide',isProtected(card));
+  option('Отмена','cancel');
+  node.append(menu);
+  const interactive=target=>target?.closest?.('button,a,input,textarea,select,[contenteditable="true"]');
+  const down=(x,y,id,target)=>{
+   clear();start=interactive(target)?null:{x,y,id};
+   if(start)timer=window.setTimeout(open,580);
+  };
+  const move=(x,y,id)=>{
+   if(start?.id===id&&Math.hypot(x-start.x,y-start.y)>12)clear();
+  };
+  if(typeof window.PointerEvent==='function'){
+   node.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;down(e.clientX,e.clientY,e.pointerId,e.target)});
+   node.addEventListener('pointermove',e=>move(e.clientX,e.clientY,e.pointerId));
+   node.addEventListener('pointerup',()=>{clear();start=null});
+   node.addEventListener('pointercancel',()=>{clear();start=null});
+  }else{
+   node.addEventListener('touchstart',e=>{if(e.touches.length===1){const p=e.touches[0];down(p.clientX,p.clientY,p.identifier,e.target)}},{passive:true});
+   node.addEventListener('touchmove',e=>{if(e.touches.length===1){const p=e.touches[0];move(p.clientX,p.clientY,p.identifier)}},{passive:true});
+   node.addEventListener('touchend',()=>{clear();start=null},{passive:true});
+   node.addEventListener('touchcancel',()=>{clear();start=null},{passive:true});
+  }
+  node.addEventListener('contextmenu',e=>{if(interactive(e.target))return;e.preventDefault();open()});
+  node.tabIndex=0;
+  node.addEventListener('keydown',e=>{
+   if(e.key==='Escape'){close();return}
+   if(e.key==='ContextMenu'||(e.shiftKey&&e.key==='F10')){e.preventDefault();open()}
+  });
+ }
+const el=(tag,klass,content)=>{
   const node=document.createElement(tag);
   if(klass)node.className=klass;
   if(content!==undefined)node.textContent=content;
@@ -234,10 +337,12 @@
   }
   article.append(actions);
   installDeferSwipe(article,card,onAction);
+  installCardContextMenu(article,card,onAction);
   return article;
  }
  root.SEYVEO_CARD_ENGINE=Object.freeze({
-  version:5,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
+  version:6,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
+   isProtected,isSuppressed,hideCard,muteFamily,getVisibility,restoreVisibility,visibleCards,
   presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome
  });
 })(window);
