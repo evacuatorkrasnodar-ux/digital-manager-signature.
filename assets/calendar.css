@@ -1611,3 +1611,11 @@
  background:#CED3D6!important;color:#1F2930!important;
 }
 :root[data-theme="light"] #calendarPage #calendarViewModes > .cal-mode-today{color:#33414A;border-top-color:rgba(45,55,60,.12)}
+
+/* Deadlines is still a calendar mode: keep its title/menu accessible,
+   but hide the date/agenda canvas while the deadlines list is shown. */
+#calendarPage #calendarView[data-mode="deadlines"] :is(
+ .cal-nav-arrows,#calendarMonth,#calendarWeek,.cal-day-summary,
+ #calendarHoliday,#calendarAgenda,#calendarAdvice
+){display:none!important}
+#calendarPage #calendarView[data-mode="deadlines"] .cal-nav{margin-bottom:4px}
