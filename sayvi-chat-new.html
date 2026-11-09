@@ -1084,13 +1084,13 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
 .turn[data-role="user"] .sv-turn-bubble-wrap > .bubble{
  width:100%;
 }
-.turn .sv-turn-bubble-wrap.sv-has-stamp > .bubble{
- padding-bottom:23px!important;
+.turn[data-role="user"] .sv-turn-bubble-wrap.sv-has-stamp > .bubble{
+ padding-bottom:10px!important;
 }
 .turn .sv-turn-time{
  position:absolute;
- right:9px;
- bottom:5px;
+ right:8px;
+ bottom:3px;
  z-index:2;
  display:inline-flex;
  justify-content:flex-end;
@@ -1101,6 +1101,8 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  font:500 10px/13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  font-variant-numeric:tabular-nums;
  color:var(--sayvi-secondary);
+ opacity:.82;
+ text-shadow:0 1px 3px rgba(0,0,0,.35);
  white-space:nowrap;
  pointer-events:none;
 }
@@ -1122,8 +1124,8 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  position:relative;
 }
 .turn[data-role="user"].sv-clock-on-attachment .sv-sent-files > .sv-sent-file:last-of-type{
- padding-bottom:23px;
- min-height:68px;
+ padding-bottom:6px;
+ min-height:57px;
 }
 .turn[data-role="user"].sv-clock-on-attachment .sv-sent-files > .sv-turn-time,
 .turn[data-role="user"].sv-clock-on-attachment .sv-sent-images > .sv-turn-time{
