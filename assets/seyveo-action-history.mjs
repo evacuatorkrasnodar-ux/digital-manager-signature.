@@ -84,7 +84,7 @@ if(personal&&head){
 .sah-inline-panel.is-empty-history .sah-inline-note{
  display:flex;flex-direction:column;align-items:center;justify-content:center;
  width:100%;max-width:330px;min-height:0;
- margin:clamp(124px,20dvh,206px) auto 0;padding:0 16px 12px;box-sizing:border-box;
+ margin:clamp(150px,28dvh,250px) auto 0;padding:0 16px 12px;box-sizing:border-box;
  background:transparent;border:0;text-align:center;
  color:var(--secondary);font-size:13.5px;line-height:1.55;
 }
@@ -255,7 +255,7 @@ if(personal&&head){
    const hands=document.createElementNS('http://www.w3.org/2000/svg','path');
    hands.setAttribute('d','M32 18v15l10 6');svg.append(hands);
    const heading=document.createElement('strong');heading.className='sah-empty-title';heading.textContent='Пока нет действий';
-   const copy=document.createElement('span');copy.className='sah-empty-copy';copy.textContent='Здесь появятся сохранённые события карточек и результаты действий.';
+   const copy=document.createElement('span');copy.className='sah-empty-copy';copy.textContent='Здесь появится история дел и действий Сэйви.';
    empty.append(svg,heading,copy);list.append(empty);return;
   }
   // Ordinary users see one latest outcome per card; developer mode shows its full trace.
