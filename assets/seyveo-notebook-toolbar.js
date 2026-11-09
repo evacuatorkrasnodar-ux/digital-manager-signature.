@@ -21,7 +21,7 @@
  // One fresh icon language: every path shares a 24x24 grid and 1.7px stroke.
  const icon=paths=>'<svg class="sv-newdock-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
  const icons={
-  pen:'<path d="m4.6 19.1 11.1-11.2a2.3 2.3 0 0 1 3.3 3.3L7.9 22.3 3 23l1.6-3.9Z"/><path d="m13.6 10 3.3 3.3M4.8 19.1l3.1 3.2"/>',
+  pen:'<path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/>',
   eraser:'<path d="m4.5 14.1 9-9a2.2 2.2 0 0 1 3.1 0l3.3 3.3a2.2 2.2 0 0 1 0 3.1L11.6 20H8.2l-3.7-3.7a1.6 1.6 0 0 1 0-2.2Z"/><path d="m10.5 8.2 6 6M11.6 20h9.2"/>',
   duplicate:'<rect x="8.8" y="8.6" width="12" height="12" rx="2.5"/><path d="M16.8 8.6V6.2a2.4 2.4 0 0 0-2.4-2.4H6.2a2.4 2.4 0 0 0-2.4 2.4v8.2a2.4 2.4 0 0 0 2.4 2.4h2.6"/>',
   settings:'<path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="2.5" fill="#202124"/><circle cx="16" cy="12" r="2.5" fill="#202124"/><circle cx="10" cy="18" r="2.5" fill="#202124"/>',
