@@ -1140,9 +1140,10 @@ function closeMessageMenus(){
   menu.hidden=true;menu.style.transform='';
  });
  chatRoot.querySelectorAll('.svcp-more-trigger').forEach(trigger=>trigger.setAttribute('aria-expanded','false'));
+ $('svcpWorkChatScreen')?.querySelectorAll('.svcp-message-context-menu').forEach(menu=>menu.remove());
 }
 document.addEventListener('pointerdown',event=>{
- if(event.target.closest?.('.svcp-message-menu,.svcp-more-trigger'))return;
+ if(event.target.closest?.('.svcp-message-menu,.svcp-more-trigger,.svcp-message-context-menu'))return;
  closeMessageMenus();
 });
 $('svcpMessages')?.addEventListener('scroll',closeMessageMenus,{passive:true});
@@ -1564,9 +1565,11 @@ function renderChat(){
     // The manager must tap and confirm before any recognition is awarded.
     // One quiet row of actions is always available UNDER the message.
     // No ellipsis, dropdown or long-press-only controls.
+    // Exactly three quick actions are visible. Other operations remain
+    // available on long press, desktop right-click, or keyboard menu key.
     const menu=el('div','svcp-message-inline-actions');
     menu.setAttribute('role','group');
-    menu.setAttribute('aria-label','Действия с сообщением');
+    menu.setAttribute('aria-label','Основные действия с сообщением');
     function svcpActionIcon(title,kind,callback,className){
      const control=btn('',callback,className+' svcp-icon-action svcp-action-'+kind);
      control.setAttribute('aria-label',title);
@@ -1589,40 +1592,39 @@ function renderChat(){
      control.appendChild(svg);
      return control;
     }
-    menu.append(svcpActionIcon('Ответить','reply',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
-    const recognitionProposal=state.viewpoint==='manager'&&!employeePreviewActive()&&msg.role==='demo-elena'
-     ?pendingRecognitionSuggestions().find(x=>x.sourceKey===recognitionSourceKey(msg))
-     :null;
-    if(recognitionProposal){
-     menu.append(svcpActionIcon('Сэйви предлагает награду: '+recognitionProposal.reason,'award',()=>{
-      if(awardRecognitionSuggestion(recognitionProposal.sourceKey))renderChat();
-     },'svcp-message-menu-item'));
-    }
-    // HR appreciation is NOT a bookmark. Only an identifiable colleague earns
-    // a golden recognition event, recorded by the existing staff-card ledger.
+    menu.append(svcpActionIcon('Ответить','reply',()=>{
+     closeMessageMenus();startReply(msg);
+    },'svcp-message-menu-item'));
+    // Keep bookmark independent of staff-recognition awards.
     const starControl=svcpActionIcon(msg.starred?'Убрать из избранного':'В избранное','star',()=>{
      const updated=state.chat.map((item,i)=>i===index?{...item,starred:!item.starred}:item);
      if(!save(CHAT_KEY,updated))return;
      state.chat=updated;
      bubble.querySelector('.svcp-bubble-saved')?.remove();
-     if(updated[index].starred){
-      const savedLabel=el('small','svcp-bubble-saved','▮ Избранное');
-      const actions=bubble.querySelector('.svcp-message-actions');
-      if(actions)bubble.insertBefore(savedLabel,actions);else bubble.append(savedLabel);
-     }
      starControl.classList.toggle('is-saved',!!updated[index].starred);
      starControl.setAttribute('aria-label',updated[index].starred?'Убрать из избранного':'В избранное');
+     starControl.title=starControl.getAttribute('aria-label');
+     starControl.setAttribute('aria-pressed',String(!!updated[index].starred));
      closeMessageMenus();renderDirectory();
     },'svcp-message-menu-item');
     starControl.classList.toggle('is-saved',!!msg.starred);
+    starControl.setAttribute('aria-pressed',String(!!msg.starred));
     menu.append(starControl);
-    menu.append(svcpActionIcon('Копировать','copy',async()=>{
+    const canAssign=!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena';
+    if(canAssign){
+     menu.append(svcpActionIcon('Поручить','task',()=>{
+      closeMessageMenus();prepareTask(msg,index);
+     },'svcp-message-menu-item'));
+    }
+    // Context-only actions. Edit and deletion permissions are preserved.
+    const secondary=[];
+    secondary.push({title:'Копировать',kind:'copy',run:async()=>{
      closeMessageMenus();
      try{await navigator.clipboard.writeText(msg.text);setStatus('Сообщение скопировано')}
      catch{setStatus('Не удалось скопировать. Выдели текст сообщения вручную.')}
-    },'svcp-message-menu-item'));
+    }});
     if(isOwn&&!msg.mediaId&&!msg.taskId&&Date.now()-Number(msg.at)>=0&&Date.now()-Number(msg.at)<=15*60*1000){
-     menu.append(svcpActionIcon('Изменить','edit',()=>{
+     secondary.push({title:'Редактировать',kind:'edit',run:()=>{
       closeMessageMenus();clearReply();
       editingMessageIndex=index;
       const editPreview=$('svcpReplyPreview'),editText=$('svcpReplyText');
@@ -1633,14 +1635,11 @@ function renderChat(){
        input.dispatchEvent(new Event('input',{bubbles:true}));
       }
       setStatus('Редактирование · измени текст и нажми «Отправить».');
-     },'svcp-message-menu-item'));
+     }});
     }
-    // Local prototype only. Employees may remove their own messages;
-    // manager preview can moderate this device's copy of team messages.
-    // Neither operation means "delete for everyone" across devices.
     if(isOwn||state.viewpoint==='manager'){
      const moderating=!isOwn;
-     menu.append(svcpActionIcon(moderating?'Убрать из локального чата':'Удалить у себя','delete',()=>{
+     secondary.push({title:moderating?'Убрать из локального чата':'Удалить у себя',kind:'delete',run:()=>{
       closeMessageMenus();
       if(!window.confirm(moderating
        ?'Убрать сообщение из локального рабочего чата на этом устройстве? У других участников оно не удалится.'
@@ -1649,29 +1648,93 @@ function renderChat(){
       if(!save(CHAT_KEY,updated))return;
       state.chat=updated;renderChat();renderDirectory();
       setStatus('Сообщение убрано только на этом устройстве.');
-     },'svcp-message-menu-item'));
+     }});
     }
-    if(!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena'){
-     menu.append(svcpActionIcon('Поручить','task',()=>{
+    const recognitionProposal=state.viewpoint==='manager'&&!employeePreviewActive()&&msg.role==='demo-elena'
+     ?pendingRecognitionSuggestions().find(x=>x.sourceKey===recognitionSourceKey(msg))
+     :null;
+    if(recognitionProposal){
+     secondary.push({title:'Поощрить сотрудника',kind:'award',run:()=>{
       closeMessageMenus();
-      prepareTask(msg,index);
-     },'svcp-message-menu-item'));
+      if(awardRecognitionSuggestion(recognitionProposal.sourceKey))renderChat();
+     }});
     }
-    // Keep swipe-to-reply; the action icons below are visible without any
-    // hidden gesture, and keyboard users can tab to each labeled button.
-    let pressStartX=0,pressStartY=0,swipeEligible=false;
+    const openContextActions=()=>{
+     const screen=$('svcpWorkChatScreen');
+     if(!screen||!bubble.isConnected||!secondary.length)return;
+     closeMessageMenus();
+     const panel=el('div','svcp-message-context-menu');
+     panel.setAttribute('role','menu');
+     panel.setAttribute('aria-label','Дополнительные действия');
+     secondary.forEach(action=>{
+      const item=svcpActionIcon(action.title,action.kind,action.run,'svcp-message-context-action');
+      item.setAttribute('role','menuitem');
+      item.append(el('span','svcp-context-action-label',action.title));
+      panel.append(item);
+     });
+     screen.append(panel);
+     const rect=bubble.getBoundingClientRect(),host=screen.getBoundingClientRect();
+     const width=panel.offsetWidth,height=panel.offsetHeight;
+     let left=isOwn?rect.right-host.left-width:rect.left-host.left;
+     left=Math.max(10,Math.min(left,host.width-width-10));
+     let top=rect.bottom-host.top+8;
+     if(top+height>host.height-12)top=rect.top-host.top-height-8;
+     top=Math.max(10,Math.min(top,host.height-height-10));
+     panel.style.left=left+'px';
+     panel.style.top=top+'px';
+     panel.querySelector('[role="menuitem"]')?.focus({preventScroll:true});
+    };
+    // A bubble remains keyboard-discoverable, without another visible button.
+    bubble.tabIndex=0;
+    bubble.setAttribute('aria-keyshortcuts','Shift+F10');
+    bubble.title='Удерживайте сообщение для дополнительных действий';
+    bubble.addEventListener('keydown',event=>{
+     if(event.target!==bubble)return;
+     if(event.key==='ContextMenu'||(event.shiftKey&&event.key==='F10')||
+        event.key==='Enter'||event.key===' '){
+      event.preventDefault();openContextActions();
+     }
+    });
+    const eligibleTarget=target=>!target.closest?.(
+     'button,audio,video,a,input,textarea,.svcp-media-slot,.svcp-message-inline-actions'
+    );
+    let pressStartX=0,pressStartY=0,swipeEligible=false,pressTimer=null,didOpenContext=false;
+    const clearPressTimer=()=>{if(pressTimer!==null){clearTimeout(pressTimer);pressTimer=null}};
     bubble.addEventListener('pointerdown',event=>{
-     if(event.target.closest('button,audio,video,a,input,textarea,.svcp-media-slot,.svcp-message-inline-actions'))return;
+     clearPressTimer();didOpenContext=false;swipeEligible=false;
+     if(event.button!==0||!eligibleTarget(event.target))return;
      pressStartX=event.clientX;pressStartY=event.clientY;
      swipeEligible=event.pointerType==='touch'||event.pointerType==='pen';
+     if(swipeEligible){
+      pressTimer=setTimeout(()=>{
+       pressTimer=null;
+       if(!bubble.isConnected)return;
+       didOpenContext=true;swipeEligible=false;
+       openContextActions();
+       if(navigator.vibrate)navigator.vibrate(8);
+      },460);
+     }
+    });
+    bubble.addEventListener('pointermove',event=>{
+     if(pressTimer!==null&&(Math.abs(event.clientX-pressStartX)>12||
+       Math.abs(event.clientY-pressStartY)>12))clearPressTimer();
     });
     bubble.addEventListener('pointerup',event=>{
+     clearPressTimer();
+     if(didOpenContext){didOpenContext=false;swipeEligible=false;return}
      const dx=event.clientX-pressStartX,dy=event.clientY-pressStartY;
-     if(swipeEligible&&dx>65&&Math.abs(dy)<45){startReply(msg);if(navigator.vibrate)navigator.vibrate(8)}
+     if(swipeEligible&&dx>65&&Math.abs(dy)<45){
+      startReply(msg);if(navigator.vibrate)navigator.vibrate(8);
+     }
      swipeEligible=false;
     });
-    bubble.addEventListener('pointercancel',()=>{swipeEligible=false});
-    // All actions formerly in the three-dot menu now sit below the message.
+    bubble.addEventListener('pointercancel',()=>{clearPressTimer();swipeEligible=false});
+    bubble.addEventListener('pointerleave',()=>{clearPressTimer();swipeEligible=false});
+    bubble.addEventListener('contextmenu',event=>{
+     if(!eligibleTarget(event.target))return;
+     event.preventDefault();
+     if(!$('svcpWorkChatScreen')?.querySelector('.svcp-message-context-menu'))openContextActions();
+    });
     bubble.classList.add('svcp-has-inline-actions');
     bubble.append(menu);
    }
