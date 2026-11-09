@@ -203,6 +203,13 @@ function announceRecommendation(item){
 function clearRecommendation(){
  window.dispatchEvent(new CustomEvent('seyveo:home-recommendation-changed',{detail:null}));
 }
+// Card preferences affect only presentation, never the task or document itself.
+function homeCard(item){
+ const family={contract:'document',work:'message',mail:'mail',task:'task',health:'health',breath:'care',music:'music',calendar:'calendar',workshop:'care'}[item?.kind]||'task';
+ return {id:String(item?.eventId||item?.id||'preview:'+item?.kind),family,
+  priority:item?.businessTask?'urgent':'normal',protected:!!item?.businessTask};
+}
+function mayShow(item){return !window.SEYVEO_CARD_ENGINE?.isSuppressed?.(homeCard(item))}
 function createSurface(primary,other=[],real=false,taskId=''){
  tiles.replaceChildren();
  const field=create('div','lm-field');
@@ -898,7 +905,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
 let previewScene=null,previewCount=0;
 function buildExamples(){
  // A deferred training example cannot return Home until explicitly restored.
- const present=sample.filter(item=>
+ const present=sample.filter(item=>mayShow(item)&&
   !(item.kind==='mail'&&mailDeferred) &&
   !(item.kind==='contract'&&documentDeferred));
  // Unified ordering is opt-in; the original Quiet Cinema layout remains unchanged.
@@ -1048,14 +1055,14 @@ function dueTasks(includeUpcoming=false){
       reason:'Это ваше незавершённое дело со сроком на завтра. Сэйви показывает его вечером накануне, не назначая время самостоятельно.',
       detail:'Откройте «Дела», чтобы подготовиться или изменить запись.'
     };
-  })).filter(item=>!quiet.has(item.eventId));
+  })).filter(item=>!quiet.has(item.eventId)&&mayShow(item));
 }
 /* Verified personal discoveries share the SINGLE Home card surface.
  * Scheduled/real tasks and owner recommendations always take precedence.
  * A public catalog release is not a playable local file or real chat.
  */
 function showDiscovery(card){
- if(!card||!available())return false;
+ if(!card||!available()||window.SEYVEO_CARD_ENGINE?.isSuppressed?.(card))return false;
  const engine=window.SEYVEO_CARD_ENGINE;
  const surface=engine?.renderCard?.(card,{onAction:id=>{
   if(id==='later')window.SEYVEO_DISCOVERY?.postpone?.(card.releaseId);
@@ -1136,7 +1143,7 @@ function installLivingCardSwipe(field,onLater){
  * They do not become an extra calendar, a push alert, or a fake completed task. */
 function upcomingCalendar(){
  return (window.SEYVEO_LIFE_EVENTS?.upcomingEvents?.()||[])
-  .filter(item=>!quiet.has('calendar:'+item.id+'|'+item.date+'|'+item.time));
+  .filter(item=>!quiet.has('calendar:'+item.id+'|'+item.date+'|'+item.time)&&mayShow({kind:'calendar',eventId:'calendar:'+item.id+'|'+item.date+'|'+item.time}));
 }
 function showCalendar(item){
  if(!item||!available())return false;
@@ -1203,7 +1210,7 @@ function workshopItems(){
  return entries.filter(item=>item.onHome&&!item.done&&
   (item.period==='any'||item.period===period)&&
   typeof item.title==='string'&&typeof item.message==='string'&&
-  !quiet.has('workshop:'+item.id));
+  !quiet.has('workshop:'+item.id)&&mayShow({kind:'workshop',eventId:'workshop:'+item.id}));
 }
 function showWorkshop(item){
  if(!item||!available())return false;
@@ -1365,6 +1372,7 @@ window.setInterval(()=>{
 window.addEventListener('seyveo:life-events-changed',scheduleRefresh);
 window.addEventListener('seyveo:fan-workshop-changed',scheduleRefresh);
 window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
+window.addEventListener('seyveo:card-visibility-changed',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
