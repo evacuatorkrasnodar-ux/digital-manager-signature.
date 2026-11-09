@@ -231,10 +231,8 @@ function restoreStoredMedia(container,message){
   }else{
    slot.append(svcpFileCard(record.name||message.mediaName||'Вложение',record.type||message.mediaType||'',url));
   }
-  if(!slot.classList.contains('svcp-voice-message')){
-   const note=el('small','svcp-chat-media-local','Только на этом устройстве · без отправки');
-   slot.append(note);
-  }
+  // The file card itself is sufficient. Delivery limitations remain in
+  // the send-status feedback, not repeated beneath every chat attachment.
   // Media is inserted asynchronously after renderChat scrolled to the latest.
   // Preserve the reading position unless the user was already near the bottom.
   if(followLatest&&thread)requestAnimationFrame(()=>{
