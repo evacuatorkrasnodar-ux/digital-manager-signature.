@@ -2117,3 +2117,100 @@ svg.sv-paper-signature .sv-paper-icon-core{
   transition:none!important;
  }
 }
+
+
+/* SEYVEO · Drawing studio graphite finish | 2026-11-09.
+   Five intentional top tools; photographic/duplicate actions remain
+   accessible inside Settings. These rules do not touch canvas mechanics. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
+ --sv-nd-size:38px!important;--sv-nd-gap:5px!important;
+ display:grid!important;
+ grid-template-columns:repeat(5,var(--sv-nd-size))!important;
+ grid-template-rows:var(--sv-nd-size)!important;
+ justify-content:center!important;align-items:center!important;
+ column-gap:var(--sv-nd-gap)!important;row-gap:0!important;
+ box-sizing:border-box!important;
+ width:226px!important;min-width:0!important;max-width:100%!important;
+ height:46px!important;min-height:46px!important;max-height:46px!important;
+ padding:3px 7px!important;margin:0 auto!important;
+ border:0!important;border-radius:16px!important;
+ background:#38383A!important;background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;isolation:isolate!important;overflow:hidden!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button{
+ width:var(--sv-nd-size)!important;height:var(--sv-nd-size)!important;
+ min-width:var(--sv-nd-size)!important;min-height:var(--sv-nd-size)!important;
+ max-width:var(--sv-nd-size)!important;max-height:var(--sv-nd-size)!important;
+ border-radius:12px!important;background:transparent!important;
+ color:#E4E7EB!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]{
+ background:#57575A!important;color:#fff!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not([data-sv-active="true"]):active{
+ background:#48484A!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button > svg.sv-newdock-glyph{
+ width:21px!important;height:21px!important;
+ min-width:21px!important;min-height:21px!important;
+ max-width:21px!important;max-height:21px!important;
+}
+/* Flat, short-width menu instead of the old large blurred sheet. */
+#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-newdock-settings-panel:not([hidden]){
+ width:min(260px,calc(100vw - 24px))!important;
+ max-width:calc(100vw - 24px)!important;
+ padding:10px!important;gap:4px!important;
+ border:0!important;border-radius:16px!important;
+ background:#38383A!important;background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:0 9px 24px rgba(0,0,0,.14)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-newdock-actions-heading{
+ margin-top:5px!important;padding-top:9px!important;
+ border-top:1px solid rgba(255,255,255,.12)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu button{
+ min-height:42px!important;height:auto!important;
+ border-radius:10px!important;
+ background:transparent!important;box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu button:active,
+#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu button[aria-pressed="true"]{
+ background:#505052!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu button:disabled{
+ opacity:.38!important;cursor:default!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu button .sv-newdock-glyph{
+ display:block!important;flex:0 0 19px!important;
+ width:19px!important;height:19px!important;
+ margin-right:10px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-back,
+#notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save{
+ background:#38383A!important;background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-webkit-slider-runnable-track{
+ background:rgba(220,226,233,.26)!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage>.sv-paper-size input::-moz-range-track{
+ background:rgba(220,226,233,.26)!important;
+}
+@media(max-width:370px){
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
+  --sv-nd-size:36px!important;--sv-nd-gap:3px!important;
+  width:208px!important;height:44px!important;min-height:44px!important;max-height:44px!important;
+  padding:4px 6px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button > svg.sv-newdock-glyph{
+  width:20px!important;height:20px!important;
+  min-width:20px!important;min-height:20px!important;
+  max-width:20px!important;max-height:20px!important;
+ }
+}
