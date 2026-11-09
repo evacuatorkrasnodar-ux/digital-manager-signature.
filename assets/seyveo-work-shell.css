@@ -1229,3 +1229,70 @@ html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button:foc
   font-size:clamp(10px,2.85vw,11.5px)!important;
  }
 }
+
+
+/* SEYVEO · Cabinet task finishing, 2026-11-10.
+   Only the task summary is changed; global dock and navigation are untouched. */
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-section-head{
+ align-items:center!important;min-height:44px!important;
+ padding:8px 3px 4px!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-manager-task-create{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;flex:none!important;
+ width:40px!important;min-width:40px!important;max-width:40px!important;
+ height:40px!important;min-height:40px!important;max-height:40px!important;
+ margin:0 1px 0 0!important;padding:0!important;
+ border:0!important;border-radius:12px!important;
+ background:#38383A!important;color:#F4F4F6!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-manager-task-create svg{
+ display:block!important;width:18px!important;height:18px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task{
+ display:flex!important;align-items:center!important;column-gap:8px!important;
+ min-height:53px!important;margin:0!important;padding:6px 4px!important;
+ box-sizing:border-box!important;
+ border-bottom:1px solid rgba(190,196,204,.085)!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task input[type="checkbox"]{
+ flex:0 0 19px!important;width:19px!important;min-width:19px!important;
+ height:19px!important;min-height:19px!important;margin:0!important;
+ border-radius:5px!important;accent-color:#38383A!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-copy{
+ flex:1 1 0%!important;min-width:0!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-actions{
+ display:flex!important;flex:none!important;align-items:center!important;
+ gap:2px!important;min-width:0!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-actions > button{
+ display:grid!important;place-items:center!important;flex:0 0 40px!important;
+ box-sizing:border-box!important;width:40px!important;min-width:40px!important;
+ height:40px!important;min-height:40px!important;
+ padding:0!important;margin:0!important;border:0!important;
+ border-radius:12px!important;box-shadow:none!important;
+ background:transparent!important;color:var(--secondary)!important;
+ font-size:0!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-actions > .svcp-task-sayvi{
+ background:#38383A!important;color:#F5F5F6!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-actions button svg{
+ display:block!important;flex:none!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.45!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-actions > button:active,
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-manager-task-create:active{
+ opacity:.76!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-actions > button:focus-visible,
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-manager-task-create:focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
