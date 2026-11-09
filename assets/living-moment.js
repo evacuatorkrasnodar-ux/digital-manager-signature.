@@ -591,7 +591,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   explain(field,(shown.reason||'')+' '+(shown.detail||'Сэйви поможет разобраться с этой карточкой.'),sayviAction);
  });
- const workSayvi=polymer('✧ Черновик Сэйви',async()=>{
+ const workSayvi=polymer('✧ Сэйви',async()=>{
   const defaultReply='Спасибо, Елена! Пришли, пожалуйста, фото выкладки — я проверю.';
   workMode='sayvi';workDraft=defaultReply;updateWork();
   const current=shown;
