@@ -1723,11 +1723,6 @@ function renderChat(){
     !msg.documentFlowId&&String(msg.text||'').trim().length>0&&
     String(msg.text||'').trim().length<=5&&!String(msg.text||'').includes('\n');
    const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(shortText?' is-short-text':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
-   // Put timestamps above ordinary text bubbles, leaving the existing
-   // metadata and special attachment/reply layouts intact.
-   if(!emojiOnly&&!isRecognition&&!msg.replyTo&&!msg.mediaId&&!msg.taskId&&
-      !msg.documentFlowId&&String(msg.text||'').trim())
-    bubble.classList.add('svcp-time-outside');
    bubble.dataset.chatIndex=String(index);
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
@@ -1735,12 +1730,10 @@ function renderChat(){
  if(isOwn)meta.querySelector('.svcp-time').title='Сохранено в этом браузере · не подтверждение доставки';
    bubble.append(meta);
    if(msg.replyTo&&typeof msg.replyTo.text==='string'){
-    // Reply sender and message time share one compact heading.
+    // The single timestamp belongs at the message's bottom-right corner.
     const quote=el('div','svcp-quote');
     const heading=el('div','svcp-quote-heading');
     heading.append(el('strong','svcp-quote-sender',msg.replyTo.sender||'Сообщение'));
-    const time=meta.querySelector('.svcp-time');
-    if(time)heading.append(time);
     quote.append(heading,el('span','svcp-quote-excerpt',msg.replyTo.text.slice(0,160)));
     bubble.append(quote);
     bubble.classList.add('svcp-has-quote-time');
@@ -1986,6 +1979,26 @@ function renderChat(){
     if(!emojiOnly){
      bubble.classList.add('svcp-has-inline-actions');
      bubble.append(menu);
+    }
+   }
+   // Every message gets one clock in its bottom corner. File cards and
+   // sticker-like emoji already have a dedicated overlay and keep it.
+   const fileType=String(msg.mediaType||'').toLowerCase();
+   const usesFileCard=!!msg.mediaId&&msg.mediaPurpose!=='voice'&&
+    !fileType.startsWith('image/')&&!fileType.startsWith('video/')&&!fileType.startsWith('audio/');
+   if(!emojiOnly&&!usesFileCard){
+    const clock=meta.querySelector('.svcp-time');
+    if(clock){
+     const stamp=el('span','svcp-message-stamp');
+     stamp.setAttribute('aria-label','Время сообщения: '+clock.textContent);
+     stamp.append(clock);
+     if(isOwn){
+      const saved=el('span','svcp-message-local-check','✓');
+      saved.title='Сохранено на устройстве · не подтверждение доставки';
+      saved.setAttribute('aria-hidden','true');stamp.append(saved);
+     }
+     bubble.append(stamp);
+     bubble.classList.add('svcp-bottom-stamp');
     }
    }
    thread.append(bubble);
