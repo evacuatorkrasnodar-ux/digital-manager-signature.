@@ -4859,3 +4859,114 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 :root[data-theme="light"] .svcp-doc-overlay{background:#F3F3F5;color:#222225}
 :root[data-theme="light"] .svcp-doc-info{color:#606066}
 @media(max-width:360px){.svcp-doc-tools{gap:3px}.svcp-doc-pill{font-size:10px;padding:5px 3px}.svcp-doc-pill svg{width:14px;height:14px}}
+
+
+/* SEYVEO 09 Nov · Telegram-inspired proportions, original silver/graphite material.
+   Files are a single tappable document surface, not a nested bubble. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only{
+ box-sizing:border-box!important;width:min(282px,calc(100vw - 44px))!important;
+ min-width:0!important;max-width:min(91%,330px)!important;
+ padding:0!important;margin-top:0!important;background:transparent!important;
+ border:0!important;box-shadow:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-media-slot:not(.svcp-voice-message){
+ margin:0!important;padding:0!important;display:block!important;width:100%!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-file-card{
+ position:relative!important;box-sizing:border-box!important;
+ width:100%!important;display:flex!important;align-items:center!important;gap:10px!important;
+ min-height:75px!important;padding:9px 10px 22px 10px!important;
+ border:0!important;border-radius:14px!important;background:#38383A!important;color:#F5F5F7!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-file-badge{
+ box-sizing:border-box!important;position:relative!important;
+ flex:0 0 48px!important;width:48px!important;min-width:48px!important;height:55px!important;
+ display:grid!important;place-items:end center!important;
+ margin:0!important;padding:0 3px 12px!important;border:0!important;
+ background:#D9373B!important;color:#FFFFFF!important;
+ border-radius:6px 0 6px 6px!important;
+ clip-path:polygon(0 0,73% 0,100% 25%,100% 100%,0 100%)!important;
+ font:800 14px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge--word{background:#3472BB!important}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge--sheet{background:#2E7655!important}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge--text,
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge--other{background:#646872!important}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-file-card-copy{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:center!important;
+ flex:1 1 auto!important;min-width:0!important;overflow:hidden!important;gap:4px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-file-card-name{
+ display:block!important;max-width:100%!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+ font:600 13px/1.24 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:#F7F7F9!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-file-card-type{
+ font:500 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#C6C7CA!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-status{
+ position:absolute!important;right:9px!important;bottom:6px!important;
+ display:flex!important;align-items:center!important;gap:4px!important;
+ white-space:nowrap!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-status .svcp-time{
+ display:block!important;position:static!important;
+ margin:0!important;padding:0!important;font:500 10px/12px system-ui,sans-serif!important;
+ color:#C1C2C6!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-status .svcp-local-save-check{
+ font:700 11px/1 system-ui,sans-serif!important;color:#D2D3D6!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only > .svcp-bubble-meta{
+ display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only > .svcp-message-inline-actions{
+ display:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only.svcp-has-inline-actions{
+ margin-bottom:5px!important;
+}
+/* Standalone emoji is big and unframed; the tiny time capsule floats over its foot. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only,
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only.is-self,
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only.is-sayvi{
+ position:relative!important;box-sizing:border-box!important;
+ display:block!important;flex:0 0 auto!important;
+ width:76px!important;min-width:76px!important;max-width:76px!important;min-height:71px!important;
+ padding:0!important;margin-top:0!important;background:transparent!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only .svcp-message-text{
+ display:block!important;width:100%!important;padding:0!important;margin:0!important;
+ font-size:54px!important;line-height:68px!important;text-align:center!important;white-space:nowrap!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only .svcp-bubble-meta{
+ position:absolute!important;right:0!important;bottom:0!important;z-index:2!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;min-height:18px!important;height:18px!important;
+ margin:0!important;padding:1px 6px!important;border-radius:11px!important;
+ background:rgba(31,33,36,.78)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only .svcp-time{
+ margin:0!important;color:#F4F4F5!important;font:500 10px/14px system-ui,sans-serif!important;
+}
+/* The tiny one-word message follows the screenshot; full paragraphs retain the outside time. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-short-text.svcp-time-outside{
+ position:relative!important;display:block!important;margin-top:0!important;
+ min-height:34px!important;padding:7px 53px 7px 10px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-short-text.svcp-time-outside > .svcp-bubble-meta > .svcp-time{
+ position:absolute!important;top:auto!important;bottom:7px!important;right:9px!important;
+ font-size:9px!important;line-height:12px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-short-text.svcp-time-outside.is-self > .svcp-bubble-meta > .svcp-time::after,
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only.is-self .svcp-time::after{
+ content:' ✓';font-weight:700;color:#D0D1D4;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-file-card{
+ background:#E0E0E3!important;color:#242427!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-file-card-name{color:#242427!important}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only :is(.svcp-file-card-type,.svcp-time){color:#66666C!important}
