@@ -835,3 +835,59 @@
 @media(max-width:375px){
  .sv-card-system--rendered .sv-card-actions{column-gap:9px!important}
 }
+
+/* SEYVEO CARD ACTIONS · Premium Rounded Squares v1
+ * One visual footprint for Sayvi, Edit and Navigate.
+ * An intuitive square-and-pencil composes/edits, never an eyedropper.
+ * Apple-like restrained material, SEYVEO-owned vector icon and graphite.
+ * The three START actions have no captions; Send/Save still have labels.
+ */
+.sv-card-system--rendered .sv-card-actions{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ column-gap:9px!important;
+ row-gap:0!important;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{
+ box-sizing:border-box!important;
+ display:inline-flex!important;
+ flex:0 0 48px!important;
+ width:48px!important;min-width:48px!important;
+ height:48px!important;min-height:48px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:14px!important;
+ background:rgba(169,180,192,.12)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:var(--sv-card-ink,var(--text))!important;
+ justify-content:center!important;align-items:center!important;
+ flex-direction:row!important;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-card-role="primary"]{
+ background:#38383A!important;
+ color:#F6F7F8!important;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button::before,
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button::after,
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-card-role="primary"]::before{
+ content:none!important;display:none!important;
+ background:none!important;box-shadow:none!important;
+ -webkit-mask:none!important;mask:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button .sv-card-symbol{
+ width:23px!important;height:23px!important;flex:0 0 23px!important;
+ stroke-width:1.8;
+}
+:root[data-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:not([data-card-role="primary"]){
+ background:rgba(43,48,55,.09)!important;
+ color:#38383A!important;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:active{
+ opacity:.82!important;transform:scale(.965);
+}
+@media(prefers-reduced-motion:reduce){
+ .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{transition:none!important}
+}
