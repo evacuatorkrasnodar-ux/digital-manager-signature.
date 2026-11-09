@@ -497,3 +497,78 @@
  #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button{transition:none!important}
 }
+
+/* SEYVEO Mail Source v1 · do not replace the incoming email with an
+   AI summary or reply draft. Reading the original comes first. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content .lm-mail-original{
+ display:block!important;
+ margin:1px 0 7px!important;
+ padding:0!important;
+ color:var(--text)!important;
+ background:none!important;
+ font-size:12.7px!important;
+ font-weight:450!important;
+ line-height:1.55!important;
+ letter-spacing:0!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;
+}
+/* Final Send / Save / Confirm is a full-width-content *pill*, not a
+   48px icon-only square. Keep its text readable and keep the final
+   confirmation visually distinct from the three start decisions. */
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="send"],
+ [data-sv-card-icon="save"],
+ [data-sv-card-icon="confirm"]):not([hidden]){
+ display:inline-flex!important;
+ flex:0 0 auto!important;
+ width:auto!important;
+ min-width:116px!important;
+ max-width:100%!important;
+ height:48px!important;
+ min-height:48px!important;
+ padding:0 14px!important;
+ gap:8px!important;
+ flex-direction:row!important;
+ align-items:center!important;
+ justify-content:center!important;
+ border-radius:14px!important;
+ background:#38383A!important;
+ color:#F7F7F8!important;
+ white-space:nowrap!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="send"],
+ [data-sv-card-icon="save"],
+ [data-sv-card-icon="confirm"]) .sv-card-icon-caption{
+ display:inline-block!important;
+ flex:0 0 auto!important;
+ font-size:12px!important;
+ line-height:1.2!important;
+ font-weight:550!important;
+ color:inherit!important;
+ white-space:nowrap!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="send"],
+ [data-sv-card-icon="save"],
+ [data-sv-card-icon="confirm"]) .sv-card-symbol{
+ width:19px!important;height:19px!important;flex:0 0 19px!important;
+}
+/* No legacy pseudo-material on final pills; one premium dark graphite fill. */
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="send"],
+ [data-sv-card-icon="save"],
+ [data-sv-card-icon="confirm"]):not([hidden])::before,
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="send"],
+ [data-sv-card-icon="save"],
+ [data-sv-card-icon="confirm"]):not([hidden])::after{
+ content:none!important;display:none!important;
+ background:none!important;box-shadow:none!important;
+}
