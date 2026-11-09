@@ -2829,21 +2829,30 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  stroke-width:1.35!important;
 }
 
-/* v184 · Sayvi-inspired final optical polish, idle one-line input only.
-   No changes to the dock dimensions, Plus, glass pane or left icons. */
-#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
-#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
- background:linear-gradient(155deg,rgba(203,211,218,.135),rgba(165,174,184,.12) 58%,rgba(148,160,170,.105)),rgba(142,152,162,.055)!important;
- border-color:rgba(220,228,235,.045)!important;
+/* v203 · Premium flat graphite for the message input.
+   Preserve the existing capsule geometry and the 38px recording target. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+ background:#38383A!important;
+ background-image:none!important;
+ border:0!important;
+ outline:0!important;
  box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ filter:none!important;
 }
-:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
-:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
- background:linear-gradient(155deg,rgba(239,242,246,.26),rgba(206,213,219,.195) 58%,rgba(189,198,206,.155)),rgba(190,199,208,.065)!important;
- border-color:rgba(226,233,238,.10)!important;
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+ right:2px!important;
 }
-#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > #svcpVoiceRecord{
- bottom:4px!important;
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field #svcpChatInput{
+ color:#fff!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field #svcpChatInput::placeholder{
+ color:#C7C7CA!important;opacity:1!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+ color:#fff!important;
 }
 
 /* v185 · Shift the microphone GLYPH, not its touch target.
