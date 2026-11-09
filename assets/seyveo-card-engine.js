@@ -384,8 +384,8 @@ const el=(tag,klass,content)=>{
    draftPane.hidden=false;actions.hidden=true;
    draftTitle.textContent=editable?'Исправить самостоятельно':'Предложение Сэйви · проверьте перед подтверждением';
    draftInput.value=card.suggestion||card.fact||'';
-   draftInput.readOnly=!editable;
-   draftHint.textContent='Демо · исходные данные не изменены. Подтверждение обязательно.';
+   draftInput.readOnly=false; // Sayvi's proposal can be adjusted before final confirmation.
+   draftHint.textContent='Демо · вариант можно исправить. Только финальная кнопка подтверждает действие; исходные данные не меняются.';
    draftSend.textContent=sendLabel(card.family);
    draftStatus.textContent='';
    if(editable)draftInput.focus({preventScroll:true});
