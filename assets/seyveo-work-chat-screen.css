@@ -4035,3 +4035,15 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   font-size:23px!important;
  }
 }
+
+/* SEYVEO direct assistant chat · no duplicate assistant invocation.
+   In group chats the header Sayvi icon keeps its @mention functionality.
+   In the direct Sayvi conversation remove the pointless empty avatar
+   and redundant mention button, preserving the title and header info. */
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] #svcpRoomAvatar,
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] .svcp-conversation-bar > #svcpCallSayvi{
+ display:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] .svcp-conversation-info{
+ min-width:0!important;flex:1 1 auto!important;
+}
