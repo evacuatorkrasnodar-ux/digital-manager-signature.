@@ -2342,11 +2342,11 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUnd
    Only the drawing color/gradient popover. All presets and input IDs retained. */
 #notePaperDialog.sv-paper-studio[open] .paper-color-control #notePaperColorMenu:not([hidden]){
  box-sizing:border-box!important;
- width:min(306px,calc(100vw - 22px))!important;
+ width:min(304px,calc(100vw - 22px))!important;
  max-width:calc(100vw - 22px)!important;
  max-height:min(470px,calc(100dvh - 115px))!important;
  display:flex!important;flex-direction:column!important;
- gap:0!important;padding:11px 12px 12px!important;
+ gap:0!important;padding:10px 11px 11px!important;
  border:1px solid rgba(255,255,255,.085)!important;
  border-radius:17px!important;
  background:#38383A!important;background-image:none!important;
@@ -2356,7 +2356,7 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUnd
  overflow-y:auto!important;overscroll-behavior:contain!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-head{
- gap:0!important;padding:0 2px 7px!important;
+ gap:0!important;padding:0 2px 6px!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-head span{
  display:none!important;
@@ -2366,7 +2366,7 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUnd
  letter-spacing:-.02em!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-section-caption{
- padding:7px 2px 5px!important;
+ padding:6px 2px 4px!important;
  border-top:1px solid rgba(255,255,255,.09)!important;
  color:#C1C1C6!important;font-size:10px!important;font-weight:600!important;
  letter-spacing:.015em!important;
@@ -2375,7 +2375,7 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUnd
  gap:4px!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid > button{
- height:33px!important;min-height:33px!important;
+ height:40px!important;min-height:40px!important;
  border-radius:9px!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid > button[aria-pressed="true"]{
@@ -2385,11 +2385,11 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUnd
  width:23px!important;height:23px!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets{
- gap:5px!important;
+ gap:4px!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button{
- height:57px!important;min-height:57px!important;
- padding:4px 3px!important;gap:4px!important;
+ height:51px!important;min-height:51px!important;
+ padding:3px 3px!important;gap:3px!important;
  border-radius:10px!important;
  background:#48484A!important;
  border:1px solid transparent!important;
@@ -2402,21 +2402,22 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUnd
  border-color:rgba(255,255,255,.26)!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-chip{
- width:51px!important;height:24px!important;
+ width:49px!important;height:23px!important;
  border-radius:7px!important;
  border:0!important;box-shadow:none!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-manual{
- gap:5px!important;
+ gap:4px!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field{
- min-height:32px!important;
+ min-height:34px!important;
  grid-template-columns:55px 31px minmax(0,1fr)!important;
+ font-size:12px!important;
  gap:7px!important;
  color:#DBDBDE!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field > span{
- color:#DBDBDE!important;
+ color:#DBDBDE!important;font-size:12px!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field input[type="color"]{
  width:31px!important;height:31px!important;
@@ -2424,21 +2425,21 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUnd
  border-radius:8px!important;background:#48484A!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field input[type="text"]{
- height:32px!important;
+ height:34px!important;
  border:1px solid rgba(255,255,255,.11)!important;
  border-radius:8px!important;
  background:#2E2E30!important;
  color:#F5F5F6!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-live-preview{
- height:18px!important;
+ height:16px!important;
  border-radius:6px!important;
  border:0!important;
 }
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu #noteGradientApply.sv-gradient-apply{
  display:grid!important;place-items:center!important;
  width:100%!important;
- height:36px!important;min-height:36px!important;
+ height:42px!important;min-height:42px!important;
  padding:0 10px!important;
  border:0!important;border-radius:10px!important;
  background:#505052!important;
