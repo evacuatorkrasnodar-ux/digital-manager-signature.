@@ -340,3 +340,40 @@
  .lm-polymer.sv-work-assistant.sv-card-icon-button::before{
  content:none!important;display:none!important;
 }
+
+/* Three clear icons WITHOUT captions on the Home card, per approved design.
+   The accessible button name stays in aria-label. Keep explicit words next
+   to the final Send/Save confirmation to prevent accidental submission. */
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="sayvi"],
+ [data-sv-card-icon="edit"],
+ [data-sv-card-icon="navigate"]):not([hidden]){
+ flex:0 0 48px!important;width:48px!important;min-width:48px!important;
+ height:48px!important;min-height:48px!important;
+ padding:0!important;gap:0!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="sayvi"],
+ [data-sv-card-icon="edit"],
+ [data-sv-card-icon="navigate"]) .sv-card-icon-caption{
+ display:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="sayvi"],
+ [data-sv-card-icon="edit"],
+ [data-sv-card-icon="navigate"]) .sv-card-symbol{
+ width:23px!important;height:23px!important;flex-basis:23px!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions{column-gap:11px!important}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden])::before,
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden])::after{
+ inset:3px!important;border-radius:13px!important;
+}
+@media(max-width:375px){
+ #homePage #seyveoLivingMoment .lm-field .lm-actions{column-gap:9px!important}
+}
