@@ -1337,7 +1337,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   answers.clear();list.replaceChildren();savedTurns=[];
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
-   append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos,turn.files);
+   append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos,turn.files,turn.at);
    if(turn.role==='assistant'&&turn.sources?.length){
     const index=savedTurns.length-1;
     savedTurns[index].sources=vettedWebResults(turn.sources).map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit}));
@@ -2287,7 +2287,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   bubble.replaceChildren(fragment);
  }
 
- function append(role,id,message,save=true,photos=null,files=null){
+ function append(role,id,message,save=true,photos=null,files=null,recordedTime=null){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
   if(!bubble){
@@ -2295,7 +2295,26 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
    if(role==='assistant'){
     const title=document.createElement('span');title.className='speaker';title.textContent='Сэйви';turn.append(title);
    }
-   bubble=document.createElement('div');bubble.className='bubble';turn.append(bubble);
+   const wrap=document.createElement('div');wrap.className='sv-turn-bubble-wrap';
+   bubble=document.createElement('div');bubble.className='bubble';wrap.append(bubble);
+   const at=typeof recordedTime==='number'&&Number.isFinite(recordedTime)&&recordedTime>0
+    ?recordedTime:(id.startsWith('loaded-')?null:Date.now());
+   if(at){
+    turn.dataset.createdAt=String(at);
+    const clock=document.createElement('span');clock.className='sv-turn-time';
+    const time=document.createElement('time');time.className='sv-turn-clock';
+    time.dateTime=new Date(at).toISOString();
+    time.textContent=new Date(at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    clock.append(time);
+    if(role==='user'){
+     const saved=document.createElement('span');saved.className='sv-turn-local-check';
+     saved.textContent='✓';saved.setAttribute('aria-hidden','true');
+     saved.title='Сохранено в браузере · доставка не подтверждена';
+     clock.append(saved);
+    }
+    wrap.append(clock);
+   }
+   turn.append(wrap);
    if(role==='assistant')addReplyActions(turn,bubble);
    else attachOwnGesture(bubble);
    list.append(turn);answers.set(id,bubble);
@@ -2313,6 +2332,15 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   else bubble.textContent=message;
   if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
   if(role==='user')showSentFiles(bubble.closest('.turn'),files);
+  // Attachment-only messages reuse their clock inside the attachment card.
+  if(role==='user'&&!bubble.textContent.trim()){
+   const turn=bubble.closest('.turn');
+   const target=turn?.querySelector('.sv-sent-files,.sv-sent-images');
+   const clock=turn?.querySelector('.sv-turn-time');
+   if(target&&clock){
+    turn.classList.add('sv-clock-on-attachment');target.append(clock);
+   }
+  }
   if(save){
    const index=Number(bubble.dataset.savedIndex);
    if(Number.isInteger(index)&&index>=0&&index<savedTurns.length){
@@ -2322,6 +2350,8 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
    }else{
     bubble.dataset.savedIndex=String(savedTurns.length);
     const entry={role,text:message};
+    const recordedAt=Number(bubble.closest('.turn')?.dataset.createdAt);
+    if(Number.isFinite(recordedAt)&&recordedAt>0)entry.at=recordedAt;
     if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
     if(role==='user'&&files?.length)entry.files=files.slice(0,6);
     savedTurns.push(entry);
@@ -2330,6 +2360,8 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   }else{
    bubble.dataset.savedIndex=String(savedTurns.length);
    const entry={role,text:message};
+    const recordedAt=Number(bubble.closest('.turn')?.dataset.createdAt);
+    if(Number.isFinite(recordedAt)&&recordedAt>0)entry.at=recordedAt;
    if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
     if(role==='user'&&files?.length)entry.files=files.slice(0,6);
    savedTurns.push(entry);
