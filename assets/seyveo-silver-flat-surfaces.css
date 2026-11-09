@@ -151,3 +151,45 @@ html body #lifePage.svmail-active .svmail .svmail-star{
 
 /* No motion or optical shifts added. The approved dock, Sayvi chat,
    notebook writing dock, popup dismissals and navigation are untouched. */
+
+/* 5. Calendar and Tasks: preserve seven-column dates, selection, pluses,
+   44px targets and the shared fixed dock. Just remove lens materials. */
+html body #calendarPage :is(
+ .cal-scope,.cal-month,#managerCalendarTabs,
+ #calendarAdd,.calendar-header-add,.cal-actions .cal-day-fab
+),
+html body #tasksPage :is(
+ #unifiedTasksTabs,.svcp-manager-task-create,.sv-cabinet-plus,
+ .personal-tasks-add,.tasks-history-actions button,#personalAddTasks
+){
+ background:var(--sv-flat-panel)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+/* Do not replace the selected date markers with flat gray. */
+html body #calendarPage :is(
+ .cal-scope button[aria-pressed="true"],
+ #managerCalendarTabs>button[aria-pressed="true"]
+),
+html body #tasksPage #unifiedTasksTabs>button[aria-pressed="true"]{
+ background:var(--sv-flat-panel-raised)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+}
+html body #calendarSpaceDialog[open] .cal-velvet-picker{
+ background:var(--sv-flat-panel)!important;
+ background-image:none!important;
+ border-color:var(--sv-flat-edge)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:0 10px 22px rgba(0,0,0,.14)!important;
+}
+html body #calendarEventDialog[open] .cal-dialog-actions>.btn.primary{
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+/* The actual calendar editing sheet remains the same page background.
+   No glass override for #calendarEventDialog itself or its input layout. */
