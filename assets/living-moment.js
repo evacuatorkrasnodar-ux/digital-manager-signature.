@@ -306,7 +306,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(active){
    execute.hidden=documentStep!=='summary';
    open.hidden=true; // Title tap opens documents without a fourth button.
-   execute.textContent='Проверить с Сэйви';
+   execute.textContent='К проверке';
    execute.dataset.cardRole='primary';
    documentAnalyze.dataset.cardRole='primary';
    documentEdit.dataset.cardRole='primary';
@@ -847,7 +847,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailStep='draft';
   documentStep='summary';workMode='choose';workDraft='';
   updateMail();
-  updateDocument();updateWork();syncDocumentTitleTap();syncDocumentTitleTap();
+  updateDocument();updateWork();syncDocumentTitleTap();
   updateCount();
   renderSecondary();
   announceRecommendation(item);
@@ -934,7 +934,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  window.SEYVEO_CARD_ENGINE?.decorateHome?.(field,primary.kind,real);
  description.hidden=!real&&(primary.kind==='contract'||primary.kind==='mail');
  updateMail();
- updateDocument();updateWork();
+ updateDocument();updateWork();syncDocumentTitleTap();
  updateCount();
  renderSecondary();
  const explanation=create('p','lm-explanation');
