@@ -234,3 +234,25 @@
   row-gap:0!important;
  }
 }
+
+/* SEYVEO Premium Dark Graphite · approved exact #38383A.
+   Applies to final Home overrides loaded after the shared Card System CSS.
+   Keep the same small visual capsule and native 44px hit area. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant:not([hidden]){
+ color:#F6F6F7!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant:not([hidden])::after{
+ background:#38383A!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]){
+ color:#F6F6F7!important;
+}
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden])::before{
+ background:#38383A!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
