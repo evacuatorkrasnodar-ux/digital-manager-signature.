@@ -982,3 +982,64 @@ html body #picturePage #pictureDataTools #pictureOperations{
 @media(prefers-reduced-motion:reduce){
  html body #picturePage #pictureDataTools > summary::after{transition:none!important}
 }
+
+
+/* SEYVEO Pulse | isolated period selector | flat graphite, no inherited layers.
+   Deliberately NOT .picture-tabs, whose historical glass variants still exist
+   above for backward compatibility. */
+html body #picturePage #pictureBusiness > .sv-pulse-periods{
+ -webkit-appearance:none!important;appearance:none!important;
+ position:relative!important;isolation:isolate!important;
+ box-sizing:border-box!important;
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-items:center!important;
+ width:calc(100% - 14px)!important;
+ height:46px!important;min-height:46px!important;
+ margin:7px 7px 13px!important;padding:3px!important;gap:3px!important;
+ border:0!important;outline:0!important;border-radius:14px!important;
+ background:#29292B!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;transform:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ overflow:hidden!important;
+}
+html body #picturePage #pictureBusiness > .sv-pulse-periods::before,
+html body #picturePage #pictureBusiness > .sv-pulse-periods::after,
+html body #picturePage #pictureBusiness > .sv-pulse-periods > button::before,
+html body #picturePage #pictureBusiness > .sv-pulse-periods > button::after{
+ content:none!important;display:none!important;
+ border:0!important;background:none!important;box-shadow:none!important;
+}
+html body #picturePage #pictureBusiness > .sv-pulse-periods > button{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;position:relative!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;min-width:0!important;
+ height:40px!important;min-height:40px!important;margin:0!important;padding:0 3px!important;
+ border:0!important;outline:0!important;border-radius:11px!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;transform:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:#C7C7CA!important;
+ font:inherit!important;font-size:12px!important;font-weight:560!important;line-height:1.2!important;
+ white-space:nowrap!important;-webkit-tap-highlight-color:transparent!important;
+}
+html body #picturePage #pictureBusiness > .sv-pulse-periods > button[aria-pressed="true"]{
+ border:0!important;background:#38383A!important;background-image:none!important;
+ color:#fff!important;box-shadow:none!important;
+ font-weight:650!important;
+}
+html body #picturePage #pictureBusiness > .sv-pulse-periods > button:focus-visible{
+ outline:2px solid #f4f4f5!important;outline-offset:-2px!important;
+}
+html[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods{
+ background:#E9E9EB!important;
+}
+html[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods > button{
+ color:#54565c!important;
+}
+html[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods > button[aria-pressed="true"]{
+ color:white!important;background:#38383A!important;
+}
+@media(max-width:350px){
+ html body #picturePage #pictureBusiness > .sv-pulse-periods > button{font-size:11px!important}
+}
