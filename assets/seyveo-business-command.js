@@ -200,7 +200,13 @@ function svcpOpenDocument(file){
  const top=el('header','svcp-doc-top'),back=el('button','svcp-doc-back');
  back.type='button';back.setAttribute('aria-label','Назад к чату');
  back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';
- top.append(back,el('strong','svcp-doc-title',file.name));
+ const heading=el('div','svcp-doc-heading');
+ heading.append(el('strong','svcp-doc-title',file.name),el('small','svcp-doc-size',svcpFileSize(file.size)));
+ const menuButton=el('button','svcp-doc-more');menuButton.type='button';
+ menuButton.setAttribute('aria-label','Действия с документом');
+ menuButton.setAttribute('aria-expanded','false');
+ menuButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.25"/><circle cx="12" cy="12" r="1.25"/><circle cx="19" cy="12" r="1.25"/></svg>';
+ top.append(back,heading,menuButton);
  const body=el('div','svcp-doc-body');
  const info=el('p','svcp-doc-info');info.setAttribute('role','status');
  const say=value=>{if(live)info.textContent=value};
@@ -240,6 +246,9 @@ function svcpOpenDocument(file){
   preview.textContent='Оригинал файла можно открыть в подходящем приложении.';
  }
  const tools=el('div','svcp-doc-tools');
+ tools.hidden=true;
+ const toggleMenu=show=>{tools.hidden=!show;menuButton.setAttribute('aria-expanded',String(show));};
+ menuButton.addEventListener('click',()=>toggleMenu(tools.hidden));
  const icons={
   eye:'<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.2"/>',
   word:'<path d="M7 3h8l4 4v14H7zM15 3v4h4M9 12l2 5 2-5 2 5 2-5"/>',
@@ -286,17 +295,38 @@ function svcpOpenDocument(file){
   window.SEYVEO_SAYVI_SURFACES?.open?.('contract','business');
  });
  doc.classList.add('svcp-doc-to-documents');
- const bottom=el('footer','svcp-doc-bottom');bottom.append(tools,doc,info);
- sheet.append(top,body,bottom);
- const onKey=e=>{if(e.key==='Escape'){e.preventDefault();close()}};
+ doc.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17c3-7 4 4 7-2 3-8 4 3 8-3M4 21h16"/></svg>';
+ doc.setAttribute('aria-label','Открыть в Документах для подписи');
+ doc.title='В Документы · подпись';
+ const share=el('button','svcp-doc-share','Поделиться');share.type='button';
+ share.addEventListener('click',()=>{
+  const payload={files:[file],title:file.name};
+  if(typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare(payload)){
+   navigator.share(payload).catch(error=>{
+    if(error?.name!=='AbortError')say('Не удалось открыть системное меню. Оригинал можно сохранить через кнопку PDF или Word.');
+   });
+  }else{
+   save(file,file.name);
+   say('Оригинал сохранён. Его можно отправить через системное меню Файлов.');
+  }
+ });
+ const shareRow=el('div','svcp-doc-share-row');shareRow.append(share,doc);
+ const bottom=el('footer','svcp-doc-bottom');bottom.append(shareRow,info);
+ sheet.append(top,body,tools,bottom);
+ const onOutside=e=>{if(!tools.hidden&&!tools.contains(e.target)&&!menuButton.contains(e.target))toggleMenu(false)};
+ const onKey=e=>{if(e.key==='Escape'){e.preventDefault();if(!tools.hidden){toggleMenu(false);return}close()}};
  function close(){
   if(!live)return;live=false;
-  document.removeEventListener('keydown',onKey);sheet.remove();URL.revokeObjectURL(url);
+  document.removeEventListener('keydown',onKey);
+  document.removeEventListener('pointerdown',onOutside);
+  sheet.remove();URL.revokeObjectURL(url);
   svcpCurrentDocClose=null;
   if(last?.isConnected)last.focus({preventScroll:true});
  }
  back.addEventListener('click',close);
- document.addEventListener('keydown',onKey);document.body.append(sheet);
+ document.addEventListener('keydown',onKey);
+ document.addEventListener('pointerdown',onOutside);
+ document.body.append(sheet);
  svcpCurrentDocClose=close;back.focus({preventScroll:true});
 }
 
