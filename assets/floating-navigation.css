@@ -1,12 +1,11 @@
-/* SEYVEO compact split dock · Notes-style composition (Nov 2026).
- * Four original laser-engraved navigation icons share one short left capsule.
- * The unchanged Sayvi voice button is the independent right circle.
- * Its CENTER, not the overall dock, stays on the viewport's 50% axis.
- * Routes, music transport and hold-to-speak behavior are unchanged. */
+/* SEYVEO split dock · approved Notes-style arrangement.
+ * The right-hand independent circle is Search; Sayvi is at the rightmost
+ * edge of the left capsule. The dock shifts as one unit so Sayvi stays on
+ * the physical screen midline, without resizing either panel or icon. */
 :root{
  --seyveo-nav-ink:#eff7f2;
  --seyveo-dock-height:56px;
- /* On compact iPhones the capsule starts at least 6px from the screen edge. */
+ /* Preserve the existing split capsule dimensions on every iPhone. */
  --sv-split-sayvi:50px;
  --sv-split-gap:8px;
  --sv-split-capsule:min(148px,calc(50vw - 39px));
@@ -37,11 +36,12 @@
 .dock{
  position:fixed!important;
  z-index:30!important;
- /* Shift the WHOLE dock as-is; the separate right Sayvi circle is at screen center.
-    No resizing of the capsule, button slots, SVG icons, or gaps. */
- left:var(--sv-split-center)!important;right:auto!important;
+ /* Only slide the existing group: Sayvi is centered in capsule column 4.
+    Four equal capsule tracks put its center at 7/8 of capsule width.
+    On normal iPhones the capsule is 148px; 148*7/8 = 129.5px. */
+ left:calc(50% - 129.5px)!important;right:auto!important;
  bottom:var(--seyveo-dock-bottom)!important;
- transform:translateX(calc(-100% + 25px))!important;
+ transform:none!important;
  display:grid!important;
  grid-template-columns:repeat(4,minmax(0,1fr)) var(--sv-split-gap) var(--sv-split-sayvi)!important;
  align-items:center!important;
@@ -129,14 +129,14 @@
 .dock>.nav-tasks{grid-column:2!important;grid-row:1!important;order:2!important}
 .dock>#navPicture{display:flex!important;grid-column:3!important;grid-row:1!important;order:3!important}
 .dock>.nav-manage{
- grid-column:4!important;grid-row:1!important;order:4!important;
- justify-self:stretch!important;align-self:center!important;
- width:100%!important;height:48px!important;min-height:48px!important;
- border-radius:24px!important;
-}
-/* Sayvi is the separate circle, center-aligned to the viewport. */
-.dock>.assistant-button{
  grid-column:6!important;grid-row:1!important;order:5!important;
+ justify-self:end!important;align-self:center!important;
+ width:50px!important;height:50px!important;min-height:50px!important;
+ border-radius:50%!important;
+}
+/* Sayvi: original 50px voice control, fourth/last slot of the capsule. */
+.dock>.assistant-button{
+ grid-column:4!important;grid-row:1!important;order:4!important;
  position:relative!important;z-index:1!important;
  left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
  transform:none!important;
@@ -357,7 +357,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
    Retain original 50px touch target, state handlers and navigation geometry;
    no chrome rim or contrasting inner disk, only the quiet etched waveform. */
 .dock>#assistantButton{
- grid-column:6!important;grid-row:1!important;order:5!important;
+ grid-column:4!important;grid-row:1!important;order:4!important;
  justify-self:center!important;align-self:center!important;
  display:flex!important;align-items:center!important;justify-content:center!important;
  box-sizing:border-box!important;
@@ -506,6 +506,11 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  }
 }
 
+/* Below 374px, the unchanged capsule is (50vw - 39px);
+   its 7/8 center offset is (43.75vw - 34.125px). */
+@media (max-width:373px){
+ .dock{left:calc(50% - 43.75vw + 34.125px)!important}
+}
 /* Compact iPhone geometry uses the very same six-column split layout. */
 @media (max-width:699px){
  .dock{
