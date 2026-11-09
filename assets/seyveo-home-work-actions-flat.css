@@ -603,3 +603,51 @@
  margin-top:12px!important;
  margin-bottom:4px!important;
 }
+
+/* Quiet Cinema · focused composition (iPhone 10 and later).
+ * While Sayvi or the user edits a reply/document, the next cards in the
+ * SAME queue temporarily fold away. No source task is dismissed; once
+ * Save/Send finishes the original queue becomes visible again.
+ * The original orb and fixed Home dock are not restyled. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-composing="true"] .lm-secondary{
+ display:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-composing="true"] .lm-primary{
+ min-width:0!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-document-content .lm-mail-edit-input{
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-height:112px!important;
+ max-height:250px!important;
+ padding:12px!important;
+ border:0!important;
+ border-radius:13px!important;
+ background:var(--seyveo-hdr-active)!important;
+ color:var(--text)!important;
+ font-family:inherit!important;
+ font-size:14px!important;
+ line-height:1.54!important;
+ resize:none!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:break-word!important;
+ overflow-x:hidden!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-edit-input{
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-height:88px!important;
+ max-height:230px!important;
+ border:0!important;
+ border-radius:13px!important;
+ resize:none!important;
+ font-size:13.5px!important;
+ line-height:1.5!important;
+ overflow-x:hidden!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-edit-input::placeholder{
+ color:var(--secondary)!important;
+ opacity:.76!important;
+}
