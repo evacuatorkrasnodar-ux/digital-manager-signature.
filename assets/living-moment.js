@@ -232,6 +232,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  copy.append(headline,description);
  hero.append(artwork,copy);
  const controls=create('div','lm-actions');
+ const cardIconize=(button,name)=>window.SEYVEO_CARD_ENGINE?.decorateActionButton?.(button,name);
  let remaining=[primary,...other],shown=primary,morphLocked=false;
  const swipedInRound=new Set();
  const seenQueueRows=new Set(real&&primary.eventId?[primary.eventId]:[]);
@@ -511,11 +512,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailLater.hidden=true;
   mailSave.hidden=!active||mailStep!=='edit';
   mailSave.textContent='Отправить';
+  cardIconize(mailSave,'send');
   mailCancel.hidden=true;
   if(active){
    open.hidden=mailStep!=='draft';
    execute.hidden=mailStep!=='confirm';
    execute.textContent='Отправить';
+   cardIconize(execute,'send');
    execute.dataset.cardRole='primary';
    mailEdit.dataset.cardRole='secondary';
    mailSave.dataset.cardRole='primary';
@@ -812,6 +815,12 @@ function createSurface(primary,other=[],real=false,taskId=''){
  });
  realLater.dataset.cardRole='quiet';
  controls.append(sayviAction,workSayvi,workOwn,workSend,workBack,execute,mailEdit,documentAnalyze,documentEdit,open,mailLater,documentLater,realLater,mailSave,mailCancel,documentSave,documentCancel);
+ // Crisp vector buttons with the approved Sayvi symbol and central sphere.
+ for(const [button,kind] of [
+  [sayviAction,'sayvi'],[workSayvi,'sayvi'],
+  [workOwn,'edit'],[mailEdit,'edit'],[documentEdit,'edit'],
+  [open,'navigate'],[workSend,'send'],[mailSave,'send'],[documentSave,'save']
+ ])cardIconize(button,kind);
  main.append(hero,workDetails,mailDetails,documentDetails,controls);
  const secondary=create('div','lm-secondary');
  function updateCount(){
@@ -856,6 +865,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   description.textContent=item.body;
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
   open.textContent='Перейти';
+  cardIconize(open,'navigate');
   open.setAttribute('aria-label',item.kind==='work'?'Открыть рабочий чат Елены':!real&&item.kind==='mail'?'Открыть раздел почты':!real&&item.kind==='contract'?'Открыть документы':'Подробнее: '+item.title);
   execute.textContent=real&&item.businessTask?'Проверить':real?'Продолжить дело':'Исполнить';
   execute.setAttribute('aria-label',(real&&item.businessTask?'Проверить: ':real?'Продолжить дело: ':'Исполнить: ')+item.title);
@@ -867,6 +877,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   documentStep='summary';documentNote=documentDefault;workMode='choose';workDraft='';
   updateMail();
   updateDocument();updateWork();syncDocumentTitleTap();
+ cardIconize(open,'navigate');
+  cardIconize(open,'navigate');
   updateCount();
   renderSecondary();
   announceRecommendation(item);
