@@ -155,7 +155,7 @@ html body #lifePage.svmail-active .svmail .svmail-star{
 /* 5. Calendar and Tasks: preserve seven-column dates, selection, pluses,
    44px targets and the shared fixed dock. Just remove lens materials. */
 html body #calendarPage :is(
- .cal-scope,.cal-month,#managerCalendarTabs,
+ .cal-scope,#managerCalendarTabs,
  #calendarAdd,.calendar-header-add,.cal-actions .cal-day-fab
 ),
 html body #tasksPage :is(
