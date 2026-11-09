@@ -424,7 +424,7 @@
 }
 
 
-/* SEYVEO Notes popovers v6 — Silver Flat graphite.
+/* SEYVEO Notes popovers v7 — Silver Flat graphite.
    Only dropdowns for attachments and formatting. The approved home-style
    notebook dock, button geometry, navigation and etched glyphs are untouched. */
 #noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu:not([hidden]),
@@ -470,9 +470,9 @@
   background-image:none!important;
   box-shadow:none!important;
   transform:none!important;
-  color:#e0e5e9!important;
+  color:#ecf0f2!important;
   text-align:left!important;
-  font:500 13.5px/1.25 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+  font:500 14.5px/1.25 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
   letter-spacing:0!important;
   -webkit-tap-highlight-color:transparent!important;
 }
@@ -488,7 +488,7 @@
   height:20px!important;
   min-height:20px!important;
   margin:0!important;
-  color:#bdc8ce!important;
+  color:#d0d9dd!important;
   filter:none!important;
   text-shadow:none!important;
 }
@@ -496,7 +496,7 @@
   display:block!important;
   fill:none!important;
   stroke:currentColor!important;
-  stroke-width:1.3!important;
+  stroke-width:1.45!important;
   stroke-linecap:round!important;
   stroke-linejoin:round!important;
 }
@@ -528,11 +528,11 @@
 }
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu>button,
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu>button{
-  color:#303941!important;
+  color:#273039!important;
 }
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu>button>svg,
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu>button::before{
-  color:#52616a!important;
+  color:#45545e!important;
 }
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteAttachmentMenu.sv-note-attachment-menu>button:is(:active,:hover),
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #svNoteFormatMenu.sv-note-format-menu>button:is(:active,:hover){
