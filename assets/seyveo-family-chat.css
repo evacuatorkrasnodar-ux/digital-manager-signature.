@@ -88,3 +88,62 @@
  min-height:56px;
  transition:none!important;
 }
+
+
+/* All SEYVEO family messages: time INSIDE the lower-right corner, not above. */
+.svf-dialog .svf-msg{
+ position:relative;
+ box-sizing:border-box;
+ width:max-content;min-width:70px;max-width:90%;
+ align-self:flex-end;
+ padding:8px 11px 23px;
+ border:0;
+ border-radius:15px 15px 6px 15px;
+ background:#38383A;
+ color:#F4F4F6;
+ box-shadow:none;
+}
+.svf-dialog .svf-msg > .svf-message-text{
+ display:block;
+ min-width:0;
+ margin:0;padding:0;
+ color:inherit;
+ font-size:14px;line-height:1.4;
+ white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.svf-dialog .svf-msg > .svf-message-stamp{
+ position:absolute;right:9px;bottom:5px;
+ display:inline-flex;align-items:center;justify-content:flex-end;gap:4px;
+ margin:0;padding:0;
+ font:500 10px/13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ color:#C6C6CA;
+ background:none;
+ white-space:nowrap;pointer-events:none;
+}
+.svf-dialog .svf-message-time{font:inherit;color:inherit;font-variant-numeric:tabular-nums}
+.svf-dialog .svf-message-local-check{font:650 11px/1 system-ui,sans-serif;color:#D1D2D6}
+/* A single emoji stands free, with the same floating corner clock as a sticker. */
+.svf-dialog .svf-msg.svf-emoji-only{
+ width:76px;min-width:76px;max-width:76px;
+ min-height:70px;
+ padding:0;
+ background:transparent;
+ border:0;
+ border-radius:0;
+}
+.svf-dialog .svf-msg.svf-emoji-only > .svf-message-text{
+ font-size:54px;line-height:68px;
+ text-align:center;white-space:nowrap;
+}
+.svf-dialog .svf-msg.svf-emoji-only > .svf-message-stamp{
+ right:0;bottom:0;
+ padding:2px 6px;
+ background:rgba(31,33,36,.78);
+ color:#F6F6F7;border-radius:11px;
+}
+:root[data-theme="light"] .svf-dialog .svf-msg:not(.svf-emoji-only){
+ background:#E1E1E3;color:#303033;
+}
+:root[data-theme="light"] .svf-dialog .svf-msg:not(.svf-emoji-only) .svf-message-stamp{
+ color:#64646B;
+}
