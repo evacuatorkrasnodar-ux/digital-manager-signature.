@@ -3525,7 +3525,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 
 /* v193 · SEYVEO in-card recipient selector. No native iOS pop-up menu.
-   Staff entries share the same matte-glass material as the task review sheet. */
+   The current recipient stays in the collapsed field; other options form a flat, compact list. */
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > .svcp-task-assignee-native{
  position:absolute!important;
  width:1px!important;
@@ -3546,7 +3546,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  width:100%!important;
  min-width:0!important;
  display:grid!important;
- gap:5px!important;
+ gap:4px!important;
 }
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-toggle{
  width:100%!important;
@@ -3598,23 +3598,27 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  min-width:0!important;
  margin:0!important;
  padding:4px!important;
- border:1px solid rgba(133,151,162,.14)!important;
- border-radius:15px!important;
- background:rgba(168,182,193,.10)!important;
+ max-height:min(178px,33dvh)!important;
+ overflow-y:auto!important;
+ overscroll-behavior:contain!important;
+ scrollbar-width:none!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:#424244!important;
  box-shadow:none!important;
 }
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices > button{
  display:flex!important;
  align-items:center!important;
- justify-content:space-between!important;
- gap:8px!important;
+ justify-content:flex-start!important;
+ gap:7px!important;
  width:100%!important;
  min-width:0!important;
- min-height:43px!important;
- padding:7px 10px!important;
+ min-height:44px!important;
+ padding:8px 10px!important;
  margin:0!important;
  border:0!important;
- border-radius:11px!important;
+ border-radius:9px!important;
  background:transparent!important;
  box-shadow:none!important;
  color:var(--text)!important;
@@ -3624,25 +3628,29 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices > button > small{
  font-size:11px!important;
  font-weight:400!important;
- color:var(--secondary)!important;
- text-align:right!important;
+ color:#C8C8CB!important;
+ text-align:left!important;
+ white-space:nowrap!important;
 }
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices > button[aria-pressed="true"]{
- background:rgba(148,164,176,.17)!important;
+ display:none!important; /* already shown in the selector; avoids repeating the selected employee */
 }
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices > button:active{
- background:rgba(148,164,176,.23)!important;
+ background:#555557!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-toggle{
  background:rgba(255,255,255,.68)!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices:not([hidden]){
- background:rgba(223,230,236,.75)!important;
+ background:#E3E3E5!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpChatTaskDraft:not([hidden]):has(#svcpRecipientChoices:not([hidden])){
  max-height:min(420px,calc(100% - 142px))!important;
 }
 
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices > button > small{
+ color:#656568!important;
+}
 /* v194 · Reduce task review bulk and let the proposed text wrap naturally.
    This is a review card, not a second fullscreen editor. */
 #svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpChatTaskDraft:not([hidden]){
