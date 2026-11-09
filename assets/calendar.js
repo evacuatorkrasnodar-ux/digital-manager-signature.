@@ -629,6 +629,8 @@ const createToggle=$('calendarAdd'),createMenu=$('calendarCreateMenu');
 function closeCreateMenu(){
  if(!createMenu)return;
  createMenu.hidden=true;
+ createMenu.dataset.panel='main';
+ createMenu.querySelector('#calendarModeChoose')?.setAttribute('aria-expanded','false');
  createToggle?.setAttribute('aria-expanded','false');
  const shared=document.getElementById('svWorkAdd');
  if(shared?.getAttribute('aria-controls')==='calendarCreateMenu')shared.setAttribute('aria-expanded','false');
@@ -636,7 +638,9 @@ function closeCreateMenu(){
 function toggleCreateMenu(){
  if(!createMenu)return;
  const next=createMenu.hidden;
+ if(next)createMenu.dataset.panel='main';
  createMenu.hidden=!next;
+ createMenu.querySelector('#calendarModeChoose')?.setAttribute('aria-expanded','false');
  createToggle?.setAttribute('aria-expanded',String(next));
 }
 createToggle?.addEventListener('click',event=>{
@@ -656,7 +660,15 @@ document.addEventListener('click',event=>{
 });
 document.addEventListener('keydown',event=>{
  if(event.key==='Escape'&&!createMenu?.hidden){
-  event.preventDefault();closeCreateMenu();
+  event.preventDefault();
+  if(createMenu.dataset.panel==='views'){
+   createMenu.dataset.panel='main';
+   const choice=createMenu.querySelector('#calendarModeChoose');
+   choice?.setAttribute('aria-expanded','false');
+   choice?.focus({preventScroll:true});
+   return;
+  }
+  closeCreateMenu();
   const shared=document.getElementById('svWorkAdd');
   const trigger=shared?.getAttribute('aria-controls')==='calendarCreateMenu'&&!shared.hidden?shared:createToggle;
   trigger?.focus({preventScroll:true});
@@ -665,41 +677,54 @@ document.addEventListener('keydown',event=>{
 window.addEventListener('hashchange',closeCreateMenu);
 $('calendarAddInline').addEventListener('click',()=>openEvent());
 $('calendarAddTask').addEventListener('click',addTask);
-/* Calendar controls live in ONE compact + menu. Keep existing
-   data-calendar-mode buttons and the original create handlers. */
+/* The + shows only three clear actions. Calendar modes form a nested
+   panel so the initial menu never covers half the screen. */
 const calendarViewModes=$('calendarViewModes');
 const calendarViewButton=$('calendarToday');
 if(calendarViewModes&&calendarViewButton&&createMenu){
- const sectionCreate=document.createElement('div');
- sectionCreate.className='cal-menu-section';
- sectionCreate.textContent='Создать';
- createMenu.prepend(sectionCreate);
- const sectionModes=document.createElement('div');
- sectionModes.className='cal-menu-section cal-menu-modes-label';
- sectionModes.textContent='Вид календаря';
- createMenu.append(sectionModes);
- createMenu.append(calendarViewModes);
- calendarViewModes.hidden=false; // its parent menu owns visibility
+ const chooseMode=document.createElement('button');
+ chooseMode.type='button';
+ chooseMode.id='calendarModeChoose';
+ chooseMode.className='cal-menu-view-choice';
+ chooseMode.setAttribute('aria-label','Выбрать вид календаря');
+ chooseMode.setAttribute('aria-haspopup','true');
+ chooseMode.setAttribute('aria-expanded','false');
+ chooseMode.setAttribute('aria-controls',calendarViewModes.id);
+ chooseMode.innerHTML='<span class="cal-create-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></span><span>Вид календаря</span><svg class="cal-menu-next" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
+ const modeReturn=document.createElement('button');
+ modeReturn.type='button';
+ modeReturn.id='calendarModeReturn';
+ modeReturn.className='cal-menu-return';
+ modeReturn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg><span>Вид календаря</span>';
+ createMenu.append(chooseMode,modeReturn,calendarViewModes);
+ calendarViewModes.hidden=false;
+ createMenu.dataset.panel='main';
  const todayOption=document.createElement('button');
  todayOption.type='button';
  todayOption.className='cal-mode-today';
  todayOption.textContent='Сегодня';
  todayOption.setAttribute('aria-label','Вернуться к сегодняшнему дню');
  calendarViewModes.append(todayOption);
+ chooseMode.addEventListener('click',()=>{
+  createMenu.dataset.panel='views';
+  chooseMode.setAttribute('aria-expanded','true');
+  calendarViewModes.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});
+ });
+ modeReturn.addEventListener('click',()=>{
+  createMenu.dataset.panel='main';
+  chooseMode.setAttribute('aria-expanded','false');
+  chooseMode.focus({preventScroll:true});
+ });
  calendarViewButton.setAttribute('aria-label','Перейти к сегодняшней дате');
  calendarViewButton.removeAttribute('aria-haspopup');
  calendarViewButton.removeAttribute('aria-controls');
  calendarViewButton.removeAttribute('aria-expanded');
  calendarViewButton.title='Сегодня';
  calendarViewButton.addEventListener('click',()=>{
-  mode='month';
-  updateFocus(new Date());
-  closeCreateMenu();
+  mode='month';updateFocus(new Date());closeCreateMenu();
  });
  todayOption.addEventListener('click',()=>{
-  mode='month';
-  updateFocus(new Date());
-  closeCreateMenu();
+  mode='month';updateFocus(new Date());closeCreateMenu();
  });
  calendarViewModes.addEventListener('click',event=>{
   if(event.target.closest('[data-calendar-mode]'))closeCreateMenu();
