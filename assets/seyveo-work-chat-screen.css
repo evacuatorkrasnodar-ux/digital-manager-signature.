@@ -2879,7 +2879,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
    No inherited bottom offsets or glyph-specific +3px nudges. */
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
  box-sizing:border-box!important;
- display:grid!important;place-items:center!important;
+ place-items:center!important;
  position:absolute!important;
  width:38px!important;min-width:38px!important;max-width:38px!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
