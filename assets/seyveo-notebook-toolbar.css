@@ -2455,3 +2455,54 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUnd
 #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu input:focus-visible{
  outline:2px solid #E1E1E3!important;outline-offset:2px!important;
 }
+
+
+/* SEYVEO Paper · shared navigation geometry, 2026-11-09.
+   The previous 326px centred header displaced Back toward the middle.
+   The 5-tool dock stays optically centred; only the flanking controls
+   gain the same 12px screen-edge alignment as other SEYVEO pages. */
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+ left:12px!important;right:12px!important;
+ width:calc(100% - 24px)!important;
+ max-width:none!important;
+ transform:none!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ column-gap:0!important;
+ justify-content:stretch!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack{
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ max-width:44px!important;max-height:44px!important;
+ position:relative!important;
+ overflow:visible!important;
+ background:transparent!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack::before{
+ content:""!important;display:block!important;
+ position:absolute!important;inset:2px!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ pointer-events:none!important;z-index:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack svg{
+ position:relative!important;z-index:1!important;
+ width:19px!important;height:19px!important;
+ stroke-width:1.45!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack:active{
+ background:transparent!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack:active::before{
+ background:#48484B!important;
+}
+/* On the smallest screens, reserve four extra pixels per side so
+   the existing five tools never squeeze or overflow. */
+@media(max-width:350px){
+ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+  left:8px!important;right:8px!important;
+  width:calc(100% - 16px)!important;
+ }
+}
