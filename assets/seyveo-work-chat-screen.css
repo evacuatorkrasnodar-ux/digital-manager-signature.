@@ -4240,3 +4240,33 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  width:18px!important;
  font-size:17px!important;
 }
+
+/* SEYVEO: visually separate navigation from participant identity, with a soft
+   header-to-conversation transition rather than a second hard-edged panel. */
+#svcpWorkChatScreen[data-view="room"] .svcp-conversation-bar{
+ position:relative!important;
+ z-index:1;
+ gap:8px!important;
+ background:linear-gradient(to bottom,rgba(56,56,58,.075) 0%,transparent 100%)!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-conversation-bar::after{
+ content:"";position:absolute;left:0;right:0;bottom:-12px;height:12px;
+ pointer-events:none;
+ background:linear-gradient(to bottom,rgba(56,56,58,.055),transparent);
+}
+#svcpWorkChatScreen[data-view="room"] #svcpRoomAvatar{
+ box-sizing:border-box!important;
+ flex:0 0 32px!important;
+ width:32px!important;min-width:32px!important;max-width:32px!important;
+ height:32px!important;min-height:32px!important;max-height:32px!important;
+ border-radius:50%!important;
+ background:#303337!important;
+ color:#E6E7E9!important;
+ font-size:14px!important;font-weight:600!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversationBack{
+ flex:0 0 40px!important;width:40px!important;height:40px!important;
+ background:#38383A!important;
+ box-shadow:none!important;
+}
