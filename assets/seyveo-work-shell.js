@@ -56,7 +56,10 @@
  add.type='button';
  add.id='svWorkAdd';
  add.setAttribute('aria-label','Создать событие или дело');
- add.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>';
+ const plusIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>';
+ const searchIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 5 5"/></svg>';
+ add.innerHTML=plusIcon;
+ add.dataset.svHeaderIcon='add';
  heading.append(back,title,add);
  shell.prepend(heading);
  const legacyTasksBack=document.getElementById('unifiedTasksBack');
@@ -193,6 +196,11 @@
   // event too so the document-level outside-click listener cannot
   // immediately close the newly opened menu.
   event.stopPropagation();
+  // History reuses the same 44px right-side header control for Search.
+  if(shell.dataset.history==='true'){
+   window.dispatchEvent(new Event('seyveo:history-search-toggle'));
+   return;
+  }
   const section=activeSection();
   if(section==='calendar'){
    calendarAdd?.click();
@@ -270,11 +278,17 @@
   back.setAttribute('aria-label',history?'Вернуться к моим делам':'Вернуться назад');
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
-  add.hidden=history||active==='employee';
-  add.setAttribute('aria-label',active==='notes'?'Новая заметка':active==='personal'?'Добавить дело':active==='calendar'?'Создать событие или дело':'Создать заметку или настроить кабинет');
-  add.setAttribute('aria-haspopup',String(active==='calendar'||active==='business'));
-  add.setAttribute('aria-controls',active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
-  add.setAttribute('aria-expanded',active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
+  add.hidden=active==='employee'&&!history;
+  const nextIcon=history?'search':'add';
+  if(add.dataset.svHeaderIcon!==nextIcon){
+   add.innerHTML=history?searchIcon:plusIcon;
+   add.dataset.svHeaderIcon=nextIcon;
+  }
+  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='notes'?'Новая заметка':active==='personal'?'Добавить дело':active==='calendar'?'Создать событие или дело':'Создать заметку или настроить кабинет');
+  add.title=history?'Поиск по истории':'';
+  add.setAttribute('aria-haspopup',String(!history&&(active==='calendar'||active==='business')));
+  add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
+  add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistorySearch')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
   shell.dataset.active=active;
   for(const button of nav.querySelectorAll('button')){
    button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===active));
