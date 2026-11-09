@@ -14,6 +14,30 @@ if(personal&&head){
  cursor:pointer;touch-action:manipulation;
 }
 .sah-inline-toggle[aria-expanded="true"]{color:var(--text)}
+/* Keep the History entry visible beside Add on the ordinary My Tasks header. */
+#unifiedPersonalTasksView .personal-tasks-head{display:flex;align-items:center;gap:8px;min-width:0}
+#unifiedPersonalTasksView .personal-tasks-head .sah-inline-toggle{
+ display:inline-flex!important;visibility:visible!important;opacity:1!important;
+ flex:0 0 auto;margin-left:auto!important;white-space:nowrap;
+ min-height:44px!important;padding:0 10px!important;
+ border:0!important;border-radius:12px!important;background:#38383A!important;
+ color:#F6F7F8!important;box-shadow:none!important;
+}
+#tasksPage.sah-history-open #seyveoActionHistoryPanel .sah-inline-head{
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ column-gap:10px!important;width:100%!important;
+}
+#seyveoActionHistoryPanel .sah-history-back{grid-column:1}
+#seyveoActionHistoryPanel .sah-history-title{grid-column:2}
+#seyveoActionHistoryPanel .sah-history-search{grid-column:3}
+#seyveoActionHistoryPanel .sah-restore-task{
+ display:inline-flex!important;visibility:visible!important;opacity:1!important;
+ flex-shrink:0!important;position:relative!important;z-index:1!important;
+}
+#seyveoActionHistoryPanel .sah-restore-task:active{background:#38383A!important}
+#seyveoActionHistoryPanel .sah-history-search[aria-expanded="true"]{
+ background:#49494B!important;
+}
 .sah-inline-toggle svg{
  display:block;flex:none;width:16px;height:16px;fill:none;
  stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
@@ -190,7 +214,7 @@ if(personal&&head){
  const panel=document.createElement('section');panel.className='sah-inline-panel';panel.id='seyveoActionHistoryPanel';panel.hidden=true;panel.setAttribute('aria-label','История действий Сэйви');
  open.setAttribute('aria-controls',panel.id);
  const heading=document.createElement('div');heading.className='sah-inline-head';
- const title=document.createElement('h2');title.className='sah-history-title';title.textContent='История действий';title.id='seyveoActionHistoryTitle';
+ const title=document.createElement('h2');title.className='sah-history-title';title.textContent='История';title.id='seyveoActionHistoryTitle';
  panel.setAttribute('aria-labelledby',title.id);
  const back=document.createElement('button');back.type='button';back.setAttribute('aria-label','Вернуться к моим делам');back.title='Назад к делам';
  const backSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');backSvg.setAttribute('viewBox','0 0 24 24');backSvg.setAttribute('aria-hidden','true');
@@ -237,7 +261,7 @@ if(personal&&head){
    empty.append(svg,heading,copy);list.append(empty);return;
   }
   // Ordinary users see one latest outcome per card; developer mode shows its full trace.
-  const base=studio?events:events.filter((e,i,all)=>all.findIndex(x=>x.eventId===e.eventId)===i);
+  const base=studio?events:events.filter((e,i,all)=>all.findIndex(x=>(x.taskId?'task:'+x.taskId:'card:'+x.eventId)===(e.taskId?'task:'+e.taskId:'card:'+e.eventId))===i);
   const q=search.value.trim().toLocaleLowerCase('ru-RU');
   const selected=q?base.filter(e=>{
    const d=e.at?new Date(e.at):null;
