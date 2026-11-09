@@ -53,7 +53,8 @@
   id:'silver-flat-v1',
   darkMaterial:'#38383A',lightMaterial:'#E4E7E9',
   primaryActionsMax:1,primaryPillsMax:1,visibleActionLimit:3,secondaryPresentation:'text',
-  deferGesture:'swipe-right',dismissGesture:'swipe-left',contextGesture:'long-press',deferMinPixels:75,
+  deferGesture:'swipe-both-cycle',dismissGesture:'long-press-only',contextGesture:'long-press',deferMinPixels:75,
+   singleCardSnoozeMs:60*60*1000,protectedSnoozeMs:10*60*1000,premiumGraphite:'#38383A',
   redundantAdviceActions:Object.freeze(['show-sayvi','show-sayvi-advice','show-suggestion','show-advice']),
   preserveDistinctAssistantActions:true
  });
@@ -187,7 +188,43 @@
   return saveVisibility(state);
  }
  function restoreVisibility(){return saveVisibility({hidden:[],muted:[]})}
- function visibleCards(cards){return Array.isArray(cards)?cards.filter(c=>!isSuppressed(c)):[]}
+ function visibleCards(cards){return Array.isArray(cards)?cards.filter(c=>!isSuppressed(c)&&!isSnoozed(c)):[]}
+ function rotateQueue(cards,currentId){
+  if(!Array.isArray(cards))return [];
+  const position=cards.findIndex(c=>c.id===currentId);
+  if(position<0||cards.length<2)return cards.slice();
+  const copy=cards.slice(),item=copy.splice(position,1)[0];copy.push(item);
+  return copy;
+ }
+ const snoozeKey='seyveo-card-snoozes-v1';
+ function readSnoozes(){
+  try{
+   const raw=JSON.parse(window.localStorage?.getItem(snoozeKey)||'[]');
+   if(!Array.isArray(raw))return [];
+   const now=Date.now();
+   return raw.filter(e=>e&&typeof e.key==='string'&&Number.isFinite(e.until)&&e.until>now).slice(-500);
+  }catch{return []}
+ }
+ function isSnoozed(card){return !!card&&readSnoozes().some(e=>e.key===cardVisibilityKey(card))}
+ function snoozeCards(cards,now=Date.now()){
+  const list=Array.isArray(cards)?cards:[cards],active=readSnoozes();let count=0;
+  for(const card of list){
+   if(!card?.id)continue;
+   const id=cardVisibilityKey(card),duration=isProtected(card)?cardPolicy.protectedSnoozeMs:cardPolicy.singleCardSnoozeMs;
+   const until=now+duration,index=active.findIndex(x=>x.key===id);
+   if(index>=0)active[index].until=until;
+   else active.push({key:id,until});count++;
+  }
+  if(!count)return false;
+  try{window.localStorage?.setItem(snoozeKey,JSON.stringify(active.slice(-500)));
+   window.dispatchEvent?.(new Event('seyveo:card-snoozes-changed'));return true}
+  catch{return false}
+ }
+ function clearSnoozes(){
+  try{window.localStorage?.removeItem(snoozeKey);
+   window.dispatchEvent?.(new Event('seyveo:card-snoozes-changed'));return true}
+  catch{return false}
+ }
  // Horizontal swipe to defer (both directions). A directional gesture must
  // be substantially longer than vertical movement so scrolling stays native.
  // Pointer events cover iOS 13+/Android/desktop; touch fallback covers old WebKit.
@@ -198,8 +235,8 @@
  }
  function installDeferSwipe(node,card,onAction){
   if(!card.actions.includes('later')||typeof onAction!=='function')return;
-  node.dataset.svSwipeLater='right';
-  node.dataset.svSwipeHide=isProtected(card)?'blocked':'left';
+  node.dataset.svSwipeLater='both';
+  node.dataset.svSwipeAction='cycle';
   const interactive=target=>target?.closest?.('button,a,input,textarea,select,[contenteditable="true"],[role="button"]');
   let start=null;
   const begin=(x,y,id,target)=>{
@@ -208,10 +245,7 @@
   const finish=(x,y,id)=>{
    if(!start||start.id!==id){start=null;return;}
    const point=start;start=null;
-   if(isDeferSwipe(x-point.x,y-point.y)){
-    if(x>point.x)onAction('later',card);
-    else if(card.demo===true||hideCard(card)){node.hidden=true;onAction('hide',card)}
-   }
+   if(isDeferSwipe(x-point.x,y-point.y))onAction('cycle',card);
   };
   if(typeof window.PointerEvent==='function'){
    node.addEventListener('pointerdown',event=>{
@@ -259,9 +293,9 @@
    });
    menu.append(button);
   };
-  option('Напомнить позже','later');
+  
   option('Не показывать такие','mute-family',isProtected(card));
-  option('Удалить карточку','hide',isProtected(card));
+  option('Убрать карточку','hide',isProtected(card));
   option('Отмена','cancel');
   node.append(menu);
   const interactive=target=>target?.closest?.('button,a,input,textarea,select,[contenteditable="true"]');
@@ -342,8 +376,9 @@ const el=(tag,klass,content)=>{
   return article;
  }
  root.SEYVEO_CARD_ENGINE=Object.freeze({
-  version:6,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
-   isProtected,isSuppressed,hideCard,muteFamily,getVisibility,restoreVisibility,visibleCards,
+  version:7,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
+   isProtected,isSuppressed,isSnoozed,hideCard,muteFamily,getVisibility,restoreVisibility,visibleCards,
+   rotateQueue,snoozeCards,clearSnoozes,
   presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome
  });
 })(window);
