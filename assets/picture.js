@@ -250,7 +250,7 @@ function renderSayviAdvice(result){
  card.hidden=false;
  details.hidden=true;
  const explainButton=$('pictureSayviWhy');
- if(explainButton){explainButton.setAttribute('aria-expanded','false');explainButton.textContent='Пояснить';}
+ if(explainButton){explainButton.setAttribute('aria-expanded','false');explainButton.textContent='Почему?';}
  details.replaceChildren();
  const rows=[];
  if(!result){
@@ -266,7 +266,7 @@ function renderSayviAdvice(result){
   const highest=costs.filter(x=>Number(x.value)>0).sort((a,b)=>b.value-a.value)[0];
   const popular=sources.filter(x=>Number(x.leads)>0).sort((a,b)=>b.leads-a.leads)[0];
   if(leads>0&&pending>0){
-   title.textContent=num.format(pending)+' из '+num.format(leads)+' обращений пока не стали заказами. Стоит проверить, на каком этапе они остановились.';
+   title.textContent='Проверьте, что мешает обращениям становиться заказами: скорость ответа, незавершённые диалоги и причины отказов.';
   }else if(cost>revenue&&cost>0){
    title.textContent='Расходы выше продаж на '+rub(cost-revenue)+'. Сначала проверьте крупные статьи расходов.';
   }else if(revenue>0){
@@ -274,7 +274,8 @@ function renderSayviAdvice(result){
   }else{
    title.textContent='Показателей пока недостаточно для вывода. Сэйви поможет определить, что следует подключить.';
   }
-  if(leads>0)rows.push('Из '+num.format(leads)+' обращений '+num.format(sales)+' стали заказами. Осталось '+num.format(pending)+'.');
+  if(leads>0)rows.push('Из '+num.format(leads)+' обращений '+num.format(sales)+' стали заказами. Без заказа — '+num.format(pending)+'.');
+  if(pending>0)rows.push('Причины пока неизвестны: данные показывают количество обращений и заказов, но не этапы их обработки.');
   if(revenue||cost)rows.push('Продажи '+rub(revenue)+', расходы '+rub(cost)+', разница '+rub(diff)+'. Это разница показателей, не расчёт чистой прибыли.');
   if(highest&&cost>0){
    const share=Math.round(Number(highest.value)/cost*100);
@@ -295,7 +296,7 @@ $('pictureSayviWhy')?.addEventListener('click',()=>{
  const panel=$('pictureSayviDetails'),button=$('pictureSayviWhy');
  const show=panel.hidden;panel.hidden=!show;
  button.setAttribute('aria-expanded',String(show));
- button.textContent=show?'Свернуть':'Пояснить';
+ button.textContent=show?'Свернуть':'Почему?';
 });
 $('pictureSayviDiscuss')?.addEventListener('click',()=>{
  const draft=sayviDraft||'Сэйви, помоги разобраться с показателями Пульса бизнеса.';
@@ -322,7 +323,7 @@ function render(){
  $('pictureBusinessCharts').hidden=false;
  $('pictureLifeNote').hidden=true;
  $('pictureQuickInsight').hidden=false;
- $('pictureWidgetArea').querySelector('.home-widgets-caption').textContent='ВАШ ВЫБОР';
+ $('pictureWidgetArea').querySelector('.home-widgets-caption').hidden=true;
  window.dispatchEvent(new CustomEvent('seyveo:picture-period',{detail:{period}}));
  // Keep the selected period visible even before external business data is connected.
  document.querySelectorAll('[data-picture-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.picturePeriod===period)));
@@ -330,7 +331,7 @@ function render(){
  if(!result){
   const note=$('pictureLifeNote');
   note.hidden=false;
-  note.textContent='Пока не получены показатели. Подключите рабочий источник в разделе «Источники и проверка».';
+  note.textContent='Пока не получены показатели. Подключите рабочий источник в разделе «Источники данных».';
   if($('pictureDemoLabel'))$('pictureDemoLabel').hidden=true;
   $('pictureBusinessCharts').hidden=true;
   $('pictureQuickInsight').hidden=true;
