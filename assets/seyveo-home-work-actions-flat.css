@@ -333,3 +333,10 @@
   flex-basis:55px!important;width:55px!important;min-width:55px!important;
  }
 }
+
+/* Work Sayvi's approved graphite layer is ::after. Do not stack
+   a second ::before layer when the icon-style override is active. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant.sv-card-icon-button::before{
+ content:none!important;display:none!important;
+}
