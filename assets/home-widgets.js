@@ -31,7 +31,7 @@ const pref=()=>{
  const raw=readable(safeRead(PROFILE));
  return raw?.focus==='life'?'life':'business';
 };
-const defaults=()=>['attention','operations'];
+const defaults=()=>['attention'];
 function selection(){
  const data=readable(safeRead(KEY));
  if(data&&data.version===1&&Array.isArray(data.ids)){
