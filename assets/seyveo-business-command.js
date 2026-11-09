@@ -290,8 +290,7 @@ function svcpOpenDocument(file){
   // Web Share has to start inside the tap handler to preserve user activation.
   const payload={files:[file],title:file.name};
   const fallback=()=>{
-   save(file,file.name);
-   say('Системное меню недоступно. Оригинал сохранён — его можно отправить из «Файлов».');
+   say('Системное меню отправки файлов недоступно. Оригинал можно сохранить через Word или PDF.');
   };
   if(typeof navigator.share!=='function'){fallback();return}
   try{
