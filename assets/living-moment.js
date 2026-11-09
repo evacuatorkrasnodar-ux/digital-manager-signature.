@@ -1365,6 +1365,8 @@ function showExistingAdvice(){
 function refresh(){
  if(previewRearmAt&&Date.now()>=previewRearmAt){previewSeen=false;previewRearmAt=0}
  if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
+ // Let the existing iOS-style outgoing animation finish before queue re-render.
+ if(space.classList.contains('lm-disappear')||tiles.querySelector('.lm-scene--changing'))return;
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=adviceIdentity(pending);
  if(mode==='preview'){
