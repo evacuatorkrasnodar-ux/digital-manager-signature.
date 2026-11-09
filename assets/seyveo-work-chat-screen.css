@@ -4196,3 +4196,47 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-shadow:none!important;
  outline:none!important;
 }
+
+/* SEYVEO · compact attachment popover, premium flat graphite. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpAttachMenu:not([hidden]){
+ box-sizing:border-box!important;
+ width:148px!important;
+ min-width:0!important;
+ max-width:calc(100vw - 24px)!important;
+ height:auto!important;
+ min-height:0!important;
+ padding:5px!important;
+ border:0!important;
+ border-radius:15px!important;
+ background:#38383A!important;
+ background-image:none!important;
+ box-shadow:0 5px 18px rgba(0,0,0,.17)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpAttachMenu:not([hidden]) > button{
+ box-sizing:border-box!important;
+ display:flex!important;
+ align-items:center!important;
+ gap:11px!important;
+ width:100%!important;
+ min-height:40px!important;
+ height:40px!important;
+ padding:0 11px!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:10px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:#F5F5F7!important;
+ font-size:13px!important;
+ font-weight:500!important;
+ text-align:left!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpAttachMenu > button > span{
+ display:inline-grid!important;
+ place-items:center!important;
+ flex:0 0 18px!important;
+ width:18px!important;
+ font-size:17px!important;
+}
