@@ -577,3 +577,106 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
 @media(max-width:375px){
  #svWorkShell > #svWorkNotebook{padding-inline:0!important}
 }
+
+/* SEYVEO TASKS · PREMIUM GRAPHITE FLAT FINISH v1
+ * Work page headers are LEFT aligned. Only empty states are centered.
+ * Remove the old frosted segmented rail, heavy highlight and blurry +.
+ * Do not change the Home sphere, dock, other page backgrounds, or handlers.
+ */
+#svWorkShell[data-shared-work="true"] #svWorkHeader{
+ padding-inline:7px!important;
+ box-sizing:border-box!important;
+ margin:0 0 8px!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTitle{
+ text-align:left!important;
+ justify-self:stretch!important;
+ font-size:clamp(25px,7vw,28px)!important;
+ font-weight:630!important;
+ letter-spacing:-.038em!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkAdd:not([hidden]){
+ box-sizing:border-box!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ border:0!important;border-radius:14px!important;
+ background:#38383A!important;
+ color:#F6F6F7!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkAdd svg{
+ width:19px!important;height:19px!important;
+ stroke-width:1.55!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs{
+ box-sizing:border-box!important;
+ width:calc(100% - 12px)!important;
+ margin:0 6px 9px!important;
+ height:45px!important;min-height:45px!important;
+ padding:3px!important;gap:3px!important;
+ border:0!important;border-radius:15px!important;
+ background:rgba(140,151,161,.075)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ transform:none!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs::before,
+#svWorkShell[data-shared-work="true"] #svWorkTabs::after{
+ content:none!important;display:none!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs button:not([hidden]){
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-width:0!important;min-height:39px!important;height:39px!important;
+ padding:0 3px!important;margin:0!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--secondary)!important;
+ font:inherit!important;font-size:11.5px!important;font-weight:530!important;
+ letter-spacing:-.015em!important;line-height:1.15!important;
+ white-space:nowrap!important;
+ transition:background-color .18s ease,color .18s ease!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs button[aria-pressed="true"]:not([hidden]){
+ background:#38383A!important;color:#F6F6F7!important;
+ font-weight:615!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs button:focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkCreateChoices:not([hidden]){
+ border:0!important;border-radius:16px!important;
+ background:#38383A!important;color:#F6F6F7!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:0 10px 28px rgba(0,0,0,.12)!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkCreateChoices > button{
+ border:0!important;border-radius:11px!important;
+ background:transparent!important;color:#F6F6F7!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkCreateChoices > button:active{
+ background:rgba(255,255,255,.10)!important;
+}
+:root[data-theme="light"] #svWorkShell[data-shared-work="true"] #svWorkTabs{
+ background:rgba(45,51,58,.07)!important;
+}
+:root[data-theme="light"] #svWorkShell[data-shared-work="true"] #svWorkTabs button:not([aria-pressed="true"]){
+ color:#616A73!important;
+}
+@media(max-width:375px){
+ #svWorkShell[data-shared-work="true"] #svWorkTabs{gap:2px!important}
+ #svWorkShell[data-shared-work="true"] #svWorkTabs button:not([hidden]){
+  font-size:clamp(10px,3vw,11.5px)!important;
+  padding-inline:1px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #svWorkShell[data-shared-work="true"] #svWorkTabs button{transition:none!important}
+}
+/* End premium flat finish. */
