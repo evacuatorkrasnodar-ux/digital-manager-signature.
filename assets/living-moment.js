@@ -253,7 +253,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   workBack.hidden=true;
   workSend.hidden=!active||workMode==='choose'||workMode==='done';
   if(active)open.hidden=workMode!=='choose';
-  execute.hidden=active;
+  if(active)execute.hidden=true;
   workDetails.replaceChildren();
   if(!active)return;
   // Source message is already visible in the headline; detail is only for composing.
@@ -581,13 +581,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const execute=polymer(real&&primary.businessTask?'Проверить':real?'Продолжить дело':'Исполнить',()=>{
   if(workActive()){updateWork();return}
   if(mailActive()){
-   if(mailStep==='draft'){mailStep='confirm';updateMail();return}
    if(mailStep==='confirm'){
-    // This is only a local scripted demo: there is no external mail acknowledgement.
-    // Close the preview after the simulated confirmation, never claim a real send.
-    mailStep='done';finishPreviewItem();return;
+    // The visible Send button is the final demo action, not a delivery receipt.
+    mailStep='sent-demo';updateMail();return;
    }
-   if(mailStep==='done'){finishPreviewItem();return}
+   return;
   }
   if(documentActive()){
    if(documentStep==='summary'){documentStep='review';updateDocument();return}
@@ -608,16 +606,15 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   finishPreviewItem();
  },'main');
- open.textContent=workActive()?'В чат':mailActive()?'В почту':documentActive()?'Открыть':'Подробнее';
+ open.textContent='Перейти';
  open.setAttribute('aria-label',workActive()?'Открыть рабочий чат Елены':mailActive()?'Открыть раздел почты':documentActive()?'Открыть документы':'Подробнее: '+shown.title);
  open.setAttribute('aria-expanded','false');
  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
  const sayviAction=polymer('✧ Сэйви',()=>{
   if(mailActive()){mailStep='confirm';updateMail();return}
   if(documentActive()){
-   // Advice is not the same action as opening the manual review.
-   explain(field,'Это учебный пример. Сэйви предлагает уточнить срок поставки и действия при задержке. «К проверке» откроет текст пункта для разбора.',sayviAction);
-   return;
+   // Show the proposed rewrite before any explicit Save action.
+   documentStep='preview';documentNote=documentDefault;updateDocument();return;
   }
   explain(field,(shown.reason||'')+' '+(shown.detail||'Сэйви поможет разобраться с этой карточкой.'),sayviAction);
  });
@@ -650,7 +647,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    }
   }finally{clearTimeout(timeout);button.disabled=false;}
  });
- const workOwn=polymer('Ответить',()=>{workMode='own';workDraft='';updateWork()});
+ const workOwn=polymer('Исправить',()=>{workMode='own';workDraft='';updateWork()});
  workSayvi.classList.add('sv-work-assistant');
  workSayvi.setAttribute('aria-label','Подготовить черновик ответа с Сэйви');
  workOwn.classList.add('sv-work-own');
@@ -669,10 +666,12 @@ function createSurface(primary,other=[],real=false,taskId=''){
   workDraft=typed;workMode='done';finishPreviewItem();
  });
  const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
- const mailSave=polymer('Сохранить',()=>{
+ const mailSave=polymer('Отправить',()=>{
   const value=mailDetails.querySelector('textarea')?.value?.trim();
-  if(!value){explain(field,'Напишите текст ответа, чтобы сохранить учебный черновик.',mailSave);return}
-  mailDraft=value.slice(0,1200);mailStep='confirm';updateMail();
+  if(!value){explain(field,'Напишите текст перед отправкой.',mailSave);return}
+  mailDraft=value.slice(0,1200);
+  mailStep='sent-demo';updateMail();
+  // No connected mailbox: visualise final Send without a false success claim.
  });
  const mailCancel=polymer('Отмена',()=>{mailStep='draft';updateMail()});
  const mailLater=polymer('Позже',()=>{
@@ -714,11 +713,21 @@ function createSurface(primary,other=[],real=false,taskId=''){
    documentAnalysis=(documentParts.length?'Проверка прервана после '+documentParts.length+' пунктов. ':'')+String(error?.message||'Не удалось разобрать документ.');
   }finally{documentAnalyzing=false;if(documentActive())updateDocument();}
  });
- const documentEdit=polymer('Исправить',()=>{documentStep='edit';updateDocument()});
+ const documentEdit=polymer('Исправить',()=>{
+  documentStep='edit';documentNote=documentSource;updateDocument();
+ });
  const documentSave=polymer('Сохранить',()=>{
   const value=documentDetails.querySelector('textarea')?.value?.trim();
-  if(!value){explain(field,'Добавьте предложение к исправлению.',documentSave);return}
-  documentNote=value.slice(0,1200);documentStep='review';updateDocument();
+  if(!value){explain(field,'Сначала введите текст документа.',documentSave);return}
+  documentNote=value.slice(0,1200);
+  try{
+   localStorage.setItem(documentDraftKey,JSON.stringify({
+    original:documentSource,proposed:documentNote,at:new Date().toISOString(),demo:true
+   }));
+   documentStep='saved';updateDocument();
+  }catch{
+   explain(field,'Не удалось сохранить учебный черновик на этом устройстве.',documentSave);
+  }
  });
  const documentCancel=polymer('Отмена',()=>{documentStep='review';updateDocument()});
  const documentLater=polymer('Позже',()=>{
@@ -735,13 +744,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
    execute.dataset.cardRole='secondary';
    return;
   }
-  sayviAction.dataset.cardRole='quiet';
-  execute.dataset.cardRole=doc&&documentStep==='review'?'secondary':'primary';
+  sayviAction.dataset.cardRole='primary';
+  execute.dataset.cardRole='secondary';
   mailEdit.dataset.cardRole='secondary';
   mailSave.dataset.cardRole=mail&&mailStep==='edit'?'primary':'secondary';
-  documentEdit.dataset.cardRole='primary';
+  documentEdit.dataset.cardRole='secondary';
   documentSave.dataset.cardRole=doc&&documentStep==='edit'?'primary':'secondary';
-  documentAnalyze.dataset.cardRole=doc&&documentStep==='review'?'primary':'secondary';
+  documentAnalyze.dataset.cardRole='secondary';
  }
  // Existing SEYVEO action hierarchy: one filled primary, one outlined
  // secondary, quiet textual Sayvi/Later. The original sizing stays in CSS.
@@ -836,7 +845,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   headline.textContent=item.title;
   description.textContent=item.body;
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
-  open.textContent=!real&&item.kind==='work'?'В чат':!real&&item.kind==='mail'?'В почту':!real&&item.kind==='contract'?'Открыть':'Подробнее';
+  open.textContent='Перейти';
   open.setAttribute('aria-label',item.kind==='work'?'Открыть рабочий чат Елены':!real&&item.kind==='mail'?'Открыть раздел почты':!real&&item.kind==='contract'?'Открыть документы':'Подробнее: '+item.title);
   execute.textContent=real&&item.businessTask?'Проверить':real?'Продолжить дело':'Исполнить';
   execute.setAttribute('aria-label',(real&&item.businessTask?'Проверить: ':real?'Продолжить дело: ':'Исполнить: ')+item.title);
@@ -845,7 +854,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   open.setAttribute('aria-expanded','false');
   execute.setAttribute('aria-expanded','false');
   mailStep='draft';
-  documentStep='summary';workMode='choose';workDraft='';
+  documentStep='summary';documentNote=documentDefault;workMode='choose';workDraft='';
   updateMail();
   updateDocument();updateWork();syncDocumentTitleTap();
   updateCount();
