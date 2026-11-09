@@ -1058,6 +1058,89 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  stroke:currentColor!important;
  stroke-width:1.5!important;
 }
+
+/* SEYVEO universal Telegram-style timestamps: one real clock inside the bubble.
+   No extra top row, text remains the only bubble text for edit/copy/reply. */
+.turn .sv-turn-bubble-wrap{
+ position:relative;
+ box-sizing:border-box;
+ min-width:0;
+}
+.turn[data-role="user"] .sv-turn-bubble-wrap{
+ align-self:flex-end;
+ width:max-content;
+ max-width:min(85%,520px);
+}
+.turn[data-role="assistant"] .sv-turn-bubble-wrap{
+ align-self:stretch;
+ width:100%;
+ max-width:100%;
+}
+.turn .sv-turn-bubble-wrap > .bubble{
+ box-sizing:border-box;
+ max-width:100%!important;
+ min-width:0;
+}
+.turn[data-role="user"] .sv-turn-bubble-wrap > .bubble{
+ width:100%;
+}
+.turn .sv-turn-bubble-wrap.sv-has-stamp > .bubble{
+ padding-bottom:23px!important;
+}
+.turn .sv-turn-time{
+ position:absolute;
+ right:9px;
+ bottom:5px;
+ z-index:2;
+ display:inline-flex;
+ justify-content:flex-end;
+ align-items:center;
+ gap:4px;
+ margin:0;
+ padding:0;
+ font:500 10px/13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ font-variant-numeric:tabular-nums;
+ color:var(--sayvi-secondary);
+ white-space:nowrap;
+ pointer-events:none;
+}
+.turn .sv-turn-clock{
+ color:inherit;
+ font:inherit;
+}
+.turn .sv-turn-local-check{
+ color:inherit;
+ font:650 11px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+/* When a user sends only files or photos, the clock lives at the bottom-right
+   of the attachment itself. It never creates a blank bubble above the file. */
+.turn[data-role="user"].sv-clock-on-attachment .sv-turn-bubble-wrap{
+ display:none!important;
+}
+.turn[data-role="user"].sv-clock-on-attachment .sv-sent-files,
+.turn[data-role="user"].sv-clock-on-attachment .sv-sent-images{
+ position:relative;
+}
+.turn[data-role="user"].sv-clock-on-attachment .sv-sent-files > .sv-sent-file:last-of-type{
+ padding-bottom:23px;
+ min-height:68px;
+}
+.turn[data-role="user"].sv-clock-on-attachment .sv-sent-files > .sv-turn-time,
+.turn[data-role="user"].sv-clock-on-attachment .sv-sent-images > .sv-turn-time{
+ right:8px;
+ bottom:5px;
+ color:var(--sayvi-secondary);
+}
+.turn[data-role="user"].sv-clock-on-attachment .sv-sent-images > .sv-turn-time{
+ border-radius:11px;
+ padding:2px 5px;
+ background:rgba(24,26,29,.70);
+ color:#F7F7F8;
+}
+:root[data-theme="light"] .turn[data-role="user"] .sv-turn-time{
+ color:#585A60;
+}
+
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=1">
 <link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=4">
@@ -2300,6 +2383,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
    const at=typeof recordedTime==='number'&&Number.isFinite(recordedTime)&&recordedTime>0
     ?recordedTime:(id.startsWith('loaded-')?null:Date.now());
    if(at){
+    wrap.classList.add('sv-has-stamp');
     turn.dataset.createdAt=String(at);
     const clock=document.createElement('span');clock.className='sv-turn-time';
     const time=document.createElement('time');time.className='sv-turn-clock';
