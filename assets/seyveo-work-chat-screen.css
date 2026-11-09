@@ -4131,24 +4131,22 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 
 
-/* SEYVEO Messages · actions in the chat flow, never a three-dot popup.
-   A 34px hit target is intentionally compact to fit iPhone 10; labels remain
-   available to assistive technology and on desktop hover. */
+/* SEYVEO messages: three visible actions only — Reply, Bookmark, Assign.
+   The other actions live in a deliberate flat-graphite long-press menu. */
 #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-has-inline-actions{
- margin-bottom:39px!important;
+ margin-bottom:46px!important;
+ -webkit-touch-callout:none!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-bubble .svcp-message-inline-actions{
- position:absolute!important;
- top:calc(100% + 3px)!important;bottom:auto!important;
+ position:absolute!important;top:calc(100% + 3px)!important;bottom:auto!important;
  left:0!important;right:auto!important;z-index:4!important;
  box-sizing:border-box!important;
  display:flex!important;align-items:center!important;justify-content:flex-start!important;
- gap:2px!important;
- width:max-content!important;max-width:calc(100vw - 28px)!important;
- min-height:34px!important;height:34px!important;
+ gap:4px!important;width:max-content!important;max-width:calc(100vw - 28px)!important;
+ height:40px!important;min-height:40px!important;
  margin:0!important;padding:0!important;
- background:transparent!important;background-image:none!important;
- border:0!important;border-radius:0!important;box-shadow:none!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  overflow:visible!important;
 }
@@ -4157,38 +4155,81 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-icon-action{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- flex:0 0 34px!important;width:34px!important;min-width:34px!important;
- height:34px!important;min-height:34px!important;
- padding:7px!important;margin:0!important;
- border:0!important;border-radius:10px!important;
+ flex:0 0 40px!important;width:40px!important;min-width:40px!important;
+ height:40px!important;min-height:40px!important;
+ margin:0!important;padding:10px!important;
+ border:0!important;border-radius:11px!important;
  background:transparent!important;background-image:none!important;
- box-shadow:none!important;color:var(--secondary)!important;
+ color:var(--secondary)!important;box-shadow:none!important;
  cursor:pointer!important;-webkit-tap-highlight-color:transparent!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-icon-action svg{
- box-sizing:border-box!important;display:block!important;
- width:19px!important;height:19px!important;
- fill:none!important;stroke:currentColor!important;
- stroke-width:1.45!important;stroke-linecap:round!important;
- stroke-linejoin:round!important;filter:none!important;
+ box-sizing:border-box!important;display:block!important;width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;filter:none!important;
 }
-#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-action-award{
- color:#D7AE62!important;
+#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-action-star.is-saved{
+ color:#F1F1F3!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-action-star.is-saved svg{
  fill:currentColor!important;
 }
-#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-icon-action:active{
- background:rgba(180,185,192,.12)!important;
+#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-icon-action:is(:active,:focus-visible){
+ background:rgba(180,185,192,.13)!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-icon-action:focus-visible{
  outline:2px solid currentColor!important;outline-offset:-2px!important;
 }
-/* Even under narrow single-word bubbles, do not squeeze or wrap the actions. */
 #svcpWorkChatScreen[data-view="room"] .svcp-bubble.svcp-has-inline-actions{
  overflow:visible!important;
 }
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-bubble.svcp-has-inline-actions:focus-visible{
+ outline:1px solid rgba(211,213,219,.55)!important;
+ outline-offset:2px!important;
+}
 
+/* One compact keyboard-, pointer- and touch-accessible context menu.
+   It is attached to the fullscreen chat, not to a clipped message bubble. */
+#svcpWorkChatScreen .svcp-message-context-menu{
+ box-sizing:border-box!important;
+ position:absolute!important;z-index:500!important;
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ align-content:start!important;gap:2px!important;
+ width:204px!important;max-width:calc(100vw - 20px)!important;
+ padding:5px!important;margin:0!important;
+ border:1px solid rgba(241,241,243,.07)!important;
+ border-radius:15px!important;
+ background:#38383A!important;background-image:none!important;
+ box-shadow:0 10px 22px rgba(0,0,0,.24)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svcpWorkChatScreen .svcp-message-context-menu > .svcp-message-context-action{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ justify-content:flex-start!important;gap:11px!important;
+ width:100%!important;min-width:0!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0 10px!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#F5F5F7!important;text-align:left!important;
+ font:500 13px/18px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+#svcpWorkChatScreen .svcp-message-context-menu > .svcp-message-context-action svg{
+ box-sizing:border-box!important;display:block!important;
+ flex:0 0 19px!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.5!important;stroke-linejoin:round!important;stroke-linecap:round!important;
+}
+#svcpWorkChatScreen .svcp-message-context-menu > .svcp-message-context-action:active,
+#svcpWorkChatScreen .svcp-message-context-menu > .svcp-message-context-action:focus-visible{
+ background:#515153!important;
+}
+#svcpWorkChatScreen .svcp-message-context-menu > .svcp-action-delete{
+ color:#FFCBCB!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen .svcp-message-context-menu{
+ background:#38383A!important;
+}
 /* SEYVEO 2026-11-09: Sayvi is accessed from the composer, never duplicated in the room header. */
 #svcpWorkChatScreen[data-view="room"] .svcp-conversation-bar > #svcpCallSayvi{
  display:none!important;
