@@ -657,3 +657,43 @@
 .sv-card-preferences-footer button:disabled{opacity:.45}
 .sv-card-preferences-empty{font-size:13px;color:var(--secondary)}
 @media(prefers-reduced-motion:reduce){.sv-card-context{animation:none}}
+
+/* SEYVEO PREMIUM GRAPHITE · final approved material #38383A.
+   One calm graphite tone for primary action and long-hold menu in all themes.
+   No lens, embossed shadow, gradients or decorative frames. */
+:root,
+:root[data-theme="light"],
+:root[data-theme="dark"],
+#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme]{
+ --sv-card-action-material:#38383A;
+ --sv-card-action-pressed:#48484B;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action[data-card-role="primary"],
+#seyveoCardStudio .scs-phone .sv-card-actions .sv-card-action[data-card-role="primary"],
+#seyveoCardStudio .scs-gallery-item .sv-card-actions .sv-card-action[data-card-role="primary"]{
+ color:#F6F6F7!important;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action[data-card-role="primary"]::before{
+ background:#38383A!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]){
+ color:#F6F6F7!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden])::before{
+ background:#38383A!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] .sv-card-context,
+#seyveoCardStudio [data-preview-theme="light"] .sv-card-context,
+.sv-card-context{
+ background:#38383A!important;color:#F6F6F7!important;
+ border:1px solid rgba(255,255,255,.13)!important;
+ box-shadow:0 10px 28px rgba(0,0,0,.14)!important;
+}
+.sv-card-context-item{
+ color:#F6F6F7!important;
+}
+.sv-card-context-item:active{background:rgba(255,255,255,.10)!important}
