@@ -2,6 +2,14 @@
    Native input values and calendar saving remain the single source of truth. */
 (()=>{
 'use strict';
+// Phone navigation is device-specific, never based on a narrow Windows window.
+const ua=navigator.userAgent||'';
+const phoneNavigation=Boolean(navigator.userAgentData?.mobile)
+ || /iPhone|iPod|Windows Phone/i.test(ua)
+ || /Android[^)]*Mobile/i.test(ua)
+ || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1
+     && Math.min(screen.width,screen.height)<700);
+document.documentElement.classList.toggle('sv-phone-navigation',phoneNavigation);
 const $=id=>document.getElementById(id);
 const dialog=$('calendarEventDialog'),date=$('calendarEventDate'),time=$('calendarEventTime');
 const dateControl=date?.closest('.cal-date-control'),timeControl=time?.closest('.cal-time-control');
