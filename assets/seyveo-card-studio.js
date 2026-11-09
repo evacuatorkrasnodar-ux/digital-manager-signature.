@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Эталон Елены: значок + заголовок + краткое описание; одна кнопка #38383A, максимум два текстовых действия. Свайп в любую сторону перелистывает очередь; одна карточка или полный круг — пауза на час. Удаление и скрытие похожих — только удержанием. Вернуть можно в Управлении. Если совет Сэйви уже виден, не дублировать его кнопкой.';
+policyGuide.textContent='Единый стандарт: Сэйви → просмотр варианта → Отправить/Сохранить; Исправить → ручная правка → Отправить/Сохранить; Перейти → исходный раздел. Все три кнопки видны на начальной карточке. Премиальный тёмный графит #38383A. Свайпы листают очередь, удержание управляет скрытием.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
@@ -88,7 +88,10 @@ function renderGallery(){
     if(note)note.textContent='Карточка перемещена в конец очереди. Источник сохранён.';
     return;
    }
-   if(note)note.textContent='Действие «'+(engine.actionLabels[id]||id)+'» показано только в мастерской.';
+   if(note)note.textContent=id==='confirm-preview'?'Финальное подтверждение показано · в демо реальной отправки нет.':
+      id==='sayvi'?'Предложение Сэйви открыто. Проверьте и нажмите Отправить/Сохранить.':
+      id==='edit'?'Редактор открыт. После правки нажмите Отправить/Сохранить.':
+      id==='navigate'?'Показан переход к исходному разделу.':'Только демонстрация.';
   }});
   const label=document.createElement('p');label.className='scs-gallery-name';
   label.textContent=(index+1)+' / '+entries.length+' · '+event[0];
@@ -98,7 +101,7 @@ function renderGallery(){
  }
  policyAudit.textContent=errors.length
   ?'Проверка стандарта: исправить '+errors.join(', ')
-  :'Стандарт проверен: '+tested+' типов · 1 графитовая кнопка · до 2 текстовых · свайпы в обе стороны и меню удержания проверены';
+  :'Стандарт проверен: '+tested+' типов · Сэйви / Исправить / Перейти → Отправить или Сохранить · #38383A';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
@@ -161,8 +164,11 @@ function render(){
     studioAction.textContent='Одна карточка · пауза на час. Источник не удалён. Выберите другое семейство для нового предпросмотра.';
     return;
    }
-   studioAction.textContent='Выбрано действие: '+(engine.actionLabels[id]||id)+
-    ' · Только демонстрация, ничего не выполнено.';
+   studioAction.textContent=id==='confirm-preview'?'Финальное подтверждение нажато · реальные отправка и сохранение отключены.':
+      id==='sayvi'?'Сэйви готовит предложение. Для проверки видна финальная кнопка.':
+      id==='edit'?'Человек исправляет текст. Для проверки видна финальная кнопка.':
+      id==='navigate'?'Показан переход, реальные данные Мастерская не открывает.':
+      'Выбрано '+(engine.actionLabels[id]||id)+' · только демо.';
   }});
   surface.dataset.cardState=statesMap[stage];
   const stateInfo=document.createElement('div');
