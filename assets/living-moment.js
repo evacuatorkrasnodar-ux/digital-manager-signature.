@@ -14,7 +14,8 @@ const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:redu
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
 // Restore the original rising three-card introduction when no real item needs attention.
-let previewArmed=true,previewSeen=false,previewRearmAt=0;
+const previewArmed=false;
+let previewSeen=true,previewRearmAt=0;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
  timers.push(id);return id;
@@ -127,29 +128,9 @@ function notifyDeferred(){
 }
 function setMailDeferred(value){mailDeferred=!!value;notifyDeferred()}
 function setDocumentDeferred(value){documentDeferred=!!value;notifyDeferred()}
-function deferredPreview(){
- const result=[];
- if(mailDeferred)result.push({
-  kind:'mail',title:'Андрей · стоимость доставки',
-  note:'Учебное письмо отложено. Настоящее сообщение не отправлялось.',
-  route:'mail'
- });
- if(documentDeferred)result.push({
-  kind:'contract',title:'Учебный договор · проверить условия',
-  note:'Учебный документ отложен. Настоящие файлы не изменены.',
-  route:'contract'
- });
- return result;
-}
-function restorePreview(kind){
- if(kind==='mail'&&!mailDeferred||kind==='contract'&&!documentDeferred)return false;
- if(kind==='mail')setMailDeferred(false);
- else if(kind==='contract')setDocumentDeferred(false);
- else return false;
- $('navHome')?.click();
- window.setTimeout(()=>window.SEYVEO_LIVING_MOMENT?.preview?.(),180);
- return true;
-}
+// Retired training mail, contract and warning cards do not enter Home history.
+function deferredPreview(){return []}
+function restorePreview(){return false}
 function restoreTask(id){
  if(typeof id!=='string'||!postponedTaskIds.has(id))return false;
  postponedTaskIds.delete(id);
@@ -161,15 +142,8 @@ function restoreTask(id){
  scheduleRefresh();
  return true;
 }
-const sample=[
- {kind:'contract',title:'Проверить документ',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
-  reason:'Это вымышленный договор для предпросмотра. Настоящий появляется только из ваших документов или разрешённого источника.',
-  detail:'В рабочем режиме Сэйви поможет проверить договор, но ничего не подпишет без вашего подтверждения.'},
- {kind:'work',title:'Елена · рабочий чат',category:'СООБЩЕНИЯ',body:'Я закончила выкладку товаров. Можете проверить?',reason:'Учебное сообщение от Елены, не из реального рабочего чата.',detail:'Сэйви может предложить черновик. Отправка не подключена.'},
- {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Есть письмо, которому нужен ответ.',
-  reason:'Почта не подключена, настоящих писем Сэйви пока не читала.',
-  detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'}
-];
+// Training scenarios are accessible in the developer Card Studio only.
+const sample=[];
 function polymer(label,callback,kind='quiet'){
  const b=create('button','lm-polymer lm-polymer--'+kind,label);
  b.type='button';b.addEventListener('click',event=>{event.stopPropagation();readingUntil=Date.now()+15000;callback(b)});
@@ -1124,33 +1098,8 @@ function hold(callback,delay){
  };
  later(check,delay);
 }
-function startPreview(){
- // When the stylesheet cannot load, do not show huge unstyled SVGs and default gray buttons.
- if(typeof window.getComputedStyle==='function' &&
-    window.getComputedStyle(space).getPropertyValue('--lm-design-ready').trim()!=='1'){
-  console.warn('SEYVEO Quiet Cinema: CSS missing; preserving normal Home.');
-  return false;
- }
- if(!available()||editing()||dueTasks().length||dynamic.querySelector('[data-owner-advice]'))return false;
- if(mode!=='idle')rest();
- mode='preview';key='preview';previewSeen=true;
- dynamic.hidden=true;
- if(!buildExamples()){previewSeen=true;rest();return false}
- tip.textContent='';
- space.hidden=false;space.classList.add('lm-preview');
- focus(true);
- // Determine the actual entry distance for each screen, including iPhone X.
- // Only transforms move during the sequence: no absolute overlays or clones.
- const targetBottom=window.visualViewport?.height||window.innerHeight;
- const relativeTop=space.getBoundingClientRect().top;
- const distance=Math.max(320,Math.min(1100,targetBottom-relativeTop+100));
- space.style.setProperty('--lm-rise-distance',distance+'px');
- later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
- // Each of the three independent cards rises from below the screen.
- // After their arrival, they join a SINGLE card that remains readable.
- hold(()=>gatherPreview(),(reduced()?0:4700)+TIMING.open);
- return true;
-}
+// No automatic or manually forced fictional cards in the live Home.
+function startPreview(){return false}
 /* Defer an evening heads-up for this calendar day only.
  * Tomorrow's ACTUAL due task must still appear on its due date. */
 const PREPARATION_DEFER_KEY='seyveo-home-preparation-deferred-v1';
@@ -1173,15 +1122,9 @@ function restorePreparation(id){
  try{localStorage.setItem(PREPARATION_DEFER_KEY,JSON.stringify({day:localDay(),ids}))}catch{}
 }
 function dueTasks(includeUpcoming=false){
- let tasks=[];
- if(window.SEYVEO_PREVIEW?.isEmployee?.()!==true){
-  try{
-   const work=JSON.parse(localStorage.getItem('seyveo-business-command-tasks-demo-v1')||'[]');
-   const reviews=Array.isArray(work)?work.filter(t=>window.SEYVEO_REVIEW_RULES?.shouldShowManagerReview(t)===true):[];
-   const people={elena:'Елена',anna:'Анна',mikhail:'Михаил'};
-   tasks=reviews.slice(0,3).map(t=>({eventId:'mail-review:'+t.id,taskId:t.id,businessTask:true,kind:'task',title:'Проверить результат поручения',body:(people[t.assigneeId]||'Сотрудник')+' передал результат. Требуется решение руководителя.',category:'SEYVEO · BUSINESS MAIL',reason:'Поручение ожидает решения руководителя.',detail:'Откройте поручение, чтобы принять результат или вернуть на доработку.'}));
-  }catch{}
- }
+ // Never turn the local BUSINESS DEMO database into Home notifications.
+ // Genuine personal deadlines below are still eligible for attention.
+ const tasks=[];
  // The shared reader owns selection of personal deadlines. The existing
  // Living Moment remains the one-and-only Home presentation/decision surface.
  const personal=window.SEYVEO_LIFE_EVENTS?.attentionTasks?.()||[];
@@ -1507,7 +1450,6 @@ function showExistingAdvice(){
  return true;
 }
 function refresh(){
- if(previewRearmAt&&Date.now()>=previewRearmAt){previewSeen=false;previewRearmAt=0}
  if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
  // Let the existing iOS-style outgoing animation finish before queue re-render.
  if(space.classList.contains('lm-disappear')||tiles.querySelector('.lm-scene--changing'))return;
@@ -1553,7 +1495,7 @@ function refresh(){
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
  // Restore the owner's approved three-card introduction before optional calendar previews.
  // Active personal deadlines and manager decisions above always retain priority.
- if(previewArmed&&!previewSeen&&!pending&&available()&&startPreview())return;
+ // No synthetic tutorial card is ever inserted into the live queue.
  const nextEvent=upcomingCalendar()[0];
  if(!pending&&nextEvent&&available()&&showCalendar(nextEvent))return;
  const discovery=window.SEYVEO_DISCOVERY?.current?.();
@@ -1588,16 +1530,14 @@ window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:card-visibility-changed',scheduleRefresh);
 window.addEventListener('seyveo:card-snoozes-changed',()=>{
  // When the user restores paused cards manually, restore the demo queue too.
- if(!(window.SEYVEO_CARD_ENGINE?.getSnoozes?.()||[]).length){
-  previewRearmAt=0;previewSeen=false;
- }
+ // Restoring snoozed real cards cannot revive deleted training previews.
  scheduleRefresh();
 });
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
  // The original intro can be replayed on revisiting Home, but real cards take priority.
- if(!location.hash||location.hash==='#home')previewSeen=false;
+ // Revisiting Home never restarts old training notices.
  if(mode!=='idle')rest();
  else focus(false);
  // Sync after the main router updates Home visibility.
@@ -1628,7 +1568,7 @@ dynamic.addEventListener('click',event=>{
  button.textContent=reason.hidden?'Почему':'Скрыть';
 },true);
 window.SEYVEO_LIVING_MOMENT=Object.freeze({
- preview:()=>startPreview(),state:()=>mode,
+ preview:()=>false,state:()=>mode,
  inspectReview:id=>({queued:dueTasks().some(t=>t.businessTask&&t.taskId===id),visible:mode==='task'&&key==='mail-review:'+id&&!space.hidden}),
  deferred:()=>deferredPreview(),
  deferredTaskIds:()=>Array.from(postponedTaskIds),
