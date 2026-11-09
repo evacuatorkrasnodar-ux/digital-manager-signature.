@@ -1268,9 +1268,13 @@ html body #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick > button{
 html body #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick > button:active{
  background:rgba(178,192,202,.11)!important;
 }
-@media(max-width:767px) and (pointer:coarse){
- #personalTaskDialog #seyveoTaskDuePicker .cal-pick-arrows{display:none!important}
- #personalTaskDialog #seyveoTaskDuePicker .cal-pick-days{touch-action:pan-y!important}
+/* On physical phones remove month chevrons entirely. Windows retains them
+   even when its browser window is as narrow as an iPhone. */
+html.sv-phone-navigation #personalTaskDialog #seyveoTaskDuePicker .cal-pick-arrows{
+ display:none!important
+}
+html.sv-phone-navigation #personalTaskDialog #seyveoTaskDuePicker .cal-pick-days{
+ touch-action:pan-y!important
 }
 :root[data-theme=light] body #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
  border-color:rgba(33,48,57,.42)!important;background:rgba(33,48,57,.08)!important;
