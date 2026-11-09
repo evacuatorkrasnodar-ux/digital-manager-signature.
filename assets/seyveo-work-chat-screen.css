@@ -5063,3 +5063,106 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-document-only .svcp-file-card-open{
  touch-action:manipulation!important;-webkit-touch-callout:none!important;
 }
+
+
+/* SEYVEO / unified chat clock: always bottom-right INSIDE the surface.
+   Applies to private, group, Sayvi/team, quotes, assignments, voice and media.
+   File-only cards and standalone emoji keep their own bottom-corner stamps. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp{
+ position:relative!important;
+ display:block!important;
+ box-sizing:border-box!important;
+ margin-top:0!important;
+ padding:8px 11px 23px!important;
+ min-height:35px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp > .svcp-message-stamp{
+ display:flex!important;
+ position:absolute!important;
+ right:9px!important;
+ bottom:5px!important;
+ left:auto!important;
+ top:auto!important;
+ z-index:2!important;
+ align-items:center!important;
+ justify-content:flex-end!important;
+ gap:4px!important;
+ padding:0!important;
+ margin:0!important;
+ color:#C6C6CB!important;
+ background:none!important;
+ pointer-events:none!important;
+ white-space:nowrap!important;
+ font-variant-numeric:tabular-nums!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp > .svcp-message-stamp > .svcp-time{
+ display:inline!important;
+ position:static!important;
+ top:auto!important;
+ left:auto!important;
+ right:auto!important;
+ bottom:auto!important;
+ flex:0 0 auto!important;
+ font:500 10px/13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:inherit!important;
+ margin:0!important;
+ padding:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-message-local-check{
+ flex:0 0 auto!important;
+ font:650 11px/12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#D1D2D7!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.svcp-bottom-stamp:not(.svcp-task-inline-label):not(.is-sayvi) > .svcp-bubble-meta{
+ display:none!important;
+ height:0!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+}
+/* Group rooms still need the author and task type at the top. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp > .svcp-bubble-meta{
+ padding-right:0!important;
+ margin:0 0 3px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp.is-short-text{
+ width:max-content!important;
+ min-width:79px!important;
+ display:block!important;
+ padding:7px 65px 7px 10px!important;
+ min-height:34px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp.is-short-text > .svcp-message-stamp{
+ bottom:7px!important;right:8px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp.svcp-has-quote-time{
+ padding-top:8px!important;
+ padding-bottom:23px!important;
+}
+/* Captioned documents use the real time on their file card and never repeat it. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-status{
+ position:absolute!important;
+ right:9px!important;
+ bottom:6px!important;
+ top:auto!important;
+ left:auto!important;
+ display:flex!important;
+ align-items:center!important;
+ gap:4px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-status > .svcp-time{
+ position:static!important;
+ font:500 10px/12px system-ui,sans-serif!important;
+ color:#C3C4C8!important;
+ margin:0!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"]
+ #svcpMessages > .svcp-bubble.svcp-bottom-stamp > .svcp-message-stamp,
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"]
+ #svcpMessages > .svcp-bubble.svcp-bottom-stamp > .svcp-message-stamp > .svcp-time{
+ color:#6E6E75!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-message-local-check{
+ color:#777781!important;
+}
