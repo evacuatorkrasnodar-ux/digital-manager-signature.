@@ -603,11 +603,22 @@ function syncDueDateDisplay(){
  control.dataset.filled=String(label!=='Выбрать дату');
 }
 for(const eventName of ['input','change','blur'])date.addEventListener(eventName,syncDueDateDisplay);
+/* Save becomes available only when a title exists. Keep the same visual
+   button geometry and the original submit validation/persistence path. */
+const taskSaveButton=$('personalTaskSave');
+function syncTaskSaveState(){
+ if(!taskSaveButton)return;
+ const filled=Boolean(input.value.trim());
+ taskSaveButton.disabled=!filled;
+ taskSaveButton.setAttribute('aria-disabled',String(!filled));
+ taskSaveButton.title=filled?(editingTaskId?'Сохранить изменения':'Сохранить дело'):'Сначала напишите название дела';
+}
+input.addEventListener('input',syncTaskSaveState);
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';
  $('personalTaskDialogTitle').textContent='Новое дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить дело');$('personalTaskSave').title='Сохранить дело';
- form.reset();syncDueDateDisplay();$('personalTaskStatus').textContent='';
+ form.reset();syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
  input.focus({preventScroll:true});
@@ -676,7 +687,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  editingTaskId=id;
  $('personalTaskDialogTitle').textContent='Изменить дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить изменения');$('personalTaskSave').title='Сохранить изменения';
- input.value=task.title;
+ input.value=task.title;syncTaskSaveState();
  date.value=task.due;
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='Изменения сохраняются только после вашего подтверждения.';
@@ -784,7 +795,7 @@ list.addEventListener('click',e=>{
   if(!suggestion){justCompletedTaskId='';render();showTaskError('Следующее поручение уже создано или исходная заметка изменилась.');return;}
   justCompletedTaskId='';
   openDialog();
-  input.value=suggestion.title;
+  input.value=suggestion.title;syncTaskSaveState();
   pendingSourceNoteId=suggestion.sourceNoteId;
   date.value='';syncDueDateDisplay();
   $('personalTaskStatus').textContent='Из исходной заметки. Проверьте текст и укажите срок, если он нужен. Сохранение — только по вашему решению.';
@@ -813,7 +824,7 @@ window.addEventListener('seyveo:task-plan-note',event=>{
  const title=typeof draft.title==='string'?draft.title.trim().replace(/\s+/g,' ').slice(0,140):'';
  if(!title)return;
  openDialog();
- input.value=title;
+ input.value=title;syncTaskSaveState();
  pendingSourceNoteId=safeNoteId(draft.sourceNoteId);
  const requested=typeof draft.date==='string'?draft.date:'';
  if(strDate(requested))date.value=requested;
