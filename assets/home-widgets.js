@@ -226,7 +226,9 @@ function cardAction(id){
   return;
  }
  if(id==='operations'){
-  $('pictureOperations')?.scrollIntoView({behavior:'smooth',block:'center'});
+  const tools=$('pictureDataTools');
+  if(tools)tools.open=true;
+  requestAnimationFrame(()=>$('pictureOperations')?.scrollIntoView({behavior:'smooth',block:'start'}));
   return;
  }
  detail(id);
