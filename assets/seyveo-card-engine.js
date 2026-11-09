@@ -342,6 +342,9 @@
   const caption=document.createElement('span');caption.className='sv-card-icon-caption';
   caption.textContent=cardIconLabels[kind];
   button.replaceChildren(svg,caption);
+  // Living Moment's old Sayvi SVG and masked ::before are obsolete once
+  // the single canonical action glyph is installed. Never paint both.
+  if(kind==='sayvi')button.classList.remove('sv-sayvi-label');
   button.dataset.svCardIcon=kind;
   if(!button.getAttribute?.('aria-label'))button.setAttribute('aria-label',cardIconLabels[kind]);
   button.setAttribute('title',cardIconLabels[kind]);
