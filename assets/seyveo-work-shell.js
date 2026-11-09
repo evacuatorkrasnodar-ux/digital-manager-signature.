@@ -135,9 +135,13 @@
  businessCreate.setAttribute('role','group');
  businessCreate.setAttribute('aria-label','Действия кабинета');
  const newNoteChoice=document.createElement('button');
- newNoteChoice.type='button';newNoteChoice.textContent='Новая заметка';
+ newNoteChoice.type='button';
+ newNoteChoice.setAttribute('aria-label','Новая заметка');
+ newNoteChoice.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3.5h8l4 4V20H6z"/><path d="M14 3.5V8h4"/><path d="m9 16 4.3-4.3 2 2L11 18l-2 .5z"/></svg><span>Новая заметка</span>';
  const cabinetChoice=document.createElement('button');
- cabinetChoice.type='button';cabinetChoice.textContent='Настроить кабинет';
+ cabinetChoice.type='button';
+ cabinetChoice.setAttribute('aria-label','Настроить кабинет');
+ cabinetChoice.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 6h17M3.5 12h17M3.5 18h17"/><circle cx="9" cy="6" r="2.1"/><circle cx="15" cy="12" r="2.1"/><circle cx="10" cy="18" r="2.1"/></svg><span>Настроить кабинет</span>';
  businessCreate.append(newNoteChoice,cabinetChoice);
  shell.append(businessCreate);
  function closeBusinessCreate(){
