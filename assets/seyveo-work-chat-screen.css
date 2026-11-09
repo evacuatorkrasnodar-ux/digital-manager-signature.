@@ -4241,26 +4241,57 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  font-size:17px!important;
 }
 
-/* SEYVEO · 2026-11-09 · clean personal conversation header.
-   One back control + text title. The participant avatar is visible in the
-   chat directory/profile, not duplicated as a second header circle.
-   Keep all content and accessibility labels intact. */
-#svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-conversation-bar{
+/* SEYVEO · 2026-11-09: single continuous, borderless room surface.
+   A shared top fade belongs to the entire conversation, never a header card.
+   Eliminate the inherited rounded rectangular frame on all chat ancestors. */
+#svcpWorkChatScreen[data-view="room"],
+#svcpWorkChatScreen[data-view="room"] #svcpWorkChatCanvas,
+#svcpWorkChatScreen[data-view="room"] #unifiedTasksChatHost,
+#svcpWorkChatScreen[data-view="room"] #svcpChats,
+#svcpWorkChatScreen[data-view="room"] #svcpConversation{
+ border:0!important;
+ border-radius:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation{
  position:relative!important;
+ background:transparent!important;
+ background-image:none!important;
  isolation:isolate!important;
- z-index:2!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation::before{
+ content:""!important;
+ display:block!important;
+ pointer-events:none!important;
+ position:absolute!important;
+ left:0!important;right:0!important;top:0!important;
+ height:106px!important;
+ z-index:0!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ background:linear-gradient(to bottom,rgba(56,56,58,.22) 0%,rgba(56,56,58,.11) 40%,rgba(56,56,58,.035) 74%,transparent 100%)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-conversation-bar{
+ position:relative!important;
+ z-index:1!important;
+ isolation:auto!important;
+ display:flex!important;
  gap:12px!important;
  border:0!important;
+ border-radius:0!important;
+ outline:0!important;
  box-shadow:none!important;
- background:linear-gradient(180deg,rgba(56,56,58,.20),rgba(56,56,58,.075) 78%,transparent)!important;
+ background:transparent!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
 }
-#svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-conversation-bar::after{
- content:""!important;
- position:absolute!important;
- left:0!important;right:0!important;bottom:-20px!important;
- height:20px!important;
- pointer-events:none!important;
- background:linear-gradient(180deg,rgba(56,56,58,.075),transparent)!important;
+#svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-conversation-bar::before,
+#svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-conversation-bar::after{
+ content:none!important;
+ display:none!important;
 }
 #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvatar{
  display:none!important;
@@ -4281,11 +4312,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  padding-inline:0!important;
 }
 @keyframes svcpRoomEntrance{
- from{opacity:.68;transform:translateY(4px)}
+ from{opacity:.7;transform:translateY(6px)}
  to{opacity:1;transform:translateY(0)}
 }
 #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([hidden]){
- animation:svcpRoomEntrance .20s cubic-bezier(.20,.75,.28,1) both;
+ animation:svcpRoomEntrance .28s cubic-bezier(.2,.75,.25,1) both;
 }
 @media(prefers-reduced-motion:reduce){
  #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([hidden]){
