@@ -35,6 +35,8 @@
   'music.release_verified':'music'
  });
  const actionLabels=Object.freeze({
+   sayvi:'Сэйви',edit:'Исправить',navigate:'Перейти',
+   'confirm-preview':'Подтвердить',
   reply:'Ответить','open-chat':'В чат',later:'Позже',
   'review-draft':'Проверить черновик','open-mail':'В почту',
   review:'Проверить','open-document':'В документы','open-task':'В дела',
@@ -59,28 +61,18 @@
   preserveDistinctAssistantActions:true
  });
  const redundantAdviceActions=new Set(cardPolicy.redundantAdviceActions);
+ // All future cards are governed by one action order, irrespective of
+ // legacy source events. Navigation and editing never imply auto-execution.
  function visibleActions(card){
-  if(!Array.isArray(card?.actions))return [];
-  const adviceVisible=typeof card.suggestion==='string'&&card.suggestion.trim().length>0;
-  const seen=new Set();
-  return card.actions.filter(id=>{
-   if(typeof id!=='string'||seen.has(id))return false;
-   seen.add(id);
-   if(id==='later'||id==='not-interested')return false; // swipe/hold own visibility controls, never a button
-   if(adviceVisible&&redundantAdviceActions.has(id))return false;
-   return true;
-  }).slice(0,cardPolicy.visibleActionLimit);
+  if(!card||!Array.isArray(card.actions))return [];
+  return ['sayvi','edit','navigate'];
  }
- // Semantic action roles are the single Studio/Home visual contract.
- // Only a meaningful alternative is secondary. Navigation and defer stay text.
- const quietActions=new Set(['later','not-interested']);
- function actionRole(id,index){
-  if(quietActions.has(id))return 'quiet';
-  if(index===0)return 'primary';
-  if(id.startsWith('open-'))return 'navigation';
+ function actionRole(id){
+  if(id==='sayvi')return 'primary';
+  if(id==='navigate')return 'navigation';
   return 'secondary';
  }
-  const confirmActions=new Set(['reply','review-payment','request-photo','review-recognition','review-document']);
+  const confirmActions=new Set(['confirm-preview']);
  const trim=(v,max)=>typeof v==='string'?v.trim().slice(0,max):'';
  const owns=(obj,key)=>Object.prototype.hasOwnProperty.call(obj,key);
  const safety=Object.freeze({
@@ -372,12 +364,50 @@ const el=(tag,klass,content)=>{
    actions.append(button);
   }
   article.append(actions);
+  // The draft preview is available to developers in Studio and to consumers
+  // of this renderer, but confirmation cannot send or sign anything itself.
+  const draftPane=el('div','sv-card-draft-preview');
+  draftPane.hidden=true;
+  draftPane.setAttribute('aria-live','polite');
+  const draftTitle=el('p','sv-card-draft-title');
+  const draftInput=el('textarea','sv-card-draft-input');
+  draftInput.rows=4;draftInput.maxLength=1200;
+  const draftHint=el('p','sv-card-draft-hint');
+  const draftSend=el('button','sv-card-draft-confirm');
+  draftSend.type='button';
+  const draftStatus=el('p','sv-card-draft-status');
+  draftPane.append(draftTitle,draftInput,draftHint,draftSend,draftStatus);
+  article.append(draftPane);
+  const sendLabel=family=>['message','mail','employee','shelf'].includes(family)?'Отправить':
+   ['document','secureFlow'].includes(family)?'Сохранить':'Подтвердить';
+  const showDraft=(editable)=>{
+   draftPane.hidden=false;actions.hidden=true;
+   draftTitle.textContent=editable?'Исправить самостоятельно':'Предложение Сэйви · проверьте перед подтверждением';
+   draftInput.value=card.suggestion||card.fact||'';
+   draftInput.readOnly=!editable;
+   draftHint.textContent='Демо · исходные данные не изменены. Подтверждение обязательно.';
+   draftSend.textContent=sendLabel(card.family);
+   draftStatus.textContent='';
+   if(editable)draftInput.focus({preventScroll:true});
+  };
+  // One result-stage button, never an extra row of controls.
+  for(const button of actions.children){
+   if(button.dataset.cardAction==='sayvi'||button.dataset.cardAction==='edit'){
+    const id=button.dataset.cardAction;
+    button.addEventListener('click',()=>showDraft(id==='edit'));
+   }
+  }
+  draftSend.addEventListener('click',()=>{
+   if(!draftInput.value.trim()){draftStatus.textContent='Сначала укажите текст.';return;}
+   draftStatus.textContent='Демо: '+draftSend.textContent+' нажато. Реальная отправка или сохранение не выполнялись.';
+   if(typeof onAction==='function')onAction('confirm-preview',card);
+  });
   installDeferSwipe(article,card,onAction);
   installCardContextMenu(article,card,onAction);
   return article;
  }
  root.SEYVEO_CARD_ENGINE=Object.freeze({
-  version:7,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
+  version:8,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
    isProtected,isSuppressed,isSnoozed,hideCard,muteFamily,getVisibility,restoreVisibility,visibleCards,
    rotateQueue,snoozeCards,getSnoozes,clearSnoozes,
   presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome
