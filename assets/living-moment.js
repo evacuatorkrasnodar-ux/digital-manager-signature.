@@ -898,7 +898,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   else if(mailActive())mailLater.click();
   else if(documentActive())documentLater.click();
   else if(workActive())finishPreviewItem();
- });
+ },()=>{if(real)finishRealItem();else finishPreviewItem()},()=>homeCard(shown));
  announceRecommendation(primary);
  return {field,changeFeatured,updateCount};
 }
@@ -1109,7 +1109,55 @@ function showTasks(items){
 
 /* Horizontal swipe on the card = Later; no additional button.
    Do not intercept vertical page scrolling or taps on the action controls. */
-function installLivingCardSwipe(field,onLater){
+function installLivingCardSwipe(field,onLater,onRemoved,getCard){
+  const engine=window.SEYVEO_CARD_ENGINE;
+  const identity=()=>typeof getCard==='function'?getCard():getCard;
+  const hide=()=>{
+   if(engine?.hideCard?.(identity()))(onRemoved||onLater)();
+  };
+  const mute=()=>{
+   const item=identity();
+   if(item&&!engine?.isProtected?.(item)&&engine?.muteFamily?.(item.family))(onRemoved||onLater)();
+  };
+  const menu=create('div','sv-card-context');
+  menu.hidden=true;menu.setAttribute('role','group');menu.setAttribute('aria-label','Управление карточкой');
+  const choice=(title,cb)=>{
+   const b=create('button','sv-card-context-item',title);b.type='button';
+   b.addEventListener('click',event=>{event.stopPropagation();menu.hidden=true;cb()});
+   menu.append(b);return b;
+  };
+  choice('Напомнить позже',onLater);
+  const muteButton=choice('Не показывать такие',mute);
+  const hideButton=choice('Удалить карточку',hide);
+  choice('Отмена',()=>{});
+  const openMenu=()=>{
+   const blocked=!!engine?.isProtected?.(identity());
+   muteButton.disabled=blocked;hideButton.disabled=blocked;
+   menu.hidden=false;menu.querySelector('button:not(:disabled)')?.focus({preventScroll:true});
+  };
+  field.append(menu);field.tabIndex=0;
+  let hold=null,holdStart=null;
+  const stopHold=()=>{if(hold!==null){clearTimeout(hold);hold=null}};
+  field.addEventListener('contextmenu',event=>{
+   if(event.target.closest('button,a,input,textarea'))return;
+   event.preventDefault();openMenu();
+  });
+  field.addEventListener('keydown',event=>{
+   if(event.key==='Escape'){menu.hidden=true;return}
+   if(event.key==='ContextMenu'||(event.shiftKey&&event.key==='F10')){event.preventDefault();openMenu()}
+  });
+  field.addEventListener('touchstart',event=>{
+   if(event.touches.length!==1||event.target.closest('button,a,input,textarea'))return;
+   const p=event.touches[0];holdStart={x:p.clientX,y:p.clientY};
+   stopHold();hold=setTimeout(openMenu,580);
+  },{passive:true});
+  field.addEventListener('touchmove',event=>{
+   if(!holdStart||event.touches.length!==1)return;
+   const p=event.touches[0];
+   if(Math.hypot(p.clientX-holdStart.x,p.clientY-holdStart.y)>12)stopHold();
+  },{passive:true});
+  field.addEventListener('touchend',()=>{stopHold();holdStart=null},{passive:true});
+  field.addEventListener('touchcancel',()=>{stopHold();holdStart=null},{passive:true});
  let start=null;
  field.addEventListener('touchstart',event=>{
   if(event.touches.length!==1||event.target.closest('button,input,textarea,a')){start=null;return}
@@ -1119,7 +1167,7 @@ function installLivingCardSwipe(field,onLater){
   if(!start||event.changedTouches.length!==1)return;
   const last=event.changedTouches[0],dx=last.clientX-start.x,dy=last.clientY-start.y;
   start=null;
-  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6)onLater();
+  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6){if(dx>0)onLater();else hide()}
  },{passive:true});
  field.addEventListener('touchcancel',()=>{start=null},{passive:true});
  // Desktop preview: mouse drag is equivalent to a finger swipe.
@@ -1134,7 +1182,7 @@ function installLivingCardSwipe(field,onLater){
   if(!mouseStart)return;
   const dx=event.clientX-mouseStart.x,dy=event.clientY-mouseStart.y;
   mouseStart=null;
-  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6)onLater();
+  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6){if(dx>0)onLater();else hide()}
  });
  field.addEventListener('pointercancel',()=>{mouseStart=null});
 }
@@ -1186,7 +1234,7 @@ function showCalendar(item){
  why.dataset.cardRole='navigation';
  open.dataset.cardRole='primary';
  controls.append(why,open);
- installLivingCardSwipe(field,postpone);
+ installLivingCardSwipe(field,postpone,postpone,()=>({id:key,family:'calendar'}));
  main.append(hero,controls);
  const explanation=create('p','lm-explanation',
   'Сэйви показывает вашу ближайшую запись за 36 часов до начала. Ничего не переносит и не выполняет автоматически. Само напоминание останется в календаре.');
@@ -1247,7 +1295,7 @@ function showWorkshop(item){
  explainButton.classList.add('sv-living-card-action');
  openButton.classList.add('sv-living-card-action','sv-living-card-action--primary');
  controls.append(explainButton,openButton);
- installLivingCardSwipe(field,postpone);
+ installLivingCardSwipe(field,postpone,postpone,()=>({id:key,family:'care'}));
  main.append(hero,controls);
  const explanation=create('p','lm-explanation','Это ваша собственная карточка из Мастерской. Она показана по выбранному времени. Других действий Сэйви без вашего подтверждения не выполняет.');
  explanation.hidden=true;
