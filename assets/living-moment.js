@@ -1242,17 +1242,20 @@ function showCalendar(item){
   quiet.add(key);
   location.hash='#calendar';
  });
- const postpone=()=>{
-  window.SEYVEO_CARD_ENGINE?.snoozeCards?.({id:key,family:'calendar'});
+ const removePresentation=()=>{
   space.classList.add('lm-disappear');
   later(()=>rest(),reduced()?0:TIMING.close);
+ };
+ const postpone=()=>{
+  window.SEYVEO_CARD_ENGINE?.snoozeCards?.({id:key,family:'calendar'});
+  removePresentation();
  };
  // Use the Card Studio action roles and shared Home master material.
  // "Подробнее" is a quiet disclosure; the calendar route is the sole primary action.
  why.dataset.cardRole='navigation';
  open.dataset.cardRole='primary';
  controls.append(why,open);
- installLivingCardSwipe(field,postpone,postpone,()=>({id:key,family:'calendar'}));
+ installLivingCardSwipe(field,postpone,removePresentation,()=>({id:key,family:'calendar'}));
  main.append(hero,controls);
  const explanation=create('p','lm-explanation',
   'Сэйви показывает вашу ближайшую запись за 36 часов до начала. Ничего не переносит и не выполняет автоматически. Само напоминание останется в календаре.');
@@ -1305,15 +1308,18 @@ function showWorkshop(item){
   quiet.add(key);
   window.SEYVEO_FAN_WORKSHOP?.open?.();
  });
- const postpone=()=>{
-  window.SEYVEO_CARD_ENGINE?.snoozeCards?.({id:key,family:'care'});
+ const removePresentation=()=>{
   space.classList.add('lm-disappear');
   later(()=>rest(),reduced()?0:TIMING.close);
+ };
+ const postpone=()=>{
+  window.SEYVEO_CARD_ENGINE?.snoozeCards?.({id:key,family:'care'});
+  removePresentation();
  };
  explainButton.classList.add('sv-living-card-action');
  openButton.classList.add('sv-living-card-action','sv-living-card-action--primary');
  controls.append(explainButton,openButton);
- installLivingCardSwipe(field,postpone,postpone,()=>({id:key,family:'care'}));
+ installLivingCardSwipe(field,postpone,removePresentation,()=>({id:key,family:'care'}));
  main.append(hero,controls);
  const explanation=create('p','lm-explanation','Это ваша собственная карточка из Мастерской. Она показана по выбранному времени. Других действий Сэйви без вашего подтверждения не выполняет.');
  explanation.hidden=true;
