@@ -295,8 +295,8 @@
    menu.append(button);
   };
   
-  option('Не показывать такие','mute-family',isProtected(card));
   option('Убрать карточку','hide',isProtected(card));
+  option('Не показывать такие','mute-family',isProtected(card));
   option('Отмена','cancel');
   node.append(menu);
   const interactive=target=>target?.closest?.('button,a,input,textarea,select,[contenteditable="true"]');
