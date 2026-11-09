@@ -4567,3 +4567,37 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-file-remove{
  color:#38383A!important;
 }
+
+
+/* SEYVEO 2026-11-09 · compact emoji-only bubble.
+   A single 👍 or similar reaction should not look like a text paragraph. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only{
+ box-sizing:border-box!important;
+ flex:0 0 auto!important;
+ width:64px!important;min-width:64px!important;max-width:64px!important;
+ min-height:0!important;
+ padding:5px 7px 6px!important;
+ border:0!important;
+ border-radius:14px 14px 14px 7px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only.is-self{
+ border-radius:14px 14px 7px 14px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only .svcp-bubble-meta{
+ box-sizing:border-box!important;
+ display:flex!important;
+ min-height:12px!important;
+ margin:0 0 1px!important;padding:0!important;
+ justify-content:center!important;align-items:center!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only .svcp-time{
+ margin:0!important;
+ font-size:9px!important;line-height:12px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only .svcp-message-text{
+ display:block!important;
+ margin:0!important;padding:0!important;
+ font-size:23px!important;line-height:27px!important;
+ text-align:center!important;
+ white-space:nowrap!important;
+}
