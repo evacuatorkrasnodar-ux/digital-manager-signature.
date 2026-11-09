@@ -63,15 +63,22 @@ function renderGallery(){
   const card=engine.buildCard({id:'studio-gallery-'+index,type:event[6],
    title:event[1],fact:event[2],suggestion:event[3],source:'Мастерская карточек',
    priority:'normal',demo:true});
-  if(!card)continue;
+  if(!card){errors.push(event[0]+' · карточка не создана');continue}
   tested++;
   const view=engine.presentation(card);
   const ids=(view?.actions||[]).map(action=>action.id);
-  const primaries=(view?.actions||[]).filter(action=>action.role==='primary').length;
-  const repeats=ids.length!==new Set(ids).size;
-  const adviceDuplicate=!!card.suggestion&&ids.some(id=>engine.cardPolicy.redundantAdviceActions.includes(id));
-  const laterButton=ids.includes('later');
-  if(primaries>engine.cardPolicy.primaryActionsMax||ids.length>engine.cardPolicy.visibleActionLimit||repeats||adviceDuplicate||laterButton)errors.push(event[0]);
+  const roles=(view?.actions||[]).map(action=>action.role);
+  const required=['sayvi','edit','navigate'];
+  const same=(actual,expected)=>actual.length===expected.length&&
+   expected.every((value,i)=>actual[i]===value);
+  // Audit exact canonical layout; count-only checks would approve wrong icons
+  // or let old "Подробнее / Разобрать / Ознакомлен" controls creep back.
+  if(!same(ids,required)||
+     !same(roles,['primary','secondary','navigation'])||
+     ids.length!==engine.cardPolicy.visibleActionLimit||
+     card.actions.some(id=>id==='not-interested'&&ids.includes(id))){
+   errors.push(event[0]+' · нарушен порядок или роли действий');
+  }
   const sample=document.createElement('div');
   sample.className='scs-gallery-item';
   sample.dataset.cardState='new';
@@ -93,15 +100,22 @@ function renderGallery(){
       id==='edit'?'Редактор открыт. После правки нажмите Отправить/Сохранить.':
       id==='navigate'?'Показан переход к исходному разделу.':'Только демонстрация.';
   }});
+  if(!surface){errors.push(event[0]+' · рендерер не создал карточку');continue}
+  const buttons=[...surface.querySelectorAll('.sv-card-actions [data-card-action]')];
+  if(!same(buttons.map(b=>b.dataset.cardAction),required)||
+     !same(buttons.map(b=>b.dataset.svCardIcon),required)||
+     buttons.some(b=>!b.querySelector('svg.sv-card-symbol')||!b.getAttribute('aria-label'))){
+   errors.push(event[0]+' · значки или доступность отличаются от эталона');
+  }
   const label=document.createElement('p');label.className='scs-gallery-name';
   label.textContent=(index+1)+' / '+entries.length+' · '+event[0];
   const feedback=document.createElement('p');feedback.className='scs-gallery-feedback';
   feedback.setAttribute('aria-live','polite');
   sample.append(label,surface,feedback);galleryGrid.append(sample);
  }
- policyAudit.textContent=errors.length
-  ?'Проверка стандарта: исправить '+errors.join(', ')
-  :'Стандарт проверен: '+tested+' типов · Сэйви / Исправить / Перейти → Отправить или Сохранить · #38383A';
+ policyAudit.textContent=errors.length||tested!==entries.length
+  ?'Проверка стандарта: '+(errors.join('; ')||'не все зарегистрированные типы отображены')
+  :'Стандарт проверен: '+tested+' типов · 3 квадрата 48×48 · Сэйви / Исправить / Перейти · #38383A · далее Отправить / Сохранить';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
