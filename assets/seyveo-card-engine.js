@@ -321,7 +321,7 @@
  // The central orb in the official Sayvi mark is preserved exactly.
  const cardGlyphs=Object.freeze({
   sayvi:'<path d="M12 2.5C13.65 2.5 14.25 7 16.4 8.6 18 10.05 21.5 10.4 21.5 12S18 13.95 16.4 15.4C14.25 17 13.65 21.5 12 21.5S9.75 17 7.6 15.4C6 13.95 2.5 13.6 2.5 12S6 10.05 7.6 8.6C9.75 7 10.35 2.5 12 2.5Z"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/>',
-  edit:'<path d="m15 5 4 4M4 20l4-.8L20.1 7.1a2.12 2.12 0 0 0-3-3L5 16.2 4 20Z"/>',
+  edit:'<path d="M12.7 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-5.7"/><path d="m10.2 15.5-3.1.7.7-3.1L17.2 3.7a2.2 2.2 0 0 1 3.1 3.1l-9.4 9.4-3.1.7"/><path d="m16.3 4.6 3.1 3.1"/>',
   navigate:'<path d="M7 17 17 7M8 7h9v9"/>',
   send:'<path d="m22 2-7.2 20-4.2-8.6L2 9.2 22 2ZM22 2 10.6 13.4"/>',
   save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
