@@ -109,7 +109,8 @@ assert.equal(browserEngine.isSnoozed(ordinary),false);
 assert.equal(browserEngine.getSnoozes().length,0);
 console.log('SEYVEO Card Engine queue rotation and timed pause: tests passed');
 
-\n// Home document card regression: no wall of four simultaneous actions.
+
+// Home document card regression: no wall of four simultaneous actions.
 const homeSceneSource=readFileSync(new URL('../assets/living-moment.js',import.meta.url),'utf8');
 assert.match(homeSceneSource,/documentEdit\.hidden=!active\|\|documentStep!=='review'\|\|!reviewed/);
 assert.match(homeSceneSource,/documentAnalyze\.hidden=!active\|\|documentStep!=='review'\|\|reviewed/);
