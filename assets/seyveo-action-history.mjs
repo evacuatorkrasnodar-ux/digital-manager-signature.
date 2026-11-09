@@ -23,13 +23,11 @@ if(personal&&head){
  border:0!important;border-radius:12px!important;background:#38383A!important;
  color:#F6F7F8!important;box-shadow:none!important;
 }
-#tasksPage.sah-history-open #seyveoActionHistoryPanel .sah-inline-head{
- display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
- column-gap:10px!important;width:100%!important;
+/* Only the persistent Work titlebar is visible in the History subview.
+   Keeping this second header mounted preserves its existing back/search listeners. */
+#svWorkShell #tasksPage.sah-history-open #seyveoActionHistoryPanel .sah-inline-head{
+ display:none!important;
 }
-#seyveoActionHistoryPanel .sah-history-back{grid-column:1}
-#seyveoActionHistoryPanel .sah-history-title{grid-column:2}
-#seyveoActionHistoryPanel .sah-history-search{grid-column:3}
 #seyveoActionHistoryPanel .sah-restore-task{
  display:inline-flex!important;visibility:visible!important;opacity:1!important;
  flex-shrink:0!important;position:relative!important;z-index:1!important;
@@ -337,7 +335,7 @@ if(personal&&head){
   if(show){
    searchOpen=false;search.value='';visibleCount=4;render();
    if(scroller)scroller.scrollTop=0;
-   requestAnimationFrame(()=>back.focus({preventScroll:true}));
+   requestAnimationFrame(()=>(document.getElementById('svWorkBack')||back).focus({preventScroll:true}));
   }else{
    searchOpen=false;search.value='';search.hidden=true;
    fallbackSearch.setAttribute('aria-expanded','false');
