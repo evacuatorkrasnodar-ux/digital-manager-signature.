@@ -555,7 +555,7 @@ function render(){
   empty.append(
    glyph,
    element('strong','personal-tasks-empty-title',done.length?'Все дела выполнены':'Пока нет дел'),
-   element('p','personal-tasks-empty-copy',done.length?'Завершённые дела сохранены в Истории.':'Добавь первое дело или отложи решение на Главной.')
+   element('p','personal-tasks-empty-copy',done.length?'Завершённые дела сохранены в Истории.':'Нажми + вверху, чтобы добавить первое дело.')
   );
   list.prepend(empty);
  }
