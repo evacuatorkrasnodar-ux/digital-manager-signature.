@@ -2553,3 +2553,96 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu button .
 html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu #notePaperDuplicate:disabled{
  display:none!important;
 }
+
+
+/* SEYVEO Paper · flat compact Paper & Shapes menu · 2026-11-09
+   Scoped to the existing menu only. Button handlers and drawing area untouched. */
+html body #notePaperDialog.sv-paper-studio[open] > #notePaperPatternMenu.sv-paper-tool-menu:not([hidden]){
+ box-sizing:border-box!important;
+ top:calc(63px + env(safe-area-inset-top,0px))!important;
+ width:min(304px,calc(100vw - 28px))!important;
+ max-width:calc(100vw - 28px)!important;
+ max-height:calc(100dvh - 122px - env(safe-area-inset-top,0px))!important;
+ padding:11px!important;
+ gap:0!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:16px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F3F3F5!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:0 12px 27px rgba(0,0,0,.22)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-head{
+ padding:0 2px 8px!important;
+ gap:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-head>span{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-head>strong{
+ color:#F7F7F8!important;font-size:15px!important;font-weight:630!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-section{
+ padding:7px 0 8px!important;
+ border-top:1px solid rgba(255,255,255,.095)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-section-label{
+ margin:0 2px 6px!important;
+ font-size:10px!important;font-weight:600!important;
+ color:#C4C4C8!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid){
+ gap:5px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button{
+ height:57px!important;min-height:57px!important;
+ padding:5px 2px!important;
+ gap:4px!important;
+ border:1px solid transparent!important;
+ border-radius:10px!important;
+ background:#48484A!important;
+ color:#EDEDEF!important;
+ box-shadow:none!important;
+ transition:background-color .14s ease!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button>svg{
+ width:20px!important;height:20px!important;
+ min-width:20px!important;min-height:20px!important;
+ max-width:20px!important;max-height:20px!important;
+ flex:0 0 20px!important;
+ stroke-width:1.65!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button span{
+ width:100%!important;
+ max-width:100%!important;
+ font-size:10px!important;font-weight:570!important;
+ line-height:1.15!important;
+ white-space:nowrap!important;
+ overflow:visible!important;
+ text-align:center!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button[aria-pressed="true"]{
+ background:#626265!important;
+ border-color:rgba(255,255,255,.18)!important;
+ box-shadow:none!important;
+ color:#fff!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button:active{
+ background:#5C5C5F!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper-menu-hint{
+ display:none!important;
+}
+@media(max-width:355px){
+ html body #notePaperDialog.sv-paper-studio[open] > #notePaperPatternMenu.sv-paper-tool-menu:not([hidden]){
+  width:calc(100vw - 20px)!important;
+  max-width:calc(100vw - 20px)!important;
+  padding:9px!important;
+ }
+ html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button{
+  height:55px!important;min-height:55px!important;
+ }
+ html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid)>button span{
+  font-size:9.5px!important;
+ }
+}
