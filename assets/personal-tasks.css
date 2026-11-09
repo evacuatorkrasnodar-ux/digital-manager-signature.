@@ -1212,3 +1212,66 @@ html body #personalTaskDialog .personal-task-submit-row{display:none!important}
 :root[data-theme=light] body #personalTaskDialog .sv-task-page-header #personalTaskCancel{
  background:#38383A!important;color:#F5F6F7!important;
 }
+
+
+/* SEYVEO · Date editor finish 2026-11-09.
+   Both editors share one graphite 44px nav control and exact left baseline.
+   Scoped rules intentionally outrank older transparent Back overrides. */
+html body #personalTaskDialog.personal-task-dialog[open] .sv-task-page-header #personalTaskCancel,
+html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
+ #seyveoTaskDuePicker .sv-task-date-header > .sv-task-date-back{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ position:relative!important;box-sizing:border-box!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ max-width:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;color:#F5F6F7!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;transform:none!important;
+}
+html body #personalTaskDialog.personal-task-dialog[open] .sv-task-page-header #personalTaskCancel svg,
+html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
+ #seyveoTaskDuePicker .sv-task-date-header > .sv-task-date-back svg{
+ display:block!important;flex:none!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #personalTaskDialog.personal-task-dialog[open] .sv-task-page-header #personalTaskCancel:active,
+html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
+ #seyveoTaskDuePicker .sv-task-date-header > .sv-task-date-back:active{
+ background:#49494B!important;
+}
+/* Selected date gets one quiet fine ring; avoid raised lens shading. */
+html body #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
+ border:1px solid rgba(216,224,230,.52)!important;
+ background:rgba(185,199,208,.085)!important;
+ box-shadow:none!important;
+}
+/* Date editor's only secondary actions remain a compact flat row. */
+html body #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:8px!important;width:100%!important;
+ margin:0!important;padding:10px 2px 0!important;
+ border-top:1px solid rgba(192,205,214,.10)!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick > button{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;min-width:0!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0 9px!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;color:var(--text)!important;
+ box-shadow:none!important;font:560 12.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick > button:active{
+ background:rgba(178,192,202,.11)!important;
+}
+@media(max-width:767px) and (pointer:coarse){
+ #personalTaskDialog #seyveoTaskDuePicker .cal-pick-arrows{display:none!important}
+ #personalTaskDialog #seyveoTaskDuePicker .cal-pick-days{touch-action:pan-y!important}
+}
+:root[data-theme=light] body #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
+ border-color:rgba(33,48,57,.42)!important;background:rgba(33,48,57,.08)!important;
+}
