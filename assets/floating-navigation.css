@@ -11,8 +11,8 @@
  --sv-split-gap:8px;
  --sv-split-capsule:min(148px,calc(50vw - 39px));
  --sv-split-width:calc(var(--sv-split-capsule) + var(--sv-split-gap) + var(--sv-split-sayvi));
- --sv-split-center:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))/2);
- --sv-split-left:calc(var(--sv-split-center) - var(--sv-split-sayvi)/2 - var(--sv-split-gap) - var(--sv-split-capsule));
+ /* Position against the true screen midline, compatible with older iOS Safari. */
+ --sv-split-center:50%;
  --seyveo-dock-icon-size:22px;
  --seyveo-dock-icon-stroke:.8;
  /* Recessed laser engraving: thin line lit by a quiet, neutral WHITE backlight in every dock mode. */
