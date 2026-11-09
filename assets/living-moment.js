@@ -284,6 +284,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  let documentParts=[];
  let documentView='remarks';
  let documentProposed='';
+ let documentFileStatus='';
  const documentDraftKey='seyveo-contract-review-draft-v1';
  const documentDetails=create('div','lm-document-content');
  documentDetails.hidden=true;
@@ -292,20 +293,23 @@ function createSurface(primary,other=[],real=false,taskId=''){
   const active=documentActive();
   syncActionHierarchy();
   documentDetails.hidden=!active;
-  documentEdit.hidden=!active||documentStep!=='review';
-  documentLater.hidden=true; // Both horizontal swipes defer this card
+  // One primary action per stage: open review -> check -> edit result -> save.
+  const reviewed=active&&documentParts.length>0;
+  documentEdit.hidden=!active||documentStep!=='review'||!reviewed;
+  documentLater.hidden=true; // Gestures manage the queue, not visible buttons.
   documentSave.hidden=!active||documentStep!=='edit';
   documentCancel.hidden=!active||documentStep!=='edit';
-  documentAnalyze.hidden=!active||documentStep!=='review';
+  documentAnalyze.hidden=!active||documentStep!=='review'||reviewed;
   documentAnalyze.disabled=documentAnalyzing;
-  documentAnalyze.textContent=documentAnalyzing?'Анализ…':'Разобрать';
-  documentAnalyze.setAttribute('aria-label','Разобрать пункт документа с Сэйви');
+  documentAnalyze.textContent=documentAnalyzing?'Проверяю…':'Проверить с Сэйви';
+  documentAnalyze.setAttribute('aria-label','Проверить пункт договора с Сэйви');
   if(active){
-   // The first card must show its working Verify action immediately.
-   execute.hidden=documentStep==='edit';
-   open.hidden=documentStep==='edit';
-   execute.textContent=documentStep==='done'?'Дальше'
-    :documentStep==='review'?'Ознакомлен':'К проверке';
+   execute.hidden=documentStep!=='summary';
+   open.hidden=true; // Title tap opens documents without a fourth button.
+   execute.textContent='Проверить с Сэйви';
+   execute.dataset.cardRole='primary';
+   documentAnalyze.dataset.cardRole='primary';
+   documentEdit.dataset.cardRole='primary';
   }
   documentDetails.replaceChildren();
   if(!active)return;
@@ -318,17 +322,27 @@ function createSurface(primary,other=[],real=false,taskId=''){
    const sourceLabel=create('label','lm-mail-edit-label','Текст пункта договора');
    const sourceInput=create('textarea','lm-mail-edit-input');sourceInput.rows=5;sourceInput.maxLength=8500;
    sourceInput.value=documentSource;sourceInput.setAttribute('aria-label','Текст пункта договора для проверки');
-   sourceInput.addEventListener('input',()=>{documentSource=sourceInput.value;});
+   sourceInput.addEventListener('input',()=>{
+    documentSource=sourceInput.value;
+    // Editing invalidates previously reviewed text without stealing focus.
+    documentParts=[];documentAnalysis='';documentProposed='';
+    documentAnalyze.hidden=false;documentEdit.hidden=true;
+   });
    sourceLabel.append(sourceInput);documentDetails.append(sourceLabel);
    const picker=create('input','lm-document-file');
    picker.type='file';picker.accept='.pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain';
-   picker.setAttribute('aria-label','Открыть документ PDF, DOCX или TXT');
-   picker.style.cssText='display:block;max-width:100%;margin:8px 0;';
-   const status=create('p','lm-mail-note','Файл читается в браузере. Для PDF и DOCX нужна библиотека обработки документов.');
+   picker.setAttribute('aria-label','Выбрать документ PDF, Word или TXT');
+   picker.id='seyveoDocumentCardFile';
+   // Native file input stays accessible, but its bulky browser UI is hidden.
+   picker.style.cssText='position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;';
+   const fileLink=create('label','lm-document-file-link','Добавить PDF или Word');
+   fileLink.htmlFor=picker.id;
+   const status=create('p','lm-mail-note',documentFileStatus);
+   status.hidden=!documentFileStatus;
    picker.addEventListener('change',async()=>{
     const file=picker.files?.[0];if(!file)return;
-    if(file.size>5*1024*1024){status.textContent='Размер файла должен быть не больше 5 МБ.';return;}
-    status.textContent='Извлекаю текст документа…';
+    if(file.size>5*1024*1024){documentFileStatus='Размер файла должен быть не больше 5 МБ.';status.textContent=documentFileStatus;status.hidden=false;return;}
+    documentFileStatus='Читаю документ…';status.textContent=documentFileStatus;status.hidden=false;
     try{
      const name=file.name.toLowerCase();
      let extracted='';
@@ -362,10 +376,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
      documentSource=extracted.trim().slice(0,8500);
      documentParts=[];documentAnalysis='';documentProposed='';
      sourceInput.value=documentSource;
-     status.textContent='✓ Текст загружен локально. Для анализа используется до 8500 символов; исходный файл не меняется.';
-    }catch(error){status.textContent='Не удалось прочитать файл: '+String(error?.message||'ошибка').slice(0,130);}
+     documentFileStatus='Текст загружен. Исходный файл не меняется.';
+     updateDocument();
+    }catch(error){documentFileStatus='Не удалось прочитать файл: '+String(error?.message||'ошибка').slice(0,130);status.textContent=documentFileStatus;status.hidden=false;}
    });
-   documentDetails.append(picker,status);
+   documentDetails.append(picker,fileLink,status);
    if(documentParts.length){
     const list=create('div','lm-document-sections');
     documentParts.forEach((part,i)=>{
@@ -578,8 +593,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   if(documentActive()){
    if(documentStep==='summary'){documentStep='review';updateDocument();return}
-   if(documentStep==='review'){documentStep='done';updateDocument();return}
-   if(documentStep==='done'){finishPreviewItem();return}
+   // Viewing or reviewing a contract is not approval/completion.
+   return;
   }
   if(real){
    // Opening an ongoing plan or task is NOT evidence of completion.
@@ -726,7 +741,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   execute.dataset.cardRole=doc&&documentStep==='review'?'secondary':'primary';
   mailEdit.dataset.cardRole='secondary';
   mailSave.dataset.cardRole=mail&&mailStep==='edit'?'primary':'secondary';
-  documentEdit.dataset.cardRole='secondary';
+  documentEdit.dataset.cardRole='primary';
   documentSave.dataset.cardRole=doc&&documentStep==='edit'?'primary':'secondary';
   documentAnalyze.dataset.cardRole=doc&&documentStep==='review'?'primary':'secondary';
  }
@@ -750,6 +765,24 @@ function createSurface(primary,other=[],real=false,taskId=''){
  sayviAction.classList.add('sv-ref-card-sayvi');
  execute.classList.add('sv-ref-card-primary');
  open.classList.add('sv-ref-card-details');
+ // The existing navigation handler stays reachable by tapping the document title.
+ function syncDocumentTitleTap(){
+  const enabled=documentActive();
+  hero.tabIndex=enabled?0:-1;
+  if(enabled){
+   hero.setAttribute('role','button');
+   hero.setAttribute('aria-label','Открыть документы: '+shown.title);
+  }else{
+   hero.removeAttribute('role');
+   hero.removeAttribute('aria-label');
+  }
+ }
+ hero.addEventListener('click',()=>{if(documentActive())open.click()});
+ hero.addEventListener('keydown',event=>{
+  if(documentActive()&&(event.key==='Enter'||event.key===' ')){
+   event.preventDefault();open.click();
+  }
+ });
  const realLater=polymer('Позже',()=>{
   if(!real||!shown.eventId||morphLocked)return;
   // Snooze only this Home session. The real item remains in its original Tasks list.
@@ -814,7 +847,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailStep='draft';
   documentStep='summary';workMode='choose';workDraft='';
   updateMail();
-  updateDocument();updateWork();
+  updateDocument();updateWork();syncDocumentTitleTap();syncDocumentTitleTap();
   updateCount();
   renderSecondary();
   announceRecommendation(item);
