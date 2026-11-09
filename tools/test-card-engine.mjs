@@ -36,6 +36,12 @@ runInNewContext(readFileSync(new URL('../assets/seyveo-card-engine.js',import.me
 const browserEngine=browserScope.window.SEYVEO_CARD_ENGINE;
 assert.equal(browserEngine.cardPolicy.darkMaterial,'#38383A');
 assert.equal(browserEngine.cardPolicy.primaryActionsMax,1);
+assert.equal(browserEngine.cardPolicy.visibleActionLimit,3);
+assert.equal(browserEngine.cardPolicy.deferGesture,'swipe-both');
+assert.equal(browserEngine.isDeferSwipe(85,4),true,'right swipe defers');
+assert.equal(browserEngine.isDeferSwipe(-90,7),true,'left swipe defers');
+assert.equal(browserEngine.isDeferSwipe(20,95),false,'vertical scrolling does not defer');
+assert.equal(browserEngine.isDeferSwipe(60,4),false,'short tap does not defer');
 const allStudioCards=browserEngine.demoEvents().map(e=>browserEngine.buildCard(e));
 assert.equal(allStudioCards.length,Object.keys(browserEngine.eventType).length);
 for(const current of allStudioCards){
@@ -44,13 +50,16 @@ for(const current of allStudioCards){
  assert.ok(p.actions.filter(a=>a.role==='primary').length<=1,'one primary action');
  assert.equal(new Set(Array.from(p.actions,a=>a.id)).size,p.actions.length,'unique actions');
  assert.ok(!p.actions.some(a=>browserEngine.cardPolicy.redundantAdviceActions.includes(a.id)),'no redundant advice control');
+ assert.ok(!p.actions.some(a=>a.id==='later'),'Later is not a button');
+ assert.ok(p.actions.length<=3,'up to three actions');
+ if(current.actions.includes('later'))assert.ok(current.actions.includes('later'),'defer action remains in original event model');
 }
 const mailCard=allStudioCards.find(c=>c.family==='mail');
 assert.ok(mailCard);
 const withDuplicateAdvice={...mailCard,actions:['show-sayvi-advice','review-draft','review-draft','open-mail','later']};
 const clean=browserEngine.presentation(withDuplicateAdvice);
-assert.deepEqual(Array.from(clean.actions,a=>a.id),['review-draft','open-mail','later']);
+assert.deepEqual(Array.from(clean.actions,a=>a.id),['review-draft','open-mail']);
 assert.equal(clean.actions.filter(a=>a.role==='primary').length,1);
 assert.deepEqual(Array.from(browserEngine.presentation({...withDuplicateAdvice,suggestion:''}).actions,a=>a.id),
- ['show-sayvi-advice','review-draft','open-mail','later'],'show-advice action stays when no visible advice');
+ ['show-sayvi-advice','review-draft','open-mail'],'show-advice action stays when no visible advice');
 console.log('SEYVEO Card Engine Silver Flat policy: tests passed');
