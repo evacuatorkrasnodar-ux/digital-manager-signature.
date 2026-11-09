@@ -1621,106 +1621,106 @@
 #calendarPage #calendarView[data-mode="deadlines"] .cal-nav{margin-bottom:4px}
 
 
-/* SEYVEO Calendar · one contextual graphite menu from the shared +.
-   Never add a second bar or push the month below the fold. */
-:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)[hidden]{
- display:none!important;
-}
+/* SEYVEO | Compact two-stage native-style Calendar popover.
+   Three actions in the initial panel; modes open in the same position. */
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)[hidden]{display:none!important}
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu):not([hidden]){
  position:absolute!important;z-index:180!important;
  top:56px!important;right:7px!important;left:auto!important;bottom:auto!important;
- box-sizing:border-box!important;
- display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
- width:min(244px,calc(100vw - 26px))!important;
- max-width:calc(100vw - 26px)!important;height:auto!important;
- gap:2px!important;margin:0!important;padding:7px!important;
- border:1px solid rgba(255,255,255,.07)!important;
- border-radius:15px!important;
- background:#38383A!important;color:#F4F5F6!important;
- background-image:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ width:min(226px,calc(100vw - 26px))!important;max-width:calc(100vw - 26px)!important;
+ height:auto!important;gap:0!important;margin:0!important;padding:5px!important;
+ border:1px solid rgba(255,255,255,.07)!important;border-radius:15px!important;
+ background:#38383A!important;background-image:none!important;color:#F4F5F6!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  box-shadow:0 8px 20px rgba(0,0,0,.16)!important;
- overflow:visible!important;isolation:isolate!important;
- opacity:1!important;transform:none!important;animation:none!important;
+ overflow:visible!important;isolation:isolate!important;opacity:1!important;
+ transform:none!important;animation:none!important;
 }
 #svWorkShell > #calendarCreateMenu{align-self:auto!important;order:0!important}
-:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-menu-section{
- grid-column:1 / -1!important;
- margin:0!important;padding:3px 7px 2px!important;
- font:600 10px/1.25 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
- letter-spacing:.04em!important;text-transform:none!important;
- color:#BFC1C4!important;
-}
-:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-menu-modes-label{
- margin-top:2px!important;padding-top:7px!important;
- border-top:1px solid rgba(255,255,255,.11)!important;
-}
-:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) > :is(#calendarCreateEvent,#calendarCreateTask){
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)
+ > :is(#calendarCreateEvent,#calendarCreateTask,#calendarModeChoose,#calendarModeReturn){
  display:flex!important;justify-content:flex-start!important;align-items:center!important;
- gap:7px!important;box-sizing:border-box!important;
- width:100%!important;height:40px!important;min-height:40px!important;
- padding:0 7px!important;margin:0!important;border:0!important;
- border-radius:10px!important;background:transparent!important;box-shadow:none!important;
- color:#F4F5F6!important;
+ box-sizing:border-box!important;width:100%!important;height:44px!important;min-height:44px!important;
+ gap:10px!important;margin:0!important;padding:0 10px!important;
+ border:0!important;border-radius:10px!important;background:transparent!important;
+ box-shadow:none!important;color:#F4F5F6!important;
+ font:550 12.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;
 }
-:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) > #calendarCreateTask{
- border-left:0!important;border-radius:10px!important;
-}
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)
+ > #calendarCreateTask{border-left:0!important;border-radius:10px!important}
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-create-choice-copy small{display:none!important}
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-create-choice-copy strong{
- color:#F4F5F6!important;font-size:11.5px!important;white-space:nowrap!important;
+ color:inherit!important;font-size:12.5px!important;font-weight:550!important;
 }
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-create-choice-icon{
- color:#E0E2E5!important;opacity:1!important;
+ display:grid!important;place-items:center!important;flex:0 0 19px!important;
+ width:19px!important;height:19px!important;color:#D5D8DC!important;opacity:1!important;
 }
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-create-choice-icon svg{
+ width:18px!important;height:18px!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.5!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)
+ :is(.cal-menu-next,#calendarModeReturn > svg){
+ display:block!important;flex:0 0 15px!important;width:15px!important;height:15px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-menu-next{
+ margin-left:auto!important;opacity:.7!important;
+}
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) > #calendarModeChoose{
+ border-top:1px solid rgba(255,255,255,.10)!important;border-radius:0 0 10px 10px!important;
+}
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) > #calendarModeReturn{
+ border-bottom:1px solid rgba(255,255,255,.10)!important;border-radius:10px 10px 0 0!important;
+ font-weight:620!important;
+}
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)[data-panel="main"]
+ > :is(#calendarModeReturn,#calendarViewModes){display:none!important}
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)[data-panel="views"]
+ > :is(#calendarCreateEvent,#calendarCreateTask,#calendarModeChoose){display:none!important}
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) #calendarViewModes{
- grid-column:1 / -1!important;
- box-sizing:border-box!important;display:grid!important;
- grid-template-columns:repeat(2,minmax(0,1fr))!important;
- width:100%!important;max-width:none!important;gap:2px!important;
- height:auto!important;min-height:0!important;padding:0!important;margin:0!important;
- border:0!important;border-radius:0!important;
- background:transparent!important;box-shadow:none!important;overflow:visible!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;
+ gap:2px!important;padding:6px 0 0!important;margin:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) #calendarViewModes > button{
  display:flex!important;align-items:center!important;justify-content:center!important;
- box-sizing:border-box!important;min-width:0!important;width:100%!important;
- height:36px!important;min-height:36px!important;padding:0 6px!important;
- margin:0!important;border:0!important;border-radius:9px!important;
- color:#F0F1F2!important;background:transparent!important;box-shadow:none!important;
- font:550 11.5px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;
+ height:40px!important;min-height:40px!important;padding:0 5px!important;margin:0!important;
+ border:0!important;border-radius:9px!important;background:transparent!important;
+ color:#F4F5F6!important;box-shadow:none!important;
+ font:550 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) #calendarViewModes > button[aria-pressed="true"]{
- background:#515153!important;color:#FFFFFF!important;
+ background:#515153!important;color:#fff!important;
 }
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) #calendarViewModes > .cal-mode-today{
- grid-column:1 / -1!important;height:34px!important;min-height:34px!important;
+ grid-column:1 / -1!important;height:38px!important;min-height:38px!important;
  border-top:1px solid rgba(255,255,255,.10)!important;border-radius:0 0 10px 10px!important;
 }
-:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) :is(button:active,button:focus-visible){
+:is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) button:active{
  background:#505052!important;
 }
 #calendarPage #calendarToday.cal-period-title::after{display:none!important}
 :root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu):not([hidden]){
  background:#E4E7E9!important;color:#29343B!important;
- border-color:rgba(25,30,35,.10)!important;
- box-shadow:0 10px 24px rgba(0,0,0,.11)!important;
-}
-:root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-menu-section{
- color:#586269!important;border-color:rgba(30,40,45,.12)!important;
+ border-color:rgba(25,30,35,.1)!important;box-shadow:0 8px 18px rgba(0,0,0,.1)!important;
 }
 :root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) :is(
- #calendarCreateEvent,#calendarCreateTask,#calendarViewModes > button
+ #calendarCreateEvent,#calendarCreateTask,#calendarModeChoose,#calendarModeReturn,#calendarViewModes > button
 ){color:#29343B!important}
-:root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-create-choice-copy strong{
- color:#29343B!important;
-}
-:root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) .cal-create-choice-icon{
- color:#46555C!important;
-}
-:root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) #calendarViewModes > button[aria-pressed="true"]{
- background:#C9CED2!important;color:#1D282F!important;
-}
+:root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)
+ .cal-create-choice-icon{color:#52616B!important}
+:root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)
+ > :is(#calendarModeChoose,#calendarModeReturn){border-color:rgba(25,30,35,.1)!important}
+:root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)
+ #calendarViewModes > button[aria-pressed="true"]{background:#C9CED2!important;color:#1D282F!important}
 
 /* SEYVEO · Calendar finish / 2026-11-09.
    Match the single premium graphite control used by History.
