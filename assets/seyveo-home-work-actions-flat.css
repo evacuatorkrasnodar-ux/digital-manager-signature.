@@ -174,7 +174,7 @@
  letter-spacing:-.015em!important;
  white-space:nowrap!important;
 }
-#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer.sv-ref-card-primary:not([hidden]){
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]){
  position:relative!important;
  isolation:isolate!important;
  padding:8px 9px!important;
@@ -183,7 +183,7 @@
  font-weight:560!important;
 }
 /* Completely replace the historic glass lens with approved matte graphite. */
-#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer.sv-ref-card-primary:not([hidden])::before{
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden])::before{
  content:""!important;
  display:block!important;
  position:absolute!important;
@@ -198,12 +198,12 @@
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
-#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer.sv-ref-card-primary:not([hidden]):active::before{
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]):active::before{
  background:var(--sv-flat-panel-raised,#48484B)!important;
 }
 /* One actual inline Sayvi mark: never a second icon or painted lens. */
 #homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer.sv-ref-card-sayvi::before,
-#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer:not(.sv-ref-card-primary)::before{
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer:not([data-card-role="primary"])::before{
  content:none!important;
  display:none!important;
  -webkit-backdrop-filter:none!important;
