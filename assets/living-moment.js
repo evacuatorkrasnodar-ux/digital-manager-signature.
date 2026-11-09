@@ -509,6 +509,22 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
  }
 
+ // Fit each draft to the text on iPhone. Small replies are entirely visible;
+ // longer replies grow to a safe limit and then scroll internally.
+ function prepareMailReply(input){
+  input.setAttribute('aria-label','Текст ответа');
+  input.style.maxHeight='260px';
+  input.style.resize='none';
+  const fit=()=>{
+   if(!input.isConnected)return;
+   input.style.height='auto';
+   const natural=input.scrollHeight+3;
+   input.style.height=Math.min(260,Math.max(112,natural))+'px';
+   input.style.overflowY=natural>260?'auto':'hidden';
+  };
+  input.addEventListener('input',()=>{mailDraft=input.value;fit()});
+  requestAnimationFrame(fit);
+ }
  function mailActive(){return !real&&shown.kind==='mail'}
  function updateMail(){
   const active=mailActive();
@@ -548,12 +564,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
    return;
   }
   mailDetails.append(create('p','lm-section-label',mailStep==='edit'?'ВАШ ОТВЕТ':
-   mailStep==='sent-demo'?'ПОДГОТОВЛЕННЫЙ ОТВЕТ':'СЭЙВИ ПРЕДЛАГАЕТ ОТВЕТ'));
+   mailStep==='sent-demo'?'ПОДГОТОВЛЕННЫЙ ОТВЕТ':'ПРЕДЛОЖЕНИЕ СЭЙВИ'));
   if(mailStep==='edit'){
-   const field=create('label','lm-mail-edit-label','Исправить и отправить');
+   const field=create('div','lm-mail-edit-label');
    const input=create('textarea','lm-mail-edit-input');
-   input.rows=3;input.maxLength=1200;input.value=mailDraft;
+   input.rows=4;input.maxLength=1200;input.value=mailDraft;
    field.append(input);mailDetails.append(field);
+   prepareMailReply(input);
   }else{
    if(mailStep==='confirm'){
     mailDetails.append(create('p','lm-mail-address','Кому: Андрей · адрес не подключён'),
@@ -562,9 +579,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
    if(mailStep==='confirm'){
     const preview=create('textarea','lm-mail-edit-input');
     preview.rows=4;preview.maxLength=1200;preview.value=mailDraft;
-    preview.setAttribute('aria-label','Предложение Сэйви · можно исправить перед отправкой');
-    preview.addEventListener('input',()=>{mailDraft=preview.value});
     mailDetails.append(preview);
+    prepareMailReply(preview);
+    preview.setAttribute('aria-label','Предложение Сэйви · можно исправить перед отправкой');
    }else{
     mailDetails.append(create('p','lm-mail-draft',mailDraft));
    }
