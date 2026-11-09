@@ -276,3 +276,60 @@
 #homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-hero[role="button"]:focus-visible{
  outline:2px solid var(--text);outline-offset:3px;border-radius:8px;
 }
+
+/* SEYVEO · approved icon actions for original Home Living Moment.
+   Keep the original orb, dock, cards, queue and actual button handlers.
+   Three compact 48px touch regions, all symbols on the same 24px grid.
+ */
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button:not([hidden]){
+ display:inline-flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ flex:0 0 58px!important;width:58px!important;min-width:58px!important;
+ min-height:48px!important;box-sizing:border-box!important;
+ padding:5px 3px!important;margin:0!important;
+ gap:2px!important;border:0!important;
+ border-radius:14px!important;box-shadow:none!important;
+ background:transparent!important;background-image:none!important;
+ font-family:inherit!important;
+ font-size:10px!important;font-weight:500!important;
+ line-height:1.15!important;text-align:center!important;
+ white-space:nowrap!important;
+ -webkit-tap-highlight-color:transparent;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions{
+ column-gap:11px!important;row-gap:0!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button:not([hidden]) .sv-card-symbol{
+ display:block!important;width:21px!important;height:21px!important;
+ flex:0 0 21px!important;color:inherit!important;
+ margin:0!important;padding:0!important;filter:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button:not([hidden]) .sv-card-icon-caption{
+ display:block!important;font-size:10px!important;font-weight:500!important;
+ line-height:1.15!important;letter-spacing:0!important;
+ white-space:nowrap!important;color:inherit!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button[data-card-role="primary"]:not([hidden]){
+ color:#F7F7F8!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button[data-card-role="primary"]:not([hidden])::before,
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button.sv-work-assistant:not([hidden])::after{
+ content:""!important;display:block!important;
+ inset:3px 1px!important;border-radius:13px!important;
+ background:#38383A!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button:not([data-card-role="primary"]):not([hidden]){
+ color:var(--text)!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button:not([hidden]):focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+ border-radius:13px!important;
+}
+@media(max-width:375px){
+ #homePage #seyveoLivingMoment .lm-field .lm-actions{column-gap:7px!important}
+ #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button:not([hidden]){
+  flex-basis:55px!important;width:55px!important;min-width:55px!important;
+ }
+}
