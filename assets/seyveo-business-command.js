@@ -146,9 +146,9 @@ function svcpFileBadge(name,type){
  badge.setAttribute('aria-hidden','true');
  return badge;
 }
-function svcpFileCard(name,type,url,timeNode=null){
+function svcpFileCard(name,type,url,timeNode=null,onOpen=null){
  const displayName=String(name||'Вложение');
- const node=el(url?'a':'div','svcp-file-card');
+ const node=el(onOpen?'button':url?'a':'div','svcp-file-card');
  const detail=svcpFileKind(displayName,type);
  node.append(svcpFileBadge(displayName,type));
  const body=el('span','svcp-file-card-copy');
@@ -158,7 +158,11 @@ function svcpFileCard(name,type,url,timeNode=null){
  if(timeNode)heading.append(timeNode);
  body.append(heading,el('small','svcp-file-card-type',detail.label));
  node.append(body);
- if(url){
+ if(onOpen){
+  node.type='button';node.classList.add('svcp-file-card-open');
+  node.setAttribute('aria-label','Посмотреть документ '+displayName);
+  node.addEventListener('click',onOpen);
+ }else if(url){
   node.href=url;
   node.download=displayName;
   node.setAttribute('aria-label','Открыть или сохранить файл: '+displayName);
@@ -166,6 +170,120 @@ function svcpFileCard(name,type,url,timeNode=null){
   node.append(arrow);
  }
  return node;
+}
+
+
+let svcpCurrentDocClose=null;
+function svcpOpenDocument(file){
+ if(!(file instanceof File)||!file.size){setStatus('Файл недоступен');return}
+ svcpCurrentDocClose?.();
+ let live=true,extracted=null;
+ const ext=file.name.split('.').pop().toLowerCase();
+ const kind=svcpFileKind(file.name,file.type).kind;
+ const url=URL.createObjectURL(file),last=document.activeElement;
+ const sheet=el('section','svcp-doc-overlay');
+ sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');
+ sheet.setAttribute('aria-label','Просмотр документа '+file.name);
+ const top=el('header','svcp-doc-top'),back=el('button','svcp-doc-back');
+ back.type='button';back.setAttribute('aria-label','Назад к чату');
+ back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';
+ top.append(back,el('strong','svcp-doc-title',file.name));
+ const body=el('div','svcp-doc-body');
+ const info=el('p','svcp-doc-info');info.setAttribute('role','status');
+ const say=value=>{if(live)info.textContent=value};
+ let preview;
+ if(kind==='pdf'){
+  preview=el('iframe','svcp-doc-pdf');preview.title='PDF '+file.name;preview.src=url;
+ }else if(kind==='image'){
+  preview=el('img','svcp-doc-image');preview.src=url;preview.alt=file.name;
+ }else{
+  preview=el('pre','svcp-doc-text',kind==='word'?'Читаю документ…':'Открываю файл…');
+ }
+ body.append(preview);
+ function save(blob,name){
+  const href=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=href;a.download=name;document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(href),15000);
+ }
+ const base=file.name.replace(/\.[^.]*$/,'')||'Документ';
+ async function getText(){
+  if(extracted!==null)return extracted;
+  if(kind==='text'){extracted=await file.text();return extracted}
+  if(kind!=='word'&&kind!=='pdf')throw Error('Для этого формата нет текстового преобразования.');
+  const form=new FormData();form.append('file',file,file.name);
+  const response=await fetch('/api/seyveo-document-text',{method:'POST',body:form,credentials:'same-origin'});
+  const data=await response.json().catch(()=>null);
+  if(!response.ok||typeof data?.text!=='string')throw Error('Нужен локальный сервер SEYVEO для чтения Word/PDF.');
+  if(data.truncated||!data.text.trim())throw Error('Полный текст недоступен. Копию создавать нельзя.');
+  extracted=data.text;return extracted;
+ }
+ if(kind==='text'){
+  getText().then(t=>{if(live)preview.textContent=t.slice(0,120000)})
+   .catch(()=>{if(live)preview.textContent='Ошибка чтения текста.'});
+ }else if(kind==='word'){
+  getText().then(t=>{if(live)preview.textContent=t})
+   .catch(()=>{if(live)preview.textContent='Предпросмотр Word требует локального сервера. Кнопка Word сохранит оригинал.'});
+ }else if(kind!=='pdf'&&kind!=='image'){
+  preview.textContent='Оригинал файла можно открыть в подходящем приложении.';
+ }
+ const tools=el('div','svcp-doc-tools');
+ const icons={
+  eye:'<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.2"/>',
+  word:'<path d="M7 3h8l4 4v14H7zM15 3v4h4M9 12l2 5 2-5 2 5 2-5"/>',
+  pdf:'<path d="M7 3h8l4 4v14H7zM15 3v4h4M9 12h6M9 16h5"/>',
+  print:'<path d="M6 8V3h12v5M6 17H4V9h16v8h-2M6 15h12v6H6z"/>',
+  pen:'<path d="M4 17c3-7 4 4 7-2 3-8 4 3 8-3M4 21h16"/>'
+ };
+ function pill(label,icon,run){
+  const button=el('button','svcp-doc-pill');button.type='button';
+  button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+icons[icon]+'</svg>';
+  button.append(el('span','',label));button.addEventListener('click',run);
+  return button;
+ }
+ tools.append(pill('Смотреть','eye',()=>{body.scrollTop=0;say('Документ открыт для просмотра.')}),pill('Word','word',async()=>{
+  try{
+   if(kind==='word'){save(file,file.name);say('Оригинал Word сохранён.');return}
+   say('Подготавливаю Word…');const t=await getText();if(!live)return;
+   const blob=window.SEYVEO_DOCS_EXPORT?.docxFromText?.(t);
+   if(!blob)throw Error('Модуль Word недоступен.');
+   save(blob,base+'-текстовая-копия.docx');
+   say('Сохранена текстовая копия Word. Оформление оригинала может отличаться.');
+  }catch(e){say(e.message||'Не удалось подготовить Word.')}
+ }),pill('PDF','pdf',async()=>{
+  try{
+   if(kind==='pdf'){save(file,file.name);say('Оригинал PDF сохранён.');return}
+   say('Подготавливаю PDF…');const t=await getText();if(!live)return;
+   if(t.length>15000)throw Error('Для PDF поддерживается до 15 000 знаков.');
+   if(!window.SEYVEO_CREATE_PDF)throw Error('Модуль PDF недоступен.');
+   const blob=await window.SEYVEO_CREATE_PDF(t);if(!live)return;
+   save(blob,base+'-текстовая-копия.pdf');
+   say('Сохранена текстовая копия PDF, без исходного оформления.');
+  }catch(e){say(e.message||'Не удалось подготовить PDF.')}
+ }),pill('Печать','print',()=>{
+  if(kind!=='pdf'&&kind!=='image'){say('Для печати открой оригинал в подходящем приложении либо подготовь PDF.');return}
+  const popup=window.open(url,'_blank');
+  say(popup?'В системном меню документа выбери «Печать».':'Разреши открытие окна для печати.');
+ }));
+ const doc= pill('В Документы · подпись','pen',()=>{
+  if(!window.SEYVEO_DOCUMENT_CENTER?.importFromChat?.(file)){
+   say('Передача в рабочие Документы сейчас недоступна.');return
+  }
+  close();
+  window.SEYVEO_SAYVI_SURFACES?.open?.('contract','business');
+ });
+ doc.classList.add('svcp-doc-to-documents');
+ const bottom=el('footer','svcp-doc-bottom');bottom.append(tools,doc,info);
+ sheet.append(top,body,bottom);
+ const onKey=e=>{if(e.key==='Escape'){e.preventDefault();close()}};
+ function close(){
+  if(!live)return;live=false;
+  document.removeEventListener('keydown',onKey);sheet.remove();URL.revokeObjectURL(url);
+  svcpCurrentDocClose=null;
+  if(last?.isConnected)last.focus({preventScroll:true});
+ }
+ back.addEventListener('click',close);
+ document.addEventListener('keydown',onKey);document.body.append(sheet);
+ svcpCurrentDocClose=close;back.focus({preventScroll:true});
 }
 
 function restoreStoredMedia(container,message){
@@ -234,7 +352,9 @@ function restoreStoredMedia(container,message){
    video.setAttribute('aria-label','Рабочее видео: '+(record.name||''));slot.append(video);
   }else{
    const timestamp=container.querySelector('.svcp-bubble-meta .svcp-time');
-   slot.append(svcpFileCard(record.name||message.mediaName||'Вложение',record.type||message.mediaType||'',url,timestamp));
+   const filename=record.name||message.mediaName||'Вложение';
+   const localFile=record.blob instanceof File?record.blob:new File([record.blob],filename,{type:record.type||message.mediaType||''});
+   slot.append(svcpFileCard(filename,record.type||message.mediaType||'',url,timestamp,()=>svcpOpenDocument(localFile)));
    if(timestamp)container.classList.add('svcp-file-time-inside');
   }
   // The file card itself is sufficient. Delivery limitations remain in
