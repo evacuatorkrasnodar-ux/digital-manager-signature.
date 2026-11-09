@@ -250,8 +250,16 @@ function createSurface(primary,other=[],real=false,taskId=''){
  let workDraft='',workMode='choose';
  const workDetails=create('div','lm-mail-content');workDetails.hidden=true;
  function workActive(){return !real&&shown.kind==='work'}
+ // Compose focus folds the other queued cards without removing them.
+ function syncComposeFocus(){
+  const composing=(workActive()&&['sayvi','own'].includes(workMode))||
+   (documentActive()&&['preview','edit'].includes(documentStep))||
+   (mailActive()&&['confirm','edit'].includes(mailStep));
+  field.dataset.lmComposing=composing?'true':'false';
+ }
  function updateWork(){
   const active=workActive();workDetails.hidden=!active;
+  syncComposeFocus();
   // The three decisions stay on the initial card, the final Send is next.
   sayviAction.hidden=active||(mailActive()&&mailStep!=='draft')||
    (documentActive()&&documentStep!=='summary');
@@ -271,10 +279,18 @@ function createSurface(primary,other=[],real=false,taskId=''){
    const label=create('label','lm-mail-edit-label');
    const input=create('textarea','lm-mail-edit-input');input.rows=3;input.maxLength=1200;input.value=workDraft;
    input.setAttribute('aria-label','Текст ответа Елене');
-   input.style.cssText='display:block;box-sizing:border-box;width:100%;max-width:100%;min-height:112px;height:auto;overflow-y:auto;resize:vertical;white-space:pre-wrap;line-height:1.5;padding:12px;border-radius:13px;';
-   input.addEventListener('input',()=>{workDraft=input.value;input.style.height='auto';input.style.height=Math.min(input.scrollHeight+4,300)+'px'});
+   input.placeholder=workMode==='own'?'Напишите ответ Елене…':'Проверьте предложенный ответ…';
+   input.style.cssText='display:block;box-sizing:border-box;width:100%;max-width:100%;min-height:88px;height:88px;overflow-y:hidden;resize:none;white-space:pre-wrap;line-height:1.5;padding:11px 12px;border-radius:13px;';
+   const fitWork=()=>{
+    if(!input.isConnected)return;
+    input.style.height='auto';
+    const natural=input.scrollHeight+4;
+    input.style.height=Math.min(230,Math.max(88,natural))+'px';
+    input.style.overflowY=natural>230?'auto':'hidden';
+   };
+   input.addEventListener('input',()=>{workDraft=input.value;fitWork()});
    label.append(input);workDetails.append(label);
-   requestAnimationFrame(()=>{if(input.isConnected){input.style.height='auto';input.style.height=Math.min(input.scrollHeight+4,300)+'px'}});
+   requestAnimationFrame(fitWork);
   }
   if(workMode==='sayvi'||workMode==='own')
    workDetails.append(create('p','lm-mail-note','Черновик · ответ отправляется только в учебный чат на этом устройстве'));
@@ -299,6 +315,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function documentActive(){return !real&&shown.kind==='contract'}
  function updateDocument(){
   const active=documentActive();
+  syncComposeFocus();
   syncActionHierarchy();
   documentDetails.hidden=!active;
   // Initial: Sayvi · Edit · Navigate. Then one Save button.
@@ -495,6 +512,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    const input=create('textarea','lm-mail-edit-input');
    input.rows=4;input.maxLength=8500;input.value=documentNote;
    label.append(input);documentDetails.append(label);
+   prepareDocumentReply(input);
    documentDetails.append(create('p','lm-mail-note','Учебная редакция. Исходный договор не изменяется.'));
   }else{
    const sayviText=documentStep==='saved'
@@ -507,6 +525,22 @@ function createSurface(primary,other=[],real=false,taskId=''){
    if(documentStep==='review')documentDetails.append(create('p','lm-mail-note',
     'Документ не изменяется.'));
   }
+ }
+
+ // Document proposals expand for review before the human explicitly Saves.
+ // Longer amendments scroll only inside this one bounded editing field.
+ function prepareDocumentReply(input){
+  input.setAttribute('aria-label','Редакция договора · доступна для изменения');
+  input.style.resize='none';
+  const fit=()=>{
+   if(!input.isConnected)return;
+   input.style.height='auto';
+   const natural=input.scrollHeight+4;
+   input.style.height=Math.min(250,Math.max(112,natural))+'px';
+   input.style.overflowY=natural>250?'auto':'hidden';
+  };
+  input.addEventListener('input',()=>{documentNote=input.value;fit()});
+  requestAnimationFrame(fit);
  }
 
  // Fit each draft to the text on iPhone. Small replies are entirely visible;
@@ -528,6 +562,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function mailActive(){return !real&&shown.kind==='mail'}
  function updateMail(){
   const active=mailActive();
+  syncComposeFocus();
   syncActionHierarchy();
   // The ORIGINAL received email must be readable before choosing an action
   // and while reviewing Sayvi's proposal or editing an answer.
