@@ -539,7 +539,15 @@ function createSurface(primary,other=[],real=false,taskId=''){
     mailDetails.append(create('p','lm-mail-address','Кому: Андрей · адрес не подключён'),
       create('p','lm-mail-address','Тема: Стоимость доставки'));
    }
-   mailDetails.append(create('p','lm-mail-draft',mailDraft));
+   if(mailStep==='confirm'){
+    const preview=create('textarea','lm-mail-edit-input');
+    preview.rows=4;preview.maxLength=1200;preview.value=mailDraft;
+    preview.setAttribute('aria-label','Предложение Сэйви · можно исправить перед отправкой');
+    preview.addEventListener('input',()=>{mailDraft=preview.value});
+    mailDetails.append(preview);
+   }else{
+    mailDetails.append(create('p','lm-mail-draft',mailDraft));
+   }
    // The Home draft is fully readable, not buried beneath duplicate status text.
    // A real sending confirmation remains explicit and cannot transmit a message.
    if(mailStep!=='draft'){
