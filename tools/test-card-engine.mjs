@@ -146,3 +146,10 @@ assert.match(iconHomeSource,/\[documentSave,'save'\]/,'document Save icon is wir
 assert.match(iconSharedStyles,/min-height:48px!important/,'regular card targets are >=44px');
 assert.match(iconHomeStyles,/min-height:48px!important/,'Home card targets are >=44px');
 console.log('SEYVEO official Sayvi-orb and iPhone action icon contract: tests passed');
+assert.match(iconEngineSource,/classList\.remove\('sv-sayvi-label'\)/,
+ 'replaced Sayvi action must lose obsolete pseudo-icon class');
+assert.match(iconHomeStyles,/sv-ref-card-sayvi\.sv-card-icon-button\[data-sv-card-icon="sayvi"\]/,
+ 'Mail and Document use their final shared Sayvi graphite capsule');
+assert.match(iconHomeStyles,/mask:none!important/,
+ 'legacy masked Sayvi star is explicitly disabled');
+console.log('SEYVEO single Sayvi mark and shared graphite background: tests passed');
