@@ -276,6 +276,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function documentActive(){return !real&&shown.kind==='contract'}
  function updateDocument(){
   const active=documentActive();
+  syncActionHierarchy();
   documentDetails.hidden=!active;
   documentEdit.hidden=!active||documentStep!=='review';
   documentLater.hidden=!active||documentStep==='edit'||documentStep==='done';
@@ -283,7 +284,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   documentCancel.hidden=!active||documentStep!=='edit';
   documentAnalyze.hidden=!active||documentStep!=='review';
   documentAnalyze.disabled=documentAnalyzing;
-  documentAnalyze.textContent=documentAnalyzing?'Сэйви анализирует…':'Разобрать текст с Сэйви';
+  documentAnalyze.textContent=documentAnalyzing?'Анализ…':'Разобрать';
+  documentAnalyze.setAttribute('aria-label','Разобрать пункт документа с Сэйви');
   if(active){
    // The first card must show its working Verify action immediately.
    execute.hidden=documentStep==='edit';
@@ -477,6 +479,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function mailActive(){return !real&&shown.kind==='mail'}
  function updateMail(){
   const active=mailActive();
+  syncActionHierarchy();
   mailDetails.hidden=!active;
   realLater.hidden=!real;
   mailEdit.hidden=!active||mailStep!=='confirm';
@@ -484,7 +487,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailSave.hidden=!active||mailStep!=='edit';
   mailCancel.hidden=!active||mailStep!=='edit';
   open.hidden=active&&mailStep==='edit';
-  execute.hidden=active&&(mailStep==='edit'||mailStep==='draft');
+  execute.hidden=active&&mailStep==='edit';
   execute.textContent=real?'Продолжить дело':active
     ?(mailStep==='done'?'Готово':mailStep==='confirm'?'Завершить':'Продолжить')
     :'Исполнить';
@@ -696,6 +699,23 @@ function createSurface(primary,other=[],real=false,taskId=''){
   setDocumentDeferred(true);
   finishPreviewItem();
  });
+ /* One role-based primary at a time for the original Living Moment.
+    The buttons keep all their click handlers and original demo safeguards. */
+ function syncActionHierarchy(){
+  const mail=mailActive(),doc=documentActive();
+  if(!mail&&!doc){
+   sayviAction.dataset.cardRole='primary';
+   execute.dataset.cardRole='secondary';
+   return;
+  }
+  sayviAction.dataset.cardRole='quiet';
+  execute.dataset.cardRole=doc&&documentStep==='review'?'secondary':'primary';
+  mailEdit.dataset.cardRole='secondary';
+  mailSave.dataset.cardRole=mail&&mailStep==='edit'?'primary':'secondary';
+  documentEdit.dataset.cardRole='secondary';
+  documentSave.dataset.cardRole=doc&&documentStep==='edit'?'primary':'secondary';
+  documentAnalyze.dataset.cardRole=doc&&documentStep==='review'?'primary':'secondary';
+ }
  // Existing SEYVEO action hierarchy: one filled primary, one outlined
  // secondary, quiet textual Sayvi/Later. The original sizing stays in CSS.
  // Shared roles from the Card Studio contract, independent of button position.
