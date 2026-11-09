@@ -2438,9 +2438,12 @@ function renderTasks(){
  const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
  const done=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&x.task.done);
  const create=el('button','svcp-manager-task-create');
- create.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>Поручить</span>';
+ // One familiar compose symbol in place of the long button label.
+ // Preserve the action handler and accessible name.
+ create.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10"/><path d="m14 6 4 4M10 16l2.5-.5 7-7a2.1 2.1 0 0 0-3-3l-7 7L9 15z"/></svg>';
  create.type='button';
  create.setAttribute('aria-label','Создать поручение в рабочем чате');
+ create.title='Поручить';
  create.addEventListener('click',()=>{
   const openChat=window.SEYVEO_UNIFIED_TASKS?.openChat;
   if(typeof openChat==='function')openChat('tasks');
@@ -2519,11 +2522,15 @@ function renderTasks(){
    if(!opened)setStatus('Не удалось открыть Сэйви. Поручение осталось без изменений.');
   },'svcp-task-sayvi');
   assist.setAttribute('aria-label','Обсудить с Сэйви поручение: '+t.text);
-  const more=btn('⋯',()=>{
+  assist.title='Спросить Сэйви';
+  assist.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2Z"/></svg>';
+  const more=btn('',()=>{
    extra.hidden=!extra.hidden;
    more.setAttribute('aria-expanded',String(!extra.hidden));
   },'svcp-task-more');
   more.setAttribute('aria-label','Дополнительные действия с поручением: '+t.text);
+  more.title='Действия';
+  more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>';
   more.setAttribute('aria-expanded',String(!extra.hidden));
   actions.append(assist,more);
   if(approval&&t.reviewStatus==='review'&&!t.done){
