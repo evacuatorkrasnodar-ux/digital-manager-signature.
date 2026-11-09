@@ -39,8 +39,11 @@
  const sayvi=document.createElement('button');
  sayvi.type='button';sayvi.id='notePaperSayvi';
  sayvi.setAttribute('aria-label','Открыть Сэйви');sayvi.title='Сэйви';
- const buttons=[pen,eraser,duplicate,settings,sheet,photo,sayvi];
- const names=['pen','eraser','duplicate','settings','sheet','photo','sayvi'];
+ // Keep only the five tools used most while drawing.
+ // Move original DOM nodes (not clones) for photo/duplicate into Settings,
+ // preserving every existing drawing engine listener.
+ const buttons=[pen,eraser,sheet,settings,sayvi];
+ const names=['pen','eraser','sheet','settings','sayvi'];
  buttons.forEach((button,index)=>{
   button.className='sv-newdock-button';
   const key=names[index];
@@ -56,7 +59,7 @@
  sheet.setAttribute('aria-controls','notePaperPatternMenu');
  sheet.setAttribute('aria-expanded','false');
  dock.replaceChildren(...buttons);
- // All old actions live elsewhere; the new dock has exactly seven buttons.
+ // Secondary actions remain accessible in the flat graphite settings menu.
  dialog.append(paperMenu);
  const settingsHost=document.createElement('div');
  settingsHost.className='sv-newdock-settings-host';
@@ -70,7 +73,16 @@
  clear.type='button';clear.id='notePaperClearSheet';clear.className='sv-newdock-clear';
  clear.innerHTML=icon('<path d="M4 7h16M9 7V4.5h6V7M7 7l.8 13h8.4L17 7M10 10.5v6M14 10.5v6"/>')+'<span>Очистить весь лист</span>';
  removePhoto.querySelector('span')?.replaceChildren(document.createTextNode('Убрать фото'));
- settingsMenu.append(plain,clear,removePhoto);
+ const actionHeading=document.createElement('span');
+ actionHeading.className='sv-newdock-menu-title sv-newdock-actions-heading';
+ actionHeading.textContent='Действия';
+ duplicate.className='sv-newdock-menu-action';
+ duplicate.innerHTML=icon(icons.duplicate)+'<span>Дублировать штрих</span>';
+ duplicate.title='Дублировать последний штрих';
+ photo.className='sv-newdock-menu-action';
+ photo.innerHTML=icon(icons.photo)+'<span>Добавить фото</span>';
+ photo.title='Добавить фото';
+ settingsMenu.append(actionHeading,photo,duplicate,plain,removePhoto,clear);
  const backgroundButtons=[...settingsMenu.querySelectorAll('[data-paper-background]')];
  const syncBackground=()=>{
   const value=window.SEYVEO_PAPER?.getBackground?.();
