@@ -239,6 +239,12 @@ function createSurface(primary,other=[],real=false,taskId=''){
  let queueRendered=false;
  // Only the ORIGINAL Quiet Cinema Mail item gains actions; no new card.
  // The message is invented. No API, actual outgoing email or AI is used.
+ // Demo data is deliberately explicit: never imply this is a received real email.
+ const mailIncoming=Object.freeze({
+  sender:'Андрей',
+  subject:'Стоимость доставки',
+  text:'Здравствуйте! Подскажите, пожалуйста, сколько стоит доставка товара? Спасибо, Андрей.'
+ });
  const mailDefault='Здравствуйте, Андрей! Спасибо за обращение. Уточните, пожалуйста, адрес доставки, чтобы мы могли рассчитать стоимость.';
  let mailDraft=mailDefault,mailStep='draft';
  let workDraft='',workMode='choose';
@@ -302,6 +308,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   documentCancel.hidden=true;
   documentAnalyze.hidden=true; // Advanced file parsing stays in Documents.
   if(active){
+   sayviAction.hidden=documentStep!=='summary'; // One Save after choosing Sayvi/Edit.
    execute.hidden=true;
    open.hidden=documentStep!=='summary';
    documentEdit.dataset.cardRole='secondary';
@@ -506,7 +513,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function updateMail(){
   const active=mailActive();
   syncActionHierarchy();
-  mailDetails.hidden=!active||mailStep==='draft';
+  // The ORIGINAL received email must be readable before choosing an action
+  // and while reviewing Sayvi's proposal or editing an answer.
+  mailDetails.hidden=!active;
   realLater.hidden=true;
   mailEdit.hidden=!active||mailStep!=='draft';
   mailLater.hidden=true;
@@ -515,6 +524,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   cardIconize(mailSave,'send');
   mailCancel.hidden=true;
   if(active){
+   sayviAction.hidden=mailStep!=='draft'; // No duplicate Sayvi beside Send.
    open.hidden=mailStep!=='draft';
    execute.hidden=mailStep!=='confirm';
    execute.textContent='Отправить';
@@ -525,13 +535,20 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }else execute.textContent=real?'Продолжить дело':'Исполнить';
   mailDetails.replaceChildren();
   if(!active)return;
-  // Source -> Sayvi draft -> actions. This message is explicitly a local
-  // training example, never an unread real message or a sent email.
+  // Incoming source is immutable and always visible. A summary is not
+  // a substitute for the original message in a mail review workflow.
   mailDetails.append(
-   create('p','lm-mail-intro','Учебный пример · письмо Андрея'),
-   create('p','lm-source-line','Вопрос клиента: сколько стоит доставка?'),
-   create('p','lm-section-label','Сэйви предлагает черновик')
+   create('p','lm-mail-intro','Учебное входящее письмо'),
+   create('p','lm-mail-address','От: '+mailIncoming.sender+' · Тема: '+mailIncoming.subject),
+   create('p','lm-mail-original',mailIncoming.text)
   );
+  if(mailStep==='draft'){
+   // The initial three actions are enough. Do not show a draft reply
+   // before Sayvi or the user has chosen to prepare one.
+   return;
+  }
+  mailDetails.append(create('p','lm-section-label',mailStep==='edit'?'ВАШ ОТВЕТ':
+   mailStep==='sent-demo'?'ПОДГОТОВЛЕННЫЙ ОТВЕТ':'СЭЙВИ ПРЕДЛАГАЕТ ОТВЕТ'));
   if(mailStep==='edit'){
    const field=create('label','lm-mail-edit-label','Исправить и отправить');
    const input=create('textarea','lm-mail-edit-input');
@@ -881,7 +898,6 @@ function createSurface(primary,other=[],real=false,taskId=''){
   documentStep='summary';documentNote=documentDefault;workMode='choose';workDraft='';
   updateMail();
   updateDocument();updateWork();syncDocumentTitleTap();
- cardIconize(open,'navigate');
   cardIconize(open,'navigate');
   updateCount();
   renderSecondary();
