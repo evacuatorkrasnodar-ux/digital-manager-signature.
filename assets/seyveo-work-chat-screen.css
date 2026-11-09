@@ -297,10 +297,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  scroll-padding-bottom:18px
 }
 #svcpWorkChatScreen .svcp-chat-day{
- align-self:center;flex:0 0 auto;margin:6px 0 4px;padding:4px 10px;border-radius:999px;
- background:#38383A;border:0;box-shadow:none;
+ align-self:center;flex:0 0 auto;margin:9px 0 5px;padding:3px 7px;border-radius:0;
+ background:transparent!important;border:0;box-shadow:none;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- font-size:11px;color:#D3D3D6
+ font-size:11px;font-weight:550;color:#B8BEC4
 }
 #svcpWorkChatScreen .svcp-bubble{
  position:relative;align-self:flex-start;max-width:min(88%,410px);min-width:0;
@@ -910,11 +910,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-sizing:border-box!important;width:max-content!important;
  max-width:min(330px,calc(100% - 48px))!important;height:auto!important;
  padding:7px 12px!important;margin:0!important;
- border:1px solid color-mix(in srgb,var(--soft-line) 65%,transparent)!important;
- border-radius:999px!important;background:var(--sv-input-surface)!important;
- -webkit-backdrop-filter:var(--sv-input-blur)!important;backdrop-filter:var(--sv-input-blur)!important;
- box-shadow:none!important;line-height:1.3!important;
- color:var(--secondary)!important;font-size:11px!important;text-align:center!important;
+ border:0!important;
+ border-radius:12px!important;background:#38383A!important;background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;line-height:1.35!important;
+ color:#F3F4F6!important;font-size:12px!important;text-align:center!important;
  white-space:normal!important;overflow-wrap:normal!important;
  overflow:visible!important;clip-path:none!important;pointer-events:none
 }
@@ -3763,8 +3763,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  padding-right:max(12px,env(safe-area-inset-right,0px))!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-chat-day{
- margin:4px 0 3px!important;
- padding:3px 10px!important;
+ margin:8px 0 5px!important;
+ padding:3px 7px!important;
  font-size:11px!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-bubble:not(.is-recognition){
@@ -3891,6 +3891,19 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  white-space:pre-wrap!important;
 }
 
+
+/* Direct messages do not need the legacy mention strip, even if hidden
+   state is temporarily stale. Keep group-specific mentions untouched. */
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] .svcp-chat-intro{
+ display:none!important;
+ height:0!important;min-height:0!important;
+ margin:0!important;padding:0!important;
+}
+/* A device error must never masquerade as active recording or hide the editor.
+   The controller normally closes it; this guard covers stale UI state. */
+#svcpWorkChatScreen #svcpVoiceCapture[data-state="error"]{
+ display:none!important;
+}
 
 /* SEYVEO Messages · directory visual standard · 2026-11-09
    Flat graphite (#38383A), matched 40px navigation, one unframed list.
