@@ -108,3 +108,14 @@ assert.equal(browserEngine.clearSnoozes(),true,'user can restore paused cards im
 assert.equal(browserEngine.isSnoozed(ordinary),false);
 assert.equal(browserEngine.getSnoozes().length,0);
 console.log('SEYVEO Card Engine queue rotation and timed pause: tests passed');
+
+\n// Home document card regression: no wall of four simultaneous actions.
+const homeSceneSource=readFileSync(new URL('../assets/living-moment.js',import.meta.url),'utf8');
+assert.match(homeSceneSource,/documentEdit\.hidden=!active\|\|documentStep!=='review'\|\|!reviewed/);
+assert.match(homeSceneSource,/documentAnalyze\.hidden=!active\|\|documentStep!=='review'\|\|reviewed/);
+assert.match(homeSceneSource,/execute\.hidden=documentStep!=='summary'/,'old acknowledgement button hidden in review');
+assert.match(homeSceneSource,/open\.hidden=true/,'no duplicate Open button in document action row');
+assert.match(homeSceneSource,/function syncDocumentTitleTap\(\)/,'document navigation lives on its title');
+assert.match(homeSceneSource,/lm-document-file-link/,'native upload button replaced with quiet text');
+assert.ok(!homeSceneSource.includes("documentStep==='review'?'Ознакомлен'"),'acknowledgement is not a fake review completion');
+console.log('SEYVEO Home document single-action contract: tests passed');
