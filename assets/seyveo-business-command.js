@@ -687,9 +687,18 @@ function commitChatMessages(entries){
 let statusResetTimer=null;
 function setStatus(s){
  const el=$('svcpChatStatus');if(!el)return;
- el.textContent=s;
  clearTimeout(statusResetTimer);
  const screen=$('svcpWorkChatScreen');
+ // Routine acknowledgements should not cover chat messages.
+ // Keep real failures and actionable cautions visible.
+ const quiet=/^(?:Сообщение сохранено локально|Фото\/видео или файл сохранены только в этом браузере|Ответ сохранён в переписке на этом устройстве|Изменение сохранено на этом устройстве|Голосовое сохранено только на этом устройстве)/u.test(String(s));
+ if(quiet){
+  el.textContent='';
+  el.dataset.show='false';
+  screen?.classList.remove('svcp-sayvi-good-news');
+  return;
+ }
+ el.textContent=s;
  // Golden Sayvi only for a real positive announcement, not regular actions.
  const goodNews=/(?:поздравляю|хорошая новость|отличные новости|награда|поощрение|успешно завершен)/iu.test(String(s));
  screen?.classList.toggle('svcp-sayvi-good-news',goodNews);
