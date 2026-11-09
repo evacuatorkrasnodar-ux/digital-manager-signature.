@@ -1690,6 +1690,17 @@ function renderChat(){
       if(awardRecognitionSuggestion(recognitionProposal.sourceKey))renderChat();
      }});
     }
+    // Single standalone emoji: no visible action rail. The same actions stay
+    // available through the long-press / right-click / keyboard context menu.
+    if(emojiOnly){
+     secondary.unshift(
+      {title:'Ответить',kind:'reply',run:()=>{closeMessageMenus();startReply(msg)}},
+      {title:msg.starred?'Убрать из избранного':'В избранное',kind:'star',
+       run:()=>starControl.click()}
+     );
+     if(canAssign)secondary.splice(2,0,
+      {title:'Поручить',kind:'task',run:()=>{closeMessageMenus();prepareTask(msg,index)}});
+    }
     const openContextActions=()=>{
      const screen=$('svcpWorkChatScreen');
      if(!screen||!bubble.isConnected||!secondary.length)return;
@@ -1766,8 +1777,11 @@ function renderChat(){
      event.preventDefault();
      if(!$('svcpWorkChatScreen')?.querySelector('.svcp-message-context-menu'))openContextActions();
     });
-    bubble.classList.add('svcp-has-inline-actions');
-    bubble.append(menu);
+    // Do not mount or reserve layout space for the three-action row on emojis.
+    if(!emojiOnly){
+     bubble.classList.add('svcp-has-inline-actions');
+     bubble.append(menu);
+    }
    }
    thread.append(bubble);
   }
