@@ -45,6 +45,29 @@
   'review-recognition':'Проверить благодарность','review-document':'Проверить документ',
   'open-release':'Открыть альбом','not-interested':'Неинтересно'
  });
+ // SEYVEO Card Studio · approved action policy (09.11.2026).
+ // A visible Sayvi proposal is already an explanation. Do not create a
+ // second button that merely repeats it. Preserve actual distinct operations:
+ // composing drafts, opening chats, reviewing, sending (with confirmation).
+ const cardPolicy=Object.freeze({
+  id:'silver-flat-v1',
+  darkMaterial:'#38383A',lightMaterial:'#E4E7E9',
+  primaryActionsMax:1,primaryPillsMax:1,secondaryPresentation:'text',
+  redundantAdviceActions:Object.freeze(['show-sayvi','show-sayvi-advice','show-suggestion','show-advice']),
+  preserveDistinctAssistantActions:true
+ });
+ const redundantAdviceActions=new Set(cardPolicy.redundantAdviceActions);
+ function visibleActions(card){
+  if(!Array.isArray(card?.actions))return [];
+  const adviceVisible=typeof card.suggestion==='string'&&card.suggestion.trim().length>0;
+  const seen=new Set();
+  return card.actions.filter(id=>{
+   if(typeof id!=='string'||seen.has(id))return false;
+   seen.add(id);
+   if(adviceVisible&&redundantAdviceActions.has(id))return false;
+   return true;
+  });
+ }
  // Semantic action roles are the single Studio/Home visual contract.
  // Only a meaningful alternative is secondary. Navigation and defer stay text.
  const quietActions=new Set(['later','not-interested']);
@@ -70,7 +93,7 @@
    source:card.source||'Источник не указан',title:card.title,fact:card.fact,
    suggestion:card.suggestion,priority:card.priority,demo:card.demo===true,
    sections:safety.sections,
-   actions:Object.freeze(card.actions.map((id,index)=>Object.freeze({
+   actions:Object.freeze(visibleActions(card).map((id,index)=>Object.freeze({
     id,label:actionLabels[id]||id,role:actionRole(id,index),requiresConfirmation:confirmActions.has(id)
    })))
   });
@@ -171,7 +194,7 @@
   return article;
  }
  root.SEYVEO_CARD_ENGINE=Object.freeze({
-  version:3,catalog,eventType,actionLabels,safety,actionRole,
+  version:4,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,
   presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome
  });
 })(window);
