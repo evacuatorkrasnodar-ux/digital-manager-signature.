@@ -211,7 +211,8 @@ window.addEventListener('seyveo:pulse-ledger-changed',()=>{
 function row(root,label,value,total,group,index){
  const r=clean('button','picture-split-row');
  r.type='button';r.dataset.pictureGroup=group;r.dataset.pictureIndex=String(index);
- r.setAttribute('aria-label',label+': '+value+'. Подробнее');
+ r.setAttribute('aria-label',label+': '+value+'. Показать подробности');
+ r.setAttribute('aria-expanded','false');
  const head=clean('span','picture-split-label');
  head.append(clean('span','',label),clean('strong','',value));
  const track=clean('span','picture-split-track');
@@ -331,27 +332,49 @@ $('pictureBars').addEventListener('click',event=>{
   ['Расходы',rub(item.cost)]
  ],'');
 });
+// Six short source/expense breakdowns belong INSIDE the Pulse, not in six
+// modal "pages". Keep the graph's separate detailed period view intact.
+function toggleInlineBreakdown(button,group,index,picture){
+ const root=button.closest('.picture-breakdown');
+ if(!root)return;
+ const wasExpanded=button.getAttribute('aria-expanded')==='true';
+ page.querySelectorAll('.picture-split-row[aria-expanded="true"]').forEach(row=>{
+  row.setAttribute('aria-expanded','false');
+  row.setAttribute('aria-label',row.getAttribute('aria-label')?.replace('Скрыть подробности','Показать подробности')||'Показать подробности');
+ });
+ page.querySelectorAll('.picture-split-inline').forEach(panel=>panel.remove());
+ if(wasExpanded)return;
+ let title='',values=[];
+ if(group==='source'){
+  const item=picture.sources[index];if(!item)return;
+  title=item.name;
+  values=[['Обращений',num.format(item.leads)],['Стали заказами',num.format(item.sales)],['Продано на сумму',rub(item.revenue)]];
+ }else{
+  const item=picture.costs[index];if(!item)return;
+  title=item.name;
+  const percent=picture.total.cost?Math.round(item.value*100/picture.total.cost):0;
+  values=[['Расходы',rub(item.value)],['Доля всех расходов',percent+'%']];
+ }
+ const panel=clean('div','picture-split-inline');
+ panel.id='pictureInline-'+group+'-'+index;
+ panel.setAttribute('role','region');
+ panel.setAttribute('aria-label','Подробности: '+title);
+ for(const [label,value] of values){
+  const row=clean('div','picture-split-inline-row');
+  row.append(clean('span','',label),clean('strong','',value));
+  panel.append(row);
+ }
+ button.insertAdjacentElement('afterend',panel);
+ button.setAttribute('aria-expanded','true');
+ button.setAttribute('aria-controls',panel.id);
+ button.setAttribute('aria-label',title+'. Скрыть подробности');
+}
 for(const [group,id] of [['source','pictureSources'],['cost','pictureExpenses']]){
  $(id).addEventListener('click',event=>{
   const button=event.target.closest('[data-picture-group]');
   if(!button||button.dataset.pictureGroup!==group)return;
   const picture=businessData();if(!picture)return;
-  const index=Number(button.dataset.pictureIndex);
-  if(group==='source'){
-   const item=picture.sources[index];if(!item)return;
-   openBreakdown(item.name,'Как клиенты нашли компанию',[
-    ['Обращений',num.format(item.leads)],
-    ['Стали заказами',num.format(item.sales)],
-    ['Продано на сумму',rub(item.revenue)]
-   ],'');
-  }else{
-   const item=picture.costs[index];if(!item)return;
-   const percent=picture.total.cost?Math.round(item.value*100/picture.total.cost):0;
-   openBreakdown(item.name,'Категория расходов',[
-    ['Расходы',rub(item.value)],
-    ['Доля всех расходов',percent+'%']
-   ],'');
-  }
+  toggleInlineBreakdown(button,group,Number(button.dataset.pictureIndex),picture);
  });
 }
 $('pictureBreakdownClose').addEventListener('click',()=>$('pictureBreakdownDialog').close());
