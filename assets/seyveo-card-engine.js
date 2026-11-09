@@ -159,7 +159,8 @@
   }catch{return {hidden:[],muted:[]}}
  }
  function saveVisibility(data){
-  try{window.localStorage?.setItem(visibilityKey,JSON.stringify({hidden:data.hidden.slice(-500),muted:data.muted}));return true;}
+  try{window.localStorage?.setItem(visibilityKey,JSON.stringify({hidden:data.hidden.slice(-500),muted:data.muted}));
+   window.dispatchEvent?.(new Event('seyveo:card-visibility-changed'));return true;}
   catch{return false;}
  }
  const cardVisibilityKey=card=>[card?.accountId||'local',card?.workspaceId||'personal',card?.family||'',card?.id||''].join('::');
