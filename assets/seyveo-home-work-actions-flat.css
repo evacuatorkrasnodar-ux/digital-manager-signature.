@@ -411,3 +411,89 @@
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] > .lm-sayvi-mark{
  display:none!important;
 }
+
+/* SEYVEO HOME · 3 identical soft-rounded squares · final visual contract.
+ * No floating edit/nav glyphs; no double lens for Sayvi. Visual backgrounds
+ * are on the BUTTON, never competing ::before and ::after layers.
+ * Keeps 48x48 touch targets and the original actions/gestures.
+ */
+#homePage #seyveoLivingMoment .lm-field .lm-actions{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ column-gap:9px!important;
+ row-gap:0!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden]){
+ box-sizing:border-box!important;
+ display:inline-flex!important;
+ flex:0 0 48px!important;
+ width:48px!important;min-width:48px!important;
+ height:48px!important;min-height:48px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;
+ border-radius:14px!important;
+ background:rgba(169,180,192,.12)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:var(--text)!important;
+ justify-content:center!important;
+ align-items:center!important;
+ flex-direction:row!important;
+ position:relative!important;
+ isolation:isolate!important;
+ gap:0!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
+ background:#38383A!important;
+ color:#F7F7F8!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden])::before,
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden])::after{
+ content:none!important;display:none!important;
+ background:none!important;
+ box-shadow:none!important;
+ -webkit-mask:none!important;mask:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field:is(
+ [data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions
+ .lm-polymer.sv-ref-card-sayvi.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden])::before,
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ .lm-polymer.sv-work-assistant.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden])::after{
+ content:none!important;display:none!important;
+ background:none!important;box-shadow:none!important;
+ -webkit-mask:none!important;mask:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden]) .sv-card-symbol{
+ display:block!important;
+ flex:0 0 23px!important;
+ width:23px!important;height:23px!important;
+ margin:0!important;padding:0!important;
+ stroke-width:1.8;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:not([data-sv-card-icon="sayvi"]):not([hidden]){
+ background:rgba(43,48,55,.09)!important;
+ color:#38383A!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden]):active{
+ opacity:.82!important;transform:scale(.965);
+}
+@media(max-width:375px){
+ #homePage #seyveoLivingMoment .lm-field .lm-actions{
+  column-gap:8px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button{transition:none!important}
+}
