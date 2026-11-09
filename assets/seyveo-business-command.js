@@ -1038,7 +1038,7 @@ function updatePerspective(){
  $('svcpConversationDetail').textContent=state.viewpoint==='elena'
   ?'Просмотр от лица Елены · демо'
   :current.kind==='personal'?(current.hint.split(' · ')[0]||'Личный чат'):'Рабочая группа';
- $('svcpMentionElena').hidden=current.kind!=='groups';
+ $('svcpMentionElena').hidden=true; // No hard-coded employee shortcut in group chat headers; @mentions belong in the composer.
  const chips=chatRoot.querySelector('.svcp-rooms');if(chips)chips.hidden=current.kind!=='groups';
  $('svcpRecognizeOpen').hidden=true; // Awards are offered contextually beside relevant messages.
  const directTask=$('svcpComposerDirectTask'),recipient=privateAssignmentRecipient();
