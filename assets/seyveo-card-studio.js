@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Эталон Елены: значок + заголовок + краткое описание; одна кнопка #38383A, максимум два текстовых действия. «Позже» — свайп карточки влево или вправо, не кнопка. Если совет Сэйви уже виден, не дублировать его кнопкой.';
+policyGuide.textContent='Эталон Елены: значок + заголовок + краткое описание; одна кнопка #38383A, максимум два текстовых действия. Вправо — «Позже», влево — «Убрать», удержание — управление показом. Всё можно вернуть в Управлении. Если совет Сэйви уже виден, не дублировать его кнопкой.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
@@ -78,11 +78,16 @@ function renderGallery(){
   sample.dataset.previewTheme=previewTheme;
   const surface=engine.renderCard(card,{onAction:id=>{
    const note=sample.querySelector('.scs-gallery-feedback');
+   if(id==='hide'||id==='mute-family'){
+    sample.dataset.cardState='removed';
+    if(note)note.textContent=id==='hide'?'Карточка убрана. Источник сохранён.':'Похожие карточки скрыты. Вернуть можно в Управлении.';
+    return;
+   }
    if(id==='later'){
     sample.dataset.cardState='deferred';
     const row=sample.querySelector('.sv-card-actions');
     if(row)row.hidden=true;
-    if(note)note.textContent='Позже · карточка отложена свайпом. Источник не удалён.';
+    if(note)note.textContent='Позже · карточка отложена свайпом вправо. Источник не удалён.';
     return;
    }
    if(note)note.textContent='Действие «'+(engine.actionLabels[id]||id)+'» показано только в мастерской.';
@@ -95,7 +100,7 @@ function renderGallery(){
  }
  policyAudit.textContent=errors.length
   ?'Проверка стандарта: исправить '+errors.join(', ')
-  :'Стандарт проверен: '+tested+' типов · 1 графитовая кнопка · до 2 текстовых · «Позже» свайпом';
+  :'Стандарт проверен: '+tested+' типов · 1 графитовая кнопка · до 2 текстовых · свайпы и меню удержания проверены';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
@@ -148,10 +153,15 @@ function render(){
   const surface=engine.renderCard(card,{onAction:id=>{
    // Studio actions only preview the intended action. No real send/payment/
    // signature/task resolution, even if a developer taps "Подтвердить".
+   if(id==='hide'||id==='mute-family'){
+    surface.dataset.cardState='removed';
+    studioAction.textContent=id==='hide'?'Карточка убрана, но исходное событие сохранено.':'Похожие карточки скрыты. Вернуть можно в Управлении.';
+    return;
+   }
    if(id==='later'){
     surface.dataset.cardState='deferred';
     const row=surface.querySelector('.sv-card-actions');if(row)row.hidden=true;
-    studioAction.textContent='Позже · карточка отложена свайпом. Данные не удалены.';
+    studioAction.textContent='Позже · карточка отложена свайпом вправо. Данные не удалены.';
     return;
    }
    studioAction.textContent='Выбрано действие: '+(engine.actionLabels[id]||id)+
@@ -209,7 +219,7 @@ if(home&&dock){
   live.replaceChildren();live.hidden=false;
   const surface=engine.renderCard(card,{onAction:id=>{
    record('Нажато '+(engine.actionLabels[id]||id)+' · демо без выполнения',card);
-   if(id==='later'){live.hidden=true;live.replaceChildren();}
+   if(id==='later'||id==='hide'||id==='mute-family'){live.hidden=true;live.replaceChildren();}
    else{
     const status=live.querySelector('[data-studio-action-status]');
     if(status)status.textContent='Действие показано как пример. Реальное выполнение не подключено.';
