@@ -255,7 +255,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    requestAnimationFrame(()=>{if(input.isConnected){input.style.height='auto';input.style.height=Math.min(input.scrollHeight+4,300)+'px'}});
   }
   if(workMode==='sayvi'||workMode==='own')
-   workDetails.append(create('p','lm-mail-note','Черновик · без отправки'));
+   workDetails.append(create('p','lm-mail-note','Черновик · ответ отправляется только в учебный чат на этом устройстве'));
  }
 
  const mailDetails=create('div','lm-mail-content');
