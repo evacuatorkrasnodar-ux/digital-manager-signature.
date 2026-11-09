@@ -26,7 +26,7 @@ const ROOMS=[
  {id:'dm-mikhail',label:'Михаил',kind:'personal',hint:'Продавец · личный рабочий чат',mark:'М',person:'mikhail',section:'people',roleGroup:'Торговый зал'},
  {id:'team',label:'Смена и команда',kind:'groups',hint:'Обсуждение смен и задач · дополнительная группа',mark:'▦',section:'extra'},
  {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
- {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочие подсказки · пока шаблонное демо',mark:'',person:'sayvi',section:'assistant'}
+ {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочий помощник',mark:'',person:'sayvi',section:'assistant'}
 ];
 const state={tab:'chats',room:'general',viewpoint:'manager',file:null,objectUrl:null,filePurpose:'file',scanCode:'',replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='',historyWindow=35;
@@ -1012,8 +1012,9 @@ function openRoom(roomId){
  const roomName=$('svcpRoomInfoName');if(roomName)roomName.textContent=
   state.viewpoint==='elena'&&selected.id==='dm-elena'?'Руководитель':selected.label;
  const roomDescription=$('svcpRoomInfoDescription');
- if(roomDescription)roomDescription.textContent=selected.hint+
-  (selected.kind==='groups'?' · общий рабочий разговор':' · личная переписка');
+ if(roomDescription)roomDescription.textContent=selected.kind==='personal'
+  ?(selected.hint.split(' · ')[0]||'Личный чат')
+  :selected.hint;
  $('svcpChatDirectory').hidden=true;
  $('svcpConversation').hidden=false;
  $('svcpConversationTitle').textContent=employeePreviewActive()&&selected.id==='dm-elena'
@@ -1646,7 +1647,7 @@ $('svcpLoadOlder')?.addEventListener('click',()=>{
 });
 function startReply(msg){
  state.replyTo={text:String(msg.text||'').slice(0,160),sender:senderName(msg)};
- $('svcpReplyText').textContent='Ответ на: '+state.replyTo.sender+' · '+state.replyTo.text;
+ $('svcpReplyText').textContent='Ответ · '+state.replyTo.sender+' · '+state.replyTo.text;
  $('svcpReplyPreview').hidden=false;
  $('svcpChatInput')?.focus({preventScroll:true});
 }
