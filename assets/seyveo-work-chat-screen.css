@@ -4489,9 +4489,17 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  color:var(--text)!important;text-align:left!important;
 }
 #tasksPage #svcpTaskList .svcp-task-file-open .svcp-file-badge{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
  flex:0 0 30px!important;width:30px!important;min-width:30px!important;height:30px!important;
- border-radius:7px!important;font-size:8px!important;
+ padding:0 2px!important;border:0!important;border-radius:7px!important;
+ background:#535355!important;color:#F5F5F7!important;
+ font:700 8px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
+#tasksPage #svcpTaskList .svcp-task-file-open .svcp-file-badge--pdf{background:#754242!important}
+#tasksPage #svcpTaskList .svcp-task-file-open .svcp-file-badge--word{background:#3A5982!important}
+#tasksPage #svcpTaskList .svcp-task-file-open .svcp-file-badge--sheet{background:#34684D!important}
+#tasksPage #svcpTaskList .svcp-task-file-open .svcp-file-badge--image{background:#5B526F!important}
+#tasksPage #svcpTaskList .svcp-task-file-open .svcp-file-badge--video{background:#656070!important}
 #tasksPage #svcpTaskList .svcp-task-file-name{
  display:block!important;min-width:0!important;max-width:175px!important;
  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
