@@ -1,0 +1,27 @@
+/* SEYVEO Notebook editor · seamless Home canvas · 2026-11-09
+ * Reuse the EXACT global scene tokens from index.html / living-space.css,
+ * instead of the historical editor-only green/blue gradient.
+ * No glass, new motion, surface, opacity layer or separate color values.
+ * Deliberately exclude the paper drawing studio and the approved dock.
+ */
+html body dialog#noteReviewDialog.note-review-dialog[open]{
+  background-color:var(--bg)!important;
+  background-image:var(--seyveo-hdr-stage),var(--sv-life-viewport-gradient)!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  background-size:100% 100%,100% 100%!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+/* Text stays directly on the shared scene, not on an extra field panel. */
+html body dialog#noteReviewDialog.note-review-dialog[open]
+ :is(.sv-note-header,.sv-note-editor,.sv-note-document-capsule,#noteReviewText){
+  background-color:transparent!important;
+  background-image:none!important;
+}
+/* The existing dark theme heading is pale. Match the Home theme in light mode. */
+:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
+ .sv-note-nav-brand strong{
+  color:var(--text)!important;
+}
