@@ -66,7 +66,7 @@
   return card.actions.filter(id=>{
    if(typeof id!=='string'||seen.has(id))return false;
    seen.add(id);
-   if(id==='later')return false; // deferral is gesture-only, never a button
+   if(id==='later'||id==='not-interested')return false; // swipe/hold own visibility controls, never a button
    if(adviceVisible&&redundantAdviceActions.has(id))return false;
    return true;
   }).slice(0,cardPolicy.visibleActionLimit);
