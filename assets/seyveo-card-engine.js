@@ -52,7 +52,8 @@
  const cardPolicy=Object.freeze({
   id:'silver-flat-v1',
   darkMaterial:'#38383A',lightMaterial:'#E4E7E9',
-  primaryActionsMax:1,primaryPillsMax:1,secondaryPresentation:'text',
+  primaryActionsMax:1,primaryPillsMax:1,visibleActionLimit:3,secondaryPresentation:'text',
+  deferGesture:'swipe-both',deferMinPixels:75,
   redundantAdviceActions:Object.freeze(['show-sayvi','show-sayvi-advice','show-suggestion','show-advice']),
   preserveDistinctAssistantActions:true
  });
@@ -64,9 +65,10 @@
   return card.actions.filter(id=>{
    if(typeof id!=='string'||seen.has(id))return false;
    seen.add(id);
+   if(id==='later')return false; // deferral is gesture-only, never a button
    if(adviceVisible&&redundantAdviceActions.has(id))return false;
    return true;
-  });
+  }).slice(0,cardPolicy.visibleActionLimit);
  }
  // Semantic action roles are the single Studio/Home visual contract.
  // Only a meaningful alternative is secondary. Navigation and defer stay text.
@@ -144,6 +146,46 @@
   field.dataset.svCardVersion='2';
   return family;
  }
+ // Horizontal swipe to defer (both directions). A directional gesture must
+ // be substantially longer than vertical movement so scrolling stays native.
+ // Pointer events cover iOS 13+/Android/desktop; touch fallback covers old WebKit.
+ function isDeferSwipe(dx,dy){
+  return Number.isFinite(dx)&&Number.isFinite(dy)
+   &&Math.abs(dx)>=cardPolicy.deferMinPixels
+   &&Math.abs(dx)>Math.abs(dy)*1.6;
+ }
+ function installDeferSwipe(node,card,onAction){
+  if(!card.actions.includes('later')||typeof onAction!=='function')return;
+  node.dataset.svSwipeLater='both';
+  const interactive=target=>target?.closest?.('button,a,input,textarea,select,[contenteditable="true"],[role="button"]');
+  let start=null;
+  const begin=(x,y,id,target)=>{
+   start=interactive(target)?null:{x,y,id};
+  };
+  const finish=(x,y,id)=>{
+   if(!start||start.id!==id){start=null;return;}
+   const point=start;start=null;
+   if(isDeferSwipe(x-point.x,y-point.y))onAction('later',card);
+  };
+  if(typeof window.PointerEvent==='function'){
+   node.addEventListener('pointerdown',event=>{
+    if(event.pointerType==='mouse'&&event.button!==0){start=null;return;}
+    begin(event.clientX,event.clientY,event.pointerId,event.target);
+   });
+   node.addEventListener('pointerup',event=>finish(event.clientX,event.clientY,event.pointerId));
+   node.addEventListener('pointercancel',()=>{start=null;});
+  }else{
+   node.addEventListener('touchstart',event=>{
+    if(event.touches.length!==1){start=null;return;}
+    const point=event.touches[0];begin(point.clientX,point.clientY,point.identifier,event.target);
+   },{passive:true});
+   node.addEventListener('touchend',event=>{
+    if(event.changedTouches.length!==1){start=null;return;}
+    const point=event.changedTouches[0];finish(point.clientX,point.clientY,point.identifier);
+   },{passive:true});
+   node.addEventListener('touchcancel',()=>{start=null;},{passive:true});
+  }
+ }
  const el=(tag,klass,content)=>{
   const node=document.createElement(tag);
   if(klass)node.className=klass;
@@ -158,7 +200,7 @@
   const article=el('article','sv-card-system sv-card-system--rendered');
   article.dataset.svCardFamily=card.family;
   article.dataset.svCardDemo=String(p.demo);
-  article.dataset.svCardVersion='2';
+  article.dataset.svCardVersion='3';
   article.setAttribute('aria-label',p.family+': '+p.title);
   const head=el('div','sv-card-header');
   const mark=el('span','sv-card-mark',p.icon);
@@ -191,10 +233,11 @@
    actions.append(button);
   }
   article.append(actions);
+  installDeferSwipe(article,card,onAction);
   return article;
  }
  root.SEYVEO_CARD_ENGINE=Object.freeze({
-  version:4,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,
+  version:5,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
   presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome
  });
 })(window);
