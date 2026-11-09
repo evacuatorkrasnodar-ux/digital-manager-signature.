@@ -2317,3 +2317,22 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > :is(#notePape
  border:0!important;
  box-shadow:none!important;
 }
+
+/* SEYVEO Ink Studio · Undo as a bare icon, 2026-11-09.
+   Only the right-side Undo: preserve a full 44px touch target and layout. */
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUndo,
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUndo:disabled,
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUndo:not(:disabled):active{
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUndo svg{
+ stroke-width:1.7!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUndo:not(:disabled):active svg{
+ opacity:.65!important;
+}
