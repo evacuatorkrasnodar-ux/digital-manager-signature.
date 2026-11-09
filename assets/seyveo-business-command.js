@@ -1515,7 +1515,11 @@ function renderChat(){
    const isSayvi=msg.role==='sayvi',isRecognition=msg.role==='recognition';
    const isOwn=state.viewpoint==='elena'?msg.role==='demo-elena':msg.role==='self';
    const mentioned=state.viewpoint==='elena'&&roomDetails().kind==='groups'&&msg.text.toLocaleLowerCase('ru-RU').includes('@елена');
-   const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
+   // Short emoji-only messages use a compact bubble, not the 104px text minimum.
+   // The time, bookmark, reply and assignment actions remain accessible.
+   const emojiOnly=!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&
+    /^[\p{Extended_Pictographic}\uFE0F\u200D\u{1F3FB}-\u{1F3FF}]{1,14}$/u.test(String(msg.text||'').trim());
+   const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
    bubble.dataset.chatIndex=String(index);
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
