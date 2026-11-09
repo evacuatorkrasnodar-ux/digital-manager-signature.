@@ -426,7 +426,8 @@ function render(){
  document.querySelectorAll('#calendarPage [data-calendar-scope]').forEach(btn=>
   btn.setAttribute('aria-pressed',String(btn.dataset.calendarScope===currentScope)));
  const deadline=mode==='deadlines';
- $('calendarView').hidden=deadline;
+ // Keep the compact period title available even in the Deadlines mode.
+ $('calendarView').hidden=false;
  $('calendarView').dataset.mode=mode;
  $('calendarDeadlineView').hidden=!deadline;
  // The header '+' is the only event shortcut; keep its duplicate parked.
