@@ -252,6 +252,8 @@ function svcpOpenDocument(file){
  const toggleMenu=show=>{tools.hidden=!show;menuButton.setAttribute('aria-expanded',String(show));};
  menuButton.addEventListener('click',()=>toggleMenu(tools.hidden));
  const icons={
+  download:'<path d="M12 3v12m-5-5 5 5 5-5M4 18v3h16v-3"/>',
+  share:'<path d="M12 16V3m-5 5 5-5 5 5M4 14v7h16v-7"/>',
   eye:'<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.2"/>',
   word:'<path d="M7 3h8l4 4v14H7zM15 3v4h4M9 12l2 5 2-5 2 5 2-5"/>',
   pdf:'<path d="M7 3h8l4 4v14H7zM15 3v4h4M9 12h6M9 16h5"/>',
@@ -264,7 +266,11 @@ function svcpOpenDocument(file){
   button.append(el('span','',label));button.addEventListener('click',run);
   return button;
  }
- tools.append(pill('Смотреть','eye',()=>{body.scrollTop=0;say('Документ открыт для просмотра.')}),pill('Word','word',async()=>{
+ // The document is already open; show five useful actions instead.
+ const actionRail=el('div','svcp-doc-action-rail');
+ actionRail.setAttribute('role','group');
+ actionRail.setAttribute('aria-label','Действия с открытым документом');
+ actionRail.append(pill('Word','word',async()=>{
   try{
    if(kind==='word'){save(file,file.name);say('Оригинал Word сохранён.');return}
    say('Подготавливаю Word…');const t=await getText();if(!live)return;
@@ -288,7 +294,11 @@ function svcpOpenDocument(file){
   const popup=window.open(url,'_blank');
   say(popup?'В системном меню документа выбери «Печать».':'Разреши открытие окна для печати.');
  }));
- const doc= pill('В Документы · подпись','pen',()=>{
+ actionRail.append(pill('Скачать','download',()=>{
+  save(file,file.name);
+  say('Оригинал файла передан в загрузки без изменений.');
+ }));
+ const doc=pill('Подпись','pen',()=>{
   if(typeof window.SEYVEO_SAYVI_SURFACES?.open!=='function'||
      !window.SEYVEO_DOCUMENT_CENTER?.importFromChat?.(file)){
    say('Передача в рабочие Документы сейчас недоступна.');return
@@ -297,11 +307,9 @@ function svcpOpenDocument(file){
   window.SEYVEO_SAYVI_SURFACES?.open?.('contract','business');
  });
  doc.classList.add('svcp-doc-to-documents');
- doc.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17c3-7 4 4 7-2 3-8 4 3 8-3M4 21h16"/></svg>';
  doc.setAttribute('aria-label','Открыть в Документах для подписи');
  doc.title='В Документы · подпись';
- const share=el('button','svcp-doc-share','Поделиться');share.type='button';
- share.addEventListener('click',()=>{
+ const share=pill('Поделиться','share',()=>{
   const payload={files:[file],title:file.name};
   if(typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare(payload)){
    navigator.share(payload).catch(error=>{
@@ -312,8 +320,9 @@ function svcpOpenDocument(file){
    say('Оригинал сохранён. Его можно отправить через системное меню Файлов.');
   }
  });
- const shareRow=el('div','svcp-doc-share-row');shareRow.append(share,doc);
- const bottom=el('footer','svcp-doc-bottom');bottom.append(shareRow,info);
+ tools.append(share);
+ actionRail.append(doc);
+ const bottom=el('footer','svcp-doc-bottom');bottom.append(actionRail,info);
  sheet.append(top,body,tools,bottom);
  const onOutside=e=>{if(!tools.hidden&&!tools.contains(e.target)&&!menuButton.contains(e.target))toggleMenu(false)};
  const onKey=e=>{if(e.key==='Escape'){e.preventDefault();if(!tools.hidden){toggleMenu(false);return}close()}};
