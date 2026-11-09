@@ -130,6 +130,9 @@ installOperationDatePicker();
 function setOperationForm(open){
  operationForm.hidden=!open;
  operationOpen.setAttribute('aria-expanded',String(open));
+ // Edit mode has a single primary action (Save). The list's add icon and
+ // redundant empty message return when editing ends.
+ operationForm.closest('.picture-operations')?.classList.toggle('is-editing',open);
  if(open){
   const day=$('pictureOperationDay');
   if(!day.value){
@@ -152,7 +155,10 @@ kindGroup.addEventListener('click',event=>{
  operationKind.dispatchEvent(new Event('change',{bubbles:true}));
 });
 operationOpen.addEventListener('click',()=>setOperationForm(operationForm.hidden));
-$('pictureOperationCancel').addEventListener('click',()=>setOperationForm(false));
+$('pictureOperationCancel').addEventListener('click',()=>{
+ setOperationForm(false);
+ operationOpen.focus({preventScroll:true});
+});
 operationKind.addEventListener('change',()=>{
  syncKindButtons();
  const money=['sale','expense'].includes(operationKind.value);
