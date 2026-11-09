@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Единый язык символов SEYVEO: Сэйви — фирменный знак со сферой, Исправить — карандаш, Перейти — стрелка; затем самолётик «Отправить» либо значок «Сохранить». Значки тонкие, с небольшими подписями и крупной областью касания. Материал #38383A. Свайпы листают очередь, удержание открывает управление карточкой.';
+policyGuide.textContent='Единый язык символов SEYVEO: Сэйви — фирменный знак со сферой, Исправить — карандаш, Перейти — стрелка; затем самолётик «Отправить» либо значок «Сохранить». Три одинаковых мягко скруглённых квадрата 48×48 без видимых подписей: фирменная Сэйви на #38383A, лист с карандашом для правки и стрелка для перехода; остальные — спокойный матовый материал. VoiceOver видит названия действий. Материал #38383A. Свайпы листают очередь, удержание открывает управление карточкой.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
