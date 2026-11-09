@@ -1124,14 +1124,16 @@ function showDiscovery(card){
  if(!card||!available()||window.SEYVEO_CARD_ENGINE?.isSuppressed?.(card)||window.SEYVEO_CARD_ENGINE?.isSnoozed?.(card))return false;
  const engine=window.SEYVEO_CARD_ENGINE;
  const surface=engine?.renderCard?.(card,{onAction:id=>{
-  if(id==='cycle')window.SEYVEO_CARD_ENGINE?.snoozeCards?.(card);
-   else if(id==='later')window.SEYVEO_DISCOVERY?.postpone?.(card.releaseId);
-  else if(id==='not-interested')window.SEYVEO_DISCOVERY?.dismiss?.(card.releaseId);
-  else if(id==='open-release'){
+  // The new Sayvi/Edit screen is a non-destructive local preview.
+  if(id==='sayvi'||id==='edit'||id==='confirm-preview')return;
+  if(id==='navigate'||id==='open-release'){
    const opened=window.SEYVEO_BROWSER?.open?.(card.releaseUrl);
    if(opened)window.SEYVEO_DISCOVERY?.dismiss?.(card.releaseId);
    return;
   }
+  if(id==='cycle')engine?.snoozeCards?.(card);
+  else if(id==='later')window.SEYVEO_DISCOVERY?.postpone?.(card.releaseId);
+  else if(id==='not-interested')window.SEYVEO_DISCOVERY?.dismiss?.(card.releaseId);
   rest();
  }});
  if(!surface)return false;
