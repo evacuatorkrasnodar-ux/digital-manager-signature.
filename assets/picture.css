@@ -680,13 +680,13 @@ html body #picturePage .picture-split-track{
 html body #picturePage .picture-split-fill{
  background:#AAB0B7!important;opacity:1!important;
 }
-:root[data-theme="light"] #picturePage #pictureBusiness > .picture-tabs{
+html[data-theme="light"] body #picturePage #pictureBusiness > .picture-tabs{
  background:#E9E9EB!important;
 }
-:root[data-theme="light"] #picturePage #pictureBusiness > .picture-tabs > button{
+html[data-theme="light"] body #picturePage #pictureBusiness > .picture-tabs > button{
  color:#60636A!important;
 }
-:root[data-theme="light"] #picturePage #pictureBusiness > .picture-tabs > button[aria-pressed="true"]{
+html[data-theme="light"] body #picturePage #pictureBusiness > .picture-tabs > button[aria-pressed="true"]{
  color:#FFF!important;
 }
 @media(max-width:360px){
