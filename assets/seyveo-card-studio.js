@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Единый стандарт: Сэйви → просмотр варианта → Отправить/Сохранить; Исправить → ручная правка → Отправить/Сохранить; Перейти → исходный раздел. Все три кнопки видны на начальной карточке. Премиальный тёмный графит #38383A. Свайпы листают очередь, удержание управляет скрытием.';
+policyGuide.textContent='Единый язык символов SEYVEO: Сэйви — фирменный знак со сферой, Исправить — карандаш, Перейти — стрелка; затем самолётик «Отправить» либо значок «Сохранить». Значки тонкие, с небольшими подписями и крупной областью касания. Материал #38383A. Свайпы листают очередь, удержание открывает управление карточкой.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
