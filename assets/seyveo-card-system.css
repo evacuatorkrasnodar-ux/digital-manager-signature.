@@ -697,3 +697,47 @@
  color:#F6F6F7!important;
 }
 .sv-card-context-item:active{background:rgba(255,255,255,.10)!important}
+
+/* SEYVEO Three-Action Card Contract · Premium Dark Graphite #38383A.
+   A single graphite Sayvi button, compact Edit and Navigate text actions.
+   After the user chooses Sayvi or Edit, the action row is replaced with
+   ONE final Send/Save/Confirm control. No fake external delivery receipt. */
+.sv-card-system--rendered .sv-card-actions[hidden],
+.sv-card-system--rendered .sv-card-draft-preview[hidden]{
+ display:none!important;
+}
+.sv-card-system--rendered .sv-card-draft-preview{
+ display:flex;flex-direction:column;gap:8px;
+ margin-top:12px;padding:10px 0 0;
+ border-top:1px solid rgba(170,179,185,.20);
+}
+.sv-card-system--rendered .sv-card-draft-title{
+ margin:0;color:var(--sv-card-ink,var(--text));
+ font-size:12.5px;line-height:1.35;font-weight:560;
+}
+.sv-card-system--rendered .sv-card-draft-input{
+ display:block;box-sizing:border-box;width:100%;min-height:84px;
+ padding:10px 12px;border-radius:12px;resize:vertical;
+ border:1px solid rgba(160,169,178,.23);
+ background:rgba(155,165,174,.07);color:var(--text);
+ font-family:inherit;font-size:13px;line-height:1.55;
+ box-shadow:none;outline-offset:2px;
+}
+.sv-card-system--rendered .sv-card-draft-input[readonly]{
+ cursor:default;resize:none;
+}
+.sv-card-system--rendered .sv-card-draft-hint,
+.sv-card-system--rendered .sv-card-draft-status{
+ margin:0;color:var(--secondary);font-size:11.5px;line-height:1.4;
+}
+.sv-card-system--rendered .sv-card-draft-confirm{
+ appearance:none;align-self:flex-start;box-sizing:border-box;
+ min-height:44px;padding:8px 17px;
+ border:0;border-radius:999px;
+ background:#38383A!important;color:#F6F6F7!important;
+ font-family:inherit;font-size:12.5px;font-weight:570;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+.sv-card-system--rendered .sv-card-draft-confirm:focus-visible{
+ outline:2px solid currentColor;outline-offset:2px;
+}
