@@ -21,8 +21,8 @@
   function closeMenus(){
     clearTimer();
     for(const {menu,trigger} of items){
-      menu.hidden=true;
-      trigger.setAttribute('aria-expanded','false');
+      if(!menu.hidden)menu.hidden=true;
+      if(trigger.getAttribute('aria-expanded')!=='false')trigger.setAttribute('aria-expanded','false');
     }
   }
   function synchronize(){
