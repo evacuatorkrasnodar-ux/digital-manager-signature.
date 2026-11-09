@@ -256,3 +256,23 @@
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
+
+/* Home document card · minimal one-action review.
+   File upload is a quiet textual link, never the browser's bulky native button. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-document-file-link{
+ display:inline-flex;align-items:center;justify-content:flex-start;
+ box-sizing:border-box;min-height:36px;margin:4px 0 5px;padding:6px 0;
+ background:transparent;border:0;box-shadow:none;
+ color:var(--secondary);font:500 12px/1.3 inherit;
+ text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;
+ cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-document-file:focus-visible + .lm-document-file-link{
+ outline:2px solid var(--text);outline-offset:2px;border-radius:4px;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-hero[role="button"]{
+ cursor:pointer;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-hero[role="button"]:focus-visible{
+ outline:2px solid var(--text);outline-offset:3px;border-radius:8px;
+}
