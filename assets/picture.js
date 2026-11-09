@@ -353,15 +353,15 @@ function render(){
  const plot=$('pictureBars');plot.replaceChildren();plot.style.setProperty('--picture-bars',trend.length);
  const max=Math.max(1,...trend.map(x=>x.revenue));
  for(const bin of trend){
-  const col=clean('button','picture-bin'),track=clean('span','picture-bin-track'),bar=clean('span','picture-bin-bar');
-  col.type='button';col.dataset.pictureIndex=String(plot.childElementCount);
-  col.setAttribute('aria-label',bin.label+': продажи '+rub(bin.revenue)+'. Подробности');
+  const col=clean('div','picture-bin'),track=clean('span','picture-bin-track'),bar=clean('span','picture-bin-bar');
+  col.setAttribute('role','img');
+  col.setAttribute('aria-label',bin.label+': продажи '+rub(bin.revenue));
   bar.style.setProperty('--bar-height',String(bin.revenue?Math.max(4,Math.round(100*bin.revenue/max)):3)+'%');
   const label=clean('small','',bin.label);
   track.append(bar);col.append(track,label);plot.append(col);
  }
  plot.setAttribute('role','group');
- plot.setAttribute('aria-label','Продажи за период: нажмите на столбец для подробностей');
+ plot.setAttribute('aria-label','Продажи за выбранный период');
  const sourceList=$('pictureSources');sourceList.replaceChildren();
  sources.forEach((source,index)=>row(sourceList,source.name,source.leads+' обращений',total.leads?source.leads*100/total.leads:0,'source',index));
  const expenses=$('pictureExpenses');expenses.replaceChildren();
@@ -369,35 +369,7 @@ function render(){
  renderSayviAdvice(result);
  $('pictureMoneyDifference').textContent='Разница продаж и расходов: '+rub(total.revenue-total.cost);
 }
-// Drill down from a number, a source, an expense, or one chart column.
-function openBreakdown(title,subtitle,values,explanation){
- const dialog=$('pictureBreakdownDialog'),list=$('pictureBreakdownRows');
- $('pictureBreakdownTitle').textContent=title;
- $('pictureBreakdownSub').textContent=subtitle;
- $('pictureBreakdownExplain').textContent=explanation||'';
- $('pictureBreakdownExplain').hidden=!explanation;
- list.replaceChildren();
- for(const [label,value] of values){
-  const r=clean('div','home-widget-detail-row');
-  r.append(clean('span','',label),clean('strong','',value));
-  list.append(r);
- }
- if(!dialog.open)dialog.showModal();
-}
-$('pictureBars').addEventListener('click',event=>{
- const button=event.target.closest('[data-picture-index]');
- if(!button)return;
- const item=businessData()?.trend?.[Number(button.dataset.pictureIndex)];
- if(!item)return;
- openBreakdown('Продажи · '+item.label,'За выбранный отрезок времени',[
-  ['Обращения',num.format(item.leads)],
-  ['Заказы',num.format(item.sales)],
-  ['Продажи на сумму',rub(item.revenue)],
-  ['Расходы',rub(item.cost)]
- ],'');
-});
-// Six short source/expense breakdowns belong INSIDE the Pulse, not in six
-// modal "pages". Keep the graph's separate detailed period view intact.
+// Source and expense breakdowns expand inside the Pulse without new pages.
 function toggleInlineBreakdown(button,group,index,picture){
  const root=button.closest('.picture-breakdown');
  if(!root)return;
@@ -441,13 +413,6 @@ for(const [group,id] of [['source','pictureSources'],['cost','pictureExpenses']]
   toggleInlineBreakdown(button,group,Number(button.dataset.pictureIndex),picture);
  });
 }
-$('pictureBreakdownClose').addEventListener('click',()=>$('pictureBreakdownDialog').close());
-$('pictureBreakdownDialog').addEventListener('click',event=>{
- const dialog=$('pictureBreakdownDialog');
- if(event.target!==dialog)return;
- const rect=dialog.getBoundingClientRect();
- if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();
-});
 document.querySelectorAll('[data-picture-period]').forEach(button=>button.addEventListener('click',()=>{
  if(period===button.dataset.picturePeriod)return;
  period=button.dataset.picturePeriod;render();
