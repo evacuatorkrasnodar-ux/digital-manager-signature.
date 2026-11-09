@@ -237,9 +237,11 @@ function setVoicePanel(open,stateName='recording'){
   stateName==='error'?'Нет микрофона':'Голосовое';
 }
 function showVoiceError(message){
-  setStatus(message);
-  setVoicePanel(true,'error');
-  if(voiceHint)voiceHint.textContent=message;
+ // An unavailable/denied microphone is NOT an active recording.
+ // Restore the composer immediately; show the reason in a short status toast.
+ setVoicePanel(false);
+ if(voiceHint)voiceHint.textContent='';
+ setStatus(message);
 }
 function cancelVoice(){
  voiceRequestId++;
@@ -402,7 +404,9 @@ voiceRecordButton?.addEventListener('pointerdown',event=>{
  voiceHold=hold;
  startVoice().then(()=>{
   if(voiceHold!==hold)return;
-  if(hold.released){
+  // A rejected permission prompt may finish before pointerup. Always release
+  // the hold if there is no recording, or the next press would be ignored.
+  if(hold.released||(!voiceSession&&!voiceDraft)){
    voiceHold=null;
    if(voiceSession&&!voiceSession.finished)stopVoice();
   }
