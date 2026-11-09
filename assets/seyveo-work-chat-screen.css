@@ -4795,6 +4795,34 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 
 
+/* SEYVEO · compact timestamps outside plain text bubbles, 9 Nov 2026.
+   Preserve the original <time> node and all other message layouts. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-time-outside{
+ margin-top:15px!important;
+ padding:7px 11px 8px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-time-outside > .svcp-bubble-meta{
+ min-height:0!important;margin:0 0 2px!important;padding:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-time-outside > .svcp-bubble-meta > .svcp-time{
+ position:absolute!important;top:-15px!important;right:3px!important;left:auto!important;
+ margin:0!important;padding:0!important;line-height:12px!important;font-size:10px!important;
+ color:var(--secondary)!important;font-variant-numeric:tabular-nums!important;white-space:nowrap!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.svcp-time-outside:not(.is-sayvi) > .svcp-bubble-meta{
+ display:block!important;height:0!important;min-height:0!important;
+ margin:0!important;padding:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"]
+ #svcpMessages > .svcp-bubble.is-short-text.svcp-time-outside{
+ display:block!important;min-width:0!important;padding:7px 10px!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"]
+ #svcpMessages > .svcp-bubble.svcp-time-outside > .svcp-bubble-meta > .svcp-time{
+ color:#606069!important;
+}
+
 /* SEYVEO · standalone emoji: actions by gesture, no visible row.
    Scope limited to emoji-only messages; the standard chat dock is unchanged. */
 #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only{
