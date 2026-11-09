@@ -226,3 +226,10 @@
  #seyveoCardStudio .scs-gallery-item{padding:11px}
  #seyveoCardStudio .scs-phone{padding:17px 11px 21px}
 }
+
+/* The tutorial deferral keeps the card's information available while
+   hiding its action row. Explicit attribute priority avoids old flex rules. */
+#seyveoCardStudio .sv-card-actions[hidden]{display:none!important}
+#seyveoCardStudio .scs-gallery-item[data-card-state="deferred"] .sv-card-system--rendered{
+ opacity:.62;
+}
