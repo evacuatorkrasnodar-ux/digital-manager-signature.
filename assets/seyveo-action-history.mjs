@@ -112,15 +112,21 @@ if(personal&&head){
  const backSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');backSvg.setAttribute('viewBox','0 0 24 24');backSvg.setAttribute('aria-hidden','true');
  const backPath=document.createElementNS('http://www.w3.org/2000/svg','path');backPath.setAttribute('d','m14 5-7 7 7 7');backSvg.append(backPath);back.classList.add('sv-nav-back','sah-history-back');
  back.append(backSvg);
- heading.append(back,title);
+ const fallbackSearch=document.createElement('button');
+ fallbackSearch.type='button';fallbackSearch.className='sah-history-search';
+ fallbackSearch.setAttribute('aria-label','Поиск в истории действий');
+ fallbackSearch.title='Поиск';
+ fallbackSearch.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 5 5"/></svg>';
+ heading.append(back,title,fallbackSearch);
  const intro=document.createElement('p');intro.className='sah-history-intro';intro.textContent='Сохранённые события и результаты действий';
  const search=document.createElement('input');search.type='search';search.className='sah-search';search.placeholder='Поиск по имени, делу или дате';search.setAttribute('aria-label','Поиск в истории действий');
- search.hidden=true;
+ search.hidden=true;search.id='sahHistorySearch';
  const list=document.createElement('div');panel.append(heading,intro,search,list);
  head.append(open);
  personal.append(panel);
  const studio=new URLSearchParams(location.search).has('seyveoStudio');
  let visibleCount=4;
+ let searchOpen=false;
  const more=document.createElement('button');more.type='button';more.className='sah-inline-toggle';more.style.marginTop='10px';more.hidden=true;more.textContent='Показать ещё';panel.append(more);
  const stateOf=v=>v==='failed'?'failed':['shown','deferred','action_pending','executing'].includes(v)?'pending':['succeeded','archived'].includes(v)?'done':'other';
  const statuses={shown:'Не завершено',deferred:'Отложено',action_pending:'Ожидает действия',executing:'Выполняется',succeeded:'Выполнено',archived:'В архиве',failed:'Ошибка',canceled:'Отменено',expired:'Истекло'};
@@ -133,7 +139,7 @@ if(personal&&head){
   const events=[...cardEvents,...taskEvents].sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
   panel.classList.toggle('is-empty-history',events.length===0);
   more.hidden=true;
-  search.hidden=events.length<5&&!search.value.trim();
+  search.hidden=!searchOpen;
   if(!events.length){
    const empty=document.createElement('div');empty.className='sah-inline-note';
    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -173,13 +179,18 @@ if(personal&&head){
    const line=document.createElement('small');line.textContent=(statuses[e.to]||e.to||'Событие')+' · '+(valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано');
    const status=document.createElement('span');status.className='sah-state';status.dataset.state=stateOf(e.to);status.textContent=statuses[e.to]||e.to||'Событие';
    line.textContent=valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано';
-   item.append(name,status,line);
+   const meta=document.createElement('div');
+   meta.className='sah-row-meta';
+   meta.append(status,line);
+   item.append(name,meta);
    if(e.taskId){
-    const recover=document.createElement('button');recover.type='button';recover.className='sah-restore-task';recover.textContent='Вернуть в дела';
+    const recover=document.createElement('button');recover.type='button';recover.className='sah-restore-task';
+    recover.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M4 12h10a6 6 0 0 1 6 6"/></svg>';
+    recover.title='Вернуть в дела';
     recover.setAttribute('aria-label','Вернуть в дела: '+e.title);
     recover.addEventListener('click',()=>{
      const ok=window.SEYVEO_PERSONAL_TASK_HISTORY?.restore?.(e.taskId);
-     if(ok)render();else recover.textContent='Не удалось восстановить';
+     if(ok)render();else {recover.setAttribute('aria-label','Не удалось восстановить дело');recover.title='Не удалось восстановить';}
     });
     item.append(recover);
    }
@@ -189,6 +200,20 @@ if(personal&&head){
   more.hidden=selected.length<=visibleCount;
   if(!more.hidden)more.textContent='Показать ещё · '+Math.min(4,selected.length-visibleCount);
  }
+ const toggleSearch=()=>{
+  if(panel.hidden)return;
+  searchOpen=!searchOpen;
+  if(!searchOpen)search.value='';
+  visibleCount=4;render();
+  fallbackSearch.setAttribute('aria-expanded',String(searchOpen));
+  const shared=document.getElementById('svWorkAdd');
+  if(shared&&shared.dataset.svHeaderIcon==='search')shared.setAttribute('aria-expanded',String(searchOpen));
+  if(searchOpen)requestAnimationFrame(()=>search.focus({preventScroll:true}));
+ };
+ fallbackSearch.setAttribute('aria-controls',search.id);
+ fallbackSearch.setAttribute('aria-expanded','false');
+ fallbackSearch.addEventListener('click',toggleSearch);
+ window.addEventListener('seyveo:history-search-toggle',toggleSearch);
  search.addEventListener('input',()=>{visibleCount=4;render();});
  more.addEventListener('click',()=>{visibleCount=Math.min(visibleCount+4,40);render();});
  const page=document.getElementById('tasksPage');
@@ -202,10 +227,12 @@ if(personal&&head){
   page?.classList.toggle('sah-history-open',show);
   open.setAttribute('aria-expanded',String(show));
   if(show){
-   visibleCount=4;render();
+   searchOpen=false;search.value='';visibleCount=4;render();
    if(scroller)scroller.scrollTop=0;
    requestAnimationFrame(()=>back.focus({preventScroll:true}));
   }else{
+   searchOpen=false;search.value='';search.hidden=true;
+   fallbackSearch.setAttribute('aria-expanded','false');
    requestAnimationFrame(()=>{
     if(restoreScroll&&scroller)scroller.scrollTop=previousScroll;
     if(restoreFocus&&open.isConnected&&!open.closest('[hidden]'))open.focus({preventScroll:true});
