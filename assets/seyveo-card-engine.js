@@ -206,6 +206,7 @@
   }catch{return []}
  }
  function isSnoozed(card){return !!card&&readSnoozes().some(e=>e.key===cardVisibilityKey(card))}
+ function getSnoozes(){return readSnoozes().map(entry=>({...entry}))}
  function snoozeCards(cards,now=Date.now()){
   const list=Array.isArray(cards)?cards:[cards],active=readSnoozes();let count=0;
   for(const card of list){
@@ -378,7 +379,7 @@ const el=(tag,klass,content)=>{
  root.SEYVEO_CARD_ENGINE=Object.freeze({
   version:7,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
    isProtected,isSuppressed,isSnoozed,hideCard,muteFamily,getVisibility,restoreVisibility,visibleCards,
-   rotateQueue,snoozeCards,clearSnoozes,
+   rotateQueue,snoozeCards,getSnoozes,clearSnoozes,
   presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome
  });
 })(window);
