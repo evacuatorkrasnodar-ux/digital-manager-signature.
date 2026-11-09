@@ -96,7 +96,14 @@ function dayItems(dayKey,includeDone=true){
  const meeting=visibleEvents().filter(x=>x.date===dayKey).map(x=>({...x,source:'event',sort:x.time||'99:00'}));
  const todo=selectedScope()==='business'?[]:tasks().filter(x=>x.date===dayKey&&(includeDone||!x.done)).map(x=>({...x,source:'task',sort:'98:00'}));
  const personal=selectedScope()==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(dayKey)||[]);
- return [...meeting,...todo,...personal].sort((a,b)=>a.sort.localeCompare(b.sort)||a.title.localeCompare(b.title,'ru'));
+ const notes=(window.SEYVEO_NOTES_API?.getNotes?.()||[])
+  .filter(note=>note.calendarDate===dayKey&&typeof note.text==='string'&&note.text.trim())
+  .map(note=>({
+   id:note.id,source:'note',sort:'97:00',
+   date:dayKey,
+   title:note.text.split('\n')[0].trim().slice(0,120)||'Заметка'
+  }));
+ return [...meeting,...todo,...personal,...notes].sort((a,b)=>a.sort.localeCompare(b.sort)||a.title.localeCompare(b.title,'ru'));
 }
 function createEntry(item){
  const btn=text('button','cal-entry');btn.type='button';
@@ -113,6 +120,10 @@ function createEntry(item){
   btn.dataset.calendarSpaceItem=item.space;
   btn.dataset.calendarSpaceRecord=item.id;
   btn.setAttribute('aria-label','Открыть '+item.label+': '+item.title);
+ }else if(item.source==='note'){
+  clock.append(text('i','cal-entry-bullet cal-entry-note-bullet'));
+  btn.dataset.calendarNote=item.id;
+  btn.setAttribute('aria-label','Открыть заметку: '+item.title);
  }else{
   clock.textContent=item.time||'Весь\u00a0день';btn.dataset.calendarEvent=item.id;
   btn.setAttribute('aria-label','Открыть событие: '+item.title);
@@ -122,6 +133,7 @@ function createEntry(item){
  if(item.done)title.style.textDecoration='line-through';
  const subtitle=item.source==='task'?(item.done?'Завершено · личное дело':'Личное дело · изменить в «Делах»'):
    item.source==='space'?(item.label+' · '+item.kind+(item.note?' · '+item.note:'')):
+   item.source==='note'?'Заметка · Блокнот':
    (item.kind==='business'?'Работа':'Личное')
    +(item.duration?(' · '+(item.duration===30?'30 мин':item.duration===60?'1 ч':item.duration===90?'1 ч 30 мин':'2 ч')):'')
    +(item.travel?' · дорога по '+item.travel+' мин':'')
@@ -158,7 +170,9 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
  if(holiday)btn.dataset.holiday=holiday.kind;
  if(!week)btn.dataset.outside=String(day.getMonth()!==focus.getMonth());
  const personal=selectedScope()==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(key)||[]);
- const records=calendarEvents.filter(x=>x.date===key).length+personalTasks.filter(x=>x.date===key).length+personal.length;
+ const datedNotes=(window.SEYVEO_NOTES_API?.getNotes?.()||[])
+  .filter(note=>note.calendarDate===key&&typeof note.text==='string'&&note.text.trim());
+ const records=calendarEvents.filter(x=>x.date===key).length+personalTasks.filter(x=>x.date===key).length+personal.length+datedNotes.length;
  btn.setAttribute('aria-label',fmtLong.format(day)+(key===today?' · сегодня':'')+(holiday?' · '+holiday.name:'')+' · '+records+' записей');
  if(week)btn.append(text('small','',weekday[(day.getDay()+6)%7]));
  btn.append(text('span','cal-day-number',String(day.getDate())));
@@ -167,6 +181,7 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
  if(calendarEvents.some(x=>x.date===key))dots.append(text('i',''));
  if(personalTasks.some(x=>x.date===key&&!x.done))dots.append(text('i','cal-dot-task'));
  if(personal.length)dots.append(text('i','cal-dot-life'));
+ if(datedNotes.length)dots.append(text('i','cal-dot-note'));
  btn.append(dots);return btn;
 }
 function renderMonth(){
@@ -655,6 +670,11 @@ $('calendarCreateTask')?.addEventListener('click',()=>{
  closeCreateMenu();
  addTask();
 });
+$('calendarCreateNote')?.addEventListener('click',()=>{
+ const targetDate=iso(); // Date the user selected, not necessarily today.
+ closeCreateMenu();
+ window.SEYVEO_NOTES_API?.newCalendarNote?.(targetDate);
+});
 document.addEventListener('click',event=>{
  if(!createMenu?.hidden&&!createMenu.contains(event.target)&&!createToggle.contains(event.target))closeCreateMenu();
 });
@@ -755,6 +775,9 @@ for(const id of ['calendarAgenda','calendarDeadlineList']){
   const entry=event.target.closest('.cal-entry');
   if(!entry)return;
   if(entry.dataset.calendarEvent)openEvent(entry.dataset.calendarEvent);
+  else if(entry.dataset.calendarNote){
+   window.SEYVEO_NOTES_API?.openCalendarNote?.(entry.dataset.calendarNote);
+  }
   else if(entry.dataset.calendarTask){
    const task=tasks().find(row=>row.id===entry.dataset.calendarTask&&!row.done);
    const name=task?window.SEYVEO_CONTACTS?.taskTarget?.(task.title)||'':'';
@@ -927,7 +950,9 @@ window.addEventListener('seyveo:calendar-plan-note',event=>{
  }
 });
 window.addEventListener('seyveo:tasks-changed',()=>{if(!page.hidden)render()});
-window.addEventListener('storage',event=>{if((event.key===STORE||event.key===TASKS)&&!page.hidden)render()});
+window.addEventListener('seyveo:notes-changed',()=>{if(!page.hidden)render()});
+window.addEventListener('load',()=>{if(!page.hidden)render()});
+window.addEventListener('storage',event=>{if((event.key===STORE||event.key===TASKS||event.key==='seyveo-notes-v1')&&!page.hidden)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!page.hidden)render()});
 // Browser timers may pause on iOS when the app is not visible. No background guarantee.
 window.setInterval(()=>{if(!page.hidden&&!document.hidden)renderAdvice()},60*1000);
