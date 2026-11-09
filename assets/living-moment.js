@@ -253,7 +253,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
   workBack.hidden=true;
   workSend.hidden=!active||workMode==='choose'||workMode==='done';
   if(active)open.hidden=workMode!=='choose';
-  if(active)execute.hidden=true;
+  else if(!mailActive()&&!documentActive())open.hidden=false;
+  if(active||documentActive())execute.hidden=true;
+  else if(!mailActive())execute.hidden=false;
   workDetails.replaceChildren();
   if(!active)return;
   // Source message is already visible in the headline; detail is only for composing.
@@ -275,7 +277,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  mailDetails.hidden=true;
  // The original document scene uses the SAME field, artwork, actions and motion.
  let documentStep='summary';
- const documentDefault='Срок поставки: [указать согласованную сторонами дату или период]. При риске задержки поставщик письменно уведомляет покупателя в согласованном сторонами порядке. Проект редакции требует проверки человеком.';
+ const documentDefault='Срок поставки: [указать согласованную сторонами дату или период]. При риске задержки поставщик письменно уведомляет покупателя в согласованном сторонами порядке.';
  let documentNote=documentDefault;
  let documentSource='Поставка товара осуществляется в согласованные сторонами сроки.';
  let documentAnalysis='';
@@ -483,7 +485,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(documentStep==='edit'||documentStep==='preview'){
    const label=create('label','lm-mail-edit-label',documentStep==='preview'?'Предложение Сэйви · можно поправить':'Исправить самостоятельно');
    const input=create('textarea','lm-mail-edit-input');
-   input.rows=4;input.maxLength=1200;input.value=documentNote;
+   input.rows=4;input.maxLength=8500;input.value=documentNote;
    label.append(input);documentDetails.append(label);
    documentDetails.append(create('p','lm-mail-note','Учебная редакция. Исходный договор не изменяется.'));
   }else{
@@ -719,7 +721,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const documentSave=polymer('Сохранить',()=>{
   const value=documentDetails.querySelector('textarea')?.value?.trim();
   if(!value){explain(field,'Сначала введите текст документа.',documentSave);return}
-  documentNote=value.slice(0,1200);
+  documentNote=value.slice(0,8500);
   try{
    localStorage.setItem(documentDraftKey,JSON.stringify({
     original:documentSource,proposed:documentNote,at:new Date().toISOString(),demo:true
