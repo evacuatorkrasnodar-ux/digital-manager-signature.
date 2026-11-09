@@ -4,9 +4,9 @@
    Intentionally NO global .dock, .sv-shared-dock, chat, modal page root,
    scanner camera, paper canvas, icon SVG or positioning rules here. */
 :root{
- --sv-flat-panel:#30363b;
- --sv-flat-panel-raised:#394147;
- --sv-flat-panel-muted:#282f34;
+ --sv-flat-panel:#38383A;
+ --sv-flat-panel-raised:#464649;
+ --sv-flat-panel-muted:#303033;
  --sv-flat-ink:#e9eef1;
  --sv-flat-edge:rgba(225,233,238,.105);
 }
