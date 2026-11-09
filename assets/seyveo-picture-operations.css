@@ -143,3 +143,225 @@
  outline:2px solid var(--text)!important;
  outline-offset:2px!important;
 }
+
+
+/* SEYVEO · Pulse operations, premium flat graphite · 2026-11-09 · v5.
+   Native ledger and date picker retained. Touch controls >=44px. */
+html body #picturePage #pictureOperations.picture-operations{
+ box-sizing:border-box!important;
+ margin:12px 0 24px!important;
+ padding:12px 9px 18px!important;
+ border:0!important;border-top:1px solid rgba(191,198,207,.15)!important;
+ border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #picturePage .picture-operations-head{
+ min-height:44px!important;
+ gap:12px!important;
+}
+html body #picturePage .picture-operations-head h2{
+ font-size:14px!important;line-height:1.3!important;
+ letter-spacing:-.018em!important;font-weight:630!important;
+}
+html body #picturePage #pictureOperationOpen{
+ display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;
+ box-sizing:border-box!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ max-width:44px!important;max-height:44px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F5F5F6!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #picturePage #pictureOperationOpen svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #picturePage #pictureOperationOpen:active{
+ background:#505052!important;
+}
+html body #picturePage #pictureOperations.is-editing #pictureOperationOpen{
+ display:none!important;
+}
+html body #picturePage #pictureOperations .picture-operations-note{
+ margin:1px 0 8px!important;
+ font-size:11px!important;line-height:1.4!important;
+ color:var(--secondary)!important;
+}
+html body #picturePage #pictureOperations .picture-operation-form:not([hidden]){
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ gap:11px!important;
+ padding:10px 0 5px!important;
+ margin:0!important;
+ min-width:0!important;
+ border:0!important;border-top:1px solid rgba(191,198,207,.12)!important;
+}
+html body #picturePage #pictureOperations .picture-operation-form label,
+html body #picturePage #pictureOperations .picture-operation-kind-field,
+html body #picturePage #pictureOperations .picture-operation-day-field{
+ gap:5px!important;
+ color:var(--secondary)!important;
+ font-size:12px!important;
+ font-weight:540!important;
+ line-height:1.35!important;
+}
+html body #picturePage #pictureOperations .picture-operation-kind-options{
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ min-height:48px!important;
+ gap:2px!important;padding:2px!important;margin:0!important;
+ border:0!important;border-radius:13px!important;
+ background:#29292B!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #picturePage #pictureOperations .picture-operation-kind-options button{
+ min-width:0!important;min-height:44px!important;height:44px!important;
+ padding:0 2px!important;margin:0!important;
+ border:0!important;border-radius:11px!important;
+ background:transparent!important;
+ color:#D0D1D4!important;
+ font:inherit!important;font-size:clamp(10px,2.85vw,12px)!important;
+ font-weight:550!important;line-height:1.15!important;
+ box-shadow:none!important;
+ white-space:nowrap!important;
+}
+html body #picturePage #pictureOperations .picture-operation-kind-options button[aria-pressed="true"]{
+ background:#38383A!important;color:#FFFFFF!important;
+ font-weight:650!important;
+ box-shadow:none!important;
+}
+html body #picturePage #pictureOperations .picture-operation-form input:not(.picture-operation-native-date),
+html body #picturePage #pictureOperations .picture-operation-date-trigger{
+ box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;
+ height:46px!important;min-height:46px!important;
+ padding:10px 12px!important;
+ margin:0!important;
+ border:1px solid rgba(236,238,242,.09)!important;
+ border-radius:12px!important;
+ background:#303033!important;background-image:none!important;
+ color:#F5F5F6!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font-family:inherit!important;font-size:16px!important;
+ line-height:1.3!important;
+}
+html body #picturePage #pictureOperations .picture-operation-form input::placeholder{
+ color:#95969A!important;opacity:1!important;
+}
+html body #picturePage #pictureOperations .picture-operation-date-trigger{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ text-align:left!important;
+}
+html body #picturePage #pictureOperations .picture-operation-date-trigger svg{
+ color:#D2D3D6!important;
+ width:18px!important;height:18px!important;
+}
+html body #picturePage #pictureOperations .picture-operation-actions{
+ display:flex!important;align-items:center!important;
+ gap:9px!important;
+ padding:1px 0 2px!important;
+}
+html body #picturePage #pictureOperations .picture-operation-actions button{
+ box-sizing:border-box!important;
+ min-height:44px!important;height:44px!important;
+ padding:0 16px!important;
+ border:0!important;border-radius:12px!important;
+ background:#38383A!important;color:#F6F6F7!important;
+ font-size:12px!important;font-weight:615!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #picturePage #pictureOperations .picture-operation-actions button+button{
+ padding:0 11px!important;
+ background:transparent!important;
+ color:var(--secondary)!important;
+}
+html body #picturePage #pictureOperations .picture-operation-empty{
+ margin:8px 2px 0!important;
+ font-size:11px!important;line-height:1.4!important;
+ color:var(--secondary)!important;
+}
+html body #picturePage #pictureOperations.is-editing .picture-operation-empty{
+ display:none!important;
+}
+html body #picturePage #pictureOperations .picture-operation-row{
+ min-height:54px!important;
+ border-top:1px solid rgba(191,198,207,.12)!important;
+}
+html body #picturePage #pictureOperations .picture-operation-form :is(input,button):focus-visible{
+ outline:2px solid #D8DADD!important;outline-offset:2px!important;
+}
+html[data-theme="light"] body #picturePage #pictureOperations .picture-operation-kind-options{
+ background:#E9E9EB!important;
+}
+html[data-theme="light"] body #picturePage #pictureOperations .picture-operation-kind-options button{
+ color:#505158!important;
+}
+html[data-theme="light"] body #picturePage #pictureOperations .picture-operation-kind-options button[aria-pressed="true"]{
+ color:#FFFFFF!important;
+}
+html[data-theme="light"] body #picturePage #pictureOperations .picture-operation-form input:not(.picture-operation-native-date),
+html[data-theme="light"] body #picturePage #pictureOperations .picture-operation-date-trigger{
+ background:#F1F1F3!important;color:#27272A!important;
+ border-color:rgba(20,20,25,.10)!important;
+}
+html[data-theme="light"] body #picturePage #pictureOperations .picture-operation-form input::placeholder{
+ color:#777981!important;
+}
+/* The custom calendar belongs to this same flat material language. */
+html body .picture-date-dialog{
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:17px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F7F7F8!important;
+ box-shadow:0 16px 38px rgba(0,0,0,.25)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ padding:16px!important;
+}
+html body .picture-date-dialog::backdrop{
+ background:rgba(0,0,0,.4)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body .picture-date-dialog .picture-date-eyebrow,
+html body .picture-date-dialog .picture-date-week span{
+ color:#CACBD0!important;
+}
+html body .picture-date-dialog :is(.picture-date-month button,.picture-date-close){
+ box-sizing:border-box!important;
+ width:44px!important;height:44px!important;
+ border:0!important;border-radius:50%!important;
+ background:#4A4A4D!important;color:#F7F7F8!important;
+ box-shadow:none!important;
+}
+html body .picture-date-dialog .picture-date-day{
+ color:#F7F7F8!important;
+}
+html body .picture-date-dialog .picture-date-day.is-selected{
+ background:#666669!important;color:#FFF!important;
+}
+html body .picture-date-dialog .picture-date-day.is-today:not(.is-selected){
+ border-color:rgba(255,255,255,.5)!important;
+}
+html body .picture-date-dialog .picture-date-footer{
+ border-color:rgba(255,255,255,.12)!important;
+}
+html body .picture-date-dialog .picture-date-footer button{
+ color:#F7F7F8!important;min-height:44px!important;
+}
+html body .picture-date-dialog .picture-date-footer [data-today]{
+ background:#505052!important;
+}
+html body .picture-date-dialog .picture-date-footer [data-cancel]{
+ color:#CACBD0!important;
+}
