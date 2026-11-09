@@ -239,6 +239,78 @@ function updateKeyNumbers(total){
   const el=$(id);if(el)el.textContent=value;
  }
 }
+// SEYVEO advisory layer: transparent, deterministic explanations derived
+// exclusively from the same period totals shown in the Pulse. This is not a
+// claim to external AI processing or connected CRM access.
+let sayviDraft='';
+const advicePeriod={today:'сегодня',week:'за неделю',month:'за месяц',year:'за год'};
+function renderSayviAdvice(result){
+ const card=$('pictureQuickInsight'),title=$('pictureSummary'),details=$('pictureSayviDetails');
+ if(!card||!title||!details)return;
+ card.hidden=false;
+ details.hidden=true;
+ $('pictureSayviWhy')?.setAttribute('aria-expanded','false');
+ details.replaceChildren();
+ const rows=[];
+ if(!result){
+  title.textContent='Чтобы анализировать работу компании, нужны показатели продаж, расходов и обращений.';
+  rows.push('Подключите источник данных. После этого Сэйви сможет подсвечивать изменения в показателях.');
+  sayviDraft='Сэйви, помоги настроить получение показателей бизнеса для Пульса.';
+ }else{
+  const t=result.total||{},leads=Number(t.leads)||0,sales=Number(t.sales)||0;
+  const revenue=Number(t.revenue)||0,cost=Number(t.cost)||0,diff=revenue-cost;
+  const pending=Math.max(0,leads-sales);
+  const costs=Array.isArray(result.costs)?result.costs:[];
+  const sources=Array.isArray(result.sources)?result.sources:[];
+  const highest=costs.filter(x=>Number(x.value)>0).sort((a,b)=>b.value-a.value)[0];
+  const popular=sources.filter(x=>Number(x.leads)>0).sort((a,b)=>b.leads-a.leads)[0];
+  if(leads>0&&pending>0){
+   title.textContent=num.format(pending)+' из '+num.format(leads)+' обращений пока не стали заказами. Стоит проверить, на каком этапе они остановились.';
+  }else if(cost>revenue&&cost>0){
+   title.textContent='Расходы выше продаж на '+rub(cost-revenue)+'. Сначала проверьте крупные статьи расходов.';
+  }else if(revenue>0){
+   title.textContent='Продажи выше расходов на '+rub(diff)+'. Посмотрим, где можно усилить результат.';
+  }else{
+   title.textContent='Показателей пока недостаточно для вывода. Сэйви поможет определить, что следует подключить.';
+  }
+  if(leads>0)rows.push('Из '+num.format(leads)+' обращений '+num.format(sales)+' стали заказами. Осталось '+num.format(pending)+'.');
+  if(revenue||cost)rows.push('Продажи '+rub(revenue)+', расходы '+rub(cost)+', разница '+rub(diff)+'. Это разница показателей, не расчёт чистой прибыли.');
+  if(highest&&cost>0){
+   const share=Math.round(Number(highest.value)/cost*100);
+   rows.push('Самая крупная статья расходов — '+highest.name+': '+rub(highest.value)+' ('+share+'%).');
+  }
+  if(popular)rows.push('Наибольшее число обращений пришло через «'+popular.name+'»: '+num.format(popular.leads)+'.');
+  if(!rows.length)rows.push('При появлении записей Сэйви покажет, как меняются продажи, обращения и расходы.');
+  sayviDraft='Сэйви, разберём Пульс бизнеса '+advicePeriod[period]+'. '+title.textContent+
+   ' Продажи '+rub(revenue)+', расходы '+rub(cost)+', обращений '+num.format(leads)+', заказов '+num.format(sales)+
+   '. Какие три действия стоит проверить в первую очередь?';
+ }
+ for(const sentence of rows){
+  const paragraph=clean('p','picture-sayvi-detail',sentence);
+  details.append(paragraph);
+ }
+}
+$('pictureSayviWhy')?.addEventListener('click',()=>{
+ const panel=$('pictureSayviDetails'),button=$('pictureSayviWhy');
+ const show=panel.hidden;panel.hidden=!show;
+ button.setAttribute('aria-expanded',String(show));
+ button.textContent=show?'Свернуть':'Пояснить';
+});
+$('pictureSayviDiscuss')?.addEventListener('click',()=>{
+ const draft=sayviDraft||'Сэйви, помоги разобраться с показателями Пульса бизнеса.';
+ const field=$('question');
+ // Do not automatically submit, act, or invent an assistant response.
+ if(field){field.value=draft;field.dispatchEvent(new Event('input',{bubbles:true}));}
+ if(typeof window.SEYVEO_CONVERSATION?.open==='function'){
+  window.SEYVEO_CONVERSATION.open();
+ }else{
+  location.hash='#home';
+ }
+});
+$('pictureConnectSources')?.addEventListener('click',()=>{
+ location.hash='#manage';
+ requestAnimationFrame(()=>document.getElementById('openManageConnections')?.click());
+});
 function render(){
  // This route is explicitly "Pulse of Business", including for life-first profiles.
  // Never hide its opt-in demonstration based on the onboarding preference.
@@ -257,31 +329,24 @@ function render(){
  if(!result){
   const note=$('pictureLifeNote');
   note.hidden=false;
-  note.textContent='Операций пока нет. Добавь продажу, расход, заказ или обращение выше.';
+  note.textContent='Пока не получены показатели. Подключите рабочий источник в разделе «Источники и проверка».';
   if($('pictureDemoLabel'))$('pictureDemoLabel').hidden=true;
   $('pictureBusinessCharts').hidden=true;
   $('pictureQuickInsight').hidden=true;
   $('pictureBars').replaceChildren();
   $('pictureSources').replaceChildren();
   $('pictureExpenses').replaceChildren();
-  $('pictureSummary').textContent='Пока нет подтверждённых показателей.';
+  renderSayviAdvice(null);
   $('pictureMoneyDifference').textContent='Данные о продажах и расходах не подключены.';
   return;
  }
  $('pictureBusinessCharts').hidden=false;
  $('pictureQuickInsight').hidden=false;
  const {total,trend,sources,costs}=result;
- const isSample=result.demo===true;
- const demoLabel=$('pictureDemoLabel');
- if(demoLabel){
-  demoLabel.hidden=!isSample;
-  demoLabel.textContent='ПРИМЕР ДАННЫХ';
- }
- const dataStatus=$('pictureDataStatus');
- if(dataStatus){
-  dataStatus.hidden=!isSample;
-  dataStatus.textContent='Примерные цифры для проверки интерфейса. После первой записи показываем только ваши операции.';
- }
+ // Presentation mode keeps filled figures visible without developer banners.
+ // The data provider still carries its internal provenance flag.
+ if($('pictureDemoLabel'))$('pictureDemoLabel').hidden=true;
+ if($('pictureDataStatus'))$('pictureDataStatus').hidden=true;
  updateKeyNumbers(total);
  const plot=$('pictureBars');plot.replaceChildren();plot.style.setProperty('--picture-bars',trend.length);
  const max=Math.max(1,...trend.map(x=>x.revenue));
@@ -299,10 +364,7 @@ function render(){
  sources.forEach((source,index)=>row(sourceList,source.name,source.leads+' обращений',total.leads?source.leads*100/total.leads:0,'source',index));
  const expenses=$('pictureExpenses');expenses.replaceChildren();
  costs.forEach((cost,index)=>row(expenses,cost.name,rub(cost.value),total.cost?cost.value*100/total.cost:0,'cost',index));
- const incomplete=Math.max(0,total.leads-total.sales);
- $('pictureSummary').textContent=total.leads
-   ?'Из '+num.format(total.leads)+' обращений '+num.format(total.sales)+' стали заказами. '+(incomplete?'Стоит проверить оставшиеся '+num.format(incomplete)+'.':'Все обращения отмечены как заказы.')
-   :'В выбранный период обращений нет.';
+ renderSayviAdvice(result);
  $('pictureMoneyDifference').textContent='Разница продаж и расходов: '+rub(total.revenue-total.cost);
 }
 // Drill down from a number, a source, an expense, or one chart column.
