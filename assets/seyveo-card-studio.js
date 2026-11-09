@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Стандарт: одна графитовая кнопка #38383A, остальные действия — текстом. Если совет Сэйви уже виден, не дублировать его кнопкой. Настоящие новые действия Сэйви сохранять.';
+policyGuide.textContent='Эталон Елены: значок + заголовок + краткое описание; одна кнопка #38383A, максимум два текстовых действия. «Позже» — свайп карточки влево или вправо, не кнопка. Если совет Сэйви уже виден, не дублировать его кнопкой.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
@@ -70,7 +70,8 @@ function renderGallery(){
   const primaries=(view?.actions||[]).filter(action=>action.role==='primary').length;
   const repeats=ids.length!==new Set(ids).size;
   const adviceDuplicate=!!card.suggestion&&ids.some(id=>engine.cardPolicy.redundantAdviceActions.includes(id));
-  if(primaries>engine.cardPolicy.primaryActionsMax||repeats||adviceDuplicate)errors.push(event[0]);
+  const laterButton=ids.includes('later');
+  if(primaries>engine.cardPolicy.primaryActionsMax||ids.length>engine.cardPolicy.visibleActionLimit||repeats||adviceDuplicate||laterButton)errors.push(event[0]);
   const sample=document.createElement('div');
   sample.className='scs-gallery-item';
   sample.dataset.cardState='new';
@@ -87,7 +88,7 @@ function renderGallery(){
  }
  policyAudit.textContent=errors.length
   ?'Проверка стандарта: исправить '+errors.join(', ')
-  :'Стандарт проверен: '+tested+' типов · одна основная кнопка · без повтора совета';
+  :'Стандарт проверен: '+tested+' типов · 1 графитовая кнопка · до 2 текстовых · «Позже» свайпом';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
