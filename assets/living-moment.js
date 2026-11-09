@@ -293,7 +293,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   documentDetails.replaceChildren();
   if(!active)return;
-  documentDetails.append(create('p','lm-section-label','✧ СЭЙВИ ЗАМЕТИЛА'));
+  documentDetails.append(create('p','lm-section-label','Сэйви заметила'));
   if(documentStep!=='summary'){
    documentDetails.append(create('p','lm-document-excerpt',
     'Пункт «Срок поставки»: конкретный срок в учебном договоре не указан.'));
@@ -486,7 +486,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   open.hidden=active&&mailStep==='edit';
   execute.hidden=active&&(mailStep==='edit'||mailStep==='draft');
   execute.textContent=real?'Продолжить дело':active
-    ?(mailStep==='done'?'Готово':mailStep==='confirm'?'Завершить пример':'Продолжить')
+    ?(mailStep==='done'?'Готово':mailStep==='confirm'?'Завершить':'Продолжить')
     :'Исполнить';
   mailDetails.replaceChildren();
   if(!active)return;
@@ -495,7 +495,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailDetails.append(
    create('p','lm-mail-intro','Учебный пример · письмо Андрея'),
    create('p','lm-source-line','Вопрос клиента: сколько стоит доставка?'),
-   create('p','lm-section-label','✧ Сэйви предлагает черновик')
+   create('p','lm-section-label','Сэйви предлагает черновик')
   );
   if(mailStep==='edit'){
    const field=create('label','lm-mail-edit-label','Исправить черновик');
@@ -578,8 +578,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   finishPreviewItem();
  },'main');
- open.textContent=workActive()?'В чат':'Подробнее';
- open.setAttribute('aria-label',workActive()?'Открыть рабочий чат Елены':'Подробнее: '+shown.title);
+ open.textContent=workActive()?'В чат':mailActive()?'В почту':documentActive()?'Открыть':'Подробнее';
+ open.setAttribute('aria-label',workActive()?'Открыть рабочий чат Елены':mailActive()?'Открыть раздел почты':documentActive()?'Открыть документы':'Подробнее: '+shown.title);
  open.setAttribute('aria-expanded','false');
  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
  const sayviAction=polymer('✧ Сэйви',()=>{
@@ -769,8 +769,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   headline.textContent=item.title;
   description.textContent=item.body;
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
-  open.textContent=!real&&item.kind==='work'?'В чат':'Подробнее';
-  open.setAttribute('aria-label',item.kind==='work'?'Открыть рабочий чат Елены':'Подробнее: '+item.title);
+  open.textContent=!real&&item.kind==='work'?'В чат':!real&&item.kind==='mail'?'В почту':!real&&item.kind==='contract'?'Открыть':'Подробнее';
+  open.setAttribute('aria-label',item.kind==='work'?'Открыть рабочий чат Елены':!real&&item.kind==='mail'?'Открыть раздел почты':!real&&item.kind==='contract'?'Открыть документы':'Подробнее: '+item.title);
   execute.textContent=real&&item.businessTask?'Проверить':real?'Продолжить дело':'Исполнить';
   execute.setAttribute('aria-label',(real&&item.businessTask?'Проверить: ':real?'Продолжить дело: ':'Исполнить: ')+item.title);
   const reason=field.querySelector('.lm-explanation');
