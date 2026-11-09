@@ -66,6 +66,25 @@
  settingsHost.innerHTML='<div id="notePaperSettingsMenu" class="sv-newdock-settings-panel" role="group" aria-label="Настройки листа" hidden><span class="sv-newdock-menu-title">Фон листа</span><div class="sv-newdock-backgrounds"><button type="button" data-paper-background="dark" aria-pressed="true">Тёмный</button><button type="button" data-paper-background="light" aria-pressed="false">Светлый</button></div></div>';
  dialog.append(settingsHost);
  const settingsMenu=$('notePaperSettingsMenu');
+ // Keep the original Save and Undo elements and their engine listeners.
+ const studioHeader=dialog.querySelector('.sv-paper-top');
+ const saveButton=$('notePaperSave'),undoButton=$('notePaperUndo');
+ if(studioHeader&&saveButton&&undoButton){
+  studioHeader.replaceChild(saveButton,undoButton);
+  saveButton.setAttribute('aria-label','Готово — сохранить рисунок');
+  saveButton.title='Готово';
+  undoButton.className='sv-newdock-menu-action';
+  undoButton.innerHTML=icon('<path d="M9 8 5 12l4 4"/><path d="M5 12h10a4 4 0 1 1 0 8"/>')+'<span>Отменить штрих</span>';
+ }
+ // The same native range input continues to control the brush engine.
+ const widthWrap=$('notePaperWidth')?.closest('.sv-paper-size');
+ if(widthWrap){
+  const thickness=document.createElement('div');
+  thickness.className='sv-newdock-thickness';
+  thickness.innerHTML='<div class="sv-newdock-thickness-head"><label for="notePaperWidth">Толщина кисти</label><output id="svPaperThicknessValue" for="notePaperWidth">5</output></div>';
+  thickness.append(widthWrap);
+  settingsMenu.append(thickness);
+ }
  const plain=document.createElement('button');
  plain.type='button';plain.id='notePaperBlankSheet';
  plain.innerHTML=icon('<rect x="5" y="3" width="14" height="18" rx="2.4"/>')+'<span>Без разлиновки</span>';
@@ -82,7 +101,7 @@
  photo.className='sv-newdock-menu-action';
  photo.innerHTML=icon(icons.photo)+'<span>Добавить фото</span>';
  photo.title='Добавить фото';
- settingsMenu.append(actionHeading,photo,duplicate,plain,removePhoto,clear);
+ settingsMenu.append(actionHeading,...(undoButton?[undoButton]:[]),photo,duplicate,plain,removePhoto,clear);
  const backgroundButtons=[...settingsMenu.querySelectorAll('[data-paper-background]')];
  const syncBackground=()=>{
   const value=window.SEYVEO_PAPER?.getBackground?.();
@@ -158,6 +177,7 @@
    const travel=Math.min(190,window.innerHeight*.36)-28;
    wrap.style.setProperty('--sv-thumb-offset',((.5-(n-min)/(max-min))*travel)+'px');
    wrap.dataset.width=String(n);range.setAttribute('aria-valuetext',String(n));
+   const number=$('svPaperThicknessValue');if(number)number.textContent=String(n);
   };
   let last=Number(range.value);
   range.addEventListener('input',()=>{
@@ -180,7 +200,8 @@
   const hide=()=>ring.classList.remove('is-visible');
   const update=e=>{
    if(!dialog.open)return;
-   if(e.pointerType==='touch'&&e.buttons===0)return;
+   // Keep the brush preview off a stationary canvas, including desktop hover.
+   if(e.buttons===0&&e.type!=='pointerdown'){hide();return;}
    const box=canvas.getBoundingClientRect(),root=stage.getBoundingClientRect();
    if(!box.width)return;
    const x=Math.max(box.left,Math.min(box.right,e.clientX));
@@ -199,7 +220,7 @@
    canvas.addEventListener(ev,update,{passive:true});
   for(const ev of ['pointerleave','pointercancel'])
    canvas.addEventListener(ev,hide,{passive:true});
-  canvas.addEventListener('pointerup',e=>{if(e.pointerType!=='mouse')hide()},{passive:true});
+  canvas.addEventListener('pointerup',hide,{passive:true});
   canvas.addEventListener('lostpointercapture',hide,{passive:true});
   dialog.addEventListener('close',hide);
   dock.addEventListener('click',hide);
