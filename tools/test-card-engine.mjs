@@ -153,3 +153,13 @@ assert.match(iconHomeStyles,/sv-ref-card-sayvi\.sv-card-icon-button\[data-sv-car
 assert.match(iconHomeStyles,/mask:none!important/,
  'legacy masked Sayvi star is explicitly disabled');
 console.log('SEYVEO single Sayvi mark and shared graphite background: tests passed');
+
+// Standard iPhone editing glyph and uniform button silhouette.
+// Use our own vectors; do not ship or redistribute Apple's symbol assets.
+assert.match(iconEngineSource,/edit:'<path d="M12\.7 4H7/,'Edit is a recognizable square-and-pencil symbol');
+assert.match(iconSharedStyles,/Premium Rounded Squares v1/,'Card Engine uses rounded-square actions');
+assert.match(iconHomeStyles,/3 identical soft-rounded squares/,'Home matches Card Engine action shapes');
+assert.match(iconSharedStyles,/width:48px!important;min-width:48px!important/,'three action targets are identical');
+assert.match(iconHomeStyles,/background:#38383A!important/,'Sayvi stays premium graphite');
+assert.match(iconHomeStyles,/background:rgba\(169,180,192,\.12\)!important/,'Edit and Navigate share restrained matte backing');
+console.log('SEYVEO rounded-square icon actions and square-pencil edit glyph: tests passed');
