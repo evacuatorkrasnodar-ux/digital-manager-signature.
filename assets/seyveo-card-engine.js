@@ -210,7 +210,7 @@
    const point=start;start=null;
    if(isDeferSwipe(x-point.x,y-point.y)){
     if(x>point.x)onAction('later',card);
-    else if(hideCard(card)){node.hidden=true;onAction('hide',card)}
+    else if(card.demo===true||hideCard(card)){node.hidden=true;onAction('hide',card)}
    }
   };
   if(typeof window.PointerEvent==='function'){
@@ -253,8 +253,8 @@
    button.addEventListener('click',()=>{
     close();
     if(action==='cancel')return;
-    if(action==='hide'){if(!hideCard(card))return;node.hidden=true;}
-    if(action==='mute-family'){if(!muteFamily(card.family))return;node.hidden=true;}
+    if(action==='hide'){if(card.demo!==true&&!hideCard(card))return;node.hidden=true;}
+    if(action==='mute-family'){if(card.demo!==true&&!muteFamily(card.family))return;node.hidden=true;}
     onAction(action,card);
    });
    menu.append(button);
