@@ -317,7 +317,38 @@
    if(e.key==='ContextMenu'||(e.shiftKey&&e.key==='F10')){e.preventDefault();open()}
   });
  }
-const el=(tag,klass,content)=>{
+// Handcrafted SEYVEO icons in a single consistent 24px vector grid.
+ // The central orb in the official Sayvi mark is preserved exactly.
+ const cardGlyphs=Object.freeze({
+  sayvi:'<path d="M12 2.5C13.65 2.5 14.25 7 16.4 8.6 18 10.05 21.5 10.4 21.5 12S18 13.95 16.4 15.4C14.25 17 13.65 21.5 12 21.5S9.75 17 7.6 15.4C6 13.95 2.5 13.6 2.5 12S6 10.05 7.6 8.6C9.75 7 10.35 2.5 12 2.5Z"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/>',
+  edit:'<path d="m15 5 4 4M4 20l4-.8L20.1 7.1a2.12 2.12 0 0 0-3-3L5 16.2 4 20Z"/>',
+  navigate:'<path d="M7 17 17 7M8 7h9v9"/>',
+  send:'<path d="m22 2-7.2 20-4.2-8.6L2 9.2 22 2ZM22 2 10.6 13.4"/>',
+  save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
+  confirm:'<path d="m5 12 4.5 4.5L19 7"/>'
+ });
+ const cardIconLabels=Object.freeze({sayvi:'Сэйви',edit:'Исправить',navigate:'Перейти',
+  send:'Отправить',save:'Сохранить',confirm:'Подтвердить'});
+ function decorateActionButton(button,kind){
+  if(!button||!Object.prototype.hasOwnProperty.call(cardGlyphs,kind))return button;
+  if(button.dataset.svCardIcon===kind&&button.querySelector?.('.sv-card-symbol'))return button;
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','sv-card-symbol');
+  svg.setAttribute('viewBox','0 0 24 24');
+  svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+  svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
+  svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');
+  svg.setAttribute('stroke-linejoin','round');svg.innerHTML=cardGlyphs[kind];
+  const caption=document.createElement('span');caption.className='sv-card-icon-caption';
+  caption.textContent=cardIconLabels[kind];
+  button.replaceChildren(svg,caption);
+  button.dataset.svCardIcon=kind;
+  button.setAttribute('aria-label',cardIconLabels[kind]);
+  button.setAttribute('title',cardIconLabels[kind]);
+  button.classList.add('sv-card-icon-button');
+  return button;
+ }
+ const el=(tag,klass,content)=>{
   const node=document.createElement(tag);
   if(klass)node.className=klass;
   if(content!==undefined)node.textContent=content;
@@ -359,6 +390,7 @@ const el=(tag,klass,content)=>{
   for(const action of p.actions){
    const button=el('button','sv-card-action',action.label);
    button.type='button';button.dataset.cardAction=action.id;button.dataset.cardRole=action.role;
+   decorateActionButton(button,action.id);
    button.disabled=typeof onAction!=='function';
    if(!button.disabled)button.addEventListener('click',()=>onAction(action.id,card));
    actions.append(button);
@@ -387,6 +419,8 @@ const el=(tag,klass,content)=>{
    draftInput.readOnly=false; // Sayvi's proposal can be adjusted before final confirmation.
    draftHint.textContent='Демо · вариант можно исправить. Только финальная кнопка подтверждает действие; исходные данные не меняются.';
    draftSend.textContent=sendLabel(card.family);
+   decorateActionButton(draftSend,draftSend.textContent==='Отправить'?'send':
+    draftSend.textContent==='Сохранить'?'save':'confirm');
    draftStatus.textContent='';
    if(editable)draftInput.focus({preventScroll:true});
   };
@@ -407,9 +441,9 @@ const el=(tag,klass,content)=>{
   return article;
  }
  root.SEYVEO_CARD_ENGINE=Object.freeze({
-  version:8,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
+  version:9,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
    isProtected,isSuppressed,isSnoozed,hideCard,muteFamily,getVisibility,restoreVisibility,visibleCards,
    rotateQueue,snoozeCards,getSnoozes,clearSnoozes,
-  presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome
+  presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome,decorateActionButton
  });
 })(window);
