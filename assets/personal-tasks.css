@@ -1158,7 +1158,7 @@ html body #personalTaskDialog.personal-task-dialog[open]::backdrop{
 html body #personalTaskDialog .personal-task-sheet,
 html body #personalTaskDialog.sv-task-date-open .personal-task-sheet{
  border:0!important;border-radius:0!important;
- background:transparent!important;background-image:none!important;
+ background:var(--bg)!important;background-image:var(--seyveo-hdr-stage)!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  box-shadow:none!important;
 }
