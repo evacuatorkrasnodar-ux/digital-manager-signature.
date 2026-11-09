@@ -1548,6 +1548,10 @@ function renderChat(){
      taskText=String(taskText||'').replace(/(?:^|\n)\s*(?:📎\s*Вложение|🎬\s*Видео|📷\s*Фото (?:выкладки|ценника)|▥\s*Фото штрихкода)\s*$/gmu,'').trim();
     if(msg.taskId)bubble.append(el('small','svcp-task-message-label','Поручение'));
     if(taskText)bubble.append(el('span','svcp-message-text',taskText));
+    // A file without a caption should be a single card, never a card inside
+    // another painted message bubble. Keep quotes and tasks unchanged.
+    if(msg.mediaId&&!msg.replyTo&&!msg.taskId&&!msg.documentFlowId&&!taskText)
+     bubble.classList.add('svcp-file-only');
    }
    if(msg.documentFlowId&&window.SEYVEO_DOCUMENT_FLOW?.get?.(msg.documentFlowId)){
     const doc=window.SEYVEO_DOCUMENT_FLOW.get(msg.documentFlowId);
