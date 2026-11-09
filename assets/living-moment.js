@@ -1079,7 +1079,7 @@ function dueTasks(includeUpcoming=false){
  * A public catalog release is not a playable local file or real chat.
  */
 function showDiscovery(card){
- if(!card||!available()||window.SEYVEO_CARD_ENGINE?.isSuppressed?.(card))return false;
+ if(!card||!available()||window.SEYVEO_CARD_ENGINE?.isSuppressed?.(card)||window.SEYVEO_CARD_ENGINE?.isSnoozed?.(card))return false;
  const engine=window.SEYVEO_CARD_ENGINE;
  const surface=engine?.renderCard?.(card,{onAction:id=>{
   if(id==='cycle')window.SEYVEO_CARD_ENGINE?.snoozeCards?.(card);
