@@ -33,7 +33,7 @@ console.log('SEYVEO Card Engine v1: tests passed');
 // The production browser renderer and the Studio must resolve the same actions.
 const preferenceMemory=new Map();
 const browserScope={window:{
- localStorage:{getItem:key=>preferenceMemory.get(key)||null,setItem:(key,value)=>preferenceMemory.set(key,value)},
+ localStorage:{getItem:key=>preferenceMemory.get(key)||null,setItem:(key,value)=>preferenceMemory.set(key,value),removeItem:key=>preferenceMemory.delete(key)},
  dispatchEvent:()=>{}
 },Event:class{constructor(type){this.type=type}}};
 runInNewContext(readFileSync(new URL('../assets/seyveo-card-engine.js',import.meta.url),'utf8'),browserScope);
