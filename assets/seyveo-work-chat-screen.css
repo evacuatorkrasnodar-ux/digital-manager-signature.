@@ -4182,3 +4182,17 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] .svcp-conversation-bar > #svcpCallSayvi{
  display:none!important;
 }
+
+/* 2026-11-09: remove the accidental oversized focus/pressed halo around the Plus.
+   Preserve its approved 50px circular face and attachment-menu behavior. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpAttachFile:is(:focus,:focus-visible,:active){
+ outline:none!important;
+ outline-offset:0!important;
+ box-shadow:none!important;
+ -webkit-tap-highlight-color:transparent;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpAttachFile::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpAttachFile::after{
+ box-shadow:none!important;
+ outline:none!important;
+}
