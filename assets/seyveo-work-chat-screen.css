@@ -4134,11 +4134,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 /* SEYVEO messages: three visible actions only — Reply, Bookmark, Assign.
    The other actions live in a deliberate flat-graphite long-press menu. */
 #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-has-inline-actions{
- margin-bottom:46px!important;
+ margin-bottom:42px!important;
  -webkit-touch-callout:none!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-bubble .svcp-message-inline-actions{
- position:absolute!important;top:calc(100% + 3px)!important;bottom:auto!important;
+ position:absolute!important;top:calc(100% + 1px)!important;bottom:auto!important;
  left:0!important;right:auto!important;z-index:4!important;
  box-sizing:border-box!important;
  display:flex!important;align-items:center!important;justify-content:flex-start!important;
@@ -4703,4 +4703,34 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-quote-excerpt,
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-heading > .svcp-time{
  color:#606069!important;
+}
+
+
+/* SEYVEO 2026-11-09 · one surface for a file-only chat message.
+   This deliberately applies to private rooms; group sender names remain in
+   their original layout, and messages with captions or replies stay intact. */
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] #svcpMessages > .svcp-bubble.svcp-file-only{
+ box-sizing:border-box!important;
+ width:min(240px,calc(100vw - 48px))!important;
+ min-width:0!important;max-width:min(88%,320px)!important;
+ min-height:0!important;height:auto!important;
+ padding:0!important;margin-top:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-media-slot:not(.svcp-voice-message){
+ box-sizing:border-box!important;
+ display:block!important;width:100%!important;
+ min-width:0!important;max-width:100%!important;
+ margin:0!important;padding:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-media-slot .svcp-file-card{
+ width:100%!important;margin:0!important;
+ border-radius:12px!important;
+ background:#38383A!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-media-slot .svcp-file-card{
+ background:#E4E4E6!important;
 }
