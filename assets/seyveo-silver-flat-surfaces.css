@@ -1,0 +1,153 @@
+/* SEYVEO Silver Flat · content-only surface cleanup · 2026-11-09
+   Approved distinction: glass lives in Home dock and chat composer;
+   workspaces, notebook cards, documents and mail use quiet solid graphite.
+   Intentionally NO global .dock, .sv-shared-dock, chat, modal page root,
+   scanner camera, paper canvas, icon SVG or positioning rules here. */
+:root{
+ --sv-flat-panel:#30363b;
+ --sv-flat-panel-raised:#394147;
+ --sv-flat-panel-muted:#282f34;
+ --sv-flat-ink:#e9eef1;
+ --sv-flat-edge:rgba(225,233,238,.105);
+}
+:root[data-theme="light"]{
+ --sv-flat-panel:#e4e7e9;
+ --sv-flat-panel-raised:#dce1e5;
+ --sv-flat-panel-muted:#eef0f2;
+ --sv-flat-ink:#303941;
+ --sv-flat-edge:rgba(52,65,73,.105);
+}
+
+/* 1. Personal notebook / Work notebook.
+   Keep the tiles, icon artwork, tap areas and approved editor dock intact. */
+html body #svWorkShell #svWorkNotebook :is(
+ .sv-note-tool,.sv-note-tool-art,.note-item,.note-empty-mark,
+ .note-more-options button,.note-more-button,.sv-note-first-action
+){
+ background:var(--sv-flat-panel)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+html body #svWorkShell #svWorkNotebook :is(
+ .sv-note-tool,.note-item,.note-empty-mark,
+ .note-more-options button,.note-more-button,.sv-note-first-action
+){
+ border-color:var(--sv-flat-edge)!important;
+}
+html body #svWorkShell #svWorkNotebook .sv-note-tool-art{
+ background:var(--sv-flat-panel-raised)!important;
+ border-color:var(--sv-flat-edge)!important;
+}
+html body #svWorkShell #svWorkNotebook :is(.sv-note-tool,.note-more-options button,.sv-note-first-action):active{
+ background:var(--sv-flat-panel-raised)!important;
+}
+
+/* 2. Shared Work selector and the add-item drop-down.
+   Do not move the persistent header or its back control. */
+html body #svWorkShell #svWorkTabs{
+ background:var(--sv-flat-panel)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+html body #svWorkShell #svWorkTabs::before{
+ background:var(--sv-flat-panel-raised)!important;
+ box-shadow:none!important;
+}
+html body #svWorkShell #svWorkCreateChoices{
+ background:var(--sv-flat-panel)!important;
+ background-image:none!important;
+ border-color:var(--sv-flat-edge)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:0 10px 22px rgba(0,0,0,.13)!important;
+}
+html body #svWorkShell #svWorkCreateChoices>button:active{
+ background:var(--sv-flat-panel-raised)!important;
+}
+html body #svWorkShell :is(#svWorkBack,#svWorkAdd){
+ background:var(--sv-flat-panel)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body #tasksPage .svcp-invite-explanation{
+ background:var(--sv-flat-panel)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+
+/* 3. Documents: one coherent flat surface, not multiple glass lenses.
+   Leave the actual PDF/Word viewer, file art, scanner and Sayvi glyph alone. */
+html body #sayviSurfacePage[data-sv-subject="contract"]{
+ --docs-page-glass:var(--sv-flat-panel);
+ --docs-page-control:var(--sv-flat-panel-raised);
+ --sv-doc-final-glass:var(--sv-flat-panel);
+ --sv-doc-final-press:var(--sv-flat-panel-raised);
+ --sv-doc-wash:var(--sv-flat-panel);
+ --sv-doc-picked:var(--sv-flat-panel-raised);
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] :is(
+ .sv-doc-head-options,.sv-doc-search-row,
+ .sv-doc-switch,.sv-doc-tool-scan,.sv-doc-tool-grid .sv-doc-tool-button,
+ .sv-doc-recents-empty,.sv-doc-recent-card,.sv-doc-folder-card,
+ .sv-doc-assistant-hero,.sv-doc-vault-shell,.sv-doc-safety,
+ .sv-doc-connections-entry,.sv-doc-flow-card
+){
+ background:var(--sv-flat-panel)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+ border-color:var(--sv-flat-edge)!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] :is(
+ .sv-doc-head-icon,.sv-doc-tool-grid .sv-doc-art,
+ .sv-doc-tool-scan>.sv-doc-art,.sv-doc-shelf-add,
+ .sv-doc-assistant-action,.sv-doc-folder-card[aria-pressed="true"],
+ .sv-doc-tab[aria-pressed="true"],.sv-doc-action
+){
+ background:var(--sv-flat-panel-raised)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+/* The header popover needs a restrained external shadow for separation. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-options{
+ box-shadow:0 10px 22px rgba(0,0,0,.14)!important;
+}
+/* Do not erase selected indicators or folder drawings. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card[aria-pressed="true"]{
+ border-color:color-mix(in srgb,var(--text) 26%,transparent)!important;
+}
+
+/* 4. Mail inside My World: native flat forms, no green glass slabs.
+   Scope to the in-page mail only, not message content or chat. */
+html body #lifePage.svmail-active .svmail :is(
+ .svmail-search,.svmail-compose input,.svmail-compose textarea,
+ .svmail-primary,.svmail-pill
+){
+ background:var(--sv-flat-panel)!important;
+ background-image:none!important;
+ border-color:var(--sv-flat-edge)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:var(--text)!important;
+}
+html body #lifePage.svmail-active .svmail .svmail-primary:active{
+ background:var(--sv-flat-panel-raised)!important;
+}
+html body #lifePage.svmail-active .svmail .svmail-star{
+ box-shadow:none!important;
+}
+
+/* No motion or optical shifts added. The approved dock, Sayvi chat,
+   notebook writing dock, popup dismissals and navigation are untouched. */
