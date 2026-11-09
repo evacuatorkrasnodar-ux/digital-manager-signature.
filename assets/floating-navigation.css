@@ -522,6 +522,32 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
 @media (max-width:389px){
  .dock{--sv-split-gap:calc(14.285714vw - 27.142857px)}
 }
+/* Final Search positioning — independent of grid tracks.
+   Position the CIRCLE by the actual midpoint of the interval from the
+   right edge of the capsule to the right edge of the phone. This avoids
+   stale grid auto-placement or column-gap changes shifting the circle.
+   Compact capsule: dock left = 1/7 vw + 6/7px, capsule = 4/7 vw + 24/7px.
+   Normal capsule: dock left = 50vw - 138.25px, capsule = 226px. */
+@media (max-width:699px){
+ .dock{--sv-search-center-left:calc(25vw + 157.125px)}
+ .dock>#navManage{
+  position:absolute!important;
+  grid-column:auto!important;grid-row:auto!important;
+  left:var(--sv-search-center-left)!important;
+  right:auto!important;top:0!important;bottom:auto!important;
+  transform:none!important;
+  width:50px!important;height:50px!important;
+  min-width:50px!important;min-height:50px!important;
+ }
+ .sv-shared-dock.dock::after{
+  left:var(--sv-search-center-left)!important;
+  right:auto!important;top:0!important;bottom:auto!important;
+  width:50px!important;height:50px!important;
+ }
+}
+@media (max-width:389px){
+ .dock{--sv-search-center-left:calc(71.428571vw - 23.714286px)}
+}
 /* Compact iPhone geometry uses the very same six-column split layout. */
 @media (max-width:699px){
  .dock{
