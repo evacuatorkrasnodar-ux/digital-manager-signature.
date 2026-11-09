@@ -307,6 +307,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    execute.hidden=documentStep!=='summary';
    open.hidden=true; // Title tap opens documents without a fourth button.
    execute.textContent='К проверке';
+   execute.setAttribute('aria-label','Перейти к проверке договора');
    execute.dataset.cardRole='primary';
    documentAnalyze.dataset.cardRole='primary';
    documentEdit.dataset.cardRole='primary';
@@ -777,9 +778,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
    hero.removeAttribute('aria-label');
   }
  }
- hero.addEventListener('click',()=>{if(documentActive())open.click()});
+ hero.addEventListener('click',()=>{
+  if(documentActive()&&!field.querySelector('.sv-card-context:not([hidden])'))open.click();
+ });
  hero.addEventListener('keydown',event=>{
-  if(documentActive()&&(event.key==='Enter'||event.key===' ')){
+  if(documentActive()&&!field.querySelector('.sv-card-context:not([hidden])')&&(event.key==='Enter'||event.key===' ')){
    event.preventDefault();open.click();
   }
  });
