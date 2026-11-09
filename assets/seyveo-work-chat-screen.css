@@ -4834,3 +4834,28 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-emoji-only > .svcp-message-inline-actions{
  display:none!important;
 }
+
+
+/* Compact graphite document actions — the same four controls as in Sayvi. */
+#svcpWorkChatScreen .svcp-file-card-open{font-family:inherit!important;cursor:pointer!important;text-align:left!important}
+.svcp-doc-overlay{position:fixed;inset:0;z-index:999999;box-sizing:border-box;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:#222428;color:#F5F5F7}
+.svcp-doc-top{flex:none;display:flex;align-items:center;gap:9px;padding:calc(env(safe-area-inset-top) + 7px) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left))}
+.svcp-doc-back{width:44px;height:44px;flex:none;display:grid;place-items:center;border:0;border-radius:14px;background:#38383A;color:#F5F5F7}
+.svcp-doc-back svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.svcp-doc-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:600}
+.svcp-doc-body{flex:1;min-height:0;display:flex;flex-direction:column;overflow:auto;padding:8px max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left))}
+.svcp-doc-pdf{flex:1;min-height:100%;width:100%;border:0;border-radius:8px;background:white}
+.svcp-doc-image{width:100%;max-width:760px;max-height:100%;margin:auto;object-fit:contain}
+.svcp-doc-text{box-sizing:border-box;max-width:760px;width:100%;min-height:45%;margin:0 auto;padding:20px 16px;overflow-wrap:anywhere;white-space:pre-wrap;border-radius:8px;background:#F8F8FA;color:#202022;font:14px/1.5 system-ui,sans-serif}
+.svcp-doc-bottom{flex:none;display:flex;flex-direction:column;gap:7px;padding:8px max(10px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.svcp-doc-tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%;max-width:640px;margin:auto}
+.svcp-doc-pill{box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:44px;border:0;border-radius:13px;padding:6px 5px;background:#38383A;color:#F4F4F6;font:550 11px/1.2 system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.svcp-doc-pill svg{flex:none;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.svcp-doc-pill span{overflow:hidden;text-overflow:ellipsis}
+.svcp-doc-to-documents{max-width:640px;width:100%;margin:auto;font-size:12px}
+.svcp-doc-info{max-width:640px;min-height:0;margin:0 auto;color:#BBBFC5;text-align:center;font:11px/1.4 system-ui,sans-serif}
+.svcp-doc-info:empty{display:none}
+.svcp-doc-pill:focus-visible,.svcp-doc-back:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+:root[data-theme="light"] .svcp-doc-overlay{background:#F3F3F5;color:#222225}
+:root[data-theme="light"] .svcp-doc-info{color:#606066}
+@media(max-width:360px){.svcp-doc-tools{gap:3px}.svcp-doc-pill{font-size:10px;padding:5px 3px}.svcp-doc-pill svg{width:14px;height:14px}}
