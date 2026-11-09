@@ -591,7 +591,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   explain(field,(shown.reason||'')+' '+(shown.detail||'Сэйви поможет разобраться с этой карточкой.'),sayviAction);
  });
- const workSayvi=polymer('✧ Ответит Сэйви',async()=>{
+ const workSayvi=polymer('✧ Черновик Сэйви',async()=>{
   const defaultReply='Спасибо, Елена! Пришли, пожалуйста, фото выкладки — я проверю.';
   workMode='sayvi';workDraft=defaultReply;updateWork();
   const current=shown;
@@ -620,11 +620,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
    }
   }finally{clearTimeout(timeout);button.disabled=false;}
  });
- const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
+ const workOwn=polymer('Ответить',()=>{workMode='own';workDraft='';updateWork()});
  workSayvi.classList.add('sv-work-assistant');
+ workSayvi.setAttribute('aria-label','Подготовить черновик ответа с Сэйви');
  workOwn.classList.add('sv-work-own');
+ workOwn.setAttribute('aria-label','Написать ответ самостоятельно');
  const workBack=polymer('Изменить',()=>{if(workMode==='sayvi'){workMode='own';}else{workMode='choose';}updateWork()});
- const workSend=polymer('Ответить',()=>{
+ const workSend=polymer('Отправить',()=>{
   const typed=workDetails.querySelector('textarea')?.value?.trim()||workDraft.trim();
   if(!typed){explain(field,'Сначала напишите ответ.',workSend);return}
   const saved=window.SEYVEO_BUSINESS_COMMAND?.sendLocalText?.('elena',typed);
