@@ -1045,3 +1045,82 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
 #svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-section-head small{
  font-size:11px!important;
 }
+
+
+/* SEYVEO · Cabinet two-action popover · compact graphite v30 · 2026-11-09.
+   Single anchored chooser, 44px hit targets, no glass. */
+html body #svWorkShell[data-active="business"] #svWorkCreateChoices:not([hidden]){
+ box-sizing:border-box!important;
+ position:absolute!important;
+ z-index:120!important;
+ top:58px!important;
+ right:7px!important;
+ left:auto!important;
+ width:min(238px,calc(100vw - 28px))!important;
+ max-width:calc(100vw - 28px)!important;
+ height:auto!important;
+ display:flex!important;
+ flex-direction:column!important;
+ gap:2px!important;
+ padding:5px!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:15px!important;
+ background:#38383A!important;
+ background-image:none!important;
+ color:#F5F5F6!important;
+ box-shadow:0 8px 18px rgba(0,0,0,.17)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button{
+ box-sizing:border-box!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ gap:11px!important;
+ min-height:44px!important;
+ height:44px!important;
+ width:100%!important;
+ margin:0!important;
+ padding:0 12px!important;
+ border:0!important;
+ border-radius:10px!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ color:#F5F5F6!important;
+ font:inherit!important;
+ font-size:13.5px!important;
+ font-weight:580!important;
+ line-height:1.25!important;
+ letter-spacing:-.012em!important;
+ white-space:nowrap!important;
+ text-align:left!important;
+}
+html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button > svg{
+ box-sizing:content-box!important;
+ display:block!important;
+ flex:none!important;
+ width:18px!important;
+ height:18px!important;
+ fill:none!important;
+ stroke:currentColor!important;
+ stroke-width:1.6!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ color:#DEE0E3!important;
+ opacity:1!important;
+}
+html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button > span{
+ display:block!important;
+ flex:1 1 auto!important;
+ min-width:0!important;
+}
+html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button:active{
+ background:#505052!important;
+}
+html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button:focus-visible{
+ outline:2px solid #E7E7EB!important;
+ outline-offset:-2px!important;
+}
