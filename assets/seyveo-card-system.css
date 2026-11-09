@@ -741,3 +741,73 @@
 .sv-card-system--rendered .sv-card-draft-confirm:focus-visible{
  outline:2px solid currentColor;outline-offset:2px;
 }
+
+/* SEYVEO Card Glyphs v1 · recognizable iPhone action language.
+ * Symbols are actual inline SVG, not font glyphs, emoji or generated PNGs.
+ * Optical control stays compact; reliable touch targets stay >=44px.
+ * The Sayvi four-point emblem contains our own central sphere.
+ */
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{
+ display:inline-flex!important;flex-direction:column!important;
+ justify-content:center!important;align-items:center!important;
+ flex:0 0 58px!important;width:58px!important;
+ min-width:58px!important;min-height:48px!important;
+ box-sizing:border-box!important;
+ padding:5px 4px!important;margin:0!important;
+ gap:2px!important;
+ border:0!important;border-radius:14px!important;
+ background:transparent!important;box-shadow:none!important;
+ white-space:nowrap!important;
+ color:var(--sv-card-ink)!important;
+}
+.sv-card-system--rendered .sv-card-actions{
+ gap:0 14px!important;
+}
+.sv-card-symbol{
+ display:block;flex:0 0 auto;
+ box-sizing:border-box;width:21px;height:21px;
+ overflow:visible;color:currentColor;shape-rendering:geometricPrecision;
+}
+.sv-card-icon-caption{
+ display:block;min-width:0;font-family:inherit;
+ font-size:10px;font-weight:500;line-height:1.15;
+ letter-spacing:.01em;white-space:nowrap;
+ color:inherit;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-card-role="primary"]{
+ color:#F7F7F8!important;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-card-role="primary"]::before{
+ inset:3px 1px!important;border-radius:13px!important;
+ background:#38383A!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:not([data-card-role="primary"]){
+ color:var(--sv-card-ink)!important;
+}
+.sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:focus-visible{
+ outline:2px solid var(--sv-card-ink)!important;
+ outline-offset:2px!important;
+}
+/* Once the user chooses Sayvi or manual editing, replace the three
+   decisions with ONE familiar, explicit Send / Save icon+label. */
+.sv-card-system--rendered .sv-card-draft-confirm.sv-card-icon-button{
+ display:inline-flex!important;flex-direction:row!important;
+ align-items:center!important;justify-content:center!important;
+ gap:8px!important;min-width:110px;
+ min-height:44px!important;padding:8px 16px!important;
+ border-radius:999px!important;background:#38383A!important;
+ color:#F7F7F8!important;
+}
+.sv-card-system--rendered .sv-card-draft-confirm .sv-card-symbol{
+ width:19px;height:19px;
+}
+.sv-card-system--rendered .sv-card-draft-confirm .sv-card-icon-caption{
+ font-size:12px;font-weight:550;
+}
+@media(max-width:375px){
+ .sv-card-system--rendered .sv-card-actions{gap:0 9px!important}
+ .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{
+  flex-basis:55px!important;min-width:55px!important;width:55px!important;
+ }
+}
