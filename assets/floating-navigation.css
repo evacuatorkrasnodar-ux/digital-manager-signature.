@@ -510,10 +510,17 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
 @media (max-width:389px){
  .dock{left:calc(50% - 35.714286vw + .857143px)!important}
 }
-/* Preserve a visible right margin for the 50px Search circle on 320-349px phones,
-   without changing capsule/button/icon sizes. */
-@media (max-width:349px){
- .dock{--sv-split-gap:30px}
+/* Center the independent 50px Search circle IN THE EMPTY SPACE
+   between the capsule edge and the physical screen's right edge.
+   Gap on both sides of the Search circle is mathematically identical.
+   Widths, icons, 50px controls and Sayvi's centered position are unchanged.
+   When capsule = 226px, free-space gap = 25vw - 68.875px.
+   Below 390px, responsive capsule gives gap = 14.285714vw - 27.142857px. */
+@media (min-width:390px) and (max-width:699px){
+ .dock{--sv-split-gap:calc(25vw - 68.875px)}
+}
+@media (max-width:389px){
+ .dock{--sv-split-gap:calc(14.285714vw - 27.142857px)}
 }
 /* Compact iPhone geometry uses the very same six-column split layout. */
 @media (max-width:699px){
