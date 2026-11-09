@@ -657,7 +657,52 @@ document.addEventListener('keydown',event=>{
 window.addEventListener('hashchange',closeCreateMenu);
 $('calendarAddInline').addEventListener('click',()=>openEvent());
 $('calendarAddTask').addEventListener('click',addTask);
-$('calendarToday').addEventListener('click',()=>updateFocus(new Date()));
+/* The mode selector is available from the month/period heading, not a
+   permanent second toolbar. All original mode buttons keep their listeners. */
+const calendarViewModes=$('calendarViewModes');
+const calendarViewButton=$('calendarToday');
+if(calendarViewModes&&calendarViewButton){
+ const nav=page.querySelector('.cal-nav');
+ nav?.after(calendarViewModes);
+ const todayOption=document.createElement('button');
+ todayOption.type='button';
+ todayOption.className='cal-mode-today';
+ todayOption.textContent='Сегодня';
+ todayOption.setAttribute('aria-label','Перейти к сегодняшней дате');
+ calendarViewModes.append(todayOption);
+ calendarViewButton.setAttribute('aria-label','Выбрать вид календаря');
+ calendarViewButton.setAttribute('aria-haspopup','true');
+ calendarViewButton.setAttribute('aria-controls',calendarViewModes.id);
+ calendarViewButton.setAttribute('aria-expanded','false');
+ calendarViewButton.title='Вид календаря';
+ const closeViewModes=()=>{
+  calendarViewModes.hidden=true;
+  calendarViewButton.setAttribute('aria-expanded','false');
+ };
+ calendarViewButton.addEventListener('click',()=>{
+  const next=calendarViewModes.hidden;
+  calendarViewModes.hidden=!next;
+  calendarViewButton.setAttribute('aria-expanded',String(next));
+ });
+ todayOption.addEventListener('click',()=>{
+  mode='month';
+  updateFocus(new Date());
+  closeViewModes();
+ });
+ calendarViewModes.addEventListener('click',event=>{
+  if(event.target.closest('[data-calendar-mode]'))closeViewModes();
+ });
+ document.addEventListener('pointerdown',event=>{
+  if(calendarViewModes.hidden||calendarViewButton.contains(event.target)||calendarViewModes.contains(event.target))return;
+  closeViewModes();
+ });
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!calendarViewModes.hidden){
+   event.preventDefault();closeViewModes();calendarViewButton.focus({preventScroll:true});
+  }
+ });
+ window.addEventListener('hashchange',closeViewModes);
+}
 document.querySelectorAll('#calendarPage [data-calendar-step]').forEach(button=>{
  button.addEventListener('click',()=>move(Number(button.dataset.calendarStep)));
 });
