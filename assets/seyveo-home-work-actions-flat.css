@@ -139,3 +139,98 @@
 :root[data-theme="light"] #homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-item[data-lm-kind="mail"] .lm-inline-art{
   color:#666D83!important;
 }
+
+
+/* SEYVEO Home · Mail + Document action standard v1.
+   These are the live Living Moment previews, NOT Studio's renderCard DOM.
+   Visually follow the same Silver Flat contract without changing handlers:
+   one 32px graphite action, quiet Sayvi/route/defer controls, 44px hit zones. */
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions{
+ display:flex!important;
+ flex-wrap:wrap!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ column-gap:6px!important;
+ row-gap:0!important;
+ max-width:100%!important;
+}
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer:not([hidden]){
+ box-sizing:border-box!important;
+ min-height:44px!important;
+ min-width:0!important;
+ flex:0 0 auto!important;
+ padding:8px 3px!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+ font-size:11.8px!important;
+ font-weight:510!important;
+ line-height:1.25!important;
+ letter-spacing:-.015em!important;
+ white-space:nowrap!important;
+}
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer.sv-ref-card-primary:not([hidden]){
+ position:relative!important;
+ isolation:isolate!important;
+ padding:8px 9px!important;
+ border-radius:999px!important;
+ color:var(--text)!important;
+ font-weight:560!important;
+}
+/* Completely replace the historic glass lens with approved matte graphite. */
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer.sv-ref-card-primary:not([hidden])::before{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ inset:6px 0!important;
+ z-index:-1!important;
+ pointer-events:none!important;
+ background:var(--sv-flat-panel,#38383A)!important;
+ background-image:none!important;
+ border:0!important;
+ border-radius:999px!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer.sv-ref-card-primary:not([hidden]):active::before{
+ background:var(--sv-flat-panel-raised,#48484B)!important;
+}
+/* One actual inline Sayvi mark: never a second icon or painted lens. */
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer.sv-ref-card-sayvi::before,
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer:not(.sv-ref-card-primary)::before{
+ content:none!important;
+ display:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer::after{
+ content:none!important;
+ display:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions .lm-polymer.sv-ref-card-details:not([hidden]){
+ color:var(--secondary)!important;
+}
+/* Do not turn the assistant's observation into a second control row. */
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-section-label{
+ color:var(--secondary)!important;
+ font-size:11.5px!important;
+ font-weight:540!important;
+ letter-spacing:0!important;
+ text-transform:none!important;
+ margin-top:9px!important;
+ margin-bottom:4px!important;
+}
+/* Below 325px, allow a balanced second line rather than crop text or
+   shrink controls below safe finger size; ordinary iPhone width fits one line. */
+@media(max-width:324px){
+ #homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"]) .lm-actions{
+  column-gap:9px!important;
+  row-gap:0!important;
+ }
+}
