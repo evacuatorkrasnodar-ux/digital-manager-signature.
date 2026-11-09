@@ -658,51 +658,45 @@ document.addEventListener('keydown',event=>{
 window.addEventListener('hashchange',closeCreateMenu);
 $('calendarAddInline').addEventListener('click',()=>openEvent());
 $('calendarAddTask').addEventListener('click',addTask);
-/* The mode selector is available from the month/period heading, not a
-   permanent second toolbar. All original mode buttons keep their listeners. */
+/* Calendar controls live in ONE compact + menu. Keep existing
+   data-calendar-mode buttons and the original create handlers. */
 const calendarViewModes=$('calendarViewModes');
 const calendarViewButton=$('calendarToday');
-if(calendarViewModes&&calendarViewButton){
- const nav=page.querySelector('.cal-nav');
- nav?.after(calendarViewModes);
+if(calendarViewModes&&calendarViewButton&&createMenu){
+ const sectionCreate=document.createElement('div');
+ sectionCreate.className='cal-menu-section';
+ sectionCreate.textContent='Создать';
+ createMenu.prepend(sectionCreate);
+ const sectionModes=document.createElement('div');
+ sectionModes.className='cal-menu-section cal-menu-modes-label';
+ sectionModes.textContent='Вид календаря';
+ createMenu.append(sectionModes);
+ createMenu.append(calendarViewModes);
+ calendarViewModes.hidden=false; // its parent menu owns visibility
  const todayOption=document.createElement('button');
  todayOption.type='button';
  todayOption.className='cal-mode-today';
  todayOption.textContent='Сегодня';
- todayOption.setAttribute('aria-label','Перейти к сегодняшней дате');
+ todayOption.setAttribute('aria-label','Вернуться к сегодняшнему дню');
  calendarViewModes.append(todayOption);
- calendarViewButton.setAttribute('aria-label','Выбрать вид календаря');
- calendarViewButton.setAttribute('aria-haspopup','true');
- calendarViewButton.setAttribute('aria-controls',calendarViewModes.id);
- calendarViewButton.setAttribute('aria-expanded','false');
- calendarViewButton.title='Вид календаря';
- const closeViewModes=()=>{
-  calendarViewModes.hidden=true;
-  calendarViewButton.setAttribute('aria-expanded','false');
- };
+ calendarViewButton.setAttribute('aria-label','Перейти к сегодняшней дате');
+ calendarViewButton.removeAttribute('aria-haspopup');
+ calendarViewButton.removeAttribute('aria-controls');
+ calendarViewButton.removeAttribute('aria-expanded');
+ calendarViewButton.title='Сегодня';
  calendarViewButton.addEventListener('click',()=>{
-  const next=calendarViewModes.hidden;
-  calendarViewModes.hidden=!next;
-  calendarViewButton.setAttribute('aria-expanded',String(next));
+  mode='month';
+  updateFocus(new Date());
+  closeCreateMenu();
  });
  todayOption.addEventListener('click',()=>{
   mode='month';
   updateFocus(new Date());
-  closeViewModes();
+  closeCreateMenu();
  });
  calendarViewModes.addEventListener('click',event=>{
-  if(event.target.closest('[data-calendar-mode]'))closeViewModes();
+  if(event.target.closest('[data-calendar-mode]'))closeCreateMenu();
  });
- document.addEventListener('pointerdown',event=>{
-  if(calendarViewModes.hidden||calendarViewButton.contains(event.target)||calendarViewModes.contains(event.target))return;
-  closeViewModes();
- });
- document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&!calendarViewModes.hidden){
-   event.preventDefault();closeViewModes();calendarViewButton.focus({preventScroll:true});
-  }
- });
- window.addEventListener('hashchange',closeViewModes);
 }
 document.querySelectorAll('#calendarPage [data-calendar-step]').forEach(button=>{
  button.addEventListener('click',()=>move(Number(button.dataset.calendarStep)));
