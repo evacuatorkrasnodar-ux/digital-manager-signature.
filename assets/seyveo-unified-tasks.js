@@ -1207,7 +1207,7 @@
  // iPhone-style arrangement: hold a real tool row, move and release.
  // The same nodes move in the DOM; regular taps, scroll and existing routes stay.
  const hint=launch.closest('.sv-cabinet-toolbar')?.querySelector('.sv-cabinet-toolbar-text small');
- const normalHint='Удерживайте инструмент, чтобы переместить';
+ const normalHint=''; // Quiet by default; show only actionable reorder feedback.
  if(hint)hint.textContent=normalHint;
  let hold=null,drag=null,clickGuardUntil=0,hintTimer=null;
  const HOLD_MS=440,SCROLL_THRESHOLD=10;
