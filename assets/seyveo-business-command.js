@@ -146,7 +146,13 @@ function svcpFileBadge(name,type){
  badge.setAttribute('aria-hidden','true');
  return badge;
 }
-function svcpFileCard(name,type,url,timeNode=null,onOpen=null){
+function svcpFileSize(bytes){
+ if(!Number.isFinite(bytes)||bytes<0)return '';
+ if(bytes<1024)return Math.round(bytes)+' Б';
+ const value=bytes<1048576?bytes/1024:bytes/1048576;
+ return value.toLocaleString('ru-RU',{maximumFractionDigits:1})+(bytes<1048576?' КБ':' МБ');
+}
+function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=false){
  const displayName=String(name||'Вложение');
  const node=el(onOpen?'button':url?'a':'div','svcp-file-card');
  const detail=svcpFileKind(displayName,type);
@@ -154,10 +160,17 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null){
  const body=el('span','svcp-file-card-copy');
  const heading=el('span','svcp-file-card-heading');
  heading.append(el('strong','svcp-file-card-name',displayName));
- // Move the existing <time> node: do not display a second timestamp row.
- if(timeNode)heading.append(timeNode);
- body.append(heading,el('small','svcp-file-card-type',detail.label));
+ body.append(heading,el('small','svcp-file-card-type',svcpFileSize(bytes)||detail.label));
  node.append(body);
+ if(timeNode){
+  const status=el('span','svcp-file-card-status');status.append(timeNode);
+  if(isOwn){
+   const tick=el('span','svcp-local-save-check','✓');
+   tick.title='Сохранено здесь · доставка не подтверждена';
+   tick.setAttribute('aria-hidden','true');status.append(tick);
+  }
+  node.append(status);
+ }
  if(onOpen){
   node.type='button';node.classList.add('svcp-file-card-open');
   node.setAttribute('aria-label','Посмотреть документ '+displayName);
@@ -356,7 +369,8 @@ function restoreStoredMedia(container,message){
    const filename=record.name||message.mediaName||'Вложение';
    const localFile=record.blob instanceof File?record.blob:new File([record.blob],filename,{type:record.type||message.mediaType||''});
    const previewable=['pdf','word','text'].includes(svcpFileKind(filename,record.type||message.mediaType||'').kind);
-   slot.append(svcpFileCard(filename,record.type||message.mediaType||'',url,timestamp,previewable?()=>svcpOpenDocument(localFile):null));
+   slot.append(svcpFileCard(filename,record.type||message.mediaType||'',url,timestamp,
+    previewable?()=>svcpOpenDocument(localFile):null,record.blob.size,container.classList.contains('is-self')));
    if(timestamp)container.classList.add('svcp-file-time-inside');
   }
   // The file card itself is sufficient. Delivery limitations remain in
@@ -1660,6 +1674,7 @@ function renderChat(){
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
    meta.append(el('strong','svcp-sender',senderName(msg)),el('time','svcp-time',formatTime(msg.at)));
+ if(isOwn)meta.querySelector('.svcp-time').title='Сохранено в этом браузере · не подтверждение доставки';
    bubble.append(meta);
    if(msg.replyTo&&typeof msg.replyTo.text==='string'){
     // Reply sender and message time share one compact heading.
@@ -1819,7 +1834,7 @@ function renderChat(){
     }
     // Single standalone emoji: no visible action rail. The same actions stay
     // available through the long-press / right-click / keyboard context menu.
-    if(emojiOnly){
+    if(emojiOnly||bubble.classList.contains('svcp-file-only')){
      secondary.unshift(
       {title:'Ответить',kind:'reply',run:()=>{closeMessageMenus();startReply(msg)}},
       {title:msg.starred?'Убрать из избранного':'В избранное',kind:'star',
