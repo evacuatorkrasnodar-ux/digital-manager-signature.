@@ -1764,9 +1764,7 @@ html body #calendarPage #calendarAdd:active{background:#49494B!important}
 
 /* Calendar 2026-11-09 · mobile touch navigates months by horizontal swipe;
    desktop/Windows keeps keyboard-accessible month chevrons. */
-@media (max-width:767px) and (pointer:coarse){
- #calendarPage .cal-nav-arrows{display:none!important}
-}
+html.sv-phone-navigation #calendarPage .cal-nav-arrows{display:none!important}
 /* A dated Notebook entry remains distinct from events and tasks. */
 #calendarPage .cal-entry-note-bullet,
 #calendarPage .cal-dot-note{
