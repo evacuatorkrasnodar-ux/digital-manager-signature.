@@ -434,7 +434,7 @@
   border:1px solid rgba(220,229,235,.105)!important;
   outline:0!important;
   border-radius:22px!important;
-  background:#30363b!important;
+  background:var(--sv-note-dock-material,#38383a)!important;
   background-image:none!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
