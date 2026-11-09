@@ -1529,6 +1529,11 @@ function renderChat(){
     !msg.documentFlowId&&String(msg.text||'').trim().length>0&&
     String(msg.text||'').trim().length<=5&&!String(msg.text||'').includes('\n');
    const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(shortText?' is-short-text':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
+   // Put timestamps above ordinary text bubbles, leaving the existing
+   // metadata and special attachment/reply layouts intact.
+   if(!emojiOnly&&!isRecognition&&!msg.replyTo&&!msg.mediaId&&!msg.taskId&&
+      !msg.documentFlowId&&String(msg.text||'').trim())
+    bubble.classList.add('svcp-time-outside');
    bubble.dataset.chatIndex=String(index);
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
