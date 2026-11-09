@@ -3374,21 +3374,21 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  overflow-x:hidden!important;
  overflow-y:auto!important;
  overscroll-behavior:contain!important;
- border:1px solid rgba(225,235,241,.12)!important;
- border-radius:22px!important;
- background:#25313b!important;
- background-image:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025))!important;
- -webkit-backdrop-filter:blur(22px) saturate(110%)!important;
- backdrop-filter:blur(22px) saturate(110%)!important;
- box-shadow:0 12px 32px rgba(0,0,0,.24)!important;
+ border:0!important;
+ border-radius:18px!important;
+ background:#38383A!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:0 10px 24px rgba(0,0,0,.18)!important;
  color:var(--text)!important;
  isolation:isolate!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpChatTaskDraft:not([hidden]){
- background:#f2f5f7!important;
- background-image:linear-gradient(145deg,rgba(255,255,255,.84),rgba(227,233,239,.55))!important;
- border-color:rgba(126,146,159,.18)!important;
- box-shadow:0 14px 34px rgba(63,76,89,.15)!important;
+ background:#F1F1F3!important;
+ background-image:none!important;
+ border-color:transparent!important;
+ box-shadow:0 10px 24px rgba(0,0,0,.09)!important;
 }
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > label{
  display:block!important;
@@ -3558,9 +3558,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  gap:10px!important;
  box-sizing:border-box!important;
  padding:9px 12px!important;
- border:1px solid rgba(133,151,162,.18)!important;
- border-radius:13px!important;
- background:rgba(213,225,235,.075)!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:#4B4B4D!important;
  box-shadow:none!important;
  color:var(--text)!important;
  font:400 15px/20px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
@@ -3646,12 +3646,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 /* v194 · Reduce task review bulk and let the proposed text wrap naturally.
    This is a review card, not a second fullscreen editor. */
 #svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpChatTaskDraft:not([hidden]){
- width:min(396px,calc(100% - 28px))!important;
+ width:min(390px,calc(100% - 28px))!important;
  max-width:calc(100% - 28px)!important;
  max-height:min(360px,calc(100% - 145px))!important;
- padding:13px 14px 12px!important;
- gap:7px!important;
- border-radius:20px!important;
+ padding:14px!important;
+ gap:8px!important;
+ border-radius:18px!important;
 }
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > label strong{
  font-size:15px!important;
@@ -3673,9 +3673,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  max-height:84px!important;
  padding:10px 12px!important;
  margin:0!important;
- border:1px solid rgba(133,151,162,.15)!important;
- border-radius:13px!important;
- background:rgba(255,255,255,.095)!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:#4B4B4D!important;
  box-shadow:none!important;
  color:var(--text)!important;
  font:400 15px/20px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
@@ -3734,24 +3734,24 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  text-align:center!important;
 }
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions > .svcp-primary{
- background:rgba(117,161,137,.15)!important;
- border-color:rgba(105,145,122,.16)!important;
- color:var(--text)!important;
+ background:#565658!important;
+ border-color:transparent!important;
+ color:#F5F5F7!important;
 }
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions > .svcp-ghost{
- background:rgba(154,168,181,.07)!important;
- border-color:rgba(154,168,181,.09)!important;
- color:var(--secondary)!important;
+ background:transparent!important;
+ border-color:transparent!important;
+ color:#E1E1E3!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions > .svcp-primary{
- background:rgba(42,130,87,.11)!important;
- border-color:rgba(42,130,87,.13)!important;
- color:#266f4d!important;
+ background:#38383A!important;
+ border-color:transparent!important;
+ color:#F5F5F7!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions > .svcp-ghost{
- background:rgba(118,135,149,.065)!important;
- border-color:rgba(118,135,149,.075)!important;
- color:#68727e!important;
+ background:transparent!important;
+ border-color:transparent!important;
+ color:#38383A!important;
 }
 
 /* v196 · Dense Work Chat conversation rhythm.
@@ -4291,4 +4291,56 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([hidden]){
   animation:none!important;
  }
+}
+
+/* SEYVEO flat polish: contextual reply, contact info and saved messages.
+   These are independent from the approved main chat composer/dock. */
+#svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpReplyPreview:not([hidden]){
+ background:#38383A!important;
+ background-image:none!important;
+ border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpReplyPreview .svcp-reply-text{
+ color:#F2F2F4!important;
+ font-size:12px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpReplyPreview .svcp-preview-close{
+ font-size:18px!important;
+ color:#E7E7EA!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpRoomInfo:not([hidden]){
+ box-sizing:border-box!important;
+ padding:12px 16px!important;
+ background:#38383A!important;
+ border:0!important;
+ box-shadow:none!important;
+ gap:4px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpRoomInfo :is(strong,p){
+ color:#F5F5F7!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpRoomInfo small{
+ color:#C6C6C9!important;
+ font-size:11px!important;
+ line-height:1.4!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-bubble-saved{
+ display:none!important; /* filled bookmark retains visible/accessible saved state */
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpReplyPreview:not([hidden]),
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpRoomInfo:not([hidden]){
+ background:#E5E5E7!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpReplyPreview :is(.svcp-reply-text,.svcp-preview-close),
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpRoomInfo :is(strong,p){
+ color:#303033!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpRoomInfo small{
+ color:#656568!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-toggle{
+ background:#E3E3E5!important;
 }
