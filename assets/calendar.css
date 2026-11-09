@@ -1639,7 +1639,7 @@
 }
 #svWorkShell > #calendarCreateMenu{align-self:auto!important;order:0!important}
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)
- > :is(#calendarCreateEvent,#calendarCreateTask,#calendarModeChoose,#calendarModeReturn){
+ > :is(#calendarCreateEvent,#calendarCreateTask,#calendarCreateNote,#calendarModeChoose,#calendarModeReturn){
  display:flex!important;justify-content:flex-start!important;align-items:center!important;
  box-sizing:border-box!important;width:100%!important;height:44px!important;min-height:44px!important;
  gap:10px!important;margin:0!important;padding:0 10px!important;
@@ -1681,7 +1681,7 @@
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)[data-panel="main"]
  > :is(#calendarModeReturn,#calendarViewModes){display:none!important}
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)[data-panel="views"]
- > :is(#calendarCreateEvent,#calendarCreateTask,#calendarModeChoose){display:none!important}
+ > :is(#calendarCreateEvent,#calendarCreateTask,#calendarCreateNote,#calendarModeChoose){display:none!important}
 :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) #calendarViewModes{
  box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
  width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;
@@ -1713,7 +1713,7 @@
  border-color:rgba(25,30,35,.1)!important;box-shadow:0 8px 18px rgba(0,0,0,.1)!important;
 }
 :root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu) :is(
- #calendarCreateEvent,#calendarCreateTask,#calendarModeChoose,#calendarModeReturn,#calendarViewModes > button
+ #calendarCreateEvent,#calendarCreateTask,#calendarCreateNote,#calendarModeChoose,#calendarModeReturn,#calendarViewModes > button
 ){color:#29343B!important}
 :root[data-theme="light"] :is(#svWorkShell > #calendarCreateMenu,#calendarPage > #calendarCreateMenu)
  .cal-create-choice-icon{color:#52616B!important}
@@ -1761,3 +1761,31 @@ html body #calendarPage #calendarAdd:active{background:#49494B!important}
  #calendarPage .cal-month > .cal-weekdays span{padding:4px 0!important}
  #calendarPage .cal-month > .cal-month-grid{padding-top:4px!important}
 }
+
+/* Calendar 2026-11-09 · mobile touch navigates months by horizontal swipe;
+   desktop/Windows keeps keyboard-accessible month chevrons. */
+@media (max-width:767px) and (pointer:coarse){
+ #calendarPage .cal-nav-arrows{display:none!important}
+}
+/* A dated Notebook entry remains distinct from events and tasks. */
+#calendarPage .cal-entry-note-bullet,
+#calendarPage .cal-dot-note{
+ display:block;flex:0 0 auto;width:5px;height:5px;border-radius:50%;
+ background:#ADBCC5!important;box-shadow:none!important;
+}
+#calendarPage .cal-entry-note-bullet{
+ width:7px;height:7px;margin:auto;
+}
+#calendarPage .cal-holiday-symbol.sv-sayvi-symbol{
+ display:inline-block!important;width:18px!important;height:18px!important;
+ flex:0 0 18px!important;min-width:18px!important;line-height:1!important;
+ background-color:var(--secondary)!important;
+ color:var(--secondary)!important;font-size:15px!important;
+}
+#noteReviewDialog .sv-note-calendar-label:not([hidden]){
+ display:block!important;margin:0 7px 4px!important;padding:0!important;
+ font:500 11.5px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--secondary)!important;letter-spacing:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#noteReviewDialog .sv-note-calendar-label[hidden]{display:none!important}
