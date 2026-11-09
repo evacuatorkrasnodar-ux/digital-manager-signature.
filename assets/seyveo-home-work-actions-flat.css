@@ -111,3 +111,31 @@
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-hero-art{
   --lm-soft-glow:#508276;
 }
+
+/* Home queue micro-polish · 2026-11-09.
+ * Align the two following tasks' title column with the featured
+ * Elena message: featured 42px art + 10px gap.
+ * Preserve tap-row height, queue behavior, dock and the living orb. */
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-item{
+  grid-template-columns:42px minmax(0,1fr)!important;
+  column-gap:10px!important;
+}
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-art{
+  color:#A7B7BF!important;
+}
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-item[data-lm-kind="contract"] .lm-inline-art{
+  color:#A7BECA!important;
+}
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-item[data-lm-kind="mail"] .lm-inline-art{
+  color:#B1B6C4!important;
+}
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-art svg{
+  opacity:.94!important;
+  stroke-width:1.55!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-item[data-lm-kind="contract"] .lm-inline-art{
+  color:#536D7B!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-item[data-lm-kind="mail"] .lm-inline-art{
+  color:#666D83!important;
+}
