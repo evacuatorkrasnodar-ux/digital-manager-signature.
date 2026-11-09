@@ -2214,10 +2214,23 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 
 <div class="picture-tabs" role="group" aria-label="За какой период"><button type="button" data-picture-period="today" aria-pressed="true">Сегодня</button><button type="button" data-picture-period="week" aria-pressed="false">Неделя</button><button type="button" data-picture-period="month" aria-pressed="false">Месяц</button><button type="button" data-picture-period="year" aria-pressed="false">Год</button></div>
 </div>
+<section id="pictureQuickInsight" class="picture-quick-insight picture-sayvi" hidden aria-labelledby="pictureSayviTitle">
+ <div class="picture-sayvi-heading">
+  <span class="picture-sayvi-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 14.8 9l6.7 3-6.7 2.9L12 21.5l-2.9-6.6L2.5 12l6.6-3z"/></svg></span>
+  <strong id="pictureSayviTitle">Сэйви</strong>
+  <span class="picture-sayvi-context">Анализ показателей</span>
+ </div>
+ <p id="pictureSummary" class="picture-sayvi-headline">Смотрю на показатели бизнеса.</p>
+ <div class="picture-sayvi-details" id="pictureSayviDetails" hidden aria-live="polite"></div>
+ <div class="picture-sayvi-actions">
+  <button type="button" id="pictureSayviWhy" aria-expanded="false" aria-controls="pictureSayviDetails">Пояснить</button>
+  <button type="button" id="pictureSayviDiscuss">Обсудить с Сэйви</button>
+ </div>
+</section>
 <section id="pictureWidgetArea" class="home-widgets" aria-labelledby="homeWidgetTitle">
 <div class="home-widgets-heading"><h2 id="homeWidgetTitle">Самое важное</h2><span class="home-widgets-caption">ВАШ ВЫБОР</span></div>
 <div id="homeWidgetGrid" class="home-widgets-grid" aria-label="Выбранные показатели"></div>
-<div id="pictureQuickInsight" class="picture-quick-insight" hidden><span class="picture-quick-insight-mark" aria-hidden="true">SEYVEO</span><p id="pictureSummary">Обновляю показатели…</p></div>
+
 </section>
 <p id="pictureLifeNote" class="picture-empty" hidden>Продажи и расходы пока не подключены.</p>
 <div id="pictureBusinessCharts">
@@ -2237,6 +2250,12 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <section class="picture-section" aria-labelledby="pictureExpensesTitle"><h2 id="pictureExpensesTitle">На что уходят деньги</h2><div id="pictureExpenses" class="picture-breakdown"></div><p id="pictureMoneyDifference" class="picture-subnote"></p></section>
 </div>
 
+<details id="pictureDataTools" class="picture-data-tools">
+<summary>Источники и проверка</summary>
+<div class="picture-data-tools-intro">
+ <p>При подключении рабочих сервисов показатели могут обновляться автоматически. Ручной ввод оставлен для проверки работы экрана.</p>
+ <button id="pictureConnectSources" type="button">Подключения</button>
+</div>
 <section id="pictureOperations" class="picture-operations" aria-label="Учёт операций">
  <div class="picture-operations-head"><h2>Операции</h2><button type="button" id="pictureOperationOpen" aria-expanded="false" aria-controls="pictureOperationForm" aria-label="Добавить операцию" title="Добавить операцию"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button></div>
  <p class="picture-operations-note">Записи только на этом устройстве · банк не подключён.</p>
@@ -2250,6 +2269,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  </form>
  <div id="pictureOperationsList" class="picture-operations-list"></div>
 </section>
+</details>
 <details id="pictureEfficiency" class="sv-picture-efficiency" hidden>
  <summary aria-label="Расчёт эффективности бизнеса">
   <svg class="sv-picture-efficiency-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 26h26M4 22l8-9 6 5 10-13M22 5h6v6"/></svg>
