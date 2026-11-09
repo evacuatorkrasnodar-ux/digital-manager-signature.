@@ -2647,3 +2647,25 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-paper
   font-size:9.5px!important;
  }
 }
+
+
+/* SEYVEO Paper · graphite thickness handle and optical Save alignment · v38.
+   Scope: two existing controls only; native range behavior stays unchanged. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size::after{
+ background:#38383A!important;
+ background-image:none!important;
+ color:#FFFFFF!important;
+ border:1px solid rgba(244,245,247,.35)!important;
+ box-shadow:none!important;
+ text-shadow:none!important;
+ font-variant-numeric:tabular-nums!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size input::-webkit-slider-runnable-track{
+ background:rgba(223,227,234,.40)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size input::-moz-range-track{
+ background:rgba(223,227,234,.40)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save svg{
+ transform:translate(1px,1px)!important;
+}
