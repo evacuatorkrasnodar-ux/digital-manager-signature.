@@ -15,7 +15,7 @@
  section.setAttribute('aria-label','Настройка карточек Сэйви');
  const title=document.createElement('h2');title.textContent='Карточки Сэйви';
  const note=document.createElement('p');
- note.textContent='Какие карточки показывать на Главной. Поручения и документы остаются на месте.';
+ note.textContent='Свайп перелистывает очередь. Удержание скрывает карточку. Здесь можно всё восстановить; исходные данные не удаляются.';
  section.append(title,note,launch);manage.append(section);
  const panel=document.createElement('dialog');
  panel.id='seyveoCardPreferences';
@@ -39,12 +39,20 @@
  function render(){
   list.replaceChildren();
   const prefs=engine.getVisibility();
-  if(!prefs.muted.length&&!prefs.hidden.length){
+  const sleeping=engine.getSnoozes?.()||[];
+  if(!prefs.muted.length&&!prefs.hidden.length&&!sleeping.length){
    const clean=document.createElement('p');clean.className='sv-card-preferences-empty';
    clean.textContent='Все категории карточек разрешены.';
    list.append(clean);reset.disabled=true;return;
   }
   reset.disabled=false;
+  if(sleeping.length){
+   const row=document.createElement('div');row.className='sv-card-preferences-row';
+   const label=document.createElement('span');
+   label.textContent='Временная пауза · '+sleeping.length+' карточек';
+   row.append(label,button('Показать сейчас',()=>{engine.clearSnoozes?.();render()}));
+   list.append(row);
+  }
   for(const family of prefs.muted){
    const row=document.createElement('div');row.className='sv-card-preferences-row';
    const label=document.createElement('span');label.textContent='Скрыта категория: '+catalogName(family);
@@ -65,7 +73,7 @@
  const open=()=>{render();if(panel.showModal)panel.showModal();else panel.setAttribute('open','')};
  const dismiss=()=>{if(panel.close)panel.close();else panel.removeAttribute('open')};
  launch.addEventListener('click',open);close.addEventListener('click',dismiss);
- reset.addEventListener('click',()=>{engine.restoreVisibility();render()});
+ reset.addEventListener('click',()=>{engine.restoreVisibility();engine.clearSnoozes?.();render()});
  panel.addEventListener('click',event=>{if(event.target===panel)dismiss()});
  window.SEYVEO_CARD_PREFERENCES=Object.freeze({open,render});
 })();
