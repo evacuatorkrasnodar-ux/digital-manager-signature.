@@ -249,7 +249,8 @@ function renderSayviAdvice(result){
  if(!card||!title||!details)return;
  card.hidden=false;
  details.hidden=true;
- $('pictureSayviWhy')?.setAttribute('aria-expanded','false');
+ const explainButton=$('pictureSayviWhy');
+ if(explainButton){explainButton.setAttribute('aria-expanded','false');explainButton.textContent='Пояснить';}
  details.replaceChildren();
  const rows=[];
  if(!result){
