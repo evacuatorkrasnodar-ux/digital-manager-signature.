@@ -271,7 +271,7 @@
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
-  title.textContent=history?'История действий':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
+  title.textContent=history?'История':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // Root destinations are already navigable through the bottom dock.
   // Do not show a redundant Back control beside each top-level title.
   back.hidden=!history;
