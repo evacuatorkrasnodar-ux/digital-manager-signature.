@@ -2430,6 +2430,27 @@ $('svcpChatInput')?.addEventListener('keydown',event=>{
 });
 function renderTasks(){
  const list=$('svcpTaskList');if(!list)return;
+ // One delegated listener for every task, not one global handler per row.
+ if(!list.dataset.svcpTaskMenuDismissBound){
+  list.dataset.svcpTaskMenuDismissBound='true';
+  const closeMenus=()=>{
+   for(const menu of list.querySelectorAll('.svcp-task-extra:not([hidden])')){
+    menu.hidden=true;
+    menu.closest('.svcp-task')?.classList.remove('svcp-task-menu-open');
+    menu.closest('.svcp-task')?.querySelector('.svcp-task-more')?.setAttribute('aria-expanded','false');
+   }
+  };
+  document.addEventListener('pointerdown',event=>{
+   if(!list.isConnected)return;
+   if(event.target.closest('#svcpTaskList .svcp-task-more, #svcpTaskList .svcp-task-extra'))return;
+   closeMenus();
+  });
+  document.addEventListener('keydown',event=>{
+   if(event.key!=='Escape'||!list.isConnected)return;
+   const more=list.querySelector('.svcp-task-menu-open .svcp-task-more');
+   if(more){event.preventDefault();closeMenus();more.focus({preventScroll:true})}
+  });
+ }
  window.dispatchEvent(new Event('seyveo:manager-tasks-updated'));
  const wasHistoryOpen=!!list.querySelector('.svcp-task-history[open]');
  // Only actual saved tasks are displayed in the manager workspace.
@@ -2518,7 +2539,15 @@ function renderTasks(){
   assist.title='Спросить Сэйви';
   assist.textContent='Сэйви';
   const more=btn('',()=>{
+   for(const other of list.querySelectorAll('.svcp-task-menu-open')){
+    if(other===row)continue;
+    other.classList.remove('svcp-task-menu-open');
+    const menu=other.querySelector('.svcp-task-extra');
+    if(menu)menu.hidden=true;
+    other.querySelector('.svcp-task-more')?.setAttribute('aria-expanded','false');
+   }
    extra.hidden=!extra.hidden;
+   row.classList.toggle('svcp-task-menu-open',!extra.hidden);
    more.setAttribute('aria-expanded',String(!extra.hidden));
   },'svcp-task-more');
   more.setAttribute('aria-label','Дополнительные действия с поручением: '+t.text);
@@ -2550,6 +2579,12 @@ function renderTasks(){
    if(!save(TASK_KEY,updated))return;
    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
   },'svcp-ghost'));
+  extra.addEventListener('click',event=>{
+   if(!event.target.closest('button'))return;
+   extra.hidden=true;
+   row.classList.remove('svcp-task-menu-open');
+   more.setAttribute('aria-expanded','false');
+  });
   if(checkbox)row.append(checkbox);
   row.append(copy,actions,extra);
   return row;
