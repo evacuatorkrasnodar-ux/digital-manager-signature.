@@ -163,3 +163,25 @@ assert.match(iconSharedStyles,/width:48px!important;min-width:48px!important/,'t
 assert.match(iconHomeStyles,/background:#38383A!important/,'Sayvi stays premium graphite');
 assert.match(iconHomeStyles,/background:rgba\(169,180,192,\.12\)!important/,'Edit and Navigate share restrained matte backing');
 console.log('SEYVEO rounded-square icon actions and square-pencil edit glyph: tests passed');
+
+// Original incoming mail must not be replaced by the generated reply draft.
+// Initial state and both answer paths display the immutable email first.
+assert.match(homeSceneSource,/const mailIncoming=Object\.freeze\(\{/,
+ 'sample incoming mail has a dedicated immutable source record');
+assert.match(homeSceneSource,/mailDetails\.hidden=!active;/,
+ 'mail content is visible before any Sayvi/Edit action');
+assert.match(homeSceneSource,/create\('p','lm-mail-original',mailIncoming\.text\)/,
+ 'the original incoming email is rendered verbatim');
+assert.match(homeSceneSource,/if\(mailStep==='draft'\)\{[\s\S]*?return;/,
+ 'no AI draft is displayed before choosing a response path');
+assert.match(homeSceneSource,/sayviAction\.hidden=mailStep!=='draft'/,
+ 'only final Send remains after choosing Sayvi or Edit');
+assert.match(homeSceneSource,/sayviAction\.hidden=documentStep!=='summary'/,
+ 'only final Save remains after choosing document action');
+assert.match(iconHomeStyles,/\.lm-mail-original\{/,
+ 'the original email has a readable dedicated style');
+assert.match(iconHomeStyles,/min-width:116px!important/,
+ 'final Send/Save is not squeezed into an icon-only square');
+assert.match(iconHomeStyles,/font-size:12px!important/,
+ 'the Send/Save text remains readable on iPhone');
+console.log('SEYVEO Home incoming email and final Send/Save labels: tests passed');
