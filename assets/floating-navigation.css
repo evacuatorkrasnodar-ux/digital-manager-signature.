@@ -1,6 +1,7 @@
-/* SEYVEO compact iOS 26-inspired split floating dock.
- * Four destinations in a glass pill and the existing fifth in a glass circle.
- * ONE set of buttons, routes, music actions and the original voice gesture. */
+/* SEYVEO compact split dock with original approved materials.
+ * Four exact 58px navigation positions, plus a 58px search slot.
+ * Sayvi occupies position 3: 2.5 × 58 = 145px, exactly half of 290px.
+ * One set of routes, music actions and the original hold-to-speak. */
 /* SEYVEO · Quiet Navigation / 2026.
  * One fixed five-position dock. Four destinations + central Sayvi.
  * Stable safe-area, native scroll, original voice and music controls. */
@@ -39,7 +40,7 @@
  align-items:center!important;
  justify-items:stretch!important;
  gap:0!important;
- width:min(390px,calc(100% - 24px))!important;
+ width:min(290px,calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
  height:var(--seyveo-dock-height)!important;min-height:var(--seyveo-dock-height)!important;
  margin:0!important;padding:0!important;
  border-radius:999px!important;
@@ -213,14 +214,14 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
  display:none!important;
 }
 @media(max-width:355px){
- .dock{width:calc(100% - 12px)!important;padding:0!important;gap:0!important}
+ .dock{width:min(290px,calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;padding:0!important;gap:0!important}
  .dock>.nav-item{font-size:10.4px!important;letter-spacing:-.038em!important}
  .dock>.nav-item svg{width:var(--seyveo-dock-icon-size)!important;height:var(--seyveo-dock-icon-size)!important}
 }
 /* Landscape notch sides: keep the SAME dock, never create a second one. */
 @media(orientation:landscape) and (max-height:650px){
  .dock{
-  width:min(420px,calc(100vw - 14px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+  width:min(290px,calc(100vw - 14px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
   left:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))/2)!important;
  }
 }
@@ -517,11 +518,11 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  }
 }
 
-/* SEYVEO unified iPhone horizontal geometry: 6px per safe viewport side.
-   Width only; preserve approved materials, button spacing and heights. */
+/* Compact iPhone geometry. Keep exact 58px spacing on all supported phones,
+   while preserving the existing dock material, icons, button hit sizes and height. */
 @media (max-width:699px){
  .dock{
-  width:min(430px,calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+  width:min(290px,calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
   max-width:calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))!important;
  }
 }
