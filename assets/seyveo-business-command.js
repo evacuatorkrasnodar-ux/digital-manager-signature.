@@ -1140,9 +1140,8 @@ composerEmojiButton?.addEventListener('click',event=>{
  closeRecognition();closeMessageMenus();
  closeComposerEmoji();
  if(!opening)return;
- // The inline row is intended for the compact single-line composer only.
- // Preserve the typed draft, restoring it when a reaction is selected.
- if(form.classList.contains('svcp-compose-multiline'))return;
+ // Emoji works in BOTH composer sizes. The expanded mode places the five
+ // choices on its lower action row without covering the typed draft.
  renderComposerEmojis();
  form.classList.add('svcp-emoji-inline-open');
  composerEmojiStrip.hidden=false;
