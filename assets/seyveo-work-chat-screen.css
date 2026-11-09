@@ -4970,3 +4970,73 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-file-card-name{color:#242427!important}
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only :is(.svcp-file-card-type,.svcp-time){color:#66666C!important}
+
+
+/* Flat fullscreen document reader: real file preview, no fake page. */
+.svcp-doc-overlay{background:#F7F7F8!important;color:#303034!important}
+.svcp-doc-top{
+ position:relative;z-index:3;flex:none;gap:8px!important;
+ background:#FCFCFD!important;border-bottom:1px solid #EAEAEC!important;
+ padding:calc(env(safe-area-inset-top) + 4px) max(10px,env(safe-area-inset-right)) 6px max(10px,env(safe-area-inset-left))!important;
+}
+.svcp-doc-back,.svcp-doc-more{
+ box-sizing:border-box;display:grid;place-items:center;flex:0 0 40px;
+ width:40px;height:40px;min-width:40px;min-height:40px;
+ border:0;border-radius:12px;background:transparent!important;color:#38383A!important;padding:7px;
+}
+.svcp-doc-back svg,.svcp-doc-more svg{
+ display:block;width:20px;height:20px;stroke:currentColor;fill:none;
+ stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+}
+.svcp-doc-more svg circle{fill:currentColor;stroke:none}
+.svcp-doc-heading{display:flex;flex:1;min-width:0;flex-direction:column;justify-content:center;gap:2px}
+.svcp-doc-title{
+ display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ font:600 12px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+.svcp-doc-size{display:block;font:500 10px/1.2 system-ui,sans-serif;color:#8A8A8F}
+.svcp-doc-body{padding:0!important;background:white!important}
+.svcp-doc-pdf{border-radius:0!important;background:white!important;box-shadow:none!important}
+.svcp-doc-bottom{
+ flex:none;gap:6px!important;background:#FCFCFD!important;border-top:1px solid #EAEAEC!important;
+ padding:7px max(12px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))!important;
+}
+.svcp-doc-share-row{display:flex;align-items:center;gap:9px;max-width:660px;width:100%;margin:0 auto}
+.svcp-doc-share{
+ flex:1;min-height:44px;padding:7px 12px;
+ display:grid;place-items:center;border:0;border-radius:12px;
+ background:#38383A;color:white;font:600 13px/1.2 system-ui,sans-serif;
+}
+.svcp-doc-to-documents{
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+ height:44px!important;min-height:44px!important;
+ display:grid!important;place-items:center!important;
+ padding:0!important;margin:0!important;border:1px solid #D6D6DA!important;
+ border-radius:12px!important;background:#EFEFF1!important;color:#38383A!important;
+}
+.svcp-doc-to-documents svg{
+ display:block;width:20px;height:20px;stroke:currentColor;fill:none;
+ stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+}
+.svcp-doc-tools{
+ position:absolute;z-index:5;top:calc(env(safe-area-inset-top) + 52px);right:10px;
+ box-sizing:border-box;display:flex!important;flex-direction:column!important;
+ width:193px!important;max-width:calc(100vw - 20px)!important;
+ gap:2px!important;padding:6px!important;margin:0!important;
+ border:1px solid #E4E4E8;border-radius:13px;background:#FDFDFE!important;
+ box-shadow:0 10px 30px rgba(0,0,0,.14);
+}
+.svcp-doc-tools[hidden]{display:none!important}
+.svcp-doc-tools > .svcp-doc-pill{
+ display:flex!important;justify-content:flex-start!important;gap:12px!important;
+ width:100%!important;min-height:42px!important;padding:8px 12px!important;
+ border:0!important;border-radius:9px!important;
+ background:transparent!important;color:#38383A!important;
+ font-size:12px!important;
+}
+.svcp-doc-tools > .svcp-doc-pill:active{background:#E8E8EC!important}
+.svcp-doc-info{color:#777780!important;max-width:660px!important}
+.svcp-doc-back:focus-visible,.svcp-doc-more:focus-visible,.svcp-doc-share:focus-visible,
+.svcp-doc-to-documents:focus-visible,.svcp-doc-pill:focus-visible{
+ outline:2px solid #38383A;outline-offset:2px;
+}
