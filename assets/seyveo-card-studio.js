@@ -43,7 +43,7 @@ page.querySelector('.scs-wrap').append(queuePanel);
 let stage=0,previewTheme='dark';
 const gallery=document.createElement('section');
 gallery.className='scs-panel scs-gallery';
-gallery.innerHTML='<div class="scs-gallery-head"><h3>Все карточки SEYVEO</h3><p class="scs-note">Один мастер-компонент · '+entries.length+' типов · обе темы переключаются вместе</p></div><div class="scs-gallery-grid" data-card-gallery></div>';
+gallery.innerHTML='<div class="scs-gallery-head"><h3>Все карточки SEYVEO</h3><p class="scs-note">Silver Flat · '+entries.length+' типов · графит #38383A · обе темы</p></div><div class="scs-gallery-grid" data-card-gallery></div>';
 page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 function renderGallery(){
@@ -100,7 +100,7 @@ function render(){
  preview.replaceChildren();
  const toolbar=document.createElement('div');
  toolbar.className='scs-preview-toolbar';
- const caption=document.createElement('strong');caption.textContent='Эталон · экран iPhone';
+ const caption=document.createElement('strong');caption.textContent='Эталон SEYVEO · Silver Flat · iPhone';
  const toggles=document.createElement('div');toggles.className='scs-theme-switch';toggles.setAttribute('role','group');toggles.setAttribute('aria-label','Тема эталонной карточки');
  for(const [theme,label] of [['dark','Black Velvet'],['light','Белая тема']]){
   const choice=document.createElement('button');choice.type='button';choice.textContent=label;
