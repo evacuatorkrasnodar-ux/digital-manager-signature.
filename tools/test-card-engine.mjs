@@ -58,17 +58,18 @@ for(const current of allStudioCards){
  assert.equal(new Set(Array.from(p.actions,a=>a.id)).size,p.actions.length,'unique actions');
  assert.ok(!p.actions.some(a=>browserEngine.cardPolicy.redundantAdviceActions.includes(a.id)),'no redundant advice control');
  assert.ok(!p.actions.some(a=>a.id==='later'),'Later is not a button');
- assert.ok(p.actions.length<=3,'up to three actions');
+ assert.equal(p.actions.length,3,'all cards inherit three predictable choices');
  if(current.actions.includes('later'))assert.ok(current.actions.includes('later'),'defer action remains in original event model');
 }
 const mailCard=allStudioCards.find(c=>c.family==='mail');
 assert.ok(mailCard);
 const withDuplicateAdvice={...mailCard,actions:['show-sayvi-advice','review-draft','review-draft','open-mail','later']};
 const clean=browserEngine.presentation(withDuplicateAdvice);
-assert.deepEqual(Array.from(clean.actions,a=>a.id),['review-draft','open-mail']);
+assert.deepEqual(Array.from(clean.actions,a=>a.id),['sayvi','edit','navigate']);
 assert.equal(clean.actions.filter(a=>a.role==='primary').length,1);
 assert.deepEqual(Array.from(browserEngine.presentation({...withDuplicateAdvice,suggestion:''}).actions,a=>a.id),
- ['show-sayvi-advice','review-draft','open-mail'],'show-advice action stays when no visible advice');
+ ['sayvi','edit','navigate'],'every future card inherits canonical actions');
+assert.deepEqual(Array.from(clean.actions,a=>a.label),['Сэйви','Исправить','Перейти']);
 console.log('SEYVEO Card Engine Silver Flat policy: tests passed');
 
 const ordinary=allStudioCards.find(c=>c.family==='message');
@@ -110,13 +111,19 @@ assert.equal(browserEngine.getSnoozes().length,0);
 console.log('SEYVEO Card Engine queue rotation and timed pause: tests passed');
 
 
-// Home document card regression: no wall of four simultaneous actions.
+// Home communication and document flow: three initial actions, then a
+// visible explicit Send/Save button, never a fake mail-provider receipt.
 const homeSceneSource=readFileSync(new URL('../assets/living-moment.js',import.meta.url),'utf8');
-assert.match(homeSceneSource,/documentEdit\.hidden=!active\|\|documentStep!=='review'\|\|!reviewed/);
-assert.match(homeSceneSource,/documentAnalyze\.hidden=!active\|\|documentStep!=='review'\|\|reviewed/);
-assert.match(homeSceneSource,/execute\.hidden=documentStep!=='summary'/,'old acknowledgement button hidden in review');
-assert.match(homeSceneSource,/open\.hidden=true/,'no duplicate Open button in document action row');
-assert.match(homeSceneSource,/function syncDocumentTitleTap\(\)/,'document navigation lives on its title');
-assert.match(homeSceneSource,/lm-document-file-link/,'native upload button replaced with quiet text');
-assert.ok(!homeSceneSource.includes("documentStep==='review'?'Ознакомлен'"),'acknowledgement is not a fake review completion');
-console.log('SEYVEO Home document single-action contract: tests passed');
+assert.match(homeSceneSource,/workOwn=polymer\('Исправить'/,'manual work edit is called Исправить');
+assert.match(homeSceneSource,/mailEdit\.hidden=!active\|\|mailStep!=='draft'/,'manual mail edit is initially available');
+assert.match(homeSceneSource,/documentEdit\.hidden=!active\|\|documentStep!=='summary'/,'manual document edit is initially available');
+assert.match(homeSceneSource,/documentSave\.hidden=!active\|\|!\['preview','edit'\]\.includes\(documentStep\)/);
+assert.match(homeSceneSource,/const mailSave=polymer\('Отправить'/,'developer can see Send in manual mail flow');
+assert.match(homeSceneSource,/execute\.textContent='Отправить'/,'developer can see Send after Sayvi mail proposal');
+assert.match(homeSceneSource,/mailStep='sent-demo'/,'explicit demo Send shows no real delivery');
+assert.match(homeSceneSource,/documentStep='preview'/,'Sayvi opens proposed amendment before Save');
+assert.match(homeSceneSource,/documentStep='saved'/,'document Save creates a local draft state');
+assert.match(homeSceneSource,/open\.textContent='Перейти'/,'third choice is navigation');
+assert.match(homeSceneSource,/function syncDocumentTitleTap\(\)/,'title navigation is preserved');
+assert.ok(!homeSceneSource.includes("documentStep==='review'?'Ознакомлен'"),'no fake acknowledgement button');
+console.log('SEYVEO canonical Home three-button Send/Save flow: tests passed');
