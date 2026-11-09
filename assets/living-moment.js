@@ -868,6 +868,10 @@ function createSurface(primary,other=[],real=false,taskId=''){
   cardIconize(open,'navigate');
   open.setAttribute('aria-label',item.kind==='work'?'Открыть рабочий чат Елены':!real&&item.kind==='mail'?'Открыть раздел почты':!real&&item.kind==='contract'?'Открыть документы':'Подробнее: '+item.title);
   execute.textContent=real&&item.businessTask?'Проверить':real?'Продолжить дело':'Исполнить';
+  // Recycled Home surfaces must not retain Send icon styling on another item.
+  execute.classList.remove('sv-card-icon-button');
+  delete execute.dataset.svCardIcon;
+  execute.removeAttribute('title');
   execute.setAttribute('aria-label',(real&&item.businessTask?'Проверить: ':real?'Продолжить дело: ':'Исполнить: ')+item.title);
   const reason=field.querySelector('.lm-explanation');
   if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
