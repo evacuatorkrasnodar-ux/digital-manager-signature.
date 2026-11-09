@@ -916,3 +916,132 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
   font-size:clamp(21px,6vw,24px)!important;
  }
 }
+
+
+/* SEYVEO · Cabinet final layout · matte graphite v29 · 2026-11-09.
+   Shared navigation is deliberately kept at the same geometry on all
+   work pages: no change of height or alignment between the tabs. */
+#svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkAdd:not([hidden]){
+ display:grid!important;place-items:center!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F5F5F6!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs{
+ background:#2B2B2D!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ border:0!important;box-shadow:none!important;
+}
+:root[data-theme="light"] #svWorkShell[data-shared-work="true"] #svWorkTabs{
+ background:#E5E5E7!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs button:not([hidden]){
+ font-size:clamp(11px,3vw,12px)!important;
+ font-weight:550!important;
+ letter-spacing:-.012em!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs button[aria-pressed="true"]:not([hidden]){
+ background:#38383A!important;
+ color:#F7F7F8!important;font-weight:630!important;
+}
+/* Cabinet: a heading, not a large instruction block. The long-press
+   reorder gesture remains active; short success messages show temporarily. */
+#svWorkShell[data-active="business"] #svCabinetToolbar.sv-cabinet-toolbar{
+ box-sizing:border-box!important;
+ min-height:47px!important;
+ padding:3px 3px 7px!important;margin:0!important;
+ gap:7px!important;
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+#svWorkShell[data-active="business"] #svCabinetToolbar .sv-cabinet-toolbar-text{
+ gap:2px!important;
+}
+#svWorkShell[data-active="business"] #svCabinetToolbar .sv-cabinet-toolbar-text strong{
+ font-size:15px!important;font-weight:630!important;
+ letter-spacing:-.02em!important;line-height:1.25!important;
+}
+#svWorkShell[data-active="business"] #svCabinetToolbar .sv-cabinet-toolbar-text small:empty{
+ display:none!important;
+}
+#svWorkShell[data-active="business"] #svCabinetToolbar .sv-cabinet-toolbar-text small:not(:empty){
+ display:block!important;color:var(--secondary)!important;
+ font-size:11px!important;line-height:1.25!important;
+}
+/* Sayvi belongs to the list, with a little extra breathing room; do not
+   wrap it in a glass card or introduce a second primary action. */
+#svWorkShell[data-active="business"] #svCabinetContinueWithSayvi.sv-cabinet-resume:not([hidden]){
+ min-height:57px!important;
+ margin:2px 0 5px!important;
+ padding:7px 5px!important;
+ gap:10px!important;
+ border:0!important;
+ border-bottom:1px solid rgba(190,196,204,.12)!important;
+ border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svWorkShell[data-active="business"] #svCabinetContinueWithSayvi .sv-cabinet-resume-copy strong{
+ font-size:13px!important;font-weight:610!important;
+ line-height:1.3!important;
+}
+#svWorkShell[data-active="business"] #svCabinetContinueWithSayvi .sv-cabinet-resume-copy small{
+ font-size:11px!important;line-height:1.3!important;
+}
+#svWorkShell[data-active="business"] #tasksPage .svcp-manager-row,
+#svWorkShell[data-active="business"] #tasksPage .svcp-manager-staff > summary{
+ box-sizing:border-box!important;
+ min-height:61px!important;
+ padding:9px 5px!important;
+ gap:10px!important;
+ border-bottom:1px solid rgba(190,196,204,.10)!important;
+ background:transparent!important;
+}
+#svWorkShell[data-active="business"] #tasksPage .svcp-manager-art{
+ width:28px!important;height:28px!important;
+}
+#svWorkShell[data-active="business"] #tasksPage .svcp-manager-art svg{
+ width:19px!important;height:19px!important;
+ stroke-width:1.6!important;
+}
+#svWorkShell[data-active="business"] #tasksPage .svcp-manager-row-text strong,
+#svWorkShell[data-active="business"] #tasksPage .svcp-manager-staff > summary strong{
+ font-size:14px!important;font-weight:610!important;
+ line-height:1.27!important;
+}
+#svWorkShell[data-active="business"] #tasksPage .svcp-manager-row-text small,
+#svWorkShell[data-active="business"] #tasksPage .svcp-manager-staff > summary small{
+ font-size:11.5px!important;line-height:1.35!important;
+}
+/* "Поручить" has its own meaning: text makes it distinct from the
+   header's Create menu. The duplicate plus glyph is visual noise. */
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-section-head{
+ padding:11px 3px 6px!important;
+ gap:10px!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-manager-task-create{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-height:44px!important;height:44px!important;
+ padding:0 13px!important;gap:0!important;
+ border:0!important;border-radius:13px!important;
+ background:#38383A!important;color:#F6F6F7!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font-size:12px!important;font-weight:600!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-manager-task-create svg{
+ display:none!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-section-head strong{
+ font-size:14px!important;font-weight:620!important;
+}
+#svWorkShell[data-active="business"] #tasksPage #svcpTaskList .svcp-task-section-head small{
+ font-size:11px!important;
+}
