@@ -46,13 +46,31 @@ gallery.className='scs-panel scs-gallery';
 gallery.innerHTML='<div class="scs-gallery-head"><h3>Все карточки SEYVEO</h3><p class="scs-note">Silver Flat · '+entries.length+' типов · графит #38383A · обе темы</p></div><div class="scs-gallery-grid" data-card-gallery></div>';
 page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
+const policyGuide=document.createElement('p');
+policyGuide.className='scs-note';
+policyGuide.textContent='Стандарт: одна графитовая кнопка #38383A, остальные действия — текстом. Если совет Сэйви уже виден, не дублировать его кнопкой. Настоящие новые действия Сэйви сохранять.';
+galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
+const policyAudit=document.createElement('p');
+policyAudit.className='scs-note';
+policyAudit.setAttribute('role','status');
+policyAudit.setAttribute('aria-live','polite');
+galleryGrid.insertAdjacentElement('afterend',policyAudit);
 function renderGallery(){
  galleryGrid.replaceChildren();
+ let tested=0;
+ const errors=[];
  for(const [index,event] of entries.entries()){
   const card=engine.buildCard({id:'studio-gallery-'+index,type:event[6],
    title:event[1],fact:event[2],suggestion:event[3],source:'Мастерская карточек',
    priority:'normal',demo:true});
   if(!card)continue;
+  tested++;
+  const view=engine.presentation(card);
+  const ids=(view?.actions||[]).map(action=>action.id);
+  const primaries=(view?.actions||[]).filter(action=>action.role==='primary').length;
+  const repeats=ids.length!==new Set(ids).size;
+  const adviceDuplicate=!!card.suggestion&&ids.some(id=>engine.cardPolicy.redundantAdviceActions.includes(id));
+  if(primaries>engine.cardPolicy.primaryActionsMax||repeats||adviceDuplicate)errors.push(event[0]);
   const sample=document.createElement('div');
   sample.className='scs-gallery-item';
   sample.dataset.cardState='new';
@@ -67,6 +85,9 @@ function renderGallery(){
   feedback.setAttribute('aria-live','polite');
   sample.append(label,surface,feedback);galleryGrid.append(sample);
  }
+ policyAudit.textContent=errors.length
+  ?'Проверка стандарта: исправить '+errors.join(', ')
+  :'Стандарт проверен: '+tested+' типов · одна основная кнопка · без повтора совета';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
