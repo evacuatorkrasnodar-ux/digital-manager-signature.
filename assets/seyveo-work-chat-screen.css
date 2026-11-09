@@ -5254,3 +5254,52 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  }
  .svcp-doc-action-rail > .svcp-doc-pill svg{width:19px!important;height:19px!important}
 }
+
+
+/* SEYVEO · document reader navigation follows approved Silver Flat.
+   42px circle, centered chevron, consistent inset on iPhone, no shadow/glass. */
+.svcp-doc-overlay .svcp-doc-top{
+ display:flex!important;
+ align-items:center!important;
+ gap:8px!important;
+ min-height:52px!important;
+}
+.svcp-doc-overlay .svcp-doc-top .svcp-doc-back{
+ box-sizing:border-box!important;
+ display:grid!important;
+ place-items:center!important;
+ flex:0 0 42px!important;
+ width:42px!important;
+ min-width:42px!important;
+ height:42px!important;
+ min-height:42px!important;
+ padding:0!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:50%!important;
+ background:#E4E7E9!important;
+ background-image:none!important;
+ color:#33414A!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ -webkit-tap-highlight-color:transparent;
+}
+.svcp-doc-overlay .svcp-doc-top .svcp-doc-back svg{
+ width:21px!important;
+ height:21px!important;
+ display:block!important;
+ fill:none!important;
+ stroke:currentColor!important;
+ stroke-width:1.45!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+}
+.svcp-doc-overlay .svcp-doc-top .svcp-doc-back:active{
+ background:#D5DADE!important;
+}
+.svcp-doc-overlay .svcp-doc-heading{
+ flex:1 1 auto!important;
+ min-width:0!important;
+ margin:0!important;
+}
