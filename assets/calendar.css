@@ -1563,3 +1563,51 @@
 :root[data-theme="light"] #calendarPage .cal-day[data-weekend="true"]:not([data-today="true"]):not([data-selected="true"]):not([data-holiday]) .cal-day-number{
  color:#537195!important;
 }
+
+
+/* SEYVEO graphite calendar · mode choices appear only by tapping the date.
+   A quiet in-flow popover keeps the original day/week/month/deadline actions. */
+#calendarPage #calendarViewModes[hidden]{display:none!important}
+#calendarPage #calendarViewModes{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ box-sizing:border-box;gap:4px;width:min(296px,100%);
+ height:auto;min-height:0;margin:2px 0 10px;padding:6px;
+ border:0;border-radius:15px;background:#38383A;
+ box-shadow:none;overflow:visible;
+ -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+#calendarPage #calendarViewModes > button{
+ display:flex;align-items:center;justify-content:center;
+ box-sizing:border-box;width:100%;min-width:0;height:40px;min-height:40px;
+ margin:0;padding:0 9px;border:0;border-radius:10px;
+ background:transparent;color:#E4E5E7;
+ box-shadow:none;font:inherit;font-size:12px;font-weight:540;
+}
+#calendarPage #calendarViewModes > button[aria-pressed="true"]{
+ background:#505052!important;color:#fff!important;border-color:transparent!important;
+}
+#calendarPage #calendarViewModes > button:active{background:#505052}
+#calendarPage #calendarViewModes > .cal-mode-today{
+ grid-column:1/-1;color:#F1F2F3;border-top:1px solid rgba(255,255,255,.10);
+}
+#calendarPage #calendarToday.cal-period-title{display:inline-flex;align-items:center;gap:9px}
+#calendarPage #calendarToday.cal-period-title::after{
+ content:"";display:block;flex:none;width:6px;height:6px;
+ border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+ transform:translateY(-2px) rotate(45deg);opacity:.7;
+}
+#calendarPage #calendarToday.cal-period-title[aria-expanded="true"]::after{
+ transform:translateY(2px) rotate(225deg);
+}
+/* Calendar is a content surface, not another raised glass card. */
+#calendarPage .cal-month{
+ background:transparent!important;border:1px solid color-mix(in srgb,var(--text) 10%,transparent)!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ border-radius:17px!important;
+}
+:root[data-theme="light"] #calendarPage #calendarViewModes{background:#E4E7E9}
+:root[data-theme="light"] #calendarPage #calendarViewModes > button{color:#33414A}
+:root[data-theme="light"] #calendarPage #calendarViewModes > button[aria-pressed="true"]{
+ background:#CED3D6!important;color:#1F2930!important;
+}
+:root[data-theme="light"] #calendarPage #calendarViewModes > .cal-mode-today{color:#33414A;border-top-color:rgba(45,55,60,.12)}
