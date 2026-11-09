@@ -2238,8 +2238,8 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 </div>
 
 <section id="pictureOperations" class="picture-operations" aria-label="Учёт операций">
- <div class="picture-operations-head"><h2>Операции</h2><button type="button" id="pictureOperationOpen" aria-expanded="false" aria-controls="pictureOperationForm">+ Добавить</button></div>
- <p class="picture-operations-note">Записи остаются на этом устройстве · ручной учёт, без подключения к банку.</p>
+ <div class="picture-operations-head"><h2>Операции</h2><button type="button" id="pictureOperationOpen" aria-expanded="false" aria-controls="pictureOperationForm" aria-label="Добавить операцию" title="Добавить операцию"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button></div>
+ <p class="picture-operations-note">Записи только на этом устройстве · банк не подключён.</p>
  <form id="pictureOperationForm" class="picture-operation-form" hidden>
   <div class="picture-operation-kind-field"><span class="picture-operation-field-label" id="pictureOperationKindLabel">Что произошло</span><div class="picture-operation-kind-options" role="group" aria-labelledby="pictureOperationKindLabel"><button type="button" data-picture-operation-kind="sale" aria-pressed="true">Продажа</button><button type="button" data-picture-operation-kind="expense" aria-pressed="false">Расход</button><button type="button" data-picture-operation-kind="order" aria-pressed="false">Заказ</button><button type="button" data-picture-operation-kind="lead" aria-pressed="false">Обращение</button></div><select id="pictureOperationKind" hidden aria-hidden="true" tabindex="-1"><option value="sale">Продажа</option><option value="expense">Расход</option><option value="order">Заказ</option><option value="lead">Обращение</option></select></div>
   <label id="pictureOperationAmountRow">Сумма, ₽<input id="pictureOperationAmount" type="number" min="0" max="100000000" step="1" inputmode="numeric" required></label>
