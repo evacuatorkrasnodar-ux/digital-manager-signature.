@@ -1525,7 +1525,10 @@ function renderChat(){
    // The time, bookmark, reply and assignment actions remain accessible.
    const emojiOnly=!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&
     !msg.demoReaction&&/^[\p{Extended_Pictographic}\uFE0F\u200D\u{1F3FB}-\u{1F3FF}]{1,14}$/u.test(String(msg.text||'').trim());
-   const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
+   const shortText=!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&!emojiOnly&&
+    !msg.documentFlowId&&String(msg.text||'').trim().length>0&&
+    String(msg.text||'').trim().length<=5&&!String(msg.text||'').includes('\n');
+   const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(shortText?' is-short-text':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
    bubble.dataset.chatIndex=String(index);
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
@@ -1546,7 +1549,15 @@ function renderChat(){
     let taskText=msg.taskId?String(msg.text||'').replace(/^\s*📌\s*Поручение:\s*/u,''):msg.text;
     if(msg.mediaId&&msg.mediaPurpose!=='voice')
      taskText=String(taskText||'').replace(/(?:^|\n)\s*(?:📎\s*Вложение|🎬\s*Видео|📷\s*Фото (?:выкладки|ценника)|▥\s*Фото штрихкода)\s*$/gmu,'').trim();
-    if(msg.taskId)bubble.append(el('small','svcp-task-message-label','Поручение'));
+    if(msg.taskId){
+     const label=el('small','svcp-task-message-label','Поручение');
+     // In direct messages the sender is already in the conversation header.
+     // Place task type next to timestamp instead of using a third text row.
+     if(roomDetails().kind==='personal'){
+      meta.insertBefore(label,meta.querySelector('.svcp-time'));
+      bubble.classList.add('svcp-task-inline-label');
+     }else bubble.append(label);
+    }
     if(taskText)bubble.append(el('span','svcp-message-text',taskText));
     // A file without a caption should be a single card, never a card inside
     // another painted message bubble. Keep quotes and tasks unchanged.
