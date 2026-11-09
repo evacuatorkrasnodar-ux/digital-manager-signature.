@@ -436,9 +436,11 @@
    types inherit it automatically, including Studio, gallery and Home demo.
    The original Home living moment's orb, dock and gesture UI are excluded.
    Material: matte #38383A, never secondary glass or a filled card frame. */
-.sv-card-system--rendered{
+:root{
  --sv-card-action-material:var(--sv-flat-panel,#38383A);
  --sv-card-action-pressed:var(--sv-flat-panel-raised,#48484B);
+}
+.sv-card-system--rendered{
  --sv-card-hit:44px;
  --sv-card-action-size:12px;
  --sv-card-rule:color-mix(in srgb,var(--sv-card-subtle) 14%,transparent);
@@ -571,7 +573,7 @@
 }
 /* Simulated light theme inside Studio does not inherit the device palette.
    Studio itself sets local --sv-card-action-material / --pressed. */
-:root[data-theme="light"] .sv-card-system--rendered{
+:root[data-theme="light"]{
  --sv-card-action-material:var(--sv-flat-panel,#E4E7E9);
  --sv-card-action-pressed:var(--sv-flat-panel-raised,#D5DADE);
 }
