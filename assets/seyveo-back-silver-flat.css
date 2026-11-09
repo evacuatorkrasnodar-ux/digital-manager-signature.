@@ -1,0 +1,58 @@
+/* SEYVEO Silver Flat back navigation · approved 2026-11-09.
+   Presentation only: preserve each screen's geometry, handlers, dock and header.
+   Matte silver-graphite, no glass/blur, barely-there pressure feedback. */
+:root{
+  --sv-back-flat:#30363b;
+  --sv-back-flat-ink:#eef2f4;
+  --sv-back-flat-pressed:#3b4248;
+}
+:root[data-theme="light"]{
+  --sv-back-flat:#e4e7e9;
+  --sv-back-flat-ink:#33414a;
+  --sv-back-flat-pressed:#d5dade;
+}
+
+/* All registered return-arrow controls, including full-screen workspaces.
+   The named ids make specificity reliable against old per-screen !important rules. */
+html body dialog[open] button:is(
+  .sv-nav-back,.sv-nav-arrow,
+  #noteReadBack,#noteScanBack,#assistantChatHistoryBack,
+  #calendarEventCancel,#svCabinetCancel
+),
+html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow{
+  border:0!important;
+  border-radius:50%!important;
+  outline-offset:2px;
+  background:var(--sv-back-flat)!important;
+  background-image:none!important;
+  color:var(--sv-back-flat-ink)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+  opacity:1!important;
+  -webkit-tap-highlight-color:transparent;
+}
+html body dialog[open] button:is(
+  .sv-nav-back,.sv-nav-arrow,
+  #noteReadBack,#noteScanBack,#assistantChatHistoryBack,
+  #calendarEventCancel,#svCabinetCancel
+):active,
+html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow:active{
+  background:var(--sv-back-flat-pressed)!important;
+  opacity:1!important;
+}
+html body dialog[open] button:is(
+  .sv-nav-back,.sv-nav-arrow,
+  #noteReadBack,#noteScanBack,#assistantChatHistoryBack,
+  #calendarEventCancel,#svCabinetCancel
+) svg,
+html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow svg{
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.45!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  filter:none!important;
+}
+/* Do not turn text-only Done/Cancel actions or generic Close/X buttons into circles. */
