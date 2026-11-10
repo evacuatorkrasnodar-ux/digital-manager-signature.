@@ -262,3 +262,9 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-caution{
  margin:0 1px!important;font:440 11px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  color:var(--secondary,#b5bfc6)!important;
 }
+
+/* Last mail items must remain reachable above the persistent app dock on phones. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace:not(.sv-mail-guard-active) .sv-mail-list{
+ box-sizing:border-box!important;
+ padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))!important;
+}
