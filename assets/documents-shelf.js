@@ -95,7 +95,10 @@ function paint(state){
  state.recentGrid.replaceChildren();
  // Sample icons are a format picker, not invented 'recent documents'.
  const showingFormats=!subset.length&&!state.query&&state.filter==='all'&&(!state.unlocked||all.length===0);
- state.recentTitle.textContent=showingFormats?'Форматы файлов':'Недавние';
+ // The document toolbar already has one Add action. Hide the four sample-format
+ // buttons when there are no real recents; keep real files, search and folders.
+ if(state.recent)state.recent.hidden=showingFormats;
+ state.recentTitle.textContent='Недавние';
  const hasMore=filtered.length>4;
  state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
  state.showAll.setAttribute('aria-label',state.expanded?'Свернуть список документов':'Показать все документы');
@@ -249,7 +252,7 @@ function mount(parent,options={}){
  foldersGrid.tabIndex=0;
  folders.append(folderHeader,foldersGrid);
  parent.append(recent,folders);
- Object.assign(state,{recentTitle,showAll,recentGrid,status,foldersGrid,folderCaption});
+ Object.assign(state,{recent,recentTitle,showAll,recentGrid,status,foldersGrid,folderCaption});
  refresh();
  return true;
 }
