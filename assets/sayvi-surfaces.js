@@ -595,6 +595,9 @@ function mailView(){
   attachmentPicker.addEventListener('change',async()=>{
    const chosen=Array.from(attachmentPicker.files||[]);
    attachmentPicker.value='';
+   // File pickers return focus to their trigger on iOS. Do not leave a
+   // large white keyboard-focus ring after the user closes Files.
+   if(document.activeElement===attachButton)attachButton.blur();
    for(const file of chosen){
     const extension=file.name.split('.').pop().toLowerCase();
     if(!['pdf','doc','docx','xls','xlsx','txt','csv','png','jpg','jpeg','webp'].includes(extension)){
@@ -833,7 +836,7 @@ function mailView(){
    const details=create('span','sv-mail-draft-details');
    const recipient=create('small','sv-mail-draft-recipient',draft.to?'Кому: '+draft.to:'Получатель не указан');
    recipient.title=draft.to||'Получатель не указан';
-   details.append(recipient);
+   // Identical starting edge on every draft: account, clip/count, recipient.
    const account=create('span','sv-mail-account-tag sv-mail-draft-account',mailAccountName(draft.account));
    details.append(account);
    if(draft.attachments?.length){
@@ -842,6 +845,7 @@ function mailView(){
     files.append(mailIcon('paperclip'),create('span','',String(draft.attachments.length)));
     details.append(files);
    }
+   details.append(recipient);
    edit.append(title,details);
    edit.addEventListener('click',()=>editDraft(draft.id));
    const remove=iconButton('trash','Удалить черновик '+(draft.subject||'Без темы'),()=>removeDraft(draft.id));
