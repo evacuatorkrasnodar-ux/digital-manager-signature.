@@ -3454,9 +3454,9 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div class="sv-company-view" id="seyveoCompanyView">
 <p class="seyveo-passport-subtitle">Контакты и реквизиты для клиентов и партнёров.</p>
 <div id="seyveoCompanyRows"></div>
-<p id="seyveoCompanyNotFilled" class="seyveo-passport-notice">Сведения ещё не заполнены. Добавьте их для создания визитки.</p>
-<button id="seyveoCompanyEditTop" class="seyveo-passport-edit-top" type="button" aria-label="Изменить сведения компании"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.6-1 10.5-10.6a2.4 2.4 0 0 0-3.4-3.4L5.3 15.6 4 20Z"/><path d="m14.7 6.2 3.3 3.3"/></svg><span>Изменить сведения</span></button>
-<div class="sv-company-actions"><button type="button" id="seyveoCompanyShare">Поделиться</button><button type="button" id="seyveoCompanyPrint">Распечатать</button><button type="button" id="seyveoCompanyQrOpen">QR-визитка</button></div><p id="seyveoCompanyQrHint" class="sv-company-qr-hint">Для QR-визитки добавьте название и телефон, почту или сайт.</p><button type="button" id="seyveoCompanyAvatarEdit" hidden tabindex="-1" aria-hidden="true">Образ</button>
+<p id="seyveoCompanyNotFilled" class="seyveo-passport-notice">Добавьте название и контакты, чтобы создать визитку.</p>
+<button id="seyveoCompanyEditTop" class="seyveo-passport-edit-top" type="button" aria-label="Изменить сведения компании"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.6-1 10.5-10.6a2.4 2.4 0 0 0-3.4-3.4L5.3 15.6 4 20Z"/><path d="m14.7 6.2 3.3 3.3"/></svg><span>Заполнить карточку</span></button>
+<div class="sv-company-actions"><button type="button" id="seyveoCompanyShare">Поделиться</button><button type="button" id="seyveoCompanyPrint">Распечатать</button><button type="button" id="seyveoCompanyQrOpen">QR-визитка</button></div><p id="seyveoCompanyQrHint" class="sv-company-qr-hint">Для QR добавьте телефон, почту или сайт.</p><button type="button" id="seyveoCompanyAvatarEdit" hidden tabindex="-1" aria-hidden="true">Образ</button>
 </div>
 <section class="sv-company-editor" id="seyveoCompanyEditor" hidden>
 <h3 class="seyveo-passport-section">Сведения и реквизиты</h3>
@@ -3481,11 +3481,11 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <label>БИК<input name="bik" type="text" maxlength="9" inputmode="numeric" pattern="[0-9]{9}"></label>
 <label>Корреспондентский счёт<input name="corr" type="text" maxlength="20" inputmode="numeric" pattern="[0-9]{20}"></label>
 </details>
-<button type="submit" class="btn primary">Сохранить изменения</button>
+<button type="submit" class="btn primary">Сохранить</button>
 </form>
 </section>
 <p class="seyveo-passport-status" data-passport-status role="status" aria-live="polite"></p>
-<p class="seyveo-passport-notice">Данные хранятся только на этом устройстве и не проверяются по ФНС. Перед отправкой проверьте получателя и содержимое.</p>
+<p id="seyveoCompanyPrivacy" class="seyveo-passport-notice" hidden>Данные хранятся на этом устройстве и не проверяются по ФНС. Перед отправкой проверьте содержимое.</p>
 <div class="info-actions" hidden><button type="button" class="btn primary" id="seyveoCompanyClose">Закрыть</button></div>
 </dialog>
 <dialog id="seyveoQrCardDialog" class="sv-qr-dialog" aria-labelledby="seyveoQrTitle"><header><button type="button" id="seyveoQrClose" class="sv-nav-back" aria-label="Назад из визитки"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><div><span class="sv-qr-overline">SEYVEO · DIGITAL CARD</span><h2 id="seyveoQrTitle">Визитка компании</h2></div></header><section class="sv-qr-body"><h3 id="seyveoQrCompanyName">Компания</h3><p id="seyveoQrCompanySubtitle"></p><div id="seyveoQrImage" class="sv-qr-image" role="img" aria-label="QR-код с контактами компании"></div><p id="seyveoQrCompanyContacts"></p><p class="sv-qr-note">QR сохраняет контакт в телефон. Реквизиты и банковские данные не включаются.</p></section><div class="sv-qr-actions"><button type="button" id="seyveoQrSave">Сохранить QR</button><button type="button" id="seyveoQrShare">Поделиться контактом</button></div><p id="seyveoQrStatus" role="status" aria-live="polite"></p></dialog>
