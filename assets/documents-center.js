@@ -386,6 +386,32 @@ function mount(parent){
  pendingChatDocument=null;
  host=el('div','sv-doc-center');parent.append(host);draw();return true;
 }
+function getSearchContext(){
+ return Object.freeze({area,view,mounted:!!host?.isConnected});
+}
+async function searchInCurrentDocuments(query,{requestArchive=false,scope=area}={}){
+ if(!host?.isConnected)return false;
+ const requested=scope==='business'&&!employeePreview()?'business':'personal';
+ if(requested!==area)setArea(requested);
+ if(view==='flow'){
+  if(employeePreview())return false;
+  view='archive';draw();
+ }
+ // Auth state is authoritative: simply filter visible documents when the
+ // vault is already unlocked. Never re-create or re-prompt for a password.
+ let unlocked=false;
+ try{unlocked=(await window.SEYVEO_DOCUMENT_VAULT?.status?.())?.unlocked===true}catch{}
+ if(!host?.isConnected)return false;
+ window.SEYVEO_DOCUMENT_SHELF?.search?.(String(query||'').slice(0,160));
+ if(!unlocked&&requestArchive){
+  const details=host.querySelector('.sv-doc-vault-shell');
+  if(details){
+   details.open=true; // the existing vault UI handles password input
+   details.scrollIntoView?.({block:'nearest',behavior:'smooth'});
+  }
+ }
+ return true;
+}
 function revealArchiveForSearch(scope='personal',query=''){
  // The password form belongs to the existing encrypted vault. Neither
  // assistant nor search can collect, store or see the user's password.
@@ -405,5 +431,5 @@ function destroy(){
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
  reset();host=null;
 }
-window.SEYVEO_DOCUMENT_CENTER=Object.freeze({mount,destroy,setArea,openApprovals,backFromNested,importFromChat,revealArchiveForSearch});
+window.SEYVEO_DOCUMENT_CENTER=Object.freeze({mount,destroy,setArea,openApprovals,backFromNested,importFromChat,revealArchiveForSearch,getSearchContext,searchInCurrentDocuments});
 })();
