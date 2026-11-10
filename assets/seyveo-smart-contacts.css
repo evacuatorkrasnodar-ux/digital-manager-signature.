@@ -1,0 +1,219 @@
+/* SEYVEO MAIL · Smart Contacts · Silver Flat graphite.
+   Standalone content page under existing Mail routing. No dock overrides. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-contacts-page[hidden]{display:none!important}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace.sv-mail-contacts-active > :not(.sv-mail-contacts-page){display:none!important}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace.sv-mail-contacts-active{padding:0 2px!important}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-contacts-page{
+ box-sizing:border-box;display:flex;flex-direction:column;gap:13px;
+ width:100%;max-width:740px;min-width:0;margin:0 auto;
+ padding:0 2px calc(130px + env(safe-area-inset-bottom,0px));
+ color:var(--text,#f1f3f5);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-head{
+ display:flex;align-items:center;gap:11px;min-height:49px;margin:0 0 2px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-back{
+ display:grid;place-items:center;box-sizing:border-box;flex:0 0 44px;
+ width:44px;height:44px;padding:0;margin:0;border:0;border-radius:50%;
+ background:var(--sv-flat-panel,#38383A);color:var(--text,#f3f4f5);
+ box-shadow:none;cursor:pointer;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-back svg{
+ width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-titles{
+ display:flex;flex-direction:column;gap:2px;min-width:0;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-titles small{
+ color:var(--secondary,#aeb3b9);font-size:9px;font-weight:500;letter-spacing:.12em;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-titles h2{
+ margin:0;padding:0;color:var(--text,#f1f3f5);font-size:26px!important;
+ font-weight:620;line-height:1.15;letter-spacing:-.045em;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-subtitle{
+ margin:0;color:var(--secondary,#ccd0d5);font-size:12.5px;line-height:1.45;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-tabs{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;
+ border-radius:14px;padding:3px;background:var(--sv-flat-panel,#38383A);
+ border:1px solid var(--sv-flat-edge,rgba(236,239,243,.11));
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-tab{
+ box-sizing:border-box;min-width:0;min-height:40px;padding:7px;
+ margin:0;border:0;border-radius:11px;background:transparent;color:var(--secondary,#d0d5d9);
+ font:570 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-tab[aria-pressed="true"]{
+ background:var(--sv-flat-panel-raised,#48484B);color:var(--text,#fff);
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-connection{
+ display:flex;align-items:center;gap:11px;min-width:0;
+ border:1px solid var(--sv-flat-edge,rgba(236,239,243,.11));
+ border-radius:14px;background:var(--sv-flat-panel,#38383A);
+ padding:12px 11px;box-shadow:none;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-connection > svg{
+ flex:0 0 21px;width:21px;height:21px;stroke:currentColor;fill:none;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-text{
+ display:flex;flex:1;flex-direction:column;min-width:0;gap:4px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-text strong{
+ font-size:12px;line-height:1.3;font-weight:610;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-text small{
+ color:var(--secondary,#c6c9cd);font-size:11px;line-height:1.36;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-action{
+ box-sizing:border-box;flex:0 0 auto;min-height:40px;padding:8px 10px;
+ border:0;border-radius:10px;background:var(--sv-flat-panel-raised,#48484B);
+ color:var(--text,#fafafa);font:580 11px/1.2 -apple-system,BlinkMacSystemFont,sans-serif;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-section-label{
+ display:flex;flex-direction:column;gap:4px;padding:3px 1px 0;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-section-label strong{
+ font-size:14px;font-weight:630;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-section-label small{
+ color:var(--secondary,#b8bcc2);font-size:11px;line-height:1.4;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-choices{
+ border:1px solid var(--sv-flat-edge,rgba(236,239,243,.10));
+ border-radius:15px;background:var(--sv-flat-panel,#38383A);
+ padding:2px 11px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-option{
+ box-sizing:border-box;display:flex;align-items:center;gap:10px;
+ min-width:0;min-height:68px;padding:9px 0;cursor:pointer;
+ border-bottom:1px solid var(--sv-flat-edge,rgba(236,239,243,.10));
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-option:last-child{border-bottom:0}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-option > svg{
+ flex:0 0 20px;width:20px;height:20px;color:var(--text,#e7eaee);
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-option-copy{
+ display:flex;flex-direction:column;flex:1;min-width:0;gap:4px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-option-copy strong{
+ font-size:12.5px;font-weight:600;line-height:1.3;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-option-copy small{
+ font-size:11px;line-height:1.35;color:var(--secondary,#cbd0d5);
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-checkbox{
+ appearance:none;-webkit-appearance:none;box-sizing:border-box;
+ flex:0 0 42px;width:42px;height:26px;min-height:26px;
+ margin:0;border:1px solid rgba(255,255,255,.2);border-radius:999px;
+ background:#656569;position:relative;cursor:pointer;outline-offset:3px;
+ transition:background .15s ease,border-color .15s ease;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-checkbox::after{
+ content:"";position:absolute;top:2px;left:2px;
+ width:20px;height:20px;border-radius:50%;background:#f7f7f8;
+ box-shadow:0 1px 3px #0003;transition:transform .15s ease;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-checkbox:checked{
+ background:#aeb2b8;border-color:#aeb2b8;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-checkbox:checked::after{
+ transform:translateX(16px);background:#29292C;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-actions{
+ display:flex;gap:8px;margin-top:2px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-save{
+ width:100%;min-height:46px;padding:10px 13px;margin:0;
+ border:0;border-radius:13px;background:var(--sv-flat-panel,#38383A);
+ color:var(--text,#fff);font:600 13px/1.25 -apple-system,BlinkMacSystemFont,sans-serif;
+ box-shadow:none;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-status{
+ min-height:0;margin:-5px 0 1px;color:var(--secondary,#cbd0d5);
+ font-size:11.5px;line-height:1.4;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-status:empty{display:none}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-preview{
+ display:flex;flex-direction:column;gap:0;
+ border-top:1px solid var(--sv-flat-edge,rgba(236,239,243,.11));
+ padding-top:9px;margin-top:5px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-preview-head{
+ display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+ padding:0 1px 8px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-preview-head strong{
+ font-size:12.5px;font-weight:600;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-preview-head small{
+ font-size:10px;color:var(--secondary,#cbd0d5);text-align:right;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-person{
+ display:flex;align-items:center;min-height:51px;gap:10px;
+ padding:7px 2px;border-bottom:1px solid var(--sv-flat-edge,rgba(236,239,243,.09));
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-avatar{
+ display:grid;place-items:center;flex:0 0 35px;width:35px;height:35px;
+ border-radius:50%;background:var(--sv-flat-panel,#38383A);
+ color:var(--text,#f2f3f5);font-size:13px;font-weight:580;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-person-main{
+ display:flex;flex:1;min-width:0;flex-direction:column;gap:3px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-person-main strong{
+ font-size:12px;font-weight:590;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-person-main small{
+ font-size:10px;color:var(--secondary,#b5bcc2);
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-group{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:26px;padding:4px 9px;border-radius:9px;
+ background:var(--sv-flat-panel,#38383A);color:var(--text,#f2f3f5);
+ font-size:10.5px;font-weight:550;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-note{
+ margin:2px 1px 0;color:var(--secondary,#b8bec4);
+ font-size:11px;line-height:1.5;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-menu-contacts{
+ box-sizing:border-box;display:flex;align-items:center;gap:9px;
+ width:100%;min-height:43px;padding:7px 9px;margin:0;
+ border:0;border-radius:11px;background:#48484B;color:#F0F2F4;
+ font:550 12px/1.25 -apple-system,BlinkMacSystemFont,sans-serif;text-align:left;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-menu-contacts svg{
+ width:17px;height:17px;flex:0 0 17px;fill:none;stroke:currentColor;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-menu-contacts span{flex:1;min-width:0}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-contacts-invite[hidden]{display:none!important}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-contacts-invite{
+ box-sizing:border-box;display:flex;align-items:center;gap:9px;
+ min-height:52px;padding:10px 11px;margin:5px 1px 9px;
+ border:1px solid var(--sv-flat-edge,rgba(236,239,243,.10));
+ border-radius:13px;background:var(--sv-flat-panel,#38383A);
+ color:var(--text,#f2f3f5);box-shadow:none;text-align:left;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-contacts-invite > svg{
+ width:20px;height:20px;flex:0 0 20px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-contacts-invite-text{
+ display:flex;flex:1;flex-direction:column;min-width:0;gap:4px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-contacts-invite-text strong{
+ font-size:12px;font-weight:600;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-contacts-invite-text small{
+ font-size:10.5px;line-height:1.3;color:var(--secondary,#d4d8dc);
+}
+@media(max-width:375px){
+ #sayviSurfacePage[data-sv-subject="mail"] .svmc-option{min-height:72px;gap:8px}
+ #sayviSurfacePage[data-sv-subject="mail"] .svmc-connection{gap:9px;padding:10px 9px}
+ #sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-action{padding:8px}
+ #sayviSurfacePage[data-sv-subject="mail"] .svmc-titles h2{font-size:24px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviSurfacePage[data-sv-subject="mail"] .svmc-checkbox,
+ #sayviSurfacePage[data-sv-subject="mail"] .svmc-checkbox::after{transition:none}
+}
