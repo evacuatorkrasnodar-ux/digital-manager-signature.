@@ -415,7 +415,15 @@ dialog.addEventListener('click',event=>{
   discardCompanyEditing();
   return;
  }
- if(button||event.target===dialog)confirmCompanyExit(event);
+ if(button||event.target===dialog){
+  confirmCompanyExit(event);
+  // Moving Back inside the shared header means the legacy
+  // dialog > button click handler no longer reaches it.
+  if(button&&!event.defaultPrevented){
+   event.preventDefault();
+   dialog.close();
+  }
+ }
 },true);
 /* Company contact links follow interface language, not demo company data. */
 const studioSite=()=>String(document.documentElement.lang||navigator.language||'ru').toLowerCase().startsWith('ru')?'https://seyveo.ru/':'https://seyveo.com/';
