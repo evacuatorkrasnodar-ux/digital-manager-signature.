@@ -1653,3 +1653,32 @@
   padding:10px 2px!important;
  }
 }
+
+/* SEYVEO MAIL · graphite account switch & attached count · Nov 2026 */
+/* Remove the raised effect on All / Personal / Business. Keep its
+   segmented shape, touch size, selection state and light-theme legibility. */
+:root[data-theme="dark"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts{
+ background:#252A2E!important;
+ border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+:root[data-theme="dark"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch[aria-pressed="true"]{
+ background:#38383A!important;
+ border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:#F2F3F4!important;
+ font-weight:620!important;
+}
+/* Badge hugs the Inbox icon rather than floating over the right-hand tile. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder-count{
+ left:calc(50% + 6px)!important;
+ right:auto!important;
+ top:2px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder{
+ font-size:clamp(11px,3vw,11.75px)!important;
+}
