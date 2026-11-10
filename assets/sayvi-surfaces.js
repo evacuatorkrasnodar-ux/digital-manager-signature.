@@ -783,12 +783,30 @@ function mailView(){
   for(const draft of list){
    const row=create('div','sv-mail-draft-row');
    const edit=create('button','sv-mail-draft-content');
-   edit.type='button';edit.append(create('strong','',draft.subject||'Без темы'));
-   edit.append(create('small','',draft.to?'Кому: '+draft.to:'Адресат не указан'));
-   edit.append(create('small','sv-mail-account-tag',mailAccountName(draft.account)));
-   if(draft.attachments?.length)edit.append(create('small','sv-mail-draft-attachment-count','Вложений: '+draft.attachments.length));
+   edit.type='button';
+   edit.setAttribute('aria-label','Открыть черновик: '+(draft.subject||'Без темы')+
+    '. '+(draft.to?'Кому: '+draft.to:'Получатель не указан')+
+    '. '+mailAccountName(draft.account)+
+    (draft.attachments?.length?'. Вложений: '+draft.attachments.length:''));
+   const title=create('strong','sv-mail-draft-title',draft.subject||'Без темы');
+   title.title=draft.subject||'Без темы';
+   if(!draft.subject)title.classList.add('is-untitled');
+   const details=create('span','sv-mail-draft-details');
+   const recipient=create('small','sv-mail-draft-recipient',draft.to?'Кому: '+draft.to:'Получатель не указан');
+   recipient.title=draft.to||'Получатель не указан';
+   details.append(recipient);
+   const account=create('span','sv-mail-account-tag sv-mail-draft-account',mailAccountName(draft.account));
+   details.append(account);
+   if(draft.attachments?.length){
+    const files=create('span','sv-mail-draft-attachment-count');
+    files.setAttribute('aria-label','Вложений: '+draft.attachments.length);
+    files.append(mailIcon('paperclip'),create('span','',String(draft.attachments.length)));
+    details.append(files);
+   }
+   edit.append(title,details);
    edit.addEventListener('click',()=>editDraft(draft.id));
-   const remove=iconButton('trash','Удалить черновик',()=>removeDraft(draft.id));
+   const remove=iconButton('trash','Удалить черновик '+(draft.subject||'Без темы'),()=>removeDraft(draft.id));
+   remove.classList.add('sv-mail-draft-delete');
    row.append(edit,remove);content.append(row);
   }
  }
@@ -854,7 +872,7 @@ function mailView(){
   info.textContent=mailEditorOpen?'':
    mailCurrent?'Просмотр учебного письма':
    mailFolder==='overview'?'':
-   mailFolder==='drafts'?'Ваши черновики · '+mailDrafts.filter(d=>mailVisible(d.account)).length:
+   mailFolder==='drafts'?'': // Draft count already belongs to the selected folder tab.
    mailFolder==='sent'?'Отправка пока недоступна':
    mailFolder==='inbox'?'Входящие · предварительный просмотр':
    mailFolder==='starred'?'Важные · предварительный просмотр':
