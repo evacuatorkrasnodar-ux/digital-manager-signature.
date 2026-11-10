@@ -863,6 +863,7 @@ function mount(target,{
    paper.replaceChildren();meta.replaceChildren();
    controlsRow.dataset.hasFile=currentPrint?'true':'false';
    stage.hidden=!currentPrint;
+   printHint.hidden=!currentPrint;
    choose.textContent=currentPrint?'Другой файл':'Выбрать PDF или фото';
    if(!currentPrint){
     openLink.hidden=true;openLink.removeAttribute('href');
@@ -874,7 +875,7 @@ function mount(target,{
     temporaryUrls.push(activeUrl);
    }catch{
     currentPrint=null;controlsRow.dataset.hasFile='false';
-    stage.hidden=true;choose.textContent='Выбрать PDF или фото';
+    stage.hidden=true;printHint.hidden=true;choose.textContent='Выбрать PDF или фото';
     openLink.hidden=true;openLink.removeAttribute('href');
     message('Не удалось открыть файл. Выберите другой.');
     return;
@@ -903,14 +904,11 @@ function mount(target,{
     message('Выберите PDF или фото до 20 МБ.');return;
    }
    currentPrint=f;update();
-   message('Файл выбран. Теперь можно открыть системную печать.');
   });
-  panel.append(filePicker,stage,controlsRow);
+  const printHint=$('p','sv-doc-print-inline-note',
+   'В открытом файле выберите «Поделиться → Печать».');
+  panel.append(filePicker,stage,controlsRow,printHint,status(''));
   update();
-  const info=$('details','sv-doc-tool-help');
-  info.append($('summary','','Как распечатать'),
-   warn('Откройте выбранный файл и выберите системное «Поделиться → Печать». Принтер выбирается в системе.'));
-  panel.append(info,status(''));
  }
  // The document viewer can hand an explicitly opened JPEG/PNG/WebP to
  // this existing signing tool. PDF editing is NOT implemented: no silent
