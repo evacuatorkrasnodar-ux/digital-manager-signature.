@@ -57,7 +57,7 @@ html body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passpor
  background:transparent!important;background-image:none!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head.has-edit-action{
+html body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-dialog-head.has-edit-action{
  grid-template-columns:44px minmax(0,1fr) 44px!important;
 }
 html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head .seyveo-company-dialog-identity{
