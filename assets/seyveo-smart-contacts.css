@@ -217,3 +217,84 @@
  #sayviSurfacePage[data-sv-subject="mail"] .svmc-checkbox,
  #sayviSurfacePage[data-sv-subject="mail"] .svmc-checkbox::after{transition:none}
 }
+
+/* SEYVEO Smart Contacts v2 · compact native iPhone layout.
+   The page does not add a second dock, header or authorization CTA. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-contacts-page{
+ gap:10px!important;
+ padding:0 2px calc(105px + env(safe-area-inset-bottom,0px))!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-head{
+ min-height:48px!important;gap:10px!important;margin:0 0 3px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-titles h2{
+ font-size:25px!important;line-height:1.15!important;font-weight:620!important;
+ letter-spacing:-.045em!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-tabs{
+ margin:0!important;min-height:46px!important;padding:3px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-tab{
+ min-height:40px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-connection{
+ min-height:66px!important;padding:9px 11px!important;gap:10px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-text{
+ gap:3px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-text strong{
+ font-size:12.5px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-text small{
+ font-size:11.5px!important;line-height:1.35!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-action{
+ min-height:42px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-section-label{
+ flex-direction:row!important;align-items:baseline!important;
+ justify-content:space-between!important;flex-wrap:wrap!important;column-gap:8px!important;
+ padding:5px 1px 0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-section-label strong{
+ font-size:13.5px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-section-label small{
+ font-size:10.5px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-choices{
+ padding:2px 11px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-option{
+ min-height:61px!important;padding:7px 0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-option-copy{
+ gap:3px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-option-copy small{
+ font-size:11.5px!important;line-height:1.33!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-status{
+ margin:0 2px!important;font-size:11.5px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-preview{
+ margin-top:7px!important;padding-top:12px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-preview-head{
+ align-items:center!important;padding-bottom:6px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-person{
+ min-height:48px!important;padding:6px 2px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-note{
+ margin:2px 1px 0!important;font-size:11px!important;line-height:1.42!important;
+}
+@media(max-width:375px){
+ html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-section-label{
+  flex-direction:column!important;align-items:flex-start!important;gap:2px!important;
+ }
+ html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-option{
+  min-height:65px!important;
+ }
+}
