@@ -1054,9 +1054,10 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 #noteReviewDialog.note-review-dialog[open] .sv-note-search-results{display:flex!important;flex-direction:column!important;gap:4px!important;max-height:140px!important;overflow-y:auto!important}
 #noteReviewDialog.note-review-dialog[open] .sv-note-search-results p{margin:8px!important;color:#bfcdd3!important;font-size:12px!important}
 /* iPhone compact notebook layout · stable keyboard geometry, no inner title rectangle */
+/* Notebook dock: same vertical baseline as Home dock, respecting iPhone safe area. */
 #noteReviewDialog.note-review-dialog[open]{
  padding-top:max(66px,calc(env(safe-area-inset-top,0px) + 36px))!important;
- padding-bottom:8px!important;
+ padding-bottom:var(--seyveo-dock-bottom,7px)!important;
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-header{
  min-height:78px!important;height:78px!important;flex:0 0 78px!important;
@@ -1775,7 +1776,8 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 }
 #noteReviewDialog.note-review-dialog[open] .sv-note-bottom{
  flex-shrink:0!important;
- padding-bottom:max(2px,env(safe-area-inset-bottom,0px))!important;
+ /* Avoid double-counting safe area: parent dialog already provides Home dock inset. */
+ padding-bottom:0!important;
 }
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-document-capsule input#svNoteTitle.sv-note-title-input{
  color:#242a31!important;
