@@ -299,12 +299,53 @@ const mailExamples=[
  {account:'personal',id:'example-tickets',initial:'Б',from:'Билеты · пример',subject:'Подтверждение бронирования',preview:'Ваше бронирование подтверждено — учебное письмо.',body:'Здравствуйте!\n\nЭто демонстрационное подтверждение бронирования. Настоящих билетов здесь нет.\n\nХорошего дня!',when:'Вчера',unread:false,starred:true,attachment:false,archived:false,trashed:false},
  {account:'personal',id:'example-family-photo',initial:'А',from:'Алексей',subject:'Фотографии из поездки',preview:'Собрал фотографии и хотел поделиться.',body:'Привет!\n\nСобрал фотографии из нашей поездки. Вложения в этой демонстрации отсутствуют.\n\nДо встречи!',when:'28 окт',unread:false,starred:false,attachment:true,archived:false,trashed:false}
 ];
+// Local sample-mail operations only; never assert provider-side delivery,
+// deletion, spam classification or sender blocking without mail authorization.
+const MAIL_SAMPLE_ACTIONS_KEY='seyveo-mail-sample-actions-v1';
+const sampleSenderKey=item=>item.account+'|'+item.from.toLocaleLowerCase('ru').trim();
+let sampleBlockedSenders=new Set();
+let mailNotice='';
+function restoreSampleActions(){
+ try{
+  const raw=JSON.parse(sessionStorage.getItem(MAIL_SAMPLE_ACTIONS_KEY)||'{}');
+  if(!raw||typeof raw!=='object')return;
+  const allowed=new Set(mailExamples.map(sampleSenderKey));
+  if(Array.isArray(raw.blocked))sampleBlockedSenders=new Set(raw.blocked.filter(k=>typeof k==='string'&&allowed.has(k)));
+  for(const m of mailExamples){
+   const s=raw.items?.[m.id];
+   m.spam=s?.spam===true;m.removed=s?.removed===true;
+   if(!s||typeof s!=='object')continue;
+   for(const flag of ['archived','trashed','starred']){
+    if(typeof s[flag]==='boolean')m[flag]=s[flag];
+   }
+   if(typeof s.unread==='boolean')m.unread=s.unread;
+  }
+ }catch{}
+}
+restoreSampleActions();
+function sampleBlocked(item){return sampleBlockedSenders.has(sampleSenderKey(item))}
+function saveSampleActions(){
+ try{
+  const items={};
+  for(const m of mailExamples){
+   items[m.id]={spam:!!m.spam,removed:!!m.removed,archived:!!m.archived,
+    trashed:!!m.trashed,starred:!!m.starred,unread:!!m.unread};
+  }
+  sessionStorage.setItem(MAIL_SAMPLE_ACTIONS_KEY,JSON.stringify({
+   items,blocked:[...sampleBlockedSenders]
+  }));
+ }catch{} // No account, network or secret is touched.
+}
 const mailIcons=Object.freeze({
  inbox:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
  sent:'<path d="m22 2-7 20-4-9-9-4 20-7ZM22 2 11 13"/>',
  drafts:'<path d="M7 3h8l5 5v13H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z"/><path d="M14 3v6h6M8 14h8M8 18h6"/>',
  starred:'<path d="m12 2 3 6.4 7 .9-5.1 5 .9 7-5.8-3.2-5.8 3.2.9-7-5.1-5 7-.9L12 2Z"/>',
  trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 15H6L5 6M10 10v7m4-7v7"/>',
+ spam:'<path d="M8 3h8l5 5v8l-5 5H8l-5-5V8Z"/><path d="M12 7v7m0 3v.1"/>',
+ shield:'<path d="M12 2 20 6v5c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V6Z"/><path d="m9 12 2 2 4-4"/>',
+ restore:'<path d="M9 4 4 9l5 5"/><path d="M4 9h10a6 6 0 1 1-5.5 8.3"/>',
+ more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',
  archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v12h14V9M10 14h4"/>',
  search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
  pencil:'<path d="M12 20h9M3 17l12-12 4 4L7 21H3v-4ZM14 6l4 4"/>',
@@ -397,10 +438,13 @@ function mailView(){
  // Search lives in its own row between the titlebar and account switch.
  // It pushes content down instead of obscuring the selected mail scope.
  section.append(top,searchLabel,scopeNav,connect,nav,extraNav,info,content);body.append(section);
- const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['trash','Корзина']];
+ const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['spam','Спам'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
-  if(key==='inbox'&&mailShowExamples)return mailExamples.filter(m=>mailVisible(m.account)&&!m.trashed&&!m.archived&&m.unread).length;
+  if(key==='inbox'&&mailShowExamples)return mailExamples.filter(m=>
+   mailVisible(m.account)&&!m.trashed&&!m.archived&&!m.spam&&!sampleBlocked(m)&&!m.removed&&m.unread).length;
+  if(key==='spam')return mailExamples.filter(m=>
+   mailVisible(m.account)&&!m.trashed&&!m.removed&&(m.spam||sampleBlocked(m))).length;
   return 0;
  }
  function openEditor(id=null,reply=null){
@@ -420,12 +464,12 @@ function mailView(){
   if(!reply)content.querySelector('[data-mail-field="to"]')?.focus();
  }
  function selectFolder(folder){
-  mailFolder=folder;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;paint();
+  mailNotice='';mailFolder=folder;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;paint();
  }
  function selectScope(account){
   if(!['all','personal','business'].includes(account)||account===mailScope)return;
   mailScope=account;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;
-  mailSearch='';searchInput.value='';paint();
+  mailNotice='';mailSearch='';searchInput.value='';paint();
  }
  function editDraft(id){
   if(!mailDrafts.some(d=>d.id===id))return;
@@ -437,8 +481,38 @@ function mailView(){
   mailDrafts=mailDrafts.filter(d=>d.id!==id);persistMailDrafts();
   mailEditingId=null;mailEditorOpen=false;mailFolder='drafts';paint();
  }
+ function updateSampleMail(item,action){
+  if(!item||!mailExamples.includes(item))return;
+  const sender=sampleSenderKey(item);
+  if(action==='spam'){
+   item.spam=true;item.trashed=false;item.archived=false;
+   mailNotice='Письмо перемещено в спам · только учебный список.';
+  }else if(action==='notspam'){
+   if(sampleBlocked(item))return;
+   item.spam=false;item.trashed=false;
+   mailNotice='Письмо возвращено во входящие · учебный список.';
+  }else if(action==='trash'){
+   item.trashed=true;item.spam=false;
+   mailNotice='Письмо в Корзине · только учебный список.';
+  }else if(action==='restore'){
+   item.trashed=false;item.spam=sampleBlocked(item);
+   mailNotice='Письмо восстановлено · только учебный список.';
+  }else if(action==='block'){
+   sampleBlockedSenders.add(sender);
+   for(const m of mailExamples.filter(v=>sampleSenderKey(v)===sender)){
+    m.spam=true;m.archived=false;m.trashed=false;
+   }
+   mailNotice='Отправитель заблокирован в учебном списке. На почтовом сервере изменений нет.';
+  }else if(action==='unblock'){
+   sampleBlockedSenders.delete(sender);
+   mailNotice='Отправитель разблокирован в учебном списке. Письма остаются в Спаме до восстановления.';
+  }else if(action==='remove'){
+   item.removed=true;mailNotice='Учебное письмо удалено из локального списка.';
+  }else return;
+  saveSampleActions();mailCurrent=null;paint();
+ }
  function viewExample(item){
-  item.unread=false;mailCurrent=item.id;mailEditorOpen=false;paint();
+  item.unread=false;saveSampleActions();mailCurrent=item.id;mailEditorOpen=false;paint();
  }
  function iconButton(name,label,callback){
   const button=create('button','sv-mail-icon-button');button.type='button';
@@ -723,16 +797,57 @@ function mailView(){
   const backButton=iconButton('back','Вернуться к списку',()=>{mailCurrent=null;paint()});
   const opts=create('div','sv-mail-detail-tools');
   const favorite=iconButton('starred',item.starred?'Убрать из важных':'Отметить важным',()=>{
-   item.starred=!item.starred;paint();
+   item.starred=!item.starred;saveSampleActions();paint();
   });
   favorite.setAttribute('aria-pressed',String(item.starred));
+  const moreMenu=create('div','sv-mail-message-menu');
+  moreMenu.hidden=true;moreMenu.setAttribute('role','group');
+  moreMenu.setAttribute('aria-label','Другие действия с письмом');
+  const more=iconButton('more','Другие действия',()=>{
+   moreMenu.hidden=!moreMenu.hidden;
+   more.setAttribute('aria-expanded',String(!moreMenu.hidden));
+   blockConfirm.hidden=true;
+  });
+  more.setAttribute('aria-expanded','false');more.setAttribute('aria-controls','svMailMoreActions');
+  moreMenu.id='svMailMoreActions';
   opts.append(favorite,iconButton('archive',item.archived?'Вернуть во входящие':'В архив · образец',()=>{
-   item.archived=!item.archived;mailCurrent=null;paint();
-  }),iconButton('trash',item.trashed?'Восстановить из корзины':'Удалить пример',()=>{
-   item.trashed=!item.trashed;mailCurrent=null;paint();
-  }));
+   item.archived=!item.archived;saveSampleActions();mailCurrent=null;paint();
+  }),iconButton('trash',item.trashed?'Восстановить из корзины':'Переместить в Корзину',()=>{
+   updateSampleMail(item,item.trashed?'restore':'trash');
+  }),more);
   heading.append(backButton,opts);
   panel.append(heading,create('span','sv-mail-account-tag',mailAccountName(item.account)),create('h2','sv-mail-detail-title',item.subject));
+  const addMenuAction=(icon,label,callback)=>{
+   const control=create('button','sv-mail-message-menu-item');control.type='button';
+   control.append(mailIcon(icon),create('span','',label));
+   control.addEventListener('click',callback);moreMenu.append(control);
+  };
+  if(!sampleBlocked(item)){
+   addMenuAction(item.spam?'restore':'spam',item.spam?'Не спам':'В спам',()=>{
+    updateSampleMail(item,item.spam?'notspam':'spam');
+   });
+  }
+  const blockConfirm=create('section','sv-mail-block-confirm');
+  blockConfirm.hidden=true;blockConfirm.setAttribute('aria-label','Подтверждение блокировки');
+  if(sampleBlocked(item)){
+   addMenuAction('shield','Разблокировать отправителя',()=>updateSampleMail(item,'unblock'));
+  }else{
+   addMenuAction('shield','Блокировать отправителя',()=>{
+    moreMenu.hidden=true;more.setAttribute('aria-expanded','false');
+    blockConfirm.hidden=false;
+   });
+   blockConfirm.append(
+    create('strong','','Блокировать отправителя?'),
+    create('p','','Письма этого отправителя уйдут в Спам в учебном списке. Почтовый сервис не подключён.')
+   );
+   const choices=create('div','sv-mail-block-confirm-actions');
+   const cancel=create('button','','Отмена');cancel.type='button';
+   cancel.addEventListener('click',()=>{blockConfirm.hidden=true;more.focus()});
+   const accept=create('button','','Блокировать');accept.type='button';
+   accept.addEventListener('click',()=>updateSampleMail(item,'block'));
+   choices.append(cancel,accept);blockConfirm.append(choices);
+  }
+  panel.append(moreMenu,blockConfirm);
   const person=create('div','sv-mail-detail-person');
   person.append(create('span','sv-mail-avatar',item.initial));
   const who=create('div','sv-mail-detail-who');
@@ -786,10 +901,11 @@ function mailView(){
 
   if(!mailShowExamples){content.append(create('p','sv-mail-empty','Почтовый ящик ещё не подключён. Подключите его, чтобы видеть настоящие письма.'));return}
   const inFolder=mailExamples.filter(m=>{
-   if(!mailVisible(m.account))return false;
+   if(!mailVisible(m.account)||m.removed)return false;
    if(mailFolder==='trash')return m.trashed;
-   if(mailFolder==='archive')return m.archived&&!m.trashed;
-   if(m.trashed)return false;
+   if(mailFolder==='spam')return !m.trashed&&(m.spam||sampleBlocked(m));
+   if(m.trashed||m.spam||sampleBlocked(m))return false;
+   if(mailFolder==='archive')return m.archived;
    if(mailFolder==='starred')return m.starred&&!m.archived;
    return !m.archived;
   });
@@ -800,6 +916,10 @@ function mailView(){
   const shown=limit?matched.slice(0,limit):matched;
   const showAccountTags=mailScope==='all'&&new Set(shown.map(m=>m.account)).size>1;
   for(const item of shown){
+   const shell=create('div','sv-mail-swipe-shell');
+   const swipeActions=create('div','sv-mail-swipe-actions');
+   swipeActions.setAttribute('role','group');
+   swipeActions.setAttribute('aria-label','Быстрые действия с письмом');
    const row=create('button','sv-mail-letter');
    row.type='button';row.classList.toggle('is-unread',item.unread);
    const avatar=create('span','sv-mail-avatar',item.initial);
@@ -815,8 +935,60 @@ function mailView(){
    if(item.starred)meta.append(mailIcon('starred'));
    if(item.unread)row.append(create('span','sv-mail-unread-dot'));
    row.append(avatar,detail,meta);
-   row.setAttribute('aria-label',item.from+', '+item.subject+', пример');
-   row.addEventListener('click',()=>viewExample(item));group.append(row);
+   row.setAttribute('aria-label',item.from+', '+item.subject+', учебное письмо. Свайп влево — действия.');
+   const choices=mailFolder==='spam'
+    ?[['restore','Не спам',()=>updateSampleMail(item,'notspam')],['trash','Удалить',()=>updateSampleMail(item,'trash')]]
+    :mailFolder==='trash'
+     ?[['restore','Вернуть',()=>updateSampleMail(item,'restore')],['trash','Удалить',()=>{
+       const yes=window.confirm('Окончательно удалить это учебное письмо из списка?');
+       if(yes)updateSampleMail(item,'remove');
+      }]]
+     :[['spam','Спам',()=>updateSampleMail(item,'spam')],['trash','Удалить',()=>updateSampleMail(item,'trash')]];
+   function setActionsOpen(open){
+    if(open){
+     for(const other of group.querySelectorAll('.sv-mail-swipe-shell.is-actions-open')){
+      if(other!==shell){
+       other.classList.remove('is-actions-open');
+       other.querySelectorAll('.sv-mail-swipe-action').forEach(b=>b.tabIndex=-1);
+      }
+     }
+    }
+    shell.classList.toggle('is-actions-open',open);
+    swipeActions.querySelectorAll('.sv-mail-swipe-action').forEach(b=>b.tabIndex=open?0:-1);
+    swipeActions.setAttribute('aria-hidden',String(!open));
+   }
+   for(const [icon,label,fn] of choices){
+    const action=create('button','sv-mail-swipe-action');
+    action.type='button';action.tabIndex=-1;
+    action.setAttribute('aria-label',label+': '+item.subject);
+    action.append(mailIcon(icon),create('span','',label));
+    action.addEventListener('click',()=>{setActionsOpen(false);fn()});
+    swipeActions.append(action);
+   }
+   setActionsOpen(false);
+   let touchStart=null;
+   shell.addEventListener('touchstart',e=>{
+    const touch=e.touches[0];if(!touch)return;
+    touchStart={x:touch.clientX,y:touch.clientY};
+   },{passive:true});
+   shell.addEventListener('touchend',e=>{
+    if(!touchStart)return;
+    const end=e.changedTouches[0];if(!end)return;
+    const dx=end.clientX-touchStart.x,dy=end.clientY-touchStart.y;touchStart=null;
+    if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy)*1.25)return;
+    if(e.cancelable)e.preventDefault();
+    setActionsOpen(dx<0);
+   },{passive:false});
+   shell.addEventListener('touchcancel',()=>{touchStart=null},{passive:true});
+   row.addEventListener('click',()=>{
+    if(shell.classList.contains('is-actions-open')){setActionsOpen(false);return}
+    viewExample(item);
+   });
+   // Desktop and assistive users can open the same actions via context menu.
+   row.addEventListener('contextmenu',event=>{
+    event.preventDefault();setActionsOpen(true);
+   });
+   shell.append(swipeActions,row);group.append(shell);
   }
  }
  function drawDrafts(){
@@ -869,7 +1041,7 @@ function mailView(){
    content.append(recent);drawExamples(3);return;
   }
   if(mailFolder==='drafts'){drawDrafts();return}
-  if(mailFolder==='inbox'||mailFolder==='starred'||mailFolder==='archive'||mailFolder==='trash'){drawExamples();return}
+  if(mailFolder==='inbox'||mailFolder==='starred'||mailFolder==='archive'||mailFolder==='spam'||mailFolder==='trash'){drawExamples();return}
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
  function paint(){
@@ -904,6 +1076,9 @@ function mailView(){
   for(const [key,label] of tabs.slice(4)){
    const button=intent(label,()=>selectFolder(key));button.classList.add('sv-mail-extra-link');
    if(mailFolder===key)button.setAttribute('aria-current','page');
+   if(key==='spam'){
+    const total=folderCount('spam');if(total)button.append(create('small','sv-mail-spam-count',String(total)));
+   }
    extraNav.append(button);
   }
   extraNav.hidden=mailEditorOpen||!!mailCurrent||mailFolder==='overview';
@@ -921,7 +1096,9 @@ function mailView(){
    mailFolder==='sent'?'Отправка пока недоступна':
    mailFolder==='inbox'?'Входящие · предварительный просмотр':
    mailFolder==='starred'?'Важные · предварительный просмотр':
-   mailFolder==='archive'?'Архив · предварительный просмотр':'Корзина · предварительный просмотр';
+   mailFolder==='archive'?'Архив · предварительный просмотр':
+   mailFolder==='spam'?'Спам · учебные письма':'Корзина · предварительный просмотр';
+  if(mailNotice&&!mailCurrent&&!mailEditorOpen)info.textContent=mailNotice;
   info.hidden=!!mailCurrent||!info.textContent;
   paintList();
  }
