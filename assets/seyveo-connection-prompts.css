@@ -1,0 +1,114 @@
+/* SEYVEO · universal external-service connection prompt.
+   One plain graphite surface with a quiet silver signal, not a glass button.
+   The same component is reused in Mail, Pulse and music integrations. */
+html body .sv-connect-prompt[hidden]{display:none!important}
+html body .sv-connect-prompt{
+ appearance:none;-webkit-appearance:none;
+ box-sizing:border-box;display:flex;flex-flow:row nowrap;
+ align-items:center;justify-content:flex-start;gap:11px;
+ width:100%;min-width:0;max-width:100%;min-height:62px;
+ margin:10px 0 12px;padding:8px 12px 8px 13px;
+ border:1px solid rgba(199,209,217,.13);
+ border-left:3px solid #A6B2BC;border-radius:15px;
+ background:#38383A;background-image:none;color:#F2F3F4;
+ box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
+ text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+html body .sv-connect-prompt-icon{
+ box-sizing:border-box;display:grid;place-items:center;
+ flex:0 0 34px;width:34px;height:34px;min-width:34px;
+ border-radius:11px;background:rgba(220,226,230,.10);
+ color:#E8EDF1;
+}
+html body .sv-connect-prompt-icon svg{
+ display:block;width:19px;height:19px;fill:none;
+ stroke:currentColor;stroke-width:1.55;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+html body .sv-connect-prompt-copy{
+ box-sizing:border-box;display:flex;flex:1 1 0;flex-direction:column;
+ justify-content:center;align-items:stretch;gap:3px;min-width:0;
+}
+html body .sv-connect-prompt-title{
+ display:block;min-width:0;max-width:100%;
+ color:#F3F5F6;font:600 12.5px/1.26 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ white-space:normal;overflow-wrap:break-word;letter-spacing:-.01em;
+}
+html body .sv-connect-prompt-caption{
+ display:block;min-width:0;max-width:100%;
+ color:#C2CAD0;font:450 10.5px/1.32 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ white-space:normal;overflow-wrap:break-word;
+}
+html body .sv-connect-prompt-arrow{
+ display:grid;place-items:center;align-self:center;
+ flex:0 0 24px;width:24px;height:44px;min-width:24px;
+ margin:0;padding:0;color:#D1D9DF;
+}
+html body .sv-connect-prompt-arrow svg{
+ display:block;width:18px;height:18px;fill:none;
+ stroke:currentColor;stroke-width:1.7;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+html body .sv-connect-prompt:active{background:#48484B}
+html body .sv-connect-prompt:focus-visible{
+ outline:2px solid #E7EDF0;outline-offset:2px;
+}
+/* Stronger scoped rule replaces the old one-line Mail Connect skin.
+   No standalone status badge, no extra header buttons. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt{
+ display:flex!important;flex-flow:row nowrap!important;
+ align-items:center!important;justify-content:flex-start!important;
+ box-sizing:border-box!important;
+ width:100%!important;max-width:100%!important;
+ height:auto!important;min-height:62px!important;
+ margin:7px 0 11px!important;padding:8px 12px 8px 13px!important;
+ gap:11px!important;
+ border:1px solid rgba(199,209,217,.13)!important;
+ border-left:3px solid #A6B2BC!important;border-radius:15px!important;
+ background:#38383A!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt > .sv-connect-prompt-icon{
+ display:grid!important;place-items:center!important;flex:0 0 34px!important;
+ width:34px!important;height:34px!important;min-width:34px!important;
+ border-radius:11px!important;background:rgba(220,226,230,.10)!important;
+ color:#E8EDF1!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-copy{
+ display:flex!important;flex:1 1 0!important;flex-direction:column!important;
+ justify-content:center!important;align-items:stretch!important;gap:3px!important;
+ min-width:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-title{
+ color:#F3F5F6!important;
+ font:600 12.5px/1.26 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:normal!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-caption{
+ color:#C2CAD0!important;
+ font:450 10.5px/1.32 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:normal!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-arrow{
+ display:grid!important;place-items:center!important;align-self:center!important;
+ flex:0 0 24px!important;width:24px!important;height:44px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt .sv-connect-prompt-arrow svg{
+ display:block!important;width:18px!important;height:18px!important;
+ stroke:#D1D9DF!important;stroke-width:1.7!important;
+ fill:none!important;
+}
+/* Pulse has its own content-width and bottom dock: don't change either. */
+html body #picturePage > .sv-connect-prompt{
+ margin:8px 0 13px;
+}
+/* For music, only when the sources panel has actually been opened. */
+html body #sayviMusicSourcesPanel > .sv-connect-prompt{
+ margin:8px 0 12px;
+}
+@media(max-width:350px){
+ html body .sv-connect-prompt,
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-prompt{
+  gap:8px!important;padding-inline:10px!important;
+ }
+}
