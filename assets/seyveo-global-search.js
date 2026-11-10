@@ -196,8 +196,9 @@ function musicIntent(query){
  const q=withoutWake(query);
  const here=searchContext();
  const wantsMusic=songWords.test(q)||(here.kind==='music'&&!documentWords.test(q)&&!mailWords.test(q));
- const isMusicVerb=/^(?:включи|включить|поставь|поставить|проиграй|послушай|запусти|запустить|слушать|найди|найти|поищи)\s+/u.test(q);
- if(wantsMusic&&(isMusicVerb||searchContext().kind==='music')){
+ const isMusicVerb=/^(?:включи|включить|поставь|поставить|проиграй|воспроизведи|сыграй|послушай|запусти|запустить|слушать|найди|найти|поищи|начни играть)\s+/u.test(q);
+ const namesSong=/^(?:песня|песню|песни|трек|треки|музыка|музыку|композиция|композицию)\s+/u.test(q);
+ if(wantsMusic&&(isMusicVerb||namesSong||here.kind==='music')){
   const title=songTitle(q);
   return title?{action:'music:track',title}:{action:'music'};
  }
