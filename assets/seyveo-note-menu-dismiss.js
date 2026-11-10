@@ -76,3 +76,52 @@
   window.SEYVEO_NOTE_MENU_DISMISS=Object.freeze({close:closeMenus,idleMs:IDLE_MS});
   synchronize();
 })();
+
+
+/* SEYVEO Notebook · accessible SVG actions and clean list previews | 2026-11-10 */
+(()=>{
+  'use strict';
+  if(window.SEYVEO_NOTE_LIST_ICONS)return;
+  const list=document.getElementById('notesList');
+  if(!list)return;
+  const icons={
+    share:'<path d="M12 15V3m0 0-4 4m4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>',
+    print:'<path d="M6 9V3h12v6M6 17H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6zM17.5 11.7h.01"/>',
+    delete:'<path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7m4 4v6m4-6v6"/>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18m-9 4v4m-2-2h4"/>'
+  };
+  const svg=kind=>'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+icons[kind]+'</svg>';
+  function upgrade(){
+    for(const row of list.querySelectorAll('.note-item')){
+      // The source note retains its text, including checklist characters.
+      // Only the 2-line summary in the list hides stray square glyphs.
+      const summary=row.querySelector('.note-row-copy > p');
+      if(summary&&!summary.dataset.svCleanSummary){
+        const before=summary.textContent||'';
+        const after=before.replace(/^[\\s]*[☐☑☒□■][\\s]*/gm,'').trim();
+        if(after!==before)summary.textContent=after||'Список';
+        summary.dataset.svCleanSummary='true';
+      }
+      for(const button of row.querySelectorAll('.note-more-options button')){
+        if(button.dataset.svNoteIcon)continue;
+        const label=(button.textContent||'').trim();
+        const kind=button.classList.contains('note-delete')?'delete':
+          /Поделиться/i.test(label)?'share':
+          /Распечатать/i.test(label)?'print':
+          /календарь|^На .+\\?$/i.test(label)?'calendar':null;
+        if(!kind)continue;
+        button.setAttribute('aria-label',label);
+        button.title=label;
+        button.dataset.svNoteIcon=kind;
+        // Update only the button's children. Its original click listeners,
+        // confirmation dialog, sharing and printing logic remain untouched.
+        button.innerHTML=svg(kind);
+      }
+    }
+  }
+  const observer=new MutationObserver(upgrade);
+  observer.observe(list,{childList:true});
+  window.addEventListener('seyveo:notes-open',upgrade);
+  window.SEYVEO_NOTE_LIST_ICONS=Object.freeze({refresh:upgrade});
+  upgrade();
+})();
