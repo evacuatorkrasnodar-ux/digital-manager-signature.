@@ -616,8 +616,16 @@ function mount(target,{
   panel.append(info,status(''));
  }
  function renderSign(){
-  panel.append(heading('Подпись','Документ · подпись пальцем'));
-  panel.append(pictorialSteps([['file','Страница'],['finger','Подпись'],['pdf','Копия PDF']]));
+  panel.dataset.hasScans=String(scans.length>0);
+  panel.append(heading('Подпись',scans.length?
+   'Выберите место и нарисуйте подпись':'Рисуйте пальцем или стилусом'));
+  // The large paper is not a real document until a page is imported.
+  if(scans.length){
+   panel.append(pictorialSteps([['file','Страница'],['finger','Подпись'],['pdf','Копия PDF']]));
+  }else{
+   panel.append($('p','sv-doc-sign-empty',
+    'Чтобы подписать PDF, сначала добавьте страницу через «Сканер» выше.'));
+  }
   const pageIndexDefault=Math.max(0,scans.length-1);
   let placement={x:.70,y:.83};
   let pageIndex=pageIndexDefault;
@@ -677,7 +685,7 @@ function mount(target,{
   if(!ctx){panel.append(status('Подпись на этом устройстве недоступна.'));return;}
   ctx.strokeStyle='#1b2a31';ctx.lineWidth=3.5;
   ctx.lineCap='round';ctx.lineJoin='round';
-  let drawing=false,marks=0;
+  let drawing=false,marks=0,actionRow=null;
   function paintPlacement(){
    for(const element of [target,overlay]){
     element.style.left=(placement.x*100)+'%';
@@ -686,6 +694,7 @@ function mount(target,{
    target.hidden=!scans.length;
    overlay.hidden=!scans.length||!marks;
    if(marks&&scans.length)overlay.src=canvas.toDataURL('image/png');
+   if(actionRow)actionRow.hidden=marks===0;
   }
   function updatePreview(){
    if(!scans.length)return;
@@ -727,15 +736,10 @@ function mount(target,{
   if(scans.length){
    updatePreview();
    preview.append(pageBar,pageBody,stageHint,choosePage,pageRail);
-  }else{
-   const sample=$('div','sv-doc-sign-page-sample');
-   sample.append($('span','','SEYVEO'));
-   for(let i=0;i<5;i++)sample.append($('i'));
-   sample.append($('em','','Место подписи'));
-   pageBody.append(sample);
-   preview.append(pageBar,pageBody,stageHint);
+   panel.append(preview);
   }
-  panel.append(preview,paper);
+  // A real scan is previewed above; otherwise only the signature pad appears.
+  panel.append(paper);
   const point=e=>{
    const bounds=canvas.getBoundingClientRect();
    if(!bounds.width||!bounds.height)return {x:0,y:0};
@@ -801,14 +805,16 @@ function mount(target,{
     message('Сохранена отдельная копия: страница '+(index+1)+'. Это не КЭП.');
    }catch{message('Не удалось создать копию с подписью.');}
   });
-  const actions=controls(onScan,pngButton,clearButton);
+  const actions=controls(...(scans.length?
+   [onScan,pngButton,clearButton]:[pngButton,clearButton]));
   onScan.className+=' sv-doc-tool-primary';
+  actionRow=actions;
+  actionRow.hidden=marks===0;
   panel.append(actions);
   const info=$('details','sv-doc-tool-help');
   info.append($('summary','','О подписи'),
    warn('Рукописная отметка не является КЭП. Для официальной электронной подписи нужно подключение через «Умные подключения».'));
-  panel.append(info,status(scans.length?
-   'Подпись появится на выбранном листе.':'Для PDF сначала добавьте скан в инструменте «Сканировать».'));
+  panel.append(info,status(''));
  }
  function renderPrint(){
   panel.append(heading('Печать','Документ → системный принтер'));
