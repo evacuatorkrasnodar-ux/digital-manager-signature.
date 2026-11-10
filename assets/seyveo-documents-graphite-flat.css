@@ -886,3 +886,116 @@ html body #sayviSurfacePage[data-sv-subject="contract"]
   grid-auto-columns:minmax(112px,43%)!important;
  }
 }
+
+
+/* Documents v7 · signature design pass.
+   Never show a pretend signed document, and never offer PDF export
+   until a real scan and pen strokes exist. Global approved dock untouched. */
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"]{
+ box-sizing:border-box!important;
+ display:grid!important;
+ gap:9px!important;
+ padding:11px 12px 12px!important;
+ background:#38383A!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"] .sv-doc-sign-empty{
+ margin:0!important;
+ padding:6px 8px 7px!important;
+ font-size:11.5px!important;
+ line-height:1.5!important;
+ color:#D1D5D9!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"] .sv-doc-tool-sign-paper{
+ box-sizing:border-box!important;
+ display:grid!important;
+ gap:5px!important;
+ padding:10px 11px 8px!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:#F4F5F6!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"] .sv-doc-sign-paper-caption{
+ font-size:11px!important;
+ line-height:1.35!important;
+ color:#6E7981!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"] .sv-doc-tool-sign-paper canvas{
+ width:100%!important;
+ height:auto!important;
+ min-height:100px!important;
+ max-height:155px!important;
+ margin:0!important;
+ border:0!important;
+ background:#F4F5F6!important;
+ touch-action:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"] .sv-doc-tool-controls[hidden]{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"] > .sv-doc-tool-controls{
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:8px!important;
+ margin:0!important;
+ padding:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"] > .sv-doc-tool-controls > button{
+ box-sizing:border-box!important;
+ min-width:0!important;
+ min-height:44px!important;
+ margin:0!important;
+ padding:8px 10px!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:#505053!important;
+ color:#F3F4F6!important;
+ font-size:12px!important;
+ font-weight:550!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"][data-has-scans="true"]
+ > .sv-doc-tool-controls > button:first-child{
+ grid-column:1 / -1!important;
+ font-weight:620!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"] .sv-doc-tool-help{
+ margin:0!important;
+ border-top:1px solid rgba(230,236,239,.11)!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"] .sv-doc-tool-help summary{
+ box-sizing:border-box!important;
+ min-height:36px!important;
+ padding:6px 1px!important;
+ font-size:11.5px!important;
+}
+/* A real imported page keeps its full preview, thumbnail rail and zoom;
+   it is the document itself that needs examination, not a sample illustration. */
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"][data-has-scans="true"] .sv-doc-sign-stage{
+ padding:10px!important;
+ gap:8px!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:#303033!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="sign"][data-has-scans="true"] .sv-doc-sign-document{
+ width:min(68%,195px)!important;
+ min-height:0!important;
+ box-shadow:none!important;
+}
