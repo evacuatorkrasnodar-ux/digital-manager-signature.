@@ -1305,12 +1305,14 @@ function mailView(){
   actions.append(label,button);content.append(actions);
  }
  function drawExamples(limit=0){
-
+  // Keep the query local to this renderer too. A prior cached revision
+  // referenced `q` here after the filtering helper was extracted.
+  const q=mailSearch.trim();
   if(!mailShowExamples){content.append(create('p','sv-mail-empty','Почтовый ящик ещё не подключён. Подключите его, чтобы видеть настоящие письма.'));return}
   const matched=visibleSampleMail();
   if(!matched.length){
    mailBulkSelecting=false;selectedMailIds.clear();
-   content.append(create('p','sv-mail-empty',mailSearch.trim()?'По этому запросу примеров нет.':'Здесь пока нет писем.'));
+   content.append(create('p','sv-mail-empty',q?'По этому запросу примеров нет.':'Здесь пока нет писем.'));
    return;
   }
   renderMailBulkBar(matched);
