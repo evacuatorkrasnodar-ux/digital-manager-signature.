@@ -505,6 +505,8 @@ function mailView(){
     filePreviewContent.append(img);
    }else if(extension==='pdf'){
     const frame=create('iframe','sv-mail-file-frame');frame.title=entry.name;
+    // Never grant active scripts or same-origin privileges to a user-supplied file.
+    frame.setAttribute('sandbox','');frame.referrerPolicy='no-referrer';
     frame.src=filePreviewUrl;filePreviewContent.append(frame);
    }else{
     filePreviewContent.append(create('p','sv-mail-file-preview-note','Для этого формата доступно скачивание.'));
