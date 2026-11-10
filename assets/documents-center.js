@@ -309,7 +309,7 @@ function draw(){
  const markBox=el('span','sv-doc-assistant-mark-box');
  markBox.append(makeIcon('sayvi'));intro.append(markBox);
  const copy=el('span','sv-doc-assistant-hero-copy');
- copy.append(el('strong','','Составить договор, проверить документ и исправить ошибки.'));
+ copy.append(el('strong','','Сэйви поможет составить и проверить документ'));
  intro.append(copy,el('span','sv-doc-chat-chevron','›'));
  const actions=el('div','sv-doc-assistant-actions');
  actions.append(
