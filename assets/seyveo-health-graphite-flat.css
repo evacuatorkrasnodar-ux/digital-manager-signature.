@@ -1,0 +1,197 @@
+/* SEYVEO Health — approved Premium Graphite, 2026-11-10.
+   Scoped to Health, never Care, Calendar, Notebook or the global dock.
+   This is presentation only: keep existing health/medication/sleep handlers. */
+
+/* Keep the real dialog and its single dock, but remove the glossy card feel. */
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]{
+  background:var(--bg)!important;
+  border:0!important;border-radius:0!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  color:var(--text);
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > button.seyveo-dialog-close.sv-nav-arrow{
+  box-sizing:border-box!important;
+  position:absolute!important;
+  z-index:5!important;
+  top:calc(20px + env(safe-area-inset-top,0px))!important;
+  left:max(16px,env(safe-area-inset-left,0px))!important;
+  right:auto!important;
+  display:grid!important;place-items:center!important;
+  width:44px!important;height:44px!important;
+  min-width:44px!important;min-height:44px!important;
+  max-width:44px!important;max-height:44px!important;
+  margin:0!important;padding:0!important;
+  border:0!important;border-radius:50%!important;
+  background:#38383A!important;background-image:none!important;
+  color:#f5f5f6!important;
+  box-shadow:none!important;filter:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #calendarSpaceDialog[data-space="health"][open]
+ > button.seyveo-dialog-close.sv-nav-arrow svg{
+  display:block!important;width:19px!important;height:19px!important;
+  fill:none!important;stroke:currentColor!important;
+  stroke-width:1.65!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #calendarSpaceDialog[data-space="health"][open]
+ > button.seyveo-dialog-close.sv-nav-arrow:active{
+  background:#48484B!important;
+}
+html body #calendarSpaceDialog[data-space="health"][open]
+ > h2#calendarSpaceTitleHeading{
+  box-sizing:border-box!important;
+  display:flex!important;align-items:center!important;
+  min-height:54px!important;margin:0 0 16px!important;
+  padding:0 0 0 60px!important;
+  font-size:clamp(26px,6.7vw,30px)!important;
+  line-height:1.13!important;font-weight:630!important;
+  letter-spacing:-.044em!important;color:var(--text)!important;
+}
+
+/* Primary health overview: clean list like the rest of My World. */
+#calendarSpaceDialog[data-space="health"] #calendarSpaceIntro{
+  display:none!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview.cal-health-overview{
+  margin:0 0 21px!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-guide,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-list-title{
+  margin:5px 1px 8px!important;
+  color:var(--secondary)!important;
+  font-size:13px!important;font-weight:570!important;
+  line-height:1.35!important;letter-spacing:-.01em!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-guide-hint{
+  display:none!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tiles,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles{
+  display:flex!important;flex-direction:column!important;
+  gap:0!important;overflow:visible!important;
+  width:100%!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;
+  box-shadow:none!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card{
+  box-sizing:border-box!important;position:relative!important;
+  display:grid!important;
+  grid-template-columns:40px minmax(0,1fr) 22px!important;
+  grid-template-rows:auto auto auto!important;
+  column-gap:12px!important;row-gap:2px!important;
+  align-content:center!important;align-items:center!important;
+  width:100%!important;min-width:0!important;
+  min-height:73px!important;max-height:none!important;
+  margin:0!important;padding:10px 2px!important;
+  border:0!important;border-bottom:1px solid rgba(174,192,205,.13)!important;
+  border-radius:0!important;
+  background:transparent!important;background-image:none!important;
+  box-shadow:none!important;filter:none!important;
+  text-align:left!important;color:var(--text)!important;
+  animation:none!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile:last-child,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card:last-child{
+  border-bottom:0!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile:active,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card:active{
+  background:transparent!important;opacity:.7!important;
+  transform:none!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-emblem,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card > svg{
+  box-sizing:border-box!important;
+  display:block!important;grid-column:1!important;grid-row:1/4!important;
+  align-self:center!important;justify-self:center!important;
+  width:33px!important;height:33px!important;
+  min-width:33px!important;max-width:33px!important;max-height:33px!important;
+  margin:0!important;padding:2px!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;
+  box-shadow:none!important;
+  fill:none!important;stroke:var(--secondary)!important;
+  stroke-width:1.7!important;opacity:1!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile-label,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card > strong{
+  display:block!important;grid-column:2!important;grid-row:1!important;
+  min-width:0!important;margin:0!important;
+  font-size:15.5px!important;font-weight:575!important;
+  letter-spacing:-.025em!important;line-height:1.27!important;
+  color:var(--text)!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile > strong,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card > small{
+  display:block!important;grid-column:2!important;grid-row:2!important;
+  min-width:0!important;margin:0!important;
+  color:var(--secondary)!important;font-size:12px!important;
+  font-weight:455!important;letter-spacing:0!important;
+  line-height:1.4!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile[data-has-record="true"] > strong{
+  color:var(--text)!important;font-size:13px!important;font-weight:550!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile > small{
+  display:block!important;grid-column:2!important;grid-row:3!important;
+  margin:0!important;color:var(--secondary)!important;
+  font-size:11px!important;line-height:1.3!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile-action,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card > .pw-card-action{
+  display:grid!important;place-items:center!important;
+  grid-column:3!important;grid-row:1/4!important;
+  justify-self:center!important;align-self:center!important;
+  position:static!important;width:22px!important;height:44px!important;
+  min-width:22px!important;margin:0!important;padding:0!important;
+  overflow:visible!important;color:var(--secondary)!important;
+  font-size:0!important;line-height:0!important;
+  opacity:.83!important;white-space:nowrap!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile-action svg,
+#calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card .pw-card-arrow{
+  position:static!important;display:block!important;
+  width:17px!important;height:17px!important;
+  margin:0!important;transform:none!important;
+  fill:none!important;stroke:currentColor!important;
+  stroke-width:1.65!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+
+/* Clinical privacy notice stays visible, but no floating box or tiny print. */
+html body #calendarSpaceDialog[data-space="health"] #calendarSpacePrivacy{
+  display:block;
+  max-width:420px!important;margin:15px 1px 0!important;
+  padding:13px 0 0!important;
+  border:0!important;border-top:1px solid rgba(174,192,205,.13)!important;
+  border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;color:var(--secondary)!important;
+  font-size:11.5px!important;font-weight:430!important;
+  line-height:1.55!important;letter-spacing:0!important;
+}
+/* Restore native scroll and tool layouts in measurement/editor focus modes. */
+#calendarSpaceDialog[data-space="health"][data-measure-focus="true"] #calendarSpacePrivacy,
+#calendarSpaceDialog[data-space="health"][data-health-focus="true"] #calendarSpacePrivacy{
+  display:none!important;
+}
+#calendarSpaceDialog[data-space="health"] #pwHealth .pw-detail{
+  border:0!important;background:transparent!important;box-shadow:none!important;
+}
+@media(max-width:370px){
+  html body #calendarSpaceDialog[data-space="health"][open] > h2#calendarSpaceTitleHeading{
+    padding-left:58px!important;font-size:25px!important;
+  }
+  #calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile,
+  #calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card{
+    column-gap:9px!important;padding-inline:0!important;min-height:70px!important;
+    grid-template-columns:36px minmax(0,1fr) 19px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #calendarSpaceDialog[data-space="health"] :is(.cal-health-tile,.pw-card){transition:none!important}
+}
