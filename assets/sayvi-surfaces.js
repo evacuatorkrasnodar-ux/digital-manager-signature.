@@ -468,10 +468,18 @@ function mailView(){
   const attachButton=iconButton('paperclip','Прикрепить файл',()=>attachmentPicker.click());
   attachButton.classList.add('sv-mail-attach-trigger');
   // Keep "Сообщение" as a clean heading; the paperclip lives beside Send below.
-  attachButton.title='Прикрепить файл';
+  attachButton.title='Добавить файлы';
+  const attachmentCount=create('span','sv-mail-attach-count');
+  attachmentCount.setAttribute('aria-hidden','true');
+  attachmentCount.hidden=true;
+  attachButton.append(attachmentCount);
   const attachmentList=create('div','sv-mail-attached-list');
-  attachmentList.setAttribute('aria-label','Прикреплённые файлы');
-  form.append(attachmentList);
+  attachmentList.setAttribute('role','list');
+  attachmentList.setAttribute('aria-label','Прикреплённые файлы. Проведите в сторону, чтобы увидеть остальные.');
+  const attachmentShelf=create('section','sv-mail-attachment-shelf');
+  attachmentShelf.setAttribute('aria-label','Вложения в черновике');
+  attachmentShelf.hidden=true;
+  attachmentShelf.append(attachmentList);
   const filePreview=create('dialog','sv-mail-file-preview');
   filePreview.setAttribute('aria-label','Просмотр вложения');
   const filePreviewHead=create('div','sv-mail-file-preview-head');
@@ -523,13 +531,20 @@ function mailView(){
    if(typeof filePreview.showModal==='function')filePreview.showModal();
    else filePreview.setAttribute('open','');
   };
-  function renderAttachments(){
+  function renderAttachments(scrollToEnd=false){
    attachmentList.replaceChildren();
+   attachmentShelf.hidden=!attachments.length;
    attachmentList.hidden=!attachments.length;
+   attachmentCount.hidden=!attachments.length;
+   attachmentCount.textContent=String(attachments.length);
+   attachButton.setAttribute('aria-label',attachments.length
+    ?'Добавить файл. Уже прикреплено: '+attachments.length+' из 5'
+    :'Прикрепить файлы');
    for(const entry of attachments){
     const kind=attachmentType(entry.name);
     const row=create('div','sv-mail-attached-item');
     row.dataset.fileKind=kind.kind;
+    row.setAttribute('role','listitem');
     const view=create('button','sv-mail-attached-preview');
     view.type='button';
     view.title=kind.name+' · '+entry.name;
@@ -552,6 +567,9 @@ function mailView(){
     remove.title='Убрать вложение';
     row.append(view,remove);attachmentList.append(row);
    }
+   if(scrollToEnd){
+    requestAnimationFrame(()=>{if(attachmentShelf.isConnected)attachmentList.scrollLeft=attachmentList.scrollWidth});
+   }
   }
   attachmentPicker.addEventListener('change',async()=>{
    const chosen=Array.from(attachmentPicker.files||[]);
@@ -569,7 +587,7 @@ function mailView(){
     const stored=await saveMailAttachment(draftId,id,file);
     if(!stored){status.textContent='Не удалось сохранить файл в браузере. Проверьте свободное место.';continue}
     attachments.push({id,name:file.name.slice(0,150),size:file.size,type:file.type||''});
-    autosaveDraft();renderAttachments();
+    autosaveDraft();renderAttachments(true);
     status.textContent=''; // The file card itself confirms successful attachment.
    }
   });
@@ -639,13 +657,13 @@ function mailView(){
   const primaryActions=create('div','sv-mail-primary-actions');
   primaryActions.append(send);
   actions.append(polish,primaryActions);
-  // Stable bottom control row: paperclip at left, chosen files beside it,
-  // Sayvi + Send at right. The icon never jumps when attachments are added.
+  // Files have their own swipeable full-width row ABOVE the controls.
+  // Below: the paperclip stays at left; Sayvi and Send stay at right.
   const composerFooter=create('div','sv-mail-compose-footer');
   const filesArea=create('div','sv-mail-footer-files');
-  filesArea.append(attachButton,attachmentList);
+  filesArea.append(attachButton);
   composerFooter.append(filesArea,actions);
-  form.append(composerFooter,preview,status);
+  form.append(attachmentShelf,composerFooter,preview,status);
   content.append(form);
  }
  /* Local, explainable mail assistance for the development prototype.
