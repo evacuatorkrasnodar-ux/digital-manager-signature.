@@ -183,3 +183,82 @@
  #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-review{padding:6px 8px!important;font-size:10.5px!important}
  #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-panel{padding:11px!important}
 }
+
+/* v2 · The admission controls occupy their OWN clean screen, never squeeze the Inbox.
+   The approved mail header and dock remain unchanged in normal mail view. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace.sv-mail-guard-active > :not(.sv-mail-gate-panel){
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace.sv-mail-guard-active{
+ padding:0 2px 110px!important;
+ width:100%!important;min-width:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace.sv-mail-guard-active .sv-mail-gate-panel:not([hidden]){
+ display:flex!important;flex-direction:column!important;
+ width:100%!important;max-width:none!important;min-width:0!important;
+ gap:11px!important;margin:0!important;padding:0 0 14px!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-page-head{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ gap:10px!important;min-height:48px!important;margin:0 0 6px!important;
+ padding:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-back{
+ display:grid!important;place-items:center!important;box-sizing:border-box!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+ background:var(--sv-flat-panel,#38383A)!important;color:var(--text,#f2f3f5)!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-back svg{
+ width:20px!important;height:20px!important;stroke:currentColor!important;
+ stroke-width:1.65!important;fill:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-page-heading{
+ font:600 clamp(23px,6vw,27px)/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.045em!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-lead{
+ margin:0 1px 4px!important;
+ color:var(--secondary,#c4c8cd)!important;
+ font:440 12px/1.42 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-heading{
+ margin:0 1px 0!important;font-size:15px!important;font-weight:600!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-accounts{
+ border-radius:12px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-modes{
+ gap:5px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-mode{
+ min-height:52px!important;padding:8px 10px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-subheading{
+ margin:5px 1px 0!important;font-size:13px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-form input,
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-form button{
+ min-height:44px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-help{
+ box-sizing:border-box!important;display:block!important;margin-top:5px!important;
+ padding:0 1px!important;border:0!important;background:transparent!important;
+ color:var(--secondary,#cbd0d5)!important;box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-help summary{
+ display:list-item!important;cursor:pointer!important;
+ padding:8px 0!important;color:var(--text,#eff1f3)!important;
+ font:540 12px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-help p{
+ margin:1px 0 5px!important;font:440 11px/1.5 system-ui,sans-serif!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-caution{
+ margin:0 1px!important;font:440 11px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--secondary,#b5bfc6)!important;
+}
