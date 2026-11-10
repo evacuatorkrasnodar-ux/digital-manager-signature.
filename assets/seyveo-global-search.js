@@ -169,19 +169,19 @@ function actionButton(label,action,meta){
 /* One input, three invisible capabilities. Never require people to choose a
    provider; display accessible matching data while they type and execute only
    after a deliberate submission or a result tap. */
-const isQuestion=q=>/^(?:как|почему|зачем|что|кто|когда|где|сколько|какой|какая|какое|какие|объясни|расскажи|помоги|посоветуй|можно ли)\b/u.test(q)||/\?$/.test(q);
-const documentWords=/\b(?:документ|документы|документа|документов|договор|договора|договоры|акт|акты|счёт|счет|счета|файл|файлы|архив|pdf|word|xlsx|подпись)\b/iu;
-const mailWords=/\b(?:письмо|письма|писем|почту|почта|email|емейл|черновик|входящие|корреспонденция)\b/iu;
+const isQuestion=q=>/^(?:как|почему|зачем|что|кто|когда|где|сколько|какой|какая|какое|какие|объясни|расскажи|помоги|посоветуй|можно ли)(?=\s|[?!,.:]|$)/u.test(q)||/\?$/.test(q);
+const documentWords=/(?:документ|договор|архив|файл|подпис|сч[её]т|(?:^|\s)акт(?:ы|а|ов)?(?=\s|$)|pdf|word|xlsx)/iu;
+const mailWords=/(?:письм|писем|почт|email|емейл|черновик|входящ|корреспонденц)/iu;
 function intention(query){
  const q=withoutWake(query);
  if(!q)return null;
  // A direct web/search command is distinct from private app content.
  const direct=routeFor(query);
  if(direct&&['web','site'].includes(direct.action))return direct;
- if(/\b(?:подключить|подключи|подключение|настроить|настройка|привязать)\b/u.test(q)){
+ if(/(?:подключ|настро|привяз)/u.test(q)){
   if(mailWords.test(q))return {action:'connect:mail'};
   if(documentWords.test(q))return {action:'connect:documents'};
-  if(/\b(?:банк|кассу|касса|crm|срм|битрикс|1с)\b/u.test(q))return {action:'connect:pulse'};
+  if(/(?:банк|касс|crm|срм|битрикс|1с)/u.test(q))return {action:'connect:pulse'};
  }
  if(isQuestion(q))return {action:'ask'};
  if(/^(?:открой|покажи|найди|отыщи|перейди к|найти)\s+/u.test(q)){
@@ -394,7 +394,7 @@ field.addEventListener('keydown',event=>{
 
 results.addEventListener('click',event=>{
  const btn=event.target.closest?.('button[data-search-action]');
- if(btn&&results.contains(btn))visit(btn.dataset.searchAction);
+ if(btn&&results.contains(btn))visit(btn.dataset.searchAction,{reveal:btn.dataset.searchAction.startsWith('docs:')});
 });
 window.addEventListener('hashchange',()=>{if(active)close()});
 window.addEventListener('seyveo:route-changed',()=>{if(active)close()});
