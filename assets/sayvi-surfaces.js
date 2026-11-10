@@ -1461,7 +1461,7 @@ function mailView(){
   const countLabel=create('strong','sv-mail-drafts-count',mailDraftSelecting
    ?'Выбрано: '+chosenVisible+' из '+list.length
    :mailSearch?'Найдено: '+list.length:'Черновиков: '+list.length);
-  const change=create('button','sv-mail-drafts-select',mailDraftSelecting?'Готово':'Выбрать');
+  const change=create('button','sv-mail-drafts-select',mailDraftSelecting?'Отмена':'Выбрать');
   change.type='button';change.setAttribute('aria-pressed',String(mailDraftSelecting));
   change.addEventListener('click',()=>{
    mailDraftSelecting=!mailDraftSelecting;
