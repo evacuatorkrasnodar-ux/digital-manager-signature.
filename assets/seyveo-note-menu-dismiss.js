@@ -98,7 +98,7 @@
       const summary=row.querySelector('.note-row-copy > p');
       if(summary&&!summary.dataset.svCleanSummary){
         const before=summary.textContent||'';
-        const after=before.replace(/^[\\s]*[☐☑☒□■][\\s]*/gm,'').trim();
+        const after=before.replace(/^[\s]*[☐☑☒□■][\s]*/gm,'').trim();
         if(after!==before)summary.textContent=after||'Список';
         summary.dataset.svCleanSummary='true';
       }
@@ -108,7 +108,7 @@
         const kind=button.classList.contains('note-delete')?'delete':
           /Поделиться/i.test(label)?'share':
           /Распечатать/i.test(label)?'print':
-          /календарь|^На .+\\?$/i.test(label)?'calendar':null;
+          /календарь|^На .+\?$/i.test(label)?'calendar':null;
         if(!kind)continue;
         button.setAttribute('aria-label',label);
         button.title=label;
