@@ -397,7 +397,10 @@ const MAIL_SAMPLE_SUSPICIOUS=new Set(['example-suspicious']);
 const emptyMailGate=()=>({mode:'smart',trusted:[]});
 function validMailGateAddress(value){
  const address=String(value||'').trim().toLowerCase();
- return address.length<=254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)?address:'';
+ if(address.length>254)return '';
+ const email=/^[^\s@]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(address);
+ const domain=/^@[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i.test(address);
+ return email||domain?address:'';
 }
 function readMailGate(){
  const defaults={personal:emptyMailGate(),business:emptyMailGate()};
@@ -416,7 +419,12 @@ function saveMailGate(){
  try{localStorage.setItem(MAIL_GATE_KEY,JSON.stringify(mailGate))}catch{}
 }
 function sampleMailAddress(item){return MAIL_SAMPLE_ADDRESSES[item?.id]||''}
-function gateTrusted(account,address){return !!address&&mailGate[account].trusted.includes(address)}
+function gateTrusted(account,address){
+ if(!address)return false;
+ const allow=mailGate[account].trusted;
+ const at=address.lastIndexOf('@');
+ return allow.includes(address)||(at>=0&&allow.includes(address.slice(at)));
+}
 function addGateTrusted(account,address){
  const verified=validMailGateAddress(address);
  if(!verified||!mailGate[account]||mailGate[account].trusted.length>=60)return false;
@@ -556,8 +564,9 @@ function mailView(){
   guardPanel.append(radio);
   guardPanel.append(create('strong','sv-mail-gate-subheading','Доверенные адреса'));
   const form=create('form','sv-mail-gate-form');
-  const input=create('input','');input.type='email';input.required=true;input.maxLength=254;
-  input.placeholder='name@example.com';input.setAttribute('aria-label','Добавить доверенный адрес');
+  const input=create('input','');input.type='text';input.required=true;input.maxLength=254;
+  input.autocapitalize='off';input.autocomplete='off';input.spellcheck=false;
+  input.placeholder='name@site.ru или @site.ru';input.setAttribute('aria-label','Добавить доверенный адрес или домен');
   const add=create('button','','Добавить');add.type='submit';
   form.append(input,add);
   const status=create('small','sv-mail-gate-status');status.setAttribute('role','status');
@@ -576,7 +585,7 @@ function mailView(){
    chip.append(remove);trusted.append(chip);
   }
   guardPanel.append(trusted);
-  guardPanel.append(create('p','sv-mail-gate-footnote','Настройки действуют только на учебные письма. Контакты, серверная фильтрация и проверка в интернете пока не подключены. Настоящие письма не отклоняются.'));
+  guardPanel.append(create('p','sv-mail-gate-footnote','Адрес разрешает одного отправителя, @домен — все адреса этого домена. Сейчас правила действуют только на учебные письма. Контакты, серверная фильтрация и проверка в интернете пока не подключены; реальные письма не отклоняются.'));
  }
  section.append(top,searchLabel,scopeNav,connect,guardRow,guardPanel,nav,extraNav,info,content);body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['review','На проверке'],['promotions','Рассылки'],['spam','Спам'],['trash','Корзина']];
