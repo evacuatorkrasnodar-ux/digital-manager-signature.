@@ -298,7 +298,7 @@ function portrait(p){
 const tenure=(since)=>{const start=new Date(since+'T12:00:00'),today=new Date();let y=today.getFullYear()-start.getFullYear(),m=today.getMonth()-start.getMonth();if(today.getDate()<start.getDate())m--;if(m<0){y--;m+=12}return y>0?(y+' г. '+m+' мес.'):m+' мес.'};
 const photoFor=p=>photos.get(p.id)||portrait(p);
 const shell=el('div','svstaff-directory');root.replaceChildren(shell);
-const intro=el('div','svstaff-intro');intro.append(el('strong',null,'Сотрудники'),el('small',null,String(people.length)+' примера'));shell.append(intro);
+// The parent Team tab and short connection notice provide the heading.
 const directory=el('div','svstaff-directory-list');shell.append(directory);
 // One short notice remains above the list; no duplicated explanation below every card.
 const modal=el('dialog','svstaff-modal');modal.setAttribute('aria-label','Профессиональная история сотрудника');document.body.append(modal);
@@ -308,7 +308,7 @@ close.setAttribute('aria-label','Назад к сотрудникам');
 close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';
 top.append(close,el('span',null,'Карточка сотрудника'));modal.append(top);
 const body=el('div','svstaff-content');modal.append(body);
-let chosen=null,showPlan=false,lastTrigger=null,leavingForChat=false;
+let chosen=null,lastTrigger=null,leavingForChat=false;
 function summaryStats(target,p){
  const metrics=el('div','svstaff-metrics');
  [['star','svstaff-gold',String(peerRecognition(p.id).length),'Знаков команды · демо'],['clipboard','svstaff-silver',String(p.remarks),p.remarks===1?'Замечание · пример':'Замечаний · пример'],['growth','svstaff-green',p.development,'Навыки · пример']].forEach(([symbol,color,value,label])=>{
@@ -323,16 +323,22 @@ function renderDirectory(){
   tile.setAttribute('aria-label','Открыть профессиональную историю: '+p.name);
   const photo=el('img','svstaff-thumb');photo.src=photoFor(p);photo.alt='';photo.loading='lazy';
   const copy=el('span','svstaff-tile-copy');
-  copy.append(el('strong',null,p.name),el('small',null,p.role+' · '+tenure(p.since)),el('span','svstaff-tile-trend','Сэйви: '+p.hint));
-  const count=el('span','svstaff-tile-count');count.append(icon('star','svstaff-gold'),el('b',null,String(peerRecognition(p.id).length)));count.setAttribute('aria-label','Знаки благодарности: '+peerRecognition(p.id).length);
+  copy.append(el('strong',null,p.name),el('small',null,p.role+' · '+tenure(p.since)));
+  const marks=peerRecognition(p.id).length;
   const arrow=el('span','svstaff-tile-arrow','›');arrow.setAttribute('aria-hidden','true');
-  const newMarks=peerRecognition(p.id).length;
-  // The recognition count already communicates this; no extra line per employee.
-  tile.append(photo,copy,count,arrow);directory.append(tile);
+  tile.append(photo,copy);
+  // Don't fill every row with an uninformative zero. Real recognition appears when present.
+  if(marks){
+   const count=el('span','svstaff-tile-count');
+   count.append(icon('star','svstaff-gold'),el('b',null,String(marks)));
+   count.setAttribute('aria-label','Знаки благодарности: '+marks);
+   tile.append(count);
+  }
+  tile.append(arrow);directory.append(tile);
  });
 }
 function openPerson(p,trigger){
- chosen=p;lastTrigger=trigger;showPlan=false;renderProfile();
+ chosen=p;lastTrigger=trigger;renderProfile();
  if(typeof modal.showModal==='function')modal.showModal();else modal.setAttribute('open','');
 }
 function renderProfile(){
@@ -457,7 +463,7 @@ function renderProfile(){
  body.append(el('p','svstaff-demo-note','Учебные данные. Заметки и поощрения требуют проверки; автоматической оценки персонала нет.'));
 
 }
-modal.addEventListener('close',()=>{chosen=null;showPlan=false;if(!leavingForChat)lastTrigger?.focus?.();leavingForChat=false});
+modal.addEventListener('close',()=>{chosen=null;if(!leavingForChat)lastTrigger?.focus?.();leavingForChat=false});
 modal.addEventListener('click',e=>{if(e.target===modal)modal.close()});
 window.addEventListener('pagehide',()=>{photos.forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u)})});
 window.SEYVEO_STAFF_CARDS=Object.freeze({open:personId=>{
