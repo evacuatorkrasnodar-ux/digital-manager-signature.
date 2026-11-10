@@ -142,3 +142,116 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions .sv-ma
   padding:9px 10px!important;font-size:11.5px!important;
  }
 }
+
+/* v3 · iPhone polish: simple list, one clear Cancel, one cleanup action.
+   No new screens and no changes to the global dock. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-toolbar{
+ min-height:42px!important;gap:4px!important;padding:2px 3px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-select,
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-all{
+ min-height:40px!important;padding:7px 7px!important;
+ font-size:11.5px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-group{
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ overflow:visible!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting{
+ margin:0!important;padding:0!important;
+ border:0!important;border-bottom:1px solid rgba(200,206,214,.11)!important;
+ border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting:last-child{
+ border-bottom:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter,
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter.is-selected,
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter.is-unread{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ width:100%!important;min-height:68px!important;height:auto!important;
+ gap:9px!important;margin:0!important;padding:9px 3px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ transform:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter .sv-mail-bulk-avatar{
+ box-sizing:border-box!important;flex:0 0 28px!important;
+ display:grid!important;place-items:center!important;
+ width:28px!important;min-width:28px!important;max-width:28px!important;
+ height:28px!important;min-height:28px!important;max-height:28px!important;
+ padding:0!important;margin:0 0 0 2px!important;
+ border:1.5px solid rgba(223,229,235,.67)!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter.is-selected .sv-mail-bulk-avatar{
+ border-color:#EBEDF0!important;background:#38383A!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter.is-selected .sv-mail-bulk-avatar::after{
+ width:10px!important;height:5px!important;border-width:0 0 2px 2px!important;
+ margin-top:-2px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting .sv-mail-letter-details{
+ display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+ gap:2px!important;min-width:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-line{
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ flex-wrap:nowrap!important;gap:6px!important;
+ min-width:0!important;width:100%!important;overflow:hidden!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-line .sv-mail-letter-sender{
+ flex:0 1 auto!important;min-width:0!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-line .sv-mail-account-tag{
+ box-sizing:border-box!important;flex:0 0 auto!important;
+ align-self:center!important;min-height:16px!important;height:16px!important;
+ padding:0 5px!important;margin:0!important;
+ border-radius:5px!important;background:#38383A!important;color:#dbe0e4!important;
+ font:540 9px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting .sv-mail-letter-meta{
+ align-self:flex-start!important;flex:0 0 auto!important;
+ min-width:40px!important;gap:4px!important;margin:1px 0 0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting .sv-mail-unread-dot{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions{
+ width:auto!important;min-width:0!important;max-width:calc(100vw - 36px)!important;
+ min-height:0!important;padding:0!important;
+ left:50%!important;right:auto!important;
+ transform:translateX(-50%)!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;
+ justify-content:center!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions .sv-mail-bulk-clean{
+ min-height:46px!important;min-width:146px!important;
+ border:1px solid rgba(241,244,246,.11)!important;
+ border-radius:14px!important;padding:10px 17px!important;
+ background:#38383A!important;color:#f3f5f6!important;
+ box-shadow:0 8px 22px rgba(0,0,0,.18)!important;
+ font-size:12px!important;
+}
+@media(max-width:360px){
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-toolbar{
+  gap:2px!important;
+ }
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-counter{
+  font-size:10.5px!important;
+ }
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-select,
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-all{
+  padding:7px 4px!important;font-size:10.5px!important;
+ }
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-swipe-shell.is-bulk-selecting > .sv-mail-letter{
+  gap:7px!important;
+ }
+}
