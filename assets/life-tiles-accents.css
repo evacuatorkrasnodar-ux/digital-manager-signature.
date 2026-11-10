@@ -62,7 +62,7 @@ html.sv-space-active #lifePage .life-heading h1 {
   margin:0!important;
   padding:0!important;
   color:var(--text)!important;
-  font-size:clamp(32px,8vw,35px)!important;
+  font-size:clamp(28px,7.2vw,31px)!important;
   font-weight:680!important;
   letter-spacing:-.052em!important;
   line-height:1.10!important;
@@ -81,7 +81,7 @@ html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid {
  display:flex!important;flex-direction:column!important;
  align-items:stretch!important;justify-content:flex-start!important;
  flex:none!important;width:100%!important;height:auto!important;min-height:0!important;
- gap:19px!important;margin:0!important;padding:0 14px!important;
+ gap:15px!important;margin:0!important;padding:0 14px!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
 }
@@ -100,7 +100,7 @@ html.sv-space-active #lifePage #calendarSpaces .sv-life-category-grid {
  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
  column-gap:10px!important;row-gap:2px!important;
  align-items:start!important;align-content:start!important;
- grid-auto-rows:minmax(64px,auto)!important;
+ grid-auto-rows:minmax(60px,auto)!important;
  width:100%!important;min-width:0!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;
@@ -122,7 +122,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   justify-content:stretch!important;
   width:100%!important;
   height:auto!important;
-  min-height:64px!important;
+  min-height:60px!important;
   max-height:none!important;
   margin:0!important;
   padding:8px 7px!important;
@@ -183,7 +183,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span {
   width:100%!important;
   margin:0!important;
   padding:0!important;
-  font-size:calc(15.8px * var(--sv-text-scale,1))!important;
+  font-size:calc(15.4px * var(--sv-text-scale,1))!important;
   font-weight:535!important;
   letter-spacing:-.025em!important;
   line-height:1.28!important;
@@ -272,7 +272,7 @@ html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"] > sv
  }
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   grid-template-columns:30px minmax(0,1fr)!important;
-  column-gap:8px!important;min-height:63px!important;
+  column-gap:8px!important;min-height:60px!important;
   padding:8px 4px!important;
  }
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg {
@@ -292,7 +292,7 @@ html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"] > sv
 
 /* My World Management footer: a quiet destination, not a second glass tile. */
 html.sv-space-active #lifePage .sv-world-management{
- margin:20px 17px 50px;padding:9px 0 0;
+ margin:15px 17px 28px;padding:7px 0 0;
  border-top:1px solid var(--sv-velvet-divider,var(--soft-line));
  background:transparent;box-shadow:none;
 }
