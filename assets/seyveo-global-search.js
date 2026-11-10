@@ -68,7 +68,7 @@ function routeFor(query){
  return null;
 }
 const isPrivateQuery = value =>
- /(?:парол|паспорт|договор|переписк|зарплат|клиент|сотрудник|мои?\s+(?:письм|документ|контакт|файл)|наши?\s+(?:данн|запис))|(?:^|\s)(?:мой|моя|моё|мои|наши|наш)(?:\s|$)/iu.test(value);
+ /(?:парол|паспорт|договор|переписк|зарплат|клиент|сотрудник|мои?\s+(?:письм|документ|контакт|файл)|наши?\s+(?:данн|запис)|личн|секретн)|(?:^|\s)(?:мой|моя|моё|мои|моей|моего|моих|мной|наши|наш|нашей|наших)(?:\s|$)/iu.test(value);
 
 function searchableRecords(query){
  if(query.length<2)return [];
@@ -316,8 +316,11 @@ function visit(action,{reveal=false}={}){
  if(action==='smart'){
   if(!intent)return;
   action=intent.action;
-  if(intent.query)query=intent.query;
  }
+ // Natural language "открой сайт ..." and "найди в интернете ..."
+ // must use the extracted URL/search term, not the whole command.
+ if((action==='web'||action==='site')&&intent?.action===action&&intent.query)
+  query=intent.query;
  // Close first: one chat, one browser, one underlying MediaSession.
  close();
  if(action.startsWith('connect:')){
