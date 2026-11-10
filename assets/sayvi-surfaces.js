@@ -193,6 +193,7 @@ let mailFolder='overview',mailEditorOpen=false,mailEditingId=null,mailCurrent=nu
 let mailEditorReturnId=null,mailEditorExitHandler=null;
 let mailSearchOpen=false;
 let mailGuardExitHandler=null;
+let mailContactsExitHandler=null;
 let mailGuardListenerAbort=null;
 let mailScope='all',mailComposeScope=null;
 // Mail drafts are local to this browser tab session. No external delivery.
@@ -351,6 +352,7 @@ const mailIcons=Object.freeze({
  trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 15H6L5 6M10 10v7m4-7v7"/>',
  spam:'<path d="M8 3h8l5 5v8l-5 5H8l-5-5V8Z"/><path d="M12 7v7m0 3v.1"/>',
  shield:'<path d="M12 2 20 6v5c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V6Z"/><path d="m9 12 2 2 4-4"/>',
+ contacts:'<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 5"/>',
  restore:'<path d="M9 4 4 9l5 5"/><path d="M4 9h10a6 6 0 1 1-5.5 8.3"/>',
  more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',
  archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v12h14V9M10 14h4"/>',
@@ -449,6 +451,7 @@ function mailView(){
  mailGuardListenerAbort?.abort();
  mailGuardListenerAbort=new AbortController();
  mailEditorExitHandler=null;
+ mailContactsExitHandler=null;
  const section=shelf();section.classList.add('sv-mail-workspace');
  const top=create('div','sv-mail-top-actions');
  const topButtons=create('div','sv-mail-top-buttons');
@@ -622,6 +625,18 @@ function mailView(){
   });
   trustedDetails.append(form,status,trusted);
   paintTrusted();guardPanel.append(trustedDetails);
+  // A single entry in Shield keeps the title bar at the approved three icons.
+  const contactsEntry=create('button','sv-mail-gate-menu-contacts');
+  contactsEntry.type='button';
+  contactsEntry.append(mailIcon('contacts'),create('span','','Умные контакты'),mailIcon('back'));
+  // Flip only this navigation glyph, not the approved global Back design.
+  contactsEntry.lastChild.style.transform='rotate(180deg)';
+  contactsEntry.addEventListener('click',()=>{
+   guardOpen=false;
+   smartContacts?.open(account);
+   paint();
+  });
+  guardPanel.append(contactsEntry);
   const pending=folderCount('review');
   if(pending&&mailShowExamples){
    const review=create('button','sv-mail-gate-menu-review');
@@ -643,8 +658,39 @@ function mailView(){
   paintList();
  }
  top.append(guardPanel);
- section.append(top,searchLabel,scopeNav,connect,nav,extraNav,info,content);
+ const contactsInvite=create('button','sv-mail-contacts-invite');
+ contactsInvite.type='button';contactsInvite.hidden=true;
+ contactsInvite.append(mailIcon('contacts'));
+ const inviteText=create('span','sv-mail-contacts-invite-text');
+ inviteText.append(create('strong','','Умные контакты'),create('small','','Настройте адресную книгу с помощью Сэйви'));
+ contactsInvite.append(inviteText,mailIcon('back'));
+ contactsInvite.lastChild.style.transform='rotate(180deg)';
+ // Contacts onboarding is optional and displayed only after VERIFIED mail connection.
+ function inviteScope(){
+  const allowed=mailScope==='all'?['personal','business']:[mailScope];
+  return allowed.find(scope=>
+   smartContacts?.isMailConnected(scope)&&!smartContacts?.hasSaved(scope))||null;
+ }
+ contactsInvite.addEventListener('click',()=>{
+  const scope=inviteScope();
+  if(!scope)return;
+  guardOpen=false;smartContacts?.open(scope);paint();
+ });
+ section.append(top,searchLabel,scopeNav,connect,contactsInvite,nav,extraNav,info,content);
  body.append(section);
+ const smartContacts=window.SEYVEO_SMART_CONTACTS?.mount({
+  host:section,
+  onConnect:openConnect,
+  onBack:()=>{smartContacts.close();paint()},
+  onSaved:()=>{const scope=inviteScope();contactsInvite.hidden=!scope; }
+ });
+ mailContactsExitHandler=()=>{
+  if(!smartContacts?.isOpen())return false;
+  smartContacts.close();paint();return true;
+ };
+ window.addEventListener('seyveo:verified-connection-changed',()=>{
+  smartContacts?.refresh();paint();
+ },{signal:mailGuardListenerAbort.signal});
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['review','На проверке'],['promotions','Рассылки'],['spam','Спам'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
@@ -1298,14 +1344,18 @@ function mailView(){
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
  function paint(){
-  page.dataset.svMailMode=mailEditorOpen?'editor':mailCurrent?'detail':'overview';
+  const contactsActive=smartContacts?.isOpen()===true;
+  page.dataset.svMailMode=contactsActive?'contacts':mailEditorOpen?'editor':mailCurrent?'detail':'overview';
+  section.classList.toggle('sv-mail-contacts-active',contactsActive);
   section.dataset.mailFolder=mailFolder;
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
   introCopy.hidden=mailEditorOpen||!!mailCurrent;
   top.hidden=mailEditorOpen||!!mailCurrent;
   searchToggle.hidden=mailEditorOpen||!!mailCurrent;
-  connect.hidden=mailEditorOpen||!!mailCurrent;
-  guardTrigger.hidden=mailEditorOpen||!!mailCurrent;
+  connect.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
+  const setupScope=inviteScope();
+  contactsInvite.hidden=mailEditorOpen||!!mailCurrent||contactsActive||!setupScope;
+  guardTrigger.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
   if(mailEditorOpen||mailCurrent){guardOpen=false;guardPanel.hidden=true;}
   scopeNav.replaceChildren();
   for(const [key,label] of [['all','Все'],['personal','Личная'],['business','Рабочая']]){
@@ -1561,6 +1611,7 @@ back.addEventListener('click',()=>{
  if(currentKind()==='contract'&&
     window.SEYVEO_DOCUMENT_CENTER?.backFromNested?.())return;
  if(currentKind()==='mail'){
+  if(typeof mailContactsExitHandler==='function'&&mailContactsExitHandler())return;
   if(typeof mailGuardExitHandler==='function'&&mailGuardExitHandler())return;
   if(typeof mailEditorExitHandler==='function'){mailEditorExitHandler();return}
   if(mailCurrent){mailCurrent=null;sync();return}
