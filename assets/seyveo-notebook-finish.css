@@ -188,10 +188,10 @@
 }
 #svWorkShell[data-active="notes"] #svWorkNotebook #notesList .note-empty-mark{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:54px!important;height:54px!important;flex:0 0 54px!important;
+ width:44px!important;height:44px!important;flex:0 0 44px!important;
  margin:0 0 5px!important;padding:0!important;
- border:0!important;border-radius:15px!important;
- background:#38383A!important;background-image:none!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
  color:#F1F1F3!important;box-shadow:none!important;
 }
 #svWorkShell[data-active="notes"] #svWorkNotebook #notesList .note-empty-mark svg{
