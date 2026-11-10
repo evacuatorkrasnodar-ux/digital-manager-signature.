@@ -817,8 +817,7 @@ function mount(target,{
   panel.append(info,status(''));
  }
  function renderPrint(){
-  panel.append(heading('Печать','Документ → системный принтер'));
-  panel.append(pictorialSteps([['file','Файл'],['print','Принтер'],['pages','Листы']]));
+  panel.append(heading('Печать','PDF или фото · через системное меню'));
   const filePicker=$('input');
   filePicker.type='file';filePicker.accept='.pdf,.jpg,.jpeg,.png,.webp';
   filePicker.setAttribute('aria-label','Выбрать документ для печати');
@@ -837,12 +836,7 @@ function mount(target,{
   }else currentPrint=null;
 
   const stage=$('div','sv-doc-print-stage');
-  const device=$('div','sv-doc-print-device');
-  const copy=$('div','sv-doc-print-device-copy');
-  copy.append($('strong','','Печать документа'),
-   $('small','','Принтер выбирается в системе'));
-  device.append(art('print'),copy);
-
+  stage.hidden=true;
   const frame=$('div','sv-doc-print-paper-frame');
   const paper=$('div','sv-doc-print-paper');
   paper.setAttribute('aria-label','Предпросмотр листа для печати');
@@ -856,22 +850,8 @@ function mount(target,{
   openLink.setAttribute('aria-label','Открыть выбранный документ для системной печати');
   openLink.hidden=true;
   controlsRow.append(choose,openLink);
-  stage.append(device,frame,meta);
+  stage.append(frame,meta);
   let activeUrl=null;
-
-  function showExample(){
-   const example=$('div','sv-doc-print-paper-example');
-   example.append($('strong','','SEYVEO'));
-   for(let i=0;i<5;i++){
-    const line=$('span','sv-doc-print-faux-line');
-    if(i===2)line.className+=' sv-doc-print-faux-medium';
-    if(i===4)line.className+=' sv-doc-print-faux-short';
-    example.append(line);
-   }
-   const marker=$('span','sv-doc-print-faux-sign');
-   marker.setAttribute('aria-hidden','true');
-   example.append(marker);paper.append(example);
-  }
   function update(){
    // Each selected file owns exactly one live blob URL. Revoking the
    // previous URL releases a decrypted in-memory copy on file switch.
@@ -882,10 +862,10 @@ function mount(target,{
    }
    paper.replaceChildren();meta.replaceChildren();
    controlsRow.dataset.hasFile=currentPrint?'true':'false';
+   stage.hidden=!currentPrint;
+   choose.textContent=currentPrint?'Другой файл':'Выбрать PDF или фото';
    if(!currentPrint){
-    showExample();openLink.hidden=true;openLink.removeAttribute('href');
-    meta.append($('strong','','Пример листа'),
-     $('small','','Выберите PDF или фотографию'));
+    openLink.hidden=true;openLink.removeAttribute('href');
     return;
    }
    const ext=String(currentPrint.name||'').split('.').pop().toLowerCase();
@@ -894,8 +874,9 @@ function mount(target,{
     temporaryUrls.push(activeUrl);
    }catch{
     currentPrint=null;controlsRow.dataset.hasFile='false';
-    showExample();openLink.hidden=true;openLink.removeAttribute('href');
-    meta.append($('strong','','Файл недоступен'));
+    stage.hidden=true;choose.textContent='Выбрать PDF или фото';
+    openLink.hidden=true;openLink.removeAttribute('href');
+    message('Не удалось открыть файл. Выберите другой.');
     return;
    }
    if(ext==='pdf'){
@@ -928,7 +909,7 @@ function mount(target,{
   update();
   const info=$('details','sv-doc-tool-help');
   info.append($('summary','','Как распечатать'),
-   warn('Нажмите «Открыть для печати», затем системное «Поделиться → Печать». Принтер и параметры выбираются в системе.'));
+   warn('Откройте выбранный файл и выберите системное «Поделиться → Печать». Принтер выбирается в системе.'));
   panel.append(info,status(''));
  }
  // The document viewer can hand an explicitly opened JPEG/PNG/WebP to
