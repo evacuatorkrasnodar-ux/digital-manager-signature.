@@ -214,6 +214,14 @@ function readMailSessionDrafts(){
  }catch{return []}
 }
 let mailDrafts=readMailSessionDrafts(),mailSearch='',mailShowExamples=true;
+// A transient query from the one Search in the main dock; no stored index.
+let pendingScopedSearch=null;
+window.addEventListener('seyveo:global-search-scope',event=>{
+ const detail=event.detail||{};
+ if(!['mail','contract'].includes(detail.kind))return;
+ const query=String(detail.query||'').trim().slice(0,200);
+ pendingScopedSearch={kind:detail.kind,query,scope:String(detail.scope||'')};
+});
 function persistMailDrafts(){
  try{
   if(mailDrafts.length)sessionStorage.setItem(MAIL_SESSION_DRAFTS_KEY,JSON.stringify(mailDrafts.slice(0,60)));
@@ -487,7 +495,8 @@ function mailView(){
  compose.addEventListener('click',()=>openEditor());
  // Shield opens the compact protection popover beside Compose; Search remains right-aligned.
  // Connection prompt stays below the Personal / Work account switch.
- topButtons.append(compose,searchToggle);
+ // The persistent dock now owns Search. Mail keeps only Compose here.
+ topButtons.append(compose);
  const introCopy=create('div','sv-mail-introduction-text');
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
  // Reuse the original navigation button inside the visible Mail titlebar.
@@ -1761,42 +1770,8 @@ function healthView(){
 }
 /* Documents local search: one header action reuses the existing encrypted-shelf filter. */
 function installDocumentsSearch(){
- const header=title.closest('.sv-deep-top');
- if(!header)return;
- header.querySelector('.sv-doc-head-tools')?.remove();
- if(page.dataset.svSubject!=='contract')return;
- const tools=create('div','sv-doc-head-tools');
- const toggle=create('button','sv-doc-head-icon sv-doc-search-toggle');
- toggle.type='button';
- toggle.setAttribute('aria-label','Поиск по документам');
- toggle.setAttribute('aria-expanded','false');
- toggle.setAttribute('aria-controls','svDocQuickSearch');
- toggle.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg>';
- tools.append(toggle);
- header.append(tools);
- const row=create('label','sv-doc-search-row');
- row.id='svDocQuickSearch';row.hidden=true;
- const glassIcon=document.createElementNS('http://www.w3.org/2000/svg','svg');
- glassIcon.setAttribute('viewBox','0 0 24 24');glassIcon.setAttribute('aria-hidden','true');
- glassIcon.innerHTML='<circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/>';
- const field=create('input','sv-doc-search-field');
- field.type='search';field.placeholder='Поиск по названию документа';
- field.autocomplete='off';field.setAttribute('aria-label','Поиск по файлам в выбранном архиве');
- row.append(glassIcon,field);body.prepend(row);
- const setOpen=open=>{
-  row.hidden=!open;
-  toggle.setAttribute('aria-expanded',String(open));
-  toggle.setAttribute('aria-label',open?'Закрыть поиск документов':'Поиск по документам');
-  if(open)field.focus({preventScroll:true});
-  else{field.value='';window.SEYVEO_DOCUMENT_SHELF?.search?.('');}
- };
- toggle.addEventListener('click',()=>setOpen(row.hidden));
- field.addEventListener('input',()=>window.SEYVEO_DOCUMENT_SHELF?.search?.(field.value));
- field.addEventListener('keydown',event=>{
-  if(event.key==='Escape'){
-   event.preventDefault();setOpen(false);toggle.focus({preventScroll:true});
-  }
- });
+ // Search from the dock feeds the existing encrypted-shelf filter.
+ title.closest('.sv-deep-top')?.querySelector('.sv-doc-head-tools')?.remove();
 }
 function render(kind){
  const descriptor=subjects[kind];if(!descriptor)return false;
@@ -1829,11 +1804,20 @@ function render(kind){
  subject.textContent=descriptor.label;title.textContent=kind==='contract'&&returnDestination?.hash==='#life'?'Личные документы':descriptor.title;intro.textContent=descriptor.intro;
  footer.textContent=kind==='contract'?'Архив с локальным шифрованием — экспериментальная функция. Без облачного восстановления, биометрии и подключённого ИИ. Для особо важных документов используйте проверенное хранилище.':kind==='mail'?'':localOnly;
  footer.hidden=kind==='mail';
+ const scoped=pendingScopedSearch?.kind===kind?pendingScopedSearch:null;
+ if(scoped&&kind==='mail'){
+  mailSearch=scoped.query.toLocaleLowerCase('ru-RU');
+  mailSearchOpen=false;
+  mailFolder=scoped.scope==='drafts'?'drafts':'inbox';
+  mailEditorOpen=false;mailCurrent=null;mailEditingId=null;
+ }
  setArt(kind);body.replaceChildren();
  if(kind==='mail')mailView();
  else if(kind==='contract')documentsView();
  else healthView();
  installDocumentsSearch();
+ if(scoped&&kind==='contract')window.SEYVEO_DOCUMENT_SHELF?.search?.(scoped.query);
+ if(scoped)pendingScopedSearch=null;
  page.classList.remove('sv-deep-enter');
  void page.offsetWidth;page.classList.add('sv-deep-enter');
  return true;
