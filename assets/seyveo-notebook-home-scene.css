@@ -127,3 +127,116 @@ html body dialog#notesDialog.notes-dialog[open] .note-open > canvas.note-paper-p
   border:0!important;box-shadow:none!important;
   filter:none!important;opacity:1!important;
 }
+
+
+/* SEYVEO Notebook · unified square creation tiles, no chooser page (2026-11-10) */
+html body dialog#notesDialog.notes-dialog[open]{
+  box-sizing:border-box!important;
+  position:fixed!important;inset:0!important;margin:0!important;
+  width:100vw!important;max-width:100vw!important;
+  height:100dvh!important;min-height:100dvh!important;max-height:100dvh!important;
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  padding:calc(14px + env(safe-area-inset-top,0px))
+          max(16px,env(safe-area-inset-right,0px))
+          calc(102px + env(safe-area-inset-bottom,0px))
+          max(16px,env(safe-area-inset-left,0px))!important;
+  border:0!important;border-radius:0!important;overflow:hidden!important;
+  background-color:var(--bg)!important;
+  background-image:var(--seyveo-hdr-stage),var(--sv-life-viewport-gradient)!important;
+  background-size:100% 100%,100% 100%!important;
+  background-repeat:no-repeat!important;
+  box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html body dialog#notesDialog.notes-dialog[open] > .seyveo-dialog-close{
+  top:calc(15px + env(safe-area-inset-top,0px))!important;
+  left:max(12px,env(safe-area-inset-left,0px))!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  color:var(--text)!important;
+}
+html body dialog#notesDialog.notes-dialog[open] > .notes-head{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  flex:0 0 45px!important;min-height:45px!important;height:45px!important;
+  margin:0 0 22px!important;padding:0 0 0 44px!important;
+  border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body dialog#notesDialog.notes-dialog[open] > .notes-head > #notesTitle{
+  display:block!important;font-size:22px!important;font-weight:610!important;
+  line-height:1.2!important;letter-spacing:-.035em!important;
+  color:var(--text)!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #notesNew,
+html body dialog#notesDialog.notes-dialog[open] #notesCount{
+  display:none!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles.sv-notebook-create-tiles{
+  box-sizing:border-box!important;display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:11px!important;
+  width:100%!important;max-width:100%!important;
+  margin:0 0 19px!important;padding:0!important;
+  border:0!important;background:transparent!important;
+  flex:0 0 auto!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles > .paper-choice-item{
+  -webkit-appearance:none!important;appearance:none!important;
+  box-sizing:border-box!important;
+  display:flex!important;flex-direction:column!important;
+  justify-content:space-between!important;align-items:flex-start!important;
+  aspect-ratio:1/1!important;
+  width:100%!important;min-width:0!important;min-height:104px!important;
+  height:auto!important;margin:0!important;
+  padding:16px 11px 13px!important;gap:8px!important;
+  background:#38383A!important;background-image:none!important;
+  color:#F7F7F8!important;
+  border:0!important;border-radius:19px!important;box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  text-align:left!important;cursor:pointer!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles .paper-choice-icon{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;
+  flex:0 0 28px!important;margin:0!important;padding:0!important;
+  background:transparent!important;background-image:none!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  color:#F7F7F8!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles .paper-choice-icon svg{
+  display:block!important;width:24px!important;height:24px!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles .paper-choice-copy{
+  display:block!important;min-width:0!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles .paper-choice-copy strong{
+  display:block!important;font-size:12.5px!important;
+  font-weight:600!important;line-height:1.2!important;
+  color:#F7F7F8!important;white-space:normal!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles .paper-choice-copy small{
+  display:none!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles > .paper-choice-item:focus-visible{
+  outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles > .paper-choice-item:active{
+  opacity:.8!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #notesList{
+  flex:1 1 auto!important;min-height:0!important;max-height:none!important;
+  padding:0!important;margin:0!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  scrollbar-width:none!important;overscroll-behavior:contain!important;
+}
+html body dialog#notesDialog.notes-dialog[open] #notesList::-webkit-scrollbar{
+  display:none!important;
+}
+@media(max-width:360px){
+  html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles{gap:8px!important}
+  html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles > .paper-choice-item{
+    padding:13px 10px 11px!important;border-radius:17px!important;min-height:94px!important;
+  }
+  html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles .paper-choice-copy strong{
+    font-size:11.5px!important;
+  }
+}
