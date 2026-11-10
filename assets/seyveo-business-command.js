@@ -1166,7 +1166,7 @@ function renderHistorySearch(){
     window.SEYVEO_UNIFIED_TASKS?.openChat?.('tasks','dm-elena','elena');
     return;
    }
-   window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('preserve');
+   window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
    requestAnimationFrame(()=>focusTask(index));
   });
  }
@@ -2150,7 +2150,7 @@ function cancelTaskDraft(){
  closeTaskRecipientPicker();
 }
 $('svcpChatTaskCancel')?.addEventListener('click',cancelTaskDraft);
-$('svcpOpenTasks')?.addEventListener('click',()=>window.SEYVEO_UNIFIED_TASKS?.openBusiness?.());
+$('svcpOpenTasks')?.addEventListener('click',()=>window.SEYVEO_UNIFIED_TASKS?.openPersonal?.());
 function taskDuplicateKey(task){
  if(!task||task.done||typeof task.text!=='string')return '';
  return (task.assigneeId||'')+'|'+task.text.trim().replace(/\s+/g,' ').toLocaleLowerCase('ru-RU');
@@ -2527,11 +2527,12 @@ function renderTasks(){
   // Consistent explanatory line icons in every context action, not bare text.
   function decorateTaskAction(control,kind){
    const label=control.textContent;
-   const glyph=kind==='sayvi'?el('span','svcp-task-extra-icon sv-sayvi-symbol'):document.createElementNS('http://www.w3.org/2000/svg','svg');
+   const glyph=document.createElementNS('http://www.w3.org/2000/svg','svg');
    glyph.classList.add('svcp-task-extra-icon');
    glyph.setAttribute('aria-hidden','true');
-   if(kind!=='sayvi'){
+   {
     const paths={
+     sayvi:'<path d="M12 2.5 14.5 9.5 21.5 12l-7 2.5L12 21.5l-2.5-7L2.5 12l7-2.5Z"/>',
      discuss:'<path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-3-.55L4 20l1.55-4.3A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8.5 11.5h7"/>',
      delete:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
      accept:'<path d="m5 12 4.5 4.5L19 7"/>',
@@ -2559,9 +2560,9 @@ function renderTasks(){
    });
    if(!opened)setStatus('Не удалось открыть Сэйви. Поручение осталось без изменений.');
   },'svcp-task-sayvi');
-  assist.setAttribute('aria-label','Обсудить с Сэйви поручение: '+t.text);
+  assist.setAttribute('aria-label','Спросить Сэйви о поручении: '+t.text);
   assist.title='Спросить Сэйви';
-  assist.textContent='Сэйви';
+  assist.textContent='Спросить Сэйви';
   const more=btn('',()=>{
    for(const other of list.querySelectorAll('.svcp-task-menu-open')){
     if(other===row)continue;
@@ -2597,7 +2598,7 @@ function renderTasks(){
    extra.append(decorateTaskAction(btn('Принять',()=>resolve(true),'svcp-approval-demo-accept'),'accept'));
    extra.append(decorateTaskAction(btn('Доработать',()=>resolve(false),'svcp-approval-demo-switch'),'rework'));
   }
-  extra.append(decorateTaskAction(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'),'discuss'));
+  extra.append(decorateTaskAction(btn('Обсудить с командой',()=>openTaskDiscussion(t),'svcp-task-discuss'),'discuss'));
   extra.append(decorateTaskAction(btn('Удалить',()=>{
    const updated=state.tasks.filter((_,index)=>index!==i);
    if(!save(TASK_KEY,updated))return;
@@ -2637,7 +2638,7 @@ function renderTasks(){
   const details=el('details','svcp-task-history');
   details.open=wasHistoryOpen;
   const summary=el('summary','svcp-task-history-title');
-  summary.append(el('strong',null,'Выполнено'),el('small',null,String(done.length)),el('span','svcp-history-chevron','›'));
+  summary.append(el('strong',null,'История'),el('small',null,String(done.length)),el('span','svcp-history-chevron','›'));
   details.append(summary);
   const completed=el('div','svcp-task-completed');
   const completedSeen=new Set(),duplicateDone=[];
@@ -2683,7 +2684,7 @@ function returnToTasks(){
  chatsFromTasks=false;
  $('svcpReturnToTasks').hidden=true;
  $('svcpTaskDiscussionQuick').hidden=true;
- window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('preserve');
+ window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
 }
 $('svcpReturnToTasks')?.addEventListener('click',returnToTasks);
 chatRoot.querySelectorAll('[data-svcp-discuss-template]').forEach(button=>button.addEventListener('click',()=>{
