@@ -128,26 +128,15 @@ html.sv-global-search-open #sayviMusicMini{
 #svGlobalSearch .sv-search-result-copy strong{font-weight:570!important}
 #svGlobalSearch .sv-search-header h2{font-weight:650!important}
 
-/* Three search sources, one dock. Native flat segmented selector. */
-#svGlobalSearch .sv-search-modes{
- box-sizing:border-box;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
- gap:3px;width:100%;min-height:46px;padding:3px;margin:12px 0 3px;
- background:#38383A;border:0;border-radius:14px;
- box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
+
+/* One input, intelligent routing. No provider switcher. */
+#svGlobalSearch .sv-search-assistant-hint{
+ margin:12px 7px 8px!important;padding:10px 11px!important;
+ border:0!important;border-radius:11px!important;
+ background:#303236!important;box-shadow:none!important;
+ color:#D5D9DC!important;font:450 12px/1.45
+  -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
-#svGlobalSearch .sv-search-modes button{
- box-sizing:border-box;min-width:0;min-height:40px;margin:0;padding:7px 4px;
- background:transparent;border:0;border-radius:11px;color:#C9CDD1;
- box-shadow:none;font:570 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
- -webkit-tap-highlight-color:transparent;cursor:pointer;
-}
-#svGlobalSearch .sv-search-modes button[aria-pressed="true"]{
- background:#505053;color:#FAFAFB;font-weight:650;
-}
-#svGlobalSearch .sv-search-modes button:focus-visible{
- outline:2px solid #F2F3F5;outline-offset:-2px;border-radius:11px;
-}
-#svGlobalSearch .sv-search-next-steps{margin-top:8px}
-#svGlobalSearch .sv-search-next-steps>.sv-search-empty{
- margin:12px 6px 10px;line-height:1.45;
-}
+#svGlobalSearch .sv-search-header{margin-bottom:12px!important}
+#svGlobalSearch .sv-search-results{margin-top:9px!important}
+#svGlobalSearch .sv-search-result-arrow{font-size:17px!important}
