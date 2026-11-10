@@ -1303,7 +1303,12 @@ function mailView(){
   if(explicit)return explicit;
   const body=String(draft.body||'').split(/\r?\n/).map(s=>s.trim().replace(/\s+/g,' ')).find(Boolean);
   if(body)return body.slice(0,105);
-  if(draft.attachments?.length)return 'Черновик с вложениями';
+  if(draft.attachments?.length){
+   // Display the actual first saved file name, not five indistinguishable drafts.
+   // File names are text only and are never interpreted as HTML.
+   const first=String(draft.attachments[0]?.name||'').split(/[\\/]/).pop().trim().replace(/\s+/g,' ');
+   return first?first.slice(0,105):'Файл без названия';
+  }
   return 'Письмо без темы';
  }
  function removeSelectedDrafts(ids){
@@ -1329,9 +1334,10 @@ function mailView(){
    [d.to,d.subject,d.body].join(' ').toLocaleLowerCase('ru').includes(mailSearch)));
   // A single selection control replaces repetitive trash cans on every line.
   const toolbar=create('div','sv-mail-drafts-bar');
-  const countLabel=create('strong','sv-mail-drafts-count',mailSearch
-   ?'Найдено: '+list.length
-   :'Черновиков: '+list.length);
+  const chosenVisible=list.filter(d=>selectedDraftIds.has(d.id)).length;
+  const countLabel=create('strong','sv-mail-drafts-count',mailDraftSelecting
+   ?'Выбрано: '+chosenVisible+' из '+list.length
+   :mailSearch?'Найдено: '+list.length:'Черновиков: '+list.length);
   const change=create('button','sv-mail-drafts-select',mailDraftSelecting?'Готово':'Выбрать');
   change.type='button';change.setAttribute('aria-pressed',String(mailDraftSelecting));
   change.addEventListener('click',()=>{
@@ -1340,6 +1346,17 @@ function mailView(){
    paintList();
   });
   toolbar.append(countLabel);
+  if(mailDraftSelecting&&list.length){
+   const allChosen=list.every(d=>selectedDraftIds.has(d.id));
+   const all=create('button','sv-mail-drafts-all',allChosen?'Снять всё':'Выбрать все');
+   all.type='button';
+   all.addEventListener('click',()=>{
+    if(allChosen)for(const item of list)selectedDraftIds.delete(item.id);
+    else for(const item of list)selectedDraftIds.add(item.id);
+    paintList();
+   });
+   toolbar.append(all);
+  }
   if(list.length)toolbar.append(change);
   content.append(toolbar);
   if(!list.length){
@@ -1350,7 +1367,10 @@ function mailView(){
   const group=create('div','sv-mail-drafts-group');content.append(group);
   for(const draft of list){
    const row=create('div','sv-mail-draft-row');
-   if(mailDraftSelecting)row.classList.add('is-selecting');
+   if(mailDraftSelecting){
+    row.classList.add('is-selecting');
+    if(selectedDraftIds.has(draft.id))row.classList.add('is-selected');
+   }
    const edit=create('button','sv-mail-draft-content');edit.type='button';
    const display=draftDisplayName(draft);
    edit.setAttribute('aria-label',mailDraftSelecting
@@ -1359,6 +1379,7 @@ function mailView(){
    if(mailDraftSelecting)edit.setAttribute('aria-pressed',String(selectedDraftIds.has(draft.id)));
    const title=create('strong','sv-mail-draft-title',display);title.title=display;
    if(!draft.subject)title.classList.add('is-untitled');
+   if(!draft.subject?.trim()&&!draft.body?.trim()&&draft.attachments?.length)title.classList.add('is-file-title');
    const details=create('span','sv-mail-draft-details');
    details.append(create('span','sv-mail-account-tag sv-mail-draft-account',mailAccountName(draft.account)));
    if(draft.attachments?.length){
@@ -1445,7 +1466,7 @@ function mailView(){
    const bottom=create('div','sv-mail-drafts-selection-actions');
    const chosen=selectedDraftIds.size;
    const remove=create('button','sv-mail-drafts-remove-selected',
-    chosen?'Удалить выбранные · '+chosen:'Выберите черновики');
+    chosen?'Удалить · '+chosen:'Выберите черновики');
    remove.type='button';remove.disabled=!chosen;
    remove.addEventListener('click',()=>{if(chosen)removeSelectedDrafts([...selectedDraftIds])});
    bottom.append(remove);content.append(bottom);
