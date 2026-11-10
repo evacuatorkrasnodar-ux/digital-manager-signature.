@@ -167,38 +167,25 @@ function mount(target,{
  if(!target)return false;
  const editor=$('section','sv-doc-tools');
  editor.append($('h2','sv-doc-tools-heading','Быстрые действия'));
- const wide=button('Сканировать',()=>open('scan'),'sv-doc-tool-scan');
- wide.append($('span','sv-doc-tool-scan-desc','Фото и страницы в PDF'),art('scan'));
- // Vector artwork is a visual guide, not fake camera capture or OCR.
- // It lives inside the real scan button and does not intercept touches.
- const scanPicture=$('span','sv-doc-scan-illustration');
- scanPicture.setAttribute('aria-hidden','true');
- scanPicture.innerHTML='<svg viewBox="0 0 196 112" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">'+
-  '<defs><linearGradient id="svDocScanPaper" x1="0" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#d6edf0" stop-opacity=".8"/><stop offset=".55" stop-color="#9ecbcd" stop-opacity=".45"/><stop offset="1" stop-color="#79bfc0" stop-opacity=".2"/></linearGradient></defs>'+
-  '<path d="M53 27l105-11c4-.5 6 1 5 5l-24 84-99-2z" fill="rgba(177,213,217,.17)" stroke="rgba(185,233,234,.42)" stroke-width="1.5"/>'+
-  '<path d="M45 9l103-7c4-.3 5 2 4 6l-25 91-100-1z" fill="url(#svDocScanPaper)" stroke="#c0e7e8" stroke-opacity=".83" stroke-width="1.6"/>'+
-  '<path d="M65 31l48-3M61 45l57-3M57 59l45-2M53 74l54-1M49 87l30 1" stroke="#d5f2f1" stroke-opacity=".68" stroke-width="2" stroke-linecap="round"/>'+
-  '<path d="M19 23v-11h12M170 89v11h-12" stroke="#c7f2ed" stroke-width="2" stroke-linecap="round" fill="none"/>'+
-  '<path d="M19 54h148" stroke="#8fe4d3" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>'+
-  '</svg>';
- wide.append(scanPicture);
- wide.setAttribute('aria-label','Сканировать документ: сфотографировать страницы и сохранить PDF');
+ // Five working document actions, one balanced iPhone row.
  const grid=$('div','sv-doc-tool-grid');
+ const scan=button('Сканер',()=>open('scan'),'sv-doc-tool-button sv-doc-tool-scan');
+ scan.dataset.action='scan';
+ scan.setAttribute('aria-label','Сканировать документ: сфотографировать страницы и сохранить PDF');
+ scan.append(art('scan'));grid.append(scan);
  const items=[
-  ['Добавить файл','file',()=>onPick()],
+  ['Добавить','file',()=>onPick()],
   ['Создать','create',()=>open('create')],
   ['Подписать','sign',()=>open('sign')],
   ['Печать','print',()=>open('print')]
-  // PDF and Word creation remains accessible inside «Создать».
-  // The former PDF ⇄ Word tile was misleading: it never converted files.
  ];
  for(const [label,key,action] of items){
-  const el=button(label,action,'sv-doc-tool-'+key);
-  el.dataset.action=key;el.append(art(key));grid.append(el);
+  const control=button(label,action,'sv-doc-tool-button sv-doc-tool-'+key);
+  control.dataset.action=key;control.append(art(key));grid.append(control);
  }
  const panel=$('section','sv-doc-tool-panel');panel.hidden=true;
  panel.setAttribute('aria-label','Инструменты документов');
- editor.append(wide,grid,panel);target.append(editor);
+ editor.append(grid,panel);target.append(editor);
  let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='';
  const clear=()=>{
   panel.replaceChildren();cleanUrls();
