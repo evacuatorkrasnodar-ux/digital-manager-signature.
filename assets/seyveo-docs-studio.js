@@ -32,6 +32,21 @@ const PICTOGRAMS=Object.freeze({
  export:'<path d="M16 24v29h34V24M33 7v31M23 17l10-10 10 10" class="sv-doc-art-accent"/>',
  check:'<path d="M14 32l12 12 24-25" class="sv-doc-art-accent"/><circle cx="32" cy="32" r="25"/>'
 });
+/* Small, consistent iOS-style line icons for the five document actions.
+   Full-feature editor illustrations elsewhere retain their existing art. */
+const TOOL_LINES=Object.freeze({
+ scan:'<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M7 12h10M9 8h6v8H9z"/>',
+ file:'<path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v6h5M12 12v6M9 15h6"/>',
+ create:'<path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="M8 8h5M8 12h3M13 17l1-4 5-5 3 3-5 5-4 1ZM17 10l3 3"/>',
+ sign:'<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M7 9h10M7 12h7M6 17c2-3 2 2 4 0 2-2 2 1 4 0 2-2 2 0 4-1"/>',
+ print:'<path d="M6 9V3h12v6M6 17H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6zM9 17h6"/>'
+});
+function toolArt(kind){
+ const wrap=$('span','sv-doc-tool-icon');
+ wrap.setAttribute('aria-hidden','true');
+ wrap.innerHTML='<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round">'+(TOOL_LINES[kind]||'')+'</svg>';
+ return wrap;
+}
 function art(kind,small=false){
  const node=$('span','sv-doc-art'+(small?' sv-doc-art-small':''));
  node.setAttribute('aria-hidden','true');
@@ -172,7 +187,7 @@ function mount(target,{
  const scan=button('Сканер',()=>open('scan'),'sv-doc-tool-button sv-doc-tool-scan');
  scan.dataset.action='scan';
  scan.setAttribute('aria-label','Сканировать документ: сфотографировать страницы и сохранить PDF');
- scan.append(art('scan'));grid.append(scan);
+ scan.append(toolArt('scan'));grid.append(scan);
  const items=[
   ['Добавить','file',()=>onPick()],
   ['Создать','create',()=>open('create')],
@@ -181,7 +196,7 @@ function mount(target,{
  ];
  for(const [label,key,action] of items){
   const control=button(label,action,'sv-doc-tool-button sv-doc-tool-'+key);
-  control.dataset.action=key;control.append(art(key));grid.append(control);
+  control.dataset.action=key;control.append(toolArt(key));grid.append(control);
  }
  const panel=$('section','sv-doc-tool-panel');panel.hidden=true;
  panel.setAttribute('aria-label','Инструменты документов');
