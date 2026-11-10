@@ -46,7 +46,7 @@ html body #seyveoCompanyDialog[open] :is(.sv-company-actions[hidden],.sv-company
 /* Higher specificity than the legacy fullscreen header's 44px left inset. */
 html body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-dialog-head{
  box-sizing:border-box!important;
- position:sticky!important;top:0!important;z-index:12!important;
+ position:relative!important;top:auto!important;z-index:2!important;
  display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;
  column-gap:4px!important;row-gap:0!important;align-items:center!important;
  width:100%!important;max-width:100%!important;
@@ -111,19 +111,27 @@ html body #seyveoCompanyDialog[open] #seyveoCompanyEditTop.is-header-action svg{
 }
 html body #seyveoCompanyDialog[open] #seyveoCompanyEditTop[hidden]{display:none!important}
 
+/* Empty state remains in normal layout flow: no fixed overlay or extra sheet. */
+html body #seyveoCompanyDialog.seyveo-passport-modal[open][data-sv-company-mode="view"][data-sv-company-filled="false"]{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+}
+html body #seyveoCompanyDialog[open] :is(.seyveo-passport-dialog-head,.sv-company-empty-mark)::before,
+html body #seyveoCompanyDialog[open] :is(.seyveo-passport-dialog-head,.sv-company-empty-mark)::after{
+ content:none!important;display:none!important;
+}
 /* Empty state: retain the original document illustration and one purposeful action. */
 /* Keep only the illustration, message and CTA in the visible viewport center. */
 html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view:not([hidden]){
- position:fixed!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
- transform:translate(-50%,-50%)!important;
- display:flex!important;flex-direction:column!important;
+ position:static!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+ transform:none!important;
+ display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
  align-items:center!important;justify-content:center!important;
  box-sizing:border-box!important;
- height:auto!important;min-height:0!important;max-height:calc(100dvh - 110px)!important;
- width:calc(100vw - 28px)!important;max-width:360px!important;
- margin:0!important;padding:0 14px!important;
- overflow-x:hidden!important;overflow-y:auto!important;
- gap:14px!important;text-align:center!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ width:100%!important;max-width:360px!important;
+ margin:auto!important;padding:10px 14px 42px!important;
+ overflow:visible!important;
+ gap:13px!important;text-align:center!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
 html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] 
@@ -133,14 +141,16 @@ html body #seyveoCompanyDialog[open][data-sv-company-filled="false"]
 html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-empty-mark:not([hidden]){
  display:grid!important;place-items:center!important;
  box-sizing:border-box!important;
- width:80px!important;height:80px!important;flex:0 0 80px!important;
- margin:0 0 2px!important;padding:0!important;
- border:0!important;border-radius:22px!important;
- background:#38383A!important;color:#E9ECEE!important;box-shadow:none!important;
+ width:66px!important;height:66px!important;flex:0 0 66px!important;
+ margin:0 0 4px!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ color:#E9ECEE!important;box-shadow:none!important;
+ filter:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html body #seyveoCompanyDialog[open] .sv-company-empty-mark svg{
- display:block!important;width:42px!important;height:42px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ display:block!important;width:49px!important;height:49px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] #seyveoCompanyNotFilled{
