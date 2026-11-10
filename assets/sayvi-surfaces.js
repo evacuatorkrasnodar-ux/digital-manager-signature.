@@ -200,7 +200,10 @@ function readMailSessionDrafts(){
    .slice(0,60).map(d=>({
     id:d.id.slice(0,100),account:['personal','business'].includes(d.account)?d.account:'',
     to:String(d.to||'').slice(0,254),subject:String(d.subject||'').slice(0,240),
-    body:String(d.body||'').slice(0,10000)
+    body:String(d.body||'').slice(0,10000),
+    attachments:Array.isArray(d.attachments)?d.attachments.filter(a=>a&&typeof a.id==='string'&&typeof a.name==='string')
+     .slice(0,5).map(a=>({id:a.id.slice(0,90),name:a.name.slice(0,150),
+      size:Math.max(0,Number(a.size)||0),type:String(a.type||'').slice(0,110)})):[]
    }));
  }catch{return []}
 }
@@ -210,6 +213,75 @@ function persistMailDrafts(){
   if(mailDrafts.length)sessionStorage.setItem(MAIL_SESSION_DRAFTS_KEY,JSON.stringify(mailDrafts.slice(0,60)));
   else sessionStorage.removeItem(MAIL_SESSION_DRAFTS_KEY);
  }catch{} // The live editor remains usable if storage is unavailable.
+}
+/* Attachments are real user-selected blobs, stored only in this browser.
+   IndexedDB keeps them with the local draft; nothing is transmitted. */
+const MAIL_ATTACHMENT_DB='seyveo-mail-attachments-v1';
+let mailAttachmentDbPromise=null;
+const mailOpenFiles=new Map();
+function mailAttachmentKey(draftId,fileId){return draftId+'::'+fileId}
+function mailAttachmentDb(){
+ if(!mailAttachmentDbPromise)mailAttachmentDbPromise=new Promise(resolve=>{
+  if(typeof indexedDB==='undefined'){resolve(null);return}
+  let request;
+  try{request=indexedDB.open(MAIL_ATTACHMENT_DB,1)}catch{resolve(null);return}
+  request.onupgradeneeded=()=>{
+   if(!request.result.objectStoreNames.contains('files'))request.result.createObjectStore('files');
+  };
+  request.onsuccess=()=>{
+   const db=request.result;
+   // Remove abandoned local file blobs after one week of inactivity.
+   try{
+    const tx=db.transaction('files','readwrite'),store=tx.objectStore('files');
+    const cursor=store.openCursor();
+    cursor.onsuccess=()=>{
+     const current=cursor.result;if(!current)return;
+     if(Date.now()-Number(current.value?.savedAt||0)>7*86400000)current.delete();
+     current.continue();
+    };
+   }catch{}
+   resolve(db);
+  };
+  request.onerror=()=>resolve(null);
+  request.onblocked=()=>resolve(null);
+ });
+ return mailAttachmentDbPromise;
+}
+async function saveMailAttachment(draftId,fileId,file){
+ const key=mailAttachmentKey(draftId,fileId);
+ const db=await mailAttachmentDb();if(!db)return false;
+ return new Promise(resolve=>{
+  try{
+   const tx=db.transaction('files','readwrite');
+   tx.objectStore('files').put({blob:file,savedAt:Date.now()},key);
+   tx.oncomplete=()=>{mailOpenFiles.set(key,file);resolve(true)};
+   tx.onerror=()=>resolve(false);tx.onabort=()=>resolve(false);
+  }catch{resolve(false)}
+ });
+}
+async function readMailAttachment(draftId,fileId){
+ const key=mailAttachmentKey(draftId,fileId);
+ if(mailOpenFiles.has(key))return mailOpenFiles.get(key);
+ const db=await mailAttachmentDb();if(!db)return null;
+ return new Promise(resolve=>{
+  try{
+   const req=db.transaction('files','readonly').objectStore('files').get(key);
+   req.onsuccess=()=>{
+    const file=req.result?.blob||null;
+    if(file)mailOpenFiles.set(key,file);
+    resolve(file);
+   };
+   req.onerror=()=>resolve(null);
+  }catch{resolve(null)}
+ });
+}
+async function deleteMailAttachment(draftId,fileId){
+ const key=mailAttachmentKey(draftId,fileId);
+ mailOpenFiles.delete(key);
+ const db=await mailAttachmentDb();if(!db)return;
+ try{
+  db.transaction('files','readwrite').objectStore('files').delete(key);
+ }catch{}
 }
 const mailAccountName=account=>account==='business'?'Рабочая':account==='personal'?'Личная':'Не выбрана';
 const mailVisible=account=>mailScope==='all'||account===mailScope;
@@ -339,6 +411,8 @@ function mailView(){
   openEditor(id);
  }
  function removeDraft(id){
+  const old=mailDrafts.find(d=>d.id===id);
+  for(const item of old?.attachments||[])void deleteMailAttachment(id,item.id);
   mailDrafts=mailDrafts.filter(d=>d.id!==id);persistMailDrafts();
   mailEditingId=null;mailEditorOpen=false;mailFolder='drafts';paint();
  }
@@ -375,25 +449,118 @@ function mailView(){
   }
   accountField.append(senderCaption,senderOptions);form.append(accountField);refreshAccount();
   const makeField=(labelText,name,tag,value,type)=>{
-   const label=create('label','sv-mail-field');
+   const label=create(tag==='textarea'?'div':'label','sv-mail-field');
    label.append(create('span','sv-mail-field-label',labelText));
    const input=create(tag,'sv-mail-input');input.dataset.mailField=name;
    if(type)input.type=type;
-   if(tag==='textarea')input.rows=6;
+   if(tag==='textarea'){input.rows=6;input.setAttribute('aria-label',labelText)}
    input.maxLength=name==='body'?10000:name==='to'?254:240;input.value=value||'';
    label.append(input);form.append(label);return input;
   };
   const to=makeField('Кому','to','input',original?.to,'email');
   const subj=makeField('Тема','subject','input',original?.subject,'text');
   const message=makeField('Сообщение','body','textarea',original?.body);
+  const attachmentPicker=create('input','sv-mail-attachment-picker');
+  attachmentPicker.type='file';attachmentPicker.hidden=true;attachmentPicker.multiple=true;
+  attachmentPicker.accept='.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.webp';
+  attachmentPicker.setAttribute('aria-label','Выбрать вложения из файлов телефона');
+  form.append(attachmentPicker);
+  const attachButton=iconButton('paperclip','Прикрепить файл',()=>attachmentPicker.click());
+  attachButton.classList.add('sv-mail-attach-trigger');
+  const messageField=message.parentElement;
+  const attachHeader=create('div','sv-mail-attach-heading');
+  attachHeader.append(messageField.querySelector('.sv-mail-field-label'),attachButton);
+  messageField.insertBefore(attachHeader,message);
+  const attachmentList=create('div','sv-mail-attached-list');
+  attachmentList.setAttribute('aria-label','Прикреплённые файлы');
+  form.append(attachmentList);
+  const filePreview=create('dialog','sv-mail-file-preview');
+  filePreview.setAttribute('aria-label','Просмотр вложения');
+  const filePreviewHead=create('div','sv-mail-file-preview-head');
+  const filePreviewTitle=create('strong','sv-mail-file-preview-name');
+  const filePreviewClose=iconButton('back','Закрыть просмотр',()=>filePreview.close());
+  filePreviewHead.append(filePreviewClose,filePreviewTitle);
+  const filePreviewContent=create('div','sv-mail-file-preview-content');
+  filePreview.append(filePreviewHead,filePreviewContent);
+  form.append(filePreview);
+  let filePreviewUrl=null;
+  filePreview.addEventListener('close',()=>{
+   filePreviewContent.replaceChildren();
+   if(filePreviewUrl){URL.revokeObjectURL(filePreviewUrl);filePreviewUrl=null}
+  });
   const status=create('p','sv-mail-feedback');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
   // One stable draft ID: every keystroke updates the same local draft.
   const draftId=original?.id||'mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
+  let attachments=[...(original?.attachments||[])];
+  const attachmentSize=n=>n>=1048576?(n/1048576).toFixed(1)+' МБ':Math.max(1,Math.round(n/1024))+' КБ';
+  const showFile=async entry=>{
+   const file=await readMailAttachment(draftId,entry.id);
+   if(!file){status.textContent='Файл больше не доступен на устройстве. Прикрепите его снова.';return}
+   filePreviewTitle.textContent=entry.name;
+   filePreviewContent.replaceChildren();
+   const extension=entry.name.split('.').pop().toLowerCase();
+   filePreviewUrl=URL.createObjectURL(file);
+   if(['jpg','jpeg','png','webp'].includes(extension)){
+    const img=create('img','sv-mail-file-image');img.alt=entry.name;img.src=filePreviewUrl;
+    filePreviewContent.append(img);
+   }else if(extension==='pdf'){
+    const frame=create('iframe','sv-mail-file-frame');frame.title=entry.name;
+    frame.src=filePreviewUrl;filePreviewContent.append(frame);
+   }else{
+    filePreviewContent.append(create('p','sv-mail-file-preview-note','Для этого формата доступно скачивание.'));
+   }
+   const download=create('a','sv-mail-file-download','Сохранить файл');
+   download.href=filePreviewUrl;download.download=entry.name;
+   filePreviewContent.append(download);
+   if(typeof filePreview.showModal==='function')filePreview.showModal();
+   else filePreview.setAttribute('open','');
+  };
+  function renderAttachments(){
+   attachmentList.replaceChildren();
+   attachmentList.hidden=!attachments.length;
+   for(const entry of attachments){
+    const row=create('div','sv-mail-attached-item');
+    const view=iconButton('paperclip','Открыть вложение '+entry.name,()=>{void showFile(entry)});
+    view.classList.add('sv-mail-attached-preview');
+    const meta=create('div','sv-mail-attached-meta');
+    meta.append(create('span','sv-mail-attached-name',entry.name),
+      create('small','sv-mail-attached-size',attachmentSize(entry.size)));
+    const remove=iconButton('trash','Убрать вложение '+entry.name,()=>{
+     attachments=attachments.filter(a=>a.id!==entry.id);
+     void deleteMailAttachment(draftId,entry.id);
+     autosaveDraft();renderAttachments();
+     status.textContent='Вложение убрано из черновика.';
+    });
+    remove.classList.add('sv-mail-attached-remove');
+    row.append(view,meta,remove);attachmentList.append(row);
+   }
+  }
+  attachmentPicker.addEventListener('change',async()=>{
+   const chosen=Array.from(attachmentPicker.files||[]);
+   attachmentPicker.value='';
+   for(const file of chosen){
+    const extension=file.name.split('.').pop().toLowerCase();
+    if(!['pdf','doc','docx','xls','xlsx','txt','csv','png','jpg','jpeg','webp'].includes(extension)){
+     status.textContent='Этот формат пока не поддерживается. Выберите документ, PDF или изображение.';continue;
+    }
+    if(file.size>10*1048576){status.textContent='Размер одного вложения — не более 10 МБ.';continue}
+    if(attachments.length>=5||attachments.reduce((sum,a)=>sum+a.size,0)+file.size>20*1048576){
+     status.textContent='Можно добавить до 5 файлов общим размером до 20 МБ.';continue;
+    }
+    const id='mf-'+Date.now()+'-'+Math.random().toString(36).slice(2,9);
+    const stored=await saveMailAttachment(draftId,id,file);
+    if(!stored){status.textContent='Не удалось сохранить файл в браузере. Проверьте свободное место.';continue}
+    attachments.push({id,name:file.name.slice(0,150),size:file.size,type:file.type||''});
+    autosaveDraft();renderAttachments();
+    status.textContent='Файл добавлен в черновик. Для настоящей отправки нужно подключить почту.';
+   }
+  });
+  renderAttachments();
   function autosaveDraft(){
    const recipient=to.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
-   if(!recipient&&!subjectText&&!bodyText&&!original)return false;
+   if(!recipient&&!subjectText&&!bodyText&&!attachments.length&&!original)return false;
    const item={id:draftId,account:original?.account||accountValue||'',
-    to:recipient.slice(0,254),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000)};
+    to:recipient.slice(0,254),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000),attachments:attachments.map(a=>({...a}))};
    const index=mailDrafts.findIndex(d=>d.id===draftId);
    if(index<0)mailDrafts.unshift(item);else mailDrafts[index]=item;
    persistMailDrafts();
@@ -508,7 +675,7 @@ function mailView(){
   const message=create('p','sv-mail-detail-text',item.body);panel.append(message);
   if(item.attachment){
    const example=create('div','sv-mail-attachment');
-   example.append(mailIcon('paperclip'),create('span','','Пример вложения · файла нет'));
+   example.append(mailIcon('paperclip'),create('span','','Образец письма · настоящее вложение отсутствует'));
    panel.append(example);
   }
   const actions=create('div','sv-mail-detail-actions');
@@ -595,6 +762,7 @@ function mailView(){
    edit.type='button';edit.append(create('strong','',draft.subject||'Без темы'));
    edit.append(create('small','',draft.to?'Кому: '+draft.to:'Адресат не указан'));
    edit.append(create('small','sv-mail-account-tag',mailAccountName(draft.account)));
+   if(draft.attachments?.length)edit.append(create('small','sv-mail-draft-attachment-count','Вложений: '+draft.attachments.length));
    edit.addEventListener('click',()=>editDraft(draft.id));
    const remove=iconButton('trash','Удалить черновик',()=>removeDraft(draft.id));
    row.append(edit,remove);content.append(row);
