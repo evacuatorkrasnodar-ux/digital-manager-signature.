@@ -95,7 +95,7 @@ function paint(state){
  state.recentGrid.replaceChildren();
  // Sample icons are a format picker, not invented 'recent documents'.
  const showingFormats=!subset.length&&!state.query&&state.filter==='all'&&(!state.unlocked||all.length===0);
- state.recentTitle.textContent=showingFormats?'Форматы':'Недавние';
+ state.recentTitle.textContent=showingFormats?'Форматы файлов':'Недавние';
  const hasMore=filtered.length>4;
  state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
  state.showAll.setAttribute('aria-label',state.expanded?'Свернуть список документов':'Показать все документы');
@@ -106,16 +106,16 @@ function paint(state){
    card.setAttribute('aria-label','Добавить '+example.format);
    card.append(documentArt(example.type,example.format),
     el('strong','sv-doc-recent-name',example.name));
-   card.addEventListener('click',()=>state.options.onPick?.());
+   card.addEventListener('click',()=>state.options.onPick?.(example.type));
    state.recentGrid.append(card);
   }
  }else if(!subset.length&&!state.unlocked&&!state.query&&state.filter==='all'){
   for(const example of examples){
    const card=el('button','sv-doc-recent-card sv-doc-example-card');
-   card.type='button';card.setAttribute('aria-label','Открыть архив для '+example.format);
+   card.type='button';card.setAttribute('aria-label','Выбрать файл '+example.format);
    card.append(documentArt(example.type,example.format),
     el('strong','sv-doc-recent-name',example.name));
-   card.addEventListener('click',()=>openArchive(state));
+   card.addEventListener('click',()=>state.options.onPick?.(example.type));
    state.recentGrid.append(card);
   }
  }else if(!subset.length){
