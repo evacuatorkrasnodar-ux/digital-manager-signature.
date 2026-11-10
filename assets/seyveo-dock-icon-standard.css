@@ -170,33 +170,8 @@ html body #sayviMusicMini .sv-music-mini-transport > button > svg{
  :root{--sv-dock-master-icon:22px;}
 }
 
-/* v5 · Three-dock on-device visual correction: Home, Notes and Music.
-   Match the approved Notes material across both floating capsules.
-   Never alter placement, grid, fixed docking or touch area geometry. */
-:root:not([data-theme="light"]) body footer.dock.sv-shared-dock::before,
-:root:not([data-theme="light"]) body footer.dock.sv-shared-dock::after,
-:root:not([data-theme="light"]) body #noteReviewDialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
-:root:not([data-theme="light"]) body #noteReviewDialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
- background:#38383A!important;
- background-image:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- box-shadow:none!important;
-}
-:root[data-theme="light"] body footer.dock.sv-shared-dock::before,
-:root[data-theme="light"] body footer.dock.sv-shared-dock::after,
-:root[data-theme="light"] body #noteReviewDialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
-:root[data-theme="light"] body #noteReviewDialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
- background:#E4E7E9!important;
- background-image:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- box-shadow:none!important;
-}
+/* Capsule material is intentionally owned by the original dock styles.
+   Do not override the approved finish here: this file styles ICONS only. */
 /* Disabled transport arrows are visibly quieter, not invisible.
    Existing aria-disabled handling remains authoritative. */
 html body footer.dock.seyveo-music-dock
