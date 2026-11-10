@@ -642,7 +642,7 @@
 }
 #sayviSurfacePage textarea.sv-mail-input{min-height:150px;resize:vertical;line-height:1.5}
 #sayviSurfacePage .sv-mail-editor .sv-mail-field{
- display:grid;grid-template-columns:80px minmax(0,1fr);align-items:center;gap:9px;
+ display:grid;grid-template-columns:54px minmax(0,1fr);align-items:center;gap:8px;
  min-height:48px;margin:0;padding:3px 0;border-bottom:1px solid var(--sv-velvet-divider);
 }
 #sayviSurfacePage .sv-mail-editor .sv-mail-field-label{
@@ -664,7 +664,7 @@
  border-bottom:1px solid color-mix(in srgb,var(--seyveo-emerald) 38%,transparent);
 }
 #sayviSurfacePage .sv-mail-editor .sv-mail-field:has(textarea){
- display:flex;flex:0 0 auto;flex-direction:column;align-items:stretch;gap:5px;
+ display:flex;flex:0 0 auto;flex-direction:column;align-items:stretch;gap:4px;
  min-height:0;padding:9px 0 3px;border-bottom:1px solid transparent;
 }
 #sayviSurfacePage .sv-mail-editor textarea.sv-mail-input{
@@ -1914,9 +1914,9 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayv
  padding-top:10px!important;
 }
 #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor textarea.sv-mail-input{
- height:clamp(156px,22dvh,205px)!important;
- min-height:156px!important;max-height:260px!important;
- resize:vertical!important;
+ height:clamp(240px,43dvh,420px)!important;
+ min-height:240px!important;max-height:420px!important;
+ resize:none!important;overflow-y:auto!important;
 }
 #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions{
  margin-top:6px!important;padding-top:10px!important;
@@ -2367,4 +2367,40 @@ html body #sayviSurfacePage[data-sv-subject="mail"] :is(
  border:0!important;border-radius:14px!important;
  background:#38383A!important;color:#F1F3F5!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+
+/* SEYVEO Mail · iPhone compose reading area, 2026-11-10.
+   Long addresses/topics start near their labels; text body gets its own
+   full-width, tall writing space instead of a small resizable textarea. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor .sv-mail-field:not(:has(textarea)){
+ grid-template-columns:54px minmax(0,1fr)!important;
+ column-gap:8px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor :is(input,textarea).sv-mail-input{
+ min-width:0!important;box-sizing:border-box!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor .sv-mail-field:has(textarea){
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ gap:4px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor textarea.sv-mail-input{
+ width:100%!important;min-width:0!important;
+ height:clamp(240px,43dvh,420px)!important;
+ min-height:240px!important;max-height:420px!important;
+ padding:8px 0!important;
+ line-height:1.53!important;
+ resize:none!important;overflow-y:auto!important;
+ overflow-wrap:anywhere!important;white-space:pre-wrap!important;
+ -webkit-overflow-scrolling:touch;
+}
+@media(max-height:650px){
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor textarea.sv-mail-input{
+  height:clamp(190px,37dvh,260px)!important;
+  min-height:190px!important;max-height:260px!important;
+ }
+}
+@media(min-width:650px) and (pointer:fine){
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor textarea.sv-mail-input{
+  resize:vertical!important;
+ }
 }
