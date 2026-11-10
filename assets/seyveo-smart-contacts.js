@@ -116,7 +116,7 @@
    legend.append(make('strong','','Доступ для Сэйви'),make('small','','Отдельно для личной и рабочей почты'));
    page.append(legend);
    const choices=make('div','svmc-choices');
-   const status=make('p','svmc-status','Настройки сохраняются автоматически. Доступ запрашивается отдельно.');status.setAttribute('role','status');
+   const status=make('p','svmc-status','Выбор сохраняется автоматически.');status.setAttribute('role','status');
    for(const [key,data] of Object.entries(infoText)){
     const label=make('label','svmc-option');
     label.append(pict(ICON[data.icon]));
@@ -130,7 +130,7 @@
      const previous={...preferences[selected]};
      preferences[selected]={...staged[selected],configured:true};
      if(save()){
-      status.textContent='Настройка сохранена. Разрешения на импорт запрашиваются отдельно.';
+      status.textContent='Выбор сохранён. Подключения и разрешения оформляются отдельно.';
       if(typeof onSaved==='function')onSaved(selected);
      }else{
       preferences[selected]=previous;
@@ -142,18 +142,18 @@
    page.append(choices,status);
    const preview=make('section','svmc-preview');
    const previewHead=make('div','svmc-preview-head');
-   previewHead.append(make('strong','','Пример списка'),make('small','','Предварительный вид'));
+   previewHead.append(make('strong','','Как будут выглядеть контакты'),make('small','','Пример · не импортировано'));
    preview.append(previewHead);
    for(const item of SAMPLES[selected]){
     const row=make('div','svmc-person');
     row.append(make('span','svmc-avatar',item.initial));
     const main=make('div','svmc-person-main');
-    main.append(make('strong','',item.name),make('small','',item.note));
+    main.append(make('strong','',item.name));
     row.append(main,make('span','svmc-group',item.category));
     preview.append(row);
    }
    page.append(preview);
-   const note=make('p','svmc-note','Импорт — только после отдельного разрешения. Сэйви предложит проверить совпадения, не изменяя оригиналы.');
+   const note=make('p','svmc-note','При будущем импорте оригиналы останутся у владельца. Объединение совпадений — только после подтверждения.');
    page.append(note);
   }
   return Object.freeze({
