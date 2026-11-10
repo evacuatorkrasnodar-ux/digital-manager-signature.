@@ -494,3 +494,31 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions .sv-mai
   width:calc(100vw - 26px)!important;max-width:310px!important;
  }
 }
+
+/* SEYVEO Mail · secondary folder navigation v6.
+   Active folder has the same subtle underline language as top folders. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders{
+ align-items:center!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link{
+ box-sizing:border-box!important;position:relative!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ min-height:44px!important;
+ margin:0!important;padding:7px 3px 10px!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;background:transparent!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[aria-current="page"]{
+ color:var(--text,#f2f3f5)!important;font-weight:590!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link[aria-current="page"]::before{
+ content:""!important;position:absolute!important;pointer-events:none!important;
+ left:calc(50% - 11px)!important;bottom:1px!important;
+ width:22px!important;height:2px!important;
+ border:0!important;border-radius:999px!important;
+ background:color-mix(in srgb,var(--text,#f2f3f5) 62%,transparent)!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders > .sv-mail-extra-link:focus-visible{
+ outline:2px solid var(--text,#f2f3f5)!important;outline-offset:-3px!important;
+ border-radius:9px!important;
+}
