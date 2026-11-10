@@ -234,6 +234,7 @@ const mailIcons=Object.freeze({
  search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
  pencil:'<path d="M12 20h9M3 17l12-12 4 4L7 21H3v-4ZM14 6l4 4"/>',
  back:'<path d="m15 5-7 7 7 7"/>',
+ reply:'<path d="m9 7-5 5 5 5"/><path d="M4 12h11a5 5 0 0 1 5 5v2"/>',
  paperclip:'<path d="m8 12 6-6a4 4 0 0 1 6 6l-8 8a6 6 0 0 1-9-9l8-8"/>',
  settings:'<path d="M4 7h16M4 17h16M8 4v6M16 14v6"/><circle cx="8" cy="7" r="2"/><circle cx="16" cy="17" r="2"/>',
  save:'<path d="M5 3h12l4 4v14H3V3h2Z"/><path d="M7 3v6h10V3M7 21v-8h10v8"/>',
@@ -373,8 +374,6 @@ function mailView(){
    senderButtons.push(button);senderOptions.append(button);
   }
   accountField.append(senderCaption,senderOptions);form.append(accountField);refreshAccount();
-  const accountHelp=create('p','sv-mail-account-help','Адрес отправителя появится после подключения почты.');
-  form.append(accountHelp);
   const makeField=(labelText,name,tag,value,type)=>{
    const label=create('label','sv-mail-field');
    label.append(create('span','sv-mail-field-label',labelText));
@@ -490,9 +489,11 @@ function mailView(){
   const heading=create('div','sv-mail-detail-bar');
   const backButton=iconButton('back','Вернуться к списку',()=>{mailCurrent=null;paint()});
   const opts=create('div','sv-mail-detail-tools');
-  opts.append(iconButton('starred',item.starred?'Убрать из важных':'Важное',()=>{
+  const favorite=iconButton('starred',item.starred?'Убрать из важных':'Отметить важным',()=>{
    item.starred=!item.starred;paint();
-  }),iconButton('archive',item.archived?'Вернуть во входящие':'В архив · демо',()=>{
+  });
+  favorite.setAttribute('aria-pressed',String(item.starred));
+  opts.append(favorite,iconButton('archive',item.archived?'Вернуть во входящие':'В архив · образец',()=>{
    item.archived=!item.archived;mailCurrent=null;paint();
   }),iconButton('trash',item.trashed?'Восстановить из корзины':'Удалить пример',()=>{
    item.trashed=!item.trashed;mailCurrent=null;paint();
@@ -502,7 +503,7 @@ function mailView(){
   const person=create('div','sv-mail-detail-person');
   person.append(create('span','sv-mail-avatar',item.initial));
   const who=create('div','sv-mail-detail-who');
-  who.append(create('strong','',item.from),create('span','',item.when+' · пример, не получено из почты'));
+  who.append(create('strong','',item.from),create('span','',item.when+' · образец письма'));
   person.append(who);panel.append(person);
   const message=create('p','sv-mail-detail-text',item.body);panel.append(message);
   if(item.attachment){
@@ -513,16 +514,18 @@ function mailView(){
   const actions=create('div','sv-mail-detail-actions');
   const reply=intent('Ответить',()=>openEditor(null,item),true);
   reply.classList.add('sv-mail-reply-action');
-  // Respect the approved capsule shape even if a legacy button reset has !important.
-  reply.style.setProperty('border-radius','999px','important');
+  reply.replaceChildren(mailIcon('reply'));
+  reply.setAttribute('aria-label','Ответить на письмо');
+  reply.title='Ответить';
   const help=intent('Сэйви',()=>{
    note.hidden=!note.hidden;
    help.setAttribute('aria-expanded',String(!note.hidden));
 
   });
   help.classList.add('sv-mail-assist-action');
-  help.style.setProperty('border-radius','999px','important');
-  help.prepend(create('span','sv-mail-assist-symbol sv-sayvi-symbol',''));
+  help.replaceChildren(create('span','sv-mail-assist-symbol sv-sayvi-symbol',''));
+  help.setAttribute('aria-label','Сэйви: помочь с письмом');
+  help.title='Сэйви · помощь с письмом';
   help.setAttribute('aria-expanded','false');
   help.setAttribute('aria-controls','svMailSayviAssist');
   actions.append(reply,help);panel.append(actions);
