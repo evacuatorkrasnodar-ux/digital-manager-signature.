@@ -1,0 +1,184 @@
+/* SEYVEO · 10 Nov 2026 · one quiet search treatment across top bars.
+   Search icons have NO decorative circular fill, but retain their full
+   44×44 touch targets and keyboard focus states. The approved dock is separate. */
+
+html body :is(
+ header,
+ .sv-deep-top,
+ .sv-mail-top-actions,
+ .sv-mail-top-buttons,
+ .manage-heading,
+ .life-heading,
+ .picture-head,
+ .calendar-heading
+) button[aria-label*="поиск" i],
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-doc-search-toggle,
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-toggle,
+html body #svWorkShell[data-history="true"] #svWorkAdd[data-sv-header-icon="search"] {
+ box-sizing:border-box!important;
+ display:grid!important;
+ place-items:center!important;
+ width:44px!important;
+ height:44px!important;
+ min-width:44px!important;
+ max-width:44px!important;
+ min-height:44px!important;
+ max-height:44px!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ outline-offset:1px;
+ filter:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:var(--text,#F3F4F5)!important;
+ opacity:1!important;
+ transform:none!important;
+}
+html body :is(
+ header,
+ .sv-deep-top,
+ .sv-mail-top-actions,
+ .sv-mail-top-buttons,
+ .manage-heading,
+ .life-heading,
+ .picture-head,
+ .calendar-heading
+) button[aria-label*="поиск" i] svg,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-search-toggle svg,
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-toggle svg,
+html body #svWorkShell[data-history="true"] #svWorkAdd[data-sv-header-icon="search"] svg {
+ box-sizing:border-box!important;
+ display:block!important;
+ width:19px!important;
+ height:19px!important;
+ margin:0!important;
+ fill:none!important;
+ stroke:currentColor!important;
+ stroke-width:1.55!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ filter:none!important;
+}
+html body :is(header,.sv-deep-top,.sv-mail-top-actions,.sv-mail-top-buttons)
+ button[aria-label*="поиск" i]:active,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-search-toggle:active,
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-toggle:active,
+html body #svWorkShell[data-history="true"] #svWorkAdd[data-sv-header-icon="search"]:active{
+ opacity:.62!important;
+}
+html body :is(header,.sv-deep-top,.sv-mail-top-actions,.sv-mail-top-buttons)
+ button[aria-label*="поиск" i]:focus-visible,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-search-toggle:focus-visible,
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-toggle:focus-visible,
+html body #svWorkShell[data-history="true"] #svWorkAdd[data-sv-header-icon="search"]:focus-visible{
+ outline:2px solid var(--text,#F4F5F6)!important;
+ outline-offset:0!important;
+ border-radius:10px!important;
+}
+
+/* Documents: one genuine horizontal header row, no title on a second level.
+   Columns and slots are symmetrical, independent of iPhone screen width. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top {
+ box-sizing:border-box!important;
+ display:block!important;
+ position:relative!important;
+ width:100%!important;
+ min-height:50px!important;
+ height:50px!important;
+ margin:0 2px 10px!important;
+ padding:0!important;
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-continuity-titlebar {
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-rows:50px!important;
+ align-items:center!important;
+ column-gap:4px!important;
+ width:100%!important;
+ height:50px!important;
+ min-height:50px!important;
+ margin:0!important;
+ padding:0!important;
+ position:relative!important;
+ transform:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top #sayviSurfaceTitle{
+ box-sizing:border-box!important;
+ grid-column:2!important;
+ grid-row:1!important;
+ align-self:center!important;
+ justify-self:center!important;
+ position:static!important;
+ display:block!important;
+ width:auto!important;
+ max-width:100%!important;
+ height:auto!important;
+ top:auto!important;
+ left:auto!important;
+ margin:0!important;
+ padding:0!important;
+ transform:none!important;
+ text-align:center!important;
+ white-space:nowrap!important;
+ font:630 clamp(22px,5.8vw,26px)/1.12
+  -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.04em!important;
+ color:var(--text,#F3F4F5)!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top #sayviSurfaceBack{
+ grid-column:1!important;
+ grid-row:1!important;
+ align-self:center!important;
+ justify-self:center!important;
+ position:static!important;
+ top:auto!important;
+ left:auto!important;
+ width:44px!important;
+ height:44px!important;
+ margin:0!important;
+ padding:0!important;
+ transform:none!important;
+ border-radius:50%!important;
+ background:#38383A!important;
+ color:#F5F5F6!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-continuity-space{
+ grid-column:3!important;
+ grid-row:1!important;
+ width:44px!important;
+ height:44px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-doc-head-tools{
+ position:absolute!important;
+ top:3px!important;
+ right:0!important;
+ bottom:auto!important;
+ left:auto!important;
+ width:44px!important;
+ height:44px!important;
+ margin:0!important;
+ padding:0!important;
+ z-index:8!important;
+}
+
+/* Stay readable on the smaller iPhone and in compact file-format cards. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-recent-name,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card strong{
+ font-size:clamp(10px,2.55vw,11px)!important;
+ line-height:1.22!important;
+}
+@media(max-width:350px){
+ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top #sayviSurfaceTitle{
+  font-size:22px!important;
+ }
+}
