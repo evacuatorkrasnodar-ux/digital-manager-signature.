@@ -1284,7 +1284,7 @@ function mailView(){
    }
    if(chosen){
     const permanent=mailFolder==='trash';
-    const clean=create('button','sv-mail-bulk-clean','Очистить');
+    const clean=create('button','sv-mail-bulk-clean','Удалить');
     clean.type='button';
     clean.setAttribute('aria-label',permanent
      ?'Удалить навсегда '+chosen+' выбранных писем после подтверждения'
@@ -1478,7 +1478,7 @@ function mailView(){
     toolbar.append(all);
    }
    if(chosenVisible){
-    const remove=create('button','sv-mail-drafts-remove-selected','Очистить');
+    const remove=create('button','sv-mail-drafts-remove-selected','Удалить');
     remove.type='button';
     remove.setAttribute('aria-label','Окончательно удалить '+chosenVisible+' выбранных черновиков и их вложения после подтверждения');
     remove.addEventListener('click',()=>removeSelectedDrafts([...selectedDraftIds]));
