@@ -255,3 +255,33 @@ html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .seyveo-pas
 html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{
  padding-left:60px!important;
 }
+
+/* Company card · clean empty-state composition v3 */
+html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{
+ padding-left:72px!important;
+}
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view:not([hidden]){
+ min-height:clamp(250px,calc(100dvh - 200px),530px)!important;
+ gap:14px!important;
+ padding:0 18px 18px!important;
+ justify-content:center!important;
+}
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] #seyveoCompanyNotFilled{
+ max-width:290px!important;
+ font-size:13px!important;
+ line-height:1.4!important;
+ letter-spacing:0!important;
+}
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] #seyveoCompanyEditTop{
+ min-width:170px!important;
+ min-height:44px!important;
+ margin:0!important;
+ padding:0 18px!important;
+ font-size:13px!important;
+ font-weight:600!important;
+}
+@media(max-height:620px){
+ html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view:not([hidden]){
+  min-height:clamp(200px,calc(100dvh - 190px),400px)!important;
+ }
+}
