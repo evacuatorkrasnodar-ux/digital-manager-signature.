@@ -95,3 +95,35 @@ html.sv-global-search-open .dock>#navManage svg{
 html.sv-global-search-open #sayviMusicMini{
  visibility:hidden!important;pointer-events:none!important;
 }
+
+/* SEYVEO premium flat Search: one searchable place, not a glass modal.
+   Preserve the approved bottom dock and large Search control. */
+#svGlobalSearch{
+ background:#15191D!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+#svGlobalSearch .sv-search-input-shell{
+ box-sizing:border-box!important;min-height:52px!important;height:52px!important;
+ padding:0 14px!important;border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svGlobalSearch .sv-search-result{
+ border-bottom:1px solid rgba(225,230,234,.07)!important;
+ min-height:55px!important;
+}
+#svGlobalSearch .sv-search-result:focus-visible{
+ outline:2px solid #E8ECEF!important;
+ outline-offset:-2px!important;
+ border-radius:10px!important;
+}
+#svGlobalSearch .sv-search-vault-hits{
+ margin:6px 0!important;
+ border:0!important;
+ background:transparent!important;
+}
+#svGlobalSearch .sv-search-result-copy strong{font-weight:570!important}
+#svGlobalSearch .sv-search-header h2{font-weight:650!important}
