@@ -475,8 +475,13 @@ function mount(target,{
   ];
 
   const sectionTitle=$('div','sv-doc-create-subhead');
-  sectionTitle.append($('strong','','Шаблоны'),
-   $('small','','Выберите образец'));
+  const blank=button('Чистый лист',()=>{
+   if(body.value.trim()&&typeof window.confirm==='function'&&
+       !window.confirm('Открыть чистый лист вместо текущего текста?'))return;
+   body.value='';documentDraft='';documentTemplate='';
+   syncTemplate();revealEditor();
+  },'sv-doc-create-blank');
+  sectionTitle.append($('strong','','Шаблоны'),blank);
   const examples=$('div','sv-doc-tool-templates');
   examples.setAttribute('role','region');
   examples.setAttribute('aria-label','Шаблоны документов, листайте горизонтально');
@@ -495,7 +500,7 @@ function mount(target,{
       typeof window.confirm==='function'&&
       !window.confirm('Заменить текущий текст выбранным шаблоном?'))return;
    body.value=content;documentDraft=content;documentTemplate=id;
-   syncTemplate();
+   syncTemplate();revealEditor();
    message('Шаблон открыт. Заполните поля своими данными.');
   }
   function syncTemplate(){
@@ -538,7 +543,7 @@ function mount(target,{
   formatSwitch.setAttribute('role','group');
   formatSwitch.setAttribute('aria-label','Выбор формата документа');
   const saveButton=button('Сохранить PDF',saveSelected,'sv-doc-tool-primary sv-doc-create-save');
-  const shareButton=button('В Файлы / поделиться',shareSelected,'sv-doc-create-share');
+  const shareButton=button('Поделиться',shareSelected,'sv-doc-create-share');
   const selectedFormat=[];
   for(const option of [
    {id:'pdf',label:'PDF',caption:'Для просмотра',art:'pdf'},
@@ -591,6 +596,17 @@ function mount(target,{
   }
   syncFormat();
   const footer=controls(saveButton,shareButton);
+  const revealEditor=()=>{
+   editing.hidden=false;formatLabel.hidden=false;
+   formatSwitch.hidden=false;footer.hidden=false;
+   panel.dataset.createStage='editing';
+  };
+  const initialDraft=Boolean(documentDraft.trim());
+  editing.hidden=!initialDraft;
+  formatLabel.hidden=!initialDraft;
+  formatSwitch.hidden=!initialDraft;
+  footer.hidden=!initialDraft;
+  panel.dataset.createStage=initialDraft?'editing':'choose';
   const sayvi=button('',()=>onSayvi('create'),'sv-doc-create-sayvi');
   sayvi.append(art('create',true),$('span','','Создать с Сэйви'));
   panel.append(sectionTitle,examples,editing,formatLabel,formatSwitch,footer,sayvi);
