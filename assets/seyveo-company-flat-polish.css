@@ -90,7 +90,7 @@ html body #seyveoCompanyDialog[open] .sv-company-empty-mark svg{
   stroke-linecap:round;stroke-linejoin:round;
 }
 html body #seyveoCompanyDialog[open][data-sv-company-filled="false"]
-  .sv-company-view{
+  .sv-company-view:not([hidden]){
   display:flex!important;flex-direction:column!important;
   align-items:center!important;justify-content:center!important;
   box-sizing:border-box!important;
@@ -131,8 +131,6 @@ html body #seyveoCompanyDialog[open] .seyveo-passport-edit-top:active{
 }
 
 /* Once saved, editing moves into the title bar as an ordinary 44px pencil. */
-html body #seyveoCompanyDialog[open][data-sv-company-mode="view"]
-  [data-sv-company-filled="true"] .seyveo-passport-edit-top{position:static}
 html body #seyveoCompanyDialog[open][data-sv-company-mode="view"][data-sv-company-filled="true"]
   #seyveoCompanyEditTop{
   position:absolute!important;
