@@ -6,9 +6,9 @@
 const $=id=>document.getElementById(id);
 const screen=$('svGlobalSearch'),field=$('svGlobalSearchInput');
 const results=$('svGlobalSearchResults'),closeButton=$('svGlobalSearchClose');
-const trigger=$('navManage'),modes=$('svSearchModes');
-if(!screen||!field||!results||!closeButton||!trigger||!modes)return;
-let active=false,previousFocus=null,previousOverflow='',searchEpoch=0,mode='system';
+const trigger=$('navManage');
+if(!screen||!field||!results||!closeButton||!trigger)return;
+let active=false,previousFocus=null,previousOverflow='',searchEpoch=0,liveMatches=[];
 const normalize=value=>String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim().replace(/\s+/g,' ');
 const nice=value=>String(value||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim();
 const rows=(key,max)=>{
@@ -165,102 +165,86 @@ function heading(value){
 function actionButton(label,action,meta){
  return itemRow({title:label,action,meta},'section');
 }
-function changeMode(next,{focus=false}={}){
- if(!['system','sayvi','web'].includes(next))return;
- mode=next;
- const placeholders={system:'Найти в SEYVEO',sayvi:'О чём спросить Сэйви?',web:'Поиск в интернете'};
- field.placeholder=placeholders[mode];
- field.setAttribute('aria-label',placeholders[mode]);
- for(const control of modes.querySelectorAll('[data-sv-search-mode]')){
-  const selected=control.dataset.svSearchMode===mode;
-  control.setAttribute('aria-pressed',String(selected));
+
+/* One input, three invisible capabilities. Never require people to choose a
+   provider; display accessible matching data while they type and execute only
+   after a deliberate submission or a result tap. */
+const isQuestion=q=>/^(?:как|почему|зачем|что|кто|когда|где|сколько|какой|какая|какое|какие|объясни|расскажи|помоги|посоветуй|можно ли)\b/u.test(q)||/\?$/.test(q);
+const documentWords=/\b(?:документ|документы|документа|документов|договор|договора|договоры|акт|акты|счёт|счет|счета|файл|файлы|архив|pdf|word|xlsx|подпись)\b/iu;
+const mailWords=/\b(?:письмо|письма|писем|почту|почта|email|емейл|черновик|входящие|корреспонденция)\b/iu;
+function intention(query){
+ const q=withoutWake(query);
+ if(!q)return null;
+ // A direct web/search command is distinct from private app content.
+ const direct=routeFor(query);
+ if(direct&&['web','site'].includes(direct.action))return direct;
+ if(/\b(?:подключить|подключи|подключение|настроить|настройка|привязать)\b/u.test(q)){
+  if(mailWords.test(q))return {action:'connect:mail'};
+  if(documentWords.test(q))return {action:'connect:documents'};
+  if(/\b(?:банк|кассу|касса|crm|срм|битрикс|1с)\b/u.test(q))return {action:'connect:pulse'};
  }
- if(active)render();
- if(focus)field.focus({preventScroll:true});
+ if(isQuestion(q))return {action:'ask'};
+ if(/^(?:открой|покажи|найди|отыщи|перейди к|найти)\s+/u.test(q)){
+  if(documentWords.test(q))return {action:'docs:personal',reveal:true};
+  if(mailWords.test(q))return {action:'mail:inbox'};
+ }
+ if(documentWords.test(q))return {action:'docs:personal',reveal:true};
+ if(mailWords.test(q))return {action:'mail:inbox'};
+ if(direct)return direct;
+ const exact=sections.find(x=>normalize(x.name)===q);
+ return exact?{action:exact.action}:null;
 }
-function nextSteps(){
- const group=document.createElement('section');
- group.className='sv-search-next-steps';
- const caption=document.createElement('p');caption.className='sv-search-empty';
- caption.textContent='В доступных данных совпадений не нашлось. Сэйви поможет разобраться — или можно продолжить поиск в интернете.';
- group.append(caption);
- group.append(actionButton('Попросить Сэйви помочь','mode:sayvi','Объяснить, уточнить или предложить следующий шаг'));
- group.append(actionButton('Продолжить в интернете','mode:web','Поиск через SEYVEO Browser по вашему выбору'));
- return group;
+function note(textValue,className='sv-search-caption'){
+ const p=document.createElement('p');p.className=className;p.textContent=textValue;return p;
 }
 function render(){
  const epoch=++searchEpoch;
- const raw=field.value.trim(),term=normalize(raw),intent=routeFor(raw);
- results.replaceChildren();
- if(mode==='sayvi'){
-  if(!raw){
-   const note=document.createElement('p');note.className='sv-search-caption';
-   note.textContent='Сэйви рядом: задай вопрос, опиши ситуацию или попроси помочь. Ответ появится в настоящем чате.';
-   results.append(note);return;
-  }
-  results.append(heading('Помощь Сэйви'));
-  results.append(actionButton('Спросить Сэйви','ask','Передать вопрос в чат Сэйви'));
-  const hint=document.createElement('p');hint.className='sv-search-caption';
-  hint.textContent='Сэйви может уточнить детали и предложить решение. Доступ к личным данным зависит от разрешений.';
-  results.append(hint);return;
+ const query=normalize(field.value),raw=field.value.trim();
+ results.replaceChildren();liveMatches=[];
+ if(!raw){
+  results.append(note('Напиши что угодно. Сэйви найдёт доступное в приложении, поможет с действием или ответит на вопрос.'));
+  return;
  }
- if(mode==='web'){
-  if(!raw){
-   const note=document.createElement('p');note.className='sv-search-caption';
-   note.textContent='Напиши, что найти в интернете. Запрос откроется в SEYVEO Browser только после твоего действия.';
-   results.append(note);return;
-  }
-  if(isPrivateQuery(raw)){
-   results.append(heading('Личный вопрос'));
-   const notice=document.createElement('p');notice.className='sv-search-empty';
-   notice.textContent='Этот запрос может содержать личные сведения. Не отправляем его в открытый интернет.';
-   results.append(notice);
-   results.append(actionButton('Спросить Сэйви','mode:sayvi','Продолжить без открытого интернет-поиска'));
-   return;
-  }
-  results.append(heading('Поиск в интернете'));
-  results.append(actionButton('Найти через SEYVEO Browser','web','Открыть результаты в браузере'));
-  const hint=document.createElement('p');hint.className='sv-search-caption';
-  hint.textContent='Интернет-поиск выполняется по твоему выбору. Содержание частных документов и закрытого архива не отправляется.';
-  results.append(hint);return;
+ const sectionsFound=sections.filter(x=>normalize(x.name+' '+x.tags).includes(query)).slice(0,5);
+ const records=searchableRecords(query);
+ liveMatches=[...records,...sectionsFound.map(x=>({...x,title:x.name,meta:'Раздел SEYVEO'}))];
+ if(liveMatches.length){
+  results.append(heading('Найдено в SEYVEO'));
+  for(const entry of liveMatches.slice(0,10))results.append(itemRow(entry,records.includes(entry)?'record':'section'));
  }
- // System: never send local data to the web or assistant merely because
- // an item is missing. Offer both meaningful next steps in the same view.
- const matching=term?sections.filter(x=>normalize(x.name+' '+x.tags).includes(term)).slice(0,7):
-  sections.filter(x=>['calendar','tasks','space:notes','manage'].includes(x.action));
- const records=searchableRecords(term);
- if(!term){
-  results.append(heading('Быстрый доступ'));
-  for(const entry of matching)results.append(itemRow({...entry,meta:'Открыть раздел SEYVEO'},'section'));
-  const hint=document.createElement('p');hint.className='sv-search-caption';
-  hint.textContent='Система ищет в доступных разделах, делах, заметках, черновиках и разблокированном архиве. Сэйви и Интернет — рядом.';
-  results.append(hint);return;
- }
- if(intent&&intent.action!=='ask'&&intent.action!=='web'&&intent.action!=='site'){
-  results.append(heading('Быстрое действие'));
-  results.append(actionButton('Выполнить команду','smart','Открыть нужный раздел SEYVEO'));
- }
- if(records.length){
-  results.append(heading('Найдено на этом устройстве'));
-  for(const record of records)results.append(itemRow(record,'record'));
- }
- if(term.length>=2){
-  void unlockedDocumentHits(term).then(found=>{
-   if(!active||mode!=='system'||epoch!==searchEpoch||normalize(field.value)!==term||!found.length)return;
+ const detected=intention(raw);
+ const routeLabel=detected?.action==='docs:personal'?'Открою документы. Защищённый архив запросит пароль.':
+  detected?.action==='mail:inbox'?'Открою почту. Если она не подключена, покажу подключение.':
+  detected?.action?.startsWith('connect:')?'Покажу настройки подключения.':
+  detected?.action==='web'||detected?.action==='site'?'Открою результат в браузере после отправки запроса.':
+  'Сэйви поможет разобраться и при необходимости проверит публичные источники.';
+ results.append(note(routeLabel,'sv-search-assistant-hint'));
+ if(query.length>=2){
+  void unlockedDocumentHits(query).then(found=>{
+   if(!active||epoch!==searchEpoch||normalize(field.value)!==query||!found.length)return;
    const group=document.createElement('section');group.className='sv-search-vault-hits';
-   group.append(heading('В разблокированном архиве'));
-   for(const record of found)group.append(itemRow(record,'record'));
+   group.append(heading('В открытом архиве'));
+   for(const entry of found)group.append(itemRow(entry,'record'));
    results.prepend(group);
-   results.querySelector('.sv-search-next-steps')?.remove();
+   liveMatches=[...found,...liveMatches];
   });
  }
- if(matching.length){
-  results.append(heading('Разделы'));
-  for(const entry of matching)results.append(itemRow({...entry,meta:'Открыть раздел SEYVEO'},'section'));
+}
+async function submitSearch(){
+ const raw=field.value.trim();
+ if(!raw)return;
+ const planned=intention(raw);
+ if(planned){visit(planned.action,{reveal:planned.reveal===true});return}
+ // Exact local record or section can be opened directly, without opening
+ // an extra menu. Multiple unrelated matches stay visible for selection.
+ const exact=liveMatches.filter(x=>normalize(x.title)===normalize(raw));
+ if(exact.length===1){visit(exact[0].action);return}
+ if(liveMatches.length===1&&!isQuestion(withoutWake(raw))){
+  visit(liveMatches[0].action);return;
  }
- const hasSystemResults=records.length>0||matching.length>0||
-  !!(intent&&intent.action!=='ask'&&intent.action!=='web'&&intent.action!=='site');
- if(!hasSystemResults)results.append(nextSteps());
+ // Unknown questions are not abandoned and private text is never silently
+ // sent to an open web engine. The real Sayvi chat handles consent and tools.
+ visit('ask');
 }
 
 function open(){
@@ -276,7 +260,7 @@ function open(){
  previousOverflow=document.body.style.overflow;
  document.body.style.overflow='hidden';
  field.value='';
- changeMode('system');
+ render();
  // Focusing within the real tap gesture allows iOS to display the keyboard.
  field.focus({preventScroll:true});
  return true;
@@ -294,9 +278,7 @@ function close({restoreFocus=false}={}){
  if(restoreFocus&&(previousFocus?.isConnected))previousFocus.focus({preventScroll:true});
  previousFocus=null;
 }
-function visit(action){
- if(action==='mode:sayvi'){changeMode('sayvi',{focus:true});return}
- if(action==='mode:web'){changeMode('web',{focus:true});return}
+function visit(action,{reveal=false}={}){
  const typed=field.value.trim(),intent=routeFor(typed);
  let query=typed;
  if(action==='smart'){
@@ -306,6 +288,13 @@ function visit(action){
  }
  // Close first: one chat, one browser, one underlying MediaSession.
  close();
+ if(action.startsWith('connect:')){
+  const service=action.slice(8);
+  if(service==='documents')window.SEYVEO_CONNECTION_PROMPTS?.open?.('documents');
+  else if(service==='mail')window.SEYVEO_CONNECTION_PROMPTS?.open?.('mail');
+  else window.SEYVEO_CONNECTION_PROMPTS?.open?.('pulse');
+  return;
+ }
  if(action==='home'){$('navHome')?.click();return;}
  if(action.startsWith('docs:')||action.startsWith('mail:')){
   const isDocs=action.startsWith('docs:');
@@ -313,7 +302,7 @@ function visit(action){
   const scope=action.split(':')[1];
   const area=isDocs?(scope==='business'?'business':'personal'):'all';
   window.dispatchEvent(new CustomEvent('seyveo:global-search-scope',{
-   detail:{kind,query:typed.slice(0,200),scope:isDocs?area:scope}
+   detail:{kind,query:typed.slice(0,200),scope:isDocs?area:scope,revealArchive:isDocs&&reveal}
   }));
   if(window.SEYVEO_SAYVI_SURFACES?.open?.(kind,area)!==true)
    location.hash=isDocs?'#sayvi-documents':'#sayvi-mail';
@@ -393,26 +382,14 @@ trigger.addEventListener('click',()=>{
  if(active)close({restoreFocus:false});else open();
 });
 closeButton.addEventListener('click',()=>close({restoreFocus:true}));
-modes.addEventListener('click',event=>{
- const button=event.target.closest?.('[data-sv-search-mode]');
- if(button&&modes.contains(button))changeMode(button.dataset.svSearchMode,{focus:true});
-});
 field.addEventListener('input',render);
 field.addEventListener('search',render);
 field.addEventListener('keydown',event=>{
- if(event.key==='Escape'){event.preventDefault();close({restoreFocus:true});return;}
- if(event.key!=='Enter')return;
- event.preventDefault();
- if(!field.value.trim())return;
- if(mode==='sayvi'){visit('ask');return;}
- if(mode==='web'){visit('web');return;}
- const intent=routeFor(field.value);
- if(intent){visit('smart');return;}
- const exact=sections.find(x=>normalize(x.name)===normalize(field.value));
- if(exact){visit(exact.action);return;}
- // No dead-end Enter: introduce the next step without silently
- // sending a possibly private query to an external service.
- changeMode('sayvi');
+ if(event.key==='Escape'){event.preventDefault();close({restoreFocus:true});return}
+ if(event.key==='Enter'){
+  event.preventDefault();
+  void submitSearch();
+ }
 });
 
 results.addEventListener('click',event=>{
@@ -424,5 +401,5 @@ window.addEventListener('seyveo:route-changed',()=>{if(active)close()});
 document.addEventListener('seyveo:browser-open',()=>{if(active)close()});
 window.addEventListener('seyveo:notes-changed',()=>{if(active)render()});
 window.addEventListener('seyveo:life-events-changed',()=>{if(active)render()});
-window.SEYVEO_GLOBAL_SEARCH=Object.freeze({open,close,isOpen:()=>active,routeFor});
+window.SEYVEO_GLOBAL_SEARCH=Object.freeze({open,close,isOpen:()=>active,routeFor,intention});
 })();
