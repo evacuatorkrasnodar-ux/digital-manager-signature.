@@ -91,3 +91,54 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-clean:disabled
   transition:none!important;
  }
 }
+
+/* v2 · Floating action bar above the approved home dock.
+   Unlike a detached button after the last mail row, this stays reachable when the folder is long.
+   Scoped to Mail selection only; dock geometry is unchanged. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace.sv-mail-bulk-active{
+ padding-bottom:calc(155px + env(safe-area-inset-bottom,0px))!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions{
+ box-sizing:border-box!important;position:fixed!important;z-index:25!important;
+ bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
+ left:50%!important;right:auto!important;transform:translateX(-50%)!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:10px!important;width:min(350px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;
+ min-height:58px!important;margin:0!important;padding:7px 8px 7px 15px!important;
+ border:1px solid rgba(241,243,245,.09)!important;border-radius:17px!important;
+ background:#38383A!important;background-image:none!important;
+ box-shadow:0 10px 24px rgba(0,0,0,.16)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions-label{
+ box-sizing:border-box!important;flex:1 1 auto!important;min-width:0!important;
+ color:#d1d5d9!important;
+ font:540 12px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions .sv-mail-bulk-clean{
+ box-sizing:border-box!important;flex:0 0 auto!important;min-width:92px!important;
+ min-height:44px!important;margin:0!important;padding:9px 13px!important;
+ border:0!important;border-radius:12px!important;
+ background:#4e4e51!important;color:#f5f6f7!important;
+ box-shadow:none!important;
+ font:600 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions .sv-mail-bulk-clean:disabled{
+ opacity:.55!important;
+}
+@media(min-width:760px){
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions{
+  width:350px!important;bottom:94px!important;
+ }
+}
+@media(max-width:360px){
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions{
+  width:calc(100vw - 22px)!important;max-width:calc(100vw - 22px)!important;
+  padding-left:11px!important;
+ }
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-actions .sv-mail-bulk-clean{
+  padding:9px 10px!important;font-size:11.5px!important;
+ }
+}
