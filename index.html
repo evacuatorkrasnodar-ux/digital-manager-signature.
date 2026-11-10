@@ -1949,6 +1949,59 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]),
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{transition:none!important}
 }
+
+/* Notebook footer parity with the approved Home dock (2026-11-10).
+   Only the Notebook writing editor toolbar: do not affect Home, Music, drawing
+   studio, or any chat composer. Share Home's capsule width and physical X origins,
+   while keeping the four Notes tools and its 50px new-note control unchanged. */
+@media(max-width:699px){
+ #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
+  --sv-note-home-left:calc(50vw - 138.25px);
+  --sv-note-home-search:calc(81.5vw + .9675px);
+  /* The dialog has 20px horizontal padding; extend the row back to screen X=0. */
+  box-sizing:border-box!important;
+  position:relative!important;
+  display:block!important;
+  left:-20px!important;right:auto!important;transform:none!important;
+  width:100vw!important;min-width:100vw!important;max-width:none!important;
+  height:50px!important;min-height:50px!important;
+  margin:0!important;padding:0!important;column-gap:0!important;
+ }
+ #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+  left:var(--sv-note-home-left)!important;right:auto!important;
+  width:var(--sv-split-capsule,226px)!important;
+  top:0!important;bottom:0!important;height:50px!important;
+ }
+ #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+  left:var(--sv-note-home-search)!important;right:auto!important;
+  width:50px!important;height:50px!important;top:0!important;bottom:auto!important;
+ }
+ #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
+  position:absolute!important;
+  left:var(--sv-note-home-left)!important;right:auto!important;
+  top:0!important;bottom:auto!important;
+  width:var(--sv-split-capsule,226px)!important;
+  min-width:0!important;max-width:none!important;
+  margin:0!important;padding:2px 12px!important;
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:0!important;
+  height:50px!important;min-height:50px!important;max-height:50px!important;
+ }
+ #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
+  position:absolute!important;
+  left:var(--sv-note-home-search)!important;right:auto!important;
+  top:0!important;bottom:auto!important;
+  width:50px!important;min-width:50px!important;max-width:50px!important;
+  height:50px!important;min-height:50px!important;max-height:50px!important;
+  transform:none!important;
+ }
+}
+@media(max-width:389px){
+ #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
+  --sv-note-home-left:calc(50vw - 35.714286vw + .857143px);
+  --sv-note-home-search:calc(89.428571vw - 29.914286px);
+ }
+}
 </style><link rel="stylesheet" href="assets/seyveo-note-attachments.css?v=11"><link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=4"><style id="seyveo-pulse-nov09-polish">
 /* Pulse only: flat graphite and compact Sayvi explanation. */
 #picturePage .picture-quick-insight.picture-sayvi{border:0;box-shadow:none;background:#38383A;border-radius:18px;padding:15px 16px}
