@@ -460,3 +460,169 @@ html body #sayviSurfacePage[data-sv-subject="contract"] :is(
   transition:none!important;
  }
 }
+
+
+/* SEYVEO Documents · compact scanner and uncluttered archive · v5
+   Only in the Documents workspace. Approved shared dock is untouched.
+   Full-size preview is preserved AFTER real pages have been scanned. */
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-recents[hidden]{
+ display:none!important;
+}
+
+/* The chosen tool can be closed by tapping the SAME icon again.
+   A subtle graphite highlight replaces the redundant "Свернуть" button. */
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-grid .sv-doc-tool-button[aria-pressed="true"]{
+ background:rgba(255,255,255,.075)!important;
+ border-radius:11px!important;
+ opacity:1!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel .sv-doc-tool-head{
+ min-height:27px!important;
+ margin:0 0 7px!important;
+ padding:0!important;
+ align-items:center!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel .sv-doc-tool-lead{
+ gap:2px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel .sv-doc-tool-lead strong{
+ font-size:13px!important;
+ font-weight:610!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel .sv-doc-tool-lead small{
+ font-size:10.5px!important;
+ line-height:1.3!important;
+}
+
+/* A small visual example is enough BEFORE a photo is selected.
+   The guide brackets, sample paper, camera and gallery buttons all remain. */
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-stage{
+ gap:5px!important;
+ margin:0!important;
+ padding:8px 9px 7px!important;
+ border-radius:12px!important;
+ background:rgba(0,0,0,.10)!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-board{
+ min-height:150px!important;
+ max-height:150px!important;
+ overflow:hidden!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-guide{
+ width:120px!important;
+ height:142px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-sheet{
+ inset:7px!important;
+ border-radius:4px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-sheet-sample{
+ gap:6px!important;
+ padding:11px 10px 8px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-sheet-stamp{
+ font-size:7px!important;
+ margin-bottom:3px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-faux-line{
+ height:2.5px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-faux-sign{
+ width:44px!important;
+ height:9px!important;
+ border-bottom-width:1px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-corner{
+ width:14px!important;
+ height:14px!important;
+ border-width:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-corner-tl{
+ border-width:2px 0 0 2px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-corner-tr{
+ border-width:2px 2px 0 0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-corner-bl{
+ border-width:0 0 2px 2px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-corner-br{
+ border-width:0 2px 2px 0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"][data-has-scans="false"] .sv-doc-scan-stage-meta{
+ min-height:15px!important;
+ font-size:10px!important;
+}
+
+/* Three tiny picture-based steps, no tall instructional strip. */
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"] .sv-doc-tool-steps{
+ padding:5px 2px 7px!important;
+ gap:3px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"] .sv-doc-tool-step{
+ gap:2px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"] .sv-doc-tool-step > .sv-doc-art-small{
+ width:27px!important;
+ height:27px!important;
+ padding:3px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"] .sv-doc-tool-step small{
+ font-size:10px!important;
+ line-height:1.25!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"] .sv-doc-tool-step-arrow{
+ font-size:16px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"] > .sv-doc-tool-controls{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:8px!important;
+ margin:5px 0 0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"] > .sv-doc-tool-controls > button{
+ min-width:0!important;
+ min-height:44px!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:#505053!important;
+ color:#F3F4F6!important;
+ font-size:12px!important;
+}
+/* Native details and real-file preview remain reachable; no data is removed. */
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"] .sv-doc-tool-help{
+ margin-top:8px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-tool-panel[data-mode="scan"] .sv-doc-tool-help summary{
+ min-height:34px!important;
+ font-size:11px!important;
+}
