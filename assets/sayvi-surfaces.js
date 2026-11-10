@@ -215,7 +215,9 @@ const mailIcons=Object.freeze({
  pencil:'<path d="M12 20h9M3 17l12-12 4 4L7 21H3v-4ZM14 6l4 4"/>',
  back:'<path d="m15 5-7 7 7 7"/>',
  paperclip:'<path d="m8 12 6-6a4 4 0 0 1 6 6l-8 8a6 6 0 0 1-9-9l8-8"/>',
- settings:'<path d="M4 7h16M4 17h16M8 4v6M16 14v6"/><circle cx="8" cy="7" r="2"/><circle cx="16" cy="17" r="2"/>'
+ settings:'<path d="M4 7h16M4 17h16M8 4v6M16 14v6"/><circle cx="8" cy="7" r="2"/><circle cx="16" cy="17" r="2"/>',
+ save:'<path d="M5 3h12l4 4v14H3V3h2Z"/><path d="M7 3v6h10V3M7 21v-8h10v8"/>',
+ send:'<path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M22 2 11 13"/>'
 });
 function mailIcon(name){
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -428,11 +430,21 @@ function mailView(){
    status.textContent='Локальная правка пробелов и оформления. Смысл и факты не проверены.';
   });
   polish.classList.add('sv-mail-polish-trigger');
+  polish.textContent='';
+  polish.append(create('span','sv-mail-assist-symbol sv-sayvi-symbol',''));
+  polish.setAttribute('aria-label','Сэйви: улучшить текст письма');
+  polish.title='Сэйви · улучшить текст';
   message.addEventListener('input',()=>{preview.hidden=true});
-  const save=create('button','sv-deep-intent','Сохранить черновик');save.type='submit';
+  const save=create('button','sv-deep-intent');save.type='submit';
   save.classList.add('sv-mail-save-trigger');
-  const send=create('button','sv-deep-intent sv-deep-intent--lead','Отправить');
+  save.append(mailIcon('save'));
+  save.setAttribute('aria-label','Сохранить черновик');
+  save.title='Сохранить черновик';
+  const send=create('button','sv-deep-intent sv-deep-intent--lead');
   send.type='button';send.classList.add('sv-mail-send-trigger');
+  send.append(mailIcon('send'));
+  send.setAttribute('aria-label','Отправить письмо');
+  send.title='Отправить письмо';
   send.setAttribute('aria-describedby','svMailSendUnavailable');
   send.addEventListener('click',()=>{
    status.textContent='Для отправки нужно подключить почтовый ящик. Письмо не отправлено. Можно сохранить его как черновик.';
