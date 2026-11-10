@@ -507,12 +507,12 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
 #svWorkShell #svWorkNotebook #notesList .note-empty .note-empty-mark{
  box-sizing:border-box!important;flex:none!important;
  display:grid!important;place-items:center!important;
- width:66px!important;height:66px!important;
- max-width:66px!important;max-height:66px!important;
+ width:44px!important;height:44px!important;
+ max-width:44px!important;max-height:44px!important;
  margin:0 0 9px!important;padding:0!important;
- border:1px solid color-mix(in srgb,var(--text) 13%,transparent)!important;
- border-radius:20px!important;
- background:color-mix(in srgb,var(--text) 5%,transparent)!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
  box-shadow:none!important;
  color:var(--secondary)!important;
 }
