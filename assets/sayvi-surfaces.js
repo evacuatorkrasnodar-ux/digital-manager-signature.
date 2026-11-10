@@ -335,8 +335,15 @@ function mailView(){
  const connectGlyph=create('span','sv-mail-connect-glyph');connectGlyph.setAttribute('aria-hidden','true');
  connectGlyph.append(mailIcon('inbox'));
  const connectLabel=create('span','sv-mail-connect-label','Подключить почту');
- const connectChevron=create('span','sv-mail-connect-chevron','›');
+ const connectChevron=create('span','sv-mail-connect-chevron');
  connectChevron.setAttribute('aria-hidden','true');
+ // Match the navigation-chevron geometry; no font-dependent "›" baseline.
+ const connectArrow=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ connectArrow.setAttribute('viewBox','0 0 24 24');
+ connectArrow.setAttribute('focusable','false');
+ connectArrow.setAttribute('aria-hidden','true');
+ connectArrow.innerHTML='<path d="m9 5 7 7-7 7"/>';
+ connectChevron.append(connectArrow);
  connect.append(connectGlyph,connectLabel,connectChevron);
  connect.addEventListener('click',openConnect);
  const compose=create('button','sv-mail-icon-button sv-mail-compose');compose.type='button';
