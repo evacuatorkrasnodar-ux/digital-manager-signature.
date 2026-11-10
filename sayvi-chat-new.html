@@ -1289,7 +1289,8 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  }
  function updateTypingPreview(){
   if(!preflight)return;
-  const message=!active&&!pendingAttachments.length?localTypingPreview(input.value):'';
+  const tray=document.getElementById('sayviAttachmentTray');
+  const message=!active&&tray?.hidden!==false?localTypingPreview(input.value):'';
   if(preflight.textContent!==message)preflight.textContent=message;
   preflight.hidden=!message;
  }
