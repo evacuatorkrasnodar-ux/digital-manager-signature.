@@ -493,6 +493,14 @@ function mailView(){
   const draftId=original?.id||'mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
   let attachments=[...(original?.attachments||[])];
   const attachmentSize=n=>n>=1048576?(n/1048576).toFixed(1)+' МБ':Math.max(1,Math.round(n/1024))+' КБ';
+  const attachmentType=name=>{
+   const extension=String(name||'').split('.').pop().toLowerCase();
+   if(extension==='pdf')return {code:'PDF',name:'PDF-документ',kind:'pdf'};
+   if(['doc','docx'].includes(extension))return {code:'DOC',name:'Документ Word',kind:'word'};
+   if(['xls','xlsx','csv'].includes(extension))return {code:'XLS',name:'Таблица Excel',kind:'sheet'};
+   if(['png','jpg','jpeg','webp'].includes(extension))return {code:'IMG',name:'Изображение',kind:'image'};
+   return {code:'TXT',name:'Текстовый файл',kind:'text'};
+  };
   const showFile=async entry=>{
    const file=await readMailAttachment(draftId,entry.id);
    if(!file){status.textContent='Файл больше не доступен на устройстве. Прикрепите его снова.';return}
@@ -521,20 +529,30 @@ function mailView(){
    attachmentList.replaceChildren();
    attachmentList.hidden=!attachments.length;
    for(const entry of attachments){
+    const kind=attachmentType(entry.name);
     const row=create('div','sv-mail-attached-item');
-    const view=iconButton('paperclip','Открыть вложение '+entry.name,()=>{void showFile(entry)});
-    view.classList.add('sv-mail-attached-preview');
-    const meta=create('div','sv-mail-attached-meta');
-    meta.append(create('span','sv-mail-attached-name',entry.name),
-      create('small','sv-mail-attached-size',attachmentSize(entry.size)));
+    row.dataset.fileKind=kind.kind;
+    const view=create('button','sv-mail-attached-preview');
+    view.type='button';
+    view.title=kind.name+' · '+entry.name;
+    view.setAttribute('aria-label','Открыть '+kind.name+': '+entry.name);
+    const badge=create('span','sv-mail-kind-mark',kind.code);
+    badge.setAttribute('aria-hidden','true');
+    const meta=create('span','sv-mail-attached-meta');
+    const name=create('span','sv-mail-attached-name',entry.name);
+    name.title=entry.name;
+    meta.append(name,create('small','sv-mail-attached-size',attachmentSize(entry.size)));
+    view.append(badge,meta);
+    view.addEventListener('click',()=>{void showFile(entry)});
     const remove=iconButton('trash','Убрать вложение '+entry.name,()=>{
      attachments=attachments.filter(a=>a.id!==entry.id);
      void deleteMailAttachment(draftId,entry.id);
      autosaveDraft();renderAttachments();
-     status.textContent='Вложение убрано из черновика.';
+     status.textContent='';
     });
     remove.classList.add('sv-mail-attached-remove');
-    row.append(view,meta,remove);attachmentList.append(row);
+    remove.title='Убрать вложение';
+    row.append(view,remove);attachmentList.append(row);
    }
   }
   attachmentPicker.addEventListener('change',async()=>{
@@ -554,7 +572,7 @@ function mailView(){
     if(!stored){status.textContent='Не удалось сохранить файл в браузере. Проверьте свободное место.';continue}
     attachments.push({id,name:file.name.slice(0,150),size:file.size,type:file.type||''});
     autosaveDraft();renderAttachments();
-    status.textContent='Файл добавлен в черновик. Для настоящей отправки нужно подключить почту.';
+    status.textContent=''; // The file card itself confirms successful attachment.
    }
   });
   renderAttachments();
@@ -623,7 +641,10 @@ function mailView(){
   const primaryActions=create('div','sv-mail-primary-actions');
   primaryActions.append(send);
   actions.append(polish,primaryActions);
-  form.append(actions,preview,status);
+  // One compact footer: files on the left, Sayvi and Send to the right.
+  const composerFooter=create('div','sv-mail-compose-footer');
+  composerFooter.append(attachmentList,actions);
+  form.append(composerFooter,preview,status);
   content.append(form);
  }
  /* Local, explainable mail assistance for the development prototype.
