@@ -50,6 +50,7 @@ function fillPreview(){
  if(logo)logo.textContent=window.SEYVEO_AVATAR_LETTER?.(saved?record.name:'SEYVEO')||'S';
 }
 function selectedRows(card){
+ if(!clean(card.name))return [];
  const allowed=card.type==='org'?['name','legalName','owner','industry','city','inn','kpp','ogrn','address','phone','email','website','bank','account','bik','corr']:
  card.type==='ip'?['name','legalName','industry','city','inn','ogrnip','address','phone','email','website','bank','account','bik','corr']:
  ['name','legalName','industry','city','inn','address','phone','email','website','bank','account','bik','corr'];
@@ -65,17 +66,20 @@ function drawRows(){
   row.append(k,v);rows.append(row);
  }
  const saved=!!clean(card.name);
+ dialog.dataset.svCompanyFilled=String(saved);
  $('seyveoCompanyNotFilled').hidden=saved;
- $('seyveoCompanyEditTop').querySelector('span').textContent=saved?'Изменить сведения':'Добавить сведения';
- $('seyveoCompanyEditTop').setAttribute('aria-label',saved?'Изменить сведения компании':'Добавить сведения компании');
- // The reader always shows the three operations so QR never feels lost.
- // Disabled actions explain that they need saved business details.
+ $('seyveoCompanyEditTop').querySelector('span').textContent=saved?'Изменить':'Заполнить карточку';
+ $('seyveoCompanyEditTop').setAttribute('aria-label',saved?'Изменить сведения компании':'Заполнить карточку компании');
+ // Keep the initial state clean. Show real actions only when they work.
  const qrReady=canCreateCompanyQr(card);
- dialog.querySelector('.sv-company-actions').hidden=false;
+ dialog.querySelector('.sv-company-actions').hidden=!saved;
  $('seyveoCompanyShare').disabled=!saved;
  $('seyveoCompanyPrint').disabled=!saved;
+ $('seyveoCompanyQrOpen').hidden=!qrReady;
  $('seyveoCompanyQrOpen').disabled=!qrReady;
- $('seyveoCompanyQrHint').hidden=qrReady;
+ $('seyveoCompanyQrHint').hidden=!saved||qrReady;
+ const privacy=$('seyveoCompanyPrivacy');
+ if(privacy)privacy.hidden=!saved;
 }
 function canCreateCompanyQr(card){
  if(!clean(card.name))return false;
@@ -136,8 +140,9 @@ function setCompanyMode(mode){
  companyEditor.hidden=!editing;
  if(editing)updateTypeChoice(Boolean(clean(load().name)));
  if(companyDone){
-  companyDone.textContent=editing?'Отмена':'Готово';
-  companyDone.setAttribute('aria-label',editing?'Отменить редактирование и вернуться к карточке':'Готово — закрыть карточку компании');
+  // Preserve the original back-arrow SVG. textContent deleted it previously.
+  companyDone.setAttribute('aria-label',editing?'Отменить редактирование и вернуться к карточке':'Назад — закрыть карточку компании');
+  companyDone.setAttribute('title',editing?'Отмена':'Назад');
  }
 }
 function restoreCompanyForm(){
@@ -222,7 +227,7 @@ function save(event){
  const error=validate(card);
  if(error){status(dialog,error);return}
  if(!store(card)){status(dialog,'Не удалось сохранить на устройстве. Проверьте память браузера.');return}
- fillPreview();drawRows();status(dialog,'Данные сохранены на этом устройстве. Проверьте их перед отправкой.');
+ fillPreview();drawRows();status(dialog,'Сохранено');
  companyFormSnapshot=companyFormSignature();
  setCompanyMode('view');
  dialog.scrollTop=0;
