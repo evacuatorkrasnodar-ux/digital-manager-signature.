@@ -662,6 +662,19 @@ function change(id,del=false){
 /* Completed personal tasks remain in the original local store for History. */
 window.SEYVEO_PERSONAL_TASK_HISTORY=Object.freeze({
  completed:()=>read().filter(item=>item.done).sort((a,b)=>(b.doneAt||b.createdAt).localeCompare(a.doneAt||a.createdAt)),
+ removeCompleted:id=>{
+  const all=read(),item=all.find(task=>task.id===id&&task.done);
+  if(!item)return false;
+  if(!save(all.filter(task=>task.id!==id)))return false;
+  render();window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
+  return true;
+ },
+ clearCompleted:()=>{
+  const all=read();
+  if(!save(all.filter(task=>!task.done)))return false;
+  render();window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
+  return true;
+ },
  restore:id=>{
   const all=read(),task=all.find(item=>item.id===id&&item.done);
   if(!task)return false;
