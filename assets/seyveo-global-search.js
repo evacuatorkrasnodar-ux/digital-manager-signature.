@@ -187,11 +187,11 @@ function intention(query){
     window.SEYVEO_PREVIEW?.isManager?.()===true?'business':'personal';
  if(/^(?:где|покажи|открой|найди|найти|отыщи|перейди к)\s+/u.test(q)){
   if(documentWords.test(q))return {action:'docs:'+documentScope,reveal:true};
-  if(mailWords.test(q))return {action:'mail:inbox'};
+  if(mailWords.test(q))return {action:/черновик/u.test(q)?'mail:drafts':'mail:inbox'};
  }
  if(isQuestion(q))return {action:'ask'};
  if(documentWords.test(q))return {action:'docs:'+documentScope,reveal:true};
- if(mailWords.test(q))return {action:'mail:inbox'};
+ if(mailWords.test(q))return {action:/черновик/u.test(q)?'mail:drafts':'mail:inbox'};
  if(direct)return direct;
  const exact=sections.find(x=>normalize(x.name)===q);
  return exact?{action:exact.action}:null;
@@ -243,8 +243,8 @@ function render(){
   results.append(heading('Найдено в SEYVEO'));
   for(const entry of liveMatches.slice(0,10))results.append(itemRow(entry,records.includes(entry)?'record':'section'));
  }
- const routeLabel=detected?.action==='docs:personal'?'Открою документы. Защищённый архив запросит пароль.':
-  detected?.action==='mail:inbox'?'Открою почту. Если она не подключена, покажу подключение.':
+ const routeLabel=detected?.action?.startsWith('docs:')?'Открою документы. Защищённый архив запросит пароль.':
+  detected?.action?.startsWith('mail:')?'Открою почту. Если она не подключена, покажу подключение.':
   detected?.action?.startsWith('connect:')?'Покажу настройки подключения.':
   detected?.action==='web'||detected?.action==='site'?'Открою результат в браузере после отправки запроса.':
   'Сэйви поможет разобраться и при необходимости проверит публичные источники.';
