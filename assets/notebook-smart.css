@@ -283,8 +283,8 @@
  box-sizing:border-box;
  display:grid;place-items:center;
  width:61px;height:61px;
- border:1px solid var(--soft-line);border-radius:21px;
- background:var(--card2);color:var(--secondary);
+ border:0;border-radius:0;
+ background:transparent;color:var(--secondary);
 }
 #notesDialog .note-empty-mark svg{
  display:block;width:30px;height:30px;
