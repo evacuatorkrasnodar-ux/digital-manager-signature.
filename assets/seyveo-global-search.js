@@ -133,7 +133,7 @@ async function unlockedDocumentHits(query){
     hits.push({title:nice(item.name).slice(0,140),
      meta:(area==='personal'?'Личный':'Рабочий')+' · разблокированный архив',
      action:'docs:'+area});
-    if(hits.length>=12)return hits;
+    if(hits.length>=12)return (await vault.status()).unlocked?hits:[];
    }
   }
   // Vault may have been locked while the asynchronous query was running.
@@ -196,6 +196,33 @@ function intention(query){
  const exact=sections.find(x=>normalize(x.name)===q);
  return exact?{action:exact.action}:null;
 }
+// Route readable requests to existing module searches, but never use
+// the full sentence as a filename or sender-name filter.
+function scopedTerm(query,action=''){
+ const raw=withoutWake(query);
+ let value=raw.replace(/^(?:найди|найти|отыщи|покажи|открой|где|поищи|ищи|поиск)\s+/u,'')
+  .replace(/^(?:мой|моя|моё|мои|наши|наш|все|всё)\s+/u,'').trim();
+ if(action.startsWith('mail:')){
+  const sender=value.match(/(?:^|\s)от\s+([а-яёa-z-]{3,})/iu);
+  if(sender){
+   const name=sender[1];
+   return normalize(name.length>=4&&/[аяыиею]$/iu.test(name)?name.slice(0,-1):name);
+  }
+  value=value.replace(/^(?:письм[оаы]?|писем|почт[ауы]?|email|черновик[иа]?|входящ[иех]+)\s*/iu,'')
+   .replace(/^(?:по теме|с темой|от кого|от|для|за|про)\s+/iu,'').trim();
+  return /^(?:почта|письма?|писем|черновики|входящие)$/iu.test(value)?'':normalize(value);
+ }
+ if(action.startsWith('docs:')){
+  if(/^(?:документ[а-я]*|файл[а-я]*|мой архив|архив|все документы|все файлы)$/iu.test(value))return '';
+  value=value.replace(/^(?:рабоч(?:ий|ие|ую)|личн(?:ый|ые|ую)|мо[йяи]|наш[иы])\s+/iu,'');
+  value=value.replace(/^(?:все|всё)\s+/iu,'');
+  // A short object label is more useful than a complete natural sentence:
+  // "найди договор за март" -> "договор".
+  const significant=value.match(/(?:договор[а-я]*|документ[а-я]*|файл[а-я]*|архив|сч[её]т[а-я]*|акт[а-я]*|pdf|word|xlsx)/iu);
+  return normalize(significant?.[0]||value).slice(0,80);
+ }
+ return normalize(value).slice(0,120);
+}
 function note(textValue,className='sv-search-caption'){
  const p=document.createElement('p');p.className=className;p.textContent=textValue;return p;
 }
@@ -207,14 +234,15 @@ function render(){
   results.append(note('Напиши что угодно. Сэйви найдёт доступное в приложении, поможет с действием или ответит на вопрос.'));
   return;
  }
+ const detected=intention(raw);
+ const lookup=scopedTerm(raw,detected?.action||'');
  const sectionsFound=sections.filter(x=>normalize(x.name+' '+x.tags).includes(query)).slice(0,5);
- const records=searchableRecords(query);
+ const records=searchableRecords(lookup||query);
  liveMatches=[...records,...sectionsFound.map(x=>({...x,title:x.name,meta:'Раздел SEYVEO'}))];
  if(liveMatches.length){
   results.append(heading('Найдено в SEYVEO'));
   for(const entry of liveMatches.slice(0,10))results.append(itemRow(entry,records.includes(entry)?'record':'section'));
  }
- const detected=intention(raw);
  const routeLabel=detected?.action==='docs:personal'?'Открою документы. Защищённый архив запросит пароль.':
   detected?.action==='mail:inbox'?'Открою почту. Если она не подключена, покажу подключение.':
   detected?.action?.startsWith('connect:')?'Покажу настройки подключения.':
@@ -222,7 +250,7 @@ function render(){
   'Сэйви поможет разобраться и при необходимости проверит публичные источники.';
  results.append(note(routeLabel,'sv-search-assistant-hint'));
  if(query.length>=2){
-  void unlockedDocumentHits(query).then(found=>{
+  void unlockedDocumentHits(lookup||query).then(found=>{
    if(!active||epoch!==searchEpoch||normalize(field.value)!==query||!found.length)return;
    const group=document.createElement('section');group.className='sv-search-vault-hits';
    group.append(heading('В открытом архиве'));
@@ -283,7 +311,7 @@ function close({restoreFocus=false}={}){
 function visit(action,{reveal=false}={}){
  const typed=field.value.trim(),intent=routeFor(typed);
  // Strip natural-language navigation verbs before filtering filenames.
- const searchText=typed.replace(/^(?:(?:сэйви|сейви)[, ]+)?(?:найди|отыщи|покажи|открой|найти|где)\s+(?:(?:мой|моя|моё|мои|наши|наш)\s+)?/iu,'').trim()||typed;
+ const searchText=scopedTerm(typed,action)||'';
  let query=typed;
  if(action==='smart'){
   if(!intent)return;
