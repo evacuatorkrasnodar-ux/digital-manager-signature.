@@ -14,7 +14,8 @@
  const ICONS=Object.freeze({
   mail:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4.5 7.5 7.5 6 7.5-6"/>',
   pulse:'<path d="M3 17h4l3-7 4 9 3-5h4"/><path d="M3 5h18"/>',
-  music:'<path d="M8 18V6l12-3v12"/><ellipse cx="5.5" cy="18.5" rx="2.5" ry="2"/><ellipse cx="17.5" cy="15.5" rx="2.5" ry="2"/>'
+  music:'<path d="M8 18V6l12-3v12"/><ellipse cx="5.5" cy="18.5" rx="2.5" ry="2"/><ellipse cx="17.5" cy="15.5" rx="2.5" ry="2"/>',
+  documents:'<path d="M7 3h8l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M15 3v5h4"/><path d="M9 12h6M9 16h5"/>'
  });
  const COPY=Object.freeze({
   mail:{
@@ -28,6 +29,10 @@
   music:{
    heading:'Подключить музыкальный сервис',
    caption:'Подписки работают после разрешённого подключения'
+  },
+  documents:{
+   heading:'Подключить документы',
+   caption:'1С · ЭДО · серверы'
   }
  });
  const instances=new Set();
@@ -41,6 +46,9 @@
     :yes('mail',scope==='business'?'business':'personal');
    if(service==='pulse')return ['bank','accounting','pos','crm'].some(s=>yes(s,'business'));
    if(service==='music')return ['apple-music','spotify','yandex-music','vk-music'].some(s=>yes(s,'personal'));
+   if(service==='documents')return scope==='business'
+    ?['documents','edo','1c','accounting','document-server'].some(s=>yes(s,'business'))
+    :['documents','cloud-storage'].some(s=>yes(s,'personal'));
    return yes(service,scope);
   }catch{return false}
  }
@@ -64,6 +72,8 @@
    if(scope==='personal')return {...copy,heading:'Подключить личную почту'};
    if(scope==='business')return {...copy,heading:'Подключить рабочую почту'};
   }
+  if(service==='documents'&&scope==='personal')
+   return {heading:'Подключить хранилище',caption:'Для синхронизации документов между устройствами'};
   return copy;
  }
  function refreshOne(item){
@@ -109,6 +119,10 @@
   return button;
  }
  function open(service){
+  if(service==='documents'&&typeof window.SEYVEO_SMART_CONNECTIONS?.open==='function'){
+   window.SEYVEO_SMART_CONNECTIONS.open('services');
+   return;
+  }
   // Use the EXISTING Management > Connections destination.
   // Nothing here claims that OAuth/IMAP, banking or a music provider is live.
   window.location.hash=SETTINGS_HASH;
