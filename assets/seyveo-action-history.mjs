@@ -245,7 +245,7 @@ if(personal&&head){
  option('Выбрать',()=>{selecting=true;chosen.clear();render()});
  option('Очистить историю',()=>{
   if(!confirm('Очистить личную историю? Завершённые дела удалятся; события Сэйви будут скрыты из списка на этом устройстве. Служебные журналы компании сохранятся.'))return;
-  if(!hideEvents(window.SEYVEO_CARD_LIFECYCLE?.history?.()||[])){alert('Не удалось сохранить очистку');return}
+  if(!window.SEYVEO_CARD_LIFECYCLE?.clearPersonalHistory?.()){alert('Не удалось очистить историю');return}
   if(!window.SEYVEO_PERSONAL_TASK_HISTORY?.clearCompleted?.()){alert('Не удалось очистить завершённые дела');return}
   selecting=false;chosen.clear();render();
  });
@@ -259,7 +259,9 @@ if(personal&&head){
  removeChosen.addEventListener('click',()=>{
   if(!chosen.size||!confirm('Удалить выбранные записи?'))return;
   const events=window.SEYVEO_CARD_LIFECYCLE?.history?.()||[];
-  if(!hideEvents(events.filter(e=>chosen.has(eventKey(e))))){alert('Не удалось сохранить изменения');return}
+  for(const e of events.filter(e=>chosen.has(eventKey(e)))){
+   if(!window.SEYVEO_CARD_LIFECYCLE?.removeHistoryEntry?.(e.eventId)){alert('Не удалось удалить запись');return}
+  }
   const tasks=window.SEYVEO_PERSONAL_TASK_HISTORY?.completed?.()||[];
   for(const task of tasks)if(chosen.has('task:'+task.id))window.SEYVEO_PERSONAL_TASK_HISTORY?.removeCompleted?.(task.id);
   chosen.clear();selecting=false;render();
@@ -371,10 +373,10 @@ if(personal&&head){
      del.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 10v7M14 10v7"/></svg>';
      del.title='Удалить запись';
      del.setAttribute('aria-label','Удалить запись: '+cleanTitle(e));
-     del.addEventListener('click',()=>{
-      if(!confirm('Удалить эту запись из личной истории?'))return;
-      const ok=e.taskId?window.SEYVEO_PERSONAL_TASK_HISTORY?.removeCompleted?.(e.taskId):hideEvents([e]);
-      if(ok)render();else alert('Не удалось удалить запись.');
+     del.addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();
+      const ok=e.taskId?window.SEYVEO_PERSONAL_TASK_HISTORY?.removeCompleted?.(e.taskId):window.SEYVEO_CARD_LIFECYCLE?.removeHistoryEntry?.(e.eventId);
+      if(ok)render();else alert('Не удалось удалить запись. Проверьте хранилище браузера.');
      });
      item.append(del);
     }
