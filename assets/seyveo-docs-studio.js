@@ -188,9 +188,9 @@ function mount(target,{
   ['Добавить файл','file',()=>onPick()],
   ['Создать','create',()=>open('create')],
   ['Подписать','sign',()=>open('sign')],
-  ['Печать','print',()=>open('print')],
-  // Uses the existing PDF/Word creator; file-to-file conversion is not claimed.
-  ['PDF ⇄ Word','convert',()=>open('create')]
+  ['Печать','print',()=>open('print')]
+  // PDF and Word creation remains accessible inside «Создать».
+  // The former PDF ⇄ Word tile was misleading: it never converted files.
  ];
  for(const [label,key,action] of items){
   const el=button(label,action,'sv-doc-tool-'+key);
