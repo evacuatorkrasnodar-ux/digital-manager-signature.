@@ -524,9 +524,7 @@ function mailView(){
  function renderGate(){
   const account=mailScope==='all'?guardAccount:mailScope;
   const pending=folderCount('review');
-  const modes=mailScope==='all'
-   ?'Личная · '+MAIL_GATE_MODES[mailGate.personal.mode].title+' / Рабочая · '+MAIL_GATE_MODES[mailGate.business.mode].title
-   :MAIL_GATE_MODES[mailGate[account].mode].title;
+  const modes=mailScope==='all'?'Умный допуск':MAIL_GATE_MODES[mailGate[account].mode].title;
   guardTrigger.querySelector('.sv-mail-gate-trigger-label').textContent=modes;
   guardTrigger.setAttribute('aria-expanded',String(guardOpen));
   guardReview.hidden=!pending||!mailShowExamples;
@@ -653,6 +651,7 @@ function mailView(){
    mailNotice='Отправитель разблокирован в учебном списке. Письма остаются в Спаме до восстановления.';
   }else if(action==='trust'){
    if(!addGateTrusted(item.account,sampleMailAddress(item)))return;
+   mailFolder='inbox';
    mailNotice='Адрес добавлен в доверенные · только учебная почта.';
   }else if(action==='remove'){
    item.removed=true;mailNotice='Учебное письмо удалено из локального списка.';
