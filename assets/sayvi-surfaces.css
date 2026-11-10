@@ -2646,3 +2646,71 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-attached-item > .sv
   flex-basis:147px!important;width:147px!important;min-width:147px!important;max-width:147px!important;
  }
 }
+
+
+/* SEYVEO Mail composer paperclip dock · bottom left · 2026-11-10.
+   The compose form remains full-width; tools share one aligned baseline.
+   Never change the app-wide Home dock or unrelated screens. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-compose-footer{
+ box-sizing:border-box!important;
+ display:flex!important;flex-flow:row nowrap!important;
+ justify-content:space-between!important;align-items:center!important;
+ width:100%!important;min-width:0!important;min-height:52px!important;
+ gap:8px!important;margin:12px 0 0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files{
+ box-sizing:border-box!important;display:flex!important;flex-flow:row nowrap!important;
+ align-items:center!important;justify-content:flex-start!important;
+ gap:6px!important;flex:1 1 0%!important;
+ min-width:0!important;width:auto!important;max-width:100%!important;
+ height:52px!important;min-height:52px!important;
+ padding:0!important;margin:0!important;background:transparent!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attach-trigger{
+ appearance:none!important;-webkit-appearance:none!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+ max-width:44px!important;height:44px!important;min-height:44px!important;
+ max-height:44px!important;padding:0!important;margin:0!important;
+ border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F1F3F5!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attach-trigger svg{
+ display:block!important;width:20px!important;height:20px!important;
+ stroke:currentColor!important;stroke-width:1.6!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attach-trigger:active{
+ background:#48484B!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attached-list{
+ box-sizing:border-box!important;display:flex!important;
+ flex:1 1 0%!important;flex-direction:row!important;flex-wrap:nowrap!important;
+ align-items:center!important;gap:6px!important;
+ min-width:0!important;max-width:none!important;width:auto!important;
+ height:52px!important;min-height:52px!important;
+ margin:0!important;padding:0!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+ scrollbar-width:none!important;-webkit-overflow-scrolling:touch;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attached-list::-webkit-scrollbar{
+ display:none!important;width:0!important;height:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attached-list[hidden]{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-compose-footer > .sv-mail-editor-actions{
+ box-sizing:border-box!important;flex:0 0 116px!important;
+ width:116px!important;min-width:116px!important;max-width:116px!important;
+ height:52px!important;min-height:52px!important;
+ margin:0 0 0 auto!important;
+}
+@media(max-width:360px){
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attached-list .sv-mail-attached-item{
+  flex-basis:142px!important;width:142px!important;min-width:142px!important;
+  max-width:142px!important;
+ }
+}
