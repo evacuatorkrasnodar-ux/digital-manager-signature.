@@ -273,8 +273,9 @@ html body #seyveoCompanyDialog[open] .seyveo-passport-form{
  margin:0!important;padding:0!important;border:0!important;
  background:transparent!important;
 }
-html body #seyveoCompanyDialog[open] .seyveo-passport-form :is(>label,> [data-passport-type]>label),
-html body #seyveoCompanyDialog[open] .sv-company-extra :is(label){
+html body #seyveoCompanyDialog[open] .seyveo-passport-form > label,
+html body #seyveoCompanyDialog[open] .seyveo-passport-form > [data-passport-type] > label,
+html body #seyveoCompanyDialog[open] .sv-company-extra label{
  display:block!important;margin:0 0 15px!important;
  font-size:12px!important;font-weight:510!important;line-height:1.4!important;
  color:var(--sv-company-quiet)!important;
