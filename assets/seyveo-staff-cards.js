@@ -241,12 +241,21 @@ style.textContent=String.raw`
 }
 .svstaff-action.secondary{background:transparent;color:var(--text);border:1px solid rgba(190,196,204,.14)}
 .svstaff-plan{
- margin:5px 0 13px;padding:13px 15px;
- border:1px solid rgba(190,196,204,.12);border-radius:13px;
+ margin:5px 0 13px;padding:0;
+ border:0;border-top:1px solid rgba(190,196,204,.12);border-radius:0;
  background:transparent;color:var(--text);
  font-size:12px;line-height:1.6
 }
-.svstaff-plan strong{display:block;margin:0 0 6px;font-size:12.5px;font-weight:610}
+.svstaff-plan>summary{
+ display:flex;align-items:center;justify-content:space-between;
+ min-height:44px;margin:0;padding:3px 0;cursor:pointer;
+ font-size:13px;font-weight:600;color:var(--text);list-style:none;
+}
+.svstaff-plan>summary::-webkit-details-marker{display:none}
+.svstaff-plan>summary::after{content:"›";font-size:21px;font-weight:400;color:var(--secondary)}
+.svstaff-plan[open]>summary::after{transform:rotate(90deg)}
+.svstaff-plan-content{padding:3px 0 10px}
+.svstaff-plan-content p{margin:5px 0;color:var(--secondary)}
 .svstaff-plan ol{margin:6px 0;padding-left:20px}
 .svstaff-demo-note{
  margin:20px 0 2px;padding:12px 0 0;
@@ -289,15 +298,15 @@ function portrait(p){
 const tenure=(since)=>{const start=new Date(since+'T12:00:00'),today=new Date();let y=today.getFullYear()-start.getFullYear(),m=today.getMonth()-start.getMonth();if(today.getDate()<start.getDate())m--;if(m<0){y--;m+=12}return y>0?(y+' г. '+m+' мес.'):m+' мес.'};
 const photoFor=p=>photos.get(p.id)||portrait(p);
 const shell=el('div','svstaff-directory');root.replaceChildren(shell);
-const intro=el('div','svstaff-intro');intro.append(el('strong',null,'ЛЮДИ КОМПАНИИ'),el('small',null,'3 учебные карточки'));shell.append(intro);
+const intro=el('div','svstaff-intro');intro.append(el('strong',null,'Сотрудники'),el('small',null,String(people.length)+' примера'));shell.append(intro);
 const directory=el('div','svstaff-directory-list');shell.append(directory);
-const note=el('p','svstaff-footnote','Учебные примеры: данные, истории и иллюстрированные портреты вымышлены. Настоящие кадровые данные пока не подключены.');shell.append(note);
+// One short notice remains above the list; no duplicated explanation below every card.
 const modal=el('dialog','svstaff-modal');modal.setAttribute('aria-label','Профессиональная история сотрудника');document.body.append(modal);
 const top=el('div','svstaff-modal-top');
 const close=button('','svstaff-close',()=>modal.close());
-close.setAttribute('aria-label','Закрыть карточку сотрудника');
-close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg>';
-top.append(el('span',null,'SEYVEO · КАДРЫ'),close);modal.append(top);
+close.setAttribute('aria-label','Назад к сотрудникам');
+close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';
+top.append(close,el('span',null,'Карточка сотрудника'));modal.append(top);
 const body=el('div','svstaff-content');modal.append(body);
 let chosen=null,showPlan=false,lastTrigger=null,leavingForChat=false;
 function summaryStats(target,p){
@@ -315,10 +324,10 @@ function renderDirectory(){
   const photo=el('img','svstaff-thumb');photo.src=photoFor(p);photo.alt='';photo.loading='lazy';
   const copy=el('span','svstaff-tile-copy');
   copy.append(el('strong',null,p.name),el('small',null,p.role+' · '+tenure(p.since)),el('span','svstaff-tile-trend','Сэйви: '+p.hint));
-  const count=el('span','svstaff-tile-count');count.append(icon('star','svstaff-gold'),el('b',null,String(peerRecognition(p.id).length)));
+  const count=el('span','svstaff-tile-count');count.append(icon('star','svstaff-gold'),el('b',null,String(peerRecognition(p.id).length)));count.setAttribute('aria-label','Знаки благодарности: '+peerRecognition(p.id).length);
   const arrow=el('span','svstaff-tile-arrow','›');arrow.setAttribute('aria-hidden','true');
   const newMarks=peerRecognition(p.id).length;
-  if(newMarks)copy.append(el('span','svstaff-peer-preview','✦ Новый знак от коллег · демо'));
+  // The recognition count already communicates this; no extra line per employee.
   tile.append(photo,copy,count,arrow);directory.append(tile);
  });
 }
@@ -329,8 +338,18 @@ function openPerson(p,trigger){
 function renderProfile(){
  if(!chosen)return;const p=chosen;body.replaceChildren();
  const hero=el('section','svstaff-hero');const photo=el('img','svstaff-photo');photo.src=photoFor(p);photo.alt='Иллюстрированный портрет сотрудника '+p.name;
+ const photoPick=el('input');photoPick.type='file';photoPick.accept='image/*';photoPick.hidden=true;photoPick.setAttribute('aria-label','Выбрать фото сотрудника');
+ photoPick.addEventListener('change',()=>{
+  const file=photoPick.files&&photoPick.files[0];if(!file)return;
+  if(!file.type.startsWith('image/')||file.size>5*1024*1024){alert('Выберите изображение размером до 5 МБ.');return}
+  const old=photos.get(p.id);if(old&&old.startsWith('blob:'))URL.revokeObjectURL(old);
+  photos.set(p.id,URL.createObjectURL(file));renderDirectory();renderProfile();
+ });
+ const photoEdit=button('','svstaff-photo-edit',()=>photoPick.click());
+ photoEdit.setAttribute('aria-label','Изменить фото сотрудника');photoEdit.title='Изменить фото';
+ photoEdit.append(photo);
  const detail=el('div','svstaff-hero-info');detail.append(el('div','svstaff-person-name',p.name),el('div','svstaff-person-role',p.role),el('div','svstaff-tenure','В компании с '+new Date(p.since+'T12:00:00').toLocaleDateString('ru-RU',{month:'long',year:'numeric'})+' · '+tenure(p.since)));
- hero.append(photo,detail);body.append(hero);
+ hero.append(photoEdit,detail,photoPick);body.append(hero);
  summaryStats(body,p);
  const history=el('section','svstaff-section');history.append(el('h3',null,'История работы'));
  p.events.forEach(item=>{
@@ -422,24 +441,21 @@ function renderProfile(){
  insight.append(head,el('p',null,p.insight));body.append(insight);
  const actions=el('div','svstaff-actions');
  actions.append(button('Написать лично','svstaff-action',()=>{
-  // The demo chat uses the employee's stable internal ID, never a display-name match.
-  // Close the employee card before opening its existing Business chat surface.
   const personId=p.id;
   leavingForChat=true;
   modal.close();
-  window.SEYVEO_BUSINESS_COMMAND?.openPrivateChat?.(personId);
+  const opened=window.SEYVEO_BUSINESS_COMMAND?.openPrivateChat?.(personId);
+  if(!opened)leavingForChat=false;
  }));
- actions.append(button(showPlan?'Скрыть план':'План развития','svstaff-action',()=>{showPlan=!showPlan;renderProfile()}));
- const inp=el('input');inp.type='file';inp.accept='image/*';inp.hidden=true;inp.setAttribute('aria-label','Загрузить фото для просмотра');inp.addEventListener('change',()=>{
-  const file=inp.files&&inp.files[0];if(!file)return;
-  if(!file.type.startsWith('image/')||file.size>5*1024*1024){alert('Выберите изображение размером до 5 МБ.');return}
-  const existing=photos.get(p.id);if(existing&&existing.startsWith('blob:'))URL.revokeObjectURL(existing);
-  photos.set(p.id,URL.createObjectURL(file));renderDirectory();renderProfile();
- });
- actions.append(button('Добавить фото','svstaff-action secondary',()=>inp.click()),inp);body.append(actions);
- if(showPlan){const plan=el('section','svstaff-plan');plan.append(el('strong',null,'Предлагаемые шаги · учебный пример'));
- const list=el('ol');p.next.forEach(x=>list.append(el('li',null,x)));plan.append(list,el('p',null,'Согласовать с самим сотрудником. Решение принимает руководитель, без автоматической оценки или наказания.'));body.append(plan)}
- body.append(el('p','svstaff-demo-note','Это демонстрационная карточка вымышленного сотрудника. Фото можно выбрать только для просмотра на этом устройстве — оно не загружается в сеть и не сохраняется. Рабочие замечания требуют проверки, права на ответ и исправление. Настоящий анализ Сэйви пока не подключён.'));
+ body.append(actions);
+ const plan=el('details','svstaff-plan');
+ const planTitle=el('summary','svstaff-plan-title','План развития');plan.append(planTitle);
+ const planContent=el('div','svstaff-plan-content');
+ const list=el('ol');p.next.forEach(x=>list.append(el('li',null,x)));
+ planContent.append(list,el('p',null,'Шаги обсуждаются с сотрудником; решение принимает руководитель.'));
+ plan.append(planContent);body.append(plan);
+ body.append(el('p','svstaff-demo-note','Учебные данные. Заметки и поощрения требуют проверки; автоматической оценки персонала нет.'));
+
 }
 modal.addEventListener('close',()=>{chosen=null;showPlan=false;if(!leavingForChat)lastTrigger?.focus?.();leavingForChat=false});
 modal.addEventListener('click',e=>{if(e.target===modal)modal.close()});
