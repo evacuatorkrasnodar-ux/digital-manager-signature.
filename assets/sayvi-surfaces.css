@@ -2822,3 +2822,72 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-draft-delete:focus-
  }
  html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-draft-details{gap:4px!important}
 }
+
+
+/* SEYVEO Mail · multiple-file shelf v70 (2026-11-10).
+   Full-width horizontal swipe ABOVE the controls. The dock is untouched. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-attachment-shelf[hidden]{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-attachment-shelf:not([hidden]){
+ box-sizing:border-box!important;display:block!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ min-height:52px!important;margin:10px 0 0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-attachment-shelf > .sv-mail-attached-list{
+ box-sizing:border-box!important;display:flex!important;flex-flow:row nowrap!important;
+ align-items:center!important;justify-content:flex-start!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ height:52px!important;min-height:52px!important;
+ padding:0 2px 0 0!important;margin:0!important;gap:8px!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+ scroll-snap-type:x proximity;scroll-padding-inline:0 8px;
+ overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+ scrollbar-width:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-attachment-shelf > .sv-mail-attached-list::-webkit-scrollbar{
+ display:none!important;width:0!important;height:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-attachment-shelf .sv-mail-attached-list > .sv-mail-attached-item{
+ box-sizing:border-box!important;
+ flex:0 0 clamp(176px,53vw,208px)!important;
+ width:clamp(176px,53vw,208px)!important;
+ min-width:clamp(176px,53vw,208px)!important;
+ max-width:clamp(176px,53vw,208px)!important;
+ height:52px!important;min-height:52px!important;max-height:52px!important;
+ scroll-snap-align:start;margin:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files{
+ flex:1 1 auto!important;width:auto!important;min-width:44px!important;
+ justify-content:flex-start!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attach-trigger{
+ position:relative!important;overflow:visible!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attach-trigger .sv-mail-attach-count[hidden]{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-footer-files > .sv-mail-attach-trigger .sv-mail-attach-count:not([hidden]){
+ box-sizing:border-box!important;position:absolute!important;
+ top:-4px!important;right:-4px!important;z-index:1!important;
+ display:grid!important;place-items:center!important;
+ width:16px!important;height:16px!important;min-width:16px!important;
+ padding:0!important;margin:0!important;border:1px solid #38383A!important;
+ border-radius:50%!important;background:#E7E9EC!important;color:#242629!important;
+ font:650 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor:has(.sv-mail-attachment-shelf:not([hidden])) .sv-mail-compose-footer{
+ margin-top:6px!important;
+}
+/* Keep the composing controls in sight when the attachment shelf appears. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor:has(.sv-mail-attachment-shelf:not([hidden])) textarea.sv-mail-input{
+ height:clamp(220px,35dvh,340px)!important;
+ min-height:220px!important;max-height:340px!important;
+}
+@media(max-height:650px){
+ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor:has(.sv-mail-attachment-shelf:not([hidden])) textarea.sv-mail-input{
+  height:clamp(170px,30dvh,230px)!important;
+  min-height:170px!important;max-height:230px!important;
+ }
+}
