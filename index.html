@@ -3454,9 +3454,16 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div class="sv-company-view" id="seyveoCompanyView">
 <p class="seyveo-passport-subtitle">Контакты и реквизиты для клиентов и партнёров.</p>
 <div id="seyveoCompanyRows"></div>
+<div id="seyveoCompanyEmptyMark" class="sv-company-empty-mark" aria-hidden="true">
+<svg viewBox="0 0 48 48" focusable="false"><rect x="9" y="6" width="30" height="36" rx="7"/><path d="M15.5 16h17M15.5 23h17M15.5 30h11"/></svg>
+</div>
 <p id="seyveoCompanyNotFilled" class="seyveo-passport-notice">Добавьте название и контакты, чтобы создать визитку.</p>
 <button id="seyveoCompanyEditTop" class="seyveo-passport-edit-top" type="button" aria-label="Изменить сведения компании"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.6-1 10.5-10.6a2.4 2.4 0 0 0-3.4-3.4L5.3 15.6 4 20Z"/><path d="m14.7 6.2 3.3 3.3"/></svg><span>Заполнить карточку</span></button>
-<div class="sv-company-actions"><button type="button" id="seyveoCompanyShare">Поделиться</button><button type="button" id="seyveoCompanyPrint">Распечатать</button><button type="button" id="seyveoCompanyQrOpen">QR-визитка</button></div><p id="seyveoCompanyQrHint" class="sv-company-qr-hint">Для QR добавьте телефон, почту или сайт.</p><button type="button" id="seyveoCompanyAvatarEdit" hidden tabindex="-1" aria-hidden="true">Образ</button>
+<div class="sv-company-actions">
+<button type="button" id="seyveoCompanyShare"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0-4.5 4.5M12 3l4.5 4.5M5 13.5v5.2A2.3 2.3 0 0 0 7.3 21h9.4a2.3 2.3 0 0 0 2.3-2.3v-5.2"/></svg><span>Поделиться</span></button>
+<button type="button" id="seyveoCompanyPrint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3.5h10V8M6 17H4a2 2 0 0 1-2-2v-4.5A2.5 2.5 0 0 1 4.5 8h15A2.5 2.5 0 0 1 22 10.5V15a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/><path d="M18.5 11.5h.01"/></svg><span>Печать</span></button>
+<button type="button" id="seyveoCompanyQrOpen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM15 14h2M20 14h1M14 18h3M20 18v3M17 21h1"/></svg><span>QR-визитка</span></button>
+</div><p id="seyveoCompanyQrHint" class="sv-company-qr-hint">Для QR добавьте телефон, почту или сайт.</p><button type="button" id="seyveoCompanyAvatarEdit" hidden tabindex="-1" aria-hidden="true">Образ</button>
 </div>
 <section class="sv-company-editor" id="seyveoCompanyEditor" hidden>
 <h3 class="seyveo-passport-section">Сведения и реквизиты</h3>
