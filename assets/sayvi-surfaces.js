@@ -239,21 +239,25 @@ function mailView(){
  const compose=create('button','sv-mail-icon-button sv-mail-compose');compose.type='button';
  compose.setAttribute('aria-label','Написать письмо');compose.append(mailIcon('pencil'));
  compose.addEventListener('click',()=>openEditor());
- topButtons.append(searchToggle,connect,compose);
+ // Show only Search and Compose in the Mail titlebar.
+ // The existing connection action is available inside the expanded Search.
+ topButtons.append(searchToggle,compose);
  const introCopy=create('div','sv-mail-introduction-text');
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
  // Reuse the original navigation button inside the visible Mail titlebar.
  // The legacy .sv-deep-top is hidden for Mail; leaving Back outside it
  // made navigation disappear or float independently of the title.
  top.append(back,introCopy,topButtons);
- const searchLabel=create('label','sv-mail-search');searchLabel.id='svMailQuickSearch';
+ const searchLabel=create('div','sv-mail-search');searchLabel.id='svMailQuickSearch';
  searchLabel.append(mailIcon('search'));
  const searchInput=create('input','sv-mail-search-input');
  searchInput.type='search';searchInput.placeholder='Поиск по письмам';
  searchInput.setAttribute('aria-label','Поиск по письмам и черновикам');
  searchInput.autocomplete='off';searchInput.value=mailSearch;
  searchInput.addEventListener('input',()=>{mailSearch=searchInput.value.trim().toLocaleLowerCase('ru');paintList()});
- searchLabel.append(searchInput);
+ connect.title='Подключения почты';
+ connect.classList.add('sv-mail-search-connect');
+ searchLabel.append(searchInput,connect);
  searchInput.addEventListener('keydown',event=>{
   if(event.key==='Escape'){
    mailSearchOpen=false;mailSearch='';searchInput.value='';paint();searchToggle.focus();
