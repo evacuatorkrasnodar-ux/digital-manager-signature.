@@ -110,6 +110,8 @@ html body dialog#notesDialog.notes-dialog[open] #notesCount{
 html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles.sv-notebook-create-tiles{
   box-sizing:border-box!important;
   display:grid!important;
+  position:relative!important;z-index:2!important;
+  pointer-events:auto!important;touch-action:manipulation!important;
   grid-template-columns:repeat(3,minmax(0,1fr))!important;
   column-gap:10px!important;row-gap:8px!important;
   align-items:start!important;justify-content:stretch!important;
@@ -123,6 +125,8 @@ html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles.sv-notebo
 html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles > .paper-choice-item{
   box-sizing:border-box!important;
   -webkit-appearance:none!important;appearance:none!important;
+  position:relative!important;z-index:3!important;
+  pointer-events:auto!important;touch-action:manipulation!important;
   display:flex!important;flex-direction:column!important;
   align-items:center!important;justify-content:flex-start!important;
   gap:9px!important;
