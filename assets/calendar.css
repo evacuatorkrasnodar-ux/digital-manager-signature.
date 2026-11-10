@@ -388,16 +388,14 @@
  overflow:hidden;overscroll-behavior:none;
 }
 #calendarEventDialog .cal-event-sheet{
- box-sizing:border-box;flex:0 1 auto;align-self:center;
- width:min(425px,100%);max-width:100%;max-height:100%;
- margin:0 auto;padding:18px clamp(15px,4.2vw,21px) 15px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
- border-radius:25px;
- background:linear-gradient(148deg,var(--seyveo-specular),transparent 68%),var(--bg);
- box-shadow:0 14px 42px rgba(0,0,0,.14);
- overflow-x:hidden;overflow-y:auto;
- overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
- scrollbar-width:none;
+ box-sizing:border-box;display:flex;flex-direction:column;
+ flex:1 1 auto;align-self:stretch;
+ width:min(425px,100%);max-width:100%;
+ height:100%;min-height:0;max-height:100%;
+ margin:0 auto;padding:17px clamp(15px,4.2vw,21px) 16px;
+ border:0;border-radius:0;
+ background:transparent;box-shadow:none;
+ overflow:hidden;overscroll-behavior:contain;
 }
 #calendarEventDialog .cal-event-sheet::-webkit-scrollbar{display:none}
 #calendarEventDialog .cal-event-sheet>h2{
@@ -407,8 +405,8 @@
 }
 #calendarEventDialog #calendarEventForm{
  box-sizing:border-box;display:flex;flex-direction:column;
- gap:12px;min-width:0;min-height:0;
- flex:none;margin:0;padding:0;overflow:visible;
+ gap:12px;min-width:0;min-height:0;flex:1 1 auto;
+ margin:0;padding:0;overflow:hidden;
 }
 #calendarEventDialog .cal-form-primary{
  display:block;flex:none;min-width:0;
@@ -417,8 +415,9 @@
 #calendarEventDialog .cal-form-primary>.cal-field{min-width:0}
 #calendarEventDialog .cal-form-scroll{
  box-sizing:border-box;display:flex;flex-direction:column;
- flex:none;min-width:0;min-height:0;gap:11px;
- padding:0;margin:0;overflow:visible;
+ flex:1 1 auto;min-width:0;min-height:0;gap:11px;
+ padding:0 0 10px;margin:0;overflow-y:auto;overflow-x:hidden;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
 }
 #calendarEventDialog .cal-form-scroll>*{
  box-sizing:border-box;min-width:0;max-width:100%;
@@ -576,9 +575,9 @@
  font-size:15px;line-height:1.4;
 }
 #calendarEventDialog .cal-dialog-actions{
- display:flex;align-items:center;justify-content:space-between;
- flex:none;position:static;z-index:auto;gap:10px;
- box-sizing:border-box;margin:0;padding:0;
+ display:flex;align-items:center;justify-content:flex-end;
+ flex:none;position:relative;z-index:1;gap:10px;
+ box-sizing:border-box;margin:auto 0 0;padding:10px 0 0;
  border:0;background:transparent;box-shadow:none;
 }
 #calendarEventDialog .cal-dialog-actions>.btn{
@@ -942,12 +941,10 @@
    Editing, reminders, dates, delete and submit retain their original nodes. */
 #calendarEventDialog .cal-event-sheet{
  position:relative!important;
- border:0!important;
- border-radius:24px!important;
- background:var(--sv-ui-sheet)!important;
- -webkit-backdrop-filter:blur(24px) saturate(108%)!important;
- backdrop-filter:blur(24px) saturate(108%)!important;
- box-shadow:0 10px 30px rgba(0,0,0,.11)!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
  padding:17px clamp(15px,4.2vw,21px) 16px!important;
 }
 #calendarEventDialog .cal-event-sheet>h2{
@@ -991,10 +988,9 @@
  border-radius:12px!important;box-shadow:none!important;
 }
 #calendarEventDialog .cal-dialog-actions{
- justify-content:space-between!important;
- gap:8px!important;
- padding-top:10px!important;
- border-top:1px solid color-mix(in srgb,var(--text) 8%,transparent)!important;
+ justify-content:flex-end!important;
+ gap:8px!important;padding-top:10px!important;
+ border-top:0!important;
 }
 #calendarEventDialog .cal-dialog-actions>.btn.primary{
  margin-left:auto!important;
@@ -2078,3 +2074,34 @@ html body input:is([type="date"],[type="time"],[type="datetime-local"]):not(.sv-
  border-radius:14px!important;
 }
 
+
+/* Event editor: one visible graphite Save anchored above the permanent dock. */
+html body #calendarEventDialog.cal-form-dialog[open] .cal-event-sheet > #calendarEventForm{
+ display:flex!important;flex-direction:column!important;
+ flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;
+}
+html body #calendarEventDialog.cal-form-dialog[open] .cal-event-sheet #calendarEventForm > .cal-form-scroll{
+ flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;
+}
+html body #calendarEventDialog.cal-form-dialog[open] .cal-event-sheet #calendarEventForm > .cal-dialog-actions{
+ margin-top:auto!important;justify-content:flex-end!important;
+ flex:0 0 auto!important;position:relative!important;
+ padding:8px 0 0!important;border:0!important;
+}
+html body #calendarEventDialog.cal-form-dialog[open] .cal-event-sheet #calendarEventForm .cal-dialog-actions > button.btn.primary{
+ box-sizing:border-box!important;display:inline-flex!important;
+ align-items:center!important;justify-content:center!important;
+ min-width:130px!important;width:auto!important;
+ height:44px!important;min-height:44px!important;
+ margin:0 0 0 auto!important;padding:0 22px!important;
+ border:0!important;border-radius:13px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F7F7F8!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font:600 14px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+html body #calendarEventDialog.cal-form-dialog[open] .cal-event-sheet{
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
