@@ -119,7 +119,9 @@
   notebookPending=false;notebookActive=true;
   if(noteDialog.open)noteDialog.close();
   if(noteTitle)noteTitle.textContent='Мои записи';
-  notebookHost.replaceChildren(notebookTools,...noteParts);
+  // The shared header '+' already exposes Text / Drawing / Photo to text.
+  // Avoid a duplicate oversized launcher above the actual notes.
+  notebookHost.replaceChildren(...noteParts);
   notebookHost.hidden=false;
   sync();
   // Use the one original notes renderer and store, without displaying
