@@ -2891,3 +2891,58 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor:has(.sv-mail
   min-height:170px!important;max-height:230px!important;
  }
 }
+
+
+/* SEYVEO Mail · Discoverable connection. Search is strictly for searching.
+   One 46px graphite row below the account selector; never a third titlebar icon. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect[hidden]{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect{
+ appearance:none!important;-webkit-appearance:none!important;
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ justify-content:flex-start!important;gap:11px!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ height:46px!important;min-height:46px!important;
+ margin:5px 0 10px!important;padding:0 13px!important;
+ border:0!important;border-radius:15px!important;
+ background:#38383A!important;background-image:none!important;
+ box-shadow:none!important;outline:none;
+ color:#F2F3F4!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ text-align:left!important;font:inherit!important;cursor:pointer;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect .sv-mail-connect-glyph{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 20px!important;width:20px!important;height:20px!important;
+ min-width:20px!important;margin:0!important;color:#E8EAED!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect svg{
+ display:block!important;width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect .sv-mail-connect-label{
+ box-sizing:border-box!important;display:block!important;flex:1 1 auto!important;
+ min-width:0!important;white-space:nowrap!important;overflow:hidden!important;
+ text-overflow:ellipsis!important;
+ color:#F4F5F6!important;
+ font:580 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.012em!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect .sv-mail-connect-chevron{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 20px!important;width:20px!important;height:20px!important;
+ min-width:20px!important;
+ color:#C9CDD2!important;font:450 25px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect:active{
+ background:#48484B!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect:focus-visible{
+ outline:2px solid #E6E8EA!important;outline-offset:2px!important;
+}
+/* A settings/filter pictogram does not belong inside a search field. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-input{
+ flex:1 1 auto!important;
+}
