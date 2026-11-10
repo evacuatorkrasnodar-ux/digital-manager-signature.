@@ -2018,3 +2018,110 @@ html body #sayviSurfacePage[data-sv-subject="mail"] :is(
 :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions .sv-mail-assist-action{
  background:#E1E4E6!important;color:#30363C!important;
 }
+
+
+/* SEYVEO Mail editor · unified control system v60 · 2026-11-10 */
+/* One family of control tokens, strictly inside the compose screen.
+   Meaningful distinction: Back is a circle; segmented choice shares one
+   container; text actions have identical height, radius, weight and fill.
+   No geometry or style changes to the global dock or chat. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor{
+ --sv-mail-action-bg:#38383A;
+ --sv-mail-action-ink:#F1F3F5;
+ --sv-mail-action-height:42px;
+ --sv-mail-action-radius:15px;
+ --sv-mail-action-font:12px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-header{
+ margin-bottom:14px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-options{
+ border-radius:17px!important;
+ border:0!important;
+ background:#26292D!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option{
+ box-sizing:border-box!important;
+ border:0!important;
+ border-radius:14px!important;
+ height:36px!important;min-height:36px!important;
+ padding:0 8px!important;
+ background:transparent!important;
+ color:#B8BDC2!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ font:550 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option[aria-pressed="true"]{
+ border:0!important;
+ background:var(--sv-mail-action-bg)!important;
+ color:var(--sv-mail-action-ink)!important;
+ font-weight:620!important;
+ box-shadow:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions{
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ align-items:start!important;
+ justify-content:stretch!important;
+ gap:8px!important;
+ flex-direction:unset!important;
+ margin-top:6px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-mail-polish-trigger{
+ grid-column:1!important;
+ justify-self:start!important;
+ align-self:start!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-primary-actions{
+ grid-column:1!important;
+ display:flex!important;
+ flex-direction:row!important;
+ justify-content:flex-end!important;
+ align-items:center!important;
+ gap:8px!important;
+ flex:0 0 auto!important;
+ width:100%!important;
+ margin:0!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions :is(
+ .sv-mail-polish-trigger,.sv-mail-save-trigger,.sv-mail-send-trigger
+){
+ box-sizing:border-box!important;
+ display:inline-flex!important;
+ justify-content:center!important;
+ align-items:center!important;
+ flex:0 0 auto!important;
+ min-height:var(--sv-mail-action-height)!important;
+ height:var(--sv-mail-action-height)!important;
+ padding:0 12px!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:var(--sv-mail-action-radius)!important;
+ background:var(--sv-mail-action-bg)!important;
+ background-image:none!important;
+ color:var(--sv-mail-action-ink)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ font:600 var(--sv-mail-action-font)/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:0!important;
+ white-space:nowrap!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions :is(
+ .sv-mail-polish-trigger,.sv-mail-save-trigger,.sv-mail-send-trigger
+):active{
+ background:#48484B!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor{
+ --sv-mail-action-bg:#E1E4E6;
+ --sv-mail-action-ink:#30363C;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-options{
+ background:#EBEDEF!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option{
+ color:#59616A!important;
+}
