@@ -1371,6 +1371,12 @@ html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button:foc
  padding:12px 3px 3px;border-top:1px solid rgba(190,196,204,.12);
  background:transparent;box-shadow:none;
 }
+/* Empty manager assignments must not draw a horizontal half-screen seam.
+   When real task rows appear, the existing section is displayed unchanged. */
+#svWorkShell[data-active="personal"] #tasksPage #svManagerAssignments:not(:has(.svcp-task)){
+ display:none!important;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
 #tasksPage #svManagerAssignments #svcpTasks{display:block;min-width:0;background:transparent}
 #tasksPage #svManagerAssignments #svcpTaskList{display:block;min-width:0;min-height:38px}
 #tasksPage #svManagerAssignments .svcp-task-list{gap:0}
