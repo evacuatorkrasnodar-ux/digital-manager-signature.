@@ -5051,7 +5051,7 @@ function renderNotes(){
   if(scheduled){
    const [y,m,d]=note.calendarDate.split('-').map(Number);
    date.textContent='На '+new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',year:'numeric'}).format(new Date(y,m-1,d));
-  }else date.textContent=Number.isNaN(when.getTime())?'Моя запись':when.toLocaleString('ru-RU');
+  }else date.textContent=Number.isNaN(when.getTime())?'Моя запись':new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(when);
   const content=document.createElement('p');content.textContent=note.paper?'Рукописный лист':(note.text.trim()?note.text:(note.attachmentsCount?'Вложения · '+note.attachmentsCount:'Пустая заметка'));
   let thumbnail=null;
   if(note.paper){
@@ -5061,7 +5061,10 @@ function renderNotes(){
    window.SEYVEO_PAPER?.preview(thumbnail,note.paper);
   }
   const controls=document.createElement('div');controls.className='note-item-actions';
-  const open=document.createElement('button');open.type='button';open.className='note-open';open.append(content);open.setAttribute('aria-label','Открыть запись');
+  const open=document.createElement('button');open.type='button';open.className='note-open';open.setAttribute('aria-label','Открыть запись');
+  const copy=document.createElement('span');copy.className='note-row-copy';copy.append(content,date);
+  if(thumbnail)open.append(thumbnail);
+  open.append(copy);
   open.addEventListener('click',()=>{
    $('notesDialog').close();
    if(note.paper)window.SEYVEO_PAPER?.open(note);
@@ -5079,7 +5082,7 @@ function renderNotes(){
    }));
   });
   const more=document.createElement('button');more.type='button';more.className='note-more-button';
-  more.textContent='•••';more.setAttribute('aria-label','Ещё действия с записью');
+  more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>';more.setAttribute('aria-label','Действия с записью');
   more.setAttribute('aria-expanded','false');
   const menu=document.createElement('div');menu.className='note-more-options';menu.hidden=true;
   function action(label,callback,cls=''){
@@ -5107,9 +5110,7 @@ function renderNotes(){
   });
   if(!note.paper)menu.prepend(calendar);
   controls.append(open,more);
-  card.append(date,controls);
-  if(thumbnail)card.append(thumbnail);
-  card.append(menu);container.append(card);
+  card.append(controls,menu);container.append(card);
  });
 }
 function openNotes(){
