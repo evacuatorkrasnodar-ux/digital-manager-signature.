@@ -90,15 +90,19 @@ function openDocumentConnections(){
 }
 function connectionsEntry(){
  const action=button('',openDocumentConnections,'sv-doc-connections-entry');
- action.setAttribute('aria-label','Открыть умные подключения документов');
- const icon=el('span','sv-doc-connections-icon');
- icon.append(makeIcon('connection'));
+ const prompts=window.SEYVEO_CONNECTION_PROMPTS;
+ if(typeof prompts?.register==='function'){
+  // Register with the same verified-only system used by Mail and Pulse.
+  // There is no local fake "connected" switch.
+  prompts.register(action,'documents',{scope:area,addClick:false});
+  return action;
+ }
+ action.setAttribute('aria-label','Открыть подключения документов');
+ action.append(makeIcon('connection'));
  const copy=el('span','sv-doc-connections-copy');
- copy.append(el('strong','','Подключения документов'),
-  el('small','','1С · ЭДО · серверы'));
- const chevron=el('span','sv-doc-chat-chevron','›');
- chevron.setAttribute('aria-hidden','true');
- action.append(icon,copy,chevron);
+ copy.append(el('strong','',area==='personal'?'Подключить хранилище':'Подключить документы'),
+  el('small','',area==='personal'?'Синхронизация между устройствами':'1С · ЭДО · серверы'));
+ action.append(copy,el('span','sv-doc-chat-chevron','›'));
  return action;
 }
 function renderPreview(parent,file){
@@ -186,6 +190,7 @@ function draw(){
   const flow=el('section','sv-doc-workspace');
   host.append(flow);
   if(!window.SEYVEO_DOCUMENT_FLOW?.mount?.(flow))flow.append(note('Согласования пока недоступны.'));
+  if(!employeePreview())host.append(connectionsEntry());
   return;
  }
  // One real archive row replaces the duplicate "protected documents"
@@ -240,6 +245,8 @@ function draw(){
   safeArea.append(storeActions,picker);
   host.append(safeArea);
  }
+ // One visible gateway on BOTH Personal and Business, not buried at page bottom.
+ host.append(connectionsEntry());
  const feedback=el('p','sv-doc-selection-status');
  feedback.setAttribute('role','status');
  if(selected&&!stored[area])feedback.textContent='Выбран «'+selected.name+'». Откройте архив и подтвердите сохранение.';
@@ -269,7 +276,7 @@ function draw(){
  const summary=el('summary','sv-doc-vault-summary');
  const archiveTitle=el('span','sv-doc-vault-copy');
  archiveTitle.append(el('span','sv-doc-vault-title',area==='personal'?'Мой архив':'Архив компании'),
-  el('small','','Защищённый сейф · пароль'));
+  el('small','','Локальное шифрование · пароль'));
  summary.append(makeIcon('lock'),archiveTitle);
  const contents=el('div','sv-doc-vault');
  archive.append(summary,contents);
@@ -315,7 +322,8 @@ function draw(){
  const markBox=el('span','sv-doc-assistant-mark-box');
  markBox.append(makeIcon('sayvi'));intro.append(markBox);
  const copy=el('span','sv-doc-assistant-hero-copy');
- copy.append(el('strong','','Помощь Сэйви с документами'));
+ copy.append(el('strong','','Сэйви поможет'),el('small','','Создать или проверить документ'));
+ intro.setAttribute('aria-label','Сэйви: создать или проверить документ');
  intro.append(copy,el('span','sv-doc-chat-chevron','›'));
  const actions=el('div','sv-doc-assistant-actions');
  actions.append(
@@ -323,7 +331,6 @@ function draw(){
   button('Проверить с Сэйви',()=>goSayvi('review'),'sv-doc-assistant-action'));
  hero.append(intro,actions);assistant.append(hero);host.append(assistant);
  host.append(archive);
- if(area==='business')host.append(connectionsEntry());
  const safety=el('details','sv-doc-safety');
  safety.append(el('summary','','О защите данных'),
   note('Архив шифруется на этом устройстве. Пароль нельзя восстановить; очистка браузера может удалить файлы. Сохраните важные документы отдельно. Учебные согласования не шифруются — не используйте в них реальные данные.'));
