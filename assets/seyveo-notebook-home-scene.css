@@ -85,11 +85,27 @@ html body dialog#notesDialog.notes-dialog[open]{
   background-repeat:no-repeat!important;
   box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
-html body dialog#notesDialog.notes-dialog[open] > .seyveo-dialog-close{
+/* Same graphite back circle as approved SEYVEO navigation.
+   Specific enough to beat later full-screen transparent-arrow rules. */
+html body dialog#notesDialog.notes-dialog[open] > button.seyveo-dialog-close.sv-nav-arrow{
+  position:absolute!important;z-index:4!important;
   top:calc(15px + env(safe-area-inset-top,0px))!important;
   left:max(12px,env(safe-area-inset-left,0px))!important;
-  background:transparent!important;border:0!important;box-shadow:none!important;
-  color:var(--text)!important;
+  right:auto!important;
+  display:grid!important;place-items:center!important;
+  width:44px!important;height:44px!important;
+  min-width:44px!important;min-height:44px!important;
+  padding:0!important;margin:0!important;
+  background:#38383A!important;background-image:none!important;
+  border:0!important;border-radius:50%!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  color:#F7F7F8!important;
+}
+html body dialog#notesDialog.notes-dialog[open] > button.seyveo-dialog-close.sv-nav-arrow svg{
+  display:block!important;width:19px!important;height:19px!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body dialog#notesDialog.notes-dialog[open] > .notes-head{
   display:flex!important;align-items:center!important;justify-content:flex-start!important;
@@ -156,9 +172,10 @@ html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles .paper-ch
   color:#F7F7F8!important;
 }
 html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles .paper-choice-icon svg{
-  display:block!important;width:30px!important;height:30px!important;
-  fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+  display:block!important;width:55px!important;height:55px!important;
+  fill:none!important;stroke:currentColor!important;
   stroke-linecap:round!important;stroke-linejoin:round!important;
+  pointer-events:none!important;
 }
 html body dialog#notesDialog.notes-dialog[open] #svNotebookCreateTiles .paper-choice-copy{
   box-sizing:border-box!important;
