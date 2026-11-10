@@ -804,11 +804,28 @@
   if(kind==='documents')window.SEYVEO_SAYVI_SURFACES?.open?.('contract','business');
   if(kind==='company')window.SEYVEO_COMPANY_PASSPORT?.open?.();
  });
+ const staffTabs=$('svcpStaffTabs'),staffSchedule=$('svcpStaffSchedulePanel');
+ function setStaffTab(kind='team'){
+  const tab=['team','schedule','hiring'].includes(kind)?kind:'team';
+  if(staffSchedule)staffSchedule.hidden=tab!=='schedule';
+  if(peopleHost)peopleHost.hidden=tab==='schedule';
+  if(people)people.hidden=tab==='schedule';
+  window.SEYVEO_BUSINESS_COMMAND?.openPeopleView?.(tab==='hiring'?'hiring':'team');
+  staffTabs?.querySelectorAll('[data-svstaff-tab]').forEach(button=>{
+   button.setAttribute('aria-pressed',String(button.dataset.svstaffTab===tab));
+  });
+  if(staffTabs)staffTabs.dataset.active=tab;
+ }
+ staffTabs?.addEventListener('click',event=>{
+  const button=event.target.closest('[data-svstaff-tab]');
+  if(!button||!staffTabs.contains(button))return;
+  setStaffTab(button.dataset.svstaffTab);
+ });
  function openPeople(kind='team'){
   if(!isManager())return;
   openBusiness('preserve');
   if(staffReveal)staffReveal.open=true;
-  window.SEYVEO_BUSINESS_COMMAND?.openPeopleView?.(kind);
+  setStaffTab(kind);
  }
  function updateManagerSummary(){
   const summary=$('svcpManagerStatus');if(!summary)return;
@@ -826,7 +843,7 @@
   }
  }
  staffReveal?.addEventListener('toggle',()=>{
-  if(staffReveal.open)window.SEYVEO_BUSINESS_COMMAND?.openPeopleView?.('team');
+  if(staffReveal.open)setStaffTab(staffTabs?.dataset.active||'team');
  });
  window.addEventListener('seyveo:manager-tasks-updated',()=>{updateManagerSummary();if(isEmployee())renderEmployeeTasks()});
  window.addEventListener('storage',event=>{if(event.key===TASK_KEY){updateManagerSummary();if(isEmployee())renderEmployeeTasks()}});
