@@ -22,8 +22,8 @@
  shell.append(calendar,tasks);
  const nav=document.createElement('nav');
  nav.id='svWorkTabs';
- nav.setAttribute('aria-label','Мои дела, календарь и кабинет');
- const choices=[['personal','Мои дела'],['calendar','Календарь'],['business','Кабинет'],['employee','Моя работа']];
+ nav.setAttribute('aria-label','Мои дела, календарь, блокнот и кабинет');
+ const choices=[['personal','Мои дела'],['calendar','Календарь'],['notes','Блокнот'],['business','Кабинет'],['employee','Моя работа']];
  for(const [id,label] of choices){
   const button=document.createElement('button');
   button.type='button';
@@ -159,9 +159,7 @@
   // Old tabs are deliberately hidden, so this shared bar must show it.
   const employeePreview=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
   const managerPreview=window.SEYVEO_PREVIEW?.isManager?.()===true;
-  const employeeTasks=!tasks.hidden&&(tasks.dataset.employeeMode==='true'||employeePreview);
-  const employeeCalendar=!calendar.hidden&&employeePreview;
-  const employeeMode=employeeTasks||employeeCalendar;
+  const employeeMode=employeePreview&&!managerPreview;
   // The same three-position shell also belongs to ONE.
   // Preview roles are an interface demo, not verified company authorization.
   const visible=!tasks.hidden||!calendar.hidden;
@@ -179,13 +177,13 @@
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
    const name=tab.dataset.svWorkTab;
    tab.hidden=employeeMode
-    ? name==='business'
+    ? (name==='business'||name==='notes')
     : managerPreview
      ? name==='employee'
      : name==='business'||name==='employee';
    tab.textContent=employeeMode
-    ? (name==='personal'?'Дела':name==='employee'?'Работа':name==='calendar'?'Календарь':'Мои дела')
-    : (name==='personal'?'Мои дела':name==='calendar'?'Календарь':name==='business'?'Кабинет':'Моя работа');
+    ? (name==='personal'?'Дела':name==='employee'?'Работа':name==='calendar'?'Календарь':'Блокнот')
+    : (name==='personal'?'Мои дела':name==='calendar'?'Календарь':name==='notes'?'Блокнот':name==='business'?'Кабинет':'Моя работа');
   }
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
@@ -227,6 +225,16 @@
   const button=event.target.closest('[data-sv-work-tab]');
   if(!button||nav.hidden)return;
   const target=button.dataset.svWorkTab;
+  if(button.hidden)return;
+  if(target==='notes'){
+   // Notebook is an entry into the existing records/editor, not another empty Work page.
+   // For an empty notebook open the creation chooser directly.
+   const api=window.SEYVEO_NOTES_API;
+   if(api?.getNotes?.().length===0)document.getElementById('notesNew')?.click();
+   else if(typeof api?.openNotes==='function')api.openNotes();
+   else document.getElementById('notesDialog')?.showModal();
+   return;
+  }
   if(target===activeSection())return;
   if(createMenu){createMenu.hidden=true;calendarAdd?.setAttribute('aria-expanded','false');add.setAttribute('aria-expanded','false');}
   closeBusinessCreate();
@@ -272,7 +280,7 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:16,sync,
+  version:17,sync,
   isNotesInline:()=>false
  });
 })();
