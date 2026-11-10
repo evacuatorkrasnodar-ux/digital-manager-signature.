@@ -653,8 +653,54 @@ $('sayviMusicFromComposer')?.addEventListener('click',()=>{
 previous.disabled=true;next.disabled=true;seek.disabled=true;
 updateFavorite();
 updatePlay();updateTime();collectionRender();syncMusicRoute();
+/* The one global Search can ask for a title already loaded into this
+   player. Return only local track metadata; never pretend a streaming
+   subscription is connected or fetch arbitrary unlicensed media. */
+const musicKey=value=>String(value||'').toLocaleLowerCase('ru-RU')
+ .replace(/ё/g,'е').replace(/\.[a-z0-9]{2,5}$/iu,'')
+ .trim().replace(/\s+/g,' ');
+function searchTracks(query){
+ const q=musicKey(query);
+ if(!q||q.length<2)return [];
+ return tracks.map((file,i)=>{
+  const info=infoFor(file);
+  const name=musicKey(info.title),artist=musicKey(info.artist),filename=musicKey(file.name);
+  const full=[name,artist,filename].join(' ');
+  let score=0;
+  if(name===q||filename===q)score=100;
+  else if(name.startsWith(q))score=80;
+  else if(name.includes(q))score=65;
+  else if(artist===q)score=55;
+  else if(full.includes(q))score=40;
+  return {title:info.title||safeName(file),artist:info.artist||'',index:i,score};
+ }).filter(item=>item.score>0).sort((a,b)=>b.score-a.score||a.index-b.index).slice(0,12);
+}
+function playIndexFromSearch(trackIndex){
+ const idx=Number(trackIndex);
+ if(!Number.isSafeInteger(idx)||idx<0||idx>=tracks.length)return false;
+ open();
+ return switchTrack(idx,true);
+}
+function playFromSearch(query){
+ const q=musicKey(query),hits=searchTracks(q);
+ if(!hits.length){
+  open();
+  sayviMessage(tracks.length
+   ?'Такой песни нет среди загруженных файлов. Добавьте запись или выберите трек из списка.'
+   :'Пока нет загруженных песен. Добавьте свои аудиофайлы в «Моя музыка».');
+  return {status:'missing',count:tracks.length};
+ }
+ if(hits.length>1){
+  open();showQueue();
+  sayviMessage('Нашла несколько песен. Выберите нужную из списка.');
+  return {status:'multiple',matches:hits};
+ }
+ const ok=playIndexFromSearch(hits[0].index);
+ return {status:ok?'started':'unavailable',track:hits[0]};
+}
 window.SEYVEO_MUSIC=Object.freeze({
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
+ searchTracks,playFromSearch,playIndexFromSearch,
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   source:'local-file',connectedServices:0
