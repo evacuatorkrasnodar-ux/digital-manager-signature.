@@ -1269,7 +1269,8 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  // Fast on-device intent cues: no network call, no storage, no generated
  // reply and no partial draft sent before the user's Send action.
  function localTypingPreview(value){
-  const q=String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim();
+  const q=String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim()
+   .replace(/^(?:(?:сэйви|сейви|сэй|сей|seyveo)[,.:!\s-]+)+/u,'').trim();
   if(q.length<7)return '';
   if(/(?:подключ|настро|привяз)/u.test(q)&&/(?:почт|email|емейл)/u.test(q))
    return 'Сэйви уже понимает: подключение почты';
