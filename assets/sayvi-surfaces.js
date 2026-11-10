@@ -69,7 +69,10 @@ function setArt(kind){
  symbol.replaceChildren(s);
 }
 function openConnect(){
- // Use the existing Management → Connections page, not a fake inbox.
+ // Reuse the common Settings > Connections route, with Mail preselected.
+ if(window.SEYVEO_CONNECTION_PROMPTS?.open){
+  window.SEYVEO_CONNECTION_PROMPTS.open('mail');return;
+ }
  location.hash='#manage';
  const row=document.querySelector('#seyveoCleanManageMenu [data-clean-section="connections"]');
  if(row)row.click();
@@ -346,6 +349,12 @@ function mailView(){
  connectChevron.append(connectArrow);
  connect.append(connectGlyph,connectLabel,connectChevron);
  connect.addEventListener('click',openConnect);
+ // The reusable component replaces the temporary one-line design.
+ // It hides only when a real provider reports verified authorization.
+ window.SEYVEO_CONNECTION_PROMPTS?.register(connect,'mail',{
+  scope:()=>mailScope,
+  addClick:false
+ });
  const compose=create('button','sv-mail-icon-button sv-mail-compose');compose.type='button';
  compose.setAttribute('aria-label','Написать письмо');compose.append(mailIcon('pencil'));
  compose.addEventListener('click',()=>openEditor());
@@ -898,6 +907,8 @@ function mailView(){
   searchLabel.hidden=mailEditorOpen||!!mailCurrent||!mailSearchOpen;
   searchToggle.setAttribute('aria-expanded',String(!searchLabel.hidden));
   searchToggle.setAttribute('aria-controls','svMailQuickSearch');
+  // Scope switches between personal and work mailbox authorization.
+  window.SEYVEO_CONNECTION_PROMPTS?.refresh();
   compose.hidden=mailEditorOpen||!!mailCurrent;
   info.textContent=mailEditorOpen?'':
    mailCurrent?'Просмотр учебного письма':
