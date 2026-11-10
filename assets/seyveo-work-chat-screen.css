@@ -5303,3 +5303,18 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  min-width:0!important;
  margin:0!important;
 }
+
+
+/* SEYVEO Work Chat · Home dock silver icon parity · 2026-11-10. */
+/* Four composer icons only. Match Home's approved dark-graphite silver ink.
+   Keep exact SVG geometry, touch areas, glass/matte surfaces, writing and
+   voice-hold mechanics. This does not recolor message bubbles or other pages. */
+:root[data-theme="dark"] #svcpWorkChatScreen #svcpChatForm{
+ --seyveo-engrave-ink:rgba(202,220,226,.84);
+}
+:root[data-theme="dark"] #svcpWorkChatScreen #svcpChatForm > :is(
+ #svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle
+),
+:root[data-theme="dark"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > #svcpVoiceRecord{
+ color:rgba(202,220,226,.84)!important;
+}
