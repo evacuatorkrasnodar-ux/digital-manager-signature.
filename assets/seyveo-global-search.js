@@ -170,7 +170,7 @@ function actionButton(label,action,meta){
    provider; display accessible matching data while they type and execute only
    after a deliberate submission or a result tap. */
 const isQuestion=q=>/^(?:как|почему|зачем|что|кто|когда|где|сколько|какой|какая|какое|какие|объясни|расскажи|помоги|посоветуй|можно ли)(?=\s|[?!,.:]|$)/u.test(q)||/\?$/.test(q);
-const documentWords=/(?:документ|договор|архив|файл|подпис|сч[её]т|(?:^|\s)акт(?:ы|а|ов)?(?=\s|$)|pdf|word|xlsx)/iu;
+const documentWords=/(?:документ|договор|архив|файл|подпись|подписать|подпиши|сч[её]т|(?:^|\s)акт(?:ы|а|ов)?(?=\s|$)|pdf|word|xlsx)/iu;
 const mailWords=/(?:письм|писем|почт|email|емейл|черновик|входящ|корреспонденц)/iu;
 function intention(query){
  const q=withoutWake(query);
@@ -183,12 +183,14 @@ function intention(query){
   if(documentWords.test(q))return {action:'connect:documents'};
   if(/(?:банк|касс|crm|срм|битрикс|1с)/u.test(q))return {action:'connect:pulse'};
  }
- if(isQuestion(q))return {action:'ask'};
- if(/^(?:открой|покажи|найди|отыщи|перейди к|найти)\s+/u.test(q)){
-  if(documentWords.test(q))return {action:'docs:personal',reveal:true};
+ const documentScope=/(?:рабоч|компан|контрагент|клиент)/u.test(q) &&
+    window.SEYVEO_PREVIEW?.isManager?.()===true?'business':'personal';
+ if(/^(?:где|покажи|открой|найди|найти|отыщи|перейди к)\s+/u.test(q)){
+  if(documentWords.test(q))return {action:'docs:'+documentScope,reveal:true};
   if(mailWords.test(q))return {action:'mail:inbox'};
  }
- if(documentWords.test(q))return {action:'docs:personal',reveal:true};
+ if(isQuestion(q))return {action:'ask'};
+ if(documentWords.test(q))return {action:'docs:'+documentScope,reveal:true};
  if(mailWords.test(q))return {action:'mail:inbox'};
  if(direct)return direct;
  const exact=sections.find(x=>normalize(x.name)===q);
@@ -280,6 +282,8 @@ function close({restoreFocus=false}={}){
 }
 function visit(action,{reveal=false}={}){
  const typed=field.value.trim(),intent=routeFor(typed);
+ // Strip natural-language navigation verbs before filtering filenames.
+ const searchText=typed.replace(/^(?:(?:сэйви|сейви)[, ]+)?(?:найди|отыщи|покажи|открой|найти|где)\s+(?:(?:мой|моя|моё|мои|наши|наш)\s+)?/iu,'').trim()||typed;
  let query=typed;
  if(action==='smart'){
   if(!intent)return;
@@ -302,7 +306,7 @@ function visit(action,{reveal=false}={}){
   const scope=action.split(':')[1];
   const area=isDocs?(scope==='business'?'business':'personal'):'all';
   window.dispatchEvent(new CustomEvent('seyveo:global-search-scope',{
-   detail:{kind,query:typed.slice(0,200),scope:isDocs?area:scope,revealArchive:isDocs&&reveal}
+   detail:{kind,query:searchText.slice(0,200),scope:isDocs?area:scope,revealArchive:isDocs&&reveal}
   }));
   if(window.SEYVEO_SAYVI_SURFACES?.open?.(kind,area)!==true)
    location.hash=isDocs?'#sayvi-documents':'#sayvi-mail';
