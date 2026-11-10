@@ -298,3 +298,34 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-note{
   min-height:65px!important;
  }
 }
+
+/* Smart Contacts v3 · final iPhone polish, no changes to app dock. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-action{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex-shrink:0!important;min-height:44px!important;min-width:90px!important;
+ padding:8px 12px!important;margin:0!important;border:0!important;
+ border-radius:14px!important;background:var(--sv-flat-panel-raised,#48484B)!important;
+ box-shadow:none!important;
+ font:590 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:0!important;white-space:nowrap!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-preview{
+ margin-top:2px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-person{
+ min-height:45px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-preview-head small{
+ white-space:nowrap!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-status{
+ line-height:1.4!important;
+}
+@media(max-width:340px){
+ html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-connection-action{
+  min-width:80px!important;padding:8px 9px!important;font-size:11.5px!important;
+ }
+ html body #sayviSurfacePage[data-sv-subject="mail"] .svmc-preview-head{
+  flex-wrap:wrap!important;
+ }
+}
