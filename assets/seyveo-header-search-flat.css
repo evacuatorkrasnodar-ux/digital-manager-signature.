@@ -182,3 +182,22 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card stro
   font-size:22px!important;
  }
 }
+
+/* Documents: make the selected workspace unambiguous on flat graphite.
+   The previous selected fill matched the selector's parent (#38383A). */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch{
+ background:#38383A!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab{
+ background:transparent!important;
+ color:#C8CBD0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab[aria-pressed="true"]{
+ background:#505053!important;
+ color:#FFFFFF!important;
+ font-weight:620!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab:focus-visible{
+ outline:2px solid #F2F3F5!important;
+ outline-offset:-2px!important;
+}
