@@ -1205,3 +1205,111 @@ html body #sayviSurfacePage[data-sv-subject="contract"]
  font-size:11px!important;
  box-shadow:none!important;
 }
+
+
+/* SEYVEO · archive setup, compact graphite form · 2026-11-10.
+   Only presentation. Password length, encryption, unlock and persistence
+   are handled by document-vault.js and remain unchanged. The dock is untouched. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-vault-shell[open]{
+ border-radius:14px!important;
+ background:#38383A!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault-shell[open]>.sv-doc-vault-summary{
+ min-height:54px!important;
+ padding:7px 12px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault-shell[open]>.sv-doc-vault{
+ padding:0 12px 8px!important;
+ background:transparent!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault .sv-vault-form{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ gap:8px!important;
+ padding:10px 0 0!important;
+ margin:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault .sv-vault-form>.sv-doc-input{
+ box-sizing:border-box!important;
+ display:block!important;
+ width:100%!important;
+ height:44px!important;
+ min-height:44px!important;
+ margin:0!important;
+ padding:9px 13px!important;
+ border-radius:11px!important;
+ font-size:16px!important;
+ line-height:1.35!important;
+ background:#2F3033!important;
+ border:1px solid rgba(225,232,236,.12)!important;
+ color:#F3F4F6!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault .sv-vault-form>.sv-doc-input:focus-visible{
+ outline:2px solid rgba(230,236,240,.75)!important;
+ outline-offset:1px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault .sv-vault-form>.sv-doc-file-actions{
+ box-sizing:border-box!important;
+ display:block!important;
+ width:100%!important;
+ margin:2px 0 0!important;
+ padding:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault .sv-vault-form>.sv-doc-file-actions>.sv-doc-primary{
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-height:44px!important;
+ margin:0!important;
+ padding:9px 14px!important;
+ border:0!important;
+ border-radius:11px!important;
+ background:#505053!important;
+ color:#F4F5F6!important;
+ font-size:12px!important;
+ font-weight:620!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault .sv-vault-form>.sv-doc-file-actions>.sv-doc-primary:disabled{
+ opacity:.55!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault .sv-vault-form>.sv-vault-status:empty{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault .sv-vault-form>.sv-vault-status:not(:empty){
+ margin:3px 0!important;
+ padding:0 2px!important;
+ font-size:11px!important;
+ line-height:1.45!important;
+}
+/* Safety explanation is accessible through a single quiet disclosure. */
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault-shell>.sv-doc-safety{
+ margin:3px 0 0!important;
+ padding:0 12px 5px!important;
+ border:0!important;
+ border-top:1px solid rgba(226,232,237,.10)!important;
+ background:transparent!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-vault-shell>.sv-doc-safety>summary{
+ min-height:36px!important;
+ font-size:10.5px!important;
+ color:#BEC6CC!important;
+}
