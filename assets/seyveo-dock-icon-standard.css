@@ -1,0 +1,95 @@
+/* SEYVEO Dock Icon Standard · 2026-11-10
+   Enlarge the GLYPHS only. Never change dock shells, hit targets,
+   column geometry, the Sayvi center button, or icon positioning.
+   This stylesheet intentionally avoids document/mail content icons. */
+
+:root{
+  --sv-dock-glyph:26px;
+  --sv-compact-dock-glyph:24px;
+  --sv-dock-line:1.3;
+}
+
+/* Main dock on Home, Deals, Business, Mail, Documents, Music. */
+html body footer.dock:not(.seyveo-browser-dock)
+  :is(#navHome,#navTasks,#navPicture,#navManage) > svg{
+  width:var(--sv-dock-glyph)!important;
+  height:var(--sv-dock-glyph)!important;
+  flex:0 0 var(--sv-dock-glyph)!important;
+}
+html body footer.dock:not(.seyveo-browser-dock)
+  :is(#navHome,#navTasks,#navPicture,#navManage) > svg:not(.seyveo-my-signature){
+  stroke-width:var(--sv-dock-line)!important;
+}
+/* The handwritten My mark is a signature, not a standard line icon. */
+
+/* Browser substitutes its own four navigation glyphs. */
+html body footer.dock.seyveo-browser-dock
+  button[data-sv-browser-action] > svg.seyveo-browser-dock-svg{
+  width:var(--sv-dock-glyph)!important;
+  height:var(--sv-dock-glyph)!important;
+  stroke-width:var(--sv-dock-line)!important;
+}
+/* Music transport icons inherit the same optical size. */
+html body footer.dock.seyveo-music-dock
+  > .nav-item:not(#assistantButton) > svg:not(.button-art){
+  width:var(--sv-dock-glyph)!important;
+  height:var(--sv-dock-glyph)!important;
+}
+
+/* Notebook: text editor's short, approved graphite dock. */
+html body #noteReviewDialog.note-review-dialog[open]
+  .sv-note-tool-row.sv-shared-dock > .sv-note-tools > button > svg,
+html body #noteReviewDialog.note-review-dialog[open]
+  .sv-note-tool-row.sv-shared-dock > .sv-note-draw-standalone > svg{
+  width:var(--sv-compact-dock-glyph)!important;
+  height:var(--sv-compact-dock-glyph)!important;
+  min-width:var(--sv-compact-dock-glyph)!important;
+  min-height:var(--sv-compact-dock-glyph)!important;
+  stroke-width:1.65!important;
+}
+html body #noteReviewDialog.note-review-dialog[open]
+  .sv-note-tool-row.sv-shared-dock > .sv-note-tools .sv-note-aa{
+  font-size:22px!important;
+}
+
+/* Notebook: drawing studio tool capsules; retain existing control layout. */
+html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top
+  #svPaperNewDock > button.sv-newdock-button > svg.sv-newdock-glyph,
+html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top
+  .paper-toolbar-primary > button > svg.sv-paper-signature,
+html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top
+  .paper-toolbar .sv-inkbar > button.sv-inkbar-tool > svg.sv-paper-signature{
+  box-sizing:border-box!important;
+  width:var(--sv-compact-dock-glyph)!important;
+  height:var(--sv-compact-dock-glyph)!important;
+  min-width:var(--sv-compact-dock-glyph)!important;
+  min-height:var(--sv-compact-dock-glyph)!important;
+  max-width:var(--sv-compact-dock-glyph)!important;
+  max-height:var(--sv-compact-dock-glyph)!important;
+}
+
+/* Work chat: glyphs in the actual bottom composer, not message actions. */
+html body #svcpWorkChatScreen #svcpChatForm
+  > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle,#svcpCameraToggle) > svg{
+  width:var(--sv-compact-dock-glyph)!important;
+  height:var(--sv-compact-dock-glyph)!important;
+  min-width:var(--sv-compact-dock-glyph)!important;
+  min-height:var(--sv-compact-dock-glyph)!important;
+}
+html body #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field
+  > :is(#svcpVoiceRecord,.svcp-chat-send) > svg{
+  width:var(--sv-compact-dock-glyph)!important;
+  height:var(--sv-compact-dock-glyph)!important;
+}
+
+/* Standalone Sayvi chat composer (+, mic, send) shares the same glyph scale. */
+html body #sayviComposer #sayviPlus > svg,
+html body #sayviComposer #sayviField :is(#sayviMic,#sayviSend) > svg{
+  width:var(--sv-compact-dock-glyph)!important;
+  height:var(--sv-compact-dock-glyph)!important;
+  stroke-width:1.55!important;
+}
+
+@media(max-width:355px){
+  :root{--sv-compact-dock-glyph:22px;}
+}
