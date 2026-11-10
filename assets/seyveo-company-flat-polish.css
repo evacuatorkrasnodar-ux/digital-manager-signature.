@@ -16,9 +16,9 @@ html body #seyveoCompanyDialog[open]{
  height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;
  margin:0!important;
  padding:calc(16px + env(safe-area-inset-top,0px))
-         max(18px,env(safe-area-inset-right,0px))
+         max(14px,env(safe-area-inset-right,0px))
          calc(25px + env(safe-area-inset-bottom,0px))
-         max(18px,env(safe-area-inset-left,0px))!important;
+         max(14px,env(safe-area-inset-left,0px))!important;
  overflow-x:hidden!important;overflow-y:auto!important;
  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
  border:0!important;border-radius:0!important;
@@ -43,14 +43,19 @@ html body #seyveoCompanyDialog[open] :is(.sv-company-actions[hidden],.sv-company
 }
 
 /* Real shared header; arrow stays aligned and visible while editing. */
-html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{
+/* Higher specificity than the legacy fullscreen header's 44px left inset. */
+html body dialog#seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-dialog-head{
  box-sizing:border-box!important;
  position:sticky!important;top:0!important;z-index:12!important;
  display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;
- gap:10px!important;align-items:center!important;
- min-height:52px!important;padding:4px 0!important;
- margin:0 0 12px!important;
- border:0!important;background:var(--bg,#151B20)!important;
+ column-gap:4px!important;row-gap:0!important;align-items:center!important;
+ width:100%!important;max-width:100%!important;
+ min-height:52px!important;height:52px!important;
+ padding:4px 0!important;padding-left:0!important;padding-right:0!important;
+ margin:0 0 10px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head.has-edit-action{
  grid-template-columns:44px minmax(0,1fr) 44px!important;
@@ -107,12 +112,17 @@ html body #seyveoCompanyDialog[open] #seyveoCompanyEditTop.is-header-action svg{
 html body #seyveoCompanyDialog[open] #seyveoCompanyEditTop[hidden]{display:none!important}
 
 /* Empty state: retain the original document illustration and one purposeful action. */
+/* Keep only the illustration, message and CTA in the visible viewport center. */
 html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view:not([hidden]){
+ position:fixed!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ transform:translate(-50%,-50%)!important;
  display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:center!important;
  box-sizing:border-box!important;
- min-height:max(285px,calc(100dvh - 148px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
- width:100%!important;margin:0!important;padding:8px 14px 32px!important;
+ height:auto!important;min-height:0!important;max-height:calc(100dvh - 110px)!important;
+ width:calc(100vw - 28px)!important;max-width:360px!important;
+ margin:0!important;padding:0 14px!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
  gap:14px!important;text-align:center!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
