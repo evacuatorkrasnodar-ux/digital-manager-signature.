@@ -246,8 +246,7 @@ html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion 
    Do NOT hide dialog close controls or nested editor backs. */
 #sayviMusicPage > #sayviMusicBack,
 #sayviAnswerPage > #sayviAnswerBack,
-#sayviSurfacePage > #sayviSurfaceBack,
-#lifePage #lifeBack{
+#sayviSurfacePage > #sayviSurfaceBack{
   display:none!important;
 }
 /* Theme is a nested Management scene, not a second full-width page.
