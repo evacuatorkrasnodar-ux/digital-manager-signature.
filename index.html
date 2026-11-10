@@ -2552,13 +2552,13 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   </div>
  </section>
  <section id="svcpTeam" class="svcp-panel" data-svcp-panel="team" role="region" aria-label="Сотрудники" hidden>
-  <p class="svcp-people-note">Учебная команда: все имена, карточки и достижения вымышлены. Настоящие сотрудники пока не подключены.</p>
-  <div class="svcp-people-switch" role="group" aria-label="Разделы работы с командой">
+  <p class="svcp-people-note">Примеры карточек · реальные сотрудники появятся после подключения.</p>
+  <div class="svcp-people-switch" role="group" aria-label="Внутренний переключатель подразделов" hidden>
    <button type="button" data-svcp-people="team" aria-pressed="true">Команда</button>
    <button type="button" data-svcp-people="hiring" aria-pressed="false">Подбор</button>
   </div>
   <div id="svcpPeopleDirectory" class="svcp-people-view">
-   <h3 class="svcp-people-heading">Карточки сотрудников</h3>
+   <h3 class="svcp-people-heading">Сотрудники</h3>
    <div id="svcpPeopleCardsHost"></div>
    <div id="svcpPeopleShiftHost"></div>
   </div>
@@ -2953,9 +2953,15 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
    <button class="svcp-manager-row" type="button" data-business-hub="documents" data-cabinet-tool="documents"><span class="svcp-manager-art" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h7M9 16h7"/></svg></span><span class="svcp-manager-row-text"><strong>Документы бизнеса</strong><small>Договоры и согласования</small></span><span class="svcp-manager-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m9 5 7 7-7 7"/></svg></span></button>
    <button class="svcp-manager-row" type="button" data-business-hub="company" data-cabinet-tool="company"><span class="svcp-manager-art" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="14" rx="2"/><path d="M8 7V4h8v3M4 13h16M10 12v3h4v-3"/></svg></span><span class="svcp-manager-row-text"><strong>Моя компания</strong><small>Контакты и QR-визитка</small></span><span class="svcp-manager-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m9 5 7 7-7 7"/></svg></span></button>
   <details id="svcpManagerPeople" class="svcp-manager-staff" data-cabinet-tool="people">
-   <summary><span class="svcp-manager-art svcp-manager-staff-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16.5 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7.5" r="3.5"/><path d="M21 20v-2a4 4 0 0 0-3-3.87M16.5 4.1a3.5 3.5 0 0 1 0 6.8"/></svg></span><span><strong>Сотрудники</strong><small>Карточки, смены и подбор</small></span><span class="svcp-manager-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m9 5 7 7-7 7"/></svg></span></summary>
+   <summary><span class="svcp-manager-art svcp-manager-staff-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16.5 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7.5" r="3.5"/><path d="M21 20v-2a4 4 0 0 0-3-3.87M16.5 4.1a3.5 3.5 0 0 1 0 6.8"/></svg></span><span><strong>Сотрудники</strong><small>Команда и управление</small></span><span class="svcp-manager-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m9 5 7 7-7 7"/></svg></span></summary>
+   <nav id="svcpStaffTabs" class="svstaff-tabs" aria-label="Разделы сотрудников">
+    <button type="button" data-svstaff-tab="team" aria-pressed="true">Команда</button>
+    <button type="button" data-svstaff-tab="schedule" aria-pressed="false">Графики</button>
+    <button type="button" data-svstaff-tab="hiring" aria-pressed="false">Подбор</button>
+   </nav>
+   <section id="svcpStaffSchedulePanel" class="svstaff-schedule-panel" hidden aria-label="Рабочие графики">
    <details id="svcpManagerSchedule" class="svcp-manager-schedule">
-    <summary>График и заявки Елены <span aria-hidden="true">›</span></summary>
+    <summary>Смены и заявки <span aria-hidden="true">›</span></summary>
     <div class="svcp-manager-schedule-inner">
      <small>Учебный график для этого устройства. Личные события сотрудника здесь не открываются.</small>
      <div class="svcp-manager-weekdays" role="group" aria-label="Рабочие дни">
@@ -2978,7 +2984,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
     </div>
    </details>
    <details class="svcp-break-setup" id="svcpBreakSetup">
-    <summary>График перерыва Елены <span aria-hidden="true">›</span></summary>
+    <summary>Перерывы <span aria-hidden="true">›</span></summary>
     <div class="svcp-break-setup-inner">
      <p>Настраивается руководителем один раз. Перерыв включается и заканчивается автоматически от начала смены.</p>
      <div class="svcp-break-controls">
@@ -2994,6 +3000,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
      <p id="svcpBreakStatus" class="svcp-break-status" role="status" aria-live="polite">График действует для следующих смен. Демо · только это устройство.</p>
     </div>
    </details>
+   </section>
    <div id="unifiedPeopleHost" class="svcp-manager-people-content"></div>
   </details>
   </div>
