@@ -9,6 +9,7 @@ const results=$('svGlobalSearchResults'),closeButton=$('svGlobalSearchClose');
 const trigger=$('navManage');
 if(!screen||!field||!results||!closeButton||!trigger)return;
 let active=false,previousFocus=null,previousOverflow='',searchEpoch=0,liveMatches=[];
+let preparedPlan=null,vaultSearchTimer=null;
 const normalize=value=>String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim().replace(/\s+/g,' ');
 const nice=value=>String(value||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim();
 const rows=(key,max)=>{
@@ -273,9 +274,11 @@ function note(textValue,className='sv-search-caption'){
 }
 function render(){
  const epoch=++searchEpoch;
+ if(vaultSearchTimer!==null){clearTimeout(vaultSearchTimer);vaultSearchTimer=null;}
  const query=normalize(field.value),raw=field.value.trim();
  results.replaceChildren();liveMatches=[];
  if(!raw){
+  preparedPlan=null;
   const ctx=searchContext();
   results.append(note(ctx.kind==='documents'
    ?'Поиск по текущим документам. Уже открытый архив остаётся разблокированным.'
@@ -286,8 +289,13 @@ function render(){
      :'Напиши название, действие или вопрос. Сэйви определит нужный раздел или ответит в чате.'));
   return;
  }
+ // Build the routing decision while the user types. The submission reuses
+ // this in-memory plan if text and page context have not changed. No network
+ // request and no partial draft leaves the device.
  const detected=intention(raw);
  const lookup=detected?.action==='music:track'?songTitle(raw):scopedTerm(raw,detected?.action||'');
+ const currentContext=searchContext();
+ preparedPlan={raw,route:location.hash,area:currentContext.area||'',detected,lookup};
  const sectionsFound=sections.filter(x=>normalize(x.name+' '+x.tags).includes(query)).slice(0,5);
  const records=searchableRecords(lookup||query);
  const musicHits=window.SEYVEO_MUSIC?.searchTracks?.(lookup||query)||[];
@@ -309,23 +317,33 @@ function render(){
   detected?.action==='music:track'?'Если песня загружена в SEYVEO SOUND, включу её в плеере.':
   detected?.action?.startsWith('connect:')?'Покажу настройки подключения.':
   detected?.action==='web'||detected?.action==='site'?'Открою результат в браузере после отправки запроса.':
-  'Сэйви поможет разобраться и при необходимости проверит публичные источники.';
+  detected?.action==='ask'?'Сэйви уже определяет тему. Ответ начнётся после отправки вопроса.':
+  'Сэйви подбирает подходящее действие. Отправь запрос для выполнения.';
  results.append(note(routeLabel,'sv-search-assistant-hint'));
  if(query.length>=2){
-  void unlockedDocumentHits(lookup||query).then(found=>{
+  // Expensive archive listing starts only after a brief typing pause.
+  // Results are invalidated by a changed query, route or closed overlay.
+  vaultSearchTimer=setTimeout(()=>{
+   vaultSearchTimer=null;
+   void unlockedDocumentHits(lookup||query).then(found=>{
    if(!active||epoch!==searchEpoch||normalize(field.value)!==query||!found.length)return;
    const group=document.createElement('section');group.className='sv-search-vault-hits';
    group.append(heading('В открытом архиве'));
    for(const entry of found)group.append(itemRow(entry,'record'));
    results.prepend(group);
    liveMatches=[...found,...liveMatches];
-  });
+   if(preparedPlan?.raw===raw)preparedPlan.matches=liveMatches;
+   });
+  },140);
  }
 }
 async function submitSearch(){
  const raw=field.value.trim();
  if(!raw)return;
- const planned=intention(raw);
+ const now=searchContext();
+ const stable=preparedPlan?.raw===raw&&preparedPlan.route===location.hash
+  &&preparedPlan.area===(now.area||'');
+ const planned=stable?preparedPlan.detected:intention(raw);
  if(planned){visit(planned.action,{reveal:planned.reveal===true});return}
  // Exact local record or section can be opened directly, without opening
  // an extra menu. Multiple unrelated matches stay visible for selection.
@@ -361,6 +379,8 @@ function close({restoreFocus=false}={}){
  if(!active)return;
  active=false;
  searchEpoch++;
+ if(vaultSearchTimer!==null){clearTimeout(vaultSearchTimer);vaultSearchTimer=null;}
+ preparedPlan=null;
  field.blur();
  screen.hidden=true;
  document.documentElement.classList.remove('sv-global-search-open');
