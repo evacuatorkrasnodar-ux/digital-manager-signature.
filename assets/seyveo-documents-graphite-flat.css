@@ -361,3 +361,31 @@ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-connections-icon
   transition:none!important;animation:none!important;
  }
 }
+
+/* Tool panels and the search field follow the same flat surface when opened. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-panel,
+html body #sayviSurfacePage[data-sv-subject="contract"] #svDocQuickSearch{
+ box-sizing:border-box!important;min-width:0!important;
+ border:1px solid rgba(244,246,248,.10)!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #svDocQuickSearch[hidden],
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-panel[hidden]{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card[aria-pressed="true"]{
+ box-shadow:inset 0 0 0 1.5px rgba(244,247,250,.42)!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] :is(
+ .sv-doc-flow-card,.sv-doc-tool-scan,.sv-doc-tool-grid .sv-doc-tool-button,
+ .sv-doc-recent-card,.sv-doc-folder-card,.sv-doc-assistant-summary,
+ .sv-doc-vault-summary,.sv-doc-connections-entry,.sv-doc-tab
+):focus-visible{
+ outline:2px solid var(--text,#F1F3F5)!important;outline-offset:2px!important;
+}
+/* Expand the original archive/password form on top of the panel,
+   without clipping its real inputs or file actions. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-vault-shell[open]{
+ overflow:visible!important;
+}
