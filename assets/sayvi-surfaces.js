@@ -1293,21 +1293,26 @@ function mailView(){
   const selected=visibleSampleMail().filter(m=>selectedMailIds.has(m.id));
   const actions=create('div','sv-mail-bulk-actions');
   const permanent=mailFolder==='trash';
+  const label=create('span','sv-mail-bulk-actions-label',
+   selected.length?'Выбрано: '+selected.length:'Не выбрано');
   const button=create('button','sv-mail-bulk-clean',
-   !selected.length?'Выберите письма':
-   permanent?'Удалить навсегда · '+selected.length:'Очистить · '+selected.length);
+   permanent?'Удалить навсегда':'Очистить');
   button.type='button';button.disabled=!selected.length;
   button.setAttribute('aria-label',permanent
    ?'Окончательно удалить выбранные письма после подтверждения'
    :'Переместить выбранные письма в Корзину после подтверждения');
   button.addEventListener('click',cleanSelectedSampleMail);
-  actions.append(button);content.append(actions);
+  actions.append(label,button);content.append(actions);
  }
  function drawExamples(limit=0){
 
   if(!mailShowExamples){content.append(create('p','sv-mail-empty','Почтовый ящик ещё не подключён. Подключите его, чтобы видеть настоящие письма.'));return}
   const matched=visibleSampleMail();
-  if(!matched.length){content.append(create('p','sv-mail-empty',q?'По этому запросу примеров нет.':'Здесь пока нет учебных писем.'));return}
+  if(!matched.length){
+   mailBulkSelecting=false;selectedMailIds.clear();
+   content.append(create('p','sv-mail-empty',mailSearch.trim()?'По этому запросу примеров нет.':'Здесь пока нет писем.'));
+   return;
+  }
   renderMailBulkBar(matched);
   const group=create('div','sv-mail-letter-group');content.append(group);
   const shown=limit?matched.slice(0,limit):matched;
@@ -1589,6 +1594,7 @@ function mailView(){
   }
  }
  function paintList(){
+  section.classList.toggle('sv-mail-bulk-active',mailBulkSelecting&&mailFolder!=='overview'&&!mailEditorOpen&&!mailCurrent);
   content.replaceChildren();
   if(mailEditorOpen){drawEditor();return}
   mailEditorExitHandler=null;
