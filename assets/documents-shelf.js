@@ -97,7 +97,13 @@ function paint(state){
  const showingFormats=!subset.length&&!state.query&&state.filter==='all'&&(!state.unlocked||all.length===0);
  // The document toolbar already has one Add action. Hide the four sample-format
  // buttons when there are no real recents; keep real files, search and folders.
- if(state.recent)state.recent.hidden=showingFormats;
+ if(state.recent){
+  state.recent.hidden=showingFormats;
+  // Older Documents CSS forces display:grid even on a hidden shelf.
+  // Inline override ensures placeholder format tiles NEVER leak on iPhone.
+  if(showingFormats)state.recent.style.setProperty('display','none','important');
+  else state.recent.style.removeProperty('display');
+ }
  state.recentTitle.textContent='Недавние';
  const hasMore=filtered.length>4;
  state.showAll.textContent=state.expanded?'Свернуть':'Все файлы ›';
