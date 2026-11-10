@@ -543,7 +543,7 @@ function mailView(){
    if(typeof filePreview.showModal==='function')filePreview.showModal();
    else filePreview.setAttribute('open','');
   };
-  function renderAttachments(scrollToEnd=false){
+  function renderAttachments(){
    attachmentList.replaceChildren();
    attachmentShelf.hidden=!attachments.length;
    attachmentList.hidden=!attachments.length;
@@ -579,9 +579,9 @@ function mailView(){
     remove.title='Убрать вложение';
     row.append(view,remove);attachmentList.append(row);
    }
-   if(scrollToEnd){
-    requestAnimationFrame(()=>{if(attachmentShelf.isConnected)attachmentList.scrollLeft=attachmentList.scrollWidth});
-   }
+   // Always start at the first file. Auto-scrolling to the last attachment
+   // previously left the first card visibly cut off on iPhone.
+   attachmentList.scrollLeft=0;
   }
   attachmentPicker.addEventListener('change',async()=>{
    const chosen=Array.from(attachmentPicker.files||[]);
@@ -599,7 +599,7 @@ function mailView(){
     const stored=await saveMailAttachment(draftId,id,file);
     if(!stored){status.textContent='Не удалось сохранить файл в браузере. Проверьте свободное место.';continue}
     attachments.push({id,name:file.name.slice(0,150),size:file.size,type:file.type||''});
-    autosaveDraft();renderAttachments(true);
+    autosaveDraft();renderAttachments();
     status.textContent=''; // The file card itself confirms successful attachment.
    }
   });
