@@ -1241,12 +1241,12 @@ function mailView(){
   const noun=count%10===1&&count%100!==11?'письмо':
    count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'письма':'писем';
   const amount=count+' '+noun;
-  const folderLabel=mailFolder==='trash'?'Корзины':
-   mailFolder==='inbox'?'Входящих':
-   mailFolder==='spam'?'Спама':
-   mailFolder==='starred'?'Важных':
-   mailFolder==='archive'?'Архива':
-   mailFolder==='promotions'?'Рассылок':'На проверке';
+  const folderLabel=mailFolder==='trash'?'Корзина':
+   mailFolder==='inbox'?'Входящие':
+   mailFolder==='spam'?'Спам':
+   mailFolder==='starred'?'Важные':
+   mailFolder==='archive'?'Архив':
+   mailFolder==='promotions'?'Рассылки':'На проверке';
   const scopeLabel=mailScope==='all'?' (личная и рабочая почта)':
    mailScope==='personal'?' (личная почта)':' (рабочая почта)';
   const question=permanent
