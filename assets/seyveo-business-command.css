@@ -2402,3 +2402,186 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+
+/* SEYVEO · EMPLOYEES | Unified flat graphite workspace · 2026-11-10.
+   Three live sections reuse existing team, schedule and recruiting handlers.
+   Styles belong to the existing business stylesheet, not another glass layer. */
+html body #tasksPage #svcpManagerPeople{
+ --svstaff-graphite:#38383A;
+ --svstaff-divider:rgba(190,197,206,.12);
+ box-sizing:border-box!important;
+ border:0!important;background:transparent!important;
+ border-radius:0!important;box-shadow:none!important;
+ overflow:visible!important;
+}
+html body #tasksPage #svcpManagerPeople>summary{
+ box-sizing:border-box!important;display:flex!important;
+ width:100%!important;min-height:58px!important;
+ align-items:center!important;gap:12px!important;
+ padding:8px 4px!important;margin:0!important;
+ border:0!important;border-bottom:1px solid var(--svstaff-divider)!important;
+ border-radius:0!important;background:transparent!important;
+ color:var(--text)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ list-style:none!important;
+}
+html body #tasksPage #svcpManagerPeople>summary::-webkit-details-marker{display:none!important}
+html body #tasksPage #svcpManagerPeople[open]>summary{
+ border-bottom:0!important;margin-bottom:5px!important;
+}
+html body #tasksPage #svcpManagerPeople>summary .svcp-manager-staff-symbol{
+ display:grid!important;place-items:center!important;
+ flex:0 0 28px!important;width:28px!important;height:28px!important;
+ padding:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;color:var(--secondary)!important;
+}
+html body #tasksPage #svcpManagerPeople>summary .svcp-manager-staff-symbol svg{
+ width:19px!important;height:19px!important;
+ stroke-width:1.55!important;
+}
+html body #tasksPage #svcpManagerPeople>summary strong{
+ font-size:15px!important;line-height:1.25!important;
+ font-weight:620!important;letter-spacing:-.015em!important;
+}
+html body #tasksPage #svcpManagerPeople>summary small{
+ font-size:11px!important;line-height:1.3!important;
+ font-weight:420!important;color:var(--secondary)!important;
+}
+html body #tasksPage #svcpManagerPeople>summary .svcp-manager-chevron{
+ flex:0 0 22px!important;width:22px!important;
+ color:var(--secondary)!important;
+}
+html body #tasksPage #svcpManagerPeople .svstaff-tabs{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ width:100%!important;box-sizing:border-box!important;
+ min-height:44px!important;gap:3px!important;
+ margin:6px 0 15px!important;padding:3px!important;
+ border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #tasksPage #svcpManagerPeople .svstaff-tabs button{
+ box-sizing:border-box!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;
+ min-width:0!important;min-height:38px!important;margin:0!important;
+ padding:0 3px!important;border:0!important;border-radius:11px!important;
+ background:transparent!important;color:#D2D3D6!important;
+ font:550 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.01em!important;box-shadow:none!important;
+}
+html body #tasksPage #svcpManagerPeople .svstaff-tabs button[aria-pressed="true"]{
+ background:#555559!important;color:#FFFFFF!important;
+ font-weight:640!important;
+}
+html body #tasksPage #svcpManagerPeople .svstaff-tabs button:focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:-3px!important;
+}
+html body #tasksPage #svcpManagerPeople #unifiedPeopleHost{
+ box-sizing:border-box!important;width:100%!important;
+ min-width:0!important;margin:0!important;padding:0 3px 14px!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #tasksPage #svcpManagerPeople :is(#unifiedPeopleHost,#svcpStaffSchedulePanel)[hidden],
+html body #tasksPage #svcpManagerPeople #svcpTeam[hidden],
+html body #tasksPage #svcpManagerPeople #svcpPeopleDirectory[hidden],
+html body #tasksPage #svcpManagerPeople #svcpPeopleHiring[hidden],
+html body #tasksPage #svcpManagerPeople .svcp-people-switch[hidden]{
+ display:none!important;
+}
+html body #tasksPage #svcpManagerPeople #svcpTeam{
+ box-sizing:border-box!important;width:100%!important;margin:0!important;
+ padding:0!important;border:0!important;background:transparent!important;
+}
+html body #tasksPage #svcpManagerPeople :is(.svcp-panel,.svcp-people-view){
+ box-sizing:border-box!important;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #tasksPage #svcpManagerPeople .svcp-people-switch{display:none!important}
+html body #tasksPage #svcpManagerPeople .svcp-people-heading{
+ display:none!important;
+}
+html body #tasksPage #svcpManagerPeople .svcp-people-note{
+ box-sizing:border-box!important;max-width:100%!important;
+ margin:0 1px 12px!important;padding:0!important;
+ font-size:11px!important;line-height:1.4!important;
+ font-weight:420!important;color:var(--secondary)!important;
+ border:0!important;background:transparent!important;
+}
+/* Schedules are separate live settings, only visible under Графики. */
+html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel:not([hidden]){
+ box-sizing:border-box!important;display:flex!important;
+ flex-direction:column!important;gap:0!important;
+ width:100%!important;margin:0!important;padding:0 3px 16px!important;
+ border:0!important;background:transparent!important;
+}
+html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details{
+ box-sizing:border-box!important;width:100%!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-bottom:1px solid var(--svstaff-divider)!important;
+ border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ overflow:visible!important;
+}
+html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details > summary{
+ box-sizing:border-box!important;display:flex!important;
+ align-items:center!important;justify-content:space-between!important;
+ gap:8px!important;min-height:51px!important;width:100%!important;
+ margin:0!important;padding:8px 1px!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ color:var(--text)!important;box-shadow:none!important;
+ font:580 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ list-style:none!important;
+}
+html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details > summary::-webkit-details-marker{display:none!important}
+html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details > summary > span{
+ display:grid!important;place-items:center!important;
+ width:25px!important;height:25px!important;
+ font-size:19px!important;font-weight:400!important;color:var(--secondary)!important;
+ transition:transform .15s ease;
+}
+html body #tasksPage #svcpManagerPeople #svcpStaffSchedulePanel > details[open] > summary > span{
+ transform:rotate(90deg);
+}
+html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner){
+ box-sizing:border-box!important;
+ margin:0!important;padding:5px 1px 15px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-inner,.svcp-break-setup-inner) :is(input,select){
+ min-height:44px!important;
+ border:1px solid var(--svstaff-divider)!important;
+ border-radius:12px!important;
+ background:#272B2F!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--text)!important;font:inherit!important;
+}
+html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-save,.svcp-break-save){
+ min-height:44px!important;padding:10px 16px!important;
+ margin-top:11px!important;border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:#FFFFFF!important;font-size:12.5px!important;font-weight:610!important;
+}
+html body #tasksPage #svcpManagerPeople :is(.svcp-manager-schedule-status,.svcp-break-status){
+ font-size:11px!important;line-height:1.45!important;
+ color:var(--secondary)!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #tasksPage #svcpManagerPeople .svcp-manager-weekdays button{
+ min-height:39px!important;border-radius:10px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #tasksPage #svcpManagerPeople .svcp-manager-weekdays button[aria-pressed="true"]{
+ background:#38383A!important;color:#FFFFFF!important;
+}
+html body #tasksPage #svcpManagerPeople .svcp-manager-request-list{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+@media(max-width:360px){
+ html body #tasksPage #svcpManagerPeople .svstaff-tabs button{font-size:11.5px!important}
+}
