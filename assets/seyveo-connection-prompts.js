@@ -101,8 +101,11 @@
   arrow.append(svg('<path d="m9 5 7 7-7 7"/>','arrow'));
   button.replaceChildren(icon,copy,arrow);
   if(options.addClick!==false)button.addEventListener('click',()=>open(service));
-  instances.add({button,service,scope:options.scope,heading,caption});
-  refresh();
+  const item={button,service,scope:options.scope,heading,caption};
+  instances.add(item);
+  // New prompts may still be detached while their host is being assembled.
+  // Render them now; a later refresh can safely prune stale detached nodes.
+  refreshOne(item);
   return button;
  }
  function open(service){
@@ -122,6 +125,7 @@
   const button=register(node('button',''),service);
   if(after?.parentNode===host)after.insertAdjacentElement('afterend',button);
   else host.prepend(button);
+  refresh();
   return button;
  }
  // One notice in each relevant external-service workspace.
