@@ -282,7 +282,7 @@ if(personal&&head){
  #seyveoActionHistoryPanel .sah-row.sah-selecting strong,#seyveoActionHistoryPanel .sah-row.sah-selecting .sah-row-meta{grid-column:2!important}
  #seyveoActionHistoryPanel .sah-row.sah-selecting .sah-restore-task{grid-column:3!important}
  .sah-pick{grid-column:1;grid-row:1/span 2;accent-color:#999}
- .sah-delete{grid-column:2;grid-row:1/span 2;justify-self:end;background:transparent;border:0;color:var(--secondary);min-height:44px;font-size:12px}
+ .sah-row:not(.sah-selecting) .sah-delete{grid-column:2;grid-row:1/span 2;justify-self:end;background:#38383A;color:white;border:0;border-radius:9px;min-height:40px;padding:0 8px;font-size:12px;display:none}\n .sah-row.sah-reveal .sah-delete{display:block!important}\n .sah-row.sah-reveal:not(:has(.sah-restore-task)){grid-template-columns:minmax(0,1fr) 74px!important}\n .sah-row.sah-reveal:has(.sah-restore-task){grid-template-columns:minmax(0,1fr) 44px 74px!important}\n .sah-row.sah-reveal:has(.sah-restore-task) .sah-delete{grid-column:3!important}
  `;document.head.append(css);
 
  let visibleCount=4;
@@ -350,10 +350,22 @@ if(personal&&head){
      check.setAttribute('aria-label','Выбрать '+cleanTitle(e));
      check.addEventListener('change',()=>{if(check.checked)chosen.add(eventKey(e));else chosen.delete(eventKey(e));showCount()});
      item.prepend(check);
-    }else if(!e.taskId){
+    }else{
      const del=document.createElement('button');del.type='button';del.className='sah-delete';del.textContent='Удалить';
-     del.addEventListener('click',()=>{if(confirm('Убрать запись из личной истории?')){if(hideEvents([e]))render();else alert('Не удалось удалить запись')}});
+     del.setAttribute('aria-label','Удалить из истории: '+cleanTitle(e));
+     del.addEventListener('click',()=>{
+      if(!confirm('Удалить запись из личной истории?'))return;
+      const ok=e.taskId?window.SEYVEO_PERSONAL_TASK_HISTORY?.removeCompleted?.(e.taskId):hideEvents([e]);
+      if(ok)render();else alert('Не удалось удалить запись.');
+     });
      item.append(del);
+     let touchX=0,touchY=0;
+     item.addEventListener('touchstart',ev=>{touchX=ev.touches[0]?.clientX||0;touchY=ev.touches[0]?.clientY||0},{passive:true});
+     item.addEventListener('touchend',ev=>{
+      const x=ev.changedTouches[0]?.clientX||0,y=ev.changedTouches[0]?.clientY||0;
+      if(touchX-x>55&&Math.abs(touchY-y)<45)item.classList.add('sah-reveal');
+      else if(x-touchX>35)item.classList.remove('sah-reveal');
+     },{passive:true});
     }
    if(e.taskId){
     const recover=document.createElement('button');recover.type='button';recover.className='sah-restore-task';
