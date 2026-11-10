@@ -172,6 +172,40 @@ function actionButton(label,action,meta){
 const isQuestion=q=>/^(?:как|почему|зачем|что|кто|когда|где|сколько|какой|какая|какое|какие|объясни|расскажи|помоги|посоветуй|можно ли)(?=\s|[?!,.:]|$)/u.test(q)||/\?$/.test(q);
 const documentWords=/(?:документ|договор|архив|файл|подпись|подписать|подпиши|сч[её]т|(?:^|\s)акт(?:ы|а|ов)?(?=\s|$)|pdf|word|xlsx)/iu;
 const mailWords=/(?:письм|писем|почт|email|емейл|черновик|входящ|корреспонденц)/iu;
+const songWords=/(?:песн|трек|музык|мелоди|композици|плейлист)/iu;
+function searchContext(){
+ const route=String(location.hash||'');
+ if(route==='#sayvi-documents'){
+  const current=window.SEYVEO_DOCUMENT_CENTER?.getSearchContext?.();
+  return {kind:'documents',area:current?.area==='business'?'business':'personal'};
+ }
+ if(route==='#sayvi-mail')return {kind:'mail'};
+ if(route==='#sayvi-music')return {kind:'music'};
+ if(route==='#tasks')return {kind:'tasks'};
+ if(route==='#calendar')return {kind:'calendar'};
+ if(route==='#life'||route==='#picture')return {kind:'life'};
+ return {kind:'global'};
+}
+function songTitle(query){
+ let value=withoutWake(query).replace(/^(?:(?:включи|включить|поставь|поставить|проиграй|послушай|запусти|запустить|найди|найти|поищи|ищи|слушать)\s+)/u,'');
+ value=value.replace(/^(?:мне|нам|пожалуйста)\s+/u,'')
+  .replace(/^(?:песню|песни|песня|трек|треки|музыку|композицию|мелодию)\s*/u,'').trim();
+ return value.length>=2?value:'';
+}
+function musicIntent(query){
+ const q=withoutWake(query);
+ const wantsMusic=songWords.test(q)||searchContext().kind==='music';
+ const isMusicVerb=/^(?:включи|включить|поставь|поставить|проиграй|послушай|запусти|запустить|слушать|найди|найти|поищи)\s+/u.test(q);
+ if(wantsMusic&&(isMusicVerb||searchContext().kind==='music')){
+  const title=songTitle(q);
+  return title?{action:'music:track',title}:{action:'music'};
+ }
+ // A name already in the local Music library is a search hit even when
+ // the query is made from Home or Files, without guessing a public catalog.
+ const matches=window.SEYVEO_MUSIC?.searchTracks?.(q);
+ if(Array.isArray(matches)&&matches.length>0)return {action:'music:track',title:q};
+ return null;
+}
 function intention(query){
  const q=withoutWake(query);
  if(!q)return null;
@@ -190,6 +224,13 @@ function intention(query){
   if(mailWords.test(q))return {action:/черновик/u.test(q)?'mail:drafts':'mail:inbox'};
  }
  if(isQuestion(q))return {action:'ask'};
+ const track=musicIntent(q);
+ if(track)return track;
+ // Within a workspace, an unqualified name means "find here". Explicit
+ // mail/document/music/web intents above still take precedence.
+ const context=searchContext();
+ if(context.kind==='documents')return {action:'docs:'+context.area,reveal:true,contextual:true};
+ if(context.kind==='mail')return {action:/черновик/u.test(q)?'mail:drafts':'mail:inbox',contextual:true};
  if(documentWords.test(q))return {action:'docs:'+documentScope,reveal:true};
  if(mailWords.test(q))return {action:/черновик/u.test(q)?'mail:drafts':'mail:inbox'};
  if(direct)return direct;
@@ -231,20 +272,37 @@ function render(){
  const query=normalize(field.value),raw=field.value.trim();
  results.replaceChildren();liveMatches=[];
  if(!raw){
-  results.append(note('Напиши что угодно. Сэйви найдёт доступное в приложении, поможет с действием или ответит на вопрос.'));
+  const ctx=searchContext();
+  results.append(note(ctx.kind==='documents'
+   ?'Поиск по текущим документам. Уже открытый архив остаётся разблокированным.'
+   :ctx.kind==='music'
+    ?'Найди песню среди загруженных записей SEYVEO SOUND.'
+    :ctx.kind==='mail'
+     ?'Поиск по доступной почте и локальным черновикам.'
+     :'Напиши название, действие или вопрос. Сэйви определит нужный раздел или ответит в чате.'));
   return;
  }
  const detected=intention(raw);
- const lookup=scopedTerm(raw,detected?.action||'');
+ const lookup=detected?.action==='music:track'?songTitle(raw):scopedTerm(raw,detected?.action||'');
  const sectionsFound=sections.filter(x=>normalize(x.name+' '+x.tags).includes(query)).slice(0,5);
  const records=searchableRecords(lookup||query);
- liveMatches=[...records,...sectionsFound.map(x=>({...x,title:x.name,meta:'Раздел SEYVEO'}))];
+ const musicHits=window.SEYVEO_MUSIC?.searchTracks?.(lookup||query)||[];
+ const trackRecords=Array.isArray(musicHits)?musicHits.slice(0,6).map(hit=>({
+  title:hit.title,meta:'SEYVEO SOUND'+(hit.artist?' · '+hit.artist:''),
+  action:'music-index:'+hit.index
+ })):[];
+ liveMatches=[...trackRecords,...records,...sectionsFound.map(x=>({...x,title:x.name,meta:'Раздел SEYVEO'}))];
  if(liveMatches.length){
   results.append(heading('Найдено в SEYVEO'));
-  for(const entry of liveMatches.slice(0,10))results.append(itemRow(entry,records.includes(entry)?'record':'section'));
+  for(const entry of liveMatches.slice(0,10))results.append(itemRow(entry,
+  records.includes(entry)||trackRecords.includes(entry)?'record':'section'));
  }
- const routeLabel=detected?.action?.startsWith('docs:')?'Открою документы. Защищённый архив запросит пароль.':
-  detected?.action?.startsWith('mail:')?'Открою почту. Если она не подключена, покажу подключение.':
+ const routeLabel=detected?.action?.startsWith('docs:')
+  ?(searchContext().kind==='documents'
+    ?'Ищу в текущих документах. Если архив открыт, повторный пароль не нужен.'
+    :'Открою документы. Для закрытого архива потребуется пароль.'):
+  detected?.action?.startsWith('mail:')?'Ищу в доступной почте. Если сервис не подключён, покажу подключение.':
+  detected?.action==='music:track'?'Если песня загружена в SEYVEO SOUND, включу её в плеере.':
   detected?.action?.startsWith('connect:')?'Покажу настройки подключения.':
   detected?.action==='web'||detected?.action==='site'?'Открою результат в браузере после отправки запроса.':
   'Сэйви поможет разобраться и при необходимости проверит публичные источники.';
@@ -323,6 +381,13 @@ function visit(action,{reveal=false}={}){
   query=intent.query;
  // Close first: one chat, one browser, one underlying MediaSession.
  close();
+ if(action==='music:track'||action.startsWith('music-index:')){
+  const music=window.SEYVEO_MUSIC;
+  if(action.startsWith('music-index:')){
+   if(!music?.playIndexFromSearch?.(Number(action.slice(12))))music?.open?.();
+  }else music?.playFromSearch?.(songTitle(typed)||typed);
+  return;
+ }
  if(action.startsWith('connect:')){
   const service=action.slice(8);
   if(service==='documents')window.SEYVEO_CONNECTION_PROMPTS?.open?.('documents');
@@ -336,6 +401,17 @@ function visit(action,{reveal=false}={}){
   const kind=isDocs?'contract':'mail';
   const scope=action.split(':')[1];
   const area=isDocs?(scope==='business'?'business':'personal'):'all';
+  // The current page owns its controls and unlocked state. Do not remount
+  // Documents and accidentally discard the already unlocked vault context.
+  if(isDocs&&location.hash==='#sayvi-documents'){
+   void window.SEYVEO_DOCUMENT_CENTER?.searchInCurrentDocuments?.(
+    searchText,{scope:area,requestArchive:reveal});
+   return;
+  }
+  if(!isDocs&&location.hash==='#sayvi-mail'){
+   window.SEYVEO_SAYVI_SURFACES?.searchInCurrentMail?.(searchText,scope);
+   return;
+  }
   window.dispatchEvent(new CustomEvent('seyveo:global-search-scope',{
    detail:{kind,query:searchText.slice(0,200),scope:isDocs?area:scope,revealArchive:isDocs&&reveal}
   }));
