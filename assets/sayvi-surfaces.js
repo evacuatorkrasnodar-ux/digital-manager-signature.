@@ -1813,6 +1813,13 @@ function render(kind){
  const header=title.closest('.sv-deep-top');
  if(header){
   if(kind==='contract'){
+   // Unlike Search, Back uses the approved graphite navigation circle.
+   // Late legacy selectors otherwise erase its background in Safari.
+   for(const [property,value] of Object.entries({
+    background:'#38383A','background-image':'none','border-radius':'50%',
+    'box-shadow':'none',color:'#F3F5F6',width:'44px',height:'44px',
+    'min-width':'44px','min-height':'44px',padding:'0',border:'0'
+   }))back.style.setProperty(property,value,'important');
    // Keep Back INSIDE the titlebar grid, alongside the centered heading.
    // Putting it on the outer header creates a second row and clips the title.
    const titlebar=title.closest('.sv-continuity-titlebar')||header;
