@@ -3453,7 +3453,8 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <dialog id="seyveoCompanyDialog" class="seyveo-passport-modal" aria-labelledby="seyveoCompanyTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close sv-nav-arrow" aria-label="Вернуться из карточки компании"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <div class="seyveo-passport-dialog-head"><div class="seyveo-company-dialog-identity"><h2 id="seyveoCompanyTitle">Карточка компании</h2><span id="seyveoCompanyInitial" hidden aria-hidden="true">S</span></div></div>
 <div class="sv-company-view" id="seyveoCompanyView">
-<p class="seyveo-passport-subtitle">Контакты и реквизиты для клиентов и партнёров.</p>
+<section id="seyveoCompanyIdentity" class="sv-company-identity" hidden aria-label="Компания"><strong id="seyveoCompanyIdentityName"></strong><span id="seyveoCompanyIdentityKind"></span></section>
+<p class="seyveo-passport-subtitle">Контакты и реквизиты</p>
 <div id="seyveoCompanyRows"></div>
 <div id="seyveoCompanyEmptyMark" class="sv-company-empty-mark" aria-hidden="true">
 <svg viewBox="0 0 48 48" focusable="false"><rect x="9" y="6" width="30" height="36" rx="7"/><path d="M15.5 16h17M15.5 23h17M15.5 30h11"/></svg>
@@ -3467,7 +3468,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 </div><p id="seyveoCompanyQrHint" class="sv-company-qr-hint">Для QR добавьте телефон, почту или сайт.</p><button type="button" id="seyveoCompanyAvatarEdit" hidden tabindex="-1" aria-hidden="true">Образ</button>
 </div>
 <section class="sv-company-editor" id="seyveoCompanyEditor" hidden>
-<h3 class="seyveo-passport-section">Сведения и реквизиты</h3>
+<h3 class="seyveo-passport-section">Основные сведения</h3>
 <form id="seyveoCompanyForm" class="seyveo-passport-form">
 <fieldset class="sv-kind"><legend>Форма работы</legend><input id="seyveoCompanyType" name="type" type="hidden" value="npd"><div class="sv-kind-options" role="radiogroup" aria-label="Форма работы"><label><input type="radio" name="companyTypeChoice" value="npd" checked><span>Самозанятый</span></label><label><input type="radio" name="companyTypeChoice" value="ip"><span>ИП</span></label><label><input type="radio" name="companyTypeChoice" value="org"><span>Компания</span></label></div><button type="button" id="seyveoCompanyChangeType" class="sv-kind-change" hidden>Изменить форму работы</button></fieldset>
 <label>Название для клиентов<input name="name" type="text" maxlength="80" required autocomplete="organization"></label>
@@ -3480,7 +3481,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div data-passport-type="org"><label>ОГРН<input name="ogrn" type="text" maxlength="13" inputmode="numeric" pattern="[0-9]{13}"></label></div>
 <div data-passport-type="ip"><label>ОГРНИП<input name="ogrnip" type="text" maxlength="15" inputmode="numeric" pattern="[0-9]{15}"></label></div>
 <label>Адрес для документов<input name="address" type="text" maxlength="200"></label>
-</div></details><label>Рабочий телефон<input name="phone" type="tel" maxlength="50"></label>
+</div></details><h3 class="sv-company-form-section">Контакты</h3><label>Рабочий телефон<input name="phone" type="tel" maxlength="50"></label>
 <label>Электронная почта<input name="email" type="email" maxlength="120"></label>
 <label>Сайт<input name="website" type="url" maxlength="180" placeholder="https://..."></label>
 <details class="sv-company-extra"><summary>Банковские реквизиты · необязательно</summary>
@@ -3493,7 +3494,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 </form>
 </section>
 <p class="seyveo-passport-status" data-passport-status role="status" aria-live="polite"></p>
-<p id="seyveoCompanyPrivacy" class="seyveo-passport-notice" hidden>Данные хранятся на этом устройстве и не проверяются по ФНС. Перед отправкой проверьте содержимое.</p>
+<p id="seyveoCompanyPrivacy" class="seyveo-passport-notice" hidden>Сведения сохранены на устройстве. Перед отправкой проверьте их точность.</p>
 <div class="info-actions" hidden><button type="button" class="btn primary" id="seyveoCompanyClose">Закрыть</button></div>
 </dialog>
 <dialog id="seyveoQrCardDialog" class="sv-qr-dialog" aria-labelledby="seyveoQrTitle"><header><button type="button" id="seyveoQrClose" class="sv-nav-back" aria-label="Назад из визитки"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><div><span class="sv-qr-overline">SEYVEO · DIGITAL CARD</span><h2 id="seyveoQrTitle">Визитка компании</h2></div></header><section class="sv-qr-body"><h3 id="seyveoQrCompanyName">Компания</h3><p id="seyveoQrCompanySubtitle"></p><div id="seyveoQrImage" class="sv-qr-image" role="img" aria-label="QR-код с контактами компании"></div><p id="seyveoQrCompanyContacts"></p><p class="sv-qr-note">QR сохраняет контакт в телефон. Реквизиты и банковские данные не включаются.</p></section><div class="sv-qr-actions"><button type="button" id="seyveoQrSave">Сохранить QR</button><button type="button" id="seyveoQrShare">Поделиться контактом</button></div><p id="seyveoQrStatus" role="status" aria-live="polite"></p></dialog>
