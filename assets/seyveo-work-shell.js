@@ -227,12 +227,10 @@
   const target=button.dataset.svWorkTab;
   if(button.hidden)return;
   if(target==='notes'){
-   // Notebook is an entry into the existing records/editor, not another empty Work page.
-   // For an empty notebook open the creation chooser directly.
+   // The Notebook landing is the single home for creation tiles and saved notes.
    const api=window.SEYVEO_NOTES_API;
-   if(api?.getNotes?.().length===0)document.getElementById('notesNew')?.click();
-   else if(typeof api?.openNotes==='function')api.openNotes();
-   else document.getElementById('notesDialog')?.showModal();
+   if(typeof api?.openNotes==='function')api.openNotes();
+   else {const dialog=document.getElementById('notesDialog');if(dialog&&!dialog.open)dialog.showModal();}
    return;
   }
   if(target===activeSection())return;
