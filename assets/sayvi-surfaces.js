@@ -1826,6 +1826,17 @@ function render(kind){
  void page.offsetWidth;page.classList.add('sv-deep-enter');
  return true;
 }
+function searchInCurrentMail(query,scope='inbox'){
+ // Keep the user in the mailbox already open. No new mini-search bar
+ // and no navigation round trip that would discard this view.
+ if(location.hash!=='#sayvi-mail')return false;
+ mailSearch=String(query||'').trim().slice(0,200).toLocaleLowerCase('ru-RU');
+ mailFolder=scope==='drafts'?'drafts':'inbox';
+ mailSearchOpen=false;
+ mailEditorOpen=false;mailEditingId=null;mailCurrent=null;
+ render('mail');
+ return true;
+}
 function currentKind(){
  if(location.hash==='#sayvi-mail')return 'mail';
  if(location.hash==='#sayvi-documents')return 'contract';
@@ -1891,6 +1902,6 @@ back.addEventListener('click',()=>{
 });
 window.addEventListener('hashchange',sync);
 window.addEventListener('pagehide',releaseFile);
-window.SEYVEO_SAYVI_SURFACES=Object.freeze({open,render,sync,openPersonal});
+window.SEYVEO_SAYVI_SURFACES=Object.freeze({open,render,sync,openPersonal,searchInCurrentMail});
 sync();
 })();
