@@ -376,6 +376,47 @@ function mount(target,{
   preview.setAttribute('aria-label','Посмотреть собранный PDF в отдельном окне');
   card.append(image,copy,preview);return card;
  }
+ let ocrEnginePromise=null;
+ function getOcrEngine(){
+  if(window.Tesseract?.createWorker)return Promise.resolve(window.Tesseract);
+  if(ocrEnginePromise)return ocrEnginePromise;
+  ocrEnginePromise=new Promise((resolve,reject)=>{
+   const script=document.createElement('script');
+   script.src='https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js';
+   script.async=true;script.crossOrigin='anonymous';
+   const timer=setTimeout(()=>reject(Error('Не удалось загрузить распознавание вовремя.')),25000);
+   script.onload=()=>{clearTimeout(timer);window.Tesseract?.createWorker?resolve(window.Tesseract):reject(Error('OCR недоступен.'));};
+   script.onerror=()=>{clearTimeout(timer);reject(Error('Нет связи с библиотекой распознавания.'));};
+   document.head.append(script);
+  }).catch(error=>{ocrEnginePromise=null;throw error;});
+  return ocrEnginePromise;
+ }
+ async function recognizeScanText(page,output,action){
+  if(!page||action.disabled)return;
+  if(!window.Tesseract?.createWorker&&!window.confirm(
+   'Для распознавания потребуется скачать движок и языковые модели из интернета. Фото обрабатывается на этом устройстве. Продолжить?'))return;
+  const startEpoch=operationEpoch, startGeneration=generation;
+  action.disabled=true;output.hidden=false;output.value='Подготавливаю распознавание…';
+  let worker;
+  try{
+   const tesseract=await getOcrEngine();
+   if(startEpoch!==operationEpoch||startGeneration!==generation||!scans.includes(page))return;
+   worker=await tesseract.createWorker(['rus','eng'],1);
+   if(startEpoch!==operationEpoch||startGeneration!==generation||!scans.includes(page))return;
+   const image=new Blob([page.jpegBytes],{type:'image/jpeg'});
+   const result=await worker.recognize(image);
+   if(startEpoch!==operationEpoch||startGeneration!==generation||!scans.includes(page))return;
+   const value=String(result?.data?.text||'').trim();
+   output.value=value||'Текст не найден. Попробуйте более чёткое фото.';
+   message(value?'Текст распознан. Проверьте ошибки перед использованием.':'Текст на странице не обнаружен.');
+  }catch(error){
+   if(startEpoch===operationEpoch&&startGeneration===generation)
+    output.value=(error?.message||'Не удалось распознать текст.');
+  }finally{
+   if(worker)try{await worker.terminate();}catch{}
+   action.disabled=false;
+  }
+ }
  function renderScan(){
   clear();
   panel.dataset.hasScans=String(scans.length>0);
@@ -449,7 +490,7 @@ function mount(target,{
    ));
   }
   const info=$('details','sv-doc-tool-help');
-  info.append($('summary','','О сканировании'),warn('Фото остаются на устройстве, без отправки в интернет. Автоматическая обрезка и OCR пока не подключены.'));
+  info.append($('summary','','О сканировании'),warn('Фотографии обрабатываются на устройстве. OCR доступен по нажатию «Распознать текст»; движок и языковые модели загружаются из интернета после согласия. Автоматическая обрезка пока не подключена.'));
   panel.append(counter,info,status(''));
  }
  function renderCreate(){
