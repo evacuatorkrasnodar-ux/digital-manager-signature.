@@ -167,8 +167,8 @@ html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] #seyveoComp
  box-sizing:border-box!important;
  min-height:44px!important;min-width:176px!important;width:auto!important;
  padding:0 19px!important;margin:3px 0 0!important;
- border:0!important;border-radius:999px!important;
- background:#38383A!important;color:#F6F7F8!important;
+ border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;color:#F6F7F8!important;
  font-size:13px!important;font-weight:600!important;line-height:1.2!important;
  box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
