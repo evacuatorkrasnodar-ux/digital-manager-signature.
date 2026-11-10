@@ -73,9 +73,9 @@
   let selected='personal',open=false;
   const staged={personal:{...preferences.personal},business:{...preferences.business}};
   const infoText={
-   book:{icon:'book',label:'Адресная книга',hint:'Запросить отдельный доступ к контактам почтового сервиса'},
-   correspondents:{icon:'mail',label:'Люди из переписки',hint:'Предлагать адреса, с которыми вы переписываетесь'},
-   groups:{icon:'spark',label:'Категории Сэйви',hint:'Предлагать группы и объединение возможных дубликатов'}
+   book:{icon:'book',label:'Адресная книга',hint:'Контакты из подключённой почты'},
+   correspondents:{icon:'mail',label:'Люди из переписки',hint:'Предлагать новых корреспондентов'},
+   groups:{icon:'spark',label:'Категории Сэйви',hint:'Группы и возможные совпадения'}
   };
   function render(){
    page.replaceChildren();
@@ -86,10 +86,8 @@
    back.append(pict(ICON.back));back.setAttribute('aria-label','Назад к почте');
    back.addEventListener('click',()=>{if(typeof onBack==='function')onBack()});
    const titles=make('div','svmc-titles');
-   titles.append(make('small','','SEYVEO · КОНТАКТЫ'),make('h2','','Умные контакты'));
+   titles.append(make('h2','','Умные контакты'));
    head.append(back,titles);page.append(head);
-   const subtitle=make('p','svmc-subtitle','Одна аккуратная адресная книга. Личное и рабочее — отдельно.');
-   page.append(subtitle);
    const tabs=make('nav','svmc-tabs');tabs.setAttribute('aria-label','Выбор адресной книги');
    for(const [scope,label] of [['personal','Личная'],['business','Рабочая']]){
     const b=make('button','svmc-tab',label);b.type='button';
@@ -103,10 +101,10 @@
    const connection=make('section','svmc-connection');
    connection.append(pict(mailConnected?ICON.check:ICON.lock));
    const connectionText=make('div','svmc-connection-text');
-   connectionText.append(make('strong','',mailConnected?'Почта подключена':'Сначала подключите почту'));
+   connectionText.append(make('strong','',mailConnected?'Почта подключена':'Почта не подключена'));
    connectionText.append(make('small','',mailConnected
-    ?bookConnected?'Доступ к контактам подтверждён провайдером':'Для импорта потребуется отдельное разрешение на контакты'
-    :'После подключения Сэйви предложит собрать адресную книгу'));
+    ?bookConnected?'Контакты разрешены · импорт пока недоступен':'Контакты потребуют отдельного разрешения'
+    :'Контакты появятся после подключения и разрешения'));
    connection.append(connectionText);
    if(!mailConnected){
     const link=make('button','svmc-connection-action','Подключить');link.type='button';
@@ -115,9 +113,10 @@
    }
    page.append(connection);
    const legend=make('div','svmc-section-label');
-   legend.append(make('strong','','Что разрешить Сэйви'),make('small','','Ваш выбор сохраняется отдельно для каждой почты'));
+   legend.append(make('strong','','Доступ для Сэйви'),make('small','','Отдельно для личной и рабочей почты'));
    page.append(legend);
    const choices=make('div','svmc-choices');
+   const status=make('p','svmc-status');status.setAttribute('role','status');
    for(const [key,data] of Object.entries(infoText)){
     const label=make('label','svmc-option');
     label.append(pict(ICON[data.icon]));
@@ -126,27 +125,24 @@
     const input=make('input','svmc-checkbox');input.type='checkbox';
     input.checked=staged[selected][key]===true;
     input.setAttribute('aria-label',data.label);
-    input.addEventListener('change',()=>{staged[selected][key]=input.checked});
+    input.addEventListener('change',()=>{
+     staged[selected][key]=input.checked;
+     const previous={...preferences[selected]};
+     preferences[selected]={...staged[selected],configured:true};
+     if(save()){
+      status.textContent='Настройка сохранена. Разрешения на импорт запрашиваются отдельно.';
+      if(typeof onSaved==='function')onSaved(selected);
+     }else{
+      preferences[selected]=previous;
+      status.textContent='Не удалось сохранить выбор на устройстве. Проверьте настройки браузера.';
+     }
+    });
     label.append(copy,input);choices.append(label);
    }
-   page.append(choices);
-   const actions=make('div','svmc-actions');
-   const saveButton=make('button','svmc-save','Сохранить выбор');saveButton.type='button';
-   const status=make('p','svmc-status');status.setAttribute('role','status');
-   saveButton.addEventListener('click',()=>{
-    preferences[selected]={...staged[selected],configured:true};
-    const stored=save();
-    if(!stored){status.textContent='Настройки действуют только до закрытия страницы: браузер не разрешил сохранение.'}
-    else if(!mailConnected){status.textContent='Выбор сохранён. Подключите почту, чтобы перейти к выдаче разрешений.'}
-    else if(staged[selected].book&&!bookConnected){
-     status.textContent='Выбор сохранён. Для адресной книги необходимо отдельно разрешить доступ у провайдера.'}
-    else {status.textContent='Настройки сохранены. Импорт и анализ реальных контактов пока недоступны.'}
-    if(typeof onSaved==='function')onSaved(selected);
-   });
-   actions.append(saveButton);page.append(actions,status);
+   page.append(choices,status);
    const preview=make('section','svmc-preview');
    const previewHead=make('div','svmc-preview-head');
-   previewHead.append(make('strong','','Как будет выглядеть список'),make('small','','Примеры · не импортировано'));
+   previewHead.append(make('strong','','Пример списка'),make('small','','Предварительный вид'));
    preview.append(previewHead);
    for(const item of SAMPLES[selected]){
     const row=make('div','svmc-person');
@@ -157,7 +153,7 @@
     preview.append(row);
    }
    page.append(preview);
-   const note=make('p','svmc-note','Сэйви не копирует контакты автоматически. Сначала — подключение почты, затем отдельные разрешения и проверка предложенных объединений. Оригиналы остаются у владельца.');
+   const note=make('p','svmc-note','Импорт — только после отдельного разрешения. Сэйви предложит проверить совпадения, не изменяя оригиналы.');
    page.append(note);
   }
   return Object.freeze({
