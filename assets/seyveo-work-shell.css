@@ -1382,6 +1382,14 @@ html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button:foc
 #tasksPage #svManagerAssignments .svcp-task-list{gap:0}
 #tasksPage #svManagerAssignments .svcp-task-title{overflow-wrap:anywhere;word-break:normal}
 #tasksPage #svManagerAssignments .svcp-task-extra{background:#38383A!important}
+/* The section above stored manager assignments must NEVER show a top divider.
+   Saved assignments remain accessible; remove only the stray 1px border,
+   even if historical/hidden .svcp-task nodes exist in the DOM. */
+html body #svWorkShell[data-active="personal"] #tasksPage #svManagerAssignments{
+ border-top:0!important;border-top-style:none!important;
+ box-shadow:none!important;
+}
+
 
 /* History: graphite back; transparent search and menu; four balanced header slots. */
 html body #svWorkShell[data-shared-work="true"][data-history="true"] #svWorkHeader{
