@@ -52,6 +52,24 @@
   })();
   return true;
  }
+
+ // A public-only fallback for static preview hosts without a live-search API.
+ // Ask once before opening an external provider. Private/local questions
+ // never reach this branch because isSearchQuestion rejects them.
+ function browserFallback(question,conversation){
+  if(typeof window.SEYVEO_BROWSER?.open!=='function')return false;
+  if(!userAllowedSearch('поиск в браузере')){
+   conversation.showSearchResults?.({query:question,status:'unavailable',results:[],
+    message:'Интернет-поиск не запущен без разрешения.'});
+   return true;
+  }
+  const url='https://yandex.ru/search/?text='+encodeURIComponent(question.slice(0,600));
+  conversation.showSearchResults?.({query:question,status:'unavailable',results:[],
+   message:'Поисковый сервер SEYVEO сейчас недоступен. Открываю публичные результаты во встроенном браузере.'});
+  window.SEYVEO_CONVERSATION?.close?.();
+  window.SEYVEO_BROWSER.open(url);
+  return true;
+ }
  function start(question){
   if(isLocalQuestion(question))return startLocal(question);
   if(!isSearchQuestion(question))return false;
@@ -77,6 +95,7 @@
     const state=await check.json();
     if(controller.signal.aborted)return;
     if(state.configured!==true){
+     if(browserFallback(question,conversation))return;
      conversation.showSearchResults({query:question,status:'unavailable',results:[],
       message:'Поиск сейчас недоступен. Проверь соединение с сервером.'});
      return;
@@ -101,8 +120,9 @@
     }else conversation.showSearchResults({...payload,query:question});
    }catch(error){
     if(controller.signal.aborted)return;
+    if(browserFallback(question,conversation))return;
     conversation.showSearchResults({query:question,status:'unavailable',results:[],
-     message:'Не удалось связаться с поисковым сервером. Проверю снова, когда он будет доступен.'});
+     message:'Не удалось связаться с поисковым сервером. Проверьте подключение и повторите запрос.'});
    }finally{
     if(active===task){active=null;conversation.endStream?.()}
    }
