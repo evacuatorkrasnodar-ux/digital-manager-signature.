@@ -1812,8 +1812,12 @@ function render(kind){
  // Keep the same Back element and click handler across every surface.
  const header=title.closest('.sv-deep-top');
  if(header){
-  if(kind==='contract'&&back.parentElement!==header)header.prepend(back);
-  else if(kind!=='contract'&&back.parentElement!==page)page.prepend(back);
+  if(kind==='contract'){
+   // Keep Back INSIDE the titlebar grid, alongside the centered heading.
+   // Putting it on the outer header creates a second row and clips the title.
+   const titlebar=title.closest('.sv-continuity-titlebar')||header;
+   if(back.parentElement!==titlebar)titlebar.prepend(back);
+  }else if(back.parentElement!==page)page.prepend(back);
  }
  subject.textContent=descriptor.label;title.textContent=kind==='contract'&&returnDestination?.hash==='#life'?'Личные документы':descriptor.title;intro.textContent=descriptor.intro;
  footer.textContent=kind==='contract'?'Архив с локальным шифрованием — экспериментальная функция. Без облачного восстановления, биометрии и подключённого ИИ. Для особо важных документов используйте проверенное хранилище.':kind==='mail'?'':localOnly;
