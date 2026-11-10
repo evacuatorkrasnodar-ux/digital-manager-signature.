@@ -2049,8 +2049,32 @@ html body #calendarSpaceDialog .cal-velvet-picker:not([hidden]){
  background-image:none!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-html body :is(#calendarEventDialog,#personalTaskDialog) .cal-premium-picker :is(.cal-pick-day.is-selected,.cal-pick-wheel-option.is-selected),
+html body :is(#calendarEventDialog,#personalTaskDialog) .cal-premium-picker .cal-pick-day.is-selected{
+ border-radius:50%!important;background:#505053!important;color:#FFFFFF!important;
+ box-shadow:none!important;
+}
+html body :is(#calendarEventDialog,#personalTaskDialog) .cal-premium-picker .cal-pick-wheel-option.is-selected,
 html body #calendarSpaceDialog .cal-velvet-picker [aria-pressed="true"]{
  border-radius:12px!important;background:#505053!important;color:#FFFFFF!important;
  box-shadow:none!important;
 }
+/* Text and wheel surfaces remain readable over graphite in both app themes. */
+html body :is(#calendarEventDialog,#personalTaskDialog) .cal-premium-picker:not([hidden]),
+html body #calendarSpaceDialog .cal-velvet-picker:not([hidden]){
+ color:#F7F7F8!important;
+}
+html body :is(#calendarEventDialog,#personalTaskDialog) .cal-premium-picker:not([hidden]) :is(button,strong,.cal-pick-wheel-title,.cal-pick-time-head small),
+html body #calendarSpaceDialog .cal-velvet-picker:not([hidden]) :is(button,strong){
+ color:#F7F7F8!important;
+}
+html body :is(#calendarEventDialog,#personalTaskDialog) .cal-premium-picker .cal-pick-wheel{
+ border-radius:14px!important;background:#2E2E30!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+/* Visible native fallbacks keep the same 14px form geometry.
+   Their OS-owned dropdown sheets cannot be rounded by CSS. */
+html body select:not([hidden]):not(.sv-standard-picker-source):not(.cal-velvet-original):not(.svcp-task-assignee-native),
+html body input:is([type="date"],[type="time"],[type="datetime-local"]):not(.sv-standard-picker-source):not(#calendarEventDate):not(#calendarEventTime):not(#personalTaskDue):not(#calendarSpaceDate){
+ border-radius:14px!important;
+}
+
