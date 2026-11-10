@@ -33,7 +33,7 @@ function saveReview(personId,kind,note){
 }
 const style=document.createElement('style');
 style.id='seyveo-staff-flat-graphite';
-style.textContent=String.raw\`
+style.textContent=String.raw`
 /* Staff list and person profile share the SEYVEO flat graphite controls. */
 .svstaff-directory{margin:0;padding:0;color:var(--text);background:transparent}
 .svstaff-intro{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0;padding:3px 0 7px}
@@ -267,7 +267,7 @@ style.textContent=String.raw\`
  .svstaff-tile-trend{font-size:10.5px}
 }
 @media(prefers-reduced-motion:reduce){.svstaff-review-trigger svg{transition:none}}
-\`;
+`;
 document.head.append(style);
 const iconPaths={
  star:'<path d="m12 2 3.1 6.3 7 1-5.1 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9L2 9.3l7-1z"/>',
