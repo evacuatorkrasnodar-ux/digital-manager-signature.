@@ -184,7 +184,7 @@ function mount(target,{
  editor.append($('h2','sv-doc-tools-heading','Быстрые действия'));
  // Five working document actions, one balanced iPhone row.
  const grid=$('div','sv-doc-tool-grid');
- const scan=button('Сканер',()=>open('scan'),'sv-doc-tool-button sv-doc-tool-scan');
+ const scan=button('Сканер',()=>open('scan'),'sv-doc-tool-scan');
  scan.dataset.action='scan';
  scan.setAttribute('aria-label','Сканировать документ: сфотографировать страницы и сохранить PDF');
  scan.append(toolArt('scan'));grid.append(scan);
@@ -195,7 +195,7 @@ function mount(target,{
   ['Печать','print',()=>open('print')]
  ];
  for(const [label,key,action] of items){
-  const control=button(label,action,'sv-doc-tool-button sv-doc-tool-'+key);
+  const control=button(label,action,'sv-doc-tool-'+key);
   control.dataset.action=key;control.append(toolArt(key));grid.append(control);
  }
  const panel=$('section','sv-doc-tool-panel');panel.hidden=true;
