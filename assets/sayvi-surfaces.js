@@ -1238,9 +1238,20 @@ function mailView(){
   const allowed=visibleSampleMail().filter(m=>selectedMailIds.has(m.id));
   if(!mailBulkSelecting||!allowed.length||mailFolder==='overview')return false;
   const count=allowed.length,permanent=mailFolder==='trash';
+  const noun=count%10===1&&count%100!==11?'письмо':
+   count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'письма':'писем';
+  const amount=count+' '+noun;
+  const folderLabel=mailFolder==='trash'?'Корзины':
+   mailFolder==='inbox'?'Входящих':
+   mailFolder==='spam'?'Спама':
+   mailFolder==='starred'?'Важных':
+   mailFolder==='archive'?'Архива':
+   mailFolder==='promotions'?'Рассылок':'На проверке';
+  const scopeLabel=mailScope==='all'?' (личная и рабочая почта)':
+   mailScope==='personal'?' (личная почта)':' (рабочая почта)';
   const question=permanent
-   ?'Удалить навсегда '+count+' писем из Корзины? Действие нельзя отменить.'
-   :'Переместить '+count+' писем в Корзину? Их можно будет восстановить.';
+   ?'Удалить навсегда '+amount+' из Корзины'+scopeLabel+'? Действие нельзя отменить.'
+   :'Переместить '+amount+' из раздела «'+folderLabel+'»'+scopeLabel+' в Корзину? Их можно будет восстановить.';
   if(!window.confirm(question))return false;
   for(const item of allowed){
    if(permanent)item.removed=true;
@@ -1248,8 +1259,8 @@ function mailView(){
   }
   saveSampleActions();
   selectedMailIds.clear();mailBulkSelecting=false;
-  mailNotice=permanent?'Удалено навсегда: '+count+' · учебные письма.':
-   'В Корзине: '+count+' · учебные письма.';
+  mailNotice=permanent?'Удалено навсегда: '+amount+' · учебный список.':
+   'В Корзине: '+amount+' · учебный список.';
   paint();return true;
  }
  function renderMailBulkBar(visible){
