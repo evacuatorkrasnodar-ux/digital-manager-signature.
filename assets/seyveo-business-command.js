@@ -893,15 +893,18 @@ document.querySelectorAll('#svcpTeam [data-svcp-people]').forEach(button=>
  button.addEventListener('click',()=>peopleView(button.dataset.svcpPeople)));
 function tab(name){
  if(!['chats','team','tasks'].includes(name))return;
+ // Assignments are managed in the unified Deals workspace, not in a separate
+ // work-chat panel. Keep the legacy task renderer for internal task updates.
+ if(name==='tasks'){
+  if(employeePreviewActive())window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
+  else window.SEYVEO_UNIFIED_TASKS?.openBusiness?.();
+  return;
+ }
  state.tab=name;
- // Panels now live in different workspaces; the old parent is not their root.
- // Update by persistent element IDs instead of querying the retired container.
- const panels={chats:$('svcpChats'),team:$('svcpTeam'),tasks:$('svcpTasks')};
  if(name==='chats'){
-  if(panels.chats)panels.chats.hidden=false;
+  const chats=$('svcpChats');if(chats)chats.hidden=false;
   chatsFromTasks=false;showInbox();
- }else if(name==='tasks')renderTasks();
- else peopleView('team');
+ }else peopleView('team');
 }
 chatRoot.querySelectorAll('[data-svcp-room]').forEach(button=>
  button.addEventListener('click',()=>openRoom(button.dataset.svcpRoom)));
