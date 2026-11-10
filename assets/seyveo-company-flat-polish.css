@@ -241,9 +241,11 @@ html body #seyveoCompanyDialog[open] :is(.sv-company-actions button,.seyveo-pass
  }
 }
 
-/* Empty company profile: no decorative badge, single clear action. */
-html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-empty-mark{
- display:none!important;
+/* Keep the original document illustration in the empty state.
+   Hide it only once company details have been saved (managed by the existing JS). */
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-empty-mark:not([hidden]){
+ display:grid!important;
+ place-items:center!important;
 }
 html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view:not([hidden]){
  min-height:min(440px,calc(100dvh - 178px))!important;
