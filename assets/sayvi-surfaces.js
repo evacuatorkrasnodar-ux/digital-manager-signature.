@@ -555,16 +555,13 @@ function mailView(){
  function renderGate(){
   const account=guardAccount;
   guardTrigger.setAttribute('aria-expanded',String(guardOpen));
+  guardBackdrop.hidden=!guardOpen||mailEditorOpen||!!mailCurrent;
   guardPanel.hidden=!guardOpen||mailEditorOpen||!!mailCurrent;
   guardPanel.replaceChildren();
   if(!guardOpen)return;
   const title=create('div','sv-mail-gate-menu-heading');
   title.append(create('strong','','Защита почты'));
-  const close=create('button','sv-mail-gate-menu-close');
-  close.type='button';close.append(mailIcon('back'));
-  close.setAttribute('aria-label','Закрыть настройки защиты');
-  close.addEventListener('click',()=>{closeGate();guardTrigger.focus()});
-  title.append(close);guardPanel.append(title);
+  guardPanel.append(title);
   const chooser=create('div','sv-mail-gate-accounts');
   for(const [key,label] of [['personal','Личная'],['business','Рабочая']]){
    const button=create('button','sv-mail-gate-account',label);
@@ -575,13 +572,14 @@ function mailView(){
   guardPanel.append(chooser);
   const modes=create('div','sv-mail-gate-modes');modes.setAttribute('role','group');
   modes.setAttribute('aria-label','Режим защиты '+(account==='business'?'рабочей':'личной')+' почты');
-  const hints={smart:'Сэйви сортирует подозрительные письма',contacts:'Знакомые и разрешённые отправители',strict:'Только доверенные адреса и домены'};
+  const hints={smart:'Сэйви сортирует письма',contacts:'Контакты и доверенные',strict:'Только разрешённые'};
   for(const [key,entry] of Object.entries(MAIL_GATE_MODES)){
    const button=create('button','sv-mail-gate-mode');button.type='button';
    button.setAttribute('aria-pressed',String(mailGate[account].mode===key));
    const marker=create('span','sv-mail-gate-radio');
    const body=create('span','sv-mail-gate-mode-body');
-   body.append(create('strong','',entry.title),create('small','',hints[key]));
+   body.append(create('strong','',entry.title));
+   if(mailGate[account].mode===key)body.append(create('small','',hints[key]));
    button.append(marker,body);
    button.addEventListener('click',()=>{
     mailGate[account].mode=key;saveMailGate();
@@ -592,7 +590,7 @@ function mailView(){
   }
   guardPanel.append(modes);
   const trustedDetails=create('details','sv-mail-gate-trusted-details');
-  trustedDetails.append(create('summary','','Доверенные адреса и домены · '+mailGate[account].trusted.length));
+  trustedDetails.append(create('summary','','Доверенные адреса · '+mailGate[account].trusted.length));
   const form=create('form','sv-mail-gate-form');
   const input=create('input','');input.type='text';input.required=true;input.maxLength=254;
   input.autocapitalize='off';input.autocomplete='off';input.spellcheck=false;
@@ -615,7 +613,7 @@ function mailView(){
     });
     chip.append(remove);trusted.append(chip);
    }
-   trustedDetails.querySelector('summary').textContent='Доверенные адреса и домены · '+mailGate[account].trusted.length;
+   trustedDetails.querySelector('summary').textContent='Доверенные адреса · '+mailGate[account].trusted.length;
   }
   form.addEventListener('submit',event=>{
    event.preventDefault();
@@ -644,7 +642,7 @@ function mailView(){
    review.addEventListener('click',()=>selectFolder('review'));
    guardPanel.append(review);
   }
-  guardPanel.append(create('small','sv-mail-gate-caution','Защита пока работает с учебными письмами. Реальная фильтрация — после подключения почты.'));
+  guardPanel.append(create('small','sv-mail-gate-caution','Пока на примерах. Реальная защита — после подключения почты.'));
  }
  function refreshMailGateView(){
   if(mailEditorOpen||mailCurrent)return;
@@ -676,7 +674,11 @@ function mailView(){
   if(!scope)return;
   guardOpen=false;smartContacts?.open(scope);paint();
  });
- section.append(top,searchLabel,scopeNav,connect,contactsInvite,nav,extraNav,info,content);
+ const guardBackdrop=create('button','sv-mail-gate-backdrop');
+ guardBackdrop.type='button';guardBackdrop.hidden=true;
+ guardBackdrop.setAttribute('aria-label','Закрыть меню защиты');
+ guardBackdrop.addEventListener('click',closeGate);
+ section.append(guardBackdrop,top,searchLabel,scopeNav,connect,contactsInvite,nav,extraNav,info,content);
  body.append(section);
  const smartContacts=window.SEYVEO_SMART_CONTACTS?.mount({
   host:section,
