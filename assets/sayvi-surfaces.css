@@ -1548,3 +1548,108 @@
   backdrop-filter:none!important;
  }
 }
+
+
+/* SEYVEO MAIL · flat folder rail and letter list · November 2026 */
+/* Strictly the mail overview: no new navigation, no modifications to the
+   editor/detail views, approved Home dock, or any chat. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar{
+ gap:4px!important;
+ margin:8px 0 17px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:center!important;
+ justify-content:center!important;
+ min-height:60px!important;
+ padding:7px 2px 8px!important;
+ gap:6px!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ text-align:center!important;
+ font-size:clamp(10.5px,2.82vw,11.5px)!important;
+ font-weight:550!important;
+ line-height:1.18!important;
+ letter-spacing:-.012em!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder > span{
+ white-space:nowrap!important;
+ overflow:visible!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder svg{
+ width:21px!important;height:21px!important;
+ stroke-width:1.5!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder[aria-current="page"]{
+ color:var(--text)!important;
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder[aria-current="page"]::after{
+ content:"";
+ position:absolute;bottom:0;left:calc(50% - 12px);
+ width:24px;height:2px;border-radius:999px;
+ background:color-mix(in srgb,var(--text) 55%,transparent);
+ pointer-events:none;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder:active{
+ background:color-mix(in srgb,#38383A 38%,transparent)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder-count{
+ top:0!important;right:5px!important;
+ min-width:16px!important;height:16px!important;
+ border:0!important;
+ background:#38383A!important;
+ color:#f0f2f4!important;
+ box-shadow:none!important;
+ font-size:10px!important;
+}
+/* Plain iOS-like mail rows: only fine dividers, no surrounding card. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-group{
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ overflow:visible!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter{
+ min-height:69px!important;
+ padding:10px 3px!important;
+ gap:9px!important;
+ border:0!important;
+ border-bottom:1px solid color-mix(in srgb,var(--text) 11%,transparent)!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter:last-child{
+ border-bottom:0!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter.is-unread{
+ background:transparent!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter:active{
+ background:color-mix(in srgb,#38383A 32%,transparent)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-avatar{
+ border:0!important;
+ background:color-mix(in srgb,#38383A 82%,transparent)!important;
+ box-shadow:none!important;
+}
+@media(max-width:390px){
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder{
+  min-height:58px!important;
+  padding:7px 1px!important;
+ }
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter{
+  padding:10px 2px!important;
+ }
+}
