@@ -937,7 +937,10 @@ function mailView(){
    row.append(avatar,detail,meta);
    row.setAttribute('aria-label',item.from+', '+item.subject+', учебное письмо. Свайп влево — действия.');
    const choices=mailFolder==='spam'
-    ?[['restore','Не спам',()=>updateSampleMail(item,'notspam')],['trash','Удалить',()=>updateSampleMail(item,'trash')]]
+    ?[sampleBlocked(item)
+       ?['shield','Разблок.',()=>updateSampleMail(item,'unblock')]
+       :['restore','Не спам',()=>updateSampleMail(item,'notspam')],
+      ['trash','Удалить',()=>updateSampleMail(item,'trash')]]
     :mailFolder==='trash'
      ?[['restore','Вернуть',()=>updateSampleMail(item,'restore')],['trash','Удалить',()=>{
        const yes=window.confirm('Окончательно удалить это учебное письмо из списка?');
