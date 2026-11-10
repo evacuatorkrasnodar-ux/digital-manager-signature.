@@ -531,9 +531,9 @@ function mailView(){
  let guardOpen=false,guardAccount='personal';
  const closeGate=()=>{guardOpen=false;paint()};
  mailGuardExitHandler=()=>{if(!guardOpen)return false;closeGate();return true};
- guardTrigger.addEventListener('click',()=>{guardOpen=true;paint()});
+ guardTrigger.addEventListener('click',()=>{guardAccount=mailScope==='all'?'personal':mailScope;guardOpen=true;paint()});
  function renderGate(){
-  const account=mailScope==='all'?guardAccount:mailScope;
+  const account=guardAccount;
   const pending=folderCount('review');
   const modes=mailScope==='all'?'Умный допуск':MAIL_GATE_MODES[mailGate[account].mode].title;
   guardTrigger.querySelector('.sv-mail-gate-trigger-label').textContent=modes;
@@ -1288,6 +1288,8 @@ function mailView(){
   }
   // A single Back in the stable titlebar replaces the extra folder arrow.
   for(const [key,label] of tabs.slice(4)){
+   // The pending review badge already opens this folder. Do not repeat it in the overflow row.
+   if(key==='review')continue;
    const button=intent(label,()=>selectFolder(key));button.classList.add('sv-mail-extra-link');
    if(mailFolder===key)button.setAttribute('aria-current','page');
    if(key==='spam'){
