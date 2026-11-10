@@ -192,6 +192,7 @@ function demoScenario(kind){
 let mailFolder='overview',mailEditorOpen=false,mailEditingId=null,mailCurrent=null;
 let mailEditorReturnId=null,mailEditorExitHandler=null;
 let mailSearchOpen=false;
+let mailGuardExitHandler=null;
 let mailScope='all',mailComposeScope=null;
 // Mail drafts are local to this browser tab session. No external delivery.
 const MAIL_SESSION_DRAFTS_KEY='seyveo-mail-session-drafts-v1';
@@ -528,7 +529,9 @@ function mailView(){
  const guardPanel=create('section','sv-mail-gate-panel');guardPanel.hidden=true;
  guardPanel.setAttribute('aria-label','Настройки допуска почты');
  let guardOpen=false,guardAccount='personal';
- guardTrigger.addEventListener('click',()=>{guardOpen=!guardOpen;renderGate()});
+ const closeGate=()=>{guardOpen=false;paint()};
+ mailGuardExitHandler=()=>{if(!guardOpen)return false;closeGate();return true};
+ guardTrigger.addEventListener('click',()=>{guardOpen=true;paint()});
  function renderGate(){
   const account=mailScope==='all'?guardAccount:mailScope;
   const pending=folderCount('review');
@@ -540,6 +543,13 @@ function mailView(){
   guardPanel.hidden=!guardOpen||mailEditorOpen||!!mailCurrent;
   guardPanel.replaceChildren();
   if(!guardOpen)return;
+  const gateHead=create('div','sv-mail-gate-page-head');
+  const gateBack=create('button','sv-mail-gate-back');gateBack.type='button';
+  gateBack.append(mailIcon('back'));gateBack.setAttribute('aria-label','Назад к почте');
+  gateBack.addEventListener('click',closeGate);
+  gateHead.append(gateBack,create('span','sv-mail-gate-page-heading','Защита почты'));
+  guardPanel.append(gateHead);
+  guardPanel.append(create('p','sv-mail-gate-lead','Сэйви помогает оставить важное во входящих.'));
   guardPanel.append(create('strong','sv-mail-gate-heading','Кто может писать вам'));
   const chooser=create('div','sv-mail-gate-accounts');
   for(const [key,title] of [['personal','Личная'],['business','Рабочая']]){
@@ -556,7 +566,8 @@ function mailView(){
    button.setAttribute('aria-pressed',String(mailGate[account].mode===key));
    const marker=create('span','sv-mail-gate-radio');
    const body=create('span','sv-mail-gate-mode-body');
-   body.append(create('strong','',entry.title),create('small','',entry.hint));
+   const hints={smart:'Проверка неизвестных и сортировка рассылок',contacts:'Во входящих — контакты и доверенные',strict:'Только разрешённые адреса и домены'};
+   body.append(create('strong','',entry.title),create('small','',hints[key]));
    button.append(marker,body);
    button.addEventListener('click',()=>{mailGate[account].mode=key;saveMailGate();mailCurrent=null;paint()});
    radio.append(button);
@@ -585,7 +596,11 @@ function mailView(){
    chip.append(remove);trusted.append(chip);
   }
   guardPanel.append(trusted);
-  guardPanel.append(create('p','sv-mail-gate-footnote','Адрес разрешает одного отправителя, @домен — все адреса этого домена. Сейчас правила действуют только на учебные письма. Контакты, серверная фильтрация и проверка в интернете пока не подключены; реальные письма не отклоняются.'));
+  const gateHelp=create('details','sv-mail-gate-help');
+  gateHelp.append(create('summary','','Как работает защита'));
+  gateHelp.append(create('p','','Адрес разрешает одного отправителя, @домен — всех отправителей домена. Сейчас правила применяются только к примерам писем. Контакты, серверная фильтрация и интернет-проверка не подключены; настоящие письма не отклоняются.'));
+  guardPanel.append(gateHelp);
+  guardPanel.append(create('small','sv-mail-gate-caution','Режим проверки пока работает с учебными письмами.'));
  }
  section.append(top,searchLabel,scopeNav,connect,guardRow,guardPanel,nav,extraNav,info,content);body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['review','На проверке'],['promotions','Рассылки'],['spam','Спам'],['trash','Корзина']];
@@ -600,6 +615,7 @@ function mailView(){
   return 0;
  }
  function openEditor(id=null,reply=null){
+  guardOpen=false;
   mailEditorReturnId=reply?.id||mailCurrent||null;
   mailEditingId=id;mailEditorOpen=true;mailCurrent=null;
   mailComposeScope=reply?.account||(id?mailDrafts.find(d=>d.id===id)?.account:null)||(mailScope==='all'?null:mailScope);
@@ -616,10 +632,12 @@ function mailView(){
   if(!reply)content.querySelector('[data-mail-field="to"]')?.focus();
  }
  function selectFolder(folder){
+  guardOpen=false;
   mailNotice='';mailFolder=folder;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;paint();
  }
  function selectScope(account){
   if(!['all','personal','business'].includes(account)||account===mailScope)return;
+  guardOpen=false;
   mailScope=account;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;
   mailNotice='';mailSearch='';searchInput.value='';paint();
  }
@@ -1238,7 +1256,8 @@ function mailView(){
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
  function paint(){
-  page.dataset.svMailMode=mailEditorOpen?'editor':mailCurrent?'detail':'overview';
+  page.dataset.svMailMode=mailEditorOpen?'editor':mailCurrent?'detail':guardOpen?'guard':'overview';
+  section.classList.toggle('sv-mail-guard-active',guardOpen);
   section.dataset.mailFolder=mailFolder;
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
   introCopy.hidden=mailEditorOpen||!!mailCurrent;
@@ -1499,6 +1518,7 @@ back.addEventListener('click',()=>{
  if(currentKind()==='contract'&&
     window.SEYVEO_DOCUMENT_CENTER?.backFromNested?.())return;
  if(currentKind()==='mail'){
+  if(typeof mailGuardExitHandler==='function'&&mailGuardExitHandler())return;
   if(typeof mailEditorExitHandler==='function'){mailEditorExitHandler();return}
   if(mailCurrent){mailCurrent=null;sync();return}
   if(mailFolder!=='overview'){mailFolder='overview';sync();return}
