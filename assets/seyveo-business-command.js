@@ -2524,6 +2524,30 @@ function renderTasks(){
   extra.id='svcpTaskActions'+i;
   extra.setAttribute('role','group');
   extra.setAttribute('aria-label','Действия с поручением');
+  // Consistent explanatory line icons in every context action, not bare text.
+  function decorateTaskAction(control,kind){
+   const label=control.textContent;
+   const glyph=kind==='sayvi'?el('span','svcp-task-extra-icon sv-sayvi-symbol'):document.createElementNS('http://www.w3.org/2000/svg','svg');
+   glyph.classList.add('svcp-task-extra-icon');
+   glyph.setAttribute('aria-hidden','true');
+   if(kind!=='sayvi'){
+    const paths={
+     discuss:'<path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-3-.55L4 20l1.55-4.3A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8.5 11.5h7"/>',
+     delete:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
+     accept:'<path d="m5 12 4.5 4.5L19 7"/>',
+     rework:'<path d="M5 9V4M5 4h5M5 4a8 8 0 1 1-1 11"/>'
+    };
+    glyph.setAttribute('viewBox','0 0 24 24');
+    glyph.setAttribute('fill','none');glyph.setAttribute('stroke','currentColor');
+    glyph.setAttribute('stroke-width','1.6');
+    glyph.setAttribute('stroke-linecap','round');glyph.setAttribute('stroke-linejoin','round');
+    glyph.innerHTML=paths[kind]||'';
+   }
+   control.textContent='';
+   control.classList.add('svcp-task-extra-action');
+   control.append(glyph,el('span','svcp-task-extra-label',label));
+   return control;
+  }
   const assist=btn('Сэйви',()=>{
    const person=t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId)?STAFF[t.assigneeId]:'';
    const stateText=approval
@@ -2557,7 +2581,7 @@ function renderTasks(){
   more.setAttribute('aria-controls',extra.id);
   more.setAttribute('aria-haspopup','true');
   actions.append(more);
-  extra.append(assist);
+  extra.append(decorateTaskAction(assist,'sayvi'));
   if(approval&&t.reviewStatus==='review'&&!t.done){
    const resolve=(accepted)=>{
     if(employeePreviewActive())return;
@@ -2570,15 +2594,15 @@ function renderTasks(){
     if(!save(TASK_KEY,updated))return;
     state.tasks=updated;renderTasks();
    };
-   extra.append(btn('Принять',()=>resolve(true),'svcp-approval-demo-accept'));
-   extra.append(btn('Доработать',()=>resolve(false),'svcp-approval-demo-switch'));
+   extra.append(decorateTaskAction(btn('Принять',()=>resolve(true),'svcp-approval-demo-accept'),'accept'));
+   extra.append(decorateTaskAction(btn('Доработать',()=>resolve(false),'svcp-approval-demo-switch'),'rework'));
   }
-  extra.append(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'));
-  extra.append(btn('Удалить',()=>{
+  extra.append(decorateTaskAction(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'),'discuss'));
+  extra.append(decorateTaskAction(btn('Удалить',()=>{
    const updated=state.tasks.filter((_,index)=>index!==i);
    if(!save(TASK_KEY,updated))return;
    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
-  },'svcp-ghost'));
+  },'svcp-ghost'),'delete'));
   extra.addEventListener('click',event=>{
    if(!event.target.closest('button'))return;
    extra.hidden=true;
