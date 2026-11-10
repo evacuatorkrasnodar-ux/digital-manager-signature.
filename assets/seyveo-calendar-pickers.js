@@ -377,7 +377,7 @@ if(taskDialog&&taskDate&&taskControl){
  };
  const fields=Object.entries(CONFIG).map(([id,title])=>({field:document.getElementById(id),title}))
   .filter(({field})=>field&&((field.tagName==='SELECT')||['date','time'].includes(field.type)));
- if(!fields.length||!HTMLDialogElement?.prototype?.showModal)return;
+ if(!fields.length||typeof HTMLDialogElement==='undefined'||typeof HTMLDialogElement.prototype.showModal!=='function')return;
  const pad=n=>String(n).padStart(2,'0');
  const formatDate=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'});
  const monthFmt=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'});
@@ -525,7 +525,6 @@ if(taskDialog&&taskDate&&taskControl){
   render();launch.setAttribute('aria-expanded','true');
   try{sheet.showModal()}catch{current=null;trigger=null;launch.setAttribute('aria-expanded','false')}
  }
- for(const {field,name,title:unused} of []){}
  for(const {field,title:fieldTitle} of fields){
   const launch=button('','sv-standard-picker-launch',()=>open(field,launch,fieldTitle));
   launch.setAttribute('aria-label',fieldTitle);
