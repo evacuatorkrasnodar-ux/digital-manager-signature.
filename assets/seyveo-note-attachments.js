@@ -109,12 +109,15 @@
   urls.forEach(url=>URL.revokeObjectURL(url));
   urls.length=0;
  }
+ let statusTimeout=null;
  function tell(message){
-  const el=byId('svNoteAttachmentStatus');
-  if(el){el.textContent=message;el.hidden=!message;}
-  if(!editor.open&&reader.open){
-   const readerStatus=byId('svNoteReaderStatus');
-   if(readerStatus){readerStatus.textContent=message;readerStatus.hidden=!message;}
+  if(statusTimeout!==null){clearTimeout(statusTimeout);statusTimeout=null;}
+  const target=!editor.open&&reader.open?byId('svNoteReaderStatus'):byId('svNoteAttachmentStatus');
+  if(!target)return;
+  target.textContent=message;
+  target.hidden=!message;
+  if(message&&/^(Вложение сохранено|Сохранено вложений|Вложение удалено)/.test(message)){
+   statusTimeout=setTimeout(()=>{target.hidden=true;target.textContent='';statusTimeout=null;},2600);
   }
  }
  const editorList=document.createElement('div');
@@ -162,7 +165,8 @@
    urls.push(url);icon.src=url;icon.loading='lazy';
   }else{
    icon=document.createElement('span');icon.className='sv-note-file-symbol';
-   icon.setAttribute('aria-hidden','true');icon.textContent='▤';
+   icon.setAttribute('aria-hidden','true');
+   icon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3.5h8l4.5 4.5v12a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 20V5A1.5 1.5 0 0 1 6 3.5Z"/><path d="M14 3.5V8h4.5M8 12h8M8 16h6"/></svg>';
   }
   icon.classList.add('sv-note-file-icon');card.append(icon);
   const info=document.createElement('div');info.className='sv-note-file-info';
@@ -171,12 +175,16 @@
   info.append(name,size);card.append(info);
   const open=document.createElement('button');open.type='button';
   open.className='sv-note-file-action';
-  open.textContent=previewableImage(item.type)||item.type==='application/pdf'?'Открыть':'Скачать';
-  open.setAttribute('aria-label',open.textContent+': '+item.name);
+  const action=previewableImage(item.type)||item.type==='application/pdf'?'Открыть':'Скачать';
+  open.setAttribute('aria-label',action+': '+item.name);
+  open.title=action;
+  open.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 5h5v5M19 5l-9 9"/><path d="M19 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg>';
   open.addEventListener('click',()=>fileAction(item));card.append(open);
   if(canRemove){
    const remove=document.createElement('button');remove.type='button';
-   remove.className='sv-note-file-remove';remove.textContent='×';
+   remove.className='sv-note-file-remove';
+   remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 7h15M9 7V4.5h6V7m3 0-.8 13H6.8L6 7M10 11v5m4-5v5"/></svg>';
+   remove.title='Удалить вложение';
    remove.setAttribute('aria-label','Удалить вложение '+item.name);
    remove.addEventListener('click',async()=>{
     if(!window.confirm('Удалить вложение «'+item.name+'»?'))return;
