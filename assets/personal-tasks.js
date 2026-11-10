@@ -129,7 +129,7 @@ function continuationPrompt(item,action){
 /* A deliberately small manual directory, not access to iPhone contacts.
    Private names/numbers remain in unencrypted localStorage: disclose this in UI.
    Only a native tel: link opened by the person's tap can initiate a call. */
-const CONTACT_KEY='seyveo-private-contacts-v1',CONTACT_MAX=40;
+const CONTACT_KEY='seyveo-private-contacts-v1',CONTACT_MAX=500;
 let editingContact='',deleteContact='',callTargetName='',chosenContact='',returnToCall=false;
 const contactName=$('seyveoContactName'),contactPhone=$('seyveoContactPhone');
 const contactStatus=$('seyveoContactStatus'),callStatus=$('seyveoCallStatus');
@@ -165,18 +165,76 @@ function callTargetFromTask(title){
 const callIntent=window.SEYVEO_CALL_INTENT;
 function matchingContacts(target,rows){return callIntent?.findMatches(target,rows)||[];}
 function personFromRequest(raw){return callIntent?.parse(raw)||'';}
+/* Native-like contact directory: sort, search, group, and call from a true tel: link.
+   The original localStorage key and call-assistant integration remain unchanged. */
+function phonebookIcon(kind){
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');
+ svg.setAttribute('fill','none');svg.setAttribute('aria-hidden','true');
+ svg.setAttribute('focusable','false');
+ const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+ const paths={
+  call:'M22 16.9v2.8a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 2.3 4.2 2 2 0 0 1 4.3 2h2.8a2 2 0 0 1 2 1.7l.5 3.2a2 2 0 0 1-.6 1.8L7 10.6a16 16 0 0 0 6.4 6.4l1.9-2a2 2 0 0 1 1.8-.6l3.2.5a2 2 0 0 1 1.7 2z',
+  edit:'M12 20h9M16 3l5 5-12 12-5 1 1-5L17 4a2 2 0 0 1 3 0z',
+  person:'M16 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8M19 8v6M16 11h6'
+ };
+ path.setAttribute('d',paths[kind]||paths.person);
+ svg.append(path);return svg;
+}
+function phonebookCount(n){
+ const tail=n%10===1&&n%100!==11?'контакт':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'контакта':'контактов';
+ return n+' '+tail;
+}
 function renderContacts(){
- const rows=readContacts(),target=$('seyveoContactsList');target.replaceChildren();
- if(!rows.length){target.append(element('p','personal-contacts-empty','Здесь пока нет контактов. Добавьте первый номер вручную.'));return;}
- for(const c of rows){
-  const row=element('div','personal-contacts-item');const details=element('div','personal-contacts-info');
-  details.append(element('strong','',c.name),element('small','',c.phone));
-  const actions=element('div','personal-contacts-row-actions');
-  const edit=element('button','','Изменить');edit.type='button';edit.dataset.contactEdit=c.id;
-  const del=element('button','','Удалить');del.type='button';del.dataset.contactDelete=c.id;
-  if(deleteContact===c.id){del.textContent='Подтвердить';del.setAttribute('aria-label','Подтвердить удаление контакта '+c.name);}
-  actions.append(edit,del);row.append(details,actions);target.append(row);
+ const all=readContacts().slice().sort((a,b)=>a.name.localeCompare(b.name,'ru',{sensitivity:'base'}));
+ const search=String($('seyveoContactSearch')?.value||'').trim().toLocaleLowerCase('ru-RU');
+ const numeric=search.replace(/\D/g,'');
+ const rows=all.filter(c=>!search||contactKey(c.name).includes(search)||(numeric&&c.phone.replace(/\D/g,'').includes(numeric)));
+ const target=$('seyveoContactsList');target.replaceChildren();
+ $('seyveoContactCount').textContent=search?rows.length+' из '+phonebookCount(all.length):phonebookCount(all.length);
+ if(!rows.length){
+  const empty=element('div','sv-phonebook-empty');
+  const symbol=element('span','sv-phonebook-empty-icon');
+  symbol.append(phonebookIcon('person'));
+  empty.append(symbol,element('strong','',search?'Ничего не найдено':'Контактов пока нет'),
+    element('small','',search?'Попробуйте другое имя или номер.':'Нажмите «+», чтобы добавить первый контакт.'));
+  target.append(empty);return;
  }
+ let previousLetter='';
+ for(const c of rows){
+  const first=c.name.charAt(0).toLocaleUpperCase('ru-RU');
+  const letter=/^[А-ЯЁA-Z]$/u.test(first)?first:'#';
+  if(letter!==previousLetter){
+   const heading=element('div','sv-phonebook-letter',letter);
+   target.append(heading);previousLetter=letter;
+  }
+  const row=element('div','sv-phonebook-row');
+  const dial=element('a','sv-phonebook-person');
+  dial.href='tel:'+c.phone;dial.setAttribute('aria-label','Позвонить: '+c.name+', '+c.phone);
+  const avatar=element('span','sv-phonebook-avatar',
+   c.name.split(/\s+/).slice(0,2).map(x=>x.charAt(0).toLocaleUpperCase('ru-RU')).join(''));
+  const copy=element('span','sv-phonebook-person-copy');
+  copy.append(element('strong','',c.name),element('small','',c.phone));
+  const callIcon=element('span','sv-phonebook-call');callIcon.append(phonebookIcon('call'));
+  dial.append(avatar,copy,callIcon);
+  const edit=element('button','sv-phonebook-edit');
+  edit.type='button';edit.dataset.contactEdit=c.id;
+  edit.setAttribute('aria-label','Изменить контакт '+c.name);
+  edit.append(phonebookIcon('edit'));
+  row.append(dial,edit);target.append(row);
+ }
+}
+function setContactEditor(show){
+ const editor=$('seyveoContactEditor');editor.hidden=!show;
+ for(const id of ['seyveoContactSearchWrap','seyveoContactCount','seyveoContactsList','seyveoContactsPrivacy']){
+  const node=$(id);if(node)node.hidden=show;
+ }
+ $('seyveoContactAdd').hidden=show;
+ $('seyveoContactCancel').hidden=!show;
+ $('seyveoContactDeleteForm').hidden=!show||!editingContact;
+ $('seyveoContactEditorTitle').textContent=editingContact?'Редактировать контакт':'Новый контакт';
+ $('seyveoContactDeleteForm').textContent='Удалить контакт';
+ if(show)contactName.focus({preventScroll:true});
 }
 function resetContactForm(){
  editingContact='';deleteContact='';
@@ -188,12 +246,13 @@ function openContacts(fromCall=false){
  if(callDialog.open)callDialog.close();
  returnToCall=Boolean(fromCall);
  resetContactForm();showContactStatus('');
- if(fromCall&&callTargetName){
-  // Use the person's requested name; the user supplies the number.
-  contactName.value=callIntent?.isJuliaAlias(callTargetName)?'Юльчик':callTargetName;
- }
+ $('seyveoContactSearch').value='';
  renderContacts();
  if(!contactsDialog.open)contactsDialog.showModal();
+ setContactEditor(Boolean(fromCall));
+ if(fromCall&&callTargetName){
+  contactName.value=callIntent?.isJuliaAlias(callTargetName)?'Юльчик':callTargetName;
+ }
 }
 function renderCallList(){
  const rows=readContacts(),query=contactKey($('seyveoCallSearch').value);
@@ -291,7 +350,13 @@ function contactsChanged(){
  window.dispatchEvent(new Event('seyveo:contacts-changed'));
 }
 /* Header close controls use the shared SEYVEO dialog handler. */
-$('seyveoContactCancel').addEventListener('click',()=>{resetContactForm();showContactStatus('');renderContacts()});
+$('seyveoContactSearch').addEventListener('input',renderContacts);
+$('seyveoContactAdd').addEventListener('click',()=>{
+ resetContactForm();showContactStatus('');setContactEditor(true);
+});
+$('seyveoContactCancel').addEventListener('click',()=>{
+ resetContactForm();showContactStatus('');setContactEditor(false);renderContacts();
+});
 $('seyveoContactForm').addEventListener('submit',event=>{
  event.preventDefault();
  const name=cleanName(contactName.value),phone=cleanPhone(contactPhone.value);
@@ -301,37 +366,44 @@ $('seyveoContactForm').addEventListener('submit',event=>{
   showContactStatus('Такой контакт уже сохранён.');return;
  }
  if(!editingContact&&existing.length>=CONTACT_MAX){
-  showContactStatus('В справочнике не больше 40 контактов.');return;
+  showContactStatus('В справочнике не больше '+CONTACT_MAX+' контактов.');return;
  }
  const updated=editingContact
   ?existing.map(c=>c.id===editingContact?{...c,name,phone}:c)
   :[...existing,{id:'contact-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),name,phone}];
  if(!writeContacts(updated)){showContactStatus('Не удалось сохранить контакт. Проверьте память устройства.');return;}
  const resume=returnToCall;
- resetContactForm();renderContacts();showContactStatus('Контакт сохранён на этом устройстве.');
+ resetContactForm();
+ $('seyveoContactSearch').value='';
+ setContactEditor(false);renderContacts();
+ showContactStatus('Контакт сохранён на этом устройстве.');
  contactsChanged();
  if(resume){returnToCall=false;contactsDialog.close();openCall(callTargetName);}
 });
 $('seyveoContactsList').addEventListener('click',event=>{
- const b=event.target.closest('button');if(!b)return;
- const rows=readContacts();
- if(b.dataset.contactEdit){
-  const c=rows.find(x=>x.id===b.dataset.contactEdit);if(!c)return;
-  deleteContact='';editingContact=c.id;
-  contactName.value=c.name;contactPhone.value=c.phone;
-  $('seyveoContactSave').textContent='Сохранить изменения';
-  $('seyveoContactCancel').hidden=false;
-  showContactStatus('Измените имя или номер и сохраните.');
-  renderContacts();contactName.focus({preventScroll:true});
- }else if(b.dataset.contactDelete){
-  const id=b.dataset.contactDelete;
-  if(deleteContact!==id){deleteContact=id;showContactStatus('Нажмите «Подтвердить» для удаления.');renderContacts();return;}
-  if(!writeContacts(rows.filter(x=>x.id!==id))){
-   showContactStatus('Не удалось удалить контакт.');return;
-  }
-  resetContactForm();renderContacts();showContactStatus('Контакт удалён с устройства.');
-  contactsChanged();
+ const edit=event.target.closest('button[data-contact-edit]');
+ if(!edit)return;
+ const c=readContacts().find(x=>x.id===edit.dataset.contactEdit);if(!c)return;
+ resetContactForm();editingContact=c.id;
+ contactName.value=c.name;contactPhone.value=c.phone;
+ $('seyveoContactSave').textContent='Сохранить изменения';
+ showContactStatus('');setContactEditor(true);
+});
+$('seyveoContactDeleteForm').addEventListener('click',()=>{
+ if(!editingContact)return;
+ if(deleteContact!==editingContact){
+  deleteContact=editingContact;
+  $('seyveoContactDeleteForm').textContent='Подтвердить удаление';
+  showContactStatus('Нажмите ещё раз, чтобы удалить контакт с этого устройства.');
+  return;
  }
+ const rows=readContacts();
+ if(!writeContacts(rows.filter(x=>x.id!==editingContact))){
+  showContactStatus('Не удалось удалить контакт.');return;
+ }
+ resetContactForm();setContactEditor(false);renderContacts();
+ showContactStatus('Контакт удалён с устройства.');
+ contactsChanged();
 });
 $('seyveoCallList').addEventListener('click',event=>{
  const b=event.target.closest('button[data-call-choice]');
