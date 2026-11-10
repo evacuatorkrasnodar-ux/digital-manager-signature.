@@ -1825,3 +1825,130 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayv
  fill:none!important;filter:none!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
+
+/* SEYVEO Mail composer · premium flat graphite refinement · Nov 2026.
+   Presentation-only. Keep recipient selection, accessible labels, drafts,
+   Sayvi polish, send feedback, editor exit confirmation and the Home dock. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor{
+ padding:4px 15px 12px!important;
+ gap:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-header{
+ display:flex!important;align-items:center!important;
+ min-height:52px!important;
+ margin:0 0 12px!important;gap:8px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-back{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+ height:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:var(--sv-back-flat,#38383A)!important;
+ background-image:none!important;
+ color:var(--sv-back-flat-ink,#EEF2F4)!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-back:active{
+ background:var(--sv-back-flat-pressed,#48484B)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-back svg{
+ display:block!important;width:19px!important;height:19px!important;
+ stroke:currentColor!important;stroke-width:1.45!important;
+ fill:none!important;filter:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-title{
+ font-size:22px!important;font-weight:620!important;
+ line-height:1.2!important;letter-spacing:-.035em!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-switch{
+ min-height:46px!important;padding:2px 0!important;
+ margin:0 0 8px!important;gap:12px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-caption{
+ color:var(--secondary)!important;font-size:13px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-options{
+ box-sizing:border-box!important;
+ width:min(230px,70%)!important;
+ min-height:42px!important;height:42px!important;
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:3px!important;padding:3px!important;
+ border:0!important;border-radius:16px!important;
+ background:#26292D!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option{
+ min-height:36px!important;height:36px!important;
+ border:0!important;border-radius:13px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#BCC2C7!important;
+ font-size:12px!important;font-weight:540!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option[aria-pressed="true"]{
+ background:#38383A!important;color:#F5F6F7!important;
+ border:0!important;box-shadow:none!important;
+ font-weight:620!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor .sv-mail-account-help{
+ margin:2px 0 7px!important;
+ font-size:11px!important;line-height:1.45!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor .sv-mail-field{
+ min-height:48px!important;
+ border-bottom:1px solid color-mix(in srgb,var(--text) 10%,transparent)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor .sv-mail-field:focus-within{
+ border-bottom-color:color-mix(in srgb,var(--text) 30%,transparent)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor .sv-mail-field:has(textarea){
+ border-bottom:0!important;
+ padding-top:10px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor textarea.sv-mail-input{
+ height:clamp(156px,22dvh,205px)!important;
+ min-height:156px!important;max-height:260px!important;
+ resize:vertical!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions{
+ margin-top:6px!important;padding-top:10px!important;
+ gap:8px!important;
+ border-top:1px solid color-mix(in srgb,var(--text) 10%,transparent)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-deep-intent{
+ border:0!important;border-radius:999px!important;
+ min-height:40px!important;padding:8px 12px!important;
+ background:#38383A!important;
+ color:#F1F3F5!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-mail-polish-trigger,
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-mail-save-trigger,
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-mail-send-trigger{
+ background:#38383A!important;border:0!important;box-shadow:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-disclaimer{
+ font-size:11px!important;line-height:1.4!important;
+ margin:8px 0 0!important;color:var(--secondary)!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-options{
+ background:#EBEDEF!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option{
+ color:#59616A!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option[aria-pressed="true"]{
+ background:#D7DADD!important;color:#2D343A!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-deep-intent{
+ background:#E1E4E6!important;color:#30363C!important;
+}
