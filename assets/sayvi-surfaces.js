@@ -397,7 +397,7 @@ const MAIL_SAMPLE_SUSPICIOUS=new Set(['example-suspicious']);
 const emptyMailGate=()=>({mode:'smart',trusted:[]});
 function validMailGateAddress(value){
  const address=String(value||'').trim().toLowerCase();
- return address.length<=254 && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(address)?address:'';
+ return address.length<=254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)?address:'';
 }
 function readMailGate(){
  const defaults={personal:emptyMailGate(),business:emptyMailGate()};
@@ -425,8 +425,9 @@ function addGateTrusted(account,address){
 }
 function gateCategory(item){
  if(item.spam||sampleBlocked(item))return 'spam';
- if(MAIL_SAMPLE_SUSPICIOUS.has(item.id))return 'review';
- if(MAIL_SAMPLE_PROMOTIONS.has(item.id))return 'promotions';
+ const trusted=gateTrusted(item.account,sampleMailAddress(item));
+ if(MAIL_SAMPLE_SUSPICIOUS.has(item.id)&&!trusted)return 'review';
+ if(MAIL_SAMPLE_PROMOTIONS.has(item.id)&&!trusted)return 'promotions';
  const settings=mailGate[item.account];
  if(!settings||settings.mode==='smart')return 'inbox';
  if(gateTrusted(item.account,sampleMailAddress(item)))return 'inbox';
@@ -530,7 +531,7 @@ function mailView(){
   guardTrigger.setAttribute('aria-expanded',String(guardOpen));
   guardReview.hidden=!pending||!mailShowExamples;
   guardReview.textContent='На проверке · '+pending;
-  guardPanel.hidden=!guardOpen;
+  guardPanel.hidden=!guardOpen||mailEditorOpen||!!mailCurrent;
   guardPanel.replaceChildren();
   if(!guardOpen)return;
   guardPanel.append(create('strong','sv-mail-gate-heading','Кто может писать вам'));
