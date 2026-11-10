@@ -1952,3 +1952,69 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayv
 :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-deep-intent{
  background:#E1E4E6!important;color:#30363C!important;
 }
+
+
+/* SEYVEO Mail · detail/editor continuity and hidden-scope fix · 2026-11-10 */
+/* A real hidden attribute must beat old high-specificity display:grid.
+   The account switch belongs to the mail folder view, not an opened letter. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts[hidden],
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar[hidden],
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions[hidden],
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search[hidden]{
+ display:none!important;
+}
+/* Both nested stages use the same 44px return control as the inbox header. */
+html body #sayviSurfacePage[data-sv-subject="mail"] :is(
+ .sv-mail-detail-bar > .sv-mail-icon-button,
+ .sv-mail-editor-header > .sv-mail-editor-back
+){
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;
+ color:#EEF2F4!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] :is(
+ .sv-mail-detail-bar > .sv-mail-icon-button,
+ .sv-mail-editor-header > .sv-mail-editor-back
+):active{background:#48484B!important}
+html body #sayviSurfacePage[data-sv-subject="mail"] :is(
+ .sv-mail-detail-bar > .sv-mail-icon-button,
+ .sv-mail-editor-header > .sv-mail-editor-back
+) svg{
+ width:19px!important;height:19px!important;
+ stroke:currentColor!important;stroke-width:1.45!important;fill:none!important;
+ stroke-linejoin:round!important;stroke-linecap:round!important;
+}
+/* Leave star/archive/trash as slender outline controls, not extra circles. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-tools .sv-mail-icon-button{
+ width:44px!important;height:44px!important;min-width:44px!important;
+ background:transparent!important;border:0!important;
+ box-shadow:none!important;
+}
+/* Calm, flat graphite actions only in the opened message. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions{
+ padding-top:10px!important;
+ border-top:1px solid color-mix(in srgb,var(--text) 10%,transparent)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions .sv-deep-intent,
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions .sv-mail-assist-action{
+ box-sizing:border-box!important;
+ min-height:40px!important;
+ padding:9px 12px!important;
+ border:0!important;border-radius:999px!important;
+ background:#38383A!important;
+ background-image:none!important;
+ color:#F1F3F5!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions .sv-deep-intent,
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions .sv-mail-assist-action{
+ background:#E1E4E6!important;color:#30363C!important;
+}
