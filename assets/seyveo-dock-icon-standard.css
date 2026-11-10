@@ -99,3 +99,65 @@ html body #sayviComposer #sayviField :is(#sayviMic,#sayviSend) > svg{
 @media(max-width:355px){
   :root{--sv-compact-dock-glyph:22px;}
 }
+
+
+/* v3 · Optical parity of the four capsule symbols and Search.
+   The drawing's outer SVG size was not enough: navigation active state,
+   SVG path geometry and the signature had separate paint/stroke defaults.
+   Keep the original dock, Sayvi touch target and routes intact. */
+:root{
+  --sv-dock-ink:#D7E0E5; /* premium neutral silver; one actual RGB value */
+  --sv-dock-optical-stroke:1.55;
+}
+:root[data-theme="light"]{
+  --sv-dock-ink:#43515B;
+}
+/* One neutral color even when one page is selected. No active glyph whitening. */
+html body footer.dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+ :is(#navHome,#navTasks,#navPicture,#navManage) > svg,
+html body footer.dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+ :is(#navHome,#navTasks,#navPicture,#navManage).active > svg,
+html body footer.dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+ #navPicture > svg.seyveo-my-signature{
+  color:var(--sv-dock-ink)!important;
+  stroke:currentColor!important;
+  stroke-width:var(--sv-dock-optical-stroke)!important;
+  opacity:1!important;
+  filter:none!important;
+}
+html body footer.dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+ #navPicture > svg.seyveo-my-signature{
+  box-sizing:content-box!important;
+  width:26px!important;
+  height:26px!important;
+  min-width:26px!important;
+  min-height:26px!important;
+  max-width:26px!important;
+  max-height:26px!important;
+  flex:0 0 26px!important;
+  margin:0 auto!important;
+  overflow:visible!important;
+}
+/* The center waveform was physically smaller and thinner than other symbols.
+   Its 74-unit viewBox is rendered at 50px; 2.25 SVG units = ~1.5px on screen.
+   No scaling on the live animated bars, only their fixed SVG artwork. */
+html body footer.dock:not(.seyveo-music-dock) #assistantButton
+ .button-art .voice-bars{
+  stroke:var(--sv-dock-ink)!important;
+  stroke-width:2.25!important;
+  stroke-linecap:round!important;
+  opacity:1!important;
+  filter:none!important;
+}
+html body footer.dock:not(.seyveo-music-dock) #assistantButton
+ .button-art .voice-dot{
+  fill:var(--sv-dock-ink)!important;
+  opacity:1!important;
+  filter:none!important;
+}
+/* Browser uses alternative navigation SVGs but the same neutral ink. */
+html body footer.dock.seyveo-browser-dock
+ button[data-sv-browser-action]:not([aria-disabled="true"]) > svg.seyveo-browser-dock-svg{
+  color:var(--sv-dock-ink)!important;
+  stroke-width:var(--sv-dock-optical-stroke)!important;
+}
