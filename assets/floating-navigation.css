@@ -549,3 +549,11 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
   max-width:calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))!important;
  }
 }
+
+/* Premium graphite dock · restrained engraving contrast (Nov 2026).
+   Change ONLY the main navigation glyph tone, without affecting Notebook,
+   mini-player, chat, backdrop, dimensions, positions or touch behavior. */
+:root[data-theme="dark"][data-palette="graphite"] footer.dock{
+ --seyveo-engrave-ink:rgba(202,220,226,.84);
+ --seyveo-engrave-active:rgba(236,244,247,.95);
+}
