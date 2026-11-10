@@ -230,13 +230,13 @@ function intention(query){
  if(isQuestion(q))return {action:'ask'};
  const track=musicIntent(q);
  if(track)return track;
- // Within a workspace, an unqualified name means "find here". Explicit
- // mail/document/music/web intents above still take precedence.
- const context=searchContext();
- if(context.kind==='documents')return {action:'docs:'+context.area,reveal:true,contextual:true};
- if(context.kind==='mail')return {action:/черновик/u.test(q)?'mail:drafts':'mail:inbox',contextual:true};
  if(documentWords.test(q))return {action:'docs:'+documentScope,reveal:true};
  if(mailWords.test(q))return {action:/черновик/u.test(q)?'mail:drafts':'mail:inbox'};
+ // In a workspace, an unqualified name means "find on this page".
+ // Explicit cross-workspace requests above always take precedence.
+ const context=searchContext();
+ if(context.kind==='documents')return {action:'docs:'+context.area,reveal:true,contextual:true};
+ if(context.kind==='mail')return {action:'mail:inbox',contextual:true};
  if(direct)return direct;
  const exact=sections.find(x=>normalize(x.name)===q);
  return exact?{action:exact.action}:null;
