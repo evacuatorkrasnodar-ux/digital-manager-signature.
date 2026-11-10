@@ -1682,3 +1682,69 @@
 #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder{
  font-size:clamp(11px,3vw,11.75px)!important;
 }
+
+
+/* SEYVEO Mail · flat header & native-feeling account switch · 2026-11-10.
+   Scoped to Mail only: Home dock, chat, folder actions, message list untouched. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions{
+ min-height:50px!important;gap:5px!important;
+ margin:0 0 12px!important;padding:0 2px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > .sv-mail-introduction-text{
+ min-width:0!important;flex:1 1 0!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-introduction-title{
+ font-size:26px!important;line-height:1.12!important;
+ font-weight:620!important;letter-spacing:-.045em!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons{
+ gap:2px!important;margin-left:auto!important;
+}
+/* Real connection control now lives at the end of the expanded search field. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search{
+ align-items:center!important;
+ padding:0 5px 0 12px!important;
+ border-radius:16px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-connect{
+ flex:0 0 40px!important;width:40px!important;min-width:40px!important;
+ max-width:40px!important;height:40px!important;min-height:40px!important;
+ margin-left:4px!important;border:0!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--secondary)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-connect:active{
+ background:#38383A!important;color:#F4F5F6!important;
+}
+/* A single matte capsule: the active option does NOT have a second glass skin. */
+:root[data-theme="dark"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts{
+ height:44px!important;min-height:44px!important;
+ padding:3px!important;gap:3px!important;
+ border:0!important;border-radius:17px!important;
+ background:#26292D!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+:root[data-theme="dark"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch{
+ min-height:38px!important;height:38px!important;
+ border:0!important;border-radius:14px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#B8BDC2!important;font-size:12px!important;font-weight:540!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+:root[data-theme="dark"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch[aria-pressed="true"]{
+ background:#38383A!important;background-image:none!important;
+ color:#F5F6F7!important;font-weight:620!important;
+ border:0!important;border-radius:14px!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts{
+ background:#ECEEF0!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch[aria-pressed="true"]{
+ background:#DDE0E3!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
