@@ -231,6 +231,60 @@ if(personal&&head){
  head.append(open);
  personal.append(panel);
  const studio=new URLSearchParams(location.search).has('seyveoStudio');
+ const hiddenKey='seyveo-personal-history-hidden-v1';
+ const readHidden=()=>{try{const a=JSON.parse(localStorage.getItem(hiddenKey)||'[]');return new Set(Array.isArray(a)?a:[])}catch{return new Set()}};
+ const eventKey=e=>e.taskId?'task:'+e.taskId:'card:'+String(e.eventId||'')+':'+String(e.at||'');
+ const hideEvents=items=>{const keys=readHidden();items.filter(e=>!e.taskId).forEach(e=>keys.add(eventKey(e)));try{localStorage.setItem(hiddenKey,JSON.stringify([...keys].slice(-4000)));return true}catch{return false}};
+ const cleanTitle=e=>{const t=String(e.title||'').trim();if(t&&!/^(?:[a-z]{1,4}[0-9a-f]{5,}|[0-9a-f]{7,})$/i.test(t))return t;const type=({'personal-task':'дело',mail:'письмо',contract:'документ',work:'сообщение'}[e.cardType]||'действие Сэйви');return e.to==='canceled'?'Отменено: '+type:'История: '+type};
+ let selecting=false;
+ const chosen=new Set();
+ const workHeader=document.getElementById('svWorkHeader'),headerSearch=document.getElementById('svWorkAdd');
+ const menu=document.createElement('button');menu.type='button';menu.id='sahHistoryMore';menu.hidden=true;menu.setAttribute('aria-label','Меню истории');menu.textContent='···';
+ const popup=document.createElement('div');popup.id='sahHistoryPopup';popup.hidden=true;
+ const option=(label,action)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',()=>{popup.hidden=true;action()});popup.append(b)};
+ option('Выбрать',()=>{selecting=true;chosen.clear();render()});
+ option('Очистить историю',()=>{
+  if(!confirm('Очистить личную историю? Завершённые дела удалятся; события Сэйви будут скрыты из списка на этом устройстве. Служебные журналы компании сохранятся.'))return;
+  if(!hideEvents(window.SEYVEO_CARD_LIFECYCLE?.history?.()||[])){alert('Не удалось сохранить очистку');return}
+  if(!window.SEYVEO_PERSONAL_TASK_HISTORY?.clearCompleted?.()){alert('Не удалось очистить завершённые дела');return}
+  selecting=false;chosen.clear();render();
+ });
+ const selection=document.createElement('div');selection.id='sahHistorySelection';selection.hidden=true;
+ const count=document.createElement('span');count.textContent='Выберите записи';
+ const removeChosen=document.createElement('button');removeChosen.type='button';removeChosen.textContent='Удалить';
+ const cancelChosen=document.createElement('button');cancelChosen.type='button';cancelChosen.textContent='Отмена';
+ selection.append(count,removeChosen,cancelChosen);panel.insertBefore(selection,list);
+ const showCount=()=>{count.textContent=chosen.size?'Выбрано: '+chosen.size:'Выберите записи';removeChosen.disabled=!chosen.size};
+ cancelChosen.addEventListener('click',()=>{selecting=false;chosen.clear();render()});
+ removeChosen.addEventListener('click',()=>{
+  if(!chosen.size||!confirm('Удалить выбранные записи?'))return;
+  const events=window.SEYVEO_CARD_LIFECYCLE?.history?.()||[];
+  if(!hideEvents(events.filter(e=>chosen.has(eventKey(e))))){alert('Не удалось сохранить изменения');return}
+  const tasks=window.SEYVEO_PERSONAL_TASK_HISTORY?.completed?.()||[];
+  for(const task of tasks)if(chosen.has('task:'+task.id))window.SEYVEO_PERSONAL_TASK_HISTORY?.removeCompleted?.(task.id);
+  chosen.clear();selecting=false;render();
+ });
+ if(workHeader&&headerSearch){workHeader.insertBefore(menu,headerSearch);workHeader.append(popup)}
+ menu.addEventListener('click',()=>{popup.hidden=!popup.hidden});
+ document.addEventListener('pointerdown',e=>{if(!menu.contains(e.target)&&!popup.contains(e.target))popup.hidden=true});
+ const css=document.createElement('style');css.textContent=`
+ #svWorkHeader[data-sah-history="true"] #svWorkAdd{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ #sahHistoryMore{width:44px;height:44px;flex:none;border:0;border-radius:0;background:transparent;color:var(--text,#fff);font-size:24px;letter-spacing:2px}
+ #sahHistoryMore[hidden],#sahHistoryPopup[hidden],#sahHistorySelection[hidden]{display:none!important}
+ #svWorkHeader{position:relative}
+ #sahHistoryPopup{position:absolute;right:5px;top:100%;z-index:80;min-width:180px;padding:6px;background:#38383A;border-radius:12px;box-shadow:0 9px 28px #0008}
+ #sahHistoryPopup button{width:100%;min-height:44px;background:transparent;border:0;color:white;text-align:left;padding:8px 12px;font:inherit;font-size:14px}
+ #sahHistorySelection{display:flex;align-items:center;gap:10px;padding:10px 0;font-size:12px}
+ #sahHistorySelection span{flex:1}
+ #sahHistorySelection button{border:0;background:#38383A;color:white;border-radius:9px;padding:9px}
+ #sahHistorySelection button:disabled{opacity:.4}
+ #seyveoActionHistoryPanel .sah-row.sah-selecting{grid-template-columns:26px minmax(0,1fr) 44px!important}
+ #seyveoActionHistoryPanel .sah-row.sah-selecting strong,#seyveoActionHistoryPanel .sah-row.sah-selecting .sah-row-meta{grid-column:2!important}
+ #seyveoActionHistoryPanel .sah-row.sah-selecting .sah-restore-task{grid-column:3!important}
+ .sah-pick{grid-column:1;grid-row:1/span 2;accent-color:#999}
+ .sah-delete{grid-column:2;grid-row:1/span 2;justify-self:end;background:transparent;border:0;color:var(--secondary);min-height:44px;font-size:12px}
+ `;document.head.append(css);
+
  let visibleCount=4;
  let searchOpen=false;
  const more=document.createElement('button');more.type='button';more.className='sah-inline-toggle';more.style.marginTop='10px';more.hidden=true;more.textContent='Показать ещё';panel.append(more);
@@ -242,7 +296,8 @@ if(personal&&head){
   const cardEvents=api?.history?.()||[];
   const tasks=window.SEYVEO_PERSONAL_TASK_HISTORY?.completed?.()||[];
   const taskEvents=tasks.map(task=>({eventId:task.id,title:task.title,cardType:'personal-task',to:'succeeded',at:task.doneAt||task.createdAt,taskId:task.id}));
-  const events=[...cardEvents,...taskEvents].sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
+  const events=[...cardEvents,...taskEvents].filter(e=>!readHidden().has(eventKey(e))).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
+ selection.hidden=!selecting;showCount();
   panel.classList.toggle('is-empty-history',events.length===0);
   more.hidden=true;
   search.hidden=!searchOpen;
@@ -281,7 +336,7 @@ if(personal&&head){
     list.append(group);lastDay=day;
    }
    const item=document.createElement('div');item.className='sah-row';item.dataset.state=stateOf(e.to);
-   const name=document.createElement('strong');name.textContent=e.title||({mail:'Письмо',work:'Рабочее сообщение',contract:'Документ'}[e.cardType]||'Действие Сэйви');
+   const name=document.createElement('strong');name.textContent=cleanTitle(e);
    const line=document.createElement('small');line.textContent=(statuses[e.to]||e.to||'Событие')+' · '+(valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано');
    const status=document.createElement('span');status.className='sah-state';status.dataset.state=stateOf(e.to);status.textContent=statuses[e.to]||e.to||'Событие';
    line.textContent=valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано';
@@ -289,6 +344,17 @@ if(personal&&head){
    meta.className='sah-row-meta';
    meta.append(status,line);
    item.append(name,meta);
+    if(selecting){
+     item.classList.add('sah-selecting');
+     const check=document.createElement('input');check.type='checkbox';check.className='sah-pick';check.checked=chosen.has(eventKey(e));
+     check.setAttribute('aria-label','Выбрать '+cleanTitle(e));
+     check.addEventListener('change',()=>{if(check.checked)chosen.add(eventKey(e));else chosen.delete(eventKey(e));showCount()});
+     item.prepend(check);
+    }else if(!e.taskId){
+     const del=document.createElement('button');del.type='button';del.className='sah-delete';del.textContent='Удалить';
+     del.addEventListener('click',()=>{if(confirm('Убрать запись из личной истории?')){if(hideEvents([e]))render();else alert('Не удалось удалить запись')}});
+     item.append(del);
+    }
    if(e.taskId){
     const recover=document.createElement('button');recover.type='button';recover.className='sah-restore-task';
     recover.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M4 12h10a6 6 0 0 1 6 6"/></svg>';
@@ -330,6 +396,7 @@ if(personal&&head){
   if(show&&(page?.hidden||location.hash!=='#tasks'))return;
   if(show)previousScroll=scroller?.scrollTop||0;
   panel.hidden=!show;
+ menu.hidden=!show;popup.hidden=true;workHeader?.setAttribute('data-sah-history',String(show));if(!show){selecting=false;chosen.clear()}
   page?.classList.toggle('sah-history-open',show);
   open.setAttribute('aria-expanded',String(show));
   if(show){
