@@ -13,7 +13,8 @@ function init(){
   play:'<path d="m9 6 9 6-9 6z"/>',
   pause:'<path d="M8.5 6v12M15.5 6v12"/>',
   next:'<path d="M17.5 6v12M6.5 6.5 15 12l-8.5 5.5z"/>',
-  tracks:'<path d="M8.5 6.5h10.5M8.5 12h10.5M8.5 17.5h10.5M4.5 6.5h1M4.5 12h1M4.5 17.5h1"/>'
+  tracks:'<path d="M8.5 6.5h10.5M8.5 12h10.5M8.5 17.5h10.5M4.5 6.5h1M4.5 12h1M4.5 17.5h1"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6.3"/><path d="m15 15 5.3 5.3"/>'
  };
  const glyph=d=>'<svg class="seyveo-music-dock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+icon[d]+'</svg>';
  let enabled=false,loaded=false,playing=false;
@@ -31,11 +32,17 @@ function init(){
   describe(outer[0],'Пред.','prev','prev');
   describe(outer[1],playing?'Пауза':'Слушать',playing?'pause':'play','play');
   describe(outer[2],'След.','next','next');
-  describe(outer[3],'Треки','tracks','tracks');
+  describe(outer[3],'Поиск','search','search');
+  // One global Search is available inside Music too; the track queue
+  // already has a separate control on the original player screen.
+  delete outer[3].dataset.svMusicAction;
+  outer[3].setAttribute('aria-label','Умный поиск SEYVEO');
+  outer[3].setAttribute('aria-controls','svGlobalSearch');
+  outer[3].setAttribute('aria-expanded','false');
   outer[0].setAttribute('aria-disabled',String(!loaded));
   outer[2].setAttribute('aria-disabled',String(!loaded));
   outer[1].setAttribute('aria-disabled','false');
-  dock.setAttribute('aria-label','SEYVEO MUSIC · предыдущий, воспроизведение, Сэйви, следующий, треки');
+  dock.setAttribute('aria-label','SEYVEO MUSIC · предыдущий, воспроизведение, Сэйви, следующий, поиск');
  }
  function enter(){
   if(enabled){draw();return;}
