@@ -184,8 +184,8 @@
      ? name==='employee'
      : name==='business'||name==='employee';
    tab.textContent=employeeMode
-    ? (name==='personal'?'Дела':name==='employee'?'Работа':name==='calendar'?'Календарь':'Блокнот')
-    : (name==='personal'?'Мои дела':name==='calendar'?'Календарь':name==='notes'?'Блокнот':name==='business'?'Кабинет':'Моя работа');
+    ? (name==='personal'?'Дела':name==='employee'?'Работа':name==='calendar'?'Календарь':'Мои дела')
+    : (name==='personal'?'Мои дела':name==='calendar'?'Календарь':name==='business'?'Кабинет':'Моя работа');
   }
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
