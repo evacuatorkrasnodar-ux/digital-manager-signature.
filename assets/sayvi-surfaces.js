@@ -190,8 +190,28 @@ let mailFolder='overview',mailEditorOpen=false,mailEditingId=null,mailCurrent=nu
 let mailEditorReturnId=null,mailEditorExitHandler=null;
 let mailSearchOpen=false;
 let mailScope='all',mailComposeScope=null;
-let mailDrafts=[],mailSearch='',mailShowExamples=true;
-const mailAccountName=account=>account==='business'?'Рабочая':'Личная';
+// Mail drafts are local to this browser tab session. No external delivery.
+const MAIL_SESSION_DRAFTS_KEY='seyveo-mail-session-drafts-v1';
+function readMailSessionDrafts(){
+ try{
+  const data=JSON.parse(sessionStorage.getItem(MAIL_SESSION_DRAFTS_KEY)||'[]');
+  if(!Array.isArray(data))return [];
+  return data.filter(d=>d&&typeof d==='object'&&typeof d.id==='string')
+   .slice(0,60).map(d=>({
+    id:d.id.slice(0,100),account:['personal','business'].includes(d.account)?d.account:'',
+    to:String(d.to||'').slice(0,254),subject:String(d.subject||'').slice(0,240),
+    body:String(d.body||'').slice(0,10000)
+   }));
+ }catch{return []}
+}
+let mailDrafts=readMailSessionDrafts(),mailSearch='',mailShowExamples=true;
+function persistMailDrafts(){
+ try{
+  if(mailDrafts.length)sessionStorage.setItem(MAIL_SESSION_DRAFTS_KEY,JSON.stringify(mailDrafts.slice(0,60)));
+  else sessionStorage.removeItem(MAIL_SESSION_DRAFTS_KEY);
+ }catch{} // The live editor remains usable if storage is unavailable.
+}
+const mailAccountName=account=>account==='business'?'Рабочая':account==='personal'?'Личная':'Не выбрана';
 const mailVisible=account=>mailScope==='all'||account===mailScope;
 const mailExamples=[
  {account:'business',id:'example-andrey',initial:'А',from:'Андрей · клиент',subject:'Стоимость доставки',preview:'Здравствуйте! Подскажите, сколько будет стоить доставка?',body:'Здравствуйте!\n\nПодскажите, пожалуйста, сколько будет стоить доставка и какие сроки возможны?\n\nСпасибо!\nАндрей',when:'10:24',unread:true,starred:false,attachment:false,archived:false,trashed:false},
@@ -318,7 +338,7 @@ function mailView(){
   openEditor(id);
  }
  function removeDraft(id){
-  mailDrafts=mailDrafts.filter(d=>d.id!==id);
+  mailDrafts=mailDrafts.filter(d=>d.id!==id);persistMailDrafts();
   mailEditingId=null;mailEditorOpen=false;mailFolder='drafts';paint();
  }
  function viewExample(item){
@@ -349,7 +369,7 @@ function mailView(){
   for(const [value,label] of [['personal','Личная'],['business','Рабочая']]){
    const button=create('button','sv-mail-sender-option',label);
    button.type='button';button.dataset.mailAccount=value;button.disabled=!!original;
-   button.addEventListener('click',()=>{if(button.disabled)return;accountValue=value;mailComposeScope=value;refreshAccount()});
+   button.addEventListener('click',()=>{if(button.disabled)return;accountValue=value;mailComposeScope=value;refreshAccount();autosaveDraft()});
    senderButtons.push(button);senderOptions.append(button);
   }
   accountField.append(senderCaption,senderOptions);form.append(accountField);refreshAccount();
@@ -367,43 +387,31 @@ function mailView(){
   const to=makeField('Кому','to','input',original?.to,'email');
   const subj=makeField('Тема','subject','input',original?.subject,'text');
   const message=makeField('Сообщение','body','textarea',original?.body);
-  const status=create('p','sv-mail-feedback');status.setAttribute('role','status');
-  const before={to:original?.to||'',subject:original?.subject||'',body:original?.body||'',account:original?.account||mailComposeScope||''};
-  const leaveSheet=create('dialog','sv-mail-account-sheet sv-mail-leave-sheet');
-  leaveSheet.setAttribute('aria-label','Выйти из письма');
-  const leaveHandle=create('div','sv-mail-sheet-handle');leaveHandle.setAttribute('aria-hidden','true');
-  const leaveHead=create('div','sv-mail-sheet-head');
-  const stay=create('button','sv-mail-sheet-cancel','Остаться');stay.type='button';stay.addEventListener('click',()=>leaveSheet.close());
-  leaveHead.append(create('h3','sv-mail-sheet-title','Сохранить письмо?'),stay);
-  const leaveChoices=create('div','sv-mail-sheet-options');
-  const exitWithoutSave=create('button','sv-mail-sheet-option','Выйти без сохранения');exitWithoutSave.type='button';
-  const saveBeforeExit=create('button','sv-mail-sheet-option','Сохранить черновик');saveBeforeExit.type='button';
-  const leaveEditor=()=>{mailEditorOpen=false;mailEditingId=null;mailCurrent=mailEditorReturnId;mailEditorReturnId=null;mailEditorExitHandler=null;paint()};
-  exitWithoutSave.addEventListener('click',()=>{leaveSheet.close();leaveEditor()});
-  saveBeforeExit.addEventListener('click',()=>{leaveSheet.close();form.requestSubmit()});
-  leaveChoices.append(saveBeforeExit,exitWithoutSave);leaveSheet.append(leaveHandle,leaveHead,leaveChoices);
-  leaveSheet.addEventListener('click',event=>{if(event.target===leaveSheet)leaveSheet.close()});
-  form.append(leaveSheet);
-  mailEditorExitHandler=()=>{
-   const changed=to.value!==before.to||subj.value!==before.subject||message.value!==before.body||accountValue!==before.account;
-   if(!changed){leaveEditor();return}
-   if(!leaveSheet.open)leaveSheet.showModal();
-  };
-  form.addEventListener('submit',event=>{
-   event.preventDefault();
+  const status=create('p','sv-mail-feedback');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+  // One stable draft ID: every keystroke updates the same local draft.
+  const draftId=original?.id||'mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
+  function autosaveDraft(){
    const recipient=to.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
-   if(!['personal','business'].includes(accountValue)){
-    status.textContent='Сначала выберите личную или рабочую почту.';senderButtons[0]?.focus();return;
-   }
-   if(!recipient&&!subjectText&&!bodyText){status.textContent='Напишите письмо или укажите тему.';return}
-   const item={id:original?.id||'mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
-    account:original?.account||accountValue,
+   if(!recipient&&!subjectText&&!bodyText&&!original)return false;
+   const item={id:draftId,account:original?.account||accountValue||'',
     to:recipient.slice(0,254),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000)};
-   if(original)mailDrafts=mailDrafts.map(d=>d.id===item.id?item:d);
-   else mailDrafts.unshift(item);
-   mailFolder='drafts';mailEditorOpen=false;mailEditingId=null;mailEditorReturnId=null;mailEditorExitHandler=null;paint();
-   info.textContent='Черновик сохранён в текущем сеансе. Ничего не отправлено.';
-  });
+   const index=mailDrafts.findIndex(d=>d.id===draftId);
+   if(index<0)mailDrafts.unshift(item);else mailDrafts[index]=item;
+   persistMailDrafts();
+   mailEditingId=draftId;
+   return true;
+  }
+  for(const field of [to,subj,message])field.addEventListener('input',autosaveDraft);
+  const leaveEditor=()=>{
+   const saved=autosaveDraft();
+   mailEditorOpen=false;mailEditingId=null;
+   mailCurrent=mailEditorReturnId;mailEditorReturnId=null;mailEditorExitHandler=null;
+   if(saved&&!mailCurrent)mailFolder='drafts';
+   paint();
+  };
+  // Back saves automatically, without the obsolete Save/Discard sheet.
+  mailEditorExitHandler=leaveEditor;
+  form.addEventListener('submit',event=>{event.preventDefault();autosaveDraft()});
   const actions=create('div','sv-mail-editor-actions');
   // Developer prototype: keep Sayvi available and preview its local formatting before approval.
   const preview=create('section','sv-mail-polish-preview');
@@ -435,27 +443,19 @@ function mailView(){
   polish.setAttribute('aria-label','Сэйви: улучшить текст письма');
   polish.title='Сэйви · улучшить текст';
   message.addEventListener('input',()=>{preview.hidden=true});
-  const save=create('button','sv-deep-intent');save.type='submit';
-  save.classList.add('sv-mail-save-trigger');
-  save.append(mailIcon('save'));
-  save.setAttribute('aria-label','Сохранить черновик');
-  save.title='Сохранить черновик';
   const send=create('button','sv-deep-intent sv-deep-intent--lead');
   send.type='button';send.classList.add('sv-mail-send-trigger');
   send.append(mailIcon('send'));
   send.setAttribute('aria-label','Отправить письмо');
   send.title='Отправить письмо';
-  send.setAttribute('aria-describedby','svMailSendUnavailable');
   send.addEventListener('click',()=>{
-   status.textContent='Для отправки нужно подключить почтовый ящик. Письмо не отправлено. Можно сохранить его как черновик.';
-   status.scrollIntoView({block:'nearest',behavior:'smooth'});
+   const saved=autosaveDraft();
+   status.textContent=saved?'Для отправки подключите почту. Черновик сохранён, письмо не отправлено.':'Для отправки подключите почтовый ящик. Письмо не отправлено.';
   });
   const primaryActions=create('div','sv-mail-primary-actions');
-  primaryActions.append(save,send);
+  primaryActions.append(send);
   actions.append(polish,primaryActions);
-  const mailDisclaimer=create('p','sv-mail-disclaimer','Отправка пока недоступна: почтовый сервис не подключён.');
-  mailDisclaimer.id='svMailSendUnavailable';
-  form.append(actions,preview,status,mailDisclaimer);
+  form.append(actions,preview,status);
   content.append(form);
  }
  /* Local, explainable mail assistance for the development prototype.
