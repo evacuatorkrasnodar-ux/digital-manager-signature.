@@ -265,3 +265,11 @@ html body #seyveoContactsDialog :is(button,a,input):focus-visible{
 :root[data-theme="light"] #seyveoContactsDialog #seyveoContactSave{
   background:#38383A!important;color:#F5F5F6!important;
 }
+
+/* Hidden state outranks the legacy list/form declarations, even with !important. */
+html body #seyveoContactsDialog #seyveoContactsList[hidden],
+html body #seyveoContactsDialog #seyveoContactDeleteForm[hidden],
+html body #seyveoContactsDialog #seyveoContactCancel[hidden],
+html body #seyveoContactsDialog #seyveoContactAdd[hidden]{
+ display:none!important;
+}
