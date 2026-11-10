@@ -7,7 +7,7 @@
  const $=id=>document.getElementById(id);
  const page=$('tasksPage'),personal=$('unifiedPersonalTasksView'),
   business=$('unifiedBusinessTasksView'),board=$('unifiedTasksTeamBoard'),
-  taskHost=$('unifiedBusinessTasksHost'),chatHost=$('unifiedTasksChatHost'),
+  taskHost=$('unifiedBusinessTasksHost'),managerAssignments=$('svManagerAssignments'),chatHost=$('unifiedTasksChatHost'),
   tasks=$('svcpTasks'),chats=$('svcpChats'),overview=$('tasksOverview'),
   people=$('svcpTeam'),peopleHost=$('unifiedPeopleHost'),staffReveal=$('svcpManagerPeople'),
   employee=$('unifiedEmployeeTasksView'),shiftHost=$('unifiedEmployeeShiftHost'),
@@ -18,7 +18,9 @@
   workDashboard=$('svcpWorkDashboard');
  if(!page||!personal||!business||!board||!taskHost||!chatHost||!tasks||!chats)return;
  // The single avatar remains a static identity indicator in the heading.
- taskHost.appendChild(tasks);
+ // The single live task list belongs under "Мои дела", never in Cabinet.
+ // Reparent rather than clone to retain history, storage and action handlers.
+ (managerAssignments||taskHost).appendChild(tasks);
  tasks.hidden=false;
  chatHost.appendChild(chats);
  chats.hidden=false;
@@ -673,6 +675,7 @@
      chosen==='business'?' BUSINESS':' НА КОНТРОЛЕ';
   }
   personal.hidden=chosen!=='personal';business.hidden=chosen!=='business';
+  if(managerAssignments)managerAssignments.hidden=chosen!=='personal'||!isManager();
   if(employee)employee.hidden=chosen!=='employee';
   if(employeeAvatar)employeeAvatar.hidden=chosen!=='employee';
   if(chosen!=='employee'&&employeeResults){
