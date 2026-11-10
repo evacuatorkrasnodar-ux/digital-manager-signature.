@@ -68,10 +68,12 @@ function drawRows(){
  const saved=!!clean(card.name);
  dialog.dataset.svCompanyFilled=String(saved);
  $('seyveoCompanyNotFilled').hidden=saved;
+ const emptyMark=$('seyveoCompanyEmptyMark');if(emptyMark)emptyMark.hidden=saved;
  $('seyveoCompanyEditTop').querySelector('span').textContent=saved?'Изменить':'Заполнить карточку';
  $('seyveoCompanyEditTop').setAttribute('aria-label',saved?'Изменить сведения компании':'Заполнить карточку компании');
  // Keep the initial state clean. Show real actions only when they work.
  const qrReady=canCreateCompanyQr(card);
+ dialog.dataset.svCompanyQrReady=String(qrReady);
  dialog.querySelector('.sv-company-actions').hidden=!saved;
  $('seyveoCompanyShare').disabled=!saved;
  $('seyveoCompanyPrint').disabled=!saved;
