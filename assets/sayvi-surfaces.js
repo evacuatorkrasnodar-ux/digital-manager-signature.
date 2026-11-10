@@ -241,7 +241,8 @@ function mailView(){
  compose.addEventListener('click',()=>openEditor());
  // Show only Search and Compose in the Mail titlebar.
  // The existing connection action is available inside the expanded Search.
- topButtons.append(searchToggle,compose);
+ // Approved Mail header: Compose first, Search at the far-right edge.
+ topButtons.append(compose,searchToggle);
  const introCopy=create('div','sv-mail-introduction-text');
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
  // Reuse the original navigation button inside the visible Mail titlebar.
