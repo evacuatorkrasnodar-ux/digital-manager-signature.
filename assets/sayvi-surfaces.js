@@ -1281,7 +1281,7 @@ function mailView(){
    });
    bar.append(all);
   }
-  const select=create('button','sv-mail-bulk-select',mailBulkSelecting?'Готово':'Выбрать');
+  const select=create('button','sv-mail-bulk-select',mailBulkSelecting?'Отмена':'Выбрать');
   select.type='button';select.setAttribute('aria-pressed',String(mailBulkSelecting));
   select.addEventListener('click',()=>{
    mailBulkSelecting=!mailBulkSelecting;selectedMailIds.clear();paintList();
@@ -1293,16 +1293,15 @@ function mailView(){
   const selected=visibleSampleMail().filter(m=>selectedMailIds.has(m.id));
   const actions=create('div','sv-mail-bulk-actions');
   const permanent=mailFolder==='trash';
-  const label=create('span','sv-mail-bulk-actions-label',
-   selected.length?'Выбрано: '+selected.length:'Не выбрано');
   const button=create('button','sv-mail-bulk-clean',
-   permanent?'Удалить навсегда':'Очистить');
+   permanent?'Удалить навсегда'+(selected.length?' · '+selected.length:''):
+    'Очистить'+(selected.length?' · '+selected.length:''));
   button.type='button';button.disabled=!selected.length;
   button.setAttribute('aria-label',permanent
    ?'Окончательно удалить выбранные письма после подтверждения'
    :'Переместить выбранные письма в Корзину после подтверждения');
   button.addEventListener('click',cleanSelectedSampleMail);
-  actions.append(label,button);content.append(actions);
+  actions.append(button);content.append(actions);
  }
  function drawExamples(limit=0){
   // Keep the query local to this renderer too. A prior cached revision
@@ -1334,16 +1333,18 @@ function mailView(){
    const avatar=create('span','sv-mail-avatar',item.initial);
    if(mailBulkSelecting){avatar.classList.add('sv-mail-bulk-avatar');avatar.textContent='';}
    const detail=create('span','sv-mail-letter-details');
+   const senderLine=create('span','sv-mail-sender-line');
    const sender=create('span','sv-mail-letter-sender',item.from);
+   senderLine.append(sender);
+   if(showAccountTags)senderLine.append(create('small','sv-mail-account-tag',mailAccountName(item.account)));
    const titleText=create('strong','sv-mail-letter-subject',item.subject);
    const preview=create('span','sv-mail-letter-preview',item.preview);
-   detail.append(sender,titleText,preview);
-   if(showAccountTags)detail.append(create('small','sv-mail-account-tag',mailAccountName(item.account)));
+   detail.append(senderLine,titleText,preview);
    const meta=create('span','sv-mail-letter-meta');
    meta.append(create('time','',item.when));
    if(item.attachment)meta.append(mailIcon('paperclip'));
    if(item.starred)meta.append(mailIcon('starred'));
-   if(item.unread)row.append(create('span','sv-mail-unread-dot'));
+   if(item.unread&&!mailBulkSelecting)row.append(create('span','sv-mail-unread-dot'));
    row.append(avatar,detail,meta);
    row.setAttribute('aria-label',mailBulkSelecting
     ?(selectedMailIds.has(item.id)?'Снять выбор: ':'Выбрать письмо: ')+item.from+', '+item.subject
