@@ -193,6 +193,7 @@ let mailFolder='overview',mailEditorOpen=false,mailEditingId=null,mailCurrent=nu
 let mailEditorReturnId=null,mailEditorExitHandler=null;
 let mailSearchOpen=false;
 let mailGuardExitHandler=null;
+let mailGuardListenerAbort=null;
 let mailScope='all',mailComposeScope=null;
 // Mail drafts are local to this browser tab session. No external delivery.
 const MAIL_SESSION_DRAFTS_KEY='seyveo-mail-session-drafts-v1';
@@ -445,6 +446,8 @@ function gateCategory(item){
 }
 
 function mailView(){
+ mailGuardListenerAbort?.abort();
+ mailGuardListenerAbort=new AbortController();
  mailEditorExitHandler=null;
  const section=shelf();section.classList.add('sv-mail-workspace');
  const top=create('div','sv-mail-top-actions');
@@ -540,12 +543,12 @@ function mailView(){
  });
  // Close like native iOS popovers, without covering the Inbox with a modal.
  document.addEventListener('pointerdown',event=>{
-  if(!guardOpen||top.contains(event.target))return;
+  if(!guardOpen||guardPanel.contains(event.target)||guardTrigger.contains(event.target))return;
   closeGate();
- });
+ },{signal:mailGuardListenerAbort.signal});
  document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&guardOpen){event.preventDefault();closeGate();guardTrigger.focus()}
- });
+ },{signal:mailGuardListenerAbort.signal});
  function renderGate(){
   const account=guardAccount;
   guardTrigger.setAttribute('aria-expanded',String(guardOpen));
