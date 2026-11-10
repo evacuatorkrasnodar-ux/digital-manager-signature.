@@ -15,7 +15,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
   box-sizing:border-box!important;
   position:absolute!important;
   z-index:5!important;
-  top:calc(20px + env(safe-area-inset-top,0px))!important;
+  top:calc(25px + env(safe-area-inset-top,0px))!important;
   left:max(16px,env(safe-area-inset-left,0px))!important;
   right:auto!important;
   display:grid!important;place-items:center!important;
@@ -161,6 +161,13 @@ html body #calendarSpaceDialog[data-space="health"][open]
   margin:0!important;transform:none!important;
   fill:none!important;stroke:currentColor!important;
   stroke-width:1.65!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+
+/* When a medication/sleep tool opens, show its editor—not the launch list.
+   This must outrank the flat-list display:flex rule above. */
+html body #calendarSpaceDialog[data-space="health"] #calendarPersonalTools
+ #pwHealth.is-focused > .pw-tiles.pw-health-tiles{
+  display:none!important;
 }
 
 /* Clinical privacy notice stays visible, but no floating box or tiny print. */
