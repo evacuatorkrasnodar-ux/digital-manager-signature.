@@ -83,10 +83,11 @@ function loadEngine(){
  loading=new Promise((resolve,reject)=>{
   const script=document.createElement('script');
   const timer=window.setTimeout(()=>reject(new Error('Долгая загрузка распознавания. Проверьте интернет.')),25000);
-  script.src='https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js';
+  // CSP permits cdnjs.cloudflare.com; jsDelivr is not in the site's script-src allowlist.
+  script.src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/tesseract.min.js';
   script.async=true;script.crossOrigin='anonymous';
   script.onload=()=>{window.clearTimeout(timer);window.Tesseract?.createWorker?resolve(window.Tesseract):reject(new Error('Движок распознавания недоступен.'))};
-  script.onerror=()=>{window.clearTimeout(timer);reject(new Error('Не удалось загрузить OCR. Проверьте интернет.'))};
+  script.onerror=()=>{window.clearTimeout(timer);script.remove();reject(new Error('Не удалось загрузить OCR: проверьте сеть и разрешённые источники скриптов.'))};
   document.head.append(script);
  }).catch(error=>{loading=null;throw error});
  return loading;
@@ -100,7 +101,10 @@ async function recognize(){
   message('Подключаю распознавание… Это может занять время на iPhone.');
   const lib=await loadEngine();
   if(token!==session)return;
-  worker=await lib.createWorker(['rus','eng'],1,{logger:info=>{
+  worker=await lib.createWorker(['rus','eng'],1,{
+   // Use the same allowed, version-pinned CDN for the worker code.
+   workerPath:'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/worker.min.js',
+   logger:info=>{
    if(token!==session||!dialog.open)return;
    if(info.status==='recognizing text'&&Number.isFinite(info.progress))
     message('Распознавание: '+Math.round(info.progress*100)+'%');
