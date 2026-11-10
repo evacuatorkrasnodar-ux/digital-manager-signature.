@@ -190,3 +190,20 @@ html.seyveo-conversation:has(#question:focus) #sayviMusicMini{display:none!impor
   -webkit-backdrop-filter:none;backdrop-filter:none;
  }
 }
+
+/* SEYVEO mini-player / 2026-11-10.
+   Match the LEFT capsule of the Home dock, excluding the Search circle.
+   Reuse the same width token and aligned x-coordinate, including iPhone X.
+   Leave the music player controls and the chat composer untouched. */
+html:not(.seyveo-conversation) #sayviMusicMini{
+ left:calc(50% - 138.25px)!important;
+ right:auto!important;
+ transform:none!important;
+ width:var(--sv-split-capsule,226px)!important;
+ max-width:var(--sv-split-capsule,226px)!important;
+}
+@media(max-width:389px){
+ html:not(.seyveo-conversation) #sayviMusicMini{
+  left:calc(50% - 35.714286vw + .857143px)!important;
+ }
+}
