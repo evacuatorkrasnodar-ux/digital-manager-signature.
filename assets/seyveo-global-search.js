@@ -8,7 +8,7 @@ const screen=$('svGlobalSearch'),field=$('svGlobalSearchInput');
 const results=$('svGlobalSearchResults'),closeButton=$('svGlobalSearchClose');
 const trigger=$('navManage');
 if(!screen||!field||!results||!closeButton||!trigger)return;
-let active=false,previousFocus=null,previousOverflow='';
+let active=false,previousFocus=null,previousOverflow='',searchEpoch=0;
 const normalize=value=>String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim().replace(/\s+/g,' ');
 const nice=value=>String(value||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim();
 const rows=(key,max)=>{
@@ -24,10 +24,10 @@ const sections=Object.freeze([
  {name:'Забота',tags:'вода дыхание отдых',action:'space:care'},
  {name:'Семья',tags:'семейный чат',action:'space:family'},
  {name:'Контакты',tags:'люди телефон',action:'space:contacts'},
- {name:'Умный дом',tags:'устройства свет',action:'space:smart-home'},
- {name:'Документы',tags:'файлы бумаги',action:'space:documents'},
+ {name:'Умный дом',tags:'устройства свет телевизор пульт bluetooth подключенные устройства',action:'space:smart-home'},
+ {name:'Документы',tags:'файлы бумаги договоры акты счета pdf word архив электронная подпись',action:'space:documents'},
  {name:'SEYVEO PAY',tags:'кошелек платежи карты',action:'space:wallet'},
- {name:'Почта',tags:'письма email',action:'space:mail'},
+ {name:'Почта',tags:'письма email черновики отправитель входящие',action:'space:mail'},
  {name:'Браузер',tags:'интернет сайты',action:'space:browser'},
  {name:'Музыка',tags:'плеер треки',action:'space:music'},
  {name:'Управление',tags:'настройки подписка подключение тема профиль',action:'manage'}
@@ -89,7 +89,56 @@ function searchableRecords(query){
   const flattened=nice(note.text).replace(/\s+/g,' ');
   records.push({title:flattened.slice(0,90),meta:'Личный блокнот',action:'space:notes'});
  }
- return records.slice(0,10);
+ // The working task list is in the same browser, but preview roles are not
+ // authorization. Never show another employee's items in the employee preview.
+ if(window.SEYVEO_PREVIEW?.isManager?.()===true||window.SEYVEO_PREVIEW?.isEmployee?.()===true){
+  const employee=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
+  for(const task of rows('seyveo-business-command-tasks-demo-v1',180)){
+   if(!task||typeof task.text!=='string'||(employee&&task.assigneeId!=='elena'))continue;
+   if(!normalize(task.text).includes(query))continue;
+   records.push({title:nice(task.text).slice(0,140),
+    meta:'Рабочее поручение'+(task.done?' · выполнено':''),
+    action:'tasks'});
+  }
+ }
+ // Mail is not connected to a provider until authentication. These are
+ // only the user's tab-local drafts, never fictitious inbox messages.
+ try{
+  const data=JSON.parse(sessionStorage.getItem('seyveo-mail-session-drafts-v1')||'[]');
+  if(Array.isArray(data))for(const draft of data.slice(0,60)){
+   if(!draft||typeof draft!=='object')continue;
+   const subject=nice(draft.subject||''),to=nice(draft.to||''),body=nice(draft.body||'');
+   if(!normalize([subject,to,body].join(' ')).includes(query))continue;
+   records.push({title:(subject||to||'Черновик без темы').slice(0,140),
+    meta:'Локальный черновик почты',action:'mail:drafts'});
+  }
+ }catch{}
+ return records.slice(0,18);
+}
+/* Decrypt only filenames, only while the user has explicitly unlocked the
+   browser-local vault. Never store an index, body, password or plaintext. */
+async function unlockedDocumentHits(query){
+ const vault=window.SEYVEO_DOCUMENT_VAULT;
+ if(query.length<2||typeof vault?.status!=='function'||typeof vault?.list!=='function')return [];
+ try{
+  const status=await vault.status();
+  if(!status.unlocked)return [];
+  const visible=window.SEYVEO_PREVIEW?.isEmployee?.()===true?['personal']:['personal','business'];
+  const hits=[];
+  for(const area of visible){
+   const items=await vault.list(area);
+   if(!Array.isArray(items))continue;
+   for(const item of items){
+    if(typeof item?.name!=='string'||!normalize(item.name).includes(query))continue;
+    hits.push({title:nice(item.name).slice(0,140),
+     meta:(area==='personal'?'Личный':'Рабочий')+' · разблокированный архив',
+     action:'docs:'+area});
+    if(hits.length>=12)return hits;
+   }
+  }
+  // Vault may have been locked while the asynchronous query was running.
+  return (await vault.status()).unlocked?hits:[];
+ }catch{return []}
 }
 function itemRow(entry,kind){
  const button=document.createElement('button');button.type='button';
@@ -117,6 +166,7 @@ function actionButton(label,action,meta){
  return itemRow({title:label,action,meta},'section');
 }
 function render(){
+ const epoch=++searchEpoch;
  const term=normalize(field.value);
  const intent=routeFor(field.value);
  results.replaceChildren();
@@ -127,7 +177,7 @@ function render(){
   results.append(heading('Быстрый доступ'));
   for(const entry of matching)results.append(itemRow({...entry,meta:'Открыть раздел SEYVEO'},'section'));
   const hint=document.createElement('p');hint.className='sv-search-caption';
-  hint.textContent='Сэйви понимает вопросы и команды. Личные записи ищутся на устройстве; интернет — только по вашему выбору.';
+  hint.textContent='Один поиск для дел, заметок, черновиков и доступных документов. Сэйви отвечает на вопросы. Закрытый архив и неподключённые сервисы не просматриваются.';
   results.append(hint);
   return;
  }
@@ -145,8 +195,20 @@ function render(){
    'smart',description));
  }
  if(records.length){
-  results.append(heading('Найдено в ваших записях'));
+  results.append(heading('Найдено на этом устройстве'));
   for(const record of records)results.append(itemRow(record,'record'));
+ }
+ if(term.length>=2){
+  // An unlocked local vault is searched asynchronously; stale results
+  // must never be shown for a newer query or after closing Search.
+  void unlockedDocumentHits(term).then(found=>{
+   if(!active||epoch!==searchEpoch||normalize(field.value)!==term||!found.length)return;
+   const group=document.createElement('section');
+   group.className='sv-search-vault-hits';
+   group.append(heading('В разблокированном архиве'));
+   for(const record of found)group.append(itemRow(record,'record'));
+   results.prepend(group);
+  });
  }
  if(matching.length){
   results.append(heading('Разделы'));
@@ -157,8 +219,11 @@ function render(){
   empty.textContent='По этому запросу нет совпадений в доступных записях SEYVEO.';
   results.append(empty);
  }
- results.append(heading('Ещё варианты'));
- results.append(actionButton('Спросить Сэйви','ask','Обсудить вопрос в вашем чате'));
+ results.append(heading('Где искать дальше'));
+ results.append(actionButton('Искать в документах','docs:personal','Доступные файлы и папки, закрытый архив требует пароль'));
+ results.append(actionButton('Искать в почте','mail:inbox','Подключённая почта при наличии доступа'));
+ results.append(actionButton('Искать в черновиках','mail:drafts','Сохранённые на этом устройстве письма'));
+ results.append(actionButton('Спросить Сэйви','ask','Вопрос или просьба на естественном языке'));
  results.append(actionButton('Искать в интернете','web','Отправить запрос через SEYVEO Browser'));
  if(!intent&&term){
   const hint=document.createElement('p');hint.className='sv-search-caption';
@@ -171,6 +236,7 @@ function open(){
  if(trigger.dataset.svMusicAction||trigger.dataset.svBrowserAction)return false;
  previousFocus=document.activeElement;
  active=true;
+ searchEpoch++;
  screen.hidden=false;
  trigger.setAttribute('aria-expanded','true');
  trigger.setAttribute('aria-label','Закрыть поиск SEYVEO');
@@ -186,6 +252,7 @@ function open(){
 function close({restoreFocus=false}={}){
  if(!active)return;
  active=false;
+ searchEpoch++;
  field.blur();
  screen.hidden=true;
  document.documentElement.classList.remove('sv-global-search-open');
@@ -206,6 +273,18 @@ function visit(action){
  // Close first: one chat, one browser, one underlying MediaSession.
  close();
  if(action==='home'){$('navHome')?.click();return;}
+ if(action.startsWith('docs:')||action.startsWith('mail:')){
+  const isDocs=action.startsWith('docs:');
+  const kind=isDocs?'contract':'mail';
+  const scope=action.split(':')[1];
+  const area=isDocs?(scope==='business'?'business':'personal'):'all';
+  window.dispatchEvent(new CustomEvent('seyveo:global-search-scope',{
+   detail:{kind,query:typed.slice(0,200),scope:isDocs?area:scope}
+  }));
+  if(window.SEYVEO_SAYVI_SURFACES?.open?.(kind,area)!==true)
+   location.hash=isDocs?'#sayvi-documents':'#sayvi-mail';
+  return;
+ }
  if(action==='tasks'){location.hash='#tasks';return;}
  if(action==='calendar'){location.hash='#calendar';return;}
  if(action==='manage'){location.hash='#manage';return;}
@@ -224,6 +303,11 @@ function visit(action){
  }
  if(action.startsWith('space:')){
   const key=action.slice(6);
+  if(key==='documents'||key==='mail'){
+   if(window.SEYVEO_SAYVI_SURFACES?.open?.(key==='documents'?'contract':'mail')!==true)
+    location.hash=key==='documents'?'#sayvi-documents':'#sayvi-mail';
+   return;
+  }
   const button=document.querySelector('#calendarSpaces [data-calendar-space="'+key+'"]');
   if(!button||button.hidden)return;
   if(key==='music'){window.SEYVEO_MUSIC?.open?.();return;}
@@ -263,6 +347,14 @@ function openSayvi(query,{submit=true}={}){
   form.requestSubmit();
  }else composer.focus({preventScroll:true});
 }
+// Also allow the familiar desktop search shortcut without duplicating controls.
+document.addEventListener('keydown',event=>{
+ if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){
+  if(trigger.dataset.svMusicAction||trigger.dataset.svBrowserAction)return;
+  event.preventDefault();
+  if(!active)open();else field.focus({preventScroll:true});
+ }
+});
 trigger.addEventListener('click',()=>{
  if(active)close({restoreFocus:false});else open();
 });
