@@ -340,3 +340,29 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-bar .sv-mail
  html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-bulk-toolbar .sv-mail-bulk-counter,
  html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-drafts-bar .sv-mail-drafts-count{font-size:10.5px!important}
 }
+
+/* v5 · One SEYVEO cleanup button, exactly the same in every Mail folder and Drafts. */
+html body #sayviSurfacePage[data-sv-subject="mail"] :is(
+ .sv-mail-bulk-toolbar .sv-mail-bulk-clean,
+ .sv-mail-drafts-bar .sv-mail-drafts-remove-selected
+){
+ box-sizing:border-box!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 91px!important;width:91px!important;min-width:91px!important;max-width:91px!important;
+ height:40px!important;min-height:40px!important;max-height:40px!important;
+ margin:0!important;padding:0 6px!important;
+ border:0!important;border-radius:10px!important;
+ background:#38383A!important;background-image:none!important;color:#F1F3F5!important;
+ box-shadow:none!important;
+ font:600 11.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:0!important;white-space:nowrap!important;
+}
+@media(max-width:360px){
+ html body #sayviSurfacePage[data-sv-subject="mail"] :is(
+  .sv-mail-bulk-toolbar .sv-mail-bulk-clean,
+  .sv-mail-drafts-bar .sv-mail-drafts-remove-selected
+ ){
+  flex-basis:84px!important;width:84px!important;min-width:84px!important;max-width:84px!important;
+  font-size:10.75px!important;
+ }
+}
