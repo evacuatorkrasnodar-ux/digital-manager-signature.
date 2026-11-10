@@ -89,7 +89,7 @@ function paint(state){
  if(state!==active)return;
  const all=itemsFor(state);
  const filtered=all.filter(item=>(state.filter==='all'||inFolder(item.name,state.filter))&&
-  (!state.query||item.name.toLocaleLowerCase('ru-RU').includes(state.query.toLocaleLowerCase('ru-RU'))));
+  (!state.query||item.name.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').includes(state.query.toLocaleLowerCase('ru-RU').replace(/ё/g,'е'))));
  const subset=state.expanded?filtered:filtered.slice(0,4);
  const recentScroll=state.recentGrid.scrollLeft;
  state.recentGrid.replaceChildren();
@@ -268,7 +268,7 @@ window.addEventListener('pageshow',()=>{if(active)refresh();});
 function search(query){
  const state=active;if(!state)return;
  state.query=String(query||'').trim();
- state.expanded=false;paint(state);
+ state.filter='all';state.expanded=!!state.query;paint(state);
  if(state.query)state.recentGrid.scrollIntoView?.({block:'nearest',behavior:'smooth'});
 }
 window.SEYVEO_DOCUMENT_SHELF=Object.freeze({mount,refresh,destroy,search});
