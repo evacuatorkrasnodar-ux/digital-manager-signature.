@@ -117,13 +117,13 @@ footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navMan
 footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navManage) > svg{
  display:block!important;
  flex:none!important;
- width:var(--seyveo-dock-icon-size,22px)!important;
- height:var(--seyveo-dock-icon-size,22px)!important;
+ width:var(--seyveo-dock-icon-size,26px)!important;
+ height:var(--seyveo-dock-icon-size,26px)!important;
  margin:0 auto!important;
  color:var(--seyveo-engrave-ink,rgba(178,210,203,.74))!important;
  fill:none!important;
  stroke:currentColor!important;
- stroke-width:var(--seyveo-dock-icon-stroke,.96)!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,1.2)!important;
  stroke-linecap:round!important;
  stroke-linejoin:round!important;
 }
