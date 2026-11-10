@@ -187,6 +187,21 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 
 #sayviStatus{position:absolute;z-index:6;left:64px;right:12px;bottom:calc(62px + env(safe-area-inset-bottom));font-size:12px;line-height:1.4;color:#a5b0b7;pointer-events:none;background:transparent}
 #sayviStatus:empty{display:none}
+/* Local proactive understanding. This single quiet line never pretends that
+   the server has generated an answer or uses an unsent private draft. */
+#sayviPreflight[hidden]{display:none!important}
+#sayviPreflight{
+ position:absolute;z-index:5;left:64px;right:12px;
+ bottom:calc(62px + env(safe-area-inset-bottom));
+ overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+ color:var(--sayvi-secondary,#AAB2BA);font:450 11.5px/1.35
+  -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ pointer-events:none;background:transparent;border:0;box-shadow:none;
+ -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+#sayviStatus:not(:empty)+#sayviPreflight{display:none!important}
+main.sayvi-menu-open #sayviPreflight{visibility:hidden}
+@media(prefers-reduced-motion:reduce){#sayviPreflight{transition:none!important}}
 /* Conversation history: native-feeling, light, independent modal; no duplicate dock. */
 #sayviHistory[hidden]{display:none!important}
 #sayviHistory{position:fixed;z-index:8;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;background:var(--sayvi-scene);color:var(--sayvi-text);padding:calc(env(safe-area-inset-top) + 13px) max(16px,env(safe-area-inset-right)) calc(26px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -1214,6 +1229,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
 </div>
 <div id="sayviImageViewer" hidden role="dialog" aria-modal="true" aria-label="Изображение"><button id="sayviImageViewerClose" type="button" aria-label="Закрыть">×</button><img id="sayviImageViewerImg" alt="Фото из разговора"></div>
 <div id="sayviStatus" role="status" aria-live="polite"></div>
+<div id="sayviPreflight" aria-live="off" hidden></div>
 </main>
 <script src="./assets/seyveo-pdf-export.js"></script>
 <script>
@@ -1249,6 +1265,34 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  const stopReplyButton=document.getElementById('sayviStopReply');
  const plus=document.getElementById('sayviPlus'),menu=document.getElementById('sayviMenu');
  const status=document.getElementById('sayviStatus');
+ const preflight=document.getElementById('sayviPreflight');
+ // Fast on-device intent cues: no network call, no storage, no generated
+ // reply and no partial draft sent before the user's Send action.
+ function localTypingPreview(value){
+  const q=String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim();
+  if(q.length<7)return '';
+  if(/(?:подключ|настро|привяз)/u.test(q)&&/(?:почт|email|емейл)/u.test(q))
+   return 'Сэйви уже понимает: подключение почты';
+  if(/(?:подключ|настро|привяз)/u.test(q)&&/(?:документ|эдо|1с)/u.test(q))
+   return 'Сэйви уже понимает: подключение документов';
+  if(/(?:договор|документ|архив|файл|подпис|pdf|word)/u.test(q))
+   return 'Сэйви готова помочь с документом';
+  if(/(?:песн|трек|музык|мелоди|плейлист|плеер)/u.test(q))
+   return 'Сэйви понимает: музыка и плеер';
+  if(/(?:погод|прогноз|новост|курс валют)/u.test(q))
+   return 'Сэйви понимает: понадобится актуальная информация';
+  if(/(?:задач|поручен|дела|календар|встреч|заметк)/u.test(q))
+   return 'Сэйви понимает: дела и записи';
+  if(q.length>=16&&/^(?:как|что|почему|зачем|объясни|расскажи|подскажи|помоги)\s/u.test(q))
+   return 'Сэйви понимает вопрос — ответ начнётся после отправки';
+  return '';
+ }
+ function updateTypingPreview(){
+  if(!preflight)return;
+  const message=!active&&!pendingAttachments.length?localTypingPreview(input.value):'';
+  if(preflight.textContent!==message)preflight.textContent=message;
+  preflight.hidden=!message;
+ }
  let active=null,sequence=0;
  const historyTurns=[];
  const answers=new Map();
@@ -1592,6 +1636,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   sendButton.hidden=!!active||!canSend;
   mic.hidden=!!active||canSend;
   stopReplyButton.hidden=!active;
+  updateTypingPreview();
  }
 
  const replyIcons={
@@ -2998,13 +3043,9 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
    }
   }
   let answer='',done=false,wasTruncated=false,streamingTurn=null;
-  const thinkingStarted=performance.now();
+  // Show actual tokens as soon as they arrive; do not pad fast responses
+  // with a fake 900 ms thinking delay.
   const stopThinking=showThinking();
-  async function finishThinking(){
-   const remaining=900-(performance.now()-thinkingStarted);
-   if(remaining>0&&!controller.signal.aborted)await new Promise(resolve=>setTimeout(resolve,remaining));
-   stopThinking();
-  }
   function revealAnswer(text){
    if(!streamingTurn){
     stopThinking();
@@ -3063,7 +3104,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
    }
   }finally{
    streamingTurn?.classList.remove('is-streaming','is-fresh');
-   await finishThinking();
+   stopThinking();
    if(active===controller){active=null;updateControls()}
   }
  }
