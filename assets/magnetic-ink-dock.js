@@ -30,7 +30,7 @@ function init(){
   {id:'home',title:'Главная',description:'Вернуться на Главную',
    icon:'<path d="M4 10.5 12 4l8 6.5v9H14v-6h-4v6H4z"/>'},
   {id:'tasks',title:'Дела',description:'Открыть дела',
-   icon:'<path d="M9 6.5h10M9 12h10M9 17.5h10M4.5 6.5h1M4.5 12h1M4.5 17.5h1"/>'},
+   icon:'<path d="M9 4.5h11.5M9 12h11.5M9 19.5h11.5M3.8 4.5h1.4M3.8 12h1.4M3.8 19.5h1.4"/>'},
   {id:'life',title:'Мой мир',description:'Открыть Мой мир',
    // One shared sprite symbol, same geometry as the first-paint dock markup.
    viewBox:'0 0 28 24',icon:'<use href="#seyveo-my-mini"/>'},
