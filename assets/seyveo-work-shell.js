@@ -127,17 +127,13 @@
   window.dispatchEvent(new Event('seyveo:notes-open'));
   resetWorkScroll();
  }
- // ONE uses the existing Notebook. Business keeps its cabinet configuration,
- // with a single + that offers both actions and creates no duplicate notes.
+ // Notebook already has its own Work tab. The Cabinet + menu contains
+ // only workplace actions, without the duplicate personal-note shortcut.
  const businessCreate=document.createElement('div');
  businessCreate.id='svWorkCreateChoices';
  businessCreate.hidden=true;
  businessCreate.setAttribute('role','group');
  businessCreate.setAttribute('aria-label','Действия кабинета');
- const newNoteChoice=document.createElement('button');
- newNoteChoice.type='button';
- newNoteChoice.setAttribute('aria-label','Новая заметка');
- newNoteChoice.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3.5h8l4 4V20H6z"/><path d="M14 3.5V8h4"/><path d="m9 16 4.3-4.3 2 2L11 18l-2 .5z"/></svg><span>Новая заметка</span>';
  const cabinetChoice=document.createElement('button');
  cabinetChoice.type='button';
  cabinetChoice.setAttribute('aria-label','Настроить кабинет');
@@ -146,7 +142,7 @@
  assignChoice.type='button';
  assignChoice.setAttribute('aria-label','Создать поручение');
  assignChoice.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h11M8 12h6M8 18h5M3 6h1M3 12h1M3 18h1"/><path d="m16 17 2 2 4-5"/></svg><span>Поручить</span>';
- businessCreate.append(assignChoice,newNoteChoice,cabinetChoice);
+ businessCreate.append(assignChoice,cabinetChoice);
  shell.append(businessCreate);
  function closeBusinessCreate(){
   businessCreate.hidden=true;
@@ -162,11 +158,6 @@
   }
   enterNotebook();
  }
- newNoteChoice.addEventListener('click',()=>{
-  closeBusinessCreate();
-  openNotebook();
-  document.getElementById('notesNew')?.click();
- });
  cabinetChoice.addEventListener('click',()=>{closeBusinessCreate();cabinetAdd?.click()});
  assignChoice.addEventListener('click',()=>{
   closeBusinessCreate();
