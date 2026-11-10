@@ -20,18 +20,10 @@
  shell.setAttribute('aria-label','Дела и календарь');
  app.insertBefore(shell,calendar);
  shell.append(calendar,tasks);
- // The Notebook is a peer of Tasks and Calendar, not a modal floating above them.
- const notebookHost=document.createElement('section');
- notebookHost.id='svWorkNotebook';
- notebookHost.hidden=true;
- notebookHost.setAttribute('aria-label','Блокнот');
- shell.append(notebookHost);
- let notebookActive=false;
- let notebookPending=false;
  const nav=document.createElement('nav');
  nav.id='svWorkTabs';
- nav.setAttribute('aria-label','Мои дела, календарь, блокнот и кабинет');
- const choices=[['personal','Мои дела'],['calendar','Календарь'],['notes','Блокнот'],['business','Кабинет'],['employee','Моя работа']];
+ nav.setAttribute('aria-label','Мои дела, календарь и кабинет');
+ const choices=[['personal','Мои дела'],['calendar','Календарь'],['business','Кабинет'],['employee','Моя работа']];
  for(const [id,label] of choices){
   const button=document.createElement('button');
   button.type='button';
@@ -69,42 +61,6 @@
  const cabinetAdd=document.getElementById('svCabinetConfigure');
  const createMenu=document.getElementById('calendarCreateMenu');
  const menuHome=createMenu?.parentElement;
- const noteDialog=document.getElementById('notesDialog');
- // Only the notebook's body goes into the normal Work document flow.
- // Keep the <dialog> itself outside the shell: non-modal dialog rendering
- // inside a flex scene can change positioning/stacking on mobile Safari.
- const noteParts=noteDialog?[
-  noteDialog.querySelector('.notes-head'),
-  document.getElementById('notesList'),
-  document.getElementById('notesStatus')
- ].filter(Boolean):[];
- const noteTitle=document.getElementById('notesTitle');
- // The shared header '+' opens the existing Text / Drawing / Photo chooser.
- function restoreNotebook(){
-  notebookActive=false;notebookPending=false;
-  if(noteTitle)noteTitle.textContent='Блокнот';
-  if(noteDialog&&noteParts.length){
-   noteDialog.append(...noteParts);
-  }
-  notebookHost.hidden=true;
- }
- function enterNotebook(){
-  if(tasks.hidden||!noteDialog||noteParts.length<3)return;
-  notebookPending=false;notebookActive=true;
-  if(noteDialog.open)noteDialog.close();
-  if(noteTitle)noteTitle.textContent='Мои записи';
-  // The shared header '+' already exposes Text / Drawing / Photo to text.
-  // Avoid a duplicate oversized launcher above the actual notes.
-  notebookHost.replaceChildren(...noteParts);
-  notebookHost.hidden=false;
-  sync();
-  // Use the one original notes renderer and store, without displaying
-  // a modal at the list level.
-  window.dispatchEvent(new Event('seyveo:notes-open'));
-  resetWorkScroll();
- }
- // Notebook already has its own Work tab. The Cabinet + menu contains
- // only workplace actions, without the duplicate personal-note shortcut.
  const businessCreate=document.createElement('div');
  businessCreate.id='svWorkCreateChoices';
  businessCreate.hidden=true;
@@ -124,16 +80,6 @@
   businessCreate.hidden=true;
   if(add.getAttribute('aria-controls')==='svWorkCreateChoices')add.setAttribute('aria-expanded','false');
  }
- function openNotebook(){
-  closeBusinessCreate();
-  if(tasks.hidden){
-   notebookPending=true;
-   window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
-   requestAnimationFrame(()=>{if(notebookPending&&!tasks.hidden)enterNotebook()});
-   return;
-  }
-  enterNotebook();
- }
  cabinetChoice.addEventListener('click',()=>{closeBusinessCreate();cabinetAdd?.click()});
  assignChoice.addEventListener('click',()=>{
   closeBusinessCreate();
@@ -147,7 +93,6 @@
  document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&!businessCreate.hidden){closeBusinessCreate();add.focus({preventScroll:true})}
  });
- noteDialog?.addEventListener('close',()=>requestAnimationFrame(sync));
  // Keep one visible + in the permanent work header. The original
  // calendar button remains the logic controller; its chooser sits in flow
  // between the header and tabs rather than covering the screen.
@@ -187,7 +132,6 @@
    calendarAdd?.click();
    add.setAttribute('aria-expanded',String(calendarAdd?.getAttribute('aria-expanded')==='true'));
   }else if(section==='personal')personalAdd?.click();
-  else if(section==='notes')document.getElementById('notesNew')?.click();
   else if(section==='business'){
    if(!window.SEYVEO_PREVIEW?.isManager?.())return;
    businessCreate.hidden=!businessCreate.hidden;
@@ -204,16 +148,10 @@
  }
  const oldTab=(parent,attribute,name)=>parent.querySelector('['+attribute+'="'+name+'"]');
  function activeSection(){
-  if(notebookActive&&!tasks.hidden)return 'notes';
   if(!calendar.hidden)return 'calendar';
   return tasks.dataset.workView==='business'?'business':tasks.dataset.workView==='employee'?'employee':'personal';
  }
  function sync(){
-  if(notebookPending&&!tasks.hidden&&location.hash==='#tasks'){
-   enterNotebook();
-   return;
-  }
-  if(notebookActive&&(tasks.hidden||location.hash!=='#tasks'))restoreNotebook();
   const active=activeSection();
   const managerTasks=!tasks.hidden&&oldTasks.dataset.manager==='true';
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
@@ -241,7 +179,7 @@
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
    const name=tab.dataset.svWorkTab;
    tab.hidden=employeeMode
-    ? name==='business'||name==='notes'
+    ? name==='business'
     : managerPreview
      ? name==='employee'
      : name==='business'||name==='employee';
@@ -252,7 +190,7 @@
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
-  title.textContent=history?'История':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
+  title.textContent=history?'История':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // Root destinations are already navigable through the bottom dock.
   // Do not show a redundant Back control beside each top-level title.
   back.hidden=!history;
@@ -275,7 +213,7 @@
    add.innerHTML=history?searchIcon:plusIcon;
    add.dataset.svHeaderIcon=nextIcon;
   }
-  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='notes'?'Новая заметка':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
+  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
   add.title=history?'Поиск по истории':'';
   add.setAttribute('aria-haspopup',String(!history&&(active==='calendar'||active==='business')));
   add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
@@ -289,9 +227,7 @@
   const button=event.target.closest('[data-sv-work-tab]');
   if(!button||nav.hidden)return;
   const target=button.dataset.svWorkTab;
-  if(target==='notes'){openNotebook();return}
   if(target===activeSection())return;
-  if(notebookActive)restoreNotebook();
   if(createMenu){createMenu.hidden=true;calendarAdd?.setAttribute('aria-expanded','false');add.setAttribute('aria-expanded','false');}
   closeBusinessCreate();
   const fromCalendar=!calendar.hidden;
@@ -331,15 +267,12 @@
  // calendar handlers close their menu (choice, outside tap or Escape).
  if(calendarAdd)observer.observe(calendarAdd,{attributes:true,attributeFilter:['aria-expanded']});
  if(createMenu)observer.observe(createMenu,{attributes:true,attributeFilter:['hidden']});
- window.addEventListener('hashchange',()=>{
-  if(notebookActive&&location.hash!=='#tasks')restoreNotebook();
-  requestAnimationFrame(sync);
- });
+ window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:15,sync,
-  isNotesInline:()=>notebookActive&&!notebookHost.hidden
+  version:16,sync,
+  isNotesInline:()=>false
  });
 })();
