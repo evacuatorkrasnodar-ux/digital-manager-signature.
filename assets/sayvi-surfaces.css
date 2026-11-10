@@ -1797,3 +1797,31 @@
 :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-connect{
  color:#555D65!important;
 }
+
+/* SEYVEO Mail header alignment · Nov 2026.
+   Follow the approved flat-silver return button shared by other screens:
+   a matte graphite circular touch target with the single thin chevron.
+   Scoped strictly to Mail and its existing back control, no duplicate.
+   The real Compose handler stays before the far-right Search icon. */
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack{
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+ max-width:44px!important;height:44px!important;min-height:44px!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:var(--sv-back-flat,#38383A)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ color:var(--sv-back-flat-ink,#EEF2F4)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack:active{
+ background:var(--sv-back-flat-pressed,#48484B)!important;
+}
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack svg{
+ width:19px!important;height:19px!important;
+ stroke:currentColor!important;stroke-width:1.45!important;
+ fill:none!important;filter:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
