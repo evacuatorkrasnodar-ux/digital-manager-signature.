@@ -235,7 +235,7 @@ if(personal&&head){
  const readHidden=()=>{try{const a=JSON.parse(localStorage.getItem(hiddenKey)||'[]');return new Set(Array.isArray(a)?a:[])}catch{return new Set()}};
  const eventKey=e=>e.taskId?'task:'+e.taskId:'card:'+String(e.eventId||'')+':'+String(e.at||'');
  const hideEvents=items=>{const keys=readHidden();items.filter(e=>!e.taskId).forEach(e=>keys.add(eventKey(e)));try{localStorage.setItem(hiddenKey,JSON.stringify([...keys].slice(-4000)));return true}catch{return false}};
- const cleanTitle=e=>{const t=String(e.title||'').trim();if(t&&!/^(?:[a-z]{1,4}[0-9a-f]{5,}|[0-9a-f]{7,})$/i.test(t))return t;const type=({'personal-task':'дело',mail:'письмо',contract:'документ',work:'сообщение'}[e.cardType]||'действие Сэйви');return e.to==='canceled'?'Отменено: '+type:'История: '+type};
+ const cleanTitle=e=>{const t=String(e.title||'').trim();if(t&&!/^(?:[a-z]{1,4}[0-9a-f]{5,}|[0-9a-f]{7,}|[a-z0-9_-]{7,})$/i.test(t))return t;const type=({'personal-task':'дело',mail:'письмо',contract:'документ',work:'сообщение'}[e.cardType]||'действие Сэйви');return e.to==='canceled'?'Отменено: '+type:'История: '+type};
  let selecting=false;
  const chosen=new Set();
  const workHeader=document.getElementById('svWorkHeader'),headerSearch=document.getElementById('svWorkAdd');
@@ -282,7 +282,23 @@ if(personal&&head){
  #seyveoActionHistoryPanel .sah-row.sah-selecting strong,#seyveoActionHistoryPanel .sah-row.sah-selecting .sah-row-meta{grid-column:2!important}
  #seyveoActionHistoryPanel .sah-row.sah-selecting .sah-restore-task{grid-column:3!important}
  .sah-pick{grid-column:1;grid-row:1/span 2;accent-color:#999}
- .sah-row:not(.sah-selecting) .sah-delete{grid-column:2;grid-row:1/span 2;justify-self:end;background:#38383A;color:white;border:0;border-radius:9px;min-height:40px;padding:0 8px;font-size:12px;display:none}\n .sah-row.sah-reveal .sah-delete{display:block!important}\n .sah-row.sah-reveal:not(:has(.sah-restore-task)){grid-template-columns:minmax(0,1fr) 74px!important}\n .sah-row.sah-reveal:has(.sah-restore-task){grid-template-columns:minmax(0,1fr) 44px 74px!important}\n .sah-row.sah-reveal:has(.sah-restore-task) .sah-delete{grid-column:3!important}
+ #seyveoActionHistoryPanel .sah-row:not(.sah-selecting) .sah-delete{
+  grid-column:2!important;grid-row:1 / span 2!important;justify-self:end!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:44px!important;height:44px!important;min-height:44px!important;
+  padding:0!important;margin:0!important;border:0!important;border-radius:10px!important;
+  background:transparent!important;color:var(--secondary,#b8b8ba)!important;
+  box-shadow:none!important;cursor:pointer!important;
+ }
+ #seyveoActionHistoryPanel .sah-row:not(.sah-selecting) .sah-delete svg{
+  width:19px!important;height:19px!important;display:block!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+ }
+ #seyveoActionHistoryPanel .sah-row:not(.sah-selecting) .sah-delete:active{
+  background:#38383A!important;color:#fff!important;
+ }
+
  `;document.head.append(css);
 
  let visibleCount=4;
@@ -351,21 +367,16 @@ if(personal&&head){
      check.addEventListener('change',()=>{if(check.checked)chosen.add(eventKey(e));else chosen.delete(eventKey(e));showCount()});
      item.prepend(check);
     }else{
-     const del=document.createElement('button');del.type='button';del.className='sah-delete';del.textContent='Удалить';
-     del.setAttribute('aria-label','Удалить из истории: '+cleanTitle(e));
+     const del=document.createElement('button');del.type='button';del.className='sah-delete';
+     del.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 10v7M14 10v7"/></svg>';
+     del.title='Удалить запись';
+     del.setAttribute('aria-label','Удалить запись: '+cleanTitle(e));
      del.addEventListener('click',()=>{
-      if(!confirm('Удалить запись из личной истории?'))return;
+      if(!confirm('Удалить эту запись из личной истории?'))return;
       const ok=e.taskId?window.SEYVEO_PERSONAL_TASK_HISTORY?.removeCompleted?.(e.taskId):hideEvents([e]);
       if(ok)render();else alert('Не удалось удалить запись.');
      });
      item.append(del);
-     let touchX=0,touchY=0;
-     item.addEventListener('touchstart',ev=>{touchX=ev.touches[0]?.clientX||0;touchY=ev.touches[0]?.clientY||0},{passive:true});
-     item.addEventListener('touchend',ev=>{
-      const x=ev.changedTouches[0]?.clientX||0,y=ev.changedTouches[0]?.clientY||0;
-      if(touchX-x>55&&Math.abs(touchY-y)<45)item.classList.add('sah-reveal');
-      else if(x-touchX>35)item.classList.remove('sah-reveal');
-     },{passive:true});
     }
    if(e.taskId){
     const recover=document.createElement('button');recover.type='button';recover.className='sah-restore-task';
