@@ -1,130 +1,238 @@
-/* SEYVEO Paper · opt-in photo to text, discreet Black Velvet scanner */
-.paper-scan-dialog{width:min(440px,calc(100vw - 28px));max-height:min(90dvh,calc(100dvh - 22px));box-sizing:border-box;padding:20px 18px 17px;overflow-y:auto}
-.paper-scan-dialog h2{margin:0 42px 7px 0;font-size:21px;line-height:1.28;font-weight:610}
-.paper-scan-dialog>p{margin:0 28px 14px 0;font-size:12px;line-height:1.5;color:var(--secondary)}
-.paper-scan-inputs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px}
-.paper-scan-inputs label{display:grid;place-items:center;flex:1 1 110px;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card2);font-size:12px;line-height:1.3;cursor:pointer;color:var(--text);text-align:center}
-.paper-scan-inputs input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.paper-scan-preview{width:100%;max-height:27dvh;object-fit:contain;background:#fff;border-radius:9px;margin:2px 0 8px}
-.paper-scan-preview[hidden]{display:none!important}
-.paper-scan-dialog .paper-scan-recognize{display:block;box-sizing:border-box;width:100%;min-height:44px;border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--text);font:inherit;font-size:12px;cursor:pointer;margin-bottom:11px}
-.paper-scan-recognize:disabled{opacity:.45}
-.paper-scan-dialog label.paper-scan-caption{display:block;margin:0 0 5px;font-size:12px;color:var(--secondary)}
-.paper-scan-dialog textarea{display:block;box-sizing:border-box;width:100%;min-height:94px;max-height:27dvh;resize:vertical;border:1px solid var(--line);border-radius:13px;padding:10px 12px;background:var(--card2);color:var(--text);font:inherit;font-size:16px;line-height:1.5}
-.paper-scan-dialog textarea:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-.paper-scan-dialog .paper-scan-status{font-size:11px;color:var(--secondary);line-height:1.45;margin:10px 0 8px}
-.paper-scan-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
-.paper-scan-actions button{flex:1 1 105px;min-height:44px;padding:8px 9px;font:inherit;font-size:12px;border-radius:999px}
-.paper-scan-dialog :is(button,label):focus-visible{outline:2px solid var(--text);outline-offset:2px}
-/* Imported image sits beneath transparent pen strokes, fully editable. */
-.paper-sheet .paper-photo-image{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}
+/* SEYVEO · Photo → Text / Premium Flat Graphite.
+   One set of scanner rules; preserve existing camera/OCR/consent/save handlers.
+   The Drawing studio image layer remains untouched. */
+.paper-sheet .paper-photo-image{
+ position:absolute;inset:0;z-index:0;
+ width:100%;height:100%;object-fit:contain;
+ pointer-events:none;user-select:none;
+}
 .paper-sheet .paper-photo-image[hidden]{display:none!important}
 .paper-sheet canvas{position:relative;z-index:1}
-.paper-toolbar .paper-photo-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.paper-toolbar .paper-photo-input{
+ position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;
+}
 .paper-toolbar #notePaperRemovePhoto[hidden]{display:none!important}
-#notesDialog .note-paper-preview{box-sizing:border-box;width:auto;max-width:100%;aspect-ratio:210/297}
-
-/* Compact scanner and in-dialog consent for Black Velvet. */
-#noteScanDialog.paper-scan-dialog{width:min(425px,calc(100vw - 28px));max-height:min(88dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));padding:19px 17px 15px;overscroll-behavior:contain}
-#noteScanDialog h2{font-size:22px;font-weight:480;margin-bottom:6px;letter-spacing:-.04em}
-#noteScanDialog>p{font-size:12px;line-height:1.45;margin:0 44px 11px 0}
-#noteScanDialog .paper-scan-inputs{gap:7px;margin-bottom:8px}
-#noteScanDialog .paper-scan-inputs label{min-height:44px;padding:8px 11px;border-radius:13px;font-size:12px}
-#noteScanDialog .paper-scan-preview{max-height:20dvh;margin:3px 0 8px;background:var(--card2);object-fit:contain}
-#noteScanDialog .paper-scan-recognize{min-height:44px;margin-bottom:9px;border-radius:13px}
-#noteScanDialog label.paper-scan-caption{font-size:12px;margin-bottom:5px}
-#noteScanDialog textarea{min-height:76px;max-height:24dvh;padding:9px 11px;line-height:1.45;font-size:16px;border-radius:13px}
-#noteScanDialog .paper-scan-status{margin:7px 0 8px;line-height:1.4}
-#noteScanDialog .paper-scan-actions{display:flex;gap:8px;flex-wrap:nowrap;margin-top:10px}
-#noteScanDialog .paper-scan-actions button{flex:1 1 0;min-width:0;min-height:44px;padding:8px 9px;font-size:12px}
-#noteScanDialog .paper-scan-actions #noteScanCancel[hidden]{display:none!important}
-#noteScanDialog .paper-scan-consent[hidden]{display:none!important}
-#noteScanDialog .paper-scan-consent{padding:12px;margin:0 0 10px;border-radius:15px;border:1px solid var(--line);background:var(--card2)}
-#noteScanDialog .paper-scan-consent p{margin:0 0 10px;color:var(--text);font-size:12px;line-height:1.45}
-#noteScanDialog .paper-scan-consent-actions{display:flex;gap:8px}
-#noteScanDialog .paper-scan-consent-actions button{min-height:44px;flex:1;min-width:0;font-size:12px}
-@media(max-width:370px){#noteScanDialog.paper-scan-dialog{padding:16px 13px 13px}#noteScanDialog .paper-scan-inputs{gap:6px}#noteScanDialog .paper-scan-inputs label{font-size:11.5px;padding:8px 5px}}
-
-
-/* Photo to text · keep poetry lines as printed, with a compact native switch. */
-#noteScanDialog .paper-scan-line-mode{
- display:flex;align-items:center;gap:10px;
- box-sizing:border-box;min-height:44px;padding:5px 2px;margin:2px 0 9px;
- color:var(--text);cursor:pointer;
+#notesDialog .note-paper-preview{
+ box-sizing:border-box;width:auto;max-width:100%;aspect-ratio:210/297;
 }
-#noteScanDialog .paper-scan-line-mode input{
- appearance:auto;-webkit-appearance:checkbox;
- flex:none;width:19px;height:19px;min-width:19px;min-height:19px;
- accent-color:var(--text);margin:0;
-}
-#noteScanDialog .paper-scan-line-mode span{display:flex;flex-direction:column;gap:1px;font-size:12.5px;line-height:1.35}
-#noteScanDialog .paper-scan-line-mode small{font-size:11px;font-weight:400;line-height:1.25;color:var(--secondary)}
-#noteScanDialog #noteScanText[wrap=off]{white-space:pre;overflow-x:auto;overflow-wrap:normal}
-
-/* SEYVEO scanner Black/White Velvet v5: consistent touch targets.
-   No changes to OCR, photo processing, or original poem line breaks. */
-#noteScanDialog.paper-scan-dialog{
- border-radius:var(--sv-ui-radius-sheet,22px);border-color:var(--sv-ui-sheet-border);background:var(--sv-ui-sheet);-webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter);box-shadow:var(--sv-ui-sheet-shadow);
-}
-#noteScanDialog .paper-scan-inputs label{
- min-height:44px;border-radius:13px;background:var(--sv-ui-field);border:1px solid transparent;color:var(--text);font-weight:525;font-size:12.5px;-webkit-tap-highlight-color:transparent;
-}
-#noteScanDialog .paper-scan-inputs label:active{background:transparent;opacity:.67}
-#noteScanDialog .paper-scan-line-mode{
- gap:12px;margin:2px 0 8px;padding:5px 2px;
-}
-#noteScanDialog .paper-scan-line-mode input{
- -webkit-appearance:none;appearance:none;
- display:grid;place-items:center;
- width:22px;height:22px;min-width:22px;min-height:22px;
- border-radius:7px;border:1px solid var(--seyveo-hdr-outline);
- background:var(--card2);margin:0;cursor:pointer;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-}
-#noteScanDialog .paper-scan-line-mode input::after{
- content:"";display:block;width:10px;height:6px;
- border-left:2px solid var(--bg);border-bottom:2px solid var(--bg);
- transform:translateY(-1px) rotate(-45deg);opacity:0;
-}
-#noteScanDialog .paper-scan-line-mode input:checked{
- background:var(--seyveo-emerald);border-color:var(--seyveo-emerald);
-}
-#noteScanDialog .paper-scan-line-mode input:checked::after{opacity:1}
-#noteScanDialog .paper-scan-line-mode input:focus-visible{
- outline:2px solid var(--text);outline-offset:3px;
-}
-#noteScanDialog .paper-scan-recognize{
- border-radius:var(--sv-ui-radius-control,12px);min-height:44px;background:transparent;border:0;color:var(--text);font-size:12.5px;font-weight:590;box-shadow:none;
-}
-#noteScanDialog .paper-scan-recognize:disabled{
- opacity:.48;cursor:default;
-}
-#noteScanDialog textarea{
- display:block;width:100%;box-sizing:border-box;resize:vertical;overflow-y:auto;overscroll-behavior:contain;min-height:115px;height:115px;max-height:190px;border:0;border-bottom:1px solid var(--seyveo-hdr-outline,var(--line));border-radius:0;padding:12px 2px;background:transparent;color:var(--text);font-size:16px;line-height:1.56;-webkit-overflow-scrolling:touch;
-}
-#noteScanDialog textarea:focus-visible{
- outline:2px solid var(--text);outline-offset:2px;
-}
-#noteScanDialog .paper-scan-actions button{
- min-height:46px;padding:9px 4px;
+/* The scanner is one seamless full-height page, not a floating glass card. */
+html body dialog#noteScanDialog.paper-scan-dialog[open]{
+ box-sizing:border-box!important;
+ position:fixed!important;inset:0!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ width:100vw!important;max-width:100vw!important;
+ height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;
+ margin:0!important;
+ padding:calc(15px + env(safe-area-inset-top,0px))
+  max(16px,env(safe-area-inset-right,0px))
+  calc(96px + env(safe-area-inset-bottom,0px))
+  max(16px,env(safe-area-inset-left,0px))!important;
  border:0!important;border-radius:0!important;
+ background-color:var(--bg)!important;
+ background-image:var(--seyveo-hdr-stage),var(--sv-life-viewport-gradient)!important;
+ background-size:100% 100%,100% 100%!important;
+ background-position:center!important;background-repeat:no-repeat!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--text)!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ scrollbar-width:none;
+}
+html body #noteScanDialog::-webkit-scrollbar{display:none}
+/* Shared navigation: back on the LEFT, readable title aligned with it. */
+html body dialog#noteScanDialog.paper-scan-dialog[open] > #noteScanBack{
+ position:absolute!important;
+ top:calc(15px + env(safe-area-inset-top,0px))!important;
+ left:max(12px,env(safe-area-inset-left,0px))!important;
+ right:auto!important;bottom:auto!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;
+ color:#f7f7f8!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ z-index:3!important;
+}
+html body dialog#noteScanDialog.paper-scan-dialog[open] > #noteScanBack svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body dialog#noteScanDialog.paper-scan-dialog[open] > h2#noteScanTitle{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;
+ min-height:44px!important;height:44px!important;
+ margin:0 0 6px!important;padding:0 0 0 48px!important;
+ font:600 21px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif!important;
+ letter-spacing:-.032em!important;color:var(--text)!important;
+}
+html body dialog#noteScanDialog.paper-scan-dialog[open] > p:first-of-type{
+ margin:0 0 15px!important;padding:0!important;
+ color:var(--secondary)!important;
+ font-size:12.5px!important;line-height:1.45!important;
+}
+/* Two first-step actions are sufficient; the file inputs retain their semantics. */
+html body #noteScanDialog .paper-scan-inputs{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:8px!important;width:100%!important;margin:0 0 14px!important;
+}
+html body #noteScanDialog .paper-scan-inputs label{
+ box-sizing:border-box!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;
+ min-width:0!important;width:100%!important;
+ min-height:46px!important;height:46px!important;
+ padding:0 8px!important;margin:0!important;
+ border:0!important;border-radius:13px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#f7f7f8!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font:560 12.5px/1.2 -apple-system,BlinkMacSystemFont,sans-serif!important;
+ text-align:center!important;cursor:pointer!important;
+ user-select:none!important;-webkit-user-select:none!important;
+}
+html body #noteScanDialog .paper-scan-inputs input{
+ position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;
+}
+html body #noteScanDialog .paper-scan-preview{
+ display:block;box-sizing:border-box;
+ width:100%!important;max-width:100%!important;
+ max-height:min(24dvh,230px)!important;
+ height:auto!important;object-fit:contain!important;
+ padding:0!important;margin:0 0 11px!important;
+ border:0!important;border-radius:8px!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;opacity:1!important;
+}
+html body #noteScanDialog .paper-scan-preview[hidden]{display:none!important}
+/* One native-format control, no raised square or green lens. */
+html body #noteScanDialog .paper-scan-line-mode{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;gap:10px!important;
+ min-height:42px!important;margin:0 0 10px!important;padding:0 2px!important;
+ color:var(--text)!important;cursor:pointer!important;
+}
+html body #noteScanDialog .paper-scan-line-mode input{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 21px!important;width:21px!important;min-width:21px!important;
+ height:21px!important;min-height:21px!important;margin:0!important;
+ border:1px solid rgba(165,177,186,.40)!important;
+ border-radius:6px!important;
  background:transparent!important;box-shadow:none!important;
- color:var(--secondary);font-size:13px;font-weight:465;
 }
-#noteScanDialog .paper-scan-actions #noteScanToText{
- color:var(--text);
- text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:5px;
+html body #noteScanDialog .paper-scan-line-mode input:checked{
+ background:#38383A!important;border-color:#808082!important;
 }
-#noteScanDialog .paper-scan-consent-actions button{
- min-height:44px;border:0;border-radius:0;
- background:transparent;box-shadow:none;color:var(--text);
+html body #noteScanDialog .paper-scan-line-mode input::after{
+ content:"";width:10px;height:6px;display:block;
+ border-left:2px solid #fff;border-bottom:2px solid #fff;
+ transform:translateY(-1px) rotate(-45deg);
+ opacity:0;
 }
-:root[data-theme=light] #noteScanDialog .paper-scan-line-mode input{
- border-color:var(--seyveo-hdr-outline);
+html body #noteScanDialog .paper-scan-line-mode input:checked::after{opacity:1}
+html body #noteScanDialog .paper-scan-line-mode span{
+ display:flex;flex-direction:column;gap:2px;
+ font-size:12.5px;line-height:1.3;
 }
-:root[data-theme=light] #noteScanDialog .paper-scan-line-mode input:checked::after{
- border-color:#fff;
+html body #noteScanDialog .paper-scan-line-mode small{
+ color:var(--secondary);font-size:11px;font-weight:400;line-height:1.25;
 }
-@media(max-height:650px){
- #noteScanDialog textarea{min-height:90px;height:90px;max-height:120px}
+/* OCR enabled only when an image was selected. */
+html body #noteScanDialog #noteScanRecognize{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ width:100%!important;min-height:44px!important;height:44px!important;
+ margin:0 0 13px!important;padding:0 12px!important;
+ border:0!important;border-radius:13px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#f7f7f8!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font:600 13px/1.2 -apple-system,BlinkMacSystemFont,sans-serif!important;
+ cursor:pointer!important;
+}
+html body #noteScanDialog #noteScanRecognize:disabled{
+ background:transparent!important;color:var(--secondary)!important;
+ opacity:.58!important;cursor:default!important;
+}
+html body #noteScanDialog .paper-scan-caption{
+ display:block;margin:0 0 6px;color:var(--secondary);
+ font-size:12px;font-weight:500;line-height:1.35;
+}
+html body #noteScanDialog #noteScanText{
+ box-sizing:border-box!important;display:block!important;
+ flex:0 1 auto!important;width:100%!important;min-width:0!important;
+ min-height:140px!important;height:clamp(140px,23dvh,205px)!important;max-height:28dvh!important;
+ resize:vertical!important;overflow-y:auto!important;
+ margin:0!important;padding:10px 2px 12px!important;
+ border:0!important;border-bottom:1px solid color-mix(in srgb,var(--text) 14%,transparent)!important;
+ border-radius:0!important;background:transparent!important;background-image:none!important;
+ color:var(--text)!important;box-shadow:none!important;
+ font:400 16px/1.52 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+}
+html body #noteScanDialog #noteScanText[wrap=off]{
+ white-space:pre!important;overflow-x:auto!important;overflow-wrap:normal!important;
+}
+html body #noteScanDialog .paper-scan-status{
+ margin:8px 0 6px!important;padding:0!important;
+ color:var(--secondary)!important;font-size:11.5px!important;line-height:1.4!important;
+}
+/* Place the two final routes near the dock, with a clear primary choice. */
+html body #noteScanDialog .paper-scan-actions{
+ box-sizing:border-box!important;
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ align-items:center!important;gap:10px!important;
+ width:100%!important;margin:auto 0 0!important;padding:12px 0 0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #noteScanDialog .paper-scan-actions button{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:100%!important;min-width:0!important;min-height:46px!important;height:46px!important;
+ padding:0 10px!important;margin:0!important;
+ border:1px solid color-mix(in srgb,var(--text) 15%,transparent)!important;
+ border-radius:13px!important;
+ background:transparent!important;background-image:none!important;
+ color:var(--text)!important;box-shadow:none!important;
+ font:560 13px/1.2 -apple-system,BlinkMacSystemFont,sans-serif!important;
+ text-decoration:none!important;
+}
+html body #noteScanDialog .paper-scan-actions #noteScanToText{
+ border:0!important;background:#38383A!important;color:#f7f7f8!important;
+}
+html body #noteScanDialog .paper-scan-actions #noteScanCancel[hidden]{display:none!important}
+/* The consent appears in place and is never silently skipped. */
+html body #noteScanDialog .paper-scan-consent[hidden]{display:none!important}
+html body #noteScanDialog .paper-scan-consent{
+ box-sizing:border-box;padding:12px;margin:0 0 12px;
+ border:1px solid color-mix(in srgb,var(--text) 12%,transparent);
+ border-radius:13px;background:#38383A;color:#f7f7f8;
+}
+html body #noteScanDialog .paper-scan-consent p{
+ margin:0 0 10px;color:inherit;font-size:12px;line-height:1.4;
+}
+html body #noteScanDialog .paper-scan-consent-actions{
+ display:flex;gap:8px;
+}
+html body #noteScanDialog .paper-scan-consent-actions button{
+ flex:1;min-height:44px;min-width:0;
+ border:0;border-radius:10px;background:rgba(255,255,255,.10);
+ color:#f7f7f8;font-size:12px;
+}
+html body #noteScanDialog .paper-scan-consent-actions .primary{
+ background:#f7f7f8;color:#38383A;
+}
+html body #noteScanDialog :is(button,input,textarea,label):focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
+@media(max-width:360px){
+ html body #noteScanDialog .paper-scan-inputs label{font-size:11.5px!important}
+ html body #noteScanDialog #noteScanText{min-height:110px!important;height:145px!important}
+}
+@media(max-height:680px){
+ html body #noteScanDialog #noteScanText{min-height:86px!important;height:105px!important}
+ html body dialog#noteScanDialog.paper-scan-dialog[open]{
+  padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;
+ }
 }
