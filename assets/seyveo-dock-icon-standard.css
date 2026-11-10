@@ -82,6 +82,12 @@ html body #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field
   height:var(--sv-compact-dock-glyph)!important;
 }
 
+/* Compact music-player controls: same glyph size, unchanged 44px targets. */
+html body #sayviMusicMini .sv-music-mini-transport > button > svg{
+  width:var(--sv-compact-dock-glyph)!important;
+  height:var(--sv-compact-dock-glyph)!important;
+}
+
 /* Standalone Sayvi chat composer (+, mic, send) shares the same glyph scale. */
 html body #sayviComposer #sayviPlus > svg,
 html body #sayviComposer #sayviField :is(#sayviMic,#sayviSend) > svg{
