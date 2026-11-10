@@ -1748,3 +1748,52 @@
  background:#DDE0E3!important;border:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
+
+/* SEYVEO Mail · inline Search layout / premium graphite · Nov 2026.
+   Expanded search is a normal full-width row BELOW the titlebar, so it
+   never obscures All / Personal / Business or the folder navigation.
+   No other page and no global dock affected. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search{
+ position:relative!important;
+ inset:auto!important;
+ top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ z-index:auto!important;
+ box-sizing:border-box!important;
+ width:100%!important;max-width:100%!important;
+ min-height:44px!important;height:44px!important;
+ margin:0 0 10px!important;padding:0 5px 0 12px!important;
+ border:0!important;border-radius:15px!important;
+ background:#38383A!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search svg{
+ flex:none!important;
+ width:18px!important;height:18px!important;
+ color:#D1D6DA!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-input{
+ min-width:0!important;
+ flex:1 1 0%!important;
+ font-size:16px!important;
+ color:#F4F5F6!important;
+ background:transparent!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-input::placeholder{
+ color:#C2C7CC!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-connect{
+ color:#D1D6DA!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search{
+ background:#E4E7EA!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-input{
+ color:#26282B!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-input::placeholder,
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search svg,
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-connect{
+ color:#555D65!important;
+}
