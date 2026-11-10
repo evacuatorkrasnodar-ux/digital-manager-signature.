@@ -328,15 +328,22 @@ function mailView(){
  const searchToggle=create('button','sv-mail-icon-button sv-mail-search-toggle');searchToggle.type='button';
  searchToggle.setAttribute('aria-label','Поиск по почте');searchToggle.append(mailIcon('search'));
  searchToggle.addEventListener('click',()=>{mailSearchOpen=!mailSearchOpen;paint();if(mailSearchOpen)searchInput.focus()});
- const connect=create('button','sv-mail-icon-button sv-mail-connect');connect.type='button';
- connect.setAttribute('aria-label','Подключить почтовый ящик');connect.append(mailIcon('settings'));
+ // An account connection is a primary mailbox action, NEVER a Search filter.
+ // The prototype points to the existing Connections information page.
+ const connect=create('button','sv-mail-connect');connect.type='button';
+ connect.setAttribute('aria-label','Подключить почту. Открыть раздел подключений');
+ const connectGlyph=create('span','sv-mail-connect-glyph');connectGlyph.setAttribute('aria-hidden','true');
+ connectGlyph.append(mailIcon('inbox'));
+ const connectLabel=create('span','sv-mail-connect-label','Подключить почту');
+ const connectChevron=create('span','sv-mail-connect-chevron','›');
+ connectChevron.setAttribute('aria-hidden','true');
+ connect.append(connectGlyph,connectLabel,connectChevron);
  connect.addEventListener('click',openConnect);
  const compose=create('button','sv-mail-icon-button sv-mail-compose');compose.type='button';
  compose.setAttribute('aria-label','Написать письмо');compose.append(mailIcon('pencil'));
  compose.addEventListener('click',()=>openEditor());
- // Show only Search and Compose in the Mail titlebar.
- // The existing connection action is available inside the expanded Search.
- // Approved Mail header: Compose first, Search at the far-right edge.
+ // The titlebar stays minimal: Compose and Search only.
+ // Connections are discoverable below the Personal / Work account switch.
  topButtons.append(compose,searchToggle);
  const introCopy=create('div','sv-mail-introduction-text');
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
@@ -358,9 +365,7 @@ function mailView(){
  searchInput.setAttribute('aria-label','Поиск по письмам и черновикам');
  searchInput.autocomplete='off';searchInput.value=mailSearch;
  searchInput.addEventListener('input',()=>{mailSearch=searchInput.value.trim().toLocaleLowerCase('ru');paintList()});
- connect.title='Подключения почты';
- connect.classList.add('sv-mail-search-connect');
- searchLabel.append(searchInput,connect);
+ searchLabel.append(searchInput);
  searchInput.addEventListener('keydown',event=>{
   if(event.key==='Escape'){
    mailSearchOpen=false;mailSearch='';searchInput.value='';paint();searchToggle.focus();
@@ -375,7 +380,7 @@ function mailView(){
  const content=create('div','sv-mail-list');
  // Search lives in its own row between the titlebar and account switch.
  // It pushes content down instead of obscuring the selected mail scope.
- section.append(top,searchLabel,scopeNav,nav,extraNav,info,content);body.append(section);
+ section.append(top,searchLabel,scopeNav,connect,nav,extraNav,info,content);body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
