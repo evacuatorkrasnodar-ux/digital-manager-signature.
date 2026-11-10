@@ -1077,11 +1077,23 @@ function mailView(){
   });
   more.setAttribute('aria-expanded','false');more.setAttribute('aria-controls','svMailMoreActions');
   moreMenu.id='svMailMoreActions';
-  opts.append(favorite,iconButton('archive',item.archived?'Вернуть во входящие':'В архив · образец',()=>{
-   item.archived=!item.archived;saveSampleActions();mailCurrent=null;paint();
-  }),iconButton('trash',item.trashed?'Восстановить из корзины':'Переместить в Корзину',()=>{
-   updateSampleMail(item,item.trashed?'restore':'trash');
-  }),more);
+  if(item.trashed){
+   // Trash is a destination, not a place for Star, Archive, Reply or Spam.
+   // Restoration is immediate; permanent deletion always asks permission.
+   opts.append(
+    iconButton('restore','Восстановить письмо',()=>updateSampleMail(item,'restore')),
+    iconButton('trash','Удалить навсегда',()=>{
+     if(window.confirm('Удалить это учебное письмо навсегда? Отменить нельзя.'))
+      updateSampleMail(item,'remove');
+    })
+   );
+  }else{
+   opts.append(favorite,iconButton('archive',item.archived?'Вернуть во входящие':'В архив · образец',()=>{
+    item.archived=!item.archived;saveSampleActions();mailCurrent=null;paint();
+   }),iconButton('trash','Переместить в Корзину',()=>{
+    updateSampleMail(item,'trash');
+   }),more);
+  }
   heading.append(backButton,opts);
   panel.append(heading,create('span','sv-mail-account-tag',mailAccountName(item.account)),create('h2','sv-mail-detail-title',item.subject));
   const addMenuAction=(icon,label,callback)=>{
@@ -1089,14 +1101,16 @@ function mailView(){
    control.append(mailIcon(icon),create('span','',label));
    control.addEventListener('click',callback);moreMenu.append(control);
   };
-  if(!sampleBlocked(item)){
+  if(!item.trashed&&!sampleBlocked(item)){
    addMenuAction(item.spam?'restore':'spam',item.spam?'Не спам':'В спам',()=>{
     updateSampleMail(item,item.spam?'notspam':'spam');
    });
   }
   const blockConfirm=create('section','sv-mail-block-confirm');
   blockConfirm.hidden=true;blockConfirm.setAttribute('aria-label','Подтверждение блокировки');
-  if(sampleBlocked(item)){
+  if(item.trashed){
+   // No sender-management actions from trash.
+  }else if(sampleBlocked(item)){
    addMenuAction('shield','Разблокировать отправителя',()=>updateSampleMail(item,'unblock'));
   }else{
    addMenuAction('shield','Блокировать отправителя',()=>{
@@ -1114,7 +1128,7 @@ function mailView(){
    accept.addEventListener('click',()=>updateSampleMail(item,'block'));
    choices.append(cancel,accept);blockConfirm.append(choices);
   }
-  if(!sampleBlocked(item)&&!gateTrusted(item.account,sampleMailAddress(item))){
+  if(!item.trashed&&!sampleBlocked(item)&&!gateTrusted(item.account,sampleMailAddress(item))){
    addMenuAction('shield','Доверять отправителю',()=>updateSampleMail(item,'trust'));
   }
   panel.append(moreMenu,blockConfirm);
@@ -1171,7 +1185,7 @@ function mailView(){
   help.title='Сэйви · помощь с письмом';
   help.setAttribute('aria-expanded','false');
   help.setAttribute('aria-controls','svMailSayviAssist');
-  actions.append(reply,help);panel.append(actions);
+  if(!item.trashed){actions.append(reply,help);panel.append(actions)}
   const note=create('section','sv-mail-sayvi-note');
   note.id='svMailSayviAssist';
   note.hidden=true;note.setAttribute('aria-label','Помощь Сэйви с письмом');
@@ -1555,7 +1569,7 @@ function mailView(){
    mailFolder==='archive'?'Архив · предварительный просмотр':
    mailFolder==='review'?'Ожидают вашего решения · учебные письма':
    mailFolder==='promotions'?'Рассылки · учебные письма':
-   mailFolder==='spam'?'Спам · учебные письма':'Корзина · предварительный просмотр';
+   mailFolder==='spam'?'Спам · учебные письма':'';
   if(mailNotice&&!mailCurrent&&!mailEditorOpen)info.textContent=mailNotice;
   info.hidden=!!mailCurrent||!info.textContent;
   paintList();
