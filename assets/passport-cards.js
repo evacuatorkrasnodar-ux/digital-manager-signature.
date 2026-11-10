@@ -111,9 +111,11 @@ function drawRows(){
  if(saved){
   if(header&&edit.parentElement!==header)header.append(edit);
   edit.classList.add('is-header-action');
+  header?.classList.toggle('has-edit-action',!companyEditing());
  }else{
   if(actions&&edit.parentElement!==actions.parentElement)actions.before(edit);
   edit.classList.remove('is-header-action');
+  header?.classList.remove('has-edit-action');
  }
  edit.hidden=companyEditing();
  const qrReady=canCreateCompanyQr(card);
@@ -190,6 +192,7 @@ function setCompanyMode(mode){
  companyEditor.hidden=!editing;
  const editButton=$('seyveoCompanyEditTop');
  if(editButton)editButton.hidden=editing;
+ dialog.querySelector('.seyveo-passport-dialog-head')?.classList.toggle('has-edit-action',!editing&&!!clean(load().name));
  if(editing)updateTypeChoice(Boolean(clean(load().name)));
  if(companyDone){
   // Preserve the original back-arrow SVG. textContent deleted it previously.
