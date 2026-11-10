@@ -1581,8 +1581,9 @@ function mailView(){
    const bottom=create('div','sv-mail-drafts-selection-actions');
    const chosen=selectedDraftIds.size;
    const remove=create('button','sv-mail-drafts-remove-selected',
-    chosen?'Удалить · '+chosen:'Выберите черновики');
+    chosen?'Очистить · '+chosen:'Выберите черновики');
    remove.type='button';remove.disabled=!chosen;
+   remove.setAttribute('aria-label','Окончательно удалить выбранные черновики и вложения после подтверждения');
    remove.addEventListener('click',()=>{if(chosen)removeSelectedDrafts([...selectedDraftIds])});
    bottom.append(remove);content.append(bottom);
   }
