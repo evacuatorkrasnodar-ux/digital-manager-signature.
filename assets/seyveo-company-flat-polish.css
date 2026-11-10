@@ -1,289 +1,482 @@
-/* SEYVEO · Company passport / Silver Graphite, Nov 10 2026.
-   Scoped correction for the company page only. No second dock, glass,
-   dummy actions, or changes to the underlying company record. */
+/* SEYVEO · Company Card · unified premium flat graphite · 2026-11-10
+   One coherent company-specific layer, including the QR contact view.
+   No glass, redundant overlays, or decorative controls. */
 
-html body #seyveoCompanyDialog.seyveo-passport-modal[open]{
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-  box-shadow:none!important;
-  color:var(--text,#f2f3f5);
+/* Palette comes from the app; #38383A is the shared action material. */
+html body #seyveoCompanyDialog[open]{
+ --sv-company-action:#38383A;
+ --sv-company-action-pressed:#505053;
+ --sv-company-field:#272B2F;
+ --sv-company-line:rgba(228,232,235,.12);
+ --sv-company-quiet:var(--secondary,#ABB2B9);
+ --sv-company-surface:var(--sv-life-viewport-gradient,var(--bg,#151B20));
+ box-sizing:border-box!important;
+ position:fixed!important;inset:0!important;
+ width:100vw!important;max-width:100vw!important;min-width:0!important;
+ height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;
+ margin:0!important;
+ padding:calc(16px + env(safe-area-inset-top,0px))
+         max(18px,env(safe-area-inset-right,0px))
+         calc(25px + env(safe-area-inset-bottom,0px))
+         max(18px,env(safe-area-inset-left,0px))!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ border:0!important;border-radius:0!important;
+ background:var(--sv-company-surface)!important;
+ background-repeat:no-repeat!important;background-size:cover!important;
+ color:var(--text,#F6F7F8)!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ scrollbar-width:none;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
 }
-
-/* The existing back arrow is the only exit in both read and edit modes. */
-html body #seyveoCompanyDialog.seyveo-passport-modal[open]
-  >button.seyveo-dialog-close.sv-nav-arrow{
-  box-sizing:border-box!important;
-  position:absolute!important;
-  top:calc(16px + env(safe-area-inset-top,0px))!important;
-  left:max(16px,env(safe-area-inset-left,0px))!important;
-  right:auto!important;
-  width:44px!important;min-width:44px!important;max-width:44px!important;
-  height:44px!important;min-height:44px!important;max-height:44px!important;
-  padding:0!important;margin:0!important;
-  display:grid!important;place-items:center!important;
-  border:0!important;border-radius:50%!important;
-  background:#38383A!important;background-image:none!important;
-  color:#F1F3F5!important;
-  box-shadow:none!important;filter:none!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-  font-size:0!important;
+html body #seyveoCompanyDialog[open]::-webkit-scrollbar{display:none}
+html body #seyveoCompanyDialog[open]::backdrop{
+ background:rgba(0,0,0,.65)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-html body #seyveoCompanyDialog.seyveo-passport-modal[open]
-  >button.seyveo-dialog-close.sv-nav-arrow svg{
-  display:block!important;
-  width:20px!important;height:20px!important;
-  flex:none!important;margin:0!important;
-  fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
-  stroke-linecap:round!important;stroke-linejoin:round!important;
-}
-html body #seyveoCompanyDialog.seyveo-passport-modal[open]
-  >button.seyveo-dialog-close.sv-nav-arrow:active{
-  background:#48484B!important;
-}
-
-/* Consistent 44px header row: title never collides with the return control. */
-html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{
-  box-sizing:border-box!important;
-  display:flex!important;align-items:center!important;
-  min-height:44px!important;
-  padding:0 2px 0 54px!important;
-  margin:0 0 14px!important;
-}
-html body #seyveoCompanyDialog[open][data-sv-company-filled="true"]
- .seyveo-passport-dialog-head{
-  padding-right:56px!important;
-}
-html body #seyveoCompanyDialog[open] #seyveoCompanyTitle{
-  margin:0!important;padding:0!important;
-  font-size:20px!important;font-weight:610!important;
-  line-height:1.25!important;letter-spacing:-.032em!important;
-  overflow-wrap:normal!important;
-}
-html body #seyveoCompanyDialog[open] .seyveo-passport-subtitle{
-  margin:0 0 16px!important;
-  font-size:12px!important;line-height:1.5!important;
-  color:var(--secondary,#AAB1B6)!important;
-}
-
-/* When empty: a single action, centered empty-state illustration,
-   no "Status unknown", fake disabled buttons, or duplicate instructions. */
-html body #seyveoCompanyDialog[open] :is(
-  .sv-company-actions[hidden],.sv-company-empty-mark[hidden],
-  #seyveoCompanyQrOpen[hidden],#seyveoCompanyQrHint[hidden],
-  #seyveoCompanyPrivacy[hidden],#seyveoCompanyNotFilled[hidden],
-  .sv-company-view[hidden],.sv-company-editor[hidden]){
-  display:none!important;
-}
-html body #seyveoCompanyDialog[open] .sv-company-empty-mark{
-  display:grid;place-items:center;
-  box-sizing:border-box;
-  width:78px;height:78px;
-  flex:0 0 78px;margin:0 auto;
-  border:0;border-radius:23px;
-  background:#38383A;
-  color:#E0E6EA;
-  box-shadow:none;
-}
-html body #seyveoCompanyDialog[open] .sv-company-empty-mark svg{
-  width:43px;height:43px;
-  fill:none;stroke:currentColor;stroke-width:1.6;
-  stroke-linecap:round;stroke-linejoin:round;
-}
-html body #seyveoCompanyDialog[open][data-sv-company-filled="false"]
-  .sv-company-view:not([hidden]){
-  display:flex!important;flex-direction:column!important;
-  align-items:center!important;justify-content:center!important;
-  box-sizing:border-box!important;
-  min-height:min(620px,calc(100dvh - 218px))!important;
-  margin:0!important;padding:6px 0 22px!important;
-  gap:15px!important;
-  text-align:center!important;
-}
-html body #seyveoCompanyDialog[open][data-sv-company-filled="false"]
-  .seyveo-passport-subtitle,
-html body #seyveoCompanyDialog[open][data-sv-company-filled="false"]
-  #seyveoCompanyRows{display:none!important}
-html body #seyveoCompanyDialog[open][data-sv-company-filled="false"]
-  #seyveoCompanyNotFilled{
-  max-width:260px;margin:0!important;padding:0!important;
-  font-size:13px!important;line-height:1.45!important;
-  color:var(--secondary,#BEC4C9)!important;
-}
-html body #seyveoCompanyDialog[open]
-  .seyveo-passport-edit-top{
-  display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  box-sizing:border-box!important;gap:9px!important;
-  width:auto;min-height:44px!important;
-  padding:0 18px!important;margin:7px 0 0!important;
-  border:0!important;border-radius:999px!important;
-  background:#38383A!important;background-image:none!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-  color:#F1F3F5!important;
-  box-shadow:none!important;
-  font-size:13px!important;font-weight:560!important;
-}
-html body #seyveoCompanyDialog[open] .seyveo-passport-edit-top svg{
-  display:block!important;width:19px!important;height:19px!important;
-  flex:none!important;stroke:currentColor!important;stroke-width:1.65!important;
-}
-html body #seyveoCompanyDialog[open] .seyveo-passport-edit-top:active{
-  background:#48484B!important;opacity:1!important;
-}
-
-/* Once saved, editing moves into the title bar as an ordinary 44px pencil. */
-html body #seyveoCompanyDialog[open][data-sv-company-mode="view"][data-sv-company-filled="true"]
-  #seyveoCompanyEditTop{
-  position:absolute!important;
-  z-index:5!important;
-  top:calc(16px + env(safe-area-inset-top,0px))!important;
-  right:max(16px,env(safe-area-inset-right,0px))!important;
-  left:auto!important;
-  width:44px!important;min-width:44px!important;max-width:44px!important;
-  height:44px!important;min-height:44px!important;max-height:44px!important;
-  padding:0!important;margin:0!important;
-  border-radius:50%!important;
-}
-html body #seyveoCompanyDialog[open][data-sv-company-mode="view"][data-sv-company-filled="true"]
-  #seyveoCompanyEditTop>span{display:none!important}
-
-/* Saved details: clean grid of values and just the usable actions. */
-html body #seyveoCompanyDialog[open] .seyveo-passport-row{
-  grid-template-columns:minmax(0,37%) minmax(0,1fr)!important;
-  align-items:start!important;column-gap:12px!important;
-  padding:12px 0!important;
-  border-bottom:1px solid rgba(215,224,233,.12)!important;
-}
-html body #seyveoCompanyDialog[open] .seyveo-passport-row :is(span,strong){
-  font-size:12.5px!important;line-height:1.45!important;
-}
-html body #seyveoCompanyDialog[open] .seyveo-passport-row strong{
-  font-weight:560!important;
-}
-html body #seyveoCompanyDialog[open] .sv-company-actions{
-  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:8px!important;
-  margin:18px 0 0!important;
-  padding:0!important;border:0!important;
-}
-html body #seyveoCompanyDialog[open][data-sv-company-qr-ready="false"]
-  .sv-company-actions{
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-}
-html body #seyveoCompanyDialog[open] .sv-company-actions button{
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  box-sizing:border-box!important;gap:7px!important;
-  min-width:0!important;min-height:44px!important;
-  padding:8px 7px!important;
-  border:0!important;border-radius:12px!important;
-  background:#38383A!important;background-image:none!important;
-  color:#EEF2F4!important;
-  box-shadow:none!important;
-  font:inherit!important;font-size:11.5px!important;font-weight:540!important;
-  white-space:nowrap!important;
-}
-html body #seyveoCompanyDialog[open] .sv-company-actions button+button{
-  border-left:0!important;
-}
-html body #seyveoCompanyDialog[open] .sv-company-actions svg{
-  display:block!important;
-  width:19px!important;height:19px!important;
-  flex:0 0 19px!important;
-  fill:none!important;stroke:currentColor!important;
-  stroke-width:1.6!important;stroke-linecap:round!important;stroke-linejoin:round!important;
-}
-html body #seyveoCompanyDialog[open] .sv-company-actions button:active{
-  background:#48484B!important;opacity:1!important;
-}
-html body #seyveoCompanyDialog[open] .sv-company-qr-hint{
-  margin:9px 0 0!important;padding:0!important;
-  color:var(--secondary,#AFB8BE)!important;
-  font-size:11.5px!important;line-height:1.45!important;
-}
-html body #seyveoCompanyDialog[open] #seyveoCompanyPrivacy{
-  margin:16px 0 0!important;padding:0!important;
-  color:var(--secondary,#ACB4B9)!important;
-  font-size:11px!important;line-height:1.55!important;
-}
-
-/* Editing retains all fields and validation; surfaces become matte graphite. */
-html body #seyveoCompanyDialog[open] .sv-kind-options{
-  background:#38383A!important;border:0!important;
-  border-radius:13px!important;
-  box-shadow:none!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html body #seyveoCompanyDialog[open] .sv-kind-options input:checked+span{
-  background:#505053!important;
-  color:#F6F6F7!important;
-  box-shadow:none!important;
-}
-html body #seyveoCompanyDialog[open] .seyveo-passport-form .btn.primary{
-  border:0!important;border-radius:12px!important;
-  background:#38383A!important;color:#F4F5F6!important;
-  box-shadow:none!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html body #seyveoCompanyDialog[open] :is(.sv-company-actions button,.seyveo-passport-edit-top,.seyveo-passport-form .btn.primary):focus-visible{
-  outline:2px solid #DAE2E6!important;outline-offset:2px!important;
-}
-@media(max-width:375px){
- html body #seyveoCompanyDialog[open] .sv-company-actions button{
-  gap:5px!important;padding:8px 4px!important;font-size:10.5px!important;
- }
- html body #seyveoCompanyDialog[open] .sv-company-actions svg{
-  width:17px!important;height:17px!important;flex-basis:17px!important;
- }
- html body #seyveoCompanyDialog[open] #seyveoCompanyTitle{font-size:19px!important;}
-}
-@media(max-height:610px){
- html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view{
-  min-height:270px!important;
- }
-}
-
-/* Keep the original document illustration in the empty state.
-   Hide it only once company details have been saved (managed by the existing JS). */
-html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-empty-mark:not([hidden]){
- display:grid!important;
- place-items:center!important;
-}
-html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view:not([hidden]){
- min-height:min(440px,calc(100dvh - 178px))!important;
- gap:12px!important;
-}
-html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .seyveo-passport-edit-top svg{
+html body #seyveoCompanyDialog[open] :is([hidden],.sv-company-view[hidden],.sv-company-editor[hidden]){
  display:none!important;
 }
-html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{
- padding-left:60px!important;
+html body #seyveoCompanyDialog[open] :is(.sv-company-actions[hidden],.sv-company-empty-mark[hidden],
+ #seyveoCompanyQrOpen[hidden],#seyveoCompanyQrHint[hidden],#seyveoCompanyPrivacy[hidden]){
+ display:none!important;
 }
 
-/* Company card · clean empty-state composition v3 */
+/* Real shared header; arrow stays aligned and visible while editing. */
 html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{
- padding-left:72px!important;
+ box-sizing:border-box!important;
+ position:sticky!important;top:0!important;z-index:12!important;
+ display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;
+ gap:10px!important;align-items:center!important;
+ min-height:52px!important;padding:4px 0!important;
+ margin:0 0 12px!important;
+ border:0!important;background:var(--bg,#151B20)!important;
 }
+html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head.has-edit-action{
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head .seyveo-company-dialog-identity{
+ display:flex!important;min-width:0!important;align-items:center!important;gap:0!important;
+}
+html body #seyveoCompanyDialog[open] #seyveoCompanyTitle{
+ margin:0!important;padding:0!important;min-width:0!important;
+ font-size:20px!important;line-height:1.18!important;font-weight:630!important;
+ letter-spacing:-.035em!important;
+ color:var(--text,#F6F7F8)!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head button.seyveo-dialog-close{
+ position:static!important;inset:auto!important;
+ display:grid!important;place-items:center!important;grid-column:1!important;
+ box-sizing:border-box!important;
+ width:44px!important;height:44px!important;min-width:44px!important;max-width:44px!important;
+ min-height:44px!important;max-height:44px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F6F6F7!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font-size:0!important;cursor:pointer!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head button.seyveo-dialog-close svg{
+ display:block!important;width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head button.seyveo-dialog-close:active{
+ background:#505053!important;
+}
+
+/* One edit control, moved into this header after the card is saved. */
+html body #seyveoCompanyDialog[open] #seyveoCompanyEditTop.is-header-action{
+ position:static!important;inset:auto!important;grid-column:3!important;
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text,#F6F7F8)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ cursor:pointer!important;
+}
+html body #seyveoCompanyDialog[open] #seyveoCompanyEditTop.is-header-action>span{display:none!important}
+html body #seyveoCompanyDialog[open] #seyveoCompanyEditTop.is-header-action svg{
+ display:block!important;width:20px!important;height:20px!important;stroke-width:1.65!important;
+}
+html body #seyveoCompanyDialog[open] #seyveoCompanyEditTop[hidden]{display:none!important}
+
+/* Empty state: retain the original document illustration and one purposeful action. */
 html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view:not([hidden]){
- min-height:clamp(250px,calc(100dvh - 200px),530px)!important;
- gap:14px!important;
- padding:0 18px 18px!important;
- justify-content:center!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;
+ min-height:max(285px,calc(100dvh - 148px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
+ width:100%!important;margin:0!important;padding:8px 14px 32px!important;
+ gap:14px!important;text-align:center!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] 
+ :is(.seyveo-passport-subtitle,#seyveoCompanyRows,#seyveoCompanyIdentity){
+ display:none!important;
+}
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-empty-mark:not([hidden]){
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ width:80px!important;height:80px!important;flex:0 0 80px!important;
+ margin:0 0 2px!important;padding:0!important;
+ border:0!important;border-radius:22px!important;
+ background:#38383A!important;color:#E9ECEE!important;box-shadow:none!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-empty-mark svg{
+ display:block!important;width:42px!important;height:42px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] #seyveoCompanyNotFilled{
- max-width:290px!important;
- font-size:13px!important;
- line-height:1.4!important;
- letter-spacing:0!important;
+ display:block!important;max-width:272px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--sv-company-quiet)!important;
+ font-size:13px!important;font-weight:420!important;line-height:1.45!important;
+ letter-spacing:0!important;white-space:normal!important;
 }
-html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] #seyveoCompanyEditTop{
- min-width:170px!important;
- min-height:44px!important;
- margin:0!important;
- padding:0 18px!important;
- font-size:13px!important;
- font-weight:600!important;
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] #seyveoCompanyEditTop:not(.is-header-action){
+ position:static!important;inset:auto!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;
+ min-height:44px!important;min-width:176px!important;width:auto!important;
+ padding:0 19px!important;margin:3px 0 0!important;
+ border:0!important;border-radius:999px!important;
+ background:#38383A!important;color:#F6F7F8!important;
+ font-size:13px!important;font-weight:600!important;line-height:1.2!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-@media(max-height:620px){
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] #seyveoCompanyEditTop svg{
+ display:none!important;
+}
+
+/* Populated card: simple company identity and grouped real details. */
+html body #seyveoCompanyDialog[open][data-sv-company-filled="true"] .sv-company-view:not([hidden]){
+ display:block!important;box-sizing:border-box!important;width:100%!important;
+ min-height:0!important;margin:0!important;padding:9px 0 20px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #seyveoCompanyDialog[open][data-sv-company-filled="true"] .seyveo-passport-subtitle{
+ display:none!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-identity:not([hidden]){
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ gap:6px!important;margin:0 0 12px!important;padding:12px 0 18px!important;
+ border:0!important;border-bottom:1px solid var(--sv-company-line)!important;
+ background:transparent!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-identity strong{
+ display:block!important;max-width:100%!important;
+ font-size:clamp(22px,5.8vw,27px)!important;font-weight:650!important;
+ line-height:1.18!important;letter-spacing:-.035em!important;
+ color:var(--text)!important;overflow-wrap:anywhere!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-identity span{
+ display:block!important;font-size:12px!important;line-height:1.45!important;
+ font-weight:450!important;color:var(--sv-company-quiet)!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-group{
+ margin:0 0 21px!important;padding:0!important;border:0!important;background:transparent!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-group-title{
+ margin:0 0 6px!important;padding:0!important;
+ font-size:12px!important;line-height:1.4!important;font-weight:620!important;
+ letter-spacing:0!important;color:var(--sv-company-quiet)!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-row{
+ display:grid!important;grid-template-columns:minmax(0,38%) minmax(0,1fr)!important;
+ gap:10px!important;align-items:center!important;box-sizing:border-box!important;
+ min-height:46px!important;padding:10px 0!important;margin:0!important;
+ border:0!important;border-bottom:1px solid var(--sv-company-line)!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-row :is(span,strong,.sv-company-value-link){
+ display:block!important;min-width:0!important;margin:0!important;padding:0!important;
+ font-size:12.5px!important;line-height:1.45!important;overflow-wrap:anywhere!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-row span{
+ color:var(--sv-company-quiet)!important;font-weight:450!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-row :is(strong,.sv-company-value-link){
+ color:var(--text)!important;font-weight:560!important;text-align:right!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-row .sv-company-value-link{
+ text-decoration:none!important;min-height:26px!important;display:flex!important;
+ align-items:center!important;justify-content:flex-end!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-actions:not([hidden]){
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:0!important;align-items:stretch!important;overflow:hidden!important;
+ margin:12px 0 13px!important;padding:4px!important;
+ border:0!important;border-radius:15px!important;
+ background:#38383A!important;box-shadow:none!important;
+}
+html body #seyveoCompanyDialog[open][data-sv-company-qr-ready="false"] .sv-company-actions:not([hidden]){
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-actions button:not([hidden]){
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;gap:6px!important;
+ min-height:58px!important;min-width:0!important;width:100%!important;
+ margin:0!important;padding:8px 4px!important;
+ border:0!important;border-radius:11px!important;
+ background:transparent!important;background-image:none!important;
+ color:#F6F7F8!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font:inherit!important;font-size:11px!important;font-weight:540!important;line-height:1.2!important;
+ white-space:normal!important;text-align:center!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-actions button:not([hidden]):active{
+ background:#505053!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-actions button svg{
+ display:block!important;flex:0 0 20px!important;
+ width:20px!important;height:20px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-qr-hint:not([hidden]){
+ margin:7px 0 0!important;padding:0!important;
+ font-size:11.5px!important;line-height:1.45!important;
+ color:var(--sv-company-quiet)!important;
+}
+html body #seyveoCompanyDialog[open] #seyveoCompanyPrivacy:not([hidden]){
+ margin:16px 0 0!important;padding:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ color:var(--sv-company-quiet)!important;font-size:11px!important;line-height:1.5!important;
+}
+
+/* Edit flow: responsive system-font form, flat fields, no decorative subcards. */
+html body #seyveoCompanyDialog[open] .sv-company-editor:not([hidden]){
+ display:block!important;width:100%!important;max-width:680px!important;
+ margin:0 auto!important;padding:4px 0 24px!important;
+ box-sizing:border-box!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-section{
+ margin:5px 0 19px!important;padding:0!important;
+ font-size:17px!important;font-weight:630!important;line-height:1.25!important;
+ letter-spacing:-.02em!important;color:var(--text)!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-form-section{
+ margin:14px 0 13px!important;padding:14px 0 0!important;
+ border-top:1px solid var(--sv-company-line)!important;
+ font-size:14px!important;font-weight:620!important;color:var(--text)!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-form{
+ display:flex!important;flex-direction:column!important;
+ margin:0!important;padding:0!important;border:0!important;
+ background:transparent!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-form :is(>label,> [data-passport-type]>label),
+html body #seyveoCompanyDialog[open] .sv-company-extra :is(label){
+ display:block!important;margin:0 0 15px!important;
+ font-size:12px!important;font-weight:510!important;line-height:1.4!important;
+ color:var(--sv-company-quiet)!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-form input:not([type="hidden"]):not([type="radio"]){
+ display:block!important;box-sizing:border-box!important;
+ width:100%!important;height:48px!important;min-height:48px!important;
+ margin:7px 0 0!important;padding:10px 13px!important;
+ border:1px solid var(--sv-company-line)!important;border-radius:12px!important;
+ background:var(--sv-company-field)!important;background-image:none!important;
+ color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
+ font-family:inherit!important;font-size:16px!important;font-weight:460!important;
+ line-height:1.35!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ outline:0!important;appearance:none!important;-webkit-appearance:none!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-form input:not([type="hidden"]):not([type="radio"]):focus{
+ border-color:color-mix(in srgb,var(--text) 50%,transparent)!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-form input::placeholder{
+ color:var(--sv-company-quiet)!important;opacity:.65!important;
+}
+html body #seyveoCompanyDialog[open] .sv-kind{
+ display:block!important;margin:0 0 17px!important;padding:0!important;
+ border:0!important;min-width:0!important;
+}
+html body #seyveoCompanyDialog[open] .sv-kind legend{
+ display:block!important;margin:0 0 9px!important;padding:0!important;
+ font-size:12px!important;font-weight:520!important;color:var(--sv-company-quiet)!important;
+}
+html body #seyveoCompanyDialog[open] .sv-kind-options{
+ display:grid!important;grid-template-columns:1.25fr .62fr .95fr!important;
+ gap:3px!important;min-height:48px!important;padding:3px!important;
+ background:#38383A!important;border:0!important;border-radius:13px!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #seyveoCompanyDialog[open] .sv-kind-options.sv-kind-options--chosen{
+ display:flex!important;align-items:stretch!important;
+}
+html body #seyveoCompanyDialog[open] .sv-kind-options label{
+ position:relative!important;display:flex!important;align-items:stretch!important;
+ min-height:42px!important;min-width:0!important;margin:0!important;
+}
+html body #seyveoCompanyDialog[open] .sv-kind-options label[hidden]{display:none!important}
+html body #seyveoCompanyDialog[open] .sv-kind-options label span{
+ display:grid!important;place-items:center!important;
+ width:100%!important;min-height:42px!important;padding:0 4px!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;color:#D0D1D4!important;
+ font-size:12px!important;font-weight:510!important;line-height:1.2!important;
+}
+html body #seyveoCompanyDialog[open] .sv-kind-options input:checked+span{
+ background:#505053!important;color:#FFF!important;box-shadow:none!important;
+}
+html body #seyveoCompanyDialog[open] .sv-kind-change{
+ min-height:44px!important;padding:4px 0!important;margin:2px 0 0!important;
+ border:0!important;background:transparent!important;
+ color:var(--sv-company-quiet)!important;font-size:12px!important;font-weight:510!important;
+}
+html body #seyveoCompanyDialog[open] .sv-kind-change[hidden]{display:none!important}
+html body #seyveoCompanyDialog[open] .sv-company-extra{
+ display:block!important;box-sizing:border-box!important;
+ margin:3px 0 15px!important;padding:0!important;
+ border:0!important;border-top:1px solid var(--sv-company-line)!important;
+ border-bottom:1px solid var(--sv-company-line)!important;
+ border-radius:0!important;background:transparent!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-extra>summary{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-height:47px!important;padding:2px 0!important;margin:0!important;
+ list-style:none!important;cursor:pointer!important;
+ font-size:13px!important;font-weight:565!important;color:var(--text)!important;
+}
+html body #seyveoCompanyDialog[open] .sv-company-extra>summary::-webkit-details-marker{display:none!important}
+html body #seyveoCompanyDialog[open] .sv-company-extra>summary span{display:none!important}
+html body #seyveoCompanyDialog[open] .sv-company-extra>summary::after{
+ content:"›";display:block;font-size:22px;font-weight:380;color:var(--sv-company-quiet);
+ transition:transform .15s;
+}
+html body #seyveoCompanyDialog[open] .sv-company-extra[open]>summary::after{
+ transform:rotate(90deg);
+}
+html body #seyveoCompanyDialog[open] .sv-company-extra-body{
+ padding:8px 0 2px!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-form .btn.primary{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;width:100%!important;min-height:48px!important;
+ margin:21px 0 8px!important;padding:0 17px!important;
+ border:0!important;border-radius:13px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F6F7F8!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font-size:14px!important;font-weight:630!important;line-height:1.2!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-form .btn.primary:active{
+ background:#505053!important;
+}
+html body #seyveoCompanyDialog[open] [data-passport-type][hidden]{display:none!important}
+html body #seyveoCompanyDialog[open] [data-passport-status]:empty{display:none!important}
+html body #seyveoCompanyDialog[open] [data-passport-status]:not(:empty){
+ display:block!important;margin:12px 0!important;padding:0!important;
+ color:var(--sv-company-quiet)!important;font-size:12px!important;
+}
+html body #seyveoCompanyDialog[open] > .info-actions{display:none!important}
+html body #seyveoCompanyDialog[open] :is(button,input,summary,a):focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
+@media(max-width:360px){
+ html body #seyveoCompanyDialog[open] #seyveoCompanyTitle{font-size:18px!important}
+ html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{gap:7px!important}
+ html body #seyveoCompanyDialog[open] .sv-company-actions button:not([hidden]){font-size:10.5px!important}
+}
+@media(max-height:530px){
  html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view:not([hidden]){
-  min-height:clamp(200px,calc(100dvh - 190px),400px)!important;
+  min-height:300px!important;padding-bottom:14px!important;
  }
+}
+
+/* The company's contact QR follows the same navigation and flat action grammar. */
+html body #seyveoQrCardDialog[open]{
+ position:fixed!important;inset:0!important;
+ box-sizing:border-box!important;
+ width:100vw!important;max-width:100vw!important;
+ height:100dvh!important;max-height:100dvh!important;
+ min-height:100dvh!important;margin:0!important;
+ padding:calc(16px + env(safe-area-inset-top,0px))
+         max(18px,env(safe-area-inset-right,0px))
+         calc(25px + env(safe-area-inset-bottom,0px))
+         max(18px,env(safe-area-inset-left,0px))!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ border:0!important;border-radius:0!important;
+ background:var(--sv-life-viewport-gradient,var(--bg,#151B20))!important;
+ color:var(--text)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #seyveoQrCardDialog[open]::backdrop{
+ background:rgba(0,0,0,.65)!important;backdrop-filter:none!important;
+}
+html body #seyveoQrCardDialog[open] header{
+ display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;
+ gap:10px!important;align-items:center!important;
+ min-height:52px!important;margin:0 0 12px!important;
+ padding:4px 0!important;border:0!important;
+}
+html body #seyveoQrCardDialog[open] #seyveoQrClose{
+ position:static!important;order:0!important;
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;color:#F6F7F8!important;
+ box-shadow:none!important;
+}
+html body #seyveoQrCardDialog[open] #seyveoQrClose svg{
+ width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+}
+html body #seyveoQrCardDialog[open] .sv-qr-overline{display:none!important}
+html body #seyveoQrCardDialog[open] #seyveoQrTitle{
+ margin:0!important;font-size:20px!important;font-weight:630!important;letter-spacing:-.035em!important;
+}
+html body #seyveoQrCardDialog[open] .sv-qr-body{
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ min-height:calc(100dvh - 265px - env(safe-area-inset-top,0px))!important;
+ padding:10px 0!important;gap:10px!important;text-align:center!important;
+}
+html body #seyveoQrCardDialog[open] .sv-qr-body h3{
+ font-size:22px!important;font-weight:650!important;color:var(--text)!important;
+}
+html body #seyveoQrCardDialog[open] .sv-qr-image{
+ display:grid!important;place-items:center!important;
+ width:232px!important;height:232px!important;max-width:80vw!important;max-height:80vw!important;
+ margin:12px 0!important;padding:12px!important;
+ border:0!important;border-radius:16px!important;
+ background:#FFF!important;box-shadow:none!important;
+}
+html body #seyveoQrCardDialog[open] .sv-qr-actions{
+ display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;
+ margin:12px 0 4px!important;
+}
+html body #seyveoQrCardDialog[open] .sv-qr-actions button{
+ min-height:48px!important;border:0!important;border-radius:13px!important;
+ background:#38383A!important;color:#F6F7F8!important;
+ font:inherit!important;font-size:12px!important;font-weight:590!important;
+ box-shadow:none!important;
+}
+html body #seyveoQrCardDialog[open] #seyveoQrStatus{
+ margin:10px 0!important;color:var(--secondary)!important;font-size:12px!important;
+}
+
+/* Keep light mode legible without introducing glass or bright accent buttons. */
+:root[data-theme="light"] body #seyveoCompanyDialog[open]{
+ --sv-company-surface:var(--bg,#F6F6F8);
+ --sv-company-field:#F0F0F2;
+ --sv-company-line:rgba(37,40,44,.13);
+ --sv-company-quiet:#656A71;
+}
+:root[data-theme="light"] body #seyveoCompanyDialog[open] .sv-kind-options label span{
+ color:#F0F0F1!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html body #seyveoCompanyDialog[open] .sv-company-extra>summary::after{transition:none!important}
 }
