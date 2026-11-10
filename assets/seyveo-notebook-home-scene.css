@@ -25,3 +25,105 @@ html body dialog#noteReviewDialog.note-review-dialog[open]
  .sv-note-nav-brand strong{
   color:var(--text)!important;
 }
+
+
+/* SEYVEO · frameless notebook illustrations and chooser | 2026-11-10 */
+/* The whole chooser is an ordinary full-screen page, NOT a graphite tile. */
+html body dialog#noteModeDialog.paper-choice-dialog[open]{
+  box-sizing:border-box!important;
+  background-color:var(--bg)!important;
+  background-image:var(--seyveo-hdr-stage),var(--sv-life-viewport-gradient)!important;
+  background-size:100% 100%,100% 100%!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  color:var(--text)!important;
+}
+/* No dark rectangular or square backplates behind the three tool drawings. */
+html body dialog#noteModeDialog.paper-choice-dialog[open]
+ .paper-choice-list .paper-choice-item .paper-choice-icon{
+  box-sizing:border-box!important;
+  display:grid!important;place-items:center!important;
+  flex:0 0 34px!important;
+  width:34px!important;height:34px!important;
+  padding:0!important;margin:0!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;background-color:transparent!important;
+  background-image:none!important;
+  color:var(--text)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  filter:none!important;opacity:1!important;
+}
+html body dialog#noteModeDialog.paper-choice-dialog[open]
+ .paper-choice-list .paper-choice-item .paper-choice-icon::before,
+html body dialog#noteModeDialog.paper-choice-dialog[open]
+ .paper-choice-list .paper-choice-item .paper-choice-icon::after{
+  content:none!important;display:none!important;
+}
+html body dialog#noteModeDialog.paper-choice-dialog[open]
+ .paper-choice-list .paper-choice-item .paper-choice-icon svg{
+  display:block!important;
+  width:23px!important;height:23px!important;
+  fill:none!important;stroke:currentColor!important;
+  stroke-width:1.65!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+  opacity:1!important;filter:none!important;
+}
+html body dialog#noteModeDialog.paper-choice-dialog[open] > p,
+html body dialog#noteModeDialog.paper-choice-dialog[open] .paper-choice-copy small{
+  color:var(--secondary)!important;
+}
+html body dialog#noteModeDialog.paper-choice-dialog[open] > h2,
+html body dialog#noteModeDialog.paper-choice-dialog[open] .paper-choice-copy strong,
+html body dialog#noteModeDialog.paper-choice-dialog[open] .paper-choice-item{
+  color:var(--text)!important;
+}
+html body dialog#noteModeDialog.paper-choice-dialog[open] .paper-choice-item{
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  border-color:rgba(190,200,210,.14)!important;
+}
+/* Empty Notebook artwork: only the original SVG remains, never a badge. */
+html body dialog#notesDialog.notes-dialog[open] .note-empty .note-empty-mark,
+html body #svWorkShell #svWorkNotebook .note-empty .note-empty-mark{
+  box-sizing:border-box!important;
+  display:grid!important;place-items:center!important;
+  flex:0 0 44px!important;
+  width:44px!important;height:44px!important;
+  max-width:44px!important;max-height:44px!important;
+  padding:0!important;margin:0 auto 6px!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;background-color:transparent!important;
+  background-image:none!important;box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  filter:none!important;opacity:1!important;
+  color:var(--text)!important;
+}
+html body dialog#notesDialog.notes-dialog[open] .note-empty .note-empty-mark svg,
+html body #svWorkShell #svWorkNotebook .note-empty .note-empty-mark svg{
+  display:block!important;
+  width:36px!important;height:36px!important;
+  fill:none!important;stroke:currentColor!important;
+  stroke-width:1.6!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+  filter:none!important;opacity:1!important;
+}
+html body dialog#notesDialog.notes-dialog[open] .note-empty .note-empty-mark::before,
+html body dialog#notesDialog.notes-dialog[open] .note-empty .note-empty-mark::after,
+html body #svWorkShell #svWorkNotebook .note-empty .note-empty-mark::before,
+html body #svWorkShell #svWorkNotebook .note-empty .note-empty-mark::after{
+  content:none!important;display:none!important;
+}
+/* Drawing previews retain their canvas content with no CSS grey overlays. */
+html body #svWorkShell #svWorkNotebook .note-open > canvas.note-paper-preview,
+html body dialog#notesDialog.notes-dialog[open] .note-open > canvas.note-paper-preview{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;box-shadow:none!important;
+  filter:none!important;opacity:1!important;
+}
