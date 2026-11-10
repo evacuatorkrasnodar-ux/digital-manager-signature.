@@ -58,20 +58,51 @@ function selectedRows(card){
 }
 function drawRows(){
  const rows=$('seyveoCompanyRows');rows.replaceChildren();
- const card=load(),entries=selectedRows(card);
- for(const [label,value] of entries){
-  const row=document.createElement('div');row.className='seyveo-passport-row';
-  const k=document.createElement('span');k.textContent=label;
-  const v=document.createElement('strong');v.textContent=value;
-  row.append(k,v);rows.append(row);
+ const card=load(),saved=!!clean(card.name);
+ const identity=$('seyveoCompanyIdentity');
+ const identityName=$('seyveoCompanyIdentityName');
+ const identityKind=$('seyveoCompanyIdentityKind');
+ if(identity)identity.hidden=!saved;
+ if(identityName)identityName.textContent=clean(card.name);
+ if(identityKind)identityKind.textContent=[LABELS[card.type]||'Компания',clean(card.industry)].filter(Boolean).join(' · ');
+ const data=new Map(selectedRows(card).filter(([label])=>label!=='Название для клиентов'&&label!=='Статус'));
+ const sections=[
+  ['Контакты',['Телефон','Электронная почта','Сайт']],
+  ['Сведения',['Полное имя / юридическое наименование','Руководитель / представитель','Город','Адрес']],
+  ['Реквизиты',['ИНН','КПП','ОГРН','ОГРНИП','Банк','Расчётный счёт','БИК','Корреспондентский счёт']]
+ ];
+ for(const [heading,fields] of sections){
+  const entries=fields.filter(label=>data.has(label)).map(label=>[label,data.get(label)]);
+  if(!entries.length)continue;
+  const section=document.createElement('section');section.className='sv-company-group';
+  const groupTitle=document.createElement('h3');groupTitle.className='sv-company-group-title';groupTitle.textContent=heading;
+  section.append(groupTitle);
+  for(const [label,value] of entries){
+   const row=document.createElement('div');row.className='seyveo-passport-row';
+   const caption=document.createElement('span');caption.textContent=label;
+   let display=document.createElement('strong');display.textContent=value;
+   if(label==='Телефон'||label==='Электронная почта'||label==='Сайт'){
+    let href='';
+    if(label==='Телефон'&&/^[+\d ()-]{5,50}$/.test(value))href='tel:'+value.replace(/[^+\d]/g,'');
+    if(label==='Электронная почта'&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))href='mailto:'+value;
+    if(label==='Сайт'){
+     try{const url=new URL(value);if(['https:','http:'].includes(url.protocol))href=url.href}catch{}
+    }
+    if(href){
+     display=document.createElement('a');display.className='sv-company-value-link';
+     display.href=href;display.textContent=value;
+     if(label==='Сайт'){display.target='_blank';display.rel='noopener noreferrer'}
+    }
+   }
+   row.append(caption,display);section.append(row);
+  }
+  rows.append(section);
  }
- const saved=!!clean(card.name);
  dialog.dataset.svCompanyFilled=String(saved);
  $('seyveoCompanyNotFilled').hidden=saved;
  const emptyMark=$('seyveoCompanyEmptyMark');if(emptyMark)emptyMark.hidden=saved;
  $('seyveoCompanyEditTop').querySelector('span').textContent=saved?'Изменить':'Заполнить карточку';
  $('seyveoCompanyEditTop').setAttribute('aria-label',saved?'Изменить сведения компании':'Заполнить карточку компании');
- // Keep the initial state clean. Show real actions only when they work.
  const qrReady=canCreateCompanyQr(card);
  dialog.dataset.svCompanyQrReady=String(qrReady);
  dialog.querySelector('.sv-company-actions').hidden=!saved;
@@ -104,6 +135,10 @@ function updateTypeChoice(compact){
 }
 function toggleType(){
  const type=$('seyveoCompanyType').value;
+ const legalLabel=form.elements.namedItem('legalName')?.closest('label');
+ if(legalLabel?.firstChild?.nodeType===3){
+  legalLabel.firstChild.textContent=type==='org'?'Юридическое наименование':type==='ip'?'ФИО предпринимателя':'ФИО самозанятого';
+ }
  form.querySelectorAll('[data-passport-type]').forEach(w=>{
    const visible=w.dataset.passportType.split(' ').includes(type);
    w.hidden=!visible;
