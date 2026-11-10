@@ -1,0 +1,363 @@
+/* SEYVEO · Documents · Graphite Flat v1
+   Approved Nov 2026: #38383A for surfaces, no decorative glass.
+   Presentation only, except the separate removal of the misleading
+   PDF⇄Word shortcut. All real scan/create/sign/print, vault and folder
+   controls keep their original handlers. Scoped to Documents only. */
+
+html body #sayviSurfacePage[data-sv-subject="contract"]{
+ --sv-doc-flat:#38383A;
+ --sv-doc-flat-active:#4A4A4D;
+ --sv-doc-flat-edge:rgba(241,243,245,.10);
+}
+
+/* One 44px nav system, balanced to match Mail and Notebook. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{
+ box-sizing:border-box!important;display:block!important;position:relative!important;
+ margin:0 2px 10px!important;padding:0!important;min-height:50px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-continuity-titlebar{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ align-items:center!important;column-gap:6px!important;
+ width:100%!important;min-height:50px!important;padding:0!important;margin:0!important;
+ position:relative!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBack{
+ box-sizing:border-box!important;position:static!important;grid-column:1!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F2F4F5!important;box-shadow:none!important;
+ filter:none!important;transform:none!important;opacity:1!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBack span{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBack svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-heading{
+ box-sizing:border-box!important;grid-column:2!important;
+ position:static!important;margin:0!important;padding:0!important;
+ min-width:0!important;font:630 clamp(23px,6vw,26px)/1.15
+ -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.04em!important;text-align:center!important;
+ white-space:nowrap!important;text-overflow:ellipsis!important;overflow:hidden!important;
+ color:var(--text,#F1F3F5)!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top .sv-continuity-space{
+ grid-column:3!important;display:block!important;width:44px!important;height:44px!important;
+ visibility:hidden!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools{
+ box-sizing:border-box!important;position:absolute!important;
+ right:0!important;top:3px!important;left:auto!important;
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ width:44px!important;min-width:44px!important;height:44px!important;
+ margin:0!important;padding:0!important;z-index:8!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-doc-search-toggle{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;color:#F2F4F5!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools .sv-doc-search-toggle svg{
+ width:19px!important;height:19px!important;stroke:currentColor!important;
+ stroke-width:1.5!important;fill:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] :is(
+ #sayviSurfaceBack,.sv-doc-search-toggle
+):focus-visible{
+ outline:2px solid var(--text,#f3f4f5)!important;outline-offset:2px!important;
+}
+
+/* Segmented switch: one material and same radius as other SEYVEO tabs. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:3px!important;min-height:46px!important;padding:3px!important;
+ margin:0 0 10px!important;border:0!important;border-radius:14px!important;
+ background:#292B2E!important;background-image:none!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab{
+ box-sizing:border-box!important;min-height:40px!important;
+ margin:0!important;padding:8px 7px!important;
+ border:0!important;border-radius:11px!important;background:transparent!important;
+ color:#D3D6D9!important;box-shadow:none!important;
+ font:580 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch .sv-doc-tab[aria-pressed="true"]{
+ background:#38383A!important;color:#F2F3F5!important;
+}
+
+/* A single 56px approvals row: preserve status and touch target. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-flow-card{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ width:100%!important;min-height:57px!important;gap:9px!important;
+ margin:0 0 9px!important;padding:8px 11px!important;
+ border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;color:#F3F4F6!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-flow-card>.sv-doc-symbol{
+ box-sizing:border-box!important;flex:0 0 36px!important;
+ width:36px!important;height:36px!important;min-height:36px!important;
+ margin:0!important;padding:7px!important;border:1px solid rgba(255,255,255,.11)!important;
+ border-radius:11px!important;background:transparent!important;color:#F0F1F3!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-flow-copy{
+ flex:1 1 auto!important;min-width:0!important;text-align:left!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-flow-copy strong{
+ color:#F1F3F5!important;font-size:12.5px!important;line-height:1.23!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-flow-copy small,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-flow-stats{
+ color:#CFD2D6!important;font-size:10px!important;line-height:1.28!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-flow-stats{
+ flex:0 0 auto!important;max-width:28%!important;white-space:normal!important;text-align:right!important;
+}
+
+/* Scanner: compact primary action, icon not a large poster. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tools-slot,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tools{
+ margin:0 0 6px!important;padding:0!important;min-width:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tools{
+ gap:7px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-scan{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:40px minmax(0,1fr) 12px!important;
+ grid-template-rows:auto auto!important;align-content:center!important;
+ gap:1px 10px!important;min-height:65px!important;width:100%!important;
+ margin:0!important;padding:8px 11px!important;
+ border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F4F5F6!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font:620 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-scan>.sv-doc-art{
+ grid-column:1!important;grid-row:1/span 2!important;place-self:center!important;
+ box-sizing:border-box!important;width:38px!important;height:38px!important;
+ min-width:38px!important;min-height:38px!important;margin:0!important;
+ padding:7px!important;border:1px solid rgba(255,255,255,.12)!important;
+ border-radius:11px!important;background:transparent!important;
+ color:#F3F4F5!important;box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-scan>.sv-doc-art svg{
+ width:100%!important;height:100%!important;stroke:currentColor!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-scan-desc{
+ grid-column:2!important;grid-row:2!important;
+ font:450 10.5px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#CCD1D6!important;margin:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-scan-illustration{
+ display:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-scan::after{
+ grid-column:3!important;grid-row:1/span 2!important;
+ border-color:#dce1e5!important;opacity:.75!important;
+}
+
+/* Four useful actions, not five raised tiles. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:5px!important;width:100%!important;margin:0 0 5px!important;
+ padding:0!important;background:transparent!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-button{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column-reverse!important;
+ align-items:center!important;justify-content:flex-end!important;
+ min-width:0!important;min-height:70px!important;gap:5px!important;
+ margin:0!important;padding:4px 2px 5px!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;color:var(--text,#f1f3f5)!important;
+ font:560 clamp(10px,2.7vw,11px)/1.18 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:center!important;white-space:normal!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-button .sv-doc-art{
+ box-sizing:border-box!important;flex:0 0 39px!important;display:grid!important;place-items:center!important;
+ width:39px!important;height:39px!important;min-width:39px!important;min-height:39px!important;
+ margin:0!important;padding:9px!important;
+ border:0!important;border-radius:12px!important;
+ background:#38383A!important;background-image:none!important;color:#F2F3F5!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-button .sv-doc-art svg{
+ width:100%!important;height:100%!important;filter:none!important;
+}
+
+/* Four items per row, compact and quiet. Semantic document colors remain on file drawings. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-shelf-slot{
+ display:grid!important;gap:10px!important;margin:4px 0 10px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-shelf-heading{
+ min-height:25px!important;margin:0 1px 5px!important;padding:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-shelf-heading h2{
+ font:650 15px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.025em!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-shelf-more{
+ min-height:36px!important;padding:6px 1px 6px 8px!important;
+ border:0!important;border-radius:8px!important;background:transparent!important;
+ color:var(--secondary,#c4c9ce)!important;font-size:11px!important;
+ box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] :is(
+ .sv-doc-recent-grid,.sv-doc-folders-grid
+){
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:6px!important;min-width:0!important;width:100%!important;
+ padding:0 0 3px!important;margin:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-recent-card{
+ box-sizing:border-box!important;min-width:0!important;min-height:83px!important;
+ margin:0!important;padding:5px 2px!important;gap:3px!important;
+ border:0!important;border-radius:13px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F3F4F5!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-example-card{
+ min-height:83px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-file-art{
+ width:35px!important;height:42px!important;max-width:100%!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-recent-name{
+ max-width:100%!important;font-size:10px!important;line-height:1.2!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card{
+ box-sizing:border-box!important;min-width:0!important;min-height:61px!important;
+ margin:0!important;padding:5px 2px!important;gap:3px!important;
+ border:0!important;border-radius:13px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F2F3F5!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card strong{
+ font:570 10px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#F2F3F5!important;white-space:nowrap!important;overflow:hidden!important;
+ text-overflow:ellipsis!important;max-width:100%!important;
+}
+
+/* The assistant, vault and connections use the SAME flat rows, not glass slabs. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-assistant{
+ gap:4px!important;margin:2px 0 8px!important;padding:0!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-assistant-title{
+ margin:0 0 5px 1px!important;
+ font:650 15px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-assistant-hero,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-vault-shell{
+ box-sizing:border-box!important;width:100%!important;
+ margin:0 0 7px!important;padding:0!important;
+ border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:#F2F4F5!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-assistant-summary{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ min-height:65px!important;gap:10px!important;
+ margin:0!important;padding:8px 11px!important;
+ border:0!important;background:transparent!important;color:#F2F4F5!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-assistant-mark-box{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 38px!important;width:38px!important;height:38px!important;
+ margin:0!important;padding:6px!important;
+ border:1px solid rgba(255,255,255,.12)!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-assistant-summary .sv-doc-symbol.sv-sayvi-symbol{
+ display:block!important;flex:0 0 24px!important;width:24px!important;height:24px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-assistant-hero-copy strong{
+ font:560 12.5px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#F2F3F5!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-assistant-actions{
+ padding:1px 10px 10px!important;gap:7px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-vault-summary{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:36px minmax(0,1fr) 12px!important;gap:10px!important;
+ align-items:center!important;min-height:57px!important;
+ margin:0!important;padding:8px 11px!important;color:#F2F4F5!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-vault-summary>.sv-doc-symbol{
+ box-sizing:border-box!important;width:35px!important;height:35px!important;
+ border:1px solid rgba(255,255,255,.1)!important;border-radius:11px!important;
+ background:transparent!important;color:#F2F3F5!important;box-shadow:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-vault-title,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-connections-copy strong{
+ color:#F2F3F5!important;font-size:12.5px!important;font-weight:590!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-vault-copy small,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-connections-copy small{
+ color:#CDD2D7!important;font-size:10.5px!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-connections-entry{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ width:100%!important;min-height:57px!important;gap:10px!important;
+ margin:0 0 8px!important;padding:8px 11px!important;
+ border:0!important;border-radius:14px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F2F3F5!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-connections-icon{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 35px!important;width:35px!important;height:35px!important;
+ border:1px solid rgba(255,255,255,.1)!important;border-radius:11px!important;
+ background:transparent!important;color:#F2F3F5!important;box-shadow:none!important;
+}
+
+/* Only Docs is affected. Navigation/dock outside this page is preserved. */
+@media(max-width:365px){
+ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid{
+  gap:3px!important;
+ }
+ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-button{
+  font-size:10px!important;
+ }
+ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-folder-card strong{
+  font-size:9px!important;
+ }
+ html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-recent-card{
+  min-height:80px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html body #sayviSurfacePage[data-sv-subject="contract"] :is(
+ .sv-doc-tool-button,.sv-doc-tool-scan,.sv-doc-recent-card,.sv-doc-folder-card
+ ){
+  transition:none!important;animation:none!important;
+ }
+}
