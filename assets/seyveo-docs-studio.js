@@ -199,8 +199,15 @@ function mount(target,{
   control.dataset.action=key;control.append(toolArt(key));grid.append(control);
  }
  const panel=$('section','sv-doc-tool-panel');panel.hidden=true;
+ panel.id='svDocToolPanel';
  panel.setAttribute('aria-label','Инструменты документов');
  editor.append(grid,panel);target.append(editor);
+ // The five-action toolbar is the only opener/closer for its panels.
+ for(const action of grid.querySelectorAll('button[data-action]:not([data-action="file"])')){
+  action.setAttribute('aria-pressed','false');
+  action.setAttribute('aria-expanded','false');
+  action.setAttribute('aria-controls','svDocToolPanel');
+ }
  let currentPrint=null,documentDraft='',documentFormat='pdf',documentTemplate='';
  const clear=()=>{
   panel.replaceChildren();cleanUrls();
@@ -211,11 +218,24 @@ function mount(target,{
  };
  const heading=(title,detail)=>{
   const bar=$('div','sv-doc-tool-head');
-  const copy=labelRow(title,detail);
-  const close=button('Свернуть',()=>{
-  operationEpoch++;importBusy=false;panel.hidden=true;delete panel.dataset.mode;mode='';clear();
- },'sv-doc-tool-close');
-  bar.append(copy,close);return bar;
+  bar.append(labelRow(title,detail));
+  return bar;
+ };
+ const syncToolSelection=()=>{
+  grid.querySelectorAll('button[data-action]:not([data-action="file"])').forEach(action=>{
+   const selected=!panel.hidden&&mode===action.dataset.action;
+   action.setAttribute('aria-pressed',String(selected));
+   action.setAttribute('aria-expanded',String(selected));
+   if(action.dataset.action==='scan'){
+    action.setAttribute('aria-label',selected?
+     'Свернуть сканер':'Сканировать документ: сфотографировать страницы и сохранить PDF');
+   }
+  });
+ };
+ const closePanel=()=>{
+  operationEpoch++;importBusy=false;panel.hidden=true;
+  delete panel.dataset.mode;delete panel.dataset.hasScans;
+  mode='';clear();syncToolSelection();
  };
  const warn=(text)=>$('p','sv-doc-tool-warning',text);
  const message=(text)=>{
@@ -223,9 +243,11 @@ function mount(target,{
   if(target)target.textContent=text;
  };
  function open(name){
+  if(mode===name&&!panel.hidden){closePanel();return;}
   if(mode!==name){operationEpoch++;importBusy=false;}
-  mode=name;panel.dataset.mode=name;panel.hidden=false;render();
-  // Keep the controls immediately next to their triggering actions.
+  mode=name;panel.dataset.mode=name;panel.hidden=false;
+  delete panel.dataset.hasScans;
+  render();syncToolSelection();
  }
  function render(){
   clear();if(!mode)return;
@@ -356,6 +378,7 @@ function mount(target,{
  }
  function renderScan(){
   clear();
+  panel.dataset.hasScans=String(scans.length>0);
   panel.append(heading('Сканер','Фото → PDF'));
   panel.append(scannerStage());
   panel.append(pictorialSteps([['camera','Фото'],['pages','Страницы'],['pdf','PDF']]));
@@ -904,6 +927,7 @@ function mount(target,{
    operationEpoch++;importBusy=false;
    scans=[page];selectedScan=0;
    mode='sign';panel.dataset.mode='sign';panel.hidden=false;render();
+   syncToolSelection();
    panel.scrollIntoView?.({block:'nearest',behavior:'smooth'});
    return true;
   }catch{return false;}
