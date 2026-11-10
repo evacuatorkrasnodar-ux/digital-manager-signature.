@@ -3684,7 +3684,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <p>В открытом приложении SEYVEO попробует распознавать ваше обращение по имени. Это пробный режим: браузер может прервать прослушивание, а звук для распознавания может передаваться внешнему сервису браузера.</p>
 <p>Фразы до обращения по имени наше приложение не сохраняет. Микрофон включится после вашего согласия, и его можно выключить в любой момент.</p>
 <div class="info-actions"><button id="wakeVoiceCancel" type="button" class="btn">Отмена</button><button id="wakeVoiceConfirm" type="button" class="btn primary">Включить</button></div>
-</dialog><dialog id="notesDialog" class="notes-dialog" aria-labelledby="notesTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" aria-label="Вернуться из блокнота"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><div class="notes-head"><h2 id="notesTitle">Блокнот</h2><p id="notesCount" class="notes-count" aria-live="polite"></p><button id="notesNew" type="button" class="notes-new" aria-label="Создать новую заметку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Новая заметка</span></button></div><div id="notesList" class="notes-list"></div><p id="notesStatus" role="status" aria-live="polite" hidden></p></dialog><dialog id="noteReviewDialog" class="notes-dialog note-review-dialog" aria-labelledby="noteReviewTitle">
+</dialog><dialog id="notesDialog" class="notes-dialog" aria-labelledby="notesTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" aria-label="Вернуться из блокнота"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><div class="notes-head"><h2 id="notesTitle">Блокнот</h2><p id="notesCount" class="notes-count" aria-live="polite"></p><button id="notesNew" type="button" class="notes-new" aria-label="Создать новую заметку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Новая заметка</span></button></div><div id="svNotebookCreateTiles" class="sv-notebook-create-tiles" role="group" aria-label="Создать запись"><button id="noteModeText" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4.5 19 10 5h4l5.5 14M7 13h10"/></svg></span><span class="paper-choice-copy"><strong>Текст</strong><small>Клавиатура и диктовка</small></span></button><button id="noteModePaper" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20ZM13.8 7.8l3 3"/></svg></span><span class="paper-choice-copy"><strong>От руки</strong><small>Пальцем или стилусом</small></span></button><button id="noteModeScan" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M7 3.5h7l4 4V13M7 3.5a2 2 0 0 0-2 2V18a2 2 0 0 0 2 2h5M14 3.5v4h4M8.5 11h5M8.5 14.5h3"/><circle cx="17" cy="17" r="3.5"/><path d="m19.7 19.7 2 2"/></svg></span><span class="paper-choice-copy"><strong>Фото → текст</strong><small>Сфотографировать или выбрать файл</small></span></button></div><div id="notesList" class="notes-list"></div><p id="notesStatus" role="status" aria-live="polite" hidden></p></dialog><dialog id="noteReviewDialog" class="notes-dialog note-review-dialog" aria-labelledby="noteReviewTitle">
 <button id="noteReviewBack" type="button" class="seyveo-close-control seyveo-dialog-close sv-note-back-arrow" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <div class="sv-note-header">
  <div class="sv-note-nav-brand"><strong>Блокнот</strong></div>
@@ -3767,16 +3767,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 </details>
 <div class="note-read-actions"><button id="noteReadEdit" class="btn" type="button">Изменить</button><button id="noteReadDone" class="btn primary" type="button">Готово</button></div>
 </dialog>
-<dialog id="noteModeDialog" class="notes-dialog paper-choice-dialog" aria-labelledby="noteModeTitle">
-<button id="noteModeBack" type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" aria-label="Вернуться к записям"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
-<h2 id="noteModeTitle">Новая запись</h2>
-<p>Выберите способ записи</p>
-<div class="paper-choice-list">
-<button id="noteModeText" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4.5 19 10 5h4l5.5 14M7 13h10"/></svg></span><span class="paper-choice-copy"><strong>Текст</strong><small>Клавиатура и диктовка</small></span></button>
-<button id="noteModePaper" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20ZM13.8 7.8l3 3"/></svg></span><span class="paper-choice-copy"><strong>От руки</strong><small>Пальцем или стилусом</small></span></button>
-<button id="noteModeScan" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M7 3.5h7l4 4V13M7 3.5a2 2 0 0 0-2 2V18a2 2 0 0 0 2 2h5M14 3.5v4h4M8.5 11h5M8.5 14.5h3"/><circle cx="17" cy="17" r="3.5"/><path d="m19.7 19.7 2 2"/></svg></span><span class="paper-choice-copy"><strong>Фото → текст</strong><small>Сфотографировать или выбрать файл</small></span></button>
-</div>
-</dialog>
+
 <dialog id="notePaperDialog" class="notes-dialog paper-editor-dialog sv-paper-studio" aria-labelledby="notePaperTitle">
 <h2 id="notePaperTitle" class="sv-paper-visually-hidden">Чистый лист</h2>
 <header class="sv-paper-top">
@@ -5027,35 +5018,7 @@ function renderNotes(){
  const n=notes.length;
  container.classList.toggle('is-empty',n===0);
  $('notesCount').textContent=n?(n+' '+(n%10===1&&n%100!==11?'запись':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'записи':'записей')):'Пространство для мыслей';
- if(!notes.length){
-  const empty=document.createElement('p');empty.className='note-empty';
-  empty.innerHTML='<span class="note-empty-mark" aria-hidden="true"><svg viewBox="0 0 32 32" focusable="false"><path d="M8 24h16M10 7h8l5 5v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3zM18 7v6h5M12 18l3-3 2 2-3 3-3 1z"/></svg></span><strong>Ваше пространство</strong><span>Здесь появятся ваши мысли, заметки и рисунки.</span>';
-  // This SVG must never acquire the legacy grey tile.
-  const mark=empty.querySelector('.note-empty-mark');
-  if(mark){
-    const declarations={
-      'background':'transparent','background-color':'transparent','background-image':'none',
-      'border':'0','border-radius':'0','box-shadow':'none','filter':'none',
-      'width':'44px','height':'44px','min-width':'44px','min-height':'44px',
-      'max-width':'44px','max-height':'44px'
-    };
-    for(const [property,value] of Object.entries(declarations)){
-      mark.style.setProperty(property,value,'important');
-    }
-  }
-  container.append(empty);
-  // A gentle first step only in the Work-tab Notebook.
-  // Reuse the existing + button's chooser and note editor.
-  if(window.SEYVEO_WORK_SHELL?.isNotesInline?.()===true){
-   const first=document.createElement('button');
-   first.type='button';
-   first.className='sv-note-first-action';
-   first.textContent='Создать первую запись';
-   first.addEventListener('click',()=>document.getElementById('notesNew')?.click());
-   container.append(first);
-  }
-  return;
- }
+ if(!notes.length)return;
  notes.forEach(note=>{
   const card=document.createElement('article');card.className='note-item';
   if(note.paper)card.classList.add('paper-note');
@@ -5476,27 +5439,11 @@ $('moreComposer').addEventListener('click',()=>{
 });
 $('viewNotes').addEventListener('click',openNotes);
 window.addEventListener('seyveo:notes-open',openNotes);
-function showNoteMode(){
- $('notesDialog').close();
- $('noteModeDialog').showModal();
-}
-$('notesNew').addEventListener('click',showNoteMode);
-$('noteModeBack').addEventListener('click',()=>$('noteModeDialog').close());
-$('noteModeDialog').addEventListener('close',()=>{
- if(!$('noteReviewDialog').open&&!$('notePaperDialog').open&&!$('noteScanDialog').open)openNotes();
-});
-$('noteModeText').addEventListener('click',()=>{
- $('noteModeDialog').close();
- openNoteReview('');
-});
-$('noteModePaper').addEventListener('click',()=>{
- $('noteModeDialog').close();
- window.SEYVEO_PAPER?.open();
-});
-$('noteModeScan').addEventListener('click',()=>{
- $('noteModeDialog').close();
- window.SEYVEO_NOTE_SCANNER?.open();
-});
+// One Notebook landing with three direct creation actions.
+$('notesNew').addEventListener('click',()=>{if($('notesDialog').open)$('notesDialog').close();openNoteReview('')});
+$('noteModeText').addEventListener('click',()=>{if($('notesDialog').open)$('notesDialog').close();openNoteReview('')});
+$('noteModePaper').addEventListener('click',()=>{if($('notesDialog').open)$('notesDialog').close();window.SEYVEO_PAPER?.open()});
+$('noteModeScan').addEventListener('click',()=>{if($('notesDialog').open)$('notesDialog').close();window.SEYVEO_NOTE_SCANNER?.open()});
 $('clearText').addEventListener('click',()=>{question.value='';syncComposer();composerMessage('Поле очищено')});
 $('collapseComposer').addEventListener('click',collapseComposer);
 $('copyText').addEventListener('click',async()=>{
