@@ -1284,7 +1284,7 @@ function mailView(){
    }
    if(chosen){
     const permanent=mailFolder==='trash';
-    const clean=create('button','sv-mail-bulk-clean',permanent?'Удалить':'Очистить');
+    const clean=create('button','sv-mail-bulk-clean','Очистить');
     clean.type='button';
     clean.setAttribute('aria-label',permanent
      ?'Удалить навсегда '+chosen+' выбранных писем после подтверждения'
