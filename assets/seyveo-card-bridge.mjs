@@ -15,6 +15,30 @@ const cards=new Map(),trace=[];const scope={accountId:'demo-account',workspaceId
    This is a local audit view, not restored permission to execute a card. */
 const ACTION_HISTORY_KEY='seyveo-card-action-history-v1';
 const ACTION_HISTORY_LIMIT=180;
+const REMOVED_HISTORY_KEY='seyveo-card-action-removed-v1';
+function removedHistoryIds(){
+ try{const a=JSON.parse(localStorage.getItem(REMOVED_HISTORY_KEY)||'[]');
+  return new Set(Array.isArray(a)?a.filter(x=>typeof x==='string'):[]);}
+ catch{return new Set();}
+}
+function removeHistoryEntry(eventId){
+ if(typeof eventId!=='string'||!eventId)return false;
+ try{
+  const removed=removedHistoryIds();removed.add(eventId);
+  localStorage.setItem(REMOVED_HISTORY_KEY,JSON.stringify([...removed].slice(-4000)));
+  localStorage.setItem(ACTION_HISTORY_KEY,JSON.stringify(storedActionHistory().filter(e=>e.eventId!==eventId)));
+  window.dispatchEvent(new Event('seyveo:cards-changed'));return true;
+ }catch{return false;}
+}
+function clearPersonalHistory(){
+ try{
+  const removed=removedHistoryIds();
+  for(const e of history())removed.add(e.eventId);
+  localStorage.setItem(REMOVED_HISTORY_KEY,JSON.stringify([...removed].slice(-4000)));
+  localStorage.setItem(ACTION_HISTORY_KEY,'[]');
+  window.dispatchEvent(new Event('seyveo:cards-changed'));return true;
+ }catch{return false;}
+}
 function storedActionHistory(){
  try{
   const rows=JSON.parse(localStorage.getItem(ACTION_HISTORY_KEY)||'[]');
@@ -97,13 +121,14 @@ function history(){
   if(!row||typeof row.eventId!=='string'||typeof row.at!=='string')continue;
   unique.set([row.eventId,row.at,row.to].join('|'),row);
  }
- return [...unique.values()].sort((a,b)=>String(b.at).localeCompare(String(a.at)))
+ const removed=removedHistoryIds();
+ return [...unique.values()].filter(e=>!removed.has(e.eventId)).sort((a,b)=>String(b.at).localeCompare(String(a.at)))
   .slice(0,ACTION_HISTORY_LIMIT);
 }
 function inspect(){return {cards:[...cards.values()].map(c=>({id:c.id,eventId:c.eventId,type:c.cardType,status:c.status,priority:c.priority})),trace:trace.slice()};}
 // The bridge never sends messages or signs documents. It only records the
 // outcome AFTER an external integration or explicit local demo confirms it.
-Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,deferred,archive,postpone,resume,openChat,complete,confirmSentMail,orderPreview,history,inspect}),writable:false,configurable:false});
+Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,deferred,archive,postpone,resume,openChat,complete,confirmSentMail,orderPreview,history,removeHistoryEntry,clearPersonalHistory,inspect}),writable:false,configurable:false});
 log('ready','Card Engine bridge loaded; legacy cards untouched');
 
 // Non-invasive adapter for the existing Quiet Cinema demo mail card.
