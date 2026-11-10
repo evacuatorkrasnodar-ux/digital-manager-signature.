@@ -194,7 +194,8 @@ function songTitle(query){
 }
 function musicIntent(query){
  const q=withoutWake(query);
- const wantsMusic=songWords.test(q)||searchContext().kind==='music';
+ const here=searchContext();
+ const wantsMusic=songWords.test(q)||(here.kind==='music'&&!documentWords.test(q)&&!mailWords.test(q));
  const isMusicVerb=/^(?:включи|включить|поставь|поставить|проиграй|послушай|запусти|запустить|слушать|найди|найти|поищи)\s+/u.test(q);
  if(wantsMusic&&(isMusicVerb||searchContext().kind==='music')){
   const title=songTitle(q);
@@ -217,8 +218,10 @@ function intention(query){
   if(documentWords.test(q))return {action:'connect:documents'};
   if(/(?:банк|касс|crm|срм|битрикс|1с)/u.test(q))return {action:'connect:pulse'};
  }
- const documentScope=/(?:рабоч|компан|контрагент|клиент)/u.test(q) &&
-    window.SEYVEO_PREVIEW?.isManager?.()===true?'business':'personal';
+ const activeDoc=searchContext();
+ const documentScope=/(?:рабоч|компан|контрагент|клиент)/u.test(q)&&window.SEYVEO_PREVIEW?.isManager?.()===true
+  ?'business':/(?:личн(?:ый|ые|ая)|мо[йяи]\s+личн)/u.test(q)
+   ?'personal':activeDoc.kind==='documents'?activeDoc.area:'personal';
  if(/^(?:где|покажи|открой|найди|найти|отыщи|перейди к)\s+/u.test(q)){
   if(documentWords.test(q))return {action:'docs:'+documentScope,reveal:true};
   if(mailWords.test(q))return {action:/черновик/u.test(q)?'mail:drafts':'mail:inbox'};
