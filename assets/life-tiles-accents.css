@@ -321,7 +321,14 @@ html.sv-space-active #lifePage .sv-world-manage-copy small{
  font-weight:440;line-height:1.32;
 }
 html.sv-space-active #lifePage .sv-world-manage-chevron{
- justify-self:end;color:var(--secondary);font-size:20px;font-weight:350;opacity:.68;
+ display:grid;place-items:center;justify-self:end;
+ width:24px;height:24px;
+ color:var(--secondary);opacity:.82;
+}
+html.sv-space-active #lifePage .sv-world-manage-chevron svg{
+ display:block;width:17px;height:17px;fill:none;
+ stroke:currentColor;stroke-width:1.6;
+ stroke-linecap:round;stroke-linejoin:round;
 }
 html.sv-space-active #lifePage .sv-world-manage-link:active{opacity:.7}
 html.sv-space-active #lifePage .sv-world-manage-link:focus-visible{
