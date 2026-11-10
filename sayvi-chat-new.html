@@ -3161,7 +3161,12 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   }
  }
  sendButton.addEventListener('click',send);
- input.addEventListener('input',updateControls);
+ input.addEventListener('input',()=>{
+  // Editing a new draft clears a stale status line, freeing the same quiet
+  // space for local topic anticipation. No outgoing request happens here.
+  if(!active)status.textContent='';
+  updateControls();
+ });
  input.addEventListener('keydown',event=>{
   if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){
    event.preventDefault();send();
