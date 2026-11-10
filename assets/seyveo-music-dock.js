@@ -42,13 +42,12 @@ function init(){
   describe(outer[0],'Пред.','prev','prev');
   describe(outer[1],playing?'Пауза':'Слушать',playing?'pause':'play','play');
   describe(outer[2],'След.','next','next');
-  describe(outer[3],'Поиск','search','search');
-  // One global Search is available inside Music too; the track queue
-  // already has a separate control on the original player screen.
+  // Keep the original approved laser-drawn Search glyph exactly as it
+  // appeared outside Music. Do not redraw or resize this dock control.
+  // The global-search listener still receives clicks on navManage.
   delete outer[3].dataset.svMusicAction;
   outer[3].setAttribute('aria-label','Умный поиск SEYVEO');
   outer[3].setAttribute('aria-controls','svGlobalSearch');
-  outer[3].setAttribute('aria-expanded','false');
   outer[0].setAttribute('aria-disabled',String(!loaded));
   outer[2].setAttribute('aria-disabled',String(!loaded));
   outer[1].setAttribute('aria-disabled','false');
