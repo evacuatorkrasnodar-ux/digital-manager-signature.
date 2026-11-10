@@ -1376,3 +1376,24 @@ html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button:foc
 #tasksPage #svManagerAssignments .svcp-task-list{gap:0}
 #tasksPage #svManagerAssignments .svcp-task-title{overflow-wrap:anywhere;word-break:normal}
 #tasksPage #svManagerAssignments .svcp-task-extra{background:#38383A!important}
+
+/* History: graphite back; transparent search and menu; four balanced header slots. */
+html body #svWorkShell[data-shared-work="true"][data-history="true"] #svWorkHeader{
+ grid-template-columns:44px minmax(0,1fr) 44px 44px!important;
+ column-gap:5px!important;
+}
+html body #svWorkShell[data-shared-work="true"][data-history="true"] #sahHistoryMore:not([hidden]){
+ grid-column:3!important;grid-row:1!important;justify-self:end!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;width:44px!important;height:44px!important;
+ padding:0!important;margin:0!important;background:transparent!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ color:var(--text,#f7f7f8)!important;
+}
+html body #svWorkShell[data-shared-work="true"][data-history="true"] #svWorkAdd:not([hidden]){
+ grid-column:4!important;grid-row:1!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ color:var(--text,#f7f7f8)!important;
+}
