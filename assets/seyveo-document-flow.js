@@ -273,8 +273,8 @@ function renderRecord(node,x){
    $('strong','svdf-paper-title',TYPES[x.kind].title),
    $('p','svdf-document-body',latestRevision(x).body),
    $('small','svdf-paper-version','Редакция №'+latestRevision(x).number));
-  detail.append(paper);
-  
+  // Keep progress with its corresponding document, not above the queue.
+  detail.append(paper,journey(x));
   const actions=$('div','svdf-actions');
   if(role==='employee'){
    if(x.state==='sent'){
@@ -336,20 +336,25 @@ function renderRecord(node,x){
    buttons.append(button('Отмена',()=>{revisionDraft={id:'',body:'',note:''};draw();},'svdf-quiet'));
    editor.append(buttons);detail.append(editor);
   }
-  const versions=$('details','svdf-versions');
-  versions.append($('summary','','Редакции · '+x.revisions.length));
+  // History and revisions now share one disclosure. Their data is untouched.
+  const history=$('details','svdf-history');
+  history.append($('summary','','История документа · '+x.revisions.length+' ред. · '+x.log.length+' действий'));
+  const historyBody=$('div','svdf-history-body');
+  const versions=$('section','svdf-versions');
+  versions.append($('strong','svdf-history-subhead','Редакции'));
   for(const rev of x.revisions.slice().reverse()){
-   // Historical text is available on demand, never repeated in full by default.
    const section=$('details','svdf-revision-item');
    section.append($('summary','','№'+rev.number+' · '+stamp(rev.at)),
     $('small','',rev.note),$('p','',rev.body));
    versions.append(section);
   }
-  detail.append(versions);
-  const log=$('details','svdf-log');log.append($('summary','','История действий · '+x.log.length));
+  const log=$('section','svdf-log');
+  log.append($('strong','svdf-history-subhead','Действия'));
   const timeline=$('ol','');
   for(const item of x.log)timeline.append($('li','',stamp(item.at)+' · '+item.text));
-  log.append(timeline);detail.append(log);card.append(detail);
+  log.append(timeline);
+  historyBody.append(versions,log);history.append(historyBody);
+  detail.append(history);card.append(detail);
  }
  node.append(card);
 }
@@ -362,14 +367,14 @@ function draw(){
   $('p','',''));
  host.append(lead);
  const safety=$('details','svdf-safety');
- safety.append($('summary','','Демо · только примеры'));
- safety.append($('p','','Учебные записи хранятся в браузере без шифрования, без серверной отправки, проверки ролей и электронной подписи. Используйте только вымышленные документы.'));
+ safety.append($('summary','','Учебный режим · без отправки'));
+ safety.append($('p','','Согласования здесь учебные: данные хранятся в браузере без шифрования, не отправляются на сервер и не являются электронной подписью. Используйте только вымышленные документы.'));
  host.append(safety);
  
- host.append(journey(get(selected)));
+ // Progress lives only within an expanded document.
  if(role==='manager'){
   const form=$('section','svdf-create svdf-create-simple');
-  form.append($('strong','','Новый запрос'));
+  form.append($('strong','','Новый запрос · Елена'));
   const sendLabel=()=>TYPES[kind].type==='Ознакомление'?'На ознакомление':'На согласование';
   const submit=button(sendLabel(),create,'svdf-primary');
   const choices=$('div','svdf-template-gallery');
@@ -394,9 +399,8 @@ function draw(){
    option.append(thumbnail,$('strong','',key==='schedule'?'Приказ':key==='equipment'?'Акт':'Договор'));
    choices.append(option);
   }
-  const recipient=$('div','svdf-recipient');
-  recipient.append(pictogram('person'),$('span','','Елена'));
-  form.append(choices,recipient,submit);
+  // Recipient already appears above the templates.
+  form.append(choices,submit);
   host.append(form);
  }else host.append($('p','svdf-hint svdf-staff-instruction','Выберите входящий документ для решения.'));
  const active=records.filter(isActive).length,completed=records.length-active;
@@ -422,7 +426,7 @@ function draw(){
  const more=$('details','svdf-optional');
  more.append($('summary','','Дополнительно'));
  const moreActions=$('div','svdf-optional-actions');
- const chat=button('Обсудить в рабочем чате',()=>{
+ const chat=button('Рабочий чат',()=>{
   const open=window.SEYVEO_UNIFIED_TASKS?.openChat;
   if(typeof open==='function')open('manage','docs',role==='employee'?'elena':'manager');
   else{info='Рабочий чат пока недоступен.';draw();}
