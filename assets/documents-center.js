@@ -194,7 +194,13 @@ function draw(){
  const selected=files[area];
  const picker=document.createElement('input');
  picker.type='file';picker.hidden=true;
- picker.accept='.pdf,.txt,.md,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.webp';
+ const allFileTypes='.pdf,.txt,.md,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.webp';
+ const typeFilters={pdf:'.pdf',word:'.docx',images:'.png,.jpg,.jpeg,.webp',sheets:'.xlsx'};
+ const openPicker=(type='all')=>{
+  picker.accept=typeFilters[type]||allFileTypes;
+  picker.click();
+ };
+ picker.accept=allFileTypes;
  picker.setAttribute('aria-label','Добавить документ в архив');
  picker.addEventListener('change',()=>{
   const file=picker.files?.[0];
@@ -213,7 +219,7 @@ function draw(){
  const studioReady=window.SEYVEO_DOCS_STUDIO?.mount?.(tools,{
   area,
   getCurrentFile:()=>files[area]||null,
-  onPick:()=>picker.click(),
+  onPick:()=>openPicker(),
   onSayvi:goSayvi,
   onImport:file=>{
    if(!(file instanceof File)||file.size>MAX_FILE||!allowed.test(file.name))
@@ -230,7 +236,7 @@ function draw(){
  }else{
   // Fallback stays visible when the illustrated studio is unavailable.
   const storeActions=el('div','sv-doc-store-actions');
-  storeActions.append(button('Добавить документ',()=>picker.click(),'sv-doc-primary'));
+  storeActions.append(button('Добавить документ',()=>openPicker(),'sv-doc-primary'));
   safeArea.append(storeActions,picker);
   host.append(safeArea);
  }
@@ -245,7 +251,7 @@ function draw(){
  window.SEYVEO_DOCUMENT_SHELF?.mount?.(shelf,{
   area,
   getSelected:()=>stored[area]?null:files[area],
-  onPick:()=>picker.click(),
+  onPick:type=>openPicker(type),
   onArchive(){
    const details=host?.querySelector('.sv-doc-vault-shell');
    if(!details)return;
@@ -303,18 +309,18 @@ function draw(){
   host.append(preview);
  }
  const assistant=el('section','sv-doc-assistant');
- assistant.append(el('h2','sv-doc-assistant-title','Сэйви поможет'));
+ // The compact assistant row already names Sayvi. No extra heading.
  const hero=el('details','sv-doc-assistant-hero');
  const intro=el('summary','sv-doc-assistant-summary');
  const markBox=el('span','sv-doc-assistant-mark-box');
  markBox.append(makeIcon('sayvi'));intro.append(markBox);
  const copy=el('span','sv-doc-assistant-hero-copy');
- copy.append(el('strong','','Сэйви поможет составить и проверить документ'));
+ copy.append(el('strong','','Помощь Сэйви с документами'));
  intro.append(copy,el('span','sv-doc-chat-chevron','›'));
  const actions=el('div','sv-doc-assistant-actions');
  actions.append(
-  button('Создать документ',()=>goSayvi('create'),'sv-doc-assistant-action'),
-  button('Проверить документ',()=>goSayvi('review'),'sv-doc-assistant-action'));
+  button('Создать с Сэйви',()=>goSayvi('create'),'sv-doc-assistant-action'),
+  button('Проверить с Сэйви',()=>goSayvi('review'),'sv-doc-assistant-action'));
  hero.append(intro,actions);assistant.append(hero);host.append(assistant);
  host.append(archive);
  if(area==='business')host.append(connectionsEntry());
