@@ -479,8 +479,8 @@ function mailView(){
  const compose=create('button','sv-mail-icon-button sv-mail-compose');compose.type='button';
  compose.setAttribute('aria-label','Написать письмо');compose.append(mailIcon('pencil'));
  compose.addEventListener('click',()=>openEditor());
- // The titlebar stays minimal: Compose and Search only.
- // Connections are discoverable below the Personal / Work account switch.
+ // Shield opens the compact protection popover beside Compose; Search remains right-aligned.
+ // Connection prompt stays below the Personal / Work account switch.
  topButtons.append(compose,searchToggle);
  const introCopy=create('div','sv-mail-introduction-text');
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
@@ -518,91 +518,130 @@ function mailView(){
  // Search lives in its own row between the titlebar and account switch.
  // It pushes content down instead of obscuring the selected mail scope.
 
- const guardRow=create('div','sv-mail-gate-row');
- const guardTrigger=create('button','sv-mail-gate-trigger');guardTrigger.type='button';
- guardTrigger.append(mailIcon('shield'),create('span','sv-mail-gate-trigger-label','Умный допуск'),mailIcon('settings'));
- guardTrigger.setAttribute('aria-label','Настроить защиту почты');
+
+ const guardTrigger=create('button','sv-mail-icon-button sv-mail-shield-toggle');guardTrigger.type='button';
+ guardTrigger.append(mailIcon('shield'));
+ guardTrigger.setAttribute('aria-label','Защита почты · Умный допуск');
+ guardTrigger.setAttribute('aria-haspopup','true');
  guardTrigger.setAttribute('aria-expanded','false');
- const guardReview=create('button','sv-mail-gate-review');guardReview.type='button';
- guardReview.addEventListener('click',()=>selectFolder('review'));
- guardRow.append(guardTrigger,guardReview);
+ guardTrigger.setAttribute('aria-controls','svMailProtectionMenu');
+ // Compose, Protection, Search: three identical, centered header actions.
+ topButtons.replaceChildren(compose,guardTrigger,searchToggle);
  const guardPanel=create('section','sv-mail-gate-panel');guardPanel.hidden=true;
- guardPanel.setAttribute('aria-label','Настройки допуска почты');
+ guardPanel.id='svMailProtectionMenu';
+ guardPanel.setAttribute('aria-label','Умный допуск · защита почты');
  let guardOpen=false,guardAccount='personal';
- const closeGate=()=>{guardOpen=false;paint()};
+ const closeGate=()=>{if(!guardOpen)return;guardOpen=false;renderGate()};
  mailGuardExitHandler=()=>{if(!guardOpen)return false;closeGate();return true};
- guardTrigger.addEventListener('click',()=>{guardAccount=mailScope==='all'?'personal':mailScope;guardOpen=true;paint()});
+ guardTrigger.addEventListener('click',event=>{
+  event.stopPropagation();
+  guardAccount=mailScope==='all'?guardAccount:mailScope;
+  guardOpen=!guardOpen;renderGate();
+ });
+ // Close like native iOS popovers, without covering the Inbox with a modal.
+ document.addEventListener('pointerdown',event=>{
+  if(!guardOpen||top.contains(event.target))return;
+  closeGate();
+ });
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&guardOpen){event.preventDefault();closeGate();guardTrigger.focus()}
+ });
  function renderGate(){
   const account=guardAccount;
-  const pending=folderCount('review');
-  const modes=mailScope==='all'?'Умный допуск':MAIL_GATE_MODES[mailGate[account].mode].title;
-  guardTrigger.querySelector('.sv-mail-gate-trigger-label').textContent=modes;
   guardTrigger.setAttribute('aria-expanded',String(guardOpen));
-  guardReview.hidden=!pending||!mailShowExamples;
-  guardReview.textContent='На проверке · '+pending;
   guardPanel.hidden=!guardOpen||mailEditorOpen||!!mailCurrent;
   guardPanel.replaceChildren();
   if(!guardOpen)return;
-  const gateHead=create('div','sv-mail-gate-page-head');
-  const gateBack=create('button','sv-mail-gate-back');gateBack.type='button';
-  gateBack.append(mailIcon('back'));gateBack.setAttribute('aria-label','Назад к почте');
-  gateBack.addEventListener('click',closeGate);
-  gateHead.append(gateBack,create('span','sv-mail-gate-page-heading','Защита почты'));
-  guardPanel.append(gateHead);
-  guardPanel.append(create('p','sv-mail-gate-lead','Сэйви помогает оставить важное во входящих.'));
-  guardPanel.append(create('strong','sv-mail-gate-heading','Кто может писать вам'));
+  const title=create('div','sv-mail-gate-menu-heading');
+  title.append(create('strong','','Защита почты'));
+  const close=create('button','sv-mail-gate-menu-close');
+  close.type='button';close.append(mailIcon('back'));
+  close.setAttribute('aria-label','Закрыть настройки защиты');
+  close.addEventListener('click',()=>{closeGate();guardTrigger.focus()});
+  title.append(close);guardPanel.append(title);
   const chooser=create('div','sv-mail-gate-accounts');
-  for(const [key,title] of [['personal','Личная'],['business','Рабочая']]){
-   const button=create('button','sv-mail-gate-account',title);
+  for(const [key,label] of [['personal','Личная'],['business','Рабочая']]){
+   const button=create('button','sv-mail-gate-account',label);
    button.type='button';button.setAttribute('aria-pressed',String(account===key));
    button.addEventListener('click',()=>{guardAccount=key;renderGate()});
    chooser.append(button);
   }
   guardPanel.append(chooser);
-  const radio=create('div','sv-mail-gate-modes');
-  radio.setAttribute('role','group');radio.setAttribute('aria-label','Режим защиты');
+  const modes=create('div','sv-mail-gate-modes');modes.setAttribute('role','group');
+  modes.setAttribute('aria-label','Режим защиты '+(account==='business'?'рабочей':'личной')+' почты');
+  const hints={smart:'Сэйви сортирует подозрительные письма',contacts:'Знакомые и разрешённые отправители',strict:'Только доверенные адреса и домены'};
   for(const [key,entry] of Object.entries(MAIL_GATE_MODES)){
    const button=create('button','sv-mail-gate-mode');button.type='button';
    button.setAttribute('aria-pressed',String(mailGate[account].mode===key));
    const marker=create('span','sv-mail-gate-radio');
    const body=create('span','sv-mail-gate-mode-body');
-   const hints={smart:'Проверка неизвестных и сортировка рассылок',contacts:'Во входящих — контакты и доверенные',strict:'Только разрешённые адреса и домены'};
    body.append(create('strong','',entry.title),create('small','',hints[key]));
    button.append(marker,body);
-   button.addEventListener('click',()=>{mailGate[account].mode=key;saveMailGate();mailCurrent=null;paint()});
-   radio.append(button);
+   button.addEventListener('click',()=>{
+    mailGate[account].mode=key;saveMailGate();
+    // Preserve this menu while the mailbox counts are recalculated.
+    renderGate();refreshMailGateView();
+   });
+   modes.append(button);
   }
-  guardPanel.append(radio);
-  guardPanel.append(create('strong','sv-mail-gate-subheading','Доверенные адреса'));
+  guardPanel.append(modes);
+  const trustedDetails=create('details','sv-mail-gate-trusted-details');
+  trustedDetails.append(create('summary','','Доверенные адреса и домены · '+mailGate[account].trusted.length));
   const form=create('form','sv-mail-gate-form');
   const input=create('input','');input.type='text';input.required=true;input.maxLength=254;
   input.autocapitalize='off';input.autocomplete='off';input.spellcheck=false;
-  input.placeholder='name@site.ru или @site.ru';input.setAttribute('aria-label','Добавить доверенный адрес или домен');
+  input.placeholder='name@site.ru или @site.ru';
+  input.setAttribute('aria-label','Доверенный адрес или домен');
   const add=create('button','','Добавить');add.type='submit';
   form.append(input,add);
   const status=create('small','sv-mail-gate-status');status.setAttribute('role','status');
+  const trusted=create('div','sv-mail-gate-trusted');
+  function paintTrusted(){
+   trusted.replaceChildren();
+   for(const address of mailGate[account].trusted){
+    const chip=create('span','sv-mail-gate-chip');
+    chip.append(create('span','',address));
+    const remove=create('button','','×');remove.type='button';
+    remove.setAttribute('aria-label','Убрать из доверенных: '+address);
+    remove.addEventListener('click',()=>{
+     mailGate[account].trusted=mailGate[account].trusted.filter(v=>v!==address);
+     saveMailGate();paintTrusted();refreshMailGateView();
+    });
+    chip.append(remove);trusted.append(chip);
+   }
+   trustedDetails.querySelector('summary').textContent='Доверенные адреса и домены · '+mailGate[account].trusted.length;
+  }
   form.addEventListener('submit',event=>{
    event.preventDefault();
    if(!addGateTrusted(account,input.value)){status.textContent='Проверьте адрес или лимит 60 записей.';return}
-   paint();
+   input.value='';status.textContent='Добавлено в доверенные';
+   paintTrusted();refreshMailGateView();
   });
-  guardPanel.append(form,status);
-  const trusted=create('div','sv-mail-gate-trusted');
-  for(const address of mailGate[account].trusted){
-   const chip=create('span','sv-mail-gate-chip');
-   chip.append(create('span','',address));
-   const remove=create('button','','×');remove.type='button';remove.setAttribute('aria-label','Убрать из доверенных: '+address);
-   remove.addEventListener('click',()=>{mailGate[account].trusted=mailGate[account].trusted.filter(v=>v!==address);saveMailGate();paint()});
-   chip.append(remove);trusted.append(chip);
+  trustedDetails.append(form,status,trusted);
+  paintTrusted();guardPanel.append(trustedDetails);
+  const pending=folderCount('review');
+  if(pending&&mailShowExamples){
+   const review=create('button','sv-mail-gate-menu-review');
+   review.type='button';review.append(mailIcon('shield'),create('span','','На проверке · '+pending));
+   review.addEventListener('click',()=>selectFolder('review'));
+   guardPanel.append(review);
   }
-  guardPanel.append(trusted);
-  const gateHelp=create('details','sv-mail-gate-help');
-  gateHelp.append(create('summary','','Как работает защита'));
-  gateHelp.append(create('p','','Адрес разрешает одного отправителя, @домен — всех отправителей домена. Сейчас правила применяются только к примерам писем. Контакты, серверная фильтрация и интернет-проверка не подключены; настоящие письма не отклоняются.'));
-  guardPanel.append(gateHelp);
-  guardPanel.append(create('small','sv-mail-gate-caution','Режим проверки пока работает с учебными письмами.'));
+  guardPanel.append(create('small','sv-mail-gate-caution','Защита пока работает с учебными письмами. Реальная фильтрация — после подключения почты.'));
  }
- section.append(top,searchLabel,scopeNav,connect,guardRow,guardPanel,nav,extraNav,info,content);body.append(section);
+ function refreshMailGateView(){
+  if(mailEditorOpen||mailCurrent)return;
+  // Refresh counts and lists without re-creating the popover or its focused inputs.
+  for(const control of nav.querySelectorAll('[data-mail-folder]')){
+   const count=folderCount(control.dataset.mailFolder);
+   const old=control.querySelector('.sv-mail-folder-count');
+   if(old)old.remove();
+   if(count)control.append(create('small','sv-mail-folder-count',String(count)));
+  }
+  paintList();
+ }
+ top.append(guardPanel);
+ section.append(top,searchLabel,scopeNav,connect,nav,extraNav,info,content);
+ body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['review','На проверке'],['promotions','Рассылки'],['spam','Спам'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
@@ -1256,16 +1295,15 @@ function mailView(){
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
  function paint(){
-  page.dataset.svMailMode=mailEditorOpen?'editor':mailCurrent?'detail':guardOpen?'guard':'overview';
-  section.classList.toggle('sv-mail-guard-active',guardOpen);
+  page.dataset.svMailMode=mailEditorOpen?'editor':mailCurrent?'detail':'overview';
   section.dataset.mailFolder=mailFolder;
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
   introCopy.hidden=mailEditorOpen||!!mailCurrent;
   top.hidden=mailEditorOpen||!!mailCurrent;
   searchToggle.hidden=mailEditorOpen||!!mailCurrent;
   connect.hidden=mailEditorOpen||!!mailCurrent;
-  guardRow.hidden=mailEditorOpen||!!mailCurrent;
-  if(mailEditorOpen||mailCurrent)guardPanel.hidden=true;
+  guardTrigger.hidden=mailEditorOpen||!!mailCurrent;
+  if(mailEditorOpen||mailCurrent){guardOpen=false;guardPanel.hidden=true;}
   scopeNav.replaceChildren();
   for(const [key,label] of [['all','Все'],['personal','Личная'],['business','Рабочая']]){
    const button=create('button','sv-mail-account-switch',label);
