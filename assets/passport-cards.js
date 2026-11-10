@@ -103,6 +103,19 @@ function drawRows(){
  const emptyMark=$('seyveoCompanyEmptyMark');if(emptyMark)emptyMark.hidden=saved;
  $('seyveoCompanyEditTop').querySelector('span').textContent=saved?'Изменить':'Заполнить карточку';
  $('seyveoCompanyEditTop').setAttribute('aria-label',saved?'Изменить сведения компании':'Заполнить карточку компании');
+ // Reuse the same edit control: in a filled card it is a quiet titlebar icon,
+ // in an empty card it is the sole centered call-to-action.
+ const edit=$('seyveoCompanyEditTop');
+ const header=dialog.querySelector('.seyveo-passport-dialog-head');
+ const actions=dialog.querySelector('.sv-company-actions');
+ if(saved){
+  if(header&&edit.parentElement!==header)header.append(edit);
+  edit.classList.add('is-header-action');
+ }else{
+  if(actions&&edit.parentElement!==actions.parentElement)actions.before(edit);
+  edit.classList.remove('is-header-action');
+ }
+ edit.hidden=companyEditing();
  const qrReady=canCreateCompanyQr(card);
  dialog.dataset.svCompanyQrReady=String(qrReady);
  dialog.querySelector('.sv-company-actions').hidden=!saved;
@@ -175,6 +188,8 @@ function setCompanyMode(mode){
  dialog.dataset.svCompanyMode=editing?'edit':'view';
  companyView.hidden=editing;
  companyEditor.hidden=!editing;
+ const editButton=$('seyveoCompanyEditTop');
+ if(editButton)editButton.hidden=editing;
  if(editing)updateTypeChoice(Boolean(clean(load().name)));
  if(companyDone){
   // Preserve the original back-arrow SVG. textContent deleted it previously.
