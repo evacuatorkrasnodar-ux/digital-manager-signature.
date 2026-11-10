@@ -293,7 +293,7 @@
   }
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
-  add.hidden=active==='employee'&&!history;
+  add.hidden=history||active==='employee';
   const nextIcon=history?'search':'add';
   if(add.dataset.svHeaderIcon!==nextIcon){
    add.innerHTML=history?searchIcon:plusIcon;
