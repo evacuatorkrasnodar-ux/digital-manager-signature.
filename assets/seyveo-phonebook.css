@@ -1,0 +1,267 @@
+/* SEYVEO Phonebook · Premium Graphite.
+   One real contact directory, one native dock, no glass. */
+html body dialog#seyveoContactsDialog.personal-contacts-dialog[open]{
+  --sv-phone-graphite:#38383A;
+  box-sizing:border-box!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:var(--bg)!important;
+  background-image:none!important;
+  color:var(--text)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+  overscroll-behavior:contain;
+  scrollbar-width:none;
+}
+#seyveoContactsDialog::-webkit-scrollbar{display:none}
+html body #seyveoContactsDialog[open] > button#seyveoContactsClose{
+  -webkit-appearance:none!important;appearance:none!important;
+  position:absolute!important;
+  top:calc(19px + env(safe-area-inset-top,0px))!important;
+  left:max(16px,env(safe-area-inset-left,0px))!important;
+  z-index:5!important;
+  display:grid!important;place-items:center!important;
+  width:44px!important;height:44px!important;
+  min-width:44px!important;min-height:44px!important;
+  margin:0!important;padding:0!important;
+  border:0!important;border-radius:50%!important;
+  background:#38383A!important;background-image:none!important;
+  color:#F5F5F6!important;opacity:1!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #seyveoContactsDialog[open] > button#seyveoContactsClose svg{
+  display:block!important;width:19px!important;height:19px!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#seyveoContactsDialog .sv-phonebook-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;min-height:53px;padding-left:56px;margin:0 0 19px;
+}
+html body #seyveoContactsDialog #seyveoContactsTitle{
+  display:block;flex:1;min-width:0;
+  margin:0!important;padding:0!important;
+  font-size:clamp(26px,6.6vw,30px)!important;
+  line-height:1.12!important;font-weight:630!important;
+  letter-spacing:-.045em!important;color:var(--text)!important;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#seyveoContactsDialog #seyveoContactAdd{
+  -webkit-appearance:none;appearance:none;
+  display:grid;place-items:center;flex:0 0 44px;
+  width:44px;height:44px;min-width:44px;min-height:44px;
+  margin:0;padding:0;border:0;border-radius:50%;
+  background:#38383A;color:#F5F5F6;
+  box-shadow:none;cursor:pointer;
+}
+#seyveoContactsDialog #seyveoContactAdd svg{
+  width:22px;height:22px;fill:none;stroke:currentColor;
+  stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
+}
+#seyveoContactsDialog #seyveoContactAdd[hidden]{display:none!important}
+#seyveoContactsDialog .sv-phonebook-search{
+  display:flex;align-items:center;gap:9px;
+  box-sizing:border-box;min-height:47px;padding:0 13px;
+  border:1px solid rgba(210,221,228,.09);border-radius:13px;
+  background:rgba(128,137,147,.11);box-shadow:none;
+}
+#seyveoContactsDialog .sv-phonebook-search > svg{
+  flex:none;width:19px;height:19px;stroke:var(--secondary);
+  stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  opacity:.8;
+}
+html body #seyveoContactsDialog #seyveoContactSearch{
+  width:100%;min-width:0;min-height:44px;margin:0;padding:9px 0;
+  border:0!important;border-radius:0!important;outline:0!important;
+  background:transparent!important;background-image:none!important;
+  box-shadow:none!important;color:var(--text)!important;
+  font:inherit;font-size:16px!important;line-height:1.3;
+}
+#seyveoContactsDialog #seyveoContactSearch::placeholder{color:var(--secondary);opacity:.68}
+#seyveoContactsDialog .sv-phonebook-search:focus-within{
+  outline:1px solid rgba(205,218,231,.36);outline-offset:1px;
+}
+#seyveoContactsDialog .sv-phonebook-count{
+  margin:15px 3px 1px;
+  color:var(--secondary);font-size:12px;font-weight:500;
+  letter-spacing:-.005em;opacity:.78;
+}
+html body #seyveoContactsDialog #seyveoContactsList.personal-contacts-list{
+  display:block!important;margin:8px 0 0!important;padding:0!important;
+  border:0!important;background:transparent!important;box-shadow:none!important;
+}
+#seyveoContactsDialog .sv-phonebook-letter{
+  position:sticky;top:0;z-index:1;
+  display:flex;align-items:center;min-height:32px;
+  padding:11px 3px 5px;
+  background:var(--bg);
+  font-size:12px;line-height:1.2;font-weight:650;
+  color:var(--secondary);letter-spacing:.08em;
+}
+html body #seyveoContactsDialog .sv-phonebook-row{
+  display:flex;align-items:center;gap:4px;
+  box-sizing:border-box;min-height:69px;width:100%;
+  padding:0 0 0 2px!important;margin:0!important;
+  border:0!important;border-bottom:1px solid rgba(186,199,209,.10)!important;
+  background:transparent!important;box-shadow:none!important;
+}
+#seyveoContactsDialog .sv-phonebook-person{
+  display:flex;align-items:center;gap:12px;
+  flex:1;min-width:0;min-height:68px;
+  padding:7px 0;text-decoration:none;color:var(--text);
+  -webkit-tap-highlight-color:transparent;
+}
+#seyveoContactsDialog .sv-phonebook-avatar{
+  display:grid;place-items:center;flex:0 0 42px;
+  width:42px;height:42px;border:1px solid rgba(220,226,235,.07);
+  border-radius:50%;background:#38383A;color:#F7F7F8;
+  font-size:15px;font-weight:590;letter-spacing:-.045em;
+}
+#seyveoContactsDialog .sv-phonebook-person-copy{
+  display:grid;align-content:center;gap:3px;min-width:0;flex:1;
+}
+#seyveoContactsDialog .sv-phonebook-person-copy strong{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:15.5px;font-weight:555;line-height:1.23;
+  color:var(--text);
+}
+#seyveoContactsDialog .sv-phonebook-person-copy small{
+  font-size:12px;font-weight:440;line-height:1.3;
+  color:var(--secondary);opacity:.85;
+}
+#seyveoContactsDialog .sv-phonebook-call{
+  display:grid;place-items:center;flex:0 0 31px;
+  width:31px;height:35px;color:#a4d9bf;
+}
+#seyveoContactsDialog .sv-phonebook-call svg{
+  width:19px;height:19px;fill:none;stroke:currentColor;
+  stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
+}
+#seyveoContactsDialog .sv-phonebook-edit{
+  display:grid;place-items:center;flex:0 0 42px;
+  width:42px;height:44px;margin:0 0 0 1px;padding:0;
+  border:0!important;border-radius:12px!important;
+  background:transparent!important;color:var(--secondary);
+  box-shadow:none!important;cursor:pointer;
+}
+#seyveoContactsDialog .sv-phonebook-edit svg{
+  width:18px;height:18px;fill:none;stroke:currentColor;
+  stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;
+}
+#seyveoContactsDialog .sv-phonebook-empty{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:246px;
+  gap:10px;padding:26px 14px;text-align:center;
+}
+#seyveoContactsDialog .sv-phonebook-empty-icon{
+  display:grid;place-items:center;width:68px;height:68px;
+  margin:0 0 6px;border-radius:22px;background:#38383A;
+  color:#EAEDF0;
+}
+#seyveoContactsDialog .sv-phonebook-empty-icon svg{
+  width:31px;height:31px;fill:none;stroke:currentColor;
+  stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;
+}
+#seyveoContactsDialog .sv-phonebook-empty strong{
+  font-size:17px;font-weight:575;line-height:1.32;
+}
+#seyveoContactsDialog .sv-phonebook-empty small{
+  max-width:260px;color:var(--secondary);
+  font-size:13px;line-height:1.5;
+}
+#seyveoContactsDialog .sv-phonebook-privacy{
+  max-width:430px;margin:21px 3px 12px;padding:12px 0 0;
+  border-top:1px solid rgba(186,199,209,.10);
+  color:var(--secondary);font-size:11.5px;line-height:1.55;
+}
+#seyveoContactsDialog .sv-phonebook-editor[hidden],
+#seyveoContactsDialog [hidden]{display:none!important}
+#seyveoContactsDialog .sv-phonebook-editor{
+  display:block;box-sizing:border-box;width:100%;
+  margin:0;padding:6px 0 14px;border:0;background:transparent;
+}
+#seyveoContactsDialog .sv-phonebook-editor-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;margin:7px 0 23px;
+}
+#seyveoContactsDialog .sv-phonebook-editor-head h3{
+  margin:0;font-size:21px;font-weight:620;
+  letter-spacing:-.035em;line-height:1.25;
+}
+#seyveoContactsDialog #seyveoContactCancel{
+  display:block;flex:none;min-height:44px;min-width:68px;
+  border:0!important;background:transparent!important;
+  box-shadow:none!important;color:var(--secondary)!important;
+  font-size:14px;font-weight:530;padding:8px 5px;
+}
+#seyveoContactsDialog #seyveoContactForm{
+  display:grid!important;gap:17px!important;margin:0!important;
+}
+#seyveoContactsDialog #seyveoContactForm label{
+  display:grid!important;gap:8px!important;
+  margin:0!important;color:var(--secondary)!important;
+  font-size:13px!important;font-weight:500!important;
+}
+html body #seyveoContactsDialog #seyveoContactForm input{
+  min-height:50px!important;width:100%!important;
+  padding:11px 14px!important;
+  border:1px solid rgba(210,221,228,.12)!important;
+  border-radius:13px!important;
+  background:rgba(128,137,147,.11)!important;
+  box-shadow:none!important;
+  color:var(--text)!important;font-size:16px!important;
+}
+#seyveoContactsDialog .personal-contacts-form-actions{
+  display:grid!important;gap:14px!important;
+  margin:6px 0 0!important;
+}
+html body #seyveoContactsDialog #seyveoContactSave{
+  display:grid!important;place-items:center!important;
+  width:100%!important;min-height:48px!important;
+  padding:10px 18px!important;margin:0!important;
+  border:0!important;border-radius:14px!important;
+  background:#38383A!important;color:#F5F5F6!important;
+  box-shadow:none!important;
+  font-size:14px!important;font-weight:590!important;
+}
+html body #seyveoContactsDialog #seyveoContactDeleteForm{
+  display:block;width:100%;min-height:44px;margin:0;
+  padding:8px 12px;border:0!important;border-radius:12px!important;
+  background:transparent!important;color:#e6949b!important;
+  box-shadow:none!important;font-size:13px;font-weight:510;
+}
+#seyveoContactsDialog #seyveoContactStatus{
+  margin:12px 3px 4px!important;
+  font-size:12px;line-height:1.4;color:var(--secondary);
+}
+#seyveoContactsDialog #seyveoContactStatus:empty{display:none!important}
+html body #seyveoContactsDialog :is(button,a,input):focus-visible{
+  outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
+#seyveoContactsDialog :is(.sv-phonebook-person,.sv-phonebook-edit):active{opacity:.66}
+@media(max-width:720px){
+ html body dialog#seyveoContactsDialog.personal-contacts-dialog[open]{
+   padding:
+    calc(19px + env(safe-area-inset-top,0px))
+    max(18px,env(safe-area-inset-right,0px))
+    calc(132px + env(safe-area-inset-bottom,0px))
+    max(18px,env(safe-area-inset-left,0px))!important;
+ }
+}
+@media(max-width:370px){
+ html body dialog#seyveoContactsDialog.personal-contacts-dialog[open]{
+   padding-left:max(13px,env(safe-area-inset-left,0px))!important;
+   padding-right:max(13px,env(safe-area-inset-right,0px))!important;
+ }
+ html body #seyveoContactsDialog[open] > button#seyveoContactsClose{
+   left:max(13px,env(safe-area-inset-left,0px))!important;
+ }
+ #seyveoContactsDialog .sv-phonebook-toolbar{padding-left:52px}
+}
+:root[data-theme="light"] #seyveoContactsDialog .sv-phonebook-avatar,
+:root[data-theme="light"] #seyveoContactsDialog #seyveoContactAdd,
+:root[data-theme="light"] #seyveoContactsDialog #seyveoContactSave{
+  background:#38383A!important;color:#F5F5F6!important;
+}
