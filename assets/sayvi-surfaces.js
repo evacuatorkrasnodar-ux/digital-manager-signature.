@@ -249,6 +249,13 @@ function mailView(){
  // The legacy .sv-deep-top is hidden for Mail; leaving Back outside it
  // made navigation disappear or float independently of the title.
  top.append(back,introCopy,topButtons);
+ // The existing shared Back button inherits conflicting late styles on iPhone.
+ // Pin the approved matte graphite face only while it belongs to Mail.
+ back.style.setProperty('background','#38383A','important');
+ back.style.setProperty('background-image','none','important');
+ back.style.setProperty('border-radius','50%','important');
+ back.style.setProperty('box-shadow','none','important');
+ back.style.setProperty('color','#EEF2F4','important');
  const searchLabel=create('div','sv-mail-search');searchLabel.id='svMailQuickSearch';
  searchLabel.append(mailIcon('search'));
  const searchInput=create('input','sv-mail-search-input');
@@ -768,6 +775,13 @@ function installDocumentsSearch(){
 function render(kind){
  const descriptor=subjects[kind];if(!descriptor)return false;
  releaseFile();page.dataset.svSubject=kind;
+ // This Back button is shared; don't leak Mail's graphite inline face
+ // onto Documents and Health when switching views.
+ if(kind!=='mail'){
+  for(const property of ['background','background-image','border-radius','box-shadow','color']){
+   back.style.removeProperty(property);
+  }
+ }
  // Documents use one real navigation row, with Back beside the title.
  // Keep the same Back element and click handler across every surface.
  const header=title.closest('.sv-deep-top');
