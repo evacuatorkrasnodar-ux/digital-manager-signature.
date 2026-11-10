@@ -264,13 +264,15 @@ function mailView(){
   }
  });
  searchLabel.addEventListener('click',event=>event.stopPropagation());
- top.append(searchLabel);
+ searchLabel.setAttribute('role','search');
  const scopeNav=create('nav','sv-mail-accounts');scopeNav.setAttribute('aria-label','Выбор почты');
  const nav=create('nav','sv-mail-toolbar');nav.setAttribute('aria-label','Папки почты');
  const extraNav=create('div','sv-mail-extra-folders');
  const info=create('div','sv-mail-info');info.setAttribute('role','status');info.setAttribute('aria-live','polite');
  const content=create('div','sv-mail-list');
- section.append(top,scopeNav,nav,extraNav,info,content);body.append(section);
+ // Search lives in its own row between the titlebar and account switch.
+ // It pushes content down instead of obscuring the selected mail scope.
+ section.append(top,searchLabel,scopeNav,nav,extraNav,info,content);body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
@@ -539,7 +541,9 @@ function mailView(){
   const matched=inFolder.filter(m=>!q||[m.from,m.subject,m.preview,m.body].join(' ').toLocaleLowerCase('ru').includes(q));
   if(!matched.length){content.append(create('p','sv-mail-empty',q?'По этому запросу примеров нет.':'Здесь пока нет учебных писем.'));return}
   const group=create('div','sv-mail-letter-group');content.append(group);
-  for(const item of (limit?matched.slice(0,limit):matched)){
+  const shown=limit?matched.slice(0,limit):matched;
+  const showAccountTags=mailScope==='all'&&new Set(shown.map(m=>m.account)).size>1;
+  for(const item of shown){
    const row=create('button','sv-mail-letter');
    row.type='button';row.classList.toggle('is-unread',item.unread);
    const avatar=create('span','sv-mail-avatar',item.initial);
@@ -548,7 +552,7 @@ function mailView(){
    const titleText=create('strong','sv-mail-letter-subject',item.subject);
    const preview=create('span','sv-mail-letter-preview',item.preview);
    detail.append(sender,titleText,preview);
-   if(mailScope==='all')detail.append(create('small','sv-mail-account-tag',mailAccountName(item.account)));
+   if(showAccountTags)detail.append(create('small','sv-mail-account-tag',mailAccountName(item.account)));
    const meta=create('span','sv-mail-letter-meta');
    meta.append(create('time','',item.when));
    if(item.attachment)meta.append(mailIcon('paperclip'));
