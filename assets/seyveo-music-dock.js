@@ -18,6 +18,16 @@ function init(){
  };
  const glyph=d=>'<svg class="seyveo-music-dock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+icon[d]+'</svg>';
  let enabled=false,loaded=false,playing=false;
+ let originalSearch=null;
+ const restoreSearch=()=>{
+  if(!originalSearch)return;
+  outer[3].innerHTML=originalSearch.html;
+  for(const [attribute,value] of Object.entries(originalSearch.attrs)){
+   if(value===null)outer[3].removeAttribute(attribute);
+   else outer[3].setAttribute(attribute,value);
+  }
+  originalSearch=null;
+ };
  const activate=()=>location.hash==='#sayvi-music'&&!document.getElementById('sayviMusicPage')?.hidden;
  const describe=(button,label,svg,action)=>{
   button.innerHTML=glyph(svg)+'<span>'+label+'</span>';
@@ -46,6 +56,10 @@ function init(){
  }
  function enter(){
   if(enabled){draw();return;}
+  // Return the approved laser-drawn Search control exactly as it was before
+  // Music borrowed the existing dock (no replacement dock and no drift).
+  const attrs=['aria-label','aria-controls','aria-expanded','title'];
+  originalSearch={html:outer[3].innerHTML,attrs:Object.fromEntries(attrs.map(a=>[a,outer[3].getAttribute(a)]))};
   enabled=true;dock.classList.add('seyveo-music-dock');
   draw();
  }
@@ -57,6 +71,7 @@ function init(){
    delete button.dataset.svFixedAction;
    button.removeAttribute('aria-disabled');
   }
+  restoreSearch();
   document.dispatchEvent(new Event('seyveo:music-dock-exit'));
   // Paint is also needed when the music entry was opened via pushState.
   window.SEYVEO_MAGNETIC_INK?.refresh?.();
