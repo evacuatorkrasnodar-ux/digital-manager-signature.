@@ -324,7 +324,9 @@ function draw(){
  const copy=el('span','sv-doc-assistant-hero-copy');
  copy.append(el('strong','','Сэйви поможет'),el('small','','Создать или проверить документ'));
  intro.setAttribute('aria-label','Сэйви: создать или проверить документ');
- intro.append(copy,el('span','sv-doc-chat-chevron','›'));
+ const chevron=el('span','sv-doc-chat-chevron');
+ chevron.setAttribute('aria-hidden','true');
+ intro.append(copy,chevron);
  const actions=el('div','sv-doc-assistant-actions');
  actions.append(
   button('Создать с Сэйви',()=>goSayvi('create'),'sv-doc-assistant-action'),
