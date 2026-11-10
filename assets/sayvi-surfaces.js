@@ -301,6 +301,11 @@ const mailExamples=[
 ];
 // Local sample-mail operations only; never assert provider-side delivery,
 // deletion, spam classification or sender blocking without mail authorization.
+
+mailExamples.push(
+ {account:'business',id:'example-promo',initial:'Р',from:'Рассылка · пример',subject:'Предложения для бизнеса',preview:'Новая подборка предложений. Учебная рассылка.',body:'Это учебная рекламная рассылка без активных ссылок и вложений.',when:'Вчера',unread:true,starred:false,attachment:false,archived:false,trashed:false},
+ {account:'personal',id:'example-suspicious',initial:'?',from:'Неизвестный · пример',subject:'Проверьте учётную запись',preview:'Письмо с неизвестного адреса. Не переходите по ссылкам.',body:'Это учебный пример подозрительного письма. Никаких ссылок или реальных проверок здесь нет.',when:'Сегодня',unread:true,starred:false,attachment:false,archived:false,trashed:false}
+);
 const MAIL_SAMPLE_ACTIONS_KEY='seyveo-mail-sample-actions-v1';
 const sampleSenderKey=item=>item.account+'|'+item.from.toLocaleLowerCase('ru').trim();
 let sampleBlockedSenders=new Set();
@@ -364,6 +369,71 @@ function mailIcon(name){
  svg.setAttribute('stroke-linejoin','round');
  svg.innerHTML=mailIcons[name]||mailIcons.inbox;return svg;
 }
+
+/* SEYVEO Mail · local gate policy preview.
+   Never reject, classify or inspect real provider messages without an authorized adapter.
+   Trusted addresses are user preferences, not proof of sender identity. */
+const MAIL_GATE_KEY='seyveo-mail-gate-v1';
+const MAIL_GATE_MODES=Object.freeze({
+ smart:{title:'Умная защита',hint:'Подозрительные примеры — на проверку, рассылки — отдельно.'},
+ contacts:{title:'Только свои',hint:'Во входящих — знакомые и разрешённые адреса. Остальные ждут решения.'},
+ strict:{title:'Строгий допуск',hint:'Во входящих только явно разрешённые адреса.'}
+});
+const MAIL_SAMPLE_ADDRESSES=Object.freeze({
+ 'example-andrey':'andrey@example.com',
+ 'example-project':'projects@example.com',
+ 'example-finance':'finance@example.com',
+ 'example-team':'office@example.com',
+ 'example-delivery':'supply@example.com',
+ 'example-family':'maria@example.com',
+ 'example-tickets':'tickets@example.com',
+ 'example-family-photo':'alex@example.com',
+ 'example-promo':'offers@example.com',
+ 'example-suspicious':'notice@example.com'
+});
+const MAIL_SAMPLE_CONTACTS=new Set(['example-family','example-team','example-project']);
+const MAIL_SAMPLE_PROMOTIONS=new Set(['example-promo']);
+const MAIL_SAMPLE_SUSPICIOUS=new Set(['example-suspicious']);
+const emptyMailGate=()=>({mode:'smart',trusted:[]});
+function validMailGateAddress(value){
+ const address=String(value||'').trim().toLowerCase();
+ return address.length<=254 && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(address)?address:'';
+}
+function readMailGate(){
+ const defaults={personal:emptyMailGate(),business:emptyMailGate()};
+ try{
+  const value=JSON.parse(localStorage.getItem(MAIL_GATE_KEY)||'{}');
+  for(const account of ['personal','business']){
+   const source=value?.[account];
+   if(source && Object.hasOwn(MAIL_GATE_MODES,source.mode))defaults[account].mode=source.mode;
+   if(Array.isArray(source?.trusted))defaults[account].trusted=[...new Set(source.trusted.map(validMailGateAddress).filter(Boolean))].slice(0,60);
+  }
+ }catch{}
+ return defaults;
+}
+let mailGate=readMailGate();
+function saveMailGate(){
+ try{localStorage.setItem(MAIL_GATE_KEY,JSON.stringify(mailGate))}catch{}
+}
+function sampleMailAddress(item){return MAIL_SAMPLE_ADDRESSES[item?.id]||''}
+function gateTrusted(account,address){return !!address&&mailGate[account].trusted.includes(address)}
+function addGateTrusted(account,address){
+ const verified=validMailGateAddress(address);
+ if(!verified||!mailGate[account]||mailGate[account].trusted.length>=60)return false;
+ if(!gateTrusted(account,verified))mailGate[account].trusted.push(verified);
+ saveMailGate();return true;
+}
+function gateCategory(item){
+ if(item.spam||sampleBlocked(item))return 'spam';
+ if(MAIL_SAMPLE_SUSPICIOUS.has(item.id))return 'review';
+ if(MAIL_SAMPLE_PROMOTIONS.has(item.id))return 'promotions';
+ const settings=mailGate[item.account];
+ if(!settings||settings.mode==='smart')return 'inbox';
+ if(gateTrusted(item.account,sampleMailAddress(item)))return 'inbox';
+ if(settings.mode==='contacts'&&MAIL_SAMPLE_CONTACTS.has(item.id))return 'inbox';
+ return 'review';
+}
+
 function mailView(){
  mailEditorExitHandler=null;
  const section=shelf();section.classList.add('sv-mail-workspace');
@@ -437,12 +507,86 @@ function mailView(){
  const content=create('div','sv-mail-list');
  // Search lives in its own row between the titlebar and account switch.
  // It pushes content down instead of obscuring the selected mail scope.
- section.append(top,searchLabel,scopeNav,connect,nav,extraNav,info,content);body.append(section);
- const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['spam','Спам'],['trash','Корзина']];
+
+ const guardRow=create('div','sv-mail-gate-row');
+ const guardTrigger=create('button','sv-mail-gate-trigger');guardTrigger.type='button';
+ guardTrigger.append(mailIcon('shield'),create('span','sv-mail-gate-trigger-label','Умный допуск'),mailIcon('settings'));
+ guardTrigger.setAttribute('aria-label','Настроить защиту почты');
+ guardTrigger.setAttribute('aria-expanded','false');
+ const guardReview=create('button','sv-mail-gate-review');guardReview.type='button';
+ guardReview.addEventListener('click',()=>selectFolder('review'));
+ guardRow.append(guardTrigger,guardReview);
+ const guardPanel=create('section','sv-mail-gate-panel');guardPanel.hidden=true;
+ guardPanel.setAttribute('aria-label','Настройки допуска почты');
+ let guardOpen=false,guardAccount='personal';
+ guardTrigger.addEventListener('click',()=>{guardOpen=!guardOpen;renderGate()});
+ function renderGate(){
+  const account=mailScope==='all'?guardAccount:mailScope;
+  const pending=folderCount('review');
+  const modes=mailScope==='all'
+   ?'Личная · '+MAIL_GATE_MODES[mailGate.personal.mode].title+' / Рабочая · '+MAIL_GATE_MODES[mailGate.business.mode].title
+   :MAIL_GATE_MODES[mailGate[account].mode].title;
+  guardTrigger.querySelector('.sv-mail-gate-trigger-label').textContent=modes;
+  guardTrigger.setAttribute('aria-expanded',String(guardOpen));
+  guardReview.hidden=!pending||!mailShowExamples;
+  guardReview.textContent='На проверке · '+pending;
+  guardPanel.hidden=!guardOpen;
+  guardPanel.replaceChildren();
+  if(!guardOpen)return;
+  guardPanel.append(create('strong','sv-mail-gate-heading','Кто может писать вам'));
+  const chooser=create('div','sv-mail-gate-accounts');
+  for(const [key,title] of [['personal','Личная'],['business','Рабочая']]){
+   const button=create('button','sv-mail-gate-account',title);
+   button.type='button';button.setAttribute('aria-pressed',String(account===key));
+   button.addEventListener('click',()=>{guardAccount=key;renderGate()});
+   chooser.append(button);
+  }
+  guardPanel.append(chooser);
+  const radio=create('div','sv-mail-gate-modes');
+  radio.setAttribute('role','group');radio.setAttribute('aria-label','Режим защиты');
+  for(const [key,entry] of Object.entries(MAIL_GATE_MODES)){
+   const button=create('button','sv-mail-gate-mode');button.type='button';
+   button.setAttribute('aria-pressed',String(mailGate[account].mode===key));
+   const marker=create('span','sv-mail-gate-radio');
+   const body=create('span','sv-mail-gate-mode-body');
+   body.append(create('strong','',entry.title),create('small','',entry.hint));
+   button.append(marker,body);
+   button.addEventListener('click',()=>{mailGate[account].mode=key;saveMailGate();mailCurrent=null;paint()});
+   radio.append(button);
+  }
+  guardPanel.append(radio);
+  guardPanel.append(create('strong','sv-mail-gate-subheading','Доверенные адреса'));
+  const form=create('form','sv-mail-gate-form');
+  const input=create('input','');input.type='email';input.required=true;input.maxLength=254;
+  input.placeholder='name@example.com';input.setAttribute('aria-label','Добавить доверенный адрес');
+  const add=create('button','','Добавить');add.type='submit';
+  form.append(input,add);
+  const status=create('small','sv-mail-gate-status');status.setAttribute('role','status');
+  form.addEventListener('submit',event=>{
+   event.preventDefault();
+   if(!addGateTrusted(account,input.value)){status.textContent='Проверьте адрес или лимит 60 записей.';return}
+   paint();
+  });
+  guardPanel.append(form,status);
+  const trusted=create('div','sv-mail-gate-trusted');
+  for(const address of mailGate[account].trusted){
+   const chip=create('span','sv-mail-gate-chip');
+   chip.append(create('span','',address));
+   const remove=create('button','','×');remove.type='button';remove.setAttribute('aria-label','Убрать из доверенных: '+address);
+   remove.addEventListener('click',()=>{mailGate[account].trusted=mailGate[account].trusted.filter(v=>v!==address);saveMailGate();paint()});
+   chip.append(remove);trusted.append(chip);
+  }
+  guardPanel.append(trusted);
+  guardPanel.append(create('p','sv-mail-gate-footnote','Настройки действуют только на учебные письма. Контакты, серверная фильтрация и проверка в интернете пока не подключены. Настоящие письма не отклоняются.'));
+ }
+ section.append(top,searchLabel,scopeNav,connect,guardRow,guardPanel,nav,extraNav,info,content);body.append(section);
+ const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['review','На проверке'],['promotions','Рассылки'],['spam','Спам'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
   if(key==='inbox'&&mailShowExamples)return mailExamples.filter(m=>
-   mailVisible(m.account)&&!m.trashed&&!m.archived&&!m.spam&&!sampleBlocked(m)&&!m.removed&&m.unread).length;
+   mailVisible(m.account)&&!m.trashed&&!m.archived&&!m.removed&&gateCategory(m)==='inbox'&&m.unread).length;
+  if((key==='review'||key==='promotions')&&mailShowExamples)return mailExamples.filter(m=>
+   mailVisible(m.account)&&!m.trashed&&!m.archived&&!m.removed&&gateCategory(m)===key).length;
   if(key==='spam')return mailExamples.filter(m=>
    mailVisible(m.account)&&!m.trashed&&!m.removed&&(m.spam||sampleBlocked(m))).length;
   return 0;
@@ -506,6 +650,9 @@ function mailView(){
   }else if(action==='unblock'){
    sampleBlockedSenders.delete(sender);
    mailNotice='Отправитель разблокирован в учебном списке. Письма остаются в Спаме до восстановления.';
+  }else if(action==='trust'){
+   if(!addGateTrusted(item.account,sampleMailAddress(item)))return;
+   mailNotice='Адрес добавлен в доверенные · только учебная почта.';
   }else if(action==='remove'){
    item.removed=true;mailNotice='Учебное письмо удалено из локального списка.';
   }else return;
@@ -847,12 +994,40 @@ function mailView(){
    accept.addEventListener('click',()=>updateSampleMail(item,'block'));
    choices.append(cancel,accept);blockConfirm.append(choices);
   }
+  if(!sampleBlocked(item)&&!gateTrusted(item.account,sampleMailAddress(item))){
+   addMenuAction('shield','Доверять отправителю',()=>updateSampleMail(item,'trust'));
+  }
   panel.append(moreMenu,blockConfirm);
   const person=create('div','sv-mail-detail-person');
   person.append(create('span','sv-mail-avatar',item.initial));
   const who=create('div','sv-mail-detail-who');
   who.append(create('strong','',item.from),create('span','',item.when+' · образец письма'));
   person.append(who);panel.append(person);
+
+  const inspectButton=create('button','sv-mail-inspect-trigger');
+  inspectButton.type='button';
+  inspectButton.append(mailIcon('shield'),create('span','','Проверить отправителя'));
+  inspectButton.setAttribute('aria-expanded','false');
+  const inspectPanel=create('section','sv-mail-inspect-panel');inspectPanel.hidden=true;
+  const sampleAddress=sampleMailAddress(item);
+  const trusted=gateTrusted(item.account,sampleAddress);
+  const inspectionRows=[
+   ['Адрес',sampleAddress+' · учебный'],
+   ['Доверие',sampleBlocked(item)?'Заблокирован в примере':trusted?'В доверенных':MAIL_SAMPLE_CONTACTS.has(item.id)?'Знакомый в примере':'Не в доверенных'],
+   ['Подлинность SPF / DKIM / DMARC','Нет технических данных'],
+   ['Открытые источники','Поиск не проводился']
+  ];
+  for(const [key,value] of inspectionRows){
+   const line=create('div','sv-mail-inspect-line');
+   line.append(create('span','',key),create('strong','',value));
+   inspectPanel.append(line);
+  }
+  inspectPanel.append(create('p','','Это демонстрационный адрес example.com, не результат интернет-проверки. При подключении настоящей почты потребуется отдельное разрешение для внешнего поиска.'));
+  inspectButton.addEventListener('click',()=>{
+   inspectPanel.hidden=!inspectPanel.hidden;
+   inspectButton.setAttribute('aria-expanded',String(!inspectPanel.hidden));
+  });
+  panel.append(inspectButton,inspectPanel);
   const message=create('p','sv-mail-detail-text',item.body);panel.append(message);
   if(item.attachment){
    const example=create('div','sv-mail-attachment');
@@ -903,8 +1078,12 @@ function mailView(){
   const inFolder=mailExamples.filter(m=>{
    if(!mailVisible(m.account)||m.removed)return false;
    if(mailFolder==='trash')return m.trashed;
-   if(mailFolder==='spam')return !m.trashed&&(m.spam||sampleBlocked(m));
-   if(m.trashed||m.spam||sampleBlocked(m))return false;
+   const category=gateCategory(m);
+   if(mailFolder==='spam')return !m.trashed&&category==='spam';
+   if(m.trashed||category==='spam')return false;
+   if(mailFolder==='review')return !m.archived&&category==='review';
+   if(mailFolder==='promotions')return !m.archived&&category==='promotions';
+   if(category!=='inbox')return false;
    if(mailFolder==='archive')return m.archived;
    if(mailFolder==='starred')return m.starred&&!m.archived;
    return !m.archived;
@@ -936,7 +1115,9 @@ function mailView(){
    if(item.unread)row.append(create('span','sv-mail-unread-dot'));
    row.append(avatar,detail,meta);
    row.setAttribute('aria-label',item.from+', '+item.subject+', учебное письмо. Свайп влево — действия.');
-   const choices=mailFolder==='spam'
+   const choices=(mailFolder==='review'||mailFolder==='promotions')
+    ?[['shield','Доверять',()=>updateSampleMail(item,'trust')],['trash','Удалить',()=>updateSampleMail(item,'trash')]]
+    :mailFolder==='spam'
     ?[sampleBlocked(item)
        ?['shield','Разблок.',()=>updateSampleMail(item,'unblock')]
        :['restore','Не спам',()=>updateSampleMail(item,'notspam')],
@@ -1044,7 +1225,7 @@ function mailView(){
    content.append(recent);drawExamples(3);return;
   }
   if(mailFolder==='drafts'){drawDrafts();return}
-  if(mailFolder==='inbox'||mailFolder==='starred'||mailFolder==='archive'||mailFolder==='spam'||mailFolder==='trash'){drawExamples();return}
+  if(['inbox','starred','archive','review','promotions','spam','trash'].includes(mailFolder)){drawExamples();return}
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
  function paint(){
@@ -1055,6 +1236,8 @@ function mailView(){
   top.hidden=mailEditorOpen||!!mailCurrent;
   searchToggle.hidden=mailEditorOpen||!!mailCurrent;
   connect.hidden=mailEditorOpen||!!mailCurrent;
+  guardRow.hidden=mailEditorOpen||!!mailCurrent;
+  if(mailEditorOpen||mailCurrent)guardPanel.hidden=true;
   scopeNav.replaceChildren();
   for(const [key,label] of [['all','Все'],['personal','Личная'],['business','Рабочая']]){
    const button=create('button','sv-mail-account-switch',label);
@@ -1090,6 +1273,7 @@ function mailView(){
   searchToggle.setAttribute('aria-expanded',String(!searchLabel.hidden));
   searchToggle.setAttribute('aria-controls','svMailQuickSearch');
   // Scope switches between personal and work mailbox authorization.
+  renderGate();
   window.SEYVEO_CONNECTION_PROMPTS?.refresh();
   compose.hidden=mailEditorOpen||!!mailCurrent;
   info.textContent=mailEditorOpen?'':
@@ -1100,6 +1284,8 @@ function mailView(){
    mailFolder==='inbox'?'Входящие · предварительный просмотр':
    mailFolder==='starred'?'Важные · предварительный просмотр':
    mailFolder==='archive'?'Архив · предварительный просмотр':
+   mailFolder==='review'?'Ожидают вашего решения · учебные письма':
+   mailFolder==='promotions'?'Рассылки · учебные письма':
    mailFolder==='spam'?'Спам · учебные письма':'Корзина · предварительный просмотр';
   if(mailNotice&&!mailCurrent&&!mailEditorOpen)info.textContent=mailNotice;
   info.hidden=!!mailCurrent||!info.textContent;
