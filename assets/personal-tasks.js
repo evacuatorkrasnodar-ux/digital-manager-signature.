@@ -192,6 +192,9 @@ function renderContacts(){
  const rows=all.filter(c=>!search||contactKey(c.name).includes(search)||(numeric&&c.phone.replace(/\D/g,'').includes(numeric)));
  const target=$('seyveoContactsList');target.replaceChildren();
  $('seyveoContactCount').textContent=search?rows.length+' из '+phonebookCount(all.length):phonebookCount(all.length);
+ // Empty directory: the magnifier and zero count only add clutter.
+ $('seyveoContactSearchWrap').hidden=all.length===0;
+ $('seyveoContactCount').hidden=all.length===0;
  if(!rows.length){
   const empty=element('div','sv-phonebook-empty');
   const symbol=element('span','sv-phonebook-empty-icon');
@@ -227,7 +230,9 @@ function renderContacts(){
 function setContactEditor(show){
  const editor=$('seyveoContactEditor');editor.hidden=!show;
  for(const id of ['seyveoContactSearchWrap','seyveoContactCount','seyveoContactsList','seyveoContactsPrivacy']){
-  const node=$(id);if(node)node.hidden=show;
+  const node=$(id);
+  if(node)node.hidden=show||(!readContacts().length&&
+   (id==='seyveoContactSearchWrap'||id==='seyveoContactCount'));
  }
  $('seyveoContactAdd').hidden=show;
  $('seyveoContactCancel').hidden=!show;
