@@ -240,3 +240,18 @@ html body #seyveoCompanyDialog[open] :is(.sv-company-actions button,.seyveo-pass
   min-height:270px!important;
  }
 }
+
+/* Empty company profile: no decorative badge, single clear action. */
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-empty-mark{
+ display:none!important;
+}
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .sv-company-view:not([hidden]){
+ min-height:min(440px,calc(100dvh - 178px))!important;
+ gap:12px!important;
+}
+html body #seyveoCompanyDialog[open][data-sv-company-filled="false"] .seyveo-passport-edit-top svg{
+ display:none!important;
+}
+html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{
+ padding-left:60px!important;
+}
