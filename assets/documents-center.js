@@ -402,6 +402,7 @@ async function searchInCurrentDocuments(query,{requestArchive=false,scope=area}=
  let unlocked=false;
  try{unlocked=(await window.SEYVEO_DOCUMENT_VAULT?.status?.())?.unlocked===true}catch{}
  if(!host?.isConnected)return false;
+ if(unlocked)void window.SEYVEO_DOCUMENT_SHELF?.refresh?.();
  window.SEYVEO_DOCUMENT_SHELF?.search?.(String(query||'').slice(0,160));
  if(!unlocked&&requestArchive){
   const details=host.querySelector('.sv-doc-vault-shell');
