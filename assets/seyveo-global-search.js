@@ -6,9 +6,9 @@
 const $=id=>document.getElementById(id);
 const screen=$('svGlobalSearch'),field=$('svGlobalSearchInput');
 const results=$('svGlobalSearchResults'),closeButton=$('svGlobalSearchClose');
-const trigger=$('navManage');
-if(!screen||!field||!results||!closeButton||!trigger)return;
-let active=false,previousFocus=null,previousOverflow='',searchEpoch=0;
+const trigger=$('navManage'),modes=$('svSearchModes');
+if(!screen||!field||!results||!closeButton||!trigger||!modes)return;
+let active=false,previousFocus=null,previousOverflow='',searchEpoch=0,mode='system';
 const normalize=value=>String(value||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim().replace(/\s+/g,' ');
 const nice=value=>String(value||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim();
 const rows=(key,max)=>{
@@ -165,11 +165,67 @@ function heading(value){
 function actionButton(label,action,meta){
  return itemRow({title:label,action,meta},'section');
 }
+function changeMode(next,{focus=false}={}){
+ if(!['system','sayvi','web'].includes(next))return;
+ mode=next;
+ const placeholders={system:'Найти в SEYVEO',sayvi:'О чём спросить Сэйви?',web:'Поиск в интернете'};
+ field.placeholder=placeholders[mode];
+ field.setAttribute('aria-label',placeholders[mode]);
+ for(const control of modes.querySelectorAll('[data-sv-search-mode]')){
+  const selected=control.dataset.svSearchMode===mode;
+  control.setAttribute('aria-pressed',String(selected));
+ }
+ if(active)render();
+ if(focus)field.focus({preventScroll:true});
+}
+function nextSteps(){
+ const group=document.createElement('section');
+ group.className='sv-search-next-steps';
+ const caption=document.createElement('p');caption.className='sv-search-empty';
+ caption.textContent='В доступных данных совпадений не нашлось. Сэйви поможет разобраться — или можно продолжить поиск в интернете.';
+ group.append(caption);
+ group.append(actionButton('Попросить Сэйви помочь','mode:sayvi','Объяснить, уточнить или предложить следующий шаг'));
+ group.append(actionButton('Продолжить в интернете','mode:web','Поиск через SEYVEO Browser по вашему выбору'));
+ return group;
+}
 function render(){
  const epoch=++searchEpoch;
- const term=normalize(field.value);
- const intent=routeFor(field.value);
+ const raw=field.value.trim(),term=normalize(raw),intent=routeFor(raw);
  results.replaceChildren();
+ if(mode==='sayvi'){
+  if(!raw){
+   const note=document.createElement('p');note.className='sv-search-caption';
+   note.textContent='Сэйви рядом: задай вопрос, опиши ситуацию или попроси помочь. Ответ появится в настоящем чате.';
+   results.append(note);return;
+  }
+  results.append(heading('Помощь Сэйви'));
+  results.append(actionButton('Спросить Сэйви','ask','Передать вопрос в чат Сэйви'));
+  const hint=document.createElement('p');hint.className='sv-search-caption';
+  hint.textContent='Сэйви может уточнить детали и предложить решение. Доступ к личным данным зависит от разрешений.';
+  results.append(hint);return;
+ }
+ if(mode==='web'){
+  if(!raw){
+   const note=document.createElement('p');note.className='sv-search-caption';
+   note.textContent='Напиши, что найти в интернете. Запрос откроется в SEYVEO Browser только после твоего действия.';
+   results.append(note);return;
+  }
+  if(isPrivateQuery(raw)){
+   results.append(heading('Личный вопрос'));
+   const notice=document.createElement('p');notice.className='sv-search-empty';
+   notice.textContent='Этот запрос может содержать личные сведения. Не отправляем его в открытый интернет.';
+   results.append(notice);
+   results.append(actionButton('Спросить Сэйви','mode:sayvi','Продолжить без открытого интернет-поиска'));
+   return;
+  }
+  results.append(heading('Поиск в интернете'));
+  results.append(actionButton('Найти через SEYVEO Browser','web','Открыть результаты в браузере'));
+  const hint=document.createElement('p');hint.className='sv-search-caption';
+  hint.textContent='Интернет-поиск выполняется по твоему выбору. Содержание частных документов и закрытого архива не отправляется.';
+  results.append(hint);return;
+ }
+ // System: never send local data to the web or assistant merely because
+ // an item is missing. Offer both meaningful next steps in the same view.
  const matching=term?sections.filter(x=>normalize(x.name+' '+x.tags).includes(term)).slice(0,7):
   sections.filter(x=>['calendar','tasks','space:notes','manage'].includes(x.action));
  const records=searchableRecords(term);
@@ -177,60 +233,36 @@ function render(){
   results.append(heading('Быстрый доступ'));
   for(const entry of matching)results.append(itemRow({...entry,meta:'Открыть раздел SEYVEO'},'section'));
   const hint=document.createElement('p');hint.className='sv-search-caption';
-  hint.textContent='Один поиск для дел, заметок, черновиков и доступных документов. Сэйви отвечает на вопросы. Закрытый архив и неподключённые сервисы не просматриваются.';
-  results.append(hint);
-  return;
+  hint.textContent='Система ищет в доступных разделах, делах, заметках, черновиках и разблокированном архиве. Сэйви и Интернет — рядом.';
+  results.append(hint);return;
  }
- if(intent){
-  const description=intent.action==='ask'?'Передать вопрос в настоящий чат Сэйви':
-   intent.action==='music'?'Открыть SEYVEO Music':
-   intent.action==='web'?'Открыть поиск в SEYVEO Browser':
-   intent.action==='site'?'Открыть страницу в SEYVEO Browser':'Перейти в нужный раздел';
-  results.append(heading('Сэйви предлагает'));
-  results.append(actionButton(
-   intent.action==='ask'?'Спросить Сэйви':
-   intent.action==='music'?'Открыть музыку':
-   intent.action==='web'?'Найти в интернете':
-   intent.action==='site'?'Открыть сайт':'Выполнить команду',
-   'smart',description));
+ if(intent&&intent.action!=='ask'&&intent.action!=='web'&&intent.action!=='site'){
+  results.append(heading('Быстрое действие'));
+  results.append(actionButton('Выполнить команду','smart','Открыть нужный раздел SEYVEO'));
  }
  if(records.length){
   results.append(heading('Найдено на этом устройстве'));
   for(const record of records)results.append(itemRow(record,'record'));
  }
  if(term.length>=2){
-  // An unlocked local vault is searched asynchronously; stale results
-  // must never be shown for a newer query or after closing Search.
   void unlockedDocumentHits(term).then(found=>{
-   if(!active||epoch!==searchEpoch||normalize(field.value)!==term||!found.length)return;
-   const group=document.createElement('section');
-   group.className='sv-search-vault-hits';
+   if(!active||mode!=='system'||epoch!==searchEpoch||normalize(field.value)!==term||!found.length)return;
+   const group=document.createElement('section');group.className='sv-search-vault-hits';
    group.append(heading('В разблокированном архиве'));
    for(const record of found)group.append(itemRow(record,'record'));
    results.prepend(group);
+   results.querySelector('.sv-search-next-steps')?.remove();
   });
  }
  if(matching.length){
   results.append(heading('Разделы'));
   for(const entry of matching)results.append(itemRow({...entry,meta:'Открыть раздел SEYVEO'},'section'));
  }
- if(!intent&&!records.length&&!matching.length){
-  const empty=document.createElement('p');empty.className='sv-search-empty';
-  empty.textContent='По этому запросу нет совпадений в доступных записях SEYVEO.';
-  results.append(empty);
- }
- results.append(heading('Где искать дальше'));
- results.append(actionButton('Искать в документах','docs:personal','Доступные файлы и папки, закрытый архив требует пароль'));
- results.append(actionButton('Искать в почте','mail:inbox','Подключённая почта при наличии доступа'));
- results.append(actionButton('Искать в черновиках','mail:drafts','Сохранённые на этом устройстве письма'));
- results.append(actionButton('Спросить Сэйви','ask','Вопрос или просьба на естественном языке'));
- results.append(actionButton('Искать в интернете','web','Отправить запрос через SEYVEO Browser'));
- if(!intent&&term){
-  const hint=document.createElement('p');hint.className='sv-search-caption';
-  hint.textContent='Выберите подходящий вариант. По одному слову Сэйви не будет угадывать ваше намерение.';
-  results.append(hint);
- }
+ const hasSystemResults=records.length>0||matching.length>0||
+  !!(intent&&intent.action!=='ask'&&intent.action!=='web'&&intent.action!=='site');
+ if(!hasSystemResults)results.append(nextSteps());
 }
+
 function open(){
  if(active)return true;
  if(trigger.dataset.svMusicAction||trigger.dataset.svBrowserAction)return false;
@@ -244,7 +276,7 @@ function open(){
  previousOverflow=document.body.style.overflow;
  document.body.style.overflow='hidden';
  field.value='';
- render();
+ changeMode('system');
  // Focusing within the real tap gesture allows iOS to display the keyboard.
  field.focus({preventScroll:true});
  return true;
@@ -263,6 +295,8 @@ function close({restoreFocus=false}={}){
  previousFocus=null;
 }
 function visit(action){
+ if(action==='mode:sayvi'){changeMode('sayvi',{focus:true});return}
+ if(action==='mode:web'){changeMode('web',{focus:true});return}
  const typed=field.value.trim(),intent=routeFor(typed);
  let query=typed;
  if(action==='smart'){
@@ -359,20 +393,28 @@ trigger.addEventListener('click',()=>{
  if(active)close({restoreFocus:false});else open();
 });
 closeButton.addEventListener('click',()=>close({restoreFocus:true}));
+modes.addEventListener('click',event=>{
+ const button=event.target.closest?.('[data-sv-search-mode]');
+ if(button&&modes.contains(button))changeMode(button.dataset.svSearchMode,{focus:true});
+});
 field.addEventListener('input',render);
 field.addEventListener('search',render);
 field.addEventListener('keydown',event=>{
- if(event.key==='Escape'){event.preventDefault();close({restoreFocus:true});}
- if(event.key==='Enter'){
-  event.preventDefault();
-  const intent=routeFor(field.value);
-  if(intent){visit('smart');return;}
-  // An exact section is safe to open; an ambiguous one-word search is not.
-  const exact=sections.find(x=>normalize(x.name)===normalize(field.value));
-  if(exact){visit(exact.action);return;}
-  field.blur();
- }
+ if(event.key==='Escape'){event.preventDefault();close({restoreFocus:true});return;}
+ if(event.key!=='Enter')return;
+ event.preventDefault();
+ if(!field.value.trim())return;
+ if(mode==='sayvi'){visit('ask');return;}
+ if(mode==='web'){visit('web');return;}
+ const intent=routeFor(field.value);
+ if(intent){visit('smart');return;}
+ const exact=sections.find(x=>normalize(x.name)===normalize(field.value));
+ if(exact){visit(exact.action);return;}
+ // No dead-end Enter: introduce the next step without silently
+ // sending a possibly private query to an external service.
+ changeMode('sayvi');
 });
+
 results.addEventListener('click',event=>{
  const btn=event.target.closest?.('button[data-search-action]');
  if(btn&&results.contains(btn))visit(btn.dataset.searchAction);
