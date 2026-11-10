@@ -71,6 +71,7 @@
 #seyveoRecruitment .svrec-fold[open] .svrec-fold-chevron{
  transform:rotate(90deg);
 }
+#seyveoRecruitment .svrec-fold:not([open]) > .svrec-section{display:none!important}
 #seyveoRecruitment .svrec-section{
  display:grid;gap:10px;min-width:0;
  margin:0;padding:3px 0 16px;
@@ -157,7 +158,7 @@
  min-height:35px;padding:7px 9px;
  border:1px solid rgba(190,197,206,.12);
  border-radius:10px;background:transparent;
- color:var(--secondary);font:500 10.5px/1.3 inherit;
+ color:var(--secondary);font-size:10.5px;font-weight:500;line-height:1.3;font-family:inherit;
 }
 #seyveoRecruitment .svrec-stage[aria-pressed="true"]{
  border-color:transparent;background:#38383A;color:#FFF;
