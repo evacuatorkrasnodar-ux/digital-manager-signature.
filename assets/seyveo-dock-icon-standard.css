@@ -1,15 +1,15 @@
-/* SEYVEO Dock Family v4 · Notes is the optical master · 2026-11-10.
+/* SEYVEO Dock Family v5 · optical review of three screenshots · 2026-11-10.
    One visual vocabulary, NOT one generic button layout.
    No dock geometry, z-index, layout, navigation, press/hold handlers,
    waveform animation, camera, drawing or keyboard rules are modified.
    Icons only; no new decorative buttons and no new glass layers. */
 
 :root{
- --sv-dock-master-icon:23px;
- --sv-dock-master-stroke:1.45;
- /* Quiet matte silver like the approved Notes toolbar; transparent enough
-    to sit naturally over either graphite panel. */
- --sv-dock-master-ink:rgba(170,191,197,.82);
+ --sv-dock-master-icon:24px;
+ --sv-dock-notes-icon:23px;
+ --sv-dock-master-stroke:1.50;
+ /* One quiet neutral silver shared by all enabled dock actions. */
+ --sv-dock-master-ink:rgba(187,202,208,.90);
 }
 :root[data-theme="light"]{
  --sv-dock-master-ink:rgba(59,73,82,.85);
@@ -52,12 +52,12 @@ html body footer.dock.seyveo-music-dock
 html body footer.dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
   #navPicture > svg.seyveo-my-signature{
  box-sizing:border-box!important;
- flex:0 0 24px!important;
- width:24px!important;min-width:24px!important;max-width:24px!important;
- height:23px!important;min-height:23px!important;max-height:23px!important;
+ flex:0 0 26px!important;
+ width:26px!important;min-width:26px!important;max-width:26px!important;
+ height:24px!important;min-height:24px!important;max-height:24px!important;
  color:var(--sv-dock-master-ink)!important;
  stroke:currentColor!important;
- stroke-width:1.22!important;
+ stroke-width:1.38!important;
  overflow:visible!important;
 }
 /* The center Sayvi waveform has a 74-unit viewBox inside a fixed 50px
@@ -85,12 +85,12 @@ html body dialog#noteReviewDialog.note-review-dialog[open]
  > .sv-note-draw-standalone > svg{
  display:block!important;
  box-sizing:border-box!important;
- width:var(--sv-dock-master-icon)!important;
- height:var(--sv-dock-master-icon)!important;
- min-width:var(--sv-dock-master-icon)!important;
- min-height:var(--sv-dock-master-icon)!important;
- max-width:var(--sv-dock-master-icon)!important;
- max-height:var(--sv-dock-master-icon)!important;
+ width:var(--sv-dock-notes-icon)!important;
+ height:var(--sv-dock-notes-icon)!important;
+ min-width:var(--sv-dock-notes-icon)!important;
+ min-height:var(--sv-dock-notes-icon)!important;
+ max-width:var(--sv-dock-notes-icon)!important;
+ max-height:var(--sv-dock-notes-icon)!important;
  margin:auto!important;
  color:var(--sv-dock-master-ink)!important;
  stroke:currentColor!important;
@@ -116,12 +116,12 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top
 html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top
  .paper-toolbar .sv-inkbar > button.sv-inkbar-tool > svg.sv-paper-signature{
  box-sizing:border-box!important;
- width:var(--sv-dock-master-icon)!important;
- height:var(--sv-dock-master-icon)!important;
- min-width:var(--sv-dock-master-icon)!important;
- min-height:var(--sv-dock-master-icon)!important;
- max-width:var(--sv-dock-master-icon)!important;
- max-height:var(--sv-dock-master-icon)!important;
+ width:var(--sv-dock-notes-icon)!important;
+ height:var(--sv-dock-notes-icon)!important;
+ min-width:var(--sv-dock-notes-icon)!important;
+ min-height:var(--sv-dock-notes-icon)!important;
+ max-width:var(--sv-dock-notes-icon)!important;
+ max-height:var(--sv-dock-notes-icon)!important;
  color:var(--sv-dock-master-ink)!important;
  stroke:currentColor!important;
  stroke-width:var(--sv-dock-master-stroke)!important;
@@ -168,4 +168,40 @@ html body #sayviMusicMini .sv-music-mini-transport > button > svg{
 /* On very narrow phones shrink all dock icons together, never individually. */
 @media(max-width:355px){
  :root{--sv-dock-master-icon:22px;}
+}
+
+/* v5 · Three-dock on-device visual correction: Home, Notes and Music.
+   Match the approved Notes material across both floating capsules.
+   Never alter placement, grid, fixed docking or touch area geometry. */
+:root:not([data-theme="light"]) body footer.dock.sv-shared-dock::before,
+:root:not([data-theme="light"]) body footer.dock.sv-shared-dock::after,
+:root:not([data-theme="light"]) body #noteReviewDialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+:root:not([data-theme="light"]) body #noteReviewDialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ background:#38383A!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] body footer.dock.sv-shared-dock::before,
+:root[data-theme="light"] body footer.dock.sv-shared-dock::after,
+:root[data-theme="light"] body #noteReviewDialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+:root[data-theme="light"] body #noteReviewDialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ background:#E4E7E9!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+/* Disabled transport arrows are visibly quieter, not invisible.
+   Existing aria-disabled handling remains authoritative. */
+html body footer.dock.seyveo-music-dock
+ > .nav-item[aria-disabled="true"],
+html body footer.dock.seyveo-browser-dock
+ > .nav-item[aria-disabled="true"]{
+ opacity:.64!important;
 }
