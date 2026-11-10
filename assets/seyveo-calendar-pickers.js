@@ -360,3 +360,202 @@ if(taskDialog&&taskDate&&taskControl){
  }
 }
 })();
+
+/* SEYVEO · shared rounded native-input replacement.
+   Keep the existing input/select as the ONLY stored value; route supported
+   system-square controls through a consistent accessible graphite dialog.
+   Calendar event and task forms already have their own custom pickers. */
+(()=>{
+ 'use strict';
+ const CONFIG={
+  pictureOperationDay:'Дата операции',
+  svcpVacationEnd:'Окончание отпуска',
+  svcpManagerDayStart:'Начало смены',
+  svcpManagerDayEnd:'Окончание смены',
+  svcpBreakAfter:'Начало перерыва',
+  svcpBreakMinutes:'Длительность перерыва'
+ };
+ const fields=Object.entries(CONFIG).map(([id,title])=>({field:document.getElementById(id),title}))
+  .filter(({field})=>field&&((field.tagName==='SELECT')||['date','time'].includes(field.type)));
+ if(!fields.length||!HTMLDialogElement?.prototype?.showModal)return;
+ const pad=n=>String(n).padStart(2,'0');
+ const formatDate=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+ const monthFmt=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'});
+ const toISO=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+ function parseDate(v){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v||''))return null;
+  const [y,m,d]=v.split('-').map(Number),x=new Date(y,m-1,d);
+  return x.getFullYear()===y&&x.getMonth()===m-1&&x.getDate()===d?x:null;
+ }
+ const sheet=document.createElement('dialog');
+ sheet.id='svStandardPickerDialog';sheet.className='sv-standard-picker-sheet';
+ sheet.setAttribute('aria-labelledby','svStandardPickerTitle');
+ sheet.innerHTML=[
+  '<header class="sv-standard-picker-head">',
+  '<button class="sv-standard-picker-back" type="button" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>',
+  '<h2 id="svStandardPickerTitle"></h2></header>',
+  '<div id="svStandardPickerBody" class="sv-standard-picker-body"></div>'
+ ].join('');
+ document.body.append(sheet);
+ const title=document.getElementById('svStandardPickerTitle');
+ const body=document.getElementById('svStandardPickerBody');
+ const back=sheet.querySelector('.sv-standard-picker-back');
+ let current=null,trigger=null,year=0,month=0,hour=0,minute=0,kind='';
+ const buttons=new Map();
+ function label(field){
+  if(field.tagName==='SELECT')return field.selectedOptions[0]?.textContent?.trim()||'Выбрать';
+  if(field.type==='date'){
+   const d=parseDate(field.value);
+   return d?formatDate.format(d):'Выбрать дату';
+  }
+  return /^\d\d:\d\d$/.test(field.value||'')?field.value:'Выбрать время';
+ }
+ function sync(field){const button=buttons.get(field);if(!button)return;
+  button.querySelector('span').textContent=label(field);
+  button.dataset.filled=String(Boolean(field.value));
+ }
+ function make(tag,cls,copy){const x=document.createElement(tag);if(cls)x.className=cls;if(copy!==undefined)x.textContent=copy;return x}
+ function button(text,cls,action){
+  const x=make('button',cls,text);x.type='button';x.addEventListener('click',action);return x;
+ }
+ function commit(value){
+  if(!current)return;
+  current.value=value;
+  current.dispatchEvent(new Event('input',{bubbles:true}));
+  current.dispatchEvent(new Event('change',{bubbles:true}));
+  sync(current);sheet.close();
+ }
+ function close(){if(sheet.open)sheet.close()}
+ back.addEventListener('click',close);
+ sheet.addEventListener('click',e=>{if(e.target===sheet)close()});
+ sheet.addEventListener('close',()=>{
+  if(trigger){trigger.setAttribute('aria-expanded','false');trigger.focus({preventScroll:true})}
+  current=null;trigger=null;body.replaceChildren();
+ });
+ function renderSelect(){
+  const list=make('div','sv-standard-picker-choices');
+  for(const option of current.options){
+   if(option.disabled||option.hidden)continue;
+   const row=button(option.textContent.trim(),'sv-standard-picker-option',()=>commit(option.value));
+   row.setAttribute('aria-pressed',String(option.value===current.value));
+   if(option.value===current.value){
+    const mark=make('span','sv-standard-picker-check','✓');mark.setAttribute('aria-hidden','true');row.append(mark);
+   }
+   list.append(row);
+  }
+  body.append(list);
+ }
+ function renderDate(){
+  const m=new Date(year,month,1),header=make('div','sv-standard-month');
+  const previous=button('‹','sv-standard-month-arrow',()=>{month--;if(month<0){month=11;year--}render()});
+  previous.setAttribute('aria-label','Предыдущий месяц');
+  const name=make('strong',null,monthFmt.format(m));
+  const next=button('›','sv-standard-month-arrow',()=>{month++;if(month>11){month=0;year++}render()});
+  next.setAttribute('aria-label','Следующий месяц');
+  header.append(previous,name,next);body.append(header);
+  const week=make('div','sv-standard-picker-week');
+  for(const day of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'])week.append(make('span',null,day));
+  body.append(week);
+  const grid=make('div','sv-standard-picker-days');
+  const offset=(m.getDay()+6)%7,days=new Date(year,month+1,0).getDate();
+  for(let n=0;n<offset;n++)grid.append(make('span','sv-standard-picker-blank'));
+  for(let n=1;n<=days;n++){
+   const date=new Date(year,month,n),value=toISO(date);
+   const inRange=(!current.min||value>=current.min)&&(!current.max||value<=current.max);
+   const day=button(String(n),'sv-standard-picker-day',()=>commit(value));
+   day.disabled=!inRange;day.setAttribute('aria-label',formatDate.format(date));
+   if(value===current.value){day.classList.add('is-selected');day.setAttribute('aria-pressed','true')}
+   if(value===toISO(new Date()))day.classList.add('is-today');
+   grid.append(day);
+  }
+  body.append(grid);
+  const actions=make('div','sv-standard-picker-actions');
+  const today=toISO(new Date());
+  if((!current.min||today>=current.min)&&(!current.max||today<=current.max))
+   actions.append(button('Сегодня','sv-standard-picker-secondary',()=>commit(today)));
+  if(!current.required)actions.append(button('Без даты','sv-standard-picker-secondary',()=>commit('')));
+  if(actions.children.length)body.append(actions);
+ }
+ function paintTime(){
+  body.querySelectorAll('[data-sv-picker-hour]').forEach(b=>b.classList.toggle('is-selected',Number(b.dataset.svPickerHour)===hour));
+  body.querySelectorAll('[data-sv-picker-minute]').forEach(b=>b.classList.toggle('is-selected',Number(b.dataset.svPickerMinute)===minute));
+  const preview=body.querySelector('.sv-standard-time-preview');
+  if(preview)preview.textContent=pad(hour)+':'+pad(minute);
+ }
+ function renderTime(){
+  const preview=make('div','sv-standard-time-preview');body.append(preview);
+  const columns=make('div','sv-standard-time-columns');
+  const hh=make('div','sv-standard-time-wheel'),mm=make('div','sv-standard-time-wheel');
+  hh.setAttribute('aria-label','Часы');hh.setAttribute('role','group');
+  mm.setAttribute('aria-label','Минуты');mm.setAttribute('role','group');
+  for(let n=0;n<24;n++){
+   const b=button(pad(n),'sv-standard-time-option',()=>{hour=n;paintTime()});
+   b.dataset.svPickerHour=String(n);hh.append(b);
+  }
+  for(let n=0;n<60;n++){
+   const b=button(pad(n),'sv-standard-time-option',()=>{minute=n;paintTime()});
+   b.dataset.svPickerMinute=String(n);mm.append(b);
+  }
+  const hCol=make('section','sv-standard-time-column'),mCol=make('section','sv-standard-time-column');
+  hCol.append(make('small',null,'Часы'),hh);mCol.append(make('small',null,'Минуты'),mm);
+  columns.append(hCol,make('span','sv-standard-time-colon',':'),mCol);
+  body.append(columns);paintTime();
+  const done=button('Готово','sv-standard-picker-done',()=>commit(pad(hour)+':'+pad(minute)));
+  body.append(done);
+  requestAnimationFrame(()=>{
+   if(!sheet.open||kind!=='time')return;
+   hh.scrollTop=Math.max(0,hour*42-84);mm.scrollTop=Math.max(0,minute*42-84);
+  });
+ }
+ function render(){if(!current)return;body.replaceChildren();
+  if(kind==='select')renderSelect();
+  else if(kind==='date')renderDate();
+  else renderTime();
+ }
+ function open(field,launch,name){
+  if(sheet.open)sheet.close();
+  current=field;trigger=launch;title.textContent=name;
+  kind=field.tagName==='SELECT'?'select':field.type;
+  if(kind==='date'){
+   const d=parseDate(field.value)||new Date();year=d.getFullYear();month=d.getMonth();
+  }else if(kind==='time'){
+   const value=/^\d\d:\d\d$/.test(field.value)?field.value:'09:00';
+   hour=Math.min(23,Number(value.slice(0,2)));minute=Math.min(59,Number(value.slice(3,5)));
+  }
+  render();launch.setAttribute('aria-expanded','true');
+  try{sheet.showModal()}catch{current=null;trigger=null;launch.setAttribute('aria-expanded','false')}
+ }
+ for(const {field,name,title:unused} of []){}
+ for(const {field,title:fieldTitle} of fields){
+  const launch=button('','sv-standard-picker-launch',()=>open(field,launch,fieldTitle));
+  launch.setAttribute('aria-label',fieldTitle);
+  launch.setAttribute('aria-expanded','false');
+  launch.setAttribute('aria-haspopup','dialog');
+  launch.setAttribute('aria-controls',sheet.id);
+  const value=make('span','sv-standard-picker-value');
+  const arrow=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  arrow.setAttribute('viewBox','0 0 24 24');arrow.setAttribute('aria-hidden','true');
+  arrow.innerHTML='<path d="m7 10 5 5 5-5"/>';
+  launch.append(value,arrow);
+  field.insertAdjacentElement('afterend',launch);
+  field.classList.add('sv-standard-picker-source');field.tabIndex=-1;
+  field.setAttribute('aria-hidden','true');
+  buttons.set(field,launch);sync(field);
+  field.addEventListener('change',()=>sync(field));
+  field.addEventListener('input',()=>sync(field));
+  const parent=field.closest('label');
+  if(parent)parent.addEventListener('click',event=>{
+   if(event.target===field||launch.contains(event.target))return;
+   if(event.target.closest('input,select,textarea,button'))return;
+   event.preventDefault();launch.click();
+  });
+ }
+ // Existing schedule code sets .value directly after restoring its saved state.
+ // Keep button labels synchronized after initialization and when tabs are entered.
+ [0,250,1200].forEach(delay=>setTimeout(()=>fields.forEach(({field})=>sync(field)),delay));
+ document.addEventListener('click',event=>{
+  if(event.target.closest('#svcpStaffTabs,[data-svstaff-tab],#svcpManagerPeople>summary'))
+   setTimeout(()=>fields.forEach(({field})=>sync(field)),0);
+ },true);
+ window.addEventListener('pageshow',()=>fields.forEach(({field})=>sync(field)));
+})();
