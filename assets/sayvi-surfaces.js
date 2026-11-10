@@ -220,7 +220,7 @@ window.addEventListener('seyveo:global-search-scope',event=>{
  const detail=event.detail||{};
  if(!['mail','contract'].includes(detail.kind))return;
  const query=String(detail.query||'').trim().slice(0,200);
- pendingScopedSearch={kind:detail.kind,query,scope:String(detail.scope||'')};
+ pendingScopedSearch={kind:detail.kind,query,scope:String(detail.scope||''),revealArchive:detail.revealArchive===true};
 });
 function persistMailDrafts(){
  try{
@@ -1816,7 +1816,11 @@ function render(kind){
  else if(kind==='contract')documentsView();
  else healthView();
  installDocumentsSearch();
- if(scoped&&kind==='contract')window.SEYVEO_DOCUMENT_SHELF?.search?.(scoped.query);
+ if(scoped&&kind==='contract'){
+  if(scoped.revealArchive)
+   window.SEYVEO_DOCUMENT_CENTER?.revealArchiveForSearch?.(scoped.scope,scoped.query);
+  else window.SEYVEO_DOCUMENT_SHELF?.search?.(scoped.query);
+ }
  if(scoped)pendingScopedSearch=null;
  page.classList.remove('sv-deep-enter');
  void page.offsetWidth;page.classList.add('sv-deep-enter');
