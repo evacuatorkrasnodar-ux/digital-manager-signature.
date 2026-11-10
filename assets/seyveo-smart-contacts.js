@@ -57,12 +57,12 @@
  }
  const SAMPLES={
   personal:[
-   {initial:'М',name:'Мария',category:'Семья',note:'Пример контакта'},
-   {initial:'А',name:'Алексей',category:'Друзья',note:'Пример контакта'}
+   {initial:'М',name:'Мария',category:'Семья'},
+   {initial:'А',name:'Алексей',category:'Друзья'}
   ],
   business:[
-   {initial:'А',name:'Андрей',category:'Клиенты',note:'Пример контакта'},
-   {initial:'П',name:'Проектный отдел',category:'Коллеги',note:'Пример контакта'}
+   {initial:'А',name:'Андрей',category:'Клиенты'},
+   {initial:'П',name:'Проектный отдел',category:'Коллеги'}
   ]
  };
  function mount({host,onBack,onConnect,onSaved}={}){
