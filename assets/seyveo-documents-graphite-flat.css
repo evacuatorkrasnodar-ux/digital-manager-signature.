@@ -439,3 +439,10 @@ html body #sayviSurfacePage[data-sv-subject="contract"] #sayviSurfaceBack svg{
  display:block!important;width:19px!important;height:19px!important;
  stroke:#F5F5F6!important;stroke-width:1.5!important;
 }
+
+/* The scanner is now a normal fifth tool, not a full-width navigation card. */
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-scan::after,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-tool-scan-desc,
+html body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-tool-grid .sv-doc-scan-illustration{
+ display:none!important;content:none!important;
+}
