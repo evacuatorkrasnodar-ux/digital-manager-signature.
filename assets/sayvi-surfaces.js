@@ -467,10 +467,8 @@ function mailView(){
   form.append(attachmentPicker);
   const attachButton=iconButton('paperclip','Прикрепить файл',()=>attachmentPicker.click());
   attachButton.classList.add('sv-mail-attach-trigger');
-  const messageField=message.parentElement;
-  const attachHeader=create('div','sv-mail-attach-heading');
-  attachHeader.append(messageField.querySelector('.sv-mail-field-label'),attachButton);
-  messageField.insertBefore(attachHeader,message);
+  // Keep "Сообщение" as a clean heading; the paperclip lives beside Send below.
+  attachButton.title='Прикрепить файл';
   const attachmentList=create('div','sv-mail-attached-list');
   attachmentList.setAttribute('aria-label','Прикреплённые файлы');
   form.append(attachmentList);
@@ -641,9 +639,12 @@ function mailView(){
   const primaryActions=create('div','sv-mail-primary-actions');
   primaryActions.append(send);
   actions.append(polish,primaryActions);
-  // One compact footer: files on the left, Sayvi and Send to the right.
+  // Stable bottom control row: paperclip at left, chosen files beside it,
+  // Sayvi + Send at right. The icon never jumps when attachments are added.
   const composerFooter=create('div','sv-mail-compose-footer');
-  composerFooter.append(attachmentList,actions);
+  const filesArea=create('div','sv-mail-footer-files');
+  filesArea.append(attachButton,attachmentList);
+  composerFooter.append(filesArea,actions);
   form.append(composerFooter,preview,status);
   content.append(form);
  }
