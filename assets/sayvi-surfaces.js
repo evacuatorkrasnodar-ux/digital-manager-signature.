@@ -705,6 +705,7 @@ function mailView(){
   return 0;
  }
  function openEditor(id=null,reply=null){
+  mailDraftSelecting=false;selectedDraftIds.clear();
   guardOpen=false;
   mailEditorReturnId=reply?.id||mailCurrent||null;
   mailEditingId=id;mailEditorOpen=true;mailCurrent=null;
@@ -722,12 +723,14 @@ function mailView(){
   if(!reply)content.querySelector('[data-mail-field="to"]')?.focus();
  }
  function selectFolder(folder){
+  mailDraftSelecting=false;selectedDraftIds.clear();
   guardOpen=false;
   mailNotice='';mailFolder=folder;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;paint();
  }
  function selectScope(account){
   if(!['all','personal','business'].includes(account)||account===mailScope)return;
   guardOpen=false;
+  mailDraftSelecting=false;selectedDraftIds.clear();
   mailScope=account;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;
   mailNotice='';mailSearch='';searchInput.value='';paint();
  }
@@ -1292,38 +1295,160 @@ function mailView(){
    shell.append(swipeActions,row);group.append(shell);
   }
  }
+
+ let mailDraftSelecting=false;
+ const selectedDraftIds=new Set();
+ function draftDisplayName(draft){
+  const explicit=String(draft.subject||'').trim().replace(/\s+/g,' ');
+  if(explicit)return explicit;
+  const body=String(draft.body||'').split(/\r?\n/).map(s=>s.trim().replace(/\s+/g,' ')).find(Boolean);
+  if(body)return body.slice(0,105);
+  if(draft.attachments?.length)return 'Черновик с вложениями';
+  return 'Письмо без темы';
+ }
+ function removeSelectedDrafts(ids){
+  const actual=[...new Set(ids)].filter(id=>mailDrafts.some(d=>d.id===id));
+  if(!actual.length)return false;
+  const count=actual.length;
+  const question=count===1
+   ?'Удалить этот черновик? Все его вложения также будут удалены с устройства. Отменить удаление нельзя.'
+   :'Удалить выбранные черновики ('+count+')? Их вложения также будут удалены с устройства. Отменить удаление нельзя.';
+  if(!window.confirm(question))return false;
+  const marked=new Set(actual);
+  for(const draft of mailDrafts.filter(d=>marked.has(d.id))){
+   for(const file of draft.attachments||[])void deleteMailAttachment(draft.id,file.id);
+  }
+  mailDrafts=mailDrafts.filter(d=>!marked.has(d.id));
+  persistMailDrafts();
+  selectedDraftIds.clear();mailDraftSelecting=false;
+  mailNotice=count===1?'Черновик удалён с устройства.':'Удалено черновиков: '+count+'.';
+  paint();return true;
+ }
  function drawDrafts(){
-  const list=mailDrafts.filter(d=>mailVisible(d.account)&&(!mailSearch||[d.to,d.subject,d.body].join(' ').toLocaleLowerCase('ru').includes(mailSearch)));
-  if(!list.length){content.append(create('p','sv-mail-empty',mailSearch?'Черновики не найдены.':'Пока нет черновиков. Нажмите «Написать», чтобы создать первый.'));return}
+  const list=mailDrafts.filter(d=>mailVisible(d.account)&&(!mailSearch||
+   [d.to,d.subject,d.body].join(' ').toLocaleLowerCase('ru').includes(mailSearch)));
+  // A single selection control replaces repetitive trash cans on every line.
+  const toolbar=create('div','sv-mail-drafts-bar');
+  const countLabel=create('strong','sv-mail-drafts-count',mailSearch
+   ?'Найдено: '+list.length
+   :'Черновиков: '+list.length);
+  const change=create('button','sv-mail-drafts-select',mailDraftSelecting?'Готово':'Выбрать');
+  change.type='button';change.setAttribute('aria-pressed',String(mailDraftSelecting));
+  change.addEventListener('click',()=>{
+   mailDraftSelecting=!mailDraftSelecting;
+   if(!mailDraftSelecting)selectedDraftIds.clear();
+   paintList();
+  });
+  toolbar.append(countLabel);
+  if(list.length)toolbar.append(change);
+  content.append(toolbar);
+  if(!list.length){
+   mailDraftSelecting=false;selectedDraftIds.clear();
+   content.append(create('p','sv-mail-empty',mailSearch?'Черновики не найдены.':'Черновиков пока нет. Нажмите карандаш, чтобы написать письмо.'));
+   return;
+  }
+  const group=create('div','sv-mail-drafts-group');content.append(group);
   for(const draft of list){
    const row=create('div','sv-mail-draft-row');
-   const edit=create('button','sv-mail-draft-content');
-   edit.type='button';
-   edit.setAttribute('aria-label','Открыть черновик: '+(draft.subject||'Без темы')+
-    '. '+(draft.to?'Кому: '+draft.to:'Получатель не указан')+
-    '. '+mailAccountName(draft.account)+
-    (draft.attachments?.length?'. Вложений: '+draft.attachments.length:''));
-   const title=create('strong','sv-mail-draft-title',draft.subject||'Без темы');
-   title.title=draft.subject||'Без темы';
+   if(mailDraftSelecting)row.classList.add('is-selecting');
+   const edit=create('button','sv-mail-draft-content');edit.type='button';
+   const display=draftDisplayName(draft);
+   edit.setAttribute('aria-label',mailDraftSelecting
+    ?(selectedDraftIds.has(draft.id)?'Снять выбор: ':'Выбрать: ')+display
+    :'Открыть черновик: '+display+'. Смахните влево для удаления.');
+   if(mailDraftSelecting)edit.setAttribute('aria-pressed',String(selectedDraftIds.has(draft.id)));
+   const title=create('strong','sv-mail-draft-title',display);title.title=display;
    if(!draft.subject)title.classList.add('is-untitled');
    const details=create('span','sv-mail-draft-details');
-   const recipient=create('small','sv-mail-draft-recipient',draft.to?'Кому: '+draft.to:'Получатель не указан');
-   recipient.title=draft.to||'Получатель не указан';
-   // Identical starting edge on every draft: account, clip/count, recipient.
-   const account=create('span','sv-mail-account-tag sv-mail-draft-account',mailAccountName(draft.account));
-   details.append(account);
+   details.append(create('span','sv-mail-account-tag sv-mail-draft-account',mailAccountName(draft.account)));
    if(draft.attachments?.length){
-    const files=create('span','sv-mail-draft-attachment-count');
-    files.setAttribute('aria-label','Вложений: '+draft.attachments.length);
-    files.append(mailIcon('paperclip'),create('span','',String(draft.attachments.length)));
-    details.append(files);
+    const count=create('span','sv-mail-draft-attachment-count');
+    count.setAttribute('aria-label','Вложений: '+draft.attachments.length);
+    count.append(mailIcon('paperclip'),create('span','',String(draft.attachments.length)));
+    details.append(count);
    }
-   details.append(recipient);
+   if(draft.to.trim()){
+    const recipient=create('small','sv-mail-draft-recipient','Кому: '+draft.to.trim());
+    recipient.title=draft.to.trim();details.append(recipient);
+   }
    edit.append(title,details);
-   edit.addEventListener('click',()=>editDraft(draft.id));
-   const remove=iconButton('trash','Удалить черновик '+(draft.subject||'Без темы'),()=>removeDraft(draft.id));
-   remove.classList.add('sv-mail-draft-delete');
-   row.append(edit,remove);content.append(row);
+   if(draft.subject?.trim()&&draft.body?.trim()){
+    const preview=create('small','sv-mail-draft-body-preview',String(draft.body).replace(/\s+/g,' ').trim().slice(0,125));
+    edit.append(preview);
+   }
+   let swipe=null;
+   const setActionsOpen=(visible)=>{
+    if(mailDraftSelecting)return;
+    for(const other of group.querySelectorAll('.sv-mail-draft-row.is-actions-open')){
+     if(other!==row){
+      other.classList.remove('is-actions-open');
+      const action=other.querySelector('.sv-mail-draft-swipe-delete');
+      if(action)action.tabIndex=-1;
+     }
+    }
+    row.classList.toggle('is-actions-open',visible);
+    if(swipe){swipe.tabIndex=visible?0:-1;swipe.setAttribute('aria-hidden',String(!visible))}
+   };
+   const selectDraft=()=>{
+    if(selectedDraftIds.has(draft.id))selectedDraftIds.delete(draft.id);
+    else selectedDraftIds.add(draft.id);
+    paintList();
+   };
+   edit.addEventListener('click',()=>{
+    if(mailDraftSelecting){selectDraft();return}
+    if(row.classList.contains('is-actions-open')){setActionsOpen(false);return}
+    editDraft(draft.id);
+   });
+   if(mailDraftSelecting){
+    const circle=create('span','sv-mail-draft-select-mark');
+    circle.setAttribute('aria-hidden','true');
+    if(selectedDraftIds.has(draft.id))circle.classList.add('is-checked');
+    row.append(circle,edit);
+   }else{
+    swipe=create('button','sv-mail-draft-swipe-delete');
+    swipe.type='button';swipe.tabIndex=-1;
+    swipe.setAttribute('aria-label','Удалить черновик: '+display);
+    swipe.setAttribute('aria-hidden','true');
+    swipe.append(mailIcon('trash'),create('span','','Удалить'));
+    swipe.addEventListener('click',()=>removeSelectedDrafts([draft.id]));
+    let startTouch=null;
+    row.addEventListener('touchstart',event=>{
+     const t=event.touches[0];
+     if(t)startTouch={x:t.clientX,y:t.clientY};
+    },{passive:true});
+    row.addEventListener('touchend',event=>{
+     if(!startTouch)return;
+     const t=event.changedTouches[0];if(!t)return;
+     const dx=t.clientX-startTouch.x,dy=t.clientY-startTouch.y;
+     startTouch=null;
+     if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy)*1.25)return;
+     if(event.cancelable)event.preventDefault();
+     setActionsOpen(dx<0);
+    },{passive:false});
+    row.addEventListener('touchcancel',()=>{startTouch=null},{passive:true});
+    edit.addEventListener('contextmenu',event=>{
+     event.preventDefault();setActionsOpen(true);
+    });
+    edit.addEventListener('keydown',event=>{
+     if(event.key==='Delete'||event.key==='Backspace'){
+      event.preventDefault();removeSelectedDrafts([draft.id]);
+     }
+     if(event.key==='Escape'&&row.classList.contains('is-actions-open')){
+      event.preventDefault();setActionsOpen(false);
+     }
+    });
+    row.append(edit,swipe);
+   }
+   group.append(row);
+  }
+  if(mailDraftSelecting){
+   const bottom=create('div','sv-mail-drafts-selection-actions');
+   const chosen=selectedDraftIds.size;
+   const remove=create('button','sv-mail-drafts-remove-selected',
+    chosen?'Удалить выбранные · '+chosen:'Выберите черновики');
+   remove.type='button';remove.disabled=!chosen;
+   remove.addEventListener('click',()=>{if(chosen)removeSelectedDrafts([...selectedDraftIds])});
+   bottom.append(remove);content.append(bottom);
   }
  }
  function paintList(){
