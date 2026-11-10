@@ -116,7 +116,7 @@
    legend.append(make('strong','','Доступ для Сэйви'),make('small','','Отдельно для личной и рабочей почты'));
    page.append(legend);
    const choices=make('div','svmc-choices');
-   const status=make('p','svmc-status');status.setAttribute('role','status');
+   const status=make('p','svmc-status','Настройки сохраняются автоматически. Доступ запрашивается отдельно.');status.setAttribute('role','status');
    for(const [key,data] of Object.entries(infoText)){
     const label=make('label','svmc-option');
     label.append(pict(ICON[data.icon]));
