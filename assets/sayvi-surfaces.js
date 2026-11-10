@@ -1267,41 +1267,39 @@ function mailView(){
   if(mailFolder==='overview'||!visible.length)return;
   const chosen=visible.filter(m=>selectedMailIds.has(m.id)).length;
   const bar=create('div','sv-mail-bulk-toolbar');
-  bar.append(create('span','sv-mail-bulk-counter',mailBulkSelecting
-   ?'Выбрано: '+chosen+' из '+visible.length
-   :'Писем: '+visible.length));
+  bar.classList.toggle('is-selecting',mailBulkSelecting);
+  const counter=create('span','sv-mail-bulk-counter',mailBulkSelecting
+   ?chosen+' из '+visible.length
+   :mailSearch.trim()?'Найдено: '+visible.length:'Писем: '+visible.length);
+  bar.append(counter);
   if(mailBulkSelecting){
-   const allChosen=visible.every(m=>selectedMailIds.has(m.id));
-   const all=create('button','sv-mail-bulk-all',allChosen?'Снять всё':'Выбрать все');
-   all.type='button';
-   all.addEventListener('click',()=>{
-    if(allChosen)for(const m of visible)selectedMailIds.delete(m.id);
-    else for(const m of visible)selectedMailIds.add(m.id);
-    paintList();
-   });
-   bar.append(all);
+   // "Отмена" already clears selection: never offer a duplicate "Снять всё".
+   if(visible.length>1&&chosen<visible.length){
+    const all=create('button','sv-mail-bulk-all','Выбрать все');all.type='button';
+    all.addEventListener('click',()=>{
+     for(const item of visible)selectedMailIds.add(item.id);
+     paintList();
+    });
+    bar.append(all);
+   }
+   if(chosen){
+    const permanent=mailFolder==='trash';
+    const clean=create('button','sv-mail-bulk-clean',permanent?'Удалить':'Очистить');
+    clean.type='button';
+    clean.setAttribute('aria-label',permanent
+     ?'Удалить навсегда '+chosen+' выбранных писем после подтверждения'
+     :'Переместить '+chosen+' выбранных писем в Корзину после подтверждения');
+    clean.addEventListener('click',cleanSelectedSampleMail);
+    bar.append(clean);
+   }
   }
   const select=create('button','sv-mail-bulk-select',mailBulkSelecting?'Отмена':'Выбрать');
   select.type='button';select.setAttribute('aria-pressed',String(mailBulkSelecting));
   select.addEventListener('click',()=>{
-   mailBulkSelecting=!mailBulkSelecting;selectedMailIds.clear();paintList();
+   mailBulkSelecting=!mailBulkSelecting;
+   selectedMailIds.clear();paintList();
   });
   bar.append(select);content.append(bar);
- }
- function renderMailBulkAction(){
-  if(!mailBulkSelecting)return;
-  const selected=visibleSampleMail().filter(m=>selectedMailIds.has(m.id));
-  const actions=create('div','sv-mail-bulk-actions');
-  const permanent=mailFolder==='trash';
-  const button=create('button','sv-mail-bulk-clean',
-   permanent?'Удалить навсегда'+(selected.length?' · '+selected.length:''):
-    'Очистить'+(selected.length?' · '+selected.length:''));
-  button.type='button';button.disabled=!selected.length;
-  button.setAttribute('aria-label',permanent
-   ?'Окончательно удалить выбранные письма после подтверждения'
-   :'Переместить выбранные письма в Корзину после подтверждения');
-  button.addEventListener('click',cleanSelectedSampleMail);
-  actions.append(button);content.append(actions);
  }
  function drawExamples(limit=0){
   // Keep the query local to this renderer too. A prior cached revision
@@ -1416,7 +1414,6 @@ function mailView(){
    });
    shell.append(swipeActions,row);group.append(shell);
   }
-  renderMailBulkAction();
  }
 
  let mailDraftSelecting=false;
@@ -1459,7 +1456,7 @@ function mailView(){
   const toolbar=create('div','sv-mail-drafts-bar');
   const chosenVisible=list.filter(d=>selectedDraftIds.has(d.id)).length;
   const countLabel=create('strong','sv-mail-drafts-count',mailDraftSelecting
-   ?'Выбрано: '+chosenVisible+' из '+list.length
+   ?chosenVisible+' из '+list.length
    :mailSearch?'Найдено: '+list.length:'Черновиков: '+list.length);
   const change=create('button','sv-mail-drafts-select',mailDraftSelecting?'Отмена':'Выбрать');
   change.type='button';change.setAttribute('aria-pressed',String(mailDraftSelecting));
@@ -1470,15 +1467,23 @@ function mailView(){
   });
   toolbar.append(countLabel);
   if(mailDraftSelecting&&list.length){
-   const allChosen=list.every(d=>selectedDraftIds.has(d.id));
-   const all=create('button','sv-mail-drafts-all',allChosen?'Снять всё':'Выбрать все');
-   all.type='button';
-   all.addEventListener('click',()=>{
-    if(allChosen)for(const item of list)selectedDraftIds.delete(item.id);
-    else for(const item of list)selectedDraftIds.add(item.id);
-    paintList();
-   });
-   toolbar.append(all);
+   // All is shown only while there are unselected drafts.
+   if(list.length>1&&chosenVisible<list.length){
+    const all=create('button','sv-mail-drafts-all','Выбрать все');
+    all.type='button';
+    all.addEventListener('click',()=>{
+     for(const item of list)selectedDraftIds.add(item.id);
+     paintList();
+    });
+    toolbar.append(all);
+   }
+   if(chosenVisible){
+    const remove=create('button','sv-mail-drafts-remove-selected','Очистить');
+    remove.type='button';
+    remove.setAttribute('aria-label','Окончательно удалить '+chosenVisible+' выбранных черновиков и их вложения после подтверждения');
+    remove.addEventListener('click',()=>removeSelectedDrafts([...selectedDraftIds]));
+    toolbar.append(remove);
+   }
   }
   if(list.length)toolbar.append(change);
   content.append(toolbar);
@@ -1585,16 +1590,7 @@ function mailView(){
    }
    group.append(row);
   }
-  if(mailDraftSelecting){
-   const bottom=create('div','sv-mail-drafts-selection-actions');
-   const chosen=selectedDraftIds.size;
-   const remove=create('button','sv-mail-drafts-remove-selected',
-    chosen?'Очистить · '+chosen:'Выберите черновики');
-   remove.type='button';remove.disabled=!chosen;
-   remove.setAttribute('aria-label','Окончательно удалить выбранные черновики и вложения после подтверждения');
-   remove.addEventListener('click',()=>{if(chosen)removeSelectedDrafts([...selectedDraftIds])});
-   bottom.append(remove);content.append(bottom);
-  }
+  // All bulk actions live beside the selection count, never below the list.
  }
  function paintList(){
   section.classList.toggle('sv-mail-bulk-active',mailBulkSelecting&&mailFolder!=='overview'&&!mailEditorOpen&&!mailCurrent);
