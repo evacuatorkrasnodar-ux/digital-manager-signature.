@@ -3155,6 +3155,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
    <span class="cal-health-tile-action" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span>
   </button>
 </div>
+ <button id="calendarHealthComfortMode" class="cal-health-comfort-toggle" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4zM16 9a5 5 0 0 1 0 6M19 6a9 9 0 0 1 0 12"/></svg><span>Крупный текст и голос Сэйви</span><small>Выкл.</small></button>
  <div id="calendarHealthAgeSetting" class="cal-health-age-setting">
   <label for="calendarHealthBirthYear">Год рождения</label>
   <select id="calendarHealthBirthYear" aria-label="Год рождения"><option value="">Не указан</option></select>
@@ -3226,7 +3227,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   <label><span>Нижнее</span><input id="calendarBpDiastolic" type="number" min="30" max="200" step="1" inputmode="numeric" placeholder="80" autocomplete="off"><small>мм рт. ст.</small></label>
   <label><span>Пульс</span><input id="calendarBpPulse" type="number" min="30" max="240" step="1" inputmode="numeric" placeholder="72" autocomplete="off"><small>уд/мин</small></label>
  </div>
- <div id="calendarBpLiveAdvice" class="cal-bp-preview" aria-live="polite">Введите три значения — Сэйви поможет разобраться в результате.</div>
+ <div class="cal-bp-voice-wrap"><div id="calendarBpLiveAdvice" class="cal-bp-preview" aria-live="polite">Введите три значения — Сэйви поможет разобраться в результате.</div><button id="calendarBpSpeak" type="button" aria-label="Озвучить рекомендацию Сэйви" title="Слушать Сэйви"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4zM16 9a5 5 0 0 1 0 6M19 6a9 9 0 0 1 0 12"/></svg></button></div>
  <div id="calendarBpEmergency" class="cal-bp-emergency" hidden>
   <strong>Возможна опасная ситуация</strong>
   <p>Если есть боль в груди, сильная одышка, нарушение речи, слабость или онемение, вызывайте скорую немедленно. Не ждите повторного измерения.</p>
