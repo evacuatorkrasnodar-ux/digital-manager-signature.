@@ -1515,7 +1515,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=4">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=3">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=4">
 </head>
 <body>
 <main>
@@ -2795,6 +2795,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
     Math.max(1,Math.ceil(original.size/1024))+' КБ'):'';
    meta.textContent=ext+(size?' · '+size:'');
    copy.append(label,meta);tile.append(copy);group.append(tile);
+   if(thumbnail)copy.replaceChildren(attachmentCaption(name));
    tile.addEventListener('click',async()=>{
     const currentFiles=sentDocumentBlobs.get(turn)||[];
     const live=currentFiles.find(file=>file.name===name);
@@ -2867,7 +2868,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    image.addEventListener('click',()=>{
     imageViewerImg.src=item.thumb;imageViewer.hidden=false;
    });
-   const label=document.createElement('span');label.textContent=item.name;
+   const label=attachmentCaption(item.name);
    tile.append(image,label);gallery.append(tile);
   }
   turn.append(gallery);
@@ -3073,6 +3074,16 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   csv:['CSV','#21865b'],json:['JSON','#8666b5'],xml:['XML','#8666b5'],
   log:['LOG','#64748b'],html:['HTML','#d56a32'],css:['CSS','#2875db'],js:['JS','#c49b21']
  };
+ function attachmentCaption(name){
+  const ext=(String(name||'').split('.').pop()||'').toLowerCase();
+  const format=ext==='docx'||ext==='doc'?'W':ext==='jpeg'?'JPG':ext.toUpperCase().slice(0,5)||'FILE';
+  const caption=document.createElement('span');caption.className='sv-file-caption';
+  const badge=document.createElement('span');badge.className='sv-file-caption-format';
+  badge.dataset.format=ext==='jpeg'?'jpg':ext;badge.textContent=format;
+  const title=document.createElement('span');title.className='sv-file-caption-name';
+  title.textContent=String(name||'Файл');title.title=title.textContent;
+  caption.append(badge,title);return caption;
+ }
  function makeDocumentIcon(file){
   const ext=(file.name.split('.').pop()||'').toLowerCase();
   const [label,color]=documentBadges[ext]||['FILE','#64748b'];
@@ -3123,12 +3134,13 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    const pagePreview=!entry.preview?documentPreviewSurface(entry.file):null;
    const visual=entry.preview?document.createElement('img'):(pagePreview||makeDocumentIcon(entry.file));
    if(entry.preview){visual.className='sv-attach-thumb';visual.src=entry.preview;visual.alt=''}
-   const label=document.createElement('span');label.className='sv-attach-caption';label.textContent=entry.file.name;label.title=entry.file.name;
+   const label=document.createElement('span');label.className='sv-attach-caption';label.append(attachmentCaption(entry.file.name));label.title=entry.file.name;
    const remove=document.createElement('button');remove.type='button';remove.className='sv-attach-remove';
    remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
    remove.setAttribute('aria-label','Убрать '+entry.file.name);
    chip.classList.toggle('sv-attach-chip--file',!entry.preview&&!pagePreview);
    chip.classList.toggle('sv-attach-chip--page',!!pagePreview);
+   chip.classList.toggle('sv-attach-chip--image',!!entry.preview);
    remove.addEventListener('click',()=>{
     if(active)return;
     if(entry.preview)URL.revokeObjectURL(entry.preview);
