@@ -64,7 +64,7 @@ html body #sayviComposer.sayvi-has-attachments .sv-attach-chip.sv-attach-chip--f
  width:195px!important;max-width:195px!important;
  height:78px!important;
  display:flex!important;align-items:center!important;gap:9px!important;
- padding:8px 26px 8px 9px!important;
+ padding:8px 42px 8px 9px!important;
 }
 html body #sayviComposer.sayvi-has-attachments .sv-attach-chip > .sv-attach-thumb{
  position:absolute!important;
@@ -111,9 +111,9 @@ html body #sayviComposer .sv-attach-remove{
  box-sizing:border-box!important;
  position:absolute!important;top:3px!important;right:3px!important;z-index:5!important;
  display:grid!important;place-items:center!important;
- width:28px!important;min-width:28px!important;
- height:28px!important;min-height:28px!important;
- margin:0!important;padding:5px!important;
+ width:38px!important;min-width:38px!important;
+ height:38px!important;min-height:38px!important;
+ margin:0!important;padding:10px!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
  color:#FFFFFF!important;
@@ -183,6 +183,21 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-file{
 html body #sayviMessages .turn[data-role="user"] .sv-sent-file:active{
  background:#242426!important;
 }
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file-copy{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ justify-content:center!important;gap:4px!important;
+ flex:1 1 auto!important;min-width:0!important;
+ max-width:100%!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file-meta{
+ display:block!important;
+ color:#AEB0B6!important;
+ font:480 10.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;overflow:hidden!important;
+ text-overflow:ellipsis!important;
+}
+
 html body #sayviMessages .turn[data-role="user"] .sv-sent-file-name{
  display:-webkit-box!important;
  -webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;
