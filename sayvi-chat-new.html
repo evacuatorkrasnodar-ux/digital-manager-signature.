@@ -3904,8 +3904,11 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
     if(remaining<180)throw Error('Слишком много вложений для одного вопроса. Пришли файлы по одному.');
     let content='',alreadyTruncated=false;
     if(isReadableText(file)){
-     if(file.size>100000)throw Error('Текстовый файл '+file.name+' слишком большой (максимум 100 КБ).');
-     content=await file.text();
+     // Read only the start for the AI excerpt, without rejecting large source files.
+     // The full original stays in the local attachment selection.
+     const textPreviewBytes=256*1024;
+     content=await file.slice(0,textPreviewBytes).text();
+     alreadyTruncated=file.size>textPreviewBytes;
     }else{
      const form=new FormData();form.append('file',file,file.name);
      let response;
