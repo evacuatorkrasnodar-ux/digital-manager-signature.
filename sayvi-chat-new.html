@@ -3660,8 +3660,10 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     :text;
    speechDraftAtStart='';
    if(shouldSend){
-    input.value='';updateControls();
-    ask(combined);
+    // Reuse the ordinary send pipeline so selected photos/documents travel
+    // with the dictated text instead of being left behind in the composer.
+    input.value=combined;updateControls();
+    send();
    }else{
     input.value=combined;updateControls();
     status.textContent='Речь распознана. Нажмите стрелку отправки.';
@@ -3784,8 +3786,8 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    const combined=speechDraftAtStart.trim()
     ?speechDraftAtStart.trimEnd()+' '+transcript:transcript;
    speechDraftAtStart='';
-   input.value='';updateControls();
-   ask(combined);
+   input.value=combined;updateControls();
+   send();
   }
   window.setTimeout(()=>{suppressMicClick=false},350);
  }
