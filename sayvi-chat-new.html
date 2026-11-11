@@ -3385,7 +3385,14 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    }else{
     tile.classList.add('sv-sent-file--compact');
     if(received)tile.classList.add('sv-received-file');
-    tile.append(makeDocumentIcon({name}));
+    if(ext==='pdf'||ext==='docx'||ext==='doc'){
+     // Use the already approved SEYVEO Word/PDF paper marks for compact chat files.
+     const paper=document.createElement('span');
+     paper.className=ext==='pdf'?'sv-sent-pdf-icon':'sv-sent-word-icon';
+     paper.setAttribute('aria-hidden','true');
+     paper.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true" focusable="false"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/><text x="12" y="21" text-anchor="middle" fill="currentColor" stroke="none" font-family="system-ui,sans-serif" font-size="'+(ext==='pdf'?'6':'11')+'" font-weight="700">'+(ext==='pdf'?'PDF':'W')+'</text></svg>';
+     tile.append(paper);
+    }else tile.append(makeDocumentIcon({name}));
     const copy=document.createElement('span');copy.className='sv-sent-file-copy';
     const label=document.createElement('strong');label.className='sv-sent-file-name';
     label.textContent=name;label.title=name;
