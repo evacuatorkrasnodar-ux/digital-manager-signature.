@@ -214,7 +214,7 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
   }
   return node;
  }
- const badge=isReceivedDocument?svcpIncomingDocumentIcon(detail.kind):svcpFileBadge(displayName,type);
+ const badge=isReceivedDocument&&sourceFile instanceof File?svcpIncomingDocumentIcon(detail.kind):svcpFileBadge(displayName,type);
  // Sender preview and task attachments are unchanged; recipients see Sayvi's icon.
  node.append(badge);
  const body=el('span','svcp-file-card-copy');
