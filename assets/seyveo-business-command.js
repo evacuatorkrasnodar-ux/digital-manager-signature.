@@ -1386,8 +1386,8 @@ function senderName(msg){
 }
 function renderDirectory(){
  const list=$('svcpConversationList');if(!list)return;
- if(renderHistorySearch())return;
  if(chatFilter==='history'){renderWorkHistory();return}
+ if(renderHistorySearch())return
  list.replaceChildren();
  $('svcpChatFilters')?.querySelectorAll('[data-svcp-chat-filter]').forEach(button=>
   button.setAttribute('aria-pressed',String(button.dataset.svcpChatFilter===chatFilter)));
