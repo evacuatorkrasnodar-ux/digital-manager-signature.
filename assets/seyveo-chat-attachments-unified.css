@@ -1069,3 +1069,80 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-he
  min-width:0!important;overflow:hidden!important;
 }
 /* Keep work chat's original document signing and document actions intact. */
+
+/* SEYVEO · Work Chat · one shared attachment editor, just like Sayvi.
+   The previously floating file-preview node now lives inside #svcpChatForm:
+   file/photo first, text second, approved work controls third. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-has-attachment{
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-rows:88px var(--svcp-editor-height,44px) 42px!important;
+ height:var(--svcp-compose-height,187px)!important;
+ min-height:var(--svcp-compose-height,187px)!important;
+ max-height:min(66dvh,calc(100dvh - 98px))!important;
+ padding:8px 7px 5px!important;
+ align-content:start!important;
+ gap:0!important;
+ border-radius:24px!important;
+ transition:height .24s cubic-bezier(.22,.8,.22,1),border-radius .24s cubic-bezier(.22,.8,.22,1)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-has-attachment > #svcpAttachmentPreview:not([hidden]){
+ position:relative!important;
+ inset:auto!important;
+ top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+ transform:none!important;
+ z-index:3!important;
+ grid-column:1/-1!important;grid-row:1!important;
+ align-self:start!important;justify-self:start!important;
+ display:flex!important;align-items:center!important;
+ flex:0 0 auto!important;
+ box-sizing:border-box!important;
+ width:min(228px,calc(100% - 16px))!important;
+ max-width:min(228px,calc(100% - 16px))!important;
+ height:75px!important;min-height:75px!important;max-height:75px!important;
+ margin:1px 0 0 9px!important;
+ padding:8px 7px 8px 10px!important;
+ overflow:hidden!important;
+ background:#1A1B1D!important;
+ border:1px solid #393A3D!important;
+ border-radius:16px!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-has-attachment > #svcpAttachmentPreview .svcp-selected-info{
+ min-width:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-has-attachment > #svcpAttachmentPreview .svcp-selected-info small{
+ display:block!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-has-attachment > #svcpAttachmentPreview .svcp-selected-photo{
+ width:56px!important;height:56px!important;flex:0 0 56px!important;
+ object-fit:cover!important;border-radius:10px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-has-attachment > #svcpAttachmentPreview .svcp-selected-remove{
+ flex:0 0 34px!important;width:34px!important;min-width:34px!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;
+ background:transparent!important;border:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-has-attachment .svcp-chat-compose-field,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-has-attachment .svcp-chat-compose-field:focus-within{
+ grid-column:1/-1!important;
+ grid-row:2!important;
+ align-self:stretch!important;
+ margin:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-has-attachment > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle,#svcpCameraToggle){
+ grid-row:3!important;
+ align-self:center!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat:has(#svcpChatForm.svcp-has-attachment #svcpAttachmentPreview:not([hidden]))
+ > #svcpReplyPreview:not([hidden]){
+ bottom:calc(var(--seyveo-dock-bottom,7px) + var(--svcp-current-compose-height,187px) + 8px)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-has-attachment{
+  transition:none!important;
+ }
+}
