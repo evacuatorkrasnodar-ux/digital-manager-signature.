@@ -703,8 +703,10 @@ function leaveMeasurement(message=''){
  $('calendarSpaceStatus').textContent=message;
  $('svCareScroll').scrollTop=0;
  // The user returns to the overview, not a hidden form field.
- const target=[...$('calendarHealthOverview').querySelectorAll('[data-health-quick]')]
-  .find(node=>node.dataset.healthQuick===category)||$('calendarSpaceClose');
+ const target=current==='health'&&category==='Давление'?
+  $('calendarBpQuickS'):
+  ([...$('calendarHealthOverview').querySelectorAll('[data-health-quick]')]
+   .find(node=>node.dataset.healthQuick===category)||$('calendarSpaceClose'));
  target.focus({preventScroll:true});
 }
 function open(space,id=null,selectedDate=''){
