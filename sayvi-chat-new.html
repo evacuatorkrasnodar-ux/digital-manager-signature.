@@ -2547,8 +2547,9 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    try{printWindow.close()}catch{}
   }
  }
- function previewSayviDocument(value,feedback){
-  const initialDraft=documentDraftOnly(value);
+ const editedDocumentDrafts=new WeakMap();
+ function previewSayviDocument(value,feedback,bubble=null){
+  const initialDraft=(bubble&&editedDocumentDrafts.get(bubble))||documentDraftOnly(value);
   if(!initialDraft){feedback.textContent='Сэйви пока не подготовила полный текст документа.';return}
   const cleanDocumentText=text=>String(text||'').replace(/\*\*(.*?)\*\*/gs,'$1').replace(/^\s*#{1,4}\s+/gm,'').trim();
    let draft=cleanDocumentText(initialDraft),editing=false;
@@ -2620,6 +2621,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    if(!editing){editor.value=draft;editorVisible(true);edit.querySelector('span').textContent='Готово';return}
    if(!editor.value.trim()){window.alert('Документ не может быть пустым');return}
    draft=editor.value;page.textContent=draft;
+   if(bubble)editedDocumentDrafts.set(bubble,draft);
    workingDocument={conversation:currentId,text:draft};
    heading.querySelector('.sv-doc-meta').textContent=documentMissingFields(draft).length
     ?'Есть данные для заполнения':'Проверь перед сохранением';
@@ -2641,6 +2643,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    if(editing)editor.value=revised;
    else{draft=revised;page.textContent=draft}
    workingDocument={conversation:currentId,text:revised};
+   if(bubble)editedDocumentDrafts.set(bubble,revised);
    updateWarnings();
   });
   const confirmDownload=()=>{
@@ -2740,7 +2743,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   const preview=document.createElement('button');preview.type='button';
   preview.className='sv-download-preview';
   preview.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Смотреть</span>';
-  preview.addEventListener('click',()=>previewSayviDocument(replySource(bubble),feedback));
+  preview.addEventListener('click',()=>previewSayviDocument(replySource(bubble),feedback,bubble));
   // Match the other menu actions: icon-only SVG with a normal button label.
   // Printing is relevant only when the reply contains a prepared document.
   const print=miniAction('print','Печать',()=>{
@@ -3163,7 +3166,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    window.SEYVEO_RICH_REPLIES.render(bubble,source,{
     draft,
     copy:value=>copyReply(value,feedback),
-    preview:()=>previewSayviDocument(source,feedback)
+    preview:()=>previewSayviDocument(source,feedback,bubble)
    });
   }else bubble.textContent=source;
  }
