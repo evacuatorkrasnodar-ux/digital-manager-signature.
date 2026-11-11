@@ -3660,7 +3660,15 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    badge.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true" focusable="false"><path d="M4 1.5h10.5L20 7v21H4z"/><path d="M14.5 1.5V7H20"/></svg><span>'+symbol+'</span>';
   }else badge.textContent=format;
   const title=document.createElement('span');title.className='sv-file-caption-name';
-  title.textContent=String(name||'Файл');title.title=title.textContent;
+  const imageType=/^(jpe?g|png|webp|gif|heic)$/i.test(ext);
+  const originalName=String(name||'Файл');
+  if(imageType){
+   const base=originalName.replace(/\.[^.]+$/,'');
+   const clean=base.replace(/\d{4,}/g,'').replace(/[_\-\s]+/g,' ').trim();
+   const cameraGenerated=/^(?:img|dsc|dscn|dcim|pict|photo|image|screenshot|скриншот|фото|изображение)$/i.test(clean);
+   title.textContent=clean&&!cameraGenerated?clean:'Фото';
+  }else title.textContent=originalName;
+  title.title=originalName;
   caption.append(badge,title);return caption;
  }
  function makeDocumentIcon(file){
