@@ -113,7 +113,7 @@
  padding:0;
  border:1px solid rgba(225,226,230,.13);
  border-radius:19px;
- background:#2E2E30;
+ background:#38383A;
  color:#F3F3F4;
  overflow:hidden;
  box-shadow:none;
@@ -196,7 +196,7 @@ html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads:n
  margin:1px 0 12px!important;
  border:1px solid rgba(225,226,230,.12)!important;
  border-radius:15px!important;
- background:#242426!important;
+ background:#38383A!important;
  box-shadow:none!important;
  overflow:hidden!important;
 }
