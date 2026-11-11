@@ -850,3 +850,35 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-word-icon svg text{
 
 /* Word uses a readable restrained blue file outline, matching the red PDF visual system. */
 html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > .sv-sent-word-icon{color:#3478F6!important;}
+
+
+/* SEYVEO approved visual hierarchy · files sent BY the user.
+   Exactly 200×60, always on the right, original extension-colored marks. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files:has(.sv-sent-file--compact){
+ align-self:flex-end!important;
+ width:min(200px,calc(100vw - 36px))!important;
+ max-width:200px!important;
+ margin-left:auto!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file.sv-sent-file--compact{
+ width:100%!important;height:60px!important;min-height:60px!important;
+ padding:9px 14px!important;gap:12px!important;
+ border:1px solid #393A3D!important;border-radius:17px!important;
+ background:#1A1B1D!important;
+ background-image:none!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-sent-file-name{
+ color:#F3F3F4!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-sent-file-meta{
+ color:#AEB0B6!important;
+}
+/* Photos are authentic media, with neither tint nor a caption strip. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo{
+ border:0!important;padding:0!important;background:transparent!important;
+ box-shadow:none!important;overflow:hidden!important;border-radius:16px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > :is(.sv-file-caption,.sv-attach-caption){
+ display:none!important;
+}
