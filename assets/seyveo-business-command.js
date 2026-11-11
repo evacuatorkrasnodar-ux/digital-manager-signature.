@@ -165,7 +165,7 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
  const displayName=String(name||'Вложение');
  const node=el(onOpen?'button':url?'a':'div','svcp-file-card');
  const detail=svcpFileKind(displayName,type);
- if(sourceFile instanceof File&&['pdf','word'].includes(detail.kind)){
+ if(isOwn&&sourceFile instanceof File&&['pdf','word'].includes(detail.kind)){
   node.classList.add('svcp-sent-document-tile');
   const preview=el('span','svcp-sent-document-thumb');
   node.append(preview);
