@@ -3718,12 +3718,8 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  function loadPdfThumbnailLibrary(){
   if(!pdfThumbnailLibrary){
    pdfThumbnailLibrary=(async()=>{
-    // Older running localhost servers prohibit all workers in CSP.
-    // Avoid triggering a fake-worker CSP violation; retain the safe icon.
-    const response=await fetch(location.pathname,{method:'HEAD',cache:'no-store',credentials:'same-origin'});
-    const policy=response.headers.get('content-security-policy')||'';
-    if(/(?:^|;)\s*worker-src\s+[^;]*'none'/i.test(policy))
-     throw Error('Update and restart local server for PDF preview');
+    // The local app route supports GET, not HEAD. Import PDF.js directly:
+    // if CSP disallows workers, PDF.js will reject and the file icon remains.
     return import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
    })().then(lib=>{
      lib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
@@ -3921,6 +3917,18 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
      const textPreviewBytes=256*1024;
      content=await file.slice(0,textPreviewBytes).text();
      alreadyTruncated=file.size>textPreviewBytes;
+    }else if(/\.docx$/iu.test(file.name)){
+     // DOCX is parsed in-browser for the text sent to the assistant.
+     // No document-text POST is needed for Word, including on localhost.
+     try{
+      const reader=await loadDocxThumbnailLibrary();
+      const result=await reader.extractRawText({arrayBuffer:await file.arrayBuffer()});
+      content=String(result?.value||'').trim();
+      if(!content){unreadable.push({name:file.name,reason:'В Word нет доступного текста'});continue}
+     }catch(error){
+      unreadable.push({name:file.name,reason:'Не удалось прочитать Word на этом устройстве'});
+      continue;
+     }
     }else{
      const form=new FormData();form.append('file',file,file.name);
      let response;
@@ -3928,17 +3936,16 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
      catch{throw Error('Локальный обработчик документов недоступен.')}
      if(!response.ok){
       const detail=await response.json().catch(()=>null);
-      // Failure to extract text must not prevent attaching the original file.
-      // The AI must not claim it has read an unreadable document.
+      // Preserve the attachment and accurately flag unreadable files.
       if([422,502,503,504].includes(response.status)){
-       unreadable.push({name:file.name});
+       unreadable.push({name:file.name,reason:detail?.error||'Не удалось извлечь текст'});
        continue;
       }
       throw Error((typeof detail?.error==='string'?detail.error:'Не удалось прочитать документ.')+' Файл остался выбранным.');
      }
      const result=await response.json().catch(()=>null);
      if(typeof result?.text!=='string'||!result.text.trim()){
-      unreadable.push({name:file.name});continue;
+      unreadable.push({name:file.name,reason:'Текст документа не найден'});continue;
      }
      content=result.text;alreadyTruncated=result.truncated===true;
     }
