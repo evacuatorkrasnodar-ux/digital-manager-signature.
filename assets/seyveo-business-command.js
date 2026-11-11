@@ -142,16 +142,19 @@ function svcpFileKind(name='',mime=''){
 }
 function svcpFileBadge(name,type){
  const meta=svcpFileKind(name,type);
- const badge=el('span','svcp-file-badge svcp-file-badge--'+meta.kind,meta.mark);
+ const badge=el('span','svcp-file-badge svcp-file-badge--'+meta.kind,'');
  if(meta.kind==='pdf'||meta.kind==='word'){
+  // Identical native SVG document contour used by Sayvi's file captions.
+  // Keep its glyph separate from the outline to avoid accidental SVG strokes.
+  const label=meta.kind==='pdf'?'PDF':'W';
+  const fontSize=meta.kind==='pdf'?6:11;
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('viewBox','0 0 32 38');
+  svg.setAttribute('viewBox','0 0 24 30');
   svg.setAttribute('aria-hidden','true');
-  const title=meta.kind==='pdf'?'PDF':'W';
-  const size=meta.kind==='pdf'?7:12;
-  svg.innerHTML='<path d="M6 2.5h13l7 7V35H6zM19 2.5v7h7" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/><text x="16" y="26" fill="currentColor" font-family="system-ui,sans-serif" font-size="'+size+'" font-weight="750" text-anchor="middle">'+title+'</text>';
+  svg.setAttribute('focusable','false');
+  svg.innerHTML='<path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/><text x="12" y="21" text-anchor="middle" font-family="system-ui,sans-serif" font-size="'+fontSize+'" font-weight="700">'+label+'</text>';
   badge.append(svg);
- }
+ }else badge.textContent=meta.mark;
  badge.setAttribute('aria-hidden','true');
  return badge;
 }
