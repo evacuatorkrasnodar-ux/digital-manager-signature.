@@ -1387,6 +1387,7 @@ function senderName(msg){
 function renderDirectory(){
  const list=$('svcpConversationList');if(!list)return;
  if(renderHistorySearch())return;
+ if(chatFilter==='history'){renderWorkHistory();return}
  list.replaceChildren();
  $('svcpChatFilters')?.querySelectorAll('[data-svcp-chat-filter]').forEach(button=>
   button.setAttribute('aria-pressed',String(button.dataset.svcpChatFilter===chatFilter)));
@@ -1466,13 +1467,119 @@ function renderDirectory(){
   list.append(row);
  }
 }
+
+/* One local chronological work history: messages, actual file references and
+   assignments across all rooms. It is read-only to employees. It does NOT
+   invent cross-device synchronization or silently erase completed tasks. */
+function renderWorkHistory(){
+ const list=$('svcpConversationList');if(!list)return;
+ list.replaceChildren();
+ const manager=!employeePreviewActive()&&state.viewpoint!=='elena';
+ const allowed=roomId=>ROOMS.some(room=>room.id===roomId)&&
+  (!employeePreviewActive()||employeeAllowedRoom(roomId));
+ const q=historyQuery.trim().toLocaleLowerCase('ru-RU');
+ const entries=[];
+ state.chat.forEach((msg,index)=>{
+  if(!msg||!allowed(msg.room))return;
+  const room=ROOMS.find(r=>r.id===msg.room);
+  const name=employeePreviewActive()&&msg.room==='dm-elena'?'Руководитель':room.label;
+  const kind=msg.mediaId?'Файл':msg.taskId?'Поручение':'Сообщение';
+  const text=String(msg.text||'').trim();
+  const filename=String(msg.mediaName||'').trim();
+  const haystack=[name,kind,text,filename,senderName(msg)].join(' ').toLocaleLowerCase('ru-RU');
+  if(q&&!haystack.includes(q))return;
+  entries.push({kind:'message',index,at:Number(msg.at)||0,name,
+   label:kind,text:filename||text||'Вложение',
+   sender:msg.role==='sayvi'?'Сэйви':msg.role==='demo-elena'?'Елена':'Руководитель',
+   roomId:msg.room});
+ });
+ state.tasks.forEach((task,index)=>{
+  if(!task||employeePreviewActive()&&task.assigneeId!=='elena')return;
+  const who=STAFF[task.assigneeId]||'Команда';
+  const text=String(task.text||'').trim();
+  const file=String(task.attachmentName||task.mediaName||'').trim();
+  const haystack=['Поручение',who,text,file].join(' ').toLocaleLowerCase('ru-RU');
+  if(q&&!haystack.includes(q))return;
+  entries.push({kind:'task',index,at:Number(task.createdAt||task.at||task.assignedAt)||0,
+   name:who,label:task.done?'Поручение выполнено':'Поручение',
+   text:text+(file?' · '+file:'')});
+ });
+ entries.sort((a,b)=>b.at-a.at||b.index-a.index);
+ $('svcpChatFilters')?.querySelectorAll('[data-svcp-chat-filter]').forEach(button=>
+  button.setAttribute('aria-pressed',String(button.dataset.svcpChatFilter==='history')));
+ const intro=el('p','svcp-history-caption',
+  manager?'История переписки, документов и поручений · на этом устройстве':
+   'Доступные тебе сообщения и поручения · на этом устройстве');
+ list.append(intro);
+ if(!entries.length){
+  list.append(el('p','svcp-search-empty',q?'По запросу ничего не найдено.':'История пока пуста.'));
+  return;
+ }
+ let lastDate='';
+ for(const entry of entries){
+  const d=new Date(entry.at);
+  const date=Number.isFinite(d.getTime())&&entry.at?d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):'Без даты';
+  if(date!==lastDate){
+   lastDate=date;
+   list.append(el('div','svcp-history-day',date));
+  }
+  const group=el('div','svcp-work-history-row');
+  const open=el('button','svcp-work-history-open');
+  open.type='button';
+  const icon=el('span','svcp-work-history-icon',entry.kind==='task'?'✓':entry.label==='Файл'?'▤':'↩');
+  icon.setAttribute('aria-hidden','true');
+  const content=el('span','svcp-work-history-content');
+  const header=el('span','svcp-work-history-heading');
+  header.append(el('strong',null,entry.name),
+   el('small',null,entry.at?new Date(entry.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):''));
+  content.append(header,
+   el('span','svcp-work-history-type',entry.label),
+   el('span','svcp-work-history-text',entry.text.slice(0,260)));
+  open.append(icon,content);
+  open.setAttribute('aria-label','Открыть '+entry.label.toLocaleLowerCase('ru-RU')+': '+entry.name);
+  open.addEventListener('click',()=>{
+   if(entry.kind==='message'){
+    openRoom(entry.roomId);focusSearchIndex=entry.index;renderChat();
+   }else{
+    if(employeePreviewActive())window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
+    else window.SEYVEO_UNIFIED_TASKS?.openBusiness?.();
+    requestAnimationFrame(()=>focusTask(entry.index));
+   }
+  });
+  group.append(open);
+  if(manager){
+   const remove=el('button','svcp-work-history-delete','×');
+   remove.type='button';
+   remove.setAttribute('aria-label','Удалить из локальной истории: '+entry.label);
+   remove.title='Удалить';
+   remove.addEventListener('click',()=>{
+    if(employeePreviewActive()||state.viewpoint!=='manager')return;
+    const message=entry.kind==='task'?
+     'Удалить поручение с этого устройства? Это удалит его из локального списка задач.':
+     'Удалить сообщение из локальной истории? На других устройствах оно не удалится.';
+    if(!window.confirm(message))return;
+    const key=entry.kind==='task'?TASK_KEY:CHAT_KEY;
+    const source=entry.kind==='task'?state.tasks:state.chat;
+    const updated=source.filter((_,i)=>i!==entry.index);
+    if(!save(key,updated))return;
+    if(entry.kind==='task'){state.tasks=updated;renderTasks();}
+    else state.chat=updated;
+    renderWorkHistory();
+   });
+   group.append(remove);
+  }
+  list.append(group);
+ }
+}
+
 $('svcpChatFilters')?.addEventListener('click',event=>{
  const button=event.target.closest('[data-svcp-chat-filter]');
  if(!button)return;
  const next=button.dataset.svcpChatFilter;
- if(!['all','people','groups','saved'].includes(next))return;
+ if(!['all','people','groups','saved','history'].includes(next))return;
  chatFilter=next;
- const search=$('svcpHistorySearch');if(search){search.value='';historyQuery=''}
+ const search=$('svcpHistorySearch');
+ if(next!=='history'&&search){search.value='';historyQuery=''}
  renderDirectory();
 });
 /* Search existing local chat history and team assignments, no new archive page. */
@@ -1544,6 +1651,7 @@ function renderHistorySearch(){
 }
 $('svcpHistorySearch')?.addEventListener('input',event=>{
  historyQuery=event.target.value||'';
+ if(chatFilter==='history'){renderWorkHistory();return}
  if(!renderHistorySearch())renderDirectory();
 });
 function focusTask(index){
@@ -2239,7 +2347,7 @@ function renderChat(){
       setStatus('Редактирование · измени текст и нажми «Отправить».');
      }});
     }
-    if(isOwn||state.viewpoint==='manager'){
+    if(!employeePreviewActive()&&state.viewpoint==='manager'){
      const moderating=!isOwn;
      secondary.push({title:moderating?'Убрать из локального чата':'Удалить у себя',kind:'delete',run:()=>{
       closeMessageMenus();
@@ -3054,7 +3162,8 @@ function renderTasks(){
    extra.append(decorateTaskAction(btn('Доработать',()=>resolve(false),'svcp-approval-demo-switch'),'rework'));
   }
   extra.append(decorateTaskAction(btn('Обсудить с командой',()=>openTaskDiscussion(t),'svcp-task-discuss'),'discuss'));
-  extra.append(decorateTaskAction(btn('Удалить',()=>{
+  if(!employeePreviewActive()&&state.viewpoint==='manager')
+   extra.append(decorateTaskAction(btn('Удалить',()=>{
    const updated=state.tasks.filter((_,index)=>index!==i);
    if(!save(TASK_KEY,updated))return;
    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
