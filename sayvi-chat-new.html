@@ -3365,15 +3365,13 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   turn.classList.toggle('sv-has-files',names.length>0);
   if(!names.length)return;
   const group=document.createElement('div');group.className='sv-sent-files';
-  // Keep sent PDF/Word pages in the same 3-across gallery as selected attachments.
-  if(!received&&names.some(name=>/\.(?:pdf|docx)$/iu.test(name)))
-   group.classList.add('sv-sent-files--preview-grid');
+  // Sent attachments always retain the complete compact file card.
   for(const name of names){
    const tile=document.createElement('button');tile.type='button';tile.className='sv-sent-file';
    tile.setAttribute('aria-label','Открыть файл '+name);
    const original=sentDocumentBlobs.get(turn)?.find(file=>file.name===name);
    const ext=(name.split('.').pop()||'').toLowerCase();
-   const pageType=!received&&(ext==='pdf'||ext==='docx');
+   const pageType=false; // The full-page gallery is for the unsent composer only.
    if(pageType){
     // Same first-page miniature as the Work Chat: consistent tile dimensions.
     tile.classList.add('sv-sent-file--page','sv-sent-file--symmetric');
