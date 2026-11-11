@@ -590,3 +590,55 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page > .sv-sent-
 html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > .sv-file-caption{
  padding-left:7px!important;padding-right:7px!important;
 }
+
+/* SEYVEO final paper thumbnail: render PDF as a true canvas image.
+   No embedded PDF toolbar, PDF overlay icon, border or white gutter.
+   Keep the deep black caption from the approved reference. */
+html body .sv-document-page-preview,
+html body .sv-document-page{
+ box-sizing:border-box!important;
+ background:#FFFFFF!important;
+ border:0!important;border-radius:0!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+}
+html body .sv-document-page-preview .sv-document-page-canvas{
+ box-sizing:border-box!important;
+ position:absolute!important;top:0!important;left:0!important;
+ display:block!important;width:100%!important;height:auto!important;
+ min-height:0!important;max-width:none!important;
+ margin:0!important;padding:0!important;border:0!important;
+ background:#FFF!important;object-fit:contain!important;
+ opacity:0!important;
+}
+html body .sv-document-page-preview.sv-preview-loaded .sv-document-page-canvas{
+ opacity:1!important;
+}
+html body .sv-document-page-preview.sv-preview-loaded .sv-document-page-fallback{
+ display:none!important;
+}
+/* PDF image is flush against the card edges, only the card itself is clipped. */
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--page > .sv-document-page-preview,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page > .sv-document-page-preview{
+ position:relative!important;left:auto!important;right:auto!important;
+ top:auto!important;bottom:auto!important;
+ width:100%!important;
+ border:0!important;border-radius:0!important;
+ overflow:hidden!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--page > .sv-document-page-preview{
+ position:absolute!important;inset:0 0 28px!important;
+ height:calc(100% - 28px)!important;
+}
+html body #sayviComposer .sv-attach-remove,
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip:is(.sv-attach-chip--image,.sv-attach-chip--page) .sv-attach-remove{
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviComposer .sv-attach-remove svg{
+ filter:drop-shadow(0 1px 2px rgba(0,0,0,.85))!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--page > .sv-attach-caption,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page > .sv-sent-file-copy{
+ background:#050506!important;
+}
