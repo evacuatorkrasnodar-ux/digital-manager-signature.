@@ -2020,6 +2020,17 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    feedback.textContent='Скопировано';
   }catch{feedback.textContent='Не удалось скопировать'}
  }
+ // Generate a meaningful safe name for the document that is actually downloaded.
+ function sayviExportFilename(value,ext){
+  const first=String(value||'').split('\n')
+   .map(x=>x.trim().replace(/^#{1,4}\s+/u,'').replace(/^\*\*|\*\*$/gu,''))
+   .find(Boolean)||'Документ';
+  let name=/^(?:\S+[,!]?\s*)?здравствуйте\b|^добрый (?:день|вечер)|^уважаем/iu.test(first)?'Письмо':first;
+  name=name.replace(/[^a-zа-яё\d\s_.-]/giu,' ')
+   .replace(/\s+/gu,'_').replace(/[_.-]{2,}/gu,'_')
+   .replace(/^[_\s.]+|[_\s.]+$/gu,'').slice(0,48);
+  return 'SEYVEO-'+(name||'Документ')+'.'+ext;
+ }
  async function exportWordReply(value,feedback){
   if(!value.trim()){feedback.textContent='Нет текста для сохранения';return}
   feedback.textContent='Готовлю Word…';
@@ -2031,7 +2042,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    if(!response.ok){const error=await response.json().catch(()=>({}));throw Error(error.error||'Экспорт Word недоступен')}
    const blob=await response.blob();
    const url=URL.createObjectURL(blob);
-   const a=document.createElement('a');a.href=url;a.download='SEYVEO-document.docx';
+   const a=document.createElement('a');a.href=url;a.download=sayviExportFilename(value,'docx');
    document.body.append(a);a.click();a.remove();
    setTimeout(()=>URL.revokeObjectURL(url),30000);
    feedback.textContent='Word сохранён';
@@ -2044,7 +2055,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   try{
    const blob=await window.SEYVEO_CREATE_PDF(value);
    const url=URL.createObjectURL(blob);
-   const a=document.createElement('a');a.href=url;a.download='SEYVEO-document.pdf';
+   const a=document.createElement('a');a.href=url;a.download=sayviExportFilename(value,'pdf');
    document.body.append(a);a.click();a.remove();
    setTimeout(()=>URL.revokeObjectURL(url),30000);
    feedback.textContent='PDF сохранён';
@@ -2474,10 +2485,10 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   const wordIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="3" y="10" width="12.5" height="8.5" rx="2.2" class="sv-file-label"/><path d="m5.6 12.3 1 3.7 1.1-2.6 1.1 2.6 1-3.7" class="sv-file-letter"/></svg>';
   const pdfIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="2" y="10" width="19" height="8.5" rx="2.2" class="sv-file-label"/><text x="11.5" y="16" text-anchor="middle" class="sv-file-pdf-text">PDF</text></svg>';
   const word=document.createElement('button');word.type='button';word.className='sv-download-word';
-  word.innerHTML=wordIcon+'<span>Word</span>';
+  word.innerHTML=wordIcon+'<span class="sv-file-entry"><strong>Документ Word</strong><small>Word · DOCX</small></span>';
   word.addEventListener('click',()=>{const draft=documentDraftOnly(replySource(bubble));if(draft)exportWordReply(draft,feedback);else feedback.textContent='Нет готового документа для Word';});
   const pdf=document.createElement('button');pdf.type='button';pdf.className='sv-download-pdf';
-  pdf.innerHTML=pdfIcon+'<span>PDF</span>';
+  pdf.innerHTML=pdfIcon+'<span class="sv-file-entry"><strong>Документ PDF</strong><small>PDF</small></span>';
   pdf.addEventListener('click',()=>{const draft=documentDraftOnly(replySource(bubble));if(draft)exportPdfReply(draft,feedback);else feedback.textContent='Нет готового документа для PDF';});
   const preview=document.createElement('button');preview.type='button';
   preview.className='sv-download-preview';
@@ -2914,7 +2925,14 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     if(downloadRow){
      const preceding=turn?.previousElementSibling;
      const request=preceding?.dataset.role==='user'?preceding.textContent:'';
-     downloadRow.hidden=!documentDraftOnly(message);
+     const draft=documentDraftOnly(message);
+     downloadRow.hidden=!draft;
+     if(draft){
+      const wordName=downloadRow.querySelector('.sv-download-word .sv-file-entry strong');
+      const pdfName=downloadRow.querySelector('.sv-download-pdf .sv-file-entry strong');
+      if(wordName)wordName.textContent=sayviExportFilename(draft,'docx');
+      if(pdfName)pdfName.textContent=sayviExportFilename(draft,'pdf');
+     }
      const printOption=turn?.querySelector('.sv-download-print');
      if(printOption)printOption.hidden=downloadRow.hidden;
     }
