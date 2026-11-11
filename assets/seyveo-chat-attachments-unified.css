@@ -2845,3 +2845,55 @@ html body #sayviMessages .turn[data-role="assistant"] .sv-document-downloads > .
 html body #sayviMessages .turn[data-role="assistant"] .sv-document-downloads > .sv-generated-file-card > .sv-generated-file-clock[hidden]{
  display:none!important;
 }
+
+/* SEYVEO compact generated documents 2026-11-11: 220x60 */
+/* Applies only to completed document cards sent by Sayvi, not to message
+   bubbles, user attachments, document viewers, or draft previews. */
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads:not([hidden]){
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ width:min(220px,calc(100vw - 36px))!important;max-width:220px!important;
+ min-width:0!important;gap:5px!important;
+ margin:5px 0 8px!important;padding:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-generated-file-card:is(.sv-download-word,.sv-download-pdf){
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;
+ flex:0 0 60px!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
+ gap:9px!important;margin:0!important;padding:7px 10px!important;
+ border:1px solid #393A3D!important;border-radius:17px!important;
+ background:#1A1B1D!important;box-shadow:none!important;
+ font:inherit!important;white-space:normal!important;overflow:hidden!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-generated-file-card:is(.sv-download-word,.sv-download-pdf) > svg.sv-generated-file-icon{
+ box-sizing:border-box!important;flex:0 0 29px!important;
+ width:29px!important;min-width:29px!important;max-width:29px!important;
+ height:35px!important;min-height:35px!important;max-height:35px!important;
+ margin:0!important;padding:0!important;display:block!important;
+ fill:none!important;stroke:none!important;overflow:visible!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-generated-file-card:is(.sv-download-word,.sv-download-pdf) > .sv-file-entry{
+ box-sizing:border-box!important;display:flex!important;flex:1 1 auto!important;
+ flex-direction:column!important;justify-content:center!important;
+ min-width:0!important;max-width:100%!important;gap:2px!important;
+ margin:0!important;padding:0 0 6px!important;overflow:hidden!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-generated-file-card:is(.sv-download-word,.sv-download-pdf) > .sv-file-entry > strong{
+ display:block!important;min-width:0!important;max-width:100%!important;
+ font:600 12px/15px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ letter-spacing:0!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-generated-file-card:is(.sv-download-word,.sv-download-pdf) > .sv-file-entry > small{
+ display:block!important;font:400 11px/13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-generated-file-card:is(.sv-download-word,.sv-download-pdf) > .sv-generated-file-clock:not([hidden]){
+ position:absolute!important;top:auto!important;left:auto!important;
+ right:8px!important;bottom:4px!important;display:block!important;
+ font:500 9px/11px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#AEB0B6!important;
+}
