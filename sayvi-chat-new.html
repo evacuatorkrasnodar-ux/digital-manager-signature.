@@ -2745,8 +2745,17 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    const tile=document.createElement('button');tile.type='button';tile.className='sv-sent-file';
    tile.setAttribute('aria-label','Открыть файл '+name);
    tile.append(makeDocumentIcon({name}));
-   const label=document.createElement('span');label.className='sv-sent-file-name';
-   label.textContent=name;label.title=name;tile.append(label);group.append(tile);
+   const copy=document.createElement('span');copy.className='sv-sent-file-copy';
+   const label=document.createElement('strong');label.className='sv-sent-file-name';
+   label.textContent=name;label.title=name;
+   const meta=document.createElement('small');meta.className='sv-sent-file-meta';
+   const ext=/\.([a-z0-9]{1,8})$/iu.exec(name)?.[1]?.toUpperCase()||'Файл';
+   const original=sentDocumentBlobs.get(turn)?.find(file=>file.name===name);
+   const size=original?.size?(original.size>=1024*1024?
+    (original.size/(1024*1024)).toFixed(1)+' МБ':
+    Math.max(1,Math.ceil(original.size/1024))+' КБ'):'';
+   meta.textContent=ext+(size?' · '+size:'');
+   copy.append(label,meta);tile.append(copy);group.append(tile);
    tile.addEventListener('click',async()=>{
     const currentFiles=sentDocumentBlobs.get(turn)||[];
     const live=currentFiles.find(file=>file.name===name);
