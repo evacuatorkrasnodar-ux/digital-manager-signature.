@@ -1910,7 +1910,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=6">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=24">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=25">
 </head>
 <body>
 <main>
@@ -3338,7 +3338,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   }
  }
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sentPdfViewer)closeSentPdf()});
- function showSentFiles(turn,files,fileRefs=null){
+ function showSentFiles(turn,files,fileRefs=null,received=false){
   turn.querySelector('.sv-sent-files')?.remove();
   const names=Array.isArray(files)?files.filter(x=>typeof x==='string'&&x.length<=200).slice(0,6):[];
   turn.classList.toggle('sv-has-files',names.length>0);
@@ -3349,7 +3349,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    tile.setAttribute('aria-label','Открыть файл '+name);
    const original=sentDocumentBlobs.get(turn)?.find(file=>file.name===name);
    const ext=(name.split('.').pop()||'').toLowerCase();
-   const pageType=ext==='pdf'||ext==='docx';
+   const pageType=!received&&(ext==='pdf'||ext==='docx');
    if(pageType){
     // Same first-page miniature as the Work Chat: consistent tile dimensions.
     tile.classList.add('sv-sent-file--page','sv-sent-file--symmetric');
@@ -3360,6 +3360,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
     tile.append(footer);
    }else{
     tile.classList.add('sv-sent-file--compact');
+    if(received)tile.classList.add('sv-received-file');
     tile.append(makeDocumentIcon({name}));
     const copy=document.createElement('span');copy.className='sv-sent-file-copy';
     const label=document.createElement('strong');label.className='sv-sent-file-name';
@@ -3586,6 +3587,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   else bubble.textContent=message;
   if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
   if(role==='user')showSentFiles(bubble.closest('.turn'),files,fileRefs);
+  if(role==='assistant'&&Array.isArray(files)&&files.length)showSentFiles(bubble.closest('.turn'),files,fileRefs,true);
   // Attachment-only messages reuse their clock inside the attachment card.
   if(role==='user'&&!bubble.textContent.trim()){
    const turn=bubble.closest('.turn');
