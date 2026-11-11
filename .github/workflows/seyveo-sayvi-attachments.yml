@@ -1,0 +1,30 @@
+name: SEYVEO Sayvi · Attachment Regression
+
+on:
+  push:
+    paths:
+      - 'sayvi-chat-new.html'
+      - 'scripts/sayvi-attachment-budget.test.mjs'
+      - '.github/workflows/seyveo-sayvi-attachments.yml'
+  pull_request:
+    paths:
+      - 'sayvi-chat-new.html'
+      - 'scripts/sayvi-attachment-budget.test.mjs'
+      - '.github/workflows/seyveo-sayvi-attachments.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sayvi-attachments:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check attachment regression test syntax
+        run: node --check scripts/sayvi-attachment-budget.test.mjs
+      - name: Verify multiple documents, PDF fallback and upload limits
+        run: node --test scripts/sayvi-attachment-budget.test.mjs
