@@ -212,8 +212,8 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active {
   }
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:focus-visible {
-  outline:2px solid var(--seyveo-emerald)!important;
-  outline-offset:-3px!important;
+  outline:2px solid var(--text)!important;
+  outline-offset:2px!important;
 }
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="browser"],
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="music"] {
@@ -307,7 +307,7 @@ html.sv-space-active #lifePage .sv-world-manage-link{
 }
 html.sv-space-active #lifePage .sv-world-manage-icon{
  width:29px;height:29px;justify-self:center;
- stroke:var(--secondary);opacity:.9;
+ stroke:var(--secondary);stroke-width:1.65;opacity:.9;
 }
 html.sv-space-active #lifePage .sv-world-manage-copy{
  min-width:0;display:flex;flex-direction:column;gap:3px;
