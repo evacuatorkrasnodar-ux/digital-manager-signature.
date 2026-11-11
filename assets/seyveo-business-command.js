@@ -1997,7 +1997,7 @@ $('svcpMessages')?.addEventListener('scroll',closeMessageMenus,{passive:true});
 const composerEmojiStrip=$('svcpComposerEmojiStrip');
 const composerEmojiButton=$('svcpComposerEmojiToggle');
 const inlineEmojiField=$('svcpChatForm')?.querySelector('.svcp-chat-compose-field');
-const inlineEmojiChoices=['🥹','🫶','🔥','✨','🤍'];
+const inlineEmojiChoices=['👍','❤️','😂','🙏','✅'];
 if(composerEmojiStrip&&inlineEmojiField)inlineEmojiField.appendChild(composerEmojiStrip);
 function closeComposerEmoji(){
  if(composerEmojiStrip)composerEmojiStrip.hidden=true;
