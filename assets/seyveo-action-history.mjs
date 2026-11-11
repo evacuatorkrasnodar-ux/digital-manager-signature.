@@ -6,6 +6,14 @@ if(personal&&head){
  const style=document.createElement('style');
  style.textContent=`
 /* History is a dedicated Tasks subview, not content appended beneath active work. */
+/* Nested History has no main dock; exiting it restores the dock automatically. */
+html.sah-history-no-dock body footer.dock.sv-shared-dock{
+ display:none!important;
+}
+html.sah-history-no-dock #seyveoActionHistoryPanel{
+ padding-bottom:calc(26px + env(safe-area-inset-bottom,0px))!important;
+}
+
 .sah-inline-toggle{
  display:inline-flex;align-items:center;justify-content:center;gap:7px;
  margin-left:auto;min-height:44px;padding:8px 9px;
@@ -477,6 +485,7 @@ if(personal&&head){
   if(show&&(page?.hidden||location.hash!=='#tasks'))return;
   if(show)previousScroll=scroller?.scrollTop||0;
   panel.hidden=!show;
+  document.documentElement.classList.toggle('sah-history-no-dock',show);
  menu.hidden=!show;popup.hidden=true;workHeader?.setAttribute('data-sah-history',String(show));if(!show){selecting=false;chosen.clear()}
   page?.classList.toggle('sah-history-open',show);
   open.setAttribute('aria-expanded',String(show));
