@@ -1789,8 +1789,24 @@ html body .sv-sent-document-viewer .sv-sent-document-original div{
 
 /* Final history polish: same clean header rhythm as other SEYVEO screens.
    A single conversation should be a single row, not a fake card or dock. */
+/* History inherits the exact Home graphite stage rather than a flat fill. */
 #sayviHistory{
- background:#11161B!important;
+ background-color:var(--sayvi-bg)!important;
+ background-image:radial-gradient(ellipse 100% 52% at 50% 0%,rgba(222,240,251,.062),transparent 78%),radial-gradient(ellipse 105% 58% at 55% 100%,rgba(121,161,184,.033),transparent 80%)!important;
+ background-repeat:no-repeat!important;
+ background-attachment:local!important;
+}
+:root[data-theme="light"] #sayviHistory{
+ background-image:radial-gradient(ellipse 100% 52% at 50% 0%,rgba(255,255,255,.95),transparent 78%),radial-gradient(ellipse 105% 58% at 55% 100%,rgba(160,188,199,.085),transparent 80%)!important;
+}
+:root[data-theme="dark"][data-palette="plum"] #sayviHistory{
+ background-image:radial-gradient(ellipse 100% 52% at 50% 0%,rgba(204,184,155,.034),transparent 78%),radial-gradient(ellipse 105% 58% at 55% 100%,rgba(99,82,65,.018),transparent 80%)!important;
+}
+:root[data-theme="dark"][data-palette="sapphire"] #sayviHistory{
+ background-image:radial-gradient(ellipse 100% 52% at 50% 0%,rgba(217,232,255,.073),transparent 78%),radial-gradient(ellipse 105% 58% at 55% 100%,rgba(100,146,242,.038),transparent 80%)!important;
+}
+#sayviHistory .history-head strong{
+ font-size:24px!important;font-weight:630!important;letter-spacing:-.035em!important;
 }
 #sayviHistory .history-shell{
  width:100%!important;max-width:600px!important;
