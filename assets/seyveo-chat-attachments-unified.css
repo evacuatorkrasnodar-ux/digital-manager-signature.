@@ -2243,62 +2243,133 @@ html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAtta
 }
 
 
-/* SEYVEO Work Chat document reader · seamless white paper + dark graphite controls. */
-html body .svcp-doc-overlay.svcp-doc-overlay--paper{
- background:#FFFFFF!important;
+/* SEYVEO Work Chat document reader · match approved Sayvi viewer.
+   Scoped to PDF, Word and text. Image viewer is not changed. */
+html body .svcp-doc-overlay.svcp-doc-overlay--document{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ height:100dvh!important;min-height:0!important;overflow:hidden!important;
+ background:#F7F7F9!important;color:#28282B!important;
 }
-html body .svcp-doc-overlay.svcp-doc-overlay--paper .svcp-doc-body{
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-top{
+ box-sizing:border-box!important;
+ position:relative!important;flex:0 0 auto!important;
+ min-height:calc(54px + env(safe-area-inset-top,0px))!important;
+ padding:calc(5px + env(safe-area-inset-top,0px)) 10px 6px!important;
+ display:flex!important;align-items:center!important;gap:9px!important;
+ background:#FFFFFF!important;
+ border:0!important;border-bottom:1px solid #EAEAED!important;
+ box-shadow:none!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-back{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 42px!important;width:42px!important;height:42px!important;
+ min-width:42px!important;min-height:42px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;color:#FFF!important;
+ box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-back svg{
+ width:21px!important;height:21px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.45!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-title{
+ color:#29292C!important;
+ font:600 12px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-size{
+ color:#86868B!important;
+ font:400 10px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-body{
  box-sizing:border-box!important;
  flex:1 1 auto!important;min-height:0!important;
  display:block!important;
  width:100%!important;
- padding:0!important;margin:0!important;
+ margin:0!important;
+ padding:10px 8px 15px!important;
  overflow-x:hidden!important;overflow-y:auto!important;
  overscroll-behavior-y:contain!important;
- background:#FFFFFF!important;
+ -webkit-overflow-scrolling:touch!important;
+ background:#F7F7F9!important;
 }
-html body .svcp-doc-overlay.svcp-doc-overlay--paper .svcp-doc-text{
- box-sizing:border-box!important;
- display:block!important;
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-text{
+ box-sizing:border-box!important;display:block!important;
  width:100%!important;max-width:760px!important;
- min-height:100%!important;height:auto!important;
+ height:auto!important;min-height:calc(100dvh - 176px)!important;
  margin:0 auto!important;
- padding:24px clamp(18px,5vw,42px) 44px!important;
- background:#FFFFFF!important;color:#222226!important;
- border:0!important;border-radius:0!important;
- box-shadow:none!important;
- font:400 16px/1.56 Georgia,"Times New Roman",serif!important;
- white-space:pre-wrap!important;overflow-wrap:anywhere!important;
- overflow:visible!important;
+ padding:24px clamp(20px,5vw,42px) 46px!important;
+ background:#FFFFFF!important;color:#202024!important;
+ border:1px solid rgba(0,0,0,.035)!important;border-radius:4px!important;
+ box-shadow:0 2px 9px rgba(0,0,0,.08)!important;
+ font:400 15px/1.65 Georgia,"Times New Roman",serif!important;
+ white-space:pre-wrap!important;overflow-wrap:anywhere!important;overflow:visible!important;
 }
-html body .svcp-doc-overlay .svcp-doc-bottom{
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf{
+ display:block!important;width:100%!important;
+ min-height:100%!important;
+ margin:0 auto!important;border:0!important;border-radius:4px!important;
+ background:#FFFFFF!important;box-shadow:0 2px 9px rgba(0,0,0,.08)!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-bottom{
  box-sizing:border-box!important;
- background:#111214!important;
- border:0!important;border-top:1px solid rgba(255,255,255,.07)!important;
- padding:7px 6px calc(8px + env(safe-area-inset-bottom,0px))!important;
+ display:flex!important;flex:0 0 auto!important;flex-direction:column!important;
+ width:100%!important;max-width:none!important;
+ margin:0!important;
+ padding:0 0 calc(5px + env(safe-area-inset-bottom,0px))!important;
  gap:0!important;
+ border:0!important;border-radius:0!important;
+ background:#F7F7F9!important;box-shadow:none!important;
 }
-html body .svcp-doc-overlay .svcp-doc-action-rail{
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail{
  box-sizing:border-box!important;
  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
- gap:2px!important;
- width:100%!important;max-width:760px!important;
- min-height:64px!important;
- margin:0 auto!important;
- padding:5px 2px!important;
- background:#111214!important;
- border:0!important;border-radius:13px!important;
- box-shadow:none!important;
+ align-items:stretch!important;gap:2px!important;
+ width:calc(100% - 10px)!important;max-width:760px!important;
+ min-height:66px!important;
+ margin:0 auto!important;padding:8px 3px!important;
+ background:#38383A!important;color:#F5F5F7!important;
+ border:0!important;border-radius:16px!important;box-shadow:none!important;
 }
-html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill,
-html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill.svcp-doc-to-documents{
- background:transparent!important;color:#F2F2F4!important;
- border:0!important;box-shadow:none!important;
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail > .svcp-doc-pill,
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail > .svcp-doc-pill.svcp-doc-to-documents{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:4px!important;flex:1 1 0!important;
+ width:100%!important;min-width:0!important;
+ height:51px!important;min-height:51px!important;max-height:51px!important;
+ margin:0!important;padding:4px 1px!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;color:#F5F5F7!important;box-shadow:none!important;
 }
-html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill span{
- color:#F2F2F4!important;
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail > .svcp-doc-pill svg{
+ width:20px!important;height:20px!important;flex:0 0 20px!important;
+ stroke:currentColor!important;stroke-width:1.5!important;
+ fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
-html body .svcp-doc-overlay .svcp-doc-info{
- color:#D1D1D4!important;
- background:transparent!important;
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail > .svcp-doc-pill span{
+ color:#F1F1F4!important;
+ font:550 10px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail > .svcp-doc-pill:active{
+ background:#4B4B4D!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail > .svcp-doc-pill:nth-child(1) .sv-file-label{fill:#2875DB!important;stroke:none!important}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail > .svcp-doc-pill:nth-child(2) .sv-file-label{fill:#DF3344!important;stroke:none!important}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail .sv-file-letter{
+ fill:none!important;stroke:white!important;stroke-width:1.15!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail .sv-file-pdf-text{
+ fill:white!important;stroke:none!important;font:800 6.5px/1 system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-info{
+ max-width:760px!important;margin:0 auto!important;padding:4px 12px!important;
+ color:#68686E!important;background:transparent!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-info:empty{display:none!important}
+@media(max-width:360px){
+ html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail > .svcp-doc-pill span{font-size:9px!important}
 }
