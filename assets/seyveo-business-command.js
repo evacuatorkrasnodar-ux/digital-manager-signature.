@@ -2402,7 +2402,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
  }
  const queued=state.files.slice(),file=queued[0]?.file||null,barcode=state.scanCode;
  if(!txt&&!queued.length&&!barcode){setStatus('Напишите сообщение или добавьте файл.');return}
- const callSayvi=state.room==='dm-sayvi'||/(^|\\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\\s|[,:.!?]|$)/i.test(txt);
+ const callSayvi=state.room==='dm-sayvi'||/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
  cameraBusy=true;
  const sendButton=$('svcpChatForm')?.querySelector('[type="submit"]');
  if(sendButton)sendButton.disabled=true;
