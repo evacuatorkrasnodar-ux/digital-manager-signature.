@@ -1389,3 +1389,36 @@ html body #sayviComposer.sayvi-has-attachments .sv-attach-chip:is(.sv-attach-chi
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
+
+
+/* 11 Nov · Sayvi attachment shelf receives its own full-height upper row. */
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments{
+ display:grid!important;
+ box-sizing:border-box!important;
+ grid-template-rows:var(--sayvi-attach-height,110px) minmax(0,var(--sayvi-editor-height,62px)) 50px!important;
+ align-content:start!important;
+ align-items:stretch!important;
+ overflow:visible!important;
+ height:var(--sayvi-composer-height,232px)!important;
+ min-height:var(--sayvi-composer-height,232px)!important;
+ max-height:min(66dvh,calc(100dvh - 98px))!important;
+ padding:5px 0 3px!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray{
+ grid-row:1!important;
+ align-self:stretch!important;
+ box-sizing:border-box!important;
+ height:var(--sayvi-attach-height,110px)!important;
+ min-height:var(--sayvi-attach-height,110px)!important;
+ max-height:var(--sayvi-attach-height,110px)!important;
+ padding:9px 0 10px!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviField{
+ grid-row:2!important;
+ align-self:stretch!important;
+ min-height:0!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments > #sayviPlus{
+ grid-row:3!important;align-self:center!important;
+}
