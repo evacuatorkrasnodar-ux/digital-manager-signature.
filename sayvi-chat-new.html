@@ -1708,16 +1708,7 @@ html body .sv-sent-document-viewer .sv-sent-document-frame{
 }
 
 
-/* Top-right Cancel replaces ellipsis during selection, Mail-style. */
-#sayviHistory .history-head #sayviHistoryCancelSelect[hidden]{display:none!important}
-#sayviHistory .history-head #sayviHistoryCancelSelect{
- display:flex!important;align-items:center!important;justify-content:center!important;
- min-height:39px!important;min-width:66px!important;
- margin-left:auto!important;padding:8px 12px!important;
- border:0!important;border-radius:11px!important;
- background:#38383A!important;color:#F5F5F7!important;
- font:550 12.5px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
-}
+/* History selection: back arrow cancels selection, no duplicate Cancel. */
 #sayviHistory .sv-history-selection{
  grid-template-columns:minmax(0,1fr) auto auto!important;
  grid-template-rows:44px!important;
@@ -1765,7 +1756,7 @@ html body .sv-sent-document-viewer .sv-sent-document-frame{
 </div>
 <section id="sayviHistory" aria-label="История разговоров" hidden>
  <div class="history-shell">
-  <div class="history-head"><button id="sayviHistoryClose" type="button" aria-label="Назад в чат" title="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button><strong>История</strong><button id="sayviHistoryMenuButton" type="button" aria-label="Меню истории" aria-expanded="false" aria-controls="sayviHistoryMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></button><button id="sayviHistoryCancelSelect" type="button" hidden>Отмена</button></div>
+  <div class="history-head"><button id="sayviHistoryClose" type="button" aria-label="Назад в чат" title="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button><strong>История</strong><button id="sayviHistoryMenuButton" type="button" aria-label="Меню истории" aria-expanded="false" aria-controls="sayviHistoryMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></button></div>
   <div id="sayviHistoryMenu" class="sv-history-menu" hidden>
    <button id="sayviHistoryFind" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.2 4.2"/></svg><span>Найти</span></button>
    <button id="sayviHistorySelect" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="m7.7 12 2.8 2.8 5.8-5.8"/></svg><span>Выбрать</span></button>
@@ -2145,7 +2136,6 @@ html body .sv-sent-document-viewer .sv-sent-document-frame{
  function setHistorySelectionMode(enabled){
   historySelectionMode=!!enabled;historySelection.clear();
   historySelectionBar.hidden=!enabled;historyMenuButton.hidden=!!enabled;
-  document.getElementById('sayviHistoryCancelSelect').hidden=!enabled;
   updateHistorySelection();closeHistoryMenu();renderHistory();
  }
  function removeHistoryConversations(ids){
@@ -2174,7 +2164,6 @@ html body .sv-sent-document-viewer .sv-sent-document-frame{
   else visible.forEach(item=>historySelection.add(item.id));
   updateHistorySelection();renderHistory();
  });
- document.getElementById('sayviHistoryCancelSelect').addEventListener('click',()=>setHistorySelectionMode(false));
  historyDeleteSelected.addEventListener('click',()=>{
   if(!historySelection.size)return;
   if(!window.confirm('Удалить выбранные разговоры ('+historySelection.size+') без возможности восстановления?'))return;
@@ -2279,7 +2268,10 @@ html body .sv-sent-document-viewer .sv-sent-document-frame{
   historyPanel.hidden=false;historyTop.setAttribute('aria-expanded','true');
  }
  historyTop.addEventListener('click',openHistory);
- document.getElementById('sayviHistoryClose').addEventListener('click',closeHistory);
+ document.getElementById('sayviHistoryClose').addEventListener('click',()=>{
+  if(historySelectionMode)setHistorySelectionMode(false);
+  else closeHistory();
+ });
  historySearch.addEventListener('input',()=>{updateHistorySelection();renderHistory()});
  // Dismiss the tiny popover by tapping elsewhere or pressing Escape.
  document.addEventListener('pointerdown',event=>{
