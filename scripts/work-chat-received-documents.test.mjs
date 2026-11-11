@@ -26,6 +26,15 @@ test('approved recipient cards have graphite format icons and stable layout',()=
  assert.match(css,/\.svcp-received-document-card > \.svcp-file-badge--pdf\{color:#FF4545/);
  assert.match(css,/\.svcp-received-document-card > \.svcp-file-badge\{/);
  assert.match(css,/\.svcp-received-document-card \.svcp-file-card-name\{/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=177/);
- assert.match(html,/assets\/seyveo-chat-attachments-unified\.css\?v=16/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=178/);
+ assert.match(html,/assets\/seyveo-chat-attachments-unified\.css\?v=17/);
+});
+
+test('photo, PDF and Word messages use the same existing three-action footer',()=>{
+ assert.match(js,/function dockMediaActions\(\)/);
+ assert.match(js,/const row=container\.querySelector\(':scope > \.svcp-message-inline-actions'\)/);
+ assert.match(js,/slot\.append\(row\)/);
+ assert.match(js,/if\(!slot\.isConnected\|\|message\.mediaPurpose==='voice'\)return/);
+ assert.match(css,/\.svcp-media-slot\.svcp-media-actions-contained > \.svcp-message-inline-actions\{/);
+ assert.match(css,/\.svcp-media-actions-contained\.svcp-bottom-stamp > \.svcp-message-stamp/);
 });
