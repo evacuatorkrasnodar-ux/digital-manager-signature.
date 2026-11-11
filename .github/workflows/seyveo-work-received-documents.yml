@@ -8,6 +8,7 @@ on:
       - 'index.html'
       - 'scripts/work-chat-received-documents.test.mjs'
       - 'scripts/work-chat-document-tasks.test.mjs'
+      - 'scripts/work-chat-unified-history.test.mjs'
       - '.github/workflows/seyveo-work-received-documents.yml'
   pull_request:
     paths:
@@ -16,6 +17,7 @@ on:
       - 'index.html'
       - 'scripts/work-chat-received-documents.test.mjs'
       - 'scripts/work-chat-document-tasks.test.mjs'
+      - 'scripts/work-chat-unified-history.test.mjs'
       - '.github/workflows/seyveo-work-received-documents.yml'
 
 permissions:
@@ -35,4 +37,5 @@ jobs:
           node --check assets/seyveo-business-command.js
           node --check scripts/work-chat-received-documents.test.mjs
           node --check scripts/work-chat-document-tasks.test.mjs
-          node --test scripts/work-chat-received-documents.test.mjs scripts/work-chat-document-tasks.test.mjs
+          node --check scripts/work-chat-unified-history.test.mjs
+          node --test scripts/work-chat-received-documents.test.mjs scripts/work-chat-document-tasks.test.mjs scripts/work-chat-unified-history.test.mjs
