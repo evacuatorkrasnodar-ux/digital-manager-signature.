@@ -3106,8 +3106,15 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
  let pdfThumbnailLibrary=null;
  function loadPdfThumbnailLibrary(){
   if(!pdfThumbnailLibrary){
-   pdfThumbnailLibrary=import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs')
-    .then(lib=>{
+   pdfThumbnailLibrary=(async()=>{
+    // Older running localhost servers prohibit all workers in CSP.
+    // Avoid triggering a fake-worker CSP violation; retain the safe icon.
+    const response=await fetch(location.pathname,{method:'HEAD',cache:'no-store',credentials:'same-origin'});
+    const policy=response.headers.get('content-security-policy')||'';
+    if(/(?:^|;)\s*worker-src\s+[^;]*'none'/i.test(policy))
+     throw Error('Update and restart local server for PDF preview');
+    return import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
+   })().then(lib=>{
      lib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
      return lib;
     }).catch(error=>{pdfThumbnailLibrary=null;throw error});
@@ -3289,7 +3296,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
  window.addEventListener('pagehide',clearAttachments);
  function isReadableText(file){return readableTextTypes.test(file.type)||readableExtensions.test(file.name)}
  async function prepareAttachments(items,textBudget=3200){
-  const segments=[],uploaded=[];
+  const segments=[],uploaded=[],unreadable=[];
   let remaining=Math.max(0,textBudget);
   const documentType=/\.(?:pdf|docx|xlsx|pptx)$/iu;
   for(const entry of items){
@@ -3307,10 +3314,18 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
      catch{throw Error('Локальный обработчик документов недоступен.')}
      if(!response.ok){
       const detail=await response.json().catch(()=>null);
+      // Failure to extract text must not prevent attaching the original file.
+      // The AI must not claim it has read an unreadable document.
+      if([422,502,503,504].includes(response.status)){
+       unreadable.push({name:file.name});
+       continue;
+      }
       throw Error((typeof detail?.error==='string'?detail.error:'Не удалось прочитать документ.')+' Файл остался выбранным.');
      }
      const result=await response.json().catch(()=>null);
-     if(typeof result?.text!=='string'||!result.text.trim())throw Error('В документе не найден текст.');
+     if(typeof result?.text!=='string'||!result.text.trim()){
+      unreadable.push({name:file.name});continue;
+     }
      content=result.text;alreadyTruncated=result.truncated===true;
     }
     const header='Файл: '+file.name+'\n--- ВЫДЕРЖКА ИЗ ДОКУМЕНТА ---\n';
@@ -3341,7 +3356,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
     uploaded.push({id:info.id,name:file.name,type:file.type||'application/octet-stream',size:file.size});
    }
   }
-  return {segments,uploaded};
+  return {segments,uploaded,unreadable};
  }
 
  // The real Notebook tablet is mounted in a bottom drawer. Stay in the
@@ -3731,9 +3746,16 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
       +'Если информации недостаточно, скажи об ограничении прямо. Не выдавай юридические выводы за окончательные.'
     : '';
    const documentQuestion=value||'Кратко расскажи, что в приложенном документе и чем можешь помочь.';
+   const unreadableNotice=files.unreadable.length
+    ? '\n\nТекст следующих вложений недоступен: '+files.unreadable.map(item=>item.name).join(', ')+
+      '. Файлы прикреплены локально, но их содержимое НЕ было прочитано. '+
+      'Не выдумывай их содержимое. Если требуется анализ, попроси текстовый PDF или файл с выделяемым текстом.'
+    : '';
    const message=hasDocument
-    ? [instruction,documentQuestion,...files.segments].join('\n\n')
-    : value||'Посмотри на прикреплённое изображение и естественно, по-дружески отреагируй на то, что действительно видишь. Кратко назови самое интересное и предложи, что можно с этим сделать. Не задавай формальный вопрос об анализе файла.';
+    ? [instruction,documentQuestion,...files.segments].join('\n\n')+unreadableNotice
+    : files.unreadable.length
+      ? 'Ты Сэйви, помощник SEYVEO. '+(value||'Пользователь прикрепил документ.')+unreadableNotice
+      : value||'Посмотри на прикреплённое изображение и естественно, по-дружески отреагируй на то, что действительно видишь. Кратко назови самое интересное и предложи, что можно с этим сделать. Не задавай формальный вопрос об анализе файла.';
    if(hasDocument){
     recentDocument={conversation:currentId,names:otherFiles.slice(0,6),text:files.segments.join('\n\n').slice(0,3000)};
    }
