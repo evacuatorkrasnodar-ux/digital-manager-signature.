@@ -1971,11 +1971,11 @@ $('svcpMentionElena')?.addEventListener('click',()=>{
  * explicit button in the personal chat and uses the previous staff-ledger key.
  */
 /* A chat emoji is never a staff performance award. Awards remain explicit. */
-const QUICK_EMOJIS=['👍','❤️','😂','🔥','👏','😊'];
+const QUICK_EMOJIS=['🫶','🔥','🥹','😂','👀','🤍'];
 const MORE_EMOJI_GROUPS=[
- {name:'Эмоции',emojis:['🥰','😍','🤣','😄','😁','😉','🥹','😢','😮','🤔','😎','🙏']},
- {name:'Поддержка',emojis:['💚','💙','💜','🫶','💪','🙌','👌','🤝','💯','✨','🎉','🏆']},
- {name:'Работа',emojis:['✅','📌','🚀','💡','👀','👏','🤩','🙈','☕','🌟','🎯','🤗']}
+ {name:'Эмоции',emojis:['🥹','🫠','🥰','🥲','😭','🤩','🫩','😎','🥺','😮‍💨','🤯','😂']},
+ {name:'Реакции',emojis:['🫶','🔥','✨','💯','👏','👌','🤝','❤️‍🔥','💀','👀','💅','🙌','✅']},
+ {name:'Эстетика',emojis:['🩷','🤍','🩶','🫧','🪽','🌸','🦋','💎','🌙','🪩','🎀','🪷']}
 ];
 function closeMessageMenus(){
  chatRoot.querySelectorAll('.svcp-message-menu').forEach(menu=>{
@@ -1994,7 +1994,7 @@ $('svcpMessages')?.addEventListener('scroll',closeMessageMenus,{passive:true});
 const composerEmojiStrip=$('svcpComposerEmojiStrip');
 const composerEmojiButton=$('svcpComposerEmojiToggle');
 const inlineEmojiField=$('svcpChatForm')?.querySelector('.svcp-chat-compose-field');
-const inlineEmojiChoices=['👍','❤️','😂','🙏','✅'];
+const inlineEmojiChoices=['🥹','🫶','🔥','✨','🤍'];
 if(composerEmojiStrip&&inlineEmojiField)inlineEmojiField.appendChild(composerEmojiStrip);
 function closeComposerEmoji(){
  if(composerEmojiStrip)composerEmojiStrip.hidden=true;
