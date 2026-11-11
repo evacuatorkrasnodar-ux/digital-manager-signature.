@@ -166,7 +166,7 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
  const node=el(onOpen?'button':url?'a':'div','svcp-file-card');
  const detail=svcpFileKind(displayName,type);
  const badge=svcpFileBadge(displayName,type);
- if(detail.kind==='pdf')badge.textContent='pdf';
+ // Keep the SVG document contour; do not replace it with a text badge.
  node.append(badge);
  const body=el('span','svcp-file-card-copy');
  const heading=el('span','svcp-file-card-heading');
