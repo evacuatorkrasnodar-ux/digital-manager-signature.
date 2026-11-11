@@ -525,12 +525,23 @@ html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-intro{
 html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-card:active{
  background:#454547!important;
 }
-/* Document workspace: graphite shell + real white A4 paper. */
+/* SEYVEO document viewer · approved Work Chat language:
+   dark top, full white scrolling document, stationary near-black action dock.
+   This replaces the conflicting graphite background below the white page. */
 html body .sv-doc-viewer{
- background:#151B20!important;color:#F5F5F7!important;
+ box-sizing:border-box!important;
+ display:flex!important;
+ flex-direction:column!important;
+ height:100dvh!important;min-height:0!important;
+ background:#FFFFFF!important;color:#222226!important;
+ overflow:hidden!important;
 }
 html body .sv-doc-viewer .sv-doc-header{
+ box-sizing:border-box!important;
+ position:relative!important;
+ flex:0 0 auto!important;
  background:#151B20!important;
+ border:0!important;
  border-bottom:1px solid rgba(255,255,255,.09)!important;
 }
 html body .sv-doc-viewer .sv-doc-back{
@@ -540,40 +551,105 @@ html body .sv-doc-viewer .sv-doc-back{
 html body .sv-doc-viewer .sv-doc-title{
  color:#F5F5F7!important;font-weight:600!important;
 }
-html body .sv-doc-viewer .sv-doc-meta{
- color:#B4B7BC!important;
-}
+html body .sv-doc-viewer .sv-doc-meta{color:#B4B7BC!important}
 html body .sv-doc-viewer .sv-doc-scroll{
- background:#20262B!important;
- padding:12px 10px 24px!important;
+ box-sizing:border-box!important;
+ flex:1 1 auto!important;min-height:0!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ padding:0!important;margin:0!important;
+ overscroll-behavior-y:contain!important;
+ -webkit-overflow-scrolling:touch!important;
+ background:#FFFFFF!important;
 }
 html body .sv-doc-viewer .sv-doc-content{
- width:100%!important;max-width:794px!important;
- margin:0 auto!important;gap:9px!important;
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ width:100%!important;max-width:760px!important;min-height:100%!important;
+ margin:0 auto!important;padding:0!important;gap:0!important;
+ background:#FFFFFF!important;
 }
 html body .sv-doc-viewer :is(.sv-doc-paper,.sv-doc-editor){
- display:block!important;width:100%!important;
- background:#FFFFFF!important;color:#202024!important;
- border:0!important;border-radius:4px!important;
- box-shadow:0 2px 10px rgba(0,0,0,.12)!important;
- padding:clamp(22px,5vw,54px)!important;
- font:400 15px/1.65 Georgia,"Times New Roman",serif!important;
- white-space:pre-wrap!important;
- min-height:65vh!important;
+ box-sizing:border-box!important;
+ display:block!important;
+ flex:1 0 auto!important;
+ width:100%!important;max-width:100%!important;
+ height:auto!important;min-height:65vh!important;
+ margin:0!important;
+ padding:24px clamp(18px,5vw,42px) 48px!important;
+ background:#FFFFFF!important;color:#222226!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ font:400 16px/1.58 Georgia,"Times New Roman",serif!important;
+ white-space:pre-wrap!important;overflow-wrap:anywhere!important;
+}
+html body .sv-doc-viewer .sv-doc-editor{
+ resize:none!important;outline:none!important;
 }
 html body .sv-doc-viewer :is(.sv-doc-paper,.sv-doc-editor)[hidden]{
  display:none!important;
 }
 html body .sv-doc-viewer .sv-doc-check{
- border-radius:12px!important;background:#38383A!important;
- color:#F5F5F7!important;
-}
-html body .sv-doc-viewer .sv-doc-check-body{color:#D0D1D5!important}
-html body .sv-doc-viewer .sv-doc-footer{
+ box-sizing:border-box!important;flex:0 0 auto!important;
+ margin:10px 10px 9px!important;padding:12px 14px!important;
+ border:0!important;border-radius:13px!important;
  background:#38383A!important;color:#F5F5F7!important;
- box-shadow:none!important;border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body .sv-doc-viewer .sv-doc-check[hidden]{display:none!important}
+html body .sv-doc-viewer .sv-doc-check-body{color:#D0D1D5!important}
+html body .sv-doc-viewer .sv-doc-check-actions button{
+ background:#48484B!important;color:#F5F5F7!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body .sv-doc-viewer .sv-doc-footer{
+ box-sizing:border-box!important;
+ position:relative!important;bottom:auto!important;flex:0 0 auto!important;
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ align-items:stretch!important;justify-content:stretch!important;gap:2px!important;
+ width:100%!important;max-width:none!important;
+ min-height:72px!important;
+ margin:0!important;
+ padding:7px 6px calc(8px + env(safe-area-inset-bottom,0px))!important;
+ border:0!important;border-top:1px solid rgba(255,255,255,.07)!important;
+ border-radius:0!important;
+ background:#111214!important;color:#F2F2F4!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body .sv-doc-viewer .sv-doc-footer button{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:4px!important;
+ flex:1 1 auto!important;
+ width:100%!important;min-width:0!important;min-height:51px!important;
+ height:51px!important;max-height:51px!important;
+ margin:0!important;padding:4px 1px!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;color:#F2F2F4!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body .sv-doc-viewer .sv-doc-footer button svg{
+ display:block!important;width:20px!important;height:20px!important;
+ flex:0 0 20px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.5!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body .sv-doc-viewer .sv-doc-footer button span{
+ position:static!important;display:block!important;
+ width:auto!important;height:auto!important;min-width:0!important;
+ margin:0!important;padding:0!important;
+ overflow:visible!important;clip:auto!important;
+ font:550 10px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#F2F2F4!important;white-space:nowrap!important;
+}
+html body .sv-doc-viewer .sv-doc-footer button:active{
+ background:#4B4B4D!important;
+}
+@media(max-width:360px){
+ html body .sv-doc-viewer .sv-doc-footer button span{font-size:9px!important}
 }
 @media(min-width:800px){
- html body .sv-doc-viewer .sv-doc-scroll{padding-top:20px!important}
- html body .sv-doc-viewer :is(.sv-doc-paper,.sv-doc-editor){min-height:920px!important}
+ html body .sv-doc-viewer .sv-doc-content{max-width:760px!important}
 }
