@@ -2549,3 +2549,81 @@ html body #sayviComposer.sayvi-compose-expanded #sayviInput[data-soft-scroll="en
 html body #sayviComposer.sayvi-compose-expanded #sayviInput[data-soft-scroll="none"]{
  -webkit-mask-image:none!important;mask-image:none!important;
 }
+
+
+/* SEYVEO · received office documents in work chat match the approved
+   Sayvi Word/PDF delivery cards. Sender's original page thumbnails remain.
+   A received card opens the genuine locally stored file viewer unchanged. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble:has(.svcp-received-document-card){
+ width:min(330px,calc(100vw - 42px))!important;
+ max-width:min(330px,calc(100vw - 42px))!important;
+ min-width:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-media-slot:has(> .svcp-received-document-card){
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card.svcp-received-document-card{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ min-height:86px!important;gap:15px!important;
+ padding:13px 15px!important;margin:0!important;
+ border:1px solid #38383A!important;border-radius:23px!important;
+ background:#1B1B1D!important;background-image:none!important;
+ color:#F5F5F7!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ text-decoration:none!important;
+ cursor:pointer!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card > .svcp-file-badge{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 54px!important;width:54px!important;min-width:54px!important;
+ height:54px!important;min-height:54px!important;
+ margin:0!important;padding:0!important;border:0!important;
+ border-radius:0!important;clip-path:none!important;
+ background:transparent!important;background-image:none!important;
+ color:#347DFF!important;
+ font-size:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card > .svcp-file-badge--pdf{color:#FF4545!important}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card > .svcp-file-badge svg{
+ width:38px!important;height:45px!important;display:block!important;
+ fill:none!important;stroke:currentColor!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-copy{
+ display:flex!important;flex-direction:column!important;
+ justify-content:center!important;gap:5px!important;
+ flex:1 1 auto!important;min-width:0!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-heading{
+ display:flex!important;min-width:0!important;max-width:100%!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-name{
+ display:block!important;min-width:0!important;max-width:100%!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ color:#F5F5F7!important;
+ font:620 16px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-type{
+ display:block!important;color:#AFAFB6!important;
+ font:450 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-status{
+ right:10px!important;bottom:4px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-arrow{display:none!important}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card:focus-visible{
+ outline:2px solid #AEB4BD!important;outline-offset:2px!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card.svcp-received-document-card{
+ background:#F5F5F6!important;border-color:rgba(56,56,58,.17)!important;color:#242427!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-name{color:#242427!important}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-type{color:#6C6C74!important}
