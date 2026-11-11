@@ -604,6 +604,22 @@ $('notePaperRemovePhoto')?.addEventListener('click',()=>{
  data.photo='';changed=true;render();report('Фотография убрана.');
 });
 window.SEYVEO_PAPER=Object.freeze({
+ // Chat handoff: export from the same approved tablet, without creating
+ // a second editor or silently saving a Notebook record.
+ hasChatContent:()=>Boolean(data.strokes.length||data.photo),
+ hasChatChanges:()=>changed,
+ exportChatPng:async()=>{
+  if(!dialog.open)throw Error('Планшет не открыт.');
+  if(pending)throw Error('Заверши штрих перед прикреплением.');
+  if(!data.strokes.length&&!data.photo)throw Error('Сначала нарисуй мысль.');
+  return png(normalize(data));
+ },
+ closeForChat:()=>{
+  if(!dialog.open)return;
+  returnToList=false;
+  changed=false;
+  dialog.close();
+ },
  clearSheet:()=>{
   if(pending)return false;
   const hasContent=Boolean(data.strokes.length||data.photo);
