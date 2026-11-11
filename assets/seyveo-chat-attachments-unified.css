@@ -2755,3 +2755,15 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge.s
 html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge.svcp-sayvi-document-mark.svcp-file-badge--pdf > .svcp-sayvi-document-letter{
  top:26px!important;font-size:9px!important;line-height:12px!important;
 }
+
+/* Sayvi compact Word/PDF marks: existing approved outline, no displaced letters. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > :is(.sv-sent-pdf-icon,.sv-sent-word-icon) svg{
+ fill:none!important;stroke:none!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > :is(.sv-sent-pdf-icon,.sv-sent-word-icon) svg > path{
+ fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > :is(.sv-sent-pdf-icon,.sv-sent-word-icon) svg > text{
+ fill:currentColor!important;stroke:none!important;stroke-width:0!important;
+ writing-mode:horizontal-tb!important;direction:ltr!important;letter-spacing:0!important;
+}
