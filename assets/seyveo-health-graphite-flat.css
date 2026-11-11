@@ -178,7 +178,7 @@ html body #calendarSpaceDialog[data-space="health"] #calendarSpacePrivacy{
   border:0!important;border-top:1px solid rgba(174,192,205,.13)!important;
   border-radius:0!important;background:transparent!important;
   box-shadow:none!important;color:var(--secondary)!important;
-  font-size:11.5px!important;font-weight:430!important;
+  font-size:12px!important;font-weight:440!important;
   line-height:1.55!important;letter-spacing:0!important;
 }
 /* Restore native scroll and tool layouts in measurement/editor focus modes. */
@@ -201,4 +201,13 @@ html body #calendarSpaceDialog[data-space="health"] #calendarSpacePrivacy{
 }
 @media(prefers-reduced-motion:reduce){
   #calendarSpaceDialog[data-space="health"] :is(.cal-health-tile,.pw-card){transition:none!important}
+}
+
+/* Keyboard and assistive navigation: premium neutral focus, no emerald
+   or decorative glass. Does not affect the pointer/touch appearance. */
+html body #calendarSpaceDialog[data-space="health"][open] > button.seyveo-dialog-close.sv-nav-arrow:focus-visible,
+html body #calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tile:focus-visible,
+html body #calendarSpaceDialog[data-space="health"] #pwHealth > .pw-health-tiles > .pw-card:focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+ border-radius:8px!important;
 }
