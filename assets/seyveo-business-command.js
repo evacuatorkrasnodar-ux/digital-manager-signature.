@@ -144,16 +144,15 @@ function svcpFileBadge(name,type){
  const meta=svcpFileKind(name,type);
  const badge=el('span','svcp-file-badge svcp-file-badge--'+meta.kind,'');
  if(meta.kind==='pdf'||meta.kind==='word'){
-  // Identical native SVG document contour used by Sayvi's file captions.
-  // Keep its glyph separate from the outline to avoid accidental SVG strokes.
-  const label=meta.kind==='pdf'?'PDF':'W';
-  const fontSize=meta.kind==='pdf'?6:11;
+  // Match the approved Sayvi document mark. The outline is SVG;
+  // the letter is a positioned HTML glyph, immune to global SVG text rules.
+  badge.classList.add('svcp-sayvi-document-mark');
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('viewBox','0 0 24 30');
   svg.setAttribute('aria-hidden','true');
-  svg.setAttribute('focusable','false');
-  svg.innerHTML='<path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/><text x="12" y="21" text-anchor="middle" font-family="system-ui,sans-serif" font-size="'+fontSize+'" font-weight="700">'+label+'</text>';
-  badge.append(svg);
+  svg.innerHTML='<path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20" />';
+  const label=el('span','svcp-sayvi-document-letter',meta.kind==='pdf'?'PDF':'W');
+  badge.append(svg,label);
  }else badge.textContent=meta.mark;
  badge.setAttribute('aria-hidden','true');
  return badge;
