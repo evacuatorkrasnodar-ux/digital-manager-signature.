@@ -2522,7 +2522,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    const fullTextHeight=expand?sayviMeasuredTextHeight(text,availableWidth):24;
    const cap=Math.min(156,Math.max(84,Math.floor((window.visualViewport?.height||window.innerHeight)*.32)));
    const editorHeight=expand?Math.min(cap,Math.max(62,fullTextHeight+18)):44;
-   const attachHeight=withFiles?118:0;
+   const attachHeight=withFiles?96:0;
    const fullHeight=expand?editorHeight+60+attachHeight:56;
    composer.classList.toggle('sayvi-compose-expanded',expand);
    composer.classList.toggle('sayvi-has-attachments',withFiles);
