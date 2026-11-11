@@ -289,5 +289,43 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-chat-media-i
  background:#090A0C!important;
  object-fit:contain!important;
 }
+/* FAMILY CHAT · its existing local preview uses the same surface.
+   The prototype does not transmit files; keep its honest status label. */
+html body .svf-dialog #svfAttachment:not([hidden]){
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;
+ gap:11px!important;
+ width:100%!important;max-width:100%!important;
+ min-height:72px!important;
+ margin:0 0 8px!important;
+ padding:8px 10px!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:15px!important;
+ background:#141517!important;
+ color:#F5F5F7!important;
+ box-shadow:none!important;
+}
+html body .svf-dialog #svfAttachment img{
+ width:72px!important;height:62px!important;
+ max-width:72px!important;
+ object-fit:contain!important;
+ flex:0 0 72px!important;
+ border-radius:9px!important;
+ background:#090A0C!important;
+}
+html body .svf-dialog #svfAttachment > span{
+ min-width:0!important;flex:1!important;
+ color:#ECECF0!important;
+ font:500 11px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ overflow-wrap:anywhere!important;
+}
+html body .svf-dialog #svfAttachment button{
+ border:0!important;border-radius:11px!important;
+ background:#38383A!important;color:#F7F7F8!important;
+ min-height:36px!important;
+ padding:6px 9px!important;
+ font:550 11px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+
 /* Consistent dark file surfaces also on the light theme, as requested.
    The surrounding chat retains the user's selected appearance. */
