@@ -2241,3 +2241,64 @@ html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAtta
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
+
+
+/* SEYVEO Work Chat document reader · seamless white paper + dark graphite controls. */
+html body .svcp-doc-overlay.svcp-doc-overlay--paper{
+ background:#FFFFFF!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--paper .svcp-doc-body{
+ box-sizing:border-box!important;
+ flex:1 1 auto!important;min-height:0!important;
+ display:block!important;
+ width:100%!important;
+ padding:0!important;margin:0!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ overscroll-behavior-y:contain!important;
+ background:#FFFFFF!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--paper .svcp-doc-text{
+ box-sizing:border-box!important;
+ display:block!important;
+ width:100%!important;max-width:760px!important;
+ min-height:100%!important;height:auto!important;
+ margin:0 auto!important;
+ padding:24px clamp(18px,5vw,42px) 44px!important;
+ background:#FFFFFF!important;color:#222226!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;
+ font:400 16px/1.56 Georgia,"Times New Roman",serif!important;
+ white-space:pre-wrap!important;overflow-wrap:anywhere!important;
+ overflow:visible!important;
+}
+html body .svcp-doc-overlay .svcp-doc-bottom{
+ box-sizing:border-box!important;
+ background:#111214!important;
+ border:0!important;border-top:1px solid rgba(255,255,255,.07)!important;
+ padding:7px 6px calc(8px + env(safe-area-inset-bottom,0px))!important;
+ gap:0!important;
+}
+html body .svcp-doc-overlay .svcp-doc-action-rail{
+ box-sizing:border-box!important;
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ gap:2px!important;
+ width:100%!important;max-width:760px!important;
+ min-height:64px!important;
+ margin:0 auto!important;
+ padding:5px 2px!important;
+ background:#111214!important;
+ border:0!important;border-radius:13px!important;
+ box-shadow:none!important;
+}
+html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill,
+html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill.svcp-doc-to-documents{
+ background:transparent!important;color:#F2F2F4!important;
+ border:0!important;box-shadow:none!important;
+}
+html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill span{
+ color:#F2F2F4!important;
+}
+html body .svcp-doc-overlay .svcp-doc-info{
+ color:#D1D1D4!important;
+ background:transparent!important;
+}
