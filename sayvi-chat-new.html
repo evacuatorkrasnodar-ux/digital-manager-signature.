@@ -1910,7 +1910,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=10">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=27">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=28">
 </head>
 <body>
 <main>
@@ -3340,10 +3340,13 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sentPdfViewer)closeSentPdf()});
  function showSentFiles(turn,files,fileRefs=null,received=false){
   turn.querySelector('.sv-sent-files')?.remove();
-  const names=Array.isArray(files)?files.filter(x=>typeof x==='string'&&x.length<=200).slice(0,6):[];
+  const names=Array.isArray(files)?files.filter(x=>typeof x==='string'&&x.length<=200).slice(0,12):[];
   turn.classList.toggle('sv-has-files',names.length>0);
   if(!names.length)return;
   const group=document.createElement('div');group.className='sv-sent-files';
+  // Keep sent PDF/Word pages in the same 3-across gallery as selected attachments.
+  if(!received&&names.some(name=>/\.(?:pdf|docx)$/iu.test(name)))
+   group.classList.add('sv-sent-files--preview-grid');
   for(const name of names){
    const tile=document.createElement('button');tile.type='button';tile.className='sv-sent-file';
    tile.setAttribute('aria-label','Открыть файл '+name);
