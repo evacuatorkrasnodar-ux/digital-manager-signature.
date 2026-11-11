@@ -5318,3 +5318,114 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 :root[data-theme="dark"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > #svcpVoiceRecord{
  color:rgba(202,220,226,.84)!important;
 }
+
+ 
+/* SEYVEO · one document reader visual language for Sayvi and Work Chat.
+   Only the work document viewer is changed; original file actions remain. */
+html body .svcp-doc-overlay{
+ background:#F7F7F9!important;
+ color:#28282B!important;
+ height:100dvh!important;
+}
+html body .svcp-doc-overlay .svcp-doc-top{
+ box-sizing:border-box!important;
+ position:relative!important;flex:0 0 auto!important;
+ min-height:calc(54px + env(safe-area-inset-top,0px))!important;
+ padding:calc(5px + env(safe-area-inset-top,0px)) 10px 6px!important;
+ gap:9px!important;
+ background:#F7F7F9!important;
+ border-bottom:1px solid #E5E5E9!important;
+ box-shadow:none!important;
+}
+html body .svcp-doc-overlay .svcp-doc-top .svcp-doc-back{
+ width:42px!important;height:42px!important;
+ min-width:42px!important;min-height:42px!important;
+ flex:0 0 42px!important;
+ background:#E5E6E9!important;color:#38383A!important;
+}
+html body .svcp-doc-overlay .svcp-doc-title{
+ color:#29292C!important;
+ font:600 12px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay .svcp-doc-size{
+ color:#86868B!important;
+ font:400 10px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay .svcp-doc-body{
+ box-sizing:border-box!important;
+ flex:1 1 auto!important;min-height:0!important;
+ padding:0!important;margin:0!important;
+ background:#F7F7F9!important;
+ overflow:auto!important;
+}
+html body .svcp-doc-overlay .svcp-doc-text{
+ box-sizing:border-box!important;
+ width:100%!important;max-width:760px!important;
+ min-height:0!important;margin:0 auto!important;
+ padding:24px clamp(14px,4vw,36px) 55px!important;
+ border:0!important;border-radius:0!important;
+ background:#F7F7F9!important;color:#28282B!important;
+ box-shadow:none!important;
+ font:400 14px/1.58 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:pre-wrap!important;overflow-wrap:anywhere!important;
+}
+html body .svcp-doc-overlay .svcp-doc-pdf{
+ border-radius:0!important;border:0!important;
+ background:#FFF!important;box-shadow:none!important;
+}
+html body .svcp-doc-overlay .svcp-doc-bottom{
+ box-sizing:border-box!important;
+ position:relative!important;flex:0 0 auto!important;
+ width:100%!important;max-width:none!important;
+ margin:0!important;
+ padding:0 0 calc(6px + env(safe-area-inset-bottom,0px))!important;
+ gap:0!important;
+ background:#F7F7F9!important;
+ border:0!important;box-shadow:none!important;
+}
+html body .svcp-doc-overlay .svcp-doc-action-rail{
+ box-sizing:border-box!important;
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ align-items:stretch!important;gap:0!important;
+ width:calc(100% - 12px)!important;max-width:760px!important;
+ min-height:67px!important;
+ margin:0 auto!important;padding:8px 3px!important;
+ border-radius:16px!important;
+ background:#38383A!important;box-shadow:none!important;
+}
+html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill,
+html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill.svcp-doc-to-documents{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:4px!important;
+ flex:1 1 0!important;
+ width:100%!important;min-width:0!important;
+ height:51px!important;min-height:51px!important;max-height:51px!important;
+ margin:0!important;padding:4px 1px!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;color:#F1F1F4!important;
+ font:550 10px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill svg{
+ flex:0 0 20px!important;width:20px!important;height:20px!important;
+ stroke-width:1.5!important;
+}
+html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill span{
+ overflow:visible!important;text-overflow:clip!important;
+ color:#F1F1F4!important;
+ font:550 10px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill:active{
+ background:#4B4B4D!important;
+}
+html body .svcp-doc-overlay .svcp-doc-info{
+ max-width:760px!important;
+ margin:0 auto!important;padding:0 12px!important;
+ color:#68686E!important;
+}
+@media(max-width:360px){
+ html body .svcp-doc-overlay .svcp-doc-action-rail > .svcp-doc-pill span{
+  font-size:9px!important;
+ }
+}
