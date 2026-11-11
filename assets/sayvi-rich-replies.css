@@ -415,3 +415,25 @@ html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-snippet{
 html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-card:active{background:#474749!important}
 html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-card:focus-visible{outline:2px solid #FFF!important;outline-offset:2px!important}
 html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads{display:none!important}
+
+/* SEYVEO · approved compact document row, no nested preview or separator. */
+html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-card{
+ min-height:70px!important;margin:4px 0 8px!important;
+ border-color:rgba(255,255,255,.10)!important;
+ border-radius:16px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-head{
+ min-height:68px!important;padding:11px 13px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-sheet{
+ height:34px!important;flex-basis:32px!important;width:32px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-sheet svg{
+ height:27px!important;width:25px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-chevron{
+ font-size:24px!important;color:#D1D1D6!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-snippet{
+ display:none!important;
+}
