@@ -2477,6 +2477,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   downloads.append(preview,word,pdf);
   options.append(print);
   for(const option of options.querySelectorAll('button')){
+   if(option.querySelector('span'))continue;
    const label=document.createElement('span');
    label.textContent=option.getAttribute('aria-label')||option.title;
    option.append(label);
@@ -2748,14 +2749,25 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     const currentFiles=sentDocumentBlobs.get(turn)||[];
     const live=currentFiles.find(file=>file.name===name);
     if(live){openSentDocument(live);return;}
+    const hadCachedFile=!!fileRefs?.[name];
     tile.disabled=true;
     let recovered=null;
-    try{if(fileRefs?.[name])recovered=await window.SEYVEO_CHAT_FILES?.restore(fileRefs[name]);}
-    catch{}
+    try{
+     if(hadCachedFile&&tile.dataset.pickOriginal!=='1')
+      recovered=await window.SEYVEO_CHAT_FILES?.restore(fileRefs[name]);
+    }catch{}
     tile.disabled=false;
     if(recovered){
      sentDocumentBlobs.set(turn,[...currentFiles.filter(file=>file.name!==name),recovered]);
      openSentDocument(recovered);
+     return;
+    }
+    if(hadCachedFile&&tile.dataset.pickOriginal!=='1'){
+     // After an expired browser session the user must explicitly tap again;
+     // browsers block file pickers launched after asynchronous decryption.
+     tile.dataset.pickOriginal='1';
+     label.textContent=name+' · выбрать снова';
+     tile.setAttribute('aria-label','Повторно выбрать файл '+name);
      return;
     }
     // Before session caching, only the filename was stored. Never invent
