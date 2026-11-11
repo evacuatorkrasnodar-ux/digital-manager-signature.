@@ -585,3 +585,70 @@ html body .sv-doc-viewer .sv-doc-footer{
  html body .sv-doc-viewer .sv-doc-scroll{padding-top:20px!important}
  html body .sv-doc-viewer :is(.sv-doc-paper,.sv-doc-editor){min-height:920px!important}
 }
+
+
+/* SEYVEO · Sayvi sends real Word/PDF documents as two separate file cards.
+   They use the existing tested export handlers; no fake attachment bytes.
+   Preview/edit stays in the small text link below, not a third large card. */
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads:not([hidden]){
+ display:flex!important;
+ flex-direction:column!important;
+ gap:8px!important;
+ width:min(100%,340px)!important;
+ max-width:340px!important;
+ margin:7px 0 10px!important;
+ padding:0!important;
+ overflow:visible!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > :is(.sv-download-word,.sv-download-pdf){
+ display:flex!important;align-items:center!important;
+ width:100%!important;min-height:82px!important;
+ padding:13px 17px!important;gap:14px!important;
+ border:1px solid rgba(216,219,225,.16)!important;
+ border-radius:22px!important;
+ background:#1B1B1D!important;color:#F5F5F7!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ cursor:pointer!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-download-pdf{
+ border-top:1px solid rgba(216,219,225,.16)!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > :is(.sv-download-word,.sv-download-pdf) > svg{
+ display:block!important;flex:0 0 54px!important;
+ width:54px!important;height:48px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-download-word .sv-file-outline{stroke:#347DFF!important}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-download-pdf .sv-file-outline{stroke:#FF4545!important}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads :is(.sv-download-word,.sv-download-pdf) .sv-file-label{fill:none!important;stroke:none!important}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads .sv-download-word .sv-file-letter{stroke:#347DFF!important;stroke-width:1.9!important}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads .sv-download-pdf .sv-file-pdf-text{fill:#FF4545!important;stroke:none!important;font-size:6.5px!important}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads .sv-file-entry strong{
+ font-size:16px!important;font-weight:620!important;line-height:1.25!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads .sv-file-entry small{
+ font-size:13px!important;color:#AFAFB6!important;line-height:1.2!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > .sv-download-preview{
+ display:inline-flex!important;align-self:flex-start!important;
+ width:auto!important;min-height:28px!important;
+ padding:0 5px!important;border:0!important;
+ background:transparent!important;color:var(--sayvi-secondary,#ACB1B8)!important;
+ font-size:12px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > :is(.sv-download-word,.sv-download-pdf):focus-visible{
+ outline:2px solid #B9C2CB!important;outline-offset:2px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents .sv-rich-document-card{
+ display:none!important;
+}
+:root[data-theme="light"] #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads > :is(.sv-download-word,.sv-download-pdf){
+ background:#F5F5F6!important;border-color:rgba(56,56,58,.16)!important;color:#222226!important;
+}
+@media(max-width:390px){
+ html body #sayviMessages .turn[data-role="assistant"].sv-has-generated-documents > .sv-document-downloads:not([hidden]){width:100%!important}
+}
