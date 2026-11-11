@@ -1483,6 +1483,31 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  background:#4A4A4C!important;
 }
 
+
+/* SEYVEO unified document reader: light canvas and anchored graphite tools */
+html body .sv-doc-viewer{background:#F7F7F9!important;color:#28282B!important;height:100dvh!important;padding:0!important}
+html body .sv-doc-viewer .sv-doc-header{position:relative!important;flex:0 0 auto!important;min-height:calc(54px + env(safe-area-inset-top,0px))!important;padding:calc(5px + env(safe-area-inset-top,0px)) 10px 6px!important;background:#F7F7F9!important;border-bottom:1px solid #E5E5E9!important;pointer-events:auto!important}
+html body .sv-doc-viewer .sv-doc-back{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;background:#E5E6E9!important;color:#38383A!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body .sv-doc-viewer .sv-doc-heading{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+html body .sv-doc-viewer .sv-doc-title{color:#29292C!important;font-size:12px!important;font-weight:600!important}
+html body .sv-doc-viewer .sv-doc-meta{font:400 10px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#86868B}
+html body .sv-doc-viewer .sv-doc-scroll{flex:1!important;min-height:0!important;margin:0!important;padding:0!important;background:#F7F7F9!important}
+html body .sv-doc-viewer .sv-doc-content{max-width:760px!important;gap:0!important;min-height:100%!important;margin:0 auto!important}
+html body .sv-doc-viewer :is(.sv-doc-paper,.sv-doc-editor){border-radius:0!important;box-shadow:none!important;min-height:0!important;max-height:none!important;padding:24px clamp(14px,4vw,36px) 55px!important;background:#F7F7F9!important;color:#28282B!important;font:400 14px/1.58 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;overflow-wrap:anywhere!important}
+html body .sv-doc-viewer .sv-doc-editor{resize:none!important;min-height:65vh!important}
+html body .sv-doc-viewer .sv-doc-check{border-radius:0!important;margin:0!important;background:#EDEEF1!important;color:#343438!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body .sv-doc-viewer .sv-doc-check-body{color:#5D616A!important}
+html body .sv-doc-viewer .sv-doc-check--date .sv-doc-check-title,html body .sv-doc-viewer .sv-doc-check--date .sv-doc-check-body{color:#7D4C21!important}
+html body .sv-doc-viewer .sv-doc-check-actions button{background:#38383A!important;color:#FFF!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body .sv-doc-viewer .sv-doc-footer{position:relative!important;flex:0 0 auto!important;bottom:auto!important;display:flex!important;align-items:stretch!important;justify-content:space-around!important;width:calc(100% - 12px)!important;max-width:760px!important;margin:0 auto calc(6px + env(safe-area-inset-bottom,0px))!important;padding:8px 3px!important;gap:0!important;border-radius:16px!important;background:#38383A!important;color:#F8F8FA!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body .sv-doc-viewer .sv-doc-footer button{display:flex!important;flex:1 1 0!important;min-width:0!important;flex-direction:column!important;gap:4px!important;width:auto!important;height:51px!important;min-height:51px!important;max-height:none!important;padding:4px 1px!important;border-radius:10px!important;color:#FFF!important;background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body .sv-doc-viewer .sv-doc-footer button svg{width:20px!important;height:20px!important}
+html body .sv-doc-viewer .sv-doc-footer button span{position:static!important;display:block!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;overflow:visible!important;clip:auto!important;color:#F1F1F4!important;font:550 10px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;white-space:nowrap!important}
+html body .sv-doc-viewer .sv-doc-footer button:active{background:#4B4B4D!important}
+html body .sv-doc-viewer .sv-doc-footer button:nth-child(1) .sv-file-label{fill:#2875DB!important}
+html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:#DF3344!important}
+@media(max-width:360px){html body .sv-doc-viewer .sv-doc-footer button span{font-size:9px!important}}
+
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=3">
 <link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=4">
@@ -2335,7 +2360,8 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  function previewSayviDocument(value,feedback){
   const initialDraft=documentDraftOnly(value);
   if(!initialDraft){feedback.textContent='Сэйви пока не подготовила полный текст документа.';return}
-  let draft=initialDraft,editing=false;
+  const cleanDocumentText=text=>String(text||'').replace(/\*\*(.*?)\*\*/gs,'$1').replace(/^\s*#{1,4}\s+/gm,'').trim();
+   let draft=cleanDocumentText(initialDraft),editing=false;
   workingDocument={conversation:currentId,text:draft};
   const make=(tag,className,textValue)=>{
    const el=document.createElement(tag);if(className)el.className=className;
@@ -2348,7 +2374,9 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   const header=make('header','sv-doc-header');
   const back=make('button','sv-doc-back');back.type='button';back.setAttribute('aria-label','Назад к чату');
   back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';
-  header.append(back,make('span','sv-doc-title','Документ'));
+  const heading=make('div','sv-doc-heading');
+   heading.append(make('span','sv-doc-title','SEYVEO-document.docx'),make('span','sv-doc-meta','Документ · предпросмотр'));
+   header.append(back,heading);
   const scroll=make('div','sv-doc-scroll');
   const content=make('div','sv-doc-content');
   const dateCheck=make('section','sv-doc-check sv-doc-check--date');
@@ -2370,7 +2398,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   const actions=make('div','sv-doc-footer');
   actions.setAttribute('role','toolbar');
   actions.setAttribute('aria-label','Действия с документом');
-  content.append(dateCheck,fieldsCheck,page,editor,actions);scroll.append(content);
+  content.append(dateCheck,fieldsCheck,page,editor);scroll.append(content);
   const button=(label,callback)=>{
    const b=make('button','',label);b.type='button';b.addEventListener('click',callback);return b;
   };
@@ -2438,15 +2466,23 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   const editIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 16.5l10-10 3 3-10 10-4 1zM14 8.5l3 3"/></svg>';
   const wordIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="3" y="10" width="12.5" height="8.5" rx="2.2" class="sv-file-label"/><path d="m5.6 12.3 1 3.7 1.1-2.6 1.1 2.6 1-3.7" class="sv-file-letter"/></svg>';
   const pdfIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="2" y="10" width="19" height="8.5" rx="2.2" class="sv-file-label"/><text x="11.5" y="16" text-anchor="middle" class="sv-file-pdf-text">PDF</text></svg>';
-  edit.innerHTML=editIcon+'<span>Редактировать</span>';
-  wordAction.innerHTML=wordIcon+'<span>Скачать Word</span>';
-  pdfAction.innerHTML=pdfIcon+'<span>Скачать PDF</span>';
-  printAction.innerHTML=printIcon+'<span>Распечатать</span>';
+  edit.innerHTML=editIcon+'<span>Изменить</span>';
+  wordAction.innerHTML=wordIcon+'<span>Word</span>';
+  pdfAction.innerHTML=pdfIcon+'<span>PDF</span>';
+  printAction.innerHTML=printIcon+'<span>Печать</span>';
   for(const [control,label] of [[edit,'Редактировать документ'],[wordAction,'Скачать Word'],[pdfAction,'Скачать PDF'],[printAction,'Распечатать документ']]){
    control.setAttribute('aria-label',label);
    control.title=label;
   }
-  actions.append(edit,wordAction,pdfAction,printAction);
+  const shareAction=button('Поделиться',async()=>{
+    const value=confirmDownload();if(!value)return;
+    if(navigator.share){try{await navigator.share({text:value,title:'Документ SEYVEO'})}catch(error){if(error?.name!=='AbortError')feedback.textContent='Не удалось поделиться';}}
+    else if(navigator.clipboard?.writeText){try{await navigator.clipboard.writeText(value);feedback.textContent='Текст скопирован'}catch{feedback.textContent='Не удалось скопировать'}}
+    else feedback.textContent='Поделиться здесь нельзя';
+   });
+   shareAction.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0-4.5 4.5M12 3l4.5 4.5M5 13v7h14v-7"/></svg><span>Поделиться</span>';
+   shareAction.setAttribute('aria-label','Поделиться документом');
+   actions.append(wordAction,pdfAction,printAction,shareAction,edit);
   const dismiss=()=>{
    if(editing&&editor.value!==draft&&!window.confirm('Закрыть без сохранения изменений?'))return;
    document.removeEventListener('keydown',onKey);
@@ -2456,7 +2492,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   back.addEventListener('click',dismiss);
   editor.addEventListener('input',updateWarnings);
   updateWarnings();
-  overlay.append(header,scroll);
+  overlay.append(header,scroll,actions);
   document.body.append(overlay);
   document.addEventListener('keydown',onKey);
   back.focus({preventScroll:true});
