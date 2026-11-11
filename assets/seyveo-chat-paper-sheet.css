@@ -30,6 +30,11 @@
  backdrop-filter:none!important;
  overflow:hidden!important;
  overscroll-behavior:contain!important;
+ animation:sv-sayvi-paper-rise .24s cubic-bezier(.22,.82,.22,1) both;
+}
+@keyframes sv-sayvi-paper-rise{
+ from{translate:0 100%;opacity:.82}
+ to{translate:0 0;opacity:1}
 }
 #sayviPaperSheet::before{
  content:""!important;
