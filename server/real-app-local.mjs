@@ -485,8 +485,8 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    try{send(res,200,await readDocumentUpload(req))}
    catch(err){
     const reason=String(err?.message||'');
-    const code=reason==='large'?413:reason==='unsupported'?415:reason==='timeout'?504:reason==='format'?400:422;
-    const safe=reason==='python-unavailable'?'Нужен Python 3.11 для чтения документов.':
+    const code=reason==='large'?413:reason==='unsupported'?415:reason==='timeout'?504:reason==='format'?400:reason==='python-unavailable'?503:reason==='invalid-result'||reason==='large-output'?502:422;
+    const safe=reason==='python-unavailable'?'Для чтения PDF, XLSX и PPTX установи Python 3.11 или запусти окружение документов SEYVEO. Для DOCX Python больше не нужен.':
      reason==='large'?'Максимальный размер документа — 8 МБ.':
      reason==='unsupported'?'Поддерживаются текстовые PDF, DOCX, XLSX и PPTX.':
      reason==='timeout'?'Документ обрабатывается слишком долго.':
