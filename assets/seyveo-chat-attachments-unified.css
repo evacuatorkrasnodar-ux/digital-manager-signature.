@@ -329,3 +329,76 @@ html body .svf-dialog #svfAttachment button{
 
 /* Consistent dark file surfaces also on the light theme, as requested.
    The surrounding chat retains the user's selected appearance. */
+
+/* SEYVEO · page-first attachment previews: document thumbnail above a dark caption.
+   The PDF preview is the real local PDF; Word text appears only when extracted. */
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip.sv-attach-chip--page{
+ display:flex!important;flex-direction:column!important;
+ flex:0 0 148px!important;width:148px!important;max-width:148px!important;
+ height:118px!important;padding:0!important;
+ border:1px solid rgba(255,255,255,.11)!important;
+ border-radius:15px!important;background:#101113!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--page .sv-document-page-preview{
+ display:block!important;position:absolute!important;inset:4px 4px 25px!important;
+ width:auto!important;height:auto!important;overflow:hidden!important;
+ border-radius:10px 10px 5px 5px!important;background:#F8F8F7!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--page .sv-attach-caption{
+ z-index:3!important;bottom:0!important;left:0!important;right:0!important;
+ background:#101113!important;text-align:left!important;
+ padding:5px 8px 6px!important;color:#F6F6F7!important;font-size:10px!important;
+}
+html body .sv-document-page{display:block;position:absolute;inset:0;background:#FAFAFA;color:#222}
+html body .sv-document-page-fallback{position:absolute;inset:0;display:grid;place-items:center}
+html body .sv-document-page-fallback .sv-attach-fileicon{
+ position:relative!important;inset:auto!important;width:42px!important;height:52px!important;
+ background:transparent!important;
+}
+html body .sv-document-page-fallback .sv-file-sheet{width:36px;height:46px;margin:0}
+html body .sv-document-pdf-frame{
+ display:block!important;position:absolute!important;top:0!important;left:0!important;
+ width:300%!important;height:300%!important;
+ transform:scale(.333333)!important;transform-origin:top left!important;
+ border:0!important;background:#FFF!important;pointer-events:none!important;
+}
+html body .sv-document-word-text{
+ display:none;position:absolute;inset:5px 7px;overflow:hidden;
+ color:#303030;background:#FFF;white-space:pre-wrap;overflow-wrap:anywhere;
+ font:400 5px/1.32 Georgia,"Times New Roman",serif;text-align:left;
+}
+html body .sv-document-page-preview.sv-preview-loaded .sv-document-word-text{display:block}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files:has(.sv-sent-file--page){
+ display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;
+ justify-content:flex-end!important;gap:8px!important;max-width:100%!important;
+ width:100%!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file.sv-sent-file--page{
+ display:flex!important;flex-direction:column!important;
+ position:relative!important;flex:0 0 154px!important;
+ width:154px!important;max-width:154px!important;height:144px!important;
+ padding:5px!important;gap:0!important;min-height:0!important;
+ border-radius:16px!important;overflow:hidden!important;
+ background:#101113!important;color:#F4F4F6!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page .sv-document-page-preview{
+ display:block!important;position:relative!important;flex:1 1 auto!important;
+ width:100%!important;min-height:0!important;overflow:hidden!important;
+ border-radius:10px 10px 5px 5px!important;background:#FFF!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page .sv-sent-file-copy{
+ display:block!important;flex:0 0 30px!important;min-width:0!important;
+ width:100%!important;padding:5px 5px 1px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page .sv-sent-file-name{
+ display:block!important;font-size:10px!important;line-height:1.25!important;
+ white-space:nowrap!important;text-overflow:ellipsis!important;overflow:hidden!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page .sv-sent-file-meta{
+ display:none!important;
+}
+@media(max-width:355px){
+ html body #sayviMessages .turn[data-role="user"] .sv-sent-file.sv-sent-file--page{
+ flex-basis:140px!important;width:140px!important;max-width:140px!important;
+ }
+}
