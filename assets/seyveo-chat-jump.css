@@ -1,0 +1,45 @@
+/* SEYVEO · one scroll-to-latest control for Sayvi and Work Messenger.
+   Floating, flat, fixed to the real composer; no change to chat layouts. */
+#sayviComposer ~ .sv-chat-jump,
+main > .sv-chat-jump,
+#svcpWorkChatScreen .svcp-chat > .sv-chat-jump{
+ position:absolute!important;
+ z-index:8!important;
+ left:50%!important;
+ right:auto!important;
+ transform:translateX(-50%)!important;
+ display:grid!important;
+ place-items:center!important;
+ box-sizing:border-box!important;
+ width:42px!important;height:42px!important;
+ min-width:42px!important;min-height:42px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F6F7F8!important;
+ box-shadow:0 3px 11px rgba(0,0,0,.12)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
+ touch-action:manipulation;
+}
+#sayviScrollBottom[hidden],
+#svcpScrollBottom[hidden],
+.sv-chat-jump[hidden]{
+ display:none!important;
+}
+.sv-chat-jump svg{
+ display:block!important;flex:none;
+ width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+.sv-chat-jump:active{background:#4A4A4C!important}
+.sv-chat-jump:focus-visible{
+ outline:2px solid #F6F7F8!important;
+ outline-offset:3px!important;
+}
+@media(prefers-reduced-motion:reduce){
+ .sv-chat-jump{transition:none!important}
+}
