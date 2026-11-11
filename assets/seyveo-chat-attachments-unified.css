@@ -642,3 +642,61 @@ html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--page > .sv-attac
 html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page > .sv-sent-file-copy{
  background:#050506!important;
 }
+
+/* SEYVEO · one page-card for PDF, DOCX and photos.
+   DOCX is rendered to scaled HTML locally; do not show a floating W over a page. */
+html body .sv-document-docx-render{
+ display:block!important;position:absolute!important;
+ inset:0!important;width:100%!important;height:100%!important;
+ overflow:hidden!important;background:#FFFFFF!important;
+ opacity:0!important;pointer-events:none!important;
+}
+html body .sv-document-page-preview.sv-preview-loaded .sv-document-docx-render{
+ opacity:1!important;
+}
+html body .sv-document-page-preview.sv-preview-loaded .sv-document-page-fallback{
+ display:none!important;
+}
+html body .sv-document-docx-render > .sv-thumb-docx-wrapper,
+html body .sv-document-docx-render > .docx-wrapper{
+ position:absolute!important;left:0!important;top:0!important;
+ display:block!important;width:816px!important;max-width:none!important;
+ margin:0!important;padding:0!important;
+ border:0!important;box-shadow:none!important;
+ background:#FFFFFF!important;
+ transform:scale(.184)!important;transform-origin:top left!important;
+}
+html body .sv-document-docx-render :is(.sv-thumb-docx,.docx){
+ box-shadow:none!important;border:0!important;
+ margin:0!important;max-width:none!important;
+}
+html body .sv-document-docx-render .sv-thumb-docx-wrapper > section:not(:first-of-type){
+ display:none!important;
+}
+/* Make the single dark strip identical for all supported file formats. */
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip:is(.sv-attach-chip--image,.sv-attach-chip--page) > .sv-attach-caption,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page > .sv-sent-file-copy,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > .sv-file-caption{
+ background:#030304!important;
+ border:0!important;
+}
+html body #sayviComposer .sv-attach-chip .sv-file-caption,
+html body #sayviMessages .turn[data-role="user"] .sv-file-caption{
+ width:100%!important;min-width:0!important;gap:4px!important;
+}
+html body #sayviComposer .sv-attach-chip .sv-file-caption-name,
+html body #sayviMessages .turn[data-role="user"] .sv-file-caption-name{
+ min-width:0!important;flex:1 1 auto!important;
+ font-size:10px!important;font-weight:480!important;
+ white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+ text-align:left!important;
+}
+html body #sayviComposer .sv-attach-chip .sv-file-caption-format,
+html body #sayviMessages .turn[data-role="user"] .sv-file-caption-format{
+ flex-shrink:0!important;
+}
+html body #sayviComposer .sv-attach-chip--image > .sv-attach-thumb,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > img{
+ object-position:center center!important;
+}
