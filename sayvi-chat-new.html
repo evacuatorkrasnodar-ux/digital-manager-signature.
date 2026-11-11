@@ -53,10 +53,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 #sayviMessages{
  scroll-padding-top:calc(env(safe-area-inset-top) + 8px);
 }
-#sayviMessages.is-scrolled{
- -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 23px,black 100%);
- mask-image:linear-gradient(to bottom,transparent 0,black 23px,black 100%);
-}
+
 .turn{display:flex;flex-direction:column;gap:5px;margin:0 0 18px;font-size:15px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .turn[data-role="user"]{align-items:flex-end}
 /* User messages: same flat Smoke Glass as the composer, with a soft
@@ -1450,12 +1447,18 @@ html body > #sayviHistoryActions button#sayviHistoryDelete:active{
  background:#4A4A4C;
 }
 :root[data-theme="light"] body #sayviHistory .history-item-title{color:var(--sayvi-text)}
-/* Scrolling chat text must fade before reaching floating Back/History buttons. */
+/* Header is transparent; do not mask or conceal chat text during scroll. */
+html body main #sayviTopActions{
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body main #sayviMessages,
 html body main #sayviMessages.is-scrolled{
- -webkit-mask-image:linear-gradient(to bottom,
-  transparent 0,transparent 49px,black 72px,black 100%)!important;
- mask-image:linear-gradient(to bottom,
-  transparent 0,transparent 49px,black 72px,black 100%)!important;
+ -webkit-mask-image:none!important;
+ mask-image:none!important;
 }
 
 /* SEYVEO 11 Nov · History shortcut is flat premium graphite, never glass.
