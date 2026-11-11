@@ -1766,7 +1766,10 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   if(!fields.length){status.textContent='В этом документе нет незаполненных полей.';return}
   documentFill={conversation:currentId,original:source,text:source,fields,index:0,answers:{}};
   workingDocument={conversation:currentId,text:source};
-  append('assistant','fill-'+(++sequence),fillQuestion(fields[0],0,fields.length));
+  const questions=fields.map(field=>'• '+field+': ').join('\n');
+  append('assistant','fill-'+(++sequence),
+   'Чтобы закончить документ, пришли недостающие сведения одним сообщением. Можно скопировать строки и вписать данные после двоеточия:\n\n'+questions+
+   '\n\nЕсли удобнее — отвечай по одному. Ненужное поле можно пропустить.');
  }
  function handleDocumentFillAnswer(value){
   const state=documentFill;
@@ -1785,6 +1788,39 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    }else{
     state.index--;
     append('assistant','fill-'+(++sequence),'Хорошо, вернёмся. '+fillQuestion(state.fields[state.index],state.index,state.fields.length));
+   }
+   return true;
+  }
+  // A single, explicitly labelled response can fill several fields at once.
+  // Never infer details from free text. Unlabelled replies keep the old flow.
+  const batch=new Map();
+  const norm=value=>String(value||'').toLocaleLowerCase('ru')
+   .replace(/^[\s•*\-\d.)]+/u,'').replace(/\s+/gu,' ').trim();
+  for(const line of answer.split(/\n/u).slice(0,20)){
+   const colon=line.indexOf(':');
+   if(colon<1)continue;
+   const field=state.fields.find(f=>norm(f)===norm(line.slice(0,colon)));
+   const value=line.slice(colon+1).trim();
+   if(!field||!value||value.length>180||/[<>\[\]]/u.test(value))continue;
+   batch.set(field,value);
+  }
+  if(batch.size){
+   for(const [field,value] of batch)state.answers[field]=value;
+   state.text=state.original;
+   for(const [field,value] of Object.entries(state.answers))
+    if(value!==null)state.text=state.text.split('['+field+']').join(value);
+   workingDocument={conversation:currentId,text:state.text};
+   const next=state.fields.findIndex(field=>!Object.prototype.hasOwnProperty.call(state.answers,field));
+   if(next<0){
+    documentFill=null;
+    append('assistant','fill-done-'+(++sequence),
+     'Внесла данные. Открой документ и проверь текст перед сохранением.\n\n---\n'+state.text+'\n---');
+   }else{
+    state.index=next;
+    const remaining=state.fields.filter(f=>!Object.prototype.hasOwnProperty.call(state.answers,f));
+    append('assistant','fill-'+(++sequence),
+     'Внесла данные. Осталось уточнить:\n'+remaining.map(f=>'• '+f).join('\n')+
+     '\n\n'+fillQuestion(state.fields[next],next,state.fields.length));
    }
    return true;
   }
@@ -2517,7 +2553,10 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   const back=make('button','sv-doc-back');back.type='button';back.setAttribute('aria-label','Назад к чату');
   back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';
   const heading=make('div','sv-doc-heading');
-   heading.append(make('span','sv-doc-title','Документ SEYVEO'),make('span','sv-doc-meta','Документ · предпросмотр'));
+   const headingTitle=draft.split('\n').map(line=>line.replace(/^#{1,4}\s+|\*\*/gu,'').trim()).find(Boolean)||'Документ';
+   const displayTitle=headingTitle.length<=74?headingTitle:'Документ SEYVEO';
+   heading.append(make('span','sv-doc-title',displayTitle),
+    make('span','sv-doc-meta',documentMissingFields(draft).length?'Есть данные для заполнения':'Проверь перед сохранением'));
    header.append(back,heading);
   const scroll=make('div','sv-doc-scroll');
   const content=make('div','sv-doc-content');
@@ -2570,6 +2609,8 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    if(!editor.value.trim()){window.alert('Документ не может быть пустым');return}
    draft=editor.value;page.textContent=draft;
    workingDocument={conversation:currentId,text:draft};
+   heading.querySelector('.sv-doc-meta').textContent=documentMissingFields(draft).length
+    ?'Есть данные для заполнения':'Проверь перед сохранением';
    editorVisible(false);edit.querySelector('span').textContent='Редактировать';
   });
   askSayvi.addEventListener('click',()=>{
