@@ -52,6 +52,81 @@ const format=(name,mime)=>{
   ext==='webp'?'WEBP':ext.toUpperCase();
  return {ext,kind,label:nameForDisplay||mime||'Файл'};
 };
+// Local, read-only DOCX text preview. ZIP entries stay inside the browser;
+// no upload, external viewer, macros or Office scripts are executed.
+async function readDocxText(file){
+ const bytes=new Uint8Array(await file.arrayBuffer());
+ const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+ const read16=(i)=>view.getUint16(i,true),read32=(i)=>view.getUint32(i,true);
+ if(bytes.length<22)throw Error('not-zip');
+ let end=-1;
+ for(let i=bytes.length-22;i>=Math.max(0,bytes.length-65557);i--){
+  if(read32(i)===0x06054b50){end=i;break;}
+ }
+ if(end<0||read16(end+4)!==0||read16(end+6)!==0)throw Error('unsupported-zip');
+ const count=read16(end+10),offset=read32(end+16);
+ if(count>1500||offset>=bytes.length)throw Error('invalid-zip-index');
+ const utf8=new TextDecoder('utf-8');
+ let cursor=offset,entry=null;
+ for(let i=0;i<count;i++){
+  if(cursor+46>bytes.length||read32(cursor)!==0x02014b50)throw Error('invalid-zip-index');
+  const method=read16(cursor+10),compressed=read32(cursor+20),size=read32(cursor+24);
+  const nameLen=read16(cursor+28),extraLen=read16(cursor+30),commentLen=read16(cursor+32);
+  if(cursor+46+nameLen+extraLen+commentLen>bytes.length)throw Error('invalid-zip-index');
+  const name=utf8.decode(bytes.subarray(cursor+46,cursor+46+nameLen));
+  if(name==='word/document.xml'){
+   entry={method,compressed,size,offset:read32(cursor+42)};
+   break;
+  }
+  cursor+=46+nameLen+extraLen+commentLen;
+ }
+ if(!entry||entry.size>2500000||entry.compressed>2500000||entry.size<1||
+    entry.size>Math.max(1024,entry.compressed)*150)throw Error('invalid-document-part');
+ const at=entry.offset;
+ if(at+30>bytes.length||read32(at)!==0x04034b50)throw Error('invalid-part-header');
+ const dataStart=at+30+read16(at+26)+read16(at+28);
+ if(dataStart+entry.compressed>bytes.length)throw Error('invalid-part-data');
+ const zipped=bytes.subarray(dataStart,dataStart+entry.compressed);
+ let plain;
+ if(entry.method===0)plain=zipped;
+ else if(entry.method===8&&typeof DecompressionStream!=='undefined'){
+  const inflated=new Blob([zipped]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  const reader=inflated.getReader(),chunks=[];
+  let size=0;
+  try{
+   while(true){
+    const {done,value}=await reader.read();
+    if(done)break;
+    size+=value.byteLength;
+    if(size>2500000)throw Error('document-too-large');
+    chunks.push(value);
+   }
+  }finally{reader.releaseLock();}
+  plain=new Uint8Array(size);
+  let n=0;
+  for(const chunk of chunks){plain.set(chunk,n);n+=chunk.length;}
+ }else throw Error('compression-not-supported');
+ if(plain.length>2500000||!plain.length)throw Error('invalid-document-part');
+ const xml=new TextDecoder('utf-8',{fatal:true}).decode(plain);
+ if(/<!DOCTYPE|<!ENTITY/i.test(xml))throw Error('xml-doctype');
+ const documentXml=new DOMParser().parseFromString(xml,'application/xml');
+ if(documentXml.querySelector('parsererror'))throw Error('invalid-docx-xml');
+ const ns='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+ const paragraphs=documentXml.getElementsByTagNameNS(ns,'p');
+ let output='',seen=0;
+ for(const paragraph of paragraphs){
+  if(seen++>=2000||output.length>=110000)break;
+  let line='';
+  for(const child of paragraph.getElementsByTagName('*')){
+   if(child.namespaceURI!==ns)continue;
+   if(child.localName==='t')line+=(child.textContent||'');
+   else if(child.localName==='tab')line+='\t';
+   else if(child.localName==='br'||child.localName==='cr')line+='\n';
+  }
+  output+=line+'\n';
+ }
+ return output.trim().slice(0,110000);
+}
 function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{}}={}){
  if(!target||!file||typeof file.name!=='string'||typeof file.size!=='number'||
     file.size<1||file.size>MAX||typeof file.text!=='function')return false;
@@ -78,6 +153,7 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{}}={}){
   frame.setAttribute('loading','lazy');
   stage.append(frame);
  }else if(info.kind==='text'){
+  stage.classList.add('svdv-stage-document');
   const pre=el('pre','svdv-text','Открываем текст…');
   stage.append(pre);
   file.text().then(text=>{
@@ -86,12 +162,27 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{}}={}){
   }).catch(()=>{
    if(active&&pre.isConnected)pre.textContent='Не удалось открыть текст.';
   });
+ }else if(info.ext==='docx'){
+  stage.classList.add('svdv-stage-document');
+  stage.setAttribute('aria-busy','true');
+  const pre=el('pre','svdv-text','Открываю Word…');
+  const note=el('p','svdv-preview-note','Предварительный просмотр текста · оформление оригинала может отличаться.');
+  stage.append(pre,note);
+  readDocxText(file).then(text=>{
+   if(!active||!stage.isConnected)return;
+   stage.removeAttribute('aria-busy');
+   if(!text)throw Error('empty-docx-text');
+   pre.textContent=text;
+  }).catch(()=>{
+   if(!active||!stage.isConnected)return;
+   stage.removeAttribute('aria-busy');
+   stage.classList.remove('svdv-stage-document');
+   stage.classList.add('svdv-stage-unavailable');
+   stage.replaceChildren(el('p','svdv-unavailable','Не удалось показать текст этого Word на устройстве. Оригинал можно открыть или сохранить.'));
+  });
  }else{
-  const fallback=el('div','svdv-fallback');
-  fallback.append(icon('file'),
-   el('strong','','Оригинал '+info.label),
-   el('small','','Этот формат откроется в подходящем приложении.'));
-  stage.append(fallback);
+  stage.classList.add('svdv-stage-unavailable');
+  stage.append(el('p','svdv-unavailable','Для этого формата доступен оригинал файла. Его можно открыть или сохранить.'));
  }
  root.append(stage);
  const notice=el('p','svdv-notice');
@@ -99,50 +190,27 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{}}={}){
  const say=(value)=>{if(active)notice.textContent=value;};
  const supportsPrint=info.kind==='pdf'||info.kind==='image';
  const toolbar=el('div','svdv-toolbar');
+ const save=el('a','svdv-action svdv-primary');
+ save.href=objectUrl;save.download=file.name||'Документ';
+ save.setAttribute('aria-label','Сохранить оригинал '+file.name);
+ save.append(icon('download'),el('span','','Сохранить'));
+ toolbar.append(save);
  const doShare=()=>{
   if(typeof navigator==='undefined'||typeof navigator.share!=='function'){
-   say('Системное меню недоступно. Сохраните файл и отправьте его самостоятельно.');
-   return;
+   say('На этом устройстве доступно сохранение оригинала.');return;
   }
   const data={files:[file],title:file.name};
   try{
    if(typeof navigator.canShare==='function'&&!navigator.canShare(data)){
-    say('Этот формат нельзя отправить напрямую. Сохраните оригинал.');return;
+    say('Системная отправка этого формата недоступна. Сохрани оригинал.');return;
    }
-   // Must begin synchronously from click, before any await, for iOS Safari.
-   void navigator.share(data).then(()=>{
-    say('Открыто системное меню. Доставку подтвердит выбранное приложение.');
-   },error=>{
-    if(error?.name!=='AbortError')say('Не удалось открыть меню. Сохраните файл вручную.');
+   // iOS requires share() directly in the user's click handler.
+   void navigator.share(data).catch(error=>{
+    if(error?.name!=='AbortError')say('Не удалось открыть меню отправки. Сохрани оригинал.');
    });
-  }catch{say('Меню отправки недоступно. Сохраните оригинал.');}
+  }catch{say('Не удалось открыть системное меню.');}
  };
- toolbar.append(action('Поделиться','share',doShare,'svdv-primary'));
- toolbar.append(action('Печать','print',()=>{
-  if(!supportsPrint){
-   say('Для печати этого формата откройте оригинал в подходящем приложении.');
-   return;
-  }
-  // No false "printed" status and no popup opened after an async step.
-  const tab=window.open(objectUrl,'_blank','noopener,noreferrer');
-  if(!tab) say('Откройте оригинал и выберите «Печать» в системном меню.');
-  else say('Откройте системное меню документа и выберите «Печать».');
- }));
- const sign=action('Подписать','signature',()=>{
-  if(info.kind!=='image'){
-   say('В этом прототипе подпись поверх готового PDF пока недоступна. Можно подписать скан в инструменте «Подписать».');
-   return;
-  }
-  try{
-   const result=onSignImage(file);
-   if(result&&typeof result.then==='function'){
-    result.then(ok=>{
-     if(ok!==true)say('Не удалось открыть подпись. Попробуйте через «Сканировать».');
-    },()=>say('Не удалось подготовить подпись.'));
-   }else if(result!==true)say('Откройте инструмент «Подписать» после сканирования.');
-  }catch{say('Не удалось подготовить подпись.');}
- });
- toolbar.append(sign);
+ toolbar.append(action('Поделиться','share',doShare));
  const more=el('details','svdv-more');
  const summary=el('summary','svdv-more-button');
  summary.append(icon('more'),el('span','','Ещё'));
@@ -151,12 +219,26 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{}}={}){
  const openLink=el('a','svdv-link');
  openLink.href=objectUrl;openLink.target='_blank';openLink.rel='noopener noreferrer';
  openLink.append(icon('file'),el('span','','Открыть оригинал'));
- const download=el('a','svdv-link');
- download.href=objectUrl;download.download=file.name||'Документ';
- download.append(icon('download'),el('span','','Сохранить копию'));
- moreBody.append(openLink,download,action('Сэйви поможет','sayvi',()=>{
-  onSayvi('review');
- }));
+ moreBody.append(openLink);
+ if(supportsPrint){
+  moreBody.append(action('Печать','print',()=>{
+   const tab=window.open(objectUrl,'_blank','noopener,noreferrer');
+   say(tab?'В открытом документе выбери системную печать.':'Открой оригинал и выбери системную печать.');
+  }));
+ }
+ if(info.kind==='image'){
+  moreBody.append(action('Подписать скан','signature',()=>{
+   try{
+    const result=onSignImage(file);
+    if(result&&typeof result.then==='function')
+     result.then(ok=>{if(ok!==true)say('Не удалось открыть подпись.');},
+      ()=>say('Не удалось открыть подпись.'));
+    else if(result!==true)say('Инструмент подписи недоступен.');
+   }catch{say('Не удалось открыть подпись.');}
+  }));
+ }
+ moreBody.append(action('Сэйви поможет','sayvi',()=>onSayvi('review')));
+ moreBody.addEventListener('click',event=>{if(event.target.closest('button,a'))more.open=false;});
  more.append(moreBody);toolbar.append(more);
  root.append(toolbar,notice);
  target.replaceChildren(root);
