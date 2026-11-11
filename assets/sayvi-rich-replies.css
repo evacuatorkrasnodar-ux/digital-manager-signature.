@@ -1,0 +1,341 @@
+/* SEYVEO · thoughtful, Apple-level reply typography, dark graphite #38383A.
+   No colorful decorations and no cards around short conversational replies.
+   Does not alter the composer, history, message state or attachment previews. */
+#sayviMessages .turn[data-role="assistant"] .bubble.sv-rich{
+ display:block;
+ box-sizing:border-box;
+ max-width:100%!important;
+ min-width:0;
+ font:400 14.5px/1.58 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:-.008em;
+ white-space:normal!important;
+ word-break:normal;
+ overflow-wrap:anywhere;
+ color:var(--sayvi-text);
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-content{
+ width:100%;
+ min-width:0;
+ max-width:660px;
+ display:flex;
+ flex-direction:column;
+ gap:0;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-p{
+ margin:0 0 13px;
+ padding:0;
+ white-space:pre-line;
+ line-height:1.6;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-p:last-child{margin-bottom:0}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-heading{
+ margin:16px 0 7px;
+ padding:0;
+ color:var(--sayvi-text);
+ font:650 15px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.015em;
+ overflow-wrap:anywhere;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-heading:first-child{
+ margin-top:0;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-list{
+ display:flex;
+ flex-direction:column;
+ gap:6px;
+ margin:1px 0 15px;
+ padding:0 0 0 24px;
+ list-style-position:outside;
+ white-space:normal;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-list:last-child{margin-bottom:0}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-list-item{
+ min-width:0;
+ padding-left:1px;
+ line-height:1.56;
+ white-space:pre-line;
+ overflow-wrap:anywhere;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-list-item::marker{
+ color:var(--sayvi-secondary);
+ font-size:.9em;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-link{
+ color:var(--sayvi-text);
+ text-decoration:underline;
+ text-decoration-color:var(--sayvi-secondary);
+ text-decoration-thickness:1px;
+ text-underline-offset:3px;
+ overflow-wrap:anywhere;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-link:focus-visible{
+ outline:2px solid currentColor;
+ outline-offset:3px;
+ border-radius:2px;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-code{
+ display:block;
+ box-sizing:border-box;
+ max-width:100%;
+ margin:4px 0 12px;
+ padding:11px 12px;
+ border-radius:11px;
+ border:1px solid rgba(255,255,255,.08);
+ background:#28282A;
+ color:#E7E7E9;
+ overflow-x:auto;
+ white-space:pre;
+ font:450 12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-quote{
+ margin:3px 0 14px;
+ border-left:2px solid var(--sayvi-secondary);
+ padding:4px 0 4px 12px;
+ white-space:pre-line;
+ color:var(--sayvi-secondary);
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-rule{
+ display:block;
+ width:100%;
+ height:1px;
+ margin:10px 0 15px;
+ padding:0;
+ border:0;
+ background:rgba(170,175,186,.22);
+}
+/* Only actual drafted documents get a framed manuscript preview. */
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-card{
+ box-sizing:border-box;
+ width:100%;
+ max-width:660px;
+ min-width:0;
+ margin:6px 0 12px;
+ padding:0;
+ border:1px solid rgba(225,226,230,.13);
+ border-radius:19px;
+ background:#2E2E30;
+ color:#F3F3F4;
+ overflow:hidden;
+ box-shadow:none;
+ -webkit-backdrop-filter:none;
+ backdrop-filter:none;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-head{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px;
+ box-sizing:border-box;
+ min-height:53px;
+ padding:8px 12px 6px 17px;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-label{
+ color:#BDBDC2;
+ font:540 12px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-tools{
+ display:flex;
+ align-items:center;
+ gap:3px;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-tool{
+ box-sizing:border-box;
+ display:grid;
+ place-items:center;
+ flex:0 0 35px;
+ width:35px;
+ height:35px;
+ margin:0;
+ padding:0;
+ border:0;
+ border-radius:10px;
+ background:transparent;
+ color:#D4D4D8;
+ cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-tool:active{
+ background:#444447;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-tool:focus-visible{
+ outline:2px solid #F6F6F7;
+ outline-offset:-2px;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-tool svg{
+ width:19px;
+ height:19px;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-body{
+ box-sizing:border-box;
+ width:100%;
+ max-height:430px;
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+ scrollbar-width:thin;
+ padding:11px 17px 17px;
+ font:400 14px/1.62 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-body .sv-rich-p{
+ margin-bottom:15px;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-body .sv-rich-heading{
+ margin-top:14px;
+ font-size:14.5px;
+ color:#F3F3F4;
+}
+/* Real Word/PDF export commands presented as calm, readable file rows. */
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads:not([hidden]){
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ width:min(100%,510px)!important;
+ max-width:510px!important;
+ gap:0!important;
+ padding:4px 0!important;
+ margin:1px 0 12px!important;
+ border:1px solid rgba(225,226,230,.12)!important;
+ border-radius:15px!important;
+ background:#242426!important;
+ box-shadow:none!important;
+ overflow:hidden!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads[hidden]{
+ display:none!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > button{
+ box-sizing:border-box!important;
+ display:flex!important;
+ justify-content:flex-start!important;
+ align-items:center!important;
+ width:100%!important;
+ min-width:0!important;
+ min-height:55px!important;
+ flex:0 0 auto!important;
+ padding:10px 14px!important;
+ margin:0!important;
+ gap:11px!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ color:#F0F0F2!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ font:570 12.5px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > button + button{
+ border-top:1px solid rgba(220,222,229,.10)!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > button:active{
+ background:#38383A!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > button > svg{
+ display:block!important;
+ flex:0 0 23px!important;
+ width:23px!important;
+ height:23px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > .sv-download-preview{
+ min-height:38px!important;
+ justify-content:flex-start!important;
+ color:#BFBFC5!important;
+ font-size:11.5px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > .sv-download-preview > svg{
+ flex-basis:18px!important;width:18px!important;height:18px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > .sv-download-word .sv-file-label{fill:#386EB5!important}
+html body #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > .sv-download-pdf .sv-file-label{fill:#C53B43!important}
+/* Contextual follow-ups only when the content really has a natural next step. */
+#sayviMessages .turn[data-role="assistant"] > .sv-rich-suggestions{
+ display:flex;
+ flex-wrap:wrap;
+ align-items:center;
+ gap:5px 13px;
+ width:100%;
+ max-width:660px;
+ margin:2px 0 5px;
+ padding:0;
+}
+#sayviMessages .turn[data-role="assistant"] > .sv-rich-suggestions[hidden]{display:none!important}
+#sayviMessages .turn[data-role="assistant"] > .sv-rich-suggestions button{
+ display:inline-flex;
+ align-items:center;
+ gap:6px;
+ min-height:33px;
+ padding:5px 0;
+ border:0;
+ border-radius:0;
+ background:transparent;
+ color:var(--sayvi-secondary);
+ font:500 12px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ cursor:pointer;
+ text-align:left;
+}
+#sayviMessages .turn[data-role="assistant"] > .sv-rich-suggestions button::before{
+ content:"↳";
+ font-size:17px;
+ font-weight:400;
+ line-height:1;
+}
+#sayviMessages .turn[data-role="assistant"] > .sv-rich-suggestions button:active{
+ color:var(--sayvi-text);
+}
+#sayviMessages .turn[data-role="assistant"] > .sv-rich-suggestions button:focus-visible{
+ outline:2px solid currentColor;
+ outline-offset:2px;
+}
+#sayviMessages .turn[data-role="assistant"] > .sv-reply-actions{
+ margin-top:3px!important;
+}
+:root[data-theme="light"] #sayviMessages .turn[data-role="assistant"] .sv-rich-document-card{
+ background:#F4F4F5;
+ color:#29292C;
+ border-color:rgba(56,56,58,.12);
+}
+:root[data-theme="light"] #sayviMessages .turn[data-role="assistant"] .sv-rich-document-label{
+ color:#75757D;
+}
+:root[data-theme="light"] #sayviMessages .turn[data-role="assistant"] .sv-rich-document-tool{
+ color:#38383A;
+}
+:root[data-theme="light"] #sayviMessages .turn[data-role="assistant"] .sv-rich-document-body .sv-rich-heading{
+ color:#27272A;
+}
+:root[data-theme="light"] #sayviMessages .turn[data-role="assistant"] .sv-rich-code{
+ background:#E8E8EB;color:#27272A;border-color:rgba(56,56,58,.12);
+}
+:root[data-theme="light"] #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads:not([hidden]){
+ background:#EFEFF1!important;
+ border-color:rgba(56,56,58,.13)!important;
+}
+:root[data-theme="light"] #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > button{
+ color:#303036!important;
+}
+:root[data-theme="light"] #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads > .sv-download-preview{
+ color:#55555D!important;
+}
+@media(max-width:390px){
+ #sayviMessages .turn[data-role="assistant"] .sv-rich-document-head{
+  padding-left:13px;
+ }
+ #sayviMessages .turn[data-role="assistant"] .sv-rich-document-body{
+  padding:9px 13px 15px;
+  font-size:13.5px;
+ }
+ #sayviMessages .turn[data-role="assistant"] .sv-rich-p{
+  font-size:14px;
+ }
+ #sayviMessages .turn[data-role="assistant"] > .sv-rich-suggestions{gap:3px 10px}
+ #sayviMessages .turn[data-role="assistant"] > .sv-rich-suggestions button{
+  font-size:11.5px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviMessages .turn[data-role="assistant"] .sv-rich-document-card,
+ #sayviMessages .turn[data-role="assistant"] .sv-rich-suggestions button{
+  transition:none!important;
+ }
+}
