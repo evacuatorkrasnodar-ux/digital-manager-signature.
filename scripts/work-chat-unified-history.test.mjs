@@ -10,7 +10,9 @@ const [js,css,html]=await Promise.all([
 ]);
 
 test('one chronological work history includes messages, attachments and assignments',()=>{
- assert.match(html,/data-svcp-chat-filter="history"/);
+ assert.match(html,/id="svcpWorkHistoryTop"/);
+ assert.match(html,/id="svcpWorkHistory"/);
+ assert.doesNotMatch(html,/data-svcp-chat-filter="history"/);
  assert.match(js,/function renderWorkHistory\(\)/);
  assert.match(js,/state\.chat\.forEach\(\(msg,index\)=>\{/);
  assert.match(js,/const kind=msg\.mediaId\?'Файл':msg\.taskId\?'Поручение':'Сообщение'/);
@@ -25,7 +27,8 @@ test('employee history is scoped to accessible rooms and own assignments',()=>{
  assert.match(js,/employeeAllowedRoom\(roomId\)/);
  assert.match(js,/employeePreviewActive\(\)&&task\.assigneeId!=='elena'/);
  assert.match(js,/const manager=!employeePreviewActive\(\)&&state\.viewpoint!=='elena'/);
- assert.match(js,/if\(manager\)\{\s*const remove=el\('button','svcp-work-history-delete'/);
+ assert.match(js,/if\(manager\)\{\s*if\(workHistorySelecting\)/);
+ assert.match(js,/if\(employeePreviewActive\(\)\|\|state\.viewpoint!=='manager'\)return/);
 });
 
 test('only the manager gets local message and task deletion actions',()=>{
@@ -35,10 +38,13 @@ test('only the manager gets local message and task deletion actions',()=>{
 });
 
 test('history follows existing design and preserves full room navigation',()=>{
- assert.match(html,/assets\/seyveo-business-command\.js\?v=176/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=240/);
- assert.match(css,/\.svcp-chat-filters\{\s*grid-template-columns:repeat\(5,minmax\(0,1fr\)\)!important/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=177/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=241/);
+ assert.match(css,/#svcpWorkHistoryTop\{/);
+ assert.match(css,/#svcpWorkHistory\{/);
  assert.match(css,/\.svcp-work-history-row\{/);
- assert.match(css,/\.svcp-work-history-delete\{/);
- assert.match(js,/if\(chatFilter==='history'\)\{renderWorkHistory\(\);return\}\s*if\(renderHistorySearch\(\)\)return/);
+ assert.match(css,/\.svcp-work-history-more\{/);
+ assert.match(js,/function openWorkHistory\(\)/);
+ assert.match(js,/function closeWorkHistory\(\)/);
+ assert.match(js,/function renderWorkHistory\(\)/);
 });
