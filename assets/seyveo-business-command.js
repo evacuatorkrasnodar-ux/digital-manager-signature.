@@ -668,12 +668,23 @@ function restoreStoredMedia(container,message){
  if(!message.mediaId)return;
  const slot=el('div','svcp-media-slot','Открываю вложение…');
  container.append(slot);
+ // Each media message owns ONE action row. Dock it within its own media
+ // surface after IndexedDB restores the image/document; never float it above
+ // the next message and never clone buttons or their handlers.
+ function dockMediaActions(){
+  if(!slot.isConnected||message.mediaPurpose==='voice')return;
+  const row=container.querySelector(':scope > .svcp-message-inline-actions');
+  if(!row)return;
+  slot.append(row);
+  slot.classList.add('svcp-media-actions-contained');
+  container.classList.add('svcp-media-actions-contained');
+ }
  loadMediaLocally(message.mediaId).then(record=>{
   if(!slot.isConnected)return;
   const thread=$('svcpMessages');
   const followLatest=!!thread&&(thread.scrollHeight-thread.scrollTop-thread.clientHeight<160);
   slot.replaceChildren();
-  if(!record?.blob){slot.textContent='Вложение недоступно на этом устройстве';return}
+  if(!record?.blob){slot.textContent='Вложение недоступно на этом устройстве';dockMediaActions();return}
   const url=URL.createObjectURL(record.blob);mediaRenderedUrls.push(url);
   if(record.type?.startsWith('image/')){
    const picture=el('img','svcp-chat-media-image');
@@ -765,12 +776,17 @@ function restoreStoredMedia(container,message){
   }
   // The file card itself is sufficient. Delivery limitations remain in
   // the send-status feedback, not repeated beneath every chat attachment.
+  dockMediaActions();
   // Media is inserted asynchronously after renderChat scrolled to the latest.
   // Preserve the reading position unless the user was already near the bottom.
   if(followLatest&&thread)requestAnimationFrame(()=>{
    if(slot.isConnected)thread.scrollTop=thread.scrollHeight;
   });
- }).catch(()=>{if(slot.isConnected)slot.textContent='Вложение недоступно в этом браузере'});
+ }).catch(()=>{
+  if(!slot.isConnected)return;
+  slot.textContent='Вложение недоступно в этом браузере';
+  dockMediaActions();
+ });
 }
 
 
@@ -2415,7 +2431,8 @@ function renderChat(){
     starControl.setAttribute('aria-pressed',String(!!msg.starred));
     menu.append(starControl);
     const canAssign=!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena';
-    // Standalone documents hide ordinary text actions; keep one task affordance.
+    // The same one-row actions are docked below every media attachment.
+    // Document-only messages also remain eligible for manager assignments.
     if(canAssign&&bubble.classList.contains('svcp-document-only'))
      bubble.classList.add('svcp-document-assignable');
     if(canAssign){
