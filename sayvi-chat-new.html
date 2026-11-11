@@ -1910,7 +1910,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=6">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=23">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=24">
 </head>
 <body>
 <main>
@@ -3347,31 +3347,39 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   for(const name of names){
    const tile=document.createElement('button');tile.type='button';tile.className='sv-sent-file';
    tile.setAttribute('aria-label','Открыть файл '+name);
-   // Full-page previews belong to the unsent composer only.
-   // Sent documents stay lightweight and never start another PDF.js render.
-   tile.classList.add('sv-sent-file--compact');
-   // Match the approved 200×60 document card: outlined red PDF, no paper tile.
-   if(/\.pdf$/i.test(name)){
-    const icon=document.createElement('span');icon.className='sv-sent-pdf-icon';
-    icon.innerHTML='<svg viewBox="0 0 28 34" aria-hidden="true"><path d="M6 2.5h11l5 5V21M17 2.5V8h5M6 2.5v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><text x="14" y="29" text-anchor="middle" font-size="9" font-weight="750" fill="currentColor">PDF</text></svg>';
-    tile.append(icon);
-   }else if(/\.docx?$/i.test(name)){
-    // Word matches PDF's thin outlined file icon, with a recognizable blue W mark.
-    const icon=document.createElement('span');icon.className='sv-sent-word-icon';
-    icon.innerHTML='<svg viewBox="0 0 28 34" aria-hidden="true"><path d="M6 2.5h11l5 5V21M17 2.5V8h5M6 2.5v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><text x="14" y="29" text-anchor="middle" font-size="11" font-weight="750" fill="currentColor">W</text></svg>';
-    tile.append(icon);
-   }else tile.append(makeDocumentIcon({name}));
-   const copy=document.createElement('span');copy.className='sv-sent-file-copy';
-   const label=document.createElement('strong');label.className='sv-sent-file-name';
-   label.textContent=name;label.title=name;
-   const meta=document.createElement('small');meta.className='sv-sent-file-meta';
-   const ext=/\.([a-z0-9]{1,8})$/iu.exec(name)?.[1]?.toUpperCase()||'Файл';
    const original=sentDocumentBlobs.get(turn)?.find(file=>file.name===name);
-   const size=original?.size?(original.size>=1024*1024?
-    (original.size/(1024*1024)).toFixed(1)+' МБ':
-    Math.max(1,Math.ceil(original.size/1024))+' КБ'):'';
-   meta.textContent=ext;
-   copy.append(label,meta);tile.append(copy);group.append(tile);
+   const ext=(name.split('.').pop()||'').toLowerCase();
+   const pageType=ext==='pdf'||ext==='docx';
+   if(pageType){
+    // Same first-page miniature as the Work Chat: consistent tile dimensions.
+    tile.classList.add('sv-sent-file--page','sv-sent-file--symmetric');
+    const thumbnail=documentPreviewSurface(original||{name});
+    if(thumbnail)tile.append(thumbnail);
+    const footer=document.createElement('span');footer.className='sv-sent-file-copy';
+    footer.append(attachmentCaption(name));
+    tile.append(footer);
+   }else{
+    tile.classList.add('sv-sent-file--compact');
+    tile.append(makeDocumentIcon({name}));
+    const copy=document.createElement('span');copy.className='sv-sent-file-copy';
+    const label=document.createElement('strong');label.className='sv-sent-file-name';
+    label.textContent=name;label.title=name;
+    const meta=document.createElement('small');meta.className='sv-sent-file-meta';
+    meta.textContent=ext.toUpperCase()||'Файл';
+    copy.append(label,meta);tile.append(copy);
+   }
+   group.append(tile);
+   // Recover preview without modifying original attachment or opening handler.
+   if(pageType&&!original&&fileRefs?.[name]){
+    window.SEYVEO_CHAT_FILES?.restore(fileRefs[name]).then(file=>{
+     if(!tile.isConnected||!file)return;
+     const preview=documentPreviewSurface(file);
+     if(preview){
+      tile.querySelector('.sv-document-page-preview')?.remove();
+      tile.prepend(preview);
+     }
+    }).catch(()=>{});
+   }
    tile.addEventListener('click',async()=>{
     const currentFiles=sentDocumentBlobs.get(turn)||[];
     const live=currentFiles.find(file=>file.name===name);
