@@ -1,9 +1,5 @@
-/* SEYVEO · Sayvi notification center
-   The composer, its send/mic behavior, material, and exact geometry stay intact.
-   Only status delivery moves from overlapping text to a discrete bottom control. */
-
-/* The legacy polite live region continues to serve assistive technology, but
-   must never paint over a message or a growing editor. */
+/* SEYVEO · problem-only system indicator, exact chat control alignment.
+   Status messages remain available to screen readers but never cover input. */
 #sayviStatus,
 main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  position:absolute!important;
@@ -18,90 +14,56 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  bottom:auto!important;right:auto!important;
  padding:0!important;margin:0!important;
  border:0!important;background:transparent!important;
+ box-shadow:none!important;pointer-events:none!important;
+}
+/* The indicator now shares #sayviField with the mic / send.
+   Their bottom baselines and 42px tap targets are identical. */
+#sayviComposer #sayviField > #sayviNoticeToggle{
+ box-sizing:border-box!important;
+ position:absolute!important;z-index:6!important;
+ left:auto!important;top:auto!important;
+ right:50px!important;bottom:1px!important;
+ display:grid!important;place-items:center!important;
+ width:42px!important;min-width:42px!important;max-width:42px!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
  box-shadow:none!important;
- pointer-events:none!important;
-}
-
-/* Low-profile notification affordance in the same lower action row as +/Send. */
-#sayviComposer #sayviNoticeToggle{
- position:absolute!important;
- z-index:7!important;
- right:52px!important;bottom:4px!important;
- left:auto!important;
- display:inline-flex!important;
- align-items:center;justify-content:center;
- gap:6px;
- box-sizing:border-box;
- width:44px;min-width:44px;
- height:44px;min-height:44px;
- margin:0;padding:0 6px;
- border:0;border-radius:13px;
- background:transparent;
- box-shadow:none;
- color:var(--sayvi-control-text,#f5f8fa);
- opacity:.88;
- cursor:pointer;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--sayvi-control-text,#F6F7F8)!important;
+ opacity:1!important;cursor:pointer;
  -webkit-appearance:none;appearance:none;
- -webkit-tap-highlight-color:transparent;
- touch-action:manipulation;
+ -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
-#sayviComposer #sayviNoticeToggle:active{
- opacity:.65;
+#sayviComposer #sayviField > #sayviNoticeToggle[hidden]{
+ display:none!important;
 }
-#sayviComposer #sayviNoticeToggle:focus-visible{
- outline:1.5px solid currentColor;
- outline-offset:-3px;
+#sayviComposer.sayvi-compose-expanded #sayviField > #sayviNoticeToggle{
+ right:43px!important;bottom:-48px!important;
 }
-#sayviNoticeToggle .sv-notice-icon{
- display:block;position:relative;
- flex:0 0 19px;width:19px;height:19px;
+#sayviComposer #sayviField > #sayviNoticeToggle:active{
+ opacity:.65!important;
 }
-#sayviNoticeToggle .sv-notice-icon svg{
- display:block;width:19px;height:19px;
- fill:none;stroke:currentColor;stroke-width:1.55;
- stroke-linecap:round;stroke-linejoin:round;
+#sayviComposer #sayviField > #sayviNoticeToggle:focus-visible{
+ outline:2px solid currentColor!important;outline-offset:-3px!important;
 }
-#sayviNoticeCount{
- position:absolute;
- top:-5px;right:-7px;
- display:grid;place-items:center;
- min-width:16px;height:16px;padding:0 3px;
- box-sizing:border-box;
- border-radius:999px;
- border:1px solid rgba(237,246,250,.18);
- background:var(--sayvi-action,rgba(146,168,182,.5));
- color:var(--sayvi-control-text,#fff);
- font-size:10px;font-weight:620;
- line-height:1;
- font-variant-numeric:tabular-nums;
+#sayviComposer #sayviNoticeToggle .sv-notice-icon,
+#sayviComposer #sayviNoticeToggle .sv-notice-icon svg{
+ display:block!important;width:20px!important;height:20px!important;
+ flex:0 0 20px!important;
 }
-#sayviNoticeCount[hidden]{display:none!important}
-#sayviNoticePreview{
- display:none;min-width:0;
- max-width:100%;
- overflow:hidden;
- white-space:nowrap;text-overflow:ellipsis;
- font-size:11px;font-weight:520;
- line-height:1.25;letter-spacing:-.01em;
- color:var(--sayvi-control-text,#fff);
+#sayviComposer #sayviNoticeToggle .sv-notice-icon svg{
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
 }
-#sayviComposer.sayvi-compose-expanded #sayviNoticeToggle{
- left:59px!important;right:58px!important;
- bottom:5px!important;
- width:auto!important;max-width:none!important;
- padding:0 8px!important;
- justify-content:flex-end!important;
- gap:8px;
-}
-#sayviComposer.sayvi-compose-expanded #sayviNoticePreview:not(:empty){
- display:block;
-}
+/* No warning = normal text area. A warning temporarily reserves exactly
+   one more 42px control, without shifting the microphone or composer. */
 #sayviComposer:not(.sayvi-compose-expanded) #sayviField #sayviInput{
- /* Prevent the compact field's letters from running beneath Bell and Send. */
- padding-right:94px!important;
+ padding-right:54px!important;
 }
-#sayviComposer.sayvi-compose-expanded #sayviField #sayviInput{
- padding:8px 12px!important;
+#sayviComposer.sayvi-has-alert:not(.sayvi-compose-expanded) #sayviField #sayviInput{
+ padding-right:98px!important;
 }
 
 /* The popover is inside the viewport scene but OUTSIDE the text composer:
@@ -191,20 +153,6 @@ main.sayvi-menu-open #sayviNoticePanel{
  border-color:rgba(85,112,127,.18);
  background:rgba(238,243,247,.97);
 }
-:root[data-theme="light"] #sayviNoticeCount{
- border-color:rgba(92,118,137,.2);
-}
-@media(max-width:365px){
- #sayviComposer #sayviNoticeToggle{
-  right:47px!important;
- }
- #sayviComposer:not(.sayvi-compose-expanded) #sayviField #sayviInput{
-  padding-right:91px!important;
- }
- #sayviComposer.sayvi-compose-expanded #sayviNoticeToggle{
-  right:53px!important;
- }
-}
 @media(prefers-reduced-transparency:reduce){
  #sayviNoticePanel{
   -webkit-backdrop-filter:none;
@@ -219,7 +167,7 @@ main.sayvi-menu-open #sayviNoticePanel{
 }
 
 /* 2026-11-11 · Approved compact premium graphite popover only.
-   Do not affect the input dock, the bell, or notification delivery. */
+   Do not affect the input dock, alignment, or notification delivery. */
 html body main #sayviNoticePanel{
  box-sizing:border-box!important;
  width:min(330px,calc(100% - 24px))!important;
