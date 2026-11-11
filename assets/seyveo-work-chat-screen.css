@@ -5483,3 +5483,131 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multi
  display:block!important;width:21px!important;height:21px!important;
  position:static!important;transform:none!important;
 }
+
+
+/* SEYVEO Work Chat · unobtrusive Sayvi help while reading an actual file.
+   The document page and approved five-action footer are never replaced. */
+html body .svcp-doc-overlay .svcp-doc-sayvi-trigger{
+ box-sizing:border-box!important;flex:0 0 40px!important;
+ display:grid!important;place-items:center!important;
+ width:40px!important;height:40px!important;min-width:40px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;color:#F5F5F7!important;
+ box-shadow:none!important;cursor:pointer!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-trigger[hidden]{display:none!important}
+html body .svcp-doc-overlay .svcp-doc-sayvi-trigger svg{
+ display:block!important;width:21px!important;height:21px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.4!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-trigger:focus-visible,
+html body .svcp-doc-overlay .svcp-doc-sayvi-collapse:focus-visible,
+html body .svcp-doc-overlay .svcp-doc-sayvi-submit:focus-visible{
+ outline:2px solid #A6ADB8!important;outline-offset:2px!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-panel[hidden]{display:none!important}
+html body .svcp-doc-overlay .svcp-doc-sayvi-panel{
+ box-sizing:border-box!important;
+ position:absolute!important;z-index:30!important;
+ left:max(8px,env(safe-area-inset-left,0px))!important;
+ right:max(8px,env(safe-area-inset-right,0px))!important;
+ bottom:calc(88px + env(safe-area-inset-bottom,0px))!important;
+ width:auto!important;max-width:540px!important;
+ max-height:min(57dvh,490px)!important;
+ margin-left:auto!important;margin-right:auto!important;
+ padding:10px!important;gap:8px!important;
+ display:flex!important;flex-direction:column!important;
+ border:1px solid rgba(236,238,243,.12)!important;
+ border-radius:20px!important;
+ background:#38383A!important;color:#F5F5F7!important;
+ box-shadow:0 12px 40px rgba(0,0,0,.26)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-head{
+ display:flex!important;align-items:center!important;
+ justify-content:space-between!important;flex:0 0 auto!important;
+ height:32px!important;min-height:32px!important;
+ padding:0 2px 0 8px!important;gap:10px!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-title{
+ display:block!important;flex:1 1 auto!important;
+ font:600 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#F5F5F7!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-collapse{
+ display:grid!important;place-items:center!important;flex:0 0 32px!important;
+ width:32px!important;height:32px!important;padding:0!important;
+ border:0!important;border-radius:50%!important;background:transparent!important;
+ color:#D0D1D5!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-collapse svg{
+ width:19px!important;height:19px!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.5!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-feed{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ flex:1 1 auto!important;min-height:95px!important;
+ max-height:35dvh!important;overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
+ scrollbar-width:none!important;
+ padding:4px 4px 7px!important;gap:8px!important;
+ color:#F5F5F7!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-feed::-webkit-scrollbar{display:none!important}
+html body .svcp-doc-overlay .svcp-doc-sayvi-turn{
+ box-sizing:border-box!important;max-width:96%!important;min-width:0!important;
+ padding:10px 12px!important;border-radius:13px!important;
+ background:#444447!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-turn--user{
+ align-self:flex-end!important;background:#555559!important;
+ max-width:88%!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-turn--assistant{align-self:flex-start!important}
+html body .svcp-doc-overlay .svcp-doc-sayvi-message{
+ display:block!important;white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;word-break:normal!important;
+ font:400 13px/1.48 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#F5F5F7!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-form{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ flex:0 0 44px!important;gap:6px!important;
+ height:44px!important;min-height:44px!important;
+ padding:4px 5px 4px 12px!important;
+ margin:0!important;border:1px solid rgba(236,238,243,.13)!important;
+ border-radius:24px!important;background:#2F2F31!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-input{
+ box-sizing:border-box!important;
+ flex:1 1 auto!important;min-width:0!important;
+ width:100%!important;height:34px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;outline:0!important;box-shadow:none!important;
+ background:transparent!important;color:#F5F5F7!important;
+ font:400 14px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-input::placeholder{color:#B1B3B9!important}
+html body .svcp-doc-overlay .svcp-doc-sayvi-submit{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 34px!important;width:34px!important;height:34px!important;
+ min-width:34px!important;padding:0!important;border:0!important;
+ border-radius:50%!important;
+ background:#F3F3F5!important;color:#38383A!important;
+}
+html body .svcp-doc-overlay .svcp-doc-sayvi-submit svg{
+ width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body .svcp-doc-overlay :is(.svcp-doc-sayvi-input,.svcp-doc-sayvi-submit):disabled{
+ opacity:.55!important;cursor:default!important;
+}
+@media(max-height:620px){
+ html body .svcp-doc-overlay .svcp-doc-sayvi-panel{max-height:46dvh!important;bottom:calc(78px + env(safe-area-inset-bottom,0px))!important}
+ html body .svcp-doc-overlay .svcp-doc-sayvi-feed{max-height:27dvh!important}
+}
