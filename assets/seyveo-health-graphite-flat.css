@@ -413,3 +413,41 @@ html body #calendarSpaceDialog[data-space="health"] #calendarSpaceFormFields:has
 #calendarSpaceDialog[data-space="health"] :is(.cal-bp-journal-empty,.cal-bp-journal-status){
  color:var(--secondary);font-size:12px;line-height:1.45;
 }
+
+
+/* Automatic date/time for pressure: only three numbers are required. */
+html body #calendarSpaceDialog[data-space="health"] #calendarSpaceFormFields:has(#calendarBloodPressureFields:not([hidden])) .calendar-space-date-row{
+ display:none!important;
+}
+html body #calendarSpaceDialog[data-space="health"] .cal-health-age-setting{
+ display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
+ margin:0 0 17px;padding:9px 0 13px;
+ border-bottom:1px solid rgba(180,190,203,.13);
+}
+html body #calendarSpaceDialog[data-space="health"] .cal-health-age-setting label{
+ flex:1 1 170px;min-width:0;font:550 12px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ color:var(--text);
+}
+html body #calendarSpaceDialog[data-space="health"] .cal-health-age-setting label small{
+ display:block;font-weight:400;color:var(--secondary);
+}
+html body #calendarSpaceDialog[data-space="health"] .cal-health-age-setting input{
+ box-sizing:border-box;flex:0 0 105px;width:105px;height:38px;
+ border:1px solid rgba(180,190,203,.19);border-radius:11px;background:rgba(130,140,153,.05);
+ color:var(--text);font-size:14px;text-align:center;
+}
+html body #calendarSpaceDialog[data-space="health"] .cal-health-age-setting > small{
+ flex:1 1 100%;font-size:11px;color:var(--secondary);line-height:1.4;
+}
+html body #calendarSpaceDialog[data-space="health"][data-measure-focus="true"] .cal-health-age-setting{
+ display:none!important;
+}
+html body #calendarSpaceDialog[data-space="health"] #calendarBpLiveAdvice[data-level="urgent"],
+html body #calendarSpaceDialog[data-space="health"] #calendarBpLiveAdvice[data-level="high"]{
+ padding:12px!important;border:1px solid rgba(255,171,153,.32)!important;
+ border-radius:12px!important;background:rgba(170,67,53,.12)!important;
+ color:#F4D6CD!important;line-height:1.55!important;
+}
+html body #calendarSpaceDialog[data-space="health"] #calendarBpLiveAdvice[data-level="raised"]{
+ color:var(--text)!important;font-weight:500!important;
+}
