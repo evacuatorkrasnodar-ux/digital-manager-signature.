@@ -1491,9 +1491,15 @@ function renderDirectory(){
 /* One local chronological work history: messages, actual file references and
    assignments across all rooms. It is read-only to employees. It does NOT
    invent cross-device synchronization or silently erase completed tasks. */
+
+/* Work Chat history uses the same mental model as Sayvi: one conversation
+   per colleague/group, not one endless row for every picture or document.
+   Task history is grouped by assignee. Source records remain unchanged.
+   Deletion is local and available to a manager in this prototype only. */
 let workHistorySelecting=false;
 const workHistorySelected=new Set();
 function workHistoryVisible(){return $('svcpWorkHistory')?.hidden===false}
+function canManageWorkHistory(){return !employeePreviewActive()&&state.viewpoint==='manager'}
 function closeWorkHistory(){
  const panel=$('svcpWorkHistory');if(panel)panel.hidden=true;
  $('svcpWorkHistoryTop')?.setAttribute('aria-expanded','false');
@@ -1512,6 +1518,7 @@ function openWorkHistory(){
  workHistorySelecting=false;workHistorySelected.clear();
  $('svcpWorkHistorySelection').hidden=true;
  $('svcpWorkHistoryMenu').hidden=true;
+ $('svcpWorkHistoryMenuButton').setAttribute('aria-expanded','false');
  $('svcpWorkHistorySearchBar').hidden=true;
  $('svcpWorkHistoryQuery').value='';
  renderWorkHistory();
@@ -1522,15 +1529,16 @@ function updateWorkHistorySelection(){
  $('svcpWorkHistoryDeleteSelected').disabled=workHistorySelected.size===0;
 }
 function toggleWorkHistorySelection(entry){
- const key=entry.kind+':'+entry.index;
- if(workHistorySelected.has(key))workHistorySelected.delete(key);else workHistorySelected.add(key);
+ const key=entry.key;
+ if(workHistorySelected.has(key))workHistorySelected.delete(key);
+ else workHistorySelected.add(key);
  renderWorkHistory();updateWorkHistorySelection();
 }
 function deleteWorkHistoryEntries(keys){
- if(employeePreviewActive()||state.viewpoint!=='manager'||!keys.size)return;
- if(!window.confirm('Удалить выбранные записи из локальной истории? На других устройствах они останутся.'))return;
- const messages=state.chat.filter((_,i)=>!keys.has('message:'+i));
- const tasks=state.tasks.filter((_,i)=>!keys.has('task:'+i));
+ if(!canManageWorkHistory()||!keys.size)return;
+ if(!window.confirm('Удалить выбранные переписки или поручения из локальной истории? На других устройствах данные не изменятся.'))return;
+ const messages=state.chat.filter(item=>!keys.has('room:'+item.room));
+ const tasks=state.tasks.filter(item=>!keys.has('task:'+String(item?.assigneeId||'team')));
  if(!save(CHAT_KEY,messages)||!save(TASK_KEY,tasks))return;
  state.chat=messages;state.tasks=tasks;
  workHistorySelected.clear();workHistorySelecting=false;
@@ -1546,111 +1554,156 @@ $('svcpWorkHistoryBack')?.addEventListener('click',()=>{
  }else closeWorkHistory();
 });
 $('svcpWorkHistoryMenuButton')?.addEventListener('click',()=>{
- const menu=$('svcpWorkHistoryMenu');menu.hidden=!menu.hidden;
+ const menu=$('svcpWorkHistoryMenu');
+ menu.hidden=!menu.hidden;
  $('svcpWorkHistoryMenuButton').setAttribute('aria-expanded',String(!menu.hidden));
 });
 $('svcpWorkHistoryFind')?.addEventListener('click',()=>{
  $('svcpWorkHistoryMenu').hidden=true;
+ $('svcpWorkHistoryMenuButton').setAttribute('aria-expanded','false');
  $('svcpWorkHistorySearchBar').hidden=false;
  $('svcpWorkHistoryQuery').focus({preventScroll:true});
 });
 $('svcpWorkHistorySelect')?.addEventListener('click',()=>{
- if(employeePreviewActive()||state.viewpoint!=='manager')return;
+ if(!canManageWorkHistory())return;
  $('svcpWorkHistoryMenu').hidden=true;
+ $('svcpWorkHistoryMenuButton').setAttribute('aria-expanded','false');
  workHistorySelecting=true;workHistorySelected.clear();
  updateWorkHistorySelection();renderWorkHistory();
 });
 $('svcpWorkHistoryClear')?.addEventListener('click',()=>{
- if(employeePreviewActive()||state.viewpoint!=='manager')return;
+ if(!canManageWorkHistory())return;
  $('svcpWorkHistoryMenu').hidden=true;
- if(!window.confirm('Очистить локальную историю сообщений и поручений? Отменить это действие нельзя.'))return;
+ $('svcpWorkHistoryMenuButton').setAttribute('aria-expanded','false');
+ if(!window.confirm('Очистить локальную историю рабочих сообщений и поручений на этом устройстве? Действие нельзя отменить.'))return;
  if(!save(CHAT_KEY,[])||!save(TASK_KEY,[]))return;
- state.chat=[];state.tasks=[];renderWorkHistory();renderDirectory();renderTasks();
+ state.chat=[];state.tasks=[];workHistorySelected.clear();
+ renderWorkHistory();renderDirectory();renderTasks();
 });
 $('svcpWorkHistorySelectAll')?.addEventListener('click',()=>{
  const rows=Array.from($('svcpWorkHistoryList')?.querySelectorAll('[data-history-key]')||[]);
- if(rows.every(row=>workHistorySelected.has(row.dataset.historyKey)))workHistorySelected.clear();
+ if(rows.length&&rows.every(row=>workHistorySelected.has(row.dataset.historyKey)))workHistorySelected.clear();
  else rows.forEach(row=>workHistorySelected.add(row.dataset.historyKey));
  renderWorkHistory();updateWorkHistorySelection();
 });
 $('svcpWorkHistoryDeleteSelected')?.addEventListener('click',()=>deleteWorkHistoryEntries(new Set(workHistorySelected)));
 $('svcpWorkHistoryQuery')?.addEventListener('input',renderWorkHistory);
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&workHistoryVisible())closeWorkHistory()});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&workHistoryVisible())closeWorkHistory();
+});
+document.addEventListener('pointerdown',event=>{
+ const menu=$('svcpWorkHistoryMenu');
+ if(menu?.hidden||!workHistoryVisible())return;
+ if(event.target.closest('#svcpWorkHistoryMenuButton,#svcpWorkHistoryMenu'))return;
+ menu.hidden=true;
+ $('svcpWorkHistoryMenuButton')?.setAttribute('aria-expanded','false');
+},{passive:true});
 
+/* Group by room or assignee, so forty files in a conversation are one row. */
+function workHistoryEntries(query=''){
+ const q=query.trim().toLocaleLowerCase('ru-RU');
+ const allowed=room=>ROOMS.some(r=>r.id===room)&&
+  (!employeePreviewActive()||employeeAllowedRoom(room));
+ const entries=[];
+ for(const room of ROOMS){
+  if(!allowed(room.id))continue;
+  const all=state.chat.map((msg,index)=>({msg,index}))
+   .filter(({msg})=>msg?.room===room.id);
+  if(!all.length)continue;
+  const title=employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label;
+  const matching=q?all.filter(({msg})=>[
+   title,room.hint,String(msg.text||''),String(msg.mediaName||''),
+   senderName(msg)
+  ].join(' ').toLocaleLowerCase('ru-RU').includes(q)):all;
+  if(!matching.length)continue;
+  const latest=matching.reduce((a,b)=>Number(b.msg.at||0)>=Number(a.msg.at||0)?b:a);
+  const nFiles=all.filter(({msg})=>!!msg.mediaId).length;
+  const nTasks=all.filter(({msg})=>!!msg.taskId).length;
+  const last=latest.msg;
+  const preview=String(last.mediaName||last.text||'Сообщение').trim().replace(/\s+/g,' ');
+  entries.push({
+   kind:'room',key:'room:'+room.id,roomId:room.id,
+   at:Number(latest.msg.at)||0,index:latest.index,
+   title,mark:room.mark||'С',
+   subtitle:preview.slice(0,130),
+   detail:all.length+' сообщ.'+(nFiles?' · '+nFiles+' файлов':'')+(nTasks?' · '+nTasks+' поруч.':'')
+  });
+ }
+ const assignees=new Map();
+ state.tasks.forEach((task,index)=>{
+  if(!task||employeePreviewActive()&&task.assigneeId!=='elena')return;
+  const id=String(task.assigneeId||'team');
+  const title=STAFF[id]||'Команда';
+  const label='Поручения · '+title;
+  const matched=!q||[label,task.text,task.attachmentName,task.mediaName]
+   .join(' ').toLocaleLowerCase('ru-RU').includes(q);
+  if(!assignees.has(id))assignees.set(id,{id,title,all:[],matched:[]});
+  const entry=assignees.get(id);
+  entry.all.push({task,index});
+  if(matched)entry.matched.push({task,index});
+ });
+ for(const group of assignees.values()){
+  if(!group.matched.length)continue;
+  const latest=group.matched.reduce((a,b)=>
+   Number(b.task.createdAt||b.task.at||b.task.assignedAt||0)>=
+   Number(a.task.createdAt||a.task.at||a.task.assignedAt||0)?b:a);
+  const open=group.all.filter(({task})=>!task.done).length;
+  entries.push({
+   kind:'task',key:'task:'+group.id,at:Number(latest.task.createdAt||latest.task.at||latest.task.assignedAt)||0,
+   index:latest.index,title:'Поручения · '+group.title,
+   mark:(group.title||'Д').slice(0,1).toUpperCase(),
+   subtitle:String(latest.task.text||'Последнее поручение').replace(/\s+/g,' ').slice(0,130),
+   detail:group.all.length+' всего'+(open?' · '+open+' в работе':'')
+  });
+ }
+ entries.sort((a,b)=>b.at-a.at||a.title.localeCompare(b.title,'ru'));
+ return entries;
+}
 function renderWorkHistory(){
  const list=$('svcpWorkHistoryList');if(!list)return;
  list.replaceChildren();
- const manager=!employeePreviewActive()&&state.viewpoint!=='elena';
+ const manager=canManageWorkHistory();
  $('svcpWorkHistorySelect').hidden=!manager;
  $('svcpWorkHistoryClear').hidden=!manager;
- const allowed=roomId=>ROOMS.some(room=>room.id===roomId)&&
-  (!employeePreviewActive()||employeeAllowedRoom(roomId));
- const q=($('svcpWorkHistoryQuery')?.value||'').trim().toLocaleLowerCase('ru-RU');
- const entries=[];
- state.chat.forEach((msg,index)=>{
-  if(!msg||!allowed(msg.room))return;
-  const room=ROOMS.find(r=>r.id===msg.room);
-  const name=employeePreviewActive()&&msg.room==='dm-elena'?'Руководитель':room.label;
-  const kind=msg.mediaId?'Файл':msg.taskId?'Поручение':'Сообщение';
-  const text=String(msg.text||'').trim();
-  const filename=String(msg.mediaName||'').trim();
-  const sender=msg.role==='sayvi'?'Сэйви':msg.role==='demo-elena'?'Елена':'Руководитель';
-  const target=room.kind==='personal'?
-   (msg.room==='dm-elena'&&sender==='Елена'?'Руководитель':name):name;
-  const direction=sender+' → '+target;
-  const haystack=[name,direction,kind,text,filename].join(' ').toLocaleLowerCase('ru-RU');
-  if(q&&!haystack.includes(q))return;
-  entries.push({kind:'message',index,at:Number(msg.at)||0,name:direction,
-   label:kind,text:filename||text||'Вложение',
-   sender,roomId:msg.room});
- });
- state.tasks.forEach((task,index)=>{
-  if(!task||employeePreviewActive()&&task.assigneeId!=='elena')return;
-  const who=STAFF[task.assigneeId]||'Команда';
-  const text=String(task.text||'').trim();
-  const file=String(task.attachmentName||task.mediaName||'').trim();
-  const haystack=['Поручение',who,text,file].join(' ').toLocaleLowerCase('ru-RU');
-  if(q&&!haystack.includes(q))return;
-  entries.push({kind:'task',index,at:Number(task.createdAt||task.at||task.assignedAt)||0,
-   name:'Руководитель → '+who,label:task.done?'Поручение выполнено':'Поручение',
-   text:text+(file?' · '+file:'')});
- });
- entries.sort((a,b)=>b.at-a.at||b.index-a.index);
- const intro=el('p','svcp-history-caption',
-  manager?'История переписки, документов и поручений · на этом устройстве':
-   'Доступные тебе сообщения и поручения · на этом устройстве');
- list.append(intro);
+ if(!manager&&workHistorySelecting){
+  workHistorySelecting=false;workHistorySelected.clear();updateWorkHistorySelection();
+ }
+ const q=$('svcpWorkHistoryQuery')?.value||'';
+ const entries=workHistoryEntries(q);
  if(!entries.length){
-  list.append(el('p','svcp-search-empty',q?'По запросу ничего не найдено.':'История пока пуста.'));
+  list.append(el('p','svcp-search-empty',q.trim()?'Ничего не найдено':'Здесь появятся рабочие разговоры и поручения.'));
   return;
  }
- let lastDate='';
+ let previousDay='';
  for(const entry of entries){
-  const d=new Date(entry.at);
-  const date=Number.isFinite(d.getTime())&&entry.at?d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):'Без даты';
-  if(date!==lastDate){
-   lastDate=date;
-   list.append(el('div','svcp-history-day',date));
+  const date=new Date(entry.at);
+  const day=entry.at&&Number.isFinite(date.getTime())?
+   date.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):'Без даты';
+  if(day!==previousDay){
+   previousDay=day;
+   list.append(el('div','svcp-history-day',day));
   }
   const group=el('div','svcp-work-history-row');
+  group.dataset.historyKey=entry.key;
   const open=el('button','svcp-work-history-open');
   open.type='button';
-  const icon=el('span','svcp-work-history-icon',entry.kind==='task'?'✓':entry.label==='Файл'?'▤':'↩');
-  icon.setAttribute('aria-hidden','true');
-  const content=el('span','svcp-work-history-content');
-  const header=el('span','svcp-work-history-heading');
-  header.append(el('strong',null,entry.name),
-   el('small',null,entry.at?new Date(entry.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):''));
-  content.append(header,
-   el('span','svcp-work-history-type',entry.label),
-   el('span','svcp-work-history-text',entry.text.slice(0,260)));
-  open.append(icon,content);
-  open.setAttribute('aria-label','Открыть '+entry.label.toLocaleLowerCase('ru-RU')+': '+entry.name);
+  const avatar=el('span','svcp-work-history-avatar',entry.mark);
+  avatar.setAttribute('aria-hidden','true');
+  if(entry.kind==='task')avatar.classList.add('is-task');
+  const body=el('span','svcp-work-history-content');
+  const heading=el('span','svcp-work-history-heading');
+  heading.append(el('strong',null,entry.title),
+   el('small',null,entry.at?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):''));
+  body.append(heading,
+   el('span','svcp-work-history-text',entry.subtitle),
+   el('span','svcp-work-history-type',entry.detail));
+  open.append(avatar,body);
+  open.setAttribute('aria-label','Открыть '+entry.title);
   open.addEventListener('click',()=>{
    if(workHistorySelecting){toggleWorkHistorySelection(entry);return}
    closeWorkHistory();
-   if(entry.kind==='message'){
-    openRoom(entry.roomId);focusSearchIndex=entry.index;renderChat();
+   if(entry.kind==='room'){
+    openRoom(entry.roomId);
    }else{
     if(employeePreviewActive())window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
     else window.SEYVEO_UNIFIED_TASKS?.openBusiness?.();
@@ -1658,34 +1711,32 @@ function renderWorkHistory(){
    }
   });
   group.append(open);
-  const key=entry.kind+':'+entry.index;
-  group.dataset.historyKey=key;
   if(manager){
    if(workHistorySelecting){
-    const check=el('span','svcp-work-history-check',workHistorySelected.has(key)?'✓':'');
-    group.classList.toggle('is-selected',workHistorySelected.has(key));
+    const check=el('span','svcp-work-history-check',workHistorySelected.has(entry.key)?'✓':'');
+    group.classList.toggle('is-selected',workHistorySelected.has(entry.key));
     open.prepend(check);
    }else{
     const more=el('button','svcp-work-history-more','···');
-    more.type='button';more.setAttribute('aria-label','Действия с записью');
+    more.type='button';more.setAttribute('aria-label','Действия с '+entry.title);
     more.addEventListener('click',()=>{
-     $('svcpWorkHistoryList')?.querySelectorAll('.svcp-work-history-row-menu').forEach(node=>node.remove());
+     list.querySelectorAll('.svcp-work-history-row-menu').forEach(node=>node.remove());
      const menu=el('div','svcp-work-history-row-menu');
-     const select=el('button',null,'Выбрать');select.type='button';
-     select.addEventListener('click',()=>{
-      workHistorySelecting=true;workHistorySelected.clear();workHistorySelected.add(key);
-      renderWorkHistory();updateWorkHistorySelection();
+     const select=el('button',null,'Выбрать');
+     select.type='button';select.addEventListener('click',()=>{
+      workHistorySelecting=true;workHistorySelected.clear();workHistorySelected.add(entry.key);
+      updateWorkHistorySelection();renderWorkHistory();
      });
-     const remove=el('button',null,'Удалить');remove.type='button';
-     remove.addEventListener('click',()=>deleteWorkHistoryEntries(new Set([key])));
+     const remove=el('button',null,'Удалить');
+     remove.type='button';remove.addEventListener('click',()=>deleteWorkHistoryEntries(new Set([entry.key])));
      menu.append(select,remove);group.append(menu);
-    });group.append(more);
+    });
+    group.append(more);
    }
   }
   list.append(group);
  }
 }
-
 $('svcpChatFilters')?.addEventListener('click',event=>{
  const button=event.target.closest('[data-svcp-chat-filter]');
  if(!button)return;
