@@ -1832,6 +1832,38 @@ html body .sv-sent-document-viewer .sv-sent-document-original div{
 }
 
 
+
+/* Match the existing Work Chat capsule-to-editor morph.
+   Expand only after actual text wrapping; existing JS measures the text.
+   The approved '+' is the same element and material in both states. */
+html body #sayviComposer,
+html body #sayviComposer.sayvi-compose-expanded{
+ transition:height .24s cubic-bezier(.22,.8,.22,1),
+            border-radius .24s cubic-bezier(.22,.8,.22,1)!important;
+ will-change:height;
+}
+html body #sayviComposer::before,
+html body #sayviComposer.sayvi-compose-expanded::before{
+ transition:border-radius .24s cubic-bezier(.22,.8,.22,1)!important;
+}
+html body #sayviComposer.sayvi-compose-expanded,
+html body #sayviComposer.sayvi-compose-expanded::before{
+ border-radius:23px!important;
+}
+/* The text capsule opens into a full-width writing surface without a
+   second card or changing the attachment button's ink and materials. */
+html body #sayviComposer #sayviField{
+ transition:background-color .20s ease,border-radius .24s cubic-bezier(.22,.8,.22,1)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html body #sayviComposer,
+ html body #sayviComposer.sayvi-compose-expanded,
+ html body #sayviComposer::before,
+ html body #sayviComposer.sayvi-compose-expanded::before,
+ html body #sayviComposer #sayviField{
+  transition:none!important;will-change:auto!important;
+ }
+}
 /* The plus is ONE identical control in compact and expanded Sayvi chat.
    Only its grid position changes; the approved compact material and glyph
    remain exactly the same in both states and across themes. */
