@@ -819,7 +819,7 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-sent
 html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > .sv-sent-word-icon{
  flex:0 0 30px!important;width:30px!important;height:34px!important;
  display:grid!important;place-items:center!important;
- color:#BFC0C3!important;background:transparent!important;
+ color:#3478F6!important;background:transparent!important;
 }
 html body #sayviMessages .turn[data-role="user"] .sv-sent-word-icon svg{
  display:block!important;width:26px!important;height:32px!important;
@@ -847,3 +847,6 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-word-icon svg text{
  font-weight:750!important;
  letter-spacing:-.35px!important;
 }
+
+/* Word uses a readable restrained blue file outline, matching the red PDF visual system. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > .sv-sent-word-icon{color:#3478F6!important;}
