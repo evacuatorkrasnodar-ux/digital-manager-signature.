@@ -527,7 +527,8 @@ html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-card:act
 }
 /* Document workspace: graphite shell + real white A4 paper. */
 html body .sv-doc-viewer{
- background:#151B20!important;color:#F5F5F7!important;
+ /* The header and footer keep their own graphite backgrounds. */
+ background:#FFFFFF!important;color:#28282B!important;
 }
 html body .sv-doc-viewer .sv-doc-header{
  background:#151B20!important;
@@ -544,12 +545,15 @@ html body .sv-doc-viewer .sv-doc-meta{
  color:#B4B7BC!important;
 }
 html body .sv-doc-viewer .sv-doc-scroll{
- background:#20262B!important;
+ /* White document workspace continues beneath short pages. */
+ background:#FFFFFF!important;
  padding:12px 10px 24px!important;
 }
 html body .sv-doc-viewer .sv-doc-content{
  width:100%!important;max-width:794px!important;
+ min-height:100%!important;
  margin:0 auto!important;gap:9px!important;
+ background:#FFFFFF!important;
 }
 html body .sv-doc-viewer :is(.sv-doc-paper,.sv-doc-editor){
  display:block!important;width:100%!important;
