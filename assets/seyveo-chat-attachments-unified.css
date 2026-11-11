@@ -1,0 +1,254 @@
+/* SEYVEO · attachment standard for both Sayvi and Work Chat.
+   Rich near-black file/image surfaces; fine graphite controls; no glass.
+   Never change the image bytes, attachment delivery, or message ordering. */
+
+/* SAYVI · selected attachments occupy their own first row in the
+   expanded composer. Nothing may cover the textarea. */
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments{
+ box-sizing:border-box!important;
+ grid-template-rows:var(--sayvi-attach-height,118px) var(--sayvi-editor-height,62px) 50px!important;
+ height:var(--sayvi-composer-height,240px)!important;
+ min-height:var(--sayvi-composer-height,240px)!important;
+ max-height:min(66dvh,calc(100dvh - 98px))!important;
+}
+html body #sayviComposer.sayvi-has-attachments #sayviAttachmentTray{
+ position:relative!important;
+ inset:auto!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ z-index:2!important;
+ grid-column:1/-1!important;grid-row:1!important;
+ align-self:stretch!important;justify-self:stretch!important;
+ display:flex!important;
+ align-items:center!important;
+ gap:8px!important;
+ width:calc(100% - 20px)!important;max-width:calc(100% - 20px)!important;
+ min-width:0!important;height:var(--sayvi-attach-height,118px)!important;
+ margin:0 10px!important;
+ padding:5px 0 8px!important;
+ border:0!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+ scroll-snap-type:x proximity!important;
+ -webkit-overflow-scrolling:touch!important;
+ scrollbar-width:none!important;
+ background:transparent!important;
+}
+html body #sayviComposer #sayviAttachmentTray[hidden]{display:none!important}
+html body #sayviComposer.sayvi-has-attachments #sayviField{
+ grid-column:1/-1!important;grid-row:2!important;
+}
+html body #sayviComposer.sayvi-has-attachments #sayviPlus{
+ grid-column:1!important;grid-row:3!important;
+}
+html body #sayviComposer.sayvi-has-attachments #sayviInput{
+ padding-right:12px!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip{
+ position:relative!important;
+ box-sizing:border-box!important;
+ display:block!important;
+ flex:0 0 124px!important;
+ width:124px!important;
+ height:104px!important;
+ min-width:124px!important;max-width:124px!important;
+ margin:0!important;padding:5px!important;
+ scroll-snap-align:start!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:16px!important;
+ overflow:hidden!important;
+ background:#141517!important;color:#F5F5F6!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+/* Document chips can show the whole filename, not a square icon and ellipsis. */
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip.sv-attach-chip--file{
+ flex:0 0 195px!important;
+ width:195px!important;max-width:195px!important;
+ height:78px!important;
+ display:flex!important;align-items:center!important;gap:9px!important;
+ padding:8px 26px 8px 9px!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip > .sv-attach-thumb{
+ position:absolute!important;
+ inset:5px!important;
+ width:calc(100% - 10px)!important;height:calc(100% - 10px)!important;
+ object-fit:contain!important;
+ border-radius:10px!important;
+ background:#08090B!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip.sv-attach-chip--file > .sv-attach-fileicon{
+ position:relative!important;inset:auto!important;
+ flex:0 0 38px!important;width:38px!important;height:47px!important;
+ background:transparent!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip.sv-attach-chip--file .sv-file-sheet{
+ width:32px!important;height:40px!important;
+ margin:0!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip > .sv-attach-caption{
+ position:absolute!important;bottom:0!important;left:0!important;right:0!important;
+ display:block!important;
+ padding:15px 6px 6px!important;
+ background:linear-gradient(transparent,rgba(0,0,0,.84))!important;
+ color:#F4F4F6!important;
+ font:500 10px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ text-align:center!important;text-shadow:none!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip.sv-attach-chip--file > .sv-attach-caption{
+ position:relative!important;
+ flex:1 1 auto!important;min-width:0!important;
+ background:transparent!important;
+ padding:0!important;
+ font:550 11px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ white-space:normal!important;overflow:hidden!important;
+ overflow-wrap:anywhere!important;word-break:break-word!important;
+ display:-webkit-box!important;
+ -webkit-box-orient:vertical!important;
+ -webkit-line-clamp:3!important;
+ text-align:left!important;
+}
+/* Only a fine white X: 28px transparent touch target, no heavy dark disk. */
+html body #sayviComposer .sv-attach-remove{
+ box-sizing:border-box!important;
+ position:absolute!important;top:3px!important;right:3px!important;z-index:5!important;
+ display:grid!important;place-items:center!important;
+ width:28px!important;min-width:28px!important;
+ height:28px!important;min-height:28px!important;
+ margin:0!important;padding:5px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ color:#FFFFFF!important;
+ font-size:0!important;line-height:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ cursor:pointer!important;
+}
+html body #sayviComposer .sv-attach-remove svg{
+ display:block!important;width:16px!important;height:16px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.8!important;stroke-linecap:round!important;
+ filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 1px #000);
+}
+html body #sayviComposer .sv-attach-remove:focus-visible{
+ outline:2px solid #FFF!important;outline-offset:-3px!important;
+ border-radius:8px!important;
+}
+html body #sayviComposer .sv-attach-remove:active{opacity:.65!important}
+
+/* SAYVI · one black material behind sent files, photos and drawings. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files{
+ width:min(92%,390px)!important;
+ max-width:390px!important;
+ gap:5px!important;
+ align-self:flex-end!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;
+ width:100%!important;min-width:0!important;
+ min-height:68px!important;
+ gap:11px!important;
+ padding:9px 12px!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:16px!important;
+ background:#141517!important;background-image:none!important;
+ box-shadow:none!important;
+ color:#F4F4F6!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ cursor:pointer!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file:active{
+ background:#242426!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file-name{
+ display:-webkit-box!important;
+ -webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;
+ min-width:0!important;
+ flex:1 1 auto!important;
+ font:550 12.5px/1.32 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#F4F4F6!important;
+ overflow:hidden!important;overflow-wrap:anywhere!important;word-break:break-word!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-images{
+ box-sizing:border-box!important;
+ align-self:flex-end!important;
+ max-width:min(100%,340px)!important;
+ padding:6px!important;gap:6px!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:17px!important;
+ background:#141517!important;
+ box-shadow:none!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-images:has(> :only-child){
+ width:min(164px,45vw)!important;
+ padding:6px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo{
+ border-radius:11px!important;
+ background:#090A0C!important;
+ overflow:hidden!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > img{
+ display:block!important;object-fit:contain!important;
+ background:#090A0C!important;
+ border-radius:10px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-images:has(> :only-child) img{
+ max-height:190px!important;aspect-ratio:auto!important;
+ object-fit:contain!important;
+}
+
+/* WORK CHAT · identical near-black material for selected media and outgoing
+   photo/document surfaces. Keep the existing file badges and timestamps. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpAttachmentPreview:not([hidden]){
+ box-sizing:border-box!important;
+ background:#141517!important;background-image:none!important;
+ color:#F4F4F6!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:16px!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpAttachmentPreview :is(.svcp-selected-photo,.svcp-selected-video){
+ border-radius:11px!important;
+ background:#090A0C!important;
+ object-fit:contain!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpAttachmentPreview .svcp-selected-info strong{
+ color:#F4F4F6!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpAttachmentPreview .svcp-selected-info small{
+ color:#BFC0C5!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card,
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-document-only .svcp-file-card,
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-file-only .svcp-file-card{
+ background:#141517!important;background-image:none!important;
+ color:#F4F4F6!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:15px!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-name{
+ color:#F4F4F6!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-type{
+ color:#C5C5C9!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-media-slot:has(.svcp-chat-media-image){
+ box-sizing:border-box!important;
+ width:100%!important;
+ padding:6px!important;
+ border:1px solid rgba(255,255,255,.08)!important;
+ border-radius:17px!important;
+ background:#141517!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-chat-media-image{
+ box-sizing:border-box!important;
+ border-radius:11px!important;
+ background:#090A0C!important;
+ object-fit:contain!important;
+}
+/* Consistent dark file surfaces also on the light theme, as requested.
+   The surrounding chat retains the user's selected appearance. */
