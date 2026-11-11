@@ -1270,6 +1270,45 @@ html body main #sayviMessages{
 #sayviMessages .sv-reply-action-menu button:focus-visible{
  outline:2px solid #F6F7F8!important;outline-offset:1px!important;
 }
+/* SEYVEO reply tools: visible icons and document actions with no extra cards. */
+#sayviMessages .sv-reply-actions > .sv-reply-action{
+ display:grid!important;place-items:center!important;
+ width:34px!important;min-width:34px!important;height:32px!important;
+ margin:0!important;padding:0!important;border:0!important;
+ border-radius:9px!important;background:transparent!important;
+ color:var(--sayvi-secondary)!important;opacity:.9!important;
+}
+#sayviMessages .sv-reply-actions > .sv-reply-action svg{
+ width:17px!important;height:17px!important;stroke:currentColor!important;fill:none!important;
+}
+#sayviMessages .sv-reply-actions > .sv-reply-action:active{
+ color:var(--sayvi-text)!important;opacity:1!important;
+}
+#sayviMessages .turn[data-role="assistant"] > .sv-document-downloads{
+ display:flex!important;align-items:center!important;flex-wrap:wrap!important;
+ gap:6px!important;max-width:min(330px,100%)!important;
+ margin:3px 0 5px!important;padding:0!important;
+ border:0!important;background:transparent!important;
+}
+#sayviMessages .turn[data-role="assistant"] > .sv-document-downloads[hidden]{display:none!important}
+#sayviMessages .turn[data-role="assistant"] > .sv-document-downloads button{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:1 1 auto;min-height:38px!important;gap:6px!important;
+ padding:7px 10px!important;border:0!important;border-radius:12px!important;
+ background:#38383A!important;background-image:none!important;color:#F6F7F8!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font:550 11.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+#sayviMessages .turn[data-role="assistant"] > .sv-document-downloads button svg{
+ flex:0 0 17px;width:17px;height:17px;
+}
+#sayviMessages .sv-reply-action-menu .sv-download-print{
+ display:flex!important;justify-content:flex-start!important;
+ align-items:center!important;min-height:44px!important;gap:8px!important;
+ padding:8px!important;border:0!important;background:transparent!important;
+ color:#F6F7F8!important;font:500 12px/1.2 system-ui,sans-serif!important;
+}
+
 /* The approved Sayvi dock and its icons are owned exclusively by the pre-existing
    composer styles. Chat-message changes must never override #sayviComposer. */
 @media(max-width:375px){
@@ -2389,10 +2428,10 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   actionPanel.hidden=true;
   const feedback=document.createElement('div');feedback.className='sv-action-feedback';
   feedback.setAttribute('role','status');
+  const copyQuick=miniAction('copy','Копировать',()=>copyReply(bubble.textContent,feedback));
   const play=miniAction('speak','Озвучить ответ',()=>toggleReplySpeech(turn,bubble,play,feedback));
   play.setAttribute('aria-pressed','false');
   options.append(
-   miniAction('copy','Копировать',()=>copyReply(bubble.textContent,feedback)),
    miniAction('retry','Повторить ответ',()=>{
     if(active){feedback.textContent='Ответ ещё идёт';return}
     const question=findReplyQuestion(turn);
@@ -2402,7 +2441,6 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    }),
    miniAction('note','В Блокнот',()=>saveReplyNote(bubble.textContent,feedback)),
    miniAction('globe','Найти в браузере',()=>browserSearchForReply(turn,bubble,feedback)),
-   play,
    miniAction('share','Поделиться',async()=>{
     if(navigator.share){
      try{await navigator.share({text:bubble.textContent})}
@@ -2435,7 +2473,8 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    ].join('\\n')+'\\n\\nВсё равно распечатать?'))return;
    printSayviDocument(draft,feedback);
   });
-  downloads.append(preview,word,pdf,print);
+  downloads.append(preview,word,pdf);
+  options.append(print);
   for(const option of options.querySelectorAll('button')){
    const label=document.createElement('span');
    label.textContent=option.getAttribute('aria-label')||option.title;
@@ -2462,9 +2501,9 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   actionPanel.addEventListener('click',event=>{
    if(event.target.closest('button'))close();
   });
-  row.append(toggle);
-  actionPanel.append(options,downloads);
-  turn.append(row,actionPanel,feedback);
+  row.append(copyQuick,play,toggle);
+  actionPanel.append(options);
+  turn.append(row,downloads,actionPanel,feedback);
  }
  // A single dismiss listener serves every reply menu, including saved conversations.
  function dismissReplyMenus(){
@@ -2808,7 +2847,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     if(downloadRow){
      const preceding=turn?.previousElementSibling;
      const request=preceding?.dataset.role==='user'?preceding.textContent:'';
-     downloadRow.hidden=!documentDraftOnly(message)||!/(?:заявлени|приказ|договор|документ|письм|акт\\b|справк|резюме|отч[её]т|предложени|претензи|инструкци|составь|подготовь|оформ[ьи])/iu.test((request||'')+' '+String(message).slice(0,280));
+     downloadRow.hidden=!documentDraftOnly(message);
     }
    }
   else bubble.textContent=message;
