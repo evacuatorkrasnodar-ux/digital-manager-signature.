@@ -3162,6 +3162,22 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  <p id="calendarBpReportAverage" class="cal-bp-average" hidden></p>
  <small>Информационная оценка домашних измерений, не диагноз. Не меняйте лечение без врача.</small>
  </div>
+ <section id="calendarBpJournal" class="cal-bp-journal" aria-label="Журнал давления" hidden>
+  <div class="cal-bp-journal-head"><div><strong>Журнал давления</strong><small id="calendarBpJournalCount"></small></div><button id="calendarBpJournalShare" type="button" aria-label="Подготовить отчёт для врача">Отправить врачу</button></div>
+  <div class="cal-bp-journal-period" role="group" aria-label="Период журнала">
+   <button type="button" data-bp-period="7" aria-pressed="true">7 дней</button>
+   <button type="button" data-bp-period="30" aria-pressed="false">30 дней</button>
+   <button type="button" data-bp-period="all" aria-pressed="false">Всё</button>
+  </div>
+  <div class="cal-bp-journal-summary" aria-live="polite">
+   <span>Сэйви · сводка измерений</span>
+   <strong id="calendarBpJournalAverage"></strong>
+   <p id="calendarBpJournalInsight"></p>
+   <small>Сводка по внесённым значениям, не диагноз. Для оценки давления врач учитывает повторные измерения, симптомы и другие данные.</small>
+  </div>
+  <div id="calendarBpJournalRows" class="cal-bp-journal-rows" aria-label="Записи давления"></div>
+  <p id="calendarBpJournalStatus" class="cal-bp-journal-status" role="status" aria-live="polite"></p>
+ </section>
 </section>
 <section id="calendarPersonalTools" class="pw-root" aria-label="Личные инструменты" hidden></section>
 <section id="seyveoWorldHub" class="seyveo-world-hub" aria-label="Мой мир · люди и связи" hidden>
