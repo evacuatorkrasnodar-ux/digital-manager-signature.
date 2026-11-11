@@ -8,6 +8,8 @@
  const HANDOFF='seyveo.sayvi.paper-handoff.v1';
  const MAX_AGE=15*60*1000;
  if(new URLSearchParams(location.search).get('seyveo-draw')!=='chat')return;
+ const embedded=new URLSearchParams(location.search).get('embed')==='1'&&window.parent!==window;
+ if(embedded)document.documentElement.classList.add('sv-sayvi-paper-embed');
  let handoff=null;
  try{handoff=JSON.parse(sessionStorage.getItem(HANDOFF)||'null')}catch{}
  if(!handoff||handoff.state!=='open'||!Number.isFinite(handoff.at)||
@@ -32,7 +34,11 @@
   }catch{}
   navigating=true;
   try{paper.closeForChat();}catch{}
-  location.assign('./sayvi-chat-new.html');
+  if(embedded){
+   // The chat stays mounted behind the drawer. Only an opaque reference to
+   // an encrypted local file crosses the same-origin iframe boundary.
+   window.parent.postMessage({type:'seyveo:paper-handoff',state,ref:ref||null},location.origin);
+  }else location.assign('./sayvi-chat-new.html');
  }
  function onBack(event){
   if(!active)return;
@@ -70,6 +76,14 @@
    report(error?.message||'Не удалось прикрепить рисунок. Попробуй снова.');
    busy=false;save.disabled=false;
   }
+ }
+ if(embedded){
+  window.addEventListener('message',event=>{
+   if(event.origin!==location.origin||event.source!==window.parent)return;
+   if(event.data?.type==='seyveo:paper-request-close'){
+    onBack({preventDefault(){},stopImmediatePropagation(){}});
+   }
+  });
  }
  // Capture events before Notebook's normal Save/Back listeners. Chat drawings
  // must never silently create a Notebook note.
