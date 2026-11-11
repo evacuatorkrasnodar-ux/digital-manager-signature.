@@ -732,3 +732,49 @@ html body .sv-document-docx-render .sv-document-docx-paper-text,
 html body .sv-document-page-preview.sv-preview-loaded .sv-document-docx-render{
  transform:none!important;
 }
+
+/* SEYVEO · approved compact sent-document card.
+   Full-size first-page previews remain exclusively in the composer tray. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files:has(.sv-sent-file--compact){
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:flex-end!important;
+ width:min(82vw,280px)!important;max-width:280px!important;
+ gap:5px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file.sv-sent-file--compact{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ flex:0 0 auto!important;
+ width:100%!important;max-width:280px!important;
+ min-height:64px!important;height:auto!important;
+ padding:9px 12px!important;gap:11px!important;
+ border:1px solid rgba(255,255,255,.15)!important;
+ border-radius:17px!important;
+ background:#18191B!important;
+ box-shadow:none!important;text-align:left!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > .sv-attach-fileicon{
+ position:relative!important;inset:auto!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 34px!important;width:34px!important;height:42px!important;
+ margin:0!important;background:transparent!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-file-sheet{
+ width:29px!important;height:36px!important;margin:0!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > .sv-sent-file-copy{
+ display:flex!important;flex-direction:column!important;justify-content:center!important;
+ flex:1 1 auto!important;min-width:0!important;gap:3px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-sent-file-name{
+ display:block!important;min-width:0!important;max-width:100%!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ font:600 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#F1F1F2!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-sent-file-meta{
+ display:block!important;
+ font:450 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#ABADB1!important;
+}
