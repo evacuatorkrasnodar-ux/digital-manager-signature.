@@ -1486,12 +1486,15 @@ function renderWorkHistory(){
   const kind=msg.mediaId?'Файл':msg.taskId?'Поручение':'Сообщение';
   const text=String(msg.text||'').trim();
   const filename=String(msg.mediaName||'').trim();
-  const haystack=[name,kind,text,filename,senderName(msg)].join(' ').toLocaleLowerCase('ru-RU');
+  const sender=msg.role==='sayvi'?'Сэйви':msg.role==='demo-elena'?'Елена':'Руководитель';
+  const target=room.kind==='personal'?
+   (msg.room==='dm-elena'&&sender==='Елена'?'Руководитель':name):name;
+  const direction=sender+' → '+target;
+  const haystack=[name,direction,kind,text,filename].join(' ').toLocaleLowerCase('ru-RU');
   if(q&&!haystack.includes(q))return;
-  entries.push({kind:'message',index,at:Number(msg.at)||0,name,
+  entries.push({kind:'message',index,at:Number(msg.at)||0,name:direction,
    label:kind,text:filename||text||'Вложение',
-   sender:msg.role==='sayvi'?'Сэйви':msg.role==='demo-elena'?'Елена':'Руководитель',
-   roomId:msg.room});
+   sender,roomId:msg.room});
  });
  state.tasks.forEach((task,index)=>{
   if(!task||employeePreviewActive()&&task.assigneeId!=='elena')return;
@@ -1501,7 +1504,7 @@ function renderWorkHistory(){
   const haystack=['Поручение',who,text,file].join(' ').toLocaleLowerCase('ru-RU');
   if(q&&!haystack.includes(q))return;
   entries.push({kind:'task',index,at:Number(task.createdAt||task.at||task.assignedAt)||0,
-   name:who,label:task.done?'Поручение выполнено':'Поручение',
+   name:'Руководитель → '+who,label:task.done?'Поручение выполнено':'Поручение',
    text:text+(file?' · '+file:'')});
  });
  entries.sort((a,b)=>b.at-a.at||b.index-a.index);
