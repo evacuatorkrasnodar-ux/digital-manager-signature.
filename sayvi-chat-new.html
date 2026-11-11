@@ -3202,7 +3202,7 @@ html body .sv-sent-document-viewer .sv-sent-document-original div{
    overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:#151515;color:white;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)';
    const bar=document.createElement('div');bar.className='sv-sent-document-header';
    bar.style.cssText='display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 16px;background:rgba(100,100,100,.13);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)';
-   const back=document.createElement('button');back.type='button';back.className='sv-sent-document-back';back.textContent='‹ Назад';
+   const back=document.createElement('button');back.type='button';back.className='sv-sent-document-back';back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';back.setAttribute('aria-label','Назад в чат');
    back.style.cssText='border:0;background:transparent;color:inherit;font:inherit;padding:10px 4px;cursor:pointer';
    back.addEventListener('click',closeSentPdf);
    const name=document.createElement('span');name.className='sv-sent-document-name';name.textContent=file.name;
