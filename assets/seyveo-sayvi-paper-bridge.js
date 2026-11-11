@@ -37,7 +37,7 @@
   if(embedded){
    // The chat stays mounted behind the drawer. Only an opaque reference to
    // an encrypted local file crosses the same-origin iframe boundary.
-   window.parent.postMessage({type:'seyveo:paper-handoff',state,ref:ref||null},location.origin);
+   window.parent.postMessage({type:'seyveo:paper-handoff',state,ref:ref||null,nonce:handoff.nonce||''},location.origin);
   }else location.assign('./sayvi-chat-new.html');
  }
  function onBack(event){
