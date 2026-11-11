@@ -1,0 +1,35 @@
+name: SEYVEO Work Chat · Received Documents
+
+on:
+  push:
+    paths:
+      - 'assets/seyveo-business-command.js'
+      - 'assets/seyveo-chat-attachments-unified.css'
+      - 'index.html'
+      - 'scripts/work-chat-received-documents.test.mjs'
+      - '.github/workflows/seyveo-work-received-documents.yml'
+  pull_request:
+    paths:
+      - 'assets/seyveo-business-command.js'
+      - 'assets/seyveo-chat-attachments-unified.css'
+      - 'index.html'
+      - 'scripts/work-chat-received-documents.test.mjs'
+      - '.github/workflows/seyveo-work-received-documents.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  received-documents:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JS and regression tests
+        run: |
+          node --check assets/seyveo-business-command.js
+          node --check scripts/work-chat-received-documents.test.mjs
+          node --test scripts/work-chat-received-documents.test.mjs
