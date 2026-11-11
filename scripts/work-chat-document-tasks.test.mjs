@@ -14,21 +14,31 @@ test('manager may assign standalone document messages',()=>{
  assert.match(script,/attachmentMediaId:msg\.mediaId/);
  assert.match(script,/if\(hasFile&&!clean\)title\.value=/);
 });
-test('document assignment shows exactly one action without blocking file opening',()=>{
+test('document actions form one compact top row with reply, bookmark, and assignment',()=>{
+ assert.match(script,/menu\.append\(svcpActionIcon\('Ответить','reply'/);
+ assert.match(script,/menu\.append\(starControl\)/);
+ assert.match(script,/menu\.append\(svcpActionIcon\('Поручить','task'/);
  assert.match(css,/\.svcp-document-only\.svcp-document-assignable > \.svcp-message-inline-actions/);
- assert.match(css,/> :not\(\.svcp-action-task\)\{display:none!important\}/);
- assert.match(css,/top:calc\(100% \+ 3px\)!important/);
+ assert.match(css,/top:-37px!important;bottom:auto!important/);
+ assert.match(css,/max-width:116px!important/);
+ assert.match(css,/> :is\(\.svcp-action-reply,\.svcp-action-star,\.svcp-action-task\)/);
+ assert.doesNotMatch(css,/> :not\(\.svcp-action-task\)\{display:none!important\}/);
  assert.match(script,/previewable\?\(\)=>svcpOpenDocument\(localFile,message\):null/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=173/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=238/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=174/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=239/);
 });
 
-test('expanded Work Chat keeps microphone beside send when text or files are present',()=>{
- assert.match(css,/#svcpChatForm\.svcp-compose-multiline \.svcp-chat-compose-field > #svcpVoiceRecord\{/);
- assert.match(css,/right:59px!important;bottom:-48px!important/);
- assert.match(css,/right:8px!important;bottom:-48px!important/);
- assert.match(css,/display:grid!important;visibility:visible!important;pointer-events:auto!important/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=238/);
+test('expanded composer physically places the original live mic and send in its bottom toolbar',()=>{
+ assert.match(script,/function svcpPlaceComposerActions\(expanded\)/);
+ assert.match(script,/const parent=expanded\?svcpComposerHost:svcpComposerField/);
+ assert.match(script,/for\(const node of \[svcpComposerMic,svcpComposerSend\]\)/);
+ assert.match(script,/svcpPlaceComposerActions\(wraps\)/);
+ assert.match(script,/svcpPlaceComposerActions\(false\)/);
+ assert.match(css,/#svcpChatForm\.svcp-compose-multiline\.svcp-voice-on-toolbar > :is\(#svcpVoiceRecord,\.svcp-chat-send\)/);
+ assert.match(css,/visibility:visible!important;pointer-events:auto!important;opacity:1!important/);
+ assert.match(css,/> #svcpVoiceRecord\{\s*right:55px!important/);
+ assert.match(css,/> \.svcp-chat-send\{\s*right:8px!important/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=239/);
 });
 
 test('document viewer offers contextual real Sayvi support without replacing its action rail',()=>{
@@ -48,6 +58,6 @@ test('document viewer offers contextual real Sayvi support without replacing its
  assert.match(css,/\.svcp-doc-sayvi-panel\[hidden\]\{display:none!important\}/);
  assert.match(css,/\.svcp-doc-sayvi-panel\{/);
  assert.match(css,/\.svcp-doc-sayvi-input\{/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=173/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=238/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=174/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=239/);
 });
