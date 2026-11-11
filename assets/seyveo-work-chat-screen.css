@@ -5972,12 +5972,23 @@ html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-row-menu butto
  min-height:37px!important;font-size:13px!important;
 }
 
-/* SEYVEO Work History: Home's real shared scene, left-aligned title,
-   compact three-line conversations without losing avatar or actions. */
+/* SEYVEO Work History: exactly the Sayvi conversation scene (not the Home orb stage).
+   Keep the flat compact history list and left-aligned navigation unchanged. */
 html body #svcpWorkChatScreen #svcpWorkHistory{
- background-color:var(--bg,#11161b)!important;
- background-image:var(--seyveo-hdr-stage,radial-gradient(ellipse 100% 52% at 50% 0%,rgba(222,240,251,.062),transparent 78%))!important;
- background-repeat:no-repeat!important;
+ background:linear-gradient(180deg,#0e1419 0%,#141b21 28%,#1b252d 55%,#212d36 78%,#10161b 100%)!important;
+ background-attachment:local!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory{
+ background:#ffffff!important;
+}
+:root[data-theme="dark"][data-palette="emerald"] body #svcpWorkChatScreen #svcpWorkHistory{
+ background:linear-gradient(180deg,#101714 0%,#16231e 50%,#202f29 78%,#111917 100%)!important;
+}
+:root[data-theme="dark"][data-palette="sapphire"] body #svcpWorkChatScreen #svcpWorkHistory{
+ background:linear-gradient(180deg,#0e1522 0%,#172239 50%,#202e48 78%,#101724 100%)!important;
+}
+:root[data-theme="dark"][data-palette="plum"] body #svcpWorkChatScreen #svcpWorkHistory{
+ background:linear-gradient(180deg,#1b1a19 0%,#252320 50%,#302c28 78%,#1c1b1a 100%)!important;
 }
 html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head{
  grid-template-columns:42px minmax(0,1fr) 42px!important;
