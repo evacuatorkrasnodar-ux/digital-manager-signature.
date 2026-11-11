@@ -149,22 +149,19 @@ function bpAge(){
 }
 function setupHealthAge(){
  const field=$('calendarHealthBirthYear'),hint=$('calendarHealthAgeHint');if(!field)return;
- let year='';try{year=localStorage.getItem(BP_BIRTH_YEAR_KEY)||''}catch{}
- field.value=year;
- field.max=String(new Date().getFullYear());
- const update=()=>{
-  const rawYear=field.value.trim(),num=Number(rawYear),currentYear=new Date().getFullYear();
-  if(rawYear&&(!Number.isInteger(num)||num<1900||num>currentYear)){
-   hint.textContent='Проверьте год рождения.';return;
-  }
+ const today=new Date().getFullYear();
+ field.replaceChildren(new Option('Не указан',''));
+ for(let year=today;year>=1900;year--)field.add(new Option(String(year),String(year)));
+ let saved='';try{saved=localStorage.getItem(BP_BIRTH_YEAR_KEY)||''}catch{}
+ if([...field.options].some(option=>option.value===saved))field.value=saved;
+ field.addEventListener('change',()=>{
   try{
-   if(rawYear)localStorage.setItem(BP_BIRTH_YEAR_KEY,rawYear);
+   if(field.value)localStorage.setItem(BP_BIRTH_YEAR_KEY,field.value);
    else localStorage.removeItem(BP_BIRTH_YEAR_KEY);
-   hint.textContent=rawYear?'Возраст учтён в пояснениях. Сохраняется только в этом браузере.':'Возраст не указан. Используются общие ориентиры для взрослых.';
+   hint.textContent='Год рождения сохранён только в этом браузере.';
    if(current==='health'){bpReport();bpPreview();renderBpJournal();}
-  }catch{hint.textContent='Не удалось сохранить год рождения в браузере.';}
- };
- field.addEventListener('change',update);
+  }catch{hint.textContent='Не удалось сохранить год рождения.';}
+ });
 }
 function bpAssess(s,d,p){
  const age=bpAge();
@@ -215,6 +212,7 @@ function bpAverage(list){
 }
 function bpReport(){
  const box=$('calendarBpReport'),records=bpReadings();
+ const emergency=$('calendarBpReportEmergency');if(emergency)emergency.hidden=!(records.length&&bpAge()!==null&&bpAge()<18?false:records.length&&(records[0].s>=180||records[0].d>=120));
  box.hidden=current!=='health'||records.length===0;
  if(box.hidden)return;
  const bp=records[0],info=bpAssess(bp.s,bp.d,bp.p);
@@ -228,13 +226,15 @@ function bpReport(){
 function bpPreview(){
  const box=$('calendarBpLiveAdvice');
  const ids=['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse'];
- if(ids.some(id=>!$(id).value.trim())){box.textContent='Введите три значения с тонометра. Сэйви объяснит результат.';box.dataset.level='neutral';return;}
+ if(ids.some(id=>!$(id).value.trim())){box.textContent='Введите три значения с тонометра. Сэйви объяснит результат.';box.dataset.level='neutral';$('calendarBpEmergency').hidden=true;return;}
  const [s,d,p]=ids.map(id=>Number($(id).value));
  if(![s,d,p].every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240){
   box.textContent='Проверьте числа: верхнее должно быть больше нижнего. Если показатели необычные, повторите измерение и при плохом самочувствии обратитесь за медицинской помощью.';
-  box.dataset.level='neutral';return;
+  box.dataset.level='neutral';$('calendarBpEmergency').hidden=true;return;
  }
  const info=bpAssess(s,d,p);
+ const emergency=$('calendarBpEmergency');
+ if(emergency)emergency.hidden=!(s>=180||d>=120);
  box.textContent='Сэйви · '+info.summary+'. '+info.advice;
  box.dataset.level=info.level;
 }
@@ -339,43 +339,82 @@ function renderBpJournal(){
   rows.append(row);
  }
 }
+/* No extra required questions: optional doctor details are included only if entered. */
+function bpDoctorDetails(){
+ return {
+  name:$('calendarBpPatientName')?.value.trim()||'',
+  medication:$('calendarBpMedicationList')?.value.trim()||'',
+  comment:$('calendarBpDoctorComment')?.value.trim()||'',
+  year:$('calendarHealthBirthYear')?.value||''
+ };
+}
 function bpDoctorText(){
- const items=bpJournalItems(),overview=bpJournalOverview(items);
+ const items=bpJournalItems(),overview=bpJournalOverview(items),details=bpDoctorDetails();
  if(!items.length)return '';
  const now=new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'long',year:'numeric'}).format(new Date());
- const period=bpJournalPeriod==='all'?'все записи':bpJournalPeriod+' дней';
- const lines=['SEYVEO · Журнал домашнего артериального давления','Подготовлен: '+now,'Период: '+period,'Количество измерений: '+items.length,
-  'Среднее всех записей выбранного периода: '+overview.average,'','Сводка Сэйви:',overview.insight,'',
-  'Измерения (давление мм рт. ст.; пульс уд/мин):'];
- for(const {item,bp} of items){
-  lines.push((bp.date||'Без даты')+(bp.time?' '+new Date(bp.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'')+
-    ' | '+bp.s+'/'+bp.d+' | '+(bp.p===null?'—':bp.p)+(item.repeatOf?' | Повторное измерение':'')+(item.detail?' | Заметка: '+item.detail.replace(/[\r\n]+/g,' '):''));
- }
- lines.push('','Внимание: данные введены пользователем вручную. Отчёт не является диагнозом или медицинским заключением.');
+ const lines=['SEYVEO · Журнал артериального давления','Дата отчёта: '+now,
+  'Период: '+(bpJournalPeriod==='all'?'все записи':bpJournalPeriod+' дней'),
+  'Измерений: '+items.length];
+ if(details.name)lines.push('Имя: '+details.name);
+ if(details.year)lines.push('Год рождения: '+details.year);
+ if(details.medication)lines.push('Лекарства: '+details.medication);
+ if(details.comment)lines.push('Комментарий: '+details.comment);
+ lines.push('','Среднее всех записей периода: '+overview.average,'Вывод Сэйви: '+overview.insight,'','Дата и время | Давление | Пульс | Примечание');
+ for(const {item,bp} of items)lines.push(
+  (bp.date||'Без даты')+(bp.time?' '+new Date(bp.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'')
+  +' | '+bp.s+'/'+bp.d+' | '+(bp.p===null?'—':bp.p)
+  +' | '+(item.repeatOf?'Повторный замер. ':'')+(item.detail||'—').replace(/[\r\n]+/g,' ')
+ );
+ lines.push('','Информация подготовлена из измерений, внесённых пользователем. Не является диагнозом или медицинским заключением.');
  return lines.join('\n');
+}
+function bpPrintDoctor(){
+ const report=bpDoctorText(),status=$('calendarBpJournalStatus');
+ if(!report){status.textContent='Для печати сначала добавьте измерение.';return;}
+ const pop=window.open('','_blank');
+ if(!pop){status.textContent='Разрешите открыть окно печати в браузере.';return;}
+ const details=bpDoctorDetails(),items=bpJournalItems(),overview=bpJournalOverview(items);
+ const escapeText=value=>String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ const dateTime=bp=>escapeText((bp.date||'Без даты')+(bp.time?' '+new Date(bp.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):''));
+ const meta=[details.name&&['Пациент',details.name],details.year&&['Год рождения',details.year],
+  details.medication&&['Лекарства',details.medication],details.comment&&['Комментарий',details.comment]].filter(Boolean)
+  .map(([key,value])=>'<div><b>'+escapeText(key)+':</b> '+escapeText(value)+'</div>').join('');
+ const rows=items.map(({item,bp})=>'<tr><td>'+dateTime(bp)+'</td><td><b>'+bp.s+'/'+bp.d+'</b></td><td>'+(bp.p===null?'—':bp.p)+'</td><td>'+escapeText((item.repeatOf?'Повторный замер. ':'')+(item.detail||''))+'</td></tr>').join('');
+ const page='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO · Журнал давления</title>'
+ +'<style>@page{size:A4;margin:17mm}body{font:12px/1.5 -apple-system,BlinkMacSystemFont,Arial,sans-serif;color:#222;margin:0}header{border-bottom:2px solid #38383A;padding-bottom:14px;margin-bottom:18px}small{color:#606773}h1{font-size:24px;margin:3px 0 4px}h2{font-size:15px;margin-top:20px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin:15px 0}.summary{background:#f3f4f5;padding:12px;border-radius:8px}.summary strong{font-size:19px}table{width:100%;border-collapse:collapse;margin-top:12px;table-layout:fixed}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid #dce0e3;vertical-align:top;overflow-wrap:anywhere}th{background:#f3f4f5}th:nth-child(1){width:28%}th:nth-child(2){width:21%}th:nth-child(3){width:12%}footer{margin-top:20px;color:#6b717a;font-size:10px}@media print{.summary{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>'
+ +'<header><small>SEYVEO / ЗДОРОВЬЕ</small><h1>Журнал давления</h1><small>Отчёт от '+escapeText(new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'long',year:'numeric'}).format(new Date()))+' · '
+ +escapeText(bpJournalPeriod==='all'?'все записи':bpJournalPeriod+' дней')+'</small></header>'
+ +(meta?'<section class="meta">'+meta+'</section>':'')
+ +'<section class="summary"><small>Сводка Сэйви · '+items.length+' измерений</small><div><strong>'+escapeText(overview.average)+'</strong></div><p>'+escapeText(overview.insight)+'</p></section>'
+ +'<h2>История измерений</h2><table><thead><tr><th>Дата и время</th><th>Давление</th><th>Пульс</th><th>Примечание</th></tr></thead><tbody>'+rows+'</tbody></table>'
+ +'<footer>Ручные измерения, предоставленные пользователем. Информационная сводка не является диагнозом или медицинским заключением.</footer>'
+ +'</body></html>';
+ pop.document.open();pop.document.write(page);pop.document.close();pop.focus();
+ pop.addEventListener('load',()=>{pop.print();},{once:true});
+ status.textContent='Подготовлен печатный журнал. В окне печати можно выбрать принтер или сохранить PDF.';
 }
 async function bpShareDoctor(){
  const report=bpDoctorText(),status=$('calendarBpJournalStatus');
- if(!report){status.textContent='Нет измерений для отчёта.';return;}
- const file=new File([report],'SEYVEO-davlenie.txt',{type:'text/plain;charset=utf-8'});
+ if(!report){status.textContent='Для отправки сначала добавьте измерение.';return;}
  try{
-  if(navigator.canShare?.({files:[file]})&&navigator.share){
-   await navigator.share({files:[file],title:'Журнал давления SEYVEO'});
-   status.textContent='Отчёт передан в меню отправки устройства.';return;
+  if(navigator.share){
+   await navigator.share({title:'SEYVEO · Журнал давления',text:report});
+   status.textContent='Открыто системное меню отправки.';return;
   }
+  const file=new Blob([report],{type:'text/plain;charset=utf-8'});
   const url=URL.createObjectURL(file),link=document.createElement('a');
-  link.href=url;link.download=file.name;document.body.append(link);link.click();link.remove();
+  link.href=url;link.download='SEYVEO-davlenie.txt';document.body.append(link);link.click();link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),30000);
-  status.textContent='Отчёт скачан. Выберите врача и отправьте файл самостоятельно.';
+  status.textContent='Отчёт сохранён. Отправьте файл врачу удобным способом.';
  }catch(error){
-  if(error?.name==='AbortError')status.textContent='Отправка отменена.';
-  else status.textContent='Не удалось подготовить отправку. Попробуйте ещё раз.';
+  status.textContent=error?.name==='AbortError'?'Отправка отменена.':'Не удалось открыть отправку.';
  }
 }
 $('calendarHealthOverview').addEventListener('click',event=>{
  const period=event.target.closest('[data-bp-period]');
  if(period){bpJournalPeriod=period.dataset.bpPeriod;renderBpJournal();return;}
  if(event.target.closest('#calendarBpJournalShare')){bpShareDoctor();return;}
+ if(event.target.closest('#calendarBpJournalPrint')){bpPrintDoctor();return;}
  const row=event.target.closest('[data-bp-open]');
  if(row)open('health',row.dataset.bpOpen);
 });
