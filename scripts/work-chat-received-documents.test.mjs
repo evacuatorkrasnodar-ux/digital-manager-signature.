@@ -26,6 +26,6 @@ test('approved recipient cards have graphite format icons and stable layout',()=
  assert.match(css,/\.svcp-received-document-card > \.svcp-file-badge--pdf\{color:#FF4545/);
  assert.match(css,/\.svcp-received-document-card > \.svcp-file-badge\{/);
  assert.match(css,/\.svcp-received-document-card \.svcp-file-card-name\{/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=176/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=177/);
  assert.match(html,/assets\/seyveo-chat-attachments-unified\.css\?v=16/);
 });
