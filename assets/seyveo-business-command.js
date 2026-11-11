@@ -741,6 +741,13 @@ $('svcpChatInput')?.addEventListener('input',syncComposerActions);
 /* The single-line input must never be temporarily resized to measure its text:
  * Safari draws that temporary state during keyboard animation. A detached,
  * invisible mirror measures both available widths without touching the dock. */
+// Sayvi pattern: selected file is row one of the SAME editor, never a
+// floating sibling. Move the existing preview node, preserving its handlers.
+const svcpComposerHost=$('svcpChatForm');
+const svcpSelectedTray=$('svcpAttachmentPreview');
+if(svcpComposerHost&&svcpSelectedTray&&svcpSelectedTray.parentNode!==svcpComposerHost){
+ svcpComposerHost.prepend(svcpSelectedTray);
+}
 const svcpComposeMeasure=document.createElement('div');
 svcpComposeMeasure.setAttribute('aria-hidden','true');
 svcpComposeMeasure.style.cssText='position:fixed;left:-10000px;top:0;display:block;visibility:hidden;pointer-events:none;box-sizing:border-box;padding:0;margin:0;border:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:24px;font-size:16px;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;';
@@ -754,6 +761,8 @@ function resizeWorkComposer(){
  const input=$('svcpChatInput'),form=$('svcpChatForm');
  if(!input||!form)return;
  const value=input.value;
+ const withAttachment=!!(state.file||state.scanCode);
+ form.classList.toggle('svcp-has-attachment',withAttachment);
  // Explicit idle reset: no stale expanded height or wrap state after sending.
  if(!value&&!state.file&&!state.scanCode){
   form.classList.remove('svcp-compose-multiline');
@@ -780,9 +789,12 @@ function resizeWorkComposer(){
  // separate 42px bottom row. No second background/capsule is introduced.
  const expandedHeight=measuredComposeHeight(value,formWidth-32);
  const editorHeight=wraps?Math.min(144,Math.max(44,expandedHeight+16)):base;
- const targetHeight=wraps?editorHeight+55:56;
+ // Same three logical rows as Sayvi: attachment, editor, toolbar.
+ const attachRow=withAttachment?88:0;
+ const targetHeight=wraps?editorHeight+55+attachRow:56;
  form.classList.toggle('svcp-compose-multiline',wraps);
  form.style.setProperty('--svcp-editor-height',editorHeight+'px');
+ form.style.setProperty('--svcp-attachment-row-height',attachRow+'px');
  form.style.setProperty('--svcp-compose-height',targetHeight+'px');
  form.style.setProperty('height',targetHeight+'px','important');
  input.style.setProperty('height',editorHeight+'px','important');
