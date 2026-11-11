@@ -18,10 +18,11 @@ const textFile=(n)=>({
  }
 });
 
-function createPreparer(fetch=async()=>{throw Error('Unexpected upload')}){
+function createPreparer(fetch=async()=>{throw Error('Unexpected upload')},readPdfTextInBrowser=async()=>{throw Error('PDF.js unavailable')}){
  const form=class {append(){}};
  return runInNewContext(source+'\nprepareAttachments',{
   isReadableText:file=>file.type==='text/plain',
+  readPdfTextInBrowser,
   FormData:form,
   fetch,
  });
@@ -40,6 +41,25 @@ test('empty text budget preserves files as unreadable rather than throwing',asyn
  const result=await createPreparer()([textFile(1),textFile(2)],0);
  assert.equal(result.segments.length,0);
  assert.equal(result.unreadable.length,2);
+});
+
+test('PDF.js text avoids a server upload and supports textual PDF',async()=>{
+ const fetch=async()=>{throw Error('PDF should not be sent to server when locally readable')};
+ const readPdf=async()=>({text:'Текст из PDF: договор и подпись.',truncated:false});
+ const pdf={file:{name:'contract.pdf',type:'application/pdf',size:123}};
+ const result=await createPreparer(fetch,readPdf)([pdf],1000);
+ assert.equal(result.unreadable.length,0);
+ assert.equal(result.segments.length,1);
+ assert.match(result.segments[0],/договор и подпись/);
+});
+
+test('scanned PDF without a text layer is reported honestly',async()=>{
+ const fetch=async()=>{throw Error('No server call expected for a parsed scan')};
+ const readPdf=async()=>({text:'',truncated:false});
+ const pdf={file:{name:'scan.pdf',type:'application/pdf',size:123}};
+ const result=await createPreparer(fetch,readPdf)([pdf],1000);
+ assert.equal(result.segments.length,0);
+ assert.equal(result.unreadable.length,1);
 });
 
 test('unprocessable PDF does not block other readable attachments',async()=>{
