@@ -44,11 +44,9 @@
  clear.type='button';
  clear.className='sv-notice-action';
  clear.textContent='Очистить';
- const close=document.createElement('button');
- close.type='button';
- close.className='sv-notice-action';
- close.textContent='Свернуть';
- actions.append(clear,close);
+ // The notification bell and a tap outside already close this panel.
+ // Do not duplicate them with a text-only 'Свернуть' button.
+ actions.append(clear);
  head.append(heading,actions);
  const list=document.createElement('div');
  list.className='sv-notice-items';
@@ -100,7 +98,7 @@
   if(available){
    unread=0;
    paint();
-   close.focus({preventScroll:true});
+   button.focus({preventScroll:true});
   }
  }
  function add(value){
@@ -117,7 +115,6 @@
   paint();
  }
  button.addEventListener('click',()=>show(panel.hidden));
- close.addEventListener('click',()=>{show(false);button.focus({preventScroll:true})});
  clear.addEventListener('click',()=>{
   messages=[];unread=0;
   lastMessage='';lastAt=0;
