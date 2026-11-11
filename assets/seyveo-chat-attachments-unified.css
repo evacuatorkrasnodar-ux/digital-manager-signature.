@@ -2704,3 +2704,23 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svc
  border-radius:15px!important;
 }
 /* Real error text remains visible; keep the same action footer after a failed load. */
+
+/* SEYVEO · Work Chat received PDF/Word: match Sayvi's original file-outline SVG.
+   Contour and letter have independent paint rules: no doubled or distorted type. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card > .svcp-file-badge:is(.svcp-file-badge--pdf,.svcp-file-badge--word) > svg{
+ display:block!important;
+ width:32px!important;height:40px!important;
+ overflow:visible!important;
+ fill:none!important;stroke:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card > .svcp-file-badge:is(.svcp-file-badge--pdf,.svcp-file-badge--word) > svg > path{
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.7!important;stroke-linejoin:round!important;stroke-linecap:round!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card > .svcp-file-badge:is(.svcp-file-badge--pdf,.svcp-file-badge--word) > svg > text{
+ fill:currentColor!important;stroke:none!important;stroke-width:0!important;
+ paint-order:normal!important;
+ font-family:system-ui,sans-serif!important;font-weight:700!important;
+ writing-mode:horizontal-tb!important;direction:ltr!important;
+ letter-spacing:0!important;white-space:nowrap!important;
+}
