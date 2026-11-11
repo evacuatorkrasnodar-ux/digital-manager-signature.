@@ -4,7 +4,10 @@
 
 /* Keep the real dialog and its single dock, but remove the glossy card feel. */
 html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]{
-  background:var(--bg)!important;
+  background-color:var(--bg)!important;
+  background-image:var(--sv-life-viewport-gradient)!important;
+  background-repeat:no-repeat!important;
+  background-size:100% 100%!important;
   border:0!important;border-radius:0!important;
   box-shadow:none!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
