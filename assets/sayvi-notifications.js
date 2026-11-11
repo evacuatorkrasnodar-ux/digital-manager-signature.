@@ -5,46 +5,45 @@
  'use strict';
  const main=document.querySelector('main');
  const composer=document.getElementById('sayviComposer');
+ const field=document.getElementById('sayviField');
  const status=document.getElementById('sayviStatus');
- if(!main||!composer||!status||document.getElementById('sayviNoticeToggle'))return;
+ if(!main||!composer||!field||!status||document.getElementById('sayviNoticeToggle'))return;
 
  const button=document.createElement('button');
  button.type='button';
  button.id='sayviNoticeToggle';
- button.setAttribute('aria-label','Центр уведомлений');
+ button.setAttribute('aria-label','Системные предупреждения');
  button.setAttribute('aria-controls','sayviNoticePanel');
  button.setAttribute('aria-expanded','false');
  button.setAttribute('aria-haspopup','true');
- button.title='Уведомления';
+ button.title='Системные предупреждения';
+ button.hidden=true;
  const icon=document.createElement('span');
  icon.className='sv-notice-icon';
  icon.setAttribute('aria-hidden','true');
- icon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>';
+ // Quiet iOS-style exclamation-in-circle. No bell, filled background or extra tile.
+ icon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5.25"/><path d="M12 16.65h.01"/></svg>';
  const count=document.createElement('span');
- count.id='sayviNoticeCount';
- count.hidden=true;
- icon.append(count);
- const preview=document.createElement('span');
- preview.id='sayviNoticePreview';
- button.append(icon,preview);
- composer.append(button);
+ button.append(icon);
+ // Same positioning context as the microphone and send arrow.
+ field.append(button);
 
  const panel=document.createElement('section');
  panel.id='sayviNoticePanel';
  panel.setAttribute('role','region');
- panel.setAttribute('aria-label','Уведомления Сэйви');
+ panel.setAttribute('aria-label','Системные уведомления');
  panel.hidden=true;
  const head=document.createElement('div');
  head.className='sv-notice-head';
  const heading=document.createElement('strong');
- heading.textContent='Уведомления';
+ heading.textContent='Системные уведомления';
  const actions=document.createElement('div');
  actions.className='sv-notice-actions';
  const clear=document.createElement('button');
  clear.type='button';
  clear.className='sv-notice-action';
  clear.textContent='Очистить';
- // The notification bell and a tap outside already close this panel.
+ // The warning indicator and a tap outside already close this panel.
  // Do not duplicate them with a text-only 'Свернуть' button.
  actions.append(clear);
  head.append(heading,actions);
@@ -65,11 +64,11 @@
   return first.length>100?first.slice(0,97)+'…':first;
  }
  function paint(){
-  count.hidden=unread===0;
-  if(unread)count.textContent=unread>9?'9+':String(unread);
-  preview.textContent=messages.length?concise(messages[0].text):'';
-  button.setAttribute('aria-label','Центр уведомлений'+(unread?', новых: '+unread:''));
-  button.dataset.empty=messages.length?'false':'true';
+  const pending=messages.length>0;
+  button.hidden=!pending;
+  composer.classList.toggle('sayvi-has-alert',pending);
+  button.setAttribute('aria-label','Системные предупреждения'+(unread?', новых: '+unread:''));
+  if(!pending){panel.hidden=true;button.setAttribute('aria-expanded','false');}
   list.replaceChildren();
   if(!messages.length){
    const empty=document.createElement('p');
@@ -101,11 +100,14 @@
    button.focus({preventScroll:true});
   }
  }
- function add(value){
+ // Show the control only for genuine technical problems, never task progress,
+ // successful actions or general conversational status messages.
+ function isSystemProblem(text){
+  return /(?:не удалось|ошибк|недоступ|не поддерж|не может быть|нет возможности|не отвечает|не ответил|не найден|не загруз|не сохрани|не удалось|прервал|сбой|превышен|превыша|слишком|больше 8 мб|ограничен моделью|отклон[её]н|устарел|поврежд[её]н|запрещ[её]н|в этом браузере нет распознавания)/iu.test(text);
+ }
+ function add(value,force=false){
   const text=String(value||'').replace(/\s+/gu,' ').trim();
-  if(!text)return;
-  // Progress text is ephemeral; only user-useful notices become history items.
-  if(/^(?:Сэйви печатает|Слушаю|Записываю|Идёт запись|Отправляем|Загружаем|Получаем ответ)(?:[.…\s]|$)/iu.test(text))return;
+  if(!text||(!force&&!isSystemProblem(text)))return;
   const at=Date.now();
   if(text===lastMessage&&at-lastAt<3500)return;
   lastMessage=text;lastAt=at;
@@ -135,7 +137,8 @@
  const observer=new MutationObserver(()=>add(status.textContent));
  observer.observe(status,{subtree:true,childList:true,characterData:true});
  document.addEventListener('seyveo:sayvi-notice',event=>{
-  if(typeof event.detail?.message==='string')add(event.detail.message);
+  if(typeof event.detail?.message==='string')
+   add(event.detail.message,event.detail?.severity==='error'||event.detail?.severity==='warning');
  });
  paint();
  add(status.textContent);
