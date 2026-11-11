@@ -72,3 +72,13 @@ test('document Sayvi button uses exactly the approved Work Chat header symbol',(
  assert.match(script,/Если просят подписать: проверь по доступному тексту сумму/);
  assert.match(script,/Никогда не гарантируй отсутствие мошенничества/);
 });
+
+
+test('Work Chat down-arrow honors hidden state even against floating grid CSS',async()=>{
+ const jumpCss=await readFile(new URL('assets/seyveo-chat-jump.css',root),'utf8');
+ const jumpJs=await readFile(new URL('assets/seyveo-chat-jump.js',root),'utf8');
+ assert.match(jumpCss,/#svcpWorkChatScreen \.svcp-chat > #svcpScrollBottom\[hidden\]\{\s*display:none!important/);
+ assert.match(jumpJs,/button\.hidden=distance<=125/);
+ assert.match(jumpJs,/list\.addEventListener\('scroll',schedule/);
+ assert.match(html,/assets\/seyveo-chat-jump\.css\?v=4/);
+});
