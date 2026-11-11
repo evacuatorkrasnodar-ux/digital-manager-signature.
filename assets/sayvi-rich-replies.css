@@ -437,3 +437,52 @@ html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-chevron{
 html body #sayviMessages .turn[data-role="assistant"] .sv-rich-document-snippet{
  display:none!important;
 }
+
+/* SEYVEO · brief answer + one document card, never repeat A4 body in chat. */
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-intro{
+ margin:0 0 5px!important;
+ font:450 14px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--sayvi-text)!important;
+ white-space:normal!important;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-hint{
+ margin:1px 0 6px!important;
+ font:440 12px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--sayvi-secondary)!important;
+}
+#sayviMessages .turn[data-role="assistant"] .sv-rich-document-label{
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+}
+/* Paper-style editable document: visual page is separate from the dark shell. */
+html body .sv-doc-viewer .sv-doc-scroll{
+ background:#E9EAED!important;
+ padding:12px 10px 25px!important;
+}
+html body .sv-doc-viewer .sv-doc-content{
+ max-width:794px!important;
+ margin:0 auto!important;
+ gap:8px!important;
+}
+html body .sv-doc-viewer :is(.sv-doc-paper,.sv-doc-editor){
+ background:#FFFFFF!important;
+ color:#202024!important;
+ border:1px solid #E1E1E5!important;
+ border-radius:5px!important;
+ box-shadow:0 2px 9px rgba(0,0,0,.06)!important;
+ padding:clamp(22px,5vw,54px)!important;
+ font:400 15px/1.65 Georgia,"Times New Roman",serif!important;
+ white-space:pre-wrap!important;
+ min-height:65vh!important;
+}
+html body .sv-doc-viewer .sv-doc-editor{
+ font:400 15px/1.6 Georgia,"Times New Roman",serif!important;
+ resize:vertical!important;
+}
+html body .sv-doc-viewer .sv-doc-check{
+ border-radius:12px!important;
+ padding:12px 14px!important;
+}
+@media(min-width:800px){
+ html body .sv-doc-viewer .sv-doc-scroll{padding-top:22px!important}
+ html body .sv-doc-viewer :is(.sv-doc-paper,.sv-doc-editor){min-height:920px!important}
+}
