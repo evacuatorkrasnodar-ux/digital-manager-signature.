@@ -3175,8 +3175,10 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 </div>
  <div id="calendarHealthAgeSetting" class="cal-health-age-setting">
   <label for="calendarHealthAge">Возраст</label>
-  <select id="calendarHealthAge" aria-label="Возраст в годах"><option value="">Указать</option></select>
-  <span class="cal-health-age-chevron" aria-hidden="true">⌄</span>
+  <div class="cal-health-age-value">
+   <select id="calendarHealthAge" aria-label="Возраст в годах"><option value="">—</option></select>
+   <span class="cal-health-age-unit">лет</span>
+  </div>
   <small id="calendarHealthAgeHint" class="cal-health-sr-only">Возраст в годах. Выбирается один раз.</small>
  </div>
  <div id="calendarBpReport" class="cal-bp-report" hidden aria-live="polite">
