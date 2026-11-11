@@ -134,6 +134,30 @@ html body #sayviComposer .sv-attach-remove:focus-visible{
 }
 html body #sayviComposer .sv-attach-remove:active{opacity:.65!important}
 
+/* On the tall editor the microphone remains available beside Send.
+   Both controls have 42px hit targets and a 5px gutter. */
+html body #sayviComposer.sayvi-compose-expanded.sayvi-voice-with-send #sayviField > #sayviMic:not([hidden]){
+ display:grid!important;place-items:center!important;
+ position:absolute!important;
+ top:auto!important;bottom:-48px!important;
+ right:49px!important;
+ width:42px!important;min-width:42px!important;max-width:42px!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ color:var(--sayvi-control-text)!important;
+ z-index:5!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-voice-with-send #sayviField > #sayviSend:not([hidden]){
+ right:4px!important;bottom:-48px!important;
+}
+/* The microphone and Send remain independent touch targets. */
+html body #sayviComposer #sayviMic:focus-visible{
+ outline:2px solid currentColor!important;outline-offset:2px!important;
+}
+
 /* SAYVI · one black material behind sent files, photos and drawings. */
 html body #sayviMessages .turn[data-role="user"] .sv-sent-files{
  width:min(92%,390px)!important;
