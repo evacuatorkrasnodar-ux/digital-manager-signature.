@@ -169,38 +169,9 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
  const detail=svcpFileKind(displayName,type);
  // Received Word/PDF files are actual locally stored attachments, not fake
  // document previews. Outgoing documents retain their approved page tiles.
- const isReceivedDocument=!isOwn&&['pdf','word'].includes(detail.kind);
+ const isReceivedDocument=['pdf','word'].includes(detail.kind);
  if(isReceivedDocument)node.classList.add('svcp-received-document-card');
- if(isOwn&&sourceFile instanceof File&&['pdf','word'].includes(detail.kind)){
-  node.classList.add('svcp-sent-document-tile');
-  const preview=el('span','svcp-sent-document-thumb');
-  node.append(preview);
-  if(!svcpDraftPagePreview(sourceFile,preview))preview.append(svcpFileBadge(displayName,type));
-  const ext=(displayName.split('.').pop()||'').toLowerCase();
-  const caption=el('span','svcp-sent-document-caption');
-  const badge=el('span','svcp-sent-document-format');
-  badge.dataset.kind=detail.kind;
-  badge.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/><text x="12" y="21" text-anchor="middle" stroke="none" fill="currentColor" font-family="system-ui,sans-serif" font-size="'+(detail.kind==='pdf'?'6':'11')+'" font-weight="700">'+(detail.kind==='pdf'?'PDF':'W')+'</text></svg>';
-  caption.append(badge,el('span','svcp-sent-document-name',displayName));
-  node.append(caption);
-  if(timeNode){
-   const status=el('span','svcp-sent-document-status');status.append(timeNode);
-   if(isOwn){
-    const tick=el('span','svcp-local-save-check','✓');
-    tick.title='Сохранено здесь · доставка не подтверждена';status.append(tick);
-   }
-   node.append(status);
-  }
-  if(onOpen){
-   node.type='button';node.classList.add('svcp-file-card-open');
-   node.setAttribute('aria-label','Открыть документ '+displayName);
-   node.addEventListener('click',onOpen);
-  }else if(url){
-   node.href=url;node.download=displayName;
-   node.setAttribute('aria-label','Сохранить файл '+displayName);
-  }
-  return node;
- }
+ // Uploaded documents always use the complete compact file card, including time/check.
  const badge=svcpFileBadge(displayName,type);
  // Keep the SVG document contour; do not replace it with a text badge.
  node.append(badge);
