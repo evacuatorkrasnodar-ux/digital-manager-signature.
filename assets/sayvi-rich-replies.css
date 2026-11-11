@@ -531,18 +531,22 @@ html body .sv-doc-viewer{
  background:#FFFFFF!important;color:#28282B!important;
 }
 html body .sv-doc-viewer .sv-doc-header{
- background:#151B20!important;
- border-bottom:1px solid rgba(255,255,255,.09)!important;
+ background:#FFFFFF!important;
+ border-bottom:1px solid #EAEAED!important;
 }
 html body .sv-doc-viewer .sv-doc-back{
- background:#38383A!important;color:#F6F7F8!important;
- border-radius:50%!important;
+ /* Existing real Back button remains at the upper-left, with clear contrast. */
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 42px!important;width:42px!important;height:42px!important;
+ min-width:42px!important;min-height:42px!important;
+ background:#38383A!important;color:#FFFFFF!important;
+ border:0!important;border-radius:50%!important;
 }
 html body .sv-doc-viewer .sv-doc-title{
- color:#F5F5F7!important;font-weight:600!important;
+ color:#28282B!important;font-weight:600!important;
 }
 html body .sv-doc-viewer .sv-doc-meta{
- color:#B4B7BC!important;
+ color:#77777E!important;
 }
 html body .sv-doc-viewer .sv-doc-scroll{
  /* White document workspace continues beneath short pages. */
