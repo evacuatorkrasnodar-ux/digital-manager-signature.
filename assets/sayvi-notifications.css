@@ -219,3 +219,29 @@ html body main #sayviNoticePanel .sv-notice-item time{
 html body main #sayviNoticePanel .sv-notice-empty{
  color:#C5C6CA!important;font-size:12px!important;
 }
+
+/* SEYVEO warning control must never overlap mic or Send.
+   Park it above the dock in its own 42px target, independent of field width. */
+html body main #sayviComposer #sayviField > #sayviNoticeToggle:not([hidden]){
+ position:fixed!important;
+ z-index:30!important;
+ top:auto!important;left:auto!important;
+ right:calc(12px + env(safe-area-inset-right,0px))!important;
+ bottom:calc(var(--seyveo-dock-bottom,8px) + var(--sayvi-composer-height,56px) + 14px + env(safe-area-inset-bottom,0px))!important;
+ width:42px!important;min-width:42px!important;max-width:42px!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;
+ color:#F5F5F7!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviComposer.sayvi-compose-expanded #sayviField > #sayviNoticeToggle:not([hidden]){
+ right:calc(12px + env(safe-area-inset-right,0px))!important;
+ bottom:calc(var(--seyveo-dock-bottom,8px) + var(--sayvi-composer-height,122px) + 14px + env(safe-area-inset-bottom,0px))!important;
+}
+html body #sayviComposer.sayvi-has-alert:not(.sayvi-compose-expanded) #sayviField #sayviInput{
+ padding-right:54px!important;
+}
+html body main #sayviNoticePanel{
+ bottom:calc(var(--seyveo-dock-bottom,8px) + var(--sayvi-composer-height,56px) + 62px + env(safe-area-inset-bottom,0px))!important;
+}
