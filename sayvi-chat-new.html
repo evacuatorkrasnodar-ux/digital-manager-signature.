@@ -1599,7 +1599,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 <link rel="stylesheet" href="assets/seyveo-dock-icon-standard.css?v=6">
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
-<link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=4">
+<link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=5">
 <link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=14">
 </head>
 <body>
@@ -1670,7 +1670,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 </main>
 <script src="./assets/seyveo-pdf-export.js"></script>
 <script src="./assets/sayvi-session-files.js?v=1"></script>
-<script src="./assets/sayvi-rich-replies.js?v=4"></script>
+<script src="./assets/sayvi-rich-replies.js?v=5"></script>
 <script>
 (()=>{
  'use strict';
@@ -1907,6 +1907,18 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
  }
  function outgoingQuestionWithDocument(question,options){
   if(options.documentFiles?.length||options.attachments?.length)return documentContextFor(question,options);
+  // A concrete request to draft a document should produce a usable draft first,
+  // not a long interview. Missing facts are marked, never invented.
+  const wantsNewDocument=/(?:составь|подготовь|напиши|оформи|создай|сделай)[^\n.!?]{0,100}(?:заявлени[ея]|договор|приказ|претензи[юя]|доверенност|служебн(?:ую|ая) записк|обращени[ея]|объяснительн|уведомлени[ея])/iu.test(String(question||''));
+  if(wantsNewDocument){
+   const guidance='Ты Сэйви, помощник SEYVEO. Пользователь просит ПОДГОТОВИТЬ документ. '+
+    'Составь полноценный пригодный для редактирования черновик сразу. Не замени документ серией вопросов. '+
+    'Не выдумывай ФИО, работодателя, должности, даты, основания и другие неизвестные данные: используй краткие placeholders вида [ФИО], [название организации], [дата]. '+
+    'Сформируй весь текст документа отдельно МЕЖДУ строками --- и --- (без Markdown-блоков кода). '+
+    'До документа — не более одного короткого предложения. После документа — максимум одно краткое замечание, если оно важно. '+
+    'Отпуск или кадровый документ не называй официально утверждённым без проверки человеком.\n\nЗапрос пользователя:\n';
+   return guidance+documentContextFor(question,options);
+  }
   if(!workingDocument||workingDocument.conversation!==currentId||!documentRevisionIntent(question))return documentContextFor(question,options);
   const instruction='Ты Сэйви, помощник SEYVEO. Пользователь просит исправить ранее подготовленный документ. Измени только то, что он попросил, сохрани остальные сведения и структуру, не придумывай отсутствующие данные. Выдай ПОЛНУЮ обновлённую версию документа между строками --- и ---, без комментариев в документе. Если изменение непонятно, уточни вопрос.\n\n';
   const tail='\n\nЗапрошенное изменение: '+question;
