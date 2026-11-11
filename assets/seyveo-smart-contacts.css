@@ -90,6 +90,10 @@
  border-bottom:1px solid var(--sv-flat-edge,rgba(236,239,243,.10));
 }
 #sayviSurfacePage[data-sv-subject="mail"] .svmc-option:last-child{border-bottom:0}
+#sayviSurfacePage[data-sv-subject="mail"] .svmc-option > .svmc-sayvi-mark{
+  display:inline-block;flex:0 0 20px;width:20px;height:20px;
+  margin:0;color:var(--text,#e7eaee);vertical-align:middle;
+}
 #sayviSurfacePage[data-sv-subject="mail"] .svmc-option > svg{
  flex:0 0 20px;width:20px;height:20px;color:var(--text,#e7eaee);
 }
