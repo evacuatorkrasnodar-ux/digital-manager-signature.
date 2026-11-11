@@ -3155,6 +3155,11 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
    <span class="cal-health-tile-action" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span>
   </button>
 </div>
+ <div id="calendarHealthAgeSetting" class="cal-health-age-setting">
+  <label for="calendarHealthBirthYear">Год рождения <small>необязательно, один раз</small></label>
+  <input id="calendarHealthBirthYear" type="number" inputmode="numeric" min="1900" max="2100" step="1" placeholder="Например, 1985" aria-describedby="calendarHealthAgeHint">
+  <small id="calendarHealthAgeHint">Помогает учитывать возраст. Данные останутся в этом браузере.</small>
+ </div>
  <div id="calendarBpReport" class="cal-bp-report" hidden aria-live="polite">
  <div class="cal-bp-report-head"><span class="cal-bp-report-icon sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви · оценка давления</strong></div>
  <p id="calendarBpReportStatus"></p>
