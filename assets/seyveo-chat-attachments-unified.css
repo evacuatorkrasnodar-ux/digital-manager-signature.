@@ -813,3 +813,30 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-sent
  font:400 12px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  color:#B3B4B8!important;
 }
+
+/* 11 Nov · Sent Word card matches the PDF geometry exactly.
+   Neutral graphite/silver accent, without the old blue Office badge. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > .sv-sent-word-icon{
+ flex:0 0 30px!important;width:30px!important;height:34px!important;
+ display:grid!important;place-items:center!important;
+ color:#BFC0C3!important;background:transparent!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-word-icon svg{
+ display:block!important;width:26px!important;height:32px!important;
+}
+/* Sent photos are clean images, with no label strip or inner padding. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo{
+ padding:0!important;border:0!important;
+ border-radius:16px!important;background:transparent!important;
+ overflow:hidden!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > img,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-images:has(> :only-child) .sv-sent-photo > img{
+ display:block!important;width:100%!important;
+ height:auto!important;max-height:240px!important;
+ object-fit:cover!important;border-radius:16px!important;
+ background:transparent!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > :is(.sv-file-caption,.sv-attach-caption){
+ display:none!important;
+}
