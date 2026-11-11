@@ -22,3 +22,11 @@ test('document assignment shows exactly one action without blocking file opening
  assert.match(html,/assets\/seyveo-business-command\.js\?v=172/);
  assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=236/);
 });
+
+test('expanded Work Chat keeps microphone beside send when text or files are present',()=>{
+ assert.match(css,/#svcpChatForm\.svcp-compose-multiline \.svcp-chat-compose-field > #svcpVoiceRecord\{/);
+ assert.match(css,/right:59px!important;bottom:-48px!important/);
+ assert.match(css,/right:8px!important;bottom:-48px!important/);
+ assert.match(css,/display:grid!important;visibility:visible!important;pointer-events:auto!important/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=237/);
+});
