@@ -226,6 +226,7 @@ function bpReport(){
 /* Accessible mode: opt-in large type and spoken results for older adults.
    Speech is local browser TTS; it does not listen, record, transmit, or prescribe. */
 const BP_COMFORT_KEY='seyveo-health-comfort-v1';
+let bpSpokenSignature='';
 let bpComfortMode=false;
 function updateBpComfort(){
  dialog.classList.toggle('cal-health-comfort',bpComfortMode);
@@ -252,6 +253,20 @@ function bpVoiceMessage(s,d,p){
  if(info.level==='low')return 'Сэйви: давление может быть низким. Если кружится голова, лучше присядьте или прилягте и не вставайте резко. При сильной слабости, обмороке, боли в груди или затруднённом дыхании срочно вызывайте медицинскую помощь. Не пейте кофе или лекарства только по совету приложения.';
  if(info.level==='neutral')return 'Сэйви: для детей и подростков оценка давления отличается от взрослой. Обсудите показатели с врачом.';
  return 'Сэйви: измерение записано. '+info.summary+'. Если самочувствие хорошее, продолжайте наблюдение и придерживайтесь рекомендаций врача.';
+}
+function bpAutoSpeak(){
+ if(!bpComfortMode)return;
+ const fields=['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse'].map(id=>$(id).value.trim());
+ if(fields.some(x=>!x))return;
+ const nums=fields.map(Number),[s,d,p]=nums;
+ if(!nums.every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240)return;
+ const signature=fields.join('/');
+ if(signature===bpSpokenSignature)return;
+ bpSpokenSignature=signature;
+ bpSpeakText(bpVoiceMessage(s,d,p));
+}
+for(const id of ['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse']){
+ $(id).addEventListener('change',bpAutoSpeak);
 }
 function bpSpeakCurrent(){
  const vals=['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse'].map(id=>$(id).value.trim());
@@ -290,6 +305,7 @@ function bpPreview(){
  box.dataset.level=info.level;
 }
 function bpForm(item=null){
+ bpSpokenSignature='';
  const active=current==='health'&&$('calendarSpaceKind').value==='Давление';
  $('calendarBloodPressureFields').hidden=!active;
  $('calendarSpaceGenericValue').hidden=active;
@@ -788,7 +804,7 @@ function save(event){
  };
  const updated=old?all.map(x=>x.id===old.id?row:x):[...all,row];
  if(!store(updated)){status.textContent='Не удалось сохранить. Проверьте память браузера.';return}
- if(isBP&&bpComfortMode)bpSpeakText(bpVoiceMessage(sys,dia,pulse));
+ if(isBP&&bpComfortMode&&bpSpokenSignature!==[String(sys),String(dia),String(pulse)].join('/'))bpSpeakText(bpVoiceMessage(sys,dia,pulse));
  if(isBP&&!old){
   const linked=row.repeatOf?bpRepeatReading(row.repeatOf):null;
   const info=bpAssess(sys,dia,pulse);
