@@ -3848,6 +3848,13 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  function addAttachments(files){
   for(const file of Array.from(files||[])){
    if(pendingAttachments.length>=12){status.textContent='Можно выбрать до 12 файлов за раз.';break}
+   // Vision accepts at most six photos in a single message; document tiles
+   // may still use the remaining slots. Enforce the real API limit early.
+   if(/^image\/(?:png|jpeg|webp)$/i.test(file.type)&&
+      pendingAttachments.filter(entry=>/^image\/(?:png|jpeg|webp)$/i.test(entry.file.type)).length>=6){
+    status.textContent='За один раз можно отправить до 6 фотографий. Остальные добавь следующим сообщением.';
+    continue;
+   }
    if(file.size>8*1024*1024){status.textContent='Файл '+file.name+' больше 8 МБ.';continue}
    if(pendingAttachments.some(a=>a.file.name===file.name&&a.file.size===file.size&&a.file.lastModified===file.lastModified))continue;
    const preview=/^image\//i.test(file.type)?URL.createObjectURL(file):null;
@@ -3909,10 +3916,23 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   const segments=[],uploaded=[],unreadable=[];
   let remaining=Math.max(0,textBudget);
   const documentType=/\.(?:pdf|docx|xlsx|pptx)$/iu;
+  const documentCount=items.filter(entry=>isReadableText(entry.file)||documentType.test(entry.file.name)).length;
+  let documentIndex=0;
   for(const entry of items){
    const file=entry.file;
    if(isReadableText(file)||documentType.test(file.name)){
-    if(remaining<180)throw Error('Слишком много вложений для одного вопроса. Пришли файлы по одному.');
+    // Reserve equal space for every remaining document, instead of allowing
+    // the first one to consume the entire message budget.
+    const remainingDocuments=Math.max(1,documentCount-documentIndex++);
+    const header='Файл: '+String(file.name||'').slice(0,72)+'\n--- ВЫДЕРЖКА ИЗ ДОКУМЕНТА ---\n';
+    const footer='\n--- КОНЕЦ ВЫДЕРЖКИ ---';
+    const shortened='\n[Текст документа показан не полностью.]';
+    const quota=Math.floor(remaining/remainingDocuments);
+    const available=quota-header.length-footer.length-shortened.length;
+    if(available<35){
+     unreadable.push({name:file.name,reason:'Для текста этого файла не хватило места в вопросе'});
+     continue;
+    }
     let content='',alreadyTruncated=false;
     if(isReadableText(file)){
      // Read only the start for the AI excerpt, without rejecting large source files.
@@ -3952,12 +3972,13 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
      }
      content=result.text;alreadyTruncated=result.truncated===true;
     }
-    const header='Файл: '+file.name+'\n--- ВЫДЕРЖКА ИЗ ДОКУМЕНТА ---\n';
-    const available=remaining-header.length-90;
-    if(available<100)throw Error('Недостаточно места для документа. Пришли его отдельно.');
+    if(!String(content||'').trim()){
+     unreadable.push({name:file.name,reason:'В документе нет доступного текста'});
+     continue;
+    }
     const excerpt=content.slice(0,available);
     const limited=alreadyTruncated||content.length>available;
-    const segment=header+excerpt+(limited?'\n[Текст документа показан не полностью.]':'')+'\n--- КОНЕЦ ВЫДЕРЖКИ ---';
+    const segment=header+excerpt+(limited?shortened:'')+footer;
     segments.push(segment);
     remaining-=segment.length;
    }else{
@@ -4375,16 +4396,21 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
       +'Если информации недостаточно, скажи об ограничении прямо. Не выдавай юридические выводы за окончательные.'
     : '';
    const documentQuestion=value||'Кратко расскажи, что в приложенном документе и чем можешь помочь.';
+   const unavailableNames=files.unreadable.slice(0,3).map(item=>String(item.name||'').slice(0,72)).join(', ');
+   const unavailableExtra=files.unreadable.length>3?' и ещё '+(files.unreadable.length-3):'';
    const unreadableNotice=files.unreadable.length
-    ? '\n\nТекст следующих вложений недоступен: '+files.unreadable.map(item=>item.name).join(', ')+
-      '. Файлы прикреплены локально, но их содержимое НЕ было прочитано. '+
-      'Не выдумывай их содержимое. Если требуется анализ, попроси текстовый PDF или файл с выделяемым текстом.'
+    ? '\n\nТекст вложений недоступен: '+unavailableNames+unavailableExtra+
+      '. Оригиналы остались прикреплены в чате, но их содержимое НЕ прочитано. '+
+      'Не выдумывай содержание. Для точного анализа нужен текстовый документ.'
     : '';
    const message=hasDocument
     ? [instruction,documentQuestion,...files.segments].join('\n\n')+unreadableNotice
     : files.unreadable.length
       ? 'Ты Сэйви, помощник SEYVEO. '+(value||'Пользователь прикрепил документ.')+unreadableNotice
       : value||'Посмотри на прикреплённое изображение и естественно, по-дружески отреагируй на то, что действительно видишь. Кратко назови самое интересное и предложи, что можно с этим сделать. Не задавай формальный вопрос об анализе файла.';
+   // The server accepts a maximum of 4000 characters in one question.
+   // Keep the draft and attachments intact instead of submitting a doomed POST.
+   if(message.length>3900)throw Error('Слишком длинное сообщение с вложениями. Сократи текст вопроса и отправь ещё раз.');
    if(hasDocument){
     recentDocument={conversation:currentId,names:otherFiles.slice(0,6),text:files.segments.join('\n\n').slice(0,3000)};
    }
