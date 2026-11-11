@@ -29,13 +29,22 @@
    const distance=Math.max(0,list.scrollHeight-list.scrollTop-list.clientHeight);
    button.hidden=distance<=125;
    if(button.hidden)return;
-   // Position above the *visible* input rather than guessing dock height.
-   // It follows multiline input, attachment trays and mobile keyboard resize.
-   const parentRect=surface.getBoundingClientRect();
-   const composerRect=composer.getBoundingClientRect();
-   const space=parentRect.bottom-composerRect.top+12;
-   const limit=Math.max(22,parentRect.height-70);
-   button.style.bottom=Math.min(limit,Math.max(22,Math.ceil(space)))+'px';
+   if(buttonId==='svcpScrollBottom'){
+    // Work Chat pins its composer to the room bottom using CSS. Its screen
+    // coordinates can be unstable during keyboard/viewport transitions.
+    // Anchor by the actual composer HEIGHT rather than its top coordinate.
+    const height=composer.getBoundingClientRect().height||composer.offsetHeight||56;
+    button.style.setProperty('--svcp-jump-composer-height',
+     Math.ceil(Math.max(56,Math.min(200,height)))+'px');
+    button.style.removeProperty('bottom');
+   }else{
+    // Sayvi's independent scene already has a proven bottom placement.
+    const parentRect=surface.getBoundingClientRect();
+    const composerRect=composer.getBoundingClientRect();
+    const space=parentRect.bottom-composerRect.top+12;
+    const limit=Math.max(22,parentRect.height-70);
+    button.style.bottom=Math.min(limit,Math.max(22,Math.ceil(space)))+'px';
+   }
   }
   function schedule(){
    if(frame)return;
