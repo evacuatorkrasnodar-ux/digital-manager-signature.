@@ -114,3 +114,15 @@ test('adding fifth item preserves four selected attachments and reports through 
  assert.equal(warnings.length,1,'duplicate should not produce limit warning');
 });
 
+
+test('Sayvi generates Word and PDF file cards only for completed document answers',async()=>{
+ const styles=await readFile(new URL('../assets/sayvi-rich-replies.css',import.meta.url),'utf8');
+ assert.match(html,/function showSayviGeneratedFiles\(bubble,message,ready=true\)/);
+ assert.match(html,/row\.hidden=!available/);
+ assert.match(html,/showSayviGeneratedFiles\(completed,answer,true\)/);
+ assert.match(html,/downloads\.append\(word,pdf,preview\)/);
+ assert.match(html,/editedDocumentDrafts\.get\(bubble\)\|\|documentDraftOnly\(replySource\(bubble\)\)/);
+ assert.match(html,/assets\/sayvi-rich-replies\.css\?v=11/);
+ assert.match(styles,/\.sv-has-generated-documents > \.sv-document-downloads:not\(\[hidden\]\)/);
+ assert.match(styles,/\.sv-has-generated-documents \.sv-rich-document-card\{/);
+});
