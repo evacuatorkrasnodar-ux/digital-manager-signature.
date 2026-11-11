@@ -35,7 +35,7 @@ test('only the manager gets local message and task deletion actions',()=>{
 });
 
 test('history follows existing design and preserves full room navigation',()=>{
- assert.match(html,/assets\/seyveo-business-command\.js\?v=175/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=176/);
  assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=240/);
  assert.match(css,/\.svcp-chat-filters\{\s*grid-template-columns:repeat\(5,minmax\(0,1fr\)\)!important/);
  assert.match(css,/\.svcp-work-history-row\{/);
