@@ -1489,6 +1489,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
 <link rel="stylesheet" href="assets/seyveo-dock-icon-standard.css?v=6">
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
+<link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=1">
 </head>
 <body>
 <main>
@@ -1552,6 +1553,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
 </main>
 <script src="./assets/seyveo-pdf-export.js"></script>
 <script src="./assets/sayvi-session-files.js?v=1"></script>
+<script src="./assets/sayvi-rich-replies.js?v=1"></script>
 <script>
 (()=>{
  'use strict';
@@ -2112,7 +2114,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  async function toggleReplySpeech(turn,bubble,button,feedback){
   if(speakingTurn===turn){stopReplySpeech();return}
   stopReplySpeech();
-  const parts=voicePhrases(bubble.textContent.trim());
+  const parts=voicePhrases(replySource(bubble).trim());
   if(!parts.length)return;
   const generation=voiceGeneration;
   speakingTurn=turn;speechButton=button;
@@ -2177,7 +2179,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  }
  function browserSearchForReply(turn,bubble,feedback){
   const question=findReplyQuestion(turn);
-  const answer=bubble.textContent.trim();
+  const answer=replySource(bubble).trim();
   const q=(question||answer.slice(0,160)).slice(0,240);
   if(!q){feedback.textContent='Не удалось определить тему поиска';return}
   stopReplySpeech();
@@ -2435,7 +2437,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   actionPanel.hidden=true;
   const feedback=document.createElement('div');feedback.className='sv-action-feedback';
   feedback.setAttribute('role','status');
-  const copyQuick=miniAction('copy','Копировать',()=>copyReply(bubble.textContent,feedback));
+  const copyQuick=miniAction('copy','Копировать',()=>copyReply(replySource(bubble),feedback));
   const play=miniAction('speak','Озвучить ответ',()=>toggleReplySpeech(turn,bubble,play,feedback));
   play.setAttribute('aria-pressed','false');
   options.append(
@@ -2446,13 +2448,13 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     stopReplySpeech();
     ask(question,{skipUser:true});
    }),
-   miniAction('note','В Блокнот',()=>saveReplyNote(bubble.textContent,feedback)),
+   miniAction('note','В Блокнот',()=>saveReplyNote(replySource(bubble),feedback)),
    miniAction('globe','Найти в браузере',()=>browserSearchForReply(turn,bubble,feedback)),
    miniAction('share','Поделиться',async()=>{
     if(navigator.share){
-     try{await navigator.share({text:bubble.textContent})}
-     catch(error){if(error?.name!=='AbortError')copyReply(bubble.textContent,feedback)}
-    }else copyReply(bubble.textContent,feedback);
+     try{await navigator.share({text:replySource(bubble)})}
+     catch(error){if(error?.name!=='AbortError')copyReply(replySource(bubble),feedback)}
+    }else copyReply(replySource(bubble),feedback);
    })
   );
   const downloads=document.createElement('div');
@@ -2461,18 +2463,18 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   const pdfIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="2" y="10" width="19" height="8.5" rx="2.2" class="sv-file-label"/><text x="11.5" y="16" text-anchor="middle" class="sv-file-pdf-text">PDF</text></svg>';
   const word=document.createElement('button');word.type='button';word.className='sv-download-word';
   word.innerHTML=wordIcon+'<span>Word</span>';
-  word.addEventListener('click',()=>{const draft=documentDraftOnly(bubble.textContent);if(draft)exportWordReply(draft,feedback);else feedback.textContent='Нет готового документа для Word';});
+  word.addEventListener('click',()=>{const draft=documentDraftOnly(replySource(bubble));if(draft)exportWordReply(draft,feedback);else feedback.textContent='Нет готового документа для Word';});
   const pdf=document.createElement('button');pdf.type='button';pdf.className='sv-download-pdf';
   pdf.innerHTML=pdfIcon+'<span>PDF</span>';
-  pdf.addEventListener('click',()=>{const draft=documentDraftOnly(bubble.textContent);if(draft)exportPdfReply(draft,feedback);else feedback.textContent='Нет готового документа для PDF';});
+  pdf.addEventListener('click',()=>{const draft=documentDraftOnly(replySource(bubble));if(draft)exportPdfReply(draft,feedback);else feedback.textContent='Нет готового документа для PDF';});
   const preview=document.createElement('button');preview.type='button';
   preview.className='sv-download-preview';
   preview.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Смотреть</span>';
-  preview.addEventListener('click',()=>previewSayviDocument(bubble.textContent,feedback));
+  preview.addEventListener('click',()=>previewSayviDocument(replySource(bubble),feedback));
   // Match the other menu actions: icon-only SVG with a normal button label.
   // Printing is relevant only when the reply contains a prepared document.
   const print=miniAction('print','Печать',()=>{
-   const draft=documentDraftOnly(bubble.textContent);
+   const draft=documentDraftOnly(replySource(bubble));
    if(!draft){feedback.textContent='Нет готового документа для печати';return}
    const warnings=documentDateWarnings(draft),missing=documentMissingFields(draft);
    if((warnings.length||missing.length)&&!window.confirm('Проверь документ перед печатью:\\n'+[
@@ -2486,7 +2488,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   // All reply actions are compact icons directly under every answer.
   // Keep the existing handlers and aria-labels; no second action sheet.
   row.append(copyQuick,play,...options.querySelectorAll('button'));
-  turn.append(row,downloads,feedback);
+  turn.append(downloads,row,feedback);
  }
  window.addEventListener('pagehide',stopReplySpeech);
 
@@ -2810,26 +2812,52 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    return thumb.length<=110000?{name:file.name,thumb}:null;
   }finally{URL.revokeObjectURL(url)}
  }
- // Render a safe Markdown subset in replies, not raw HTML.
- // Keep the original source intact for saved history and copying.
+ // Keep original source for copy, speech, printing and document downloads.
+ // Only the visible presentation is structured.
+ function replySource(bubble){
+  return window.SEYVEO_RICH_REPLIES?.raw(bubble)??bubble?.textContent??'';
+ }
  function renderAssistantText(bubble,source){
-  const fragment=document.createDocumentFragment();
-  const lines=String(source).split('\n');
-  lines.forEach((raw,index)=>{
-   if(index)fragment.append(document.createTextNode('\n'));
-   const line=raw.replace(/^(\s{0,3})#{1,4}\s+/u,'$1')
-    .replace(/^(\s{0,3})[-*+]\s+(?=\S)/u,'$1• ');
-   const pattern=/\*\*([^*\n]+)\*\*/gu;
-   let cursor=0,match;
-   while((match=pattern.exec(line))){
-    if(match.index>cursor)fragment.append(document.createTextNode(line.slice(cursor,match.index)));
-    const strong=document.createElement('strong');
-    strong.textContent=match[1];fragment.append(strong);
-    cursor=pattern.lastIndex;
-   }
-   if(cursor<line.length)fragment.append(document.createTextNode(line.slice(cursor)));
-  });
-  bubble.replaceChildren(fragment);
+  const draft=documentDraftOnly(source);
+  const feedback=bubble.closest('.turn')?.querySelector('.sv-action-feedback');
+  if(window.SEYVEO_RICH_REPLIES?.render){
+   window.SEYVEO_RICH_REPLIES.render(bubble,source,{
+    draft,
+    copy:value=>copyReply(value,feedback),
+    preview:()=>previewSayviDocument(source,feedback)
+   });
+  }else bubble.textContent=source;
+ }
+ function showReplySuggestions(bubble,source){
+  const turn=bubble?.closest('.turn');
+  if(!turn||!window.SEYVEO_RICH_REPLIES?.suggestions)return;
+  let group=turn.querySelector('.sv-rich-suggestions');
+  const draft=documentDraftOnly(source);
+  const entries=window.SEYVEO_RICH_REPLIES.suggestions(
+   String(source||''),draft,findReplyQuestion(turn)
+  ).slice(0,2);
+  if(!entries.length){group?.remove();return}
+  if(!group){
+   group=document.createElement('div');
+   group.className='sv-rich-suggestions';
+   group.setAttribute('aria-label','Предложения для продолжения');
+   const row=turn.querySelector('.sv-reply-actions');
+   if(row)turn.insertBefore(group,row);else turn.append(group);
+  }
+  group.replaceChildren();
+  for(const entry of entries){
+   const button=document.createElement('button');button.type='button';
+   button.textContent=entry.label;
+   button.title='Добавить запрос в поле ввода';
+   button.addEventListener('click',()=>{
+    if(active)return;
+    if(input.value.trim()&&!window.confirm('Заменить набранный текст предложенным запросом?'))return;
+    input.value=entry.query;
+    updateControls();
+    input.focus({preventScroll:true});
+   });
+   group.append(button);
+  }
  }
 
  function append(role,id,message,save=true,photos=null,files=null,recordedTime=null,fileRefs=null){
@@ -2867,6 +2895,8 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   }
   if(role==='assistant'){
     renderAssistantText(bubble,message);
+    // Contextual suggestions appear after the answer, never for every token.
+    if(!active||id.startsWith('loaded-'))showReplySuggestions(bubble,message);
     const turn=bubble.closest('.turn');
     const downloadRow=turn?.querySelector('.sv-document-downloads');
     if(downloadRow){
@@ -3440,6 +3470,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    }
   }finally{
    streamingTurn?.classList.remove('is-streaming','is-fresh');
+   if(done&&answer.trim())showReplySuggestions(answers.get(replyId),answer);
    stopThinking();
    if(active===controller){active=null;updateControls()}
   }
