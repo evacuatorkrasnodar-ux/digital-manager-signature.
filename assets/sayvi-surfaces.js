@@ -365,7 +365,7 @@ const mailIcons=Object.freeze({
  more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',
  archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v12h14V9M10 14h4"/>',
  search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
- pencil:'<path d="M12 20h9M3 17l12-12 4 4L7 21H3v-4ZM14 6l4 4"/>',
+ pencil:'<path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M17.4 2.6a2.1 2.1 0 0 1 3 3L12 14l-4 1 1-4Z"/>',
  back:'<path d="m15 5-7 7 7 7"/>',
  reply:'<path d="m9 7-5 5 5 5"/><path d="M4 12h11a5 5 0 0 1 5 5v2"/>',
  paperclip:'<path d="m8 12 6-6a4 4 0 0 1 6 6l-8 8a6 6 0 0 1-9-9l8-8"/>',
@@ -463,9 +463,6 @@ function mailView(){
  const section=shelf();section.classList.add('sv-mail-workspace');
  const top=create('div','sv-mail-top-actions');
  const topButtons=create('div','sv-mail-top-buttons');
- const searchToggle=create('button','sv-mail-icon-button sv-mail-search-toggle');searchToggle.type='button';
- searchToggle.setAttribute('aria-label','Поиск по почте');searchToggle.append(mailIcon('search'));
- searchToggle.addEventListener('click',()=>{mailSearchOpen=!mailSearchOpen;paint();if(mailSearchOpen)searchInput.focus()});
  // An account connection is a primary mailbox action, NEVER a Search filter.
  // The prototype points to the existing Connections information page.
  const connect=create('button','sv-mail-connect');connect.type='button';
@@ -493,9 +490,9 @@ function mailView(){
  const compose=create('button','sv-mail-icon-button sv-mail-compose');compose.type='button';
  compose.setAttribute('aria-label','Написать письмо');compose.append(mailIcon('pencil'));
  compose.addEventListener('click',()=>openEditor());
- // Shield opens the compact protection popover beside Compose; Search remains right-aligned.
+ // Keep two header actions only: compose and protection.
+ // Mail search remains available through the global dock, not a duplicate header icon.
  // Connection prompt stays below the Personal / Work account switch.
- // The persistent dock now owns Search. Mail keeps only Compose here.
  topButtons.append(compose);
  const introCopy=create('div','sv-mail-introduction-text');
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
@@ -523,7 +520,7 @@ function mailView(){
  searchLabel.append(searchInput);
  searchInput.addEventListener('keydown',event=>{
   if(event.key==='Escape'){
-   mailSearchOpen=false;mailSearch='';searchInput.value='';paint();searchToggle.focus();
+   mailSearchOpen=false;mailSearch='';searchInput.value='';paint();compose.focus();
   }
  });
  searchLabel.addEventListener('click',event=>event.stopPropagation());
@@ -543,8 +540,8 @@ function mailView(){
  guardTrigger.setAttribute('aria-haspopup','true');
  guardTrigger.setAttribute('aria-expanded','false');
  guardTrigger.setAttribute('aria-controls','svMailProtectionMenu');
- // Compose, Protection, Search: three identical, centered header actions.
- topButtons.replaceChildren(compose,guardTrigger,searchToggle);
+ // Compose and Protection: identical touch targets, no redundant header magnifier.
+ topButtons.replaceChildren(compose,guardTrigger);
  const guardPanel=create('section','sv-mail-gate-panel');guardPanel.hidden=true;
  guardPanel.id='svMailProtectionMenu';
  guardPanel.setAttribute('aria-label','Умный допуск · защита почты');
@@ -1629,7 +1626,6 @@ function mailView(){
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
   introCopy.hidden=mailEditorOpen||!!mailCurrent;
   top.hidden=mailEditorOpen||!!mailCurrent;
-  searchToggle.hidden=mailEditorOpen||!!mailCurrent;
   connect.hidden=mailEditorOpen||!!mailCurrent||contactsActive;
   const setupScope=inviteScope();
   contactsInvite.hidden=mailEditorOpen||!!mailCurrent||contactsActive||!setupScope;
@@ -1669,8 +1665,6 @@ function mailView(){
   extraNav.hidden=mailEditorOpen||!!mailCurrent||mailFolder==='overview';
   nav.hidden=mailEditorOpen||!!mailCurrent;
   searchLabel.hidden=mailEditorOpen||!!mailCurrent||!mailSearchOpen;
-  searchToggle.setAttribute('aria-expanded',String(!searchLabel.hidden));
-  searchToggle.setAttribute('aria-controls','svMailQuickSearch');
   // Scope switches between personal and work mailbox authorization.
   renderGate();
   window.SEYVEO_CONNECTION_PROMPTS?.refresh();
