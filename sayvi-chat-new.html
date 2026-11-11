@@ -1832,12 +1832,10 @@ html body .sv-sent-document-viewer .sv-sent-document-original div{
 }
 
 
-/* SEYVEO · Work Chat parity: the Sayvi attachment plus is a real,
-   flat 50px graphite circle in both compact and expanded composers.
-   Keep the existing plus SVG, hit area and attachment menu handlers. */
-html body #sayviComposer > button#sayviPlus,
+/* SEYVEO · Work Chat parity applies ONLY to expanded Sayvi composer.
+   The compact Sayvi input and its approved plus must remain unchanged. */
 html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus,
-:root[data-theme="light"] body #sayviComposer > button#sayviPlus{
+:root[data-theme="light"] body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  position:relative!important;
  display:grid!important;
  place-items:center!important;
@@ -1858,7 +1856,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus,
  backdrop-filter:none!important;
  color:#D5D8DC!important;
 }
-html body #sayviComposer > button#sayviPlus svg{
+html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus svg{
  display:block!important;
  width:21px!important;
  height:21px!important;
@@ -1869,7 +1867,7 @@ html body #sayviComposer > button#sayviPlus svg{
  stroke-linecap:round!important;
  stroke-linejoin:round!important;
 }
-html body #sayviComposer > button#sayviPlus:active{
+html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus:active{
  background:#49494B!important;
 }
 </style>
