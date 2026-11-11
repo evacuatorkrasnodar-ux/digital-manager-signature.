@@ -115,22 +115,25 @@
   svg.innerHTML=paths[name]||'';return svg;
  }
  function card(draft,actions){
-  const holder=el('section','sv-rich-document-card');
-  holder.setAttribute('aria-label','Текст готового документа');
+  const holder=el('button','sv-rich-document-card');
+  holder.type='button';
+  holder.setAttribute('aria-label','Открыть документ');
+  const titleMatch=/^\\s*(?:#{1,4}\\s*)?(?:\\*\\*)?([^\\n]{4,80})/u.exec(draft);
+  const title=(titleMatch?.[1]||'Документ').replace(/\\*\\*/g,'').trim();
   const top=el('div','sv-rich-document-head');
-  const label=el('span','sv-rich-document-label','Текст');
-  const controls=el('div','sv-rich-document-tools');
-  for(const name of ['copy','expand']){
-   const button=el('button','sv-rich-document-tool');
-   button.type='button';button.append(icon(name));
-   button.title=name==='copy'?'Копировать текст документа':'Посмотреть документ полностью';
-   button.setAttribute('aria-label',button.title);
-   button.addEventListener('click',()=>name==='copy'?actions.copy?.(draft):actions.preview?.());
-   controls.append(button);
-  }
-  top.append(label,controls);
-  const content=el('div','sv-rich-document-body');blocks(content,draft);
-  holder.append(top,content);return holder;
+  const sheet=el('span','sv-rich-document-sheet');
+  sheet.setAttribute('aria-hidden','true');
+  sheet.innerHTML='<svg viewBox="0 0 24 24"><path d="M6 2.8h8.5L19 7.3V21H6zM14.5 2.8v4.5H19M9 12h7M9 15.5h7M9 19h5"/></svg>';
+  const description=el('div','sv-rich-document-description');
+  const name=el('strong','sv-rich-document-name',title.slice(0,70));
+  const subtitle=el('span','sv-rich-document-label','Документ · открыть и изменить');
+  description.append(name,subtitle);
+  const arrow=el('span','sv-rich-document-chevron');arrow.setAttribute('aria-hidden','true');arrow.textContent='›';
+  top.append(sheet,description,arrow);
+  const preview=el('div','sv-rich-document-snippet',draft.replace(/\\*\\*/g,'').replace(/^\\s*#{1,4}\\s+/gm,'').trim());
+  holder.append(top,preview);
+  holder.addEventListener('click',()=>actions.preview?.());
+  return holder;
  }
  function render(bubble,source,options={}){
   if(!bubble)return;
