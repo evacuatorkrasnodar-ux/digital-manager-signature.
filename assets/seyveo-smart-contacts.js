@@ -75,7 +75,7 @@
   const infoText={
    book:{icon:'book',label:'Адресная книга',hint:'Контакты из подключённой почты'},
    correspondents:{icon:'mail',label:'Люди из переписки',hint:'Предлагать новых корреспондентов'},
-   groups:{icon:'spark',label:'Категории Сэйви',hint:'Группы и возможные совпадения'}
+   groups:{icon:'sayvi',label:'Категории Сэйви',hint:'Группы и возможные совпадения'}
   };
   function render(){
    page.replaceChildren();
@@ -119,7 +119,9 @@
    const status=make('p','svmc-status','Выбор сохраняется автоматически.');status.setAttribute('role','status');
    for(const [key,data] of Object.entries(infoText)){
     const label=make('label','svmc-option');
-    label.append(pict(ICON[data.icon]));
+    const symbol=data.icon==='sayvi'?make('span','sv-sayvi-symbol svmc-sayvi-mark'):pict(ICON[data.icon]);
+    symbol.setAttribute('aria-hidden','true');
+    label.append(symbol);
     const copy=make('span','svmc-option-copy');
     copy.append(make('strong','',data.label),make('small','',data.hint));
     const input=make('input','svmc-checkbox');input.type='checkbox';
