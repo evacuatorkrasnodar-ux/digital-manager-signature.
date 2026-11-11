@@ -790,7 +790,10 @@ function resizeWorkComposer(){
  const expandedHeight=measuredComposeHeight(value,formWidth-32);
  const editorHeight=wraps?Math.min(144,Math.max(44,expandedHeight+16)):base;
  // Same three logical rows as Sayvi: attachment, editor, toolbar.
- const attachRow=withAttachment?112:0;
+ const rowCount=Math.ceil((state.files.length+(state.scanCode?1:0))/3);
+ const viewport=window.visualViewport?.height||window.innerHeight;
+ const editorLimit=Math.max(110,Math.floor(viewport*.62)-editorHeight-66);
+ const attachRow=withAttachment?Math.min(12+rowCount*105,editorLimit):0;
  const targetHeight=wraps?editorHeight+55+attachRow:56;
  form.classList.toggle('svcp-compose-multiline',wraps);
  form.style.setProperty('--svcp-editor-height',editorHeight+'px');
@@ -2348,7 +2351,18 @@ function renderCapturePreview(){
    else{media.muted=true;media.playsInline=true;media.preload='metadata'}
    tile.append(media);
   }else tile.append(svcpFileBadge(file.name,file.type));
-  tile.append(el('small','svcp-preview-tile-name',file.name));
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  const displayName=kind==='image'?file.name.replace(/\.[^.]+$/,'').replace(/\d{4,}/g,'').replace(/[_\-\s]+/g,' ').trim():file.name;
+  const caption=el('small','svcp-preview-tile-name');
+  const label=el('span','svcp-preview-caption-text',kind==='image'&&(!displayName||/^(img|dsc|photo|image|фото|скриншот)$/i.test(displayName))?'Фото':displayName);
+  const glyph=el('span','svcp-preview-caption-icon');
+  const marks={pdf:'PDF',doc:'W',docx:'W',xls:'X',xlsx:'X',csv:'CSV',ppt:'P',pptx:'P',jpg:'JPG',jpeg:'JPG',png:'PNG',webp:'WEBP',gif:'GIF',html:'HTML',htm:'HTML',css:'CSS',js:'JS',mp4:'MP4',mov:'MOV',mp3:'MP3',wav:'WAV',zip:'ZIP',rar:'RAR'};
+  const mark=marks[ext]||(ext.toUpperCase().slice(0,4)||'FILE');
+  const markKind=/^(doc|docx)$/.test(ext)?'word':/^(xls|xlsx|csv)$/.test(ext)?'sheet':ext==='pdf'?'pdf':/^(ppt|pptx)$/.test(ext)?'slides':kind==='image'?'image':kind==='video'?'video':/^(html|htm|css|js)$/.test(ext)?'code':'other';
+  glyph.dataset.kind=markKind;
+  glyph.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/></svg><span>'+mark+'</span>';
+  caption.append(glyph,label);
+  tile.append(caption);
   const remove=btn('',()=>{
    state.files.splice(index,1);state.file=state.files[0]?.file||null;
    state.filePurpose=state.files[0]?.purpose||'file';renderCapturePreview();
