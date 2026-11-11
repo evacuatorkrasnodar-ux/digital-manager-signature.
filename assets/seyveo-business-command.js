@@ -144,14 +144,15 @@ function svcpFileBadge(name,type){
  const meta=svcpFileKind(name,type);
  const badge=el('span','svcp-file-badge svcp-file-badge--'+meta.kind,'');
  if(meta.kind==='pdf'||meta.kind==='word'){
-  // Original 11 November, 08:41-08:50: open-bottom file silhouette with mark below.
-  badge.classList.add('svcp-original-file-icon');
+  // Match the approved Sayvi document mark. The outline is SVG;
+  // the letter is a positioned HTML glyph, immune to global SVG text rules.
+  badge.classList.add('svcp-sayvi-document-mark');
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('viewBox','0 0 28 34');
+  svg.setAttribute('viewBox','0 0 24 30');
   svg.setAttribute('aria-hidden','true');
-  const mark=meta.kind==='pdf'?'PDF':'W';
-  svg.innerHTML='<path d="M6 2.5h11l5 5V21M17 2.5V8h5M6 2.5v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><text x="14" y="29" text-anchor="middle" font-size="'+(meta.kind==='pdf'?9:11)+'" font-weight="750" fill="currentColor">'+mark+'</text>';
-  badge.append(svg);
+  svg.innerHTML='<path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20" />';
+  const label=el('span','svcp-sayvi-document-letter',meta.kind==='pdf'?'PDF':'W');
+  badge.append(svg,label);
  }else badge.textContent=meta.mark;
  badge.setAttribute('aria-hidden','true');
  return badge;
@@ -168,9 +169,38 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
  const detail=svcpFileKind(displayName,type);
  // Received Word/PDF files are actual locally stored attachments, not fake
  // document previews. Outgoing documents retain their approved page tiles.
- const isReceivedDocument=['pdf','word'].includes(detail.kind);
+ const isReceivedDocument=!isOwn&&['pdf','word'].includes(detail.kind);
  if(isReceivedDocument)node.classList.add('svcp-received-document-card');
- // Uploaded documents always use the complete compact file card, including time/check.
+ if(isOwn&&sourceFile instanceof File&&['pdf','word'].includes(detail.kind)){
+  node.classList.add('svcp-sent-document-tile');
+  const preview=el('span','svcp-sent-document-thumb');
+  node.append(preview);
+  if(!svcpDraftPagePreview(sourceFile,preview))preview.append(svcpFileBadge(displayName,type));
+  const ext=(displayName.split('.').pop()||'').toLowerCase();
+  const caption=el('span','svcp-sent-document-caption');
+  const badge=el('span','svcp-sent-document-format');
+  badge.dataset.kind=detail.kind;
+  badge.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/><text x="12" y="21" text-anchor="middle" stroke="none" fill="currentColor" font-family="system-ui,sans-serif" font-size="'+(detail.kind==='pdf'?'6':'11')+'" font-weight="700">'+(detail.kind==='pdf'?'PDF':'W')+'</text></svg>';
+  caption.append(badge,el('span','svcp-sent-document-name',displayName));
+  node.append(caption);
+  if(timeNode){
+   const status=el('span','svcp-sent-document-status');status.append(timeNode);
+   if(isOwn){
+    const tick=el('span','svcp-local-save-check','✓');
+    tick.title='Сохранено здесь · доставка не подтверждена';status.append(tick);
+   }
+   node.append(status);
+  }
+  if(onOpen){
+   node.type='button';node.classList.add('svcp-file-card-open');
+   node.setAttribute('aria-label','Открыть документ '+displayName);
+   node.addEventListener('click',onOpen);
+  }else if(url){
+   node.href=url;node.download=displayName;
+   node.setAttribute('aria-label','Сохранить файл '+displayName);
+  }
+  return node;
+ }
  const badge=svcpFileBadge(displayName,type);
  // Keep the SVG document contour; do not replace it with a text badge.
  node.append(badge);
