@@ -1354,7 +1354,8 @@ html body main #sayviMenu button svg{
 }
 html body main #sayviMenu button:active{background:#4A4A4C!important}
 html body main #sayviHistory{
- background:var(--sayvi-bg)!important;color:var(--sayvi-text)!important;
+ /* Do not reset background-image: a previous !important shorthand hid Home's stage. */
+ background-color:var(--sayvi-bg)!important;color:var(--sayvi-text)!important;
 }
 #sayviHistory .history-shell{max-width:600px}
 #sayviHistory .history-head{
