@@ -24,7 +24,7 @@ test('document actions form one compact top row with reply, bookmark, and assign
  assert.match(css,/> :is\(\.svcp-action-reply,\.svcp-action-star,\.svcp-action-task\)/);
  assert.doesNotMatch(css,/> :not\(\.svcp-action-task\)\{display:none!important\}/);
  assert.match(script,/previewable\?\(\)=>svcpOpenDocument\(localFile,message\):null/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=175/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=176/);
  assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=240/);
 });
 
@@ -58,6 +58,15 @@ test('document viewer offers contextual real Sayvi support without replacing its
  assert.match(css,/\.svcp-doc-sayvi-panel\[hidden\]\{display:none!important\}/);
  assert.match(css,/\.svcp-doc-sayvi-panel\{/);
  assert.match(css,/\.svcp-doc-sayvi-input\{/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=175/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=176/);
  assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=240/);
+});
+
+test('document Sayvi button uses exactly the approved Work Chat header symbol',()=>{
+ const canonical=script.match(/sayviButton\.innerHTML='([^']+)'/);
+ const viewer=script.match(/sayviTrigger\.innerHTML='([^']+)'/);
+ assert.ok(canonical&&viewer,'both symbols are present');
+ assert.equal(viewer[1],canonical[1]);
+ assert.match(script,/Если просят подписать: проверь по доступному тексту сумму/);
+ assert.match(script,/Никогда не гарантируй отсутствие мошенничества/);
 });
