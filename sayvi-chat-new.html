@@ -1830,6 +1830,48 @@ html body .sv-sent-document-viewer .sv-sent-document-original div{
  color:#AAB0B7!important;font-size:11px!important;
  font-variant-numeric:tabular-nums!important;
 }
+
+
+/* SEYVEO · Work Chat parity: the Sayvi attachment plus is a real,
+   flat 50px graphite circle in both compact and expanded composers.
+   Keep the existing plus SVG, hit area and attachment menu handlers. */
+html body #sayviComposer > button#sayviPlus,
+html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus,
+:root[data-theme="light"] body #sayviComposer > button#sayviPlus{
+ position:relative!important;
+ display:grid!important;
+ place-items:center!important;
+ flex:0 0 50px!important;
+ width:50px!important;
+ min-width:50px!important;
+ max-width:50px!important;
+ height:50px!important;
+ min-height:50px!important;
+ max-height:50px!important;
+ border:1px solid rgba(255,255,255,.075)!important;
+ border-radius:50%!important;
+ background:#38383A!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ filter:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:#D5D8DC!important;
+}
+html body #sayviComposer > button#sayviPlus svg{
+ display:block!important;
+ width:21px!important;
+ height:21px!important;
+ margin:auto!important;
+ fill:none!important;
+ stroke:currentColor!important;
+ stroke-width:1.6!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+}
+html body #sayviComposer > button#sayviPlus:active{
+ background:#49494B!important;
+}
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=4">
 <link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=4">
