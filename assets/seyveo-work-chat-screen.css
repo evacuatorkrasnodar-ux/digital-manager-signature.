@@ -5676,7 +5676,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multi
 
 /* Work Chat · Sayvi-style compact history across messages and tasks. */
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters{
- grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
  column-gap:2px!important;
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters > [data-svcp-chat-filter]{
