@@ -1910,7 +1910,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=6">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=22">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=23">
 </head>
 <body>
 <main>
@@ -3652,13 +3652,29 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   const caption=document.createElement('span');caption.className='sv-file-caption';
   const badge=document.createElement('span');badge.className='sv-file-caption-format';
   badge.dataset.format=ext==='jpeg'?'jpg':ext;
-  if(['pdf','doc','docx','jpg','jpeg','png','webp','gif','heic'].includes(ext)){
-   const imageType=['jpg','jpeg','png','webp','gif','heic'].includes(ext);
-   const symbol=ext==='pdf'?'PDF':(ext==='doc'||ext==='docx'?'W':ext==='jpeg'?'JPG':ext.toUpperCase());
-   badge.classList.add('sv-file-caption-format--outline');
-   badge.setAttribute('aria-label',imageType?'Изображение '+symbol:ext==='pdf'?'PDF':'Word');
-   badge.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true" focusable="false"><path d="M4 1.5h10.5L20 7v21H4z"/><path d="M14.5 1.5V7H20"/></svg><span>'+symbol+'</span>';
-  }else badge.textContent=format;
+  // Every file type uses the same thin document outline, never a filled badge.
+  const formatLabels={
+   pdf:'PDF',doc:'W',docx:'W',xls:'X',xlsx:'X',csv:'CSV',
+   ppt:'P',pptx:'P',pps:'P',ppsx:'P',
+   jpg:'JPG',jpeg:'JPG',png:'PNG',webp:'WEBP',gif:'GIF',heic:'HEIC',heif:'HEIF',svg:'SVG',bmp:'BMP',tif:'TIF',tiff:'TIF',
+   mp4:'MP4',mov:'MOV',m4v:'M4V',avi:'AVI',mkv:'MKV',webm:'WEBM',
+   mp3:'MP3',wav:'WAV',ogg:'OGG',m4a:'M4A',aac:'AAC',flac:'FLAC',
+   zip:'ZIP',rar:'RAR','7z':'7Z',tar:'TAR',gz:'GZ',
+   html:'HTML',htm:'HTML',css:'CSS',js:'JS',ts:'TS',json:'JSON',xml:'XML',
+   txt:'TXT',md:'MD',markdown:'MD',log:'LOG',rtf:'RTF',
+   py:'PY',java:'JAVA',sql:'SQL',exe:'EXE',apk:'APK',epub:'EPUB'
+  };
+  const symbol=formatLabels[ext]||((ext||'FILE').toUpperCase().slice(0,4));
+  const officeWord=['doc','docx'].includes(ext),officeSheet=['xls','xlsx','csv'].includes(ext);
+  const officeSlides=['ppt','pptx','pps','ppsx'].includes(ext);
+  const imageFormat=['jpg','jpeg','png','webp','gif','heic','heif','svg','bmp','tif','tiff'].includes(ext);
+  const mediaFormat=['mp4','mov','m4v','avi','mkv','webm','mp3','wav','ogg','m4a','aac','flac'].includes(ext);
+  const codeFormat=['html','htm','css','js','ts','json','xml','py','java','sql'].includes(ext);
+  const archiveFormat=['zip','rar','7z','tar','gz'].includes(ext);
+  badge.dataset.kind=ext==='pdf'?'pdf':officeWord?'word':officeSheet?'sheet':officeSlides?'slides':imageFormat?'image':mediaFormat?'media':codeFormat?'code':archiveFormat?'archive':'other';
+  badge.classList.add('sv-file-caption-format--outline');
+  badge.setAttribute('aria-label','Формат '+symbol);
+  badge.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true" focusable="false"><path d="M4 1.5h10.5L20 7v21H4z"/><path d="M14.5 1.5V7H20"/></svg><span>'+symbol+'</span>';
   const title=document.createElement('span');title.className='sv-file-caption-name';
   const imageType=/^(jpe?g|png|webp|gif|heic)$/i.test(ext);
   const originalName=String(name||'Файл');
