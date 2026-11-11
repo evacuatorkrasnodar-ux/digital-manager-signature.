@@ -260,6 +260,7 @@ function svcpOpenDocument(file,sourceMessage=null){
  sayviTrigger.setAttribute('aria-label','Спросить Сэйви об этом документе');
  sayviTrigger.title='Помощь Сэйви с документом';
  sayviTrigger.setAttribute('aria-expanded','false');
+ if(!['word','pdf','text'].includes(kind))sayviTrigger.hidden=true;
  sayviTrigger.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8c1.8 5.7 3.5 7.4 9.2 9.2-5.7 1.8-7.4 3.5-9.2 9.2-1.8-5.7-3.5-7.4-9.2-9.2 5.7-1.8 7.4-3.5 9.2-9.2Z"/></svg>';
  top.append(back,heading,sayviTrigger);
  const body=el('div','svcp-doc-body');
