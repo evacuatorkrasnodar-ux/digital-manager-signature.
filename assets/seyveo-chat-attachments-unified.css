@@ -1819,3 +1819,42 @@ html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-tile > .svcp-
  position:absolute!important;top:11px!important;left:50%!important;transform:translateX(-50%)!important;
  width:42px!important;height:50px!important;margin:0!important;background:transparent!important;
 }
+
+/* Work Chat PDF and DOCX first-page thumbnails — above caption only. */
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-tile > .svcp-preview-document-page{
+ box-sizing:border-box!important;display:block!important;position:absolute!important;
+ inset:0 0 23px!important;width:100%!important;height:calc(100% - 23px)!important;
+ padding:0!important;margin:0!important;overflow:hidden!important;
+ background:#FFF!important;border:0!important;border-radius:0!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-document-fallback{
+ position:absolute!important;inset:0!important;z-index:0!important;
+ display:grid!important;place-items:center!important;background:#101113!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-document-fallback .svcp-file-badge{
+ position:relative!important;inset:auto!important;transform:none!important;
+ width:42px!important;height:50px!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-document-page.svcp-page-ready .svcp-preview-document-fallback{
+ display:none!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-document-canvas{
+ position:absolute!important;inset:0!important;z-index:1!important;
+ display:none!important;width:100%!important;height:auto!important;
+ min-height:100%!important;object-fit:cover!important;object-position:top left!important;
+ background:white!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-page-ready .svcp-preview-document-canvas{
+ display:block!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-docx-content{
+ position:absolute!important;inset:0!important;z-index:1!important;
+ box-sizing:border-box!important;display:none!important;
+ padding:6px 7px!important;overflow:hidden!important;
+ background:#FFF!important;color:#242424!important;
+ font:500 4.7px/1.48 Georgia,serif!important;white-space:pre-wrap!important;
+ word-break:break-word!important;text-align:left!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-page-ready .svcp-preview-docx-content{
+ display:block!important;
+}
