@@ -1910,7 +1910,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=10">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=29">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=30">
 </head>
 <body>
 <main>
@@ -2540,7 +2540,28 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    // Only the message history scrolls; never let its bubbles get compressed.
    const list=document.getElementById('sayviMessages');
    if(list)list.style.scrollPaddingBottom=fullHeight+18+'px';
+   // Update both fade edges after the grid and textarea acquire their size.
+   requestAnimationFrame(updateSayviSoftScrollEdges);
   }
+ 
+ /* The fade indicates content that can be scrolled into view.
+    It does not hide the last line or final file when scrolled to the end. */
+ function updateSoftScrollEdge(element){
+  if(!element)return;
+  const overflow=element.scrollHeight-element.clientHeight;
+  const position=overflow<=3?'none':
+   element.scrollTop<=3?'start':
+   element.scrollTop>=overflow-3?'end':'middle';
+  if(element.dataset.softScroll!==position)element.dataset.softScroll=position;
+ }
+ function updateSayviSoftScrollEdges(){
+  updateSoftScrollEdge(input);
+  updateSoftScrollEdge(document.getElementById('sayviAttachmentTray'));
+ }
+ input.addEventListener('scroll',()=>updateSoftScrollEdge(input),{passive:true});
+ document.getElementById('sayviAttachmentTray')?.addEventListener('scroll',event=>{
+  updateSoftScrollEdge(event.currentTarget);
+ },{passive:true});
   window.addEventListener('resize',resizeComposerInput,{passive:true});
   window.visualViewport?.addEventListener('resize',resizeComposerInput,{passive:true});
   function updateControls(){
@@ -3844,6 +3865,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    });
    chip.append(visual,label,remove);attachmentTray.append(chip);
   }
+  requestAnimationFrame(()=>updateSoftScrollEdge(attachmentTray));
  }
  function addAttachments(files){
   for(const file of Array.from(files||[])){
