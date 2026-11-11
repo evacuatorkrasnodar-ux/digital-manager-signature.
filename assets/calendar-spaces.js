@@ -151,8 +151,8 @@ function bpAge(){
 }
 function setupHealthAge(){
  const field=$('calendarHealthAge'),hint=$('calendarHealthAgeHint');if(!field)return;
- field.replaceChildren(new Option('Указать',''));
- for(let n=1;n<=110;n++)field.add(new Option(n+' '+(n%10===1&&n%100!==11?'год':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'года':'лет'),String(n)));
+ field.replaceChildren(new Option('—',''));
+ for(let n=1;n<=110;n++)field.add(new Option(String(n),String(n)));
  let saved='';try{
   saved=localStorage.getItem(BP_AGE_KEY)||'';
   if(!saved){
