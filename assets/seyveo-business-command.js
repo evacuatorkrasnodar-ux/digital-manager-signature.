@@ -2400,37 +2400,43 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   renderChat();renderDirectory();setStatus('Изменение сохранено на этом устройстве.');
   return;
  }
- const file=state.file,purpose=state.filePurpose,barcode=state.scanCode;
- if(!txt&&!file&&!barcode){setStatus('Напишите сообщение или откройте камеру.');return}
- const type=file?.type||'';
- const label=file?(purpose==='shelf'?'📷 Фото выкладки':purpose==='price'?'📷 Фото ценника':
-  purpose==='barcode'?'▥ Фото штрихкода':type.startsWith('video/')?'🎬 Видео':'📎 Вложение'):'';
- const message=[txt,label,barcode?'Штрихкод: '+barcode:''].filter(Boolean).join('\n');
+ const queued=state.files.slice(),file=queued[0]?.file||null,barcode=state.scanCode;
+ if(!txt&&!queued.length&&!barcode){setStatus('Напишите сообщение или добавьте файл.');return}
+ const callSayvi=state.room==='dm-sayvi'||/(^|\\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\\s|[,:.!?]|$)/i.test(txt);
  cameraBusy=true;
  const sendButton=$('svcpChatForm')?.querySelector('[type="submit"]');
  if(sendButton)sendButton.disabled=true;
  try{
-  let mediaId=null;
-  if(file){
-   try{mediaId=await saveMediaLocally(file)}
+  const saved=[];
+  for(const item of queued){
+   let mediaId;
+   try{mediaId=await saveMediaLocally(item.file)}
    catch{
-    setStatus('Файл не удалось сохранить в браузере. Проверьте свободное место и разрешения. Сообщение не отправлено.');
+    setStatus('Не удалось сохранить «'+item.file.name+'». Отправка отменена.');
     return;
    }
+   saved.push({...item,mediaId});
   }
-  const entry={room:state.room,text:message,at:Date.now(),
-   role:state.viewpoint==='elena'?'demo-elena':'self',
-   ...(mediaId?{mediaId,mediaType:type,mediaName:file.name,mediaPurpose:purpose}:{}),
-   ...(state.replyTo?{replyTo:state.replyTo}:{})};
-  const callSayvi=state.room==='dm-sayvi'||/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
-  const messages=[entry];
+  const room=state.room,role=state.viewpoint==='elena'?'demo-elena':'self';
+  const baseText=[txt,barcode?'Штрихкод: '+barcode:''].filter(Boolean).join('\n');
+  const messages=saved.map((item,i)=>{
+   const type=item.file.type||'',purpose=item.purpose;
+   const label=purpose==='shelf'?'📷 Фото выкладки':purpose==='price'?'📷 Фото ценника':
+    purpose==='barcode'?'▥ Фото штрихкода':type.startsWith('video/')?'🎬 Видео':'📎 Вложение';
+   return {room,role,at:Date.now()+i,text:[i===0?baseText:'',label].filter(Boolean).join('\n'),
+    mediaId:item.mediaId,mediaType:type,mediaName:item.file.name,mediaPurpose:purpose,
+    ...(i===0&&state.replyTo?{replyTo:state.replyTo}:{})};
+  });
+  if(!saved.length)messages.push({room,role,at:Date.now(),text:baseText,
+   ...(state.replyTo?{replyTo:state.replyTo}:{})});
   if(callSayvi){
-   if(file){
-    messages.push({room:state.room,role:'sayvi',at:Date.now(),
-     text:'Файл сохранён локально. Я пока не умею анализировать изображения и видео в этом демо. Для проверки выкладки нужны зрение ИИ, инструкции магазина и каталог товаров.'});
+   if(saved.length){
+    messages.push({room,role:'sayvi',at:Date.now()+saved.length+1,
+     text:'Файлы сохранены локально. Анализ вложений и доставка другим участникам пока недоступны.'});
    }else{
     const advice=suggestFromChat(txt);
-    messages.push({room:state.room,role:'sayvi',text:advice.text,at:Date.now(),...(advice.task?{suggestTask:advice.task}:{})});
+    messages.push({room,role:'sayvi',text:advice.text,at:Date.now()+1,
+     ...(advice.task?{suggestTask:advice.task}:{})});
    }
   }
   if(!commitChatMessages(messages))return;
@@ -2438,7 +2444,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   input.value='';cleanupPreview();clearReply();cancelTaskDraft();syncComposerActions();resizeWorkComposer();
   window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();
-  setStatus(mediaId?'Фото/видео или файл сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
+  setStatus(saved.length?'Файлы сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
    barcode?'Код записан локально, но не проверен по каталогу магазина.':
    callSayvi?'Сэйви ответила шаблонной подсказкой, не настоящим ИИ.':'Сообщение сохранено локально, без доставки на другие устройства.');
  }finally{
