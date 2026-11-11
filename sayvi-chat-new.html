@@ -3096,8 +3096,49 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   wrapper.setAttribute('aria-label',ext.toUpperCase()+' файл');
   return wrapper;
  }
- // Local document page previews. No third-party document renderer.
- const docPreviewUrls=new Set();
+ // Render the real first PDF page to a canvas, not a nested PDF viewer
+ // (nested viewers add toolbars, an extra PDF icon, and internal whitespace).
+ // The original file never leaves this device for preview.
+ let pdfThumbnailLibrary=null;
+ function loadPdfThumbnailLibrary(){
+  if(!pdfThumbnailLibrary){
+   pdfThumbnailLibrary=import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs')
+    .then(lib=>{
+     lib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+     return lib;
+    }).catch(error=>{pdfThumbnailLibrary=null;throw error});
+  }
+  return pdfThumbnailLibrary;
+ }
+ async function drawPdfThumbnail(file,canvas,surface){
+  let task=null,pdf=null;
+  try{
+   const lib=await loadPdfThumbnailLibrary();
+   if(!canvas.isConnected)return;
+   const bytes=new Uint8Array(await file.arrayBuffer());
+   if(!canvas.isConnected)return;
+   task=lib.getDocument({data:bytes,useSystemFonts:true});
+   pdf=await task.promise;
+   const first=await pdf.getPage(1);
+   if(!canvas.isConnected)return;
+   const viewport=first.getViewport({scale:1});
+   const targetWidth=310;
+   const scale=targetWidth/viewport.width;
+   const scaled=first.getViewport({scale});
+   canvas.width=Math.max(1,Math.round(scaled.width));
+   canvas.height=Math.max(1,Math.round(scaled.height));
+   const context=canvas.getContext('2d',{alpha:false});
+   if(!context)return;
+   await first.render({canvasContext:context,viewport:scaled}).promise;
+   if(!canvas.isConnected)return;
+   surface.classList.add('sv-preview-loaded');
+  }catch(error){
+   // Keep the original document badge on unsupported/offline browsers.
+   console.debug('SEYVEO: PDF preview unavailable',error);
+  }finally{
+   try{pdf?.destroy()}catch{}
+  }
+ }
  function documentPreviewSurface(file){
   const ext=(file?.name?.split('.').pop()||'').toLowerCase();
   if(!['pdf','docx'].includes(ext))return null;
@@ -3106,21 +3147,15 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   const fallback=document.createElement('span');fallback.className='sv-document-page-fallback';
   fallback.append(makeDocumentIcon(file));page.append(fallback);surface.append(page);
   if(ext==='pdf'){
-   const url=URL.createObjectURL(file);docPreviewUrls.add(url);
-   const frame=document.createElement('iframe');frame.className='sv-document-pdf-frame';
-   frame.title='Первая страница PDF';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
-   frame.src=url+'#page=1&toolbar=0&navpanes=0&scrollbar=0&view=FitH';
-   page.append(frame);
-  }else{
-   const textNode=document.createElement('span');textNode.className='sv-document-word-text';
-   page.append(textNode);
-   // Do not POST documents merely to draw a thumbnail.
-   // The approved on-send document pipeline handles real extraction.
-   // When no locally rendered page exists, show the honest Word badge.
+   const canvas=document.createElement('canvas');canvas.className='sv-document-page-canvas';
+   canvas.setAttribute('aria-hidden','true');page.append(canvas);
+   // Yield until the preview has entered the DOM.
+   requestAnimationFrame(()=>{if(canvas.isConnected)drawPdfThumbnail(file,canvas,surface)});
   }
+  // Word retains its file badge until a fully local first-page renderer exists.
+  // Do not send unsolicited server POST requests to make a thumbnail.
   return surface;
  }
- window.addEventListener('pagehide',()=>{for(const url of docPreviewUrls)URL.revokeObjectURL(url);docPreviewUrls.clear()});
  function clearAttachments(){
   for(const a of pendingAttachments){if(a.preview)URL.revokeObjectURL(a.preview)}
   pendingAttachments=[];
