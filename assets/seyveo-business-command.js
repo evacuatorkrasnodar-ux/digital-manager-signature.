@@ -165,6 +165,10 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
  const displayName=String(name||'Вложение');
  const node=el(onOpen?'button':url?'a':'div','svcp-file-card');
  const detail=svcpFileKind(displayName,type);
+ // Received Word/PDF files are actual locally stored attachments, not fake
+ // document previews. Outgoing documents retain their approved page tiles.
+ const isReceivedDocument=!isOwn&&['pdf','word'].includes(detail.kind);
+ if(isReceivedDocument)node.classList.add('svcp-received-document-card');
  if(isOwn&&sourceFile instanceof File&&['pdf','word'].includes(detail.kind)){
   node.classList.add('svcp-sent-document-tile');
   const preview=el('span','svcp-sent-document-thumb');
@@ -201,7 +205,8 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
  const body=el('span','svcp-file-card-copy');
  const heading=el('span','svcp-file-card-heading');
  heading.append(el('strong','svcp-file-card-name',displayName));
- body.append(heading,el('small','svcp-file-card-type',svcpFileSize(bytes)||detail.label));
+ body.append(heading,el('small','svcp-file-card-type',
+  isReceivedDocument?(detail.kind==='word'?(displayName.toLowerCase().endsWith('.docx')?'DOCX':'DOC'):'PDF'):(svcpFileSize(bytes)||detail.label)));
  node.append(body);
  if(timeNode){
   const status=el('span','svcp-file-card-status');status.append(timeNode);
