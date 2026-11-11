@@ -57,6 +57,31 @@
  background:#202124!important;
  overflow:hidden!important;
 }
+/* A blocked iframe must never leave a giant broken grey rectangle.
+   Loading disappears only after the real tablet confirms it is ready. */
+#sayviPaperSheet > .sayvi-paper-loading{
+ position:absolute!important;inset:9px 0 0!important;z-index:4!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:15px!important;padding:20px!important;
+ background:#202124!important;color:#EBEBEE!important;
+ font:500 13px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:center!important;
+}
+#sayviPaperSheet > .sayvi-paper-loading p{
+ max-width:280px!important;margin:0!important;
+}
+#sayviPaperSheet > .sayvi-paper-loading button{
+ border:0!important;border-radius:12px!important;
+ background:#38383A!important;color:#F7F7F8!important;
+ padding:11px 18px!important;min-height:42px!important;
+ font:600 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ cursor:pointer!important;
+}
+#sayviPaperSheet > .sayvi-paper-loading button:focus-visible{
+ outline:2px solid #FFFFFF!important;outline-offset:2px!important;
+}
+
 #sayviPaperScrim[hidden],
 #sayviPaperSheet[hidden]{
  display:none!important;
