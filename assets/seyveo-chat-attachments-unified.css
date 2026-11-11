@@ -2724,3 +2724,34 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-doc
  writing-mode:horizontal-tb!important;direction:ltr!important;
  letter-spacing:0!important;white-space:nowrap!important;
 }
+
+/* Received work chat files: exact Sayvi-style paper contour, with stable lettering. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card > .svcp-file-badge.svcp-sayvi-document-mark{
+ position:relative!important;display:block!important;flex:0 0 42px!important;
+ width:42px!important;min-width:42px!important;height:46px!important;min-height:46px!important;
+ background:transparent!important;overflow:visible!important;padding:0!important;margin:0!important;
+ color:#3478F6!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card > .svcp-file-badge.svcp-sayvi-document-mark.svcp-file-badge--pdf{
+ color:#FF4545!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge.svcp-sayvi-document-mark > svg{
+ position:absolute!important;left:5px!important;top:2px!important;
+ width:32px!important;height:40px!important;
+ display:block!important;overflow:visible!important;fill:none!important;stroke:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge.svcp-sayvi-document-mark > svg > path{
+ fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge.svcp-sayvi-document-mark > .svcp-sayvi-document-letter{
+ position:absolute!important;display:block!important;z-index:1!important;
+ left:50%!important;top:28px!important;transform:translateX(-50%)!important;
+ width:auto!important;height:auto!important;min-width:0!important;
+ font:750 11px/13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:0!important;white-space:nowrap!important;text-align:center!important;
+ color:currentColor!important;background:transparent!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-badge.svcp-sayvi-document-mark.svcp-file-badge--pdf > .svcp-sayvi-document-letter{
+ top:26px!important;font-size:9px!important;line-height:12px!important;
+}
