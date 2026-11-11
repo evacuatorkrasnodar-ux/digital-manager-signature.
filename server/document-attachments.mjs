@@ -5,6 +5,7 @@ import {spawn} from 'node:child_process';
 import {resolve,dirname,extname,join} from 'node:path';
 import {existsSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
+import {extractDocxText} from './docx-text.mjs';
 
 const BASE=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const SCRIPT=resolve(BASE,'server','document-reader.py');
@@ -66,5 +67,7 @@ export async function readDocumentUpload(req){
  if(!file.length||file.length>MAX)throw Error('large');
  if(ext==='.pdf'&&!file.subarray(0,5).equals(Buffer.from('%PDF-')))throw Error('unsupported');
  if(ext!=='.pdf'&&!file.subarray(0,2).equals(Buffer.from('PK')))throw Error('unsupported');
+ // DOCX needs no Python installation: parse text safely with built-in Node.
+ if(ext==='.docx')return extractDocxText(file);
  return extractDocument(file,ext);
 }
