@@ -615,7 +615,8 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
      }
     });
     if(documentMode&&!res.destroyed){
-     const output=hasFalseDocumentRefusal(documentText)?recoverDocumentRequest(message.message):documentText.trim();
+     const output=hasFalseDocumentRefusal(documentText)||hasRepeatedKeyRun(documentText)
+      ?recoverDocumentRequest(message.message):documentText.trim();
      res.write(JSON.stringify({type:'delta',text:output})+'\n');
     }
     console.log('[SEYVEO Timing] First text:',firstTextMs,'ms; complete:',Date.now()-startedAt,'ms');
