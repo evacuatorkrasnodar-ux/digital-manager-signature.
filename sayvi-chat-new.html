@@ -2025,7 +2025,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   const first=String(value||'').split('\n')
    .map(x=>x.trim().replace(/^#{1,4}\s+/u,'').replace(/^\*\*|\*\*$/gu,''))
    .find(Boolean)||'Документ';
-  let name=/^(?:\S+[,!]?\s*)?здравствуйте\b|^добрый (?:день|вечер)|^уважаем/iu.test(first)?'Письмо':first;
+  let name=/^(?:\S+[,!]?\s*)?здравствуйте(?![а-яё])|^добрый (?:день|вечер)|^уважаем/iu.test(first)?'Письмо':first;
   name=name.replace(/[^a-zа-яё\d\s_.-]/giu,' ')
    .replace(/\s+/gu,'_').replace(/[_.-]{2,}/gu,'_')
    .replace(/^[_\s.]+|[_\s.]+$/gu,'').slice(0,48);
@@ -2841,6 +2841,14 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   return window.SEYVEO_RICH_REPLIES?.raw(bubble)??bubble?.textContent??'';
  }
  function renderAssistantText(bubble,source){
+  // During token streaming repaint at most ~12 times/second on older phones.
+  // The complete answer is always painted on the final stream event.
+  const streaming=!!active&&bubble.closest('.turn')?.classList.contains('is-streaming');
+  if(streaming&&Date.now()-(bubble._sayviRichLastPaint||0)<85){
+   bubble._sayviRawText=String(source);
+   return;
+  }
+  bubble._sayviRichLastPaint=Date.now();
   const draft=documentDraftOnly(source);
   const feedback=bubble.closest('.turn')?.querySelector('.sv-action-feedback');
   if(window.SEYVEO_RICH_REPLIES?.render){
@@ -3500,7 +3508,11 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    }
   }finally{
    streamingTurn?.classList.remove('is-streaming','is-fresh');
-   if(done&&answer.trim())showReplySuggestions(answers.get(replyId),answer);
+   if(done&&answer.trim()){
+    const completed=answers.get(replyId);
+    if(completed)renderAssistantText(completed,answer);
+    showReplySuggestions(completed,answer);
+   }
    stopThinking();
    if(active===controller){active=null;updateControls()}
   }
