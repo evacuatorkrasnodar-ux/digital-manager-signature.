@@ -3139,6 +3139,40 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    try{pdf?.destroy()}catch{}
   }
  }
+ // Browser-only DOCX preview: render the first page, not a Word file icon.
+ // Dependencies are fetched on demand; document bytes remain in this browser.
+ let docxThumbnailPromise=null;
+ function loadDocxThumbnailLibrary(){
+  if(docxThumbnailPromise)return docxThumbnailPromise;
+  const script=url=>new Promise((resolve,reject)=>{
+   const tag=document.createElement('script');tag.src=url;tag.async=true;
+   tag.onload=resolve;tag.onerror=()=>reject(Error('DOCX preview module unavailable'));
+   document.head.append(tag);
+  });
+  docxThumbnailPromise=(async()=>{
+   if(!window.JSZip)await script('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
+   if(!window.docx?.renderAsync)await script('https://cdn.jsdelivr.net/npm/docx-preview@0.4.1/dist/docx-preview.min.js');
+   if(!window.docx?.renderAsync)throw Error('DOCX renderer missing');
+   return window.docx;
+  })().catch(e=>{docxThumbnailPromise=null;throw e});
+  return docxThumbnailPromise;
+ }
+ async function drawWordThumbnail(file,target,surface){
+  try{
+   const renderer=await loadDocxThumbnailLibrary();
+   if(!target.isConnected)return;
+   // The rendered DOCX is untrusted content: do not execute scripts from it.
+   await renderer.renderAsync(file,target,target,{
+    className:'sv-thumb-docx',inWrapper:true,breakPages:true,
+    ignoreLastRenderedPageBreak:false,renderHeaders:true,renderFooters:true,
+    useBase64URL:true
+   });
+   if(!target.isConnected)return;
+   surface.classList.add('sv-preview-loaded');
+  }catch(error){
+   console.debug('SEYVEO: local DOCX preview unavailable',error);
+  }
+ }
  function documentPreviewSurface(file){
   const ext=(file?.name?.split('.').pop()||'').toLowerCase();
   if(!['pdf','docx'].includes(ext))return null;
@@ -3152,8 +3186,12 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    // Yield until the preview has entered the DOM.
    requestAnimationFrame(()=>{if(canvas.isConnected)drawPdfThumbnail(file,canvas,surface)});
   }
-  // Word retains its file badge until a fully local first-page renderer exists.
-  // Do not send unsolicited server POST requests to make a thumbnail.
+  if(ext==='docx'){
+   const preview=document.createElement('span');preview.className='sv-document-docx-render';
+   page.append(preview);
+   requestAnimationFrame(()=>{if(preview.isConnected)drawWordThumbnail(file,preview,surface)});
+  }
+  // Keep the real file type badge until a page renders successfully.
   return surface;
  }
  function clearAttachments(){
