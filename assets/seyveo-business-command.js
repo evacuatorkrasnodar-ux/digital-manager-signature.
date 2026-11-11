@@ -163,6 +163,19 @@ function svcpFileSize(bytes){
  const value=bytes<1048576?bytes/1024:bytes/1048576;
  return value.toLocaleString('ru-RU',{maximumFractionDigits:1})+(bytes<1048576?' КБ':' МБ');
 }
+// Recipient-only document artwork. Exact SVG from the approved Sayvi 220x60
+// card; sending-side document previews retain their existing component.
+function svcpIncomingDocumentIcon(kind){
+ const mark=kind==='pdf'?'PDF':'W';
+ const icon=el('span','svcp-incoming-document-icon svcp-incoming-document-icon--'+kind);
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 28 34');
+ svg.setAttribute('aria-hidden','true');
+ svg.innerHTML='<path d="M6 2.5h11l5 5V21M17 2.5V8h5M6 2.5v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><text x="14" y="29" text-anchor="middle" font-size="'+(kind==='pdf'?'9':'11')+'" font-weight="750" fill="currentColor">'+mark+'</text>';
+ icon.append(svg);
+ icon.setAttribute('aria-hidden','true');
+ return icon;
+}
 function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=false,sourceFile=null){
  const displayName=String(name||'Вложение');
  const node=el(onOpen?'button':url?'a':'div','svcp-file-card');
@@ -201,8 +214,8 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
   }
   return node;
  }
- const badge=svcpFileBadge(displayName,type);
- // Keep the SVG document contour; do not replace it with a text badge.
+ const badge=isReceivedDocument?svcpIncomingDocumentIcon(detail.kind):svcpFileBadge(displayName,type);
+ // Sender preview and task attachments are unchanged; recipients see Sayvi's icon.
  node.append(badge);
  const body=el('span','svcp-file-card-copy');
  const heading=el('span','svcp-file-card-heading');
