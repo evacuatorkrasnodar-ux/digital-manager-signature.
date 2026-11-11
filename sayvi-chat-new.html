@@ -543,22 +543,6 @@ main.sv-file-drag #sayviField::after{
 }
 main.sv-file-drag #sayviField textarea{opacity:.25}
 
-/* Quiet drawing canvas: the pen operates on actual pointer events. */
-#sayviDrawing[hidden]{display:none!important}
-#sayviDrawing{position:absolute;z-index:20;inset:0;background:var(--sayvi-scene);color:var(--sayvi-text);overflow:hidden}
-.sv-draw-shell{width:100%;height:100%;max-width:900px;margin:auto;display:flex;flex-direction:column;gap:12px;padding:calc(12px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
-.sv-draw-header{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
-.sv-draw-header strong{font-size:16px;font-weight:560;letter-spacing:-.02em}
-.sv-draw-header button{border:0;background:transparent;color:var(--sayvi-text);font:500 14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;min-height:40px;padding:0 7px}
-#sayviDrawAttach{color:var(--sayvi-control-text);font-weight:600}
-.sv-draw-tools{display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none}
-.sv-draw-tools button{border:0;background:var(--sayvi-glass);color:var(--sayvi-text);border-radius:999px;min-height:35px;padding:0 12px;font:450 13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;white-space:nowrap}
-.sv-draw-tools button[aria-pressed="true"]{background:var(--sayvi-pressed);font-weight:650}
-.sv-draw-board{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:18px;background:#f8f9f9}
-#sayviDrawCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
-.sv-draw-hint{margin:0;color:var(--sayvi-secondary);font:400 11px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:center}
-
-
 /* Sent documents use the same file-type artwork as the attachment tray. */
 .sv-sent-files{display:flex;flex-direction:column;gap:5px;max-width:min(85%,520px);align-self:flex-end;margin-top:1px}
 .sv-sent-file{display:flex;align-items:center;gap:10px;min-height:57px;padding:6px 10px;border-radius:15px;background:var(--sayvi-glass);color:var(--sayvi-text);-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%)}
@@ -1281,6 +1265,15 @@ html body main #sayviMessages{
 #sayviMessages .sv-reply-actions > .sv-reply-action:active{
  color:var(--sayvi-text)!important;opacity:1!important;
 }
+#sayviMessages .sv-reply-actions{
+ flex-wrap:nowrap!important;gap:2px!important;max-width:100%!important;
+}
+#sayviMessages .sv-reply-actions > .sv-reply-action{
+ flex:0 0 35px!important;width:35px!important;min-width:35px!important;
+ height:36px!important;min-height:36px!important;
+}
+#sayviMessages .sv-reply-actions > .sv-reply-action[hidden]{display:none!important}
+
 #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads{
  display:flex!important;align-items:center!important;flex-wrap:wrap!important;
  gap:6px!important;max-width:min(330px,100%)!important;
@@ -1510,14 +1503,6 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  <button type="button" id="sayviSpeechStop" aria-label="Остановить диктовку"><span class="sv-stop-square" aria-hidden="true"></span></button>
  <button type="button" id="sayviSpeechSend" aria-label="Отправить распознанный текст"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-5.5 5.5M12 5l5.5 5.5"/></svg></button>
 </div>
-<section id="sayviDrawing" hidden aria-label="Нарисовать мысль" role="dialog" aria-modal="true">
- <div class="sv-draw-shell">
-  <header class="sv-draw-header"><button id="sayviDrawCancel" type="button">Назад</button><strong>Нарисовать мысль</strong><button id="sayviDrawAttach" type="button">Прикрепить</button></header>
-  <div class="sv-draw-tools" aria-label="Инструменты рисования"><button type="button" data-draw-tool="pen" aria-pressed="true">Перо</button><button type="button" data-draw-tool="eraser" aria-pressed="false">Ластик</button><button type="button" id="sayviDrawUndo">Отменить</button><button type="button" id="sayviDrawClear">Очистить</button></div>
-  <div class="sv-draw-board"><canvas id="sayviDrawCanvas" aria-label="Область рисования пальцем или стилусом"></canvas></div>
-  <p class="sv-draw-hint">Рисуй пальцем или стилусом. На Samsung S Pen учитывается сила нажатия.</p>
- </div>
-</section>
 <div id="sayviAttachmentTray" aria-label="Выбранные вложения" hidden></div>
 <input type="file" id="sayviPickPhoto" accept="image/jpeg,image/png,image/webp" multiple hidden aria-label="Выбрать фото">
 <input type="file" id="sayviPickFile" accept=".txt,.md,.markdown,.csv,.json,.xml,.log,.html,.css,.js,.pdf,.docx,.xlsx,.pptx,image/png,image/jpeg,image/webp,text/plain,application/pdf" multiple hidden aria-label="Выбрать файлы">
@@ -2497,50 +2482,11 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   print.hidden=true;
   downloads.append(preview,word,pdf);
   options.append(print);
-  for(const option of options.querySelectorAll('button')){
-   if(option.querySelector('span'))continue;
-   const label=document.createElement('span');
-   label.textContent=option.getAttribute('aria-label')||option.title;
-   option.append(label);
-  }
-  const toggle=document.createElement('button');
-  toggle.type='button';toggle.className='sv-reply-menu-toggle';
-  toggle.setAttribute('aria-label','Действия с ответом');
-  toggle.setAttribute('aria-expanded','false');
-  toggle.title='Действия с ответом';
-  toggle.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.65"/><circle cx="12" cy="12" r="1.65"/><circle cx="19" cy="12" r="1.65"/></svg>';
-  const close=()=>{actionPanel.hidden=true;toggle.setAttribute('aria-expanded','false')};
-  toggle.addEventListener('click',()=>{
-   const shouldOpen=actionPanel.hidden;
-   for(const other of list.querySelectorAll('.sv-reply-action-menu:not([hidden])')){
-    other.hidden=true;
-    other.closest('.turn')?.querySelector('.sv-reply-menu-toggle')?.setAttribute('aria-expanded','false');
-   }
-   if(shouldOpen){
-    actionPanel.hidden=false;toggle.setAttribute('aria-expanded','true');
-    requestAnimationFrame(()=>actionPanel.scrollIntoView({block:'nearest',behavior:'auto'}));
-   }else close();
-  });
-  actionPanel.addEventListener('click',event=>{
-   if(event.target.closest('button'))close();
-  });
-  row.append(copyQuick,play,toggle);
-  actionPanel.append(options);
-  turn.append(row,downloads,actionPanel,feedback);
+  // All reply actions are compact icons directly under every answer.
+  // Keep the existing handlers and aria-labels; no second action sheet.
+  row.append(copyQuick,play,...options.querySelectorAll('button'));
+  turn.append(row,downloads,feedback);
  }
- // A single dismiss listener serves every reply menu, including saved conversations.
- function dismissReplyMenus(){
-  for(const panel of list.querySelectorAll('.sv-reply-action-menu:not([hidden])')){
-   panel.hidden=true;
-   panel.closest('.turn')?.querySelector('.sv-reply-menu-toggle')?.setAttribute('aria-expanded','false');
-  }
- }
- document.addEventListener('pointerdown',event=>{
-  if(!event.target.closest('.sv-reply-actions,.sv-reply-action-menu'))dismissReplyMenus();
- },{passive:true});
- document.addEventListener('keydown',event=>{
-  if(event.key==='Escape')dismissReplyMenus();
- });
  window.addEventListener('pagehide',stopReplySpeech);
 
  const ownSheet=document.getElementById('sayviOwnSheet');
@@ -3153,105 +3099,14 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   return {segments,uploaded};
  }
 
- // A real 2D sketch board: pressure-sensitive Pointer Events for Samsung S Pen
- // with finger/mouse fallback. Strokes are rasterized only when attached.
- const drawPanel=document.getElementById('sayviDrawing');
- const drawCanvas=document.getElementById('sayviDrawCanvas');
- const drawBoard=drawCanvas.parentElement;
- const drawCtx=drawCanvas.getContext('2d');
- const drawUndo=document.getElementById('sayviDrawUndo');
- const drawAttach=document.getElementById('sayviDrawAttach');
- let drawTool='pen',drawStrokes=[],drawCurrent=null,drawActivePointer=null,drawSize={w:0,h:0};
- function drawPoint(event){
-  const r=drawCanvas.getBoundingClientRect();
-  return {x:Math.max(0,Math.min(1,(event.clientX-r.left)/Math.max(1,r.width))),
-          y:Math.max(0,Math.min(1,(event.clientY-r.top)/Math.max(1,r.height))),
-          p:event.pointerType==='pen'&&event.pressure>0?event.pressure:.5};
- }
- function drawRepaint(){
-  if(!drawCtx)return;
-  const {w,h}=drawSize;if(!w||!h)return;
-  drawCtx.clearRect(0,0,w,h);
-  drawCtx.fillStyle='#f8f9f9';drawCtx.fillRect(0,0,w,h);
-  for(const stroke of [...drawStrokes,...(drawCurrent?[drawCurrent]:[])]){
-   const points=stroke.points;if(!points.length)continue;
-   drawCtx.lineCap='round';drawCtx.lineJoin='round';
-   drawCtx.strokeStyle=stroke.tool==='eraser'?'#f8f9f9':'#27343c';
-   drawCtx.fillStyle=drawCtx.strokeStyle;
-   if(points.length===1){
-    const p=points[0],rad=(stroke.tool==='eraser'?12:1.6)*(.5+p.p)/2;
-    drawCtx.beginPath();drawCtx.arc(p.x*w,p.y*h,rad,0,Math.PI*2);drawCtx.fill();continue;
-   }
-   for(let i=1;i<points.length;i++){
-    const a=points[i-1],b=points[i];
-    drawCtx.lineWidth=stroke.tool==='eraser'?24:Math.max(1.1,1.2+3*b.p);
-    drawCtx.beginPath();drawCtx.moveTo(a.x*w,a.y*h);drawCtx.lineTo(b.x*w,b.y*h);drawCtx.stroke();
-   }
-  }
-  drawUndo.disabled=drawStrokes.length===0;
-  drawAttach.disabled=drawStrokes.length===0;
- }
- function drawResize(){
-  if(drawPanel.hidden)return;
-  const r=drawBoard.getBoundingClientRect();
-  const w=Math.max(1,Math.round(r.width)),h=Math.max(1,Math.round(r.height));
-  if(!w||!h)return;
-  drawSize={w,h};
-  const dpr=Math.min(window.devicePixelRatio||1,2);
-  drawCanvas.width=Math.round(w*dpr);drawCanvas.height=Math.round(h*dpr);
-  drawCtx.setTransform(dpr,0,0,dpr,0,0);
-  drawRepaint();
- }
- function drawOpen(){
-  closeMenu();drawPanel.hidden=false;drawStrokes=[];drawCurrent=null;drawActivePointer=null;
-  drawTool='pen';document.querySelectorAll('[data-draw-tool]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.drawTool==='pen')));
-  drawResize();
- }
- function drawClose(){drawPanel.hidden=true;drawCurrent=null;drawActivePointer=null}
- document.getElementById('sayviDrawIdea').addEventListener('click',drawOpen);
- document.getElementById('sayviDrawCancel').addEventListener('click',drawClose);
- document.querySelectorAll('[data-draw-tool]').forEach(b=>b.addEventListener('click',()=>{
-  drawTool=b.dataset.drawTool;
-  document.querySelectorAll('[data-draw-tool]').forEach(item=>item.setAttribute('aria-pressed',String(item===b)));
- }));
- drawCanvas.addEventListener('pointerdown',event=>{
-  if(drawActivePointer!==null||!event.isPrimary&&event.pointerType!=='mouse')return;
-  event.preventDefault();
-  drawActivePointer=event.pointerId;drawCurrent={tool:drawTool,points:[drawPoint(event)]};
-  try{drawCanvas.setPointerCapture(event.pointerId)}catch{}
-  drawRepaint();
- });
- drawCanvas.addEventListener('pointermove',event=>{
-  if(drawActivePointer!==event.pointerId||!drawCurrent)return;
-  event.preventDefault();
-  const coalesced=typeof event.getCoalescedEvents==='function'?event.getCoalescedEvents():[];
-  for(const e of coalesced.length?coalesced:[event])drawCurrent.points.push(drawPoint(e));
-  drawRepaint();
- });
- function drawEnd(event){
-  if(drawActivePointer!==event.pointerId)return;
-  if(drawCurrent){drawCurrent.points.push(drawPoint(event));drawStrokes.push(drawCurrent)}
-  drawCurrent=null;drawActivePointer=null;drawRepaint();
- }
- drawCanvas.addEventListener('pointerup',drawEnd);
- drawCanvas.addEventListener('pointercancel',event=>{
-  if(drawActivePointer!==event.pointerId)return;
-  drawCurrent=null;drawActivePointer=null;drawRepaint();
- });
- drawUndo.addEventListener('click',()=>{drawStrokes.pop();drawRepaint()});
- document.getElementById('sayviDrawClear').addEventListener('click',()=>{drawStrokes=[];drawRepaint()});
- window.addEventListener('resize',drawResize,{passive:true});
- document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&!drawPanel.hidden){event.preventDefault();drawClose()}
- });
- drawAttach.addEventListener('click',()=>{
-  if(!drawStrokes.length)return;
-  if(pendingAttachments.length>=6){status.textContent='Можно прикрепить не более 6 файлов.';drawClose();return}
-  drawCanvas.toBlob(blob=>{
-   if(!blob){status.textContent='Не удалось сохранить рисунок';return}
-   const file=new File([blob],'Моя мысль '+new Date().toLocaleDateString('ru-RU')+'.png',{type:'image/png'});
-   addAttachments([file]);drawClose();
-  },'image/png');
+ // The only drawing editor is SEYVEO's approved Notebook tablet.
+ document.getElementById('sayviDrawIdea').addEventListener('click',()=>{
+  closeMenu();
+  try{
+   sessionStorage.setItem('seyveo.sayvi.paper-handoff.v1',
+    JSON.stringify({at:Date.now(),state:'open',draft:input.value.slice(0,8000)}));
+   window.location.assign('./index.html?seyveo-draw=chat');
+  }catch{status.textContent='Не удалось открыть планшет рисования.'}
  });
  function closeMenu(){
   menu.hidden=true;scene.classList.remove('sayvi-menu-open');
@@ -3873,6 +3728,24 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     status.textContent=message.intent==='create'
      ?'Задача для Сэйви подготовлена. Нажмите отправку, когда будете готовы.'
      :'Задача подготовлена. Прикрепите документ кнопкой «+», затем отправьте сообщение.';
+   }
+  }
+ }catch{}
+ // Recover a drawing from the approved SEYVEO Paper tablet into attachments.
+ // Never submit it to Sayvi automatically.
+ try{
+  const raw=sessionStorage.getItem('seyveo.sayvi.paper-handoff.v1');
+  const item=raw?JSON.parse(raw):null;
+  if(item&&Date.now()-item.at<15*60*1000&&(item.state==='ready'||item.state==='cancelled')){
+   sessionStorage.removeItem('seyveo.sayvi.paper-handoff.v1');
+   if(typeof item.draft==='string'&&!input.value)input.value=item.draft.slice(0,8000);
+   if(item.state==='ready'){
+    (async()=>{
+     const image=await window.SEYVEO_CHAT_FILES?.restore(item.ref);
+     if(image&&image.type==='image/png'&&pendingAttachments.length<6)
+      addAttachments([image]);
+     else status.textContent='Рисунок не удалось восстановить. Повтори рисование.';
+    })().catch(()=>{status.textContent='Не удалось прикрепить рисунок.'});
    }
   }
  }catch{}
