@@ -217,3 +217,57 @@ main.sayvi-menu-open #sayviNoticePanel{
   animation:none!important;transition:none!important;
  }
 }
+
+/* 2026-11-11 · Approved compact premium graphite popover only.
+   Do not affect the input dock, the bell, or notification delivery. */
+html body main #sayviNoticePanel{
+ box-sizing:border-box!important;
+ width:min(330px,calc(100% - 24px))!important;
+ max-height:min(280px,43dvh)!important;
+ padding:8px!important;
+ border:0!important;border-radius:16px!important;
+ background:#38383A!important;background-image:none!important;
+ color:#F6F7F8!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body main #sayviNoticePanel .sv-notice-head{
+ padding:4px 6px 8px!important;
+ gap:8px!important;
+}
+html body main #sayviNoticePanel .sv-notice-head strong{
+ color:#F6F7F8!important;font-size:13px!important;font-weight:620!important;
+}
+html body main #sayviNoticePanel .sv-notice-actions{
+ gap:0!important;
+}
+html body main #sayviNoticePanel .sv-notice-action{
+ color:#D5D7DB!important;
+ font-size:12px!important;
+ min-height:40px!important;
+ padding:6px 8px!important;
+}
+html body main #sayviNoticePanel .sv-notice-action[hidden]{
+ display:none!important;
+}
+html body main #sayviNoticePanel .sv-notice-items{
+ gap:0!important;
+}
+html body main #sayviNoticePanel .sv-notice-item{
+ box-sizing:border-box!important;
+ padding:11px 5px!important;
+ border:0!important;
+ border-top:1px solid rgba(243,245,248,.12)!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+html body main #sayviNoticePanel .sv-notice-item p{
+ color:#F6F7F8!important;
+ font-size:12px!important;font-weight:510!important;line-height:1.45!important;
+}
+html body main #sayviNoticePanel .sv-notice-item time{
+ color:#C5C6CA!important;font-size:10px!important;
+}
+html body main #sayviNoticePanel .sv-notice-empty{
+ color:#C5C6CA!important;font-size:12px!important;
+}
