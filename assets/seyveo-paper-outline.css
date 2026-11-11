@@ -1,0 +1,50 @@
+/* SEYVEO Paper · fine hairline for the real five-tool graphite capsule.
+   No duplicate controls and no change to tools, shortcuts or canvas geometry. */
+html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
+ border:1px solid rgba(245,246,250,.24)!important;
+ border-radius:16px!important;
+ background:#38383A!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+/* When opened from Sayvi, the existing full-viewport tablet lives inside
+   an iframe whose viewport is just the bottom sheet. */
+html.sv-sayvi-paper-embed,
+html.sv-sayvi-paper-embed body{
+ box-sizing:border-box!important;
+ width:100%!important;height:100%!important;
+ margin:0!important;overflow:hidden!important;
+ background:#202124!important;
+}
+html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open]{
+ position:fixed!important;
+ inset:0!important;
+ width:100vw!important;min-width:100vw!important;max-width:100vw!important;
+ height:100dvh!important;min-height:100dvh!important;max-height:100dvh!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:#202124!important;
+ box-shadow:none!important;
+}
+html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio::backdrop{
+ background:transparent!important;
+}
+html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+ min-height:53px!important;
+ padding-top:3px!important;
+ padding-bottom:3px!important;
+}
+html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open] > .sv-paper-bottom{
+ padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important;
+ height:72px!important;min-height:72px!important;
+}
+html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open] #notePaperStage{
+ background:#202124!important;
+}
+html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-newdock-settings-panel:not([hidden]),
+html.sv-sayvi-paper-embed #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu:not([hidden]){
+ max-height:min(68dvh,350px)!important;
+ overflow-y:auto!important;
+}
