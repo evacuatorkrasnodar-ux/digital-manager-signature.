@@ -1299,11 +1299,26 @@ html body main #sayviMessages{
 #sayviMessages .turn[data-role="assistant"] > .sv-document-downloads button svg{
  flex:0 0 17px;width:17px;height:17px;
 }
-#sayviMessages .sv-reply-action-menu .sv-download-print{
+/* Print matches all menu actions: 17px icon, 44px row, no unbounded SVG. */
+#sayviMessages .sv-reply-menu-options > .sv-download-print{
  display:flex!important;justify-content:flex-start!important;
- align-items:center!important;min-height:44px!important;gap:8px!important;
- padding:8px!important;border:0!important;background:transparent!important;
- color:#F6F7F8!important;font:500 12px/1.2 system-ui,sans-serif!important;
+ align-items:center!important;width:100%!important;min-width:0!important;
+ height:auto!important;min-height:44px!important;gap:8px!important;
+ padding:9px 8px!important;margin:0!important;
+ border:0!important;border-radius:10px!important;background:transparent!important;
+ color:#F6F7F8!important;opacity:1!important;
+ font:500 12px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;
+}
+#sayviMessages .sv-reply-menu-options > .sv-download-print[hidden]{display:none!important}
+#sayviMessages .sv-reply-menu-options > .sv-download-print svg{
+ display:block!important;flex:0 0 17px!important;
+ width:17px!important;height:17px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.5!important;
+}
+#sayviMessages .sv-reply-menu-options > .sv-download-print span{
+ display:block!important;flex:1!important;min-width:0!important;
+ white-space:normal!important;overflow-wrap:break-word!important;
 }
 
 /* The approved Sayvi dock and its icons are owned exclusively by the pre-existing
@@ -1996,7 +2011,8 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    docx:'<path d="M6 2.5h9l4 4V21H6zM15 2.5V7h4M8.5 11l1.8 6 1.7-4 1.7 4 1.8-6"/>',
   globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-3 3-4.4 6-4.4 9s1.4 6 4.4 9M12 3c3 3 4.4 6 4.4 9s-1.4 6-4.4 9"/>',
   speak:'<path d="M4 9v6h4l5 4V5L8 9H4zM16 9a5 5 0 0 1 0 6M18.5 6a9 9 0 0 1 0 12"/>',
-  share:'<path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13.5v5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5v-5"/>'
+  share:'<path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13.5v5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5v-5"/>',
+  print:'<path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7zM17 11h1"/>'
  };
  function miniAction(icon,label,callback){
   const b=document.createElement('button');b.type='button';b.className='sv-reply-action';
@@ -2466,9 +2482,9 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   preview.className='sv-download-preview';
   preview.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Смотреть</span>';
   preview.addEventListener('click',()=>previewSayviDocument(bubble.textContent,feedback));
-  const print=document.createElement('button');print.type='button';print.className='sv-download-print';
-  print.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7zM17 11h1"/></svg><span>Печать</span>';
-  print.addEventListener('click',()=>{
+  // Match the other menu actions: icon-only SVG with a normal button label.
+  // Printing is relevant only when the reply contains a prepared document.
+  const print=miniAction('print','Печать',()=>{
    const draft=documentDraftOnly(bubble.textContent);
    if(!draft){feedback.textContent='Нет готового документа для печати';return}
    const warnings=documentDateWarnings(draft),missing=documentMissingFields(draft);
@@ -2477,6 +2493,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    ].join('\\n')+'\\n\\nВсё равно распечатать?'))return;
    printSayviDocument(draft,feedback);
   });
+  print.hidden=true;
   downloads.append(preview,word,pdf);
   options.append(print);
   for(const option of options.querySelectorAll('button')){
@@ -2908,6 +2925,8 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
      const preceding=turn?.previousElementSibling;
      const request=preceding?.dataset.role==='user'?preceding.textContent:'';
      downloadRow.hidden=!documentDraftOnly(message);
+     const printOption=turn?.querySelector('.sv-download-print');
+     if(printOption)printOption.hidden=downloadRow.hidden;
     }
    }
   else bubble.textContent=message;
