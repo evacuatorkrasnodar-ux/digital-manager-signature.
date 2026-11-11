@@ -3867,18 +3867,20 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   }
   requestAnimationFrame(()=>updateSoftScrollEdge(attachmentTray));
  }
+ const SAYVI_ATTACHMENT_LIMIT=4;
+ const SAYVI_ATTACHMENT_LIMIT_NOTICE='Превышен лимит: Сэйви принимает до 4 вложений за одно сообщение — фото и документы вместе. Остальные отправь следующим сообщением.';
+ function showAttachmentLimitNotice(){
+  // Reuse the approved (!) system-notification button and its graphite panel.
+  status.textContent=SAYVI_ATTACHMENT_LIMIT_NOTICE;
+  document.dispatchEvent(new CustomEvent('seyveo:sayvi-notice',{
+   detail:{message:SAYVI_ATTACHMENT_LIMIT_NOTICE,severity:'warning'}
+  }));
+ }
  function addAttachments(files){
   for(const file of Array.from(files||[])){
-   if(pendingAttachments.length>=12){status.textContent='Можно выбрать до 12 файлов за раз.';break}
-   // Vision accepts at most six photos in a single message; document tiles
-   // may still use the remaining slots. Enforce the real API limit early.
-   if(/^image\/(?:png|jpeg|webp)$/i.test(file.type)&&
-      pendingAttachments.filter(entry=>/^image\/(?:png|jpeg|webp)$/i.test(entry.file.type)).length>=6){
-    status.textContent='За один раз можно отправить до 6 фотографий. Остальные добавь следующим сообщением.';
-    continue;
-   }
-   if(file.size>8*1024*1024){status.textContent='Файл '+file.name+' больше 8 МБ.';continue}
    if(pendingAttachments.some(a=>a.file.name===file.name&&a.file.size===file.size&&a.file.lastModified===file.lastModified))continue;
+   if(pendingAttachments.length>=SAYVI_ATTACHMENT_LIMIT){showAttachmentLimitNotice();break}
+   if(file.size>8*1024*1024){status.textContent='Файл '+file.name+' больше 8 МБ.';continue}
    const preview=/^image\//i.test(file.type)?URL.createObjectURL(file):null;
    pendingAttachments.push({file,preview});
   }
@@ -4076,8 +4078,8 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  document.addEventListener('seyveo:sayvi-paper-attach',event=>{
   const file=event.detail?.file;
   if(!(file instanceof File)||file.type!=='image/png')return;
-  if(pendingAttachments.length>=12){
-   status.textContent='Сначала освободи место для рисунка: можно прикрепить до 12 файлов.';
+  if(pendingAttachments.length>=SAYVI_ATTACHMENT_LIMIT){
+   showAttachmentLimitNotice();
    return;
   }
   addAttachments([file]);
@@ -4752,7 +4754,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    if(item.state==='ready'){
     (async()=>{
      const image=await window.SEYVEO_CHAT_FILES?.restore(item.ref);
-     if(image&&image.type==='image/png'&&pendingAttachments.length<6)
+     if(image&&image.type==='image/png')
       addAttachments([image]);
      else status.textContent='Рисунок не удалось восстановить. Повтори рисование.';
     })().catch(()=>{status.textContent='Не удалось прикрепить рисунок.'});
