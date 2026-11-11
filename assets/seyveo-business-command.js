@@ -235,6 +235,7 @@ function svcpOpenDocument(file){
  const ext=file.name.split('.').pop().toLowerCase();
  const kind=svcpFileKind(file.name,file.type).kind;
  const url=URL.createObjectURL(file),last=document.activeElement;
+ let pdfLoadingTask=null,pdfDoc=null,pdfObserver=null;
  const sheet=el('section','svcp-doc-overlay');
  if(kind==='word'||kind==='text')sheet.classList.add('svcp-doc-overlay--paper');
  if(['word','pdf','text'].includes(kind))sheet.classList.add('svcp-doc-overlay--document');
@@ -252,13 +253,109 @@ function svcpOpenDocument(file){
  const say=value=>{if(live)info.textContent=value};
  let preview;
  if(kind==='pdf'){
-  preview=el('iframe','svcp-doc-pdf');preview.title='PDF '+file.name;preview.src=url;
+  // Render PDF pages inside SEYVEO rather than the browser PDF plugin,
+  // which draws non-styleable horizontal and vertical scrollbars.
+  preview=el('div','svcp-doc-pdf-pages');
+  preview.setAttribute('role','document');
+  preview.setAttribute('aria-label','PDF '+file.name);
+  preview.append(el('p','svcp-doc-pdf-progress','Открываю PDF…'));
  }else if(kind==='image'){
   preview=el('img','svcp-doc-image');preview.src=url;preview.alt=file.name;
  }else{
   preview=el('pre','svcp-doc-text',kind==='word'?'Читаю документ…':'Открываю файл…');
  }
  body.append(preview);
+ async function renderPdfPages(){
+  if(kind!=='pdf'||!live)return;
+  const fallback=()=>{
+   if(!live||!preview.isConnected)return;
+   // No dependency should make a document unreadable: retain native fallback.
+   // Clip only the browser-owned scrollbar edges, not the PDF content or touch input.
+   pdfObserver?.disconnect();pdfObserver=null;
+   const clip=el('div','svcp-doc-pdf-native-clip');
+   const frame=el('iframe','svcp-doc-pdf');
+   frame.title='PDF '+file.name;
+   frame.src=url+'#toolbar=1&navpanes=0&scrollbar=0&view=FitH';
+   clip.append(frame);
+   preview.replaceChildren(clip);
+   preview.classList.add('svcp-doc-pdf-pages--native');
+  };
+  try{
+   const pdfjs=await svcpLoadPdfThumb();
+   if(!live)return;
+   pdfLoadingTask=pdfjs.getDocument({
+    data:new Uint8Array(await file.arrayBuffer()),useSystemFonts:true
+   });
+   pdfDoc=await pdfLoadingTask.promise;
+   if(!live)return;
+   const pageCount=pdfDoc.numPages;
+   if(!pageCount)throw Error('Empty PDF');
+   const pages=[];
+   // The page is always fitted to the available phone width.
+   // Render only pages in or near view so long files stay responsive.
+   for(let number=1;number<=pageCount;number++){
+    if(!live)return;
+    const page=await pdfDoc.getPage(number);
+    const natural=page.getViewport({scale:1});
+    const tile=el('section','svcp-doc-pdf-page');
+    tile.style.aspectRatio=natural.width+' / '+natural.height;
+    tile.setAttribute('aria-label','Страница '+number+' из '+pageCount);
+    tile.dataset.state='idle';
+    const canvas=el('canvas','svcp-doc-pdf-canvas');
+    canvas.setAttribute('aria-hidden','true');
+    tile.append(canvas);
+    pages.push({page,natural,tile,canvas});
+   }
+   if(!live)return;
+   preview.replaceChildren(...pages.map(entry=>entry.tile));
+   async function draw(entry){
+    if(!live||entry.tile.dataset.state!=='idle'||!entry.tile.isConnected)return;
+    entry.tile.dataset.state='drawing';
+    try{
+     const pageWidth=Math.max(80,entry.tile.clientWidth||body.clientWidth-20);
+     const ratio=Math.min(2,Math.max(1,window.devicePixelRatio||1));
+     const scale=Math.min(2.2,ratio*pageWidth/entry.natural.width);
+     const viewport=entry.page.getViewport({scale});
+     const limit=Math.sqrt(4200000/Math.max(1,viewport.width*viewport.height));
+     const finalViewport=limit<1?entry.page.getViewport({scale:scale*limit}):viewport;
+     entry.canvas.width=Math.max(1,Math.round(finalViewport.width));
+     entry.canvas.height=Math.max(1,Math.round(finalViewport.height));
+     const context=entry.canvas.getContext('2d',{alpha:false});
+     if(!context)throw Error('PDF canvas unavailable');
+     await entry.page.render({canvasContext:context,viewport:finalViewport}).promise;
+     if(!live)return;
+     entry.tile.dataset.state='ready';
+    }catch(err){
+     if(live){
+      entry.tile.dataset.state='failed';
+      entry.tile.append(el('span','svcp-doc-pdf-error','Страница недоступна'));
+      console.debug('SEYVEO PDF page:',err);
+     }
+    }
+   }
+   if(typeof IntersectionObserver==='function'){
+    pdfObserver=new IntersectionObserver(entries=>{
+     for(const entry of entries){
+      const item=pages.find(p=>p.tile===entry.target);
+      if(!item)continue;
+      if(entry.isIntersecting){
+       if(item.tile.dataset.state==='idle')void draw(item);
+      }else if(item.tile.dataset.state==='ready'){
+       // Release bitmap backing stores outside the viewport.
+       item.canvas.width=0;item.canvas.height=0;
+       item.tile.dataset.state='idle';
+      }
+     }
+    },{root:body,rootMargin:'480px 0px'});
+    pages.forEach(item=>pdfObserver.observe(item.tile));
+   }else{
+    for(const item of pages){if(!live)return;await draw(item)}
+   }
+  }catch(err){
+   console.debug('SEYVEO PDF renderer unavailable:',err);
+   fallback();
+  }
+ }
  function save(blob,name){
   const href=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=href;a.download=name;document.body.append(a);a.click();a.remove();
@@ -359,6 +456,8 @@ function svcpOpenDocument(file){
  function close(){
   if(!live)return;live=false;
   document.removeEventListener('keydown',onKey);
+  pdfObserver?.disconnect();pdfObserver=null;
+  try{pdfLoadingTask?.destroy()?.catch?.(()=>{})}catch{}
   sheet.remove();URL.revokeObjectURL(url);
   svcpCurrentDocClose=null;
   if(last?.isConnected)last.focus({preventScroll:true});
@@ -367,6 +466,7 @@ function svcpOpenDocument(file){
  document.addEventListener('keydown',onKey);
  document.body.append(sheet);
  svcpCurrentDocClose=close;back.focus({preventScroll:true});
+ if(kind==='pdf')requestAnimationFrame(()=>{if(live)void renderPdfPages()});
 }
 
 function restoreStoredMedia(container,message){
