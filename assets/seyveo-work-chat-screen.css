@@ -5972,6 +5972,46 @@ html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-row-menu butto
  min-height:37px!important;font-size:13px!important;
 }
 
+/* SEYVEO Work History: Home's real shared scene, left-aligned title,
+   compact three-line conversations without losing avatar or actions. */
+html body #svcpWorkChatScreen #svcpWorkHistory{
+ background-color:var(--bg,#11161b)!important;
+ background-image:var(--seyveo-hdr-stage,radial-gradient(ellipse 100% 52% at 50% 0%,rgba(222,240,251,.062),transparent 78%))!important;
+ background-repeat:no-repeat!important;
+}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head{
+ grid-template-columns:42px minmax(0,1fr) 42px!important;
+ column-gap:12px!important;
+}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > strong{
+ grid-column:2!important;justify-self:start!important;
+ text-align:left!important;font-size:22px!important;font-weight:650!important;
+}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list{margin-top:4px!important}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-history-day{
+ padding:10px 4px 4px!important;font-size:11px!important;
+}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-row{
+ min-height:60px!important;
+}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-open{
+ min-height:60px!important;padding:6px 3px!important;gap:9px!important;
+}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-avatar{
+ flex:0 0 34px!important;width:34px!important;min-width:34px!important;
+ height:34px!important;font-size:14px!important;
+}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-content{gap:2px!important}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-heading strong{
+ font-size:13px!important;line-height:1.2!important;
+}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-text{
+ font-size:11.5px!important;line-height:1.25!important;
+}
+html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-type{
+ font-size:10.5px!important;line-height:1.2!important;
+}
+
 /* SEYVEO · 2026-11-11: one fixed lower-right time baseline for text bubbles.
    Reserve a dedicated bottom strip so short messages and long paragraphs
    cannot shift the stamp or overlap it. Media retain their native stamps. */
