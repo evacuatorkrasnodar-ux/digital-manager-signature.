@@ -161,10 +161,40 @@ function svcpFileSize(bytes){
  const value=bytes<1048576?bytes/1024:bytes/1048576;
  return value.toLocaleString('ru-RU',{maximumFractionDigits:1})+(bytes<1048576?' КБ':' МБ');
 }
-function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=false){
+function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=false,sourceFile=null){
  const displayName=String(name||'Вложение');
  const node=el(onOpen?'button':url?'a':'div','svcp-file-card');
  const detail=svcpFileKind(displayName,type);
+ if(sourceFile instanceof File&&['pdf','word'].includes(detail.kind)){
+  node.classList.add('svcp-sent-document-tile');
+  const preview=el('span','svcp-sent-document-thumb');
+  node.append(preview);
+  if(!svcpDraftPagePreview(sourceFile,preview))preview.append(svcpFileBadge(displayName,type));
+  const ext=(displayName.split('.').pop()||'').toLowerCase();
+  const caption=el('span','svcp-sent-document-caption');
+  const badge=el('span','svcp-sent-document-format');
+  badge.dataset.kind=detail.kind;
+  badge.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/></svg><span>'+(detail.kind==='pdf'?'PDF':'W')+'</span>';
+  caption.append(badge,el('span','svcp-sent-document-name',displayName));
+  node.append(caption);
+  if(timeNode){
+   const status=el('span','svcp-sent-document-status');status.append(timeNode);
+   if(isOwn){
+    const tick=el('span','svcp-local-save-check','✓');
+    tick.title='Сохранено здесь · доставка не подтверждена';status.append(tick);
+   }
+   node.append(status);
+  }
+  if(onOpen){
+   node.type='button';node.classList.add('svcp-file-card-open');
+   node.setAttribute('aria-label','Открыть документ '+displayName);
+   node.addEventListener('click',onOpen);
+  }else if(url){
+   node.href=url;node.download=displayName;
+   node.setAttribute('aria-label','Сохранить файл '+displayName);
+  }
+  return node;
+ }
  const badge=svcpFileBadge(displayName,type);
  // Keep the SVG document contour; do not replace it with a text badge.
  node.append(badge);
@@ -407,7 +437,7 @@ function restoreStoredMedia(container,message){
    const localFile=record.blob instanceof File?record.blob:new File([record.blob],filename,{type:record.type||message.mediaType||''});
    const previewable=['pdf','word','text'].includes(svcpFileKind(filename,record.type||message.mediaType||'').kind);
    const tile=svcpFileCard(filename,record.type||message.mediaType||'',url,timestamp,
-    previewable?()=>svcpOpenDocument(localFile):null,record.blob.size,container.classList.contains('is-self'));
+    previewable?()=>svcpOpenDocument(localFile):null,record.blob.size,container.classList.contains('is-self'),localFile);
    if(container.classList.contains('svcp-document-only')){
     let hold=null,blocked=false,startX=0,startY=0;
     const clear=()=>{if(hold!==null){clearTimeout(hold);hold=null}};
