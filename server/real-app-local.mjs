@@ -66,6 +66,27 @@ const HEADERS={
  'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','x-frame-options':'DENY','cross-origin-resource-policy':'same-origin',
  'content-security-policy':"default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://upload.wikimedia.org https://planetary.s3.amazonaws.com; media-src 'self' blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-src 'self' blob: https:; worker-src 'none'; manifest-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
 };
+// Only the private Notebook drawing sheet may embed the Home UI inside Sayvi.
+// All other pages, paths, APIs and top-level navigations remain unframeable.
+function isApprovedSayviPaperFrame(req){
+ if(req.method!=='GET')return false;
+ const path=(req.url||'').split('?')[0];
+ if(path!=='/'&&path!=='/index.html')return false;
+ if(req.headers['sec-fetch-site']!=='same-origin'||
+    req.headers['sec-fetch-dest']!=='iframe'||
+    req.headers['sec-fetch-mode']!=='navigate')return false;
+ const params=new URL(req.url,ORIGIN).searchParams;
+ return params.get('seyveo-draw')==='chat'&&params.get('embed')==='1';
+}
+function homePageHeaders(req){
+ if(!isApprovedSayviPaperFrame(req))return HEADERS;
+ // Preserve the complete CSP except for the one explicit same-origin frame.
+ return {...HEADERS,
+  'x-frame-options':'SAMEORIGIN',
+  'content-security-policy':HEADERS['content-security-policy']
+   .replace("frame-ancestors 'none'","frame-ancestors 'self'")
+ };
+}
 const ANCHOR="const answer=getDemoAnswer(q);\n// Keep one focused composer. Blur/close/reopen/refocus made Safari bounce\n// the keyboard and shifted both the conversation and floating input.\nquestion.value='';syncComposer();\nshowWrittenReply(q,answer);";
 const LOCAL_VOICE_UI="// Use the existing voice control only. Never inject duplicate microphones into Feather Chat.\nwindow.SEYVEO_LOCAL_VOICE_BRIDGE=phrase=>{\n if(window.SEYVEO_LOCAL_PENDING){setHint('SEYVEO ещё отвечает.');return true}\n if(composerMode==='notes')setComposerMode('ask');\n if(composer.hidden)openComposer();\n question.value=phrase;syncComposer();\n window.SEYVEO_LOCAL_VOICE_NEXT=true;\n composer.requestSubmit();\n return true;\n};";
 const INTELLIGENCE_UI="// Local Home only: reveal all planned skills, with honest connection status.\nconst catalogRequest=/^(?:сэй[\\s,]*|сэйви[\\s,]*)?(?:покажи|расскажи|какие у тебя)\\s+(?:возможности|навыки|способности)\\??$/iu.test(q.trim());\nif(composerMode==='ask'&&catalogRequest){\n if(window.SEYVEO_LOCAL_PENDING){composerMessage('SEYVEO ещё отвечает.');return}\n window.SEYVEO_LOCAL_PENDING=true;\n window.SEYVEO_LOCAL_CHAT_ACTIVE=true;clearTimeout(composerIdle);\n question.value='';syncComposer();\n const panel=$('orbInlineReplyText');\n $('orbInlineReply').hidden=false;$('stage').classList.add('has-inline-reply');\n panel.textContent='Показываю устройство интеллекта SEYVEO…';\n fetch('/api/seyveo-intelligence-catalog',{credentials:'same-origin'})\n  .then(async response=>{\n   if(!response.ok)throw Error('Не удалось загрузить возможности.');\n   const catalog=await response.json();\n   const state={'blueprint':'запланировано','prototype':'прототип','server-adapter':'серверная основа'};\n   const lines=catalog.capabilities.map(item=>'• '+item.title+' — '+(state[item.readiness]||'план')+'. '+item.description);\n   const answer='SEYVEO · возможности SEYVEO\\n\\n'+lines.join('\\n')+\n     '\\n\\nВажно: этот список — устройство будущего управляющего, а не уже доступные функции. Ничего не подключается и не выполняется автоматически.';\n   panel.textContent=answer;panel.scrollTop=0;\n   window.SEYVEO_CHAT_HISTORY?.add({question:q,answer});\n  }).catch(error=>{panel.textContent=String(error?.message||'Ошибка просмотра.')})\n  .finally(()=>{window.SEYVEO_LOCAL_PENDING=false});\n return;\n}";
@@ -345,7 +366,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
   if(req.method==='GET'&&(path==='/'||path==='/index.html')){
    try{
     const html=adaptOriginalHome(await readFile(resolve(ROOT,'index.html'),'utf8'));
-    res.writeHead(200,{...HEADERS,'content-type':'text/html; charset=utf-8'});
+    res.writeHead(200,{...homePageHeaders(req),'content-type':'text/html; charset=utf-8'});
     res.end(html);
    }catch(error){
      console.error('[SEYVEO Home] Ошибка загрузки:',error?.stack||error);
