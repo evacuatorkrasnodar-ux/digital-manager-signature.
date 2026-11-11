@@ -28,7 +28,7 @@ const ROOMS=[
  {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочий помощник',mark:'',person:'sayvi',section:'assistant'}
 ];
-const state={tab:'chats',room:'general',viewpoint:'manager',file:null,objectUrl:null,filePurpose:'file',scanCode:'',replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
+const state={tab:'chats',room:'general',viewpoint:'manager',file:null,files:[],previewUrls:[],objectUrl:null,filePurpose:'file',scanCode:'',replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='',historyWindow=35;
 // Demo document requests appear as messages in the existing documents room.
 // No transport: the message and workflow exist only on this device.
@@ -730,7 +730,7 @@ window.addEventListener('seyveo:work-chat-closing',()=>{
 function syncComposerActions(){
  const form=$('svcpChatForm');if(!form)return;
  const text=$('svcpChatInput')?.value.trim()||'';
- form.dataset.hasContent=String(!!(text||state.file||state.scanCode));
+ form.dataset.hasContent=String(!!(text||state.files.length||state.file||state.scanCode));
  // "Поручить" belongs to the manager's action menu on a sent message,
  // not the cramped writing dock. Preserve the original task review workflow.
  const task=$('svcpComposerDirectTask');
@@ -761,10 +761,10 @@ function resizeWorkComposer(){
  const input=$('svcpChatInput'),form=$('svcpChatForm');
  if(!input||!form)return;
  const value=input.value;
- const withAttachment=!!(state.file||state.scanCode);
+ const withAttachment=!!(state.files.length||state.file||state.scanCode);
  form.classList.toggle('svcp-has-attachment',withAttachment);
  // Explicit idle reset: no stale expanded height or wrap state after sending.
- if(!value&&!state.file&&!state.scanCode){
+ if(!value&&!state.files.length&&!state.file&&!state.scanCode){
   form.classList.remove('svcp-compose-multiline');
   form.style.setProperty('--svcp-editor-height','40px');
   form.style.setProperty('--svcp-compose-height','56px');
@@ -784,13 +784,13 @@ function resizeWorkComposer(){
  const hasNewline=value.includes('\n');
  const textHeight=measuredComposeHeight(value,shortWidth);
  // The chosen file opens the full writing surface, even before any text.
- const wraps=!!(state.file||state.scanCode)||!!value&&(hasNewline||textHeight>24);
+ const wraps=withAttachment||!!value&&(hasNewline||textHeight>24);
  // In multiline the text occupies the full width. Tool buttons use the
  // separate 42px bottom row. No second background/capsule is introduced.
  const expandedHeight=measuredComposeHeight(value,formWidth-32);
  const editorHeight=wraps?Math.min(144,Math.max(44,expandedHeight+16)):base;
  // Same three logical rows as Sayvi: attachment, editor, toolbar.
- const attachRow=withAttachment?88:0;
+ const attachRow=withAttachment?112:0;
  const targetHeight=wraps?editorHeight+55+attachRow:56;
  form.classList.toggle('svcp-compose-multiline',wraps);
  form.style.setProperty('--svcp-editor-height',editorHeight+'px');
@@ -2317,9 +2317,14 @@ cameraToggle?.addEventListener('click',()=>{
  picker.value='';picker.click();
 });
 document.addEventListener('keydown',event=>{if(event.key==='Escape')setCameraTray(false)});
-function cleanupPreview(){
+function clearWorkPreviewUrls(){
+ for(const url of state.previewUrls)URL.revokeObjectURL(url);
+ state.previewUrls=[];
  if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}
- state.file=null;state.filePurpose='file';state.scanCode='';
+}
+function cleanupPreview(){
+ clearWorkPreviewUrls();
+ state.files=[];state.file=null;state.filePurpose='file';state.scanCode='';
  for(const input of new Set(Object.values(cameraInputs))){if(input)input.value=''}
  const barcode=$('svcpBarcodeInput');if(barcode)barcode.value='';
  const display=$('svcpAttachmentPreview');
@@ -2329,61 +2334,53 @@ function cleanupPreview(){
 function renderCapturePreview(){
  syncComposerActions();
  const display=$('svcpAttachmentPreview');if(!display)return;
- display.replaceChildren();
- if(!state.file&&!state.scanCode){display.hidden=true;return}
- display.hidden=false;display.classList.add('svcp-work-media-preview');
- if(state.file){
-  if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}
-  state.objectUrl=URL.createObjectURL(state.file);
-  if(state.file.type.startsWith('image/')){
-   const img=el('img','svcp-selected-photo');
-   img.src=state.objectUrl;img.alt='Выбранный снимок, пока только на этом устройстве';
-   display.append(img);
-  }else if(state.file.type.startsWith('video/')){
-   const video=el('video','svcp-selected-video');video.src=state.objectUrl;
-   video.controls=true;video.playsInline=true;video.preload='metadata';
-   display.append(video);
-  }
+ clearWorkPreviewUrls();display.replaceChildren();
+ if(!state.files.length&&!state.scanCode){display.hidden=true;resizeWorkComposer();return}
+ display.hidden=false;display.classList.add('svcp-square-tray');
+ for(const [index,item] of state.files.entries()){
+  const file=item.file,kind=svcpFileKind(file.name,file.type).kind;
+  const tile=el('div','svcp-preview-tile svcp-preview-'+kind);tile.title=file.name;
+  if(kind==='image'||kind==='video'){
+   const url=URL.createObjectURL(file);state.previewUrls.push(url);
+   const media=el(kind==='image'?'img':'video','svcp-preview-tile-image');
+   media.src=url;
+   if(kind==='image')media.alt=file.name;
+   else{media.muted=true;media.playsInline=true;media.preload='metadata'}
+   tile.append(media);
+  }else tile.append(svcpFileBadge(file.name,file.type));
+  tile.append(el('small','svcp-preview-tile-name',file.name));
+  const remove=btn('',()=>{
+   state.files.splice(index,1);state.file=state.files[0]?.file||null;
+   state.filePurpose=state.files[0]?.purpose||'file';renderCapturePreview();
+  },'svcp-preview-tile-remove');
+  remove.setAttribute('aria-label','Убрать '+file.name);
+  remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+  tile.append(remove);display.append(tile);
  }
- if(state.file&&!state.file.type.startsWith('image/')&&!state.file.type.startsWith('video/'))
-  display.append(svcpFileBadge(state.file.name,state.file.type));
- const info=el('div','svcp-selected-info');
- if(state.file){
-  info.append(el('strong',null,state.file.name));
-  info.append(el('small',null,svcpFileKind(state.file.name,state.file.type).label+' · Только на этом устройстве'));
- }else if(state.scanCode){
-  info.append(el('strong',null,'Штрихкод'));
-  info.append(el('small','svcp-scanned-code',state.scanCode+' · каталог не проверен'));
+ if(state.scanCode){
+  const tile=el('div','svcp-preview-tile svcp-preview-code');
+  tile.append(el('strong','svcp-preview-code-mark','▥'),el('small','svcp-preview-tile-name',state.scanCode));display.append(tile);
  }
- display.append(info);
- const remove=btn('',()=>{cleanupPreview();setStatus('Вложение убрано.')},'svcp-ghost svcp-selected-remove');
- remove.setAttribute('aria-label','Убрать вложение');
- remove.title='Убрать вложение';
- remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M9 7V5h6v2M7 7l1 12h8l1-12M10 10v6M14 10v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
- display.append(remove);
  resizeWorkComposer();
 }
-function pickCaptureFile(file,purpose){
- cleanupPreview();
- if(!file)return;
- const cap=file.type.startsWith('video/')?60*1024*1024:16*1024*1024;
- if(file.size>cap){
-  setStatus('Файл слишком большой для локального демо. Видео до 60 МБ, фото и другие файлы до 16 МБ.');
-  return;
+function pickCaptureFiles(files,purpose){
+ const incoming=Array.from(files||[]).filter(f=>f instanceof File);
+ for(const file of incoming){
+  if(state.files.length>=10){setStatus('Можно прикрепить до 10 файлов.');break}
+  const cap=file.type.startsWith('video/')?60*1024*1024:16*1024*1024;
+  if(file.size>cap){setStatus('Слишком большой файл: '+file.name);continue}
+  state.files.push({file,purpose});
  }
- state.file=file;
- state.filePurpose=purpose;
- renderCapturePreview();
- setCameraTray(false);
+ if(!state.files.length)return;
+ state.file=state.files[0].file;state.filePurpose=state.files[0].purpose;
+ renderCapturePreview();setCameraTray(false);
 }
-// One camera action; the image type will be inferred when vision is connected.
+function pickCaptureFile(file,purpose){if(file)pickCaptureFiles([file],purpose)}
 $('svcpCameraPhoto')?.addEventListener('change',()=>{
- const file=$('svcpCameraPhoto').files?.[0];
- if(file)pickCaptureFile(file,'photo');
+ pickCaptureFiles($('svcpCameraPhoto').files,'photo');
 });
 $('svcpFile')?.addEventListener('change',()=>{
- const file=$('svcpFile').files?.[0];
- if(file)pickCaptureFile(file,'file');
+ pickCaptureFiles($('svcpFile').files,'file');
 });
 function btn(text,action,cls){
  const button=el('button',cls,text);button.type='button';button.addEventListener('click',action);return button;
