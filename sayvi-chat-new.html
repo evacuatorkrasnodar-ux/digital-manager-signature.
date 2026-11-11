@@ -1832,43 +1832,23 @@ html body .sv-sent-document-viewer .sv-sent-document-original div{
 }
 
 
-/* SEYVEO · Work Chat parity applies ONLY to expanded Sayvi composer.
-   The compact Sayvi input and its approved plus must remain unchanged. */
-html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus,
-:root[data-theme="light"] body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
- position:relative!important;
- display:grid!important;
- place-items:center!important;
- flex:0 0 50px!important;
- width:50px!important;
- min-width:50px!important;
- max-width:50px!important;
- height:50px!important;
- min-height:50px!important;
- max-height:50px!important;
- border:1px solid rgba(176,193,203,.105)!important;
- border-radius:50%!important;
- background:#1B252C!important;
- background-image:linear-gradient(155deg,rgba(79,98,108,.17),rgba(15,23,28,.08) 60%,rgba(0,0,0,.12))!important;
- box-shadow:inset 0 1px 0 rgba(214,227,233,.045)!important;
- filter:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- color:#ACBBC4!important;
+/* The plus is ONE identical control in compact and expanded Sayvi chat.
+   Only its grid position changes; the approved compact material and glyph
+   remain exactly the same in both states and across themes. */
+html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
+ border:0!important;
+ background:var(--sayvi-home-copy-material)!important;
+ box-shadow:var(--sayvi-home-copy-shadow)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
 }
-html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus svg{
- display:block!important;
- width:21px!important;
- height:21px!important;
- margin:auto!important;
- fill:none!important;
- stroke:currentColor!important;
- stroke-width:1.6!important;
- stroke-linecap:round!important;
- stroke-linejoin:round!important;
-}
-html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus:active{
- background:#2B3840!important;
+@media(prefers-reduced-transparency:reduce){
+ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
+  background:var(--sayvi-fallback)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
 }
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=4">
