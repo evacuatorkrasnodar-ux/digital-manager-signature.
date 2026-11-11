@@ -2966,7 +2966,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    workingDocument={conversation:currentId,text:draft};
    heading.querySelector('.sv-doc-meta').textContent=documentMissingFields(draft).length
     ?'Есть данные для заполнения':'Проверь перед сохранением';
-   editorVisible(false);edit.querySelector('span').textContent='Редактировать';
+   editorVisible(false);edit.querySelector('span').textContent='Изменить';
   });
   askSayvi.addEventListener('click',()=>{
    const text=currentDraft();
