@@ -223,6 +223,57 @@ function bpReport(){
  node.hidden=!average;
  if(average)node.textContent='Среднее двух замеров в пределах 30 минут: '+average.s+'/'+average.d+' мм рт. ст.'+(average.p!==null?', пульс '+average.p:'')+'. Это среднее, а не прогноз следующего результата.';
 }
+/* Accessible mode: opt-in large type and spoken results for older adults.
+   Speech is local browser TTS; it does not listen, record, transmit, or prescribe. */
+const BP_COMFORT_KEY='seyveo-health-comfort-v1';
+let bpComfortMode=false;
+function updateBpComfort(){
+ dialog.classList.toggle('cal-health-comfort',bpComfortMode);
+ const button=$('calendarHealthComfortMode');
+ button?.setAttribute('aria-pressed',String(bpComfortMode));
+ if(button){const small=button.querySelector('small');if(small)small.textContent=bpComfortMode?'Вкл.':'Выкл.';}
+}
+function bpSpeakText(text){
+ if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window))return false;
+ try{
+  window.speechSynthesis.cancel();
+  const voice=new SpeechSynthesisUtterance(text);
+  voice.lang='ru-RU';voice.rate=.84;voice.pitch=1;voice.volume=1;
+  const russian=window.speechSynthesis.getVoices().find(v=>v.lang?.toLowerCase().startsWith('ru'));
+  if(russian)voice.voice=russian;
+  window.speechSynthesis.speak(voice);
+  return true;
+ }catch{return false}
+}
+function bpVoiceMessage(s,d,p){
+ const info=bpAssess(s,d,p);
+ if(info.level==='urgent')return 'Сэйви: давление очень высокое. Если есть боль в груди, одышка, онемение, слабость, нарушение речи или зрения, немедленно вызовите скорую по номеру 103 или 112. Не ждите повторного измерения. Если опасных симптомов нет, спокойно посидите и через минуту повторите измерение. При сохраняющихся очень высоких показателях срочно свяжитесь с врачом.';
+ if(info.level==='high'||info.level==='raised')return 'Сэйви: давление повышено. Постарайтесь не волноваться. Сядьте удобно, опираясь на спинку, отдохните пять минут. Затем измерьте давление повторно. Если показания остаются высокими, свяжитесь с врачом. Не принимайте дополнительные лекарства без назначения.';
+ if(info.level==='low')return 'Сэйви: давление может быть низким. Если кружится голова, лучше присядьте или прилягте и не вставайте резко. При сильной слабости, обмороке, боли в груди или затруднённом дыхании срочно вызывайте медицинскую помощь. Не пейте кофе или лекарства только по совету приложения.';
+ if(info.level==='neutral')return 'Сэйви: для детей и подростков оценка давления отличается от взрослой. Обсудите показатели с врачом.';
+ return 'Сэйви: измерение записано. '+info.summary+'. Если самочувствие хорошее, продолжайте наблюдение и придерживайтесь рекомендаций врача.';
+}
+function bpSpeakCurrent(){
+ const vals=['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse'].map(id=>$(id).value.trim());
+ if(vals.some(v=>!v)){bpSpeakText('Введите верхнее давление, нижнее давление и пульс.');return;}
+ const [s,d,p]=vals.map(Number);
+ if(!Number.isInteger(s)||!Number.isInteger(d)||!Number.isInteger(p)||s<=d||s<50||s>300||d<30||d>200||p<30||p>240){
+  bpSpeakText('Пожалуйста, проверьте введённые цифры.');return;
+ }
+ if(!bpSpeakText(bpVoiceMessage(s,d,p)))$('calendarSpaceStatus').textContent='Озвучивание недоступно в этом браузере. Рекомендация показана текстом.';
+}
+try{bpComfortMode=localStorage.getItem(BP_COMFORT_KEY)==='1'}catch{}
+updateBpComfort();
+$('calendarHealthComfortMode')?.addEventListener('click',()=>{
+ bpComfortMode=!bpComfortMode;
+ try{localStorage.setItem(BP_COMFORT_KEY,bpComfortMode?'1':'0')}catch{}
+ updateBpComfort();
+ if(bpComfortMode)bpSpeakText('Режим заботы включён. Цифры крупнее. Сэйви будет озвучивать результаты после сохранения.');
+ else if('speechSynthesis' in window)window.speechSynthesis.cancel();
+});
+$('calendarBpSpeak')?.addEventListener('click',bpSpeakCurrent);
+dialog.addEventListener('close',()=>{if('speechSynthesis' in window)window.speechSynthesis.cancel();});
+
 function bpPreview(){
  const box=$('calendarBpLiveAdvice');
  const ids=['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse'];
@@ -737,6 +788,7 @@ function save(event){
  };
  const updated=old?all.map(x=>x.id===old.id?row:x):[...all,row];
  if(!store(updated)){status.textContent='Не удалось сохранить. Проверьте память браузера.';return}
+ if(isBP&&bpComfortMode)bpSpeakText(bpVoiceMessage(sys,dia,pulse));
  if(isBP&&!old){
   const linked=row.repeatOf?bpRepeatReading(row.repeatOf):null;
   const info=bpAssess(sys,dia,pulse);
