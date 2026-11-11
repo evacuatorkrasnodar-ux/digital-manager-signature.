@@ -2034,3 +2034,22 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-bubble.is-sa
  border:1px solid #393A3D!important;
  background:#1A1B1D!important;color:#F5F5F7!important;
 }
+
+/* Work attachments: format letters belong inside SVG, never wrap vertically. */
+html body #svcpWorkChatScreen #svcpMessages .svcp-sent-document-format,
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon{
+ display:block!important;position:relative!important;overflow:visible!important;
+ direction:ltr!important;writing-mode:horizontal-tb!important;
+ white-space:nowrap!important;word-break:normal!important;
+}
+html body #svcpWorkChatScreen #svcpMessages .svcp-sent-document-format svg,
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon svg{
+ width:14px!important;height:18px!important;overflow:visible!important;
+ display:block!important;
+}
+html body #svcpWorkChatScreen #svcpMessages .svcp-sent-document-name,
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-text{
+ overflow:hidden!important;text-overflow:ellipsis!important;
+ white-space:nowrap!important;word-break:normal!important;
+ writing-mode:horizontal-tb!important;
+}
