@@ -23,13 +23,31 @@
  let frame=null;
  let token='';
  let isOpen=false;
+ let loading=null;
+ let loadTimer=0;
+
+ function showLoadError(){
+  if(!isOpen||!loading)return;
+  loading.replaceChildren();
+  const message=document.createElement('p');
+  message.textContent='Не удалось открыть планшет. Обнови локальный сервер SEYVEO и сам чат.';
+  const close=document.createElement('button');
+  close.type='button';
+  close.textContent='Закрыть';
+  close.addEventListener('click',()=>{
+   hide();
+   try{sessionStorage.removeItem(KEY)}catch{}
+  });
+  loading.append(message,close);
+ }
 
  function hide(){
   if(!isOpen)return;
   isOpen=false;
+  if(loadTimer){clearTimeout(loadTimer);loadTimer=0;}
   scrim.hidden=true;sheet.hidden=true;
   sheet.replaceChildren();
-  frame=null;token='';
+  frame=null;token='';loading=null;
   scene.classList.remove('sayvi-paper-open');
   document.getElementById('sayviDrawIdea')?.setAttribute('aria-expanded','false');
   // Do not force the mobile keyboard open when closing the drawing sheet.
@@ -49,7 +67,14 @@
   if(!isOpen||!frame||event.origin!==location.origin||
      event.source!==frame.contentWindow)return;
   const data=event.data;
-  if(!data||data.type!=='seyveo:paper-handoff'||data.nonce!==token)return;
+  if(!data||data.nonce!==token)return;
+  if(data.type==='seyveo:paper-loaded'){
+   if(loadTimer){clearTimeout(loadTimer);loadTimer=0;}
+   loading?.remove();
+   loading=null;
+   return;
+  }
+  if(data.type!=='seyveo:paper-handoff')return;
   const state=data.state,ref=data.ref;
   if(state!=='ready'&&state!=='cancelled')return;
   hide();
@@ -104,8 +129,13 @@
    problem('Планшет не загрузился. Попробуй снова.');
    hide();
   });
-  sheet.append(frame);
+  loading=document.createElement('div');
+  loading.className='sayvi-paper-loading';
+  loading.setAttribute('role','status');
+  loading.textContent='Открываю планшет рисования…';
+  sheet.append(frame,loading);
   isOpen=true;
+  loadTimer=setTimeout(showLoadError,7000);
   scrim.hidden=false;sheet.hidden=false;
   scene.classList.add('sayvi-paper-open');
   document.getElementById('sayviDrawIdea')?.setAttribute('aria-expanded','true');
