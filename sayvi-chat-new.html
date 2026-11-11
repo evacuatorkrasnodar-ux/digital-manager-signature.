@@ -1279,7 +1279,7 @@ html body #sayviTopActions .sv-top-action{
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html body #sayviComposer::before,
-html body :root[data-theme="light"] #sayviComposer::before{
+html:root[data-theme="light"] body #sayviComposer::before{
  background:#38383A!important;background-image:none!important;
  border:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
@@ -1308,6 +1308,27 @@ html body #sayviComposer #sayviField > #sayviInput{
 html body #sayviComposer #sayviField > #sayviInput::placeholder{
  color:#C5C6CA!important;-webkit-text-fill-color:#C5C6CA!important;
  opacity:1!important;
+}
+/* Expanded compose state keeps the same matte material; the earlier
+   high-specificity Work Chat rules must not re-enable blurred glass. */
+html body #sayviComposer.sayvi-compose-expanded::before{
+ background:#38383A!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviComposer.sayvi-compose-expanded > #sayviPlus{
+ background:#38383A!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviComposer.sayvi-compose-expanded #sayviField{
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #sayviComposer.sayvi-compose-expanded #sayviField > button#sayviSend:not([hidden]){
+ background:#474749!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 @media(max-width:375px){
  #sayviMessages .sv-reply-action-menu{width:min(300px,100%)!important}
@@ -2309,7 +2330,7 @@ html body #sayviComposer #sayviField > #sayviInput::placeholder{
    }
    if(shouldOpen){
     actionPanel.hidden=false;toggle.setAttribute('aria-expanded','true');
-    requestAnimationFrame(()=>actionPanel.scrollIntoView({block:'nearest',behavior:'instant'}));
+    requestAnimationFrame(()=>actionPanel.scrollIntoView({block:'nearest',behavior:'auto'}));
    }else close();
   });
   actionPanel.addEventListener('click',event=>{
