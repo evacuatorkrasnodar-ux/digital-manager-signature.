@@ -1508,6 +1508,44 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(1) .sv-file-label{fill:
 html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:#DF3344!important}
 @media(max-width:360px){html body .sv-doc-viewer .sv-doc-footer button span{font-size:9px!important}}
 
+
+/* SEYVEO chat history · search and batch actions live in one graphite top menu. */
+#sayviHistory .history-shell{position:relative!important}
+#sayviHistory .history-head #sayviHistoryMenuButton{
+ display:grid!important;place-items:center!important;flex:0 0 44px!important;
+ width:44px!important;height:44px!important;margin-left:auto!important;
+ padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;color:var(--sayvi-text)!important;
+}
+#sayviHistory .history-head #sayviHistoryMenuButton[hidden]{display:none!important}
+#sayviHistory .history-head #sayviHistoryMenuButton svg{width:22px!important;height:22px!important;fill:currentColor!important}
+#sayviHistory .history-search[hidden],#sayviHistory .sv-history-menu[hidden],#sayviHistory .sv-history-selection[hidden]{display:none!important}
+#sayviHistory .sv-history-menu{
+ position:absolute;right:0;top:60px;z-index:12;
+ display:flex;flex-direction:column;width:min(234px,calc(100vw - 36px));
+ padding:7px 0;border:0;border-radius:13px;background:#38383A;
+ box-shadow:0 10px 30px rgba(0,0,0,.20);
+}
+#sayviHistory .sv-history-menu button{
+ min-height:44px;padding:10px 18px;border:0;background:transparent;
+ color:#F5F5F7;text-align:left;font:500 13px/1.4 -apple-system,system-ui,sans-serif;
+}
+#sayviHistory .sv-history-menu button:active{background:#49494B}
+#sayviHistory .sv-history-selection{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ padding:8px 0 4px;color:var(--sayvi-text);font-size:13px;
+}
+#sayviHistory .sv-history-selection button{
+ min-height:38px;padding:6px 11px;border:0;border-radius:10px;
+ background:#38383A;color:#F5F5F7;font-size:13px;
+}
+#sayviHistory .sv-history-selection button:disabled{opacity:.4}
+#sayviHistory .sv-history-check{
+ display:grid;place-items:center;flex:0 0 21px;width:21px;height:21px;
+ border:1px solid #85858A;border-radius:7px;color:#FFF;font-size:13px;background:#38383A;
+}
+#sayviHistory .history-row:has(.sv-history-check){gap:11px}
+
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=4">
 <link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=4">
@@ -1548,8 +1586,10 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 </div>
 <section id="sayviHistory" aria-label="История разговоров" hidden>
  <div class="history-shell">
-  <div class="history-head"><button id="sayviHistoryClose" type="button" aria-label="Назад в чат" title="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button><strong>История</strong></div>
-  <label class="history-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 4.3 4.3"/></svg><input id="sayviHistorySearch" type="search" placeholder="Поиск разговоров" aria-label="Поиск по истории" autocomplete="off"></label>
+  <div class="history-head"><button id="sayviHistoryClose" type="button" aria-label="Назад в чат" title="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button><strong>История</strong><button id="sayviHistoryMenuButton" type="button" aria-label="Меню истории" aria-expanded="false" aria-controls="sayviHistoryMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></button></div>
+  <div id="sayviHistoryMenu" class="sv-history-menu" hidden><button id="sayviHistoryFind" type="button">Найти</button><button id="sayviHistorySelect" type="button">Выбрать</button><button id="sayviHistoryClear" type="button">Очистить историю</button></div>
+  <div id="sayviHistorySelection" class="sv-history-selection" hidden><button id="sayviHistoryCancelSelect" type="button">Отмена</button><span id="sayviHistorySelectionCount">Выбрано: 0</span><button id="sayviHistoryDeleteSelected" type="button" disabled>Удалить</button></div>
+  <label class="history-search" id="sayviHistorySearchBar" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 4.3 4.3"/></svg><input id="sayviHistorySearch" type="search" placeholder="Поиск разговоров" aria-label="Поиск по истории" autocomplete="off"></label>
   <div id="sayviHistoryList"></div>
  </div>
  <div id="sayviHistoryActions" class="history-action-sheet" hidden>
@@ -1848,6 +1888,58 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
  // entire new viewport/page just to display a destructive action.
  document.body.append(historyActions);
  let historySelected=null;
+ let historySelectionMode=false;
+ const historySelection=new Set();
+ const historyMenu=document.getElementById('sayviHistoryMenu');
+ const historyMenuButton=document.getElementById('sayviHistoryMenuButton');
+ const historySearchBar=document.getElementById('sayviHistorySearchBar');
+ const historySelectionBar=document.getElementById('sayviHistorySelection');
+ const historySelectionCount=document.getElementById('sayviHistorySelectionCount');
+ const historyDeleteSelected=document.getElementById('sayviHistoryDeleteSelected');
+ function closeHistoryMenu(){historyMenu.hidden=true;historyMenuButton.setAttribute('aria-expanded','false')}
+ function updateHistorySelection(){
+  historySelectionCount.textContent='Выбрано: '+historySelection.size;
+  historyDeleteSelected.disabled=!historySelection.size;
+ }
+ function setHistorySelectionMode(enabled){
+  historySelectionMode=!!enabled;historySelection.clear();
+  historySelectionBar.hidden=!enabled;historyMenuButton.hidden=!!enabled;
+  updateHistorySelection();closeHistoryMenu();renderHistory();
+ }
+ function removeHistoryConversations(ids){
+  if(ids.has(currentId)){
+   if(active){active.abort();active=null;updateControls()}
+   currentId='conversation-'+Date.now();savedTurns=[];historyTurns.length=0;recentDocument=null;
+   answers.clear();list.replaceChildren();list.scrollTop=0;updateScrollEdge();
+   input.value='';updateControls();status.textContent='';
+  }
+  archive=archive.filter(item=>!ids.has(item.id));
+  persist();closeHistoryActions();renderHistory();
+ }
+ historyMenuButton.addEventListener('click',event=>{
+  event.stopPropagation();closeHistoryActions();
+  historyMenu.hidden=!historyMenu.hidden;
+  historyMenuButton.setAttribute('aria-expanded',String(!historyMenu.hidden));
+ });
+ document.getElementById('sayviHistoryFind').addEventListener('click',()=>{
+  closeHistoryMenu();historySearchBar.hidden=false;historySearch.focus({preventScroll:true});
+ });
+ document.getElementById('sayviHistorySelect').addEventListener('click',()=>setHistorySelectionMode(true));
+ document.getElementById('sayviHistoryCancelSelect').addEventListener('click',()=>setHistorySelectionMode(false));
+ historyDeleteSelected.addEventListener('click',()=>{
+  if(!historySelection.size)return;
+  if(!window.confirm('Удалить выбранные разговоры ('+historySelection.size+') без возможности восстановления?'))return;
+  const ids=new Set(historySelection);setHistorySelectionMode(false);removeHistoryConversations(ids);
+ });
+ document.getElementById('sayviHistoryClear').addEventListener('click',()=>{
+  closeHistoryMenu();const items=conversationsForHistory();
+  if(!items.length)return;
+  if(!window.confirm('Очистить всю историю разговоров ('+items.length+') без возможности восстановления?'))return;
+  removeHistoryConversations(new Set(items.map(item=>item.id)));
+ });
+ document.addEventListener('pointerdown',event=>{
+  if(!historyMenu.hidden&&!historyMenu.contains(event.target)&&!historyMenuButton.contains(event.target))closeHistoryMenu();
+ },{passive:true});
  const historyTime=new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'});
  const historyDate=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'});
  function convoDate(item){
@@ -1904,6 +1996,10 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    sub.append(detail,time);open.append(name,sub);
    open.setAttribute('aria-label','Открыть разговор: '+name.textContent);
    open.addEventListener('click',()=>{
+    if(historySelectionMode){
+     if(historySelection.has(item.id))historySelection.delete(item.id);else historySelection.add(item.id);
+     updateHistorySelection();renderHistory();return;
+    }
     if(active)return;
     if(item.id!==currentId){
      if(savedTurns.length)archive.unshift(snapshot());
@@ -1912,6 +2008,12 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
     }
     closeHistory();
    });
+   if(historySelectionMode){
+    const checkbox=document.createElement('span');checkbox.className='sv-history-check';
+    checkbox.setAttribute('aria-hidden','true');checkbox.textContent=historySelection.has(item.id)?'✓':'';
+    row.append(checkbox,open);open.setAttribute('aria-pressed',String(historySelection.has(item.id)));
+    historyList.append(row);continue;
+   }
    const more=document.createElement('button');more.type='button';more.className='history-more';more.setAttribute('aria-label','Действия с разговором');
    more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
    more.addEventListener('click',()=>{
@@ -1930,9 +2032,9 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
    row.append(open,more);historyList.append(row);
   }
  }
- function closeHistory(){closeHistoryActions();historyPanel.hidden=true;historyTop.setAttribute('aria-expanded','false')}
+ function closeHistory(){setHistorySelectionMode(false);closeHistoryActions();historySearchBar.hidden=true;historySearch.value="";historyPanel.hidden=true;historyTop.setAttribute('aria-expanded','false')}
  function openHistory(){
-  closeMenu();historySearch.value='';renderHistory();
+  closeMenu();setHistorySelectionMode(false);historySearchBar.hidden=true;historySearch.value='';renderHistory();
   historyPanel.hidden=false;historyTop.setAttribute('aria-expanded','true');
  }
  historyTop.addEventListener('click',openHistory);
@@ -1946,6 +2048,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
  },{passive:true});
  document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&!historyActions.hidden)closeHistoryActions();
+  if(event.key==='Escape'&&!historyMenu.hidden)closeHistoryMenu();
  });
  historyPanel.addEventListener('scroll',()=>{
   if(!historyActions.hidden)closeHistoryActions();
@@ -1968,7 +2071,10 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
  });
  document.addEventListener('keydown',e=>{
   if(e.key!=='Escape'||historyPanel.hidden)return;
-  if(!historyActions.hidden)closeHistoryActions();else closeHistory();
+  if(!historyMenu.hidden)closeHistoryMenu();
+  else if(!historyActions.hidden)closeHistoryActions();
+  else if(historySelectionMode)setHistorySelectionMode(false);
+  else closeHistory();
  });
   /* Work Chat sizing behaviour: measure with an invisible mirror. Do not
      temporarily collapse the live textarea during Safari keyboard animations. */
