@@ -451,3 +451,57 @@ html body #calendarSpaceDialog[data-space="health"] #calendarBpLiveAdvice[data-l
 html body #calendarSpaceDialog[data-space="health"] #calendarBpLiveAdvice[data-level="raised"]{
  color:var(--text)!important;font-weight:500!important;
 }
+
+
+/* SEYVEO · explicit repeat measurement flow, no glass or additional navigation. */
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-panel{
+ margin:8px 0 18px;padding:14px 14px 12px;
+ border:1px solid rgba(183,193,205,.18);border-radius:16px;
+ background:rgba(54,58,62,.25);color:var(--text);box-shadow:none;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-panel[hidden],
+#calendarSpaceDialog[data-space="health"][data-measure-focus="true"] .cal-bp-repeat-panel{display:none!important}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-panel[data-level="urgent"]{
+ border-color:rgba(235,158,143,.4);background:rgba(134,59,51,.14);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-panel > strong{
+ display:block;font:650 15px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.02em;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-panel > p{
+ margin:8px 0 10px;font-size:12.5px;line-height:1.55;color:var(--text);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-values{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+ margin:13px 0 14px;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-values[hidden]{display:none!important}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-value{
+ display:flex;flex-direction:column;gap:4px;min-width:0;
+ padding:12px;border:1px solid rgba(170,185,197,.12);border-radius:12px;
+ background:rgba(150,158,169,.06);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-value small{
+ font-size:11px;color:var(--secondary);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-value strong{
+ font-size:clamp(19px,6vw,25px);letter-spacing:-.04em;font-variant-numeric:tabular-nums;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-value span{
+ font-size:11px;color:var(--secondary);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-actions{display:flex;gap:9px;align-items:center}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-actions button{
+ min-height:42px;padding:9px 12px;border:0;border-radius:12px;
+ font:600 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+#calendarSpaceDialog[data-space="health"] #calendarBpRepeatAction{
+ flex:1;background:#38383A;color:#fff;
+}
+#calendarSpaceDialog[data-space="health"] #calendarBpRepeatAction[hidden]{display:none!important}
+#calendarSpaceDialog[data-space="health"] #calendarBpRepeatDismiss{
+ flex:0 0 auto;background:transparent;color:var(--secondary);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-repeat-tag{
+ font-size:10.5px;color:var(--secondary);font-weight:500;
+}
