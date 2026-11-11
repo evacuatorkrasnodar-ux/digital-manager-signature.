@@ -841,7 +841,7 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > :is(.sv-file-c
  display:none!important;
 }
 
-/* Word symbol uses the identical three-letter layout as the approved PDF icon. */
+/* Word uses a single blue W, centered beneath its document contour. */
 html body #sayviMessages .turn[data-role="user"] .sv-sent-word-icon svg text{
  font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  font-weight:750!important;
