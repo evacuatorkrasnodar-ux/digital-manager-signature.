@@ -34,9 +34,13 @@ main > .sv-chat-jump,
  z-index:9!important;
 }
 
+/* Explicit IDs outrank the visible floating-button rule (which has
+   #svcpWorkChatScreen plus two classes). Without this, display:grid!important
+   keeps the Work Chat arrow visible even while JS sets button.hidden=true. */
 #sayviScrollBottom[hidden],
 #svcpScrollBottom[hidden],
-.sv-chat-jump[hidden]{
+.sv-chat-jump[hidden],
+#svcpWorkChatScreen .svcp-chat > #svcpScrollBottom[hidden]{
  display:none!important;
 }
 .sv-chat-jump svg{
