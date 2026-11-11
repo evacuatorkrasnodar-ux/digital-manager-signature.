@@ -3213,12 +3213,6 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
    <small>Сводка по внесённым значениям, не диагноз. Для оценки давления врач учитывает повторные измерения, симптомы и другие данные.</small>
   </div>
   <div id="calendarBpJournalRows" class="cal-bp-journal-rows" aria-label="Записи давления"></div>
-  <details id="calendarBpDoctorOptions" class="cal-bp-doctor-options">
-   <summary>Данные для врача <small>необязательно</small></summary>
-   <label>Имя <input id="calendarBpPatientName" type="text" autocomplete="name" maxlength="90" placeholder="Можно пропустить"></label>
-   <label>Принимаемые лекарства <textarea id="calendarBpMedicationList" rows="2" maxlength="500" placeholder="Можно пропустить"></textarea></label>
-   <label>Комментарий <textarea id="calendarBpDoctorComment" rows="2" maxlength="500" placeholder="Можно пропустить"></textarea></label>
-  </details>
   <p id="calendarBpJournalStatus" class="cal-bp-journal-status" role="status" aria-live="polite"></p>
  </section>
 </section>
@@ -3263,6 +3257,23 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <small id="calendarSpacePrivacy" class="calendar-space-privacy">Записи только на устройстве</small>
 <button type="button" id="calendarSpaceClose" class="cal-space-close">Готово</button>
 </div>
+
+ <section id="calendarBpDoctorSheet" class="cal-bp-doctor-sheet" role="dialog" aria-modal="true" aria-labelledby="calendarBpDoctorSheetTitle" hidden>
+  <div class="cal-bp-doctor-backdrop" data-bp-sheet-close="1"></div>
+  <div class="cal-bp-doctor-sheet-content">
+   <div class="cal-bp-doctor-sheet-head">
+    <button id="calendarBpDoctorSheetBack" type="button" aria-label="Закрыть отчёт"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+    <strong id="calendarBpDoctorSheetTitle">Отчёт врачу</strong>
+   </div>
+   <p class="cal-bp-doctor-sheet-intro">Дополнительные данные можно пропустить.</p>
+   <div id="calendarBpDoctorOptions" class="cal-bp-doctor-options">
+    <label>Имя <input id="calendarBpPatientName" type="text" autocomplete="name" maxlength="90" placeholder="Необязательно"></label>
+    <label>Принимаемые лекарства <textarea id="calendarBpMedicationList" rows="2" maxlength="500" placeholder="Необязательно"></textarea></label>
+    <label>Комментарий <textarea id="calendarBpDoctorComment" rows="2" maxlength="500" placeholder="Необязательно"></textarea></label>
+   </div>
+   <button id="calendarBpDoctorConfirm" type="button" class="cal-bp-doctor-confirm">Поделиться</button>
+  </div>
+ </section>
 </dialog><dialog id="calendarEventDialog" class="cal-form-dialog" aria-labelledby="calendarEventTitleHeading">
 <button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Вернуться к календарю"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
 <div class="cal-event-sheet">
