@@ -1568,3 +1568,17 @@ html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[d
 html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="docx"] span{
  font-size:8px!important;
 }
+
+/* Sayvi: use the same clean outlined file mark for photo formats, without a badge. */
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="jpg"],
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="jpeg"],
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="png"],
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="webp"],
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="gif"],
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="heic"]{
+ color:#D0D4DA!important;
+}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="webp"] span,
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="heic"] span{
+ font-size:4px!important;
+}
