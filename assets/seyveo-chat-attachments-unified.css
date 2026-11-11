@@ -1451,3 +1451,86 @@ html body #sayviComposer.sayvi-has-attachments .sv-attach-chip:is(.sv-attach-chi
  padding:0 3px!important;background:#050506!important;text-align:left!important;
  font-size:8px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
 }
+
+
+/* SAYVI · 3-column attachment gallery, naturally expanding upward. */
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments{
+ display:grid!important;
+ grid-template-rows:var(--sayvi-attach-height,121px) minmax(0,var(--sayvi-editor-height,62px)) 50px!important;
+ height:var(--sayvi-composer-height,240px)!important;
+ min-height:var(--sayvi-composer-height,240px)!important;
+ max-height:min(66dvh,calc(100dvh - 98px))!important;
+ overflow:hidden!important;
+ align-content:start!important;
+ transition:height .25s cubic-bezier(.22,.8,.22,1),min-height .25s cubic-bezier(.22,.8,.22,1)!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray{
+ position:relative!important;
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ grid-auto-rows:99px!important;
+ column-gap:7px!important;row-gap:6px!important;
+ align-content:start!important;
+ align-items:start!important;
+ justify-content:stretch!important;
+ grid-column:1/-1!important;grid-row:1!important;
+ width:calc(100% - 16px)!important;max-width:calc(100% - 16px)!important;
+ min-width:0!important;
+ height:var(--sayvi-attach-height,121px)!important;
+ min-height:0!important;max-height:var(--sayvi-attach-height,121px)!important;
+ margin:0 8px!important;padding:8px 0 9px!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ overscroll-behavior:contain!important;
+ scroll-snap-type:none!important;
+ scrollbar-width:none!important;
+ -webkit-overflow-scrolling:touch!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray > .sv-attach-chip:is(.sv-attach-chip--page,.sv-attach-chip--image,.sv-attach-chip--file){
+ box-sizing:border-box!important;display:block!important;
+ flex:none!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ height:99px!important;min-height:99px!important;max-height:99px!important;
+ margin:0!important;padding:0!important;
+ border:1px solid rgba(255,255,255,.09)!important;
+ border-radius:13px!important;background:#111214!important;
+ box-shadow:none!important;overflow:hidden!important;
+ scroll-snap-align:none!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray > .sv-attach-chip--page > .sv-document-page-preview,
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray > .sv-attach-chip--image > .sv-attach-thumb{
+ position:absolute!important;
+ inset:0 0 23px!important;
+ width:100%!important;height:calc(100% - 23px)!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ overflow:hidden!important;
+ object-fit:cover!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray > .sv-attach-chip:is(.sv-attach-chip--page,.sv-attach-chip--image,.sv-attach-chip--file) > .sv-attach-caption{
+ position:absolute!important;z-index:3!important;
+ inset:auto 0 0!important;
+ display:flex!important;align-items:center!important;
+ width:100%!important;height:23px!important;min-height:23px!important;max-height:23px!important;
+ margin:0!important;padding:0 5px!important;
+ background:#050506!important;color:#F6F6F7!important;
+ border:0!important;box-sizing:border-box!important;
+ font:500 9px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray .sv-file-caption-name{
+ font-size:9px!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray > .sv-attach-chip .sv-attach-remove{
+ position:absolute!important;z-index:6!important;top:0!important;right:0!important;
+ width:28px!important;height:28px!important;
+ min-width:28px!important;min-height:28px!important;
+ padding:6px!important;border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviField{
+ grid-row:2!important;
+}
