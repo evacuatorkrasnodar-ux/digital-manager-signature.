@@ -1546,6 +1546,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
 <div id="sayviPreflight" aria-live="off" hidden></div>
 </main>
 <script src="./assets/seyveo-pdf-export.js"></script>
+<script src="./assets/sayvi-session-files.js?v=1"></script>
 <script>
 (()=>{
  'use strict';
@@ -1782,7 +1783,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   answers.clear();list.replaceChildren();savedTurns=[];
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
-   append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos,turn.files,turn.at);
+   append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos,turn.files,turn.at,turn.fileRefs);
    if(turn.role==='assistant'&&turn.sources?.length){
     const index=savedTurns.length-1;
     savedTurns[index].sources=vettedWebResults(turn.sources).map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit}));
@@ -2731,7 +2732,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   }
  }
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sentPdfViewer)closeSentPdf()});
- function showSentFiles(turn,files){
+ function showSentFiles(turn,files,fileRefs=null){
   turn.querySelector('.sv-sent-files')?.remove();
   const names=Array.isArray(files)?files.filter(x=>typeof x==='string'&&x.length<=200).slice(0,6):[];
   turn.classList.toggle('sv-has-files',names.length>0);
@@ -2740,14 +2741,58 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   for(const name of names){
    const tile=document.createElement('button');tile.type='button';tile.className='sv-sent-file';
    tile.setAttribute('aria-label','Открыть файл '+name);
-   const original=(sentDocumentBlobs.get(turn)||[]).find(f=>f.name===name);
-   tile.addEventListener('click',()=>openSentDocument(original));
    tile.append(makeDocumentIcon({name}));
    const label=document.createElement('span');label.className='sv-sent-file-name';
    label.textContent=name;label.title=name;tile.append(label);group.append(tile);
+   tile.addEventListener('click',async()=>{
+    const currentFiles=sentDocumentBlobs.get(turn)||[];
+    const live=currentFiles.find(file=>file.name===name);
+    if(live){openSentDocument(live);return;}
+    tile.disabled=true;
+    let recovered=null;
+    try{if(fileRefs?.[name])recovered=await window.SEYVEO_CHAT_FILES?.restore(fileRefs[name]);}
+    catch{}
+    tile.disabled=false;
+    if(recovered){
+     sentDocumentBlobs.set(turn,[...currentFiles.filter(file=>file.name!==name),recovered]);
+     openSentDocument(recovered);
+     return;
+    }
+    // Before session caching, only the filename was stored. Never invent
+    // missing file bytes; let the user select that exact original explicitly.
+    status.textContent='Чтобы открыть «'+name+'», выбери оригинал на этом устройстве.';
+    const picker=document.createElement('input');
+    picker.type='file';picker.hidden=true;picker.accept='.pdf,.docx,.xlsx,.pptx,.txt,.md';
+    document.body.append(picker);
+    picker.addEventListener('change',async()=>{
+     const file=picker.files?.[0];picker.remove();
+     if(!file)return;
+     if(file.name!==name){
+      status.textContent='Выбран другой файл. Найди оригинал «'+name+'».';
+      return;
+     }
+     if(file.size>8*1024*1024){
+      status.textContent='Максимальный размер вложения — 8 МБ.';return;
+     }
+     sentDocumentBlobs.set(turn,[...currentFiles.filter(item=>item.name!==name),file]);
+     openSentDocument(file);
+     const refs=await window.SEYVEO_CHAT_FILES?.remember([file]).catch(()=>({}));
+     if(refs?.[name]){
+      const index=Number(turn.querySelector('.bubble')?.dataset.savedIndex);
+      if(Number.isInteger(index)&&index>=0&&savedTurns[index]?.role==='user'){
+       const old=savedTurns[index].fileRefs||{};
+       savedTurns[index].fileRefs={...old,...refs};
+       fileRefs=savedTurns[index].fileRefs;
+       persist();
+      }
+     }
+    },{once:true});
+    picker.click();
+   });
   }
   turn.append(group);
  }
+
  function showSentPhotos(turn,photos){
   const valid=safeSentPhotos(photos);
   turn.querySelector('.sv-sent-images')?.remove();
@@ -2807,7 +2852,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   bubble.replaceChildren(fragment);
  }
 
- function append(role,id,message,save=true,photos=null,files=null,recordedTime=null){
+ function append(role,id,message,save=true,photos=null,files=null,recordedTime=null,fileRefs=null){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
   if(!bubble){
@@ -2852,7 +2897,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    }
   else bubble.textContent=message;
   if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
-  if(role==='user')showSentFiles(bubble.closest('.turn'),files);
+  if(role==='user')showSentFiles(bubble.closest('.turn'),files,fileRefs);
   // Attachment-only messages reuse their clock inside the attachment card.
   if(role==='user'&&!bubble.textContent.trim()){
    const turn=bubble.closest('.turn');
@@ -2868,6 +2913,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     savedTurns[index].text=message;
     if(role==='user'&&photos?.length)savedTurns[index].photos=safeSentPhotos(photos);
     if(role==='user'&&files?.length)savedTurns[index].files=files.slice(0,6);
+    if(role==='user'&&fileRefs&&Object.keys(fileRefs).length)savedTurns[index].fileRefs={...fileRefs};
    }else{
     bubble.dataset.savedIndex=String(savedTurns.length);
     const entry={role,text:message};
@@ -2875,6 +2921,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     if(Number.isFinite(recordedAt)&&recordedAt>0)entry.at=recordedAt;
     if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
     if(role==='user'&&files?.length)entry.files=files.slice(0,6);
+    if(role==='user'&&fileRefs&&Object.keys(fileRefs).length)entry.fileRefs={...fileRefs};
     savedTurns.push(entry);
    }
    persist();
@@ -2885,6 +2932,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     if(Number.isFinite(recordedAt)&&recordedAt>0)entry.at=recordedAt;
    if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
     if(role==='user'&&files?.length)entry.files=files.slice(0,6);
+    if(role==='user'&&fileRefs&&Object.keys(fileRefs).length)entry.fileRefs={...fileRefs};
    savedTurns.push(entry);
   }
   if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
@@ -3425,7 +3473,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   const id=++sequence,replyId='reply-'+id;
   const linkedPhotos=contextImagesFor(question,options);
   if(!options.skipUser){
-   append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos,options.previewFiles);
+   append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos,options.previewFiles,null,options.fileRefs);
    const sentTurn=answers.get('user-'+id)?.closest('.turn');
    if(sentTurn&&Array.isArray(options.documentFiles)){
     sentDocumentBlobs.set(sentTurn,options.documentFiles);
@@ -3521,7 +3569,11 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    const thumbs=(await Promise.all(selected.map(async item=>{
     try{return await makeSentPhoto(item.file)}catch{return null}
    }))).filter(Boolean);
-   const otherFiles=selected.filter(x=>!['image/png','image/jpeg','image/webp'].includes(x.file.type)).map(x=>x.file.name);
+   const attachedDocuments=selected.filter(x=>!['image/png','image/jpeg','image/webp'].includes(x.file.type)).map(x=>x.file);
+   const otherFiles=attachedDocuments.map(x=>x.name);
+   // Encrypted local session cache keeps these explicitly chosen files
+   // readable after refresh; cache failures must not block sending.
+   const fileRefs=await window.SEYVEO_CHAT_FILES?.remember(attachedDocuments).catch(()=>({}))||{};
    const display=value;
    const hasDocument=files.segments.length>0;
    const instruction=hasDocument
@@ -3543,7 +3595,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    // attaching it again, while the temporary server still holds its bytes.
    recentVisual=files.uploaded.length?
     {conversation:currentId,at:Date.now(),items:files.uploaded}:null;
-   await ask(message,{displayMessage:display,previewPhotos:thumbs,previewFiles:otherFiles,documentFiles:selected.filter(x=>!['image/png','image/jpeg','image/webp'].includes(x.file.type)).map(x=>x.file),attachments:files.uploaded});
+   await ask(message,{displayMessage:display,previewPhotos:thumbs,previewFiles:otherFiles,documentFiles:attachedDocuments,attachments:files.uploaded,fileRefs});
   }catch(error){
    if(active===lock){active=null;updateControls()}
    status.textContent=String(error?.message||'Не удалось отправить файл.');
