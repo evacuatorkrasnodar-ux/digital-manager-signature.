@@ -1909,7 +1909,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <link rel="stylesheet" href="assets/seyveo-dock-icon-standard.css?v=6">
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
-<link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=10">
+<link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=11">
 <link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=30">
 </head>
 <body>
@@ -3091,10 +3091,10 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   const pdfIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="2" y="10" width="19" height="8.5" rx="2.2" class="sv-file-label"/><text x="11.5" y="16" text-anchor="middle" class="sv-file-pdf-text">PDF</text></svg>';
   const word=document.createElement('button');word.type='button';word.className='sv-download-word';
   word.innerHTML=wordIcon+'<span class="sv-file-entry"><strong>Документ Word</strong><small>Word · DOCX</small></span>';
-  word.addEventListener('click',()=>{const draft=documentDraftOnly(replySource(bubble));if(draft)exportWordReply(draft,feedback);else feedback.textContent='Нет готового документа для Word';});
+  word.addEventListener('click',()=>{const draft=editedDocumentDrafts.get(bubble)||documentDraftOnly(replySource(bubble));if(draft)exportWordReply(draft,feedback);else feedback.textContent='Нет готового документа для Word';});
   const pdf=document.createElement('button');pdf.type='button';pdf.className='sv-download-pdf';
   pdf.innerHTML=pdfIcon+'<span class="sv-file-entry"><strong>Документ PDF</strong><small>PDF</small></span>';
-  pdf.addEventListener('click',()=>{const draft=documentDraftOnly(replySource(bubble));if(draft)exportPdfReply(draft,feedback);else feedback.textContent='Нет готового документа для PDF';});
+  pdf.addEventListener('click',()=>{const draft=editedDocumentDrafts.get(bubble)||documentDraftOnly(replySource(bubble));if(draft)exportPdfReply(draft,feedback);else feedback.textContent='Нет готового документа для PDF';});
   const preview=document.createElement('button');preview.type='button';
   preview.className='sv-download-preview';
   preview.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Смотреть</span>';
@@ -3111,7 +3111,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    printSayviDocument(draft,feedback);
   });
   print.hidden=true;
-  downloads.append(preview,word,pdf);
+  downloads.append(word,pdf,preview);
   options.append(print);
   // Keep the compact icon actions visible beneath each Sayvi reply.
   row.append(copyQuick,play,...options.querySelectorAll('button'));
@@ -3554,6 +3554,24 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   }
  }
 
+ // A finished document is delivered as two actual download actions, not
+ // a decorative filename. The browser makes a DOCX/PDF on demand when tapped.
+ function showSayviGeneratedFiles(bubble,message,ready=true){
+  const turn=bubble?.closest('.turn');
+  const row=turn?.querySelector('.sv-document-downloads');
+  if(!row)return;
+  const draft=editedDocumentDrafts.get(bubble)||documentDraftOnly(message);
+  const available=!!draft&&ready;
+  row.hidden=!available;
+  turn.classList.toggle('sv-has-generated-documents',available);
+  const printOption=turn.querySelector('.sv-download-print');
+  if(printOption)printOption.hidden=!available;
+  if(!available)return;
+  const wordName=row.querySelector('.sv-download-word .sv-file-entry strong');
+  const pdfName=row.querySelector('.sv-download-pdf .sv-file-entry strong');
+  if(wordName)wordName.textContent=sayviExportFilename(draft,'docx');
+  if(pdfName)pdfName.textContent=sayviExportFilename(draft,'pdf');
+ }
  function append(role,id,message,save=true,photos=null,files=null,recordedTime=null,fileRefs=null){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
@@ -3592,21 +3610,9 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
     // Contextual suggestions appear after the answer, never for every token.
     if(!active||id.startsWith('loaded-'))showReplySuggestions(bubble,message);
     const turn=bubble.closest('.turn');
-    const downloadRow=turn?.querySelector('.sv-document-downloads');
-    if(downloadRow){
-     const preceding=turn?.previousElementSibling;
-     const request=preceding?.dataset.role==='user'?preceding.textContent:'';
-     const draft=documentDraftOnly(message);
-     downloadRow.hidden=true; // The document card opens the full-screen reader with all export actions.
-     if(draft){
-      const wordName=downloadRow.querySelector('.sv-download-word .sv-file-entry strong');
-      const pdfName=downloadRow.querySelector('.sv-download-pdf .sv-file-entry strong');
-      if(wordName)wordName.textContent=sayviExportFilename(draft,'docx');
-      if(pdfName)pdfName.textContent=sayviExportFilename(draft,'pdf');
-     }
-     const printOption=turn?.querySelector('.sv-download-print');
-     if(printOption)printOption.hidden=downloadRow.hidden;
-    }
+    // Draft cards appear only after the reply is complete or reloaded.
+    // Never offer to download a partially streamed document.
+    showSayviGeneratedFiles(bubble,message,!active||id.startsWith('loaded-'));
    }
   else bubble.textContent=message;
   if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
@@ -4415,7 +4421,10 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    streamingTurn?.classList.remove('is-streaming','is-fresh');
    if(done&&answer.trim()){
     const completed=answers.get(replyId);
-    if(completed)renderAssistantText(completed,answer);
+    if(completed){
+     renderAssistantText(completed,answer);
+     showSayviGeneratedFiles(completed,answer,true);
+    }
     showReplySuggestions(completed,answer);
    }
    stopThinking();
