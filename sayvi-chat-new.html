@@ -2210,6 +2210,18 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
     if(candidate.length>=75&&candidate.split('\n').length>=3)text=candidate;
    }
   }
+  if(!text){
+   // A completed polite letter may start with a greeting instead of a title.
+   // Require both a greeting and sign-off to avoid cards for casual chat.
+   const greet=/^(?:(?:Уважаем(?:ый|ая|ые)\s+\S+[,!])|(?:Здравствуйте[,!])|(?:Добрый (?:день|вечер)[,!])|(?:[А-ЯЁ][а-яё-]{2,40},\s*здравствуйте[!.]?))\s*$/iu;
+   const greetAt=lines.findIndex(line=>greet.test(line.trim()));
+   if(greetAt>=0){
+    const candidate=lines.slice(greetAt).join('\n').trim();
+    const closure=/(?:^|\n)\s*(?:С уважением[,!]?|Спасибо за понимание[!.]?|С наилучшими пожеланиями[,!]?)\s*(?:\n|$)/iu;
+    if(candidate.length>=110&&candidate.split('\n').length>=5&&closure.test(candidate))
+     text=candidate;
+   }
+  }
   if(!text)return '';
   text=text.replace(/\n(?:---+|___+)\s*$/u,'').trim();
   text=text.replace(/\n{2,}(?:Если хочешь|Могу (?:также|ещ[её])|Хочешь|При необходимости)[^\n]*(?:\n[^\n]*)*$/iu,'').trim();
