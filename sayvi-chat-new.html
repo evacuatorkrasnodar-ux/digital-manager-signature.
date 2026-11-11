@@ -3386,12 +3386,21 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
     tile.classList.add('sv-sent-file--compact');
     if(received)tile.classList.add('sv-received-file');
     if(ext==='pdf'||ext==='docx'||ext==='doc'){
-     // Use the already approved SEYVEO Word/PDF paper marks for compact chat files.
-     const paper=document.createElement('span');
-     paper.className=ext==='pdf'?'sv-sent-pdf-icon':'sv-sent-word-icon';
-     paper.setAttribute('aria-hidden','true');
-     paper.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true" focusable="false"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/><text x="12" y="21" text-anchor="middle" fill="currentColor" stroke="none" font-family="system-ui,sans-serif" font-size="'+(ext==='pdf'?'6':'11')+'" font-weight="700">'+(ext==='pdf'?'PDF':'W')+'</text></svg>';
-     tile.append(paper);
+     // Exact DOM from Work Chat svcpFileBadge() — one shared SVG contour
+     // plus separately positioned HTML letter, not SVG <text>.
+     const type=ext==='pdf'?'pdf':'word';
+     const badge=document.createElement('span');
+     badge.className='svcp-file-badge svcp-file-badge--'+type+' svcp-sayvi-document-mark';
+     const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+     svg.setAttribute('viewBox','0 0 24 30');
+     svg.setAttribute('aria-hidden','true');
+     svg.innerHTML='<path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20" />';
+     const glyph=document.createElement('span');
+     glyph.className='svcp-sayvi-document-letter';
+     glyph.textContent=type==='pdf'?'PDF':'W';
+     badge.append(svg,glyph);
+     badge.setAttribute('aria-hidden','true');
+     tile.append(badge);
     }else tile.append(makeDocumentIcon({name}));
     const copy=document.createElement('span');copy.className='sv-sent-file-copy';
     const label=document.createElement('strong');label.className='sv-sent-file-name';
