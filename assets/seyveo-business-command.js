@@ -236,6 +236,7 @@ function svcpOpenDocument(file){
  const kind=svcpFileKind(file.name,file.type).kind;
  const url=URL.createObjectURL(file),last=document.activeElement;
  const sheet=el('section','svcp-doc-overlay');
+ if(kind==='word'||kind==='text')sheet.classList.add('svcp-doc-overlay--paper');
  sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');
  sheet.setAttribute('aria-label','Просмотр документа '+file.name);
  const top=el('header','svcp-doc-top'),back=el('button','svcp-doc-back');
