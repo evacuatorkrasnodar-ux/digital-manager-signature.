@@ -1990,3 +1990,47 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-fi
  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
  color:#F5F5F7!important;text-align:left!important;
 }
+
+/* SEYVEO document direction standard: own file = page thumbnail; received = compact file row. */
+html body #sayviMessages .turn[data-role="assistant"] .sv-sent-files{
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ justify-content:flex-start!important;gap:6px!important;
+ width:min(200px,calc(100vw - 40px))!important;max-width:200px!important;
+ margin:4px 0!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-sent-file.sv-received-file{
+ box-sizing:border-box!important;display:flex!important;flex-direction:row!important;
+ align-items:center!important;gap:10px!important;
+ width:100%!important;max-width:200px!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
+ padding:8px 12px!important;margin:0!important;
+ border:1px solid #393A3D!important;border-radius:17px!important;
+ background:#1A1B1D!important;color:#F5F5F7!important;box-shadow:none!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-received-file > .sv-attach-fileicon{
+ display:grid!important;place-items:center!important;position:relative!important;
+ flex:0 0 32px!important;width:32px!important;height:40px!important;
+ margin:0!important;background:transparent!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-received-file > .sv-sent-file-copy{
+ display:flex!important;flex-direction:column!important;justify-content:center!important;
+ flex:1 1 auto!important;min-width:0!important;gap:3px!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-received-file .sv-sent-file-name{
+ display:block!important;font:600 12px/1.25 system-ui,sans-serif!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ color:#F5F5F7!important;
+}
+html body #sayviMessages .turn[data-role="assistant"] .sv-received-file .sv-sent-file-meta{
+ display:block!important;font:400 11px/1.2 system-ui,sans-serif!important;color:#B3B4B8!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-bubble.is-other .svcp-file-card:not(.svcp-sent-document-tile),
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-bubble.is-sayvi .svcp-file-card:not(.svcp-sent-document-tile){
+ box-sizing:border-box!important;
+ width:min(200px,calc(100vw - 48px))!important;
+ max-width:200px!important;min-height:60px!important;
+ padding:8px 11px!important;
+ gap:9px!important;border-radius:17px!important;
+ border:1px solid #393A3D!important;
+ background:#1A1B1D!important;color:#F5F5F7!important;
+}
