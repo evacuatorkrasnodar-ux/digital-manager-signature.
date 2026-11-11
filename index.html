@@ -3144,6 +3144,24 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div id="svCareScroll" class="sv-care-scroll" tabindex="0" role="region" aria-label="Содержимое личного раздела">
 <p id="calendarSpaceIntro">Ваши записи на этом устройстве</p>
 <section id="calendarHealthOverview" class="cal-health-overview" aria-label="Запись показателей здоровья" hidden>
+ <div class="cal-bp-home-entry">
+  <h3>Записать давление</h3>
+  <form id="calendarBpQuickForm" autocomplete="off">
+   <div class="cal-bp-home-grid">
+    <label><span>Верхнее</span><input id="calendarBpQuickS" type="number" inputmode="numeric" min="50" max="300" placeholder="130" required><small>мм рт. ст.</small></label>
+    <label><span>Нижнее</span><input id="calendarBpQuickD" type="number" inputmode="numeric" min="30" max="200" placeholder="80" required><small>мм рт. ст.</small></label>
+    <label><span>Пульс</span><input id="calendarBpQuickP" type="number" inputmode="numeric" min="30" max="240" placeholder="72" required><small>уд/мин</small></label>
+   </div>
+   <div id="calendarBpQuickAdvice" class="cal-bp-home-advice" aria-live="polite">Сэйви объяснит результат после ввода.</div>
+   <div id="calendarBpQuickEmergency" class="cal-bp-emergency" hidden>
+    <strong>Возможна опасная ситуация</strong>
+    <p>При боли в груди, одышке, нарушении речи, онемении или резкой слабости немедленно вызывайте скорую. Не ждите повторного замера.</p>
+    <div><a href="tel:103">Вызвать 103</a><a href="tel:112">112</a></div>
+   </div>
+   <button class="cal-bp-home-save" type="submit">Сохранить измерение</button>
+  </form>
+  <small id="calendarBpQuickLast" class="cal-bp-quick-last" hidden></small>
+ </div>
  <h3 class="cal-health-guide">Показатели</h3>
  <p class="cal-health-guide-hint">Нажмите на показатель, чтобы посмотреть или добавить запись.</p>
  <div class="cal-health-tiles">
@@ -3155,12 +3173,11 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
    <span class="cal-health-tile-action" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span>
   </button>
 </div>
- <button id="calendarHealthComfortMode" class="cal-health-comfort-toggle" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17h16M7 14l5-10 5 10M9 11h6"/></svg><span>Крупный текст</span><small>Выкл.</small></button>
  <div id="calendarHealthAgeSetting" class="cal-health-age-setting">
-  <label for="calendarHealthBirthYear">Год рождения</label>
-  <select id="calendarHealthBirthYear" aria-label="Год рождения"><option value="">Не указан</option></select>
+  <label for="calendarHealthAge">Возраст</label>
+  <select id="calendarHealthAge" aria-label="Возраст в годах"><option value="">Указать</option></select>
   <span class="cal-health-age-chevron" aria-hidden="true">⌄</span>
-  <small id="calendarHealthAgeHint" class="cal-health-sr-only">Возраст необязателен; выбирается один раз.</small>
+  <small id="calendarHealthAgeHint" class="cal-health-sr-only">Возраст в годах. Выбирается один раз.</small>
  </div>
  <div id="calendarBpReport" class="cal-bp-report" hidden aria-live="polite">
  <div class="cal-bp-report-head"><span class="cal-bp-report-icon sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви · оценка давления</strong></div>
