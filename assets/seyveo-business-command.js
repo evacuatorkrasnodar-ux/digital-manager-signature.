@@ -174,7 +174,7 @@ function svcpFileCard(name,type,url,timeNode=null,onOpen=null,bytes=null,isOwn=f
   const caption=el('span','svcp-sent-document-caption');
   const badge=el('span','svcp-sent-document-format');
   badge.dataset.kind=detail.kind;
-  badge.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/></svg><span>'+(detail.kind==='pdf'?'PDF':'W')+'</span>';
+  badge.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/><text x="12" y="21" text-anchor="middle" stroke="none" fill="currentColor" font-family="system-ui,sans-serif" font-size="'+(detail.kind==='pdf'?'6':'11')+'" font-weight="700">'+(detail.kind==='pdf'?'PDF':'W')+'</text></svg>';
   caption.append(badge,el('span','svcp-sent-document-name',displayName));
   node.append(caption);
   if(timeNode){
@@ -2459,7 +2459,7 @@ function renderCapturePreview(){
   const mark=marks[ext]||(ext.toUpperCase().slice(0,4)||'FILE');
   const markKind=/^(doc|docx)$/.test(ext)?'word':/^(xls|xlsx|csv)$/.test(ext)?'sheet':ext==='pdf'?'pdf':/^(ppt|pptx)$/.test(ext)?'slides':kind==='image'?'image':kind==='video'?'video':/^(html|htm|css|js)$/.test(ext)?'code':'other';
   glyph.dataset.kind=markKind;
-  glyph.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/></svg><span>'+mark+'</span>';
+  glyph.innerHTML='<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M4 1.5h10.5L20 7v21H4zM14.5 1.5V7H20"/><text x="12" y="21" text-anchor="middle" stroke="none" fill="currentColor" font-family="system-ui,sans-serif" font-size="'+(mark.length>3?'4':mark.length>1?'6':'11')+'" font-weight="700">'+mark+'</text></svg>';
   caption.append(glyph,label);
   tile.append(caption);
   const remove=btn('',()=>{
