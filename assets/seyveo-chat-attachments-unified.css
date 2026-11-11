@@ -1717,3 +1717,105 @@ html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-tile > .svcp-
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
+
+
+/* WORK CHAT · 3-column gallery rows synchronized with composer height */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-has-attachment{
+ display:grid!important;
+ grid-template-rows:var(--svcp-attachment-row-height,117px) minmax(0,var(--svcp-editor-height,44px)) 42px!important;
+ height:var(--svcp-compose-height,215px)!important;
+ min-height:var(--svcp-compose-height,215px)!important;
+ max-height:min(67dvh,calc(100dvh - 96px))!important;
+ align-content:start!important;
+ transition:height .24s cubic-bezier(.22,.8,.22,1)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-has-attachment > #svcpAttachmentPreview.svcp-square-tray:not([hidden]){
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ grid-auto-rows:99px!important;
+ column-gap:7px!important;row-gap:6px!important;
+ align-content:start!important;align-items:start!important;
+ grid-column:1/-1!important;grid-row:1!important;
+ box-sizing:border-box!important;
+ width:calc(100% - 16px)!important;max-width:calc(100% - 16px)!important;min-width:0!important;
+ height:var(--svcp-attachment-row-height,117px)!important;
+ min-height:0!important;max-height:var(--svcp-attachment-row-height,117px)!important;
+ margin:0 8px!important;padding:8px 0 9px!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ scroll-snap-type:none!important;overscroll-behavior:contain!important;
+ scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpAttachmentPreview.svcp-square-tray > .svcp-preview-tile{
+ box-sizing:border-box!important;position:relative!important;
+ display:block!important;flex:none!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ height:99px!important;min-height:99px!important;max-height:99px!important;
+ margin:0!important;padding:0!important;
+ border:1px solid rgba(255,255,255,.09)!important;border-radius:13px!important;
+ background:#111214!important;color:#F5F5F6!important;
+ box-shadow:none!important;overflow:hidden!important;scroll-snap-align:none!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-tile-image{
+ position:absolute!important;inset:0 0 23px!important;
+ width:100%!important;height:calc(100% - 23px)!important;
+ object-fit:cover!important;border:0!important;border-radius:0!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-tile-name{
+ position:absolute!important;z-index:3!important;inset:auto 0 0!important;
+ display:flex!important;align-items:center!important;gap:4px!important;
+ box-sizing:border-box!important;width:100%!important;
+ height:23px!important;min-height:23px!important;max-height:23px!important;
+ margin:0!important;padding:0 4px!important;
+ background:#050506!important;color:#F5F5F7!important;
+ font:500 9px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;overflow:hidden!important;white-space:nowrap!important;
+ text-overflow:ellipsis!important;border:0!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon{
+ position:relative!important;display:grid!important;place-items:center!important;
+ flex:0 0 14px!important;width:14px!important;height:18px!important;
+ min-width:14px!important;min-height:18px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;color:#C9CED5!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon[data-kind="pdf"]{color:#FF4C4C!important}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon[data-kind="word"]{color:#3986FF!important}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon[data-kind="sheet"]{color:#3CC789!important}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon[data-kind="slides"]{color:#EA934B!important}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon[data-kind="video"]{color:#B59DF5!important}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon[data-kind="code"]{color:#E8B768!important}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon svg{
+ position:absolute!important;inset:0!important;
+ width:14px!important;height:18px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
+ stroke-linejoin:round!important;stroke-linecap:round!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon span{
+ position:relative!important;z-index:1!important;display:block!important;margin-top:5px!important;
+ color:currentColor!important;font:700 5px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon[data-kind="word"] span,
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-icon[data-kind="sheet"] span{
+ font-size:8px!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-text{
+ flex:1 1 auto!important;min-width:0!important;display:block!important;
+ overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-tile-remove{
+ position:absolute!important;z-index:5!important;top:0!important;right:0!important;
+ width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;
+ padding:6px!important;margin:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ color:#FFF!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-tile-remove svg{
+ width:16px!important;height:16px!important;
+ filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))!important;
+}
+html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-tile > .svcp-file-badge{
+ position:absolute!important;top:11px!important;left:50%!important;transform:translateX(-50%)!important;
+ width:42px!important;height:50px!important;margin:0!important;background:transparent!important;
+}
