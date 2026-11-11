@@ -3087,18 +3087,27 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   );
   const downloads=document.createElement('div');
   downloads.className='sv-document-downloads';downloads.hidden=true;
-  const wordIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="3" y="10" width="12.5" height="8.5" rx="2.2" class="sv-file-label"/><path d="m5.6 12.3 1 3.7 1.1-2.6 1.1 2.6 1-3.7" class="sv-file-letter"/></svg>';
-  const pdfIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="2" y="10" width="19" height="8.5" rx="2.2" class="sv-file-label"/><text x="11.5" y="16" text-anchor="middle" class="sv-file-pdf-text">PDF</text></svg>';
-  const word=document.createElement('button');word.type='button';word.className='sv-download-word';
-  word.innerHTML=wordIcon+'<span class="sv-file-entry"><strong>Документ Word</strong><small>Word · DOCX</small></span>';
-  word.addEventListener('click',()=>{const draft=editedDocumentDrafts.get(bubble)||documentDraftOnly(replySource(bubble));if(draft)exportWordReply(draft,feedback);else feedback.textContent='Нет готового документа для Word';});
-  const pdf=document.createElement('button');pdf.type='button';pdf.className='sv-download-pdf';
-  pdf.innerHTML=pdfIcon+'<span class="sv-file-entry"><strong>Документ PDF</strong><small>PDF</small></span>';
-  pdf.addEventListener('click',()=>{const draft=editedDocumentDrafts.get(bubble)||documentDraftOnly(replySource(bubble));if(draft)exportPdfReply(draft,feedback);else feedback.textContent='Нет готового документа для PDF';});
-  const preview=document.createElement('button');preview.type='button';
-  preview.className='sv-download-preview';
-  preview.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Смотреть</span>';
-  preview.addEventListener('click',()=>previewSayviDocument(replySource(bubble),feedback,bubble));
+  // Sayvi-generated documents must look exactly like the approved
+  // 08:50 compact file cards, not like small utility pills.
+  const generatedFileIcon=(kind)=>{
+   const isPdf=kind==='pdf',mark=isPdf?'PDF':'W';
+   return '<svg viewBox="0 0 28 34" aria-hidden="true" focusable="false" class="sv-generated-file-icon">'+
+    '<path d="M6 2.5h11l5 5V21M17 2.5V8h5M6 2.5v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<text x="14" y="29" text-anchor="middle" font-size="'+(isPdf?'9':'11')+'" font-weight="750" fill="currentColor">'+mark+'</text></svg>';
+  };
+  const makeGeneratedFileCard=(kind)=>{
+   const button=document.createElement('button');
+   button.type='button';
+   button.className='sv-download-'+(kind==='pdf'?'pdf':'word')+' sv-generated-file-card';
+   button.setAttribute('aria-label','Открыть '+(kind==='pdf'?'PDF':'Word')+' документ от Сэйви');
+   button.innerHTML=generatedFileIcon(kind)+
+    '<span class="sv-file-entry"><strong>Документ SEYVEO</strong><small>'+(kind==='pdf'?'PDF':'DOCX')+'</small></span>'+
+    '<span class="sv-generated-file-clock" aria-hidden="true"></span>';
+   button.addEventListener('click',()=>previewSayviDocument(replySource(bubble),feedback,bubble));
+   return button;
+  };
+  const word=makeGeneratedFileCard('word');
+  const pdf=makeGeneratedFileCard('pdf');
   // Match the other menu actions: icon-only SVG with a normal button label.
   // Printing is relevant only when the reply contains a prepared document.
   const print=miniAction('print','Печать',()=>{
@@ -3111,7 +3120,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    printSayviDocument(draft,feedback);
   });
   print.hidden=true;
-  downloads.append(word,pdf,preview);
+  downloads.append(word,pdf);
   options.append(print);
   // Keep the compact icon actions visible beneath each Sayvi reply.
   row.append(copyQuick,play,...options.querySelectorAll('button'));
@@ -3580,6 +3589,13 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   const pdfName=row.querySelector('.sv-download-pdf .sv-file-entry strong');
   if(wordName)wordName.textContent=sayviExportFilename(draft,'docx');
   if(pdfName)pdfName.textContent=sayviExportFilename(draft,'pdf');
+  // The file timestamp is the assistant message's actual timestamp,
+  // never the current time or a fabricated delivery confirmation.
+  const timestamp=turn.querySelector('.sv-turn-clock')?.textContent||'';
+  row.querySelectorAll('.sv-generated-file-clock').forEach(clock=>{
+   clock.textContent=timestamp;
+   clock.hidden=!timestamp;
+  });
  }
  function append(role,id,message,save=true,photos=null,files=null,recordedTime=null,fileRefs=null){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
