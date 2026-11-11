@@ -27,6 +27,7 @@ function read(){
    detail:typeof x.detail==='string'?x.detail.slice(0,500):'',
    bpPulse:Number.isInteger(x.bpPulse)&&x.bpPulse>=30&&x.bpPulse<=240?x.bpPulse:null,
    recordedAt:Number.isSafeInteger(x.recordedAt)&&x.recordedAt>0?x.recordedAt:0,
+   repeatOf:typeof x.repeatOf==='string'?x.repeatOf.slice(0,90):'',
    yearless:x.space==='world'&&x.kind==='День рождения'&&x.yearless===true
   })).filter(x=>x.title);
  }catch{return []}
@@ -253,6 +254,41 @@ function bpForm(item=null){
 for(const id of ['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse']){
  $(id).addEventListener('input',bpPreview);
 }
+/* An explicit second measurement is a separate record linked to the first.
+   The call to emergency care is never delayed by the repeat suggestion. */
+let bpRepeatSourceId='',bpNotice=null;
+function bpRepeatReading(id){return read().find(x=>x.space==='health'&&x.kind==='Давление'&&x.id===id)||null}
+function updateBpRepeatPanel(){
+ const box=$('calendarBpRepeatPanel');if(!box)return;
+ box.hidden=current!=='health'||!bpNotice||dialog.dataset.measureFocus==='true';
+ if(box.hidden)return;
+ const title=$('calendarBpRepeatHeading'),message=$('calendarBpRepeatMessage');
+ const values=$('calendarBpRepeatValues'),action=$('calendarBpRepeatAction');
+ values.replaceChildren();
+ const first=bpRepeatReading(bpNotice.first),second=bpNotice.second?bpRepeatReading(bpNotice.second):null;
+ if(!first){box.hidden=true;return;}
+ const bp1=bpParse(first),bp2=bpParse(second);
+ if(!bp1){box.hidden=true;return;}
+ if(bp2){
+  title.textContent='Два измерения сохранены';
+  const ds=bp2.s-bp1.s,dd=bp2.d-bp1.d;
+  const fmt=n=>n>0?'+'+n:String(n);
+  message.textContent='Второе измерение: изменение верхнего '+fmt(ds)+', нижнего '+fmt(dd)+' мм рт. ст. Два отдельных результата записаны в журнал. Если значения остаются высокими, обсудите их с врачом. При тревожных симптомах вызывайте экстренную помощь.';
+  for(const [label,bp] of [['Первое',bp1],['Повторное',bp2]]){
+   const item=dom('div','cal-bp-repeat-value');
+   item.append(dom('small','',label),dom('strong','',bp.s+'/'+bp.d),dom('span','',bp.p===null?'Пульс не указан':'Пульс '+bp.p));
+   values.append(item);
+  }
+  values.hidden=false;action.hidden=true;box.dataset.level='paired';
+ }else{
+  const info=bpAssess(bp1.s,bp1.d,bp1.p);
+  title.textContent=info.level==='urgent'?'Очень высокое давление':'Сэйви · проверьте измерение';
+  message.textContent=info.level==='urgent'
+   ?'Если есть боль в груди, одышка, сильная головная боль с нарушением зрения, слабость или нарушение речи — немедленно вызывайте скорую, не ожидая повторного замера. Если этих симптомов нет, спокойно посидите, повторите измерение не раньше чем через минуту и срочно свяжитесь с врачом при сохраняющихся очень высоких показателях.'
+   :'Если нет тревожных симптомов, отдохните спокойно пять минут и повторите измерение через 1–2 минуты. При боли в груди, одышке, обмороке или нарушении речи вызывайте экстренную помощь.';
+  values.hidden=true;action.hidden=false;box.dataset.level=info.level;
+ }
+}
 /* A physician-friendly pressure log from the existing local records only. */
 let bpJournalPeriod='7';
 function bpJournalItems(){
@@ -297,6 +333,8 @@ function renderBpJournal(){
   const clock=bp.time?new Date(bp.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'';
   row.append(dom('span','cal-bp-journal-date',when+(clock?' · '+clock:'')));
   row.append(dom('strong','cal-bp-journal-reading',bp.s+'/'+bp.d+'  ·  '+(bp.p===null?'—':bp.p)));
+  if(item.repeatOf)row.append(dom('small','cal-bp-repeat-tag','Повторное измерение'));
+  else if(items.some(other=>other.item.repeatOf===item.id))row.append(dom('small','cal-bp-repeat-tag','Первое измерение в паре'));
   if(item.detail)row.append(dom('small','cal-bp-journal-note',item.detail));
   rows.append(row);
  }
@@ -311,7 +349,7 @@ function bpDoctorText(){
   'Измерения (давление мм рт. ст.; пульс уд/мин):'];
  for(const {item,bp} of items){
   lines.push((bp.date||'Без даты')+(bp.time?' '+new Date(bp.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'')+
-    ' | '+bp.s+'/'+bp.d+' | '+(bp.p===null?'—':bp.p)+(item.detail?' | Заметка: '+item.detail.replace(/[\r\n]+/g,' '):''));
+    ' | '+bp.s+'/'+bp.d+' | '+(bp.p===null?'—':bp.p)+(item.repeatOf?' | Повторное измерение':'')+(item.detail?' | Заметка: '+item.detail.replace(/[\r\n]+/g,' '):''));
  }
  lines.push('','Внимание: данные введены пользователем вручную. Отчёт не является диагнозом или медицинским заключением.');
  return lines.join('\n');
@@ -373,6 +411,7 @@ function renderHealthOverview(){
  value.closest('[data-health-quick]')?.setAttribute('data-has-record',String(Boolean(latest)));
  bpReport();
  renderBpJournal();
+ updateBpRepeatPanel();
 }
 function renderList(){
  const root=$('calendarSpaceList');root.replaceChildren();
@@ -553,6 +592,7 @@ function measurementFocus(active){
  }
 }
 function leaveMeasurement(message=''){
+ bpRepeatSourceId='';
  if(!svPicker.hidden)svClosePicker(false);
  const active=document.activeElement;
  if(active&&dialog.contains(active)&&active.matches('input,textarea,select'))active.blur();
@@ -571,6 +611,7 @@ function leaveMeasurement(message=''){
 }
 function open(space,id=null,selectedDate=''){
  if(!META[space])return;
+ bpRepeatSourceId='';bpNotice=null;
  const legacyStep=id&&read().find(row=>row.id===id&&row.kind==='Шаги'&&row.space==='health');
  if(legacyStep){
   open('care');
@@ -611,6 +652,7 @@ function open(space,id=null,selectedDate=''){
  else $('svCareScroll').scrollTop=0;
 }
 function add(kind=null){
+ if(!bpRepeatSourceId)bpNotice=null;
  // Health overview and history share this single form; reveal it before focus.
  const journal=$('calendarSpaceJournal');
  if(journal&&!journal.open)journal.open=true;
@@ -651,10 +693,19 @@ function save(event){
   detail:$('calendarSpaceDetail').value.trim().slice(0,500),
   bpPulse:isBP?pulse:null,
   recordedAt:isBP?(old?.recordedAt||measuredAt?.getTime()||Date.now()):0,
+  repeatOf:isBP?(old?.repeatOf||(bpRepeatSourceId&&bpRepeatReading(bpRepeatSourceId)?bpRepeatSourceId:'')):'',
   yearless:current==='world'&&$('calendarSpaceKind').value==='День рождения'&&$('calendarSpaceAnnual').checked&&!!date
  };
  const updated=old?all.map(x=>x.id===old.id?row:x):[...all,row];
  if(!store(updated)){status.textContent='Не удалось сохранить. Проверьте память браузера.';return}
+ if(isBP&&!old){
+  const linked=row.repeatOf?bpRepeatReading(row.repeatOf):null;
+  const info=bpAssess(sys,dia,pulse);
+  if(linked)bpNotice={first:linked.id,second:row.id};
+  else if(['raised','high','urgent','low'].includes(info.level))bpNotice={first:row.id,second:''};
+  else bpNotice=null;
+ }
+ bpRepeatSourceId='';
  if(current==='health'&&dialog.dataset.measureFocus==='true'){
   leaveMeasurement('Сохранено на этом устройстве');
  }else{
@@ -747,6 +798,15 @@ $('calendarSpaceAdd').addEventListener('click',()=>add());
 $('calendarHealthOverview').addEventListener('click',event=>{
  const quick=event.target.closest('[data-health-quick]');
  if(quick)add(quick.dataset.healthQuick);
+});
+$('calendarHealthOverview').addEventListener('click',event=>{
+ if(event.target.closest('#calendarBpRepeatDismiss')){bpNotice=null;updateBpRepeatPanel();return;}
+ if(event.target.closest('#calendarBpRepeatAction')){
+  const source=bpNotice?.first;
+  if(!source||!bpRepeatReading(source))return;
+  add('Давление');
+  bpRepeatSourceId=source;
+ }
 });
 $('calendarSpaceKind').addEventListener('change',()=>{updateHealthPlaceholder();bpForm();});
 $('calendarSpaceFormFields').addEventListener('submit',save);
