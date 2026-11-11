@@ -117,7 +117,7 @@
  function card(draft,actions){
   const holder=el('button','sv-rich-document-card');
   holder.type='button';
-  holder.setAttribute('aria-label','Открыть документ');
+  holder.setAttribute('aria-label','Открыть документ для проверки и редактирования');
   const titleMatch=/^\s*(?:#{1,4}\s*)?(?:\*\*)?([^\n]{4,80})/u.exec(draft);
   const title=(titleMatch?.[1]||'Документ').replace(/\*\*/g,'').trim();
   const top=el('div','sv-rich-document-head');
@@ -126,13 +126,17 @@
   sheet.innerHTML='<svg viewBox="0 0 24 24"><path d="M6 2.8h8.5L19 7.3V21H6zM14.5 2.8v4.5H19M9 12h7M9 15.5h7M9 19h5"/></svg>';
   const description=el('div','sv-rich-document-description');
   const name=el('strong','sv-rich-document-name',title.slice(0,70));
-  const subtitle=el('span','sv-rich-document-label','Документ SEYVEO');
+  const incomplete=/\[[^\]\n]{2,80}\]/u.test(draft);
+  const subtitle=el('span','sv-rich-document-label',incomplete?'Нужно заполнить данные':'Подготовлен · проверь перед сохранением');
   description.append(name,subtitle);
   const arrow=el('span','sv-rich-document-chevron');arrow.setAttribute('aria-hidden','true');arrow.textContent='›';
   top.append(sheet,description,arrow);
   holder.append(top);
   holder.addEventListener('click',()=>actions.preview?.());
   return holder;
+ }
+ function incompleteDocument(draft){
+  return /\[[^\]\n]{2,80}\]/u.test(String(draft||''));
  }
  function render(bubble,source,options={}){
   if(!bubble)return;
@@ -151,9 +155,16 @@
    if(start>=0){
     const before=text.slice(0,start).replace(/(?:^|\n)\s*(?:---+|___+|\*\*\*+)\s*$/u,'').trim();
     const after=text.slice(start+draft.length).replace(/^\s*(?:---+|___+|\*\*\*+)\s*/u,'').trim();
-    if(before)blocks(content,before);
+    // The manuscript stays inside the document viewer, not repeated in chat.
+    // A short neutral explanation replaces long preambles and follow-up prompts.
+    const intro=incompleteDocument(draft)
+     ?'Подготовила документ. В нём остались поля для заполнения.'
+     :'Подготовила документ. Открой его, чтобы проверить текст и сохранить.';
+    content.append(el('p','sv-rich-document-intro',intro));
     content.append(card(draft,options));
-    if(after)blocks(content,after);
+    // Preserve meaningful warnings without turning the chat into a second editor.
+    const caution=[before,after].join(' ').match(/(?:проверь|обрати внимание|важно)[^.!?\n]{12,150}[.!?]?/iu);
+    if(caution)content.append(el('p','sv-rich-document-hint',caution[0].trim()));
    }else content.append(card(draft,options));
    bubble.classList.add('sv-rich','sv-rich-document');
   }else{
