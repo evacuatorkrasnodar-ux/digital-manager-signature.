@@ -368,7 +368,7 @@ function renderProfile(){
  const recognitions=peerRecognition(p.id);
  const badges=el('section','svstaff-peer-section');
  const title=el('div','svstaff-peer-head');
- title.append(el('h3',null,'✦ Знаки признания коллег'),el('span','svstaff-peer-count',String(recognitions.length)));
+ title.append(el('h3',null,'Знаки признания коллег'),el('span','svstaff-peer-count',String(recognitions.length)));
  badges.append(title);
  if(!recognitions.length)badges.append(el('p','svstaff-peer-empty','Пока нет новых знаков. Коллеги могут поблагодарить за помощь в рабочем чате.'));
  for(const record of recognitions.slice(0,12)){
