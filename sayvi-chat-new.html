@@ -1559,40 +1559,6 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 #sayviHistory .history-row:has(.sv-history-check){gap:11px}
 
 
-/* SEYVEO · a single three-dot entry replaces six persistent reply buttons. */
-#sayviMessages .sv-reply-actions{margin:2px 0 0 -6px!important}
-#sayviMessages .sv-reply-menu-toggle{
- display:grid!important;place-items:center!important;
- width:42px!important;height:34px!important;min-width:42px!important;min-height:34px!important;
- border:0!important;border-radius:10px!important;padding:0!important;
- color:var(--sayvi-secondary)!important;background:transparent!important;
-}
-#sayviMessages .sv-reply-menu-toggle svg{
- width:20px!important;height:20px!important;fill:currentColor!important;stroke:none!important;
-}
-#sayviMessages .sv-reply-action-menu{
- width:min(238px,calc(100vw - 38px))!important;
- max-width:min(238px,calc(100vw - 38px))!important;
- border-radius:14px!important;padding:6px!important;margin:3px 0 7px!important;
- background:#38383A!important;
-}
-#sayviMessages .sv-reply-menu-options{
- display:flex!important;flex-direction:column!important;gap:0!important;
-}
-#sayviMessages .sv-reply-menu-options > .sv-reply-action{
- display:flex!important;flex-direction:row!important;align-items:center!important;
- gap:12px!important;min-height:42px!important;width:100%!important;
- padding:9px 11px!important;
- font-size:12.5px!important;color:#F5F5F7!important;text-align:left!important;
-}
-#sayviMessages .sv-reply-menu-options > .sv-reply-action svg{
- flex:0 0 19px!important;width:19px!important;height:19px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
-}
-#sayviMessages .sv-reply-menu-options > .sv-reply-action span{
- display:block!important;flex:1!important;line-height:1.35!important;white-space:normal!important;
-}
-#sayviMessages .sv-reply-menu-options > button[hidden]{display:none!important}
 
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=4">
@@ -2696,13 +2662,6 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   document.addEventListener('keydown',onKey);
   back.focus({preventScroll:true});
  }
- let openReplyActionMenu=null;
- document.addEventListener('pointerdown',event=>{
-  if(!openReplyActionMenu||openReplyActionMenu.turn.contains(event.target))return;
-  openReplyActionMenu.panel.hidden=true;
-  openReplyActionMenu.button.setAttribute('aria-expanded','false');
-  openReplyActionMenu=null;
- },{passive:true});
  function addReplyActions(turn,bubble){
   const row=document.createElement('div');row.className='sv-reply-actions';
   row.setAttribute('aria-label','Действия с ответом Сэйви');
@@ -2759,39 +2718,9 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   print.hidden=true;
   downloads.append(preview,word,pdf);
   options.append(print);
-  // Keep every existing action, but reveal them only through one graphite menu.
-  const controls=[copyQuick,play,...options.querySelectorAll('button')];
-  options.replaceChildren();
-  for(const control of controls){
-   const caption=document.createElement('span');
-   caption.textContent=control.getAttribute('aria-label')||control.title||'Действие';
-   control.append(caption);options.append(control);
-  }
-  actionPanel.append(options);
-  const menuButton=document.createElement('button');menuButton.type='button';
-  menuButton.className='sv-reply-menu-toggle';
-  menuButton.setAttribute('aria-label','Действия с ответом');
-  menuButton.setAttribute('aria-expanded','false');
-  menuButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>';
-  menuButton.addEventListener('click',()=>{
-   if(openReplyActionMenu?.panel===actionPanel){
-    actionPanel.hidden=true;menuButton.setAttribute('aria-expanded','false');
-    openReplyActionMenu=null;return;
-   }
-   if(openReplyActionMenu){
-    openReplyActionMenu.panel.hidden=true;
-    openReplyActionMenu.button.setAttribute('aria-expanded','false');
-   }
-   actionPanel.hidden=false;menuButton.setAttribute('aria-expanded','true');
-   openReplyActionMenu={turn,panel:actionPanel,button:menuButton};
-  });
-  actionPanel.addEventListener('click',event=>{
-   if(!event.target.closest('button'))return;
-   actionPanel.hidden=true;menuButton.setAttribute('aria-expanded','false');
-   if(openReplyActionMenu?.panel===actionPanel)openReplyActionMenu=null;
-  });
-  row.append(menuButton);
-  turn.append(downloads,row,actionPanel,feedback);
+  // Keep the compact icon actions visible beneath each Sayvi reply.
+  row.append(copyQuick,play,...options.querySelectorAll('button'));
+  turn.append(downloads,row,feedback);
  }
  window.addEventListener('pagehide',stopReplySpeech);
 
