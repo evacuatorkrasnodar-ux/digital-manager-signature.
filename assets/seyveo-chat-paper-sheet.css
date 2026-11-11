@@ -1,0 +1,73 @@
+/* SEYVEO Sayvi · drawing is a bottom sheet, not another screen.
+   The existing conversation stays visible behind the raised paper tablet. */
+#sayviPaperScrim{
+ position:absolute!important;
+ inset:0!important;
+ z-index:90!important;
+ background:rgba(0,0,0,.28)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#sayviPaperSheet{
+ box-sizing:border-box!important;
+ position:absolute!important;
+ z-index:91!important;
+ left:50%!important;right:auto!important;bottom:0!important;
+ transform:translateX(-50%)!important;
+ display:block!important;
+ width:min(100%,680px)!important;
+ height:min(76%,740px)!important;
+ max-height:calc(100% - 108px)!important;
+ min-height:0!important;
+ padding:9px 0 0!important;
+ border:1px solid rgba(243,244,248,.13)!important;
+ border-bottom:0!important;
+ border-radius:24px 24px 0 0!important;
+ background:#202124!important;
+ background-image:none!important;
+ box-shadow:0 -10px 30px rgba(0,0,0,.20)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ overflow:hidden!important;
+ overscroll-behavior:contain!important;
+}
+#sayviPaperSheet::before{
+ content:""!important;
+ position:absolute!important;
+ z-index:2!important;
+ left:50%!important;top:4px!important;
+ transform:translateX(-50%)!important;
+ display:block!important;
+ width:35px!important;height:3px!important;
+ border-radius:99px!important;
+ background:rgba(244,246,249,.34)!important;
+ pointer-events:none!important;
+}
+#sayviPaperSheet > .sayvi-paper-frame{
+ box-sizing:border-box!important;
+ display:block!important;
+ width:100%!important;height:100%!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:#202124!important;
+ overflow:hidden!important;
+}
+#sayviPaperScrim[hidden],
+#sayviPaperSheet[hidden]{
+ display:none!important;
+}
+main.sayvi-paper-open #sayviScrollBottom{
+ display:none!important;
+}
+@media(min-width:800px){
+ #sayviPaperSheet{border-radius:25px 25px 0 0!important}
+}
+@media(max-height:535px){
+ #sayviPaperSheet{
+  height:calc(100% - 68px)!important;
+  max-height:calc(100% - 68px)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviPaperSheet{animation:none!important;transition:none!important}
+}
