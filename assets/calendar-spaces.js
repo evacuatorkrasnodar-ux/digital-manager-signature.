@@ -256,7 +256,6 @@ function bpPreview(){
  box.dataset.level=info.level;
 }
 function bpForm(item=null){
- bpSpokenSignature='';
  const active=current==='health'&&$('calendarSpaceKind').value==='Давление';
  $('calendarBloodPressureFields').hidden=!active;
  $('calendarSpaceGenericValue').hidden=active;
