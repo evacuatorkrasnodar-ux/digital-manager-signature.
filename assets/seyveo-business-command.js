@@ -143,6 +143,15 @@ function svcpFileKind(name='',mime=''){
 function svcpFileBadge(name,type){
  const meta=svcpFileKind(name,type);
  const badge=el('span','svcp-file-badge svcp-file-badge--'+meta.kind,meta.mark);
+ if(meta.kind==='pdf'||meta.kind==='word'){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 32 38');
+  svg.setAttribute('aria-hidden','true');
+  const title=meta.kind==='pdf'?'PDF':'W';
+  const size=meta.kind==='pdf'?7:12;
+  svg.innerHTML='<path d="M6 2.5h13l7 7V35H6zM19 2.5v7h7" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/><text x="16" y="26" fill="currentColor" font-family="system-ui,sans-serif" font-size="'+size+'" font-weight="750" text-anchor="middle">'+title+'</text>';
+  badge.append(svg);
+ }
  badge.setAttribute('aria-hidden','true');
  return badge;
 }
@@ -765,7 +774,8 @@ function resizeWorkComposer(){
  const shortWidth=formWidth-132-15-54;
  const hasNewline=value.includes('\n');
  const textHeight=measuredComposeHeight(value,shortWidth);
- const wraps=!!value&&(hasNewline||textHeight>24);
+ // The chosen file opens the full writing surface, even before any text.
+ const wraps=!!(state.file||state.scanCode)||!!value&&(hasNewline||textHeight>24);
  // In multiline the text occupies the full width. Tool buttons use the
  // separate 42px bottom row. No second background/capsule is introduced.
  const expandedHeight=measuredComposeHeight(value,formWidth-32);
@@ -2302,7 +2312,7 @@ function cleanupPreview(){
  const barcode=$('svcpBarcodeInput');if(barcode)barcode.value='';
  const display=$('svcpAttachmentPreview');
  if(display){display.replaceChildren();display.hidden=true}
- syncComposerActions();
+ syncComposerActions();resizeWorkComposer();
 }
 function renderCapturePreview(){
  syncComposerActions();
@@ -2339,6 +2349,7 @@ function renderCapturePreview(){
  remove.title='Убрать вложение';
  remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M9 7V5h6v2M7 7l1 12h8l1-12M10 10v6M14 10v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
  display.append(remove);
+ resizeWorkComposer();
 }
 function pickCaptureFile(file,purpose){
  cleanupPreview();
