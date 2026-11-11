@@ -165,7 +165,7 @@
  }
  function suggestions(text,draft,question){
   const q=String(question||'');
-  if(text.length<135||text.length>14000)return [];
+  if(text.length>14000||(!draft&&text.length<135))return [];
   if(draft){
    if(/письм|сообщен|ответ|электронн/iu.test(q+' '+draft.slice(0,300)))
     return [
