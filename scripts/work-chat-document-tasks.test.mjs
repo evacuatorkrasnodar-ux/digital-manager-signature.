@@ -20,7 +20,7 @@ test('document assignment shows exactly one action without blocking file opening
  assert.match(css,/top:calc\(100% \+ 3px\)!important/);
  assert.match(script,/previewable\?\(\)=>svcpOpenDocument\(localFile\):null/);
  assert.match(html,/assets\/seyveo-business-command\.js\?v=172/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=236/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=237/);
 });
 
 test('expanded Work Chat keeps microphone beside send when text or files are present',()=>{
