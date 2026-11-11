@@ -2406,3 +2406,66 @@ html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-info:empty{disp
 @media(max-width:360px){
  html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-action-rail > .svcp-doc-pill span{font-size:9px!important}
 }
+
+
+/* Work Chat PDF pages: scroll gestures without native scrollbars. */
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-body{
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ scrollbar-width:none!important;
+ -ms-overflow-style:none!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-body::-webkit-scrollbar{
+ width:0!important;height:0!important;display:none!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf-pages{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ width:100%!important;max-width:760px!important;min-width:0!important;
+ min-height:100%!important;
+ margin:0 auto!important;padding:0!important;gap:8px!important;
+ overflow:visible!important;background:transparent!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf-page{
+ box-sizing:border-box!important;display:block!important;position:relative!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ height:auto!important;flex:0 0 auto!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+ border:0!important;border-radius:3px!important;
+ background:#FFFFFF!important;
+ box-shadow:0 2px 9px rgba(0,0,0,.08)!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf-canvas{
+ box-sizing:border-box!important;display:block!important;
+ width:100%!important;height:100%!important;
+ margin:0!important;padding:0!important;border:0!important;
+ object-fit:fill!important;background:#FFFFFF!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf-progress{
+ padding:20px 16px!important;margin:0!important;
+ color:#6B6B70!important;background:transparent!important;
+ font:400 13px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:center!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf-error{
+ position:absolute!important;inset:0!important;
+ display:grid!important;place-items:center!important;
+ color:#6B6B70!important;font:400 13px/1.5 system-ui,sans-serif!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf-pages--native{
+ display:block!important;position:relative!important;
+ height:100%!important;min-height:calc(100dvh - 175px)!important;
+ overflow:hidden!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf-native-clip{
+ box-sizing:border-box!important;position:absolute!important;inset:0!important;
+ overflow:hidden!important;
+ background:#FFFFFF!important;
+}
+html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf-native-clip > iframe.svcp-doc-pdf{
+ display:block!important;position:absolute!important;left:0!important;top:0!important;
+ width:calc(100% + 18px)!important;height:calc(100% + 18px)!important;
+ min-height:calc(100% + 18px)!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;
+}
