@@ -251,6 +251,7 @@ if(personal&&head){
  const cleanTitle=e=>{const t=String(e.title||'').trim();if(t&&!/^(?:[a-z]{1,4}[0-9a-f]{5,}|[0-9a-f]{7,}|[a-z0-9_-]{7,})$/i.test(t))return t;const type=({'personal-task':'дело',mail:'письмо',contract:'документ',work:'сообщение'}[e.cardType]||'действие Сэйви');return e.to==='canceled'?'Отменено: '+type:'История: '+type};
  let selecting=false;
  const chosen=new Set();
+ let selectableEntries=[];
  const workHeader=document.getElementById('svWorkHeader'),headerSearch=document.getElementById('svWorkAdd');
  const menu=document.createElement('button');menu.type='button';menu.id='sahHistoryMore';menu.hidden=true;menu.setAttribute('aria-label','Меню истории');menu.textContent='···';
  const popup=document.createElement('div');popup.id='sahHistoryPopup';popup.hidden=true;
@@ -263,12 +264,27 @@ if(personal&&head){
   selecting=false;chosen.clear();render();
  });
  const selection=document.createElement('div');selection.id='sahHistorySelection';selection.hidden=true;
- const count=document.createElement('span');count.textContent='Выберите записи';
+ const selectAll=document.createElement('button');selectAll.type='button';selectAll.id='sahSelectAll';selectAll.textContent='Выбрать все';
+ const count=document.createElement('span');count.textContent='Выбрано: 0';count.setAttribute('aria-live','polite');
  const removeChosen=document.createElement('button');removeChosen.type='button';removeChosen.textContent='Удалить';
- const cancelChosen=document.createElement('button');cancelChosen.type='button';cancelChosen.textContent='Отмена';
- selection.append(count,removeChosen,cancelChosen);panel.insertBefore(selection,list);
- const showCount=()=>{count.textContent=chosen.size?'Выбрано: '+chosen.size:'Выберите записи';removeChosen.disabled=!chosen.size};
- cancelChosen.addEventListener('click',()=>{selecting=false;chosen.clear();render()});
+ selection.append(selectAll,count,removeChosen);panel.insertBefore(selection,list);
+ const leaveSelection=()=>{selecting=false;chosen.clear();popup.hidden=true;render()};
+ const showCount=()=>{
+  const keys=selectableEntries.map(eventKey);
+  const all=keys.length>0&&keys.every(key=>chosen.has(key));
+  count.textContent='Выбрано: '+chosen.size;
+  removeChosen.disabled=!chosen.size;
+  selectAll.disabled=!keys.length;
+  selectAll.textContent=all?'Снять всё':'Выбрать все';
+  selectAll.setAttribute('aria-pressed',String(all));
+ };
+ selectAll.addEventListener('click',()=>{
+  const keys=selectableEntries.map(eventKey);
+  if(!keys.length)return;
+  if(keys.every(key=>chosen.has(key)))keys.forEach(key=>chosen.delete(key));
+  else keys.forEach(key=>chosen.add(key));
+  render();
+ });
  removeChosen.addEventListener('click',()=>{
   if(!chosen.size||!confirm('Удалить выбранные записи?'))return;
   const events=window.SEYVEO_CARD_LIFECYCLE?.history?.()||[];
@@ -289,10 +305,15 @@ if(personal&&head){
  #svWorkHeader{position:relative}
  #sahHistoryPopup{position:absolute;right:5px;top:100%;z-index:80;min-width:180px;padding:6px;background:#38383A;border-radius:12px;box-shadow:0 9px 28px #0008}
  #sahHistoryPopup button{width:100%;min-height:44px;background:transparent;border:0;color:white;text-align:left;padding:8px 12px;font:inherit;font-size:14px}
- #sahHistorySelection{display:flex;align-items:center;gap:10px;padding:10px 0;font-size:12px}
- #sahHistorySelection span{flex:1}
- #sahHistorySelection button{border:0;background:#38383A;color:white;border-radius:9px;padding:9px}
+ #sahHistorySelection{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:10px 0;font-size:12px}
+ #sahHistorySelection span{white-space:nowrap;color:var(--secondary,#b8b8ba);font-size:11px}
+ #sahHistorySelection button{min-height:38px;border:0;background:#38383A;color:#fff;border-radius:10px;padding:8px 11px;font:500 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+ #sahHistorySelection #sahSelectAll{justify-self:start;white-space:nowrap}
  #sahHistorySelection button:disabled{opacity:.4}
+ #seyveoActionHistoryPanel .sah-row.sah-selecting{cursor:pointer;touch-action:manipulation}
+ #seyveoActionHistoryPanel .sah-row.sah-selecting .sah-restore-task{display:none!important}
+ #seyveoActionHistoryPanel .sah-row.sah-selecting .sah-pick{width:21px;height:21px;cursor:pointer}
+ @media(max-width:360px){#sahHistorySelection{gap:5px}#sahHistorySelection button{padding:7px 8px;font-size:11px}#sahHistorySelection span{font-size:10px}}
  #seyveoActionHistoryPanel .sah-row.sah-selecting{grid-template-columns:26px minmax(0,1fr) 44px!important}
  #seyveoActionHistoryPanel .sah-row.sah-selecting strong,#seyveoActionHistoryPanel .sah-row.sah-selecting .sah-row-meta{grid-column:2!important}
  #seyveoActionHistoryPanel .sah-row.sah-selecting .sah-restore-task{grid-column:3!important}
@@ -328,11 +349,11 @@ if(personal&&head){
   const tasks=window.SEYVEO_PERSONAL_TASK_HISTORY?.completed?.()||[];
   const taskEvents=tasks.map(task=>({eventId:task.id,title:task.title,cardType:'personal-task',to:'succeeded',at:task.doneAt||task.createdAt,taskId:task.id}));
   const events=[...cardEvents,...taskEvents].filter(e=>!readHidden().has(eventKey(e))).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
- selection.hidden=!selecting;showCount();
+ selection.hidden=!selecting;
   panel.classList.toggle('is-empty-history',events.length===0);
   more.hidden=true;
   search.hidden=!searchOpen;
-  if(!events.length){
+  if(!events.length){selectableEntries=[];showCount();
    const empty=document.createElement('div');empty.className='sah-inline-note';
    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
    svg.setAttribute('viewBox','0 0 64 64');svg.setAttribute('class','sah-empty-icon');svg.setAttribute('aria-hidden','true');
@@ -353,6 +374,7 @@ if(personal&&head){
    const parts=[e.title,e.cardType,e.reason,e.eventId,statuses[e.to],date,d?d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):''];
    return parts.some(value=>String(value||'').toLocaleLowerCase('ru-RU').includes(q));
   }):base;
+  selectableEntries=selected;showCount();
   if(!selected.length){const empty=document.createElement('p');empty.className='sah-inline-note';empty.textContent=q?'Совпадений не найдено':'Пока нет записанных действий';list.append(empty);more.hidden=true;return;}
   const dateKey=d=>[d.getFullYear(),d.getMonth(),d.getDate()].join('-');
   const today=new Date(),yesterday=new Date(today.getFullYear(),today.getMonth(),today.getDate()-1);
@@ -381,6 +403,11 @@ if(personal&&head){
      check.setAttribute('aria-label','Выбрать '+cleanTitle(e));
      check.addEventListener('change',()=>{if(check.checked)chosen.add(eventKey(e));else chosen.delete(eventKey(e));showCount()});
      item.prepend(check);
+     item.addEventListener('click',event=>{
+      if(event.target===check||event.target.closest('button'))return;
+      check.checked=!check.checked;
+      check.dispatchEvent(new Event('change',{bubbles:true}));
+     });
     }else{
      const del=document.createElement('button');del.type='button';del.className='sah-delete';
      del.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 10v7M14 10v7"/></svg>';
@@ -393,7 +420,7 @@ if(personal&&head){
      });
      item.append(del);
     }
-   if(e.taskId){
+   if(e.taskId&&!selecting){
     const recover=document.createElement('button');recover.type='button';recover.className='sah-restore-task';
     recover.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M4 12h10a6 6 0 0 1 6 6"/></svg>';
     recover.title='Вернуть в дела';
@@ -451,9 +478,9 @@ if(personal&&head){
   }
  };
  open.addEventListener('click',()=>toggle(true));
- back.addEventListener('click',()=>toggle(false));
+ back.addEventListener('click',()=>{if(selecting)leaveSelection();else toggle(false)});
  panel.addEventListener('keydown',event=>{
-  if(event.key==='Escape'){event.preventDefault();toggle(false)}
+  if(event.key==='Escape'){event.preventDefault();if(selecting)leaveSelection();else toggle(false)}
  });
  // Routing away must never leave the Tasks screen stuck in History mode.
  window.addEventListener('hashchange',()=>{
