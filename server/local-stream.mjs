@@ -5,7 +5,7 @@ import {normalizeMessage,safeInstruction} from './hybrid-core.mjs';
 import {validateHistory} from './local-dialogue.mjs';
 import {coachMessage} from './seyveo-lessons/lesson-coach.mjs';
 import {russianLanguageContext} from './russian-language.mjs';
-import {russianWritingGuidance} from './russian-writing.mjs';
+import {russianWritingGuidance,isDocumentWritingRequest} from './russian-writing.mjs';
 import {modelToolGuidance} from './intelligence/tool-policy.mjs';
 
 const MODEL_URL='http://127.0.0.1:11434/api/chat';
@@ -37,7 +37,14 @@ export function localOptionsFor(message){
 export async function askLocalStream(message,{name='SEYVEO',memory='',examples='',history=[],knowledge='',images=[],onDelta=()=>{},signal}={}){
  const question=normalizeMessage(message);
  const visual=images.length>0;
- const dialogue=visual?[]:validateHistory(history);
+ const documentMode=!visual&&isDocumentWritingRequest(question);
+ const checkedDialogue=visual?[]:validateHistory(history);
+ // Correct earlier capability hallucinations rather than reinforcing them.
+ // Preserve the surrounding user turns (dates, requested revisions, etc.).
+ const dialogue=documentMode?checkedDialogue.map(turn=>
+  turn.role==='assistant'&&/(?:не могу|нет возможности|не умею)[\\s\\S]{0,150}(?:файл|docx|документ|передава|загружа)/iu.test(turn.content)
+   ?{role:'assistant',content:'Предыдущий ответ не содержал готового документа.'}:turn
+ ):checkedDialogue;
  const coaching=visual?null:coachMessage(question);
  const languageHint=russianLanguageContext(question);
  const writingHint=russianWritingGuidance(question);
@@ -78,7 +85,7 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
    body:JSON.stringify({
     model,stream:true,keep_alive:'15m',
     messages:turns,
-    options:visual?{...localOptionsFor(question),num_predict:1500,temperature:0.35}:localOptionsFor(question)
+    options:visual?{...localOptionsFor(question),num_predict:1500,temperature:0.35}:documentMode?{...localOptionsFor(question),num_predict:2700,temperature:0.25}:localOptionsFor(question)
    }),
    signal:controller.signal
   });
