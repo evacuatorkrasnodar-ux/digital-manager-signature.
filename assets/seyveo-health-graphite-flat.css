@@ -344,3 +344,72 @@ html body #calendarSpaceDialog[data-space="health"] #calendarSpaceFormFields:has
 html body #calendarSpaceDialog[data-space="health"] #calendarSpaceFormFields:has(#calendarBloodPressureFields:not([hidden])) .calendar-space-actions button.primary::after{
  content:none!important;display:none!important;
 }
+
+
+/* Pressure journal: quiet clinical list, one clear action, no glass cards. */
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal{
+ margin:16px 0 20px!important;padding:0!important;border:0!important;
+ background:transparent!important;color:var(--text)!important;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal[hidden]{display:none!important}
+#calendarSpaceDialog[data-space="health"][data-measure-focus="true"] .cal-bp-journal{display:none!important}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-head{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 13px;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-head > div{display:flex;flex-direction:column;gap:3px;min-width:0}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-head strong{
+ font:650 18px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.025em;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-head small{
+ color:var(--secondary);font-size:11px;
+}
+#calendarSpaceDialog[data-space="health"] #calendarBpJournalShare{
+ flex:0 0 auto;min-height:38px;padding:0 12px;border:0;border-radius:12px;
+ background:#38383A;color:#fff;font:600 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-period{
+ display:flex;gap:6px;margin:0 0 13px;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-period button{
+ flex:1;min-width:0;min-height:37px;padding:6px;border:0;border-radius:11px;
+ background:rgba(153,163,175,.07);color:var(--secondary);font-size:12px;font-weight:550;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-period button[aria-pressed="true"]{
+ background:#38383A;color:#fff;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-summary{
+ padding:13px 0 16px;border-block:1px solid rgba(180,190,203,.15);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-summary > span{
+ display:block;color:var(--secondary);font-size:12px;margin:0 0 9px;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-summary > strong{
+ display:block;font:650 clamp(19px,5.8vw,25px)/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.03em;font-variant-numeric:tabular-nums;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-summary > p{
+ margin:8px 0;color:var(--text);font-size:12.5px;line-height:1.55;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-summary > small{
+ display:block;font-size:11px;line-height:1.5;color:var(--secondary);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-rows{display:flex;flex-direction:column}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-row{
+ display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+ width:100%;min-height:67px;text-align:left;padding:10px 2px;
+ border:0;border-bottom:1px solid rgba(180,190,203,.13);
+ border-radius:0;background:transparent;color:var(--text);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-date{
+ font-size:11px;color:var(--secondary);
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-reading{
+ font-size:16px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-note{
+ width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:11px;color:var(--secondary);
+}
+#calendarSpaceDialog[data-space="health"] :is(.cal-bp-journal-empty,.cal-bp-journal-status){
+ color:var(--secondary);font-size:12px;line-height:1.45;
+}
