@@ -126,12 +126,11 @@
   sheet.innerHTML='<svg viewBox="0 0 24 24"><path d="M6 2.8h8.5L19 7.3V21H6zM14.5 2.8v4.5H19M9 12h7M9 15.5h7M9 19h5"/></svg>';
   const description=el('div','sv-rich-document-description');
   const name=el('strong','sv-rich-document-name',title.slice(0,70));
-  const subtitle=el('span','sv-rich-document-label','Документ · открыть и изменить');
+  const subtitle=el('span','sv-rich-document-label','Документ SEYVEO');
   description.append(name,subtitle);
   const arrow=el('span','sv-rich-document-chevron');arrow.setAttribute('aria-hidden','true');arrow.textContent='›';
   top.append(sheet,description,arrow);
-  const preview=el('div','sv-rich-document-snippet',draft.replace(/\*\*/g,'').replace(/^\s*#{1,4}\s+/gm,'').trim());
-  holder.append(top,preview);
+  holder.append(top);
   holder.addEventListener('click',()=>actions.preview?.());
   return holder;
  }
