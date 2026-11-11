@@ -2053,3 +2053,37 @@ html body #svcpWorkChatScreen #svcpAttachmentPreview .svcp-preview-caption-text{
  white-space:nowrap!important;word-break:normal!important;
  writing-mode:horizontal-tb!important;
 }
+
+
+/* Sayvi: keep PDF/W caption glyphs inside SVG and filenames on a single row. */
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format.sv-file-caption-format--outline,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption-format.sv-file-caption-format--outline{
+ box-sizing:border-box!important;position:relative!important;
+ display:block!important;flex:0 0 16px!important;
+ width:16px!important;min-width:16px!important;max-width:16px!important;
+ height:19px!important;min-height:19px!important;max-height:19px!important;
+ margin:0 4px 0 0!important;padding:0!important;
+ overflow:visible!important;white-space:nowrap!important;word-break:normal!important;
+ direction:ltr!important;writing-mode:horizontal-tb!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline svg,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption-format--outline svg{
+ position:absolute!important;inset:0!important;
+ display:block!important;width:16px!important;height:19px!important;
+ overflow:visible!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.7!important;stroke-linejoin:round!important;
+}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline svg text,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption-format--outline svg text{
+ fill:currentColor!important;stroke:none!important;
+ writing-mode:horizontal-tb!important;direction:ltr!important;
+ letter-spacing:0!important;white-space:nowrap!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption-name,
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-name{
+ flex:1 1 auto!important;min-width:0!important;
+ white-space:nowrap!important;word-break:normal!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+ writing-mode:horizontal-tb!important;
+}
