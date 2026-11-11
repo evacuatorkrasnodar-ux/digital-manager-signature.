@@ -3156,15 +3156,17 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   </button>
 </div>
  <div id="calendarHealthAgeSetting" class="cal-health-age-setting">
-  <label for="calendarHealthBirthYear">Год рождения <small>необязательно, один раз</small></label>
-  <input id="calendarHealthBirthYear" type="number" inputmode="numeric" min="1900" max="2100" step="1" placeholder="Например, 1985" aria-describedby="calendarHealthAgeHint">
-  <small id="calendarHealthAgeHint">Помогает учитывать возраст. Данные останутся в этом браузере.</small>
+  <label for="calendarHealthBirthYear">Год рождения</label>
+  <select id="calendarHealthBirthYear" aria-label="Год рождения"><option value="">Не указан</option></select>
+  <span class="cal-health-age-chevron" aria-hidden="true">⌄</span>
+  <small id="calendarHealthAgeHint" class="cal-health-sr-only">Возраст необязателен; выбирается один раз.</small>
  </div>
  <div id="calendarBpReport" class="cal-bp-report" hidden aria-live="polite">
  <div class="cal-bp-report-head"><span class="cal-bp-report-icon sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви · оценка давления</strong></div>
  <p id="calendarBpReportStatus"></p>
  <p id="calendarBpReportAdvice"></p>
  <p id="calendarBpReportAverage" class="cal-bp-average" hidden></p>
+ <div id="calendarBpReportEmergency" class="cal-bp-emergency" hidden><strong>Срочная помощь при опасных симптомах</strong><p>Не откладывайте вызов скорой при боли в груди, одышке, нарушении речи, слабости или онемении.</p><div><a href="tel:103">Вызвать 103</a><a href="tel:112">112</a></div></div>
  <small>Информационная оценка домашних измерений, не диагноз. Не меняйте лечение без врача.</small>
  </div>
  <section id="calendarBpRepeatPanel" class="cal-bp-repeat-panel" hidden aria-live="polite">
@@ -3177,7 +3179,10 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   </div>
  </section>
  <section id="calendarBpJournal" class="cal-bp-journal" aria-label="Журнал давления" hidden>
-  <div class="cal-bp-journal-head"><div><strong>Журнал давления</strong><small id="calendarBpJournalCount"></small></div><button id="calendarBpJournalShare" type="button" aria-label="Подготовить отчёт для врача">Отправить врачу</button></div>
+  <div class="cal-bp-journal-head"><div><strong>Журнал давления</strong><small id="calendarBpJournalCount"></small></div><div class="cal-bp-journal-actions">
+ <button id="calendarBpJournalShare" type="button" aria-label="Поделиться отчётом врача" title="Поделиться"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0-4 4m4-4 4 4M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button>
+ <button id="calendarBpJournalPrint" type="button" aria-label="Напечатать журнал" title="Печать"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6zM17 12h2"/></svg></button>
+ </div></div>
   <div class="cal-bp-journal-period" role="group" aria-label="Период журнала">
    <button type="button" data-bp-period="7" aria-pressed="true">7 дней</button>
    <button type="button" data-bp-period="30" aria-pressed="false">30 дней</button>
@@ -3190,6 +3195,12 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
    <small>Сводка по внесённым значениям, не диагноз. Для оценки давления врач учитывает повторные измерения, симптомы и другие данные.</small>
   </div>
   <div id="calendarBpJournalRows" class="cal-bp-journal-rows" aria-label="Записи давления"></div>
+  <details id="calendarBpDoctorOptions" class="cal-bp-doctor-options">
+   <summary>Данные для врача <small>необязательно</small></summary>
+   <label>Имя <input id="calendarBpPatientName" type="text" autocomplete="name" maxlength="90" placeholder="Можно пропустить"></label>
+   <label>Принимаемые лекарства <textarea id="calendarBpMedicationList" rows="2" maxlength="500" placeholder="Можно пропустить"></textarea></label>
+   <label>Комментарий <textarea id="calendarBpDoctorComment" rows="2" maxlength="500" placeholder="Можно пропустить"></textarea></label>
+  </details>
   <p id="calendarBpJournalStatus" class="cal-bp-journal-status" role="status" aria-live="polite"></p>
  </section>
 </section>
@@ -3216,6 +3227,11 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   <label><span>Пульс</span><input id="calendarBpPulse" type="number" min="30" max="240" step="1" inputmode="numeric" placeholder="72" autocomplete="off"><small>уд/мин</small></label>
  </div>
  <div id="calendarBpLiveAdvice" class="cal-bp-preview" aria-live="polite">Введите три значения — Сэйви поможет разобраться в результате.</div>
+ <div id="calendarBpEmergency" class="cal-bp-emergency" hidden>
+  <strong>Возможна опасная ситуация</strong>
+  <p>Если есть боль в груди, сильная одышка, нарушение речи, слабость или онемение, вызывайте скорую немедленно. Не ждите повторного измерения.</p>
+  <div><a href="tel:103" aria-label="Позвонить в скорую помощь 103">Вызвать 103</a><a href="tel:112" aria-label="Позвонить в экстренную службу 112">112</a></div>
+ </div>
 </div>
 <div class="calendar-space-date-row">
 <label>Раздел<select id="calendarSpaceKind"></select></label>
