@@ -1488,6 +1488,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
 <link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=4">
 <link rel="stylesheet" href="assets/seyveo-dock-icon-standard.css?v=6">
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=1">
+<link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=1">
 </head>
 <body>
 <main>
@@ -3099,14 +3100,21 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   return {segments,uploaded};
  }
 
- // The only drawing editor is SEYVEO's approved Notebook tablet.
+ // The real Notebook tablet is mounted in a bottom drawer. Stay in the
+ // chat, preserve the typed draft, and do not auto-send the drawing.
  document.getElementById('sayviDrawIdea').addEventListener('click',()=>{
   closeMenu();
-  try{
-   sessionStorage.setItem('seyveo.sayvi.paper-handoff.v1',
-    JSON.stringify({at:Date.now(),state:'open',draft:input.value.slice(0,8000)}));
-   window.location.assign('./index.html?seyveo-draw=chat');
-  }catch{status.textContent='Не удалось открыть планшет рисования.'}
+  if(window.SEYVEO_SAYVI_PAPER?.open)window.SEYVEO_SAYVI_PAPER.open();
+  else status.textContent='Планшет ещё загружается. Попробуй снова.';
+ });
+ document.addEventListener('seyveo:sayvi-paper-attach',event=>{
+  const file=event.detail?.file;
+  if(!(file instanceof File)||file.type!=='image/png')return;
+  if(pendingAttachments.length>=6){
+   status.textContent='Сначала освободи место для рисунка: можно прикрепить до 6 файлов.';
+   return;
+  }
+  addAttachments([file]);
  });
  function closeMenu(){
   menu.hidden=true;scene.classList.remove('sayvi-menu-open');
@@ -3759,5 +3767,6 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
 <script src="assets/seyveo-intelligence-core.js?v=1"></script>
 <script src="assets/sayvi-notifications.js?v=3"></script>
 <script src="assets/seyveo-chat-jump.js?v=1"></script>
+<script src="assets/seyveo-chat-paper-sheet.js?v=1"></script>
 </body>
 </html>
