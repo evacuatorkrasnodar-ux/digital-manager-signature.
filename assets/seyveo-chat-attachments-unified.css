@@ -3002,3 +3002,22 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-doc
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-name{color:#242427!important}
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-type,
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-status > .svcp-time{color:#6C6C74!important}
+
+/* Work Chat · 12 Nov · narrow ONLY outgoing page-preview documents */
+/* A more specific document-only bubble rule previously stretched 138px tiles
+   to ~282px. Keep the existing preview/footer height, just narrow the width.
+   Received compact 220x60 document cards and photo attachments are untouched. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-document-only:has(.svcp-file-card.svcp-sent-document-tile),
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble:has(.svcp-file-card.svcp-sent-document-tile),
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] #svcpMessages > .svcp-bubble.svcp-document-only:has(.svcp-file-card.svcp-sent-document-tile){
+ box-sizing:border-box!important;
+ width:min(210px,calc(100vw - 36px))!important;
+ max-width:min(210px,calc(100vw - 36px))!important;
+ min-width:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-document-only .svcp-file-card.svcp-sent-document-tile,
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card.svcp-sent-document-tile,
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] #svcpMessages > .svcp-bubble.svcp-document-only .svcp-file-card.svcp-sent-document-tile{
+ box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+}
