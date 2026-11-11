@@ -1070,6 +1070,21 @@ const svcpSelectedTray=$('svcpAttachmentPreview');
 if(svcpComposerHost&&svcpSelectedTray&&svcpSelectedTray.parentNode!==svcpComposerHost){
  svcpComposerHost.prepend(svcpSelectedTray);
 }
+// The microphone was hidden in long drafts because it stayed positioned
+// relative to the text field (and older rules swapped it with Send). Put
+// the SAME live controls in the composer's action row while expanded.
+// Moving the existing nodes preserves their actual recording/send handlers.
+const svcpComposerField=svcpComposerHost?.querySelector('.svcp-chat-compose-field');
+const svcpComposerMic=$('svcpVoiceRecord');
+const svcpComposerSend=svcpComposerHost?.querySelector('.svcp-chat-send');
+function svcpPlaceComposerActions(expanded){
+ if(!svcpComposerHost||!svcpComposerField)return;
+ const parent=expanded?svcpComposerHost:svcpComposerField;
+ for(const node of [svcpComposerMic,svcpComposerSend]){
+  if(node&&node.parentNode!==parent)parent.append(node);
+ }
+ svcpComposerHost.classList.toggle('svcp-voice-on-toolbar',expanded);
+}
 const svcpComposeMeasure=document.createElement('div');
 svcpComposeMeasure.setAttribute('aria-hidden','true');
 svcpComposeMeasure.style.cssText='position:fixed;left:-10000px;top:0;display:block;visibility:hidden;pointer-events:none;box-sizing:border-box;padding:0;margin:0;border:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:24px;font-size:16px;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;';
@@ -1088,6 +1103,7 @@ function resizeWorkComposer(){
  // Explicit idle reset: no stale expanded height or wrap state after sending.
  if(!value&&!state.files.length&&!state.file&&!state.scanCode){
   form.classList.remove('svcp-compose-multiline');
+  svcpPlaceComposerActions(false);
   form.style.setProperty('--svcp-editor-height','40px');
   form.style.setProperty('--svcp-compose-height','56px');
   form.style.setProperty('height','56px','important');
@@ -1118,6 +1134,7 @@ function resizeWorkComposer(){
  const attachRow=withAttachment?Math.min(12+rowCount*105,editorLimit):0;
  const targetHeight=wraps?editorHeight+55+attachRow:56;
  form.classList.toggle('svcp-compose-multiline',wraps);
+ svcpPlaceComposerActions(wraps);
  form.style.setProperty('--svcp-editor-height',editorHeight+'px');
  form.style.setProperty('--svcp-attachment-row-height',attachRow+'px');
  form.style.setProperty('--svcp-compose-height',targetHeight+'px');
