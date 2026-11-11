@@ -2024,7 +2024,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  function sayviExportFilename(value,ext){
   const first=String(value||'').split('\n')
    .map(x=>x.trim().replace(/^#{1,4}\s+/u,'').replace(/^\*\*|\*\*$/gu,''))
-   .find(Boolean)||'Документ';
+   .find(x=>x&&!/^(?:---+|___+|\*\*\*+)\s*$/u.test(x))||'Документ';
   let name=/^(?:\S+[,!]?\s*)?здравствуйте(?![а-яё])|^добрый (?:день|вечер)|^уважаем/iu.test(first)?'Письмо':first;
   name=name.replace(/[^a-zа-яё\d\s_.-]/giu,' ')
    .replace(/\s+/gu,'_').replace(/[_.-]{2,}/gu,'_')
