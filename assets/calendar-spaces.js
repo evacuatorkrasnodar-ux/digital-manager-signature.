@@ -141,26 +141,33 @@ function bpParse(x){
  return {s,d,p:Number.isInteger(x.bpPulse)?x.bpPulse:null,date:x.date||'',time:x.recordedAt||0};
 }
 /* Optional birth year is separate from measurements and never sent automatically. */
-const BP_BIRTH_YEAR_KEY='seyveo-health-birth-year-v1';
+/* One optional age in years, not birth year. Legacy birth-year settings migrate
+   once to an approximate age using the calendar year, never invent age 75. */
+const BP_AGE_KEY='seyveo-health-age-v1';
+const BP_OLD_YEAR_KEY='seyveo-health-birth-year-v1';
 function bpAge(){
- let year=0;try{year=Number(localStorage.getItem(BP_BIRTH_YEAR_KEY)||0)}catch{}
- const currentYear=new Date().getFullYear();
- return Number.isInteger(year)&&year>=1900&&year<=currentYear?currentYear-year:null;
+ let age=0;try{age=Number(localStorage.getItem(BP_AGE_KEY)||0)}catch{}
+ return Number.isInteger(age)&&age>=1&&age<=110?age:null;
 }
 function setupHealthAge(){
- const field=$('calendarHealthBirthYear'),hint=$('calendarHealthAgeHint');if(!field)return;
- const today=new Date().getFullYear();
- field.replaceChildren(new Option('Не указан',''));
- for(let year=today;year>=1900;year--)field.add(new Option(String(year),String(year)));
- let saved='';try{saved=localStorage.getItem(BP_BIRTH_YEAR_KEY)||''}catch{}
+ const field=$('calendarHealthAge'),hint=$('calendarHealthAgeHint');if(!field)return;
+ field.replaceChildren(new Option('Указать',''));
+ for(let n=1;n<=110;n++)field.add(new Option(n+' '+(n%10===1&&n%100!==11?'год':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'года':'лет'),String(n)));
+ let saved='';try{
+  saved=localStorage.getItem(BP_AGE_KEY)||'';
+  if(!saved){
+   const old=Number(localStorage.getItem(BP_OLD_YEAR_KEY)||0),converted=new Date().getFullYear()-old;
+   if(old>=1900&&converted>=1&&converted<=110){saved=String(converted);localStorage.setItem(BP_AGE_KEY,saved);}
+  }
+ }catch{}
  if([...field.options].some(option=>option.value===saved))field.value=saved;
  field.addEventListener('change',()=>{
   try{
-   if(field.value)localStorage.setItem(BP_BIRTH_YEAR_KEY,field.value);
-   else localStorage.removeItem(BP_BIRTH_YEAR_KEY);
-   hint.textContent='Год рождения сохранён только в этом браузере.';
-   if(current==='health'){bpReport();bpPreview();renderBpJournal();}
-  }catch{hint.textContent='Не удалось сохранить год рождения.';}
+   if(field.value)localStorage.setItem(BP_AGE_KEY,field.value);
+   else localStorage.removeItem(BP_AGE_KEY);
+   hint.textContent='Возраст сохранён в этом браузере.';
+   if(current==='health'){bpReport();bpPreview();renderBpJournal();quickBpAdvice();}
+  }catch{hint.textContent='Не удалось сохранить возраст.';}
  });
 }
 function bpAssess(s,d,p){
@@ -223,23 +230,6 @@ function bpReport(){
  node.hidden=!average;
  if(average)node.textContent='Среднее двух замеров в пределах 30 минут: '+average.s+'/'+average.d+' мм рт. ст.'+(average.p!==null?', пульс '+average.p:'')+'. Это среднее, а не прогноз следующего результата.';
 }
-/* Elder-friendly large text only. Voice must come exclusively from Sayvi's
-   own voice pipeline; never substitute a browser or device TTS voice. */
-const BP_COMFORT_KEY='seyveo-health-comfort-v1';
-let bpComfortMode=false;
-function updateBpComfort(){
- dialog.classList.toggle('cal-health-comfort',bpComfortMode);
- const button=$('calendarHealthComfortMode');
- button?.setAttribute('aria-pressed',String(bpComfortMode));
- if(button){const small=button.querySelector('small');if(small)small.textContent=bpComfortMode?'Вкл.':'Выкл.';}
-}
-try{bpComfortMode=localStorage.getItem(BP_COMFORT_KEY)==='1'}catch{}
-updateBpComfort();
-$('calendarHealthComfortMode')?.addEventListener('click',()=>{
- bpComfortMode=!bpComfortMode;
- try{localStorage.setItem(BP_COMFORT_KEY,bpComfortMode?'1':'0')}catch{}
- updateBpComfort();
-});
 function bpPreview(){
  const box=$('calendarBpLiveAdvice');
  const ids=['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse'];
@@ -362,7 +352,7 @@ function bpDoctorDetails(){
   name:$('calendarBpPatientName')?.value.trim()||'',
   medication:$('calendarBpMedicationList')?.value.trim()||'',
   comment:$('calendarBpDoctorComment')?.value.trim()||'',
-  year:$('calendarHealthBirthYear')?.value||''
+  age:$('calendarHealthAge')?.value||''
  };
 }
 function bpDoctorText(){
@@ -373,7 +363,7 @@ function bpDoctorText(){
   'Период: '+(bpJournalPeriod==='all'?'все записи':bpJournalPeriod+' дней'),
   'Измерений: '+items.length];
  if(details.name)lines.push('Имя: '+details.name);
- if(details.year)lines.push('Год рождения: '+details.year);
+ if(details.age)lines.push('Возраст: '+details.age+' лет');
  if(details.medication)lines.push('Лекарства: '+details.medication);
  if(details.comment)lines.push('Комментарий: '+details.comment);
  lines.push('','Среднее всех записей периода: '+overview.average,'Вывод Сэйви: '+overview.insight,'','Дата и время | Давление | Пульс | Примечание');
@@ -393,7 +383,7 @@ function bpPrintDoctor(){
  const details=bpDoctorDetails(),items=bpJournalItems(),overview=bpJournalOverview(items);
  const escapeText=value=>String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
  const dateTime=bp=>escapeText((bp.date||'Без даты')+(bp.time?' '+new Date(bp.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):''));
- const meta=[details.name&&['Пациент',details.name],details.year&&['Год рождения',details.year],
+ const meta=[details.name&&['Пациент',details.name],details.age&&['Возраст',details.age+' лет'],
   details.medication&&['Лекарства',details.medication],details.comment&&['Комментарий',details.comment]].filter(Boolean)
   .map(([key,value])=>'<div><b>'+escapeText(key)+':</b> '+escapeText(value)+'</div>').join('');
  const rows=items.map(({item,bp})=>'<tr><td>'+dateTime(bp)+'</td><td><b>'+bp.s+'/'+bp.d+'</b></td><td>'+(bp.p===null?'—':bp.p)+'</td><td>'+escapeText((item.repeatOf?'Повторный замер. ':'')+(item.detail||''))+'</td></tr>').join('');
@@ -436,6 +426,56 @@ $('calendarHealthOverview').addEventListener('click',event=>{
  if(row)open('health',row.dataset.bpOpen);
 });
 
+/* Inline measurements on the first Health screen use the existing save handler,
+   data store and automatic timestamp; no new journal/database is created. */
+function quickBpValues(){
+ return ['calendarBpQuickS','calendarBpQuickD','calendarBpQuickP'].map(id=>$(id).value.trim());
+}
+function quickBpAdvice(){
+ const box=$('calendarBpQuickAdvice'),emergency=$('calendarBpQuickEmergency');
+ if(!box||!emergency)return;
+ const vals=quickBpValues();
+ if(vals.some(x=>!x)){box.textContent='Сэйви объяснит результат после ввода.';box.dataset.level='neutral';emergency.hidden=true;return;}
+ const [s,d,p]=vals.map(Number);
+ if(![s,d,p].every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240){
+  box.textContent='Проверьте цифры: верхнее должно быть больше нижнего.';box.dataset.level='neutral';emergency.hidden=true;return;
+ }
+ const info=bpAssess(s,d,p);
+ box.textContent='Сэйви · '+info.summary+'. '+info.advice;
+ box.dataset.level=info.level;
+ emergency.hidden=!(s>=180||d>=120);
+}
+for(const id of ['calendarBpQuickS','calendarBpQuickD','calendarBpQuickP']){
+ $(id).addEventListener('input',quickBpAdvice);
+}
+$('calendarBpQuickForm').addEventListener('submit',event=>{
+ event.preventDefault();
+ const vals=quickBpValues(),[s,d,p]=vals.map(Number);
+ if(vals.some(x=>!x)||![s,d,p].every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240){
+  quickBpAdvice();return;
+ }
+ // Preserve the original editor for repeat readings and edits; the inline
+ // entry is strictly for a fresh measurement.
+ editing=null;bpRepeatSourceId='';
+ const kind=$('calendarSpaceKind');
+ if(![...kind.options].some(option=>option.value==='Давление'))renderForm();
+ kind.value='Давление';
+ $('calendarBpSystolic').value=String(s);
+ $('calendarBpDiastolic').value=String(d);
+ $('calendarBpPulse').value=String(p);
+ $('calendarSpaceDetail').value='';
+ const before=read().length;
+ save({preventDefault(){}});
+ if(read().length>before){
+  for(const id of ['calendarBpQuickS','calendarBpQuickD','calendarBpQuickP'])$(id).value='';
+  $('calendarBpQuickAdvice').textContent='Измерение сохранено. Сэйви добавила дату и время в журнал.';
+  $('calendarBpQuickAdvice').dataset.level='saved';
+  $('calendarBpQuickEmergency').hidden=true;
+ }else{
+  $('calendarBpQuickAdvice').textContent=$('calendarSpaceStatus').textContent||'Не удалось сохранить измерение.';
+ }
+});
+
 function renderHealthOverview(){
  const overview=$('calendarHealthOverview');overview.hidden=current!=='health';
  if(current!=='health')return;
@@ -449,6 +489,8 @@ function renderHealthOverview(){
  const latest=recent('Давление'),standalonePulse=recent('Пульс');
  const bp=bpParse(latest);
  const value=$('calHealthPressureValue'),date=$('calHealthPressureDate');
+ const last=$('calendarBpQuickLast');
+ if(last){last.hidden=!bp;last.textContent=bp?'Последний замер: '+bp.s+'/'+bp.d+' · пульс '+(bp.p===null?'—':bp.p):'';}
  if(bp){
   value.textContent=bp.s+'/'+bp.d+' мм рт. ст.'+
    (bp.p!==null?' · '+bp.p+' уд/мин':'');
