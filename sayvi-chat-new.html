@@ -3912,6 +3912,30 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  filePicker.addEventListener('change',()=>{addAttachments(filePicker.files);filePicker.value=''});
  window.addEventListener('pagehide',clearAttachments);
  function isReadableText(file){return readableTextTypes.test(file.type)||readableExtensions.test(file.name)}
+ // PDF.js is already used for previews. Read selectable PDF text locally first,
+ // avoiding a failed /api/seyveo-document-text POST when Python is missing.
+ // Scanned pages without a text layer remain explicitly unreadable (no fake OCR).
+ async function readPdfTextInBrowser(file){
+  const lib=await loadPdfThumbnailLibrary();
+  const task=lib.getDocument({data:new Uint8Array(await file.arrayBuffer()),useSystemFonts:true});
+  let pdf=null;
+  try{
+   pdf=await task.promise;
+   const chunks=[];let length=0;
+   const pages=Math.min(pdf.numPages,8);
+   for(let number=1;number<=pages&&length<5400;number++){
+    const page=await pdf.getPage(number);
+    const textLayer=await page.getTextContent();
+    const part=Array.from(textLayer.items||[],item=>typeof item.str==='string'?item.str:'').join(' ').trim();
+    if(part){chunks.push(part);length+=part.length+2}
+    page.cleanup();
+   }
+   return {text:chunks.join('\n\n').slice(0,5400),truncated:pdf.numPages>pages||length>5400};
+  }finally{
+   if(pdf)await pdf.destroy().catch(()=>{});
+   else await task.destroy().catch(()=>{});
+  }
+ }
  async function prepareAttachments(items,textBudget=3200){
   const segments=[],uploaded=[],unreadable=[];
   let remaining=Math.max(0,textBudget);
@@ -3953,24 +3977,40 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
       continue;
      }
     }else{
-     const form=new FormData();form.append('file',file,file.name);
-     let response;
-     try{response=await fetch('/api/seyveo-document-text',{method:'POST',credentials:'same-origin',body:form})}
-     catch{throw Error('Локальный обработчик документов недоступен.')}
-     if(!response.ok){
-      const detail=await response.json().catch(()=>null);
-      // Preserve the attachment and accurately flag unreadable files.
-      if([422,502,503,504].includes(response.status)){
-       unreadable.push({name:file.name,reason:detail?.error||'Не удалось извлечь текст'});
+     let parsedInBrowser=false;
+     if(/\.pdf$/iu.test(file.name)){
+      try{
+       const extracted=await readPdfTextInBrowser(file);
+       content=extracted.text;alreadyTruncated=extracted.truncated;
+       parsedInBrowser=true;
+      }catch{
+       // Offline PDF.js workers may fail; preserve the existing local-server fallback.
+      }
+      if(parsedInBrowser&&!content.trim()){
+       unreadable.push({name:file.name,reason:'В PDF нет текстового слоя: возможно, это скан'});
        continue;
       }
-      throw Error((typeof detail?.error==='string'?detail.error:'Не удалось прочитать документ.')+' Файл остался выбранным.');
      }
-     const result=await response.json().catch(()=>null);
-     if(typeof result?.text!=='string'||!result.text.trim()){
-      unreadable.push({name:file.name,reason:'Текст документа не найден'});continue;
+     if(!parsedInBrowser){
+      const form=new FormData();form.append('file',file,file.name);
+      let response;
+      try{response=await fetch('/api/seyveo-document-text',{method:'POST',credentials:'same-origin',body:form})}
+      catch{throw Error('Локальный обработчик документов недоступен.')}
+      if(!response.ok){
+       const detail=await response.json().catch(()=>null);
+       // Preserve the attachment and accurately flag unreadable files.
+       if([422,502,503,504].includes(response.status)){
+        unreadable.push({name:file.name,reason:detail?.error||'Не удалось извлечь текст'});
+        continue;
+       }
+       throw Error((typeof detail?.error==='string'?detail.error:'Не удалось прочитать документ.')+' Файл остался выбранным.');
+      }
+      const result=await response.json().catch(()=>null);
+      if(typeof result?.text!=='string'||!result.text.trim()){
+       unreadable.push({name:file.name,reason:'Текст документа не найден'});continue;
+      }
+      content=result.text;alreadyTruncated=result.truncated===true;
      }
-     content=result.text;alreadyTruncated=result.truncated===true;
     }
     if(!String(content||'').trim()){
      unreadable.push({name:file.name,reason:'В документе нет доступного текста'});
