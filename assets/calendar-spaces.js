@@ -139,31 +139,64 @@ function bpParse(x){
  if(s<50||s>300||d<30||d>200||s<=d)return null;
  return {s,d,p:Number.isInteger(x.bpPulse)?x.bpPulse:null,date:x.date||'',time:x.recordedAt||0};
 }
+/* Optional birth year is separate from measurements and never sent automatically. */
+const BP_BIRTH_YEAR_KEY='seyveo-health-birth-year-v1';
+function bpAge(){
+ let year=0;try{year=Number(localStorage.getItem(BP_BIRTH_YEAR_KEY)||0)}catch{}
+ const currentYear=new Date().getFullYear();
+ return Number.isInteger(year)&&year>=1900&&year<=currentYear?currentYear-year:null;
+}
+function setupHealthAge(){
+ const field=$('calendarHealthBirthYear'),hint=$('calendarHealthAgeHint');if(!field)return;
+ let year='';try{year=localStorage.getItem(BP_BIRTH_YEAR_KEY)||''}catch{}
+ field.value=year;
+ field.max=String(new Date().getFullYear());
+ const update=()=>{
+  const rawYear=field.value.trim(),num=Number(rawYear),currentYear=new Date().getFullYear();
+  if(rawYear&&(!Number.isInteger(num)||num<1900||num>currentYear)){
+   hint.textContent='Проверьте год рождения.';return;
+  }
+  try{
+   if(rawYear)localStorage.setItem(BP_BIRTH_YEAR_KEY,rawYear);
+   else localStorage.removeItem(BP_BIRTH_YEAR_KEY);
+   hint.textContent=rawYear?'Возраст учтён в пояснениях. Сохраняется только в этом браузере.':'Возраст не указан. Используются общие ориентиры для взрослых.';
+   if(current==='health'){bpReport();bpPreview();renderBpJournal();}
+  }catch{hint.textContent='Не удалось сохранить год рождения в браузере.';}
+ };
+ field.addEventListener('change',update);
+}
 function bpAssess(s,d,p){
+ const age=bpAge();
+ if(age!==null&&age<18)return {
+  level:'neutral',summary:'Для детей и подростков нужна оценка врача',
+  advice:'У детей давление оценивают с учётом возраста, роста и пола. Взрослые пороги здесь неприменимы. При необычных показателях обратитесь к педиатру; при боли в груди, нарушении сознания, сильной одышке или других острых симптомах вызывайте экстренную помощь.'
+ };
  let level,summary,advice;
  if(s>=180||d>=120){
-  level='urgent';summary='Очень высокое давление';
-  advice='Если есть боль в груди, одышка, выраженная слабость, онемение, нарушение зрения или речи — немедленно вызывайте экстренную помощь по местному номеру. Не ждите второго измерения при таких симптомах. Без симптомов повторите замер через минуту и срочно свяжитесь с врачом, если значение остаётся очень высоким.';
+  level='urgent';summary='Очень высокое давление — проверьте симптомы';
+  advice='Если есть боль в груди, одышка, сильная головная боль с нарушением зрения, онемение, слабость, спутанность или нарушение речи — сразу вызывайте скорую помощь по местному номеру. Не ждите повторного измерения. Если таких симптомов нет, спокойно посидите не менее минуты, повторите измерение и срочно свяжитесь с врачом, если значение остаётся очень высоким.';
  }else if(s<90||d<60){
   level='low';summary='Возможно пониженное давление';
-  advice='Давление может быть пониженным. При головокружении безопасно присядьте или прилягте. Если есть обморок или выраженная слабость, нужна срочная медицинская помощь. Если самочувствие хорошее, повторите измерение после отдыха.';
+  advice='Если кружится голова, присядьте или прилягте, чтобы не упасть. При обмороке, боли в груди, затруднённом дыхании или выраженной слабости нужна срочная медицинская помощь. При хорошем самочувствии измерьте повторно после отдыха и обсудите повторяющиеся низкие значения с врачом.';
  }else if(s>=160||d>=100){
-  level='high';summary='Значительно выше домашнего ориентира';
-  advice='Значение значительно повышено. Посидите спокойно пять минут и повторите измерение через 1–2 минуты. Если давление остаётся высоким, обратитесь к врачу в ближайшее время. Не меняйте лечение самостоятельно.';
+  level='high';summary='Значительно повышенное давление';
+  advice='Спокойно сядьте, опираясь на спинку, расслабьте руку на уровне сердца и отдохните пять минут. Повторите измерение через 1–2 минуты. Если показания сохраняются, свяжитесь с врачом в ближайшее время; не принимайте дополнительные лекарства без его назначения. При тревожных симптомах обращайтесь за экстренной помощью.';
  }else if(s>=135||d>=85){
-  level='raised';summary='Выше ориентира для домашних измерений';
-  advice='По европейскому ориентиру для среднего домашнего давления это повышенный результат. Повторите измерение через 1–2 минуты после спокойного отдыха. Если такие значения повторяются, обсудите их с врачом.';
+  level='raised';summary='Выше ориентира домашних измерений';
+  advice='Спокойно посидите пять минут и повторите измерение через 1–2 минуты. Важны средние значения за несколько дней, а не одно число. Если высокие значения повторяются, обсудите журнал с врачом.';
  }else if(s>=120||d>=70){
-  level='watch';summary='Немного выше оптимального домашнего диапазона';
-  advice='Это выше оптимального диапазона, но один замер не означает диагноз. Повторите измерение после спокойного отдыха через 1–2 минуты. Сэйви сохранит два результата и покажет среднее, если их измерили рядом по времени.';
+  level='watch';summary='В диапазоне, требующем наблюдения';
+  advice='Это не диагноз. Если измеряли после нагрузки или волнения, отдохните пять минут и перемерьте давление через 1–2 минуты. Продолжайте вести журнал.';
  }else{
   level='usual';summary='Ниже ориентира повышенного домашнего давления';
-  advice='По используемому ориентиру результат не повышен. Учитывайте самочувствие и рекомендации своего врача: один замер не заменяет наблюдения за несколькими днями.';
+  advice='Единичное измерение не заменяет оценку самочувствия и наблюдение за несколькими днями. Продолжайте журнал по рекомендациям своего врача.';
  }
  if(Number.isInteger(p)&&(p>100||p<60)){
-  advice+=' Пульс '+p+' в минуту выходит за обычный диапазон покоя 60–100: нагрузка и индивидуальные особенности важны. При боли в груди, обмороке или одышке обращайтесь за экстренной помощью.';
+  advice+=' Пульс '+p+' уд/мин вне обычного диапазона покоя 60–100; учитывайте нагрузку и особенности организма. При обмороке, боли в груди или сильной одышке срочно обращайтесь за медицинской помощью.';
  }
- if(level!=='urgent')advice+=' Перед измерением избегайте нагрузки и кофеина за 30 минут, держите руку на уровне сердца.';
+ if(age===null)advice+=' Оценка использует общие ориентиры для взрослых: возраст не указан.';
+ else if(age>=85)advice+=' В возрасте 85 лет и старше целевые значения определяются врачом индивидуально.';
+ advice+=' Если вы беременны, обратитесь к врачу за индивидуальной оценкой давления, особенно при повышенных значениях.';
  return {level,summary,advice};
 }
 function bpReadings(){
@@ -508,6 +541,7 @@ dialog.addEventListener('click',event=>{if(svPicker.hidden)return;if(!event.targ
 dialog.addEventListener('keydown',event=>{if(event.key==='Escape'&&!svPicker.hidden){event.preventDefault();event.stopPropagation();svClosePicker();}});
 dialog.addEventListener('close',()=>{if(!svPicker.hidden)svClosePicker(false);});
 svSyncControls();
+setupHealthAge();
 
 function measurementFocus(active){
  const enabled=Boolean(active&&current==='health');
@@ -601,7 +635,10 @@ function save(event){
  const validBp=vals.every(Boolean)&&[sys,dia,pulse].every(Number.isInteger)&&
   sys>=50&&sys<=300&&dia>=30&&dia<=200&&sys>dia&&pulse>=30&&pulse<=240;
  const title=isBP?sys+'/'+dia:$('calendarSpaceTitle').value.trim().replace(/\s+/g,' ').slice(0,110);
- const date=$('calendarSpaceDate').value;
+ const previous=isBP?read().find(x=>x.id===editing&&x.space===current):null;
+ const measuredAt=isBP&&!previous?new Date():null;
+ const localStamp=measuredAt?[measuredAt.getFullYear(),String(measuredAt.getMonth()+1).padStart(2,'0'),String(measuredAt.getDate()).padStart(2,'0')].join('-'):'';
+ const date=isBP?(previous?.date||localStamp):$('calendarSpaceDate').value;
  const status=$('calendarSpaceStatus');
  if(isBP&&!validBp){status.textContent='Проверьте верхнее, нижнее и пульс. Нужны три корректных числа.';return}
  if(!title){status.textContent='Напишите название.';return}
@@ -613,7 +650,7 @@ function save(event){
   space:current,title,kind:$('calendarSpaceKind').value,date,
   detail:$('calendarSpaceDetail').value.trim().slice(0,500),
   bpPulse:isBP?pulse:null,
-  recordedAt:isBP?(old?.recordedAt||Date.now()):0,
+  recordedAt:isBP?(old?.recordedAt||measuredAt?.getTime()||Date.now()):0,
   yearless:current==='world'&&$('calendarSpaceKind').value==='День рождения'&&$('calendarSpaceAnnual').checked&&!!date
  };
  const updated=old?all.map(x=>x.id===old.id?row:x):[...all,row];
