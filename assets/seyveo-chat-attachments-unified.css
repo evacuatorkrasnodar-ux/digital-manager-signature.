@@ -840,3 +840,10 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-images:has(> :only-chi
 html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > :is(.sv-file-caption,.sv-attach-caption){
  display:none!important;
 }
+
+/* Word symbol uses the identical three-letter layout as the approved PDF icon. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-word-icon svg text{
+ font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-weight:750!important;
+ letter-spacing:-.35px!important;
+}
