@@ -2334,6 +2334,75 @@ function cleanupPreview(){
  if(display){display.replaceChildren();display.hidden=true}
  syncComposerActions();resizeWorkComposer();
 }
+/* Work chat draft document thumbnails: same browser-only approach as Sayvi.
+   Never upload or alter original bytes; show an icon only if preview cannot render. */
+let svcpPdfThumbLib=null,svcpWordThumbLib=null;
+function svcpLoadPdfThumb(){
+ if(!svcpPdfThumbLib){
+  svcpPdfThumbLib=import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs')
+   .then(mod=>{mod.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';return mod})
+   .catch(e=>{svcpPdfThumbLib=null;throw e});
+ }
+ return svcpPdfThumbLib;
+}
+function svcpLoadWordThumb(){
+ if(!svcpWordThumbLib){
+  svcpWordThumbLib=new Promise((resolve,reject)=>{
+   if(window.mammoth?.extractRawText){resolve(window.mammoth);return}
+   const script=document.createElement('script');
+   script.src='https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.13.0/mammoth.browser.min.js';
+   script.async=true;
+   script.onload=()=>window.mammoth?.extractRawText?resolve(window.mammoth):reject(Error('DOCX preview unavailable'));
+   script.onerror=()=>reject(Error('DOCX preview unavailable'));
+   document.head.append(script);
+  }).catch(e=>{svcpWordThumbLib=null;throw e});
+ }
+ return svcpWordThumbLib;
+}
+function svcpDraftPagePreview(file,tile){
+ const ext=(file.name.split('.').pop()||'').toLowerCase();
+ if(ext!=='pdf'&&ext!=='docx')return false;
+ const frame=el('div','svcp-preview-document-page');
+ frame.setAttribute('aria-hidden','true');
+ const fallback=el('div','svcp-preview-document-fallback');
+ fallback.append(svcpFileBadge(file.name,file.type));
+ frame.append(fallback);tile.append(frame);
+ if(ext==='pdf'){
+  const canvas=el('canvas','svcp-preview-document-canvas');
+  frame.append(canvas);
+  requestAnimationFrame(async()=>{
+   let pdf=null;
+   try{
+    const lib=await svcpLoadPdfThumb();if(!canvas.isConnected)return;
+    pdf=await lib.getDocument({data:new Uint8Array(await file.arrayBuffer()),useSystemFonts:true}).promise;
+    if(!canvas.isConnected)return;
+    const page=await pdf.getPage(1),size=page.getViewport({scale:1});
+    const viewport=page.getViewport({scale:320/size.width});
+    canvas.width=Math.max(1,Math.round(viewport.width));
+    canvas.height=Math.max(1,Math.round(viewport.height));
+    const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)return;
+    await page.render({canvasContext:ctx,viewport}).promise;
+    if(frame.isConnected)frame.classList.add('svcp-page-ready');
+   }catch(err){console.debug('Work Chat PDF thumbnail unavailable',err)}
+   finally{try{pdf?.destroy()}catch{}}
+  });
+ }else{
+  const content=el('div','svcp-preview-docx-content');
+  frame.append(content);
+  requestAnimationFrame(async()=>{
+   try{
+    const mammoth=await svcpLoadWordThumb();if(!content.isConnected)return;
+    const data=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});
+    if(!content.isConnected)return;
+    const text=String(data?.value||'').trim();
+    if(!text)return;
+    content.textContent=text.slice(0,2200);
+    frame.classList.add('svcp-page-ready');
+   }catch(err){console.debug('Work Chat Word thumbnail unavailable',err)}
+  });
+ }
+ return true;
+}
 function renderCapturePreview(){
  syncComposerActions();
  const display=$('svcpAttachmentPreview');if(!display)return;
@@ -2350,7 +2419,7 @@ function renderCapturePreview(){
    if(kind==='image')media.alt=file.name;
    else{media.muted=true;media.playsInline=true;media.preload='metadata'}
    tile.append(media);
-  }else tile.append(svcpFileBadge(file.name,file.type));
+  }else if(!svcpDraftPagePreview(file,tile))tile.append(svcpFileBadge(file.name,file.type));
   const ext=(file.name.split('.').pop()||'').toLowerCase();
   const displayName=kind==='image'?file.name.replace(/\.[^.]+$/,'').replace(/\d{4,}/g,'').replace(/[_\-\s]+/g,' ').trim():file.name;
   const caption=el('small','svcp-preview-tile-name');
