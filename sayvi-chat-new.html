@@ -1505,10 +1505,10 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  <button type="button" id="sayviSpeechStop" aria-label="Остановить диктовку"><span class="sv-stop-square" aria-hidden="true"></span></button>
  <button type="button" id="sayviSpeechSend" aria-label="Отправить распознанный текст"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-5.5 5.5M12 5l5.5 5.5"/></svg></button>
 </div>
-<div id="sayviAttachmentTray" aria-label="Выбранные вложения" hidden></div>
 <input type="file" id="sayviPickPhoto" accept="image/jpeg,image/png,image/webp" multiple hidden aria-label="Выбрать фото">
 <input type="file" id="sayviPickFile" accept=".txt,.md,.markdown,.csv,.json,.xml,.log,.html,.css,.js,.pdf,.docx,.xlsx,.pptx,image/png,image/jpeg,image/webp,text/plain,application/pdf" multiple hidden aria-label="Выбрать файлы">
 <div id="sayviComposer">
+<div id="sayviAttachmentTray" aria-label="Выбранные вложения" hidden></div>
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <div id="sayviField"><textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Напиши Сэйви…"></textarea>
 <button id="sayviMic" type="button" aria-label="Начать голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.25" y="2.75" width="5.5" height="12.5" rx="2.75"/><path d="M5.75 11.4v.95a6.25 6.25 0 0 0 12.5 0v-.95M12 18.6v2.55M9.15 21.25h5.7"/></svg></button>
@@ -1962,13 +1962,17 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    const text=input.value;
    const compactTextWidth=Math.max(48,(composer.clientWidth||window.innerWidth-12)-142);
    const shortHeight=sayviMeasuredTextHeight(text,compactTextWidth);
-   const expand=!!text&&(text.includes('\n')||shortHeight>24);
+   const withFiles=pendingAttachments.length>0;
+   const expand=withFiles||!!text&&(text.includes('\n')||shortHeight>24);
    const availableWidth=(composer.clientWidth||window.innerWidth-12)-26;
    const fullTextHeight=expand?sayviMeasuredTextHeight(text,availableWidth):24;
    const cap=Math.min(156,Math.max(84,Math.floor((window.visualViewport?.height||window.innerHeight)*.32)));
    const editorHeight=expand?Math.min(cap,Math.max(62,fullTextHeight+18)):44;
-   const fullHeight=expand?editorHeight+60:56;
+   const attachHeight=withFiles?118:0;
+   const fullHeight=expand?editorHeight+60+attachHeight:56;
    composer.classList.toggle('sayvi-compose-expanded',expand);
+   composer.classList.toggle('sayvi-has-attachments',withFiles);
+   composer.style.setProperty('--sayvi-attach-height',attachHeight+'px');
    composer.style.setProperty('--sayvi-editor-height',editorHeight+'px');
    composer.style.setProperty('--sayvi-composer-height',fullHeight+'px');
    // Real reserved space for every dock height, including multi-line editing.
@@ -1987,8 +1991,12 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   const typed=!!input.value.trim();
   input.disabled=!!active;
   const canSend=typed||pendingAttachments.length>0;
+  const largeMode=composer.classList.contains('sayvi-compose-expanded');
   sendButton.hidden=!!active||!canSend;
-  mic.hidden=!!active||canSend;
+  // In the open editor, keep voice dictation and Send side by side.
+  // The single-line capsule still swaps the mic for the Send arrow.
+  mic.hidden=!!active||(!largeMode&&canSend);
+  composer.classList.toggle('sayvi-voice-with-send',!!canSend&&largeMode&&!active);
   stopReplyButton.hidden=!active;
   updateTypingPreview();
  }
@@ -3042,7 +3050,9 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
    if(entry.preview){visual.className='sv-attach-thumb';visual.src=entry.preview;visual.alt=''}
    const label=document.createElement('span');label.className='sv-attach-caption';label.textContent=entry.file.name;label.title=entry.file.name;
    const remove=document.createElement('button');remove.type='button';remove.className='sv-attach-remove';
-   remove.textContent='×';remove.setAttribute('aria-label','Убрать '+entry.file.name);
+   remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+   remove.setAttribute('aria-label','Убрать '+entry.file.name);
+   chip.classList.toggle('sv-attach-chip--file',!entry.preview);
    remove.addEventListener('click',()=>{
     if(active)return;
     if(entry.preview)URL.revokeObjectURL(entry.preview);
@@ -3592,6 +3602,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  const SpeechApi=window.SpeechRecognition||window.webkitSpeechRecognition;
  let speechSession=null,spokenFinal='',spokenInterim='',speechStart=0,speechTimer=null;
  let speechGeneration=0,speechAborted=false,speechStopping=false,speechSendRequested=false;
+ let speechDraftAtStart='';
  let speechWatchdog=null,speechHasResult=false;
  function updateSpeechClock(){
   const seconds=Math.floor((performance.now()-speechStart)/1000);
@@ -3634,9 +3645,15 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   try{finished?.abort()}catch{}
   clearSpeech();
   if(text){
-   if(shouldSend)ask(text);
-   else{
-    input.value=text;updateControls();
+   const combined=speechDraftAtStart.trim()
+    ?speechDraftAtStart.trimEnd()+' '+text
+    :text;
+   speechDraftAtStart='';
+   if(shouldSend){
+    input.value='';updateControls();
+    ask(combined);
+   }else{
+    input.value=combined;updateControls();
     status.textContent='Речь распознана. Нажмите стрелку отправки.';
    }
   }else{
@@ -3664,7 +3681,8 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  }
  function startSpeech(){
   if(speechSession){stopSpeech();return}
-  if(active||input.value.trim())return;
+  if(active)return;
+  speechDraftAtStart=input.value;
   status.textContent='';
   if(!SpeechApi){
    status.textContent='В этом браузере нет распознавания речи. Можно использовать микрофон клавиатуры iPhone.';
@@ -3733,7 +3751,7 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
  mic.setAttribute('aria-label','Удерживайте для голосового сообщения');
  mic.addEventListener('pointerdown',event=>{
   if(!event.isPrimary||event.button!==0||holdSpeechPointer!==null)return;
-  if(active||input.value.trim())return;
+  if(active)return;
   event.preventDefault();
   holdSpeechPointer=event.pointerId;suppressMicClick=true;
   try{mic.setPointerCapture(event.pointerId)}catch{}
@@ -3753,7 +3771,11 @@ html body main #sayviTopActions button#sayviHistoryTop.sv-top-action:active{
   else if(heldSpeechReadyText){
    const transcript=heldSpeechReadyText;
    heldSpeechReadyText='';
-   ask(transcript);
+   const combined=speechDraftAtStart.trim()
+    ?speechDraftAtStart.trimEnd()+' '+transcript:transcript;
+   speechDraftAtStart='';
+   input.value='';updateControls();
+   ask(combined);
   }
   window.setTimeout(()=>{suppressMicClick=false},350);
  }
