@@ -1515,7 +1515,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=4">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=7">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=8">
 </head>
 <body>
 <main>
@@ -3144,32 +3144,33 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
  let docxThumbnailPromise=null;
  function loadDocxThumbnailLibrary(){
   if(docxThumbnailPromise)return docxThumbnailPromise;
-  const script=url=>new Promise((resolve,reject)=>{
-   const tag=document.createElement('script');tag.src=url;tag.async=true;
-   tag.onload=resolve;tag.onerror=()=>reject(Error('DOCX preview module unavailable'));
-   document.head.append(tag);
-  });
-  docxThumbnailPromise=(async()=>{
-   if(!window.JSZip)await script('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
-   if(!window.docx?.renderAsync)await script('https://cdn.jsdelivr.net/npm/docx-preview@0.4.1/dist/docx-preview.min.js');
-   if(!window.docx?.renderAsync)throw Error('DOCX renderer missing');
-   return window.docx;
-  })().catch(e=>{docxThumbnailPromise=null;throw e});
+  const url='https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.13.0/mammoth.browser.min.js';
+  docxThumbnailPromise=new Promise((resolve,reject)=>{
+   if(window.mammoth?.extractRawText){resolve(window.mammoth);return}
+   const script=document.createElement('script');
+   script.src=url;script.async=true;
+   script.onload=()=>window.mammoth?.extractRawText?resolve(window.mammoth):reject(Error('Word preview module unavailable'));
+   script.onerror=()=>reject(Error('Word preview module unavailable'));
+   document.head.append(script);
+  }).catch(error=>{docxThumbnailPromise=null;throw error});
   return docxThumbnailPromise;
  }
  async function drawWordThumbnail(file,target,surface){
   try{
    const renderer=await loadDocxThumbnailLibrary();
    if(!target.isConnected)return;
-   // The rendered DOCX is untrusted content: do not execute scripts from it.
-   await renderer.renderAsync(file,target,target,{
-    className:'sv-thumb-docx',inWrapper:true,breakPages:true,
-    ignoreLastRenderedPageBreak:false,renderHeaders:true,renderFooters:true,
-    useBase64URL:true
-   });
+   // Extract plain text inside the browser. Never insert unsanitized DOCX HTML.
+   const result=await renderer.extractRawText({arrayBuffer:await file.arrayBuffer()});
    if(!target.isConnected)return;
+   const text=String(result?.value||'').trim();
+   if(!text)return;
+   const page=document.createElement('span');
+   page.className='sv-document-docx-paper-text';
+   page.textContent=text.slice(0,2200);
+   target.replaceChildren(page);
    surface.classList.add('sv-preview-loaded');
   }catch(error){
+   // On unsupported/offline browsers keep an honest Word file icon.
    console.debug('SEYVEO: local DOCX preview unavailable',error);
   }
  }
