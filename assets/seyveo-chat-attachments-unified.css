@@ -882,3 +882,115 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-photo{
 html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > :is(.sv-file-caption,.sv-attach-caption){
  display:none!important;
 }
+
+
+/* SEYVEO 11 Nov · SAYVI -> WORK CHAT visual parity.
+   Only presentation: existing file opening, signatures, task assignments,
+   voice recording, message permissions and document action listeners stay intact. */
+
+/* Sent and received files share Sayvi's compact material, but direction
+   and authorship remain owned by the existing work-chat message layout. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble:is(.svcp-document-only,.svcp-file-only){
+ box-sizing:border-box!important;
+ width:min(200px,calc(100vw - 36px))!important;
+ max-width:min(200px,calc(100vw - 36px))!important;
+ min-width:0!important;
+ border:0!important;background:transparent!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble:is(.svcp-document-only,.svcp-file-only) .svcp-file-card{
+ box-sizing:border-box!important;
+ width:100%!important;max-width:100%!important;
+ min-height:60px!important;
+ border:1px solid #393A3D!important;
+ border-radius:17px!important;
+ padding:8px 11px!important;gap:9px!important;
+ background:#1A1B1D!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:#F3F3F4!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble:is(.svcp-document-only,.svcp-file-only) .svcp-file-badge{
+ flex:0 0 31px!important;
+ width:31px!important;min-width:31px!important;
+ height:37px!important;min-height:37px!important;
+ align-self:center!important;
+ margin:0!important;
+ border-radius:4px!important;
+ font-size:10px!important;
+}
+/* Keep existing semantic PDF/Word format marks; do not recolor data/types. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-name{
+ min-width:0!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+ white-space:nowrap!important;color:#F3F3F4!important;
+ font:600 12.5px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-file-card-type{
+ color:#BFC0C5!important;
+ font:400 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+/* User photos remain pure photos. Do not interfere with their click handlers,
+   media load state, or timestamps shown outside the media slot. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-media-slot:has(> .svcp-chat-media-image),
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-media-slot:has(.svcp-chat-media-image){
+ padding:0!important;border:0!important;
+ background:transparent!important;box-shadow:none!important;
+ border-radius:16px!important;overflow:hidden!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-chat-media-image{
+ display:block!important;
+ max-width:100%!important;
+ border:0!important;border-radius:16px!important;
+ padding:0!important;background:transparent!important;
+ object-fit:contain!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpAttachmentPreview:not([hidden]){
+ background:#1A1B1D!important;
+ border:1px solid #393A3D!important;
+ border-radius:16px!important;
+ box-shadow:none!important;
+}
+/* Same document preview shell as Sayvi: dark header, real white paper.
+   All pre-existing work footer tools stay visible, including Sign. */
+html body .svcp-doc-overlay{
+ background:#151B20!important;color:#F5F5F7!important;
+}
+html body .svcp-doc-overlay .svcp-doc-top{
+ background:#151B20!important;
+ border-bottom:1px solid rgba(255,255,255,.09)!important;
+}
+html body .svcp-doc-overlay .svcp-doc-back{
+ background:#38383A!important;color:#F5F5F7!important;
+ border-radius:50%!important;
+}
+html body .svcp-doc-overlay :is(.svcp-doc-title,.svcp-doc-size){
+ color:#F5F5F7!important;
+}
+html body .svcp-doc-overlay .svcp-doc-body{
+ background:#20262B!important;
+ scrollbar-width:none!important;
+ -ms-overflow-style:none!important;
+}
+html body .svcp-doc-overlay .svcp-doc-body::-webkit-scrollbar{display:none!important}
+html body .svcp-doc-overlay .svcp-doc-text{
+ width:100%!important;max-width:760px!important;
+ background:#FFF!important;color:#202024!important;
+ border-radius:4px!important;
+ padding:clamp(22px,5vw,54px)!important;
+ box-shadow:0 2px 10px rgba(0,0,0,.12)!important;
+ font:400 15px/1.6 Georgia,"Times New Roman",serif!important;
+}
+html body .svcp-doc-overlay .svcp-doc-pdf{background:#FFF!important}
+html body .svcp-doc-overlay .svcp-doc-bottom{
+ background:#151B20!important;
+}
+html body .svcp-doc-overlay .svcp-doc-info{color:#BDC0C6!important}
+/* Selected image/photo viewer keeps original pixels with no artificial frame. */
+html body .svcp-doc-overlay .svcp-doc-image{
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;border:0!important;
+ background:transparent!important;
+}
+/* Buttons are still the original working voice / signature controls. */
