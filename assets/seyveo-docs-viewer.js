@@ -240,12 +240,18 @@ function mount(target,file,{onSignImage=()=>{},onSayvi=()=>{}}={}){
  moreBody.append(action('Сэйви поможет','sayvi',()=>onSayvi('review')));
  moreBody.addEventListener('click',event=>{if(event.target.closest('button,a'))more.open=false;});
  more.append(moreBody);toolbar.append(more);
+ const dismissMore=event=>{if(!more.contains(event.target))more.open=false;};
+ const closeMoreOnEscape=event=>{if(event.key==='Escape'&&more.open){more.open=false;summary.focus();}};
+ document.addEventListener('pointerdown',dismissMore,{passive:true});
+ document.addEventListener('keydown',closeMoreOnEscape);
  root.append(toolbar,notice);
  target.replaceChildren(root);
  return Object.freeze({
   destroy(){
    if(!active)return;
    active=false;target.replaceChildren();
+   document.removeEventListener('pointerdown',dismissMore);
+   document.removeEventListener('keydown',closeMoreOnEscape);
    URL.revokeObjectURL(objectUrl);
   }
  });
