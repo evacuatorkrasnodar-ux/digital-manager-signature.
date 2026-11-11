@@ -14,18 +14,20 @@ test('manager may assign standalone document messages',()=>{
  assert.match(script,/attachmentMediaId:msg\.mediaId/);
  assert.match(script,/if\(hasFile&&!clean\)title\.value=/);
 });
-test('document actions form one compact top row with reply, bookmark, and assignment',()=>{
+test('photos and documents share exactly one attached three-action footer',()=>{
  assert.match(script,/menu\.append\(svcpActionIcon\('Ответить','reply'/);
  assert.match(script,/menu\.append\(starControl\)/);
  assert.match(script,/menu\.append\(svcpActionIcon\('Поручить','task'/);
- assert.match(css,/\.svcp-document-only\.svcp-document-assignable > \.svcp-message-inline-actions/);
- assert.match(css,/top:-37px!important;bottom:auto!important/);
- assert.match(css,/max-width:116px!important/);
- assert.match(css,/> :is\(\.svcp-action-reply,\.svcp-action-star,\.svcp-action-task\)/);
- assert.doesNotMatch(css,/> :not\(\.svcp-action-task\)\{display:none!important\}/);
+ assert.match(script,/function dockMediaActions\(\)/);
+ assert.match(script,/container\.querySelector\(':scope > \.svcp-message-inline-actions'\)/);
+ assert.match(script,/slot\.append\(row\)/);
+ assert.match(script,/container\.classList\.add\('svcp-media-actions-contained'\)/);
+ assert.match(script,/dockMediaActions\(\);/);
+ assert.doesNotMatch(css,/top:-37px!important;bottom:auto!important/);
  assert.match(script,/previewable\?\(\)=>svcpOpenDocument\(localFile,message\):null/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=177/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=241/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=178/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=242/);
+ assert.match(html,/assets\/seyveo-chat-attachments-unified\.css\?v=17/);
 });
 
 test('expanded composer physically places the original live mic and send in its bottom toolbar',()=>{
@@ -38,7 +40,7 @@ test('expanded composer physically places the original live mic and send in its 
  assert.match(css,/visibility:visible!important;pointer-events:auto!important;opacity:1!important/);
  assert.match(css,/> #svcpVoiceRecord\{\s*right:55px!important/);
  assert.match(css,/> \.svcp-chat-send\{\s*right:8px!important/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=241/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=242/);
 });
 
 test('document viewer offers contextual real Sayvi support without replacing its action rail',()=>{
@@ -58,8 +60,8 @@ test('document viewer offers contextual real Sayvi support without replacing its
  assert.match(css,/\.svcp-doc-sayvi-panel\[hidden\]\{display:none!important\}/);
  assert.match(css,/\.svcp-doc-sayvi-panel\{/);
  assert.match(css,/\.svcp-doc-sayvi-input\{/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=177/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=241/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=178/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=242/);
 });
 
 test('document Sayvi button uses exactly the approved Work Chat header symbol',()=>{
