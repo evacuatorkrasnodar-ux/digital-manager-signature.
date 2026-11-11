@@ -7,6 +7,7 @@ on:
       - 'assets/seyveo-chat-attachments-unified.css'
       - 'index.html'
       - 'scripts/work-chat-received-documents.test.mjs'
+      - 'scripts/work-chat-document-tasks.test.mjs'
       - '.github/workflows/seyveo-work-received-documents.yml'
   pull_request:
     paths:
@@ -14,6 +15,7 @@ on:
       - 'assets/seyveo-chat-attachments-unified.css'
       - 'index.html'
       - 'scripts/work-chat-received-documents.test.mjs'
+      - 'scripts/work-chat-document-tasks.test.mjs'
       - '.github/workflows/seyveo-work-received-documents.yml'
 
 permissions:
@@ -32,4 +34,5 @@ jobs:
         run: |
           node --check assets/seyveo-business-command.js
           node --check scripts/work-chat-received-documents.test.mjs
-          node --test scripts/work-chat-received-documents.test.mjs
+          node --check scripts/work-chat-document-tasks.test.mjs
+          node --test scripts/work-chat-received-documents.test.mjs scripts/work-chat-document-tasks.test.mjs
