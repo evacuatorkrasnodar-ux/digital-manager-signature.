@@ -325,3 +325,22 @@ html body #calendarSpaceDialog[data-space="health"] #calendarSpaceFormFields:has
  html body #calendarSpaceDialog[data-space="health"] .cal-bp-grid{gap:5px!important}
  html body #calendarSpaceDialog[data-space="health"] .cal-bp-grid input{height:60px!important;min-height:60px!important;font-size:27px!important}
 }
+
+/* Health measurement visual refinement: one instruction, quiet note and clean CTA. */
+html body #calendarSpaceDialog[data-space="health"] #calendarBloodPressureFields:not([hidden]) .cal-bp-lead{
+ display:none!important;
+}
+html body #calendarSpaceDialog[data-space="health"] #calendarBloodPressureFields:not([hidden]) #calendarBpLiveAdvice{
+ margin-top:7px!important;padding:10px 0 4px!important;
+}
+html body #calendarSpaceDialog[data-space="health"] #calendarSpaceFormFields:has(#calendarBloodPressureFields:not([hidden])) textarea{
+ min-height:68px!important;resize:none!important;
+ background:rgba(22,28,34,.10)!important;
+}
+html body #calendarSpaceDialog[data-space="health"] #calendarSpaceFormFields:has(#calendarBloodPressureFields:not([hidden])) .calendar-space-actions button.primary{
+ text-decoration:none!important;background-image:none!important;
+}
+html body #calendarSpaceDialog[data-space="health"] #calendarSpaceFormFields:has(#calendarBloodPressureFields:not([hidden])) .calendar-space-actions button.primary::before,
+html body #calendarSpaceDialog[data-space="health"] #calendarSpaceFormFields:has(#calendarBloodPressureFields:not([hidden])) .calendar-space-actions button.primary::after{
+ content:none!important;display:none!important;
+}
