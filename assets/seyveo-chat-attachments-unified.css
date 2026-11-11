@@ -1939,3 +1939,54 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-bubble:has(.
  width:max-content!important;min-width:0!important;
  max-width:min(92%,340px)!important;
 }
+
+
+/* Sayvi sent documents: symmetrical Work Chat first-page cards. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files:has(.sv-sent-file--symmetric){
+ box-sizing:border-box!important;display:flex!important;flex-direction:row!important;
+ flex-wrap:wrap!important;justify-content:flex-end!important;align-items:flex-start!important;
+ gap:7px!important;width:min(100%,430px)!important;max-width:430px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file.sv-sent-file--page.sv-sent-file--symmetric{
+ position:relative!important;box-sizing:border-box!important;
+ display:block!important;flex:0 0 138px!important;
+ width:138px!important;min-width:138px!important;max-width:138px!important;
+ height:151px!important;min-height:151px!important;max-height:151px!important;
+ margin:0!important;padding:0!important;gap:0!important;
+ overflow:hidden!important;border:1px solid rgba(255,255,255,.09)!important;
+ border-radius:15px!important;background:#0C0D0F!important;
+ box-shadow:none!important;color:#F5F5F7!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric > .sv-document-page-preview{
+ display:block!important;position:absolute!important;
+ inset:0 0 27px!important;
+ flex:none!important;width:100%!important;height:calc(100% - 27px)!important;
+ min-height:0!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;overflow:hidden!important;
+ background:#FFF!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric > .sv-sent-file-copy{
+ position:absolute!important;z-index:3!important;inset:auto 0 0!important;
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ width:100%!important;height:27px!important;min-height:27px!important;max-height:27px!important;
+ flex:none!important;margin:0!important;padding:0 5px!important;
+ border:0!important;border-radius:0!important;
+ background:#030304!important;overflow:hidden!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption{
+ display:flex!important;align-items:center!important;gap:4px!important;
+ width:100%!important;min-width:0!important;overflow:hidden!important;
+ background:transparent!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption-format{
+ flex:0 0 14px!important;max-width:14px!important;min-width:14px!important;
+ width:14px!important;height:18px!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption-name{
+ flex:1 1 auto!important;min-width:0!important;max-width:100%!important;
+ display:block!important;font:500 9px/1.15 system-ui,sans-serif!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ color:#F5F5F7!important;text-align:left!important;
+}
