@@ -1515,7 +1515,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=4">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=2">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=3">
 </head>
 <body>
 <main>
@@ -2780,7 +2780,10 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   for(const name of names){
    const tile=document.createElement('button');tile.type='button';tile.className='sv-sent-file';
    tile.setAttribute('aria-label','Открыть файл '+name);
-   tile.append(makeDocumentIcon({name}));
+   const originalFile=sentDocumentBlobs.get(turn)?.find(file=>file.name===name);
+   const thumbnail=originalFile?documentPreviewSurface(originalFile):null;
+   if(thumbnail){tile.classList.add('sv-sent-file--page');tile.append(thumbnail)}
+   else tile.append(makeDocumentIcon({name}));
    const copy=document.createElement('span');copy.className='sv-sent-file-copy';
    const label=document.createElement('strong');label.className='sv-sent-file-name';
    label.textContent=name;label.title=name;
@@ -3082,6 +3085,34 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   wrapper.setAttribute('aria-label',ext.toUpperCase()+' файл');
   return wrapper;
  }
+ // Local document page previews. No third-party document renderer.
+ const docPreviewUrls=new Set();
+ function documentPreviewSurface(file){
+  const ext=(file?.name?.split('.').pop()||'').toLowerCase();
+  if(!['pdf','docx'].includes(ext))return null;
+  const surface=document.createElement('span');surface.className='sv-document-page-preview';
+  const page=document.createElement('span');page.className='sv-document-page';
+  const fallback=document.createElement('span');fallback.className='sv-document-page-fallback';
+  fallback.append(makeDocumentIcon(file));page.append(fallback);surface.append(page);
+  if(ext==='pdf'){
+   const url=URL.createObjectURL(file);docPreviewUrls.add(url);
+   const frame=document.createElement('iframe');frame.className='sv-document-pdf-frame';
+   frame.title='Первая страница PDF';frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');
+   frame.src=url+'#page=1&toolbar=0&navpanes=0&scrollbar=0&view=FitH';
+   page.append(frame);
+  }else{
+   const textNode=document.createElement('span');textNode.className='sv-document-word-text';
+   page.append(textNode);
+   const form=new FormData();form.append('file',file,file.name);
+   fetch('/api/seyveo-document-text',{method:'POST',credentials:'same-origin',body:form})
+    .then(r=>r.ok?r.json():null).then(data=>{
+     if(!textNode.isConnected||typeof data?.text!=='string'||!data.text.trim())return;
+     textNode.textContent=data.text.slice(0,650);surface.classList.add('sv-preview-loaded');
+    }).catch(()=>{});
+  }
+  return surface;
+ }
+ window.addEventListener('pagehide',()=>{for(const url of docPreviewUrls)URL.revokeObjectURL(url);docPreviewUrls.clear()});
  function clearAttachments(){
   for(const a of pendingAttachments){if(a.preview)URL.revokeObjectURL(a.preview)}
   pendingAttachments=[];
@@ -3092,13 +3123,15 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   attachmentTray.hidden=pendingAttachments.length===0;
   for(const entry of pendingAttachments){
    const chip=document.createElement('div');chip.className='sv-attach-chip';
-   const visual=entry.preview?document.createElement('img'):makeDocumentIcon(entry.file);
+   const pagePreview=!entry.preview?documentPreviewSurface(entry.file):null;
+   const visual=entry.preview?document.createElement('img'):(pagePreview||makeDocumentIcon(entry.file));
    if(entry.preview){visual.className='sv-attach-thumb';visual.src=entry.preview;visual.alt=''}
    const label=document.createElement('span');label.className='sv-attach-caption';label.textContent=entry.file.name;label.title=entry.file.name;
    const remove=document.createElement('button');remove.type='button';remove.className='sv-attach-remove';
    remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
    remove.setAttribute('aria-label','Убрать '+entry.file.name);
-   chip.classList.toggle('sv-attach-chip--file',!entry.preview);
+   chip.classList.toggle('sv-attach-chip--file',!entry.preview&&!pagePreview);
+   chip.classList.toggle('sv-attach-chip--page',!!pagePreview);
    remove.addEventListener('click',()=>{
     if(active)return;
     if(entry.preview)URL.revokeObjectURL(entry.preview);
