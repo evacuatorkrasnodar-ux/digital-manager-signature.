@@ -5971,3 +5971,23 @@ html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-row-menu{
 html body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-row-menu button{
  min-height:37px!important;font-size:13px!important;
 }
+
+/* SEYVEO · 2026-11-11: one fixed lower-right time baseline for text bubbles.
+   Reserve a dedicated bottom strip so short messages and long paragraphs
+   cannot shift the stamp or overlap it. Media retain their native stamps. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp:not(.svcp-media-actions-contained):not(.svcp-document-only):not(.is-emoji-only){
+ position:relative!important;
+ padding-bottom:23px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp.is-short-text:not(.svcp-media-actions-contained):not(.svcp-document-only):not(.is-emoji-only){
+ padding-bottom:23px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-bottom-stamp:not(.svcp-media-actions-contained):not(.svcp-document-only):not(.is-emoji-only) > .svcp-message-stamp{
+ position:absolute!important;
+ top:auto!important;left:auto!important;
+ right:9px!important;bottom:5px!important;
+ height:13px!important;min-height:13px!important;
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ gap:3px!important;
+ line-height:13px!important;
+}
