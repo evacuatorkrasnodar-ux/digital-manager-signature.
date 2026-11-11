@@ -2014,22 +2014,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
     row.append(checkbox,open);open.setAttribute('aria-pressed',String(historySelection.has(item.id)));
     historyList.append(row);continue;
    }
-   const more=document.createElement('button');more.type='button';more.className='history-more';more.setAttribute('aria-label','Действия с разговором');
-   more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
-   more.addEventListener('click',()=>{
-    if(historySelected===item.id&&!historyActions.hidden){closeHistoryActions();return}
-    historySelected=item.id;
-    historyActions.hidden=false;
-    const rect=more.getBoundingClientRect();
-    const menuWidth=196,menuHeight=54,edge=12;
-    const w=window.innerWidth,h=window.innerHeight;
-    const left=Math.max(edge,Math.min(w-edge-menuWidth,rect.right-menuWidth));
-    const top=rect.bottom+menuHeight+10>h-edge
-     ?Math.max(edge,rect.top-menuHeight-6):rect.bottom+6;
-    historyActions.style.left=Math.round(left)+'px';
-    historyActions.style.top=Math.round(top)+'px';
-   });
-   row.append(open,more);historyList.append(row);
+   row.append(open);historyList.append(row);
   }
  }
  function closeHistory(){setHistorySelectionMode(false);closeHistoryActions();historySearchBar.hidden=true;historySearch.value="";historyPanel.hidden=true;historyTop.setAttribute('aria-expanded','false')}
