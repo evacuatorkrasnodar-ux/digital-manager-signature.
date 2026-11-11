@@ -1422,3 +1422,32 @@ html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviFiel
 html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments > #sayviPlus{
  grid-row:3!important;align-self:center!important;
 }
+
+/* Sayvi four larger files in each iPhone row. */
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray{
+ gap:4px!important;width:calc(100% - 12px)!important;max-width:calc(100% - 12px)!important;
+ margin:0 6px!important;padding:8px 0 10px!important;
+ height:var(--sayvi-attach-height,114px)!important;
+ min-height:var(--sayvi-attach-height,114px)!important;
+ max-height:var(--sayvi-attach-height,114px)!important;
+ align-items:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip:is(.sv-attach-chip--page,.sv-attach-chip--image,.sv-attach-chip--file){
+ flex:0 0 calc((100% - 12px) / 4)!important;
+ width:calc((100% - 12px) / 4)!important;
+ min-width:calc((100% - 12px) / 4)!important;
+ max-width:calc((100% - 12px) / 4)!important;
+ height:88px!important;min-height:88px!important;max-height:88px!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--page > .sv-document-page-preview,
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--image > .sv-attach-thumb{
+ position:absolute!important;inset:0 0 20px!important;width:100%!important;
+ height:calc(100% - 20px)!important;margin:0!important;border:0!important;border-radius:0!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip:is(.sv-attach-chip--page,.sv-attach-chip--image,.sv-attach-chip--file) > .sv-attach-caption{
+ position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;
+ display:flex!important;align-items:center!important;
+ height:20px!important;min-height:20px!important;max-height:20px!important;
+ padding:0 3px!important;background:#050506!important;text-align:left!important;
+ font-size:8px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
