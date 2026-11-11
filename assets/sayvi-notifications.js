@@ -23,7 +23,6 @@
  icon.setAttribute('aria-hidden','true');
  // Quiet iOS-style exclamation-in-circle. No bell, filled background or extra tile.
  icon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5.25"/><path d="M12 16.65h.01"/></svg>';
- const count=document.createElement('span');
  button.append(icon);
  // Same positioning context as the microphone and send arrow.
  field.append(button);
@@ -57,12 +56,6 @@
  let lastMessage='';
  let lastAt=0;
  const clock=new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'});
- function concise(message){
-  if(/^Задача для Сэйви подготовлена/u.test(message))return 'Задача для Сэйви готова';
-  if(/^Задача подготовлена\. Прикрепите/u.test(message))return 'Прикрепите документ и отправьте';
-  const first=message.split(/[.!?]\s+/u)[0]||message;
-  return first.length>100?first.slice(0,97)+'…':first;
- }
  function paint(){
   const pending=messages.length>0;
   button.hidden=!pending;
@@ -103,7 +96,7 @@
  // Show the control only for genuine technical problems, never task progress,
  // successful actions or general conversational status messages.
  function isSystemProblem(text){
-  return /(?:не удалось|ошибк|недоступ|не поддерж|не может быть|нет возможности|не отвечает|не ответил|не найден|не загруз|не сохрани|не удалось|прервал|сбой|превышен|превыша|слишком|больше 8 мб|ограничен моделью|отклон[её]н|устарел|поврежд[её]н|запрещ[её]н|в этом браузере нет распознавания)/iu.test(text);
+  return /(?:не удалось|ошибк|недоступ|не поддерж|не может быть|нет возможности|не отвечает|не ответил|не найден|не загруз|не сохрани|прервал|сбой|превышен|превыша|слишком|больше 8 мб|ограничен моделью|отклон[её]н|устарел|поврежд[её]н|запрещ[её]н|нужен python|неверн|в этом браузере нет распознавания)/iu.test(text);
  }
  function add(value,force=false){
   const text=String(value||'').replace(/\s+/gu,' ').trim();
