@@ -503,13 +503,17 @@ function svcpOpenDocument(file,sourceMessage=null){
   if(sayviTextCache)return sayviTextCache;
   if(sayviTextPromise)return sayviTextPromise;
   sayviTextPromise=(async()=>{
-   if(kind==='text')return {text:await file.text(),truncated:false};
+   if(kind==='text'){
+    const text=await file.text();
+    if(!text.trim())throw Error('Этот текстовый файл пустой.');
+    return {text,truncated:false};
+   }
    if(kind!=='word'&&kind!=='pdf')throw Error('Сэйви пока разбирает текстовые документы, Word и PDF.');
    // Use the same validated local extraction route as the document reader.
    // It may return a partial excerpt; never present that as the entire file.
    const form=new FormData();form.append('file',file,file.name);
    const response=await fetch('/api/seyveo-document-text',{
-    method:'POST',credentials:'same-origin',body:form
+    method:'POST',credentials:'same-origin',body:form,signal:sayviController?.signal
    });
    const data=await response.json().catch(()=>null);
    if(!response.ok){
