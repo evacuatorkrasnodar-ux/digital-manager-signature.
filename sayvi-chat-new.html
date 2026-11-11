@@ -1864,6 +1864,27 @@ html body #sayviComposer #sayviField{
   transition:none!important;will-change:auto!important;
  }
 }
+/* Work Chat's two-phase capsule morph. First character joins the
+   long backing to the existing Plus; wrapping expands the editor upward.
+   No change to the button, its color, its geometry or its click handler. */
+html body #sayviComposer::before,
+html body #sayviComposer.sayvi-compose-expanded::before{
+ transition:left .25s cubic-bezier(.22,.8,.22,1),
+            border-radius .24s cubic-bezier(.22,.8,.22,1)!important;
+}
+html body #sayviComposer:not(.sayvi-compose-expanded):not([data-has-content="true"])::before{
+ left:58px!important;
+}
+html body #sayviComposer[data-has-content="true"]::before,
+html body #sayviComposer.sayvi-compose-expanded::before{
+ left:0!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html body #sayviComposer::before,
+ html body #sayviComposer.sayvi-compose-expanded::before{
+  transition:none!important;
+ }
+}
 /* The plus is ONE identical control in compact and expanded Sayvi chat.
    Only its grid position changes; the approved compact material and glyph
    remain exactly the same in both states and across themes. */
@@ -2495,6 +2516,8 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    const shortHeight=sayviMeasuredTextHeight(text,compactTextWidth);
    const withFiles=pendingAttachments.length>0;
    const expand=withFiles||!!text&&(text.includes('\n')||shortHeight>24);
+   // Phase one: the existing capsule backdrop flows toward the unchanged Plus.
+   composer.dataset.hasContent=String(text.length>0);
    const availableWidth=(composer.clientWidth||window.innerWidth-12)-26;
    const fullTextHeight=expand?sayviMeasuredTextHeight(text,availableWidth):24;
    const cap=Math.min(156,Math.max(84,Math.floor((window.visualViewport?.height||window.innerHeight)*.32)));
