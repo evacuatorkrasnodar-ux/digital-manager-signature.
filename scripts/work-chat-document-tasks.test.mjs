@@ -24,8 +24,8 @@ test('document actions form one compact top row with reply, bookmark, and assign
  assert.match(css,/> :is\(\.svcp-action-reply,\.svcp-action-star,\.svcp-action-task\)/);
  assert.doesNotMatch(css,/> :not\(\.svcp-action-task\)\{display:none!important\}/);
  assert.match(script,/previewable\?\(\)=>svcpOpenDocument\(localFile,message\):null/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=174/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=239/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=175/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=240/);
 });
 
 test('expanded composer physically places the original live mic and send in its bottom toolbar',()=>{
@@ -38,7 +38,7 @@ test('expanded composer physically places the original live mic and send in its 
  assert.match(css,/visibility:visible!important;pointer-events:auto!important;opacity:1!important/);
  assert.match(css,/> #svcpVoiceRecord\{\s*right:55px!important/);
  assert.match(css,/> \.svcp-chat-send\{\s*right:8px!important/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=239/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=240/);
 });
 
 test('document viewer offers contextual real Sayvi support without replacing its action rail',()=>{
@@ -58,6 +58,6 @@ test('document viewer offers contextual real Sayvi support without replacing its
  assert.match(css,/\.svcp-doc-sayvi-panel\[hidden\]\{display:none!important\}/);
  assert.match(css,/\.svcp-doc-sayvi-panel\{/);
  assert.match(css,/\.svcp-doc-sayvi-input\{/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=174/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=239/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=175/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=240/);
 });
