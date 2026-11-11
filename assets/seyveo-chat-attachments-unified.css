@@ -1941,56 +1941,89 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-bubble:has(.
 }
 
 
-/* Sayvi sent documents: symmetrical Work Chat first-page cards. */
-html body #sayviMessages .turn[data-role="user"] .sv-sent-files:has(.sv-sent-file--symmetric){
- box-sizing:border-box!important;display:flex!important;flex-direction:row!important;
- flex-wrap:wrap!important;justify-content:flex-end!important;align-items:flex-start!important;
- gap:7px!important;width:min(100%,430px)!important;max-width:430px!important;
+/* Sayvi sent documents: identical compact 3-across attachment tiles.
+   A sent message retains the same 99px page previews and 23px black captions.
+   The layout is right-aligned for outgoing messages; incoming remains compact. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files.sv-sent-files--preview-grid{
+ box-sizing:border-box!important;position:relative!important;
+ display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;
+ justify-content:flex-end!important;align-items:flex-start!important;
+ gap:6px 7px!important;
+ width:min(100%,430px)!important;max-width:430px!important;
+ align-self:flex-end!important;margin:1px 0 0 auto!important;
+ padding:0!important;border:0!important;background:transparent!important;
 }
-html body #sayviMessages .turn[data-role="user"] .sv-sent-file.sv-sent-file--page.sv-sent-file--symmetric{
- position:relative!important;box-sizing:border-box!important;
- display:block!important;flex:0 0 138px!important;
- width:138px!important;min-width:138px!important;max-width:138px!important;
- height:151px!important;min-height:151px!important;max-height:151px!important;
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid > .sv-sent-file.sv-sent-file--page.sv-sent-file--symmetric{
+ box-sizing:border-box!important;position:relative!important;
+ display:block!important;flex:0 0 calc((100% - 14px)/3)!important;
+ width:calc((100% - 14px)/3)!important;
+ min-width:0!important;max-width:calc((100% - 14px)/3)!important;
+ height:99px!important;min-height:99px!important;max-height:99px!important;
  margin:0!important;padding:0!important;gap:0!important;
- overflow:hidden!important;border:1px solid rgba(255,255,255,.09)!important;
- border-radius:15px!important;background:#0C0D0F!important;
- box-shadow:none!important;color:#F5F5F7!important;
+ border:1px solid rgba(255,255,255,.09)!important;
+ border-radius:13px!important;
+ background:#111214!important;
+ box-shadow:none!important;overflow:hidden!important;
+ color:#F5F5F7!important;white-space:nowrap!important;
 }
-html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric > .sv-document-page-preview{
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid > .sv-sent-file--symmetric > .sv-document-page-preview{
+ box-sizing:border-box!important;
  display:block!important;position:absolute!important;
- inset:0 0 27px!important;
- flex:none!important;width:100%!important;height:calc(100% - 27px)!important;
+ inset:0 0 23px!important;
+ width:100%!important;height:calc(100% - 23px)!important;
  min-height:0!important;max-height:none!important;
  margin:0!important;padding:0!important;
- border:0!important;border-radius:0!important;overflow:hidden!important;
- background:#FFF!important;
-}
-html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric > .sv-sent-file-copy{
- position:absolute!important;z-index:3!important;inset:auto 0 0!important;
- box-sizing:border-box!important;display:flex!important;align-items:center!important;
- width:100%!important;height:27px!important;min-height:27px!important;max-height:27px!important;
- flex:none!important;margin:0!important;padding:0 5px!important;
  border:0!important;border-radius:0!important;
- background:#030304!important;overflow:hidden!important;
+ background:#FFF!important;overflow:hidden!important;
 }
-html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption{
- display:flex!important;align-items:center!important;gap:4px!important;
- width:100%!important;min-width:0!important;overflow:hidden!important;
- background:transparent!important;
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid > .sv-sent-file--symmetric > .sv-sent-file-copy{
+ box-sizing:border-box!important;
+ position:absolute!important;z-index:3!important;
+ inset:auto 0 0!important;
+ display:flex!important;flex-direction:row!important;
+ align-items:center!important;justify-content:flex-start!important;
+ width:100%!important;min-width:0!important;
+ height:23px!important;min-height:23px!important;max-height:23px!important;
+ margin:0!important;padding:0 5px!important;gap:4px!important;
+ border:0!important;border-radius:0!important;
+ background:#050506!important;overflow:hidden!important;
+ color:#F5F5F7!important;
 }
-html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption-format{
- flex:0 0 14px!important;max-width:14px!important;min-width:14px!important;
- width:14px!important;height:18px!important;margin:0!important;padding:0!important;
- border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption{
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ gap:4px!important;width:100%!important;min-width:0!important;
+ margin:0!important;padding:0!important;background:transparent!important;
+ overflow:hidden!important;
 }
-html body #sayviMessages .turn[data-role="user"] .sv-sent-file--symmetric .sv-file-caption-name{
- flex:1 1 auto!important;min-width:0!important;max-width:100%!important;
- display:block!important;font:500 9px/1.15 system-ui,sans-serif!important;
- overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
- color:#F5F5F7!important;text-align:left!important;
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format{
+ box-sizing:border-box!important;position:relative!important;
+ display:block!important;flex:0 0 15px!important;
+ width:15px!important;min-width:15px!important;max-width:15px!important;
+ height:19px!important;min-height:19px!important;max-height:19px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ overflow:visible!important;
 }
-
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format svg{
+ position:absolute!important;inset:0!important;width:15px!important;height:19px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-name{
+ display:block!important;flex:1 1 auto!important;min-width:0!important;
+ max-width:100%!important;margin:0!important;padding:0!important;
+ font:500 9px/14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#F5F5F7!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;word-break:normal!important;
+ text-align:left!important;writing-mode:horizontal-tb!important;
+}
+/* Time sits above the bottom caption rather than covering a filename. */
+html body #sayviMessages .turn[data-role="user"].sv-clock-on-attachment .sv-sent-files--preview-grid > .sv-turn-time{
+ position:absolute!important;z-index:5!important;
+ bottom:26px!important;right:4px!important;
+ padding:2px 5px!important;border-radius:7px!important;
+ background:rgba(0,0,0,.70)!important;color:#FFF!important;
+ font:500 9px/1 system-ui,sans-serif!important;
+}
 /* SEYVEO document direction standard: own file = page thumbnail; received = compact file row. */
 html body #sayviMessages .turn[data-role="assistant"] .sv-sent-files{
  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
