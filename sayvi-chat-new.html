@@ -1515,7 +1515,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
 <link rel="stylesheet" href="assets/seyveo-chat-paper-sheet.css?v=2">
 <link rel="stylesheet" href="assets/sayvi-rich-replies.css?v=4">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=8">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=9">
 </head>
 <body>
 <main>
@@ -2780,10 +2780,10 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   for(const name of names){
    const tile=document.createElement('button');tile.type='button';tile.className='sv-sent-file';
    tile.setAttribute('aria-label','Открыть файл '+name);
-   const originalFile=sentDocumentBlobs.get(turn)?.find(file=>file.name===name);
-   const thumbnail=originalFile?documentPreviewSurface(originalFile):null;
-   if(thumbnail){tile.classList.add('sv-sent-file--page');tile.append(thumbnail)}
-   else tile.append(makeDocumentIcon({name}));
+   // Full-page previews belong to the unsent composer only.
+   // Sent documents stay lightweight and never start another PDF.js render.
+   tile.classList.add('sv-sent-file--compact');
+   tile.append(makeDocumentIcon({name}));
    const copy=document.createElement('span');copy.className='sv-sent-file-copy';
    const label=document.createElement('strong');label.className='sv-sent-file-name';
    label.textContent=name;label.title=name;
@@ -2795,7 +2795,6 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
     Math.max(1,Math.ceil(original.size/1024))+' КБ'):'';
    meta.textContent=ext+(size?' · '+size:'');
    copy.append(label,meta);tile.append(copy);group.append(tile);
-   if(thumbnail)copy.replaceChildren(attachmentCaption(name));
    tile.addEventListener('click',async()=>{
     const currentFiles=sentDocumentBlobs.get(turn)||[];
     const live=currentFiles.find(file=>file.name===name);
