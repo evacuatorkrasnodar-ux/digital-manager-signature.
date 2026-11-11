@@ -1561,21 +1561,13 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 
 
 
-/* SEYVEO approved chat color hierarchy · 11 Nov 2026.
-   Background #151B20, user replies #303A43, documents & controls #38383A.
-   No glass surfaces on message bubbles; keep the six reply icons visible. */
+/* SEYVEO message surfaces only.
+   Do not override the approved page background or original scene gradient. */
 :root:not([data-theme="light"]){
- --sayvi-bg:#151B20;
- --sayvi-scene:linear-gradient(180deg,#141A1F 0%,#151B20 44%,#1A232A 100%);
  --sayvi-menu:#38383A;
  --sayvi-bubble:#303A43;
  --sayvi-secondary:#AAB0B7;
  --sayvi-pressed:#45474A;
-}
-:root:not([data-theme="light"]) body,
-:root:not([data-theme="light"]) body main{
- background:#151B20!important;
- background-image:linear-gradient(180deg,#141A1F 0%,#151B20 44%,#1A232A 100%)!important;
 }
 :root:not([data-theme="light"]) body main #sayviMessages .turn[data-role="user"] .sv-turn-bubble-wrap > .bubble{
  background:#303A43!important;
