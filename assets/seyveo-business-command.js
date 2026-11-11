@@ -237,6 +237,7 @@ function svcpOpenDocument(file){
  const url=URL.createObjectURL(file),last=document.activeElement;
  const sheet=el('section','svcp-doc-overlay');
  if(kind==='word'||kind==='text')sheet.classList.add('svcp-doc-overlay--paper');
+ if(['word','pdf','text'].includes(kind))sheet.classList.add('svcp-doc-overlay--document');
  sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');
  sheet.setAttribute('aria-label','Просмотр документа '+file.name);
  const top=el('header','svcp-doc-top'),back=el('button','svcp-doc-back');
@@ -287,8 +288,8 @@ function svcpOpenDocument(file){
  const icons={
   share:'<path d="M12 16V3m-5 5 5-5 5 5M4 14v7h16v-7"/>',
   eye:'<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.2"/>',
-  word:'<path d="M7 3h8l4 4v14H7zM15 3v4h4M9 12l2 5 2-5 2 5 2-5"/>',
-  pdf:'<path d="M7 3h8l4 4v14H7zM15 3v4h4M9 12h6M9 16h5"/>',
+  word:'<path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="3" y="10" width="12.5" height="8.5" rx="2.2" class="sv-file-label"/><path d="m5.6 12.3 1 3.7 1.1-2.6 1.1 2.6 1-3.7" class="sv-file-letter"/>',
+  pdf:'<path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="2" y="10" width="19" height="8.5" rx="2.2" class="sv-file-label"/><text x="11.5" y="16" text-anchor="middle" class="sv-file-pdf-text">PDF</text>',
   print:'<path d="M6 8V3h12v5M6 17H4V9h16v8h-2M6 15h12v6H6z"/>',
   pen:'<path d="M4 17c3-7 4 4 7-2 3-8 4 3 8-3M4 21h16"/>'
  };
