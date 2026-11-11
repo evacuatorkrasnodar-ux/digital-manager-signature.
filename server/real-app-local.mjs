@@ -13,6 +13,7 @@ import {dirname,resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {respond} from './brain.mjs';
 import {askLocalStream} from './local-stream.mjs';
+import {isDocumentWritingRequest} from './russian-writing.mjs';
 import {loadKnowledgeLibrary,retrieveKnowledge,knowledgeContext} from './knowledge-engine.mjs';
 import {createMemoryStore,memoryContext} from './local-memory.mjs';
 import {memoryCommand,memoryResultText} from './conversation-memory.mjs';
@@ -30,6 +31,33 @@ import {createSeyveoWebProvider} from './seyveo-web.mjs';
 import {searchLocalIndex} from './seyveo-index.mjs';
 import {planPublicResearch,reviewPublicSources} from './intelligence/research-planner.mjs';
 import {composeEvidenceBrief} from './intelligence/evidence-brief.mjs';
+
+// Browser input safety and document-answer integrity. No private content is logged.
+function hasRepeatedKeyRun(value){
+ const text=String(value||'').trim();
+ if(text.length<50||text.includes('```'))return false;
+ const hit=/([а-яёa-z0-9])\\1{17,}/iu.exec(text);
+ return !!hit&&hit[0].length>=Math.max(18,Math.floor(text.length*.08));
+}
+function hasFalseDocumentRefusal(value){
+ const text=String(value||'').slice(0,1100).toLowerCase();
+ if(/(?:^|\\s)(?:не могу|не умею|нет возможности|не способен|недоступно)[\\s\\S]{0,160}(?:docx|word|pdf|файл|документ|передава|отправля|созда|сохраня|загружа)/iu.test(text))return true;
+ return /(?:файл|docx|word|pdf)[\\s\\S]{0,110}(?:недоступ|не могу|не умею|нет возможности)/iu.test(text);
+}
+function recoverDocumentRequest(question){
+ const q=String(question||'');
+ const date=/(?:с|от)\\s+(\\d{1,2}\\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря))(?:\\s+(20\\d{2}))?/iu.exec(q);
+ if(/заявлени/iu.test(q)&&/отпуск/iu.test(q)){
+  const dateText=date?date[1]+' '+(date[2]||'[год]'):'[дата начала]';
+  return '---\\nЗаявление\\n\\nПрошу предоставить мне [вид отпуска] с '+dateText+
+   ' на [количество] календарных дней.\\n\\nДата составления: [дата]\\nПодпись: [подпись]\\nФИО: [ФИО]\\n---\\nПроверь незаполненные поля. Документ можно скачать в Word или PDF через действия с ответом.';
+ }
+ if(/заявлени/iu.test(q)){
+  return 'Подготовлю заявление'+(date?' с датой '+date[1]:'')+
+   '. Уточни, пожалуйста, его назначение: отпуск, увольнение, перевод или другое? Тогда оформлю готовый текст.';
+ }
+ return 'Я могу подготовить полный текст документа, после чего ты сможешь сохранить его в Word или PDF через меню ответа. Уточни, пожалуйста, вид и назначение документа.';
+}
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -539,6 +567,13 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    }
    // Explicit closed-form numeric commands are resolved locally without Ollama.
    // Never parse unlabeled values from free-form conversation.
+   // Keyboard glitches and long key holds are not content to imitate.
+   if(!images.length&&hasRepeatedKeyRun(message.message)){
+    const reply='В сообщении много повторяющихся символов. Возможно, это случайное нажатие. Напиши, пожалуйста, что ты хотел спросить — продолжим с того же места.';
+    res.writeHead(200,{...HEADERS,'content-type':'application/x-ndjson; charset=utf-8','x-accel-buffering':'no'});
+    res.end(JSON.stringify({type:'delta',text:reply})+'\\n'+JSON.stringify({type:'done',source:'input-check',cloud:false,executed:false})+'\\n');
+    return;
+   }
    const math=businessChatAnswer(message.message);
    if(math&&!images.length){
     count++;
@@ -567,13 +602,22 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
      loadKnowledgeLibrary({directory:join(ROOT,'knowledge','approved')})
     ]);
     const knowledge=knowledgeContext(retrieveKnowledge(message.message,knowledgeDocs));
+    const documentMode=!images.length&&isDocumentWritingRequest(message.message);
+    let documentText='';
     const result=await askLocalStream(message.message,{
      name:'SEYVEO',memory:memoryContext(facts),examples,knowledge,history:message.history,images,signal:controller.signal,
      onDelta:token=>{
       if(firstTextMs===null)firstTextMs=Date.now()-startedAt;
-      if(!res.destroyed)res.write(JSON.stringify({type:'delta',text:token})+'\n');
+      // Wait for one coherent document; do not stream a false file refusal or
+      // runaway repetition into a saved legal/business draft.
+      if(documentMode)documentText+=token;
+      else if(!res.destroyed)res.write(JSON.stringify({type:'delta',text:token})+'\\n');
      }
     });
+    if(documentMode&&!res.destroyed){
+     const output=hasFalseDocumentRefusal(documentText)?recoverDocumentRequest(message.message):documentText.trim();
+     res.write(JSON.stringify({type:'delta',text:output})+'\\n');
+    }
     console.log('[SEYVEO Timing] First text:',firstTextMs,'ms; complete:',Date.now()-startedAt,'ms');
     if(!res.destroyed)res.end(JSON.stringify({
      type:'done',model:result.model,cloud:false,executed:false,truncated:result.truncated===true
