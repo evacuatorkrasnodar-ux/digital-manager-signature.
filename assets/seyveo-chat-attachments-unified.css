@@ -542,3 +542,51 @@ html body #sayviComposer.sayvi-has-attachments .sv-attach-chip:is(.sv-attach-chi
   flex-basis:140px!important;width:140px!important;max-width:140px!important;
  }
 }
+
+/* 11 Nov · borderless document tiles and deep-black footer.
+   Preserve a single outer clip, never draw an inner frame around the PDF. */
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip:is(.sv-attach-chip--page,.sv-attach-chip--image),
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file.sv-sent-file--page,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo{
+ border:0!important;background:#050506!important;box-shadow:none!important;
+ overflow:hidden!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--page > .sv-document-page-preview,
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip--image > .sv-attach-thumb{
+ inset:0 0 28px!important;width:100%!important;height:calc(100% - 28px)!important;
+ border:0!important;border-radius:0!important;margin:0!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file.sv-sent-file--page,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo{
+ padding:0!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page > .sv-document-page-preview,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > img{
+ border:0!important;border-radius:0!important;margin:0!important;
+ width:100%!important;background:#FFF!important;
+}
+html body .sv-document-page,
+html body .sv-document-page-preview{
+ border:0!important;box-shadow:none!important;
+}
+html body .sv-document-page{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ background:#FFF!important;overflow:hidden!important;
+}
+html body .sv-document-pdf-frame{
+ top:0!important;left:0!important;
+ right:auto!important;bottom:auto!important;
+ border:0!important;margin:0!important;
+ transform-origin:top left!important;
+}
+html body #sayviComposer.sayvi-has-attachments .sv-attach-chip:is(.sv-attach-chip--page,.sv-attach-chip--image) > .sv-attach-caption,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page > .sv-sent-file-copy,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > .sv-file-caption{
+ background:#050506!important;border:0!important;
+ color:#F5F5F7!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--page > .sv-sent-file-copy,
+html body #sayviMessages .turn[data-role="user"] .sv-sent-photo > .sv-file-caption{
+ padding-left:7px!important;padding-right:7px!important;
+}
