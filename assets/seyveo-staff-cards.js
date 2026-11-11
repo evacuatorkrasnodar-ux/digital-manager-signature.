@@ -230,6 +230,8 @@ style.textContent=String.raw`
  font-size:15px;font-weight:620;color:var(--text)
 }
 .svstaff-insight-head .svstaff-icon{color:var(--secondary)}
+/* Canonical Sayvi emblem has the center dot; do not draw a generic sparkle here. */
+.svstaff-insight-head .svstaff-sayvi-mark{display:inline-block;width:20px;height:20px;flex:0 0 20px;margin:0;color:var(--secondary)}
 .svstaff-insight-head svg{width:19px;height:19px}
 .svstaff-insight p{margin:0;font-size:12px;line-height:1.6;color:var(--secondary)}
 .svstaff-actions{display:flex;flex-wrap:wrap;gap:9px;margin:2px 0 13px;padding:0}
@@ -284,8 +286,7 @@ const iconPaths={
  growth:'<path d="M3 17 9 11l4 4 8-9M15 6h6v6"/>',
  check:'<circle cx="12" cy="12" r="9"/><path d="m7 12 3 3 7-7"/>',
  doc:'<path d="M7 2h8l4 4v16H7zM15 2v4h4M10 14l2 2 4-4"/>',
- warn:'<path d="M12 3 22 21H2zM12 9v5M12 18h.01"/>',
- spark:'<path d="m12 2 2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/>'
+ warn:'<path d="M12 3 22 21H2zM12 9v5M12 18h.01"/>'
 };
 const icon=(name,cls)=>{const sp=document.createElement('span');sp.className='svstaff-icon'+(cls?' '+cls:'');sp.setAttribute('aria-hidden','true');sp.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">'+iconPaths[name]+'</svg>';return sp};
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
@@ -443,7 +444,7 @@ function renderProfile(){
   renderProfile();
  });
  review.append(form);body.append(review);
- const insight=el('section','svstaff-insight');const head=el('div','svstaff-insight-head');head.append(icon('spark'),el('span',null,'Сэйви · Анализ ситуации'));
+ const insight=el('section','svstaff-insight');const head=el('div','svstaff-insight-head');const sayviMark=el('span','sv-sayvi-symbol svstaff-sayvi-mark');sayviMark.setAttribute('aria-hidden','true');head.append(sayviMark,el('span',null,'Сэйви · Анализ ситуации'));
  insight.append(head,el('p',null,p.insight));body.append(insight);
  const actions=el('div','svstaff-actions');
  actions.append(button('Написать лично','svstaff-action',()=>{
