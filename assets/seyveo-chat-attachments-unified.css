@@ -2627,3 +2627,80 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-doc
 }
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-name{color:#242427!important}
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-received-document-card .svcp-file-card-type{color:#6C6C74!important}
+
+
+/* Work Chat · unified media action footer (photo, Word, PDF, other files).
+   The existing three real buttons are MOVED, not copied, into their own
+   attachment slot after IndexedDB renders it. No floating row can drift
+   above the next document or appear twice between two files. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained.svcp-has-inline-actions,
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-document-only.svcp-document-assignable.svcp-media-actions-contained{
+ margin-top:0!important;margin-bottom:9px!important;
+ padding-bottom:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained,
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained:has(> .svcp-chat-media-image),
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained:has(> .svcp-received-document-card){
+ box-sizing:border-box!important;
+ position:relative!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:stretch!important;justify-content:flex-start!important;
+ gap:0!important;min-width:0!important;width:100%!important;max-width:100%!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:15px!important;
+ background:#141517!important;box-shadow:none!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > .svcp-message-inline-actions{
+ box-sizing:border-box!important;
+ position:relative!important;
+ display:flex!important;flex-flow:row nowrap!important;
+ align-items:center!important;justify-content:flex-end!important;
+ top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ z-index:2!important;
+ flex:0 0 40px!important;
+ width:100%!important;max-width:100%!important;
+ height:40px!important;min-height:40px!important;
+ padding:2px 5px!important;margin:0!important;gap:1px!important;
+ border:0!important;border-radius:0 0 15px 15px!important;
+ background:#141517!important;background-image:none!important;box-shadow:none!important;
+ overflow:visible!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > .svcp-message-inline-actions > .svcp-icon-action{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ position:static!important;
+ flex:0 0 38px!important;
+ width:38px!important;min-width:38px!important;max-width:38px!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ margin:0!important;padding:8px!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;color:#D2D4D8!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > .svcp-message-inline-actions > .svcp-icon-action svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > .svcp-message-inline-actions > .svcp-action-star.is-saved svg{
+ fill:currentColor!important;
+}
+/* Keep the timestamp over the PHOTO itself, above the integrated action
+   footer. Documents already have their own timestamp in their black strip. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained.svcp-bottom-stamp > .svcp-message-stamp{
+ bottom:43px!important;right:8px!important;z-index:3!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > :is(.svcp-chat-media-image,.svcp-chat-media-video){
+ box-sizing:border-box!important;
+ margin:0!important;width:100%!important;
+ border-radius:15px 15px 0 0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > .svcp-file-card,
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > .svcp-file-card.svcp-received-document-card{
+ box-sizing:border-box!important;
+ width:100%!important;max-width:100%!important;
+ margin:0!important;
+ border-radius:15px 15px 0 0!important;
+}
+/* Real error text remains visible; keep the same action footer after a failed load. */
