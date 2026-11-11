@@ -1269,67 +1269,8 @@ html body main #sayviMessages{
 #sayviMessages .sv-reply-action-menu button:focus-visible{
  outline:2px solid #F6F7F8!important;outline-offset:1px!important;
 }
-/* Preserve the three-piece composer geometry, swap glass for solid graphite. */
-html body #sayviTopActions .sv-top-action{
- width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
- background:#38383A!important;
- background-image:none!important;border:0!important;
- border-radius:50%!important;box-shadow:none!important;
- color:#F6F7F8!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html body #sayviComposer::before,
-html:root[data-theme="light"] body #sayviComposer::before{
- background:#38383A!important;background-image:none!important;
- border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html body #sayviComposer > #sayviPlus{
- background:#38383A!important;background-image:none!important;
- border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html body #sayviComposer #sayviField{
- background:#38383A!important;background-image:none!important;
- border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html body #sayviComposer #sayviField > button#sayviSend:not([hidden]),
-html body #sayviComposer #sayviField > button#sayviMic:not([hidden]){
- background:#474749!important;background-image:none!important;
- border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- color:#F6F7F8!important;
-}
-html body #sayviComposer #sayviField > #sayviInput{
- color:#F6F7F8!important;
- -webkit-text-fill-color:#F6F7F8!important;
-}
-html body #sayviComposer #sayviField > #sayviInput::placeholder{
- color:#C5C6CA!important;-webkit-text-fill-color:#C5C6CA!important;
- opacity:1!important;
-}
-/* Expanded compose state keeps the same matte material; the earlier
-   high-specificity Work Chat rules must not re-enable blurred glass. */
-html body #sayviComposer.sayvi-compose-expanded::before{
- background:#38383A!important;background-image:none!important;
- border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html body #sayviComposer.sayvi-compose-expanded > #sayviPlus{
- background:#38383A!important;background-image:none!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html body #sayviComposer.sayvi-compose-expanded #sayviField{
- border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-html body #sayviComposer.sayvi-compose-expanded #sayviField > button#sayviSend:not([hidden]){
- background:#474749!important;background-image:none!important;
- border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
+/* The approved Sayvi dock and its icons are owned exclusively by the pre-existing
+   composer styles. Chat-message changes must never override #sayviComposer. */
 @media(max-width:375px){
  #sayviMessages .sv-reply-action-menu{width:min(300px,100%)!important}
 }
