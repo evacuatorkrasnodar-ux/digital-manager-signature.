@@ -54,3 +54,10 @@ main > .sv-chat-jump,
 @media(prefers-reduced-motion:reduce){
  .sv-chat-jump{transition:none!important}
 }
+
+
+/* Attachment selection uses the space above the Work Chat composer.
+   Do not place the scroll arrow on top of the pending PDF/photo card. */
+#svcpWorkChatScreen[data-view="room"] .svcp-chat:has(#svcpAttachmentPreview:not([hidden])) > #svcpScrollBottom{
+ display:none!important;
+}
