@@ -2469,3 +2469,34 @@ html body .svcp-doc-overlay.svcp-doc-overlay--document .svcp-doc-pdf-native-clip
  border:0!important;border-radius:0!important;
  box-shadow:none!important;
 }
+
+
+/* Sayvi sent 3-column thumbnails: restore format-colored outline glyphs. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format.sv-file-caption-format--outline{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ color:#C5CBD3!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format--outline[data-kind="pdf"]{
+ color:#FF4C4C!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format--outline[data-kind="word"]{
+ color:#3986FF!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format--outline[data-kind="sheet"]{
+ color:#3CC789!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format--outline[data-kind="slides"]{
+ color:#EA934B!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format--outline[data-kind="media"]{
+ color:#B59DF5!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format--outline[data-kind="code"]{
+ color:#E8B768!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format--outline svg{
+ stroke:currentColor!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format--outline svg text{
+ fill:currentColor!important;stroke:none!important;
+}
