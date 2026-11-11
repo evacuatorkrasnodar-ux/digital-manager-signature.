@@ -2648,8 +2648,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svc
  gap:0!important;min-width:0!important;width:100%!important;max-width:100%!important;
  padding:0!important;margin:0!important;
  border:0!important;border-radius:15px!important;
- background:#141517!important;box-shadow:none!important;
- overflow:hidden!important;
+ background:transparent!important;box-shadow:none!important;
+ overflow:visible!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > .svcp-message-inline-actions{
  box-sizing:border-box!important;
@@ -2662,8 +2662,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svc
  width:100%!important;max-width:100%!important;
  height:40px!important;min-height:40px!important;
  padding:2px 5px!important;margin:0!important;gap:1px!important;
- border:0!important;border-radius:0 0 15px 15px!important;
- background:#141517!important;background-image:none!important;box-shadow:none!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
  overflow:visible!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
@@ -2694,13 +2694,13 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svc
 html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > :is(.svcp-chat-media-image,.svcp-chat-media-video){
  box-sizing:border-box!important;
  margin:0!important;width:100%!important;
- border-radius:15px 15px 0 0!important;
+ border-radius:15px!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > .svcp-file-card,
 html body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-media-actions-contained > .svcp-media-slot.svcp-media-actions-contained > .svcp-file-card.svcp-received-document-card{
  box-sizing:border-box!important;
  width:100%!important;max-width:100%!important;
  margin:0!important;
- border-radius:15px 15px 0 0!important;
+ border-radius:15px!important;
 }
 /* Real error text remains visible; keep the same action footer after a failed load. */
