@@ -255,9 +255,22 @@ if(personal&&head){
  const workHeader=document.getElementById('svWorkHeader'),headerSearch=document.getElementById('svWorkAdd');
  const menu=document.createElement('button');menu.type='button';menu.id='sahHistoryMore';menu.hidden=true;menu.setAttribute('aria-label','Меню истории');menu.textContent='···';
  const popup=document.createElement('div');popup.id='sahHistoryPopup';popup.hidden=true;
- const option=(label,action)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',()=>{popup.hidden=true;action()});popup.append(b)};
- option('Выбрать',()=>{selecting=true;chosen.clear();render()});
- option('Очистить историю',()=>{
+ // Same graphite icon menu as Sayvi chat history: search only appears on request.
+ const option=(label,icon,action)=>{
+  const b=document.createElement('button');b.type='button';
+  const icons={
+   search:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.2 4.2"/>',
+   select:'<rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="m7.7 12 2.8 2.8 5.8-5.8"/>',
+   trash:'<path d="M4 6.5h16M9 6.5V4h6v2.5M6.6 6.5l.9 13h9l.9-13M10 10.5v5.5M14 10.5v5.5"/>'
+  };
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+icons[icon]+'</svg><span></span>';
+  b.querySelector('span').textContent=label;
+  b.addEventListener('click',()=>{popup.hidden=true;action()});
+  popup.append(b);
+ };
+ option('Найти','search',()=>{if(!searchOpen)toggleSearch();else search.focus({preventScroll:true})});
+ option('Выбрать','select',()=>{selecting=true;chosen.clear();render()});
+ option('Очистить историю','trash',()=>{
   if(!confirm('Очистить личную историю? Завершённые дела удалятся; события Сэйви будут скрыты из списка на этом устройстве. Служебные журналы компании сохранятся.'))return;
   if(!window.SEYVEO_CARD_LIFECYCLE?.clearPersonalHistory?.()){alert('Не удалось очистить историю');return}
   if(!window.SEYVEO_PERSONAL_TASK_HISTORY?.clearCompleted?.()){alert('Не удалось очистить завершённые дела');return}
@@ -303,8 +316,11 @@ if(personal&&head){
  #sahHistoryMore{width:44px;height:44px;flex:none;border:0;border-radius:0;background:transparent;color:var(--text,#fff);font-size:24px;letter-spacing:2px}
  #sahHistoryMore[hidden],#sahHistoryPopup[hidden],#sahHistorySelection[hidden]{display:none!important}
  #svWorkHeader{position:relative}
- #sahHistoryPopup{position:absolute;right:5px;top:100%;z-index:80;min-width:180px;padding:6px;background:#38383A;border-radius:12px;box-shadow:0 9px 28px #0008}
- #sahHistoryPopup button{width:100%;min-height:44px;background:transparent;border:0;color:white;text-align:left;padding:8px 12px;font:inherit;font-size:14px}
+ #sahHistoryPopup{position:absolute;right:5px;top:100%;z-index:80;width:min(234px,calc(100vw - 36px));padding:7px 0;background:#38383A;border-radius:13px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+ #sahHistoryPopup button{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;background:transparent;border:0;color:#F5F5F7;text-align:left;padding:10px 15px;font:500 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+ #sahHistoryPopup button svg{display:block;flex:0 0 19px;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+ #sahHistoryPopup button span{min-width:0;line-height:1.3}
+ #sahHistoryPopup button:active{background:#49494B}
  #sahHistorySelection{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:10px 0;font-size:12px}
  #sahHistorySelection span{white-space:nowrap;color:var(--secondary,#b8b8ba);font-size:11px}
  #sahHistorySelection button{min-height:38px;border:0;background:#38383A;color:#fff;border-radius:10px;padding:8px 11px;font:500 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
