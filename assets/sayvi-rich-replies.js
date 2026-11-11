@@ -118,8 +118,8 @@
   const holder=el('button','sv-rich-document-card');
   holder.type='button';
   holder.setAttribute('aria-label','Открыть документ');
-  const titleMatch=/^\\s*(?:#{1,4}\\s*)?(?:\\*\\*)?([^\\n]{4,80})/u.exec(draft);
-  const title=(titleMatch?.[1]||'Документ').replace(/\\*\\*/g,'').trim();
+  const titleMatch=/^\s*(?:#{1,4}\s*)?(?:\*\*)?([^\n]{4,80})/u.exec(draft);
+  const title=(titleMatch?.[1]||'Документ').replace(/\*\*/g,'').trim();
   const top=el('div','sv-rich-document-head');
   const sheet=el('span','sv-rich-document-sheet');
   sheet.setAttribute('aria-hidden','true');
@@ -130,7 +130,7 @@
   description.append(name,subtitle);
   const arrow=el('span','sv-rich-document-chevron');arrow.setAttribute('aria-hidden','true');arrow.textContent='›';
   top.append(sheet,description,arrow);
-  const preview=el('div','sv-rich-document-snippet',draft.replace(/\\*\\*/g,'').replace(/^\\s*#{1,4}\\s+/gm,'').trim());
+  const preview=el('div','sv-rich-document-snippet',draft.replace(/\*\*/g,'').replace(/^\s*#{1,4}\s+/gm,'').trim());
   holder.append(top,preview);
   holder.addEventListener('click',()=>actions.preview?.());
   return holder;
