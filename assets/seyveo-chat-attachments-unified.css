@@ -2500,3 +2500,52 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .s
 html body #sayviMessages .turn[data-role="user"] .sv-sent-files--preview-grid .sv-sent-file--symmetric .sv-file-caption-format--outline svg text{
  fill:currentColor!important;stroke:none!important;
 }
+
+
+/* Sayvi · calm scroll edges for the 3-column draft gallery and long text.
+   Only clipped/scrollable content fades. When the user reaches an edge, the
+   corresponding side becomes fully opaque, so no file or letter is lost.
+   Never use an overlay: file close buttons and text remain interactive. */
+html body #sayviComposer.sayvi-compose-expanded.sayvi-has-attachments #sayviAttachmentTray{
+ overscroll-behavior-y:contain!important;
+ -webkit-overflow-scrolling:touch!important;
+ scroll-behavior:auto!important;
+ scrollbar-width:none!important;
+}
+html body #sayviComposer.sayvi-compose-expanded #sayviInput{
+ scrollbar-width:none!important;
+ -webkit-overflow-scrolling:touch!important;
+ overscroll-behavior-y:contain!important;
+}
+/* Gallery: fade the end only if there is another row below. */
+html body #sayviComposer #sayviAttachmentTray[data-soft-scroll="start"]{
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 26px),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 26px),transparent 100%)!important;
+}
+html body #sayviComposer #sayviAttachmentTray[data-soft-scroll="middle"]{
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 22px,#000 calc(100% - 26px),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0%,#000 22px,#000 calc(100% - 26px),transparent 100%)!important;
+}
+html body #sayviComposer #sayviAttachmentTray[data-soft-scroll="end"]{
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 22px,#000 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0%,#000 22px,#000 100%)!important;
+}
+html body #sayviComposer #sayviAttachmentTray[data-soft-scroll="none"]{
+ -webkit-mask-image:none!important;mask-image:none!important;
+}
+/* Writing surface: top letters do not cut across the gallery edge. */
+html body #sayviComposer.sayvi-compose-expanded #sayviInput[data-soft-scroll="start"]{
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 14px),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 14px),transparent 100%)!important;
+}
+html body #sayviComposer.sayvi-compose-expanded #sayviInput[data-soft-scroll="middle"]{
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 14px,#000 calc(100% - 14px),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0%,#000 14px,#000 calc(100% - 14px),transparent 100%)!important;
+}
+html body #sayviComposer.sayvi-compose-expanded #sayviInput[data-soft-scroll="end"]{
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 14px,#000 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0%,#000 14px,#000 100%)!important;
+}
+html body #sayviComposer.sayvi-compose-expanded #sayviInput[data-soft-scroll="none"]{
+ -webkit-mask-image:none!important;mask-image:none!important;
+}
