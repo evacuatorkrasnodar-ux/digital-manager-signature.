@@ -220,6 +220,95 @@ function bpForm(item=null){
 for(const id of ['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse']){
  $(id).addEventListener('input',bpPreview);
 }
+/* A physician-friendly pressure log from the existing local records only. */
+let bpJournalPeriod='7';
+function bpJournalItems(){
+ const now=new Date(),end=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ const min=bpJournalPeriod==='all'?null:new Date(end.getFullYear(),end.getMonth(),end.getDate()-Number(bpJournalPeriod)+1);
+ const since=min?[min.getFullYear(),String(min.getMonth()+1).padStart(2,'0'),String(min.getDate()).padStart(2,'0')].join('-'):null;
+ return read().filter(x=>x.space==='health'&&x.kind==='Давление')
+  .map(x=>({item:x,bp:bpParse(x)})).filter(x=>x.bp&&(!since||(x.bp.date&&x.bp.date>=since)))
+  .sort((a,b)=>(b.bp.date||'').localeCompare(a.bp.date||'')||b.bp.time-a.bp.time);
+}
+function bpJournalOverview(items){
+ if(!items.length)return {average:'Нет измерений за период',insight:'Добавьте измерения, чтобы Сэйви показала динамику.'};
+ const avg=k=>Math.round(items.reduce((sum,x)=>sum+x.bp[k],0)/items.length);
+ const pulse=items.filter(x=>Number.isInteger(x.bp.p));
+ const p=pulse.length?' · пульс '+Math.round(pulse.reduce((n,x)=>n+x.bp.p,0)/pulse.length):'';
+ const bp=avg('s')+'/'+avg('d');
+ const oldest=items[items.length-1].bp,newest=items[0].bp;
+ const deltaS=newest.s-oldest.s,deltaD=newest.d-oldest.d;
+ let trend='Для оценки изменения нужны измерения в разные дни.';
+ if(items.length>=2&&newest.date&&oldest.date&&newest.date!==oldest.date){
+  const sign=x=>x>0?'+'+x:String(x);
+  trend='Первый и последний замеры периода: изменение верхнего '+sign(deltaS)+', нижнего '+sign(deltaD)+' мм рт. ст. Это разница отдельных измерений, не доказанный тренд.';
+ }
+ const days=new Set(items.map(x=>x.bp.date).filter(Boolean)).size;
+ let note=items.length<4||days<3?' Данных пока мало для устойчивых выводов.':' Сравнивайте измерения в похожих условиях и обсудите средние значения с врачом.';
+ return {average:bp+' мм рт. ст.'+p,insight:items.length+' измерений за '+days+' '+(days===1?'день':'дн.')+'. '+trend+note};
+}
+function renderBpJournal(){
+ const root=$('calendarBpJournal');if(!root)return;
+ root.hidden=current!=='health';if(root.hidden)return;
+ const items=bpJournalItems(),summary=bpJournalOverview(items);
+ $('calendarBpJournalCount').textContent=items.length+' '+(items.length===1?'измерение':'измерений');
+ $('calendarBpJournalAverage').textContent=summary.average;
+ $('calendarBpJournalInsight').textContent=summary.insight;
+ root.querySelectorAll('[data-bp-period]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.bpPeriod===bpJournalPeriod)));
+ const rows=$('calendarBpJournalRows');rows.replaceChildren();
+ if(!items.length){rows.append(dom('p','cal-bp-journal-empty','Нет измерений за выбранный период.'));return;}
+ const formatter=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',year:'numeric'});
+ for(const {item,bp} of items){
+  const row=dom('button','cal-bp-journal-row');row.type='button';row.dataset.bpOpen=item.id;
+  const when=bp.date?formatter.format(new Date(bp.date+'T12:00:00')):'Дата не указана';
+  const clock=bp.time?new Date(bp.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'';
+  row.append(dom('span','cal-bp-journal-date',when+(clock?' · '+clock:'')));
+  row.append(dom('strong','cal-bp-journal-reading',bp.s+'/'+bp.d+'  ·  '+(bp.p===null?'—':bp.p)));
+  if(item.detail)row.append(dom('small','cal-bp-journal-note',item.detail));
+  rows.append(row);
+ }
+}
+function bpDoctorText(){
+ const items=bpJournalItems(),overview=bpJournalOverview(items);
+ if(!items.length)return '';
+ const now=new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'long',year:'numeric'}).format(new Date());
+ const period=bpJournalPeriod==='all'?'все записи':bpJournalPeriod+' дней';
+ const lines=['SEYVEO · Журнал домашнего артериального давления','Подготовлен: '+now,'Период: '+period,'Количество измерений: '+items.length,
+  'Среднее всех записей выбранного периода: '+overview.average,'','Сводка Сэйви:',overview.insight,'',
+  'Измерения (давление мм рт. ст.; пульс уд/мин):'];
+ for(const {item,bp} of items){
+  lines.push((bp.date||'Без даты')+(bp.time?' '+new Date(bp.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'')+
+    ' | '+bp.s+'/'+bp.d+' | '+(bp.p===null?'—':bp.p)+(item.detail?' | Заметка: '+item.detail.replace(/[\r\n]+/g,' '):''));
+ }
+ lines.push('','Внимание: данные введены пользователем вручную. Отчёт не является диагнозом или медицинским заключением.');
+ return lines.join('\n');
+}
+async function bpShareDoctor(){
+ const report=bpDoctorText(),status=$('calendarBpJournalStatus');
+ if(!report){status.textContent='Нет измерений для отчёта.';return;}
+ const file=new File([report],'SEYVEO-davlenie.txt',{type:'text/plain;charset=utf-8'});
+ try{
+  if(navigator.canShare?.({files:[file]})&&navigator.share){
+   await navigator.share({files:[file],title:'Журнал давления SEYVEO'});
+   status.textContent='Отчёт передан в меню отправки устройства.';return;
+  }
+  const url=URL.createObjectURL(file),link=document.createElement('a');
+  link.href=url;link.download=file.name;document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+  status.textContent='Отчёт скачан. Выберите врача и отправьте файл самостоятельно.';
+ }catch(error){
+  if(error?.name==='AbortError')status.textContent='Отправка отменена.';
+  else status.textContent='Не удалось подготовить отправку. Попробуйте ещё раз.';
+ }
+}
+$('calendarHealthOverview').addEventListener('click',event=>{
+ const period=event.target.closest('[data-bp-period]');
+ if(period){bpJournalPeriod=period.dataset.bpPeriod;renderBpJournal();return;}
+ if(event.target.closest('#calendarBpJournalShare')){bpShareDoctor();return;}
+ const row=event.target.closest('[data-bp-open]');
+ if(row)open('health',row.dataset.bpOpen);
+});
+
 function renderHealthOverview(){
  const overview=$('calendarHealthOverview');overview.hidden=current!=='health';
  if(current!=='health')return;
@@ -250,6 +339,7 @@ function renderHealthOverview(){
  }
  value.closest('[data-health-quick]')?.setAttribute('data-has-record',String(Boolean(latest)));
  bpReport();
+ renderBpJournal();
 }
 function renderList(){
  const root=$('calendarSpaceList');root.replaceChildren();
