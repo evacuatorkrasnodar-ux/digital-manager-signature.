@@ -417,11 +417,48 @@ async function bpShareDoctor(){
   status.textContent=error?.name==='AbortError'?'Отправка отменена.':'Не удалось открыть отправку.';
  }
 }
+/* Clinical details are only requested from Share or Print. */
+let bpDoctorSheetAction='share',bpDoctorSheetPreviousFocus=null;
+function closeBpDoctorSheet(){
+ const sheet=$('calendarBpDoctorSheet');if(!sheet||sheet.hidden)return;
+ sheet.hidden=true;
+ const focus=bpDoctorSheetPreviousFocus;bpDoctorSheetPreviousFocus=null;
+ if(focus?.isConnected)focus.focus({preventScroll:true});
+}
+function openBpDoctorSheet(action){
+ const sheet=$('calendarBpDoctorSheet');if(!sheet)return;
+ bpDoctorSheetAction=action==='print'?'print':'share';
+ bpDoctorSheetPreviousFocus=document.activeElement;
+ $('calendarBpDoctorConfirm').textContent=bpDoctorSheetAction==='print'?'Печать':'Поделиться';
+ sheet.hidden=false;
+ $('calendarBpDoctorSheetBack').focus({preventScroll:true});
+}
+$('calendarBpDoctorSheetBack').addEventListener('click',closeBpDoctorSheet);
+$('calendarBpDoctorSheet').addEventListener('click',event=>{
+ if(event.target.closest('[data-bp-sheet-close]'))closeBpDoctorSheet();
+});
+$('calendarBpDoctorConfirm').addEventListener('click',()=>{
+ const action=bpDoctorSheetAction;
+ closeBpDoctorSheet();
+ if(action==='print')bpPrintDoctor();
+ else bpShareDoctor();
+});
+$('calendarBpDoctorSheet').addEventListener('keydown',event=>{
+ if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeBpDoctorSheet();return;}
+ if(event.key==='Tab'){
+  const controls=[...$('calendarBpDoctorSheet').querySelectorAll('button,input,textarea')].filter(el=>!el.disabled);
+  const first=controls[0],last=controls[controls.length-1];
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+ }
+});
+dialog.addEventListener('close',()=>{$('calendarBpDoctorSheet').hidden=true;bpDoctorSheetPreviousFocus=null;});
+
 $('calendarHealthOverview').addEventListener('click',event=>{
  const period=event.target.closest('[data-bp-period]');
  if(period){bpJournalPeriod=period.dataset.bpPeriod;renderBpJournal();return;}
- if(event.target.closest('#calendarBpJournalShare')){bpShareDoctor();return;}
- if(event.target.closest('#calendarBpJournalPrint')){bpPrintDoctor();return;}
+ if(event.target.closest('#calendarBpJournalShare')){openBpDoctorSheet('share');return;}
+ if(event.target.closest('#calendarBpJournalPrint')){openBpDoctorSheet('print');return;}
  const row=event.target.closest('[data-bp-open]');
  if(row)open('health',row.dataset.bpOpen);
 });
