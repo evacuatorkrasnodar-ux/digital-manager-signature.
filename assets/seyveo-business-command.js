@@ -2008,6 +2008,9 @@ function renderChat(){
     starControl.setAttribute('aria-pressed',String(!!msg.starred));
     menu.append(starControl);
     const canAssign=!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena';
+    // Standalone documents hide ordinary text actions; keep one task affordance.
+    if(canAssign&&bubble.classList.contains('svcp-document-only'))
+     bubble.classList.add('svcp-document-assignable');
     if(canAssign){
      menu.append(svcpActionIcon('Поручить','task',()=>{
       closeMessageMenus();prepareTask(msg,index);
@@ -2266,6 +2269,7 @@ function prepareTask(msg,index=null){
  closeTaskRecipientPicker();
  const title=$('svcpChatTaskTitle');
  title.value=clean;
+ if(hasFile&&!clean)title.value='Проверить документ «'+String(msg.mediaName||'Вложение').slice(0,85)+'»';
  title.placeholder=hasFile?'Что нужно сделать с файлом?':'Что нужно сделать?';
  svcpShowDraftAttachment();
  $('svcpChatTaskDraft').hidden=false;
