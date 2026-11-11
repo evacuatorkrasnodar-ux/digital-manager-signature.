@@ -1373,7 +1373,7 @@ html body main #sayviHistory{
 /* A real floating context menu, not a fullscreen bottom sheet. */
 html body > #sayviHistoryActions.history-action-sheet{
  position:fixed!important;
- inset:auto!important;
+ right:auto!important;bottom:auto!important;
  z-index:30!important;
  width:196px!important;height:auto!important;
  box-sizing:border-box!important;
@@ -1410,6 +1410,13 @@ html body > #sayviHistoryActions button#sayviHistoryDelete:active{
  background:#4A4A4C;
 }
 :root[data-theme="light"] body #sayviHistory .history-item-title{color:var(--sayvi-text)}
+/* Scrolling chat text must fade before reaching floating Back/History buttons. */
+html body main #sayviMessages.is-scrolled{
+ -webkit-mask-image:linear-gradient(to bottom,
+  transparent 0,transparent 49px,black 72px,black 100%)!important;
+ mask-image:linear-gradient(to bottom,
+  transparent 0,transparent 49px,black 72px,black 100%)!important;
+}
 
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=1">
