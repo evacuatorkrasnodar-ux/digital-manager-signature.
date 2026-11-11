@@ -1582,3 +1582,27 @@ html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[d
 html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-format="heic"] span{
  font-size:4px!important;
 }
+
+/* Unified fine-line icons for all Sayvi file types. No square format badges. */
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="pdf"]{color:#FF4C4C!important}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="word"]{color:#3986FF!important}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="sheet"]{color:#3CC789!important}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="slides"]{color:#EA934B!important}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="image"]{color:#D0D4DA!important}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="media"]{color:#B59DF5!important}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="code"]{color:#E8B768!important}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="archive"]{color:#B7BDC7!important}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="other"]{color:#C6CBD2!important}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline span{
+ font-size:6px!important;letter-spacing:-.045em!important;
+ max-width:13px!important;white-space:nowrap!important;
+ overflow:hidden!important;
+}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="word"] span,
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="sheet"] span,
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline[data-kind="slides"] span{
+ font-size:8px!important;
+}
+html body #sayviComposer #sayviAttachmentTray .sv-file-caption-format--outline span:is(:not(:empty)){
+ text-align:center!important;
+}
