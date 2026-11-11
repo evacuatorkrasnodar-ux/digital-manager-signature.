@@ -1716,6 +1716,75 @@ html body .sv-sent-document-viewer .sv-sent-document-frame{
 }
 #sayviHistory #sayviHistorySelectionCount{grid-area:1/2!important}
 #sayviHistory #sayviHistoryDeleteSelected{grid-area:1/3!important}
+
+
+/* SEYVEO document readers: fixed compact header, icon controls, no visible
+   scrollbars. DOCX gets one native scrolling surface and readable white paper.
+   PDF remains in the native browser viewer, which owns its own pagination. */
+html body .sv-sent-document-viewer .sv-sent-document-header{
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ gap:8px!important;align-items:center!important;
+ flex:0 0 55px!important;min-height:55px!important;
+ padding:5px 10px!important;
+ background:#151B20!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-back,
+html body .sv-sent-document-viewer .sv-sent-document-action{
+ display:grid!important;place-items:center!important;
+ width:42px!important;height:42px!important;min-width:42px!important;
+ padding:0!important;margin:0!important;border:0!important;
+ border-radius:50%!important;
+ color:#F7F7F8!important;background:#38383A!important;
+ font-size:0!important;box-shadow:none!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-action{
+ background:transparent!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-header button svg{
+ display:block!important;width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.6!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-name{
+ text-align:center!important;
+ font:600 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.01em!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-scroll{
+ overflow-y:auto!important;overflow-x:hidden!important;
+ scrollbar-width:none!important;-ms-overflow-style:none!important;
+ padding:12px 8px calc(32px + env(safe-area-inset-bottom))!important;
+ -webkit-overflow-scrolling:touch!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-scroll::-webkit-scrollbar{
+ display:none!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-paper{
+ min-height:0!important;
+ padding:clamp(22px,5vw,54px)!important;
+ font:400 15px/1.65 Georgia,"Times New Roman",serif!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-paper > div{
+ font:inherit!important;line-height:inherit!important;
+ white-space:pre-wrap!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-paper > p{
+ margin:0 0 20px!important;color:#777A80!important;
+ font:400 11px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-original{
+ margin-top:28px!important;border-top:1px solid #E2E2E5!important;
+ padding-top:15px!important;
+ color:#62656A!important;
+ font:400 12px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body .sv-sent-document-viewer .sv-sent-document-original summary{cursor:pointer!important}
+html body .sv-sent-document-viewer .sv-sent-document-original div{
+ margin-top:12px!important;white-space:pre-wrap!important;color:#424349!important;
+}
+@media(min-width:750px){
+ html body .sv-sent-document-viewer .sv-sent-document-paper{max-width:794px!important}
+}
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=4">
 <link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=4">
@@ -3066,11 +3135,11 @@ html body .sv-sent-document-viewer .sv-sent-document-frame{
    overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:#151515;color:white;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)';
    const bar=document.createElement('div');bar.className='sv-sent-document-header';
    bar.style.cssText='display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 16px;background:rgba(100,100,100,.13);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)';
-   const back=document.createElement('button');back.type='button';back.className='sv-sent-document-back';back.textContent='‹ Назад';
+   const back=document.createElement('button');back.type='button';back.className='sv-sent-document-back';back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>';back.setAttribute('aria-label','Назад в чат');
    back.style.cssText='border:0;background:transparent;color:inherit;font:inherit;padding:10px 4px;cursor:pointer';
    const name=document.createElement('span');name.className='sv-sent-document-name';name.textContent=file.name;
    name.style.cssText='flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px';
-   const external=document.createElement('button');external.type='button';external.textContent='Открыть отдельно';
+   const external=document.createElement('button');external.type='button';external.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5H5v14h14v-3M12 4h8v8M20 4l-9 9"/></svg>';external.className='sv-sent-document-action';external.setAttribute('aria-label','Открыть PDF отдельно');external.title='Открыть отдельно';
    external.style.cssText='border:0;background:transparent;color:inherit;font:inherit;font-size:12px;padding:10px 4px;cursor:pointer';
    external.addEventListener('click',()=>window.open(url,'_blank'));
    back.addEventListener('click',closeSentPdf);bar.append(back,name,external);
@@ -3093,7 +3162,7 @@ html body .sv-sent-document-viewer .sv-sent-document-frame{
    back.addEventListener('click',closeSentPdf);
    const name=document.createElement('span');name.className='sv-sent-document-name';name.textContent=file.name;
    name.style.cssText='flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px';
-   const download=document.createElement('button');download.type='button';download.textContent='Скачать';
+   const download=document.createElement('button');download.type='button';download.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4.5 17v3h15v-3"/></svg>';download.className='sv-sent-document-action';download.setAttribute('aria-label','Скачать Word');download.title='Скачать';
    download.style.cssText='border:0;background:transparent;color:inherit;font:inherit;font-size:12px;padding:10px 4px;cursor:pointer';
    download.addEventListener('click',()=>{
     const u=URL.createObjectURL(file);const a=document.createElement('a');
@@ -3120,7 +3189,19 @@ html body .sv-sent-document-viewer .sv-sent-document-frame{
      if(!response.ok)throw Error(data?.error||'Сервер не смог прочитать Word.');
      if(typeof data?.text!=='string'||!data.text.trim())throw Error('В документе нет доступного текста.');
      if(sentPdfViewer?.overlay!==current)return;
-     text.textContent=data.text+(data.truncated?'\n\n[Показана только часть текста документа.]':'');
+     // A generated SEYVEO draft can contain the assistant's conversation
+     // outside two --- delimiters. Show the document itself by default,
+     // while preserving the complete extracted text on demand.
+     const originalText=data.text;
+     const match=originalText.match(/(?:^|\n)---\s*\n([\s\S]+?)\n---(?:\s*\n|\s*$)/u);
+     const body=match&&match[1].trim().length>70?match[1].trim():originalText;
+     text.textContent=body+(data.truncated?'\n\n[Показана только часть текста документа.]':'');
+     if(body!==originalText){
+      const raw=document.createElement('details');raw.className='sv-sent-document-original';
+      const summary=document.createElement('summary');summary.textContent='Весь извлечённый текст';
+      const full=document.createElement('div');full.textContent=originalText;
+      raw.append(summary,full);paper.append(raw);
+     }
     }catch(e){
      if(sentPdfViewer?.overlay!==current)return;
      text.textContent='Не удалось открыть Word: '+String(e?.message||'ошибка')+'\n\nПроверь локальный сервер SEYVEO или скачай оригинал.';
