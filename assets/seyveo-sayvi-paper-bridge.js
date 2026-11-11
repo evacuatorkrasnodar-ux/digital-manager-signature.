@@ -101,6 +101,11 @@
   back.setAttribute('aria-label','Вернуться в чат Сэйви');
   save.setAttribute('aria-label','Прикрепить рисунок к чату Сэйви');
   save.title='Прикрепить в чат';
+  if(embedded){
+   window.parent.postMessage({
+    type:'seyveo:paper-loaded',nonce:handoff.nonce||''
+   },location.origin);
+  }
  }catch(error){
   report(error?.message||'Не удалось открыть планшет.');
   returnToChat('cancelled');
