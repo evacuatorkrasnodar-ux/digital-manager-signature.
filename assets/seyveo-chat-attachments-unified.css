@@ -778,3 +778,38 @@ html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-sent
  font:450 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  color:#ABADB1!important;
 }
+
+/* 11 Nov · exact approved sent PDF card (reference: 200 × 60).
+   Pre-send document miniatures stay unchanged. */
+html body #sayviMessages .turn[data-role="user"] .sv-sent-files:has(.sv-sent-file--compact){
+ width:min(200px,calc(100vw - 36px))!important;
+ max-width:200px!important;gap:5px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file.sv-sent-file--compact{
+ flex:0 0 auto!important;width:100%!important;max-width:200px!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
+ gap:12px!important;padding:9px 14px!important;
+ border:1px solid #393A3D!important;border-radius:17px!important;
+ background:#1A1B1D!important;
+ box-shadow:none!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > .sv-sent-pdf-icon{
+ flex:0 0 30px!important;width:30px!important;height:34px!important;
+ display:grid!important;place-items:center!important;
+ background:transparent!important;color:#FF493F!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-pdf-icon svg{
+ display:block!important;width:26px!important;height:32px!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact > .sv-sent-file-copy{
+ gap:3px!important;min-width:0!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-sent-file-name{
+ font:600 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#F1F1F2!important;letter-spacing:0!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #sayviMessages .turn[data-role="user"] .sv-sent-file--compact .sv-sent-file-meta{
+ font:400 12px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#B3B4B8!important;
+}
