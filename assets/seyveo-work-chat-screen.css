@@ -5452,3 +5452,34 @@ html body .svcp-doc-overlay .svcp-doc-info{
  border:0!important;border-radius:12px!important;
  background:#38383A!important;color:#F5F5F7!important;cursor:pointer!important;
 }
+
+
+/* 11 Nov · Work Chat expanded composer: keep voice beside Send even with
+   typed text and document attachments. Single-line mode remains unchanged.
+   Position both in the existing lower action area, with separate tap targets. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > #svcpVoiceRecord{
+ display:grid!important;visibility:visible!important;pointer-events:auto!important;
+ position:absolute!important;top:auto!important;
+ right:59px!important;bottom:-48px!important;
+ width:40px!important;height:40px!important;
+ min-width:40px!important;min-height:40px!important;
+ margin:0!important;padding:0!important;
+ z-index:12!important;opacity:1!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > .svcp-chat-send{
+ position:absolute!important;top:auto!important;
+ right:8px!important;bottom:-48px!important;
+ width:40px!important;height:40px!important;
+ min-width:40px!important;min-height:40px!important;
+ margin:0!important;z-index:12!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline[data-has-content="false"] .svcp-chat-compose-field > .svcp-chat-send{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+/* Record remains reachable even when Send has replaced Mic in the compact
+   composer; expanded draft mode deliberately supports both actions. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > #svcpVoiceRecord svg{
+ display:block!important;width:21px!important;height:21px!important;
+ position:static!important;transform:none!important;
+}
