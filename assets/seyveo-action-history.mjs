@@ -17,11 +17,24 @@ if(personal&&head){
 /* Keep the History entry visible beside Add on the ordinary My Tasks header. */
 #unifiedPersonalTasksView .personal-tasks-head{display:flex;align-items:center;gap:8px;min-width:0}
 #unifiedPersonalTasksView .personal-tasks-head .sah-inline-toggle{
- display:inline-flex!important;visibility:visible!important;opacity:1!important;
- flex:0 0 auto;margin-left:auto!important;white-space:nowrap;
- min-height:44px!important;padding:0 10px!important;
- border:0!important;border-radius:12px!important;background:#38383A!important;
- color:#F6F7F8!important;box-shadow:none!important;
+ display:grid!important;place-items:center!important;
+ visibility:visible!important;opacity:1!important;
+ box-sizing:border-box!important;
+ flex:0 0 44px!important;margin-left:auto!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
+ color:var(--text)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#unifiedPersonalTasksView .personal-tasks-head .sah-inline-toggle svg{
+ display:block!important;width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#unifiedPersonalTasksView .personal-tasks-head .sah-inline-toggle:active{
+ opacity:.6!important;
 }
 /* Only the persistent Work titlebar is visible in the History subview.
    Keeping this second header mounted preserves its existing back/search listeners. */
@@ -208,7 +221,7 @@ if(personal&&head){
  openSvg.setAttribute('viewBox','0 0 24 24');openSvg.setAttribute('aria-hidden','true');openSvg.setAttribute('focusable','false');
  const outline=document.createElementNS('http://www.w3.org/2000/svg','path');
  outline.setAttribute('d','M12 3.5a8.5 8.5 0 1 1-8.5 8.5M3.5 4v5h5M12 7.5V12l3 2');
- openSvg.append(outline);open.append(openSvg,document.createTextNode('История'));
+ openSvg.append(outline);open.append(openSvg);open.title='История';
  const panel=document.createElement('section');panel.className='sah-inline-panel';panel.id='seyveoActionHistoryPanel';panel.hidden=true;panel.setAttribute('aria-label','История действий Сэйви');
  open.setAttribute('aria-controls',panel.id);
  const heading=document.createElement('div');heading.className='sah-inline-head';
