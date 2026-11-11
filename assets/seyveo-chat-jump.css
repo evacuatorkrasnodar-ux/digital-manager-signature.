@@ -23,6 +23,17 @@ main > .sv-chat-jump,
  -webkit-tap-highlight-color:transparent;
  touch-action:manipulation;
 }
+/* Work Chat composer is an absolute bottom dock. Use its height, not its
+   top viewport coordinate; this avoids the arrow jumping under the header. */
+#svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpScrollBottom{
+ position:absolute!important;
+ top:auto!important;
+ bottom:calc(var(--seyveo-dock-bottom,7px) + var(--svcp-jump-composer-height,56px) + 16px)!important;
+ left:50%!important;right:auto!important;
+ transform:translateX(-50%)!important;
+ z-index:9!important;
+}
+
 #sayviScrollBottom[hidden],
 #svcpScrollBottom[hidden],
 .sv-chat-jump[hidden]{
