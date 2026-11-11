@@ -1509,7 +1509,7 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
 @media(max-width:360px){html body .sv-doc-viewer .sv-doc-footer button span{font-size:9px!important}}
 
 </style>
-<link rel="stylesheet" href="assets/sayvi-notifications.css?v=3">
+<link rel="stylesheet" href="assets/sayvi-notifications.css?v=4">
 <link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=4">
 <link rel="stylesheet" href="assets/seyveo-dock-icon-standard.css?v=6">
 <link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=2">
@@ -3103,12 +3103,9 @@ html body .sv-doc-viewer .sv-doc-footer button:nth-child(2) .sv-file-label{fill:
   }else{
    const textNode=document.createElement('span');textNode.className='sv-document-word-text';
    page.append(textNode);
-   const form=new FormData();form.append('file',file,file.name);
-   fetch('/api/seyveo-document-text',{method:'POST',credentials:'same-origin',body:form})
-    .then(r=>r.ok?r.json():null).then(data=>{
-     if(!textNode.isConnected||typeof data?.text!=='string'||!data.text.trim())return;
-     textNode.textContent=data.text.slice(0,650);surface.classList.add('sv-preview-loaded');
-    }).catch(()=>{});
+   // Do not POST documents merely to draw a thumbnail.
+   // The approved on-send document pipeline handles real extraction.
+   // When no locally rendered page exists, show the honest Word badge.
   }
   return surface;
  }
