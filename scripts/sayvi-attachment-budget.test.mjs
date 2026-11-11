@@ -71,8 +71,46 @@ test('unprocessable PDF does not block other readable attachments',async()=>{
  assert.equal(result.segments.length,1);
 });
 
-test('image selection and outgoing request respect actual server limits',()=>{
- assert.match(html,/pendingAttachments\.filter\(entry=>\/\^image\\\/\(\?:png\|jpeg\|webp\)\$\/i\.test\(entry\.file\.type\)\)\.length>=6/);
+test('four attachments is the single Sayvi limit for photos and documents',()=>{
+ assert.match(html,/const SAYVI_ATTACHMENT_LIMIT=4;/);
+ assert.match(html,/pendingAttachments\.length>=SAYVI_ATTACHMENT_LIMIT/);
+ assert.match(html,/function showAttachmentLimitNotice\(\)/);
+ assert.match(html,/seyveo:sayvi-notice/);
+ assert.match(html,/severity:'warning'/);
+ assert.doesNotMatch(html,/pendingAttachments\.length>=12/);
+ assert.doesNotMatch(html,/pendingAttachments\.length<6/);
  assert.match(html,/if\(message\.length>3900\)throw Error/);
  assert.doesNotMatch(source,/Слишком много вложений для одного вопроса/);
 });
+
+test('adding fifth item preserves four selected attachments and reports through warning button',()=>{
+ const start=html.indexOf(' const SAYVI_ATTACHMENT_LIMIT=4;');
+ const stop=html.indexOf('\n // Desktop drag-and-drop',start);
+ assert.ok(start>0&&stop>start);
+ const snippet=html.slice(start,stop);
+ const selected=[];
+ const warnings=[];
+ const status={textContent:''};
+ const context={
+  pendingAttachments:selected,
+  status,
+  document:{dispatchEvent:ev=>warnings.push(ev.detail)},
+  CustomEvent:class {constructor(type,options){this.type=type;this.detail=options.detail}},
+  URL:{createObjectURL:()=> 'blob:preview'},
+  renderAttachments:()=>{},
+  updateControls:()=>{}
+ };
+ const add=runInNewContext(snippet+'\naddAttachments',context);
+ const files=Array.from({length:5},(_,n)=>({
+  name:'file-'+n+'.pdf',type:'application/pdf',size:1000,lastModified:n
+ }));
+ add(files);
+ assert.equal(selected.length,4);
+ assert.equal(selected[3].file.name,'file-3.pdf');
+ assert.equal(warnings.length,1);
+ assert.equal(warnings[0].severity,'warning');
+ assert.match(status.textContent,/4 вложений/);
+ add([files[0]]);
+ assert.equal(warnings.length,1,'duplicate should not produce limit warning');
+});
+
