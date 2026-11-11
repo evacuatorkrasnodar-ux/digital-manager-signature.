@@ -64,7 +64,7 @@ const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
 const TYPES={'.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.woff2':'font/woff2','.woff':'font/woff','.avif':'image/avif','.gif':'image/gif','.mp4':'video/mp4','.webm':'video/webm','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.wav':'audio/wav','.mp3':'audio/mpeg','.json':'application/json','.webmanifest':'application/manifest+json','.ico':'image/x-icon'};
 const HEADERS={
  'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','x-frame-options':'DENY','cross-origin-resource-policy':'same-origin',
- 'content-security-policy':"default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://upload.wikimedia.org https://planetary.s3.amazonaws.com; media-src 'self' blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-src 'self' blob: https:; worker-src 'none'; manifest-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+ 'content-security-policy':"default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://upload.wikimedia.org https://planetary.s3.amazonaws.com; media-src 'self' blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-src 'self' blob: https:; worker-src 'self' blob:; manifest-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
 };
 // Only the private Notebook drawing sheet may embed the Home UI inside Sayvi.
 // All other pages, paths, APIs and top-level navigations remain unframeable.
