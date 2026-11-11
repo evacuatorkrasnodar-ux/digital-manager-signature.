@@ -13,7 +13,7 @@ test('received Word and PDF use real attachment rendering, not invented file blo
  assert.match(js,/const isReceivedDocument=!isOwn&&\['pdf','word'\]\.includes\(detail\.kind\)/);
  assert.match(js,/if\(isReceivedDocument\)node\.classList\.add\('svcp-received-document-card'\)/);
  assert.match(js,/if\(isOwn&&sourceFile instanceof File&&\['pdf','word'\]\.includes\(detail\.kind\)\)/);
- assert.match(js,/previewable\?\(\)=>svcpOpenDocument\(localFile\):null/);
+ assert.match(js,/previewable\?\(\)=>svcpOpenDocument\(localFile,message\):null/);
  assert.match(js,/loadMediaLocally\(message\.mediaId\)/);
 });
 test('received Word and PDF show type as DOCX or PDF and retain actual filename',()=>{
@@ -26,6 +26,6 @@ test('approved recipient cards have graphite format icons and stable layout',()=
  assert.match(css,/\.svcp-received-document-card > \.svcp-file-badge--pdf\{color:#FF4545/);
  assert.match(css,/\.svcp-received-document-card > \.svcp-file-badge\{/);
  assert.match(css,/\.svcp-received-document-card \.svcp-file-card-name\{/);
- assert.match(html,/assets\/seyveo-business-command\.js\?v=172/);
+ assert.match(html,/assets\/seyveo-business-command\.js\?v=173/);
  assert.match(html,/assets\/seyveo-chat-attachments-unified\.css\?v=16/);
 });
