@@ -42,7 +42,7 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
  // Correct earlier capability hallucinations rather than reinforcing them.
  // Preserve the surrounding user turns (dates, requested revisions, etc.).
  const dialogue=documentMode?checkedDialogue.map(turn=>
-  turn.role==='assistant'&&/(?:не могу|нет возможности|не умею)[\\s\\S]{0,150}(?:файл|docx|документ|передава|загружа)/iu.test(turn.content)
+  turn.role==='assistant'&&/(?:не могу|нет возможности|не умею)[\s\S]{0,150}(?:файл|docx|документ|передава|загружа)/iu.test(turn.content)
    ?{role:'assistant',content:'Предыдущий ответ не содержал готового документа.'}:turn
  ):checkedDialogue;
  const coaching=visual?null:coachMessage(question);
