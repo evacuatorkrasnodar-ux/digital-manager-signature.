@@ -684,7 +684,11 @@ function quickBpAdvice(){
   box.textContent='Проверьте цифры: верхнее должно быть больше нижнего.';box.dataset.level='neutral';emergency.hidden=true;return;
  }
  const info=bpAssess(s,d,p);
- box.textContent='Сэйви · '+info.summary+'. '+info.advice;
+ box.replaceChildren(
+  document.createTextNode('Сэйви · '),
+  Object.assign(document.createElement('strong'),{className:'sv-bp-level-label',textContent:info.summary}),
+  document.createTextNode('. '+info.advice)
+ );
  box.dataset.level=info.level;
  emergency.hidden=!(s>=180||d>=120);
 }
