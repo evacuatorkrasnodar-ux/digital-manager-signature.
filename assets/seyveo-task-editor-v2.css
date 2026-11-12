@@ -44,9 +44,11 @@ html body dialog#personalTaskDialog.sv-task-editor-v2[open] > .personal-task-she
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  transform:none!important;transition:none!important;animation:none!important;
- overflow-x:hidden!important;overflow-y:auto!important;
+ /* NEVER scroll the parent of the shared header: only the form/picker
+    scroll. Previously Safari moved both top circles with the whole sheet. */
+ overflow-x:hidden!important;overflow-y:hidden!important;
  overscroll-behavior:contain!important;
- -webkit-overflow-scrolling:touch!important;
+ -webkit-overflow-scrolling:auto!important;
  scrollbar-width:none!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v2 .personal-task-sheet::-webkit-scrollbar{display:none!important}
@@ -119,10 +121,13 @@ html body dialog#personalTaskDialog.sv-task-editor-v2:not([data-sv-task-header-r
 /* Compact, uncluttered form. No floating glass and no extra border panels. */
 html body dialog#personalTaskDialog.sv-task-editor-v2 #personalTaskForm{
  box-sizing:border-box!important;
- display:flex!important;flex:0 0 auto!important;
+ display:flex!important;flex:1 1 auto!important;
  flex-direction:column!important;
- width:100%!important;min-width:0!important;
+ width:100%!important;min-width:0!important;min-height:0!important;
  margin:11px 0 0!important;padding:0!important;gap:0!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior:contain!important;
+ -webkit-overflow-scrolling:touch!important;
  border:0!important;border-radius:17px!important;
  background:#EFF1F3!important;background-image:none!important;
  box-shadow:none!important;
@@ -229,10 +234,13 @@ html body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
 html body dialog#personalTaskDialog.sv-task-editor-v2[open] #seyveoTaskDuePicker.cal-premium-picker:not([hidden]){
  box-sizing:border-box!important;
  display:block!important;flex:1 1 auto!important;
- width:100%!important;min-width:0!important;
+ width:100%!important;min-width:0!important;min-height:0!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;background:transparent!important;
  box-shadow:none!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior:contain!important;
+ -webkit-overflow-scrolling:touch!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v2[open]
  #seyveoTaskDuePicker > header.sv-task-date-header{
