@@ -3,7 +3,7 @@
  * Existing route and touch handlers remain intact. Dark theme / Health
  * keep their independent styles. No extra overlays or duplicate icons.
  */
-:root[data-theme="light"]{--seyveo-dock-height:63px}
+:root[data-theme="light"]{--seyveo-dock-height:60px}
 :root[data-theme="light"] :is(
  body > footer.dock.sv-shared-dock,
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
@@ -12,7 +12,7 @@
  --sv-feng-capsule:clamp(176px,calc(100vw - max(var(--sv-feng-side),env(safe-area-inset-left,0px)) - max(var(--sv-feng-side),env(safe-area-inset-right,0px)) - 71px),264px);
  --sv-home-dock-ink:#0B0B0D;
  --sv-home-dock-active:#0B0B0D;
- --seyveo-dock-height:63px;
+ --seyveo-dock-height:60px;
  box-sizing:border-box!important;
  position:fixed!important;
  left:max(var(--sv-feng-side),env(safe-area-inset-left,0px))!important;
@@ -20,10 +20,10 @@
  bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;
  top:auto!important;
  width:auto!important;max-width:none!important;
- height:63px!important;min-height:63px!important;
+ height:60px!important;min-height:60px!important;
  transform:none!important;
  display:grid!important;
- grid-template-columns:repeat(4,minmax(0,calc(var(--sv-feng-capsule) / 4))) minmax(0,1fr) 63px!important;
+ grid-template-columns:repeat(4,minmax(0,calc(var(--sv-feng-capsule) / 4))) minmax(0,1fr) 60px!important;
  gap:0!important;align-items:center!important;justify-items:stretch!important;
 }
 /* The only two background surfaces are the approved original dock pseudos. */
@@ -37,7 +37,7 @@
 )::after{
  box-sizing:border-box!important;
  top:0!important;bottom:0!important;
- height:63px!important;
+ height:60px!important;
  /* Same material constants as the Health dock (not merely similar). */
  border:1.75px solid rgba(255,255,255,.94)!important;
  border-radius:999px!important;
@@ -62,7 +62,7 @@
  body > footer.dock.sv-shared-dock,
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
 )::after{
- left:auto!important;right:0!important;width:63px!important;
+ left:auto!important;right:0!important;width:60px!important;
 }
 /* Four equal icon tracks, then a flexible gap and the separate search. */
 :root[data-theme="light"] :is(
@@ -100,8 +100,8 @@
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
 ) > #navManage{
  grid-column:6!important;
- width:63px!important;min-width:63px!important;max-width:63px!important;
- height:63px!important;min-height:63px!important;max-height:63px!important;
+ width:60px!important;min-width:60px!important;max-width:60px!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
  justify-self:end!important;
 }
 :root[data-theme="light"] :is(
@@ -109,7 +109,7 @@
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
 ) > :is(#navHome,#navTasks,#navPicture){
  width:100%!important;min-width:0!important;
- height:61px!important;min-height:61px!important;
+ height:58px!important;min-height:58px!important;
  display:flex!important;align-items:center!important;justify-content:center!important;
 }
 /* Shared minimal-outline icons: one geometry, one weight and one black ink.
