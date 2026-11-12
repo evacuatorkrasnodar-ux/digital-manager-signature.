@@ -111,45 +111,30 @@
  height:61px!important;min-height:61px!important;
  display:flex!important;align-items:center!important;justify-content:center!important;
 }
-/* No icon fonts or historical replacement SVG groups.
-   Two actual SVG paths are owned by magnetic-ink-dock.js. */
+/* Shared minimal-outline icons: one geometry, one weight and one black ink.
+   Both Home and Tasks use simple open paths in index.html. */
 :root[data-theme="light"] :is(
  body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
 ) > :is(#navHome,#navTasks) > svg.sv-canonical-dock-icon{
- display:block!important;
- box-sizing:border-box!important;
+ display:block!important;box-sizing:border-box!important;
  flex:0 0 26px!important;
  width:26px!important;min-width:26px!important;max-width:26px!important;
  height:26px!important;min-height:26px!important;max-height:26px!important;
  margin:0 auto!important;
- color:#0B0B0D!important;stroke:#0B0B0D!important;
+ color:#0B0B0D!important;
+ stroke:#0B0B0D!important;stroke-width:1.85!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
  fill:none!important;opacity:1!important;filter:none!important;
  shape-rendering:geometricPrecision!important;
 }
 :root[data-theme="light"] :is(
  body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
-) > #navHome > svg [data-sv-fill-home],
-:root[data-theme="light"] :is(
- body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
- body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
-) > #navTasks > svg [data-sv-task-box]{
- fill:#0B0B0D!important;stroke:none!important;
-}
-:root[data-theme="light"] :is(
- body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
- body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
-) > #navTasks > svg [data-sv-task-check]{
- fill:none!important;stroke:#FFFFFF!important;
- stroke-width:1.35!important;stroke-linecap:round!important;stroke-linejoin:round!important;
-}
-:root[data-theme="light"] :is(
- body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
- body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
-) > #navTasks > svg [data-sv-task-lines]{
- fill:none!important;stroke:#0B0B0D!important;
- stroke-width:1.75!important;stroke-linecap:round!important;
+) > :is(#navHome,#navTasks) > svg.sv-canonical-dock-icon > path{
+ stroke:#0B0B0D!important;stroke-width:1.85!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ fill:none!important;opacity:1!important;
 }
 /* Brand My World signature and Sayvi wave retain their original vectors. */
 :root[data-theme="light"] :is(
@@ -157,9 +142,9 @@
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
 ) > #navPicture > svg.seyveo-my-signature{
  display:block!important;
- flex:0 0 26px!important;
- width:26px!important;min-width:26px!important;max-width:26px!important;
- height:24px!important;min-height:24px!important;max-height:24px!important;
+ flex:0 0 28px!important;
+ width:28px!important;min-width:28px!important;max-width:28px!important;
+ height:26px!important;min-height:26px!important;max-height:26px!important;
  color:#0B0B0D!important;stroke:#0B0B0D!important;
  stroke-width:1.65!important;fill:none!important;
  transform:none!important;opacity:1!important;filter:none!important;
