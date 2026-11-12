@@ -355,3 +355,93 @@ html body dialog#personalTaskDialog.sv-task-editor-v2[open]
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* 2026-11-13 · Task due-date screen: restore readable light calendar text.
+   Legacy Calendar painted graphite pickers with white !important text;
+   this screen intentionally uses a WHITE flat canvas, so its own picker
+   must own the foreground. Scope everything to this one open light editor. */
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ > .personal-task-sheet{
+ --sv-task-calendar-header-height:calc(var(--sv-header-row,62px) + 16px + env(safe-area-inset-top,0px));
+ background:#FFFFFF!important;
+ background-image:linear-gradient(
+  to bottom,
+  var(--sv-header-surface,#F2F1F6) 0,
+  var(--sv-header-surface,#F2F1F6) var(--sv-task-calendar-header-height),
+  #FFFFFF var(--sv-task-calendar-header-height),
+  #FFFFFF 100%
+ )!important;
+}
+@media(min-width:650px){
+ :root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ > .personal-task-sheet{
+  --sv-task-calendar-header-height:calc(var(--sv-header-row,62px) + 24px + env(safe-area-inset-top,0px));
+ }
+}
+/* Match the real shared Work header circle's left edge on phones.
+   The calendar stage lives inside a padded form, while the main header
+   breaks out of that padding. Move ONLY the date-stage back circle. */
+@media(max-width:649px){
+ html body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker > .sv-task-date-header > button.sv-task-date-back{
+  transform:translateX(-16px)!important;
+ }
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker.cal-premium-picker:not([hidden]){
+ color:#1C1C1E!important;
+ background:transparent!important;
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .cal-pick-head strong{
+ color:#1C1C1E!important;
+ font-size:17px!important;font-weight:590!important;
+ letter-spacing:-.02em!important;
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .cal-pick-arrows button{
+ color:#1C1C1E!important;
+ opacity:1!important;
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .cal-pick-week span{
+ color:#62656B!important;
+ font-size:12px!important;font-weight:480!important;
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .cal-pick-day{
+ color:#222328!important;
+ font-size:15px!important;font-weight:490!important;
+ opacity:1!important;
+ border-color:transparent!important;
+ background:transparent!important;
+ text-shadow:none!important;
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .cal-pick-day.is-today:not(.is-selected){
+ border:1px solid rgba(41,45,53,.43)!important;
+ color:#1C1C1E!important;
+ background:transparent!important;
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .cal-pick-day.is-selected{
+ color:#FFFFFF!important;
+ background:#38383A!important;
+ border:1px solid #38383A!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .sv-task-date-quick{
+ border-top:1px solid rgba(60,60,67,.14)!important;
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .sv-task-date-quick > button{
+ color:#1C1C1E!important;
+ font-size:14px!important;font-weight:530!important;
+}
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .sv-task-date-quick > button:focus-visible,
+:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
+ #seyveoTaskDuePicker .cal-pick-day:focus-visible{
+ outline:2px solid #38383A!important;outline-offset:2px!important;
+}
