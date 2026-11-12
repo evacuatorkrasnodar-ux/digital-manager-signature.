@@ -125,6 +125,46 @@
  fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;filter:none!important;
 }
+/* Approved completion row after Sayvi fixes a document.
+   Save is one crisp diskette, Pencil is the already-approved Edit glyph,
+   Arrow is real navigation to Sayvi chat (no duplicate "Sayvi" button).
+   The user is never asked to send a document without a recipient. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"]
+ .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="save"]:not([hidden]){
+ display:inline-flex!important;flex:0 0 50px!important;
+ box-sizing:border-box!important;width:50px!important;min-width:50px!important;max-width:50px!important;
+ height:50px!important;min-height:50px!important;max-height:50px!important;
+ margin:0!important;padding:0!important;gap:0!important;
+ align-items:center!important;justify-content:center!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;color:#FFF!important;box-shadow:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"]
+ .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="save"] .sv-card-icon-caption{
+ display:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"]
+ .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="save"] svg.sv-card-symbol{
+ display:block!important;width:23px!important;height:23px!important;flex:0 0 23px!important;
+ stroke:currentColor!important;stroke-width:1.7!important;
+ fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+/* Finished assistant suggestion is a read-only paragraph, not an editor. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-document-proposal{
+ box-sizing:border-box!important;display:block!important;width:100%!important;
+ margin:3px 0 7px!important;padding:13px 14px!important;
+ border:0!important;border-radius:14px!important;
+ background:var(--sv-card-proposal-surface,rgba(155,165,174,.07))!important;
+ color:var(--sv-card-proposal-ink,var(--text))!important;
+ font:450 14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
+ letter-spacing:0!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important;
+ box-shadow:none!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="save"]:focus-visible{
+ outline:2px solid currentColor!important;outline-offset:3px!important;
+}
+
 /* No legacy pseudo-material on final pills; one premium dark graphite fill. */
 #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is(
