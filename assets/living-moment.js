@@ -319,18 +319,24 @@ function createSurface(primary,other=[],real=false,taskId=''){
   syncComposeFocus();
   syncActionHierarchy();
   documentDetails.hidden=!active;
-  // Initial: Sayvi · Edit · Navigate. Then one Save button.
-  documentEdit.hidden=!active||documentStep!=='summary';
+  // Three distinct options once Sayvi prepares a correction: save, edit, chat.
+  const reviewChoice=documentStep==='preview',manuallyEditing=documentStep==='edit';
+  documentEdit.hidden=!active||!['summary','preview'].includes(documentStep);
   documentLater.hidden=true;
-  documentSave.hidden=!active||!['preview','edit'].includes(documentStep);
+  documentSave.hidden=!active||!(reviewChoice||manuallyEditing);
   documentCancel.hidden=true;
-  documentAnalyze.hidden=true; // Advanced file parsing stays in Documents.
+  documentAnalyze.hidden=true;
   if(active){
-   sayviAction.hidden=documentStep!=='summary'; // One Save after choosing Sayvi/Edit.
+   sayviAction.hidden=documentStep!=='summary';
    execute.hidden=true;
-   open.hidden=documentStep!=='summary';
+   open.hidden=!['summary','preview','edit'].includes(documentStep);
    documentEdit.dataset.cardRole='secondary';
    documentSave.dataset.cardRole='primary';
+   open.dataset.cardRole='navigation';
+   open.setAttribute('aria-label',documentStep==='summary'?'Открыть документы':'Обсудить предложение с Сэйви в чате');
+   open.setAttribute('title',documentStep==='summary'?'Открыть документы':'В чат с Сэйви');
+   if(reviewChoice)controls.append(documentSave,documentEdit,open);
+   else if(manuallyEditing)controls.append(documentSave,open);
   }
   documentDetails.replaceChildren();
   if(!active)return;
@@ -513,13 +519,19 @@ function createSurface(primary,other=[],real=false,taskId=''){
     documentDetails.append(create('p','lm-mail-note','Разбор сохранён как учебный черновик на этом устройстве. Оригинал не меняется.'));
    }
   }
-  if(documentStep==='edit'||documentStep==='preview'){
-   const label=create('label','lm-mail-edit-label lm-note-step-label'+(documentStep==='edit'?' lm-note-step-label--reply':''),documentStep==='preview'?'Предложение Сэйви':'Ваш вариант');
+  if(documentStep==='preview'){
+   documentDetails.append(create('p','lm-section-label','Предложение Сэйви'));
+   const text=create('p','lm-document-proposal',documentNote);
+   text.setAttribute('aria-label','Исправленный текст Сэйви — предпросмотр');
+   documentDetails.append(text);
+   documentDetails.append(create('p','lm-mail-note','Черновик · исходный договор не изменяется.'));
+  }else if(documentStep==='edit'){
+   const label=create('label','lm-mail-edit-label lm-note-step-label lm-note-step-label--reply','Ваш вариант');
    const input=create('textarea','lm-mail-edit-input');
    input.rows=4;input.maxLength=8500;input.value=documentNote;
    label.append(input);documentDetails.append(label);
    prepareDocumentReply(input);
-   documentDetails.append(create('p','lm-mail-note','Черновик · исходный договор не изменяется.'));
+   documentDetails.append(create('p','lm-mail-note','Сохранение изменений — по нажатию дискеты.'));
   }else{
    const sayviText=documentStep==='saved'
     ?'Учебный черновик сохранён на этом устройстве. Исходный договор не изменён.'
@@ -584,7 +596,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   // and while reviewing Sayvi's proposal or editing an answer.
   mailDetails.hidden=!active;
   realLater.hidden=true;
-  mailEdit.hidden=!active||mailStep!=='draft';
+  mailEdit.hidden=!active||!['draft','confirm'].includes(mailStep);
   mailLater.hidden=true;
   mailSave.hidden=!active||mailStep!=='edit';
   mailSave.textContent='Отправить';
@@ -593,7 +605,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailCancel.hidden=true;
   if(active){
    sayviAction.hidden=mailStep!=='draft'; // No duplicate Sayvi beside Send.
-   open.hidden=mailStep!=='draft';
+   open.hidden=!['draft','confirm','edit'].includes(mailStep);
    execute.hidden=mailStep!=='confirm';
    execute.textContent='Отправить';
    cardIconize(execute,'send');
@@ -601,6 +613,10 @@ function createSurface(primary,other=[],real=false,taskId=''){
    execute.dataset.cardRole='primary';
    mailEdit.dataset.cardRole='secondary';
    mailSave.dataset.cardRole='primary';
+   open.setAttribute('aria-label',mailStep==='draft'?'Открыть почту':'Обсудить ответ с Сэйви в чате');
+   open.setAttribute('title',mailStep==='draft'?'Открыть почту':'В чат с Сэйви');
+   if(mailStep==='confirm')controls.append(execute,mailEdit,open);
+   else if(mailStep==='edit')controls.append(mailSave,open);
   }else{
    execute.textContent=real?'Продолжить дело':'Исполнить';
    execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
@@ -633,11 +649,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
       create('p','lm-mail-address','Тема: Стоимость доставки'));
    }
    if(mailStep==='confirm'){
-    const preview=create('textarea','lm-mail-edit-input');
-    preview.rows=4;preview.maxLength=1200;preview.value=mailDraft;
+    const preview=create('p','lm-mail-draft',mailDraft);
+    preview.setAttribute('aria-label','Предложенный ответ Сэйви — предпросмотр');
     mailDetails.append(preview);
-    prepareMailReply(preview);
-    preview.setAttribute('aria-label','Предложение Сэйви · можно исправить перед отправкой');
    }else{
     mailDetails.append(create('p','lm-mail-draft',mailDraft));
    }
