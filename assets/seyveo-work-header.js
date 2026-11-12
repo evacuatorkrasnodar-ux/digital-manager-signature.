@@ -83,6 +83,8 @@
   stroke:currentColor;stroke-width:1.8;fill:none;
   stroke-linecap:round;stroke-linejoin:round;
  }
+ /* Larger back chevron, same delicate hairline. Keep the button rim and Plus untouched. */
+ .back svg{width:25px;height:25px;stroke-width:1.45}
  .action svg{width:22px;height:22px;stroke-width:1.85}
  .control:active{opacity:.72}
  .control:focus-visible{outline:2px solid currentColor;outline-offset:2px}
