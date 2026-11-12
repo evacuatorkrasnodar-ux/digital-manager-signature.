@@ -229,17 +229,16 @@
 }
 
 
-/* SEYVEO Home · ONE card-action contract for the white theme.
- * No historical pill pseudo-layers. Three actions have 50px tap targets,
- * 21px crisp icons, 8px spacing. Final Save / Send / Confirm remain
- * legible text buttons, handled above. No event handlers are touched.
- */
+/* SEYVEO / Home card actions v22 — REBUILT, not layered.
+   Three distinct round Apple-style controls, the same 50px touch target.
+   One black Sayvi button, two quiet silver controls; no duplicate lenses.
+   Send/Save/Confirm text actions above remain unchanged. */
 #homePage #seyveoLivingMoment .lm-field .lm-actions{
  display:flex!important;
  flex-wrap:wrap!important;
- align-items:center!important;
  justify-content:flex-start!important;
- gap:8px!important;
+ align-items:center!important;
+ gap:10px!important;
  max-width:100%!important;
 }
 #homePage #seyveoLivingMoment .lm-field .lm-actions
@@ -250,16 +249,18 @@
  flex:0 0 50px!important;
  width:50px!important;min-width:50px!important;max-width:50px!important;
  height:50px!important;min-height:50px!important;max-height:50px!important;
- padding:0!important;margin:0!important;
+ padding:0!important;margin:0!important;gap:0!important;
+ position:relative!important;
+ isolation:isolate!important;
  align-items:center!important;justify-content:center!important;
- flex-direction:row!important;gap:0!important;
- border:0!important;border-radius:14px!important;
+ flex-direction:row!important;
+ border:0!important;
+ border-radius:50%!important;
  background-image:none!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- position:relative!important;
- isolation:isolate!important;
  -webkit-tap-highlight-color:transparent;
+ cursor:pointer;
 }
 #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is(
@@ -283,11 +284,11 @@
  [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]) .sv-card-symbol{
  box-sizing:border-box!important;
  display:block!important;
- flex:0 0 21px!important;
- width:21px!important;min-width:21px!important;max-width:21px!important;
- height:21px!important;min-height:21px!important;max-height:21px!important;
+ flex:0 0 22px!important;
+ width:22px!important;min-width:22px!important;max-width:22px!important;
+ height:22px!important;min-height:22px!important;max-height:22px!important;
  margin:0!important;padding:0!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;
+ stroke:currentColor!important;stroke-width:1.7!important;fill:none!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
  opacity:1!important;filter:none!important;
 }
@@ -297,43 +298,43 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- background:rgba(43,48,55,.08)!important;color:#000000!important;
+ background:#F0F1F3!important;color:#111113!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol > path{
- fill:none!important;stroke:#FFFFFF!important;stroke-width:1.8!important;
+ fill:none!important;stroke:#FFFFFF!important;stroke-width:1.7!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol > circle{
  fill:#FFFFFF!important;stroke:none!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
- .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]) .sv-card-symbol *,
+ .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]) .sv-card-symbol,
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
- .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]) .sv-card-symbol{
- color:#000000!important;stroke:#000000!important;
- fill:none!important;stroke-width:1.8!important;
- opacity:1!important;filter:none!important;
+ .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]) .sv-card-symbol *{
+ color:#111113!important;stroke:#111113!important;fill:none!important;
+ stroke-width:1.7!important;opacity:1!important;filter:none!important;
 }
 :root[data-theme="dark"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
- background:#38383A!important;color:#FFFFFF!important;
+ background:#F2F2F7!important;color:#000000!important;
 }
 :root[data-theme="dark"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- background:rgba(255,255,255,.10)!important;color:#FFFFFF!important;
+ background:#38383A!important;color:#FFFFFF!important;
 }
 #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is(
  [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]):focus-visible{
- outline:2px solid var(--text)!important;outline-offset:2px!important;
+ outline:2px solid currentColor!important;outline-offset:3px!important;
 }
 #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is(
  [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]):active{
- opacity:.84!important;transform:scale(.97);
+ transform:scale(.95);opacity:.82!important;
 }
 @media(prefers-reduced-motion:reduce){
- #homePage #seyveoLivingMoment .lm-field .lm-actions
- .lm-polymer.sv-card-icon-button{transition:none!important}
+ #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button{
+  transition:none!important;
+ }
 }
