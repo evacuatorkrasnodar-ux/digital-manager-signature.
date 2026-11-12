@@ -68,10 +68,10 @@
   white-space:nowrap!important;
 }
 :root[data-theme="light"] #svWorkShell[data-shared-work="true"] #svWorkTabs > button:not([hidden]){
-  color:#313238!important;
+  color:#17181C!important;
 }
 :root[data-theme="light"] #svWorkShell[data-shared-work="true"] #svWorkTabs > button[aria-pressed="true"]:not([hidden]){
-  background:#FFFFFF!important;color:#17191E!important;
+  background:#FFFFFF!important;color:#0C0D10!important;
   font-weight:590!important;
   box-shadow:0 1px 2px rgba(32,35,42,.045)!important;
 }
