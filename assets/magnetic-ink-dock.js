@@ -65,7 +65,9 @@ function init(){
    // Repaint only after a contextual mode has replaced an icon, or when
    // obsolete markup is detected. This is the sole runtime artwork source.
    const expected=canonical[index];
-   if(button.innerHTML!==expected)button.innerHTML=expected;
+   const hasCanonical=!item.icon||!!button.querySelector(':scope > svg.sv-canonical-dock-icon');
+   if(button.dataset.svFixedAction!==item.id||!hasCanonical)
+    button.innerHTML=expected;
    button.dataset.svFixedAction=item.id;
    button.setAttribute('aria-label',item.description);
    button.title=item.title;
