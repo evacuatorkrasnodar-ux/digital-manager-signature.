@@ -15,10 +15,10 @@
   order:0;
   align-self:flex-start;
   width:calc(100% + var(--gutter-l) + var(--gutter-r));
-  min-height:calc(62px + var(--gutter-t));
-  height:calc(62px + var(--gutter-t));
+  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t));
+  height:calc(var(--sv-header-row,62px) + var(--gutter-t));
   margin:calc(-1 * var(--gutter-t)) 0 0 calc(-1 * var(--gutter-l));
-  color:#1C1C1E;
+  color:var(--sv-header-ink,#1C1C1E);
   background:transparent;
   border:0;
   border-radius:0;
@@ -35,42 +35,37 @@
   width:100%;
   height:100%;
   display:grid;
-  grid-template-columns:42px minmax(0,1fr) 42px;
+  grid-template-columns:var(--sv-header-slot,42px) minmax(0,1fr) var(--sv-header-slot,42px);
   align-items:center;
-  column-gap:8px;
+  column-gap:var(--sv-header-gap,8px);
   padding:var(--gutter-t) var(--gutter-r) 0 var(--gutter-l);
   margin:0;
   border:0;
   border-radius:0;
   box-shadow:none;
-  background:#F2F1F6;
+  background:var(--sv-header-surface,#F2F1F6);
  }
  .title {
   grid-column:2;grid-row:1;
   min-width:0;margin:0;padding:0;
-  font-size:20px;font-weight:590;line-height:1.2;
-  letter-spacing:-.02em;text-align:center;
+  font-size:var(--sv-header-title-size,20px);font-weight:var(--sv-header-title-weight,590);line-height:var(--sv-header-title-leading,1.2);
+  letter-spacing:var(--sv-header-title-tracking,-.02em);text-align:center;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   color:inherit;
  }
  .control {
   appearance:none;-webkit-appearance:none;
   grid-row:1;
-  width:42px;height:42px;min-width:42px;min-height:42px;
+  width:var(--sv-header-slot,42px);height:var(--sv-header-slot,42px);min-width:var(--sv-header-slot,42px);min-height:var(--sv-header-slot,42px);
   display:grid;place-items:center;
   padding:0;margin:0;
   border-radius:50%;
-  border:1.75px solid rgba(255,255,255,.94);
-  background:rgba(190,193,202,.43);
-  -webkit-backdrop-filter:blur(12px) saturate(108%);
-  backdrop-filter:blur(12px) saturate(108%);
-  box-shadow:0 0 0 .7px rgba(164,170,184,.30),
-   inset 0 1px 1px rgba(75,82,96,.055),
-   inset 0 -1px 0 rgba(255,255,255,.18),
-   inset .6px 0 .7px rgba(255,255,255,.16),
-   inset -.6px 0 .8px rgba(75,82,96,.055),
-   0 1px 2px rgba(82,88,103,.045);
-  color:#0B0B0D;
+  border:var(--sv-header-circle-border,1.75px solid rgba(255,255,255,.94));
+  background:var(--sv-header-circle,rgba(190,193,202,.43));
+  -webkit-backdrop-filter:var(--sv-header-circle-filter,blur(12px) saturate(108%));
+  backdrop-filter:var(--sv-header-circle-filter,blur(12px) saturate(108%));
+  box-shadow:var(--sv-header-circle-shadow,0 0 0 .7px rgba(164,170,184,.30));
+  color:var(--sv-header-icon-ink,#0B0B0D);
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
@@ -79,22 +74,22 @@
  .action{grid-column:3;justify-self:end}
  .control[hidden]{display:none!important}
  .control svg{
-  display:block;width:21px;height:21px;
+  display:block;width:var(--sv-header-action-icon,22px);height:var(--sv-header-action-icon,22px);
   stroke:currentColor;stroke-width:1.8;fill:none;
   stroke-linecap:round;stroke-linejoin:round;
  }
  /* Larger back chevron, same delicate hairline. Keep the button rim and Plus untouched. */
- .back svg{width:25px;height:25px;stroke-width:1.45}
- .action svg{width:22px;height:22px;stroke-width:1.85}
+ .back svg{width:var(--sv-header-back-icon,25px);height:var(--sv-header-back-icon,25px);stroke-width:var(--sv-header-back-weight,1.45)}
+ .action svg{width:var(--sv-header-action-icon,22px);height:var(--sv-header-action-icon,22px);stroke-width:var(--sv-header-action-weight,1.85)}
  .control:active{opacity:.72}
  .control:focus-visible{outline:2px solid currentColor;outline-offset:2px}
- :host([data-theme="dark"]){color:#F6F6F8}
+ :host([data-theme="dark"]){color:var(--sv-header-ink,#F6F6F8)}
  :host([data-theme="dark"]) .bar{
-  background:#202023;border:0;box-shadow:none
+  background:var(--sv-header-surface,#202023);border:0;box-shadow:none
  }
  :host([data-theme="dark"]) .control{
-  background:#38383A;color:#F6F6F8;
-  border:1px solid rgba(255,255,255,.14);
+  background:var(--sv-header-circle,#38383A);color:var(--sv-header-icon-ink,#F6F6F8);
+  border:var(--sv-header-circle-border,1px solid rgba(255,255,255,.14));
   -webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none
  }
  @media(prefers-reduced-transparency:reduce){
