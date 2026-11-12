@@ -43,6 +43,18 @@
     if(existing&&!existing.hidden)existing.focus({preventScroll:true});
    });
   }
+  // The Notebook is a normal full-screen page now; the shared dock stays
+  // in its original DOM position. Close the Notebook when a dock destination
+  // is chosen so it never covers the newly selected route.
+  const dock=document.querySelector('footer.dock');
+  if(dock&&!dialog.dataset.svDockRouteWired){
+   dialog.dataset.svDockRouteWired='true';
+   const destinations=new Set(['navHome','navTasks','navPicture','navManage','assistantButton']);
+   dock.addEventListener('click',event=>{
+    const button=event.target.closest?.('button');
+    if(dialog.open&&button&&destinations.has(button.id))dialog.close();
+   },true);
+  }
   if(!factory?.create||!legacyBack)return;
   if(dialog.querySelector('#svNotebookSharedHeader'))return;
   const {host,back,title,add}=factory.create();
