@@ -146,6 +146,16 @@ function render(){
  addPair(block,'Сердце',selectStatus(p.heart,p.heartDetails),p.heart==='yes');
  addPair(block,'Другие заболевания',displayOrUnknown(p.conditions));
  addPair(block,'Операции / импланты',displayOrUnknown(p.operations));
+ const last=d.confirmed[0];
+ addPair(block,'Последний отмеченный приём',last?
+  last.name+' · '+(last.dose||'доза не указана')+' · '+dateText(last.date)+
+  (last.at?' · отметка '+new Date(last.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):' · точное время неизвестно')
+  :'Нет подтверждённых отметок');
+ const latestBp=d.pressure[0];
+ addPair(block,'Последнее давление',latestBp?
+  latestBp.s+'/'+latestBp.d+' мм рт. ст.'+(latestBp.pulse!==null?' · пульс '+latestBp.pulse:'')+' · '+
+  (latestBp.time?timeText(latestBp.time):dateText(latestBp.date))
+  :'Не измерялось в журнале');
  addPair(block,'Экстренный контакт',p.contactName||p.contactPhone?
   [p.contactName,p.contactPhone].filter(Boolean).join(' · '):'Не указан');
  if(p.note)addPair(block,'Дополнительно',p.note);
