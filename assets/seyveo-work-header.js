@@ -19,6 +19,11 @@
   height:calc(62px + var(--gutter-t));
   margin:calc(-1 * var(--gutter-t)) 0 0 calc(-1 * var(--gutter-l));
   color:#1C1C1E;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  filter:none;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
  }
  @media(max-width:649px){
@@ -36,14 +41,14 @@
   padding:var(--gutter-t) var(--gutter-r) 0 var(--gutter-l);
   margin:0;
   border:0;
-  border-bottom:1px solid rgba(195,195,204,.30);
   border-radius:0;
+  box-shadow:none;
   background:#F2F2F7;
  }
  .title {
   grid-column:2;grid-row:1;
   min-width:0;margin:0;padding:0;
-  font-size:17px;font-weight:590;line-height:1.2;
+  font-size:18px;font-weight:550;line-height:1.2;
   letter-spacing:-.02em;text-align:center;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   color:inherit;
@@ -83,7 +88,7 @@
  .control:focus-visible{outline:2px solid currentColor;outline-offset:2px}
  :host([data-theme="dark"]){color:#F6F6F8}
  :host([data-theme="dark"]) .bar{
-  background:#202023;border-bottom-color:rgba(255,255,255,.08)
+  background:#202023;border:0;box-shadow:none
  }
  :host([data-theme="dark"]) .control{
   background:#38383A;color:#F6F6F8;
