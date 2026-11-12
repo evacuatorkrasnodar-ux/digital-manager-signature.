@@ -3176,10 +3176,10 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  <div id="calendarHealthAgeSetting" class="cal-health-age-setting">
   <label for="calendarHealthAge">Возраст</label>
   <div class="cal-health-age-value">
-   <select id="calendarHealthAge" aria-label="Возраст в годах"><option value="">—</option></select>
+   <input id="calendarHealthAge" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" enterkeyhint="done" autocomplete="off" placeholder="—" aria-label="Возраст в годах">
    <span class="cal-health-age-unit">лет</span>
   </div>
-  <small id="calendarHealthAgeHint" class="cal-health-sr-only">Возраст в годах. Выбирается один раз.</small>
+  <small id="calendarHealthAgeHint" class="cal-health-sr-only">Введите возраст цифрами. Сохранится автоматически.</small>
  </div>
  <div id="calendarBpReport" class="cal-bp-report" hidden aria-live="polite">
  <div class="cal-bp-report-head"><span class="cal-bp-report-icon sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви · оценка давления</strong></div>
