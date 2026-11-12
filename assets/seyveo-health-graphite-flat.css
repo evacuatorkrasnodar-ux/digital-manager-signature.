@@ -645,3 +645,29 @@ html body #calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .sv-b
   padding-inline:2px!important;
  }
 }
+
+/* Color is functional, not decorative: ONLY Sayvi's short pressure
+   assessment changes shade. Explanations, figures, page, cards and dock
+   preserve their existing appearance. */
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ :is(#calendarBpReport,#calendarBpQuickAdvice)[data-level="usual"]{--sv-bp-status-ink:#72D7A3}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ :is(#calendarBpReport,#calendarBpQuickAdvice)[data-level="low"]{--sv-bp-status-ink:#78BFFF}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ :is(#calendarBpReport,#calendarBpQuickAdvice)[data-level="raised"]{--sv-bp-status-ink:#FFD16A}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ :is(#calendarBpReport,#calendarBpQuickAdvice)[data-level="high"]{--sv-bp-status-ink:#FFAD66}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ :is(#calendarBpReport,#calendarBpQuickAdvice)[data-level="urgent"]{--sv-bp-status-ink:#FF7979}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ #calendarBpReport #calendarBpReportStatus,
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ #calendarBpQuickAdvice strong.sv-bp-level-label{
+ color:var(--sv-bp-status-ink,#FFFFFF)!important;
+ -webkit-text-fill-color:var(--sv-bp-status-ink,#FFFFFF)!important;
+ opacity:1!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ #calendarBpQuickAdvice strong.sv-bp-level-label{
+ font:inherit!important;font-weight:650!important;
+}
