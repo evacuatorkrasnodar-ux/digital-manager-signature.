@@ -26,15 +26,24 @@ function init(){
  const track=document.getElementById('assistantQuickTrack');
  if(rail){rail.setAttribute('aria-hidden','true');rail.inert=true;}
  if(track)track.tabIndex=-1;
- // The HTML footer is the only source of the four navigation SVGs.
- // Never replace those icons with duplicate, older vector data from this script.
- const originalButtonMarkup=buttons.map(button=>button.innerHTML);
+ // One canonical vector for each main destination. Never restore legacy art.
+ const originalOtherMarkup={
+  life:document.getElementById('navPicture').innerHTML,
+  search:document.getElementById('navManage').innerHTML
+ };
  const items=[
-  {id:'home',title:'Главная',description:'Вернуться на Главную'},
-  {id:'tasks',title:'Дела',description:'Открыть дела'},
+  {id:'home',title:'Главная',description:'Вернуться на Главную',
+   icon:'<path data-sv-fill-home fill-rule="evenodd" d="M10.68 3.35a2 2 0 0 1 2.64 0l7.24 6.3a1.27 1.27 0 1 1-1.66 1.92l-.68-.59v7.72a2.1 2.1 0 0 1-2.1 2.1H7.88a2.1 2.1 0 0 1-2.1-2.1v-7.72l-.68.59a1.27 1.27 0 1 1-1.66-1.92l7.24-6.3ZM10 20.8v-5.5c0-1.05.85-1.9 1.9-1.9h.2c1.05 0 1.9.85 1.9 1.9v5.5H10Z"/>'},
+  {id:'tasks',title:'Дела',description:'Открыть дела',
+   icon:'<rect data-sv-task-box x="2.9" y="3.25" width="5.3" height="5.3" rx="1.55"/><rect data-sv-task-box x="2.9" y="10.35" width="5.3" height="5.3" rx="1.55"/><rect data-sv-task-box x="2.9" y="17.45" width="5.3" height="5.3" rx="1.55"/><path data-sv-task-check d="m4.1 5.95 1.15 1.02 1.83-2.08M4.1 13.05l1.15 1.02 1.83-2.08M4.1 20.15l1.15 1.02 1.83-2.08"/><path data-sv-task-lines d="M11.3 5.9h9.2M11.3 13h9.2M11.3 20.1h9.2"/>'},
   {id:'life',title:'Мой мир',description:'Открыть Мой мир'},
   {id:'search',title:'Поиск',description:'Умный поиск SEYVEO'}
  ];
+ function canonicalMarkup(item){
+  if(item.id==='life'||item.id==='search')return originalOtherMarkup[item.id];
+  return '<svg class="sv-canonical-dock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+item.icon+'</svg><span>'+item.title+'</span>';
+ }
+ const canonical=items.map(canonicalMarkup);
  const musicMode=()=>dock.classList.contains('seyveo-music-dock')||
   window.SEYVEO_MUSIC_DOCK?.isActive?.()===true;
  function activeDestination(){
@@ -53,17 +62,13 @@ function init(){
   items.forEach((item,index)=>{
    const button=buttons[index];
    button.hidden=false;
-   // Music/Browser may temporarily reuse these buttons: restore the
-   // ORIGINAL HTML icons after those modes exit, not obsolete replacement SVGs.
-   // Normal route changes do not re-render matching artwork.
-   if(button.dataset.svFixedAction!==item.id||
-      button.innerHTML!==originalButtonMarkup[index]){
-    if(button.innerHTML!==originalButtonMarkup[index])
-     button.innerHTML=originalButtonMarkup[index];
-    button.dataset.svFixedAction=item.id;
-    button.setAttribute('aria-label',item.description);
-    button.title=item.title;
-   }
+   // Repaint only after a contextual mode has replaced an icon, or when
+   // obsolete markup is detected. This is the sole runtime artwork source.
+   const expected=canonical[index];
+   if(button.innerHTML!==expected)button.innerHTML=expected;
+   button.dataset.svFixedAction=item.id;
+   button.setAttribute('aria-label',item.description);
+   button.title=item.title;
    const selected=item.id===active;
    button.classList.toggle('active',selected);
    if(selected)button.setAttribute('aria-current','page');
