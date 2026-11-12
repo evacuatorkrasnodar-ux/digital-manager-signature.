@@ -1,18 +1,10 @@
-/* One shared neutral graphite palette for Health and the medical passport. */
-:root{
- --sv-health-background:#18191B;
- --sv-health-surface:#242426;
- --sv-health-control:#38383A;
- --sv-health-text:#FFFFFF;
- --sv-health-secondary:#D1D1D6;
-}
 /* SEYVEO HEALTH 2 · Rebuilt 12 Nov 2026.
    A clean, full-screen graphite workspace. Existing measurements, journal,
    local storage, keyboard support and event handlers are intentionally retained.
    No legacy health styling is imported. */
-html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]{
- --health-bg:var(--sv-health-background);--health-surface:var(--sv-health-surface);--health-action:var(--sv-health-control);
- --health-text:var(--sv-health-text);--health-muted:var(--sv-health-secondary);--health-rule:rgba(225,225,230,.14);
+#calendarSpaceDialog[data-space="health"]{
+ --health-bg:#18191B;--health-surface:#242426;--health-action:#38383A;
+ --health-text:#FFFFFF;--health-muted:#D1D1D6;--health-rule:rgba(225,225,230,.14);
  color:var(--health-text)!important;
  background:var(--health-bg)!important;background-image:none!important;
  border:0!important;border-radius:0!important;outline:0!important;
