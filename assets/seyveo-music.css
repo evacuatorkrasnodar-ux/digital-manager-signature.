@@ -7,6 +7,8 @@ html.sv-music-screen,html.sv-music-screen body{height:100%!important;overflow:hi
 html.sv-music-screen .app{
  height:100dvh!important;min-height:0!important;max-height:100dvh!important;
  overflow:hidden!important;overscroll-behavior:none!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;
  padding-bottom:calc(var(--seyveo-dock-bottom,18px) + var(--seyveo-dock-height,56px) + 10px)!important;
 }
 #sayviMusicPage{
