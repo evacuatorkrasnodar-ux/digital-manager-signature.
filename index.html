@@ -3074,18 +3074,19 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
   <g class="sv-dock-legacy-glyph"><path d="m3.75 10.25 7-6.08a1.9 1.9 0 0 1 2.5 0l7 6.08a1.6 1.6 0 0 1 .55 1.22v7.18a1.7 1.7 0 0 1-1.7 1.7H5.4a1.7 1.7 0 0 1-1.7-1.7v-7.18a1.6 1.6 0 0 1 .55-1.22Z"/><path d="M9.3 20.35v-5.65a1.2 1.2 0 0 1 1.2-1.2h3a1.2 1.2 0 0 1 1.2 1.2v5.65"/></g>
   <g class="sv-dock-modern-glyph" style="display:none">
-    <path d="m3.25 10.55 7.6-6.4a1.8 1.8 0 0 1 2.3 0l7.6 6.4"/>
-    <path d="M5.3 9.85v8.95a1.9 1.9 0 0 0 1.9 1.9h9.6a1.9 1.9 0 0 0 1.9-1.9V9.85"/>
-    <path d="M9.65 20.7v-6.1a1.5 1.5 0 0 1 1.5-1.5h1.7a1.5 1.5 0 0 1 1.5 1.5v6.1"/>
+    <!-- New Apple-inspired solid Home silhouette; doorway is transparent. -->
+    <path fill="currentColor" fill-rule="evenodd" stroke="none" d="M10.68 3.35a2 2 0 0 1 2.64 0l7.24 6.3a1.27 1.27 0 1 1-1.66 1.92l-.68-.59v7.72a2.1 2.1 0 0 1-2.1 2.1H7.88a2.1 2.1 0 0 1-2.1-2.1v-7.72l-.68.59a1.27 1.27 0 1 1-1.66-1.92l7.24-6.3ZM10 20.8v-5.5c0-1.05.85-1.9 1.9-1.9h.2c1.05 0 1.9.85 1.9 1.9v5.5H10Z"/>
   </g>
 </svg><span>Главная</span></button>
 <button type="button" id="navTasks" class="nav-item nav-tasks" aria-label="Открыть дела"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
   <g class="sv-dock-legacy-glyph"><circle cx="4.9" cy="6" r="1.05" fill="currentColor" stroke="none"/><circle cx="4.9" cy="12" r="1.05" fill="currentColor" stroke="none"/><circle cx="4.9" cy="18" r="1.05" fill="currentColor" stroke="none"/><path d="M9.2 6h10.9M9.2 12h10.9M9.2 18h10.9"/></g>
   <g class="sv-dock-modern-glyph" style="display:none">
-    <circle cx="5" cy="5.15" r="1.35"/>
-    <circle cx="5" cy="12" r="1.35"/>
-    <circle cx="5" cy="18.85" r="1.35"/>
-    <path d="M10.15 5.15h10.05M10.15 12H20.2M10.15 18.85H20.2"/>
+    <!-- New compact checked task list, not the previous three-dot menu. -->
+    <rect x="2.9" y="3.25" width="5.3" height="5.3" rx="1.55" fill="currentColor" stroke="none"/>
+    <rect x="2.9" y="10.35" width="5.3" height="5.3" rx="1.55" fill="currentColor" stroke="none"/>
+    <rect x="2.9" y="17.45" width="5.3" height="5.3" rx="1.55" fill="currentColor" stroke="none"/>
+    <path d="m4.1 5.95 1.15 1.02 1.83-2.08M4.1 13.05l1.15 1.02 1.83-2.08M4.1 20.15l1.15 1.02 1.83-2.08" stroke="#FFFFFF" fill="none" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M11.3 5.9h9.2M11.3 13h9.2M11.3 20.1h9.2" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
   </g>
 </svg><span>Дела</span></button>
 <button type="button" id="assistantButton" class="assistant-button" aria-label="Сэйви: открыть единый разговор. Удерживайте, чтобы говорить" aria-describedby="voiceHint" aria-pressed="false">
