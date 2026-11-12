@@ -4791,8 +4791,8 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    const proposed=typeof message?.proposal==='string'?message.proposal.slice(0,2200):'';
    const reviewPrompt=cardReview?(
     message.kind==='mail'
-     ?'Сэйви, помоги обсудить подготовленный ответ на письмо. Это черновик из карточки, не отправлен.\\n\\nВходящее сообщение:\\n'+original+'\\n\\nПредложенный ответ:\\n'+proposed
-     :'Сэйви, обсудим предложение по документу из карточки. Это учебный фрагмент, не полный загруженный файл. Если нужно проверить оригинал, попроси меня прикрепить документ.\\n\\nИсходный фрагмент:\\n'+original+'\\n\\nПредложенная редакция:\\n'+proposed
+     ?'Сэйви, помоги обсудить подготовленный ответ на письмо. Это черновик из карточки, не отправлен.\n\nВходящее сообщение:\n'+original+'\n\nПредложенный ответ:\n'+proposed
+     :'Сэйви, обсудим предложение по документу из карточки. Это учебный фрагмент, не полный загруженный файл. Если нужно проверить оригинал, попроси меня прикрепить документ.\n\nИсходный фрагмент:\n'+original+'\n\nПредложенная редакция:\n'+proposed
    ):null;
    const prompt=cardReview?reviewPrompt:(valid?prompts[message.intent]:null);
    if(prompt&&input&&!input.value.trim()){
