@@ -527,6 +527,10 @@ function renderBpJournal(){
  const root=$('calendarBpJournal');if(!root)return;
  root.hidden=current!=='health';if(root.hidden)return;
  const items=bpJournalItems(),summary=bpJournalOverview(items);
+ // Show period filters only if history has multiple readings; never hide a
+ // useful filter when one reading falls outside the current period.
+ root.dataset.bpCount=String(items.length);
+ root.dataset.bpTotal=String(read().filter(x=>x.space==='health'&&x.kind==='Давление'&&bpParse(x)).length);
  $('calendarBpJournalCount').textContent=items.length+' '+(items.length===1?'измерение':'измерений');
  $('calendarBpJournalAverage').textContent=summary.average;
  const title=root.querySelector('.cal-bp-journal-summary>span');
