@@ -318,7 +318,9 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  display:block!important;overflow:hidden!important;
  padding:15px!important;margin:0 0 15px!important;
  border:0!important;border-radius:15px!important;
- background:var(--health-surface)!important;box-shadow:none!important;
+ background:#38383A!important;background-image:none!important;
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+ box-shadow:none!important;
 }
 #calendarSpaceDialog[data-space="health"] #calendarBpJournal[hidden]{display:none!important}
 #calendarSpaceDialog[data-space="health"] #calendarBpJournal[data-bp-total="0"] .cal-bp-journal-period,
@@ -352,7 +354,8 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  width:34px!important;height:34px!important;min-width:34px!important;
  margin:0!important;padding:7px!important;flex:0 0 34px!important;
  border:0!important;border-radius:9px!important;
- background:#38383A!important;color:#fff!important;box-shadow:none!important;
+ background:#2C2C2E!important;color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;box-shadow:none!important;
 }
 #calendarSpaceDialog[data-space="health"] .cal-bp-journal-actions svg{
  display:block!important;width:18px!important;height:18px!important;
@@ -369,7 +372,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  min-height:33px!important;margin:0!important;padding:6px 12px!important;
  border:0!important;border-radius:10px!important;box-shadow:none!important;
  font:550 12px/1.2 system-ui,sans-serif!important;
- color:var(--health-muted)!important;background:#38383A!important;
+ color:#FFFFFF!important;background:#2C2C2E!important;
 }
 #calendarSpaceDialog[data-space="health"] .cal-bp-journal-period button[aria-pressed="true"]{
  color:#fff!important;background:#525255!important;
