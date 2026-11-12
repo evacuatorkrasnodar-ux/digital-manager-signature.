@@ -742,6 +742,47 @@
  outline:2px solid currentColor;outline-offset:2px;
 }
 
+/* Master workshop: the same restrained semantic proposal material on all
+   future cards. Local Studio theme wins over the real application's theme. */
+:root[data-theme="light"]{
+ --sv-card-reading-proposal-bg:#F3F5F4;
+ --sv-card-reading-proposal-ink:#24302D;
+ --sv-card-reading-proposal-label:#4C7569;
+}
+:root[data-theme="dark"]{
+ --sv-card-reading-proposal-bg:transparent;
+ --sv-card-reading-proposal-ink:var(--text,#F4F4F6);
+ --sv-card-reading-proposal-label:var(--secondary,#B9BDC4);
+}
+#seyveoCardStudio [data-preview-theme="light"]{
+ --sv-card-reading-proposal-bg:#F3F5F4;
+ --sv-card-reading-proposal-ink:#24302D;
+ --sv-card-reading-proposal-label:#4C7569;
+}
+#seyveoCardStudio [data-preview-theme="dark"]{
+ --sv-card-reading-proposal-bg:transparent;
+ --sv-card-reading-proposal-ink:#F4F4F6;
+ --sv-card-reading-proposal-label:#C7D2D9;
+}
+.sv-card-system--rendered .sv-card-proposal{
+ background:var(--sv-card-reading-proposal-bg,transparent)!important;
+ border-top:0!important;border-radius:14px!important;
+ padding:13px 14px!important;margin-top:9px!important;
+ box-shadow:none!important;
+}
+.sv-card-system--rendered .sv-card-proposal .sv-card-label{
+ color:var(--sv-card-reading-proposal-label,var(--secondary))!important;
+ font-weight:560!important;
+}
+.sv-card-system--rendered .sv-card-proposal .sv-card-value{
+ color:var(--sv-card-reading-proposal-ink,var(--text))!important;
+}
+.sv-card-system--rendered .sv-card-draft-input{
+ background:var(--sv-card-reading-proposal-bg,rgba(155,165,174,.07))!important;
+ color:var(--sv-card-reading-proposal-ink,var(--text))!important;
+ border:0!important;border-radius:14px!important;
+}
+
 /* SEYVEO Card Glyphs v1 · recognizable iPhone action language.
  * Symbols are actual inline SVG, not font glyphs, emoji or generated PNGs.
  * Optical control stays compact; reliable touch targets stay >=44px.
