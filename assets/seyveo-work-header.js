@@ -43,7 +43,7 @@
   border:0;
   border-radius:0;
   box-shadow:none;
-  background:#F2F2F7;
+  background:#F2F1F6;
  }
  .title {
   grid-column:2;grid-row:1;
