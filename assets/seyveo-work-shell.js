@@ -242,7 +242,7 @@
    else if(location.hash!=='#tasks')location.hash='#tasks';
    else oldTab(oldTasks,'data-unified-tasks-tab','personal')?.click();
    resetWorkScroll();
-   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+   requestAnimationFrame(sync);
    return;
   }
   if(target==='business'){
@@ -250,7 +250,7 @@
    if(typeof open==='function')open('preserve');
    else oldTab(oldTasks,'data-unified-tasks-tab','business')?.click();
    resetWorkScroll();
-   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+   requestAnimationFrame(sync);
    return;
   }
   // ONE has no manager-calendar legacy tabs, so use the original routes.
@@ -258,7 +258,7 @@
    if(target==='calendar')location.hash='#calendar';
    else if(target==='personal')window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
    resetWorkScroll();
-   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+   requestAnimationFrame(sync);
    return;
   }
   const employeePreview=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
@@ -268,7 +268,7 @@
    if(target==='personal')window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
    else if(target==='employee')window.SEYVEO_UNIFIED_TASKS?.openEmployee?.();
    resetWorkScroll();
-   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+   requestAnimationFrame(sync);
    return;
   }
   const original=fromCalendar
@@ -277,7 +277,7 @@
   if(original&&!original.disabled&&!original.hidden){
    original.click();
    resetWorkScroll();
-   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+   requestAnimationFrame(sync);
   }
  });
  const observer=new MutationObserver(sync);
