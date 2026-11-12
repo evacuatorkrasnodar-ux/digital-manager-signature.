@@ -671,17 +671,26 @@
  filter:none!important;
 }
 
-/* Sayvi Home action: solid black emblem, not just a black stroke.
-   Keep the shared light control tile, dimensions and other icons untouched. */
+/* Sayvi tutorial action: BLACK TILE with the original fine WHITE emblem.
+   Do not fill the logo itself; preserve the 48px button and other actions. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
- .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]) .sv-card-symbol > path {
- fill:#000000!important;
- stroke:#000000!important;
- opacity:1!important;
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
+ background:#000000!important;
+ color:#FFFFFF!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
- .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]) .sv-card-symbol > circle {
- fill:#000000!important;
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]) .sv-card-symbol,
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]) .sv-card-symbol > path{
+ color:#FFFFFF!important;
+ stroke:#FFFFFF!important;
+ fill:none!important;
+ opacity:1!important;
+ filter:none!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]) .sv-card-symbol > circle{
+ fill:#FFFFFF!important;
  stroke:none!important;
  opacity:1!important;
 }
