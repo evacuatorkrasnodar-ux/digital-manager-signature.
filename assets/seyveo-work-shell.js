@@ -20,6 +20,10 @@
  shell.setAttribute('aria-label','Дела и календарь');
  app.insertBefore(shell,calendar);
  shell.append(calendar,tasks);
+ // A single permanent header and tab bar own Notebook as well.
+ // Only Notebook CONTENT mounts into Work; its old screen chrome is gone.
+ const notesPage=document.getElementById('notesDialog');
+ if(notesPage)shell.append(notesPage);
  // The legacy heading must never paint beside the permanent work heading.
  // Inline important wins against old, later-loaded stylesheets without
  // destroying the original controls or their click handlers.
@@ -101,6 +105,7 @@
   }
  }
  back.addEventListener('click',()=>{
+  if(notesPage?.open){notesPage.close();return;}
   if(tasks.classList.contains('sah-history-open')){
    document.querySelector('#seyveoActionHistoryPanel .sah-inline-head button')?.click();
    return;
@@ -126,6 +131,7 @@
    calendarAdd?.click();
    add.setAttribute('aria-expanded',String(calendarAdd?.getAttribute('aria-expanded')==='true'));
   }else if(section==='personal')personalAdd?.click();
+  else if(section==='notes')window.SEYVEO_NOTE_LAUNCH?.launch?.('noteModeText');
   else if(section==='business'){
    if(!window.SEYVEO_PREVIEW?.isManager?.())return;
    businessCreate.hidden=!businessCreate.hidden;
@@ -142,6 +148,7 @@
  }
  const oldTab=(parent,attribute,name)=>parent.querySelector('['+attribute+'="'+name+'"]');
  function activeSection(){
+  if(notesPage?.open)return 'notes';
   if(!calendar.hidden)return 'calendar';
   return tasks.dataset.workView==='business'?'business':tasks.dataset.workView==='employee'?'employee':'personal';
  }
@@ -156,8 +163,8 @@
   const employeeMode=employeePreview&&!managerPreview;
   // The same three-position shell also belongs to ONE.
   // Preview roles are an interface demo, not verified company authorization.
-  const visible=!tasks.hidden||!calendar.hidden;
-  const history=visible&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
+  const visible=!!notesPage?.open||!tasks.hidden||!calendar.hidden;
+  const history=visible&&!notesPage?.open&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
   parkCalendarMenu(visible&&!history&&active==='calendar');
   if(active!=='business'||!managerPreview||history)closeBusinessCreate();
   if(active!=='calendar'||history){
@@ -183,7 +190,7 @@
   heading.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
-  title.textContent=history?'История':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
+  title.textContent=history?'История':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // Match the approved Apple-style header: one Back, centered title,
   // and one contextual action. The Back delegates to existing navigation.
   back.hidden=false;
@@ -198,7 +205,7 @@
    add.innerHTML=history?searchIcon:plusIcon;
    add.dataset.svHeaderIcon=nextIcon;
   }
-  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
+  add.setAttribute('aria-label',history?'Поиск в истории действий':active==='notes'?'Создать текстовую заметку':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
   add.title=history?'Поиск по истории':'';
   add.setAttribute('aria-haspopup',String(!history&&(active==='calendar'||active==='business')));
   add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
@@ -221,6 +228,8 @@
    return;
   }
   if(target===activeSection())return;
+  // Stay in ONE stable header/tab bar. Only switch the content panel.
+  if(notesPage?.open)notesPage.close();
   if(createMenu){createMenu.hidden=true;calendarAdd?.setAttribute('aria-expanded','false');add.setAttribute('aria-expanded','false');}
   closeBusinessCreate();
   const fromCalendar=!calendar.hidden;
@@ -286,7 +295,7 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:17,sync,
-  isNotesInline:()=>false
+  version:18,sync,
+  isNotesInline:()=>true
  });
 })();
