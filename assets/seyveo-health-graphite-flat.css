@@ -703,7 +703,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:.73!important;
 }
 
-/* HEALTH LIGHT · slim pearl-plastic rim with gentle convex edge v66.
+/* HEALTH LIGHT · flat matte center with only a microscopic inner rim shadow v67.
    The global dock is a single DOM instance; this sheet changes ONLY its
    appearance while portaled inside the Health dialog in the white theme.
    No pseudo-surface behind the dock: the capsule and search button own
@@ -718,7 +718,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  --sv-health-height:60px;
  --sv-health-matte:rgba(211,216,223,.62);
  --sv-health-rim:rgba(250,249,248,.94);
- --sv-health-pearl-edge:0 0 0 .65px rgba(180,185,193,.27),0 1.35px 1.8px -.8px rgba(84,92,104,.16),inset -.8px -.9px 1.4px -.65px rgba(74,82,92,.14);
+ --sv-health-pearl-edge:0 0 0 .6px rgba(180,185,193,.23),inset -.45px -.55px 1px -.7px rgba(74,82,92,.085);
  --sv-health-ink:#1C1C1E;
  --sv-health-blue:#007AFF;
  position:fixed!important;
