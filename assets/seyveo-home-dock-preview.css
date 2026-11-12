@@ -170,7 +170,8 @@
 }
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .button-art > .sv-sayvi-sonic {
   display:block!important;
-  stroke:var(--sv-home-dock-ink,#475563)!important;
+  color:var(--sv-home-dock-ink,#475563)!important;
+  stroke:currentColor!important;
   stroke-width:2.75!important;
   stroke-linecap:round!important;
   stroke-linejoin:round!important;
