@@ -514,14 +514,14 @@ function bpJournalOverview(items){
  const bp=avg('s')+'/'+avg('d');
  const oldest=items[items.length-1].bp,newest=items[0].bp;
  const deltaS=newest.s-oldest.s,deltaD=newest.d-oldest.d;
- let trend='Для оценки изменения нужны измерения в разные дни.';
+ let trend='Добавьте замеры в другие дни для сравнения.';
  if(items.length>=2&&newest.date&&oldest.date&&newest.date!==oldest.date){
   const sign=x=>x>0?'+'+x:String(x);
-  trend='Первый и последний замеры периода: изменение верхнего '+sign(deltaS)+', нижнего '+sign(deltaD)+' мм рт. ст. Это разница отдельных измерений, не доказанный тренд.';
+  trend='Изменение: верхнее '+sign(deltaS)+', нижнее '+sign(deltaD)+' мм рт. ст. (не подтверждённый тренд).';
  }
  const days=new Set(items.map(x=>x.bp.date).filter(Boolean)).size;
- let note=items.length<4||days<3?' Пока мало данных для сравнения.':' Для динамики сравнивайте замеры в похожих условиях.';
- return {average:bp+' мм рт. ст.'+p,insight:items.length+' измерений за '+days+' '+(days===1?'день':'дн.')+'. '+trend+note};
+ let note=items.length<4||days<3?'':' Сравнивайте замеры в похожих условиях.';
+ return {average:bp+' мм рт. ст.'+p,insight:trend+note};
 }
 function renderBpJournal(){
  const root=$('calendarBpJournal');if(!root)return;
@@ -727,7 +727,7 @@ function renderHealthOverview(){
  const bp=bpParse(latest);
  const value=$('calHealthPressureValue'),date=$('calHealthPressureDate');
  const last=$('calendarBpQuickLast');
- if(last){last.hidden=!bp;last.textContent=bp?'Последний замер: '+bp.s+'/'+bp.d+' · пульс '+(bp.p===null?'—':bp.p):'';}
+ if(last){last.hidden=true;last.textContent='';}
  if(bp){
   value.textContent=bp.s+'/'+bp.d+' мм рт. ст.'+
    (bp.p!==null?' · '+bp.p+' уд/мин':'');
