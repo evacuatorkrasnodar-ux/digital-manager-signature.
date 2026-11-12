@@ -57,7 +57,8 @@ html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack
 }
 /* Full-page returns live outside dialogs. Keep the existing position,
    42–44px tap geometry and individual click handlers untouched. */
-html body #svWorkShell #svWorkBack,
+/* Work back is owned only by seyveo-work-shell.css to avoid two
+   competing materials. The Sayvi back keeps the approved flat treatment. */
 html body #sayviSurfacePage #sayviSurfaceBack{
   border:0!important;
   border-radius:50%!important;
@@ -68,11 +69,9 @@ html body #sayviSurfacePage #sayviSurfaceBack{
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
-html body #svWorkShell #svWorkBack:active,
 html body #sayviSurfacePage #sayviSurfaceBack:active{
   background:var(--sv-back-flat-pressed)!important;
 }
-html body #svWorkShell #svWorkBack svg,
 html body #sayviSurfacePage #sayviSurfaceBack svg{
   stroke:currentColor!important;
   stroke-width:1.45!important;
