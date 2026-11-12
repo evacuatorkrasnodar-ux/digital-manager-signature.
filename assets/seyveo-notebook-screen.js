@@ -1,59 +1,52 @@
-/* SEYVEO Notebook: native, non-modal page controller.
- * One page, one nav, no duplicate header, no dock reparenting, no DOM rebuild.
- * Existing note storage and editor APIs remain the sole data owners. */
+/* SEYVEO Notebook · one in-flow Work tab, November 2026.
+ * Legacy note APIs expect #notesDialog.open / show() / close().
+ * Keep their storage, autosave and editors; never create a modal, duplicate
+ * navigation/header, detached overlay, focus jump or moving dock. */
 (()=>{
  'use strict';
  const page=document.getElementById('notesDialog');
  if(!page||page.tagName!=='SECTION')return;
- const nav=page.querySelector('#svNotebookWorkTabs');
- const back=page.querySelector('#svNotebookBack');
- const add=page.querySelector('#svNotebookAdd');
- const dock=document.querySelector('footer.dock');
- const topLevelRoutes=new Set(['navHome','navTasks','navPicture','navManage','assistantButton']);
+ const tasks=document.getElementById('tasksPage');
+ const calendar=document.getElementById('calendarPage');
 
- // Drop-in surface compatibility for the old notebook API. Existing callers
- // can continue using .open/.show()/.close() without invoking Safari's dialog
- // top layer, autofocus or scroll-restoration machinery.
- Object.defineProperty(page,'open',{configurable:true,get(){return page.hasAttribute('open')}});
+ Object.defineProperty(page,'open',{
+  configurable:true,
+  get(){return page.hasAttribute('open');}
+ });
  page.show=function(){
   if(page.open)return;
+  // Notebook belongs to Work. If launched from another area, enter Work
+  // first; the shared Work header/tabs remain the only navigation surface.
+  if(tasks?.hidden&&calendar?.hidden){
+   if(typeof window.SEYVEO_UNIFIED_TASKS?.openPersonal==='function')
+    window.SEYVEO_UNIFIED_TASKS.openPersonal();
+   else if(location.hash!=='#tasks')location.hash='#tasks';
+  }
   page.hidden=false;
   page.setAttribute('open','');
+  window.SEYVEO_WORK_SHELL?.sync?.();
  };
  page.showModal=page.show;
  page.close=function(){
   if(!page.open)return;
   page.removeAttribute('open');
   page.hidden=true;
+  window.SEYVEO_WORK_SHELL?.sync?.();
   page.dispatchEvent(new Event('close'));
  };
  page.hidden=true;
  page.removeAttribute('open');
- back?.addEventListener('click',()=>page.close());
- add?.addEventListener('click',()=>window.SEYVEO_NOTE_LAUNCH?.launch?.('noteModeText'));
 
- nav?.addEventListener('click',event=>{
-  const button=event.target.closest('button[data-sv-work-tab]');
-  if(!button||!nav.contains(button)||!page.open)return;
-  const target=button.dataset.svWorkTab;
-  if(target==='notes')return;
-  const workTabs=document.getElementById('svWorkTabs');
-  const delegate=workTabs?.querySelector('button[data-sv-work-tab="'+target+'"]');
-  // Keep the underlying Work destination ready before revealing it.
-  if(delegate&&!delegate.hidden&&!workTabs.hidden)delegate.click();
-  else if(target==='personal'){
-   window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
-  }else if(target==='calendar'){
-   location.hash='#calendar';
-  }else if(target==='business'){
-   window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('preserve');
-  }
-  page.close();
- });
+ // Shared dock has its own original handlers; these only hide the Notebook,
+ // never move, resize or reconstruct the dock.
+ const dock=document.querySelector('footer.dock');
+ const routes=new Set(['navHome','navTasks','navPicture','navManage','assistantButton']);
  dock?.addEventListener('click',event=>{
   if(!page.open)return;
-  const target=event.target.closest?.('button');
-  if(target&&topLevelRoutes.has(target.id))page.close();
+  const button=event.target.closest?.('button');
+  if(button&&routes.has(button.id))page.close();
  },true);
- window.SEYVEO_NOTEBOOK_SCREEN=Object.freeze({version:2,show:()=>page.show(),close:()=>page.close()});
+ window.SEYVEO_NOTEBOOK_SCREEN=Object.freeze({
+  version:3,show:()=>page.show(),close:()=>page.close()
+ });
 })();
