@@ -18,13 +18,13 @@ const text=(tag,value,cls)=>{
 };
 const stamp=value=>dateOk(value)?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(new Date(value+'T12:00:00')):'—';
 const format=n=>new Intl.NumberFormat('ru-RU').format(n);
-const def=()=>({water:{},waterGoal:0,sessions:{},medications:[],medLogs:{},sleep:[],cycleEnabled:false,cycleLength:28,cycles:[]});
+const def=()=>({water:{},waterGoal:0,sessions:{},medications:[],medLogs:{},medTakenAt:{},sleep:[],cycleEnabled:false,cycleLength:28,cycles:[]});
 function load(){
  try{
   const value=JSON.parse(localStorage.getItem(KEY)||'null');
   if(!value||typeof value!=='object'||Array.isArray(value))return def();
   const base=def();
-  for(const name of ['water','sessions','medLogs'])if(value[name]&&typeof value[name]==='object'&&!Array.isArray(value[name]))base[name]=value[name];
+  for(const name of ['water','sessions','medLogs','medTakenAt'])if(value[name]&&typeof value[name]==='object'&&!Array.isArray(value[name]))base[name]=value[name];
   for(const name of ['medications','sleep','cycles'])if(Array.isArray(value[name]))base[name]=value[name].slice(-250);
   base.waterGoal=Number.isInteger(value.waterGoal)&&value.waterGoal>=0&&value.waterGoal<=6000?value.waterGoal:0;
   base.cycleEnabled=value.cycleEnabled===true;
@@ -676,8 +676,8 @@ host.addEventListener('click',event=>{
   const key=btn.dataset.pwTaken+'|'+today();
   const wasTaken=state.medLogs[key]==='taken';
   if(save(d=>{
-   if(wasTaken)delete d.medLogs[key];
-   else d.medLogs[key]='taken';
+   if(wasTaken){delete d.medLogs[key];delete d.medTakenAt[key];}
+   else {d.medLogs[key]='taken';d.medTakenAt[key]=Date.now();}
   })){
    renderMeds();
    // Keep focus in the same row after replacing the button, without scrolling.
@@ -690,7 +690,7 @@ host.addEventListener('click',event=>{
  if(btn.dataset.pwDelMed){
   if(!confirm('Удалить назначение из личного журнала?'))return;
   if(save(d=>{d.medications=d.medications.filter(r=>r.id!==btn.dataset.pwDelMed);
-    for(const k of Object.keys(d.medLogs))if(k.startsWith(btn.dataset.pwDelMed+'|'))delete d.medLogs[k];
+    for(const k of Object.keys(d.medLogs))if(k.startsWith(btn.dataset.pwDelMed+'|')){delete d.medLogs[k];delete d.medTakenAt[k];}
   })){renderMeds();notice('Назначение удалено.');}return;
  }
  if(btn.dataset.pwDelSleep){
