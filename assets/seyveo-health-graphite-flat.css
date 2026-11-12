@@ -761,6 +761,12 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 :root[data-theme="light"] body
  dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  > footer.dock.sv-shared-dock{
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
  --sv-dock-master-ink:rgba(31,34,39,.88);
  --seyveo-engrave-ink:rgba(31,34,39,.78);
  --seyveo-engrave-active:rgba(16,18,22,.96);
@@ -783,8 +789,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  box-shadow:
    inset 0 1px 0 rgba(255,255,255,.93),
    inset 0 -1px 1px rgba(118,125,135,.12),
-   0 0 0 .5px rgba(255,255,255,.72),
-   0 4px 13px rgba(33,40,50,.10)!important;
+   0 0 0 .5px rgba(255,255,255,.72)!important;
 }
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"] body
