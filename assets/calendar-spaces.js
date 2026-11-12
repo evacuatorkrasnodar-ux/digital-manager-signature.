@@ -390,6 +390,80 @@ for(const id of ['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse']){
 /* An explicit second measurement is a separate record linked to the first.
    The call to emergency care is never delayed by the repeat suggestion. */
 let bpRepeatSourceId='',bpNotice=null;
+/* SEYVEO emergency assistance after a confirmed repeat measurement.
+   Use the original Sayvi mark (assets/sayvi-mark.svg via .sv-sayvi-symbol);
+   never start a phone call without a user's tap. */
+const bpEmergencyScreen=document.createElement('section');
+bpEmergencyScreen.id='svBpEmergencyScreen';
+bpEmergencyScreen.setAttribute('role','dialog');
+bpEmergencyScreen.setAttribute('aria-modal','true');
+bpEmergencyScreen.setAttribute('aria-labelledby','svBpEmergencyTitle');
+bpEmergencyScreen.hidden=true;
+bpEmergencyScreen.innerHTML=`
+ <div class="sv-bp-emergency-content">
+  <div class="sv-bp-emergency-brand"><span class="sv-sayvi-symbol" aria-hidden="true"></span><span>Сэйви</span></div>
+  <h2 id="svBpEmergencyTitle">Давление очень высокое</h2>
+  <div class="sv-bp-emergency-reading"><strong id="svBpEmergencyNumbers"></strong><span>мм рт. ст. · повторный замер</span></div>
+  <p class="sv-bp-emergency-copy">При боли в груди, одышке, нарушении речи или зрения, внезапной слабости — немедленно вызывайте скорую.</p>
+  <a class="sv-bp-emergency-call" href="tel:112" aria-label="Позвонить в экстренную службу 112"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.32.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z"/></svg></a>
+  <strong class="sv-bp-emergency-call-label">Вызвать скорую · 112</strong>
+  <button class="sv-bp-emergency-more" type="button" id="svBpEmergencyMore" aria-expanded="false">Нет опасных симптомов — что делать?</button>
+  <p id="svBpEmergencyGuidance" hidden>Повторное давление остаётся очень высоким. Срочно свяжитесь с медицинским специалистом сегодня. Если симптомы появились — вызывайте скорую немедленно.</p>
+  <button class="sv-bp-emergency-close" type="button" id="svBpEmergencyClose" aria-label="Вернуться к измерениям">Вернуться к измерениям</button>
+ </div>`;
+document.body.append(bpEmergencyScreen);
+const bpEmergencyStyles=document.createElement('style');
+bpEmergencyStyles.textContent=`
+ #svBpEmergencyScreen[hidden],#svBpEmergencyGuidance[hidden]{display:none!important}
+ #svBpEmergencyScreen{position:fixed;inset:0;z-index:2147483000;box-sizing:border-box;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 35px) 22px calc(env(safe-area-inset-bottom,0px) + 22px);background:var(--bg,#11161b);color:var(--text,#fff);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
+ .sv-bp-emergency-content{max-width:420px;min-height:100%;margin:auto;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0}
+ .sv-bp-emergency-brand{display:flex;flex-direction:column;align-items:center;gap:13px;font-size:19px;font-weight:670}
+ .sv-bp-emergency-brand .sv-sayvi-symbol{width:60px;height:60px;color:currentColor}
+ #svBpEmergencyTitle{font-size:clamp(27px,8vw,37px);line-height:1.12;letter-spacing:-.04em;font-weight:750;margin:34px 0 25px;max-width:360px}
+ .sv-bp-emergency-reading{box-sizing:border-box;width:100%;padding:21px 12px 20px;background:rgba(215,44,54,.12);border:1px solid rgba(225,57,63,.32);border-radius:26px;display:flex;flex-direction:column;gap:7px}
+ .sv-bp-emergency-reading strong{font-size:clamp(46px,14vw,68px);line-height:1.1;letter-spacing:-.055em;color:#ef4444;font-variant-numeric:tabular-nums}
+ .sv-bp-emergency-reading span{font-size:13px;opacity:.75}
+ .sv-bp-emergency-copy{font-size:15px;line-height:1.5;margin:25px 0 25px;max-width:355px}
+ .sv-bp-emergency-call{width:102px;height:102px;border-radius:50%;display:grid;place-items:center;color:#fff;background:#df252f;box-shadow:0 8px 28px rgba(202,25,40,.19);text-decoration:none;flex-shrink:0}
+ .sv-bp-emergency-call svg{width:46px;height:46px}
+ .sv-bp-emergency-call-label{margin:13px 0 26px;font-size:17px}
+ .sv-bp-emergency-more{background:transparent;color:inherit;border:0;border-bottom:1px solid currentColor;padding:5px 0;font:inherit;font-size:14px;cursor:pointer}
+ #svBpEmergencyGuidance{font-size:14px;line-height:1.45;max-width:350px;margin:15px 0 0}
+ .sv-bp-emergency-close{background:transparent;border:0;color:inherit;opacity:.65;font:inherit;font-size:13px;min-height:44px;margin-top:18px;padding:8px 14px;cursor:pointer}
+ @media(max-height:680px){#svBpEmergencyScreen{padding-top:calc(env(safe-area-inset-top,0px) + 14px)}#svBpEmergencyTitle{margin:18px 0 15px}.sv-bp-emergency-copy{margin:17px 0}.sv-bp-emergency-call{width:82px;height:82px}}
+`;
+document.head.append(bpEmergencyStyles);
+let bpEmergencyPreviousFocus=null;
+function showBpEmergency(sys,dia){
+ const screen=bpEmergencyScreen;
+ $('svBpEmergencyNumbers').textContent=sys+' / '+dia;
+ $('svBpEmergencyGuidance').hidden=true;
+ $('svBpEmergencyMore').setAttribute('aria-expanded','false');
+ bpEmergencyPreviousFocus=document.activeElement;
+ screen.hidden=false;
+ $('svBpEmergencyCall')?.focus();
+ screen.querySelector('.sv-bp-emergency-call').focus({preventScroll:true});
+}
+function hideBpEmergency(){
+ bpEmergencyScreen.hidden=true;
+ if(bpEmergencyPreviousFocus?.isConnected)bpEmergencyPreviousFocus.focus({preventScroll:true});
+}
+$('svBpEmergencyClose').addEventListener('click',hideBpEmergency);
+$('svBpEmergencyMore').addEventListener('click',()=>{
+ const panel=$('svBpEmergencyGuidance');
+ panel.hidden=!panel.hidden;
+ $('svBpEmergencyMore').setAttribute('aria-expanded',String(!panel.hidden));
+});
+bpEmergencyScreen.addEventListener('keydown',event=>{
+ if(event.key==='Escape'){event.preventDefault();hideBpEmergency();}
+ if(event.key==='Tab'){
+  const controls=[...bpEmergencyScreen.querySelectorAll('a,button')].filter(el=>!el.hidden);
+  if(!controls.length)return;
+  const first=controls[0],last=controls[controls.length-1];
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+ }
+});
 function bpRepeatReading(id){return read().find(x=>x.space==='health'&&x.kind==='Давление'&&x.id===id)||null}
 function updateBpRepeatPanel(){
  const box=$('calendarBpRepeatPanel');if(!box)return;
@@ -965,7 +1039,13 @@ function save(event){
  if(isBP&&!old){
   const linked=row.repeatOf?bpRepeatReading(row.repeatOf):null;
   const info=bpAssess(sys,dia,pulse);
-  if(linked)bpNotice={first:linked.id,second:row.id};
+  if(linked){
+   bpNotice={first:linked.id,second:row.id};
+   const original=bpParse(linked);
+   if(original&&(original.s>=180||original.d>=120)&&(sys>=180||dia>=120)){
+    showBpEmergency(sys,dia);
+   }
+  }
   else if(['raised','high','urgent','low'].includes(info.level))bpNotice={first:row.id,second:''};
   else bpNotice=null;
  }
