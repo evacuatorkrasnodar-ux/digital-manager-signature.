@@ -480,3 +480,59 @@
   transform-origin:50% 50%!important;
   shape-rendering:geometricPrecision!important;
 }
+
+
+/* SEYVEO / white dock icon optics v11 (2026-11-12).
+ * Apple-inspired restraint: matched perceived size, not giant icon boxes.
+ * Keep the approved 264px capsule, 63px height, 4 hit areas, search circle,
+ * brand artwork, voice handlers, and dark / Health / Music / Browser untouched.
+ */
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+) > :is(#navHome,#navTasks) > svg {
+ box-sizing:border-box!important;
+ flex:0 0 26px!important;
+ width:26px!important; min-width:26px!important; max-width:26px!important;
+ height:26px!important; min-height:26px!important; max-height:26px!important;
+ stroke-width:1.7!important;
+}
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+) > :is(#navHome,#navTasks) > svg .sv-dock-modern-glyph {
+ stroke-width:1.7!important;
+}
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+) > #navTasks > svg .sv-dock-modern-glyph circle {
+ fill:currentColor!important;
+ stroke:none!important;
+}
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+) > #navPicture > svg.seyveo-my-signature {
+ box-sizing:border-box!important;
+ flex:0 0 26px!important;
+ width:26px!important;min-width:26px!important;max-width:26px!important;
+ height:24px!important;min-height:24px!important;max-height:24px!important;
+ stroke-width:1.7!important;
+ transform:none!important;transform-origin:center center!important;
+}
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+) #assistantButton .button-art > .sv-sayvi-sonic {
+ transform-box:view-box!important;
+ transform-origin:50% 50%!important;
+ transform:scale(.94)!important;
+ stroke-width:2.15!important;
+}
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+) #assistantButton .sv-sayvi-sonic :is(.sv-sayvi-ray,.sv-sayvi-core) {
+ stroke-width:2.15!important;
+}
