@@ -30,7 +30,7 @@ entry.setAttribute('aria-label','Экстренная карта Сэйви · �
 entry.setAttribute('title','Медпаспорт');
 entry.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z" fill="currentColor"/></svg>';
 dialog.append(entry);
-const overlay=document.createElement('section');
+const overlay=document.createElement('dialog');
 overlay.id='svMedicalOverlay';
 overlay.hidden=true;
 overlay.setAttribute('role','dialog');
@@ -222,10 +222,12 @@ function openPassport(){
  previousFocus=document.activeElement;
  overlay.hidden=false;
  formDisplay(false);
+ if(!overlay.open)overlay.showModal();
  $('svMedicalBack').focus({preventScroll:true});
 }
 function closePassport(){
  if(isEditing){formDisplay(false);return}
+ if(overlay.open)overlay.close();
  overlay.hidden=true;
  if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});
 }
@@ -285,7 +287,8 @@ overlay.addEventListener('keydown',event=>{
 });
 function syncEntry(){entry.hidden=!dialog.open||dialog.dataset.space!=='health'}
 window.addEventListener('seyveo:space-opened',syncEntry);
-dialog.addEventListener('close',()=>{syncEntry();overlay.hidden=true;isEditing=false});
+overlay.addEventListener('cancel',event=>{event.preventDefault();closePassport();});
+dialog.addEventListener('close',()=>{syncEntry();if(overlay.open)overlay.close();overlay.hidden=true;isEditing=false});
 new MutationObserver(syncEntry).observe(dialog,{attributes:true,attributeFilter:['data-space','open']});
 syncEntry();
 })();
