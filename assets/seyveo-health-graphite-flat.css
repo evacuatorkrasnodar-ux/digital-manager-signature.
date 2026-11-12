@@ -107,30 +107,31 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 
 /* 2. One compact native-feeling header. */
 html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > #calendarSpaceTitleHeading{
- box-sizing:border-box!important;display:block!important;
- min-height:48px!important;margin:0 0 9px!important;
- padding:8px 50px 4px 58px!important;
- font:700 22px/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
- letter-spacing:-.035em!important;
- color:var(--health-text)!important;
- -webkit-text-fill-color:var(--health-text)!important;
+ box-sizing:border-box!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;
+ width:100%!important;height:54px!important;min-height:54px!important;
+ margin:0 0 12px!important;padding:0 55px!important;
+ font:600 17px/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
+ text-align:center!important;letter-spacing:-.025em!important;
+ color:var(--health-text)!important;-webkit-text-fill-color:var(--health-text)!important;
  background:transparent!important;border:0!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
 }
 html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > button.seyveo-dialog-close.sv-nav-arrow{
  position:absolute!important;z-index:10!important;
- top:calc(15px + env(safe-area-inset-top,0px))!important;
+ top:calc(18px + env(safe-area-inset-top,0px))!important;
  left:calc(14px + env(safe-area-inset-left,0px))!important;
  right:auto!important;bottom:auto!important;transform:none!important;
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  width:44px!important;height:44px!important;min-width:44px!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:999px!important;
- background:var(--health-action)!important;
- color:var(--health-action-text)!important;
- box-shadow:none!important;
+ background:var(--health-inset)!important;
+ color:var(--health-text)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
 }
 :root[data-theme="light"] #calendarSpaceDialog[data-space="health"] > button.seyveo-dialog-close.sv-nav-arrow{
- background:#E9EAED!important;color:#1C1C1E!important;
+ background:#E7E8EC!important;color:#1C1C1E!important;
 }
 #calendarSpaceDialog[data-space="health"] > button.seyveo-dialog-close.sv-nav-arrow svg{
  width:19px!important;height:19px!important;fill:none!important;
@@ -679,52 +680,131 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  }
 }
 
-/* Health white theme only: frosted polymer-rim dock finish · Nov 2026.
-   This styles the TWO EXISTING dock surfaces, only while the Health
-   workspace is open in the light theme. It never changes dock geometry,
-   routes, icon drawing, handlers, the Health page background or other docks. */
-:root[data-theme="light"] body
- dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
- > footer.dock.sv-shared-dock{
- background:transparent!important;
- background-image:none!important;
- border:0!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- --sv-dock-master-ink:rgba(31,34,39,.88);
- --seyveo-engrave-ink:rgba(31,34,39,.78);
- --seyveo-engrave-active:rgba(16,18,22,.96);
- --seyveo-nav-ink:#1C1C1E;
+/* Health header action: one genuine +, opens the existing number wheel.
+   Scoping is deliberate: Home and every other dock remain untouched. */
+#calendarSpaceDialog .sv-health-header-add{display:none!important}
+#calendarSpaceDialog[data-space="health"] > .sv-health-header-add:not([hidden]){
+ position:absolute!important;z-index:10!important;
+ top:calc(18px + env(safe-area-inset-top,0px))!important;
+ right:calc(14px + env(safe-area-inset-right,0px))!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;height:44px!important;min-width:44px!important;
+ padding:0!important;margin:0!important;border:0!important;
+ border-radius:50%!important;background:var(--health-inset)!important;
+ color:var(--health-text)!important;box-shadow:none!important;
+ -webkit-appearance:none;appearance:none;
 }
-:root[data-theme="light"] body
- dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
- > footer.dock.sv-shared-dock::before,
-:root[data-theme="light"] body
- dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
- > footer.dock.sv-shared-dock::after{
- box-sizing:border-box!important;
- border:1px solid rgba(176,183,191,.36)!important;
- background:linear-gradient(150deg,
-   rgba(255,255,255,.83) 0%,
-   rgba(248,249,251,.72) 47%,
-   rgba(231,234,239,.76) 100%)!important;
- -webkit-backdrop-filter:blur(22px) saturate(135%)!important;
- backdrop-filter:blur(22px) saturate(135%)!important;
- box-shadow:
-   inset 0 1px 0 rgba(255,255,255,.93),
-   inset 0 -1px 1px rgba(118,125,135,.12),
-   0 0 0 .5px rgba(255,255,255,.72)!important;
+#calendarSpaceDialog[data-space="health"] > .sv-health-header-add svg{
+ width:22px!important;height:22px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#calendarSpaceDialog[data-space="health"] > :is(.sv-health-header-add,.seyveo-dialog-close):active{
+ opacity:.73!important;
+}
+
+/* Apple-inspired WHITE Health dock: ONE capsule + ONE search circle.
+   Own and replace the prior Health dock surface here, not in Home's styles.
+   The four existing actions keep their routing and voice behavior.
+   Main capsule width is a single configurable token for later screen variants. */
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock{
+ --sv-health-dock-capsule:clamp(214px,58vw,244px);
+ --sv-health-dock-search:56px;
+ --sv-health-dock-height:56px;
+ --seyveo-dock-height:var(--sv-health-dock-height);
+ --seyveo-dock-icon-size:21px;
+ --seyveo-dock-icon-stroke:1.55;
+ --seyveo-nav-ink:#101114;
+ --seyveo-engrave-ink:#1C1C1E;
+ --seyveo-engrave-active:#101114;
+ --sv-dock-master-ink:#1C1C1E;
+ --sv-split-gap:0px;
+ position:fixed!important;
+ left:50%!important;right:auto!important;top:auto!important;
+ bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;
+ transform:translateX(-50%)!important;
+ display:grid!important;
+ grid-template-columns:9px repeat(4,minmax(0,calc((var(--sv-health-dock-capsule) - 18px)*.25))) 9px minmax(12px,1fr) var(--sv-health-dock-search)!important;
+ gap:0!important;align-items:center!important;justify-items:center!important;
+ width:min(400px,calc(100vw - 18px))!important;max-width:400px!important;
+ height:var(--sv-health-dock-height)!important;min-height:var(--sv-health-dock-height)!important;
+ padding:0!important;margin:0!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ isolation:isolate!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock::before,
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock::after{
+ box-sizing:border-box!important;content:""!important;display:block!important;
+ position:absolute!important;pointer-events:none!important;z-index:0!important;
+ top:0!important;bottom:auto!important;height:56px!important;
+ border-radius:999px!important;
+ border:1px solid rgba(157,164,176,.30)!important;
+ background:linear-gradient(150deg,rgba(255,255,255,.78),rgba(237,239,243,.72) 58%,rgba(224,227,232,.83))!important;
+ -webkit-backdrop-filter:blur(24px) saturate(125%)!important;
+ backdrop-filter:blur(24px) saturate(125%)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.92),inset 0 -1px 1px rgba(120,127,138,.11),0 0 0 .5px rgba(255,255,255,.62)!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock::before{
+ left:0!important;right:auto!important;width:var(--sv-health-dock-capsule)!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock::after{
+ left:auto!important;right:0!important;width:var(--sv-health-dock-search)!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > :is(.nav-home,.nav-tasks,.nav-picture){
+ position:relative!important;top:auto!important;left:auto!important;right:auto!important;
+ transform:none!important;z-index:1!important;
+ height:54px!important;min-height:54px!important;width:100%!important;
+ padding:3px 0!important;margin:0!important;gap:2px!important;
+ background:transparent!important;border:0!important;border-radius:999px!important;
+ box-shadow:none!important;color:#202124!important;
+ font-size:10px!important;font-weight:450!important;line-height:1.15!important;
+ letter-spacing:-.02em!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > .nav-item:is(.active,[aria-current="page"]){
+ background:rgba(255,255,255,.48)!important;box-shadow:none!important;
+ color:#0D0D0F!important;font-weight:590!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > .nav-item svg{
+ width:21px!important;height:21px!important;stroke:currentColor!important;
+ stroke-width:1.55!important;fill:none!important;filter:none!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > #assistantButton{
+ position:relative!important;z-index:1!important;
+ justify-self:center!important;align-self:center!important;
+ width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;
+ margin:0!important;border:0!important;background:transparent!important;
+ box-shadow:none!important;filter:none!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > #assistantButton .button-art{
+ width:48px!important;height:48px!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > #navManage{
+ position:relative!important;z-index:1!important;
+ grid-column:8!important;grid-row:1!important;
+ width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;
+ margin:0!important;padding:0!important;
+ display:grid!important;place-items:center!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#087DFA!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > #navManage svg{
+ width:25px!important;height:25px!important;stroke:#087DFA!important;
+ stroke-width:1.85!important;fill:none!important;filter:none!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > #navManage span{
+ display:none!important;
+}
+@media(max-width:340px){
+ :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock{
+  --sv-health-dock-capsule:214px;
+  width:calc(100vw - 12px)!important;
+ }
 }
 @media(prefers-reduced-transparency:reduce){
- :root[data-theme="light"] body
- dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
- > footer.dock.sv-shared-dock::before,
- :root[data-theme="light"] body
- dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
- > footer.dock.sv-shared-dock::after{
-  background:#EEF0F3!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
+ :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock::before,
+ :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock::after{
+  background:#ECEEF1!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
