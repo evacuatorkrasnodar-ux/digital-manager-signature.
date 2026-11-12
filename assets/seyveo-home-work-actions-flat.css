@@ -294,26 +294,28 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
- border:1.25px solid #0B0B0D!important;
- background:transparent!important;color:#0B0B0D!important;
+ border:var(--sv-card-sayvi-outline,1.25px solid #0B0B0D)!important;
+ background:var(--sv-card-sayvi-bg,transparent)!important;
+ color:var(--sv-card-sayvi-ink,#0B0B0D)!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- background:#F0F1F3!important;color:#111113!important;
+ background:var(--sv-card-action-neutral-bg,#F0F1F3)!important;color:#111113!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
- width:27px!important;min-width:27px!important;max-width:27px!important;
- height:27px!important;min-height:27px!important;max-height:27px!important;
- flex:0 0 27px!important;
+ width:var(--sv-card-sayvi-glyph,27px)!important;min-width:var(--sv-card-sayvi-glyph,27px)!important;max-width:var(--sv-card-sayvi-glyph,27px)!important;
+ height:var(--sv-card-sayvi-glyph,27px)!important;min-height:var(--sv-card-sayvi-glyph,27px)!important;max-height:var(--sv-card-sayvi-glyph,27px)!important;
+ flex:0 0 var(--sv-card-sayvi-glyph,27px)!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol > path{
- fill:none!important;stroke:#0B0B0D!important;stroke-width:1.5!important;
+ fill:none!important;stroke:var(--sv-card-sayvi-ink,#0B0B0D)!important;
+ stroke-width:var(--sv-card-sayvi-stroke,1.5)!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol > circle{
- fill:#0B0B0D!important;stroke:none!important;
+ fill:var(--sv-card-sayvi-ink,#0B0B0D)!important;stroke:none!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]) .sv-card-symbol,
