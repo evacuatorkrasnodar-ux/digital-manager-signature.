@@ -5250,8 +5250,8 @@ function renderNotes(){
  });
 }
 function openNotes(){
- // Keep the underlying Work page at its exact scroll position when
- // a full-screen Notebook dialog enters Safari's modal top layer.
+ // Rebuilt Notebook is a non-modal fixed page: keep the Work page at
+ // its exact scroll position when the Notebook is shown.
  const scrolling=document.scrollingElement;
  const pageY=scrolling?.scrollTop||0;
  const app=document.querySelector('.app');
@@ -5261,7 +5261,7 @@ function openNotes(){
  const dialog=$('notesDialog');
  if(!dialog.open){
   dialog.show();
-  // Native showModal() can focus an off-screen control and scroll the page.
+  // Programmatic focus can still scroll on Safari; prevent it.
   // Focus the visible surface instead, without forcing viewport movement.
   if(!dialog.hasAttribute('tabindex'))dialog.setAttribute('tabindex','-1');
   dialog.focus({preventScroll:true});
