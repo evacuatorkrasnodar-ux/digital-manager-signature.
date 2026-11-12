@@ -361,10 +361,10 @@
   top:0!important;
   right:0!important;left:0!important;
   bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
-  width:100%!important;max-width:100%!important;
+  width:100%!important;max-width:530px!important;
   height:auto!important;max-height:none!important;
   transform:none!important;
-  margin:0!important;
+  margin:0 auto!important;
   padding:calc(16px + env(safe-area-inset-top,0px))
            max(20px,calc(12px + env(safe-area-inset-right,0px)))
            16px
