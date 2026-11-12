@@ -1024,3 +1024,19 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  outline:2px solid var(--text)!important;
  outline-offset:2px!important;
 }
+
+
+/* The perimeter diagnostic reported a non-zero outline on the root HTML/body,
+   while the Health dialog itself already has zero border/shadow. Remove only
+   viewport-sized root focus rings while Health is open; preserve focus rings
+   on every interactive control. */
+@media (max-width:720px){
+ html:has(> body > #calendarSpaceDialog[open][data-space="health"]),
+ html:has(#calendarSpaceDialog[open][data-space="health"]) > body{
+  outline:0!important;
+  outline-width:0!important;
+  outline-offset:0!important;
+  border:0!important;
+  box-shadow:none!important;
+ }
+}
