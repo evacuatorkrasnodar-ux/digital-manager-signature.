@@ -4,7 +4,8 @@
    No legacy health styling is imported. */
 #calendarSpaceDialog[data-space="health"]{
  --health-bg:#18191B;--health-surface:#242426;--health-action:#38383A;
- --health-text:#FFFFFF;--health-muted:#D1D1D6;--health-rule:rgba(225,225,230,.14);
+ --health-text:#FFFFFF;--health-muted:#FFFFFF;--health-rule:rgba(225,225,230,.14);
+ --text:#FFFFFF;--secondary:#FFFFFF;
  color:var(--health-text)!important;
  background:var(--health-bg)!important;background-image:none!important;
  border:0!important;border-radius:0!important;outline:0!important;
@@ -536,4 +537,24 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-save{
  background:#38383A!important;background-image:none!important;
  color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;opacity:1!important;
+}
+
+/* Health typography: true white, no inherited muted text colours. */
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] :is(
+ .cal-bp-home-entry>h3,
+ .cal-bp-home-grid label>span,.cal-bp-home-grid label>small,
+ #calendarBpReport .cal-bp-report-head strong,
+ #calendarBpReportStatus,#calendarBpReportAdvice,
+ #calendarBpJournal .cal-bp-journal-head strong,
+ #calendarBpJournalCount,
+ #calendarBpJournalAverage,#calendarBpJournalInsight,
+ #calendarBpJournal .cal-bp-journal-date,
+ #calendarBpJournal .cal-bp-journal-reading,
+ #calendarBpJournal .cal-bp-journal-summary>span,
+ #pwHealth>.pw-list-title,
+ #pwHealth .pw-card strong,#pwHealth .pw-card small
+){
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ opacity:1!important;
 }
