@@ -3144,24 +3144,29 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div id="svCareScroll" class="sv-care-scroll" tabindex="0" role="region" aria-label="Содержимое личного раздела">
 <p id="calendarSpaceIntro">Ваши записи на этом устройстве</p>
 <section id="calendarHealthOverview" class="cal-health-overview" aria-label="Запись показателей здоровья" hidden>
- <div class="cal-bp-home-entry">
-  <h3>Записать давление</h3>
+ <section class="sv-bp-capture" aria-label="Записать давление">
+  <h3 class="sv-bp-capture-title">Новое измерение</h3>
   <form id="calendarBpQuickForm" autocomplete="off">
-   <div class="cal-bp-home-grid">
-    <label><span>Верхнее</span><input id="calendarBpQuickS" type="number" inputmode="numeric" min="50" max="300" placeholder="130" required><small>мм рт. ст.</small></label>
-    <label><span>Нижнее</span><input id="calendarBpQuickD" type="number" inputmode="numeric" min="30" max="200" placeholder="80" required><small>мм рт. ст.</small></label>
-    <label><span>Пульс</span><input id="calendarBpQuickP" type="number" inputmode="numeric" min="30" max="240" placeholder="72" required><small>уд/мин</small></label>
+   <div class="sv-bp-pair" role="group" aria-label="Артериальное давление">
+    <label class="sv-bp-number"><span>Верхнее</span><input id="calendarBpQuickS" type="number" inputmode="none" min="50" max="300" placeholder="—" aria-label="Верхнее давление. Коснитесь, чтобы выбрать число" required></label>
+    <span class="sv-bp-pair-slash" aria-hidden="true">/</span>
+    <label class="sv-bp-number"><span>Нижнее</span><input id="calendarBpQuickD" type="number" inputmode="none" min="30" max="200" placeholder="—" aria-label="Нижнее давление. Коснитесь, чтобы выбрать число" required></label>
+    <small class="sv-bp-pair-unit">мм рт. ст.</small>
    </div>
-   <div id="calendarBpQuickAdvice" class="cal-bp-home-advice" aria-live="polite"></div>
+   <div class="sv-bp-pulse">
+    <span class="sv-bp-pulse-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12h4l3-5 4.5 10 3-5h4.5"/></svg>Пульс</span>
+    <label class="sv-bp-pulse-value"><input id="calendarBpQuickP" type="number" inputmode="none" min="30" max="240" placeholder="—" aria-label="Пульс. Коснитесь, чтобы выбрать число" required><span>уд/мин</span></label>
+   </div>
+   <div id="calendarBpQuickAdvice" class="sv-bp-feedback" aria-live="polite"></div>
    <div id="calendarBpQuickEmergency" class="cal-bp-emergency" hidden>
     <strong>Возможна опасная ситуация</strong>
     <p>При боли в груди, одышке, нарушении речи, онемении или резкой слабости немедленно вызывайте скорую. Не ждите повторного замера.</p>
     <div><a href="tel:103">Вызвать 103</a><a href="tel:112">112</a></div>
    </div>
-   <button class="cal-bp-home-save" type="submit">Сохранить измерение</button>
+   <button class="sv-bp-submit" type="submit">Сохранить измерение</button>
   </form>
-  <small id="calendarBpQuickLast" class="cal-bp-quick-last" hidden></small>
- </div>
+  <small id="calendarBpQuickLast" hidden></small>
+ </section>
  <h3 class="cal-health-guide">Показатели</h3>
  <p class="cal-health-guide-hint">Нажмите на показатель, чтобы посмотреть или добавить запись.</p>
  <div class="cal-health-tiles">
@@ -6255,7 +6260,7 @@ syncManager();render();
 <section class="syp-screen" data-syp-screen="history" hidden><div class="syp-panel"><h3>История покупок</h3><p>Здесь появятся подтверждённые операции и доступные чеки после официального подключения банков. Сейчас операций нет.</p></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
 </div></dialog><script src="assets/seyveo-pay.js?v=2"></script><script src="assets/seyveo-family-chat.js?v=3"></script><script src="assets/seyveo-business-command.js?v=183"></script><script src="assets/seyveo-unified-tasks.js?v=70"></script><script src="assets/seyveo-employee-schedule.js?v=2"></script><script src="assets/seyveo-dock-continuity.js?v=3"></script><script src="assets/seyveo-global-search.js?v=12"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=21"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=18"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
-<dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><link rel="stylesheet" href="assets/seyveo-offline-manager.css?v=5"><link rel="stylesheet" href="assets/seyveo-silver-flat-surfaces.css?v=3"><link rel="stylesheet" href="assets/seyveo-mail-guard.css?v=6"><link rel="stylesheet" href="assets/seyveo-smart-contacts.css?v=4"><link rel="stylesheet" href="assets/seyveo-mail-drafts-clean.css?v=2"><link rel="stylesheet" href="assets/seyveo-mail-bulk-clean.css?v=5"><link rel="stylesheet" href="assets/seyveo-notebook-home-scene.css?v=8"><link rel="stylesheet" href="assets/seyveo-home-work-actions-flat.css?v=14"><link rel="stylesheet" href="assets/seyveo-documents-graphite-flat.css?v=10"><link rel="stylesheet" href="assets/seyveo-header-search-flat.css?v=2"><link rel="stylesheet" href="assets/seyveo-phonebook.css?v=3"><link rel="stylesheet" href="assets/seyveo-health-graphite-flat.css?v=36"><link rel="stylesheet" href="assets/seyveo-medical-passport.css?v=10"><script src="assets/seyveo-offline-manager.js?v=2" defer></script>
+<dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><link rel="stylesheet" href="assets/seyveo-offline-manager.css?v=5"><link rel="stylesheet" href="assets/seyveo-silver-flat-surfaces.css?v=3"><link rel="stylesheet" href="assets/seyveo-mail-guard.css?v=6"><link rel="stylesheet" href="assets/seyveo-smart-contacts.css?v=4"><link rel="stylesheet" href="assets/seyveo-mail-drafts-clean.css?v=2"><link rel="stylesheet" href="assets/seyveo-mail-bulk-clean.css?v=5"><link rel="stylesheet" href="assets/seyveo-notebook-home-scene.css?v=8"><link rel="stylesheet" href="assets/seyveo-home-work-actions-flat.css?v=14"><link rel="stylesheet" href="assets/seyveo-documents-graphite-flat.css?v=10"><link rel="stylesheet" href="assets/seyveo-header-search-flat.css?v=2"><link rel="stylesheet" href="assets/seyveo-phonebook.css?v=3"><link rel="stylesheet" href="assets/seyveo-health-graphite-flat.css?v=37"><link rel="stylesheet" href="assets/seyveo-medical-passport.css?v=10"><script src="assets/seyveo-offline-manager.js?v=2" defer></script>
 
 
 <script src="assets/seyveo-recruitment.js?v=2" defer></script><script>
