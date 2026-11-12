@@ -32,6 +32,36 @@
   if(typeof form.requestSubmit==='function')form.requestSubmit(save);
   else save.click();
  });
+ // Match the actual on-screen circles of «Мои дела», not estimated
+ // padding. Both headers are built from the same Shadow DOM factory, but
+ // their parents have different horizontal gutters. Calibrate ONLY these
+ // two buttons; do not move the title, form or 60px dock.
+ const alignButtons=()=>{
+  if(!dialog.open)return;
+  const source=document.querySelector('#svWorkShell > seyveo-work-head');
+  const sourceShadow=source?.shadowRoot;
+  if(!sourceShadow)return;
+  const pairs=[
+   [view.back,sourceShadow.querySelector('.control.back')],
+   [view.add,sourceShadow.querySelector('.control.action')]
+  ];
+  for(const [target,reference] of pairs){
+   if(!target||!reference)continue;
+   const match=reference.getBoundingClientRect();
+   // If Work isn't the currently visible page (e.g. launched from Home),
+   // leave the button in its ordinary shared-header grid position.
+   if(!match.width||!match.height||match.top<0||match.top>140)continue;
+   target.style.transform='none';
+   const actual=target.getBoundingClientRect();
+   const x=(match.left+match.width/2)-(actual.left+actual.width/2);
+   const y=(match.top+match.height/2)-(actual.top+actual.height/2);
+   target.style.transform='translate('+x.toFixed(2)+'px,'+y.toFixed(2)+'px)';
+  }
+ };
+ // MutationObserver runs at the end of the same task as showModal(), before
+ // the next paint, so there is no visible intermediate button movement.
+ new MutationObserver(()=>{if(dialog.open)alignButtons();}).observe(dialog,{attributes:true,attributeFilter:['open']});
+ window.addEventListener('resize',alignButtons,{passive:true});
  const sync=()=>{
   view.title.textContent=title.textContent||'Новое дело';
   view.add.disabled=save.disabled;
@@ -51,6 +81,10 @@
  new MutationObserver(sync).observe(save,{attributes:true,attributeFilter:['disabled','aria-label','title']});
  const syncTheme=()=>{host.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';};
  new MutationObserver(syncTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
- dialog.addEventListener('close',sync);
+ dialog.addEventListener('close',()=>{
+  view.back.style.transform='none';
+  view.add.style.transform='none';
+  sync();
+ });
  window.SEYVEO_TASK_SCREEN=Object.freeze({version:2,sync});
 })();
