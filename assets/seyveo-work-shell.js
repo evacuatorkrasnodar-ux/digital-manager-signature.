@@ -207,7 +207,20 @@
    back.style.setProperty('border-radius','50%','important');
    back.style.setProperty('box-shadow','none','important');
   }else{
-   for(const name of ['background-color','color','border-radius','box-shadow'])back.style.removeProperty(name);
+   // Explicitly apply the approved circular material to Back. An older global
+   // .sv-nav-back style otherwise makes the left control transparent.
+   const light=document.documentElement.dataset.theme==='light';
+   const material=light?'rgba(211,215,222,.42)':'rgba(92,95,101,.40)';
+   const ink=light?'#252930':'#F6F7F8';
+   for(const control of [back,add]){
+    control.style.setProperty('background-color',material,'important');
+    control.style.setProperty('color',ink,'important');
+    control.style.setProperty('border','1px solid rgba(142,149,161,.13)','important');
+    control.style.setProperty('border-radius','50%','important');
+    control.style.setProperty('box-shadow','0 1px 4px rgba(20,25,32,.04)','important');
+    control.style.setProperty('width','44px','important');
+    control.style.setProperty('height','44px','important');
+   }
   }
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
