@@ -980,9 +980,9 @@ function healthDockTab(id,label,icon){
  return btn;
 }
 const healthDockSummary=healthDockTab('svHealthDockSummary','Сводка',
- '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 11.8h3.8l2.1-4.9 3.2 10.2 2.3-5.3h3.6"/><path d="M12 20.7c-3.6-2.2-8.2-5.8-8.2-10.7a4.6 4.6 0 0 1 8.2-2.8 4.6 4.6 0 0 1 8.2 2.8c0 4.9-4.6 8.5-8.2 10.7z" opacity=".38"/></svg>');
+ '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.1C9.2 19.2 2.4 14.5 2.4 9a5.1 5.1 0 0 1 9.6-2.3A5.1 5.1 0 0 1 21.6 9c0 5.5-6.8 10.2-9.6 12.1Z"/></svg>');
 const healthDockAccess=healthDockTab('svHealthDockAccess','Доступ',
- '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.2" y="10.2" width="13.6" height="10.1" rx="2.3"/><path d="M8.3 10.2V7a3.7 3.7 0 0 1 7.4 0v3.2M12 14.5v2.2"/></svg>');
+ '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="7.2" r="3.2"/><circle cx="17.1" cy="7.7" r="2.8"/><path d="M1.7 18.7c0-3.9 2.7-6.3 6.3-6.3s6.3 2.4 6.3 6.3V21H1.7Z"/><path d="M15.3 13.1c4-.9 7 1.3 7 5.3V21h-6.5v-2.3c0-2.3-.2-4.2-.5-5.6Z"/></svg>');
 healthDockActions.append(healthDockSummary,healthDockAccess);
 if(healthDock)healthDock.insertBefore(healthDockActions,healthDock.querySelector('#navManage'));
 const healthAccessPanel=dom('section','sv-health-access-panel');
