@@ -703,7 +703,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:.73!important;
 }
 
-/* HEALTH LIGHT · calibrated flat smoked-silver dock with dimensional pearl RIM v52.
+/* HEALTH LIGHT · natural white pearl polymer, matte without metallic shine v53.
    The global dock is a single DOM instance; this sheet changes ONLY its
    appearance while portaled inside the Health dialog in the white theme.
    No pseudo-surface behind the dock: the capsule and search button own
@@ -717,8 +717,8 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  --sv-health-side:clamp(14px,5vw,22px);
  --sv-health-height:60px;
  --sv-health-matte:rgba(211,216,223,.62);
- --sv-health-rim:linear-gradient(145deg,rgba(255,255,255,.99) 0%,rgba(222,231,243,.90) 27%,rgba(255,255,255,.99) 53%,rgba(165,176,196,.64) 82%,rgba(248,251,255,.97) 100%);
- --sv-health-pearl-edge:inset 0 0 0 .45px rgba(255,255,255,.55),0 0 0 .65px rgba(154,161,178,.17),0 2px 5px rgba(76,87,103,.065);
+ --sv-health-rim:rgba(250,249,248,.94);
+ --sv-health-pearl-edge:0 0 0 .7px rgba(184,188,198,.24);
  --sv-health-ink:#1C1C1E;
  --sv-health-blue:#007AFF;
  position:fixed!important;
@@ -762,9 +762,9 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  width:var(--sv-health-capsule)!important;max-width:var(--sv-health-capsule)!important;
  height:60px!important;min-height:60px!important;
  padding:2px!important;margin:0!important;
- border:1.5px solid transparent!important;
+ border:1.5px solid var(--sv-health-rim)!important;
  border-radius:999px!important;
- background:linear-gradient(var(--sv-health-matte),var(--sv-health-matte)) padding-box,var(--sv-health-rim) border-box!important;
+ background:var(--sv-health-matte)!important;
  -webkit-backdrop-filter:blur(20px) saturate(94%)!important;
  backdrop-filter:blur(20px) saturate(94%)!important;
  box-shadow:var(--sv-health-pearl-edge)!important;
@@ -819,8 +819,8 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  max-width:var(--sv-health-search)!important;
  height:var(--sv-health-search)!important;min-height:var(--sv-health-search)!important;
  margin:0!important;padding:0!important;gap:0!important;
- border:1.5px solid transparent!important;border-radius:50%!important;
- background:linear-gradient(var(--sv-health-matte),var(--sv-health-matte)) padding-box,var(--sv-health-rim) border-box!important;
+ border:1.5px solid var(--sv-health-rim)!important;border-radius:50%!important;
+ background:var(--sv-health-matte)!important;
  -webkit-backdrop-filter:blur(20px) saturate(94%)!important;
  backdrop-filter:blur(20px) saturate(94%)!important;
  box-shadow:var(--sv-health-pearl-edge)!important;
