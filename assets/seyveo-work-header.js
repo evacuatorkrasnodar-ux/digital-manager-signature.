@@ -48,7 +48,7 @@
  .title {
   grid-column:2;grid-row:1;
   min-width:0;margin:0;padding:0;
-  font-size:18.5px;font-weight:580;line-height:1.2;
+  font-size:20px;font-weight:590;line-height:1.2;
   letter-spacing:-.02em;text-align:center;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   color:inherit;
