@@ -50,6 +50,11 @@
  const {host:heading,back,title,add}=workHeader;
  const plusIcon=workHeader.icons.plus;
  const searchIcon=workHeader.icons.search;
+ // Personal landing uses History in the left circle. Reuse the single
+ // existing Action History panel; keep the original back chevron for subviews.
+ const backIcon=back.innerHTML;
+ const historyIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 4.5v5h5"/><path d="M3.7 9.5a8.5 8.5 0 1 1-.2 4"/><path d="M12 7.5V12l3 2"/></svg>';
+ back.dataset.svHeaderIcon='back';
  add.dataset.svHeaderIcon='add';
  shell.prepend(heading);
  const legacyTasksBack=document.getElementById('unifiedTasksBack');
@@ -105,6 +110,12 @@
   }
  }
  back.addEventListener('click',()=>{
+  // Personal root: the left control is History rather than duplicate Back.
+  // Delegate to the existing launcher, preserving its data, state and events.
+  if(activeSection()==='personal'&&!tasks.classList.contains('sah-history-open')){
+   const launch=document.querySelector('#unifiedPersonalTasksView .personal-tasks-head .sah-inline-toggle');
+   if(launch&&!launch.hidden){launch.click();return;}
+  }
   if(notesPage?.open){notesPage.close();return;}
   if(tasks.classList.contains('sah-history-open')){
    document.querySelector('#seyveoActionHistoryPanel .sah-inline-head button')?.click();
@@ -191,10 +202,18 @@
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
   title.textContent=history?'История':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
-  // Match the approved Apple-style header: one Back, centered title,
-  // and one contextual action. The Back delegates to existing navigation.
+  // In the personal landing use the same approved circle for History.
+  // Every nested view (including History) retains the real Back arrow.
   back.hidden=false;
-  back.setAttribute('aria-label',history?'Вернуться к моим делам':'Вернуться назад');
+  const showHistoryIcon=active==='personal'&&!history;
+  const backKind=showHistoryIcon?'history':'back';
+  if(back.dataset.svHeaderIcon!==backKind){
+   back.innerHTML=showHistoryIcon?historyIcon:backIcon;
+   back.dataset.svHeaderIcon=backKind;
+  }
+  back.setAttribute('aria-label',showHistoryIcon?'История выполненных дел':history?'Вернуться к моим делам':'Вернуться назад');
+  back.title=showHistoryIcon?'История': '';
+  back.setAttribute('aria-haspopup','false');
   // A single stylesheet now owns Back/Add material for all routes,
   // including History. Do not write inline visual overrides here.
   // The employee home has contextual controls inside its own dashboard.
@@ -295,7 +314,7 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:18,sync,
+  version:19,sync,
   isNotesInline:()=>true
  });
 })();
