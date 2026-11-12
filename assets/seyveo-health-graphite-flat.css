@@ -703,7 +703,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:.73!important;
 }
 
-/* HEALTH LIGHT · taller pearl-rimmed flat smoked-silver dock v49.
+/* HEALTH LIGHT · screenshot-calibrated flat smoked-silver dock v50.
    The global dock is a single DOM instance; this sheet changes ONLY its
    appearance while portaled inside the Health dialog in the white theme.
    No pseudo-surface behind the dock: the capsule and search button own
@@ -712,10 +712,10 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 .dock > .sv-health-dock-actions{display:none!important;}
 
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock{
- --sv-health-capsule:clamp(188px,58vw,220px);
- --sv-health-search:58px;
- --sv-health-gap:24px;
- --sv-health-height:58px;
+ --sv-health-capsule:clamp(164px,47vw,190px);
+ --sv-health-search:60px;
+ --sv-health-side:clamp(14px,5vw,22px);
+ --sv-health-height:60px;
  --sv-health-matte:rgba(211,216,223,.62);
  --sv-health-rim:rgba(249,250,253,.86);
  --sv-health-ink:#1C1C1E;
@@ -726,11 +726,11 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  left:50%!important;
  bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;
  transform:translate3d(-50%,0,0)!important;
- display:flex!important;align-items:center!important;justify-content:center!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
  flex-direction:row!important;flex-wrap:nowrap!important;
- gap:var(--sv-health-gap)!important;
- width:calc(var(--sv-health-capsule) + var(--sv-health-search) + var(--sv-health-gap))!important;
- max-width:calc(100vw - 20px)!important;
+ gap:0!important;
+ width:calc(100vw - var(--sv-health-side) - var(--sv-health-side))!important;
+ max-width:390px!important;
  height:var(--sv-health-height)!important;min-height:var(--sv-health-height)!important;
  margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
@@ -759,7 +759,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  gap:2px!important;
  flex:none!important;
  width:var(--sv-health-capsule)!important;max-width:var(--sv-health-capsule)!important;
- height:58px!important;min-height:58px!important;
+ height:60px!important;min-height:60px!important;
  padding:2px!important;margin:0!important;
  border:1.5px solid var(--sv-health-rim)!important;
  border-radius:999px!important;
@@ -776,7 +776,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  align-items:center!important;justify-content:center!important;
  flex:1 1 auto!important;gap:1px!important;
  min-width:44px!important;
- height:52px!important;min-height:52px!important;
+ height:54px!important;min-height:54px!important;
  margin:0!important;padding:3px 4px 2px!important;
  border:0!important;border-radius:999px!important;
  background:transparent!important;box-shadow:none!important;
@@ -788,14 +788,13 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 }
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock .sv-health-dock-tab svg{
  display:block!important;
- width:21px!important;height:21px!important;flex:none!important;
- fill:none!important;stroke:currentColor!important;
- stroke-width:1.65!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
+ width:23px!important;height:23px!important;flex:none!important;
+ fill:currentColor!important;stroke:none!important;
+ 
  filter:none!important;
 }
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock .sv-health-dock-tab[aria-pressed="true"]{
- background:rgba(255,255,255,.24)!important;
+ background:rgba(132,140,152,.12)!important;
  color:#0B0B0D!important;
  font-weight:550!important;
 }
