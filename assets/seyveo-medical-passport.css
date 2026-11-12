@@ -3,7 +3,7 @@
 html body dialog#calendarSpaceDialog[data-space="health"] #svMedicalEntry[hidden]{display:none!important}
 html body dialog#calendarSpaceDialog[data-space="health"] #svMedicalEntry{
  position:absolute!important;
- top:calc(25px + env(safe-area-inset-top,0px))!important;
+ top:calc(16px + env(safe-area-inset-top,0px))!important;
  right:max(16px,env(safe-area-inset-right,0px))!important;
  left:auto!important;
  z-index:15!important;
