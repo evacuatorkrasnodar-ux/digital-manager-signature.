@@ -58,10 +58,9 @@
  const searchIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 5 5"/></svg>';
  add.innerHTML=plusIcon;
  add.dataset.svHeaderIcon='add';
- // Removed the entire visible Work header at the user's request.
- // Keep detached controls solely so existing navigation sync code does not
- // break while the header is redesigned from scratch. They are NOT mounted.
+ // One real, persistent header; the legacy page headings remain hidden.
  heading.append(back,title,add);
+ shell.prepend(heading);
  const legacyTasksBack=document.getElementById('unifiedTasksBack');
  const legacyCalendarBack=document.getElementById('calendarBack');
  const calendarAdd=document.getElementById('calendarAdd');
@@ -209,19 +208,11 @@
    back.style.setProperty('border-radius','50%','important');
    back.style.setProperty('box-shadow','none','important');
   }else{
-   // Explicitly apply the approved circular material to Back. An older global
-   // .sv-nav-back style otherwise makes the left control transparent.
-   const light=document.documentElement.dataset.theme==='light';
-   const material=light?'rgba(226,228,233,.70)':'rgba(92,95,101,.40)';
-   const ink=light?'#252930':'#F6F7F8';
+   // Material is owned by the single canonical stylesheet, not inline JS.
    for(const control of [back,add]){
-    control.style.setProperty('background-color',material,'important');
-    control.style.setProperty('color',ink,'important');
-    control.style.setProperty('border',light?'1px solid rgba(185,190,200,.24)':'1px solid rgba(142,149,161,.13)','important');
-    control.style.setProperty('border-radius','50%','important');
-    control.style.setProperty('box-shadow',light?'inset 0 1px 0 rgba(255,255,255,.70),0 1px 3px rgba(24,29,37,.045)':'0 1px 4px rgba(20,25,32,.04)','important');
-    control.style.setProperty('width','44px','important');
-    control.style.setProperty('height','44px','important');
+    for(const prop of ['background-color','color','border','border-radius','box-shadow','width','height']){
+     control.style.removeProperty(prop);
+    }
    }
   }
   // The employee home has contextual controls inside its own dashboard.
