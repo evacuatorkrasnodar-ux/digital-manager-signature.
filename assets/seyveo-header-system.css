@@ -167,9 +167,12 @@ html[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
 html[data-theme="light"] body dialog#notesDialog.notes-dialog[open] > .notes-head{
  box-sizing:border-box!important;display:flex!important;
  align-items:center!important;justify-content:center!important;
- width:100%!important;height:var(--sv-header-row)!important;
+ /* Flush with the viewport edges, not the Notebook dialog's 16px padding. */
+ width:calc(100% + max(16px,env(safe-area-inset-left,0px)) + max(16px,env(safe-area-inset-right,0px)))!important;
+ height:var(--sv-header-row)!important;
  min-height:var(--sv-header-row)!important;flex:0 0 var(--sv-header-row)!important;
- margin:0 0 16px!important;padding:0 calc(var(--sv-header-slot) + 8px)!important;
+ margin:0 0 16px calc(-1 * max(16px,env(safe-area-inset-left,0px)))!important;
+ padding:0 calc(var(--sv-header-slot) + 8px)!important;
  border:0!important;border-radius:0!important;
  background:var(--sv-header-surface)!important;background-image:none!important;
  box-shadow:none!important;
