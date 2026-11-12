@@ -159,7 +159,7 @@
  body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
 ) #assistantButton .button-art > .sv-sayvi-sonic{
- display:block!important;stroke:#0B0B0D!important;stroke-width:2.15!important;
+ display:none!important;stroke:#0B0B0D!important;stroke-width:2.15!important;
  fill:none!important;color:#0B0B0D!important;
  opacity:1!important;filter:none!important;
  transform-box:view-box!important;transform-origin:50% 50%!important;
@@ -178,6 +178,27 @@
 ) #assistantButton .sv-sayvi-sonic .sv-sayvi-end-dot{
  fill:#0B0B0D!important;stroke:none!important;opacity:1!important;
  animation:none!important;
+}
+/* Original four-ray Sayvi signature, optically larger in the 50px control.
+   Only the icon is changed: dock layout, button handlers and material stay. */
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+) #assistantButton .button-art > .sv-sayvi-hero-mark{
+ display:block!important;opacity:1!important;
+}
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+) #assistantButton .sv-sayvi-hero-mark > path{
+ stroke:#0B0B0D!important;stroke-width:1.25!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;fill:none!important;
+}
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+) #assistantButton .sv-sayvi-hero-mark > circle{
+ fill:#0B0B0D!important;stroke:none!important;
 }
 /* Voice animation only while deliberately pressing/recording. */
 @keyframes sv-dock-active-breathe{
