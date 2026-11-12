@@ -395,7 +395,10 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  fill:transparent!important;
 }
 :root[data-theme="light"] .dock>#assistantButton .button-art .button-rim{
- stroke:none!important;opacity:0!important;
+ /* Original rim: a single crisp 1px black outline in the light dock. */
+ display:block!important;stroke:#0B0B0D!important;
+ stroke-width:1.5!important;fill:none!important;
+ opacity:1!important;filter:none!important;
 }
 :root[data-theme="light"] .dock>#assistantButton:is(:active,.pressing,.arming) .button-art .center-face{
  fill:transparent!important;
