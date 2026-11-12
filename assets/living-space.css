@@ -541,7 +541,7 @@ html.sv-space-active #managePage .seyveo-clean-back{
 }
 /* NOTEBOOK, CARE AND DOCUMENTS — remain accessible real editors, not
    a duplicate dock of pill buttons over private content. */
-:is(#notesDialog,#calendarSpaceDialog:not([data-space="health"]),#noteReadDialog,#noteReviewDialog,#noteModeDialog,
+:is(#notesDialog,#calendarSpaceDialog:not(:is([data-space="health"],[data-space="care"])),#noteReadDialog,#noteReviewDialog,#noteModeDialog,
     .paper-editor-dialog,.paper-choice-dialog)[open]{
  background:var(--sv-ui-sheet);
  box-shadow:var(--sv-ui-sheet-shadow);
@@ -1646,7 +1646,7 @@ html.sv-space-active #lifePage .life-footnote{
 #seyveoSmartHomeDialog .svh-tile{
  border-radius:19px!important;box-shadow:none!important;
 }
-:root[data-theme=light] :is(#calendarSpaceDialog:not([data-space="health"]),#seyveoContactsDialog,#seyveoSmartHomeDialog){
+:root[data-theme=light] :is(#calendarSpaceDialog:not(:is([data-space="health"],[data-space="care"])),#seyveoContactsDialog,#seyveoSmartHomeDialog){
  background:var(--sv-ui-sheet)!important;border-color:var(--sv-ui-sheet-border)!important;
 }
 /* Shared pigment contract for the whole app and My World subpages.
