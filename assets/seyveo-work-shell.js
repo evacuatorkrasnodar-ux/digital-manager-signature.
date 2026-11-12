@@ -58,8 +58,10 @@
  const searchIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 5 5"/></svg>';
  add.innerHTML=plusIcon;
  add.dataset.svHeaderIcon='add';
+ // Removed the entire visible Work header at the user's request.
+ // Keep detached controls solely so existing navigation sync code does not
+ // break while the header is redesigned from scratch. They are NOT mounted.
  heading.append(back,title,add);
- shell.prepend(heading);
  const legacyTasksBack=document.getElementById('unifiedTasksBack');
  const legacyCalendarBack=document.getElementById('calendarBack');
  const calendarAdd=document.getElementById('calendarAdd');
