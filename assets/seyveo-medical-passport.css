@@ -1,0 +1,144 @@
+/* SEYVEO · Medical passport, emergency-first flat graphite UI */
+#svMedicalEntry[hidden],#svMedicalOverlay[hidden],#svMedicalOverlay [hidden]{display:none!important}
+html body dialog#calendarSpaceDialog[data-space="health"] #svMedicalEntry{
+ position:absolute!important;
+ top:calc(25px + env(safe-area-inset-top,0px))!important;
+ right:max(16px,env(safe-area-inset-right,0px))!important;
+ left:auto!important;
+ z-index:15!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+ background:#38383A!important;color:white!important;
+ border:0!important;border-radius:50%!important;
+ box-shadow:none!important;cursor:pointer!important;
+ -webkit-tap-highlight-color:transparent!important
+}
+html body #svMedicalEntry svg{display:block;width:22px;height:22px}
+#svMedicalOverlay{
+ position:fixed;inset:0;
+ z-index:2147483200;
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+ background:#11161b;
+ color:#f7f7f8;
+ padding:calc(22px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px));
+ box-sizing:border-box;
+ font:-apple-system-body;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+ font-size:15px;
+}
+#svMedicalOverlay *{box-sizing:border-box}
+#svMedicalOverlay button,#svMedicalOverlay input,#svMedicalOverlay select,#svMedicalOverlay textarea{font-family:inherit}
+#svMedicalOverlay .sv-med-shell{width:100%;max-width:490px;margin:auto}
+#svMedicalOverlay .sv-med-header{
+ display:grid;grid-template-columns:44px 1fr 44px;
+ align-items:center;gap:6px;min-height:48px;
+ margin:0 0 20px;
+}
+#svMedicalOverlay .sv-med-header h2{
+ font-size:18px;letter-spacing:-.025em;line-height:1.25;text-align:center;
+ margin:0;font-weight:650;color:inherit;
+}
+#svMedicalOverlay .sv-med-back,#svMedicalOverlay .sv-med-edit{
+ width:44px;height:44px;display:grid;place-items:center;cursor:pointer;
+ border:0;border-radius:50%;background:#38383A;color:#fff;
+ padding:0;
+}
+#svMedicalOverlay .sv-med-back svg,#svMedicalOverlay .sv-med-edit svg{
+ width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#svMedicalOverlay .sv-med-brand{
+ display:flex;align-items:center;gap:9px;color:#dde0e2;
+ font-weight:550;font-size:13px;margin-bottom:6px;
+}
+#svMedicalOverlay .sv-med-brand .sv-sayvi-symbol{width:22px;height:22px;color:#fafafa}
+#svMedicalOverlay #svMedicalPerson{font-weight:730;font-size:29px;line-height:1.1;letter-spacing:-.04em;margin:8px 0}
+#svMedicalOverlay .sv-med-muted{font-size:13px;line-height:1.45;color:#aeb5be;margin:5px 0}
+#svMedicalOverlay .sv-med-block{
+ background:#22282e;
+ border:1px solid rgba(220,226,234,.08);
+ border-radius:18px;
+ padding:15px 16px;
+ margin:14px 0;
+}
+#svMedicalOverlay .sv-med-block h4{
+ font-size:12px;font-weight:680;letter-spacing:.025em;
+ color:#a9b4bf;margin:0 0 12px;text-transform:uppercase;
+}
+#svMedicalOverlay .sv-med-pair{
+ display:flex;flex-direction:column;gap:5px;
+ padding:10px 0;border-bottom:1px solid rgba(215,225,235,.09)
+}
+#svMedicalOverlay .sv-med-pair:last-child{border-bottom:0;padding-bottom:2px}
+#svMedicalOverlay .sv-med-pair span{font-size:12px;color:#aeb5bf}
+#svMedicalOverlay .sv-med-pair strong{
+ font-size:15px;line-height:1.4;font-weight:570;color:#f2f3f5;
+ white-space:pre-wrap;overflow-wrap:anywhere;
+}
+#svMedicalOverlay .sv-med-pair-emphasis strong{color:#f5a6a8}
+#svMedicalOverlay .sv-med-item{
+ margin:0;padding:10px 0;line-height:1.4;
+ font-size:14px;color:#f0f1f3;
+ border-bottom:1px solid rgba(215,225,235,.08);
+ overflow-wrap:anywhere;white-space:pre-wrap;
+}
+#svMedicalOverlay .sv-med-item:last-child{border-bottom:0;padding-bottom:2px}
+#svMedicalOverlay .sv-med-disclaimer{
+ font-size:12px;line-height:1.5;color:#aab3bb;margin:15px 0;
+}
+#svMedicalOverlay .sv-med-actions{display:flex;gap:9px;margin-top:18px}
+#svMedicalOverlay .sv-med-actions button{
+ flex:1;min-height:46px;padding:10px 12px;border:0;border-radius:13px;
+ background:#38383A;color:#fff;font-size:14px;font-weight:600;cursor:pointer;
+}
+#svMedicalOverlay .sv-med-actions button:first-child{background:#ededf0;color:#18191b}
+#svMedicalOverlay .sv-med-intro{color:#aeb5be;font-size:14px;line-height:1.4}
+#svMedicalOverlay #svMedicalForm label{
+ display:flex;flex-direction:column;gap:7px;
+ font-size:13px;font-weight:580;color:#d9dde1;
+ margin:14px 0;
+}
+#svMedicalOverlay #svMedicalForm input,
+#svMedicalOverlay #svMedicalForm select,
+#svMedicalOverlay #svMedicalForm textarea{
+ appearance:none;-webkit-appearance:none;
+ width:100%;min-height:44px;padding:12px;
+ border:1px solid rgba(215,225,235,.13);border-radius:13px;
+ background:#30363d;color:#fff;
+ font-size:16px;font-weight:450;outline:none;box-shadow:none;
+}
+#svMedicalOverlay #svMedicalForm textarea{resize:vertical;min-height:82px;line-height:1.4}
+#svMedicalOverlay #svMedicalForm :is(input,select,textarea):focus{border-color:#98a7b7}
+#svMedicalOverlay #svMedicalForm select{background:#30363d}
+#svMedicalOverlay #svMedicalForm [data-sv-med-if][hidden]{display:none!important}
+#svMedicalOverlay #svMedicalFormStatus{color:#ffb5b5;min-height:1em;font-size:13px}
+@media (prefers-color-scheme:light){
+ html[data-theme="light"] #svMedicalOverlay{background:#f9fafb;color:#25282e}
+ html[data-theme="light"] #svMedicalOverlay .sv-med-block{background:#fff;border-color:#e5e8ec}
+ html[data-theme="light"] #svMedicalOverlay :is(.sv-med-pair strong,.sv-med-item){color:#202329}
+ html[data-theme="light"] #svMedicalOverlay :is(.sv-med-muted,.sv-med-brand,.sv-med-pair span,.sv-med-block h4,.sv-med-disclaimer,.sv-med-intro){color:#66707a}
+ html[data-theme="light"] #svMedicalOverlay #svMedicalForm label{color:#303640}
+ html[data-theme="light"] #svMedicalOverlay #svMedicalForm :is(input,select,textarea){background:#f1f2f4;color:#25282e;border-color:#d8dce0}
+}
+@media print{
+ @page{size:A4;margin:14mm}
+ body > :not(#svMedicalOverlay){display:none!important}
+ html,body{background:#fff!important;color:#000!important}
+ #svMedicalOverlay{
+  display:block!important;position:static!important;overflow:visible!important;
+  z-index:auto!important;padding:0!important;background:#fff!important;color:#000!important;
+ }
+ #svMedicalOverlay #svMedicalForm{display:none!important}
+ #svMedicalOverlay #svMedicalView{display:block!important}
+ #svMedicalOverlay .sv-med-header button,
+ #svMedicalOverlay .sv-med-actions,
+ #svMedicalOverlay #svMedicalShareMessage{display:none!important}
+ #svMedicalOverlay :is(.sv-med-block,.sv-med-item){background:#fff!important;border-color:#ddd!important;break-inside:avoid}
+ #svMedicalOverlay :is(.sv-med-pair strong,.sv-med-item,.sv-med-header h2,#svMedicalPerson){color:#111!important}
+ #svMedicalOverlay :is(.sv-med-muted,.sv-med-pair span,.sv-med-block h4,.sv-med-brand,.sv-med-disclaimer){color:#555!important}
+ #svMedicalOverlay .sv-med-pair-emphasis strong{color:#9b2226!important}
+}
