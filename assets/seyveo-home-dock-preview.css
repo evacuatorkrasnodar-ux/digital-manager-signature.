@@ -536,3 +536,34 @@
 ) #assistantButton .sv-sayvi-sonic :is(.sv-sayvi-ray,.sv-sayvi-core) {
  stroke-width:2.15!important;
 }
+
+/* Native-looking modern Home and Tasks glyphs v12.
+ * Explicit fills protect the new SVG art from the older outline-only rules.
+ * The shared capsule, search, My World, Sayvi and touch targets are unchanged. */
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #navHome > svg .sv-dock-modern-glyph > path[fill="currentColor"],
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #navTasks > svg .sv-dock-modern-glyph > rect[fill="currentColor"]{
+ fill:#0B0B0D!important;
+ stroke:none!important;
+}
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #navTasks > svg .sv-dock-modern-glyph > path[stroke="#FFFFFF"]{
+ fill:none!important;
+ stroke:#FFFFFF!important;
+ stroke-width:1.35!important;
+}
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #navTasks > svg .sv-dock-modern-glyph > path[stroke="currentColor"]{
+ fill:none!important;
+ stroke:#0B0B0D!important;
+ stroke-width:1.75!important;
+}
