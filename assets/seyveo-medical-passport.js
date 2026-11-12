@@ -41,7 +41,7 @@ overlay.innerHTML=[
  '<header class="sv-med-header">',
  '<button type="button" class="sv-med-back" id="svMedicalBack" aria-label="Вернуться к здоровью"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>',
  '<h2 id="svMedicalHeading">Экстренная карта</h2>',
- '<button type="button" class="sv-med-edit" id="svMedicalEdit" aria-label="Редактировать медпаспорт"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.6-1 10.5-10.6a2.4 2.4 0 0 0-3.4-3.4L5.3 15.6 4 20Z"/><path d="m14.7 6.2 3.3 3.3"/></svg></button>',
+ '<button type="button" class="sv-med-edit" id="svMedicalEdit" aria-label="Редактировать медпаспорт"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="13" height="17" rx="2.5"/><path d="m11 15 8.1-8.1a1.9 1.9 0 0 1 2.7 2.7L13.7 17.7 10 18.5 11 15Z"/></svg></button>',
  '</header>',
  '<div id="svMedicalView">',
  '<div class="sv-med-brand"><span class="sv-sayvi-symbol" aria-hidden="true"></span><span>Сэйви · Здоровье</span></div>',
@@ -219,6 +219,7 @@ wizard.id='svMedicalWizard';wizard.hidden=true;
 $('svMedicalForm').before(wizard);
 const W_STEPS=[
  ['Как вас зовут?','name'],
+ ['Сколько вам лет?','age'],
  ['Есть аллергии?','allergies'],
  ['Есть заболевания сердца?','heart'],
  ['Какие заболевания вам известны?','conditions'],
@@ -227,7 +228,7 @@ const W_STEPS=[
  ['Что ещё важно знать?','note']
 ];
 const W_CONDITIONS=['Гипертония','Диабет','Перенесённый инсульт','Заболевания почек','Эпилепсия'];
-let wDraft=defaults(),wStep=0,wBook=false,wManual=false,wError='',wSelected=[],wOther='';
+let wDraft=defaults(),wStep=0,wBook=false,wManual=false,wError='',wSelected=[],wOther='',wAge='';
 function wEl(tag,cls,text){
  const el=document.createElement(tag);if(cls)el.className=cls;
  if(text!==undefined)el.textContent=text;return el;
@@ -238,25 +239,31 @@ function wBtn(text,action,cls){
 function wAdvance(){
  wError='';
  if(wBook){wBook=false;wRender();return}
- if(wStep===1&&wDraft.allergies==='yes'&&!safeString(wDraft.allergyDetails)){
+ if(W_STEPS[wStep][1]==='allergies'&&wDraft.allergies==='yes'&&!safeString(wDraft.allergyDetails)){
   wError='Уточните аллергию либо выберите «Не знаю».';wRender();return;
  }
- if(wStep===2&&wDraft.heart==='yes'&&!safeString(wDraft.heartDetails)){
+ if(W_STEPS[wStep][1]==='heart'&&wDraft.heart==='yes'&&!safeString(wDraft.heartDetails)){
   wError='Уточните заболевание сердца либо выберите «Не знаю».';wRender();return;
  }
- if(wStep===4&&wDraft.operations==='__yes__'){
+ if(W_STEPS[wStep][1]==='operations'&&wDraft.operations==='__yes__'){
   wError='Укажите операцию или имплант, либо выберите «Не знаю».';wRender();return;
  }
- if(wStep===5&&(wDraft.contactName||wDraft.contactPhone)&&!validPhone(wDraft.contactPhone)){
+ if(W_STEPS[wStep][1]==='contact'&&(wDraft.contactName||wDraft.contactPhone)&&!validPhone(wDraft.contactPhone)){
   wError='Укажите корректный номер или пропустите вопрос.';wRender();return;
  }
- if(wStep<6){wStep++;wRender();return}
+ if(wStep<W_STEPS.length-1){wStep++;wRender();return}
  wDraft.updatedAt=Date.now();
- try{localStorage.setItem(KEY,JSON.stringify(wDraft));formDisplay(false)}
+ try{
+  localStorage.setItem(KEY,JSON.stringify(wDraft));
+  if(wAge){localStorage.setItem('seyveo-health-age-v1',wAge);const ageField=$('calendarHealthAge');if(ageField){ageField.value=wAge;ageField.dispatchEvent(new Event('change',{bubbles:true}));}}
+  formDisplay(false)
+ }
  catch{wError='Не удалось сохранить Медпаспорт на этом устройстве.';wRender()}
 }
 function wBegin(){
  wDraft=readProfile();wStep=0;wBook=false;wManual=false;wError='';
+ const savedAge=Number(localStorage.getItem('seyveo-health-age-v1')||0);
+ wAge=Number.isInteger(savedAge)&&savedAge>=1&&savedAge<=110?String(savedAge):'';
  const existing=wDraft.conditions.split(' · ').filter(Boolean);
  wSelected=W_CONDITIONS.filter(x=>existing.includes(x));
  wOther=existing.filter(x=>!W_CONDITIONS.includes(x)&&x!=='Известных нет (со слов пользователя)').join(' · ');
@@ -329,6 +336,16 @@ function wRender(){
   show('');search.addEventListener('input',()=>show(search.value.trim()));
   box.append(wBtn('Ввести номер вручную','manual','sv-med-w-link'));
  }else if(key==='name')wInput(box,'name','Имя и фамилия',false);
+ else if(key==='age'){
+  box.append(wEl('p','sv-med-w-note','Выберите возраст. Он будет общим с разделом «Давление».'));
+  const selector=wEl('select','sv-med-w-input sv-med-w-age');
+  selector.setAttribute('aria-label','Возраст в годах');
+  const empty=wEl('option','', 'Не указывать');empty.value='';selector.append(empty);
+  for(let n=1;n<=110;n++){const item=wEl('option','',n+' '+(n%10===1&&n%100!==11?'год':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'года':'лет'));item.value=String(n);selector.append(item)}
+  selector.value=wAge;
+  selector.addEventListener('change',()=>{wAge=selector.value});
+  box.append(selector);
+ }
  else if(key==='allergies'||key==='heart')wChoices(box,key);
  else if(key==='conditions'){
   box.append(wEl('p','sv-med-w-note','Отметьте только то, что вам известно.'));
@@ -375,7 +392,7 @@ function wRender(){
  actions.append(wBtn('Назад','back','sv-med-w-back'));
  if(!wBook){
   actions.append(wBtn('Пропустить','skip','sv-med-w-skip'));
-  actions.append(wBtn(wStep===6?'Сохранить':'Далее','next','sv-med-w-next'));
+  actions.append(wBtn(wStep===W_STEPS.length-1?'Сохранить':'Далее','next','sv-med-w-next'));
  }
  wizard.append(actions);
 }
@@ -400,7 +417,8 @@ wizard.addEventListener('click',e=>{
  }
  if(action==='skip'){
   const k=W_STEPS[wStep][1];
-  if(k==='allergies'||k==='heart'){wDraft[k]='unknown';wDraft[k==='heart'?'heartDetails':'allergyDetails']=''}
+  if(k==='age'){wAge=''}
+  else if(k==='allergies'||k==='heart'){wDraft[k]='unknown';wDraft[k==='heart'?'heartDetails':'allergyDetails']=''}
   else if(k==='conditions'){wSelected=[];wOther='';wDraft.conditions=''}
   else if(k==='contact'){wDraft.contactName='';wDraft.contactPhone=''}
   else wDraft[k]='';
