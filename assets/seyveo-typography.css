@@ -2,7 +2,7 @@
    Scales text only: no orb/artwork/dock dimensions are changed.
    Existing decorative marks and clock numerals retain their typography. */
 :root{
- --sv-text-scale:1;
+ --sv-text-scale:1.05;
  --sv-type-body:17px;
  --sv-type-regular:16px;
  --sv-type-secondary:14px;
