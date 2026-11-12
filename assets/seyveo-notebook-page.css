@@ -1,0 +1,272 @@
+/* SEYVEO Notebook · rebuilt stable page (Nov 2026).
+   The Notebook landing is a normal page, NOT a native modal. Its layout is
+   single-owned here: existing notes, drawing, scanning, autosave and dock
+   continue to use their original implementations. */
+html body #notesDialog.sv-notebook-page[hidden]{display:none!important}
+html body #notesDialog.sv-notebook-page[open]{
+ box-sizing:border-box!important;
+ position:fixed!important;
+ inset:0 0 auto 0!important;
+ z-index:29!important; /* original shared dock is fixed at z-index:30 */
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:stretch!important;
+ width:100%!important;
+ max-width:530px!important;
+ min-width:0!important;
+ height:100svh!important;
+ min-height:100svh!important;
+ max-height:100svh!important;
+ margin:0 auto!important;
+ padding:calc(16px + env(safe-area-inset-top,0px))
+         max(16px,env(safe-area-inset-right,0px))
+         calc(104px + env(safe-area-inset-bottom,0px))
+         max(16px,env(safe-area-inset-left,0px))!important;
+ overflow:hidden!important;
+ border:0!important;
+ border-radius:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+ background:var(--bg,#F9FAFB)!important;
+ color:var(--text,#1C1C1E)!important;
+ overscroll-behavior:contain!important;
+ isolation:isolate;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ transform:none!important;
+ transition:none!important;
+ animation:none!important;
+}
+html body #notesDialog.sv-notebook-page[open] #svNotebookSharedHeader{
+ flex:0 0 auto!important;
+ max-width:none!important;
+}
+/* Reuse the exact approved Shadow DOM header; hide only the old duplicate. */
+html body #notesDialog.sv-notebook-page[data-sv-shared-header="true"] > .notes-head,
+html body #notesDialog.sv-notebook-page[data-sv-shared-header="true"] > .seyveo-dialog-close{
+ display:none!important;
+}
+html body #notesDialog.sv-notebook-page:not([data-sv-shared-header="true"]) > .notes-head{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 62px!important;margin:0 0 10px!important;padding:0!important;
+ color:var(--text)!important;
+}
+html body #notesDialog.sv-notebook-page:not([data-sv-shared-header="true"]) > .seyveo-dialog-close{
+ position:absolute!important;top:calc(25px + env(safe-area-inset-top,0px))!important;left:16px!important;
+ display:grid!important;place-items:center!important;
+ width:42px!important;height:42px!important;z-index:3!important;
+}
+html body #notesDialog.sv-notebook-page > .notes-head #notesNew,
+html body #notesDialog.sv-notebook-page > .notes-head #notesCount{display:none!important}
+
+/* The segmented Work navigation keeps an invariant row height. */
+html body #notesDialog.sv-notebook-page #svNotebookWorkTabs{
+ box-sizing:border-box!important;
+ display:flex!important;
+ flex:0 0 33px!important;
+ align-items:stretch!important;
+ justify-content:space-between!important;
+ width:100%!important;
+ height:33px!important;min-height:33px!important;max-height:33px!important;
+ padding:2px!important;
+ margin:12px 0 12px!important;
+ border:0!important;border-radius:999px!important;
+ background:#ECEDEF!important;
+ box-shadow:none!important;
+ overflow:hidden!important;
+}
+html body #notesDialog.sv-notebook-page #svNotebookWorkTabs > button{
+ box-sizing:border-box!important;
+ flex:1 1 0!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-width:0!important;min-height:0!important;
+ margin:0!important;padding:0 3px!important;
+ border:0!important;border-radius:999px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#25262A!important;
+ font:600 clamp(11px,3.5vw,14px)/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:-.02em!important;
+ white-space:nowrap!important;
+ transition:none!important;transform:none!important;
+}
+html body #notesDialog.sv-notebook-page #svNotebookWorkTabs > button[aria-pressed="true"]{
+ background:#FFF!important;color:#141518!important;
+}
+:root[data-theme="dark"] body #notesDialog.sv-notebook-page #svNotebookWorkTabs{
+ background:#2F3032!important;
+}
+:root[data-theme="dark"] body #notesDialog.sv-notebook-page #svNotebookWorkTabs > button{
+ color:#E3E3E7!important;
+}
+:root[data-theme="dark"] body #notesDialog.sv-notebook-page #svNotebookWorkTabs > button[aria-pressed="true"]{
+ background:#555559!important;color:#FFF!important;
+}
+
+/* Fixed-size launchers. Their buttons and SVGs are the existing working ones. */
+html body #notesDialog.sv-notebook-page #svNotebookCreateTiles{
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ align-items:start!important;gap:10px!important;
+ flex:0 0 auto!important;
+ width:100%!important;min-width:0!important;
+ margin:0 0 18px!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #notesDialog.sv-notebook-page #svNotebookCreateTiles > .paper-choice-item{
+ appearance:none!important;-webkit-appearance:none!important;
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:flex-start!important;
+ gap:9px!important;
+ width:100%!important;min-width:0!important;
+ height:auto!important;min-height:0!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ color:var(--text)!important;box-shadow:none!important;
+ text-align:center!important;
+ cursor:pointer!important;
+ touch-action:manipulation!important;
+ -webkit-tap-highlight-color:transparent!important;
+ transition:none!important;transform:none!important;
+}
+html body #notesDialog.sv-notebook-page #svNotebookCreateTiles .paper-choice-icon{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ width:100%!important;max-width:112px!important;
+ height:auto!important;aspect-ratio:1/1!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:21px!important;
+ background:#38383A!important;
+ color:#F7F7F8!important;box-shadow:none!important;
+}
+html body #notesDialog.sv-notebook-page #svNotebookCreateTiles .paper-choice-icon svg{
+ display:block!important;width:55px!important;height:55px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ pointer-events:none!important;
+}
+html body #notesDialog.sv-notebook-page #svNotebookCreateTiles .paper-choice-copy{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 19px!important;
+ width:100%!important;min-height:19px!important;
+ margin:0!important;padding:0!important;
+}
+html body #notesDialog.sv-notebook-page #svNotebookCreateTiles .paper-choice-copy strong{
+ margin:0!important;padding:0!important;
+ color:var(--text)!important;
+ font:600 clamp(11px,3vw,12.5px)/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ text-align:center!important;
+}
+html body #notesDialog.sv-notebook-page #svNotebookCreateTiles .paper-choice-copy small{display:none!important}
+html body #notesDialog.sv-notebook-page #svNotebookCreateTiles .paper-choice-item:active .paper-choice-icon{opacity:.76!important}
+
+/* Saved notes: one flat scroll area, no ghost panel or extra background. */
+html body #notesDialog.sv-notebook-page #notesList.notes-list{
+ box-sizing:border-box!important;
+ display:flex!important;
+ flex:1 1 0%!important;
+ flex-direction:column!important;
+ width:100%!important;min-width:0!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+ gap:0!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+ overscroll-behavior:contain!important;
+ -webkit-overflow-scrolling:touch!important;
+ scrollbar-width:none!important;
+}
+html body #notesDialog.sv-notebook-page #notesList::-webkit-scrollbar{display:none!important}
+html body #notesDialog.sv-notebook-page #notesList::before,
+html body #notesDialog.sv-notebook-page #notesList::after{content:none!important;display:none!important}
+html body #notesDialog.sv-notebook-page #notesList .note-item{
+ box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;
+ margin:0!important;padding:3px 0!important;
+ border:0!important;border-bottom:1px solid color-mix(in srgb,var(--text) 7%,transparent)!important;
+ border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-item-actions{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:4px!important;
+ width:100%!important;min-height:74px!important;
+ padding:0!important;margin:0!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-open{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ flex:1 1 auto!important;
+ gap:12px!important;
+ width:auto!important;min-width:0!important;max-width:none!important;
+ min-height:74px!important;padding:2px 0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;
+ text-align:left!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-open > .note-paper-preview{
+ box-sizing:border-box!important;
+ display:block!important;flex:0 0 42px!important;
+ width:42px!important;min-width:42px!important;max-width:42px!important;
+ height:72px!important;min-height:72px!important;max-height:72px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:3px!important;
+ background:#25262A!important;object-fit:cover!important;box-shadow:none!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-row-copy{
+ display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+ justify-content:center!important;gap:5px!important;min-width:0!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-row-copy > p{
+ display:-webkit-box!important;-webkit-line-clamp:2!important;line-clamp:2!important;
+ -webkit-box-orient:vertical!important;overflow:hidden!important;
+ margin:0!important;padding:0!important;
+ color:var(--text)!important;font-size:13.5px!important;
+ font-weight:600!important;line-height:1.33!important;
+ overflow-wrap:anywhere!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-row-copy > small{
+ display:block!important;margin:0!important;padding:0!important;
+ color:var(--secondary)!important;font-size:10.5px!important;font-weight:450!important;
+ line-height:1.3!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-more-button{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;flex:0 0 42px!important;
+ width:42px!important;min-width:42px!important;
+ height:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;color:var(--text)!important;box-shadow:none!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-more-button svg{
+ display:block!important;width:20px!important;height:20px!important;
+ fill:currentColor!important;stroke:none!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-more-options[hidden]{display:none!important}
+html body #notesDialog.sv-notebook-page #notesList .note-more-options:not([hidden]){
+ box-sizing:border-box!important;
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:6px!important;width:100%!important;
+ margin:4px 0 8px!important;padding:8px 0 0!important;
+ border:0!important;border-top:1px solid color-mix(in srgb,var(--text) 8%,transparent)!important;
+ border-radius:0!important;background:transparent!important;
+}
+html body #notesDialog.sv-notebook-page #notesList .note-more-options > button{
+ box-sizing:border-box!important;min-height:40px!important;
+ padding:8px!important;margin:0!important;
+ border:0!important;border-radius:11px!important;
+ background:#38383A!important;color:#F7F7F8!important;
+ font-size:12px!important;font-weight:560!important;
+}
+html body #notesDialog.sv-notebook-page #notesStatus[hidden]{display:none!important}
+html body #notesDialog.sv-notebook-page #notesStatus:not([hidden]){
+ margin:6px 0 0!important;flex:none!important;color:var(--secondary)!important;font-size:12px!important;
+}
+@media(max-width:355px){
+ html body #notesDialog.sv-notebook-page #svNotebookCreateTiles{gap:7px!important}
+ html body #notesDialog.sv-notebook-page #svNotebookCreateTiles .paper-choice-icon{border-radius:18px!important}
+}
