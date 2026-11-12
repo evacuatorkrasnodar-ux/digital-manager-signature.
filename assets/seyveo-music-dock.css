@@ -207,3 +207,155 @@ html:not(.seyveo-conversation) #sayviMusicMini{
   left:calc(50% - 35.714286vw + .857143px)!important;
  }
 }
+
+
+/* SEYVEO Silver Mist mini-player v32 · white-theme visual only.
+   Exact shared dock frosted material, sharp graphite artwork/controls,
+   edge-aligned with the left capsule. Keep original player IDs, 44px
+   touch targets, progress state, swipe gestures and audio session.
+   No extra pseudo-surface or changes to full-size music player / dark mode.
+ */
+:root[data-theme="light"] #sayviMusicMini {
+  box-sizing:border-box!important;
+  height:56px!important;
+  min-height:56px!important;
+  max-height:56px!important;
+  padding:0 7px 0 7px!important;
+  gap:0!important;
+  border:1px solid rgba(253,254,255,.80)!important;
+  border-radius:999px!important;
+  background:rgba(196,201,211,.39)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(109%)!important;
+  backdrop-filter:blur(15px) saturate(109%)!important;
+  box-shadow:
+    0 0 0 .55px rgba(134,148,166,.19),
+    inset .65px 0 1px rgba(255,255,255,.23),
+    inset -.6px 0 .85px rgba(73,85,103,.075),
+    inset 0 1px 1px rgba(73,85,103,.065),
+    inset 0 -1px 0 rgba(255,255,255,.27),
+    0 3px 9px rgba(51,64,78,.06)!important;
+  color:#0B0B0D!important;
+}
+:root[data-theme="light"]:not(.seyveo-conversation) #sayviMusicMini {
+  left:max(clamp(14px,5vw,22px),env(safe-area-inset-left,0px))!important;
+  right:auto!important;
+  transform:none!important;
+  width:clamp(176px,60vw,226px)!important;
+  max-width:clamp(176px,60vw,226px)!important;
+  bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 63px + 8px)!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-open {
+  flex:1 1 0%!important;
+  min-width:0!important;
+  min-height:44px!important;
+  height:54px!important;
+  gap:7px!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-symbol {
+  box-sizing:border-box!important;
+  flex:0 0 40px!important;
+  width:40px!important;
+  min-width:40px!important;
+  height:40px!important;
+  border:1px solid rgba(255,255,255,.50)!important;
+  border-radius:50%!important;
+  background:rgba(231,234,239,.56)!important;
+  box-shadow:inset 0 1px 1px rgba(29,39,51,.08)!important;
+  overflow:hidden!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-artwork{
+  border-radius:50%!important;
+  background-size:cover!important;
+  background-position:center!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-placeholder{
+  width:21px!important;
+  height:21px!important;
+  stroke:#283541!important;
+  stroke-width:1.75!important;
+  fill:none!important;
+  filter:none!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-meta{
+  min-width:0!important;
+  gap:2px!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-title{
+  color:#0B0B0D!important;
+  font-size:12.6px!important;
+  font-weight:630!important;
+  line-height:1.13!important;
+  letter-spacing:-.02em!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-artist{
+  color:#5D6773!important;
+  font-size:10px!important;
+  font-weight:485!important;
+  line-height:1.2!important;
+  letter-spacing:0!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport{
+  min-width:88px!important;
+  flex:0 0 88px!important;
+  gap:0!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport button{
+  box-sizing:border-box!important;
+  flex:0 0 44px!important;
+  width:44px!important;
+  height:44px!important;
+  min-width:44px!important;
+  min-height:44px!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:#192631!important;
+  opacity:1!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport svg{
+  width:22px!important;
+  height:22px!important;
+  stroke:currentColor!important;
+  stroke-width:1.85!important;
+  fill:none!important;
+  opacity:1!important;
+  filter:none!important;
+  shape-rendering:geometricPrecision!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-skip:disabled{
+  opacity:.30!important;
+}
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-progress{
+  left:18px!important;
+  right:18px!important;
+  bottom:2px!important;
+  height:1.5px!important;
+  opacity:.72!important;
+  border-radius:999px!important;
+  background:linear-gradient(to right,#25303B 0 var(--sv-mini-progress),rgba(52,65,78,.16) var(--sv-mini-progress) 100%)!important;
+}
+:root[data-theme="light"] #sayviMusicMini button:focus-visible{
+  outline:2px solid #1777DA!important;
+  outline-offset:-3px!important;
+  border-radius:999px!important;
+}
+@media (max-width:355px) {
+  :root[data-theme="light"] #sayviMusicMini {
+    padding-left:5px!important;
+    padding-right:4px!important;
+  }
+  :root[data-theme="light"] #sayviMusicMini .sv-music-mini-symbol {
+    flex-basis:36px!important;
+    width:36px!important;
+    min-width:36px!important;
+    height:36px!important;
+  }
+  :root[data-theme="light"] #sayviMusicMini .sv-music-mini-open {gap:5px!important;}
+}
+@media (prefers-reduced-transparency:reduce) {
+  :root[data-theme="light"] #sayviMusicMini{
+    background:#E5E7EC!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
