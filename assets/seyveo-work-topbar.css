@@ -9,20 +9,30 @@
 }
 
 /* ONE header, edge-to-edge inside the existing app padding. */
+#svWorkShell{
+  /* Match the actual .app gutters including iOS notch safe areas. */
+  --sv-work-pad-left:max(20px,calc(12px + env(safe-area-inset-left,0px)));
+  --sv-work-pad-right:max(20px,calc(12px + env(safe-area-inset-right,0px)));
+  --sv-work-pad-top:calc(24px + env(safe-area-inset-top,0px));
+}
+@media(max-width:649px){
+  #svWorkShell{--sv-work-pad-top:calc(16px + env(safe-area-inset-top,0px))}
+}
 #svWorkShell[data-shared-work="true"] #svWorkHeader {
   box-sizing:border-box!important;
   order:0!important;
-  align-self:center!important;
+  align-self:flex-start!important;
+  position:relative!important;
   display:grid!important;
   grid-template-columns:42px minmax(0,1fr) 42px!important;
   align-items:center!important;
   column-gap:8px!important;
-  width:calc(100% + 40px)!important;
+  width:calc(100% + var(--sv-work-pad-left) + var(--sv-work-pad-right))!important;
   max-width:none!important;
-  min-height:62px!important;
-  height:62px!important;
-  padding:0 20px!important;
-  margin:0!important;
+  min-height:calc(62px + var(--sv-work-pad-top))!important;
+  height:calc(62px + var(--sv-work-pad-top))!important;
+  padding:var(--sv-work-pad-top) var(--sv-work-pad-right) 0 var(--sv-work-pad-left)!important;
+  margin:calc(-1 * var(--sv-work-pad-top)) 0 0 calc(-1 * var(--sv-work-pad-left))!important;
   border:0!important;
   border-radius:0!important;
   box-shadow:none!important;
