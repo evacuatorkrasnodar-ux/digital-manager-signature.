@@ -407,3 +407,6 @@ html:has(#calendarSpaceDialog[open][data-space="health"]) body{
 #calendarSpaceDialog[data-space="health"] .cal-bp-journal-status{
  font-size:12px!important;line-height:1.4!important;white-space:normal!important;
 }
+
+/* Medical card is the only visible place to edit age. Hidden bridge for existing assessment logic. */
+#calendarSpaceDialog[data-space="health"] input#calendarHealthAge[type="hidden"]{display:none!important;position:absolute!important;width:0!important;height:0!important;padding:0!important;margin:0!important;visibility:hidden!important;}
