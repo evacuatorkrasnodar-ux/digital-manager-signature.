@@ -9,21 +9,7 @@
   const factory=window.SEYVEO_WORK_HEADER;
   const launcher=window.SEYVEO_NOTE_LAUNCH;
   const legacyBack=dialog?.querySelector(':scope > button.seyveo-dialog-close');
-  if(!dialog||!factory?.create||!legacyBack||!launcher?.launch)return;
-  if(dialog.querySelector('#svNotebookSharedHeader'))return;
-  const {host,back,title,add}=factory.create();
-  host.id='svNotebookSharedHeader';
-  title.textContent='Блокнот';
-  back.setAttribute('aria-label','Вернуться из блокнота');
-  add.setAttribute('aria-label','Создать текстовую заметку');
-  add.setAttribute('title','Новая текстовая заметка');
-  back.addEventListener('click',()=>legacyBack.click());
-  // The existing three tiles still offer text, drawing and photo-to-text.
-  // Plus uses the SAME validated text-note launcher, never a second editor.
-  add.addEventListener('click',()=>{
-   if(dialog.open)launcher.launch('noteModeText');
-  });
-  dialog.insertBefore(host,dialog.firstChild);
+  if(!dialog)return;
   // The segmented control is in index.html so it is visible even if
   // optional UI initialization fails. JS only supplies its real routing.
   const nav=dialog.querySelector(':scope > #svNotebookWorkTabs');
@@ -54,6 +40,21 @@
     });
    });
   }
+  if(!factory?.create||!legacyBack)return;
+  if(dialog.querySelector('#svNotebookSharedHeader'))return;
+  const {host,back,title,add}=factory.create();
+  host.id='svNotebookSharedHeader';
+  title.textContent='Блокнот';
+  back.setAttribute('aria-label','Вернуться из блокнота');
+  add.setAttribute('aria-label','Создать текстовую заметку');
+  add.setAttribute('title','Новая текстовая заметка');
+  back.addEventListener('click',()=>legacyBack.click());
+  // The existing three tiles still offer text, drawing and photo-to-text.
+  // Plus uses the SAME validated text-note launcher, never a second editor.
+  add.addEventListener('click',()=>{
+   if(dialog.open)window.SEYVEO_NOTE_LAUNCH?.launch?.('noteModeText');
+  });
+  dialog.insertBefore(host,dialog.firstChild);
   const updateTheme=()=>{
    host.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
   };
