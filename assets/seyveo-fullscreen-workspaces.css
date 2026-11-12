@@ -355,7 +355,7 @@
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
   box-shadow:none!important;
  }
- html body #personalTaskDialog[open] .personal-task-sheet{
+ html body #personalTaskDialog.personal-task-dialog[open] .personal-task-sheet{
   box-sizing:border-box!important;
   position:absolute!important;
   top:0!important;
@@ -438,7 +438,7 @@
 /* Desktop retains the earlier compact dialog geometry, but big panels are
    solid thematic surfaces rather than blurred glass. */
 @media(min-width:721px){
- html body #personalTaskDialog[open] .personal-task-sheet,
+ html body #personalTaskDialog.personal-task-dialog[open] .personal-task-sheet,
  html body #svCabinetDialog[open].sv-cabinet-dialog,
  html body #calendarEventDialog[open] .cal-event-sheet{
   background:var(--bg)!important;
