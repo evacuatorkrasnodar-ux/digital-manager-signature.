@@ -487,11 +487,11 @@
 /* Notebook list: no ghost panel behind saved notes.
    Keep each real note row and the approved dock/header untouched. */
 #notesDialog.notes-dialog[open] #notesList.notes-list{
-  flex:0 1 auto!important;
+  flex:1 1 0%!important;
   align-self:stretch!important;
   height:auto!important;
   min-height:0!important;
-  max-height:calc(100dvh - 310px)!important;
+  max-height:none!important;
   margin:0!important;
   padding:0!important;
   border:0!important;
