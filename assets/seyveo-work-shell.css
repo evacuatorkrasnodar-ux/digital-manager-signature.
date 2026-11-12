@@ -510,12 +510,7 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
  margin:0 0 17px!important;
  stroke-width:1.4!important;
 }
-#svWorkShell[data-active="personal"] #personalTaskList.is-empty .personal-tasks-empty-title{
- font-size:18px!important;font-weight:610!important;letter-spacing:-.027em!important;
-}
-#svWorkShell[data-active="personal"] #personalTaskList.is-empty .personal-tasks-empty-copy{
- font-size:12.5px!important;line-height:1.5!important;
-}
+/* Empty-state font size, weight and contrast now belong to personal-tasks.css only. */
 
 
 
