@@ -1435,12 +1435,97 @@ html body #svWorkShell[data-history="true"] #svWorkAdd{display:none!important}
  display:none!important;
 }
 
-/* Shared Work header was removed from the rendered DOM.
-   No header background, gradient, separator or header controls remain. */
+/* SEYVEO: newly built Work header, 12 Nov 2026.
+   One real full-bleed colored header instead of overlaid pseudo-layers.
+   Keep all bottom-dock styling outside this scope. */
 #svWorkShell[data-shared-work="true"] #tasksPage .tasks-heading,
 #svWorkShell[data-shared-work="true"] #calendarPage .calendar-header{
  display:none!important;
 }
+html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkHeader{
+ box-sizing:border-box!important;
+ order:0!important;
+ align-self:center!important;
+ width:min(100vw,530px)!important;
+ max-width:none!important;
+ height:68px!important;
+ min-height:68px!important;
+ margin:0!important;
+ padding:0 20px!important;
+ display:grid!important;
+ grid-template-columns:42px minmax(0,1fr) 42px!important;
+ align-items:center!important;
+ column-gap:7px!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ background-image:none!important;
+}
+:root[data-theme="light"] body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkHeader{
+ background-color:#F2F1F6!important;
+ border-bottom:1px solid #E9E8ED!important;
+}
+html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkTitle{
+ grid-column:2!important;
+ grid-row:1!important;
+ align-self:center!important;
+ justify-self:stretch!important;
+ text-align:center!important;
+ font-size:17px!important;
+ font-weight:590!important;
+ line-height:1.2!important;
+ letter-spacing:-.02em!important;
+}
+html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkBack,
+html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkAdd:not([hidden]){
+ box-sizing:border-box!important;
+ display:flex!important;
+ grid-row:1!important;
+ align-items:center!important;
+ justify-content:center!important;
+ justify-self:center!important;
+ width:42px!important;min-width:42px!important;max-width:42px!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ margin:0!important;padding:0!important;
+ border-radius:50%!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ filter:none!important;
+ transform:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkBack{
+ grid-column:1!important;
+ visibility:visible!important;
+}
+html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkAdd:not([hidden]){
+ grid-column:3!important;
+ visibility:visible!important;
+ pointer-events:auto!important;
+}
+:root[data-theme="light"] body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkBack,
+:root[data-theme="light"] body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkAdd:not([hidden]){
+ background-color:rgba(196,201,211,.39)!important;
+ border:1.3px solid rgba(253,254,255,.88)!important;
+ color:#24272D!important;
+ box-shadow:0 0 0 .55px rgba(134,148,166,.16)!important;
+}
+html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkBack svg,
+html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkAdd svg{
+ width:19px!important;height:19px!important;
+ fill:none!important;
+ stroke:currentColor!important;
+ stroke-width:1.5!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+}
+html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkTabs{
+ order:1!important;
+ align-self:center!important;
+ width:calc(100% - 12px)!important;
+ margin:9px 6px 12px!important;
+}
+
 /* Work selector follows the reference's thin, quiet segmented control. */
 #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkTabs{
  height:36px!important;min-height:36px!important;
