@@ -20,6 +20,12 @@
  shell.setAttribute('aria-label','Дела и календарь');
  app.insertBefore(shell,calendar);
  shell.append(calendar,tasks);
+ // The legacy heading must never paint beside the permanent work heading.
+ // Inline important wins against old, later-loaded stylesheets without
+ // destroying the original controls or their click handlers.
+ for(const legacy of [tasks.querySelector('.tasks-heading'),calendar.querySelector('.calendar-header')]){
+  if(legacy)legacy.style.setProperty('display','none','important');
+ }
  const nav=document.createElement('nav');
  nav.id='svWorkTabs';
  nav.setAttribute('aria-label','Мои дела, календарь, блокнот и кабинет');
@@ -189,9 +195,9 @@
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
   title.textContent=history?'История':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
-  // Root destinations are already navigable through the bottom dock.
-  // Do not show a redundant Back control beside each top-level title.
-  back.hidden=!history;
+  // Match the approved Apple-style header: one Back, centered title,
+  // and one contextual action. The Back delegates to existing navigation.
+  back.hidden=false;
   back.setAttribute('aria-label',history?'Вернуться к моим делам':'Вернуться назад');
   // Keep both History controls as identical graphite circles even if an
   // older theme stylesheet overrides the shared Back class on mobile Safari.
