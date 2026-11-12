@@ -1152,20 +1152,15 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  display:none!important;
 }
 
-/* SEYVEO semantic text accent: only a meaningful phrase, never a decoration. */
+/* Semantic emphasis: clean, legible orange, regular Apple-like text.
+   No faux-bold weight or hyperlink-like underline. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-document-note .lm-meaning-accent{
- color:#A86E11;
- font-weight:480;
- text-decoration-line:underline;
- text-decoration-color:rgba(168,110,17,.55);
- text-decoration-thickness:1px;
- text-underline-offset:3px;
+ color:#C66A00;
+ font-weight:400;
+ text-decoration:none;
 }
 :root[data-theme="dark"] #homePage #seyveoLivingMoment .lm-document-note .lm-meaning-accent{
- color:#E0B364;
- font-weight:480;
- text-decoration-line:underline;
- text-decoration-color:rgba(224,179,100,.6);
- text-decoration-thickness:1px;
- text-underline-offset:3px;
+ color:#FFB347;
+ font-weight:400;
+ text-decoration:none;
 }
