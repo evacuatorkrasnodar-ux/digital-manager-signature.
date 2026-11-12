@@ -3,7 +3,7 @@
    local storage, keyboard support and event handlers are intentionally retained.
    No legacy health styling is imported. */
 #calendarSpaceDialog[data-space="health"]{
- --health-bg:#18191B;--health-surface:#38383A;--health-action:#38383A;
+ --health-bg:#18191B;--health-surface:#242426;--health-action:#38383A;
  --health-text:#FFFFFF;--health-muted:#FFFFFF;--health-rule:rgba(225,225,230,.14);
  --text:#FFFFFF;--secondary:#FFFFFF;
  color:var(--health-text)!important;
@@ -285,9 +285,10 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  border:0!important;
 }
 #calendarSpaceDialog[data-space="health"] #calendarBpReport{
- margin:0 0 14px!important;padding:14px 15px!important;min-width:0!important;
- background:#38383A!important;background-image:none!important;border:0!important;
- border-radius:15px!important;box-shadow:none!important;overflow-wrap:anywhere!important;
+ margin:0 0 14px!important;padding:6px 5px 13px!important;min-width:0!important;
+ background:transparent!important;border:0!important;
+ border-bottom:1px solid var(--health-rule)!important;border-radius:0!important;
+ box-shadow:none!important;overflow-wrap:anywhere!important;
 }
 #calendarSpaceDialog[data-space="health"] #calendarBpReport[data-level="urgent"]{
  padding:13px!important;border-left:3px solid #FF7474!important;
@@ -513,7 +514,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 
 /* Approved pressure-entry palette only. Do not recolor the page, journal or medical card. */
 html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-entry{
- background-color:#38383A!important;background-image:none!important;
+ background-color:#242426!important;background-image:none!important;
  color:#FFFFFF!important;
 }
 html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-entry>h3{
@@ -561,52 +562,26 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:1!important;
 }
 
-/* Final unified Health surface palette. All Health cards share the approved
-   SEYVEO graphite; text is true white. No layout or event handler changes. */
-html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]{
- --health-bg:#18191B!important;
- --health-surface:#38383A!important;
- --health-action:#38383A!important;
- --health-text:#FFFFFF!important;
- --health-muted:#FFFFFF!important;
- --text:#FFFFFF!important;
- --secondary:#FFFFFF!important;
- background-color:#18191B!important;
- background-image:none!important;
- color:#FFFFFF!important;
-}
-html body #calendarSpaceDialog.cal-space-dialog[open][data-space="health"] :is(
- .cal-bp-home-entry,#calendarBpReport,#calendarBpJournal,
- #calendarBpRepeatPanel,#pwHealth>.pw-health-tiles,#pwHealth>.pw-tiles
+/* Health text contrast only. No background, sizing, border or layout changes. */
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll :is(
+ h1,h2,h3,h4,h5,h6,p,small,strong,span,label,summary,output,
+ .pw-card,.pw-list-title,.cal-bp-journal-row,.cal-bp-home-save,
+ .cal-bp-journal-period button,.cal-bp-journal-actions button
 ){
- background-color:#38383A!important;
- background-image:none!important;
- box-shadow:none!important;
- color:#FFFFFF!important;
-}
-html body #calendarSpaceDialog.cal-space-dialog[open][data-space="health"] :is(
- .cal-bp-home-entry,#calendarBpReport,#calendarBpJournal,
- #pwHealth>.pw-health-tiles
-) :is(h3,h4,span,small,strong,p,label,summary){
  color:#FFFFFF!important;
  -webkit-text-fill-color:#FFFFFF!important;
  opacity:1!important;
  text-shadow:none!important;
 }
-html body #calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #pwHealth .pw-health-tiles .pw-card>svg{
- background:#2C2C2E!important;
- background-image:none!important;
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll :is(
+ input:not([type="hidden"]),textarea,select
+){
  color:#FFFFFF!important;
- stroke:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ opacity:1!important;
 }
-html body #calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #pwHealth .pw-health-tiles .pw-card .pw-card-arrow{
- stroke:#FFFFFF!important;
-}
-html body #calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-save{
- border:1px solid rgba(255,255,255,.20)!important;
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll :is(input,textarea)::placeholder{
  color:#FFFFFF!important;
-}
-html body #calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #calendarBpReport[data-level="urgent"]{
- background:#312426!important;
- border-left:3px solid #FF7474!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ opacity:1!important;
 }
