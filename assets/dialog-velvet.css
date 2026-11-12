@@ -350,7 +350,7 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
  background:var(--sv-life-dialog-bg,var(--card))!important;
  color:var(--text);
 }
-#calendarSpaceDialog:not([hidden]):not([data-space="health"]){
+#calendarSpaceDialog:not([hidden]):not([data-space="health"]):not([data-space="care"]){
  box-sizing:border-box;
  border:1px solid var(--seyveo-hdr-outline,var(--line))!important;
  border-radius:22px!important;box-shadow:none!important;
