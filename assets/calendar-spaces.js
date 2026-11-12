@@ -309,11 +309,11 @@ function bpAssess(s,d,p){
  }else if(s>=160||d>=100){
   level='high';
   summary='Давление заметно повышено';
-  advice='Посидите спокойно пять минут и повторите замер. Если высокие показатели сохраняются, запишитесь на приём в поликлинику.';
+  advice='Отдохните пять минут и измерьте снова. Если давление остаётся высоким, обратитесь за медицинской консультацией.';
  }else if(s>=135||d>=85){
   level='raised';
   summary='Давление повышено';
-  advice='Спокойно посидите пять минут и измерьте ещё раз. Сэйви сохранит оба результата.';
+  advice='Посидите спокойно пять минут и повторите измерение.';
  }else if(s>=120||d>=70){
   level='watch';
   summary='Давление ниже порога повышенного домашнего';
@@ -325,8 +325,8 @@ function bpAssess(s,d,p){
  }
  if(Number.isInteger(p)&&(p>100||p<60)){
   const extra='Пульс '+p+' в минуту вне обычного диапазона покоя.';
-  advice+=(level==='urgent'?' ': '\n')+extra;
-  if(level!=='urgent')advice+=' Если есть обморок, боль в груди или сильная одышка — вызывайте скорую.';
+  advice+=' '+extra;
+  if(level!=='urgent')advice+=' При боли в груди, обмороке или сильной одышке вызывайте экстренную помощь.';
  }
  return {level,summary,advice};
 }
@@ -350,7 +350,7 @@ function bpReport(){
  if(box.hidden)return;
  const bp=records[0],info=bpAssess(bp.s,bp.d,bp.p);
  box.dataset.level=info.level;
- $('calendarBpReportStatus').textContent=info.summary+' · '+bp.s+'/'+bp.d+' мм рт. ст.'+(bp.p!==null?', пульс '+bp.p:'');
+ $('calendarBpReportStatus').textContent=info.summary;
  $('calendarBpReportAdvice').textContent=info.advice;
  const average=bpAverage(records),node=$('calendarBpReportAverage');
  node.hidden=!average;
@@ -529,6 +529,8 @@ function renderBpJournal(){
  const items=bpJournalItems(),summary=bpJournalOverview(items);
  $('calendarBpJournalCount').textContent=items.length+' '+(items.length===1?'измерение':'измерений');
  $('calendarBpJournalAverage').textContent=summary.average;
+ const title=root.querySelector('.cal-bp-journal-summary>span');
+ if(title)title.textContent=items.length===1?'Измерение':items.length>1?'Среднее за период':'Показатели за период';
  $('calendarBpJournalInsight').textContent=summary.insight;
  root.querySelectorAll('[data-bp-period]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.bpPeriod===bpJournalPeriod)));
  const rows=$('calendarBpJournalRows');rows.replaceChildren();
@@ -672,7 +674,7 @@ function quickBpAdvice(){
  const box=$('calendarBpQuickAdvice'),emergency=$('calendarBpQuickEmergency');
  if(!box||!emergency)return;
  const vals=quickBpValues();
- if(vals.some(x=>!x)){box.textContent='Сэйви объяснит результат после ввода.';box.dataset.level='neutral';emergency.hidden=true;return;}
+ if(vals.some(x=>!x)){box.textContent='';box.dataset.level='neutral';emergency.hidden=true;return;}
  const [s,d,p]=vals.map(Number);
  if(![s,d,p].every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240){
   box.textContent='Проверьте цифры: верхнее должно быть больше нижнего.';box.dataset.level='neutral';emergency.hidden=true;return;
@@ -689,7 +691,7 @@ $('calendarBpQuickForm').addEventListener('submit',event=>{
  event.preventDefault();
  const vals=quickBpValues(),[s,d,p]=vals.map(Number);
  if(vals.some(x=>!x)||![s,d,p].every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240){
-  quickBpAdvice();return;
+  quickBpAdvice();if(vals.some(x=>!x))$('calendarBpQuickAdvice').textContent='Введите верхнее, нижнее и пульс.';return;
  }
  // Preserve the original editor for repeat readings and edits; the inline
  // entry is strictly for a fresh measurement.
