@@ -26,16 +26,14 @@ function init(){
  const track=document.getElementById('assistantQuickTrack');
  if(rail){rail.setAttribute('aria-hidden','true');rail.inert=true;}
  if(track)track.tabIndex=-1;
+ // The HTML footer is the only source of the four navigation SVGs.
+ // Never replace those icons with duplicate, older vector data from this script.
+ const originalButtonMarkup=buttons.map(button=>button.innerHTML);
  const items=[
-  {id:'home',title:'Главная',description:'Вернуться на Главную',
-   icon:'<path d="M4 10.5 12 4l8 6.5v9H14v-6h-4v6H4z"/>'},
-  {id:'tasks',title:'Дела',description:'Открыть дела',
-   icon:'<path d="M9 4.5h11.5M9 12h11.5M9 19.5h11.5M3.8 4.5h1.4M3.8 12h1.4M3.8 19.5h1.4"/>'},
-  {id:'life',title:'Мой мир',description:'Открыть Мой мир',
-   // One shared sprite symbol, same geometry as the first-paint dock markup.
-   viewBox:'0 0 28 24',icon:'<use href="#seyveo-my-mini"/>'},
-  {id:'search',title:'Поиск',description:'Умный поиск SEYVEO',
-   icon:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m15.7 15.7 5 5"/>'}
+  {id:'home',title:'Главная',description:'Вернуться на Главную'},
+  {id:'tasks',title:'Дела',description:'Открыть дела'},
+  {id:'life',title:'Мой мир',description:'Открыть Мой мир'},
+  {id:'search',title:'Поиск',description:'Умный поиск SEYVEO'}
  ];
  const musicMode=()=>dock.classList.contains('seyveo-music-dock')||
   window.SEYVEO_MUSIC_DOCK?.isActive?.()===true;
@@ -55,9 +53,13 @@ function init(){
   items.forEach((item,index)=>{
    const button=buttons[index];
    button.hidden=false;
-   // Do not recreate SVG/labels on every hashchange: avoids label flashes.
-   if(button.dataset.svFixedAction!==item.id){
-    button.innerHTML='<svg class="seyveo-dock-nav-svg'+(item.id==='life'?' seyveo-my-signature':'')+'" viewBox="'+(item.viewBox||'0 0 24 24')+'" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+item.icon+'</svg><span>'+item.title+'</span>';
+   // Music/Browser may temporarily reuse these buttons: restore the
+   // ORIGINAL HTML icons after those modes exit, not obsolete replacement SVGs.
+   // Normal route changes do not re-render matching artwork.
+   if(button.dataset.svFixedAction!==item.id||
+      button.innerHTML!==originalButtonMarkup[index]){
+    if(button.innerHTML!==originalButtonMarkup[index])
+     button.innerHTML=originalButtonMarkup[index];
     button.dataset.svFixedAction=item.id;
     button.setAttribute('aria-label',item.description);
     button.title=item.title;
