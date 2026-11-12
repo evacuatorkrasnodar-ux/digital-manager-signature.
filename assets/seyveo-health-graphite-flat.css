@@ -703,7 +703,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:.73!important;
 }
 
-/* HEALTH LIGHT · natural white pearl polymer with a micro-light on the rim v58.
+/* HEALTH LIGHT · pearl matte dock with hand-marked directional edge glints v59.
    The global dock is a single DOM instance; this sheet changes ONLY its
    appearance while portaled inside the Health dialog in the white theme.
    No pseudo-surface behind the dock: the capsule and search button own
@@ -718,7 +718,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  --sv-health-height:60px;
  --sv-health-matte:rgba(211,216,223,.62);
  --sv-health-rim:rgba(250,249,248,.94);
- --sv-health-pearl-edge:inset 0 1px 0 rgba(255,255,255,.42),0 0 0 .7px rgba(184,188,198,.24),0 1px 1.3px rgba(93,102,113,.09);
+ --sv-health-pearl-edge:0 0 0 .7px rgba(184,188,198,.24),0 1px 1.3px rgba(93,102,113,.09);
  --sv-health-ink:#1C1C1E;
  --sv-health-blue:#007AFF;
  position:fixed!important;
@@ -769,6 +769,32 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  backdrop-filter:blur(20px) saturate(94%)!important;
  box-shadow:var(--sv-health-pearl-edge)!important;
  position:relative!important;z-index:1!important;
+}
+/* USER-MARKED light ONLY: upper-left and lower-right arcs of each pearl rim.
+   No full-length upper glint, no chrome, no new opaque surface. The original
+   matte backgrounds and 60px geometry remain unchanged. */
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > .sv-health-dock-actions::after,
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > #navManage::after{
+ content:""!important;display:block!important;
+ position:absolute!important;inset:.3px!important;
+ box-sizing:border-box!important;
+ padding:1.8px!important;border-radius:inherit!important;
+ background:conic-gradient(from 0deg at 50% 50%,
+  transparent 0deg 58deg,
+  rgba(255,255,255,.10) 73deg,
+  rgba(255,255,255,.72) 98deg,
+  rgba(255,255,255,.40) 127deg,
+  transparent 153deg 238deg,
+  rgba(255,255,255,.10) 250deg,
+  rgba(255,255,255,.78) 280deg,
+  rgba(255,255,255,.48) 310deg,
+  transparent 334deg 360deg
+ )!important;
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0)!important;
+ mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0)!important;
+ -webkit-mask-composite:xor!important;
+ mask-composite:exclude!important;
+ pointer-events:none!important;z-index:3!important;
 }
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock .sv-health-dock-tab{
  -webkit-appearance:none!important;appearance:none!important;
