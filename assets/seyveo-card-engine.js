@@ -331,10 +331,11 @@
   navigate:'<path d="M7 17 17 7M8 7h9v9"/>',
   send:'<path d="m22 2-7.2 20-4.2-8.6L2 9.2 22 2ZM22 2 10.6 13.4"/>',
   save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
-  confirm:'<path d="m5 12 4.5 4.5L19 7"/>'
+  confirm:'<path d="m5 12 4.5 4.5L19 7"/>',
+  back:'<path d="m14.5 5-7 7 7 7"/>'
  });
  const cardIconLabels=Object.freeze({sayvi:'Сэйви',edit:'Исправить',navigate:'Перейти',
-  send:'Отправить',save:'Сохранить',confirm:'Подтвердить'});
+  send:'Отправить',save:'Сохранить',confirm:'Подтвердить',back:'Назад'});
  function decorateActionButton(button,kind){
   if(!button||!Object.prototype.hasOwnProperty.call(cardGlyphs,kind))return button;
   if(button.dataset.svCardIcon===kind&&button.querySelector?.('.sv-card-symbol'))return button;
@@ -405,8 +406,8 @@
    actions.append(button);
   }
   article.append(actions);
-  // Approved RESULT stage for every card: approve / pencil / navigation.
-  // Engine remains pure: no real sending, saving or navigation without onAction.
+  // Approved result stage: only Send and Back. No legacy disk or pencil.
+  // Pure UI: real delivery is the service owner's responsibility.
   const draftPane=el('div','sv-card-draft-preview');
   draftPane.hidden=true;draftPane.setAttribute('aria-live','polite');
   const draftTitle=el('p','sv-card-draft-title');
@@ -415,36 +416,24 @@
   draftInput.rows=4;draftInput.maxLength=1200;draftInput.hidden=true;
   const draftHint=el('p','sv-card-draft-hint');
   const draftActions=el('div','sv-card-draft-actions');
-  draftActions.setAttribute('role','group');
-  draftActions.setAttribute('aria-label','Выберите действие с предложением Сэйви');
+  draftActions.setAttribute('role','group');draftActions.setAttribute('aria-label','Отправить или назад');
   const draftSend=el('button','sv-card-draft-confirm');draftSend.type='button';
-  const draftEdit=el('button','sv-card-draft-option');draftEdit.type='button';
-  const draftChat=el('button','sv-card-draft-option');draftChat.type='button';
-  decorateActionButton(draftEdit,'edit');
-  decorateActionButton(draftChat,'navigate');
-  draftEdit.setAttribute('aria-label','Исправить предложение самостоятельно');
-  draftChat.setAttribute('aria-label','Перейти для обсуждения предложения');
-  draftActions.append(draftSend,draftEdit,draftChat);
+  draftSend.textContent='Отправить';decorateActionButton(draftSend,'send');
+  draftSend.setAttribute('aria-label','Отправить предложенный текст');
+  const draftBack=el('button','sv-card-draft-option');draftBack.type='button';
+  draftBack.textContent='Назад';decorateActionButton(draftBack,'back');
+  draftBack.setAttribute('aria-label','Назад к карточке');
+  draftActions.append(draftSend,draftBack);
   const draftStatus=el('p','sv-card-draft-status');
   draftPane.append(draftTitle,draftText,draftInput,draftHint,draftActions,draftStatus);
   article.append(draftPane);
-  const sendLabel=family=>['message','mail','employee','shelf'].includes(family)?'Отправить':
-   ['document','secureFlow'].includes(family)?'Сохранить':'Подтвердить';
   const showDraft=(editable)=>{
    draftPane.hidden=false;actions.hidden=true;
    draftTitle.textContent=editable?'Ваш вариант':'Предложение Сэйви';
    draftInput.value=card.suggestion||card.fact||'';
    draftText.textContent=draftInput.value;
    draftInput.hidden=!editable;draftText.hidden=editable;
-   draftEdit.hidden=editable;
-   draftHint.textContent='Решение за вами: подтвердить, исправить или перейти к обсуждению. Автоматических действий нет.';
-   const label=sendLabel(card.family);
-   draftSend.textContent=label;
-   decorateActionButton(draftSend,label==='Отправить'?'send':
-    label==='Сохранить'?'save':'confirm');
-   draftSend.setAttribute('aria-label',label==='Отправить'?'Отправить подготовленный ответ':label==='Сохранить'?'Сохранить предложенную редакцию':'Подтвердить предложение');
-   draftChat.setAttribute('aria-label',['message','mail','document','secureFlow'].includes(card.family)
-    ?'Обсудить с Сэйви в чате':'Перейти к исходному разделу');
+   draftHint.textContent='Проверьте текст, затем отправьте или вернитесь.';
    draftStatus.textContent='';
    if(editable)draftInput.focus({preventScroll:true});
   };
@@ -454,19 +443,13 @@
     button.addEventListener('click',()=>showDraft(id==='edit'));
    }
   }
-  draftEdit.addEventListener('click',()=>{
-   draftInput.value=draftText.textContent||'';
-   draftInput.hidden=false;draftText.hidden=true;draftEdit.hidden=true;
-   draftTitle.textContent='Ваш вариант';
-   draftInput.focus({preventScroll:true});
-  });
-  draftChat.addEventListener('click',()=>{
-   if(typeof onAction==='function')onAction('navigate',card);
+  draftBack.addEventListener('click',()=>{
+   draftPane.hidden=true;actions.hidden=false;draftStatus.textContent='';
   });
   draftSend.addEventListener('click',()=>{
    const value=(draftInput.hidden?draftText.textContent:draftInput.value)?.trim();
    if(!value){draftStatus.textContent='Сначала укажите текст.';return;}
-   draftStatus.textContent='Учебный просмотр: действие подтверждено, внешняя отправка или сохранение не выполнялись.';
+   draftStatus.textContent='Учебный просмотр: подтверждение принято, реальная отправка не выполнялась.';
    if(typeof onAction==='function')onAction('confirm-preview',card);
   });
   installDeferSwipe(article,card,onAction);
