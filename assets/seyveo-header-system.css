@@ -345,7 +345,6 @@ html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper
 
 /* Accessibility and system settings. */
 @media(prefers-reduced-transparency:reduce){
- html[data-theme="light"] body dialog#notesDialog.notes-dialog[open] > button.seyveo-dialog-close.sv-nav-arrow,
  html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
   > :is(button.seyveo-dialog-close.sv-nav-arrow,button.sv-health-header-add:not([hidden])){
   background:#E3E4E9!important;
