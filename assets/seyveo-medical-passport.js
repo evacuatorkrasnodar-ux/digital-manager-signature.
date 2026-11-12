@@ -41,17 +41,18 @@ overlay.innerHTML=[
  '<header class="sv-med-header">',
  '<button type="button" class="sv-med-back" id="svMedicalBack" aria-label="Вернуться к здоровью"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>',
  '<h2 id="svMedicalHeading">Экстренная карта</h2>',
- '<button type="button" class="sv-med-edit" id="svMedicalEdit" aria-label="Редактировать медпаспорт"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 4 4 4M4 20l4.5-1 11-11a2.83 2.83 0 0 0-4-4l-11 11L4 20Z"/></svg></button>',
+ '<button type="button" class="sv-med-edit" id="svMedicalEdit" aria-label="Редактировать медпаспорт"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.6-1 10.5-10.6a2.4 2.4 0 0 0-3.4-3.4L5.3 15.6 4 20Z"/><path d="m14.7 6.2 3.3 3.3"/></svg></button>',
  '</header>',
  '<div id="svMedicalView">',
  '<div class="sv-med-brand"><span class="sv-sayvi-symbol" aria-hidden="true"></span><span>Сэйви · Здоровье</span></div>',
  '<h3 id="svMedicalPerson"></h3>',
  '<p id="svMedicalUpdated" class="sv-med-muted"></p>',
  '<div id="svMedicalEssentials"></div>',
- '<div id="svMedicalMedications"></div>',
- '<div id="svMedicalIntakes"></div>',
- '<div id="svMedicalPressure"></div>',
- '<p class="sv-med-disclaimer">Информация внесена пользователем. «Не указано» не означает «нет». Приём лекарств показан только по ручным отметкам.</p>',
+ '<details id="svMedicalHistory" class="sv-med-history">',
+ '<summary><span>История здоровья</span><small id="svMedicalHistoryCount"></small><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></summary>',
+ '<div class="sv-med-history-body"><div id="svMedicalMedications"></div><div id="svMedicalIntakes"></div><div id="svMedicalPressure"></div></div>',
+ '</details>',
+ '<p class="sv-med-disclaimer">Сведения со слов пользователя. Отметки о приёме — ручные.</p>',
  '<div class="sv-med-actions">',
  '<button type="button" id="svMedicalPrint">Распечатать / PDF</button>',
  '<button type="button" id="svMedicalShare">Поделиться</button>',
@@ -137,37 +138,55 @@ function addSection(container,title,items,emptyLabel){
 }
 function render(){
  const d=getSnapshot(),p=d.profile;
- $('svMedicalPerson').textContent=displayOrUnknown(p.name);
- $('svMedicalUpdated').textContent='Возраст: '+d.age+' · Профиль обновлён: '+(p.updatedAt?timeText(p.updatedAt):'ещё не заполнен');
+ const hasName=!!p.name;
+ $('svMedicalPerson').textContent=hasName?p.name:'Медпаспорт';
+ $('svMedicalPerson').classList.toggle('sv-med-person-empty',!hasName);
+ $('svMedicalUpdated').textContent='Возраст: '+d.age+
+   (hasName?'': ' · Имя не указано')+
+   (p.updatedAt?' · Обновлено '+timeText(p.updatedAt):'');
  const essentials=$('svMedicalEssentials');essentials.replaceChildren();
  const block=document.createElement('section');block.className='sv-med-block';
  block.append(txt('h4','Важное для скорой'));
  addPair(block,'Аллергии',selectStatus(p.allergies,p.allergyDetails),p.allergies==='yes');
  addPair(block,'Сердце',selectStatus(p.heart,p.heartDetails),p.heart==='yes');
- addPair(block,'Другие заболевания',displayOrUnknown(p.conditions));
- addPair(block,'Операции / импланты',displayOrUnknown(p.operations));
+ if(p.conditions)addPair(block,'Другие заболевания',p.conditions);
+ if(p.operations)addPair(block,'Операции и импланты',p.operations);
+ const currentMeds=d.meds.map(x=>[safeString(x.name,90),safeString(x.dose,80)].filter(Boolean).join(' · '));
+ const shownMeds=currentMeds.slice(0,2);
+ addPair(block,'Лекарства',currentMeds.length?
+   shownMeds.join('; ')+(currentMeds.length>shownMeds.length?' · +'+(currentMeds.length-shownMeds.length)+' ещё':'')
+   :'Нет записей о лекарствах');
  const last=d.confirmed[0];
- addPair(block,'Последний отмеченный приём',last?
+ if(last)addPair(block,'Последний отмеченный приём',
   last.name+' · '+(last.dose||'доза не указана')+' · '+dateText(last.date)+
-  (last.at?' · отметка '+new Date(last.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):' · точное время неизвестно')
-  :'Нет подтверждённых отметок');
+  (last.at?' · '+new Date(last.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):' · время отметки неизвестно'));
  const latestBp=d.pressure[0];
- addPair(block,'Последнее давление',latestBp?
+ addPair(block,'Давление',latestBp?
   latestBp.s+'/'+latestBp.d+' мм рт. ст.'+(latestBp.pulse!==null?' · пульс '+latestBp.pulse:'')+' · '+
   (latestBp.time?timeText(latestBp.time):dateText(latestBp.date))
-  :'Не измерялось в журнале');
- addPair(block,'Экстренный контакт',p.contactName||p.contactPhone?
-  [p.contactName,p.contactPhone].filter(Boolean).join(' · '):'Не указан');
+  :'Нет измерений');
+ if(p.contactName||p.contactPhone)addPair(block,'Экстренный контакт',
+  [p.contactName,p.contactPhone].filter(Boolean).join(' · '));
  if(p.note)addPair(block,'Дополнительно',p.note);
  essentials.append(block);
- const meds=d.meds.map(x=>[safeString(x.name,90),safeString(x.dose,80),safeString(x.time,5)].filter(Boolean).join(' · '));
- addSection($('svMedicalMedications'),'Записанные лекарства',meds,'Не указаны');
+ const medRows=d.meds.map(x=>[safeString(x.name,90),safeString(x.dose,80),safeString(x.time,5)].filter(Boolean).join(' · '));
+ addSection($('svMedicalMedications'),'Лекарства',medRows,'Лекарства не записаны');
  const intakes=d.confirmed.map(x=>x.name+' · '+(x.dose||'доза не указана')+' · '+dateText(x.date)+
-  (x.at?' · отметка '+new Date(x.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):' · время отметки неизвестно'));
- addSection($('svMedicalIntakes'),'Последние подтверждённые приёмы',intakes,'Подтверждений приёма пока нет');
+  (x.at?' · отмечено '+new Date(x.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):' · время отметки неизвестно'));
+ addSection($('svMedicalIntakes'),'Отмеченные приёмы',intakes,'Приём не подтверждался');
  const pressure=d.pressure.map(x=>x.s+'/'+x.d+' мм рт. ст.'+(x.pulse!==null?' · пульс '+x.pulse:'')+
   ' · '+(x.time?timeText(x.time):dateText(x.date)));
- addSection($('svMedicalPressure'),'Последние измерения давления',pressure,'Измерений пока нет');
+ addSection($('svMedicalPressure'),'Измерения давления',pressure,'Измерений нет');
+ const history=$('svMedicalHistory');
+ const count=d.meds.length+d.confirmed.length+d.pressure.length;
+ history.hidden=count===0;
+ if(count){
+  const parts=[];
+  if(d.pressure.length)parts.push(d.pressure.length+' '+(d.pressure.length===1?'замер':'замеров'));
+  if(d.meds.length)parts.push(d.meds.length+' '+(d.meds.length===1?'лекарство':'лекарств'));
+  if(d.confirmed.length)parts.push(d.confirmed.length+' отметок');
+  $('svMedicalHistoryCount').textContent=parts.join(' · ');
+ }
 }
 function plainText(){
  const d=getSnapshot(),p=d.profile,lines=[
@@ -201,6 +220,7 @@ function formDisplay(edit){
  $('svMedicalHeading').textContent=edit?'Медпаспорт':'Экстренная карта';
  if(edit)fillForm();
  else render();
+ overlay.scrollTop=0;
 }
 function fillForm(){
  const d=readProfile(),form=$('svMedicalForm');
@@ -265,7 +285,13 @@ $('svMedicalForm').addEventListener('submit',event=>{
   $('svMedicalFormStatus').textContent='Не удалось сохранить на этом устройстве.';
  }
 });
-$('svMedicalPrint').addEventListener('click',()=>{render();window.print()});
+$('svMedicalPrint').addEventListener('click',()=>{
+ render();
+ const history=$('svMedicalHistory'),wasOpen=history.open;
+ if(!history.hidden)history.open=true;
+ window.addEventListener('afterprint',()=>{history.open=wasOpen},{once:true});
+ window.print();
+});
 $('svMedicalShare').addEventListener('click',async()=>{
  const message=$('svMedicalShareMessage');
  message.textContent='';
