@@ -18,7 +18,12 @@ html body dialog#calendarSpaceDialog[data-space="health"] #svMedicalEntry{
 }
 html body #svMedicalEntry svg{display:block;width:22px;height:22px}
 #svMedicalOverlay{
- position:fixed;inset:0;
+ position:fixed!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ max-width:none!important;max-height:none!important;
+ min-width:0!important;min-height:0!important;
+ margin:0!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;
  z-index:2147483200;
  overflow-y:auto;
  overscroll-behavior:contain;
