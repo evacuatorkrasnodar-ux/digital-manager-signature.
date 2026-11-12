@@ -698,7 +698,7 @@ function openDialog(){
  form.reset();syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
- input.focus({preventScroll:true});
+ /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
 }
 function put(e){
  e.preventDefault();
@@ -781,7 +781,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  date.value=task.due;
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='Изменения сохраняются только после вашего подтверждения.';
- input.focus({preventScroll:true});
+ /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
  if(detail)detail.result={status:'opened'};
 });
 /* Home collections do not own a second database. Completing a saved task
@@ -889,7 +889,7 @@ list.addEventListener('click',e=>{
   pendingSourceNoteId=suggestion.sourceNoteId;
   date.value='';syncDueDateDisplay();
   $('personalTaskStatus').textContent='Из исходной заметки. Проверьте текст и укажите срок, если он нужен. Сохранение — только по вашему решению.';
-  input.focus({preventScroll:true});
+  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
  }
  else if(btn.dataset.taskOrigin){
   const target=read().find(row=>row.id===btn.dataset.taskOrigin);
@@ -920,7 +920,7 @@ window.addEventListener('seyveo:task-plan-note',event=>{
  if(strDate(requested))date.value=requested;
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='SEYVEO заметил возможное дело в заметке. Проверьте название и срок, затем сохраните.';
- input.focus({preventScroll:true});
+ /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
 });
 /* Explicit one-click approval of up to five tasks from a reviewed Notebook plan.
    Same local task store and renderer as the normal task editor. Atomic write,
