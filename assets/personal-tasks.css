@@ -1105,8 +1105,8 @@
 }
 #personalTaskDialog .sv-task-page-header > .sv-task-topbar{
  grid-column:1!important;align-self:center!important;
- width:44px!important;min-width:44px!important;max-width:44px!important;
- height:44px!important;min-height:44px!important;
+ width:var(--sv-header-slot,42px)!important;min-width:var(--sv-header-slot,42px)!important;max-width:var(--sv-header-slot,42px)!important;
+ height:var(--sv-header-slot,42px)!important;min-height:var(--sv-header-slot,42px)!important;
  display:flex!important;align-items:center!important;justify-content:center!important;
  margin:0!important;padding:0!important;
 }
@@ -1119,21 +1119,21 @@
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 #personalTaskDialog .sv-task-page-header > .sv-task-header-spacer{
- grid-column:3!important;width:44px;height:44px;pointer-events:none;
+ grid-column:3!important;width:var(--sv-header-slot,42px);height:var(--sv-header-slot,42px);pointer-events:none;
 }
 #personalTaskDialog .sv-task-page-header #personalTaskCancel,
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-header .sv-task-date-back{
  grid-column:1!important;justify-self:center!important;align-self:center!important;
  display:inline-flex!important;align-items:center!important;justify-content:center!important;
- width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
- max-width:44px!important;max-height:44px!important;
+ width:var(--sv-header-slot,42px)!important;height:var(--sv-header-slot,42px)!important;min-width:var(--sv-header-slot,42px)!important;min-height:var(--sv-header-slot,42px)!important;
+ max-width:var(--sv-header-slot,42px)!important;max-height:var(--sv-header-slot,42px)!important;
  margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
  background:transparent!important;box-shadow:none!important;color:var(--text)!important;
 }
 #personalTaskDialog .sv-task-page-header #personalTaskCancel svg,
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-header .sv-task-date-back svg{
- display:block!important;width:19px!important;height:19px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ display:block!important;width:var(--sv-header-back-icon,25px)!important;height:var(--sv-header-back-icon,25px)!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-header-back-weight,1.45)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important
 }
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-header{
@@ -1173,9 +1173,9 @@ html body #personalTaskDialog .sv-task-page-header > #personalTaskSave{
  align-self:center!important;display:inline-flex!important;
  align-items:center!important;justify-content:center!important;
  position:relative!important;top:auto!important;right:auto!important;
- width:var(--sv-header-slot,42px)!important;height:44px!important;
- min-width:44px!important;max-width:44px!important;
- min-height:44px!important;max-height:44px!important;
+ width:var(--sv-header-slot,42px)!important;height:var(--sv-header-slot,42px)!important;
+ min-width:var(--sv-header-slot,42px)!important;max-width:var(--sv-header-slot,42px)!important;
+ min-height:var(--sv-header-slot,42px)!important;max-height:var(--sv-header-slot,42px)!important;
  margin:0!important;padding:0!important;border:var(--sv-header-circle-border)!important;
  border-radius:50%!important;background:var(--sv-header-circle)!important;
  color:var(--sv-header-icon-ink)!important;-webkit-appearance:none!important;appearance:none!important;
@@ -1183,12 +1183,12 @@ html body #personalTaskDialog .sv-task-page-header > #personalTaskSave{
  box-shadow:var(--sv-header-circle-shadow)!important;transform:none!important;
 }
 html body #personalTaskDialog .sv-task-page-header > #personalTaskSave svg{
- width:20px!important;height:20px!important;display:block!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;
+ width:var(--sv-header-action-icon,22px)!important;height:var(--sv-header-action-icon,22px)!important;display:block!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-header-action-weight,1.85)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body #personalTaskDialog .sv-task-page-header > #personalTaskSave:active{
- background:#49494B!important;
+ background:var(--seyveo-hdr-active,rgba(156,162,172,.30))!important;
 }
 html body #personalTaskDialog .sv-task-page-header > #personalTaskSave:focus-visible,
 html body #personalTaskDialog .sv-task-page-header #personalTaskCancel:focus-visible{
@@ -1218,8 +1218,8 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
  #seyveoTaskDuePicker .sv-task-date-header > .sv-task-date-back{
  display:inline-flex!important;align-items:center!important;justify-content:center!important;
  position:relative!important;box-sizing:border-box!important;
- width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
- max-width:44px!important;max-height:44px!important;
+ width:var(--sv-header-slot,42px)!important;height:var(--sv-header-slot,42px)!important;min-width:var(--sv-header-slot,42px)!important;min-height:var(--sv-header-slot,42px)!important;
+ max-width:var(--sv-header-slot,42px)!important;max-height:var(--sv-header-slot,42px)!important;
  margin:0!important;padding:0!important;
  border:var(--sv-header-circle-border)!important;border-radius:50%!important;
  background:var(--sv-header-circle)!important;background-image:none!important;color:var(--sv-header-icon-ink)!important;
@@ -1229,14 +1229,14 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
 html body #personalTaskDialog.personal-task-dialog[open] .sv-task-page-header #personalTaskCancel svg,
 html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
  #seyveoTaskDuePicker .sv-task-date-header > .sv-task-date-back svg{
- display:block!important;flex:none!important;width:19px!important;height:19px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ display:block!important;flex:none!important;width:var(--sv-header-back-icon,25px)!important;height:var(--sv-header-back-icon,25px)!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-header-back-weight,1.45)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body #personalTaskDialog.personal-task-dialog[open] .sv-task-page-header #personalTaskCancel:active,
 html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
  #seyveoTaskDuePicker .sv-task-date-header > .sv-task-date-back:active{
- background:#49494B!important;
+ background:var(--seyveo-hdr-active,rgba(156,162,172,.30))!important;
 }
 /* Selected date gets one quiet fine ring; avoid raised lens shading. */
 html body #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
@@ -1288,7 +1288,7 @@ html body #personalTaskDialog .sv-task-page-header > #personalTaskSave:disabled 
  opacity:.32!important;
 }
 html body #personalTaskDialog .sv-task-page-header > #personalTaskSave:disabled:active{
- background:#38383A!important;
+ background:var(--sv-header-circle)!important;
 }
 
 /* 2026-11-11 · Deadline picker: stop the header/back chevron escaping
