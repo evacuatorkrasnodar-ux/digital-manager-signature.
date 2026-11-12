@@ -35,6 +35,8 @@
  const sync=()=>{
   view.title.textContent=title.textContent||'Новое дело';
   view.add.disabled=save.disabled;
+  check.style.opacity=save.disabled?'.32':'1';
+  view.add.style.cursor=save.disabled?'default':'pointer';
   view.add.setAttribute('aria-disabled',String(save.disabled));
   view.add.setAttribute('aria-label',save.getAttribute('aria-label')||'Сохранить дело');
   view.add.title=save.title||'Сохранить дело';
