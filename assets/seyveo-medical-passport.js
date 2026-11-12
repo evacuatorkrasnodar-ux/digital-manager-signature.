@@ -227,7 +227,7 @@ const W_STEPS=[
  ['Что ещё важно знать?','note']
 ];
 const W_CONDITIONS=['Гипертония','Диабет','Перенесённый инсульт','Заболевания почек','Эпилепсия'];
-let wDraft=defaults(),wStep=0,wBook=false,wError='',wSelected=[],wOther='';
+let wDraft=defaults(),wStep=0,wBook=false,wManual=false,wError='',wSelected=[],wOther='';
 function wEl(tag,cls,text){
  const el=document.createElement(tag);if(cls)el.className=cls;
  if(text!==undefined)el.textContent=text;return el;
@@ -256,7 +256,7 @@ function wAdvance(){
  catch{wError='Не удалось сохранить Медпаспорт на этом устройстве.';wRender()}
 }
 function wBegin(){
- wDraft=readProfile();wStep=0;wBook=false;wError='';
+ wDraft=readProfile();wStep=0;wBook=false;wManual=false;wError='';
  const existing=wDraft.conditions.split(' · ').filter(Boolean);
  wSelected=W_CONDITIONS.filter(x=>existing.includes(x));
  wOther=existing.filter(x=>!W_CONDITIONS.includes(x)&&x!=='Известных нет (со слов пользователя)').join(' · ');
@@ -364,8 +364,11 @@ function wRender(){
   if(navigator.contacts&&typeof navigator.contacts.select==='function')
    box.append(wBtn('Контакты телефона','device','sv-med-w-link'));
   if(wDraft.contactPhone)box.append(wEl('p','sv-med-w-note','Выбран: '+wDraft.contactName+' · '+wDraft.contactPhone));
-  wInput(box,'contactName','Имя близкого',false);
-  wInput(box,'contactPhone','Номер телефона',false);
+  box.append(wBtn(wManual?'Скрыть ручной ввод':'Ввести вручную','toggle-manual','sv-med-w-link'));
+  if(wManual){
+   wInput(box,'contactName','Имя близкого',false);
+   wInput(box,'contactPhone','Номер телефона',false);
+  }
  }else if(key==='note')wInput(box,'note','Необязательно',true);
  if(wError)wizard.append(wEl('p','sv-med-w-error',wError));
  const actions=wEl('div','sv-med-w-actions');
@@ -423,7 +426,8 @@ wizard.addEventListener('click',e=>{
   return;
  }
  if(action==='book'){wBook=true;wRender();return}
- if(action==='manual'){wBook=false;wRender();return}
+ if(action==='manual'){wBook=false;wManual=true;wRender();return}
+ if(action==='toggle-manual'){wManual=!wManual;wRender();return}
  if(action==='device'){wDevice();return}
  if(action==='person'){
   const name=btn.dataset.name,phone=btn.dataset.phone;
