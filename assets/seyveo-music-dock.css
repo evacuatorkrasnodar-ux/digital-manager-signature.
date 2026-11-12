@@ -240,8 +240,8 @@ html:not(.seyveo-conversation) #sayviMusicMini{
   left:max(clamp(14px,5vw,22px),env(safe-area-inset-left,0px))!important;
   right:auto!important;
   transform:none!important;
-  width:clamp(176px,60vw,226px)!important;
-  max-width:clamp(176px,60vw,226px)!important;
+  width:clamp(176px,calc(100vw - 2 * clamp(14px,5vw,22px) - 71px),264px)!important;
+  max-width:clamp(176px,calc(100vw - 2 * clamp(14px,5vw,22px) - 71px),264px)!important;
   bottom:calc(max(8px,calc(env(safe-area-inset-bottom,0px) - 14px)) + 63px + 8px)!important;
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-open {
