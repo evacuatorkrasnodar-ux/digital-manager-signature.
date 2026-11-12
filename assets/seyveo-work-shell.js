@@ -236,6 +236,26 @@
   if(createMenu){createMenu.hidden=true;calendarAdd?.setAttribute('aria-expanded','false');add.setAttribute('aria-expanded','false');}
   closeBusinessCreate();
   const fromCalendar=!calendar.hidden;
+  // The new visible navigation must call the real Tasks controller directly.
+  // Do not proxy taps through the old hidden tab buttons: the hidden legacy
+  // control is not a reliable interactive target after the header rebuild.
+  if(target==='personal'){
+   const open=window.SEYVEO_UNIFIED_TASKS?.openPersonal;
+   if(typeof open==='function')open();
+   else if(location.hash!=='#tasks')location.hash='#tasks';
+   else oldTab(oldTasks,'data-unified-tasks-tab','personal')?.click();
+   resetWorkScroll();
+   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+   return;
+  }
+  if(target==='business'){
+   const open=window.SEYVEO_UNIFIED_TASKS?.openBusiness;
+   if(typeof open==='function')open('preserve');
+   else oldTab(oldTasks,'data-unified-tasks-tab','business')?.click();
+   resetWorkScroll();
+   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+   return;
+  }
   // ONE has no manager-calendar legacy tabs, so use the original routes.
   if(!window.SEYVEO_PREVIEW?.isManager?.()&&!window.SEYVEO_PREVIEW?.isEmployee?.()){
    if(target==='calendar')location.hash='#calendar';
