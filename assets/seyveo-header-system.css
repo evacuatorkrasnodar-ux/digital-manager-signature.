@@ -258,34 +258,38 @@ html[data-theme="light"] body #personalTaskDialog
 html[data-theme="light"] body #personalTaskDialog
  .sv-task-page-header > #personalTaskSave:disabled svg{opacity:.32!important}
 
-/* Exact shared Work-header coordinates for the New Task screen.
-   New Task's full-screen scroll sheet used to shift the top buttons by its
-   own padding/scroll. Anchor that existing header to the SAME viewport track
-   as the Work Shadow header: 530px centered app, 20px side gutters, top 16px.
-   Only geometry changes. The original Back/Save nodes and events stay put. */
+/* New Task: align ONLY the actual Back and Save circles to the exact
+   coordinates of the permanent Work header. The title, header row, form,
+   date picker, and bottom dock remain in their original layout. */
 @media(max-width:720px){
  html body dialog#personalTaskDialog.personal-task-dialog[open]:not(.sv-task-date-open)
-  .personal-task-sheet{
-  /* The fixed header is out of flow; keep the task form at its old y. */
-  padding-top:calc(16px + env(safe-area-inset-top,0px) + var(--sv-header-row,62px) + 11px)!important;
- }
+  .sv-task-page-header #personalTaskCancel,
  html body dialog#personalTaskDialog.personal-task-dialog[open]:not(.sv-task-date-open)
-  .sv-task-page-header{
-  box-sizing:border-box!important;
+  .sv-task-page-header > #personalTaskSave{
   position:fixed!important;
-  top:calc(16px + env(safe-area-inset-top,0px))!important;
-  left:calc(max(0px, calc(50vw - 265px)) + max(20px, calc(12px + env(safe-area-inset-left,0px))))!important;
-  right:calc(max(0px, calc(50vw - 265px)) + max(20px, calc(12px + env(safe-area-inset-right,0px))))!important;
+  top:calc(26px + env(safe-area-inset-top,0px))!important;
   bottom:auto!important;
-  width:auto!important;max-width:none!important;
-  height:var(--sv-header-row,62px)!important;
-  min-height:var(--sv-header-row,62px)!important;
+  width:var(--sv-header-slot,42px)!important;
+  height:var(--sv-header-slot,42px)!important;
+  min-width:var(--sv-header-slot,42px)!important;
+  min-height:var(--sv-header-slot,42px)!important;
+  max-width:var(--sv-header-slot,42px)!important;
+  max-height:var(--sv-header-slot,42px)!important;
   margin:0!important;padding:0!important;
   transform:none!important;
-  z-index:20!important;
+  z-index:21!important;
+ }
+ html body dialog#personalTaskDialog.personal-task-dialog[open]:not(.sv-task-date-open)
+  .sv-task-page-header #personalTaskCancel{
+  left:calc(max(0px, 50vw - 265px) + max(20px, 12px + env(safe-area-inset-left,0px)))!important;
+  right:auto!important;
+ }
+ html body dialog#personalTaskDialog.personal-task-dialog[open]:not(.sv-task-date-open)
+  .sv-task-page-header > #personalTaskSave{
+  right:calc(max(0px, 50vw - 265px) + max(20px, 12px + env(safe-area-inset-right,0px)))!important;
+  left:auto!important;
  }
 }
-
 /* Health: 62px top row, 42px existing back & plus, same gentle material.
    Health's scrolling medical content and bottom dock are entirely excluded. */
 html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
