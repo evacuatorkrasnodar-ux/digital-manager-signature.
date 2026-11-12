@@ -319,24 +319,20 @@ function createSurface(primary,other=[],real=false,taskId=''){
   syncComposeFocus();
   syncActionHierarchy();
   documentDetails.hidden=!active;
-  // Three distinct options once Sayvi prepares a correction: save, edit, chat.
-  const reviewChoice=documentStep==='preview',manuallyEditing=documentStep==='edit';
-  documentEdit.hidden=!active||!['summary','preview'].includes(documentStep);
+  // After Sayvi: exactly Send or Back. No Save diskette, pencil or extra route.
+  const reviewChoice=documentStep==='preview';
+  documentEdit.hidden=!active||documentStep!=='summary';
   documentLater.hidden=true;
-  documentSave.hidden=!active||!(reviewChoice||manuallyEditing);
-  documentCancel.hidden=true;
+  documentSave.hidden=!active||!reviewChoice;
+  documentCancel.hidden=!active||!reviewChoice;
   documentAnalyze.hidden=true;
   if(active){
    sayviAction.hidden=documentStep!=='summary';
    execute.hidden=true;
-   open.hidden=!['summary','preview','edit'].includes(documentStep);
-   documentEdit.dataset.cardRole='secondary';
+   open.hidden=documentStep!=='summary';
    documentSave.dataset.cardRole='primary';
-   open.dataset.cardRole='navigation';
-   open.setAttribute('aria-label',documentStep==='summary'?'Открыть документы':'Обсудить предложение с Сэйви в чате');
-   open.setAttribute('title',documentStep==='summary'?'Открыть документы':'В чат с Сэйви');
-   if(reviewChoice)controls.append(documentSave,documentEdit,open);
-   else if(manuallyEditing)controls.append(documentSave,open);
+   documentCancel.dataset.cardRole='secondary';
+   if(reviewChoice)controls.append(documentSave,documentCancel);
   }
   documentDetails.replaceChildren();
   if(!active)return;
@@ -531,7 +527,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    input.rows=4;input.maxLength=8500;input.value=documentNote;
    label.append(input);documentDetails.append(label);
    prepareDocumentReply(input);
-   documentDetails.append(create('p','lm-mail-note','Сохранение изменений — по нажатию дискеты.'));
+   documentDetails.append(create('p','lm-mail-note','Текст можно отправить после проверки.'));
   }else{
    const sayviText=documentStep==='saved'
     ?'Учебный черновик сохранён на этом устройстве. Исходный договор не изменён.'
@@ -596,13 +592,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
   // and while reviewing Sayvi's proposal or editing an answer.
   mailDetails.hidden=!active;
   realLater.hidden=true;
-  mailEdit.hidden=!active||!['draft','confirm'].includes(mailStep);
+  mailEdit.hidden=!active||mailStep!=='draft';
   mailLater.hidden=true;
   mailSave.hidden=!active||mailStep!=='edit';
   mailSave.textContent='Отправить';
   cardIconize(mailSave,'send');
   mailSave.setAttribute('aria-label','Отправить подготовленный ответ (предпросмотр)');
-  mailCancel.hidden=true;
+  mailCancel.hidden=!active||mailStep!=='confirm';
   if(active){
    sayviAction.hidden=mailStep!=='draft'; // No duplicate Sayvi beside Send.
    open.hidden=!['draft','confirm','edit'].includes(mailStep);
@@ -615,7 +611,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    mailSave.dataset.cardRole='primary';
    open.setAttribute('aria-label',mailStep==='draft'?'Открыть почту':'Обсудить ответ с Сэйви в чате');
    open.setAttribute('title',mailStep==='draft'?'Открыть почту':'В чат с Сэйви');
-   if(mailStep==='confirm')controls.append(execute,mailEdit,open);
+   if(mailStep==='confirm')controls.append(execute,mailCancel);
    else if(mailStep==='edit')controls.append(mailSave,open);
   }else{
    execute.textContent=real?'Продолжить дело':'Исполнить';
@@ -812,7 +808,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailStep='sent-demo';updateMail();
   // No connected mailbox: visualise final Send without a false success claim.
  });
- const mailCancel=polymer('Отмена',()=>{mailStep='draft';updateMail()});
+ const mailCancel=polymer('Назад',()=>{mailStep='draft';updateMail()});
+ mailCancel.setAttribute('aria-label','Назад к письму');
+ mailCancel.setAttribute('title','Назад');
  const mailLater=polymer('Позже',()=>{
   if(!mailActive())return;
   setMailDeferred(true);
@@ -857,21 +855,17 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(documentStep==='summary')documentNote=documentSource;
   documentStep='edit';updateDocument();
  });
- const documentSave=polymer('Сохранить',()=>{
-  const value=(documentStep==='edit'?
-   documentDetails.querySelector('textarea')?.value:documentNote)?.trim();
-  if(!value){explain(field,'Сначала укажите текст документа.',documentSave);return}
-  documentNote=value.slice(0,8500);
-  try{
-   localStorage.setItem(documentDraftKey,JSON.stringify({
-    original:documentSource,proposed:documentNote,at:new Date().toISOString(),demo:true
-   }));
-   documentStep='saved';updateDocument();
-  }catch{
-   explain(field,'Не удалось сохранить учебный черновик на этом устройстве.',documentSave);
-  }
+ const documentSave=polymer('Отправить',()=>{
+  // No recipient is specified for this document. Open the real Sayvi chat
+  // with an UNSENT prepared text, never claim an external document was sent.
+  if(!documentNote.trim()){explain(field,'Текст предложения пуст.',documentSave);return}
+  openSayviDiscussion('contract',documentSource,documentNote);
  });
- const documentCancel=polymer('Отмена',()=>{documentStep='review';updateDocument()});
+ documentSave.setAttribute('aria-label','Передать предложение Сэйви в чат без автоматической отправки');
+ documentSave.setAttribute('title','Отправить');
+ const documentCancel=polymer('Назад',()=>{documentStep='summary';updateDocument()});
+ documentCancel.setAttribute('aria-label','Назад к карточке документа');
+ documentCancel.setAttribute('title','Назад');
  const documentLater=polymer('Позже',()=>{
   if(!documentActive())return;
   setDocumentDeferred(true);
@@ -948,7 +942,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  for(const [button,kind] of [
   [sayviAction,'sayvi'],[workSayvi,'sayvi'],
   [workOwn,'edit'],[mailEdit,'edit'],[documentEdit,'edit'],
-  [open,'navigate'],[workSend,'send'],[mailSave,'send'],[documentSave,'save']
+  [open,'navigate'],[workSend,'send'],[mailSave,'send'],[documentSave,'send'],[documentCancel,'back'],[mailCancel,'back']
  ])cardIconize(button,kind);
  main.append(hero,workDetails,mailDetails,documentDetails,controls);
  const secondary=create('div','lm-secondary');
