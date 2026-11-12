@@ -3381,9 +3381,14 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <button id="calendarDeleteEvent" type="button" class="btn" hidden>Удалить</button>
 <button id="calendarEventCancel" type="button" class="btn" aria-label="Вернуться к календарю"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <button type="submit" class="btn primary">Сохранить</button></div>
-</form></div></dialog><dialog id="personalTaskDialog" class="cal-form-dialog personal-task-dialog" aria-labelledby="personalTaskDialogTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть окно нового дела"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
-<div class="personal-task-sheet"><header class="sv-task-page-header"><div class="personal-task-actions sv-task-topbar" role="group" aria-label="Навигация"><button id="personalTaskCancel" class="sv-nav-back" type="button" aria-label="Назад к моим делам"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button></div><h2 id="personalTaskDialogTitle">Новое дело</h2><button id="personalTaskSave" class="sv-task-save" type="submit" form="personalTaskForm" aria-label="Сохранить дело" title="Сохранить дело"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.3 4.5 4.5L19 7.4"/></svg></button></header>
-<form id="personalTaskForm">
+</form></div></dialog><dialog id="personalTaskDialog" class="sv-task-editor-v2" aria-labelledby="personalTaskDialogTitle">
+ <div class="personal-task-sheet">
+  <header class="sv-task-original-controls" aria-label="Навигация нового дела">
+   <button id="personalTaskCancel" type="button" aria-label="Назад к моим делам"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+   <h2 id="personalTaskDialogTitle">Новое дело</h2>
+   <button id="personalTaskSave" type="submit" form="personalTaskForm" aria-label="Сохранить дело" title="Сохранить дело"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.3 4.5 4.5L19 7.4"/></svg></button>
+  </header>
+  <form id="personalTaskForm">
 <label>Что сделать?<input id="personalTaskTitle" type="text" maxlength="140" autocomplete="off" required placeholder="Например, позвонить маме"></label>
 <div class="personal-task-field"><span class="personal-task-field-caption">Срок · необязательно</span>
 <span class="personal-task-date-control">
@@ -3392,7 +3397,9 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <svg class="personal-task-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M7.5 3.5v4M16.5 3.5v4M3.5 10h17"/></svg>
 </span></div>
 <small id="personalTaskStatus" role="status" aria-live="polite"></small>
-</form></div></dialog>
+</form>
+ </div>
+</dialog>
 <dialog id="seyveoContactsDialog" class="cal-form-dialog personal-contacts-dialog" aria-labelledby="seyveoContactsTitle">
  <button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" id="seyveoContactsClose" aria-label="Вернуться в Мой мир"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
  <header class="sv-phonebook-toolbar">
@@ -6324,7 +6331,7 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=7"></script><script src="assets/seyveo-work-shell.js?v=39"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
+</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=7"></script><script src="assets/seyveo-work-shell.js?v=39"></script><script src="assets/seyveo-task-editor-v2.js?v=1"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
  // Only the actual viewport HEIGHT affects editor geometry. Scroll events
@@ -6454,4 +6461,4 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=21"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=9"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=3"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=21"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=9"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=3"><link rel="stylesheet" href="assets/seyveo-task-editor-v2.css?v=1"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
