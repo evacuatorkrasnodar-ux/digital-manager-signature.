@@ -954,3 +954,20 @@ html body #calendarSpaceDialog[data-space="health"] :is(
 ){
  cursor:pointer!important;caret-color:transparent!important;
 }
+
+/* Health · remove the rectangular layer behind the original floating dock.
+   Preserve the dock's capsule/search circles and all navigation handlers. */
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock{
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]{
+ outline:0!important;
+ border:0!important;
+ box-shadow:none!important;
+}
