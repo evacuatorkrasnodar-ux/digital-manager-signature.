@@ -200,21 +200,8 @@
   // and one contextual action. The Back delegates to existing navigation.
   back.hidden=false;
   back.setAttribute('aria-label',history?'Вернуться к моим делам':'Вернуться назад');
-  // Keep both History controls as identical graphite circles even if an
-  // older theme stylesheet overrides the shared Back class on mobile Safari.
-  if(history){
-   back.style.setProperty('background-color','#38383A','important');
-   back.style.setProperty('color','#F6F7F8','important');
-   back.style.setProperty('border-radius','50%','important');
-   back.style.setProperty('box-shadow','none','important');
-  }else{
-   // Material is owned by the single canonical stylesheet, not inline JS.
-   for(const control of [back,add]){
-    for(const prop of ['background-color','color','border','border-radius','box-shadow','width','height']){
-     control.style.removeProperty(prop);
-    }
-   }
-  }
+  // A single stylesheet now owns Back/Add material for all routes,
+  // including History. Do not write inline visual overrides here.
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
   add.hidden=history||active==='employee';
