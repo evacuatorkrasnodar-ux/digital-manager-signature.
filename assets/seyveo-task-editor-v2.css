@@ -378,13 +378,14 @@ html body dialog#personalTaskDialog.sv-task-editor-v2[open]
   --sv-task-calendar-header-height:calc(var(--sv-header-row,62px) + 24px + env(safe-area-inset-top,0px));
  }
 }
-/* Match the real shared Work header circle's left edge on phones.
-   The calendar stage lives inside a padded form, while the main header
-   breaks out of that padding. Move ONLY the date-stage back circle. */
+/* Keep the back circle inside the picker scrollport.
+   Translating the button outside this container clipped its left half.
+   The date header stays in the same grid with its title centered. */
 @media(max-width:649px){
  html body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
  #seyveoTaskDuePicker > .sv-task-date-header > button.sv-task-date-back{
-  transform:translateX(-16px)!important;
+  transform:none!important;
+  justify-self:start!important;
  }
 }
 :root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v2.sv-task-date-open[open]
