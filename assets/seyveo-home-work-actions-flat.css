@@ -125,29 +125,30 @@
  fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;filter:none!important;
 }
-/* Approved completion row after Sayvi fixes a document.
-   Save is one crisp diskette, Pencil is the already-approved Edit glyph,
-   Arrow is real navigation to Sayvi chat (no duplicate "Sayvi" button).
-   The user is never asked to send a document without a recipient. */
-#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"]
- .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="save"]:not([hidden]){
- display:inline-flex!important;flex:0 0 50px!important;
- box-sizing:border-box!important;width:50px!important;min-width:50px!important;max-width:50px!important;
+/* Sayvi result: two controls only. Paper plane + quiet back chevron.
+   No floppy disk, no extra pencil. Approved original Card Engine glyphs. */
+#homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="contract"],[data-lm-subject="mail"])
+ .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="back"]:not([hidden]){
+ display:inline-flex!important;box-sizing:border-box!important;
+ flex:0 0 50px!important;width:50px!important;min-width:50px!important;max-width:50px!important;
  height:50px!important;min-height:50px!important;max-height:50px!important;
- margin:0!important;padding:0!important;gap:0!important;
- align-items:center!important;justify-content:center!important;
+ padding:0!important;margin:0!important;align-items:center!important;justify-content:center!important;
  border:0!important;border-radius:50%!important;
- background:#38383A!important;color:#FFF!important;box-shadow:none!important;
+ background:#F0F1F3!important;color:#111113!important;box-shadow:none!important;
 }
-#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"]
- .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="save"] .sv-card-icon-caption{
+#homePage #seyveoLivingMoment .lm-field
+ .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="back"] .sv-card-icon-caption{
  display:none!important;
 }
-#homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"]
- .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="save"] svg.sv-card-symbol{
- display:block!important;width:23px!important;height:23px!important;flex:0 0 23px!important;
- stroke:currentColor!important;stroke-width:1.7!important;
- fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+#homePage #seyveoLivingMoment .lm-field
+ .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="back"] svg.sv-card-symbol{
+ width:25px!important;height:25px!important;flex:0 0 25px!important;
+ stroke:currentColor!important;stroke-width:1.45!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+:root[data-theme="dark"] #homePage #seyveoLivingMoment .lm-field
+ .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="back"]:not([hidden]){
+ background:#38383A!important;color:#F6F6F8!important;
 }
 /* Finished assistant suggestion is a read-only paragraph, not an editor. */
 #homePage #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-document-proposal{
