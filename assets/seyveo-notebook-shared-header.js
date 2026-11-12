@@ -23,13 +23,13 @@
     // Route in the same event turn as closing the Notebook. A delayed
     // requestAnimationFrame briefly exposed the previous Work page, causing
     // the header and bottom dock to visibly jump on every tab switch.
-    dialog.close();
     const workTabs=document.getElementById('svWorkTabs');
     const existing=workTabs?.querySelector('[data-sv-work-tab="'+target+'"]');
+    // Update the covered Work page before revealing it. Closing the modal
+    // first exposed the previous tab during Safari's focus restoration.
     if(existing&&!existing.hidden&&!workTabs.hidden){
-     existing.click();return;
-    }
-    if(target==='personal'){
+     existing.click();
+    }else if(target==='personal'){
      if(typeof window.SEYVEO_UNIFIED_TASKS?.openPersonal==='function')
       window.SEYVEO_UNIFIED_TASKS.openPersonal();
      else location.hash='#tasks';
@@ -39,6 +39,8 @@
       window.SEYVEO_UNIFIED_TASKS.openBusiness('preserve');
      else location.hash='#tasks';
     }
+    dialog.close();
+    if(existing&&!existing.hidden)existing.focus({preventScroll:true});
    });
   }
   if(!factory?.create||!legacyBack)return;
