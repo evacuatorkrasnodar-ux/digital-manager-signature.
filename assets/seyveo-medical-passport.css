@@ -1,5 +1,6 @@
 /* SEYVEO · Medical passport, emergency-first flat graphite UI */
 #svMedicalEntry[hidden],#svMedicalOverlay[hidden],#svMedicalOverlay [hidden]{display:none!important}
+html body dialog#calendarSpaceDialog[data-space="health"] #svMedicalEntry[hidden]{display:none!important}
 html body dialog#calendarSpaceDialog[data-space="health"] #svMedicalEntry{
  position:absolute!important;
  top:calc(25px + env(safe-area-inset-top,0px))!important;
