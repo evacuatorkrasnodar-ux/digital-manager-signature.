@@ -210,14 +210,14 @@
    // Explicitly apply the approved circular material to Back. An older global
    // .sv-nav-back style otherwise makes the left control transparent.
    const light=document.documentElement.dataset.theme==='light';
-   const material=light?'rgba(211,215,222,.42)':'rgba(92,95,101,.40)';
+   const material=light?'rgba(226,228,233,.70)':'rgba(92,95,101,.40)';
    const ink=light?'#252930':'#F6F7F8';
    for(const control of [back,add]){
     control.style.setProperty('background-color',material,'important');
     control.style.setProperty('color',ink,'important');
-    control.style.setProperty('border','1px solid rgba(142,149,161,.13)','important');
+    control.style.setProperty('border',light?'1px solid rgba(185,190,200,.24)':'1px solid rgba(142,149,161,.13)','important');
     control.style.setProperty('border-radius','50%','important');
-    control.style.setProperty('box-shadow','0 1px 4px rgba(20,25,32,.04)','important');
+    control.style.setProperty('box-shadow',light?'inset 0 1px 0 rgba(255,255,255,.70),0 1px 3px rgba(24,29,37,.045)':'0 1px 4px rgba(20,25,32,.04)','important');
     control.style.setProperty('width','44px','important');
     control.style.setProperty('height','44px','important');
    }
