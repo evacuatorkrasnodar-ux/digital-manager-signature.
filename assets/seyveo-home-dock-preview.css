@@ -251,7 +251,7 @@
 }
 
 
-/* Silver Mist geometry v4 · aligned to the approved Health dock.
+/* Silver Mist geometry v5 · anchored to screen edges like Apple / Health.
  * Equal physical edge gutters and baseline, with a 63px search circle.
  * The 4-action capsule intentionally remains wider than Health's 2-action
  * capsule. Four working buttons, Sayvi voice-hold and browser/music modes
@@ -263,12 +263,12 @@
   --sv-feng-capsule:clamp(176px,60vw,226px);
   box-sizing:border-box!important;
   position:fixed!important;
-  left:50%!important;
-  right:auto!important;
+  left:max(var(--sv-feng-side),env(safe-area-inset-left,0px))!important;
+  right:max(var(--sv-feng-side),env(safe-area-inset-right,0px))!important;
   bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;
-  transform:translate3d(-50%,0,0)!important;
-  width:calc(100vw - var(--sv-feng-side) - var(--sv-feng-side))!important;
-  max-width:390px!important;
+  transform:none!important;
+  width:auto!important;
+  max-width:none!important;
   height:63px!important;
   min-height:63px!important;
   display:grid!important;
