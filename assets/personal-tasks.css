@@ -835,11 +835,11 @@
 }
 #tasksPage .personal-tasks-empty-title{
  display:block;margin:0 0 7px;color:var(--text);
- font-size:19px;font-weight:620;line-height:1.23;letter-spacing:-.028em;
+ font-size:20px;font-weight:610;line-height:1.25;letter-spacing:-.022em;
 }
 #tasksPage .personal-tasks-empty-copy{
  display:block;max-width:280px;margin:0;color:var(--secondary);
- font-size:13.5px;font-weight:420;line-height:1.55;
+ font-size:15px;font-weight:450;line-height:1.48;
 }
 #tasksPage .personal-list-title{
  margin:5px 0 0;padding:3px 1px;
