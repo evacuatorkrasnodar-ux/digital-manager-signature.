@@ -55,6 +55,12 @@
   id:'silver-flat-v1',
   darkMaterial:'#38383A',lightMaterial:'#E4E7E9',
   primaryActionsMax:1,primaryPillsMax:1,visibleActionLimit:3,secondaryPresentation:'text',
+  // Approved source-of-truth: future Card Engine families inherit this white-theme style.
+  sayviButtonStandard:Object.freeze({
+   theme:'light',shape:'circle',touchPx:50,ringPx:1.25,glyphPx:27,
+   mark:'original-four-point-with-center',fill:'transparent',ink:'#0B0B0D',
+   darkTheme:'preserve-current'
+  }),
   deferGesture:'swipe-both-cycle',dismissGesture:'long-press-only',contextGesture:'long-press',deferMinPixels:75,
    singleCardSnoozeMs:60*60*1000,protectedSnoozeMs:10*60*1000,premiumGraphite:'#38383A',
   redundantAdviceActions:Object.freeze(['show-sayvi','show-sayvi-advice','show-suggestion','show-advice']),
