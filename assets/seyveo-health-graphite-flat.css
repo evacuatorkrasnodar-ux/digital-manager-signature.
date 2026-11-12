@@ -4,7 +4,7 @@
    No legacy health styling is imported. */
 #calendarSpaceDialog[data-space="health"]{
  --health-bg:#18191B;--health-surface:#242426;--health-action:#38383A;
- --health-text:#F4F4F5;--health-muted:#A6A6AB;--health-rule:rgba(225,225,230,.10);
+ --health-text:#FFFFFF;--health-muted:#D1D1D6;--health-rule:rgba(225,225,230,.14);
  color:var(--health-text)!important;
  background:var(--health-bg)!important;background-image:none!important;
  border:0!important;border-radius:0!important;outline:0!important;
@@ -96,6 +96,16 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  box-shadow:none!important;caret-color:transparent!important;
  -webkit-appearance:none!important;appearance:textfield!important;
  touch-action:none!important;
+}
+/* The values are examples until entered: visible, but distinguishable from saved data. */
+#calendarSpaceDialog[data-space="health"] .cal-bp-home-grid input::placeholder,
+#calendarSpaceDialog[data-space="health"] .cal-bp-grid input::placeholder{
+ color:#D1D1D6!important;opacity:1!important;
+ -webkit-text-fill-color:#D1D1D6!important;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-home-grid input:not(:placeholder-shown),
+#calendarSpaceDialog[data-space="health"] .cal-bp-grid input:not(:placeholder-shown){
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
 }
 #calendarSpaceDialog[data-space="health"] input[type=number]::-webkit-inner-spin-button,
 #calendarSpaceDialog[data-space="health"] input[type=number]::-webkit-outer-spin-button{
@@ -207,7 +217,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 }
 #calendarSpaceDialog[data-space="health"] .cal-health-number-side{
  display:grid!important;place-items:center!important;height:30px!important;
- color:#A6A6AB!important;font:500 17px system-ui!important;
+ color:var(--health-muted)!important;font:500 17px system-ui!important;
 }
 #calendarSpaceDialog[data-space="health"] .cal-health-number-current{
  display:grid!important;place-items:center!important;
@@ -281,11 +291,11 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  font-size:14px!important;line-height:1.35!important;
 }
 #calendarSpaceDialog[data-space="health"] #calendarBpReportStatus{
- margin:0 0 7px!important;font-size:14px!important;
+ margin:0 0 7px!important;color:var(--health-text)!important;font-size:14px!important;
  font-weight:630!important;line-height:1.42!important;
 }
 #calendarSpaceDialog[data-space="health"] #calendarBpReportAdvice{
- margin:0!important;font-size:12px!important;line-height:1.5!important;
+ margin:0!important;color:var(--health-muted)!important;font-size:12px!important;line-height:1.5!important;
  color:var(--health-muted)!important;white-space:normal!important;
 }
 #calendarSpaceDialog[data-space="health"] #calendarBpReport>small{
@@ -308,7 +318,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  flex:1 1 auto!important;min-width:0!important;gap:2px!important;
 }
 #calendarSpaceDialog[data-space="health"] .cal-bp-journal-head strong{
- display:block!important;font:650 16px/1.3 system-ui,sans-serif!important;
+ color:var(--health-text)!important;display:block!important;font:650 16px/1.3 system-ui,sans-serif!important;
  white-space:normal!important;letter-spacing:-.025em!important;
 }
 #calendarSpaceDialog[data-space="health"] #calendarBpJournalCount{
@@ -464,7 +474,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  grid-row:1/3!important;
 }
 #calendarSpaceDialog[data-space="health"] #pwHealth .pw-health-tiles .pw-card strong{
- font-size:14px!important;line-height:1.3!important;grid-row:1!important;
+ color:var(--health-text)!important;font-size:14px!important;line-height:1.3!important;grid-row:1!important;
 }
 #calendarSpaceDialog[data-space="health"] #pwHealth .pw-health-tiles .pw-card small{
  grid-row:2!important;font-size:12px!important;line-height:1.4!important;
