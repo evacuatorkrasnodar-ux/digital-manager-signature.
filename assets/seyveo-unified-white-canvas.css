@@ -1,0 +1,65 @@
+/* SEYVEO · White Canvas / Health reference v1 · 2026-11-12
+ * True Health light-mode canvas is flat #FFFFFF, not a silver gradient.
+ * This sheet synchronizes ONLY scene/page backdrops with that exact canvas.
+ * The approved smoky translucent docks, cards, form controls, photos,
+ * document paper, editor canvases, and the black theme retain their materials.
+ * Avoid an extra fixed overlay, body pseudo-element, shadow or new glass layer.
+ * Reversible: remove this stylesheet link from index.html.
+ */
+:root[data-theme="light"] {
+  --sv-unified-white-canvas:#FFFFFF;
+  --sv-life-viewport-gradient:#FFFFFF;
+  --sv-life-inner-gradient:#FFFFFF;
+}
+
+/* Browser and page shell share one continuous bright white surface. */
+:root[data-theme="light"],
+:root[data-theme="light"] body {
+  background-color:var(--sv-unified-white-canvas)!important;
+  background-image:none!important;
+}
+:root[data-theme="light"] body:has(> .app > #homePage:not([hidden])) {
+  background:var(--sv-unified-white-canvas)!important;
+  background-image:none!important;
+  background-repeat:no-repeat!important;
+}
+:root[data-theme="light"] body > .app {
+  background-color:transparent!important;
+  background-image:none!important;
+}
+
+/* Only large route canvases, never the controls or content cards inside. */
+:root[data-theme="light"] body :is(
+ #homePage,
+ #managePage,
+ #tasksPage,
+ #picturePage,
+ #calendarPage,
+ #lifePage,
+ #sayviSurfacePage,
+ #sayviAnswerPage,
+ #sayviMusicPage,
+ #sayviVideoPage
+) {
+  background-color:transparent!important;
+  background-image:none!important;
+}
+
+/* The same scene continues behind the work area without adding a sheet. */
+:root[data-theme="light"] body :is(#svWorkShell) {
+  background-color:transparent!important;
+  background-image:none!important;
+}
+
+/* Only fullscreen workspaces that host the existing shared navigation dock.
+ * Compact popups, message surfaces and input/dialog cards are not targeted. */
+:root[data-theme="light"] body dialog.seyveo-dock-host[open] {
+  background-color:var(--sv-unified-white-canvas)!important;
+  background-image:none!important;
+}
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open] {
+  background-color:var(--sv-unified-white-canvas)!important;
+  background-image:none!important;
+}
+/* The Health page is the source of truth; do not override its internal
+ * surfaces, status colors, scrolling content or approved translucent dock. */
