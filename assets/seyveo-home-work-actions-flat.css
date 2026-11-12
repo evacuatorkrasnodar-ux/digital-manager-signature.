@@ -205,6 +205,14 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment
  .lm-field .lm-section-label--reply{color:var(--sv-card-accent-reply)!important}
+/* Editing labels also carry meaning, without adding extra badge backgrounds. */
+:root[data-theme="light"] #homePage #seyveoLivingMoment
+ .lm-field .lm-note-step-label{
+ color:var(--sv-card-accent-sayvi)!important;font-size:12px!important;
+ font-weight:560!important;letter-spacing:0!important;line-height:1.4!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment
+ .lm-field .lm-note-step-label--reply{color:var(--sv-card-accent-reply)!important}
 :root[data-theme="light"] #homePage #seyveoLivingMoment
  .lm-field[data-lm-subject="mail"] .lm-mail-intro,
 :root[data-theme="light"] #homePage #seyveoLivingMoment
