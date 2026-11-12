@@ -4784,12 +4784,24 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
     edit:'Сэйви, помоги отредактировать документ, который я прикреплю через плюс. Сначала уточни, что нужно изменить, затем подготовь новую редакцию. Если файла не будет, попроси его приложить.',
     export:'Сэйви, помоги подготовить документ для скачивания в PDF или Word. Я приложу исходный файл через плюс. Уточни формат и необходимые изменения, покажи результат для проверки. Пока файл не приложен, не утверждай, что прочитала его.'
    };
-   const prompt=valid?prompts[message.intent]:null;
+   // Home card handoff: never auto-send, keep draft inside sessionStorage
+   // (never put document wording in a navigation URL).
+   const cardReview=valid&&message.intent==='card-review';
+   const original=typeof message?.original==='string'?message.original.slice(0,2200):'';
+   const proposed=typeof message?.proposal==='string'?message.proposal.slice(0,2200):'';
+   const reviewPrompt=cardReview?(
+    message.kind==='mail'
+     ?'Сэйви, помоги обсудить подготовленный ответ на письмо. Это черновик из карточки, не отправлен.\\n\\nВходящее сообщение:\\n'+original+'\\n\\nПредложенный ответ:\\n'+proposed
+     :'Сэйви, обсудим предложение по документу из карточки. Это учебный фрагмент, не полный загруженный файл. Если нужно проверить оригинал, попроси меня прикрепить документ.\\n\\nИсходный фрагмент:\\n'+original+'\\n\\nПредложенная редакция:\\n'+proposed
+   ):null;
+   const prompt=cardReview?reviewPrompt:(valid?prompts[message.intent]:null);
    if(prompt&&input&&!input.value.trim()){
     input.value=prompt;
-    status.textContent=message.intent==='create'
-     ?'Задача для Сэйви подготовлена. Нажмите отправку, когда будете готовы.'
-     :'Задача подготовлена. Прикрепите документ кнопкой «+», затем отправьте сообщение.';
+    status.textContent=cardReview
+     ?'Текст из карточки подготовлен для обсуждения. Ничего не отправлено — проверьте и нажмите стрелку.'
+     :message.intent==='create'
+      ?'Задача для Сэйви подготовлена. Нажмите отправку, когда будете готовы.'
+      :'Задача подготовлена. Прикрепите документ кнопкой «+», затем отправьте сообщение.';
    }
   }
  }catch{}
