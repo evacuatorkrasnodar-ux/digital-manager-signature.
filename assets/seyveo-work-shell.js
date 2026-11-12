@@ -207,19 +207,12 @@
    back.style.setProperty('border-radius','50%','important');
    back.style.setProperty('box-shadow','none','important');
   }else{
-   // Explicitly apply the approved circular material to Back. An older global
-   // .sv-nav-back style otherwise makes the left control transparent.
-   const light=document.documentElement.dataset.theme==='light';
-   const material=light?'rgba(226,228,233,.70)':'rgba(92,95,101,.40)';
-   const ink=light?'#252930':'#F6F7F8';
+   // The flat circular controls are painted in the shared stylesheet.
+   // Clear the history-only inline material so it cannot emboss the root bar.
    for(const control of [back,add]){
-    control.style.setProperty('background-color',material,'important');
-    control.style.setProperty('color',ink,'important');
-    control.style.setProperty('border',light?'1px solid rgba(185,190,200,.24)':'1px solid rgba(142,149,161,.13)','important');
-    control.style.setProperty('border-radius','50%','important');
-    control.style.setProperty('box-shadow',light?'inset 0 1px 0 rgba(255,255,255,.70),0 1px 3px rgba(24,29,37,.045)':'0 1px 4px rgba(20,25,32,.04)','important');
-    control.style.setProperty('width','44px','important');
-    control.style.setProperty('height','44px','important');
+    for(const name of ['background-color','color','border','border-radius','box-shadow','width','height']){
+     control.style.removeProperty(name);
+    }
    }
   }
   // The employee home has contextual controls inside its own dashboard.
