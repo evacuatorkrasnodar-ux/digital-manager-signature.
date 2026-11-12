@@ -309,10 +309,10 @@ html[data-theme="light"] #svMedicalOverlay .sv-med-history>summary small{color:#
 }
 html[data-theme="light"] #svMedicalOverlay .sv-med-w-title,
 html[data-theme="light"] #svMedicalOverlay .sv-med-w-brand{color:#262a2e}
-html[data-theme="light"] #svMedicalOverlay .sv-med-w-input{background:var(--sv-health-text);color:#262a2e!important;border-color:#d8dce1}
+html[data-theme="light"] #svMedicalOverlay .sv-med-w-input{background:#f0f1f3;color:#262a2e!important;border-color:#d8dce1}
 html[data-theme="light"] #svMedicalOverlay .sv-med-w-choices .sv-med-w-btn,
 html[data-theme="light"] #svMedicalOverlay .sv-med-w-check{color:#fff}
-html[data-theme="light"] #svMedicalOverlay .sv-med-w-people{background:var(--sv-health-text)}
+html[data-theme="light"] #svMedicalOverlay .sv-med-w-people{background:#f0f1f3}
 html[data-theme="light"] #svMedicalOverlay .sv-med-w-people .sv-med-w-person{color:#292b30}
 html[data-theme="light"] #svMedicalOverlay .sv-med-w-note{color:#656d78}
 @media(max-width:360px){
