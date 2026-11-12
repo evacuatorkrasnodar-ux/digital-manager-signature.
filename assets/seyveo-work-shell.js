@@ -45,7 +45,7 @@
  const back=document.createElement('button');
  back.type='button';
  back.id='svWorkBack';
- back.classList.add('sv-nav-back');
+ back.classList.add('sv-work-back-control');
  back.setAttribute('aria-label','Вернуться назад');
  back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';
  const title=document.createElement('h1');
