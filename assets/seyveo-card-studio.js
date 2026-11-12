@@ -40,15 +40,15 @@ queuePanel.innerHTML='<h3>Автоматическая очередь · дем�
 page.querySelector('.scs-wrap').append(queuePanel);
 // The canonical catalog is rendered together so designers see ALL card families,
 // rather than approving a single example and accidentally leaving others behind.
-let stage=0,previewTheme='dark';
+let stage=0,previewTheme='light';
 const gallery=document.createElement('section');
 gallery.className='scs-panel scs-gallery';
-gallery.innerHTML='<div class="scs-gallery-head"><h3>Все карточки SEYVEO</h3><p class="scs-note">Silver Flat · '+entries.length+' типов · графит #38383A · обе темы</p></div><div class="scs-gallery-grid" data-card-gallery></div>';
+gallery.innerHTML='<div class="scs-gallery-head"><h3>Все карточки SEYVEO</h3><p class="scs-note">Единый стандарт · '+entries.length+' типов · белая и чёрная темы</p></div><div class="scs-gallery-grid" data-card-gallery></div>';
 page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Единый язык символов SEYVEO: Сэйви — фирменный знак со сферой, Исправить — карандаш, Перейти — стрелка; затем самолётик «Отправить» либо значок «Сохранить». Три одинаковых мягко скруглённых квадрата 48×48 без видимых подписей: фирменная Сэйви на #38383A, лист с карандашом для правки и стрелка для перехода; остальные — спокойный матовый материал. VoiceOver видит названия действий. Материал #38383A. Свайпы листают очередь, удержание открывает управление карточкой.';
+policyGuide.textContent='Утверждённый стандарт для всех новых карточек: в белой теме три круглые кнопки 50×50. Сэйви — оригинальный фирменный знак 27 px со сферой, прозрачный центр и тонкое чёрное кольцо 1,25 px; Исправить — карандаш, Перейти — стрелка на спокойном серебристом фоне. В тёмной теме пока сохраняется прежний графит. Подписей на кнопках нет, VoiceOver называет действия. После выбора появляется отдельная кнопка «Отправить» или «Сохранить». Свайп листает очередь, удержание открывает управление карточкой.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
@@ -69,6 +69,10 @@ function renderGallery(){
   const ids=(view?.actions||[]).map(action=>action.id);
   const roles=(view?.actions||[]).map(action=>action.role);
   const required=['sayvi','edit','navigate'];
+  const sayviStandard=engine.cardPolicy.sayviButtonStandard;
+  if(!sayviStandard||sayviStandard.touchPx!==50||sayviStandard.ringPx!==1.25||sayviStandard.glyphPx!==27){
+   errors.push(event[0]+' · отклонение от утверждённого стандарта Сэйви');
+  }
   const same=(actual,expected)=>actual.length===expected.length&&
    expected.every((value,i)=>actual[i]===value);
   // Audit exact canonical layout; count-only checks would approve wrong icons
@@ -115,7 +119,7 @@ function renderGallery(){
  }
  policyAudit.textContent=errors.length||tested!==entries.length
   ?'Проверка стандарта: '+(errors.join('; ')||'не все зарегистрированные типы отображены')
-  :'Стандарт проверен: '+tested+' типов · 3 квадрата 48×48 · Сэйви / Исправить / Перейти · #38383A · далее Отправить / Сохранить';
+  :'Стандарт проверен: '+tested+' типов · белая тема: три круга 50×50, Сэйви 27 px / кольцо 1,25 px · тёмная тема сохранена';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
