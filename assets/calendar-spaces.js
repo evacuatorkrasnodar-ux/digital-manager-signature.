@@ -182,6 +182,53 @@ function setupHealthAge(){
  field.addEventListener('blur',save);
  field.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();field.blur();}});
 }
+/* A native-feeling value scrubber: slide one finger up/down to adjust numbers.
+   No spinner buttons or enormous option lists. Typing remains available. */
+function installHealthValueScrubber(id,min,max,step=1){
+ const field=$(id);if(!field)return;
+ let startY=0,startValue=null,moved=false,lastSteps=0;
+ const update=(value)=>{
+  const next=Math.max(min,Math.min(max,Math.round(value/step)*step));
+  if(String(next)!==field.value){field.value=String(next);field.dispatchEvent(new Event('input',{bubbles:true}));}
+ };
+ field.addEventListener('touchstart',event=>{
+  if(event.touches.length!==1)return;
+  startY=event.touches[0].clientY;
+  const n=Number(field.value);
+  startValue=field.value.trim()&&Number.isFinite(n)?n:null;
+  moved=false;lastSteps=0;
+ },{passive:true});
+ field.addEventListener('touchmove',event=>{
+  if(event.touches.length!==1||startValue===null)return;
+  const dy=startY-event.touches[0].clientY;
+  if(Math.abs(dy)<13&&!moved)return;
+  if(event.cancelable)event.preventDefault();
+  moved=true;
+  const steps=dy>0?Math.floor((dy+7)/22):Math.ceil((dy-7)/22);
+  if(steps===lastSteps)return;
+  lastSteps=steps;
+  update(startValue+steps*step);
+ },{passive:false});
+ field.addEventListener('touchend',()=>{
+  if(!moved)return;
+  field.dispatchEvent(new Event('change',{bubbles:true}));
+  if(id==='calendarHealthAge')field.blur();
+ },{passive:true});
+ field.addEventListener('wheel',event=>{
+  if(document.activeElement!==field)return;
+  if(event.cancelable)event.preventDefault();
+  const current=Number(field.value);
+  if(!field.value.trim()||!Number.isFinite(current))return;
+  update(current+(event.deltaY<0?step:-step));
+  field.dispatchEvent(new Event('change',{bubbles:true}));
+ },{passive:false});
+}
+for(const [id,low,high] of [
+ ['calendarHealthAge',1,110],['calendarBpQuickS',50,300],
+ ['calendarBpQuickD',30,200],['calendarBpQuickP',30,240],
+ ['calendarBpSystolic',50,300],['calendarBpDiastolic',30,200],['calendarBpPulse',30,240]
+])installHealthValueScrubber(id,low,high);
+
 function bpAssess(s,d,p){
  const age=bpAge();
  if(age!==null&&age<18)return {
