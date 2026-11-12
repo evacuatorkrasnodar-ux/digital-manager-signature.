@@ -9,8 +9,9 @@ const dock=document.querySelector('footer.dock');
 if(!dock||window.SEYVEO_DOCK_CONTINUITY)return;
 const WORKSPACES=new Set([
  'calendarSpaceDialog','seyveoSmartHomeDialog','seyveoContactsDialog','seyveoFamilyDialog',
- 'notesDialog','noteReadDialog','noteReviewDialog','noteModeDialog','notePaperDialog',
- 'noteScanDialog','calendarEventDialog','personalTaskDialog','manageRoadmapDialog',
+ // Notebook is a stable non-modal page. Its editors render above the
+ // original dock without physically reparenting it during transitions.
+ 'calendarEventDialog','personalTaskDialog','manageRoadmapDialog',
  'manageConnectionsDialog','manageDataDialog','assistantChatHistoryDialog',
  'homeWidgetsManageDialog','seyveoAccountDemo','seyveoPulseDialog','seyveoStudioDialog',
  'seyveoCompanyDialog','seyveoQrCardDialog','seyveoAvatarDialog','homeWidgetDetails',
