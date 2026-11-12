@@ -1097,9 +1097,9 @@
    Original form controls, Save action and date input are unchanged. */
 #personalTaskDialog .sv-task-page-header{
  box-sizing:border-box!important;display:grid!important;
- grid-template-columns:44px minmax(0,1fr) 44px!important;
- align-items:center!important;gap:6px!important;
- width:100%!important;height:54px!important;min-height:54px!important;
+ grid-template-columns:var(--sv-header-slot,42px) minmax(0,1fr) var(--sv-header-slot,42px)!important;
+ align-items:center!important;gap:var(--sv-header-gap,8px)!important;
+ width:100%!important;height:var(--sv-header-row,62px)!important;min-height:var(--sv-header-row,62px)!important;
  margin:0 0 11px!important;padding:0!important;
  border:0!important;background:transparent!important;
 }
@@ -1111,11 +1111,11 @@
  margin:0!important;padding:0!important;
 }
 #personalTaskDialog .sv-task-page-header > :is(#personalTaskDialogTitle,.sv-task-date-title){
- grid-column:2!important;align-self:center!important;
- margin:0!important;padding:0!important;min-width:0!important;
- font-size:var(--sv-page-title-size,clamp(25px,7vw,28px))!important;
- font-weight:620!important;line-height:1.12!important;
- letter-spacing:-.042em!important;color:var(--text)!important;
+ grid-column:2!important;grid-row:1!important;align-self:center!important;justify-self:stretch!important;
+ margin:0!important;padding:0!important;min-width:0!important;width:100%!important;
+ font-size:var(--sv-header-title-size,20px)!important;
+ font-weight:var(--sv-header-title-weight,590)!important;line-height:1.12!important;
+ letter-spacing:var(--sv-header-title-tracking,-.02em)!important;color:var(--sv-header-ink,var(--text))!important;text-align:center!important;
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 #personalTaskDialog .sv-task-page-header > .sv-task-header-spacer{
@@ -1139,13 +1139,7 @@
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-header{
  margin-bottom:14px!important
 }
-@media(max-width:720px){
- /* The editor may keep its legacy full-bleed titlebar, but the date picker
-    header must stay inside the actual calendar sheet. */
- html body #personalTaskDialog[open] .sv-task-page-header:not(.sv-task-date-header){
-  margin-left:-12px!important;width:calc(100% + 24px)!important
- }
-}
+/* Header follows form gutters on all screen widths; no -12px expansion. */
 @media(max-width:365px){
  #personalTaskDialog .sv-task-page-header{gap:4px!important}
 }
@@ -1171,7 +1165,7 @@ html body #personalTaskDialog.personal-task-dialog form{
  box-shadow:none!important;
 }
 html body #personalTaskDialog .sv-task-page-header{
- grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-columns:var(--sv-header-slot,42px) minmax(0,1fr) var(--sv-header-slot,42px)!important;
  margin-bottom:11px!important;
 }
 html body #personalTaskDialog .sv-task-page-header > #personalTaskSave{
@@ -1179,14 +1173,14 @@ html body #personalTaskDialog .sv-task-page-header > #personalTaskSave{
  align-self:center!important;display:inline-flex!important;
  align-items:center!important;justify-content:center!important;
  position:relative!important;top:auto!important;right:auto!important;
- width:44px!important;height:44px!important;
+ width:var(--sv-header-slot,42px)!important;height:44px!important;
  min-width:44px!important;max-width:44px!important;
  min-height:44px!important;max-height:44px!important;
- margin:0!important;padding:0!important;border:0!important;
- border-radius:50%!important;background:#38383A!important;
- color:#F5F6F7!important;-webkit-appearance:none!important;appearance:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- box-shadow:none!important;transform:none!important;
+ margin:0!important;padding:0!important;border:var(--sv-header-circle-border)!important;
+ border-radius:50%!important;background:var(--sv-header-circle)!important;
+ color:var(--sv-header-icon-ink)!important;-webkit-appearance:none!important;appearance:none!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;backdrop-filter:var(--sv-header-circle-filter)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;transform:none!important;
 }
 html body #personalTaskDialog .sv-task-page-header > #personalTaskSave svg{
  width:20px!important;height:20px!important;display:block!important;
@@ -1201,9 +1195,9 @@ html body #personalTaskDialog .sv-task-page-header #personalTaskCancel:focus-vis
  outline:2px solid var(--text)!important;outline-offset:2px!important;
 }
 html body #personalTaskDialog .sv-task-page-header #personalTaskCancel{
- border-radius:50%!important;background:#38383A!important;
- color:#F5F6F7!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ border:var(--sv-header-circle-border)!important;border-radius:50%!important;background:var(--sv-header-circle)!important;
+ color:var(--sv-header-icon-ink)!important;box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;backdrop-filter:var(--sv-header-circle-filter)!important;
 }
 html body #personalTaskDialog .personal-task-sheet>.personal-task-privacy,
 html body #personalTaskDialog .personal-task-submit-row{display:none!important}
@@ -1212,7 +1206,7 @@ html body #personalTaskDialog .personal-task-submit-row{display:none!important}
 }
 :root[data-theme=light] body #personalTaskDialog .sv-task-page-header > #personalTaskSave,
 :root[data-theme=light] body #personalTaskDialog .sv-task-page-header #personalTaskCancel{
- background:#38383A!important;color:#F5F6F7!important;
+ background:var(--sv-header-circle)!important;color:var(--sv-header-icon-ink)!important;
 }
 
 
@@ -1227,9 +1221,9 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
  max-width:44px!important;max-height:44px!important;
  margin:0!important;padding:0!important;
- border:0!important;border-radius:50%!important;
- background:#38383A!important;background-image:none!important;color:#F5F6F7!important;
- box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ border:var(--sv-header-circle-border)!important;border-radius:50%!important;
+ background:var(--sv-header-circle)!important;background-image:none!important;color:var(--sv-header-icon-ink)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;-webkit-backdrop-filter:var(--sv-header-circle-filter)!important;backdrop-filter:var(--sv-header-circle-filter)!important;
  filter:none!important;transform:none!important;
 }
 html body #personalTaskDialog.personal-task-dialog[open] .sv-task-page-header #personalTaskCancel svg,
@@ -1285,8 +1279,8 @@ html.sv-phone-navigation #personalTaskDialog #seyveoTaskDuePicker .cal-pick-days
 /* SEYVEO · Empty task has no valid save action. Do not change the
    approved graphite circles or their 44px hit geometry. */
 html body #personalTaskDialog .sv-task-page-header > #personalTaskSave:disabled{
- background:#38383A!important;
- color:#F5F6F7!important;
+ background:var(--sv-header-circle)!important;
+ color:var(--sv-header-icon-ink)!important;
  opacity:1!important;
  cursor:default!important;
 }
