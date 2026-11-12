@@ -151,24 +151,36 @@ function bpAge(){
 }
 function setupHealthAge(){
  const field=$('calendarHealthAge'),hint=$('calendarHealthAgeHint');if(!field)return;
- field.replaceChildren(new Option('—',''));
- for(let n=1;n<=110;n++)field.add(new Option(String(n),String(n)));
  let saved='';try{
   saved=localStorage.getItem(BP_AGE_KEY)||'';
   if(!saved){
-   const old=Number(localStorage.getItem(BP_OLD_YEAR_KEY)||0),converted=new Date().getFullYear()-old;
-   if(old>=1900&&converted>=1&&converted<=110){saved=String(converted);localStorage.setItem(BP_AGE_KEY,saved);}
+   const old=Number(localStorage.getItem(BP_OLD_YEAR_KEY)||0),approx=new Date().getFullYear()-old;
+   if(old>=1900&&approx>=1&&approx<=110){
+    saved=String(approx);localStorage.setItem(BP_AGE_KEY,saved);
+   }
   }
  }catch{}
- if([...field.options].some(option=>option.value===saved))field.value=saved;
- field.addEventListener('change',()=>{
+ if(/^\d{1,3}$/.test(saved)&&Number(saved)>=1&&Number(saved)<=110)field.value=saved;
+ const save=()=>{
+  const value=field.value.replace(/\D/g,'').slice(0,3);
+  field.value=value;
+  const valid=value===''||(Number(value)>=1&&Number(value)<=110);
+  if(!valid){hint.textContent='Введите возраст от 1 до 110 лет.';field.setAttribute('aria-invalid','true');return;}
+  field.removeAttribute('aria-invalid');
   try{
-   if(field.value)localStorage.setItem(BP_AGE_KEY,field.value);
+   if(value)localStorage.setItem(BP_AGE_KEY,String(Number(value)));
    else localStorage.removeItem(BP_AGE_KEY);
-   hint.textContent='Возраст сохранён в этом браузере.';
+   hint.textContent='Возраст сохранён.';
    if(current==='health'){bpReport();bpPreview();renderBpJournal();quickBpAdvice();}
   }catch{hint.textContent='Не удалось сохранить возраст.';}
+ };
+ field.addEventListener('input',()=>{
+  field.value=field.value.replace(/\D/g,'').slice(0,3);
+  if(field.hasAttribute('aria-invalid'))field.removeAttribute('aria-invalid');
  });
+ field.addEventListener('change',save);
+ field.addEventListener('blur',save);
+ field.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();field.blur();}});
 }
 function bpAssess(s,d,p){
  const age=bpAge();
