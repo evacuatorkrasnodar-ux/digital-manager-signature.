@@ -74,10 +74,16 @@ const isPrivateQuery = value =>
 function searchableRecords(query){
  if(query.length<2)return [];
  const records=[];
+ // Completed tasks live in this SAME local store; their removal/restoration
+ // stays owned by SEYVEO_PERSONAL_TASK_HISTORY rather than a search index.
  for(const task of rows('seyveo-personal-tasks-v1',150)){
-  if(!task||typeof task.title!=='string'||task.done===true)continue;
+  if(!task||typeof task.title!=='string')continue;
   if(!normalize(task.title).includes(query))continue;
-  records.push({title:nice(task.title).slice(0,140),meta:'Личное дело'+(task.due?' · '+task.due:''),action:'tasks'});
+  const completed=task.done===true;
+  const date=completed?task.doneAt:task.due;
+  records.push({title:nice(task.title).slice(0,140),
+   meta:(completed?'Выполненное дело · История':'Текущее дело')+(date?' · '+date.slice(0,10):''),
+   action:'tasks'});
  }
  for(const item of rows('seyveo-calendar-events-v1',300)){
   if(!item||item.kind==='business'||typeof item.title!=='string')continue;
@@ -228,6 +234,10 @@ function intention(query){
   if(documentWords.test(q))return {action:'docs:'+documentScope,reveal:true};
   if(mailWords.test(q))return {action:/черновик/u.test(q)?'mail:drafts':'mail:inbox'};
  }
+ // Searching for an existing personal task is a local lookup, not a new
+ // reminder instruction. Preserve "напомни/создай" for Sayvi actions.
+ if(/^(?:найди|найти|поищи|ищи|поиск|покажи|где|отыщи)\s+(?:(?:мои?|наши?|все|выполненные|завершенные|завершённые|старые|текущие|активные)\s+)*(?:дело|дела|дел|задачу|задачи|задач|напоминание|напоминания)(?=\s|$)/u.test(q))
+  return {action:'tasks',contextual:true};
  if(isQuestion(q))return {action:'ask'};
  const track=musicIntent(q);
  if(track)return track;
@@ -257,6 +267,12 @@ function scopedTerm(query,action=''){
   value=value.replace(/^(?:письм[оаы]?|писем|почт[ауы]?|email|черновик[иа]?|входящ[иех]+)\s*/iu,'')
    .replace(/^(?:по теме|с темой|от кого|от|для|за|про)\s+/iu,'').trim();
   return /^(?:почта|письма?|писем|черновики|входящие)$/iu.test(value)?'':normalize(value);
+ }
+ if(action==='tasks'){
+  value=value.replace(/^(?:(?:мои?|наши?|все|выполненные|завершенные|завершённые|старые|текущие|активные)\s+)*/u,'')
+   .replace(/^(?:дело|дела|дел|задачу|задачи|задач|напоминание|напоминания)(?=\s|$)/u,'')
+   .replace(/^(?:про|о|об|по|на|с|со|за|которое|которую|которые|связанное с)\s+/u,'').trim();
+  return normalize(value).slice(0,120);
  }
  if(action.startsWith('docs:')){
   if(/^(?:документ[а-я]*|файл[а-я]*|мой архив|архив|все документы|все файлы)$/iu.test(value))return '';
@@ -309,7 +325,8 @@ function render(){
   for(const entry of liveMatches.slice(0,10))results.append(itemRow(entry,
   records.includes(entry)||trackRecords.includes(entry)?'record':'section'));
  }
- const routeLabel=detected?.action?.startsWith('docs:')
+ const routeLabel=detected?.action==='tasks'?'Проверяю текущие и выполненные дела в этом устройстве. Нажми найденное дело, чтобы открыть раздел.':
+  detected?.action?.startsWith('docs:')
   ?(searchContext().kind==='documents'
     ?'Ищу в текущих документах. Если архив открыт, повторный пароль не нужен.'
     :'Открою документы. Для закрытого архива потребуется пароль.'):
@@ -344,6 +361,16 @@ async function submitSearch(){
  const stable=preparedPlan?.raw===raw&&preparedPlan.route===location.hash
   &&preparedPlan.area===(now.area||'');
  const planned=stable?preparedPlan.detected:intention(raw);
+ // Task searches show matching local records first. Enter must not dismiss
+ // several plausible results just because a task intent was recognized.
+ if(planned?.action==='tasks'&&liveMatches.some(x=>x.meta?.includes('дело'))){
+  const taskMatches=liveMatches.filter(x=>x.action==='tasks'&&x.meta?.includes('дело'));
+  if(taskMatches.length===1){visit('tasks');return}
+  if(taskMatches.length>1){
+   results.querySelector('button[data-search-action="tasks"]')?.focus({preventScroll:true});
+   return;
+  }
+ }
  if(planned){visit(planned.action,{reveal:planned.reveal===true});return}
  // Exact local record or section can be opened directly, without opening
  // an extra menu. Multiple unrelated matches stay visible for selection.
@@ -534,6 +561,7 @@ results.addEventListener('click',event=>{
 window.addEventListener('hashchange',()=>{if(active)close()});
 window.addEventListener('seyveo:route-changed',()=>{if(active)close()});
 document.addEventListener('seyveo:browser-open',()=>{if(active)close()});
+window.addEventListener('seyveo:personal-tasks-changed',()=>{if(active)render()});
 window.addEventListener('seyveo:notes-changed',()=>{if(active)render()});
 window.addEventListener('seyveo:life-events-changed',()=>{if(active)render()});
 window.SEYVEO_GLOBAL_SEARCH=Object.freeze({open,close,isOpen:()=>active,routeFor,intention});
