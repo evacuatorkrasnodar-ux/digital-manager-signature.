@@ -869,3 +869,21 @@ html body #calendarSpaceDialog[data-space="health"] #calendarHealthAge:focus{
 html body #calendarSpaceDialog[data-space="health"] #calendarHealthAge[aria-invalid="true"]{
  color:#efa69b!important;
 }
+
+
+/* Health numbers: swipe values by finger; never show browser arrow spinners. */
+html body #calendarSpaceDialog[data-space="health"] :is(
+ #calendarHealthAge,#calendarBpQuickS,#calendarBpQuickD,#calendarBpQuickP,
+ #calendarBpSystolic,#calendarBpDiastolic,#calendarBpPulse
+){
+ touch-action:none!important;overscroll-behavior:contain!important;
+ user-select:text!important;-webkit-user-select:text!important;
+ -moz-appearance:textfield!important;appearance:textfield!important;
+}
+html body #calendarSpaceDialog[data-space="health"] input[type="number"]::-webkit-outer-spin-button,
+html body #calendarSpaceDialog[data-space="health"] input[type="number"]::-webkit-inner-spin-button{
+ -webkit-appearance:none!important;appearance:none!important;margin:0!important;display:none!important;
+}
+html body #calendarSpaceDialog[data-space="health"] input[type="number"]{
+ -moz-appearance:textfield!important;appearance:textfield!important;
+}
