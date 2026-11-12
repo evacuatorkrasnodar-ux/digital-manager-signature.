@@ -146,3 +146,65 @@ html body #svMedicalEntry svg{display:block;width:22px;height:22px}
  #svMedicalOverlay :is(.sv-med-muted,.sv-med-pair span,.sv-med-block h4,.sv-med-brand,.sv-med-disclaimer){color:#555!important}
  #svMedicalOverlay .sv-med-pair-emphasis strong{color:#9b2226!important}
 }
+
+/* Compact SEYVEO emergency card · no repeated boxes or long empty states */
+#svMedicalOverlay .sv-med-header{margin-bottom:14px}
+#svMedicalOverlay #svMedicalPerson{font-size:25px;line-height:1.16;margin:7px 0 3px;letter-spacing:-.035em}
+#svMedicalOverlay #svMedicalPerson.sv-med-person-empty{font-size:22px;font-weight:640}
+#svMedicalOverlay #svMedicalUpdated{font-size:12px;line-height:1.35;margin:3px 0 11px}
+#svMedicalOverlay .sv-med-brand{font-size:12px;margin-bottom:4px;gap:7px}
+#svMedicalOverlay .sv-med-brand .sv-sayvi-symbol{width:18px;height:18px}
+#svMedicalOverlay #svMedicalEssentials .sv-med-block{
+ margin:8px 0 10px;padding:14px 15px 10px;
+ border-radius:17px;background:#22282e;
+}
+#svMedicalOverlay #svMedicalEssentials .sv-med-block h4{margin:0 0 9px}
+#svMedicalOverlay #svMedicalEssentials .sv-med-pair{
+ display:grid;grid-template-columns:minmax(92px,34%) minmax(0,1fr);
+ gap:8px;align-items:start;padding:9px 0;
+ border-bottom:1px solid rgba(215,225,235,.085);
+}
+#svMedicalOverlay #svMedicalEssentials .sv-med-pair:last-child{padding-bottom:0;border-bottom:0}
+#svMedicalOverlay #svMedicalEssentials .sv-med-pair span{font-size:12px;line-height:1.4;color:#acb4be}
+#svMedicalOverlay #svMedicalEssentials .sv-med-pair strong{
+ font-size:14px;line-height:1.42;letter-spacing:-.012em;font-weight:570;
+ overflow-wrap:break-word;word-break:normal;
+}
+#svMedicalOverlay .sv-med-history{margin:10px 0 7px;background:#22282e;border:1px solid rgba(220,226,234,.08);border-radius:16px;overflow:hidden}
+#svMedicalOverlay .sv-med-history[hidden]{display:none!important}
+#svMedicalOverlay .sv-med-history>summary{
+ display:flex;align-items:center;gap:9px;list-style:none;cursor:pointer;
+ min-height:54px;padding:12px 14px;
+ color:inherit;-webkit-tap-highlight-color:transparent;
+}
+#svMedicalOverlay .sv-med-history>summary::-webkit-details-marker{display:none}
+#svMedicalOverlay .sv-med-history>summary span{font-weight:640;font-size:14px;flex:1 1 auto}
+#svMedicalOverlay .sv-med-history>summary small{font-size:11px;color:#abb4bf;line-height:1.35;text-align:right}
+#svMedicalOverlay .sv-med-history>summary svg{width:17px;height:17px;flex:0 0 17px;fill:none;stroke:currentColor;stroke-width:1.65;transition:transform .18s}
+#svMedicalOverlay .sv-med-history[open]>summary svg{transform:rotate(180deg)}
+#svMedicalOverlay .sv-med-history-body{padding:0 11px 12px}
+#svMedicalOverlay .sv-med-history-body .sv-med-block{
+ background:transparent;border:0;border-radius:0;border-top:1px solid rgba(215,225,235,.09);
+ padding:12px 3px 4px;margin:0;
+}
+#svMedicalOverlay .sv-med-history-body .sv-med-block h4{font-size:11px;margin:0 0 6px}
+#svMedicalOverlay .sv-med-history-body .sv-med-item{font-size:13px;padding:8px 0}
+#svMedicalOverlay .sv-med-disclaimer{font-size:11px;line-height:1.4;margin:9px 0}
+#svMedicalOverlay .sv-med-actions{margin-top:13px;gap:8px}
+#svMedicalOverlay .sv-med-actions button{min-height:44px;font-size:13px;border-radius:12px}
+html[data-theme="light"] #svMedicalOverlay #svMedicalEssentials .sv-med-block,
+html[data-theme="light"] #svMedicalOverlay .sv-med-history{background:#fff;border-color:#e5e8ec}
+html[data-theme="light"] #svMedicalOverlay #svMedicalEssentials .sv-med-pair span,
+html[data-theme="light"] #svMedicalOverlay .sv-med-history>summary small{color:#68737d}
+@media(max-width:375px){
+ #svMedicalOverlay #svMedicalEssentials .sv-med-pair{grid-template-columns:minmax(84px,32%) minmax(0,1fr);gap:7px}
+ #svMedicalOverlay #svMedicalEssentials .sv-med-pair strong{font-size:13px}
+ #svMedicalOverlay .sv-med-history>summary{gap:6px}
+}
+@media print{
+ #svMedicalOverlay .sv-med-history{background:#fff!important;border:1px solid #ddd!important;overflow:visible!important}
+ #svMedicalOverlay .sv-med-history>summary svg{display:none!important}
+ #svMedicalOverlay .sv-med-history-body .sv-med-block{border-top:1px solid #ddd!important}
+ #svMedicalOverlay .sv-med-history>summary small{color:#444!important}
+ #svMedicalOverlay #svMedicalEssentials .sv-med-block{background:#fff!important;border:1px solid #ddd!important}
+}
