@@ -187,10 +187,60 @@ html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
  padding:0!important;border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
 }
-/* Keep a clean content transition under the header and safe touch targets. */
+/* Exactly the same segmented geometry/material as Work's #svWorkTabs.
+   A separate DOM bar is required because Notebook is a native modal route;
+   clicking an item closes the modal before routing to the existing Work tab. */
+html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > #svNotebookWorkTabs{
+ box-sizing:border-box!important;order:1!important;position:relative!important;z-index:5!important;
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-self:stretch!important;flex:0 0 32px!important;gap:2px!important;
+ width:calc(100% + 16px)!important;min-width:0!important;
+ height:32px!important;min-height:32px!important;max-height:32px!important;
+ margin:13px -8px 12px!important;padding:3px!important;
+ border:0!important;border-radius:999px!important;
+ background:#EDEDED!important;background-image:none!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ user-select:none!important;-webkit-user-select:none!important;
+}
+html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > #svNotebookWorkTabs > button{
+ box-sizing:border-box!important;appearance:none!important;-webkit-appearance:none!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-width:0!important;min-height:26px!important;height:26px!important;
+ margin:0!important;padding:0 3px!important;
+ border:0!important;border-radius:999px!important;
+ background:transparent!important;background-image:none!important;
+ color:#17181C!important;box-shadow:none!important;
+ text-align:center!important;
+ font:560 15px/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
+ letter-spacing:-.01em!important;white-space:nowrap!important;cursor:pointer!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > #svNotebookWorkTabs > button[aria-pressed="true"]{
+ background:#FFFFFF!important;color:#0C0D10!important;font-weight:590!important;
+ box-shadow:0 1px 2px rgba(32,35,42,.045)!important;
+}
+html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > #svNotebookWorkTabs > button:focus-visible{
+ outline:2px solid currentColor!important;outline-offset:2px!important;
+}
+:root[data-theme="dark"] body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > #svNotebookWorkTabs{background:#2B2B2D!important}
+:root[data-theme="dark"] body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > #svNotebookWorkTabs > button{color:#C6C6CA!important}
+:root[data-theme="dark"] body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > #svNotebookWorkTabs > button[aria-pressed="true"]{
+ background:#555559!important;color:#FFFFFF!important;box-shadow:none!important;
+}
+@media(max-width:355px){
+ html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > #svNotebookWorkTabs > button{font-size:13px!important}
+}
 html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
  > #svNotebookCreateTiles{
- margin-top:15px!important;
+ order:2!important;margin-top:0!important;
 }
 /* Text notebook: unify existing upper controls without moving the editor,
    its save/cancel actions or keyboard. */
