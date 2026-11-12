@@ -34,9 +34,9 @@
  filter:none!important;
 }
 :root[data-theme="light"] #calendarSpaceDialog[data-space="health"]{
- --health-bg:#F8F9FB;
+ --health-bg:#FFFFFF;
  --health-surface:#FFFFFF;
- --health-inset:#F0F1F4;
+ --health-inset:#F2F2F7;
  --health-text:#1C1C1E;
  --health-muted:#6D7079;
  --health-rule:rgba(36,39,46,.11);
