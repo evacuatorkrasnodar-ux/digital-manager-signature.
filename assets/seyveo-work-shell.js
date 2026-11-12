@@ -217,7 +217,7 @@
    // The Notebook landing is the single home for creation tiles and saved notes.
    const api=window.SEYVEO_NOTES_API;
    if(typeof api?.openNotes==='function')api.openNotes();
-   else {const dialog=document.getElementById('notesDialog');if(dialog&&!dialog.open)dialog.showModal();}
+   else {const dialog=document.getElementById('notesDialog');if(dialog&&!dialog.open)dialog.show();}
    return;
   }
   if(target===activeSection())return;
