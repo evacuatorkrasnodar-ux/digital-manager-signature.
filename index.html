@@ -3071,8 +3071,23 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  </defs>
 </svg>
 <footer class="dock sv-shared-dock" aria-label="Нижняя панель">
-<button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3.75 10.25 7-6.08a1.9 1.9 0 0 1 2.5 0l7 6.08a1.6 1.6 0 0 1 .55 1.22v7.18a1.7 1.7 0 0 1-1.7 1.7H5.4a1.7 1.7 0 0 1-1.7-1.7v-7.18a1.6 1.6 0 0 1 .55-1.22Z"/><path d="M9.3 20.35v-5.65a1.2 1.2 0 0 1 1.2-1.2h3a1.2 1.2 0 0 1 1.2 1.2v5.65"/></svg><span>Главная</span></button>
-<button type="button" id="navTasks" class="nav-item nav-tasks" aria-label="Открыть дела"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="4.9" cy="6" r="1.05" fill="currentColor" stroke="none"/><circle cx="4.9" cy="12" r="1.05" fill="currentColor" stroke="none"/><circle cx="4.9" cy="18" r="1.05" fill="currentColor" stroke="none"/><path d="M9.2 6h10.9M9.2 12h10.9M9.2 18h10.9"/></svg><span>Дела</span></button>
+<button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <g class="sv-dock-legacy-glyph"><path d="m3.75 10.25 7-6.08a1.9 1.9 0 0 1 2.5 0l7 6.08a1.6 1.6 0 0 1 .55 1.22v7.18a1.7 1.7 0 0 1-1.7 1.7H5.4a1.7 1.7 0 0 1-1.7-1.7v-7.18a1.6 1.6 0 0 1 .55-1.22Z"/><path d="M9.3 20.35v-5.65a1.2 1.2 0 0 1 1.2-1.2h3a1.2 1.2 0 0 1 1.2 1.2v5.65"/></g>
+  <g class="sv-dock-modern-glyph" style="display:none">
+    <path d="m3.25 10.55 7.6-6.4a1.8 1.8 0 0 1 2.3 0l7.6 6.4"/>
+    <path d="M5.3 9.85v8.95a1.9 1.9 0 0 0 1.9 1.9h9.6a1.9 1.9 0 0 0 1.9-1.9V9.85"/>
+    <path d="M9.65 20.7v-6.1a1.5 1.5 0 0 1 1.5-1.5h1.7a1.5 1.5 0 0 1 1.5 1.5v6.1"/>
+  </g>
+</svg><span>Главная</span></button>
+<button type="button" id="navTasks" class="nav-item nav-tasks" aria-label="Открыть дела"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <g class="sv-dock-legacy-glyph"><circle cx="4.9" cy="6" r="1.05" fill="currentColor" stroke="none"/><circle cx="4.9" cy="12" r="1.05" fill="currentColor" stroke="none"/><circle cx="4.9" cy="18" r="1.05" fill="currentColor" stroke="none"/><path d="M9.2 6h10.9M9.2 12h10.9M9.2 18h10.9"/></g>
+  <g class="sv-dock-modern-glyph" style="display:none">
+    <circle cx="5" cy="5.15" r="1.35"/>
+    <circle cx="5" cy="12" r="1.35"/>
+    <circle cx="5" cy="18.85" r="1.35"/>
+    <path d="M10.15 5.15h10.05M10.15 12H20.2M10.15 18.85H20.2"/>
+  </g>
+</svg><span>Дела</span></button>
 <button type="button" id="assistantButton" class="assistant-button" aria-label="Сэйви: открыть единый разговор. Удерживайте, чтобы говорить" aria-describedby="voiceHint" aria-pressed="false">
 <svg class="button-art" viewBox="0 0 74 74" aria-hidden="true" focusable="false">
 <defs>
