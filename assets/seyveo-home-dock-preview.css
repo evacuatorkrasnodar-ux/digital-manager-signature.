@@ -402,3 +402,14 @@
     transform:none!important;
   }
 }
+
+/* Home-only monochrome search v8. Keep Health's own blue magnifier and
+   retain existing contextual search styling in Music, Browser and other pages. */
+:root[data-theme="light"] body:has(> .app > #homePage:not([hidden]))
+ > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+ > #navManage > svg {
+  color:#0B0B0D!important;
+  stroke:#0B0B0D!important;
+  opacity:1!important;
+  filter:none!important;
+}
