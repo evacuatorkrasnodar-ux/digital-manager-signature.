@@ -521,8 +521,18 @@ function createSurface(primary,other=[],real=false,taskId=''){
     :documentStep==='summary'
      ?'В договоре не указан срок поставки. Предлагаю уточнить его.'
      :'Предлагаю: '+documentNote;
-   documentDetails.append(create('p','lm-document-note',
-    (documentAnalysis&&documentStep==='review'?documentAnalysis:sayviText)));
+   const message=documentAnalysis&&documentStep==='review'?documentAnalysis:sayviText;
+   const note=create('p','lm-document-note');
+   // Highlight only the relevant warning in the prepared learning example.
+   // User-supplied document analysis remains plain text, never HTML.
+   const phrase='не указан срок поставки';
+   if(documentStep==='summary'&&message.includes(phrase)){
+    const index=message.indexOf(phrase);
+    note.append(document.createTextNode(message.slice(0,index)),
+     create('span','lm-meaning-accent',phrase),
+     document.createTextNode(message.slice(index+phrase.length)));
+   }else note.textContent=message;
+   documentDetails.append(note);
    if(documentStep==='review')documentDetails.append(create('p','lm-mail-note',
     'Документ не изменяется.'));
   }
