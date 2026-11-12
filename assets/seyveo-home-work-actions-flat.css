@@ -230,7 +230,7 @@
 
 
 /* SEYVEO Home · ONE card-action contract for the white theme.
- * No historical pill pseudo-layers. Three actions have 48px tap targets,
+ * No historical pill pseudo-layers. Three actions have 50px tap targets,
  * 21px crisp icons, 8px spacing. Final Save / Send / Confirm remain
  * legible text buttons, handled above. No event handlers are touched.
  */
@@ -247,9 +247,9 @@
  [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
  box-sizing:border-box!important;
  display:inline-flex!important;
- flex:0 0 48px!important;
- width:48px!important;min-width:48px!important;max-width:48px!important;
- height:48px!important;min-height:48px!important;max-height:48px!important;
+ flex:0 0 50px!important;
+ width:50px!important;min-width:50px!important;max-width:50px!important;
+ height:50px!important;min-height:50px!important;max-height:50px!important;
  padding:0!important;margin:0!important;
  align-items:center!important;justify-content:center!important;
  flex-direction:row!important;gap:0!important;
