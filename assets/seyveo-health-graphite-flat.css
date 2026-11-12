@@ -703,7 +703,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:.73!important;
 }
 
-/* HEALTH LIGHT · pearl-rimmed flat smoked-silver polymer dock v48.
+/* HEALTH LIGHT · taller pearl-rimmed flat smoked-silver dock v49.
    The global dock is a single DOM instance; this sheet changes ONLY its
    appearance while portaled inside the Health dialog in the white theme.
    No pseudo-surface behind the dock: the capsule and search button own
@@ -713,9 +713,9 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock{
  --sv-health-capsule:clamp(188px,58vw,220px);
- --sv-health-search:50px;
+ --sv-health-search:58px;
  --sv-health-gap:24px;
- --sv-health-height:50px;
+ --sv-health-height:58px;
  --sv-health-matte:rgba(211,216,223,.62);
  --sv-health-rim:rgba(249,250,253,.86);
  --sv-health-ink:#1C1C1E;
@@ -759,7 +759,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  gap:2px!important;
  flex:none!important;
  width:var(--sv-health-capsule)!important;max-width:var(--sv-health-capsule)!important;
- height:50px!important;min-height:50px!important;
+ height:58px!important;min-height:58px!important;
  padding:2px!important;margin:0!important;
  border:1.5px solid var(--sv-health-rim)!important;
  border-radius:999px!important;
@@ -776,7 +776,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  align-items:center!important;justify-content:center!important;
  flex:1 1 auto!important;gap:1px!important;
  min-width:44px!important;
- height:44px!important;min-height:44px!important;
+ height:52px!important;min-height:52px!important;
  margin:0!important;padding:3px 4px 2px!important;
  border:0!important;border-radius:999px!important;
  background:transparent!important;box-shadow:none!important;
