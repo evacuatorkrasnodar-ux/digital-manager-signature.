@@ -716,7 +716,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  --sv-health-search:63px;
  --sv-health-side:clamp(14px,5vw,22px);
  --sv-health-height:63px;
- --sv-health-matte:rgba(214,214,222,.34);
+ --sv-health-matte:rgba(190,193,202,.43);
  --sv-health-rim:rgba(255,255,255,.94);
  --sv-health-pearl-edge:0 0 0 .7px rgba(164,170,184,.30),inset 0 1px 1px rgba(75,82,96,.055),inset 0 -1px 0 rgba(255,255,255,.18),inset .6px 0 .7px rgba(255,255,255,.16),inset -.6px 0 .8px rgba(75,82,96,.055),0 1px 2px rgba(82,88,103,.045);
  --sv-health-ink:#1C1C1E;
