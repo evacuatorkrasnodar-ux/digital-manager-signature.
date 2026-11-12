@@ -231,7 +231,7 @@
 
 /* SEYVEO / Home card actions v22 — REBUILT, not layered.
    Three distinct round Apple-style controls, the same 50px touch target.
-   One black Sayvi button, two quiet silver controls; no duplicate lenses.
+   One outlined Sayvi button, two quiet silver controls; no duplicate lenses.
    Send/Save/Confirm text actions above remain unchanged. */
 #homePage #seyveoLivingMoment .lm-field .lm-actions{
  display:flex!important;
@@ -294,19 +294,26 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
- background:#000000!important;color:#FFFFFF!important;
+ border:1.25px solid #0B0B0D!important;
+ background:transparent!important;color:#0B0B0D!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
  background:#F0F1F3!important;color:#111113!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
+ width:27px!important;min-width:27px!important;max-width:27px!important;
+ height:27px!important;min-height:27px!important;max-height:27px!important;
+ flex:0 0 27px!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol > path{
- fill:none!important;stroke:#FFFFFF!important;stroke-width:1.7!important;
+ fill:none!important;stroke:#0B0B0D!important;stroke-width:1.5!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol > circle{
- fill:#FFFFFF!important;stroke:none!important;
+ fill:#0B0B0D!important;stroke:none!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]) .sv-card-symbol,
