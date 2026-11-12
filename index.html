@@ -3831,15 +3831,11 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <p>В открытом приложении SEYVEO попробует распознавать ваше обращение по имени. Это пробный режим: браузер может прервать прослушивание, а звук для распознавания может передаваться внешнему сервису браузера.</p>
 <p>Фразы до обращения по имени наше приложение не сохраняет. Микрофон включится после вашего согласия, и его можно выключить в любой момент.</p>
 <div class="info-actions"><button id="wakeVoiceCancel" type="button" class="btn">Отмена</button><button id="wakeVoiceConfirm" type="button" class="btn primary">Включить</button></div>
-</dialog><section id="notesDialog" class="sv-notebook-page" aria-labelledby="notesTitle" hidden>
-<header class="sv-notebook-header">
- <button id="svNotebookBack" type="button" aria-label="Вернуться из блокнота"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
- <h2 id="notesTitle">Блокнот</h2>
- <button id="svNotebookAdd" type="button" aria-label="Создать текстовую заметку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg></button>
-</header>
+</dialog><section id="notesDialog" class="sv-notebook-content" aria-labelledby="notesTitle" hidden>
+<h2 id="notesTitle" class="sv-notebook-visually-hidden">Блокнот</h2>
 <p id="notesCount" class="notes-count" aria-live="polite" hidden></p>
 <button id="notesNew" type="button" hidden aria-hidden="true" tabindex="-1" style="display:none!important">Новая заметка</button>
-<nav id="svNotebookWorkTabs" class="sv-notebook-work-tabs" aria-label="Разделы моих дел"><button type="button" data-sv-work-tab="personal" aria-pressed="false">Мои дела</button><button type="button" data-sv-work-tab="calendar" aria-pressed="false">Календарь</button><button type="button" data-sv-work-tab="notes" aria-pressed="true" aria-current="page">Блокнот</button><button type="button" data-sv-work-tab="business" aria-pressed="false">Кабинет</button></nav><div id="svNotebookCreateTiles" class="sv-notebook-create-tiles" role="group" aria-label="Создать запись"><button id="noteModeText" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M17 7h23l8 8v36a6 6 0 0 1-6 6H17a6 6 0 0 1-6-6V13a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="M40 7v7a3 3 0 0 0 3 3h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m19 39 8-18h4l8 18M22.8 32h12.5" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 46h22M19 51h15" fill="none" stroke="currentColor" opacity=".63" stroke-width="2" stroke-linecap="round"/></svg></span><span class="paper-choice-copy"><strong>Текст</strong><small>Клавиатура и диктовка</small></span></button><button id="noteModePaper" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M15 8h27l7 7v35a6 6 0 0 1-6 6H15a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="M42 8v6a2 2 0 0 0 2 2h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M17 42c5-8 7-14 10-12 3 2-4 12 1 11 4-1 6-10 9-10 3 0-1 8 2 8 2 0 4-2 6-4" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/><path d="m40 23 10-10a3.4 3.4 0 0 1 5 5L45 28l-7 2Z" fill="#c9ced3" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m48 15 5 5M19 49h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".7"/></svg></span><span class="paper-choice-copy"><strong>От руки</strong><small>Пальцем или стилусом</small></span></button><button id="noteModeScan" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect x="13" y="9" width="38" height="46" rx="6" fill="rgba(255,255,255,.065)" stroke="currentColor" stroke-width="2.1"/><rect x="19" y="16" width="26" height="19" rx="3" fill="rgba(255,255,255,.09)" stroke="currentColor" stroke-width="1.8"/><circle cx="37" cy="22" r="3" fill="#d6dbe0"/><path d="m21 33 8-8 7 7 4-4 5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 41h22M21 46h17" fill="none" stroke="currentColor" opacity=".78" stroke-width="2.2" stroke-linecap="round"/><path d="M7 19v-6a5 5 0 0 1 5-5h5M57 19v-6a5 5 0 0 0-5-5h-2M7 45v6a5 5 0 0 0 5 5h5M57 45v6a5 5 0 0 1-5 5h-2" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="paper-choice-copy"><strong>Фото → текст</strong><small>Сфотографировать или выбрать файл</small></span></button></div><div id="notesList" class="notes-list"></div><p id="notesStatus" role="status" aria-live="polite" hidden></p></section><script src="assets/seyveo-notebook-screen.js?v=1"></script><dialog id="noteReviewDialog" class="notes-dialog note-review-dialog" aria-labelledby="noteReviewTitle">
+<div id="svNotebookCreateTiles" class="sv-notebook-create-tiles" role="group" aria-label="Создать запись"><button id="noteModeText" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M17 7h23l8 8v36a6 6 0 0 1-6 6H17a6 6 0 0 1-6-6V13a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="M40 7v7a3 3 0 0 0 3 3h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m19 39 8-18h4l8 18M22.8 32h12.5" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 46h22M19 51h15" fill="none" stroke="currentColor" opacity=".63" stroke-width="2" stroke-linecap="round"/></svg></span><span class="paper-choice-copy"><strong>Текст</strong><small>Клавиатура и диктовка</small></span></button><button id="noteModePaper" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M15 8h27l7 7v35a6 6 0 0 1-6 6H15a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="M42 8v6a2 2 0 0 0 2 2h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M17 42c5-8 7-14 10-12 3 2-4 12 1 11 4-1 6-10 9-10 3 0-1 8 2 8 2 0 4-2 6-4" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/><path d="m40 23 10-10a3.4 3.4 0 0 1 5 5L45 28l-7 2Z" fill="#c9ced3" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m48 15 5 5M19 49h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".7"/></svg></span><span class="paper-choice-copy"><strong>От руки</strong><small>Пальцем или стилусом</small></span></button><button id="noteModeScan" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect x="13" y="9" width="38" height="46" rx="6" fill="rgba(255,255,255,.065)" stroke="currentColor" stroke-width="2.1"/><rect x="19" y="16" width="26" height="19" rx="3" fill="rgba(255,255,255,.09)" stroke="currentColor" stroke-width="1.8"/><circle cx="37" cy="22" r="3" fill="#d6dbe0"/><path d="m21 33 8-8 7 7 4-4 5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 41h22M21 46h17" fill="none" stroke="currentColor" opacity=".78" stroke-width="2.2" stroke-linecap="round"/><path d="M7 19v-6a5 5 0 0 1 5-5h5M57 19v-6a5 5 0 0 0-5-5h-2M7 45v6a5 5 0 0 0 5 5h5M57 45v6a5 5 0 0 1-5 5h-2" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="paper-choice-copy"><strong>Фото → текст</strong><small>Сфотографировать или выбрать файл</small></span></button></div><div id="notesList" class="notes-list"></div><p id="notesStatus" role="status" aria-live="polite" hidden></p></section><script src="assets/seyveo-notebook-screen.js?v=2"></script><dialog id="noteReviewDialog" class="notes-dialog note-review-dialog" aria-labelledby="noteReviewTitle">
 <button id="noteReviewBack" type="button" class="seyveo-close-control seyveo-dialog-close sv-note-back-arrow" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <div class="sv-note-header">
  <div class="sv-note-nav-brand"><strong>Блокнот</strong></div>
@@ -4920,7 +4916,7 @@ showWrittenReply(q,answer);
    Only clicks OUTSIDE the dialog rectangle dismiss it; taps on its padding
    or scrolling content must not unexpectedly close the window.
    Microphone consent stays explicit: Cancel/Enable or native Escape. */
-for(const id of ['info','notesDialog']){
+for(const id of ['info']){
   const dialog=$(id);
   dialog.addEventListener('click',event=>{
     if(!dialog.open||event.target!==dialog)return;
@@ -5258,24 +5254,10 @@ function renderNotes(){
  });
 }
 function openNotes(){
- // Rebuilt Notebook is a non-modal fixed page: keep the Work page at
- // its exact scroll position when the Notebook is shown.
- const scrolling=document.scrollingElement;
- const pageY=scrolling?.scrollTop||0;
- const app=document.querySelector('.app');
- const appY=app?.scrollTop||0;
  renderNotes();
- if(window.SEYVEO_WORK_SHELL?.isNotesInline?.()===true)return;
- const dialog=$('notesDialog');
- if(!dialog.open){
-  dialog.show();
-  // Programmatic focus can still scroll on Safari; prevent it.
-  // Focus the visible surface instead, without forcing viewport movement.
-  if(!dialog.hasAttribute('tabindex'))dialog.setAttribute('tabindex','-1');
-  dialog.focus({preventScroll:true});
-  if(scrolling&&scrolling.scrollTop!==pageY)scrolling.scrollTop=pageY;
-  if(app&&app.scrollTop!==appY)app.scrollTop=appY;
- }
+ // This is now a real Work tab, never a second modal/header.
+ const page=$('notesDialog');
+ if(!page.open)page.show();
 }
 /* Reading is separate from editing: open long OCR documents without the keyboard. */
 let readingNoteID=null,readerToEditor=false,readerToAction=false,noteActionDraft=null,noteTaskPlan=null;
@@ -6342,7 +6324,7 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=7"></script><script src="assets/seyveo-work-shell.js?v=37"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
+</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=7"></script><script src="assets/seyveo-work-shell.js?v=38"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
  // Only the actual viewport HEIGHT affects editor geometry. Scroll events
@@ -6472,4 +6454,4 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=21"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=6"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=21"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=6"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=3"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
