@@ -325,6 +325,15 @@ html:not(.seyveo-conversation) #sayviMusicMini{
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-skip:disabled{
   opacity:1!important;
 }
+/* Always paint the actual SVG glyphs solid black, including disabled Next. */
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport button svg,
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport button svg path,
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport button:disabled svg,
+:root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport button:disabled svg path{
+  stroke:#000000!important;
+  opacity:1!important;
+  filter:none!important;
+}
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-progress{
   left:18px!important;
   right:18px!important;
