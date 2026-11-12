@@ -152,9 +152,9 @@
   gap:2px!important;
   width:calc(100% - 12px)!important;
   min-width:0!important;
-  height:36px!important;
-  min-height:36px!important;
-  margin:7px 6px 12px!important;
+  height:32px!important;
+  min-height:32px!important;
+  margin:13px 6px 12px!important;
   padding:3px!important;
   border:0!important;
   border-radius:999px!important;
@@ -191,8 +191,8 @@
   align-items:center!important;
   justify-content:center!important;
   min-width:0!important;
-  min-height:30px!important;
-  height:30px!important;
+  min-height:26px!important;
+  height:26px!important;
   margin:0!important;
   padding:0 3px!important;
   border:0!important;
