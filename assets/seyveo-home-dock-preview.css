@@ -1,25 +1,27 @@
-/* SEYVEO Home Dock / Silver Mist concept · 2026-11-12
- * Reversible visual experiment for the WHITE HOME SCREEN ONLY.
- * Keep original dock geometry, tap targets, route handlers, Sayvi voice, and dark theme.
- * No wrappers, new pseudo-elements or background sheet underneath the dock.
- * Restore by deleting this stylesheet link from index.html.
+/* SEYVEO / Silver Mist v2 · shared white-theme dock · 2026-11-12.
+ * This is the approved Home look promoted to every ordinary workspace.
+ * Uses the ONE original shared dock, its existing capsule/search pseudo-surfaces
+ * and all existing click, route, voice-hold and player/browser handlers.
+ * Only styling and height changes. Do NOT apply to dark theme or Health's
+ * independently approved 63px dock. Family-chat hidden dock stays hidden.
+ * Reversible: remove this stylesheet's link from index.html.
  */
-:root[data-theme="light"]:not(.seyveo-conversation)
- body:has(> .app > #homePage:not([hidden]))
- > footer.dock.sv-shared-dock {
+
+:root[data-theme="light"] {
+  --seyveo-dock-height:63px;
+}
+
+:root[data-theme="light"] body > footer.dock.sv-shared-dock,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock {
   --sv-home-dock-ink:#475563;
   --sv-home-dock-active:#253441;
   --sv-home-dock-blue:#1777DA;
+  --seyveo-dock-height:63px;
+  height:63px!important;
+  min-height:63px!important;
 }
-
-/* One existing frosted capsule and one existing search disc; keep the 226/50 geometry.
-   A quiet cool-silver tint, not opaque plastic. Asymmetric rim catches light subtly. */
-:root[data-theme="light"]:not(.seyveo-conversation)
- body:has(> .app > #homePage:not([hidden]))
- > footer.dock.sv-shared-dock::before,
-:root[data-theme="light"]:not(.seyveo-conversation)
- body:has(> .app > #homePage:not([hidden]))
- > footer.dock.sv-shared-dock::after {
+:root[data-theme="light"] body > footer.dock.sv-shared-dock::before,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::before {
   box-sizing:border-box!important;
   border:1px solid rgba(253,254,255,.80)!important;
   background:rgba(196,201,211,.39)!important;
@@ -33,12 +35,42 @@
     inset 0 -1px 0 rgba(255,255,255,.27),
     0 3px 9px rgba(51,64,78,.06)!important;
 }
-
-/* Same hit areas, visually stronger optical size and clean graphite engraving. */
-:root[data-theme="light"]:not(.seyveo-conversation)
- body:has(> .app > #homePage:not([hidden]))
- > footer.dock.sv-shared-dock
- :is(#navHome,#navTasks,#navPicture) > svg {
+:root[data-theme="light"] body > footer.dock.sv-shared-dock::after,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::after {
+  box-sizing:border-box!important;
+  width:63px!important;
+  border:1px solid rgba(253,254,255,.80)!important;
+  background:rgba(196,201,211,.39)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(109%)!important;
+  backdrop-filter:blur(15px) saturate(109%)!important;
+  box-shadow:
+    0 0 0 .55px rgba(134,148,166,.19),
+    inset .65px 0 1px rgba(255,255,255,.23),
+    inset -.6px 0 .85px rgba(73,85,103,.075),
+    inset 0 1px 1px rgba(73,85,103,.065),
+    inset 0 -1px 0 rgba(255,255,255,.27),
+    0 3px 9px rgba(51,64,78,.06)!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture),
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture) {
+  height:61px!important;
+  min-height:61px!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #navManage,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #navManage {
+  box-sizing:border-box!important;
+  flex:0 0 63px!important;
+  width:63px!important;
+  min-width:63px!important;
+  max-width:63px!important;
+  height:63px!important;
+  min-height:63px!important;
+  max-height:63px!important;
+  justify-self:end!important;
+  align-self:center!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture) > svg,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture) > svg {
   box-sizing:border-box!important;
   flex:0 0 25.5px!important;
   width:25.5px!important;
@@ -53,29 +85,28 @@
   fill:none!important;
   filter:none!important;
 }
-:root[data-theme="light"]:not(.seyveo-conversation)
- body:has(> .app > #homePage:not([hidden]))
- > footer.dock.sv-shared-dock
- :is(#navHome,#navTasks,#navPicture).active > svg {
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture).active > svg,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture).active > svg {
   color:var(--sv-home-dock-active)!important;
 }
-:root[data-theme="light"]:not(.seyveo-conversation)
- body:has(> .app > #homePage:not([hidden]))
- > footer.dock.sv-shared-dock #navPicture > svg.seyveo-my-signature {
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #navPicture > svg.seyveo-my-signature,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #navPicture > svg.seyveo-my-signature {
+  box-sizing:border-box!important;
   flex:0 0 27px!important;
   width:27px!important;
   min-width:27px!important;
   max-width:27px!important;
+  height:27px!important;
+  min-height:27px!important;
+  max-height:27px!important;
   height:25px!important;
   min-height:25px!important;
   max-height:25px!important;
   stroke-width:1.47!important;
 }
-
-/* Original working global search action, now with a more vivid but balanced blue. */
-:root[data-theme="light"]:not(.seyveo-conversation)
- body:has(> .app > #homePage:not([hidden]))
- > footer.dock.sv-shared-dock #navManage > svg {
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #navManage > svg,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #navManage > svg {
+  box-sizing:border-box!important;
   flex:0 0 25.5px!important;
   width:25.5px!important;
   min-width:25.5px!important;
@@ -83,34 +114,48 @@
   height:25.5px!important;
   min-height:25.5px!important;
   max-height:25.5px!important;
-  stroke:var(--sv-home-dock-blue)!important;
-  color:var(--sv-home-dock-blue)!important;
   stroke-width:1.8!important;
   fill:none!important;
   filter:none!important;
 }
-
-/* Keep Sayvi's actual waveform and long-press behavior; adjust ink only. */
-:root[data-theme="light"]:not(.seyveo-conversation)
- body:has(> .app > #homePage:not([hidden]))
- > footer.dock.sv-shared-dock #assistantButton .button-art .voice-bars {
+:root[data-theme="light"] body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage > svg,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage > svg {
+  color:var(--sv-home-dock-blue)!important;
+  stroke:var(--sv-home-dock-blue)!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #assistantButton .button-art .voice-bars,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #assistantButton .button-art .voice-bars {
   stroke:var(--sv-home-dock-ink)!important;
 }
-:root[data-theme="light"]:not(.seyveo-conversation)
- body:has(> .app > #homePage:not([hidden]))
- > footer.dock.sv-shared-dock #assistantButton .button-art .voice-dot {
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #assistantButton .button-art .voice-dot,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #assistantButton .button-art .voice-dot {
   fill:var(--sv-home-dock-ink)!important;
 }
 
+/* Preserve original circle center on iPhone: add 13px diameter without
+ * shifting the blue glyph or the circle into the right-edge safe area. */
+@media (max-width:699px) {
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #navManage,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #navManage {
+  left:calc(var(--sv-search-center-left) - 6.5px)!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock::after,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::after {
+  left:calc(var(--sv-search-center-left) - 6.5px)!important;
+}
+}
+
 @media (prefers-reduced-transparency:reduce) {
-  :root[data-theme="light"]:not(.seyveo-conversation)
-   body:has(> .app > #homePage:not([hidden]))
-   > footer.dock.sv-shared-dock::before,
-  :root[data-theme="light"]:not(.seyveo-conversation)
-   body:has(> .app > #homePage:not([hidden]))
-   > footer.dock.sv-shared-dock::after {
-    background:#E5E7EC!important;
-    -webkit-backdrop-filter:none!important;
-    backdrop-filter:none!important;
-  }
+:root[data-theme="light"] body > footer.dock.sv-shared-dock::before,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::before {
+  background:#E5E7EC!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock::after,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::after {
+  background:#E5E7EC!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
 }
