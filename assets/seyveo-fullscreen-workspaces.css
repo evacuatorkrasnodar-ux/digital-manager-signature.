@@ -48,7 +48,10 @@
   max-height:100dvh!important;
   border:0!important;
   border-radius:0!important;
+  outline:0!important;
   box-shadow:none!important;
+  -webkit-appearance:none!important;
+  appearance:none!important;
   background:var(--bg)!important;
   color:var(--text)!important;
   overflow-x:hidden!important;
@@ -82,6 +85,15 @@
   flex-direction:column!important;
   overflow:hidden!important;
   overscroll-behavior:none!important;
+  border:0!important;border-radius:0!important;
+  outline:0!important;box-shadow:none!important;
+ }
+ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="care"] > #svCareScroll.sv-care-scroll{
+  background:transparent!important;border:0!important;border-radius:0!important;
+  outline:0!important;box-shadow:none!important;
+ }
+ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="care"] > #svCareScroll.sv-care-scroll:focus-visible{
+  outline:0!important;box-shadow:none!important;
  }
  html body #calendarSpaceDialog > #svCareScroll.sv-care-scroll{
   box-sizing:border-box;
