@@ -118,3 +118,41 @@ html body dialog:is(#onboardDialog,#seyveoAccountDemo,#seyveoQrCardDialog,#seyve
  button:is(#onboardClose,#seyveoAccountClose,#seyveoQrClose,#seyveoAvatarClose) svg{
   fill:none!important;stroke:currentColor!important;stroke-width:1.45!important;
 }
+
+/* Header Material Circle · one reusable Silver Mist control.
+   Exact palette, blur and rim are shared with the approved white dock.
+   Use only on real navigation/action buttons, not text actions. */
+:root[data-theme="light"] .sv-header-material-circle{
+ box-sizing:border-box!important;
+ width:50px!important;min-width:50px!important;max-width:50px!important;
+ height:50px!important;min-height:50px!important;max-height:50px!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ padding:0!important;margin:0!important;
+ border:1px solid rgba(253,254,255,.80)!important;
+ border-radius:50%!important;
+ background:rgba(196,201,211,.39)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:blur(15px) saturate(109%)!important;
+ backdrop-filter:blur(15px) saturate(109%)!important;
+ box-shadow:0 0 0 .55px rgba(134,148,166,.19),
+   inset .65px 0 1px rgba(255,255,255,.23),
+   inset -.6px 0 .85px rgba(73,85,103,.075),
+   inset 0 1px 1px rgba(73,85,103,.065),
+   inset 0 -1px 0 rgba(255,255,255,.27),
+   0 3px 9px rgba(51,64,78,.06)!important;
+ color:#0B0B0D!important;
+ -webkit-tap-highlight-color:transparent;
+}
+:root[data-theme="light"] .sv-header-material-circle svg{
+ width:22px!important;height:22px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.85!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+:root[data-theme="light"] .sv-header-material-circle:active{opacity:.82!important}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"] .sv-header-material-circle{
+  background:#E5E7EC!important;backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+ }
+}
