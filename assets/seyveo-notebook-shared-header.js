@@ -20,24 +20,25 @@
     if(!button||!nav.contains(button)||!dialog.open)return;
     const target=button.dataset.svWorkTab;
     if(target==='notes')return;
+    // Route in the same event turn as closing the Notebook. A delayed
+    // requestAnimationFrame briefly exposed the previous Work page, causing
+    // the header and bottom dock to visibly jump on every tab switch.
     dialog.close();
-    requestAnimationFrame(()=>{
-     const workTabs=document.getElementById('svWorkTabs');
-     const existing=workTabs?.querySelector('[data-sv-work-tab="'+target+'"]');
-     if(existing&&!existing.hidden&&!workTabs.hidden){
-      existing.click();return;
-     }
-     if(target==='personal'){
-      if(typeof window.SEYVEO_UNIFIED_TASKS?.openPersonal==='function')
-       window.SEYVEO_UNIFIED_TASKS.openPersonal();
-      else location.hash='#tasks';
-     }else if(target==='calendar')location.hash='#calendar';
-     else if(target==='business'){
-      if(typeof window.SEYVEO_UNIFIED_TASKS?.openBusiness==='function')
-       window.SEYVEO_UNIFIED_TASKS.openBusiness('preserve');
-      else location.hash='#tasks';
-     }
-    });
+    const workTabs=document.getElementById('svWorkTabs');
+    const existing=workTabs?.querySelector('[data-sv-work-tab="'+target+'"]');
+    if(existing&&!existing.hidden&&!workTabs.hidden){
+     existing.click();return;
+    }
+    if(target==='personal'){
+     if(typeof window.SEYVEO_UNIFIED_TASKS?.openPersonal==='function')
+      window.SEYVEO_UNIFIED_TASKS.openPersonal();
+     else location.hash='#tasks';
+    }else if(target==='calendar')location.hash='#calendar';
+    else if(target==='business'){
+     if(typeof window.SEYVEO_UNIFIED_TASKS?.openBusiness==='function')
+      window.SEYVEO_UNIFIED_TASKS.openBusiness('preserve');
+     else location.hash='#tasks';
+    }
    });
   }
   if(!factory?.create||!legacyBack)return;
