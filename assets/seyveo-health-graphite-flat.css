@@ -507,3 +507,33 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 #calendarSpaceDialog[data-space="health"] #pwHealth>.pw-list-title{
  margin:0 0 8px!important;font-size:12px!important;
 }
+
+/* Approved pressure-entry palette only. Do not recolor the page, journal or medical card. */
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-entry{
+ background-color:#242426!important;background-image:none!important;
+ color:#FFFFFF!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-entry>h3{
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-grid{
+ background:#2C2C2E!important;background-image:none!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-grid label{
+ background:transparent!important;background-image:none!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-grid label>span,
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-grid label>small{
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;opacity:1!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-grid input{
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+ opacity:1!important;filter:none!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-grid input::placeholder{
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;opacity:1!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] .cal-bp-home-save{
+ background:#38383A!important;background-image:none!important;
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;opacity:1!important;
+}
