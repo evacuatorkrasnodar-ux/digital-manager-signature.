@@ -26,24 +26,15 @@ function init(){
  const track=document.getElementById('assistantQuickTrack');
  if(rail){rail.setAttribute('aria-hidden','true');rail.inert=true;}
  if(track)track.tabIndex=-1;
- // One canonical vector for each main destination. Never restore legacy art.
- const originalOtherMarkup={
-  life:document.getElementById('navPicture').innerHTML,
-  search:document.getElementById('navManage').innerHTML
- };
+ // One single source of icons: the dock markup in index.html.
+ // Keep copies only to restore the original after Music/Browser take over.
+ const originalMarkup=buttons.map(button=>button.innerHTML);
  const items=[
-  {id:'home',title:'Главная',description:'Вернуться на Главную',
-   icon:'<path data-sv-fill-home fill-rule="evenodd" d="M10.68 3.35a2 2 0 0 1 2.64 0l7.24 6.3a1.27 1.27 0 1 1-1.66 1.92l-.68-.59v7.72a2.1 2.1 0 0 1-2.1 2.1H7.88a2.1 2.1 0 0 1-2.1-2.1v-7.72l-.68.59a1.27 1.27 0 1 1-1.66-1.92l7.24-6.3ZM10 20.8v-5.5c0-1.05.85-1.9 1.9-1.9h.2c1.05 0 1.9.85 1.9 1.9v5.5H10Z"/>'},
-  {id:'tasks',title:'Дела',description:'Открыть дела',
-   icon:'<rect data-sv-task-box x="2.9" y="3.25" width="5.3" height="5.3" rx="1.55"/><rect data-sv-task-box x="2.9" y="10.35" width="5.3" height="5.3" rx="1.55"/><rect data-sv-task-box x="2.9" y="17.45" width="5.3" height="5.3" rx="1.55"/><path data-sv-task-check d="m4.1 5.95 1.15 1.02 1.83-2.08M4.1 13.05l1.15 1.02 1.83-2.08M4.1 20.15l1.15 1.02 1.83-2.08"/><path data-sv-task-lines d="M11.3 5.9h9.2M11.3 13h9.2M11.3 20.1h9.2"/>'},
+  {id:'home',title:'Главная',description:'Вернуться на Главную'},
+  {id:'tasks',title:'Дела',description:'Открыть дела'},
   {id:'life',title:'Мой мир',description:'Открыть Мой мир'},
   {id:'search',title:'Поиск',description:'Умный поиск SEYVEO'}
  ];
- function canonicalMarkup(item){
-  if(item.id==='life'||item.id==='search')return originalOtherMarkup[item.id];
-  return '<svg class="sv-canonical-dock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+item.icon+'</svg><span>'+item.title+'</span>';
- }
- const canonical=items.map(canonicalMarkup);
  const musicMode=()=>dock.classList.contains('seyveo-music-dock')||
   window.SEYVEO_MUSIC_DOCK?.isActive?.()===true;
  function activeDestination(){
@@ -62,12 +53,15 @@ function init(){
   items.forEach((item,index)=>{
    const button=buttons[index];
    button.hidden=false;
-   // Repaint only after a contextual mode has replaced an icon, or when
-   // obsolete markup is detected. This is the sole runtime artwork source.
-   const expected=canonical[index];
-   const hasCanonical=!item.icon||!!button.querySelector(':scope > svg.sv-canonical-dock-icon');
-   if(button.dataset.svFixedAction!==item.id||!hasCanonical)
-    button.innerHTML=expected;
+   // Only restore the original markup when a contextual dock replaced it.
+   // Normal route changes leave the icons alone: no re-paint or SVG clashes.
+   const hasOriginalIcon=index===0||index===1
+    ? !!button.querySelector(':scope > svg.sv-canonical-dock-icon')
+    : index===2
+      ? !!button.querySelector(':scope > svg.seyveo-my-signature')
+      : !!button.querySelector(':scope > svg:not(.seyveo-music-dock-svg):not(.seyveo-browser-dock-svg)');
+   if(button.dataset.svFixedAction!==item.id||!hasOriginalIcon)
+    button.innerHTML=originalMarkup[index];
    button.dataset.svFixedAction=item.id;
    button.setAttribute('aria-label',item.description);
    button.title=item.title;
