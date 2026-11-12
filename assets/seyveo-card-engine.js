@@ -405,44 +405,68 @@
    actions.append(button);
   }
   article.append(actions);
-  // The draft preview is available to developers in Studio and to consumers
-  // of this renderer, but confirmation cannot send or sign anything itself.
+  // Approved RESULT stage for every card: approve / pencil / navigation.
+  // Engine remains pure: no real sending, saving or navigation without onAction.
   const draftPane=el('div','sv-card-draft-preview');
-  draftPane.hidden=true;
-  draftPane.setAttribute('aria-live','polite');
+  draftPane.hidden=true;draftPane.setAttribute('aria-live','polite');
   const draftTitle=el('p','sv-card-draft-title');
+  const draftText=el('p','sv-card-draft-text');
   const draftInput=el('textarea','sv-card-draft-input');
-  draftInput.rows=4;draftInput.maxLength=1200;
+  draftInput.rows=4;draftInput.maxLength=1200;draftInput.hidden=true;
   const draftHint=el('p','sv-card-draft-hint');
-  const draftSend=el('button','sv-card-draft-confirm');
-  draftSend.type='button';
+  const draftActions=el('div','sv-card-draft-actions');
+  draftActions.setAttribute('role','group');
+  draftActions.setAttribute('aria-label','Выберите действие с предложением Сэйви');
+  const draftSend=el('button','sv-card-draft-confirm');draftSend.type='button';
+  const draftEdit=el('button','sv-card-draft-option');draftEdit.type='button';
+  const draftChat=el('button','sv-card-draft-option');draftChat.type='button';
+  decorateActionButton(draftEdit,'edit');
+  decorateActionButton(draftChat,'navigate');
+  draftEdit.setAttribute('aria-label','Исправить предложение самостоятельно');
+  draftChat.setAttribute('aria-label','Перейти для обсуждения предложения');
+  draftActions.append(draftSend,draftEdit,draftChat);
   const draftStatus=el('p','sv-card-draft-status');
-  draftPane.append(draftTitle,draftInput,draftHint,draftSend,draftStatus);
+  draftPane.append(draftTitle,draftText,draftInput,draftHint,draftActions,draftStatus);
   article.append(draftPane);
   const sendLabel=family=>['message','mail','employee','shelf'].includes(family)?'Отправить':
    ['document','secureFlow'].includes(family)?'Сохранить':'Подтвердить';
   const showDraft=(editable)=>{
    draftPane.hidden=false;actions.hidden=true;
-   draftTitle.textContent=editable?'Исправить самостоятельно':'Предложение Сэйви · проверьте перед подтверждением';
+   draftTitle.textContent=editable?'Ваш вариант':'Предложение Сэйви';
    draftInput.value=card.suggestion||card.fact||'';
-   draftInput.readOnly=false; // Sayvi's proposal can be adjusted before final confirmation.
-   draftHint.textContent='Демо · вариант можно исправить. Только финальная кнопка подтверждает действие; исходные данные не меняются.';
-   draftSend.textContent=sendLabel(card.family);
-   decorateActionButton(draftSend,draftSend.textContent==='Отправить'?'send':
-    draftSend.textContent==='Сохранить'?'save':'confirm');
+   draftText.textContent=draftInput.value;
+   draftInput.hidden=!editable;draftText.hidden=editable;
+   draftEdit.hidden=editable;
+   draftHint.textContent='Решение за вами: подтвердить, исправить или перейти к обсуждению. Автоматических действий нет.';
+   const label=sendLabel(card.family);
+   draftSend.textContent=label;
+   decorateActionButton(draftSend,label==='Отправить'?'send':
+    label==='Сохранить'?'save':'confirm');
+   draftSend.setAttribute('aria-label',label==='Отправить'?'Отправить подготовленный ответ':label==='Сохранить'?'Сохранить предложенную редакцию':'Подтвердить предложение');
+   draftChat.setAttribute('aria-label',['message','mail','document','secureFlow'].includes(card.family)
+    ?'Обсудить с Сэйви в чате':'Перейти к исходному разделу');
    draftStatus.textContent='';
    if(editable)draftInput.focus({preventScroll:true});
   };
-  // One result-stage button, never an extra row of controls.
   for(const button of actions.children){
    if(button.dataset.cardAction==='sayvi'||button.dataset.cardAction==='edit'){
     const id=button.dataset.cardAction;
     button.addEventListener('click',()=>showDraft(id==='edit'));
    }
   }
+  draftEdit.addEventListener('click',()=>{
+   draftInput.value=draftText.textContent||'';
+   draftInput.hidden=false;draftText.hidden=true;draftEdit.hidden=true;
+   draftTitle.textContent='Ваш вариант';
+   draftInput.focus({preventScroll:true});
+  });
+  draftChat.addEventListener('click',()=>{
+   if(typeof onAction==='function')onAction('navigate',card);
+  });
   draftSend.addEventListener('click',()=>{
-   if(!draftInput.value.trim()){draftStatus.textContent='Сначала укажите текст.';return;}
-   draftStatus.textContent='Демо: '+draftSend.textContent+' нажато. Реальная отправка или сохранение не выполнялись.';
+   const value=(draftInput.hidden?draftText.textContent:draftInput.value)?.trim();
+   if(!value){draftStatus.textContent='Сначала укажите текст.';return;}
+   draftStatus.textContent='Учебный просмотр: действие подтверждено, внешняя отправка или сохранение не выполнялись.';
    if(typeof onAction==='function')onAction('confirm-preview',card);
   });
   installDeferSwipe(article,card,onAction);
