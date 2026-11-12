@@ -159,3 +159,92 @@
   backdrop-filter:none!important;
 }
 }
+
+
+/* SEYVEO Sayvi sonic signature v3: a slightly larger hero mark (30px optical).
+ * Keep the original 50px Sayvi hit target, 63px shared dock and the exact
+ * click / hold-to-record events unchanged. Dark theme keeps its old artwork.
+ * No extra body, panel, circle or box shadow behind the new vector glyph. */
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .button-art > .wave-mark {
+  display:none!important;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .button-art > .sv-sayvi-sonic {
+  display:block!important;
+  stroke:var(--sv-home-dock-ink,#475563)!important;
+  stroke-width:2.75!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  fill:none!important;
+  filter:none!important;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic .sv-sayvi-ray {
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:2.6!important;
+  stroke-linecap:round!important;
+  transform-box:fill-box;
+  transform-origin:center center;
+  animation:sv-sayvi-ray-flow 3.4s ease-in-out infinite alternate;
+  will-change:transform;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic .sv-sayvi-ray--top,
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic .sv-sayvi-ray--bottom{
+  animation-duration:3s;
+  animation-delay:-1.4s;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic .sv-sayvi-ray--inner-left{
+  animation-duration:2.8s;
+  animation-delay:-1.9s;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic .sv-sayvi-ray--inner-right{
+  animation-duration:3.2s;
+  animation-delay:-.8s;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic .sv-sayvi-ray--outer-left{
+  animation-duration:2.6s;
+  animation-delay:-1.2s;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic .sv-sayvi-ray--outer-right{
+  animation-duration:2.9s;
+  animation-delay:-2s;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic .sv-sayvi-end-dot {
+  fill:currentColor!important;
+  stroke:none!important;
+  opacity:.82;
+  animation:sv-sayvi-dot-glow 2.7s ease-in-out infinite alternate;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic .sv-sayvi-core {
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:2.65!important;
+  transform-box:fill-box;
+  transform-origin:center center;
+  animation:sv-sayvi-core-breathe 3.1s ease-in-out infinite;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton.listening .sv-sayvi-sonic .sv-sayvi-ray {
+  animation-duration:.84s!important;
+}
+:root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton.listening .sv-sayvi-sonic .sv-sayvi-core {
+  animation-duration:1.05s!important;
+}
+@keyframes sv-sayvi-ray-flow {
+  0%{transform:scaleY(.80)}
+  50%{transform:scaleY(1.08)}
+  100%{transform:scaleY(.92)}
+}
+@keyframes sv-sayvi-core-breathe {
+  0%,100%{transform:scale(1);opacity:.90}
+  50%{transform:scale(1.085);opacity:1}
+}
+@keyframes sv-sayvi-dot-glow {
+  0%{opacity:.62}
+  100%{opacity:1}
+}
+@media (prefers-reduced-motion:reduce) {
+  :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock, body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock) #assistantButton .sv-sayvi-sonic :is(.sv-sayvi-ray,.sv-sayvi-core,.sv-sayvi-end-dot){
+    animation:none!important;
+    transform:none!important;
+    will-change:auto!important;
+  }
+}
