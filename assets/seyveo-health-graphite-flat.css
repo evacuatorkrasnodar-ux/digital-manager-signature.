@@ -955,19 +955,43 @@ html body #calendarSpaceDialog[data-space="health"] :is(
  cursor:pointer!important;caret-color:transparent!important;
 }
 
-/* Health · remove the rectangular layer behind the original floating dock.
-   Preserve the dock's capsule/search circles and all navigation handlers. */
-html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock{
- background:transparent!important;
- background-image:none!important;
- border:0!important;
- outline:0!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
-}
-html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]{
- outline:0!important;
- border:0!important;
- box-shadow:none!important;
+/* Health full-bleed canvas: the square edge in the screenshot was around
+   the WHOLE dialog (left/right/bottom), not behind the dock itself.
+   The original dock remains untouched; this corrects the outer modal frame. */
+@media (max-width:720px){
+ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]{
+  box-sizing:border-box!important;
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  position:fixed!important;
+  inset:0!important;
+  top:0!important;right:0!important;bottom:0!important;left:0!important;
+  margin:0!important;
+  width:100vw!important;min-width:100vw!important;max-width:100vw!important;
+  height:100dvh!important;min-height:100dvh!important;max-height:100dvh!important;
+  border:0!important;
+  border-width:0!important;
+  border-style:none!important;
+  border-radius:0!important;
+  outline:0!important;
+  outline-offset:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  background-color:var(--bg)!important;
+  background-image:var(--sv-life-viewport-gradient)!important;
+  background-repeat:no-repeat!important;
+  background-size:100% 100%!important;
+  background-clip:border-box!important;
+  overflow:hidden!important;
+ }
+ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]::before,
+ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]::after{
+  content:none!important;display:none!important;
+ }
+ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]::backdrop{
+  background:var(--bg)!important;
+  border:0!important;
+  box-shadow:none!important;
+ }
 }
