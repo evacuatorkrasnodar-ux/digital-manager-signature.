@@ -482,3 +482,29 @@
   #notesDialog.notes-dialog[open] .note-row-copy > p,
   #svWorkShell[data-active="notes"] #svWorkNotebook .note-row-copy > p{font-size:13px!important;}
 }
+
+
+/* Notebook list: no ghost panel behind saved notes.
+   Keep each real note row and the approved dock/header untouched. */
+#notesDialog.notes-dialog[open] #notesList.notes-list{
+  flex:0 1 auto!important;
+  align-self:stretch!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:calc(100dvh - 310px)!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+#notesDialog.notes-dialog[open] #notesList.notes-list::before,
+#notesDialog.notes-dialog[open] #notesList.notes-list::after{
+  content:none!important;
+  display:none!important;
+}
