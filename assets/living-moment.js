@@ -664,8 +664,29 @@ function createSurface(primary,other=[],real=false,taskId=''){
    }
   }
  }
+ // Draft handoff to the actual Sayvi chat; never send automatically or expose
+ // personal document content in a URL. The chat lets the user review the text.
+ function openSayviDiscussion(kind,original,proposal){
+  try{
+   sessionStorage.setItem('seyveo.sayvi.document-handoff.v1',JSON.stringify({
+    intent:'card-review',kind,original:String(original||'').slice(0,2200),
+    proposal:String(proposal||'').slice(0,2200),at:Date.now()
+   }));
+  }catch{}
+  if(typeof window.SEYVEO_CONVERSATION?.open==='function'){
+   window.SEYVEO_CONVERSATION.open();
+  }else location.assign('sayvi-chat-new.html');
+ }
+ function openDocumentWorkspace(){
+  const api=window.SEYVEO_SAYVI_SURFACES;
+  if(api?.open)api.open('contract');
+  else location.hash='#sayvi-documents';
+ }
  const open=polymer('Подробнее',()=>{
   if(mailActive()){
+   if(mailStep==='confirm'||mailStep==='edit'){
+    openSayviDiscussion('mail',mailIncoming.text,mailDraft);return;
+   }
    const api=window.SEYVEO_SAYVI_SURFACES;
    if(api?.open)api.open('mail');
    else location.hash='#sayvi-mail';
@@ -677,9 +698,10 @@ function createSurface(primary,other=[],real=false,taskId=''){
    return;
   }
   if(documentActive()){
-   const api=window.SEYVEO_SAYVI_SURFACES;
-   if(api?.open)api.open('contract');
-   else location.hash='#sayvi-documents';
+   if(documentStep==='preview'||documentStep==='edit'){
+    openSayviDiscussion('contract',documentSource,documentNote);return;
+   }
+   openDocumentWorkspace();
    return;
   }
   if(real){
@@ -831,11 +853,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }finally{documentAnalyzing=false;if(documentActive())updateDocument();}
  });
  const documentEdit=polymer('Исправить',()=>{
-  documentStep='edit';documentNote=documentSource;updateDocument();
+  // Edit Sayvi's proposed wording if one is already on screen.
+  if(documentStep==='summary')documentNote=documentSource;
+  documentStep='edit';updateDocument();
  });
  const documentSave=polymer('Сохранить',()=>{
-  const value=documentDetails.querySelector('textarea')?.value?.trim();
-  if(!value){explain(field,'Сначала введите текст документа.',documentSave);return}
+  const value=(documentStep==='edit'?
+   documentDetails.querySelector('textarea')?.value:documentNote)?.trim();
+  if(!value){explain(field,'Сначала укажите текст документа.',documentSave);return}
   documentNote=value.slice(0,8500);
   try{
    localStorage.setItem(documentDraftKey,JSON.stringify({
@@ -902,11 +927,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
  }
  hero.addEventListener('click',()=>{
-  if(documentActive()&&!field.querySelector('.sv-card-context:not([hidden])'))open.click();
+  if(documentActive()&&!field.querySelector('.sv-card-context:not([hidden])'))openDocumentWorkspace();
  });
  hero.addEventListener('keydown',event=>{
   if(documentActive()&&!field.querySelector('.sv-card-context:not([hidden])')&&(event.key==='Enter'||event.key===' ')){
-   event.preventDefault();open.click();
+   event.preventDefault();openDocumentWorkspace();
   }
  });
  const realLater=polymer('Позже',()=>{
