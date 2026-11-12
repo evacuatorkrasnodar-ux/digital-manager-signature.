@@ -703,7 +703,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:.73!important;
 }
 
-/* HEALTH LIGHT · genuine frosted translucent dock v72 (63px).
+/* HEALTH LIGHT · fine silver tint and lifted pearl rim v73 (63px).
    The global dock is a single DOM instance; this sheet changes ONLY its
    appearance while portaled inside the Health dialog in the white theme.
    No pseudo-surface behind the dock: the capsule and search button own
@@ -716,9 +716,9 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  --sv-health-search:63px;
  --sv-health-side:clamp(14px,5vw,22px);
  --sv-health-height:63px;
- --sv-health-matte:rgba(208,206,214,.30);
- --sv-health-rim:rgba(251,251,253,.90);
- --sv-health-pearl-edge:0 0 0 .6px rgba(180,185,193,.23),inset -.45px -.55px 1px -.7px rgba(74,82,92,.085);
+ --sv-health-matte:rgba(214,214,222,.34);
+ --sv-health-rim:rgba(255,255,255,.94);
+ --sv-health-pearl-edge:0 0 0 .7px rgba(164,170,184,.30),inset 0 1px 0 rgba(255,255,255,.46),0 1px 2px rgba(82,88,103,.07);
  --sv-health-ink:#1C1C1E;
  --sv-health-blue:#007AFF;
  position:fixed!important;
@@ -762,7 +762,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  width:var(--sv-health-capsule)!important;max-width:var(--sv-health-capsule)!important;
  height:var(--sv-health-height)!important;min-height:var(--sv-health-height)!important;
  padding:2px!important;margin:0!important;
- border:1.5px solid var(--sv-health-rim)!important;
+ border:1.75px solid var(--sv-health-rim)!important;
  border-radius:999px!important;
  background:var(--sv-health-matte)!important;
  -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
@@ -819,7 +819,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  max-width:var(--sv-health-search)!important;
  height:var(--sv-health-search)!important;min-height:var(--sv-health-search)!important;
  margin:0!important;padding:0!important;gap:0!important;
- border:1.5px solid var(--sv-health-rim)!important;border-radius:50%!important;
+ border:1.75px solid var(--sv-health-rim)!important;border-radius:50%!important;
  background:var(--sv-health-matte)!important;
  -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
  backdrop-filter:blur(12px) saturate(108%)!important;
