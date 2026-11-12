@@ -2644,7 +2644,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 </section>
 </main><main class="life-main" id="lifePage" hidden aria-labelledby="lifeTitle">
 <header class="life-heading">
-<div class="sv-continuity-titlebar"><button class="life-back" id="lifeBack" type="button" aria-label="Вернуться на Главную" style="background:#38383A!important;background-image:none!important;border-radius:50%!important;color:#F4F5F6!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg><span>Главная</span></button>
+<div class="sv-continuity-titlebar"><button class="life-back" id="lifeBack" type="button" aria-label="Вернуться на Главную"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg><span>Главная</span></button>
 <h1 id="lifeTitle" tabindex="-1"><span>Мой мир</span></h1><span class="sv-continuity-space" aria-hidden="true"></span></div>
 </header>
 <section class="calendar-spaces" aria-label="Разделы Моего мира">
@@ -6309,7 +6309,7 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=6"></script><script src="assets/seyveo-work-shell.js?v=36"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
+</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=7"></script><script src="assets/seyveo-work-shell.js?v=36"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
  const sync=()=>{if(!dlg.open)return;const v=window.visualViewport;dlg.style.setProperty('--sv-note-height',(v?v.height:window.innerHeight)+'px');dlg.style.setProperty('--sv-note-top','0px')};
@@ -6417,4 +6417,4 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=20"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=20"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=1"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
