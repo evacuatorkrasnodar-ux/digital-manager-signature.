@@ -949,6 +949,21 @@ dialog.addEventListener('keydown',event=>{if(event.key==='Escape'&&!svPicker.hid
 dialog.addEventListener('close',()=>{if(!svPicker.hidden)svClosePicker(false);});
 svSyncControls();
 setupHealthAge();
+/* One Health-only plus in the native header; never clone the shared dock. */
+const healthHeaderAdd=document.createElement('button');
+healthHeaderAdd.id='calendarHealthHeaderAdd';
+healthHeaderAdd.className='sv-health-header-add';
+healthHeaderAdd.type='button';
+healthHeaderAdd.hidden=true;
+healthHeaderAdd.setAttribute('aria-label','Добавить измерение давления');
+healthHeaderAdd.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>';
+dialog.insertBefore(healthHeaderAdd,$('svCareScroll'));
+healthHeaderAdd.addEventListener('click',()=>{
+ if(current!=='health')return;
+ $('svCareScroll').scrollTop=0;
+ openHealthPicker('calendarBpQuickS');
+});
+
 
 function measurementFocus(active){
  const enabled=Boolean(active&&current==='health');
@@ -990,6 +1005,7 @@ function open(space,id=null,selectedDate=''){
  }
  current=space;editing=id;
  dialog.dataset.space=space;
+ healthHeaderAdd.hidden=space!=='health';
  measurementFocus(false);
  const journal=$('calendarSpaceJournal');
  if(journal){
