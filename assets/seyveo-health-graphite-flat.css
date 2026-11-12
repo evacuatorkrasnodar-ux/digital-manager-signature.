@@ -995,3 +995,32 @@ html body #calendarSpaceDialog[data-space="health"] :is(
   box-shadow:none!important;
  }
 }
+
+/* Health content region must not render an independent rectangle or focus ring
+   around the full viewport. Keep scrolling; preserve keyboard access. */
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > #svCareScroll.sv-care-scroll{
+ border:0!important;
+ border-radius:0!important;
+ outline:0!important;
+ outline-offset:0!important;
+ box-shadow:none!important;
+ background:transparent!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > #svCareScroll.sv-care-scroll:focus,
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > #svCareScroll.sv-care-scroll:focus-visible{
+ outline:0!important;
+ outline-offset:0!important;
+ box-shadow:none!important;
+}
+/* Retain visible keyboard focus on interactive controls inside Health. */
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > #svCareScroll.sv-care-scroll :is(button,a,input,textarea,select):focus-visible{
+ outline:2px solid var(--text)!important;
+ outline-offset:2px!important;
+}
