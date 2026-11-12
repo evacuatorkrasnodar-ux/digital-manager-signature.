@@ -410,3 +410,45 @@ html:has(#calendarSpaceDialog[open][data-space="health"]) body{
 
 /* Medical card is the only visible place to edit age. Hidden bridge for existing assessment logic. */
 #calendarSpaceDialog[data-space="health"] input#calendarHealthAge[type="hidden"]{display:none!important;position:absolute!important;width:0!important;height:0!important;padding:0!important;margin:0!important;visibility:hidden!important;}
+
+/* Health screen layout refinement · 12 Nov 2026 */
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-guide,
+#calendarSpaceDialog[data-space="health"] #calendarHealthOverview .cal-health-tiles{
+ display:none!important;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-home-entry{
+ margin-bottom:14px!important;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-home-advice[data-level="neutral"]{
+ color:var(--health-muted)!important;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-quick-last{
+ display:none!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarBpReport{
+ padding:14px 15px!important;margin:0 0 13px!important;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-report-head{
+ margin-bottom:7px!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarBpReportAdvice{
+ font-size:12px!important;line-height:1.45!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarBpJournal{
+ padding:14px 15px!important;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-summary{
+ margin-bottom:5px!important;padding-bottom:9px!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarBpJournalAverage{
+ margin-bottom:3px!important;font-size:16px!important;
+}
+#calendarSpaceDialog[data-space="health"] #calendarBpJournalInsight{
+ font-size:11.5px!important;line-height:1.4!important;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-row{
+ min-height:46px!important;padding:8px 0!important;
+}
+#calendarSpaceDialog[data-space="health"] .cal-bp-journal-period{
+ margin-bottom:9px!important;
+}
