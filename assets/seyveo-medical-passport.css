@@ -322,11 +322,12 @@ html[data-theme="light"] #svMedicalOverlay .sv-med-w-note{color:#656d78}
 }
 @media print{#svMedicalOverlay #svMedicalWizard{display:none!important}}
 
-/* Approved outline edit action — no extra round graphite button. */
+/* Match Health's 44px graphite navigation circles, retaining the exact Mail pencil. */
 #svMedicalOverlay .sv-med-header #svMedicalEdit{
- background:transparent!important;border:0!important;border-radius:0!important;
- box-shadow:none!important;color:inherit!important;
+ background:#38383A!important;border:0!important;border-radius:50%!important;
+ box-shadow:none!important;color:#fff!important;
  width:44px!important;height:44px!important;padding:0!important;
+ display:grid!important;place-items:center!important;
 }
 #svMedicalOverlay .sv-med-header #svMedicalEdit svg{
  width:23px!important;height:23px!important;fill:none!important;
