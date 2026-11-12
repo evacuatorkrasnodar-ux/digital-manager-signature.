@@ -1326,3 +1326,75 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
  min-width:0!important;margin:0!important;
  padding:0!important;transform:none!important;
 }
+
+/* SEYVEO Tasks header · single approved Apple-like layout.
+   The genuine #personalAddTasks button is in the header, never duplicated. */
+:root[data-theme="light"] #tasksPage[data-work-view="personal"] .tasks-heading{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) 50px!important;
+ align-items:center!important;
+ gap:10px!important;
+ position:relative!important;
+ margin:0 0 12px!important;
+ min-height:60px!important;
+ padding:0!important;
+}
+:root[data-theme="light"] #tasksPage[data-work-view="personal"] .tasks-heading > :is(.manage-caption,#tasksOverview,#svcpManagerSignal,#svcpEmployeeAvatar){
+ display:none!important;
+}
+:root[data-theme="light"] #tasksPage[data-work-view="personal"] .tasks-heading > #tasksTitle{
+ grid-column:1!important;grid-row:1!important;
+ font:500 25px/1.18 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
+ letter-spacing:-.035em!important;
+ color:#1D1D1F!important;
+ margin:0!important;
+}
+:root[data-theme="light"] #tasksPage[data-work-view="personal"] .tasks-heading > #personalAddTasks{
+ grid-column:2!important;grid-row:1!important;
+ box-sizing:border-box!important;
+ width:50px!important;min-width:50px!important;max-width:50px!important;
+ height:50px!important;min-height:50px!important;max-height:50px!important;
+ padding:0!important;margin:0!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ border-radius:50%!important;
+ color:#0B0B0D!important;
+}
+:root[data-theme="light"] #tasksPage .tasks-heading > #personalAddTasks > span{
+ display:none!important;
+}
+:root[data-theme="light"] #tasksPage .tasks-heading > #personalAddTasks svg{
+ display:block!important;
+ width:22px!important;height:22px!important;
+ stroke:currentColor!important;stroke-width:1.85!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ fill:none!important;
+}
+:root[data-theme="light"] #tasksPage[data-work-view="personal"] .tasks-heading #unifiedTasksBack[hidden]{
+ display:none!important;
+}
+:root[data-theme="light"] #tasksPage[data-work-view="personal"] .tasks-heading #unifiedTasksBack:not([hidden]){
+ grid-column:1!important;grid-row:1!important;
+ justify-self:start!important;
+}
+:root[data-theme="light"] #tasksPage[data-work-view="personal"] .tasks-heading:has(#unifiedTasksBack:not([hidden])) > #tasksTitle{
+ padding-left:54px!important;
+}
+#tasksPage .personal-tasks-head[hidden]{display:none!important}
+:root[data-theme="light"] #tasksPage #unifiedTasksTabs.tasks-switch{
+ box-sizing:border-box!important;
+ min-height:44px!important;
+ padding:3px!important;
+ background:#E7E8EC!important;
+ border:0!important;border-radius:17px!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] #tasksPage #unifiedTasksTabs.tasks-switch > button{
+ min-height:38px!important;
+ border:0!important;border-radius:14px!important;
+ font:500 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
+ color:#646B76!important;
+ background:transparent!important;box-shadow:none!important;
+}
+:root[data-theme="light"] #tasksPage #unifiedTasksTabs.tasks-switch > button[aria-pressed="true"]{
+ background:#38383A!important;color:#FFFFFF!important;
+}
