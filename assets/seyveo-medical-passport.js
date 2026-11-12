@@ -41,7 +41,7 @@ overlay.innerHTML=[
  '<header class="sv-med-header">',
  '<button type="button" class="sv-med-back" id="svMedicalBack" aria-label="Вернуться к здоровью"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>',
  '<h2 id="svMedicalHeading">Экстренная карта</h2>',
- '<button type="button" class="sv-med-edit" id="svMedicalEdit" aria-label="Редактировать медпаспорт"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="13" height="17" rx="2.5"/><path d="m11 15 8.1-8.1a1.9 1.9 0 0 1 2.7 2.7L13.7 17.7 10 18.5 11 15Z"/></svg></button>',
+ '<button type="button" class="sv-med-edit" id="svMedicalEdit" aria-label="Редактировать медпаспорт"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M17.4 2.6a2.1 2.1 0 0 1 3 3L12 14l-4 1 1-4Z"/></svg></button>',
  '</header>',
  '<div id="svMedicalView">',
  '<div class="sv-med-brand"><span class="sv-sayvi-symbol" aria-hidden="true"></span><span>Сэйви · Здоровье</span></div>',
