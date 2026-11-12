@@ -24,53 +24,36 @@
    if(dialog.open)launcher.launch('noteModeText');
   });
   dialog.insertBefore(host,dialog.firstChild);
-  // The standalone Notebook belongs to the same four-section Work navigation.
-  // Use a real segmented bar, not a screenshot or duplicate Work shell.
-  const segments=[
-   ['personal','Мои дела'],['calendar','Календарь'],
-   ['notes','Блокнот'],['business','Кабинет']
-  ];
-  const nav=document.createElement('nav');
-  nav.id='svNotebookWorkTabs';
-  nav.setAttribute('aria-label','Разделы моих дел');
-  for(const [id,label] of segments){
-   const button=document.createElement('button');
-   button.type='button';button.dataset.svWorkTab=id;
-   button.textContent=label;
-   button.setAttribute('aria-pressed',String(id==='notes'));
-   if(id==='notes')button.setAttribute('aria-current','page');
-   nav.append(button);
-  }
-  nav.addEventListener('click',event=>{
-   const button=event.target.closest('button[data-sv-work-tab]');
-   if(!button||!nav.contains(button)||!dialog.open)return;
-   const target=button.dataset.svWorkTab;
-   if(target==='notes')return;
-   // Close the modal before moving into a route; otherwise its top layer
-   // would cover the destination on Safari/iPhone.
-   dialog.close();
-   requestAnimationFrame(()=>{
-    const workTabs=document.getElementById('svWorkTabs');
-    const existing=workTabs?.querySelector('[data-sv-work-tab="'+target+'"]');
-    if(existing&&!existing.hidden&&!workTabs.hidden){
-     existing.click();return;
-    }
-    if(target==='personal'){
-     if(typeof window.SEYVEO_UNIFIED_TASKS?.openPersonal==='function')
-      window.SEYVEO_UNIFIED_TASKS.openPersonal();
-     else location.hash='#tasks';
-    }else if(target==='calendar'){
-     location.hash='#calendar';
-    }else if(target==='business'){
-     if(typeof window.SEYVEO_UNIFIED_TASKS?.openBusiness==='function')
-      window.SEYVEO_UNIFIED_TASKS.openBusiness('preserve');
-     else location.hash='#tasks';
-    }
+  // The segmented control is in index.html so it is visible even if
+  // optional UI initialization fails. JS only supplies its real routing.
+  const nav=dialog.querySelector(':scope > #svNotebookWorkTabs');
+  if(nav&&!nav.dataset.svNotebookWired){
+   nav.dataset.svNotebookWired='true';
+   nav.addEventListener('click',event=>{
+    const button=event.target.closest('button[data-sv-work-tab]');
+    if(!button||!nav.contains(button)||!dialog.open)return;
+    const target=button.dataset.svWorkTab;
+    if(target==='notes')return;
+    dialog.close();
+    requestAnimationFrame(()=>{
+     const workTabs=document.getElementById('svWorkTabs');
+     const existing=workTabs?.querySelector('[data-sv-work-tab="'+target+'"]');
+     if(existing&&!existing.hidden&&!workTabs.hidden){
+      existing.click();return;
+     }
+     if(target==='personal'){
+      if(typeof window.SEYVEO_UNIFIED_TASKS?.openPersonal==='function')
+       window.SEYVEO_UNIFIED_TASKS.openPersonal();
+      else location.hash='#tasks';
+     }else if(target==='calendar')location.hash='#calendar';
+     else if(target==='business'){
+      if(typeof window.SEYVEO_UNIFIED_TASKS?.openBusiness==='function')
+       window.SEYVEO_UNIFIED_TASKS.openBusiness('preserve');
+      else location.hash='#tasks';
+     }
+    });
    });
-  });
-  const tiles=dialog.querySelector('#svNotebookCreateTiles');
-  if(tiles)dialog.insertBefore(nav,tiles);
-  else dialog.append(nav);
+  }
   const updateTheme=()=>{
    host.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
   };
