@@ -235,6 +235,28 @@ html.seyveo-conversation :is(#ask,.seyveo-conversation-expand){font-size:calc(va
  #manageThemeScreen .sv-type-choice-row button{font-size:calc(12px * var(--sv-text-scale))}
 }
 
+/* Home cards: native system text, softer Apple-style hierarchy.
+   Preserve all existing geometry, icons and the approved dock. */
+#homePage{
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",sans-serif;
+ font-optical-sizing:auto;
+ font-kerning:normal;
+}
+#homePage .message .kicker{
+ font-weight:470;
+ letter-spacing:.065em;
+}
+#homePage .message h2{
+ font-weight:480;
+ letter-spacing:-.026em;
+}
+#homePage .message p{
+ font-weight:400;
+ letter-spacing:-.005em;
+}
+#homePage #seyveoLivingMoment :is(.lm-inline-note,.lm-document-note,.lm-mail-note){
+ font-weight:400;
+}
 /* Home cards: better legibility without changing their stage, animation or card geometry. */
 #homePage :is(.message .kicker,.timeline-history,.activity-empty,.personal-brief-head small,
  .personal-brief-empty,.personal-brief-more){
@@ -248,16 +270,16 @@ html.seyveo-conversation :is(#ask,.seyveo-conversation-expand){font-size:calc(va
 #homePage #seyveoLivingMoment .lm-inline-title{
  font-size:calc(13.5px * var(--sv-text-scale))!important;
  line-height:1.34!important;
- font-weight:490!important;
- letter-spacing:-.022em;
+ font-weight:460!important;
+ letter-spacing:-.015em;
 }
 #homePage #seyveoLivingMoment .lm-primary-title{
  font-size:calc(15.5px * var(--sv-text-scale))!important;
  line-height:1.28!important;
- font-weight:510!important;
- letter-spacing:-.031em;
+ font-weight:480!important;
+ letter-spacing:-.026em;
 }
-#homePage #seyveoLivingMoment .lm-primary-subtitle{font-weight:410!important}
+#homePage #seyveoLivingMoment .lm-primary-subtitle{font-weight:400!important}
 #homePage #seyveoLivingMoment :is(.lm-mail-draft,.lm-mail-edit-input){
  font-size:calc(15px * var(--sv-text-scale))!important;line-height:1.5
 }
