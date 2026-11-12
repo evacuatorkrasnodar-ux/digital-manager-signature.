@@ -41,7 +41,7 @@
   content:none!important;display:none!important;
 }
 :root[data-theme="light"] #svWorkShell[data-shared-work="true"] #svWorkTabs{
-  background:#EEEFF1!important;
+  background:#EDEDED!important;
 }
 :root[data-theme="dark"] #svWorkShell[data-shared-work="true"] #svWorkTabs{
   background:#2B2B2D!important;
