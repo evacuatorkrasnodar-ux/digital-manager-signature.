@@ -694,3 +694,65 @@
  stroke:none!important;
  opacity:1!important;
 }
+
+
+/* SEYVEO Home tutorial actions v19: Apple-like visual hierarchy.
+   Only the three training-card buttons; do not change navigation dock. */
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions{
+ column-gap:8px!important;
+ row-gap:0!important;
+ align-items:center!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden]){
+ box-sizing:border-box!important;
+ display:inline-flex!important;
+ flex:0 0 48px!important;
+ width:48px!important;min-width:48px!important;max-width:48px!important;
+ height:48px!important;min-height:48px!important;max-height:48px!important;
+ padding:0!important;
+ border:0!important;border-radius:14px!important;
+ box-shadow:none!important;
+ align-items:center!important;justify-content:center!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
+ background:rgba(43,48,55,.08)!important;
+ color:#000000!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
+ background:#000000!important;
+ color:#FFFFFF!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden]) .sv-card-symbol{
+ box-sizing:border-box!important;
+ display:block!important;
+ flex:0 0 21px!important;
+ width:21px!important;min-width:21px!important;max-width:21px!important;
+ height:21px!important;min-height:21px!important;max-height:21px!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ stroke-width:1.8!important;
+ opacity:1!important;filter:none!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]) .sv-card-symbol,
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]) .sv-card-symbol *{
+ color:#000000!important;stroke:#000000!important;
+ fill:none!important;stroke-width:1.8!important;
+ opacity:1!important;filter:none!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]) .sv-card-symbol,
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]) .sv-card-symbol > path{
+ color:#FFFFFF!important;stroke:#FFFFFF!important;
+ fill:none!important;stroke-width:1.8!important;
+ opacity:1!important;filter:none!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]) .sv-card-symbol > circle{
+ fill:#FFFFFF!important;stroke:none!important;opacity:1!important;
+}
