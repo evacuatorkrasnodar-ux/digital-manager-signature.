@@ -3276,6 +3276,18 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
    <button id="calendarBpDoctorConfirm" type="button" class="cal-bp-doctor-confirm">Поделиться</button>
   </div>
  </section>
+ <section id="calendarHealthNumberPicker" class="cal-health-number-picker" role="dialog" aria-modal="true" aria-labelledby="calendarHealthPickerTitle" hidden>
+  <div class="cal-health-number-backdrop" data-health-picker-cancel="1"></div>
+  <div class="cal-health-number-panel">
+   <strong id="calendarHealthPickerTitle">Возраст</strong>
+   <div id="calendarHealthPickerWheel" class="cal-health-number-wheel" role="spinbutton" tabindex="0" aria-valuemin="1" aria-valuemax="110" aria-valuenow="75" aria-label="Выберите число">
+    <span id="calendarHealthPickerPrevious" class="cal-health-number-side" aria-hidden="true"></span>
+    <span id="calendarHealthPickerValue" class="cal-health-number-current">75</span>
+    <span id="calendarHealthPickerNext" class="cal-health-number-side" aria-hidden="true"></span>
+   </div>
+   <div class="cal-health-number-picker-actions"><button id="calendarHealthPickerCancel" type="button">Отмена</button><button id="calendarHealthPickerDone" type="button">Готово</button></div>
+  </div>
+ </section>
 </dialog><dialog id="calendarEventDialog" class="cal-form-dialog" aria-labelledby="calendarEventTitleHeading">
 <button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Вернуться к календарю"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
 <div class="cal-event-sheet">
