@@ -3,8 +3,8 @@
    local storage, keyboard support and event handlers are intentionally retained.
    No legacy health styling is imported. */
 #calendarSpaceDialog[data-space="health"]{
- --health-bg:#111917;--health-surface:#222927;--health-action:#38383A;
- --health-text:#F4F5F5;--health-muted:#A7B0AD;--health-rule:rgba(220,230,225,.12);
+ --health-bg:#18191B;--health-surface:#242426;--health-action:#38383A;
+ --health-text:#F4F4F5;--health-muted:#A6A6AB;--health-rule:rgba(225,225,230,.10);
  color:var(--health-text)!important;
  background:var(--health-bg)!important;background-image:none!important;
  border:0!important;border-radius:0!important;outline:0!important;
@@ -77,7 +77,7 @@ html:has(#calendarSpaceDialog[open][data-space="health"]) body{
  display:flex!important;flex-direction:column!important;align-items:center!important;
  min-width:0!important;padding:8px 2px 10px!important;margin:0!important;
  border:0!important;border-radius:12px!important;
- background:rgba(255,255,255,.045)!important;
+ background:#2C2C2E!important;
 }
 #calendarSpaceDialog[data-space="health"] .cal-bp-home-grid label>span,
 #calendarSpaceDialog[data-space="health"] .cal-bp-grid label>span{
@@ -192,7 +192,7 @@ html:has(#calendarSpaceDialog[open][data-space="health"]) body{
  position:relative!important;box-sizing:border-box!important;
  width:min(100%,260px)!important;padding:16px!important;
  border:0!important;border-radius:19px!important;
- background:#252C2A!important;color:#fff!important;
+ background:#242426!important;color:#fff!important;
  box-shadow:0 14px 44px rgba(0,0,0,.42)!important;
 }
 #calendarSpaceDialog[data-space="health"] .cal-health-number-panel>strong{
@@ -207,12 +207,12 @@ html:has(#calendarSpaceDialog[open][data-space="health"]) body{
 }
 #calendarSpaceDialog[data-space="health"] .cal-health-number-side{
  display:grid!important;place-items:center!important;height:30px!important;
- color:#8F9995!important;font:500 17px system-ui!important;
+ color:#A6A6AB!important;font:500 17px system-ui!important;
 }
 #calendarSpaceDialog[data-space="health"] .cal-health-number-current{
  display:grid!important;place-items:center!important;
  width:82%!important;min-height:49px!important;
- border-top:1px solid #636B68!important;border-bottom:1px solid #636B68!important;
+ border-top:1px solid #626267!important;border-bottom:1px solid #626267!important;
  color:#fff!important;font:650 34px system-ui!important;
 }
 #calendarSpaceDialog[data-space="health"] .cal-health-number-picker-actions{
