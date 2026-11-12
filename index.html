@@ -3095,7 +3095,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   <circle class="voice-dot" cx="52.8" cy="37" r="1.5"/>
 </g>
 <!-- SEYVEO signature: optically larger animated sonic orb; old dark-mode mark retained. -->
-<g class="sv-sayvi-sonic" style="display:none" aria-hidden="true">
+<g class="sv-sayvi-sonic" style="display:none" aria-hidden="true" transform="translate(37 37) scale(1.12) translate(-37 -37)">
   <path class="sv-sayvi-ray sv-sayvi-ray--top" d="M37 16.5v9"/>
   <path class="sv-sayvi-ray sv-sayvi-ray--bottom" d="M37 48.5v9"/>
   <path class="sv-sayvi-ray sv-sayvi-ray--inner-left" d="M30.5 27.5v19"/>
@@ -6417,4 +6417,4 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=3"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
