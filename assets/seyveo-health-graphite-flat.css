@@ -703,7 +703,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:.73!important;
 }
 
-/* HEALTH LIGHT · approved Apple-inspired bottom navigation v46.
+/* HEALTH LIGHT · flat smoked-silver frosted polymer dock v47.
    The global dock is a single DOM instance; this sheet changes ONLY its
    appearance while portaled inside the Health dialog in the white theme.
    No pseudo-surface behind the dock: the capsule and search button own
@@ -716,8 +716,8 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  --sv-health-search:50px;
  --sv-health-gap:24px;
  --sv-health-height:50px;
- --sv-health-matte:linear-gradient(155deg,rgba(255,255,255,.80) 0%,rgba(238,239,243,.76) 58%,rgba(228,230,235,.85) 100%);
- --sv-health-rim:rgba(151,158,171,.26);
+ --sv-health-matte:rgba(211,216,223,.62);
+ --sv-health-rim:rgba(143,150,161,.34);
  --sv-health-ink:#1C1C1E;
  --sv-health-blue:#007AFF;
  position:fixed!important;
@@ -764,9 +764,9 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  border:1px solid var(--sv-health-rim)!important;
  border-radius:999px!important;
  background:var(--sv-health-matte)!important;
- -webkit-backdrop-filter:blur(22px) saturate(125%)!important;
- backdrop-filter:blur(22px) saturate(125%)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.89),inset 0 -1px 1px rgba(127,131,142,.08)!important;
+ -webkit-backdrop-filter:blur(20px) saturate(94%)!important;
+ backdrop-filter:blur(20px) saturate(94%)!important;
+ box-shadow:none!important;
  position:relative!important;z-index:1!important;
 }
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock .sv-health-dock-tab{
@@ -795,7 +795,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  filter:none!important;
 }
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock .sv-health-dock-tab[aria-pressed="true"]{
- background:rgba(255,255,255,.52)!important;
+ background:rgba(255,255,255,.24)!important;
  color:#0B0B0D!important;
  font-weight:550!important;
 }
@@ -821,9 +821,9 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  margin:0!important;padding:0!important;gap:0!important;
  border:1px solid var(--sv-health-rim)!important;border-radius:50%!important;
  background:var(--sv-health-matte)!important;
- -webkit-backdrop-filter:blur(22px) saturate(125%)!important;
- backdrop-filter:blur(22px) saturate(125%)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.89),inset 0 -1px 1px rgba(127,131,142,.08)!important;
+ -webkit-backdrop-filter:blur(20px) saturate(94%)!important;
+ backdrop-filter:blur(20px) saturate(94%)!important;
+ box-shadow:none!important;
  color:var(--sv-health-blue)!important;
  font-size:0!important;
  z-index:1!important;
