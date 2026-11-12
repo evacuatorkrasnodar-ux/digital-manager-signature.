@@ -1151,3 +1151,21 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  content:none!important;
  display:none!important;
 }
+
+/* SEYVEO semantic text accent: only a meaningful phrase, never a decoration. */
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-document-note .lm-meaning-accent{
+ color:#A86E11;
+ font-weight:600;
+ text-decoration-line:underline;
+ text-decoration-color:rgba(168,110,17,.55);
+ text-decoration-thickness:1px;
+ text-underline-offset:3px;
+}
+:root[data-theme="dark"] #homePage #seyveoLivingMoment .lm-document-note .lm-meaning-accent{
+ color:#E0B364;
+ font-weight:600;
+ text-decoration-line:underline;
+ text-decoration-color:rgba(224,179,100,.6);
+ text-decoration-thickness:1px;
+ text-underline-offset:3px;
+}
