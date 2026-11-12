@@ -3144,26 +3144,40 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <div id="svCareScroll" class="sv-care-scroll" tabindex="0" role="region" aria-label="Содержимое личного раздела">
 <p id="calendarSpaceIntro">Ваши записи на этом устройстве</p>
 <section id="calendarHealthOverview" class="cal-health-overview" aria-label="Запись показателей здоровья" hidden>
- <section class="sv-bp-capture" aria-label="Записать давление">
+ <section class="sv-bp-capture" aria-label="Новое измерение давления">
   <h3 class="sv-bp-capture-title">Новое измерение</h3>
   <form id="calendarBpQuickForm" autocomplete="off">
    <div class="sv-bp-pair" role="group" aria-label="Артериальное давление">
-    <label class="sv-bp-number"><span>Верхнее</span><input id="calendarBpQuickS" type="number" inputmode="none" min="50" max="300" placeholder="—" aria-label="Верхнее давление. Коснитесь, чтобы выбрать число" required></label>
+    <label class="sv-bp-number sv-bp-number--s"><span>Верхнее</span><input id="calendarBpQuickS" type="number" inputmode="none" min="50" max="300" placeholder="120" aria-label="Верхнее давление. Нажмите, чтобы прокрутить значение" required></label>
     <span class="sv-bp-pair-slash" aria-hidden="true">/</span>
-    <label class="sv-bp-number"><span>Нижнее</span><input id="calendarBpQuickD" type="number" inputmode="none" min="30" max="200" placeholder="—" aria-label="Нижнее давление. Коснитесь, чтобы выбрать число" required></label>
+    <label class="sv-bp-number sv-bp-number--d"><span>Нижнее</span><input id="calendarBpQuickD" type="number" inputmode="none" min="30" max="200" placeholder="80" aria-label="Нижнее давление. Нажмите, чтобы прокрутить значение" required></label>
     <small class="sv-bp-pair-unit">мм рт. ст.</small>
    </div>
    <div class="sv-bp-pulse">
-    <span class="sv-bp-pulse-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12h4l3-5 4.5 10 3-5h4.5"/></svg>Пульс</span>
-    <label class="sv-bp-pulse-value"><input id="calendarBpQuickP" type="number" inputmode="none" min="30" max="240" placeholder="—" aria-label="Пульс. Коснитесь, чтобы выбрать число" required><span>уд/мин</span></label>
+    <label class="sv-bp-pulse-line">
+     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 5.3c-2.2-2.1-5.9-2-8.5.7-2.6-2.7-6.3-2.8-8.5-.7-2.9 2.8-2.4 6.7 1 10.2l7.5 6 7.5-6c3.4-3.5 3.9-7.4 1-10.2Z"/></svg>
+     <span>Пульс</span>
+     <input id="calendarBpQuickP" type="number" inputmode="none" min="30" max="240" placeholder="72" aria-label="Пульс. Нажмите, чтобы прокрутить значение" required>
+     <small>уд/мин</small>
+    </label>
    </div>
    <div id="calendarBpQuickAdvice" class="sv-bp-feedback" aria-live="polite"></div>
+<div id="calendarBpReport" class="cal-bp-report" hidden aria-live="polite">
+ <div class="cal-bp-report-head"><span class="cal-bp-report-icon sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви · оценка давления</strong></div>
+ <p id="calendarBpReportStatus"></p>
+ <p id="calendarBpReportAdvice"></p>
+ <p id="calendarBpReportAverage" class="cal-bp-average" hidden></p>
+ <div id="calendarBpReportEmergency" class="cal-bp-emergency" hidden><strong>Срочная помощь при опасных симптомах</strong><p>Не откладывайте вызов скорой при боли в груди, одышке, нарушении речи, слабости или онемении.</p><div><a href="tel:103">Вызвать 103</a><a href="tel:112">112</a></div></div>
+ <small>Информационная оценка домашних измерений, не диагноз. Не меняйте лечение без врача.</small>
+ </div>
+
    <div id="calendarBpQuickEmergency" class="cal-bp-emergency" hidden>
     <strong>Возможна опасная ситуация</strong>
     <p>При боли в груди, одышке, нарушении речи, онемении или резкой слабости немедленно вызывайте скорую. Не ждите повторного замера.</p>
     <div><a href="tel:103">Вызвать 103</a><a href="tel:112">112</a></div>
    </div>
-   <button class="sv-bp-submit" type="submit">Сохранить измерение</button>
+   <button class="sv-bp-submit" type="submit">Сохранить</button>
+   <small class="sv-bp-autodate">Дата и время сохраняются автоматически</small>
   </form>
   <small id="calendarBpQuickLast" hidden></small>
  </section>
@@ -3180,14 +3194,6 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 </div>
  <input id="calendarHealthAge" type="hidden" aria-hidden="true">
  <small id="calendarHealthAgeHint" hidden aria-hidden="true"></small>
- <div id="calendarBpReport" class="cal-bp-report" hidden aria-live="polite">
- <div class="cal-bp-report-head"><span class="cal-bp-report-icon sv-sayvi-symbol" aria-hidden="true"></span><strong>Сэйви · оценка давления</strong></div>
- <p id="calendarBpReportStatus"></p>
- <p id="calendarBpReportAdvice"></p>
- <p id="calendarBpReportAverage" class="cal-bp-average" hidden></p>
- <div id="calendarBpReportEmergency" class="cal-bp-emergency" hidden><strong>Срочная помощь при опасных симптомах</strong><p>Не откладывайте вызов скорой при боли в груди, одышке, нарушении речи, слабости или онемении.</p><div><a href="tel:103">Вызвать 103</a><a href="tel:112">112</a></div></div>
- <small>Информационная оценка домашних измерений, не диагноз. Не меняйте лечение без врача.</small>
- </div>
  <section id="calendarBpRepeatPanel" class="cal-bp-repeat-panel" hidden aria-live="polite">
   <strong id="calendarBpRepeatHeading"></strong>
   <p id="calendarBpRepeatMessage"></p>
