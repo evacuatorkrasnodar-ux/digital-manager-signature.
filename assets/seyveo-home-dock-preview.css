@@ -260,7 +260,7 @@
 :root[data-theme="light"] body > footer.dock.sv-shared-dock,
 :root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock {
   --sv-feng-side:clamp(14px,5vw,22px);
-  --sv-feng-capsule:clamp(176px,60vw,226px);
+  --sv-feng-capsule:clamp(176px,calc(100vw - max(var(--sv-feng-side),env(safe-area-inset-left,0px)) - max(var(--sv-feng-side),env(safe-area-inset-right,0px)) - 71px),264px);
   box-sizing:border-box!important;
   position:fixed!important;
   left:max(var(--sv-feng-side),env(safe-area-inset-left,0px))!important;
