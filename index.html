@@ -5119,8 +5119,21 @@ $('composerHistory').addEventListener('click',()=>{
 $('assistantDialogHistory').addEventListener('click',()=>{
   window.SEYVEO_CHAT_HISTORY?.open();
 });
+// Health measurements have their own protected journal. Never show a
+// health-tagged blood-pressure record as a Notebook note, and never delete it.
+function isHealthMeasurementNote(n){
+ if(!n||typeof n!=='object')return false;
+ const labels=['space','sourceSpace','originSpace','source','category','section','kind','type','subtitle','meta']
+  .map(k=>typeof n[k]==='string'?n[k].trim().toLowerCase():'');
+ const isHealth=labels.some(v=>/^(?:health|здоровье)(?:\s*[·:—-]\s*(?:давление|blood.?pressure))?$/.test(v));
+ const isPressure=labels.some(v=>/^(?:давление|blood.?pressure|bp)$/.test(v));
+ return isHealth&&(isPressure||/^\d{2,3}\s*\/\s*\d{2,3}$/.test(String(n.title||n.text||'').trim()));
+}
 function getNotes(){
-  try{const v=JSON.parse(localStorage.getItem(NOTES_KEY)||'[]');return Array.isArray(v)?v.filter(n=>n&&typeof n.text==='string'&&typeof n.id==='string').slice(0,100):[]}catch{return []}
+ try{
+  const v=JSON.parse(localStorage.getItem(NOTES_KEY)||'[]');
+  return Array.isArray(v)?v.filter(n=>n&&typeof n.text==='string'&&typeof n.id==='string'&&!isHealthMeasurementNote(n)).slice(0,100):[];
+ }catch{return []}
 }
 function putNotes(list){
   try{
