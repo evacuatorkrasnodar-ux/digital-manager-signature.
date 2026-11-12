@@ -708,7 +708,8 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
    The four existing actions keep their routing and voice behavior.
    Main capsule width is a single configurable token for later screen variants. */
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock{
- --sv-health-dock-capsule:clamp(214px,58vw,244px);
+ --sv-health-action-track:clamp(49px,14.4vw,56px);
+ --sv-health-dock-capsule:clamp(214px,calc(57.6vw + 18px),242px);
  --sv-health-dock-search:56px;
  --sv-health-dock-height:56px;
  --seyveo-dock-height:var(--sv-health-dock-height);
@@ -724,7 +725,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;
  transform:translateX(-50%)!important;
  display:grid!important;
- grid-template-columns:9px repeat(4,minmax(0,calc((var(--sv-health-dock-capsule) - 18px)*.25))) 9px minmax(12px,1fr) var(--sv-health-dock-search)!important;
+ grid-template-columns:9px repeat(4,var(--sv-health-action-track)) 9px minmax(12px,1fr) var(--sv-health-dock-search)!important;
  gap:0!important;align-items:center!important;justify-items:center!important;
  width:min(400px,calc(100vw - 18px))!important;max-width:400px!important;
  height:var(--sv-health-dock-height)!important;min-height:var(--sv-health-dock-height)!important;
