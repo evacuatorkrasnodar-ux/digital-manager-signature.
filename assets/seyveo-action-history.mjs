@@ -479,6 +479,26 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
  more.addEventListener('click',()=>{visibleCount=Math.min(visibleCount+4,40);render();});
  const page=document.getElementById('tasksPage');
  const scroller=document.querySelector('.app');
+ // The shared dock is the same DOM node on every page. The existing
+ // CSS-only history suppression can lose against later !important rules.
+ // Preserve the original inline display state and lock it only while the
+ // nested History view is shown; never alter the dock itself.
+ const sharedDock=document.querySelector('footer.dock.sv-shared-dock');
+ let dockDisplayBefore=null,dockDisplayPriorityBefore='';
+ const setHistoryDockVisibility=show=>{
+  if(!sharedDock)return;
+  if(show){
+   if(dockDisplayBefore===null){
+    dockDisplayBefore=sharedDock.style.getPropertyValue('display');
+    dockDisplayPriorityBefore=sharedDock.style.getPropertyPriority('display');
+   }
+   sharedDock.style.setProperty('display','none','important');
+  }else if(dockDisplayBefore!==null){
+   if(dockDisplayBefore)sharedDock.style.setProperty('display',dockDisplayBefore,dockDisplayPriorityBefore);
+   else sharedDock.style.removeProperty('display');
+   dockDisplayBefore=null;dockDisplayPriorityBefore='';
+  }
+ };
  let previousScroll=0;
  const toggle=(show,{restoreFocus=true,restoreScroll=true}={})=>{
   if(show===!panel.hidden)return;
@@ -486,6 +506,7 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
   if(show)previousScroll=scroller?.scrollTop||0;
   panel.hidden=!show;
   document.documentElement.classList.toggle('sah-history-no-dock',show);
+  setHistoryDockVisibility(show);
  menu.hidden=!show;popup.hidden=true;workHeader?.setAttribute('data-sah-history',String(show));if(!show){selecting=false;chosen.clear()}
   page?.classList.toggle('sah-history-open',show);
   open.setAttribute('aria-expanded',String(show));
