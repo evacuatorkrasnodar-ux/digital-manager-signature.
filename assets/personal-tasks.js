@@ -669,7 +669,7 @@ function syncDueDateDisplay(){
  const display=$('personalTaskDueDisplay'),control=date.closest('.personal-task-date-control');
  if(!display||!control)return;
  const value=date.value;
- let label='Выбрать дату';
+ let label='Не выбрана';
  if(/^\d{4}-\d{2}-\d{2}$/.test(value)){
   const [year,month,day]=value.split('-').map(Number);
   const parsed=new Date(year,month-1,day);
@@ -677,7 +677,7 @@ function syncDueDateDisplay(){
    label=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',year:'numeric'}).format(parsed);
  }
  display.textContent=label;
- control.dataset.filled=String(label!=='Выбрать дату');
+ control.dataset.filled=String(label!=='Не выбрана');
 }
 for(const eventName of ['input','change','blur'])date.addEventListener(eventName,syncDueDateDisplay);
 /* Save becomes available only when a title exists. Keep the same visual
