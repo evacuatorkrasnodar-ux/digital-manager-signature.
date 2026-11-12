@@ -1434,3 +1434,52 @@ html body #svWorkShell[data-history="true"] #svWorkAdd{display:none!important}
 #svWorkShell[data-shared-work="true"] #svWorkTabs > button[hidden]{
  display:none!important;
 }
+
+/* 2026-11-12: one iOS-style work header. Scoped to Work only; dock untouched. */
+#svWorkShell[data-shared-work="true"] #tasksPage .tasks-heading,
+#svWorkShell[data-shared-work="true"] #calendarPage .calendar-header{
+ display:none!important;
+}
+#svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkHeader{
+ display:grid!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ align-items:center!important;
+ column-gap:8px!important;
+ height:58px!important;min-height:58px!important;
+ margin:0 0 6px!important;
+}
+#svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkBack{
+ display:inline-flex!important;
+ grid-column:1!important;grid-row:1!important;
+ justify-self:start!important;
+ visibility:visible!important;
+ width:44px!important;height:44px!important;
+ background:rgba(211,215,222,.42)!important;
+ color:var(--text)!important;
+ border:1px solid rgba(142,149,161,.13)!important;
+ border-radius:50%!important;
+ box-shadow:0 1px 4px rgba(20,25,32,.04)!important;
+}
+#svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkTitle{
+ grid-column:2!important;grid-row:1!important;
+ text-align:center!important;
+ font-size:19px!important;font-weight:610!important;
+ letter-spacing:-.025em!important;
+}
+#svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkAdd:not([hidden]){
+ grid-column:3!important;grid-row:1!important;
+ justify-self:end!important;
+ background:rgba(211,215,222,.42)!important;
+ color:var(--text)!important;
+ border:1px solid rgba(142,149,161,.13)!important;
+ box-shadow:0 1px 4px rgba(20,25,32,.04)!important;
+}
+#svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkBack svg,
+#svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkAdd svg{
+ width:20px!important;height:20px!important;
+ stroke-width:1.65!important;
+}
+/* Keep the active section selector below the header; never duplicate titles. */
+#svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkTabs{
+ margin:0 0 12px!important;
+}
