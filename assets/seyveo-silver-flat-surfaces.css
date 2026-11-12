@@ -68,13 +68,8 @@ html body #svWorkShell #svWorkCreateChoices{
 html body #svWorkShell #svWorkCreateChoices>button:active{
  background:var(--sv-flat-panel-raised)!important;
 }
-html body #svWorkShell :is(#svWorkBack,#svWorkAdd){
- background:var(--sv-flat-panel)!important;
- background-image:none!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
-}
+/* Work Back/Add material is owned solely by seyveo-work-topbar.css.
+   Do not flatten or remove its Health-style capsule rim here. */
 html body #tasksPage .svcp-invite-explanation{
  background:var(--sv-flat-panel)!important;
  background-image:none!important;
