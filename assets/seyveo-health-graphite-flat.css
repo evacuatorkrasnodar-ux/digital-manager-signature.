@@ -123,19 +123,21 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  left:calc(14px + env(safe-area-inset-left,0px))!important;
  right:auto!important;bottom:auto!important;transform:none!important;
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:44px!important;height:44px!important;min-width:44px!important;
+ width:50px!important;height:50px!important;min-width:50px!important;
  margin:0!important;padding:0!important;
- border:0!important;border-radius:999px!important;
- background:var(--health-inset)!important;
- color:var(--health-text)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+ border:1px solid rgba(253,254,255,.80)!important;border-radius:50%!important;
+ background:rgba(196,201,211,.39)!important;
+ color:#0B0B0D!important;
+ -webkit-backdrop-filter:blur(15px) saturate(109%)!important;
+ backdrop-filter:blur(15px) saturate(109%)!important;
+ box-shadow:0 0 0 .55px rgba(134,148,166,.19),inset .65px 0 1px rgba(255,255,255,.23),inset -.6px 0 .85px rgba(73,85,103,.075),inset 0 1px 1px rgba(73,85,103,.065),inset 0 -1px 0 rgba(255,255,255,.27),0 3px 9px rgba(51,64,78,.06)!important;
 }
 :root[data-theme="light"] #calendarSpaceDialog[data-space="health"] > button.seyveo-dialog-close.sv-nav-arrow{
- background:#E7E8EC!important;color:#1C1C1E!important;
+ background:rgba(196,201,211,.39)!important;color:#0B0B0D!important;
 }
 #calendarSpaceDialog[data-space="health"] > button.seyveo-dialog-close.sv-nav-arrow svg{
- width:19px!important;height:19px!important;fill:none!important;
- stroke:currentColor!important;stroke-width:1.7!important;
+ width:22px!important;height:22px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.85!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 
@@ -688,15 +690,18 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  top:calc(18px + env(safe-area-inset-top,0px))!important;
  right:calc(14px + env(safe-area-inset-right,0px))!important;
  display:grid!important;place-items:center!important;
- width:44px!important;height:44px!important;min-width:44px!important;
- padding:0!important;margin:0!important;border:0!important;
- border-radius:50%!important;background:var(--health-inset)!important;
- color:var(--health-text)!important;box-shadow:none!important;
+ width:50px!important;height:50px!important;min-width:50px!important;
+ padding:0!important;margin:0!important;border:1px solid rgba(253,254,255,.80)!important;
+ border-radius:50%!important;background:rgba(196,201,211,.39)!important;
+ color:#0B0B0D!important;
+ -webkit-backdrop-filter:blur(15px) saturate(109%)!important;
+ backdrop-filter:blur(15px) saturate(109%)!important;
+ box-shadow:0 0 0 .55px rgba(134,148,166,.19),inset .65px 0 1px rgba(255,255,255,.23),inset -.6px 0 .85px rgba(73,85,103,.075),inset 0 1px 1px rgba(73,85,103,.065),inset 0 -1px 0 rgba(255,255,255,.27),0 3px 9px rgba(51,64,78,.06)!important;
  -webkit-appearance:none;appearance:none;
 }
 #calendarSpaceDialog[data-space="health"] > .sv-health-header-add svg{
  width:22px!important;height:22px!important;fill:none!important;
- stroke:currentColor!important;stroke-width:1.65!important;
+ stroke:currentColor!important;stroke-width:1.85!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 #calendarSpaceDialog[data-space="health"] > :is(.sv-health-header-add,.seyveo-dialog-close):active{
