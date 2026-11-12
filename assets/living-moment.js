@@ -334,8 +334,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   documentDetails.replaceChildren();
   if(!active)return;
-  documentDetails.append(create('p','lm-section-label','Сэйви заметила'));
-  if(documentStep!=='summary'){
+  // Observation -> inspect proposal -> explicit Save. Do not duplicate headings.
+  if(documentStep==='summary'||documentStep==='review'){
+   documentDetails.append(create('p','lm-section-label','Сэйви заметила'));
+  }else if(documentStep==='saved'){
+   documentDetails.append(create('p','lm-section-label','Черновик сохранён'));
+  }
+  if(documentStep!=='summary'&&documentStep!=='saved'){
    documentDetails.append(create('p','lm-document-excerpt',
     'Пункт «Срок поставки»: конкретный срок в учебном договоре не указан.'));
   }
@@ -509,12 +514,12 @@ function createSurface(primary,other=[],real=false,taskId=''){
    }
   }
   if(documentStep==='edit'||documentStep==='preview'){
-   const label=create('label','lm-mail-edit-label',documentStep==='preview'?'Предложение Сэйви · можно поправить':'Исправить самостоятельно');
+   const label=create('label','lm-mail-edit-label lm-note-step-label'+(documentStep==='edit'?' lm-note-step-label--reply':''),documentStep==='preview'?'Предложение Сэйви':'Ваш вариант');
    const input=create('textarea','lm-mail-edit-input');
    input.rows=4;input.maxLength=8500;input.value=documentNote;
    label.append(input);documentDetails.append(label);
    prepareDocumentReply(input);
-   documentDetails.append(create('p','lm-mail-note','Учебная редакция. Исходный договор не изменяется.'));
+   documentDetails.append(create('p','lm-mail-note','Черновик · исходный договор не изменяется.'));
   }else{
    const sayviText=documentStep==='saved'
     ?'Учебный черновик сохранён на этом устройстве. Исходный договор не изменён.'
@@ -584,6 +589,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailSave.hidden=!active||mailStep!=='edit';
   mailSave.textContent='Отправить';
   cardIconize(mailSave,'send');
+  mailSave.setAttribute('aria-label','Отправить подготовленный ответ (предпросмотр)');
   mailCancel.hidden=true;
   if(active){
    sayviAction.hidden=mailStep!=='draft'; // No duplicate Sayvi beside Send.
@@ -591,10 +597,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
    execute.hidden=mailStep!=='confirm';
    execute.textContent='Отправить';
    cardIconize(execute,'send');
+   execute.setAttribute('aria-label','Отправить подготовленный ответ (предпросмотр)');
    execute.dataset.cardRole='primary';
    mailEdit.dataset.cardRole='secondary';
    mailSave.dataset.cardRole='primary';
-  }else execute.textContent=real?'Продолжить дело':'Исполнить';
+  }else{
+   execute.textContent=real?'Продолжить дело':'Исполнить';
+   execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
+  }
   mailDetails.replaceChildren();
   if(!active)return;
   // Incoming source is immutable and always visible. A summary is not
@@ -609,8 +619,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
    // before Sayvi or the user has chosen to prepare one.
    return;
   }
-  mailDetails.append(create('p','lm-section-label',mailStep==='edit'?'ВАШ ОТВЕТ':
-   mailStep==='sent-demo'?'ПОДГОТОВЛЕННЫЙ ОТВЕТ':'ПРЕДЛОЖЕНИЕ СЭЙВИ'));
+  mailDetails.append(create('p',mailStep==='edit'?'lm-section-label lm-section-label--reply':'lm-section-label',
+   mailStep==='edit'?'Ваш ответ':mailStep==='sent-demo'?'Подготовленный ответ':'Предложение Сэйви'));
   if(mailStep==='edit'){
    const field=create('div','lm-mail-edit-label');
    const input=create('textarea','lm-mail-edit-input');
@@ -635,8 +645,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
    // A real sending confirmation remains explicit and cannot transmit a message.
    if(mailStep!=='draft'){
     mailDetails.append(create('p','lm-mail-note',mailStep==='sent-demo'
-     ?'Демо: нажато «Отправить». Почта не подключена — письмо не отправлено.'
-     :'Предпросмотр готов. Для отправки нажмите «Отправить».'));
+     ?'Почта не подключена — письмо не отправлено.'
+     :'Почта не подключена · отправка недоступна.'));
    }
   }
  }
