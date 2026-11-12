@@ -117,14 +117,12 @@ html body #svMedicalEntry svg{display:block;width:22px;height:22px}
 #svMedicalOverlay #svMedicalForm select{background:#30363d}
 #svMedicalOverlay #svMedicalForm [data-sv-med-if][hidden]{display:none!important}
 #svMedicalOverlay #svMedicalFormStatus{color:#ffb5b5;min-height:1em;font-size:13px}
-@media (prefers-color-scheme:light){
  html[data-theme="light"] #svMedicalOverlay{background:#f9fafb;color:#25282e}
  html[data-theme="light"] #svMedicalOverlay .sv-med-block{background:#fff;border-color:#e5e8ec}
  html[data-theme="light"] #svMedicalOverlay :is(.sv-med-pair strong,.sv-med-item){color:#202329}
  html[data-theme="light"] #svMedicalOverlay :is(.sv-med-muted,.sv-med-brand,.sv-med-pair span,.sv-med-block h4,.sv-med-disclaimer,.sv-med-intro){color:#66707a}
  html[data-theme="light"] #svMedicalOverlay #svMedicalForm label{color:#303640}
  html[data-theme="light"] #svMedicalOverlay #svMedicalForm :is(input,select,textarea){background:#f1f2f4;color:#25282e;border-color:#d8dce0}
-}
 @media print{
  @page{size:A4;margin:14mm}
  body > :not(#svMedicalOverlay){display:none!important}
