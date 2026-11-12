@@ -162,92 +162,8 @@ html[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
  width:var(--sv-header-action-icon)!important;height:var(--sv-header-action-icon)!important;
  stroke-width:1.65!important;
 }
-/* Standalone Notebook uses the SAME isolated header DOM as Work.
-   The real Work header provides both rings, back glyph and plus glyph;
-   the older standalone close/title nodes stay in the DOM for their handlers.
-   No extra painted header, no fake action, no duplicated visual title. */
-html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
- > :is(button.seyveo-dialog-close.sv-nav-arrow,.notes-head){
- display:none!important;
-}
-html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
- > seyveo-work-head#svNotebookSharedHeader{
- /* Full bleed, matching Work's exact 62px heading row + device safe area. */
- --gutter-l:max(12px,env(safe-area-inset-left,0px));
- --gutter-r:max(12px,env(safe-area-inset-right,0px));
- --gutter-t:calc(16px + env(safe-area-inset-top,0px));
- box-sizing:border-box!important;
- display:block!important;position:relative!important;z-index:5!important;
- flex:0 0 auto!important;align-self:flex-start!important;
- width:calc(100% + max(16px,env(safe-area-inset-left,0px)) + max(16px,env(safe-area-inset-right,0px)))!important;
- height:calc(var(--sv-header-row) + var(--gutter-t))!important;
- min-height:calc(var(--sv-header-row) + var(--gutter-t))!important;
- margin:calc(-1 * (14px + env(safe-area-inset-top,0px))) 0 0
-  calc(-1 * max(16px,env(safe-area-inset-left,0px)))!important;
- padding:0!important;border:0!important;border-radius:0!important;
- background:transparent!important;box-shadow:none!important;
-}
-/* Static Notebook segmented control: works even if the optional shared-header script does not start. Geometry/material as Work's #svWorkTabs.
-   A separate DOM bar is required because Notebook is a native modal route;
-   clicking an item closes the modal before routing to the existing Work tab. */
-html body dialog#notesDialog.notes-dialog[open]
- > #svNotebookWorkTabs{
- box-sizing:border-box!important;order:1!important;position:relative!important;z-index:5!important;
- display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
- align-self:stretch!important;flex:0 0 32px!important;gap:2px!important;
- width:calc(100% + 16px)!important;min-width:0!important;
- height:32px!important;min-height:32px!important;max-height:32px!important;
- margin:13px -8px 12px!important;padding:3px!important;
- border:0!important;border-radius:999px!important;
- background:#EDEDED!important;background-image:none!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- user-select:none!important;-webkit-user-select:none!important;
-}
-html body dialog#notesDialog.notes-dialog[open]
- > #svNotebookWorkTabs > button{
- box-sizing:border-box!important;appearance:none!important;-webkit-appearance:none!important;
- display:flex!important;align-items:center!important;justify-content:center!important;
- min-width:0!important;min-height:26px!important;height:26px!important;
- margin:0!important;padding:0 3px!important;
- border:0!important;border-radius:999px!important;
- background:transparent!important;background-image:none!important;
- color:#17181C!important;box-shadow:none!important;
- text-align:center!important;
- font:560 15px/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
- letter-spacing:-.01em!important;white-space:nowrap!important;cursor:pointer!important;
- -webkit-tap-highlight-color:transparent!important;
-}
-html body dialog#notesDialog.notes-dialog[open]
- > #svNotebookWorkTabs > button[aria-pressed="true"]{
- background:#FFFFFF!important;color:#0C0D10!important;font-weight:590!important;
- box-shadow:0 1px 2px rgba(32,35,42,.045)!important;
-}
-html body dialog#notesDialog.notes-dialog[open]
- > #svNotebookWorkTabs > button:focus-visible{
- outline:2px solid currentColor!important;outline-offset:2px!important;
-}
-:root[data-theme="dark"] body dialog#notesDialog.notes-dialog[open]
- > #svNotebookWorkTabs{background:#2B2B2D!important}
-:root[data-theme="dark"] body dialog#notesDialog.notes-dialog[open]
- > #svNotebookWorkTabs > button{color:#C6C6CA!important}
-:root[data-theme="dark"] body dialog#notesDialog.notes-dialog[open]
- > #svNotebookWorkTabs > button[aria-pressed="true"]{
- background:#555559!important;color:#FFFFFF!important;box-shadow:none!important;
-}
-@media(max-width:355px){
- html body dialog#notesDialog.notes-dialog[open]
- > #svNotebookWorkTabs > button{font-size:13px!important}
-}
-html body dialog#notesDialog.notes-dialog[open]
- > #svNotebookCreateTiles{
- order:2!important;margin-top:0!important;
-}
-html body dialog#notesDialog.notes-dialog[open] > #notesList{
- order:3!important;
-}
-html body dialog#notesDialog.notes-dialog[open] > #notesStatus{
- order:4!important;
-}
+/* Notebook now uses the ONE persistent Work header and tab bar.
+   The removed modal header and duplicate tabs have no CSS here. */
 /* Text notebook: unify existing upper controls without moving the editor,
    its save/cancel actions or keyboard. */
 html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
@@ -275,6 +191,73 @@ html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
   -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  letter-spacing:var(--sv-header-title-tracking)!important;
 }
+/* Shared 62px/42px header geometry: use the original New Task
+   controls and Work header tokens, never clone or reparent navigation. */
+html[data-theme="light"] body #personalTaskDialog .sv-task-page-header{
+ display:grid!important;
+ grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
+ grid-template-rows:var(--sv-header-row)!important;
+ gap:var(--sv-header-gap)!important;
+ align-items:center!important;
+ width:100%!important;height:var(--sv-header-row)!important;
+ min-height:var(--sv-header-row)!important;
+ margin-left:0!important;padding:0!important;transform:none!important;
+}
+html[data-theme="light"] body #personalTaskDialog
+ .sv-task-page-header > #personalTaskDialogTitle{
+ grid-column:2!important;grid-row:1!important;
+ width:100%!important;min-width:0!important;
+ margin:0!important;padding:0!important;
+ font:var(--sv-header-title-weight) var(--sv-header-title-size)/var(--sv-header-title-leading)
+   -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
+ color:var(--sv-header-ink)!important;letter-spacing:var(--sv-header-title-tracking)!important;
+ text-align:center!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html[data-theme="light"] body #personalTaskDialog
+ .sv-task-page-header > .sv-task-topbar{
+ grid-column:1!important;grid-row:1!important;
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;max-width:var(--sv-header-slot)!important;
+ height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;max-height:var(--sv-header-slot)!important;
+ margin:0!important;padding:0!important;
+}
+html[data-theme="light"] body #personalTaskDialog
+ .sv-task-page-header :is(#personalTaskCancel,#personalTaskSave){
+ box-sizing:border-box!important;
+ position:relative!important;inset:auto!important;
+ display:grid!important;place-items:center!important;
+ width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;max-width:var(--sv-header-slot)!important;
+ height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;max-height:var(--sv-header-slot)!important;
+ margin:0!important;padding:0!important;
+ border:var(--sv-header-circle-border)!important;border-radius:50%!important;
+ background:var(--sv-header-circle)!important;background-image:none!important;
+ color:var(--sv-header-icon-ink)!important;box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
+ transform:none!important;
+}
+html[data-theme="light"] body #personalTaskDialog
+ .sv-task-page-header > #personalTaskSave{
+ grid-column:3!important;grid-row:1!important;justify-self:end!important;
+}
+html[data-theme="light"] body #personalTaskDialog
+ .sv-task-page-header #personalTaskCancel svg{
+ width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
+ stroke-width:var(--sv-header-back-weight)!important;
+}
+html[data-theme="light"] body #personalTaskDialog
+ .sv-task-page-header #personalTaskSave svg{
+ width:var(--sv-header-action-icon)!important;height:var(--sv-header-action-icon)!important;
+ stroke-width:var(--sv-header-action-weight)!important;
+}
+html[data-theme="light"] body #personalTaskDialog
+ .sv-task-page-header > #personalTaskSave:disabled{
+ opacity:1!important;background:var(--sv-header-circle)!important;color:var(--sv-header-icon-ink)!important;
+}
+html[data-theme="light"] body #personalTaskDialog
+ .sv-task-page-header > #personalTaskSave:disabled svg{opacity:.32!important}
+
 /* Health: 62px top row, 42px existing back & plus, same gentle material.
    Health's scrolling medical content and bottom dock are entirely excluded. */
 html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
