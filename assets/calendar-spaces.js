@@ -186,7 +186,7 @@ function setupHealthAge(){
    Values are applied only with "Готово"; cancel leaves the saved value untouched. */
 const healthNumberSpecs={
  calendarHealthAge:{title:'Возраст',min:1,max:110,fallback:75},
- calendarBpQuickS:{title:'Верхнее давление',min:50,max:300,fallback:130},
+ calendarBpQuickS:{title:'Верхнее давление',min:50,max:300,fallback:120},
  calendarBpQuickD:{title:'Нижнее давление',min:30,max:200,fallback:80},
  calendarBpQuickP:{title:'Пульс',min:30,max:240,fallback:72},
  calendarBpSystolic:{title:'Верхнее давление',min:50,max:300,fallback:130},
@@ -677,18 +677,33 @@ function quickBpValues(){
 function quickBpAdvice(){
  const box=$('calendarBpQuickAdvice'),emergency=$('calendarBpQuickEmergency');
  if(!box||!emergency)return;
- const vals=quickBpValues();
- if(vals.some(x=>!x)){box.textContent='';box.dataset.level='neutral';emergency.hidden=true;return;}
+ const vals=quickBpValues(),report=$('calendarBpReport');
+ // Never show the verdict of an older saved reading as if it belongs
+ // to the new numbers currently being entered.
+ if(vals.every(x=>!x)){
+  box.replaceChildren();box.dataset.level='neutral';
+  emergency.hidden=true;bpReport();return;
+ }
+ if(report)report.hidden=true;
+ if(vals.some(x=>!x)){
+  box.replaceChildren();box.dataset.level='neutral';
+  emergency.hidden=true;return;
+ }
  const [s,d,p]=vals.map(Number);
  if(![s,d,p].every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240){
-  box.textContent='Проверьте цифры: верхнее должно быть больше нижнего.';box.dataset.level='neutral';emergency.hidden=true;return;
+  box.textContent='Проверьте показатели: верхнее должно быть больше нижнего.';
+  box.dataset.level='neutral';emergency.hidden=true;return;
  }
  const info=bpAssess(s,d,p);
- box.replaceChildren(
-  document.createTextNode('Сэйви · '),
-  Object.assign(document.createElement('strong'),{className:'sv-bp-level-label',textContent:info.summary}),
-  document.createTextNode('. '+info.advice)
- );
+ const verdict=document.createElement('strong');
+ verdict.className='sv-bp-level-label';
+ verdict.textContent=info.summary;
+ box.replaceChildren(document.createTextNode('Сэйви:'),verdict);
+ if(!['usual','watch'].includes(info.level)){
+  const note=document.createElement('span');
+  note.className='sv-bp-advice-line';note.textContent=info.advice;
+  box.append(note);
+ }
  box.dataset.level=info.level;
  emergency.hidden=!(s>=180||d>=120);
 }
@@ -698,8 +713,15 @@ for(const id of ['calendarBpQuickS','calendarBpQuickD','calendarBpQuickP']){
 $('calendarBpQuickForm').addEventListener('submit',event=>{
  event.preventDefault();
  const vals=quickBpValues(),[s,d,p]=vals.map(Number);
- if(vals.some(x=>!x)||![s,d,p].every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240){
-  quickBpAdvice();if(vals.some(x=>!x))$('calendarBpQuickAdvice').textContent='Введите верхнее, нижнее и пульс.';return;
+ if(vals.some(x=>!x)){
+  // One action: guide the user to the first empty wheel, rather than
+  // showing an error or saving the visible example placeholders.
+  const next=['calendarBpQuickS','calendarBpQuickD','calendarBpQuickP'].find(id=>!$(id).value.trim());
+  if(next)openHealthPicker(next);
+  return;
+ }
+ if(![s,d,p].every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240){
+  quickBpAdvice();return;
  }
  // Preserve the original editor for repeat readings and edits; the inline
  // entry is strictly for a fresh measurement.
@@ -715,9 +737,10 @@ $('calendarBpQuickForm').addEventListener('submit',event=>{
  save({preventDefault(){}});
  if(read().length>before){
   for(const id of ['calendarBpQuickS','calendarBpQuickD','calendarBpQuickP'])$(id).value='';
-  $('calendarBpQuickAdvice').textContent='Измерение сохранено. Сэйви добавила дату и время в журнал.';
-  $('calendarBpQuickAdvice').dataset.level='saved';
+  $('calendarBpQuickAdvice').replaceChildren();
+  $('calendarBpQuickAdvice').dataset.level='neutral';
   $('calendarBpQuickEmergency').hidden=true;
+  bpReport();
  }else{
   $('calendarBpQuickAdvice').textContent=$('calendarSpaceStatus').textContent||'Не удалось сохранить измерение.';
  }
