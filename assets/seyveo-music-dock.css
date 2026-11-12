@@ -309,7 +309,7 @@ html:not(.seyveo-conversation) #sayviMusicMini{
   background:transparent!important;
   border:0!important;
   box-shadow:none!important;
-  color:#192631!important;
+  color:#000000!important;
   opacity:1!important;
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-transport svg{
@@ -323,7 +323,7 @@ html:not(.seyveo-conversation) #sayviMusicMini{
   shape-rendering:geometricPrecision!important;
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-skip:disabled{
-  opacity:.30!important;
+  opacity:1!important;
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-progress{
   left:18px!important;
