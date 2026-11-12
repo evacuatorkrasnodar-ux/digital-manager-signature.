@@ -182,52 +182,113 @@ function setupHealthAge(){
  field.addEventListener('blur',save);
  field.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();field.blur();}});
 }
-/* A native-feeling value scrubber: slide one finger up/down to adjust numbers.
-   No spinner buttons or enormous option lists. Typing remains available. */
-function installHealthValueScrubber(id,min,max,step=1){
- const field=$(id);if(!field)return;
- let startY=0,startValue=null,moved=false,lastSteps=0;
- const update=(value)=>{
-  const next=Math.max(min,Math.min(max,Math.round(value/step)*step));
-  if(String(next)!==field.value){field.value=String(next);field.dispatchEvent(new Event('input',{bubbles:true}));}
- };
- field.addEventListener('touchstart',event=>{
-  if(event.touches.length!==1)return;
-  startY=event.touches[0].clientY;
-  const n=Number(field.value);
-  startValue=field.value.trim()&&Number.isFinite(n)?n:null;
-  moved=false;lastSteps=0;
- },{passive:true});
- field.addEventListener('touchmove',event=>{
-  if(event.touches.length!==1||startValue===null)return;
-  const dy=startY-event.touches[0].clientY;
-  if(Math.abs(dy)<13&&!moved)return;
-  if(event.cancelable)event.preventDefault();
-  moved=true;
-  const steps=dy>0?Math.floor((dy+7)/22):Math.ceil((dy-7)/22);
-  if(steps===lastSteps)return;
-  lastSteps=steps;
-  update(startValue+steps*step);
- },{passive:false});
- field.addEventListener('touchend',()=>{
-  if(!moved)return;
-  field.dispatchEvent(new Event('change',{bubbles:true}));
-  if(id==='calendarHealthAge')field.blur();
- },{passive:true});
- field.addEventListener('wheel',event=>{
-  if(document.activeElement!==field)return;
-  if(event.cancelable)event.preventDefault();
-  const current=Number(field.value);
-  if(!field.value.trim()||!Number.isFinite(current))return;
-  update(current+(event.deltaY<0?step:-step));
-  field.dispatchEvent(new Event('change',{bubbles:true}));
- },{passive:false});
+/* Shared compact number wheel for age, blood pressure and pulse.
+   Values are applied only with "Готово"; cancel leaves the saved value untouched. */
+const healthNumberSpecs={
+ calendarHealthAge:{title:'Возраст',min:1,max:110,fallback:75},
+ calendarBpQuickS:{title:'Верхнее давление',min:50,max:300,fallback:130},
+ calendarBpQuickD:{title:'Нижнее давление',min:30,max:200,fallback:80},
+ calendarBpQuickP:{title:'Пульс',min:30,max:240,fallback:72},
+ calendarBpSystolic:{title:'Верхнее давление',min:50,max:300,fallback:130},
+ calendarBpDiastolic:{title:'Нижнее давление',min:30,max:200,fallback:80},
+ calendarBpPulse:{title:'Пульс',min:30,max:240,fallback:72}
+};
+let healthPickerId='',healthPickerNumber=0,healthPickerPreviousFocus=null;
+function refreshHealthPicker(){
+ const spec=healthNumberSpecs[healthPickerId];if(!spec)return;
+ const val=$('calendarHealthPickerValue'),wheel=$('calendarHealthPickerWheel');
+ val.textContent=String(healthPickerNumber);
+ $('calendarHealthPickerPrevious').textContent=healthPickerNumber>spec.min?String(healthPickerNumber-1):'';
+ $('calendarHealthPickerNext').textContent=healthPickerNumber<spec.max?String(healthPickerNumber+1):'';
+ wheel.setAttribute('aria-valuemin',String(spec.min));
+ wheel.setAttribute('aria-valuemax',String(spec.max));
+ wheel.setAttribute('aria-valuenow',String(healthPickerNumber));
+ wheel.setAttribute('aria-valuetext',healthPickerNumber+' '+(healthPickerId==='calendarHealthAge'?'лет':healthPickerId.toLowerCase().includes('pulse')||healthPickerId.endsWith('P')?'уд/мин':'мм рт. ст.'));
 }
-for(const [id,low,high] of [
- ['calendarHealthAge',1,110],['calendarBpQuickS',50,300],
- ['calendarBpQuickD',30,200],['calendarBpQuickP',30,240],
- ['calendarBpSystolic',50,300],['calendarBpDiastolic',30,200],['calendarBpPulse',30,240]
-])installHealthValueScrubber(id,low,high);
+function moveHealthPicker(delta){
+ const spec=healthNumberSpecs[healthPickerId];if(!spec)return;
+ healthPickerNumber=Math.max(spec.min,Math.min(spec.max,healthPickerNumber+delta));
+ refreshHealthPicker();
+}
+function closeHealthPicker(apply){
+ const picker=$('calendarHealthNumberPicker');
+ if(picker.hidden)return;
+ if(apply&&healthPickerId){
+  const field=$(healthPickerId);
+  field.value=String(healthPickerNumber);
+  field.dispatchEvent(new Event('input',{bubbles:true}));
+  field.dispatchEvent(new Event('change',{bubbles:true}));
+ }
+ picker.hidden=true;
+ const focus=healthPickerPreviousFocus;healthPickerPreviousFocus=null;healthPickerId='';
+ if(focus?.isConnected)focus.focus({preventScroll:true});
+}
+function openHealthPicker(id){
+ const spec=healthNumberSpecs[id],field=$(id);
+ if(!spec||!field||current!=='health')return;
+ healthPickerPreviousFocus=field;
+ healthPickerId=id;
+ const existing=Number(field.value);
+ healthPickerNumber=field.value.trim()&&Number.isInteger(existing)&&existing>=spec.min&&existing<=spec.max?existing:spec.fallback;
+ $('calendarHealthPickerTitle').textContent=spec.title;
+ $('calendarHealthNumberPicker').hidden=false;
+ refreshHealthPicker();
+ $('calendarHealthPickerWheel').focus({preventScroll:true});
+}
+for(const id of Object.keys(healthNumberSpecs)){
+ const field=$(id);if(!field)continue;
+ field.readOnly=true;
+ field.setAttribute('aria-haspopup','dialog');
+ field.setAttribute('aria-controls','calendarHealthNumberPicker');
+ field.addEventListener('click',()=>openHealthPicker(id));
+ field.addEventListener('keydown',event=>{
+  if(event.key==='Enter'||event.key===' '){event.preventDefault();openHealthPicker(id)}
+ });
+}
+$('calendarHealthPickerCancel').addEventListener('click',()=>closeHealthPicker(false));
+$('calendarHealthPickerDone').addEventListener('click',()=>closeHealthPicker(true));
+$('calendarHealthNumberPicker').addEventListener('click',event=>{
+ if(event.target.closest('[data-health-picker-cancel]'))closeHealthPicker(false);
+});
+$('calendarHealthPickerWheel').addEventListener('keydown',event=>{
+ if(event.key==='ArrowUp'){event.preventDefault();moveHealthPicker(1)}
+ else if(event.key==='ArrowDown'){event.preventDefault();moveHealthPicker(-1)}
+ else if(event.key==='PageUp'){event.preventDefault();moveHealthPicker(10)}
+ else if(event.key==='PageDown'){event.preventDefault();moveHealthPicker(-10)}
+ else if(event.key==='Enter'){event.preventDefault();closeHealthPicker(true)}
+ else if(event.key==='Escape'){event.preventDefault();closeHealthPicker(false)}
+});
+let healthPickerStartY=0,healthPickerMoved=0;
+const wheel=$('calendarHealthPickerWheel');
+wheel.addEventListener('pointerdown',event=>{
+ healthPickerStartY=event.clientY;healthPickerMoved=0;
+ wheel.setPointerCapture?.(event.pointerId);
+});
+wheel.addEventListener('pointermove',event=>{
+ if(!wheel.hasPointerCapture?.(event.pointerId))return;
+ const dist=healthPickerStartY-event.clientY;
+ const steps=dist>0?Math.floor(dist/27):Math.ceil(dist/27);
+ if(!steps)return;
+ moveHealthPicker(steps);healthPickerStartY+=-steps*27;healthPickerMoved+=Math.abs(steps);
+});
+wheel.addEventListener('wheel',event=>{
+ event.preventDefault();moveHealthPicker(event.deltaY>0?-1:1);
+},{passive:false});
+wheel.addEventListener('click',event=>{
+ if(healthPickerMoved)return;
+ const bounds=wheel.getBoundingClientRect();
+ if(event.clientY<bounds.top+bounds.height/3)moveHealthPicker(1);
+ else if(event.clientY>bounds.top+bounds.height*2/3)moveHealthPicker(-1);
+});
+$('calendarHealthNumberPicker').addEventListener('keydown',event=>{
+ if(event.key==='Escape'){event.preventDefault();closeHealthPicker(false)}
+ if(event.key==='Tab'){
+  const stops=[$('calendarHealthPickerWheel'),$('calendarHealthPickerCancel'),$('calendarHealthPickerDone')];
+  const index=stops.indexOf(document.activeElement);
+  if(index>=0){event.preventDefault();stops[(index+(event.shiftKey?stops.length-1:1))%stops.length].focus();}
+ }
+});
+dialog.addEventListener('close',()=>{$('calendarHealthNumberPicker').hidden=true;healthPickerId='';});
 
 function bpAssess(s,d,p){
  const age=bpAge();
