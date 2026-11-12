@@ -65,7 +65,8 @@
   white-space:nowrap!important;
 }
 
-/* Health's material, scaled down to 42 px. Left and right are identical. */
+/* The same Health/search material on BOTH buttons. Keep the geometry
+   in one place; explicit selectors prevent other Back styles overriding it. */
 #svWorkShell[data-shared-work="true"] :is(#svWorkBack,#svWorkAdd) {
   -webkit-appearance:none!important;
   appearance:none!important;
@@ -97,9 +98,15 @@
   grid-column:3!important;
   justify-self:end!important;
 }
-:root[data-theme="light"] #svWorkShell[data-shared-work="true"] :is(#svWorkBack,#svWorkAdd) {
+/* The light Search circle in Health is the source of truth for material.
+   Back and Add intentionally share these exact, non-raised values. */
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkBack,
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkAdd {
   background:rgba(190,193,202,.43)!important;
+  background-color:rgba(190,193,202,.43)!important;
+  background-image:none!important;
   border:1.75px solid rgba(255,255,255,.94)!important;
+  outline:none!important;
   -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
   backdrop-filter:blur(12px) saturate(108%)!important;
   box-shadow:0 0 0 .7px rgba(164,170,184,.30),
@@ -108,7 +115,8 @@
     inset .6px 0 .7px rgba(255,255,255,.16),
     inset -.6px 0 .8px rgba(75,82,96,.055),
     0 1px 2px rgba(82,88,103,.045)!important;
-  color:#1C1C1E!important;
+  color:#0B0B0D!important;
+  opacity:1!important;
 }
 :root[data-theme="dark"] #svWorkShell[data-shared-work="true"] :is(#svWorkBack,#svWorkAdd) {
   background:#38383A!important;
@@ -123,14 +131,19 @@
 }
 #svWorkShell[data-shared-work="true"] :is(#svWorkBack,#svWorkAdd) svg{
   display:block!important;
-  width:19px!important;
-  height:19px!important;
+  width:21px!important;
+  height:21px!important;
   stroke:currentColor!important;
-  stroke-width:1.55!important;
+  stroke-width:1.8!important;
   stroke-linecap:round!important;
   stroke-linejoin:round!important;
   fill:none!important;
   filter:none!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkAdd svg{
+  width:22px!important;
+  height:22px!important;
+  stroke-width:1.85!important;
 }
 #svWorkShell[data-shared-work="true"] :is(#svWorkBack,#svWorkAdd):active{
   opacity:.72!important;
@@ -139,7 +152,6 @@
   outline:2px solid currentColor!important;
   outline-offset:2px!important;
 }
-
 /* Clean segmented bar below the separately tinted header. */
 #svWorkShell[data-shared-work="true"] #svWorkTabs {
   box-sizing:border-box!important;
