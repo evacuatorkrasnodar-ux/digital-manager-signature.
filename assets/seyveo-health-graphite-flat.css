@@ -784,6 +784,8 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > #navManage{
  position:relative!important;z-index:1!important;
  grid-column:8!important;grid-row:1!important;
+ left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+ transform:none!important;justify-self:center!important;align-self:center!important;
  width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;
  margin:0!important;padding:0!important;
  display:grid!important;place-items:center!important;
