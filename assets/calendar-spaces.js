@@ -964,6 +964,54 @@ healthHeaderAdd.addEventListener('click',()=>{
  openHealthPicker('calendarBpQuickS');
 });
 
+/* Health WHITE dock only: real Summary/Access tabs + existing Search button.
+   Never create a second dock or remove/rebind global navigation routes. */
+const healthDock=document.querySelector('footer.dock.sv-shared-dock');
+const healthDockActions=dom('div','sv-health-dock-actions');
+healthDockActions.setAttribute('role','group');
+healthDockActions.setAttribute('aria-label','Разделы здоровья');
+function healthDockTab(id,label,icon){
+ const btn=dom('button','sv-health-dock-tab');
+ btn.type='button';
+ btn.id=id;
+ btn.setAttribute('aria-label',label);
+ btn.setAttribute('aria-pressed','false');
+ btn.innerHTML=icon+'<span>'+label+'</span>';
+ return btn;
+}
+const healthDockSummary=healthDockTab('svHealthDockSummary','Сводка',
+ '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 11.8h3.8l2.1-4.9 3.2 10.2 2.3-5.3h3.6"/><path d="M12 20.7c-3.6-2.2-8.2-5.8-8.2-10.7a4.6 4.6 0 0 1 8.2-2.8 4.6 4.6 0 0 1 8.2 2.8c0 4.9-4.6 8.5-8.2 10.7z" opacity=".38"/></svg>');
+const healthDockAccess=healthDockTab('svHealthDockAccess','Доступ',
+ '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.2" y="10.2" width="13.6" height="10.1" rx="2.3"/><path d="M8.3 10.2V7a3.7 3.7 0 0 1 7.4 0v3.2M12 14.5v2.2"/></svg>');
+healthDockActions.append(healthDockSummary,healthDockAccess);
+if(healthDock)healthDock.insertBefore(healthDockActions,healthDock.querySelector('#navManage'));
+const healthAccessPanel=dom('section','sv-health-access-panel');
+healthAccessPanel.id='calendarHealthAccessPanel';
+healthAccessPanel.hidden=true;
+healthAccessPanel.setAttribute('aria-label','Доступ к данным здоровья');
+healthAccessPanel.innerHTML=
+ '<h3>Доступ к данным</h3>'+
+ '<div class="sv-health-access-item"><strong>Локальные измерения</strong><p>Давление и пульс сохраняются в этом браузере. Синхронизация не включена.</p></div>'+
+ '<div class="sv-health-access-item"><strong>Apple Health</strong><p>Подключение пока недоступно. Данные не передаются в Apple Health.</p></div>'+
+ '<div class="sv-health-access-item"><strong>Защита записей</strong><p>Записи здесь не зашифрованы. Не используйте это хранилище для конфиденциальных медицинских документов.</p></div>';
+$('svCareScroll').insertBefore(healthAccessPanel,$('svCareScroll').firstChild);
+function setHealthDockView(view){
+ const access=view==='access'&&current==='health'&&document.documentElement.dataset.theme==='light';
+ dialog.dataset.healthDockView=access?'access':'summary';
+ healthDockSummary.setAttribute('aria-pressed',String(!access));
+ healthDockAccess.setAttribute('aria-pressed',String(access));
+ healthAccessPanel.hidden=!access;
+ $('svCareScroll').scrollTop=0;
+}
+healthDockSummary.addEventListener('click',()=>setHealthDockView('summary'));
+healthDockAccess.addEventListener('click',()=>setHealthDockView('access'));
+new MutationObserver(()=>{
+ if(document.documentElement.dataset.theme!=='light'&&dialog.dataset.healthDockView==='access')
+  setHealthDockView('summary');
+}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+dialog.addEventListener('close',()=>setHealthDockView('summary'));
+
+
 
 function measurementFocus(active){
  const enabled=Boolean(active&&current==='health');
@@ -1006,6 +1054,7 @@ function open(space,id=null,selectedDate=''){
  current=space;editing=id;
  dialog.dataset.space=space;
  healthHeaderAdd.hidden=space!=='health';
+ setHealthDockView('summary');
  measurementFocus(false);
  const journal=$('calendarSpaceJournal');
  if(journal){
