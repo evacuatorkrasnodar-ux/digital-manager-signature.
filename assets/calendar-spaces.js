@@ -40,7 +40,10 @@ function dom(tag,cls,txt){const el=document.createElement(tag);if(cls)el.classNa
 function calendarItems(ymd){
  if(!dateValid(ymd))return [];
  const [year,month,day]=ymd.split('-');
- return read().filter(x=>x.date&&(
+ // Health measurements belong only in their own private journal.
+ // Never insert blood-pressure or pulse readings into the Calendar agenda.
+ // This changes only the view, not the saved health measurements.
+ return read().filter(x=>x.space!=='health'&&x.date&&(
   x.yearless?x.date.slice(5)===month+'-'+day:x.date===ymd
  )).map(x=>({
   id:x.id,space:x.space,source:'space',date:ymd,kind:x.kind,
