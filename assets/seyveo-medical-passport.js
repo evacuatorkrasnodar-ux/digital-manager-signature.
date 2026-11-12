@@ -212,13 +212,235 @@ function plainText(){
  lines.push('','Данные введены пользователем. Неуказанные сведения не означают отсутствие заболеваний. Отметки о приёме внесены вручную.');
  return lines.join('\n');
 }
+
+/* Sayvi's compact guided intake: user-confirmed facts only. */
+const wizard=document.createElement('section');
+wizard.id='svMedicalWizard';wizard.hidden=true;
+$('svMedicalForm').before(wizard);
+const W_STEPS=[
+ ['Как вас зовут?','name'],
+ ['Есть аллергии?','allergies'],
+ ['Есть заболевания сердца?','heart'],
+ ['Какие заболевания вам известны?','conditions'],
+ ['Были операции или есть импланты?','operations'],
+ ['Кому позвонить в экстренном случае?','contact'],
+ ['Что ещё важно знать?','note']
+];
+const W_CONDITIONS=['Гипертония','Диабет','Перенесённый инсульт','Заболевания почек','Эпилепсия'];
+let wDraft=defaults(),wStep=0,wBook=false,wError='',wSelected=[],wOther='';
+function wEl(tag,cls,text){
+ const el=document.createElement(tag);if(cls)el.className=cls;
+ if(text!==undefined)el.textContent=text;return el;
+}
+function wBtn(text,action,cls){
+ const el=wEl('button','sv-med-w-btn '+(cls||''),text);el.type='button';el.dataset.action=action;return el;
+}
+function wAdvance(){
+ wError='';
+ if(wBook){wBook=false;wRender();return}
+ if(wStep===1&&wDraft.allergies==='yes'&&!safeString(wDraft.allergyDetails)){
+  wError='Уточните аллергию либо выберите «Не знаю».';wRender();return;
+ }
+ if(wStep===2&&wDraft.heart==='yes'&&!safeString(wDraft.heartDetails)){
+  wError='Уточните заболевание сердца либо выберите «Не знаю».';wRender();return;
+ }
+ if(wStep===4&&wDraft.operations==='__yes__'){
+  wError='Укажите операцию или имплант, либо выберите «Не знаю».';wRender();return;
+ }
+ if(wStep===5&&(wDraft.contactName||wDraft.contactPhone)&&!validPhone(wDraft.contactPhone)){
+  wError='Укажите корректный номер или пропустите вопрос.';wRender();return;
+ }
+ if(wStep<6){wStep++;wRender();return}
+ wDraft.updatedAt=Date.now();
+ try{localStorage.setItem(KEY,JSON.stringify(wDraft));formDisplay(false)}
+ catch{wError='Не удалось сохранить Медпаспорт на этом устройстве.';wRender()}
+}
+function wBegin(){
+ wDraft=readProfile();wStep=0;wBook=false;wError='';
+ const existing=wDraft.conditions.split(' · ').filter(Boolean);
+ wSelected=W_CONDITIONS.filter(x=>existing.includes(x));
+ wOther=existing.filter(x=>!W_CONDITIONS.includes(x)&&x!=='Известных нет (со слов пользователя)').join(' · ');
+ wRender();
+}
+function wInput(root,key,placeholder,area){
+ const el=wEl(area?'textarea':'input','sv-med-w-input');
+ if(area){el.rows=3;}else{el.type=key==='contactPhone'?'tel':'text';}
+ el.placeholder=placeholder;el.value=wDraft[key]||'';
+ el.maxLength=['conditions','note'].includes(key)?750:key==='name'?120:key==='contactPhone'?24:300;
+ el.addEventListener('input',()=>{wDraft[key]=el.value.slice(0,el.maxLength)});
+ root.append(el);return el;
+}
+function wChoices(root,key){
+ const group=wEl('div','sv-med-w-choices');
+ for(const [value,label] of [['yes','Да'],['no','Нет'],['unknown','Не знаю']]){
+  const b=wBtn(label,'yesno','sv-med-w-choice'+(wDraft[key]===value?' selected':''));
+  b.dataset.key=key;b.dataset.value=value;
+  b.setAttribute('aria-pressed',String(wDraft[key]===value));
+  group.append(b);
+ }
+ root.append(group);
+ if(wDraft[key]==='yes')wInput(root,key==='heart'?'heartDetails':'allergyDetails',
+  key==='heart'?'Какое заболевание сердца?':'На что аллергия и какая реакция?',true);
+}
+function wReadContacts(){
+ const result={items:[]};
+ try{window.dispatchEvent(new CustomEvent('seyveo:contacts-read',{detail:result}))}catch{}
+ return (Array.isArray(result.items)?result.items:[])
+  .filter(x=>x&&typeof x.name==='string'&&typeof x.phone==='string')
+  .map(x=>({name:safeString(x.name,120),phone:safeString(x.phone,24)}))
+  .filter(x=>x.name&&validPhone(x.phone)).slice(0,100);
+}
+function wSaveContact(name,phone){
+ const profile=readProfile();
+ profile.contactName=name;profile.contactPhone=phone;profile.updatedAt=Date.now();
+ try{localStorage.setItem(KEY,JSON.stringify(profile));return true}
+ catch{return false}
+}
+function wRender(){
+ if(!isEditing||wizard.hidden)return;
+ wizard.replaceChildren();
+ const brand=wEl('div','sv-med-w-brand');
+ brand.append(wEl('span','sv-sayvi-symbol'),wEl('strong','','Сэйви'));
+ wizard.append(brand);
+ const track=wEl('div','sv-med-w-track');
+ track.append(wEl('small','','Вопрос '+(wStep+1)+' из '+W_STEPS.length));
+ const dots=wEl('div','sv-med-w-dots');
+ W_STEPS.forEach((_,i)=>dots.append(wEl('i',i<=wStep?'active':'')));
+ track.append(dots);wizard.append(track);
+ wizard.append(wEl('h3','sv-med-w-title',wBook?'Выберите близкого человека':W_STEPS[wStep][0]));
+ const box=wEl('div','sv-med-w-body');wizard.append(box);
+ const key=W_STEPS[wStep][1];
+ if(wBook){
+  const items=wReadContacts();
+  box.append(wEl('p','sv-med-w-note','Контакты SEYVEO. Нажмите на человека — имя и номер сохранятся.'));
+  const search=wEl('input','sv-med-w-input');search.type='search';search.placeholder='Найти контакт';
+  box.append(search);
+  const list=wEl('div','sv-med-w-people');box.append(list);
+  const show=q=>{
+   list.replaceChildren();
+   const found=items.filter(x=>(x.name+' '+x.phone).toLocaleLowerCase('ru-RU').includes(q.toLocaleLowerCase('ru-RU')));
+   if(!found.length)list.append(wEl('p','sv-med-w-note',items.length?'Ничего не найдено.':'Контактов SEYVEO пока нет.'));
+   for(const person of found){
+    const b=wBtn('','person','sv-med-w-person');
+    b.dataset.name=person.name;b.dataset.phone=person.phone;
+    b.append(wEl('strong','',person.name),wEl('small','',person.phone));list.append(b);
+   }
+  };
+  show('');search.addEventListener('input',()=>show(search.value.trim()));
+  box.append(wBtn('Ввести номер вручную','manual','sv-med-w-link'));
+ }else if(key==='name')wInput(box,'name','Имя и фамилия',false);
+ else if(key==='allergies'||key==='heart')wChoices(box,key);
+ else if(key==='conditions'){
+  box.append(wEl('p','sv-med-w-note','Отметьте только то, что вам известно.'));
+  const group=wEl('div','sv-med-w-checks');
+  for(const condition of W_CONDITIONS){
+   const on=wSelected.includes(condition);
+   const b=wBtn((on?'✓  ':'○  ')+condition,'condition','sv-med-w-check'+(on?' selected':''));
+   b.dataset.condition=condition;b.setAttribute('aria-pressed',String(on));group.append(b);
+  }
+  box.append(group);
+  const other=wEl('input','sv-med-w-input');other.type='text';other.maxLength=300;other.placeholder='Другое (если есть)';
+  other.value=wOther;
+  other.addEventListener('input',()=>{wOther=other.value;wDraft.conditions=[...wSelected,wOther.trim()].filter(Boolean).join(' · ').slice(0,750)});
+  box.append(other);
+  box.append(wBtn('Известных заболеваний нет','no-conditions','sv-med-w-link'));
+ }else if(key==='operations'){
+  const yes=!!wDraft.operations&&wDraft.operations!=='Операций и имплантов нет (со слов пользователя)';
+  const group=wEl('div','sv-med-w-choices');
+  for(const [value,label] of [['yes','Да'],['no','Нет'],['unknown','Не знаю']]){
+   const active=value==='yes'?yes:value==='no'?wDraft.operations==='Операций и имплантов нет (со слов пользователя)':!wDraft.operations;
+   const b=wBtn(label,'operation','sv-med-w-choice'+(active?' selected':''));
+   b.dataset.value=value;group.append(b);
+  }
+  box.append(group);
+  if(yes){
+   const el=wEl('textarea','sv-med-w-input');el.rows=3;el.maxLength=300;
+   el.placeholder='Какая операция или имплант?';
+   el.value=wDraft.operations==='__yes__'?'':wDraft.operations;
+   el.addEventListener('input',()=>{wDraft.operations=el.value||'__yes__'});box.append(el);
+  }
+ }else if(key==='contact'){
+  box.append(wBtn('Выбрать из контактов','book','sv-med-w-primary'));
+  if(navigator.contacts&&typeof navigator.contacts.select==='function')
+   box.append(wBtn('Контакты телефона','device','sv-med-w-link'));
+  if(wDraft.contactPhone)box.append(wEl('p','sv-med-w-note','Выбран: '+wDraft.contactName+' · '+wDraft.contactPhone));
+  wInput(box,'contactName','Имя близкого',false);
+  wInput(box,'contactPhone','Номер телефона',false);
+ }else if(key==='note')wInput(box,'note','Необязательно',true);
+ if(wError)wizard.append(wEl('p','sv-med-w-error',wError));
+ const actions=wEl('div','sv-med-w-actions');
+ actions.append(wBtn('Назад','back','sv-med-w-back'));
+ if(!wBook){
+  actions.append(wBtn('Пропустить','skip','sv-med-w-skip'));
+  actions.append(wBtn(wStep===6?'Сохранить':'Далее','next','sv-med-w-next'));
+ }
+ wizard.append(actions);
+}
+async function wDevice(){
+ try{
+  const result=await navigator.contacts.select(['name','tel'],{multiple:false});
+  const person=result?.[0];
+  const name=safeString(person?.name?.[0],120),phone=safeString(person?.tel?.[0],24);
+  if(!name||!validPhone(phone)){wError='Номер не найден. Выберите другой контакт.';wRender();return}
+  if(!wSaveContact(name,phone)){wError='Не удалось сохранить контакт.';wRender();return}
+  wDraft.contactName=name;wDraft.contactPhone=phone;wAdvance();
+ }catch(error){if(error?.name!=='AbortError'){wError='Не удалось открыть контакты телефона.';wRender()}}
+}
+wizard.addEventListener('click',e=>{
+ const btn=e.target.closest('button[data-action]');if(!btn)return;
+ const action=btn.dataset.action;wError='';
+ if(action==='back'){
+  if(wBook)wBook=false;
+  else if(wStep>0)wStep--;
+  else {formDisplay(false);return}
+  wRender();return;
+ }
+ if(action==='skip'){
+  const k=W_STEPS[wStep][1];
+  if(k==='allergies'||k==='heart'){wDraft[k]='unknown';wDraft[k==='heart'?'heartDetails':'allergyDetails']=''}
+  else if(k==='conditions'){wSelected=[];wOther='';wDraft.conditions=''}
+  else if(k==='contact'){wDraft.contactName='';wDraft.contactPhone=''}
+  else wDraft[k]='';
+  wAdvance();return;
+ }
+ if(action==='next'){wAdvance();return}
+ if(action==='yesno'){
+  const k=btn.dataset.key,v=btn.dataset.value;wDraft[k]=v;
+  if(v!=='yes'){wDraft[k==='heart'?'heartDetails':'allergyDetails']='';wAdvance()}
+  else wRender();return;
+ }
+ if(action==='condition'){
+  const c=btn.dataset.condition;
+  wSelected=wSelected.includes(c)?wSelected.filter(x=>x!==c):[...wSelected,c];
+  wDraft.conditions=[...wSelected,wOther.trim()].filter(Boolean).join(' · ').slice(0,750);
+  wRender();return;
+ }
+ if(action==='no-conditions'){wSelected=[];wOther='';wDraft.conditions='Известных нет (со слов пользователя)';wStep++;wRender();return}
+ if(action==='operation'){
+  const v=btn.dataset.value;
+  if(v==='yes'){wDraft.operations='__yes__';wRender()}
+  else{wDraft.operations=v==='no'?'Операций и имплантов нет (со слов пользователя)':'';wAdvance()}
+  return;
+ }
+ if(action==='book'){wBook=true;wRender();return}
+ if(action==='manual'){wBook=false;wRender();return}
+ if(action==='device'){wDevice();return}
+ if(action==='person'){
+  const name=btn.dataset.name,phone=btn.dataset.phone;
+  if(!validPhone(phone))return;
+  if(!wSaveContact(name,phone)){wError='Не удалось сохранить контакт.';wRender();return}
+  wDraft.contactName=name;wDraft.contactPhone=phone;wBook=false;wAdvance();
+ }
+});
+
 function formDisplay(edit){
  isEditing=edit;
  $('svMedicalView').hidden=edit;
- $('svMedicalForm').hidden=!edit;
+ $('svMedicalForm').hidden=true;
+ wizard.hidden=!edit;
  $('svMedicalEdit').hidden=edit;
  $('svMedicalHeading').textContent=edit?'Медпаспорт':'Экстренная карта';
- if(edit)fillForm();
+ if(edit)wBegin();
  else render();
  overlay.scrollTop=0;
 }
