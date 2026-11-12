@@ -1448,8 +1448,8 @@ html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWo
  align-self:center!important;
  width:min(100vw,530px)!important;
  max-width:none!important;
- height:68px!important;
- min-height:68px!important;
+ height:64px!important;
+ min-height:64px!important;
  margin:0!important;
  padding:0 20px!important;
  display:grid!important;
@@ -1462,8 +1462,8 @@ html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWo
  background-image:none!important;
 }
 :root[data-theme="light"] body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkHeader{
- background-color:#F2F1F6!important;
- border-bottom:1px solid #E9E8ED!important;
+ background-color:#F5F4F8!important;
+ border-bottom:1px solid #EBEAF0!important;
 }
 html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkTitle{
  grid-column:2!important;
@@ -1505,10 +1505,11 @@ html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWo
 }
 :root[data-theme="light"] body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkBack,
 :root[data-theme="light"] body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkAdd:not([hidden]){
- background-color:rgba(196,201,211,.39)!important;
- border:1.3px solid rgba(253,254,255,.88)!important;
+ background:rgba(196,201,211,.58)!important;
+ background-image:none!important;
+ border:1px solid rgba(252,253,255,.88)!important;
  color:#24272D!important;
- box-shadow:0 0 0 .55px rgba(134,148,166,.16)!important;
+ box-shadow:0 0 0 .65px rgba(134,148,166,.21)!important;
 }
 html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkBack svg,
 html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkAdd svg{
@@ -1523,7 +1524,7 @@ html body #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWo
  order:1!important;
  align-self:center!important;
  width:calc(100% - 12px)!important;
- margin:9px 6px 12px!important;
+ margin:6px 6px 12px!important;
 }
 
 /* Work selector follows the reference's thin, quiet segmented control. */
