@@ -703,7 +703,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:.73!important;
 }
 
-/* HEALTH LIGHT · warmer, softly translucent and slightly taller matte dock v69.
+/* HEALTH LIGHT · compact cool-silver translucent matte dock v70.
    The global dock is a single DOM instance; this sheet changes ONLY its
    appearance while portaled inside the Health dialog in the white theme.
    No pseudo-surface behind the dock: the capsule and search button own
@@ -713,11 +713,11 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock{
  --sv-health-capsule:clamp(164px,47vw,190px);
- --sv-health-search:66px;
+ --sv-health-search:60px;
  --sv-health-side:clamp(14px,5vw,22px);
- --sv-health-height:66px;
- --sv-health-matte:rgba(206,204,200,.66);
- --sv-health-rim:rgba(250,249,246,.84);
+ --sv-health-height:60px;
+ --sv-health-matte:rgba(208,206,214,.70);
+ --sv-health-rim:rgba(251,251,253,.90);
  --sv-health-pearl-edge:0 0 0 .6px rgba(180,185,193,.23),inset -.45px -.55px 1px -.7px rgba(74,82,92,.085);
  --sv-health-ink:#1C1C1E;
  --sv-health-blue:#007AFF;
@@ -877,7 +877,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
 }
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > :is(.sv-health-dock-actions,#navManage){
-  background:#E1DFDC!important;
+  background:#E3E2E7!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
