@@ -28,22 +28,21 @@
    return;
   }
   if(status){status.hidden=true;status.textContent='';}
-  // Closing the parent modal first is essential for Safari's top layer.
+  // Close the list and open its editor in the SAME task. Waiting for
+  // requestAnimationFrame painted one frame of the previous workspace,
+  // which looked like a full-screen Notebook jump on iOS.
   if(notebook.open)notebook.close();
-  // Use one frame for the modal handoff, avoiding simultaneous dialogs.
-  requestAnimationFrame(()=>{
-   try{
-    route.run();
-    const dest=id==='noteModeText'?'noteReviewDialog':id==='noteModePaper'?'notePaperDialog':'noteScanDialog';
-    if(!document.getElementById(dest)?.open){
-     report('Не удалось открыть «'+route.label+'». Попробуйте ещё раз.');
-     if(!notebook.open)window.SEYVEO_NOTES_API?.openNotes?.();
-    }
-   }catch(error){
-    report('Не удалось открыть «'+route.label+'». '+(error?.message||''));
+  try{
+   route.run();
+   const dest=id==='noteModeText'?'noteReviewDialog':id==='noteModePaper'?'notePaperDialog':'noteScanDialog';
+   if(!document.getElementById(dest)?.open){
+    report('Не удалось открыть «'+route.label+'». Попробуйте ещё раз.');
     if(!notebook.open)window.SEYVEO_NOTES_API?.openNotes?.();
    }
-  });
+  }catch(error){
+   report('Не удалось открыть «'+route.label+'». '+(error?.message||''));
+   if(!notebook.open)window.SEYVEO_NOTES_API?.openNotes?.();
+  }
  }
  // Capture before the legacy bubble listeners; no duplicate modal launches.
  document.addEventListener('click',event=>{
