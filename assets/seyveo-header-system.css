@@ -1,0 +1,275 @@
+/* SEYVEO HEADER SYSTEM · approved 2026-11-12
+ * Source of truth: Work header / "Мои дела".
+ * ONE shared token contract. Adapt existing controls, NEVER overlay/copy headers.
+ * Light theme only: dark theme retains its approved surfaces.
+ * Do not style the main dock, card actions, editor body or chat composer.
+ */
+:root{
+ --sv-header-row:62px;
+ --sv-header-slot:42px;
+ --sv-header-gap:8px;
+ --sv-header-title-size:20px;
+ --sv-header-title-weight:590;
+ --sv-header-title-leading:1.2;
+ --sv-header-title-tracking:-.02em;
+ --sv-header-back-icon:25px;
+ --sv-header-back-weight:1.45;
+ --sv-header-action-icon:22px;
+ --sv-header-action-weight:1.85;
+ --sv-header-surface:#F2F1F6;
+ --sv-header-ink:#1C1C1E;
+ --sv-header-icon-ink:#0B0B0D;
+ --sv-header-circle:rgba(190,193,202,.43);
+ --sv-header-circle-border:1.75px solid rgba(255,255,255,.94);
+ --sv-header-circle-shadow:
+    0 0 0 .7px rgba(164,170,184,.30),
+    inset 0 1px 1px rgba(75,82,96,.055),
+    inset 0 -1px 0 rgba(255,255,255,.18),
+    inset .6px 0 .7px rgba(255,255,255,.16),
+    inset -.6px 0 .8px rgba(75,82,96,.055),
+    0 1px 2px rgba(82,88,103,.045);
+ --sv-header-circle-filter:blur(12px) saturate(108%);
+ --sv-header-segment:#EDEDED;
+}
+:root[data-theme="dark"]{
+ --sv-header-surface:#202023;
+ --sv-header-ink:#F6F6F8;
+ --sv-header-icon-ink:#F6F6F8;
+ --sv-header-circle:#38383A;
+ --sv-header-circle-border:1px solid rgba(255,255,255,.14);
+ --sv-header-circle-shadow:none;
+ --sv-header-circle-filter:none;
+ --sv-header-segment:#2B2B2D;
+}
+/* Shared titlebar on standalone app routes. Buttons remain their original DOM
+   nodes and keep all existing listeners; root destinations have no fake Back. */
+html[data-theme="light"] body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar{
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
+ grid-template-rows:var(--sv-header-row)!important;
+ gap:var(--sv-header-gap)!important;
+ align-items:center!important;
+ width:100%!important;height:var(--sv-header-row)!important;
+ min-height:var(--sv-header-row)!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:var(--sv-header-surface)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+}
+html[data-theme="light"] body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > :is(h1,h2){
+ box-sizing:border-box!important;
+ grid-column:2!important;grid-row:1!important;
+ justify-self:stretch!important;align-self:center!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ margin:0!important;padding:0!important;
+ color:var(--sv-header-ink)!important;
+ font:var(--sv-header-title-weight) var(--sv-header-title-size)/var(--sv-header-title-leading)
+   -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
+ letter-spacing:var(--sv-header-title-tracking)!important;
+ text-align:center!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html[data-theme="light"] body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > button:is(.seyveo-picture-back,.life-back,.sv-deep-back,.manage-theme-back){
+ appearance:none!important;-webkit-appearance:none!important;
+ box-sizing:border-box!important;
+ grid-column:1!important;grid-row:1!important;
+ display:grid!important;place-items:center!important;
+ justify-self:start!important;align-self:center!important;
+ width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;max-width:var(--sv-header-slot)!important;
+ height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;max-height:var(--sv-header-slot)!important;
+ margin:0!important;padding:0!important;
+ border:var(--sv-header-circle-border)!important;
+ border-radius:50%!important;
+ background:var(--sv-header-circle)!important;background-image:none!important;
+ color:var(--sv-header-icon-ink)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
+ filter:none!important;transform:none!important;
+ font-size:0!important;line-height:0!important;
+ -webkit-tap-highlight-color:transparent;
+}
+html[data-theme="light"] body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > button:is(.seyveo-picture-back,.life-back,.sv-deep-back,.manage-theme-back) svg{
+ display:block!important;
+ width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:var(--sv-header-back-weight)!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html[data-theme="light"] body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > :is(.sv-continuity-space){
+ width:var(--sv-header-slot)!important;height:var(--sv-header-slot)!important;
+ grid-column:3!important;grid-row:1!important;
+}
+/* The Documents/Mail titlebar has older 50px rules. Correct its existing
+   header without creating a second top bar, and preserve its search action. */
+html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] .sv-deep-top{
+ box-sizing:border-box!important;
+ height:var(--sv-header-row)!important;min-height:var(--sv-header-row)!important;
+ margin:0 0 10px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] .sv-deep-top .sv-continuity-titlebar{
+ grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
+ grid-template-rows:var(--sv-header-row)!important;
+ width:100%!important;height:var(--sv-header-row)!important;
+ min-height:var(--sv-header-row)!important;
+}
+html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] #sayviSurfaceBack{
+ display:grid!important;place-items:center!important;
+ width:var(--sv-header-slot)!important;height:var(--sv-header-slot)!important;
+ min-width:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;
+ border:var(--sv-header-circle-border)!important;border-radius:50%!important;
+ background:var(--sv-header-circle)!important;
+ color:var(--sv-header-icon-ink)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
+}
+html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] #sayviSurfaceBack svg{
+ width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
+ stroke-width:var(--sv-header-back-weight)!important;
+}
+html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] #sayviSurfaceTitle{
+ font:var(--sv-header-title-weight) var(--sv-header-title-size)/var(--sv-header-title-leading)
+  -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:var(--sv-header-title-tracking)!important;
+ text-align:center!important;color:var(--sv-header-ink)!important;
+}
+html[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-tools{
+ top:10px!important;right:0!important;
+ width:var(--sv-header-slot)!important;height:var(--sv-header-slot)!important;
+}
+html[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-head-tools .sv-doc-search-toggle{
+ width:var(--sv-header-slot)!important;height:var(--sv-header-slot)!important;
+ min-width:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;
+ border:var(--sv-header-circle-border)!important;border-radius:50%!important;
+ background:var(--sv-header-circle)!important;
+ color:var(--sv-header-icon-ink)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
+}
+html[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
+ .sv-doc-search-toggle svg{
+ width:var(--sv-header-action-icon)!important;height:var(--sv-header-action-icon)!important;
+ stroke-width:1.65!important;
+}
+/* Standalone Notebook. Its real back remains clickable; Notes New is
+   intentionally hidden by the existing chooser architecture. Do not fake a +. */
+html[data-theme="light"] body dialog#notesDialog.notes-dialog[open] > .notes-head{
+ box-sizing:border-box!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;
+ width:100%!important;height:var(--sv-header-row)!important;
+ min-height:var(--sv-header-row)!important;flex:0 0 var(--sv-header-row)!important;
+ margin:0 0 16px!important;padding:0 calc(var(--sv-header-slot) + 8px)!important;
+ border:0!important;border-radius:0!important;
+ background:var(--sv-header-surface)!important;background-image:none!important;
+ box-shadow:none!important;
+}
+html[data-theme="light"] body dialog#notesDialog.notes-dialog[open] > .notes-head > #notesTitle{
+ margin:0!important;padding:0!important;min-width:0!important;
+ color:var(--sv-header-ink)!important;
+ font:var(--sv-header-title-weight) var(--sv-header-title-size)/var(--sv-header-title-leading)
+  -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:var(--sv-header-title-tracking)!important;
+ text-align:center!important;
+}
+html[data-theme="light"] body dialog#notesDialog.notes-dialog[open]
+ > button.seyveo-dialog-close.sv-nav-arrow{
+ top:calc(24px + env(safe-area-inset-top,0px))!important;
+ left:max(16px,env(safe-area-inset-left,0px))!important;
+ width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;max-width:var(--sv-header-slot)!important;
+ height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;max-height:var(--sv-header-slot)!important;
+ border:var(--sv-header-circle-border)!important;border-radius:50%!important;
+ background:var(--sv-header-circle)!important;
+ color:var(--sv-header-icon-ink)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
+}
+html[data-theme="light"] body dialog#notesDialog.notes-dialog[open]
+ > button.seyveo-dialog-close.sv-nav-arrow svg{
+ width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
+ stroke-width:var(--sv-header-back-weight)!important;
+}
+/* Text notebook: unify existing upper controls without moving the editor,
+   its save/cancel actions or keyboard. */
+html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
+ :is(#noteReviewBack,.sv-note-nav-circle){
+ box-sizing:border-box!important;
+ width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;
+ height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;
+ padding:0!important;
+ border:var(--sv-header-circle-border)!important;border-radius:50%!important;
+ background:var(--sv-header-circle)!important;color:var(--sv-header-icon-ink)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
+}
+html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
+ #noteReviewBack svg{
+ width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
+ stroke:var(--sv-header-icon-ink)!important;
+ stroke-width:var(--sv-header-back-weight)!important;
+}
+html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
+ .sv-note-nav-brand strong{
+ color:var(--sv-header-ink)!important;
+ font:var(--sv-header-title-weight) var(--sv-header-title-size)/var(--sv-header-title-leading)
+  -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:var(--sv-header-title-tracking)!important;
+}
+/* Health: 62px top row, 42px existing back & plus, same gentle material.
+   Health's scrolling medical content and bottom dock are entirely excluded. */
+html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > #calendarSpaceTitleHeading{
+ box-sizing:border-box!important;
+ height:var(--sv-header-row)!important;min-height:var(--sv-header-row)!important;
+ width:calc(100% + 28px)!important;
+ margin:0 -14px 12px!important;padding:0 65px!important;
+ background:var(--sv-header-surface)!important;background-image:none!important;
+ color:var(--sv-header-ink)!important;-webkit-text-fill-color:var(--sv-header-ink)!important;
+ font:var(--sv-header-title-weight) var(--sv-header-title-size)/var(--sv-header-title-leading)
+   -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:var(--sv-header-title-tracking)!important;
+}
+html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > :is(button.seyveo-dialog-close.sv-nav-arrow,button.sv-health-header-add:not([hidden])){
+ top:calc(23px + env(safe-area-inset-top,0px))!important;
+ width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;max-width:var(--sv-header-slot)!important;
+ height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;max-height:var(--sv-header-slot)!important;
+ padding:0!important;margin:0!important;
+ border:var(--sv-header-circle-border)!important;border-radius:50%!important;
+ background:var(--sv-header-circle)!important;
+ color:var(--sv-header-icon-ink)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
+}
+html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > button.seyveo-dialog-close.sv-nav-arrow svg{
+ width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
+ stroke-width:var(--sv-header-back-weight)!important;
+}
+html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > button.sv-health-header-add:not([hidden]) svg{
+ width:var(--sv-header-action-icon)!important;height:var(--sv-header-action-icon)!important;
+ stroke-width:var(--sv-header-action-weight)!important;
+}
+/* Accessibility and system settings. */
+@media(prefers-reduced-transparency:reduce){
+ html[data-theme="light"] body dialog#notesDialog.notes-dialog[open] > button.seyveo-dialog-close.sv-nav-arrow,
+ html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+  > :is(button.seyveo-dialog-close.sv-nav-arrow,button.sv-health-header-add:not([hidden])){
+  background:#E3E4E9!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
