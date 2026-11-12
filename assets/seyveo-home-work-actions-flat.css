@@ -651,3 +651,22 @@
  color:var(--secondary)!important;
  opacity:.76!important;
 }
+
+/* Home tutorial card actions: unified black outline glyphs.
+   Same soft silver background on all three, without a black filled tile. */
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden]),
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
+ background:rgba(43,48,55,.09)!important;
+ color:#000000!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden]) .sv-card-symbol,
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button[data-sv-card-icon]:not([hidden]) .sv-card-symbol *{
+ color:#000000!important;
+ stroke:#000000!important;
+ opacity:1!important;
+ filter:none!important;
+}
