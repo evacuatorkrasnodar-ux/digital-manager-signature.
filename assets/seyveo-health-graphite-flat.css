@@ -714,6 +714,19 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
   height:69px!important;font-size:44px!important;
  }
 }
+/* Short, readable explanation appears below the coloured verdict only
+   when the measurement deserves attention. No new panels or decoration. */
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ #calendarBpQuickAdvice .sv-bp-advice-line{
+ display:block!important;flex-basis:100%!important;
+ margin:3px 0 0!important;padding:0!important;
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+ font:450 12px/1.48 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] #svCareScroll
+ :is(#calendarBpReport,#calendarBpQuickAdvice)[data-level="watch"]{
+ --sv-bp-status-ink:#86D9A4;
+}
 /* Color is functional, not decorative: ONLY Sayvi's short pressure
    assessment changes shade. Explanations, figures, page, cards and dock
    preserve their existing appearance. */
