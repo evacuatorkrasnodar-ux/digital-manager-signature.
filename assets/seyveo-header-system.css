@@ -264,6 +264,54 @@ html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][
  width:var(--sv-header-action-icon)!important;height:var(--sv-header-action-icon)!important;
  stroke-width:var(--sv-header-action-weight)!important;
 }
+/* Notebook drawing studio: keep its real pen/eraser toolbar, canvas,
+   undo, and input handlers; only the upper chrome joins the shared system.
+   The paper itself never inherits the header background. */
+html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+ box-sizing:border-box!important;
+ grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
+ min-height:calc(var(--sv-header-row) + env(safe-area-inset-top,0px))!important;
+ padding:calc(12px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px))
+  8px max(14px,env(safe-area-inset-left,0px))!important;
+ border:0!important;border-radius:0!important;
+ background:var(--sv-header-surface)!important;background-image:none!important;
+ box-shadow:none!important;
+}
+html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top
+ > :is(#notePaperBack,#notePaperUndo){
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;max-width:var(--sv-header-slot)!important;
+ height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;max-height:var(--sv-header-slot)!important;
+ margin:0!important;padding:0!important;
+ border:var(--sv-header-circle-border)!important;border-radius:50%!important;
+ background:var(--sv-header-circle)!important;
+ color:var(--sv-header-icon-ink)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
+}
+html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top
+ > #notePaperBack::before{
+ content:none!important;display:none!important;
+ background:none!important;box-shadow:none!important;
+}
+html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top
+ > #notePaperBack svg{
+ width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
+ stroke:var(--sv-header-icon-ink)!important;
+ stroke-width:var(--sv-header-back-weight)!important;
+}
+html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top
+ > #notePaperUndo svg{
+ width:var(--sv-header-action-icon)!important;height:var(--sv-header-action-icon)!important;
+ stroke:var(--sv-header-icon-ink)!important;
+}
+/* Do not hide the original disabled undo state. */
+html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top
+ > #notePaperUndo:disabled{
+ opacity:.28!important;pointer-events:none!important;
+}
+
 /* Accessibility and system settings. */
 @media(prefers-reduced-transparency:reduce){
  html[data-theme="light"] body dialog#notesDialog.notes-dialog[open] > button.seyveo-dialog-close.sv-nav-arrow,
