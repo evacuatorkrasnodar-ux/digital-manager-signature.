@@ -162,46 +162,35 @@ html[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
  width:var(--sv-header-action-icon)!important;height:var(--sv-header-action-icon)!important;
  stroke-width:1.65!important;
 }
-/* Standalone Notebook. Its real back remains clickable; Notes New is
-   intentionally hidden by the existing chooser architecture. Do not fake a +. */
-html[data-theme="light"] body dialog#notesDialog.notes-dialog[open] > .notes-head{
- box-sizing:border-box!important;display:flex!important;
- align-items:center!important;justify-content:center!important;
- /* Flush with the viewport edges, not the Notebook dialog's 16px padding. */
+/* Standalone Notebook uses the SAME isolated header DOM as Work.
+   The real Work header provides both rings, back glyph and plus glyph;
+   the older standalone close/title nodes stay in the DOM for their handlers.
+   No extra painted header, no fake action, no duplicated visual title. */
+html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > :is(button.seyveo-dialog-close.sv-nav-arrow,.notes-head){
+ display:none!important;
+}
+html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > seyveo-work-head#svNotebookSharedHeader{
+ /* Full bleed, matching Work's exact 62px heading row + device safe area. */
+ --gutter-l:max(12px,env(safe-area-inset-left,0px));
+ --gutter-r:max(12px,env(safe-area-inset-right,0px));
+ --gutter-t:calc(16px + env(safe-area-inset-top,0px));
+ box-sizing:border-box!important;
+ display:block!important;position:relative!important;z-index:5!important;
+ flex:0 0 auto!important;align-self:flex-start!important;
  width:calc(100% + max(16px,env(safe-area-inset-left,0px)) + max(16px,env(safe-area-inset-right,0px)))!important;
- height:var(--sv-header-row)!important;
- min-height:var(--sv-header-row)!important;flex:0 0 var(--sv-header-row)!important;
- margin:0 0 16px calc(-1 * max(16px,env(safe-area-inset-left,0px)))!important;
- padding:0 calc(var(--sv-header-slot) + 8px)!important;
- border:0!important;border-radius:0!important;
- background:var(--sv-header-surface)!important;background-image:none!important;
- box-shadow:none!important;
+ height:calc(var(--sv-header-row) + var(--gutter-t))!important;
+ min-height:calc(var(--sv-header-row) + var(--gutter-t))!important;
+ margin:calc(-1 * (14px + env(safe-area-inset-top,0px))) 0 0
+  calc(-1 * max(16px,env(safe-area-inset-left,0px)))!important;
+ padding:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
 }
-html[data-theme="light"] body dialog#notesDialog.notes-dialog[open] > .notes-head > #notesTitle{
- margin:0!important;padding:0!important;min-width:0!important;
- color:var(--sv-header-ink)!important;
- font:var(--sv-header-title-weight) var(--sv-header-title-size)/var(--sv-header-title-leading)
-  -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- letter-spacing:var(--sv-header-title-tracking)!important;
- text-align:center!important;
-}
-html[data-theme="light"] body dialog#notesDialog.notes-dialog[open]
- > button.seyveo-dialog-close.sv-nav-arrow{
- top:calc(24px + env(safe-area-inset-top,0px))!important;
- left:max(16px,env(safe-area-inset-left,0px))!important;
- width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;max-width:var(--sv-header-slot)!important;
- height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;max-height:var(--sv-header-slot)!important;
- border:var(--sv-header-circle-border)!important;border-radius:50%!important;
- background:var(--sv-header-circle)!important;
- color:var(--sv-header-icon-ink)!important;
- box-shadow:var(--sv-header-circle-shadow)!important;
- -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
- backdrop-filter:var(--sv-header-circle-filter)!important;
-}
-html[data-theme="light"] body dialog#notesDialog.notes-dialog[open]
- > button.seyveo-dialog-close.sv-nav-arrow svg{
- width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
- stroke-width:var(--sv-header-back-weight)!important;
+/* Keep a clean content transition under the header and safe touch targets. */
+html body dialog#notesDialog.notes-dialog[open][data-sv-shared-header="true"]
+ > #svNotebookCreateTiles{
+ margin-top:15px!important;
 }
 /* Text notebook: unify existing upper controls without moving the editor,
    its save/cancel actions or keyboard. */
