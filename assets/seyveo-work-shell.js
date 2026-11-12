@@ -39,27 +39,14 @@
   nav.append(button);
  }
  shell.prepend(nav);
- // The header is also ONE persistent node; old headers retain their listeners.
- const heading=document.createElement('header');
- heading.id='svWorkHeader';
- const back=document.createElement('button');
- back.type='button';
- back.id='svWorkBack';
- back.classList.add('sv-work-back-control');
- back.setAttribute('aria-label','Вернуться назад');
- back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';
- const title=document.createElement('h1');
- title.id='svWorkTitle';
- const add=document.createElement('button');
- add.type='button';
- add.id='svWorkAdd';
- add.setAttribute('aria-label','Создать событие или дело');
- const plusIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>';
- const searchIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 5 5"/></svg>';
- add.innerHTML=plusIcon;
+ // Mount one isolated, newly written header. Its controls live inside
+ // Shadow DOM, so old app styles cannot remove Back's circular material.
+ const workHeader=window.SEYVEO_WORK_HEADER?.create();
+ if(!workHeader)throw new Error('SEYVEO Work header module is missing');
+ const {host:heading,back,title,add}=workHeader;
+ const plusIcon=workHeader.icons.plus;
+ const searchIcon=workHeader.icons.search;
  add.dataset.svHeaderIcon='add';
- // One real, persistent header; the legacy page headings remain hidden.
- heading.append(back,title,add);
  shell.prepend(heading);
  const legacyTasksBack=document.getElementById('unifiedTasksBack');
  const legacyCalendarBack=document.getElementById('calendarBack');
@@ -193,6 +180,7 @@
     : (name==='personal'?'Мои дела':name==='calendar'?'Календарь':name==='notes'?'Блокнот':name==='business'?'Кабинет':'Моя работа');
   }
   heading.hidden=!visible;
+  heading.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
   title.textContent=history?'История':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
@@ -204,7 +192,7 @@
   // including History. Do not write inline visual overrides here.
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
-  add.hidden=history||active==='employee';
+  add.hidden=active==='employee';
   const nextIcon=history?'search':'add';
   if(add.dataset.svHeaderIcon!==nextIcon){
    add.innerHTML=history?searchIcon:plusIcon;
@@ -288,6 +276,7 @@
  observer.observe(calendar,{attributes:true,attributeFilter:['hidden']});
  observer.observe(oldTasks,{attributes:true,attributeFilter:['data-manager']});
  observer.observe(oldCalendar,{attributes:true,attributeFilter:['hidden']});
+ observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
  // Keep the visible + accessible state in sync when the original
  // calendar handlers close their menu (choice, outside tap or Escape).
  if(calendarAdd)observer.observe(calendarAdd,{attributes:true,attributeFilter:['aria-expanded']});
