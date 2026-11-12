@@ -1448,11 +1448,12 @@ html body #svWorkShell[data-history="true"] #svWorkAdd{display:none!important}
  column-gap:6px!important;align-items:center!important;
  margin:0 0 3px!important;padding:0 6px!important;
 }
-/* One continuous, softly tinted header panel. This is the header's OWN
-   background, not a pseudo-element or an overlay on the buttons. */
+/* Light header reference: one flat, separate tint ending at the
+   header bottom. No gradient, pseudo-element, glow or button edits. */
 :root[data-theme="light"] #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkHeader{
- background:linear-gradient(180deg,#F5F4F8 0%,#F1F0F5 100%)!important;
- border-bottom:1px solid rgba(187,187,198,.32)!important;
+ background:#F2F1F6!important;
+ background-image:none!important;
+ border-bottom:1px solid #E9E8ED!important;
  box-shadow:none!important;
 }
 #svWorkShell[data-shared-work="true"]:not([data-history="true"]) #svWorkBack,
