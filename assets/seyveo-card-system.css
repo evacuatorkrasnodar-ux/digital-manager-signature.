@@ -789,18 +789,34 @@
  outline:2px solid var(--sv-card-ink)!important;
  outline-offset:2px!important;
 }
-/* Once the user chooses Sayvi or manual editing, replace the three
-   decisions with ONE familiar, explicit Send / Save icon+label. */
-.sv-card-system--rendered .sv-card-draft-confirm.sv-card-icon-button{
+/* Final human-controlled action (Card Engine / Studio): no auto-send.
+   Send uses only an accessible paper plane; Save/Confirm retain text. */
+.sv-card-system--rendered .sv-card-draft-confirm.sv-card-icon-button:not([data-sv-card-icon="send"]){
  display:inline-flex!important;flex-direction:row!important;
  align-items:center!important;justify-content:center!important;
- gap:8px!important;min-width:110px;
+ gap:8px!important;min-width:110px!important;
  min-height:44px!important;padding:8px 16px!important;
- border-radius:999px!important;background:#38383A!important;
- color:#F7F7F8!important;
+ border-radius:999px!important;background:#38383A!important;color:#F7F7F8!important;
 }
+.sv-card-system--rendered .sv-card-draft-confirm.sv-card-icon-button[data-sv-card-icon="send"]{
+ display:inline-flex!important;flex-direction:row!important;
+ align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;
+ flex:0 0 50px!important;width:50px!important;min-width:50px!important;max-width:50px!important;
+ height:50px!important;min-height:50px!important;max-height:50px!important;
+ padding:0!important;margin:0!important;gap:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;color:#FFFFFF!important;
+ box-shadow:none!important;
+}
+.sv-card-system--rendered .sv-card-draft-confirm.sv-card-icon-button[data-sv-card-icon="send"]
+ .sv-card-icon-caption{display:none!important}
 .sv-card-system--rendered .sv-card-draft-confirm .sv-card-symbol{
  width:19px;height:19px;
+}
+.sv-card-system--rendered .sv-card-draft-confirm[data-sv-card-icon="send"] svg.sv-card-symbol{
+ width:23px!important;height:23px!important;flex:0 0 23px!important;
+ stroke-width:1.7!important;fill:none!important;
 }
 .sv-card-system--rendered .sv-card-draft-confirm .sv-card-icon-caption{
  font-size:12px;font-weight:550;
