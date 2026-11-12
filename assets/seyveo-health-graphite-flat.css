@@ -703,7 +703,7 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  opacity:.73!important;
 }
 
-/* HEALTH LIGHT · pearl matte dock with hand-marked directional edge glints v59.
+/* HEALTH LIGHT · pearl matte dock with individually placed directional glints v60.
    The global dock is a single DOM instance; this sheet changes ONLY its
    appearance while portaled inside the Health dialog in the white theme.
    No pseudo-surface behind the dock: the capsule and search button own
@@ -779,22 +779,39 @@ html body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  position:absolute!important;inset:.3px!important;
  box-sizing:border-box!important;
  padding:1.8px!important;border-radius:inherit!important;
+ /* Capsule: left-upper lip ~285deg; right-lower lip ~108deg.
+    Search circle uses its own 135deg / 315deg arcs below. */
  background:conic-gradient(from 0deg at 50% 50%,
-  transparent 0deg 58deg,
-  rgba(255,255,255,.10) 73deg,
-  rgba(255,255,255,.72) 98deg,
-  rgba(255,255,255,.40) 127deg,
-  transparent 153deg 238deg,
-  rgba(255,255,255,.10) 250deg,
-  rgba(255,255,255,.78) 280deg,
-  rgba(255,255,255,.48) 310deg,
-  transparent 334deg 360deg
+  transparent 0deg 78deg,
+  rgba(255,255,255,.08) 91deg,
+  rgba(255,255,255,.62) 109deg,
+  rgba(255,255,255,.35) 127deg,
+  transparent 150deg 258deg,
+  rgba(255,255,255,.10) 270deg,
+  rgba(255,255,255,.68) 288deg,
+  rgba(255,255,255,.37) 305deg,
+  transparent 329deg 360deg
  )!important;
  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0)!important;
  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0)!important;
  -webkit-mask-composite:xor!important;
  mask-composite:exclude!important;
  pointer-events:none!important;z-index:3!important;
+}
+/* Circular search has different angular geometry from the wide capsule:
+   its upper-left glint peaks at 315deg, lower-right at 135deg. */
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock > #navManage::after{
+ background:conic-gradient(from 0deg at 50% 50%,
+  transparent 0deg 101deg,
+  rgba(255,255,255,.09) 112deg,
+  rgba(255,255,255,.62) 135deg,
+  rgba(255,255,255,.32) 153deg,
+  transparent 172deg 281deg,
+  rgba(255,255,255,.09) 292deg,
+  rgba(255,255,255,.68) 315deg,
+  rgba(255,255,255,.35) 334deg,
+  transparent 352deg 360deg
+ )!important;
 }
 :root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"] > footer.dock.sv-shared-dock .sv-health-dock-tab{
  -webkit-appearance:none!important;appearance:none!important;
