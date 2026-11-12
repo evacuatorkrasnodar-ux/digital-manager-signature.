@@ -249,3 +249,96 @@
     will-change:auto!important;
   }
 }
+
+
+/* Silver Mist geometry v4 · aligned to the approved Health dock.
+ * Equal physical edge gutters and baseline, with a 63px search circle.
+ * The 4-action capsule intentionally remains wider than Health's 2-action
+ * capsule. Four working buttons, Sayvi voice-hold and browser/music modes
+ * keep their exact original DOM and handlers. No extra backplates.
+ */
+:root[data-theme="light"] body > footer.dock.sv-shared-dock,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock {
+  --sv-feng-side:clamp(14px,5vw,22px);
+  --sv-feng-capsule:clamp(176px,60vw,226px);
+  box-sizing:border-box!important;
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;
+  transform:translate3d(-50%,0,0)!important;
+  width:calc(100vw - var(--sv-feng-side) - var(--sv-feng-side))!important;
+  max-width:390px!important;
+  height:63px!important;
+  min-height:63px!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,calc(var(--sv-feng-capsule) / 4))) minmax(0,1fr) 63px!important;
+  align-items:center!important;
+  justify-items:stretch!important;
+  gap:0!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock::before,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::before {
+  left:0!important;
+  right:auto!important;
+  top:0!important;
+  bottom:0!important;
+  width:var(--sv-feng-capsule)!important;
+  height:63px!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock::after,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::after {
+  left:auto!important;
+  right:0!important;
+  top:0!important;
+  bottom:0!important;
+  width:63px!important;
+  height:63px!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #navHome,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #navHome {
+  grid-column:1!important;
+  grid-row:1!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #navTasks,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #navTasks {
+  grid-column:2!important;
+  grid-row:1!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #assistantButton,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #assistantButton {
+  grid-column:3!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  align-self:center!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #navPicture,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #navPicture {
+  grid-column:4!important;
+  grid-row:1!important;
+}
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > #navManage,
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > #navManage {
+  position:relative!important;
+  grid-column:6!important;
+  grid-row:1!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  justify-self:end!important;
+  align-self:center!important;
+  margin:0!important;
+}
+
+/* Keep all 4 icon centers on the same horizontal baseline.
+ * Preserve 44px+ tappable areas, even on narrow iPhones. */
+:root[data-theme="light"] body > footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture),
+:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture) {
+  box-sizing:border-box!important;
+  justify-self:stretch!important;
+  align-self:center!important;
+  min-width:0!important;
+  margin:0!important;
+}
