@@ -136,7 +136,7 @@
 #seyveoCardStudio .scs-phone .sv-card-system--rendered{color:var(--text)}
 #seyveoCardStudio .scs-phone :is(.sv-card-source,.sv-card-label,.sv-card-training,.scs-state-detail){color:var(--secondary)}
 #seyveoCardStudio .scs-phone :is(.sv-card-title,.sv-card-value,.scs-state-name){color:var(--text)}
-#seyveoCardStudio .scs-phone .sv-card-action{color:var(--text)!important}
+#seyveoCardStudio .scs-phone .sv-card-action:not([data-sv-card-icon="sayvi"]){color:var(--text)!important}
 #seyveoCardStudio .scs-phone .sv-card-action[data-card-action="later"]{color:var(--secondary)!important}
 @media(max-width:420px){#seyveoCardStudio .scs-phone{padding:18px 13px 23px;border-radius:22px}}
 
