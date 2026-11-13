@@ -1403,3 +1403,32 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
 :root[data-theme="light"] #tasksPage #unifiedTasksTabs.tasks-switch > button[aria-pressed="true"]{
  background:#38383A!important;color:#FFFFFF!important;
 }
+
+/* SEYVEO personal task polish · no redundant numeric counter above All Tasks.
+   Actual task list and deadlines remain visible and accessible. */
+#svWorkShell #tasksPage[data-work-view="personal"] #tasksOverview{
+ display:none!important;
+}
+#tasksPage[data-work-view="personal"] .tasks-context-kicker{
+ color:#626770!important;
+ font-size:12px!important;
+ font-weight:540!important;
+ letter-spacing:.005em!important;
+ text-transform:none!important;
+ opacity:1!important;
+}
+#tasksPage[data-work-view="personal"] #tasksContextWhen[data-urgency="today"]{
+ color:#3D6EAB!important;
+}
+#tasksPage[data-work-view="personal"] #tasksContextWhen[data-urgency="overdue"]{
+ color:#A66B29!important;
+}
+:root[data-theme="dark"] #tasksPage[data-work-view="personal"] .tasks-context-kicker{
+ color:#B8BBC5!important;
+}
+:root[data-theme="dark"] #tasksPage[data-work-view="personal"] #tasksContextWhen[data-urgency="today"]{
+ color:#99BDEE!important;
+}
+:root[data-theme="dark"] #tasksPage[data-work-view="personal"] #tasksContextWhen[data-urgency="overdue"]{
+ color:#E7B77C!important;
+}
