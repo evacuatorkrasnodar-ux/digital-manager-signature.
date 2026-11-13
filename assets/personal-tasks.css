@@ -1432,3 +1432,29 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
 :root[data-theme="dark"] #tasksPage[data-work-view="personal"] #tasksContextWhen[data-urgency="overdue"]{
  color:#E7B77C!important;
 }
+
+/* Task list: scheduled time only; creation metadata lives under Подробнее. */
+#tasksPage .personal-task-menu{
+ flex-wrap:wrap!important;
+ align-items:center!important;
+ justify-content:flex-end!important;
+ gap:0 16px!important;
+}
+#tasksPage .personal-task-menu-details{
+ border:0!important;background:transparent!important;
+ padding:10px 2px!important;min-height:44px!important;
+ font:500 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#3874AC!important;cursor:pointer!important;
+}
+#tasksPage .personal-task-detail-data{
+ order:3!important;flex:0 0 100%!important;
+ padding:9px 0 11px!important;
+ border-top:1px solid rgba(60,60,67,.08)!important;
+ color:#676B73!important;
+ font:450 13px/1.6 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+#tasksPage .personal-task-detail-data[hidden]{display:none!important}
+#tasksPage .personal-task-detail-entry+ .personal-task-detail-entry{margin-top:3px!important}
+#tasksPage .personal-task-menu-details:focus-visible{outline:2px solid #3874AC!important;outline-offset:2px!important;border-radius:7px!important}
+:root[data-theme="dark"] #tasksPage .personal-task-menu-details{color:#8EBBEA!important}
+:root[data-theme="dark"] #tasksPage .personal-task-detail-data{color:#B5B5BE!important;border-top-color:rgba(255,255,255,.12)!important}
