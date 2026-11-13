@@ -170,7 +170,7 @@
 }
 #tasksPage #personalTaskList .personal-task-row.sv-agenda-entry{
  box-sizing:border-box!important;position:relative!important;
- display:grid!important;grid-template-columns:22px minmax(0,1fr) 29px!important;
+ display:grid!important;grid-template-columns:32px minmax(0,1fr)!important;
  grid-template-rows:auto!important;align-items:center!important;
  column-gap:7px!important;row-gap:0!important;
  width:100%!important;max-width:none!important;
@@ -185,7 +185,7 @@
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-art{
  box-sizing:border-box!important;position:relative!important;
- display:grid!important;place-items:center!important;
+ display:none!important;place-items:center!important;
  grid-column:1;grid-row:1;align-self:center!important;
  width:22px!important;min-width:22px!important;max-width:22px!important;
  height:30px!important;min-height:30px!important;
@@ -227,18 +227,38 @@
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-name.is-done{
  color:#959BA6!important;text-decoration:line-through;
 }
+/* Apple-like task checkbox: small outlined square, generous invisible tap target. */
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check{
- display:grid!important;place-items:center!important;
- grid-column:3;grid-row:1;align-self:center!important;
- flex:0 0 25px!important;width:25px!important;min-width:25px!important;
- height:25px!important;min-height:25px!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ position:relative!important;grid-column:1;grid-row:1;
+ align-self:center!important;justify-self:center!important;
+ flex:0 0 32px!important;width:32px!important;min-width:32px!important;
+ height:40px!important;min-height:40px!important;
  margin:0!important;padding:0!important;
- border:1px solid #CED4DC!important;border-radius:50%!important;
- background:#FFFFFF!important;color:#4F7398!important;
- box-shadow:none!important;font-size:13px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;color:transparent!important;
+ box-shadow:none!important;font-size:0!important;cursor:pointer;
 }
-#tasksPage #personalTaskList .sv-agenda-entry .personal-task-check[aria-pressed="true"]{
- background:#EEF4FA!important;border-color:#83A5C3!important;
+#tasksPage #personalTaskList .sv-agenda-entry .personal-task-check::before{
+ content:"";position:absolute;inset:auto;
+ width:17px;height:17px;box-sizing:border-box;
+ border:1.4px solid #6A9FC5;border-radius:4px;background:#FFF;
+}
+#tasksPage #personalTaskList .sv-agenda-entry[data-kind="personal"] .personal-task-check::before{
+ border-color:#A69CB8;
+}
+#tasksPage #personalTaskList .sv-agenda-entry .personal-task-check[aria-pressed="true"]::before{
+ background:#6A9FC5;border-color:#6A9FC5;
+}
+#tasksPage #personalTaskList .sv-agenda-entry[data-kind="personal"] .personal-task-check[aria-pressed="true"]::before{
+ background:#A69CB8;border-color:#A69CB8;
+}
+#tasksPage #personalTaskList .sv-agenda-entry .personal-task-check[aria-pressed="true"]::after{
+ content:"✓";position:absolute;color:#FFF;
+ font:650 12px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+#tasksPage #personalTaskList .sv-agenda-entry .personal-task-check:focus-visible{
+ outline:2px solid #4E86BB!important;outline-offset:1px!important;border-radius:7px!important;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-sayvi{
  display:none!important;grid-column:2;grid-row:2;
@@ -356,9 +376,10 @@
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-entry .sv-agenda-entry-time{
  color:#A7AAB4!important;
 }
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check{
- background:#292D34!important;border-color:#6D7481!important;color:#BDD3EC!important;
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check::before{
+ background:#292D34;border-color:#8BAAC4;
 }
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-entry[data-kind="personal"] .personal-task-check::before{border-color:#B3A8C4}
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-entry .personal-task-menu:not([hidden]){
  border-top-color:#40444C!important;
 }
