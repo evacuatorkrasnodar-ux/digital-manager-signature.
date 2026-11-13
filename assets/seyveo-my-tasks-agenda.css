@@ -749,3 +749,17 @@ html.sv-agenda-scroll-active .app{
 html.sv-task-selection-active #svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools{
  padding-bottom:calc(105px + env(safe-area-inset-bottom,0px))!important;
 }
+
+
+/* When the search keyboard opens on a touch device, free the lower viewport.
+   Never resize, recolor or rebuild the approved global dock. */
+@media(max-width:699px) and (hover:none) and (pointer:coarse){
+ :root.sv-task-search-focus :is(
+  body > footer.dock.sv-shared-dock,
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
+ ){
+  transform:translate3d(0,calc(100% + 24px + env(safe-area-inset-bottom,0px)),0)!important;
+  opacity:0!important;
+  pointer-events:none!important;
+ }
+}
