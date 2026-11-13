@@ -68,7 +68,7 @@ function read(){
  createdAt:typeof item.createdAt==='string'?item.createdAt:'',doneAt:typeof item.doneAt==='string'?item.doneAt:'',
  ...(safeNoteId(item.sourceNoteId)?{sourceNoteId:item.sourceNoteId}:{}),
  ...(typeof item.source==='string'&&['sayvi','work','notebook'].includes(item.source)?{source:item.source}:{}),
- category:item.category==='work'||item.source==='work'?'work':'personal'}));
+ category:item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal')}));
 }
 function save(items){
  try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)));return true}
@@ -529,7 +529,7 @@ window.SEYVEO_TASK_ASSIST=Object.freeze({open:askSayviForTask});
  * No artificial event duration or fictitious task dates are introduced. */
 let svTaskDateMode='day',svTaskSelectedDate='',svTaskWeekAnchor='';
 let svTaskCategoryFilter='all';
-const svTaskCategory=item=>item.category==='work'||item.source==='work'?'work':'personal';
+const svTaskCategory=item=>item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal');
 const svTaskMatchesCategory=item=>svTaskCategoryFilter==='all'||svTaskCategory(item)===svTaskCategoryFilter;
 function svTaskISO(d){
  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
