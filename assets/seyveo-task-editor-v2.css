@@ -446,3 +446,17 @@ html body dialog#personalTaskDialog.sv-task-editor-v2[open]
  #seyveoTaskDuePicker .cal-pick-day:focus-visible{
  outline:2px solid #38383A!important;outline-offset:2px!important;
 }
+
+/* New Task · optional native iOS time selector, no header/dock changes */
+html body dialog#personalTaskDialog.sv-task-editor-v2 #personalTaskForm > .sv-task-time-row{margin-top:-10px!important;border-top:1px solid rgba(60,60,67,.09)!important;border-radius:0 0 16px 16px!important}
+html body dialog#personalTaskDialog.sv-task-editor-v2 #personalTaskForm > .personal-task-field:has(+ .sv-task-time-row){border-radius:16px 16px 0 0!important;border-bottom-color:transparent!important}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-clock-icon{width:20px;height:20px;flex:0 0 20px;stroke:#477AA8;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-display{margin-left:auto;margin-right:23px;white-space:nowrap;font:480 15px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#737780;pointer-events:none}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-row[data-filled="true"] .sv-task-time-display{color:#356EAA}
+html body dialog#personalTaskDialog.sv-task-editor-v2 #personalTaskTime{position:absolute!important;inset:0!important;z-index:3!important;width:100%!important;height:100%!important;opacity:0!important;cursor:pointer!important;border:0!important}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-clear{position:absolute;z-index:5;right:37px;top:50%;transform:translateY(-50%);width:26px;height:30px;border:0;background:#F4F4F6;color:#737780;font-size:21px;font-weight:350;cursor:pointer}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-clear[hidden]{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-row[data-filled="true"] .sv-task-time-display{margin-right:46px}
+:root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-clock-icon{stroke:#8ABAF0}
+:root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-row[data-filled="true"] .sv-task-time-display{color:#94BDF3}
+:root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-clear{background:#303034;color:#D0D0D5}
