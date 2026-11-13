@@ -40,18 +40,23 @@
  display:grid;grid-template-columns:minmax(0,1fr);
  align-items:center;position:relative;
  border-top:1px solid var(--agenda-rule);
+ border-bottom:1px solid var(--agenda-rule);
  padding-top:0;
 }
 #tasksPage #svTasksDateNav .sv-agenda-week{
- box-sizing:border-box;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
- width:100%;min-width:0;gap:0;overflow:hidden;
+ box-sizing:border-box;display:block;
+ width:100%;min-width:0;overflow:hidden;
  touch-action:pan-y;overscroll-behavior-x:contain;
+}
+#tasksPage #svTasksDateNav .sv-agenda-track{
+ box-sizing:border-box;display:flex;flex-wrap:nowrap;
+ width:100%;min-width:0;will-change:transform;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day{
  box-sizing:border-box;display:flex;flex-direction:column;
  justify-content:flex-start;align-items:center;gap:5px;
- position:relative;z-index:0;
- width:100%;min-width:0;min-height:139px;
+ position:relative;z-index:0;flex:0 0 calc(20% - 3.6px);
+ width:calc(20% - 3.6px);min-width:0;min-height:139px;
  padding:8px 0 5px;margin:0;
  color:var(--agenda-text);background:#FFFFFF;
  border:0;border-right:1px solid #E5E8ED;border-radius:0;
@@ -59,7 +64,9 @@
  transition:box-shadow .18s ease,transform .18s ease,border-color .18s ease;
  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
-#tasksPage #svTasksDateNav .sv-agenda-day:first-child{border-left:1px solid #E5E8ED}
+#tasksPage #svTasksDateNav .sv-agenda-day:first-child{
+ margin-left:calc(-20% + 12.6px);border-left:1px solid #E5E8ED;
+}
 #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
  z-index:1;transform:translateY(-1px);
  border:1px solid #DFE3E9;border-top-color:#F4F5F7;
