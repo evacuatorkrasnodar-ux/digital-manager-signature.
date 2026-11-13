@@ -306,7 +306,7 @@
  #svInlineTaskTools .sv-tool-bulk button:disabled{opacity:.4}
  /* Only the selection submode swaps the dock for a wider bottom toolbar.
     Full-width light header material, safe-area aware on iPhone. */
- html.sv-task-selection-active body > footer.dock.sv-shared-dock{
+ html.sv-task-selection-active footer.dock.sv-shared-dock{
   display:none!important
  }
  #svTaskSelectionBar[hidden]{display:none!important}
