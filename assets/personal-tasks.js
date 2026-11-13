@@ -99,14 +99,8 @@ function displayDate(item){
  const label=strDate(item.due);
  const current=new Date(),today=[current.getFullYear(),String(current.getMonth()+1).padStart(2,'0'),String(current.getDate()).padStart(2,'0')].join('-');
  const day=label?(item.due<today?'Срок прошёл · '+label:item.due===today?'Сегодня':'До '+label):'';
- // List metadata always shows the actual creation time, regardless of
- // whether a separate execution time was scheduled in the editor.
- // Never conflate scheduled time with the creation timestamp.
- const stamp=typeof item.createdAt==='string'?Date.parse(item.createdAt):NaN;
- const recorded=Number.isFinite(stamp)&&stamp>0?
-  new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'}).format(new Date(stamp)):'';
- const scheduled=day&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'')?' · в '+item.time:'';
- return day?(day+scheduled+(recorded?' · создано '+recorded:'')):(recorded?'Создано '+recorded:'');
+ const scheduled=day&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'')?' · '+item.time:'';
+ return day+scheduled;
 }
 /* Suggest only a next EXPLICIT instruction from the same current note.
    Ignore already saved tasks (even completed), ambiguous notes and old relative
@@ -568,6 +562,21 @@ function row(item,compact=false,deferred=false){
   checkbox.setAttribute('aria-label',item.done?'Вернуть дело: '+item.title:'Завершить дело: '+item.title);
   checkbox.setAttribute('aria-pressed',String(item.done));
   const menu=element('div','personal-task-menu');menu.hidden=true;
+  const detailsButton=element('button','personal-task-menu-details','Подробнее');
+  detailsButton.type='button';detailsButton.dataset.taskDetails=item.id;
+  detailsButton.setAttribute('aria-expanded','false');
+  detailsButton.setAttribute('aria-label','Подробнее о деле: '+item.title);
+  const details=element('div','personal-task-detail-data');details.hidden=true;
+  const created=Date.parse(item.createdAt||'');
+  const creation=Number.isFinite(created)?
+   new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(created)):'Неизвестно';
+  const scheduled=item.due?(strDate(item.due)+(item.time?' · '+item.time:'')):'Не назначено';
+  details.append(
+   element('div','personal-task-detail-entry','Создано: '+creation),
+   element('div','personal-task-detail-entry','Выполнить: '+scheduled),
+   element('div','personal-task-detail-entry','Статус: '+(item.done?'Выполнено':'Не выполнено'))
+  );
+  menu.append(detailsButton,details);
   const remove=element('button','personal-task-menu-delete','Удалить дело');
   remove.type='button';remove.dataset.taskDelete=item.id;
   remove.setAttribute('aria-label','Удалить дело: '+item.title);
@@ -907,6 +916,14 @@ list.addEventListener('click',e=>{
   btn.setAttribute('aria-expanded',String(!expanded));
   const menu=taskRow.querySelector('.personal-task-menu');
   if(menu)menu.hidden=expanded;
+ }
+ else if(btn.dataset.taskDetails){
+  const menu=btn.closest('.personal-task-menu');
+  const details=menu?.querySelector('.personal-task-detail-data');
+  if(details){
+   details.hidden=!details.hidden;
+   btn.setAttribute('aria-expanded',String(!details.hidden));
+  }
  }
  else if(btn.dataset.taskCall){
   const task=read().find(x=>x.id===btn.dataset.taskCall);
