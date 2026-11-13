@@ -1859,3 +1859,37 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
 #tasksPage #svTasksDateNav .sv-task-pill-time{
  font-size:10px!important;
 }
+
+
+/* Reference calendar all-day line: label + sky capsule + cool gray capsule. */
+#tasksPage #svTasksDateNav .sv-task-all-day-line{
+ display:grid;grid-template-columns:35px minmax(0,1fr);
+ align-items:center;column-gap:5px;width:100%;margin:0 0 9px;
+}
+#tasksPage #svTasksDateNav .sv-task-all-day-label{
+ color:#8B909A;font:450 9px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ white-space:nowrap;
+}
+#tasksPage #svTasksDateNav .sv-task-all-day-line .sv-task-event-pills{
+ min-width:0;margin:0!important;gap:5px!important;
+}
+#tasksPage #svTasksDateNav .sv-task-event-pill[data-tint="neutral"]{
+ --sv-pill-bg:#EBEDF0;--sv-pill-fg:#30343D;--sv-pill-dot:#B18DD4;
+}
+#tasksPage #svTasksDateNav .sv-task-event-pill[data-tint="neutral"] .sv-task-pill-dot{
+ box-sizing:border-box;background:transparent!important;border:1.5px solid #B18DD4;
+}
+#tasksPage #svTasksDateNav .sv-task-event-pill[data-tint="blue"] .sv-task-pill-dot{
+ width:13px!important;height:13px!important;flex-basis:13px!important;
+ background:#38B5F0!important;border:2px solid #BFEAFB;
+}
+#tasksPage #svTasksDateNav .sv-task-event-pill[data-tint="blue"] .sv-task-pill-dot::after{
+ content:"✦";display:block;color:white;font-size:8px;line-height:9px;text-align:center;
+}
+#tasksPage #svTasksDateNav .sv-task-event-pill[data-tint="neutral"] .sv-task-pill-dot{
+ width:12px!important;height:12px!important;flex-basis:12px!important;
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-event-pill[data-tint="neutral"]{
+ --sv-pill-bg:#383B42;--sv-pill-fg:#F0F0F3;
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-all-day-label{color:#ADB1BC}
