@@ -501,3 +501,26 @@
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="blue"]{background:#0A84FF}
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="yellow"]{background:#FFD60A}
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="purple"]{background:#BF5AF2}
+
+
+/* An outlined rounded square marks an actionable reminder; events keep dots. */
+#tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"] .sv-agenda-scene-dot{
+ appearance:none;box-sizing:border-box;display:grid;place-items:center;
+ width:13px;height:13px;min-width:13px;min-height:13px;
+ padding:0;margin:0;
+ background:transparent!important;border:1.5px solid #55B7C5!important;
+ border-radius:3px!important;box-shadow:none!important;
+ cursor:pointer;color:#FFFFFF;
+}
+#tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"] .sv-agenda-scene-dot[aria-pressed="true"]{
+ background:#55B7C5!important;
+}
+#tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"] .sv-agenda-scene-dot[aria-pressed="true"]::after{
+ content:"✓";font:700 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+#tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"] .sv-agenda-scene-dot:focus-visible{
+ outline:2px solid #0A84FF!important;outline-offset:3px!important;
+}
+#tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"][data-done="true"] .personal-task-name{
+ color:#949AA4!important;text-decoration:line-through!important;
+}
