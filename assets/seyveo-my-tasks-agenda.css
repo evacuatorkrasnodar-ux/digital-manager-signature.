@@ -41,21 +41,18 @@
  padding-top:0;
 }
 #tasksPage #svTasksDateNav .sv-agenda-week{
- box-sizing:border-box;display:flex;flex-wrap:nowrap;position:relative;
- width:100%;min-width:0;gap:0;overflow-x:auto;overflow-y:hidden;
- scroll-snap-type:x proximity;scrollbar-width:none;
- -webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;
- overscroll-behavior-x:contain;
+ box-sizing:border-box;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ width:100%;min-width:0;gap:0;overflow:hidden;
+ touch-action:pan-y;overscroll-behavior-x:contain;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day{
- box-sizing:border-box;display:flex;flex:0 0 20%;flex-direction:column;
+ box-sizing:border-box;display:flex;flex-direction:column;
  justify-content:flex-start;align-items:center;gap:5px;
- width:20%;min-width:0;min-height:139px;
+ width:100%;min-width:0;min-height:139px;
  padding:8px 0 5px;margin:0;
  color:var(--agenda-text);background:#FFFFFF;
  border:0;border-right:1px solid #ECEEF1;border-radius:0;
  box-shadow:inset 0 1px 2px rgba(40,51,64,.035);
- scroll-snap-align:start;
  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day:focus-visible,
