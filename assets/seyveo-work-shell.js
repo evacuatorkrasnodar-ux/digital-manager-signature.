@@ -56,6 +56,7 @@
  const historyBar=heading.shadowRoot?.querySelector('.bar');
  const historyGroup=document.createElement('div');
  historyGroup.className='sv-history-dual';
+ const searchTasks=document.createElement('button');searchTasks.type='button';searchTasks.className='control sv-history-search';searchTasks.innerHTML=searchIcon;searchTasks.setAttribute('aria-label','Поиск по всем делам');
  const selectHistory=document.createElement('button');
  selectHistory.className='control sv-history-select';
  selectHistory.type='button';
@@ -64,16 +65,16 @@
  selectHistory.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="m7 10 2 2 3-3M13.8 10h3.5M7 15.5h10.3"/></svg>';
  if(historyBar){
   historyBar.append(historyGroup);
-  historyGroup.append(selectHistory,add);
+  historyGroup.append(selectHistory,searchTasks,add);
   const design=document.createElement('style');
   design.textContent=`
   .sv-history-dual{display:contents}
   .sv-history-select{display:none}
-  :host([data-history-tools="true"]) .bar{position:relative}
-  :host([data-history-tools="true"]) .sv-history-dual{
+  :host([data-task-tools="true"]) .bar{position:relative}
+  :host([data-task-tools="true"]) .sv-history-dual{
    position:absolute;right:var(--gutter-r);top:var(--gutter-t);
    z-index:2;box-sizing:border-box;display:flex;align-items:center;
-   justify-content:center;gap:0;width:90px;height:42px;padding:0 2px;
+   justify-content:center;gap:0;width:126px;height:42px;padding:0 2px;
    border:var(--sv-header-circle-border,1px solid rgba(255,255,255,.94));
    border-radius:999px;
    background:var(--sv-header-circle,rgba(190,193,202,.43));
@@ -81,32 +82,32 @@
    -webkit-backdrop-filter:var(--sv-header-circle-filter,blur(12px));
    backdrop-filter:var(--sv-header-circle-filter,blur(12px));
   }
-  :host([data-history-tools="true"]) .sv-history-dual .control{
-   display:grid!important;flex:0 0 42px!important;
-   width:42px!important;height:40px!important;min-width:42px!important;
+  :host([data-task-tools="true"]) .sv-history-dual .control{
+   display:grid!important;flex:0 0 40px!important;
+   width:40px!important;height:40px!important;min-width:40px!important;
    min-height:40px!important;margin:0!important;padding:0!important;
    border:0!important;border-radius:999px!important;
    background:transparent!important;box-shadow:none!important;
    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
    color:var(--sv-header-icon-ink,#0B0B0D)!important;
   }
-  :host([data-history-tools="true"]) .sv-history-dual .control svg{
+  :host([data-task-tools="true"]) .sv-history-dual .control svg{
    width:20px;height:20px;stroke-width:1.7;
   }
-  :host([data-history-tools="true"]) .sv-history-dual .sv-history-select::after{
+  :host([data-task-tools="true"]) .sv-history-dual :is(.sv-history-select,.sv-history-search)::after{
    content:"";position:absolute;top:10px;bottom:10px;right:0;
    width:1px;background:rgba(100,106,119,.19);
   }
-  :host([data-history-tools="true"]) .sv-history-dual .sv-history-select{
+  :host([data-task-tools="true"]) .sv-history-dual :is(.sv-history-select,.sv-history-search){
    display:grid!important;position:relative;
   }
-  :host([data-history-tools="true"]) .sv-history-dual .control:active{
+  :host([data-task-tools="true"]) .sv-history-dual .control:active{
    background:rgba(120,125,140,.12)!important;
   }
-  :host([data-history-tools="true"]) .sv-history-dual .sv-history-select[aria-pressed="true"]{
+  :host([data-task-tools="true"]) .sv-history-dual .sv-history-select[aria-pressed="true"]{
    background:rgba(120,125,140,.16)!important;
   }
-  :host([data-history-tools="true"][data-theme="dark"]) .sv-history-dual{
+  :host([data-task-tools="true"][data-theme="dark"]) .sv-history-dual{
    background:var(--sv-header-circle,#38383A);
    border:var(--sv-header-circle-border,1px solid rgba(255,255,255,.14));
    box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
@@ -114,14 +115,8 @@
   `;
   heading.shadowRoot.append(design);
  }
- selectHistory.addEventListener('click',event=>{
-  event.stopPropagation();
-  window.dispatchEvent(new Event('seyveo:history-select-toggle'));
- });
- window.addEventListener('seyveo:history-selection-changed',event=>{
-  selectHistory.setAttribute('aria-pressed',String(event.detail?.active===true));
-  selectHistory.setAttribute('aria-label',event.detail?.active?'Отменить выбор записей':'Выбрать записи истории');
- });
+ selectHistory.addEventListener('click',event=>{event.stopPropagation();window.SEYVEO_TASK_INLINE?.toggle('select')});
+ searchTasks.addEventListener('click',event=>{event.stopPropagation();window.SEYVEO_TASK_INLINE?.toggle('search')});
  // Personal landing uses History in the left circle. Reuse the single
  // existing Action History panel; keep the original back chevron for subviews.
  const backIcon=back.innerHTML;
@@ -182,12 +177,6 @@
   }
  }
  back.addEventListener('click',()=>{
-  // Personal root: the left control is History rather than duplicate Back.
-  // Delegate to the existing launcher, preserving its data, state and events.
-  if(activeSection()==='personal'&&!tasks.classList.contains('sah-history-open')){
-   const launch=document.querySelector('#unifiedPersonalTasksView .personal-tasks-head .sah-inline-toggle');
-   if(launch&&!launch.hidden){launch.click();return;}
-  }
   if(notesPage?.open){notesPage.close();return;}
   if(tasks.classList.contains('sah-history-open')){
    document.querySelector('#seyveoActionHistoryPanel .sah-inline-head button')?.click();
@@ -273,20 +262,15 @@
   heading.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
-  heading.dataset.historyTools=String(history);
-  if(!history)selectHistory.setAttribute('aria-pressed','false');
+  heading.dataset.taskTools=String(active==='personal'&&!history);
+  if(active!=='personal')window.SEYVEO_TASK_INLINE?.close();
   title.textContent=history?'История':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // In the personal landing use the same approved circle for History.
   // Every nested view (including History) retains the real Back arrow.
-  back.hidden=false;
-  const showHistoryIcon=active==='personal'&&!history;
-  const backKind=showHistoryIcon?'history':'back';
-  if(back.dataset.svHeaderIcon!==backKind){
-   back.innerHTML=showHistoryIcon?historyIcon:backIcon;
-   back.dataset.svHeaderIcon=backKind;
-  }
-  back.setAttribute('aria-label',showHistoryIcon?'История выполненных дел':history?'Вернуться к моим делам':'Вернуться назад');
-  back.title=showHistoryIcon?'История': '';
+  back.hidden=active==='personal'&&!history;
+  if(back.dataset.svHeaderIcon!=='back'){back.innerHTML=backIcon;back.dataset.svHeaderIcon='back'}
+  back.setAttribute('aria-label',history?'Вернуться к моим делам':'Вернуться назад');
+  back.title='';
   back.setAttribute('aria-haspopup','false');
   // A single stylesheet now owns Back/Add material for all routes,
   // including History. Do not write inline visual overrides here.
@@ -388,7 +372,7 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:20,sync,
+  version:21,sync,
   isNotesInline:()=>true
  });
 })();
