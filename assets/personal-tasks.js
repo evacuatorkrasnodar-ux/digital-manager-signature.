@@ -547,57 +547,78 @@ function svTaskPalette(task){
  if(/документ|договор|бумаг|отчёт|отчет|письм|почт/.test(t))return 'blue';
  if(/семь|семей|мам|пап|дом|деть|дети/.test(t))return 'peach';
  if(/рабоч|клиент|проект|заказ|достав/.test(t))return 'amber';
- return 'silver';
+ if(/куп|продукт|магазин|покупк/.test(t))return 'peach';
+  const tones=['blue','lilac','rose','amber','peach'];
+  let hash=0;for(const symbol of t)hash=(hash*33+symbol.codePointAt(0))>>>0;
+  return tones[hash%tones.length];
 }
-function svTaskDrawDateNav(){
- const panel=list.parentElement;
- if(!panel)return;
+function svTaskDrawDateNav(rows=[]){
+ const panel=list.parentElement;if(!panel)return;
  let nav=panel.querySelector('#svTasksDateNav');
- if(!nav){
-  nav=element('nav','sv-task-date-nav');
-  nav.id='svTasksDateNav';
-  nav.setAttribute('aria-label','Дни и дела');
-  list.before(nav);
- }
+ if(!nav){nav=element('nav','sv-task-date-nav');nav.id='svTasksDateNav';nav.setAttribute('aria-label','Дни и дела');list.before(nav);}
  if(!svTaskSelectedDate)svTaskSelectedDate=svTaskISO(new Date());
  if(!svTaskWeekAnchor)svTaskWeekAnchor=svTaskSelectedDate;
  nav.replaceChildren();
+ const chosenDate=svTaskDate(svTaskSelectedDate)||new Date();
  const heading=element('div','sv-task-date-heading');
  const prev=element('button','sv-task-week-arrow','‹');
  prev.type='button';prev.setAttribute('aria-label','Предыдущая неделя');
  const next=element('button','sv-task-week-arrow','›');
  next.type='button';next.setAttribute('aria-label','Следующая неделя');
- const chosenDate=svTaskDate(svTaskSelectedDate)||new Date();
- const name=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'short'}).format(chosenDate);
- const label=name.charAt(0).toLocaleUpperCase('ru-RU')+name.slice(1)+
-  (chosenDate.getFullYear()!==new Date().getFullYear()?' '+chosenDate.getFullYear():'');
- const month=element('strong','sv-task-date-month',label);
- month.title=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(chosenDate);
+ const month=element('strong','sv-task-date-month',new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(chosenDate));
  const all=element('button','sv-task-all-button','Все дела');
  all.type='button';all.setAttribute('aria-pressed',String(svTaskDateMode==='all'));
  all.addEventListener('click',()=>{svTaskDateMode='all';render()});
  prev.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,-7);svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,-7);render()});
  next.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,7);svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,7);render()});
  heading.append(prev,month,next,all);
- const strip=element('div','sv-task-day-strip');
- const monday=svTaskDate(svTaskWeekAnchor);
+ const strip=element('div','sv-task-day-strip'),monday=svTaskDate(svTaskWeekAnchor);
  monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
- const today=svTaskISO(new Date());
+ const today=svTaskISO(new Date()),byDate=new Map();
+ rows.forEach(item=>{if(!item.due)return;if(!byDate.has(item.due))byDate.set(item.due,[]);byDate.get(item.due).push(item);});
+ const countLabel=n=>n+' '+(n%10===1&&n%100!==11?'дело':(n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'дела':'дел'));
  for(let i=0;i<7;i++){
-  const d=new Date(monday);
-  d.setDate(monday.getDate()+i);
-  const iso=svTaskISO(d),selected=svTaskDateMode==='day'&&svTaskSelectedDate===iso;
-  const b=element('button','sv-task-day-tab');
-  b.type='button';b.dataset.day=iso;b.setAttribute('aria-pressed',String(selected));
-  b.setAttribute('aria-label',new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long'}).format(d));
+  const d=new Date(monday);d.setDate(monday.getDate()+i);
+  const iso=svTaskISO(d),selected=svTaskSelectedDate===iso,entries=byDate.get(iso)||[];
+  const b=element('button','sv-task-day-tab');b.type='button';b.dataset.day=iso;b.setAttribute('aria-pressed',String(selected));
+  const dayLabel=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long'}).format(d);
+  b.setAttribute('aria-label',dayLabel+(entries.length?' · '+countLabel(entries.length):''));
   b.append(element('span','sv-task-day-week',new Intl.DateTimeFormat('ru-RU',{weekday:'short'}).format(d).replace('.','')),
    element('span','sv-task-day-number',String(d.getDate())));
-  if(iso===today)b.dataset.today='true';
-  if(selected)b.dataset.selected='true';
+  if(iso===today)b.dataset.today='true';if(selected)b.dataset.selected='true';
+  if(entries.length){
+   const marks=element('span','sv-task-day-marks');marks.setAttribute('aria-hidden','true');
+   [...new Set(entries.map(svTaskPalette))].slice(0,3).forEach(tint=>{const dot=element('span','sv-task-day-mark');dot.dataset.tint=tint;marks.append(dot);});
+   b.append(marks);
+  }
   b.addEventListener('click',()=>{svTaskDateMode='day';svTaskSelectedDate=iso;svTaskWeekAnchor=iso;render()});
   strip.append(b);
  }
- nav.append(heading,strip);
+ const picked=element('div','sv-task-picked-date');
+ const fullDate=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long'}).format(chosenDate);
+ picked.append(element('strong','',fullDate.charAt(0).toLocaleUpperCase('ru-RU')+fullDate.slice(1)));
+ nav.append(heading,strip,picked);
+ const onDate=(byDate.get(svTaskSelectedDate)||[]).slice().sort((a,b)=>(a.time||'00:00').localeCompare(b.time||'00:00'));
+ if(onDate.length){
+  const pills=element('div','sv-task-event-pills');pills.setAttribute('role','group');pills.setAttribute('aria-label','Дела на выбранный день');
+  for(const item of onDate){
+   const pill=element('button','sv-task-event-pill');pill.type='button';pill.dataset.tint=svTaskPalette(item);
+   pill.setAttribute('aria-label',(item.time?item.time+' · ':'')+item.title+'. Открыть дело');
+   const dot=element('span','sv-task-pill-dot');dot.setAttribute('aria-hidden','true');pill.append(dot);
+   if(item.time)pill.append(element('time','sv-task-pill-time',item.time));
+   pill.append(element('span','sv-task-pill-title',item.title));
+   pill.addEventListener('click',()=>{
+    svTaskDateMode='day';render();
+    window.requestAnimationFrame(()=>{
+     const row=[...list.querySelectorAll('.personal-task-row[data-task-id]')].find(x=>x.dataset.taskId===item.id);
+     if(!row)return;row.scrollIntoView({block:'center',behavior:'auto'});
+     row.querySelector('[data-task-menu]')?.focus({preventScroll:true});
+    });
+   });
+   pills.append(pill);
+  }
+  nav.append(pills);
+ }
 }
 function svTaskSectionTitle(label,kind){
  const title=element('h3','personal-list-title sv-task-section-title',label);
@@ -786,7 +807,7 @@ function render(){
  // One category needs no second caption beneath the Tasks header.
  // When categories coexist, short section names restore scannability.
  const showGroupLabels=Number(visibleActive.length>0)+Number(hasDeferred)>1;
- svTaskDrawDateNav();
+ svTaskDrawDateNav(visibleActive);
  list.replaceChildren();
  if(svTaskDateMode==='day'){
   svTaskRenderDay(visibleActive);
