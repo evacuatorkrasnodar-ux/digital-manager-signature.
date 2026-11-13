@@ -50,12 +50,25 @@
 #tasksPage #svTasksDateNav .sv-agenda-day{
  box-sizing:border-box;display:flex;flex-direction:column;
  justify-content:flex-start;align-items:center;gap:5px;
+ position:relative;z-index:0;
  width:100%;min-width:0;min-height:139px;
  padding:8px 0 5px;margin:0;
  color:var(--agenda-text);background:#FFFFFF;
- border:0;border-right:1px solid #ECEEF1;border-radius:0;
+ border:0;border-right:1px solid #E5E8ED;border-radius:0;
  box-shadow:inset 0 1px 2px rgba(40,51,64,.035);
+ transition:box-shadow .18s ease,transform .18s ease,border-color .18s ease;
  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#tasksPage #svTasksDateNav .sv-agenda-day:first-child{border-left:1px solid #E5E8ED}
+#tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
+ z-index:1;transform:translateY(-1px);
+ border:1px solid #DFE3E9;border-top-color:#F4F5F7;
+ border-radius:3px 3px 0 0;
+ background:#FFFFFF;
+ box-shadow:0 2px 10px rgba(33,43,61,.13),0 0 0 .5px rgba(137,148,166,.12);
+}
+@media(prefers-reduced-motion:reduce){
+ #tasksPage #svTasksDateNav .sv-agenda-day{transition:none}
 }
 #tasksPage #svTasksDateNav .sv-agenda-day:focus-visible,
 #tasksPage #svTasksDateNav .sv-agenda-filter:focus-visible{
@@ -99,7 +112,7 @@
 #tasksPage #svTasksDateNav .sv-agenda-week-step:first-child{left:-25px}
 #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:-25px}
 #tasksPage #svTasksDateNav .sv-agenda-handle{
- position:relative;z-index:1;width:24px;height:4px;margin:-15px auto 13px;
+ position:relative;z-index:2;width:24px;height:4px;margin:-15px auto 22px;
  border-radius:3px;background:#8F939B;
 }
 #tasksPage #svTasksDateNav .sv-agenda-filters{
@@ -139,8 +152,8 @@
  box-sizing:border-box!important;display:flex!important;
  align-items:center!important;justify-content:flex-start!important;
  gap:6px!important;width:100%!important;
- margin:16px 0 0!important;padding:10px 0 8px!important;
- border-top:1px solid #E9ECEF!important;background:transparent!important;
+ margin:12px 0 0!important;padding:10px 0 8px!important;
+ border-top:1px solid #E7EAF0!important;background:transparent!important;
  color:#343941!important;letter-spacing:0!important;
 }
 #tasksPage #personalTaskList .sv-agenda-section-heading:first-child{
@@ -275,7 +288,7 @@
 }
 #tasksPage #personalTaskList .personal-deferred-row{
  margin:0!important;padding:10px 6px!important;
- border:0!important;border-bottom:1px solid #EEF0F3!important;
+ border:0!important;
  border-radius:0!important;background:transparent!important;box-shadow:none!important;
 }
 #tasksPage #personalTaskList .personal-task-continuation{
@@ -303,6 +316,13 @@
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day{
  background:#25282F;border-right-color:#3D414B;
  box-shadow:inset 0 1px 2px rgba(0,0,0,.12);
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day:first-child{
+ border-left-color:#3D414B;
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
+ background:#2D323C;border-color:#4A515D;
+ box-shadow:0 2px 11px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.05);
 }
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day-number{
  color:#E9EBF0;
