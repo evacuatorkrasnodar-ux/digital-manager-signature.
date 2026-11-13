@@ -633,7 +633,37 @@ function svAgendaScrollToDate(iso){
  window.setTimeout(()=>{svAgendaJumpThrough=0;},540);
  return true;
 }
+/* Minimize the approved 60px dock only while a touch user reads My Tasks.
+ * Material, icons and global navigation are never modified. */
+const svAgendaDockMedia=window.matchMedia('(max-width:699px) and (hover:none) and (pointer:coarse)');
+let svAgendaDockPreviousY=0,svAgendaDockTravel=0,svAgendaDockDirection=0,svAgendaDockPauseUntil=0;
+function svAgendaShowDock(){
+ document.documentElement.classList.remove('sv-agenda-dock-minimized');
+}
+function svAgendaPauseDockMotion(){
+ svAgendaDockPauseUntil=Date.now()+750;
+ svAgendaDockPreviousY=list.scrollTop;
+ svAgendaDockTravel=0;
+ svAgendaDockDirection=0;
+ svAgendaShowDock();
+}
+function svAgendaSyncDockFromScroll(){
+ const root=document.documentElement,y=list.scrollTop;
+ const eligible=root.classList.contains('sv-agenda-scroll-active')&&svAgendaDockMedia.matches&&!dialog.open;
+ const delta=y-svAgendaDockPreviousY;
+ svAgendaDockPreviousY=y;
+ if(!eligible||list.scrollHeight-list.clientHeight<60||y<8){
+  svAgendaDockTravel=0;svAgendaDockDirection=0;svAgendaShowDock();return;
+ }
+ if(Date.now()<svAgendaDockPauseUntil||Math.abs(delta)<.7)return;
+ const direction=delta>0?1:-1;
+ if(direction!==svAgendaDockDirection){svAgendaDockTravel=0;svAgendaDockDirection=direction;}
+ svAgendaDockTravel+=Math.abs(delta);
+ if(direction>0&&svAgendaDockTravel>=30&&y>35)root.classList.add('sv-agenda-dock-minimized');
+ if(direction<0&&svAgendaDockTravel>=12)svAgendaShowDock();
+}
 function svAgendaJumpToDate(iso){
+ svAgendaPauseDockMotion();
  svAgendaMarkSelected(iso);
  if(svAgendaScrollToDate(iso))return;
  // Dates without entries still have a selectable heading.
@@ -1433,11 +1463,20 @@ window.addEventListener('seyveo:calendar-changed',()=>{if(!$('tasksPage')?.hidde
 window.addEventListener('hashchange',()=>{if(!$('tasksPage')?.hidden)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 list.addEventListener('scroll',()=>{
+ svAgendaSyncDockFromScroll();
  if(svAgendaScrollFrame)return;
  svAgendaScrollFrame=requestAnimationFrame(()=>{
   svAgendaScrollFrame=0;
   svAgendaSyncFromScroll();
  });
 },{passive:true});
+document.addEventListener('pointerdown',event=>{
+ if(event.target.closest?.('#svTasksDateNav'))svAgendaPauseDockMotion();
+},{passive:true,capture:true});
+dialog.addEventListener('close',svAgendaPauseDockMotion);
+new MutationObserver(()=>{
+ if(!document.documentElement.classList.contains('sv-agenda-scroll-active'))svAgendaPauseDockMotion();
+}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+if(svAgendaDockMedia.addEventListener)svAgendaDockMedia.addEventListener('change',svAgendaPauseDockMotion);
 render();
 })();
