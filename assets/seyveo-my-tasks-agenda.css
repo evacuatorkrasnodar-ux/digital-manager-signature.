@@ -448,3 +448,47 @@
 /* Compact event/task switch inside the existing editor, no extra dock buttons. */
 #personalTaskDialog .sv-task-editor-type{margin-top:8px!important}
 #personalTaskDialog .sv-task-editor-type legend{font-size:12px!important;color:#727783!important}
+
+
+/* Calendar-style scene rows: compact times, colored calendar marks, quiet notes. */
+#tasksPage #personalTaskList .personal-task-row.sv-agenda-scene{
+ display:grid!important;grid-template-columns:24px minmax(0,1fr)!important;
+ column-gap:7px!important;min-height:54px!important;
+ padding:5px 13px 7px!important;align-items:center!important;
+}
+#tasksPage #personalTaskList .sv-agenda-scene .sv-agenda-scene-dot{
+ display:block;grid-column:1;grid-row:1;align-self:center;justify-self:center;
+ width:9px;height:9px;border-radius:50%;background:#FF9F0A;
+}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="orange"] .sv-agenda-scene-dot{background:#FF9F0A}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="blue"] .sv-agenda-scene-dot{background:#0A84FF}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="green"] .sv-agenda-scene-dot{background:#34C759}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="red"] .sv-agenda-scene-dot{background:#FF453A}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="yellow"] .sv-agenda-scene-dot{background:#FFD60A}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="purple"] .sv-agenda-scene-dot{background:#AF52DE}
+#tasksPage #personalTaskList .sv-agenda-scene .personal-task-content{
+ grid-column:2!important;grid-row:1!important;gap:2px!important;
+}
+#tasksPage #personalTaskList .sv-agenda-scene .sv-agenda-entry-time{
+ font-size:12px!important;font-weight:490!important;line-height:1.24!important;
+ color:#818690!important;
+}
+#tasksPage #personalTaskList .sv-agenda-scene .personal-task-name{
+ min-height:0!important;margin:0!important;padding:0!important;
+ color:#242930!important;font-size:15px!important;font-weight:530!important;
+ line-height:1.28!important;letter-spacing:-.012em!important;
+ text-decoration:none!important;cursor:default!important;
+}
+#tasksPage #personalTaskList .sv-agenda-scene .sv-agenda-scene-note{
+ font:450 11.5px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#8B9099!important;
+}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-scene .personal-task-name{
+ color:#E6E8ED!important;
+}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-scene .sv-agenda-entry-time{
+ color:#A7AAB4!important;
+}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-scene .sv-agenda-scene-note{
+ color:#A2A7B1!important;
+}
