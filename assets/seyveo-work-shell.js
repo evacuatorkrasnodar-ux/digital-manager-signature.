@@ -211,6 +211,153 @@
   }
  });
 
+
+ // One inline Tasks view for Search and Select; no separate History route.
+ const personalView=document.getElementById('unifiedPersonalTasksView');
+ const taskList=personalView?.querySelector('#personalTaskList');
+ const toolPanel=document.createElement('section');
+ toolPanel.id='svInlineTaskTools';toolPanel.hidden=true;
+ if(taskList)taskList.parentElement.insertBefore(toolPanel,taskList);
+ let toolMode='',filter='all',query='';
+ const selected=new Set();
+ const make=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
+ const style=document.createElement('style');
+ style.textContent=`
+ #svInlineTaskTools[hidden]{display:none!important}
+ #svInlineTaskTools{width:100%;box-sizing:border-box;padding:10px 0 22px;color:var(--text)}
+ #svInlineTaskTools .sv-tool-top{display:flex;justify-content:space-between;align-items:center;min-height:44px}
+ #svInlineTaskTools .sv-tool-top strong{font-size:17px;font-weight:580}
+ #svInlineTaskTools button{font:inherit;color:inherit;cursor:pointer}
+ #svInlineTaskTools .sv-tool-top button,#svInlineTaskTools .sv-tool-bulk button{min-height:40px;border:0;
+  border-radius:12px;padding:6px 11px;background:var(--sv-header-segment,#EDEDED);font-size:14px}
+ #svInlineTaskTools .sv-tool-input{box-sizing:border-box;width:100%;height:46px;margin:8px 0;padding:0 14px;
+  border:0;outline:none;border-radius:14px;background:var(--sv-header-segment,#EDEDED);
+  color:var(--text);font:400 16px -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+ #svInlineTaskTools .sv-tool-filters{display:flex;gap:4px;margin:8px 0 10px;padding:3px;
+  border-radius:14px;background:var(--sv-header-segment,#EDEDED)}
+ #svInlineTaskTools .sv-tool-filters button{flex:1;min-height:36px;border:0;border-radius:11px;background:transparent;font-size:13px}
+ #svInlineTaskTools .sv-tool-filters button[aria-pressed="true"]{background:var(--card,#fff);box-shadow:0 1px 3px #0001}
+ #svInlineTaskTools .sv-tool-result{display:flex;align-items:center;gap:11px;padding:10px 2px;
+  border-bottom:1px solid var(--soft-line,#0001);min-height:56px}
+ #svInlineTaskTools .sv-tool-result input{width:21px;height:21px;accent-color:#38383A;flex:none}
+ #svInlineTaskTools .sv-tool-copy{flex:1;min-width:0}
+ #svInlineTaskTools .sv-tool-copy strong{display:block;font-size:15.5px;font-weight:480;overflow-wrap:anywhere}
+ #svInlineTaskTools .sv-tool-copy small{display:block;margin-top:4px;color:var(--secondary);font-size:12px}
+ #svInlineTaskTools .sv-tool-result>button{min-height:40px;min-width:50px;border:0;background:transparent;font-size:13px}
+ #svInlineTaskTools .sv-tool-bulk{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:14px}
+ #svInlineTaskTools .sv-tool-bulk span{font-size:12px;color:var(--secondary)}
+ #svInlineTaskTools .sv-tool-bulk button:last-child{color:#B33E43}
+ #svInlineTaskTools .sv-tool-bulk button:disabled{opacity:.4}
+ #svInlineTaskTools .sv-tool-empty{text-align:center;padding:52px 5px;color:var(--secondary);font-size:14px}
+ #svWorkShell[data-task-tool-mode="search"] #personalTaskList,
+ #svWorkShell[data-task-tool-mode="select"] #personalTaskList,
+ #svWorkShell[data-task-tool-mode="search"] #tasksContextFocus,
+ #svWorkShell[data-task-tool-mode="select"] #tasksContextFocus{display:none!important}
+ `;
+ document.head.append(style);
+ const getTasks=()=>{
+  if(window.SEYVEO_PERSONAL_TASK_TOOLS?.list)return window.SEYVEO_PERSONAL_TASK_TOOLS.list();
+  try{const v=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');return Array.isArray(v)?v:[]}
+  catch{return []}
+ };
+ const matches=()=>getTasks().filter(t=>{
+  if(!t||typeof t.title!=='string')return false;
+  if(filter==='active'&&t.done===true||filter==='done'&&t.done!==true)return false;
+  return t.title.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').includes(query.trim().toLocaleLowerCase('ru-RU').replace(/ё/g,'е'));
+ }).sort((a,b)=>String(b.doneAt||b.createdAt||'').localeCompare(String(a.doneAt||a.createdAt||'')));
+ function paint(){
+  toolPanel.replaceChildren();
+  const headingRow=make('div','sv-tool-top');
+  headingRow.append(make('strong','',toolMode==='search'?'Поиск по делам':'Выбрать дела'));
+  const done=make('button','','Готово');done.type='button';done.addEventListener('click',()=>setMode(''));headingRow.append(done);
+  toolPanel.append(headingRow);
+  let results=make('div','sv-tool-results');
+  if(toolMode==='search'){
+   const input=make('input','sv-tool-input');input.type='search';input.placeholder='Найти дело';
+   input.setAttribute('aria-label','Поиск по названию дела');input.value=query;
+   input.addEventListener('input',()=>{query=input.value;paintResults()});
+   toolPanel.append(input);
+  }
+  const tabs=make('div','sv-tool-filters');
+  for(const [key,label] of [['all','Все'],['active','Активные'],['done','Выполненные']]){
+   const button=make('button','',label);button.type='button';
+   button.setAttribute('aria-pressed',String(filter===key));
+   button.addEventListener('click',()=>{filter=key;paint()});
+   tabs.append(button);
+  }
+  toolPanel.append(tabs,results);
+  let counter=null,deleteButton=null;
+  if(toolMode==='select'){
+   const bulk=make('div','sv-tool-bulk');
+   const all=make('button','','Выбрать все');all.type='button';
+   all.addEventListener('click',()=>{
+    const hits=matches(),fully=hits.length>0&&hits.every(t=>selected.has(t.id));
+    hits.forEach(t=>fully?selected.delete(t.id):selected.add(t.id));paint();
+   });
+   counter=make('span','','Выбрано: 0');
+   deleteButton=make('button','','Удалить');deleteButton.type='button';
+   deleteButton.addEventListener('click',()=>{
+    const ids=[...selected];if(!ids.length)return;
+    if(!window.confirm('Удалить выбранные дела ('+ids.length+')? Восстановить их нельзя.'))return;
+    if(!window.SEYVEO_PERSONAL_TASK_TOOLS?.removeMany?.(ids)){
+     window.alert('Не удалось удалить выбранные дела');return;
+    }
+    selected.clear();paint();
+   });
+   bulk.append(all,counter,deleteButton);toolPanel.append(bulk);
+  }
+  function paintResults(){
+   results.replaceChildren();
+   const hits=matches();
+   if(!hits.length)results.append(make('p','sv-tool-empty','Дел не найдено'));
+   for(const task of hits){
+    const row=make('div','sv-tool-result');
+    if(toolMode==='select'){
+     const check=make('input');check.type='checkbox';check.checked=selected.has(task.id);
+     check.setAttribute('aria-label','Выбрать '+task.title);
+     check.addEventListener('change',()=>{check.checked?selected.add(task.id):selected.delete(task.id);updateBulk()});
+     row.append(check);
+    }
+    const body=make('div','sv-tool-copy');
+    body.append(make('strong','',task.title));
+    body.append(make('small','',task.done?'Выполнено'+(task.doneAt?' · '+String(task.doneAt).slice(0,10):''):
+      task.due?'Срок · '+task.due:'Активное дело'));
+    row.append(body);
+    if(toolMode==='search'){
+     const btn=make('button','',task.done?'Вернуть':'Открыть');btn.type='button';
+     btn.addEventListener('click',()=>{
+      if(task.done){if(window.SEYVEO_PERSONAL_TASK_HISTORY?.restore?.(task.id))paint()}
+      else{setMode('');requestAnimationFrame(()=>{
+       const item=[...document.querySelectorAll('.personal-task-row[data-task-id]')].find(x=>x.dataset.taskId===task.id);
+       item?.scrollIntoView({block:'center',behavior:'auto'});
+       item?.querySelector('[data-task-menu]')?.focus({preventScroll:true});
+      })}
+     });row.append(btn);
+    }
+    results.append(row);
+   }
+   updateBulk();
+  }
+  function updateBulk(){
+   if(counter)counter.textContent='Выбрано: '+selected.size;
+   if(deleteButton)deleteButton.disabled=!selected.size;
+  }
+  paintResults();
+ }
+ function setMode(mode){
+  toolMode=mode;filter='all';query='';selected.clear();
+  shell.dataset.taskToolMode=mode;
+  toolPanel.hidden=!mode;
+  selectHistory.setAttribute('aria-pressed',String(mode==='select'));
+  searchTasks.setAttribute('aria-pressed',String(mode==='search'));
+  if(mode)paint();
+ }
+ window.SEYVEO_TASK_INLINE=Object.freeze({
+  toggle:mode=>setMode(toolMode===mode?'':mode),close:()=>{if(toolMode)setMode('')},
+  current:()=>toolMode
+ });
+ window.addEventListener('seyveo:personal-tasks-changed',()=>{if(toolMode)paint()});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&toolMode){event.preventDefault();setMode('')}});
  // Route switches always start at the same stable viewport origin.
  // Never scroll on routine data refreshes.
  function resetWorkScroll(){
