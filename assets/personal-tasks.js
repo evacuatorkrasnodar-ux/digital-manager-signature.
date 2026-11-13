@@ -595,8 +595,10 @@ function svTaskDrawDateNav(rows=[]){
   strip.append(b);
  }
  const picked=element('div','sv-task-picked-date');
- const fullDate=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long'}).format(chosenDate);
- picked.append(element('strong','',fullDate.charAt(0).toLocaleUpperCase('ru-RU')+fullDate.slice(1)));
+ const weekday=new Intl.DateTimeFormat('ru-RU',{weekday:'long'}).format(chosenDate);
+ const datePart=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(chosenDate);
+ const fullDate=weekday.charAt(0).toLocaleUpperCase('ru-RU')+weekday.slice(1)+' — '+datePart;
+ picked.append(element('strong','',fullDate));
  nav.append(heading,strip,picked);
  const onDate=(byDate.get(svTaskSelectedDate)||[]).slice().sort((a,b)=>(a.time||'00:00').localeCompare(b.time||'00:00'));
  if(onDate.length){
