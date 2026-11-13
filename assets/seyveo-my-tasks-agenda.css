@@ -40,7 +40,7 @@
  box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);
  align-items:center;position:relative;
  /* Bleed only the date rail to the screen edge; tabs and task rows keep gutters. */
- width:calc(100% + 66px);margin-inline:-33px;
+ width:calc(100% + 26px);margin-inline:-13px;
  border-top:1px solid var(--agenda-rule);
  border-bottom:1px solid var(--agenda-rule);
  padding:0;
@@ -301,7 +301,7 @@
 @media(max-width:380px){
  #tasksPage #svTasksDateNav{padding-inline:8px!important}
  #tasksPage #svTasksDateNav .sv-agenda-ticker{
-  width:calc(100% + 56px);margin-inline:-28px;
+  width:calc(100% + 16px);margin-inline:-8px;
  }
  #tasksPage #personalTaskList.personal-tasks-list{padding-inline:8px!important}
  #tasksPage #personalTaskList .sv-agenda-section-heading::before{left:-8px;right:-8px}
