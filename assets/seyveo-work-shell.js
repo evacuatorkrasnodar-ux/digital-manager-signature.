@@ -479,7 +479,11 @@
    button.addEventListener('click',()=>{filter=key;paint()});
    tabs.append(button);
   }
-  toolPanel.append(tabs,results);
+  // The active-status filter is the only capsule on the nested All Tasks page.
+  // Move the live control into the existing work-tabs slot without cloning it.
+  nav.querySelector('.sv-tool-filters')?.remove();
+  nav.append(tabs);
+  toolPanel.append(results);
   let counter=null,deleteButton=null,selectAll=null;
   selectionBar.replaceChildren();
   if(!selectionActive){
@@ -590,7 +594,10 @@
   selectionActive=false;
   shell.dataset.taskToolMode=toolMode;
   toolPanel.hidden=!toolMode;
-  if(!toolMode)document.documentElement.classList.remove('sv-task-search-focus');
+  if(!toolMode){
+   document.documentElement.classList.remove('sv-task-search-focus');
+   nav.querySelector('.sv-tool-filters')?.remove();
+  }
   syncToolHeader();
   if(toolMode)paint();
   // The shared header and scroll container must switch as one component.
@@ -672,6 +679,7 @@
   heading.dataset.taskTools=String(active==='personal'&&!history);
   if(active!=='personal')window.SEYVEO_TASK_INLINE?.close();
   const nested=active==='personal'&&!history&&!!toolMode;
+  nav.dataset.taskFilters=String(nested);
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
