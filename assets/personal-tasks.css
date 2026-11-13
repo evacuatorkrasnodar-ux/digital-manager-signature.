@@ -1458,3 +1458,206 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
 #tasksPage .personal-task-menu-details:focus-visible{outline:2px solid #3874AC!important;outline-offset:2px!important;border-radius:7px!important}
 :root[data-theme="dark"] #tasksPage .personal-task-menu-details{color:#8EBBEA!important}
 :root[data-theme="dark"] #tasksPage .personal-task-detail-data{color:#B5B5BE!important;border-top-color:rgba(255,255,255,.12)!important}
+
+
+/* 2026-11-13 · SEYVEO My Tasks · pastel day planner.
+ * Strictly scoped to personal Tasks. Work tabs, header and 60px dock remain intact. */
+#tasksPage #svTasksDateNav{
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;
+ padding:3px 3px 14px!important;margin:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#tasksPage #svTasksDateNav .sv-task-date-heading{
+ display:flex;align-items:center;gap:7px;min-height:41px;margin:0 2px 10px;
+}
+#tasksPage #svTasksDateNav .sv-task-date-month{
+ flex:1 1 auto;min-width:0;margin-left:2px;
+ color:#222428;font:590 18px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.026em;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#tasksPage #svTasksDateNav .sv-task-week-arrow{
+ border:0!important;background:transparent!important;color:#505761!important;
+ display:grid;place-items:center;flex:0 0 31px;width:31px;height:38px;
+ border-radius:11px;font:340 28px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#tasksPage #svTasksDateNav .sv-task-week-arrow:active{background:#F0F1F4!important}
+#tasksPage #svTasksDateNav .sv-task-all-button{
+ flex:0 0 auto;min-height:33px;margin-left:1px;
+ padding:5px 11px;border-radius:999px;border:1px solid #E6E8EC;
+ background:#F4F4F6;color:#42464E;
+ font:560 12px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ cursor:pointer;white-space:nowrap;
+}
+#tasksPage #svTasksDateNav .sv-task-all-button[aria-pressed="true"]{
+ background:#E8EAF0;color:#252A33;border-color:#E0E2E8;
+}
+#tasksPage #svTasksDateNav .sv-task-day-strip{
+ box-sizing:border-box;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+ width:100%;column-gap:1px;overflow:visible;
+}
+#tasksPage #svTasksDateNav .sv-task-day-tab{
+ box-sizing:border-box;display:flex;flex-direction:column;align-items:center;
+ justify-content:center;gap:5px;min-width:0;min-height:68px;
+ margin:0;padding:4px 0;border:0;border-radius:14px;background:transparent;
+ color:#626773;cursor:pointer;touch-action:manipulation;
+ -webkit-tap-highlight-color:transparent;
+}
+#tasksPage #svTasksDateNav .sv-task-day-week{
+ font:500 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:.01em;
+}
+#tasksPage #svTasksDateNav .sv-task-day-number{
+ box-sizing:border-box;display:grid;place-items:center;
+ width:35px;height:35px;border:0;border-radius:50%;
+ color:#262A32;background:transparent;
+ font:550 17px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ font-variant-numeric:tabular-nums;
+}
+#tasksPage #svTasksDateNav .sv-task-day-tab[data-today="true"] .sv-task-day-number:not(:where([data-selected] *)){
+ color:#CE545E;background:#FFF0F2;
+}
+#tasksPage #svTasksDateNav .sv-task-day-tab[data-selected="true"] .sv-task-day-number{
+ color:#FFF!important;background:#F05E66!important;
+ box-shadow:0 2px 7px rgba(207,70,79,.15);
+}
+#tasksPage #svTasksDateNav :is(.sv-task-day-tab,.sv-task-week-arrow,.sv-task-all-button):focus-visible{
+ outline:2px solid #507AB6;outline-offset:2px;
+}
+#tasksPage #personalTaskList.personal-tasks-list{
+ padding:0 3px 16px!important;background:transparent!important;
+}
+#tasksPage #personalTaskList .sv-task-section-title{
+ display:block;margin:13px 1px 8px!important;padding:0 1px!important;
+ font:570 12px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#6E737E!important;letter-spacing:.012em!important;
+ text-transform:none!important;
+}
+#tasksPage #personalTaskList .sv-task-selected-heading{
+ display:block;margin:3px 2px 14px;padding:0;
+ font:590 17px/1.32 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.02em;color:#24272F;text-transform:capitalize;
+}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event{
+ --sv-task-fill:#EDF1F7;--sv-task-ink:#708197;
+ display:flex!important;align-items:center!important;flex-wrap:wrap!important;
+ position:relative!important;box-sizing:border-box!important;
+ gap:7px!important;margin:0 0 8px!important;padding:9px 10px!important;
+ min-height:66px!important;width:100%!important;max-width:100%!important;
+ border:0!important;border-left:3px solid var(--sv-task-ink)!important;
+ border-radius:16px!important;
+ background:var(--sv-task-fill)!important;
+ background-image:none!important;
+ box-shadow:none!important;overflow:visible!important;
+}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event[data-tint="blue"]{--sv-task-fill:#E4F0FF;--sv-task-ink:#447FC3}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event[data-tint="rose"]{--sv-task-fill:#FFE9ED;--sv-task-ink:#C96576}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event[data-tint="lilac"]{--sv-task-fill:#EDE7FC;--sv-task-ink:#8867C7}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event[data-tint="peach"]{--sv-task-fill:#FDECE2;--sv-task-ink:#C9855C}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event[data-tint="amber"]{--sv-task-fill:#FFF1DA;--sv-task-ink:#B37B33}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event .personal-task-art{
+ box-sizing:border-box!important;
+ flex:0 0 37px!important;min-width:37px!important;
+ width:37px!important;height:41px!important;min-height:41px!important;
+ display:grid!important;place-items:center!important;
+ color:var(--sv-task-ink)!important;
+ background:rgba(255,255,255,.50)!important;border:0!important;
+ border-radius:12px!important;box-shadow:none!important;
+}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event .personal-task-art svg{
+ width:22px!important;height:22px!important;stroke-width:1.65!important;
+}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event .personal-task-content{
+ flex:1 1 0!important;min-width:0!important;gap:2px!important;
+}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event .personal-task-name{
+ min-height:25px!important;padding:1px 0!important;
+ color:#242833!important;font-size:14px!important;font-weight:590!important;
+ line-height:1.28!important;letter-spacing:-.015em!important;
+}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event .personal-task-content small{
+ font-size:12px!important;font-weight:460!important;
+ line-height:1.35!important;color:#555D6A!important;
+}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event .personal-task-sayvi{
+ flex:0 0 auto!important;min-width:46px!important;min-height:42px!important;
+ padding:5px 2px!important;font-size:11px!important;
+ color:#485462!important;background:transparent!important;
+}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event .personal-task-check{
+ width:28px!important;height:28px!important;min-width:28px!important;
+ min-height:28px!important;flex:0 0 28px!important;
+ border:1.35px solid rgba(74,91,114,.34)!important;
+ background:rgba(255,255,255,.55)!important;border-radius:50%!important;
+}
+#tasksPage #personalTaskList .personal-task-row.sv-task-event .personal-task-menu{
+ box-sizing:border-box!important;margin:3px 0 0!important;
+ padding:5px 1px 0!important;border-top:1px solid rgba(60,60,67,.12)!important;
+}
+#tasksPage #personalTaskList .sv-task-day-empty{
+ padding:16px 8px;margin:4px 0 12px;border-radius:12px;
+ background:#F7F8FA;color:#717681;font:460 13px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+#tasksPage #personalTaskList .sv-task-day-timeline{
+ box-sizing:border-box;width:100%;margin:6px 0 14px;padding:0;
+}
+#tasksPage #personalTaskList .sv-task-hour-block{
+ position:relative;box-sizing:border-box;
+ display:grid;grid-template-columns:47px minmax(0,1fr);column-gap:8px;
+ min-height:65px;width:100%;padding:0;margin:0;
+ border-top:1px solid #E9EBEF;
+}
+#tasksPage #personalTaskList .sv-task-hour-label{
+ display:block;padding:7px 0 0;color:#858994;
+ font:480 11.5px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ font-variant-numeric:tabular-nums;
+}
+#tasksPage #personalTaskList .sv-task-hour-track{
+ display:flex;flex-direction:column;gap:0;min-width:0;padding:3px 0;
+}
+#tasksPage #personalTaskList .sv-task-hour-track .sv-task-event{
+ min-height:60px!important;margin-bottom:5px!important;
+}
+#tasksPage #personalTaskList .sv-task-now-marker{
+ position:absolute;z-index:4;left:47px;right:0;height:1px;
+ background:#EA4D57;pointer-events:none;
+}
+#tasksPage #personalTaskList .sv-task-now-marker::before{
+ content:"";position:absolute;top:-4px;left:-5px;
+ width:9px;height:9px;border-radius:50%;background:#EA4D57;
+}
+#tasksPage #personalTaskList .sv-task-now-marker>span{
+ position:absolute;right:0;bottom:4px;padding:1px 5px;
+ border-radius:5px;background:#FCE8E9;color:#C84049;
+ font:550 10px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ font-variant-numeric:tabular-nums;
+}
+@media(max-width:380px){
+ #tasksPage #personalTaskList .sv-task-event{gap:4px!important;padding-inline:7px!important}
+ #tasksPage #personalTaskList .sv-task-event .personal-task-art{width:32px!important;min-width:32px!important;flex-basis:32px!important}
+ #tasksPage #personalTaskList .sv-task-event .personal-task-sayvi{min-width:40px!important;font-size:10.5px!important}
+ #tasksPage #svTasksDateNav .sv-task-date-month{font-size:16px}
+ #tasksPage #svTasksDateNav .sv-task-day-number{width:32px;height:32px;font-size:16px}
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-date-month,
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-selected-heading{color:#F3F3F6!important}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-day-number{color:#E6E6ED;background:transparent}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-day-tab[data-today="true"] .sv-task-day-number{color:#F2A6AF;background:#392A32}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-all-button{background:#33343A;color:#EAEAF0;border-color:#43454F}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-week-arrow{color:#DEE0E7!important}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-section-title{color:#AEB1BB!important}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event{
+ --sv-task-fill:#30323B;--sv-task-ink:#9BA9C8;
+}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event[data-tint="blue"]{--sv-task-fill:#233548;--sv-task-ink:#8BC0F0}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event[data-tint="rose"]{--sv-task-fill:#422E38;--sv-task-ink:#E39AAA}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event[data-tint="lilac"]{--sv-task-fill:#352F48;--sv-task-ink:#B5A1EF}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event[data-tint="peach"]{--sv-task-fill:#40352E;--sv-task-ink:#E5B193}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event[data-tint="amber"]{--sv-task-fill:#40382D;--sv-task-ink:#E8C28A}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event .personal-task-name{color:#F5F5F7!important}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event .personal-task-content small{color:#CDD0DC!important}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event .personal-task-art{background:rgba(255,255,255,.055)!important}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event .personal-task-sayvi{color:#DFE3EE!important}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event .personal-task-check{background:rgba(255,255,255,.06)!important;border-color:#747887!important}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-hour-block{border-color:#41434A}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-day-empty{background:#303038;color:#B0B3BE}
