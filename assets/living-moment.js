@@ -222,7 +222,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const top=create('div','lm-field-top');
  const label=create('span','lm-field-eyebrow',primary.category);
  const measure=create('span','lm-field-measure',real?'ВАШИ ДЕЛА':'ДЕМО');
- if(real)top.append(label,measure);
+ const clockLabel=create('time','sv-lm-event-clock');clockLabel.hidden=true;
+ clockLabel.setAttribute('aria-label','Время запланированного дела');
+ if(real)top.append(label,measure,clockLabel);
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
  const artwork=create('div','lm-hero-art lm-hero-art--'+primary.kind);
@@ -984,6 +986,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
   artwork.className='lm-hero-art lm-hero-art--'+item.kind;
   artwork.replaceChildren(icon(item.kind));
   label.textContent=item.category;
+  const hasClock=real&&/^([01]\\d|2[0-3]):[0-5]\\d$/.test(item.time||'');
+  clockLabel.hidden=!hasClock;
+  clockLabel.textContent=hasClock?item.time:'';
   headline.textContent=item.title;
   description.textContent=item.body;
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
@@ -1240,7 +1245,7 @@ function dueTasks(includeUpcoming=false){
    const eventId='task:'+item.id+'|'+item.date;
    const when=new Date(item.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
    return {
-    eventId,taskId:item.id||'',kind:'task',title:item.title,
+    eventId,taskId:item.id||'',kind:'task',title:item.title,time:item.time||'',
     body:'Срок наступил · '+when+'. Дело сохранено в вашем списке.',
     category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
     reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
@@ -1250,7 +1255,7 @@ function dueTasks(includeUpcoming=false){
     const when=new Date(item.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
     return {
       eventId:'task:'+item.id+'|'+item.date,taskId:item.id||'',kind:'task',
-      upcoming:true,title:item.title,
+      upcoming:true,title:item.title,time:item.time||'',
       body:'Запланировано на завтра · '+when+'. Можно подготовиться заранее.',
       category:'СЭЙВИ · ЗАВТРА В ПЛАНАХ',
       reason:'Это ваше незавершённое дело со сроком на завтра. Сэйви показывает его вечером накануне, не назначая время самостоятельно.',
