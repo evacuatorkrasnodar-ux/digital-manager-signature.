@@ -653,3 +653,19 @@ html.sv-agenda-scroll-active .app{
 #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list::-webkit-scrollbar{
  display:none;
 }
+
+/* iPhone agenda reading mode: the approved dock remains a single 60px unit.
+   Only its position/visibility changes, never its materials or icons. */
+@media (max-width:699px) and (hover:none) and (pointer:coarse){
+ html.sv-agenda-scroll-active body > footer.dock.sv-shared-dock{
+  transition:transform .22s cubic-bezier(.22,.8,.28,1),opacity .16s ease!important;
+ }
+ html.sv-agenda-scroll-active.sv-agenda-dock-minimized body > footer.dock.sv-shared-dock{
+  transform:translate3d(0,calc(100% + 24px + env(safe-area-inset-bottom,0px)),0)!important;
+  opacity:0!important;
+  pointer-events:none!important;
+ }
+}
+@media (prefers-reduced-motion:reduce){
+ html.sv-agenda-scroll-active body > footer.dock.sv-shared-dock{transition:none!important}
+}
