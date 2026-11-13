@@ -528,3 +528,28 @@ html.sv-music-screen[data-theme=dark][data-palette=plum] .app{
 @media(prefers-reduced-motion:reduce){
  #sayviMusicPage .sv-music-lyric{transition:none!important;filter:none!important}
 }
+
+/* Optional Screen Awake; never affects music dock geometry. */
+#sayviMusicPage .sv-music-awake-control{
+ display:flex;align-items:center;justify-content:center;gap:10px;
+ padding:7px 12px 9px;margin:2px auto 2px;max-width:95%;
+}
+#sayviMusicPage .sv-music-awake-control button{
+ flex:0 0 auto;min-height:39px;border-radius:12px;
+ border:1px solid color-mix(in srgb,currentColor 13%,transparent);
+ padding:7px 12px;background:color-mix(in srgb,currentColor 7%,transparent);
+ color:inherit;font:520 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ cursor:pointer;
+}
+#sayviMusicPage .sv-music-awake-control button[aria-pressed="true"]{
+ color:#3E79B6;background:#EAF2FA;border-color:#BED5E8;
+}
+#sayviMusicPage .sv-music-awake-control small{
+ min-width:0;max-width:205px;opacity:.72;
+ font:440 11px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+#sayviMusicPage .sv-music-awake-control button:focus-visible{outline:2px solid #678DBC;outline-offset:2px}
+@media(max-width:380px){
+ #sayviMusicPage .sv-music-awake-control{gap:6px;padding-inline:5px}
+ #sayviMusicPage .sv-music-awake-control small{font-size:10px}
+}
