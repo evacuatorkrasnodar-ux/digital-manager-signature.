@@ -249,6 +249,14 @@
  const toolPanel=document.createElement('section');
  toolPanel.id='svInlineTaskTools';toolPanel.hidden=true;
  if(taskList)taskList.parentElement.insertBefore(toolPanel,taskList);
+ // Selection actions live in a single bottom accessory bar, in the space
+ // normally reserved for the global dock. Never duplicate/resize that dock.
+ const selectionBar=document.createElement('section');
+ selectionBar.id='svTaskSelectionBar';
+ selectionBar.hidden=true;
+ selectionBar.setAttribute('role','group');
+ selectionBar.setAttribute('aria-label','Действия с выбранными делами');
+ document.body.appendChild(selectionBar);
  let toolMode='',filter='all',query='',selectionActive=false;
  const selected=new Set();
  const make=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
@@ -296,6 +304,70 @@
  #svInlineTaskTools .sv-tool-bulk span{font-size:12px;color:var(--secondary)}
  #svInlineTaskTools .sv-tool-bulk button:last-child{color:#B33E43}
  #svInlineTaskTools .sv-tool-bulk button:disabled{opacity:.4}
+ /* Only the selection submode swaps the dock for a wider bottom toolbar.
+    Full-width light header material, safe-area aware on iPhone. */
+ html.sv-task-selection-active body > footer.dock.sv-shared-dock{
+  display:none!important
+ }
+ #svTaskSelectionBar[hidden]{display:none!important}
+ #svTaskSelectionBar{
+  box-sizing:border-box;position:fixed!important;inset:auto 0 0!important;
+  z-index:1800!important;display:flex;align-items:flex-start;justify-content:center;
+  width:100%!important;max-width:none!important;
+  min-height:calc(94px + env(safe-area-inset-bottom,0px))!important;
+  padding:12px max(12px,env(safe-area-inset-right,0px))
+    calc(15px + env(safe-area-inset-bottom,0px))
+    max(12px,env(safe-area-inset-left,0px))!important;
+  border:0!important;border-top:1px solid rgba(75,77,88,.055)!important;
+  border-radius:0!important;
+  background:var(--sv-header-surface,#F2F1F6)!important;
+  box-shadow:0 -5px 22px rgba(30,32,44,.035)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  font:-apple-system-body!important;
+ }
+ #svTaskSelectionBar .sv-tool-action-row{
+  box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr) minmax(0,.85fr) minmax(0,.75fr);
+  align-items:center;gap:3px;width:100%;max-width:530px;height:56px;min-height:56px;
+  margin:0 auto;padding:4px;border-radius:19px;
+  background:rgba(201,204,214,.26);
+  border:1px solid rgba(255,255,255,.74);
+ }
+ #svTaskSelectionBar button{
+  appearance:none;-webkit-appearance:none;
+  display:grid;place-items:center;min-width:0;width:100%;height:46px;
+  margin:0;padding:0 4px;border:0;border-radius:15px;
+  background:transparent;box-shadow:none;
+  color:#232327;font:500 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  white-space:nowrap;cursor:pointer;
+ }
+ #svTaskSelectionBar .sv-task-all{background:rgba(255,255,255,.83)}
+ #svTaskSelectionBar .sv-task-count{
+  display:grid;place-items:center;min-width:0;white-space:nowrap;
+  color:#70737B;font:490 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif
+ }
+ #svTaskSelectionBar .sv-task-count[data-has-selection="true"]{color:#3769A9;font-weight:570}
+ #svTaskSelectionBar .sv-task-delete{color:#B34750}
+ #svTaskSelectionBar .sv-task-delete:disabled{color:#B6A4A8;opacity:.55}
+ #svTaskSelectionBar .sv-task-cancel{color:#60636B}
+ #svTaskSelectionBar button:active{background:rgba(130,135,148,.13)}
+ #svTaskSelectionBar button:focus-visible{outline:2px solid #3769A9;outline-offset:1px}
+ html.sv-task-selection-active #svInlineTaskTools{padding-bottom:130px!important}
+ :root[data-theme="dark"] #svTaskSelectionBar{
+  background:var(--sv-header-surface,#202023)!important;border-top-color:rgba(255,255,255,.08)!important
+ }
+ :root[data-theme="dark"] #svTaskSelectionBar .sv-tool-action-row{
+  background:rgba(130,132,145,.17);border-color:rgba(255,255,255,.1)
+ }
+ :root[data-theme="dark"] #svTaskSelectionBar button{color:#F2F2F5}
+ :root[data-theme="dark"] #svTaskSelectionBar .sv-task-all{background:rgba(255,255,255,.1)}
+ :root[data-theme="dark"] #svTaskSelectionBar .sv-task-count[data-has-selection="true"]{color:#8FB7EB}
+ :root[data-theme="dark"] #svTaskSelectionBar .sv-task-delete{color:#F19AA2}
+ :root[data-theme="dark"] #svTaskSelectionBar .sv-task-delete:disabled{opacity:.4}
+ @media(max-width:350px){
+  #svTaskSelectionBar{padding-left:6px!important;padding-right:6px!important}
+  #svTaskSelectionBar button{font-size:12px;padding:0 2px}
+  #svTaskSelectionBar .sv-task-count{font-size:11px}
+ }
  #svInlineTaskTools .sv-tool-selection-cancel{
   display:block;margin:8px 0 0 auto;min-height:40px;padding:6px 12px;
   border:0;border-radius:12px;background:transparent;
@@ -382,7 +454,8 @@
    tabs.append(button);
   }
   toolPanel.append(tabs,results);
-  let counter=null,deleteButton=null;
+  let counter=null,deleteButton=null,selectAll=null;
+  selectionBar.replaceChildren();
   if(!selectionActive){
    const footer=make('div','sv-tool-bulk sv-tool-select-entry');
    const select=make('button','','Выбрать');
@@ -391,16 +464,16 @@
    select.addEventListener('click',toggleSelection);
    footer.append(select);
    toolPanel.append(footer);
-  }
-  if(selectionActive){
-   const bulk=make('div','sv-tool-bulk');
-   const all=make('button','','Выбрать все');all.type='button';
-   all.addEventListener('click',()=>{
+  }else{
+   const bulk=make('div','sv-tool-action-row');
+   selectAll=make('button','sv-task-all','Выбрать все');selectAll.type='button';
+   selectAll.addEventListener('click',()=>{
     const hits=matches(),fully=hits.length>0&&hits.every(t=>selected.has(t.id));
     hits.forEach(t=>fully?selected.delete(t.id):selected.add(t.id));paint();
    });
-   counter=make('span','','Выбрано: 0');
-   deleteButton=make('button','','Удалить');deleteButton.type='button';
+   counter=make('span','sv-task-count','Выбрано: 0');
+   counter.setAttribute('aria-live','polite');
+   deleteButton=make('button','sv-task-delete','Удалить');deleteButton.type='button';
    deleteButton.addEventListener('click',()=>{
     const ids=[...selected];if(!ids.length)return;
     if(!window.confirm('Удалить выбранные дела ('+ids.length+')? Восстановить их нельзя.'))return;
@@ -409,15 +482,11 @@
     }
     selected.clear();paint();
    });
-   const cancel=make('button','','Отмена');
-   cancel.type='button';
+   const cancel=make('button','sv-task-cancel','Отмена');cancel.type='button';
    cancel.setAttribute('aria-label','Отменить выбор дел');
    cancel.addEventListener('click',toggleSelection);
-   bulk.append(all,counter,deleteButton);
-   toolPanel.append(bulk,cancel);
-   cancel.className='sv-tool-selection-cancel';
-   const hits=matches();
-   all.textContent=hits.length&&hits.every(t=>selected.has(t.id))?'Снять выбор':'Выбрать все';
+   bulk.append(selectAll,counter,deleteButton,cancel);
+   selectionBar.append(bulk);
   }
   function paintResults(){
    results.replaceChildren();
@@ -462,6 +531,10 @@
     counter.textContent='Выбрано: '+selected.size;
     counter.dataset.hasSelection=String(selected.size>0);
    }
+   if(selectAll){
+    const hits=matches();
+    selectAll.textContent=hits.length&&hits.every(t=>selected.has(t.id))?'Снять выбор':'Выбрать все';
+   }
    if(deleteButton)deleteButton.disabled=!selected.size;
   }
   paintResults();
@@ -471,6 +544,9 @@
   const nested=!!toolMode&&inPersonal;
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
+  const selectionVisible=selectionActive&&nested;
+  selectionBar.hidden=!selectionVisible;
+  document.documentElement.classList.toggle('sv-task-selection-active',selectionVisible);
   selectHistory.setAttribute('aria-pressed',String(selectionActive));
   selectHistory.setAttribute('aria-label',selectionActive?'Отменить выбор дел':'Выбрать дела');
   if(inPersonal){
@@ -668,7 +744,7 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:25,sync,
+  version:26,sync,
   isNotesInline:()=>true
  });
 })();
