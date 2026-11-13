@@ -1893,3 +1893,15 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
  --sv-pill-bg:#383B42;--sv-pill-fg:#F0F0F3;
 }
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-all-day-label{color:#ADB1BC}
+
+
+/* Mobile task calendar is finger-swiped; desktop retains week arrows. */
+@media(max-width:767px){
+ #tasksPage #svTasksDateNav .sv-task-date-heading{
+  display:none!important;
+ }
+ #tasksPage #svTasksDateNav .sv-task-day-strip{
+  touch-action:pan-y;overscroll-behavior-x:contain;
+  margin-top:0!important;
+ }
+}
