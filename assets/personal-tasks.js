@@ -580,14 +580,14 @@ function svAgendaRenderNav(rows){
  const strip=element('div','sv-agenda-week');
  strip.setAttribute('role','group');strip.setAttribute('aria-label','Дни недели');
  const first=svTaskDate(svTaskSelectedDate);
- first.setDate(first.getDate()-31);
+ first.setDate(first.getDate()-2);
  const today=svTaskISO(new Date()),byDate=new Map();
  for(const item of rows){
   if(!item.due)continue;
   if(!byDate.has(item.due))byDate.set(item.due,[]);
   byDate.get(item.due).push(item);
  }
- for(let i=0;i<63;i++){
+ for(let i=0;i<5;i++){
   const day=new Date(first);day.setDate(first.getDate()+i);
   const iso=svTaskISO(day),entries=byDate.get(iso)||[];
   const btn=element('button','sv-agenda-day');
@@ -611,7 +611,26 @@ function svAgendaRenderNav(rows){
   });
   strip.append(btn);
  }
- // Finger scrolling is native. Only focus the selected day when the rail is rebuilt.
+ // A finger swipe replaces this complete five-day window.
+ // No tiny arrows are shown on mobile.
+ let touchStart=null,ignoreTapUntil=0;
+ strip.addEventListener('touchstart',event=>{
+  if(event.touches.length!==1)return;
+  touchStart={x:event.touches[0].clientX,y:event.touches[0].clientY};
+ },{passive:true});
+ strip.addEventListener('touchend',event=>{
+  if(!touchStart||!event.changedTouches.length)return;
+  const dx=event.changedTouches[0].clientX-touchStart.x;
+  const dy=event.changedTouches[0].clientY-touchStart.y;
+  touchStart=null;
+  if(Math.abs(dx)<35||Math.abs(dx)<Math.abs(dy)*1.25)return;
+  if(event.cancelable)event.preventDefault();
+  ignoreTapUntil=Date.now()+450;
+  svAgendaChangeWeek(dx<0?1:-1);
+ },{passive:false});
+ strip.addEventListener('click',event=>{
+  if(Date.now()<=ignoreTapUntil){event.preventDefault();event.stopPropagation();}
+ },true);
  ticker.append(back,strip,next);
  const handle=element('div','sv-agenda-handle');
  handle.setAttribute('aria-hidden','true');
@@ -631,14 +650,6 @@ function svAgendaRenderNav(rows){
   filters.append(btn);
  }
  nav.append(month,ticker,handle,filters);
- const focusSelected=()=>{
-  if(!strip.isConnected||!strip.clientWidth)return;
-  const selected=strip.querySelector('[data-selected="true"]');
-  if(selected)selected.scrollIntoView({block:'nearest',inline:'center',behavior:'instant'});
- };
- focusSelected();
- setTimeout(focusSelected,0);
- setTimeout(focusSelected,120);
 }
 function svAgendaSection(iso,titleOverride){
  const header=element('h3','sv-agenda-section-heading');
