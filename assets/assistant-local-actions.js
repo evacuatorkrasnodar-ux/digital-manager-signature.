@@ -364,7 +364,12 @@ function startPlan(plan){
  return true;
 }
 function start(raw){
- return enabled()?startPlan(window.SEYVEO_LOCAL_ACTIONS?.previewAction?.(raw)):false;
+ const plan=window.SEYVEO_LOCAL_ACTIONS?.previewAction?.(raw);
+ if(!plan)return false;
+ // On standalone chat, even with the tour off, use the existing main-app
+ // writer. The preference hides animation; it never disables the command.
+ if(!enabled()&&$('personalTaskForm')&&$('calendarEventForm'))return false;
+ return startPlan(plan);
 }
 function configure(raw){
  const q=String(raw||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim();
