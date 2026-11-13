@@ -57,11 +57,11 @@
     Switching Tasks / Notebook / Cabinet must never move the capsule.
     Back and Plus remain on the same first-row axis in every tab. */
  :host([data-work-tabs="true"]){
-  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 58px);
-  height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 58px);
+  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 18px);
+  height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 18px);
  }
  :host([data-work-tabs="true"]) .bar{
-  grid-template-rows:var(--sv-header-row,62px) minmax(0,1fr);
+  grid-template-rows:42px minmax(0,1fr);
  }
  :host([data-agenda="true"]) .bar{
   padding-left:calc(var(--gutter-l) + 4px);
