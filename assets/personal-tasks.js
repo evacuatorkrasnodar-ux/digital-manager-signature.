@@ -528,7 +528,7 @@ window.SEYVEO_TASK_ASSIST=Object.freeze({open:askSayviForTask});
 
 /* SEYVEO Agenda · one renderer for the iOS-style date ticker and event list.
  * Data, task actions and the global shell remain owned by Personal Tasks. */
-let svTaskSelectedDate='',svTaskCategoryFilter='all';
+let svTaskSelectedDate='',svTaskWindowStart='',svTaskCategoryFilter='all';
 const svTaskCategory=item=>item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal');
 const svTaskMatchesCategory=item=>svTaskCategoryFilter==='all'||svTaskCategory(item)===svTaskCategoryFilter;
 function svTaskISO(d){
@@ -546,7 +546,9 @@ function svTaskShiftDay(iso,days){
 }
 function svTaskPalette(task){return svTaskCategory(task)==='work'?'blue':'neutral';}
 function svAgendaChangeWeek(step){
- svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,step*5);
+ if(!svTaskWindowStart)svTaskWindowStart=svTaskISO(new Date());
+ svTaskWindowStart=svTaskShiftDay(svTaskWindowStart,step*5);
+ svTaskSelectedDate=svTaskWindowStart;
  render();
 }
 function svAgendaRenderNav(rows){
@@ -559,12 +561,15 @@ function svAgendaRenderNav(rows){
   list.before(nav);
  }
  if(!svTaskSelectedDate)svTaskSelectedDate=svTaskISO(new Date());
+ if(!svTaskWindowStart)svTaskWindowStart=svTaskISO(new Date());
  nav.replaceChildren();
  const picked=svTaskDate(svTaskSelectedDate)||new Date();
  const month=element('button','sv-agenda-month-heading');
  month.type='button';month.setAttribute('aria-label','Вернуться к сегодняшнему дню');
  month.addEventListener('click',()=>{
-  svTaskSelectedDate=svTaskISO(new Date());render();
+  svTaskSelectedDate=svTaskISO(new Date());
+  svTaskWindowStart=svTaskSelectedDate;
+  render();
  });
  const monthName=new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(picked);
  const monthLabel=element('strong','sv-agenda-month-name',monthName.charAt(0).toLocaleUpperCase('ru-RU')+monthName.slice(1));
@@ -579,8 +584,7 @@ function svAgendaRenderNav(rows){
  next.addEventListener('click',()=>svAgendaChangeWeek(1));
  const strip=element('div','sv-agenda-week');
  strip.setAttribute('role','group');strip.setAttribute('aria-label','Дни недели');
- const first=svTaskDate(svTaskSelectedDate);
- first.setDate(first.getDate()-2);
+ const first=svTaskDate(svTaskWindowStart);
  const today=svTaskISO(new Date()),byDate=new Map();
  for(const item of rows){
   if(!item.due)continue;
