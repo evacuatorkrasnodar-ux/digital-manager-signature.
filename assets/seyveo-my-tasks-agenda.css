@@ -57,8 +57,8 @@
 #tasksPage #svTasksDateNav .sv-agenda-day{
  box-sizing:border-box;display:flex;flex-direction:column;
  justify-content:flex-start;align-items:center;gap:5px;
- position:relative;z-index:0;flex:0 0 calc(20% - 3.6px);
- width:calc(20% - 3.6px);min-width:0;min-height:139px;
+ position:relative;z-index:0;flex:0 0 18.5%;
+ width:18.5%;min-width:0;min-height:139px;
  padding:8px 0 5px;margin:0;
  color:var(--agenda-text);background:#FFFFFF;
  border:0;border-right:1px solid #E5E8ED;border-radius:0;
@@ -67,7 +67,7 @@
  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day:first-child{
- margin-left:calc(-20% + 3.6px);border-left:1px solid #E5E8ED;
+ margin-left:-18.5%;border-left:1px solid #E5E8ED;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
  z-index:1;transform:translateY(-1px);
