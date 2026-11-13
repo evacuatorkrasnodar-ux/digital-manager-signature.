@@ -267,191 +267,23 @@
  });
 
 
- // One inline Tasks view for Search and Select; no separate History route.
+ // All Tasks v2 stays within the permanent Work shell but owns its scroll
+ // and bottom actions. The calendar and underlying task records are untouched.
  const personalView=document.getElementById('unifiedPersonalTasksView');
  const taskList=personalView?.querySelector('#personalTaskList');
  const toolPanel=document.createElement('section');
- toolPanel.id='svInlineTaskTools';toolPanel.hidden=true;
+ toolPanel.id='svAllTasksView';toolPanel.hidden=true;
  if(taskList)taskList.parentElement.insertBefore(toolPanel,taskList);
- // Selection actions live in a single bottom accessory bar, in the space
- // normally reserved for the global dock. Never duplicate/resize that dock.
+ // The actions belong to the screen's flex layout, not to a fixed body layer.
  const selectionBar=document.createElement('section');
- selectionBar.id='svTaskSelectionBar';
+ selectionBar.id='svAllTasksFooter';
  selectionBar.hidden=true;
  selectionBar.setAttribute('role','group');
  selectionBar.setAttribute('aria-label','Действия с выбранными делами');
- document.body.appendChild(selectionBar);
  let toolMode='',filter='all',query='',selectionActive=false,searchOpen=false;
  const selected=new Set();
  const make=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
- const style=document.createElement('style');
- style.textContent=`
- #svInlineTaskTools[hidden]{display:none!important}
- #svInlineTaskTools{width:100%;box-sizing:border-box;padding:10px 0 22px;color:var(--text)}
- #svInlineTaskTools .sv-tool-top{display:flex;justify-content:space-between;align-items:center;min-height:44px}
- #svInlineTaskTools .sv-tool-top strong{font-size:17px;font-weight:580}
- #svInlineTaskTools button{font:inherit;color:inherit;cursor:pointer}
- #svInlineTaskTools .sv-tool-top button,#svInlineTaskTools .sv-tool-bulk button{min-height:40px;border:0;
-  border-radius:12px;padding:6px 11px;background:var(--sv-header-segment,#EDEDED);font-size:14px}
- #svInlineTaskTools .sv-tool-input{box-sizing:border-box;width:100%;height:46px;margin:8px 0;padding:0 14px;
-  border:0;outline:none;border-radius:14px;background:var(--sv-header-segment,#EDEDED);
-  color:var(--text);font:400 16px -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
- #svInlineTaskTools .sv-tool-filters{display:flex;gap:4px;margin:8px 0 10px;padding:3px;
-  border-radius:14px;background:var(--sv-header-segment,#EDEDED)}
- #svInlineTaskTools .sv-tool-filters button{flex:1;min-height:36px;border:0;border-radius:11px;background:transparent;font-size:13px}
- #svInlineTaskTools .sv-tool-filters button[aria-pressed="true"]{background:var(--card,#fff);box-shadow:0 1px 3px #0001}
- #svInlineTaskTools .sv-tool-result{display:flex;align-items:center;gap:11px;padding:10px 2px;
-  border-bottom:1px solid var(--soft-line,#0001);min-height:56px}
- #svInlineTaskTools .sv-tool-result input[type="checkbox"]{
-  -webkit-appearance:none;appearance:none;
-  position:relative;display:grid;place-items:center;box-sizing:border-box;
-  width:22px;height:22px;min-width:22px;min-height:22px;flex:none;
-  margin:0;border:1.5px solid #A5A7AE;border-radius:50%;
-  background:transparent;cursor:pointer;
- }
- #svInlineTaskTools .sv-tool-result input[type="checkbox"]:checked{
-  border-color:#38383A;background:#38383A;
- }
- #svInlineTaskTools .sv-tool-result input[type="checkbox"]:checked::after{
-  content:"";width:10px;height:6px;display:block;
-  border-left:2px solid #FFF;border-bottom:2px solid #FFF;
-  transform:translateY(-1px) rotate(-45deg);
- }
- #svInlineTaskTools .sv-tool-result input[type="checkbox"]:focus-visible{
-  outline:2px solid #38383A;outline-offset:3px;
- }
- #svInlineTaskTools .sv-tool-copy{flex:1;min-width:0}
- #svInlineTaskTools .sv-tool-copy strong{display:block;font-size:15.5px;font-weight:480;overflow-wrap:anywhere}
- #svInlineTaskTools .sv-tool-copy small{display:block;margin-top:4px;color:var(--secondary);font-size:12px}
- #svInlineTaskTools .sv-tool-result>button{min-height:40px;min-width:50px;border:0;background:transparent;font-size:13px}
- #svInlineTaskTools .sv-tool-bulk{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:14px}
- #svInlineTaskTools .sv-tool-bulk span{font-size:12px;color:var(--secondary)}
- #svInlineTaskTools .sv-tool-bulk button:last-child{color:#B33E43}
- #svInlineTaskTools .sv-tool-bulk button:disabled{opacity:.4}
- /* Only the selection submode swaps the dock for a bottom toolbar.
-    Its outer host remains invisible; only the action capsule is painted. */
- html.sv-task-selection-active footer.dock.sv-shared-dock{
-  display:none!important
- }
- #svTaskSelectionBar[hidden]{display:none!important}
- #svTaskSelectionBar{
-  box-sizing:border-box;position:fixed!important;
-  top:auto!important;left:50%!important;right:auto!important;
-  bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;
-  transform:translateX(-50%)!important;
-  z-index:1800!important;display:flex;align-items:center;justify-content:center;
-  width:min(calc(100% - max(12px,env(safe-area-inset-left,0px)) - max(12px,env(safe-area-inset-right,0px))),530px)!important;
-  max-width:530px!important;
-  height:56px!important;min-height:56px!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-  font:-apple-system-body!important;
- }
- #svTaskSelectionBar .sv-tool-action-row{
-  box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr) minmax(0,.85fr) minmax(0,.75fr);
-  align-items:center;gap:3px;width:100%;max-width:530px;height:56px;min-height:56px;
-  margin:0 auto;padding:4px;border-radius:19px;
-  background:rgba(201,204,214,.26);
-  border:1px solid rgba(255,255,255,.74);
- }
- #svTaskSelectionBar button{
-  appearance:none;-webkit-appearance:none;
-  display:grid;place-items:center;min-width:0;width:100%;height:46px;
-  margin:0;padding:0 4px;border:0;border-radius:15px;
-  background:transparent;box-shadow:none;
-  color:#232327;font:500 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
-  white-space:nowrap;cursor:pointer;
- }
- #svTaskSelectionBar .sv-task-all{background:rgba(255,255,255,.83)}
- #svTaskSelectionBar .sv-task-count{
-  display:grid;place-items:center;min-width:0;white-space:nowrap;
-  color:#70737B;font:490 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif
- }
- #svTaskSelectionBar .sv-task-count[data-has-selection="true"]{color:#3769A9;font-weight:570}
- #svTaskSelectionBar .sv-task-delete{color:#B34750}
- #svTaskSelectionBar .sv-task-delete:disabled{color:#B6A4A8;opacity:.55}
- #svTaskSelectionBar .sv-task-cancel{color:#60636B}
- #svTaskSelectionBar button:active{background:rgba(130,135,148,.13)}
- #svTaskSelectionBar button:focus-visible{outline:2px solid #3769A9;outline-offset:1px}
- html.sv-task-selection-active #svInlineTaskTools{padding-bottom:130px!important}
- :root[data-theme="dark"] #svTaskSelectionBar{
-  background:transparent!important;border:0!important;box-shadow:none!important
- }
- :root[data-theme="dark"] #svTaskSelectionBar .sv-tool-action-row{
-  background:rgba(130,132,145,.17);border-color:rgba(255,255,255,.1)
- }
- :root[data-theme="dark"] #svTaskSelectionBar button{color:#F2F2F5}
- :root[data-theme="dark"] #svTaskSelectionBar .sv-task-all{background:rgba(255,255,255,.1)}
- :root[data-theme="dark"] #svTaskSelectionBar .sv-task-count[data-has-selection="true"]{color:#8FB7EB}
- :root[data-theme="dark"] #svTaskSelectionBar .sv-task-delete{color:#F19AA2}
- :root[data-theme="dark"] #svTaskSelectionBar .sv-task-delete:disabled{opacity:.4}
- @media(max-width:350px){
-  #svTaskSelectionBar{width:calc(100% - 12px)!important}
-  #svTaskSelectionBar button{font-size:12px;padding:0 2px}
-  #svTaskSelectionBar .sv-task-count{font-size:11px}
- }
- #svInlineTaskTools .sv-tool-selection-cancel{
-  display:block;margin:8px 0 0 auto;min-height:40px;padding:6px 12px;
-  border:0;border-radius:12px;background:transparent;
-  font-size:14px;color:var(--secondary)
- }
- #svInlineTaskTools .sv-tool-select-entry{justify-content:flex-start}
- #svInlineTaskTools .sv-tool-select-entry button{min-width:90px}
-
- /* Polished single-page task browser: fine typography and quiet color. */
- #svInlineTaskTools{padding-top:12px;padding-bottom:26px}
- #svInlineTaskTools .sv-tool-input{
-  margin:4px 0 13px;min-height:48px;background:#F2F2F4;
-  border:1px solid rgba(60,60,67,.04);border-radius:15px;
-  font-weight:450;letter-spacing:-.012em;
- }
- #svInlineTaskTools .sv-tool-input::placeholder{color:#8A8C92;opacity:1}
- #svInlineTaskTools .sv-tool-filters{
-  margin:0 0 12px;min-height:42px;align-items:center;border-radius:999px;
-  background:#F0F0F2;
- }
- #svInlineTaskTools .sv-tool-filters button{
-  min-height:36px;border-radius:999px;font-weight:480;letter-spacing:-.01em
- }
- #svInlineTaskTools .sv-tool-filters button[aria-pressed="true"]{
-  background:#FFF;box-shadow:0 1px 3px rgba(18,18,20,.07)
- }
- #svInlineTaskTools .sv-tool-result{
-  padding:13px 3px;min-height:65px;border-bottom:1px solid rgba(60,60,67,.09)
- }
- #svInlineTaskTools .sv-tool-copy strong{
-  color:var(--text);font-size:16px;font-weight:490;line-height:1.35
- }
- #svInlineTaskTools .sv-tool-bulk{
-  padding:16px 0 8px;gap:8px
- }
- #svInlineTaskTools .sv-tool-bulk button{
-  border-radius:14px;min-height:42px;font-weight:500
- }
- :root[data-theme="dark"] #svInlineTaskTools .sv-tool-input,
- :root[data-theme="dark"] #svInlineTaskTools .sv-tool-filters{background:#303034}
- :root[data-theme="dark"] #svInlineTaskTools .sv-tool-filters button[aria-pressed="true"]{
-  background:#444448;color:#F6F6F8
- }
- /* Apple-like semantic color: a single restrained blue for selection,
-    a warm amber only for overdue dates. Neutral copy stays graphite. */
- #svInlineTaskTools{--sv-task-accent:#3769A9;--sv-task-warn:#AD6A23}
- #svInlineTaskTools .sv-tool-bulk span[data-has-selection="true"]{
-  color:var(--sv-task-accent);font-weight:560
- }
- #svInlineTaskTools .sv-tool-filters button[aria-pressed="true"]{color:var(--sv-task-accent)}
- #svInlineTaskTools .sv-tool-copy small[data-status="overdue"]{color:var(--sv-task-warn)}
- #svInlineTaskTools .sv-tool-copy small[data-status="done"]{color:var(--sv-task-accent)}
- :root[data-theme="dark"] #svInlineTaskTools{--sv-task-accent:#8FB7EB;--sv-task-warn:#F1BB79}
- #svInlineTaskTools .sv-tool-empty{text-align:center;padding:52px 5px;color:var(--secondary);font-size:14px}
- #svWorkShell[data-task-tool-mode="all"] #personalTaskList,
- #svWorkShell[data-task-tool-mode="all"] #tasksContextFocus{display:none!important}
- `;
- document.head.append(style);
+ // All Tasks v2 uses one standalone stylesheet, without legacy injected layers.
  // Hide only the dock's position when the iPhone keyboard takes over search.
  // The approved dock material and its 60px geometry remain unchanged.
  toolPanel.addEventListener('focusin',event=>{
@@ -495,7 +327,7 @@
   // Move the live control into the existing work-tabs slot without cloning it.
   nav.querySelector('.sv-tool-filters')?.remove();
   nav.append(tabs);
-  toolPanel.append(results);
+  toolPanel.append(results,selectionBar);
   let counter=null,deleteButton=null,selectAll=null;
   selectionBar.replaceChildren();
   if(selectionActive){
@@ -760,7 +592,7 @@
   add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
   add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistorySearch')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
   shell.dataset.active=active;
-  for(const button of nav.querySelectorAll('button')){
+  for(const button of nav.querySelectorAll('[data-sv-work-tab]')){
    button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===active));
   }
  }
