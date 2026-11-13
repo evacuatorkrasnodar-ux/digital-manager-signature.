@@ -55,18 +55,19 @@
  }
  /* Calendar shortcut sits above the month, matching Apple's compact hierarchy. */
  :host([data-agenda="true"]){
-  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 32px);
-  height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 32px);
+  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 38px);
+  height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 38px);
  }
  :host([data-agenda="true"]) .bar{
-  grid-template-rows:32px minmax(0,1fr);
+  grid-template-rows:44px minmax(0,1fr);
   padding-left:calc(var(--gutter-l) + 4px);
  }
  :host([data-agenda="true"]) .month,
  :host([data-agenda="true"]) .title,
  :host([data-agenda="true"]) .control{grid-row:2}
  .calendar-jump{
-  grid-column:1 / 3;grid-row:1;justify-self:start;align-self:center;
+  grid-column:1 / 3;grid-row:1;justify-self:start;align-self:end;
+  margin-bottom:3px;
   display:inline-flex;align-items:center;gap:8px;
   appearance:none;border:0;background:transparent;padding:0;margin:0;
   color:#C83644;font:500 12.5px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
