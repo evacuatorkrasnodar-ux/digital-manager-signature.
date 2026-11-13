@@ -606,6 +606,14 @@ html.sv-agenda-scroll-active body{
  overflow:hidden!important;
  overscroll-behavior:none;
 }
+/* «Все дела» is currently a white canvas even when the saved global palette
+   is dark. Its transparent scrolling surface must not expose the dark root
+   background around the edges or beneath the floating actions. */
+html.sv-agenda-scroll-active:has(#svWorkShell[data-task-tool-mode="all"]),
+html.sv-agenda-scroll-active:has(#svWorkShell[data-task-tool-mode="all"]) body{
+ background:#FFFFFF!important;
+ background-image:none!important;
+}
 html.sv-agenda-scroll-active .app{
  box-sizing:border-box!important;
  height:100dvh!important;
