@@ -611,12 +611,7 @@ function svAgendaRenderNav(rows){
   });
   strip.append(btn);
  }
- // Native horizontal scrolling provides continuous finger navigation.
- // Recenter only on render; ordinary swipes do not reset the chosen day.
- window.requestAnimationFrame(()=>{
-  const current=strip.querySelector('[data-selected="true"]');
-  if(current)strip.scrollLeft=current.offsetLeft-(strip.clientWidth-current.clientWidth)/2;
- });
+ // Finger scrolling is native. Only focus the selected day when the rail is rebuilt.
  ticker.append(back,strip,next);
  const handle=element('div','sv-agenda-handle');
  handle.setAttribute('aria-hidden','true');
@@ -636,6 +631,14 @@ function svAgendaRenderNav(rows){
   filters.append(btn);
  }
  nav.append(month,ticker,handle,filters);
+ const focusSelected=()=>{
+  if(!strip.isConnected||!strip.clientWidth)return;
+  const selected=strip.querySelector('[data-selected="true"]');
+  if(selected)strip.scrollLeft=Math.max(0,selected.offsetLeft-(strip.clientWidth-selected.clientWidth)/2);
+ };
+ focusSelected();
+ setTimeout(focusSelected,0);
+ setTimeout(focusSelected,120);
 }
 function svAgendaSection(iso,titleOverride){
  const header=element('h3','sv-agenda-section-heading');
