@@ -850,3 +850,15 @@ html.sv-task-selection-active body > footer.dock.sv-shared-dock{
  background:#47474B!important;
  color:#8FB7EB!important;
 }
+
+/* One two-action header capsule owns search and multi-select.
+   The list opens without a permanently visible search field or footer. */
+#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-input[hidden]{
+ display:none!important;
+}
+#svWorkShell[data-task-tool-mode="all"][data-agenda-scroll="true"] #tasksPage #svInlineTaskTools{
+ padding-top:0!important;
+}
+#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-input:not([hidden]){
+ margin:2px 0 10px!important;
+}
