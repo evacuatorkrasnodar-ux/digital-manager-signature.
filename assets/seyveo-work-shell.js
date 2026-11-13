@@ -392,7 +392,7 @@
     body.append(make('strong','',task.title));
     const today=new Date();
     const localToday=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
-    const overdue=!task.done&&/^\\d{4}-\\d{2}-\\d{2}$/.test(String(task.due||''))&&task.due<localToday;
+    const overdue=!task.done&&/^\d{4}-\d{2}-\d{2}$/.test(String(task.due||''))&&task.due<localToday;
     const subtitle=make('small','',task.done?'Выполнено'+(task.doneAt?' · '+String(task.doneAt).slice(0,10):''):
       task.due?(overdue?'Просрочено · ':'Срок · ')+task.due:'Активное дело');
     if(task.done)subtitle.dataset.status='done';
