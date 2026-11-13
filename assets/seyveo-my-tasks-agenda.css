@@ -17,7 +17,7 @@
  --agenda-rule:#ECEEF1;
  --agenda-red:#EC636E;
  box-sizing:border-box;width:100%!important;max-width:none!important;
- padding:12px 13px 6px!important;margin:0!important;
+ padding:3px 13px 6px!important;margin:0!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
@@ -28,6 +28,8 @@
  border:0;background:transparent;box-shadow:none;text-align:left;cursor:pointer;
  letter-spacing:-.035em;
 }
+/* Month and year now live in the left side of the permanent Work header. */
+#tasksPage #svTasksDateNav .sv-agenda-month-heading{display:none!important}
 #tasksPage #svTasksDateNav .sv-agenda-month-name{
  font-size:28px;line-height:1.12;font-weight:680;color:var(--agenda-text);
 }
