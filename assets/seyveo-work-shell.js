@@ -664,6 +664,8 @@
   month.hidden=!showMonth;
   calendarJump.hidden=!showMonth;
   heading.dataset.agenda=String(showMonth);
+  shell.dataset.agendaScroll=String(showMonth);
+  document.documentElement.classList.toggle('sv-agenda-scroll-active',showMonth);
   if(showMonth){
    const nav=document.getElementById('svTasksDateNav');
    const name=nav?.querySelector('.sv-agenda-month-name')?.textContent;
