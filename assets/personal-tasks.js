@@ -1136,7 +1136,7 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
  }
  const sourceNoteId=safeNoteId(detail.sourceNoteId);
  const all=read(),seen=new Set(all.map(item=>
-  item.title.replace(/\s+/g,' ').trim().toLocaleLowerCase('ru-RU')+'|'+item.due));
+  item.title.replace(/\s+/g,' ').trim().toLocaleLowerCase('ru-RU')+'|'+item.due+'|'+(item.time||'')));
  const pending=[];
  let duplicates=0;
  for(const draft of detail.items){
@@ -1144,13 +1144,13 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
    detail.result={status:'invalid',message:'Проверьте текст дел и сроки.'};return;
   }
   const title=draft.title.trim().replace(/\s+/g,' ').slice(0,140);
-  const due=draft.due;
-  if(!title||(due&&!strDate(due))){
+  const due=draft.due,time=typeof draft.time==='string'?draft.time:'';
+  if(!title||(due&&!strDate(due))||(time&&(!due||!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(time)))){
    detail.result={status:'invalid',message:'Проверьте текст дел и даты.'};return;
   }
-  const key=title.toLocaleLowerCase('ru-RU')+'|'+due;
+  const key=title.toLocaleLowerCase('ru-RU')+'|'+due+'|'+time;
   if(seen.has(key)){duplicates++;continue}
-  seen.add(key);pending.push({title,due});
+  seen.add(key);pending.push({title,due,time});
  }
  if(!pending.length){
   detail.result={status:'already',added:0,duplicates,
@@ -1163,7 +1163,7 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
  const stamp=Date.now(),createdAt=new Date(stamp).toISOString();
  const next=all.concat(pending.map((draft,index)=>({
   id:'personal-'+stamp+'-'+index+'-'+Math.random().toString(36).slice(2,9),
-  title:draft.title,due:draft.due,done:false,createdAt,doneAt:'',
+  title:draft.title,due:draft.due,time:draft.time||'',done:false,createdAt,doneAt:'',
   ...(sourceNoteId?{sourceNoteId}:{})
  })));
  if(!save(next)){
