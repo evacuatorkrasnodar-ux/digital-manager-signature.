@@ -5,10 +5,11 @@
 'use strict';
 const KEY='seyveo-screen-awake-opt-in-v1';
 const $=id=>document.getElementById(id);
-let wanted=false,lock=null,inFlight=null,revision=0;
+let wanted=false,lock=null,inFlight=null,revision=0,lastState='off';
 try{wanted=localStorage.getItem(KEY)==='on'}catch{}
 const supported=()=>Boolean(window.isSecureContext&&navigator.wakeLock?.request);
 const send=(state,message)=>{
+ lastState=state;
  window.dispatchEvent(new CustomEvent('seyveo:screen-awake-state',{detail:{
   wanted,active:!!lock&&!lock.released,supported:supported(),state,message
  }}));
@@ -17,13 +18,13 @@ const send=(state,message)=>{
 function syncUI(){
  for(const button of document.querySelectorAll('[data-seyveo-screen-awake]')){
   button.setAttribute('aria-pressed',String(wanted));
-  button.textContent=wanted?'Экран включён':'Не гасить экран';
+  button.textContent=wanted?(lock&&!lock.released?'Экран включён':'Пробую удержать'):'Не гасить экран';
   button.title=wanted?'Выключить удержание экрана':'Оставить экран включённым, пока SEYVEO открыт';
  }
  for(const node of document.querySelectorAll('[data-seyveo-screen-awake-status]')){
   node.textContent=!supported()?'В этом браузере удержание экрана недоступно.':
    lock&&!lock.released?'Экран не будет автоматически гаснуть, пока SEYVEO открыт.':
-   wanted?'Ожидаю разрешения iOS. Проверь экран или нажми кнопку ещё раз.':
+   wanted?(lastState==='denied'?'iOS не разрешила удерживать экран. Попробуй ещё раз касанием кнопки.':'Ожидаю разрешения iOS. Проверь экран или нажми кнопку ещё раз.'):
    'Работает только при открытом SEYVEO. Не заменяет зарядку и не запускает фоновые действия.';
  }
 }
