@@ -72,7 +72,6 @@
   const lastUpdate=updatedAt?new Date(updatedAt).toLocaleString('ru-RU',{
    day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'
   }):'';
-  let visible=0;
   list.querySelectorAll('.sv-agenda-section-heading[data-weather-date]').forEach(heading=>{
    const badge=heading.querySelector('.sv-agenda-weather');
    if(!badge)return;
@@ -85,19 +84,10 @@
    badge.replaceChildren(high,low,icon);
    badge.hidden=false;
    badge.title='Прогноз для '+location.name+': '+description+', '+temperature(item.max)+' / '+temperature(item.min)+
-    (lastUpdate?' · обновлено '+lastUpdate:'');
+    (lastUpdate?' · обновлено '+lastUpdate:'')+' · данные: Open-Meteo (CC BY 4.0)';
    badge.setAttribute('aria-label',badge.title);
-   visible++;
   });
-  let credit=list.querySelector('.sv-agenda-weather-source');
-  if(visible&&!credit){
-   credit=document.createElement('a');
-   credit.className='sv-agenda-weather-source';
-   credit.href='https://open-meteo.com/';
-   credit.target='_blank';credit.rel='noopener noreferrer';
-   credit.textContent='Погода: Open-Meteo';
-   list.append(credit);
-  }else if(!visible&&credit)credit.remove();
+  list.querySelectorAll('.sv-agenda-weather-source').forEach(credit=>credit.remove());
  }
  function parseForecast(json){
   const data=json?.daily;
