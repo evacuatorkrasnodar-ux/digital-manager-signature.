@@ -88,6 +88,13 @@
  letter-spacing:.012em;color:var(--agenda-muted);
  text-transform:uppercase;
 }
+/* One small header indicator means there is at least one actionable task on this day. */
+#tasksPage #svTasksDateNav .sv-agenda-day[data-has-tasks="true"] .sv-agenda-weekday::before{
+ content:"✓";display:inline-grid;place-items:center;
+ width:9px;height:9px;margin-right:3px;vertical-align:1px;
+ border:1px solid #79A9CF;border-radius:2px;
+ background:#E9F5FE;color:#347FAF;font:750 7px/1 -apple-system,system-ui,sans-serif;
+}
 #tasksPage #svTasksDateNav .sv-agenda-day-number{
  display:grid;place-items:center;
  box-sizing:border-box;width:36px;height:36px;border-radius:50%;
@@ -211,6 +218,18 @@
 #tasksPage #personalTaskList .sv-agenda-entry[data-kind="personal"] .personal-task-art::after{
  background:#9E98A9;
 }
+/* Events use the colored Calendar dot. Only actionable tasks show a checkbox. */
+#tasksPage #personalTaskList .sv-agenda-entry[data-entry-type="event"] .personal-task-check{display:none!important}
+#tasksPage #personalTaskList .sv-agenda-entry[data-entry-type="event"] .personal-task-art{display:grid!important}
+#tasksPage #personalTaskList .sv-agenda-entry[data-entry-type="event"] .personal-task-art::after{
+ width:8px;height:8px;left:9px;top:11px;border:0;background:#007AFF;
+}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="orange"] .personal-task-art::after{background:#FF9F0A}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="green"] .personal-task-art::after{background:#34C759}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="red"] .personal-task-art::after{background:#FF453A}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="blue"] .personal-task-art::after{background:#0A84FF}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="yellow"] .personal-task-art::after{background:#FFD60A}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="purple"] .personal-task-art::after{background:#BF5AF2}
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-content{
  box-sizing:border-box!important;display:flex!important;
  flex-direction:column!important;align-items:stretch!important;
@@ -398,3 +417,7 @@
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-entry .personal-task-sayvi{
  color:#C6DCF5!important;background:#2C4056!important;
 }
+
+/* Compact event/task switch inside the existing editor, no extra dock buttons. */
+#personalTaskDialog .sv-task-editor-type{margin-top:8px!important}
+#personalTaskDialog .sv-task-editor-type legend{font-size:12px!important;color:#727783!important}
