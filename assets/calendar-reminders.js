@@ -1,7 +1,7 @@
-/* SEYVEO · In-app calendar reminders v1.
+/* SEYVEO · In-app calendar reminders v2.
  * No background/push claims, no permission prompt, no app navigation without a tap.
- * A reminder appears once per tab session when SEYVEO is visible and a timed
- * event reaches its owner-selected 15/30/60 minute lead time.
+ * Reminders are checked while open and on return to foreground; a short catch-up
+ * window prevents silent loss after the browser throttles timers.
  * The calendar's existing localStorage event schema is read-only here. */
 (()=>{
 'use strict';
@@ -34,7 +34,10 @@ function dueReminders(list,now=Date.now(),seen=new Set()){
   const until=when-timestamp,lead=Number(item.remind);
   // -1 means at the exact event time. A short grace window covers iOS
   // timer throttling when the app becomes visible, not closed-app pushes.
-  if(lead===-1?(until>0||until<=-120000):(until<=0||until>lead*60000))continue;
+  // On return from a suspended iPhone tab, deliver recently missed reminders.
+  // Never flood the person with appointments from long ago.
+  const grace=30*60000;
+  if(lead===-1?(until>0||until<=-grace):(until<=-grace||until>lead*60000))continue;
   ready.push({item,when,until,key:reminderKey(item)});
  }
  return ready.sort((a,b)=>a.when-b.when||String(a.item.title).localeCompare(String(b.item.title),'ru'));
@@ -44,13 +47,23 @@ if(typeof module!=='undefined'&&module.exports){
 }
 if(typeof document==='undefined'||typeof window==='undefined')return;
 const seen=new Set();
+// Keep one receipt per reminder across app reloads, but expire old receipts.
 try{
- const saved=JSON.parse(sessionStorage.getItem(SEEN)||'[]');
- if(Array.isArray(saved))saved.filter(x=>typeof x==='string').slice(-250).forEach(x=>seen.add(x));
+ const saved=JSON.parse(localStorage.getItem(SEEN)||'[]');
+ const fresh=Date.now()-14*86400000;
+ if(Array.isArray(saved))saved.filter(x=>x&&typeof x.key==='string'&&Number(x.at)>=fresh)
+  .slice(-250).forEach(x=>seen.add(x.key));
 }catch{}
 let panel=null,closeTimer=0,current=null;
 function persist(){
- try{sessionStorage.setItem(SEEN,JSON.stringify([...seen].slice(-250)))}catch{}
+ try{
+  const now=Date.now(),fresh=now-14*86400000;
+  const previous=JSON.parse(localStorage.getItem(SEEN)||'[]');
+  const rows=Array.isArray(previous)?previous.filter(x=>x&&typeof x.key==='string'&&Number(x.at)>=fresh):[];
+  const saved=new Map(rows.map(x=>[x.key,x.at]));
+  for(const key of seen)saved.set(key,now);
+  localStorage.setItem(SEEN,JSON.stringify([...saved].slice(-250).map(([key,at])=>({key,at}))));
+ }catch{}
 }
 function events(){
  try{
@@ -94,11 +107,17 @@ function show(next){
  const controls=document.createElement('div');controls.className='seyveo-reminder-actions';
  const open=document.createElement('button');open.type='button';open.textContent='Календарь';open.setAttribute('aria-label','Открыть календарь');
  const dismiss=document.createElement('button');dismiss.type='button';dismiss.textContent='Понятно';dismiss.setAttribute('aria-label','Закрыть напоминание');
- open.addEventListener('click',()=>{close();if(location.hash!=='#calendar')location.hash='#calendar';else window.dispatchEvent(new Event('seyveo:calendar-open'))});
+ open.addEventListener('click',()=>{
+  const date=current?.item?.date;
+  close();if(location.hash!=='#calendar')location.hash='#calendar';
+  else window.dispatchEvent(new Event('seyveo:calendar-open'));
+  if(date)window.dispatchEvent(new CustomEvent('seyveo:calendar-focus-date',{detail:{date}}));
+ });
  dismiss.addEventListener('click',close);
  controls.append(open,dismiss);host.append(caption,title,copy,controls);
  document.body.append(host);updateText();
- closeTimer=setTimeout(close,13000);
+ // A short-lived toast was too easy to miss, especially for older users.
+ closeTimer=setTimeout(close,45000);
 }
 function check(){
  if(!canShow()){if(panel)removePanel();return}
