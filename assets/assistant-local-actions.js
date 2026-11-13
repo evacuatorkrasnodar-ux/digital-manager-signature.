@@ -393,6 +393,14 @@ function restore(){
  if(record)showReceipt({plan:info.plan,already:info.already},record);
  else receiptClear();
 }
+// The real command was committed before the tour. While its saved form is
+// displayed, prevent an accidental second Save from duplicating the record.
+document.addEventListener('submit',event=>{
+ if(!job?.saved||!job.dialog?.open)return;
+ if(['personalTaskForm','calendarEventForm'].includes(event.target?.id)){
+  event.preventDefault();event.stopImmediatePropagation();
+ }
+},true);
 document.addEventListener('visibilitychange',()=>{
  if(document.visibilityState==='hidden'&&job){
   const j=job;job=null;j.cancelled=true;
@@ -408,7 +416,7 @@ function mailRequest(raw){
  const q=String(raw||'').trim().toLocaleLowerCase('ru-RU').replace(/ё/g,'е')
   .replace(/^(?:(?:сейви|сейва|сэйви|сэйва|сэй|сей|seyveo)[,.!:\s]+)?(?:а\s+)?/,'')
   .replace(/[?!.]+$/,'').replace(/\s+/g,' ').trim();
- return /^(?:(?:а\s+)?где(?: у нас| находится| находится у нас)? (?:почта|личная почта|рабочая почта)(?: покажи(?: мне)?)?|покажи(?: мне)? (?:почту|личную почту|рабочую почту)|открой(?: мне)? (?:почту|личную почту|рабочую почту))$/.test(q);
+ return /^(?:(?:а\s+)?где(?: у нас| моя| находится| находится у нас)? (?:почта|личная почта|рабочая почта)(?: покажи(?: мне)?)?|покажи(?: мне)? (?:почту|личную почту|рабочую почту)|открой(?: мне)? (?:почту|личную почту|рабочую почту))$/.test(q);
 }
 function navigate(raw,force=false){
  if(!mailRequest(raw))return false;
