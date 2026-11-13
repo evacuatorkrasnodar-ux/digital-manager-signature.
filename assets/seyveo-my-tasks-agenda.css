@@ -24,7 +24,8 @@
 }
 #tasksPage #svTasksDateNav .sv-agenda-month-heading{
  display:flex;align-items:baseline;gap:5px;
- min-height:28px;padding:0 1px 4px;
+ box-sizing:border-box;width:100%;min-height:28px;padding:0 1px 4px;
+ border:0;background:transparent;box-shadow:none;text-align:left;cursor:pointer;
  letter-spacing:-.035em;
 }
 #tasksPage #svTasksDateNav .sv-agenda-month-name{
