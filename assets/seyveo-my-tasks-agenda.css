@@ -763,3 +763,11 @@ html.sv-task-selection-active #svWorkShell[data-task-tool-mode="all"] #svInlineT
   pointer-events:none!important;
  }
 }
+
+
+/* Selection toolbar fully replaces dock interaction; leave the dock's design
+   intact and make its underlying layer non-interactive while selecting. */
+html.sv-task-selection-active body > footer.dock.sv-shared-dock{
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
