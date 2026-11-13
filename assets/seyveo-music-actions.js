@@ -52,8 +52,17 @@ function handle(raw){
   const message=next?'Переключаю на следующий трек.':'Возвращаю предыдущий трек.';
   msg(message);return{status:'requested',message};
  }
- if(/^(?:(?:сделай|убавь|уменьши|прибавь|увеличь)\s+(?:музыку|звук|громкость)\s+(?:тише|громче)?|(?:музыку|звук|громкость)\s+(?:потише|погромче|тише|громче)|(?:потише|погромче|тише|громче)\s+(?:музыку|звук|громкость))$/.test(q)){
+ if(/^(?:(?:сделай|убавь|уменьши|прибавь|увеличь)\s+(?:музыку|звук|громкость)\s+(?:тише|громче)?|сделай\s+(?:потише|погромче|тише|громче)|(?:музыку|звук|громкость)\s+(?:потише|погромче|тише|громче)|(?:потише|погромче|тише|громче)\s+(?:музыку|звук|громкость)|(?:тише|громче|потише|погромче))$/.test(q)){
+  if(/^(?:тише|громче|потише|погромче|сделай\s+(?:тише|громче|потише|погромче))$/.test(q)&&!music.state?.().playing&&location.hash!=='#sayvi-music')return null;
   const up=/громче|прибавь|увеличь/.test(q)&&!/уменьши/.test(q);
+  // iPhone Safari exposes hardware-controlled volume. The website cannot
+  // honestly promise to change the user's physical speaker level.
+  const ios=/iPhone|iPad|iPod/i.test(navigator.userAgent||'')||
+    (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(ios){
+   const message='На iPhone системная громкость управляется боковыми кнопками. Сэйви не может менять её из Safari.';
+   msg(message);return {status:'unsupported',message};
+  }
   const old=audio.volume,target=Math.max(0,Math.min(1,Math.round((old+(up?.15:-.15))*100)/100));
   if(target===old){
    const message=up?'Громкость плеера уже на максимуме.':'Громкость плеера уже на минимуме.';
