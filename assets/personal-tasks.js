@@ -656,7 +656,7 @@ function svAgendaSyncFromScroll(){
  // On the final screenful, highlight the last visible day even when its
  // heading cannot reach the very top of the list.
  if(scrollRange-list.scrollTop<3){
-  const finalLine=rect.top+list.clientHeight*.72;
+  const finalLine=rect.top+list.clientHeight*.86;
   for(const heading of headings){
    if(heading.getBoundingClientRect().top<=finalLine)current=heading;
   }
