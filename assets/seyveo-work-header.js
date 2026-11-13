@@ -91,7 +91,7 @@
  }
  .month[hidden]{display:none!important}
  .month-name{display:block;color:inherit;font-weight:700}
- .month-year{display:block;color:#B93429;font-weight:430;letter-spacing:-.018em;font-variant-numeric:tabular-nums}
+ .month-year{display:block;color:#B93429;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;font-size:1em;font-weight:400;letter-spacing:-.035em;font-variant-numeric:proportional-nums lining-nums}
  :host([data-theme="dark"]) .month-year{color:#F47883}
  .month:focus-visible{outline:2px solid currentColor;outline-offset:5px;border-radius:3px}
  .control {
