@@ -14,6 +14,27 @@
  const factory=window.SEYVEO_WORK_HEADER;
  if(!dialog||!sheet||!legacy||!back||!save||!title||!form||!factory?.create)return;
  if(sheet.querySelector('#svTaskSharedHeader'))return;
+
+ const dateRow=sheet.querySelector('.personal-task-field');
+ if(dateRow&&!sheet.querySelector('#personalTaskTime')){
+  const row=document.createElement('div');
+  row.className='personal-task-field sv-task-time-row';
+  row.innerHTML='<svg class="sv-task-clock-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.25"/><path d="M12 7.5v5l3.25 2"/></svg><span class="personal-task-field-caption">Время</span><span id="personalTaskTimeDisplay" class="sv-task-time-display">Не выбрано</span><svg class="personal-task-date-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg><input type="time" id="personalTaskTime" name="time" step="60" aria-label="Время выполнения дела"><button type="button" class="sv-task-time-clear" hidden aria-label="Убрать время">×</button>';
+  dateRow.insertAdjacentElement('afterend',row);
+  const field=row.querySelector('input'),shown=row.querySelector('#personalTaskTimeDisplay'),clear=row.querySelector('.sv-task-time-clear');
+  const refresh=()=>{
+   const valid=/^([01]\d|2[0-3]):[0-5]\d$/.test(field.value);
+   shown.textContent=valid?field.value:'Не выбрано';
+   row.dataset.filled=String(valid);
+   clear.hidden=!valid;
+  };
+  field.addEventListener('input',refresh);
+  field.addEventListener('change',refresh);
+  clear.addEventListener('click',()=>{field.value='';refresh();});
+  dialog.addEventListener('close',refresh);
+  dialog.addEventListener('sv-task-time-sync',refresh);
+  refresh();
+ }
  const view=factory.create();
  const host=view.host;
  host.id='svTaskSharedHeader';
