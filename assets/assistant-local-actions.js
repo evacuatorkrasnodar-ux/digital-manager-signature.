@@ -350,79 +350,121 @@ function showReceipt(j,result){
  window.SEYVEO_LOCAL_ACTIONS?.clearPendingReminder?.();
  window.dispatchEvent(new CustomEvent('seyveo:live-action-finished',{detail:{kind:j.plan.kind,id:result.id,status:'saved'}}));
 }
-async function run(j){
- try{
-  check(j);verify(j);
-  // The write was committed and verified synchronously before the tour.
-  if(document.querySelector('dialog[open]')){clearPanel();job=null;showReceipt(j,j.saved);return}
-  const record=j.plan.kind==='task'?await taskFlow(j):await calendarFlow(j);
-  check(j);focus(j,null);clearPanel();job=null;
-  if(document.visibilityState!=='hidden'){
-   $('navHome')?.click();
-   await delay(250);
-   showReceipt(j,record);
-  }
- }catch(error){
-  focus(j,null);clearPanel();
-  if(job===j)job=null;
-  if(j.saved&&!j.cancelled&&document.visibilityState!=='hidden')showReceipt(j,j.saved);
- }
-}
+
 function matchingRecord(plan){
  const d=plan.draft,key=plan.kind==='task'?TASKS:CAL;
  return rows(key).slice().reverse().find(x=>
   typeof x?.id==='string'&&x.title===d.title&&
-  (plan.kind==='task'?x.due===(d.date||''):x.date===d.date)&&
+  (plan.kind==='task'?(x.done!==true&&x.due===(d.date||'')):x.date===d.date)&&
   (x.time||'')===(d.time||'')&&
   (plan.kind!=='calendar'||!d.remindAtStart||x.remind===-1)
  );
 }
+// Safety path: an accepted command is ALWAYS finished via the existing
+// validated owner writers when the visual walkthrough is interrupted.
+// Never fake the receipt or write directly to a second task/calendar store.
+function completeFast(j,options={}){
+ if(!j||j.cancelled)return false;
+ if(j.committing)return false;
+ j.committing=true;
+ try{
+  let record=j.saved||matchingRecord(j.plan),already=Boolean(record);
+  if(!record){
+   const d=j.plan.draft;
+   const outcome=window.SEYVEO_LOCAL_ACTIONS?.executePlan?.({
+    kind:j.plan.kind,draft:{status:'ready',title:d.title,date:d.date||'',time:d.time||'',remindAtStart:!!d.remindAtStart}
+   });
+   if(!['saved','already'].includes(outcome?.status))throw new Error(outcome?.message||'Не удалось сохранить');
+   already=outcome.status==='already';
+   record=matchingRecord(j.plan);
+   if(!record)throw new Error('Запись отсутствует после сохранения');
+  }
+  j.saved=record;j.already=already;
+  queueClear(j);receiptWrite(j);
+  j.cancelled=true;
+  if(job===j)job=null;
+  j.focused?.classList.remove('sv-live-focus');
+  if(j.dialog?.open)j.dialog.close();
+  clearPanel();
+  if(options.goHome&&document.visibilityState==='visible')$('navHome')?.click();
+  if(options.visible!==false&&document.visibilityState==='visible')showReceipt(j,record);
+  return true;
+ }catch(error){
+  j.committing=false;
+  if(options.visible!==false&&document.visibilityState==='visible')setError(error?.message||'Ошибка записи');
+  return false;
+ }
+}
+async function run(j){
+ try{
+  check(j);verify(j);
+  if(document.querySelector('dialog[open]')){
+   completeFast(j,{visible:true});return;
+  }
+  const record=j.plan.kind==='task'?await taskFlow(j):await calendarFlow(j);
+  check(j);
+  focus(j,null);
+  j.saved=record;
+  if(job===j)job=null;
+  clearPanel();
+  if(document.visibilityState==='visible'){
+   $('navHome')?.click();
+   await delay(240);
+   showReceipt(j,record);
+  }
+ }catch(error){
+  if(j.cancelled)return;
+  // Unexpected view failure must not discard an accepted command.
+  if(completeFast(j,{visible:true}))return;
+  if(job===j){
+   j.committing=false;
+   panel('Не удалось завершить показ. Можно повторить сохранение или отменить.');
+  }
+ }
+}
 function startPlan(plan){
  if(!plan||!['task','calendar'].includes(plan.kind))return false;
- if(job)return true;
+ if(job){
+  // Preserve the first accepted request before starting a second one.
+  if(!completeFast(job,{visible:false}))return false;
+ }
  if(!$('personalTaskForm')||!$('calendarEventForm')){
   if(!location.pathname.endsWith('/sayvi-chat-new.html'))return false;
-  try{localStorage.setItem(HANDOFF,JSON.stringify({plan,at:Date.now()}))}catch{return false}
+  try{localStorage.setItem(HANDOFF,JSON.stringify({plan,at:Date.now()}))}
+  catch{return false}
   location.assign('./index.html#home');return true;
  }
- const j={plan,cancelled:false,dialog:null,focused:null,saved:null,already:false};
- try{
-  verify(j);
-  const result=window.SEYVEO_LOCAL_ACTIONS?.executePlan?.({
-   kind:plan.kind,
-   draft:{status:'ready',title:plan.draft.title,date:plan.draft.date||'',time:plan.draft.time||'',remindAtStart:!!plan.draft.remindAtStart}
-  });
-  if(!['saved','already'].includes(result?.status))throw new Error(result?.message||'Запись не сохранена');
-  j.already=result.status==='already';
-  j.saved=matchingRecord(plan);
-  if(!j.saved)throw new Error('Не удалось подтвердить сохранение');
-  receiptWrite(j);
- }catch(error){
-  panel('Сэйви: '+String(error.message||error));
-  const current=progress;
-  window.setTimeout(()=>{if(progress===current)clearPanel()},5500);
+ const j={plan,token:'la-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),
+  cancelled:false,committing:false,internalSubmit:false,dialog:null,focused:null,saved:null,already:false,expectedHash:null};
+ try{verify(j)}catch(error){setError(error.message);return true}
+ // Duplicate commands should not create a second task.
+ const existing=matchingRecord(plan);
+ if(existing){
+  j.saved=existing;j.already=true;receiptWrite(j);showReceipt(j,existing);return true;
+ }
+ if(!queueWrite(j)){
+  setError('Не удалось запомнить поручение. Проверь память браузера.');
   return true;
  }
  receipt?.remove();receipt=null;
- if(!enabled()||document.visibilityState==='hidden'){showReceipt(j,j.saved);return true}
+ if(!enabled()||document.visibilityState!=='visible'){
+  completeFast(j,{visible:document.visibilityState==='visible'});return true;
+ }
  job=j;
- window.setTimeout(()=>run(j),180);
+ panel('Сэйви начинает выполнять поручение');
+ window.setTimeout(()=>run(j),160);
  return true;
 }
 function start(raw){
  const plan=window.SEYVEO_LOCAL_ACTIONS?.previewAction?.(raw);
- if(!plan)return false;
- // On standalone chat, even with the tour off, use the existing main-app
- // writer. The preference hides animation; it never disables the command.
- if(!enabled()&&$('personalTaskForm')&&$('calendarEventForm'))return false;
- return startPlan(plan);
+ return plan?startPlan(plan):false;
 }
 function configure(raw){
  const q=String(raw||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim();
  if(!/(?:показ|действия|live action|лайв экшен|обучени)/.test(q)||
     !/(?:включ|выключ|отключ|убер|покажи|скрой|скрыть)/.test(q))return null;
  if(/(?:выключ|отключ|убер|скрой|скрыть)/.test(q)){
-  setEnabled(false);if(job)cancel();
+  if(job)completeFast(job,{visible:true});setEnabled(false);
   return {status:'saved',message:'Показ действий Сэйви отключён. Поручения по-прежнему выполняются.'};
  }
  if(/(?:включ|покажи)/.test(q)){
