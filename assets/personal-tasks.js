@@ -522,9 +522,147 @@ function askSayviForTask({title,kind='task',note='',due='',assignee='' }={}){
  return true;
 }
 window.SEYVEO_TASK_ASSIST=Object.freeze({open:askSayviForTask});
+
+/* SEYVEO · My Tasks day board: view-only layer over the existing task store.
+ * The task rows keep their original action IDs, completion and edit logic.
+ * No artificial event duration or fictitious task dates are introduced. */
+let svTaskDateMode='all',svTaskSelectedDate='',svTaskWeekAnchor='';
+function svTaskISO(d){
+ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function svTaskDate(iso){
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso||''))return null;
+ const d=new Date(iso+'T12:00:00');
+ return Number.isNaN(d.getTime())?null:d;
+}
+function svTaskShiftDay(iso,days){
+ const d=svTaskDate(iso)||new Date();
+ d.setDate(d.getDate()+days);
+ return svTaskISO(d);
+}
+function svTaskPalette(task){
+ const t=String(task.title||'').toLocaleLowerCase('ru-RU');
+ if(/звон|позвон|телефон|встрет|встреч/.test(t))return 'lilac';
+ if(/здоров|давлен|лекар|врач|лечен/.test(t))return 'rose';
+ if(/документ|договор|бумаг|отчёт|отчет|письм|почт/.test(t))return 'blue';
+ if(/семь|семей|мам|пап|дом|деть|дети/.test(t))return 'peach';
+ if(/рабоч|клиент|проект|заказ|достав/.test(t))return 'amber';
+ return 'silver';
+}
+function svTaskDrawDateNav(){
+ const panel=list.parentElement;
+ if(!panel)return;
+ let nav=panel.querySelector('#svTasksDateNav');
+ if(!nav){
+  nav=element('nav','sv-task-date-nav');
+  nav.id='svTasksDateNav';
+  nav.setAttribute('aria-label','Дни и дела');
+  list.before(nav);
+ }
+ if(!svTaskSelectedDate)svTaskSelectedDate=svTaskISO(new Date());
+ if(!svTaskWeekAnchor)svTaskWeekAnchor=svTaskSelectedDate;
+ nav.replaceChildren();
+ const heading=element('div','sv-task-date-heading');
+ const prev=element('button','sv-task-week-arrow','‹');
+ prev.type='button';prev.setAttribute('aria-label','Предыдущая неделя');
+ const next=element('button','sv-task-week-arrow','›');
+ next.type='button';next.setAttribute('aria-label','Следующая неделя');
+ const month=element('strong','sv-task-date-month',new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(svTaskDate(svTaskWeekAnchor)));
+ const all=element('button','sv-task-all-button',svTaskDateMode==='all'?'Все дела':'Показать все');
+ all.type='button';all.setAttribute('aria-pressed',String(svTaskDateMode==='all'));
+ all.addEventListener('click',()=>{svTaskDateMode='all';render()});
+ prev.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,-7);svTaskSelectedDate=svTaskWeekAnchor;svTaskDateMode='day';render()});
+ next.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,7);svTaskSelectedDate=svTaskWeekAnchor;svTaskDateMode='day';render()});
+ heading.append(prev,month,next,all);
+ const strip=element('div','sv-task-day-strip');
+ const monday=svTaskDate(svTaskWeekAnchor);
+ monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
+ const today=svTaskISO(new Date());
+ for(let i=0;i<7;i++){
+  const d=new Date(monday);
+  d.setDate(monday.getDate()+i);
+  const iso=svTaskISO(d),selected=svTaskDateMode==='day'&&svTaskSelectedDate===iso;
+  const b=element('button','sv-task-day-tab');
+  b.type='button';b.dataset.day=iso;b.setAttribute('aria-pressed',String(selected));
+  b.setAttribute('aria-label',new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long'}).format(d));
+  b.append(element('span','sv-task-day-week',new Intl.DateTimeFormat('ru-RU',{weekday:'short'}).format(d).replace('.','')),
+   element('span','sv-task-day-number',String(d.getDate())));
+  if(iso===today)b.dataset.today='true';
+  if(selected)b.dataset.selected='true';
+  b.addEventListener('click',()=>{svTaskDateMode='day';svTaskSelectedDate=iso;svTaskWeekAnchor=iso;render()});
+  strip.append(b);
+ }
+ nav.append(heading,strip);
+}
+function svTaskSectionTitle(label,kind){
+ const title=element('h3','personal-list-title sv-task-section-title',label);
+ if(kind)title.dataset.section=kind;
+ return title;
+}
+function svTaskRenderDay(rows){
+ const chosen=svTaskDate(svTaskSelectedDate);
+ if(!chosen)return;
+ list.append(element('h3','sv-task-selected-heading',new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long'}).format(chosen)));
+ const onDay=rows.filter(item=>item.due===svTaskSelectedDate);
+ const allDay=onDay.filter(item=>!item.time);
+ const timed=onDay.filter(item=>item.time).sort((a,b)=>a.time.localeCompare(b.time));
+ if(allDay.length){
+  list.append(svTaskSectionTitle('Весь день','all-day'));
+  allDay.forEach(item=>list.append(row(item)));
+ }
+ if(!onDay.length){
+  const empty=element('p','sv-task-day-empty','На этот день дел пока нет. Выберите другой день или нажмите «Показать все».');
+  list.append(empty);
+ }
+ list.append(svTaskSectionTitle('По времени','timeline'));
+ const today=svTaskISO(new Date()),now=new Date();
+ const hours=timed.map(item=>Number(item.time.slice(0,2))).filter(Number.isFinite);
+ if(svTaskSelectedDate===today)hours.push(now.getHours());
+ const start=Math.max(0,Math.min(8,...hours));
+ const end=Math.min(23,Math.max(19,...hours));
+ const timeline=element('div','sv-task-day-timeline');
+ for(let hour=start;hour<=end;hour++){
+  const slot=element('div','sv-task-hour-block');
+  const hourStr=String(hour).padStart(2,'0');
+  slot.append(element('time','sv-task-hour-label',hourStr+':00'));
+  const track=element('div','sv-task-hour-track');
+  timed.filter(item=>Number(item.time.slice(0,2))===hour).forEach(item=>track.append(row(item)));
+  if(svTaskSelectedDate===today&&now.getHours()===hour){
+   const mark=element('div','sv-task-now-marker');
+   mark.style.top=Math.round(now.getMinutes()/60*65)+'px';
+   mark.append(element('span','',new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'}).format(now)));
+   slot.append(mark);
+  }
+  slot.append(track);timeline.append(slot);
+ }
+ list.append(timeline);
+}
+function svTaskRenderAll(rows){
+ if(!rows.length)return;
+ const groups=new Map();
+ for(const item of rows){
+  const key=item.due||'unscheduled';
+  if(!groups.has(key))groups.set(key,[]);
+  groups.get(key).push(item);
+ }
+ const names=[...groups.keys()].sort((a,b)=>(a==='unscheduled'?'9999-12-31':a).localeCompare(b==='unscheduled'?'9999-12-31':b));
+ const today=svTaskISO(new Date());
+ for(const key of names){
+  let label='Без срока';
+  if(key!=='unscheduled'){
+   const d=svTaskDate(key);
+   label=key===today?'Сегодня':key===svTaskShiftDay(today,1)?'Завтра':new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long'}).format(d);
+  }
+  list.append(svTaskSectionTitle(label,'date'));
+  groups.get(key).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99')).forEach(item=>list.append(row(item)));
+ }
+}
+
 function row(item,compact=false,deferred=false){
  const section=element('div',compact?'personal-brief-row':'personal-task-row');
  section.dataset.taskId=item.id;
+ if(!compact&&!deferred){section.classList.add('sv-task-event');section.dataset.tint=svTaskPalette(item);
+  if(item.time)section.dataset.scheduled='true';}
  const label=element('span','personal-task-content');
  const contact=callTargetFromTask(item.title);
  const name=element('button',compact&&contact?'personal-task-call-title':'personal-task-name',item.title);
@@ -640,13 +778,15 @@ function render(){
  // One category needs no second caption beneath the Tasks header.
  // When categories coexist, short section names restore scannability.
  const showGroupLabels=Number(visibleActive.length>0)+Number(hasDeferred)>1;
+ svTaskDrawDateNav();
  list.replaceChildren();
- if(visibleActive.length){
-  if(showGroupLabels)list.append(element('h3','personal-list-title','Сейчас'));
-  visibleActive.forEach(task=>list.append(row(task)));
+ if(svTaskDateMode==='day'){
+  svTaskRenderDay(visibleActive);
+ }else{
+  svTaskRenderAll(visibleActive);
  }
- if(hasDeferred){
-  if(showGroupLabels)list.append(element('h3','personal-list-title','Отложено'));
+ if(hasDeferred&&svTaskDateMode==='all'){
+  list.append(svTaskSectionTitle('Отложено','deferred'));
   postponed.forEach(task=>list.append(row(task,false,true)));
   preview.forEach(item=>list.append(deferredPreviewRow(item)));
  }
