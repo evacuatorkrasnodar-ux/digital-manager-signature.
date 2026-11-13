@@ -102,17 +102,20 @@
  color:#FFF!important;background:var(--agenda-red)!important;
 }
 #tasksPage #svTasksDateNav .sv-agenda-marks{
- box-sizing:border-box;display:grid;grid-template-columns:repeat(2,6px);
- justify-content:center;justify-items:center;align-content:start;
- column-gap:8px;row-gap:8px;width:100%;min-height:25px;
- margin-top:6px;
+ box-sizing:border-box;display:block;position:relative;
+ width:52px;height:36px;min-height:36px;margin-top:5px;
 }
 #tasksPage #svTasksDateNav .sv-agenda-mark{
- display:block;width:5px;height:5px;border-radius:50%;
- background:#A0A4AC;
+ display:block;position:absolute;width:6px;height:6px;border-radius:50%;
+ background:#A0A4AC;box-shadow:0 .5px 1px rgba(0,0,0,.09);
 }
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(1){left:7px;top:2px}
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(2){left:23px;top:11px}
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(3){left:39px;top:4px}
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(4){left:12px;top:25px}
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(5){left:35px;top:25px}
 #tasksPage #svTasksDateNav .sv-agenda-mark[data-kind="work"]{background:#4E9CCF}
-#tasksPage #svTasksDateNav .sv-agenda-mark[data-kind="personal"]{background:#A39AAC}
+#tasksPage #svTasksDateNav .sv-agenda-mark[data-kind="personal"]{background:#A69CB8}
 #tasksPage #svTasksDateNav .sv-agenda-week-step{
  display:none;position:absolute;z-index:2;top:18px;width:26px;height:30px;
  border:0;background:transparent;color:#878C95;
@@ -121,8 +124,8 @@
 #tasksPage #svTasksDateNav .sv-agenda-week-step:first-child{left:-25px}
 #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:-25px}
 #tasksPage #svTasksDateNav .sv-agenda-handle{
- position:relative;z-index:2;width:24px;height:4px;margin:-15px auto 22px;
- border-radius:3px;background:#8F939B;
+ position:relative;z-index:2;width:44px;height:5px;margin:-10px auto 16px;
+ border-radius:4px;background:#8F939B;
 }
 #tasksPage #svTasksDateNav .sv-agenda-filters{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
@@ -340,6 +343,8 @@
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day-number{
  color:#E9EBF0;
 }
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-kind="work"]{background:#6CB9E8}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-kind="personal"]{background:#BCAFD2}
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-filter{
  background:#25384A;color:#BED9F3;border-color:#355573;
 }
