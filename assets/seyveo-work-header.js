@@ -120,7 +120,7 @@
  function create(){
   const host=document.createElement('seyveo-work-head');
   const shadow=host.attachShadow({mode:'open'});
-  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="month" type="button" aria-label="Вернуться к сегодняшнему дню" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
+  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="month" type="button" aria-label="Открыть календарь" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
   const back=shadow.querySelector('.back');
   const title=shadow.querySelector('.title');
   const month=shadow.querySelector('.month');
