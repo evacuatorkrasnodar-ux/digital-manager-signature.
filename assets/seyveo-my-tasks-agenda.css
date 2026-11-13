@@ -531,3 +531,38 @@
 #tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"][data-done="true"] .personal-task-name{
  color:#949AA4!important;text-decoration:line-through!important;
 }
+
+
+/* Sayvi Weather: tiny real daily forecast aligned to the right of each agenda date. */
+#tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather{
+ box-sizing:border-box;display:inline-flex!important;align-items:center;justify-content:flex-end;
+ flex:0 0 auto;gap:2px;margin-left:auto;padding-left:4px;
+ white-space:nowrap;font:600 11.5px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums;color:#252A32!important;
+}
+#tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather[hidden]{display:none!important}
+#tasksPage #personalTaskList .sv-agenda-weather-high{font-weight:660;color:#252A32}
+#tasksPage #personalTaskList .sv-agenda-weather-low{font-weight:500;color:#9196A0}
+#tasksPage #personalTaskList .sv-agenda-weather-icon{
+ display:inline-grid;place-items:center;width:23px;height:23px;flex:0 0 23px;margin-left:2px;
+}
+#tasksPage #personalTaskList .sv-agenda-weather-icon svg{display:block;width:23px;height:23px;overflow:visible}
+#tasksPage #personalTaskList .sv-agenda-weather-source{
+ display:block;width:max-content;max-width:calc(100% - 24px);margin:10px 13px 8px auto;
+ color:#9399A3!important;background:transparent!important;border:0!important;
+ font:450 10px/1.3 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ text-decoration:none!important;text-align:right;
+}
+#tasksPage #personalTaskList .sv-agenda-weather-source:hover{text-decoration:underline!important}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather,
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-weather-high{color:#F3F4F6!important}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-weather-low{color:#B1B5BF}
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-weather-source{color:#A1A7B1!important}
+@media(max-width:380px){
+ #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather{
+  font-size:10.5px!important;gap:1px;padding-left:2px;
+ }
+ #tasksPage #personalTaskList .sv-agenda-weather-icon,
+ #tasksPage #personalTaskList .sv-agenda-weather-icon svg{width:20px;height:20px}
+ #tasksPage #personalTaskList .sv-agenda-weather-icon{flex-basis:20px;margin-left:1px}
+}
