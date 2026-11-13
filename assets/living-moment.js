@@ -163,11 +163,11 @@ function restoreTask(id){
  return true;
 }
 const sample=[
- {kind:'contract',title:'Проверить документ',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
+ {kind:'contract',title:'Проверить документ',sampleTime:'10:32',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
   reason:'Это вымышленный договор для предпросмотра. Настоящий появляется только из ваших документов или разрешённого источника.',
   detail:'В рабочем режиме Сэйви поможет проверить договор, но ничего не подпишет без вашего подтверждения.'},
- {kind:'work',title:'Елена · рабочий чат',category:'СООБЩЕНИЯ',body:'Я закончила выкладку товаров. Можете проверить?',reason:'Учебное сообщение от Елены, не из реального рабочего чата.',detail:'Сэйви может предложить черновик. Отправка не подключена.'},
- {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Есть письмо, которому нужен ответ.',
+ {kind:'work',title:'Елена · рабочий чат',sampleTime:'10:40',category:'СООБЩЕНИЯ',body:'Я закончила выкладку товаров. Можете проверить?',reason:'Учебное сообщение от Елены, не из реального рабочего чата.',detail:'Сэйви может предложить черновик. Отправка не подключена.'},
+ {kind:'mail',title:'Почта',sampleTime:'10:45',category:'СООБЩЕНИЯ',body:'Есть письмо, которому нужен ответ.',
   reason:'Почта не подключена, настоящих писем Сэйви пока не читала.',
   detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'}
 ];
@@ -224,7 +224,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const measure=create('span','lm-field-measure',real?'ВАШИ ДЕЛА':'ДЕМО');
  const clockLabel=create('time','sv-lm-event-clock');clockLabel.hidden=true;
  clockLabel.setAttribute('aria-label','Время запланированного дела');
- if(real)top.append(label,measure,clockLabel);
+ top.append(label);
+ if(real)top.append(measure);
+ top.append(clockLabel);
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
  const artwork=create('div','lm-hero-art lm-hero-art--'+primary.kind);
@@ -969,6 +971,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    mark.append(icon(item.kind));
    const words=create('span','lm-inline-copy');
    words.append(create('span','lm-inline-title',item.title),create('span','lm-inline-note',item.body));
+   if(!real&&item.sampleTime)words.append(create('span','sv-lm-sample-time','Пример · '+item.sampleTime));
    row.append(mark,words);
    row.addEventListener('click',()=>{
     readingUntil=Date.now()+12000;
@@ -986,9 +989,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
   artwork.className='lm-hero-art lm-hero-art--'+item.kind;
   artwork.replaceChildren(icon(item.kind));
   label.textContent=item.category;
-  const hasClock=real&&/^([01]\\d|2[0-3]):[0-5]\\d$/.test(item.time||'');
-  clockLabel.hidden=!hasClock;
-  clockLabel.textContent=hasClock?item.time:'';
+  const hasClock=real&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'');
+  const exampleClock=!real&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.sampleTime||'');
+  clockLabel.hidden=!(hasClock||exampleClock);
+  clockLabel.textContent=hasClock?item.time:exampleClock?'Пример · '+item.sampleTime:'';
+  clockLabel.setAttribute('aria-label',hasClock?'Время выполнения дела':'Учебное время для примера');
   headline.textContent=item.title;
   description.textContent=item.body;
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
@@ -1104,7 +1109,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  explanation.hidden=true;
  open.setAttribute('aria-controls',explanation.id);
  execute.setAttribute('aria-controls',explanation.id);
- if(real)scene.append(top);
+ scene.append(top);
  scene.append(main,secondary,explanation);
  field.append(scene);
  tiles.append(field);
