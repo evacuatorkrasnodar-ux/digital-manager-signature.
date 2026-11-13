@@ -317,6 +317,41 @@
  #svInlineTaskTools .sv-tool-bulk span{font-size:12px;color:var(--secondary)}
  #svInlineTaskTools .sv-tool-bulk button:last-child{color:#B33E43}
  #svInlineTaskTools .sv-tool-bulk button:disabled{opacity:.4}
+ /* Polished single-page task browser: fine typography and quiet color. */
+ #svInlineTaskTools{padding-top:12px;padding-bottom:26px}
+ #svInlineTaskTools .sv-tool-input{
+  margin:4px 0 13px;min-height:48px;background:#F2F2F4;
+  border:1px solid rgba(60,60,67,.04);border-radius:15px;
+  font-weight:450;letter-spacing:-.012em;
+ }
+ #svInlineTaskTools .sv-tool-input::placeholder{color:#8A8C92;opacity:1}
+ #svInlineTaskTools .sv-tool-filters{
+  margin:0 0 12px;min-height:42px;align-items:center;border-radius:999px;
+  background:#F0F0F2;
+ }
+ #svInlineTaskTools .sv-tool-filters button{
+  min-height:36px;border-radius:999px;font-weight:480;letter-spacing:-.01em
+ }
+ #svInlineTaskTools .sv-tool-filters button[aria-pressed="true"]{
+  background:#FFF;box-shadow:0 1px 3px rgba(18,18,20,.07)
+ }
+ #svInlineTaskTools .sv-tool-result{
+  padding:13px 3px;min-height:65px;border-bottom:1px solid rgba(60,60,67,.09)
+ }
+ #svInlineTaskTools .sv-tool-copy strong{
+  color:var(--text);font-size:16px;font-weight:490;line-height:1.35
+ }
+ #svInlineTaskTools .sv-tool-bulk{
+  padding:16px 0 8px;gap:8px
+ }
+ #svInlineTaskTools .sv-tool-bulk button{
+  border-radius:14px;min-height:42px;font-weight:500
+ }
+ :root[data-theme="dark"] #svInlineTaskTools .sv-tool-input,
+ :root[data-theme="dark"] #svInlineTaskTools .sv-tool-filters{background:#303034}
+ :root[data-theme="dark"] #svInlineTaskTools .sv-tool-filters button[aria-pressed="true"]{
+  background:#444448;color:#F6F6F8
+ }
  /* Apple-like semantic color: a single restrained blue for selection,
     a warm amber only for overdue dates. Neutral copy stays graphite. */
  #svInlineTaskTools{--sv-task-accent:#3769A9;--sv-task-warn:#AD6A23}
@@ -379,6 +414,8 @@
     selected.clear();paint();
    });
    bulk.append(all,counter,deleteButton);toolPanel.append(bulk);
+   const hits=matches();
+   all.textContent=hits.length&&hits.every(t=>selected.has(t.id))?'Снять выбор':'Выбрать все';
   }
   function paintResults(){
    results.replaceChildren();
