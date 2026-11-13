@@ -113,7 +113,7 @@
    while Friday's weekday label carries the same warm red. */
 #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"] .sv-agenda-day-number{
  width:40px;height:40px;
- background:#B93429!important;color:#FFFFFF!important;
+ background:#109BDD!important;color:#FFFFFF!important;
  font-size:22px;font-weight:630;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day[data-weekday="5"] .sv-agenda-weekday{
@@ -387,7 +387,7 @@
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day-number{
  color:#E9EBF0;
 }
-:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"] .sv-agenda-day-number{color:#FFFFFF!important;background:#B93429!important;}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"] .sv-agenda-day-number{color:#FFFFFF!important;background:#109BDD!important;}
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-kind="work"]{background:#6CB9E8}
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-kind="personal"]{background:#BCAFD2}
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-filter{
