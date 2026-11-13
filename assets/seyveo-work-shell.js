@@ -328,8 +328,8 @@
  #svInlineTaskTools .sv-tool-bulk span{font-size:12px;color:var(--secondary)}
  #svInlineTaskTools .sv-tool-bulk button:last-child{color:#B33E43}
  #svInlineTaskTools .sv-tool-bulk button:disabled{opacity:.4}
- /* Only the selection submode swaps the dock for a wider bottom toolbar.
-    Full-width light header material, safe-area aware on iPhone. */
+ /* Only the selection submode swaps the dock for a bottom toolbar.
+    Its outer host remains invisible; only the action capsule is painted. */
  html.sv-task-selection-active footer.dock.sv-shared-dock{
   display:none!important
  }
@@ -342,10 +342,10 @@
   padding:12px max(12px,env(safe-area-inset-right,0px))
     calc(15px + env(safe-area-inset-bottom,0px))
     max(12px,env(safe-area-inset-left,0px))!important;
-  border:0!important;border-top:1px solid rgba(75,77,88,.055)!important;
+  border:0!important;
   border-radius:0!important;
-  background:var(--sv-header-surface,#F2F1F6)!important;
-  box-shadow:0 -5px 22px rgba(30,32,44,.035)!important;
+  background:transparent!important;
+  box-shadow:none!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
   font:-apple-system-body!important;
  }
@@ -377,7 +377,7 @@
  #svTaskSelectionBar button:focus-visible{outline:2px solid #3769A9;outline-offset:1px}
  html.sv-task-selection-active #svInlineTaskTools{padding-bottom:130px!important}
  :root[data-theme="dark"] #svTaskSelectionBar{
-  background:var(--sv-header-surface,#202023)!important;border-top-color:rgba(255,255,255,.08)!important
+  background:transparent!important;border:0!important;box-shadow:none!important
  }
  :root[data-theme="dark"] #svTaskSelectionBar .sv-tool-action-row{
   background:rgba(130,132,145,.17);border-color:rgba(255,255,255,.1)
