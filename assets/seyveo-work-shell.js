@@ -68,8 +68,7 @@
  selectHistory.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.2" width="17" height="12.2" rx="2.3"/><path d="M7 7.1h10M7 10.7h10M5.1 18.3h13.8M5.1 21h13.8"/></svg>';
  if(historyBar){
   historyBar.append(historyGroup);
-  historyBar.append(selectHistory);
-  historyGroup.append(searchTasks,add);
+  historyGroup.append(searchTasks,selectHistory,add);
   const design=document.createElement('style');
   design.textContent=`
   /* Both task actions occupy the SAME 62px header grid row as the title.
@@ -121,11 +120,11 @@
   :host([data-task-tools="true"]) .sv-history-select[aria-pressed="true"]{
    background:rgba(120,125,140,.22)!important;
   }
-  /* In Select mode, the canonical Back replaces Select in the same grid
-     slot. Hide the Search/+ capsule without altering its material or size. */
-  :host([data-task-selecting="true"]) .sv-history-dual{
-   display:none!important;
-  }
+  /* The nested All Tasks capsule contains Search and Select. */
+  :host([data-task-selecting="true"]) .sv-history-dual{display:flex!important}
+  :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select{display:grid!important}
+  :host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search):not(.sv-history-select){display:none!important}
+  :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select[aria-pressed="true"]{background:rgba(120,125,140,.18)!important}
   /* All Tasks has only the standard Back in the shared header.
      Select and Select All are below the list, never over the Back. */
   :host([data-task-tools="true"][data-theme="dark"]) .sv-history-select,
@@ -143,7 +142,8 @@
  });
  searchTasks.addEventListener('click',event=>{
   event.stopPropagation();
-  window.SEYVEO_TASK_INLINE?.open();
+  if(window.SEYVEO_TASK_INLINE?.current?.())window.SEYVEO_TASK_INLINE.toggleSearch();
+  else window.SEYVEO_TASK_INLINE?.open();
  });
  // Personal landing uses History in the left circle. Reuse the single
  // existing Action History panel; keep the original back chevron for subviews.
@@ -272,7 +272,7 @@
  selectionBar.setAttribute('role','group');
  selectionBar.setAttribute('aria-label','Действия с выбранными делами');
  document.body.appendChild(selectionBar);
- let toolMode='',filter='all',query='',selectionActive=false;
+ let toolMode='',filter='all',query='',selectionActive=false,searchOpen=false;
  const selected=new Set();
  const make=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
  const style=document.createElement('style');
@@ -468,6 +468,7 @@
   // this SAME screen; never a second page with duplicate search/filters.
   const input=make('input','sv-tool-input');
   input.type='search';input.placeholder='Найти дело';input.value=query;
+  input.hidden=!searchOpen;
   input.setAttribute('aria-label','Поиск по названию дела');
   input.addEventListener('input',()=>{query=input.value;paintResults()});
   toolPanel.append(input);
@@ -486,15 +487,7 @@
   toolPanel.append(results);
   let counter=null,deleteButton=null,selectAll=null;
   selectionBar.replaceChildren();
-  if(!selectionActive){
-   const footer=make('div','sv-tool-bulk sv-tool-select-entry');
-   const select=make('button','','Выбрать');
-   select.type='button';
-   select.setAttribute('aria-label','Выбрать дела для удаления');
-   select.addEventListener('click',toggleSelection);
-   footer.append(select);
-   toolPanel.append(footer);
-  }else{
+  if(selectionActive){
    const bulk=make('div','sv-tool-action-row');
    selectAll=make('button','sv-task-all','Выбрать все');selectAll.type='button';
    selectAll.addEventListener('click',()=>{
@@ -580,6 +573,7 @@
   document.documentElement.classList.toggle('sv-task-selection-active',selectionVisible);
   selectHistory.setAttribute('aria-pressed',String(selectionActive));
   selectHistory.setAttribute('aria-label',selectionActive?'Отменить выбор дел':'Выбрать дела');
+  searchTasks.setAttribute('aria-expanded',String(nested&&searchOpen));
   if(inPersonal){
    back.hidden=!nested;
    back.setAttribute('aria-label',nested?'Вернуться к моим делам':'Вернуться назад');
@@ -590,7 +584,7 @@
  }
  function setMode(mode){
   toolMode=mode?'all':'';
-  filter='all';query='';selected.clear();
+  filter='all';query='';searchOpen=false;selected.clear();
   selectionActive=false;
   shell.dataset.taskToolMode=toolMode;
   toolPanel.hidden=!toolMode;
@@ -605,6 +599,18 @@
   // long task list gets clipped behind the dock.
   sync();
  }
+ function toggleSearch(){
+  if(!toolMode)return;
+  searchOpen=!searchOpen;
+  if(!searchOpen){
+   query='';
+   document.activeElement?.blur?.();
+   document.documentElement.classList.remove('sv-task-search-focus');
+  }
+  paint();
+  syncToolHeader();
+  if(searchOpen)requestAnimationFrame(()=>toolPanel.querySelector('.sv-tool-input')?.focus({preventScroll:true}));
+ }
  function toggleSelection(){
   if(!toolMode)setMode('all');
   selectionActive=!selectionActive;
@@ -615,6 +621,7 @@
  window.SEYVEO_TASK_INLINE=Object.freeze({
   open:()=>{if(!toolMode)setMode('all')},
   select:toggleSelection,
+  toggleSearch,
   toggle:mode=>{if(mode==='select')toggleSelection();else if(!toolMode)setMode('all');else setMode('')},
   close:()=>{if(toolMode)setMode('')},
   current:()=>toolMode
@@ -679,6 +686,9 @@
   heading.dataset.taskTools=String(active==='personal'&&!history);
   if(active!=='personal')window.SEYVEO_TASK_INLINE?.close();
   const nested=active==='personal'&&!history&&!!toolMode;
+  searchTasks.innerHTML=nested?searchIcon:historyIcon;
+  searchTasks.setAttribute('aria-label',nested?'Поиск по делам':'История и все дела');
+  searchTasks.setAttribute('aria-expanded',String(nested&&searchOpen));
   nav.dataset.taskFilters=String(nested);
   nav.setAttribute('aria-label',nested?'Фильтры дел':'Мои дела, блокнот и кабинет');
   heading.dataset.taskSelecting=String(nested);
