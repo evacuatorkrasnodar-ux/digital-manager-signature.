@@ -67,7 +67,8 @@ function read(){
  due:/^\d{4}-\d{2}-\d{2}$/.test(item.due)?item.due:'',time:/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time)?item.time:'',done:item.done===true,
  createdAt:typeof item.createdAt==='string'?item.createdAt:'',doneAt:typeof item.doneAt==='string'?item.doneAt:'',
  ...(safeNoteId(item.sourceNoteId)?{sourceNoteId:item.sourceNoteId}:{}),
- ...(typeof item.source==='string'&&['sayvi','work','notebook'].includes(item.source)?{source:item.source}:{})}));
+ ...(typeof item.source==='string'&&['sayvi','work','notebook'].includes(item.source)?{source:item.source}:{}),
+ category:item.category==='work'||item.source==='work'?'work':'personal'}));
 }
 function save(items){
  try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)));return true}
@@ -526,7 +527,10 @@ window.SEYVEO_TASK_ASSIST=Object.freeze({open:askSayviForTask});
 /* SEYVEO · My Tasks day board: view-only layer over the existing task store.
  * The task rows keep their original action IDs, completion and edit logic.
  * No artificial event duration or fictitious task dates are introduced. */
-let svTaskDateMode='all',svTaskSelectedDate='',svTaskWeekAnchor='';
+let svTaskDateMode='day',svTaskSelectedDate='',svTaskWeekAnchor='';
+let svTaskCategoryFilter='all';
+const svTaskCategory=item=>item.category==='work'||item.source==='work'?'work':'personal';
+const svTaskMatchesCategory=item=>svTaskCategoryFilter==='all'||svTaskCategory(item)===svTaskCategoryFilter;
 function svTaskISO(d){
  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
@@ -617,46 +621,35 @@ function svTaskDrawDateNav(rows=[]){
  const fullDate=weekday.charAt(0).toLocaleUpperCase('ru-RU')+weekday.slice(1)+' — '+datePart;
  picked.append(element('strong','',fullDate));
  nav.append(heading,strip,picked);
- const onDate=(byDate.get(svTaskSelectedDate)||[]).slice().sort((a,b)=>(a.time||'00:00').localeCompare(b.time||'00:00'));
- {
-  const eventLine=element('div','sv-task-all-day-line');
-  eventLine.append(element('span','sv-task-all-day-label','Весь день'));
-  const pills=element('div','sv-task-event-pills');pills.setAttribute('role','group');pills.setAttribute('aria-label','Дела и быстрые действия на выбранный день');
-  for(const [index,item] of onDate.entries()){
-   const pill=element('button','sv-task-event-pill');pill.type='button';pill.dataset.tint=index===0?'blue':index===1?'neutral':svTaskPalette(item);
-   pill.setAttribute('aria-label',(item.time?item.time+' · ':'')+item.title+'. Открыть дело');
-   const dot=element('span','sv-task-pill-dot');dot.setAttribute('aria-hidden','true');pill.append(dot);
-   if(item.time)pill.append(element('time','sv-task-pill-time',item.time));
-   pill.append(element('span','sv-task-pill-title',item.title));
-   pill.addEventListener('click',()=>{
-    svTaskDateMode='day';render();
-    window.requestAnimationFrame(()=>{
-     const row=[...list.querySelectorAll('.personal-task-row[data-task-id]')].find(x=>x.dataset.taskId===item.id);
-     if(!row)return;row.scrollIntoView({block:'center',behavior:'auto'});
-     row.querySelector('[data-task-menu]')?.focus({preventScroll:true});
-    });
-   });
-   pills.append(pill);
-  }
-  if(onDate.length<2){
-   const shortcuts=onDate.length?[['Напоминание','neutral']]:[['Новое дело','blue'],['Напоминание','neutral']];
-   for(const [label,tint] of shortcuts){
-    const pill=element('button','sv-task-event-pill sv-task-quick-pill');
-    pill.type='button';pill.dataset.tint=tint;
-    pill.setAttribute('aria-label','Создать: '+label);
-    pill.append(element('span','sv-task-pill-dot'));
-    pill.append(element('span','sv-task-pill-title',label));
-    pill.addEventListener('click',()=>{openDialog();});
-    pills.append(pill);
-   }
-  }
-  eventLine.append(pills);nav.append(eventLine);
+
+ const pills=element('div','sv-task-event-pills sv-task-category-pills');
+ pills.setAttribute('role','group');pills.setAttribute('aria-label','Фильтр дел');
+ for(const [kind,label,tint] of [['work','Рабочие','blue'],['personal','Личные','neutral']]){
+  const pill=element('button','sv-task-event-pill sv-task-category-pill');
+  pill.type='button';pill.dataset.tint=tint;pill.dataset.category=kind;
+  const active=svTaskCategoryFilter==='all'||svTaskCategoryFilter===kind;
+  pill.setAttribute('aria-pressed',String(active));
+  pill.setAttribute('aria-label',label+'. '+(active?'Отображаются':'Скрыты'));
+  pill.append(element('span','sv-task-pill-dot'));
+  pill.append(element('span','sv-task-pill-title',label));
+  pill.addEventListener('click',()=>{
+   svTaskCategoryFilter=svTaskCategoryFilter===kind?'all':kind;
+   render();
+  });
+  pills.append(pill);
  }
+ nav.append(pills);
 }
 function svTaskSectionTitle(label,kind){
  const title=element('h3','personal-list-title sv-task-section-title',label);
  if(kind)title.dataset.section=kind;
  return title;
+}
+function svTaskRenderOtherDays(rows){
+ const other=rows.filter(item=>item.due!==svTaskSelectedDate);
+ if(!other.length)return;
+ list.append(svTaskSectionTitle('Остальные дела','other-days'));
+ other.forEach(item=>list.append(row(item)));
 }
 function svTaskRenderDay(rows){
  const chosen=svTaskDate(svTaskSelectedDate);
@@ -670,10 +663,10 @@ function svTaskRenderDay(rows){
   allDay.forEach(item=>list.append(row(item)));
  }
  if(!onDay.length){
-  const empty=element('p','sv-task-day-empty','На этот день дел пока нет. Выберите другой день или нажмите «Показать все».');
+  const empty=element('p','sv-task-day-empty',rows.length?'На выбранный день дел нет. Остальные дела — ниже.':'В этой категории пока нет дел.');
   list.append(empty);
  }
- if(!timed.length)return;
+ if(!timed.length){svTaskRenderOtherDays(rows);return;}
  list.append(svTaskSectionTitle('По времени','timeline'));
  const today=svTaskISO(new Date()),now=new Date();
  const hours=timed.map(item=>Number(item.time.slice(0,2))).filter(Number.isFinite);
@@ -696,6 +689,7 @@ function svTaskRenderDay(rows){
   slot.append(track);timeline.append(slot);
  }
  list.append(timeline);
+ svTaskRenderOtherDays(rows);
 }
 function svTaskRenderAll(rows){
  if(!rows.length)return;
@@ -832,11 +826,11 @@ function render(){
  const preview=Array.isArray(living?.deferred?.())?living.deferred():[];
  const postponed=open.filter(item=>deferredIds.has(item.id));
  const active=open.filter(item=>!deferredIds.has(item.id));
- renderContext(active);
+ const visibleActive=active.filter(svTaskMatchesCategory);
+ renderContext(visibleActive);
  // The calendar-style board owns the presentation; don't hide a real task
  // just because it was selected for the legacy featured preview.
- const visibleActive=active;
- const hasDeferred=postponed.length>0||preview.length>0;
+ const hasDeferred=postponed.some(svTaskMatchesCategory)||(svTaskCategoryFilter!=='work'&&preview.length>0);
  // One category needs no second caption beneath the Tasks header.
  // When categories coexist, short section names restore scannability.
  const showGroupLabels=Number(visibleActive.length>0)+Number(hasDeferred)>1;
@@ -847,10 +841,10 @@ function render(){
  }else{
   svTaskRenderAll(visibleActive);
  }
- if(hasDeferred&&svTaskDateMode==='all'){
+ if(hasDeferred){
   list.append(svTaskSectionTitle('Отложено','deferred'));
-  postponed.forEach(task=>list.append(row(task,false,true)));
-  preview.forEach(item=>list.append(deferredPreviewRow(item)));
+  postponed.filter(svTaskMatchesCategory).forEach(task=>list.append(row(task,false,true)));
+  if(svTaskCategoryFilter!=='work')preview.forEach(item=>list.append(deferredPreviewRow(item)));
  }
  if(!open.length&&!preview.length){
   const empty=element('div','personal-tasks-empty');
@@ -925,7 +919,11 @@ function openDialog(){
  pendingSourceNoteId='';editingTaskId='';
  $('personalTaskDialogTitle').textContent='Новое дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить дело');$('personalTaskSave').title='Сохранить дело';
- form.reset();dialog.dispatchEvent(new Event('sv-task-time-sync'));syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
+ form.reset();
+ const newCategory=form.querySelector('input[name="personalTaskCategory"][value="'+(svTaskCategoryFilter==='work'?'work':'personal')+'"]');
+ if(newCategory)newCategory.checked=true;
+ if(!$('tasksPage')?.hidden&&svTaskDateMode==='day')date.value=svTaskSelectedDate;
+ dialog.dispatchEvent(new Event('sv-task-time-sync'));syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
@@ -938,6 +936,7 @@ function put(e){
   const all=read(),record=all.find(task=>task.id===editingTaskId&&!task.done);
   if(!record){$('personalTaskStatus').textContent='Дело изменилось или уже выполнено. Откройте список заново.';return}
   record.title=title.slice(0,140);record.due=date.value;record.time=date.value?($('personalTaskTime')?.value||''):'';
+  record.category=form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';
   if(!save(all)){$('personalTaskStatus').textContent='Не удалось сохранить изменения.';return}
   editingTaskId='';dialog.close();render();
   window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
@@ -945,7 +944,9 @@ function put(e){
  }
  const all=read();
  if(all.length>=MAX){$('personalTaskStatus').textContent='Достигнут предел записей. Удалите ненужные завершённые дела.';return}
- const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',done:false,createdAt:new Date().toISOString(),doneAt:'',
+ const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',
+ category:form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal',
+ done:false,createdAt:new Date().toISOString(),doneAt:'',
  ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})}];
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
  pendingSourceNoteId='';justCompletedTaskId='';
@@ -1025,6 +1026,8 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  $('personalTaskDialogTitle').textContent='Изменить дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить изменения');$('personalTaskSave').title='Сохранить изменения';
  input.value=task.title;syncTaskSaveState();
+ const categoryChoice=form.querySelector('input[name="personalTaskCategory"][value="'+svTaskCategory(task)+'"]');
+ if(categoryChoice)categoryChoice.checked=true;
  date.value=task.due;
  if($('personalTaskTime'))$('personalTaskTime').value=task.time||'';
  dialog.dispatchEvent(new Event('sv-task-time-sync'));
