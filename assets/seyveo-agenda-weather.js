@@ -68,6 +68,9 @@
  function paint(){
   const list=document.querySelector('#tasksPage #personalTaskList');
   if(!list)return;
+  const lastUpdate=updatedAt?new Date(updatedAt).toLocaleString('ru-RU',{
+   day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'
+  }):'';
   let visible=0;
   list.querySelectorAll('.sv-agenda-section-heading[data-weather-date]').forEach(heading=>{
    const badge=heading.querySelector('.sv-agenda-weather');
@@ -80,7 +83,8 @@
    const icon=document.createElement('span');icon.className='sv-agenda-weather-icon';icon.innerHTML=iconSVG(kind);
    badge.replaceChildren(high,low,icon);
    badge.hidden=false;
-   badge.title='Прогноз для '+location.name+': '+description+', '+temperature(item.max)+' / '+temperature(item.min);
+   badge.title='Прогноз для '+location.name+': '+description+', '+temperature(item.max)+' / '+temperature(item.min)+
+    (lastUpdate?' · обновлено '+lastUpdate:'');
    badge.setAttribute('aria-label',badge.title);
    visible++;
   });
