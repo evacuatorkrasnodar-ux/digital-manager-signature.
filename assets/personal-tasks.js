@@ -617,9 +617,18 @@ function svAgendaRenderNav(rows){
   marks.setAttribute('aria-hidden','true');
   // One dot is one real scheduled task; its color identifies the calendar.
   // Limit the tiny preview to five marks while preserving the true count for VoiceOver.
+  // A consistent color identifies each real entry. Avoid duplicate colors
+  // inside the same tiny day preview; this never invents calendar events.
+  const tones=['orange','green','red','blue','yellow','purple'];
+  const taken=new Set();
   entries.slice(0,5).forEach(task=>{
    const dot=element('i','sv-agenda-mark');
-   dot.dataset.kind=svTaskCategory(task);marks.append(dot);
+   dot.dataset.kind=svTaskCategory(task);
+   let hash=0;
+   for(const char of String(task.id||task.title))hash=(Math.imul(hash,31)+char.charCodeAt(0))>>>0;
+   let tone=hash%tones.length;
+   while(taken.has(tone))tone=(tone+1)%tones.length;
+   taken.add(tone);dot.dataset.tone=tones[tone];marks.append(dot);
   });
   btn.append(marks);
   btn.addEventListener('click',()=>{
