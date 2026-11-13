@@ -62,7 +62,7 @@
  selectHistory.type='button';
  selectHistory.setAttribute('aria-label','Выбрать записи истории');
  selectHistory.setAttribute('aria-pressed','false');
- selectHistory.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="m7 10 2 2 3-3M13.8 10h3.5M7 15.5h10.3"/></svg>';
+ selectHistory.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.2" width="17" height="12.2" rx="2.3"/><path d="M7 7.1h10M7 10.7h10M5.1 18.3h13.8M5.1 21h13.8"/></svg>';
  if(historyBar){
   historyBar.append(historyGroup);
   historyBar.append(selectHistory);
