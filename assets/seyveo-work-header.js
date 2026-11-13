@@ -73,7 +73,7 @@
   margin-bottom:3px;
   display:inline-flex;align-items:center;gap:9px;
   appearance:none;border:0;background:transparent;padding:0;margin:0;
-  color:#B93429;font:420 14px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  color:#A83F22;font:520 15px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;letter-spacing:-.018em;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
  }
  .calendar-jump svg{display:block;width:21px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
