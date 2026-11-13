@@ -545,6 +545,7 @@ window.SEYVEO_TASK_ASSIST=Object.freeze({open:askSayviForTask});
  * Data, task actions and the global shell remain owned by Personal Tasks. */
 let svTaskSelectedDate='',svTaskWindowStart='';
 let svAgendaLastRows=[],svAgendaScrollFrame=0,svAgendaJumpThrough=0;
+let svAgendaAnchorCache=null,svAgendaInitiallyAligned=false;
 const svTaskCategory=item=>item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal');
 /* All categories are always visible; colors distinguish them without screen filters. */
 const svTaskMatchesCategory=()=>true;
@@ -623,14 +624,41 @@ function svAgendaMarkSelected(iso){
   else delete button.dataset.selected;
  }
 }
+/* Cache the positions of day headings. A long flick then costs one binary
+ * search per animation frame, rather than a layout read for every date. */
+function svAgendaGetAnchors(){
+ if(!svAgendaAnchorCache){
+  const listTop=list.getBoundingClientRect().top;
+  const currentScroll=list.scrollTop;
+  svAgendaAnchorCache=[...list.querySelectorAll('.sv-agenda-section-heading[data-weather-date]')]
+   .map(heading=>({iso:heading.dataset.weatherDate,top:Math.max(0,currentScroll+heading.getBoundingClientRect().top-listTop)}));
+ }
+ return svAgendaAnchorCache;
+}
+function svAgendaAnchorAt(position){
+ const anchors=svAgendaGetAnchors();
+ if(!anchors.length)return null;
+ let low=0,high=anchors.length-1,result=0;
+ while(low<=high){
+  const mid=(low+high)>>1;
+  if(anchors[mid].top<=position){result=mid;low=mid+1;}
+  else high=mid-1;
+ }
+ return anchors[result];
+}
 function svAgendaScrollToDate(iso){
- const heading=[...list.querySelectorAll('.sv-agenda-section-heading[data-weather-date]')]
-  .find(item=>item.dataset.weatherDate===iso);
- if(!heading)return false;
- const target=list.scrollTop+heading.getBoundingClientRect().top-list.getBoundingClientRect().top;
- svAgendaJumpThrough=Date.now()+520;
- list.scrollTo({top:Math.max(0,target),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
- window.setTimeout(()=>{svAgendaJumpThrough=0;},540);
+ const anchor=svAgendaGetAnchors().find(item=>item.iso===iso);
+ if(!anchor)return false;
+ const target=Math.max(0,anchor.top);
+ const distance=Math.abs(target-list.scrollTop);
+ // Never animate through dozens of days. Close days glide; distant ones
+ // jump directly with the selected calendar date already in place.
+ const glide=!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&distance<=list.clientHeight*2.5;
+ const duration=glide?540:100;
+ const until=Date.now()+duration;
+ svAgendaJumpThrough=until;
+ list.scrollTo({top:target,behavior:glide?'smooth':'instant'});
+ window.setTimeout(()=>{if(svAgendaJumpThrough===until)svAgendaJumpThrough=0;},duration);
  return true;
 }
 /* Minimize the approved 60px dock only while a touch user reads My Tasks.
@@ -675,24 +703,12 @@ function svAgendaSyncFromScroll(){
  if(Date.now()<svAgendaJumpThrough||document.getElementById('svWorkShell')?.dataset.agendaScroll!=='true')return;
  const scrollRange=list.scrollHeight-list.clientHeight;
  if(scrollRange<35)return; // All days fit on screen: retain the explicitly chosen date.
- const headings=[...list.querySelectorAll('.sv-agenda-section-heading[data-weather-date]')];
- if(!headings.length)return;
- const rect=list.getBoundingClientRect();
- const activationLine=rect.top+Math.min(85,Math.max(42,list.clientHeight*.22));
- let current=headings[0];
- for(const heading of headings){
-  if(heading.getBoundingClientRect().top<=activationLine)current=heading;
-  else break;
- }
- // On the final screenful, highlight the last visible day even when its
- // heading cannot reach the very top of the list.
- if(scrollRange-list.scrollTop<3){
-  const finalLine=rect.top+list.clientHeight*.86;
-  for(const heading of headings){
-   if(heading.getBoundingClientRect().top<=finalLine)current=heading;
-  }
- }
- const iso=current.dataset.weatherDate;
+ // A long inertial flick stays on the browser's native compositor. Only
+ // the current date is synchronized, via a binary search over cached anchors.
+ const lastScreen=scrollRange-list.scrollTop<3;
+ const focus=list.scrollTop+(lastScreen?list.clientHeight*.86:Math.min(85,Math.max(42,list.clientHeight*.22)));
+ const current=svAgendaAnchorAt(focus);
+ const iso=current?.iso;
  if(iso&&iso!==svTaskSelectedDate)svAgendaMarkSelected(iso);
 }
 function svAgendaChangeWeek(step){
@@ -711,7 +727,23 @@ function svAgendaRenderNav(rows){
  }
  if(!svTaskSelectedDate)svTaskSelectedDate=svTaskISO(new Date());
  if(!svTaskWindowStart)svTaskWindowStart=svTaskISO(new Date());
+ // Updating a task must not replace the entire calendar strip if its seven
+ // days are unchanged. This keeps taps and transitions steady.
+ const visibleThrough=svTaskShiftDay(svTaskWindowStart,6);
+ const previewSignature=rows.filter(item=>item.due>=svTaskWindowStart&&item.due<=visibleThrough)
+  .map(item=>[item.id,item.due,item.done,svTaskCategory(item),svTaskDotTone(item)].join(':')).join(';');
+ const signature=[svTaskWindowStart,svTaskSelectedDate.slice(0,7),svTaskISO(new Date()),previewSignature].join('|');
+ if(nav.dataset.modelSignature===signature&&nav.querySelector('.sv-agenda-day')){
+  for(const button of nav.querySelectorAll('.sv-agenda-day')){
+   const selected=button.dataset.day===svTaskSelectedDate;
+   button.setAttribute('aria-pressed',String(selected));
+   if(selected)button.dataset.selected='true';
+   else delete button.dataset.selected;
+  }
+  return;
+ }
  nav.replaceChildren();
+ nav.dataset.modelSignature=signature;
  nav.dataset.monthSelected=svTaskSelectedDate.slice(0,7);
  const picked=svTaskDate(svTaskSelectedDate)||new Date();
  const month=element('button','sv-agenda-month-heading');
@@ -1028,11 +1060,18 @@ function render(){
  const hasDeferred=postponed.length>0||preview.length>0;
  const wasRendered=!!list.querySelector('.sv-agenda-section-heading');
  const previousScroll=list.scrollTop;
+ const previousAnchor=wasRendered?svAgendaAnchorAt(previousScroll+1):null;
+ const offsetWithinDay=previousAnchor?previousScroll-previousAnchor.top:0;
  svAgendaLastRows=visibleActive;
  svAgendaRenderNav(visibleActive);
  list.replaceChildren();
+ svAgendaAnchorCache=null;
  svAgendaRenderList(visibleActive);
- if(wasRendered)list.scrollTop=previousScroll;
+ list.dataset.long=String(visibleActive.length+postponed.length>=18);
+ if(wasRendered){
+  const matching=previousAnchor&&svAgendaGetAnchors().find(item=>item.iso===previousAnchor.iso);
+  list.scrollTop=matching?Math.max(0,matching.top+offsetWithinDay):previousScroll;
+ }
  if(hasDeferred){
   list.append(svAgendaSection(null,'Отложено'));
   postponed.forEach(task=>list.append(row(task,false,true)));
@@ -1463,6 +1502,25 @@ window.addEventListener('storage',event=>{if(event.key===KEY||event.key===CAL_EV
 window.addEventListener('seyveo:calendar-changed',()=>{if(!$('tasksPage')?.hidden)render()});
 window.addEventListener('hashchange',()=>{if(!$('tasksPage')?.hidden)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+// The list owns vertical momentum. Never intercept touchmove or emulate
+// scrolling with JavaScript: iOS handles the gesture and its deceleration.
+function svAgendaAlignInitial(){
+ if(svAgendaInitiallyAligned||!document.documentElement.classList.contains('sv-agenda-scroll-active')||!list.clientHeight)return;
+ svAgendaInitiallyAligned=true;
+ if(list.scrollTop>2)return; // Never override a person's own position.
+ const today=svTaskISO(new Date());
+ if(svTaskSelectedDate!==today)return;
+ const anchor=svAgendaGetAnchors().find(item=>item.iso===today);
+ if(anchor){
+  svAgendaDockPreviousY=anchor.top;
+  list.scrollTop=anchor.top;
+ }
+}
+new MutationObserver(()=>{svAgendaAnchorCache=null;})
+ .observe(list,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
+if(window.ResizeObserver)new ResizeObserver(()=>{svAgendaAnchorCache=null;}).observe(list);
+window.addEventListener('resize',()=>{svAgendaAnchorCache=null;},{passive:true});
+document.fonts?.ready?.then(()=>{svAgendaAnchorCache=null;});
 list.addEventListener('scroll',()=>{
  svAgendaSyncDockFromScroll();
  if(svAgendaScrollFrame)return;
@@ -1478,7 +1536,10 @@ dialog.addEventListener('close',svAgendaPauseDockMotion);
 new MutationObserver(()=>{
  if(!document.documentElement.classList.contains('sv-agenda-scroll-active')&&
     document.documentElement.classList.contains('sv-agenda-dock-minimized'))svAgendaPauseDockMotion();
+ if(!svAgendaInitiallyAligned&&document.documentElement.classList.contains('sv-agenda-scroll-active'))
+  requestAnimationFrame(svAgendaAlignInitial);
 }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 if(svAgendaDockMedia.addEventListener)svAgendaDockMedia.addEventListener('change',svAgendaPauseDockMotion);
 render();
+requestAnimationFrame(svAgendaAlignInitial);
 })();
