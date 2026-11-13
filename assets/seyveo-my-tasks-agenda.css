@@ -804,8 +804,13 @@ html.sv-task-selection-active body > footer.dock.sv-shared-dock{
 #svWorkShell[data-task-tool-mode="all"] #svWorkTabs[data-task-filters="true"] > .sv-tool-filters{
  display:flex!important;
  box-sizing:border-box!important;
+ grid-column:1 / -1!important;
+ grid-row:1!important;
+ align-self:stretch!important;
  flex:1 1 100%!important;
  width:100%!important;
+ height:100%!important;
+ min-height:0!important;
  max-width:100%!important;
  min-width:0!important;
  margin:0!important;
@@ -820,7 +825,8 @@ html.sv-task-selection-active body > footer.dock.sv-shared-dock{
  display:block!important;
  flex:1 1 0!important;
  min-width:0!important;
- min-height:30px!important;
+ height:100%!important;
+ min-height:0!important;
  padding:0 4px!important;
  border:0!important;
  border-radius:999px!important;
