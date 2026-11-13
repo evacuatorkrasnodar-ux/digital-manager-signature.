@@ -140,7 +140,6 @@
 #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:-25px}
 #tasksPage #svTasksDateNav .sv-agenda-handle{
  position:relative;z-index:2;width:40px;height:5px;margin:-9px auto 4px;
- transform:translateX(-2.5vw);
  border-radius:4px;background:#8F939B;
 }
 #tasksPage #personalTaskList.personal-tasks-list{
@@ -348,6 +347,7 @@
 }
 /* On phones the workspace shell has a 13px outer inset. Align the first day with the screen edge. */
 @media(max-width:767px){
+ #tasksPage #svTasksDateNav .sv-agenda-handle{transform:translateX(-2.5vw)}
  #tasksPage #svTasksDateNav .sv-agenda-ticker{
   width:100vw;margin-left:-26px;margin-right:0;
  }
