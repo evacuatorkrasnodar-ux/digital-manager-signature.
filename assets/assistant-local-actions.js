@@ -242,7 +242,9 @@ async function taskFlow(j){
   await pause(j,270);
  }
  focus(j,null);
- const oldIds=new Set(rows(TASKS).map(x=>x.id));
+ const before=rows(TASKS);
+ if(before.some(x=>!x.done&&x.title.trim().toLocaleLowerCase('ru-RU')===d.title.trim().toLocaleLowerCase('ru-RU')&&x.due===(d.date||'')&&(x.time||'')===(d.time||'')))throw new Error('Такое дело уже есть. Повторно не создаю.');
+ const oldIds=new Set(before.map(x=>x.id));
  j.committing=true;panel('Сохраняю дело и проверяю запись');
  const form=$('personalTaskForm');
  if(!form?.checkValidity())throw new Error('Проверьте обязательные поля');
@@ -296,7 +298,7 @@ function showReceipt(j,result){
  const close=document.createElement('button');close.type='button';close.className='sv-la-x';close.textContent='×';close.setAttribute('aria-label','Закрыть карточку');close.addEventListener('click',()=>{receipt?.remove();receipt=null});
  top.append(label,close);
  const title=document.createElement('strong');title.textContent=result.title;
- const when=document.createElement('p');when.textContent=dateText(j.plan.draft.date)+(j.plan.draft.time?' · '+j.plan.draft.time:'')+(j.plan.draft.remindAtStart?' · напомнить в это время':'');
+ const when=document.createElement('p');when.textContent=dateText(j.plan.draft.date)+(j.plan.draft.time?' · '+j.plan.draft.time:'')+(j.plan.draft.remindAtStart?' · сигнал в приложении, пока оно открыто':'');
  const view=document.createElement('button');view.type='button';view.textContent='Проверить';
  view.addEventListener('click',()=>{
   receipt?.remove();receipt=null;
@@ -304,7 +306,7 @@ function showReceipt(j,result){
   else{location.hash='#calendar';window.dispatchEvent(new CustomEvent('seyveo:calendar-focus-date',{detail:{date:j.plan.draft.date}}))}
  });
  receipt.append(top,title,when,view);
- ($('homePage')||document.body).append(receipt);
+ document.body.append(receipt);
  window.SEYVEO_LOCAL_ACTIONS?.clearPendingReminder?.();
  window.dispatchEvent(new CustomEvent('seyveo:live-action-finished',{detail:{kind:j.plan.kind,id:result.id,status:'saved'}}));
 }
