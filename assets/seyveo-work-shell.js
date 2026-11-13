@@ -140,16 +140,8 @@
   :host([data-task-selecting="true"]) .sv-history-dual{
    display:none!important;
   }
-  /* One All Tasks screen: Back left, native-size Select action right. */
-  :host([data-task-selecting="true"]) .sv-history-select{
-   grid-column:3!important;grid-row:1!important;
-   justify-self:end!important;align-self:center!important;
-   display:grid!important;
-  }
-  :host([data-task-selecting="true"][data-selection-active="true"]) .sv-history-select{
-   color:var(--sv-header-icon-ink,#0B0B0D)!important;
-   background:var(--sv-header-circle,rgba(190,193,202,.43))!important;
-  }
+  /* All Tasks has only the standard Back in the shared header.
+     Select and Select All are below the list, never over the Back. */
   :host([data-task-tools="true"][data-theme="dark"]) .sv-history-select,
   :host([data-task-tools="true"][data-theme="dark"]) .sv-history-dual{
    background:var(--sv-header-circle,#38383A)!important;
@@ -319,6 +311,14 @@
  #svInlineTaskTools .sv-tool-bulk span{font-size:12px;color:var(--secondary)}
  #svInlineTaskTools .sv-tool-bulk button:last-child{color:#B33E43}
  #svInlineTaskTools .sv-tool-bulk button:disabled{opacity:.4}
+ #svInlineTaskTools .sv-tool-selection-cancel{
+  display:block;margin:8px 0 0 auto;min-height:40px;padding:6px 12px;
+  border:0;border-radius:12px;background:transparent;
+  font-size:14px;color:var(--secondary)
+ }
+ #svInlineTaskTools .sv-tool-select-entry{justify-content:flex-start}
+ #svInlineTaskTools .sv-tool-select-entry button{min-width:90px}
+
  /* Polished single-page task browser: fine typography and quiet color. */
  #svInlineTaskTools{padding-top:12px;padding-bottom:26px}
  #svInlineTaskTools .sv-tool-input{
@@ -398,6 +398,15 @@
   }
   toolPanel.append(tabs,results);
   let counter=null,deleteButton=null;
+  if(!selectionActive){
+   const footer=make('div','sv-tool-bulk sv-tool-select-entry');
+   const select=make('button','','Выбрать');
+   select.type='button';
+   select.setAttribute('aria-label','Выбрать дела для удаления');
+   select.addEventListener('click',toggleSelection);
+   footer.append(select);
+   toolPanel.append(footer);
+  }
   if(selectionActive){
    const bulk=make('div','sv-tool-bulk');
    const all=make('button','','Выбрать все');all.type='button';
@@ -415,7 +424,13 @@
     }
     selected.clear();paint();
    });
-   bulk.append(all,counter,deleteButton);toolPanel.append(bulk);
+   const cancel=make('button','','Отмена');
+   cancel.type='button';
+   cancel.setAttribute('aria-label','Отменить выбор дел');
+   cancel.addEventListener('click',toggleSelection);
+   bulk.append(all,counter,deleteButton);
+   toolPanel.append(bulk,cancel);
+   cancel.className='sv-tool-selection-cancel';
    const hits=matches();
    all.textContent=hits.length&&hits.every(t=>selected.has(t.id))?'Снять выбор':'Выбрать все';
   }
