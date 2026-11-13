@@ -99,6 +99,7 @@
    for(const option of ['Продуктовые магазины','Ресторан или кафе','Строительство','Услуги','Для себя','Просто посмотреть'])
     chips.append(btn(option,()=>option==='Просто посмотреть'?exploreApp():advance(option),'is-chip'));
    wrap.append(chips,el('small','sv-smart-start-note','Свой вариант можно написать в обычном поле чата.'));
+   wrap.append(liveActionOption());
   }else if(['roles','sources','features'].includes(step)){
    const suggested=roleSuggestions(session.business);
    const data=step==='roles'?[...new Set([...suggested,...session.roles].filter(x=>x!=='Другая должность'))].map(x=>[x,x]):
