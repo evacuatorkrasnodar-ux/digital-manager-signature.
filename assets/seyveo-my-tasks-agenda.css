@@ -42,7 +42,7 @@
  /* Bleed only the date rail to the screen edge; tabs and task rows keep gutters. */
  width:calc(100% + 66px);margin-inline:-33px;
  border-top:1px solid var(--agenda-rule);
- border-bottom:1px solid var(--agenda-rule);
+ border-bottom:0;
  padding:0;
 }
 #tasksPage #svTasksDateNav .sv-agenda-week{
@@ -140,12 +140,19 @@
  align-items:center!important;justify-content:flex-start!important;
  gap:6px!important;width:100%!important;
  margin:12px 0 0!important;padding:10px 0 8px!important;
- border-top:1px solid #E7EAF0!important;background:transparent!important;
+ border-top:0!important;background:transparent!important;
+ position:relative!important;
  color:#343941!important;letter-spacing:0!important;
+}
+#tasksPage #personalTaskList .sv-agenda-section-heading::before{
+ content:'';position:absolute;pointer-events:none;
+ top:0;left:-13px;right:-13px;height:1px;
+ background:#E7EAF0;
 }
 #tasksPage #personalTaskList .sv-agenda-section-heading:first-child{
  margin-top:0!important;
 }
+#tasksPage #personalTaskList .sv-agenda-section-heading:first-child::before{display:none;}
 #tasksPage #personalTaskList .sv-agenda-section-heading strong{
  font:700 10.5px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  text-transform:uppercase!important;
@@ -297,6 +304,7 @@
   width:calc(100% + 56px);margin-inline:-28px;
  }
  #tasksPage #personalTaskList.personal-tasks-list{padding-inline:8px!important}
+ #tasksPage #personalTaskList .sv-agenda-section-heading::before{left:-8px;right:-8px}
  #tasksPage #svTasksDateNav .sv-agenda-day-number{width:34px;height:34px;font-size:19px}
  #tasksPage #personalTaskList .sv-agenda-entry .personal-task-name{font-size:14px!important}
 }
@@ -327,8 +335,9 @@
  background:#363941;color:#D8D8E1;border-color:#4E515C;
 }
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading{
- color:#E2E4EA!important;border-top-color:#42464F!important;
+ color:#E2E4EA!important;
 }
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading::before{background:#42464F}
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-section-date{
  color:#A0A4AF!important;
 }
