@@ -72,6 +72,20 @@ function read(){
  category:item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal'),
  entryType:item.entryType==='event'||item.entryType==='task'?item.entryType:svInferEntryType(item.title)}));
 }
+/* Calendar appointments keep their own validated store. The agenda reads them
+   as views only: it never writes or copies an appointment into Tasks. */
+const CAL_EVENTS_KEY='seyveo-calendar-events-v1';
+function svCalendarAgendaEvents(){
+ let data=[];try{const parsed=JSON.parse(localStorage.getItem(CAL_EVENTS_KEY)||'[]');if(Array.isArray(parsed))data=parsed}catch{}
+ return data.filter(item=>item&&typeof item.id==='string'&&typeof item.title==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(item.date||''))
+ .slice(-300).map(item=>({
+  id:'calendar:'+item.id,calendarId:item.id,sourceStore:'calendar',
+  title:item.title.trim().slice(0,140),due:item.date,
+  time:/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'')?item.time:'',
+  category:item.kind==='business'?'work':'personal',entryType:'event',done:false,
+  createdAt:typeof item.createdAt==='string'?item.createdAt:''
+ })).filter(item=>item.title);
+}
 function save(items){
  try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)));return true}
  catch{return false}
@@ -746,6 +760,7 @@ function svAgendaRenderList(rows){
 function row(item,compact=false,deferred=false){
  const section=element('div',compact?'personal-brief-row':'personal-task-row');
  section.dataset.taskId=item.id;
+ if(item.sourceStore==='calendar')section.dataset.calendarId=item.calendarId;
  if(!compact){section.classList.add('sv-agenda-entry');section.dataset.kind=svTaskCategory(item);section.dataset.entryType=svTaskEntryType(item);
   section.dataset.tone=svTaskDotTone(item);
   if(item.time)section.dataset.scheduled='true';}
@@ -801,16 +816,19 @@ function row(item,compact=false,deferred=false){
   const scheduled=item.due?(strDate(item.due)+(item.time?' · '+item.time:'')):'Не назначено';
   details.append(
    element('div','personal-task-detail-entry','Создано: '+creation),
-   element('div','personal-task-detail-entry','Выполнить: '+scheduled),
-   element('div','personal-task-detail-entry','Статус: '+(item.done?'Выполнено':'Не выполнено'))
+   element('div','personal-task-detail-entry',(svTaskEntryType(item)==='event'?'Когда: ':'Выполнить: ')+scheduled),
+   element('div','personal-task-detail-entry','Тип: '+(svTaskEntryType(item)==='event'?'Событие':'Задача'))
   );
   menu.append(detailsButton,details);
   const editButton=element('button','personal-task-menu-details','Изменить');
-  editButton.type='button';editButton.dataset.taskEdit=item.id;menu.prepend(editButton);
+  editButton.type='button';
+  if(item.sourceStore==='calendar')editButton.dataset.calendarOpen=item.calendarId;
+  else editButton.dataset.taskEdit=item.id;
+  menu.prepend(editButton);
   const remove=element('button','personal-task-menu-delete','Удалить дело');
   remove.type='button';remove.dataset.taskDelete=item.id;
   remove.setAttribute('aria-label','Удалить дело: '+item.title);
-  menu.append(remove);
+  if(item.sourceStore!=='calendar')menu.append(remove);
   if(deferred){
    const resume=element('button','personal-task-menu-delete','Вернуть на Главную');
    resume.type='button';resume.dataset.taskResume=item.id;
@@ -864,7 +882,7 @@ function render(){
  const preview=Array.isArray(living?.deferred?.())?living.deferred():[];
  const postponed=open.filter(item=>deferredIds.has(item.id));
  const active=open.filter(item=>!deferredIds.has(item.id));
- const visibleActive=active;
+ const visibleActive=[...active,...svCalendarAgendaEvents()].sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||(a.time||'').localeCompare(b.time||''));
  renderContext(visibleActive);
  const hasDeferred=postponed.length>0||preview.length>0;
  svAgendaRenderNav(visibleActive);
@@ -1127,6 +1145,12 @@ list.addEventListener('click',e=>{
   const item=(window.SEYVEO_LIVING_MOMENT?.deferred?.()||[]).find(entry=>entry.kind===kind);
   if(item)askSayviForTask({title:item.title,kind:kind==='mail'?'mail':'contract',note:item.note});
  }
+ else if(btn.dataset.calendarOpen){
+  const event=svCalendarAgendaEvents().find(item=>item.calendarId===btn.dataset.calendarOpen);
+  if(!event)return;
+  location.hash='#calendar';
+  window.dispatchEvent(new CustomEvent('seyveo:calendar-open-entry',{detail:{id:event.calendarId}}));
+ }
  else if(btn.dataset.taskEdit){
   window.dispatchEvent(new CustomEvent('seyveo:home-task-edit',{detail:{id:btn.dataset.taskEdit}}));
  }
@@ -1259,7 +1283,7 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
   }
   const title=draft.title.trim().replace(/\s+/g,' ').slice(0,140);
   const due=draft.due,time=typeof draft.time==='string'?draft.time:'';
-  if(!title||(due&&!strDate(due))||(time&&(!due||!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(time)))){
+  if(!title||(due&&!strDate(due))||(time&&(!due||!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)))){
    detail.result={status:'invalid',message:'Проверьте текст дел и даты.'};return;
   }
   const key=title.toLocaleLowerCase('ru-RU')+'|'+due+'|'+time;
@@ -1289,7 +1313,8 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
  detail.result={status:'saved',added:pending.length,duplicates,
   message:'Добавлено в Дела: '+pending.length+(duplicates?' · уже были: '+duplicates:'')+'.'};
 });
-window.addEventListener('storage',event=>{if(event.key===KEY){justCompletedTaskId='';render()}});
+window.addEventListener('storage',event=>{if(event.key===KEY||event.key===CAL_EVENTS_KEY){justCompletedTaskId='';render()}});
+window.addEventListener('seyveo:calendar-changed',()=>{if(!$('tasksPage')?.hidden)render()});
 window.addEventListener('hashchange',()=>{if(!$('tasksPage')?.hidden)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 render();
