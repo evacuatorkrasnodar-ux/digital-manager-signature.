@@ -557,7 +557,9 @@ function svInferEntryType(title){
 }
 function svTaskEntryType(item){return item.entryType==='event'?'event':'task';}
 function svTaskDotTone(item){
- const tones=['orange','green','red','blue','yellow','purple'];let hash=0;
+ const tones=['orange','green','red','blue','yellow','purple'];
+ if(tones.includes(item.tone))return item.tone;
+ let hash=0;
  for(const char of String(item.id||item.title))hash=(Math.imul(hash,31)+char.charCodeAt(0))>>>0;
  return tones[hash%tones.length];
 }
@@ -577,6 +579,25 @@ function svTaskShiftDay(iso,days){
  const d=svTaskDate(iso)||new Date();
  d.setDate(d.getDate()+days);
  return svTaskISO(d);
+}
+/* Removable visual agenda scenes: no storage writes, notifications or imported contacts. */
+const SV_AGENDA_SCENES=Object.freeze([
+ {offset:0,time:'12:00',endTime:'13:00',title:'Обед с Анной',tone:'orange'},
+ {offset:0,time:'13:30',endTime:'14:00',title:'Обсудить задачи с командой',tone:'blue',subtitle:'Видеозвонок'},
+ {offset:0,time:'15:00',title:'Отправить макеты',tone:'purple'},
+ {offset:0,time:'16:30',endTime:'17:30',title:'Встреча по проекту',tone:'yellow',subtitle:'Офис'},
+ {offset:1,time:'07:00',endTime:'08:00',title:'Йога',tone:'orange'},
+ {offset:1,time:'10:00',endTime:'11:00',title:'Поездка за город',tone:'green'},
+ {offset:1,time:'17:30',title:'Забрать заказ',tone:'purple'},
+ {offset:2,time:'09:00',endTime:'11:00',title:'Семейная прогулка',tone:'red'},
+ {offset:2,time:'19:00',endTime:'20:30',title:'Ужин с друзьями',tone:'green'}
+]);
+function svAgendaSceneEntries(){
+ const today=svTaskISO(new Date());
+ return SV_AGENDA_SCENES.map((item,index)=>({
+  ...item,id:'scene:'+index,due:svTaskShiftDay(today,item.offset),
+  category:'personal',entryType:'event',sourceStore:'scene',done:false
+ }));
 }
 function svTaskPalette(task){return svTaskCategory(task)==='work'?'blue':'neutral';}
 function svAgendaChangeWeek(step){
@@ -759,6 +780,19 @@ function svAgendaRenderList(rows){
 
 
 function row(item,compact=false,deferred=false){
+ if(!compact&&item.sourceStore==='scene'){
+  const section=element('div','personal-task-row sv-agenda-entry sv-agenda-scene');
+  section.dataset.tone=svTaskDotTone(item);
+  const dot=element('span','sv-agenda-scene-dot');
+  dot.setAttribute('aria-hidden','true');
+  const copy=element('span','personal-task-content');
+  const range=item.time+(item.endTime?' – '+item.endTime:'');
+  copy.append(element('span','sv-agenda-entry-time',range),
+   element('span','personal-task-name',item.title));
+  if(item.subtitle)copy.append(element('small','sv-agenda-scene-note',item.subtitle));
+  section.append(dot,copy);
+  return section;
+ }
  const section=element('div',compact?'personal-brief-row':'personal-task-row');
  section.dataset.taskId=item.id;
  if(item.sourceStore==='calendar')section.dataset.calendarId=item.calendarId;
@@ -883,7 +917,7 @@ function render(){
  const preview=Array.isArray(living?.deferred?.())?living.deferred():[];
  const postponed=open.filter(item=>deferredIds.has(item.id));
  const active=open.filter(item=>!deferredIds.has(item.id));
- const visibleActive=[...active,...svCalendarAgendaEvents()].sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||(a.time||'').localeCompare(b.time||''));
+ const visibleActive=[...active,...svCalendarAgendaEvents(),...svAgendaSceneEntries()].sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||(a.time||'').localeCompare(b.time||''));
  renderContext(active);
  const hasDeferred=postponed.length>0||preview.length>0;
  svAgendaRenderNav(visibleActive);
