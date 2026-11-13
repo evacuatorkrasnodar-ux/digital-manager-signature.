@@ -249,6 +249,7 @@ function verify(j){
 async function taskFlow(j){
  const d=j.plan.draft;
  panel('Сэйви открывает «Мои дела»');
+ j.expectedHash='#tasks';
  if(window.SEYVEO_UNIFIED_TASKS?.openPersonal)window.SEYVEO_UNIFIED_TASKS.openPersonal();
  else location.hash='#tasks';
  await pause(j,430);
@@ -275,15 +276,23 @@ async function taskFlow(j){
   j.dialog.dispatchEvent(new Event('sv-task-time-sync'));
   await pause(j,270);
  }
- focus(j,null);
- panel('Показываю сохранённое дело');
- if(j.dialog?.open)j.dialog.close();
- return j.saved;
+ focus(j,$('personalTaskSave'));
+ panel('Сэйви сохраняет дело');
+ await pause(j,400);
+ const before=new Set(rows(TASKS).map(x=>x.id));
+ const form=$('personalTaskForm');
+ if(!form?.checkValidity())throw new Error('Редактор не принял обязательные поля');
+ j.committing=true;j.internalSubmit=true;
+ try{form.requestSubmit()}finally{j.internalSubmit=false;j.committing=false}
+ const entry=rows(TASKS).find(x=>!before.has(x.id)&&x.title===d.title&&x.due===(d.date||'')&&(x.time||'')===(d.time||''));
+ if(!entry||j.dialog?.open)throw new Error('Сохранение дела не подтверждено');
+ j.saved=entry;queueClear(j);receiptWrite(j);
+ return entry;
 }
 async function calendarFlow(j){
  const d=j.plan.draft;
  panel('Сэйви открывает календарь');
- location.hash='#calendar';
+ j.expectedHash='#calendar';location.hash='#calendar';
  await pause(j,390);
  window.dispatchEvent(new CustomEvent('seyveo:calendar-from-ask',{detail:{status:'ready',title:'',date:d.date,time:''}}));
  await pause(j,340);
@@ -306,10 +315,19 @@ async function calendarFlow(j){
   radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));
   await pause(j,220);
  }
- focus(j,null);
- panel('Напоминание уже сохранено');
- if(j.dialog?.open)j.dialog.close();
- return j.saved;
+ focus(j,$('#calendarEventForm button[type="submit"]')||$('calendarEventTime'));
+ panel('Сэйви сохраняет событие');
+ await pause(j,430);
+ const before=new Set(rows(CAL).map(x=>x.id));
+ const form=$('calendarEventForm');
+ if(!form?.checkValidity())throw new Error('Редактор календаря не принял дату или название');
+ j.committing=true;j.internalSubmit=true;
+ try{form.requestSubmit()}finally{j.internalSubmit=false;j.committing=false}
+ const entry=rows(CAL).find(x=>!before.has(x.id)&&x.title===d.title&&x.date===d.date&&
+  (x.time||'')===(d.time||'')&&(!d.remindAtStart||x.remind===-1));
+ if(!entry||j.dialog?.open)throw new Error('Календарь не подтвердил сохранение. Проверь время и пересечения.');
+ j.saved=entry;queueClear(j);receiptWrite(j);
+ return entry;
 }
 function showReceipt(j,result){
  styles();receipt?.remove();
