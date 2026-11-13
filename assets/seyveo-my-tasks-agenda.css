@@ -37,11 +37,13 @@
  color:var(--agenda-red);font-size:28px;font-weight:670;line-height:1.12;
 }
 #tasksPage #svTasksDateNav .sv-agenda-ticker{
- display:grid;grid-template-columns:minmax(0,1fr);
+ box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);
  align-items:center;position:relative;
+ /* Bleed only the date rail to the screen edge; tabs and task rows keep gutters. */
+ width:calc(100% + 66px);margin-inline:-33px;
  border-top:1px solid var(--agenda-rule);
  border-bottom:1px solid var(--agenda-rule);
- padding-top:0;
+ padding:0;
 }
 #tasksPage #svTasksDateNav .sv-agenda-week{
  box-sizing:border-box;display:block;
@@ -65,7 +67,7 @@
  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day:first-child{
- margin-left:calc(-20% + 12.6px);border-left:1px solid #E5E8ED;
+ margin-left:calc(-20% + 3.6px);border-left:1px solid #E5E8ED;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
  z-index:1;transform:translateY(-1px);
@@ -307,11 +309,15 @@
  font-size:12px!important;color:#4A6381!important;
 }
 @media(min-width:768px){
- #tasksPage #svTasksDateNav .sv-agenda-ticker{padding-inline:16px}
  #tasksPage #svTasksDateNav .sv-agenda-week-step{display:grid;place-items:center}
+ #tasksPage #svTasksDateNav .sv-agenda-week-step:first-child{left:8px}
+ #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:8px}
 }
 @media(max-width:380px){
  #tasksPage #svTasksDateNav{padding-inline:8px!important}
+ #tasksPage #svTasksDateNav .sv-agenda-ticker{
+  width:calc(100% + 56px);margin-inline:-28px;
+ }
  #tasksPage #personalTaskList.personal-tasks-list{padding-inline:8px!important}
  #tasksPage #svTasksDateNav .sv-agenda-day-number{width:34px;height:34px;font-size:19px}
  #tasksPage #personalTaskList .sv-agenda-entry .personal-task-name{font-size:14px!important}
