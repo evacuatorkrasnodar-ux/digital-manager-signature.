@@ -47,7 +47,7 @@
  // Shadow DOM, so old app styles cannot remove Back's circular material.
  const workHeader=window.SEYVEO_WORK_HEADER?.create();
  if(!workHeader)throw new Error('SEYVEO Work header module is missing');
- const {host:heading,back,title,add}=workHeader;
+ const {host:heading,back,title,month,add}=workHeader;
  const plusIcon=workHeader.icons.plus;
  const searchIcon=workHeader.icons.search;
  // A single Apple-style grouped action: Select + Search in the History header.
@@ -152,6 +152,15 @@
  back.dataset.svHeaderIcon='back';
  add.dataset.svHeaderIcon='add';
  shell.prepend(heading);
+ // The month is a real part of the shared header, not a floating calendar overlay.
+ month.addEventListener('click',()=>{
+  document.querySelector('#svTasksDateNav .sv-agenda-month-heading')?.click();
+ });
+ document.addEventListener('seyveo:agenda-month-changed',event=>{
+  const detail=event.detail||{};
+  if(detail.month)month.querySelector('.month-name').textContent=detail.month;
+  if(detail.year)month.querySelector('.month-year').textContent=detail.year;
+ });
  const legacyTasksBack=document.getElementById('unifiedTasksBack');
  const legacyCalendarBack=document.getElementById('calendarBack');
  const calendarAdd=document.getElementById('calendarAdd');
@@ -554,6 +563,7 @@
    back.hidden=!nested;
    back.setAttribute('aria-label',nested?'Вернуться к моим делам':'Вернуться назад');
    title.textContent=nested?'Все дела':'Мои дела';
+   month.hidden=nested;
    title.hidden=!nested; // The tab capsule already says «Мои дела».
   }
  }
@@ -642,6 +652,15 @@
   // Top-level sections are named in the permanent tab capsule below.
   // Keep titles for nested «Все дела», «История», and the employee workspace.
   title.hidden=!history&&!nested&&['personal','calendar','notes','business'].includes(active);
+  const showMonth=active==='personal'&&!history&&!nested&&visible;
+  month.hidden=!showMonth;
+  if(showMonth){
+   const nav=document.getElementById('svTasksDateNav');
+   const name=nav?.querySelector('.sv-agenda-month-name')?.textContent;
+   const year=nav?.querySelector('.sv-agenda-year')?.textContent;
+   if(name)month.querySelector('.month-name').textContent=name;
+   if(year)month.querySelector('.month-year').textContent=year;
+  }
   // In the personal landing use the same approved circle for History.
   // Every nested view (including History) retains the real Back arrow.
   back.hidden=active==='personal'&&!history&&!nested;
