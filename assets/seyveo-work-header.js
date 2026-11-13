@@ -53,6 +53,28 @@
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   color:inherit;
  }
+ /* Calendar shortcut sits above the month, matching Apple's compact hierarchy. */
+ :host([data-agenda="true"]){
+  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 28px);
+  height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 28px);
+ }
+ :host([data-agenda="true"]) .bar{
+  grid-template-rows:28px minmax(0,1fr);
+ }
+ :host([data-agenda="true"]) .month,
+ :host([data-agenda="true"]) .title,
+ :host([data-agenda="true"]) .control{grid-row:2}
+ .calendar-jump{
+  grid-column:1 / 3;grid-row:1;justify-self:start;align-self:center;
+  display:inline-flex;align-items:center;gap:9px;
+  appearance:none;border:0;background:transparent;padding:0;margin:0;
+  color:#C93E4B;font:500 12px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+ }
+ .calendar-jump svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+ .calendar-jump[hidden]{display:none!important}
+ .calendar-jump:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:3px}
+ :host([data-theme="dark"]) .calendar-jump{color:#F47883}
  .month {
   grid-column:1 / 3;grid-row:1;justify-self:start;align-self:center;
   display:flex;align-items:baseline;gap:5px;
@@ -120,13 +142,14 @@
  function create(){
   const host=document.createElement('seyveo-work-head');
   const shadow=host.attachShadow({mode:'open'});
-  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="month" type="button" aria-label="Открыть календарь" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
+  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="calendar-jump" type="button" aria-label="Открыть все календари" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="3.5" width="15" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Все календари</span></button><button class="month" type="button" aria-label="Открыть календарь" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
   const back=shadow.querySelector('.back');
   const title=shadow.querySelector('.title');
   const month=shadow.querySelector('.month');
+  const calendarJump=shadow.querySelector('.calendar-jump');
   const add=shadow.querySelector('.action');
   host.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
-  return {host,back,title,month,add,icons:{plus:PLUS,search:SEARCH}};
+  return {host,back,title,month,calendarJump,add,icons:{plus:PLUS,search:SEARCH}};
  }
  window.SEYVEO_WORK_HEADER=Object.freeze({create});
 })();
