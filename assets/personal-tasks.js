@@ -662,7 +662,7 @@ function svTaskRenderDay(rows){
   list.append(svTaskSectionTitle('Весь день','all-day'));
   allDay.forEach(item=>list.append(row(item)));
  }
- if(!onDay.length){
+ if(!onDay.length&&(rows.length||read().some(item=>!item.done))){
   const empty=element('p','sv-task-day-empty',rows.length?'На выбранный день дел нет. Остальные дела — ниже.':'В этой категории пока нет дел.');
   list.append(empty);
  }
