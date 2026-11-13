@@ -79,6 +79,18 @@
   label.append(toggle,body);
   return label;
  }
+ function awakeOption(){
+  const label=el('label','sv-smart-start-live-option');
+  const toggle=el('input');toggle.type='checkbox';
+  toggle.checked=window.SEYVEO_SCREEN_AWAKE?.enabled?.()===true;
+  toggle.setAttribute('aria-label','Не гасить экран, когда SEYVEO открыт');
+  const body=el('span','sv-smart-start-live-copy');
+  body.append(el('strong',null,'Не гасить экран'));
+  body.append(el('small',null,'Удобно, когда iPhone на зарядке и ты наблюдаешь за действиями Сэйви. Включается только по желанию.'));
+  body.append(el('small',null,'Работает, пока приложение открыто и Safari разрешает. Блокировка телефона и переход в другое приложение отключают удержание. Зарядку веб-версия не определяет.'));
+  toggle.addEventListener('change',()=>void window.SEYVEO_SCREEN_AWAKE?.setEnabled?.(toggle.checked));
+  label.append(toggle,body);return label;
+ }
  function draw(){
   if(!session)return;
   chat.open();
@@ -100,6 +112,7 @@
     chips.append(btn(option,()=>option==='Просто посмотреть'?exploreApp():advance(option),'is-chip'));
    wrap.append(chips,el('small','sv-smart-start-note','Свой вариант можно написать в обычном поле чата.'));
    wrap.append(liveActionOption());
+   wrap.append(awakeOption());
   }else if(['roles','sources','features'].includes(step)){
    const suggested=roleSuggestions(session.business);
    const data=step==='roles'?[...new Set([...suggested,...session.roles].filter(x=>x!=='Другая должность'))].map(x=>[x,x]):
@@ -126,6 +139,7 @@
    wrap.append(summary,btn('Сохранить план',finish,'is-primary'));
   }else if(step==='done'){
    wrap.append(liveActionOption());
+   wrap.append(awakeOption());
    wrap.append(btn('Посмотреть мой кабинет',revealCabinet,'is-primary'));
    wrap.append(btn('Пока останусь в чате',()=>{
     if(cabinetHandoffTimer)clearTimeout(cabinetHandoffTimer);
