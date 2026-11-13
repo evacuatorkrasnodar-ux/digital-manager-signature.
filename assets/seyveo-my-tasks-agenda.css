@@ -672,3 +672,32 @@ html.sv-agenda-scroll-active .app{
 @media (prefers-reduced-motion:reduce){
  html.sv-agenda-scroll-active body > footer.dock.sv-shared-dock{transition:none!important}
 }
+
+
+/* SEYVEO motion polish · calm transitions without moving approved geometry.
+   Native touch momentum stays native; never apply CSS smooth scrolling globally. */
+#tasksPage #svTasksDateNav .sv-agenda-day-number{
+ transition:background-color .18s ease,color .18s ease,box-shadow .18s ease;
+}
+#tasksPage #svTasksDateNav .sv-agenda-month-heading{
+ transition:color .18s ease;
+}
+/* Only genuinely long agendas reveal a hairline scroll-position indicator.
+   The dock itself, its glass and its dimensions are deliberately unchanged. */
+#svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list[data-long="true"]{
+ scrollbar-width:thin;
+ scrollbar-color:rgba(118,126,138,.28) transparent;
+}
+#svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list[data-long="true"]::-webkit-scrollbar{
+ display:block;width:3px;background:transparent;
+}
+#svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list[data-long="true"]::-webkit-scrollbar-thumb{
+ background:rgba(118,126,138,.28);border-radius:99px;
+}
+#svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list[data-long="true"]::-webkit-scrollbar-track{
+ background:transparent;
+}
+@media(prefers-reduced-motion:reduce){
+ #tasksPage #svTasksDateNav .sv-agenda-day-number,
+ #tasksPage #svTasksDateNav .sv-agenda-month-heading{transition:none!important}
+}
