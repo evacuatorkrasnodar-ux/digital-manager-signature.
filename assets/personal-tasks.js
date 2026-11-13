@@ -720,6 +720,7 @@ function svAgendaSection(iso,titleOverride){
   caption=iso===today?'Сегодня':iso===tomorrow?'Завтра':
    new Intl.DateTimeFormat('ru-RU',{weekday:'long'}).format(day);
  }
+ if(iso===today&&caption.toLocaleLowerCase('ru-RU')==='сегодня')header.dataset.today='true';
  header.append(element('strong','',caption.toLocaleUpperCase('ru-RU')));
  if(day)header.append(element('span','sv-agenda-section-date',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'numeric',year:'numeric'}).format(day)));
  return header;
