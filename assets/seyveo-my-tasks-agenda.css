@@ -298,10 +298,16 @@
  #tasksPage #svTasksDateNav .sv-agenda-week-step:first-child{left:8px}
  #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:8px}
 }
+/* On phones the workspace shell has a 13px outer inset. Align the first day with the screen edge. */
+@media(max-width:767px){
+ #tasksPage #svTasksDateNav .sv-agenda-ticker{
+  width:100vw;margin-left:-26px;margin-right:0;
+ }
+}
 @media(max-width:380px){
  #tasksPage #svTasksDateNav{padding-inline:8px!important}
  #tasksPage #svTasksDateNav .sv-agenda-ticker{
-  width:calc(100% + 16px);margin-inline:-8px;
+  width:100vw;margin-left:-21px;margin-right:0;
  }
  #tasksPage #personalTaskList.personal-tasks-list{padding-inline:8px!important}
  #tasksPage #personalTaskList .sv-agenda-section-heading::before{left:-8px;right:-8px}
