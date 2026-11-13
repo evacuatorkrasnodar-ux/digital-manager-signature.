@@ -1827,3 +1827,35 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-picked-date strong{
  color:#F0F1F5;
 }
+
+
+/* Compact Apple-like calendar: week arrows without duplicate month title. */
+#tasksPage #svTasksDateNav .sv-task-date-heading{
+ justify-content:space-between!important;
+ min-height:26px!important;margin:0 0 1px!important;
+}
+#tasksPage #svTasksDateNav .sv-task-week-arrow{
+ width:26px!important;height:26px!important;flex-basis:26px!important;
+ font-size:22px!important;
+}
+#tasksPage #svTasksDateNav .sv-task-picked-date{
+ min-height:34px!important;margin:5px 0 5px!important;
+ padding:7px 4px 1px!important;
+}
+#tasksPage #svTasksDateNav .sv-task-event-pills{
+ gap:4px!important;margin-bottom:8px!important;
+}
+#tasksPage #svTasksDateNav .sv-task-event-pill{
+ min-height:25px!important;height:25px!important;
+ padding:3px 7px!important;gap:5px!important;
+ border-radius:999px!important;
+}
+#tasksPage #svTasksDateNav .sv-task-pill-dot{
+ width:6px!important;height:6px!important;flex-basis:6px!important;
+}
+#tasksPage #svTasksDateNav .sv-task-pill-title{
+ font-size:10.5px!important;line-height:1.2!important;
+}
+#tasksPage #svTasksDateNav .sv-task-pill-time{
+ font-size:10px!important;
+}
