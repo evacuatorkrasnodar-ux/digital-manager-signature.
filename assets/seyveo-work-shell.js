@@ -76,23 +76,8 @@
   .sv-history-dual{display:contents}
   .sv-history-select,.sv-history-search{display:none}
   :host([data-task-tools="true"]) .bar{position:relative}
-  :host([data-task-tools="true"][data-task-selecting="true"]) .sv-history-select{
-   position:relative!important;z-index:2;
-   grid-column:1!important;grid-row:1!important;
-   justify-self:start!important;align-self:center!important;
-   display:grid!important;place-items:center!important;
-   width:var(--sv-header-slot,42px)!important;
-   height:var(--sv-header-slot,42px)!important;
-   min-width:var(--sv-header-slot,42px)!important;
-   min-height:var(--sv-header-slot,42px)!important;
-   margin:0!important;padding:0!important;border-radius:50%!important;
-   background:var(--sv-header-circle,rgba(190,193,202,.43))!important;
-   border:var(--sv-header-circle-border,1.75px solid rgba(255,255,255,.94))!important;
-   box-shadow:var(--sv-header-circle-shadow,0 0 0 .7px rgba(164,170,184,.3))!important;
-   -webkit-backdrop-filter:var(--sv-header-circle-filter,blur(12px))!important;
-   backdrop-filter:var(--sv-header-circle-filter,blur(12px))!important;
-   color:var(--sv-header-icon-ink,#0B0B0D)!important;
-  }
+  /* The old header Select button is retired on every Tasks stage.
+     The canonical Back occupies the left slot in All Tasks. */
   :host([data-task-tools="true"]) .sv-history-dual{
    position:relative;z-index:2;
    grid-column:3;grid-row:1;
