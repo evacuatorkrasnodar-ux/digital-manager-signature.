@@ -452,6 +452,7 @@
   return t.title.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').includes(query.trim().toLocaleLowerCase('ru-RU').replace(/ё/g,'е'));
  }).sort((a,b)=>String(b.doneAt||b.createdAt||'').localeCompare(String(a.doneAt||a.createdAt||'')));
  function paint(){
+  const previousResultScroll=toolPanel.querySelector('.sv-tool-results')?.scrollTop||0;
   toolPanel.replaceChildren();
   // Always one search box and one results list. Selection is a mode within
   // this SAME screen; never a second page with duplicate search/filters.
@@ -553,6 +554,7 @@
    if(deleteButton)deleteButton.disabled=!selected.size;
   }
   paintResults();
+  results.scrollTop=previousResultScroll;
  }
  function syncToolHeader(){
   const inPersonal=activeSection()==='personal'&&!tasks.classList.contains('sah-history-open');
@@ -580,6 +582,10 @@
   toolPanel.hidden=!toolMode;
   syncToolHeader();
   if(toolMode)paint();
+  // The shared header and scroll container must switch as one component.
+  // Otherwise the calendar's left label overlaps «Все дела» and the
+  // long task list gets clipped behind the dock.
+  sync();
  }
  function toggleSelection(){
   if(!toolMode)setMode('all');
@@ -665,8 +671,11 @@
   month.hidden=!showMonth;
   calendarJump.hidden=!showMonth;
   heading.dataset.agenda=String(showMonth);
-  shell.dataset.agendaScroll=String(showMonth);
-  document.documentElement.classList.toggle('sv-agenda-scroll-active',showMonth);
+  // Both the agenda and «Все дела» use a fixed shell with a native inner
+  // scroll area. Only the agenda has the month and seven-day strip.
+  const innerScroll=showMonth||nested;
+  shell.dataset.agendaScroll=String(innerScroll);
+  document.documentElement.classList.toggle('sv-agenda-scroll-active',innerScroll);
   // A single composited fade on entry; no translate or layout shift, so the
   // permanent Apple-style header and approved 60px dock never jump.
   const returningToAgenda=svAgendaWasVisible===false&&showMonth;
