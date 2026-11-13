@@ -441,6 +441,16 @@
  #svWorkShell[data-task-tool-mode="all"] #tasksContextFocus{display:none!important}
  `;
  document.head.append(style);
+ // Hide only the dock's position when the iPhone keyboard takes over search.
+ // The approved dock material and its 60px geometry remain unchanged.
+ toolPanel.addEventListener('focusin',event=>{
+  if(event.target.matches('.sv-tool-input'))
+   document.documentElement.classList.add('sv-task-search-focus');
+ });
+ toolPanel.addEventListener('focusout',event=>{
+  if(event.target.matches('.sv-tool-input'))
+   document.documentElement.classList.remove('sv-task-search-focus');
+ });
  const getTasks=()=>{
   if(window.SEYVEO_PERSONAL_TASK_TOOLS?.list)return window.SEYVEO_PERSONAL_TASK_TOOLS.list();
   try{const v=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');return Array.isArray(v)?v:[]}
@@ -580,6 +590,7 @@
   selectionActive=false;
   shell.dataset.taskToolMode=toolMode;
   toolPanel.hidden=!toolMode;
+  if(!toolMode)document.documentElement.classList.remove('sv-task-search-focus');
   syncToolHeader();
   if(toolMode)paint();
   // The shared header and scroll container must switch as one component.
@@ -676,6 +687,9 @@
   const innerScroll=showMonth||nested;
   shell.dataset.agendaScroll=String(innerScroll);
   document.documentElement.classList.toggle('sv-agenda-scroll-active',innerScroll);
+  // A dock hidden by a prior agenda flick must reappear in «Все дела».
+  if(nested&&document.documentElement.classList.contains('sv-agenda-dock-minimized'))
+   document.documentElement.classList.remove('sv-agenda-dock-minimized');
   // A single composited fade on entry; no translate or layout shift, so the
   // permanent Apple-style header and approved 60px dock never jump.
   const returningToAgenda=svAgendaWasVisible===false&&showMonth;
