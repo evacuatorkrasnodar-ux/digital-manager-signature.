@@ -590,6 +590,27 @@ function svTaskDrawDateNav(rows=[]){
   b.addEventListener('click',()=>{svTaskDateMode='day';svTaskSelectedDate=iso;svTaskWeekAnchor=iso;render()});
   strip.append(b);
  }
+ // On phones, swipe the dates horizontally to move one complete week.
+ // Ignore vertical page scrolling and keep normal day taps intact.
+ let touchStart=null;
+ strip.addEventListener('touchstart',event=>{
+  if(event.touches.length!==1){touchStart=null;return;}
+  touchStart={x:event.touches[0].clientX,y:event.touches[0].clientY};
+ },{passive:true});
+ strip.addEventListener('touchcancel',()=>{touchStart=null;},{passive:true});
+ strip.addEventListener('touchend',event=>{
+  if(!touchStart||event.changedTouches.length!==1)return;
+  const dx=event.changedTouches[0].clientX-touchStart.x;
+  const dy=event.changedTouches[0].clientY-touchStart.y;
+  touchStart=null;
+  if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy)*1.35)return;
+  if(event.cancelable)event.preventDefault();
+  const step=dx<0?7:-7;
+  svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,step);
+  svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,step);
+  svTaskDateMode='day';
+  render();
+ },{passive:false});
  const picked=element('div','sv-task-picked-date');
  const weekday=new Intl.DateTimeFormat('ru-RU',{weekday:'long'}).format(chosenDate);
  const datePart=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(chosenDate);
