@@ -744,7 +744,13 @@ function svAgendaSection(iso,titleOverride){
  }
  if(iso===today&&caption.toLocaleLowerCase('ru-RU')==='сегодня')header.dataset.today='true';
  header.append(element('strong','',caption.toLocaleUpperCase('ru-RU')));
- if(day)header.append(element('span','sv-agenda-section-date',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'numeric',year:'numeric'}).format(day)));
+ if(day){
+  header.dataset.weatherDate=iso;
+  header.append(element('span','sv-agenda-section-date',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'numeric',year:'numeric'}).format(day)));
+  const weather=element('span','sv-agenda-weather');
+  weather.hidden=true;
+  header.append(weather);
+ }
  return header;
 }
 function svAgendaAddRows(items){
@@ -971,6 +977,7 @@ function render(){
  $('personalBriefCount').hidden=!open.length;
  $('personalBrief').hidden=open.length===0;
  window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
+ document.dispatchEvent(new Event('seyveo:agenda-rendered'));
 }
 window.addEventListener('seyveo:home-deferred-changed',render);
 function syncDueDateDisplay(){
