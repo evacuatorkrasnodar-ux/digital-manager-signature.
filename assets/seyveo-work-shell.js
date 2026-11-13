@@ -91,7 +91,7 @@
    color:var(--sv-header-icon-ink,#0B0B0D)!important;
   }
   :host([data-task-tools="true"]) .sv-history-dual{
-   position:absolute;right:var(--gutter-r);top:var(--gutter-t);z-index:2;
+   position:absolute;right:var(--gutter-r);top:calc(2 * var(--gutter-t));z-index:2;
    box-sizing:border-box;display:flex;align-items:center;justify-content:center;
    gap:0;width:88px;height:42px;padding:0 2px;
    border:var(--sv-header-circle-border,1.75px solid rgba(255,255,255,.94));
