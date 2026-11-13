@@ -170,7 +170,8 @@ function receiptClear(){try{localStorage.removeItem(RECEIPT)}catch{}}
 
 function queueRead(){try{
  const v=JSON.parse(localStorage.getItem(PENDING)||'null');
- return v&&v.plan&&typeof v.at==='number'&&Date.now()-v.at<43200000?v:null;
+ if(v&&Date.now()-Number(v.at)>43200000){localStorage.removeItem(PENDING);return null}
+ return v&&v.plan&&typeof v.at==='number'&&Date.now()-v.at>=0?v:null;
 }catch{return null}}
 function queueWrite(j){
  try{localStorage.setItem(PENDING,JSON.stringify({at:Date.now(),token:j.token,plan:j.plan}));return true}
@@ -368,7 +369,7 @@ function completeFast(j,options={}){
  if(j.committing)return false;
  j.committing=true;
  try{
-  let record=j.saved||matchingRecord(j.plan),already=Boolean(record);
+  let record=j.saved||matchingRecord(j.plan),already=j.saved?Boolean(j.already):Boolean(record);
   if(!record){
    const d=j.plan.draft;
    const outcome=window.SEYVEO_LOCAL_ACTIONS?.executePlan?.({
