@@ -1792,3 +1792,38 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
  #tasksPage #svTasksDateNav .sv-task-event-pill{padding:7px 9px;font-size:11.5px}
  #tasksPage #svTasksDateNav .sv-task-pill-title{max-width:43vw}
 }
+
+
+/* Calendar reference: centered date divider and two pastel pills per row. */
+#tasksPage #svTasksDateNav .sv-task-picked-date{
+ box-sizing:border-box;justify-content:center;width:100%;
+ min-height:40px;margin:5px 0 8px;padding:8px 4px 3px;
+ border-top:1px solid rgba(75,85,101,.10);
+ text-align:center;
+}
+#tasksPage #svTasksDateNav .sv-task-picked-date strong{
+ color:#292D35;font-size:13px;font-weight:620;line-height:1.3;
+ letter-spacing:-.015em;
+}
+#tasksPage #svTasksDateNav .sv-task-event-pills{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:6px;width:100%;margin:0 0 11px;padding:0 1px;
+}
+#tasksPage #svTasksDateNav .sv-task-event-pill{
+ display:flex;width:100%;max-width:none;min-height:31px;
+ padding:6px 8px;gap:5px;overflow:hidden;
+ border-radius:999px;
+}
+#tasksPage #svTasksDateNav .sv-task-pill-title{
+ flex:1 1 auto;max-width:none;min-width:0;
+ font-size:11.5px;
+}
+#tasksPage #svTasksDateNav .sv-task-pill-time{
+ font-size:10.5px;font-weight:630;
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-picked-date{
+ border-top-color:rgba(255,255,255,.12);
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-picked-date strong{
+ color:#F0F1F5;
+}
