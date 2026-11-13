@@ -633,7 +633,7 @@ function svTaskDrawDateNav(rows=[]){
   pill.append(element('span','sv-task-pill-dot'));
   pill.append(element('span','sv-task-pill-title',label));
   pill.addEventListener('click',()=>{
-   svTaskCategoryFilter=svTaskCategoryFilter===kind?'all':kind;
+   svTaskCategoryFilter=svTaskCategoryFilter==='all'?kind:'all';
    render();
   });
   pills.append(pill);
