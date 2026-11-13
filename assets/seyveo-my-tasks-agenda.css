@@ -492,3 +492,12 @@
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-scene .sv-agenda-scene-note{
  color:#A2A7B1!important;
 }
+
+
+/* Calendar dots preserve their individual event colors in dark mode too. */
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="orange"]{background:#FF9F0A}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="green"]{background:#34C759}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="red"]{background:#FF453A}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="blue"]{background:#0A84FF}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="yellow"]{background:#FFD60A}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="purple"]{background:#BF5AF2}
