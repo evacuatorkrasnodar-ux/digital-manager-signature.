@@ -612,7 +612,7 @@ html.sv-agenda-scroll-active .app{
  min-height:0!important;
  max-height:100dvh!important;
  overflow:hidden!important;
- padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))!important;
+ padding-bottom:0!important;
 }
 #svWorkShell[data-agenda-scroll="true"]{
  flex:1 1 auto!important;
@@ -647,6 +647,8 @@ html.sv-agenda-scroll-active .app{
  overscroll-behavior-y:contain;
  scrollbar-width:none;
  scroll-padding-top:3px;
+ /* Keep final rows clear of the floating dock without a full-width footer. */
+ padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
 }
 #svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list::-webkit-scrollbar{
  display:none;
