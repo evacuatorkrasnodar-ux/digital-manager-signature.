@@ -883,7 +883,7 @@ function render(){
  const postponed=open.filter(item=>deferredIds.has(item.id));
  const active=open.filter(item=>!deferredIds.has(item.id));
  const visibleActive=[...active,...svCalendarAgendaEvents()].sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||(a.time||'').localeCompare(b.time||''));
- renderContext(visibleActive);
+ renderContext(active);
  const hasDeferred=postponed.length>0||preview.length>0;
  svAgendaRenderNav(visibleActive);
  list.replaceChildren();
