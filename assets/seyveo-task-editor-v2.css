@@ -460,3 +460,36 @@ html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-row[data-fil
 :root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-clock-icon{stroke:#8ABAF0}
 :root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-row[data-filled="true"] .sv-task-time-display{color:#94BDF3}
 :root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-clear{background:#303034;color:#D0D0D5}
+
+/* Clickable, reliable time chooser: native popup + select-wheel fallback. */
+html body dialog#personalTaskDialog.sv-task-editor-v2 #personalTaskTime{
+ position:absolute!important;width:1px!important;height:1px!important;
+ left:50%!important;top:50%!important;inset:auto!important;
+ opacity:.01!important;z-index:0!important;pointer-events:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-open{
+ display:block!important;position:absolute!important;inset:0!important;
+ z-index:4!important;width:100%!important;height:100%!important;
+ border:0!important;background:transparent!important;cursor:pointer!important;
+ border-radius:16px!important;touch-action:manipulation!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-open:focus-visible{
+ outline:2px solid #477AA8!important;outline-offset:-3px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-picker{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ justify-content:center!important;gap:12px!important;flex:0 0 auto!important;
+ padding:15px!important;margin-top:-10px!important;background:#F4F4F6!important;
+ border-radius:0 0 16px 16px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-picker[hidden]{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-picker select{
+ flex:1;min-width:0;height:48px;font-size:20px;font-weight:500;
+ text-align:center;color:#1C1C1E;background:white;border:1px solid rgba(60,60,67,.10);border-radius:11px;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-done{
+ border:0;border-radius:11px;padding:0 15px;height:48px;
+ color:#316EA8;background:#E1ECF8;font-size:15px;font-weight:570;cursor:pointer;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-clear{z-index:6!important}
+:root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-picker{background:#303034!important}
