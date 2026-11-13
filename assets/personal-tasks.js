@@ -563,7 +563,11 @@ function svAgendaRenderNav(rows){
  if(!svTaskWeekAnchor)svTaskWeekAnchor=svTaskSelectedDate;
  nav.replaceChildren();
  const picked=svTaskDate(svTaskSelectedDate)||new Date();
- const month=element('div','sv-agenda-month-heading');
+ const month=element('button','sv-agenda-month-heading');
+ month.type='button';month.setAttribute('aria-label','Вернуться к сегодняшнему дню');
+ month.addEventListener('click',()=>{
+  svTaskSelectedDate=svTaskISO(new Date());svTaskWeekAnchor=svTaskSelectedDate;render();
+ });
  const monthName=new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(picked);
  const monthLabel=element('strong','sv-agenda-month-name',monthName.charAt(0).toLocaleUpperCase('ru-RU')+monthName.slice(1));
  const year=element('span','sv-agenda-year',String(picked.getFullYear()));
