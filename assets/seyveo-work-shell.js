@@ -631,7 +631,7 @@
   }
   // Apple-style agenda: month heading flows directly into the day strip.
   // Other work sections retain their own navigation; no dock changes.
-  nav.hidden=!visible||history||active==='personal';
+  nav.hidden=!visible||history;
   nav.dataset.employee=String(employeeMode);
   nav.dataset.one=String(!managerPreview&&!employeeMode);
   nav.dataset.business=String(managerPreview&&!employeeMode);
