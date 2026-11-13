@@ -11,7 +11,7 @@ function execute(kind,draft){
   window.dispatchEvent(new CustomEvent('seyveo:tasks-plan-batch',{detail}));
   const result=detail.result||{status:'error',message:'Раздел дел пока недоступен.'};
   if(result.status==='saved')return {kind,status:'saved',
-   message:'Готово! Добавила в Дела: «'+draft.title+'»'+(draft.date?' · '+draft.date:'')+'.'+
+   message:'Готово! Добавила в Дела: «'+draft.title+'»'+(draft.date?' · '+draft.date:'')+(draft.time?' в '+draft.time:'')+'.'+
    (draft.date?' Это срок в списке дел, не фоновый будильник.':'')};
   if(result.status==='already')return {kind,status:'already',message:'Это дело уже записано. Дубликат не создаю.'};
   return {kind,status:result.status||'error',message:result.message||'Не удалось добавить дело.'};
