@@ -72,7 +72,7 @@
   margin-bottom:3px;
   display:inline-flex;align-items:center;gap:9px;
   appearance:none;border:0;background:transparent;padding:0;margin:0;
-  color:#C83644;font:530 15px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  color:#B93429;font:530 15px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
  }
  .calendar-jump svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -91,7 +91,7 @@
  }
  .month[hidden]{display:none!important}
  .month-name{display:block;color:inherit;font-weight:700}
- .month-year{display:block;color:#D44B32;font-weight:430;letter-spacing:-.018em;font-variant-numeric:tabular-nums}
+ .month-year{display:block;color:#B93429;font-weight:430;letter-spacing:-.018em;font-variant-numeric:tabular-nums}
  :host([data-theme="dark"]) .month-year{color:#F47883}
  .month:focus-visible{outline:2px solid currentColor;outline-offset:5px;border-radius:3px}
  .control {
