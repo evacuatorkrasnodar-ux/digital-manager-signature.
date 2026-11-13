@@ -1,10 +1,11 @@
 /* SEYVEO / Sayvi Weather for the compact agenda.
-   Live forecast only; no invented temperatures or browser location prompts.
-   Open-Meteo free endpoint is for evaluation/prototyping only. */
+   Same-origin weather feed works inside previews with connect-src 'self'.
+   Weather data is refreshed upstream; the browser never fabricates temperatures. */
 (()=>{
  'use strict';
- const CACHE_KEY='seyveo.agenda-weather.cache.v1';
+ const CACHE_KEY='seyveo.agenda-weather.cache.v2';
  const LOCATION_KEY='seyveo.agenda-weather.location.v1';
+ const FEED_URL='assets/seyveo-weather-krasnodar.json';
  const REFRESH_MS=75*60*1000;
  const STALE_MS=18*60*60*1000;
  const DEFAULT_LOCATION=Object.freeze({name:'Краснодар',latitude:45.0355,longitude:38.9753});
@@ -119,19 +120,25 @@
   const activeLocation=location;
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),9000);
-  const url=new URL('https://api.open-meteo.com/v1/forecast');
-  url.searchParams.set('latitude',String(activeLocation.latitude));
-  url.searchParams.set('longitude',String(activeLocation.longitude));
-  url.searchParams.set('daily','weather_code,temperature_2m_max,temperature_2m_min');
-  url.searchParams.set('timezone','auto');
-  url.searchParams.set('forecast_days','7');
+  /* All browser requests remain on our origin. GitHub Actions refreshes the feed.
+     A location-aware backend can replace this path once profiles are connected. */
+  const configured=window.SEYVEO_WEATHER_FEED_URL;
+  const feedPath=typeof configured==='string'&&configured.trim()?configured:FEED_URL;
+  const url=new URL(feedPath,document.baseURI);
   inFlight=(async()=>{
    try{
-    const response=await fetch(url.toString(),{signal:controller.signal,mode:'cors',credentials:'omit',cache:'no-store'});
+    if(url.origin!==window.location.origin)throw Error('Weather feed must be same-origin');
+    if(locationId(activeLocation)!==locationId(DEFAULT_LOCATION)&&!configured)
+     throw Error('Weather feed is not yet configured for this city');
+    const response=await fetch(url.toString(),{signal:controller.signal,credentials:'same-origin',cache:'no-store'});
     if(!response.ok)throw Error('Weather HTTP '+response.status);
-    const fresh=parseForecast(await response.json());
+    const payload=await response.json();
+    const fetchedAt=Date.parse(payload.fetched_at);
+    if(!Number.isFinite(fetchedAt)||Date.now()-fetchedAt>STALE_MS)
+     throw Error('Weather feed is out of date');
+    const fresh=parseForecast(payload);
     if(locationId(activeLocation)!==locationId(location))return;
-    days=fresh;updatedAt=Date.now();saveCache();paint();
+    days=fresh;updatedAt=fetchedAt;saveCache();paint();
    }catch(error){
     if(!updatedAt||Date.now()-updatedAt>STALE_MS){days.clear();updatedAt=0;}
     paint();
