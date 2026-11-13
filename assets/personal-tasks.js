@@ -763,6 +763,23 @@ window.SEYVEO_PERSONAL_TASK_HISTORY=Object.freeze({
   return true;
  }
 });
+/* Shared Tasks toolbar: selection deletes from the SAME validated local
+   store. No duplicate history database or unconfirmed automatic removals. */
+window.SEYVEO_PERSONAL_TASK_TOOLS=Object.freeze({
+ list:()=>read().map(item=>({id:item.id,title:item.title,due:item.due,done:item.done,
+  createdAt:item.createdAt,doneAt:item.doneAt})),
+ removeMany:ids=>{
+  if(!Array.isArray(ids)||!ids.length||ids.length>MAX)return false;
+  const chosen=new Set(ids.filter(id=>typeof id==='string'));
+  const all=read(),remaining=all.filter(task=>!chosen.has(task.id));
+  if(remaining.length===all.length)return false;
+  if(!save(remaining))return false;
+  justCompletedTaskId='';render();
+  window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
+  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
+  return true;
+ }
+});
 /* Task edits from the Center of Decisions use the existing local editor.
    This is not a second store; edits require explicit confirmation. */
 window.addEventListener('seyveo:home-task-edit',event=>{
