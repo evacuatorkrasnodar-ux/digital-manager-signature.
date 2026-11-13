@@ -55,20 +55,21 @@
  }
  /* Calendar shortcut sits above the month, matching Apple's compact hierarchy. */
  :host([data-agenda="true"]){
-  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 28px);
-  height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 28px);
+  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 32px);
+  height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 32px);
  }
  :host([data-agenda="true"]) .bar{
-  grid-template-rows:28px minmax(0,1fr);
+  grid-template-rows:32px minmax(0,1fr);
+  padding-left:calc(var(--gutter-l) + 4px);
  }
  :host([data-agenda="true"]) .month,
  :host([data-agenda="true"]) .title,
  :host([data-agenda="true"]) .control{grid-row:2}
  .calendar-jump{
   grid-column:1 / 3;grid-row:1;justify-self:start;align-self:center;
-  display:inline-flex;align-items:center;gap:9px;
+  display:inline-flex;align-items:center;gap:8px;
   appearance:none;border:0;background:transparent;padding:0;margin:0;
-  color:#C93E4B;font:500 12px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  color:#C83644;font:500 12.5px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
  }
  .calendar-jump svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -81,13 +82,13 @@
   max-width:100%;min-width:0;padding:0;margin:0;
   appearance:none;border:0;border-radius:0;background:transparent;
   box-shadow:none;color:inherit;cursor:pointer;text-align:left;
-  font:600 clamp(21px,5.7vw,26px)/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
-  letter-spacing:-.026em;white-space:nowrap;
+  font:600 clamp(23px,6.1vw,27px)/1.12 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
+  letter-spacing:-.032em;white-space:nowrap;
   -webkit-tap-highlight-color:transparent;
  }
  .month[hidden]{display:none!important}
  .month-name{display:block;color:inherit;font-weight:620}
- .month-year{display:block;color:#D9434D;font-weight:430;letter-spacing:-.018em;font-variant-numeric:tabular-nums}
+ .month-year{display:block;color:#D63A47;font-weight:430;letter-spacing:-.018em;font-variant-numeric:tabular-nums}
  :host([data-theme="dark"]) .month-year{color:#F47883}
  .month:focus-visible{outline:2px solid currentColor;outline-offset:5px;border-radius:3px}
  .control {
