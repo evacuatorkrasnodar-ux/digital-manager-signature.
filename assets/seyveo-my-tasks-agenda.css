@@ -547,17 +547,38 @@
  display:inline-grid;place-items:center;width:23px;height:23px;flex:0 0 23px;margin-left:2px;
 }
 #tasksPage #personalTaskList .sv-agenda-weather-icon svg{display:block;width:23px;height:23px;overflow:visible}
-#tasksPage #personalTaskList .sv-agenda-weather-source{
- display:block;width:max-content;max-width:calc(100% - 24px);margin:10px 13px 8px auto;
- color:#9399A3!important;background:transparent!important;border:0!important;
- font:450 10px/1.3 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
- text-decoration:none!important;text-align:right;
+/* Source credit stays out of the agenda list. On touch, tapping the forecast reveals it. */
+@media (hover:none) and (pointer:coarse){
+ #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather{
+  position:relative;cursor:pointer;touch-action:manipulation;
+ }
+ #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather::before{
+  content:"";position:absolute;inset:-9px -3px;
+ }
 }
-#tasksPage #personalTaskList .sv-agenda-weather-source:hover{text-decoration:underline!important}
+.sv-agenda-weather-popover{
+ position:fixed;z-index:2147483000;box-sizing:border-box;
+ display:grid;gap:4px;width:max-content;min-width:194px;max-width:calc(100vw - 20px);
+ padding:11px 13px 10px;border:1px solid #E2E3E6;border-radius:13px;
+ background:#FFFFFF;color:#1C1D20;
+ box-shadow:0 7px 22px rgba(30,33,38,.12);
+ font:500 12px/1.35 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
+}
+.sv-agenda-weather-popover-label{font-size:11px;color:#777D86}
+.sv-agenda-weather-popover-links{display:flex;align-items:baseline;gap:15px;white-space:nowrap}
+.sv-agenda-weather-popover-links a{
+ color:#202329;text-decoration:none;font-weight:600;
+}
+.sv-agenda-weather-popover-links a:last-child{font-size:10.5px;color:#868B94;font-weight:500}
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather,
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-weather-high{color:#F3F4F6!important}
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-weather-low{color:#B1B5BF}
-:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-weather-source{color:#A1A7B1!important}
+:root[data-theme="dark"] .sv-agenda-weather-popover{
+ background:#292B2E;border-color:#47494E;color:#F3F4F6;
+}
+:root[data-theme="dark"] .sv-agenda-weather-popover-label{color:#B9BDC5}
+:root[data-theme="dark"] .sv-agenda-weather-popover-links a{color:#F3F4F6}
+:root[data-theme="dark"] .sv-agenda-weather-popover-links a:last-child{color:#C0C3CA}
 @media(max-width:380px){
  #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather{
   font-size:10.5px!important;gap:1px;padding-left:2px;
