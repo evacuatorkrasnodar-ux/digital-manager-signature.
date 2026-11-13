@@ -660,7 +660,10 @@ html.sv-agenda-scroll-active .app{
  html.sv-agenda-scroll-active body > footer.dock.sv-shared-dock{
   transition:transform .22s cubic-bezier(.22,.8,.28,1),opacity .16s ease!important;
  }
- html.sv-agenda-scroll-active.sv-agenda-dock-minimized body > footer.dock.sv-shared-dock{
+ :root.sv-agenda-scroll-active.sv-agenda-dock-minimized :is(
+  body > footer.dock.sv-shared-dock,
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
+ ){
   transform:translate3d(0,calc(100% + 24px + env(safe-area-inset-bottom,0px)),0)!important;
   opacity:0!important;
   pointer-events:none!important;
