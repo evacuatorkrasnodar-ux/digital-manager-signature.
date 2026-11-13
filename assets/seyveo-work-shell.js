@@ -335,13 +335,14 @@
  }
  #svTaskSelectionBar[hidden]{display:none!important}
  #svTaskSelectionBar{
-  box-sizing:border-box;position:fixed!important;inset:auto 0 0!important;
-  z-index:1800!important;display:flex;align-items:flex-start;justify-content:center;
+  box-sizing:border-box;position:fixed!important;
+  top:auto!important;left:0!important;right:0!important;
+  bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;
+  z-index:1800!important;display:flex;align-items:center;justify-content:center;
   width:100%!important;max-width:none!important;
-  min-height:calc(94px + env(safe-area-inset-bottom,0px))!important;
-  padding:12px max(12px,env(safe-area-inset-right,0px))
-    calc(15px + env(safe-area-inset-bottom,0px))
-    max(12px,env(safe-area-inset-left,0px))!important;
+  height:56px!important;min-height:56px!important;
+  padding:0 max(12px,env(safe-area-inset-right,0px))
+    0 max(12px,env(safe-area-inset-left,0px))!important;
   border:0!important;
   border-radius:0!important;
   background:transparent!important;
