@@ -32,8 +32,8 @@
  }
  const nav=document.createElement('nav');
  nav.id='svWorkTabs';
- nav.setAttribute('aria-label','Мои дела, календарь, блокнот и кабинет');
- const choices=[['personal','Мои дела'],['calendar','Календарь'],['notes','Блокнот'],['business','Кабинет'],['employee','Моя работа']];
+ nav.setAttribute('aria-label','Мои дела, блокнот и кабинет');
+ const choices=[['personal','Мои дела'],['notes','Блокнот'],['business','Кабинет'],['employee','Моя работа']];
  for(const [id,label] of choices){
   const button=document.createElement('button');
   button.type='button';
@@ -154,7 +154,11 @@
  shell.prepend(heading);
  // The month is a real part of the shared header, not a floating calendar overlay.
  month.addEventListener('click',()=>{
-  document.querySelector('#svTasksDateNav .sv-agenda-month-heading')?.click();
+  // The month heading is the single entry point to the full calendar.
+  // Keep the agenda's currently visible month; do not reset it to today.
+  location.hash='#calendar';
+  resetWorkScroll();
+  requestAnimationFrame(sync);
  });
  document.addEventListener('seyveo:agenda-month-changed',event=>{
   const detail=event.detail||{};
