@@ -173,5 +173,47 @@
   view.add.style.transform='none';
   sync();
  });
+ // iOS Safari can shrink only the visual viewport when the keyboard opens.
+ // Keep the shared header stationary; only the form's available height changes.
+ const taskViewport=window.visualViewport;
+ let taskKeyboardBaseline=0;
+ const isTextEditing=field=>field&&sheet.contains(field)&&(
+  field.matches?.('textarea,[contenteditable="true"],input[type="text"],input[type="search"],input[type="email"],input[type="tel"],input[type="url"],input[type="number"]')
+ );
+ function syncTaskKeyboard(){
+  if(!dialog.open){
+   dialog.dataset.svKeyboardVisible='false';
+   dialog.style.removeProperty('--sv-task-visible-height');
+   taskKeyboardBaseline=0;
+   return;
+  }
+  const current=taskViewport?.height||window.innerHeight;
+  const focused=document.activeElement;
+  const textFocus=isTextEditing(focused);
+  if(!taskKeyboardBaseline||!textFocus)taskKeyboardBaseline=Math.max(window.innerHeight,current);
+  const keyboardVisible=Boolean(textFocus&&window.matchMedia('(max-width:699px) and (pointer:coarse)').matches&&taskKeyboardBaseline-current>100);
+  dialog.dataset.svKeyboardVisible=String(keyboardVisible);
+  if(!keyboardVisible){
+   dialog.style.removeProperty('--sv-task-visible-height');
+   return;
+  }
+  dialog.style.setProperty('--sv-task-visible-height',Math.max(260,Math.floor(current))+'px');
+  // Scroll the form alone, never the shared header or outer page.
+  requestAnimationFrame(()=>{
+   if(!dialog.open||document.activeElement!==focused)return;
+   const formRect=form.getBoundingClientRect(),fieldRect=focused.getBoundingClientRect();
+   if(fieldRect.bottom>formRect.bottom-12)form.scrollTop+=fieldRect.bottom-formRect.bottom+18;
+   else if(fieldRect.top<formRect.top+8)form.scrollTop-=formRect.top-fieldRect.top+10;
+  });
+ }
+ new MutationObserver(syncTaskKeyboard).observe(dialog,{attributes:true,attributeFilter:['open']});
+ dialog.addEventListener('close',syncTaskKeyboard);
+ dialog.addEventListener('focusin',()=>requestAnimationFrame(syncTaskKeyboard));
+ dialog.addEventListener('focusout',()=>requestAnimationFrame(syncTaskKeyboard));
+ taskViewport?.addEventListener('resize',syncTaskKeyboard,{passive:true});
+ window.addEventListener('orientationchange',()=>{
+  taskKeyboardBaseline=0;
+  requestAnimationFrame(syncTaskKeyboard);
+ },{passive:true});
  window.SEYVEO_TASK_SCREEN=Object.freeze({version:2,sync});
 })();
