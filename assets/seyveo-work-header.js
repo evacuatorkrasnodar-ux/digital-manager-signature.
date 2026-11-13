@@ -73,10 +73,10 @@
   margin-bottom:3px;
   display:inline-flex;align-items:center;gap:9px;
   appearance:none;border:0;background:transparent;padding:0;margin:0;
-  color:#A83D27;font:560 15px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;letter-spacing:-.012em;
+  color:#A83D27;font:560 16.5px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;letter-spacing:-.012em;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
  }
- .calendar-jump svg{display:block;width:21px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+ .calendar-jump svg{display:block;width:23px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
  .calendar-jump[hidden]{display:none!important}
  .calendar-jump:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:3px}
  :host([data-theme="dark"]) .calendar-jump{color:#F47883}
