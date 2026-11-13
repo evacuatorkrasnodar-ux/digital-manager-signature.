@@ -53,20 +53,21 @@
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   color:inherit;
  }
- /* Calendar shortcut sits above the month, matching Apple's compact hierarchy. */
- :host([data-agenda="true"]){
+ /* Reserve the same two-row header height for every Work tab.
+    Switching Tasks / Notebook / Cabinet must never move the capsule.
+    Back and Plus remain on the same first-row axis in every tab. */
+ :host([data-work-tabs="true"]){
   min-height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 58px);
   height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 58px);
  }
+ :host([data-work-tabs="true"]) .bar{
+  grid-template-rows:var(--sv-header-row,62px) minmax(0,1fr);
+ }
  :host([data-agenda="true"]) .bar{
-  grid-template-rows:50px minmax(0,1fr);
   padding-left:calc(var(--gutter-l) + 4px);
  }
- :host([data-agenda="true"]) .month,
- :host([data-agenda="true"]) .title,
- :host([data-agenda="true"]) .control{grid-row:2}
- :host([data-agenda="true"]) .month{position:relative;top:12px}
- :host([data-agenda="true"]) .calendar-jump{position:relative;top:18px}
+ :host([data-agenda="true"]) .month{grid-row:2;align-self:center}
+ :host([data-agenda="true"]) .calendar-jump{align-self:center}
  .calendar-jump{
   grid-column:1 / 3;grid-row:1;justify-self:start;align-self:end;
   margin-bottom:3px;
