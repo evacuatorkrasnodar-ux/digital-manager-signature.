@@ -43,7 +43,7 @@
   border:0;
   border-radius:0;
   box-shadow:none;
-  background:var(--sv-header-surface,#F2F1F6);
+  background:#FFFFFF; /* Match the white content surface, no grey header strip. */
  }
  .title {
   grid-column:2;grid-row:1;
