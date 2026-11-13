@@ -1,0 +1,127 @@
+/* SEYVEO · All Tasks v2 · rebuilt screen, 14 Nov 2026.
+   One scroll region and one in-flow action footer. No fullscreen sheet,
+   no fixed bottom backdrop, no changes to the approved global dock. */
+#svAllTasksView[hidden],#svAllTasksFooter[hidden]{display:none!important}
+
+#svWorkShell[data-task-tool-mode="all"] #personalTaskList,
+#svWorkShell[data-task-tool-mode="all"] #tasksContextFocus{display:none!important}
+#svWorkShell[data-task-tool-mode="all"] #tasksPage #svTasksDateNav{display:none!important}
+
+#svWorkShell[data-task-tool-mode="all"] #tasksPage #svAllTasksView{
+ box-sizing:border-box!important;
+ display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+ width:100%!important;min-width:0!important;min-height:0!important;
+ padding:8px 0 0!important;margin:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ overflow:hidden!important;color:#17191E;
+ font-family:-apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
+}
+
+#svAllTasksView .sv-tool-input{
+ box-sizing:border-box;flex:0 0 auto;width:100%;height:46px;min-height:46px;
+ margin:0 0 12px;padding:0 14px;border:1px solid #E7EAF0;
+ border-radius:13px;background:#F5F5F7;color:#17191E;
+ outline:none;font:500 16px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
+}
+#svAllTasksView .sv-tool-input[hidden]{display:none!important}
+#svAllTasksView .sv-tool-input::placeholder{color:#707782;opacity:1}
+#svAllTasksView .sv-tool-input:focus-visible{border-color:#BFC6D0;outline:2px solid #DDE8F1;outline-offset:1px}
+
+#svAllTasksView .sv-tool-results{
+ box-sizing:border-box;display:block;flex:1 1 auto;min-width:0;min-height:0;
+ overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;
+ overscroll-behavior-y:contain;scrollbar-width:none;
+ padding:0 0 calc(84px + env(safe-area-inset-bottom,0px));
+ background:transparent;border:0;box-shadow:none;
+}
+#svAllTasksView .sv-tool-results::-webkit-scrollbar{display:none}
+#svAllTasksView:has(#svAllTasksFooter:not([hidden])) .sv-tool-results{padding-bottom:12px}
+
+#svAllTasksView .sv-tool-result{
+ box-sizing:border-box;display:flex;align-items:center;gap:11px;
+ min-height:70px;padding:11px 3px;border-bottom:1px solid #E7EAF0;
+ background:transparent;
+}
+#svAllTasksView .sv-tool-result:last-child{border-bottom-color:transparent}
+#svAllTasksView .sv-tool-copy{flex:1 1 auto;min-width:0}
+#svAllTasksView .sv-tool-copy strong{
+ display:block;color:#17191E;font-size:15.7px;font-weight:550;
+ line-height:1.33;letter-spacing:-.015em;overflow-wrap:anywhere;
+}
+#svAllTasksView .sv-tool-copy small{
+ display:block;margin-top:4px;color:#707782;
+ font-size:12px;font-weight:520;line-height:1.25;
+}
+#svAllTasksView .sv-tool-copy small[data-status="done"]{color:#527EAF}
+#svAllTasksView .sv-tool-copy small[data-status="overdue"]{color:#B06438}
+#svAllTasksView .sv-tool-result > button{
+ box-sizing:border-box;flex:0 0 auto;min-width:68px;min-height:44px;
+ padding:0 5px;border:0;background:transparent;box-shadow:none;
+ color:#3769A9;font:550 13.5px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;cursor:pointer;
+}
+#svAllTasksView .sv-tool-result > button:focus-visible{outline:2px solid #3769A9;outline-offset:-2px;border-radius:9px}
+
+#svAllTasksView .sv-tool-result input[type="checkbox"]{
+ -webkit-appearance:none;appearance:none;box-sizing:border-box;
+ position:relative;display:grid;place-items:center;flex:0 0 22px;
+ width:22px;height:22px;margin:0;padding:0;
+ border:1.5px solid #A3A8B0;border-radius:50%;background:transparent;
+ cursor:pointer;
+}
+#svAllTasksView .sv-tool-result input[type="checkbox"]:checked{background:#38383A;border-color:#38383A}
+#svAllTasksView .sv-tool-result input[type="checkbox"]:checked::after{
+ content:"";width:10px;height:6px;border-left:2px solid #FFF;
+ border-bottom:2px solid #FFF;transform:translateY(-1px) rotate(-45deg);
+}
+#svAllTasksView .sv-tool-result input[type="checkbox"]:focus-visible{outline:2px solid #38383A;outline-offset:3px}
+#svAllTasksView .sv-tool-empty{
+ padding:52px 8px;text-align:center;color:#707782;
+ font-size:14px;font-weight:500;
+}
+
+/* A real flex child: scrolling cannot expose a fixed white rectangle. */
+#svAllTasksFooter{
+ box-sizing:border-box;display:block;flex:0 0 auto;
+ width:100%;min-height:0;margin:0;
+ padding:0 0 max(8px,calc(env(safe-area-inset-bottom,0px) - 14px));
+ border:0;background:transparent;box-shadow:none;isolation:auto;
+}
+#svAllTasksFooter .sv-tool-action-row{
+ box-sizing:border-box;display:grid;align-items:center;
+ grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr) minmax(0,.85fr) minmax(0,.75fr);
+ gap:3px;width:100%;height:60px;min-height:60px;padding:4px;
+ border:1.75px solid rgba(255,255,255,.94);border-radius:999px;
+ background:rgba(190,193,202,.43);
+ box-shadow:0 0 0 .7px rgba(164,170,184,.30),inset 0 1px 1px rgba(75,82,96,.055);
+}
+#svAllTasksFooter button{
+ appearance:none;-webkit-appearance:none;display:grid;place-items:center;
+ width:100%;height:50px;min-width:0;margin:0;padding:0 3px;
+ border:0;border-radius:999px;background:transparent;box-shadow:none;
+ color:#202329;font:550 12.8px/1.15 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
+ white-space:nowrap;cursor:pointer;
+}
+#svAllTasksFooter .sv-task-all{background:rgba(255,255,255,.82)}
+#svAllTasksFooter .sv-task-count{display:grid;place-items:center;min-width:0;color:#707782;font-size:11.8px;white-space:nowrap}
+#svAllTasksFooter .sv-task-count[data-has-selection="true"]{color:#3769A9;font-weight:570}
+#svAllTasksFooter .sv-task-delete{color:#B34750}
+#svAllTasksFooter .sv-task-delete:disabled{color:#B6A4A8;opacity:.55}
+#svAllTasksFooter .sv-task-cancel{color:#60636B}
+#svAllTasksFooter button:active{background:rgba(130,135,148,.12)}
+#svAllTasksFooter button:focus-visible{outline:2px solid #3769A9;outline-offset:1px}
+
+/* The existing dock is merely hidden during bulk actions, never restyled. */
+html.sv-task-selection-active body > footer.dock.sv-shared-dock{visibility:hidden!important;pointer-events:none!important}
+html.sv-task-search-focus #svAllTasksFooter{visibility:hidden!important;pointer-events:none!important}
+@media(max-width:699px) and (hover:none) and (pointer:coarse){
+ :root.sv-task-search-focus body > footer.dock.sv-shared-dock{
+  transform:translate3d(0,calc(100% + 24px + env(safe-area-inset-bottom,0px)),0)!important;
+  opacity:0!important;pointer-events:none!important;
+ }
+}
+
+@media(max-width:350px){
+ #svAllTasksFooter button{font-size:11.5px;padding:0 2px}
+ #svAllTasksFooter .sv-task-count{font-size:10.5px}
+}
+@media(prefers-reduced-motion:reduce){#svAllTasksView *{scroll-behavior:auto!important}}
