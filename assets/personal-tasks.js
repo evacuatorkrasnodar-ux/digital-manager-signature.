@@ -600,7 +600,9 @@ function svAgendaRenderNav(rows){
   const btn=element('button','sv-agenda-day');
   btn.type='button';btn.dataset.day=iso;
   btn.setAttribute('aria-pressed',String(iso===svTaskSelectedDate));
-  btn.setAttribute('aria-label',new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(day));
+  const dayLabel=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(day);
+  const workCount=entries.filter(task=>svTaskCategory(task)==='work').length;
+  btn.setAttribute('aria-label',dayLabel+(entries.length?', дел: '+entries.length+', рабочих: '+workCount+', личных: '+(entries.length-workCount):', дел нет'));
   if(iso===today)btn.dataset.today='true';
   if(iso===svTaskSelectedDate)btn.dataset.selected='true';
   const shortDay=new Intl.DateTimeFormat('ru-RU',{weekday:'short'}).format(day).replace('.','');
@@ -608,7 +610,9 @@ function svAgendaRenderNav(rows){
    element('span','sv-agenda-day-number',String(day.getDate())));
   const marks=element('span','sv-agenda-marks');
   marks.setAttribute('aria-hidden','true');
-  entries.slice(0,3).forEach(task=>{
+  // One dot is one real scheduled task; its color identifies the calendar.
+  // Limit the tiny preview to five marks while preserving the true count for VoiceOver.
+  entries.slice(0,5).forEach(task=>{
    const dot=element('i','sv-agenda-mark');
    dot.dataset.kind=svTaskCategory(task);marks.append(dot);
   });
