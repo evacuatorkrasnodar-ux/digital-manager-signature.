@@ -336,13 +336,14 @@
  #svTaskSelectionBar[hidden]{display:none!important}
  #svTaskSelectionBar{
   box-sizing:border-box;position:fixed!important;
-  top:auto!important;left:0!important;right:0!important;
+  top:auto!important;left:50%!important;right:auto!important;
   bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 14px))!important;
+  transform:translateX(-50%)!important;
   z-index:1800!important;display:flex;align-items:center;justify-content:center;
-  width:100%!important;max-width:none!important;
+  width:min(calc(100% - max(12px,env(safe-area-inset-left,0px)) - max(12px,env(safe-area-inset-right,0px))),530px)!important;
+  max-width:530px!important;
   height:56px!important;min-height:56px!important;
-  padding:0 max(12px,env(safe-area-inset-right,0px))
-    0 max(12px,env(safe-area-inset-left,0px))!important;
+  padding:0!important;
   border:0!important;
   border-radius:0!important;
   background:transparent!important;
@@ -389,7 +390,7 @@
  :root[data-theme="dark"] #svTaskSelectionBar .sv-task-delete{color:#F19AA2}
  :root[data-theme="dark"] #svTaskSelectionBar .sv-task-delete:disabled{opacity:.4}
  @media(max-width:350px){
-  #svTaskSelectionBar{padding-left:6px!important;padding-right:6px!important}
+  #svTaskSelectionBar{width:calc(100% - 12px)!important}
   #svTaskSelectionBar button{font-size:12px;padding:0 2px}
   #svTaskSelectionBar .sv-task-count{font-size:11px}
  }
