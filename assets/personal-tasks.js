@@ -99,10 +99,9 @@ function displayDate(item){
  const label=strDate(item.due);
  const current=new Date(),today=[current.getFullYear(),String(current.getMonth()+1).padStart(2,'0'),String(current.getDate()).padStart(2,'0')].join('-');
  const day=label?(item.due<today?'Срок прошёл · '+label:item.due===today?'Сегодня':'До '+label):'';
- // The selected time is a deadline, never the creation/arrival timestamp.
- if(day&&item.time)return day+' · '+item.time;
- // For older date-only tasks display their recorded creation time with a
- // clear label. Do not invent a deadline and do not use the current time.
+ // List metadata always shows the actual creation time, regardless of
+ // whether a separate execution time was scheduled in the editor.
+ // Never conflate scheduled time with the creation timestamp.
  const stamp=typeof item.createdAt==='string'?Date.parse(item.createdAt):NaN;
  const recorded=Number.isFinite(stamp)&&stamp>0?
   new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'}).format(new Date(stamp)):'';
@@ -549,12 +548,6 @@ function row(item,compact=false,deferred=false){
  label.append(name);
  const due=displayDate(item);
  if(due||item.done||deferred)label.append(element('small','',item.done?'Завершено':deferred?'Отложено с Главной · до следующего открытия':due));
- // Source-linked items with a scheduled deadline can additionally show
- // their recorded time of creation; it is not claimed as mail delivery time.
- if(!item.done&&!deferred&&item.time&&(item.sourceNoteId||item.source)&&Number.isFinite(Date.parse(item.createdAt))){
-  const received=new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'}).format(new Date(item.createdAt));
-  label.append(element('small','personal-task-received','Создано '+received));
- }
  if(!compact){
   if(item.sourceNoteId){
    const origin=element('button','personal-task-origin','Из Блокнота · Открыть запись');
