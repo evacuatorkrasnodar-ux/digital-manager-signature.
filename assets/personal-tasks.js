@@ -547,7 +547,7 @@ function svTaskShiftDay(iso,days){
 function svTaskPalette(task){return svTaskCategory(task)==='work'?'blue':'neutral';}
 function svAgendaChangeWeek(step){
  if(!svTaskWindowStart)svTaskWindowStart=svTaskISO(new Date());
- svTaskWindowStart=svTaskShiftDay(svTaskWindowStart,step*5);
+ svTaskWindowStart=svTaskShiftDay(svTaskWindowStart,step);
  svTaskSelectedDate=svTaskWindowStart;
  render();
 }
@@ -584,14 +584,17 @@ function svAgendaRenderNav(rows){
  next.addEventListener('click',()=>svAgendaChangeWeek(1));
  const strip=element('div','sv-agenda-week');
  strip.setAttribute('role','group');strip.setAttribute('aria-label','Дни недели');
+ const track=element('div','sv-agenda-track');
+ strip.append(track);
  const first=svTaskDate(svTaskWindowStart);
+ first.setDate(first.getDate()-1);
  const today=svTaskISO(new Date()),byDate=new Map();
  for(const item of rows){
   if(!item.due)continue;
   if(!byDate.has(item.due))byDate.set(item.due,[]);
   byDate.get(item.due).push(item);
  }
- for(let i=0;i<5;i++){
+ for(let i=0;i<7;i++){
   const day=new Date(first);day.setDate(first.getDate()+i);
   const iso=svTaskISO(day),entries=byDate.get(iso)||[];
   const btn=element('button','sv-agenda-day');
@@ -613,25 +616,50 @@ function svAgendaRenderNav(rows){
   btn.addEventListener('click',()=>{
    svTaskSelectedDate=iso;render();
   });
-  strip.append(btn);
+  track.append(btn);
  }
- // A finger swipe replaces this complete five-day window.
- // No tiny arrows are shown on mobile.
- let touchStart=null,ignoreTapUntil=0;
+ // The side peeks reveal a continuous carousel. Drag the cards with a finger.
+ // The window advances by one day, preserving today at the left on entry.
+ let touchStart=null,ignoreTapUntil=0,gestureActive=false;
+ const clearMotion=()=>{
+  track.style.transition='transform .16s cubic-bezier(.22,.75,.35,1)';
+  track.style.transform='translate3d(0,0,0)';
+ };
  strip.addEventListener('touchstart',event=>{
   if(event.touches.length!==1)return;
-  touchStart={x:event.touches[0].clientX,y:event.touches[0].clientY};
+  const touch=event.touches[0];
+  touchStart={x:touch.clientX,y:touch.clientY};
+  gestureActive=false;
+  track.style.transition='none';
+ },{passive:true});
+ strip.addEventListener('touchmove',event=>{
+  if(!touchStart||event.touches.length!==1)return;
+  const touch=event.touches[0],dx=touch.clientX-touchStart.x,dy=touch.clientY-touchStart.y;
+  if(Math.abs(dx)<8||Math.abs(dx)<Math.abs(dy)*1.3)return;
+  gestureActive=true;
+  const limit=strip.clientWidth/5;
+  track.style.transform='translate3d('+Math.max(-limit,Math.min(limit,dx))+'px,0,0)';
  },{passive:true});
  strip.addEventListener('touchend',event=>{
   if(!touchStart||!event.changedTouches.length)return;
-  const dx=event.changedTouches[0].clientX-touchStart.x;
-  const dy=event.changedTouches[0].clientY-touchStart.y;
+  const touch=event.changedTouches[0];
+  const dx=touch.clientX-touchStart.x,dy=touch.clientY-touchStart.y;
   touchStart=null;
-  if(Math.abs(dx)<35||Math.abs(dx)<Math.abs(dy)*1.25)return;
+  if(!gestureActive||Math.abs(dx)<35||Math.abs(dx)<Math.abs(dy)*1.25){
+   clearMotion();gestureActive=false;return;
+  }
   if(event.cancelable)event.preventDefault();
-  ignoreTapUntil=Date.now()+450;
-  svAgendaChangeWeek(dx<0?1:-1);
+  ignoreTapUntil=Date.now()+500;
+  const direction=dx<0?1:-1;
+  const tile=strip.clientWidth/5;
+  track.style.transition='transform .16s cubic-bezier(.22,.75,.35,1)';
+  track.style.transform='translate3d('+(dx<0?-tile:tile)+'px,0,0)';
+  setTimeout(()=>svAgendaChangeWeek(direction),160);
+  gestureActive=false;
  },{passive:false});
+ strip.addEventListener('touchcancel',()=>{
+  touchStart=null;gestureActive=false;clearMotion();
+ },{passive:true});
  strip.addEventListener('click',event=>{
   if(Date.now()<=ignoreTapUntil){event.preventDefault();event.stopPropagation();}
  },true);
