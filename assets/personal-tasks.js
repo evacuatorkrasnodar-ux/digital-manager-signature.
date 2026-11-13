@@ -565,13 +565,9 @@ function svTaskDrawDateNav(rows=[]){
  prev.type='button';prev.setAttribute('aria-label','Предыдущая неделя');
  const next=element('button','sv-task-week-arrow','›');
  next.type='button';next.setAttribute('aria-label','Следующая неделя');
- const month=element('strong','sv-task-date-month',new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(chosenDate));
- const all=element('button','sv-task-all-button','Все дела');
- all.type='button';all.setAttribute('aria-pressed',String(svTaskDateMode==='all'));
- all.addEventListener('click',()=>{svTaskDateMode='all';render()});
  prev.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,-7);svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,-7);render()});
  next.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,7);svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,7);render()});
- heading.append(prev,month,next,all);
+ heading.append(prev,next);
  const strip=element('div','sv-task-day-strip'),monday=svTaskDate(svTaskWeekAnchor);
  monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
  const today=svTaskISO(new Date()),byDate=new Map();
