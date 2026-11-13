@@ -680,7 +680,7 @@ function svAgendaRenderNav(rows){
   });
   track.append(btn);
  }
- // The side peeks reveal a continuous carousel. Drag the cards with a finger.
+ // Five equal day columns form one uninterrupted rail; swipe advances the window.
  // The window advances by one day, preserving today at the left on entry.
  let touchStart=null,ignoreTapUntil=0,gestureActive=false;
  const clearMotion=()=>{
@@ -699,7 +699,7 @@ function svAgendaRenderNav(rows){
   const touch=event.touches[0],dx=touch.clientX-touchStart.x,dy=touch.clientY-touchStart.y;
   if(Math.abs(dx)<8||Math.abs(dx)<Math.abs(dy)*1.3)return;
   gestureActive=true;
-  const limit=strip.clientWidth*.19;
+  const limit=track.firstElementChild?.getBoundingClientRect().width||strip.clientWidth/5;
   track.style.transform='translate3d('+Math.max(-limit,Math.min(limit,dx))+'px,0,0)';
  },{passive:true});
  strip.addEventListener('touchend',event=>{
@@ -713,7 +713,7 @@ function svAgendaRenderNav(rows){
   if(event.cancelable)event.preventDefault();
   ignoreTapUntil=Date.now()+500;
   const direction=dx<0?1:-1;
-  const tile=strip.clientWidth*.19;
+  const tile=track.firstElementChild?.getBoundingClientRect().width||strip.clientWidth/5;
   track.style.transition='transform .16s cubic-bezier(.22,.75,.35,1)';
   track.style.transform='translate3d('+(dx<0?-tile:tile)+'px,0,0)';
   setTimeout(()=>svAgendaChangeWeek(direction),160);
