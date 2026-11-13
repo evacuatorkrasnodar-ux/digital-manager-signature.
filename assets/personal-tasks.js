@@ -528,7 +528,7 @@ window.SEYVEO_TASK_ASSIST=Object.freeze({open:askSayviForTask});
 
 /* SEYVEO Agenda · one renderer for the iOS-style date ticker and event list.
  * Data, task actions and the global shell remain owned by Personal Tasks. */
-let svTaskSelectedDate='',svTaskWeekAnchor='',svTaskCategoryFilter='all';
+let svTaskSelectedDate='',svTaskCategoryFilter='all';
 const svTaskCategory=item=>item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal');
 const svTaskMatchesCategory=item=>svTaskCategoryFilter==='all'||svTaskCategory(item)===svTaskCategoryFilter;
 function svTaskISO(d){
@@ -546,8 +546,7 @@ function svTaskShiftDay(iso,days){
 }
 function svTaskPalette(task){return svTaskCategory(task)==='work'?'blue':'neutral';}
 function svAgendaChangeWeek(step){
- svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,step*7);
- svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,step*7);
+ svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,step*5);
  render();
 }
 function svAgendaRenderNav(rows){
@@ -560,13 +559,12 @@ function svAgendaRenderNav(rows){
   list.before(nav);
  }
  if(!svTaskSelectedDate)svTaskSelectedDate=svTaskISO(new Date());
- if(!svTaskWeekAnchor)svTaskWeekAnchor=svTaskSelectedDate;
  nav.replaceChildren();
  const picked=svTaskDate(svTaskSelectedDate)||new Date();
  const month=element('button','sv-agenda-month-heading');
  month.type='button';month.setAttribute('aria-label','Вернуться к сегодняшнему дню');
  month.addEventListener('click',()=>{
-  svTaskSelectedDate=svTaskISO(new Date());svTaskWeekAnchor=svTaskSelectedDate;render();
+  svTaskSelectedDate=svTaskISO(new Date());render();
  });
  const monthName=new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(picked);
  const monthLabel=element('strong','sv-agenda-month-name',monthName.charAt(0).toLocaleUpperCase('ru-RU')+monthName.slice(1));
@@ -574,23 +572,23 @@ function svAgendaRenderNav(rows){
  month.append(monthLabel,year);
  const ticker=element('div','sv-agenda-ticker');
  const back=element('button','sv-agenda-week-step','‹');
- back.type='button';back.setAttribute('aria-label','Предыдущая неделя');
+ back.type='button';back.setAttribute('aria-label','Предыдущие дни');
  back.addEventListener('click',()=>svAgendaChangeWeek(-1));
  const next=element('button','sv-agenda-week-step','›');
- next.type='button';next.setAttribute('aria-label','Следующая неделя');
+ next.type='button';next.setAttribute('aria-label','Следующие дни');
  next.addEventListener('click',()=>svAgendaChangeWeek(1));
  const strip=element('div','sv-agenda-week');
  strip.setAttribute('role','group');strip.setAttribute('aria-label','Дни недели');
- const monday=svTaskDate(svTaskWeekAnchor);
- monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
+ const first=svTaskDate(svTaskSelectedDate);
+ first.setDate(first.getDate()-31);
  const today=svTaskISO(new Date()),byDate=new Map();
  for(const item of rows){
   if(!item.due)continue;
   if(!byDate.has(item.due))byDate.set(item.due,[]);
   byDate.get(item.due).push(item);
  }
- for(let i=0;i<7;i++){
-  const day=new Date(monday);day.setDate(monday.getDate()+i);
+ for(let i=0;i<63;i++){
+  const day=new Date(first);day.setDate(first.getDate()+i);
   const iso=svTaskISO(day),entries=byDate.get(iso)||[];
   const btn=element('button','sv-agenda-day');
   btn.type='button';btn.dataset.day=iso;
@@ -609,25 +607,16 @@ function svAgendaRenderNav(rows){
   });
   btn.append(marks);
   btn.addEventListener('click',()=>{
-   svTaskSelectedDate=iso;svTaskWeekAnchor=iso;render();
+   svTaskSelectedDate=iso;render();
   });
   strip.append(btn);
  }
- let start=null;
- strip.addEventListener('touchstart',e=>{
-  if(e.touches.length!==1){start=null;return;}
-  start={x:e.touches[0].clientX,y:e.touches[0].clientY};
- },{passive:true});
- strip.addEventListener('touchcancel',()=>{start=null;},{passive:true});
- strip.addEventListener('touchend',e=>{
-  if(!start||e.changedTouches.length!==1)return;
-  const dx=e.changedTouches[0].clientX-start.x;
-  const dy=e.changedTouches[0].clientY-start.y;
-  start=null;
-  if(Math.abs(dx)<44||Math.abs(dx)<Math.abs(dy)*1.3)return;
-  if(e.cancelable)e.preventDefault();
-  svAgendaChangeWeek(dx<0?1:-1);
- },{passive:false});
+ // Native horizontal scrolling provides continuous finger navigation.
+ // Recenter only on render; ordinary swipes do not reset the chosen day.
+ window.requestAnimationFrame(()=>{
+  const current=strip.querySelector('[data-selected="true"]');
+  if(current)strip.scrollLeft=current.offsetLeft-(strip.clientWidth-current.clientWidth)/2;
+ });
  ticker.append(back,strip,next);
  const handle=element('div','sv-agenda-handle');
  handle.setAttribute('aria-hidden','true');
