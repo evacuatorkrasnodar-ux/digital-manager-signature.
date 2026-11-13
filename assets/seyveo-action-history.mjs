@@ -289,6 +289,7 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
  const count=document.createElement('span');count.textContent='Выбрано: 0';count.setAttribute('aria-live','polite');
  const removeChosen=document.createElement('button');removeChosen.type='button';removeChosen.textContent='Удалить';
  selection.append(selectAll,count,removeChosen);panel.insertBefore(selection,list);
+ const broadcastSelection=()=>window.dispatchEvent(new CustomEvent('seyveo:history-selection-changed',{detail:{active:selecting}}));
  const leaveSelection=()=>{selecting=false;chosen.clear();popup.hidden=true;render()};
  const showCount=()=>{
   const keys=selectableEntries.map(eventKey);
@@ -367,6 +368,7 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
  const stateOf=v=>v==='failed'?'failed':['shown','deferred','action_pending','executing'].includes(v)?'pending':['succeeded','archived'].includes(v)?'done':'other';
  const statuses={shown:'Не завершено',deferred:'Отложено',action_pending:'Ожидает действия',executing:'Выполняется',succeeded:'Выполнено',archived:'В архиве',failed:'Ошибка',canceled:'Отменено',expired:'Истекло'};
  function render(){
+  broadcastSelection();
   list.replaceChildren();
   const api=window.SEYVEO_CARD_LIFECYCLE;
   const cardEvents=api?.history?.()||[];
@@ -475,6 +477,13 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
  fallbackSearch.setAttribute('aria-expanded','false');
  fallbackSearch.addEventListener('click',toggleSearch);
  window.addEventListener('seyveo:history-search-toggle',toggleSearch);
+ window.addEventListener('seyveo:history-select-toggle',()=>{
+  if(panel.hidden)return;
+  selecting=!selecting;
+  chosen.clear();
+  popup.hidden=true;
+  render();
+ });
  search.addEventListener('input',()=>{visibleCount=4;render();});
  more.addEventListener('click',()=>{visibleCount=Math.min(visibleCount+4,40);render();});
  const page=document.getElementById('tasksPage');
@@ -515,6 +524,7 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
    if(scroller)scroller.scrollTop=0;
    requestAnimationFrame(()=>(document.getElementById('svWorkBack')||back).focus({preventScroll:true}));
   }else{
+   selecting=false;chosen.clear();broadcastSelection();
    searchOpen=false;search.value='';search.hidden=true;
    fallbackSearch.setAttribute('aria-expanded','false');
    requestAnimationFrame(()=>{
