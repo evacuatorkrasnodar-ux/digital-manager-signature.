@@ -617,8 +617,9 @@ function svTaskDrawDateNav(rows=[]){
    });
    pills.append(pill);
   }
-  if(!onDate.length){
-   for(const [label,tint] of [['Новое дело','blue'],['Напоминание','neutral']]){
+  if(onDate.length<2){
+   const shortcuts=onDate.length?[['Напоминание','neutral']]:[['Новое дело','blue'],['Напоминание','neutral']];
+   for(const [label,tint] of shortcuts){
     const pill=element('button','sv-task-event-pill sv-task-quick-pill');
     pill.type='button';pill.dataset.tint=tint;
     pill.setAttribute('aria-label','Создать: '+label);
