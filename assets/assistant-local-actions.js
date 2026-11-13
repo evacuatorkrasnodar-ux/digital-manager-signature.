@@ -397,8 +397,43 @@ document.addEventListener('visibilitychange',()=>{
  }else if(document.visibilityState==='visible')restore();
 });
 window.addEventListener('pageshow',restore);
-window.SEYVEO_LIVE_ACTION=Object.freeze({start,startPlan,configure,cancel,isBusy:()=>!!job,enabled,setEnabled});
+
+const NAV_HANDOFF='seyveo-live-action-navigation-v1';
+function mailRequest(raw){
+ const q=String(raw||'').trim().toLocaleLowerCase('ru-RU').replace(/ё/g,'е')
+  .replace(/^(?:(?:сейви|сейва|сэйви|сэйва|сэй|сей|seyveo)[,.!:\s]+)?(?:а\s+)?/,'')
+  .replace(/[?!.]+$/,'').replace(/\s+/g,' ').trim();
+ return /^(?:(?:а\s+)?где(?: у нас| находится| находится у нас)? (?:почта|личная почта|рабочая почта)(?: покажи(?: мне)?)?|покажи(?: мне)? (?:почту|личную почту|рабочую почту)|открой(?: мне)? (?:почту|личную почту|рабочую почту))$/.test(q);
+}
+function navigate(raw,force=false){
+ if(!mailRequest(raw))return false;
+ if(!$('personalTaskForm')||!$('calendarEventForm')){
+  if(!location.pathname.endsWith('/sayvi-chat-new.html'))return false;
+  try{localStorage.setItem(NAV_HANDOFF,JSON.stringify({raw,at:Date.now()}))}catch{return false}
+  location.assign('./index.html#home');return true;
+ }
+ if(!enabled()&&!force)return false;
+ // No write, permission grant or mail sending. Reuse the actual Mail tile.
+ if(document.querySelector('dialog[open]'))return false;
+ if(enabled()){
+  panel('Сэйви показывает, где находится Почта');
+  location.hash='#life';
+ }
+ const open=()=>{
+  const tile=$('calendarSpaces')?.querySelector('[data-calendar-space="mail"]');
+  if(tile)tile.click();
+  else if(!window.SEYVEO_SAYVI_SURFACES?.open?.('mail','personal'))location.hash='#sayvi-mail';
+  clearPanel();
+ };
+ if(enabled())window.setTimeout(open,480);else open();
+ return true;
+}
+window.SEYVEO_LIVE_ACTION=Object.freeze({start,startPlan,configure,navigate,cancel,isBusy:()=>!!job,enabled,setEnabled});
 if($('personalTaskForm')&&$('calendarEventForm')){
+ let pendingNav=null;
+ try{pendingNav=JSON.parse(localStorage.getItem(NAV_HANDOFF)||'null');localStorage.removeItem(NAV_HANDOFF)}catch{}
+ if(pendingNav?.raw&&Date.now()-Number(pendingNav.at)<12*3600000)
+  window.setTimeout(()=>navigate(pendingNav.raw,true),250);
  let pending=null;
  try{pending=JSON.parse(localStorage.getItem(HANDOFF)||'null');localStorage.removeItem(HANDOFF)}catch{}
  if(pending?.plan&&Date.now()-Number(pending.at)<12*3600000)
