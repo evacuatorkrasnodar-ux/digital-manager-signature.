@@ -551,7 +551,7 @@ function getEventKind(){
  return form.querySelector('input[name="calendarEventKind"]:checked')?.value==='business'?'business':'personal';
 }
 function openEvent(id=null){
- const item=id?visibleEvents().find(x=>x.id===id):null;editing=item?.id||null;
+ const item=id?events().find(x=>x.id===id):null;editing=item?.id||null;
  form.reset();
  $('calendarEventTitleHeading').textContent=item?'Изменить событие':'Новое событие';
  $('calendarEventName').value=item?.title||'';
@@ -853,6 +853,16 @@ window.addEventListener('seyveo:calendar-focus-date',event=>{
  revealSelectedDay();
 });
 window.addEventListener('seyveo:calendar-open',()=>{render()});
+/* From the unified My Tasks agenda: edit the original Calendar record. */
+window.addEventListener('seyveo:calendar-open-entry',event=>{
+ const id=event.detail?.id;
+ const entry=typeof id==='string'?events().find(item=>item.id===id):null;
+ if(!entry)return;
+ if(location.hash!=='#calendar')location.hash='#calendar';
+ if(entry.kind==='business'&&managerPreview())scope='all';
+ const day=at(entry.date);if(day)updateFocus(day);
+ openEvent(entry.id);
+});
 window.addEventListener('seyveo:calendar-manager-context',event=>{
  if(event.detail?.active!==true||!managerPreview())return;
  scope='all';
