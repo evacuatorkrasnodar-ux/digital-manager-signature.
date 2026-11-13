@@ -27,6 +27,29 @@
  view.add.replaceChildren(check);
  view.back.setAttribute('aria-label','Назад к моим делам');
  view.back.addEventListener('click',()=>back.click());
+ // The due-date stage previously used an independent header with its own
+ // grid and top offsets. Mount an IDENTICAL shared Work header instead:
+ // same Shadow DOM, grid, vertical center, button material and safe areas.
+ // Keep the original date Back button as the existing behavior delegate.
+ const duePicker=sheet.querySelector('#seyveoTaskDuePicker');
+ const oldDateHeader=duePicker?.querySelector(':scope > .sv-task-date-header');
+ const oldDateBack=oldDateHeader?.querySelector('.sv-task-date-back');
+ if(duePicker&&oldDateHeader&&oldDateBack&&!duePicker.querySelector('#svTaskDateSharedHeader')){
+  const dateView=factory.create();
+  dateView.host.id='svTaskDateSharedHeader';
+  dateView.host.setAttribute('aria-label','Выбор срока дела');
+  dateView.title.textContent='Выбрать срок';
+  dateView.title.id='svTaskDateHeading';
+  dateView.add.hidden=true;
+  dateView.back.setAttribute('aria-label','Вернуться к новому делу');
+  dateView.back.addEventListener('click',()=>oldDateBack.click());
+  // Replace just the visible stage heading. The old handlers retain their
+  // detached button references, so Save, Today, No Date and Back stay intact.
+  duePicker.replaceChild(dateView.host,oldDateHeader);
+  const dateTheme=()=>{dateView.host.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light'};
+  new MutationObserver(dateTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  dateTheme();
+ }
  view.add.addEventListener('click',()=>{
   if(save.disabled)return;
   if(typeof form.requestSubmit==='function')form.requestSubmit(save);
