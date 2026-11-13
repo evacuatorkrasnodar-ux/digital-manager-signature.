@@ -493,3 +493,14 @@ html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-done{
 }
 html body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-clear{z-index:6!important}
 :root[data-theme="dark"] body dialog#personalTaskDialog.sv-task-editor-v2 .sv-task-time-picker{background:#303034!important}
+
+/* On touch devices the keyboard reduces the editor's usable viewport,
+   without moving its shared Work header or changing the outer dialog. */
+@media (max-width:699px) and (pointer:coarse){
+ html body dialog#personalTaskDialog.sv-task-editor-v2[open][data-sv-keyboard-visible="true"] > .personal-task-sheet{
+  height:var(--sv-task-visible-height,100svh)!important;
+  min-height:var(--sv-task-visible-height,100svh)!important;
+  max-height:var(--sv-task-visible-height,100svh)!important;
+  padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
+ }
+}
