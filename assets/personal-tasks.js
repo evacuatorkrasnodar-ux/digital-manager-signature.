@@ -584,19 +584,20 @@ function svTaskShiftDay(iso,days){
 const SV_AGENDA_SCENES=Object.freeze([
  {offset:0,time:'12:00',endTime:'13:00',title:'Обед с Анной',tone:'orange'},
  {offset:0,time:'13:30',endTime:'14:00',title:'Обсудить задачи с командой',tone:'blue',subtitle:'Видеозвонок'},
- {offset:0,time:'15:00',title:'Отправить макеты',tone:'purple'},
+ {offset:0,time:'15:00',title:'Отправить макеты',tone:'blue',entryType:'task'},
  {offset:0,time:'16:30',endTime:'17:30',title:'Встреча по проекту',tone:'yellow',subtitle:'Офис'},
  {offset:1,time:'07:00',endTime:'08:00',title:'Йога',tone:'orange'},
  {offset:1,time:'10:00',endTime:'11:00',title:'Поездка за город',tone:'green'},
- {offset:1,time:'17:30',title:'Забрать заказ',tone:'purple'},
+ {offset:1,time:'17:30',title:'Забрать заказ',tone:'blue',entryType:'task'},
  {offset:2,time:'09:00',endTime:'11:00',title:'Семейная прогулка',tone:'red'},
  {offset:2,time:'19:00',endTime:'20:30',title:'Ужин с друзьями',tone:'green'}
 ]);
+const svAgendaSceneDone=new Set();
 function svAgendaSceneEntries(){
  const today=svTaskISO(new Date());
  return SV_AGENDA_SCENES.map((item,index)=>({
   ...item,id:'scene:'+index,due:svTaskShiftDay(today,item.offset),
-  category:'personal',entryType:'event',sourceStore:'scene',done:false
+  category:'personal',entryType:item.entryType==='task'?'task':'event',sourceStore:'scene',done:svAgendaSceneDone.has(index)
  }));
 }
 function svTaskPalette(task){return svTaskCategory(task)==='work'?'blue':'neutral';}
@@ -657,7 +658,7 @@ function svAgendaRenderNav(rows){
   const dayLabel=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(day);
   const workCount=entries.filter(task=>svTaskCategory(task)==='work').length;
   btn.setAttribute('aria-label',dayLabel+(entries.length?', дел: '+entries.length+', рабочих: '+workCount+', личных: '+(entries.length-workCount):', дел нет'));
-  if(entries.some(item=>svTaskEntryType(item)==='task'))btn.dataset.hasTasks='true';
+  if(entries.some(item=>svTaskEntryType(item)==='task'&&!item.done))btn.dataset.hasTasks='true';
   if(iso===today)btn.dataset.today='true';
   if(iso===svTaskSelectedDate)btn.dataset.selected='true';
   const shortDay=new Intl.DateTimeFormat('ru-RU',{weekday:'short'}).format(day).replace('.','');
@@ -782,15 +783,30 @@ function svAgendaRenderList(rows){
 function row(item,compact=false,deferred=false){
  if(!compact&&item.sourceStore==='scene'){
   const section=element('div','personal-task-row sv-agenda-entry sv-agenda-scene');
+  const isTask=svTaskEntryType(item)==='task';
   section.dataset.tone=svTaskDotTone(item);
-  const dot=element('span','sv-agenda-scene-dot');
-  dot.setAttribute('aria-hidden','true');
+  section.dataset.entryType=isTask?'task':'event';
+  section.dataset.done=String(!!item.done);
+  const marker=element(isTask?'button':'span','sv-agenda-scene-dot');
+  if(isTask){
+   marker.type='button';
+   marker.setAttribute('aria-label',(item.done?'Вернуть задачу: ':'Завершить задачу: ')+item.title);
+   marker.setAttribute('aria-pressed',String(!!item.done));
+   marker.addEventListener('click',()=>{
+    const index=Number(item.id.split(':')[1]);
+    if(!Number.isInteger(index)||index<0||index>=SV_AGENDA_SCENES.length)return;
+    if(svAgendaSceneDone.has(index))svAgendaSceneDone.delete(index);
+    else svAgendaSceneDone.add(index);
+    render();
+   });
+  }else marker.setAttribute('aria-hidden','true');
   const copy=element('span','personal-task-content');
   const range=item.time+(item.endTime?' – '+item.endTime:'');
-  copy.append(element('span','sv-agenda-entry-time',range),
-   element('span','personal-task-name',item.title));
+  const name=element('span','personal-task-name',item.title);
+  if(item.done)name.classList.add('is-done');
+  copy.append(element('span','sv-agenda-entry-time',range),name);
   if(item.subtitle)copy.append(element('small','sv-agenda-scene-note',item.subtitle));
-  section.append(dot,copy);
+  section.append(marker,copy);
   return section;
  }
  const section=element('div',compact?'personal-brief-row':'personal-task-row');
