@@ -66,7 +66,8 @@ function read(){
  .slice(-MAX).map(item=>({id:item.id,title:item.title.trim().slice(0,140),
  due:/^\d{4}-\d{2}-\d{2}$/.test(item.due)?item.due:'',time:/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time)?item.time:'',done:item.done===true,
  createdAt:typeof item.createdAt==='string'?item.createdAt:'',doneAt:typeof item.doneAt==='string'?item.doneAt:'',
- ...(safeNoteId(item.sourceNoteId)?{sourceNoteId:item.sourceNoteId}:{})}));
+ ...(safeNoteId(item.sourceNoteId)?{sourceNoteId:item.sourceNoteId}:{}),
+ ...(typeof item.source==='string'&&['sayvi','work','notebook'].includes(item.source)?{source:item.source}:{})}));
 }
 function save(items){
  try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)));return true}
@@ -97,7 +98,8 @@ function taskIcon(kind){
 function displayDate(item){
  const label=strDate(item.due);if(!label)return '';
  const current=new Date(),today=[current.getFullYear(),String(current.getMonth()+1).padStart(2,'0'),String(current.getDate()).padStart(2,'0')].join('-');
- return item.due<today?'Срок прошёл · '+label:item.due===today?'Сегодня':'До '+label;
+ const day=item.due<today?'Срок прошёл · '+label:item.due===today?'Сегодня':'До '+label;
+ return day+(item.time?' · '+item.time:'');
 }
 /* Suggest only a next EXPLICIT instruction from the same current note.
    Ignore already saved tasks (even completed), ambiguous notes and old relative
@@ -540,6 +542,10 @@ function row(item,compact=false,deferred=false){
  label.append(name);
  const due=displayDate(item);
  if(due||item.done||deferred)label.append(element('small','',item.done?'Завершено':deferred?'Отложено с Главной · до следующего открытия':due));
+ if(!item.done&&!deferred&&(item.sourceNoteId||item.source)&&Number.isFinite(Date.parse(item.createdAt))){
+  const received=new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'}).format(new Date(item.createdAt));
+  label.append(element('small','personal-task-received','Добавлено '+received));
+ }
  if(!compact){
   if(item.sourceNoteId){
    const origin=element('button','personal-task-origin','Из Блокнота · Открыть запись');
