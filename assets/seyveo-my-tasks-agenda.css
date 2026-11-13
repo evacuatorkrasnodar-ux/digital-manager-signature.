@@ -183,6 +183,7 @@
  font:500 10.5px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  font-variant-numeric:tabular-nums;
 }
+#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] strong,
 #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
  color:#109BDD!important;
 }
@@ -405,6 +406,7 @@
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-section-date{
  color:#A0A4AF!important;
 }
+:root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] strong,
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
  color:#69C5F4!important;
 }
