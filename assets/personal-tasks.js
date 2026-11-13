@@ -597,10 +597,12 @@ function svTaskDrawDateNav(rows=[]){
  picked.append(element('strong','',fullDate));
  nav.append(heading,strip,picked);
  const onDate=(byDate.get(svTaskSelectedDate)||[]).slice().sort((a,b)=>(a.time||'00:00').localeCompare(b.time||'00:00'));
- if(onDate.length){
-  const pills=element('div','sv-task-event-pills');pills.setAttribute('role','group');pills.setAttribute('aria-label','Дела на выбранный день');
-  for(const item of onDate){
-   const pill=element('button','sv-task-event-pill');pill.type='button';pill.dataset.tint=svTaskPalette(item);
+ {
+  const eventLine=element('div','sv-task-all-day-line');
+  eventLine.append(element('span','sv-task-all-day-label','Весь день'));
+  const pills=element('div','sv-task-event-pills');pills.setAttribute('role','group');pills.setAttribute('aria-label','Дела и быстрые действия на выбранный день');
+  for(const [index,item] of onDate.entries()){
+   const pill=element('button','sv-task-event-pill');pill.type='button';pill.dataset.tint=index===0?'blue':index===1?'neutral':svTaskPalette(item);
    pill.setAttribute('aria-label',(item.time?item.time+' · ':'')+item.title+'. Открыть дело');
    const dot=element('span','sv-task-pill-dot');dot.setAttribute('aria-hidden','true');pill.append(dot);
    if(item.time)pill.append(element('time','sv-task-pill-time',item.time));
@@ -615,7 +617,18 @@ function svTaskDrawDateNav(rows=[]){
    });
    pills.append(pill);
   }
-  nav.append(pills);
+  if(!onDate.length){
+   for(const [label,tint] of [['Новое дело','blue'],['Напоминание','neutral']]){
+    const pill=element('button','sv-task-event-pill sv-task-quick-pill');
+    pill.type='button';pill.dataset.tint=tint;
+    pill.setAttribute('aria-label','Создать: '+label);
+    pill.append(element('span','sv-task-pill-dot'));
+    pill.append(element('span','sv-task-pill-title',label));
+    pill.addEventListener('click',()=>{openDialog();});
+    pills.append(pill);
+   }
+  }
+  eventLine.append(pills);nav.append(eventLine);
  }
 }
 function svTaskSectionTitle(label,kind){
