@@ -680,6 +680,7 @@
   if(active!=='personal')window.SEYVEO_TASK_INLINE?.close();
   const nested=active==='personal'&&!history&&!!toolMode;
   nav.dataset.taskFilters=String(nested);
+  nav.setAttribute('aria-label',nested?'Фильтры дел':'Мои дела, блокнот и кабинет');
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
