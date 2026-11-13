@@ -74,7 +74,7 @@
   const body=el('span','sv-smart-start-live-copy');
   body.append(el('strong',null,'SEYVEO LIVE ACTION'));
   body.append(el('small',null,'Показ действий Сэйви — необязательное обучение. Она открывает разделы, показывает, где что находится, и как выполняет поручения.'));
-  body.append(el('small',null,'Это не мешает работе: дело сохраняется сразу. Скрытие показа или выключение экрана не отменяет сохранённое. Показ можно отключить в любой момент.'));
+  body.append(el('small',null,'Сэйви запоминает просьбу, показывает настоящее заполнение и сохраняет дело. Если отвлечёшься или свернёшь SEYVEO, она попробует завершить сохранение без показа. До сохранения можно отменить.'));
   toggle.addEventListener('change',()=>window.SEYVEO_LIVE_ACTION?.setEnabled?.(toggle.checked));
   label.append(toggle,body);
   return label;
