@@ -631,7 +631,7 @@ function svAgendaRenderNav(rows){
   const day=new Date(first);day.setDate(first.getDate()+i);
   const iso=svTaskISO(day),entries=byDate.get(iso)||[];
   const btn=element('button','sv-agenda-day');
-  btn.type='button';btn.dataset.day=iso;
+  btn.type='button';btn.dataset.day=iso;btn.dataset.weekday=String(day.getDay());
   btn.setAttribute('aria-pressed',String(iso===svTaskSelectedDate));
   const dayLabel=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(day);
   const workCount=entries.filter(task=>svTaskCategory(task)==='work').length;
