@@ -151,7 +151,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports={handle,execute,ex
  * confirms it. No synthetic background notification. */
 (function(){
 'use strict';
-const HANDOFF='seyveo-live-action-handoff-v1',RECEIPT='seyveo-live-action-receipt-v1',PREF='seyveo-live-action-show-v1',TASKS='seyveo-personal-tasks-v1',CAL='seyveo-calendar-events-v1';
+const HANDOFF='seyveo-live-action-handoff-v1',PENDING='seyveo-live-action-pending-v2',RECEIPT='seyveo-live-action-receipt-v1',PREF='seyveo-live-action-show-v1',TASKS='seyveo-personal-tasks-v1',CAL='seyveo-calendar-events-v1';
 const $=id=>document.getElementById(id);
 const delay=ms=>new Promise(done=>window.setTimeout(done,ms));
 const validTime=v=>/^([01]\d|2[0-3]):[0-5]\d$/.test(String(v||''));
@@ -167,9 +167,32 @@ const setEnabled=on=>{try{localStorage.setItem(PREF,on?'on':'off')}catch{}window
 function receiptWrite(j){try{localStorage.setItem(RECEIPT,JSON.stringify({plan:j.plan,id:j.saved.id,already:!!j.already,at:Date.now()}))}catch{}}
 function receiptRead(){try{const r=JSON.parse(localStorage.getItem(RECEIPT)||'null');return r&&Date.now()-r.at<86400000&&r.id&&r.plan?r:null}catch{return null}}
 function receiptClear(){try{localStorage.removeItem(RECEIPT)}catch{}}
+
+function queueRead(){try{
+ const v=JSON.parse(localStorage.getItem(PENDING)||'null');
+ return v&&v.plan&&typeof v.at==='number'&&Date.now()-v.at<43200000?v:null;
+}catch{return null}}
+function queueWrite(j){
+ try{localStorage.setItem(PENDING,JSON.stringify({at:Date.now(),token:j.token,plan:j.plan}));return true}
+ catch{return false}
+}
+function queueClear(j){
+ try{const v=JSON.parse(localStorage.getItem(PENDING)||'null');
+  if(!j||v?.token===j.token)localStorage.removeItem(PENDING);
+ }catch{}
+}
+function setError(message){
+ panel('Не удалось выполнить: '+String(message||'Ошибка сохранения'));
+ if(progress){
+  progress.querySelectorAll('button').forEach(b=>b.hidden=true);
+  const item=progress;
+  window.setTimeout(()=>{if(progress===item)clearPanel()},5000);
+ }
+}
+
 function styles(){
  if($('svLiveStyles'))return;
- const el=document.createElement('style');el.id='svLiveStyles';el.textContent="\n#svLiveProgress{position:fixed;z-index:2147483000;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(375px,calc(100vw - 24px));box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:56px;padding:11px 12px;background:rgba(251,252,254,.98);border:1px solid rgba(76,108,146,.15);box-shadow:0 10px 34px rgba(19,34,53,.16);border-radius:17px;color:#252A32;font:500 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}\n#svLiveProgress .sv-la-mark{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border-radius:50%;background:#EAF0FA;color:#5479AD;font-size:19px;animation:svLivePulse 1.2s ease-in-out infinite}\n#svLiveProgress span.sv-la-message{flex:1;min-width:0}\n#svLiveProgress button{min-height:40px;padding:8px 10px;border:0;border-radius:11px;background:#EDEFF3;color:#495361;font:550 12px -apple-system,system-ui,sans-serif}\n#svLiveReceipt{position:fixed;z-index:2147483000;left:50%;bottom:calc(106px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);box-sizing:border-box;width:min(375px,calc(100vw - 24px));padding:15px 17px;border-radius:19px;border:1px solid rgba(76,108,146,.13);background:#FBFCFE;box-shadow:0 12px 36px rgba(19,34,53,.16);color:#20252D;font:450 14px/1.45 -apple-system,system-ui,sans-serif}\n#svLiveReceipt .sv-la-top{display:flex;justify-content:space-between;align-items:center;color:#4B76A6;font-size:12px;font-weight:600}\n#svLiveReceipt strong{display:block;font-weight:600;font-size:16px;margin:6px 0 2px}\n#svLiveReceipt p{margin:0 0 13px;color:#6B7380;font-size:12.5px}\n#svLiveReceipt button{border:0;border-radius:11px;padding:10px 16px;background:#EAF1FA;color:#366B9F;font:600 13px -apple-system,system-ui,sans-serif;min-height:40px}\n#svLiveReceipt .sv-la-x{padding:0 6px;background:transparent;color:#89919B;font-size:21px;min-height:30px}\n.sv-live-focus{outline:2px solid rgba(81,131,196,.60)!important;outline-offset:3px;border-radius:8px!important;transition:outline-color .2s}\n@keyframes svLivePulse{50%{opacity:.55;transform:scale(.91)}}\n:root[data-theme=dark] #svLiveProgress,:root[data-theme=dark] #svLiveReceipt{background:rgba(42,44,51,.98);color:#F4F5F7;border-color:rgba(255,255,255,.10)}\n:root[data-theme=dark] #svLiveProgress button{background:#444650;color:#F3F4F8}\n:root[data-theme=dark] #svLiveReceipt p{color:#B8BEC8}\n@media(prefers-reduced-motion:reduce){#svLiveProgress .sv-la-mark{animation:none}}\n";document.head.append(el);
+ const el=document.createElement('style');el.id='svLiveStyles';el.textContent="\n#svLiveProgress{position:fixed;z-index:2147483000;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(375px,calc(100vw - 24px));box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:56px;padding:11px 12px;background:rgba(251,252,254,.98);border:1px solid rgba(76,108,146,.15);box-shadow:0 10px 34px rgba(19,34,53,.16);border-radius:17px;color:#252A32;font:500 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}\n#svLiveProgress .sv-la-mark{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border-radius:50%;background:#EAF0FA;color:#5479AD;font-size:19px;animation:svLivePulse 1.2s ease-in-out infinite}\n#svLiveProgress span.sv-la-message{flex:1;min-width:0}\n#svLiveProgress .sv-la-controls{display:flex;align-items:center;gap:4px;flex:0 0 auto}\n#svLiveProgress button{min-height:40px;padding:7px 8px;border:0;border-radius:11px;background:#EDEFF3;color:#495361;font:550 11px -apple-system,system-ui,sans-serif;cursor:pointer}\n#svLiveProgress button:first-child{background:#E9F1FB;color:#38699A}\n@media(max-width:370px){#svLiveProgress{gap:6px!important;padding-inline:8px!important}#svLiveProgress .sv-la-mark{display:none!important}#svLiveProgress button{padding-inline:5px!important;font-size:10px!important}}\n#svLiveReceipt{position:fixed;z-index:2147483000;left:50%;bottom:calc(106px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);box-sizing:border-box;width:min(375px,calc(100vw - 24px));padding:15px 17px;border-radius:19px;border:1px solid rgba(76,108,146,.13);background:#FBFCFE;box-shadow:0 12px 36px rgba(19,34,53,.16);color:#20252D;font:450 14px/1.45 -apple-system,system-ui,sans-serif}\n#svLiveReceipt .sv-la-top{display:flex;justify-content:space-between;align-items:center;color:#4B76A6;font-size:12px;font-weight:600}\n#svLiveReceipt strong{display:block;font-weight:600;font-size:16px;margin:6px 0 2px}\n#svLiveReceipt p{margin:0 0 13px;color:#6B7380;font-size:12.5px}\n#svLiveReceipt button{border:0;border-radius:11px;padding:10px 16px;background:#EAF1FA;color:#366B9F;font:600 13px -apple-system,system-ui,sans-serif;min-height:40px}\n#svLiveReceipt .sv-la-x{padding:0 6px;background:transparent;color:#89919B;font-size:21px;min-height:30px}\n.sv-live-focus{outline:2px solid rgba(81,131,196,.60)!important;outline-offset:3px;border-radius:8px!important;transition:outline-color .2s}\n@keyframes svLivePulse{50%{opacity:.55;transform:scale(.91)}}\n:root[data-theme=dark] #svLiveProgress,:root[data-theme=dark] #svLiveReceipt{background:rgba(42,44,51,.98);color:#F4F5F7;border-color:rgba(255,255,255,.10)}\n:root[data-theme=dark] #svLiveProgress button{background:#444650;color:#F3F4F8}\n:root[data-theme=dark] #svLiveReceipt p{color:#B8BEC8}\n@media(prefers-reduced-motion:reduce){#svLiveProgress .sv-la-mark{animation:none}}\n";document.head.append(el);
 }
 function panel(text){
  styles();
@@ -177,23 +200,28 @@ function panel(text){
   progress=document.createElement('div');progress.id='svLiveProgress';progress.setAttribute('role','status');progress.setAttribute('aria-live','polite');
   const mark=document.createElement('span');mark.className='sv-la-mark';mark.textContent='✧';
   const msg=document.createElement('span');msg.className='sv-la-message';
-  const stop=document.createElement('button');stop.type='button';stop.textContent='Скрыть показ';stop.addEventListener('click',cancel);
-  progress.append(mark,msg,stop);
+  const actions=document.createElement('span');actions.className='sv-la-controls';
+  const finish=document.createElement('button');finish.type='button';finish.textContent='Завершить';finish.setAttribute('aria-label','Сохранить поручение сейчас');finish.addEventListener('click',finishNow);
+  const stop=document.createElement('button');stop.type='button';stop.textContent='Отменить';stop.setAttribute('aria-label','Отменить несохранённое поручение');stop.addEventListener('click',cancel);
+  actions.append(finish,stop);progress.append(mark,msg,actions);
  }
  const target=job?.dialog?.open?job.dialog:document.body;
  if(progress.parentNode!==target)target.append(progress);
  progress.querySelector('.sv-la-message').textContent=text;
- progress.querySelector('button').hidden=!!job?.committing;
+ progress.querySelectorAll('.sv-la-controls button').forEach(b=>b.hidden=!job||!!job.committing);
 }
 function clearPanel(){progress?.remove();progress=null}
 function cancel(){
- if(!job)return;
+ if(!job||job.committing)return;
  const j=job;job=null;j.cancelled=true;
  j.focused?.classList.remove('sv-live-focus');
  if(j.dialog?.open)j.dialog.close();
- clearPanel();
- // Hiding the walkthrough does not cancel the already saved task.
- if(j.saved)showReceipt(j,j.saved);
+ queueClear(j);clearPanel();
+ window.dispatchEvent(new CustomEvent('seyveo:live-action-cancelled',{detail:{kind:j.plan.kind}}));
+}
+function finishNow(){
+ if(!job||job.committing)return;
+ completeFast(job,{visible:true});
 }
 function check(j){if(j.cancelled||job!==j)throw new Error('Остановлено')}
 async function pause(j,ms){await delay(ms);check(j)}
