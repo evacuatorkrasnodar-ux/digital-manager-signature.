@@ -105,7 +105,8 @@ function displayDate(item){
  const stamp=typeof item.createdAt==='string'?Date.parse(item.createdAt):NaN;
  const recorded=Number.isFinite(stamp)&&stamp>0?
   new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'}).format(new Date(stamp)):'';
- return day?(recorded?day+' · создано '+recorded:day):(recorded?'Создано '+recorded:'');
+ const scheduled=day&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'')?' · в '+item.time:'';
+ return day?(day+scheduled+(recorded?' · создано '+recorded:'')):(recorded?'Создано '+recorded:'');
 }
 /* Suggest only a next EXPLICIT instruction from the same current note.
    Ignore already saved tasks (even completed), ambiguous notes and old relative
