@@ -100,6 +100,12 @@
    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
    color:var(--sv-header-icon-ink,#0B0B0D)!important;
   }
+  /* The landing calendar needs just History and Add. A third, hidden
+     Select control previously inherited display:grid!important above and
+     overflowed the 88px capsule, clipping Add at the right screen edge. */
+  :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-history-select{
+   display:none!important;
+  }
   :host([data-task-tools="true"]) .sv-history-select svg{
    width:20px!important;height:20px!important;
    fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
