@@ -772,8 +772,10 @@ function render(){
  const preview=Array.isArray(living?.deferred?.())?living.deferred():[];
  const postponed=open.filter(item=>deferredIds.has(item.id));
  const active=open.filter(item=>!deferredIds.has(item.id));
- const featuredTaskId=renderContext(active);
- const visibleActive=active.filter(item=>item.id!==featuredTaskId||focusPanel?.dataset.focusKind!=='call');
+ renderContext(active);
+ // The calendar-style board owns the presentation; don't hide a real task
+ // just because it was selected for the legacy featured preview.
+ const visibleActive=active;
  const hasDeferred=postponed.length>0||preview.length>0;
  // One category needs no second caption beneath the Tasks header.
  // When categories coexist, short section names restore scannability.
