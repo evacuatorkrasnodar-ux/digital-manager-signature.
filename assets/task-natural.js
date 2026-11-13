@@ -17,8 +17,7 @@ function understand(input,now=new Date()){
  if(/(?:^|\s)(?:через\s+(?:\d+|недел\w*|месяц|год|час)|следующ\w*|прошл\w*|кажд\w*|ежедневн\w*|еженедел\w*)/i.test(body)||
     /утром|вечером|ночью|после обеда|к вечеру|до обеда/i.test(body))
   return ask('Уточните конкретную дату. Для напоминаний по часам используйте календарь.');
- if(/(?:^|\s)(?:в|к|на)\s*\d{1,2}(?::\d{1,2}|\s+час(?:ов|а)?)(?=\s|$|[,.!?])/i.test(body))
-  return ask('В делах можно указать день, но не час. Для точного времени используйте событие календаря.');
+ // Time is read after removing the calendar date; do not mistake a date number for an hour.
  let date=null,m=body.match(/(?:^|\s)(?:на\s+|в\s+)?(сегодня|завтра|послезавтра)(?=\s|$|[,.!?])/i);
  if(m){date=plus(now,({сегодня:0,завтра:1,послезавтра:2})[m[1].toLowerCase()]);body=body.replace(m[0],' ').trim();}
  if(!date){
@@ -52,10 +51,21 @@ function understand(input,now=new Date()){
  if(/(?:^|\s)(?:сегодня|завтра|послезавтра|понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)(?=\s|$|[,.!?])/i.test(body)||
  /(?:^|\s)\d{1,2}[./-]\d{1,2}(?=\s|$)/.test(body))return ask('Уточните одну дату, пожалуйста.');
  if(reminder&&!date)return ask('На какой день напомнить? Например: «Напомни завтра позвонить маме».');
+ let time='';
+ const timeMatch=body.match(/(?:^|\s)(?:в|к)\s*(\d{1,2})(?::(\d{1,2}))?(?:\s*(утра|вечера|дня|час(?:а|ов)?))?(?=\s|$|[,.!?])/i);
+ if(timeMatch){
+  let hours=Number(timeMatch[1]),minutes=timeMatch[2]===undefined?0:Number(timeMatch[2]);
+  const part=String(timeMatch[3]||'').toLowerCase();
+  if((part==='вечера'||part==='дня')&&hours>0&&hours<12)hours+=12;
+  if(part==='утра'&&hours===12)hours=0;
+  if(hours>23||minutes>59)return ask('Уточните время, например «в 09:00».');
+  time=String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0');
+  body=body.replace(timeMatch[0],' ').replace(/\s+/g,' ').trim();
+ }
  const title=body.replace(/[.!?,:]+$/,'').replace(/^(?:(?:мне|пожалуйста|что)\s+){1,2}/i,'').trim();
  if(!title)return ask('Напишите, какое дело нужно выполнить.');
  if(title.length>140)return ask('Сократите название дела до 140 символов.');
- return {status:'ready',kind:'task',title,date:date?format(date):''};
+ return {status:'ready',kind:'task',title,date:date?format(date):'',time};
 }
 if(typeof module!=='undefined'&&module.exports)module.exports={understand};
 if(typeof window!=='undefined')window.SEYVEO_TASK_NL=understand;
