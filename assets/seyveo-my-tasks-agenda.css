@@ -711,54 +711,6 @@ html.sv-agenda-scroll-active .app{
 }
 
 
-/* «Все дела» is a focused subview, not a second calendar.
-   Keep the approved header/tabs stationary; give the results their own
-   native momentum scroll and a safe area above the unchanged 60px dock. */
-#svWorkShell[data-task-tool-mode="all"] #tasksPage #svTasksDateNav{
- display:none!important;
-}
-#svWorkShell[data-task-tool-mode="all"][data-agenda-scroll="true"] #tasksPage #svInlineTaskTools{
- box-sizing:border-box!important;
- display:flex!important;
- flex:1 1 auto!important;
- flex-direction:column!important;
- min-height:0!important;
- overflow:hidden!important;
- padding:8px 0 calc(84px + env(safe-area-inset-bottom,0px))!important;
-}
-#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-input,
-#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-filters{
- flex:0 0 auto;
-}
-#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-results{
- flex:1 1 auto!important;
- min-height:0!important;
- overflow-x:hidden!important;
- overflow-y:auto!important;
- -webkit-overflow-scrolling:touch;
- overscroll-behavior-y:contain;
- padding:0 0 14px!important;
-}
-#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-select-entry{
- flex:0 0 auto;
- margin:0!important;
- padding:9px 0 0!important;
-}
-#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-result>button{
- min-width:72px;
- padding:0 6px;
- color:#3769A9;
- font-size:14px;
- font-weight:540;
-}
-:root[data-theme="dark"] #svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-result>button{
- color:#8FB7EB;
-}
-html.sv-task-selection-active #svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools{
- padding-bottom:calc(105px + env(safe-area-inset-bottom,0px))!important;
-}
-
-
 /* When the search keyboard opens on a touch device, free the lower viewport.
    Never resize, recolor or rebuild the approved global dock. */
 @media(max-width:699px) and (hover:none) and (pointer:coarse){
@@ -772,37 +724,6 @@ html.sv-task-selection-active #svWorkShell[data-task-tool-mode="all"] #svInlineT
  }
 }
 
-
-/* Selection toolbar fully replaces dock interaction; leave the dock's design
-   intact and make its underlying layer non-interactive while selecting. */
-html.sv-task-selection-active body > footer.dock.sv-shared-dock{
- visibility:hidden!important;
- pointer-events:none!important;
-}
-
-
-/* A plain, calm Select action is not destructive. The older generic
-   :last-child rule painted the only Select button deletion-red. */
-#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-select-entry button{
- appearance:none;
- background:transparent!important;
- border:0!important;
- box-shadow:none!important;
- color:#3769A9!important;
- font-size:14.5px!important;
- font-weight:550!important;
- min-height:44px!important;
- padding:0 10px!important;
-}
-:root[data-theme="dark"] #svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-select-entry button{
- color:#8FB7EB!important;
-}
-/* A list continues underneath the fixed selector. Fade the last few pixels
-   rather than showing a clipped sliver of the next row's action label. */
-#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-results{
- -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 17px),transparent 100%);
- mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 17px),transparent 100%);
-}
 
 /* The nested All Tasks view owns one navigation capsule. Its live filters
    replace the three workspace destinations in precisely the same slot. */
@@ -859,14 +780,3 @@ html.sv-task-selection-active body > footer.dock.sv-shared-dock{
  color:#8FB7EB!important;
 }
 
-/* One two-action header capsule owns search and multi-select.
-   The list opens without a permanently visible search field or footer. */
-#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-input[hidden]{
- display:none!important;
-}
-#svWorkShell[data-task-tool-mode="all"][data-agenda-scroll="true"] #tasksPage #svInlineTaskTools{
- padding-top:0!important;
-}
-#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-input:not([hidden]){
- margin:2px 0 10px!important;
-}
