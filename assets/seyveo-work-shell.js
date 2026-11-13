@@ -302,6 +302,16 @@
  #svInlineTaskTools .sv-tool-bulk span{font-size:12px;color:var(--secondary)}
  #svInlineTaskTools .sv-tool-bulk button:last-child{color:#B33E43}
  #svInlineTaskTools .sv-tool-bulk button:disabled{opacity:.4}
+ /* Apple-like semantic color: a single restrained blue for selection,
+    a warm amber only for overdue dates. Neutral copy stays graphite. */
+ #svInlineTaskTools{--sv-task-accent:#3769A9;--sv-task-warn:#AD6A23}
+ #svInlineTaskTools .sv-tool-bulk span[data-has-selection="true"]{
+  color:var(--sv-task-accent);font-weight:560
+ }
+ #svInlineTaskTools .sv-tool-filters button[aria-pressed="true"]{color:var(--sv-task-accent)}
+ #svInlineTaskTools .sv-tool-copy small[data-status="overdue"]{color:var(--sv-task-warn)}
+ #svInlineTaskTools .sv-tool-copy small[data-status="done"]{color:var(--sv-task-accent)}
+ :root[data-theme="dark"] #svInlineTaskTools{--sv-task-accent:#8FB7EB;--sv-task-warn:#F1BB79}
  #svInlineTaskTools .sv-tool-empty{text-align:center;padding:52px 5px;color:var(--secondary);font-size:14px}
  #svWorkShell[data-task-tool-mode="search"] #personalTaskList,
  #svWorkShell[data-task-tool-mode="select"] #personalTaskList,
@@ -380,8 +390,14 @@
     }
     const body=make('div','sv-tool-copy');
     body.append(make('strong','',task.title));
-    body.append(make('small','',task.done?'Выполнено'+(task.doneAt?' · '+String(task.doneAt).slice(0,10):''):
-      task.due?'Срок · '+task.due:'Активное дело'));
+    const today=new Date();
+    const localToday=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    const overdue=!task.done&&/^\\d{4}-\\d{2}-\\d{2}$/.test(String(task.due||''))&&task.due<localToday;
+    const subtitle=make('small','',task.done?'Выполнено'+(task.doneAt?' · '+String(task.doneAt).slice(0,10):''):
+      task.due?(overdue?'Просрочено · ':'Срок · ')+task.due:'Активное дело');
+    if(task.done)subtitle.dataset.status='done';
+    else if(overdue)subtitle.dataset.status='overdue';
+    body.append(subtitle);
     row.append(body);
     if(toolMode==='search'){
      const btn=make('button','',task.done?'Вернуть':'Открыть');btn.type='button';
@@ -399,7 +415,10 @@
    updateBulk();
   }
   function updateBulk(){
-   if(counter)counter.textContent='Выбрано: '+selected.size;
+   if(counter){
+    counter.textContent='Выбрано: '+selected.size;
+    counter.dataset.hasSelection=String(selected.size>0);
+   }
    if(deleteButton)deleteButton.disabled=!selected.size;
   }
   paintResults();
