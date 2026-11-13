@@ -567,7 +567,15 @@ function svTaskDrawDateNav(){
  prev.type='button';prev.setAttribute('aria-label','Предыдущая неделя');
  const next=element('button','sv-task-week-arrow','›');
  next.type='button';next.setAttribute('aria-label','Следующая неделя');
- const month=element('strong','sv-task-date-month',new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(svTaskDate(svTaskWeekAnchor)));
+ const chosenMonthDate=svTaskDate(svTaskWeekAnchor);
+ const mondayForLabel=new Date(chosenMonthDate);
+ mondayForLabel.setDate(chosenMonthDate.getDate()-(chosenMonthDate.getDay()+6)%7);
+ const sundayForLabel=new Date(mondayForLabel);
+ sundayForLabel.setDate(mondayForLabel.getDate()+6);
+ const rangeLabel=String(mondayForLabel.getDate())+'–'+String(sundayForLabel.getDate())+
+  ' '+new Intl.DateTimeFormat('ru-RU',{month:'short'}).format(sundayForLabel);
+ const month=element('strong','sv-task-date-month',rangeLabel);
+ window.dispatchEvent(new CustomEvent('seyveo:tasks-month-label',{detail:{date:svTaskWeekAnchor}}));
  const all=element('button','sv-task-all-button',svTaskDateMode==='all'?'Все дела':'Показать все');
  all.type='button';all.setAttribute('aria-pressed',String(svTaskDateMode==='all'));
  all.addEventListener('click',()=>{svTaskDateMode='all';render()});
@@ -637,6 +645,7 @@ function svTaskRenderDay(rows){
  }
  list.append(timeline);
 }
+window.addEventListener('seyveo:tasks-show-all',()=>{svTaskDateMode='all';render()});
 function svTaskRenderAll(rows){
  if(!rows.length)return;
  const groups=new Map();
