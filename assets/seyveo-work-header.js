@@ -53,6 +53,21 @@
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   color:inherit;
  }
+ .month {
+  grid-column:1 / 3;grid-row:1;justify-self:start;align-self:center;
+  display:flex;align-items:baseline;gap:6px;
+  max-width:100%;min-width:0;padding:0;margin:0;
+  appearance:none;border:0;border-radius:0;background:transparent;
+  box-shadow:none;color:inherit;cursor:pointer;text-align:left;
+  font:680 clamp(21px,5.7vw,26px)/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
+  letter-spacing:-.035em;white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;
+ }
+ .month[hidden]{display:none!important}
+ .month-name{display:block;color:inherit}
+ .month-year{display:block;color:#EC636E;font-variant-numeric:tabular-nums}
+ :host([data-theme="dark"]) .month-year{color:#F47883}
+ .month:focus-visible{outline:2px solid currentColor;outline-offset:5px;border-radius:3px}
  .control {
   appearance:none;-webkit-appearance:none;
   grid-row:1;
@@ -105,12 +120,13 @@
  function create(){
   const host=document.createElement('seyveo-work-head');
   const shadow=host.attachShadow({mode:'open'});
-  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back" type="button" aria-label="Вернуться назад">'+BACK+'</button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
+  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="month" type="button" aria-label="Вернуться к сегодняшнему дню" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
   const back=shadow.querySelector('.back');
   const title=shadow.querySelector('.title');
+  const month=shadow.querySelector('.month');
   const add=shadow.querySelector('.action');
   host.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
-  return {host,back,title,add,icons:{plus:PLUS,search:SEARCH}};
+  return {host,back,title,month,add,icons:{plus:PLUS,search:SEARCH}};
  }
  window.SEYVEO_WORK_HEADER=Object.freeze({create});
 })();
