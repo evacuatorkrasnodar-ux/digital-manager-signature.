@@ -69,14 +69,15 @@
   historyGroup.append(searchTasks,add);
   const design=document.createElement('style');
   design.textContent=`
-  /* Personal tasks: true system-size controls, 42px circle on the left,
-     two 42px hit targets in one 88px capsule on the right.
-     The title remains anchored to the middle of the full header width. */
+  /* Both task actions occupy the SAME 62px header grid row as the title.
+     No per-button top offsets: one native grid baseline on every screen. */
   .sv-history-dual{display:contents}
   .sv-history-select,.sv-history-search{display:none}
   :host([data-task-tools="true"]) .bar{position:relative}
   :host([data-task-tools="true"]) .sv-history-select{
-   position:absolute!important;z-index:2;top:var(--gutter-t);left:var(--gutter-l);
+   position:relative!important;z-index:2;
+   grid-column:1!important;grid-row:1!important;
+   justify-self:start!important;align-self:center!important;
    display:grid!important;place-items:center!important;
    width:var(--sv-header-slot,42px)!important;
    height:var(--sv-header-slot,42px)!important;
@@ -91,7 +92,9 @@
    color:var(--sv-header-icon-ink,#0B0B0D)!important;
   }
   :host([data-task-tools="true"]) .sv-history-dual{
-   position:absolute;right:var(--gutter-r);top:calc(2 * var(--gutter-t));z-index:2;
+   position:relative;z-index:2;
+   grid-column:3;grid-row:1;
+   justify-self:end;align-self:center;
    box-sizing:border-box;display:flex;align-items:center;justify-content:center;
    gap:0;width:88px;height:42px;padding:0 2px;
    border:var(--sv-header-circle-border,1.75px solid rgba(255,255,255,.94));
