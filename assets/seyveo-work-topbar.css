@@ -26,11 +26,13 @@
   backdrop-filter:none!important;
   transform:none!important;
 }
+/* Match the count of visible tabs; no empty fourth grid cell. */
 #svWorkShell[data-shared-work="true"] #svWorkTabs[data-business="true"]{
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
-}
-#svWorkShell[data-shared-work="true"] #svWorkTabs[data-employee="true"]{
   grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs[data-one="true"],
+#svWorkShell[data-shared-work="true"] #svWorkTabs[data-employee="true"]{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
 }
 #svWorkShell[data-shared-work="true"] #svWorkTabs[hidden],
 #svWorkShell[data-shared-work="true"] #svWorkTabs > button[hidden]{
