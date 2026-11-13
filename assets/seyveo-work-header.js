@@ -85,12 +85,12 @@
   max-width:100%;min-width:0;padding:0;margin:0;
   appearance:none;border:0;border-radius:0;background:transparent;
   box-shadow:none;color:inherit;cursor:pointer;text-align:left;
-  font:650 clamp(30px,8vw,35px)/1.12 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
+  font:600 clamp(28px,7.3vw,32px)/1.12 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
   letter-spacing:-.032em;white-space:nowrap;
   -webkit-tap-highlight-color:transparent;
  }
  .month[hidden]{display:none!important}
- .month-name{display:block;color:inherit;font-weight:700}
+ .month-name{display:block;color:inherit;font-weight:620}
  .month-year{display:block;color:#B93429;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;font-size:1em;font-weight:400;letter-spacing:-.035em;font-variant-numeric:proportional-nums lining-nums}
  :host([data-theme="dark"]) .month-year{color:#F47883}
  .month:focus-visible{outline:2px solid currentColor;outline-offset:5px;border-radius:3px}
