@@ -80,6 +80,9 @@
  path.setAttribute('d','m5 12.3 4.5 4.5L19 7.4');
  check.append(path);
  view.add.replaceChildren(check);
+ // Saving happens automatically when leaving the editor: no checkmark action.
+ view.add.hidden=true;view.add.style.display='none';view.add.tabIndex=-1;
+ view.add.setAttribute('aria-hidden','true');
  view.back.setAttribute('aria-label','Назад к моим делам');
  view.back.addEventListener('click',()=>back.click());
  // The due-date stage previously used an independent header with its own
