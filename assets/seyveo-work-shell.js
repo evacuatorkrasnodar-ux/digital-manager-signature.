@@ -69,7 +69,7 @@
   const design=document.createElement('style');
   design.textContent=`
   .sv-history-dual{display:contents}
-  .sv-history-select{display:none}
+  .sv-history-select,.sv-history-search{display:none}
   :host([data-task-tools="true"]) .bar{position:relative}
   :host([data-task-tools="true"]) .sv-history-dual{
    position:absolute;right:var(--gutter-r);top:var(--gutter-t);
