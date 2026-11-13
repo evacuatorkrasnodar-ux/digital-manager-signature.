@@ -567,20 +567,15 @@ function svTaskDrawDateNav(){
  prev.type='button';prev.setAttribute('aria-label','Предыдущая неделя');
  const next=element('button','sv-task-week-arrow','›');
  next.type='button';next.setAttribute('aria-label','Следующая неделя');
- const chosenMonthDate=svTaskDate(svTaskWeekAnchor);
- const mondayForLabel=new Date(chosenMonthDate);
- mondayForLabel.setDate(chosenMonthDate.getDate()-(chosenMonthDate.getDay()+6)%7);
- const sundayForLabel=new Date(mondayForLabel);
- sundayForLabel.setDate(mondayForLabel.getDate()+6);
- const rangeLabel=String(mondayForLabel.getDate())+'–'+String(sundayForLabel.getDate())+
-  ' '+new Intl.DateTimeFormat('ru-RU',{month:'short'}).format(sundayForLabel);
- const month=element('strong','sv-task-date-month',rangeLabel);
- window.dispatchEvent(new CustomEvent('seyveo:tasks-month-label',{detail:{date:svTaskWeekAnchor}}));
- const all=element('button','sv-task-all-button',svTaskDateMode==='all'?'Все дела':'Показать все');
+ const anchorDate=svTaskDate(svTaskWeekAnchor);
+ const monthName=new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(anchorDate);
+ const month=element('strong','sv-task-date-month',monthName.charAt(0).toUpperCase()+monthName.slice(1));
+ month.title=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(anchorDate);
+ const all=element('button','sv-task-all-button','Все дела');
  all.type='button';all.setAttribute('aria-pressed',String(svTaskDateMode==='all'));
  all.addEventListener('click',()=>{svTaskDateMode='all';render()});
- prev.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,-7);svTaskSelectedDate=svTaskWeekAnchor;svTaskDateMode='day';render()});
- next.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,7);svTaskSelectedDate=svTaskWeekAnchor;svTaskDateMode='day';render()});
+ prev.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,-7);if(svTaskDateMode==='day')svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,-7);render()});
+ next.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,7);if(svTaskDateMode==='day')svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,7);render()});
  heading.append(prev,month,next,all);
  const strip=element('div','sv-task-day-strip');
  const monday=svTaskDate(svTaskWeekAnchor);
@@ -622,6 +617,7 @@ function svTaskRenderDay(rows){
   const empty=element('p','sv-task-day-empty','На этот день дел пока нет. Выберите другой день или нажмите «Показать все».');
   list.append(empty);
  }
+ if(!timed.length)return;
  list.append(svTaskSectionTitle('По времени','timeline'));
  const today=svTaskISO(new Date()),now=new Date();
  const hours=timed.map(item=>Number(item.time.slice(0,2))).filter(Number.isFinite);
@@ -645,7 +641,6 @@ function svTaskRenderDay(rows){
  }
  list.append(timeline);
 }
-window.addEventListener('seyveo:tasks-show-all',()=>{svTaskDateMode='all';render()});
 function svTaskRenderAll(rows){
  if(!rows.length)return;
  const groups=new Map();
