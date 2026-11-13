@@ -473,29 +473,65 @@ function configure(raw){
  }
  return null;
 }
+
 function restore(){
  if(job||document.visibilityState==='hidden')return;
+ // A queued request survived page termination. Save it through the existing
+ // owner store now; do not pretend that Safari executed code while closed.
+ const pending=queueRead();
+ if(pending){
+  const j={plan:pending.plan,token:pending.token,cancelled:false,
+   committing:false,dialog:null,focused:null,saved:null,already:false};
+  try{verify(j);completeFast(j,{visible:true})}
+  catch(error){queueClear(j);setError(error.message)}
+  return;
+ }
  const info=receiptRead();
  if(!info)return;
  const record=matchingRecord(info.plan);
  if(record)showReceipt({plan:info.plan,already:info.already},record);
  else receiptClear();
 }
-// The real command was committed before the tour. While its saved form is
-// displayed, prevent an accidental second Save from duplicating the record.
+// The editor is Sayvi's real editor, but accidental human input must not
+// create an extra record or turn the form into a competing second author.
 document.addEventListener('submit',event=>{
- if(!job?.saved||!job.dialog?.open)return;
- if(['personalTaskForm','calendarEventForm'].includes(event.target?.id)){
-  event.preventDefault();event.stopImmediatePropagation();
- }
+ const j=job;
+ if(!j||!['personalTaskForm','calendarEventForm'].includes(event.target?.id)||
+    j.internalSubmit)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ if(!j.committing)completeFast(j,{visible:true});
 },true);
+// A casual screen touch stops the walkthrough, NOT the accepted assignment.
+// The same validated writer finishes immediately, even if navigation follows.
+document.addEventListener('pointerdown',event=>{
+ const j=job;
+ if(!j||!event.isTrusted||j.committing||event.target?.closest?.('#svLiveProgress'))return;
+ if(j.dialog?.contains?.(event.target))event.preventDefault();
+ completeFast(j,{visible:true});
+},true);
+document.addEventListener('keydown',event=>{
+ if(!job||job.committing||event.key!=='Escape')return;
+ event.preventDefault();event.stopImmediatePropagation();
+ completeFast(job,{visible:true});
+},true);
+for(const id of ['personalTaskDialog','calendarEventDialog']){
+ $(id)?.addEventListener('close',()=>{
+  if(job&&!job.committing&&!job.saved&&job.dialog?.id===id)
+   completeFast(job,{visible:true});
+ });
+}
+window.addEventListener('hashchange',()=>{
+ const j=job;if(!j||j.committing)return;
+ if(j.expectedHash&&location.hash===j.expectedHash){j.expectedHash=null;return}
+ completeFast(j,{visible:document.visibilityState==='visible'});
+});
 document.addEventListener('visibilitychange',()=>{
- if(document.visibilityState==='hidden'&&job){
-  const j=job;job=null;j.cancelled=true;
-  j.focused?.classList.remove('sv-live-focus');
-  if(j.dialog?.open)j.dialog.close();
-  clearPanel();
- }else if(document.visibilityState==='visible')restore();
+ if(document.visibilityState==='hidden'){
+  if(job)completeFast(job,{visible:false});
+ }else restore();
+});
+window.addEventListener('pagehide',()=>{
+ if(job)completeFast(job,{visible:false});
 });
 window.addEventListener('pageshow',restore);
 
