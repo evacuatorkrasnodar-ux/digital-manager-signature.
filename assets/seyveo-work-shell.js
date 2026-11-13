@@ -57,28 +57,6 @@
  const historyGroup=document.createElement('div');
  historyGroup.className='sv-history-dual';
 
- // Upper-left month navigation belongs to the permanent Work header.
- const headerMonth=document.createElement('button');
- headerMonth.type='button';
- headerMonth.className='sv-header-month-link';
- headerMonth.setAttribute('aria-label','Показать все дела');
- headerMonth.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg><span class="sv-header-month-text"></span>';
- const monthText=headerMonth.querySelector('.sv-header-month-text');
- const setMonth=iso=>{
-  const d=typeof iso==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(iso)
-   ?new Date(iso+'T12:00:00'):new Date();
-  if(!Number.isFinite(d.getTime()))return;
-  const word=new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(d);
-  monthText.textContent=word.charAt(0).toUpperCase()+word.slice(1);
-  headerMonth.title='Все дела · '+new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(d);
- };
- setMonth();
- window.addEventListener('seyveo:tasks-month-label',event=>setMonth(event.detail?.date));
- headerMonth.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:tasks-show-all')));
- historyBar?.append(headerMonth);
- const monthStyle=document.createElement('style');
- monthStyle.textContent="\n:host .sv-header-month-link{display:none!important}\n:host([data-task-tools=\"true\"][data-task-selecting=\"false\"]) .sv-header-month-link{\n display:inline-flex!important;align-items:center;justify-content:flex-start;\n position:absolute;z-index:4;left:var(--gutter-l);top:calc(var(--gutter-t) + 10px);\n width:auto;max-width:110px;height:42px;margin:0;padding:0;\n border:0;border-radius:0;background:transparent;box-shadow:none;\n color:var(--sv-header-icon-ink,#252A31);cursor:pointer;\n white-space:nowrap;-webkit-tap-highlight-color:transparent;\n}\n:host .sv-header-month-link svg{\n width:20px;height:20px;flex:0 0 20px;fill:none;stroke:currentColor;\n stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;\n}\n:host .sv-header-month-text{\n min-width:0;overflow:hidden;text-overflow:ellipsis;\n font:550 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;\n letter-spacing:-.017em;\n}\n:host .sv-header-month-link:focus-visible{\n outline:2px solid #567EAB;outline-offset:2px;border-radius:8px;\n}\n:host([data-theme=\"dark\"]) .sv-header-month-link{color:#F0F0F4}\n@media(max-width:360px){\n :host .sv-header-month-link{max-width:85px!important}\n :host .sv-header-month-text{font-size:12.5px}\n :host .sv-header-month-link svg{width:17px;height:17px;flex-basis:17px}\n}\n";
- heading.shadowRoot?.append(monthStyle);
  const searchTasks=document.createElement('button');searchTasks.type='button';searchTasks.className='control sv-history-search';
  searchTasks.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5v5h5"/><path d="M3.7 9.5a8.5 8.5 0 1 1-.2 4"/><path d="M12 7.5V12l3 2"/></svg>';
  searchTasks.setAttribute('aria-label','История и все дела');
