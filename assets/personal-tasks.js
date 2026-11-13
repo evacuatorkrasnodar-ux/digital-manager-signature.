@@ -58,6 +58,7 @@ function showTaskError(message){if(!notice)return;notice.textContent=message;not
 function clearTaskError(){if(!notice)return;notice.textContent='';notice.hidden=true;}
 const KEY='seyveo-personal-tasks-v1',MAX=150;
 let pendingSourceNoteId='',justCompletedTaskId='',editingTaskId='';
+let taskEditorSavedOnExit=false;
 function safeNoteId(value){return typeof value==='string'&&value.length>0&&value.length<=128?value:'';}
 function safeParse(raw){try{const v=JSON.parse(raw||'[]');return Array.isArray(v)?v:[]}catch{return []}}
 function read(){
@@ -916,7 +917,7 @@ function syncTaskSaveState(){
 }
 input.addEventListener('input',syncTaskSaveState);
 function openDialog(){
- pendingSourceNoteId='';editingTaskId='';
+ pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;
  $('personalTaskDialogTitle').textContent='Новое дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить дело');$('personalTaskSave').title='Сохранить дело';
  form.reset();
@@ -938,7 +939,7 @@ function put(e){
   record.title=title.slice(0,140);record.due=date.value;record.time=date.value?($('personalTaskTime')?.value||''):'';
   record.category=form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';
   if(!save(all)){$('personalTaskStatus').textContent='Не удалось сохранить изменения.';return}
-  editingTaskId='';dialog.close();render();
+  editingTaskId='';taskEditorSavedOnExit=true;if(dialog.open)dialog.close();render();
   window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
   return;
  }
@@ -950,8 +951,17 @@ function put(e){
  ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})}];
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
  pendingSourceNoteId='';justCompletedTaskId='';
- dialog.close();render();
+ taskEditorSavedOnExit=true;if(dialog.open)dialog.close();render();
  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
+}
+/* Back, backdrop, Escape and navigation all commit the same task once. */
+function exitTaskEditor(){
+ if(!dialog.open)return;
+ if(dialog.classList.contains('sv-task-date-open')){
+  dialog.dispatchEvent(new Event('seyveo:task-date-back'));return;
+ }
+ if(!input.value.trim()){dialog.close();return;}
+ put({preventDefault(){}});
 }
 function change(id,del=false){
  const all=read(),target=all.find(item=>item.id===id);if(!target)return;
@@ -1076,7 +1086,7 @@ window.addEventListener('seyveo:home-task-open',event=>{
 form.addEventListener('submit',put);
 $('personalAddHome').addEventListener('click',openDialog);
 $('personalAddTasks').addEventListener('click',openDialog);
-$('personalTaskCancel').addEventListener('click',()=>dialog.close());
+$('personalTaskCancel').addEventListener('click',exitTaskEditor);
 list.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn)return;
  if(btn.dataset.deferredSayvi){
@@ -1161,11 +1171,18 @@ list.addEventListener('click',e=>{
  }
 });
 dialog.addEventListener('click',event=>{
- if(event.target!==dialog)return;
- if(dialog.classList.contains('sv-task-date-open')){
-  dialog.dispatchEvent(new Event('seyveo:task-date-back'));return;
- }
- dialog.close();
+ if(event.target===dialog)exitTaskEditor();
+});
+dialog.addEventListener('cancel',event=>{
+ event.preventDefault();exitTaskEditor();
+});
+dialog.addEventListener('close',()=>{
+ // Another module can close the dialog directly. Preserve a valid edit.
+ if(!taskEditorSavedOnExit&&input.value.trim())put({preventDefault(){}});
+});
+window.addEventListener('hashchange',()=>{if(dialog.open)exitTaskEditor();});
+window.addEventListener('pagehide',()=>{
+ if(dialog.open&&!taskEditorSavedOnExit&&input.value.trim())put({preventDefault(){}});
 });
 /* Prepared from a Notebook note; the existing task form is the only
    writer and still requires the person's explicit Save action. */
