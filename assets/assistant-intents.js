@@ -36,7 +36,7 @@ function understand(input){
  q=q.replace(/[\s.!?]+$/g,'').replace(/\s+/g,' ');
  q=q.replace(/\s+пожалуйста$/,'').trim();
  q=q.replace(/^(?:а|ну)\s+(?=где|открой|покажи)/,'');
- if(/^(?:где(?: у нас| находится| найти| находится у нас)?|покажи(?: мне)?)\s+(?:почта|почту|рабочая почта|личная почта)(?:\s+покажи(?: мне)?)?$/.test(q))
+ if(/^(?:где(?: у нас| моя| находится| найти| находится у нас)?|покажи(?: мне)?)\s+(?:почта|почту|рабочая почта|личная почта)(?:\s+покажи(?: мне)?)?$/.test(q))
   return Object.freeze({kind:'navigate',tool:'mail',label:labels.mail});
  if(q==='браузер'||q==='сейвео браузер')
   return Object.freeze({kind:'navigate',tool:'browser',label:labels.browser});
