@@ -123,7 +123,7 @@
    ]){
     const p=el('p');p.append(el('strong',null,label+': '),document.createTextNode(value));summary.append(p);
    }
-   wrap.append(summary,liveActionOption(),btn('Сохранить план',finish,'is-primary'));
+   wrap.append(summary,btn('Сохранить план',finish,'is-primary'));
   }else if(step==='done'){
    wrap.append(liveActionOption());
    wrap.append(btn('Посмотреть мой кабинет',revealCabinet,'is-primary'));
