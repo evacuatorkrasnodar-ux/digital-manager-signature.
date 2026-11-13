@@ -41,8 +41,14 @@
   const source=document.querySelector('#svWorkShell > seyveo-work-head');
   const sourceShadow=source?.shadowRoot;
   if(!sourceShadow)return;
+  // In My Tasks the default Back slot is intentionally hidden and
+  // replaced by Select in the exact same grid cell. Measure the VISIBLE
+  // button, not the retired hidden Back (zero-size rect).
+  const leftReference=source.dataset.taskTools==='true'
+   ?sourceShadow.querySelector('.sv-history-select')
+   :sourceShadow.querySelector('.control.back');
   const pairs=[
-   [view.back,sourceShadow.querySelector('.control.back')],
+   [view.back,leftReference],
    [view.add,sourceShadow.querySelector('.control.action')]
   ];
   for(const [target,reference] of pairs){
