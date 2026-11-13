@@ -36,7 +36,7 @@ function tasksFor(date){
  if(!validDate(date))return [];
  return readRows(TASK_KEY,150)
   .filter(r=>r&&typeof r.id==='string'&&r.due===date&&r.done!==true&&cleanTitle(r.title))
-  .map(r=>({id:r.id,title:cleanTitle(r.title),date,kind:'task'}));
+  .map(r=>({id:r.id,title:cleanTitle(r.title),date,time:clock(r.time),kind:'task'}));
 }
 /* Family dates are used only INSIDE My World (never Home or Sayvi). */
 function worldDatesFor(date){
@@ -74,7 +74,7 @@ function upcomingTasks(now=new Date()){
  return readRows(TASK_KEY,150)
   .filter(r=>r&&typeof r.id==='string'&&r.done!==true&&r.due===tomorrow&&cleanTitle(r.title))
   .sort((a,b)=>String(a.createdAt||'').localeCompare(String(b.createdAt||'')))
-  .slice(0,3).map(r=>({id:r.id,title:cleanTitle(r.title),date:tomorrow,kind:'task'}));
+  .slice(0,3).map(r=>({id:r.id,title:cleanTitle(r.title),date:tomorrow,time:clock(r.time),kind:'task'}));
 }
 /* Only confirmed personal task deadlines are pushed onto Home.
  * Calendar reminders keep their existing separate opt-in alert UI. */
@@ -84,7 +84,7 @@ function attentionTasks(now=new Date()){
   .filter(r=>r&&typeof r.id==='string'&&r.done!==true&&
     validDate(r.due)&&r.due<=today&&cleanTitle(r.title))
   .sort((a,b)=>a.due.localeCompare(b.due))
-  .map(r=>({id:r.id,title:cleanTitle(r.title),date:r.due,kind:'task'}));
+  .map(r=>({id:r.id,title:cleanTitle(r.title),date:r.due,time:clock(r.time),kind:'task'}));
 }
 /* Read-only relationship hint. A title match is only a possible connection:
  * Sayvi never claims a task belongs to a meeting without confirmation. */
