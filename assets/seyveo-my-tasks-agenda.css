@@ -1,3 +1,8 @@
+@font-face{
+ font-family:"SEYVEO Calendar";
+ src:url("fonts/InterVariable.woff2") format("woff2");
+ font-style:normal;font-weight:100 900;font-display:swap;
+}
 /* SEYVEO Agenda — the only style owner for My Tasks' calendar and agenda.
    Shared header, workspace tabs, editor and 60px global dock are untouched. */
 #tasksPage #unifiedPersonalTasksView{
@@ -20,7 +25,8 @@
  padding:3px 13px 6px!important;margin:0!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
- font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ font-family:-apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
+ font-optical-sizing:auto;font-kerning:normal;
 }
 #tasksPage #svTasksDateNav .sv-agenda-month-heading{
  display:flex;align-items:baseline;gap:5px;
@@ -84,8 +90,8 @@
  outline:2px solid #4E86BB!important;outline-offset:2px;
 }
 #tasksPage #svTasksDateNav .sv-agenda-weekday{
- font:570 10px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
- letter-spacing:.012em;color:var(--agenda-muted);
+ font:600 10.5px/1.18 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
+ letter-spacing:.008em;color:var(--agenda-muted);
  text-transform:uppercase;
 }
 /* One small header indicator means there is at least one actionable task on this day. */
@@ -98,7 +104,7 @@
 #tasksPage #svTasksDateNav .sv-agenda-day-number{
  display:grid;place-items:center;
  box-sizing:border-box;width:36px;height:36px;border-radius:50%;
- font:580 21px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ font:580 21px/1 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
  font-variant-numeric:tabular-nums;color:#252A33;
  background:transparent;
 }
@@ -144,7 +150,7 @@
 #tasksPage #svTasksDateNav .sv-agenda-week-step{
  display:none;position:absolute;z-index:2;top:18px;width:26px;height:30px;
  border:0;background:transparent;color:#878C95;
- font:350 25px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ font:350 25px/1 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
 }
 #tasksPage #svTasksDateNav .sv-agenda-week-step:first-child{left:-25px}
 #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:-25px}
@@ -175,12 +181,12 @@
 }
 #tasksPage #personalTaskList .sv-agenda-section-heading:first-child::before{display:none;}
 #tasksPage #personalTaskList .sv-agenda-section-heading strong{
- font:700 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font:670 12px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
  text-transform:uppercase!important;
 }
 #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-section-date{
- color:#979BA4!important;
- font:510 11.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#858C96!important;
+ font:510 11.5px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
  font-variant-numeric:tabular-nums;
 }
 /* Apple Calendar: Today is a compact, prominent caption right below the day rail. */
@@ -193,7 +199,7 @@
  line-height:1.2!important;
 }
 #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] strong{
- font-size:13px!important;font-weight:690!important;letter-spacing:.005em!important;
+ font-size:13px!important;font-weight:660!important;letter-spacing:.003em!important;
  text-transform:uppercase!important;
 }
 #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
@@ -203,7 +209,7 @@
  margin:0!important;padding:11px 15px 14px!important;
  background:transparent!important;border:0!important;
  color:#8C919B!important;
- font:450 12px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font:450 12px/1.45 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
 }
 #tasksPage #personalTaskList .personal-task-row.sv-agenda-entry{
  box-sizing:border-box!important;position:relative!important;
@@ -260,17 +266,17 @@
 }
 #tasksPage #personalTaskList .sv-agenda-entry .sv-agenda-entry-time{
  display:block!important;
- font:510 12.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- color:#9A9EA7!important;font-variant-numeric:tabular-nums;
+ font:510 13px/1.22 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ color:#707782!important;font-variant-numeric:tabular-nums;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-name{
  display:block!important;box-sizing:border-box!important;
  width:100%!important;min-height:25px!important;margin:0!important;
  padding:1px 0 3px!important;text-align:left!important;
- color:#252A32!important;background:transparent!important;
+ color:#202329!important;background:transparent!important;
  border:0!important;border-radius:0!important;
- font:520 15.5px/1.27 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- letter-spacing:-.012em!important;white-space:normal!important;
+ font:550 15.5px/1.25 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ letter-spacing:-.014em!important;white-space:normal!important;
  box-shadow:none!important;cursor:pointer;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-name.is-done{
@@ -304,7 +310,7 @@
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check[aria-pressed="true"]::after{
  content:"✓";position:absolute;color:#FFF;
- font:650 12px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ font:650 12px/1 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check:focus-visible{
  outline:2px solid #4E86BB!important;outline-offset:1px!important;border-radius:7px!important;
@@ -316,7 +322,7 @@
  padding:5px 10px!important;margin:3px 0!important;
  color:#4B79A6!important;background:#EDF5FC!important;
  border:0!important;border-radius:10px!important;
- font:520 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font:520 11px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
 }
 #tasksPage #personalTaskList .sv-agenda-entry:has(.personal-task-name[aria-expanded="true"]) .personal-task-sayvi{
  display:inline-flex!important;
@@ -337,17 +343,17 @@
  min-height:30px!important;margin:0!important;padding:5px 10px!important;
  border-radius:9px!important;border:1px solid #E7E9EE!important;
  background:#F7F8FA!important;color:#47505F!important;
- font:520 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font:520 11px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-detail-data:not([hidden]){
  display:block!important;flex:0 0 100%!important;width:100%!important;
  padding:4px 0!important;background:transparent!important;border:0!important;
- color:#797F89!important;font:440 11px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#797F89!important;font:440 11px/1.5 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-origin{
  grid-column:2;grid-row:2;
  color:#6682A1;background:transparent;border:0;
- text-align:left;font:470 10px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ text-align:left;font:470 10px/1.25 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
 }
 #tasksPage #personalTaskList .personal-deferred-row{
  margin:0!important;padding:10px 6px!important;
@@ -470,18 +476,18 @@
  grid-column:2!important;grid-row:1!important;gap:2px!important;
 }
 #tasksPage #personalTaskList .sv-agenda-scene .sv-agenda-entry-time{
- font-size:12.7px!important;font-weight:500!important;line-height:1.2!important;
- color:#818690!important;
+ font-size:13px!important;font-weight:520!important;line-height:1.23!important;
+ color:#707782!important;
 }
 #tasksPage #personalTaskList .sv-agenda-scene .personal-task-name{
  min-height:0!important;margin:0!important;padding:0!important;
- color:#202329!important;font-size:16px!important;font-weight:500!important;
- line-height:1.24!important;letter-spacing:-.018em!important;
+ color:#181B20!important;font-size:15.7px!important;font-weight:550!important;
+ line-height:1.26!important;letter-spacing:-.012em!important;
  text-decoration:none!important;cursor:default!important;
 }
 #tasksPage #personalTaskList .sv-agenda-scene .sv-agenda-scene-note{
- font:450 12px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- color:#8B9099!important;
+ font:470 12.2px/1.26 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ color:#747B86!important;
 }
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-scene .personal-task-name{
  color:#E6E8ED!important;
@@ -516,7 +522,7 @@
  background:#55B7C5!important;
 }
 #tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"] .sv-agenda-scene-dot[aria-pressed="true"]::after{
- content:"✓";font:700 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ content:"✓";font:700 10px/1 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
 }
 #tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"] .sv-agenda-scene-dot:focus-visible{
  outline:2px solid #0A84FF!important;outline-offset:3px!important;
