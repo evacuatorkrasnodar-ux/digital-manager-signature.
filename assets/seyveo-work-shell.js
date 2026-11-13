@@ -47,7 +47,7 @@
  // Shadow DOM, so old app styles cannot remove Back's circular material.
  const workHeader=window.SEYVEO_WORK_HEADER?.create();
  if(!workHeader)throw new Error('SEYVEO Work header module is missing');
- const {host:heading,back,title,month,add}=workHeader;
+ const {host:heading,back,title,month,calendarJump,add}=workHeader;
  const plusIcon=workHeader.icons.plus;
  const searchIcon=workHeader.icons.search;
  // A single Apple-style grouped action: Select + Search in the History header.
@@ -153,6 +153,7 @@
  add.dataset.svHeaderIcon='add';
  shell.prepend(heading);
  // The month is a real part of the shared header, not a floating calendar overlay.
+ calendarJump.addEventListener('click',()=>month.click());
  month.addEventListener('click',()=>{
   // The month heading is the single entry point to the full calendar.
   // Keep the agenda's currently visible month; do not reset it to today.
@@ -660,6 +661,8 @@
   title.hidden=!history&&!nested&&['personal','calendar','notes','business'].includes(active);
   const showMonth=active==='personal'&&!history&&!nested&&visible;
   month.hidden=!showMonth;
+  calendarJump.hidden=!showMonth;
+  heading.dataset.agenda=String(showMonth);
   if(showMonth){
    const nav=document.getElementById('svTasksDateNav');
    const name=nav?.querySelector('.sv-agenda-month-name')?.textContent;
