@@ -173,7 +173,7 @@
  margin:6px 0 0!important;padding:6px 13px 6px!important;
  border-top:1px solid #E7EAF0!important;background:transparent!important;
  position:relative!important;
- color:#109BDD!important;letter-spacing:0!important;
+ color:#17191E!important;letter-spacing:0!important;
 }
 #tasksPage #personalTaskList .sv-agenda-section-heading::before{display:none!important;content:none!important}
 #tasksPage #personalTaskList .sv-agenda-section-heading:first-child{
@@ -181,11 +181,11 @@
 }
 #tasksPage #personalTaskList .sv-agenda-section-heading:first-child::before{display:none;}
 #tasksPage #personalTaskList .sv-agenda-section-heading strong{
- font:660 13px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ font:700 13px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
  text-transform:uppercase!important;
 }
 #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-section-date{
- color:#109BDD!important;
+ color:#858B95!important;
  font:520 12.5px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
  font-variant-numeric:tabular-nums;
 }
@@ -420,10 +420,10 @@
  background:#363941;color:#D8D8E1;border-color:#4E515C;
 }
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading{
- color:#69C5F4!important;border-top-color:#42464F!important;
+ color:#F4F5F7!important;border-top-color:#42464F!important;
 }
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-section-date{
- color:#69C5F4!important;
+ color:#A5AAB4!important;
 }
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] strong,
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-section-date{
