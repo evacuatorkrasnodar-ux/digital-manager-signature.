@@ -634,7 +634,7 @@ function svAgendaRenderNav(rows){
  const focusSelected=()=>{
   if(!strip.isConnected||!strip.clientWidth)return;
   const selected=strip.querySelector('[data-selected="true"]');
-  if(selected)strip.scrollLeft=Math.max(0,selected.offsetLeft-(strip.clientWidth-selected.clientWidth)/2);
+  if(selected)selected.scrollIntoView({block:'nearest',inline:'center',behavior:'instant'});
  };
  focusSelected();
  setTimeout(focusSelected,0);
