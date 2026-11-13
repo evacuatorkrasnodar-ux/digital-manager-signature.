@@ -630,10 +630,7 @@ function svAgendaScrollToDate(iso){
  const target=list.scrollTop+heading.getBoundingClientRect().top-list.getBoundingClientRect().top;
  svAgendaJumpThrough=Date.now()+520;
  list.scrollTo({top:Math.max(0,target),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
- window.setTimeout(()=>{
-  svAgendaJumpThrough=0;
-  svAgendaSyncFromScroll();
- },540);
+ window.setTimeout(()=>{svAgendaJumpThrough=0;},540);
  return true;
 }
 function svAgendaJumpToDate(iso){
@@ -645,6 +642,8 @@ function svAgendaJumpToDate(iso){
 }
 function svAgendaSyncFromScroll(){
  if(Date.now()<svAgendaJumpThrough||document.getElementById('svWorkShell')?.dataset.agendaScroll!=='true')return;
+ const scrollRange=list.scrollHeight-list.clientHeight;
+ if(scrollRange<35)return; // All days fit on screen: retain the explicitly chosen date.
  const headings=[...list.querySelectorAll('.sv-agenda-section-heading[data-weather-date]')];
  if(!headings.length)return;
  const rect=list.getBoundingClientRect();
@@ -656,9 +655,10 @@ function svAgendaSyncFromScroll(){
  }
  // On the final screenful, highlight the last visible day even when its
  // heading cannot reach the very top of the list.
- if(list.scrollHeight-list.clientHeight-list.scrollTop<3){
+ if(scrollRange-list.scrollTop<3){
+  const finalLine=rect.top+list.clientHeight*.72;
   for(const heading of headings){
-   if(heading.getBoundingClientRect().top<rect.bottom-25)current=heading;
+   if(heading.getBoundingClientRect().top<=finalLine)current=heading;
   }
  }
  const iso=current.dataset.weatherDate;
