@@ -124,13 +124,16 @@
    background:rgba(120,125,140,.12)!important;
   }
   :host([data-task-tools="true"]) .sv-history-select[aria-pressed="true"]{
-   background:rgba(120,125,140,.22)!important;
+   background:transparent!important;
   }
   /* The nested All Tasks capsule contains Search and Select. */
   :host([data-task-selecting="true"]) .sv-history-dual{display:flex!important}
   :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select{display:grid!important}
   :host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search):not(.sv-history-select){display:none!important}
-  :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select[aria-pressed="true"]{background:rgba(120,125,140,.18)!important}
+  /* Selection is conveyed by the icon, not a second grey pill inside
+     the already finished pearl capsule. */
+  :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select[aria-pressed="true"]{background:transparent!important}
+  :host([data-task-selecting="true"]) .sv-history-select[aria-pressed="true"] svg{stroke-width:2!important}
   /* All Tasks has only the standard Back in the shared header.
      Select and Select All are below the list, never over the Back. */
   :host([data-task-tools="true"][data-theme="dark"]) .sv-history-select,
