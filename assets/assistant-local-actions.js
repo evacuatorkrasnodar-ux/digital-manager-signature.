@@ -7,7 +7,7 @@
 function execute(kind,draft){
  if(draft.status!=='ready')return {kind,status:'clarify',message:draft.message||'Уточните поручение.'};
  if(kind==='task'){
-  const detail={items:[{title:draft.title,due:draft.date||''}]};
+  const detail={items:[{title:draft.title,due:draft.date||'',time:draft.time||''}]};
   window.dispatchEvent(new CustomEvent('seyveo:tasks-plan-batch',{detail}));
   const result=detail.result||{status:'error',message:'Раздел дел пока недоступен.'};
   if(result.status==='saved')return {kind,status:'saved',
@@ -60,6 +60,8 @@ function executePlan(plan){
    return {kind,status:'invalid',message:'Уточни название поручения.'};
   if(typeof draft.date!=='string'||(draft.date&&!/^\d{4}-\d{2}-\d{2}$/.test(draft.date)))
    return {kind,status:'invalid',message:'Уточни дату поручения.'};
+  if(kind==='task'&&draft.time!==undefined&&(typeof draft.time!=='string'||(draft.time&&(!/^([01]\d|2[0-3]):[0-5]\d$/.test(draft.time)||!draft.date))))
+   return {kind,status:'invalid',message:'Уточни дату и время дела.'};
   if(kind==='calendar'&&(
    !draft.date||typeof draft.time!=='string'||
    draft.time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(draft.time)
@@ -129,14 +131,14 @@ function handle(raw){
 
 function previewAction(raw){
  if(typeof raw!=='string'||raw.length>700)return null;
- const phrase=raw.trim().replace(/\s+/g,' ');
+ const phrase=raw.trim().replace(/\s+/g,' ').replace(/^(?:сэйва|сейва)(?=[,!.:\s])/i,'Сэйви');
  const normalized=phrase.replace(/^(?:(?:сэйви|сейви|сэйва|сейва|сэй|сей|seyveo)[,!.:\s]+)?(?:пожалуйста\s+)?(?:создай|сделай|добавь|поставь|запиши)\s+(?:мне\s+)?напоминание(?=\s|$)/i,'Напомни мне');
  const reminder=window.SEYVEO_REMINDER_NL?.fromPhrase(normalized);
  if(reminder?.status==='ready')return{kind:'calendar',source:'reminder',draft:{title:reminder.title,date:reminder.date,time:reminder.time,remindAtStart:true}};
  const task=window.SEYVEO_TASK_NL?.(phrase);
  if(task?.status==='ready')return{kind:'task',source:'task',draft:{title:task.title,date:task.date||'',time:task.time||''}};
  const event=window.SEYVEO_CALENDAR_NL?.(phrase);
- if(event?.status==='ready')return{kind:'calendar',source:'event',draft:{title:event.title,date:event.date,time:event.time||'',remindAtStart:false}};
+ if(event?.status==='ready')return{kind:'calendar',source:'event',draft:{title:event.title.trim().replace(/\s+/g,' '),date:event.date,time:event.time||'',remindAtStart:false}};
  return null;
 }
 window.SEYVEO_LOCAL_ACTIONS=Object.freeze({handle,executePlan,previewAction,clearPendingReminder:()=>rememberReminder(null)});
