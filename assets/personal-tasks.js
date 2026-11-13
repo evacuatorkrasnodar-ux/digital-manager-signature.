@@ -650,6 +650,9 @@ function svAgendaRenderNav(rows){
   filters.append(btn);
  }
  nav.append(month,ticker,handle,filters);
+ document.dispatchEvent(new CustomEvent('seyveo:agenda-month-changed',{
+  detail:{month:monthLabel.textContent,year:year.textContent}
+ }));
 }
 function svAgendaSection(iso,titleOverride){
  const header=element('h3','sv-agenda-section-heading');
