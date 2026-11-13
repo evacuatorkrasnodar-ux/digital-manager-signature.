@@ -6,12 +6,13 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const labels=Object.freeze({
- home:'Главная',tasks:'Дела',picture:'Картина',manage:'Управление',connections:'Подключения',
+ home:'Главная',tasks:'Дела',mail:'Почта',picture:'Картина',manage:'Управление',connections:'Подключения',
  life:'Личное пространство',calendar:'Календарь',notes:'Блокнот',
  health:'Здоровье',care:'Забота',world:'Мой мир',help:'Первая помощь',browser:'SEYVEO Browser'
 });
 const aliases=[
  ['home',/^(?:главн(?:ая|ую|ой|ое)|домой|домашн(?:ий экран|юю страницу)|начальн(?:ый|ую) экран)$/],
+ ['mail',/^(?:почт(?:а|у|е|ы)|личн(?:ая|ую) почт(?:а|у)|рабоч(?:ая|ую) почт(?:а|у)|электронн(?:ая|ую) почт(?:а|у)|входящ(?:ие|их) письм(?:а|ах))$/],
  ['calendar',/^(?:календар(?:ь|я|е|ю)|расписани(?:е|я|ю)|планы на день)$/],
  ['notes',/^(?:блокнот(?:а|е)?|записк(?:и|ах|ам)|заметк(?:и|ах|у)|мои заметки|мои записи|моих запис(?:ях|ей))$/],
  ['tasks',/^(?:дела|мо[ьи] дел(?:а|ах)|задач(?:и|ах|у)|поручени(?:я|ях)|список задач|список дел)$/],
@@ -31,9 +32,12 @@ function toolFor(target){
 function understand(input){
  if(typeof input!=='string'||input.length>180||/[\n\r;]/.test(input))return null;
  let q=input.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim();
- q=q.replace(/^(?:(?:сейвео|севео|сейво|сэйви|сейви|сэй|сей|seyveo)[\s,!:.]+)?(?:пожалуйста[,\s]+)?/i,'').trim();
+ q=q.replace(/^(?:(?:сейвео|севео|сейво|сэйви|сейви|сэйва|сейва|сэй|сей|seyveo)[\s,!:.]+)?(?:пожалуйста[,\s]+)?/i,'').trim();
  q=q.replace(/[\s.!?]+$/g,'').replace(/\s+/g,' ');
  q=q.replace(/\s+пожалуйста$/,'').trim();
+ q=q.replace(/^(?:а|ну)\s+(?=где|открой|покажи)/,'');
+ if(/^(?:где(?: у нас| находится| найти| находится у нас)?|покажи(?: мне)?)\s+(?:почта|почту|рабочая почта|личная почта)(?:\s+покажи(?: мне)?)?$/.test(q))
+  return Object.freeze({kind:'navigate',tool:'mail',label:labels.mail});
  if(q==='браузер'||q==='сейвео браузер')
   return Object.freeze({kind:'navigate',tool:'browser',label:labels.browser});
  // Voice/text shortcut to the ALREADY EXISTING Management connections.
@@ -110,6 +114,14 @@ function execute(plan){
  switch(plan.tool){
   case 'home':$('navHome')?.click();succeeded=!!$('navHome');break;
   case 'tasks':$('navTasks')?.click();succeeded=!!$('navTasks');break;
+  case 'mail':{
+   // Reuse the very same Mail route as the Мой мир tile.
+   const button=$('calendarSpaces')?.querySelector('[data-calendar-space="mail"]');
+   if(button){button.click();succeeded=true}
+   else if(window.SEYVEO_SAYVI_SURFACES?.open?.('mail','personal'))succeeded=true;
+   else{location.hash='#sayvi-mail';succeeded=true}
+   break;
+  }
   case 'picture':$('navPicture')?.click();succeeded=!!$('navPicture');break;
   case 'manage':location.hash='manage';succeeded=true;break;
   case 'connections':{
