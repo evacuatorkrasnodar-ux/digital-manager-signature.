@@ -14,6 +14,61 @@
  let updatedAt=0;
  let lastAttemptAt=0;
  let inFlight=null;
+ let sourcePopover=null;
+ const touchWeather=window.matchMedia?.('(hover: none) and (pointer: coarse)');
+
+ function closeSourcePopover(){
+  if(!sourcePopover)return;
+  sourcePopover.badge.setAttribute('aria-expanded','false');
+  sourcePopover.node.remove();
+  sourcePopover=null;
+ }
+ function toggleSourcePopover(badge){
+  if(sourcePopover?.badge===badge){closeSourcePopover();return;}
+  closeSourcePopover();
+  const bubble=document.createElement('div');
+  bubble.className='sv-agenda-weather-popover';
+  bubble.setAttribute('role','dialog');
+  bubble.setAttribute('aria-label','Источник прогноза погоды');
+  const label=document.createElement('span');
+  label.className='sv-agenda-weather-popover-label';
+  label.textContent='Источник прогноза';
+  const links=document.createElement('div');
+  links.className='sv-agenda-weather-popover-links';
+  const provider=document.createElement('a');
+  provider.href='https://open-meteo.com/';
+  provider.target='_blank';provider.rel='noopener noreferrer';
+  provider.textContent='Open-Meteo ↗';
+  const license=document.createElement('a');
+  license.href='https://creativecommons.org/licenses/by/4.0/';
+  license.target='_blank';license.rel='noopener noreferrer';
+  license.textContent='CC BY 4.0';
+  links.append(provider,license);bubble.append(label,links);
+  document.body.append(bubble);
+  const rect=badge.getBoundingClientRect();
+  const edge=Math.max(10,window.innerWidth-rect.right);
+  bubble.style.right=edge+'px';
+  bubble.style.top=(rect.bottom+bubble.offsetHeight+8>window.innerHeight?
+   Math.max(8,rect.top-bubble.offsetHeight-7):rect.bottom+7)+'px';
+  badge.setAttribute('aria-expanded','true');
+  sourcePopover={badge,node:bubble};
+ }
+ function enableMobileSource(badge){
+  if(!touchWeather?.matches||badge.dataset.weatherSourceReady)return;
+  badge.dataset.weatherSourceReady='true';
+  badge.setAttribute('role','button');
+  badge.setAttribute('tabindex','0');
+  badge.setAttribute('aria-haspopup','dialog');
+  badge.setAttribute('aria-expanded','false');
+  badge.addEventListener('click',event=>{
+   event.preventDefault();event.stopPropagation();toggleSourcePopover(badge);
+  });
+  badge.addEventListener('keydown',event=>{
+   if(event.key==='Enter'||event.key===' '){
+    event.preventDefault();event.stopPropagation();toggleSourcePopover(badge);
+   }
+  });
+ }
 
  function validLocation(input){
   if(!input||typeof input.name!=='string'||!input.name.trim()||
@@ -69,6 +124,7 @@
  function paint(){
   const list=document.querySelector('#tasksPage #personalTaskList');
   if(!list)return;
+  closeSourcePopover();
   const lastUpdate=updatedAt?new Date(updatedAt).toLocaleString('ru-RU',{
    day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'
   }):'';
@@ -83,9 +139,11 @@
    const icon=document.createElement('span');icon.className='sv-agenda-weather-icon';icon.innerHTML=iconSVG(kind);
    badge.replaceChildren(high,low,icon);
    badge.hidden=false;
-   badge.title='Прогноз для '+location.name+': '+description+', '+temperature(item.max)+' / '+temperature(item.min)+
+   const tooltip='Прогноз для '+location.name+': '+description+', '+temperature(item.max)+' / '+temperature(item.min)+
     (lastUpdate?' · обновлено '+lastUpdate:'')+' · данные: Open-Meteo (CC BY 4.0)';
-   badge.setAttribute('aria-label',badge.title);
+   if(touchWeather?.matches){badge.removeAttribute('title');enableMobileSource(badge);}
+   else badge.title=tooltip;
+   badge.setAttribute('aria-label',tooltip);
   });
   list.querySelectorAll('.sv-agenda-weather-source').forEach(credit=>credit.remove());
  }
@@ -149,6 +207,13 @@
   readCache();paint();refresh();
   document.addEventListener('seyveo:agenda-rendered',()=>{paint();refresh();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
+  document.addEventListener('pointerdown',event=>{
+   if(sourcePopover&&!sourcePopover.node.contains(event.target)&&
+      !sourcePopover.badge.contains(event.target))closeSourcePopover();
+  },true);
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeSourcePopover();});
+  window.addEventListener('scroll',closeSourcePopover,{capture:true,passive:true});
+  window.addEventListener('resize',closeSourcePopover,{passive:true});
  }
  window.SAYVI_WEATHER=Object.freeze({
   refresh:()=>refresh(true),setLocation,
