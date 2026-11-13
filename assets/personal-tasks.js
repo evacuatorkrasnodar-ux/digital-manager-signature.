@@ -64,7 +64,7 @@ function read(){
  let raw=null;try{raw=localStorage.getItem(KEY)}catch{}
  return safeParse(raw).filter(item=>item&&typeof item.id==='string'&&typeof item.title==='string')
  .slice(-MAX).map(item=>({id:item.id,title:item.title.trim().slice(0,140),
- due:/^\d{4}-\d{2}-\d{2}$/.test(item.due)?item.due:'',done:item.done===true,
+ due:/^\d{4}-\d{2}-\d{2}$/.test(item.due)?item.due:'',time:/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time)?item.time:'',done:item.done===true,
  createdAt:typeof item.createdAt==='string'?item.createdAt:'',doneAt:typeof item.doneAt==='string'?item.doneAt:'',
  ...(safeNoteId(item.sourceNoteId)?{sourceNoteId:item.sourceNoteId}:{})}));
 }
@@ -705,7 +705,7 @@ function openDialog(){
  pendingSourceNoteId='';editingTaskId='';
  $('personalTaskDialogTitle').textContent='Новое дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить дело');$('personalTaskSave').title='Сохранить дело';
- form.reset();syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
+ form.reset();dialog.dispatchEvent(new Event('sv-task-time-sync'));syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
@@ -717,7 +717,7 @@ function put(e){
  if(editingTaskId){
   const all=read(),record=all.find(task=>task.id===editingTaskId&&!task.done);
   if(!record){$('personalTaskStatus').textContent='Дело изменилось или уже выполнено. Откройте список заново.';return}
-  record.title=title.slice(0,140);record.due=date.value;
+  record.title=title.slice(0,140);record.due=date.value;record.time=date.value?($('personalTaskTime')?.value||''):'';
   if(!save(all)){$('personalTaskStatus').textContent='Не удалось сохранить изменения.';return}
   editingTaskId='';dialog.close();render();
   window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
@@ -725,7 +725,7 @@ function put(e){
  }
  const all=read();
  if(all.length>=MAX){$('personalTaskStatus').textContent='Достигнут предел записей. Удалите ненужные завершённые дела.';return}
- const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,done:false,createdAt:new Date().toISOString(),doneAt:'',
+ const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',done:false,createdAt:new Date().toISOString(),doneAt:'',
  ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})}];
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
  pendingSourceNoteId='';justCompletedTaskId='';
@@ -806,6 +806,8 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  $('personalTaskSave').setAttribute('aria-label','Сохранить изменения');$('personalTaskSave').title='Сохранить изменения';
  input.value=task.title;syncTaskSaveState();
  date.value=task.due;
+ if($('personalTaskTime'))$('personalTaskTime').value=task.time||'';
+ dialog.dispatchEvent(new Event('sv-task-time-sync'));
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='Изменения сохраняются только после вашего подтверждения.';
  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
