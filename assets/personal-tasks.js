@@ -69,7 +69,8 @@ function read(){
  createdAt:typeof item.createdAt==='string'?item.createdAt:'',doneAt:typeof item.doneAt==='string'?item.doneAt:'',
  ...(safeNoteId(item.sourceNoteId)?{sourceNoteId:item.sourceNoteId}:{}),
  ...(typeof item.source==='string'&&['sayvi','work','notebook'].includes(item.source)?{source:item.source}:{}),
- category:item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal')}));
+ category:item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal'),
+ entryType:item.entryType==='event'||item.entryType==='task'?item.entryType:svInferEntryType(item.title)}));
 }
 function save(items){
  try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)));return true}
@@ -533,6 +534,19 @@ const svTaskCategory=item=>item.category==='work'||item.category==='personal'?it
 /* All categories are always visible; colors distinguish them without screen filters. */
 const svTaskMatchesCategory=()=>true;
 /* Conservative offline suggestion; the person can always change the category. */
+/* Calendar events happen; tasks can be checked off. Preserve explicit choices. */
+function svInferEntryType(title){
+ const value=String(title||'').toLocaleLowerCase('ru-RU');
+ if(/(^|[^а-яё])(напомни|напоминан|купить|подготовить|отправить|оплатить|сделать|проверить|забрать|заказать|позвонить|написать|выслать|убрать|помыть|сдать|завершить|задач)/u.test(value))return 'task';
+ if(/(^|[^а-яё])(встреч|поездк|созвон|совещан|конференц|тренировк|заняти|урок|приём|прием|праздник|день рождени|обед|ужин|концерт|путешеств|мероприят)/u.test(value))return 'event';
+ return 'task';
+}
+function svTaskEntryType(item){return item.entryType==='event'?'event':'task';}
+function svTaskDotTone(item){
+ const tones=['orange','green','red','blue','yellow','purple'];let hash=0;
+ for(const char of String(item.id||item.title))hash=(Math.imul(hash,31)+char.charCodeAt(0))>>>0;
+ return tones[hash%tones.length];
+}
 function svSuggestTaskCategory(title){
  const value=String(title||'').toLocaleLowerCase('ru-RU');
  return /(^|[^а-яё])(клиент|заказчик|поставщик|сотрудник|коллега|контрагент|офис|договор|счёт|счет|отчёт|отчет|совещани|проект|работ|начальник|бухгалтер|зарплат|командиров|брифинг|планерк)/u.test(value)?'work':'personal';
@@ -608,6 +622,7 @@ function svAgendaRenderNav(rows){
   const dayLabel=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(day);
   const workCount=entries.filter(task=>svTaskCategory(task)==='work').length;
   btn.setAttribute('aria-label',dayLabel+(entries.length?', дел: '+entries.length+', рабочих: '+workCount+', личных: '+(entries.length-workCount):', дел нет'));
+  if(entries.some(item=>svTaskEntryType(item)==='task'))btn.dataset.hasTasks='true';
   if(iso===today)btn.dataset.today='true';
   if(iso===svTaskSelectedDate)btn.dataset.selected='true';
   const shortDay=new Intl.DateTimeFormat('ru-RU',{weekday:'short'}).format(day).replace('.','');
@@ -617,18 +632,11 @@ function svAgendaRenderNav(rows){
   marks.setAttribute('aria-hidden','true');
   // One dot is one real scheduled task; its color identifies the calendar.
   // Limit the tiny preview to five marks while preserving the true count for VoiceOver.
-  // A consistent color identifies each real entry. Avoid duplicate colors
-  // inside the same tiny day preview; this never invents calendar events.
-  const tones=['orange','green','red','blue','yellow','purple'];
-  const taken=new Set();
+  // Keep an item's calendar-dot color identical to its agenda-row color.
   entries.slice(0,5).forEach(task=>{
    const dot=element('i','sv-agenda-mark');
    dot.dataset.kind=svTaskCategory(task);
-   let hash=0;
-   for(const char of String(task.id||task.title))hash=(Math.imul(hash,31)+char.charCodeAt(0))>>>0;
-   let tone=hash%tones.length;
-   while(taken.has(tone))tone=(tone+1)%tones.length;
-   taken.add(tone);dot.dataset.tone=tones[tone];marks.append(dot);
+   dot.dataset.tone=svTaskDotTone(task);marks.append(dot);
   });
   btn.append(marks);
   btn.addEventListener('click',()=>{
@@ -738,7 +746,8 @@ function svAgendaRenderList(rows){
 function row(item,compact=false,deferred=false){
  const section=element('div',compact?'personal-brief-row':'personal-task-row');
  section.dataset.taskId=item.id;
- if(!compact){section.classList.add('sv-agenda-entry');section.dataset.kind=svTaskCategory(item);
+ if(!compact){section.classList.add('sv-agenda-entry');section.dataset.kind=svTaskCategory(item);section.dataset.entryType=svTaskEntryType(item);
+  section.dataset.tone=svTaskDotTone(item);
   if(item.time)section.dataset.scheduled='true';}
  const label=element('span','personal-task-content');
  const contact=callTargetFromTask(item.title);
@@ -796,6 +805,8 @@ function row(item,compact=false,deferred=false){
    element('div','personal-task-detail-entry','Статус: '+(item.done?'Выполнено':'Не выполнено'))
   );
   menu.append(detailsButton,details);
+  const editButton=element('button','personal-task-menu-details','Изменить');
+  editButton.type='button';editButton.dataset.taskEdit=item.id;menu.prepend(editButton);
   const remove=element('button','personal-task-menu-delete','Удалить дело');
   remove.type='button';remove.dataset.taskDelete=item.id;
   remove.setAttribute('aria-label','Удалить дело: '+item.title);
@@ -918,17 +929,24 @@ function syncTaskSaveState(){
  taskSaveButton.setAttribute('aria-disabled',String(!filled));
  taskSaveButton.title=filled?(editingTaskId?'Сохранить изменения':'Сохранить дело'):'Сначала напишите название дела';
 }
-let svTaskCategoryTouched=false;
+let svTaskCategoryTouched=false,svTaskTypeTouched=false;
+form.querySelectorAll('input[name="personalTaskType"]').forEach(choice=>choice.addEventListener('change',()=>{svTaskTypeTouched=true;}));
 form.querySelectorAll('input[name="personalTaskCategory"]').forEach(choice=>choice.addEventListener('change',()=>{svTaskCategoryTouched=true;}));
 input.addEventListener('input',()=>{
  syncTaskSaveState();
- if(editingTaskId||svTaskCategoryTouched)return;
- const category=svSuggestTaskCategory(input.value);
- const choice=form.querySelector('input[name="personalTaskCategory"][value="'+category+'"]');
- if(choice)choice.checked=true;
+ if(editingTaskId)return;
+ if(!svTaskCategoryTouched){
+  const category=svSuggestTaskCategory(input.value);
+  const choice=form.querySelector('input[name="personalTaskCategory"][value="'+category+'"]');
+  if(choice)choice.checked=true;
+ }
+ if(!svTaskTypeTouched){
+  const type=form.querySelector('input[name="personalTaskType"][value="'+svInferEntryType(input.value)+'"]');
+  if(type)type.checked=true;
+ }
 });
 function openDialog(){
- pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;svTaskCategoryTouched=false;
+ pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;svTaskCategoryTouched=false;svTaskTypeTouched=false;
  $('personalTaskDialogTitle').textContent='Новое дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить дело');$('personalTaskSave').title='Сохранить дело';
  form.reset();
@@ -949,6 +967,7 @@ function put(e){
   if(!record){$('personalTaskStatus').textContent='Дело изменилось или уже выполнено. Откройте список заново.';return}
   record.title=title.slice(0,140);record.due=date.value;record.time=date.value?($('personalTaskTime')?.value||''):'';
   record.category=form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';
+  record.entryType=form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task';
   if(!save(all)){$('personalTaskStatus').textContent='Не удалось сохранить изменения.';return}
   editingTaskId='';taskEditorSavedOnExit=true;if(dialog.open)dialog.close();render();
   window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
@@ -958,6 +977,7 @@ function put(e){
  if(all.length>=MAX){$('personalTaskStatus').textContent='Достигнут предел записей. Удалите ненужные завершённые дела.';return}
  const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',
  category:form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal',
+ entryType:form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task',
  done:false,createdAt:new Date().toISOString(),doneAt:'',
  ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})}];
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
@@ -1049,6 +1069,8 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  input.value=task.title;syncTaskSaveState();
  const categoryChoice=form.querySelector('input[name="personalTaskCategory"][value="'+svTaskCategory(task)+'"]');
  if(categoryChoice)categoryChoice.checked=true;
+ const typeChoice=form.querySelector('input[name="personalTaskType"][value="'+svTaskEntryType(task)+'"]');
+ if(typeChoice)typeChoice.checked=true;
  date.value=task.due;
  if($('personalTaskTime'))$('personalTaskTime').value=task.time||'';
  dialog.dispatchEvent(new Event('sv-task-time-sync'));
@@ -1104,6 +1126,9 @@ list.addEventListener('click',e=>{
   const kind=btn.dataset.deferredSayvi;
   const item=(window.SEYVEO_LIVING_MOMENT?.deferred?.()||[]).find(entry=>entry.kind===kind);
   if(item)askSayviForTask({title:item.title,kind:kind==='mail'?'mail':'contract',note:item.note});
+ }
+ else if(btn.dataset.taskEdit){
+  window.dispatchEvent(new CustomEvent('seyveo:home-task-edit',{detail:{id:btn.dataset.taskEdit}}));
  }
  else if(btn.dataset.taskSayvi){
   const task=read().find(entry=>entry.id===btn.dataset.taskSayvi);
@@ -1205,6 +1230,8 @@ window.addEventListener('seyveo:task-plan-note',event=>{
  input.value=title;syncTaskSaveState();
  const suggested=form.querySelector('input[name="personalTaskCategory"][value="'+svSuggestTaskCategory(title)+'"]');
  if(suggested)suggested.checked=true;
+ const suggestedType=form.querySelector('input[name="personalTaskType"][value="'+svInferEntryType(title)+'"]');
+ if(suggestedType)suggestedType.checked=true;
  pendingSourceNoteId=safeNoteId(draft.sourceNoteId);
  const requested=typeof draft.date==='string'?draft.date:'';
  if(strDate(requested))date.value=requested;
@@ -1250,7 +1277,7 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
  const stamp=Date.now(),createdAt=new Date(stamp).toISOString();
  const next=all.concat(pending.map((draft,index)=>({
   id:'personal-'+stamp+'-'+index+'-'+Math.random().toString(36).slice(2,9),
-  title:draft.title,due:draft.due,time:draft.time||'',category:svSuggestTaskCategory(draft.title),done:false,createdAt,doneAt:'',
+  title:draft.title,due:draft.due,time:draft.time||'',category:svSuggestTaskCategory(draft.title),entryType:svInferEntryType(draft.title),done:false,createdAt,doneAt:'',
   ...(sourceNoteId?{sourceNoteId}:{})
  })));
  if(!save(next)){
