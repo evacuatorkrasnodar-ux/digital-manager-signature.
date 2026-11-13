@@ -63,6 +63,22 @@
   }
   container.append(list);
  }
+
+ // The only preference here is whether to SHOW Sayvi's already committed work.
+ // Turning it off never disables commands, record saving, or reminders.
+ function liveActionOption(){
+  const label=el('label','sv-smart-start-live-option');
+  const toggle=el('input');toggle.type='checkbox';
+  toggle.checked=window.SEYVEO_LIVE_ACTION?.enabled?.()!==false;
+  toggle.setAttribute('aria-label','Показывать действия Сэйви на экране');
+  const body=el('span','sv-smart-start-live-copy');
+  body.append(el('strong',null,'SEYVEO LIVE ACTION'));
+  body.append(el('small',null,'Показ действий Сэйви — необязательное обучение. Она открывает разделы, показывает, где что находится, и как выполняет поручения.'));
+  body.append(el('small',null,'Это не мешает работе: дело сохраняется сразу. Скрытие показа или выключение экрана не отменяет сохранённое. Показ можно отключить в любой момент.'));
+  toggle.addEventListener('change',()=>window.SEYVEO_LIVE_ACTION?.setEnabled?.(toggle.checked));
+  label.append(toggle,body);
+  return label;
+ }
  function draw(){
   if(!session)return;
   chat.open();
@@ -106,8 +122,9 @@
    ]){
     const p=el('p');p.append(el('strong',null,label+': '),document.createTextNode(value));summary.append(p);
    }
-   wrap.append(summary,btn('Сохранить план',finish,'is-primary'));
+   wrap.append(summary,liveActionOption(),btn('Сохранить план',finish,'is-primary'));
   }else if(step==='done'){
+   wrap.append(liveActionOption());
    wrap.append(btn('Посмотреть мой кабинет',revealCabinet,'is-primary'));
    wrap.append(btn('Пока останусь в чате',()=>{
     if(cabinetHandoffTimer)clearTimeout(cabinetHandoffTimer);
