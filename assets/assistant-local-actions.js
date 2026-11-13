@@ -151,7 +151,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports={handle,execute,ex
  * confirms it. No synthetic background notification. */
 (function(){
 'use strict';
-const HANDOFF='seyveo-live-action-handoff-v1',TASKS='seyveo-personal-tasks-v1',CAL='seyveo-calendar-events-v1';
+const HANDOFF='seyveo-live-action-handoff-v1',RECEIPT='seyveo-live-action-receipt-v1',PREF='seyveo-live-action-show-v1',TASKS='seyveo-personal-tasks-v1',CAL='seyveo-calendar-events-v1';
 const $=id=>document.getElementById(id);
 const delay=ms=>new Promise(done=>window.setTimeout(done,ms));
 const validTime=v=>/^([01]\d|2[0-3]):[0-5]\d$/.test(String(v||''));
@@ -162,6 +162,11 @@ function validDate(v){
 }
 function rows(key){try{const x=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(x)?x:[]}catch{return []}}
 let job=null,progress=null,receipt=null;
+const enabled=()=>{try{return localStorage.getItem(PREF)!=='off'}catch{return true}};
+const setEnabled=on=>{try{localStorage.setItem(PREF,on?'on':'off')}catch{}window.dispatchEvent(new CustomEvent('seyveo:live-action-setting',{detail:{enabled:!!on}}));return !!on};
+function receiptWrite(j){try{localStorage.setItem(RECEIPT,JSON.stringify({plan:j.plan,id:j.saved.id,already:!!j.already,at:Date.now()}))}catch{}}
+function receiptRead(){try{const r=JSON.parse(localStorage.getItem(RECEIPT)||'null');return r&&Date.now()-r.at<86400000&&r.id&&r.plan?r:null}catch{return null}}
+function receiptClear(){try{localStorage.removeItem(RECEIPT)}catch{}}
 function styles(){
  if($('svLiveStyles'))return;
  const el=document.createElement('style');el.id='svLiveStyles';el.textContent="\n#svLiveProgress{position:fixed;z-index:2147483000;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(375px,calc(100vw - 24px));box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:56px;padding:11px 12px;background:rgba(251,252,254,.98);border:1px solid rgba(76,108,146,.15);box-shadow:0 10px 34px rgba(19,34,53,.16);border-radius:17px;color:#252A32;font:500 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}\n#svLiveProgress .sv-la-mark{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border-radius:50%;background:#EAF0FA;color:#5479AD;font-size:19px;animation:svLivePulse 1.2s ease-in-out infinite}\n#svLiveProgress span.sv-la-message{flex:1;min-width:0}\n#svLiveProgress button{min-height:40px;padding:8px 10px;border:0;border-radius:11px;background:#EDEFF3;color:#495361;font:550 12px -apple-system,system-ui,sans-serif}\n#svLiveReceipt{position:fixed;z-index:2147483000;left:50%;bottom:calc(106px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);box-sizing:border-box;width:min(375px,calc(100vw - 24px));padding:15px 17px;border-radius:19px;border:1px solid rgba(76,108,146,.13);background:#FBFCFE;box-shadow:0 12px 36px rgba(19,34,53,.16);color:#20252D;font:450 14px/1.45 -apple-system,system-ui,sans-serif}\n#svLiveReceipt .sv-la-top{display:flex;justify-content:space-between;align-items:center;color:#4B76A6;font-size:12px;font-weight:600}\n#svLiveReceipt strong{display:block;font-weight:600;font-size:16px;margin:6px 0 2px}\n#svLiveReceipt p{margin:0 0 13px;color:#6B7380;font-size:12.5px}\n#svLiveReceipt button{border:0;border-radius:11px;padding:10px 16px;background:#EAF1FA;color:#366B9F;font:600 13px -apple-system,system-ui,sans-serif;min-height:40px}\n#svLiveReceipt .sv-la-x{padding:0 6px;background:transparent;color:#89919B;font-size:21px;min-height:30px}\n.sv-live-focus{outline:2px solid rgba(81,131,196,.60)!important;outline-offset:3px;border-radius:8px!important;transition:outline-color .2s}\n@keyframes svLivePulse{50%{opacity:.55;transform:scale(.91)}}\n:root[data-theme=dark] #svLiveProgress,:root[data-theme=dark] #svLiveReceipt{background:rgba(42,44,51,.98);color:#F4F5F7;border-color:rgba(255,255,255,.10)}\n:root[data-theme=dark] #svLiveProgress button{background:#444650;color:#F3F4F8}\n:root[data-theme=dark] #svLiveReceipt p{color:#B8BEC8}\n@media(prefers-reduced-motion:reduce){#svLiveProgress .sv-la-mark{animation:none}}\n";document.head.append(el);
@@ -172,7 +177,7 @@ function panel(text){
   progress=document.createElement('div');progress.id='svLiveProgress';progress.setAttribute('role','status');progress.setAttribute('aria-live','polite');
   const mark=document.createElement('span');mark.className='sv-la-mark';mark.textContent='✧';
   const msg=document.createElement('span');msg.className='sv-la-message';
-  const stop=document.createElement('button');stop.type='button';stop.textContent='Остановить';stop.addEventListener('click',cancel);
+  const stop=document.createElement('button');stop.type='button';stop.textContent='Скрыть показ';stop.addEventListener('click',cancel);
   progress.append(mark,msg,stop);
  }
  const target=job?.dialog?.open?job.dialog:document.body;
@@ -182,12 +187,13 @@ function panel(text){
 }
 function clearPanel(){progress?.remove();progress=null}
 function cancel(){
- if(!job||job.committing)return;
- job.cancelled=true;
- job?.focused?.classList.remove('sv-live-focus');
- if(job.dialog?.open)job.dialog.close();
- clearPanel();job=null;
- const home=$('navHome');if(home)home.click();else location.hash='#home';
+ if(!job)return;
+ const j=job;job=null;j.cancelled=true;
+ j.focused?.classList.remove('sv-live-focus');
+ if(j.dialog?.open)j.dialog.close();
+ clearPanel();
+ // Hiding the walkthrough does not cancel the already saved task.
+ if(j.saved)showReceipt(j,j.saved);
 }
 function check(j){if(j.cancelled||job!==j)throw new Error('Остановлено')}
 async function pause(j,ms){await delay(ms);check(j)}
@@ -242,17 +248,9 @@ async function taskFlow(j){
   await pause(j,270);
  }
  focus(j,null);
- const before=rows(TASKS);
- if(before.some(x=>!x.done&&x.title.trim().toLocaleLowerCase('ru-RU')===d.title.trim().toLocaleLowerCase('ru-RU')&&x.due===(d.date||'')&&(x.time||'')===(d.time||'')))throw new Error('Такое дело уже есть. Повторно не создаю.');
- const oldIds=new Set(before.map(x=>x.id));
- j.committing=true;panel('Сохраняю дело и проверяю запись');
- const form=$('personalTaskForm');
- if(!form?.checkValidity())throw new Error('Проверьте обязательные поля');
- form.requestSubmit();
- await delay(160);
- const result=rows(TASKS).find(x=>!oldIds.has(x.id)&&x.title===d.title&&x.due===(d.date||'')&&x.time===(d.time||''));
- if(!result||j.dialog?.open)throw new Error('Сохранение дела не подтверждено');
- return result;
+ panel('Показываю сохранённое дело');
+ if(j.dialog?.open)j.dialog.close();
+ return j.saved;
 }
 async function calendarFlow(j){
  const d=j.plan.draft;
@@ -281,20 +279,15 @@ async function calendarFlow(j){
   await pause(j,220);
  }
  focus(j,null);
- j.committing=true;panel('Сохраняю и проверяю календарь');
- const detail={status:'ready',title:d.title,date:d.date,time:d.time||'',remindAtStart:!!d.remindAtStart};
- window.dispatchEvent(new CustomEvent('seyveo:calendar-save-from-ask',{detail}));
- if(detail.result?.status!=='saved')throw new Error(detail.result?.message||'Сохранение не подтверждено');
- const result=rows(CAL).find(x=>x.title===d.title&&x.date===d.date&&x.time===(d.time||'')&&(!d.remindAtStart||x.remind===-1));
- if(!result)throw new Error('Событие не найдено после сохранения');
+ panel('Напоминание уже сохранено');
  if(j.dialog?.open)j.dialog.close();
- return result;
+ return j.saved;
 }
 function showReceipt(j,result){
  styles();receipt?.remove();
  receipt=document.createElement('aside');receipt.id='svLiveReceipt';receipt.setAttribute('role','status');
  const top=document.createElement('div');top.className='sv-la-top';
- const label=document.createElement('span');label.textContent='✧ Сэйви · Готово, проверь';
+ const label=document.createElement('span');label.textContent=j.already?'✧ Сэйви · Уже записано':'✧ Сэйви · Готово, проверь';
  const close=document.createElement('button');close.type='button';close.className='sv-la-x';close.textContent='×';close.setAttribute('aria-label','Закрыть карточку');close.addEventListener('click',()=>{receipt?.remove();receipt=null});
  top.append(label,close);
  const title=document.createElement('strong');title.textContent=result.title;
@@ -307,51 +300,110 @@ function showReceipt(j,result){
  });
  receipt.append(top,title,when,view);
  document.body.append(receipt);
+ receiptClear();
  window.SEYVEO_LOCAL_ACTIONS?.clearPendingReminder?.();
  window.dispatchEvent(new CustomEvent('seyveo:live-action-finished',{detail:{kind:j.plan.kind,id:result.id,status:'saved'}}));
 }
 async function run(j){
  try{
   check(j);verify(j);
-  if(document.querySelector('dialog[open]'))throw new Error('Сначала закрой открытое окно');
+  // The write was committed and verified synchronously before the tour.
+  if(document.querySelector('dialog[open]')){clearPanel();job=null;showReceipt(j,j.saved);return}
   const record=j.plan.kind==='task'?await taskFlow(j):await calendarFlow(j);
   check(j);focus(j,null);clearPanel();job=null;
-  if($('navHome'))$('navHome').click();else location.hash='#home';
-  await delay(380);showReceipt(j,record);
- }catch(e){
-  if(j.cancelled){clearPanel();return}
-  focus(j,null);j.committing=false;
-  const error=String(e?.message||'Ошибка сохранения');
-  if(j.dialog?.open){
-   const field=$(j.plan.kind==='task'?'personalTaskStatus':'calendarEventStatus');
-   if(field)field.textContent=error;
+  if(document.visibilityState!=='hidden'){
+   $('navHome')?.click();
+   await delay(250);
+   showReceipt(j,record);
   }
-  panel('Не удалось: '+error);
-  const ref=progress;
-  job=null;
-  window.setTimeout(()=>{if(progress===ref)clearPanel()},5500);
+ }catch(error){
+  focus(j,null);clearPanel();
+  if(job===j)job=null;
+  if(j.saved&&!j.cancelled&&document.visibilityState!=='hidden')showReceipt(j,j.saved);
  }
+}
+function matchingRecord(plan){
+ const d=plan.draft,key=plan.kind==='task'?TASKS:CAL;
+ return rows(key).slice().reverse().find(x=>
+  typeof x?.id==='string'&&x.title===d.title&&
+  (plan.kind==='task'?x.due===(d.date||''):x.date===d.date)&&
+  (x.time||'')===(d.time||'')&&
+  (plan.kind!=='calendar'||!d.remindAtStart||x.remind===-1)
+ );
 }
 function startPlan(plan){
  if(!plan||!['task','calendar'].includes(plan.kind))return false;
  if(job)return true;
  if(!$('personalTaskForm')||!$('calendarEventForm')){
   if(!location.pathname.endsWith('/sayvi-chat-new.html'))return false;
-  try{sessionStorage.setItem(HANDOFF,JSON.stringify({plan,at:Date.now()}))}catch{return false}
+  try{localStorage.setItem(HANDOFF,JSON.stringify({plan,at:Date.now()}))}catch{return false}
   location.assign('./index.html#home');return true;
  }
+ const j={plan,cancelled:false,dialog:null,focused:null,saved:null,already:false};
+ try{
+  verify(j);
+  const result=window.SEYVEO_LOCAL_ACTIONS?.executePlan?.({
+   kind:plan.kind,
+   draft:{status:'ready',title:plan.draft.title,date:plan.draft.date||'',time:plan.draft.time||'',remindAtStart:!!plan.draft.remindAtStart}
+  });
+  if(!['saved','already'].includes(result?.status))throw new Error(result?.message||'Запись не сохранена');
+  j.already=result.status==='already';
+  j.saved=matchingRecord(plan);
+  if(!j.saved)throw new Error('Не удалось подтвердить сохранение');
+  receiptWrite(j);
+ }catch(error){
+  panel('Сэйви: '+String(error.message||error));
+  const current=progress;
+  window.setTimeout(()=>{if(progress===current)clearPanel()},5500);
+  return true;
+ }
  receipt?.remove();receipt=null;
- job={plan,cancelled:false,committing:false,dialog:null,focused:null};
- const current=job;
- window.setTimeout(()=>run(current),180);
+ if(!enabled()||document.visibilityState==='hidden'){showReceipt(j,j.saved);return true}
+ job=j;
+ window.setTimeout(()=>run(j),180);
  return true;
 }
-function start(raw){return startPlan(window.SEYVEO_LOCAL_ACTIONS?.previewAction?.(raw))}
-window.SEYVEO_LIVE_ACTION=Object.freeze({start,startPlan,cancel,isBusy:()=>!!job});
+function start(raw){
+ return enabled()?startPlan(window.SEYVEO_LOCAL_ACTIONS?.previewAction?.(raw)):false;
+}
+function configure(raw){
+ const q=String(raw||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim();
+ if(!/(?:показ|действия|live action|лайв экшен|обучени)/.test(q)||
+    !/(?:включ|выключ|отключ|убер|покажи|скрой|скрыть)/.test(q))return null;
+ if(/(?:выключ|отключ|убер|скрой|скрыть)/.test(q)){
+  setEnabled(false);if(job)cancel();
+  return {status:'saved',message:'Показ действий Сэйви отключён. Поручения по-прежнему выполняются.'};
+ }
+ if(/(?:включ|покажи)/.test(q)){
+  setEnabled(true);
+  return {status:'saved',message:'SEYVEO LIVE ACTION включён. Показываю работу в приложении, не мешая выполнению команд.'};
+ }
+ return null;
+}
+function restore(){
+ if(job||document.visibilityState==='hidden')return;
+ const info=receiptRead();
+ if(!info)return;
+ const record=matchingRecord(info.plan);
+ if(record)showReceipt({plan:info.plan,already:info.already},record);
+ else receiptClear();
+}
+document.addEventListener('visibilitychange',()=>{
+ if(document.visibilityState==='hidden'&&job){
+  const j=job;job=null;j.cancelled=true;
+  j.focused?.classList.remove('sv-live-focus');
+  if(j.dialog?.open)j.dialog.close();
+  clearPanel();
+ }else if(document.visibilityState==='visible')restore();
+});
+window.addEventListener('pageshow',restore);
+window.SEYVEO_LIVE_ACTION=Object.freeze({start,startPlan,configure,cancel,isBusy:()=>!!job,enabled,setEnabled});
 if($('personalTaskForm')&&$('calendarEventForm')){
  let pending=null;
- try{pending=JSON.parse(sessionStorage.getItem(HANDOFF)||'null');sessionStorage.removeItem(HANDOFF)}catch{}
- if(pending?.plan&&Date.now()-Number(pending.at)<20000)window.setTimeout(()=>startPlan(pending.plan),600);
+ try{pending=JSON.parse(localStorage.getItem(HANDOFF)||'null');localStorage.removeItem(HANDOFF)}catch{}
+ if(pending?.plan&&Date.now()-Number(pending.at)<12*3600000)
+  window.setTimeout(()=>startPlan(pending.plan),150);
+ else window.setTimeout(restore,300);
 }
 })();
 
