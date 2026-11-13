@@ -701,3 +701,51 @@ html.sv-agenda-scroll-active .app{
  #tasksPage #svTasksDateNav .sv-agenda-day-number,
  #tasksPage #svTasksDateNav .sv-agenda-month-heading{transition:none!important}
 }
+
+
+/* «Все дела» is a focused subview, not a second calendar.
+   Keep the approved header/tabs stationary; give the results their own
+   native momentum scroll and a safe area above the unchanged 60px dock. */
+#svWorkShell[data-task-tool-mode="all"] #tasksPage #svTasksDateNav{
+ display:none!important;
+}
+#svWorkShell[data-task-tool-mode="all"][data-agenda-scroll="true"] #tasksPage #svInlineTaskTools{
+ box-sizing:border-box!important;
+ display:flex!important;
+ flex:1 1 auto!important;
+ flex-direction:column!important;
+ min-height:0!important;
+ overflow:hidden!important;
+ padding:8px 0 calc(84px + env(safe-area-inset-bottom,0px))!important;
+}
+#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-input,
+#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-filters{
+ flex:0 0 auto;
+}
+#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-results{
+ flex:1 1 auto!important;
+ min-height:0!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ -webkit-overflow-scrolling:touch;
+ overscroll-behavior-y:contain;
+ padding:0 0 14px!important;
+}
+#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-select-entry{
+ flex:0 0 auto;
+ margin:0!important;
+ padding:9px 0 0!important;
+}
+#svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-result>button{
+ min-width:72px;
+ padding:0 6px;
+ color:#3769A9;
+ font-size:14px;
+ font-weight:540;
+}
+:root[data-theme="dark"] #svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools .sv-tool-result>button{
+ color:#8FB7EB;
+}
+html.sv-task-selection-active #svWorkShell[data-task-tool-mode="all"] #svInlineTaskTools{
+ padding-bottom:calc(105px + env(safe-area-inset-bottom,0px))!important;
+}
