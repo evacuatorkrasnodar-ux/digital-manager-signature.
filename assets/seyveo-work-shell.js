@@ -133,6 +133,12 @@
   :host([data-task-tools="true"]) .sv-history-select[aria-pressed="true"]{
    background:rgba(120,125,140,.22)!important;
   }
+  /* In Select mode, the canonical Back replaces Select in the same grid
+     slot. Hide the Search/+ capsule without altering its material or size. */
+  :host([data-task-selecting="true"]) .sv-history-select,
+  :host([data-task-selecting="true"]) .sv-history-dual{
+   display:none!important;
+  }
   :host([data-task-tools="true"][data-theme="dark"]) .sv-history-select,
   :host([data-task-tools="true"][data-theme="dark"]) .sv-history-dual{
    background:var(--sv-header-circle,#38383A)!important;
@@ -204,6 +210,10 @@
   }
  }
  back.addEventListener('click',()=>{
+  if(window.SEYVEO_TASK_INLINE?.current?.()==='select'&&activeSection()==='personal'){
+   window.SEYVEO_TASK_INLINE.close();
+   return;
+  }
   if(notesPage?.open){notesPage.close();return;}
   if(tasks.classList.contains('sah-history-open')){
    document.querySelector('#seyveoActionHistoryPanel .sah-inline-head button')?.click();
@@ -266,7 +276,24 @@
  #svInlineTaskTools .sv-tool-filters button[aria-pressed="true"]{background:var(--card,#fff);box-shadow:0 1px 3px #0001}
  #svInlineTaskTools .sv-tool-result{display:flex;align-items:center;gap:11px;padding:10px 2px;
   border-bottom:1px solid var(--soft-line,#0001);min-height:56px}
- #svInlineTaskTools .sv-tool-result input{width:21px;height:21px;accent-color:#38383A;flex:none}
+ #svInlineTaskTools .sv-tool-result input[type="checkbox"]{
+  -webkit-appearance:none;appearance:none;
+  position:relative;display:grid;place-items:center;box-sizing:border-box;
+  width:22px;height:22px;min-width:22px;min-height:22px;flex:none;
+  margin:0;border:1.5px solid #A5A7AE;border-radius:50%;
+  background:transparent;cursor:pointer;
+ }
+ #svInlineTaskTools .sv-tool-result input[type="checkbox"]:checked{
+  border-color:#38383A;background:#38383A;
+ }
+ #svInlineTaskTools .sv-tool-result input[type="checkbox"]:checked::after{
+  content:"";width:10px;height:6px;display:block;
+  border-left:2px solid #FFF;border-bottom:2px solid #FFF;
+  transform:translateY(-1px) rotate(-45deg);
+ }
+ #svInlineTaskTools .sv-tool-result input[type="checkbox"]:focus-visible{
+  outline:2px solid #38383A;outline-offset:3px;
+ }
  #svInlineTaskTools .sv-tool-copy{flex:1;min-width:0}
  #svInlineTaskTools .sv-tool-copy strong{display:block;font-size:15.5px;font-weight:480;overflow-wrap:anywhere}
  #svInlineTaskTools .sv-tool-copy small{display:block;margin-top:4px;color:var(--secondary);font-size:12px}
@@ -294,10 +321,16 @@
  }).sort((a,b)=>String(b.doneAt||b.createdAt||'').localeCompare(String(a.doneAt||a.createdAt||'')));
  function paint(){
   toolPanel.replaceChildren();
-  const headingRow=make('div','sv-tool-top');
-  headingRow.append(make('strong','',toolMode==='search'?'Поиск по делам':'Выбрать дела'));
-  const done=make('button','','Готово');done.type='button';done.addEventListener('click',()=>setMode(''));headingRow.append(done);
-  toolPanel.append(headingRow);
+  // Select mode owns the page title and Back in the permanent top header.
+  // Search retains a local Done button until its own navigation is unified.
+  if(toolMode==='search'){
+   const headingRow=make('div','sv-tool-top');
+   headingRow.append(make('strong','','Поиск по делам'));
+   const done=make('button','','Готово');
+   done.type='button';done.addEventListener('click',()=>setMode(''));
+   headingRow.append(done);
+   toolPanel.append(headingRow);
+  }
   let results=make('div','sv-tool-results');
   if(toolMode==='search'){
    const input=make('input','sv-tool-input');input.type='search';input.placeholder='Найти дело';
@@ -377,6 +410,13 @@
   toolPanel.hidden=!mode;
   selectHistory.setAttribute('aria-pressed',String(mode==='select'));
   searchTasks.setAttribute('aria-pressed',String(mode==='search'));
+  const selecting=mode==='select'&&activeSection()==='personal';
+  heading.dataset.taskSelecting=String(selecting);
+  if(activeSection()==='personal'&&!tasks.classList.contains('sah-history-open')){
+   back.hidden=!selecting;
+   back.setAttribute('aria-label',selecting?'Вернуться к моим делам':'Вернуться назад');
+   title.textContent=selecting?'Выбрать дела':'Мои дела';
+  }
   if(mode)paint();
  }
  window.SEYVEO_TASK_INLINE=Object.freeze({
@@ -438,12 +478,14 @@
   shell.dataset.history=String(history);
   heading.dataset.taskTools=String(active==='personal'&&!history);
   if(active!=='personal')window.SEYVEO_TASK_INLINE?.close();
-  title.textContent=history?'История':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
+  const selecting=active==='personal'&&!history&&toolMode==='select';
+  heading.dataset.taskSelecting=String(selecting);
+  title.textContent=history?'История':selecting?'Выбрать дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // In the personal landing use the same approved circle for History.
   // Every nested view (including History) retains the real Back arrow.
-  back.hidden=active==='personal'&&!history;
+  back.hidden=active==='personal'&&!history&&!selecting;
   if(back.dataset.svHeaderIcon!=='back'){back.innerHTML=backIcon;back.dataset.svHeaderIcon='back'}
-  back.setAttribute('aria-label',history?'Вернуться к моим делам':'Вернуться назад');
+  back.setAttribute('aria-label',history||selecting?'Вернуться к моим делам':'Вернуться назад');
   back.title='';
   back.setAttribute('aria-haspopup','false');
   // A single stylesheet now owns Back/Add material for all routes,
@@ -546,7 +588,7 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:21,sync,
+  version:22,sync,
   isNotesInline:()=>true
  });
 })();
