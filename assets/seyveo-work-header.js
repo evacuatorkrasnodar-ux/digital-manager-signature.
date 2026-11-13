@@ -72,10 +72,10 @@
   margin-bottom:3px;
   display:inline-flex;align-items:center;gap:9px;
   appearance:none;border:0;background:transparent;padding:0;margin:0;
-  color:#B93429;font:530 15px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  color:#B93429;font:420 14px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
  }
- .calendar-jump svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+ .calendar-jump svg{display:block;width:21px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
  .calendar-jump[hidden]{display:none!important}
  .calendar-jump:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:3px}
  :host([data-theme="dark"]) .calendar-jump{color:#F47883}
@@ -146,7 +146,7 @@
  function create(){
   const host=document.createElement('seyveo-work-head');
   const shadow=host.attachShadow({mode:'open'});
-  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="calendar-jump" type="button" aria-label="Открыть все календари" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="3.5" width="15" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Все календари</span></button><button class="month" type="button" aria-label="Открыть календарь" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
+  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="calendar-jump" type="button" aria-label="Открыть все календари" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Все календари</span></button><button class="month" type="button" aria-label="Открыть календарь" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
   const back=shadow.querySelector('.back');
   const title=shadow.querySelector('.title');
   const month=shadow.querySelector('.month');
