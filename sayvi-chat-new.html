@@ -4365,6 +4365,12 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  }
  async function ask(question,options={}){
   if(!options.skipUser&&!options.attachments?.length){
+   if(window.SEYVEO_LIVE_ACTION?.start(question)){
+    const id=++sequence;
+    append('user','user-'+id,options.displayMessage??question,true);
+    append('assistant','reply-'+id,'Открываю SEYVEO и показываю выполнение действия.');
+    return;
+   }
    const cardAction=window.SEYVEO_CARD_VOICE?.handle(question);
    const localAction=cardAction?null:window.SEYVEO_LOCAL_ACTIONS?.handle(question);
    const action=cardAction||localAction;
@@ -4828,7 +4834,9 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 </script>
 <script src="assets/seyveo-chat-calendar-bridge.js?v=2"></script>
 <script src="assets/reminder-dialogue.js?v=1"></script>
-<script src="assets/assistant-local-actions.js?v=4"></script>
+<script src="assets/task-natural.js?v=2"></script>
+<script src="assets/calendar-natural.js?v=1"></script>
+<script src="assets/assistant-local-actions.js?v=5"></script>
 <script src="assets/seyveo-card-voice.js?v=3"></script>
 <script src="assets/seyveo-intelligence-core.js?v=1"></script>
 <script src="assets/sayvi-notifications.js?v=3"></script>
