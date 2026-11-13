@@ -56,7 +56,9 @@
  const historyBar=heading.shadowRoot?.querySelector('.bar');
  const historyGroup=document.createElement('div');
  historyGroup.className='sv-history-dual';
- const searchTasks=document.createElement('button');searchTasks.type='button';searchTasks.className='control sv-history-search';searchTasks.innerHTML=searchIcon;searchTasks.setAttribute('aria-label','Поиск по всем делам');
+ const searchTasks=document.createElement('button');searchTasks.type='button';searchTasks.className='control sv-history-search';
+ searchTasks.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5v5h5"/><path d="M3.7 9.5a8.5 8.5 0 1 1-.2 4"/><path d="M12 7.5V12l3 2"/></svg>';
+ searchTasks.setAttribute('aria-label','История и все дела');
  const selectHistory=document.createElement('button');
  selectHistory.className='control sv-history-select';
  selectHistory.type='button';
@@ -74,7 +76,7 @@
   .sv-history-dual{display:contents}
   .sv-history-select,.sv-history-search{display:none}
   :host([data-task-tools="true"]) .bar{position:relative}
-  :host([data-task-tools="true"]) .sv-history-select{
+  :host([data-task-tools="true"][data-task-selecting="true"]) .sv-history-select{
    position:relative!important;z-index:2;
    grid-column:1!important;grid-row:1!important;
    justify-self:start!important;align-self:center!important;
@@ -666,7 +668,7 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:24,sync,
+  version:25,sync,
   isNotesInline:()=>true
  });
 })();
