@@ -107,16 +107,23 @@
  width:52px;height:36px;min-height:36px;margin-top:5px;
 }
 #tasksPage #svTasksDateNav .sv-agenda-mark{
- display:block;position:absolute;width:6px;height:6px;border-radius:50%;
+ display:block;position:absolute;width:5.5px;height:5.5px;border-radius:50%;
  background:#AF52DE;box-shadow:0 .5px 1px rgba(0,0,0,.08);
 }
-#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(1){left:7px;top:2px}
-#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(2){left:23px;top:11px}
-#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(3){left:39px;top:4px}
-#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(4){left:12px;top:25px}
-#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(5){left:35px;top:25px}
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(1){left:13px;top:3px}
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(2){left:25px;top:13px}
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(3){left:39px;top:5px}
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(4){left:15px;top:24px}
+#tasksPage #svTasksDateNav .sv-agenda-mark:nth-child(5){left:34px;top:25px}
 #tasksPage #svTasksDateNav .sv-agenda-mark[data-kind="work"]{background:#007AFF}
 #tasksPage #svTasksDateNav .sv-agenda-mark[data-kind="personal"]{background:#AF52DE}
+/* Calendar-color palette: one real task = one small, distinct dot. */
+#tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="orange"]{background:#FF9F0A}
+#tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="green"]{background:#34C759}
+#tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="red"]{background:#FF453A}
+#tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="blue"]{background:#0A84FF}
+#tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="yellow"]{background:#FFD60A}
+#tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="purple"]{background:#BF5AF2}
 #tasksPage #svTasksDateNav .sv-agenda-week-step{
  display:none;position:absolute;z-index:2;top:18px;width:26px;height:30px;
  border:0;background:transparent;color:#878C95;
