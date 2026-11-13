@@ -596,3 +596,58 @@
  #tasksPage #personalTaskList .sv-agenda-weather-icon svg{width:20px;height:20px}
  #tasksPage #personalTaskList .sv-agenda-weather-icon{flex-basis:20px;margin-left:1px}
 }
+
+/* Linked Apple-style agenda scrolling: the shared header, tab capsule and
+   five-day rail remain fixed; only the entries below the rail move. */
+html.sv-agenda-scroll-active,
+html.sv-agenda-scroll-active body{
+ height:100%;
+ max-height:100dvh;
+ overflow:hidden!important;
+ overscroll-behavior:none;
+}
+html.sv-agenda-scroll-active .app{
+ box-sizing:border-box!important;
+ height:100dvh!important;
+ min-height:0!important;
+ max-height:100dvh!important;
+ overflow:hidden!important;
+ padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))!important;
+}
+#svWorkShell[data-agenda-scroll="true"]{
+ flex:1 1 auto!important;
+ min-height:0!important;
+ overflow:hidden!important;
+}
+#svWorkShell[data-agenda-scroll="true"] #tasksPage #unifiedPersonalTasksView{
+ box-sizing:border-box!important;
+ display:flex!important;
+ flex:1 1 auto!important;
+ flex-direction:column!important;
+ min-height:0!important;
+ overflow:hidden!important;
+ padding-bottom:0!important;
+}
+#svWorkShell[data-agenda-scroll="true"] #tasksPage .personal-tasks-panel{
+ display:flex!important;
+ flex:1 1 auto!important;
+ flex-direction:column!important;
+ min-height:0!important;
+ overflow:hidden!important;
+}
+#svWorkShell[data-agenda-scroll="true"] #tasksPage #svTasksDateNav{
+ flex:0 0 auto!important;
+}
+#svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list{
+ flex:1 1 auto!important;
+ min-height:0!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ -webkit-overflow-scrolling:touch;
+ overscroll-behavior-y:contain;
+ scrollbar-width:none;
+ scroll-padding-top:3px;
+}
+#svWorkShell[data-agenda-scroll="true"] #tasksPage #personalTaskList.personal-tasks-list::-webkit-scrollbar{
+ display:none;
+}
