@@ -1690,3 +1690,17 @@ html body #personalTaskDialog.personal-task-dialog.sv-task-date-open[open]
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-event .personal-task-check{background:rgba(255,255,255,.065)!important;border-color:#69717E!important}
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-hour-block{border-color:#40424B!important}
 :root[data-theme="dark"] #tasksPage #personalTaskList .sv-task-day-empty{background:#303238!important;color:#B7BBC8!important}
+
+/* Simplified My Tasks control map: month/week navigation + one explicit All filter. */
+#tasksPage #svTasksDateNav .sv-task-all-button{
+ border-radius:10px!important;
+ padding:7px 10px!important;
+ color:#5C6778!important;
+}
+#tasksPage #svTasksDateNav .sv-task-all-button[aria-pressed="true"]{
+ color:#3E6E9D!important;
+ background:rgba(86,131,183,.10)!important;
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-task-all-button[aria-pressed="true"]{
+ color:#AACBEF!important;background:rgba(107,158,223,.15)!important;
+}
