@@ -19,9 +19,43 @@
  if(dateRow&&!sheet.querySelector('#personalTaskTime')){
   const row=document.createElement('div');
   row.className='personal-task-field sv-task-time-row';
-  row.innerHTML='<svg class="sv-task-clock-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.25"/><path d="M12 7.5v5l3.25 2"/></svg><span class="personal-task-field-caption">Время</span><span id="personalTaskTimeDisplay" class="sv-task-time-display">Не выбрано</span><svg class="personal-task-date-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg><input type="time" id="personalTaskTime" name="time" step="60" aria-label="Время выполнения дела"><button type="button" class="sv-task-time-clear" hidden aria-label="Убрать время">×</button>';
+  row.innerHTML='<svg class="sv-task-clock-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.25"/><path d="M12 7.5v5l3.25 2"/></svg><span class="personal-task-field-caption">Время</span><span id="personalTaskTimeDisplay" class="sv-task-time-display">Не выбрано</span><svg class="personal-task-date-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg><input type="time" id="personalTaskTime" name="time" step="60" aria-label="Время выполнения дела"><button type="button" class="sv-task-time-open" aria-label="Выбрать время"></button><button type="button" class="sv-task-time-clear" hidden aria-label="Убрать время">×</button>';
   dateRow.insertAdjacentElement('afterend',row);
   const field=row.querySelector('input'),shown=row.querySelector('#personalTaskTimeDisplay'),clear=row.querySelector('.sv-task-time-clear');
+  const trigger=row.querySelector('.sv-task-time-open');
+  // Native time input is unreliable when fully transparent on some Safari
+  // builds. Always keep a fully working fallback with real selects.
+  const picker=document.createElement('div');
+  picker.className='sv-task-time-picker';picker.hidden=true;
+  picker.setAttribute('aria-label','Часы и минуты');
+  const hours=document.createElement('select'),minutes=document.createElement('select');
+  hours.setAttribute('aria-label','Часы');minutes.setAttribute('aria-label','Минуты');
+  for(let n=0;n<24;n++){const o=document.createElement('option');o.value=String(n).padStart(2,'0');o.textContent=o.value;hours.append(o)}
+  for(let n=0;n<60;n++){const o=document.createElement('option');o.value=String(n).padStart(2,'0');o.textContent=o.value;minutes.append(o)}
+  const done=document.createElement('button');done.type='button';done.className='sv-task-time-done';done.textContent='Готово';
+  picker.append(hours,minutes,done);row.insertAdjacentElement('afterend',picker);
+  const openFallback=()=>{
+   const parts=/^\d{2}:\d{2}$/.test(field.value)?field.value.split(':'):['12','00'];
+   hours.value=parts[0];minutes.value=parts[1];picker.hidden=false;
+   trigger.setAttribute('aria-expanded','true');
+  };
+  trigger.setAttribute('aria-expanded','false');
+  trigger.setAttribute('aria-controls','svTaskTimePicker');
+  picker.id='svTaskTimePicker';
+  trigger.addEventListener('click',()=>{
+   // showPicker is explicitly invoked inside the original click activation.
+   if(typeof field.showPicker==='function'){
+    try{field.showPicker();return}catch(e){/* Safari support varies */}
+   }
+   openFallback();
+  });
+  done.addEventListener('click',()=>{
+   field.value=hours.value+':'+minutes.value;
+   field.dispatchEvent(new Event('change',{bubbles:true}));
+   picker.hidden=true;trigger.setAttribute('aria-expanded','false');
+  });
+  dialog.addEventListener('close',()=>{picker.hidden=true;trigger.setAttribute('aria-expanded','false')});
+
   const refresh=()=>{
    const valid=/^([01]\d|2[0-3]):[0-5]\d$/.test(field.value);
    shown.textContent=valid?field.value:'Не выбрано';
