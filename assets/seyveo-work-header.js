@@ -65,6 +65,8 @@
  :host([data-agenda="true"]) .month,
  :host([data-agenda="true"]) .title,
  :host([data-agenda="true"]) .control{grid-row:2}
+ :host([data-agenda="true"]) .month{position:relative;top:5px}
+ :host([data-agenda="true"]) .calendar-jump{position:relative;top:16px}
  .calendar-jump{
   grid-column:1 / 3;grid-row:1;justify-self:start;align-self:end;
   margin-bottom:3px;
