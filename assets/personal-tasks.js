@@ -15,7 +15,17 @@ function renderContext(open){
  focusPanel.hidden=!priority;
  if(!priority){focusOpen.dataset.focusTask='';focusOpen.dataset.focusCall='';focusComplete.hidden=true;return '';}
  const contact=callTargetFromTask(priority.title);
- focusWhen.textContent=priority.when;
+ // Only useful time context belongs above the task. No repeated
+ // SEYVEO label or redundant "Срок": the card is already a task card.
+ const labels={
+  'Срок прошёл':'Просрочено',
+  'Срок сегодня':'Сегодня',
+  'Срок завтра':'Завтра',
+  'Срок в ближайшие дни':'В ближайшие дни'
+ };
+ focusWhen.textContent=labels[priority.when]||String(priority.when||'').replace(/^Срок\s+/u,'');
+ focusWhen.dataset.urgency=priority.when==='Срок прошёл'?'overdue':
+  priority.when==='Срок сегодня'?'today':'upcoming';
  focusTitle.textContent=priority.title;
  focusOpen.dataset.focusTask=priority.id;
  focusOpen.dataset.focusCall=contact;
