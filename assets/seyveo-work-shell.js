@@ -610,6 +610,7 @@
   if(!calendar.hidden)return 'calendar';
   return tasks.dataset.workView==='business'?'business':tasks.dataset.workView==='employee'?'employee':'personal';
  }
+ let svAgendaWasVisible=null;
  function sync(){
   const active=activeSection();
   const managerTasks=!tasks.hidden&&oldTasks.dataset.manager==='true';
@@ -666,6 +667,16 @@
   heading.dataset.agenda=String(showMonth);
   shell.dataset.agendaScroll=String(showMonth);
   document.documentElement.classList.toggle('sv-agenda-scroll-active',showMonth);
+  // A single composited fade on entry; no translate or layout shift, so the
+  // permanent Apple-style header and approved 60px dock never jump.
+  const returningToAgenda=svAgendaWasVisible===false&&showMonth;
+  svAgendaWasVisible=showMonth;
+  if(returningToAgenda&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+   const view=document.getElementById('unifiedPersonalTasksView');
+   view?.animate?.([{opacity:.90},{opacity:1}],{
+    duration:180,easing:'cubic-bezier(.22,1,.36,1)'
+   });
+  }
   if(showMonth){
    const nav=document.getElementById('svTasksDateNav');
    const name=nav?.querySelector('.sv-agenda-month-name')?.textContent;
