@@ -593,7 +593,6 @@ function svAgendaRenderNav(rows){
  const track=element('div','sv-agenda-track');
  strip.append(track);
  const first=svTaskDate(svTaskWindowStart);
- first.setDate(first.getDate()-1);
  const today=svTaskISO(new Date()),byDate=new Map();
  for(const item of rows){
   if(!item.due)continue;
@@ -647,7 +646,7 @@ function svAgendaRenderNav(rows){
   const touch=event.touches[0],dx=touch.clientX-touchStart.x,dy=touch.clientY-touchStart.y;
   if(Math.abs(dx)<8||Math.abs(dx)<Math.abs(dy)*1.3)return;
   gestureActive=true;
-  const limit=strip.clientWidth*.185;
+  const limit=strip.clientWidth*.178;
   track.style.transform='translate3d('+Math.max(-limit,Math.min(limit,dx))+'px,0,0)';
  },{passive:true});
  strip.addEventListener('touchend',event=>{
@@ -661,7 +660,7 @@ function svAgendaRenderNav(rows){
   if(event.cancelable)event.preventDefault();
   ignoreTapUntil=Date.now()+500;
   const direction=dx<0?1:-1;
-  const tile=strip.clientWidth*.185;
+  const tile=strip.clientWidth*.178;
   track.style.transition='transform .16s cubic-bezier(.22,.75,.35,1)';
   track.style.transform='translate3d('+(dx<0?-tile:tile)+'px,0,0)';
   setTimeout(()=>svAgendaChangeWeek(direction),160);
