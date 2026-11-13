@@ -638,7 +638,8 @@ function svAgendaScrollToDate(iso){
 const svAgendaDockMedia=window.matchMedia('(max-width:699px) and (hover:none) and (pointer:coarse)');
 let svAgendaDockPreviousY=0,svAgendaDockTravel=0,svAgendaDockDirection=0,svAgendaDockPauseUntil=0;
 function svAgendaShowDock(){
- document.documentElement.classList.remove('sv-agenda-dock-minimized');
+ if(document.documentElement.classList.contains('sv-agenda-dock-minimized'))
+  document.documentElement.classList.remove('sv-agenda-dock-minimized');
 }
 function svAgendaPauseDockMotion(){
  svAgendaDockPauseUntil=Date.now()+750;
@@ -1475,7 +1476,8 @@ document.addEventListener('pointerdown',event=>{
 },{passive:true,capture:true});
 dialog.addEventListener('close',svAgendaPauseDockMotion);
 new MutationObserver(()=>{
- if(!document.documentElement.classList.contains('sv-agenda-scroll-active'))svAgendaPauseDockMotion();
+ if(!document.documentElement.classList.contains('sv-agenda-scroll-active')&&
+    document.documentElement.classList.contains('sv-agenda-dock-minimized'))svAgendaPauseDockMotion();
 }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 if(svAgendaDockMedia.addEventListener)svAgendaDockMedia.addEventListener('change',svAgendaPauseDockMotion);
 render();
