@@ -554,6 +554,7 @@
    back.hidden=!nested;
    back.setAttribute('aria-label',nested?'Вернуться к моим делам':'Вернуться назад');
    title.textContent=nested?'Все дела':'Мои дела';
+   title.hidden=!nested; // The tab capsule already says «Мои дела».
   }
  }
  function setMode(mode){
@@ -638,6 +639,9 @@
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
+  // Top-level sections are named in the permanent tab capsule below.
+  // Keep titles for nested «Все дела», «История», and the employee workspace.
+  title.hidden=!history&&!nested&&['personal','calendar','notes','business'].includes(active);
   // In the personal landing use the same approved circle for History.
   // Every nested view (including History) retains the real Back arrow.
   back.hidden=active==='personal'&&!history&&!nested;
