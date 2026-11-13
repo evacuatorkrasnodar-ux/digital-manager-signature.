@@ -55,17 +55,17 @@
  }
  .month {
   grid-column:1 / 3;grid-row:1;justify-self:start;align-self:center;
-  display:flex;align-items:baseline;gap:6px;
+  display:flex;align-items:baseline;gap:5px;
   max-width:100%;min-width:0;padding:0;margin:0;
   appearance:none;border:0;border-radius:0;background:transparent;
   box-shadow:none;color:inherit;cursor:pointer;text-align:left;
-  font:680 clamp(21px,5.7vw,26px)/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
-  letter-spacing:-.035em;white-space:nowrap;
+  font:600 clamp(21px,5.7vw,26px)/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
+  letter-spacing:-.026em;white-space:nowrap;
   -webkit-tap-highlight-color:transparent;
  }
  .month[hidden]{display:none!important}
- .month-name{display:block;color:inherit}
- .month-year{display:block;color:#EC636E;font-variant-numeric:tabular-nums}
+ .month-name{display:block;color:inherit;font-weight:620}
+ .month-year{display:block;color:#D9434D;font-weight:430;letter-spacing:-.018em;font-variant-numeric:tabular-nums}
  :host([data-theme="dark"]) .month-year{color:#F47883}
  .month:focus-visible{outline:2px solid currentColor;outline-offset:5px;border-radius:3px}
  .control {
