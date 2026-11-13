@@ -567,15 +567,17 @@ function svTaskDrawDateNav(){
  prev.type='button';prev.setAttribute('aria-label','Предыдущая неделя');
  const next=element('button','sv-task-week-arrow','›');
  next.type='button';next.setAttribute('aria-label','Следующая неделя');
- const anchorDate=svTaskDate(svTaskWeekAnchor);
- const monthName=new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(anchorDate);
- const month=element('strong','sv-task-date-month',monthName.charAt(0).toUpperCase()+monthName.slice(1));
- month.title=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(anchorDate);
+ const chosenDate=svTaskDate(svTaskSelectedDate)||new Date();
+ const name=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'short'}).format(chosenDate);
+ const label=name.charAt(0).toLocaleUpperCase('ru-RU')+name.slice(1)+
+  (chosenDate.getFullYear()!==new Date().getFullYear()?' '+chosenDate.getFullYear():'');
+ const month=element('strong','sv-task-date-month',label);
+ month.title=new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(chosenDate);
  const all=element('button','sv-task-all-button','Все дела');
  all.type='button';all.setAttribute('aria-pressed',String(svTaskDateMode==='all'));
  all.addEventListener('click',()=>{svTaskDateMode='all';render()});
- prev.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,-7);if(svTaskDateMode==='day')svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,-7);render()});
- next.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,7);if(svTaskDateMode==='day')svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,7);render()});
+ prev.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,-7);svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,-7);render()});
+ next.addEventListener('click',()=>{svTaskWeekAnchor=svTaskShiftDay(svTaskWeekAnchor,7);svTaskSelectedDate=svTaskShiftDay(svTaskSelectedDate,7);render()});
  heading.append(prev,month,next,all);
  const strip=element('div','sv-task-day-strip');
  const monday=svTaskDate(svTaskWeekAnchor);
@@ -605,7 +607,7 @@ function svTaskSectionTitle(label,kind){
 function svTaskRenderDay(rows){
  const chosen=svTaskDate(svTaskSelectedDate);
  if(!chosen)return;
- list.append(element('h3','sv-task-selected-heading',new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long'}).format(chosen)));
+ // The selected date is already visible above the week strip.
  const onDay=rows.filter(item=>item.due===svTaskSelectedDate);
  const allDay=onDay.filter(item=>!item.time);
  const timed=onDay.filter(item=>item.time).sort((a,b)=>a.time.localeCompare(b.time));
