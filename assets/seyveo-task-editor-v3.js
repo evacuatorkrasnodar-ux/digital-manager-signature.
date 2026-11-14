@@ -65,6 +65,11 @@
   const result=cleaned||raw;
   return result.charAt(0).toLocaleUpperCase('ru-RU')+result.slice(1);
  }
+ function sizePhrase(){
+  if(!dialog.open)return;
+  title.style.height='auto';
+  title.style.height=Math.max(80,Math.min(174,title.scrollHeight))+'px';
+ }
  function updateSmartPreview(){
   if(!smartPreview||!smartDetails)return;
   const raw=title.value.trim().replace(/\s+/g,' ');
@@ -139,7 +144,7 @@
   if(repeat&&!manualRepeat&&(!isEditing()||signals.repeat!=='none'))repeat.value=signals.repeat;
   updateSmartPreview();
  }
- title.addEventListener('input',applyPhrase);
+ title.addEventListener('input',()=>{sizePhrase();applyPhrase()});
  manualToggle?.addEventListener('click',()=>{
   const open=dialog.classList.toggle('sv-task-manual-open');
   manualToggle.setAttribute('aria-expanded',String(open));
@@ -208,15 +213,17 @@
   dialog.classList.remove('sv-task-manual-open');
   manualToggle?.setAttribute('aria-expanded','false');
   date.dispatchEvent(new Event('change',{bubbles:true}));
+  sizePhrase();
   updateSmartPreview();
  });
  observer.observe(dialog,{attributes:true,attributeFilter:['open']});
- dialog.addEventListener('sv-task-editor-sync',()=>{sync();updateSmartPreview()});
+ dialog.addEventListener('sv-task-editor-sync',()=>{sync();updateSmartPreview();sizePhrase()});
  dialog.addEventListener('close',()=>{
   if(recognition){try{recognition.stop()}catch{}recognition=null;voiceButton?.setAttribute('aria-pressed','false')}
   dialog.classList.remove('sv-task-manual-open');
   quickDateOpen=false;
   manualToggle?.setAttribute('aria-expanded','false');
+  title.style.height='';
   form.scrollTop=0;
  });
  window.SEYVEO_TASK_SCREEN=Object.freeze({version:4,sync,titleForSave:effectiveTitle});
