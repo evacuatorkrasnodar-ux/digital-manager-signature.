@@ -1321,6 +1321,7 @@ window.SEYVEO_PERSONAL_TASK_TOOLS=Object.freeze({
   const all=read(),remaining=all.filter(task=>!chosen.has(task.id));
   if(remaining.length===all.length)return false;
   if(!save(remaining))return false;
+  void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.(all.filter(task=>chosen.has(task.id)).map(task=>task.id));
   justCompletedTaskId='';render();
   window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
   window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
