@@ -10,12 +10,14 @@ const cases=[
 for(const [phrase,expected] of cases){
  const result=extract(phrase);assert.ok(result,'No place: '+phrase);
  assert.equal(result.label,expected.label,phrase);assert.equal(result.query,expected.query,phrase);
+ if(!result.explicitAddress)assert.ok(result.kind,'No venue kind: '+phrase);
 }
 for(const phrase of ['Позвонить Анне завтра в 12','Встреча с Анной в четверг','Купить хлеб в кафе','Кофе с другом в кафе']){
  assert.equal(extract(phrase),null,'Wrong place from: '+phrase);
 }
 assert.equal(cleanPlace({name:'Cafe',address:'улица',lat:'250',lon:'40'}),null);
 assert.equal(cleanPlace({name:'Cafe',address:'улица',lat:'45.012',lon:'38.993'}).lat,45.012);
+assert.equal(cleanPlace({name:'Cafe',address:'улица',lat:45,lon:39,wikidata:'Q12345'}).wikidata,'Q12345');
 assert.ok(mapURL({name:'Cafe',address:'улица',lat:45.012,lon:38.993}).includes('marker=45.012000'));
 const tiles=mapTiles({name:'Cafe',address:'улица',lat:45.012,lon:38.993});
 assert.ok(tiles.length>=1&&tiles.length<=4);
