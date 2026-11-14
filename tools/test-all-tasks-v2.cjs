@@ -26,5 +26,5 @@ assert.match(source,/SEYVEO_PERSONAL_TASK_TOOLS\?\.removeMany/);
 assert.match(source,/SEYVEO_PERSONAL_TASK_HISTORY\?\.restore/);
 assert.match(taskData,/window\.SEYVEO_PERSONAL_TASK_TOOLS=Object\.freeze/);
 assert.match(taskData,/window\.SEYVEO_PERSONAL_TASK_HISTORY=Object\.freeze/);
-assert.match(html,/assets\/seyveo-all-tasks-v2\.css\?v=1/);
+assert.match(html,/assets\/seyveo-all-tasks-v2\.css\?v=\d+/);
 console.log('PASS: All Tasks v2 is a single in-flow view backed by the original task store.');
