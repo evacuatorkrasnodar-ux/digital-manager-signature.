@@ -13,6 +13,10 @@
     layer.className='sv-sayvi-velvet-layer sv-sayvi-velvet-'+name;
     sphere.appendChild(layer);
   }
+  const glassGlow=document.createElement('span');
+  glassGlow.className='sv-sayvi-velvet-glass-glow';
+  glassGlow.setAttribute('aria-hidden','true');
+  button.appendChild(glassGlow);
   button.appendChild(sphere);
   button.classList.add('sv-sayvi-velvet-ready');
 
@@ -35,6 +39,7 @@
       action==='speaking'||action==='reply'?'speaking':'idle';
     const next=phase||inferred;
     if(sphere.dataset.state!==next)sphere.dataset.state=next;
+    if(button.dataset.sayviVelvetState!==next)button.dataset.sayviVelvetState=next;
   }
 
   document.addEventListener('seyveo:assistant-presence',event=>{
