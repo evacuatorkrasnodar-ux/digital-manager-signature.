@@ -63,6 +63,7 @@
  }
  let manualDate=false,manualTime=false,manualPriority=false,manualRepeat=false;
  let quickDateOpen=false;
+ let quickWheelMode='date';
  /* The native keyboard belongs to the phone. Follow its visual viewport so
     the small controls stay immediately above it, without moving the editor. */
  let keyboardFrame=0,lastKeyboardInset=-1;
@@ -84,7 +85,7 @@
  window.visualViewport?.addEventListener('scroll',queueKeyboardPosition);
  window.addEventListener('resize',queueKeyboardPosition);
  dialog.addEventListener('focusin',queueKeyboardPosition);
- const isEditing=()=>document.getElementById('personalTaskDialogTitle')?.textContent==='Изменить';
+ const isEditing=()=>document.getElementById('personalTaskDialogTitle')?.textContent?.startsWith('Изменить');
  function createText(kind,text){
   const node=document.createElement('span');node.className='sv-task-smart-'+kind;
   node.textContent=text;return node;
@@ -118,6 +119,113 @@
   title.style.height='auto';
   title.style.height=Math.max(80,Math.min(174,title.scrollHeight))+'px';
  }
+ const wheelRowHeight=40;
+ const wheelMonths=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2020,i,1)));
+ const padWheel=n=>String(n).padStart(2,'0');
+ function makeWheelColumn(label,choices,value,change){
+  const column=document.createElement('div');column.className='sv-task-wheel-column';
+  column.tabIndex=0;column.setAttribute('role','listbox');column.setAttribute('aria-label',label);
+  const buttons=[];
+  let active=Math.max(0,choices.findIndex(item=>item.value===value));
+  let scrollTimer=0;
+  function select(index,commit=false,force=false){
+   const next=Math.min(choices.length-1,Math.max(0,index));
+   const changed=next!==active;
+   if(changed){
+    buttons[active]?.classList.remove('is-selected');buttons[active]?.setAttribute('aria-selected','false');
+    active=next;buttons[active]?.classList.add('is-selected');buttons[active]?.setAttribute('aria-selected','true');
+   }
+   if(commit&&(changed||force))change(choices[active].value);
+  }
+  choices.forEach((item,index)=>{
+   const button=document.createElement('button');button.type='button';button.className='sv-task-wheel-option';
+   button.textContent=item.label;button.tabIndex=-1;button.setAttribute('role','option');
+   button.setAttribute('aria-selected',String(index===active));
+   if(index===active)button.classList.add('is-selected');
+   button.addEventListener('click',()=>{
+    column.scrollTo({top:index*wheelRowHeight,behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+    select(index,true,true);
+   });
+   buttons.push(button);column.append(button);
+  });
+  column.addEventListener('scroll',()=>{
+   clearTimeout(scrollTimer);
+   scrollTimer=setTimeout(()=>{
+    if(!column.isConnected)return;
+    select(Math.round(column.scrollTop/wheelRowHeight),true);
+   },75);
+  },{passive:true});
+  column.addEventListener('keydown',event=>{
+   const direction=event.key==='ArrowUp'?-1:event.key==='ArrowDown'?1:0;
+   if(!direction&&event.key!=='Home'&&event.key!=='End')return;
+   event.preventDefault();
+   const next=event.key==='Home'?0:event.key==='End'?choices.length-1:Math.min(choices.length-1,Math.max(0,active+direction));
+   column.scrollTop=next*wheelRowHeight;select(next,true,true);
+  });
+  requestAnimationFrame(()=>{if(column.isConnected)column.scrollTop=active*wheelRowHeight});
+  return {node:column,set(value){const index=choices.findIndex(item=>item.value===value);if(index<0)return;column.scrollTop=index*wheelRowHeight;select(index)}};
+ }
+ function makeWheelEditor(whenDate,whenTime){
+  const editor=document.createElement('div');editor.className='sv-task-smart-wheel-edit';
+  const tabs=document.createElement('div');tabs.className='sv-task-wheel-tabs';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Что исправить');
+  for(const [mode,label] of [['date','Дата'],['time','Время']]){
+   const button=document.createElement('button');button.type='button';button.textContent=label;
+   button.classList.toggle('is-active',quickWheelMode===mode);button.setAttribute('aria-pressed',String(quickWheelMode===mode));
+   button.addEventListener('click',()=>{quickWheelMode=mode;updateSmartPreview()});
+   tabs.append(button);
+  }
+  editor.append(tabs);
+  const body=document.createElement('div');body.className='sv-task-wheel-body';
+  body.classList.toggle('is-time',quickWheelMode==='time');
+  if(quickWheelMode==='date'){
+   const chosen=/^\d{4}-\d{2}-\d{2}$/.test(date.value)?date.value:today();
+   const [year,month,day]=chosen.split('-').map(Number);
+   const picked={year,month,day};
+   let dayWheel=null;
+   const dayHost=document.createElement('div');dayHost.className='sv-task-wheel-host';
+   function commitDate(){
+    picked.day=Math.min(picked.day,new Date(picked.year,picked.month,0).getDate());
+    manualDate=true;date.value=[picked.year,padWheel(picked.month),padWheel(picked.day)].join('-');
+    whenDate.textContent=new Intl.DateTimeFormat('ru-RU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(new Date(picked.year,picked.month-1,picked.day));
+   }
+   function drawDayWheel(){
+    const daysInMonth=new Date(picked.year,picked.month,0).getDate();
+    picked.day=Math.min(picked.day,daysInMonth);
+    dayWheel=makeWheelColumn('Число',Array.from({length:daysInMonth},(_,index)=>({value:index+1,label:String(index+1)})),picked.day,day=>{picked.day=day;commitDate()});
+    dayHost.replaceChildren(dayWheel.node);
+   }
+   const months=makeWheelColumn('Месяц',wheelMonths.map((label,i)=>({value:i+1,label:label.charAt(0).toLocaleUpperCase('ru-RU')+label.slice(1)})),picked.month,value=>{picked.month=value;drawDayWheel();commitDate()});
+   const years=makeWheelColumn('Год',Array.from({length:201},(_,index)=>({value:1900+index,label:String(1900+index)})),picked.year,value=>{picked.year=value;drawDayWheel();commitDate()});
+   drawDayWheel();body.append(months.node,dayHost,years.node);
+  }else{
+   const [hour,minute]=(timeInput?.value||'09:00').split(':').map(Number);
+   const picked={hour,minute};
+   function commitTime(){
+    manualTime=true;if(timeInput)timeInput.value=padWheel(picked.hour)+':'+padWheel(picked.minute);
+    whenTime.textContent=padWheel(picked.hour)+':'+padWheel(picked.minute);
+   }
+   body.append(
+    makeWheelColumn('Часы',Array.from({length:24},(_,value)=>({value,label:padWheel(value)})),picked.hour,value=>{picked.hour=value;commitTime()}).node,
+    makeWheelColumn('Минуты',Array.from({length:60},(_,value)=>({value,label:padWheel(value)})),picked.minute,value=>{picked.minute=value;commitTime()}).node
+   );
+  }
+  editor.append(body);
+  const actions=document.createElement('div');actions.className='sv-task-wheel-actions';
+  const clear=document.createElement('button');clear.type='button';clear.className='sv-task-wheel-clear';
+  clear.textContent=quickWheelMode==='date'?'Без даты':'Без времени';
+  clear.addEventListener('click',()=>{
+   if(quickWheelMode==='date'){manualDate=true;date.value='';whenDate.textContent='Без даты'}
+   else{manualTime=true;if(timeInput)timeInput.value='';whenTime.textContent='Время не выбрано'}
+   updateSmartPreview();
+  });
+  const done=document.createElement('button');done.type='button';done.className='sv-task-smart-quick-done';done.textContent='Готово';
+  done.addEventListener('click',()=>{
+   quickDateOpen=false;date.dispatchEvent(new Event('change',{bubbles:true}));
+   timeInput?.dispatchEvent(new Event('change',{bubbles:true}));updateSmartPreview();
+  });
+  actions.append(clear,done);editor.append(actions);
+  return editor;
+ }
  function updateSmartPreview(){
   if(!smartPreview||!smartDetails)return;
   const raw=title.value.trim().replace(/\s+/g,' ');
@@ -128,8 +236,6 @@
   const multi=drafts.length>1;
   const displayed=drafts.length?drafts:[{title:effectiveTitle(),category:selectedCategory(),entryType:selectedType(),tone:'orange'}];
   const category=displayed[0].category,kind=displayed[0].entryType;
-  const heading=smartPreview.querySelector('.sv-new-task-smart-heading strong');
-  if(heading)heading.textContent=multi?'Сэйви выделила '+displayed.length+' дела':'Сэйви определила';
   smartPreview.classList.toggle('is-work',category==='work');
   smartPreview.classList.toggle('is-multi',multi);
   for(const item of displayed){
@@ -154,28 +260,9 @@
   whenTime.textContent=timeInput?.value||'Время не выбрано';
   const arrow=document.createElement('span');arrow.className='sv-task-smart-when-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');
   when.append(whenDate,whenTime,arrow);
-  when.addEventListener('click',()=>{quickDateOpen=!quickDateOpen;updateSmartPreview();if(quickDateOpen)smartDetails.querySelector('.sv-task-quick-date')?.focus({preventScroll:true})});
+  when.addEventListener('click',()=>{quickDateOpen=!quickDateOpen;if(quickDateOpen)quickWheelMode='date';updateSmartPreview()});
   smartDetails.append(when);
-  if(quickDateOpen){
-   const edit=document.createElement('div');edit.className='sv-task-smart-quick-edit';
-   const dateLabel=document.createElement('label');dateLabel.textContent='Дата';
-   const quickDate=document.createElement('input');quickDate.type='date';quickDate.className='sv-task-quick-date';quickDate.value=date.value;
-   quickDate.setAttribute('aria-label','Исправить дату дела');
-   quickDate.addEventListener('change',()=>{
-    manualDate=true;date.value=quickDate.value;
-    date.dispatchEvent(new Event('change',{bubbles:true}));sync();updateSmartPreview();
-   });dateLabel.append(quickDate);
-   const timeLabel=document.createElement('label');timeLabel.textContent='Время';
-   const quickTime=document.createElement('input');quickTime.type='time';quickTime.className='sv-task-quick-time';quickTime.value=timeInput?.value||'';
-   quickTime.setAttribute('aria-label','Исправить время дела');
-   quickTime.addEventListener('change',()=>{
-    manualTime=true;if(timeInput){timeInput.value=quickTime.value;timeInput.dispatchEvent(new Event('change',{bubbles:true}))}
-    updateSmartPreview();
-   });timeLabel.append(quickTime);
-   const done=document.createElement('button');done.type='button';done.className='sv-task-smart-quick-done';done.textContent='Готово';
-   done.addEventListener('click',()=>{quickDateOpen=false;updateSmartPreview()});
-   edit.append(dateLabel,timeLabel,done);smartDetails.append(edit);
-  }
+  if(quickDateOpen)smartDetails.append(makeWheelEditor(whenDate,whenTime));
   const meta=document.createElement('div');meta.className='sv-task-smart-meta';
   if(!multi){
    meta.append(createText('category',category==='work'?'Работа':'Личное'));
