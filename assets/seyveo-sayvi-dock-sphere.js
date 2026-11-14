@@ -8,7 +8,8 @@
   const canvas = document.createElement('canvas');
   canvas.className = 'sv-sayvi-dock-sphere';
   canvas.setAttribute('aria-hidden', 'true');
-  canvas.width = canvas.height = Math.round(42 * Math.min(window.devicePixelRatio || 1, 2.5));
+  // Render at no less than 3x the 42px size; downsampling removes rim stair-steps.
+  canvas.width = canvas.height = 42 * 3;
 
   const vertexSource = `
     attribute vec2 position;
@@ -46,7 +47,8 @@
       float active=energy*(.73+.27*speech);
       float edge=.92+.01*active*sin(ang*3.+t*2.1);
       float r=length(p);
-      float alpha=1.-smoothstep(edge-.011,edge+.003,r);
+      // A 1px optical fade: avoid a hard rasterized outline at dock-icon scale.
+      float alpha=1.-smoothstep(edge-.043,edge+.009,r);
       if(alpha<.002) discard;
 
       vec2 q=p/edge;
@@ -77,8 +79,9 @@
       float specB=pow(max(dot(n,lightB),0.),105.);
       color+=vec3(.53,.55,.57)*specA;
       color+=vec3(.14,.26,.31)*specB;
-      color=mix(color,depthColor,fresnel*.29);
-      color+=vec3(.16,.22,.24)*smoothstep(.84,1.,r/edge)*.26;
+      // Keep glass volume, but soften the dark Fresnel ring into the pearl body.
+      color=mix(color,depthColor,fresnel*.12);
+      color+=vec3(.16,.22,.24)*smoothstep(.84,1.,r/edge)*.055;
       color+=vec3(.31,.33,.35)*gaussian(q,vec2(-.34,.57),35.);
       color+=vec3(.09,.15,.18)*gaussian(q,vec2(.49,-.58),80.);
       gl_FragColor=vec4(clamp(color,0.,1.),alpha);
