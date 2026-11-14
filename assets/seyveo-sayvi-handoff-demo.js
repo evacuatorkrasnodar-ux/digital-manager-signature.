@@ -1,6 +1,6 @@
 /* Reversible cinematic prototype, opt-in via ?sayvi-handoff=1.
-   Big Sayvi appears at launch, hands off to the existing 42px dock sphere,
-   then the actual Tasks page opens. No changes to tasks or user data. */
+   Big Sayvi becomes the 42px dock sphere; Home's real cards remain on Home.
+   The original orb travels above all containers, with no visual clone. */
 (() => {
   'use strict';
   const params=new URLSearchParams(location.search);
@@ -10,10 +10,9 @@
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
   const orb=document.getElementById('orb');
-  const art=document.getElementById('plasmaVisual');
   const dockButton=document.getElementById('assistantButton');
   const small=dockButton?.querySelector('.sv-sayvi-velvet-sphere');
-  if(!home||!orb||!art||!dockButton||!small){
+  if(!home||!orb||!dockButton||!small){
     root.classList.remove('sv-sayvi-handoff-demo');
     return;
   }
@@ -21,10 +20,26 @@
   let done=false;
   let flying=false;
   let animation=null;
-  let fadeAnimation=null;
   let introTimer=0;
-  let openTimer=0;
   let todayCard=null;
+  const orbHome=orb.parentNode;
+  const orbNext=orb.nextSibling;
+  let originalOrbStyle=null;
+  function restoreOrb(){
+    animation?.cancel();
+    animation=null;
+    // The *same* button goes home, already concealed by the docked layout.
+    if(orb.parentNode!==orbHome){
+      if(orbNext&&orbNext.parentNode===orbHome)orbHome.insertBefore(orb,orbNext);
+      else orbHome.appendChild(orb);
+    }
+    orb.classList.remove('sv-sayvi-handoff-flight');
+    if(originalOrbStyle!==null){
+      if(originalOrbStyle)orb.setAttribute('style',originalOrbStyle);
+      else orb.removeAttribute('style');
+      originalOrbStyle=null;
+    }
+  }
   const storeList=key=>{
     try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[];}
     catch{return [];}
@@ -85,25 +100,17 @@
     const label=isToday?'Сегодня':date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(date):'Без даты';
     meta.textContent=label+(item.time?' · '+item.time:'');
   }
-  function finish({openTasks=false}={}){
+  function finish(){
     if(done)return;
     done=true;
     clearTimeout(introTimer);
-    clearTimeout(openTimer);
     root.classList.add('sv-sayvi-handoff-docked','sv-sayvi-handoff-arrived');
-    animation?.cancel();
-    fadeAnimation?.cancel();
-    orb.style.removeProperty('will-change');
+    restoreOrb();
     flying=false;
     root.classList.remove('sv-sayvi-handoff-inflight');
     const cluster=document.getElementById('orbCluster');
     if(cluster){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
     renderToday();
-    const targetHash=location.hash;
-    if(openTasks && (!targetHash||targetHash==='#home')){
-      // Let the final pearl glint settle before revealing real task content.
-      openTimer=setTimeout(()=>{if(!location.hash||location.hash==='#home')location.hash='tasks';},190);
-    }
     setTimeout(()=>root.classList.remove('sv-sayvi-handoff-arrived'),850);
   }
 
@@ -111,41 +118,45 @@
     if(done)return;
     if(document.hidden){finish();return;}
     if(location.hash&&location.hash!=='#home'){finish();return;}
-    if(matchMedia('(prefers-reduced-motion: reduce)').matches){finish({openTasks:true});return;}
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     const from=orb.getBoundingClientRect();
     const to=small.getBoundingClientRect();
     if(!from.width||!to.width){finish();return;}
 
-    // Animate the already painted REAL orb. An image cloned into a new fixed
-    // compositor layer can be invisible during Safari/Chromium SVG rendering.
-    const finalScale=(to.width/.8)/(orb.offsetWidth||from.width);
+    // Move the REAL orb into the top-level compositor. Animating it within
+    // #orbCluster was clipped by Home's stacking / overflow contexts.
+    const finalScale=to.width/from.width;
     const dx=(to.left+to.width/2)-(from.left+from.width/2);
     const dy=(to.top+to.height/2)-(from.top+from.height/2);
-    const originalTransform=getComputedStyle(orb).transform;
+    originalOrbStyle=orb.getAttribute('style')||'';
+    document.body.appendChild(orb);
+    orb.classList.add('sv-sayvi-handoff-flight');
+    for(const [name,value] of Object.entries({
+      left:`${from.left}px`,top:`${from.top}px`,
+      width:`${from.width}px`,height:`${from.height}px`
+    }))orb.style.setProperty(name,value,'important');
+    // A non-important transform lets the Web Animations compositor own motion.
+    orb.style.setProperty('transform','none');
     flying=true;
-    orb.style.willChange='transform,opacity';
     root.classList.add('sv-sayvi-handoff-inflight');
 
     requestAnimationFrame(()=>{
       if(done)return;
-      const duration=inspectSlow?2800:990;
+      const duration=inspectSlow?2800:790;
       animation=orb.animate([
-        {transform:originalTransform},
-        {transform:`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`}
-      ],{duration,easing:'cubic-bezier(.42,0,.18,1)',fill:'forwards'});
-      fadeAnimation=orb.animate([
-        {offset:0,opacity:1},
-        {offset:.80,opacity:1},
-        {offset:1,opacity:0}
-      ],{duration,fill:'forwards'});
-      animation.finished.then(()=>finish({openTasks:true})).catch(()=>{});
+        {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
+        {offset:.28,transform:`translate3d(${dx*.18}px,${dy*.12}px,0) scale(.91)`,opacity:1},
+        {offset:.8,transform:`translate3d(${dx*.82}px,${dy*.82}px,0) scale(${finalScale+(1-finalScale)*.14})`,opacity:1},
+        {offset:1,transform:`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`,opacity:1}
+      ],{duration,easing:'cubic-bezier(.26,.65,.23,1)',fill:'forwards'});
+      animation.finished.then(finish).catch(()=>{});
     });
   }
 
   // An intentional but short brand greeting; any user navigation takes priority.
   const launch=()=>{
     if(location.hash&&location.hash!=='#home'){finish();return;}
-    introTimer=setTimeout(begin,540);
+    introTimer=setTimeout(begin,380);
   };
   if(document.readyState==='complete')launch();
   else window.addEventListener('load',launch,{once:true});
@@ -153,7 +164,7 @@
   window.addEventListener('pagehide',()=>{if(!done)finish();});
   window.addEventListener('resize',()=>{if(flying&&!done)finish();});
   document.addEventListener('pointerdown',event=>{
-    if(done){clearTimeout(openTimer);return;}
+    if(done)return;
     if(event.target.closest('#orb,#assistantButton,#navTasks,#navPicture,#navManage'))finish();
   },{capture:true});
   for(const name of ['seyveo:route-changed','seyveo:tasks-changed','seyveo:calendar-changed'])
