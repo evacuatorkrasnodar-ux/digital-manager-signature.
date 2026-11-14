@@ -3,7 +3,9 @@
    then the actual Tasks page opens. No changes to tasks or user data. */
 (() => {
   'use strict';
-  if(new URLSearchParams(location.search).get('sayvi-handoff')!=='1')return;
+  const params=new URLSearchParams(location.search);
+  if(params.get('sayvi-handoff')!=='1')return;
+  const inspectSlow=params.get('sayvi-slow')==='1';
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
@@ -138,7 +140,7 @@
     animation=flight.animate([
       {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
       {offset:1,transform:`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`,opacity:0}
-    ],{duration:990,easing:'cubic-bezier(.42,0,.18,1)',fill:'forwards'});
+    ],{duration:inspectSlow?2800:990,easing:'cubic-bezier(.42,0,.18,1)',fill:'forwards'});
     animation.finished.then(()=>finish({openTasks:true})).catch(()=>{});
   }
 
