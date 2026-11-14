@@ -27,6 +27,11 @@
   opacity:0 !important;
   pointer-events:none !important;
 }
+:root.sv-sayvi-handoff-demo #homePage #seyveoNameTip{display:none !important}
+:root.sv-sayvi-handoff-demo #homePage #stage > .message{
+  transition:opacity .32s cubic-bezier(.22,.8,.22,1) !important;
+}
+:root.sv-sayvi-handoff-inflight #homePage #stage > .message{opacity:0 !important}
 :root.sv-sayvi-handoff-inflight #homePage #stage {
   z-index:10000 !important;
 }
