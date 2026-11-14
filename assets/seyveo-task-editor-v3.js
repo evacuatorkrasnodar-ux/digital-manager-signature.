@@ -157,7 +157,7 @@
   const repeat=document.getElementById('personalTaskRepeat')?.value;
   if(repeat&&repeat!=='none')meta.append(createText('repeat',({daily:'Каждый день',weekly:'Каждую неделю',monthly:'Каждый месяц'})[repeat]||'Повтор'));
   smartDetails.append(meta);
-  if(lead)smartDetails.append(createText('notice','Время предупреждения распознано. Фоновые уведомления пока не подключены.'));
+  if(lead)smartDetails.append(createText('notice','Уведомление за час пока недоступно.'));
   if(timeInput?.value&&!date.value)smartDetails.append(createText('notice','Укажи дату для напоминания по времени.'));
  }
  function applyPhrase(){
