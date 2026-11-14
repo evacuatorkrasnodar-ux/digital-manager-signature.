@@ -3,6 +3,10 @@
 html:has(#personalTaskDialog.sv-task-editor-v3[open]) body > footer.dock.sv-shared-dock{
  visibility:hidden!important;pointer-events:none!important;
 }
+html body dialog#personalTaskDialog.sv-task-editor-v3 > footer.dock,
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-shared-dock{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
 html body dialog#personalTaskDialog.sv-task-editor-v3{
  box-sizing:border-box!important;position:fixed!important;inset:0!important;
  width:100vw!important;max-width:none!important;height:100dvh!important;max-height:none!important;
@@ -14,6 +18,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3{
 html body dialog#personalTaskDialog.sv-task-editor-v3::backdrop{background:#FFFFFF!important;backdrop-filter:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
  position:relative!important;box-sizing:border-box!important;
+ inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+ transform:none!important;
  display:flex!important;flex-direction:column!important;align-items:stretch!important;
  width:min(100%,520px)!important;height:100%!important;max-height:none!important;
  margin:0 auto!important;padding:0!important;border:0!important;border-radius:0!important;
