@@ -309,21 +309,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header .sv-ne
  font:560 15px/1.1 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-intro{
- display:flex!important;align-items:center!important;gap:10px!important;
- margin:8px 3px 13px!important;padding:0 2px!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-intro>div{
- flex:1 1 auto!important;min-width:0!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-intro-mark{
- display:grid!important;place-items:center!important;flex:0 0 39px!important;width:39px!important;height:39px!important;
- border-radius:50%!important;background:#E9EFF9!important;color:#237ACE!important;font:600 25px/1 system-ui!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-intro strong{
- display:block!important;color:#17191E!important;font:650 16.5px/1.25 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-intro p{
- margin:3px 0 0!important;color:#707782!important;font:480 12.9px/1.35 system-ui!important;
+ display:flex!important;justify-content:flex-end!important;align-items:center!important;
+ margin:2px 3px 11px!important;padding:0 2px!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-quick-actions{
  display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;
@@ -605,6 +592,21 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{displ
 @media (min-width:700px){
  html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
   border-radius:20px!important;border:1px solid #E7EAF0!important;
+ }
+}
+/* On iPhone the native status area stays behind a separate rounded sheet.
+   The system keyboard supplies its own grey bottom surface. */
+@media (max-width:620px){
+ html body dialog#personalTaskDialog.sv-task-editor-v3{
+  background:#D6D7DB!important;
+ }
+ html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
+  margin:max(22px,env(safe-area-inset-top,0px)) auto 0!important;
+  height:calc(100% - max(22px,env(safe-area-inset-top,0px)))!important;
+  border-radius:32px 32px 0 0!important;
+ }
+ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header{
+  padding-top:7px!important;
  }
 }
 @media (prefers-reduced-motion:reduce){
