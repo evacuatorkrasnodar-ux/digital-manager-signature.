@@ -72,7 +72,7 @@ function upcomingTasks(now=new Date()){
  if(now.getHours()<18)return [];
  const tomorrow=key(new Date(now.getFullYear(),now.getMonth(),now.getDate()+1));
  return readRows(TASK_KEY,150)
-  .filter(r=>r&&typeof r.id==='string'&&r.done!==true&&r.due===tomorrow&&cleanTitle(r.title))
+  .filter(r=>r&&typeof r.id==='string'&&r.done!==true&&r.due===tomorrow&&cleanTitle(r.title)&&r.showOnHome!==false)
   .sort((a,b)=>String(a.createdAt||'').localeCompare(String(b.createdAt||'')))
   .slice(0,3).map(r=>({id:r.id,title:cleanTitle(r.title),date:tomorrow,time:clock(r.time),kind:'task'}));
 }
@@ -82,7 +82,7 @@ function attentionTasks(now=new Date()){
  const today=key(now);
  return readRows(TASK_KEY,150)
   .filter(r=>r&&typeof r.id==='string'&&r.done!==true&&
-    validDate(r.due)&&r.due<=today&&cleanTitle(r.title))
+    validDate(r.due)&&r.due<=today&&cleanTitle(r.title)&&r.showOnHome!==false)
   .sort((a,b)=>a.due.localeCompare(b.due))
   .map(r=>({id:r.id,title:cleanTitle(r.title),date:r.due,time:clock(r.time),kind:'task'}));
 }
