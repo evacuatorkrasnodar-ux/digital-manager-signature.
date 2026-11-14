@@ -233,14 +233,14 @@
  opacity:1!important;
  transition:color .24s ease,stroke .24s ease!important;
 }
-:root[data-theme="light"].sv-global-search-open footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage,
-:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage:active{
+:root[data-theme="light"].sv-global-search-open footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage,
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage:active{
  background:radial-gradient(ellipse 110% 95% at 50% 5%,rgba(10,132,255,.19),rgba(10,132,255,.065) 72%)!important;
  box-shadow:inset 0 1.5px 3px rgba(31,42,58,.13),inset 0 -1px 1px rgba(255,255,255,.32)!important;
  transform:scale(.965)!important;
 }
-:root[data-theme="light"].sv-global-search-open footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage > svg,
-:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage:active > svg{
+:root[data-theme="light"].sv-global-search-open footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage#navManage > svg,
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage#navManage#navManage:active > svg{
  color:#087DF1!important;
  stroke:#087DF1!important;
 }
