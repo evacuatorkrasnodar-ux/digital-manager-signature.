@@ -8,8 +8,15 @@
   #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-velvet-sphere {
   transition:opacity .43s cubic-bezier(.22,.8,.22,1) !important;
 }
+:root.sv-sayvi-handoff-inflight #homePage #stage {
+  z-index:10000 !important;
+}
+:root.sv-sayvi-handoff-inflight #homePage #orbCluster {
+  z-index:10001 !important;
+}
 :root.sv-sayvi-handoff-inflight #homePage #orb {
-  opacity:0 !important;
+  z-index:10002 !important;
+  pointer-events:none !important;
 }
 :root.sv-sayvi-handoff-inflight #homePage #orbCluster::before {
   opacity:0 !important;
