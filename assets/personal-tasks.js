@@ -1169,7 +1169,9 @@ function openDialog(){
  const newCategory=form.querySelector('input[name="personalTaskCategory"][value="personal"]');
  if(newCategory)newCategory.checked=true;
  svSyncTaskListChoice();
- date.value=(!$('tasksPage')?.hidden&&svTaskSelectedDate)?svTaskSelectedDate:svTaskISO(new Date());
+ /* Smart-first composer never invents a due date. It is filled from the phrase
+    or explicitly through "Уточнить вручную". */
+ date.value='';
  dialog.dispatchEvent(new Event('sv-task-editor-sync'));syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
@@ -1177,7 +1179,7 @@ function openDialog(){
 }
 function put(e){
  e.preventDefault();
- const title=input.value.trim().replace(/\s+/g,' ');
+ const title=(window.SEYVEO_TASK_SCREEN?.titleForSave?.()||input.value).trim().replace(/\s+/g,' ');
  if(!title){$('personalTaskStatus').textContent='Напишите, что нужно сделать.';input.focus();return}
  if(editingTaskId){
   const all=read(),record=all.find(task=>task.id===editingTaskId&&!task.done);
@@ -1199,6 +1201,7 @@ function put(e){
  if(all.length>=MAX){$('personalTaskStatus').textContent='Достигнут предел записей. Удалите ненужные завершённые дела.';return}
  const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',
  category:form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal',
+ tone:form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'blue':'orange',
  entryType:form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task',
  notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',
  repeat:$('personalTaskRepeat')?.value||'none',priority:$('personalTaskPriority')?.value||'none',
