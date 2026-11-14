@@ -71,9 +71,12 @@ function read(){
  ...(typeof item.source==='string'&&['sayvi','work','notebook'].includes(item.source)?{source:item.source}:{}),
  category:item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal'),
  entryType:item.entryType==='event'||item.entryType==='task'?item.entryType:svInferEntryType(item.title),
+ tone:['orange','green','red','blue','yellow','purple'].includes(item.tone)?item.tone:'',
  notes:typeof item.notes==='string'?item.notes.slice(0,1000):'',
  url:typeof item.url==='string'?item.url.slice(0,500):'',
  place:window.SEYVEO_TASK_PLACES?.cleanPlace?.(item.place)||null,
+ remindBefore:[15,30,60].includes(item.remindBefore)?item.remindBefore:0,
+ showOnHome:item.showOnHome!==false,
  repeat:['none','daily','weekly','monthly'].includes(item.repeat)?item.repeat:'none',
  priority:['none','low','medium','high'].includes(item.priority)?item.priority:'none'}));
 }
@@ -559,7 +562,7 @@ const svTaskMatchesCategory=()=>true;
 function svInferEntryType(title){
  const value=String(title||'').toLocaleLowerCase('ru-RU');
  if(/(^|[^а-яё])(напомни|напоминан|купить|подготовить|отправить|оплатить|сделать|проверить|забрать|заказать|позвонить|написать|выслать|убрать|помыть|сдать|завершить|задач)/u.test(value))return 'task';
- if(/(^|[^а-яё])(встреч|поездк|созвон|совещан|конференц|тренировк|заняти|урок|приём|прием|праздник|день рождени|обед|ужин|концерт|путешеств|мероприят)/u.test(value))return 'event';
+ if(/(^|[^а-яё])(встреч|встрет|поездк|созвон|совещан|конференц|тренировк|заняти|урок|приём|прием|праздник|день рождени|обед|ужин|концерт|путешеств|мероприят)/u.test(value))return 'event';
  return 'task';
 }
 function svTaskEntryType(item){return item.entryType==='event'?'event':'task';}
@@ -574,6 +577,7 @@ function svSuggestTaskCategory(title){
  const value=String(title||'').toLocaleLowerCase('ru-RU');
  return /(^|[^а-яё])(клиент|заказчик|поставщик|сотрудник|коллега|контрагент|офис|договор|счёт|счет|отчёт|отчет|совещани|проект|работ|начальник|бухгалтер|зарплат|командиров|брифинг|планерк)/u.test(value)?'work':'personal';
 }
+window.SEYVEO_TASK_CLASSIFY=Object.freeze({type:svInferEntryType,category:svSuggestTaskCategory});
 function svTaskISO(d){
  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
@@ -1201,17 +1205,31 @@ function put(e){
   return;
  }
  const all=read();
- if(all.length>=MAX){$('personalTaskStatus').textContent='Достигнут предел записей. Удалите ненужные завершённые дела.';return}
- const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',
- category:form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal',
- tone:form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'blue':'orange',
- entryType:form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task',
- notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',
- place:window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null,
- repeat:$('personalTaskRepeat')?.value||'none',priority:$('personalTaskPriority')?.value||'none',
- showOnHome:Boolean($('personalTaskShowOnHome')?.checked),
- done:false,createdAt:new Date().toISOString(),doneAt:'',
- ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})}];
+ const planned=window.SEYVEO_TASK_SCREEN?.draftsForSave?.();
+ const multiple=Array.isArray(planned)&&planned.length>1;
+ const drafts=multiple?planned:[{
+  title,category:form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal',
+  entryType:form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task',
+  remindBefore:Array.isArray(planned)&&planned[0]?.remindBefore||0
+ }];
+ if(drafts.some(draft=>!draft.title?.trim())||drafts.length>4){$('personalTaskStatus').textContent='Проверь названия дел перед сохранением.';return}
+ if(all.length+drafts.length>MAX){$('personalTaskStatus').textContent='Не хватает места для всех дел. Удалите ненужные завершённые дела.';return}
+ const common={due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',
+  notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',
+  repeat:$('personalTaskRepeat')?.value||'none',priority:$('personalTaskPriority')?.value||'none',
+  showOnHome:Boolean($('personalTaskShowOnHome')?.checked),done:false,createdAt:new Date().toISOString(),doneAt:''};
+ const suggestedPlace=window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null;
+ const additions=drafts.map(draft=>{
+  const category=draft.category==='work'?'work':'personal';
+  return {...common,id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),
+   title:draft.title.trim().replace(/\s+/g,' ').slice(0,140),category,
+   tone:category==='work'?'blue':(multiple?draft.tone||'orange':'orange'),
+   entryType:draft.entryType==='event'?'event':'task',
+   place:multiple&&draft.entryType!=='event'?null:suggestedPlace,
+   remindBefore:[15,30,60].includes(draft.remindBefore)?draft.remindBefore:0,
+   ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})};
+ });
+ const next=[...all,...additions];
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
  pendingSourceNoteId='';justCompletedTaskId='';
  taskEditorSavedOnExit=true;if(dialog.open)dialog.close();render();
