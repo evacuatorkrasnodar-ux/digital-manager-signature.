@@ -92,6 +92,45 @@
   if(!body||body.length>140||!/[\p{L}]/u.test(body))return null;
   return {title:body.charAt(0).toLocaleUpperCase('ru-RU')+body.slice(1),date:date?iso(date):'',time};
  }
- if(typeof module!=='undefined'&&module.exports)module.exports={parse,signals};
- if(root){root.SEYVEO_TASK_SMART_NL=parse;root.SEYVEO_TASK_SMART_SIGNALS=signals;}
+ /* Multi-action review. Split only at an explicit conjunction followed by a
+    second actionable verb; do not split 'чай и кофе' or a person's full name. */
+ const ACTIONS='позвонить|созвониться|встретиться|купить|забрать|отправить|написать|подготовить|проверить|оплатить|сделать|заказать|сходить|поехать|отвезти|привезти|обсудить|согласовать|записаться|получить|передать|пригласить|провести|организовать|навестить|заехать|поговорить';
+ const actionSeparator=new RegExp('(?:\\s*;\\s*|\\s+(?:и|а\\s+потом|затем|потом)\\s+)(?=(?:'+ACTIONS+')(?=$|[\\s,.!?]))','iu');
+ const names=new Set(('мирон мирону мирона мироном анна анне анну анной анны елена елене елену еленой елены андрей андрею андрея андреем ' +
+  'алексей алексею алексея алексеем роман роману романа романом игорь игорю игоря игорем мария марии марию марией ' +
+  'михаил михаилу михаила михаилом дмитрий дмитрию дмитрия дмитрием сергей сергею сергея сергеем ' +
+  'павел павлу павла павлом иван ивану ивана иваном пётр петру петра петром николай николаю николая николаем ' +
+  'ольга ольге ольгу ольгой ольги наталья наталье наталью натальей натальи татьяна татьяне татьяну татьяной ' +
+  'юлия юлии юлию юлией светлана светлане светлану светланой екатерина екатерине екатерину екатериной ' +
+  'максим максиму максима максимом артём артёму артёма артёмом краснодар краснодаре москва москве сочи').split(' '));
+ const cap=value=>value.charAt(0).toLocaleUpperCase('ru-RU')+value.slice(1);
+ function polishTitle(input){
+  let value=String(input||'').replace(/\s+/g,' ').trim().replace(/^[\s,;.!?:—–-]+|[\s,;.!?:—–-]+$/gu,'');
+  value=value.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'');
+  value=value.replace(/(?:^|[\s,])(?:на|по|улице|ул\.?)\s+([а-яё][а-яё-]{2,})\s*,?\s*(\d+[а-яё]?(?:\/\d+)?)(?=$|[\s,.!?])/giu,(match,street,num)=>{
+   const before=match.slice(0,match.toLocaleLowerCase('ru-RU').indexOf(street.toLocaleLowerCase('ru-RU')));
+   return before+cap(street)+', '+num;
+  });
+  value=value.replace(/\p{L}+/gu,word=>names.has(word.toLocaleLowerCase('ru-RU'))?cap(word):word);
+  value=value.replace(/\s+([,;:!?])/g,'$1').replace(/([,;:!?])(?=\p{L})/gu,'$1 ');
+  return cap(value).slice(0,140);
+ }
+ function plan(input,now=new Date()){
+  if(typeof input!=='string'||!input.trim()||input.length>700)return null;
+  const parsed=parse(input,now);
+  let body=parsed?.title||input.replace(/\s+/g,' ').trim()
+   .replace(/^(?:(?:сэйви|сейви|сэй|сей)[,!:.,\s]+)?(?:пожалуйста[,]?\s+)?/iu,'')
+   .replace(/^(?:напомни(?:те)?(?:\s+мне)?|запланируй|запиши|назначь|создай|добавь)\s+/iu,'');
+  body=body.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'');
+  let leadMinutes=0;
+  const lead=body.match(/^за\s+(час|один\s+час|1\s+час|полчаса|30\s+минут|15\s+минут)(?=$|[\s,.!?])/iu);
+  if(lead){leadMinutes=/15/u.test(lead[1])?15:/полчаса|30/u.test(lead[1])?30:60;body=body.slice(lead[0].length).trim()}
+  const parts=body.split(actionSeparator).map(polishTitle).filter(Boolean);
+  if(!parts.length)return null;
+  const unique=[...new Map(parts.map(value=>[value.toLocaleLowerCase('ru-RU'),value])).values()];
+  const titles=unique.length>4?[polishTitle(body)]:unique;
+  return {items:titles.map(title=>({title})),date:parsed?.date||'',time:parsed?.time||'',leadMinutes};
+ }
+ if(typeof module!=='undefined'&&module.exports)module.exports={parse,signals,plan,polishTitle};
+ if(root){root.SEYVEO_TASK_SMART_NL=parse;root.SEYVEO_TASK_SMART_SIGNALS=signals;root.SEYVEO_TASK_SMART_PLAN=plan;}
 })(typeof window!=='undefined'?window:null);
