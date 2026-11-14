@@ -31,13 +31,16 @@
 }
 #homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-art svg{
   opacity:.94!important;
-  stroke-width:1.55!important;
+  stroke-width:1.7!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-art{
+  color:#252629!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-item[data-lm-kind="contract"] .lm-inline-art{
-  color:#536D7B!important;
+  color:#252629!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary .lm-inline-item[data-lm-kind="mail"] .lm-inline-art{
-  color:#666D83!important;
+  color:#252629!important;
 }
 
 

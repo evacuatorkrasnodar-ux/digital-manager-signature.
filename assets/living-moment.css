@@ -850,7 +850,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  box-sizing:border-box;width:100%;max-width:100%;
 }
 
-/* One soft category-tinted glow on the featured icon only, never on the rail. */
+/* Category tone for the dark theme; white-theme icons use a unified ink. */
 #seyveoLivingMoment .lm-field .lm-hero-art{--lm-soft-glow:#a9dac7}
 #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-hero-art{--lm-soft-glow:#b8d4e8}
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-hero-art,
@@ -861,6 +861,11 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  color:var(--lm-soft-glow)!important;
  stroke:currentColor!important;
  filter:none;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-hero-art > .lm-art-svg{
+ color:#252629!important;
+ stroke-width:1.6;
+ opacity:1;
 }
 #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:first-child:not([hidden]){
  font-weight:470;
@@ -1050,6 +1055,13 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 
 /* Match the dock against the viewport, not the narrower Home content column. */
 #homePage #seyveoLivingMoment{
+ /* Scope the larger, regular-weight Apple typography to the Home queue. */
+ --sv-master-title-size:16.5px;
+ --sv-master-title-weight:530;
+ --sv-master-description-size:14px;
+ --sv-master-queue-title-size:15px;
+ --sv-master-queue-description-size:14px;
+ --sv-master-queue-leading:1.46;
  box-sizing:border-box;
  width:min(430px,calc(100vw - 14px));
  max-width:none;
@@ -1062,16 +1074,16 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
    Optical material belongs to the main control, never a second card panel.
    Keep the existing queue, reply buttons, orb, dock and reveal mechanics. */
 #homePage #seyveoLivingMoment .lm-primary-title{
- font-size:15.5px;line-height:1.34;font-weight:560;letter-spacing:-.025em;
+ font-size:16.5px;line-height:1.34;font-weight:530;letter-spacing:-.025em;
 }
 #homePage #seyveoLivingMoment .lm-primary-subtitle{
- font-size:13px;line-height:1.48;
+ font-size:14px;line-height:1.48;
 }
 #homePage #seyveoLivingMoment .lm-inline-title{
- font-size:13.5px;line-height:1.38;font-weight:540;letter-spacing:-.016em;
+ font-size:15px;line-height:1.38;font-weight:510;letter-spacing:-.016em;
 }
 #homePage #seyveoLivingMoment .lm-inline-note{
- font-size:12.5px;line-height:1.48;
+ font-size:14px;line-height:1.46;
 }
 #homePage #seyveoLivingMoment .lm-mail-content p{
  font-size:13px;line-height:1.52;
@@ -1179,13 +1191,13 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  margin-bottom:7px;min-height:15px;padding:0 2px;
 }
 #homePage #seyveoLivingMoment .lm-field[data-lm-mode="preview"] .lm-field-eyebrow{
- color:#777C85;font-size:10px;letter-spacing:.01em;
+ color:#565A62;font-size:11.5px;font-weight:510;letter-spacing:.01em;
 }
 #homePage #seyveoLivingMoment .lm-field-top .sv-lm-event-clock{
  margin-left:auto;color:#7E848C;font-size:12px;font-weight:470;
  font-variant-numeric:tabular-nums;letter-spacing:0;white-space:nowrap;
 }
 #homePage #seyveoLivingMoment .sv-lm-sample-time{
- display:block;color:#8A8F97;font-size:11px;line-height:1.3;
+ display:block;color:#737780;font-size:11.5px;line-height:1.3;
  font-variant-numeric:tabular-nums;
 }
