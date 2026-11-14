@@ -1,0 +1,34 @@
+/* SEYVEO Sayvi — original pearl sphere artwork only.
+   The approved dock shell, 50px touch target, spacing and navigation stay intact. */
+#assistantButton > .sv-sayvi-dock-sphere {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+:root[data-theme="light"] :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #assistantButton.sv-sayvi-sphere-ready > .button-art {
+  opacity: 0 !important;
+}
+
+:root[data-theme="light"] :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #assistantButton.sv-sayvi-sphere-ready > .sv-sayvi-dock-sphere {
+  display: block !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: 42px !important;
+  height: 42px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  opacity: 1 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  filter: drop-shadow(0 1px 2px rgba(57,115,158,.13)) !important;
+  pointer-events: none !important;
+}
