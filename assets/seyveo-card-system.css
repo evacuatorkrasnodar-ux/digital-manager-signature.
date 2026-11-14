@@ -893,11 +893,11 @@
  .sv-card-system--rendered .sv-card-actions{column-gap:9px!important}
 }
 
-/* SEYVEO CARD WORKSHOP · approved Sayvi action standard · 12 Nov 2026.
+/* SEYVEO CARD WORKSHOP · Home and Studio Glass Regular controls.
  * A single shared contract for Card Engine, Studio previews and future cards.
- * White theme: three 50px circular touch surfaces; Sayvi has only a precise
- * 1.25px black ring, an unfilled center and its ORIGINAL 27px signature glyph.
- * The Edit/Navigate actions remain softly tinted. Do not affect the dock.
+ * White theme: three 50px circular touch surfaces with the same translucent
+ * material and thin rim; Sayvi retains a slightly stronger priority outline.
+ * No raised exterior shadow and no nested decorative lens. Do not affect the dock.
  * Dark theme retains its existing graphite treatment pending separate approval.
  * The final Send / Save / Confirm button remains a separate explicit action.
  */
@@ -905,6 +905,10 @@
  --sv-card-icon-touch:48px;
  --sv-card-icon-radius:14px;
  --sv-card-action-neutral-bg:rgba(169,180,192,.12);
+ --sv-card-action-outline:0 solid transparent;
+ --sv-card-action-shadow:none;
+ --sv-card-action-blur:none;
+ --sv-card-icon-stroke:1.8;
  --sv-card-sayvi-outline:0 solid transparent;
  --sv-card-sayvi-bg:#38383A;
  --sv-card-sayvi-ink:#F6F7F8;
@@ -915,18 +919,26 @@
 #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"]{
  --sv-card-icon-touch:50px;
  --sv-card-icon-radius:50%;
- --sv-card-action-neutral-bg:#F0F1F3;
- --sv-card-sayvi-outline:1.25px solid #0B0B0D;
- --sv-card-sayvi-bg:transparent;
+ --sv-card-action-neutral-bg:rgba(238,240,243,.70);
+ --sv-card-action-outline:1px solid rgba(120,130,144,.29);
+ --sv-card-action-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+ --sv-card-action-blur:blur(12px) saturate(128%);
+ --sv-card-icon-stroke:1.7;
+ --sv-card-sayvi-outline:1px solid rgba(36,38,42,.52);
+ --sv-card-sayvi-bg:rgba(238,240,243,.70);
  --sv-card-sayvi-ink:#0B0B0D;
  --sv-card-sayvi-glyph:27px;
- --sv-card-sayvi-stroke:1.5;
+ --sv-card-sayvi-stroke:1.7;
 }
 /* Preview switch overrides the real app theme without changing preferences. */
 #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="dark"]{
  --sv-card-icon-touch:48px;
  --sv-card-icon-radius:14px;
  --sv-card-action-neutral-bg:rgba(169,180,192,.12);
+ --sv-card-action-outline:0 solid transparent;
+ --sv-card-action-shadow:none;
+ --sv-card-action-blur:none;
+ --sv-card-icon-stroke:1.8;
  --sv-card-sayvi-outline:0 solid transparent;
  --sv-card-sayvi-bg:#38383A;
  --sv-card-sayvi-ink:#F6F7F8;
@@ -943,14 +955,16 @@
  width:var(--sv-card-icon-touch)!important;min-width:var(--sv-card-icon-touch)!important;
  height:var(--sv-card-icon-touch)!important;min-height:var(--sv-card-icon-touch)!important;
  margin:0!important;padding:0!important;gap:0!important;
- border:0!important;border-radius:var(--sv-card-icon-radius)!important;
+ border:var(--sv-card-action-outline)!important;border-radius:var(--sv-card-icon-radius)!important;
  background:var(--sv-card-action-neutral-bg)!important;
- background-image:none!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ background-image:none!important;box-shadow:var(--sv-card-action-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-card-action-blur)!important;backdrop-filter:var(--sv-card-action-blur)!important;
  color:var(--sv-card-ink,var(--text))!important;
  justify-content:center!important;align-items:center!important;
  flex-direction:row!important;
  -webkit-tap-highlight-color:transparent;
+ transition:transform 220ms cubic-bezier(.22,1,.36,1),opacity 180ms ease,
+  background-color 180ms ease,border-color 180ms ease;
 }
 .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
  border:var(--sv-card-sayvi-outline)!important;
@@ -968,7 +982,7 @@
 .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button .sv-card-symbol{
  display:block!important;
  width:23px!important;height:23px!important;flex:0 0 23px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-card-icon-stroke)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
  opacity:1!important;filter:none!important;
 }
@@ -986,7 +1000,7 @@
  fill:var(--sv-card-sayvi-ink)!important;stroke:none!important;
 }
 .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:active{
- opacity:.82!important;transform:scale(.965);
+ opacity:.92!important;transform:scale(.965);
 }
 .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:focus-visible{
  outline:2px solid currentColor!important;outline-offset:3px!important;
@@ -994,6 +1008,14 @@
 @media(prefers-reduced-motion:reduce){
  .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button{
   transition:none!important;
+ }
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"],
+ #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"]{
+  --sv-card-action-neutral-bg:#F0F1F3;
+  --sv-card-sayvi-bg:#F0F1F3;
+  --sv-card-action-blur:none;
  }
 }
 
