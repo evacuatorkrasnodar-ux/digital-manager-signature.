@@ -81,10 +81,8 @@
 
 /* A real flex child: scrolling cannot expose a fixed white rectangle. */
 #svAllTasksFooter{
- box-sizing:border-box;display:block;flex:0 0 auto;
- width:100%;min-height:0;margin:0;
- padding:0 0 max(8px,calc(env(safe-area-inset-bottom,0px) - 14px));
- border:0;background:transparent;box-shadow:none;isolation:auto;
+ /* The footer itself must paint absolutely nothing: only its capsule exists. */
+ display:contents;
 }
 #svAllTasksFooter .sv-tool-action-row{
  box-sizing:border-box;display:grid;align-items:center;
