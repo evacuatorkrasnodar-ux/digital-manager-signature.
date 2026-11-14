@@ -69,12 +69,14 @@
       todayCard.append(label,button);
       document.getElementById('stage')?.after(todayCard);
     }
-    todayCard.hidden=!!hasRealCard;
     const item=nextAgenda();
+    // If the calendar has not exposed a stored upcoming item, leave Home's
+    // real message/decision feed alone: never imply the user has no plans.
+    todayCard.hidden=!!hasRealCard||!item;
     const title=todayCard.querySelector('.sv-sayvi-handoff-agenda-title');
     const meta=todayCard.querySelector('.sv-sayvi-handoff-agenda-meta');
-    title.textContent=item?item.title:'Сегодня всё спокойно';
-    if(!item){meta.textContent='Открыть мои дела';return;}
+    title.textContent=item?.title||'';
+    if(!item){meta.textContent='';return;}
     const date=item.date?new Date(item.date+'T12:00:00'):null;
     const isToday=date&&item.date===new Date().toLocaleDateString('sv-SE');
     const label=isToday?'Сегодня':date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(date):'Без даты';
@@ -125,20 +127,18 @@
     visual.src=art.currentSrc||art.src;
     visual.alt='';
     visual.decoding='async';
-    visual.style.filter=getComputedStyle(art).filter;
+    const sourceFilter=getComputedStyle(art).filter;
+    visual.style.filter=(sourceFilter==='none'?'':sourceFilter+' ')+'contrast(1.08) saturate(1.05)';
     flight.appendChild(visual);
     document.body.appendChild(flight);
     root.classList.add('sv-sayvi-handoff-inflight');
 
-    // A gentle lift and a long, silent glide. Only compositor-friendly
-    // transform/opacity animate, so older iPhones do not need a shader pass.
+    // A single uninterrupted, compositor-friendly glide. The pearl underneath
+    // the SVG prevents transparent details from vanishing against white Home.
     animation=flight.animate([
       {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
-      {offset:.20,transform:`translate3d(${dx*.055}px,${dy*-.06}px,0) scale(.93)`,opacity:1},
-      {offset:.57,transform:`translate3d(${dx*.47}px,${dy*.39}px,0) scale(.53)`,opacity:1},
-      {offset:.88,transform:`translate3d(${dx*.91}px,${dy*.88}px,0) scale(${finalScale*1.22})`,opacity:1},
       {offset:1,transform:`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`,opacity:0}
-    ],{duration:1180,easing:'cubic-bezier(.2,.74,.22,1)',fill:'forwards'});
+    ],{duration:990,easing:'cubic-bezier(.42,0,.18,1)',fill:'forwards'});
     animation.finished.then(()=>finish({openTasks:true})).catch(()=>{});
   }
 
