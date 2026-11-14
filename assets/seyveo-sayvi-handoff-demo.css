@@ -72,7 +72,7 @@
   padding:8px 0 15px !important;
   justify-content:flex-start !important;
   flex:0 0 auto !important;
-  transition:min-height .64s ease,padding .64s ease !important;
+  transition:none !important;
 }
 :root.sv-sayvi-handoff-docked #homePage #stage .message {
   min-height:0 !important;
@@ -86,6 +86,19 @@
 }
 :root.sv-sayvi-handoff-docked #homePage :is(#dynamic,#seyveoLivingMoment,#svSmartStartHome){
   transition:opacity .56s cubic-bezier(.2,.8,.2,1) !important;
+}
+/* The large layout collapses behind an invisible frame; cards then reveal at
+   their FINAL coordinates, instead of flying upward half a screen. */
+:root.sv-cinema-revealing #homePage #stage > .message,
+:root.sv-cinema-revealing #homePage :is(#dynamic,#seyveoLivingMoment,#svSmartStartHome){
+  opacity:0 !important;
+}
+:root.sv-cinema-card-reveal #homePage :is(#seyveoLivingMoment,#dynamic):not([hidden]){
+  animation:sv-cinema-content-in .76s cubic-bezier(.2,.82,.19,1) both;
+}
+@keyframes sv-cinema-content-in{
+  0%,8%{opacity:0;transform:translate3d(0,13px,0)}
+  100%{opacity:1;transform:translate3d(0,0,0)}
 }
 
 /* Real tasks only: never invent a card just to fill the opening scene. */
@@ -248,4 +261,5 @@ body > #orb.sv-sayvi-handoff-flight {
   :root.sv-sayvi-handoff-demo #assistantButton .sv-sayvi-velvet-sphere{transition:none!important}
   :root.sv-sayvi-handoff-arrived #assistantButton .sv-sayvi-velvet-glass-glow{animation:none!important}
   .sv-sayvi-handoff-today{animation:none!important}
+  :root.sv-cinema-card-reveal #homePage :is(#seyveoLivingMoment,#dynamic){animation:none!important}
 }
