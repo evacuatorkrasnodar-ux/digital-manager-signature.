@@ -38,10 +38,10 @@
  box-sizing:border-box!important;
  top:0!important;bottom:0!important;
  height:60px!important;
- /* Same material constants as the Health dock (not merely similar). */
+ /* White-theme dock: a lighter neutral glass wash on both original panes. */
  border:1.75px solid rgba(255,255,255,.94)!important;
  border-radius:999px!important;
- background:rgba(190,193,202,.43)!important;
+ background:rgba(190,193,202,.28)!important;
  -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
  backdrop-filter:blur(12px) saturate(108%)!important;
  box-shadow:0 0 0 .7px rgba(164,170,184,.30),
