@@ -1137,6 +1137,14 @@ function syncTaskSaveState(){
  taskSaveButton.title=filled?(editingTaskId?'Сохранить изменения':'Сохранить дело'):'Сначала напишите название дела';
 }
 let svTaskCategoryTouched=false,svTaskTypeTouched=false;
+const svTaskListChoice=$('svNewTaskListChoice');
+function svSyncTaskListChoice(){
+ if(svTaskListChoice)svTaskListChoice.value=form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';
+}
+svTaskListChoice?.addEventListener('change',()=>{
+ const choice=form.querySelector('input[name="personalTaskCategory"][value="'+svTaskListChoice.value+'"]');
+ if(choice){choice.checked=true;svTaskCategoryTouched=true;}
+});
 form.querySelectorAll('input[name="personalTaskType"]').forEach(choice=>choice.addEventListener('change',()=>{svTaskTypeTouched=true;}));
 form.querySelectorAll('input[name="personalTaskCategory"]').forEach(choice=>choice.addEventListener('change',()=>{svTaskCategoryTouched=true;}));
 input.addEventListener('input',()=>{
@@ -1146,6 +1154,7 @@ input.addEventListener('input',()=>{
   const category=svSuggestTaskCategory(input.value);
   const choice=form.querySelector('input[name="personalTaskCategory"][value="'+category+'"]');
   if(choice)choice.checked=true;
+  svSyncTaskListChoice();
  }
  if(!svTaskTypeTouched){
   const type=form.querySelector('input[name="personalTaskType"][value="'+svInferEntryType(input.value)+'"]');
@@ -1159,6 +1168,7 @@ function openDialog(){
  form.reset();
  const newCategory=form.querySelector('input[name="personalTaskCategory"][value="personal"]');
  if(newCategory)newCategory.checked=true;
+ svSyncTaskListChoice();
  date.value=(!$('tasksPage')?.hidden&&svTaskSelectedDate)?svTaskSelectedDate:svTaskISO(new Date());
  dialog.dispatchEvent(new Event('sv-task-editor-sync'));syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
@@ -1177,6 +1187,7 @@ function put(e){
   record.url=$('personalTaskURL')?.value.trim().slice(0,500)||'';
   record.repeat=$('personalTaskRepeat')?.value||'none';
   record.priority=$('personalTaskPriority')?.value||'none';
+  record.showOnHome=Boolean($('personalTaskShowOnHome')?.checked);
   record.category=form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';
   record.entryType=form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task';
   if(!save(all)){$('personalTaskStatus').textContent='Не удалось сохранить изменения.';return}
@@ -1191,6 +1202,7 @@ function put(e){
  entryType:form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task',
  notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',
  repeat:$('personalTaskRepeat')?.value||'none',priority:$('personalTaskPriority')?.value||'none',
+ showOnHome:Boolean($('personalTaskShowOnHome')?.checked),
  done:false,createdAt:new Date().toISOString(),doneAt:'',
  ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})}];
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
@@ -1278,6 +1290,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  input.value=task.title;syncTaskSaveState();
  const categoryChoice=form.querySelector('input[name="personalTaskCategory"][value="'+svTaskCategory(task)+'"]');
  if(categoryChoice)categoryChoice.checked=true;
+ svSyncTaskListChoice();
  const typeChoice=form.querySelector('input[name="personalTaskType"][value="'+svTaskEntryType(task)+'"]');
  if(typeChoice)typeChoice.checked=true;
  date.value=task.due;
@@ -1285,6 +1298,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  if($('personalTaskURL'))$('personalTaskURL').value=task.url||'';
  if($('personalTaskRepeat'))$('personalTaskRepeat').value=task.repeat||'none';
  if($('personalTaskPriority'))$('personalTaskPriority').value=task.priority||'none';
+ if($('personalTaskShowOnHome'))$('personalTaskShowOnHome').checked=task.showOnHome===undefined?true:task.showOnHome===true;
  if($('personalTaskTime'))$('personalTaskTime').value=task.time||'';
  dialog.dispatchEvent(new Event('sv-task-editor-sync'));
  syncDueDateDisplay();
