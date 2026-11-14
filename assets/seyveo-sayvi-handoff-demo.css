@@ -1,7 +1,11 @@
 /* SEYVEO · one Sayvi, two scales. Opt-in launch study only (?sayvi-handoff=1).
    The approved dock shell, navigation tracks and other screens are untouched. */
-:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked)
-  #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-velvet-sphere {
+/* Match the dock's high-specificity light-theme rule, otherwise its
+   !important opacity can reveal a second sphere during the flight. */
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked)[data-theme="light"] :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-velvet-sphere {
   opacity:0 !important;
 }
 :root.sv-sayvi-handoff-demo
