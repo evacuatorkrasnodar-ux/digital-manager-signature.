@@ -44,6 +44,48 @@
   display:none !important;
 }
 
+/* Only the opt-in study gets a real-data, one-card Home destination.
+   It does not mirror, edit or fabricate tasks. */
+.sv-sayvi-handoff-today{display:none}
+:root.sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]){
+  display:block;
+  margin:14px 0 6px;
+  animation:sv-sayvi-handoff-card-in .58s cubic-bezier(.18,.82,.2,1) both;
+}
+.sv-sayvi-handoff-today-label{
+  margin:0 0 9px 4px;
+  font-size:12px;
+  letter-spacing:.045em;
+  font-weight:560;
+  color:#7e8894;
+}
+.sv-sayvi-handoff-agenda-card{
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  width:100%;
+  min-height:88px;
+  padding:16px 17px;
+  border:1px solid rgba(188,201,212,.37);
+  border-radius:19px;
+  background:#fff;
+  color:#14191e;
+  text-align:left;
+  box-shadow:0 3px 15px rgba(79,107,128,.035);
+}
+.sv-sayvi-handoff-agenda-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
+.sv-sayvi-handoff-agenda-title{font-size:16px;font-weight:560;letter-spacing:-.018em;line-height:1.35;overflow-wrap:anywhere}
+.sv-sayvi-handoff-agenda-meta{font-size:12px;color:#84909b;font-weight:460}
+.sv-sayvi-handoff-agenda-arrow{display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border-radius:50%;background:#f1f4f7;color:#45505c}
+.sv-sayvi-handoff-agenda-arrow svg{display:block;width:17px;height:17px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+@keyframes sv-sayvi-handoff-card-in{
+  from{opacity:0;transform:translate3d(0,19px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+:root[data-theme="dark"] .sv-sayvi-handoff-agenda-card{background:#262c32;color:#f2f6f8;border-color:rgba(200,218,232,.14)}
+:root[data-theme="dark"] .sv-sayvi-handoff-agenda-arrow{background:#343b43;color:#dbe4e9}
+
 /* The flight is one visual, not a second active assistant. */
 .sv-sayvi-handoff-flight {
   position:fixed;
@@ -99,4 +141,5 @@
   :root.sv-sayvi-handoff-docked #homePage :is(#orbCluster,#stage){transition:none!important}
   :root.sv-sayvi-handoff-demo #assistantButton .sv-sayvi-velvet-sphere{transition:none!important}
   :root.sv-sayvi-handoff-arrived #assistantButton .sv-sayvi-velvet-glass-glow{animation:none!important}
+  .sv-sayvi-handoff-today{animation:none!important}
 }
