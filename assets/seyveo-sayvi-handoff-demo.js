@@ -8,6 +8,8 @@
   const replay=params.get('sayvi-intro')==='1'||params.get('sayvi-handoff')==='1';
   const noIntro=params.get('sayvi-intro')==='0';
   const speed=params.get('sayvi-slow')==='1'?1.8:1;
+  // Deliberate, local-only voice review. The published PWA remains silent.
+  const localVoicePreview=params.get('sayvi-voice')==='1'&&location.origin==='http://127.0.0.1:8790';
   const dailyKey='seyveo-sayvi-cinema-last-day-v4';
   const currentDay=()=>{
     const d=new Date();
@@ -40,45 +42,59 @@
   let greeting=null;
   let greetingDelay=0;
   let greetingTicker=0;
+  let startGreeting=()=>{};
+  let welcomeSpeech='';
   if(showCinema&&message){
     let owner='';
     try{
       const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
       owner=typeof profile?.name==='string'?profile.name.trim().split(/\s+/)[0].slice(0,32):'';
     }catch{}
-    const greetingLines=[`Привет${owner ? ', '+owner : ''}!`,'Я Сэйви.','Рада тебя видеть!'];
-    const writtenHello=greetingLines.join(' ');
+    const greetingLines=[
+      {text:`Привет${owner ? ', '+owner : ''}!`,kind:'welcome',type:79,hold:920,erase:47},
+      {text:'Я Сэйви.',kind:'name',type:89,hold:1000,erase:55},
+      {text:'Рада тебя видеть!',kind:'wish',type:81}
+    ];
+    welcomeSpeech=greetingLines.map(line=>line.text).join(' ');
     greeting=document.createElement('p');
     greeting.className='sv-cinema-written-hello';
-    greeting.setAttribute('aria-label',writtenHello);
+    greeting.setAttribute('aria-label',welcomeSpeech);
     greeting.setAttribute('aria-live','off');
-    const lineElements=greetingLines.map((line,index)=>{
-      const span=document.createElement('span');
-      span.className='sv-cinema-written-line sv-cinema-written-line--'+['welcome','name','wish'][index];
-      greeting.appendChild(span);
-      return span;
-    });
+    const writing=document.createElement('span');
+    writing.className='sv-cinema-written-line sv-cinema-written-line--welcome';
+    greeting.appendChild(writing);
     message.appendChild(greeting);
     root.classList.add('sv-cinema-greeting-active');
-    greetingDelay=setTimeout(()=>{
+    startGreeting=()=>{greetingDelay=setTimeout(()=>{
       if(done)return;
       greeting.classList.add('sv-cinema-written-hello--visible');
-      let cursor=0;
-      // Short, legible typing; no audio and no extra overlays or layout shifts.
-      greetingTicker=setInterval(()=>{
-        if(done||!greeting){clearInterval(greetingTicker);return;}
-        cursor=Math.min(writtenHello.length,cursor+1);
-        let offset=0;
-        greetingLines.forEach((line,index)=>{
-          lineElements[index].textContent=line.slice(0,Math.max(0,Math.min(line.length,cursor-offset)));
-          offset+=line.length+1;
-        });
-        if(cursor===writtenHello.length){
-          clearInterval(greetingTicker);
-          greeting.setAttribute('aria-live','polite');
-        }
-      },65);
-    },1250);
+      // Three distinct thoughts, never three lines at once: Sayvi writes,
+      // pauses and gently erases the first two before signing the final one.
+      const playPhrase=index=>{
+        if(done||!greeting)return;
+        const phrase=greetingLines[index];
+        writing.className='sv-cinema-written-line sv-cinema-written-line--'+phrase.kind;
+        writing.textContent='';
+        greeting.setAttribute('aria-label',phrase.text);
+        let cursor=0;
+        const type=()=>{
+          if(done||!greeting)return;
+          cursor=Math.min(phrase.text.length,cursor+1);
+          writing.textContent=phrase.text.slice(0,cursor);
+          if(cursor<phrase.text.length)greetingTicker=setTimeout(type,phrase.type);
+          else if(index<greetingLines.length-1)greetingTicker=setTimeout(erase,phrase.hold);
+        };
+        const erase=()=>{
+          if(done||!greeting)return;
+          cursor=Math.max(0,cursor-1);
+          writing.textContent=phrase.text.slice(0,cursor);
+          if(cursor>0)greetingTicker=setTimeout(erase,phrase.erase);
+          else greetingTicker=setTimeout(()=>playPhrase(index+1),285);
+        };
+        greetingTicker=setTimeout(type,phrase.type);
+      };
+      playPhrase(0);
+    },1040);};
   }
   // The HTML fallback is dark. Synchronize the already-selected white theme
   // before the first cinematic frame to avoid a dark-to-white visual flash.
@@ -98,6 +114,11 @@
   let dockMetrics=null;
   let dockStyleBefore=null;
   let todayCard=null;
+  let voiceButton=null;
+  let voiceDownload=null;
+  let voiceRecordingUrl=null;
+  let voiceContext=null;
+  let voiceSource=null;
   const orbHome=orb.parentNode;
   const orbNext=orb.nextSibling;
   let originalOrbStyle=null;
@@ -211,8 +232,12 @@
   function finish({spark=false}={}){
     if(done)return;
     done=true;
+    voiceButton?.remove();
+    voiceButton=null;
+    if(voiceDownload)voiceDownload.hidden=false;
+    if(voiceSource){try{voiceSource.stop();}catch{}voiceSource=null;}
     clearTimeout(greetingDelay);
-    clearInterval(greetingTicker);
+    clearTimeout(greetingTicker);
     greeting?.remove();
     greeting=null;
     root.classList.remove('sv-cinema-greeting-active');
@@ -293,15 +318,93 @@
     });
   }
 
+  function runOpening({restartArtwork=false}={}){
+    if(done)return;
+    prepareDock();
+    root.classList.remove('sv-cinema-boot');
+    // Local speech synthesis can take longer than the SVG's first playback.
+    // Restart its clock so the approved voice and the artwork begin together.
+    if(restartArtwork&&heroArtwork){
+      const imagePath=(heroArtwork.getAttribute('src')||'').split('?')[0];
+      if(imagePath)heroArtwork.setAttribute('src',imagePath+'?cinema='+Date.now());
+    }
+    startGreeting();
+    // Let the real 9.5-second signature complete before the 4.2-second flight.
+    introTimer=setTimeout(begin,10400);
+  }
+
+  function showLocalVoicePreview(){
+    // The private voice server binds to this exact loopback origin and checks
+    // Origin on every request. Never attempt public-site-to-localhost access.
+    voiceButton=document.createElement('button');
+    voiceButton.type='button';
+    voiceButton.className='sv-cinema-local-voice';
+    voiceButton.textContent='▶ Смотреть с голосом Сэйви';
+    voiceButton.setAttribute('aria-label','Воспроизвести заставку с фирменным голосом Сэйви');
+    document.body.appendChild(voiceButton);
+    voiceButton.addEventListener('click',async()=>{
+      if(done||!voiceButton||voiceButton.disabled)return;
+      if(voiceButton.dataset.fallback==='silent'){
+        voiceButton.remove();voiceButton=null;
+        runOpening();return;
+      }
+      const control=voiceButton;
+      control.disabled=true;
+      control.textContent='Сэйви готовит голос…';
+      try{
+        const Engine=window.AudioContext||window.webkitAudioContext;
+        if(!Engine)throw Error('Браузер не поддерживает воспроизведение звука.');
+        // Unlock while the user-initiated click is still active (iOS/Safari).
+        voiceContext=new Engine();
+        await voiceContext.resume();
+        const response=await fetch('/api/seyveo-private-tts',{
+          method:'POST',credentials:'same-origin',
+          headers:{'content-type':'application/json'},
+          body:JSON.stringify({text:welcomeSpeech})
+        });
+        if(!response.ok){
+          const detail=await response.json().catch(()=>({}));
+          throw Error(detail.error||'Голосовой движок не ответил: '+response.status);
+        }
+        const bytes=await response.arrayBuffer();
+        const decoded=await voiceContext.decodeAudioData(bytes.slice(0));
+        if(done)return;
+        // Only the synthesized greeting is downloadable, never the private
+        // source reference used by the local TTS engine.
+        voiceRecordingUrl=URL.createObjectURL(new Blob([bytes],{type:'audio/wav'}));
+        voiceDownload=document.createElement('a');
+        voiceDownload.className='sv-cinema-local-voice-download';
+        voiceDownload.href=voiceRecordingUrl;
+        voiceDownload.download='SEYVEO-Sayvi-welcome.wav';
+        voiceDownload.textContent='↓ Скачать запись Сэйви';
+        voiceDownload.hidden=true;
+        document.body.appendChild(voiceDownload);
+        control.remove();voiceButton=null;
+        voiceSource=voiceContext.createBufferSource();
+        voiceSource.buffer=decoded;
+        voiceSource.connect(voiceContext.destination);
+        voiceSource.start(voiceContext.currentTime+1.04);
+        runOpening({restartArtwork:true});
+      }catch(error){
+        console.warn('[SEYVEO Cinema] Фирменный голос недоступен:',error?.message||error);
+        if(!done&&voiceButton===control){
+          control.disabled=false;
+          control.dataset.fallback='silent';
+          control.textContent='Голос недоступен · Смотреть без звука';
+          control.title=String(error?.message||error).slice(0,180);
+        }
+      }
+    });
+  }
+
   // One opening per LOCAL calendar day; route changes never replay the film.
   const launch=()=>{
     if(!showCinema||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
-    prepareDock();
-    root.classList.remove('sv-cinema-boot');
-    // The real SEYVEO pearl-signature animation lasts 9.5s. Let the complete
-    // artwork play, plus one quiet beat, before Sayvi starts her journey.
-    // Deliberately independent of the flight's slow-motion test multiplier.
-    introTimer=setTimeout(begin,10400);
+    if(localVoicePreview){
+      prepareDock();
+      root.classList.remove('sv-cinema-boot');
+      showLocalVoicePreview();
+    }else runOpening();
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
@@ -310,7 +413,11 @@
     if(!done&&location.hash&&location.hash!=='#home')finish();
     if(location.hash&&location.hash!=='#home')root.classList.remove('sv-cinema-stagger-enter');
   });
-  window.addEventListener('pagehide',()=>{if(!done)finish();});
+  window.addEventListener('pagehide',()=>{
+    if(!done)finish();
+    if(voiceRecordingUrl)URL.revokeObjectURL(voiceRecordingUrl);
+    voiceContext?.close().catch(()=>{});
+  });
   let lastViewportWidth=window.innerWidth;
   window.addEventListener('resize',()=>{
     const widthChange=Math.abs(window.innerWidth-lastViewportWidth);
@@ -325,6 +432,7 @@
   let skipClickUntil=0;
   document.addEventListener('pointerdown',event=>{
     if(done)return;
+    if(localVoicePreview&&event.target.closest('.sv-cinema-local-voice'))return;
     event.preventDefault();
     event.stopImmediatePropagation();
     skipClickUntil=Date.now()+650;

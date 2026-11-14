@@ -84,6 +84,7 @@
   display:flex;
   flex-direction:column;
   align-items:center;
+  justify-content:center;
   gap:5px;
   width:min(390px,calc(100vw - 42px));
   min-height:112px;
@@ -126,6 +127,43 @@
 :root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello--visible{
   opacity:1;
   transform:translate3d(0,0,0);
+}
+/* Explicit review switch on the trusted LOCAL voice server only. The public
+   opening never shows this control and never auto-plays the microphone voice. */
+.sv-cinema-local-voice,.sv-cinema-local-voice-download{
+  position:fixed;
+  z-index:2147483003;
+  left:50%;
+  bottom:calc(96px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  max-width:calc(100vw - 36px);
+  padding:10px 20px;
+  border:1px solid rgba(113,133,149,.28);
+  border-radius:999px;
+  background:rgba(247,249,251,.94);
+  color:#252b30;
+  box-shadow:0 3px 14px rgba(31,53,70,.075);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  font:500 14px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  letter-spacing:-.012em;
+  text-decoration:none;
+  text-align:center;
+  cursor:pointer;
+}
+.sv-cinema-local-voice:disabled{opacity:.7;cursor:wait}
+.sv-cinema-local-voice-download{
+  left:auto;right:16px;bottom:calc(85px + env(safe-area-inset-bottom,0px));
+  transform:none;font-size:12px;min-height:40px;padding:9px 13px;
+}
+.sv-cinema-local-voice-download[hidden]{display:none!important}
+:root[data-theme="dark"] .sv-cinema-local-voice,
+:root[data-theme="dark"] .sv-cinema-local-voice-download{
+  background:rgba(54,58,62,.94);color:#f8fafb;border-color:rgba(206,218,225,.20);
 }
 :root.sv-sayvi-handoff-inflight #homePage #stage > .message{opacity:0 !important}
 :root.sv-sayvi-handoff-inflight #homePage #stage {
