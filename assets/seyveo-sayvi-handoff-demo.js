@@ -34,6 +34,41 @@
     root.classList.remove('sv-sayvi-handoff-demo','sv-cinema-boot');
     return;
   }
+  // The opening is a quiet, personalized written introduction. The ordinary
+  // Home greeting (and its live task context) returns after the handoff.
+  const message=home.querySelector('#stage > .message');
+  let greeting=null;
+  let greetingDelay=0;
+  let greetingTicker=0;
+  if(showCinema&&message){
+    let owner='';
+    try{
+      const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
+      owner=typeof profile?.name==='string'?profile.name.trim().split(/\s+/)[0].slice(0,32):'';
+    }catch{}
+    const writtenHello=`Привет${owner?', '+owner:''}. Я Сэйви, и я всегда рядом.`;
+    greeting=document.createElement('p');
+    greeting.className='sv-cinema-written-hello';
+    greeting.setAttribute('aria-label',writtenHello);
+    greeting.setAttribute('aria-live','off');
+    message.appendChild(greeting);
+    root.classList.add('sv-cinema-greeting-active');
+    greetingDelay=setTimeout(()=>{
+      if(done)return;
+      greeting.classList.add('sv-cinema-written-hello--visible');
+      let cursor=0;
+      // Short, legible typing; no audio and no extra overlays or layout shifts.
+      greetingTicker=setInterval(()=>{
+        if(done||!greeting){clearInterval(greetingTicker);return;}
+        cursor=Math.min(writtenHello.length,cursor+1);
+        greeting.textContent=writtenHello.slice(0,cursor);
+        if(cursor===writtenHello.length){
+          clearInterval(greetingTicker);
+          greeting.setAttribute('aria-live','polite');
+        }
+      },65);
+    },1250);
+  }
   // The HTML fallback is dark. Synchronize the already-selected white theme
   // before the first cinematic frame to avoid a dark-to-white visual flash.
   if(root.dataset.theme==='light'&&heroArtwork?.getAttribute('src')?.includes('plasma-signature.svg')){
@@ -165,6 +200,11 @@
   function finish({spark=false}={}){
     if(done)return;
     done=true;
+    clearTimeout(greetingDelay);
+    clearInterval(greetingTicker);
+    greeting?.remove();
+    greeting=null;
+    root.classList.remove('sv-cinema-greeting-active');
     root.classList.remove('sv-cinema-boot');
     clearTimeout(introTimer);
     clearTimeout(safetyTimer);

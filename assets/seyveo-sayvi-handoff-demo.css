@@ -68,6 +68,38 @@
 :root.sv-sayvi-handoff-demo #homePage #stage > .message{
   transition:opacity .32s cubic-bezier(.22,.8,.22,1) !important;
 }
+/* The intro speaks only through letters. Ordinary "Добрый день" and the
+   actionable card text are restored untouched at the end of the scene. */
+:root.sv-cinema-greeting-active #homePage #stage > .message > :not(.sv-cinema-written-hello){
+  display:none !important;
+}
+:root.sv-cinema-greeting-active #homePage #stage > .message{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  min-height:92px !important;
+  margin:8px auto 0 !important;
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello{
+  display:block;
+  width:min(355px,calc(100vw - 50px));
+  min-height:2.7em;
+  margin:0;
+  opacity:0;
+  transform:translate3d(0,9px,0);
+  text-align:center;
+  font-size:clamp(20px,5.1vw,25px);
+  font-weight:450;
+  line-height:1.38;
+  letter-spacing:-.027em;
+  color:var(--text,#202226);
+  -webkit-font-smoothing:antialiased;
+  transition:opacity .75s ease,transform .85s cubic-bezier(.22,.8,.22,1);
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello--visible{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
 :root.sv-sayvi-handoff-inflight #homePage #stage > .message{opacity:0 !important}
 :root.sv-sayvi-handoff-inflight #homePage #stage {
   z-index:10000 !important;
