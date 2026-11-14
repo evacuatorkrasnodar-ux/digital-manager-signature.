@@ -74,6 +74,8 @@ function read(){
  tone:['orange','green','red','blue','yellow','purple'].includes(item.tone)?item.tone:'',
  notes:typeof item.notes==='string'?item.notes.slice(0,1000):'',
  url:typeof item.url==='string'?item.url.slice(0,500):'',
+ attachment:item.attachment&&typeof item.attachment.name==='string'&&Number.isFinite(item.attachment.size)&&item.attachment.size>0&&item.attachment.size<=10*1024*1024?
+  {name:item.attachment.name.slice(0,130),type:String(item.attachment.type||'').slice(0,110),size:item.attachment.size}:null,
  place:window.SEYVEO_TASK_PLACES?.cleanPlace?.(item.place)||null,
  remindBefore:[15,30,60].includes(item.remindBefore)?item.remindBefore:0,
  showOnHome:item.showOnHome!==false,
@@ -1001,6 +1003,12 @@ function row(item,compact=false,deferred=false){
    element('div','personal-task-detail-entry',(svTaskEntryType(item)==='event'?'Когда: ':'Выполнить: ')+scheduled),
    element('div','personal-task-detail-entry','Тип: '+(svTaskEntryType(item)==='event'?'Событие':'Задача'))
   );
+  if(item.attachment){
+   const attachmentButton=element('button','personal-task-detail-attachment','📎 '+item.attachment.name);
+   attachmentButton.type='button';attachmentButton.dataset.taskAttachment=item.id;
+   attachmentButton.setAttribute('aria-label','Скачать вложение: '+item.attachment.name);
+   details.append(attachmentButton);
+  }
   menu.append(detailsButton,details);
   const editButton=element('button','personal-task-menu-details','Изменить');
   editButton.type='button';
@@ -1169,6 +1177,7 @@ input.addEventListener('input',()=>{
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;svTaskCategoryTouched=false;svTaskTypeTouched=false;
  window.SEYVEO_TASK_PLACE_EDITOR?.reset?.();
+ window.SEYVEO_TASK_ATTACHMENTS?.reset?.();
  $('personalTaskDialogTitle').textContent='Новое дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить дело');$('personalTaskSave').title='Сохранить дело';
  form.reset();
@@ -1183,23 +1192,37 @@ function openDialog(){
  window.requestAnimationFrame(syncDueDateDisplay);
  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
 }
-function put(e){
+let taskFileSaving=false;
+async function put(e){
  e.preventDefault();
+ if(taskFileSaving)return;
  const title=(window.SEYVEO_TASK_SCREEN?.titleForSave?.()||input.value).trim().replace(/\s+/g,' ');
  if(!title){$('personalTaskStatus').textContent='Напишите, что нужно сделать.';input.focus();return}
+ const attachments=window.SEYVEO_TASK_ATTACHMENTS;
+ const attachmentMeta=attachments?.getMeta?.()||null;
+ async function persistFile(taskIds){
+  if(!attachments?.persist)return true;
+  taskFileSaving=true;taskSaveButton.disabled=true;
+  try{await attachments.persist(taskIds);return true}
+  catch{$('personalTaskStatus').textContent='Не удалось сохранить вложение. Проверь память устройства и попробуй снова.';return false}
+  finally{taskFileSaving=false;syncTaskSaveState()}
+ }
  if(editingTaskId){
   const all=read(),record=all.find(task=>task.id===editingTaskId&&!task.done);
   if(!record){$('personalTaskStatus').textContent='Дело изменилось или уже выполнено. Откройте список заново.';return}
   record.title=title.slice(0,140);record.due=date.value;record.time=date.value?($('personalTaskTime')?.value||''):'';
   record.notes=$('personalTaskNotes')?.value.trim().slice(0,1000)||'';
   record.url=$('personalTaskURL')?.value.trim().slice(0,500)||'';
+  record.attachment=attachmentMeta;
   record.place=window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null;
   record.repeat=$('personalTaskRepeat')?.value||'none';
   record.priority=$('personalTaskPriority')?.value||'none';
   record.showOnHome=Boolean($('personalTaskShowOnHome')?.checked);
   record.category=form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';
   record.entryType=form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task';
+  if(!await persistFile([record.id]))return;
   if(!save(all)){$('personalTaskStatus').textContent='Не удалось сохранить изменения.';return}
+  void attachments?.afterSave?.([record.id]);
   editingTaskId='';taskEditorSavedOnExit=true;if(dialog.open)dialog.close();render();
   window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
   return;
@@ -1216,6 +1239,7 @@ function put(e){
  if(all.length+drafts.length>MAX){$('personalTaskStatus').textContent='Не хватает места для всех дел. Удалите ненужные завершённые дела.';return}
  const common={due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',
   notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',
+  attachment:attachmentMeta,
   repeat:$('personalTaskRepeat')?.value||'none',priority:$('personalTaskPriority')?.value||'none',
   showOnHome:Boolean($('personalTaskShowOnHome')?.checked),done:false,createdAt:new Date().toISOString(),doneAt:''};
  const suggestedPlace=window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null;
@@ -1230,7 +1254,9 @@ function put(e){
    ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})};
  });
  const next=[...all,...additions];
+ if(!await persistFile(additions.map(item=>item.id)))return;
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
+ void attachments?.afterSave?.(additions.map(item=>item.id));
  pendingSourceNoteId='';justCompletedTaskId='';
  taskEditorSavedOnExit=true;if(dialog.open)dialog.close();render();
  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
@@ -1245,6 +1271,7 @@ function change(id,del=false){
  if(del){
    if(!window.confirm('Удалить дело «'+target.title+'»?'))return;
    if(!save(all.filter(item=>item.id!==id))){showTaskError('Не удалось удалить дело. Проверьте память устройства.');return}
+   void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.([id]);
  }else{
    target.done=!target.done;target.doneAt=target.done?new Date().toISOString():'';
    if(!save(all)){showTaskError('Не удалось сохранить изменение. Проверьте память устройства.');return}
@@ -1261,12 +1288,14 @@ window.SEYVEO_PERSONAL_TASK_HISTORY=Object.freeze({
   const all=read(),item=all.find(task=>task.id===id&&task.done);
   if(!item)return false;
   if(!save(all.filter(task=>task.id!==id)))return false;
+  void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.([id]);
   render();window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
   return true;
  },
  clearCompleted:()=>{
   const all=read();
   if(!save(all.filter(task=>!task.done)))return false;
+  void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.(all.filter(item=>item.done).map(item=>item.id));
   render();window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
   return true;
  },
@@ -1327,6 +1356,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  if($('personalTaskTime'))$('personalTaskTime').value=task.time||'';
  dialog.dispatchEvent(new Event('sv-task-editor-sync'));
  window.SEYVEO_TASK_PLACE_EDITOR?.load?.(task.place);
+ window.SEYVEO_TASK_ATTACHMENTS?.load?.(task.id,task.attachment);
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='Изменения сохраняются только после вашего подтверждения.';
  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
@@ -1434,6 +1464,10 @@ list.addEventListener('click',e=>{
    details.hidden=!details.hidden;
    btn.setAttribute('aria-expanded',String(!details.hidden));
   }
+ }
+ else if(btn.dataset.taskAttachment){
+  void window.SEYVEO_TASK_ATTACHMENTS?.openFor?.(btn.dataset.taskAttachment)
+   ?.then(ok=>{if(!ok)showTaskError('Не удалось открыть файл на этом устройстве.')});
  }
  else if(btn.dataset.taskCall){
   const task=read().find(x=>x.id===btn.dataset.taskCall);
