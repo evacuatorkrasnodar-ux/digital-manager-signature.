@@ -1,7 +1,7 @@
-/* SEYVEO · All Tasks v2 · rebuilt screen, 14 Nov 2026.
-   One scroll region and one in-flow action footer. No fullscreen sheet,
+/* SEYVEO · All Tasks v3 · rebuilt screen, 14 Nov 2026.
+   One scroll region and one standalone action capsule. No fullscreen sheet,
    no fixed bottom backdrop, no changes to the approved global dock. */
-#svAllTasksView[hidden],#svAllTasksFooter[hidden]{display:none!important}
+#svAllTasksView[hidden],#svTaskActionCapsule[hidden]{display:none!important}
 
 #svWorkShell[data-task-tool-mode="all"] #personalTaskList,
 #svWorkShell[data-task-tool-mode="all"] #tasksContextFocus{display:none!important}
@@ -35,7 +35,7 @@
  background:transparent;border:0;box-shadow:none;
 }
 #svAllTasksView .sv-tool-results::-webkit-scrollbar{display:none}
-#svAllTasksView:has(#svAllTasksFooter:not([hidden])) .sv-tool-results{padding-bottom:12px}
+html.sv-task-selection-active #svAllTasksView .sv-tool-results{padding-bottom:76px}
 
 #svAllTasksView .sv-tool-result{
  box-sizing:border-box;display:flex;align-items:center;gap:11px;
@@ -79,12 +79,8 @@
  font-size:14px;font-weight:500;
 }
 
-/* A real flex child: scrolling cannot expose a fixed white rectangle. */
-#svAllTasksFooter{
- /* The footer itself must paint absolutely nothing: only its capsule exists. */
- display:contents;
-}
-#svAllTasksFooter .sv-tool-action-row{
+/* A single body-level capsule: no parent rectangle, footer or backdrop. */
+#svTaskActionCapsule{
  box-sizing:border-box;display:grid;align-items:center;
  position:fixed;z-index:110;
  left:50%;bottom:max(8px,env(safe-area-inset-bottom,0px));
@@ -95,25 +91,25 @@
  background:rgba(190,193,202,.43);
  box-shadow:0 0 0 .7px rgba(164,170,184,.30),inset 0 1px 1px rgba(75,82,96,.055);
 }
-#svAllTasksFooter button{
+#svTaskActionCapsule button{
  appearance:none;-webkit-appearance:none;display:grid;place-items:center;
  width:100%;height:50px;min-width:0;margin:0;padding:0 3px;
  border:0;border-radius:999px;background:transparent;box-shadow:none;
  color:#202329;font:550 12.8px/1.15 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
  white-space:nowrap;cursor:pointer;
 }
-#svAllTasksFooter .sv-task-all{background:rgba(255,255,255,.82)}
-#svAllTasksFooter .sv-task-count{display:grid;place-items:center;min-width:0;color:#707782;font-size:11.8px;white-space:nowrap}
-#svAllTasksFooter .sv-task-count[data-has-selection="true"]{color:#3769A9;font-weight:570}
-#svAllTasksFooter .sv-task-delete{color:#B34750}
-#svAllTasksFooter .sv-task-delete:disabled{color:#B6A4A8;opacity:.55}
-#svAllTasksFooter .sv-task-cancel{color:#60636B}
-#svAllTasksFooter button:active{background:rgba(130,135,148,.12)}
-#svAllTasksFooter button:focus-visible{outline:2px solid #3769A9;outline-offset:1px}
+#svTaskActionCapsule .sv-task-all{background:rgba(255,255,255,.82)}
+#svTaskActionCapsule .sv-task-count{display:grid;place-items:center;min-width:0;color:#707782;font-size:11.8px;white-space:nowrap}
+#svTaskActionCapsule .sv-task-count[data-has-selection="true"]{color:#3769A9;font-weight:570}
+#svTaskActionCapsule .sv-task-delete{color:#B34750}
+#svTaskActionCapsule .sv-task-delete:disabled{color:#B6A4A8;opacity:.55}
+#svTaskActionCapsule .sv-task-cancel{color:#60636B}
+#svTaskActionCapsule button:active{background:rgba(130,135,148,.12)}
+#svTaskActionCapsule button:focus-visible{outline:2px solid #3769A9;outline-offset:1px}
 
 /* The existing dock is merely hidden during bulk actions, never restyled. */
 html.sv-task-selection-active body > footer.dock.sv-shared-dock{visibility:hidden!important;pointer-events:none!important}
-html.sv-task-search-focus #svAllTasksFooter{visibility:hidden!important;pointer-events:none!important}
+html.sv-task-search-focus #svTaskActionCapsule{visibility:hidden!important;pointer-events:none!important}
 @media(max-width:699px) and (hover:none) and (pointer:coarse){
  :root.sv-task-search-focus body > footer.dock.sv-shared-dock{
   transform:translate3d(0,calc(100% + 24px + env(safe-area-inset-bottom,0px)),0)!important;
@@ -122,7 +118,7 @@ html.sv-task-search-focus #svAllTasksFooter{visibility:hidden!important;pointer-
 }
 
 @media(max-width:350px){
- #svAllTasksFooter button{font-size:11.5px;padding:0 2px}
- #svAllTasksFooter .sv-task-count{font-size:10.5px}
+ #svTaskActionCapsule button{font-size:11.5px;padding:0 2px}
+ #svTaskActionCapsule .sv-task-count{font-size:10.5px}
 }
 @media(prefers-reduced-motion:reduce){#svAllTasksView *{scroll-behavior:auto!important}}
