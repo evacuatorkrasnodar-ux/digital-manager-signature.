@@ -135,13 +135,17 @@
     document.body.appendChild(flight);
     root.classList.add('sv-sayvi-handoff-inflight');
 
-    // A single uninterrupted, compositor-friendly glide. The pearl underneath
-    // the SVG prevents transparent details from vanishing against white Home.
-    animation=flight.animate([
-      {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
-      {offset:1,transform:`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`,opacity:0}
-    ],{duration:inspectSlow?2800:990,easing:'cubic-bezier(.42,0,.18,1)',fill:'forwards'});
-    animation.finished.then(()=>finish({openTasks:true})).catch(()=>{});
+    // Let the translucent SVG and its pearl backing actually paint before
+    // moving them into a compositor layer. Without this, Chromium can show
+    // a blank flight while the keyframes are technically running.
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(done||!flight)return;
+      animation=flight.animate([
+        {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
+        {offset:1,transform:`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`,opacity:0}
+      ],{duration:inspectSlow?2800:990,easing:'cubic-bezier(.42,0,.18,1)',fill:'forwards'});
+      animation.finished.then(()=>finish({openTasks:true})).catch(()=>{});
+    }));
   }
 
   // An intentional but short brand greeting; any user navigation takes priority.
