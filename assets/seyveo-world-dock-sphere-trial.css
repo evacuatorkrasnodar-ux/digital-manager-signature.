@@ -1,0 +1,34 @@
+/* Reversible My World icon trial. No changes to the approved dock's material,
+   layout, 60px glass shell or the neighboring 42px Sayvi sphere. */
+#navPicture > .sv-world-dock-sphere-trial {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+:root[data-theme="light"] :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #navPicture.sv-world-sphere-ready > svg.seyveo-my-signature {
+  opacity: 0 !important;
+}
+
+:root[data-theme="light"] :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #navPicture.sv-world-sphere-ready > .sv-world-dock-sphere-trial {
+  display: block !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  opacity: 1 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  filter: drop-shadow(0 1px 2px rgba(57,115,158,.12)) !important;
+  pointer-events: none !important;
+}
