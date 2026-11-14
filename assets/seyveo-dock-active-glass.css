@@ -1,6 +1,10 @@
 /* Inset selected state for the existing SEYVEO 60px Liquid Glass dock.
    This does not restyle the two original dock shells or Search circle. */
+footer.dock.sv-shared-dock > .sv-dock-active-indicator{
+ display:none;position:absolute;pointer-events:none;
+}
 :root[data-theme="light"] footer.dock.sv-shared-dock > .sv-dock-active-indicator{
+ display:block!important;
  position:absolute!important;
  z-index:1!important;
  pointer-events:none!important;
