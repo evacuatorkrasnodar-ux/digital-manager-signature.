@@ -1169,7 +1169,7 @@ input.addEventListener('input',()=>{
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;svTaskCategoryTouched=false;svTaskTypeTouched=false;
  window.SEYVEO_TASK_PLACE_EDITOR?.reset?.();
- $('personalTaskDialogTitle').textContent='Новое';
+ $('personalTaskDialogTitle').textContent='Новое дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить дело');$('personalTaskSave').title='Сохранить дело';
  form.reset();
  const newCategory=form.querySelector('input[name="personalTaskCategory"][value="personal"]');
@@ -1310,7 +1310,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  }
  openDialog();
  editingTaskId=id;
- $('personalTaskDialogTitle').textContent='Изменить';
+ $('personalTaskDialogTitle').textContent='Изменить дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить изменения');$('personalTaskSave').title='Сохранить изменения';
  input.value=task.title;syncTaskSaveState();
  const categoryChoice=form.querySelector('input[name="personalTaskCategory"][value="'+svTaskCategory(task)+'"]');
