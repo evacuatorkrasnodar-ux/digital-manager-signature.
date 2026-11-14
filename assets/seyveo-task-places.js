@@ -47,7 +47,7 @@
   const a=result?.address||{};
   const street=[a.road||a.pedestrian||a.street||a.place,a.house_number].filter(Boolean).join(', ');
   const city=a.city||a.town||a.village||a.municipality||a.county||'';
-  const parts=[street,city,a.state].filter(Boolean);
+  const parts=[street,city,a.state].filter((value,index,array)=>value&&!array.slice(0,index).includes(value));
   return normalize(parts.join(' · ')||result.display_name||'');
  }
  function sameVenue(candidate,proposal){
@@ -60,14 +60,14 @@
  function cacheGet(key){
   const local=cache.get(key);if(local&&Date.now()-local.at<30*86400000)return local.value;
   try{
-   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:'+key)||'null');
+   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v2:'+key)||'null');
    if(stored&&Date.now()-stored.at<30*86400000){cache.set(key,stored);return stored.value;}
   }catch{}
   return undefined;
  }
  function cacheSet(key,value){
   const record={at:Date.now(),value};cache.set(key,record);
-  try{root.localStorage.setItem('seyveo-place:'+key,JSON.stringify(record))}catch{}
+  try{root.localStorage.setItem('seyveo-place:v2:'+key,JSON.stringify(record))}catch{}
  }
  async function lookup(proposal){
   if(!proposal||!proposal.query||proposal.query.length>140)return null;
@@ -82,16 +82,21 @@
   if(url.protocol!=='https:')throw Error('Insecure map search endpoint');
   url.searchParams.set('q',proposal.query);url.searchParams.set('format','jsonv2');
   url.searchParams.set('addressdetails','1');url.searchParams.set('extratags','1');
-  url.searchParams.set('namedetails','1');url.searchParams.set('limit','3');url.searchParams.set('accept-language','ru');
+  url.searchParams.set('namedetails','1');url.searchParams.set('limit','5');url.searchParams.set('accept-language','ru');
   const response=await root.fetch(url.toString(),{method:'GET',mode:'cors',credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
   if(!response.ok)throw Error('Place search unavailable');
   const results=await response.json();if(!Array.isArray(results))throw Error('Invalid place response');
-  const match=results.find(row=>sameVenue(row,proposal)&&Number.isFinite(Number(row.lat))&&Number.isFinite(Number(row.lon)));
-  const value=match?cleanPlace({
-   name:proposal.explicitAddress?(match.name||'Место встречи'):(match.name||proposal.label),
-   address:locationLabel(match),lat:match.lat,lon:match.lon,
-   photo:match.extratags?.wikimedia_commons||''
-  }):null;
+  const found=results.filter(row=>sameVenue(row,proposal)&&Number.isFinite(Number(row.lat))&&Number.isFinite(Number(row.lon)));
+  const candidates=[];
+  for(const match of found){
+   const candidate=cleanPlace({
+    name:proposal.explicitAddress?(match.name||'Место встречи'):(match.name||proposal.label),
+    address:locationLabel(match),lat:match.lat,lon:match.lon,
+    photo:match.extratags?.wikimedia_commons||''
+   });
+   if(candidate&&!candidates.some(item=>item.name===candidate.name&&item.address===candidate.address))candidates.push(candidate);
+  }
+  const value=candidates.length>1?{ambiguous:true,candidates:candidates.slice(0,4)}:candidates[0]||null;
   cacheSet(key,value);return value;
  }
  function mapURL(place){
@@ -102,13 +107,32 @@
   url.searchParams.set('layer','mapnik');url.searchParams.set('marker',lat.toFixed(6)+','+lon.toFixed(6));
   return url.toString();
  }
+ function mapTiles(place,width=127,height=96,zoom=16){
+  const p=cleanPlace(place);if(!p)return [];
+  const z=Math.max(1,Math.min(18,Math.floor(zoom))),size=2**z;
+  const latitude=Math.max(-85.0511,Math.min(85.0511,p.lat))*Math.PI/180;
+  const centerX=(p.lon+180)/360*size*256;
+  const centerY=(1-Math.log(Math.tan(latitude)+1/Math.cos(latitude))/Math.PI)/2*size*256;
+  const originX=Math.floor((centerX-width/2)/256),originY=Math.floor((centerY-height/2)/256);
+  const tiles=[];
+  const base=String(root?.SEYVEO_MAP_TILE_ENDPOINT||'https://tile.openstreetmap.org').replace(/\/$/,'');
+  if(!/^https:\/\//.test(base))return [];
+  for(let y=originY;y<=Math.floor((centerY+height/2)/256);y++){
+   for(let x=originX;x<=Math.floor((centerX+width/2)/256);x++){
+    if(y<0||y>=size)continue;
+    tiles.push({url:base+'/'+z+'/'+((x%size+size)%size)+'/'+y+'.png',
+     left:Math.round(x*256-centerX+width/2),top:Math.round(y*256-centerY+height/2)});
+   }
+  }
+  return tiles.slice(0,4);
+ }
  function fullMapURL(place){
   const p=cleanPlace(place);return p?'https://www.openstreetmap.org/?mlat='+p.lat+'&mlon='+p.lon+'#map=17/'+p.lat+'/'+p.lon:'';
  }
  function photoURL(place){
   const file=cleanPhoto(place?.photo);return file?'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width=240':'';
  }
- const api=Object.freeze({extract,lookup,cleanPlace,mapURL,fullMapURL,photoURL});
+ const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,photoURL});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.SEYVEO_TASK_PLACES=api;
 })(typeof window!=='undefined'?window:null);
