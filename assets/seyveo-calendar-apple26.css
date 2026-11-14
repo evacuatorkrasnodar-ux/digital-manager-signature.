@@ -30,13 +30,13 @@ html:not([data-theme]) #calendarPage .cal-month>.cal-weekdays span{
 :root[data-theme="light"] #calendarPage .cal-month>.cal-month-grid,
 html:not([data-theme]) #calendarPage .cal-month>.cal-month-grid{
  display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;
- grid-auto-rows:55px!important;column-gap:0!important;row-gap:0!important;
+ grid-auto-rows:49px!important;column-gap:0!important;row-gap:0!important;
  margin:0!important;padding:0!important;border:0!important;background:#FFF!important;
 }
 :root[data-theme="light"] #calendarPage .cal-month-grid .cal-day,
 html:not([data-theme]) #calendarPage .cal-month-grid .cal-day{
  display:flex!important;align-items:center!important;justify-content:center!important;
- gap:4px!important;min-height:55px!important;margin:0!important;padding:5px 1px 3px!important;
+ gap:2px!important;min-height:49px!important;margin:0!important;padding:3px 1px 2px!important;
  border:0!important;border-bottom:1px solid #EBEDF0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;color:#16191E!important;
  font:530 15px/1 system-ui!important;opacity:1!important;
@@ -64,20 +64,20 @@ html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-today="true"]
 html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-weekend="true"]:not([data-selected="true"]) .cal-day-number{
  color:#7D828B!important;
 }
-/* Existing truthful local event signals become restrained dots, not bars/cards. */
+/* Tiny Apple-like ink marks represent actual saved items. */
 #calendarPage .cal-month-grid .cal-day-dots{
  display:flex!important;align-items:center!important;justify-content:center!important;
- gap:3px!important;height:5px!important;max-width:100%!important;margin:0!important;
+ gap:2px!important;height:4px!important;max-width:100%!important;margin:0!important;
 }
 #calendarPage .cal-month-grid .cal-day-dots i{
- flex:0 0 4px!important;display:block!important;width:4px!important;height:4px!important;
- border:0!important;border-radius:50%!important;transform:none!important;
+ flex:0 0 7px!important;display:block!important;width:7px!important;height:3.5px!important;
+ border:0!important;border-radius:999px!important;transform:none!important;
  background:#6CB7E7!important;opacity:.9!important;
 }
 #calendarPage .cal-month-grid .cal-day-dots i.cal-dot-task{background:#AF8CE2!important}
 #calendarPage .cal-month-grid .cal-day-dots i.cal-dot-life{background:#E8B77C!important}
-#calendarPage .cal-month-grid .cal-day-dots i.cal-dot-note{background:#B8BDC9!important}
-#calendarPage .cal-month-grid .cal-day-dots i.cal-dot-holiday{background:#E78191!important}
+#calendarPage .cal-month-grid .cal-day-dots i.cal-dot-note{flex-basis:4px!important;width:4px!important;height:4px!important;border-radius:50%!important;background:#B8BDC9!important}
+#calendarPage .cal-month-grid .cal-day-dots i.cal-dot-holiday{flex-basis:4px!important;width:4px!important;height:4px!important;border-radius:50%!important;background:#E78191!important}
 /* The month view is only calendar. Day/week modes still retain their details. */
 #calendarPage #calendarView[data-mode="month"] :is(.cal-day-summary,#calendarAgenda,#calendarHoliday,#calendarAdvice){
  display:none!important;
@@ -159,4 +159,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice p{
  html:not([data-theme]) #calendarPage .cal-month>.cal-month-grid{grid-auto-rows:48px!important}
  :root[data-theme="light"] #calendarPage .cal-month-grid .cal-day,
  html:not([data-theme]) #calendarPage .cal-month-grid .cal-day{min-height:48px!important}
+}
+/* On phones the full calendar already changes months with a finger swipe. */
+@media(max-width:620px){
+ html body #calendarPage .cal-nav-arrows{display:none!important}
 }
