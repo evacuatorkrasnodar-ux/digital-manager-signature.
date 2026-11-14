@@ -23,7 +23,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-she
  display:flex!important;flex-direction:column!important;align-items:stretch!important;
  width:min(100%,520px)!important;height:100%!important;max-height:none!important;
  margin:0 auto!important;padding:0!important;border:0!important;border-radius:0!important;
- background:#F2F2F7!important;box-shadow:none!important;overflow:hidden!important;
+ background:#F2F2F7!important;box-shadow:none!important;overflow:clip!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header{
