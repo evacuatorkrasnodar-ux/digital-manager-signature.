@@ -7,17 +7,17 @@
  const title=document.getElementById('personalTaskTitle');
  const panel=document.getElementById('svNewTaskPlacePanel');
  if(!places||!dialog||!title||!panel)return;
- let proposal=null,place=null,query='',status='idle',request=0;
+ let proposal=null,place=null,choices=[],query='',status='idle',request=0;
  const node=(tag,cls,text)=>{
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
  };
  function reset(){
-  request++;proposal=null;place=null;query='';status='idle';
+  request++;proposal=null;place=null;choices=[];query='';status='idle';
   panel.replaceChildren();panel.hidden=true;
  }
  function load(saved){
-  place=places.cleanPlace(saved);proposal=places.extract(title.value);
+  place=places.cleanPlace(saved);choices=[];proposal=places.extract(title.value);
   query=proposal?.query||'';status=place?'found':'idle';request++;render();
  }
  function placeForSave(){return places.cleanPlace(place)}
@@ -49,14 +49,27 @@
    const link=document.createElement('a');link.className='sv-place-map';
    link.href=places.fullMapURL(place);link.target='_blank';link.rel='noopener noreferrer';
    link.setAttribute('aria-label','Открыть место на OpenStreetMap');
-   const frame=document.createElement('iframe');frame.loading='lazy';frame.title='Мини-карта места встречи';
-   frame.tabIndex=-1;frame.setAttribute('aria-hidden','true');frame.referrerPolicy='strict-origin-when-cross-origin';
-   frame.src=places.mapURL(place);frame.setAttribute('sandbox','allow-scripts allow-same-origin');
-   link.append(frame,node('span','sv-place-map-pin','●'));card.append(link);
+   const narrow=window.matchMedia('(max-width:370px)').matches;
+   for(const tile of places.mapTiles(place,narrow?104:127,narrow?90:96)){
+    const img=document.createElement('img');img.className='sv-place-map-tile';img.loading='lazy';
+    img.alt='';img.setAttribute('aria-hidden','true');img.decoding='async';img.src=tile.url;
+    img.style.left=tile.left+'px';img.style.top=tile.top+'px';link.append(img);
+   }
+   link.append(node('span','sv-place-map-pin','●'),node('span','sv-place-attribution','© OSM'));
+   card.append(link);
    const credit=node('div','sv-place-credit');
    const source=document.createElement('a');source.href='https://www.openstreetmap.org/copyright';
    source.target='_blank';source.rel='noopener noreferrer';source.textContent='© OpenStreetMap contributors';
    credit.append(node('span','','Проверь адрес перед сохранением'),source);panel.append(credit);
+  }else if(choices.length){
+   card.classList.add('sv-place-choices');
+   card.append(node('p','sv-place-choice-intro','Нашла несколько похожих мест. Выбери нужное:'));
+   for(const candidate of choices){
+    const option=node('button','sv-place-choice');option.type='button';
+    option.append(node('strong','',candidate.name),node('small','',candidate.address));
+    option.addEventListener('click',()=>{place=candidate;choices=[];status='found';render()});
+    card.append(option);
+   }
   }else{
    const copy=node('div','sv-place-copy');
    const headline=proposal?.label||'Место пока не указано';
@@ -76,7 +89,7 @@
   const next=places.extract(title.value);
   const nextQuery=next?.query||'';
   if(nextQuery!==query){
-   request++;place=null;status='idle';query=nextQuery;
+   request++;place=null;choices=[];status='idle';query=nextQuery;
   }
   proposal=next;render();
  }
@@ -87,7 +100,10 @@
   try{
    const result=await places.lookup(proposal);
    if(sequence!==request||requestedQuery!==query||!dialog.open)return;
-   place=places.cleanPlace(result);status=place?'found':'not-found';
+   if(result?.ambiguous&&Array.isArray(result.candidates)){
+    choices=result.candidates.map(places.cleanPlace).filter(Boolean);
+    place=null;status=choices.length?'choose':'not-found';
+   }else{place=places.cleanPlace(result);choices=[];status=place?'found':'not-found'}
   }catch{
    if(sequence!==request||requestedQuery!==query||!dialog.open)return;
    status='error';
