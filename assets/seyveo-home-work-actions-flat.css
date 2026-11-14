@@ -395,7 +395,7 @@
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
  border:var(--sv-card-sayvi-outline,1px solid rgba(255,255,255,.94))!important;
- background:var(--sv-card-sayvi-bg,rgba(190,193,202,.43))!important;
+ background:#FFFFFF!important;
  box-shadow:var(--sv-card-sayvi-shadow,none)!important;
  -webkit-backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
  backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
