@@ -288,7 +288,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar svg{
  fill:none!important;stroke:currentColor!important;stroke-width:1.9!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 :is(button,input,select,textarea):focus-visible{
+html body dialog#personalTaskDialog.sv-task-editor-v3 :is(button,input,select,textarea):not(#personalTaskTitle):focus-visible{
  outline:2px solid #007AFF!important;outline-offset:2px!important;
 }
 /* Smart-first New screen. Detailed calendar controls remain available on demand. */
