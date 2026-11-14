@@ -924,7 +924,12 @@
  --sv-card-icon-radius:50%;
  --sv-card-action-neutral-bg:rgba(255,255,255,.90);
  --sv-card-action-outline:0 solid transparent;
- --sv-card-action-shadow:0 2px 8px rgba(25,31,42,.075),
+ /* Optical glass edge: a subpixel light rim and directional inner reflection,
+    not a visible CSS border. Keep the actual button border at zero. */
+ --sv-card-action-shadow:0 0 0 .35px rgba(211,216,225,.24),
+   inset 0 1px .8px rgba(255,255,255,.96),
+   inset 0 -1px 1px rgba(205,211,222,.22),
+   0 2px 8px rgba(25,31,42,.075),
    0 0 1px rgba(25,31,42,.028);
  --sv-card-action-blur:blur(12px) saturate(108%);
  --sv-card-icon-stroke:1.7;
