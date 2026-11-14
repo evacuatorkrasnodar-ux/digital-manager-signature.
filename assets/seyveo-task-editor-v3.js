@@ -10,6 +10,14 @@
  const hasDate=document.getElementById('svNewTaskHasDate');
  const settings=document.getElementById('svNewTaskDateSettings');
  const monthLabel=document.getElementById('svNewTaskMonthLabel');
+ const smartPreview=document.getElementById('svNewTaskSmartPreview');
+ const smartDetails=document.getElementById('svNewTaskSmartDetails');
+ const smartHint=document.getElementById('svNewTaskSmartHint');
+ const manualToggle=document.getElementById('svNewTaskManualToggle');
+ const timeInput=document.getElementById('personalTaskTime');
+ const voiceButton=document.getElementById('svNewTaskVoice');
+ const readPhrase=window.SEYVEO_TASK_SMART_NL;
+ const readSignals=window.SEYVEO_TASK_SMART_SIGNALS;
  if(!dialog||!form||!date||!days||!title||!hasDate)return;
  const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  const iso=(y,m,d)=>[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');
@@ -28,6 +36,7 @@
    if(value===date.value){button.classList.add('is-selected');button.setAttribute('aria-current','date')}
    if(value===today())button.classList.add('is-today');
    button.addEventListener('click',()=>{
+    manualDate=true;
     date.value=value;date.dispatchEvent(new Event('change',{bubbles:true}));
    });
    days.append(button);
@@ -40,8 +49,103 @@
   if(valid){const [year,month]=date.value.split('-').map(Number);shownYear=year;shownMonth=month-1}
   draw();
  }
+ let manualDate=false,manualTime=false,manualPriority=false,manualRepeat=false;
+ const isEditing=()=>document.getElementById('personalTaskDialogTitle')?.textContent==='Изменить';
+ function createText(kind,text){
+  const node=document.createElement('span');node.className='sv-task-smart-'+kind;
+  node.textContent=text;return node;
+ }
+ function selectedCategory(){return form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';}
+ function selectedType(){return form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task';}
+ function effectiveTitle(){
+  const phrase=typeof readPhrase==='function'?readPhrase(title.value):null;
+  const raw=(phrase?.title||title.value).trim().replace(/\s+/g,' ');
+  const cleaned=raw.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'').trim();
+  return cleaned||raw;
+ }
+ function updateSmartPreview(){
+  if(!smartPreview||!smartDetails)return;
+  const raw=title.value.trim().replace(/\s+/g,' ');
+  if(smartHint)smartHint.hidden=Boolean(raw);
+  smartPreview.hidden=!raw;
+  smartDetails.replaceChildren();
+  if(!raw)return;
+  const name=effectiveTitle();
+  const category=selectedCategory(),kind=selectedType();
+  smartPreview.classList.toggle('is-work',category==='work');
+  const main=document.createElement('div');main.className='sv-task-smart-main';
+  const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+category;dot.setAttribute('aria-hidden','true');
+  main.append(dot,createText('name',name));smartDetails.append(main);
+  const meta=document.createElement('div');meta.className='sv-task-smart-meta';
+  meta.append(createText('category',category==='work'?'Работа':'Личное'));
+  meta.append(createText('kind',kind==='event'?'Событие':'Напоминание'));
+  if(date.value){
+   const [year,month,day]=date.value.split('-').map(Number);
+   meta.append(createText('date',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(new Date(year,month-1,day))));
+  }else meta.append(createText('no-date','Без срока'));
+  if(timeInput?.value)meta.append(createText('time',timeInput.value));
+  const priority=document.getElementById('personalTaskPriority')?.value;
+  if(priority&&priority!=='none')meta.append(createText('priority',({low:'Без спешки',medium:'Важно',high:'Срочно'})[priority]||'Приоритет'));
+  const repeat=document.getElementById('personalTaskRepeat')?.value;
+  if(repeat&&repeat!=='none')meta.append(createText('repeat',({daily:'Каждый день',weekly:'Каждую неделю',monthly:'Каждый месяц'})[repeat]||'Повтор'));
+  smartDetails.append(meta);
+  if(timeInput?.value&&!date.value)smartDetails.append(createText('notice','Укажи дату для напоминания по времени.'));
+ }
+ function applyPhrase(){
+  const parsed=typeof readPhrase==='function'?readPhrase(title.value):null;
+  const signals=typeof readSignals==='function'?readSignals(title.value):{priority:'none',repeat:'none'};
+  if(!manualDate&&(!isEditing()||parsed?.date)){
+   const next=parsed?.date||'';
+   if(date.value!==next){date.value=next;date.dispatchEvent(new Event('change',{bubbles:true}));}
+  }
+  if(timeInput&&!manualTime&&(!isEditing()||parsed?.time)){
+   const next=parsed?.time||'';
+   if(timeInput.value!==next){timeInput.value=next;timeInput.dispatchEvent(new Event('change',{bubbles:true}));}
+  }
+  const priority=document.getElementById('personalTaskPriority');
+  if(priority&&!manualPriority&&(!isEditing()||signals.priority!=='none'))priority.value=signals.priority;
+  const repeat=document.getElementById('personalTaskRepeat');
+  if(repeat&&!manualRepeat&&(!isEditing()||signals.repeat!=='none'))repeat.value=signals.repeat;
+  updateSmartPreview();
+ }
+ title.addEventListener('input',applyPhrase);
+ manualToggle?.addEventListener('click',()=>{
+  const open=dialog.classList.toggle('sv-task-manual-open');
+  manualToggle.setAttribute('aria-expanded',String(open));
+  if(open)manualToggle.scrollIntoView({block:'start',behavior:'smooth'});
+ });
+ date.addEventListener('change',event=>{if(event.isTrusted)manualDate=true;updateSmartPreview();});
+ timeInput?.addEventListener('change',event=>{if(event.isTrusted)manualTime=true;updateSmartPreview();});
+ document.getElementById('personalTaskPriority')?.addEventListener('change',event=>{if(event.isTrusted)manualPriority=true;updateSmartPreview();});
+ document.getElementById('personalTaskRepeat')?.addEventListener('change',event=>{if(event.isTrusted)manualRepeat=true;updateSmartPreview();});
+ for(const selector of ['input[name="personalTaskType"]','input[name="personalTaskCategory"]','#svNewTaskListChoice']){
+  form.querySelectorAll(selector).forEach(control=>control.addEventListener('change',updateSmartPreview));
+ }
+ /* Voice is strictly user-initiated. Browser recognition fills the same field;
+    it never commits a task or launches the global Sayvi conversation. */
+ const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ let recognition=null;
+ if(voiceButton){
+  if(!Recognition)voiceButton.hidden=true;
+  else voiceButton.addEventListener('click',()=>{
+   if(recognition){try{recognition.stop()}catch{}return}
+   const rec=new Recognition();recognition=rec;rec.lang='ru-RU';
+   rec.interimResults=false;rec.maxAlternatives=1;
+   voiceButton.setAttribute('aria-pressed','true');
+   rec.onresult=event=>{
+    const transcript=String(event.results?.[0]?.[0]?.transcript||'').trim();
+    if(!transcript)return;
+    title.value=[title.value.trim(),transcript].filter(Boolean).join(' ').slice(0,140);
+    title.dispatchEvent(new Event('input',{bubbles:true}));
+   };
+   rec.onerror=()=>{const status=document.getElementById('personalTaskStatus');if(status)status.textContent='Не удалось распознать речь. Можно написать или использовать микрофон клавиатуры.'};
+   rec.onend=()=>{recognition=null;voiceButton.setAttribute('aria-pressed','false')};
+   try{rec.start()}catch{recognition=null;voiceButton.setAttribute('aria-pressed','false')}
+  });
+ }
  date.addEventListener('change',sync);
  hasDate.addEventListener('change',()=>{
+  manualDate=true;
   if(!hasDate.checked)date.value='';
   else date.value=today();
   date.dispatchEvent(new Event('change',{bubbles:true}));
@@ -69,10 +173,19 @@
  }));
  const observer=new MutationObserver(()=>{
   if(!dialog.open)return;
+  manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;
+  dialog.classList.remove('sv-task-manual-open');
+  manualToggle?.setAttribute('aria-expanded','false');
   date.dispatchEvent(new Event('change',{bubbles:true}));
+  updateSmartPreview();
  });
  observer.observe(dialog,{attributes:true,attributeFilter:['open']});
- dialog.addEventListener('sv-task-editor-sync',sync);
- dialog.addEventListener('close',()=>{dialog.querySelector('.personal-task-sheet')?.scrollTo(0,0)});
- window.SEYVEO_TASK_SCREEN=Object.freeze({version:3,sync});
+ dialog.addEventListener('sv-task-editor-sync',()=>{sync();updateSmartPreview()});
+ dialog.addEventListener('close',()=>{
+  if(recognition){try{recognition.stop()}catch{}recognition=null;voiceButton?.setAttribute('aria-pressed','false')}
+  dialog.classList.remove('sv-task-manual-open');
+  manualToggle?.setAttribute('aria-expanded','false');
+  form.scrollTop=0;
+ });
+ window.SEYVEO_TASK_SCREEN=Object.freeze({version:4,sync,titleForSave:effectiveTitle});
 })();
