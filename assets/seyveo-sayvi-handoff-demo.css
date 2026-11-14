@@ -1,0 +1,102 @@
+/* SEYVEO · one Sayvi, two scales. Opt-in launch study only (?sayvi-handoff=1).
+   The approved dock shell, navigation tracks and other screens are untouched. */
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked)
+  #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-velvet-sphere {
+  opacity:0 !important;
+}
+:root.sv-sayvi-handoff-demo
+  #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-velvet-sphere {
+  transition:opacity .43s cubic-bezier(.22,.8,.22,1) !important;
+}
+:root.sv-sayvi-handoff-inflight #homePage #orb {
+  opacity:0 !important;
+}
+:root.sv-sayvi-handoff-inflight #homePage #orbCluster::before {
+  opacity:0 !important;
+}
+
+/* Once Sayvi has docked, Home yields the hero's space to actual cards. */
+:root.sv-sayvi-handoff-docked #homePage #orbCluster {
+  height:0 !important;
+  min-height:0 !important;
+  margin:0 !important;
+  overflow:hidden !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+  transition:height .64s cubic-bezier(.22,.85,.22,1),opacity .28s ease !important;
+}
+:root.sv-sayvi-handoff-docked #homePage #stage {
+  min-height:0 !important;
+  padding:8px 0 15px !important;
+  justify-content:flex-start !important;
+  flex:0 0 auto !important;
+  transition:min-height .64s ease,padding .64s ease !important;
+}
+:root.sv-sayvi-handoff-docked #homePage #stage .message {
+  min-height:0 !important;
+  margin:2px auto 0 !important;
+}
+:root.sv-sayvi-handoff-docked #homePage #stage .message h2 {
+  margin:5px 0 7px !important;
+}
+:root.sv-sayvi-handoff-docked #homePage #seyveoNameTip {
+  display:none !important;
+}
+
+/* The flight is one visual, not a second active assistant. */
+.sv-sayvi-handoff-flight {
+  position:fixed;
+  z-index:2147483000;
+  display:block;
+  isolation:isolate;
+  border-radius:50%;
+  pointer-events:none;
+  transform-origin:center center;
+  will-change:transform,opacity;
+  contain:layout style paint;
+}
+.sv-sayvi-handoff-flight img {
+  display:block;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  user-select:none;
+  -webkit-user-select:none;
+  pointer-events:none;
+}
+.sv-sayvi-handoff-flight::after {
+  content:"";
+  position:absolute;
+  inset:15%;
+  border-radius:50%;
+  pointer-events:none;
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.49),transparent 60%);
+  opacity:0;
+  animation:sv-sayvi-handoff-glint 1.12s ease-in-out both;
+}
+@keyframes sv-sayvi-handoff-glint {
+  0%,15%{opacity:0}
+  44%{opacity:.5}
+  78%{opacity:.10}
+  100%{opacity:0}
+}
+
+/* A single soft afterglow suggests that the light has entered the pearl glass. */
+:root.sv-sayvi-handoff-arrived #assistantButton .sv-sayvi-velvet-glass-glow {
+  animation:sv-sayvi-handoff-arrival .78s ease-out both !important;
+}
+@keyframes sv-sayvi-handoff-arrival {
+  0%{opacity:.63}
+  35%{opacity:.47}
+  100%{opacity:0}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .sv-sayvi-handoff-flight{display:none!important}
+  :root.sv-sayvi-handoff-docked #homePage :is(#orbCluster,#stage){transition:none!important}
+  :root.sv-sayvi-handoff-demo #assistantButton .sv-sayvi-velvet-sphere{transition:none!important}
+  :root.sv-sayvi-handoff-arrived #assistantButton .sv-sayvi-velvet-glass-glow{animation:none!important}
+}
