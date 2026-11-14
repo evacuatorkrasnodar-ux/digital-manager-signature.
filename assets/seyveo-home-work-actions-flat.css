@@ -215,14 +215,15 @@
  margin-bottom:4px!important;
 }
 
-/* Approved white theme: original letter/document on white, proposals in
-   clean warm mist; subdued green for Sayvi and blue for human reply. */
+/* Apple-inspired semantic reading hierarchy for the approved white theme:
+   secondary graphite for Sayvi's explanatory label, clear orange for a
+   meaningful warning, and neutral (not green-tinted) proposal surfaces. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment{
- --sv-card-proposal-surface:#F3F5F4;
- --sv-card-proposal-ink:#24302D;
- --sv-card-accent-sayvi:#4C7569;
+ --sv-card-proposal-surface:#F5F5F7;
+ --sv-card-proposal-ink:#1C1C1E;
+ --sv-card-accent-sayvi:#6E6E73;
  --sv-card-accent-reply:#526F86;
- --sv-card-quiet-ink:#60666C;
+ --sv-card-quiet-ink:#636366;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment
  .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"],[data-lm-subject="work"])
@@ -243,8 +244,8 @@
 :root[data-theme="light"] #homePage #seyveoLivingMoment
  .lm-field:is([data-lm-subject="mail"],[data-lm-subject="contract"],[data-lm-subject="work"])
  .lm-section-label{
- color:var(--sv-card-accent-sayvi)!important;font-size:11.5px!important;
- font-weight:560!important;letter-spacing:.005em!important;line-height:1.4!important;
+ color:var(--sv-card-accent-sayvi)!important;font-size:12.5px!important;
+ font-weight:550!important;letter-spacing:0!important;line-height:1.4!important;
  text-transform:none!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment
@@ -271,7 +272,7 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment
  .lm-document-note .lm-meaning-accent{
- color:#A1652B!important;font-weight:480!important;text-decoration:none!important;
+ color:#C55300!important;font-weight:500!important;text-decoration:none!important;
 }
 
 /* Quiet Cinema · focused composition (iPhone 10 and later).
