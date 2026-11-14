@@ -274,12 +274,12 @@
  const toolPanel=document.createElement('section');
  toolPanel.id='svAllTasksView';toolPanel.hidden=true;
  if(taskList)taskList.parentElement.insertBefore(toolPanel,taskList);
- // The actions belong to the screen's flex layout, not to a fixed body layer.
- const selectionBar=document.createElement('section');
- selectionBar.id='svAllTasksFooter';
- selectionBar.hidden=true;
- selectionBar.setAttribute('role','group');
- selectionBar.setAttribute('aria-label','Действия с выбранными делами');
+ // Rebuilt actions: just one floating capsule, with no footer or backdrop.
+ const actionCapsule=document.createElement('nav');
+ actionCapsule.id='svTaskActionCapsule';
+ actionCapsule.hidden=true;
+ actionCapsule.setAttribute('aria-label','Действия с выбранными делами');
+ document.body.append(actionCapsule);
  let toolMode='',filter='all',query='',selectionActive=false,searchOpen=false;
  const selected=new Set();
  const make=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
@@ -327,11 +327,10 @@
   // Move the live control into the existing work-tabs slot without cloning it.
   nav.querySelector('.sv-tool-filters')?.remove();
   nav.append(tabs);
-  toolPanel.append(results,selectionBar);
+  toolPanel.append(results);
   let counter=null,deleteButton=null,selectAll=null;
-  selectionBar.replaceChildren();
+  actionCapsule.replaceChildren();
   if(selectionActive){
-   const bulk=make('div','sv-tool-action-row');
    selectAll=make('button','sv-task-all','Выбрать все');selectAll.type='button';
    selectAll.addEventListener('click',()=>{
     const hits=matches(),fully=hits.length>0&&hits.every(t=>selected.has(t.id));
@@ -351,8 +350,7 @@
    const cancel=make('button','sv-task-cancel','Отмена');cancel.type='button';
    cancel.setAttribute('aria-label','Отменить выбор дел');
    cancel.addEventListener('click',toggleSelection);
-   bulk.append(selectAll,counter,deleteButton,cancel);
-   selectionBar.append(bulk);
+   actionCapsule.append(selectAll,counter,deleteButton,cancel);
   }
   function paintResults(){
    results.replaceChildren();
@@ -412,7 +410,7 @@
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   const selectionVisible=selectionActive&&nested;
-  selectionBar.hidden=!selectionVisible;
+  actionCapsule.hidden=!selectionVisible;
   document.documentElement.classList.toggle('sv-task-selection-active',selectionVisible);
   selectHistory.setAttribute('aria-pressed',String(selectionActive));
   selectHistory.setAttribute('aria-label',selectionActive?'Отменить выбор дел':'Выбрать дела');
