@@ -327,7 +327,7 @@
 /* SEYVEO / Home card actions — approved asymmetric Apple composition.
    All three match New Task: 50px hit circles and 23px icons. Sayvi alone
    receives the Search dock lens; Edit and Navigate have white regular-glass
-   round faces. A temporary border experiment on these two is scoped below.
+   round faces with a barely visible edge, never a drawn border.
    Send/Save/Confirm text actions above remain unchanged. */
 #homePage #seyveoLivingMoment .lm-field .lm-actions{
  display:flex!important;
@@ -403,12 +403,8 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- /* Reversible comparison: borrow Sayvi's fine white border and pearl rim,
-    while keeping the two secondary buttons' own white glass material. */
- border:var(--sv-card-sayvi-outline,1px solid rgba(255,255,255,.94))!important;
- background:var(--sv-card-action-neutral-bg,rgba(255,255,255,.90))!important;
- box-shadow:0 0 0 .7px rgba(164,170,184,.30),
-  var(--sv-card-action-shadow,0 2px 8px rgba(25,31,42,.075))!important;
+ border:0!important;background:var(--sv-card-action-neutral-bg,rgba(255,255,255,.90))!important;
+ box-shadow:var(--sv-card-action-shadow,0 2px 8px rgba(25,31,42,.075))!important;
  -webkit-backdrop-filter:var(--sv-card-action-blur,none)!important;
  backdrop-filter:var(--sv-card-action-blur,none)!important;
  color:#111113!important;
