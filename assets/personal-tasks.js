@@ -70,7 +70,11 @@ function read(){
  ...(safeNoteId(item.sourceNoteId)?{sourceNoteId:item.sourceNoteId}:{}),
  ...(typeof item.source==='string'&&['sayvi','work','notebook'].includes(item.source)?{source:item.source}:{}),
  category:item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal'),
- entryType:item.entryType==='event'||item.entryType==='task'?item.entryType:svInferEntryType(item.title)}));
+ entryType:item.entryType==='event'||item.entryType==='task'?item.entryType:svInferEntryType(item.title),
+ notes:typeof item.notes==='string'?item.notes.slice(0,1000):'',
+ url:typeof item.url==='string'?item.url.slice(0,500):'',
+ repeat:['none','daily','weekly','monthly'].includes(item.repeat)?item.repeat:'none',
+ priority:['none','low','medium','high'].includes(item.priority)?item.priority:'none'}));
 }
 /* Calendar appointments keep their own validated store. The agenda reads them
    as views only: it never writes or copies an appointment into Tasks. */
@@ -1155,8 +1159,8 @@ function openDialog(){
  form.reset();
  const newCategory=form.querySelector('input[name="personalTaskCategory"][value="personal"]');
  if(newCategory)newCategory.checked=true;
- if(!$('tasksPage')?.hidden&&svTaskSelectedDate)date.value=svTaskSelectedDate;
- dialog.dispatchEvent(new Event('sv-task-time-sync'));syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
+ date.value=(!$('tasksPage')?.hidden&&svTaskSelectedDate)?svTaskSelectedDate:svTaskISO(new Date());
+ dialog.dispatchEvent(new Event('sv-task-editor-sync'));syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
@@ -1169,6 +1173,10 @@ function put(e){
   const all=read(),record=all.find(task=>task.id===editingTaskId&&!task.done);
   if(!record){$('personalTaskStatus').textContent='Дело изменилось или уже выполнено. Откройте список заново.';return}
   record.title=title.slice(0,140);record.due=date.value;record.time=date.value?($('personalTaskTime')?.value||''):'';
+  record.notes=$('personalTaskNotes')?.value.trim().slice(0,1000)||'';
+  record.url=$('personalTaskURL')?.value.trim().slice(0,500)||'';
+  record.repeat=$('personalTaskRepeat')?.value||'none';
+  record.priority=$('personalTaskPriority')?.value||'none';
   record.category=form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';
   record.entryType=form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task';
   if(!save(all)){$('personalTaskStatus').textContent='Не удалось сохранить изменения.';return}
@@ -1181,6 +1189,8 @@ function put(e){
  const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',
  category:form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal',
  entryType:form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task',
+ notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',
+ repeat:$('personalTaskRepeat')?.value||'none',priority:$('personalTaskPriority')?.value||'none',
  done:false,createdAt:new Date().toISOString(),doneAt:'',
  ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})}];
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
@@ -1188,14 +1198,10 @@ function put(e){
  taskEditorSavedOnExit=true;if(dialog.open)dialog.close();render();
  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
 }
-/* Back, backdrop, Escape and navigation all commit the same task once. */
+/* Manual creation commits ONLY from the checkmark. X / Escape means cancel. */
 function exitTaskEditor(){
  if(!dialog.open)return;
- if(dialog.classList.contains('sv-task-date-open')){
-  dialog.dispatchEvent(new Event('seyveo:task-date-back'));return;
- }
- if(!input.value.trim()){dialog.close();return;}
- put({preventDefault(){}});
+ dialog.close();
 }
 function change(id,del=false){
  const all=read(),target=all.find(item=>item.id===id);if(!target)return;
@@ -1275,8 +1281,12 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  const typeChoice=form.querySelector('input[name="personalTaskType"][value="'+svTaskEntryType(task)+'"]');
  if(typeChoice)typeChoice.checked=true;
  date.value=task.due;
+ if($('personalTaskNotes'))$('personalTaskNotes').value=task.notes||'';
+ if($('personalTaskURL'))$('personalTaskURL').value=task.url||'';
+ if($('personalTaskRepeat'))$('personalTaskRepeat').value=task.repeat||'none';
+ if($('personalTaskPriority'))$('personalTaskPriority').value=task.priority||'none';
  if($('personalTaskTime'))$('personalTaskTime').value=task.time||'';
- dialog.dispatchEvent(new Event('sv-task-time-sync'));
+ dialog.dispatchEvent(new Event('sv-task-editor-sync'));
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='Изменения сохраняются только после вашего подтверждения.';
  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
@@ -1421,14 +1431,8 @@ dialog.addEventListener('click',event=>{
 dialog.addEventListener('cancel',event=>{
  event.preventDefault();exitTaskEditor();
 });
-dialog.addEventListener('close',()=>{
- // Another module can close the dialog directly. Preserve a valid edit.
- if(!taskEditorSavedOnExit&&input.value.trim())put({preventDefault(){}});
-});
+dialog.addEventListener('close',()=>{taskEditorSavedOnExit=false});
 window.addEventListener('hashchange',()=>{if(dialog.open)exitTaskEditor();});
-window.addEventListener('pagehide',()=>{
- if(dialog.open&&!taskEditorSavedOnExit&&input.value.trim())put({preventDefault(){}});
-});
 /* Prepared from a Notebook note; the existing task form is the only
    writer and still requires the person's explicit Save action. */
 window.addEventListener('seyveo:task-plan-note',event=>{
