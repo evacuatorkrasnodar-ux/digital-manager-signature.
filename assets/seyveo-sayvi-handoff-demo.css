@@ -6,7 +6,26 @@
 }
 :root.sv-sayvi-handoff-demo
   #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-velvet-sphere {
-  transition:opacity .43s cubic-bezier(.22,.8,.22,1) !important;
+  transition:opacity .18s ease-out !important;
+}
+/* Greeting is deliberately smaller than the old permanent hero. Its space
+   exists only during the first second, then returns to the real card feed. */
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #orbCluster,
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage.lm-focus #orbCluster {
+  height:clamp(210px,62vw,285px) !important;
+  margin-bottom:0 !important;
+}
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #orb,
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage.lm-focus #orb {
+  width:clamp(210px,62vw,285px) !important;
+  height:clamp(210px,62vw,285px) !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  transform:none !important;
+}
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage :is(#dynamic,#seyveoLivingMoment){
+  opacity:0 !important;
+  pointer-events:none !important;
 }
 :root.sv-sayvi-handoff-inflight #homePage #stage {
   z-index:10000 !important;
@@ -49,6 +68,9 @@
 }
 :root.sv-sayvi-handoff-docked #homePage #seyveoNameTip {
   display:none !important;
+}
+:root.sv-sayvi-handoff-docked #homePage :is(#dynamic,#seyveoLivingMoment){
+  transition:opacity .56s cubic-bezier(.2,.8,.2,1) !important;
 }
 
 /* Only the opt-in study gets a real-data, one-card Home destination.
@@ -93,57 +115,23 @@
 :root[data-theme="dark"] .sv-sayvi-handoff-agenda-card{background:#262c32;color:#f2f6f8;border-color:rgba(200,218,232,.14)}
 :root[data-theme="dark"] .sv-sayvi-handoff-agenda-arrow{background:#343b43;color:#dbe4e9}
 
-/* The flight is one visual, not a second active assistant. */
-.sv-sayvi-handoff-flight {
-  position:fixed;
-  z-index:2147483000;
-  display:block;
-  isolation:isolate;
-  border-radius:50%;
-  pointer-events:none;
-  transform-origin:center center;
-  will-change:transform,opacity;
-}
-.sv-sayvi-handoff-flight::before {
-  content:"";
-  position:absolute;
-  inset:10%;
-  border-radius:50%;
-  pointer-events:none;
-  background:radial-gradient(circle at 32% 23%,#fff 2%,#eff8f8 34%,#d3e7e8 70%,#a6c5c7 100%);
-  box-shadow:inset -3px -7px 13px rgba(87,132,141,.12),
-    inset 4px 4px 13px rgba(255,255,255,.54),
-    0 5px 23px rgba(103,161,177,.13);
-  z-index:0;
-}
-.sv-sayvi-handoff-flight img {
-  display:block;
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  user-select:none;
-  -webkit-user-select:none;
-  pointer-events:none;
-  z-index:1;
-}
-.sv-sayvi-handoff-flight::after {
-  content:"";
-  position:absolute;
-  inset:15%;
-  border-radius:50%;
-  pointer-events:none;
-  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.49),transparent 60%);
-  z-index:2;
-  opacity:0;
-  animation:sv-sayvi-handoff-glint 1.12s ease-in-out both;
-}
-@keyframes sv-sayvi-handoff-glint {
-  0%,15%{opacity:0}
-  44%{opacity:.5}
-  78%{opacity:.10}
-  100%{opacity:0}
+/* The actual #orb is lifted above the stacking contexts that clipped it.
+   Its original SVG, light, hit handlers and DOM identity stay unchanged. */
+body > #orb.sv-sayvi-handoff-flight {
+  position:fixed !important;
+  display:grid !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding:0 !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  max-width:none !important;
+  max-height:none !important;
+  z-index:2147483000 !important;
+  pointer-events:none !important;
+  transform-origin:center center !important;
+  will-change:transform;
+  filter:drop-shadow(0 5px 12px rgba(66,133,163,.15)) contrast(1.07);
 }
 
 /* A single soft afterglow suggests that the light has entered the pearl glass. */
@@ -157,7 +145,7 @@
 }
 
 @media(prefers-reduced-motion:reduce){
-  .sv-sayvi-handoff-flight{display:none!important}
+  body > #orb.sv-sayvi-handoff-flight{display:none!important}
   :root.sv-sayvi-handoff-docked #homePage :is(#orbCluster,#stage){transition:none!important}
   :root.sv-sayvi-handoff-demo #assistantButton .sv-sayvi-velvet-sphere{transition:none!important}
   :root.sv-sayvi-handoff-arrived #assistantButton .sv-sayvi-velvet-glass-glow{animation:none!important}
