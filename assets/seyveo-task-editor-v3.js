@@ -3,6 +3,7 @@
 (()=>{
  'use strict';
  const dialog=document.getElementById('personalTaskDialog');
+ const sheet=dialog?.querySelector('.personal-task-sheet');
  const form=document.getElementById('personalTaskForm');
  const date=document.getElementById('personalTaskDue');
  const days=document.getElementById('svNewTaskCalendarDays');
@@ -62,6 +63,27 @@
  }
  let manualDate=false,manualTime=false,manualPriority=false,manualRepeat=false;
  let quickDateOpen=false;
+ /* The native keyboard belongs to the phone. Follow its visual viewport so
+    the small controls stay immediately above it, without moving the editor. */
+ let keyboardFrame=0,lastKeyboardInset=-1;
+ function updateKeyboardPosition(){
+  if(!dialog.open||!sheet)return;
+  const viewport=window.visualViewport;
+  const remaining=viewport?Math.max(0,window.innerHeight-viewport.height-viewport.offsetTop):0;
+  const inset=remaining>110?Math.round(remaining):0;
+  if(Math.abs(inset-lastKeyboardInset)<3)return;
+  lastKeyboardInset=inset;
+  sheet.style.setProperty('--sv-task-keyboard-inset',inset+'px');
+  sheet.classList.toggle('sv-task-keyboard-visible',inset>0);
+ }
+ function queueKeyboardPosition(){
+  if(keyboardFrame)return;
+  keyboardFrame=requestAnimationFrame(()=>{keyboardFrame=0;updateKeyboardPosition()});
+ }
+ window.visualViewport?.addEventListener('resize',queueKeyboardPosition);
+ window.visualViewport?.addEventListener('scroll',queueKeyboardPosition);
+ window.addEventListener('resize',queueKeyboardPosition);
+ dialog.addEventListener('focusin',queueKeyboardPosition);
  const isEditing=()=>document.getElementById('personalTaskDialogTitle')?.textContent==='Изменить';
  function createText(kind,text){
   const node=document.createElement('span');node.className='sv-task-smart-'+kind;
@@ -246,6 +268,7 @@
   if(!dialog.open)return;
   manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;quickDateOpen=false;
   setCalendarOpen(false);
+  queueKeyboardPosition();
   date.dispatchEvent(new Event('change',{bubbles:true}));
   sizePhrase();
   updateSmartPreview();
@@ -255,6 +278,10 @@
  dialog.addEventListener('close',()=>{
   if(recognition){try{recognition.stop()}catch{}recognition=null;voiceButton?.setAttribute('aria-pressed','false')}
   setCalendarOpen(false);
+  if(keyboardFrame){cancelAnimationFrame(keyboardFrame);keyboardFrame=0}
+  lastKeyboardInset=-1;
+  sheet?.style.removeProperty('--sv-task-keyboard-inset');
+  sheet?.classList.remove('sv-task-keyboard-visible');
   quickDateOpen=false;
   title.style.height='';
   form.scrollTop=0;
