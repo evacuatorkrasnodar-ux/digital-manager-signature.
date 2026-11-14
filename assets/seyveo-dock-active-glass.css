@@ -1,5 +1,13 @@
 /* Inset selected state for the existing SEYVEO 60px Liquid Glass dock.
    This does not restyle the two original dock shells or Search circle. */
+/* More room for four tabs, without moving the Search circle or changing
+   the dock's 60px height, material, tint, border or touch feedback. */
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock),
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+){
+ --sv-feng-capsule:clamp(176px,calc(100vw - max(var(--sv-feng-side),env(safe-area-inset-left,0px)) - max(var(--sv-feng-side),env(safe-area-inset-right,0px)) - 71px),310px);
+}
 footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  display:none;position:absolute;pointer-events:none;
 }

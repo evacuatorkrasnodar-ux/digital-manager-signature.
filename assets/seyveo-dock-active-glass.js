@@ -27,7 +27,7 @@ function init(){
   if(!tab?.element)return false;
   const r=tab.element.getBoundingClientRect(),outer=dock.getBoundingClientRect();
   if(r.width<20||r.height<20||outer.width<100)return false;
-  const width=Math.max(38,Math.min(r.width-4,64));
+  const width=Math.max(38,Math.min(r.width-4,82));
   const x=r.left-outer.left+(r.width-width)/2;
   indicator.style.setProperty('--sv-indicator-width',`${width.toFixed(2)}px`);
   indicator.style.setProperty('--sv-indicator-x',`${x.toFixed(2)}px`);
