@@ -18,6 +18,7 @@
  const voiceButton=document.getElementById('svNewTaskVoice');
  const readPhrase=window.SEYVEO_TASK_SMART_NL;
  const readSignals=window.SEYVEO_TASK_SMART_SIGNALS;
+ const readPlan=window.SEYVEO_TASK_SMART_PLAN;
  if(!dialog||!form||!date||!days||!title||!hasDate)return;
  const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  const iso=(y,m,d)=>[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');
@@ -58,7 +59,22 @@
  }
  function selectedCategory(){return form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';}
  function selectedType(){return form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task';}
+ function proposedPlan(){return !isEditing()&&typeof readPlan==='function'?readPlan(title.value):null;}
+ function draftsForSave(){
+  const plan=proposedPlan();
+  if(!plan?.items?.length)return [];
+  const classifier=window.SEYVEO_TASK_CLASSIFY;
+  return plan.items.map((item,index)=>({
+   title:item.title,
+   category:classifier?.category?.(item.title)||selectedCategory(),
+   entryType:classifier?.type?.(item.title)||selectedType(),
+   tone:index===0?'orange':(['green','purple','yellow'][index-1]||'orange'),
+   remindBefore:plan.leadMinutes||0
+  }));
+ }
  function effectiveTitle(){
+  const planned=proposedPlan();
+  if(planned?.items?.length)return planned.items[0].title;
   const phrase=typeof readPhrase==='function'?readPhrase(title.value):null;
   const raw=(phrase?.title||title.value).trim().replace(/\s+/g,' ');
   const cleaned=raw.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'').trim();
@@ -77,14 +93,26 @@
   smartPreview.hidden=!raw;
   smartDetails.replaceChildren();
   if(!raw)return;
-  const name=effectiveTitle();
-  const category=selectedCategory(),kind=selectedType();
+  const drafts=draftsForSave();
+  const multi=drafts.length>1;
+  const displayed=drafts.length?drafts:[{title:effectiveTitle(),category:selectedCategory(),entryType:selectedType(),tone:'orange'}];
+  const category=displayed[0].category,kind=displayed[0].entryType;
+  const heading=smartPreview.querySelector('.sv-new-task-smart-heading strong');
+  if(heading)heading.textContent=multi?'Сэйви выделила '+displayed.length+' дела':'Сэйви определила';
   smartPreview.classList.toggle('is-work',category==='work');
-  const main=document.createElement('div');main.className='sv-task-smart-main';
-  const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+category;dot.setAttribute('aria-hidden','true');
-  main.append(dot,createText('name',name));smartDetails.append(main);
+  smartPreview.classList.toggle('is-multi',multi);
+  for(const item of displayed){
+   const main=document.createElement('div');main.className='sv-task-smart-main';
+   const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+item.category;
+   if(multi&&item.category!=='work')dot.classList.add('is-tone-'+item.tone);
+   dot.setAttribute('aria-hidden','true');
+   const copy=document.createElement('div');copy.className='sv-task-smart-item-copy';
+   copy.append(createText('name',item.title));
+   if(multi)copy.append(createText('item-detail',(item.category==='work'?'Работа':'Личное')+' · '+(item.entryType==='event'?'Событие':'Напоминание')));
+   main.append(dot,copy);smartDetails.append(main);
+  }
   const when=document.createElement('button');when.type='button';when.className='sv-task-smart-when';
-  when.setAttribute('aria-label','Изменить дату и время дела');
+  when.setAttribute('aria-label',multi?'Изменить дату и время обоих дел':'Изменить дату и время дела');
   when.setAttribute('aria-expanded',String(quickDateOpen));
   const whenDate=document.createElement('span');whenDate.className='sv-task-smart-when-date';
   const whenTime=document.createElement('span');whenTime.className='sv-task-smart-when-time';
@@ -118,13 +146,18 @@
    edit.append(dateLabel,timeLabel,done);smartDetails.append(edit);
   }
   const meta=document.createElement('div');meta.className='sv-task-smart-meta';
-  meta.append(createText('category',category==='work'?'Работа':'Личное'));
-  meta.append(createText('kind',kind==='event'?'Событие':'Напоминание'));
+  if(!multi){
+   meta.append(createText('category',category==='work'?'Работа':'Личное'));
+   meta.append(createText('kind',kind==='event'?'Событие':'Напоминание'));
+  }
+  const lead=proposedPlan()?.leadMinutes||0;
+  if(lead)meta.append(createText('lead',`За ${lead===60?'1 час':lead+' мин.'} до начала`));
   const priority=document.getElementById('personalTaskPriority')?.value;
   if(priority&&priority!=='none')meta.append(createText('priority',({low:'Без спешки',medium:'Важно',high:'Срочно'})[priority]||'Приоритет'));
   const repeat=document.getElementById('personalTaskRepeat')?.value;
   if(repeat&&repeat!=='none')meta.append(createText('repeat',({daily:'Каждый день',weekly:'Каждую неделю',monthly:'Каждый месяц'})[repeat]||'Повтор'));
   smartDetails.append(meta);
+  if(lead)smartDetails.append(createText('notice','Время предупреждения распознано. Фоновые уведомления пока не подключены.'));
   if(timeInput?.value&&!date.value)smartDetails.append(createText('notice','Укажи дату для напоминания по времени.'));
  }
  function applyPhrase(){
@@ -226,5 +259,5 @@
   title.style.height='';
   form.scrollTop=0;
  });
- window.SEYVEO_TASK_SCREEN=Object.freeze({version:4,sync,titleForSave:effectiveTitle});
+ window.SEYVEO_TASK_SCREEN=Object.freeze({version:5,sync,titleForSave:effectiveTitle,draftsForSave});
 })();
