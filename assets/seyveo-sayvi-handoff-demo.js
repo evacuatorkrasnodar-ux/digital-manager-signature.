@@ -125,6 +125,11 @@
     flight.style.top=from.top+'px';
     flight.style.width=from.width+'px';
     flight.style.height=from.height+'px';
+    if(inspectSlow){
+      // Diagnostic paint only, available on the private slow-motion URL.
+      flight.style.background='rgba(229,92,122,.25)';
+      flight.style.pointerEvents='auto';
+    }
     const visual=document.createElement('img');
     visual.src=art.currentSrc||art.src;
     visual.alt='';
