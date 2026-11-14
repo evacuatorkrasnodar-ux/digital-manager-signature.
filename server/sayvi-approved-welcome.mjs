@@ -29,3 +29,33 @@ export async function readApprovedWelcome({folders=welcomeFolders(),sha256=APPRO
  }
  return null;
 }
+
+// The approved master has a low-level transient in its first 50 ms followed
+// by silence until ~478 ms. Remove that pre-roll ONLY from the private playback
+// copy: keep the owner's verified download untouched and preserve every word.
+// The remaining 78 ms of silence is intentional, to avoid a clipped first syllable.
+export function prepareWelcomeForPlayback(master){
+ if(!Buffer.isBuffer(master)||master.length<44||
+    master.toString('ascii',0,4)!=='RIFF'||master.toString('ascii',8,12)!=='WAVE'||
+    master.toString('ascii',12,16)!=='fmt '||master.readUInt32LE(16)!==16||
+    master.readUInt16LE(20)!==1||master.readUInt16LE(22)!==1||
+    master.readUInt32LE(24)!==24000||master.readUInt16LE(34)!==16||
+    master.toString('ascii',36,40)!=='data'||master.readUInt32LE(40)!==master.length-44){
+  throw Error('Неподдерживаемый формат утверждённого WAV Сэйви.');
+ }
+ const trimBytes=Math.round(24000*.4)*2;
+ if(master.length<=44+trimBytes+24000)throw Error('Утверждённая запись Сэйви слишком короткая.');
+ const result=Buffer.allocUnsafe(master.length-trimBytes);
+ master.copy(result,0,0,44);
+ master.copy(result,44,44+trimBytes);
+ result.writeUInt32LE(result.length-8,4);
+ result.writeUInt32LE(result.length-44,40);
+ // A microscopic fade is applied entirely inside the remaining silent lead-in.
+ const fadeSamples=Math.round(24000*.045);
+ for(let index=0;index<fadeSamples;index++){
+  const offset=44+index*2;
+  const sample=result.readInt16LE(offset);
+  result.writeInt16LE(Math.round(sample*index/fadeSamples),offset);
+ }
+ return result;
+}

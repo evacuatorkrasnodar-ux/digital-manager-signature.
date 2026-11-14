@@ -26,7 +26,7 @@ import {analyzeBusinessMail} from './mail-intelligence.mjs';
 import {addApprovedExample,learningStats,findApprovedExamples} from './approved-learning.mjs';
 import {createLearningQueue} from './learning-queue.mjs';
 import {createVoiceWorker} from './voice-worker.mjs';
-import {readApprovedWelcome} from './sayvi-approved-welcome.mjs';
+import {readApprovedWelcome,prepareWelcomeForPlayback} from './sayvi-approved-welcome.mjs';
 import {createBraveContextProvider,searchWithSources} from './live-search.mjs';
 import {createSeyveoWebProvider} from './seyveo-web.mjs';
 import {searchLocalIndex} from './seyveo-index.mjs';
@@ -207,10 +207,11 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
   const path=(req.url||'').split('?')[0];
   if(req.method==='GET'&&path==='/api/seyveo-approved-welcome'){
    try{
-    const audio=await readApprovedWelcome();
-    if(!audio){
+    const master=await readApprovedWelcome();
+    if(!master){
      send(res,404,{error:'Скачай утверждённый SEYVEO-Sayvi-welcome.wav в папку Загрузки.'});
     }else{
+     const audio=prepareWelcomeForPlayback(master);
      res.writeHead(200,{...HEADERS,'content-type':'audio/wav','content-length':String(audio.length)});
      res.end(audio);
     }
