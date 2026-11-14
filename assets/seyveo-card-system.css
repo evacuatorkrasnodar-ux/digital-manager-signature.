@@ -897,7 +897,7 @@
  * A single shared contract for Card Engine, Studio previews and future cards.
  * White theme: Sayvi inherits the search lens's exact optical values, scaled
  * to the New Task header's 50px circle with a 23px symbol. Edit and Navigate
- * use the same dimensions and 23px symbols, clean white without borders.
+ * use pale regular glass that reads white, with no outline and a soft edge.
  * No duplicate decorative lens. Do not affect the original Dock.
  * Dark theme retains its existing graphite treatment pending separate approval.
  * The final Send / Save / Confirm button remains a separate explicit action.
@@ -922,10 +922,11 @@
 #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"]{
  --sv-card-icon-touch:50px;
  --sv-card-icon-radius:50%;
- --sv-card-action-neutral-bg:#FFFFFF;
+ --sv-card-action-neutral-bg:rgba(255,255,255,.90);
  --sv-card-action-outline:0 solid transparent;
- --sv-card-action-shadow:none;
- --sv-card-action-blur:none;
+ --sv-card-action-shadow:0 2px 8px rgba(25,31,42,.075),
+   0 0 1px rgba(25,31,42,.028);
+ --sv-card-action-blur:blur(12px) saturate(108%);
  --sv-card-icon-stroke:1.7;
  --sv-card-sayvi-outline:1px solid rgba(255,255,255,.94);
  --sv-card-sayvi-bg:rgba(190,193,202,.43);

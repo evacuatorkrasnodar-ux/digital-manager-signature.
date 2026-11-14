@@ -325,7 +325,8 @@
 
 /* SEYVEO / Home card actions — approved asymmetric Apple composition.
    All three match New Task: 50px hit circles and 23px icons. Sayvi alone
-   receives the Search dock lens; Edit and Navigate have no rim or shadow.
+   receives the Search dock lens; Edit and Navigate have white regular-glass
+   round faces with a barely visible edge, never a drawn border.
    Send/Save/Confirm text actions above remain unchanged. */
 #homePage #seyveoLivingMoment .lm-field .lm-actions{
  display:flex!important;
@@ -401,9 +402,10 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- border:0!important;background:#FFFFFF!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ border:0!important;background:var(--sv-card-action-neutral-bg,rgba(255,255,255,.90))!important;
+ box-shadow:var(--sv-card-action-shadow,0 2px 8px rgba(25,31,42,.075))!important;
+ -webkit-backdrop-filter:var(--sv-card-action-blur,none)!important;
+ backdrop-filter:var(--sv-card-action-blur,none)!important;
  color:#111113!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
