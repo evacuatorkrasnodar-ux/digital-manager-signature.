@@ -291,11 +291,12 @@
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-name.is-done{
  color:#959BA6!important;text-decoration:line-through;
 }
-/* Apple-like task checkbox: small outlined square, generous invisible tap target. */
+/* Every created task uses the same colored round calendar marker as events.
+   The invisible 32x40 tap target still lets a person complete the task. */
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  position:relative!important;grid-column:1;grid-row:1;
- align-self:center!important;justify-self:center!important;
+ align-self:start!important;justify-self:center!important;
  flex:0 0 32px!important;width:32px!important;min-width:32px!important;
  height:40px!important;min-height:40px!important;
  margin:0!important;padding:0!important;
@@ -305,21 +306,21 @@
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check::before{
  content:"";position:absolute;inset:auto;
- width:17px;height:17px;box-sizing:border-box;
- border:1.4px solid #6A9FC5;border-radius:4px;background:#FFF;
+ top:4px;width:12px;height:12px;box-sizing:border-box;
+ border:0;border-radius:50%;background:#0A84FF;
 }
-#tasksPage #personalTaskList .sv-agenda-entry[data-kind="personal"] .personal-task-check::before{
- border-color:#A69CB8;
-}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="orange"] .personal-task-check::before{background:#FF9F0A}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="green"] .personal-task-check::before{background:#34C759}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="red"] .personal-task-check::before{background:#FF453A}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="blue"] .personal-task-check::before{background:#0A84FF}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="yellow"] .personal-task-check::before{background:#FFD60A}
+#tasksPage #personalTaskList .sv-agenda-entry[data-tone="purple"] .personal-task-check::before{background:#BF5AF2}
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check[aria-pressed="true"]::before{
- background:#6A9FC5;border-color:#6A9FC5;
-}
-#tasksPage #personalTaskList .sv-agenda-entry[data-kind="personal"] .personal-task-check[aria-pressed="true"]::before{
- background:#A69CB8;border-color:#A69CB8;
+ width:17px;height:17px;top:2px;background:#38383A;border:0;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check[aria-pressed="true"]::after{
- content:"✓";position:absolute;color:#FFF;
- font:650 12px/1 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
+ content:"✓";position:absolute;top:3px;color:#FFF;
+ font:650 11px/1 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
 }
 #tasksPage #personalTaskList .sv-agenda-entry .personal-task-check:focus-visible{
  outline:2px solid #4E86BB!important;outline-offset:1px!important;border-radius:7px!important;
@@ -519,17 +520,22 @@
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-mark[data-tone="purple"]{background:#BF5AF2}
 
 
-/* An outlined rounded square marks an actionable reminder; events keep dots. */
+/* Demo tasks and real tasks share the same round, colored agenda language. */
 #tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"] .sv-agenda-scene-dot{
  appearance:none;box-sizing:border-box;display:grid;place-items:center;
  width:13px;height:13px;min-width:13px;min-height:13px;
  padding:0;margin:3px 0 0;
- background:transparent!important;border:1.5px solid #55B7C5!important;
- border-radius:3px!important;box-shadow:none!important;
+ background:#0A84FF!important;border:0!important;
+ border-radius:50%!important;box-shadow:none!important;
  cursor:pointer;color:#FFFFFF;
 }
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="orange"][data-entry-type="task"] .sv-agenda-scene-dot{background:#FF9F0A!important}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="green"][data-entry-type="task"] .sv-agenda-scene-dot{background:#34C759!important}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="red"][data-entry-type="task"] .sv-agenda-scene-dot{background:#FF453A!important}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="yellow"][data-entry-type="task"] .sv-agenda-scene-dot{background:#FFD60A!important}
+#tasksPage #personalTaskList .sv-agenda-scene[data-tone="purple"][data-entry-type="task"] .sv-agenda-scene-dot{background:#BF5AF2!important}
 #tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"] .sv-agenda-scene-dot[aria-pressed="true"]{
- background:#55B7C5!important;
+ background:#38383A!important;
 }
 #tasksPage #personalTaskList .sv-agenda-scene[data-entry-type="task"] .sv-agenda-scene-dot[aria-pressed="true"]::after{
  content:"✓";font:700 10px/1 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
