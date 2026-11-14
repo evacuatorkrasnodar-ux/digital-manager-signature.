@@ -24,6 +24,35 @@
  const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  const iso=(y,m,d)=>[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');
  let shownYear=new Date().getFullYear(),shownMonth=new Date().getMonth();
+ /* The dots come from the user's actual saved tasks and calendar events.
+    Never fabricate busy days to imitate the Apple reference. */
+ function monthMarkers(){
+  const result=new Map();
+  const add=(key,tone)=>{
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(key||'')||!key.startsWith(iso(shownYear,shownMonth,1).slice(0,7)))return;
+   const list=result.get(key)||[];
+   if(list.length>=3)return;
+   list.push(tone);result.set(key,list);
+  };
+  const read=key=>{
+   try{const rows=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(rows)?rows:[]}
+   catch{return []}
+  };
+  for(const item of read('seyveo-calendar-events-v1').slice(-300)){
+   if(!item||typeof item.title!=='string')continue;
+   add(item.date,item.kind==='business'?'blue':'orange');
+  }
+  const tones=new Set(['blue','purple','orange','green','red','yellow']);
+  for(const item of read('seyveo-personal-tasks-v1').slice(-150)){
+   if(!item||typeof item.title!=='string'||item.done===true)continue;
+   add(item.due,tones.has(item.tone)?item.tone:item.category==='work'?'blue':'purple');
+  }
+  return result;
+ }
+ function moveCalendarMonth(direction){
+  const next=new Date(shownYear,shownMonth+direction,1);
+  shownYear=next.getFullYear();shownMonth=next.getMonth();draw();
+ }
  function setCalendarOpen(open){
   if(!calendarButton||!calendarPopover)return;
   calendarPopover.hidden=!open;
@@ -34,18 +63,27 @@
   }
  }
  function draw(){
-  monthLabel.textContent=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(new Date(shownYear,shownMonth,1));
+  const heading=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(new Date(shownYear,shownMonth,1)).replace(/\s*г\.$/u,'');
+  monthLabel.textContent=heading.charAt(0).toLocaleUpperCase('ru-RU')+heading.slice(1);
   days.replaceChildren();
+  const markers=monthMarkers();
   const first=(new Date(shownYear,shownMonth,1).getDay()+6)%7;
   const count=new Date(shownYear,shownMonth+1,0).getDate();
   for(let i=0;i<first;i++){const empty=document.createElement('span');empty.className='sv-new-task-empty-day';days.append(empty)}
   for(let d=1;d<=count;d++){
-   const button=document.createElement('button');button.type='button';button.textContent=String(d);
+   const button=document.createElement('button');button.type='button';
    const value=iso(shownYear,shownMonth,d);
    button.dataset.iso=value;
    button.setAttribute('aria-label',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(new Date(shownYear,shownMonth,d)));
    if(value===date.value){button.classList.add('is-selected');button.setAttribute('aria-current','date')}
    if(value===today())button.classList.add('is-today');
+   const number=document.createElement('span');number.className='sv-task-cal-number';number.textContent=String(d);
+   const marks=document.createElement('span');marks.className='sv-task-cal-marks';marks.setAttribute('aria-hidden','true');
+   for(const tone of markers.get(value)||[]){
+    const mark=document.createElement('i');mark.className='sv-task-cal-mark sv-task-cal-'+tone;
+    marks.append(mark);
+   }
+   button.append(number,marks);
    button.addEventListener('click',()=>{
     manualDate=true;
     date.value=value;date.dispatchEvent(new Event('change',{bubbles:true}));
@@ -346,11 +384,38 @@
   date.dispatchEvent(new Event('change',{bubbles:true}));
  });
  document.getElementById('svNewTaskPrevMonth')?.addEventListener('click',()=>{
-  const d=new Date(shownYear,shownMonth-1,1);shownYear=d.getFullYear();shownMonth=d.getMonth();draw();
+  moveCalendarMonth(-1);
  });
  document.getElementById('svNewTaskNextMonth')?.addEventListener('click',()=>{
-  const d=new Date(shownYear,shownMonth+1,1);shownYear=d.getFullYear();shownMonth=d.getMonth();draw();
+  moveCalendarMonth(1);
  });
+ /* On phones the month is navigated by a horizontal finger swipe.
+    Vertical gestures still scroll the task editor normally. */
+ const calendarSurface=dialog.querySelector('.sv-new-task-calendar');
+ let calendarTouch=null,lastCalendarSwipe=0;
+ calendarSurface?.addEventListener('touchstart',event=>{
+  if(calendarPopover?.hidden||event.touches.length!==1){calendarTouch=null;return}
+  const point=event.touches[0];
+  calendarTouch={id:point.identifier,x:point.clientX,y:point.clientY,time:Date.now()};
+ },{passive:true});
+ calendarSurface?.addEventListener('touchend',event=>{
+  if(!calendarTouch)return;
+  const start=calendarTouch;calendarTouch=null;
+  if(calendarPopover?.hidden)return;
+  const point=Array.from(event.changedTouches).find(p=>p.identifier===start.id);
+  if(!point)return;
+  const dx=point.clientX-start.x,dy=point.clientY-start.y;
+  if(Math.abs(dx)<42||Math.abs(dx)<Math.abs(dy)*1.4||Date.now()-start.time>1400)return;
+  lastCalendarSwipe=Date.now();moveCalendarMonth(dx<0?1:-1);
+  event.preventDefault();
+ },{passive:false});
+ calendarSurface?.addEventListener('click',event=>{
+  if(Date.now()-lastCalendarSwipe<450){event.preventDefault();event.stopPropagation()}
+ },true);
+ calendarSurface?.addEventListener('touchcancel',()=>{calendarTouch=null},{passive:true});
+ for(const name of ['seyveo:tasks-changed','seyveo:personal-tasks-changed','seyveo:calendar-changed']){
+  window.addEventListener(name,()=>{if(dialog.open&&!calendarPopover?.hidden)draw()});
+ }
  const observer=new MutationObserver(()=>{
   if(!dialog.open)return;
   manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;quickDateOpen=false;
