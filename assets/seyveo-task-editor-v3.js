@@ -12,7 +12,6 @@
  const monthLabel=document.getElementById('svNewTaskMonthLabel');
  const smartPreview=document.getElementById('svNewTaskSmartPreview');
  const smartDetails=document.getElementById('svNewTaskSmartDetails');
- const smartHint=document.getElementById('svNewTaskSmartHint');
  const calendarButton=document.getElementById('svNewTaskCalendarButton');
  const calendarPopover=document.getElementById('svNewTaskCalendarPopover');
  const timeInput=document.getElementById('personalTaskTime');
@@ -100,7 +99,6 @@
  function updateSmartPreview(){
   if(!smartPreview||!smartDetails)return;
   const raw=title.value.trim().replace(/\s+/g,' ');
-  if(smartHint)smartHint.hidden=Boolean(raw);
   smartPreview.hidden=!raw;
   smartDetails.replaceChildren();
   if(!raw)return;
