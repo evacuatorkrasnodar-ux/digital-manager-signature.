@@ -395,7 +395,7 @@
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
  border:0!important;
- background:rgba(255,255,255,.12)!important;
+ background:rgba(190,193,202,.28)!important;
  box-shadow:var(--sv-card-action-shadow,0 2px 8px rgba(25,31,42,.075))!important;
  -webkit-backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
  backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
@@ -403,19 +403,25 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- border:0!important;background:rgba(255,255,255,.12)!important;
+ border:0!important;background:rgba(190,193,202,.28)!important;
  box-shadow:var(--sv-card-action-shadow,0 2px 8px rgba(25,31,42,.075))!important;
  -webkit-backdrop-filter:var(--sv-card-action-blur,none)!important;
  backdrop-filter:var(--sv-card-action-blur,none)!important;
  color:#111113!important;
 }
-/* Neutral glass: no fixed gray tint; the background shows through a 12% white
-   wash and 12px blur. Keep the dock-inspired thin rim, without inset embossing. */
+/* Exact approved dock material, now shared by the three 50px Home actions.
+   Material only: no change to button sizing, placement or touch behavior. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- border:1px solid rgba(255,255,255,.90)!important;
- box-shadow:0 0 0 .45px rgba(164,170,184,.22),
-  0 1px 3px rgba(25,31,42,.04)!important;
+ border:1.75px solid rgba(255,255,255,.94)!important;
+ box-shadow:0 0 0 .7px rgba(164,170,184,.30),
+  inset 0 1px 1px rgba(75,82,96,.055),
+  inset 0 -1px 0 rgba(255,255,255,.18),
+  inset .6px 0 .7px rgba(255,255,255,.16),
+  inset -.6px 0 .8px rgba(75,82,96,.055),
+  0 1px 2px rgba(82,88,103,.045)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
+ backdrop-filter:blur(12px) saturate(108%)!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
