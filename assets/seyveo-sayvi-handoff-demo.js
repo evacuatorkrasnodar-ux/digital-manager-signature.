@@ -1,4 +1,4 @@
-/* SEYVEO first opening of the day: the real Sayvi greets, gently travels into
+/* SEYVEO opening: the real Sayvi greets, gently travels into
    her miniature, while the original three-slot dock grows by one slot.
    Home stays Home; task data, navigation and touch handlers are untouched.
    ?sayvi-intro=1 replays the scene for review; ?sayvi-intro=0 skips it. */
@@ -30,8 +30,13 @@
   // Previously the mouse-pointer check accidentally excluded mobile Safari.
   const pageReload=performance.getEntriesByType('navigation')[0]?.type==='reload'
     ||performance.navigation?.type===1;
+  // Home Screen PWA launches are often reported as "navigate", not "reload".
+  // Each new standalone document is a new app opening: replay its artwork,
+  // while ordinary Safari tabs retain the once-a-day behavior.
+  const standaloneLaunch=matchMedia('(display-mode: standalone)').matches
+    ||navigator.standalone===true;
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||pageReload||!alreadySeen);
+  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||pageReload||standaloneLaunch||!alreadySeen);
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
@@ -580,7 +585,18 @@
 
   // One opening per LOCAL calendar day; route changes never replay the film.
   const launch=()=>{
-    if(!showCinema||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
+    if(!showCinema||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
+    if(document.hidden){
+      // iOS can construct a standalone Web App while it is still backgrounded.
+      // Do not burn the opening before the first visible frame is possible.
+      const onVisible=()=>{
+        if(document.hidden)return;
+        document.removeEventListener('visibilitychange',onVisible);
+        requestAnimationFrame(launch);
+      };
+      document.addEventListener('visibilitychange',onVisible);
+      return;
+    }
     if(localVoicePreview){
       prepareDock();
       root.classList.remove('sv-cinema-boot');
