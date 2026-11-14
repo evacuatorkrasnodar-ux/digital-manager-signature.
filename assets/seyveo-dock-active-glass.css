@@ -34,23 +34,23 @@
 :root[data-theme="light"] footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture,#assistantButton){z-index:2!important}
 /* High-specificity accents override only the legacy black SVG paint. */
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)
- > #navHome:is(.active,.sv-dock-nav-press),
+ > #navHome#navHome:is(.active,.sv-dock-nav-press),
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)
- > #navHome:is(.active,.sv-dock-nav-press) > svg,
+ > #navHome#navHome:is(.active,.sv-dock-nav-press) > svg,
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)
- > #navHome:is(.active,.sv-dock-nav-press) > svg *{color:#087DF1!important;stroke:#087DF1!important}
+ > #navHome#navHome:is(.active,.sv-dock-nav-press) > svg *{color:#087DF1!important;stroke:#087DF1!important}
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)
- > #navTasks:is(.active,.sv-dock-nav-press),
+ > #navTasks#navTasks:is(.active,.sv-dock-nav-press),
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)
- > #navTasks:is(.active,.sv-dock-nav-press) > svg,
+ > #navTasks#navTasks:is(.active,.sv-dock-nav-press) > svg,
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)
- > #navTasks:is(.active,.sv-dock-nav-press) > svg *{color:#D6534A!important;stroke:#D6534A!important}
+ > #navTasks#navTasks:is(.active,.sv-dock-nav-press) > svg *{color:#D6534A!important;stroke:#D6534A!important}
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)
- > #navPicture:is(.active,.sv-dock-nav-press),
+ > #navPicture#navPicture:is(.active,.sv-dock-nav-press),
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)
- > #navPicture:is(.active,.sv-dock-nav-press) > svg,
+ > #navPicture#navPicture:is(.active,.sv-dock-nav-press) > svg,
 :root[data-theme="light"] :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)
- > #navPicture:is(.active,.sv-dock-nav-press) > svg *{color:#675CC7!important;stroke:#675CC7!important}
+ > #navPicture#navPicture:is(.active,.sv-dock-nav-press) > svg *{color:#675CC7!important;stroke:#675CC7!important}
 :root[data-theme="light"] footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture) > svg,
 :root[data-theme="light"] footer.dock.sv-shared-dock > :is(#navHome,#navTasks,#navPicture) > svg *{
  transition:stroke 230ms ease,color 230ms ease!important;
