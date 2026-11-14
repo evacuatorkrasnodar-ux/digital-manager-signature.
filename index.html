@@ -3395,7 +3395,10 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
     <label><input type="radio" name="personalTaskType" value="event"><span>Событие</span></label>
     <label><input type="radio" name="personalTaskType" value="task" checked><span>Напоминание</span></label>
    </fieldset>
-   <div class="sv-new-task-intro"><span class="sv-new-task-intro-mark" aria-hidden="true">✧</span><div><strong>Скажи или напиши Сэйви</strong><p>Что нужно сделать и когда. Сэйви разберёт детали, а ты проверишь.</p></div><button id="svNewTaskVoice" type="button" aria-label="Продиктовать Сэйви" aria-pressed="false" title="Продиктовать"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-4 0h8"/></svg></button></div>
+   <div class="sv-new-task-intro"><div><strong>Скажи или напиши Сэйви</strong><p>Что нужно сделать и когда. Сэйви разберёт детали, а ты проверишь.</p></div><div class="sv-new-task-quick-actions" role="group" aria-label="Календарь и голосовой ввод"><button id="svNewTaskCalendarButton" type="button" aria-label="Посмотреть даты" aria-expanded="false" aria-controls="svNewTaskCalendarPopover" title="Календарь"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M7.7 3.5v4M16.3 3.5v4M3.5 9.5h17M7.7 13.1h.1M12 13.1h.1M16.3 13.1h.1M7.7 16.8h.1M12 16.8h.1"/></svg></button><span class="sv-new-task-quick-divider" aria-hidden="true"></span><button id="svNewTaskVoice" type="button" aria-label="Продиктовать Сэйви" aria-pressed="false" title="Продиктовать"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-4 0h8"/></svg></button></div></div>
+   <section id="svNewTaskCalendarPopover" class="sv-new-task-calendar-popover" aria-label="Выбор даты дела" hidden>
+    <div class="sv-new-task-calendar"><div class="sv-new-task-month-bar"><button id="svNewTaskPrevMonth" type="button" aria-label="Предыдущий месяц">‹</button><strong id="svNewTaskMonthLabel"></strong><button id="svNewTaskNextMonth" type="button" aria-label="Следующий месяц">›</button></div><div class="sv-new-task-weekdays" aria-hidden="true"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div id="svNewTaskCalendarDays" class="sv-new-task-calendar-days"></div></div>
+   </section>
    <section class="sv-new-task-card sv-new-task-main" aria-label="Описание">
     <textarea id="personalTaskTitle" rows="2" maxlength="140" autocomplete="off" required placeholder="Например, завтра в 10 позвонить Андрею" aria-label="Что сказать Сэйви"></textarea>
     <p id="svNewTaskSmartHint" class="sv-new-task-smart-hint">Сэйви сама определит дату, время и нужный список.</p>
@@ -3407,26 +3410,15 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
     <div id="svNewTaskSmartDetails" class="sv-new-task-smart-details"></div>
     <section id="svNewTaskPlacePanel" class="sv-new-task-place" aria-label="Место встречи" aria-live="polite" hidden></section>
    </div>
-   <button id="svNewTaskManualToggle" class="sv-new-task-manual-toggle" type="button" aria-expanded="false" aria-controls="svNewTaskDateSettings">Уточнить вручную <span aria-hidden="true">⌄</span></button>
-   <h3 class="sv-new-task-section-title">Дата и время</h3>
-   <section class="sv-new-task-card sv-new-task-date-card" aria-label="Дата и время">
-    <label class="sv-new-task-date-toggle"><span class="sv-new-task-calendar-icon">▦</span><span>Дата</span><input id="svNewTaskHasDate" type="checkbox" checked role="switch" aria-label="Использовать дату"><i aria-hidden="true"></i></label>
-    <div id="svNewTaskDateSettings">
-     <div class="sv-new-task-setting"><span>Выбранная дата</span><span class="personal-task-date-control"><input id="personalTaskDue" type="date" aria-label="Дата дела"><span id="personalTaskDueDisplay" class="personal-task-date-display">Не выбрана</span></span></div>
-     <label class="sv-new-task-setting sv-new-task-time-setting"><span>Время</span><input id="personalTaskTime" type="time" step="60" aria-label="Время дела"></label>
-     <div class="sv-new-task-calendar" aria-label="Календарь выбора даты">
-      <div class="sv-new-task-month-bar"><button id="svNewTaskPrevMonth" type="button" aria-label="Предыдущий месяц">‹</button><strong id="svNewTaskMonthLabel"></strong><button id="svNewTaskNextMonth" type="button" aria-label="Следующий месяц">›</button></div>
-      <div class="sv-new-task-weekdays" aria-hidden="true"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
-      <div id="svNewTaskCalendarDays" class="sv-new-task-calendar-days"></div>
-     </div>
-    </div>
-   </section>
-   <section class="sv-new-task-card sv-new-task-settings" aria-label="Дополнительные настройки">
-    <label><span class="sv-new-task-setting-icon">↻</span><span>Повтор</span><select id="personalTaskRepeat" aria-label="Повтор"><option value="none">Никогда</option><option value="daily">Каждый день</option><option value="weekly">Каждую неделю</option><option value="monthly">Каждый месяц</option></select></label>
-    <div class="sv-new-task-list-setting"><span class="sv-new-task-setting-icon">☷</span><span>Список</span><select id="svNewTaskListChoice" aria-label="Список дела"><option value="personal">Напоминания</option><option value="work">Работа</option></select><fieldset class="sv-new-task-category" hidden aria-hidden="true"><label><input type="radio" name="personalTaskCategory" value="personal" checked><span>Личное</span></label><label><input type="radio" name="personalTaskCategory" value="work"><span>Работа</span></label></fieldset></div>
-    <label><span class="sv-new-task-setting-icon">!</span><span>Приоритет</span><select id="personalTaskPriority" aria-label="Приоритет"><option value="none">Нет</option><option value="low">Низкий</option><option value="medium">Средний</option><option value="high">Высокий</option></select></label>
-    <label class="sv-new-task-home-setting"><span class="sv-new-task-setting-icon sv-new-task-sayvi-icon">✧</span><span class="sv-new-task-home-copy"><strong>Сэйви на Главной</strong><small>Напомнить в день дела</small></span><input id="personalTaskShowOnHome" type="checkbox" role="switch" aria-label="Показывать дело у Сэйви на Главной"><i aria-hidden="true"></i></label>
-   </section>
+   <div class="sv-new-task-legacy-state" hidden aria-hidden="true">
+    <input id="svNewTaskHasDate" type="checkbox" checked>
+    <div id="svNewTaskDateSettings"><span class="personal-task-date-control"><input id="personalTaskDue" type="date"><span id="personalTaskDueDisplay">Не выбрана</span></span><input id="personalTaskTime" type="time" step="60"></div>
+    <select id="personalTaskRepeat"><option value="none">Никогда</option><option value="daily">Каждый день</option><option value="weekly">Каждую неделю</option><option value="monthly">Каждый месяц</option></select>
+    <select id="svNewTaskListChoice"><option value="personal">Напоминания</option><option value="work">Работа</option></select>
+    <fieldset class="sv-new-task-category" hidden><label><input type="radio" name="personalTaskCategory" value="personal" checked>Личное</label><label><input type="radio" name="personalTaskCategory" value="work">Работа</label></fieldset>
+    <select id="personalTaskPriority"><option value="none">Нет</option><option value="low">Низкий</option><option value="medium">Средний</option><option value="high">Высокий</option></select>
+    <input id="personalTaskShowOnHome" type="checkbox">
+   </div>
    <small id="personalTaskStatus" role="status" aria-live="polite"></small>
   </form>
  </div>
@@ -6414,7 +6406,7 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=24"></script><script src="assets/seyveo-work-shell.js?v=78"></script><script src="assets/seyveo-task-smart-nl.js?v=2"></script><script src="assets/seyveo-task-places.js?v=3"></script><script src="assets/seyveo-task-editor-v3.js?v=8"></script><script src="assets/seyveo-task-places-ui.js?v=4"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
+</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=24"></script><script src="assets/seyveo-work-shell.js?v=78"></script><script src="assets/seyveo-task-smart-nl.js?v=2"></script><script src="assets/seyveo-task-places.js?v=3"></script><script src="assets/seyveo-task-editor-v3.js?v=9"></script><script src="assets/seyveo-task-places-ui.js?v=4"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
  // Only the actual viewport HEIGHT affects editor geometry. Scroll events
@@ -6544,4 +6536,4 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=21"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=10"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=3"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=12"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=21"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=10"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=3"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=13"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
