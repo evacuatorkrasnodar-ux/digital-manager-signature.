@@ -199,6 +199,9 @@
   function begin(){
     if(done)return;
     if(document.hidden||!atHome||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
+    // Address bars and safe-area insets may settle during the long logo scene.
+    // Measure the dock again immediately before beginning the actual flight.
+    prepareDock();
     const from=orb.getBoundingClientRect();
     if(!from.width){finish();return;}
     const to=small.getBoundingClientRect();
@@ -257,7 +260,15 @@
     if(location.hash&&location.hash!=='#home')root.classList.remove('sv-cinema-stagger-enter');
   });
   window.addEventListener('pagehide',()=>{if(!done)finish();});
-  window.addEventListener('resize',()=>{if(!done)finish();});
+  let lastViewportWidth=window.innerWidth;
+  window.addEventListener('resize',()=>{
+    const widthChange=Math.abs(window.innerWidth-lastViewportWidth);
+    lastViewportWidth=window.innerWidth;
+    // iOS browser chrome often changes only the height during startup; that
+    // must not cut off the artwork. A genuine width/orientation change during
+    // flight is different: settle safely on the real dock target.
+    if(!done&&animation&&widthChange>44)finish();
+  });
   // Any tap/click immediately opens the functional Home. Consume the same
   // gesture so a skip cannot accidentally activate a dock button or a card.
   let skipClickUntil=0;
