@@ -203,7 +203,9 @@
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
   requestAnimationFrame(launch);
-  window.addEventListener('hashchange',()=>{if(!done)finish();});
+  window.addEventListener('hashchange',()=>{
+    if(!done&&location.hash&&location.hash!=='#home')finish();
+  });
   window.addEventListener('pagehide',()=>{if(!done)finish();});
   window.addEventListener('resize',()=>{if(started&&!done)finish();});
   document.addEventListener('pointerdown',()=>{if(!done)finish();},{capture:true});
