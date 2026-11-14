@@ -73,6 +73,7 @@ function read(){
  entryType:item.entryType==='event'||item.entryType==='task'?item.entryType:svInferEntryType(item.title),
  notes:typeof item.notes==='string'?item.notes.slice(0,1000):'',
  url:typeof item.url==='string'?item.url.slice(0,500):'',
+ place:window.SEYVEO_TASK_PLACES?.cleanPlace?.(item.place)||null,
  repeat:['none','daily','weekly','monthly'].includes(item.repeat)?item.repeat:'none',
  priority:['none','low','medium','high'].includes(item.priority)?item.priority:'none'}));
 }
@@ -1163,6 +1164,7 @@ input.addEventListener('input',()=>{
 });
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;svTaskCategoryTouched=false;svTaskTypeTouched=false;
+ window.SEYVEO_TASK_PLACE_EDITOR?.reset?.();
  $('personalTaskDialogTitle').textContent='Новое';
  $('personalTaskSave').setAttribute('aria-label','Сохранить дело');$('personalTaskSave').title='Сохранить дело';
  form.reset();
@@ -1187,6 +1189,7 @@ function put(e){
   record.title=title.slice(0,140);record.due=date.value;record.time=date.value?($('personalTaskTime')?.value||''):'';
   record.notes=$('personalTaskNotes')?.value.trim().slice(0,1000)||'';
   record.url=$('personalTaskURL')?.value.trim().slice(0,500)||'';
+  record.place=window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null;
   record.repeat=$('personalTaskRepeat')?.value||'none';
   record.priority=$('personalTaskPriority')?.value||'none';
   record.showOnHome=Boolean($('personalTaskShowOnHome')?.checked);
@@ -1204,6 +1207,7 @@ function put(e){
  tone:form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'blue':'orange',
  entryType:form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task',
  notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',
+ place:window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null,
  repeat:$('personalTaskRepeat')?.value||'none',priority:$('personalTaskPriority')?.value||'none',
  showOnHome:Boolean($('personalTaskShowOnHome')?.checked),
  done:false,createdAt:new Date().toISOString(),doneAt:'',
@@ -1304,6 +1308,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  if($('personalTaskShowOnHome'))$('personalTaskShowOnHome').checked=task.showOnHome===undefined?true:task.showOnHome===true;
  if($('personalTaskTime'))$('personalTaskTime').value=task.time||'';
  dialog.dispatchEvent(new Event('sv-task-editor-sync'));
+ window.SEYVEO_TASK_PLACE_EDITOR?.load?.(task.place);
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='Изменения сохраняются только после вашего подтверждения.';
  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
