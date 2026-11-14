@@ -290,6 +290,7 @@
     // later live updates keep their normal transitions and touch behaviour.
     if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);
     setTimeout(()=>root.classList.remove('sv-sayvi-handoff-arrived'),850);
+    window.dispatchEvent(new Event('seyveo:cinema-finished'));
   }
 
   function begin(){
@@ -625,4 +626,179 @@
   },{capture:true});
   for(const name of ['seyveo:route-changed','seyveo:tasks-changed','seyveo:calendar-changed'])
     window.addEventListener(name,renderToday);
+
+  // SEYVEO Sound · ambient Home. Only a real playing music session may bring
+  // the large ORIGINAL orb back, and only while Home is in front. It never
+  // creates another player, another dock, or another copy of Sayvi.
+  const musicAudio=document.getElementById('sayviMusicAudio');
+  const musicMini=document.getElementById('sayviMusicMini');
+  const ambientIdleMs=40000;
+  let ambientTimer=0;
+  let ambient=false;
+  let ambientLeaving=false;
+  let ambientMotion=null;
+  let ambientGeneration=0;
+  let ambientRoute=location.hash||'#home';
+  let ambientTicket=0;
+  const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function musicIsPlaying(){
+    return !!musicAudio&&!!musicAudio.src&&!musicAudio.paused&&!musicAudio.ended&&!musicAudio.error;
+  }
+  function canShowMusicAmbient(){
+    if(!done||ambientLeaving||document.hidden||home.hidden||
+       (location.hash&&location.hash!=='#home')||
+       !musicIsPlaying()||!musicMini||musicMini.hidden||
+       root.classList.contains('seyveo-conversation')||
+       document.querySelector('dialog[open]')||
+       document.activeElement?.matches('input,textarea,[contenteditable="true"]'))return false;
+    const composer=document.getElementById('ask');
+    return !composer||composer.hidden;
+  }
+  function cancelAmbientTimer(){
+    clearTimeout(ambientTimer);ambientTimer=0;
+    ambientTicket++;
+  }
+  function scheduleMusicAmbient(delay=ambientIdleMs){
+    cancelAmbientTimer();
+    if(ambient||!canShowMusicAmbient())return;
+    const ticket=ambientTicket;
+    ambientTimer=setTimeout(()=>{
+      ambientTimer=0;
+      if(ticket===ambientTicket)enterMusicAmbient();
+    },delay);
+  }
+  function restoreAmbientMotion(){
+    ambientMotion?.cancel();
+    ambientMotion=null;
+  }
+  function enterMusicAmbient(){
+    if(ambient||!canShowMusicAmbient())return;
+    cancelAmbientTimer();
+    ambient=true;
+    ambientGeneration++;
+    root.classList.remove('sv-music-ambient-leaving');
+    root.classList.add('sv-music-ambient');
+    // Measure both states after the settled layout; the sphere rises from
+    // exactly the existing assistant position rather than an invented point.
+    const to=orb.getBoundingClientRect();
+    const from=small.getBoundingClientRect();
+    if(!reduceMotion()&&to.width&&from.width&&typeof orb.animate==='function'){
+      const dx=from.left+from.width/2-(to.left+to.width/2);
+      const dy=from.top+from.height/2-(to.top+to.height/2);
+      const scale=Math.min(1,from.width/to.width);
+      try{
+        restoreAmbientMotion();
+        const motion=orb.animate([
+          {transform:`translate3d(${dx}px,${dy}px,0) scale(${scale})`,opacity:.98},
+          {transform:'translate3d(0,0,0) scale(1)',opacity:1}
+        ],{duration:1320,easing:'cubic-bezier(.2,.72,.16,1)',fill:'both'});
+        ambientMotion=motion;
+        motion.finished.then(()=>{
+          if(ambientMotion===motion)restoreAmbientMotion();
+        }).catch(()=>{});
+      }catch{/* The static orb remains usable without Web Animations. */}
+    }
+  }
+  function leaveMusicAmbient({animate=true,afterTap=false}={}){
+    cancelAmbientTimer();
+    if(!ambient){
+      // A route change or playback stop must also cancel a return flight that
+      // is still in progress. Never leave the dock masked on another screen.
+      if(ambientLeaving&&!animate){
+        ambientGeneration++;
+        ambientLeaving=false;
+        restoreAmbientMotion();
+        root.classList.remove('sv-music-ambient','sv-music-ambient-leaving');
+      }
+      return;
+    }
+    ambient=false;
+    const generation=++ambientGeneration;
+    restoreAmbientMotion();
+    const settle=()=>{
+      if(generation!==ambientGeneration)return;
+      root.classList.remove('sv-music-ambient','sv-music-ambient-leaving');
+      ambientLeaving=false;
+      restoreAmbientMotion();
+      if(afterTap&&!home.hidden){
+        root.classList.add('sv-cinema-stagger-enter');
+        setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);
+      }
+      if(canShowMusicAmbient())scheduleMusicAmbient();
+    };
+    if(!animate||reduceMotion()||!musicIsPlaying()||home.hidden||typeof orb.animate!=='function'){
+      settle();return;
+    }
+    const from=orb.getBoundingClientRect();
+    const to=small.getBoundingClientRect();
+    if(!from.width||!to.width){settle();return;}
+    ambientLeaving=true;
+    root.classList.add('sv-music-ambient-leaving');
+    const dx=to.left+to.width/2-(from.left+from.width/2);
+    const dy=to.top+to.height/2-(from.top+from.height/2);
+    const scale=Math.min(1,to.width/from.width);
+    try{
+      const motion=orb.animate([
+        {transform:'translate3d(0,0,0) scale(1)',opacity:1},
+        {transform:`translate3d(${dx}px,${dy}px,0) scale(${scale})`,opacity:1}
+      ],{duration:1150,easing:'cubic-bezier(.44,0,.16,1)',fill:'forwards'});
+      ambientMotion=motion;
+      let settled=false;
+      const complete=()=>{
+        if(settled)return;
+        settled=true;settle();
+      };
+      motion.finished.then(complete).catch(complete);
+      setTimeout(complete,1450);
+    }catch{settle();}
+  }
+  // A touch dismisses only the ambient artwork; the first touch cannot
+  // accidentally trigger an underlying task or dock action. Mini-player
+  // transport controls remain live and retain the current audio session.
+  document.addEventListener('pointerdown',event=>{
+    if(!ambient){
+      if(canShowMusicAmbient())scheduleMusicAmbient();
+      return;
+    }
+    if(event.target.closest('#sayviMusicMini')){
+      leaveMusicAmbient({animate:false});
+      return;
+    }
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    skipClickUntil=Date.now()+700;
+    leaveMusicAmbient({animate:true,afterTap:true});
+  },{capture:true,passive:false});
+  document.addEventListener('keydown',()=>{
+    if(ambient)leaveMusicAmbient({animate:false});
+    else if(canShowMusicAmbient())scheduleMusicAmbient();
+  },{capture:true});
+  function syncAmbientRoute(){
+    const route=location.hash||'#home';
+    if(route===ambientRoute)return;
+    const fromMusic=ambientRoute==='#sayvi-music'&&route==='#home';
+    ambientRoute=route;
+    if(route!=='#home'){
+      leaveMusicAmbient({animate:false});
+      cancelAmbientTimer();
+      return;
+    }
+    if(fromMusic){
+      // Let the existing route switch reveal Home and the mini-player first.
+      scheduleMusicAmbient(280);
+    }else scheduleMusicAmbient();
+  }
+  window.addEventListener('hashchange',syncAmbientRoute);
+  window.addEventListener('seyveo:route-changed',syncAmbientRoute);
+  window.addEventListener('seyveo:cinema-finished',()=>scheduleMusicAmbient());
+  document.addEventListener('seyveo:music-state',event=>{
+    if(!event.detail?.playing){leaveMusicAmbient({animate:false});return;}
+    // Music's own route synchronization may fire twice. Do not replace the
+    // short return-from-player timer with a full 40-second idle delay.
+    if(!ambient&&!ambientTimer)scheduleMusicAmbient();
+  });
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden){leaveMusicAmbient({animate:false});cancelAmbientTimer();}
+    else if(canShowMusicAmbient())scheduleMusicAmbient();
+  });
 })();

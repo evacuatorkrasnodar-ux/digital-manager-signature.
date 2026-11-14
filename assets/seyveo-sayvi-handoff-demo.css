@@ -128,8 +128,8 @@
   opacity:1;
   transform:translate3d(0,0,0);
 }
-/* Private voice preview on the trusted LOCAL server only. The control is
-   shown only when Edge prevents autoplay; the public opening stays silent. */
+/* Private voice controls: local PC stream or an owner-imported Safari file.
+   No audio is hosted publicly; the control appears when a tap is required. */
 .sv-cinema-local-voice,.sv-cinema-local-voice-download{
   position:fixed;
   z-index:2147483003;
@@ -416,4 +416,80 @@ body > #orb.sv-sayvi-handoff-flight {
   :root.sv-sayvi-handoff-arrived #assistantButton .sv-sayvi-velvet-glass-glow{animation:none!important}
   .sv-sayvi-handoff-today{animation:none!important}
   :root.sv-cinema-stagger-enter #homePage :is(#stage > .message,#seyveoLivingMoment .lm-caption,#seyveoLivingMoment .lm-tiles > *,#seyveoLivingMoment .lm-inline-item,#dynamic > *,#svSmartStartHome,#svcpWorkHomePreview,#workTimeline,.sv-sayvi-handoff-today){animation:none!important}
+}
+
+/* SEYVEO SOUND · living music artwork on Home.
+   The ORIGINAL orb returns only while a track plays. The existing miniature
+   temporarily disappears; its approved dock material and geometry remain.
+   The real mini-player is independent and stays fully interactive. */
+:root.sv-music-ambient.sv-sayvi-handoff-docked #homePage #stage{
+  min-height:calc(100dvh - 215px)!important;
+  flex:1 1 auto!important;
+  justify-content:center!important;
+  padding:0 0 16px!important;
+  transition:none!important;
+}
+:root.sv-music-ambient.sv-sayvi-handoff-docked #homePage #orbCluster,
+:root.sv-music-ambient.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
+  height:clamp(210px,62vw,285px)!important;
+  min-height:0!important;
+  margin-bottom:0!important;
+  opacity:1!important;
+  visibility:visible!important;
+  overflow:visible!important;
+  pointer-events:auto!important;
+  transition:none!important;
+}
+:root.sv-music-ambient.sv-sayvi-handoff-docked #homePage #orb,
+:root.sv-music-ambient.sv-sayvi-handoff-docked #homePage.lm-focus #orb{
+  display:grid!important;
+  width:clamp(210px,62vw,285px)!important;
+  height:clamp(210px,62vw,285px)!important;
+  min-width:0!important;
+  min-height:0!important;
+  transform:none;
+  transform-origin:center center;
+  will-change:transform,opacity;
+}
+:root.sv-music-ambient #homePage #stage > .message{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+:root.sv-music-ambient #homePage :is(#dynamic,#seyveoLivingMoment,#svSmartStartHome,#svcpWorkHomePreview,#workTimeline){
+  display:none!important;
+  pointer-events:none!important;
+}
+:root.sv-music-ambient :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #assistantButton{
+  opacity:0!important;
+  pointer-events:none!important;
+}
+:root.sv-music-ambient :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+)::before{
+  animation:sv-music-ambient-dock-shrink 1100ms cubic-bezier(.22,.8,.2,1) both!important;
+}
+:root.sv-music-ambient.sv-music-ambient-leaving :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+)::before{
+  animation:sv-music-ambient-dock-expand 1100ms cubic-bezier(.22,.8,.2,1) both!important;
+}
+@keyframes sv-music-ambient-dock-shrink{
+  from{clip-path:inset(0 0 0 0 round 999px)}
+  to{clip-path:inset(0 25% 0 0 round 999px)}
+}
+@keyframes sv-music-ambient-dock-expand{
+  from{clip-path:inset(0 25% 0 0 round 999px)}
+  to{clip-path:inset(0 0 0 0 round 999px)}
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-music-ambient :is(
+    body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+    body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+  )::before{animation:none!important;clip-path:inset(0 25% 0 0 round 999px)!important}
 }
