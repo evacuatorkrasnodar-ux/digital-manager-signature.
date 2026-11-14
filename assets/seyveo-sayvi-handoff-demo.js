@@ -11,7 +11,9 @@
   // The approved Sayvi voice is available for a private, local project preview.
   // Ordinary public openings are silent; no voice sample is published.
   const localVoicePreview=params.get('sayvi-voice')==='1'&&location.origin==='http://127.0.0.1:8790';
-  const projectIntroduction='Привет! Меня зовут Сэйви. Можешь звать меня просто Сэй. Меня создала компания SEYVEO — студия технологий, искусственного интеллекта и автоматизации. Я здесь, чтобы помогать тебе с делами, находить решения и делать сложное простым. Я могла бы долго рассказывать о том, что умею… Но знаешь что? Лучше я тебе покажу. Ну что, начнём?';
+  // Spoken brand spelling only: the visible brand always remains SEYVEO.
+  // Qwen's Russian TTS must not pronounce Latin SEYVEO letter by letter.
+  const projectIntroduction='Привет! Меня зовут Сэйви. Можешь звать меня просто Сэй. Меня создала компания Сэйвео — студия технологий, искусственного интеллекта и автоматизации. Я здесь, чтобы помогать тебе с делами, находить решения и делать сложное простым. Я могла бы долго рассказывать о том, что умею… Но знаешь что? Лучше я тебе покажу. Ну что, начнём?';
   const dailyKey='seyveo-sayvi-cinema-last-day-v4';
   const currentDay=()=>{
     const d=new Date();
