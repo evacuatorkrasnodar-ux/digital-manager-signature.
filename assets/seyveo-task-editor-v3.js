@@ -13,7 +13,8 @@
  const smartPreview=document.getElementById('svNewTaskSmartPreview');
  const smartDetails=document.getElementById('svNewTaskSmartDetails');
  const smartHint=document.getElementById('svNewTaskSmartHint');
- const manualToggle=document.getElementById('svNewTaskManualToggle');
+ const calendarButton=document.getElementById('svNewTaskCalendarButton');
+ const calendarPopover=document.getElementById('svNewTaskCalendarPopover');
  const timeInput=document.getElementById('personalTaskTime');
  const voiceButton=document.getElementById('svNewTaskVoice');
  const readPhrase=window.SEYVEO_TASK_SMART_NL;
@@ -23,6 +24,15 @@
  const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  const iso=(y,m,d)=>[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');
  let shownYear=new Date().getFullYear(),shownMonth=new Date().getMonth();
+ function setCalendarOpen(open){
+  if(!calendarButton||!calendarPopover)return;
+  calendarPopover.hidden=!open;
+  calendarButton.setAttribute('aria-expanded',String(open));
+  if(open){
+   const [year,month]=(date.value||today()).split('-').map(Number);
+   shownYear=year;shownMonth=month-1;draw();
+  }
+ }
  function draw(){
   monthLabel.textContent=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(new Date(shownYear,shownMonth,1));
   days.replaceChildren();
@@ -39,6 +49,7 @@
    button.addEventListener('click',()=>{
     manualDate=true;
     date.value=value;date.dispatchEvent(new Event('change',{bubbles:true}));
+    setCalendarOpen(false);
    });
    days.append(button);
   }
@@ -178,10 +189,14 @@
   updateSmartPreview();
  }
  title.addEventListener('input',()=>{sizePhrase();applyPhrase()});
- manualToggle?.addEventListener('click',()=>{
-  const open=dialog.classList.toggle('sv-task-manual-open');
-  manualToggle.setAttribute('aria-expanded',String(open));
-  if(open)manualToggle.scrollIntoView({block:'start',behavior:'smooth'});
+ calendarButton?.addEventListener('click',()=>{
+  title.blur();setCalendarOpen(Boolean(calendarPopover?.hidden));
+ });
+ dialog.addEventListener('pointerdown',event=>{
+  if(!calendarPopover?.hidden&&!calendarPopover.contains(event.target)&&!calendarButton?.contains(event.target))setCalendarOpen(false);
+ },true);
+ dialog.addEventListener('cancel',event=>{
+  if(!calendarPopover?.hidden){event.preventDefault();setCalendarOpen(false)}
  });
  date.addEventListener('change',event=>{if(event.isTrusted)manualDate=true;updateSmartPreview();});
  timeInput?.addEventListener('change',event=>{if(event.isTrusted)manualTime=true;updateSmartPreview();});
@@ -195,7 +210,11 @@
  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
  let recognition=null;
  if(voiceButton){
-  if(!Recognition)voiceButton.hidden=true;
+  if(!Recognition)voiceButton.addEventListener('click',()=>{
+   const status=document.getElementById('personalTaskStatus');
+   if(status)status.textContent='Для диктовки используй микрофон клавиатуры телефона.';
+   title.focus({preventScroll:true});
+  });
   else voiceButton.addEventListener('click',()=>{
    if(recognition){try{recognition.stop()}catch{}return}
    const rec=new Recognition();recognition=rec;rec.lang='ru-RU';
@@ -225,26 +244,10 @@
  document.getElementById('svNewTaskNextMonth')?.addEventListener('click',()=>{
   const d=new Date(shownYear,shownMonth+1,1);shownYear=d.getFullYear();shownMonth=d.getMonth();draw();
  });
- const jump={
-  date:()=>document.querySelector('.sv-new-task-calendar'),
-  time:()=>document.getElementById('personalTaskTime'),
-  notes:()=>document.getElementById('personalTaskNotes'),
-  category:()=>document.querySelector('.sv-new-task-list-setting'),
-  priority:()=>document.getElementById('personalTaskPriority')
- };
- dialog.querySelectorAll('[data-sv-task-focus]').forEach(button=>button.addEventListener('click',()=>{
-  const target=jump[button.dataset.svTaskFocus]?.();if(!target)return;
-  if((button.dataset.svTaskFocus==='date'||button.dataset.svTaskFocus==='time')&&!hasDate.checked){
-   hasDate.checked=true;hasDate.dispatchEvent(new Event('change',{bubbles:true}));
-  }
-  target.scrollIntoView({block:'center',behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
-  if(target.matches('input,textarea,select'))target.focus({preventScroll:true});
- }));
  const observer=new MutationObserver(()=>{
   if(!dialog.open)return;
   manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;quickDateOpen=false;
-  dialog.classList.remove('sv-task-manual-open');
-  manualToggle?.setAttribute('aria-expanded','false');
+  setCalendarOpen(false);
   date.dispatchEvent(new Event('change',{bubbles:true}));
   sizePhrase();
   updateSmartPreview();
@@ -253,9 +256,8 @@
  dialog.addEventListener('sv-task-editor-sync',()=>{sync();updateSmartPreview();sizePhrase()});
  dialog.addEventListener('close',()=>{
   if(recognition){try{recognition.stop()}catch{}recognition=null;voiceButton?.setAttribute('aria-pressed','false')}
-  dialog.classList.remove('sv-task-manual-open');
+  setCalendarOpen(false);
   quickDateOpen=false;
-  manualToggle?.setAttribute('aria-expanded','false');
   title.style.height='';
   form.scrollTop=0;
  });
