@@ -3405,6 +3405,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
    <div id="svNewTaskSmartPreview" class="sv-new-task-smart-preview" role="region" aria-label="Сэйви распознала" hidden>
     <div class="sv-new-task-smart-heading"><span class="sv-new-task-smart-mark" aria-hidden="true">✧</span><strong>Сэйви определила</strong><span>Проверь перед сохранением</span></div>
     <div id="svNewTaskSmartDetails" class="sv-new-task-smart-details"></div>
+    <section id="svNewTaskPlacePanel" class="sv-new-task-place" aria-label="Место встречи" aria-live="polite" hidden></section>
    </div>
    <button id="svNewTaskManualToggle" class="sv-new-task-manual-toggle" type="button" aria-expanded="false" aria-controls="svNewTaskDateSettings">Уточнить вручную <span aria-hidden="true">⌄</span></button>
    <h3 class="sv-new-task-section-title">Дата и время</h3>
@@ -6413,7 +6414,7 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=24"></script><script src="assets/seyveo-work-shell.js?v=78"></script><script src="assets/seyveo-task-smart-nl.js?v=1"></script><script src="assets/seyveo-task-editor-v3.js?v=3"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
+</script><script src="assets/seyveo-home-presence.js?v=7"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=24"></script><script src="assets/seyveo-work-shell.js?v=78"></script><script src="assets/seyveo-task-smart-nl.js?v=1"></script><script src="assets/seyveo-task-places.js?v=1"></script><script src="assets/seyveo-task-editor-v3.js?v=4"></script><script src="assets/seyveo-task-places-ui.js?v=1"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
  // Only the actual viewport HEIGHT affects editor geometry. Scroll events
@@ -6543,4 +6544,4 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=21"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=10"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=3"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=6"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=21"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=10"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=3"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=7"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script></body></html>
