@@ -8,8 +8,10 @@
   const replay=params.get('sayvi-intro')==='1'||params.get('sayvi-handoff')==='1';
   const noIntro=params.get('sayvi-intro')==='0';
   const speed=params.get('sayvi-slow')==='1'?1.8:1;
-  // Deliberate, local-only voice review. The published PWA remains silent.
+  // The approved Sayvi voice is available for a private, local project preview.
+  // Ordinary public openings are silent; no voice sample is published.
   const localVoicePreview=params.get('sayvi-voice')==='1'&&location.origin==='http://127.0.0.1:8790';
+  const projectIntroduction='Привет! Меня зовут Сэйви. Можешь звать меня просто Сэй. Меня создала компания SEYVEO — студия технологий, искусственного интеллекта и автоматизации. Я здесь, чтобы помогать тебе с делами, находить решения и делать сложное простым. Я могла бы долго рассказывать о том, что умею… Но знаешь что? Лучше я тебе покажу. Ну что, начнём?';
   const dailyKey='seyveo-sayvi-cinema-last-day-v4';
   const currentDay=()=>{
     const d=new Date();
@@ -23,7 +25,7 @@
   const desktopReload=performance.getEntriesByType('navigation')[0]?.type==='reload'
     &&matchMedia('(hover: hover) and (pointer: fine)').matches;
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro&&(replay||desktopReload||!alreadySeen);
+  const showCinema=atHome&&!noIntro&&(replay||localVoicePreview||desktopReload||!alreadySeen);
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
@@ -119,6 +121,8 @@
   let voiceRecordingUrl=null;
   let voiceContext=null;
   let voiceSource=null;
+  let voiceProgress=0;
+  let openingStartedAt=0;
   const orbHome=orb.parentNode;
   const orbNext=orb.nextSibling;
   let originalOrbStyle=null;
@@ -235,6 +239,7 @@
     voiceButton?.remove();
     voiceButton=null;
     if(voiceDownload)voiceDownload.hidden=false;
+    clearInterval(voiceProgress);
     if(voiceSource){try{voiceSource.stop();}catch{}voiceSource=null;}
     clearTimeout(greetingDelay);
     clearTimeout(greetingTicker);
@@ -318,24 +323,26 @@
     });
   }
 
-  function runOpening({restartArtwork=false}={}){
+  function runOpening({restartArtwork=false,waitForNarration=false}={}){
     if(done)return;
     prepareDock();
     root.classList.remove('sv-cinema-boot');
-    // Local speech synthesis can take longer than the SVG's first playback.
-    // Restart its clock so the approved voice and the artwork begin together.
+    // Voice synthesis can take several minutes on the owner's CPU. Restart
+    // the logo clock only after the completed narration is ready to play.
     if(restartArtwork&&heroArtwork){
       const imagePath=(heroArtwork.getAttribute('src')||'').split('?')[0];
       if(imagePath)heroArtwork.setAttribute('src',imagePath+'?cinema='+Date.now());
     }
+    openingStartedAt=performance.now();
     startGreeting();
-    // Let the real 9.5-second signature complete before the 4.2-second flight.
-    introTimer=setTimeout(begin,10400);
+    // The sphere never flies away while the private project narration speaks.
+    // Its audio onended event starts the flight after the final spoken word.
+    if(!waitForNarration)introTimer=setTimeout(begin,10400);
   }
 
   function showLocalVoicePreview(){
-    // The private voice server binds to this exact loopback origin and checks
-    // Origin on every request. Never attempt public-site-to-localhost access.
+    // The approved voice stays on the user's PC, behind the loopback-only TTS
+    // endpoint. Only the newly generated introduction can be downloaded.
     voiceButton=document.createElement('button');
     voiceButton.type='button';
     voiceButton.className='sv-cinema-local-voice';
@@ -350,17 +357,23 @@
       }
       const control=voiceButton;
       control.disabled=true;
-      control.textContent='Сэйви готовит голос…';
+      const startedAt=Date.now();
+      control.textContent='Сэйви записывает · 0:00';
+      voiceProgress=setInterval(()=>{
+        if(done||voiceButton!==control){clearInterval(voiceProgress);return;}
+        const elapsed=Math.floor((Date.now()-startedAt)/1000);
+        control.textContent=`Сэйви записывает · ${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}`;
+      },1000);
       try{
         const Engine=window.AudioContext||window.webkitAudioContext;
         if(!Engine)throw Error('Браузер не поддерживает воспроизведение звука.');
-        // Unlock while the user-initiated click is still active (iOS/Safari).
+        // Unlock playback while the click is still active (iOS/Safari).
         voiceContext=new Engine();
         await voiceContext.resume();
         const response=await fetch('/api/seyveo-private-tts',{
           method:'POST',credentials:'same-origin',
           headers:{'content-type':'application/json'},
-          body:JSON.stringify({text:welcomeSpeech})
+          body:JSON.stringify({text:projectIntroduction})
         });
         if(!response.ok){
           const detail=await response.json().catch(()=>({}));
@@ -368,24 +381,31 @@
         }
         const bytes=await response.arrayBuffer();
         const decoded=await voiceContext.decodeAudioData(bytes.slice(0));
+        clearInterval(voiceProgress);
         if(done)return;
-        // Only the synthesized greeting is downloadable, never the private
-        // source reference used by the local TTS engine.
         voiceRecordingUrl=URL.createObjectURL(new Blob([bytes],{type:'audio/wav'}));
         voiceDownload=document.createElement('a');
         voiceDownload.className='sv-cinema-local-voice-download';
         voiceDownload.href=voiceRecordingUrl;
-        voiceDownload.download='SEYVEO-Sayvi-welcome.wav';
-        voiceDownload.textContent='↓ Скачать запись Сэйви';
+        voiceDownload.download='SEYVEO-Sayvi-project-intro.wav';
+        voiceDownload.textContent='↓ Скачать презентацию Сэйви';
         voiceDownload.hidden=true;
         document.body.appendChild(voiceDownload);
         control.remove();voiceButton=null;
         voiceSource=voiceContext.createBufferSource();
         voiceSource.buffer=decoded;
         voiceSource.connect(voiceContext.destination);
+        voiceSource.onended=()=>{
+          if(done)return;
+          // Give the signature its full 9.5 seconds even if the voice is short.
+          // When the narration is longer, let it finish plus a quiet breath.
+          const remaining=Math.max(700,10400-(performance.now()-openingStartedAt));
+          introTimer=setTimeout(begin,remaining);
+        };
         voiceSource.start(voiceContext.currentTime+1.04);
-        runOpening({restartArtwork:true});
+        runOpening({restartArtwork:true,waitForNarration:true});
       }catch(error){
+        clearInterval(voiceProgress);
         console.warn('[SEYVEO Cinema] Фирменный голос недоступен:',error?.message||error);
         if(!done&&voiceButton===control){
           control.disabled=false;
@@ -416,6 +436,7 @@
   window.addEventListener('pagehide',()=>{
     if(!done)finish();
     if(voiceRecordingUrl)URL.revokeObjectURL(voiceRecordingUrl);
+    if(voiceSource){try{voiceSource.stop();}catch{}voiceSource=null;}
     voiceContext?.close().catch(()=>{});
   });
   let lastViewportWidth=window.innerWidth;
