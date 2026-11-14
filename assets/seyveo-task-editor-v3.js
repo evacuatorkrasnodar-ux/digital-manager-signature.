@@ -50,6 +50,7 @@
   draw();
  }
  let manualDate=false,manualTime=false,manualPriority=false,manualRepeat=false;
+ let quickDateOpen=false;
  const isEditing=()=>document.getElementById('personalTaskDialogTitle')?.textContent==='Изменить';
  function createText(kind,text){
   const node=document.createElement('span');node.className='sv-task-smart-'+kind;
@@ -77,14 +78,43 @@
   const main=document.createElement('div');main.className='sv-task-smart-main';
   const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+category;dot.setAttribute('aria-hidden','true');
   main.append(dot,createText('name',name));smartDetails.append(main);
+  const when=document.createElement('button');when.type='button';when.className='sv-task-smart-when';
+  when.setAttribute('aria-label','Изменить дату и время дела');
+  when.setAttribute('aria-expanded',String(quickDateOpen));
+  const whenDate=document.createElement('span');whenDate.className='sv-task-smart-when-date';
+  const whenTime=document.createElement('span');whenTime.className='sv-task-smart-when-time';
+  if(date.value){
+   const [year,month,day]=date.value.split('-').map(Number);
+   whenDate.textContent=new Intl.DateTimeFormat('ru-RU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(new Date(year,month-1,day));
+  }else whenDate.textContent='Без даты';
+  whenTime.textContent=timeInput?.value||'Время не выбрано';
+  const arrow=document.createElement('span');arrow.className='sv-task-smart-when-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');
+  when.append(whenDate,whenTime,arrow);
+  when.addEventListener('click',()=>{quickDateOpen=!quickDateOpen;updateSmartPreview();if(quickDateOpen)smartDetails.querySelector('.sv-task-quick-date')?.focus({preventScroll:true})});
+  smartDetails.append(when);
+  if(quickDateOpen){
+   const edit=document.createElement('div');edit.className='sv-task-smart-quick-edit';
+   const dateLabel=document.createElement('label');dateLabel.textContent='Дата';
+   const quickDate=document.createElement('input');quickDate.type='date';quickDate.className='sv-task-quick-date';quickDate.value=date.value;
+   quickDate.setAttribute('aria-label','Исправить дату дела');
+   quickDate.addEventListener('change',()=>{
+    manualDate=true;date.value=quickDate.value;
+    date.dispatchEvent(new Event('change',{bubbles:true}));sync();updateSmartPreview();
+   });dateLabel.append(quickDate);
+   const timeLabel=document.createElement('label');timeLabel.textContent='Время';
+   const quickTime=document.createElement('input');quickTime.type='time';quickTime.className='sv-task-quick-time';quickTime.value=timeInput?.value||'';
+   quickTime.setAttribute('aria-label','Исправить время дела');
+   quickTime.addEventListener('change',()=>{
+    manualTime=true;if(timeInput){timeInput.value=quickTime.value;timeInput.dispatchEvent(new Event('change',{bubbles:true}))}
+    updateSmartPreview();
+   });timeLabel.append(quickTime);
+   const done=document.createElement('button');done.type='button';done.className='sv-task-smart-quick-done';done.textContent='Готово';
+   done.addEventListener('click',()=>{quickDateOpen=false;updateSmartPreview()});
+   edit.append(dateLabel,timeLabel,done);smartDetails.append(edit);
+  }
   const meta=document.createElement('div');meta.className='sv-task-smart-meta';
   meta.append(createText('category',category==='work'?'Работа':'Личное'));
   meta.append(createText('kind',kind==='event'?'Событие':'Напоминание'));
-  if(date.value){
-   const [year,month,day]=date.value.split('-').map(Number);
-   meta.append(createText('date',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(new Date(year,month-1,day))));
-  }else meta.append(createText('no-date','Без срока'));
-  if(timeInput?.value)meta.append(createText('time',timeInput.value));
   const priority=document.getElementById('personalTaskPriority')?.value;
   if(priority&&priority!=='none')meta.append(createText('priority',({low:'Без спешки',medium:'Важно',high:'Срочно'})[priority]||'Приоритет'));
   const repeat=document.getElementById('personalTaskRepeat')?.value;
@@ -174,7 +204,7 @@
  }));
  const observer=new MutationObserver(()=>{
   if(!dialog.open)return;
-  manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;
+  manualDate=false;manualTime=false;manualPriority=false;manualRepeat=false;quickDateOpen=false;
   dialog.classList.remove('sv-task-manual-open');
   manualToggle?.setAttribute('aria-expanded','false');
   date.dispatchEvent(new Event('change',{bubbles:true}));
@@ -185,6 +215,7 @@
  dialog.addEventListener('close',()=>{
   if(recognition){try{recognition.stop()}catch{}recognition=null;voiceButton?.setAttribute('aria-pressed','false')}
   dialog.classList.remove('sv-task-manual-open');
+  quickDateOpen=false;
   manualToggle?.setAttribute('aria-expanded','false');
   form.scrollTop=0;
  });
