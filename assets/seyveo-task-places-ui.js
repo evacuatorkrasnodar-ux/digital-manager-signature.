@@ -7,20 +7,27 @@
  const title=document.getElementById('personalTaskTitle');
  const panel=document.getElementById('svNewTaskPlacePanel');
  if(!places||!dialog||!title||!panel)return;
- let proposal=null,place=null,choices=[],query='',status='idle',request=0;
+ let proposal=null,place=null,choices=[],query='',status='idle',request=0,photoRequest=0;
  const node=(tag,cls,text)=>{
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
  };
  function reset(){
-  request++;proposal=null;place=null;choices=[];query='';status='idle';
+  request++;photoRequest++;proposal=null;place=null;choices=[];query='';status='idle';
   panel.replaceChildren();panel.hidden=true;
  }
  function load(saved){
   place=places.cleanPlace(saved);choices=[];proposal=places.extract(title.value);
-  query=proposal?.query||'';status=place?'found':'idle';request++;render();
+  query=proposal?.query||'';status=place?'found':'idle';request++;render();resolvePlacePhoto();
  }
  function placeForSave(){return places.cleanPlace(place)}
+ async function resolvePlacePhoto(){
+  if(!place||place.photo||!place.wikidata)return;
+  const token=++photoRequest,target=place;
+  const updated=await places.resolvePhoto(target);
+  if(token!==photoRequest||!dialog.open||!place||place.lat!==target.lat||place.lon!==target.lon)return;
+  if(updated?.photo){place=updated;render()}
+ }
  function render(){
   if(!dialog.open)return;
   const hasMeeting=/(?:^|[\s,.!?])(?:встреч[а-яё]*|встрет[а-яё]*|переговор[а-яё]*|пообед[а-яё]*|поужин[а-яё]*|позавтрак[а-яё]*|обед|ужин)(?=$|[\s,.!?])/iu.test(title.value);
@@ -67,7 +74,7 @@
    for(const candidate of choices){
     const option=node('button','sv-place-choice');option.type='button';
     option.append(node('strong','',candidate.name),node('small','',candidate.address));
-    option.addEventListener('click',()=>{place=candidate;choices=[];status='found';render()});
+    option.addEventListener('click',()=>{place=candidate;choices=[];status='found';render();resolvePlacePhoto()});
     card.append(option);
    }
   }else{
@@ -89,7 +96,7 @@
   const next=places.extract(title.value);
   const nextQuery=next?.query||'';
   if(nextQuery!==query){
-   request++;place=null;choices=[];status='idle';query=nextQuery;
+   request++;photoRequest++;place=null;choices=[];status='idle';query=nextQuery;
   }
   proposal=next;render();
  }
@@ -108,7 +115,7 @@
    if(sequence!==request||requestedQuery!==query||!dialog.open)return;
    status='error';
   }
-  render();
+  render();resolvePlacePhoto();
  }
  title.addEventListener('input',sync);
  title.addEventListener('blur',()=>{if(proposal&&status==='idle')lookup()});
