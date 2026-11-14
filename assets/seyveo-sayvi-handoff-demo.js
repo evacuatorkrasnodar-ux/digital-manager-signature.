@@ -8,7 +8,7 @@
   const replay=params.get('sayvi-intro')==='1'||params.get('sayvi-handoff')==='1';
   const noIntro=params.get('sayvi-intro')==='0';
   const speed=params.get('sayvi-slow')==='1'?1.8:1;
-  const dailyKey='seyveo-sayvi-cinema-last-day-v2';
+  const dailyKey='seyveo-sayvi-cinema-last-day-v3';
   const currentDay=()=>{
     const d=new Date();
     return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -240,7 +240,9 @@
           {offset:.51,transform:`translate3d(${dx*.17}px,${dy*.22}px,0) scale(.76)`,opacity:1,easing:'cubic-bezier(.45,.3,.25,1)'},
           {offset:.76,transform:`translate3d(${dx*.58}px,${dy*.68}px,0) scale(.35)`,opacity:1,easing:'cubic-bezier(.2,.7,.16,1)'},
           {offset:.91,transform:land,opacity:1,easing:'ease-out'},
-          {offset:1,transform:land,opacity:0}
+          // Remain a complete miniature sphere at the landing point. The
+          // matching dock artwork takes over in the same frame: no dot fade.
+          {offset:1,transform:land,opacity:1}
         ],{duration:3900*speed,easing:'linear',fill:'forwards'});
         safetyTimer=setTimeout(()=>finish({spark:true}),4450*speed);
         animation.finished.then(()=>finish({spark:true})).catch(()=>{});
