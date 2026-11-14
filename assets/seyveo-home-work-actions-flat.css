@@ -395,7 +395,7 @@
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
  border:0!important;
- background:rgba(190,193,202,.28)!important;
+ background:rgba(190,193,202,.22)!important;
  box-shadow:var(--sv-card-action-shadow,0 2px 8px rgba(25,31,42,.075))!important;
  -webkit-backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
  backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
@@ -403,14 +403,14 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- border:0!important;background:rgba(190,193,202,.28)!important;
+ border:0!important;background:rgba(190,193,202,.22)!important;
  box-shadow:var(--sv-card-action-shadow,0 2px 8px rgba(25,31,42,.075))!important;
  -webkit-backdrop-filter:var(--sv-card-action-blur,none)!important;
  backdrop-filter:var(--sv-card-action-blur,none)!important;
  color:#111113!important;
 }
-/* Exact approved dock material, now shared by the three 50px Home actions.
-   Material only: no change to button sizing, placement or touch behavior. */
+/* Approved dock glass optics on three 50px Home actions, with a lighter 22%
+   neutral tint. Preserve the same pearl rim and microshadows. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
  border:1.75px solid rgba(255,255,255,.94)!important;
