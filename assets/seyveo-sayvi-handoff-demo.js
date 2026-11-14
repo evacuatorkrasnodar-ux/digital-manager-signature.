@@ -145,8 +145,8 @@
       const duration=inspectSlow?2800:790;
       animation=orb.animate([
         {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
-        {offset:.28,transform:`translate3d(${dx*.18}px,${dy*.12}px,0) scale(.91)`,opacity:1},
-        {offset:.8,transform:`translate3d(${dx*.82}px,${dy*.82}px,0) scale(${finalScale+(1-finalScale)*.14})`,opacity:1},
+        {offset:.28,transform:`translate3d(${dx*.58}px,${dy*.12}px,0) scale(.82)`,opacity:1},
+        {offset:.8,transform:`translate3d(${dx*.95}px,${dy*.8}px,0) scale(${finalScale+(1-finalScale)*.1})`,opacity:1},
         {offset:1,transform:`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`,opacity:1}
       ],{duration,easing:'cubic-bezier(.26,.65,.23,1)',fill:'forwards'});
       animation.finished.then(finish).catch(()=>{});
