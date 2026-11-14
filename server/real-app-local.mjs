@@ -26,6 +26,7 @@ import {analyzeBusinessMail} from './mail-intelligence.mjs';
 import {addApprovedExample,learningStats,findApprovedExamples} from './approved-learning.mjs';
 import {createLearningQueue} from './learning-queue.mjs';
 import {createVoiceWorker} from './voice-worker.mjs';
+import {readApprovedWelcome} from './sayvi-approved-welcome.mjs';
 import {createBraveContextProvider,searchWithSources} from './live-search.mjs';
 import {createSeyveoWebProvider} from './seyveo-web.mjs';
 import {searchLocalIndex} from './seyveo-index.mjs';
@@ -204,6 +205,18 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='GET'&&path==='/api/seyveo-approved-welcome'){
+   try{
+    const audio=await readApprovedWelcome();
+    if(!audio){
+     send(res,404,{error:'Скачай утверждённый SEYVEO-Sayvi-welcome.wav в папку Загрузки.'});
+    }else{
+     res.writeHead(200,{...HEADERS,'content-type':'audio/wav','content-length':String(audio.length)});
+     res.end(audio);
+    }
+   }catch{send(res,503,{error:'Не удалось прочитать локальное приветствие Сэйви.'})}
+   return;
+  }
   if(req.method==='POST'&&path==='/api/seyveo-index-search'){
    if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
    try{

@@ -11,9 +11,8 @@
   // The approved Sayvi voice is available for a private, local project preview.
   // Ordinary public openings are silent; no voice sample is published.
   const localVoicePreview=params.get('sayvi-voice')==='1'&&location.origin==='http://127.0.0.1:8790';
-  // Spoken brand spelling only: the visible brand always remains SEYVEO.
-  // Qwen's Russian TTS must not pronounce Latin SEYVEO letter by letter.
-  const projectIntroduction='Привет! Меня зовут Сэйви. Можешь звать меня просто Сэй. Меня создала компания Сэйвео — студия технологий, искусственного интеллекта и автоматизации. Я здесь, чтобы помогать тебе с делами, находить решения и делать сложное простым. Я могла бы долго рассказывать о том, что умею… Но знаешь что? Лучше я тебе покажу. Ну что, начнём?';
+  // The personal cinematic uses the exact approved short WAV, never a fresh
+  // TTS performance. Long project narration remains a separate local task.
   const dailyKey='seyveo-sayvi-cinema-last-day-v4';
   const currentDay=()=>{
     const d=new Date();
@@ -343,8 +342,8 @@
   }
 
   function showLocalVoicePreview(){
-    // The approved voice stays on the user's PC, behind the loopback-only TTS
-    // endpoint. Only the newly generated introduction can be downloaded.
+    // Read the owner's exact approved 3.36-second WAV from the loopback server.
+    // No voice sample is committed to the public website or regenerated.
     voiceButton=document.createElement('button');
     voiceButton.type='button';
     voiceButton.className='sv-cinema-local-voice';
@@ -359,27 +358,17 @@
       }
       const control=voiceButton;
       control.disabled=true;
-      const startedAt=Date.now();
-      control.textContent='Сэйви записывает · 0:00';
-      voiceProgress=setInterval(()=>{
-        if(done||voiceButton!==control){clearInterval(voiceProgress);return;}
-        const elapsed=Math.floor((Date.now()-startedAt)/1000);
-        control.textContent=`Сэйви записывает · ${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}`;
-      },1000);
+      control.textContent='Готовлю приветствие Сэйви…';
       try{
         const Engine=window.AudioContext||window.webkitAudioContext;
         if(!Engine)throw Error('Браузер не поддерживает воспроизведение звука.');
         // Unlock playback while the click is still active (iOS/Safari).
         voiceContext=new Engine();
         await voiceContext.resume();
-        const response=await fetch('/api/seyveo-private-tts',{
-          method:'POST',credentials:'same-origin',
-          headers:{'content-type':'application/json'},
-          body:JSON.stringify({text:projectIntroduction})
-        });
+        const response=await fetch('/api/seyveo-approved-welcome',{credentials:'same-origin'});
         if(!response.ok){
           const detail=await response.json().catch(()=>({}));
-          throw Error(detail.error||'Голосовой движок не ответил: '+response.status);
+          throw Error(detail.error||'Не удалось открыть утверждённую запись Сэйви: '+response.status);
         }
         const bytes=await response.arrayBuffer();
         const decoded=await voiceContext.decodeAudioData(bytes.slice(0));
@@ -389,8 +378,8 @@
         voiceDownload=document.createElement('a');
         voiceDownload.className='sv-cinema-local-voice-download';
         voiceDownload.href=voiceRecordingUrl;
-        voiceDownload.download='SEYVEO-Sayvi-project-intro.wav';
-        voiceDownload.textContent='↓ Скачать презентацию Сэйви';
+        voiceDownload.download='SEYVEO-Sayvi-welcome.wav';
+        voiceDownload.textContent='↓ Скачать приветствие Сэйви';
         voiceDownload.hidden=true;
         document.body.appendChild(voiceDownload);
         control.remove();voiceButton=null;
@@ -399,8 +388,8 @@
         voiceSource.connect(voiceContext.destination);
         voiceSource.onended=()=>{
           if(done)return;
-          // Give the signature its full 9.5 seconds even if the voice is short.
-          // When the narration is longer, let it finish plus a quiet breath.
+          // The 3.36-second greeting ends well before the 10.4-second logo.
+          // Never shorten the artwork just because the voice has finished.
           const remaining=Math.max(700,10400-(performance.now()-openingStartedAt));
           introTimer=setTimeout(begin,remaining);
         };
