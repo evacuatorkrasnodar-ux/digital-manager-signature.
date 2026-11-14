@@ -219,7 +219,9 @@
     }))orb.style.setProperty(name,value,'important');
     orb.style.setProperty('transform','none');
     root.classList.add('sv-sayvi-handoff-inflight');
-    growDock(950*speed,2550*speed);
+    // Unveil the fourth slot while Sayvi is still travelling. The capsule
+    // completes its long, smooth expansion just before the sphere docks.
+    growDock(180*speed,3650*speed);
 
     requestAnimationFrame(()=>{
       if(done)return;

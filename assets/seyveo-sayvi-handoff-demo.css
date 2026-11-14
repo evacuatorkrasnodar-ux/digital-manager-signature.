@@ -19,7 +19,8 @@
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
   body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
 )::before{
-  clip-path:inset(0 25% 0 0 round 999px) !important;
+  /* No !important: it would override the keyframes, snapping open at finish. */
+  clip-path:inset(0 25% 0 0 round 999px);
 }
 :root.sv-cinema-dock-growing[data-theme="light"] :is(
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
