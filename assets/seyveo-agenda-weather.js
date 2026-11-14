@@ -187,9 +187,11 @@
     const fresh=parseForecast(payload);
     if(locationId(activeLocation)!==locationId(location))return;
     days=fresh;updatedAt=fetchedAt;saveCache();paint();
+    window.dispatchEvent(new Event('seyveo:weather-updated'));
    }catch(error){
     if(!updatedAt||Date.now()-updatedAt>STALE_MS){days.clear();updatedAt=0;}
     paint();
+    window.dispatchEvent(new Event('seyveo:weather-updated'));
     console.info('SEYVEO weather temporarily unavailable:',error?.message||String(error));
    }finally{clearTimeout(timer);inFlight=null;}
   })();
