@@ -269,12 +269,45 @@
 :root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
  #assistantButton .sv-sayvi-dock-spark-motion{
  transform-box:fill-box!important;transform-origin:center!important;
- animation:sv-sayvi-dock-alive 5.6s ease-in-out infinite!important;
+ animation:sv-sayvi-dock-alive 6s ease-in-out infinite!important;
 }
 @keyframes sv-sayvi-dock-alive{
- 0%,28%,100%{transform:scale(1);opacity:1}
- 44%{transform:scale(1.045);opacity:.90}
- 60%{transform:scale(1);opacity:1}
+ 0%,18%,64%,100%{transform:scale(1)}
+ 37%{transform:scale(1.055)}
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton .sv-sayvi-dock-light-trace{
+ fill:none!important;stroke:#159FFF!important;stroke-width:1.95!important;
+ stroke-linecap:round!important;stroke-dasharray:17 83!important;
+ animation:sv-sayvi-dock-trace 6s linear infinite!important;
+ filter:drop-shadow(0 0 .8px rgba(0,122,255,.40))!important;
+}
+@keyframes sv-sayvi-dock-trace{
+ 0%,13%{stroke-dashoffset:0;opacity:0}
+ 23%{opacity:.96}
+ 60%{stroke-dashoffset:-100;opacity:.9}
+ 72%,100%{stroke-dashoffset:-117;opacity:0}
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton .sv-sayvi-dock-heart-halo{
+ fill:rgba(10,132,255,.17)!important;stroke:none!important;
+ transform-box:fill-box!important;transform-origin:center!important;
+ animation:sv-sayvi-dock-heart 3s ease-in-out infinite!important;
+}
+@keyframes sv-sayvi-dock-heart{
+ 0%,100%{opacity:.16;transform:scale(.72)}
+ 50%{opacity:.78;transform:scale(1.12)}
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton .sv-sayvi-dock-orbit{
+ fill:#159FFF!important;stroke:none!important;
+ transform-box:fill-box!important;transform-origin:center!important;
+ animation:sv-sayvi-dock-orbit 9s linear infinite!important;
+}
+@keyframes sv-sayvi-dock-orbit{
+ 0%{transform:rotate(0deg);opacity:0}
+ 12%,80%{opacity:.65}
+ 100%{transform:rotate(360deg);opacity:0}
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
  #assistantButton:is(:active,.pressing,.arming,.listening,[aria-pressed="true"]) .sv-sayvi-dock-emblem{
@@ -282,10 +315,19 @@
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
  #assistantButton:is(:active,.pressing,.arming,.listening,[aria-pressed="true"]) .sv-sayvi-dock-spark-motion{
- animation:sv-sayvi-dock-alive 1.7s ease-in-out infinite!important;
+ animation:sv-sayvi-dock-alive 2.2s ease-in-out infinite!important;
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton:is(:active,.pressing,.arming,.listening,[aria-pressed="true"]) .sv-sayvi-dock-light-trace{
+ animation-duration:1.65s!important;
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton:is(:active,.pressing,.arming,.listening,[aria-pressed="true"]) .sv-sayvi-dock-orbit{
+ animation-duration:3.2s!important;
 }
 @media(prefers-reduced-motion:reduce){
- :root[data-theme="light"] footer.dock.sv-shared-dock #assistantButton .sv-sayvi-dock-spark-motion{
+ :root[data-theme="light"] footer.dock.sv-shared-dock #assistantButton :is(.sv-sayvi-dock-spark-motion,.sv-sayvi-dock-light-trace,.sv-sayvi-dock-heart-halo,.sv-sayvi-dock-orbit){
   animation:none!important;
  }
+ :root[data-theme="light"] footer.dock.sv-shared-dock #assistantButton :is(.sv-sayvi-dock-light-trace,.sv-sayvi-dock-heart-halo,.sv-sayvi-dock-orbit){opacity:0!important}
 }
