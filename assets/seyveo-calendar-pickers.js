@@ -208,7 +208,7 @@ dialog.classList.add('sv-custom-pickers-ready');
    No extra task database, full-screen dialog, or dock is created. */
 const taskDialog=$('personalTaskDialog'),taskDate=$('personalTaskDue');
 const taskControl=taskDate?.closest('.personal-task-date-control');
-if(taskDialog&&taskDate&&taskControl){
+if(taskDialog&&taskDate&&taskControl&&!taskDialog.classList.contains('sv-task-editor-v3')){
  const dueField=taskControl.closest('.personal-task-field');
  const picker=document.createElement('section');
  picker.id='seyveoTaskDuePicker';picker.className='cal-premium-picker';
