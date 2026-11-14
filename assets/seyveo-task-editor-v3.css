@@ -390,6 +390,18 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-main{
  padding:12px 17px!important;border-radius:22px!important;background:#FFF!important;
  box-sizing:border-box!important;
 }
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-item-copy{
+ display:flex!important;flex:1 1 auto!important;min-width:0!important;flex-direction:column!important;gap:4px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-item-detail{
+ color:#707782!important;font:520 12px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-preview.is-multi .sv-task-smart-name{
+ font-size:16.5px!important;font-weight:590!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-dot.is-tone-green{background:#2DC66D!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-dot.is-tone-purple{background:#A277DC!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-dot.is-tone-yellow{background:#FFCB15!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-dot{
  display:block!important;flex:0 0 12px!important;width:12px!important;height:12px!important;border-radius:50%!important;
  background:#FF9F0A!important;
@@ -465,6 +477,10 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-priority{
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-repeat{
  color:#37739B!important;background:#EBF5FC!important;border-radius:99px!important;
  padding:5px 9px!important;font:570 12px/1.15 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-lead{
+ color:#1E6FBF!important;background:#EAF3FF!important;border-radius:99px!important;
+ padding:5px 9px!important;font:580 12px/1.15 system-ui!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-no-date{color:#707782!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-notice{
