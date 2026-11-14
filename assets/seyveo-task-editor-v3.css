@@ -1,0 +1,248 @@
+/* SEYVEO · Manual New Task v3. One self-contained iPhone editor.
+   Replaces v2, no inherited dock or white floating backdrop. */
+html:has(#personalTaskDialog.sv-task-editor-v3[open]) body > footer.dock.sv-shared-dock{
+ visibility:hidden!important;pointer-events:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3{
+ box-sizing:border-box!important;position:fixed!important;inset:0!important;
+ width:100vw!important;max-width:none!important;height:100dvh!important;max-height:none!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+ background:#F2F2F7!important;color:#17191E!important;box-shadow:none!important;
+ overflow:hidden!important;overscroll-behavior:contain!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3::backdrop{background:#FFFFFF!important;backdrop-filter:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
+ position:relative!important;box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ width:min(100%,520px)!important;height:100%!important;max-height:none!important;
+ margin:0 auto!important;padding:0!important;border:0!important;border-radius:0!important;
+ background:#F2F2F7!important;box-shadow:none!important;overflow:hidden!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header{
+ box-sizing:border-box!important;flex:0 0 auto!important;display:grid!important;
+ grid-template-columns:60px minmax(0,1fr) 60px!important;align-items:center!important;
+ height:82px!important;min-height:82px!important;margin:0!important;
+ padding:calc(env(safe-area-inset-top,0px) + 8px) 15px 4px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header h2{
+ margin:0!important;text-align:center!important;color:#17191E!important;
+ font:650 21px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header button{
+ display:grid!important;place-items:center!important;justify-self:center!important;
+ width:50px!important;height:50px!important;margin:0!important;padding:0!important;
+ border-radius:50%!important;cursor:pointer!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskCancel{
+ border:1.5px solid #FFF!important;background:#E7E7EB!important;
+ color:#181B21!important;font:320 35px/1 system-ui!important;box-shadow:0 0 0 1px #DADCE2!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave{
+ border:0!important;background:#FF3341!important;color:#FFF!important;
+ box-shadow:none!important;opacity:1!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave:disabled{
+ opacity:.4!important;cursor:default!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave svg{
+ width:27px!important;height:27px!important;fill:none!important;stroke:#FFF!important;
+ stroke-width:2.2!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskForm{
+ box-sizing:border-box!important;flex:1 1 auto!important;display:flex!important;
+ flex-direction:column!important;align-items:stretch!important;gap:0!important;
+ width:100%!important;min-height:0!important;height:auto!important;max-height:none!important;
+ margin:0!important;padding:0 17px 110px!important;background:transparent!important;
+ border:0!important;overflow-x:hidden!important;overflow-y:auto!important;
+ -webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;
+ scrollbar-width:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskForm::-webkit-scrollbar{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-type{
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:1fr 1fr!important;
+ width:100%!important;height:44px!important;min-height:44px!important;
+ padding:3px!important;margin:1px 0 24px!important;border:0!important;
+ border-radius:99px!important;background:#E4E4E9!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-type label{
+ position:relative!important;display:grid!important;place-items:center!important;
+ min-width:0!important;margin:0!important;padding:0!important;cursor:pointer!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-type input{
+ position:absolute!important;opacity:0!important;width:100%!important;height:100%!important;margin:0!important;cursor:pointer!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-type span{
+ display:grid!important;place-items:center!important;width:100%!important;height:100%!important;
+ border-radius:99px!important;color:#202329!important;font:560 15.5px/1.1 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-type input:checked + span{
+ background:#FFF!important;box-shadow:0 1px 2px #00000010!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-card{
+ box-sizing:border-box!important;flex:0 0 auto!important;display:block!important;
+ width:100%!important;margin:0!important;padding:0 16px!important;
+ border:0!important;border-radius:25px!important;background:#FFF!important;box-shadow:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-main{
+ padding:8px 19px 5px!important;margin-bottom:24px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-main :is(input,textarea){
+ box-sizing:border-box!important;display:block!important;width:100%!important;
+ margin:0!important;border:0!important;border-radius:0!important;outline:none!important;
+ background:transparent!important;box-shadow:none!important;color:#17191E!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ resize:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskTitle{
+ min-height:85px!important;padding:12px 0 10px!important;
+ font-size:27px!important;font-weight:570!important;line-height:1.28!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskTitle::placeholder{color:#A2A5AC!important;opacity:1!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 :is(#personalTaskNotes,#personalTaskURL){
+ min-height:46px!important;padding:12px 0!important;font-size:15px!important;font-weight:480!important;
+ color:#252A30!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskNotes{border-bottom:1px solid #E7EAF0!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 :is(#personalTaskNotes,#personalTaskURL)::placeholder{color:#A5A8AE!important;opacity:1!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-section-title{
+ margin:0 0 10px 8px!important;color:#737781!important;
+ font:620 16px/1.3 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-date-card{padding:0 17px 15px!important;margin-bottom:16px!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-date-toggle{
+ display:flex!important;align-items:center!important;gap:11px!important;height:58px!important;
+ margin:0!important;font:550 17px/1.2 system-ui!important;color:#17191E!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-icon{
+ display:grid!important;place-items:center!important;flex:0 0 32px!important;width:32px!important;height:32px!important;
+ border-radius:50%!important;background:#087FF5!important;color:#FFF!important;font-size:21px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskHasDate{
+ appearance:none!important;-webkit-appearance:none!important;position:absolute!important;
+ opacity:0!important;width:1px!important;height:1px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-date-toggle i{
+ position:relative!important;display:block!important;width:48px!important;height:29px!important;
+ margin-left:auto!important;border-radius:99px!important;background:#D1D2D8!important;transition:background .18s ease!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-date-toggle i::after{
+ content:"";position:absolute;top:3px;left:3px;width:23px;height:23px;
+ border-radius:50%;background:#FFF;box-shadow:0 1px 3px #0002;transition:transform .18s ease;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskHasDate:checked + i{background:#007AFF!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskHasDate:checked + i::after{transform:translateX(19px)}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskDateSettings[hidden]{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-setting{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;
+ min-height:53px!important;padding:5px 0!important;border-top:1px solid #E7EAF0!important;
+ color:#737781!important;font:480 14px/1.25 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .personal-task-date-control{
+ position:relative!important;display:block!important;width:auto!important;height:auto!important;min-height:0!important;
+ margin-left:auto!important;padding:0!important;background:#F3F3F7!important;border:0!important;
+ border-radius:99px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskDue{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:0!important;cursor:pointer!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskDueDisplay{
+ display:block!important;white-space:nowrap!important;padding:8px 13px!important;
+ color:#202329!important;font:520 13.8px/1.2 system-ui!important;pointer-events:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskTime{
+ box-sizing:border-box!important;min-width:112px!important;max-width:140px!important;
+ margin:0!important;padding:7px 10px!important;background:#F3F3F7!important;
+ color:#202329!important;border:0!important;border-radius:99px!important;
+ font:520 14px/1.3 system-ui!important;text-align:center!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar{padding:4px 0 8px!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar{
+ display:grid!important;grid-template-columns:44px 1fr 44px!important;align-items:center!important;
+ min-height:40px!important;text-align:center!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar strong{
+ color:#17191E!important;font:640 18px/1.2 system-ui!important;text-transform:capitalize!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar button{
+ width:40px!important;height:40px!important;padding:0!important;border:0!important;border-radius:50%!important;
+ background:#F3F3F7!important;color:#202329!important;font:400 28px/1 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 :is(.sv-new-task-weekdays,.sv-new-task-calendar-days){
+ display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;text-align:center!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-weekdays{
+ padding:7px 0 4px!important;color:#7B808A!important;font:510 12px/1.4 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days{
+ grid-auto-rows:43px!important;align-items:center!important;justify-items:center!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button{
+ width:38px!important;height:38px!important;padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;color:#202329!important;font:530 16px/1 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today:not(.is-selected){color:#007AFF!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected{
+ background:#007AFF!important;color:#FFF!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-settings{padding:0 17px!important;margin-bottom:6px!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-settings > :is(label,.sv-new-task-list-setting){
+ display:flex!important;align-items:center!important;gap:11px!important;
+ min-height:58px!important;margin:0!important;border-bottom:1px solid #E7EAF0!important;
+ color:#202329!important;font:540 16px/1.2 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-settings > :last-child{border-bottom:0!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-setting-icon{
+ display:grid!important;place-items:center!important;flex:0 0 30px!important;width:30px!important;height:30px!important;
+ border-radius:50%!important;background:#EBEFF9!important;color:#3879D8!important;
+ font:640 19px/1 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-settings select{
+ min-width:100px!important;max-width:160px!important;margin-left:auto!important;border:0!important;
+ background:transparent!important;color:#737781!important;text-align:right!important;
+ font:500 13.5px/1.3 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-category{
+ display:flex!important;gap:4px!important;margin:0 0 0 auto!important;padding:0!important;border:0!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-category label{position:relative!important;cursor:pointer!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-category input{position:absolute!important;opacity:0!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-category span{
+ display:block!important;padding:8px 10px!important;border-radius:99px!important;background:#F3F3F7!important;
+ color:#737781!important;font:540 12.5px/1.1 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-category input:checked + span{
+ background:#E6F0FD!important;color:#176AC7!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskStatus{
+ display:block!important;margin:12px 0 0!important;padding:0 6px!important;background:transparent!important;
+ color:#B93429!important;font:500 12px/1.4 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskStatus:empty{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{
+ position:absolute!important;z-index:2!important;bottom:max(8px,env(safe-area-inset-bottom,0px))!important;
+ left:17px!important;right:17px!important;display:grid!important;grid-template-columns:repeat(5,1fr)!important;
+ gap:4px!important;height:58px!important;padding:4px!important;border:1.5px solid #FFF!important;
+ border-radius:99px!important;background:#E4E5EBF2!important;box-shadow:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar button{
+ display:grid!important;place-items:center!important;width:100%!important;height:48px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;color:#202329!important;font:550 26px/1 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar button:first-child{
+ justify-self:center!important;width:48px!important;background:#007AFF!important;color:#FFF!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 :is(button,input,select,textarea):focus-visible{
+ outline:2px solid #007AFF!important;outline-offset:2px!important;
+}
+@media (min-width:700px){
+ html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
+  border-radius:20px!important;border:1px solid #E7EAF0!important;
+ }
+}
+@media (prefers-reduced-motion:reduce){
+ html body dialog#personalTaskDialog.sv-task-editor-v3 *,
+ html body dialog#personalTaskDialog.sv-task-editor-v3 *::after{transition:none!important;scroll-behavior:auto!important}
+}
