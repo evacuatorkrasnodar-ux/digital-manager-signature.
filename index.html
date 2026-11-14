@@ -3111,7 +3111,10 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <!-- Reuse SEYVEO's own four-point Sayvi emblem in the light dock. -->
 <g class="sv-sayvi-dock-emblem" style="display:none" aria-hidden="true" transform="translate(37 37) scale(1.78) translate(-12 -12)">
   <g class="sv-sayvi-dock-spark-motion">
+    <circle class="sv-sayvi-dock-heart-halo" cx="12" cy="12" r="4.3"/>
+    <g class="sv-sayvi-dock-orbit"><circle cx="12" cy="-1.4" r=".72"/><circle cx="12" cy="25.4" r=".48"/></g>
     <path class="sv-sayvi-dock-spark" d="M12 2.5C13.65 2.5 14.25 7 16.4 8.6 18 10.05 21.5 10.4 21.5 12S18 13.95 16.4 15.4C14.25 17 13.65 21.5 12 21.5S9.75 17 7.6 15.4C6 13.95 2.5 13.6 2.5 12S6 10.05 7.6 8.6C9.75 7 10.35 2.5 12 2.5Z"/>
+    <path class="sv-sayvi-dock-light-trace" pathLength="100" d="M12 2.5C13.65 2.5 14.25 7 16.4 8.6 18 10.05 21.5 10.4 21.5 12S18 13.95 16.4 15.4C14.25 17 13.65 21.5 12 21.5S9.75 17 7.6 15.4C6 13.95 2.5 13.6 2.5 12S6 10.05 7.6 8.6C9.75 7 10.35 2.5 12 2.5Z"/>
     <circle class="sv-sayvi-dock-spark-core" cx="12" cy="12" r="1.7"/>
   </g>
 </g>
@@ -6550,7 +6553,7 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=27"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=10"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=3"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=21"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=1"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=28"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=1"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=10"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=3"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=21"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=4">
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
 </body></html>
