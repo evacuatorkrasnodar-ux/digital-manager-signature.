@@ -19,8 +19,9 @@
   }
 
   let done=false;
-  let flight=null;
+  let flying=false;
   let animation=null;
+  let fadeAnimation=null;
   let introTimer=0;
   let openTimer=0;
   let todayCard=null;
@@ -89,11 +90,12 @@
     done=true;
     clearTimeout(introTimer);
     clearTimeout(openTimer);
-    animation?.cancel();
-    flight?.remove();
-    flight=null;
-    root.classList.remove('sv-sayvi-handoff-inflight');
     root.classList.add('sv-sayvi-handoff-docked','sv-sayvi-handoff-arrived');
+    animation?.cancel();
+    fadeAnimation?.cancel();
+    orb.style.removeProperty('will-change');
+    flying=false;
+    root.classList.remove('sv-sayvi-handoff-inflight');
     const cluster=document.getElementById('orbCluster');
     if(cluster){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
     renderToday();
@@ -114,43 +116,30 @@
     const to=small.getBoundingClientRect();
     if(!from.width||!to.width){finish();return;}
 
-    // The visible SVG silhouette occupies ~80% of its viewBox, not its img box.
-    const finalScale=(to.width/.8)/from.width;
+    // Animate the already painted REAL orb. An image cloned into a new fixed
+    // compositor layer can be invisible during Safari/Chromium SVG rendering.
+    const finalScale=(to.width/.8)/(orb.offsetWidth||from.width);
     const dx=(to.left+to.width/2)-(from.left+from.width/2);
     const dy=(to.top+to.height/2)-(from.top+from.height/2);
-    flight=document.createElement('div');
-    flight.className='sv-sayvi-handoff-flight';
-    flight.setAttribute('aria-hidden','true');
-    flight.style.left=from.left+'px';
-    flight.style.top=from.top+'px';
-    flight.style.width=from.width+'px';
-    flight.style.height=from.height+'px';
-    if(inspectSlow){
-      // Diagnostic paint only, available on the private slow-motion URL.
-      flight.style.background='rgba(229,92,122,.25)';
-      flight.style.pointerEvents='auto';
-    }
-    const visual=document.createElement('img');
-    visual.src=art.currentSrc||art.src;
-    visual.alt='';
-    visual.decoding='async';
-    const sourceFilter=getComputedStyle(art).filter;
-    visual.style.filter=(sourceFilter==='none'?'':sourceFilter+' ')+'contrast(1.08) saturate(1.05)';
-    flight.appendChild(visual);
-    document.body.appendChild(flight);
+    const originalTransform=getComputedStyle(orb).transform;
+    flying=true;
+    orb.style.willChange='transform,opacity';
     root.classList.add('sv-sayvi-handoff-inflight');
 
-    // Let the translucent SVG and its pearl backing actually paint before
-    // moving them into a compositor layer. Without this, Chromium can show
-    // a blank flight while the keyframes are technically running.
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      if(done||!flight)return;
-      animation=flight.animate([
-        {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
-        {offset:1,transform:`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`,opacity:0}
-      ],{duration:inspectSlow?2800:990,easing:'cubic-bezier(.42,0,.18,1)',fill:'forwards'});
+    requestAnimationFrame(()=>{
+      if(done)return;
+      const duration=inspectSlow?2800:990;
+      animation=orb.animate([
+        {transform:originalTransform},
+        {transform:`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`}
+      ],{duration,easing:'cubic-bezier(.42,0,.18,1)',fill:'forwards'});
+      fadeAnimation=orb.animate([
+        {offset:0,opacity:1},
+        {offset:.80,opacity:1},
+        {offset:1,opacity:0}
+      ],{duration,fill:'forwards'});
       animation.finished.then(()=>finish({openTasks:true})).catch(()=>{});
-    }));
+    });
   }
 
   // An intentional but short brand greeting; any user navigation takes priority.
@@ -162,7 +151,7 @@
   else window.addEventListener('load',launch,{once:true});
   window.addEventListener('hashchange',()=>{if(!done)finish();});
   window.addEventListener('pagehide',()=>{if(!done)finish();});
-  window.addEventListener('resize',()=>{if(flight&&!done)finish();});
+  window.addEventListener('resize',()=>{if(flying&&!done)finish();});
   document.addEventListener('pointerdown',event=>{
     if(done){clearTimeout(openTimer);return;}
     if(event.target.closest('#orb,#assistantButton,#navTasks,#navPicture,#navManage'))finish();
