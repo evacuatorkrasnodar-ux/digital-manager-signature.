@@ -72,7 +72,7 @@
    for(const candidate of choices){
     const option=node('button','sv-place-choice');option.type='button';
     option.append(node('strong','',candidate.name),node('small','',candidate.address));
-    option.addEventListener('click',()=>{place=candidate;choices=[];status='found';render();resolvePlacePhoto()});
+    option.addEventListener('click',()=>{place=candidate;choices=[];status='found';render();resolvePlacePhoto();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
     card.append(option);
    }
   }else{
@@ -114,6 +114,7 @@
    status='error';
   }
   render();resolvePlacePhoto();
+  window.dispatchEvent(new Event('seyveo:task-place-updated'));
  }
  title.addEventListener('input',sync);
  title.addEventListener('blur',()=>{if(proposal&&status==='idle')lookup()});
