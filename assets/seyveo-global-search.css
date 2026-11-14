@@ -140,3 +140,23 @@ html.sv-global-search-open #sayviMusicMini{
 #svGlobalSearch .sv-search-header{margin-bottom:12px!important}
 #svGlobalSearch .sv-search-results{margin-top:9px!important}
 #svGlobalSearch .sv-search-result-arrow{font-size:17px!important}
+
+/* White SEYVEO theme: the global search canvas follows the clean page,
+   while the approved dock and its blue pressed Search control stay intact. */
+:root[data-theme="light"] #svGlobalSearch{
+ background:#FFFFFF!important;
+ color:#111113!important;
+}
+:root[data-theme="light"] #svGlobalSearch .sv-search-input-shell{
+ background:#F4F5F7!important;
+}
+:root[data-theme="light"] #svGlobalSearch .sv-search-assistant-hint{
+ background:#F4F5F7!important;
+ color:#555B65!important;
+}
+:root[data-theme="light"] #svGlobalSearch .sv-search-result{
+ border-bottom-color:rgba(25,31,42,.075)!important;
+}
+:root[data-theme="light"] #svGlobalSearch .sv-search-result:focus-visible{
+ outline-color:#007AFF!important;
+}
