@@ -119,10 +119,8 @@
   let todayCard=null;
   let voiceButton=null;
   let voiceDownload=null;
-  let voiceRecordingUrl=null;
-  let voiceContext=null;
-  let voiceSource=null;
-  let voiceProgress=0;
+  let voiceMedia=null;
+  let voiceFallbackTimer=0;
   let openingStartedAt=0;
   const orbHome=orb.parentNode;
   const orbNext=orb.nextSibling;
@@ -240,8 +238,14 @@
     voiceButton?.remove();
     voiceButton=null;
     if(voiceDownload)voiceDownload.hidden=false;
-    clearInterval(voiceProgress);
-    if(voiceSource){try{voiceSource.stop();}catch{}voiceSource=null;}
+    clearTimeout(voiceFallbackTimer);
+    if(voiceMedia){
+      voiceMedia.pause();
+      voiceMedia.onplaying=null;
+      voiceMedia.onended=null;
+      voiceMedia.onerror=null;
+      voiceMedia=null;
+    }
     clearTimeout(greetingDelay);
     clearTimeout(greetingTicker);
     greeting?.remove();
@@ -324,16 +328,12 @@
     });
   }
 
-  function runOpening({restartArtwork=false,waitForNarration=false}={}){
+  function runOpening({waitForNarration=false}={}){
     if(done)return;
     prepareDock();
     root.classList.remove('sv-cinema-boot');
-    // Voice synthesis can take several minutes on the owner's CPU. Restart
-    // the logo clock only after the completed narration is ready to play.
-    if(restartArtwork&&heroArtwork){
-      const imagePath=(heroArtwork.getAttribute('src')||'').split('?')[0];
-      if(imagePath)heroArtwork.setAttribute('src',imagePath+'?cinema='+Date.now());
-    }
+    // The artwork is already loaded. Changing its URL on voice playback
+    // caused a brief white/dark flash before the first spoken word.
     openingStartedAt=performance.now();
     startGreeting();
     // The sphere never flies away while the private project narration speaks.
@@ -343,69 +343,77 @@
 
   function showLocalVoicePreview(){
     // Read the owner's exact approved 3.36-second WAV from the loopback server.
+    // The browser is allowed to play it immediately if its autoplay policy
+    // permits. If Edge blocks spoken autoplay, show one explicit play control.
     // No voice sample is committed to the public website or regenerated.
     voiceButton=document.createElement('button');
     voiceButton.type='button';
     voiceButton.className='sv-cinema-local-voice';
-    voiceButton.textContent='▶ Смотреть с голосом Сэйви';
+    voiceButton.textContent='▶ Включить голос Сэйви';
     voiceButton.setAttribute('aria-label','Воспроизвести заставку с фирменным голосом Сэйви');
+    voiceButton.hidden=true;
     document.body.appendChild(voiceButton);
-    voiceButton.addEventListener('click',async()=>{
-      if(done||!voiceButton||voiceButton.disabled)return;
+    voiceMedia=new Audio('/api/seyveo-approved-welcome');
+    voiceMedia.preload='auto';
+    voiceMedia.onplaying=()=>{
+      if(done||openingStartedAt)return;
+      clearTimeout(voiceFallbackTimer);
+      voiceButton?.remove();voiceButton=null;
+      voiceDownload=document.createElement('a');
+      voiceDownload.className='sv-cinema-local-voice-download';
+      voiceDownload.href='/api/seyveo-approved-welcome';
+      voiceDownload.download='SEYVEO-Sayvi-welcome.wav';
+      voiceDownload.textContent='↓ Скачать приветствие Сэйви';
+      voiceDownload.hidden=true;
+      document.body.appendChild(voiceDownload);
+      // Start the written scene at the first audible audio frame, with no
+      // synthetic one-second silence or image reload.
+      runOpening({waitForNarration:true});
+    };
+    voiceMedia.onended=()=>{
+      if(done)return;
+      const remaining=Math.max(700,10400-(performance.now()-openingStartedAt));
+      introTimer=setTimeout(begin,remaining);
+    };
+    const fallback=(error)=>{
+      if(done||!voiceButton)return;
+      clearTimeout(voiceFallbackTimer);
+      console.warn('[SEYVEO Cinema] Фирменный голос недоступен:',error?.message||error);
+      voiceButton.dataset.fallback='silent';
+      voiceButton.textContent='Голос недоступен · Смотреть без звука';
+      voiceButton.title=String(error?.message||error).slice(0,180);
+      voiceButton.hidden=false;
+    };
+    voiceMedia.onerror=()=>fallback(Error('Не удалось открыть локальную запись Сэйви.'));
+    const play=()=>{
+      if(done||!voiceMedia)return;
+      voiceMedia.play().catch(error=>{
+        if(done||!voiceButton)return;
+        if(error?.name==='NotAllowedError'){
+          // Edge requires a user gesture on some sites and profiles.
+          clearTimeout(voiceFallbackTimer);
+          voiceButton.hidden=false;
+          voiceButton.disabled=false;
+        }else fallback(error);
+      });
+    };
+    voiceButton.addEventListener('click',()=>{
+      if(done||!voiceButton)return;
       if(voiceButton.dataset.fallback==='silent'){
         voiceButton.remove();voiceButton=null;
         runOpening();return;
       }
-      const control=voiceButton;
-      control.disabled=true;
-      control.textContent='Готовлю приветствие Сэйви…';
-      try{
-        const Engine=window.AudioContext||window.webkitAudioContext;
-        if(!Engine)throw Error('Браузер не поддерживает воспроизведение звука.');
-        // Unlock playback while the click is still active (iOS/Safari).
-        voiceContext=new Engine();
-        await voiceContext.resume();
-        const response=await fetch('/api/seyveo-approved-welcome',{credentials:'same-origin'});
-        if(!response.ok){
-          const detail=await response.json().catch(()=>({}));
-          throw Error(detail.error||'Не удалось открыть утверждённую запись Сэйви: '+response.status);
-        }
-        const bytes=await response.arrayBuffer();
-        const decoded=await voiceContext.decodeAudioData(bytes.slice(0));
-        clearInterval(voiceProgress);
-        if(done)return;
-        voiceRecordingUrl=URL.createObjectURL(new Blob([bytes],{type:'audio/wav'}));
-        voiceDownload=document.createElement('a');
-        voiceDownload.className='sv-cinema-local-voice-download';
-        voiceDownload.href=voiceRecordingUrl;
-        voiceDownload.download='SEYVEO-Sayvi-welcome.wav';
-        voiceDownload.textContent='↓ Скачать приветствие Сэйви';
-        voiceDownload.hidden=true;
-        document.body.appendChild(voiceDownload);
-        control.remove();voiceButton=null;
-        voiceSource=voiceContext.createBufferSource();
-        voiceSource.buffer=decoded;
-        voiceSource.connect(voiceContext.destination);
-        voiceSource.onended=()=>{
-          if(done)return;
-          // The 3.36-second greeting ends well before the 10.4-second logo.
-          // Never shorten the artwork just because the voice has finished.
-          const remaining=Math.max(700,10400-(performance.now()-openingStartedAt));
-          introTimer=setTimeout(begin,remaining);
-        };
-        voiceSource.start(voiceContext.currentTime+1.04);
-        runOpening({restartArtwork:true,waitForNarration:true});
-      }catch(error){
-        clearInterval(voiceProgress);
-        console.warn('[SEYVEO Cinema] Фирменный голос недоступен:',error?.message||error);
-        if(!done&&voiceButton===control){
-          control.disabled=false;
-          control.dataset.fallback='silent';
-          control.textContent='Голос недоступен · Смотреть без звука';
-          control.title=String(error?.message||error).slice(0,180);
-        }
-      }
+      voiceButton.disabled=true;
+      voiceButton.textContent='Готовлю приветствие Сэйви…';
+      // Play is initiated synchronously inside the Edge gesture handler.
+      play();
     });
+    // If a slow local drive stalls, keep the preview usable rather than
+    // leaving the owner on a blank, non-interactive opening indefinitely.
+    voiceFallbackTimer=setTimeout(()=>{
+      if(!done&&voiceButton&&openingStartedAt===0)voiceButton.hidden=false;
+    },1800);
+    play();
   }
 
   // One opening per LOCAL calendar day; route changes never replay the film.
@@ -426,9 +434,6 @@
   });
   window.addEventListener('pagehide',()=>{
     if(!done)finish();
-    if(voiceRecordingUrl)URL.revokeObjectURL(voiceRecordingUrl);
-    if(voiceSource){try{voiceSource.stop();}catch{}voiceSource=null;}
-    voiceContext?.close().catch(()=>{});
   });
   let lastViewportWidth=window.innerWidth;
   window.addEventListener('resize',()=>{

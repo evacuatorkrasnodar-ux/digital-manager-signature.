@@ -128,8 +128,8 @@
   opacity:1;
   transform:translate3d(0,0,0);
 }
-/* Explicit review switch on the trusted LOCAL voice server only. The public
-   opening never shows this control and never auto-plays the microphone voice. */
+/* Private voice preview on the trusted LOCAL server only. The control is
+   shown only when Edge prevents autoplay; the public opening stays silent. */
 .sv-cinema-local-voice,.sv-cinema-local-voice-download{
   position:fixed;
   z-index:2147483003;
@@ -156,6 +156,7 @@
   cursor:pointer;
 }
 .sv-cinema-local-voice:disabled{opacity:.7;cursor:wait}
+.sv-cinema-local-voice[hidden]{display:none!important}
 .sv-cinema-local-voice-download{
   left:auto;right:16px;bottom:calc(85px + env(safe-area-inset-bottom,0px));
   transform:none;font-size:12px;min-height:40px;padding:9px 13px;
