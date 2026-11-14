@@ -128,6 +128,7 @@
     clearTimeout(introTimer);
     clearTimeout(safetyTimer);
     clearTimeout(flareTimer);
+    if(spark)root.classList.add('sv-cinema-revealing','sv-cinema-card-reveal');
     root.classList.add('sv-sayvi-handoff-docked');
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
@@ -149,6 +150,10 @@
     }
     rememberOpening();
     renderToday();
+    if(spark){
+      setTimeout(()=>root.classList.remove('sv-cinema-revealing'),55);
+      setTimeout(()=>root.classList.remove('sv-cinema-card-reveal'),900);
+    }
     setTimeout(()=>root.classList.remove('sv-sayvi-handoff-arrived'),850);
   }
 
