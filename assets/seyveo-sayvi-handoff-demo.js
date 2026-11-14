@@ -16,6 +16,11 @@
     root.classList.remove('sv-sayvi-handoff-demo');
     return;
   }
+  // Keep the dock visually empty until the same visible Sayvi reaches it.
+  // Inline priority protects against the dock's stronger !important rules.
+  const smallOpacity=small.style.getPropertyValue('opacity');
+  const smallOpacityPriority=small.style.getPropertyPriority('opacity');
+  small.style.setProperty('opacity','0','important');
 
   let done=false;
   let flying=false;
@@ -106,6 +111,8 @@
     clearTimeout(introTimer);
     root.classList.add('sv-sayvi-handoff-docked','sv-sayvi-handoff-arrived');
     restoreOrb();
+    if(smallOpacity)small.style.setProperty('opacity',smallOpacity,smallOpacityPriority);
+    else small.style.removeProperty('opacity');
     flying=false;
     root.classList.remove('sv-sayvi-handoff-inflight');
     const cluster=document.getElementById('orbCluster');
