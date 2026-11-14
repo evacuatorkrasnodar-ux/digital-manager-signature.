@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict');
-const {extract,cleanPlace,mapURL,photoURL}=require('../assets/seyveo-task-places.js');
+const {extract,cleanPlace,mapURL,mapTiles,photoURL}=require('../assets/seyveo-task-places.js');
 const cases=[
  ['Встреча с Леной завтра в 11 в кафе Пушкин в Краснодаре',{label:'кафе «Пушкин»',query:'кафе Пушкин, Краснодар'}],
  ['Пообедать в кофейне «Surf Coffee» в четверг в 12',{label:'кофейня «Surf Coffee»',query:'кофейня Surf Coffee'}],
@@ -17,6 +17,9 @@ for(const phrase of ['Позвонить Анне завтра в 12','Встр�
 assert.equal(cleanPlace({name:'Cafe',address:'улица',lat:'250',lon:'40'}),null);
 assert.equal(cleanPlace({name:'Cafe',address:'улица',lat:'45.012',lon:'38.993'}).lat,45.012);
 assert.ok(mapURL({name:'Cafe',address:'улица',lat:45.012,lon:38.993}).includes('marker=45.012000'));
+const tiles=mapTiles({name:'Cafe',address:'улица',lat:45.012,lon:38.993});
+assert.ok(tiles.length>=1&&tiles.length<=4);
+assert.ok(tiles.every(tile=>/^https:\/\/tile\.openstreetmap\.org\/16\/\d+\/\d+\.png$/.test(tile.url)));
 assert.ok(photoURL({photo:'File:Coffee.jpg'}).includes('Coffee.jpg'));
 assert.equal(photoURL({photo:'https://example.com/wrong.jpg'}),'');
 console.log('SEYVEO place extraction: '+(cases.length+4)+' phrases + map/photo validation OK');
