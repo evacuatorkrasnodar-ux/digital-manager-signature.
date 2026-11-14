@@ -167,7 +167,7 @@
     done=true;
     clearTimeout(introTimer);
     clearTimeout(safetyTimer);
-    if(spark)root.classList.add('sv-cinema-revealing','sv-cinema-card-reveal');
+    if(spark)root.classList.add('sv-cinema-stagger-enter');
     root.classList.add('sv-sayvi-handoff-docked');
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
@@ -189,10 +189,9 @@
     }
     rememberOpening();
     renderToday();
-    if(spark){
-      setTimeout(()=>root.classList.remove('sv-cinema-revealing'),55);
-      setTimeout(()=>root.classList.remove('sv-cinema-card-reveal'),900);
-    }
+    // Remove animation control once every delayed card has settled, so any
+    // later live updates keep their normal transitions and touch behaviour.
+    if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);
     setTimeout(()=>root.classList.remove('sv-sayvi-handoff-arrived'),850);
   }
 
@@ -250,6 +249,7 @@
   requestAnimationFrame(launch);
   window.addEventListener('hashchange',()=>{
     if(!done&&location.hash&&location.hash!=='#home')finish();
+    if(location.hash&&location.hash!=='#home')root.classList.remove('sv-cinema-stagger-enter');
   });
   window.addEventListener('pagehide',()=>{if(!done)finish();});
   window.addEventListener('resize',()=>{if(!done)finish();});
