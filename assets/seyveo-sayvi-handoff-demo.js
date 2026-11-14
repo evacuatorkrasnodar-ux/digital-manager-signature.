@@ -8,7 +8,7 @@
   const replay=params.get('sayvi-intro')==='1'||params.get('sayvi-handoff')==='1';
   const noIntro=params.get('sayvi-intro')==='0';
   const speed=params.get('sayvi-slow')==='1'?1.8:1;
-  const dailyKey='seyveo-sayvi-cinema-last-day-v3';
+  const dailyKey='seyveo-sayvi-cinema-last-day-v4';
   const currentDay=()=>{
     const d=new Date();
     return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -22,6 +22,7 @@
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
   const orb=document.getElementById('orb');
+  const heroArtwork=document.getElementById('plasmaVisual');
   const dockButton=document.getElementById('assistantButton');
   const small=dockButton?.querySelector('.sv-sayvi-velvet-sphere');
   const dock=dockButton?.closest('footer.dock');
@@ -29,64 +30,53 @@
     root.classList.remove('sv-sayvi-handoff-demo');
     return;
   }
+  // The HTML fallback is dark. Synchronize the already-selected white theme
+  // before the first cinematic frame to avoid a dark-to-white visual flash.
+  if(root.dataset.theme==='light'&&heroArtwork?.getAttribute('src')?.includes('plasma-signature.svg')){
+    heroArtwork.setAttribute('src','assets/plasma-signature-light.svg?v=24');
+  }
   // Never show both Sayvis. Inline priority wins over the dock's !important CSS.
   const smallOpacity=small.style.getPropertyValue('opacity');
   const smallOpacityPriority=small.style.getPropertyPriority('opacity');
   if(showCinema)small.style.setProperty('opacity','0','important');
 
   let done=false;
-  let started=false;
   let animation=null;
   let introTimer=0;
   let safetyTimer=0;
-  let flareTimer=0;
-  let dockFrame=0;
+  let dockTimer=0;
   let dockMetrics=null;
   let dockStyleBefore=null;
   let todayCard=null;
-  let flare=null;
   const orbHome=orb.parentNode;
   const orbNext=orb.nextSibling;
   let originalOrbStyle=null;
-  const dockProperties=['--sv-feng-capsule','--sv-cinema-slot','--sv-cinema-extra'];
   function prepareDock(){
     if(!showCinema||root.dataset.theme!=='light'||!dock)return;
-    // Read the actual approved capsule width, after the theme's clamp resolves.
+    // The existing grid stays at final coordinates. Only its background mask
+    // changes; reflowing grid tracks on every frame caused visible stutter.
     const full=parseFloat(getComputedStyle(dock,'::before').width);
     if(!Number.isFinite(full)||full<180)return;
     const slot=full/4;
-    dockMetrics={full,slot,closed:slot*3};
-    dockStyleBefore=dockProperties.map(key=>[
-      key,dock.style.getPropertyValue(key),dock.style.getPropertyPriority(key)
-    ]);
-    dock.style.setProperty('--sv-cinema-slot',`${slot}px`);
-    dock.style.setProperty('--sv-cinema-extra','0px');
-    dock.style.setProperty('--sv-feng-capsule',`${slot*3}px`);
+    dockMetrics={full,slot};
+    dockStyleBefore=[dock.style.getPropertyValue('--sv-cinema-grow-duration'),dock.style.getPropertyPriority('--sv-cinema-grow-duration')];
     root.classList.add('sv-cinema-intro-active');
   }
   function growDock(delay,duration){
     if(!dockMetrics)return;
-    const start=performance.now();
-    const frame=time=>{
-      if(done)return;
-      const progress=Math.max(0,Math.min(1,(time-start-delay)/duration));
-      const eased=progress<.5?4*progress**3:1-(-2*progress+2)**3/2;
-      const extra=dockMetrics.slot*eased;
-      dock.style.setProperty('--sv-cinema-extra',`${extra}px`);
-      dock.style.setProperty('--sv-feng-capsule',`${dockMetrics.closed+extra}px`);
-      if(progress<1)dockFrame=requestAnimationFrame(frame);
-    };
-    dockFrame=requestAnimationFrame(frame);
+    dock.style.setProperty('--sv-cinema-grow-duration',`${duration}ms`);
+    dockTimer=setTimeout(()=>{
+      if(!done)root.classList.add('sv-cinema-dock-growing');
+    },delay);
   }
   function restoreDock(){
-    cancelAnimationFrame(dockFrame);
+    clearTimeout(dockTimer);
     if(dock&&dockStyleBefore){
-      dockStyleBefore.forEach(([key,value,priority])=>{
-        if(value)dock.style.setProperty(key,value,priority);
-        else dock.style.removeProperty(key);
-      });
+      const [value,priority]=dockStyleBefore;
+      if(value)dock.style.setProperty('--sv-cinema-grow-duration',value,priority);
+      else dock.style.removeProperty('--sv-cinema-grow-duration');
     }
-    root.classList.remove('sv-cinema-intro-active','sv-cinema-intro-dock-ready');
+    root.classList.remove('sv-cinema-intro-active','sv-cinema-dock-growing','sv-cinema-intro-dock-ready');
     dockStyleBefore=null;
   }
   function restoreOrb(){
@@ -173,7 +163,6 @@
     done=true;
     clearTimeout(introTimer);
     clearTimeout(safetyTimer);
-    clearTimeout(flareTimer);
     if(spark)root.classList.add('sv-cinema-revealing','sv-cinema-card-reveal');
     root.classList.add('sv-sayvi-handoff-docked');
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
@@ -182,7 +171,6 @@
     if(smallOpacity)small.style.setProperty('opacity',smallOpacity,smallOpacityPriority);
     else small.style.removeProperty('opacity');
     root.classList.remove('sv-sayvi-handoff-inflight');
-    flare?.remove();
     const cluster=document.getElementById('orbCluster');
     if(cluster){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
     if(spark){
@@ -218,7 +206,6 @@
 
     // Lift the original painted orb above clipping contexts. Its final scale
     // matches the exact same SVG in the dock; there is no substitute animation.
-    started=true;
     originalOrbStyle=orb.getAttribute('style')||'';
     document.body.appendChild(orb);
     orb.classList.add('sv-sayvi-handoff-flight');
@@ -228,23 +215,19 @@
     }))orb.style.setProperty(name,value,'important');
     orb.style.setProperty('transform','none');
     root.classList.add('sv-sayvi-handoff-inflight');
-    growDock(850*speed,2350*speed);
+    growDock(950*speed,2550*speed);
 
     requestAnimationFrame(()=>{
       if(done)return;
       try{
         const land=`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`;
         animation=orb.animate([
-          {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1,easing:'cubic-bezier(.34,0,.3,1)'},
-          {offset:.13,transform:'translate3d(0,-7px,0) scale(1.025)',opacity:1,easing:'cubic-bezier(.54,0,.3,1)'},
-          {offset:.51,transform:`translate3d(${dx*.17}px,${dy*.22}px,0) scale(.76)`,opacity:1,easing:'cubic-bezier(.45,.3,.25,1)'},
-          {offset:.76,transform:`translate3d(${dx*.58}px,${dy*.68}px,0) scale(.35)`,opacity:1,easing:'cubic-bezier(.2,.7,.16,1)'},
-          {offset:.91,transform:land,opacity:1,easing:'ease-out'},
-          // Remain a complete miniature sphere at the landing point. The
-          // matching dock artwork takes over in the same frame: no dot fade.
+          // A single physically continuous curve avoids jumps in velocity at
+          // intermediate keyframes; the miniature remains a complete sphere.
+          {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
           {offset:1,transform:land,opacity:1}
-        ],{duration:3900*speed,easing:'linear',fill:'forwards'});
-        safetyTimer=setTimeout(()=>finish({spark:true}),4450*speed);
+        ],{duration:4200*speed,easing:'cubic-bezier(.45,0,.16,1)',fill:'forwards'});
+        safetyTimer=setTimeout(()=>finish({spark:true}),4850*speed);
         animation.finished.then(()=>finish({spark:true})).catch(()=>{});
       }catch{finish();}
     });
