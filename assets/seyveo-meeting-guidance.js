@@ -53,7 +53,7 @@
   advice.hidden=true;advice.replaceChildren();
   if(!dialog.open||!title.value.trim()||!validDay(due.value))return;
   const raw=title.value.toLocaleLowerCase('ru-RU');
-  const meeting=/(?:встреч|встрет|переговор|кафе|кофе|ресторан|поужин|пообед|ужин|обед)/iu.test(raw);
+  const meeting=/(?:встреч|встрет|переговор|поужин|пообед|(?:ужин|обед|завтрак)\s+с\b)/iu.test(raw);
   if(!meeting)return;
   const day=validDay(due.value),parts=[];
   if(/^([01]\d|2[0-3]):[0-5]\d$/.test(time.value)){
