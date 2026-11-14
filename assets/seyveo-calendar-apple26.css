@@ -1,0 +1,162 @@
+/* SEYVEO · One calm Apple-inspired calendar language.
+   A month is a month: numbers and discreet dots, no agenda cards below it. */
+:root[data-theme="light"] #calendarPage .cal-nav,
+html:not([data-theme]) #calendarPage .cal-nav{
+ min-height:51px!important;margin:3px 0 4px!important;padding:0 3px 4px!important;border:0!important;
+}
+:root[data-theme="light"] #calendarPage .cal-nav h2,
+html:not([data-theme]) #calendarPage .cal-nav h2{
+ font:680 27px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.035em!important;color:#17191D!important;
+}
+:root[data-theme="light"] #calendarPage .cal-month,
+html:not([data-theme]) #calendarPage .cal-month{
+ margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+ background:#FFF!important;box-shadow:none!important;backdrop-filter:none!important;
+ -webkit-backdrop-filter:none!important;
+}
+#calendarPage .cal-month::before{display:none!important}
+:root[data-theme="light"] #calendarPage .cal-month>.cal-weekdays,
+html:not([data-theme]) #calendarPage .cal-month>.cal-weekdays{
+ display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;
+ gap:0!important;margin:0!important;padding:4px 0 6px!important;
+ border-bottom:1px solid #E8E9ED!important;background:#FFF!important;
+}
+:root[data-theme="light"] #calendarPage .cal-month>.cal-weekdays span,
+html:not([data-theme]) #calendarPage .cal-month>.cal-weekdays span{
+ color:#838790!important;opacity:1!important;font:520 10.5px/1.2 system-ui!important;
+ text-align:center!important;
+}
+:root[data-theme="light"] #calendarPage .cal-month>.cal-month-grid,
+html:not([data-theme]) #calendarPage .cal-month>.cal-month-grid{
+ display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;
+ grid-auto-rows:55px!important;column-gap:0!important;row-gap:0!important;
+ margin:0!important;padding:0!important;border:0!important;background:#FFF!important;
+}
+:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day,
+html:not([data-theme]) #calendarPage .cal-month-grid .cal-day{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ gap:4px!important;min-height:55px!important;margin:0!important;padding:5px 1px 3px!important;
+ border:0!important;border-bottom:1px solid #EBEDF0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;color:#16191E!important;
+ font:530 15px/1 system-ui!important;opacity:1!important;
+}
+#calendarPage .cal-month-grid .cal-day[data-outside="true"] .cal-day-number,
+#calendarPage .cal-month-grid .cal-day[data-outside="true"] .cal-day-dots{visibility:hidden!important}
+:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day-number,
+html:not([data-theme]) #calendarPage .cal-month-grid .cal-day-number{
+ display:grid!important;place-items:center!important;flex:none!important;
+ width:30px!important;min-width:30px!important;height:30px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;color:#17191D!important;
+ font-weight:560!important;
+}
+:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day[data-selected="true"] .cal-day-number,
+html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-selected="true"] .cal-day-number{
+ background:#17191D!important;color:#FFF!important;border:0!important;
+ box-shadow:none!important;font-weight:650!important;
+}
+:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day[data-today="true"]:not([data-selected="true"]) .cal-day-number,
+html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-today="true"]:not([data-selected="true"]) .cal-day-number{
+ color:#F34A4D!important;background:transparent!important;box-shadow:none!important;
+}
+:root[data-theme="light"] #calendarPage .cal-month-grid .cal-day[data-weekend="true"]:not([data-selected="true"]) .cal-day-number,
+html:not([data-theme]) #calendarPage .cal-month-grid .cal-day[data-weekend="true"]:not([data-selected="true"]) .cal-day-number{
+ color:#7D828B!important;
+}
+/* Existing truthful local event signals become restrained dots, not bars/cards. */
+#calendarPage .cal-month-grid .cal-day-dots{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ gap:3px!important;height:5px!important;max-width:100%!important;margin:0!important;
+}
+#calendarPage .cal-month-grid .cal-day-dots i{
+ flex:0 0 4px!important;display:block!important;width:4px!important;height:4px!important;
+ border:0!important;border-radius:50%!important;transform:none!important;
+ background:#6CB7E7!important;opacity:.9!important;
+}
+#calendarPage .cal-month-grid .cal-day-dots i.cal-dot-task{background:#AF8CE2!important}
+#calendarPage .cal-month-grid .cal-day-dots i.cal-dot-life{background:#E8B77C!important}
+#calendarPage .cal-month-grid .cal-day-dots i.cal-dot-note{background:#B8BDC9!important}
+#calendarPage .cal-month-grid .cal-day-dots i.cal-dot-holiday{background:#E78191!important}
+/* The month view is only calendar. Day/week modes still retain their details. */
+#calendarPage #calendarView[data-mode="month"] :is(.cal-day-summary,#calendarAgenda,#calendarHoliday,#calendarAdvice){
+ display:none!important;
+}
+/* Month selector in event creation. The dates match the main calendar ink. */
+:root[data-theme="light"] #calendarEventDialog .cal-premium-picker:not([hidden]),
+html:not([data-theme]) #calendarEventDialog .cal-premium-picker:not([hidden]){
+ border:1px solid #E5E8EE!important;border-radius:24px!important;
+ background:#FFF!important;color:#17191D!important;box-shadow:none!important;
+}
+:root[data-theme="light"] #calendarEventDialog #seyveoPickDate .cal-pick-day,
+html:not([data-theme]) #calendarEventDialog #seyveoPickDate .cal-pick-day{
+ border:0!important;border-radius:50%!important;color:#1A1D22!important;background:transparent!important;
+ font:550 15px/1 system-ui!important;
+}
+:root[data-theme="light"] #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected,
+html:not([data-theme]) #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected{
+ border:0!important;border-radius:50%!important;background:#17191D!important;color:#FFF!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] #calendarEventDialog #seyveoPickDate .cal-pick-day.is-today:not(.is-selected),
+html:not([data-theme]) #calendarEventDialog #seyveoPickDate .cal-pick-day.is-today:not(.is-selected){
+ color:#F34A4D!important;border:0!important;
+}
+/* Same month numbers and circles in the compact date viewer of a new task. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-popover{
+ border:1px solid #E5E8EE!important;border-radius:24px!important;background:#FFF!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button{
+ border:0!important;border-radius:50%!important;background:transparent!important;
+ color:#17191D!important;font:550 14px/1 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected{
+ border-radius:50%!important;background:#17191D!important;color:#FFF!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today:not(.is-selected){
+ color:#F34A4D!important;
+}
+html body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-selected{
+ border-radius:50%!important;background:#17191D!important;color:#FFF!important;box-shadow:none!important;
+}
+html body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days button.is-today:not(.is-selected){
+ color:#F34A4D!important;
+}
+/* Sayvi's context appears with the meeting preview, never in the month grid. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice[hidden]{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice{
+ display:flex!important;align-items:flex-start!important;gap:10px!important;
+ margin:11px 0 2px!important;padding:12px 14px!important;
+ border:1px solid #E4E9F2!important;border-radius:19px!important;
+ background:#F9FBFF!important;color:#333C49!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice-mark{
+ display:grid!important;place-items:center!important;flex:none!important;
+ width:25px!important;height:25px!important;border-radius:50%!important;
+ background:#E9F1FF!important;color:#3D84E6!important;font:600 17px/1 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice p{
+ flex:1!important;margin:1px 0 0!important;
+ font:510 13.5px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.01em!important;overflow-wrap:anywhere!important;
+}
+/* Health, Care and My World use the same simple date grid when selecting a day. */
+:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-picker:has(.cal-velvet-days):not([hidden]){
+ border:1px solid #E5E8EE!important;border-radius:23px!important;
+ background:#FFF!important;color:#17191D!important;box-shadow:none!important;
+}
+:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-picker:has(.cal-velvet-days) :is(button,strong){
+ color:#17191D!important;
+}
+:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-days button[aria-pressed="true"]{
+ background:#17191D!important;color:#FFF!important;border-radius:50%!important;
+}
+:root[data-theme="light"] body #calendarSpaceDialog .cal-velvet-days button.is-today:not([aria-pressed="true"]){
+ color:#F34A4D!important;
+}
+@media(max-width:370px){
+ :root[data-theme="light"] #calendarPage .cal-month>.cal-month-grid,
+ html:not([data-theme]) #calendarPage .cal-month>.cal-month-grid{grid-auto-rows:48px!important}
+ :root[data-theme="light"] #calendarPage .cal-month-grid .cal-day,
+ html:not([data-theme]) #calendarPage .cal-month-grid .cal-day{min-height:48px!important}
+}
