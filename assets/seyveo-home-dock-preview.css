@@ -218,3 +218,33 @@
 @media(prefers-reduced-motion:reduce){
  :root[data-theme="light"] #assistantButton .sv-sayvi-ray{animation:none!important}
 }
+
+/* Search only: stable black laser glyph on every shared-dock destination.
+   When the search canvas opens, the original 60px glass circle gains the
+   same gently recessed blue selection cue as the four dock tabs. */
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage{
+ color:#0B0B0D!important;
+ opacity:1!important;
+ transition:background .24s ease,box-shadow .24s ease,transform .24s cubic-bezier(.22,1,.36,1)!important;
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage > svg{
+ color:#0B0B0D!important;
+ stroke:#0B0B0D!important;
+ opacity:1!important;
+ transition:color .24s ease,stroke .24s ease!important;
+}
+:root[data-theme="light"].sv-global-search-open footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage,
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage:active{
+ background:radial-gradient(ellipse 110% 95% at 50% 5%,rgba(10,132,255,.19),rgba(10,132,255,.065) 72%)!important;
+ box-shadow:inset 0 1.5px 3px rgba(31,42,58,.13),inset 0 -1px 1px rgba(255,255,255,.32)!important;
+ transform:scale(.965)!important;
+}
+:root[data-theme="light"].sv-global-search-open footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage > svg,
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #navManage:active > svg{
+ color:#087DF1!important;
+ stroke:#087DF1!important;
+}
+@media(prefers-reduced-motion:reduce){
+ :root[data-theme="light"] footer.dock.sv-shared-dock > #navManage,
+ :root[data-theme="light"] footer.dock.sv-shared-dock > #navManage > svg{transition:none!important}
+}
