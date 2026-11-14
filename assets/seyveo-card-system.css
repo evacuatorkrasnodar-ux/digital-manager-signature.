@@ -893,11 +893,12 @@
  .sv-card-system--rendered .sv-card-actions{column-gap:9px!important}
 }
 
-/* SEYVEO CARD WORKSHOP · Home and Studio Glass Regular controls.
+/* SEYVEO CARD WORKSHOP · Sayvi uses the approved Dock search material.
  * A single shared contract for Card Engine, Studio previews and future cards.
- * White theme: three 50px circular touch surfaces with the same translucent
- * material and thin rim; Sayvi retains a slightly stronger priority outline.
- * No raised exterior shadow and no nested decorative lens. Do not affect the dock.
+ * White theme: Sayvi inherits the search lens's exact optical values, scaled
+ * to the New Task header's 50px circle with a 23px symbol. Edit and Navigate
+ * use the same dimensions and 23px symbols, clean white without borders.
+ * No duplicate decorative lens. Do not affect the original Dock.
  * Dark theme retains its existing graphite treatment pending separate approval.
  * The final Send / Save / Confirm button remains a separate explicit action.
  */
@@ -911,6 +912,8 @@
  --sv-card-icon-stroke:1.8;
  --sv-card-sayvi-outline:0 solid transparent;
  --sv-card-sayvi-bg:#38383A;
+ --sv-card-sayvi-shadow:none;
+ --sv-card-sayvi-blur:none;
  --sv-card-sayvi-ink:#F6F7F8;
  --sv-card-sayvi-glyph:23px;
  --sv-card-sayvi-stroke:1.8;
@@ -919,15 +922,22 @@
 #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"]{
  --sv-card-icon-touch:50px;
  --sv-card-icon-radius:50%;
- --sv-card-action-neutral-bg:rgba(238,240,243,.70);
- --sv-card-action-outline:1px solid rgba(120,130,144,.29);
- --sv-card-action-shadow:inset 0 1px 0 rgba(255,255,255,.65);
- --sv-card-action-blur:blur(12px) saturate(128%);
+ --sv-card-action-neutral-bg:#FFFFFF;
+ --sv-card-action-outline:0 solid transparent;
+ --sv-card-action-shadow:none;
+ --sv-card-action-blur:none;
  --sv-card-icon-stroke:1.7;
- --sv-card-sayvi-outline:1px solid rgba(36,38,42,.52);
- --sv-card-sayvi-bg:rgba(238,240,243,.70);
+ --sv-card-sayvi-outline:1px solid rgba(255,255,255,.94);
+ --sv-card-sayvi-bg:rgba(190,193,202,.43);
+ --sv-card-sayvi-shadow:0 0 0 .7px rgba(164,170,184,.30),
+   inset 0 1px 1px rgba(75,82,96,.055),
+   inset 0 -1px 0 rgba(255,255,255,.18),
+   inset .6px 0 .7px rgba(255,255,255,.16),
+   inset -.6px 0 .8px rgba(75,82,96,.055),
+   0 1px 2px rgba(82,88,103,.045);
+ --sv-card-sayvi-blur:blur(12px) saturate(108%);
  --sv-card-sayvi-ink:#0B0B0D;
- --sv-card-sayvi-glyph:27px;
+ --sv-card-sayvi-glyph:23px;
  --sv-card-sayvi-stroke:1.7;
 }
 /* Preview switch overrides the real app theme without changing preferences. */
@@ -941,6 +951,8 @@
  --sv-card-icon-stroke:1.8;
  --sv-card-sayvi-outline:0 solid transparent;
  --sv-card-sayvi-bg:#38383A;
+ --sv-card-sayvi-shadow:none;
+ --sv-card-sayvi-blur:none;
  --sv-card-sayvi-ink:#F6F7F8;
  --sv-card-sayvi-glyph:23px;
  --sv-card-sayvi-stroke:1.8;
@@ -970,6 +982,9 @@
  border:var(--sv-card-sayvi-outline)!important;
  border-radius:var(--sv-card-icon-radius)!important;
  background:var(--sv-card-sayvi-bg)!important;
+ box-shadow:var(--sv-card-sayvi-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-card-sayvi-blur)!important;
+ backdrop-filter:var(--sv-card-sayvi-blur)!important;
  color:var(--sv-card-sayvi-ink)!important;
 }
 .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button::before,
@@ -1013,9 +1028,10 @@
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"],
  #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"]{
-  --sv-card-action-neutral-bg:#F0F1F3;
-  --sv-card-sayvi-bg:#F0F1F3;
+  --sv-card-action-neutral-bg:#FFFFFF;
+  --sv-card-sayvi-bg:#E5E7EC;
   --sv-card-action-blur:none;
+  --sv-card-sayvi-blur:none;
  }
 }
 

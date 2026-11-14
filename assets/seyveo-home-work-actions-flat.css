@@ -323,9 +323,9 @@
 }
 
 
-/* SEYVEO / Home card actions — one shared Glass Regular material.
-   Three equal 50px touch targets; Sayvi has a restrained priority outline.
-   Flat translucent silver, no raised rim or duplicate decorative lenses.
+/* SEYVEO / Home card actions — approved asymmetric Apple composition.
+   All three match New Task: 50px hit circles and 23px icons. Sayvi alone
+   receives the Search dock lens; Edit and Navigate have no rim or shadow.
    Send/Save/Confirm text actions above remain unchanged. */
 #homePage #seyveoLivingMoment .lm-field .lm-actions{
  display:flex!important;
@@ -382,9 +382,9 @@
  [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]) .sv-card-symbol{
  box-sizing:border-box!important;
  display:block!important;
- flex:0 0 22px!important;
- width:22px!important;min-width:22px!important;max-width:22px!important;
- height:22px!important;min-height:22px!important;max-height:22px!important;
+ flex:0 0 23px!important;
+ width:23px!important;min-width:23px!important;max-width:23px!important;
+ height:23px!important;min-height:23px!important;max-height:23px!important;
  margin:0!important;padding:0!important;
  stroke:currentColor!important;stroke-width:1.7!important;fill:none!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
@@ -392,13 +392,19 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
- border:var(--sv-card-sayvi-outline,1px solid rgba(36,38,42,.52))!important;
- background:var(--sv-card-sayvi-bg,rgba(238,240,243,.70))!important;
+ border:var(--sv-card-sayvi-outline,1px solid rgba(255,255,255,.94))!important;
+ background:var(--sv-card-sayvi-bg,rgba(190,193,202,.43))!important;
+ box-shadow:var(--sv-card-sayvi-shadow,none)!important;
+ -webkit-backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
+ backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
  color:var(--sv-card-sayvi-ink,#0B0B0D)!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- background:var(--sv-card-action-neutral-bg,rgba(238,240,243,.70))!important;color:#111113!important;
+ border:0!important;background:#FFFFFF!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:#111113!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
