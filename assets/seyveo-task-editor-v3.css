@@ -721,7 +721,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-previe
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu{
  position:absolute!important;z-index:18!important;left:16px!important;
  bottom:calc(var(--sv-task-float-bottom) + 60px)!important;
- box-sizing:border-box!important;display:grid!important;width:245px!important;
+ box-sizing:border-box!important;display:grid!important;width:min(272px,calc(100% - 32px))!important;
  padding:5px!important;border:1px solid #E1E4EC!important;border-radius:20px!important;
  background:#FFF!important;box-shadow:0 6px 22px #2A34401C!important;
 }
