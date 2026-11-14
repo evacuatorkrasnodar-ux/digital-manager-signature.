@@ -134,6 +134,53 @@
   let voiceFileInput=null;
   let voiceFileUrl=null;
   let openingStartedAt=0;
+  // The Home greeting is a welcome, not a permanent part of the workspace.
+  // Keep it for a quiet visitor, but give the room back to real cards once
+  // they begin working (and in any case after five minutes).
+  const homeGreetingMaxMs=5*60*1000;
+  const homeGreetingMinMs=3500;
+  let homeGreetingStartedAt=0;
+  let homeGreetingDeadline=0;
+  let homeGreetingTimer=0;
+  let homeGreetingDismissed=false;
+  function expireHomeGreeting(){
+    if(homeGreetingDismissed||!done||!message)return;
+    homeGreetingDismissed=true;
+    clearTimeout(homeGreetingTimer);
+    message.style.setProperty('--sv-home-greeting-height',`${Math.ceil(message.getBoundingClientRect().height)+2}px`);
+    root.classList.add('sv-home-greeting-fading');
+    const fadeMs=matchMedia('(prefers-reduced-motion: reduce)').matches?0:390;
+    setTimeout(()=>root.classList.add('sv-home-greeting-expired'),fadeMs);
+  }
+  function engageHomeGreeting(){
+    if(!homeGreetingStartedAt||homeGreetingDismissed)return;
+    const elapsed=Date.now()-homeGreetingStartedAt;
+    clearTimeout(homeGreetingTimer);
+    homeGreetingTimer=setTimeout(expireHomeGreeting,Math.max(0,homeGreetingMinMs-elapsed));
+  }
+  function beginHomeGreetingLifetime(){
+    if(homeGreetingStartedAt||!message)return;
+    homeGreetingStartedAt=Date.now();
+    homeGreetingDeadline=homeGreetingStartedAt+homeGreetingMaxMs;
+    homeGreetingTimer=setTimeout(expireHomeGreeting,homeGreetingMaxMs);
+  }
+  // A first purposeful touch or keyboard action means the visitor is already
+  // working. Do not consume the event: the real control must still respond.
+  document.addEventListener('pointerdown',event=>{
+    if(!done||home.hidden||homeGreetingDismissed||root.classList.contains('sv-music-ambient'))return;
+    if(event.target.closest('#stage > .message'))return;
+    engageHomeGreeting();
+  },{capture:true,passive:true});
+  document.addEventListener('keydown',event=>{
+    if(done&&!home.hidden&&!event.repeat)engageHomeGreeting();
+  },{capture:true});
+  window.addEventListener('hashchange',()=>{
+    if(done&&homeGreetingStartedAt&&(location.hash&&location.hash!=='#home'))engageHomeGreeting();
+  });
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden&&homeGreetingStartedAt&&!homeGreetingDismissed&&Date.now()>=homeGreetingDeadline)
+      expireHomeGreeting();
+  });
   const orbHome=orb.parentNode;
   const orbNext=orb.nextSibling;
   let originalOrbStyle=null;
@@ -291,6 +338,7 @@
     }
     rememberOpening();
     renderToday();
+    beginHomeGreetingLifetime();
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
     if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);

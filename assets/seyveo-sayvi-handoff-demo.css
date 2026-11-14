@@ -194,17 +194,38 @@
 }
 :root.sv-sayvi-handoff-docked #homePage #stage {
   min-height:0 !important;
-  padding:8px 0 15px !important;
+  /* The camera inset is already reserved by .app: reclaim the second gap. */
+  padding:0 0 15px !important;
+  margin-top:-11px !important;
   justify-content:flex-start !important;
   flex:0 0 auto !important;
   transition:none !important;
 }
 :root.sv-sayvi-handoff-docked #homePage #stage .message {
   min-height:0 !important;
-  margin:2px auto 0 !important;
+  margin:0 auto !important;
 }
 :root.sv-sayvi-handoff-docked #homePage #stage .message h2 {
   margin:5px 0 7px !important;
+}
+/* A greeting makes a good arrival, but should not occupy the workspace.
+   Fade first, then gently release its actual measured height to the cards. */
+:root.sv-sayvi-handoff-docked.sv-home-greeting-fading #homePage #stage > .message {
+  max-height:var(--sv-home-greeting-height, 180px) !important;
+  overflow:hidden !important;
+  opacity:0 !important;
+  transform:translate3d(0,-6px,0);
+  pointer-events:none !important;
+  transition:opacity .36s ease,transform .39s ease,max-height .56s cubic-bezier(.22,.8,.22,1),margin .56s ease !important;
+}
+:root.sv-sayvi-handoff-docked.sv-home-greeting-expired #homePage #stage > .message {
+  max-height:0 !important;
+  margin:0 auto !important;
+  visibility:hidden !important;
+}
+:root.sv-sayvi-handoff-docked.sv-home-greeting-expired:not(.sv-music-ambient) #homePage #stage {
+  padding-bottom:0 !important;
+  transition:padding .56s cubic-bezier(.22,.8,.22,1) !important;
 }
 :root.sv-sayvi-handoff-docked #homePage #seyveoNameTip {
   display:none !important;
@@ -416,6 +437,8 @@ body > #orb.sv-sayvi-handoff-flight {
   :root.sv-sayvi-handoff-arrived #assistantButton .sv-sayvi-velvet-glass-glow{animation:none!important}
   .sv-sayvi-handoff-today{animation:none!important}
   :root.sv-cinema-stagger-enter #homePage :is(#stage > .message,#seyveoLivingMoment .lm-caption,#seyveoLivingMoment .lm-tiles > *,#seyveoLivingMoment .lm-inline-item,#dynamic > *,#svSmartStartHome,#svcpWorkHomePreview,#workTimeline,.sv-sayvi-handoff-today){animation:none!important}
+  :root.sv-home-greeting-fading #homePage #stage > .message,
+  :root.sv-home-greeting-expired #homePage #stage{transition:none!important}
 }
 
 /* SEYVEO SOUND · living music artwork on Home.
