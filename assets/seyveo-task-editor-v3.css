@@ -356,10 +356,6 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskTitle{
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskTitle::placeholder{
  color:#9B9FA8!important;font-weight:480!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-hint{
- margin:2px 0 0!important;color:#707782!important;font:480 12.5px/1.35 system-ui!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-hint[hidden],
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-preview[hidden]{display:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-preview{
  position:relative!important;display:block!important;margin:13px 0 11px!important;padding:0 0 0 16px!important;
