@@ -780,3 +780,79 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion bu
  flex:none!important;padding:8px 10px!important;border:0!important;border-radius:12px!important;
  background:#FFF!important;color:#A46D2D!important;font:600 12px/1.2 system-ui!important;
 }
+
+/* Apple-style month sheet: real saved work is shown only as quiet, colored
+   markers below the numbers. No extra task list or dividing toolbar line. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-quick-divider{
+ display:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarButton[aria-expanded="true"]{
+ background:transparent!important;color:#007AFF!important;border:0!important;
+ box-shadow:none!important;outline:0!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarButton:focus-visible{
+ outline:2px solid #007AFF!important;outline-offset:2px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar{
+ padding:0!important;touch-action:pan-y;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-weekdays{
+ padding:6px 0 8px!important;
+ font:500 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#8E939C!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days{
+ grid-auto-rows:43px!important;align-items:stretch!important;justify-items:stretch!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > :is(button,.sv-new-task-empty-day){
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;height:43px!important;
+ border-top:1px solid #E9ECF0!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button{
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;
+ gap:1px!important;margin:0!important;padding:5px 0 0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#17191D!important;font:550 14px/1 system-ui!important;
+}
+/* The selected number is a circle, never a white/black full-size tile. */
+html body dialog#personalTaskDialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-selected{
+ background:transparent!important;color:#17191D!important;border-radius:0!important;box-shadow:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days .sv-task-cal-number{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:none!important;width:26px!important;height:26px!important;border-radius:50%!important;
+ color:#17191D!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-selected .sv-task-cal-number{
+ background:#17191D!important;color:#FFF!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-today:not(.is-selected) .sv-task-cal-number{
+ color:#F34A4D!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-marks{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:none!important;min-height:4px!important;gap:2px!important;pointer-events:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-mark{
+ display:block!important;flex:none!important;width:7px!important;height:3.5px!important;
+ border-radius:999px!important;background:#A4CDE9!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-blue{background:#83C7EB!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-purple{background:#CE9BE0!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-orange{background:#E8BA7E!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-green{background:#9BD6B2!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-red{background:#EE8B9B!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-yellow{background:#E8D280!important}
+@media(max-width:620px){
+ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar{
+  display:flex!important;align-items:flex-end!important;justify-content:flex-start!important;
+  min-height:43px!important;padding:0 2px 8px!important;text-align:left!important;
+ }
+ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar strong{
+  font:650 25px/1.12 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+  letter-spacing:-.035em!important;text-align:left!important;
+ }
+ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar button{
+  display:none!important;
+ }
+}
