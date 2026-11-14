@@ -144,7 +144,7 @@ body > #orb.sv-sayvi-handoff-flight {
   z-index:2147483000 !important;
   pointer-events:none !important;
   transform-origin:center center !important;
-  will-change:transform,opacity,filter;
+  will-change:transform,opacity;
   filter:drop-shadow(0 5px 12px rgba(66,133,163,.15)) contrast(1.07);
 }
 
@@ -153,8 +153,8 @@ body > #orb.sv-sayvi-handoff-flight {
 .sv-cinema-star{
   position:fixed;
   z-index:2147483001;
-  width:185px;
-  height:185px;
+  width:240px;
+  height:240px;
   opacity:0;
   transform:translate3d(-50%,-50%,0) scale(.03);
   pointer-events:none;
@@ -172,23 +172,23 @@ body > #orb.sv-sayvi-handoff-flight {
 .sv-cinema-star-cross{
   width:100%;height:100%;
   background:
-    linear-gradient(90deg,transparent 0%,rgba(174,218,234,.11) 22%,#fff 49%,#fff 51%,rgba(174,218,234,.11) 78%,transparent 100%) center/100% 3px no-repeat,
-    linear-gradient(0deg,transparent 0%,rgba(174,218,234,.13) 20%,#fff 49%,#fff 51%,rgba(174,218,234,.13) 80%,transparent 100%) center/3px 100% no-repeat;
-  filter:drop-shadow(0 0 10px rgba(132,199,221,.68));
+    linear-gradient(90deg,transparent 0%,rgba(81,153,188,.13) 18%,rgba(80,156,190,.83) 43%,#fff 50%,rgba(80,156,190,.83) 57%,rgba(81,153,188,.13) 82%,transparent 100%) center/100% 4px no-repeat,
+    linear-gradient(0deg,transparent 0%,rgba(81,153,188,.13) 18%,rgba(80,156,190,.83) 43%,#fff 50%,rgba(80,156,190,.83) 57%,rgba(81,153,188,.13) 82%,transparent 100%) center/4px 100% no-repeat;
+  filter:drop-shadow(0 0 9px rgba(58,142,181,.62));
 }
 .sv-cinema-star-diagonal{
-  width:62%;height:62%;
+  width:67%;height:67%;
   rotate:45deg;
   background:
-    linear-gradient(90deg,transparent,#fff 49%,#fff 51%,transparent) center/100% 2px no-repeat,
-    linear-gradient(0deg,transparent,#fff 49%,#fff 51%,transparent) center/2px 100% no-repeat;
-  opacity:.64;
+    linear-gradient(90deg,transparent,rgba(101,173,200,.68) 46%,#fff 50%,rgba(101,173,200,.68) 54%,transparent) center/100% 2px no-repeat,
+    linear-gradient(0deg,transparent,rgba(101,173,200,.68) 46%,#fff 50%,rgba(101,173,200,.68) 54%,transparent) center/2px 100% no-repeat;
+  opacity:.86;
 }
 .sv-cinema-star-core{
-  width:30px;height:30px;
+  width:42px;height:42px;
   border-radius:50%;
-  background:radial-gradient(circle,#fff 0 20%,#f5fcff 38%,rgba(174,226,244,.85) 56%,transparent 76%);
-  box-shadow:0 0 24px 9px rgba(187,229,241,.44);
+  background:radial-gradient(circle,#fff 0 12%,#e8faff 31%,rgba(89,178,211,.88) 54%,transparent 77%);
+  box-shadow:0 0 9px 3px rgba(62,155,196,.52),0 0 35px 12px rgba(129,203,230,.24);
 }
 @keyframes sv-cinema-star-collapse{
   0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.04)}
@@ -218,11 +218,11 @@ body > #orb.sv-sayvi-handoff-flight {
 }
 .sv-cinema-dock-spark::before{
   width:100%;height:3px;
-  background:linear-gradient(90deg,transparent 0%,rgba(182,222,236,.66) 35%,#fff 50%,rgba(182,222,236,.66) 65%,transparent 100%);
+  background:linear-gradient(90deg,transparent 0%,rgba(81,155,191,.68) 35%,#fff 50%,rgba(81,155,191,.68) 65%,transparent 100%);
 }
 .sv-cinema-dock-spark::after{
   height:100%;width:3px;
-  background:linear-gradient(0deg,transparent 0%,rgba(182,222,236,.52) 35%,#fff 50%,rgba(182,222,236,.52) 65%,transparent 100%);
+  background:linear-gradient(0deg,transparent 0%,rgba(81,155,191,.62) 35%,#fff 50%,rgba(81,155,191,.62) 65%,transparent 100%);
 }
 @keyframes sv-cinema-dock-arrival{
   0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.08)}
