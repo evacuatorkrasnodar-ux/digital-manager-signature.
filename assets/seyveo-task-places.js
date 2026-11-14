@@ -28,7 +28,7 @@
   }
   if(name.length<2||/^(?:кем|ним|ней|другом|подругой|коллегой|анн[а-яё]*|лен[а-яё]*|друг[а-яё]*)$/iu.test(name))return null;
   const label=kind+' «'+name+'»';
-  return {label,query:kind+' '+name+(city?', '+city:''),explicitAddress:false,city,venueName:name};
+  return {label,query:kind+' '+name+(city?', '+city:''),explicitAddress:false,city,venueName:name,kind};
  }
  function cleanPlace(value){
   if(!value||typeof value!=='object')return null;
@@ -36,7 +36,8 @@
   if(!Number.isFinite(lat)||Math.abs(lat)>90||!Number.isFinite(lon)||Math.abs(lon)>180)return null;
   const name=String(value.name||'').slice(0,110).trim(),address=String(value.address||'').slice(0,250).trim();
   if(!name||!address)return null;
-  return {name,address,lat,lon,source:'openstreetmap',photo:cleanPhoto(value.photo)};
+  const wikidata=/^Q[1-9]\d{0,11}$/.test(String(value.wikidata||''))?value.wikidata:'';
+  return {name,address,lat,lon,source:'openstreetmap',photo:cleanPhoto(value.photo),wikidata};
  }
  function cleanPhoto(value){
   if(typeof value!=='string')return '';
@@ -52,6 +53,16 @@
  }
  function sameVenue(candidate,proposal){
   if(proposal.explicitAddress)return true;
+  const type=String(candidate.type||'').toLocaleLowerCase('en-US');
+  const accepted={
+   кафе:['cafe','restaurant','coffee_shop','bakery','confectionery'],
+   кофейня:['cafe','coffee_shop','bakery'],ресторан:['restaurant','cafe'],
+   бар:['bar','pub'],паб:['pub','bar'],пиццерия:['restaurant','fast_food'],
+   бистро:['restaurant','cafe','fast_food'],пекарня:['bakery','cafe'],
+   отель:['hotel','guest_house'],гостиница:['hotel','guest_house'],
+   коворкинг:['coworking_space','office'],музей:['museum'],кинотеатр:['cinema']
+  };
+  if(!accepted[proposal.kind]?.includes(type))return false;
   const requested=normalize(proposal.venueName).toLocaleLowerCase('ru-RU');
   const found=normalize([candidate.name,candidate.namedetails?.name,candidate.display_name?.split(',')[0]].filter(Boolean).join(' ')).toLocaleLowerCase('ru-RU');
   return found.includes(requested)||requested.includes(found)&&found.length>=4;
@@ -60,14 +71,14 @@
  function cacheGet(key){
   const local=cache.get(key);if(local&&Date.now()-local.at<30*86400000)return local.value;
   try{
-   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v2:'+key)||'null');
+   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v3:'+key)||'null');
    if(stored&&Date.now()-stored.at<30*86400000){cache.set(key,stored);return stored.value;}
   }catch{}
   return undefined;
  }
  function cacheSet(key,value){
   const record={at:Date.now(),value};cache.set(key,record);
-  try{root.localStorage.setItem('seyveo-place:v2:'+key,JSON.stringify(record))}catch{}
+  try{root.localStorage.setItem('seyveo-place:v3:'+key,JSON.stringify(record))}catch{}
  }
  async function lookup(proposal){
   if(!proposal||!proposal.query||proposal.query.length>140)return null;
@@ -92,7 +103,7 @@
    const candidate=cleanPlace({
     name:proposal.explicitAddress?(match.name||'Место встречи'):(match.name||proposal.label),
     address:locationLabel(match),lat:match.lat,lon:match.lon,
-    photo:match.extratags?.wikimedia_commons||''
+    photo:match.extratags?.wikimedia_commons||'',wikidata:match.extratags?.wikidata||''
    });
    if(candidate&&!candidates.some(item=>item.name===candidate.name&&item.address===candidate.address))candidates.push(candidate);
   }
@@ -132,7 +143,25 @@
  function photoURL(place){
   const file=cleanPhoto(place?.photo);return file?'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width=240':'';
  }
- const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,photoURL});
+ const photoCache=new Map();
+ async function resolvePhoto(value){
+  const place=cleanPlace(value);if(!place||place.photo||!place.wikidata)return place;
+  let file=photoCache.get(place.wikidata);
+  if(file===undefined){
+   const url=new URL('https://www.wikidata.org/w/api.php');
+   url.searchParams.set('action','wbgetentities');url.searchParams.set('ids',place.wikidata);
+   url.searchParams.set('props','claims');url.searchParams.set('format','json');url.searchParams.set('origin','*');
+   try{
+    const response=await root.fetch(url.toString(),{credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
+    if(!response.ok)return place;
+    const data=await response.json();
+    file=cleanPhoto(data?.entities?.[place.wikidata]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value);
+    photoCache.set(place.wikidata,file);
+   }catch{return place}
+  }
+  return {...place,photo:file||''};
+ }
+ const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,photoURL,resolvePhoto});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.SEYVEO_TASK_PLACES=api;
 })(typeof window!=='undefined'?window:null);
