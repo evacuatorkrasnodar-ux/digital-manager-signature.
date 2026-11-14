@@ -248,3 +248,44 @@
  :root[data-theme="light"] footer.dock.sv-shared-dock > #navManage,
  :root[data-theme="light"] footer.dock.sv-shared-dock > #navManage > svg{transition:none!important}
 }
+
+/* Sayvi's established four-point emblem, reused inside the locked 50px dock
+   touch target. Only its artwork moves: no extra disk, border or dock motion. */
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton .button-art > .sv-sayvi-sonic{display:none!important}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton .button-art > .sv-sayvi-dock-emblem{
+ display:block!important;color:#0B0B0D!important;opacity:1!important;
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton .sv-sayvi-dock-spark{
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton .sv-sayvi-dock-spark-core{
+ fill:currentColor!important;stroke:none!important;
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton .sv-sayvi-dock-spark-motion{
+ transform-box:fill-box!important;transform-origin:center!important;
+ animation:sv-sayvi-dock-alive 5.6s ease-in-out infinite!important;
+}
+@keyframes sv-sayvi-dock-alive{
+ 0%,28%,100%{transform:scale(1);opacity:1}
+ 44%{transform:scale(1.045);opacity:.90}
+ 60%{transform:scale(1);opacity:1}
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton:is(:active,.pressing,.arming,.listening,[aria-pressed="true"]) .sv-sayvi-dock-emblem{
+ color:#087DF1!important;
+}
+:root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
+ #assistantButton:is(:active,.pressing,.arming,.listening,[aria-pressed="true"]) .sv-sayvi-dock-spark-motion{
+ animation:sv-sayvi-dock-alive 1.7s ease-in-out infinite!important;
+}
+@media(prefers-reduced-motion:reduce){
+ :root[data-theme="light"] footer.dock.sv-shared-dock #assistantButton .sv-sayvi-dock-spark-motion{
+  animation:none!important;
+ }
+}
