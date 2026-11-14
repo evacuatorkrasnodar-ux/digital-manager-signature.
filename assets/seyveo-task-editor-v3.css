@@ -661,3 +661,123 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{displ
  html body dialog#personalTaskDialog.sv-task-editor-v3 *,
  html body dialog#personalTaskDialog.sv-task-editor-v3 *::after{transition:none!important;scroll-behavior:auto!important}
 }
+/* Two matching 50px header circles: close in pearl silver, confirm in Apple red. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskCancel{
+ border-radius:50%!important;aspect-ratio:1!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave{
+ border-radius:50%!important;aspect-ratio:1!important;
+ border:1.5px solid #FFF!important;
+ background:#FF3341!important;color:#FFF!important;
+ box-shadow:0 1px 2px #FF334121,0 0 0 .5px #E7283D66!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave:disabled{
+ opacity:.62!important;background:#FF6671!important;color:#FFF!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave svg{
+ stroke:#FFF!important;
+}
+/* This is a compact floating counterpart of our pearl-bordered dock,
+   not a squashed grey rounded rectangle. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-quick-actions{
+ box-sizing:border-box!important;width:116px!important;min-height:50px!important;height:50px!important;
+ padding:2px!important;gap:0!important;
+ border:1.5px solid #FFF!important;border-radius:999px!important;
+ background:linear-gradient(160deg,#E3E5EB,#D5D8E0)!important;
+ box-shadow:inset 0 1px 2px #FFF9,0 0 0 .7px #A3A8B64D!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 :is(#svNewTaskVoice,#svNewTaskCalendarButton){
+ box-sizing:border-box!important;flex:0 0 52px!important;width:52px!important;height:44px!important;
+ border-radius:99px!important;color:#181B21!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 :is(#svNewTaskVoice,#svNewTaskCalendarButton) svg{
+ width:21px!important;height:21px!important;stroke-width:1.85!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-quick-divider{
+ height:22px!important;background:#BEC3CE!important;
+}
+/* The camera mirrors the right capsule, sharing its keyboard-safe baseline. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera{
+ position:absolute!important;left:16px!important;bottom:var(--sv-task-float-bottom)!important;
+ z-index:16!important;width:50px!important;height:50px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCameraButton{
+ display:grid!important;place-items:center!important;box-sizing:border-box!important;
+ width:50px!important;height:50px!important;margin:0!important;padding:0!important;
+ border:1.5px solid #FFF!important;border-radius:50%!important;
+ background:linear-gradient(160deg,#E3E5EB,#D5D8E0)!important;color:#181B21!important;
+ box-shadow:inset 0 1px 2px #FFF9,0 0 0 .7px #A3A8B64D!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCameraButton[aria-expanded="true"]{
+ background:#FFF!important;color:#007AFF!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCameraButton svg,
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu svg{
+ width:22px!important;height:22px!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.85!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu[hidden],
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-preview[hidden]{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu{
+ position:absolute!important;z-index:18!important;left:16px!important;
+ bottom:calc(var(--sv-task-float-bottom) + 60px)!important;
+ box-sizing:border-box!important;display:grid!important;width:245px!important;
+ padding:5px!important;border:1px solid #E1E4EC!important;border-radius:20px!important;
+ background:#FFF!important;box-shadow:0 6px 22px #2A34401C!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu button{
+ display:flex!important;align-items:center!important;gap:11px!important;
+ width:100%!important;min-height:48px!important;padding:9px 12px!important;
+ text-align:left!important;border:0!important;border-radius:15px!important;
+ background:transparent!important;color:#202329!important;
+ font:560 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu button + button{
+ border-top:1px solid #E9EBF0!important;border-radius:0 0 15px 15px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu svg{flex:none!important;width:20px!important;height:20px!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-preview{
+ display:grid!important;gap:7px!important;margin:3px 0 10px!important;min-width:0!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-card{
+ display:flex!important;align-items:center!important;gap:12px!important;min-height:70px!important;
+ padding:8px 11px!important;border:1px solid #E4E7ED!important;border-radius:21px!important;
+ background:#FFF!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-thumb{
+ display:grid!important;place-items:center!important;flex:none!important;
+ width:54px!important;height:54px!important;overflow:hidden!important;border-radius:14px!important;
+ background:#F2F3F7!important;color:#626C7A!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-thumb img{width:100%!important;height:100%!important;object-fit:cover!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-thumb svg{
+ width:26px!important;height:26px!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-copy{
+ display:grid!important;gap:3px!important;flex:1!important;min-width:0!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-copy strong{
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ font:570 14px/1.35 system-ui!important;color:#202329!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-copy small{
+ font:470 12px/1.25 system-ui!important;color:#808590!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-remove{
+ display:grid!important;place-items:center!important;flex:none!important;width:28px!important;height:28px!important;
+ padding:0!important;border:0!important;border-radius:50%!important;
+ background:#F1F2F6!important;color:#747B87!important;font:400 22px/1 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion{
+ display:flex!important;align-items:center!important;gap:8px!important;padding:9px 12px!important;
+ border-radius:16px!important;background:#FFF9EB!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion p{
+ flex:1!important;min-width:0!important;margin:0!important;color:#6B5944!important;
+ font:480 12px/1.4 system-ui!important;overflow-wrap:anywhere!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion button{
+ flex:none!important;padding:8px 10px!important;border:0!important;border-radius:12px!important;
+ background:#FFF!important;color:#A46D2D!important;font:600 12px/1.2 system-ui!important;
+}
