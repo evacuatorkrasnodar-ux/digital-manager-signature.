@@ -1,0 +1,151 @@
+/* SEYVEO Sayvi · animated pearl velvet, scoped to the existing light dock.
+   The approved 60px glass shell, active pill, search, and 50px button do not change. */
+#assistantButton > .sv-sayvi-velvet-sphere {
+  display:none !important;
+  pointer-events:none !important;
+}
+:root[data-theme="light"] :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #assistantButton.sv-sayvi-velvet-ready > svg.button-art {
+  opacity:0 !important;
+}
+:root[data-theme="light"] :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-velvet-sphere {
+  display:block !important;
+  position:absolute !important;
+  box-sizing:border-box !important;
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+  max-width:42px !important;
+  max-height:42px !important;
+  left:50% !important;
+  top:50% !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:50% !important;
+  transform:translate(-50%,-50%) !important;
+  overflow:hidden !important;
+  opacity:1 !important;
+  background:radial-gradient(ellipse at 36% 27%,
+    #fbfdff 0%,#eaf2f9 38%,#d3e2ed 74%,#b8cedc 100%) !important;
+  box-shadow:inset -2px -2px 5px rgba(95,124,157,.11),
+    inset 1px 2px 4px rgba(255,255,255,.49),
+    0 1px 3px rgba(100,140,179,.08) !important;
+  isolation:isolate !important;
+  pointer-events:none !important;
+  z-index:2 !important;
+}
+
+#assistantButton .sv-sayvi-velvet-layer {
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  will-change:transform,opacity;
+  transition:opacity .85s ease;
+}
+#assistantButton .sv-sayvi-velvet-cool {
+  inset:-29%;
+  background:
+    radial-gradient(ellipse 43% 42% at 24% 38%,
+      rgba(40,148,255,.97),rgba(78,178,255,.73) 45%,transparent 99%),
+    radial-gradient(ellipse 43% 45% at 75% 29%,
+      rgba(146,96,246,.95),rgba(177,136,250,.62) 48%,transparent 99%),
+    radial-gradient(ellipse 48% 48% at 49% 80%,
+      rgba(38,213,219,.96),rgba(89,224,230,.59) 48%,transparent 99%);
+  filter:blur(2px) saturate(128%);
+  animation:sv-sayvi-velvet-cool-flow 5.3s ease-in-out infinite alternate;
+}
+#assistantButton .sv-sayvi-velvet-warm {
+  inset:-31%;
+  background:
+    radial-gradient(ellipse 47% 43% at 74% 64%,
+      rgba(255,121,45,.98),rgba(255,162,73,.89) 38%,
+      rgba(255,205,126,.43) 70%,transparent 100%),
+    radial-gradient(ellipse 34% 39% at 36% 23%,
+      rgba(255,188,113,.60),transparent 100%);
+  filter:blur(2.5px) saturate(113%);
+  animation:sv-sayvi-velvet-warm-flow 5.8s ease-in-out infinite alternate;
+}
+#assistantButton .sv-sayvi-velvet-tide {
+  inset:-42%;
+  background:linear-gradient(105deg,
+    transparent 18%,rgba(64,171,249,0) 26%,
+    rgba(68,174,250,.29) 41%,rgba(148,106,241,.39) 53%,
+    rgba(248,154,95,.25) 67%,transparent 83%);
+  filter:blur(2.8px);
+  animation:sv-sayvi-velvet-cross 5.2s ease-in-out infinite alternate;
+}
+#assistantButton .sv-sayvi-velvet-heart {
+  inset:-14%;
+  background:radial-gradient(ellipse 28% 28% at 49% 50%,
+    #fff 0%,rgba(255,255,255,.96) 25%,
+    rgba(255,255,255,.72) 48%,
+    rgba(247,251,255,.27) 74%,transparent 100%);
+  filter:blur(1px);
+  animation:sv-sayvi-velvet-heart-breathe 4.6s ease-in-out infinite alternate;
+}
+#assistantButton .sv-sayvi-velvet-surface {
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 51%,transparent 44%,
+      rgba(226,240,249,.09) 65%,rgba(223,235,245,.25) 91%,
+      rgba(234,242,249,.40) 100%),
+    radial-gradient(ellipse 58% 53% at 34% 26%,
+      rgba(255,255,255,.17),transparent 100%);
+  box-shadow:inset 0 0 4px rgba(104,132,160,.05);
+}
+
+/* Every phase is driven by existing Sayvi events; idle never simulates speech. */
+#assistantButton .sv-sayvi-velvet-sphere[data-state="idle"] .sv-sayvi-velvet-cool {opacity:.24}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="idle"] .sv-sayvi-velvet-warm {opacity:0}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="idle"] .sv-sayvi-velvet-tide {opacity:.14}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="idle"] .sv-sayvi-velvet-heart {opacity:.18}
+
+#assistantButton .sv-sayvi-velvet-sphere[data-state="listening"] .sv-sayvi-velvet-cool {opacity:.94;animation-duration:3.6s}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="listening"] .sv-sayvi-velvet-warm {opacity:.08}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="listening"] .sv-sayvi-velvet-tide {opacity:.80}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="listening"] .sv-sayvi-velvet-heart {opacity:.22}
+
+#assistantButton .sv-sayvi-velvet-sphere[data-state="thinking"] .sv-sayvi-velvet-cool {opacity:.40}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="thinking"] .sv-sayvi-velvet-warm {opacity:.94;animation-duration:3.7s}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="thinking"] .sv-sayvi-velvet-tide {opacity:.57}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="thinking"] .sv-sayvi-velvet-heart {opacity:.29}
+
+#assistantButton .sv-sayvi-velvet-sphere[data-state="speaking"] .sv-sayvi-velvet-cool {opacity:.91;animation-duration:2.8s}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="speaking"] .sv-sayvi-velvet-warm {opacity:.48;animation-duration:3s}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="speaking"] .sv-sayvi-velvet-tide {opacity:.85}
+#assistantButton .sv-sayvi-velvet-sphere[data-state="speaking"] .sv-sayvi-velvet-heart {opacity:.96;animation-duration:2.2s}
+
+@keyframes sv-sayvi-velvet-cool-flow {
+  0%{transform:translate(-11%,8%) rotate(-16deg) scale(1.12)}
+  36%{transform:translate(3%,-7%) rotate(12deg) scale(1.19)}
+  71%{transform:translate(10%,5%) rotate(32deg) scale(1.06)}
+  100%{transform:translate(-6%,-10%) rotate(52deg) scale(1.21)}
+}
+@keyframes sv-sayvi-velvet-warm-flow {
+  0%{transform:translate(15%,-12%) rotate(26deg) scale(1.12)}
+  41%{transform:translate(-8%,7%) rotate(-9deg) scale(1.18)}
+  76%{transform:translate(-14%,-3%) rotate(-29deg) scale(1.11)}
+  100%{transform:translate(11%,12%) rotate(-45deg) scale(1.08)}
+}
+@keyframes sv-sayvi-velvet-cross {
+  0%{transform:translate(-38%,-8%) rotate(-18deg)}
+  50%{transform:translate(0%,5%) rotate(0deg)}
+  100%{transform:translate(35%,10%) rotate(18deg)}
+}
+@keyframes sv-sayvi-velvet-heart-breathe {
+  0%{transform:translate(-8%,3%) scale(.88)}
+  50%{transform:translate(3%,-4%) scale(1.1)}
+  100%{transform:translate(7%,4%) scale(.96)}
+}
+@media(prefers-reduced-motion:reduce){
+  #assistantButton .sv-sayvi-velvet-layer{
+    animation:none!important;transition:none!important;
+  }
+}
