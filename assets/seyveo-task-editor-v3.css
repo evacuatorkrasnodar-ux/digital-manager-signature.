@@ -342,7 +342,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-main{
  padding:10px 18px 12px!important;margin-bottom:3px!important;border-radius:25px!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskTitle{
- min-height:106px!important;padding:9px 0 8px!important;
+ min-height:80px!important;padding:9px 0 8px!important;
  font:550 22px/1.32 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
  caret-color:#FF3341!important;
 }
