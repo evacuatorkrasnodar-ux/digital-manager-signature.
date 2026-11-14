@@ -794,5 +794,16 @@ if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1])){
   process.stdout.write('Qwen3 4B · GPT-6 выключен · только этот ПК\n');
   process.stdout.write('Закрыть сервер: Ctrl+C\n\n');
  });
- server.on('error',()=>{process.stderr.write('Ошибка запуска сервера на порту '+PORT+'.\n');process.exitCode=1});
+ server.on('error',error=>{
+  if(error?.code==='EADDRINUSE'){
+   process.stderr.write('\nSEYVEO: порт '+PORT+' уже занят.\n');
+   process.stderr.write('Вероятно, локальный SEYVEO уже открыт в другом чёрном окне.\n');
+   process.stderr.write('Проверь в браузере: '+ORIGIN+'/api/seyveo-approved-welcome\n');
+   process.stderr.write('Если работает старая версия: останови только прежний SEYVEO через Ctrl+C, затем запусти снова.\n\n');
+  }else{
+   process.stderr.write('Не удалось запустить SEYVEO на '+ORIGIN+'.\n');
+   process.stderr.write('Причина: '+String(error?.code||'UNKNOWN')+' · '+String(error?.message||'Неизвестная ошибка')+'\n');
+  }
+  process.exitCode=1;
+ });
 }
