@@ -1,5 +1,6 @@
-/* SEYVEO first opening of the day: Sayvi greets, becomes a bright star,
-   contracts to a point, then answers from the approved dock. Home stays Home.
+/* SEYVEO first opening of the day: the real Sayvi greets, gently travels into
+   her miniature, while the original three-slot dock grows by one slot.
+   Home stays Home; task data, navigation and touch handlers are untouched.
    ?sayvi-intro=1 replays the scene for review; ?sayvi-intro=0 skips it. */
 (() => {
   'use strict';
@@ -7,7 +8,7 @@
   const replay=params.get('sayvi-intro')==='1'||params.get('sayvi-handoff')==='1';
   const noIntro=params.get('sayvi-intro')==='0';
   const speed=params.get('sayvi-slow')==='1'?1.8:1;
-  const dailyKey='seyveo-sayvi-cinema-last-day-v1';
+  const dailyKey='seyveo-sayvi-cinema-last-day-v2';
   const currentDay=()=>{
     const d=new Date();
     return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -23,6 +24,7 @@
   const orb=document.getElementById('orb');
   const dockButton=document.getElementById('assistantButton');
   const small=dockButton?.querySelector('.sv-sayvi-velvet-sphere');
+  const dock=dockButton?.closest('footer.dock');
   if(!home||!orb||!dockButton||!small){
     root.classList.remove('sv-sayvi-handoff-demo');
     return;
@@ -38,11 +40,55 @@
   let introTimer=0;
   let safetyTimer=0;
   let flareTimer=0;
+  let dockFrame=0;
+  let dockMetrics=null;
+  let dockStyleBefore=null;
   let todayCard=null;
   let flare=null;
   const orbHome=orb.parentNode;
   const orbNext=orb.nextSibling;
   let originalOrbStyle=null;
+  const dockProperties=['--sv-feng-capsule','--sv-cinema-slot','--sv-cinema-extra'];
+  function prepareDock(){
+    if(!showCinema||root.dataset.theme!=='light'||!dock)return;
+    // Read the actual approved capsule width, after the theme's clamp resolves.
+    const full=parseFloat(getComputedStyle(dock,'::before').width);
+    if(!Number.isFinite(full)||full<180)return;
+    const slot=full/4;
+    dockMetrics={full,slot,closed:slot*3};
+    dockStyleBefore=dockProperties.map(key=>[
+      key,dock.style.getPropertyValue(key),dock.style.getPropertyPriority(key)
+    ]);
+    dock.style.setProperty('--sv-cinema-slot',`${slot}px`);
+    dock.style.setProperty('--sv-cinema-extra','0px');
+    dock.style.setProperty('--sv-feng-capsule',`${slot*3}px`);
+    root.classList.add('sv-cinema-intro-active');
+  }
+  function growDock(delay,duration){
+    if(!dockMetrics)return;
+    const start=performance.now();
+    const frame=time=>{
+      if(done)return;
+      const progress=Math.max(0,Math.min(1,(time-start-delay)/duration));
+      const eased=progress<.5?4*progress**3:1-(-2*progress+2)**3/2;
+      const extra=dockMetrics.slot*eased;
+      dock.style.setProperty('--sv-cinema-extra',`${extra}px`);
+      dock.style.setProperty('--sv-feng-capsule',`${dockMetrics.closed+extra}px`);
+      if(progress<1)dockFrame=requestAnimationFrame(frame);
+    };
+    dockFrame=requestAnimationFrame(frame);
+  }
+  function restoreDock(){
+    cancelAnimationFrame(dockFrame);
+    if(dock&&dockStyleBefore){
+      dockStyleBefore.forEach(([key,value,priority])=>{
+        if(value)dock.style.setProperty(key,value,priority);
+        else dock.style.removeProperty(key);
+      });
+    }
+    root.classList.remove('sv-cinema-intro-active','sv-cinema-intro-dock-ready');
+    dockStyleBefore=null;
+  }
   function restoreOrb(){
     animation?.cancel();
     animation=null;
@@ -132,6 +178,7 @@
     root.classList.add('sv-sayvi-handoff-docked');
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
+    restoreDock();
     if(smallOpacity)small.style.setProperty('opacity',smallOpacity,smallOpacityPriority);
     else small.style.removeProperty('opacity');
     root.classList.remove('sv-sayvi-handoff-inflight');
@@ -162,9 +209,15 @@
     if(document.hidden||!atHome||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     const from=orb.getBoundingClientRect();
     if(!from.width){finish();return;}
+    const to=small.getBoundingClientRect();
+    const centerX=from.left+from.width/2,centerY=from.top+from.height/2;
+    const targetX=dockMetrics?dock.getBoundingClientRect().left+dockMetrics.slot*3.5:to.left+to.width/2;
+    const targetY=to.top+to.height/2;
+    const dx=targetX-centerX,dy=targetY-centerY;
+    const finalScale=52/from.width;
 
-    // Keep one REAL orb, outside Home's clipping contexts, and implode it in
-    // place. The dock's small Sayvi appears only after the star disappears.
+    // Lift the original painted orb above clipping contexts. Its final scale
+    // matches the exact same SVG in the dock; there is no substitute animation.
     started=true;
     originalOrbStyle=orb.getAttribute('style')||'';
     document.body.appendChild(orb);
@@ -175,26 +228,21 @@
     }))orb.style.setProperty(name,value,'important');
     orb.style.setProperty('transform','none');
     root.classList.add('sv-sayvi-handoff-inflight');
-    flare=document.createElement('span');
-    flare.className='sv-cinema-star';
-    flare.setAttribute('aria-hidden','true');
-    flare.style.left=`${from.left+from.width/2}px`;
-    flare.style.top=`${from.top+from.height/2}px`;
-    flare.innerHTML='<i class="sv-cinema-star-cross"></i><i class="sv-cinema-star-diagonal"></i><i class="sv-cinema-star-core"></i>';
-    document.body.appendChild(flare);
+    growDock(850*speed,2350*speed);
 
     requestAnimationFrame(()=>{
       if(done)return;
       try{
+        const land=`translate3d(${dx}px,${dy}px,0) scale(${finalScale})`;
         animation=orb.animate([
-          {offset:0,transform:'scale(1)',opacity:1},
-          {offset:.34,transform:'scale(1.085)',opacity:1},
-          {offset:.58,transform:'scale(.86)',opacity:1},
-          {offset:.83,transform:'scale(.19)',opacity:.98},
-          {offset:1,transform:'scale(.012)',opacity:0}
-        ],{duration:1250*speed,easing:'cubic-bezier(.22,.65,.22,1)',fill:'forwards'});
-        flareTimer=setTimeout(()=>flare?.classList.add('sv-cinema-star--burst'),480*speed);
-        safetyTimer=setTimeout(()=>finish({spark:true}),1750*speed);
+          {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1,easing:'cubic-bezier(.34,0,.3,1)'},
+          {offset:.13,transform:'translate3d(0,-7px,0) scale(1.025)',opacity:1,easing:'cubic-bezier(.54,0,.3,1)'},
+          {offset:.51,transform:`translate3d(${dx*.17}px,${dy*.22}px,0) scale(.76)`,opacity:1,easing:'cubic-bezier(.45,.3,.25,1)'},
+          {offset:.76,transform:`translate3d(${dx*.58}px,${dy*.68}px,0) scale(.35)`,opacity:1,easing:'cubic-bezier(.2,.7,.16,1)'},
+          {offset:.91,transform:land,opacity:1,easing:'ease-out'},
+          {offset:1,transform:land,opacity:0}
+        ],{duration:3900*speed,easing:'linear',fill:'forwards'});
+        safetyTimer=setTimeout(()=>finish({spark:true}),4450*speed);
         animation.finished.then(()=>finish({spark:true})).catch(()=>{});
       }catch{finish();}
     });
@@ -203,7 +251,8 @@
   // One opening per LOCAL calendar day; route changes never replay the film.
   const launch=()=>{
     if(!showCinema||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
-    introTimer=setTimeout(begin,850*speed);
+    prepareDock();
+    introTimer=setTimeout(begin,3000*speed);
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
@@ -212,7 +261,7 @@
     if(!done&&location.hash&&location.hash!=='#home')finish();
   });
   window.addEventListener('pagehide',()=>{if(!done)finish();});
-  window.addEventListener('resize',()=>{if(started&&!done)finish();});
+  window.addEventListener('resize',()=>{if(!done)finish();});
   document.addEventListener('pointerdown',()=>{if(!done)finish();},{capture:true});
   for(const name of ['seyveo:route-changed','seyveo:tasks-changed','seyveo:calendar-changed'])
     window.addEventListener(name,renderToday);
