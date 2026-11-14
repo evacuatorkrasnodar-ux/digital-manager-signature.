@@ -61,7 +61,8 @@
   const phrase=typeof readPhrase==='function'?readPhrase(title.value):null;
   const raw=(phrase?.title||title.value).trim().replace(/\s+/g,' ');
   const cleaned=raw.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'').trim();
-  return cleaned||raw;
+  const result=cleaned||raw;
+  return result.charAt(0).toLocaleUpperCase('ru-RU')+result.slice(1);
  }
  function updateSmartPreview(){
   if(!smartPreview||!smartDetails)return;
