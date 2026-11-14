@@ -77,24 +77,51 @@
   display:flex !important;
   align-items:center;
   justify-content:center;
-  min-height:92px !important;
+  min-height:130px !important;
   margin:8px auto 0 !important;
 }
 :root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello{
-  display:block;
-  width:min(355px,calc(100vw - 50px));
-  min-height:2.7em;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+  width:min(390px,calc(100vw - 42px));
+  min-height:112px;
   margin:0;
   opacity:0;
   transform:translate3d(0,9px,0);
   text-align:center;
-  font-size:clamp(20px,5.1vw,25px);
-  font-weight:450;
-  line-height:1.38;
-  letter-spacing:-.027em;
-  color:var(--text,#202226);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI Variable Text",system-ui,sans-serif;
+  font-size:22px;
+  line-height:1.24;
+  letter-spacing:-.032em;
+  color:var(--text,#17191c);
   -webkit-font-smoothing:antialiased;
   transition:opacity .75s ease,transform .85s cubic-bezier(.22,.8,.22,1);
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line{
+  display:block;
+  min-height:1.25em;
+  white-space:nowrap;
+  font-kerning:normal;
+  font-optical-sizing:auto;
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--welcome{
+  font-size:clamp(25px,6.2vw,31px);
+  font-weight:560;
+  letter-spacing:-.045em;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--name{
+  font-size:clamp(19px,4.8vw,23px);
+  font-weight:430;
+  color:var(--secondary,#5a6169);
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--wish{
+  font-size:clamp(22px,5.2vw,26px);
+  font-weight:490;
+  letter-spacing:-.037em;
 }
 :root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello--visible{
   opacity:1;

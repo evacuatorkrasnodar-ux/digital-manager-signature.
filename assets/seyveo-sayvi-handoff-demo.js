@@ -46,11 +46,18 @@
       const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
       owner=typeof profile?.name==='string'?profile.name.trim().split(/\s+/)[0].slice(0,32):'';
     }catch{}
-    const writtenHello=`Привет${owner?', '+owner:''}. Я Сэйви, и я всегда рядом.`;
+    const greetingLines=[`Привет${owner ? ', '+owner : ''}!`,'Я Сэйви.','Рада тебя видеть!'];
+    const writtenHello=greetingLines.join(' ');
     greeting=document.createElement('p');
     greeting.className='sv-cinema-written-hello';
     greeting.setAttribute('aria-label',writtenHello);
     greeting.setAttribute('aria-live','off');
+    const lineElements=greetingLines.map((line,index)=>{
+      const span=document.createElement('span');
+      span.className='sv-cinema-written-line sv-cinema-written-line--'+['welcome','name','wish'][index];
+      greeting.appendChild(span);
+      return span;
+    });
     message.appendChild(greeting);
     root.classList.add('sv-cinema-greeting-active');
     greetingDelay=setTimeout(()=>{
@@ -61,7 +68,11 @@
       greetingTicker=setInterval(()=>{
         if(done||!greeting){clearInterval(greetingTicker);return;}
         cursor=Math.min(writtenHello.length,cursor+1);
-        greeting.textContent=writtenHello.slice(0,cursor);
+        let offset=0;
+        greetingLines.forEach((line,index)=>{
+          lineElements[index].textContent=line.slice(0,Math.max(0,Math.min(line.length,cursor-offset)));
+          offset+=line.length+1;
+        });
         if(cursor===writtenHello.length){
           clearInterval(greetingTicker);
           greeting.setAttribute('aria-live','polite');
