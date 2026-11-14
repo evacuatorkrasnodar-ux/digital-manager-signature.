@@ -449,7 +449,7 @@ function render(){
  $('calendarAddInline').hidden=true;
  document.querySelector('#calendarPage .cal-actions').dataset.deadlines=String(deadline);
  document.querySelectorAll('[data-calendar-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.calendarMode===mode)));
- $('calendarPeriodTitle').textContent=mode==='month'?niceFirst(fmtMonth.format(focus)):
+ $('calendarPeriodTitle').textContent=mode==='month'?niceFirst(fmtMonth.format(focus).replace(/\s*г\.$/u,'')):
   mode==='week'?fmtLong.format(monday(focus)).replace(/\s+\d{4}\s*г?\.?/,'')+' — '+fmtLong.format(step(monday(focus),6)):
   mode==='day'?niceFirst(fmtShort.format(focus)):'Сроки';
  if(deadline){renderDeadlines();renderAdvice();return}
