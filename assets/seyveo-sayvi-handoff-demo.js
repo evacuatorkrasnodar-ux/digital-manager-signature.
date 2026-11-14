@@ -16,8 +16,12 @@
   const day=currentDay();
   let alreadySeen=false;
   try{alreadySeen=localStorage.getItem(dailyKey)===day;}catch{}
+  // Desktop design review: a normal or hard refresh replays the cinematic.
+  // Browsers do not expose whether the HTTP cache was explicitly bypassed.
+  const desktopReload=performance.getEntriesByType('navigation')[0]?.type==='reload'
+    &&matchMedia('(hover: hover) and (pointer: fine)').matches;
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro&&(replay||!alreadySeen);
+  const showCinema=atHome&&!noIntro&&(replay||desktopReload||!alreadySeen);
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
