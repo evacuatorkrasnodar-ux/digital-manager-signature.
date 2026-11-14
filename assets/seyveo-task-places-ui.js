@@ -30,9 +30,7 @@
  }
  function render(){
   if(!dialog.open)return;
-  const hasMeeting=/(?:^|[\s,.!?])(?:встреч[а-яё]*|встрет[а-яё]*|переговор[а-яё]*|пообед[а-яё]*|поужин[а-яё]*|позавтрак[а-яё]*|обед|ужин)(?=$|[\s,.!?])/iu.test(title.value);
-  const event=document.querySelector('input[name="personalTaskType"]:checked')?.value==='event';
-  const visible=Boolean(place||proposal||(hasMeeting&&event));
+  const visible=Boolean(place||proposal);
   panel.hidden=!visible;panel.replaceChildren();if(!visible)return;
   const heading=node('div','sv-place-heading');
   heading.append(node('strong','','Место встречи'));
