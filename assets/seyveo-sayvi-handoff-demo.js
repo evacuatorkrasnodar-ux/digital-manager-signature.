@@ -182,11 +182,11 @@
       if(done)return;
       try{
         animation=orb.animate([
-          {offset:0,transform:'scale(1)',opacity:1,filter:'brightness(1)'},
-          {offset:.34,transform:'scale(1.085)',opacity:1,filter:'brightness(1.14)'},
-          {offset:.58,transform:'scale(.98)',opacity:1,filter:'brightness(1.3)'},
-          {offset:.83,transform:'scale(.17)',opacity:.92,filter:'brightness(1.8)'},
-          {offset:1,transform:'scale(.012)',opacity:0,filter:'brightness(2.1)'}
+          {offset:0,transform:'scale(1)',opacity:1},
+          {offset:.34,transform:'scale(1.085)',opacity:1},
+          {offset:.58,transform:'scale(.86)',opacity:1},
+          {offset:.83,transform:'scale(.19)',opacity:.98},
+          {offset:1,transform:'scale(.012)',opacity:0}
         ],{duration:1250*speed,easing:'cubic-bezier(.22,.65,.22,1)',fill:'forwards'});
         flareTimer=setTimeout(()=>flare?.classList.add('sv-cinema-star--burst'),480*speed);
         safetyTimer=setTimeout(()=>finish({spark:true}),1750*speed);
