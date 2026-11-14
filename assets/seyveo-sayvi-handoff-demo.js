@@ -8,9 +8,14 @@
   const replay=params.get('sayvi-intro')==='1'||params.get('sayvi-handoff')==='1';
   const noIntro=params.get('sayvi-intro')==='0';
   const speed=params.get('sayvi-slow')==='1'?1.8:1;
-  // The approved Sayvi voice is available for a private, local project preview.
-  // Ordinary public openings are silent; no voice sample is published.
-  const localVoicePreview=params.get('sayvi-voice')==='1'&&location.origin==='http://127.0.0.1:8790';
+  // The approved Sayvi voice is available via the trusted local server, or
+  // from a file the owner explicitly imports into this browser's private data.
+  // No recording is published with SEYVEO; other visitors remain silent.
+  const voiceRequested=params.get('sayvi-voice')==='1';
+  const localVoicePreview=voiceRequested&&location.origin==='http://127.0.0.1:8790';
+  let personalVoiceSaved=false;
+  try{personalVoiceSaved=localStorage.getItem('seyveo-private-voice-ready-v1')==='1';}catch{}
+  const fileVoicePreview=!localVoicePreview&&(voiceRequested||personalVoiceSaved);
   // The personal cinematic uses the exact approved short WAV, never a fresh
   // TTS performance. Long project narration remains a separate local task.
   const dailyKey='seyveo-sayvi-cinema-last-day-v4';
@@ -21,12 +26,12 @@
   const day=currentDay();
   let alreadySeen=false;
   try{alreadySeen=localStorage.getItem(dailyKey)===day;}catch{}
-  // Desktop design review: a normal or hard refresh replays the cinematic.
-  // Browsers do not expose whether the HTTP cache was explicitly bypassed.
-  const desktopReload=performance.getEntriesByType('navigation')[0]?.type==='reload'
-    &&matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // Replaying on a refresh is intentional on both Safari/iPhone and desktop.
+  // Previously the mouse-pointer check accidentally excluded mobile Safari.
+  const pageReload=performance.getEntriesByType('navigation')[0]?.type==='reload'
+    ||performance.navigation?.type===1;
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro&&(replay||localVoicePreview||desktopReload||!alreadySeen);
+  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||pageReload||!alreadySeen);
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
@@ -121,6 +126,8 @@
   let voiceDownload=null;
   let voiceMedia=null;
   let voiceFallbackTimer=0;
+  let voiceFileInput=null;
+  let voiceFileUrl=null;
   let openingStartedAt=0;
   const orbHome=orb.parentNode;
   const orbNext=orb.nextSibling;
@@ -237,6 +244,8 @@
     done=true;
     voiceButton?.remove();
     voiceButton=null;
+    voiceFileInput?.remove();
+    voiceFileInput=null;
     if(voiceDownload)voiceDownload.hidden=false;
     clearTimeout(voiceFallbackTimer);
     if(voiceMedia){
@@ -246,6 +255,7 @@
       voiceMedia.onerror=null;
       voiceMedia=null;
     }
+    if(voiceFileUrl){URL.revokeObjectURL(voiceFileUrl);voiceFileUrl=null;}
     clearTimeout(greetingDelay);
     clearTimeout(greetingTicker);
     greeting?.remove();
@@ -416,6 +426,157 @@
     play();
   }
 
+  // Safari cannot read the owner's PC Downloads. One-time local import lets
+  // the owner hear the same approved recording on their iPhone without making
+  // the voice sample publicly downloadable on GitHub Pages. IndexedDB belongs
+  // to the current Safari/PWA installation, never to our server.
+  function privateVoiceDatabase(){
+    return new Promise((resolve,reject)=>{
+      if(!window.indexedDB){reject(Error('Локальное хранение файлов недоступно.'));return;}
+      const request=indexedDB.open('seyveo-private-cinema-v1',1);
+      request.onupgradeneeded=()=>request.result.createObjectStore('recordings');
+      request.onsuccess=()=>resolve(request.result);
+      request.onerror=()=>reject(request.error||Error('Не удалось открыть хранилище Сэйви.'));
+    });
+  }
+  async function privateVoiceGet(){
+    const db=await privateVoiceDatabase();
+    try{return await new Promise((resolve,reject)=>{
+      const transaction=db.transaction('recordings','readonly');
+      const request=transaction.objectStore('recordings').get('approved-welcome');
+      request.onsuccess=()=>resolve(request.result instanceof Blob?request.result:null);
+      request.onerror=()=>reject(request.error||Error('Не удалось прочитать запись Сэйви.'));
+    });}finally{db.close();}
+  }
+  async function privateVoiceSave(blob){
+    const db=await privateVoiceDatabase();
+    try{await new Promise((resolve,reject)=>{
+      const transaction=db.transaction('recordings','readwrite');
+      transaction.objectStore('recordings').put(blob,'approved-welcome');
+      transaction.oncomplete=resolve;
+      transaction.onerror=()=>reject(transaction.error||Error('Не удалось сохранить запись Сэйви.'));
+      transaction.onabort=()=>reject(transaction.error||Error('Запись не сохранена.'));
+    });}finally{db.close();}
+  }
+  async function verifyAndCleanPrivateVoice(file){
+    if(!file||file.size<44||file.size>500000)throw Error('Выбери короткий утверждённый WAV Сэйви.');
+    if(!crypto.subtle)throw Error('Для проверки записи нужен защищённый HTTPS.');
+    const bytes=await file.arrayBuffer();
+    const digest=await crypto.subtle.digest('SHA-256',bytes);
+    const signature=Array.from(new Uint8Array(digest),value=>value.toString(16).padStart(2,'0')).join('');
+    if(signature!=='84776078a50c3cda79aa977712bd593905f369d545f78c5f9b17a9ea1f004a7d'){
+      throw Error('Это другая запись. Выбери SEYVEO-Sayvi-welcome.wav.');
+    }
+    const view=new DataView(bytes),ascii=(start,end)=>String.fromCharCode(...new Uint8Array(bytes,start,end-start));
+    if(ascii(0,4)!=='RIFF'||ascii(8,12)!=='WAVE'||ascii(12,16)!=='fmt '||
+       view.getUint32(16,true)!==16||view.getUint16(20,true)!==1||
+       view.getUint16(22,true)!==1||view.getUint32(24,true)!==24000||
+       view.getUint16(34,true)!==16||ascii(36,40)!=='data'||
+       view.getUint32(40,true)!==bytes.byteLength-44){
+      throw Error('Неподдерживаемый формат WAV.');
+    }
+    // Match the private PC server: remove the noisy 400 ms pre-roll, keep the
+    // 78 ms before the first word, and fade in only during that silence.
+    const trimBytes=24000*2*.4;
+    const clean=new Uint8Array(bytes.byteLength-trimBytes);
+    clean.set(new Uint8Array(bytes,0,44));
+    clean.set(new Uint8Array(bytes,44+trimBytes),44);
+    const out=new DataView(clean.buffer);
+    out.setUint32(4,clean.length-8,true);
+    out.setUint32(40,clean.length-44,true);
+    const fadeSamples=Math.round(24000*.045);
+    for(let i=0;i<fadeSamples;i++){
+      const offset=44+i*2;
+      out.setInt16(offset,Math.round(out.getInt16(offset,true)*i/fadeSamples),true);
+    }
+    return new Blob([clean],{type:'audio/wav'});
+  }
+  function showPrivateFileVoicePreview(){
+    voiceButton=document.createElement('button');
+    voiceButton.type='button';
+    voiceButton.className='sv-cinema-local-voice';
+    voiceButton.hidden=true;
+    voiceButton.disabled=true;
+    voiceButton.textContent='Подключаю голос Сэйви…';
+    document.body.appendChild(voiceButton);
+    voiceFileInput=document.createElement('input');
+    voiceFileInput.type='file';
+    voiceFileInput.accept='.wav,audio/wav';
+    voiceFileInput.hidden=true;
+    document.body.appendChild(voiceFileInput);
+    const importControl=(message='↓ Выбрать голос Сэйви')=>{
+      if(done||!voiceButton)return;
+      voiceButton.dataset.mode='import';
+      voiceButton.textContent=message;
+      voiceButton.disabled=false;
+      voiceButton.hidden=false;
+    };
+    const play=()=>{
+      if(!voiceMedia||done)return;
+      voiceMedia.play().catch(error=>{
+        if(done||!voiceButton)return;
+        if(error?.name==='NotAllowedError'){
+          // iOS Safari only permits spoken playback after a direct tap.
+          voiceButton.dataset.mode='play';
+          voiceButton.textContent='▶ Включить голос Сэйви';
+          voiceButton.disabled=false;
+          voiceButton.hidden=false;
+        }else importControl('Не удалось воспроизвести · Выбрать WAV снова');
+      });
+    };
+    const useRecording=blob=>{
+      if(done)return;
+      if(voiceMedia){voiceMedia.pause();voiceMedia=null;}
+      if(voiceFileUrl)URL.revokeObjectURL(voiceFileUrl);
+      voiceFileUrl=URL.createObjectURL(blob);
+      voiceMedia=new Audio(voiceFileUrl);
+      voiceMedia.preload='auto';
+      voiceMedia.onplaying=()=>{
+        if(done||openingStartedAt)return;
+        voiceButton?.remove();voiceButton=null;
+        voiceFileInput?.remove();voiceFileInput=null;
+        runOpening({waitForNarration:true});
+      };
+      voiceMedia.onended=()=>{
+        if(done)return;
+        introTimer=setTimeout(begin,Math.max(700,10400-(performance.now()-openingStartedAt)));
+      };
+      voiceMedia.onerror=()=>importControl('Голос недоступен · Выбрать WAV снова');
+      play();
+    };
+    voiceFileInput.addEventListener('change',async()=>{
+      const file=voiceFileInput?.files?.[0];
+      if(!file||done)return;
+      voiceButton.disabled=true;
+      voiceButton.textContent='Проверяю фирменный голос…';
+      try{
+        const recording=await verifyAndCleanPrivateVoice(file);
+        await privateVoiceSave(recording);
+        try{localStorage.setItem('seyveo-private-voice-ready-v1','1');}catch{}
+        if(!done)useRecording(recording);
+      }catch(error){
+        console.warn('[SEYVEO Cinema] Не удалось импортировать голос:',error?.message||error);
+        importControl('Нужна утверждённая запись · Выбрать снова');
+        if(voiceButton)voiceButton.title=String(error?.message||error).slice(0,180);
+      }finally{if(voiceFileInput)voiceFileInput.value='';}
+    });
+    voiceButton.addEventListener('click',()=>{
+      if(done||!voiceButton)return;
+      if(voiceButton.dataset.mode==='import'){voiceFileInput?.click();return;}
+      voiceButton.disabled=true;
+      voiceButton.textContent='Готовлю приветствие Сэйви…';
+      play();
+    });
+    privateVoiceGet().then(recording=>{
+      if(done)return;
+      if(recording)useRecording(recording);
+      else importControl();
+    }).catch(error=>{
+      console.warn('[SEYVEO Cinema] Локальный голос недоступен:',error?.message||error);
+      importControl('↓ Выбрать голос Сэйви');
+    });
+  }
+
   // One opening per LOCAL calendar day; route changes never replay the film.
   const launch=()=>{
     if(!showCinema||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
@@ -423,6 +584,10 @@
       prepareDock();
       root.classList.remove('sv-cinema-boot');
       showLocalVoicePreview();
+    }else if(fileVoicePreview){
+      prepareDock();
+      root.classList.remove('sv-cinema-boot');
+      showPrivateFileVoicePreview();
     }else runOpening();
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
@@ -449,7 +614,7 @@
   let skipClickUntil=0;
   document.addEventListener('pointerdown',event=>{
     if(done)return;
-    if(localVoicePreview&&event.target.closest('.sv-cinema-local-voice'))return;
+    if((localVoicePreview||fileVoicePreview)&&event.target.closest('.sv-cinema-local-voice'))return;
     event.preventDefault();
     event.stopImmediatePropagation();
     skipClickUntil=Date.now()+650;
