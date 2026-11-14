@@ -31,7 +31,7 @@
   const small=dockButton?.querySelector('.sv-sayvi-velvet-sphere');
   const dock=dockButton?.closest('footer.dock');
   if(!home||!orb||!dockButton||!small){
-    root.classList.remove('sv-sayvi-handoff-demo');
+    root.classList.remove('sv-sayvi-handoff-demo','sv-cinema-boot');
     return;
   }
   // The HTML fallback is dark. Synchronize the already-selected white theme
@@ -165,6 +165,7 @@
   function finish({spark=false}={}){
     if(done)return;
     done=true;
+    root.classList.remove('sv-cinema-boot');
     clearTimeout(introTimer);
     clearTimeout(safetyTimer);
     if(spark)root.classList.add('sv-cinema-stagger-enter');
@@ -242,7 +243,11 @@
   const launch=()=>{
     if(!showCinema||document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     prepareDock();
-    introTimer=setTimeout(begin,3000*speed);
+    root.classList.remove('sv-cinema-boot');
+    // The real SEYVEO pearl-signature animation lasts 9.5s. Let the complete
+    // artwork play, plus one quiet beat, before Sayvi starts her journey.
+    // Deliberately independent of the flight's slow-motion test multiplier.
+    introTimer=setTimeout(begin,10400);
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
@@ -253,7 +258,19 @@
   });
   window.addEventListener('pagehide',()=>{if(!done)finish();});
   window.addEventListener('resize',()=>{if(!done)finish();});
-  document.addEventListener('pointerdown',()=>{if(!done)finish();},{capture:true});
+  // Any tap/click immediately opens the functional Home. Consume the same
+  // gesture so a skip cannot accidentally activate a dock button or a card.
+  let skipClickUntil=0;
+  document.addEventListener('pointerdown',event=>{
+    if(done)return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    skipClickUntil=Date.now()+650;
+    finish();
+  },{capture:true,passive:false});
+  document.addEventListener('click',event=>{
+    if(Date.now()<skipClickUntil){event.preventDefault();event.stopImmediatePropagation();}
+  },{capture:true});
   for(const name of ['seyveo:route-changed','seyveo:tasks-changed','seyveo:calendar-changed'])
     window.addEventListener(name,renderToday);
 })();

@@ -1,5 +1,32 @@
-<!doctype html><html lang="ru" data-theme="dark" data-palette="graphite"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#11161b"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="description" content="Цифровой управляющий SEYVEO — персональный помощник для жизни и бизнеса."><title>Цифровой управляющий · Living Interface</title><link rel="manifest" href="manifest.webmanifest?v=7"><link rel="icon" type="image/svg+xml" href="assets/app-icon.svg?v=6"><link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=3"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Управляющий"><style>
+<!doctype html><html lang="ru" data-theme="dark" data-palette="graphite"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#11161b">
+<script>
+/* Restore the selected appearance BEFORE the first stylesheet or first paint.
+   The normal app controller below remains the single owner of theme changes. */
+(()=>{try{
+  let choice='graphite';
+  for(const key of ['dm-signature-living-v2','dm-signature-living-v1']){
+    const saved=JSON.parse(localStorage.getItem(key)||'null');
+    if(saved&&['auto','graphite','light','dark','sapphire','plum'].includes(saved.theme)){
+      choice=saved.theme;break;
+    }
+  }
+  const resolved=choice==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'graphite':'light'):choice;
+  const isLight=resolved==='light';
+  document.documentElement.dataset.theme=isLight?'light':'dark';
+  document.documentElement.dataset.palette=isLight?'white':resolved==='graphite'?'graphite':resolved==='sapphire'?'sapphire':resolved==='plum'?'plum':'emerald';
+  document.querySelector('meta[name="theme-color"]').content=isLight?'#f9fafb':resolved==='graphite'?'#11161b':resolved==='sapphire'?'#101724':resolved==='plum'?'#1c1b1a':'#111917';
+}catch{}})();
+// Prevent the raw Home layout flashing before its cinematic controller starts.
+if(!location.hash||location.hash==='#home'){
+  document.documentElement.classList.add('sv-cinema-boot');
+  setTimeout(()=>document.documentElement.classList.remove('sv-cinema-boot'),3200);
+}
+</script>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="description" content="Цифровой управляющий SEYVEO — персональный помощник для жизни и бизнеса."><title>Цифровой управляющий · Living Interface</title><link rel="manifest" href="manifest.webmanifest?v=7"><link rel="icon" type="image/svg+xml" href="assets/app-icon.svg?v=6"><link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=3"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Управляющий"><style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-kerning:normal;font-optical-sizing:auto;--type-display:28px;--type-heading:22px;--type-body:15px;--type-body-compact:14px;--type-label:13px;--type-caption:12px;--type-eyebrow:11px;color-scheme:dark;--bg:#111917;--card:#192a25;--card2:#21332c;--text:#ffffff;--secondary:#d9dde1;--line:#35534a;--glass:#edf7f2;--shadow:#0007;--soft-line:#abcaba24;--seyveo-emerald:#91c9b5;--seyveo-emerald-deep:#345d50;--seyveo-velvet:#14241f;--seyveo-metal-peak:#fbfffd;--seyveo-metal-mid:#c6dcd2;--seyveo-specular:rgba(249,255,252,.072);--seyveo-hdr-outline:rgba(165,208,190,.20);--seyveo-hdr-active:rgba(148,197,173,.11);--seyveo-hdr-stage:radial-gradient(ellipse 100% 52% at 50% 0%,rgba(203,255,233,.050),transparent 78%),radial-gradient(ellipse 105% 58% at 55% 100%,rgba(95,175,144,.030),transparent 80%);--seyveo-hdr-glint:rgba(251,255,251,.115)}
+:root.sv-cinema-boot #homePage,
+:root.sv-cinema-boot #homeHeader,
+:root.sv-cinema-boot body > footer.dock{opacity:0!important}
 :root[data-theme=light]{color-scheme:light;--bg:#f9fafb;--card:#ffffff;--card2:#eff3f5;--text:#111214;--secondary:#36383D;--line:#d5e1e1;--glass:#315f57;--shadow:#698b8126;--soft-line:#285a4c22;--seyveo-emerald:#386d5b;--seyveo-emerald-deep:#345d50;--seyveo-velvet:#e9eef2;--seyveo-metal-peak:#ffffff;--seyveo-metal-mid:#819e95;--seyveo-specular:rgba(255,255,255,.70);--seyveo-hdr-outline:rgba(47,105,87,.15);--seyveo-hdr-active:rgba(64,148,121,.10);--seyveo-hdr-stage:radial-gradient(ellipse 100% 52% at 50% 0%,rgba(255,255,255,.95),transparent 78%),radial-gradient(ellipse 105% 58% at 55% 100%,rgba(160,188,199,.085),transparent 80%);--seyveo-hdr-glint:rgba(255,255,255,.96)}
 /* SEYVEO Black Velvet palettes. The existing emerald defaults above remain intact.
    Change color tokens only; the original orb, animation and card geometry are shared. */
@@ -49,6 +76,10 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:8px 0 14px;min-height:385px}
 .plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer}
 .plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
+/* The HTML image fallback is dark. Never paint the wrong sphere for a single
+   frame while applyTheme() swaps it to the saved White Velvet artwork. */
+:root[data-theme=light] #plasmaVisual[src*="plasma-signature.svg"],
+:root[data-theme=dark] #plasmaVisual[src*="plasma-signature-light.svg"]{opacity:0}
 
 
 
@@ -6565,5 +6596,5 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=1">
 <script src="assets/seyveo-sayvi-mini-copy.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=14">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=21"></script>
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=22"></script>
 </body></html>
