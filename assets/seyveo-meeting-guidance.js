@@ -32,7 +32,9 @@
   if(rainy(code))advice.push('прихвати зонт');
   if(snowy(code)||cold)advice.push('оденься теплее');
   else if(cool)advice.push('может пригодиться куртка');
-  return 'По прогнозу для '+city+' '+conditions.join(', ')+'.'+(advice.length?' '+advice.join(' и ')+'.':'');
+  const friendly=advice.join(' и ');
+  return 'Прогноз на день встречи · '+city+': '+conditions.join(', ')+'.'+
+   (friendly?' '+friendly.charAt(0).toLocaleUpperCase('ru-RU')+friendly.slice(1)+'.':'');
  }
  function localDistanceKm(latA,lonA,latB,lonB){
   const radians=n=>n*Math.PI/180;
@@ -43,9 +45,18 @@
  function untilText(target){
   const minutes=Math.ceil((target.getTime()-Date.now())/60000);
   if(minutes<=0||minutes>72*60)return '';
-  if(minutes<60)return 'До встречи около '+minutes+' мин.';
-  if(minutes<24*60)return 'До встречи около '+Math.ceil(minutes/60)+' ч.';
-  return 'До встречи около '+Math.floor(minutes/1440)+' дн.';
+  const word=(count,one,few,many)=>{
+   const mod100=count%100,mod10=count%10;
+   return mod100>=11&&mod100<=14?many:mod10===1?one:mod10>=2&&mod10<=4?few:many;
+  };
+  if(minutes<60)return 'До встречи около '+minutes+' '+word(minutes,'минуты','минут','минут')+'.';
+  if(minutes<24*60){
+   const hours=Math.ceil(minutes/60);
+   return 'До встречи около '+hours+' '+word(hours,'часа','часов','часов')+'.';
+  }
+  const days=Math.floor(minutes/1440);
+  if(days===1)return 'До встречи около суток.';
+  return 'До встречи около '+days+' '+word(days,'дня','дней','дней')+'.';
  }
  let frame=0;
  function update(){
