@@ -413,8 +413,8 @@
    neutral tint. Preserve the same pearl rim and microshadows. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- border:1.75px solid rgba(255,255,255,.94)!important;
- box-shadow:0 0 0 .7px rgba(164,170,184,.30),
+ border:1px solid rgba(255,255,255,.94)!important;
+ box-shadow:0 0 0 .45px rgba(164,170,184,.30),
   inset 0 1px 1px rgba(75,82,96,.055),
   inset 0 -1px 0 rgba(255,255,255,.18),
   inset .6px 0 .7px rgba(255,255,255,.16),
