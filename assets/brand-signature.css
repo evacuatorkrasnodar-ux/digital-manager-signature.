@@ -73,11 +73,11 @@
 }
 :root[data-theme="light"] #homePage #signal.is-pearl .brand-word{
   color:#738590;
-  background:linear-gradient(150deg,#627582 4%,#e6edf1 25%,#8596a1 44%,#f8fbfc 59%,#526673 83%,#bdcbd3 100%);
+  background:linear-gradient(150deg,#3c4e5a 4%,#adbbc5 29%,#526572 54%,#c4d0d8 71%,#405360 100%);
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 1px 1px rgba(43,61,70,.28));
+  filter:drop-shadow(0 1px 1px rgba(43,61,70,.17));
 }
 #homePage #signal.is-pearl .brand-specialty{
   color:#bdcad3;
@@ -85,28 +85,3 @@
   letter-spacing:.13em;
 }
 :root[data-theme="light"] #homePage #signal.is-pearl .brand-specialty{color:#7e909b}
-
-/* The reference launch orb is smoke-silver, not mint glass.
-   Only the large spoken welcome is toned; the everyday light orb and dock
-   crystal preserve their approved materials and geometry. */
-:root[data-theme="light"].sv-cinema-greeting-active #homePage #plasmaVisual{
-  filter:grayscale(1) brightness(.60) contrast(1.09);
-}
-:root[data-theme="light"].sv-cinema-greeting-active #homePage #signal.is-brand .brand-mark{
-  filter:grayscale(1) drop-shadow(0 1px 1px rgba(35,47,55,.20));
-}
-/* The screenshot's engraving is pale platinum on the darker opening glass.
-   Make the logo readable at full reveal; only the intro receives this contrast. */
-:root[data-theme="light"].sv-cinema-greeting-active #homePage #signal.is-pearl .brand-word{
-  font-weight:560;
-  color:#f4f7fa;
-  background:linear-gradient(155deg,#fff 0%,#e9f0f5 27%,#fff 50%,#cbd8e0 84%,#f4f8fb 100%);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 1px 2px rgba(29,39,45,.44));
-}
-:root[data-theme="light"].sv-cinema-greeting-active #homePage #signal.is-pearl .brand-specialty{
-  color:#d5e0e8;
-  text-shadow:0 1px 2px rgba(28,39,46,.35);
-}
