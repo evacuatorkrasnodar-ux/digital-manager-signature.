@@ -700,6 +700,13 @@ function svAgendaJumpToDate(iso){
  render();
  svAgendaScrollToDate(iso);
 }
+/* The visible month in the shared header is a one-tap Today shortcut.
+   Keep the full Calendar behind its separate “Все календари” control. */
+window.addEventListener('seyveo:agenda-go-today',()=>{
+ const today=svTaskISO(new Date());
+ svTaskWindowStart=today;
+ svAgendaJumpToDate(today);
+});
 function svAgendaSyncFromScroll(){
  if(Date.now()<svAgendaJumpThrough||document.getElementById('svWorkShell')?.dataset.agendaScroll!=='true')return;
  const scrollRange=list.scrollHeight-list.clientHeight;
