@@ -653,6 +653,13 @@
     rememberOpening();
     renderToday();
     beginHomeGreetingLifetime();
+    if(root.classList.contains('sv-home-prelayout')){
+      // Let Safari commit the final orb/card geometry while the stage is
+      // invisible, then reveal one stable composition without size motion.
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        root.classList.remove('sv-home-prelayout');
+      }));
+    }
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
     if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);
@@ -986,7 +993,10 @@
       root.classList.add('sv-sayvi-handoff-docked');
       root.classList.toggle('sv-sayvi-home-idle',initial.mode==='idle');
       root.classList.toggle('sv-sayvi-home-cards',initial.mode==='cards');
-      if(initial.mode==='cards')root.style.setProperty('--sv-home-live-orb-size',initial.size+'px');
+      if(initial.mode==='cards'){
+        root.classList.add('sv-home-prelayout');
+        root.style.setProperty('--sv-home-live-orb-size',initial.size+'px');
+      }
     }
   }
   // The script is at the end of <body>; settle the functional controls next.
