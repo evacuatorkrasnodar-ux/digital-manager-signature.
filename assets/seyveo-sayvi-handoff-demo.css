@@ -194,8 +194,8 @@
 }
 :root.sv-sayvi-handoff-docked #homePage #stage {
   min-height:0 !important;
-  /* The camera inset is already reserved by .app: reclaim the second gap. */
-  padding:0 0 15px !important;
+  /* Reserve a calm line below the fixed Sayvi status on the settled Home. */
+  padding:25px 0 15px !important;
   margin-top:-11px !important;
   justify-content:flex-start !important;
   flex:0 0 auto !important;
