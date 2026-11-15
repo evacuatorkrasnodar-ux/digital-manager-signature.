@@ -35,10 +35,10 @@
 }
 @media(prefers-reduced-motion:reduce){#homeHeader .seyveo-brand-trigger:hover .seyveo-brand-name{opacity:1}}
 
-/* Keep the fleeting SEYVEO signature proportional when the live orb shrinks.
-   Only the inner lockup scales; the sphere, mist and motion remain unchanged. */
+/* Restored original full-size logo (2026-10-27): the 98x46 two-wave mark,
+   24px wordmark and 9px descriptor are no longer scaled down to 70%. */
 #homePage #signal.is-pearl .brand-lockup{
- transform:scale(.70);
+ transform:scale(1);
  transform-origin:center center;
 }
 
@@ -47,4 +47,25 @@
 :root.sv-sayvi-home-cards:not(.sv-home-launch-logo-visible) #homePage #signal.is-pearl .brand-lockup{
   visibility:hidden!important;
   opacity:0!important;
+}
+/* Fast studio signature only for the big startup Sayvi. The app remains
+   usable throughout; the 42px dock sphere is never affected. */
+:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing :is(.brand-mark,.brand-word,.brand-specialty){
+  animation:sv-home-signature-show 2.25s ease-in-out both!important;
+}
+:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .brand-word{
+  animation-delay:.10s!important;
+}
+:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .brand-specialty{
+  animation-delay:.17s!important;
+}
+@keyframes sv-home-signature-show{
+  0%{opacity:0}
+  23%,76%{opacity:1}
+  100%{opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing :is(.brand-mark,.brand-word,.brand-specialty){
+    animation:none!important;opacity:1!important
+  }
 }
