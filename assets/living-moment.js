@@ -351,7 +351,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
    documentSave.dataset.cardRole='primary';
    documentCancel.dataset.cardRole='secondary';
    if(editing){
-    cardIconize(documentSave,'save');
+    cardIconize(documentSave,'confirm');
+    documentSave.title='Сохранить';
+    documentSave.querySelector('.sv-card-icon-caption')?.replaceChildren('Сохранить');
     documentSave.setAttribute('aria-label','Сохранить свой вариант договора на этом устройстве');
    }else if(reviewChoice){
     cardIconize(documentSave,'send');
