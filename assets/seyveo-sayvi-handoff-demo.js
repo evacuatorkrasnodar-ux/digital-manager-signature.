@@ -298,11 +298,100 @@
     if(visible){cluster.removeAttribute('aria-hidden');cluster.inert=false;}
     else if(done){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
   }
+  // One physical Sayvi sphere moves between Home and the original dock.
+  // Keep its latest on-screen position BEFORE the route hides Home.
+  let lastHomeOrbRect=null;
+  let routeFlight=null;
+  let routeFlightGeneration=0;
+  const rectCopy=r=>({left:r.left,top:r.top,width:r.width,height:r.height,
+    x:r.left+r.width/2,y:r.top+r.height/2});
+  const safeRect=r=>!!r&&Number.isFinite(r.x)&&Number.isFinite(r.y)&&
+    Number.isFinite(r.width)&&r.width>=40&&r.height>=40;
+  function rememberHomeOrb(){
+    if(!done||!homeRouteVisible()||root.classList.contains('sv-sayvi-route-undocking'))return;
+    const r=orb.getBoundingClientRect();
+    if(r.width>=70&&r.height>=70&&r.bottom>0)lastHomeOrbRect=rectCopy(r);
+  }
+  document.addEventListener('pointerdown',rememberHomeOrb,{capture:true,passive:true});
+  window.addEventListener('resize',rememberHomeOrb,{passive:true});
+  window.addEventListener('scroll',rememberHomeOrb,{capture:true,passive:true});
+  if(typeof ResizeObserver!=='undefined')new ResizeObserver(rememberHomeOrb).observe(orb);
+  function stopRouteFlight(){
+    ++routeFlightGeneration;
+    if(routeFlight){
+      clearTimeout(routeFlight.timer);
+      try{routeFlight.animation?.cancel();}catch{}
+      routeFlight=null;
+    }
+    root.classList.remove('sv-sayvi-route-docking','sv-sayvi-route-undocking');
+    if(orb.parentNode!==orbHome&&done)restoreOrb();
+  }
+  function routeOrbDestination(){
+    // Temporarily remove responsive size transitions while MEASURING the
+    // destination. Restoring this property keeps all normal Home animations.
+    const before=orb.style.getPropertyValue('transition');
+    const beforePriority=orb.style.getPropertyPriority('transition');
+    orb.style.setProperty('transition','none','important');
+    const rect=rectCopy(orb.getBoundingClientRect());
+    if(before)orb.style.setProperty('transition',before,beforePriority);
+    else orb.style.removeProperty('transition');
+    return rect;
+  }
+  function startRouteFlight(toHome){
+    if(!done||document.hidden||!orb.animate||
+       matchMedia('(prefers-reduced-motion: reduce)').matches||
+       root.classList.contains('sv-music-ambient')||
+       root.classList.contains('sv-music-ambient-leaving'))return false;
+    const smallRect=rectCopy(small.getBoundingClientRect());
+    const homeRect=toHome?routeOrbDestination():lastHomeOrbRect;
+    if(!safeRect(homeRect)||!safeRect(smallRect))return false;
+    stopRouteFlight();
+    const from=toHome?smallRect:homeRect;
+    const to=toHome?homeRect:smallRect;
+    const baseSize=Math.max(from.width,to.width);
+    const fromScale=from.width/baseSize,toScale=to.width/baseSize;
+    const dx=to.x-from.x,dy=to.y-from.y;
+    const token=++routeFlightGeneration;
+    const stateClass=toHome?'sv-sayvi-route-undocking':'sv-sayvi-route-docking';
+    root.classList.add(stateClass);
+    originalOrbStyle=orb.getAttribute('style')||'';
+    document.body.appendChild(orb);
+    orb.classList.add('sv-sayvi-handoff-flight','sv-sayvi-route-orb-flight');
+    for(const [prop,value] of Object.entries({
+      left:`${from.x-baseSize/2}px`,top:`${from.y-baseSize/2}px`,
+      width:`${baseSize}px`,height:`${baseSize}px`
+    }))orb.style.setProperty(prop,value,'important');
+    const settle=()=>{
+      if(token!==routeFlightGeneration)return;
+      ++routeFlightGeneration;
+      try{routeFlight?.animation?.cancel();}catch{}
+      routeFlight=null;
+      restoreOrb();
+      root.classList.remove(stateClass);
+      if(toHome)rememberHomeOrb();
+    };
+    try{
+      const a=orb.animate([
+        {transform:`translate3d(0,0,0) scale(${fromScale})`,opacity:1},
+        {transform:`translate3d(${dx}px,${dy}px,0) scale(${toScale})`,opacity:1}
+      ],{duration:820,easing:'cubic-bezier(.42,.02,.18,1)',fill:'forwards'});
+      const timer=setTimeout(settle,1080);
+      routeFlight={animation:a,timer};
+      a.finished.then(()=>{clearTimeout(timer);settle();}).catch(()=>{});
+    }catch{settle();}
+    return true;
+  }
   let dockExpandTimer=0;
   function syncIdleHome(){
     if(!done)return;
     const wasOnHome=root.classList.contains('sv-sayvi-home-present');
     const onHome=homeRouteVisible();
+    const moving=wasOnHome!==onHome&&
+      (home.hidden||(onHome&&!home.hidden))&&
+      !root.classList.contains('sv-music-ambient');
+    if(wasOnHome&&!onHome)rememberHomeOrb();
+    // Hide the destination miniature until the actual Home sphere lands.
+    if(moving)root.classList.add(onHome?'sv-sayvi-route-undocking':'sv-sayvi-route-docking');
     const count=onHome?upcomingHomeItems().length:0;
     const compact=onHome&&count>0;
     root.classList.toggle('sv-sayvi-home-present',onHome);
@@ -312,7 +401,6 @@
       clearTimeout(dockExpandTimer);
       root.classList.remove('sv-sayvi-home-idle-leaving');
     }else if(wasOnHome){
-      // Bring the miniature back while the original dock capsule expands.
       clearTimeout(dockExpandTimer);
       root.classList.add('sv-sayvi-home-idle-leaving');
       dockExpandTimer=setTimeout(()=>{
@@ -321,6 +409,13 @@
     }
     root.dataset.svHomeCards=String(compact?Math.min(3,Math.max(1,count)):0);
     updateClusterInteraction();
+    if(moving){
+      requestAnimationFrame(()=>{
+        if(homeRouteVisible()!==onHome||startRouteFlight(onHome)===false){
+          root.classList.remove('sv-sayvi-route-docking','sv-sayvi-route-undocking');
+        }
+      });
+    }else if(onHome)requestAnimationFrame(rememberHomeOrb);
   }
   // The owner's saved tasks are the only source of Home task cards.
   // Never create a second task store or show educational suggestions as real.
