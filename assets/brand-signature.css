@@ -58,21 +58,30 @@
   }
 }
 
-/* Original SEYVEO cinematic lettering: cool platinum, never green.
-   The approved 24px type, geometry, and 9.3s reveal stay unchanged. */
+/* The owner's silver-platinum reference: a light, letterspaced engraving.
+   Preserve the original wave artwork and the 9.3s reveal choreography. */
 #homePage #signal.is-pearl .brand-word{
-  color:#e5ebef;
-  background:linear-gradient(150deg,#fff 6%,#e4eaee 30%,#a0aeb9 57%,#f5f8fa 76%,#8998a5 100%);
+  font-size:22px;
+  font-weight:520;
+  letter-spacing:.20em;
+  padding-left:.20em;
+  color:#e7eef2;
+  background:linear-gradient(150deg,#f8fbfc 6%,#a7b6c1 31%,#f2f6f8 55%,#c4d0d8 76%,#8496a3 100%);
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
 }
 :root[data-theme="light"] #homePage #signal.is-pearl .brand-word{
-  color:#42505d;
-  background:linear-gradient(150deg,#303e4a 8%,#8899a7 38%,#4d5e6d 70%,#2f3d49 100%);
+  color:#738590;
+  background:linear-gradient(150deg,#627582 4%,#e6edf1 25%,#8596a1 44%,#f8fbfc 59%,#526673 83%,#bdcbd3 100%);
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 1px 1px rgba(43,61,70,.28));
 }
-#homePage #signal.is-pearl .brand-specialty{color:#b9c5d0}
-:root[data-theme="light"] #homePage #signal.is-pearl .brand-specialty{color:#627483}
+#homePage #signal.is-pearl .brand-specialty{
+  color:#bdcad3;
+  font-weight:430;
+  letter-spacing:.13em;
+}
+:root[data-theme="light"] #homePage #signal.is-pearl .brand-specialty{color:#7e909b}
