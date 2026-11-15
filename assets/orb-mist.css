@@ -197,6 +197,12 @@
 :root[data-theme=light] #orb .orb-logo-mist::after{
  background:radial-gradient(ellipse 35% 31% at 47% 43%,rgba(255,255,255,.84),rgba(230,239,249,.18) 62%,transparent 100%);
 }
+/* The light pearl clouds sit behind the logo (z-index 2 < 3).
+   Their bright center washes out the silver letters against pale glass.
+   Keep motion and sphere unchanged; soften only this brief logo-time haze. */
+:root[data-theme=light] #orb .orb-logo-mist.is-breathing{
+ filter:opacity(.48);
+}
 @media(prefers-reduced-motion:reduce){
  #orb .orb-mist::before,
  #orb .orb-logo-mist,
