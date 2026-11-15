@@ -609,7 +609,7 @@ body > #orb.sv-sayvi-handoff-flight {
 }
 
 /* Управление · real Home plans. Flat graphite switch, no extra glass layers. */
-#managePage .sv-home-agenda-management{margin:0 0 18px}
+#managePage .sv-home-agenda-management{margin:0 0 18px;max-width:480px;width:100%;justify-self:start}
 #managePage .sv-home-agenda-setting{
   cursor:pointer;user-select:none;-webkit-user-select:none;min-height:69px;gap:12px;
   -webkit-tap-highlight-color:transparent
