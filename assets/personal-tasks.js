@@ -594,17 +594,7 @@ function svTaskShiftDay(iso,days){
  return svTaskISO(d);
 }
 /* Removable visual agenda scenes: no storage writes, notifications or imported contacts. */
-const SV_AGENDA_SCENES=Object.freeze([
- {offset:0,time:'12:00',endTime:'13:00',title:'Обед с Анной',tone:'orange'},
- {offset:0,time:'13:30',endTime:'14:00',title:'Обсудить задачи с командой',tone:'blue',subtitle:'Видеозвонок'},
- {offset:0,time:'15:00',title:'Отправить макеты',tone:'blue',entryType:'task'},
- {offset:0,time:'16:30',endTime:'17:30',title:'Встреча по проекту',tone:'yellow',subtitle:'Офис'},
- {offset:1,time:'07:00',endTime:'08:00',title:'Йога',tone:'orange'},
- {offset:1,time:'10:00',endTime:'11:00',title:'Поездка за город',tone:'green'},
- {offset:1,time:'17:30',title:'Забрать заказ',tone:'blue',entryType:'task'},
- {offset:2,time:'09:00',endTime:'11:00',title:'Семейная прогулка',tone:'red'},
- {offset:2,time:'19:00',endTime:'20:30',title:'Ужин с друзьями',tone:'green'}
-]);
+const SV_AGENDA_SCENES=Object.freeze([]); // No synthetic calendar entries.
 const svAgendaSceneDone=new Set();
 function svAgendaSceneEntries(){
  const today=svTaskISO(new Date());
@@ -1072,7 +1062,7 @@ function render(){
  const preview=Array.isArray(living?.deferred?.())?living.deferred():[];
  const postponed=open.filter(item=>deferredIds.has(item.id));
  const active=open.filter(item=>!deferredIds.has(item.id));
- const visibleActive=[...active,...svCalendarAgendaEvents(),...svAgendaSceneEntries()].sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||(a.time||'').localeCompare(b.time||''));
+ const visibleActive=[...active,...svCalendarAgendaEvents()].sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||(a.time||'').localeCompare(b.time||''));
  renderContext(active);
  const hasDeferred=postponed.length>0||preview.length>0;
  const wasRendered=!!list.querySelector('.sv-agenda-section-heading');
