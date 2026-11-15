@@ -32,9 +32,11 @@ test('Launch logo waits for Home scene, and local voice bridge survives',async()
   assert.match(html,/sv-home-launch-logo-visible/);
   assert.match(brand,/sv-sayvi-home-cards:not\(\.sv-home-launch-logo-visible\)/);
   assert.match(brand,/#homePage #signal\.is-pearl \.brand-lockup\{\s*transform:scale\(1\)/);
-  assert.match(brand,/\.brand-mark\{\s*animation:cinema-mark 5\.4s/);
-  assert.match(brand,/\.brand-word\{\s*animation:cinema-word 5\.4s/);
-  assert.match(brand,/\.brand-specialty\{\s*animation:cinema-specialty 5\.4s/);
+  assert.match(html,/\.brand-mark\{\s*animation:cinema-mark 9\.3s/);
+  assert.match(html,/\.brand-word\{\s*animation:cinema-word 9\.3s/);
+  assert.match(html,/\.brand-specialty\{\s*animation:cinema-specialty 9\.3s/);
+  assert.doesNotMatch(brand,/animation:cinema-(?:mark|word|specialty) 5\.4s/);
+  assert.match(brand,/Original Silk Motion \/ Pearl Mist/);
   assert.match(homeCss,/sv-home-cinema-orb \.78s/);
   assert.match(homeCss,/sv-home-cinema-card-rise 1\.4s \.72s/);
   assert.match(homeCss,/sv-home-queue-preview\{[\s\S]*?animation-delay:calc\(1\.15s/);
@@ -60,8 +62,10 @@ test('White PWA wakes quickly and Sayvi writes a welcome without moving Home',as
   assert.match(html,/setTimeout\(\(\)=>document\.documentElement\.classList\.remove\('sv-cinema-boot'\),1500\)/);
   assert.doesNotMatch(html,/classList\.remove\('sv-cinema-boot'\),3200/);
   assert.match(homeJs,/function showHomeWelcome\(\)/);
-  assert.match(homeJs,/Я Сэйви\. Рада тебя видеть!/);
-  assert.match(homeJs,/renderToday\(\);\s*beginHomeGreetingLifetime\(\);\s*showHomeWelcome\(\)/);
+  assert.match(homeJs,/text:'Я Сэйви\.',kind:'name',type:89,hold:1000,erase:55/);
+  assert.match(homeJs,/text:'Рада тебя видеть!',kind:'wish',type:81/);
+  assert.match(homeJs,/const erase=\(\)=>\{/);
+  assert.match(homeJs,/renderToday\(\);\s*beginHomeGreetingLifetime\(\);\s*if\(!greetingPlayed\)showHomeWelcome\(\)/);
   assert.match(homeCss,/\.sv-home-welcome-intro\{\s*position:absolute;inset:0/);
   assert.match(homeCss,/sv-home-welcome-active[\s\S]*?opacity:0!important/);
   new Script(homeJs);
