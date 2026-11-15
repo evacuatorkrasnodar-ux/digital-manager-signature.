@@ -1025,6 +1025,13 @@
 #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
  visibility:hidden!important;
 }
+/* Studio's independent dark preview must keep its approved graphite symbol. */
+#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="dark"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
+ background-image:none!important;
+}
+#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="dark"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
+ visibility:visible!important;
+}
 .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:active{
  opacity:.92!important;transform:scale(.965);
 }
