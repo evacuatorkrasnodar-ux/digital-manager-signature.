@@ -56,6 +56,18 @@
     const brief={city,days,updatedAt};
     return validBrief(brief)&&days[0]?.date===dateKey()?brief:null;
   };
+  const weatherGlyph=code=>{
+    const cloud='<path d="M5.4 17.3h12.3a3.5 3.5 0 0 0 .2-7 5.8 5.8 0 0 0-11.2-.7 3.9 3.9 0 0 0-1.3 7.7Z"/>';
+    const sun='<circle cx="12" cy="12" r="4.1"/><path d="M12 2.4v2.1M12 19.5v2.1M2.4 12h2.1M19.5 12h2.1M5.2 5.2l1.5 1.5M17.3 17.3l1.5 1.5M18.8 5.2l-1.5 1.5M6.7 17.3l-1.5 1.5"/>';
+    const wet=code>=51&&code<=67||code>=80&&code<=82;
+    const snow=code>=71&&code<=77||code>=85&&code<=86;
+    const fog=code===45||code===48;
+    const body=code===0?sun:cloud+
+      (wet?'<path d="m8 19.5-.8 1.8m4.8-1.8-.8 1.8m4.8-1.8-.8 1.8"/>':
+      snow?'<path d="M8 19.5v2m4-2v2m4-2v2"/>':
+      fog?'<path d="M6 20.5h12"/>':'');
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+body+'</svg>';
+  };
   const home=document.getElementById('homePage');
   if(home){
     const cluster=home.querySelector('#orbCluster');
@@ -69,7 +81,7 @@
       const mark=document.createElement('span');
       mark.className='sv-sayvi-home-weather-mark';
       mark.setAttribute('aria-hidden','true');
-      mark.textContent='✳';
+      mark.innerHTML=weatherGlyph(0);
       const label=document.createElement('span');
       button.append(mark,label);
       cluster.insertAdjacentElement('afterend',button);
@@ -79,6 +91,7 @@
         const today=current?.days[0];
         button.hidden=!today;
         if(!today)return;
+        mark.innerHTML=weatherGlyph(today.code);
         label.textContent=current.city+' · '+temperature(today.max)+' / '+temperature(today.min)+' · '+condition(today.code);
         button.title='Открыть прогноз Сэйви';
       };
@@ -131,7 +144,7 @@
     const high=document.createElement('span');
     high.textContent=temperature(first.max);
     const low=document.createElement('span');
-    low.textContent='макс. / мин. '+temperature(first.min);
+    low.textContent='минимум '+temperature(first.min);
     main.append(high,low);
     container.append(eyebrow,heading,lead,main);
     if(data.days.length>1){
