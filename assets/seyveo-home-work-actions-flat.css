@@ -413,7 +413,7 @@
    softened 4% silver wash, unchanged pearl rim and restrained microshadows. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- border:1px solid rgba(255,255,255,.94)!important;
+ border:.7px solid rgba(255,255,255,.94)!important;
  box-shadow:0 0 0 .45px rgba(164,170,184,.30),
   inset 0 1px 1px rgba(75,82,96,.055),
   inset 0 -1px 0 rgba(255,255,255,.18),
