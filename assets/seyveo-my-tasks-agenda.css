@@ -806,10 +806,11 @@ html.sv-agenda-scroll-active .app{
 }
 #tasksPage #personalTaskList .sv-agenda-entry .sv-task-swipe-delete{
  box-sizing:border-box;position:absolute;z-index:0;
- inset:0 0 0 auto;width:88px;min-height:54px;
- border:0!important;border-radius:0!important;
- background:#FF3B30!important;color:#FFF!important;
- font:600 14px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ top:50%;right:6px;width:76px;height:42px;min-height:42px;
+ transform:translateY(-50%);
+ border:0!important;border-radius:13px!important;
+ background:#FF453A!important;color:#FFF!important;
+ font:600 13px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  box-shadow:none!important;
 }
 #tasksPage #personalTaskList .sv-agenda-entry:not(.is-swipe-open) .sv-task-swipe-delete{
