@@ -607,3 +607,50 @@ body > #orb.sv-sayvi-handoff-flight {
     body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
   )::before{animation:none!important;clip-path:inset(0 25% 0 0 round 999px)!important}
 }
+
+/* Управление · real Home plans. Flat graphite switch, no extra glass layers. */
+#managePage .sv-home-agenda-management{margin:0 0 18px}
+#managePage .sv-home-agenda-setting{
+  cursor:pointer;user-select:none;-webkit-user-select:none;min-height:69px;gap:12px;
+  -webkit-tap-highlight-color:transparent
+}
+#managePage .sv-home-agenda-setting .manage-text{padding-right:8px}
+#managePage .sv-home-agenda-input{
+  position:absolute;right:15px;top:50%;width:48px;height:30px;
+  transform:translateY(-50%);opacity:0;margin:0;cursor:pointer;z-index:1
+}
+#managePage .sv-home-agenda-track{
+  position:relative;display:block;flex:0 0 48px;width:48px;height:30px;
+  box-sizing:border-box;border-radius:999px;background:#d8dadd;
+  border:1px solid rgba(60,65,71,.10);
+  transition:background-color .24s ease,border-color .24s ease
+}
+#managePage .sv-home-agenda-track::after{
+  content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;
+  border-radius:50%;background:#fff;
+  box-shadow:0 1px 2px rgba(0,0,0,.13);
+  transition:transform .26s cubic-bezier(.2,.8,.2,1)
+}
+#managePage .sv-home-agenda-input:checked+.sv-home-agenda-track{
+  background:#38383A;border-color:#38383A
+}
+#managePage .sv-home-agenda-input:checked+.sv-home-agenda-track::after{
+  transform:translateX(18px)
+}
+#managePage .sv-home-agenda-input:focus-visible+.sv-home-agenda-track{
+  outline:2px solid currentColor;outline-offset:3px
+}
+:root[data-theme="dark"] #managePage .sv-home-agenda-input:checked+.sv-home-agenda-track{
+  background:#d7d9de;border-color:#d7d9de
+}
+:root[data-theme="dark"] #managePage .sv-home-agenda-input:checked+.sv-home-agenda-track::after{
+  background:#38383A;box-shadow:none
+}
+@media(prefers-reduced-motion:reduce){
+  #managePage .sv-home-agenda-track,#managePage .sv-home-agenda-track::after{transition:none}
+}
+
+/* Training-only Home samples are retired; real cards keep their renderer. */
+#homePage #seyveoLivingMoment.lm-preview:not(.lm-real),
+#homePage #svcpWorkHomePreview,
+#homePage #seyveoDemoLaunch{display:none!important}
