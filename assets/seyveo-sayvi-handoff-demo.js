@@ -298,18 +298,14 @@
     if(!count&&hasTodayAttention())count=1;
     if(!count)return {mode:'idle'};
     if(count>4)return {mode:'dock'};
-    const vh=Math.max(0,document.documentElement.clientHeight||0,window.innerHeight||0);
-    const header=document.getElementById('homeHeader');
-    const headerHeight=header&&!header.hidden?Math.min(95,header.getBoundingClientRect().height):48;
-    const messageHeight=message&&!root.classList.contains('sv-home-greeting-expired')?
-      Math.max(65,Math.min(145,message.getBoundingClientRect().height)):0;
-    // Reserve each real item, even though the feed initially displays one.
-    // Three fit on a typical tall phone; four only when the screen allows it.
-    const taskHeight=agenda.length?154+Math.max(0,agenda.length-1)*95:0;
-    const otherHeight=(livingCount+adviceCount)*114;
-    const room=vh-headerHeight-messageHeight-taskHeight-otherHeight-142;
-    if(room<140)return {mode:'dock'};
-    return {mode:'cards',size:Math.round(Math.min(205,room))};
+    // Stable tiers: the animated greeting and card heights must never
+    // affect Sayvi's dimensions or force a spontaneous dock transition.
+    const vh=Math.max(0,document.documentElement.clientHeight||window.innerHeight||0);
+    const vw=Math.max(0,document.documentElement.clientWidth||window.innerWidth||0);
+    if(vh<570&&count>=4)return {mode:'dock'};
+    const tiers=vh>=800?[212,212,190,166]:vh>=700?[198,198,180,156]:[180,180,166,146];
+    const size=Math.min(tiers[Math.min(count,4)-1],Math.max(130,Math.floor(vw*.56)));
+    return {mode:'cards',size};
   }
   function shouldKeepSphereHome(){
     return homeSphereLayout().mode!=='dock';
