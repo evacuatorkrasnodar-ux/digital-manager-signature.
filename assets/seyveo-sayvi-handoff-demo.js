@@ -32,6 +32,9 @@
   const atHome=!location.hash||location.hash==='#home';
   const showCinema=atHome&&!noIntro&&(replay||voiceRequested||!alreadySeen);
   const root=document.documentElement;
+  // Keep Safari's changing viewport height from resizing Sayvi on launch.
+  const startupLayoutHeight=Math.max(document.documentElement.clientHeight||0,window.innerHeight||0);
+  let startupLayoutStable=false;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
   const orb=document.getElementById('orb');
@@ -300,7 +303,7 @@
     if(count>4)return {mode:'dock'};
     // Stable tiers: the animated greeting and card heights must never
     // affect Sayvi's dimensions or force a spontaneous dock transition.
-    const vh=Math.max(0,document.documentElement.clientHeight||window.innerHeight||0);
+    const vh=startupLayoutStable?Math.max(0,document.documentElement.clientHeight||window.innerHeight||0):startupLayoutHeight;
     const vw=Math.max(0,document.documentElement.clientWidth||window.innerWidth||0);
     if(vh<570&&count>=4)return {mode:'dock'};
     const tiers=vh>=800?[212,212,190,166]:vh>=700?[198,198,180,156]:[180,180,166,146];
@@ -1022,6 +1025,7 @@
   window.addEventListener('resize',()=>{
     const widthChange=Math.abs(window.innerWidth-lastViewportWidth);
     lastViewportWidth=window.innerWidth;
+    if(widthChange>44)startupLayoutStable=true;
     // iOS browser chrome often changes only the height during startup; that
     // must not cut off the artwork. A genuine width/orientation change during
     // flight is different: settle safely on the real dock target.
