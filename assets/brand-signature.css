@@ -85,3 +85,13 @@
   letter-spacing:.13em;
 }
 :root[data-theme="light"] #homePage #signal.is-pearl .brand-specialty{color:#7e909b}
+
+/* The reference launch orb is smoke-silver, not mint glass.
+   Only the large spoken welcome is toned; the everyday light orb and dock
+   crystal preserve their approved materials and geometry. */
+:root[data-theme="light"].sv-cinema-greeting-active #homePage #plasmaVisual{
+  filter:grayscale(1) brightness(.60) contrast(1.09);
+}
+:root[data-theme="light"].sv-cinema-greeting-active #homePage #signal.is-brand .brand-mark{
+  filter:grayscale(1) drop-shadow(0 1px 1px rgba(35,47,55,.20));
+}
