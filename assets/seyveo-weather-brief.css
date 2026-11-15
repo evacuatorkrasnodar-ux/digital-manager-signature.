@@ -22,6 +22,19 @@
   transition:padding-top .56s cubic-bezier(.22,.8,.22,1)!important;
  }
 }
+/* A calm, genuinely centred Home when the welcome has faded and
+   there are no due cards. The dock and live orb themselves are untouched. */
+@media (max-width:600px){
+ :root.sv-home-greeting-expired.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #stage{
+  min-height:clamp(440px,calc(100dvh - 154px),760px)!important;
+  transition:min-height .78s cubic-bezier(.22,.8,.22,1)!important;
+ }
+}
+@media (prefers-reduced-motion:reduce){
+ :root.sv-home-greeting-expired.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #stage{
+  transition:none!important;
+ }
+}
 @media(prefers-reduced-motion:reduce){#homePage .sv-sayvi-home-weather{transition:none}}
 /* Sayvi's flat, native-feeling forecast inside her existing conversation. */
 .turn.sv-sayvi-weather-turn .bubble{width:min(100%,520px)!important;max-width:100%!important;white-space:normal!important}
