@@ -339,10 +339,11 @@
       flash.className='sv-cinema-dock-spark';
       flash.setAttribute('aria-hidden','true');
       const target=small.getBoundingClientRect();
-      flash.style.left=`${target.left+target.width/2}px`;
-      flash.style.top=`${target.top+target.height/2}px`;
+      // Optical reflection lands slightly above-left of the sphere's centre.
+      flash.style.left=`${target.left+target.width/2-3}px`;
+      flash.style.top=`${target.top+target.height/2-5}px`;
       document.body.appendChild(flash);
-      setTimeout(()=>flash.remove(),1050);
+      setTimeout(()=>flash.remove(),1800);
     }
     rememberOpening();
     renderToday();
