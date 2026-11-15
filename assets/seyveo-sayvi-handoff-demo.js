@@ -37,6 +37,7 @@
   let startupLayoutStable=false;
   root.style.setProperty('--sv-home-stable-vh',startupLayoutHeight+'px');
   root.classList.add('sv-sayvi-handoff-demo');
+  if(atHome)root.classList.add('sv-home-stabilizing');
   const home=document.getElementById('homePage');
   const orb=document.getElementById('orb');
   const heroArtwork=document.getElementById('plasmaVisual');
@@ -643,9 +644,8 @@
     greeting?.remove();
     greeting=null;
     root.classList.remove('sv-cinema-greeting-active');
-    // Keep the returning Home covered while Safari commits final sizes.
-    // The initial large generic sphere must never be visible mid-shrink.
-    if(!root.classList.contains('sv-home-prelayout'))root.classList.remove('sv-cinema-boot');
+    // Keep the launch cover until the final sphere and card positions
+    // have committed; uncovering early made the orb jump on iOS.
     clearTimeout(introTimer);
     clearTimeout(safetyTimer);
     if(spark)root.classList.add('sv-cinema-stagger-enter');
@@ -672,13 +672,12 @@
     rememberOpening();
     renderToday();
     beginHomeGreetingLifetime();
-    if(root.classList.contains('sv-home-prelayout')){
-      // One short layout commit beneath the existing launch cover.
-      // Reveal only after the sphere, text slot and task rows are positioned.
-      setTimeout(()=>{
+    requestAnimationFrame(()=>{
+      root.classList.remove('sv-home-stabilizing');
+      requestAnimationFrame(()=>{
         root.classList.remove('sv-home-prelayout','sv-cinema-boot');
-      },1300);
-    }
+      });
+    });
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
     if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);
