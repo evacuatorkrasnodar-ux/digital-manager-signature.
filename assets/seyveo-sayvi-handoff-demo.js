@@ -26,17 +26,11 @@
   const day=currentDay();
   let alreadySeen=false;
   try{alreadySeen=localStorage.getItem(dailyKey)===day;}catch{}
-  // Replaying on a refresh is intentional on both Safari/iPhone and desktop.
-  // Previously the mouse-pointer check accidentally excluded mobile Safari.
-  const pageReload=performance.getEntriesByType('navigation')[0]?.type==='reload'
-    ||performance.navigation?.type===1;
-  // Home Screen PWA launches are often reported as "navigate", not "reload".
-  // Each new standalone document is a new app opening: replay its artwork,
-  // while ordinary Safari tabs retain the once-a-day behavior.
-  const standaloneLaunch=matchMedia('(display-mode: standalone)').matches
-    ||navigator.standalone===true;
+  // A calm daily greeting, once per local calendar day. Reloading Safari or
+  // reopening the PWA on the same day must not repeat the cinematic flight.
+  // The full first-install introduction is a separate, later experience.
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||pageReload||standaloneLaunch||!alreadySeen);
+  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||!alreadySeen);
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
@@ -67,11 +61,10 @@
   let startGreeting=()=>{};
   let welcomeSpeech='';
   if(showCinema&&message){
-    const greetingLines=[
-      {text:'Привет!',kind:'welcome',type:79,hold:920,erase:47},
-      {text:'Я Сэйви.',kind:'name',type:89,hold:1000,erase:55},
-      {text:'Рада тебя видеть!',kind:'wish',type:81}
-    ];
+    const hour=new Date().getHours();
+    const hello=hour<5?'Доброй ночи!':hour<12?'Доброе утро!':
+      hour<18?'Добрый день!':'Добрый вечер!';
+    const greetingLines=[{text:hello,kind:'welcome',type:79}];
     welcomeSpeech=greetingLines.map(line=>line.text).join(' ');
     greeting=document.createElement('p');
     greeting.className='sv-cinema-written-hello';
@@ -168,7 +161,10 @@
     message.style.setProperty('--sv-home-greeting-height',`${Math.ceil(message.getBoundingClientRect().height)+2}px`);
     root.classList.add('sv-home-greeting-fading');
     const fadeMs=matchMedia('(prefers-reduced-motion: reduce)').matches?0:390;
-    setTimeout(()=>root.classList.add('sv-home-greeting-expired'),fadeMs);
+    setTimeout(()=>{
+      root.classList.add('sv-home-greeting-expired');
+      queueTodayRefresh();
+    },fadeMs);
   }
   function engageHomeGreeting(){
     if(!homeGreetingStartedAt||homeGreetingDismissed)return;
@@ -283,28 +279,66 @@
       Array.from(dynamic.children).some(el=>!el.hidden&&el.classList.contains('decision-card'));
     return !!(agenda||realCards||advice);
   }
+  // Count genuine, unfinished work; never infer the layout from a single
+  // rendered card (Home deliberately presents the first item of its queue).
+  // The available vertical room, rather than a hard-coded four-card limit,
+  // determines whether a fourth item can share Home with the sphere.
+  function homeSphereLayout(){
+    if(home.hidden||(location.hash&&location.hash!=='#home'))return {mode:'dock'};
+    const agenda=upcomingHomeItems();
+    const living=document.getElementById('seyveoLivingMoment');
+    const livingCount=living&&!living.hidden&&!living.classList.contains('lm-preview')?
+      [...living.querySelectorAll('.lm-tiles > :not([hidden]),.lm-inline-item:not([hidden])')].length:0;
+    const dynamic=document.getElementById('dynamic');
+    const adviceCount=dynamic&&!dynamic.hidden?
+      [...dynamic.children].filter(el=>!el.hidden&&el.classList.contains('decision-card')).length:0;
+    let count=agenda.length+livingCount+adviceCount;
+    if(!count&&hasTodayAttention())count=1;
+    if(!count)return {mode:'idle'};
+    if(count>4)return {mode:'dock'};
+    const vh=Math.max(0,document.documentElement.clientHeight||0,window.innerHeight||0);
+    const header=document.getElementById('homeHeader');
+    const headerHeight=header&&!header.hidden?Math.min(95,header.getBoundingClientRect().height):48;
+    const messageHeight=message&&!root.classList.contains('sv-home-greeting-expired')?
+      Math.max(65,Math.min(145,message.getBoundingClientRect().height)):0;
+    // Reserve each real item, even though the feed initially displays one.
+    // Three fit on a typical tall phone; four only when the screen allows it.
+    const taskHeight=agenda.length?154+Math.max(0,agenda.length-1)*95:0;
+    const otherHeight=(livingCount+adviceCount)*114;
+    const room=vh-headerHeight-messageHeight-taskHeight-otherHeight-142;
+    if(room<140)return {mode:'dock'};
+    return {mode:'cards',size:Math.round(Math.min(205,room))};
+  }
   function shouldKeepSphereHome(){
-    return !home.hidden&&(!location.hash||location.hash==='#home')&&!hasTodayAttention();
+    return homeSphereLayout().mode!=='dock';
   }
   let idleDockTimer=0;
   function updateClusterInteraction(){
     const cluster=document.getElementById('orbCluster');
     if(!cluster)return;
     const visible=root.classList.contains('sv-sayvi-home-idle')||
+      root.classList.contains('sv-sayvi-home-cards')||
       root.classList.contains('sv-music-ambient');
     if(visible){cluster.removeAttribute('aria-hidden');cluster.inert=false;}
     else if(done){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
   }
   function syncIdleHome(){
     if(!done)return;
-    const idle=shouldKeepSphereHome();
-    const previous=root.classList.contains('sv-sayvi-home-idle');
-    if(idle){
+    const layout=homeSphereLayout();
+    const idle=layout.mode==='idle';
+    const cards=layout.mode==='cards';
+    const previous=root.classList.contains('sv-sayvi-home-idle')||
+      root.classList.contains('sv-sayvi-home-cards');
+    if(idle||cards){
       clearTimeout(idleDockTimer);
       root.classList.remove('sv-sayvi-home-idle-leaving');
-      root.classList.add('sv-sayvi-home-idle');
+      root.classList.toggle('sv-sayvi-home-idle',idle);
+      root.classList.toggle('sv-sayvi-home-cards',cards);
+      if(cards)root.style.setProperty('--sv-home-live-orb-size',layout.size+'px');
+      else root.style.removeProperty('--sv-home-live-orb-size');
     }else if(previous){
-      root.classList.remove('sv-sayvi-home-idle');
+      root.classList.remove('sv-sayvi-home-idle','sv-sayvi-home-cards');
+      root.style.removeProperty('--sv-home-live-orb-size');
       root.classList.add('sv-sayvi-home-idle-leaving');
       clearTimeout(idleDockTimer);
       idleDockTimer=setTimeout(()=>root.classList.remove('sv-sayvi-home-idle-leaving'),820);
@@ -478,6 +512,7 @@
     .forEach(type=>window.addEventListener(type,queueTodayRefresh));
   window.addEventListener('focus',queueTodayRefresh);
   window.addEventListener('hashchange',queueTodayRefresh);
+  window.addEventListener('resize',queueTodayRefresh);
   window.addEventListener('storage',event=>{
     if(['seyveo-personal-tasks-v1','seyveo-calendar-events-v1',homeAgendaKey,homeLaterKey].includes(event.key)){
       if(event.key===homeAgendaKey&&homeAgendaSwitch)homeAgendaSwitch.checked=homeAgendaEnabled();
@@ -838,7 +873,8 @@
     });
   }
 
-  // One opening per LOCAL calendar day; route changes never replay the film.
+  // Once per local day: greet on Home, fly into the dock only when the
+  // real cards leave too little room for a living sphere.
   const launch=()=>{
     if(!showCinema||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     if(document.hidden){
