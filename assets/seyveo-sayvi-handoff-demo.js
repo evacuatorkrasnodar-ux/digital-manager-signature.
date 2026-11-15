@@ -888,6 +888,9 @@
       document.addEventListener('visibilitychange',onVisible);
       return;
     }
+    // When real work fits beside Sayvi, Home is already the destination.
+    // Do not show a second written intro or resize the sphere twice.
+    if(shouldKeepSphereHome()&&!voiceRequested){finish();return;}
     if(localVoicePreview){
       prepareDock();
       root.classList.remove('sv-cinema-boot');
