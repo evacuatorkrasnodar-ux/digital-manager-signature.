@@ -312,6 +312,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const documentDefault='Срок поставки: [указать согласованную сторонами дату или период]. При риске задержки поставщик письменно уведомляет покупателя в согласованном сторонами порядке.';
  let documentNote=documentDefault;
  let documentSource='Поставка товара осуществляется в согласованные сторонами сроки.';
+ let documentManualSaved=null;
  let documentAnalysis='';
  let documentAnalyzing=false;
  let documentParts=[];
@@ -319,6 +320,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
  let documentProposed='';
  let documentFileStatus='';
  const documentDraftKey='seyveo-contract-review-draft-v1';
+ try{
+  const saved=JSON.parse(localStorage.getItem(documentDraftKey)||'null');
+  if(saved?.manual===true&&saved.original===documentSource&&typeof saved.proposed==='string')
+   documentManualSaved=saved.proposed;
+ }catch{}
  const documentDetails=create('div','lm-document-content');
  documentDetails.hidden=true;
  function documentActive(){return !real&&shown.kind==='contract'}
@@ -327,12 +333,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
   syncComposeFocus();
   syncActionHierarchy();
   documentDetails.hidden=!active;
-  // After Sayvi: exactly Send or Back. No Save diskette, pencil or extra route.
+  // The user's own edit must have a Save action. Sayvi's preview keeps Send / Back.
   const reviewChoice=documentStep==='preview';
+  const editing=documentStep==='edit';
+  const saved=documentStep==='saved';
   documentEdit.hidden=!active||documentStep!=='summary';
   documentLater.hidden=true;
-  documentSave.hidden=!active||!reviewChoice;
-  documentCancel.hidden=!active||!reviewChoice;
+  documentSave.hidden=!active||!(reviewChoice||editing);
+  documentCancel.hidden=!active||!(reviewChoice||editing||saved);
   documentAnalyze.hidden=true;
   if(active){
    sayviAction.hidden=documentStep!=='summary';
@@ -340,7 +348,15 @@ function createSurface(primary,other=[],real=false,taskId=''){
    open.hidden=documentStep!=='summary';
    documentSave.dataset.cardRole='primary';
    documentCancel.dataset.cardRole='secondary';
-   if(reviewChoice)controls.append(documentSave,documentCancel);
+   if(editing){
+    cardIconize(documentSave,'save');
+    documentSave.setAttribute('aria-label','Сохранить свой вариант договора на этом устройстве');
+   }else if(reviewChoice){
+    cardIconize(documentSave,'send');
+    documentSave.setAttribute('aria-label','Передать предложение Сэйви в чат без автоматической отправки');
+   }
+   if(reviewChoice||editing)controls.append(documentSave,documentCancel);
+   else if(saved)controls.append(documentCancel);
   }
   documentDetails.replaceChildren();
   if(!active)return;
@@ -360,6 +376,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    sourceInput.value=documentSource;sourceInput.setAttribute('aria-label','Текст пункта договора для проверки');
    sourceInput.addEventListener('input',()=>{
     documentSource=sourceInput.value;
+    documentManualSaved=null;
     // Editing invalidates previously reviewed text without stealing focus.
     documentParts=[];documentAnalysis='';documentProposed='';
     documentAnalyze.hidden=false;documentEdit.hidden=true;
@@ -410,6 +427,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
      }
      if(!extracted.trim())throw Error('Текст не найден. Возможно, PDF содержит только сканы.');
      documentSource=extracted.trim().slice(0,8500);
+     documentManualSaved=null;
      documentParts=[];documentAnalysis='';documentProposed='';
      sourceInput.value=documentSource;
      documentFileStatus='Текст загружен. Исходный файл не меняется.';
@@ -535,13 +553,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
    input.rows=4;input.maxLength=8500;input.value=documentNote;
    label.append(input);documentDetails.append(label);
    prepareDocumentReply(input);
-   documentDetails.append(create('p','lm-mail-note','Текст можно отправить после проверки.'));
+   documentDetails.append(create('p','lm-mail-note','Сохраните ваш вариант — он останется на этом устройстве.'));
+  }else if(documentStep==='saved'){
+   documentDetails.append(create('p','lm-document-proposal',documentNote));
+   documentDetails.append(create('p','lm-mail-note','Учебный черновик сохранён на этом устройстве. Исходный договор не изменён.'));
   }else{
-   const sayviText=documentStep==='saved'
-    ?'Учебный черновик сохранён на этом устройстве. Исходный договор не изменён.'
-    :documentStep==='summary'
-     ?'В договоре не указан срок поставки. Предлагаю уточнить его.'
-     :'Предлагаю: '+documentNote;
+   const sayviText=documentStep==='summary'
+    ?'В договоре не указан срок поставки. Предлагаю уточнить его.'
+    :'Предлагаю: '+documentNote;
    const message=documentAnalysis&&documentStep==='review'?documentAnalysis:sayviText;
    const note=create('p','lm-document-note');
    // Highlight only the relevant warning in the prepared learning example.
@@ -859,15 +878,25 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }finally{documentAnalyzing=false;if(documentActive())updateDocument();}
  });
  const documentEdit=polymer('Исправить',()=>{
-  // Edit Sayvi's proposed wording if one is already on screen.
-  if(documentStep==='summary')documentNote=documentSource;
+  // A manually saved version survives returning to the card and reloading.
+  if(documentStep==='summary')documentNote=documentManualSaved??documentSource;
   documentStep='edit';updateDocument();
  });
  const documentSave=polymer('Отправить',()=>{
-  // No recipient is specified for this document. Open the real Sayvi chat
-  // with an UNSENT prepared text, never claim an external document was sent.
   if(!documentNote.trim()){explain(field,'Текст предложения пуст.',documentSave);return}
-  openSayviDiscussion('contract',documentSource,documentNote);
+  if(documentStep==='edit'){
+   // Save the user's proposed wording locally; never overwrite the original.
+   try{
+    localStorage.setItem(documentDraftKey,JSON.stringify({
+     original:documentSource,proposed:documentNote,at:new Date().toISOString(),demo:true,manual:true
+    }));
+    documentManualSaved=documentNote;
+    documentStep='saved';updateDocument();
+   }catch{explain(field,'Не удалось сохранить черновик на устройстве.',documentSave);}
+   return;
+  }
+  // A Sayvi preview is only prepared in the chat, without automatic sending.
+  if(documentStep==='preview')openSayviDiscussion('contract',documentSource,documentNote);
  });
  documentSave.setAttribute('aria-label','Передать предложение Сэйви в чат без автоматической отправки');
  documentSave.setAttribute('title','Отправить');
