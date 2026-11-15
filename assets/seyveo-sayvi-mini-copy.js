@@ -24,5 +24,10 @@
     attributes:true,attributeFilter:['src']
   });
   button.appendChild(copy);
+  // The already-approved cinematic dock spark glints over the same artwork.
+  const spark=document.createElement('span');
+  spark.className='sv-cinema-dock-spark sv-sayvi-dock-idle-spark';
+  spark.setAttribute('aria-hidden','true');
+  button.appendChild(spark);
   button.classList.add('sv-sayvi-velvet-ready');
 })();
