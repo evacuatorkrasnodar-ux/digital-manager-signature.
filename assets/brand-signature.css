@@ -48,26 +48,10 @@
   visibility:hidden!important;
   opacity:0!important;
 }
-/* Restore the original Silk Motion choreography for the big launch Sayvi:
-   waves emerge from pearl mist, then SEYVEO, then its specialty. The opening
-   cover still clears immediately; the signature continues in the live Home. */
-:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .brand-mark{
-  animation:cinema-mark 5.4s linear both!important;
-}
-:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .brand-word{
-  animation:cinema-word 5.4s linear both!important;
-}
-:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .brand-specialty{
-  animation:cinema-specialty 5.4s linear both!important;
-}
-:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .pearl-stage::before{
-  animation-duration:5.4s!important;
-}
-:root.sv-home-launch-logo-visible #homePage #orb .orb-logo-mist.is-breathing,
-:root.sv-home-launch-logo-visible #homePage #orb .orb-logo-mist.is-breathing :is(.orb-logo-cloud--a,.orb-logo-cloud--b,.orb-logo-cloud--c),
-:root.sv-home-launch-logo-visible #homePage #orb .orb-logo-mist.is-breathing::after{
-  animation-duration:5.4s!important;
-}
+/* Original Silk Motion / Pearl Mist: let index.html's approved 9.3s staged
+   cinema-mark, cinema-word and cinema-specialty keyframes play unmodified.
+   The separate 7.8s pearl clouds retain their own softer rhythm. Do not
+   accelerate or transform the logo parent: that once caused visible jumps. */
 @media(prefers-reduced-motion:reduce){
   :root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing :is(.brand-mark,.brand-word,.brand-specialty){
     animation:none!important;opacity:1!important
