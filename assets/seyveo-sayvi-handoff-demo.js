@@ -681,6 +681,13 @@
     rememberOpening();
     renderToday();
     beginHomeGreetingLifetime();
+    const cinematicHomeArrival=atHome&&!home.hidden&&!document.hidden&&!spark&&
+      (root.classList.contains('sv-sayvi-home-idle')||
+       root.classList.contains('sv-sayvi-home-cards'));
+    if(cinematicHomeArrival){
+      root.classList.add('sv-home-cinematic-intro');
+      setTimeout(()=>root.classList.remove('sv-home-cinematic-intro'),1100);
+    }
     requestAnimationFrame(()=>{
       root.classList.remove('sv-home-stabilizing');
       requestAnimationFrame(()=>{
