@@ -48,21 +48,25 @@
   visibility:hidden!important;
   opacity:0!important;
 }
-/* Fast studio signature only for the big startup Sayvi. The app remains
-   usable throughout; the 42px dock sphere is never affected. */
-:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing :is(.brand-mark,.brand-word,.brand-specialty){
-  animation:sv-home-signature-show 2.25s ease-in-out both!important;
+/* Restore the original Silk Motion choreography for the big launch Sayvi:
+   waves emerge from pearl mist, then SEYVEO, then its specialty. The opening
+   cover still clears immediately; the signature continues in the live Home. */
+:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .brand-mark{
+  animation:cinema-mark 5.4s linear both!important;
 }
 :root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .brand-word{
-  animation-delay:.10s!important;
+  animation:cinema-word 5.4s linear both!important;
 }
 :root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .brand-specialty{
-  animation-delay:.17s!important;
+  animation:cinema-specialty 5.4s linear both!important;
 }
-@keyframes sv-home-signature-show{
-  0%{opacity:0}
-  23%,76%{opacity:1}
-  100%{opacity:0}
+:root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing .pearl-stage::before{
+  animation-duration:5.4s!important;
+}
+:root.sv-home-launch-logo-visible #homePage #orb .orb-logo-mist.is-breathing,
+:root.sv-home-launch-logo-visible #homePage #orb .orb-logo-mist.is-breathing :is(.orb-logo-cloud--a,.orb-logo-cloud--b,.orb-logo-cloud--c),
+:root.sv-home-launch-logo-visible #homePage #orb .orb-logo-mist.is-breathing::after{
+  animation-duration:5.4s!important;
 }
 @media(prefers-reduced-motion:reduce){
   :root.sv-home-launch-logo-visible #homePage #signal.is-pearl.is-appearing :is(.brand-mark,.brand-word,.brand-specialty){
