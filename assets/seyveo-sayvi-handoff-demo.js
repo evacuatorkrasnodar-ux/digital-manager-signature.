@@ -251,6 +251,55 @@
     try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[];}
     catch{return [];}
   };
+  // Home without due work is a living space, not an empty page.
+  // Ignore tomorrow's entries; unfinished overdue work still needs attention.
+  const todayKey=()=>{
+    const d=new Date();
+    return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+  };
+  function hasTodayAttention(){
+    const date=todayKey();
+    const dueTask=storeList('seyveo-personal-tasks-v1').some(item=>
+      item&&!item.done&&item.showOnHome!==false&&
+      typeof item.due==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(item.due)&&item.due<=date);
+    const dueEvent=storeList('seyveo-calendar-events-v1').some(item=>
+      item&&!item.done&&item.date===date);
+    const living=document.getElementById('seyveoLivingMoment');
+    const realCards=living&&!living.hidden&&!living.classList.contains('lm-preview')&&
+      !!living.querySelector('.lm-tiles > :not([hidden]),.lm-inline-item:not([hidden])');
+    const dynamic=document.getElementById('dynamic');
+    const advice=dynamic&&!dynamic.hidden&&
+      Array.from(dynamic.children).some(el=>!el.hidden&&el.classList.contains('decision-card'));
+    return dueTask||dueEvent||realCards||advice;
+  }
+  function shouldKeepSphereHome(){
+    return !home.hidden&&(!location.hash||location.hash==='#home')&&!hasTodayAttention();
+  }
+  let idleDockTimer=0;
+  function updateClusterInteraction(){
+    const cluster=document.getElementById('orbCluster');
+    if(!cluster)return;
+    const visible=root.classList.contains('sv-sayvi-home-idle')||
+      root.classList.contains('sv-music-ambient');
+    if(visible){cluster.removeAttribute('aria-hidden');cluster.inert=false;}
+    else if(done){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
+  }
+  function syncIdleHome(){
+    if(!done)return;
+    const idle=shouldKeepSphereHome();
+    const previous=root.classList.contains('sv-sayvi-home-idle');
+    if(idle){
+      clearTimeout(idleDockTimer);
+      root.classList.remove('sv-sayvi-home-idle-leaving');
+      root.classList.add('sv-sayvi-home-idle');
+    }else if(previous){
+      root.classList.remove('sv-sayvi-home-idle');
+      root.classList.add('sv-sayvi-home-idle-leaving');
+      clearTimeout(idleDockTimer);
+      idleDockTimer=setTimeout(()=>root.classList.remove('sv-sayvi-home-idle-leaving'),820);
+    }
+    updateClusterInteraction();
+  }
   function nextAgenda(){
     const today=new Date(),iso=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
     const validDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value);
@@ -322,6 +371,7 @@
     requestAnimationFrame(()=>{
       todayRefreshPending=false;
       if(!home.hidden)renderToday();
+      syncIdleHome();
     });
   }
   ['seyveoLivingMoment','dynamic'].forEach(id=>{
@@ -342,6 +392,13 @@
       queueTodayRefresh();
   });
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueTodayRefresh();});
+
+  if(typeof MutationObserver!=='undefined'){
+    new MutationObserver(syncIdleHome).observe(home,{attributes:true,attributeFilter:['hidden']});
+    new MutationObserver(updateClusterInteraction).observe(root,{attributes:true,attributeFilter:['class']});
+  }
+  // Pick up the change of day even when the PWA stays open overnight.
+  setInterval(()=>{if(done&&!document.hidden)syncIdleHome();},60000);
 
   function finish({spark=false}={}){
     if(done)return;
@@ -370,14 +427,14 @@
     clearTimeout(safetyTimer);
     if(spark)root.classList.add('sv-cinema-stagger-enter');
     root.classList.add('sv-sayvi-handoff-docked');
+    syncIdleHome();
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
     restoreDock();
     if(smallOpacity)small.style.setProperty('opacity',smallOpacity,smallOpacityPriority);
     else small.style.removeProperty('opacity');
     root.classList.remove('sv-sayvi-handoff-inflight');
-    const cluster=document.getElementById('orbCluster');
-    if(cluster){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
+    updateClusterInteraction();
     if(spark){
       const flash=document.createElement('span');
       flash.className='sv-cinema-dock-spark';
@@ -401,6 +458,9 @@
 
   function begin(){
     if(done)return;
+    // With no work due today, Sayvi stays in the Home scene; no pointless
+    // flight into the dock followed by an immediate return.
+    if(shouldKeepSphereHome()){finish();return;}
     if(document.hidden||!atHome||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     // Address bars and safe-area insets may settle during the long logo scene.
     // Measure the dock again immediately before beginning the actual flight.
