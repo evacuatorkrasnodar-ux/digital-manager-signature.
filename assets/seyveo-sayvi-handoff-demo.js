@@ -696,7 +696,6 @@
     if(done)return;
     // With no work due today, Sayvi stays in the Home scene; no pointless
     // flight into the dock followed by an immediate return.
-    if(shouldKeepSphereHome()){finish();return;}
     if(document.hidden||!atHome||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     // Address bars and safe-area insets may settle during the long logo scene.
     // Measure the dock again immediately before beginning the actual flight.
@@ -736,7 +735,16 @@
           {offset:1,transform:land,opacity:1}
         ],{duration:4200*speed,easing:'cubic-bezier(.45,0,.16,1)',fill:'forwards'});
         safetyTimer=setTimeout(()=>finish({spark:true}),4850*speed);
-        animation.finished.then(()=>finish({spark:true})).catch(()=>{});
+        animation.finished.then(()=>{
+          if(done)return;
+          if(shouldKeepSphereHome()){
+            // Preserve the original cinematic descent into the dock. Once it
+            // lands, one fluid reverse journey puts Sayvi beside the real
+            // Home cards, while the pearl dock retracts to three controls.
+            finish();
+            startRouteFlight(true);
+          }else finish({spark:true});
+        }).catch(()=>{});
       }catch{finish();}
     });
   }
