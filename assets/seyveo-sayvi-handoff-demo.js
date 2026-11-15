@@ -321,7 +321,7 @@
     else if(done){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
   }
   function syncIdleHome(){
-    if(!done)return;
+    if(!done||root.classList.contains('sv-home-writing'))return;
     const layout=homeSphereLayout();
     const idle=layout.mode==='idle';
     const cards=layout.mode==='cards';
@@ -552,6 +552,37 @@
     }
   });
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueTodayRefresh();});
+  // One keyboard-focus state for genuine inline Home editors (work chat,
+  // mail previews and task forms). Existing editors retain all their own
+  // sending and draft logic; we only manage the surrounding Home scene.
+  const homeEditorSelector='textarea,input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),[contenteditable="true"]';
+  let homeWritingCloseTimer=0;
+  const homeEditingElement=()=>!home.hidden&&
+    (location.hash===''||location.hash==='#home')&&
+    document.activeElement?.closest?.('#homePage')&&
+    document.activeElement?.matches?.(homeEditorSelector);
+  function syncHomeWriting(){
+    clearTimeout(homeWritingCloseTimer);
+    if(homeEditingElement()&&(innerWidth<=780||matchMedia('(pointer:coarse)').matches)){
+      root.classList.add('sv-home-writing');
+    }else{
+      root.classList.remove('sv-home-writing');
+      queueTodayRefresh();
+    }
+  }
+  document.addEventListener('focusin',event=>{
+    if(home.contains(event.target)&&event.target.matches?.(homeEditorSelector))syncHomeWriting();
+  });
+  document.addEventListener('focusout',event=>{
+    if(!home.contains(event.target)||!event.target.matches?.(homeEditorSelector))return;
+    clearTimeout(homeWritingCloseTimer);
+    // iOS moves focus through toolbar buttons while closing the keyboard;
+    // wait for that transition rather than flashing the orb on every blur.
+    homeWritingCloseTimer=setTimeout(syncHomeWriting,300);
+  });
+  window.addEventListener('hashchange',()=>{if(root.classList.contains('sv-home-writing'))syncHomeWriting();});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&root.classList.contains('sv-home-writing'))root.classList.remove('sv-home-writing');});
+
 
   if(typeof MutationObserver!=='undefined'){
     new MutationObserver(syncIdleHome).observe(home,{attributes:true,attributeFilter:['hidden']});
