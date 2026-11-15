@@ -475,6 +475,63 @@ body > #orb.sv-sayvi-handoff-flight {
   :root.sv-home-greeting-expired #homePage #stage{transition:none!important}
 }
 
+/* Quiet Home: keep the ORIGINAL Sayvi orb in the centre when no work is
+   due today. This mode never hides the decision feed or changes music logic. */
+:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #stage{
+  min-height:clamp(420px,calc(100dvh - 280px),700px)!important;
+  flex:1 1 auto!important;
+  justify-content:center!important;
+  padding:31px 0 20px!important;
+  margin-top:0!important;
+  transition:min-height .62s cubic-bezier(.2,.8,.2,1)!important;
+}
+:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #orbCluster,
+:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
+  height:clamp(210px,62vw,285px)!important;
+  min-height:0!important;
+  margin-bottom:0!important;
+  opacity:1!important;
+  visibility:visible!important;
+  overflow:visible!important;
+  pointer-events:auto!important;
+  transition:height .62s cubic-bezier(.2,.8,.2,1),opacity .52s ease!important;
+}
+:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #orb,
+:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage.lm-focus #orb{
+  display:grid!important;
+  width:clamp(210px,62vw,285px)!important;
+  height:clamp(210px,62vw,285px)!important;
+  min-width:0!important;
+  min-height:0!important;
+  opacity:1!important;
+  transform:none!important;
+  pointer-events:auto!important;
+}
+:root.sv-sayvi-home-idle body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
+  opacity:0!important;
+  pointer-events:none!important;
+}
+:root.sv-sayvi-home-idle body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
+  animation:sv-home-idle-dock-shrink .76s cubic-bezier(.22,.8,.2,1) both!important;
+}
+:root.sv-sayvi-home-idle-leaving body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
+  animation:sv-home-idle-dock-expand .82s cubic-bezier(.22,.8,.2,1) both!important;
+}
+@keyframes sv-home-idle-dock-shrink{
+  from{clip-path:inset(0 0 0 0 round 999px)}
+  to{clip-path:inset(0 25% 0 0 round 999px)}
+}
+@keyframes sv-home-idle-dock-expand{
+  from{clip-path:inset(0 25% 0 0 round 999px)}
+  to{clip-path:inset(0 0 0 0 round 999px)}
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-sayvi-home-idle body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
+    animation:none!important;
+    clip-path:inset(0 25% 0 0 round 999px)!important;
+  }
+}
+
 /* SEYVEO SOUND · living music artwork on Home.
    The ORIGINAL orb returns only while a track plays. The existing miniature
    temporarily disappears; its approved dock material and geometry remain.
