@@ -743,3 +743,26 @@ body > #orb.sv-sayvi-handoff-flight {
 #homePage #seyveoLivingMoment.lm-preview:not(.lm-real),
 #homePage #svcpWorkHomePreview,
 #homePage #seyveoDemoLaunch{display:none!important}
+
+
+/* Focused reply on Home: one stable transition while iOS keyboard opens.
+   Dock styling stays unchanged; inline forms and their drafts are preserved. */
+:root.sv-home-writing #homePage #stage{
+  min-height:0!important;flex:0 0 auto!important;padding:0!important;margin:0!important;
+  transition:min-height .62s cubic-bezier(.22,1,.36,1),padding .62s ease!important
+}
+:root.sv-home-writing #homePage #orbCluster,
+:root.sv-home-writing #homePage.lm-focus #orbCluster{
+  height:0!important;min-height:0!important;opacity:0!important;pointer-events:none!important;
+  transition:height .62s cubic-bezier(.22,1,.36,1),opacity .32s ease!important
+}
+:root.sv-home-writing #homePage #stage > .message,
+:root.sv-home-writing #homePage .sv-sayvi-handoff-today:not(:focus-within),
+:root.sv-home-writing #homePage #seyveoLivingMoment:not(:focus-within),
+:root.sv-home-writing #homePage #dynamic > :not(:focus-within){
+  display:none!important
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-home-writing #homePage #stage,
+  :root.sv-home-writing #homePage #orbCluster{transition:none!important}
+}
