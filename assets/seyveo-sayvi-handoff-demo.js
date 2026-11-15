@@ -26,17 +26,14 @@
   const day=currentDay();
   let alreadySeen=false;
   try{alreadySeen=localStorage.getItem(dailyKey)===day;}catch{}
-  // Replaying on a refresh is intentional on both Safari/iPhone and desktop.
-  // Previously the mouse-pointer check accidentally excluded mobile Safari.
-  const pageReload=performance.getEntriesByType('navigation')[0]?.type==='reload'
-    ||performance.navigation?.type===1;
-  // Home Screen PWA launches are often reported as "navigate", not "reload".
-  // Each new standalone document is a new app opening: replay its artwork,
-  // while ordinary Safari tabs retain the once-a-day behavior.
-  const standaloneLaunch=matchMedia('(display-mode: standalone)').matches
-    ||navigator.standalone===true;
+  const everKey='seyveo-sayvi-cinema-ever-v1';
+  let everSeen=false;
+  try{everSeen=localStorage.getItem(everKey)==='1';}catch{}
+  const fullWelcome=!everSeen||params.get('sayvi-intro-full')==='1';
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||pageReload||standaloneLaunch||!alreadySeen);
+  // Once per local calendar day, including PWA reloads. Manual replay is
+  // always available for testing; ordinary navigation never repeats it.
+  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||!alreadySeen);
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
@@ -67,11 +64,13 @@
   let startGreeting=()=>{};
   let welcomeSpeech='';
   if(showCinema&&message){
-    const greetingLines=[
-      {text:'Привет!',kind:'welcome',type:79,hold:920,erase:47},
-      {text:'Я Сэйви.',kind:'name',type:89,hold:1000,erase:55},
-      {text:'Рада тебя видеть!',kind:'wish',type:81}
-    ];
+    const hour=new Date().getHours();
+    const daytime=hour<5?'Доброй ночи!':hour<12?'Доброе утро!':hour<18?'Добрый день!':'Добрый вечер!';
+    const greetingLines=fullWelcome?[
+      {text:'Привет!',kind:'welcome',type:69,hold:690,erase:41},
+      {text:'Я Сэйви.',kind:'name',type:74,hold:760,erase:44},
+      {text:'Рада тебя видеть!',kind:'wish',type:68}
+    ]:[{text:daytime,kind:'welcome',type:54}];
     welcomeSpeech=greetingLines.map(line=>line.text).join(' ');
     greeting=document.createElement('p');
     greeting.className='sv-cinema-written-hello';
@@ -115,7 +114,7 @@
         greetingTicker=setTimeout(type,phrase.type);
       };
       playPhrase(0);
-    },1040);};
+    },fullWelcome?760:250);};
   }
   if(!greeting)writtenGreetingComplete=true;
   // The HTML fallback is dark. Synchronize the already-selected white theme
@@ -146,11 +145,55 @@
   let voiceFileInput=null;
   let voiceFileUrl=null;
   let openingStartedAt=0;
+  let introSceneNote=null;
+  let introDockHint=null;
+  let introWritingTimer=0;
+  let introSceneDelay=0;
+  function clearIntroScene(){
+    clearTimeout(introWritingTimer);
+    clearTimeout(introSceneDelay);
+    introSceneNote?.remove();introSceneNote=null;
+    introDockHint?.remove();introDockHint=null;
+  }
+  function showIntroSceneNote(){
+    const stage=document.getElementById('stage');
+    if(!stage||introSceneNote)return;
+    const note=document.createElement('p');
+    note.className='sv-cinema-scene-note';
+    note.setAttribute('aria-hidden','true');
+    stage.append(note);
+    introSceneNote=note;
+    const line='Помогу с делами, планами и вопросами.';
+    let index=0;
+    const type=()=>{
+      if(done||introSceneNote!==note)return;
+      note.textContent=line.slice(0,++index);
+      if(index<line.length)introWritingTimer=setTimeout(type,fullWelcome?42:31);
+    };
+    introSceneDelay=setTimeout(()=>{
+      if(done||introSceneNote!==note)return;
+      note.classList.add('sv-cinema-scene-note--visible');
+      type();
+    },(fullWelcome?1450:770)*speed);
+  }
+  function showIntroDockHint(){
+    if(introDockHint)return;
+    const hint=document.createElement('div');
+    hint.className='sv-cinema-dock-hint';
+    hint.setAttribute('aria-hidden','true');
+    hint.textContent='На других экранах я здесь';
+    const r=small.getBoundingClientRect();
+    hint.style.left=Math.max(132,Math.min(window.innerWidth-132,r.left+r.width/2))+'px';
+    hint.style.top=Math.max(48,r.top-44)+'px';
+    document.body.append(hint);
+    introDockHint=hint;
+    requestAnimationFrame(()=>hint.classList.add('sv-cinema-dock-hint--visible'));
+  }
   // Do not cut off the final letters or the approved voice. The handoff
   // begins after BOTH have finished, with a short breathing pause.
   function scheduleFlightWhenReady(){
     if(done||!openingStartedAt||!writtenGreetingComplete||!narrationComplete||introTimer)return;
-    introTimer=setTimeout(begin,1250);
+    introTimer=setTimeout(begin,(fullWelcome?980:420)*speed);
   }
   // The Home greeting is a welcome, not a permanent part of the workspace.
   // Keep it for a quiet visitor, but give the room back to real cards once
@@ -201,7 +244,52 @@
   });
   const orbHome=orb.parentNode;
   const orbNext=orb.nextSibling;
+  // Quiet Home state: real weather from the SAME agenda forecast, not a
+  // placeholder or another weather provider. No card/panel around the line.
+  const idleInfo=document.createElement('div');
+  idleInfo.id='svSayviHomeIdleInfo';
+  idleInfo.className='sv-sayvi-home-idle-info';
+  idleInfo.hidden=true;
+  idleInfo.innerHTML='<button type="button" class="sv-sayvi-home-weather" hidden aria-label="Открыть прогноз в делах">'+
+    '<span class="sv-sayvi-home-weather-icon" aria-hidden="true"></span>'+
+    '<span class="sv-sayvi-home-weather-temperatures"></span>'+
+    '<span class="sv-sayvi-home-weather-condition"></span></button>'+
+    '<p class="sv-sayvi-home-idle-note">На сегодня всё спокойно</p>';
+  orbHome.after(idleInfo);
+  const idleWeather=idleInfo.querySelector('.sv-sayvi-home-weather');
+  const idleNote=idleInfo.querySelector('.sv-sayvi-home-idle-note');
+  let celebrationUntil=0,celebrationTimer=0;
   let originalOrbStyle=null;
+  function updateHomeWeather(){
+    const forecast=window.SAYVI_WEATHER?.getPresentation?.(todayKey());
+    if(!forecast){idleWeather.hidden=true;return;}
+    idleWeather.querySelector('.sv-sayvi-home-weather-icon').innerHTML=forecast.icon;
+    idleWeather.querySelector('.sv-sayvi-home-weather-temperatures').textContent=forecast.high+' / '+forecast.low;
+    idleWeather.querySelector('.sv-sayvi-home-weather-condition').textContent='· '+forecast.description;
+    const detail='Прогноз для '+forecast.city+': '+forecast.description+
+      '. Максимум '+forecast.high+', минимум '+forecast.low+'. Открыть погоду в делах.';
+    idleWeather.title=detail;
+    idleWeather.setAttribute('aria-label',detail);
+    idleWeather.hidden=false;
+  }
+  function updateIdleNote(){
+    const celebrating=Date.now()<celebrationUntil;
+    idleNote.textContent=celebrating?'На сегодня всё. Отличная работа!':
+      postponedHomeItems().length?'Отложенное дело ждёт своего времени':'На сегодня всё спокойно';
+    root.classList.toggle('sv-sayvi-home-day-celebrating',celebrating);
+  }
+  function celebrateCompletedDay(){
+    celebrationUntil=Date.now()+4200;
+    clearTimeout(celebrationTimer);
+    updateIdleNote();
+    celebrationTimer=setTimeout(()=>{
+      celebrationUntil=0;
+      updateIdleNote();
+    },4250);
+  }
+  idleWeather.addEventListener('click',()=>document.getElementById('navTasks')?.click());
+  window.addEventListener('seyveo:weather-updated',updateHomeWeather);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateHomeWeather()});
   function prepareDock(){
     if(!showCinema||root.dataset.theme!=='light'||!dock)return;
     // The existing grid stays at final coordinates. Only its background mask
@@ -247,7 +335,7 @@
   }
   function rememberOpening(){
     if(!showCinema)return;
-    try{localStorage.setItem(dailyKey,day);}catch{}
+    try{localStorage.setItem(dailyKey,day);localStorage.setItem(everKey,'1');}catch{}
   }
   const storeList=key=>{
     try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[];}
@@ -412,6 +500,8 @@
       },860);
     }
     root.dataset.svHomeCards=String(compact?Math.min(3,Math.max(1,count)):0);
+    idleInfo.hidden=!onHome||compact||root.classList.contains('sv-music-ambient');
+    if(!idleInfo.hidden){updateHomeWeather();updateIdleNote();}
     updateClusterInteraction();
     homePresenceInitialized=true;
     if(moving){
@@ -522,8 +612,11 @@
         if(action==='complete'&&item.kind==='task'){
           const detail={id:item.id};
           window.dispatchEvent(new CustomEvent('seyveo:home-task-complete',{detail}));
-          if(detail.result?.ok){queueTodayRefresh();}
-          else{
+          if(detail.result?.ok){
+            if(homeRouteVisible()&&upcomingHomeItems().length===0&&postponedHomeItems().length===0)
+              celebrateCompletedDay();
+            queueTodayRefresh();
+          }else{
             const status=todayCard.querySelector('.sv-home-task-status');
             status.textContent=detail.result?.message||'Не удалось завершить дело. Попробуйте открыть «Дела».';
             status.hidden=false;
@@ -640,6 +733,7 @@
   function finish({spark=false}={}){
     if(done)return;
     done=true;
+    clearIntroScene();
     voiceButton?.remove();
     voiceButton=null;
     voiceFileInput?.remove();
@@ -686,6 +780,9 @@
     rememberOpening();
     renderToday();
     beginHomeGreetingLifetime();
+    // The daily movie already greeted the visitor. Finish with a clean Home:
+    // its sphere, real cards or quiet weather line, not a second greeting.
+    if(homeRouteVisible())expireHomeGreeting();
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
     if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);
@@ -721,9 +818,11 @@
     }))orb.style.setProperty(name,value,'important');
     orb.style.setProperty('transform','none');
     root.classList.add('sv-sayvi-handoff-inflight');
+    showIntroSceneNote();
     // Unveil the fourth slot while Sayvi is still travelling. The capsule
     // completes its long, smooth expansion just before the sphere docks.
-    growDock(180*speed,3650*speed);
+    const flightDuration=(fullWelcome?4200:1700)*speed;
+    growDock((fullWelcome?180:100)*speed,(fullWelcome?3650:1400)*speed);
 
     requestAnimationFrame(()=>{
       if(done)return;
@@ -734,16 +833,22 @@
           // intermediate keyframes; the miniature remains a complete sphere.
           {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
           {offset:1,transform:land,opacity:1}
-        ],{duration:4200*speed,easing:'cubic-bezier(.45,0,.16,1)',fill:'forwards'});
-        safetyTimer=setTimeout(()=>finish({spark:true}),4850*speed);
+        ],{duration:flightDuration,easing:'cubic-bezier(.45,0,.16,1)',fill:'forwards'});
+        safetyTimer=setTimeout(()=>finish(),flightDuration+(fullWelcome?2000:1250)*speed);
         animation.finished.then(()=>{
           if(done)return;
+          clearTimeout(safetyTimer);
           if(shouldKeepSphereHome()){
-            // Preserve the original cinematic descent into the dock. Once it
-            // lands, one fluid reverse journey puts Sayvi beside the real
-            // Home cards, while the pearl dock retracts to three controls.
-            finish();
-            startRouteFlight(true);
+            // Let the miniature rest long enough to teach its location, then
+            // return the SAME living sphere to the quiet Home canvas.
+            introSceneNote?.classList.remove('sv-cinema-scene-note--visible');
+            showIntroDockHint();
+            introTimer=setTimeout(()=>{
+              if(done)return;
+              finish();
+              startRouteFlight(true);
+            },(fullWelcome?1250:680)*speed);
+            safetyTimer=setTimeout(()=>{if(!done)finish();},(fullWelcome?2000:1250)*speed);
           }else finish({spark:true});
         }).catch(()=>{});
       }catch{finish();}
