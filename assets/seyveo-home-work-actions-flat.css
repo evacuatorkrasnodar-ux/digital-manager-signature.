@@ -395,7 +395,7 @@
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
  border:0!important;
- background:transparent!important;
+ background:rgba(190,193,202,.18)!important;
  box-shadow:var(--sv-card-action-shadow,0 2px 8px rgba(25,31,42,.075))!important;
  -webkit-backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
  backdrop-filter:var(--sv-card-sayvi-blur,none)!important;
@@ -403,18 +403,18 @@
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- border:0!important;background:transparent!important;
+ border:0!important;background:rgba(190,193,202,.18)!important;
  box-shadow:var(--sv-card-action-shadow,0 2px 8px rgba(25,31,42,.075))!important;
  -webkit-backdrop-filter:var(--sv-card-action-blur,none)!important;
  backdrop-filter:var(--sv-card-action-blur,none)!important;
  color:#111113!important;
 }
-/* Approved dock optics on three 50px Home actions. First white-theme polish:
-   transparent fill, unchanged pearl rim and restrained microshadows. */
+/* Approved dock glass optics on three 50px Home actions, with a lighter 18%
+   neutral tint. Preserve the same pearl rim and microshadows. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
- border:.7px solid rgba(255,255,255,.28)!important;
- box-shadow:0 0 0 .45px rgba(164,170,184,.16),
+ border:1px solid rgba(255,255,255,.94)!important;
+ box-shadow:0 0 0 .45px rgba(164,170,184,.30),
   inset 0 1px 1px rgba(75,82,96,.055),
   inset 0 -1px 0 rgba(255,255,255,.18),
   inset .6px 0 .7px rgba(255,255,255,.16),
@@ -468,13 +468,3 @@
   transition:none!important;
  }
 }
-
-/* SEYVEO Potok · replaces the retired sparkle on the Home Sayvi action. */
-:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]),
-:root[data-theme="dark"] #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
- background-image:url('./seyveo-potok.svg?v=4')!important;
- background-position:center!important;
- background-size:100% 100%!important;
- background-repeat:no-repeat!important;
-}
-#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{visibility:hidden!important;}
