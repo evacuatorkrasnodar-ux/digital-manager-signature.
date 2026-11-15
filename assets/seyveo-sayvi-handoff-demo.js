@@ -473,17 +473,14 @@
     return true;
   }
   let dockExpandTimer=0;
-  let homePresenceInitialized=false;
   function syncIdleHome(){
     if(!done)return;
     const wasOnHome=root.classList.contains('sv-sayvi-home-present');
     const onHome=homeRouteVisible();
-    const moving=homePresenceInitialized&&wasOnHome!==onHome&&
-      (home.hidden||(onHome&&!home.hidden))&&
-      !root.classList.contains('sv-music-ambient');
-    if(wasOnHome&&!onHome)rememberHomeOrb();
-    // Hide the destination miniature until the actual Home sphere lands.
-    if(moving)root.classList.add(onHome?'sv-sayvi-route-undocking':'sv-sayvi-route-docking');
+    // Ordinary navigation is immediate: Sayvi is already in the dock when
+    // a section opens. Only the PEARL CAPSULE quietly grows/shrinks.
+    // The cinematic flight is reserved for the daily welcome.
+    if(!onHome&&routeFlight)stopRouteFlight();
     const count=onHome?upcomingHomeItems().length:0;
     const compact=onHome&&count>0;
     root.classList.toggle('sv-sayvi-home-present',onHome);
@@ -503,14 +500,7 @@
     idleInfo.hidden=!onHome||compact||root.classList.contains('sv-music-ambient');
     if(!idleInfo.hidden){updateHomeWeather();updateIdleNote();}
     updateClusterInteraction();
-    homePresenceInitialized=true;
-    if(moving){
-      requestAnimationFrame(()=>{
-        if(homeRouteVisible()!==onHome||startRouteFlight(onHome)===false){
-          root.classList.remove('sv-sayvi-route-docking','sv-sayvi-route-undocking');
-        }
-      });
-    }else if(onHome)requestAnimationFrame(rememberHomeOrb);
+    if(onHome)requestAnimationFrame(rememberHomeOrb);
   }
   // The owner's saved tasks are the only source of Home task cards.
   // Never create a second task store or show educational suggestions as real.
