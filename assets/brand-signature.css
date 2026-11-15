@@ -57,3 +57,22 @@
     animation:none!important;opacity:1!important
   }
 }
+
+/* Original SEYVEO cinematic lettering: cool platinum, never green.
+   The approved 24px type, geometry, and 9.3s reveal stay unchanged. */
+#homePage #signal.is-pearl .brand-word{
+  color:#e5ebef;
+  background:linear-gradient(150deg,#fff 6%,#e4eaee 30%,#a0aeb9 57%,#f5f8fa 76%,#8998a5 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+:root[data-theme="light"] #homePage #signal.is-pearl .brand-word{
+  color:#42505d;
+  background:linear-gradient(150deg,#303e4a 8%,#8899a7 38%,#4d5e6d 70%,#2f3d49 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+#homePage #signal.is-pearl .brand-specialty{color:#b9c5d0}
+:root[data-theme="light"] #homePage #signal.is-pearl .brand-specialty{color:#627483}
