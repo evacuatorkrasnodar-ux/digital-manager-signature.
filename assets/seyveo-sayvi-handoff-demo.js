@@ -686,7 +686,9 @@
        root.classList.contains('sv-sayvi-home-cards'));
     if(cinematicHomeArrival){
       root.classList.add('sv-home-cinematic-intro');
-      setTimeout(()=>root.classList.remove('sv-home-cinematic-intro'),1100);
+      // Keep the entrance class until the last queue card has settled.
+      // Removing it mid-flight used to snap the cards to their final position.
+      setTimeout(()=>root.classList.remove('sv-home-cinematic-intro'),3100);
     }
     requestAnimationFrame(()=>{
       root.classList.remove('sv-home-stabilizing');
