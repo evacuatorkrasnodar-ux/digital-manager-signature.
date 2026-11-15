@@ -49,22 +49,18 @@
     root.classList.remove('sv-sayvi-handoff-demo','sv-cinema-boot');
     return;
   }
-  // The opening is a quiet, personalized written introduction. The ordinary
+  // The opening is a quiet written introduction. The ordinary
   // Home greeting (and its live task context) returns after the handoff.
   const message=home.querySelector('#stage > .message');
   let greeting=null;
   let greetingDelay=0;
   let greetingTicker=0;
+  let writtenGreetingComplete=false;
   let startGreeting=()=>{};
   let welcomeSpeech='';
   if(showCinema&&message){
-    let owner='';
-    try{
-      const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
-      owner=typeof profile?.name==='string'?profile.name.trim().split(/\s+/)[0].slice(0,32):'';
-    }catch{}
     const greetingLines=[
-      {text:`Привет${owner ? ', '+owner : ''}!`,kind:'welcome',type:79,hold:920,erase:47},
+      {text:'Привет!',kind:'welcome',type:79,hold:920,erase:47},
       {text:'Я Сэйви.',kind:'name',type:89,hold:1000,erase:55},
       {text:'Рада тебя видеть!',kind:'wish',type:81}
     ];
@@ -96,6 +92,10 @@
           writing.textContent=phrase.text.slice(0,cursor);
           if(cursor<phrase.text.length)greetingTicker=setTimeout(type,phrase.type);
           else if(index<greetingLines.length-1)greetingTicker=setTimeout(erase,phrase.hold);
+          else{
+            writtenGreetingComplete=true;
+            scheduleFlightWhenReady();
+          }
         };
         const erase=()=>{
           if(done||!greeting)return;
@@ -109,6 +109,7 @@
       playPhrase(0);
     },1040);};
   }
+  if(!greeting)writtenGreetingComplete=true;
   // The HTML fallback is dark. Synchronize the already-selected white theme
   // before the first cinematic frame to avoid a dark-to-white visual flash.
   if(root.dataset.theme==='light'&&heroArtwork?.getAttribute('src')?.includes('plasma-signature.svg')){
@@ -122,6 +123,7 @@
   let done=false;
   let animation=null;
   let introTimer=0;
+  let narrationComplete=true;
   let safetyTimer=0;
   let dockTimer=0;
   let dockMetrics=null;
@@ -134,6 +136,12 @@
   let voiceFileInput=null;
   let voiceFileUrl=null;
   let openingStartedAt=0;
+  // Do not cut off the final letters or the approved voice. The handoff
+  // begins after BOTH have finished, with a short breathing pause.
+  function scheduleFlightWhenReady(){
+    if(done||!openingStartedAt||!writtenGreetingComplete||!narrationComplete||introTimer)return;
+    introTimer=setTimeout(begin,1250);
+  }
   // The Home greeting is a welcome, not a permanent part of the workspace.
   // Keep it for a quiet visitor, but give the room back to real cards once
   // they begin working (and in any case after five minutes).
@@ -400,9 +408,9 @@
     // caused a brief white/dark flash before the first spoken word.
     openingStartedAt=performance.now();
     startGreeting();
-    // The sphere never flies away while the private project narration speaks.
-    // Its audio onended event starts the flight after the final spoken word.
-    if(!waitForNarration)introTimer=setTimeout(begin,10400);
+    // Both written and spoken greetings are allowed to finish naturally.
+    narrationComplete=!waitForNarration;
+    scheduleFlightWhenReady();
   }
 
   function showLocalVoicePreview(){
@@ -436,8 +444,8 @@
     };
     voiceMedia.onended=()=>{
       if(done)return;
-      const remaining=Math.max(700,10400-(performance.now()-openingStartedAt));
-      introTimer=setTimeout(begin,remaining);
+      narrationComplete=true;
+      scheduleFlightWhenReady();
     };
     const fallback=(error)=>{
       if(done||!voiceButton)return;
@@ -593,7 +601,8 @@
       };
       voiceMedia.onended=()=>{
         if(done)return;
-        introTimer=setTimeout(begin,Math.max(700,10400-(performance.now()-openingStartedAt)));
+        narrationComplete=true;
+        scheduleFlightWhenReady();
       };
       voiceMedia.onerror=()=>importControl('Голос недоступен · Выбрать WAV снова');
       play();
