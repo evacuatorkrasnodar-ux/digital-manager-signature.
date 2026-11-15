@@ -4564,7 +4564,7 @@ function sayviHomeContext(brief){
  const upcoming=homeAgendaVisibleInGreeting()?(life?.upcomingEvents?.()||[]).filter(e=>!homeTaskPostponed(e,'calendar')):[];
  const now=new Date();
  const connection=homeAgendaVisibleInGreeting()?life?.relatedPreparation?.(now):null;
- if(connection){
+ if(connection&&!homeTaskPostponed(connection.task)&&!homeTaskPostponed(connection.event,'calendar')){
   return 'К событию «'+connection.event.title+'» есть дело «'+connection.task.title+'». Возможно, они связаны. Хочешь, помогу проверить подготовку?';
  }
  const soon=upcoming.find(item=>Number.isFinite(item.startsAt)&&item.startsAt>=now.getTime()&&item.startsAt-now.getTime()<=2*60*60*1000);
