@@ -6,6 +6,17 @@
   letter-spacing:0;text-align:center;white-space:normal;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
 #homePage .sv-sayvi-home-weather[hidden]{display:none!important}
+/* One separate, centered weather row AFTER the greeting on the restored Home.
+   It is never allowed to share the fixed top status line. */
+#homePage #stage > .sv-sayvi-home-weather{
+  flex:0 0 auto;
+  margin:8px auto 4px;
+  padding:6px 10px;
+  max-width:calc(100vw - 34px);
+  min-height:30px;
+  line-height:1.35;
+}
+
 /* The restored voice-cinema Home no longer uses home-idle/home-cards modes.
    Show a valid forecast after the opening; keep the cinema itself uncluttered. */
 :root.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage .sv-sayvi-home-weather:not([hidden]){
