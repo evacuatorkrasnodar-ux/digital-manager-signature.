@@ -921,7 +921,7 @@
 #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"]{
  --sv-card-icon-touch:50px;
  --sv-card-icon-radius:50%;
- --sv-card-action-neutral-bg:rgba(190,193,202,.05);
+ --sv-card-action-neutral-bg:transparent;
  --sv-card-action-outline:.7px solid rgba(255,255,255,.28);
  --sv-card-action-shadow:0 0 0 .45px rgba(164,170,184,.16),
    inset 0 1px 1px rgba(75,82,96,.055),
