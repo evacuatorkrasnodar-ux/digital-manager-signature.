@@ -21,12 +21,20 @@ test('Home reserves the async weather row before rendering Sayvi',async()=>{
 });
 
 test('Launch logo waits for Home scene, and local voice bridge survives',async()=>{
-  const [html,brand]=await Promise.all([read('index.html'),read('assets/brand-signature.css')]);
+  const [html,brand,homeCss,homeJs]=await Promise.all([
+    read('index.html'),read('assets/brand-signature.css'),
+    read('assets/seyveo-sayvi-handoff-demo.css'),
+    read('assets/seyveo-sayvi-handoff-demo.js')
+  ]);
   assert.match(html,/seyveo:cinema-opening/);
   assert.match(html,/seyveo:cinema-finished/);
   assert.match(html,/homeLaunchLogoShown=showBrandSignature\('launch'\)/);
   assert.match(html,/sv-home-launch-logo-visible/);
   assert.match(brand,/sv-sayvi-home-cards:not\(\.sv-home-launch-logo-visible\)/);
+  assert.match(brand,/#homePage #signal\.is-pearl \.brand-lockup\{\s*transform:scale\(1\)/);
+  assert.match(brand,/sv-home-signature-show 2\.25s/);
+  assert.match(homeCss,/sv-home-cinema-orb \.78s/);
+  assert.match(homeJs,/root\.classList\.add\('sv-home-cinematic-intro'\)/);
   const adapted=adaptOriginalHome(html);
   assert.match(adapted,/window\.SEYVEO_LOCAL_VOICE_BRIDGE=phrase/);
   for(const [,code] of adapted.matchAll(/<script(?:[^>]*)>([\s\S]*?)<\/script>/g)){
