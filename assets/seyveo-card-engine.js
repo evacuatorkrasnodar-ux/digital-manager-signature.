@@ -53,13 +53,13 @@
  // composing drafts, opening chats, reviewing, sending (with confirmation).
  const cardPolicy=Object.freeze({
   id:'pearl-clear-v1',
-  darkMaterial:'#38383A',lightMaterial:'rgba(190,193,202,.10)',
+  darkMaterial:'#38383A',lightMaterial:'rgba(190,193,202,.05)',
   primaryActionsMax:1,primaryPillsMax:1,visibleActionLimit:3,secondaryPresentation:'text',
   // Approved source-of-truth: future Card Engine families inherit this white-theme style.
   sayviButtonStandard:Object.freeze({
    theme:'light',shape:'circle',touchPx:50,ringPx:.7,outerRingPx:.45,
    rimOpacity:.28,outerRimOpacity:.16,glyphPx:30,
-   mark:'potok',fill:'silver-mist-10',ink:'#0B0B0D',
+   mark:'potok',fill:'silver-mist-5',ink:'#0B0B0D',
    darkTheme:'preserve-current'
   }),
   deferGesture:'swipe-both-cycle',dismissGesture:'long-press-only',contextGesture:'long-press',deferMinPixels:75,
