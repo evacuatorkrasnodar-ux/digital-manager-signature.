@@ -946,9 +946,12 @@ function row(item,compact=false,deferred=false){
   name.dataset.taskCall=item.id;
   name.setAttribute('aria-label','Подготовить звонок: '+contact);
  }else if(!compact){
-  name.dataset.taskMenu=item.id;
-  name.setAttribute('aria-label','Показать действия с делом: '+item.title);
-  name.setAttribute('aria-expanded','false');
+  if(item.sourceStore==='calendar')name.dataset.calendarOpen=item.calendarId;
+  else if(!item.done)name.dataset.taskEdit=item.id;
+  else name.dataset.taskMenu=item.id;
+  name.setAttribute('aria-label',item.sourceStore==='calendar'?'Изменить событие: '+item.title:
+   item.done?'Показать действия с делом: '+item.title:'Изменить дело: '+item.title);
+  if(item.done)name.setAttribute('aria-expanded','false');
  }else{
   name.disabled=true;
  }
@@ -1017,7 +1020,18 @@ function row(item,compact=false,deferred=false){
   const sayvi=element('button','personal-task-sayvi','Сэйви');
   sayvi.type='button';sayvi.dataset.taskSayvi=item.id;
   sayvi.setAttribute('aria-label','Обсудить с Сэйви дело: '+item.title);
-  section.append(art,label,sayvi,checkbox,menu);
+  /* A single moving surface exposes the red action underneath. The outer
+     calendar row never moves, so vertical scroll and date anchors stay put. */
+  const surface=element('div','sv-task-swipe-foreground');
+  surface.append(art,label,sayvi,checkbox);
+  if(item.sourceStore!=='calendar'){
+   const swipeDelete=element('button','sv-task-swipe-delete','Удалить');
+   swipeDelete.type='button';swipeDelete.dataset.taskSwipeDelete=item.id;
+   swipeDelete.setAttribute('aria-label','Удалить дело: '+item.title);
+   swipeDelete.tabIndex=-1;
+   section.append(swipeDelete);
+  }
+  section.append(surface,menu);
  }else section.append(label);
  return section;
 }
@@ -1395,13 +1409,184 @@ window.addEventListener('seyveo:home-task-open',event=>{
  };
  window.requestAnimationFrame(()=>window.setTimeout(showTarget,100));
 });
+/* One deliberate tap opens the real editor. A horizontal drag only reveals a
+   button; it NEVER deletes by itself. Touch scrolling stays native on iOS. */
+const SV_SWIPE_WIDTH=88;
+let svSwipeOpenRow=null,svSwipePointer=null,svSwipeLongTimer=0,svSwipeIgnoreClickUntil=0;
+let svSwipeIgnoredRow=null;
+let svTaskContext=null,svTaskUndo=null;
+function svSetTaskSwipe(row,offset,dragging=false){
+ if(!row)return;
+ const value=Math.max(-SV_SWIPE_WIDTH,Math.min(0,offset));
+ row.style.setProperty('--sv-task-swipe-offset',value+'px');
+ row.classList.toggle('is-swipe-dragging',dragging);
+ row.classList.toggle('is-swipe-open',value<=-SV_SWIPE_WIDTH/2);
+ const button=row.querySelector('[data-task-swipe-delete]');
+ if(button)button.tabIndex=value<=-SV_SWIPE_WIDTH/2?0:-1;
+ if(value===-SV_SWIPE_WIDTH)svSwipeOpenRow=row;
+ else if(svSwipeOpenRow===row)svSwipeOpenRow=null;
+}
+function svCloseTaskSwipe(except){
+ if(svSwipeOpenRow&&svSwipeOpenRow!==except)svSetTaskSwipe(svSwipeOpenRow,0);
+}
+function svCloseTaskContext(){
+ svTaskContext?.remove();svTaskContext=null;
+}
+function svOpenTaskEditor(row){
+ if(!row)return;
+ svCloseTaskSwipe();svCloseTaskContext();
+ if(row.dataset.calendarId){
+  window.dispatchEvent(new CustomEvent('seyveo:calendar-open-entry',{detail:{id:row.dataset.calendarId}}));
+  return;
+ }
+ const id=row.dataset.taskId;
+ const task=read().find(item=>item.id===id&&!item.done);
+ if(task)window.dispatchEvent(new CustomEvent('seyveo:home-task-edit',{detail:{id}}));
+ else row.querySelector('[data-task-menu]')?.click();
+}
+function svOpenTaskContext(row){
+ svCloseTaskContext();svCloseTaskSwipe();
+ const id=row.dataset.taskId;
+ if(!id)return;
+ const menu=element('div','sv-task-context-menu');
+ menu.setAttribute('role','menu');menu.setAttribute('aria-label','Действия с делом');
+ const edit=element('button','','Изменить');
+ edit.type='button';edit.setAttribute('role','menuitem');
+ edit.addEventListener('click',()=>svOpenTaskEditor(row));
+ menu.append(edit);
+ if(!row.dataset.calendarId){
+  const remove=element('button','sv-task-context-delete','Удалить');
+  remove.type='button';remove.setAttribute('role','menuitem');
+  remove.addEventListener('click',()=>{svCloseTaskContext();svDeleteTaskWithUndo(id)});
+  menu.append(remove);
+ }
+ document.body.append(menu);svTaskContext=menu;
+ const rect=row.getBoundingClientRect(),width=menu.offsetWidth,height=menu.offsetHeight;
+ const left=Math.max(12,Math.min(rect.left+Math.min(35,rect.width/4),innerWidth-width-12));
+ const preferredTop=rect.bottom+height+16<innerHeight-74?rect.bottom+6:rect.top-height-6;
+ const top=Math.max(12,Math.min(preferredTop,innerHeight-height-12));
+ menu.style.left=left+'px';menu.style.top=top+'px';
+ edit.focus({preventScroll:true});
+}
+function svNotifyTaskStoreChanged(){
+ window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
+ window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
+}
+function svFinalizeTaskUndo(){
+ if(!svTaskUndo)return;
+ const pending=svTaskUndo;svTaskUndo=null;
+ clearTimeout(pending.timeout);pending.toast.remove();
+ // Attachments are retained during Undo and cleaned only when it expires.
+ if(!read().some(item=>item.id===pending.task.id))
+  void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.([pending.task.id]);
+}
+function svDeleteTaskWithUndo(id){
+ const all=read(),index=all.findIndex(task=>task.id===id);
+ if(index<0)return;
+ svFinalizeTaskUndo();
+ if(!save(all.filter(task=>task.id!==id))){
+  showTaskError('Не удалось удалить дело. Проверьте память устройства.');return;
+ }
+ svCloseTaskSwipe();svCloseTaskContext();justCompletedTaskId='';render();svNotifyTaskStoreChanged();
+ const toast=element('div','sv-task-undo-toast');
+ toast.setAttribute('role','status');
+ const message=element('span','','Дело удалено');
+ const undo=element('button','','Отменить');undo.type='button';
+ toast.append(message,undo);document.body.append(toast);
+ const pending={task:all[index],index,toast,timeout:0};svTaskUndo=pending;
+ undo.addEventListener('click',()=>{
+  if(svTaskUndo!==pending)return;
+  const current=read();
+  if(!current.some(task=>task.id===pending.task.id)){
+   if(current.length>=MAX){showTaskError('Нет места, чтобы вернуть дело.');return;}
+   current.splice(Math.min(pending.index,current.length),0,pending.task);
+   if(!save(current)){showTaskError('Не удалось вернуть дело. Проверьте память устройства.');return;}
+  }
+  clearTimeout(pending.timeout);pending.toast.remove();svTaskUndo=null;
+  render();svNotifyTaskStoreChanged();
+ });
+ pending.timeout=window.setTimeout(svFinalizeTaskUndo,6000);
+}
+function svClearTaskLongTimer(){clearTimeout(svSwipeLongTimer);svSwipeLongTimer=0;}
+list.addEventListener('pointerdown',event=>{
+ if(event.pointerType==='mouse'&&event.button!==0)return;
+ const row=event.target.closest?.('.sv-agenda-entry[data-task-id]');
+ if(!row||event.target.closest('[data-task-swipe-delete]'))return;
+ if(event.target.closest('[data-task-toggle],[data-task-call],[data-task-origin]'))return;
+ svSwipeIgnoreClickUntil=0;svSwipeIgnoredRow=null;
+ svCloseTaskContext();svCloseTaskSwipe(row);
+ svSwipePointer={id:event.pointerId,row,x:event.clientX,y:event.clientY,
+  initial:row.classList.contains('is-swipe-open')?-SV_SWIPE_WIDTH:0,dragging:false,long:false};
+ if(event.pointerType!=='mouse'){
+  svClearTaskLongTimer();
+  svSwipeLongTimer=window.setTimeout(()=>{
+   if(!svSwipePointer||svSwipePointer.id!==event.pointerId||svSwipePointer.dragging)return;
+   svSwipePointer.long=true;svSwipeIgnoredRow=row;svSwipeIgnoreClickUntil=performance.now()+700;
+   svOpenTaskContext(row);
+  },570);
+ }
+},{passive:true});
+list.addEventListener('pointermove',event=>{
+ const state=svSwipePointer;
+ if(!state||state.id!==event.pointerId||state.long)return;
+ const dx=event.clientX-state.x,dy=event.clientY-state.y;
+ if(!state.dragging){
+  if(Math.abs(dy)>9&&Math.abs(dy)>Math.abs(dx)){svClearTaskLongTimer();svSwipePointer=null;return;}
+  if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)*1.3){
+   svClearTaskLongTimer();
+   if(!state.row.querySelector('[data-task-swipe-delete]')){svSwipePointer=null;return;}
+   state.dragging=true;
+  }else if(Math.abs(dx)>9||Math.abs(dy)>9)svClearTaskLongTimer();
+ }
+ if(state.dragging)svSetTaskSwipe(state.row,state.initial+dx,true);
+},{passive:true});
+function svFinishTaskPointer(event,cancelled=false){
+ const state=svSwipePointer;
+ if(!state||state.id!==event.pointerId)return;
+ svClearTaskLongTimer();svSwipePointer=null;
+ if(state.dragging){
+  const distance=state.initial+event.clientX-state.x;
+  svSetTaskSwipe(state.row,!cancelled&&distance<-(SV_SWIPE_WIDTH/2)?-SV_SWIPE_WIDTH:0);
+  svSwipeIgnoredRow=state.row;
+  svSwipeIgnoreClickUntil=performance.now()+480;
+ }else if(state.long){svSwipeIgnoredRow=state.row;svSwipeIgnoreClickUntil=performance.now()+650;}
+}
+document.addEventListener('pointerup',event=>svFinishTaskPointer(event),{capture:true,passive:true});
+document.addEventListener('pointercancel',event=>svFinishTaskPointer(event,true),{capture:true,passive:true});
+list.addEventListener('click',event=>{
+ if(performance.now()>=svSwipeIgnoreClickUntil||
+  event.target.closest?.('[data-task-swipe-delete]')||
+  event.target.closest?.('.sv-agenda-entry[data-task-id]')!==svSwipeIgnoredRow)return;
+ event.preventDefault();event.stopImmediatePropagation();
+},{capture:true});
+list.addEventListener('contextmenu',event=>{
+ const row=event.target.closest?.('.sv-agenda-entry[data-task-id]');
+ if(!row)return;
+ event.preventDefault();svClearTaskLongTimer();svSwipePointer=null;
+ svOpenTaskContext(row);
+});
+list.addEventListener('scroll',()=>{svClearTaskLongTimer();svCloseTaskContext();svCloseTaskSwipe();},{passive:true});
+document.addEventListener('pointerdown',event=>{
+ if(svTaskContext&&!svTaskContext.contains(event.target))svCloseTaskContext();
+ if(svSwipeOpenRow&&!svSwipeOpenRow.contains(event.target))svCloseTaskSwipe();
+},{capture:true,passive:true});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'){svCloseTaskContext();svCloseTaskSwipe();}
+});
+window.addEventListener('hashchange',()=>{svCloseTaskContext();svCloseTaskSwipe();});
 form.addEventListener('submit',put);
 $('personalAddHome').addEventListener('click',openDialog);
 $('personalAddTasks').addEventListener('click',openDialog);
 $('personalTaskCancel').addEventListener('click',exitTaskEditor);
 list.addEventListener('click',e=>{
- const btn=e.target.closest('button');if(!btn)return;
- if(btn.dataset.deferredSayvi){
+ const btn=e.target.closest('button');
+ if(!btn){
+  const row=e.target.closest('.sv-task-swipe-foreground')?.closest('.sv-agenda-entry[data-task-id]');
+  if(row)svOpenTaskEditor(row);
+  return;
+ }
+ if(btn.dataset.taskSwipeDelete)svDeleteTaskWithUndo(btn.dataset.taskSwipeDelete);
+ else if(btn.dataset.deferredSayvi){
   const kind=btn.dataset.deferredSayvi;
   const item=(window.SEYVEO_LIVING_MOMENT?.deferred?.()||[]).find(entry=>entry.kind===kind);
   if(item)askSayviForTask({title:item.title,kind:kind==='mail'?'mail':'contract',note:item.note});
