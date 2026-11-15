@@ -44,7 +44,7 @@
 
 /* The signature belongs to the full-size opening Sayvi only.
    Small Home/task variants keep the original pearl sphere unbranded. */
-:root.sv-sayvi-home-cards #homePage #signal.is-pearl .brand-lockup{
+:root.sv-sayvi-home-cards:not(.sv-home-launch-logo-visible) #homePage #signal.is-pearl .brand-lockup{
   visibility:hidden!important;
   opacity:0!important;
 }
