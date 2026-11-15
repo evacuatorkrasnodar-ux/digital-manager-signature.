@@ -251,6 +251,20 @@
     try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[];}
     catch{return [];}
   };
+  // This owner-controlled preference affects only the Home presentation.
+  // Tasks, calendar events and business decisions remain in their own stores.
+  const homeAgendaKey='seyveo-home-agenda-visible-v1';
+  function homeAgendaEnabled(){
+    try{return localStorage.getItem(homeAgendaKey)!=='0';}catch{return true;}
+  }
+  const homeAgendaSwitch=document.getElementById('svHomeAgendaSwitch');
+  if(homeAgendaSwitch){
+    homeAgendaSwitch.checked=homeAgendaEnabled();
+    homeAgendaSwitch.addEventListener('change',()=>{
+      try{localStorage.setItem(homeAgendaKey,homeAgendaSwitch.checked?'1':'0');}catch{}
+      window.dispatchEvent(new Event('seyveo:home-agenda-visibility-changed'));
+    });
+  }
   // Home without due work is a living space, not an empty page.
   // Ignore tomorrow's entries; unfinished overdue work still needs attention.
   const todayKey=()=>{
@@ -259,10 +273,11 @@
   };
   function hasTodayAttention(){
     const date=todayKey();
-    const dueTask=storeList('seyveo-personal-tasks-v1').some(item=>
+    const showAgenda=homeAgendaEnabled();
+    const dueTask=showAgenda&&storeList('seyveo-personal-tasks-v1').some(item=>
       item&&!item.done&&
       typeof item.due==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(item.due)&&item.due<=date);
-    const dueEvent=storeList('seyveo-calendar-events-v1').some(item=>
+    const dueEvent=showAgenda&&storeList('seyveo-calendar-events-v1').some(item=>
       item&&!item.done&&item.date===date);
     const living=document.getElementById('seyveoLivingMoment');
     const realCards=living&&!living.hidden&&!living.classList.contains('lm-preview')&&
@@ -301,6 +316,7 @@
     updateClusterInteraction();
   }
   function nextAgenda(){
+    if(!homeAgendaEnabled())return null;
     const today=new Date(),iso=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
     const validDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value);
     const validTime=value=>typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);
@@ -346,7 +362,9 @@
     const item=nextAgenda();
     // If the calendar has not exposed a stored upcoming item, leave Home's
     // real message/decision feed alone: never imply the user has no plans.
-    todayCard.hidden=!item;
+    // The original Living Moment owns real cards and swipe/Later semantics.
+    // This compact card is only a fallback if that renderer is unavailable.
+    todayCard.hidden=!item||typeof window.SEYVEO_LIVING_MOMENT?.state==='function';
     const title=todayCard.querySelector('.sv-sayvi-handoff-agenda-title');
     const meta=todayCard.querySelector('.sv-sayvi-handoff-agenda-meta');
     title.textContent=item?.title||'';
@@ -377,13 +395,16 @@
     }
   });
   ['seyveo:tasks-changed','seyveo:personal-tasks-changed','seyveo:life-events-changed',
-    'seyveo:calendar-changed','seyveo:home-recommendation-changed']
+    'seyveo:calendar-changed','seyveo:home-recommendation-changed',
+    'seyveo:home-agenda-visibility-changed']
     .forEach(type=>window.addEventListener(type,queueTodayRefresh));
   window.addEventListener('focus',queueTodayRefresh);
   window.addEventListener('hashchange',queueTodayRefresh);
   window.addEventListener('storage',event=>{
-    if(['seyveo-personal-tasks-v1','seyveo-calendar-events-v1'].includes(event.key))
+    if(['seyveo-personal-tasks-v1','seyveo-calendar-events-v1',homeAgendaKey].includes(event.key)){
+      if(event.key===homeAgendaKey&&homeAgendaSwitch)homeAgendaSwitch.checked=homeAgendaEnabled();
       queueTodayRefresh();
+    }
   });
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueTodayRefresh();});
 
