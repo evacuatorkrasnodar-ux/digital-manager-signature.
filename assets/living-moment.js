@@ -16,8 +16,9 @@ function homeAgendaEnabled(){
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
-// Restore the original rising three-card introduction when no real item needs attention.
-const previewArmed=false; // Educational Home cards are retired.
+// The approved three-card introduction is back. Real user tasks and owner
+// decisions always take precedence; these examples never enter task storage.
+const previewArmed=true;
 let previewSeen=false,previewRearmAt=0;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -1548,8 +1549,10 @@ function refresh(){
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=adviceIdentity(pending);
  if(mode==='preview'){
-  // Training cards are retired; immediately clear an old in-memory scene.
-  rest();return;
+  // Keep the current training card stable while it is being read. A genuine
+  // new task or owner recommendation can still replace the demonstration.
+  if(dueTasks().length||pending)rest();
+  return;
  }
  if(mode==='task'){
   if(!dynamic.hidden)dynamic.hidden=true;
@@ -1659,7 +1662,7 @@ dynamic.addEventListener('click',event=>{
  button.textContent=reason.hidden?'Почему':'Скрыть';
 },true);
 window.SEYVEO_LIVING_MOMENT=Object.freeze({
- preview:()=>false,state:()=>mode,
+ preview:()=>startPreview(),state:()=>mode,
  inspectReview:id=>({queued:dueTasks().some(t=>t.businessTask&&t.taskId===id),visible:mode==='task'&&key==='mail-review:'+id&&!space.hidden}),
  deferred:()=>deferredPreview(),
  deferredTaskIds:()=>Array.from(postponedTaskIds),
