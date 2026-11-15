@@ -76,30 +76,3 @@
   font-weight:430;
   letter-spacing:.13em;
 }
-
-
-/* Light-theme opening mark: platinum engraving with enough contrast against
-   the pale crystal. Only the signature changes; orb glass and choreography stay. */
-:root[data-theme=light] #homePage #signal.is-pearl .brand-word{
-  font-size:24px;
-  font-weight:560;
-  letter-spacing:.19em;
-  padding-left:.19em;
-  color:#334c58;
-  background:linear-gradient(155deg,#344c57 0%,#70858f 24%,#304954 46%,#8298a3 57%,#3a535f 76%,#293f4b 100%);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  -webkit-text-stroke:.18px rgba(30,51,60,.38);
-  filter:drop-shadow(0 1px .45px rgba(248,252,255,.25));
-}
-:root[data-theme=light] #homePage #signal.is-pearl .brand-specialty{
-  color:#455d69;
-  font-size:9.4px;
-  font-weight:520;
-  letter-spacing:.125em;
-  text-shadow:0 1px .4px rgba(250,253,255,.35);
-}
-:root[data-theme=light] #homePage #signal.is-brand .brand-mark{
-  filter:grayscale(.9) brightness(.88) contrast(1.12) drop-shadow(0 1px .75px rgba(23,43,52,.25));
-}
