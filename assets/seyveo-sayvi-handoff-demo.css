@@ -136,11 +136,13 @@
   opacity:0;transform:translate3d(0,-5px,0);
 }
 .sv-home-welcome-intro-line{display:block;max-width:100%;line-height:1.23;overflow-wrap:anywhere}
-.sv-home-welcome-intro-line--0{font-size:clamp(19px,5.1vw,23px);font-weight:520;letter-spacing:-.035em}
-.sv-home-welcome-intro-line--1{font-size:clamp(16px,4.35vw,20px);font-weight:430;letter-spacing:-.028em;color:var(--secondary,#5a6169)}
+.sv-home-welcome-intro-line--welcome{font-size:clamp(23px,6.1vw,29px);font-weight:540;letter-spacing:-.042em}
+.sv-home-welcome-intro-line--name{font-size:clamp(20px,5.1vw,24px);font-weight:440;letter-spacing:-.032em;color:var(--secondary,#5a6169)}
+.sv-home-welcome-intro-line--wish{font-size:clamp(21px,5.45vw,26px);font-weight:490;letter-spacing:-.036em}
 @media(max-height:690px){
-  .sv-home-welcome-intro-line--0{font-size:19px}
-  .sv-home-welcome-intro-line--1{font-size:16px}
+  .sv-home-welcome-intro-line--welcome{font-size:23px}
+  .sv-home-welcome-intro-line--name{font-size:20px}
+  .sv-home-welcome-intro-line--wish{font-size:21px}
 }
 @media(prefers-reduced-motion:reduce){
   #homePage #stage > .message .sv-home-welcome-intro{transition:none!important;transform:none!important}
