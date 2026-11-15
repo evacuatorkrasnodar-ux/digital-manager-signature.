@@ -1144,3 +1144,15 @@
   transition:none!important;
  }
 }
+
+/* Card Studio's separately selected dark preview keeps its original
+   graphite action buttons even while the real app is in white mode. */
+#seyveoCardStudio [data-preview-theme="dark"] .sv-card-system--rendered .sv-card-draft-actions
+ :is(.sv-card-draft-confirm,.sv-card-draft-option).sv-card-icon-button{
+ border:0!important;
+ background:#38383A!important;
+ color:#FFFFFF!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
