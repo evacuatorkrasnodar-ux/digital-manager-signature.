@@ -836,3 +836,23 @@ body > #orb.sv-sayvi-handoff-flight {
 @media(prefers-reduced-motion:reduce){
   :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{transition:none!important}
 }
+
+
+/* Home → section: the dock grows first; Sayvi gently appears only inside
+   its fully expanded slot. The approved capsule geometry is unchanged. */
+:root.sv-sayvi-home-idle-leaving body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
+  animation-duration:1.05s!important;
+  animation-timing-function:cubic-bezier(.22,1,.36,1)!important
+}
+:root.sv-sayvi-home-idle-leaving body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
+  opacity:0!important;pointer-events:none!important
+}
+:root.sv-home-dock-sphere-enter body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
+  animation:sv-home-dock-sphere-reveal .72s cubic-bezier(.22,1,.36,1) both!important
+}
+@keyframes sv-home-dock-sphere-reveal{
+  from{opacity:0}to{opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-home-dock-sphere-enter body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{animation:none!important}
+}
