@@ -322,22 +322,41 @@
 .sv-home-task-meta{font-size:13px;font-weight:440;line-height:1.35;color:#767e87}
 .sv-home-task-note{margin:10px 0 0 60px;color:#555b62;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
 .sv-home-task-note[hidden]{display:none}
-.sv-home-task-actions{display:flex;align-items:center;gap:10px;margin:15px 0 0 60px}
+.sv-home-task-actions{display:flex;align-items:flex-start;gap:8px;margin:14px 0 0 53px}
 .sv-home-task-actions button{
-  display:grid;place-items:center;width:44px;height:44px;padding:0;flex:0 0 44px;
-  border:0;border-radius:50%;background:#f2f3f5;color:#1f252a;
-  -webkit-tap-highlight-color:transparent;
-  transition:background-color .18s ease,transform .18s ease
+  display:flex;align-items:center;flex-direction:column;gap:6px;
+  min-width:78px;min-height:69px;padding:0;flex:0 0 78px;
+  border:0;background:transparent;color:#1f252a;
+  -webkit-tap-highlight-color:transparent
 }
 .sv-home-task-actions button[hidden]{display:none!important}
-.sv-home-task-actions button:active{background:#e7e9eb;transform:scale(.95)}
-.sv-home-task-actions button:focus-visible{outline:2px solid #38383A;outline-offset:3px}
+.sv-home-task-action-icon{
+  display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;
+  border-radius:50%;background:#f2f3f5;
+  transition:background-color .18s ease,transform .18s ease
+}
+.sv-home-task-actions button:active .sv-home-task-action-icon{background:#e7e9eb;transform:scale(.95)}
+.sv-home-task-actions button:focus-visible{outline:2px solid #38383A;outline-offset:3px;border-radius:8px}
 .sv-home-task-actions svg{
   width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;
   stroke-linecap:round;stroke-linejoin:round
 }
+.sv-home-task-action-label{font-size:11px;line-height:1.2;font-weight:480;color:#626870;white-space:nowrap}
 .sv-home-task-status{margin:9px 0 0 60px;color:#b34b35;font-size:12px;line-height:1.35}
 .sv-home-task-status[hidden]{display:none}
+.sv-home-task-postponed{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin:8px 0 18px;padding:10px 13px;
+  background:#f6f7f8;border:1px solid #e9ebed;border-radius:16px;
+  color:#5b636c;font-size:12px;line-height:1.35
+}
+.sv-home-task-postponed[hidden]{display:none!important}
+.sv-home-task-postponed-text{min-width:0;overflow-wrap:anywhere}
+.sv-home-task-postponed button{
+  flex:0 0 auto;border:0;border-radius:18px;padding:8px 12px;
+  background:#e8eaee;color:#1c2127;font:inherit;font-weight:600
+}
+.sv-home-task-postponed button:focus-visible{outline:2px solid #38383A;outline-offset:2px}
 @keyframes sv-sayvi-handoff-card-in{
   from{opacity:0;transform:translate3d(0,12px,0)}
   to{opacity:1;transform:translate3d(0,0,0)}
@@ -345,7 +364,11 @@
 :root[data-theme="dark"] .sv-home-task-title{color:#f3f4f6}
 :root[data-theme="dark"] .sv-home-task-eyebrow,:root[data-theme="dark"] .sv-home-task-meta{color:#b5bbc2}
 :root[data-theme="dark"] .sv-home-task-note{color:#c7cbd0}
-:root[data-theme="dark"] .sv-home-task-actions button{background:#353a40;color:#f4f4f6}
+:root[data-theme="dark"] .sv-home-task-actions button{color:#f4f4f6}
+:root[data-theme="dark"] .sv-home-task-action-icon{background:#353a40}
+:root[data-theme="dark"] .sv-home-task-action-label{color:#b5bbc2}
+:root[data-theme="dark"] .sv-home-task-postponed{background:#272b30;color:#d5d9de;border-color:#42474c}
+:root[data-theme="dark"] .sv-home-task-postponed button{background:#373d44;color:#f4f5f7}
 :root[data-theme="dark"].sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]){border-bottom-color:rgba(225,230,236,.14)}
 
 /* The actual #orb is lifted above stacking contexts, then contracted to a
