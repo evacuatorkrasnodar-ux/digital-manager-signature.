@@ -9,7 +9,8 @@
 :root.sv-sayvi-handoff-docked.sv-sayvi-home-idle #homePage .sv-sayvi-home-weather:not([hidden]),
 :root.sv-sayvi-handoff-docked.sv-sayvi-home-cards #homePage .sv-sayvi-home-weather:not([hidden]){
   display:inline-flex}
-#homePage .sv-sayvi-home-weather-mark{font-size:14px;font-weight:500;color:#7c9da8}
+#homePage .sv-sayvi-home-weather-mark{width:17px;height:17px;display:inline-flex;flex:none;color:#82969d}
+#homePage .sv-sayvi-home-weather-mark svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 #homePage .sv-sayvi-home-weather:focus-visible{outline:2px solid #79a6b7;outline-offset:1px}
 :root[data-theme="dark"] #homePage .sv-sayvi-home-weather{color:#c8d4d9}
 :root.sv-sayvi-home-cards #homePage .sv-sayvi-home-weather{margin:0 auto 2px;padding:4px 9px;font-size:12px}
