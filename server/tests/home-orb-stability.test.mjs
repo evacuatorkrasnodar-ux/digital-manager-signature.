@@ -21,10 +21,12 @@ test('Home reserves the async weather row before rendering Sayvi',async()=>{
 });
 
 test('Launch logo waits for Home scene, and local voice bridge survives',async()=>{
-  const html=await read('index.html');
+  const [html,brand]=await Promise.all([read('index.html'),read('assets/brand-signature.css')]);
   assert.match(html,/seyveo:cinema-opening/);
   assert.match(html,/seyveo:cinema-finished/);
   assert.match(html,/homeLaunchLogoShown=showBrandSignature\('launch'\)/);
+  assert.match(html,/sv-home-launch-logo-visible/);
+  assert.match(brand,/sv-sayvi-home-cards:not\(\.sv-home-launch-logo-visible\)/);
   const adapted=adaptOriginalHome(html);
   assert.match(adapted,/window\.SEYVEO_LOCAL_VOICE_BRIDGE=phrase/);
   for(const [,code] of adapted.matchAll(/<script(?:[^>]*)>([\s\S]*?)<\/script>/g)){
