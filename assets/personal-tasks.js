@@ -1174,6 +1174,11 @@ input.addEventListener('input',()=>{
   if(type)type.checked=true;
  }
 });
+function homeVisibilityForSave(){
+ const control=$('personalTaskShowOnHome');
+ // This legacy option is hidden in the current editor; do not silently opt out.
+ return control?.closest('[hidden]')?true:control?.checked!==false;
+}
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;svTaskCategoryTouched=false;svTaskTypeTouched=false;
  window.SEYVEO_TASK_PLACE_EDITOR?.reset?.();
@@ -1217,7 +1222,7 @@ async function put(e){
   record.place=window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null;
   record.repeat=$('personalTaskRepeat')?.value||'none';
   record.priority=$('personalTaskPriority')?.value||'none';
-  record.showOnHome=Boolean($('personalTaskShowOnHome')?.checked);
+  record.showOnHome=homeVisibilityForSave();
   record.category=form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';
   record.entryType=form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task';
   if(!await persistFile([record.id]))return;
@@ -1241,7 +1246,7 @@ async function put(e){
   notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',
   attachment:attachmentMeta,
   repeat:$('personalTaskRepeat')?.value||'none',priority:$('personalTaskPriority')?.value||'none',
-  showOnHome:Boolean($('personalTaskShowOnHome')?.checked),done:false,createdAt:new Date().toISOString(),doneAt:''};
+  showOnHome:homeVisibilityForSave(),done:false,createdAt:new Date().toISOString(),doneAt:''};
  const suggestedPlace=window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null;
  const additions=drafts.map(draft=>{
   const category=draft.category==='work'?'work':'personal';
