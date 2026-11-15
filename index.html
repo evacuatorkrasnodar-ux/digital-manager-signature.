@@ -2389,6 +2389,13 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 <main class="manage-main" id="managePage" hidden aria-labelledby="manageTitle">
 <div id="manageOverview">
 <header class="manage-heading"><div class="sv-continuity-titlebar sv-continuity-root"><h1 id="manageTitle" tabindex="-1">Управление</h1></div><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> УПРАВЛЕНИЕ</p><p>Всё важное — на своём месте.</p></header>
+<section class="manage-group sv-home-agenda-management" aria-label="Настройка дел на главной"><div class="manage-card">
+<label class="manage-row sv-home-agenda-setting" for="svHomeAgendaSwitch">
+<span class="smc-illustration" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="11" width="28" height="28" rx="6"/><path d="m16 21 3 3 5-6M28 21h5M17 31h15"/></svg></span>
+<span class="manage-text"><strong>Дела на главной</strong><small>Показывать мои дела и встречи</small></span>
+<input id="svHomeAgendaSwitch" class="sv-home-agenda-input" type="checkbox" role="switch" checked aria-label="Показывать дела и встречи на главной">
+<span class="sv-home-agenda-track" aria-hidden="true"></span>
+</label></div></section>
 <div class="sv-permissions-entry-wrap"><button id="svPermissionsEntry" type="button" class="sv-permissions-entry">Разрешения Сэйви <span aria-hidden="true">›</span></button></div>
 <section id="svPermissionPanel" class="sv-permission-panel" hidden aria-labelledby="svPermissionTitle">
  <h2 id="svPermissionTitle">Разрешения Сэйви</h2>
@@ -4488,7 +4495,11 @@ function chosenAssistantName(){
     return chosen||'Сэйви';
   }catch{return 'Сэйви'}
 }
+function homeAgendaVisibleInGreeting(){
+ try{return localStorage.getItem('seyveo-home-agenda-visible-v1')!=='0'}catch{return true}
+}
 function localTaskBrief(){
+ if(!homeAgendaVisibleInGreeting())return {count:0,dueToday:0,overdue:0,first:''};
   try{
     const all=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');
     const open=Array.isArray(all)?all.filter(t=>t&&typeof t.title==='string'&&!t.done):[];
@@ -4542,10 +4553,10 @@ function sayviHomeContext(brief){
  // Sayvi's initiative is a single grounded thought, not a new notification feed.
  // Only local, non-business personal tasks/calendar and approved LAB notes.
  const life=window.SEYVEO_LIFE_EVENTS;
- const tasks=life?.attentionTasks?.()||[];
- const upcoming=life?.upcomingEvents?.()||[];
+ const tasks=homeAgendaVisibleInGreeting()?(life?.attentionTasks?.()||[]):[];
+ const upcoming=homeAgendaVisibleInGreeting()?(life?.upcomingEvents?.()||[]):[];
  const now=new Date();
- const connection=life?.relatedPreparation?.(now);
+ const connection=homeAgendaVisibleInGreeting()?life?.relatedPreparation?.(now):null;
  if(connection){
   return 'К событию «'+connection.event.title+'» есть дело «'+connection.task.title+'». Возможно, они связаны. Хочешь, помогу проверить подготовку?';
  }
@@ -4566,7 +4577,7 @@ function sayviHomeContext(brief){
   const when=item.date===today?'Сегодня':Number.isNaN(date.getTime())?'Скоро':date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
   return when+' в '+item.time+' — «'+item.title+'». '+sayviPreparationOffer(item.title);
  }
- const future=life?.upcomingTasks?.()||[];
+ const future=homeAgendaVisibleInGreeting()?(life?.upcomingTasks?.()||[]):[];
  if(future.length)return 'На завтра запланировано «'+future[0].title+'». Можем подготовиться заранее.';
  const personal=window.SEYVEO_FAN_WORKSHOP?.homeNote?.();
  if(personal?.message)return personal.message;
@@ -4642,11 +4653,12 @@ window.addEventListener('seyveo:tasks-changed',syncHomeVoice);
 window.addEventListener('seyveo:life-events-changed',syncHomeVoice);
 window.addEventListener('seyveo:calendar-changed',syncHomeVoice);
 window.addEventListener('seyveo:personal-tasks-changed',syncHomeVoice);
+ window.addEventListener('seyveo:home-agenda-visibility-changed',syncHomeVoice);
 
 window.addEventListener('seyveo:fan-workshop-changed',syncHomeVoice);
 window.addEventListener('seyveo:profile-changed',syncHomeVoice);
 window.addEventListener('storage',event=>{
-  if(['seyveo-personal-tasks-v1','seyveo-first-acquaintance-v1'].includes(event.key))syncHomeVoice();
+  if(['seyveo-personal-tasks-v1','seyveo-first-acquaintance-v1','seyveo-home-agenda-visible-v1'].includes(event.key))syncHomeVoice();
 });
 /* Refresh the real greeting at daypart/date boundaries without DOM observers.
    One low-frequency check, only while Home is visible in the foreground. */
@@ -6195,7 +6207,7 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/assistant-chat-history.js?v=6"></script><script src="assets/wake-mode.js?v=7"></script><script src="assets/seyveo-permission-flow.js?v=5"></script><script src="assets/seyveo-gps-waypoint.js?v=1"></script><script src="assets/demo-mode.js?v=2"></script><script src="assets/management.js?v=61"></script><script src="assets/pulse-business-walkthrough.js?v=3"></script><script src="assets/pulse-inbox-demo.js?v=2"></script><script src="assets/onboarding.js?v=11"></script><script src="assets/context-focus.js?v=1"></script><script src="assets/contact-call-intent.js?v=1"></script><script src="assets/personal-tasks.js?v=108"></script><script src="assets/seyveo-agenda-weather.js?v=6"></script><script src="assets/calendar-natural.js?v=2"></script><script src="assets/task-natural.js?v=2"></script><script src="assets/reminder-dialogue.js?v=1"></script><script src="assets/notebook-natural.js?v=5"></script><script src="assets/notebook-paper.js?v=20"></script><script src="assets/seyveo-notebook-toolbar.js?v=25"></script><script src="assets/notebook-scan.js?v=5"></script><script src="assets/seyveo-notebook-launch.js?v=2"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=47"></script><script src="assets/seyveo-calendar-pickers.js?v=15"></script><script src="assets/seyveo-screen-awake.js?v=2"></script><script src="assets/assistant-local-actions.js?v=9"></script><script src="assets/calendar-reminders.js?v=3"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=46"></script><script src="assets/personal-wellness.js?v=21"></script><script src="assets/seyveo-medical-passport.js?v=8"></script><script src="assets/passport-cards.js?v=37"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/seyveo-business-ledger.js?v=1"></script><script src="assets/pulse.js?v=11"></script><script src="assets/picture.js?v=23"></script><script src="assets/home-widgets.js?v=13"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=7"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/assistant-intents.js?v=8"></script><script src="assets/business-map.js?v=21"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=6"></script><script src="assets/connection-coach.js?v=14"></script><script src="assets/seyveo-connection-prompts.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-search-velvet.css?v=1"><link rel="stylesheet" href="assets/seyveo-browser.css?v=124"><script src="assets/seyveo-browser.js?v=79"></script><script src="assets/seyveo-live-search-ui.js?v=1"></script><script src="assets/seyveo-rich-answer-ui.js?v=2"></script><script src="assets/sayvi-page.js?v=20261104-navigation-refresh-2"></script><script src="assets/sayvi-onboarding.js?v=20261113-live4"></script><script src="assets/seyveo-browser-flow.js?v=3"></script><script src="assets/seyveo-live-search-request.js?v=7"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=7"></script><script src="assets/seyveo-card-engine.js?v=18"></script><script src="assets/living-moment.js?v=132"></script><script src="assets/living-screen-core.js?v=3"></script><script src="assets/living-space.js?v=7"></script><script src="assets/document-vault.js?v=1"></script><script src="assets/document-vault-ui.js?v=7"></script><script src="assets/seyveo-document-flow.js?v=14"></script><script src="assets/seyveo-docs-export.js?v=1"></script><script src="assets/seyveo-pdf-export.js?v=1"></script><script src="assets/seyveo-docs-studio.js?v=23"></script><script src="assets/seyveo-docs-viewer.js?v=2"></script><script src="assets/documents-shelf.js?v=13"></script><script src="assets/documents-center.js?v=35"></script><script src="assets/seyveo-smart-contacts.js?v=5"></script><script src="assets/sayvi-surfaces.js?v=88"></script><script src="assets/living-answers.js?v=4"></script><script src="assets/network-care.js?v=3"></script><script src="assets/music-metadata.js?v=1"></script><script src="assets/seyveo-music.js?v=49"></script><script src="assets/seyveo-music-actions.js?v=2"></script><script src="assets/seyveo-music-dock.js?v=15"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=5"></script><script src="assets/magnetic-ink-dock.js?v=18"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=2"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/navigation-system.js?v=7"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=3" defer></script><script>
+</script><script src="assets/assistant-chat-history.js?v=6"></script><script src="assets/wake-mode.js?v=7"></script><script src="assets/seyveo-permission-flow.js?v=5"></script><script src="assets/seyveo-gps-waypoint.js?v=1"></script><script src="assets/demo-mode.js?v=2"></script><script src="assets/management.js?v=61"></script><script src="assets/pulse-business-walkthrough.js?v=3"></script><script src="assets/pulse-inbox-demo.js?v=2"></script><script src="assets/onboarding.js?v=11"></script><script src="assets/context-focus.js?v=1"></script><script src="assets/contact-call-intent.js?v=1"></script><script src="assets/personal-tasks.js?v=109"></script><script src="assets/seyveo-agenda-weather.js?v=6"></script><script src="assets/calendar-natural.js?v=2"></script><script src="assets/task-natural.js?v=2"></script><script src="assets/reminder-dialogue.js?v=1"></script><script src="assets/notebook-natural.js?v=5"></script><script src="assets/notebook-paper.js?v=20"></script><script src="assets/seyveo-notebook-toolbar.js?v=25"></script><script src="assets/notebook-scan.js?v=5"></script><script src="assets/seyveo-notebook-launch.js?v=2"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=47"></script><script src="assets/seyveo-calendar-pickers.js?v=15"></script><script src="assets/seyveo-screen-awake.js?v=2"></script><script src="assets/assistant-local-actions.js?v=9"></script><script src="assets/calendar-reminders.js?v=3"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=46"></script><script src="assets/personal-wellness.js?v=21"></script><script src="assets/seyveo-medical-passport.js?v=8"></script><script src="assets/passport-cards.js?v=37"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/seyveo-business-ledger.js?v=1"></script><script src="assets/pulse.js?v=11"></script><script src="assets/picture.js?v=23"></script><script src="assets/home-widgets.js?v=13"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=7"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/assistant-intents.js?v=8"></script><script src="assets/business-map.js?v=21"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=6"></script><script src="assets/connection-coach.js?v=14"></script><script src="assets/seyveo-connection-prompts.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-search-velvet.css?v=1"><link rel="stylesheet" href="assets/seyveo-browser.css?v=124"><script src="assets/seyveo-browser.js?v=79"></script><script src="assets/seyveo-live-search-ui.js?v=1"></script><script src="assets/seyveo-rich-answer-ui.js?v=2"></script><script src="assets/sayvi-page.js?v=20261104-navigation-refresh-2"></script><script src="assets/sayvi-onboarding.js?v=20261113-live4"></script><script src="assets/seyveo-browser-flow.js?v=3"></script><script src="assets/seyveo-live-search-request.js?v=7"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=7"></script><script src="assets/seyveo-card-engine.js?v=18"></script><script src="assets/living-moment.js?v=133"></script><script src="assets/living-screen-core.js?v=3"></script><script src="assets/living-space.js?v=7"></script><script src="assets/document-vault.js?v=1"></script><script src="assets/document-vault-ui.js?v=7"></script><script src="assets/seyveo-document-flow.js?v=14"></script><script src="assets/seyveo-docs-export.js?v=1"></script><script src="assets/seyveo-pdf-export.js?v=1"></script><script src="assets/seyveo-docs-studio.js?v=23"></script><script src="assets/seyveo-docs-viewer.js?v=2"></script><script src="assets/documents-shelf.js?v=13"></script><script src="assets/documents-center.js?v=35"></script><script src="assets/seyveo-smart-contacts.js?v=5"></script><script src="assets/sayvi-surfaces.js?v=88"></script><script src="assets/living-answers.js?v=4"></script><script src="assets/network-care.js?v=3"></script><script src="assets/music-metadata.js?v=1"></script><script src="assets/seyveo-music.js?v=49"></script><script src="assets/seyveo-music-actions.js?v=2"></script><script src="assets/seyveo-music-dock.js?v=15"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=5"></script><script src="assets/magnetic-ink-dock.js?v=18"></script><script src="assets/seyveo-browser-dock.js?v=7"></script><script src="assets/orb-language.js?v=2"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=4"></script><script src="assets/navigation-system.js?v=7"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=3" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
@@ -6604,6 +6616,6 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=1">
 <script src="assets/seyveo-sayvi-mini-copy.js?v=1"></script>
-<link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=26">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=41"></script>
+<link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=27">
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=42"></script>
 </body></html>
