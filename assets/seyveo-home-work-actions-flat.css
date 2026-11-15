@@ -497,20 +497,18 @@
  height:50px!important;min-height:50px!important;max-height:50px!important;
  margin:0!important;padding:0!important;gap:0!important;
  align-items:center!important;justify-content:center!important;flex-direction:row!important;
- border:1px solid rgba(146,157,170,.25)!important;
+ border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28))!important;
  border-radius:50%!important;
- background:rgba(146,157,170,.05)!important;background-image:none!important;
+ background:var(--sv-card-action-neutral-bg,transparent)!important;background-image:none!important;
  color:#111315!important;
- box-shadow:0 0 0 .4px rgba(179,188,199,.20),
-  inset 0 1px 0 rgba(255,255,255,.62),
-  0 1.5px 4px rgba(59,71,86,.055)!important;
- -webkit-backdrop-filter:blur(10px) saturate(106%)!important;
- backdrop-filter:blur(10px) saturate(106%)!important;
+ box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16))!important;
+ -webkit-backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%))!important;
+ backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%))!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment
  .lm-field[data-lm-composing="true"] .lm-actions
  .lm-polymer.sv-card-icon-button[data-card-role="primary"]:not([hidden]){
- border-color:rgba(92,102,113,.38)!important;
+ border-color:rgba(255,255,255,.28)!important;
 }
 :root[data-theme="light"] #homePage #seyveoLivingMoment
  .lm-field[data-lm-composing="true"] .lm-actions
@@ -544,7 +542,7 @@
 :root[data-theme="light"] #homePage #seyveoLivingMoment
  .lm-field[data-lm-composing="true"] .lm-actions
  .lm-polymer.sv-card-icon-button:not([hidden]):active{
- transform:scale(.965)!important;opacity:.85!important;
+ transform:scale(.965)!important;opacity:.92!important;
 }
 @media(max-width:370px){
  :root[data-theme="light"] #homePage #seyveoLivingMoment
