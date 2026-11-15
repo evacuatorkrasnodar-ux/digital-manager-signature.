@@ -65,15 +65,12 @@
   let startGreeting=()=>{};
   let welcomeSpeech='';
   if(showCinema&&message){
-    let owner='';
-    try{
-      const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
-      owner=typeof profile?.name==='string'?profile.name.trim().split(/\s+/)[0].slice(0,32):'';
-    }catch{}
+    // Written phrases match the exact approved 3.36-second spoken greeting.
+    // Do not insert an owner's name: the recording says only "Привет!".
     const greetingLines=[
-      {text:`Привет${owner ? ', '+owner : ''}!`,kind:'welcome',type:79,hold:920,erase:47},
-      {text:'Я Сэйви.',kind:'name',type:89,hold:1000,erase:55},
-      {text:'Рада тебя видеть!',kind:'wish',type:81}
+      {text:'Привет!',kind:'welcome',type:52,hold:260,erase:30},
+      {text:'Я Сэйви.',kind:'name',type:48,hold:260,erase:30},
+      {text:'Рада тебя видеть!',kind:'wish',type:60}
     ];
     welcomeSpeech=greetingLines.map(line=>line.text).join(' ');
     greeting=document.createElement('p');
@@ -109,12 +106,12 @@
           cursor=Math.max(0,cursor-1);
           writing.textContent=phrase.text.slice(0,cursor);
           if(cursor>0)greetingTicker=setTimeout(erase,phrase.erase);
-          else greetingTicker=setTimeout(()=>playPhrase(index+1),285);
+          else greetingTicker=setTimeout(()=>playPhrase(index+1),120);
         };
         greetingTicker=setTimeout(type,phrase.type);
       };
       playPhrase(0);
-    },1040);};
+    },160);};
   }
   // The HTML fallback is dark. Synchronize the already-selected white theme
   // before the first cinematic frame to avoid a dark-to-white visual flash.
