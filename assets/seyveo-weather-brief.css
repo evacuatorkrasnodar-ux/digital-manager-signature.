@@ -16,10 +16,10 @@
 :root.sv-sayvi-home-cards #homePage .sv-sayvi-home-weather{margin:-7px auto -3px;padding:9px 9px;font-size:14px}
 /* Once the temporary welcome text fades, use a little of the released
    vertical room. This affects Home's content only, not its dock or sphere. */
-@media (max-width:600px) and (min-height:700px){
+@media (max-width:600px){
  :root.sv-home-greeting-expired.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
-  padding-top:clamp(18px,3.7dvh,33px)!important;
-  transition:padding-top .56s cubic-bezier(.22,.8,.22,1)!important;
+  min-height:clamp(285px,calc(100dvh - 365px),435px)!important;
+  transition:min-height .78s cubic-bezier(.22,.8,.22,1)!important;
  }
 }
 /* A calm, genuinely centred Home when the welcome has faded and
@@ -31,7 +31,8 @@
  }
 }
 @media (prefers-reduced-motion:reduce){
- :root.sv-home-greeting-expired.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #stage{
+ :root.sv-home-greeting-expired.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #stage,
+ :root.sv-home-greeting-expired.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
   transition:none!important;
  }
 }
