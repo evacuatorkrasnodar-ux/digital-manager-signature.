@@ -49,6 +49,14 @@
     root.classList.remove('sv-sayvi-handoff-demo','sv-cinema-boot');
     return;
   }
+  // Independent status line: the greeting can expire, Sayvi's presence cannot.
+  // Fixed placement keeps the approved flight geometry and card positions intact.
+  if(!home.querySelector('.sv-sayvi-home-online')){
+    const online=document.createElement('div');
+    online.className='sv-sayvi-home-online';
+    online.textContent='Сэйви · на связи';
+    home.prepend(online);
+  }
   // The opening is a quiet written introduction. The ordinary
   // Home greeting (and its live task context) returns after the handoff.
   const message=home.querySelector('#stage > .message');
@@ -251,7 +259,8 @@
       .map(item=>({title:item.title.slice(0,140),date:validDate(item.due)?item.due:'',time:validTime(item.time)?item.time:''}));
     const events=storeList('seyveo-calendar-events-v1').filter(item=>item&&typeof item.title==='string'&&validDate(item.date))
       .map(item=>({title:item.title.slice(0,140),date:item.date,time:validTime(item.time)?item.time:''}));
-    const upcoming=[...tasks,...events].filter(item=>item.title.trim()&&(!item.date||item.date>=iso));
+    // Keep unfinished overdue tasks too; only past calendar events are omitted.
+    const upcoming=[...tasks,...events.filter(item=>item.date>=iso)].filter(item=>item.title.trim());
     upcoming.sort((a,b)=>(a.date||'9999-12-31').localeCompare(b.date||'9999-12-31')||(a.time||'99:99').localeCompare(b.time||'99:99'));
     return upcoming[0]||null;
   }
@@ -259,7 +268,12 @@
     if(!done)return;
     const living=document.getElementById('seyveoLivingMoment');
     const advice=document.getElementById('dynamic');
-    const hasRealCard=(living&&!living.hidden)||(advice&&!advice.hidden&&advice.childElementCount>0);
+    const hasVisibleCards=(parent,selector)=>parent&&!parent.hidden&&
+      Array.from(parent.querySelectorAll(selector)).some(node=>
+        !node.hidden&&node.getClientRects().length>0&&getComputedStyle(node).visibility!=='hidden');
+    // A visible but empty Living Moment container must not suppress a real task.
+    const hasRealCard=hasVisibleCards(living,'.lm-tiles > *, .lm-inline-item')||
+      hasVisibleCards(advice,':scope > *');
     if(!todayCard){
       todayCard=document.createElement('section');
       todayCard.className='sv-sayvi-handoff-today';
@@ -299,6 +313,36 @@
     const label=isToday?'Сегодня':date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(date):'Без даты';
     meta.textContent=label+(item.time?' · '+item.time:'');
   }
+  // Recommendations, cards and tasks can change after docking. Keep the
+  // nearest real item in sync instead of freezing the visibility at launch.
+  let todayRefreshPending=false;
+  function queueTodayRefresh(){
+    if(!done||todayRefreshPending)return;
+    todayRefreshPending=true;
+    requestAnimationFrame(()=>{
+      todayRefreshPending=false;
+      if(!home.hidden)renderToday();
+    });
+  }
+  ['seyveoLivingMoment','dynamic'].forEach(id=>{
+    const container=document.getElementById(id);
+    if(container&&typeof MutationObserver!=='undefined'){
+      new MutationObserver(queueTodayRefresh).observe(container,{
+        childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']
+      });
+    }
+  });
+  ['seyveo:tasks-changed','seyveo:personal-tasks-changed','seyveo:life-events-changed',
+    'seyveo:calendar-changed','seyveo:home-recommendation-changed']
+    .forEach(type=>window.addEventListener(type,queueTodayRefresh));
+  window.addEventListener('focus',queueTodayRefresh);
+  window.addEventListener('hashchange',queueTodayRefresh);
+  window.addEventListener('storage',event=>{
+    if(['seyveo-personal-tasks-v1','seyveo-calendar-events-v1'].includes(event.key))
+      queueTodayRefresh();
+  });
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueTodayRefresh();});
+
   function finish({spark=false}={}){
     if(done)return;
     done=true;
