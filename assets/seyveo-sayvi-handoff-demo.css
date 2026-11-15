@@ -588,6 +588,7 @@ body > #orb.sv-sayvi-handoff-flight {
   justify-content:center!important;
   padding:9px 0 5px!important;
   margin-top:0!important;
+  transition:padding .7s cubic-bezier(.22,1,.36,1),min-height .7s cubic-bezier(.22,1,.36,1)!important;
 }
 :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #orbCluster,
 :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
@@ -610,6 +611,7 @@ body > #orb.sv-sayvi-handoff-flight {
   opacity:1!important;
   transform:none!important;
   pointer-events:auto!important;
+  transition:width .78s cubic-bezier(.22,1,.36,1),height .78s cubic-bezier(.22,1,.36,1),opacity .5s ease!important;
 }
 :root.sv-sayvi-home-cards body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
   opacity:0!important;
