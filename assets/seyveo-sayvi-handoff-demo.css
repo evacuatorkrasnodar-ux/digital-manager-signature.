@@ -852,12 +852,13 @@ body > #orb.sv-sayvi-handoff-flight {
 :root.sv-sayvi-home-idle-leaving :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
   opacity:0!important;pointer-events:none!important
 }
-:root.sv-home-dock-sphere-enter :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
-  animation:sv-home-dock-sphere-reveal .42s cubic-bezier(.22,1,.36,1) both!important
+:root.sv-home-dock-sphere-wait :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
+  opacity:0!important;
+  pointer-events:none!important
 }
-@keyframes sv-home-dock-sphere-reveal{
-  from{opacity:0}to{opacity:1}
+:root.sv-home-dock-sphere-revealing :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
+  transition:opacity .46s cubic-bezier(.24,.7,.2,1)!important
 }
 @media(prefers-reduced-motion:reduce){
-  :root.sv-home-dock-sphere-enter :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{animation:none!important}
+  :root.sv-home-dock-sphere-revealing :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{transition:none!important}
 }
