@@ -419,6 +419,18 @@ body > #orb.sv-sayvi-handoff-flight {
   100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.14)}
 }
 
+/* The approved dock-arrival spark also glints on the miniature crystal.
+   Same existing artwork and keyframes, constrained to Sayvi's 42px sphere. */
+#assistantButton .sv-sayvi-velvet-sphere > .sv-cinema-dock-spark.sv-sayvi-dock-idle-spark{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:42px;
+  height:42px;
+  z-index:5;
+  animation:sv-cinema-dock-arrival 7.5s ease-in-out 1s infinite;
+}
+
 /* A single soft afterglow suggests that the light has entered the pearl glass. */
 :root.sv-sayvi-handoff-arrived #assistantButton .sv-sayvi-velvet-glass-glow {
   animation:sv-sayvi-handoff-arrival .78s ease-out both !important;
