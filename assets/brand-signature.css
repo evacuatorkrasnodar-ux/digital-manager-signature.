@@ -26,7 +26,7 @@
 /* The two-wave mark is now landscape; give it room to read inside Pearl Mist.
    The existing reveal timing and central glass sphere are unchanged. */
 #signal.is-brand .brand-mark{width:98px;height:46px;object-fit:contain}
-:root[data-theme=light] #signal.is-brand .brand-mark{filter:none}
+:root[data-theme=light] #signal.is-brand .brand-mark{filter:drop-shadow(0 1px 1px #ffffff15)}
 @media(max-width:370px){
  #homeHeader button.seyveo-brand-trigger{gap:8px;height:40px}
  #homeHeader .seyveo-brand-trigger img{width:40px;height:40px}
@@ -71,17 +71,8 @@
   background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-:root[data-theme="light"] #homePage #signal.is-pearl .brand-word{
-  color:#738590;
-  background:linear-gradient(150deg,#3c4e5a 4%,#adbbc5 29%,#526572 54%,#c4d0d8 71%,#405360 100%);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 1px 1px rgba(43,61,70,.17));
-}
 #homePage #signal.is-pearl .brand-specialty{
   color:#bdcad3;
   font-weight:430;
   letter-spacing:.13em;
 }
-:root[data-theme="light"] #homePage #signal.is-pearl .brand-specialty{color:#7e909b}
