@@ -342,10 +342,12 @@
        matchMedia('(prefers-reduced-motion: reduce)').matches||
        root.classList.contains('sv-music-ambient')||
        root.classList.contains('sv-music-ambient-leaving'))return false;
+    // A fast second navigation may interrupt the first flight. Restore the
+    // real orb to its stage before measuring the new destination.
+    stopRouteFlight();
     const smallRect=rectCopy(small.getBoundingClientRect());
     const homeRect=toHome?routeOrbDestination():lastHomeOrbRect;
     if(!safeRect(homeRect)||!safeRect(smallRect))return false;
-    stopRouteFlight();
     const from=toHome?smallRect:homeRect;
     const to=toHome?homeRect:smallRect;
     const baseSize=Math.max(from.width,to.width);
