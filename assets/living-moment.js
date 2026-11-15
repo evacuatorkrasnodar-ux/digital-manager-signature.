@@ -274,8 +274,10 @@ function createSurface(primary,other=[],real=false,taskId=''){
    (documentActive()&&documentStep!=='summary');
   workSayvi.hidden=!active||workMode!=='choose';
   workOwn.hidden=!active||workMode!=='choose';
-  workBack.hidden=true;
-  workSend.hidden=!active||workMode==='choose'||workMode==='done';
+  const composing=active&&(workMode==='sayvi'||workMode==='own');
+  workBack.hidden=!composing;
+  workSend.hidden=!composing;
+  if(composing)controls.append(workSend,workBack);
   if(active)open.hidden=workMode!=='choose';
   else if(!mailActive()&&!documentActive())open.hidden=false;
   if(active||documentActive())execute.hidden=true;
@@ -625,7 +627,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailSave.textContent='Отправить';
   cardIconize(mailSave,'send');
   mailSave.setAttribute('aria-label','Отправить подготовленный ответ (предпросмотр)');
-  mailCancel.hidden=!active||mailStep!=='confirm';
+  mailCancel.hidden=!active||!['confirm','edit'].includes(mailStep);
   if(active){
    sayviAction.hidden=mailStep!=='draft'; // No duplicate Sayvi beside Send.
    open.hidden=!['draft','confirm','edit'].includes(mailStep);
@@ -638,8 +640,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
    mailSave.dataset.cardRole='primary';
    open.setAttribute('aria-label',mailStep==='draft'?'Открыть почту':'Обсудить ответ с Сэйви в чате');
    open.setAttribute('title',mailStep==='draft'?'Открыть почту':'В чат с Сэйви');
-   if(mailStep==='confirm')controls.append(execute,mailCancel);
-   else if(mailStep==='edit')controls.append(mailSave,open);
+   if(mailStep==='confirm')controls.append(execute,open,mailCancel);
+   else if(mailStep==='edit')controls.append(mailSave,open,mailCancel);
   }else{
    execute.textContent=real?'Продолжить дело':'Исполнить';
    execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
@@ -814,7 +816,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
  workSayvi.setAttribute('aria-label','Подготовить черновик ответа с Сэйви');
  workOwn.classList.add('sv-work-own');
  workOwn.setAttribute('aria-label','Написать ответ самостоятельно');
- const workBack=polymer('Изменить',()=>{if(workMode==='sayvi'){workMode='own';}else{workMode='choose';}updateWork()});
+ const workBack=polymer('Назад',()=>{workMode='choose';updateWork()});
+ workBack.setAttribute('aria-label','Назад к выбору способа ответа Елене');
+ workBack.setAttribute('title','Назад');
  const workSend=polymer('Отправить',()=>{
   const typed=workDetails.querySelector('textarea')?.value?.trim()||workDraft.trim();
   if(!typed){explain(field,'Сначала напишите ответ.',workSend);return}
@@ -979,7 +983,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  for(const [button,kind] of [
   [sayviAction,'sayvi'],[workSayvi,'sayvi'],
   [workOwn,'edit'],[mailEdit,'edit'],[documentEdit,'edit'],
-  [open,'navigate'],[workSend,'send'],[mailSave,'send'],[documentSave,'send'],[documentCancel,'back'],[mailCancel,'back']
+  [open,'navigate'],[workSend,'send'],[workBack,'back'],[mailSave,'send'],[documentSave,'send'],[documentCancel,'back'],[mailCancel,'back']
  ])cardIconize(button,kind);
  main.append(hero,workDetails,mailDetails,documentDetails,controls);
  const secondary=create('div','lm-secondary');
