@@ -831,6 +831,32 @@ body > #orb.sv-sayvi-handoff-flight {
 
 /* The returning Home renders its final card-size sphere before revealing it.
    This prevents the initial generic 300px orb from shrinking in plain sight. */
+/* Quick cinematic reveal: visual layers fade into their already-settled
+   positions. The sphere's box, stage geometry and dock never move. */
+:root.sv-home-cinematic-intro #homePage #plasmaVisual{
+  animation:sv-home-cinema-orb .78s cubic-bezier(.22,.8,.2,1) both!important;
+  transform-origin:center center;
+}
+:root.sv-home-cinematic-intro #homePage #stage > .message{
+  animation:sv-home-cinema-copy .66s .16s cubic-bezier(.22,.8,.2,1) both!important;
+}
+:root.sv-home-cinematic-intro #homePage .sv-sayvi-home-online{
+  animation:sv-home-cinema-copy .54s .1s ease-out both!important;
+}
+@keyframes sv-home-cinema-orb{
+  0%{opacity:.12;filter:brightness(1.16);scale:.98}
+  54%{opacity:.93;filter:brightness(1.07);scale:.995}
+  100%{opacity:1;filter:none;scale:1}
+}
+@keyframes sv-home-cinema-copy{
+  from{opacity:0;translate:0 5px}
+  to{opacity:1;translate:0 0}
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-home-cinematic-intro #homePage :is(#plasmaVisual,#stage > .message,.sv-sayvi-home-online){
+    animation:none!important;scale:1!important;translate:none!important
+  }
+}
 :root.sv-home-stabilizing.sv-sayvi-handoff-demo.sv-sayvi-handoff-docked #homePage :is(#stage,#orb,#orbCluster),
 :root.sv-home-stabilizing.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage :is(#stage,#orb,#orbCluster){
   transition:none!important
