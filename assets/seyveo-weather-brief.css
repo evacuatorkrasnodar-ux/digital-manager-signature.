@@ -6,8 +6,9 @@
   letter-spacing:0;text-align:center;white-space:normal;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
 #homePage .sv-sayvi-home-weather[hidden]{display:none!important}
-:root.sv-sayvi-handoff-docked.sv-sayvi-home-idle #homePage .sv-sayvi-home-weather:not([hidden]),
-:root.sv-sayvi-handoff-docked.sv-sayvi-home-cards #homePage .sv-sayvi-home-weather:not([hidden]){
+/* The restored voice-cinema Home no longer uses home-idle/home-cards modes.
+   Show a valid forecast after the opening; keep the cinema itself uncluttered. */
+:root.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage .sv-sayvi-home-weather:not([hidden]){
   display:inline-flex}
 #homePage .sv-sayvi-home-weather-mark{width:17px;height:17px;display:inline-flex;flex:none;color:#82969d}
 #homePage .sv-sayvi-home-weather-mark svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
