@@ -137,6 +137,8 @@
   let dockMetrics=null;
   let dockStyleBefore=null;
   let todayCard=null;
+  let postponedCard=null;
+  let currentPostponedItem=null;
   let voiceButton=null;
   let voiceDownload=null;
   let voiceMedia=null;
@@ -319,7 +321,7 @@
       return raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
     }catch{return {};}
   }
-  function upcomingHomeItems(){
+  function upcomingHomeItems(includePostponed=false){
     if(!homeAgendaEnabled())return [];
     const today=todayKey(),later=homeLaterMap(),now=Date.now();
     const validDate=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -334,8 +336,27 @@
       !e.done&&e.kind!=='business'&&validDate(e.date)&&e.date===today)
       .map(e=>({key:'calendar:'+e.id,id:e.id,kind:'event',title:e.title.trim().slice(0,140),
         date:e.date,time:clock(e.time),notes:''}));
-    return [...tasks,...events].filter(item=>!(Number(later[item.key])>now))
+    return [...tasks,...events].filter(item=>includePostponed||!(Number(later[item.key])>now))
       .sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'99:99').localeCompare(b.time||'99:99'));
+  }
+  function postponedHomeItems(){
+    const later=homeLaterMap(),now=Date.now();
+    return upcomingHomeItems(true).filter(item=>Number(later[item.key])>now)
+      .map(item=>({...item,until:Number(later[item.key])}))
+      .sort((a,b)=>a.until-b.until);
+  }
+  function homePostponementChanged(){
+    window.dispatchEvent(new Event('seyveo:home-task-postponement-changed'));
+    queueTodayRefresh();
+  }
+  function restoreHomeItem(item){
+    if(!item)return;
+    try{
+      const later=homeLaterMap();
+      delete later[item.key];
+      localStorage.setItem(homeLaterKey,JSON.stringify(later));
+    }catch{}
+    homePostponementChanged();
   }
   function postponeHomeItem(item){
     if(!item)return;
@@ -345,7 +366,7 @@
       fresh[item.key]=Date.now()+60*60*1000;
       localStorage.setItem(homeLaterKey,JSON.stringify(fresh));
     }catch{}
-    queueTodayRefresh();
+    homePostponementChanged();
   }
   function homeItemWhen(item){
     const date=item.date===todayKey()?'Сегодня':
@@ -363,9 +384,9 @@
         '<div class="sv-home-task-copy"><strong class="sv-home-task-title"></strong><span class="sv-home-task-meta"></span></div></div>'+
         '<p class="sv-home-task-note" hidden></p>'+
         '<div class="sv-home-task-actions" role="group" aria-label="Действия с делом">'+
-        '<button type="button" data-sv-home-action="details" aria-label="Подробнее о деле" title="Подробнее"><svg viewBox="0 0 24 24"><path d="M6 18 18 6M8 6h10v10"/></svg></button>'+
-        '<button type="button" data-sv-home-action="complete" aria-label="Отметить дело выполненным" title="Исполнить"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.5 12 3 3 6-6"/></svg></button>'+
-        '<button type="button" data-sv-home-action="later" aria-label="Отложить карточку на час" title="Позже"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></button></div>'+
+        '<button type="button" data-sv-home-action="details" aria-label="Подробнее о деле" title="Подробнее"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><path d="M6 18 18 6M8 6h10v10"/></svg></span><span class="sv-home-task-action-label">Подробнее</span></button>'+
+        '<button type="button" data-sv-home-action="complete" aria-label="Отметить дело выполненным" title="Исполнить"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.5 12 3 3 6-6"/></svg></span><span class="sv-home-task-action-label">Исполнить</span></button>'+
+        '<button type="button" data-sv-home-action="later" aria-label="Отложить карточку на час" title="Убрать на час"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><span class="sv-home-task-action-label">Позже · 1 ч</span></button></div>'+
         '<p class="sv-home-task-status" role="status" aria-live="polite" hidden></p>';
       todayCard.addEventListener('click',event=>{
         const button=event.target.closest('button[data-sv-home-action]');
@@ -401,10 +422,24 @@
         if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)postponeHomeItem(currentHomeItem);
       },{passive:true});
       document.getElementById('stage')?.after(todayCard);
+      postponedCard=document.createElement('aside');
+      postponedCard.className='sv-home-task-postponed';
+      postponedCard.setAttribute('aria-label','Отложенная карточка дела');
+      postponedCard.innerHTML='<span class="sv-home-task-postponed-text" role="status"></span><button type="button" aria-label="Вернуть отложенную карточку сейчас">Вернуть</button>';
+      postponedCard.querySelector('button').addEventListener('click',()=>restoreHomeItem(currentPostponedItem));
+      todayCard.after(postponedCard);
     }
     const items=upcomingHomeItems(),item=items[0]||null;
     currentHomeItem=item;
     todayCard.hidden=!item;
+    const postponed=postponedHomeItems();
+    currentPostponedItem=postponed[0]||null;
+    postponedCard.hidden=!currentPostponedItem;
+    if(currentPostponedItem){
+      const until=new Date(currentPostponedItem.until).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+      const more=postponed.length>1?' · ещё '+(postponed.length-1):'';
+      postponedCard.querySelector('.sv-home-task-postponed-text').textContent='«'+currentPostponedItem.title+'» · отложено до '+until+more;
+    }
     if(!item)return;
     todayCard.querySelector('.sv-home-task-eyebrow').textContent=item.kind==='event'?'СЭЙВИ · ВАША ВСТРЕЧА':'СЭЙВИ · ВАШЕ ДЕЛО';
     todayCard.querySelector('.sv-home-task-title').textContent=item.title;
