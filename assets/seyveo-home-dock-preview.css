@@ -38,13 +38,13 @@
  box-sizing:border-box!important;
  top:0!important;bottom:0!important;
  height:60px!important;
- /* White-theme dock: a lighter neutral glass wash on both original panes. */
- border:1px solid rgba(255,255,255,.94)!important;
+ /* Trial: the exact transparent pearl material approved for Home card actions. */
+ border:.7px solid rgba(255,255,255,.28)!important;
  border-radius:999px!important;
- background:rgba(190,193,202,.28)!important;
+ background:transparent!important;
  -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
  backdrop-filter:blur(12px) saturate(108%)!important;
- box-shadow:0 0 0 .45px rgba(164,170,184,.30),
+ box-shadow:0 0 0 .45px rgba(164,170,184,.16),
    inset 0 1px 1px rgba(75,82,96,.055),
    inset 0 -1px 0 rgba(255,255,255,.18),
    inset .6px 0 .7px rgba(255,255,255,.16),
@@ -57,8 +57,8 @@
 )::before{
  left:0!important;right:auto!important;
  width:var(--sv-feng-capsule)!important;
- /* A slightly more legible pearl line for the long capsule only. */
- box-shadow:0 0 0 .7px rgba(133,142,158,.42),
+ /* Same ring as the search circle: one continuous edge while the dock grows. */
+ box-shadow:0 0 0 .45px rgba(164,170,184,.16),
    inset 0 1px 1px rgba(75,82,96,.055),
    inset 0 -1px 0 rgba(255,255,255,.18),
    inset .6px 0 .7px rgba(255,255,255,.16),
