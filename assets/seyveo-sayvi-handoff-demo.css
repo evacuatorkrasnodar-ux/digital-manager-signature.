@@ -565,6 +565,46 @@ body > #orb.sv-sayvi-handoff-flight {
   }
 }
 
+/* The same living Sayvi can share Home with a short queue of real work.
+   Only her size and the existing three-slot presentation change: the
+   approved dock material, icons and navigation remain untouched. */
+:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
+  min-height:0!important;
+  flex:0 0 auto!important;
+  justify-content:center!important;
+  padding:9px 0 5px!important;
+  margin-top:0!important;
+}
+:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #orbCluster,
+:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
+  height:var(--sv-home-live-orb-size,170px)!important;
+  min-height:0!important;
+  margin-bottom:0!important;
+  opacity:1!important;
+  visibility:visible!important;
+  overflow:visible!important;
+  pointer-events:auto!important;
+  transition:height .62s cubic-bezier(.2,.8,.2,1),opacity .52s ease!important;
+}
+:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #orb,
+:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage.lm-focus #orb{
+  display:grid!important;
+  width:var(--sv-home-live-orb-size,170px)!important;
+  height:var(--sv-home-live-orb-size,170px)!important;
+  min-width:0!important;
+  min-height:0!important;
+  opacity:1!important;
+  transform:none!important;
+  pointer-events:auto!important;
+}
+:root.sv-sayvi-home-cards body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
+  opacity:0!important;
+  pointer-events:none!important;
+}
+:root.sv-sayvi-home-cards body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
+  animation:sv-home-idle-dock-shrink .76s cubic-bezier(.22,.8,.2,1) both!important;
+}
+
 /* SEYVEO SOUND · living music artwork on Home.
    The ORIGINAL orb returns only while a track plays. The existing miniature
    temporarily disappears; its approved dock material and geometry remain.
