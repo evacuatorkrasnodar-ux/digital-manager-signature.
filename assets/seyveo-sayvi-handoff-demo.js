@@ -272,20 +272,14 @@
     return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
   };
   function hasTodayAttention(){
-    const date=todayKey();
-    const showAgenda=homeAgendaEnabled();
-    const dueTask=showAgenda&&storeList('seyveo-personal-tasks-v1').some(item=>
-      item&&!item.done&&
-      typeof item.due==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(item.due)&&item.due<=date);
-    const dueEvent=showAgenda&&storeList('seyveo-calendar-events-v1').some(item=>
-      item&&!item.done&&item.date===date);
+    const agenda=upcomingHomeItems().length>0;
     const living=document.getElementById('seyveoLivingMoment');
     const realCards=living&&!living.hidden&&!living.classList.contains('lm-preview')&&
       !!living.querySelector('.lm-tiles > :not([hidden]),.lm-inline-item:not([hidden])');
     const dynamic=document.getElementById('dynamic');
     const advice=dynamic&&!dynamic.hidden&&
       Array.from(dynamic.children).some(el=>!el.hidden&&el.classList.contains('decision-card'));
-    return dueTask||dueEvent||realCards||advice;
+    return !!(agenda||realCards||advice);
   }
   function shouldKeepSphereHome(){
     return !home.hidden&&(!location.hash||location.hash==='#home')&&!hasTodayAttention();
@@ -315,64 +309,113 @@
     }
     updateClusterInteraction();
   }
-  function nextAgenda(){
-    if(!homeAgendaEnabled())return null;
-    const today=new Date(),iso=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
-    const validDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value);
-    const validTime=value=>typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);
-    const tasks=storeList('seyveo-personal-tasks-v1').filter(item=>item&&!item.done&&typeof item.title==='string')
-      .map(item=>({title:item.title.slice(0,140),date:validDate(item.due)?item.due:'',time:validTime(item.time)?item.time:''}));
-    const events=storeList('seyveo-calendar-events-v1').filter(item=>item&&typeof item.title==='string'&&validDate(item.date))
-      .map(item=>({title:item.title.slice(0,140),date:item.date,time:validTime(item.time)?item.time:''}));
-    // Keep unfinished overdue tasks too; only past calendar events are omitted.
-    const upcoming=[...tasks,...events.filter(item=>item.date>=iso)].filter(item=>item.title.trim());
-    upcoming.sort((a,b)=>(a.date||'9999-12-31').localeCompare(b.date||'9999-12-31')||(a.time||'99:99').localeCompare(b.time||'99:99'));
-    return upcoming[0]||null;
+  // The owner's saved tasks are the only source of Home task cards.
+  // Never create a second task store or show educational suggestions as real.
+  const homeLaterKey='seyveo-home-task-later-v1';
+  let currentHomeItem=null;
+  function homeLaterMap(){
+    try{
+      const raw=JSON.parse(localStorage.getItem(homeLaterKey)||'{}');
+      return raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
+    }catch{return {};}
+  }
+  function upcomingHomeItems(){
+    if(!homeAgendaEnabled())return [];
+    const today=todayKey(),later=homeLaterMap(),now=Date.now();
+    const validDate=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s);
+    const clock=s=>typeof s==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(s)?s:'';
+    const tasks=storeList('seyveo-personal-tasks-v1').filter(t=>
+      t&&typeof t.id==='string'&&typeof t.title==='string'&&t.title.trim()&&
+      !t.done&&validDate(t.due)&&t.due<=today)
+      .map(t=>({key:'task:'+t.id,id:t.id,kind:'task',title:t.title.trim().slice(0,140),
+        date:t.due,time:clock(t.time),notes:typeof t.notes==='string'?t.notes.trim().slice(0,280):''}));
+    const events=storeList('seyveo-calendar-events-v1').filter(e=>
+      e&&typeof e.id==='string'&&typeof e.title==='string'&&e.title.trim()&&
+      !e.done&&e.kind!=='business'&&validDate(e.date)&&e.date===today)
+      .map(e=>({key:'calendar:'+e.id,id:e.id,kind:'event',title:e.title.trim().slice(0,140),
+        date:e.date,time:clock(e.time),notes:''}));
+    return [...tasks,...events].filter(item=>!(Number(later[item.key])>now))
+      .sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'99:99').localeCompare(b.time||'99:99'));
+  }
+  function postponeHomeItem(item){
+    if(!item)return;
+    try{
+      const fresh=Object.fromEntries(Object.entries(homeLaterMap())
+        .filter(([,until])=>Number(until)>Date.now()).slice(-120));
+      fresh[item.key]=Date.now()+60*60*1000;
+      localStorage.setItem(homeLaterKey,JSON.stringify(fresh));
+    }catch{}
+    queueTodayRefresh();
+  }
+  function homeItemWhen(item){
+    const date=item.date===todayKey()?'Сегодня':
+      new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'}).format(new Date(item.date+'T12:00:00'));
+    return date+(item.time?' · '+item.time:'');
   }
   function renderToday(){
     if(!done)return;
-    // Real saved tasks and calendar appointments outrank educational Home
-    // examples. Demo cards may remain below, but never suppress an actual plan.
     if(!todayCard){
       todayCard=document.createElement('section');
-      todayCard.className='sv-sayvi-handoff-today';
-      todayCard.setAttribute('aria-label','Ближайшее дело');
-      const label=document.createElement('div');
-      label.className='sv-sayvi-handoff-today-label';
-      label.textContent='БЛИЖАЙШЕЕ';
-      const button=document.createElement('button');
-      button.className='sv-sayvi-handoff-agenda-card';
-      button.type='button';
-      const copy=document.createElement('span');
-      copy.className='sv-sayvi-handoff-agenda-copy';
-      const title=document.createElement('span');
-      title.className='sv-sayvi-handoff-agenda-title';
-      const meta=document.createElement('span');
-      meta.className='sv-sayvi-handoff-agenda-meta';
-      const arrow=document.createElement('span');
-      arrow.className='sv-sayvi-handoff-agenda-arrow';
-      arrow.setAttribute('aria-hidden','true');
-      arrow.innerHTML='<svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg>';
-      copy.append(title,meta);
-      button.append(copy,arrow);
-      button.addEventListener('click',()=>{location.hash='tasks';});
-      todayCard.append(label,button);
+      todayCard.className='sv-sayvi-handoff-today sv-home-real-task';
+      todayCard.setAttribute('aria-label','Настоящее дело на главной');
+      todayCard.innerHTML='<div class="sv-home-task-top"><span class="sv-home-task-eyebrow">СЭЙВИ · ВАШЕ ДЕЛО</span><span class="sv-home-task-count"></span></div>'+
+        '<div class="sv-home-task-main"><span class="sv-home-task-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="3"/><path d="M8 8.5h8M8 12h6M8 15.5h4"/></svg></span>'+
+        '<div class="sv-home-task-copy"><strong class="sv-home-task-title"></strong><span class="sv-home-task-meta"></span></div></div>'+
+        '<p class="sv-home-task-note" hidden></p>'+
+        '<div class="sv-home-task-actions" role="group" aria-label="Действия с делом">'+
+        '<button type="button" data-sv-home-action="details" aria-label="Подробнее о деле" title="Подробнее"><svg viewBox="0 0 24 24"><path d="M6 18 18 6M8 6h10v10"/></svg></button>'+
+        '<button type="button" data-sv-home-action="complete" aria-label="Отметить дело выполненным" title="Исполнить"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.5 12 3 3 6-6"/></svg></button>'+
+        '<button type="button" data-sv-home-action="later" aria-label="Отложить карточку на час" title="Позже"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></button></div>'+
+        '<p class="sv-home-task-status" role="status" aria-live="polite" hidden></p>';
+      todayCard.addEventListener('click',event=>{
+        const button=event.target.closest('button[data-sv-home-action]');
+        if(!button||!currentHomeItem)return;
+        const item=currentHomeItem,action=button.dataset.svHomeAction;
+        if(action==='later'){postponeHomeItem(item);return;}
+        if(action==='details'){
+          if(item.kind==='task')window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:item.id}}));
+          else location.hash='#calendar';
+          return;
+        }
+        if(action==='complete'&&item.kind==='task'){
+          const detail={id:item.id};
+          window.dispatchEvent(new CustomEvent('seyveo:home-task-complete',{detail}));
+          if(detail.result?.ok){queueTodayRefresh();}
+          else{
+            const status=todayCard.querySelector('.sv-home-task-status');
+            status.textContent=detail.result?.message||'Не удалось завершить дело. Попробуйте открыть «Дела».';
+            status.hidden=false;
+          }
+        }
+      });
+      let finger=null;
+      todayCard.addEventListener('touchstart',event=>{
+        if(event.touches.length!==1||event.target.closest('button')){finger=null;return;}
+        finger={x:event.touches[0].clientX,y:event.touches[0].clientY};
+      },{passive:true});
+      todayCard.addEventListener('touchend',event=>{
+        if(!finger||event.changedTouches.length!==1)return;
+        const dx=event.changedTouches[0].clientX-finger.x;
+        const dy=event.changedTouches[0].clientY-finger.y;
+        finger=null;
+        if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)postponeHomeItem(currentHomeItem);
+      },{passive:true});
       document.getElementById('stage')?.after(todayCard);
     }
-    const item=nextAgenda();
-    // If the calendar has not exposed a stored upcoming item, leave Home's
-    // real message/decision feed alone: never imply the user has no plans.
-    // The original Living Moment owns real cards and swipe/Later semantics.
-    // This compact card is only a fallback if that renderer is unavailable.
-    todayCard.hidden=!item||typeof window.SEYVEO_LIVING_MOMENT?.state==='function';
-    const title=todayCard.querySelector('.sv-sayvi-handoff-agenda-title');
-    const meta=todayCard.querySelector('.sv-sayvi-handoff-agenda-meta');
-    title.textContent=item?.title||'';
-    if(!item){meta.textContent='';return;}
-    const date=item.date?new Date(item.date+'T12:00:00'):null;
-    const isToday=date&&item.date===new Date().toLocaleDateString('sv-SE');
-    const label=isToday?'Сегодня':date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(date):'Без даты';
-    meta.textContent=label+(item.time?' · '+item.time:'');
+    const items=upcomingHomeItems(),item=items[0]||null;
+    currentHomeItem=item;
+    todayCard.hidden=!item;
+    if(!item)return;
+    todayCard.querySelector('.sv-home-task-eyebrow').textContent=item.kind==='event'?'СЭЙВИ · ВАША ВСТРЕЧА':'СЭЙВИ · ВАШЕ ДЕЛО';
+    todayCard.querySelector('.sv-home-task-title').textContent=item.title;
+    todayCard.querySelector('.sv-home-task-meta').textContent=homeItemWhen(item);
+    todayCard.querySelector('.sv-home-task-count').textContent=items.length>1?'1 из '+items.length:'';
+    const note=todayCard.querySelector('.sv-home-task-note');
+    note.hidden=!item.notes;
+    note.textContent=item.notes;
+    todayCard.querySelector('[data-sv-home-action="complete"]').hidden=item.kind!=='task';
+    const status=todayCard.querySelector('.sv-home-task-status');
+    status.hidden=true;status.textContent='';
   }
   // Recommendations, cards and tasks can change after docking. Keep the
   // nearest real item in sync instead of freezing the visibility at launch.
@@ -401,7 +444,7 @@
   window.addEventListener('focus',queueTodayRefresh);
   window.addEventListener('hashchange',queueTodayRefresh);
   window.addEventListener('storage',event=>{
-    if(['seyveo-personal-tasks-v1','seyveo-calendar-events-v1',homeAgendaKey].includes(event.key)){
+    if(['seyveo-personal-tasks-v1','seyveo-calendar-events-v1',homeAgendaKey,homeLaterKey].includes(event.key)){
       if(event.key===homeAgendaKey&&homeAgendaSwitch)homeAgendaSwitch.checked=homeAgendaEnabled();
       queueTodayRefresh();
     }
@@ -413,7 +456,7 @@
     new MutationObserver(updateClusterInteraction).observe(root,{attributes:true,attributeFilter:['class']});
   }
   // Pick up the change of day even when the PWA stays open overnight.
-  setInterval(()=>{if(done&&!document.hidden)syncIdleHome();},60000);
+  setInterval(()=>{if(done&&!document.hidden)queueTodayRefresh();},60000);
 
   function finish({spark=false}={}){
     if(done)return;
