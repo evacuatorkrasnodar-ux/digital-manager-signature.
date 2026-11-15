@@ -384,11 +384,12 @@
     return true;
   }
   let dockExpandTimer=0;
+  let homePresenceInitialized=false;
   function syncIdleHome(){
     if(!done)return;
     const wasOnHome=root.classList.contains('sv-sayvi-home-present');
     const onHome=homeRouteVisible();
-    const moving=wasOnHome!==onHome&&
+    const moving=homePresenceInitialized&&wasOnHome!==onHome&&
       (home.hidden||(onHome&&!home.hidden))&&
       !root.classList.contains('sv-music-ambient');
     if(wasOnHome&&!onHome)rememberHomeOrb();
@@ -411,6 +412,7 @@
     }
     root.dataset.svHomeCards=String(compact?Math.min(3,Math.max(1,count)):0);
     updateClusterInteraction();
+    homePresenceInitialized=true;
     if(moving){
       requestAnimationFrame(()=>{
         if(homeRouteVisible()!==onHome||startRouteFlight(onHome)===false){
