@@ -30,7 +30,7 @@
   // reopening the PWA on the same day must not repeat the cinematic flight.
   // The full first-install introduction is a separate, later experience.
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||!alreadySeen);
+  const showCinema=atHome&&!noIntro;
   const root=document.documentElement;
   // Keep Safari's changing viewport height from resizing Sayvi on launch.
   const startupLayoutHeight=Math.max(document.documentElement.clientHeight||0,window.innerHeight||0);
@@ -1098,9 +1098,7 @@
       document.addEventListener('visibilitychange',onVisible);
       return;
     }
-    // When real work fits beside Sayvi, Home is already the destination.
-    // Do not show a second written intro or resize the sphere twice.
-    if(shouldKeepSphereHome()&&!voiceRequested){finish();return;}
+    // First show the large Sayvi and greeting; only then resolve work cards.
     if(localVoicePreview){
       prepareDock();
       root.classList.remove('sv-cinema-boot');
@@ -1114,7 +1112,7 @@
   // Resolve the real Home layout synchronously before its first paint.
   // Otherwise the generic 300px orb visibly jumps to the task-size orb
   // on the very next animation frame, dragging the greeting and cards.
-  if(atHome&&!voiceRequested){
+  if(atHome&&!voiceRequested&&!showCinema){
     const initial=homeSphereLayout();
     if(initial.mode==='idle'||initial.mode==='cards'){
       root.classList.add('sv-sayvi-handoff-docked');
