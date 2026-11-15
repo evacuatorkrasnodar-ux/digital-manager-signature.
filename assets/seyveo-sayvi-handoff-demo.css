@@ -13,14 +13,13 @@
   transition:opacity .24s cubic-bezier(.2,.8,.2,1) !important;
 }
 /* Three icons remain in their FINAL grid tracks throughout the film.
-   Only the existing pearl pseudo-surface is unmasked by the compositor;
+   The existing pearl surface changes visible width without clipping its border;
    no per-frame grid/layout updates or replacement dock are needed. */
 :root.sv-cinema-intro-active[data-theme="light"] :is(
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
   body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
 )::before{
-  /* No !important: it would override the keyframes, snapping open at finish. */
-  clip-path:inset(0 25% 0 0 round 999px);
+  max-width:calc(var(--sv-feng-capsule) * .75);
 }
 :root.sv-cinema-dock-growing[data-theme="light"] :is(
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
@@ -29,8 +28,8 @@
   animation:sv-cinema-dock-unveil var(--sv-cinema-grow-duration,2350ms) cubic-bezier(.18,.8,.2,1) both !important;
 }
 @keyframes sv-cinema-dock-unveil{
-  from{clip-path:inset(0 25% 0 0 round 999px)}
-  to{clip-path:inset(0 0 0 0 round 999px)}
+  from{max-width:calc(var(--sv-feng-capsule) * .75)}
+  to{max-width:var(--sv-feng-capsule)}
 }
 :root.sv-cinema-intro-active:not(.sv-cinema-intro-dock-ready)[data-theme="light"] :is(
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
@@ -625,17 +624,17 @@ body > #orb.sv-sayvi-handoff-flight {
   animation:sv-home-idle-dock-expand .82s cubic-bezier(.22,.8,.2,1) both!important;
 }
 @keyframes sv-home-idle-dock-shrink{
-  from{clip-path:inset(0 0 0 0 round 999px)}
-  to{clip-path:inset(0 25% 0 0 round 999px)}
+  from{max-width:var(--sv-feng-capsule)}
+  to{max-width:calc(var(--sv-feng-capsule) * .75)}
 }
 @keyframes sv-home-idle-dock-expand{
-  from{clip-path:inset(0 25% 0 0 round 999px)}
-  to{clip-path:inset(0 0 0 0 round 999px)}
+  from{max-width:calc(var(--sv-feng-capsule) * .75)}
+  to{max-width:var(--sv-feng-capsule)}
 }
 @media(prefers-reduced-motion:reduce){
   :root.sv-sayvi-home-idle body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
     animation:none!important;
-    clip-path:inset(0 25% 0 0 round 999px)!important;
+    max-width:calc(var(--sv-feng-capsule) * .75)!important;
   }
 }
 
@@ -743,18 +742,18 @@ body > #orb.sv-sayvi-handoff-flight {
   animation:sv-music-ambient-dock-expand 1100ms cubic-bezier(.22,.8,.2,1) both!important;
 }
 @keyframes sv-music-ambient-dock-shrink{
-  from{clip-path:inset(0 0 0 0 round 999px)}
-  to{clip-path:inset(0 25% 0 0 round 999px)}
+  from{max-width:var(--sv-feng-capsule)}
+  to{max-width:calc(var(--sv-feng-capsule) * .75)}
 }
 @keyframes sv-music-ambient-dock-expand{
-  from{clip-path:inset(0 25% 0 0 round 999px)}
-  to{clip-path:inset(0 0 0 0 round 999px)}
+  from{max-width:calc(var(--sv-feng-capsule) * .75)}
+  to{max-width:var(--sv-feng-capsule)}
 }
 @media(prefers-reduced-motion:reduce){
   :root.sv-music-ambient :is(
     body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
     body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
-  )::before{animation:none!important;clip-path:inset(0 25% 0 0 round 999px)!important}
+  )::before{animation:none!important;max-width:calc(var(--sv-feng-capsule) * .75)!important}
 }
 
 /* Управление · real Home plans. Flat graphite switch, no extra glass layers. */
