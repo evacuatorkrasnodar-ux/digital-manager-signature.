@@ -238,7 +238,7 @@
       if(orbNext&&orbNext.parentNode===orbHome)orbHome.insertBefore(orb,orbNext);
       else orbHome.appendChild(orb);
     }
-    orb.classList.remove('sv-sayvi-handoff-flight');
+    orb.classList.remove('sv-sayvi-handoff-flight','sv-sayvi-route-orb-flight');
     if(originalOrbStyle!==null){
       if(originalOrbStyle)orb.setAttribute('style',originalOrbStyle);
       else orb.removeAttribute('style');
