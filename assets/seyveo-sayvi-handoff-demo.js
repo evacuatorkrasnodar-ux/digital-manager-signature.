@@ -40,6 +40,15 @@
   if(atHome)root.classList.add('sv-home-stabilizing');
   const home=document.getElementById('homePage');
   const orb=document.getElementById('orb');
+  // An immutable weather row belongs to the Home layout from its first
+  // frame. Weather arrives asynchronously and must never push Sayvi upward.
+  const cluster=home?.querySelector('#orbCluster');
+  if(cluster&&!home.querySelector('#svHomeWeatherSlot')){
+    const slot=document.createElement('div');
+    slot.id='svHomeWeatherSlot';
+    slot.className='sv-home-weather-slot';
+    cluster.insertAdjacentElement('afterend',slot);
+  }
   const heroArtwork=document.getElementById('plasmaVisual');
   const dockButton=document.getElementById('assistantButton');
   const small=dockButton?.querySelector('.sv-sayvi-velvet-sphere');
@@ -738,6 +747,7 @@
     if(done)return;
     prepareDock();
     root.classList.remove('sv-cinema-boot');
+    window.dispatchEvent(new Event('seyveo:cinema-opening'));
     // The artwork is already loaded. Changing its URL on voice playback
     // caused a brief white/dark flash before the first spoken word.
     openingStartedAt=performance.now();
