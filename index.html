@@ -4498,11 +4498,18 @@ function chosenAssistantName(){
 function homeAgendaVisibleInGreeting(){
  try{return localStorage.getItem('seyveo-home-agenda-visible-v1')!=='0'}catch{return true}
 }
+function homeTaskPostponed(item,kind='task'){
+ if(!item?.id)return false;
+ try{
+  const raw=JSON.parse(localStorage.getItem('seyveo-home-task-later-v1')||'{}');
+  return Number(raw?.[kind+':'+item.id])>Date.now();
+ }catch{return false}
+}
 function localTaskBrief(){
  if(!homeAgendaVisibleInGreeting())return {count:0,dueToday:0,overdue:0,first:''};
   try{
     const all=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');
-    const open=Array.isArray(all)?all.filter(t=>t&&typeof t.title==='string'&&!t.done):[];
+    const open=Array.isArray(all)?all.filter(t=>t&&typeof t.title==='string'&&!t.done&&!homeTaskPostponed(t)):[];
     const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
     const due=open.filter(t=>typeof t.due==='string'&&/^\d{4}-\d\d-\d\d$/.test(t.due)&&t.due<=today)
       .sort((a,b)=>a.due.localeCompare(b.due));
@@ -4553,8 +4560,8 @@ function sayviHomeContext(brief){
  // Sayvi's initiative is a single grounded thought, not a new notification feed.
  // Only local, non-business personal tasks/calendar and approved LAB notes.
  const life=window.SEYVEO_LIFE_EVENTS;
- const tasks=homeAgendaVisibleInGreeting()?(life?.attentionTasks?.()||[]):[];
- const upcoming=homeAgendaVisibleInGreeting()?(life?.upcomingEvents?.()||[]):[];
+ const tasks=homeAgendaVisibleInGreeting()?(life?.attentionTasks?.()||[]).filter(t=>!homeTaskPostponed(t)):[];
+ const upcoming=homeAgendaVisibleInGreeting()?(life?.upcomingEvents?.()||[]).filter(e=>!homeTaskPostponed(e,'calendar')):[];
  const now=new Date();
  const connection=homeAgendaVisibleInGreeting()?life?.relatedPreparation?.(now):null;
  if(connection){
@@ -4653,12 +4660,13 @@ window.addEventListener('seyveo:tasks-changed',syncHomeVoice);
 window.addEventListener('seyveo:life-events-changed',syncHomeVoice);
 window.addEventListener('seyveo:calendar-changed',syncHomeVoice);
 window.addEventListener('seyveo:personal-tasks-changed',syncHomeVoice);
- window.addEventListener('seyveo:home-agenda-visibility-changed',syncHomeVoice);
+window.addEventListener('seyveo:home-task-postponement-changed',syncHomeVoice);
+window.addEventListener('seyveo:home-agenda-visibility-changed',syncHomeVoice);
 
 window.addEventListener('seyveo:fan-workshop-changed',syncHomeVoice);
 window.addEventListener('seyveo:profile-changed',syncHomeVoice);
 window.addEventListener('storage',event=>{
-  if(['seyveo-personal-tasks-v1','seyveo-first-acquaintance-v1','seyveo-home-agenda-visible-v1'].includes(event.key))syncHomeVoice();
+  if(['seyveo-personal-tasks-v1','seyveo-first-acquaintance-v1','seyveo-home-agenda-visible-v1','seyveo-home-task-later-v1'].includes(event.key))syncHomeVoice();
 });
 /* Refresh the real greeting at daypart/date boundaries without DOM observers.
    One low-frequency check, only while Home is visible in the foreground. */
@@ -6616,6 +6624,6 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=1">
 <script src="assets/seyveo-sayvi-mini-copy.js?v=1"></script>
-<link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=29">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=43"></script>
+<link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=30">
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=44"></script>
 </body></html>
