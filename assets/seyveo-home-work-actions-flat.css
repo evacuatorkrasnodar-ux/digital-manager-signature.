@@ -414,7 +414,7 @@
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
  border:.7px solid rgba(255,255,255,.28)!important;
- box-shadow:0 0 0 .45px rgba(164,170,184,.22),
+ box-shadow:0 0 0 .45px rgba(164,170,184,.16),
   inset 0 1px 1px rgba(75,82,96,.055),
   inset 0 -1px 0 rgba(255,255,255,.18),
   inset .6px 0 .7px rgba(255,255,255,.16),
