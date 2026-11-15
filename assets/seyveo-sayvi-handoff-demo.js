@@ -771,7 +771,13 @@
     renderToday();
     beginHomeGreetingLifetime();
     if(!greetingPlayed)showHomeWelcome();
-    const cinematicHomeArrival=atHome&&!home.hidden&&!document.hidden&&!spark&&
+    root.classList.remove('sv-cinema-cards-before-shrink');
+    if(openingCardsRevealed){
+      root.classList.add('sv-cinema-final-shrink');
+      root.classList.remove('sv-home-stabilizing');
+      setTimeout(()=>root.classList.remove('sv-cinema-final-shrink'),1450);
+    }
+    const cinematicHomeArrival=!openingCardsRevealed&&atHome&&!home.hidden&&!document.hidden&&!spark&&
       (root.classList.contains('sv-sayvi-home-idle')||
        root.classList.contains('sv-sayvi-home-cards'));
     if(cinematicHomeArrival){
@@ -793,8 +799,19 @@
     window.dispatchEvent(new Event('seyveo:cinema-finished'));
   }
 
+  let openingCardsRevealed=false;
   function begin(){
     if(done)return;
+    // Keep the full-size Sayvi until the logo and rising cards have landed.
+    // Only afterward may she settle to her compact Home size or fly to dock.
+    if(!openingCardsRevealed&&atHome&&!document.hidden&&
+       !matchMedia('(prefers-reduced-motion: reduce)').matches){
+      openingCardsRevealed=true;
+      root.classList.add('sv-cinema-cards-before-shrink');
+      renderToday();
+      introTimer=setTimeout(()=>{introTimer=0;begin();},2450*speed);
+      return;
+    }
     // With no work due today, Sayvi stays in the Home scene; no pointless
     // flight into the dock followed by an immediate return.
     if(shouldKeepSphereHome()){finish();return;}
