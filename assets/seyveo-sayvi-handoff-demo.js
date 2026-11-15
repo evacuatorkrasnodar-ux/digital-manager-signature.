@@ -354,6 +354,7 @@
     const fromScale=from.width/baseSize,toScale=to.width/baseSize;
     const dx=to.x-from.x,dy=to.y-from.y;
     const token=++routeFlightGeneration;
+    const travelMs=toHome?1120:1040;
     const stateClass=toHome?'sv-sayvi-route-undocking':'sv-sayvi-route-docking';
     root.classList.add(stateClass);
     originalOrbStyle=orb.getAttribute('style')||'';
@@ -376,8 +377,8 @@
       const a=orb.animate([
         {transform:`translate3d(0,0,0) scale(${fromScale})`,opacity:1},
         {transform:`translate3d(${dx}px,${dy}px,0) scale(${toScale})`,opacity:1}
-      ],{duration:820,easing:'cubic-bezier(.42,.02,.18,1)',fill:'forwards'});
-      const timer=setTimeout(settle,1080);
+      ],{duration:travelMs,easing:'cubic-bezier(.42,.02,.18,1)',fill:'forwards'});
+      const timer=setTimeout(settle,travelMs+280);
       routeFlight={animation:a,timer};
       a.finished.then(()=>{clearTimeout(timer);settle();}).catch(()=>{});
     }catch{settle();}
