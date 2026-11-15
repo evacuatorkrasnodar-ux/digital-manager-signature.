@@ -799,8 +799,8 @@ body > #orb.sv-sayvi-handoff-flight {
   #managePage .sv-home-agenda-track,#managePage .sv-home-agenda-track::after{transition:none}
 }
 
-/* Training-only Home samples are retired; real cards keep their renderer. */
-#homePage #seyveoLivingMoment.lm-preview:not(.lm-real),
+/* Three approved educational cards use the existing Quiet Cinema plane.
+   Only the obsolete duplicate demo panels remain hidden. */
 #homePage #svcpWorkHomePreview,
 #homePage #seyveoDemoLaunch{display:none!important}
 
