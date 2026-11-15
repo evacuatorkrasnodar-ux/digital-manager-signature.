@@ -41,7 +41,7 @@
  /* Trial: the exact transparent pearl material approved for Home card actions. */
  border:.7px solid rgba(255,255,255,.28)!important;
  border-radius:999px!important;
- background:rgba(190,193,202,.10)!important;
+ background:linear-gradient(rgba(255,255,255,.05),rgba(255,255,255,.05)),rgba(190,193,202,.10)!important;
  -webkit-backdrop-filter:blur(4px) saturate(100%)!important;
  backdrop-filter:blur(4px) saturate(100%)!important;
  box-shadow:0 0 0 .45px rgba(164,170,184,.16),
