@@ -660,7 +660,7 @@
       // Reveal only after the sphere, text slot and task rows are positioned.
       setTimeout(()=>{
         root.classList.remove('sv-home-prelayout','sv-cinema-boot');
-      },240);
+      },1300);
     }
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
