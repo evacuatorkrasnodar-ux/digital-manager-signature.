@@ -4624,14 +4624,12 @@ function syncHomeVoice(){
       headline=name?name+', есть рекомендация':'Есть рекомендация';
       subline=currentHomeRecommendation.message;
     }
-  }else if(brief.overdue){
-    kicker='Ваш план · требует внимания';
-    headline=name?name+', есть дело с прошедшим сроком':'Есть дело с прошедшим сроком';
-    subline='«'+brief.first+'». Посмотрите личные дела, когда будет удобно.';
-  }else if(brief.dueToday){
-    kicker='Ваш план на сегодня';
-    headline=name?name+', на сегодня есть дело':'На сегодня есть дело';
-    subline='«'+brief.first+'». '+(brief.count===1?'Могу помочь с этим делом.':'Остальные записи — в разделе «Дела».');
+  }else if(brief.overdue||brief.dueToday){
+    // Real task cards below already carry the title, due time and actions.
+    // Keep the greeting human and quiet; never repeat tasks in narration.
+    kicker=assistant+' · на связи';
+    headline=daypartGreeting()+(name?', '+name:'');
+    subline='';
   }else{
 
     const personal=window.SEYVEO_FAN_WORKSHOP?.homeNote?.();
@@ -6626,8 +6624,8 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=1">
 <script src="assets/seyveo-sayvi-mini-copy.js?v=1"></script>
-<link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=34">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=49"></script>
+<link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=35">
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=50"></script>
 <link rel="stylesheet" href="assets/seyveo-weather-brief.css?v=3">
 <script src="assets/seyveo-weather-brief.js?v=2"></script>
 </body></html>
