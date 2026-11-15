@@ -4531,6 +4531,13 @@ function sayviPreparationOffer(title){
   return 'Хочешь, я помогу подготовить вопросы для приёма?';
  return 'Хочешь, я помогу составить короткий план подготовки?';
 }
+function unfinishedTaskPhrase(count){
+ const n=Math.max(0,Math.floor(Number(count)||0));
+ const tail=n%100,unit=n%10;
+ const form=(tail>=11&&tail<=14)||unit===0||unit>=5
+  ?'незавершённых дел':unit===1?'незавершённое дело':'незавершённых дела';
+ return n+' '+form;
+}
 function sayviHomeContext(brief){
  // Sayvi's initiative is a single grounded thought, not a new notification feed.
  // Only local, non-business personal tasks/calendar and approved LAB notes.
@@ -4550,8 +4557,8 @@ function sayviHomeContext(brief){
  }
  if(tasks.length){
   return tasks.length===1
-   ?'В «Делах» ждёт внимания: «'+tasks[0].title+'». Можем начать с него.'
-   :'В «Делах» '+tasks.length+' задач со сроком сегодня или раньше. Помогу выбрать главное.';
+   ?'На сегодня '+unfinishedTaskPhrase(1)+' — «'+tasks[0].title+'». Могу помочь с ним.'
+   :'В «Делах» '+unfinishedTaskPhrase(tasks.length)+' со сроком сегодня или раньше. Помогу выбрать главное.';
  }
  if(upcoming.length){
   const item=upcoming[0],date=new Date(item.date+'T12:00:00');
@@ -4563,7 +4570,9 @@ function sayviHomeContext(brief){
  if(future.length)return 'На завтра запланировано «'+future[0].title+'». Можем подготовиться заранее.';
  const personal=window.SEYVEO_FAN_WORKSHOP?.homeNote?.();
  if(personal?.message)return personal.message;
- if(brief.count)return 'В твоём списке '+brief.count+' незавершённых дел. Можем выбрать, с какого начать.';
+ if(brief.count)return brief.count===1
+  ?'В твоём списке 1 незавершённое дело. Могу помочь с ним.'
+  :'В твоём списке '+unfinishedTaskPhrase(brief.count)+'. Можем выбрать, с какого начать.';
  const hour=now.getHours();
  if(hour<5)return 'Я рядом, если захочешь записать мысль или разобрать важное.';
  if(hour<12)return 'Можем посмотреть планы на день или заняться тем, что сейчас важно.';
@@ -4602,7 +4611,7 @@ function syncHomeVoice(){
   }else if(brief.dueToday){
     kicker='Ваш план на сегодня';
     headline=name?name+', на сегодня есть дело':'На сегодня есть дело';
-    subline='«'+brief.first+'». Остальные записи — в разделе «Дела».';
+    subline='«'+brief.first+'». '+(brief.count===1?'Могу помочь с этим делом.':'Остальные записи — в разделе «Дела».');
   }else{
 
     const personal=window.SEYVEO_FAN_WORKSHOP?.homeNote?.();
@@ -6596,5 +6605,5 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=1">
 <script src="assets/seyveo-sayvi-mini-copy.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=26">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=39"></script>
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=40"></script>
 </body></html>
