@@ -352,8 +352,8 @@
       idleDockTimer=setTimeout(()=>{
         root.classList.remove('sv-sayvi-home-idle-leaving');
         root.classList.add('sv-home-dock-sphere-enter');
-        dockRevealTimer=setTimeout(()=>root.classList.remove('sv-home-dock-sphere-enter'),760);
-      },1050);
+        dockRevealTimer=setTimeout(()=>root.classList.remove('sv-home-dock-sphere-enter'),460);
+      },640);
     }
     updateClusterInteraction();
   }
