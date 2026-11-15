@@ -16,10 +16,22 @@
   document.documentElement.dataset.palette=isLight?'white':resolved==='graphite'?'graphite':resolved==='sapphire'?'sapphire':resolved==='plum'?'plum':'emerald';
   document.querySelector('meta[name="theme-color"]').content=isLight?'#f9fafb':resolved==='graphite'?'#11161b':resolved==='sapphire'?'#101724':resolved==='plum'?'#1c1b1a':'#111917';
 }catch{}})();
-// Prevent the raw Home layout flashing before its cinematic controller starts.
+// Hide the raw Home only when today's greeting is actually scheduled.
+// Reopening the PWA or refreshing during the same day stays instant.
 if(!location.hash||location.hash==='#home'){
-  document.documentElement.classList.add('sv-cinema-boot');
-  setTimeout(()=>document.documentElement.classList.remove('sv-cinema-boot'),3200);
+  try{
+    const q=new URLSearchParams(location.search);
+    const d=new Date();
+    const today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),
+      String(d.getDate()).padStart(2,'0')].join('-');
+    const seen=localStorage.getItem('seyveo-sayvi-cinema-last-day-v4')===today;
+    const intro=q.get('sayvi-intro');
+    if(intro!=='0'&&(intro==='1'||q.get('sayvi-handoff')==='1'||
+      q.get('sayvi-voice')==='1'||!seen)){
+      document.documentElement.classList.add('sv-cinema-boot');
+      setTimeout(()=>document.documentElement.classList.remove('sv-cinema-boot'),3200);
+    }
+  }catch{}
 }
 </script>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="description" content="Цифровой управляющий SEYVEO — персональный помощник для жизни и бизнеса."><title>Цифровой управляющий · Living Interface</title><link rel="manifest" href="manifest.webmanifest?v=7"><link rel="icon" type="image/svg+xml" href="assets/app-icon.svg?v=6"><link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=3"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Управляющий"><style>
@@ -6624,6 +6636,6 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=1">
 <script src="assets/seyveo-sayvi-mini-copy.js?v=1"></script>
-<link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=30">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=44"></script>
+<link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=31">
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=45"></script>
 </body></html>
