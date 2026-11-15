@@ -1028,6 +1028,7 @@ function row(item,compact=false,deferred=false){
    const swipeDelete=element('button','sv-task-swipe-delete','Удалить');
    swipeDelete.type='button';swipeDelete.dataset.taskSwipeDelete=item.id;
    swipeDelete.setAttribute('aria-label','Удалить дело: '+item.title);
+   swipeDelete.setAttribute('aria-hidden','true');
    swipeDelete.tabIndex=-1;
    section.append(swipeDelete);
   }
@@ -1422,7 +1423,10 @@ function svSetTaskSwipe(row,offset,dragging=false){
  row.classList.toggle('is-swipe-dragging',dragging);
  row.classList.toggle('is-swipe-open',value<=-SV_SWIPE_WIDTH/2);
  const button=row.querySelector('[data-task-swipe-delete]');
- if(button)button.tabIndex=value<=-SV_SWIPE_WIDTH/2?0:-1;
+ if(button){
+  button.tabIndex=value<=-SV_SWIPE_WIDTH/2?0:-1;
+  button.setAttribute('aria-hidden',value<=-SV_SWIPE_WIDTH/2?'false':'true');
+ }
  if(value===-SV_SWIPE_WIDTH)svSwipeOpenRow=row;
  else if(svSwipeOpenRow===row)svSwipeOpenRow=null;
 }
