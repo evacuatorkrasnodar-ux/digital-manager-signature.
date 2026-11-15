@@ -14,14 +14,8 @@
 #homePage .sv-sayvi-home-weather:focus-visible{outline:2px solid #79a6b7;outline-offset:1px}
 :root[data-theme="dark"] #homePage .sv-sayvi-home-weather{color:#c8d4d9}
 :root.sv-sayvi-home-cards #homePage .sv-sayvi-home-weather{margin:-7px auto -3px;padding:9px 9px;font-size:14px}
-/* Once the temporary welcome text fades, use a little of the released
-   vertical room. This affects Home's content only, not its dock or sphere. */
-@media (max-width:600px) and (min-height:700px){
- :root.sv-home-greeting-expired.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
-  padding-top:clamp(18px,3.7dvh,33px)!important;
-  transition:padding-top .56s cubic-bezier(.22,.8,.22,1)!important;
- }
-}
+/* The weather and greeting occupy reserved rows. Expiring the greeting must
+   never move the original Home sphere or alter the stage padding. */
 @media(prefers-reduced-motion:reduce){#homePage .sv-sayvi-home-weather{transition:none}}
 /* Sayvi's flat, native-feeling forecast inside her existing conversation. */
 .turn.sv-sayvi-weather-turn .bubble{width:min(100%,520px)!important;max-width:100%!important;white-space:normal!important}
