@@ -1111,3 +1111,36 @@
  .sv-card-icon-button:focus-visible{
  outline:2px solid currentColor!important;outline-offset:3px!important;
 }
+
+/* Card Workshop / rendered previews · use the approved Home reference for
+   the FINAL icon-only Send and Back actions too. The original 50px hit
+   targets, icons, routes and dark theme remain unchanged. */
+:root[data-theme="light"] .sv-card-system--rendered .sv-card-draft-actions
+ :is(.sv-card-draft-confirm,.sv-card-draft-option).sv-card-icon-button,
+#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"]
+ .sv-card-system--rendered .sv-card-draft-actions
+ :is(.sv-card-draft-confirm,.sv-card-draft-option).sv-card-icon-button{
+ border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28))!important;
+ border-radius:50%!important;
+ background:var(--sv-card-action-neutral-bg,transparent)!important;
+ background-image:none!important;
+ color:#111113!important;
+ box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16))!important;
+ -webkit-backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%))!important;
+ backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%))!important;
+ filter:none!important;
+ transition:transform 220ms cubic-bezier(.22,1,.36,1),opacity 180ms ease!important;
+}
+:root[data-theme="light"] .sv-card-system--rendered .sv-card-draft-actions
+ :is(.sv-card-draft-confirm,.sv-card-draft-option).sv-card-icon-button:active,
+#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"]
+ .sv-card-system--rendered .sv-card-draft-actions
+ :is(.sv-card-draft-confirm,.sv-card-draft-option).sv-card-icon-button:active{
+ transform:scale(.965)!important;opacity:.92!important;
+}
+@media(prefers-reduced-motion:reduce){
+ :root[data-theme="light"] .sv-card-system--rendered .sv-card-draft-actions
+ :is(.sv-card-draft-confirm,.sv-card-draft-option).sv-card-icon-button{
+  transition:none!important;
+ }
+}
