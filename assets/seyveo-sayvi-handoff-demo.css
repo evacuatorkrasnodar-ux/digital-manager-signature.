@@ -830,6 +830,10 @@ body > #orb.sv-sayvi-handoff-flight {
 :root.sv-home-prelayout #homePage #orbCluster{
   transition:none!important
 }
+:root.sv-home-prelayout.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage :is(#orb,#orbCluster,#stage){
+  transition:none!important;
+  animation:none!important
+}
 :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
   transition:opacity .88s cubic-bezier(.22,1,.36,1),min-height 1.2s cubic-bezier(.22,1,.36,1),padding 1.2s cubic-bezier(.22,1,.36,1)!important
 }
