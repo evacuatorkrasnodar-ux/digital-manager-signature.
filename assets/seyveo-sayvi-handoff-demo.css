@@ -13,13 +13,14 @@
   transition:opacity .24s cubic-bezier(.2,.8,.2,1) !important;
 }
 /* Three icons remain in their FINAL grid tracks throughout the film.
-   The existing pearl surface changes visible width without clipping its border;
+   Only the existing pearl pseudo-surface is unmasked by the compositor;
    no per-frame grid/layout updates or replacement dock are needed. */
 :root.sv-cinema-intro-active[data-theme="light"] :is(
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
   body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
 )::before{
-  max-width:calc(var(--sv-feng-capsule) * .75);
+  /* No !important: it would override the keyframes, snapping open at finish. */
+  clip-path:inset(0 25% 0 0 round 999px);
 }
 :root.sv-cinema-dock-growing[data-theme="light"] :is(
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
@@ -28,8 +29,8 @@
   animation:sv-cinema-dock-unveil var(--sv-cinema-grow-duration,2350ms) cubic-bezier(.18,.8,.2,1) both !important;
 }
 @keyframes sv-cinema-dock-unveil{
-  from{max-width:calc(var(--sv-feng-capsule) * .75)}
-  to{max-width:var(--sv-feng-capsule)}
+  from{clip-path:inset(0 25% 0 0 round 999px)}
+  to{clip-path:inset(0 0 0 0 round 999px)}
 }
 :root.sv-cinema-intro-active:not(.sv-cinema-intro-dock-ready)[data-theme="light"] :is(
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
@@ -41,7 +42,7 @@
 /* Greeting is deliberately smaller than the old permanent hero. Its space
    exists only during the first second, then returns to the real card feed. */
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage{
-  min-height:calc(var(--sv-home-stable-vh,100dvh) - 186px) !important;
+  min-height:calc(100dvh - 186px) !important;
   justify-content:center !important;
   flex:1 1 auto !important;
   padding:0 0 12px !important;
@@ -64,87 +65,8 @@
   pointer-events:none !important;
 }
 :root.sv-sayvi-handoff-demo #homePage #seyveoNameTip{display:none !important}
-/* The Home's weather control is populated after an async request. Reserve
-   its entire row from the first frame so no late text can shift Sayvi. */
-#homePage .sv-home-weather-slot{
-  box-sizing:border-box;
-  display:flex;
-  flex:0 0 40px;
-  width:100%;height:40px;min-height:40px;max-height:40px;
-  align-items:center;justify-content:center;
-  overflow:hidden;
-  margin:0;padding:0;
-}
-:root.sv-home-writing #homePage .sv-home-weather-slot,
-:root.sv-sayvi-handoff-docked:not(.sv-sayvi-home-idle):not(.sv-sayvi-home-cards):not(.sv-music-ambient) #homePage .sv-home-weather-slot{
-  display:none!important
-}
-/* Persistent status stays above Home when the transient greeting fades. */
-:root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online{
-  position:fixed;
-  z-index:32;
-  left:50%;
-  top:calc(13px + env(safe-area-inset-top,0px));
-  transform:translateX(-50%);
-  max-width:calc(100vw - 40px);
-  white-space:nowrap;
-  pointer-events:none;
-  text-align:center;
-  font:540 12px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-  color:var(--secondary,#41484e);
-  -webkit-font-smoothing:antialiased;
-}
-:root.sv-sayvi-handoff-demo[data-theme="light"] #homePage .sv-sayvi-home-online{color:#3d444a}
-:root.sv-sayvi-handoff-demo[data-theme="dark"] #homePage .sv-sayvi-home-online{color:#dfe6ec}
-:root.sv-sayvi-handoff-demo #homePage #stage > .message #kicker{display:none!important}
-/* Reserve a modest top line only after docking; the flight remains unchanged. */
-:root.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage #stage{
-  padding-top:31px!important;
-}
 :root.sv-sayvi-handoff-demo #homePage #stage > .message{
   transition:opacity .32s cubic-bezier(.22,.8,.22,1) !important;
-}
-/* A personal welcome uses the EXISTING 76/112px message slot. The sphere,
-   weather row and task cards never reflow while Sayvi writes. */
-:root.sv-sayvi-handoff-docked #homePage #stage > .message{
-  position:relative;
-}
-:root.sv-sayvi-handoff-docked #homePage #stage > .message > :is(#headline,#subline,#quietSignal){
-  transition:opacity .6s ease;
-}
-:root.sv-home-welcome-active #homePage #stage > .message > :is(#headline,#subline,#quietSignal){
-  opacity:0!important;
-}
-#homePage #stage > .message .sv-home-welcome-intro{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;width:100%;margin:0;padding:0 8px;
-  pointer-events:none;overflow:hidden;
-  opacity:0;transform:translate3d(0,9px,0);
-  transition:opacity .62s ease,transform .78s cubic-bezier(.22,.8,.2,1);
-  color:var(--text,#17191c);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
-  font-optical-sizing:auto;text-align:center;
-}
-#homePage #stage > .message .sv-home-welcome-intro.is-visible{
-  opacity:1;transform:translate3d(0,0,0);
-}
-#homePage #stage > .message .sv-home-welcome-intro.is-leaving{
-  opacity:0;transform:translate3d(0,-5px,0);
-}
-.sv-home-welcome-intro-line{display:block;max-width:100%;line-height:1.23;overflow-wrap:anywhere}
-.sv-home-welcome-intro-line--welcome{font-size:clamp(23px,6.1vw,29px);font-weight:540;letter-spacing:-.042em}
-.sv-home-welcome-intro-line--name{font-size:clamp(20px,5.1vw,24px);font-weight:440;letter-spacing:-.032em;color:var(--secondary,#5a6169)}
-.sv-home-welcome-intro-line--wish{font-size:clamp(21px,5.45vw,26px);font-weight:490;letter-spacing:-.036em}
-@media(max-height:690px){
-  .sv-home-welcome-intro-line--welcome{font-size:23px}
-  .sv-home-welcome-intro-line--name{font-size:20px}
-  .sv-home-welcome-intro-line--wish{font-size:21px}
-}
-@media(prefers-reduced-motion:reduce){
-  #homePage #stage > .message .sv-home-welcome-intro{transition:none!important;transform:none!important}
 }
 /* The intro speaks only through letters. Ordinary "Добрый день" and the
    actionable card text are restored untouched at the end of the scene. */
@@ -155,11 +77,7 @@
   display:flex !important;
   align-items:center;
   justify-content:center;
-  height:130px !important;
   min-height:130px !important;
-  max-height:130px !important;
-  flex:0 0 130px !important;
-  overflow:hidden !important;
   margin:8px auto 0 !important;
 }
 :root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello{
@@ -352,97 +270,49 @@
   animation:sv-cinema-rise-in 870ms cubic-bezier(.16,1,.3,1) 650ms both;
 }
 
-/* Saved Home tasks · one real action card, no "go to tasks" placeholder. */
+/* Real tasks only: never invent a card just to fill the opening scene. */
 .sv-sayvi-handoff-today{display:none}
 :root.sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]){
   display:block;
-  margin:18px 0 20px;
-  padding:0 1px 15px;
-  border-bottom:1px solid rgba(60,69,78,.12);
-  background:transparent;
-  animation:sv-sayvi-handoff-card-in .68s cubic-bezier(.16,1,.3,1) both;
+  margin:14px 0 6px;
+  animation:sv-sayvi-handoff-card-in .58s cubic-bezier(.18,.82,.2,1) both;
 }
-.sv-home-task-top[hidden]{display:none!important}
-.sv-home-task-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 15px}
-.sv-home-task-eyebrow{font-size:11px;font-weight:570;letter-spacing:.105em;color:#71777e}
-.sv-home-task-count{font-size:11px;color:#8b9198;white-space:nowrap}
-.sv-home-task-count:empty{display:none}
-.sv-home-task-main{display:flex;align-items:center;gap:15px;min-width:0}
-.sv-home-task-symbol{
-  display:grid;place-items:center;flex:0 0 45px;width:45px;height:49px;
-  color:#25292e;background:transparent
+:root.sv-cinema-stagger-enter #homePage .sv-sayvi-handoff-today:not([hidden]){
+  animation:sv-cinema-rise-in 900ms cubic-bezier(.16,1,.3,1) 630ms both;
 }
-.sv-home-task-symbol svg{
-  display:block;width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.35;
-  stroke-linecap:round;stroke-linejoin:round
+.sv-sayvi-handoff-today-label{
+  margin:0 0 9px 4px;
+  font-size:12px;
+  letter-spacing:.045em;
+  font-weight:560;
+  color:#7e8894;
 }
-.sv-home-task-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:6px}
-.sv-home-task-title{font-size:20px;font-weight:580;line-height:1.23;letter-spacing:-.028em;color:#17191c;overflow-wrap:anywhere}
-.sv-home-task-meta{font-size:13px;font-weight:440;line-height:1.35;color:#767e87}
-.sv-home-task-note{margin:10px 0 0 60px;color:#555b62;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
-.sv-home-task-note[hidden]{display:none}
-.sv-home-task-actions{display:flex;align-items:flex-start;gap:8px;margin:14px 0 0 53px}
-.sv-home-task-actions button{
-  display:flex;align-items:center;flex-direction:column;gap:6px;
-  min-width:78px;min-height:69px;padding:0;flex:0 0 78px;
-  border:0;background:transparent;color:#1f252a;
-  -webkit-tap-highlight-color:transparent
+.sv-sayvi-handoff-agenda-card{
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  width:100%;
+  min-height:88px;
+  padding:16px 17px;
+  border:1px solid rgba(188,201,212,.37);
+  border-radius:19px;
+  background:#fff;
+  color:#14191e;
+  text-align:left;
+  box-shadow:0 3px 15px rgba(79,107,128,.035);
 }
-.sv-home-task-actions button[hidden]{display:none!important}
-.sv-home-task-action-icon{
-  display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;
-  border-radius:50%;background:#f2f3f5;
-  transition:background-color .18s ease,transform .18s ease
-}
-.sv-home-task-actions button:active .sv-home-task-action-icon{background:#e7e9eb;transform:scale(.95)}
-.sv-home-task-actions button:focus-visible{outline:2px solid #38383A;outline-offset:3px;border-radius:8px}
-.sv-home-task-actions svg{
-  width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;
-  stroke-linecap:round;stroke-linejoin:round
-}
-.sv-home-task-action-label{font-size:11px;line-height:1.2;font-weight:480;color:#626870;white-space:nowrap}
-.sv-home-task-status{margin:9px 0 0 60px;color:#b34b35;font-size:12px;line-height:1.35}
-.sv-home-task-status[hidden]{display:none}
-.sv-home-task-postponed{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  margin:8px 0 18px;padding:10px 13px;
-  background:#f6f7f8;border:1px solid #e9ebed;border-radius:16px;
-  color:#5b636c;font-size:12px;line-height:1.35
-}
-.sv-home-task-postponed[hidden]{display:none!important}
-.sv-home-task-postponed-text{min-width:0;overflow-wrap:anywhere}
-.sv-home-task-postponed button{
-  flex:0 0 auto;border:0;border-radius:18px;padding:8px 12px;
-  background:#e8eaee;color:#1c2127;font:inherit;font-weight:600
-}
-.sv-home-task-postponed button:focus-visible{outline:2px solid #38383A;outline-offset:2px}
-/* Compact live queue: one actionable card, three selectable cards. */
-.sv-home-queue-previews{display:grid;gap:0;margin:14px 0 0 53px}
-.sv-home-queue-preview{display:flex;align-items:center;gap:11px;width:100%;min-height:62px;padding:9px 4px 9px 0;text-align:left;border:0;border-top:1px solid rgba(65,73,81,.09);background:transparent;color:#22272b;cursor:pointer;animation:sv-home-queue-rise .65s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(100ms + var(--sv-home-queue-order,0)*95ms);-webkit-tap-highlight-color:transparent}
-.sv-home-queue-preview:focus-visible{outline:2px solid #38383A;outline-offset:2px;border-radius:8px}
-.sv-home-queue-mark{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:#abb5bb}
-.sv-home-queue-copy{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
-.sv-home-queue-title{font-size:15px;line-height:1.3;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sv-home-queue-time{font-size:12px;line-height:1.3;color:#69747b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sv-home-queue-chevron{width:16px;height:16px;flex:0 0 16px;fill:none;stroke:#939ba1;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.sv-home-queue-more{margin:8px 0 0 53px;color:#69747b;font-size:12px}
-@keyframes sv-home-queue-rise{from{opacity:0;transform:translate3d(0,22px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-:root[data-theme="dark"] .sv-home-queue-preview{color:#f2f3f5;border-top-color:rgba(235,240,245,.12)}
-:root[data-theme="dark"] .sv-home-queue-time,:root[data-theme="dark"] .sv-home-queue-more{color:#b5bbc2}
-@media(prefers-reduced-motion:reduce){.sv-home-queue-preview{animation:none!important}}
+.sv-sayvi-handoff-agenda-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
+.sv-sayvi-handoff-agenda-title{font-size:16px;font-weight:560;letter-spacing:-.018em;line-height:1.35;overflow-wrap:anywhere}
+.sv-sayvi-handoff-agenda-meta{font-size:12px;color:#84909b;font-weight:460}
+.sv-sayvi-handoff-agenda-arrow{display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border-radius:50%;background:#f1f4f7;color:#45505c}
+.sv-sayvi-handoff-agenda-arrow svg{display:block;width:17px;height:17px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
 @keyframes sv-sayvi-handoff-card-in{
-  from{opacity:0;transform:translate3d(0,22px,0)}
+  from{opacity:0;transform:translate3d(0,19px,0)}
   to{opacity:1;transform:translate3d(0,0,0)}
 }
-:root[data-theme="dark"] .sv-home-task-title{color:#f3f4f6}
-:root[data-theme="dark"] .sv-home-task-eyebrow,:root[data-theme="dark"] .sv-home-task-meta{color:#b5bbc2}
-:root[data-theme="dark"] .sv-home-task-note{color:#c7cbd0}
-:root[data-theme="dark"] .sv-home-task-actions button{color:#f4f4f6}
-:root[data-theme="dark"] .sv-home-task-action-icon{background:#353a40}
-:root[data-theme="dark"] .sv-home-task-action-label{color:#b5bbc2}
-:root[data-theme="dark"] .sv-home-task-postponed{background:#272b30;color:#d5d9de;border-color:#42474c}
-:root[data-theme="dark"] .sv-home-task-postponed button{background:#373d44;color:#f4f5f7}
-:root[data-theme="dark"].sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]){border-bottom-color:rgba(225,230,236,.14)}
+:root[data-theme="dark"] .sv-sayvi-handoff-agenda-card{background:#262c32;color:#f2f6f8;border-color:rgba(200,218,232,.14)}
+:root[data-theme="dark"] .sv-sayvi-handoff-agenda-arrow{background:#343b43;color:#dbe4e9}
 
 /* The actual #orb is lifted above stacking contexts, then contracted to a
    pinpoint in place. Original SVG, light, DOM identity and handlers survive. */
@@ -516,47 +386,37 @@ body > #orb.sv-sayvi-handoff-flight {
   100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.012)}
 }
 
-/* Approved SEYVEO Crystal Spark. All rays share the miniature's true
-   centre; no offset, blue flash, bubble or change to the 60px dock. */
+/* One short point of light announces the assistant's arrival in the dock. */
 .sv-cinema-dock-spark{
-  position:fixed;z-index:2147483002;
+  position:fixed;
+  z-index:2147483002;
   width:90px;height:90px;
-  opacity:0;pointer-events:none;
-  transform:translate3d(-50%,-50%,0) scale(.15);
-  transform-origin:center center;
-  will-change:transform,opacity;
-  background:
-    linear-gradient(45deg,transparent 47.9%,rgba(135,156,166,.30) 49.15%,#fff 49.72%,#fff 50.28%,rgba(135,156,166,.30) 50.85%,transparent 52.1%) center/40px 40px no-repeat,
-    linear-gradient(-45deg,transparent 48.1%,rgba(135,156,166,.25) 49.22%,#fff 49.72%,#fff 50.28%,rgba(135,156,166,.25) 50.78%,transparent 51.9%) center/31px 31px no-repeat,
-    radial-gradient(circle at center,#fff 0 1px,rgba(135,154,163,.68) 1.55px,#fff 2.2px,rgba(180,198,207,.20) 3.8px,transparent 6px);
-  filter:drop-shadow(0 0 1px rgba(101,123,134,.48)) drop-shadow(0 0 4px rgba(255,255,255,.78));
-  animation:sv-cinema-dock-arrival .93s cubic-bezier(.18,.74,.22,1) both;
+  transform:translate3d(-50%,-50%,0) scale(.1);
+  opacity:0;
+  pointer-events:none;
+  animation:sv-cinema-dock-arrival .95s cubic-bezier(.15,.78,.2,1) both;
 }
 .sv-cinema-dock-spark::before,.sv-cinema-dock-spark::after{
-  content:"";position:absolute;left:50%;top:50%;
-  transform:translate3d(-50%,-50%,0);
-  border-radius:999px;pointer-events:none;
+  content:"";
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  border-radius:999px;
+  filter:drop-shadow(0 0 6px rgba(130,193,221,.78));
 }
 .sv-cinema-dock-spark::before{
-  width:82px;height:2px;
-  background:linear-gradient(90deg,transparent 0%,rgba(139,161,174,.24) 14%,
-    rgba(192,211,222,.55) 36%,#fff 50%,rgba(192,211,222,.58) 64%,
-    rgba(139,161,174,.22) 86%,transparent 100%);
-  box-shadow:0 0 3px rgba(112,143,157,.25);
+  width:100%;height:3px;
+  background:linear-gradient(90deg,transparent 0%,rgba(81,155,191,.68) 35%,#fff 50%,rgba(81,155,191,.68) 65%,transparent 100%);
 }
 .sv-cinema-dock-spark::after{
-  height:90px;width:2px;
-  background:linear-gradient(0deg,transparent 0%,rgba(139,161,174,.27) 14%,
-    rgba(192,211,222,.60) 37%,#fff 50%,rgba(192,211,222,.58) 63%,
-    rgba(139,161,174,.23) 86%,transparent 100%);
-  box-shadow:0 0 3px rgba(112,143,157,.25);
+  height:100%;width:3px;
+  background:linear-gradient(0deg,transparent 0%,rgba(81,155,191,.62) 35%,#fff 50%,rgba(81,155,191,.62) 65%,transparent 100%);
 }
 @keyframes sv-cinema-dock-arrival{
-  0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.15)}
-  22%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}
-  43%{opacity:.37;transform:translate3d(-50%,-50%,0) scale(.76)}
-  65%{opacity:.68;transform:translate3d(-50%,-50%,0) scale(.52)}
-  100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.18)}
+  0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.08)}
+  19%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}
+  48%{opacity:.86;transform:translate3d(-50%,-50%,0) scale(.63)}
+  100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.14)}
 }
 
 /* A single soft afterglow suggests that the light has entered the pearl glass. */
@@ -579,105 +439,6 @@ body > #orb.sv-sayvi-handoff-flight {
   :root.sv-cinema-stagger-enter #homePage :is(#stage > .message,#seyveoLivingMoment .lm-caption,#seyveoLivingMoment .lm-tiles > *,#seyveoLivingMoment .lm-inline-item,#dynamic > *,#svSmartStartHome,#svcpWorkHomePreview,#workTimeline,.sv-sayvi-handoff-today){animation:none!important}
   :root.sv-home-greeting-fading #homePage #stage > .message,
   :root.sv-home-greeting-expired #homePage #stage{transition:none!important}
-}
-
-/* Quiet Home: keep the ORIGINAL Sayvi orb in the centre when no work is
-   due today. This mode never hides the decision feed or changes music logic. */
-:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #stage{
-  min-height:clamp(420px,calc(var(--sv-home-stable-vh,100dvh) - 280px),700px)!important;
-  flex:1 1 auto!important;
-  justify-content:center!important;
-  padding:31px 0 20px!important;
-  margin-top:0!important;
-  transition:none!important;
-}
-:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #orbCluster,
-:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
-  height:clamp(210px,62vw,285px)!important;
-  min-height:0!important;
-  margin-bottom:0!important;
-  opacity:1!important;
-  visibility:visible!important;
-  overflow:visible!important;
-  pointer-events:auto!important;
-  transition:opacity .52s ease!important;
-}
-:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #orb,
-:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage.lm-focus #orb{
-  display:grid!important;
-  width:clamp(210px,62vw,285px)!important;
-  height:clamp(210px,62vw,285px)!important;
-  min-width:0!important;
-  min-height:0!important;
-  opacity:1!important;
-  transform:none!important;
-  pointer-events:auto!important;
-}
-:root.sv-sayvi-home-idle body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
-  opacity:0!important;
-  pointer-events:none!important;
-}
-:root.sv-sayvi-home-idle body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
-  animation:sv-home-idle-dock-shrink .76s cubic-bezier(.22,.8,.2,1) both!important;
-}
-:root.sv-sayvi-home-idle-leaving body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
-  animation:sv-home-idle-dock-expand .82s cubic-bezier(.22,.8,.2,1) both!important;
-}
-@keyframes sv-home-idle-dock-shrink{
-  from{max-width:var(--sv-feng-capsule)}
-  to{max-width:calc(var(--sv-feng-capsule) * .75)}
-}
-@keyframes sv-home-idle-dock-expand{
-  from{max-width:calc(var(--sv-feng-capsule) * .75)}
-  to{max-width:var(--sv-feng-capsule)}
-}
-@media(prefers-reduced-motion:reduce){
-  :root.sv-sayvi-home-idle body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
-    animation:none!important;
-    max-width:calc(var(--sv-feng-capsule) * .75)!important;
-  }
-}
-
-/* The same living Sayvi can share Home with a short queue of real work.
-   Only her size and the existing three-slot presentation change: the
-   approved dock material, icons and navigation remain untouched. */
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
-  min-height:0!important;
-  flex:0 0 auto!important;
-  justify-content:center!important;
-  padding:9px 0 5px!important;
-  margin-top:0!important;
-  transition:none!important;
-}
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #orbCluster,
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
-  height:var(--sv-home-live-orb-size,170px)!important;
-  min-height:0!important;
-  margin-bottom:0!important;
-  opacity:1!important;
-  visibility:visible!important;
-  overflow:visible!important;
-  pointer-events:auto!important;
-  transition:opacity .52s ease!important;
-}
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #orb,
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage.lm-focus #orb{
-  display:grid!important;
-  width:var(--sv-home-live-orb-size,170px)!important;
-  height:var(--sv-home-live-orb-size,170px)!important;
-  min-width:0!important;
-  min-height:0!important;
-  opacity:1!important;
-  transform:none!important;
-  pointer-events:auto!important;
-  transition:opacity .5s ease!important;
-}
-:root.sv-sayvi-home-cards body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
-  opacity:0!important;
-  pointer-events:none!important;
-}
-:root.sv-sayvi-home-cards body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
-  animation:sv-home-idle-dock-shrink .76s cubic-bezier(.22,.8,.2,1) both!important;
 }
 
 /* SEYVEO SOUND · living music artwork on Home.
@@ -742,221 +503,16 @@ body > #orb.sv-sayvi-handoff-flight {
   animation:sv-music-ambient-dock-expand 1100ms cubic-bezier(.22,.8,.2,1) both!important;
 }
 @keyframes sv-music-ambient-dock-shrink{
-  from{max-width:var(--sv-feng-capsule)}
-  to{max-width:calc(var(--sv-feng-capsule) * .75)}
+  from{clip-path:inset(0 0 0 0 round 999px)}
+  to{clip-path:inset(0 25% 0 0 round 999px)}
 }
 @keyframes sv-music-ambient-dock-expand{
-  from{max-width:calc(var(--sv-feng-capsule) * .75)}
-  to{max-width:var(--sv-feng-capsule)}
+  from{clip-path:inset(0 25% 0 0 round 999px)}
+  to{clip-path:inset(0 0 0 0 round 999px)}
 }
 @media(prefers-reduced-motion:reduce){
   :root.sv-music-ambient :is(
     body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
     body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
-  )::before{animation:none!important;max-width:calc(var(--sv-feng-capsule) * .75)!important}
-}
-
-/* Управление · real Home plans. Flat graphite switch, no extra glass layers. */
-#managePage .sv-home-agenda-management{margin:0 0 18px;max-width:480px;width:100%;justify-self:start}
-#managePage .sv-home-agenda-setting{
-  cursor:pointer;user-select:none;-webkit-user-select:none;min-height:69px;gap:12px;
-  -webkit-tap-highlight-color:transparent
-}
-#managePage .sv-home-agenda-setting .manage-text{padding-right:8px}
-#managePage .sv-home-agenda-input{
-  position:absolute;right:15px;top:50%;width:48px;height:30px;
-  transform:translateY(-50%);opacity:0;margin:0;cursor:pointer;z-index:1
-}
-#managePage .sv-home-agenda-track{
-  position:relative;display:block;flex:0 0 48px;width:48px;height:30px;
-  box-sizing:border-box;border-radius:999px;background:#d8dadd;
-  border:1px solid rgba(60,65,71,.10);
-  transition:background-color .24s ease,border-color .24s ease
-}
-#managePage .sv-home-agenda-track::after{
-  content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;
-  border-radius:50%;background:#fff;
-  box-shadow:0 1px 2px rgba(0,0,0,.13);
-  transition:transform .26s cubic-bezier(.2,.8,.2,1)
-}
-#managePage .sv-home-agenda-input:checked+.sv-home-agenda-track{
-  background:#38383A;border-color:#38383A
-}
-#managePage .sv-home-agenda-input:checked+.sv-home-agenda-track::after{
-  transform:translateX(18px)
-}
-#managePage .sv-home-agenda-input:focus-visible+.sv-home-agenda-track{
-  outline:2px solid currentColor;outline-offset:3px
-}
-:root[data-theme="dark"] #managePage .sv-home-agenda-input:checked+.sv-home-agenda-track{
-  background:#d7d9de;border-color:#d7d9de
-}
-:root[data-theme="dark"] #managePage .sv-home-agenda-input:checked+.sv-home-agenda-track::after{
-  background:#38383A;box-shadow:none
-}
-@media(prefers-reduced-motion:reduce){
-  #managePage .sv-home-agenda-track,#managePage .sv-home-agenda-track::after{transition:none}
-}
-
-/* Three approved educational cards use the existing Quiet Cinema plane.
-   Only the obsolete duplicate demo panels remain hidden. */
-#homePage #svcpWorkHomePreview,
-#homePage #seyveoDemoLaunch{display:none!important}
-
-
-/* Focused reply on Home: one stable transition while iOS keyboard opens.
-   Dock styling stays unchanged; inline forms and their drafts are preserved. */
-:root.sv-home-writing #homePage #stage{
-  min-height:0!important;flex:0 0 auto!important;padding:0!important;margin:0!important;
-  transition:min-height .62s cubic-bezier(.22,1,.36,1),padding .62s ease!important
-}
-:root.sv-home-writing #homePage #orbCluster,
-:root.sv-home-writing #homePage.lm-focus #orbCluster{
-  height:0!important;min-height:0!important;opacity:0!important;pointer-events:none!important;
-  transition:height .62s cubic-bezier(.22,1,.36,1),opacity .32s ease!important
-}
-:root.sv-home-writing #homePage #stage > .message,
-:root.sv-home-writing #homePage .sv-sayvi-handoff-today:not(:focus-within),
-:root.sv-home-writing #homePage #seyveoLivingMoment:not(:focus-within),
-:root.sv-home-writing #homePage #dynamic > :not(:focus-within){
-  display:none!important
-}
-@media(prefers-reduced-motion:reduce){
-  :root.sv-home-writing #homePage #stage,
-  :root.sv-home-writing #homePage #orbCluster{transition:none!important}
-}
-
-
-/* The physical orb size is settled synchronously before the first paint.
-   No second CSS animation may independently resize its stage or artwork. */
-:root.sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]){
-  animation-duration:1.05s;
-  animation-delay:.48s
-}
-:root.sv-sayvi-handoff-docked #homePage .sv-home-queue-preview{
-  animation-duration:1.02s;
-  animation-delay:calc(.78s + var(--sv-home-queue-order,0)*.16s)
-}
-:root.sv-sayvi-handoff-docked.sv-home-greeting-fading #homePage #stage > .message{
-  transition:opacity .7s ease,transform .72s cubic-bezier(.22,1,.36,1),max-height .9s cubic-bezier(.22,1,.36,1),margin .9s ease!important
-}
-@media(prefers-reduced-motion:reduce){
-  :root.sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]),
-  :root.sv-sayvi-handoff-docked #homePage .sv-home-queue-preview{animation:none!important}
-}
-
-
-/* Stable greeting slot: the text belongs to the sphere's layout and cannot
-   move the sphere or the real cards when it appears, changes or fades. */
-:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #stage > .message{
-  box-sizing:border-box!important;
-  height:112px!important;min-height:112px!important;max-height:112px!important;
-  flex:0 0 112px!important;overflow:hidden!important
-}
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage > .message{
-  box-sizing:border-box!important;
-  height:76px!important;min-height:76px!important;max-height:76px!important;
-  flex:0 0 76px!important;overflow:hidden!important
-}
-:root:is(.sv-sayvi-home-idle,.sv-sayvi-home-cards).sv-sayvi-handoff-docked.sv-home-greeting-expired #homePage #stage > .message{
-  margin:0 auto!important;opacity:0!important;visibility:hidden!important
-}
-@media(max-height:690px){
-  :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage > .message{
-    height:62px!important;min-height:62px!important;max-height:62px!important;flex-basis:62px!important
-  }
-}
-
-
-/* The returning Home renders its final card-size sphere before revealing it.
-   This prevents the initial generic 300px orb from shrinking in plain sight. */
-/* Quick cinematic reveal: visual layers fade into their already-settled
-   positions. The sphere's box, stage geometry and dock never move. */
-:root.sv-home-cinematic-intro #homePage #plasmaVisual{
-  animation:sv-home-cinema-orb .78s cubic-bezier(.22,.8,.2,1) both!important;
-  transform-origin:center center;
-}
-:root.sv-home-cinematic-intro #homePage #stage > .message{
-  animation:sv-home-cinema-copy .66s .16s cubic-bezier(.22,.8,.2,1) both!important;
-}
-:root.sv-home-cinematic-intro #homePage .sv-sayvi-home-online{
-  animation:sv-home-cinema-copy .54s .1s ease-out both!important;
-}
-/* One continuous launch scene: while the waves, name and specialty slowly
-   resolve inside Sayvi, the actual task cards float into their FINAL slots.
-   Translate/opacity do not alter layout, so the orb and dock never jump. */
-:root.sv-home-cinematic-intro.sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]),
-:root.sv-home-cinematic-intro.sv-sayvi-handoff-docked #homePage #dynamic:not([hidden]) > *,
-:root.sv-home-cinematic-intro.sv-sayvi-handoff-docked #homePage #seyveoLivingMoment:not([hidden]) .lm-tiles > *,
-:root.sv-home-cinematic-intro.sv-sayvi-handoff-docked #homePage :is(#svSmartStartHome,#svcpWorkHomePreview,#workTimeline):not([hidden]){
-  animation:sv-home-cinema-card-rise 1.4s .72s cubic-bezier(.16,1,.3,1) both!important;
-}
-:root.sv-home-cinematic-intro.sv-sayvi-handoff-docked #homePage .sv-home-queue-preview{
-  animation:sv-home-cinema-card-rise 1.12s cubic-bezier(.16,1,.3,1) both!important;
-  animation-delay:calc(1.15s + var(--sv-home-queue-order,0)*130ms)!important;
-}
-@keyframes sv-home-cinema-card-rise{
-  from{opacity:0;transform:translate3d(0,48px,0)}
-  to{opacity:1;transform:translate3d(0,0,0)}
-}
-@keyframes sv-home-cinema-orb{
-  0%{opacity:.12;filter:brightness(1.16);scale:.98}
-  54%{opacity:.93;filter:brightness(1.07);scale:.995}
-  100%{opacity:1;filter:none;scale:1}
-}
-@keyframes sv-home-cinema-copy{
-  from{opacity:0;translate:0 5px}
-  to{opacity:1;translate:0 0}
-}
-@media(prefers-reduced-motion:reduce){
-  :root.sv-home-cinematic-intro #homePage :is(#plasmaVisual,#stage > .message,.sv-sayvi-home-online){
-    animation:none!important;scale:1!important;translate:none!important
-  }
-  :root.sv-home-cinematic-intro #homePage :is(.sv-sayvi-handoff-today,.sv-home-queue-preview,#dynamic > *,#seyveoLivingMoment .lm-tiles > *,#svSmartStartHome,#svcpWorkHomePreview,#workTimeline){
-    animation:none!important;transform:none!important;opacity:1!important
-  }
-}
-:root.sv-home-stabilizing.sv-sayvi-handoff-demo.sv-sayvi-handoff-docked #homePage :is(#stage,#orb,#orbCluster),
-:root.sv-home-stabilizing.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage :is(#stage,#orb,#orbCluster){
-  transition:none!important
-}
-:root.sv-home-prelayout #homePage #stage{
-  opacity:0!important;
-  transition:none!important
-}
-:root.sv-home-prelayout #homePage #orb,
-:root.sv-home-prelayout #homePage #orbCluster{
-  transition:none!important
-}
-:root.sv-home-prelayout.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage :is(#orb,#orbCluster,#stage){
-  transition:none!important;
-  animation:none!important
-}
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
-  transition:opacity .88s cubic-bezier(.22,1,.36,1)!important
-}
-@media(prefers-reduced-motion:reduce){
-  :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{transition:none!important}
-}
-
-
-/* Home → section: the dock grows first; Sayvi gently appears only inside
-   its fully expanded slot. The approved capsule geometry is unchanged. */
-:root.sv-sayvi-home-idle-leaving :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock)::before{
-  animation:sv-home-idle-dock-expand .64s cubic-bezier(.22,1,.36,1) both!important;
-  animation-duration:.64s!important;
-  animation-timing-function:cubic-bezier(.22,1,.36,1)!important
-}
-:root.sv-sayvi-home-idle-leaving :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
-  opacity:0!important;pointer-events:none!important
-}
-:root.sv-home-dock-sphere-wait :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
-  opacity:0!important;
-  pointer-events:none!important
-}
-:root.sv-home-dock-sphere-revealing :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
-  transition:opacity .46s cubic-bezier(.24,.7,.2,1)!important
-}
-@media(prefers-reduced-motion:reduce){
-  :root.sv-home-dock-sphere-revealing :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{transition:none!important}
+  )::before{animation:none!important;clip-path:inset(0 25% 0 0 round 999px)!important}
 }
