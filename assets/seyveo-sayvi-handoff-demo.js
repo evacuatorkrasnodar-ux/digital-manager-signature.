@@ -49,6 +49,18 @@
     root.classList.remove('sv-sayvi-handoff-demo','sv-cinema-boot');
     return;
   }
+  // Flow keeps the familiar Sayvi target clickable while her living sphere
+  // occupies the Home stage. It shares the ORIGINAL button and its handlers.
+  let flow=dockButton.querySelector('.sv-sayvi-flow-dock');
+  if(!flow){
+    flow=document.createElement('img');
+    flow.className='sv-sayvi-flow-dock';
+    flow.src='assets/seyveo-flow-button.svg?v=1';
+    flow.alt='';
+    flow.setAttribute('aria-hidden','true');
+    flow.draggable=false;
+    dockButton.append(flow);
+  }
   // Independent status line: the greeting can expire, Sayvi's presence cannot.
   // Fixed placement keeps the approved flight geometry and card positions intact.
   if(!home.querySelector('.sv-sayvi-home-online')){
@@ -283,38 +295,38 @@
       Array.from(dynamic.children).some(el=>!el.hidden&&el.classList.contains('decision-card'));
     return !!(agenda||realCards||advice);
   }
-  function shouldKeepSphereHome(){
-    return !home.hidden&&(!location.hash||location.hash==='#home')&&!hasTodayAttention();
+  function homeRouteVisible(){
+    return !home.hidden&&(!location.hash||location.hash==='#home')&&
+      !root.classList.contains('seyveo-conversation')&&!document.querySelector('dialog[open]');
   }
-  let idleDockTimer=0;
+  function shouldKeepSphereHome(){
+    return homeRouteVisible();
+  }
   function updateClusterInteraction(){
     const cluster=document.getElementById('orbCluster');
     if(!cluster)return;
-    const visible=root.classList.contains('sv-sayvi-home-idle')||
+    const visible=root.classList.contains('sv-sayvi-home-present')||
       root.classList.contains('sv-music-ambient');
     if(visible){cluster.removeAttribute('aria-hidden');cluster.inert=false;}
     else if(done){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
   }
   function syncIdleHome(){
     if(!done)return;
-    const idle=shouldKeepSphereHome();
-    const previous=root.classList.contains('sv-sayvi-home-idle');
-    if(idle){
-      clearTimeout(idleDockTimer);
-      root.classList.remove('sv-sayvi-home-idle-leaving');
-      root.classList.add('sv-sayvi-home-idle');
-    }else if(previous){
-      root.classList.remove('sv-sayvi-home-idle');
-      root.classList.add('sv-sayvi-home-idle-leaving');
-      clearTimeout(idleDockTimer);
-      idleDockTimer=setTimeout(()=>root.classList.remove('sv-sayvi-home-idle-leaving'),820);
-    }
+    const onHome=homeRouteVisible();
+    const count=onHome?upcomingHomeItems().length:0;
+    const compact=onHome&&count>0;
+    root.classList.toggle('sv-sayvi-home-present',onHome);
+    root.classList.toggle('sv-sayvi-home-with-cards',compact);
+    root.classList.toggle('sv-sayvi-home-idle',onHome&&!compact);
+    root.classList.remove('sv-sayvi-home-idle-leaving');
+    root.dataset.svHomeCards=String(compact?Math.min(3,Math.max(1,count)):0);
     updateClusterInteraction();
   }
   // The owner's saved tasks are the only source of Home task cards.
   // Never create a second task store or show educational suggestions as real.
   const homeLaterKey='seyveo-home-task-later-v1';
   let currentHomeItem=null;
+  let selectedHomeKey='';
   function homeLaterMap(){
     try{
       const raw=JSON.parse(localStorage.getItem(homeLaterKey)||'{}');
@@ -351,6 +363,7 @@
   }
   function restoreHomeItem(item){
     if(!item)return;
+    selectedHomeKey=item.key;
     try{
       const later=homeLaterMap();
       delete later[item.key];
@@ -360,6 +373,7 @@
   }
   function postponeHomeItem(item){
     if(!item)return;
+    if(selectedHomeKey===item.key)selectedHomeKey='';
     try{
       const fresh=Object.fromEntries(Object.entries(homeLaterMap())
         .filter(([,until])=>Number(until)>Date.now()).slice(-120));
@@ -387,8 +401,15 @@
         '<button type="button" data-sv-home-action="details" aria-label="Подробнее о деле" title="Подробнее"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><path d="M6 18 18 6M8 6h10v10"/></svg></span><span class="sv-home-task-action-label">Подробнее</span></button>'+
         '<button type="button" data-sv-home-action="complete" aria-label="Отметить дело выполненным" title="Исполнить"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.5 12 3 3 6-6"/></svg></span><span class="sv-home-task-action-label">Исполнить</span></button>'+
         '<button type="button" data-sv-home-action="later" aria-label="Отложить карточку на час" title="Убрать на час"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><span class="sv-home-task-action-label">Позже · 1 ч</span></button></div>'+
-        '<p class="sv-home-task-status" role="status" aria-live="polite" hidden></p>';
+        '<p class="sv-home-task-status" role="status" aria-live="polite" hidden></p>'+
+        '<div class="sv-home-task-queue" aria-label="Следующие дела"></div>'+
+        '<button class="sv-home-task-more" type="button" hidden>Остальные дела</button>';
       todayCard.addEventListener('click',event=>{
+        const choose=event.target.closest('button[data-sv-home-select]');
+        if(choose){selectedHomeKey=choose.dataset.svHomeSelect;renderToday();return;}
+        if(event.target.closest('button.sv-home-task-more')){
+          document.getElementById('navTasks')?.click();return;
+        }
         const button=event.target.closest('button[data-sv-home-action]');
         if(!button||!currentHomeItem)return;
         const item=currentHomeItem,action=button.dataset.svHomeAction;
@@ -429,7 +450,10 @@
       postponedCard.querySelector('button').addEventListener('click',()=>restoreHomeItem(currentPostponedItem));
       todayCard.after(postponedCard);
     }
-    const items=upcomingHomeItems(),item=items[0]||null;
+    const items=upcomingHomeItems();
+    const selectedIndex=items.findIndex(value=>value.key===selectedHomeKey);
+    const activeIndex=selectedIndex>=0?selectedIndex:0;
+    const item=items[activeIndex]||null;
     currentHomeItem=item;
     todayCard.hidden=!item;
     const postponed=postponedHomeItems();
@@ -444,13 +468,33 @@
     todayCard.querySelector('.sv-home-task-eyebrow').textContent=item.kind==='event'?'СЭЙВИ · ВАША ВСТРЕЧА':'СЭЙВИ · ВАШЕ ДЕЛО';
     todayCard.querySelector('.sv-home-task-title').textContent=item.title;
     todayCard.querySelector('.sv-home-task-meta').textContent=homeItemWhen(item);
-    todayCard.querySelector('.sv-home-task-count').textContent=items.length>1?'1 из '+items.length:'';
+    todayCard.querySelector('.sv-home-task-count').textContent=items.length>1?(activeIndex+1)+' из '+items.length:'';
     const note=todayCard.querySelector('.sv-home-task-note');
     note.hidden=!item.notes;
     note.textContent=item.notes;
     todayCard.querySelector('[data-sv-home-action="complete"]').hidden=item.kind!=='task';
     const status=todayCard.querySelector('.sv-home-task-status');
     status.hidden=true;status.textContent='';
+    const queue=todayCard.querySelector('.sv-home-task-queue');
+    queue.replaceChildren();
+    const other=items.filter(value=>value.key!==item.key).slice(0,2);
+    for(const next of other){
+      const row=document.createElement('button');
+      row.type='button';
+      row.className='sv-home-task-next';
+      row.dataset.svHomeSelect=next.key;
+      row.setAttribute('aria-label','Выбрать дело: '+next.title);
+      row.innerHTML='<span class="sv-home-task-next-dot" aria-hidden="true"></span>'+
+        '<span class="sv-home-task-next-copy"><strong></strong><small></small></span>'+
+        '<span class="sv-home-task-next-arrow" aria-hidden="true">›</span>';
+      row.querySelector('strong').textContent=next.title;
+      row.querySelector('small').textContent=homeItemWhen(next);
+      queue.append(row);
+    }
+    const more=todayCard.querySelector('.sv-home-task-more');
+    const hiddenCount=Math.max(0,items.length-1-other.length);
+    more.hidden=!hiddenCount;
+    if(hiddenCount)more.textContent='Ещё '+hiddenCount+' в «Делах»';
   }
   // Recommendations, cards and tasks can change after docking. Keep the
   // nearest real item in sync instead of freezing the visibility at launch.
@@ -953,7 +997,9 @@
     // exactly the existing assistant position rather than an invented point.
     const to=orb.getBoundingClientRect();
     const from=small.getBoundingClientRect();
-    if(!reduceMotion()&&to.width&&from.width&&typeof orb.animate==='function'){
+    // Sayvi is already on Home; music enlarges that SAME sphere in place.
+    if(!root.classList.contains('sv-sayvi-home-present')&&
+       !reduceMotion()&&to.width&&from.width&&typeof orb.animate==='function'){
       const dx=from.left+from.width/2-(to.left+to.width/2);
       const dy=from.top+from.height/2-(to.top+to.height/2);
       const scale=Math.min(1,from.width/to.width);
@@ -997,7 +1043,8 @@
       }
       if(canShowMusicAmbient())scheduleMusicAmbient();
     };
-    if(!animate||reduceMotion()||!musicIsPlaying()||home.hidden||typeof orb.animate!=='function'){
+    if(!animate||reduceMotion()||!musicIsPlaying()||home.hidden||
+       root.classList.contains('sv-sayvi-home-present')||typeof orb.animate!=='function'){
       settle();return;
     }
     const from=orb.getBoundingClientRect();
@@ -1031,7 +1078,7 @@
       if(canShowMusicAmbient())scheduleMusicAmbient();
       return;
     }
-    if(event.target.closest('#sayviMusicMini')){
+    if(event.target.closest('#sayviMusicMini,#assistantButton,#orb')){
       leaveMusicAmbient({animate:false});
       return;
     }
