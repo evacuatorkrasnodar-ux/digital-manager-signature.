@@ -1239,38 +1239,10 @@ function restorePreparation(id){
  const ids=preparationDeferred().filter(entry=>!entry.startsWith(prefix));
  try{localStorage.setItem(PREPARATION_DEFER_KEY,JSON.stringify({day:localDay(),ids}))}catch{}
 }
-function dueTasks(includeUpcoming=false){
- if(!homeAgendaEnabled())return [];
- // Never turn the local BUSINESS DEMO database into Home notifications.
- // Genuine personal deadlines below are still eligible for attention.
- const tasks=[];
- // The shared reader owns selection of personal deadlines. The existing
- // Living Moment remains the one-and-only Home presentation/decision surface.
- const personal=window.SEYVEO_LIFE_EVENTS?.attentionTasks?.()||[];
- // Evening preparation is optional and comes AFTER genuine due tasks.
- // No duplicate stored task, no invented due hour.
- const future=includeUpcoming?(window.SEYVEO_LIFE_EVENTS?.upcomingTasks?.()||[]).filter(item=>!preparationDeferred().includes('task:'+item.id+'|'+item.date)):[];
- return tasks.concat(personal.map(item=>{
-   const eventId='task:'+item.id+'|'+item.date;
-   const when=new Date(item.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
-   return {
-    eventId,taskId:item.id||'',kind:'task',title:item.title,time:item.time||'',
-    body:'Срок наступил · '+when+'. Дело сохранено в вашем списке.',
-    category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
-    reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
-    detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
-   };
-  }),future.map(item=>{
-    const when=new Date(item.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
-    return {
-      eventId:'task:'+item.id+'|'+item.date,taskId:item.id||'',kind:'task',
-      upcoming:true,title:item.title,time:item.time||'',
-      body:'Запланировано на завтра · '+when+'. Можно подготовиться заранее.',
-      category:'СЭЙВИ · ЗАВТРА В ПЛАНАХ',
-      reason:'Это ваше незавершённое дело со сроком на завтра. Сэйви показывает его вечером накануне, не назначая время самостоятельно.',
-      detail:'Откройте «Дела», чтобы подготовиться или изменить запись.'
-    };
-  })).filter(item=>!quiet.has(item.eventId)&&mayShow(item));
+function dueTasks(){
+ // The dedicated real Home task card now owns personal deadlines and actions.
+ // Never render a second copy inside the Living Moment.
+ return [];
 }
 /* Verified personal discoveries share the SINGLE Home card surface.
  * Scheduled/real tasks and owner recommendations always take precedence.
@@ -1408,9 +1380,8 @@ function installLivingCardSwipe(field,onLater,onRemoved,getCard){
 /* Real upcoming Calendar reminders share the existing Home living plane.
  * They do not become an extra calendar, a push alert, or a fake completed task. */
 function upcomingCalendar(){
- if(!homeAgendaEnabled())return [];
- return (window.SEYVEO_LIFE_EVENTS?.upcomingEvents?.()||[])
-  .filter(item=>!quiet.has('calendar:'+item.id+'|'+item.date+'|'+item.time)&&mayShow({kind:'calendar',eventId:'calendar:'+item.id+'|'+item.date+'|'+item.time}));
+ // Actual calendar entries are surfaced by the dedicated Home agenda card.
+ return [];
 }
 function showCalendar(item){
  if(!item||!available())return false;
@@ -1577,10 +1548,8 @@ function refresh(){
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=adviceIdentity(pending);
  if(mode==='preview'){
-  if(!dynamic.hidden)dynamic.hidden=true;
-  // A real manager review supersedes only the idle training presentation.
-  if(dueTasks().some(item=>item.businessTask)&&!editing()){rest();return}
-  return;
+  // Training cards are retired; immediately clear an old in-memory scene.
+  rest();return;
  }
  if(mode==='task'){
   if(!dynamic.hidden)dynamic.hidden=true;
