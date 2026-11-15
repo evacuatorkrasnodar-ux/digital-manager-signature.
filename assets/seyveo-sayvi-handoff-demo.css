@@ -796,3 +796,25 @@ body > #orb.sv-sayvi-handoff-flight {
   :root.sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]),
   :root.sv-sayvi-handoff-docked #homePage .sv-home-queue-preview{animation:none!important}
 }
+
+
+/* Stable greeting slot: the text belongs to the sphere's layout and cannot
+   move the sphere or the real cards when it appears, changes or fades. */
+:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #stage > .message{
+  box-sizing:border-box!important;
+  height:112px!important;min-height:112px!important;max-height:112px!important;
+  flex:0 0 112px!important;overflow:hidden!important
+}
+:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage > .message{
+  box-sizing:border-box!important;
+  height:76px!important;min-height:76px!important;max-height:76px!important;
+  flex:0 0 76px!important;overflow:hidden!important
+}
+:root:is(.sv-sayvi-home-idle,.sv-sayvi-home-cards).sv-sayvi-handoff-docked.sv-home-greeting-expired #homePage #stage > .message{
+  margin:-7px auto 0!important;opacity:0!important;visibility:hidden!important
+}
+@media(max-height:690px){
+  :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage > .message{
+    height:62px!important;min-height:62px!important;max-height:62px!important;flex-basis:62px!important
+  }
+}
