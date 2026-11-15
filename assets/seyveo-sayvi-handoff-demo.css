@@ -65,6 +65,21 @@
   pointer-events:none !important;
 }
 :root.sv-sayvi-handoff-demo #homePage #seyveoNameTip{display:none !important}
+/* The Home's weather control is populated after an async request. Reserve
+   its entire row from the first frame so no late text can shift Sayvi. */
+#homePage .sv-home-weather-slot{
+  box-sizing:border-box;
+  display:flex;
+  flex:0 0 40px;
+  width:100%;height:40px;min-height:40px;max-height:40px;
+  align-items:center;justify-content:center;
+  overflow:hidden;
+  margin:0;padding:0;
+}
+:root.sv-home-writing #homePage .sv-home-weather-slot,
+:root.sv-sayvi-handoff-docked:not(.sv-sayvi-home-idle):not(.sv-sayvi-home-cards):not(.sv-music-ambient) #homePage .sv-home-weather-slot{
+  display:none!important
+}
 /* Persistent status stays above Home when the transient greeting fades. */
 :root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online{
   position:fixed;
@@ -535,7 +550,7 @@ body > #orb.sv-sayvi-handoff-flight {
   justify-content:center!important;
   padding:31px 0 20px!important;
   margin-top:0!important;
-  transition:min-height .62s cubic-bezier(.2,.8,.2,1)!important;
+  transition:none!important;
 }
 :root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #orbCluster,
 :root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
@@ -546,7 +561,7 @@ body > #orb.sv-sayvi-handoff-flight {
   visibility:visible!important;
   overflow:visible!important;
   pointer-events:auto!important;
-  transition:height .62s cubic-bezier(.2,.8,.2,1),opacity .52s ease!important;
+  transition:opacity .52s ease!important;
 }
 :root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #orb,
 :root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage.lm-focus #orb{
@@ -593,7 +608,7 @@ body > #orb.sv-sayvi-handoff-flight {
   justify-content:center!important;
   padding:9px 0 5px!important;
   margin-top:0!important;
-  transition:padding .7s cubic-bezier(.22,1,.36,1),min-height .7s cubic-bezier(.22,1,.36,1)!important;
+  transition:none!important;
 }
 :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #orbCluster,
 :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
@@ -604,7 +619,7 @@ body > #orb.sv-sayvi-handoff-flight {
   visibility:visible!important;
   overflow:visible!important;
   pointer-events:auto!important;
-  transition:height .62s cubic-bezier(.2,.8,.2,1),opacity .52s ease!important;
+  transition:opacity .52s ease!important;
 }
 :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #orb,
 :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage.lm-focus #orb{
@@ -616,7 +631,7 @@ body > #orb.sv-sayvi-handoff-flight {
   opacity:1!important;
   transform:none!important;
   pointer-events:auto!important;
-  transition:width .78s cubic-bezier(.22,1,.36,1),height .78s cubic-bezier(.22,1,.36,1),opacity .5s ease!important;
+  transition:opacity .5s ease!important;
 }
 :root.sv-sayvi-home-cards body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{
   opacity:0!important;
@@ -773,18 +788,8 @@ body > #orb.sv-sayvi-handoff-flight {
 }
 
 
-/* Unified calm Home motion: sphere, its layout slot and real cards settle
-   together. No changes to the approved dock material or icons. */
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
-  transition:min-height 1.2s cubic-bezier(.22,1,.36,1),padding 1.2s cubic-bezier(.22,1,.36,1)!important
-}
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #orbCluster,
-:root.sv-sayvi-home-idle.sv-sayvi-handoff-docked #homePage #orbCluster{
-  transition:height 1.2s cubic-bezier(.22,1,.36,1),opacity .82s ease!important
-}
-:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #orb{
-  transition:width 1.2s cubic-bezier(.22,1,.36,1),height 1.2s cubic-bezier(.22,1,.36,1),opacity .82s ease!important
-}
+/* The physical orb size is settled synchronously before the first paint.
+   No second CSS animation may independently resize its stage or artwork. */
 :root.sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]){
   animation-duration:1.05s;
   animation-delay:.48s
@@ -815,7 +820,7 @@ body > #orb.sv-sayvi-handoff-flight {
   flex:0 0 76px!important;overflow:hidden!important
 }
 :root:is(.sv-sayvi-home-idle,.sv-sayvi-home-cards).sv-sayvi-handoff-docked.sv-home-greeting-expired #homePage #stage > .message{
-  margin:-7px auto 0!important;opacity:0!important;visibility:hidden!important
+  margin:0 auto!important;opacity:0!important;visibility:hidden!important
 }
 @media(max-height:690px){
   :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage > .message{
@@ -843,7 +848,7 @@ body > #orb.sv-sayvi-handoff-flight {
   animation:none!important
 }
 :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
-  transition:opacity .88s cubic-bezier(.22,1,.36,1),min-height 1.2s cubic-bezier(.22,1,.36,1),padding 1.2s cubic-bezier(.22,1,.36,1)!important
+  transition:opacity .88s cubic-bezier(.22,1,.36,1)!important
 }
 @media(prefers-reduced-motion:reduce){
   :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{transition:none!important}
