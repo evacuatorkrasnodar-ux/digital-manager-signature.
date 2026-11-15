@@ -331,7 +331,7 @@
   edit:'<path d="M12.7 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-5.7"/><path d="m10.2 15.5-3.1.7.7-3.1L17.2 3.7a2.2 2.2 0 0 1 3.1 3.1l-9.4 9.4-3.1.7"/><path d="m16.3 4.6 3.1 3.1"/>',
   navigate:'<path d="M7 17 17 7M8 7h9v9"/>',
   send:'<path d="m22 2-7.2 20-4.2-8.6L2 9.2 22 2ZM22 2 10.6 13.4"/>',
-  save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
+  save:'<rect x="3.25" y="3.25" width="17.5" height="17.5" rx="4"/><circle cx="12" cy="12" r="2.3" fill="currentColor" stroke="none"/>',
   confirm:'<path d="m5 12 4.5 4.5L19 7"/>',
   back:'<path d="m14.5 5-7 7 7 7"/>'
  });
