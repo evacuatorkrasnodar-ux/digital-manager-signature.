@@ -220,7 +220,14 @@
  window.SAYVI_WEATHER=Object.freeze({
   refresh:()=>refresh(true),setLocation,
   getLocation:()=>({...location}),
-  getForecast:date=>days.has(date)?{...days.get(date)}:null
+  getForecast:date=>days.has(date)?{...days.get(date)}:null,
+  getPresentation:date=>{
+   const day=days.get(date);
+   if(!day)return null;
+   const [kind,description]=condition(day.code);
+   return {kind,description,high:temperature(day.max),low:temperature(day.min),
+    icon:iconSVG(kind),city:location.name,updatedAt};
+  }
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
  else init();
