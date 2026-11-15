@@ -161,15 +161,15 @@
  back.dataset.svHeaderIcon='back';
  add.dataset.svHeaderIcon='add';
  shell.prepend(heading);
- // The month is a real part of the shared header, not a floating calendar overlay.
- calendarJump.addEventListener('click',()=>month.click());
- month.addEventListener('click',()=>{
-  // The month heading is the single entry point to the full calendar.
-  // Keep the agenda's currently visible month; do not reset it to today.
+ // Keep the full Calendar on its clearly labelled control. The month heading
+ // in the agenda behaves like the native Today shortcut instead.
+ calendarJump.addEventListener('click',()=>{
   location.hash='#calendar';
   resetWorkScroll();
   requestAnimationFrame(sync);
  });
+ month.setAttribute('aria-label','Вернуться к сегодняшнему дню');
+ month.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:agenda-go-today')));
  document.addEventListener('seyveo:agenda-month-changed',event=>{
   const detail=event.detail||{};
   if(detail.month)month.querySelector('.month-name').textContent=detail.month;
