@@ -162,7 +162,7 @@
     clearTimeout(homeGreetingTimer);
     message.style.setProperty('--sv-home-greeting-height',`${Math.ceil(message.getBoundingClientRect().height)+2}px`);
     root.classList.add('sv-home-greeting-fading');
-    const fadeMs=matchMedia('(prefers-reduced-motion: reduce)').matches?0:390;
+    const fadeMs=matchMedia('(prefers-reduced-motion: reduce)').matches?0:760;
     setTimeout(()=>{
       root.classList.add('sv-home-greeting-expired');
       queueTodayRefresh();
@@ -332,8 +332,11 @@
       root.classList.remove('sv-sayvi-home-idle-leaving');
       root.classList.toggle('sv-sayvi-home-idle',idle);
       root.classList.toggle('sv-sayvi-home-cards',cards);
-      if(cards)root.style.setProperty('--sv-home-live-orb-size',layout.size+'px');
-      else root.style.removeProperty('--sv-home-live-orb-size');
+      const nextSize=cards?layout.size+'px':'';
+      if(root.style.getPropertyValue('--sv-home-live-orb-size')!==nextSize){
+        if(cards)root.style.setProperty('--sv-home-live-orb-size',nextSize);
+        else root.style.removeProperty('--sv-home-live-orb-size');
+      }
     }else if(previous){
       root.classList.remove('sv-sayvi-home-idle','sv-sayvi-home-cards');
       root.style.removeProperty('--sv-home-live-orb-size');
@@ -493,7 +496,7 @@
     // Keep existing preview elements between refreshes: animation runs only when a new card arrives.
     const others=items.filter(entry=>entry.key!==item.key).slice(0,3);
     const existing=new Map(Array.from(homeQueuePreviews.children).map(node=>[node.dataset.svHomePreview,node]));
-    const fragment=document.createDocumentFragment();
+    const desiredRows=[];
     others.forEach((entry,index)=>{
       let row=existing.get(entry.key);
       if(!row){
@@ -504,14 +507,24 @@
         row.innerHTML='<span class="sv-home-queue-mark" aria-hidden="true"></span><span class="sv-home-queue-copy"><span class="sv-home-queue-title"></span><span class="sv-home-queue-time"></span></span><svg class="sv-home-queue-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
         row.style.setProperty('--sv-home-queue-order',index);
       }
-      row.querySelector('.sv-home-queue-title').textContent=entry.title;
-      row.querySelector('.sv-home-queue-time').textContent=homeItemWhen(entry);
-      row.setAttribute('aria-label','Открыть дело: '+entry.title);
-      fragment.append(row);
+      const titleNode=row.querySelector('.sv-home-queue-title');
+      const timeNode=row.querySelector('.sv-home-queue-time');
+      const when=homeItemWhen(entry);
+      if(titleNode.textContent!==entry.title)titleNode.textContent=entry.title;
+      if(timeNode.textContent!==when)timeNode.textContent=when;
+      const label='Открыть дело: '+entry.title;
+      if(row.getAttribute('aria-label')!==label)row.setAttribute('aria-label',label);
+      desiredRows.push(row);
       existing.delete(entry.key);
     });
-    // Moving retained nodes preserves their animation state.
-    homeQueuePreviews.append(fragment);
+    const orderChanged=homeQueuePreviews.children.length!==others.length||
+      others.some((entry,index)=>homeQueuePreviews.children[index]?.dataset.svHomePreview!==entry.key);
+    // Reparenting unchanged cards on every refresh restarts Safari animations.
+    if(orderChanged){
+      const fragment=document.createDocumentFragment();
+      desiredRows.forEach(row=>fragment.append(row));
+      homeQueuePreviews.append(fragment);
+    }
     existing.forEach(row=>row.remove());
     const more=todayCard.querySelector('.sv-home-queue-more');
     const remaining=Math.max(0,items.length-1-others.length);
