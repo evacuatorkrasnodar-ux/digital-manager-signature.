@@ -46,3 +46,23 @@ test('Launch logo waits for Home scene, and local voice bridge survives',async()
     if(code.trim())new Script(code);
   }
 });
+
+test('White PWA wakes quickly and Sayvi writes a welcome without moving Home',async()=>{
+  const [html,manifest,homeCss,homeJs]=await Promise.all([
+    read('index.html'),read('manifest.webmanifest'),
+    read('assets/seyveo-sayvi-handoff-demo.css'),
+    read('assets/seyveo-sayvi-handoff-demo.js')
+  ]);
+  const pwa=JSON.parse(manifest);
+  assert.equal(pwa.background_color,'#ffffff');
+  assert.equal(pwa.theme_color,'#ffffff');
+  assert.match(html,/data-theme="light" data-palette="white"/);
+  assert.match(html,/setTimeout\(\(\)=>document\.documentElement\.classList\.remove\('sv-cinema-boot'\),1500\)/);
+  assert.doesNotMatch(html,/classList\.remove\('sv-cinema-boot'\),3200/);
+  assert.match(homeJs,/function showHomeWelcome\(\)/);
+  assert.match(homeJs,/Я Сэйви\. Рада тебя видеть!/);
+  assert.match(homeJs,/renderToday\(\);\s*beginHomeGreetingLifetime\(\);\s*showHomeWelcome\(\)/);
+  assert.match(homeCss,/\.sv-home-welcome-intro\{\s*position:absolute;inset:0/);
+  assert.match(homeCss,/sv-home-welcome-active[\s\S]*?opacity:0!important/);
+  new Script(homeJs);
+});
