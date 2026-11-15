@@ -826,6 +826,10 @@ body > #orb.sv-sayvi-handoff-flight {
 
 /* The returning Home renders its final card-size sphere before revealing it.
    This prevents the initial generic 300px orb from shrinking in plain sight. */
+:root.sv-home-stabilizing.sv-sayvi-handoff-demo.sv-sayvi-handoff-docked #homePage :is(#stage,#orb,#orbCluster),
+:root.sv-home-stabilizing.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage :is(#stage,#orb,#orbCluster){
+  transition:none!important
+}
 :root.sv-home-prelayout #homePage #stage{
   opacity:0!important;
   transition:none!important
