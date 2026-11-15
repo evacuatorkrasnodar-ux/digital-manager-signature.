@@ -13,11 +13,6 @@
     layer.className='sv-sayvi-velvet-layer sv-sayvi-velvet-'+name;
     sphere.appendChild(layer);
   }
-  // Reuse the already-approved dock-arrival laser sparkle on the miniature.
-  const spark=document.createElement('span');
-  spark.className='sv-cinema-dock-spark sv-sayvi-dock-idle-spark';
-  spark.setAttribute('aria-hidden','true');
-  sphere.appendChild(spark);
   const glassGlow=document.createElement('span');
   glassGlow.className='sv-sayvi-velvet-glass-glow';
   glassGlow.setAttribute('aria-hidden','true');
