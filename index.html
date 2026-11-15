@@ -4625,10 +4625,11 @@ function syncHomeVoice(){
       subline=currentHomeRecommendation.message;
     }
   }else if(brief.overdue||brief.dueToday){
-    // Real task cards below already carry the title, due time and actions.
-    // Keep the greeting human and quiet; never repeat tasks in narration.
+    // Real task cards below carry the title and actions; only the count
+    // determines the short, grammatically correct headline.
     kicker=assistant+' · на связи';
-    headline=daypartGreeting()+(name?', '+name:'');
+    const many=brief.count>1;
+    headline=brief.overdue?(many?'Есть дела с прошедшим сроком':'Есть дело с прошедшим сроком'):(many?'На сегодня есть дела':'На сегодня есть дело');
     subline='';
   }else{
 
