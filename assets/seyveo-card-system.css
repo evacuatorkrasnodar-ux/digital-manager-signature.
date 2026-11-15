@@ -893,11 +893,10 @@
  .sv-card-system--rendered .sv-card-actions{column-gap:9px!important}
 }
 
-/* SEYVEO CARD WORKSHOP · Sayvi uses the approved Dock search material.
- * A single shared contract for Card Engine, Studio previews and future cards.
- * White theme: Sayvi inherits the search lens's exact optical values, scaled
- * to the New Task header's 50px circle with a 23px symbol. Edit and Navigate
- * use pale regular glass that reads white, with no outline and a soft edge.
+/* SEYVEO CARD WORKSHOP · Approved Home action standard (15 November).
+ * One shared contract for Card Engine, Studio previews and future cards.
+ * White theme: three 50px circles, fully transparent fill, quiet pearl rim,
+ * 12px matte blur and a 23px ink icon; Sayvi carries the Potok mark.
  * No duplicate decorative lens. Do not affect the original Dock.
  * Dark theme retains its existing graphite treatment pending separate approval.
  * The final Send / Save / Confirm button remains a separate explicit action.
@@ -922,25 +921,19 @@
 #seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"]{
  --sv-card-icon-touch:50px;
  --sv-card-icon-radius:50%;
- --sv-card-action-neutral-bg:rgba(255,255,255,.90);
- --sv-card-action-outline:0 solid transparent;
- /* Optical glass edge: a subpixel light rim and directional inner reflection,
-    not a visible CSS border. Keep the actual button border at zero. */
- --sv-card-action-shadow:0 0 0 .35px rgba(211,216,225,.24),
-   inset 0 1px .8px rgba(255,255,255,.96),
-   inset 0 -1px 1px rgba(205,211,222,.22),
-   0 2px 8px rgba(25,31,42,.075),
-   0 0 1px rgba(25,31,42,.028);
- --sv-card-action-blur:blur(12px) saturate(108%);
- --sv-card-icon-stroke:1.7;
- --sv-card-sayvi-outline:1px solid rgba(255,255,255,.94);
- --sv-card-sayvi-bg:rgba(190,193,202,.43);
- --sv-card-sayvi-shadow:0 0 0 .7px rgba(164,170,184,.30),
+ --sv-card-action-neutral-bg:transparent;
+ --sv-card-action-outline:.7px solid rgba(255,255,255,.28);
+ --sv-card-action-shadow:0 0 0 .45px rgba(164,170,184,.16),
    inset 0 1px 1px rgba(75,82,96,.055),
    inset 0 -1px 0 rgba(255,255,255,.18),
    inset .6px 0 .7px rgba(255,255,255,.16),
    inset -.6px 0 .8px rgba(75,82,96,.055),
    0 1px 2px rgba(82,88,103,.045);
+ --sv-card-action-blur:blur(12px) saturate(108%);
+ --sv-card-icon-stroke:1.7;
+ --sv-card-sayvi-outline:var(--sv-card-action-outline);
+ --sv-card-sayvi-bg:var(--sv-card-action-neutral-bg);
+ --sv-card-sayvi-shadow:var(--sv-card-action-shadow);
  --sv-card-sayvi-blur:blur(12px) saturate(108%);
  --sv-card-sayvi-ink:#0B0B0D;
  --sv-card-sayvi-glyph:23px;
@@ -1019,6 +1012,18 @@
 }
 .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol > circle{
  fill:var(--sv-card-sayvi-ink)!important;stroke:none!important;
+}
+/* The new assistant emblem is artwork inside the existing 50px button. */
+:root[data-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"],
+#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
+ background-image:url('./seyveo-potok.svg?v=4')!important;
+ background-position:center!important;
+ background-size:100% 100%!important;
+ background-repeat:no-repeat!important;
+}
+:root[data-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol,
+#seyveoCardStudio :is(.scs-phone,.scs-gallery-item)[data-preview-theme="light"] .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{
+ visibility:hidden!important;
 }
 .sv-card-system--rendered .sv-card-actions .sv-card-action.sv-card-icon-button:active{
  opacity:.92!important;transform:scale(.965);
