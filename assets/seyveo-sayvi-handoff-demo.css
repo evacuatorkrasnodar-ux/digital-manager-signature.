@@ -442,6 +442,9 @@ body > #orb.sv-sayvi-handoff-flight {
   z-index:5;
   animation:sv-cinema-dock-arrival 7.5s ease-in-out 1s infinite;
 }
+/* Only the repeating mini glint is scaled down; the landing star is unchanged. */
+#assistantButton > .sv-sayvi-dock-idle-spark::before{width:42px}
+#assistantButton > .sv-sayvi-dock-idle-spark::after{height:42px}
 
 /* A single soft afterglow suggests that the light has entered the pearl glass. */
 :root.sv-sayvi-handoff-arrived #assistantButton .sv-sayvi-velvet-glass-glow {
