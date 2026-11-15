@@ -311,6 +311,7 @@
     return homeSphereLayout().mode!=='dock';
   }
   let idleDockTimer=0;
+  let dockRevealTimer=0;
   function updateClusterInteraction(){
     const cluster=document.getElementById('orbCluster');
     if(!cluster)return;
@@ -329,7 +330,8 @@
       root.classList.contains('sv-sayvi-home-cards');
     if(idle||cards){
       clearTimeout(idleDockTimer);
-      root.classList.remove('sv-sayvi-home-idle-leaving');
+      clearTimeout(dockRevealTimer);
+      root.classList.remove('sv-sayvi-home-idle-leaving','sv-home-dock-sphere-enter');
       root.classList.toggle('sv-sayvi-home-idle',idle);
       root.classList.toggle('sv-sayvi-home-cards',cards);
       const nextSize=cards?layout.size+'px':'';
@@ -341,8 +343,14 @@
       root.classList.remove('sv-sayvi-home-idle','sv-sayvi-home-cards');
       root.style.removeProperty('--sv-home-live-orb-size');
       root.classList.add('sv-sayvi-home-idle-leaving');
+      root.classList.remove('sv-home-dock-sphere-enter');
       clearTimeout(idleDockTimer);
-      idleDockTimer=setTimeout(()=>root.classList.remove('sv-sayvi-home-idle-leaving'),820);
+      clearTimeout(dockRevealTimer);
+      idleDockTimer=setTimeout(()=>{
+        root.classList.remove('sv-sayvi-home-idle-leaving');
+        root.classList.add('sv-home-dock-sphere-enter');
+        dockRevealTimer=setTimeout(()=>root.classList.remove('sv-home-dock-sphere-enter'),760);
+      },1050);
     }
     updateClusterInteraction();
   }
