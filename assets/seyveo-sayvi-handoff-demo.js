@@ -49,18 +49,6 @@
     root.classList.remove('sv-sayvi-handoff-demo','sv-cinema-boot');
     return;
   }
-  // Flow keeps the familiar Sayvi target clickable while her living sphere
-  // occupies the Home stage. It shares the ORIGINAL button and its handlers.
-  let flow=dockButton.querySelector('.sv-sayvi-flow-dock');
-  if(!flow){
-    flow=document.createElement('img');
-    flow.className='sv-sayvi-flow-dock';
-    flow.src='assets/seyveo-flow-button.svg?v=1';
-    flow.alt='';
-    flow.setAttribute('aria-hidden','true');
-    flow.draggable=false;
-    dockButton.append(flow);
-  }
   // Independent status line: the greeting can expire, Sayvi's presence cannot.
   // Fixed placement keeps the approved flight geometry and card positions intact.
   if(!home.querySelector('.sv-sayvi-home-online')){
@@ -310,15 +298,27 @@
     if(visible){cluster.removeAttribute('aria-hidden');cluster.inert=false;}
     else if(done){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
   }
+  let dockExpandTimer=0;
   function syncIdleHome(){
     if(!done)return;
+    const wasOnHome=root.classList.contains('sv-sayvi-home-present');
     const onHome=homeRouteVisible();
     const count=onHome?upcomingHomeItems().length:0;
     const compact=onHome&&count>0;
     root.classList.toggle('sv-sayvi-home-present',onHome);
     root.classList.toggle('sv-sayvi-home-with-cards',compact);
     root.classList.toggle('sv-sayvi-home-idle',onHome&&!compact);
-    root.classList.remove('sv-sayvi-home-idle-leaving');
+    if(onHome){
+      clearTimeout(dockExpandTimer);
+      root.classList.remove('sv-sayvi-home-idle-leaving');
+    }else if(wasOnHome){
+      // Bring the miniature back while the original dock capsule expands.
+      clearTimeout(dockExpandTimer);
+      root.classList.add('sv-sayvi-home-idle-leaving');
+      dockExpandTimer=setTimeout(()=>{
+        root.classList.remove('sv-sayvi-home-idle-leaving');
+      },860);
+    }
     root.dataset.svHomeCards=String(compact?Math.min(3,Math.max(1,count)):0);
     updateClusterInteraction();
   }
