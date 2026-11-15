@@ -107,6 +107,44 @@
 :root.sv-sayvi-handoff-demo #homePage #stage > .message{
   transition:opacity .32s cubic-bezier(.22,.8,.22,1) !important;
 }
+/* A personal welcome uses the EXISTING 76/112px message slot. The sphere,
+   weather row and task cards never reflow while Sayvi writes. */
+:root.sv-sayvi-handoff-docked #homePage #stage > .message{
+  position:relative;
+}
+:root.sv-sayvi-handoff-docked #homePage #stage > .message > :is(#headline,#subline,#quietSignal){
+  transition:opacity .6s ease;
+}
+:root.sv-home-welcome-active #homePage #stage > .message > :is(#headline,#subline,#quietSignal){
+  opacity:0!important;
+}
+#homePage #stage > .message .sv-home-welcome-intro{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;width:100%;margin:0;padding:0 8px;
+  pointer-events:none;overflow:hidden;
+  opacity:0;transform:translate3d(0,9px,0);
+  transition:opacity .62s ease,transform .78s cubic-bezier(.22,.8,.2,1);
+  color:var(--text,#17191c);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  font-optical-sizing:auto;text-align:center;
+}
+#homePage #stage > .message .sv-home-welcome-intro.is-visible{
+  opacity:1;transform:translate3d(0,0,0);
+}
+#homePage #stage > .message .sv-home-welcome-intro.is-leaving{
+  opacity:0;transform:translate3d(0,-5px,0);
+}
+.sv-home-welcome-intro-line{display:block;max-width:100%;line-height:1.23;overflow-wrap:anywhere}
+.sv-home-welcome-intro-line--0{font-size:clamp(19px,5.1vw,23px);font-weight:520;letter-spacing:-.035em}
+.sv-home-welcome-intro-line--1{font-size:clamp(16px,4.35vw,20px);font-weight:430;letter-spacing:-.028em;color:var(--secondary,#5a6169)}
+@media(max-height:690px){
+  .sv-home-welcome-intro-line--0{font-size:19px}
+  .sv-home-welcome-intro-line--1{font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  #homePage #stage > .message .sv-home-welcome-intro{transition:none!important;transform:none!important}
+}
 /* The intro speaks only through letters. Ordinary "Добрый день" and the
    actionable card text are restored untouched at the end of the scene. */
 :root.sv-cinema-greeting-active #homePage #stage > .message > :not(.sv-cinema-written-hello){
