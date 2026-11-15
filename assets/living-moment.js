@@ -10,11 +10,14 @@ const tiles=$('seyveoLivingTiles'),tip=$('seyveoLivingCaption');
 if(!home||!stage||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
+function homeAgendaEnabled(){
+ try{return localStorage.getItem('seyveo-home-agenda-visible-v1')!=='0'}catch{return true}
+}
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
 // Restore the original rising three-card introduction when no real item needs attention.
-const previewArmed=true;
+const previewArmed=false; // Educational Home cards are retired.
 let previewSeen=false,previewRearmAt=0;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -1237,6 +1240,7 @@ function restorePreparation(id){
  try{localStorage.setItem(PREPARATION_DEFER_KEY,JSON.stringify({day:localDay(),ids}))}catch{}
 }
 function dueTasks(includeUpcoming=false){
+ if(!homeAgendaEnabled())return [];
  // Never turn the local BUSINESS DEMO database into Home notifications.
  // Genuine personal deadlines below are still eligible for attention.
  const tasks=[];
@@ -1404,6 +1408,7 @@ function installLivingCardSwipe(field,onLater,onRemoved,getCard){
 /* Real upcoming Calendar reminders share the existing Home living plane.
  * They do not become an extra calendar, a push alert, or a fake completed task. */
 function upcomingCalendar(){
+ if(!homeAgendaEnabled())return [];
  return (window.SEYVEO_LIFE_EVENTS?.upcomingEvents?.()||[])
   .filter(item=>!quiet.has('calendar:'+item.id+'|'+item.date+'|'+item.time)&&mayShow({kind:'calendar',eventId:'calendar:'+item.id+'|'+item.date+'|'+item.time}));
 }
@@ -1641,6 +1646,7 @@ window.setInterval(()=>{
  if(!document.hidden&&!home.hidden) scheduleRefresh();
 },5*60*1000);
 window.addEventListener('seyveo:life-events-changed',scheduleRefresh);
+window.addEventListener('seyveo:home-agenda-visibility-changed',scheduleRefresh);
 window.addEventListener('seyveo:fan-workshop-changed',scheduleRefresh);
 window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:card-visibility-changed',scheduleRefresh);
@@ -1684,7 +1690,7 @@ dynamic.addEventListener('click',event=>{
  button.textContent=reason.hidden?'Почему':'Скрыть';
 },true);
 window.SEYVEO_LIVING_MOMENT=Object.freeze({
- preview:()=>startPreview(),state:()=>mode,
+ preview:()=>false,state:()=>mode,
  inspectReview:id=>({queued:dueTasks().some(t=>t.businessTask&&t.taskId===id),visible:mode==='task'&&key==='mail-review:'+id&&!space.hidden}),
  deferred:()=>deferredPreview(),
  deferredTaskIds:()=>Array.from(postponedTaskIds),
@@ -1694,7 +1700,7 @@ window.SEYVEO_LIVING_MOMENT=Object.freeze({
 window.addEventListener('seyveo:review-rules-ready',scheduleRefresh);
 window.addEventListener('seyveo:manager-tasks-updated',scheduleRefresh);
 window.addEventListener('seyveo:employee-task-updated',scheduleRefresh);
-window.addEventListener('storage',event=>{if(event.key==='seyveo-business-command-tasks-demo-v1')scheduleRefresh();});
+window.addEventListener('storage',event=>{if(['seyveo-business-command-tasks-demo-v1','seyveo-home-agenda-visible-v1'].includes(event.key))scheduleRefresh();});
 scheduleRefresh();
 // The original rising three-card introduction is armed at startup.
 // Delayed activation had allowed a calendar card to block it for the session.
