@@ -315,14 +315,8 @@
   }
   function renderToday(){
     if(!done)return;
-    const living=document.getElementById('seyveoLivingMoment');
-    const advice=document.getElementById('dynamic');
-    const hasVisibleCards=(parent,selector)=>parent&&!parent.hidden&&
-      Array.from(parent.querySelectorAll(selector)).some(node=>
-        !node.hidden&&node.getClientRects().length>0&&getComputedStyle(node).visibility!=='hidden');
-    // A visible but empty Living Moment container must not suppress a real task.
-    const hasRealCard=hasVisibleCards(living,'.lm-tiles > *, .lm-inline-item')||
-      hasVisibleCards(advice,':scope > *');
+    // Real saved tasks and calendar appointments outrank educational Home
+    // examples. Demo cards may remain below, but never suppress an actual plan.
     if(!todayCard){
       todayCard=document.createElement('section');
       todayCard.className='sv-sayvi-handoff-today';
@@ -352,7 +346,7 @@
     const item=nextAgenda();
     // If the calendar has not exposed a stored upcoming item, leave Home's
     // real message/decision feed alone: never imply the user has no plans.
-    todayCard.hidden=!!hasRealCard||!item;
+    todayCard.hidden=!item;
     const title=todayCard.querySelector('.sv-sayvi-handoff-agenda-title');
     const meta=todayCard.querySelector('.sv-sayvi-handoff-agenda-meta');
     title.textContent=item?.title||'';
