@@ -26,29 +26,21 @@
   const day=currentDay();
   let alreadySeen=false;
   try{alreadySeen=localStorage.getItem(dailyKey)===day;}catch{}
-  // A calm daily greeting, once per local calendar day. Reloading Safari or
-  // reopening the PWA on the same day must not repeat the cinematic flight.
-  // The full first-install introduction is a separate, later experience.
+  // Replaying on a refresh is intentional on both Safari/iPhone and desktop.
+  // Previously the mouse-pointer check accidentally excluded mobile Safari.
+  const pageReload=performance.getEntriesByType('navigation')[0]?.type==='reload'
+    ||performance.navigation?.type===1;
+  // Home Screen PWA launches are often reported as "navigate", not "reload".
+  // Each new standalone document is a new app opening: replay its artwork,
+  // while ordinary Safari tabs retain the once-a-day behavior.
+  const standaloneLaunch=matchMedia('(display-mode: standalone)').matches
+    ||navigator.standalone===true;
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro;
+  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||pageReload||standaloneLaunch||!alreadySeen);
   const root=document.documentElement;
-  // Keep Safari's changing viewport height from resizing Sayvi on launch.
-  const startupLayoutHeight=Math.max(document.documentElement.clientHeight||0,window.innerHeight||0);
-  let startupLayoutStable=false;
-  root.style.setProperty('--sv-home-stable-vh',startupLayoutHeight+'px');
   root.classList.add('sv-sayvi-handoff-demo');
-  if(atHome)root.classList.add('sv-home-stabilizing');
   const home=document.getElementById('homePage');
   const orb=document.getElementById('orb');
-  // An immutable weather row belongs to the Home layout from its first
-  // frame. Weather arrives asynchronously and must never push Sayvi upward.
-  const cluster=home?.querySelector('#orbCluster');
-  if(cluster&&!home.querySelector('#svHomeWeatherSlot')){
-    const slot=document.createElement('div');
-    slot.id='svHomeWeatherSlot';
-    slot.className='sv-home-weather-slot';
-    cluster.insertAdjacentElement('afterend',slot);
-  }
   const heroArtwork=document.getElementById('plasmaVisual');
   const dockButton=document.getElementById('assistantButton');
   const small=dockButton?.querySelector('.sv-sayvi-velvet-sphere');
@@ -57,32 +49,22 @@
     root.classList.remove('sv-sayvi-handoff-demo','sv-cinema-boot');
     return;
   }
-  // Independent status line: the greeting can expire, Sayvi's presence cannot.
-  // Fixed placement keeps the approved flight geometry and card positions intact.
-  if(!home.querySelector('.sv-sayvi-home-online')){
-    const online=document.createElement('div');
-    online.className='sv-sayvi-home-online';
-    online.textContent='Сэйви · на связи';
-    home.prepend(online);
-  }
-  // The opening is a quiet written introduction. The ordinary
+  // The opening is a quiet, personalized written introduction. The ordinary
   // Home greeting (and its live task context) returns after the handoff.
   const message=home.querySelector('#stage > .message');
   let greeting=null;
   let greetingDelay=0;
   let greetingTicker=0;
-  let writtenGreetingComplete=false;
-  let greetingPlayed=false;
   let startGreeting=()=>{};
   let welcomeSpeech='';
   if(showCinema&&message){
     let owner='';
     try{
       const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
-      owner=typeof profile?.name==='string'?profile.name.trim().split(/\s+/)[0].slice(0,24):'';
+      owner=typeof profile?.name==='string'?profile.name.trim().split(/\s+/)[0].slice(0,32):'';
     }catch{}
     const greetingLines=[
-      {text:`Привет${owner?', '+owner:''}!`,kind:'welcome',type:79,hold:920,erase:47},
+      {text:`Привет${owner ? ', '+owner : ''}!`,kind:'welcome',type:79,hold:920,erase:47},
       {text:'Я Сэйви.',kind:'name',type:89,hold:1000,erase:55},
       {text:'Рада тебя видеть!',kind:'wish',type:81}
     ];
@@ -96,7 +78,7 @@
     greeting.appendChild(writing);
     message.appendChild(greeting);
     root.classList.add('sv-cinema-greeting-active');
-    startGreeting=()=>{greetingPlayed=true;greetingDelay=setTimeout(()=>{
+    startGreeting=()=>{greetingDelay=setTimeout(()=>{
       if(done)return;
       greeting.classList.add('sv-cinema-written-hello--visible');
       // Three distinct thoughts, never three lines at once: Sayvi writes,
@@ -114,10 +96,6 @@
           writing.textContent=phrase.text.slice(0,cursor);
           if(cursor<phrase.text.length)greetingTicker=setTimeout(type,phrase.type);
           else if(index<greetingLines.length-1)greetingTicker=setTimeout(erase,phrase.hold);
-          else{
-            writtenGreetingComplete=true;
-            scheduleFlightWhenReady();
-          }
         };
         const erase=()=>{
           if(done||!greeting)return;
@@ -131,7 +109,6 @@
       playPhrase(0);
     },1040);};
   }
-  if(!greeting)writtenGreetingComplete=true;
   // The HTML fallback is dark. Synchronize the already-selected white theme
   // before the first cinematic frame to avoid a dark-to-white visual flash.
   if(root.dataset.theme==='light'&&heroArtwork?.getAttribute('src')?.includes('plasma-signature.svg')){
@@ -145,16 +122,11 @@
   let done=false;
   let animation=null;
   let introTimer=0;
-  let narrationComplete=true;
   let safetyTimer=0;
   let dockTimer=0;
   let dockMetrics=null;
   let dockStyleBefore=null;
   let todayCard=null;
-  let postponedCard=null;
-  let currentPostponedItem=null;
-  let focusedHomeKey=null;
-  let homeQueuePreviews=null;
   let voiceButton=null;
   let voiceDownload=null;
   let voiceMedia=null;
@@ -162,12 +134,6 @@
   let voiceFileInput=null;
   let voiceFileUrl=null;
   let openingStartedAt=0;
-  // Do not cut off the final letters or the approved voice. The handoff
-  // begins after BOTH have finished, with a short breathing pause.
-  function scheduleFlightWhenReady(){
-    if(done||!openingStartedAt||!writtenGreetingComplete||!narrationComplete||introTimer)return;
-    introTimer=setTimeout(begin,1250);
-  }
   // The Home greeting is a welcome, not a permanent part of the workspace.
   // Keep it for a quiet visitor, but give the room back to real cards once
   // they begin working (and in any case after five minutes).
@@ -183,11 +149,8 @@
     clearTimeout(homeGreetingTimer);
     message.style.setProperty('--sv-home-greeting-height',`${Math.ceil(message.getBoundingClientRect().height)+2}px`);
     root.classList.add('sv-home-greeting-fading');
-    const fadeMs=matchMedia('(prefers-reduced-motion: reduce)').matches?0:760;
-    setTimeout(()=>{
-      root.classList.add('sv-home-greeting-expired');
-      queueTodayRefresh();
-    },fadeMs);
+    const fadeMs=matchMedia('(prefers-reduced-motion: reduce)').matches?0:390;
+    setTimeout(()=>root.classList.add('sv-home-greeting-expired'),fadeMs);
   }
   function engageHomeGreeting(){
     if(!homeGreetingStartedAt||homeGreetingDismissed)return;
@@ -201,86 +164,6 @@
     homeGreetingDeadline=homeGreetingStartedAt+homeGreetingMaxMs;
     homeGreetingTimer=setTimeout(expireHomeGreeting,homeGreetingMaxMs);
   }
-  // Even when today's tasks keep Sayvi in her final Home position, she must
-  // still greet the visitor. Write into the ALREADY RESERVED message slot,
-  // never insert another block that can move the orb or the cards.
-  let welcomeTypeTimer=0;
-  let welcomeEndTimer=0;
-  let welcomeNode=null;
-  function dismissHomeWelcome(){
-    if(!welcomeNode)return;
-    clearTimeout(welcomeTypeTimer);
-    clearTimeout(welcomeEndTimer);
-    const old=welcomeNode;
-    welcomeNode=null;
-    old.classList.add('is-leaving');
-    root.classList.remove('sv-home-welcome-active');
-    setTimeout(()=>old.remove(),680);
-  }
-  function showHomeWelcome(){
-    if(noIntro||!atHome||home.hidden||document.hidden||!message||
-       root.classList.contains('sv-music-ambient'))return;
-    dismissHomeWelcome();
-    let name='';
-    try{
-      const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
-      if(typeof profile?.name==='string')name=profile.name.trim().split(/\s+/)[0].slice(0,24);
-    }catch{}
-    // The owner's original approved three thoughts. Each one is typed,
-    // held, erased and replaced in the same anchored line, not stacked.
-    const phrases=[
-      {text:`Привет${name?', '+name:''}!`,kind:'welcome',type:79,hold:920,erase:47},
-      {text:'Я Сэйви.',kind:'name',type:89,hold:1000,erase:55},
-      {text:'Рада тебя видеть!',kind:'wish',type:81}
-    ];
-    const note=document.createElement('p');
-    note.className='sv-home-welcome-intro';
-    note.setAttribute('aria-label',phrases.map(item=>item.text).join(' '));
-    note.setAttribute('aria-live','off');
-    const writing=document.createElement('span');
-    writing.className='sv-home-welcome-intro-line sv-home-welcome-intro-line--welcome';
-    note.appendChild(writing);
-    welcomeNode=note;
-    message.appendChild(note);
-    root.classList.add('sv-home-welcome-active');
-    requestAnimationFrame(()=>{if(welcomeNode===note)note.classList.add('is-visible')});
-    if(matchMedia('(prefers-reduced-motion: reduce)').matches){
-      writing.className='sv-home-welcome-intro-line sv-home-welcome-intro-line--wish';
-      writing.textContent=phrases.at(-1).text;
-      welcomeEndTimer=setTimeout(dismissHomeWelcome,2200);
-      return;
-    }
-    const playPhrase=index=>{
-      if(welcomeNode!==note)return;
-      const phrase=phrases[index];
-      writing.className='sv-home-welcome-intro-line sv-home-welcome-intro-line--'+phrase.kind;
-      writing.textContent='';
-      let cursor=0;
-      const type=()=>{
-        if(welcomeNode!==note)return;
-        cursor=Math.min(phrase.text.length,cursor+1);
-        writing.textContent=phrase.text.slice(0,cursor);
-        if(cursor<phrase.text.length)welcomeTypeTimer=setTimeout(type,phrase.type);
-        else if(index+1<phrases.length)welcomeTypeTimer=setTimeout(erase,phrase.hold);
-      };
-      const erase=()=>{
-        if(welcomeNode!==note)return;
-        cursor=Math.max(0,cursor-1);
-        writing.textContent=phrase.text.slice(0,cursor);
-        if(cursor>0)welcomeTypeTimer=setTimeout(erase,phrase.erase);
-        else welcomeTypeTimer=setTimeout(()=>playPhrase(index+1),285);
-      };
-      welcomeTypeTimer=setTimeout(type,phrase.type);
-    };
-    welcomeTypeTimer=setTimeout(()=>playPhrase(0),380);
-    const writingMs=380+phrases.reduce((ms,phrase,index)=>ms+phrase.text.length*phrase.type+
-      (index+1<phrases.length?phrase.hold+phrase.text.length*phrase.erase+285:0),0);
-    // Let the final thought linger while the original 9.3s logo dissolves.
-    welcomeEndTimer=setTimeout(dismissHomeWelcome,Math.max(9300,writingMs+1400));
-  }
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)dismissHomeWelcome()});
-  window.addEventListener('hashchange',dismissHomeWelcome);
-  document.addEventListener('pointerdown',()=>{if(done)dismissHomeWelcome()},{capture:true,passive:true});
   // A first purposeful touch or keyboard action means the visitor is already
   // working. Do not consume the event: the real control must still respond.
   document.addEventListener('pointerdown',event=>{
@@ -352,374 +235,62 @@
     try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[];}
     catch{return [];}
   };
-  // This owner-controlled preference affects only the Home presentation.
-  // Tasks, calendar events and business decisions remain in their own stores.
-  const homeAgendaKey='seyveo-home-agenda-visible-v1';
-  function homeAgendaEnabled(){
-    try{return localStorage.getItem(homeAgendaKey)!=='0';}catch{return true;}
-  }
-  const homeAgendaSwitch=document.getElementById('svHomeAgendaSwitch');
-  if(homeAgendaSwitch){
-    homeAgendaSwitch.checked=homeAgendaEnabled();
-    homeAgendaSwitch.addEventListener('change',()=>{
-      try{localStorage.setItem(homeAgendaKey,homeAgendaSwitch.checked?'1':'0');}catch{}
-      window.dispatchEvent(new Event('seyveo:home-agenda-visibility-changed'));
-    });
-  }
-  // Home without due work is a living space, not an empty page.
-  // Ignore tomorrow's entries; unfinished overdue work still needs attention.
-  const todayKey=()=>{
-    const d=new Date();
-    return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
-  };
-  function hasTodayAttention(){
-    const agenda=upcomingHomeItems().length>0;
-    const living=document.getElementById('seyveoLivingMoment');
-    const realCards=living&&!living.hidden&&!living.classList.contains('lm-preview')&&
-      !!living.querySelector('.lm-tiles > :not([hidden]),.lm-inline-item:not([hidden])');
-    const dynamic=document.getElementById('dynamic');
-    const advice=dynamic&&!dynamic.hidden&&
-      Array.from(dynamic.children).some(el=>!el.hidden&&el.classList.contains('decision-card'));
-    return !!(agenda||realCards||advice);
-  }
-  // Count genuine, unfinished work; never infer the layout from a single
-  // rendered card (Home deliberately presents the first item of its queue).
-  // The available vertical room, rather than a hard-coded four-card limit,
-  // determines whether a fourth item can share Home with the sphere.
-  function homeSphereLayout(){
-    if(home.hidden||(location.hash&&location.hash!=='#home'))return {mode:'dock'};
-    const agenda=upcomingHomeItems();
-    const living=document.getElementById('seyveoLivingMoment');
-    // Educational cards also occupy real screen space. Count their visible
-    // suggestions for layout only; they never become real business tasks.
-    const livingCount=living&&!living.hidden?
-      [...living.querySelectorAll('.lm-tiles > :not([hidden]),.lm-inline-item:not([hidden])')].length:0;
-    const dynamic=document.getElementById('dynamic');
-    const adviceCount=dynamic&&!dynamic.hidden?
-      [...dynamic.children].filter(el=>!el.hidden&&el.classList.contains('decision-card')).length:0;
-    let count=agenda.length+livingCount+adviceCount;
-    if(!count&&hasTodayAttention())count=1;
-    if(!count)return {mode:'idle'};
-    if(count>4)return {mode:'dock'};
-    // Stable tiers: the animated greeting and card heights must never
-    // affect Sayvi's dimensions or force a spontaneous dock transition.
-    const vh=startupLayoutStable?Math.max(0,document.documentElement.clientHeight||window.innerHeight||0):startupLayoutHeight;
-    const vw=Math.max(0,document.documentElement.clientWidth||window.innerWidth||0);
-    if(vh<570&&count>=4)return {mode:'dock'};
-    const tiers=vh>=800?[212,212,190,166]:vh>=700?[198,198,180,156]:[180,180,166,146];
-    const size=Math.min(tiers[Math.min(count,4)-1],Math.max(130,Math.floor(vw*.56)));
-    return {mode:'cards',size};
-  }
-  function shouldKeepSphereHome(){
-    return homeSphereLayout().mode!=='dock';
-  }
-  let idleDockTimer=0;
-  let dockRevealTimer=0;
-  function updateClusterInteraction(){
-    const cluster=document.getElementById('orbCluster');
-    if(!cluster)return;
-    const visible=root.classList.contains('sv-sayvi-home-idle')||
-      root.classList.contains('sv-sayvi-home-cards')||
-      root.classList.contains('sv-music-ambient');
-    if(visible){cluster.removeAttribute('aria-hidden');cluster.inert=false;}
-    else if(done){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
-  }
-  function syncIdleHome(){
-    if(!done||root.classList.contains('sv-home-writing'))return;
-    const layout=homeSphereLayout();
-    const idle=layout.mode==='idle';
-    const cards=layout.mode==='cards';
-    const previous=root.classList.contains('sv-sayvi-home-idle')||
-      root.classList.contains('sv-sayvi-home-cards');
-    if(idle||cards){
-      clearTimeout(idleDockTimer);
-      clearTimeout(dockRevealTimer);
-      root.classList.remove('sv-sayvi-home-idle-leaving','sv-home-dock-sphere-wait','sv-home-dock-sphere-revealing');
-      root.classList.toggle('sv-sayvi-home-idle',idle);
-      root.classList.toggle('sv-sayvi-home-cards',cards);
-      const nextSize=cards?layout.size+'px':'';
-      if(root.style.getPropertyValue('--sv-home-live-orb-size')!==nextSize){
-        if(cards)root.style.setProperty('--sv-home-live-orb-size',nextSize);
-        else root.style.removeProperty('--sv-home-live-orb-size');
-      }
-    }else if(previous){
-      root.classList.remove('sv-sayvi-home-idle','sv-sayvi-home-cards');
-      root.style.removeProperty('--sv-home-live-orb-size');
-      root.classList.add('sv-sayvi-home-idle-leaving','sv-home-dock-sphere-wait');
-      root.classList.remove('sv-home-dock-sphere-revealing');
-      clearTimeout(idleDockTimer);
-      clearTimeout(dockRevealTimer);
-      idleDockTimer=setTimeout(()=>{
-        // Hold the miniature invisible across the dock's last layout frame.
-        // One opacity transition reveals the already-painted sphere in place.
-        root.classList.add('sv-home-dock-sphere-revealing');
-        root.classList.remove('sv-sayvi-home-idle-leaving');
-        requestAnimationFrame(()=>requestAnimationFrame(()=>{
-          root.classList.remove('sv-home-dock-sphere-wait');
-          dockRevealTimer=setTimeout(()=>root.classList.remove('sv-home-dock-sphere-revealing'),520);
-        }));
-      },640);
-    }
-    updateClusterInteraction();
-  }
-  // The owner's saved tasks are the only source of Home task cards.
-  // Never create a second task store or show educational suggestions as real.
-  const homeLaterKey='seyveo-home-task-later-v1';
-  let currentHomeItem=null;
-  function homeLaterMap(){
-    try{
-      const raw=JSON.parse(localStorage.getItem(homeLaterKey)||'{}');
-      return raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
-    }catch{return {};}
-  }
-  function upcomingHomeItems(includePostponed=false){
-    if(!homeAgendaEnabled())return [];
-    const today=todayKey(),later=homeLaterMap(),now=Date.now();
-    const validDate=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s);
-    const clock=s=>typeof s==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(s)?s:'';
-    const tasks=storeList('seyveo-personal-tasks-v1').filter(t=>
-      t&&typeof t.id==='string'&&typeof t.title==='string'&&t.title.trim()&&
-      !t.done&&validDate(t.due)&&t.due<=today)
-      .map(t=>({key:'task:'+t.id,id:t.id,kind:'task',title:t.title.trim().slice(0,140),
-        date:t.due,time:clock(t.time),notes:typeof t.notes==='string'?t.notes.trim().slice(0,280):''}));
-    const events=storeList('seyveo-calendar-events-v1').filter(e=>
-      e&&typeof e.id==='string'&&typeof e.title==='string'&&e.title.trim()&&
-      !e.done&&e.kind!=='business'&&validDate(e.date)&&e.date===today)
-      .map(e=>({key:'calendar:'+e.id,id:e.id,kind:'event',title:e.title.trim().slice(0,140),
-        date:e.date,time:clock(e.time),notes:''}));
-    return [...tasks,...events].filter(item=>includePostponed||!(Number(later[item.key])>now))
-      .sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'99:99').localeCompare(b.time||'99:99'));
-  }
-  function postponedHomeItems(){
-    const later=homeLaterMap(),now=Date.now();
-    return upcomingHomeItems(true).filter(item=>Number(later[item.key])>now)
-      .map(item=>({...item,until:Number(later[item.key])}))
-      .sort((a,b)=>a.until-b.until);
-  }
-  function homePostponementChanged(){
-    window.dispatchEvent(new Event('seyveo:home-task-postponement-changed'));
-    queueTodayRefresh();
-  }
-  function restoreHomeItem(item){
-    if(!item)return;
-    try{
-      const later=homeLaterMap();
-      delete later[item.key];
-      localStorage.setItem(homeLaterKey,JSON.stringify(later));
-    }catch{}
-    homePostponementChanged();
-  }
-  function postponeHomeItem(item){
-    if(!item)return;
-    try{
-      const fresh=Object.fromEntries(Object.entries(homeLaterMap())
-        .filter(([,until])=>Number(until)>Date.now()).slice(-120));
-      fresh[item.key]=Date.now()+60*60*1000;
-      localStorage.setItem(homeLaterKey,JSON.stringify(fresh));
-    }catch{}
-    homePostponementChanged();
-  }
-  function homeItemWhen(item){
-    const date=item.date===todayKey()?'Сегодня':
-      new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'}).format(new Date(item.date+'T12:00:00'));
-    return date+(item.time?' · '+item.time:'');
+  function nextAgenda(){
+    const today=new Date(),iso=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    const validDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value);
+    const validTime=value=>typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+    const tasks=storeList('seyveo-personal-tasks-v1').filter(item=>item&&!item.done&&item.showOnHome!==false&&typeof item.title==='string')
+      .map(item=>({title:item.title.slice(0,140),date:validDate(item.due)?item.due:'',time:validTime(item.time)?item.time:''}));
+    const events=storeList('seyveo-calendar-events-v1').filter(item=>item&&typeof item.title==='string'&&validDate(item.date))
+      .map(item=>({title:item.title.slice(0,140),date:item.date,time:validTime(item.time)?item.time:''}));
+    const upcoming=[...tasks,...events].filter(item=>item.title.trim()&&(!item.date||item.date>=iso));
+    upcoming.sort((a,b)=>(a.date||'9999-12-31').localeCompare(b.date||'9999-12-31')||(a.time||'99:99').localeCompare(b.time||'99:99'));
+    return upcoming[0]||null;
   }
   function renderToday(){
     if(!done)return;
+    const living=document.getElementById('seyveoLivingMoment');
+    const advice=document.getElementById('dynamic');
+    const hasRealCard=(living&&!living.hidden)||(advice&&!advice.hidden&&advice.childElementCount>0);
     if(!todayCard){
       todayCard=document.createElement('section');
-      todayCard.className='sv-sayvi-handoff-today sv-home-real-task';
-      todayCard.setAttribute('aria-label','Настоящее дело на главной');
-      todayCard.innerHTML='<div class="sv-home-task-top"><span class="sv-home-task-count"></span></div>'+
-        '<div class="sv-home-task-main"><span class="sv-home-task-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="3"/><path d="M8 8.5h8M8 12h6M8 15.5h4"/></svg></span>'+
-        '<div class="sv-home-task-copy"><strong class="sv-home-task-title"></strong><span class="sv-home-task-meta"></span></div></div>'+
-        '<p class="sv-home-task-note" hidden></p>'+
-        '<div class="sv-home-task-actions" role="group" aria-label="Действия с делом">'+
-        '<button type="button" data-sv-home-action="details" aria-label="Подробнее о деле" title="Подробнее"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><path d="M6 18 18 6M8 6h10v10"/></svg></span><span class="sv-home-task-action-label">Подробнее</span></button>'+
-        '<button type="button" data-sv-home-action="complete" aria-label="Отметить дело выполненным" title="Исполнить"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.5 12 3 3 6-6"/></svg></span><span class="sv-home-task-action-label">Исполнить</span></button>'+
-        '<button type="button" data-sv-home-action="later" aria-label="Отложить карточку на час" title="Убрать на час"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><span class="sv-home-task-action-label">Позже · 1 ч</span></button></div>'+
-        '<p class="sv-home-task-status" role="status" aria-live="polite" hidden></p>'+
-        '<div class="sv-home-queue-previews" aria-label="Другие дела сегодня"></div>'+
-        '<p class="sv-home-queue-more" hidden></p>';
-      homeQueuePreviews=todayCard.querySelector('.sv-home-queue-previews');
-      todayCard.addEventListener('click',event=>{
-        const preview=event.target.closest('button[data-sv-home-preview]');
-        if(preview){focusedHomeKey=preview.dataset.svHomePreview;renderToday();return;}
-        const button=event.target.closest('button[data-sv-home-action]');
-        if(!button||!currentHomeItem)return;
-        const item=currentHomeItem,action=button.dataset.svHomeAction;
-        if(action==='later'){postponeHomeItem(item);return;}
-        if(action==='details'){
-          if(item.kind==='task')window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:item.id}}));
-          else location.hash='#calendar';
-          return;
-        }
-        if(action==='complete'&&item.kind==='task'){
-          const detail={id:item.id};
-          window.dispatchEvent(new CustomEvent('seyveo:home-task-complete',{detail}));
-          if(detail.result?.ok){queueTodayRefresh();}
-          else{
-            const status=todayCard.querySelector('.sv-home-task-status');
-            status.textContent=detail.result?.message||'Не удалось завершить дело. Попробуйте открыть «Дела».';
-            status.hidden=false;
-          }
-        }
-      });
-      let finger=null;
-      todayCard.addEventListener('touchstart',event=>{
-        if(event.touches.length!==1||event.target.closest('button')){finger=null;return;}
-        finger={x:event.touches[0].clientX,y:event.touches[0].clientY};
-      },{passive:true});
-      todayCard.addEventListener('touchend',event=>{
-        if(!finger||event.changedTouches.length!==1)return;
-        const dx=event.changedTouches[0].clientX-finger.x;
-        const dy=event.changedTouches[0].clientY-finger.y;
-        finger=null;
-        if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)postponeHomeItem(currentHomeItem);
-      },{passive:true});
+      todayCard.className='sv-sayvi-handoff-today';
+      todayCard.setAttribute('aria-label','Ближайшее дело');
+      const label=document.createElement('div');
+      label.className='sv-sayvi-handoff-today-label';
+      label.textContent='БЛИЖАЙШЕЕ';
+      const button=document.createElement('button');
+      button.className='sv-sayvi-handoff-agenda-card';
+      button.type='button';
+      const copy=document.createElement('span');
+      copy.className='sv-sayvi-handoff-agenda-copy';
+      const title=document.createElement('span');
+      title.className='sv-sayvi-handoff-agenda-title';
+      const meta=document.createElement('span');
+      meta.className='sv-sayvi-handoff-agenda-meta';
+      const arrow=document.createElement('span');
+      arrow.className='sv-sayvi-handoff-agenda-arrow';
+      arrow.setAttribute('aria-hidden','true');
+      arrow.innerHTML='<svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg>';
+      copy.append(title,meta);
+      button.append(copy,arrow);
+      button.addEventListener('click',()=>{location.hash='tasks';});
+      todayCard.append(label,button);
       document.getElementById('stage')?.after(todayCard);
-      postponedCard=document.createElement('aside');
-      postponedCard.className='sv-home-task-postponed';
-      postponedCard.setAttribute('aria-label','Отложенная карточка дела');
-      postponedCard.innerHTML='<span class="sv-home-task-postponed-text" role="status"></span><button type="button" aria-label="Вернуть отложенную карточку сейчас">Вернуть</button>';
-      postponedCard.querySelector('button').addEventListener('click',()=>restoreHomeItem(currentPostponedItem));
-      todayCard.after(postponedCard);
     }
-    const items=upcomingHomeItems();
-    const item=items.find(entry=>entry.key===focusedHomeKey)||items[0]||null;
-    focusedHomeKey=item?.key||null;
-    currentHomeItem=item;
-    todayCard.hidden=!item;
-    const postponed=postponedHomeItems();
-    currentPostponedItem=postponed[0]||null;
-    postponedCard.hidden=!currentPostponedItem;
-    if(currentPostponedItem){
-      const until=new Date(currentPostponedItem.until).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-      const more=postponed.length>1?' · ещё '+(postponed.length-1):'';
-      postponedCard.querySelector('.sv-home-task-postponed-text').textContent='«'+currentPostponedItem.title+'» · отложено до '+until+more;
-    }
-    if(!item)return;
-    todayCard.querySelector('.sv-home-task-top').hidden=items.length<=1;
-    todayCard.querySelector('.sv-home-task-title').textContent=item.title;
-    todayCard.querySelector('.sv-home-task-meta').textContent=homeItemWhen(item);
-    todayCard.querySelector('.sv-home-task-count').textContent=items.length>1?(items.findIndex(entry=>entry.key===item.key)+1)+' из '+items.length:'';
-    const note=todayCard.querySelector('.sv-home-task-note');
-    note.hidden=!item.notes;
-    note.textContent=item.notes;
-    todayCard.querySelector('[data-sv-home-action="complete"]').hidden=item.kind!=='task';
-    const status=todayCard.querySelector('.sv-home-task-status');
-    status.hidden=true;status.textContent='';
-    // Keep existing preview elements between refreshes: animation runs only when a new card arrives.
-    const others=items.filter(entry=>entry.key!==item.key).slice(0,3);
-    const existing=new Map(Array.from(homeQueuePreviews.children).map(node=>[node.dataset.svHomePreview,node]));
-    const desiredRows=[];
-    others.forEach((entry,index)=>{
-      let row=existing.get(entry.key);
-      if(!row){
-        row=document.createElement('button');
-        row.type='button';
-        row.className='sv-home-queue-preview';
-        row.dataset.svHomePreview=entry.key;
-        row.innerHTML='<span class="sv-home-queue-mark" aria-hidden="true"></span><span class="sv-home-queue-copy"><span class="sv-home-queue-title"></span><span class="sv-home-queue-time"></span></span><svg class="sv-home-queue-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
-        row.style.setProperty('--sv-home-queue-order',index);
-      }
-      const titleNode=row.querySelector('.sv-home-queue-title');
-      const timeNode=row.querySelector('.sv-home-queue-time');
-      const when=homeItemWhen(entry);
-      if(titleNode.textContent!==entry.title)titleNode.textContent=entry.title;
-      if(timeNode.textContent!==when)timeNode.textContent=when;
-      const label='Открыть дело: '+entry.title;
-      if(row.getAttribute('aria-label')!==label)row.setAttribute('aria-label',label);
-      desiredRows.push(row);
-      existing.delete(entry.key);
-    });
-    const orderChanged=homeQueuePreviews.children.length!==others.length||
-      others.some((entry,index)=>homeQueuePreviews.children[index]?.dataset.svHomePreview!==entry.key);
-    // Reparenting unchanged cards on every refresh restarts Safari animations.
-    if(orderChanged){
-      const fragment=document.createDocumentFragment();
-      desiredRows.forEach(row=>fragment.append(row));
-      homeQueuePreviews.append(fragment);
-    }
-    existing.forEach(row=>row.remove());
-    const more=todayCard.querySelector('.sv-home-queue-more');
-    const remaining=Math.max(0,items.length-1-others.length);
-    more.hidden=!remaining;
-    more.textContent=remaining?'Ещё '+remaining+' в «Делах»':'';
+    const item=nextAgenda();
+    // If the calendar has not exposed a stored upcoming item, leave Home's
+    // real message/decision feed alone: never imply the user has no plans.
+    todayCard.hidden=!!hasRealCard||!item;
+    const title=todayCard.querySelector('.sv-sayvi-handoff-agenda-title');
+    const meta=todayCard.querySelector('.sv-sayvi-handoff-agenda-meta');
+    title.textContent=item?.title||'';
+    if(!item){meta.textContent='';return;}
+    const date=item.date?new Date(item.date+'T12:00:00'):null;
+    const isToday=date&&item.date===new Date().toLocaleDateString('sv-SE');
+    const label=isToday?'Сегодня':date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(date):'Без даты';
+    meta.textContent=label+(item.time?' · '+item.time:'');
   }
-  // Recommendations, cards and tasks can change after docking. Keep the
-  // nearest real item in sync instead of freezing the visibility at launch.
-  let todayRefreshPending=false;
-  function queueTodayRefresh(){
-    if(!done||todayRefreshPending)return;
-    todayRefreshPending=true;
-    requestAnimationFrame(()=>{
-      todayRefreshPending=false;
-      if(!home.hidden)renderToday();
-      syncIdleHome();
-    });
-  }
-  ['seyveoLivingMoment','dynamic'].forEach(id=>{
-    const container=document.getElementById(id);
-    if(container&&typeof MutationObserver!=='undefined'){
-      new MutationObserver(queueTodayRefresh).observe(container,{
-        childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']
-      });
-    }
-  });
-  ['seyveo:tasks-changed','seyveo:personal-tasks-changed','seyveo:life-events-changed',
-    'seyveo:calendar-changed','seyveo:home-recommendation-changed',
-    'seyveo:home-agenda-visibility-changed']
-    .forEach(type=>window.addEventListener(type,queueTodayRefresh));
-  window.addEventListener('focus',queueTodayRefresh);
-  window.addEventListener('hashchange',queueTodayRefresh);
-  window.addEventListener('resize',queueTodayRefresh);
-  window.addEventListener('storage',event=>{
-    if(['seyveo-personal-tasks-v1','seyveo-calendar-events-v1',homeAgendaKey,homeLaterKey].includes(event.key)){
-      if(event.key===homeAgendaKey&&homeAgendaSwitch)homeAgendaSwitch.checked=homeAgendaEnabled();
-      queueTodayRefresh();
-    }
-  });
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueTodayRefresh();});
-  // One keyboard-focus state for genuine inline Home editors (work chat,
-  // mail previews and task forms). Existing editors retain all their own
-  // sending and draft logic; we only manage the surrounding Home scene.
-  const homeEditorSelector='textarea,input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),[contenteditable="true"]';
-  let homeWritingCloseTimer=0;
-  const homeEditingElement=()=>!home.hidden&&
-    (location.hash===''||location.hash==='#home')&&
-    document.activeElement?.closest?.('#homePage')&&
-    document.activeElement?.matches?.(homeEditorSelector);
-  function syncHomeWriting(){
-    clearTimeout(homeWritingCloseTimer);
-    if(homeEditingElement()&&(innerWidth<=780||matchMedia('(pointer:coarse)').matches)){
-      root.classList.add('sv-home-writing');
-    }else{
-      root.classList.remove('sv-home-writing');
-      queueTodayRefresh();
-    }
-  }
-  document.addEventListener('focusin',event=>{
-    if(home.contains(event.target)&&event.target.matches?.(homeEditorSelector))syncHomeWriting();
-  });
-  document.addEventListener('focusout',event=>{
-    if(!home.contains(event.target)||!event.target.matches?.(homeEditorSelector))return;
-    clearTimeout(homeWritingCloseTimer);
-    // iOS moves focus through toolbar buttons while closing the keyboard;
-    // wait for that transition rather than flashing the orb on every blur.
-    homeWritingCloseTimer=setTimeout(syncHomeWriting,300);
-  });
-  window.addEventListener('hashchange',()=>{if(root.classList.contains('sv-home-writing'))syncHomeWriting();});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden&&root.classList.contains('sv-home-writing'))root.classList.remove('sv-home-writing');});
-
-
-  if(typeof MutationObserver!=='undefined'){
-    new MutationObserver(syncIdleHome).observe(home,{attributes:true,attributeFilter:['hidden']});
-    new MutationObserver(updateClusterInteraction).observe(root,{attributes:true,attributeFilter:['class']});
-  }
-  // Pick up the change of day even when the PWA stays open overnight.
-  setInterval(()=>{if(done&&!document.hidden)queueTodayRefresh();},60000);
-
   function finish({spark=false}={}){
     if(done)return;
     done=true;
@@ -742,50 +313,32 @@
     greeting?.remove();
     greeting=null;
     root.classList.remove('sv-cinema-greeting-active');
-    // Keep the launch cover until the final sphere and card positions
-    // have committed; uncovering early made the orb jump on iOS.
+    root.classList.remove('sv-cinema-boot');
     clearTimeout(introTimer);
     clearTimeout(safetyTimer);
     if(spark)root.classList.add('sv-cinema-stagger-enter');
     root.classList.add('sv-sayvi-handoff-docked');
-    syncIdleHome();
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
     restoreDock();
     if(smallOpacity)small.style.setProperty('opacity',smallOpacity,smallOpacityPriority);
     else small.style.removeProperty('opacity');
     root.classList.remove('sv-sayvi-handoff-inflight');
-    updateClusterInteraction();
+    const cluster=document.getElementById('orbCluster');
+    if(cluster){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
     if(spark){
       const flash=document.createElement('span');
       flash.className='sv-cinema-dock-spark';
       flash.setAttribute('aria-hidden','true');
       const target=small.getBoundingClientRect();
-      // The full-size white star must be exactly concentric with docked Sayvi.
       flash.style.left=`${target.left+target.width/2}px`;
       flash.style.top=`${target.top+target.height/2}px`;
       document.body.appendChild(flash);
-      setTimeout(()=>flash.remove(),1100);
+      setTimeout(()=>flash.remove(),1050);
     }
     rememberOpening();
     renderToday();
     beginHomeGreetingLifetime();
-    if(!greetingPlayed)showHomeWelcome();
-    const cinematicHomeArrival=atHome&&!home.hidden&&!document.hidden&&!spark&&
-      (root.classList.contains('sv-sayvi-home-idle')||
-       root.classList.contains('sv-sayvi-home-cards'));
-    if(cinematicHomeArrival){
-      root.classList.add('sv-home-cinematic-intro');
-      // Keep the entrance class until the last queue card has settled.
-      // Removing it mid-flight used to snap the cards to their final position.
-      setTimeout(()=>root.classList.remove('sv-home-cinematic-intro'),3100);
-    }
-    requestAnimationFrame(()=>{
-      root.classList.remove('sv-home-stabilizing');
-      requestAnimationFrame(()=>{
-        root.classList.remove('sv-home-prelayout','sv-cinema-boot');
-      });
-    });
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
     if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);
@@ -795,9 +348,6 @@
 
   function begin(){
     if(done)return;
-    // With no work due today, Sayvi stays in the Home scene; no pointless
-    // flight into the dock followed by an immediate return.
-    if(shouldKeepSphereHome()){finish();return;}
     if(document.hidden||!atHome||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     // Address bars and safe-area insets may settle during the long logo scene.
     // Measure the dock again immediately before beginning the actual flight.
@@ -846,14 +396,13 @@
     if(done)return;
     prepareDock();
     root.classList.remove('sv-cinema-boot');
-    window.dispatchEvent(new Event('seyveo:cinema-opening'));
     // The artwork is already loaded. Changing its URL on voice playback
     // caused a brief white/dark flash before the first spoken word.
     openingStartedAt=performance.now();
     startGreeting();
-    // Both written and spoken greetings are allowed to finish naturally.
-    narrationComplete=!waitForNarration;
-    scheduleFlightWhenReady();
+    // The sphere never flies away while the private project narration speaks.
+    // Its audio onended event starts the flight after the final spoken word.
+    if(!waitForNarration)introTimer=setTimeout(begin,10400);
   }
 
   function showLocalVoicePreview(){
@@ -887,8 +436,8 @@
     };
     voiceMedia.onended=()=>{
       if(done)return;
-      narrationComplete=true;
-      scheduleFlightWhenReady();
+      const remaining=Math.max(700,10400-(performance.now()-openingStartedAt));
+      introTimer=setTimeout(begin,remaining);
     };
     const fallback=(error)=>{
       if(done||!voiceButton)return;
@@ -1044,8 +593,7 @@
       };
       voiceMedia.onended=()=>{
         if(done)return;
-        narrationComplete=true;
-        scheduleFlightWhenReady();
+        introTimer=setTimeout(begin,Math.max(700,10400-(performance.now()-openingStartedAt)));
       };
       voiceMedia.onerror=()=>importControl('Голос недоступен · Выбрать WAV снова');
       play();
@@ -1083,8 +631,7 @@
     });
   }
 
-  // Once per local day: greet on Home, fly into the dock only when the
-  // real cards leave too little room for a living sphere.
+  // One opening per LOCAL calendar day; route changes never replay the film.
   const launch=()=>{
     if(!showCinema||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
     if(document.hidden){
@@ -1098,7 +645,6 @@
       document.addEventListener('visibilitychange',onVisible);
       return;
     }
-    // First show the large Sayvi and greeting; only then resolve work cards.
     if(localVoicePreview){
       prepareDock();
       root.classList.remove('sv-cinema-boot');
@@ -1109,22 +655,8 @@
       showPrivateFileVoicePreview();
     }else runOpening();
   };
-  // Resolve the real Home layout synchronously before its first paint.
-  // Otherwise the generic 300px orb visibly jumps to the task-size orb
-  // on the very next animation frame, dragging the greeting and cards.
-  if(atHome&&!voiceRequested&&!showCinema){
-    const initial=homeSphereLayout();
-    if(initial.mode==='idle'||initial.mode==='cards'){
-      root.classList.add('sv-sayvi-handoff-docked');
-      root.classList.toggle('sv-sayvi-home-idle',initial.mode==='idle');
-      root.classList.toggle('sv-sayvi-home-cards',initial.mode==='cards');
-      if(initial.mode==='cards'){
-        root.classList.add('sv-home-prelayout');
-        root.style.setProperty('--sv-home-live-orb-size',initial.size+'px');
-      }
-    }
-  }
-  // The script is at the end of <body>; settle the functional controls next.
+  // The script is at the end of <body>; do not wait for slow images or audio.
+  // A pending window.load was able to postpone the old preview indefinitely.
   requestAnimationFrame(launch);
   window.addEventListener('hashchange',()=>{
     if(!done&&location.hash&&location.hash!=='#home')finish();
@@ -1137,10 +669,6 @@
   window.addEventListener('resize',()=>{
     const widthChange=Math.abs(window.innerWidth-lastViewportWidth);
     lastViewportWidth=window.innerWidth;
-    if(widthChange>44){
-      startupLayoutStable=true;
-      root.style.setProperty('--sv-home-stable-vh',Math.max(0,document.documentElement.clientHeight||window.innerHeight)+'px');
-    }
     // iOS browser chrome often changes only the height during startup; that
     // must not cut off the artwork. A genuine width/orientation change during
     // flight is different: settle safely on the real dock target.
