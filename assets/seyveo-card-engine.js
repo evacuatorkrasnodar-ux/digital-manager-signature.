@@ -47,18 +47,19 @@
   'review-recognition':'Проверить благодарность','review-document':'Проверить документ',
   'open-release':'Открыть альбом','not-interested':'Неинтересно'
  });
- // SEYVEO Card Studio · approved action policy (09.11.2026).
+ // SEYVEO Card Studio · approved transparent pearl actions (15.11.2026).
  // A visible Sayvi proposal is already an explanation. Do not create a
  // second button that merely repeats it. Preserve actual distinct operations:
  // composing drafts, opening chats, reviewing, sending (with confirmation).
  const cardPolicy=Object.freeze({
-  id:'silver-flat-v1',
-  darkMaterial:'#38383A',lightMaterial:'#E4E7E9',
+  id:'pearl-clear-v1',
+  darkMaterial:'#38383A',lightMaterial:'transparent',
   primaryActionsMax:1,primaryPillsMax:1,visibleActionLimit:3,secondaryPresentation:'text',
   // Approved source-of-truth: future Card Engine families inherit this white-theme style.
   sayviButtonStandard:Object.freeze({
-   theme:'light',shape:'circle',touchPx:50,ringPx:1.25,glyphPx:27,
-   mark:'original-four-point-with-center',fill:'transparent',ink:'#0B0B0D',
+   theme:'light',shape:'circle',touchPx:50,ringPx:.7,outerRingPx:.45,
+   rimOpacity:.28,outerRimOpacity:.16,glyphPx:30,
+   mark:'potok',fill:'transparent',ink:'#0B0B0D',
    darkTheme:'preserve-current'
   }),
   deferGesture:'swipe-both-cycle',dismissGesture:'long-press-only',contextGesture:'long-press',deferMinPixels:75,
