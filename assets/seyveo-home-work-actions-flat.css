@@ -472,8 +472,9 @@
 /* SEYVEO Potok · replaces the retired sparkle on the Home Sayvi action. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]),
 :root[data-theme="dark"] #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]:not([hidden]){
- background:#FAFAFB url('./seyveo-potok.svg?v=4') center / 100% 100% no-repeat!important;
- border:0!important;
- box-shadow:none!important;
+ background-image:url('./seyveo-potok.svg?v=4')!important;
+ background-position:center!important;
+ background-size:100% 100%!important;
+ background-repeat:no-repeat!important;
 }
 #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol{visibility:hidden!important;}
