@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Утверждённый стандарт для всех новых карточек: в белой теме три круглые кнопки 50×50. Сэйви — оригинальный фирменный знак 27 px со сферой, прозрачный центр и тонкое чёрное кольцо 1,25 px; Исправить — карандаш, Перейти — стрелка на спокойном серебристом фоне. В тёмной теме пока сохраняется прежний графит. Подписей на кнопках нет, VoiceOver называет действия. После нажатия на Сэйви остаются только две кнопки: самолётик «Отправить» и стрелка «Назад». Дискет и лишних инструментов нет; отправка требует действия пользователя. Свайп листает очередь, удержание открывает управление карточкой.';
+policyGuide.textContent='Утверждённый эталон SEYVEO для всех карточек: в белой теме три круглые кнопки 50×50 с полностью прозрачной заливкой, матовостью 12 px и нежным перламутровым ободком 0,7 px (белый 28%) плюс внешним серебряным контуром 0,45 px (16%). Сэйви — знак «Поток», Исправить — карандаш, Перейти — стрелка. В тёмной теме пока сохраняется прежний графит. Подписей на кнопках нет, VoiceOver называет действия. После нажатия на Сэйви остаются только две кнопки: самолётик «Отправить» и стрелка «Назад». Отправка требует действия пользователя. Свайп листает очередь, удержание открывает управление карточкой.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
@@ -70,7 +70,8 @@ function renderGallery(){
   const roles=(view?.actions||[]).map(action=>action.role);
   const required=['sayvi','edit','navigate'];
   const sayviStandard=engine.cardPolicy.sayviButtonStandard;
-  if(!sayviStandard||sayviStandard.touchPx!==50||sayviStandard.ringPx!==1.25||sayviStandard.glyphPx!==27){
+  if(!sayviStandard||sayviStandard.touchPx!==50||sayviStandard.ringPx!==.7||
+     sayviStandard.outerRingPx!==.45||sayviStandard.mark!=='potok'||sayviStandard.fill!=='transparent'){
    errors.push(event[0]+' · отклонение от утверждённого стандарта Сэйви');
   }
   const same=(actual,expected)=>actual.length===expected.length&&
@@ -119,7 +120,7 @@ function renderGallery(){
  }
  policyAudit.textContent=errors.length||tested!==entries.length
   ?'Проверка стандарта: '+(errors.join('; ')||'не все зарегистрированные типы отображены')
-  :'Стандарт проверен: '+tested+' типов · белая тема: три круга 50×50, Сэйви 27 px / кольцо 1,25 px · тёмная тема сохранена';
+  :'Стандарт проверен: '+tested+' типов · белая тема: три прозрачных круга 50×50, «Поток», кольцо 0,7 px · тёмная тема сохранена';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
