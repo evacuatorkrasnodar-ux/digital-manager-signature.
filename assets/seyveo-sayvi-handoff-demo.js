@@ -411,7 +411,7 @@
       todayCard=document.createElement('section');
       todayCard.className='sv-sayvi-handoff-today sv-home-real-task';
       todayCard.setAttribute('aria-label','Настоящее дело на главной');
-      todayCard.innerHTML='<div class="sv-home-task-top"><span class="sv-home-task-eyebrow">СЭЙВИ · ВАШЕ ДЕЛО</span><span class="sv-home-task-count"></span></div>'+
+      todayCard.innerHTML='<div class="sv-home-task-top"><span class="sv-home-task-count"></span></div>'+
         '<div class="sv-home-task-main"><span class="sv-home-task-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="3"/><path d="M8 8.5h8M8 12h6M8 15.5h4"/></svg></span>'+
         '<div class="sv-home-task-copy"><strong class="sv-home-task-title"></strong><span class="sv-home-task-meta"></span></div></div>'+
         '<p class="sv-home-task-note" hidden></p>'+
@@ -480,7 +480,7 @@
       postponedCard.querySelector('.sv-home-task-postponed-text').textContent='«'+currentPostponedItem.title+'» · отложено до '+until+more;
     }
     if(!item)return;
-    todayCard.querySelector('.sv-home-task-eyebrow').textContent=item.kind==='event'?'СЭЙВИ · ВАША ВСТРЕЧА':'СЭЙВИ · ВАШЕ ДЕЛО';
+    todayCard.querySelector('.sv-home-task-top').hidden=items.length<=1;
     todayCard.querySelector('.sv-home-task-title').textContent=item.title;
     todayCard.querySelector('.sv-home-task-meta').textContent=homeItemWhen(item);
     todayCard.querySelector('.sv-home-task-count').textContent=items.length>1?(items.findIndex(entry=>entry.key===item.key)+1)+' из '+items.length:'';
