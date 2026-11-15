@@ -39,6 +39,17 @@
   clip-path:inset(0 0 0 0 round 999px)!important;
 }
 
+/* Width must animate in BOTH directions: after the last card disappears,
+   the Home sphere grows to its calm full-size state rather than jumping. */
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage #orb,
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage.lm-focus #orb{
+  transition:width .62s cubic-bezier(.22,.8,.2,1),height .62s cubic-bezier(.22,.8,.2,1)!important;
+}
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage #orbCluster,
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage.lm-focus #orbCluster{
+  transition:height .62s cubic-bezier(.22,.8,.2,1),opacity .36s ease!important;
+}
+
 /* A living presence with up to three real cards. Sphere scales continuously
    while the real card text remains full-size and tappable on iPhone XR. */
 :root.sv-sayvi-home-with-cards.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage #stage{
