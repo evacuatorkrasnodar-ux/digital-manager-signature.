@@ -388,35 +388,44 @@ body > #orb.sv-sayvi-handoff-flight {
 
 /* One short point of light announces the assistant's arrival in the dock. */
 .sv-cinema-dock-spark{
-  position:fixed;
-  z-index:2147483002;
+  position:fixed;z-index:2147483002;
   width:90px;height:90px;
-  transform:translate3d(-50%,-50%,0) scale(.1);
-  opacity:0;
-  pointer-events:none;
-  animation:sv-cinema-dock-arrival .95s cubic-bezier(.15,.78,.2,1) both;
+  opacity:0;pointer-events:none;
+  transform:translate3d(-50%,-50%,0) scale(.15);
+  transform-origin:center center;
+  will-change:transform,opacity;
+  background:
+    linear-gradient(45deg,transparent 47.9%,rgba(135,156,166,.30) 49.15%,#fff 49.72%,#fff 50.28%,rgba(135,156,166,.30) 50.85%,transparent 52.1%) center/40px 40px no-repeat,
+    linear-gradient(-45deg,transparent 48.1%,rgba(135,156,166,.25) 49.22%,#fff 49.72%,#fff 50.28%,rgba(135,156,166,.25) 50.78%,transparent 51.9%) center/31px 31px no-repeat,
+    radial-gradient(circle at center,#fff 0 1px,rgba(135,154,163,.68) 1.55px,#fff 2.2px,rgba(180,198,207,.20) 3.8px,transparent 6px);
+  filter:drop-shadow(0 0 1px rgba(101,123,134,.48)) drop-shadow(0 0 4px rgba(255,255,255,.78));
+  animation:sv-cinema-dock-arrival .93s cubic-bezier(.18,.74,.22,1) both;
 }
 .sv-cinema-dock-spark::before,.sv-cinema-dock-spark::after{
-  content:"";
-  position:absolute;
-  left:50%;top:50%;
-  transform:translate(-50%,-50%);
-  border-radius:999px;
-  filter:drop-shadow(0 0 6px rgba(130,193,221,.78));
+  content:"";position:absolute;left:50%;top:50%;
+  transform:translate3d(-50%,-50%,0);
+  border-radius:999px;pointer-events:none;
 }
 .sv-cinema-dock-spark::before{
-  width:100%;height:3px;
-  background:linear-gradient(90deg,transparent 0%,rgba(81,155,191,.68) 35%,#fff 50%,rgba(81,155,191,.68) 65%,transparent 100%);
+  width:82px;height:2px;
+  background:linear-gradient(90deg,transparent 0%,rgba(139,161,174,.24) 14%,
+    rgba(192,211,222,.55) 36%,#fff 50%,rgba(192,211,222,.58) 64%,
+    rgba(139,161,174,.22) 86%,transparent 100%);
+  box-shadow:0 0 3px rgba(112,143,157,.25);
 }
 .sv-cinema-dock-spark::after{
-  height:100%;width:3px;
-  background:linear-gradient(0deg,transparent 0%,rgba(81,155,191,.62) 35%,#fff 50%,rgba(81,155,191,.62) 65%,transparent 100%);
+  height:90px;width:2px;
+  background:linear-gradient(0deg,transparent 0%,rgba(139,161,174,.27) 14%,
+    rgba(192,211,222,.60) 37%,#fff 50%,rgba(192,211,222,.58) 63%,
+    rgba(139,161,174,.23) 86%,transparent 100%);
+  box-shadow:0 0 3px rgba(112,143,157,.25);
 }
 @keyframes sv-cinema-dock-arrival{
-  0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.08)}
-  19%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}
-  48%{opacity:.86;transform:translate3d(-50%,-50%,0) scale(.63)}
-  100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.14)}
+  0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.15)}
+  22%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}
+  43%{opacity:.37;transform:translate3d(-50%,-50%,0) scale(.76)}
+  65%{opacity:.68;transform:translate3d(-50%,-50%,0) scale(.52)}
+  100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.18)}
 }
 
 /* Use the EXISTING arrival sparkle on the real SVG miniature.
