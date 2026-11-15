@@ -390,7 +390,9 @@
     if(home.hidden||(location.hash&&location.hash!=='#home'))return {mode:'dock'};
     const agenda=upcomingHomeItems();
     const living=document.getElementById('seyveoLivingMoment');
-    const livingCount=living&&!living.hidden&&!living.classList.contains('lm-preview')?
+    // Educational cards also occupy real screen space. Count their visible
+    // suggestions for layout only; they never become real business tasks.
+    const livingCount=living&&!living.hidden?
       [...living.querySelectorAll('.lm-tiles > :not([hidden]),.lm-inline-item:not([hidden])')].length:0;
     const dynamic=document.getElementById('dynamic');
     const adviceCount=dynamic&&!dynamic.hidden?
