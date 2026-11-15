@@ -960,35 +960,3 @@ body > #orb.sv-sayvi-handoff-flight {
 @media(prefers-reduced-motion:reduce){
   :root.sv-home-dock-sphere-revealing :is(body > footer.dock.sv-shared-dock,body dialog.seyveo-dock-host[open] > footer.dock.sv-shared-dock):not(.seyveo-browser-dock):not(.seyveo-music-dock) > #assistantButton{transition:none!important}
 }
-
-/* Approved launch order: large Sayvi → written greeting / signature →
-   cards rise from below → sphere settles. No dock material changes. */
-:root.sv-sayvi-handoff-demo.sv-cinema-cards-before-shrink #homePage #stage{
-  min-height:clamp(345px,55dvh,490px)!important;
-  flex:0 0 auto!important;
-  transition:min-height .9s cubic-bezier(.22,.8,.2,1)!important;
-}
-:root.sv-sayvi-handoff-demo.sv-cinema-cards-before-shrink #homePage
- :is(#dynamic,#seyveoLivingMoment,#svSmartStartHome){
-  display:block!important;
-  pointer-events:auto!important;
-  animation:sv-cinema-rise-in 1.35s cubic-bezier(.16,1,.3,1) both!important;
-}
-:root.sv-sayvi-handoff-demo.sv-cinema-cards-before-shrink #homePage
- :is(.sv-sayvi-handoff-today,.sv-home-queue-preview,#svcpWorkHomePreview,#workTimeline){
-  animation:sv-cinema-rise-in 1.45s .3s cubic-bezier(.16,1,.3,1) both!important;
-}
-:root.sv-cinema-final-shrink.sv-sayvi-handoff-docked #homePage
- :is(#orb,#orbCluster,#stage){
-  transition:width 1.15s cubic-bezier(.22,.8,.2,1),
-             height 1.15s cubic-bezier(.22,.8,.2,1),
-             min-height 1.15s cubic-bezier(.22,.8,.2,1),
-             padding 1.15s cubic-bezier(.22,.8,.2,1),
-             opacity .45s ease!important;
-}
-@media(prefers-reduced-motion:reduce){
-  :root.sv-sayvi-handoff-demo.sv-cinema-cards-before-shrink #homePage
-   :is(#dynamic,#seyveoLivingMoment,#svSmartStartHome,.sv-sayvi-handoff-today,.sv-home-queue-preview){
-    animation:none!important;
-  }
-}
