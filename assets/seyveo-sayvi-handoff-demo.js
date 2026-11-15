@@ -260,7 +260,7 @@
   function hasTodayAttention(){
     const date=todayKey();
     const dueTask=storeList('seyveo-personal-tasks-v1').some(item=>
-      item&&!item.done&&item.showOnHome!==false&&
+      item&&!item.done&&
       typeof item.due==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(item.due)&&item.due<=date);
     const dueEvent=storeList('seyveo-calendar-events-v1').some(item=>
       item&&!item.done&&item.date===date);
@@ -304,7 +304,7 @@
     const today=new Date(),iso=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
     const validDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value);
     const validTime=value=>typeof value==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(value);
-    const tasks=storeList('seyveo-personal-tasks-v1').filter(item=>item&&!item.done&&item.showOnHome!==false&&typeof item.title==='string')
+    const tasks=storeList('seyveo-personal-tasks-v1').filter(item=>item&&!item.done&&typeof item.title==='string')
       .map(item=>({title:item.title.slice(0,140),date:validDate(item.due)?item.due:'',time:validTime(item.time)?item.time:''}));
     const events=storeList('seyveo-calendar-events-v1').filter(item=>item&&typeof item.title==='string'&&validDate(item.date))
       .map(item=>({title:item.title.slice(0,140),date:item.date,time:validTime(item.time)?item.time:''}));
