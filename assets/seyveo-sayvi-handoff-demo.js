@@ -396,6 +396,9 @@
     if(done)return;
     prepareDock();
     root.classList.remove('sv-cinema-boot');
+    // Start the approved 9.3-second mark/word/signature on the large sphere.
+    // The Home controller waits two frames for its final visible geometry.
+    window.dispatchEvent(new Event('seyveo:cinema-opening'));
     // The artwork is already loaded. Changing its URL on voice playback
     // caused a brief white/dark flash before the first spoken word.
     openingStartedAt=performance.now();
