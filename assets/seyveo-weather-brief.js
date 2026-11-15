@@ -84,10 +84,10 @@
       mark.innerHTML=weatherGlyph(0);
       const label=document.createElement('span');
       button.append(mark,label);
-      // The dedicated row is reserved before Home first paints. Keeping
-      // this async control inside it prevents a vertical jump of the orb.
-      const slot=home.querySelector('#svHomeWeatherSlot');
-      if(slot)slot.appendChild(button);
+      // Weather belongs below the Home greeting, never on the top status
+      // line. The restored voice-cinema Home has no old weather slot.
+      const message=home.querySelector('#stage > .message');
+      if(message)message.insertAdjacentElement('afterend',button);
       else cluster.insertAdjacentElement('afterend',button);
       let current=null;
       const sync=()=>{
