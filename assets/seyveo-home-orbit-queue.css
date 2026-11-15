@@ -1,0 +1,127 @@
+/* SEYVEO Home · one living sphere, one actionable real task and a quiet queue.
+   This late layer does not alter the approved 60px dock geometry/material. */
+:root.sv-sayvi-home-present[data-sv-home-cards="1"]{--sv-live-sphere:clamp(149px,42vw,178px)}
+:root.sv-sayvi-home-present[data-sv-home-cards="2"]{--sv-live-sphere:clamp(121px,34vw,145px)}
+:root.sv-sayvi-home-present[data-sv-home-cards="3"]{--sv-live-sphere:clamp(99px,27vw,119px)}
+
+/* The Home sphere is never duplicated by the natural dock thumbnail. */
+#assistantButton>.sv-sayvi-flow-dock{
+  position:absolute!important;top:50%!important;left:50%!important;
+  width:48px!important;height:48px!important;max-width:48px!important;
+  border:0!important;background:transparent!important;object-fit:contain!important;
+  transform:translate(-50%,-50%) scale(.92)!important;
+  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+  z-index:12!important;filter:none!important;
+  transition:opacity .34s ease,transform .45s cubic-bezier(.2,.8,.2,1)!important;
+}
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked #assistantButton>.sv-sayvi-flow-dock{
+  opacity:1!important;visibility:visible!important;
+  transform:translate(-50%,-50%) scale(1)!important;
+}
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked #assistantButton>.sv-sayvi-velvet-sphere,
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked #assistantButton>.sv-sayvi-mini-copy,
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked #assistantButton>.button-art{
+  opacity:0!important;visibility:hidden!important;
+}
+/* Previously quiet/music Home shrank the capsule and hid Sayvi's button.
+   Flow occupies the SAME native 50px touch target and keeps the dock complete. */
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked :is(
+  body>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"])>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+)>#assistantButton{
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+}
+:root.sv-sayvi-home-present.sv-sayvi-handoff-docked :is(
+  body>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"])>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+)::before{
+  animation:none!important;
+  clip-path:inset(0 0 0 0 round 999px)!important;
+}
+
+/* A living presence with up to three real cards. Sphere scales continuously
+   while the real card text remains full-size and tappable on iPhone XR. */
+:root.sv-sayvi-home-with-cards.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage #stage{
+  min-height:0!important;flex:0 0 auto!important;
+  justify-content:flex-start!important;margin-top:0!important;
+  padding:9px 0 3px!important;
+  transition:padding .52s ease!important;
+}
+:root.sv-sayvi-home-with-cards.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage #orbCluster,
+:root.sv-sayvi-home-with-cards.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage.lm-focus #orbCluster{
+  height:var(--sv-live-sphere)!important;min-height:0!important;
+  margin:0 auto 3px!important;overflow:visible!important;
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+  transition:height .58s cubic-bezier(.22,.8,.2,1),opacity .36s ease!important;
+}
+:root.sv-sayvi-home-with-cards.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage #orb,
+:root.sv-sayvi-home-with-cards.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage.lm-focus #orb{
+  display:grid!important;
+  width:var(--sv-live-sphere)!important;height:var(--sv-live-sphere)!important;
+  min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+  transform:none!important;
+  transition:width .58s cubic-bezier(.22,.8,.2,1),height .58s cubic-bezier(.22,.8,.2,1)!important;
+}
+:root.sv-sayvi-home-with-cards.sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]){
+  margin:5px 0 15px!important;padding-bottom:10px!important;
+  animation:none!important;
+}
+:root.sv-sayvi-home-with-cards #homePage .sv-home-task-top{margin-bottom:9px}
+:root.sv-sayvi-home-with-cards #homePage .sv-home-task-main{gap:11px}
+:root.sv-sayvi-home-with-cards #homePage .sv-home-task-symbol{
+  width:38px;height:42px;flex-basis:38px
+}
+:root.sv-sayvi-home-with-cards #homePage .sv-home-task-symbol svg{width:32px;height:32px}
+:root.sv-sayvi-home-with-cards #homePage .sv-home-task-title{font-size:19px;line-height:1.25}
+:root.sv-sayvi-home-with-cards #homePage .sv-home-task-note{margin-left:49px}
+:root.sv-sayvi-home-with-cards #homePage .sv-home-task-actions{margin:11px 0 0 40px;gap:5px}
+:root.sv-sayvi-home-with-cards #homePage .sv-home-task-actions button{
+  min-width:75px;flex-basis:75px;min-height:65px
+}
+.sv-home-task-queue{display:grid;margin:10px 0 0}
+.sv-home-task-queue:empty{display:none}
+.sv-home-task-next{
+  appearance:none;-webkit-appearance:none;
+  display:flex;align-items:center;text-align:left;gap:12px;
+  width:100%;min-height:52px;padding:9px 4px;
+  border:0;border-top:1px solid rgba(45,53,64,.085);
+  background:transparent;color:#1f252a;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.sv-home-task-next:active{background:rgba(125,135,149,.07)}
+.sv-home-task-next:focus-visible{outline:2px solid #38383A;outline-offset:-2px;border-radius:8px}
+.sv-home-task-next-dot{
+  flex:0 0 7px;width:7px;height:7px;border-radius:50%;background:#8eaac0
+}
+.sv-home-task-next-copy{min-width:0;display:flex;flex:1;flex-direction:column;gap:3px}
+.sv-home-task-next-copy strong{
+  font-size:15px;line-height:1.25;font-weight:520;letter-spacing:-.015em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.sv-home-task-next-copy small{font-size:12px;color:#7d858d;font-weight:430;line-height:1.25}
+.sv-home-task-next-arrow{font-size:22px;line-height:1;color:#a6adb4;padding-right:3px}
+.sv-home-task-more{
+  border:0;background:transparent;color:#646d78;
+  display:block;padding:9px 3px;font-size:12px;font-weight:500;text-align:left;
+}
+.sv-home-task-more[hidden]{display:none!important}
+:root[data-theme="dark"] .sv-home-task-next{color:#f1f3f5;border-top-color:rgba(245,246,249,.13)}
+:root[data-theme="dark"] .sv-home-task-next-copy small{color:#b4bdc6}
+:root[data-theme="dark"] .sv-home-task-more{color:#c3cbd4}
+
+/* Music has its own full-height sphere and mini-player. Do not pile task
+   controls over the player; they'll reappear when ambient mode ends. */
+:root.sv-music-ambient #homePage .sv-sayvi-handoff-today,
+:root.sv-music-ambient #homePage .sv-home-task-postponed{display:none!important}
+@media(max-height:690px){
+  :root.sv-sayvi-home-present[data-sv-home-cards="1"]{--sv-live-sphere:132px}
+  :root.sv-sayvi-home-present[data-sv-home-cards="2"]{--sv-live-sphere:110px}
+  :root.sv-sayvi-home-present[data-sv-home-cards="3"]{--sv-live-sphere:89px}
+  :root.sv-sayvi-home-with-cards #homePage .sv-home-task-next{min-height:47px;padding:7px 4px}
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-sayvi-home-with-cards #homePage #orbCluster,
+  :root.sv-sayvi-home-with-cards #homePage #orb,
+  #assistantButton>.sv-sayvi-flow-dock{transition:none!important}
+}
