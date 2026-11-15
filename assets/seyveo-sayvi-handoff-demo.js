@@ -977,8 +977,19 @@
       showPrivateFileVoicePreview();
     }else runOpening();
   };
-  // The script is at the end of <body>; do not wait for slow images or audio.
-  // A pending window.load was able to postpone the old preview indefinitely.
+  // Resolve the real Home layout synchronously before its first paint.
+  // Otherwise the generic 300px orb visibly jumps to the task-size orb
+  // on the very next animation frame, dragging the greeting and cards.
+  if(atHome&&!voiceRequested){
+    const initial=homeSphereLayout();
+    if(initial.mode==='idle'||initial.mode==='cards'){
+      root.classList.add('sv-sayvi-handoff-docked');
+      root.classList.toggle('sv-sayvi-home-idle',initial.mode==='idle');
+      root.classList.toggle('sv-sayvi-home-cards',initial.mode==='cards');
+      if(initial.mode==='cards')root.style.setProperty('--sv-home-live-orb-size',initial.size+'px');
+    }
+  }
+  // The script is at the end of <body>; settle the functional controls next.
   requestAnimationFrame(launch);
   window.addEventListener('hashchange',()=>{
     if(!done&&location.hash&&location.hash!=='#home')finish();
