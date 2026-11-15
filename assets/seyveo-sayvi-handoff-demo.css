@@ -818,3 +818,21 @@ body > #orb.sv-sayvi-handoff-flight {
     height:62px!important;min-height:62px!important;max-height:62px!important;flex-basis:62px!important
   }
 }
+
+
+/* The returning Home renders its final card-size sphere before revealing it.
+   This prevents the initial generic 300px orb from shrinking in plain sight. */
+:root.sv-home-prelayout #homePage #stage{
+  opacity:0!important;
+  transition:none!important
+}
+:root.sv-home-prelayout #homePage #orb,
+:root.sv-home-prelayout #homePage #orbCluster{
+  transition:none!important
+}
+:root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
+  transition:opacity .88s cubic-bezier(.22,1,.36,1),min-height 1.2s cubic-bezier(.22,1,.36,1),padding 1.2s cubic-bezier(.22,1,.36,1)!important
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{transition:none!important}
+}
