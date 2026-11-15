@@ -132,6 +132,8 @@
   let todayCard=null;
   let postponedCard=null;
   let currentPostponedItem=null;
+  let focusedHomeKey=null;
+  let homeQueuePreviews=null;
   let voiceButton=null;
   let voiceDownload=null;
   let voiceMedia=null;
@@ -421,8 +423,13 @@
         '<button type="button" data-sv-home-action="details" aria-label="Подробнее о деле" title="Подробнее"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><path d="M6 18 18 6M8 6h10v10"/></svg></span><span class="sv-home-task-action-label">Подробнее</span></button>'+
         '<button type="button" data-sv-home-action="complete" aria-label="Отметить дело выполненным" title="Исполнить"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m7.5 12 3 3 6-6"/></svg></span><span class="sv-home-task-action-label">Исполнить</span></button>'+
         '<button type="button" data-sv-home-action="later" aria-label="Отложить карточку на час" title="Убрать на час"><span class="sv-home-task-action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><span class="sv-home-task-action-label">Позже · 1 ч</span></button></div>'+
-        '<p class="sv-home-task-status" role="status" aria-live="polite" hidden></p>';
+        '<p class="sv-home-task-status" role="status" aria-live="polite" hidden></p>'+
+        '<div class="sv-home-queue-previews" aria-label="Другие дела сегодня"></div>'+
+        '<p class="sv-home-queue-more" hidden></p>';
+      homeQueuePreviews=todayCard.querySelector('.sv-home-queue-previews');
       todayCard.addEventListener('click',event=>{
+        const preview=event.target.closest('button[data-sv-home-preview]');
+        if(preview){focusedHomeKey=preview.dataset.svHomePreview;renderToday();return;}
         const button=event.target.closest('button[data-sv-home-action]');
         if(!button||!currentHomeItem)return;
         const item=currentHomeItem,action=button.dataset.svHomeAction;
@@ -463,7 +470,9 @@
       postponedCard.querySelector('button').addEventListener('click',()=>restoreHomeItem(currentPostponedItem));
       todayCard.after(postponedCard);
     }
-    const items=upcomingHomeItems(),item=items[0]||null;
+    const items=upcomingHomeItems();
+    const item=items.find(entry=>entry.key===focusedHomeKey)||items[0]||null;
+    focusedHomeKey=item?.key||null;
     currentHomeItem=item;
     todayCard.hidden=!item;
     const postponed=postponedHomeItems();
@@ -478,13 +487,40 @@
     todayCard.querySelector('.sv-home-task-eyebrow').textContent=item.kind==='event'?'СЭЙВИ · ВАША ВСТРЕЧА':'СЭЙВИ · ВАШЕ ДЕЛО';
     todayCard.querySelector('.sv-home-task-title').textContent=item.title;
     todayCard.querySelector('.sv-home-task-meta').textContent=homeItemWhen(item);
-    todayCard.querySelector('.sv-home-task-count').textContent=items.length>1?'1 из '+items.length:'';
+    todayCard.querySelector('.sv-home-task-count').textContent=items.length>1?(items.findIndex(entry=>entry.key===item.key)+1)+' из '+items.length:'';
     const note=todayCard.querySelector('.sv-home-task-note');
     note.hidden=!item.notes;
     note.textContent=item.notes;
     todayCard.querySelector('[data-sv-home-action="complete"]').hidden=item.kind!=='task';
     const status=todayCard.querySelector('.sv-home-task-status');
     status.hidden=true;status.textContent='';
+    // Keep existing preview elements between refreshes: animation runs only when a new card arrives.
+    const others=items.filter(entry=>entry.key!==item.key).slice(0,3);
+    const existing=new Map(Array.from(homeQueuePreviews.children).map(node=>[node.dataset.svHomePreview,node]));
+    const fragment=document.createDocumentFragment();
+    others.forEach((entry,index)=>{
+      let row=existing.get(entry.key);
+      if(!row){
+        row=document.createElement('button');
+        row.type='button';
+        row.className='sv-home-queue-preview';
+        row.dataset.svHomePreview=entry.key;
+        row.innerHTML='<span class="sv-home-queue-mark" aria-hidden="true"></span><span class="sv-home-queue-copy"><span class="sv-home-queue-title"></span><span class="sv-home-queue-time"></span></span><svg class="sv-home-queue-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+        row.style.setProperty('--sv-home-queue-order',index);
+      }
+      row.querySelector('.sv-home-queue-title').textContent=entry.title;
+      row.querySelector('.sv-home-queue-time').textContent=homeItemWhen(entry);
+      row.setAttribute('aria-label','Открыть дело: '+entry.title);
+      fragment.append(row);
+      existing.delete(entry.key);
+    });
+    // Moving retained nodes preserves their animation state.
+    homeQueuePreviews.append(fragment);
+    existing.forEach(row=>row.remove());
+    const more=todayCard.querySelector('.sv-home-queue-more');
+    const remaining=Math.max(0,items.length-1-others.length);
+    more.hidden=!remaining;
+    more.textContent=remaining?'Ещё '+remaining+' в «Делах»':'';
   }
   // Recommendations, cards and tasks can change after docking. Keep the
   // nearest real item in sync instead of freezing the visibility at launch.
