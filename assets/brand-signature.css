@@ -34,3 +34,10 @@
  #homeHeader .seyveo-brand-specialty{font-size:8.4px;letter-spacing:0}
 }
 @media(prefers-reduced-motion:reduce){#homeHeader .seyveo-brand-trigger:hover .seyveo-brand-name{opacity:1}}
+
+/* Keep the fleeting SEYVEO signature proportional when the live orb shrinks.
+   Only the inner lockup scales; the sphere, mist and motion remain unchanged. */
+#homePage #signal.is-pearl .brand-lockup{
+ transform:scale(.70);
+ transform-origin:center center;
+}
