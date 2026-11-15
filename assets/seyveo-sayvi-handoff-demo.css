@@ -386,85 +386,47 @@ body > #orb.sv-sayvi-handoff-flight {
   100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.012)}
 }
 
-/* SEYVEO · photographic white diffraction glint at dock contact.
-   Keep the approved 90px, dead-centred laser cross; soften its ends and
-   offset the peaks of the two rays for one natural, imperfect flicker. */
+/* Approved SEYVEO Crystal Spark. All rays share the miniature's true
+   centre; no offset, blue flash, bubble or change to the 60px dock. */
 .sv-cinema-dock-spark{
-  position:fixed;
-  z-index:2147483002;
+  position:fixed;z-index:2147483002;
   width:90px;height:90px;
-  transform:translate3d(-50%,-50%,0) scale(.22);
-  opacity:0;
-  pointer-events:none;
+  opacity:0;pointer-events:none;
+  transform:translate3d(-50%,-50%,0) scale(.15);
+  transform-origin:center center;
   will-change:transform,opacity;
-  background:radial-gradient(circle at 50% 50%,#fff 0 1px,rgba(141,166,179,.88) 1.45px,
-    rgba(255,255,255,.99) 2.2px,rgba(179,196,206,.21) 3.6px,transparent 8px);
-  animation:sv-cinema-dock-arrival 1.04s cubic-bezier(.17,.72,.22,1) both;
+  background:
+    linear-gradient(45deg,transparent 47.9%,rgba(135,156,166,.30) 49.15%,#fff 49.72%,#fff 50.28%,rgba(135,156,166,.30) 50.85%,transparent 52.1%) center/40px 40px no-repeat,
+    linear-gradient(-45deg,transparent 48.1%,rgba(135,156,166,.25) 49.22%,#fff 49.72%,#fff 50.28%,rgba(135,156,166,.25) 50.78%,transparent 51.9%) center/31px 31px no-repeat,
+    radial-gradient(circle at center,#fff 0 1px,rgba(135,154,163,.68) 1.55px,#fff 2.2px,rgba(180,198,207,.20) 3.8px,transparent 6px);
+  filter:drop-shadow(0 0 1px rgba(101,123,134,.48)) drop-shadow(0 0 4px rgba(255,255,255,.78));
+  animation:sv-cinema-dock-arrival .93s cubic-bezier(.18,.74,.22,1) both;
 }
 .sv-cinema-dock-spark::before,.sv-cinema-dock-spark::after{
-  content:"";
-  position:absolute;
-  left:50%;top:50%;
-  border-radius:999px;
-  pointer-events:none;
-  will-change:transform,opacity;
-  filter:drop-shadow(0 0 1px rgba(119,141,152,.38))
-         drop-shadow(0 0 4px rgba(255,255,255,.75));
+  content:"";position:absolute;left:50%;top:50%;
+  transform:translate3d(-50%,-50%,0);
+  border-radius:999px;pointer-events:none;
 }
 .sv-cinema-dock-spark::before{
-  width:100%;height:3px;
-  background:linear-gradient(180deg,transparent 0%,rgba(150,173,186,.18) 20%,
-    rgba(147,170,181,.49) 42%,#fff 50%,rgba(147,170,181,.44) 58%,
-    rgba(150,173,186,.15) 80%,transparent 100%);
-  -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.14) 16%,
-    rgba(0,0,0,.65) 40%,#000 50%,rgba(0,0,0,.69) 60%,
-    rgba(0,0,0,.12) 85%,transparent 100%);
-  mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.14) 16%,
-    rgba(0,0,0,.65) 40%,#000 50%,rgba(0,0,0,.69) 60%,
-    rgba(0,0,0,.12) 85%,transparent 100%);
-  animation:sv-cinema-dock-ray-x 1.04s cubic-bezier(.19,.78,.23,1) both;
+  width:82px;height:2px;
+  background:linear-gradient(90deg,transparent 0%,rgba(139,161,174,.24) 14%,
+    rgba(192,211,222,.55) 36%,#fff 50%,rgba(192,211,222,.58) 64%,
+    rgba(139,161,174,.22) 86%,transparent 100%);
+  box-shadow:0 0 3px rgba(112,143,157,.25);
 }
 .sv-cinema-dock-spark::after{
-  height:100%;width:3px;
-  background:linear-gradient(90deg,transparent 0%,rgba(150,173,186,.17) 20%,
-    rgba(147,170,181,.48) 42%,#fff 50%,rgba(147,170,181,.43) 58%,
-    rgba(150,173,186,.14) 80%,transparent 100%);
-  -webkit-mask-image:linear-gradient(0deg,transparent 0%,rgba(0,0,0,.13) 18%,
-    rgba(0,0,0,.62) 40%,#000 50%,rgba(0,0,0,.67) 60%,
-    rgba(0,0,0,.13) 83%,transparent 100%);
-  mask-image:linear-gradient(0deg,transparent 0%,rgba(0,0,0,.13) 18%,
-    rgba(0,0,0,.62) 40%,#000 50%,rgba(0,0,0,.67) 60%,
-    rgba(0,0,0,.13) 83%,transparent 100%);
-  animation:sv-cinema-dock-ray-y 1.04s cubic-bezier(.18,.75,.25,1) both;
+  height:90px;width:2px;
+  background:linear-gradient(0deg,transparent 0%,rgba(139,161,174,.27) 14%,
+    rgba(192,211,222,.60) 37%,#fff 50%,rgba(192,211,222,.58) 63%,
+    rgba(139,161,174,.23) 86%,transparent 100%);
+  box-shadow:0 0 3px rgba(112,143,157,.25);
 }
 @keyframes sv-cinema-dock-arrival{
-  0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.22)}
-  13%{opacity:.38;transform:translate3d(-50%,-50%,0) scale(.70)}
-  27%{opacity:.98;transform:translate3d(-50%,-50%,0) scale(1)}
-  34%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}
-  47%{opacity:.63;transform:translate3d(-50%,-50%,0) scale(.9)}
-  57%{opacity:.28;transform:translate3d(-50%,-50%,0) scale(.77)}
-  66%{opacity:.47;transform:translate3d(-50%,-50%,0) scale(.76)}
-  79%{opacity:.13;transform:translate3d(-50%,-50%,0) scale(.60)}
-  100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.48)}
-}
-@keyframes sv-cinema-dock-ray-x{
-  0%,9%{opacity:0;transform:translate(-50%,-50%) scaleX(.15)}
-  23%{opacity:.8;transform:translate(-50%,-50%) scaleX(.81)}
-  29%{opacity:1;transform:translate(-50%,-50%) scaleX(1)}
-  40%{opacity:.81;transform:translate(-50%,-50%) scaleX(.91)}
-  55%{opacity:.21;transform:translate(-50%,-50%) scaleX(.55)}
-  65%{opacity:.38;transform:translate(-50%,-50%) scaleX(.42)}
-  79%,100%{opacity:0;transform:translate(-50%,-50%) scaleX(.16)}
-}
-@keyframes sv-cinema-dock-ray-y{
-  0%,14%{opacity:0;transform:translate(-50%,-50%) scaleY(.13)}
-  26%{opacity:.69;transform:translate(-50%,-50%) scaleY(.75)}
-  34%{opacity:1;transform:translate(-50%,-50%) scaleY(1)}
-  44%{opacity:.71;transform:translate(-50%,-50%) scaleY(.88)}
-  57%{opacity:.18;transform:translate(-50%,-50%) scaleY(.45)}
-  68%{opacity:.31;transform:translate(-50%,-50%) scaleY(.37)}
-  81%,100%{opacity:0;transform:translate(-50%,-50%) scaleY(.14)}
+  0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.15)}
+  22%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}
+  43%{opacity:.37;transform:translate3d(-50%,-50%,0) scale(.76)}
+  65%{opacity:.68;transform:translate3d(-50%,-50%,0) scale(.52)}
+  100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.18)}
 }
 
 /* A single soft afterglow suggests that the light has entered the pearl glass. */
