@@ -1,8 +1,8 @@
 /* Weather remains a quiet line beneath the original Home sphere. */
 #homePage .sv-sayvi-home-weather{display:none;align-items:center;justify-content:center;
-  gap:6px;max-width:calc(100vw - 32px);margin:7px auto 2px;padding:7px 10px;
+  gap:7px;max-width:calc(100vw - 32px);margin:-4px auto -2px;padding:9px 10px;
   border:0;border-radius:12px;box-shadow:none;background:transparent;
-  color:#4d5960;font:400 13px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  color:#3c4950;font:400 14px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
   letter-spacing:0;text-align:center;white-space:normal;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
 #homePage .sv-sayvi-home-weather[hidden]{display:none!important}
@@ -13,7 +13,15 @@
 #homePage .sv-sayvi-home-weather-mark svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 #homePage .sv-sayvi-home-weather:focus-visible{outline:2px solid #79a6b7;outline-offset:1px}
 :root[data-theme="dark"] #homePage .sv-sayvi-home-weather{color:#c8d4d9}
-:root.sv-sayvi-home-cards #homePage .sv-sayvi-home-weather{margin:0 auto 2px;padding:4px 9px;font-size:12px}
+:root.sv-sayvi-home-cards #homePage .sv-sayvi-home-weather{margin:-7px auto -3px;padding:9px 9px;font-size:14px}
+/* Once the temporary welcome text fades, use a little of the released
+   vertical room. This affects Home's content only, not its dock or sphere. */
+@media (max-width:600px) and (min-height:700px){
+ :root.sv-home-greeting-expired.sv-sayvi-home-cards.sv-sayvi-handoff-docked #homePage #stage{
+  padding-top:clamp(18px,3.7dvh,33px)!important;
+  transition:padding-top .56s cubic-bezier(.22,.8,.22,1)!important;
+ }
+}
 @media(prefers-reduced-motion:reduce){#homePage .sv-sayvi-home-weather{transition:none}}
 /* Sayvi's flat, native-feeling forecast inside her existing conversation. */
 .turn.sv-sayvi-weather-turn .bubble{width:min(100%,520px)!important;max-width:100%!important;white-space:normal!important}
