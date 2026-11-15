@@ -1,5 +1,24 @@
 /* SEYVEO Home · one living sphere, one actionable real task and a quiet queue.
    This late layer does not alter the approved 60px dock geometry/material. */
+/* Actual sphere flight during Home ↔ section navigation. The original
+   dock expands underneath; no second sphere flashes at the destination. */
+body>#orb.sv-sayvi-route-orb-flight{
+  display:grid!important;
+  opacity:1!important;visibility:visible!important;pointer-events:none!important;
+  z-index:2147483000!important;
+  filter:none!important;backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+  will-change:transform,opacity!important;
+}
+:root.sv-sayvi-route-docking.sv-sayvi-handoff-docked #assistantButton,
+:root.sv-sayvi-route-undocking.sv-sayvi-handoff-docked #assistantButton{
+  opacity:0!important;pointer-events:none!important;
+}
+:root.sv-sayvi-route-undocking.sv-sayvi-home-present.sv-sayvi-handoff-docked #homePage #orb,
+:root.sv-sayvi-route-undocking.sv-sayvi-home-present.sv-sayvi-handoff-docked #homePage.lm-focus #orb{
+  opacity:0!important;pointer-events:none!important;
+}
+
 :root.sv-sayvi-home-present[data-sv-home-cards="1"]{--sv-live-sphere:clamp(149px,42vw,178px)}
 :root.sv-sayvi-home-present[data-sv-home-cards="2"]{--sv-live-sphere:clamp(121px,34vw,145px)}
 :root.sv-sayvi-home-present[data-sv-home-cards="3"]{--sv-live-sphere:clamp(99px,27vw,119px)}
