@@ -350,10 +350,11 @@
       clearTimeout(idleDockTimer);
       clearTimeout(dockRevealTimer);
       idleDockTimer=setTimeout(()=>{
-        root.classList.remove('sv-sayvi-home-idle-leaving');
+        // Sayvi fades in during the last part of the dock's expansion.
         root.classList.add('sv-home-dock-sphere-enter');
+        setTimeout(()=>root.classList.remove('sv-sayvi-home-idle-leaving'),160);
         dockRevealTimer=setTimeout(()=>root.classList.remove('sv-home-dock-sphere-enter'),460);
-      },640);
+      },480);
     }
     updateClusterInteraction();
   }
