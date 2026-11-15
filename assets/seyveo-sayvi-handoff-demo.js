@@ -194,6 +194,67 @@
     homeGreetingDeadline=homeGreetingStartedAt+homeGreetingMaxMs;
     homeGreetingTimer=setTimeout(expireHomeGreeting,homeGreetingMaxMs);
   }
+  // Even when today's tasks keep Sayvi in her final Home position, she must
+  // still greet the visitor. Write into the ALREADY RESERVED message slot,
+  // never insert another block that can move the orb or the cards.
+  let welcomeTypeTimer=0;
+  let welcomeEndTimer=0;
+  let welcomeNode=null;
+  function dismissHomeWelcome(){
+    if(!welcomeNode)return;
+    clearTimeout(welcomeTypeTimer);
+    clearTimeout(welcomeEndTimer);
+    const old=welcomeNode;
+    welcomeNode=null;
+    old.classList.add('is-leaving');
+    root.classList.remove('sv-home-welcome-active');
+    setTimeout(()=>old.remove(),680);
+  }
+  function showHomeWelcome(){
+    if(noIntro||!atHome||home.hidden||document.hidden||!message||
+       root.classList.contains('sv-music-ambient'))return;
+    dismissHomeWelcome();
+    let name='';
+    try{
+      const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
+      if(typeof profile?.name==='string')name=profile.name.trim().replace(/\s+/g,' ').slice(0,32);
+    }catch{}
+    const phrases=[name?`Привет, ${name}!`:'Привет!','Я Сэйви. Рада тебя видеть!'];
+    const note=document.createElement('p');
+    note.className='sv-home-welcome-intro';
+    note.setAttribute('aria-label',phrases.join(' '));
+    note.setAttribute('aria-live','off');
+    const lines=phrases.map((_,i)=>{
+      const line=document.createElement('span');
+      line.className='sv-home-welcome-intro-line sv-home-welcome-intro-line--'+i;
+      note.appendChild(line);
+      return line;
+    });
+    welcomeNode=note;
+    message.appendChild(note);
+    root.classList.add('sv-home-welcome-active');
+    requestAnimationFrame(()=>{if(welcomeNode===note)note.classList.add('is-visible')});
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+      lines.forEach((line,i)=>{line.textContent=phrases[i]});
+      welcomeEndTimer=setTimeout(dismissHomeWelcome,2200);
+      return;
+    }
+    const write=(lineIndex,pos=0)=>{
+      if(welcomeNode!==note)return;
+      const phrase=phrases[lineIndex];
+      const next=Math.min(pos+1,phrase.length);
+      lines[lineIndex].textContent=phrase.slice(0,next);
+      if(next<phrase.length)welcomeTypeTimer=setTimeout(()=>write(lineIndex,next),47);
+      else if(lineIndex+1<phrases.length)welcomeTypeTimer=setTimeout(()=>write(lineIndex+1),290);
+    };
+    welcomeTypeTimer=setTimeout(()=>write(0),380);
+    // The written greeting and the 5.4s original signature share one scene;
+    // the normal task headline quietly returns without changing row height.
+    welcomeEndTimer=setTimeout(dismissHomeWelcome,5650);
+  }
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)dismissHomeWelcome()});
+  window.addEventListener('hashchange',dismissHomeWelcome);
+  document.addEventListener('pointerdown',()=>{if(done)dismissHomeWelcome()},{capture:true,passive:true});
   // A first purposeful touch or keyboard action means the visitor is already
   // working. Do not consume the event: the real control must still respond.
   document.addEventListener('pointerdown',event=>{
@@ -681,6 +742,7 @@
     rememberOpening();
     renderToday();
     beginHomeGreetingLifetime();
+    showHomeWelcome();
     const cinematicHomeArrival=atHome&&!home.hidden&&!document.hidden&&!spark&&
       (root.classList.contains('sv-sayvi-home-idle')||
        root.classList.contains('sv-sayvi-home-cards'));
