@@ -65,6 +65,30 @@
   pointer-events:none !important;
 }
 :root.sv-sayvi-handoff-demo #homePage #seyveoNameTip{display:none !important}
+/* Persistent status stays above Home when the transient greeting fades. */
+:root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online{
+  position:fixed;
+  z-index:32;
+  left:50%;
+  top:calc(13px + env(safe-area-inset-top,0px));
+  transform:translateX(-50%);
+  max-width:calc(100vw - 40px);
+  white-space:nowrap;
+  pointer-events:none;
+  text-align:center;
+  font:540 12px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--secondary,#41484e);
+  -webkit-font-smoothing:antialiased;
+}
+:root.sv-sayvi-handoff-demo[data-theme="light"] #homePage .sv-sayvi-home-online{color:#3d444a}
+:root.sv-sayvi-handoff-demo[data-theme="dark"] #homePage .sv-sayvi-home-online{color:#dfe6ec}
+:root.sv-sayvi-handoff-demo #homePage #stage > .message #kicker{display:none!important}
+/* Reserve a modest top line only after docking; the flight remains unchanged. */
+:root.sv-sayvi-handoff-docked:not(.sv-music-ambient) #homePage #stage{
+  padding-top:31px!important;
+}
 :root.sv-sayvi-handoff-demo #homePage #stage > .message{
   transition:opacity .32s cubic-bezier(.22,.8,.22,1) !important;
 }
