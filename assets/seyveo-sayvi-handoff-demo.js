@@ -35,6 +35,7 @@
   // Keep Safari's changing viewport height from resizing Sayvi on launch.
   const startupLayoutHeight=Math.max(document.documentElement.clientHeight||0,window.innerHeight||0);
   let startupLayoutStable=false;
+  root.style.setProperty('--sv-home-stable-vh',startupLayoutHeight+'px');
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
   const orb=document.getElementById('orb');
@@ -1030,7 +1031,10 @@
   window.addEventListener('resize',()=>{
     const widthChange=Math.abs(window.innerWidth-lastViewportWidth);
     lastViewportWidth=window.innerWidth;
-    if(widthChange>44)startupLayoutStable=true;
+    if(widthChange>44){
+      startupLayoutStable=true;
+      root.style.setProperty('--sv-home-stable-vh',Math.max(0,document.documentElement.clientHeight||window.innerHeight)+'px');
+    }
     // iOS browser chrome often changes only the height during startup; that
     // must not cut off the artwork. A genuine width/orientation change during
     // flight is different: settle safely on the real dock target.
