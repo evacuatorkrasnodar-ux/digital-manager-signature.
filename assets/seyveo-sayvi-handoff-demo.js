@@ -72,13 +72,20 @@
   let greetingDelay=0;
   let greetingTicker=0;
   let writtenGreetingComplete=false;
+  let greetingPlayed=false;
   let startGreeting=()=>{};
   let welcomeSpeech='';
   if(showCinema&&message){
-    const hour=new Date().getHours();
-    const hello=hour<5?'Доброй ночи!':hour<12?'Доброе утро!':
-      hour<18?'Добрый день!':'Добрый вечер!';
-    const greetingLines=[{text:hello,kind:'welcome',type:79}];
+    let owner='';
+    try{
+      const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
+      owner=typeof profile?.name==='string'?profile.name.trim().split(/\s+/)[0].slice(0,24):'';
+    }catch{}
+    const greetingLines=[
+      {text:`Привет${owner?', '+owner:''}!`,kind:'welcome',type:79,hold:920,erase:47},
+      {text:'Я Сэйви.',kind:'name',type:89,hold:1000,erase:55},
+      {text:'Рада тебя видеть!',kind:'wish',type:81}
+    ];
     welcomeSpeech=greetingLines.map(line=>line.text).join(' ');
     greeting=document.createElement('p');
     greeting.className='sv-cinema-written-hello';
@@ -89,7 +96,7 @@
     greeting.appendChild(writing);
     message.appendChild(greeting);
     root.classList.add('sv-cinema-greeting-active');
-    startGreeting=()=>{greetingDelay=setTimeout(()=>{
+    startGreeting=()=>{greetingPlayed=true;greetingDelay=setTimeout(()=>{
       if(done)return;
       greeting.classList.add('sv-cinema-written-hello--visible');
       // Three distinct thoughts, never three lines at once: Sayvi writes,
@@ -217,40 +224,59 @@
     let name='';
     try{
       const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
-      if(typeof profile?.name==='string')name=profile.name.trim().replace(/\s+/g,' ').slice(0,32);
+      if(typeof profile?.name==='string')name=profile.name.trim().split(/\s+/)[0].slice(0,24);
     }catch{}
-    const phrases=[name?`Привет, ${name}!`:'Привет!','Я Сэйви. Рада тебя видеть!'];
+    // The owner's original approved three thoughts. Each one is typed,
+    // held, erased and replaced in the same anchored line, not stacked.
+    const phrases=[
+      {text:`Привет${name?', '+name:''}!`,kind:'welcome',type:79,hold:920,erase:47},
+      {text:'Я Сэйви.',kind:'name',type:89,hold:1000,erase:55},
+      {text:'Рада тебя видеть!',kind:'wish',type:81}
+    ];
     const note=document.createElement('p');
     note.className='sv-home-welcome-intro';
-    note.setAttribute('aria-label',phrases.join(' '));
+    note.setAttribute('aria-label',phrases.map(item=>item.text).join(' '));
     note.setAttribute('aria-live','off');
-    const lines=phrases.map((_,i)=>{
-      const line=document.createElement('span');
-      line.className='sv-home-welcome-intro-line sv-home-welcome-intro-line--'+i;
-      note.appendChild(line);
-      return line;
-    });
+    const writing=document.createElement('span');
+    writing.className='sv-home-welcome-intro-line sv-home-welcome-intro-line--welcome';
+    note.appendChild(writing);
     welcomeNode=note;
     message.appendChild(note);
     root.classList.add('sv-home-welcome-active');
     requestAnimationFrame(()=>{if(welcomeNode===note)note.classList.add('is-visible')});
     if(matchMedia('(prefers-reduced-motion: reduce)').matches){
-      lines.forEach((line,i)=>{line.textContent=phrases[i]});
+      writing.className='sv-home-welcome-intro-line sv-home-welcome-intro-line--wish';
+      writing.textContent=phrases.at(-1).text;
       welcomeEndTimer=setTimeout(dismissHomeWelcome,2200);
       return;
     }
-    const write=(lineIndex,pos=0)=>{
+    const playPhrase=index=>{
       if(welcomeNode!==note)return;
-      const phrase=phrases[lineIndex];
-      const next=Math.min(pos+1,phrase.length);
-      lines[lineIndex].textContent=phrase.slice(0,next);
-      if(next<phrase.length)welcomeTypeTimer=setTimeout(()=>write(lineIndex,next),47);
-      else if(lineIndex+1<phrases.length)welcomeTypeTimer=setTimeout(()=>write(lineIndex+1),290);
+      const phrase=phrases[index];
+      writing.className='sv-home-welcome-intro-line sv-home-welcome-intro-line--'+phrase.kind;
+      writing.textContent='';
+      let cursor=0;
+      const type=()=>{
+        if(welcomeNode!==note)return;
+        cursor=Math.min(phrase.text.length,cursor+1);
+        writing.textContent=phrase.text.slice(0,cursor);
+        if(cursor<phrase.text.length)welcomeTypeTimer=setTimeout(type,phrase.type);
+        else if(index+1<phrases.length)welcomeTypeTimer=setTimeout(erase,phrase.hold);
+      };
+      const erase=()=>{
+        if(welcomeNode!==note)return;
+        cursor=Math.max(0,cursor-1);
+        writing.textContent=phrase.text.slice(0,cursor);
+        if(cursor>0)welcomeTypeTimer=setTimeout(erase,phrase.erase);
+        else welcomeTypeTimer=setTimeout(()=>playPhrase(index+1),285);
+      };
+      welcomeTypeTimer=setTimeout(type,phrase.type);
     };
-    welcomeTypeTimer=setTimeout(()=>write(0),380);
-    // The written greeting and the 5.4s original signature share one scene;
-    // the normal task headline quietly returns without changing row height.
-    welcomeEndTimer=setTimeout(dismissHomeWelcome,5650);
+    welcomeTypeTimer=setTimeout(()=>playPhrase(0),380);
+    const writingMs=380+phrases.reduce((ms,phrase,index)=>ms+phrase.text.length*phrase.type+
+      (index+1<phrases.length?phrase.hold+phrase.text.length*phrase.erase+285:0),0);
+    // Let the final thought linger while the original 9.3s logo dissolves.
+    welcomeEndTimer=setTimeout(dismissHomeWelcome,Math.max(9300,writingMs+1400));
   }
   document.addEventListener('visibilitychange',()=>{if(document.hidden)dismissHomeWelcome()});
   window.addEventListener('hashchange',dismissHomeWelcome);
@@ -742,7 +768,7 @@
     rememberOpening();
     renderToday();
     beginHomeGreetingLifetime();
-    showHomeWelcome();
+    if(!greetingPlayed)showHomeWelcome();
     const cinematicHomeArrival=atHome&&!home.hidden&&!document.hidden&&!spark&&
       (root.classList.contains('sv-sayvi-home-idle')||
        root.classList.contains('sv-sayvi-home-cards'));
