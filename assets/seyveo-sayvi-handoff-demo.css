@@ -294,49 +294,59 @@
   animation:sv-cinema-rise-in 870ms cubic-bezier(.16,1,.3,1) 650ms both;
 }
 
-/* Real tasks only: never invent a card just to fill the opening scene. */
+/* Saved Home tasks · one real action card, no "go to tasks" placeholder. */
 .sv-sayvi-handoff-today{display:none}
 :root.sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]){
   display:block;
-  margin:14px 0 6px;
-  animation:sv-sayvi-handoff-card-in .58s cubic-bezier(.18,.82,.2,1) both;
+  margin:18px 0 20px;
+  padding:0 1px 15px;
+  border-bottom:1px solid rgba(60,69,78,.12);
+  background:transparent;
+  animation:sv-sayvi-handoff-card-in .5s cubic-bezier(.19,.8,.2,1) both;
 }
-:root.sv-cinema-stagger-enter #homePage .sv-sayvi-handoff-today:not([hidden]){
-  animation:sv-cinema-rise-in 900ms cubic-bezier(.16,1,.3,1) 630ms both;
+.sv-home-task-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 15px}
+.sv-home-task-eyebrow{font-size:11px;font-weight:570;letter-spacing:.105em;color:#71777e}
+.sv-home-task-count{font-size:11px;color:#8b9198;white-space:nowrap}
+.sv-home-task-count:empty{display:none}
+.sv-home-task-main{display:flex;align-items:center;gap:15px;min-width:0}
+.sv-home-task-symbol{
+  display:grid;place-items:center;flex:0 0 45px;width:45px;height:49px;
+  color:#25292e;background:transparent
 }
-.sv-sayvi-handoff-today-label{
-  margin:0 0 9px 4px;
-  font-size:12px;
-  letter-spacing:.045em;
-  font-weight:560;
-  color:#7e8894;
+.sv-home-task-symbol svg{
+  display:block;width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.35;
+  stroke-linecap:round;stroke-linejoin:round
 }
-.sv-sayvi-handoff-agenda-card{
-  box-sizing:border-box;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  width:100%;
-  min-height:88px;
-  padding:16px 17px;
-  border:1px solid rgba(188,201,212,.37);
-  border-radius:19px;
-  background:#fff;
-  color:#14191e;
-  text-align:left;
-  box-shadow:0 3px 15px rgba(79,107,128,.035);
+.sv-home-task-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:6px}
+.sv-home-task-title{font-size:20px;font-weight:580;line-height:1.23;letter-spacing:-.028em;color:#17191c;overflow-wrap:anywhere}
+.sv-home-task-meta{font-size:13px;font-weight:440;line-height:1.35;color:#767e87}
+.sv-home-task-note{margin:10px 0 0 60px;color:#555b62;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+.sv-home-task-note[hidden]{display:none}
+.sv-home-task-actions{display:flex;align-items:center;gap:10px;margin:15px 0 0 60px}
+.sv-home-task-actions button{
+  display:grid;place-items:center;width:44px;height:44px;padding:0;flex:0 0 44px;
+  border:0;border-radius:50%;background:#f2f3f5;color:#1f252a;
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color .18s ease,transform .18s ease
 }
-.sv-sayvi-handoff-agenda-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
-.sv-sayvi-handoff-agenda-title{font-size:16px;font-weight:560;letter-spacing:-.018em;line-height:1.35;overflow-wrap:anywhere}
-.sv-sayvi-handoff-agenda-meta{font-size:12px;color:#84909b;font-weight:460}
-.sv-sayvi-handoff-agenda-arrow{display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border-radius:50%;background:#f1f4f7;color:#45505c}
-.sv-sayvi-handoff-agenda-arrow svg{display:block;width:17px;height:17px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sv-home-task-actions button[hidden]{display:none!important}
+.sv-home-task-actions button:active{background:#e7e9eb;transform:scale(.95)}
+.sv-home-task-actions button:focus-visible{outline:2px solid #38383A;outline-offset:3px}
+.sv-home-task-actions svg{
+  width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round
+}
+.sv-home-task-status{margin:9px 0 0 60px;color:#b34b35;font-size:12px;line-height:1.35}
+.sv-home-task-status[hidden]{display:none}
 @keyframes sv-sayvi-handoff-card-in{
-  from{opacity:0;transform:translate3d(0,19px,0)}
+  from{opacity:0;transform:translate3d(0,12px,0)}
   to{opacity:1;transform:translate3d(0,0,0)}
 }
-:root[data-theme="dark"] .sv-sayvi-handoff-agenda-card{background:#262c32;color:#f2f6f8;border-color:rgba(200,218,232,.14)}
-:root[data-theme="dark"] .sv-sayvi-handoff-agenda-arrow{background:#343b43;color:#dbe4e9}
+:root[data-theme="dark"] .sv-home-task-title{color:#f3f4f6}
+:root[data-theme="dark"] .sv-home-task-eyebrow,:root[data-theme="dark"] .sv-home-task-meta{color:#b5bbc2}
+:root[data-theme="dark"] .sv-home-task-note{color:#c7cbd0}
+:root[data-theme="dark"] .sv-home-task-actions button{background:#353a40;color:#f4f4f6}
+:root[data-theme="dark"].sv-sayvi-handoff-docked #homePage .sv-sayvi-handoff-today:not([hidden]){border-bottom-color:rgba(225,230,236,.14)}
 
 /* The actual #orb is lifted above stacking contexts, then contracted to a
    pinpoint in place. Original SVG, light, DOM identity and handlers survive. */
