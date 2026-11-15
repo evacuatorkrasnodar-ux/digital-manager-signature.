@@ -419,9 +419,12 @@ body > #orb.sv-sayvi-handoff-flight {
   100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.14)}
 }
 
-/* The approved dock-arrival spark also glints on the miniature crystal.
-   Same existing artwork and keyframes, constrained to Sayvi's 42px sphere. */
-#assistantButton .sv-sayvi-velvet-sphere > .sv-cinema-dock-spark.sv-sayvi-dock-idle-spark{
+/* Use the EXISTING arrival sparkle on the real SVG miniature.
+   Hide it whenever the large Sayvi is on Home or travelling to the dock. */
+#assistantButton > .sv-sayvi-dock-idle-spark{display:none}
+:root.sv-sayvi-handoff-docked:not(.sv-sayvi-home-idle):not(.sv-sayvi-home-cards):not(.sv-music-ambient):not(.sv-sayvi-handoff-inflight)
+  #assistantButton.sv-sayvi-velvet-ready > .sv-sayvi-dock-idle-spark{
+  display:block;
   position:absolute;
   left:50%;
   top:50%;
