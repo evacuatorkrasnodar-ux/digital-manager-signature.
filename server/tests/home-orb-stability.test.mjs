@@ -32,9 +32,14 @@ test('Launch logo waits for Home scene, and local voice bridge survives',async()
   assert.match(html,/sv-home-launch-logo-visible/);
   assert.match(brand,/sv-sayvi-home-cards:not\(\.sv-home-launch-logo-visible\)/);
   assert.match(brand,/#homePage #signal\.is-pearl \.brand-lockup\{\s*transform:scale\(1\)/);
-  assert.match(brand,/sv-home-signature-show 2\.25s/);
+  assert.match(brand,/\.brand-mark\{\s*animation:cinema-mark 5\.4s/);
+  assert.match(brand,/\.brand-word\{\s*animation:cinema-word 5\.4s/);
+  assert.match(brand,/\.brand-specialty\{\s*animation:cinema-specialty 5\.4s/);
   assert.match(homeCss,/sv-home-cinema-orb \.78s/);
+  assert.match(homeCss,/sv-home-cinema-card-rise 1\.4s \.72s/);
+  assert.match(homeCss,/sv-home-queue-preview\{[\s\S]*?animation-delay:calc\(1\.15s/);
   assert.match(homeJs,/root\.classList\.add\('sv-home-cinematic-intro'\)/);
+  assert.match(homeJs,/remove\('sv-home-cinematic-intro'\),3100/);
   const adapted=adaptOriginalHome(html);
   assert.match(adapted,/window\.SEYVEO_LOCAL_VOICE_BRIDGE=phrase/);
   for(const [,code] of adapted.matchAll(/<script(?:[^>]*)>([\s\S]*?)<\/script>/g)){
