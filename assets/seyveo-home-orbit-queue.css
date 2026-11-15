@@ -4,39 +4,38 @@
 :root.sv-sayvi-home-present[data-sv-home-cards="2"]{--sv-live-sphere:clamp(121px,34vw,145px)}
 :root.sv-sayvi-home-present[data-sv-home-cards="3"]{--sv-live-sphere:clamp(99px,27vw,119px)}
 
-/* The Home sphere is never duplicated by the natural dock thumbnail. */
-#assistantButton>.sv-sayvi-flow-dock{
-  position:absolute!important;top:50%!important;left:50%!important;
-  width:48px!important;height:48px!important;max-width:48px!important;
-  border:0!important;background:transparent!important;object-fit:contain!important;
-  transform:translate(-50%,-50%) scale(.92)!important;
-  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
-  z-index:12!important;filter:none!important;
-  transition:opacity .34s ease,transform .45s cubic-bezier(.2,.8,.2,1)!important;
-}
-:root.sv-sayvi-home-present.sv-sayvi-handoff-docked #assistantButton>.sv-sayvi-flow-dock{
-  opacity:1!important;visibility:visible!important;
-  transform:translate(-50%,-50%) scale(1)!important;
-}
-:root.sv-sayvi-home-present.sv-sayvi-handoff-docked #assistantButton>.sv-sayvi-velvet-sphere,
-:root.sv-sayvi-home-present.sv-sayvi-handoff-docked #assistantButton>.sv-sayvi-mini-copy,
-:root.sv-sayvi-home-present.sv-sayvi-handoff-docked #assistantButton>.button-art{
-  opacity:0!important;visibility:hidden!important;
-}
-/* Previously quiet/music Home shrank the capsule and hid Sayvi's button.
-   Flow occupies the SAME native 50px touch target and keeps the dock complete. */
+/* One Sayvi, two locations. On Home the REAL sphere is the touch target:
+   tap opens her chat, hold starts voice. The fourth dock item retracts. */
 :root.sv-sayvi-home-present.sv-sayvi-handoff-docked :is(
   body>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
   body dialog.seyveo-dock-host[open]:not([data-space="health"])>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
 )>#assistantButton{
-  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+  opacity:0!important;
+  pointer-events:none!important;
 }
 :root.sv-sayvi-home-present.sv-sayvi-handoff-docked :is(
   body>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
   body dialog.seyveo-dock-host[open]:not([data-space="health"])>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
 )::before{
-  animation:none!important;
-  clip-path:inset(0 0 0 0 round 999px)!important;
+  animation:sv-home-idle-dock-shrink .76s cubic-bezier(.22,.8,.2,1) both!important;
+}
+/* Existing expansion animation is restored on leaving Home. The original
+   miniature becomes reachable again on every other route. */
+:root.sv-sayvi-home-idle-leaving.sv-sayvi-handoff-docked :is(
+  body>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"])>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+)::before{
+  animation:sv-home-idle-dock-expand .82s cubic-bezier(.22,.8,.2,1) both!important;
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-sayvi-home-present.sv-sayvi-handoff-docked :is(
+    body>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+    body dialog.seyveo-dock-host[open]:not([data-space="health"])>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+  )::before{animation:none!important;clip-path:inset(0 25% 0 0 round 999px)!important}
+  :root.sv-sayvi-home-idle-leaving.sv-sayvi-handoff-docked :is(
+    body>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+    body dialog.seyveo-dock-host[open]:not([data-space="health"])>footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+  )::before{animation:none!important;clip-path:inset(0 0 0 0 round 999px)!important}
 }
 
 /* Width must animate in BOTH directions: after the last card disappears,
@@ -133,6 +132,5 @@
 }
 @media(prefers-reduced-motion:reduce){
   :root.sv-sayvi-home-with-cards #homePage #orbCluster,
-  :root.sv-sayvi-home-with-cards #homePage #orb,
-  #assistantButton>.sv-sayvi-flow-dock{transition:none!important}
+  :root.sv-sayvi-home-with-cards #homePage #orb{transition:none!important}
 }
