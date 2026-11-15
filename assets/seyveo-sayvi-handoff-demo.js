@@ -334,7 +334,7 @@
     if(idle||cards){
       clearTimeout(idleDockTimer);
       clearTimeout(dockRevealTimer);
-      root.classList.remove('sv-sayvi-home-idle-leaving','sv-home-dock-sphere-enter');
+      root.classList.remove('sv-sayvi-home-idle-leaving','sv-home-dock-sphere-wait','sv-home-dock-sphere-revealing');
       root.classList.toggle('sv-sayvi-home-idle',idle);
       root.classList.toggle('sv-sayvi-home-cards',cards);
       const nextSize=cards?layout.size+'px':'';
@@ -345,14 +345,19 @@
     }else if(previous){
       root.classList.remove('sv-sayvi-home-idle','sv-sayvi-home-cards');
       root.style.removeProperty('--sv-home-live-orb-size');
-      root.classList.add('sv-sayvi-home-idle-leaving');
-      root.classList.remove('sv-home-dock-sphere-enter');
+      root.classList.add('sv-sayvi-home-idle-leaving','sv-home-dock-sphere-wait');
+      root.classList.remove('sv-home-dock-sphere-revealing');
       clearTimeout(idleDockTimer);
       clearTimeout(dockRevealTimer);
       idleDockTimer=setTimeout(()=>{
+        // Hold the miniature invisible across the dock's last layout frame.
+        // One opacity transition reveals the already-painted sphere in place.
+        root.classList.add('sv-home-dock-sphere-revealing');
         root.classList.remove('sv-sayvi-home-idle-leaving');
-        root.classList.add('sv-home-dock-sphere-enter');
-        dockRevealTimer=setTimeout(()=>root.classList.remove('sv-home-dock-sphere-enter'),460);
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+          root.classList.remove('sv-home-dock-sphere-wait');
+          dockRevealTimer=setTimeout(()=>root.classList.remove('sv-home-dock-sphere-revealing'),520);
+        }));
       },640);
     }
     updateClusterInteraction();
