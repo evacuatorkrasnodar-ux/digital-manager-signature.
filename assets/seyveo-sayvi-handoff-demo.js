@@ -49,6 +49,13 @@
     root.classList.remove('sv-sayvi-handoff-demo','sv-cinema-boot');
     return;
   }
+  // Restore the approved top-of-Home presence line independently of greeting.
+  if(!home.querySelector('.sv-sayvi-home-online')){
+    const online=document.createElement('div');
+    online.className='sv-sayvi-home-online';
+    online.textContent='Сэйви · на связи';
+    home.prepend(online);
+  }
   // The opening is a quiet, personalized written introduction. The ordinary
   // Home greeting (and its live task context) returns after the handoff.
   const message=home.querySelector('#stage > .message');
