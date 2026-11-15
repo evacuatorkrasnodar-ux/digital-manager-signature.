@@ -386,46 +386,39 @@ body > #orb.sv-sayvi-handoff-flight {
   100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.012)}
 }
 
-/* Approved SEYVEO star: a tiny white-pearl diffraction glint, not a blue
-   laser cross, bubble, ring or extra sphere. Two uneven, tapered rays make
-   it read as a reflected point of light on the existing miniature. */
+/* SEYVEO docking flash: restore the owner's approved 90px laser-cross shape,
+   but render its beams white with a fine neutral-silver edge for contrast on
+   the white Home canvas. The centre matches the miniature exactly. */
 .sv-cinema-dock-spark{
   position:fixed;
   z-index:2147483002;
-  width:52px;height:52px;
-  border-radius:50%;
-  background:radial-gradient(circle at 50% 50%,#fff 0 1px,rgba(255,255,255,.95) 2px,rgba(149,175,188,.44) 3.5px,transparent 6.5px);
-  transform:translate3d(-50%,-50%,0) scale(.58);
+  width:90px;height:90px;
+  transform:translate3d(-50%,-50%,0) scale(.1);
   opacity:0;
   pointer-events:none;
-  animation:sv-cinema-dock-arrival 1.65s cubic-bezier(.22,.75,.22,1) both;
+  animation:sv-cinema-dock-arrival .95s cubic-bezier(.15,.78,.2,1) both;
 }
 .sv-cinema-dock-spark::before,.sv-cinema-dock-spark::after{
   content:"";
   position:absolute;
   left:50%;top:50%;
-  width:5px;
-  background:linear-gradient(180deg,transparent 0%,rgba(143,169,181,.40) 24%,#fff 50%,rgba(150,175,187,.47) 76%,transparent 100%);
-  clip-path:polygon(50% 0,69% 40%,100% 50%,66% 60%,50% 100%,34% 60%,0 50%,31% 40%);
-  filter:drop-shadow(0 0 2px rgba(142,174,189,.36));
+  transform:translate(-50%,-50%);
+  border-radius:999px;
+  filter:drop-shadow(0 0 1.5px rgba(106,130,141,.64)) drop-shadow(0 0 6px rgba(245,252,255,.88));
 }
 .sv-cinema-dock-spark::before{
-  height:42px;
-  transform:translate(-50%,-50%) rotate(-17deg);
+  width:100%;height:3px;
+  background:linear-gradient(90deg,transparent 0%,rgba(206,221,228,.22) 18%,rgba(226,237,242,.86) 43%,#fff 50%,rgba(226,237,242,.86) 57%,rgba(206,221,228,.22) 82%,transparent 100%);
 }
 .sv-cinema-dock-spark::after{
-  width:4px;height:32px;
-  transform:translate(-50%,-50%) rotate(63deg);
-  opacity:.84;
+  height:100%;width:3px;
+  background:linear-gradient(0deg,transparent 0%,rgba(206,221,228,.22) 18%,rgba(226,237,242,.83) 43%,#fff 50%,rgba(226,237,242,.83) 57%,rgba(206,221,228,.22) 82%,transparent 100%);
 }
 @keyframes sv-cinema-dock-arrival{
-  0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.58)}
-  13%{opacity:.85;transform:translate3d(-50%,-50%,0) scale(.92)}
-  29%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}
-  42%{opacity:.66;transform:translate3d(-50%,-50%,0) scale(.88)}
-  55%{opacity:.15;transform:translate3d(-50%,-50%,0) scale(.74)}
-  69%{opacity:.38;transform:translate3d(-50%,-50%,0) scale(.83)}
-  100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.62)}
+  0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.08)}
+  19%{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}
+  48%{opacity:.86;transform:translate3d(-50%,-50%,0) scale(.63)}
+  100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.14)}
 }
 
 /* A single soft afterglow suggests that the light has entered the pearl glass. */
