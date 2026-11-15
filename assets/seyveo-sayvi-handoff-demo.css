@@ -304,6 +304,7 @@
   background:transparent;
   animation:sv-sayvi-handoff-card-in .68s cubic-bezier(.16,1,.3,1) both;
 }
+.sv-home-task-top[hidden]{display:none!important}
 .sv-home-task-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 15px}
 .sv-home-task-eyebrow{font-size:11px;font-weight:570;letter-spacing:.105em;color:#71777e}
 .sv-home-task-count{font-size:11px;color:#8b9198;white-space:nowrap}
