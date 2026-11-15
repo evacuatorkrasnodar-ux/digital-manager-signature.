@@ -188,10 +188,15 @@
     if(!showCinema||root.dataset.theme!=='light'||!dock)return;
     // The existing grid stays at final coordinates. Only its background mask
     // changes; reflowing grid tracks on every frame caused visible stutter.
-    const full=parseFloat(getComputedStyle(dock,'::before').width);
-    if(!Number.isFinite(full)||full<180)return;
-    const slot=full/4;
-    dockMetrics={full,slot};
+    const homeNav=dock.querySelector('#navHome')?.getBoundingClientRect();
+    const sayviNav=dockButton.getBoundingClientRect();
+    // Read the grid tracks, not the shrinking ::before pearl surface.
+    // Its max-width is smaller while the dock is short.
+    const gridFull=homeNav?.width&&sayviNav.width
+      ?(sayviNav.left+sayviNav.width/2-homeNav.left-homeNav.width/2)*4/3:0;
+    const full=gridFull>140?gridFull:parseFloat(getComputedStyle(dock,'::before').width);
+    if(!Number.isFinite(full)||full<140)return;
+    dockMetrics={full,slot:full/4};
     dockStyleBefore=[dock.style.getPropertyValue('--sv-cinema-grow-duration'),dock.style.getPropertyPriority('--sv-cinema-grow-duration')];
     root.classList.add('sv-cinema-intro-active');
   }
@@ -356,7 +361,9 @@
     if(!from.width){finish();return;}
     const to=small.getBoundingClientRect();
     const centerX=from.left+from.width/2,centerY=from.top+from.height/2;
-    const targetX=dockMetrics?dock.getBoundingClientRect().left+dockMetrics.slot*3.5:to.left+to.width/2;
+    // Aim at the actual painted mini sphere, never at a guessed dock slot.
+    const landing=to.width&&to.height?to:dockButton.getBoundingClientRect();
+    const targetX=landing.left+landing.width/2;
     const targetY=to.top+to.height/2;
     const dx=targetX-centerX,dy=targetY-centerY;
     const finalScale=52/from.width;
