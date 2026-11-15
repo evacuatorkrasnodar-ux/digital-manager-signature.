@@ -15,7 +15,7 @@
   const localVoicePreview=voiceRequested&&location.origin==='http://127.0.0.1:8790';
   let personalVoiceSaved=false;
   try{personalVoiceSaved=localStorage.getItem('seyveo-private-voice-ready-v1')==='1';}catch{}
-  const fileVoicePreview=!localVoicePreview&&(voiceRequested||personalVoiceSaved);
+  const fileVoicePreview=!localVoicePreview&&voiceRequested;
   // The personal cinematic uses the exact approved short WAV, never a fresh
   // TTS performance. Long project narration remains a separate local task.
   const dailyKey='seyveo-sayvi-cinema-last-day-v4';
@@ -631,6 +631,48 @@
     });
   }
 
+  // The approved recording is now publicly available for all SEYVEO visitors.
+  // Browsers that block autoplay receive a clear one-tap play control.
+  function showPublicVoiceWelcome(){
+    runOpening();
+    voiceMedia=new Audio('assets/SEYVEO-Sayvi-welcome.wav?v=1');
+    voiceMedia.preload='auto';
+    const showPlayButton=()=>{
+      if(done||!voiceMedia)return;
+      if(!voiceButton){
+        voiceButton=document.createElement('button');
+        voiceButton.type='button';
+        voiceButton.className='sv-cinema-local-voice';
+        voiceButton.setAttribute('aria-label','Включить голосовое приветствие Сэйви');
+        document.body.appendChild(voiceButton);
+        voiceButton.addEventListener('click',()=>{
+          if(!voiceMedia||done)return;
+          voiceButton.disabled=true;
+          voiceButton.textContent='Включаю голос Сэйви…';
+          playWelcome();
+        });
+      }
+      voiceButton.textContent='▶ Включить голос Сэйви';
+      voiceButton.hidden=false;
+      voiceButton.disabled=false;
+    };
+    const playWelcome=()=>{
+      if(!voiceMedia||done)return;
+      voiceMedia.play().then(()=>{
+        if(voiceButton){voiceButton.remove();voiceButton=null;}
+      }).catch(error=>{
+        if(done)return;
+        if(error?.name==='NotAllowedError')showPlayButton();
+        else{
+          console.warn('[SEYVEO] Voice playback:',error?.message||error);
+          showPlayButton();
+        }
+      });
+    };
+    voiceMedia.onerror=()=>showPlayButton();
+    playWelcome();
+  }
+
   // One opening per LOCAL calendar day; route changes never replay the film.
   const launch=()=>{
     if(!showCinema||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
@@ -653,7 +695,7 @@
       prepareDock();
       root.classList.remove('sv-cinema-boot');
       showPrivateFileVoicePreview();
-    }else runOpening();
+    }else showPublicVoiceWelcome();
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
