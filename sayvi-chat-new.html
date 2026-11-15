@@ -1997,6 +1997,8 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <script src="./assets/seyveo-pdf-export.js"></script>
 <script src="./assets/sayvi-session-files.js?v=1"></script>
 <script src="./assets/sayvi-rich-replies.js?v=5"></script>
+<link rel="stylesheet" href="assets/seyveo-weather-brief.css?v=1">
+<script src="assets/seyveo-weather-brief.js?v=1"></script>
 <script>
 (()=>{
  'use strict';
@@ -3537,6 +3539,10 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   return window.SEYVEO_RICH_REPLIES?.raw(bubble)??bubble?.textContent??'';
  }
  function renderAssistantText(bubble,source){
+  if(window.SEYVEO_WEATHER_BRIEF?.isMessage(source)){
+   if(!window.SEYVEO_WEATHER_BRIEF.render(bubble,source))bubble.textContent="Не удалось показать прогноз.";
+   return;
+  }
   // During token streaming repaint at most ~12 times/second on older phones.
   // The complete answer is always painted on the final stream event.
   const streaming=!!active&&bubble.closest('.turn')?.classList.contains('is-streaming');
@@ -3649,11 +3655,11 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   if(role==='assistant'){
     renderAssistantText(bubble,message);
     // Contextual suggestions appear after the answer, never for every token.
-    if(!active||id.startsWith('loaded-'))showReplySuggestions(bubble,message);
+    if(!window.SEYVEO_WEATHER_BRIEF?.isMessage(message)&&(!active||id.startsWith('loaded-')))showReplySuggestions(bubble,message);
     const turn=bubble.closest('.turn');
     // Draft cards appear only after the reply is complete or reloaded.
     // Never offer to download a partially streamed document.
-    showSayviGeneratedFiles(bubble,message,!active||id.startsWith('loaded-'));
+    if(!window.SEYVEO_WEATHER_BRIEF?.isMessage(message))showSayviGeneratedFiles(bubble,message,!active||id.startsWith('loaded-'));
    }
   else bubble.textContent=message;
   if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
@@ -4787,6 +4793,9 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  // Do not abort on visibilitychange: that cancels the initial permission flow.
  // pagehide above handles actual navigation away from this chat.
  restore();
+ // A tap on the weather beneath the Home sphere opens a real, saved
+ // graphic in Sayvi's conversation. It never sends a fake AI request.
+ try{window.SEYVEO_WEATHER_BRIEF?.acceptHandoff(text=>append('assistant','weather-'+Date.now(),text))}catch{}
  // One-time handoff from Documents: text-only task, never a decrypted file.
  // Do not auto-send; the user decides whether to attach a document and send.
  try{
