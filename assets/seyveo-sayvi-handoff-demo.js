@@ -626,7 +626,9 @@
     greeting?.remove();
     greeting=null;
     root.classList.remove('sv-cinema-greeting-active');
-    root.classList.remove('sv-cinema-boot');
+    // Keep the returning Home covered while Safari commits final sizes.
+    // The initial large generic sphere must never be visible mid-shrink.
+    if(!root.classList.contains('sv-home-prelayout'))root.classList.remove('sv-cinema-boot');
     clearTimeout(introTimer);
     clearTimeout(safetyTimer);
     if(spark)root.classList.add('sv-cinema-stagger-enter');
@@ -654,11 +656,11 @@
     renderToday();
     beginHomeGreetingLifetime();
     if(root.classList.contains('sv-home-prelayout')){
-      // Let Safari commit the final orb/card geometry while the stage is
-      // invisible, then reveal one stable composition without size motion.
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        root.classList.remove('sv-home-prelayout');
-      }));
+      // One short layout commit beneath the existing launch cover.
+      // Reveal only after the sphere, text slot and task rows are positioned.
+      setTimeout(()=>{
+        root.classList.remove('sv-home-prelayout','sv-cinema-boot');
+      },240);
     }
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
