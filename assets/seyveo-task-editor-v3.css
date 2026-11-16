@@ -1075,6 +1075,16 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-photo-link:after{
  right:7px;bottom:7px;width:20px;height:20px;font-size:12px;
 }
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-photo-link.sv-place-photo-unavailable{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ padding:12px!important;text-align:center!important;background:#F0F2F6!important;
+ color:#687483!important;font:500 12px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ cursor:pointer!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-photo-link.sv-place-photo-unavailable:before,
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-photo-link.sv-place-photo-unavailable:after{
+ display:none!important;
+}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-map{
  width:112px!important;height:112px!important;border-radius:16px!important;
 }

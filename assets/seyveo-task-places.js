@@ -290,18 +290,25 @@
   url.searchParams.set('viewpoint',p.lat.toFixed(6)+','+p.lon.toFixed(6));
   return url.toString();
  }
+ function isCuratedMallPhoto(place,file=cleanPhoto(place?.photo)){
+  const known=VERIFIED_VENUES[0];
+  return file===known.photo&&place?.source==='known-address'&&
+   Math.abs(Number(place.lat)-known.lat)<.00001&&Math.abs(Number(place.lon)-known.lon)<.00001;
+ }
  function photoURL(place,width=500){
   // Wikimedia's 2026 thumbnail CDN accepts predefined steps. An arbitrary
   // width (the former 240px) can fail on Safari and silently hide the photo.
   const file=cleanPhoto(place?.photo);
+  // This explicitly verified photo is bundled with SEYVEO. It must remain
+  // visible on local installations even if Wikimedia's image CDN is blocked.
+  if(isCuratedMallPhoto(place,file))return 'assets/seyveo-krasnaya-ploshchad-entrance-2024.jpg';
   const requested=Math.max(120,Math.min(960,Math.round(Number(width)||500)));
   const size=[120,250,330,500,960].find(step=>step>=requested)||960;
   return file?'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width='+size:'';
  }
  function photoInfo(value){
   const place=cleanPlace(value);if(!place?.photo)return null;
-  const mall=place.source==='known-address'&&place.photo===VERIFIED_VENUES[0].photo&&
-   Math.abs(place.lat-VERIFIED_VENUES[0].lat)<.00001&&Math.abs(place.lon-VERIFIED_VENUES[0].lon)<.00001;
+  const mall=isCuratedMallPhoto(place);
   return {
    label:mall?'Вход в ТРЦ «Красная Площадь»':'Фото места',
    author:mall?'Andrew Butko':place.photoAuthor,

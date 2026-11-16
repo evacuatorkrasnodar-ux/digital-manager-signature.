@@ -97,9 +97,13 @@ test('matches an address inside a shopping mall even when its tenant is absent f
  assert.match(info.label,/Вход в ТРЦ «Красная Площадь»/);
  assert.equal(info.author,'Andrew Butko');
  assert.equal(info.license,'CC BY-SA 4.0');
- assert(window.SEYVEO_TASK_PLACES.photoURL(result,960).includes('width=960'));
- assert(window.SEYVEO_TASK_PLACES.photoURL(result).includes('width=500'));
- assert(window.SEYVEO_TASK_PLACES.photoURL(result,240).includes('width=250'));
+ assert.equal(window.SEYVEO_TASK_PLACES.photoURL(result,960),'assets/seyveo-krasnaya-ploshchad-entrance-2024.jpg');
+ const localPhoto=path.join(__dirname,'../assets/seyveo-krasnaya-ploshchad-entrance-2024.jpg');
+ assert.equal(fs.readFileSync(localPhoto).subarray(0,3).toString('hex'),'ffd8ff',
+  'the real JPEG must be committed alongside the UI');
+ const unrelated={name:'Другое кафе',address:'Краснодар, ул. Красная',lat:45.03,lon:38.97,photo:'Cafe exterior.jpg'};
+ assert(window.SEYVEO_TASK_PLACES.photoURL(unrelated).includes('width=500'));
+ assert(window.SEYVEO_TASK_PLACES.photoURL(unrelated,240).includes('width=250'));
  const previousSave={...result};delete previousSave.photo;
  assert.equal(window.SEYVEO_TASK_PLACES.cleanPlace(previousSave).photo,result.photo,
   'previously saved tasks must acquire the verified photo too');

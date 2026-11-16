@@ -81,13 +81,13 @@ test('the confirmed mall entrance photo previews over the map and enlarges with 
  assert(descendants(panel).some(el=>el.className==='sv-place-card sv-place-card-has-photo'),
   'a real photo must be large in its own card row, not hidden over the map');
  const photo=descendants(thumbnail).find(el=>el.tagName==='img');
- assert(photo.src.includes('commons.wikimedia.org'));
- assert(photo.src.includes('width=500'),'the thumbnail uses a supported Wikimedia width');
+ assert(photo.src.endsWith('assets/seyveo-krasnaya-ploshchad-entrance-2024.jpg'),
+  'a known verified entrance photo must load from SEYVEO, not a fragile external hotlink');
  assert(descendants(panel).some(el=>el.className==='sv-place-map'),'the original map remains visible');
  thumbnail.click();
  const viewer=descendants(dialog).find(el=>el.className==='sv-place-photo-lightbox');
  assert(viewer,'tapping opens a larger in-app image');
- assert(descendants(viewer).some(el=>el.className==='sv-place-photo-large'&&el.src.includes('width=960')));
+ assert(descendants(viewer).some(el=>el.className==='sv-place-photo-large'&&el.src.endsWith('seyveo-krasnaya-ploshchad-entrance-2024.jpg')));
  assert(descendants(viewer).some(el=>el.tagName==='strong'&&el.textContent==='Вход в ТРЦ «Красная Площадь»'),
   'the mall entrance must never be called the cafe entrance');
  assert(descendants(viewer).some(el=>el.tagName==='a'&&el.textContent.includes('Andrew Butko')));
@@ -96,7 +96,7 @@ test('the confirmed mall entrance photo previews over the map and enlarges with 
  assert(!descendants(dialog).some(el=>el.className==='sv-place-photo-lightbox'));
 });
 
-test('a temporarily unavailable photo retries a standard size before returning to the compact map',async()=>{
+test('a temporarily unavailable photo retries a standard size and explains the fallback',async()=>{
  const dialog=new Node('dialog');dialog.open=true;
  const title=new Node('textarea');title.value='завтра встреча в кафе Ромашка Краснодар';
  const panel=new Node('section');
@@ -114,9 +114,11 @@ test('a temporarily unavailable photo retries a standard size before returning t
  img.listeners.error[0]();
  assert(img.src.includes('width=250'),'retry uses a second standard Wikimedia size');
  img.listeners.error[0]();
- assert(!descendants(panel).some(el=>el.className==='sv-place-photo-link'));
- assert(descendants(panel).some(el=>el.className==='sv-place-card'),
-  'the original compact map card is restored when images are unavailable');
+ assert(photo.className.includes('sv-place-photo-unavailable'));
+ assert.equal(photo.textContent,'Фото временно недоступно',
+  'a loading error must never make the photo disappear without explanation');
+ assert(descendants(panel).some(el=>el.className==='sv-place-map'),
+  'the map must remain usable when the photo is unavailable');
 });
 
 test('Sayvi enriches a non-curated venue photo and displays its real credit',async()=>{

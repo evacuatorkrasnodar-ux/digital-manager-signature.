@@ -108,8 +108,13 @@
     img.alt=info?.label||'Фото места';
     let retried=false;
     img.addEventListener('error',()=>{
-     if(!retried){retried=true;img.src=places.photoURL(place,250);return}
-     photo.remove();card.className='sv-place-card';visual.className='sv-place-visual';
+     const fallback=places.photoURL(place,250);
+     if(!retried&&fallback!==photoURL){retried=true;img.src=fallback;return}
+     // Never silently hide the entire image: otherwise the user cannot tell
+     // whether the app has no photo or whether the network failed.
+     img.remove();photo.className+=' sv-place-photo-unavailable';
+     photo.textContent='Фото временно недоступно';
+     photo.setAttribute('aria-label','Фото недоступно — открыть источник');
     });
     photo.append(img);visual.append(photo);
    }
