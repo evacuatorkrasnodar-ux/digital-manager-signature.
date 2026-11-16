@@ -16,6 +16,9 @@ screen.innerHTML=`<div class="sw-summary">
  <label class="sw-field"><span>Напиши Сэйви</span><textarea id="swText" rows="2" placeholder="Кофе 250, бензин 1500"></textarea></label>
  <p class="sw-hint">Например: «зарплата 85000» или «кофе 250, продукты 2300»</p>
  <div class="sw-editor-actions"><button type="button" class="sw-primary" data-sw="parse">Разобрать</button><button type="button" class="sw-secondary" data-sw="manual">Вручную</button></div>
+ <div class="sw-photos"><button type="button" class="sw-secondary" data-sw="camera">📷 Сфотографировать чек</button><button type="button" class="sw-secondary" data-sw="photo">📎 Фото из файлов</button></div>
+ <input id="swCamera" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden><input id="swPhoto" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+ <div id="swReceipt" class="sw-receipt" hidden><img id="swReceiptPreview" alt="Выбранный чек"><p id="swReceiptStatus" role="status">Читаю чек…</p><button type="button" class="sw-secondary" data-sw="discard-receipt">Убрать фото</button></div>
  <div class="sw-manual" id="swManual" hidden><label>Сумма, ₽<input id="swAmount" type="text" inputmode="decimal" placeholder="250"></label><label>Название<input id="swTitle" maxlength="100" placeholder="Кофе"></label><label>Категория<select id="swCategory"></select></label><label>Дата<input id="swDate" type="date"></label><button type="button" class="sw-primary" data-sw="save">Сохранить</button><button type="button" class="sw-secondary" data-sw="cancel-edit" hidden>Отмена</button></div>
  <div id="swReview" class="sw-review" hidden></div><p id="swMessage" class="sw-message" role="status" aria-live="polite"></p>
  </div>
@@ -33,7 +36,7 @@ const dateText=s=>{const [y,m,d]=s.split('-');return d+'.'+m+'.'+y;};
 const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');};
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let entries=[];try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(v))entries=v.filter(x=>x&&['income','expense'].includes(x.kind)&&Number.isFinite(x.amount)&&x.amount>0&&/^\d{4}-\d{2}-\d{2}$/.test(x.date)).slice(0,10000);}catch{}
-let selected=new Date();selected.setDate(1);let kind='expense',editing=null,pending=[];
+let selected=new Date();selected.setDate(1);let kind='expense',editing=null,pending=[],scannedReceiptHash='',receiptObjectURL='';
 const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(entries));return true;}catch{message('Не удалось сохранить. Проверь свободное место и настройки браузера.');return false;}};
 const message=t=>{$('swMessage').textContent=t;};
 const amountValue=s=>{let t=String(s).trim().replace(/\s/g,'').replace(',','.');const n=Number(t);return /^\d+(?:\.\d{1,2})?$/.test(t)&&n>0&&n<1e10?Math.round(n*100)/100:NaN;};
@@ -49,6 +52,52 @@ function parseOne(part){
  if(!title)return null;
  const entryKind=incomeHint(title)?'income':kind;
  return {id:crypto.randomUUID?.()||String(Date.now())+Math.random(),kind:entryKind,title:title.slice(0,100),amount:n,category:entryKind==='income'?'Доход':category(title),date:today()};
+}
+function discardReceipt(){
+ scanGeneration++;
+ if(receiptObjectURL)URL.revokeObjectURL(receiptObjectURL);
+ receiptObjectURL='';scannedReceiptHash='';$('swReceipt').hidden=true;$('swCamera').value='';$('swPhoto').value='';
+}
+let ocrLoader=null,scanGeneration=0;
+function loadOcr(){
+ if(window.Tesseract)return Promise.resolve(window.Tesseract);
+ if(ocrLoader)return ocrLoader;
+ ocrLoader=new Promise((resolve,reject)=>{
+  const script=document.createElement('script');script.async=true;
+  script.src='https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js';
+  script.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(Error('OCR недоступен'));
+  script.onerror=()=>reject(Error('Не удалось загрузить распознавание'));
+  document.head.append(script);
+ }).catch(error=>{ocrLoader=null;throw error});
+ return ocrLoader;
+}
+async function scanReceipt(file){
+ if(!file)return;
+ if(!/^image\/(?:jpeg|png|webp)$/i.test(file.type)||file.size>6*1024*1024||!file.size){message('Выбери JPG, PNG или WebP до 6 МБ.');return;}
+ discardReceipt();const token=scanGeneration;receiptObjectURL=URL.createObjectURL(file);$('swReceiptPreview').src=receiptObjectURL;$('swReceipt').hidden=false;$('swReceiptStatus').textContent='Сэйви читает чек на устройстве…';
+ kind='expense';updateKind();editing=null;
+ let worker=null;
+ try{
+  if(crypto.subtle){const hash=await crypto.subtle.digest('SHA-256',await file.arrayBuffer());scannedReceiptHash=Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('');}
+  if(scannedReceiptHash&&entries.some(x=>x.sourceHash===scannedReceiptHash)){$('swReceiptStatus').textContent='Такое фото чека уже использовалось. Проверь историю, прежде чем сохранять повторно.';return;}
+  const OCR=await loadOcr();worker=await OCR.createWorker(['rus','eng'],1);
+  const result=await worker.recognize(file);const content=String(result?.data?.text||'').replace(/\r/g,'');
+  if(token!==scanGeneration)return;
+  const lines=content.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  let sum=NaN;
+  for(const line of lines.filter(x=>/итого|к оплате|всего|сумма|total/i.test(x)).reverse()){
+   const values=[...line.matchAll(/(\d[\d ]{0,8}[,.]\d{2}|\d{2,8})\s*(?:₽|руб)?/g)].map(x=>amountValue(x[1])).filter(Number.isFinite);
+   if(values.length){sum=values[values.length-1];break;}
+  }
+  const shop=lines.find(x=>/[а-яёa-z]{3}/i.test(x)&&!/кассов|фискаль|оператор|приход|сумма|чек|инн|ндс/i.test(x))||'Покупка по чеку';
+  const matchCount=lines.length;
+  showManual({kind:'expense',amount:Number.isFinite(sum)?sum:'',title:shop.slice(0,65),category:category(shop),date:today()});
+  $('swReceiptStatus').textContent=Number.isFinite(sum)?'Сэйви нашла возможную сумму '+rub(sum)+'. Сверь с чеком и нажми «Сохранить».':'Текст найден ('+matchCount+' строк), но итоговая сумма не определена. Введи сумму вручную и проверь перед сохранением.';
+ }catch{
+  if(token!==scanGeneration)return;
+  showManual({kind:'expense',title:'Покупка по чеку',amount:'',category:'Другое',date:today()});
+  $('swReceiptStatus').textContent='Не удалось автоматически прочитать чек. Введи сумму с фотографии вручную.';
+ }finally{if(worker)try{await worker.terminate()}catch{}}
 }
 function addBatch(batch){
  const original=entries.slice();entries=[...batch,...entries];if(!persist()){entries=original;return false;}
@@ -80,7 +129,10 @@ screen.addEventListener('click',ev=>{
  if(b.dataset.swKind){kind=b.dataset.swKind;updateKind();return;}
  const action=b.dataset.sw;
  if(action==='previous'||action==='next'){selected.setMonth(selected.getMonth()+(action==='next'?1:-1));render();}
- if(action==='manual'){editing=null;showManual(null);message('');}
+ if(action==='manual'){discardReceipt();editing=null;showManual(null);message('');}
+ if(action==='camera')$('swCamera').click();
+ if(action==='photo')$('swPhoto').click();
+ if(action==='discard-receipt')discardReceipt();
  if(action==='cancel-edit'){editing=null;$('swManual').hidden=true;message('');}
  if(action==='parse'){
  const raw=$('swText').value.trim();
@@ -95,13 +147,16 @@ screen.addEventListener('click',ev=>{
  if(action==='save'){
  const n=amountValue($('swAmount').value),title=$('swTitle').value.trim(),date=$('swDate').value;
  if(!Number.isFinite(n)||!title||!/^\d{4}-\d{2}-\d{2}$/.test(date)){message('Проверь сумму, название и дату.');return;}
- const entry={id:editing||crypto.randomUUID?.()||String(Date.now()),kind,title:title.slice(0,100),amount:n,date,category:kind==='income'?'Доход':$('swCategory').value};
+ const entry={id:editing||crypto.randomUUID?.()||String(Date.now()),kind,title:title.slice(0,100),amount:n,date,category:kind==='income'?'Доход':$('swCategory').value,...(scannedReceiptHash?{sourceHash:scannedReceiptHash}:{})};
  const before=entries.slice();entries=editing?entries.map(x=>x.id===editing?entry:x):[entry,...entries];
- if(!persist()){entries=before;return;}editing=null;$('swManual').hidden=true;render();message('Сохранено.');
+ if(!persist()){entries=before;return;}editing=null;$('swManual').hidden=true;discardReceipt();render();message('Сохранено.');
  }
- if(action==='edit'){const x=entries.find(x=>x.id===b.dataset.id);if(x){editing=x.id;showManual(x);}}
+ if(action==='edit'){const x=entries.find(x=>x.id===b.dataset.id);if(x){discardReceipt();editing=x.id;showManual(x);}}
  if(action==='delete'){const x=entries.find(x=>x.id===b.dataset.id);if(x&&confirm('Удалить запись «'+x.title+'»?')){const before=entries.slice();entries=entries.filter(y=>y.id!==x.id);if(!persist())entries=before;render();}}
 });
+$('swCamera').addEventListener('change',ev=>{const file=ev.target.files?.[0];if(file)void scanReceipt(file);});
+$('swPhoto').addEventListener('change',ev=>{const file=ev.target.files?.[0];if(file)void scanReceipt(file);});
+dialog.addEventListener('close',discardReceipt);
 render();
 window.SEYVEO_WALLET={open:()=>{if(!dialog.open)dialog.showModal();dialog.querySelectorAll('.syp-screen').forEach(el=>el.hidden=el!==screen);render();},getSummary:()=>({entries:entries.length,balance:entries.reduce((a,x)=>a+(x.kind==='income'?x.amount:-x.amount),0)})};
 })();
