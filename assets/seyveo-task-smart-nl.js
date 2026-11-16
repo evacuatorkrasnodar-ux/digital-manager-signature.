@@ -46,7 +46,7 @@
  }
  function parse(input,now=new Date()){
   if(typeof input!=='string'||input.length>700||!Number.isFinite(now?.getTime?.()))return null;
-  let body=unwrapOuterQuotes(correctKnownTypos(input).replace(/\s+/g,' '));
+  let body=unwrapOuterQuotes(correctKnownTypos(input).replace(/\r?\n+/g,'; ').replace(/\s+/g,' ').replace(/(^|[\s,;])в(?=\d{1,2}(?=$|[\s,.!?]))/giu,'$1в '));
   if(!body)return null;
   body=body.replace(/^(?:(?:сэйви|сейви|сэй|сей|сейвео|seyveo)[,!:.\s]+)?(?:пожалуйста[,]?\s+)?/iu,'');
   body=body.replace(/^(?:напомни(?:те)?(?:\s+мне)?|запланируй|запиши|назначь|создай|добавь)\s+(?:(?:(?:мне|в\s+(?:календарь|дела)|дело|задачу|событие)\s+){0,2})/iu,'');
@@ -122,6 +122,17 @@
  // personal names and brands such as "Вкусно — и точка" remain one task.
  const actionSeparator=new RegExp('(?:\\s*;\\s*|,\\s+(?='+TASK_PREFIX+TASK_HEADS+'(?=$|[\\s,.!?]))|\\s+(?:и|а\\s+потом|затем|потом|после\\s+этого)\\s+(?='+TASK_PREFIX+TASK_HEADS+'(?=$|[\\s,.!?])))','iu');
  const datedActionSeparator=new RegExp('\\s+(?=(?:сегодня|завтра|послезавтра)\\s+(?:(?:в|к)\\s+\\d{1,2}(?::\\d{2})?\\s+)?'+TASK_HEADS+'(?=$|[\\s,.!?]))','giu');
+ // A new actionable verb can begin another request even without punctuation.
+ const nextActionHead=new RegExp('(?:'+TASK_HEADS+')(?=$|[\\s,.!?])','giu');
+ function splitLooseActions(fragment){
+  const positions=[...fragment.matchAll(nextActionHead)].map(match=>match.index);
+  if(positions.length<2)return [fragment];
+  const cut=positions.slice(1).filter(at=>at>0&&/\s/u.test(fragment.charAt(at-1)));
+  if(!cut.length)return [fragment];
+  const parts=[];let start=0;
+  for(const at of cut){parts.push(fragment.slice(start,at).trim());start=at}
+  parts.push(fragment.slice(start).trim());return parts.filter(Boolean);
+ }
  const names=new Set(('мирон мирону мирона мироном анна анне анну анной анны елена елене елену еленой елены андрей андрею андрея андреем ' +
   'алексей алексею алексея алексеем роман роману романа романом игорь игорю игоря игорем мария марии марию марией ' +
   'михаил михаилу михаила михаилом дмитрий дмитрию дмитрия дмитрием сергей сергею сергея сергеем ' +
@@ -177,14 +188,14 @@
  }
  function plan(input,now=new Date()){
   if(typeof input!=='string'||!input.trim()||input.length>700)return null;
-  let body=unwrapOuterQuotes(correctKnownTypos(input).replace(/\s+/g,' '))
+  let body=unwrapOuterQuotes(correctKnownTypos(input).replace(/\r?\n+/g,'; ').replace(/\s+/g,' '))
    .replace(/^(?:(?:сэйви|сейви|сэй|сей)[,!:.,\s]+)?(?:пожалуйста[,]?\s+)?/iu,'')
    .replace(/^(?:напомни(?:те)?(?:\s+мне)?|запланируй|запиши|назначь|создай|добавь)\s+/iu,'');
   body=body.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'');
   let leadMinutes=0;
   const lead=body.match(/^за\s+(час|один\s+час|1\s+час|полчаса|30\s+минут|15\s+минут)(?=$|[\s,.!?])/iu);
   if(lead){leadMinutes=/15/u.test(lead[1])?15:/полчаса|30/u.test(lead[1])?30:60;body=body.slice(lead[0].length).trim()}
-  const parts=body.split(actionSeparator).flatMap(fragment=>fragment.split(datedActionSeparator)).map(part=>part.trim()).filter(Boolean);
+  const parts=body.split(actionSeparator).flatMap(fragment=>fragment.split(datedActionSeparator)).flatMap(fragment=>splitLooseActions(fragment)).map(part=>part.trim()).filter(Boolean);
   if(!parts.length)return null;
   let inheritedDate='';
   const candidates=parts.map(part=>{
