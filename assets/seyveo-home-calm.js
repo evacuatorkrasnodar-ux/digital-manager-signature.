@@ -43,9 +43,10 @@
   show();event.stopPropagation();
  },{capture:true,passive:true});
  document.addEventListener('click',event=>{
-  if(Date.now()>suppressBlankClickUntil)return;
+  if(!isHome())return;
   if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
   suppressBlankClickUntil=0;
+  // No invisible full-screen chat shortcut: Chat belongs to the sphere.
   event.preventDefault();event.stopImmediatePropagation();
  },true);
  notice.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:open-card-review')));
