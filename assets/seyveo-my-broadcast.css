@@ -58,7 +58,10 @@
 .sv-broadcast-later{background:#f5f7f9;color:#50606c}
 .sv-broadcast-save{background:#222c36!important;border-color:#222c36!important;
  color:#fff!important}
-.sv-broadcast-save span{margin-left:9px;font-size:17px;font-weight:350}
+:root.sv-broadcast-first-return:not(.sv-home-empty-sphere) #homePage :is(
+ #seyveoLivingMoment,#dynamic,#svSmartStartHome,#svcpWorkHomePreview,#workTimeline,
+ .sv-sayvi-handoff-today){opacity:0!important;pointer-events:none!important}
+:root.sv-broadcast-first-return #homePage #stage > .message{opacity:0!important}
 :root[data-theme="dark"] .sv-broadcast-description,
 :root[data-theme="dark"] .sv-broadcast-fineprint,
 :root[data-theme="dark"] .sv-broadcast-awake-note{color:#acb3bc}
@@ -106,6 +109,16 @@
  background:rgba(251,253,255,.96);box-shadow:0 2px 9px rgba(52,74,91,.07);
  color:#365164;font:500 12.5px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  white-space:nowrap;cursor:pointer;z-index:5;
+}
+#svBroadcastReturnLine[hidden]{display:none!important}
+:root.sv-broadcast-first-return.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svBroadcastReturnLine{
+ position:absolute!important;
+ top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 73px)!important;
+ left:50%;transform:translateX(-50%);width:min(350px,calc(100vw - 42px));
+ margin:0;padding:0 8px;box-sizing:border-box;
+ text-align:center;color:#435866;font:450 clamp(13px,3.5vw,14px)/1.45
+ -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ z-index:5;
 }
 @media(max-height:700px){
  #svBroadcastPreferences{padding-top:10px;padding-bottom:7px}

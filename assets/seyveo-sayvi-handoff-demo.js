@@ -957,7 +957,7 @@
       !root.classList.contains('sv-music-ambient')&&
       !root.classList.contains('sv-music-ambient-leaving')&&
       !document.querySelector('dialog[open]')&&
-      !hasHomeCards();
+      (!hasHomeCards()||root.classList.contains('sv-broadcast-first-return'));
   }
 
   function restoreEmptyMotion(){
@@ -970,7 +970,8 @@
   }
   function enterEmptySphere(){
     if(emptySphere||emptyLeaving||!canShowEmptySphere())return;
-    const afterCards=hadCardsBeforeEmpty;
+    const afterCards=hadCardsBeforeEmpty&&
+      !root.classList.contains('sv-broadcast-first-return');
     hadCardsBeforeEmpty=false;
     emptySphere=true;
     const epoch=++emptyEpoch;
@@ -1134,7 +1135,7 @@
   emptyRootObserver.observe(root,{attributes:true,attributeFilter:['class']});
   for(const name of ['seyveo:cinema-finished','seyveo:route-changed','seyveo:tasks-changed',
     'seyveo:calendar-changed','seyveo:card-visibility-changed','seyveo:home-agenda-visibility-changed',
-    'seyveo:broadcast-setup-complete'])
+    'seyveo:broadcast-setup-complete','seyveo:broadcast-first-return-ended'])
     window.addEventListener(name,()=>scheduleEmptySphereSync(name==='seyveo:cinema-finished'?850:260));
   window.addEventListener('hashchange',()=>scheduleEmptySphereSync(150));
   document.addEventListener('visibilitychange',()=>scheduleEmptySphereSync(160));

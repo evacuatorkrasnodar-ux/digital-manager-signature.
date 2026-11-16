@@ -20,6 +20,7 @@
  const allowed=new Set(OPTIONS.map(item=>item[0]));
  const params=new URLSearchParams(location.search);
  const qaSkip=params.get('sayvi-intro')==='0';
+ const reviewIntro=params.get('broadcast-intro')==='1';
  const read=(key)=>{try{return localStorage.getItem(key)}catch{return null}};
  const write=(key,value)=>{try{localStorage.setItem(key,value)}catch{}};
  const validTopics=value=>Array.isArray(value)
@@ -34,7 +35,7 @@
   return {topics:[...DEFAULT_TOPICS],keepAwake:false};
  };
  let prefs=readPrefs();
- let onboarding=!qaSkip&&read(SEEN_KEY)!=='1'&&
+ let onboarding=!qaSkip&&(reviewIntro||read(SEEN_KEY)!=='1')&&
    (!location.hash||location.hash==='#home');
  if(onboarding)root.classList.add('sv-broadcast-onboarding');
  const reduced=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -54,7 +55,7 @@
   <section class="sv-broadcast-sheet" role="dialog" aria-modal="true"
       aria-labelledby="svBroadcastTitle" aria-describedby="svBroadcastExplainer">
    <p class="sv-broadcast-eyebrow">СЭЙВИ · ЗНАКОМСТВО</p>
-   <h2 id="svBroadcastTitle">Что тебе интересно?</h2>
+   <h2 id="svBroadcastTitle" tabindex="-1">Что тебе интересно?</h2>
    <p id="svBroadcastExplainer" class="sv-broadcast-description">Выбери несколько тем. Я подстрою подсказки на главной и твоё утреннее шоу.</p>
    <div class="sv-broadcast-topic-grid" role="group" aria-label="Темы моего эфира"></div>
    <p class="sv-broadcast-fineprint">Новости подключим позже, когда появятся проверенные источники. Пока не будем их выдумывать.</p>
@@ -62,7 +63,7 @@
    <p class="sv-broadcast-awake-note">Работает только на поддерживаемых устройствах, пока приложение открыто.</p>
    <div class="sv-broadcast-sheet-actions">
     <button type="button" id="svBroadcastLater" class="sv-broadcast-later">Позже</button>
-    <button type="button" id="svBroadcastSave" class="sv-broadcast-save">Готово <span aria-hidden="true">↗</span></button>
+    <button type="button" id="svBroadcastSave" class="sv-broadcast-save">Готово</button>
    </div>
   </section>`;
  document.body.appendChild(overlay);
@@ -82,7 +83,26 @@
  }
  const wakeCheckbox=overlay.querySelector('#svBroadcastAwake');
  const saveButton=overlay.querySelector('#svBroadcastSave');
- let previousFocus=null;
+ let previousFocus=null,firstReturnTimer=0,returnTyping=0;
+ const returnLine=document.createElement('p');
+ returnLine.id='svBroadcastReturnLine';
+ returnLine.className='sv-broadcast-return-line';
+ returnLine.hidden=true;
+ stage.appendChild(returnLine);
+ const hasActualCards=()=>{
+  const living=document.getElementById('seyveoLivingMoment');
+  if(living&&!living.hidden)return true;
+  const advice=document.getElementById('dynamic');
+  if(advice&&!advice.hidden&&[...advice.children].some(el=>!el.hidden))return true;
+  for(const id of ['svSmartStartHome','svcpWorkHomePreview','workTimeline']){
+   const item=document.getElementById(id);
+   if(item&&!item.hidden)return true;
+  }
+  const agenda=home.querySelector('.sv-sayvi-handoff-today');
+  return !!agenda&&!agenda.hidden;
+ };
+ const canBroadcast=()=>noCards()&&
+  !root.classList.contains('sv-broadcast-first-return')&&!hasActualCards();
  function selected(){return [...grid.querySelectorAll('input:checked')].map(item=>item.value)}
  function setSelected(topics){
   const keys=new Set(topics);
@@ -97,9 +117,36 @@
   wakeCheckbox.checked=prefs.keepAwake;
   overlay.hidden=false;
   root.classList.add('sv-broadcast-sheet-open');
-  saveButton.focus({preventScroll:true});
+  overlay.querySelector('#svBroadcastTitle').focus({preventScroll:true});
   return true;
  }
+ function finishFirstReturn(){
+  clearTimeout(firstReturnTimer);firstReturnTimer=0;
+  clearTimeout(returnTyping);returnTyping=0;
+  returnLine.hidden=true;
+  root.classList.remove('sv-broadcast-first-return');
+  window.dispatchEvent(new Event('seyveo:broadcast-first-return-ended'));
+  if(isHome()&&!hasActualCards()){
+   window.dispatchEvent(new Event('seyveo:home-idle-prompt'));
+   window.setTimeout(offerAfterSetup,460);
+  }
+ }
+ function writeFirstReturn(){
+  if(!root.classList.contains('sv-broadcast-first-return')||!isHome())return;
+  window.dispatchEvent(new Event('seyveo:home-idle-prompt'));
+  const letters=Array.from('Я запомнила, что тебе интересно. ✨');
+  returnLine.textContent='';returnLine.hidden=false;
+  let i=0;
+  const tick=()=>{
+   if(!root.classList.contains('sv-broadcast-first-return'))return;
+   if(reduced()){returnLine.textContent=letters.join('');return;}
+   if(i>=letters.length)return;
+   returnLine.textContent+=letters[i++];
+   returnTyping=setTimeout(tick,36);
+  };
+  returnTyping=setTimeout(tick,480);
+ }
+ window.addEventListener('seyveo:home-sayvi-arrived',writeFirstReturn);
  function closePreferences({save=false}={}){
   if(overlay.hidden)return;
   if(save){
@@ -112,19 +159,23 @@
   const wasOnboarding=onboarding;
   onboarding=false;
   write(SEEN_KEY,'1');
+  if(wasOnboarding)root.classList.add('sv-broadcast-first-return');
   root.classList.remove('sv-broadcast-onboarding');
-  // The handoff controller sees this only after the sheet is gone. If the
-  // user has no cards, the original miniature flies back to the Home orb.
+  // The ORIGINAL miniature flies home once after the choice. If there are
+  // already cards, the full-size sphere greets for a few seconds and then
+  // returns to its dock slot to give actionable work the room it needs.
   if(wasOnboarding)window.dispatchEvent(new Event('seyveo:broadcast-setup-complete'));
   if(previousFocus?.isConnected&&!wasOnboarding)
    previousFocus.focus({preventScroll:true});
   previousFocus=null;
-  if(wasOnboarding)window.setTimeout(()=>{
-   if(isHome()&&noCards()){
-    window.dispatchEvent(new Event('seyveo:home-idle-prompt'));
-    window.setTimeout(offerAfterSetup,460);
-   }
-  },2400);
+  if(wasOnboarding){
+   firstReturnTimer=setTimeout(finishFirstReturn,5200);
+   // No cards: keep the orb on Home, but make the show available sooner.
+   window.setTimeout(()=>{
+    if(root.classList.contains('sv-broadcast-first-return')&&!hasActualCards())
+     finishFirstReturn();
+   },2550);
+  }
  }
  saveButton.addEventListener('click',()=>closePreferences({save:true}));
  overlay.querySelector('#svBroadcastLater').addEventListener('click',()=>closePreferences());
@@ -288,7 +339,7 @@
   catch{screenLock=null}
  }
  function start(options={}){
-  if(!isHome()||!noCards()||!overlay.hidden)return false;
+  if(!isHome()||!canBroadcast()||!overlay.hidden)return false;
   if(active)stop();
   // A user's direct tap on Start is the only moment to request playback.
   // Files belong to their local SEYVEO SOUND library, never a fake stream.
@@ -327,7 +378,7 @@
  });
  stageBox.querySelector('#svBroadcastStop').addEventListener('click',stop);
  function offerAfterSetup(){
-  if(onboarding||!overlay.hidden||active||!noCards()||!isHome()||offer)return;
+  if(onboarding||!overlay.hidden||active||!canBroadcast()||!isHome()||offer)return;
   offer=document.createElement('button');
   offer.id='svBroadcastStartOffer';
   offer.type='button';offer.className='sv-broadcast-start-offer';
@@ -354,11 +405,13 @@
  // makes an occasional offer. A solved card keeps its own celebration.
  window.addEventListener('seyveo:route-changed',()=>{
   if(active&&!isHome())stop();
+  if(!isHome()&&root.classList.contains('sv-broadcast-first-return'))finishFirstReturn();
   if(!isHome()&&offer){offer.remove();offer=null;}
  });
  window.addEventListener('hashchange',()=>{
   if(active&&!isHome())stop();
   if(!isHome()&&!overlay.hidden)closePreferences();
+  if(!isHome()&&root.classList.contains('sv-broadcast-first-return'))finishFirstReturn();
  });
  document.addEventListener('visibilitychange',()=>{
   if(document.hidden){

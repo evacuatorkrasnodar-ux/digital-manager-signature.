@@ -8,7 +8,7 @@ const source=readFileSync(join(root,'assets/seyveo-my-broadcast.js'),'utf8');
 const style=readFileSync(join(root,'assets/seyveo-my-broadcast.css'),'utf8');
 const cinema=readFileSync(join(root,'assets/seyveo-sayvi-handoff-demo.js'),'utf8');
 const index=readFileSync(join(root,'index.html'),'utf8');
-assert.match(index,/seyveo-my-broadcast\.js\?v=1[\s\S]*seyveo-sayvi-handoff-demo\.js\?v=90/,
+assert.match(index,/seyveo-my-broadcast\.js\?v=2[\s\S]*seyveo-sayvi-handoff-demo\.js\?v=91/,
  'The preference flag must initialize before the original cinematic');
 assert.match(source,/root\.classList\.add\('sv-broadcast-onboarding'\)/,
  'First meeting is a deliberate one-time state');
@@ -18,6 +18,10 @@ assert.match(cinema,/!root\.classList\.contains\('sv-broadcast-onboarding'\)/,
  'The Home sphere waits until the introduction ends');
 assert.match(source,/window\.dispatchEvent\(new Event\('seyveo:broadcast-setup-complete'\)\)/,
  'Finishing preferences resumes the original Home sphere controller');
+assert.match(source,/root\.classList\.add\('sv-broadcast-first-return'\)/,
+ 'The original sphere returns once even if demonstration cards are waiting');
+assert.match(cinema,/!hasHomeCards\(\)\|\|root\.classList\.contains\('sv-broadcast-first-return'\)/,
+ 'The existing sphere return temporarily gives first-meeting priority');
 assert.match(source,/read\(SEEN_KEY\)!=='1'/,
  'The menu never becomes a recurring interruption');
 assert.match(source,/localStorage\.setItem\(key,value\)/,
