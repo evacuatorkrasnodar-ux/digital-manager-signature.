@@ -1,0 +1,41 @@
+/* Calm Home · one center, one scale, one coordinated transition. */
+:root.sv-home-calm.sv-home-empty-arrived #homePage #orbCluster,
+:root.sv-home-calm.sv-home-empty-arrived #homePage.lm-focus #orbCluster{
+ top:calc(50dvh - 20px)!important;
+ height:clamp(252px,74.4vw,342px)!important;
+ transition:top .9s cubic-bezier(.22,.8,.22,1),height .9s cubic-bezier(.22,.8,.22,1)!important;
+}
+:root.sv-home-calm.sv-home-empty-arrived #homePage #orb,
+:root.sv-home-calm.sv-home-empty-arrived #homePage.lm-focus #orb{
+ width:clamp(252px,74.4vw,342px)!important;
+ height:clamp(252px,74.4vw,342px)!important;
+ transition:width .9s cubic-bezier(.22,.8,.22,1),height .9s cubic-bezier(.22,.8,.22,1)!important;
+}
+:root.sv-home-empty-arrived:not(.sv-home-calm) #homePage #orbCluster{
+ transition:top .9s cubic-bezier(.22,.8,.22,1),height .9s cubic-bezier(.22,.8,.22,1)!important;
+}
+:root.sv-home-empty-arrived:not(.sv-home-calm) #homePage #orb{
+ transition:width .9s cubic-bezier(.22,.8,.22,1),height .9s cubic-bezier(.22,.8,.22,1)!important;
+}
+:root.sv-home-calm #homePage #stage>.message,
+:root.sv-home-calm #homePage #svSayviHomeWeather,
+:root.sv-home-calm #homePage #svHomeCalmDetails{
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+}
+:root.sv-home-calm #homePage #svHomeLivingLine[data-sv-presence]:not([hidden]){
+ width:max-content!important;max-width:min(340px,calc(100vw - 34px))!important;
+ font-size:16px!important;line-height:1.45!important;padding:13px 17px!important;
+}
+#homePage #svHomeCalmDetails{
+ position:absolute;z-index:9;top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 83px);
+ left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 40px);
+ padding:4px 8px;margin:0;border:0;background:transparent;box-shadow:none;
+ color:#30343B;font:500 14px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;
+ white-space:nowrap;cursor:pointer;
+}
+#homePage #svHomeCalmDetails[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){
+ :root.sv-home-calm #homePage #orbCluster,:root.sv-home-calm #homePage #orb,
+ :root.sv-home-empty-arrived:not(.sv-home-calm) #homePage #orbCluster,
+ :root.sv-home-empty-arrived:not(.sv-home-calm) #homePage #orb{transition:none!important}
+}
