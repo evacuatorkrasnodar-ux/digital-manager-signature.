@@ -6,24 +6,66 @@
  'use strict';
  const CITY_FORMS={краснодар:'Краснодар',краснодаре:'Краснодар',москва:'Москва',москве:'Москва',сочи:'Сочи',казань:'Казань',казани:'Казань',новосибирск:'Новосибирск',новосибирске:'Новосибирск',екатеринбург:'Екатеринбург',екатеринбурге:'Екатеринбург',петербург:'Санкт-Петербург',петербурге:'Санкт-Петербург'};
  const KIND_FORMS={кафе:'кафе',кофейне:'кофейня',ресторане:'ресторан',баре:'бар',пабе:'паб',пиццерии:'пиццерия',бистро:'бистро',пекарне:'пекарня',отеле:'отель',гостинице:'гостиница',коворкинге:'коворкинг',музее:'музей',кинотеатре:'кинотеатр'};
+ // Known restaurant address: the chain's public list confirms the address;
+ // the first floor is an owner correction. The marker locates the *mall*,
+ // not the restaurant entrance. Never present it as a precise doorway.
+ const VERIFIED_VENUES=[Object.freeze({
+  venue:'вкусно и точка',city:'Краснодар',
+  name:'Вкусно — и точка · ТРЦ «Красная Площадь»',
+  address:'ул. Дзержинского, 100 · Краснодар · 1-й этаж',
+  lat:45.102210,lon:38.983892,precision:'building',
+  source:'known-address',sourceUrl:'',
+  keywords:['красная площадь','дзержинского','100']
+ })];
  const meeting=/(?:^|[\s,.!?])(?:встреч[а-яё]*|встрет[а-яё]*|переговор[а-яё]*|пообед[а-яё]*|поужин[а-яё]*|позавтрак[а-яё]*|обед|ужин|завтрак|кофе|посид[а-яё]*)(?=$|[\s,.!?])/iu;
  function normalize(value){return String(value||'').replace(/[«»"“”]/g,'').replace(/\s+/g,' ').trim()}
- function extract(input){
+ function searchText(value){return normalize(value).toLocaleLowerCase('ru-RU').replace(/[—–-]/gu,' ').replace(/\s+/gu,' ').trim()}
+ function validCity(value){return typeof value==='string'&&/^[\p{L} -]{2,60}$/u.test(value.trim())?value.trim():''}
+ function suggestedCity(){
+  // Explicit place preference wins; then a saved business city; then the city
+  // the person sees in SEYVEO's weather. Never infer GPS without consent.
+  try{
+   const saved=validCity(root?.localStorage?.getItem('seyveo-place-city-v1'));
+   if(saved)return saved;
+   const company=JSON.parse(root?.localStorage?.getItem('seyveo-company-passport-v1')||'null');
+   const city=validCity(company?.city);if(city)return city;
+  }catch{}
+  return validCity(root?.SAYVI_WEATHER?.getLocation?.()?.name);
+ }
+ function setPreferredCity(value){
+  const city=validCity(value);
+  if(!city)return false;
+  try{root?.localStorage?.setItem('seyveo-place-city-v1',city)}catch{}
+  return true;
+ }
+ function extract(input,options={}){
   const phrase=String(input||'').slice(0,500);
   if(!meeting.test(phrase))return null;
   const cityMatch=phrase.match(/(?:^|[\s,.!?])(?:в\s+городе\s+|г\.\s*)([А-ЯЁ][А-ЯЁа-яё-]{2,}(?:\s+[А-ЯЁ][А-ЯЁа-яё-]+)?)/u)
    ||phrase.match(/(?:^|[\s,.!?])в\s+(Краснодаре|Москве|Сочи|Казани|Новосибирске|Екатеринбурге|Петербурге)(?=$|[\s,.!?])/iu);
   let city=cityMatch?(CITY_FORMS[cityMatch[1]?.toLocaleLowerCase('ru-RU')]||cityMatch[1]):'';
   const address=phrase.match(/(?:^|[\s,.!?])(?:по\s+адресу|это\s+адрес|адрес\s*[:—]?)\s*([^!?\n]{6,110})/iu);
+  let addressDetail='';
   if(address){
-   const detail=normalize(address[1].replace(/\s+(?:сегодня|завтра|послезавтра|в\s+\d{1,2}(?::\d{2})?)(?=$|[\s,.!?]).*$/iu,'')
+   addressDetail=normalize(address[1].replace(/\s+(?:сегодня|завтра|послезавтра|в\s+\d{1,2}(?::\d{2})?)(?=$|[\s,.!?]).*$/iu,'')
     .replace(/^((?:улица|ул\.?\s*)?\s*[А-ЯЁа-яё][А-ЯЁа-яё\s.-]{2,55}?\s+\d+[А-ЯЁа-яё]?(?:\/\d+)?)(?:\s+.*)?$/iu,'$1'));
-   if(detail.length>=6)return {label:'Место встречи',query:detail,explicitAddress:true,city};
   }
   const venue=phrase.match(/(?:^|[\s,.!?])(?:в|во|у)\s+(кафе|кофейне|ресторане|баре|пабе|пиццерии|бистро|пекарне|отеле|гостинице|коворкинге|музее|кинотеатре)\s+(«[^»]{2,70}»|"[^"]{2,70}"|[^,.!?\n]{2,100})/iu);
-  if(!venue)return null;
+  if(!venue){
+   if(addressDetail.length<6)return null;
+   city=city||validCity(options.city)||suggestedCity();
+   return {label:'Место встречи',query:[addressDetail,city].filter(Boolean).join(', '),
+    explicitAddress:true,city,explicitCity:Boolean(cityMatch)};
+  }
   const kind=KIND_FORMS[venue[1].toLocaleLowerCase('ru-RU')];
   let name=normalize(venue[2]);
+  const qualifier=name.match(/\s+(?=(?:тц|трц|торговый\s+центр|мегацентр|ул\.?|улица|на\s+(?:улице|ул\.?|дзержинского)|это\s+адрес|по\s+адресу)(?:\s|$))/iu);
+  let locationHint=qualifier?name.slice(qualifier.index).trim():'';
+  if(qualifier)name=name.slice(0,qualifier.index).trim();
+  if(!locationHint&&/[»"]$/.test(venue[2])){
+   const tail=phrase.slice(venue.index+venue[0].length).match(/^\s*,?\s*((?:в\s+)?(?:тц|трц|торговый\s+центр|мегацентр|на\s+улице|на\s+ул\.?|улица|ул\.?)\s+[^,.!?\n]{3,90})/iu);
+   if(tail)locationHint=normalize(tail[1]);
+  }
   // People frequently finish a venue phrase with an unmarked city, e.g.
   // "кафе вкусно и точка краснодар". Never send "краснодар" as a brand word.
   const atEnd=name.match(/(?:\s+|,\s*)(краснодаре?|москв[ае]|сочи|казан[ьи]|новосибирск(?:е)?|екатеринбург(?:е)?|петербург(?:е)?)(?:[»"])?$/iu);
@@ -37,8 +79,12 @@
   if(name.length<2||/^(?:кем|ним|ней|другом|подругой|коллегой|анн[а-яё]*|лен[а-яё]*|друг[а-яё]*)$/iu.test(name))return null;
   const searchName=name;
   if(/^вкусно\s+(?:[—–-]\s*)?и\s+точка$/iu.test(name))name='Вкусно — и точка';
+  const contextCity=typeof options.city==='string'?options.city:suggestedCity();
+  city=city||contextCity;
   const label=kind+' «'+name+'»';
-  return {label,query:kind+' '+searchName+(city?', '+city:''),explicitAddress:false,city,venueName:name,kind};
+  const detail=addressDetail||locationHint;
+  return {label,query:[kind+' '+searchName,detail,city].filter(Boolean).join(', ').slice(0,140),
+   explicitAddress:false,city,explicitCity:Boolean(cityMatch||atEnd),venueName:name,kind,locationHint:detail};
  }
  function cleanPlace(value){
   if(!value||typeof value!=='object')return null;
@@ -47,7 +93,10 @@
   const name=String(value.name||'').slice(0,110).trim(),address=String(value.address||'').slice(0,250).trim();
   if(!name||!address)return null;
   const wikidata=/^Q[1-9]\d{0,11}$/.test(String(value.wikidata||''))?value.wikidata:'';
-  return {name,address,lat,lon,source:'openstreetmap',photo:cleanPhoto(value.photo),wikidata};
+  const verified=value.source==='known-address';
+  const sourceUrl=verified&&/^https:\/\/vkusnoitochka\.ru\//.test(value.sourceUrl||'')?value.sourceUrl:'';
+  return {name,address,lat,lon,source:verified?'known-address':'openstreetmap',
+   sourceUrl,precision:verified?'building':'point',photo:cleanPhoto(value.photo),wikidata};
  }
  function cleanPhoto(value){
   if(typeof value!=='string')return '';
@@ -73,26 +122,50 @@
    коворкинг:['coworking_space','office'],музей:['museum'],кинотеатр:['cinema']
   };
   if(!accepted[proposal.kind]?.includes(type))return false;
-  const searchable=value=>normalize(value).toLocaleLowerCase('ru-RU').replace(/[—–-]/gu,' ').replace(/\s+/gu,' ').trim();
-  const requested=searchable(proposal.venueName);
-  const found=searchable([candidate.name,candidate.namedetails?.name,candidate.display_name?.split(',')[0]].filter(Boolean).join(' '));
+  const requested=searchText(proposal.venueName);
+  const found=searchText([candidate.name,candidate.namedetails?.name,candidate.display_name?.split(',')[0]].filter(Boolean).join(' '));
   return found.includes(requested)||requested.includes(found)&&found.length>=4;
+ }
+ function verifiedCandidates(proposal){
+  if(!proposal?.venueName)return [];
+  const request=searchText(proposal.venueName),city=searchText(proposal.city);
+  const hint=searchText(proposal.locationHint);
+  return VERIFIED_VENUES.filter(row=>{
+   if(request!==row.venue||city&&searchText(row.city)!==city)return false;
+   if(hint){
+    const full=searchText(row.address+' '+row.name);
+    const terms=hint.replace(/^(?:в\s+)?(?:тц|трц|торговый\s+центр|мегацентр|на\s+улице|на\s+ул\.?|улица|ул\.?)\s+/u,'').split(/[\s,]+/u).filter(word=>word.length>=3||/^\d+$/u.test(word));
+    if(!terms.length||!terms.every(word=>full.includes(word)))return false;
+   }
+   return true;
+  }).map(cleanPlace).filter(Boolean);
+ }
+ function matchesAddressHint(candidate,proposal){
+  const hint=searchText(proposal.locationHint);
+  if(!hint)return true;
+  const tokens=hint.replace(/^(?:в\s+)?(?:тц|трц|торговый\s+центр|мегацентр|на\s+улице|на\s+ул\.?|улица|ул\.?)\s+/u,'')
+   .split(/[\s,]+/u).filter(word=>word.length>=3||/^\d+$/u.test(word));
+  if(!tokens.length)return true;
+  const combined=searchText([candidate.display_name,candidate.name,...Object.values(candidate.address||{})].join(' '));
+  return tokens.every(word=>combined.includes(word));
  }
  const cache=new Map();let earliest=0;
  function cacheGet(key){
   const local=cache.get(key);if(local&&Date.now()-local.at<30*86400000)return local.value;
   try{
-   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v3:'+key)||'null');
+   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v4:'+key)||'null');
    if(stored&&Date.now()-stored.at<30*86400000){cache.set(key,stored);return stored.value;}
   }catch{}
   return undefined;
  }
  function cacheSet(key,value){
   const record={at:Date.now(),value};cache.set(key,record);
-  try{root.localStorage.setItem('seyveo-place:v3:'+key,JSON.stringify(record))}catch{}
+  try{root.localStorage.setItem('seyveo-place:v4:'+key,JSON.stringify(record))}catch{}
  }
  async function lookup(proposal){
   if(!proposal||!proposal.query||proposal.query.length>140)return null;
+  if(!proposal.city&&!proposal.explicitAddress)return {cityRequired:true};
+  const localMatches=verifiedCandidates(proposal);
   const key=encodeURIComponent(proposal.query.toLocaleLowerCase('ru-RU'));
   const cached=cacheGet(key);if(cached!==undefined)return cached;
   const now=Date.now();const pause=Math.max(0,earliest-now);
@@ -105,16 +178,20 @@
   // A same-origin local bridge works even when a secure browser policy blocks
   // outgoing requests. Public static hosting has no such backend.
   if(!configured&&!/github\.io$/iu.test(host)){
-   const response=await root.fetch('/api/seyveo-place-lookup',{
-    method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},
-    body:JSON.stringify({query:proposal.query})
-   });
-   if(response.ok){const payload=await response.json();results=payload?.results}
-   else if((response.status===404||response.status===405)&&loopback){
-    // A reloaded HTML file does not restart the already running Node server.
-    // Don't issue a doomed cross-origin request against its older CSP.
-    throw Error('seyveo-place-server-restart-needed');
-   }else if(response.status!==404&&response.status!==405)throw Error('Local place search unavailable');
+   try{
+    const response=await root.fetch('/api/seyveo-place-lookup',{
+     method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},
+     body:JSON.stringify({query:proposal.query})
+    });
+    if(response.ok){const payload=await response.json();results=payload?.results}
+    else if((response.status===404||response.status===405)&&loopback){
+     // A reloaded HTML file does not restart the already running Node server.
+     throw Error('seyveo-place-server-restart-needed');
+    }else if(response.status!==404&&response.status!==405)throw Error('Local place search unavailable');
+   }catch(error){
+    if(!localMatches.length||error?.message==='seyveo-place-server-restart-needed')throw error;
+    results=[];
+   }
   }
   if(results===null){
    const endpoint=configured||'https://nominatim.openstreetmap.org/search';
@@ -123,13 +200,16 @@
    url.searchParams.set('q',proposal.query);url.searchParams.set('format','jsonv2');
    url.searchParams.set('addressdetails','1');url.searchParams.set('extratags','1');
    url.searchParams.set('namedetails','1');url.searchParams.set('limit','5');url.searchParams.set('accept-language','ru');
-   const response=await root.fetch(url.toString(),{method:'GET',mode:'cors',credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
-   if(!response.ok)throw Error('Place search unavailable');
-   results=await response.json();
+   try{
+    const response=await root.fetch(url.toString(),{method:'GET',mode:'cors',credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
+    if(!response.ok)throw Error('Place search unavailable');
+    results=await response.json();
+   }catch(error){if(!localMatches.length)throw error;results=[]}
   }
   if(!Array.isArray(results))throw Error('Invalid place response');
-  const found=results.filter(row=>sameVenue(row,proposal)&&Number.isFinite(Number(row.lat))&&Number.isFinite(Number(row.lon)));
-  const candidates=[];
+  const found=results.filter(row=>sameVenue(row,proposal)&&matchesAddressHint(row,proposal)&&Number.isFinite(Number(row.lat))&&Number.isFinite(Number(row.lon))&&
+   (!proposal.city||searchText(row.address?.city||row.address?.town||row.address?.village||row.display_name).includes(searchText(proposal.city))));
+  const candidates=[...localMatches];
   for(const match of found){
    const candidate=cleanPlace({
     name:proposal.explicitAddress?(match.name||'Место встречи'):(match.name||proposal.label),
@@ -171,6 +251,13 @@
  function fullMapURL(place){
   const p=cleanPlace(place);return p?'https://www.openstreetmap.org/?mlat='+p.lat+'&mlon='+p.lon+'#map=17/'+p.lat+'/'+p.lon:'';
  }
+ function streetViewURL(place){
+  const p=cleanPlace(place);if(!p)return '';
+  const url=new URL('https://www.google.com/maps/@');
+  url.searchParams.set('api','1');url.searchParams.set('map_action','pano');
+  url.searchParams.set('viewpoint',p.lat.toFixed(6)+','+p.lon.toFixed(6));
+  return url.toString();
+ }
  function photoURL(place){
   const file=cleanPhoto(place?.photo);return file?'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width=240':'';
  }
@@ -192,7 +279,8 @@
   }
   return {...place,photo:file||''};
  }
- const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,photoURL,resolvePhoto});
+ const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,streetViewURL,
+  photoURL,resolvePhoto,suggestedCity,setPreferredCity});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.SEYVEO_TASK_PLACES=api;
 })(typeof window!=='undefined'?window:null);

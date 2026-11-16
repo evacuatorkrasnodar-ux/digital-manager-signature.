@@ -594,6 +594,12 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-heading strong{
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-heading span{
  color:#707782!important;font:470 11.5px/1.2 system-ui!important;
 }
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-city-trigger{
+ margin:0!important;padding:4px 0 4px 8px!important;min-height:28px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ color:#4F708F!important;font:520 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:right!important;cursor:pointer!important;
+}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-card{
  display:flex!important;gap:12px!important;align-items:center!important;justify-content:space-between!important;
  min-height:104px!important;box-sizing:border-box!important;padding:11px 12px 11px 15px!important;
