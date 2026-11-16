@@ -69,15 +69,7 @@
   line.focus({preventScroll:true});
  }
  line.addEventListener('click',enter);
- const tasksAdd=document.getElementById('personalAddTasks');
- if(tasksAdd){
-  const cards=document.createElement('button');
-  cards.id='svReviewTasksButton';cards.type='button';
-  cards.setAttribute('aria-label','Разобрать карточки');
-  cards.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7" width="15" height="13" rx="2"/><path d="M8 4h11a2 2 0 0 1 2 2v10"/><path d="M8 11h9M8 15h6"/></svg>';
-  tasksAdd.after(cards);
-  cards.addEventListener('click',enter);
- }
+ window.addEventListener('seyveo:open-card-review',enter);
  room.querySelector('#svReviewBack').addEventListener('click',leave);
  window.addEventListener('keydown',event=>{if(open&&event.key==='Escape')leave()});
  window.addEventListener('hashchange',()=>{if(open&&location.hash&&location.hash!=='#home')leave()});
