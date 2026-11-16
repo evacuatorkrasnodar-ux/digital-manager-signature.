@@ -53,7 +53,7 @@
   display:none!important;
 }
 /* Calm thoughts and the longer 'My morning' remain exclusive to empty Home. */
-:root.sv-home-card-sphere #homePage :is(#svHomeLivingLine,#svBroadcastStage,#svBroadcastStartOffer,#svBroadcastReturnLine){
+:root.sv-home-card-sphere #homePage :is(#svHomeLivingLine[data-sv-presence="idle"],#svBroadcastStage,#svBroadcastStartOffer,#svBroadcastReturnLine){
   display:none!important;
 }
 :root.sv-home-card-sphere.sv-broadcast-first-return #homePage
@@ -77,4 +77,22 @@
   :root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #svSayviHomeWeather{
    top:253px!important;
   }
+}
+/* Even with an actionable card, a spoken request receives its compact typed
+   reply. Reserve the height so its letters never overlap the featured card. */
+:root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere:has(
+ #svHomeLivingLine[data-sv-presence="reply"]:not([hidden])) #homePage #stage{
+ min-height:clamp(375px,49dvh,460px)!important;
+ height:clamp(375px,49dvh,460px)!important;
+ transition:min-height .6s cubic-bezier(.22,.8,.22,1),height .6s cubic-bezier(.22,.8,.22,1)!important;
+}
+:root.sv-home-card-sphere.sv-home-empty-sphere.sv-home-empty-arrived #homePage
+ #svHomeLivingLine:is([data-sv-presence="reply"],[data-sv-presence="listening"]):not([hidden]){
+ display:flex!important;
+ top:calc(clamp(172px,24dvh,228px) + clamp(74px,21vw,90px) + 55px)!important;
+ left:50%!important;
+ width:min(380px,calc(100% - 32px))!important;
+ max-height:110px!important;
+ z-index:8;
+ transform:translateX(-50%)!important;
 }

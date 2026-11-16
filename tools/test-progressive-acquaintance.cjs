@@ -17,6 +17,8 @@ assert.match(intro,/introStep==='business'/,'Optional business setup follows');
 assert.match(intro,/businessChoice==='business'\?'pro'/,
  'Only an explicit business selection changes the profile focus');
 assert.match(intro,/seyveo:profile-changed/,'Other screens hear profile updates');
+assert.match(index,/SEYVEO_BROADCAST\?\.rememberName\?\.\(name\)/,
+ 'The explicit voice request can remember a name in the same profile');
 assert.match(progressive,/location\.hash==='#sayvi-music'/,
  'Music is introduced on the actual Music screen');
 assert.match(progressive,/location\.hash==='#sayvi-documents'/,
@@ -37,7 +39,9 @@ assert.match(cinematic,/root\.classList\.toggle\('sv-home-card-sphere',withCards
  'The original sphere shrinks when there is a real card');
 assert.match(home,/#seyveoLivingMoment \.lm-secondary\{\s*display:none!important;/,
  'Home exposes one featured card, not the full task list');
-assert.match(index,/seyveo-home-conversation\.css\?v=1/,
+assert.match(home,/#svHomeLivingLine:is\(\[data-sv-presence="reply"\],\[data-sv-presence="listening"\]\):not\(\[hidden\]\)/,
+ 'Mini voice replies remain visible on Home while a card is present');
+assert.match(index,/seyveo-home-conversation\.css\?v=2/,
  'Compact Home geometry is included');
 assert.match(index,/seyveo-progressive-discovery\.js\?v=2/,
  'Section-specific introduction is included');

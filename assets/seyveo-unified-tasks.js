@@ -956,15 +956,14 @@
   if(!resume)return;
   resume.hidden=false;
   const label=resume.querySelector('.sv-cabinet-resume-copy strong');
-  if(label)label.textContent='Продолжить с Сэйви';
+  if(label)label.textContent='Настроить с Сэйви';
   const note=resume.querySelector('.sv-cabinet-resume-copy small');
-  if(note)note.textContent='Вместе настроим или улучшим кабинет';
+  if(note)note.textContent='Вместе подберём инструменты и задачи';
  }
  resume?.addEventListener('click',()=>{
-  // The existing onboarding controller handles resume and saved answers.
-  const existing=$('svCabinetStartWithSayvi');
-  if(existing)existing.click();
-  else launch.click();
+  // The retired inline-chat walkthrough opens a different standalone page.
+  // Keep the person in the actual cabinet's goal-first constructor instead.
+  open();
  });
  window.addEventListener('storage',event=>{if(event.key===KEY)syncResume()});
  syncResume();

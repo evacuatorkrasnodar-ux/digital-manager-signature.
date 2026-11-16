@@ -514,7 +514,9 @@
    const clean=String(name||'').trim().replace(/\s+/g,' ').slice(0,60);
    if(!clean)return false;
    profile={...readProfile(),schemaVersion:1,name:clean,updatedAt:new Date().toISOString()};
-   write(PROFILE_KEY,JSON.stringify(profile));
+   const value=JSON.stringify(profile);
+   write(PROFILE_KEY,value);
+   if(read(PROFILE_KEY)!==value)return false;
    window.dispatchEvent(new Event('seyveo:profile-changed'));
    return true;
   }});
