@@ -1,5 +1,10 @@
 /* SEYVEO · once-a-day cinematic awakening and quiet Home afterwards.
    Only the original Sayvi and real cards remain; approved dock untouched. */
+/* The same size before and after the welcome; only this file owns it. */
+:root.sv-sayvi-handoff-demo{
+ --sv-home-orb-size:clamp(230px,68vw,315px);
+ --sv-home-orb-half:clamp(115px,34vw,157.5px);
+}
 /* Match the dock's high-specificity light-theme rule, otherwise its
    !important opacity can reveal a second sphere during the flight. */
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked)[data-theme="light"] :is(
@@ -49,13 +54,13 @@
 }
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #orbCluster,
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage.lm-focus #orbCluster {
-  height:clamp(210px,62vw,285px) !important;
+  height:var(--sv-home-orb-size) !important;
   margin-bottom:0 !important;
 }
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #orb,
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage.lm-focus #orb {
-  width:clamp(210px,62vw,285px) !important;
-  height:clamp(210px,62vw,285px) !important;
+  width:var(--sv-home-orb-size) !important;
+  height:var(--sv-home-orb-size) !important;
   min-width:0 !important;
   min-height:0 !important;
   transform:none !important;
@@ -472,7 +477,7 @@ body > #orb.sv-sayvi-handoff-flight {
 }
 :root:is(.sv-music-ambient,.sv-home-empty-sphere).sv-sayvi-handoff-docked #homePage #orbCluster,
 :root:is(.sv-music-ambient,.sv-home-empty-sphere).sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
-  height:clamp(210px,62vw,285px)!important;
+  height:var(--sv-home-orb-size)!important;
   min-height:0!important;
   margin-bottom:0!important;
   opacity:1!important;
@@ -484,8 +489,8 @@ body > #orb.sv-sayvi-handoff-flight {
 :root:is(.sv-music-ambient,.sv-home-empty-sphere).sv-sayvi-handoff-docked #homePage #orb,
 :root:is(.sv-music-ambient,.sv-home-empty-sphere).sv-sayvi-handoff-docked #homePage.lm-focus #orb{
   display:grid!important;
-  width:clamp(210px,62vw,285px)!important;
-  height:clamp(210px,62vw,285px)!important;
+  width:var(--sv-home-orb-size)!important;
+  height:var(--sv-home-orb-size)!important;
   min-width:0!important;
   min-height:0!important;
   transform:none;
@@ -582,7 +587,7 @@ body > #orb.sv-sayvi-handoff-flight {
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage > .message,
 :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #stage > .message{
   position:absolute!important;
-  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 19px)!important;
+  top:calc(50dvh - 100px + var(--sv-home-orb-half) + 19px)!important;
   left:50%!important;
   width:min(385px,calc(100% - 32px))!important;
   margin:0!important;
@@ -592,7 +597,7 @@ body > #orb.sv-sayvi-handoff-flight {
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #svSayviHomeWeather,
 :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #svSayviHomeWeather{
   position:absolute!important;
-  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 135px)!important;
+  top:calc(50dvh - 100px + var(--sv-home-orb-half) + 135px)!important;
   left:50%!important;
   margin:0!important;
   transform:translateX(-50%)!important;
@@ -601,7 +606,7 @@ body > #orb.sv-sayvi-handoff-flight {
 /* When the welcome has done its job, the weather gently moves closer to
    Sayvi. Her coordinate never changes, even while the copy fades away. */
 :root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svSayviHomeWeather{
-  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 27px)!important;
+  top:calc(50dvh - 100px + var(--sv-home-orb-half) + 27px)!important;
 }
 @media(prefers-reduced-motion:reduce){
   :root.sv-home-empty-sphere #homePage #svSayviHomeWeather,
