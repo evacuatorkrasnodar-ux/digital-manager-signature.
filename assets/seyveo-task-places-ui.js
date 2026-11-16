@@ -8,16 +8,116 @@
  const title=document.getElementById('personalTaskTitle');
  const panel=document.getElementById('svNewTaskPlacePanel');
  if(!places||!dialog||!title||!panel)return;
- let proposal=null,place=null,confirmed=false,choices=[],choicesExpanded=false,choicesNearby=false,query='',sourceQuery='',status='idle',request=0,photoRequest=0,searchTimer=0,refining=false,refineText='',cityEditing=false,photoViewer=null;
+ let proposal=null,place=null,confirmed=false,choices=[],choicesExpanded=false,choicesNearby=false,query='',sourceQuery='',status='idle',request=0,photoRequest=0,searchTimer=0,refining=false,refineText='',cityEditing=false,photoViewer=null,mapViewer=null,mapCleanup=null;
  const node=(tag,cls,text)=>{
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
  };
  function closePhotoViewer(){if(photoViewer){photoViewer.remove();photoViewer=null}}
+ function closeMapViewer(){
+  if(!mapViewer)return;
+  mapCleanup?.();mapCleanup=null;mapViewer.remove();mapViewer=null;
+ }
+ function openMapViewer(value){
+  const target=places.cleanPlace(value);if(!target||!dialog.open)return;
+  closePhotoViewer();closeMapViewer();
+  const shade=node('div','sv-place-map-overlay');shade.setAttribute('role','dialog');
+  shade.setAttribute('aria-modal','true');shade.setAttribute('aria-label','Карта места встречи');
+  const sheet=node('div','sv-place-map-sheet');sheet.addEventListener('click',event=>event.stopPropagation());
+  const handle=node('div','sv-place-map-handle');handle.setAttribute('aria-hidden','true');
+  const header=node('div','sv-place-map-header');
+  const headline=node('div','sv-place-map-headline');
+  headline.append(node('strong','',target.name),node('span','',target.address));
+  const close=node('button','sv-place-map-close','×');close.type='button';
+  close.setAttribute('aria-label','Закрыть карту');close.addEventListener('click',closeMapViewer);
+  header.append(headline,close);
+  const viewport=node('div','sv-place-map-viewport');viewport.setAttribute('aria-label','Интерактивная карта: перетаскивай, увеличивай двумя пальцами или кнопками');
+  const tilesLayer=node('div','sv-place-map-layer');
+  const pin=node('span','sv-place-map-marker');pin.setAttribute('aria-label','Выбранное место');
+  const controls=node('div','sv-place-map-controls');
+  const zoomIn=node('button','sv-place-map-zoom','+');zoomIn.type='button';zoomIn.setAttribute('aria-label','Приблизить карту');
+  const zoomOut=node('button','sv-place-map-zoom','−');zoomOut.type='button';zoomOut.setAttribute('aria-label','Отдалить карту');
+  const centerButton=node('button','sv-place-map-center','◎');centerButton.type='button';centerButton.setAttribute('aria-label','Вернуться к месту встречи');
+  controls.append(zoomIn,zoomOut,centerButton);
+  const attribution=node('a','sv-place-map-credit','© OpenStreetMap contributors');
+  attribution.href='https://www.openstreetmap.org/copyright';attribution.target='_blank';attribution.rel='noopener noreferrer';
+  viewport.append(tilesLayer,pin,controls,attribution);
+  const footer=node('div','sv-place-map-footer');
+  const navigatorLink=node('a','sv-place-map-route-primary','Маршрут в Навигаторе ↗');
+  navigatorLink.href=places.navigatorRouteURL(target);
+  navigatorLink.setAttribute('aria-label','Передать адрес в Яндекс Навигатор');
+  const mapsLink=node('a','sv-place-map-route-secondary','Яндекс Карты ↗');
+  mapsLink.href=places.yandexRouteURL(target);mapsLink.target='_blank';mapsLink.rel='noopener noreferrer';
+  mapsLink.setAttribute('aria-label','Маршрут в Яндекс Картах, если Навигатор не установлен');
+  footer.append(navigatorLink,mapsLink);
+  sheet.append(handle,header,viewport,footer);shade.append(sheet);
+  shade.addEventListener('click',closeMapViewer);
+  shade.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeMapViewer()}});
+  mapViewer=shade;dialog.append(shade);
+  let centerLat=target.lat,centerLon=target.lon,zoom=16;
+  const activePointers=new Map(),tileNodes=new Map();let pinchDistance=0;
+  function world(lat,lon){
+   const size=256*2**zoom,radians=Math.max(-85.0511,Math.min(85.0511,lat))*Math.PI/180;
+   return {x:(lon+180)/360*size,y:(1-Math.log(Math.tan(radians)+1/Math.cos(radians))/Math.PI)/2*size};
+  }
+  function pan(dx,dy){
+   const size=256*2**zoom,old=world(centerLat,centerLon);
+   const x=old.x-dx,y=Math.max(0,Math.min(size,old.y-dy));
+   centerLon=((x/size*360)%360+540)%360-180;
+   centerLat=(2*Math.atan(Math.exp(Math.PI*(1-2*y/size)))-Math.PI/2)*180/Math.PI;
+  }
+  function draw(){
+   if(!mapViewer)return;
+   const width=viewport.clientWidth||Math.min(window.innerWidth||390,440);
+   const height=viewport.clientHeight||Math.min((window.innerHeight||820)*.59,530);
+   const tiles=places.mapTiles({...target,lat:centerLat,lon:centerLon},width,height,zoom);
+   const used=new Set();
+   for(const tile of tiles){
+    let img=tileNodes.get(tile.url);
+    if(!img){
+     img=node('img','sv-place-map-tile');img.src=tile.url;img.alt='';img.draggable=false;
+     img.setAttribute('aria-hidden','true');img.decoding='async';img.referrerPolicy='strict-origin-when-cross-origin';
+     tileNodes.set(tile.url,img);tilesLayer.append(img);
+    }
+    img.style.left=tile.left+'px';img.style.top=tile.top+'px';used.add(tile.url);
+   }
+   for(const [url,img] of tileNodes){if(!used.has(url)){img.remove();tileNodes.delete(url)}}
+   const point=world(target.lat,target.lon),origin=world(centerLat,centerLon);
+   pin.style.left='calc(50% + '+(point.x-origin.x)+'px)';
+   pin.style.top='calc(50% + '+(point.y-origin.y)+'px)';
+   zoomIn.disabled=zoom>=18;zoomOut.disabled=zoom<=3;
+  }
+  function changeZoom(delta){zoom=Math.max(3,Math.min(18,zoom+delta));draw()}
+  zoomIn.addEventListener('click',()=>changeZoom(1));zoomOut.addEventListener('click',()=>changeZoom(-1));
+  centerButton.addEventListener('click',()=>{centerLat=target.lat;centerLon=target.lon;zoom=16;draw()});
+  viewport.addEventListener('pointerdown',event=>{
+   if(event.target.closest?.('button,a'))return;
+   activePointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+   viewport.setPointerCapture?.(event.pointerId);
+   if(activePointers.size===2){const [a,b]=[...activePointers.values()];pinchDistance=Math.hypot(a.x-b.x,a.y-b.y)}
+  });
+  viewport.addEventListener('pointermove',event=>{
+   const last=activePointers.get(event.pointerId);if(!last)return;
+   activePointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+   if(activePointers.size===1){pan(event.clientX-last.x,event.clientY-last.y);draw()}
+   else if(activePointers.size===2){
+    const [a,b]=[...activePointers.values()],distance=Math.hypot(a.x-b.x,a.y-b.y);
+    if(pinchDistance>0&&distance/pinchDistance>1.4){changeZoom(1);pinchDistance=distance}
+    else if(pinchDistance>0&&distance/pinchDistance<.72){changeZoom(-1);pinchDistance=distance}
+   }
+  });
+  const pointerEnd=event=>{activePointers.delete(event.pointerId);pinchDistance=0};
+  viewport.addEventListener('pointerup',pointerEnd);viewport.addEventListener('pointercancel',pointerEnd);
+  viewport.addEventListener('lostpointercapture',pointerEnd);
+  viewport.addEventListener('wheel',event=>{event.preventDefault();changeZoom(event.deltaY<0?1:-1)},{passive:false});
+  const onResize=()=>draw();window.addEventListener?.('resize',onResize);
+  mapCleanup=()=>window.removeEventListener?.('resize',onResize);
+  draw();close.focus?.({preventScroll:true});
+ }
  function openPhotoViewer(location){
   const info=places.photoInfo(location),src=places.photoURL(location,960);
   if(!info||!src)return;
-  closePhotoViewer();
+  closeMapViewer();closePhotoViewer();
   const shade=node('div','sv-place-photo-lightbox');
   shade.setAttribute('role','dialog');shade.setAttribute('aria-modal','true');
   shade.setAttribute('aria-label',info.label);
@@ -46,12 +146,12 @@
  }
  function reset(){
   clearTimeout(searchTimer);
-  closePhotoViewer();
+  closePhotoViewer();closeMapViewer();
   request++;photoRequest++;proposal=null;place=null;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;query='';sourceQuery='';status='idle';refining=false;refineText='';cityEditing=false;
   panel.replaceChildren();panel.hidden=true;
  }
  function load(saved){
-  closePhotoViewer();
+  closePhotoViewer();closeMapViewer();
   place=places.cleanPlace(saved);confirmed=Boolean(place);choices=[];choicesExpanded=false;choicesNearby=false;proposal=places.extract(title.value);
   query=proposal?.query||'';sourceQuery=query;status=place?'found':'idle';request++;render();resolvePlacePhoto();
  }
@@ -60,7 +160,7 @@
  // explicit confirmation before it can become a task destination.
  function suggest(candidate){
   const next=places.cleanPlace(candidate);if(!next||!dialog.open)return false;
-  request++;photoRequest++;clearTimeout(searchTimer);
+  request++;photoRequest++;clearTimeout(searchTimer);closeMapViewer();
   place=next;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;
   proposal=null;query='';sourceQuery='';status='found';refining=false;refineText='';cityEditing=false;
   render();resolvePlacePhoto();window.dispatchEvent(new Event('seyveo:task-place-updated'));
@@ -128,15 +228,14 @@
     });
     photo.append(img);visual.append(photo);
    }
-   const link=document.createElement('a');link.className='sv-place-map';
-   link.href=places.fullMapURL(place);link.target='_blank';link.rel='noopener noreferrer';
-   link.setAttribute('aria-label',place.source==='yandex'?'Открыть место в Яндекс Картах':'Открыть место на OpenStreetMap');
+   const link=document.createElement('button');link.type='button';link.className='sv-place-map';
+   link.setAttribute('aria-label','Увеличить карту внутри SEYVEO');
+   link.addEventListener('click',()=>openMapViewer(place));
    const narrow=window.matchMedia('(max-width:370px)').matches;
    if(place.source==='yandex'){
     // Keep Yandex business data on the Yandex directory, not on OSM tiles.
-    link.href=places.yandexSearchURL(place.name+' '+place.address);
     link.className+=' sv-place-map-yandex';
-    link.append(node('span','sv-place-map-yandex-label','Яндекс\nКарты ↗'));
+    link.append(node('span','sv-place-map-yandex-label','Открыть\nкарту ↗'));
    }else{
     for(const tile of places.mapTiles(place,narrow?96:112,photoURL?(narrow?96:112):(narrow?88:96))){
      const img=document.createElement('img');img.className='sv-place-map-tile';img.loading='lazy';
@@ -253,7 +352,7 @@
  }
  function sync(){
   clearTimeout(searchTimer);
-  closePhotoViewer();
+  closePhotoViewer();closeMapViewer();
   const next=places.extract(title.value);
   const nextQuery=next?.query||'';
   if(nextQuery!==sourceQuery){

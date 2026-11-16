@@ -51,8 +51,34 @@ test('a found branch stays a suggestion until the user confirms the real address
   'technical map footnotes must not take space beneath the small map');
  assert(!descendants(panel).some(node=>node.className==='sv-place-attribution'),
   'tiny thumbnail must not show a source badge');
- assert(descendants(panel).some(node=>node.className==='sv-place-map'&&node.href.includes('openstreetmap.org')),
-  'tapping the thumbnail must still open its original map');
+ assert(descendants(panel).some(node=>node.className==='sv-place-map'&&node.tagName==='button'),
+  'tapping the thumbnail must open an in-app map rather than a new browser tab');
+ const mapButton=descendants(panel).find(node=>node.className==='sv-place-map');
+ mapButton.click();
+ const map=descendants(dialog).find(node=>node.className==='sv-place-map-overlay');
+ assert(map,'in-app map overlay opens on demand');
+ assert.equal(map.attributes['aria-modal'],'true');
+ assert(descendants(map).filter(node=>node.className==='sv-place-map-tile').length>4,
+  'expanded map loads tiles only when the user opens it');
+ const navigatorLink=descendants(map).find(node=>node.className==='sv-place-map-route-primary');
+ assert.match(navigatorLink.href,/^yandexnavi:\/\/build_route_on_map\?lat_to=45\.02&lon_to=38\.9$/);
+ const mapsFallback=descendants(map).find(node=>node.className==='sv-place-map-route-secondary');
+ assert.match(mapsFallback.href,/yandex\.ru\/maps\/\?mode=routes/);
+ assert(descendants(map).some(node=>node.className==='sv-place-map-credit'&&node.href.includes('openstreetmap.org/copyright')));
+ const zoomButton=descendants(map).find(node=>node.className==='sv-place-map-zoom'&&node.textContent==='+');
+ assert(zoomButton);
+ zoomButton.click();
+ assert(descendants(map).some(node=>node.className==='sv-place-map-tile'&&node.src.includes('/17/')),
+  'zoom changes the real tiles, not a stretched screenshot');
+ const viewport=descendants(map).find(node=>node.className==='sv-place-map-viewport');
+ const marker=descendants(map).find(node=>node.className==='sv-place-map-marker');
+ const oldMarker=marker.style.left;
+ viewport.listeners.pointerdown[0]({pointerId:1,clientX:90,clientY:100,target:{closest:()=>null}});
+ viewport.listeners.pointermove[0]({pointerId:1,clientX:115,clientY:100});
+ assert.notEqual(marker.style.left,oldMarker,'dragging moves the map beneath the selected marker');
+ viewport.listeners.pointerup[0]({pointerId:1});
+ descendants(map).find(node=>node.className==='sv-place-map-close').click();
+ assert(!descendants(dialog).some(node=>node.className==='sv-place-map-overlay'));
  const button=descendants(panel).find(node=>node.className==='sv-place-confirm');
  assert(button,'the confirmed-location action is visible');
  button.click();

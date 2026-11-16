@@ -402,7 +402,23 @@
      left:Math.round(x*256-centerX+width/2),top:Math.round(y*256-centerY+height/2)});
    }
   }
-  return tiles.slice(0,4);
+  // Thumbnails normally need four tiles. An expanded, user-opened map needs
+  // enough tiles for the viewport; never prefetch beyond the visible area.
+  return tiles.slice(0,36);
+ }
+ function navigatorRouteURL(place){
+  const p=cleanPlace(place);
+  // Yandex Navigator accepts a destination alone and uses the person's
+  // current location as the start; no device coordinates enter this link.
+  return p?'yandexnavi://build_route_on_map?lat_to='+p.lat+'&lon_to='+p.lon:'';
+ }
+ function yandexRouteURL(place){
+  const p=cleanPlace(place);if(!p)return '';
+  const url=new URL('https://yandex.ru/maps/');
+  url.searchParams.set('mode','routes');
+  url.searchParams.set('rtext','~'+p.lat+','+p.lon);
+  url.searchParams.set('rtt','auto');
+  return url.toString();
  }
  function fullMapURL(place){
   const p=cleanPlace(place);return p?'https://www.openstreetmap.org/?mlat='+p.lat+'&mlon='+p.lon+'#map=17/'+p.lat+'/'+p.lon:'';
@@ -501,7 +517,7 @@
   const metadata=await photoMetadata(file);
   return metadata?{...updated,...metadata}:updated;
  }
- const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,streetViewURL,yandexSearchURL,
+ const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,streetViewURL,yandexSearchURL,navigatorRouteURL,yandexRouteURL,
   photoURL,photoInfo,venueInfo,resolvePhoto,suggestedCity,setPreferredCity});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.SEYVEO_TASK_PLACES=api;

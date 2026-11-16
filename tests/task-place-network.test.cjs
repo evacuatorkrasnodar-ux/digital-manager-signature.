@@ -14,6 +14,19 @@ test('Yandex Maps handoff passes only the place query after a user click',()=>{
  assert.equal(places.yandexSearchURL(''),'');
 });
 
+test('Yandex Navigator route uses only the confirmed destination and has a browser fallback',()=>{
+ const places=require('../assets/seyveo-task-places.js');
+ const venue={name:'Вкусно — и точка',address:'Краснодар, Дзержинского 100',lat:45.102210,lon:38.983892};
+ const navigator=places.navigatorRouteURL(venue);
+ assert.equal(navigator,'yandexnavi://build_route_on_map?lat_to=45.10221&lon_to=38.983892');
+ assert(!navigator.includes('lat_from')&&!navigator.includes('lon_from'),'no user location leaves SEYVEO');
+ const fallback=new URL(places.yandexRouteURL(venue));
+ assert.equal(fallback.origin,'https://yandex.ru');
+ assert.equal(fallback.searchParams.get('rtext'),'~45.10221,38.983892');
+ assert.equal(fallback.searchParams.get('rtt'),'auto');
+ assert.equal(places.navigatorRouteURL({name:'bad',address:'bad',lat:999,lon:0}),'');
+});
+
 test('a shopping-mall landmark qualifies a familiar restaurant, not its brand',async()=>{
  const places=require('../assets/seyveo-task-places.js');
  const examples=[
@@ -61,6 +74,9 @@ test('compact map shows the surrounding streets rather than only the mall roof',
  const thumbnails=places.mapTiles({name:'ТЦ Красная Площадь',address:'Дзержинского, 100 · Краснодар',lat:45.10221,lon:38.983892},112,96);
  assert(thumbnails.length>0);
  assert(thumbnails.every(tile=>tile.url.includes('/14/')));
+ const expanded=places.mapTiles({name:'ТЦ Красная Площадь',address:'Краснодар',lat:45.10221,lon:38.983892},390,520,16);
+ assert(expanded.length>4,'an expanded map fills its viewport rather than staying a 112px preview');
+ assert(expanded.length<=36,'do not prefetch a whole city from public OSM tiles');
 });
 
 test('uses the local same-origin address service without a cross-origin connection',async()=>{
