@@ -327,6 +327,16 @@
   url.searchParams.set('layer','mapnik');url.searchParams.set('marker',lat.toFixed(6)+','+lon.toFixed(6));
   return url.toString();
  }
+ // A user-initiated handoff to Yandex's own place directory. This is not a
+ // Geocoder request: the existing Geocoder key cannot search organizations.
+ // Only the location query (never the complete private task) is passed over.
+ function yandexSearchURL(query){
+  const location=normalize(String(query||'').slice(0,180));
+  if(!location)return '';
+  const url=new URL('https://yandex.ru/maps/');
+  url.searchParams.set('text',location);
+  return url.toString();
+ }
  // The thumbnail is only 112 × 96 px. A close zoom shows one roof instead of
  // a usable map; keep enough surrounding streets visible at this size.
  function mapTiles(place,width=127,height=96,zoom=14){
@@ -445,7 +455,7 @@
   const metadata=await photoMetadata(file);
   return metadata?{...updated,...metadata}:updated;
  }
- const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,streetViewURL,
+ const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,streetViewURL,yandexSearchURL,
   photoURL,photoInfo,venueInfo,resolvePhoto,suggestedCity,setPreferredCity});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.SEYVEO_TASK_PLACES=api;

@@ -5,6 +5,15 @@ const vm=require('node:vm');
 const path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../assets/seyveo-task-places.js'),'utf8');
 
+test('Yandex Maps handoff passes only the place query after a user click',()=>{
+ const places=require('../assets/seyveo-task-places.js');
+ const url=new URL(places.yandexSearchURL('Вкусно — и точка, Дзержинского 100, Краснодар'));
+ assert.equal(url.origin,'https://yandex.ru');
+ assert.equal(url.pathname,'/maps/');
+ assert.equal(url.searchParams.get('text'),'Вкусно — и точка, Дзержинского 100, Краснодар');
+ assert.equal(places.yandexSearchURL(''),'');
+});
+
 test('compact map shows the surrounding streets rather than only the mall roof',()=>{
  const places=require('../assets/seyveo-task-places.js');
  const thumbnails=places.mapTiles({name:'ТЦ Красная Площадь',address:'Дзержинского, 100 · Краснодар',lat:45.10221,lon:38.983892},112,96);

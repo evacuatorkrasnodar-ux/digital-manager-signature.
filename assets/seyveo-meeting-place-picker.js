@@ -28,9 +28,7 @@
    !/(?:^|\s)(?:в|во)\s+(?:кафе|ресторане|кофейне|баре|пиццерии|бистро)\b/iu.test(value);
  }
  function mapSearchURL(item,city){
-  const url=new URL('https://www.google.com/maps/search/');
-  url.searchParams.set('api','1');url.searchParams.set('query',item.hint+' '+city);
-  return url.toString();
+  return places.yandexSearchURL(item.hint+' '+city);
  }
  function render(){
   section.hidden=!dialog.open||dismissed||!hasMeeting()||Boolean(places.extract(title.value));
@@ -76,7 +74,7 @@
   if(candidates.length>visible)section.append(button('Показать ещё',()=>{visible+=5;render()},'sv-meeting-place-more'));
   if(mood){
    const item=moods.find(entry=>entry.id===mood);
-   const link=node('a','sv-meeting-place-map','Посмотреть ещё в картах ↗');
+   const link=node('a','sv-meeting-place-map','Посмотреть в Яндекс Картах ↗');
    link.href=mapSearchURL(item,currentCity);link.target='_blank';link.rel='noopener noreferrer';section.append(link);
   }
   section.append(button('Не сейчас',()=>{dismissed=true;render()},'sv-meeting-place-dismiss'));
@@ -92,10 +90,13 @@
    else if(found?.cityRequired)note='Сначала укажи город.';
    else{
     const raw=found?.ambiguous?found.candidates:found?[found]:[];
-    candidates=raw.map(places.cleanPlace).filter(Boolean).slice(0,15);
-    if(!candidates.length)note='Пока нет проверенных вариантов. Можно посмотреть места в картах.';
+    // Unnamed OSM objects such as three indistinguishable "Кафе" rows are
+    // insufficient for a useful recommendation. Never invent venue names.
+    const generic=/^(?:кафе|ресторан|кофейня|кофе|бар|паб|бистро|пиццерия|пекарня)$/iu;
+    candidates=raw.map(places.cleanPlace).filter(value=>value&&!generic.test(value.name)).slice(0,15);
+    if(!candidates.length)note='Тут пока нет проверенных названий. Яндекс Карты покажут больше заведений.';
    }
-  }catch{if(sequence===token)note='Не удалось проверить заведения. Можно посмотреть их в картах.'}
+  }catch{if(sequence===token)note='Не удалось проверить заведения. Можно посмотреть их в Яндекс Картах.'}
   if(sequence===token){busy=false;render()}
  }
  function reset(){token++;expanded=false;mood='';candidates=[];busy=false;note='';dismissed=false;visible=5;cityValue='';render()}

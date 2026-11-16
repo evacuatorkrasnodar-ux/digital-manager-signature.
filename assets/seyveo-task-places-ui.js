@@ -163,6 +163,12 @@
     }
     panel.append(strip);
    }
+   // Photo galleries, reviews and hours belong to the verified place listing.
+   // Open Yandex's directory on an explicit tap; do not scrape it or claim
+   // that the matching business page has already been verified.
+   const yandex=node('a','sv-place-manual-map','Посмотреть в Яндекс Картах ↗');
+   yandex.href=places.yandexSearchURL(place.name+' '+place.address);
+   yandex.target='_blank';yandex.rel='noopener noreferrer';panel.append(yandex);
   }else if(choices.length){
    card.classList.add('sv-place-choices');
    card.append(node('p','sv-place-choice-intro',choicesNearby?
@@ -197,8 +203,8 @@
     retry.type='button';retry.addEventListener('click',lookup);card.append(retry);
    }
    if(proposal&&(status==='error'||status==='not-found'||status==='restart')){
-    const fallback=node('a','sv-place-manual-map','Найти в картах ↗');
-    fallback.href='https://www.openstreetmap.org/search?query='+encodeURIComponent(proposal.query);
+    const fallback=node('a','sv-place-manual-map','Найти в Яндекс Картах ↗');
+    fallback.href=places.yandexSearchURL(proposal.query);
     fallback.target='_blank';fallback.rel='noopener noreferrer';panel.append(fallback);
    }
   }

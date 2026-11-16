@@ -50,3 +50,29 @@ test('Sayvi offers a choice only for a meeting without a specified venue',async(
  title.value='Завтра встреча в кафе Ромашка';picker.render();
  assert(section.hidden,'a named venue must not be replaced by a recommendation');
 });
+
+test('unnamed category objects are not presented as recommended restaurants',async()=>{
+ const dialog=new Node('dialog');dialog.open=true;
+ const title=new Node('textarea');title.value='Завтра деловая встреча с Романом';
+ const panel=new Node('section');
+ const store={personalTaskDialog:dialog,personalTaskTitle:title,svNewTaskPlacePanel:panel};
+ const window={SEYVEO_TASK_PLACES:{...places,suggestedCity:()=> 'Краснодар'},
+  SEYVEO_SEARCH_HUB:{findPlace:async()=>({ambiguous:true,candidates:[
+   {name:'Кафе',address:'улица Красная 1 · Краснодар',lat:45.02,lon:38.97},
+   {name:'Кофейня Романтика',address:'улица Красная 2 · Краснодар',lat:45.03,lon:38.98}
+  ]})},
+  SEYVEO_TASK_PLACE_EDITOR:{suggest:()=>true},dispatchEvent:()=>{}};
+ const document={getElementById:id=>store[id],createElement:tag=>new Node(tag)};
+ class MutationObserver{observe(){}}
+ vm.runInNewContext(source,{window,document,URL,MutationObserver,Event:class{},setTimeout,clearTimeout});
+ window.SEYVEO_MEETING_PLACE_PICKER.render();
+ const section=panel.next;
+ descendants(section).find(x=>x.textContent==='Подобрать').click();
+ descendants(section).find(x=>x.textContent==='Деловая').click();
+ await new Promise(resolve=>setImmediate(resolve));
+ const shown=descendants(section).filter(x=>x.className==='sv-meeting-place-choice');
+ assert.equal(shown.length,1);
+ assert.equal(shown[0].children[0].textContent,'Кофейня Романтика');
+ const maps=descendants(section).find(x=>x.tagName==='a');
+ assert.equal(new URL(maps.href).origin,'https://yandex.ru');
+});
