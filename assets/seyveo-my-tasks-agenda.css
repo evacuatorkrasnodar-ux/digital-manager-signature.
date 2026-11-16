@@ -387,6 +387,15 @@
  #tasksPage #svTasksDateNav .sv-agenda-ticker{
   width:100vw;margin-left:-26px;margin-right:0;
  }
+ /* Five complete dates plus a visible sixth: the first border and the
+    last full card's right border stay inside the iPhone viewport. */
+ #tasksPage #svTasksDateNav .sv-agenda-week{
+  padding:3px 0 3px 8px;
+ }
+ #tasksPage #svTasksDateNav .sv-agenda-day{
+  flex:0 0 calc(100% / 5.75);
+  width:calc(100% / 5.75);
+ }
 }
 @media(max-width:380px){
  #tasksPage #svTasksDateNav{padding-inline:8px!important}
