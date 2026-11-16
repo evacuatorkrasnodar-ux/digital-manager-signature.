@@ -152,7 +152,8 @@
 :root.sv-cinema-greeting-active.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage > .message{
   position:absolute!important;
   /* Bottom-anchor the speech card to Sayvi; its height may vary by device. */
-  top:calc(50dvh - 100px - var(--sv-home-orb-half) - 4px)!important;
+  /* The tail sits at the same optical distance as Sayvi's idle speech. */
+  top:calc(50dvh - 100px - var(--sv-home-orb-half) + 7px)!important;
   left:50%!important;
   width:min(316px,calc(100vw - 40px))!important;
   max-height:144px!important;
