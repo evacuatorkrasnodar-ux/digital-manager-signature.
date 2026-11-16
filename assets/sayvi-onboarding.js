@@ -91,6 +91,13 @@
   toggle.addEventListener('change',()=>void window.SEYVEO_SCREEN_AWAKE?.setEnabled?.(toggle.checked));
   label.append(toggle,body);return label;
  }
+ function savedPlacesOption(){
+  const places=window.SEYVEO_SAVED_PLACES;
+  if(!places)return null;
+  const saved=places.read();
+  const label=saved.home||saved.work?'Дом и работа · изменить':'Дом и работа · по желанию';
+  return btn(label,()=>places.openEditor(),'is-chip');
+ }
  function draw(){
   if(!session)return;
   chat.open();
@@ -113,6 +120,7 @@
    wrap.append(chips,el('small','sv-smart-start-note','Свой вариант можно написать в обычном поле чата.'));
    wrap.append(liveActionOption());
    wrap.append(awakeOption());
+   const places=savedPlacesOption();if(places)wrap.append(places);
   }else if(['roles','sources','features'].includes(step)){
    const suggested=roleSuggestions(session.business);
    const data=step==='roles'?[...new Set([...suggested,...session.roles].filter(x=>x!=='Другая должность'))].map(x=>[x,x]):
@@ -137,9 +145,11 @@
     const p=el('p');p.append(el('strong',null,label+': '),document.createTextNode(value));summary.append(p);
    }
    wrap.append(summary,btn('Сохранить план',finish,'is-primary'));
+   const places=savedPlacesOption();if(places)wrap.append(places);
   }else if(step==='done'){
    wrap.append(liveActionOption());
    wrap.append(awakeOption());
+   const places=savedPlacesOption();if(places)wrap.append(places);
    wrap.append(btn('Посмотреть мой кабинет',revealCabinet,'is-primary'));
    wrap.append(btn('Пока останусь в чате',()=>{
     if(cabinetHandoffTimer)clearTimeout(cabinetHandoffTimer);

@@ -56,6 +56,16 @@
   query=proposal?.query||'';sourceQuery=query;status=place?'found':'idle';request++;render();resolvePlacePhoto();
  }
  function placeForSave(){return confirmed?places.cleanPlace(place):null}
+ // A place suggested for a date or business meeting still needs the person's
+ // explicit confirmation before it can become a task destination.
+ function suggest(candidate){
+  const next=places.cleanPlace(candidate);if(!next||!dialog.open)return false;
+  request++;photoRequest++;clearTimeout(searchTimer);
+  place=next;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;
+  proposal=null;query='';sourceQuery='';status='found';refining=false;refineText='';cityEditing=false;
+  render();resolvePlacePhoto();window.dispatchEvent(new Event('seyveo:task-place-updated'));
+  return true;
+ }
  async function resolvePlacePhoto(){
   if(!place||place.source==='known-address'||
    (!place.photo&&!place.wikidata)||(place.photo&&place.photoAuthor&&place.photoLicense))return;
@@ -139,6 +149,19 @@
     const change=node('button','sv-place-refine-trigger','Другой адрес');change.type='button';
     change.addEventListener('click',()=>{refining=!refining;render()});
     actions.append(accept,change);panel.append(actions);
+   }
+   const details=places.venueInfo?.(place);
+   if(details){
+    const strip=node('div','sv-place-venue-details');
+    if(details.hours)strip.append(node('span','sv-place-hours','Часы · '+details.hours));
+    if(details.menuURL){
+     const menu=node('a','sv-place-menu-link','Меню и цены ↗');
+     menu.href=details.menuURL;menu.target='_blank';menu.rel='noopener noreferrer';
+     menu.title=details.menuNote||'Открыть меню на официальном сайте';
+     menu.setAttribute('aria-label','Открыть официальное меню. Цены могут отличаться в выбранном ресторане');
+     strip.append(menu);
+    }
+    panel.append(strip);
    }
   }else if(choices.length){
    card.classList.add('sv-place-choices');
@@ -254,5 +277,5 @@
  const openObserver=new MutationObserver(()=>{if(dialog.open)sync()});
  openObserver.observe(dialog,{attributes:true,attributeFilter:['open']});
  dialog.addEventListener('close',reset);
- window.SEYVEO_TASK_PLACE_EDITOR=Object.freeze({reset,load,placeForSave,lookup,sync});
+ window.SEYVEO_TASK_PLACE_EDITOR=Object.freeze({reset,load,suggest,placeForSave,lookup,sync});
 })();

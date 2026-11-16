@@ -108,6 +108,9 @@ test('the confirmed mall entrance photo previews over the map and enlarges with 
  assert(photo.src.endsWith('assets/seyveo-krasnaya-ploshchad-entrance-2024.jpg'),
   'a known verified entrance photo must load from SEYVEO, not a fragile external hotlink');
  assert(descendants(panel).some(el=>el.className==='sv-place-map'),'the original map remains visible');
+ const menu=descendants(panel).find(el=>el.className==='sv-place-menu-link');
+ assert(menu&&menu.href==='https://vkusnoitochka.ru/menu',
+  'the official menu link is visible without inventing branch-specific prices');
  thumbnail.click();
  const viewer=descendants(dialog).find(el=>el.className==='sv-place-photo-lightbox');
  assert(viewer,'tapping opens a larger in-app image');

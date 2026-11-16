@@ -1,0 +1,19 @@
+/* One optional invitation under a meeting; no intrusive second dialog. */
+dialog#personalTaskDialog .sv-meeting-place-picker{margin:12px 21px 10px;padding:14px 15px;background:#f7f8fa;border:1px solid #edf0f3;border-radius:20px;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#22262e}
+dialog#personalTaskDialog .sv-meeting-place-picker[hidden]{display:none!important}
+dialog#personalTaskDialog .sv-meeting-place-heading{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.35}
+dialog#personalTaskDialog .sv-meeting-place-heading strong{font-weight:600}
+dialog#personalTaskDialog .sv-meeting-place-star{display:inline-flex;justify-content:center;align-items:center;flex:none;width:25px;height:25px;border-radius:50%;background:#e9f0fd;color:#367fdb;font-size:16px}
+dialog#personalTaskDialog .sv-meeting-place-open{display:block;margin:12px 0 0 34px;padding:9px 16px;background:#e9eef5;color:#2c4d78;border:1px solid #e0e8f3;border-radius:17px;font-size:13px;font-weight:600}
+dialog#personalTaskDialog .sv-meeting-place-moods{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+dialog#personalTaskDialog .sv-meeting-place-mood{border:1px solid #e4e8ee;background:#fff;color:#2b323e;border-radius:17px;padding:9px 12px;font-size:12px;font-weight:600}
+dialog#personalTaskDialog .sv-meeting-place-mood.is-active{background:#323843;color:#fff;border-color:#323843}
+dialog#personalTaskDialog .sv-meeting-place-muted{margin:10px 0 0;color:#7a838f;font-size:12px;line-height:1.45}
+dialog#personalTaskDialog .sv-meeting-place-choice{display:grid;width:100%;text-align:left;gap:4px;padding:11px 12px;margin-top:7px;border:0;border-radius:14px;background:#fff;color:#232832}
+dialog#personalTaskDialog .sv-meeting-place-choice strong{font-size:13px;font-weight:600}
+dialog#personalTaskDialog .sv-meeting-place-choice small{font-size:11px;color:#7c8794;line-height:1.4}
+dialog#personalTaskDialog :is(.sv-meeting-place-more,.sv-meeting-place-dismiss){padding:8px 3px;margin-top:9px;background:transparent;border:0;color:#728092;font-size:12px}
+dialog#personalTaskDialog .sv-meeting-place-map{display:inline-block;margin-top:11px;font-size:12px;font-weight:600;color:#3a73b7;text-decoration:none}
+dialog#personalTaskDialog .sv-meeting-place-city{display:flex;gap:7px;margin-top:12px}
+dialog#personalTaskDialog .sv-meeting-place-city input{min-width:0;flex:1;min-height:39px;border:1px solid #e3e7eb;border-radius:12px;padding:8px 10px;font-size:14px;background:#fff}
+dialog#personalTaskDialog .sv-meeting-place-city button{border:0;border-radius:12px;background:#2c333d;color:#fff;padding:8px 12px;font-size:12px}

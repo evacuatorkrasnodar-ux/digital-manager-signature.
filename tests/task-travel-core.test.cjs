@@ -28,3 +28,12 @@ test('directions link supports public transport without inventing bus numbers',(
  assert.equal(u.searchParams.get('travelmode'),'transit');
  assert.equal(u.searchParams.get('destination'),'45.03,38.97');
 });
+
+test('stored home can open directions without requesting GPS or inventing travel time',()=>{
+ const address='Краснодар, ул. Красная, 12';
+ const u=new URL(core.directionsURL({lat:45.10221,lon:38.983892},{address}));
+ assert.equal(u.searchParams.get('origin'),address);
+ assert.equal(u.searchParams.get('destination'),'45.10221,38.983892');
+ assert.equal(u.hostname,'www.google.com');
+ assert.equal(core.departure('2026-11-17','18:00',null),null);
+});

@@ -19,7 +19,7 @@ test('sends only a short location query to the fixed official provider',async()=
  assert.equal(url.searchParams.get('limit'),'15','one explicit search may show several branches in one city');
  assert.match(options.headers['User-Agent'],/SEYVEO/);
  assert.equal(result[0].name,'Вкусно — и точка');
- assert.deepEqual(result[0].extratags,{wikidata:'Q123',wikimedia_commons:'',image:'File:My Cafe.jpg'});
+ assert.deepEqual(result[0].extratags,{wikidata:'Q123',wikimedia_commons:'',image:'File:My Cafe.jpg',opening_hours:''});
 });
 
 test('returns more than five candidate branches without additional provider calls',async()=>{

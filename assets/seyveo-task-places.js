@@ -18,6 +18,9 @@
   // Real photograph of the shopping centre entrance, NOT the cafe doorway.
   // Andrew Butko · CC BY-SA 4.0 · Wikimedia Commons (11 July 2024).
   photo:'2024-07-11. Краснодар DSC 2268.jpg',
+  // Chain-wide official menu; its prices are region-dependent and NOT a quote
+  // for this particular branch. No opening hours are asserted without data.
+  menuURL:'https://vkusnoitochka.ru/menu',
   keywords:['красная площадь','дзержинского','100']
  })];
  const meeting=/(?:^|[\s,.!?])(?:встреч[а-яё]*|встрет[а-яё]*|переговор[а-яё]*|пообед[а-яё]*|поужин[а-яё]*|позавтрак[а-яё]*|обед|ужин|завтрак|кофе|посид[а-яё]*)(?=$|[\s,.!?])/iu;
@@ -54,6 +57,9 @@
   try{
    const saved=validCity(root?.localStorage?.getItem('seyveo-place-city-v1'));
    if(saved)return saved;
+   // A voluntarily saved home/work city also works when GPS is disabled.
+   const personal=validCity(root?.SEYVEO_SAVED_PLACES?.city?.());
+   if(personal)return personal;
    const company=JSON.parse(root?.localStorage?.getItem('seyveo-company-passport-v1')||'null');
    const city=validCity(company?.city);if(city)return city;
   }catch{}
@@ -132,8 +138,10 @@
   const photoAuthor=photo&&typeof value.photoAuthor==='string'?value.photoAuthor.replace(/\s+/gu,' ').trim().slice(0,120):'';
   const photoLicense=photo&&typeof value.photoLicense==='string'?value.photoLicense.replace(/\s+/gu,' ').trim().slice(0,80):'';
   const photoLicenseURL=photo?safeLicenseURL(value.photoLicenseURL):'';
+  const openingHours=typeof value.openingHours==='string'&&/^[\p{L}\p{N}\s:;,+\-/]+$/u.test(value.openingHours.trim())?
+   value.openingHours.trim().slice(0,95):'';
   return {name,address,lat,lon,source:verified?'known-address':'openstreetmap',
-   sourceUrl,precision:verified?'building':'point',photo,wikidata,photoAuthor,photoLicense,photoLicenseURL};
+   sourceUrl,precision:verified?'building':'point',photo,wikidata,photoAuthor,photoLicense,photoLicenseURL,openingHours};
  }
  function cleanPhoto(value){
   if(typeof value!=='string')return '';
@@ -177,6 +185,7 @@
   };
   if(!accepted[proposal.kind]?.includes(type))return false;
   const requested=searchText(proposal.venueName);
+  if(!requested)return true; // An explicitly requested category, not a fabricated brand.
   const found=searchText([candidate.name,candidate.namedetails?.name,candidate.display_name?.split(',')[0]].filter(Boolean).join(' '));
   return found.includes(requested)||requested.includes(found)&&found.length>=4;
  }
@@ -301,7 +310,7 @@
     name:proposal.explicitAddress?(match.name||'Место встречи'):(match.name||proposal.label),
     address:locationLabel(match),lat:match.lat,lon:match.lon,
     photo:cleanPhoto(match.extratags?.wikimedia_commons)||cleanPhoto(match.extratags?.image)||'',
-    wikidata:match.extratags?.wikidata||''
+    wikidata:match.extratags?.wikidata||'',openingHours:match.extratags?.opening_hours||''
    });
    if(candidate&&(!origin||proposal.city||distanceKm(candidate,origin)<=50)&&
     !candidates.some(item=>item.name===candidate.name&&item.address===candidate.address))candidates.push(candidate);
@@ -376,6 +385,14 @@
    sourceURL:'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(place.photo)
   };
  }
+ function venueInfo(value){
+  const place=cleanPlace(value);if(!place)return null;
+  const verified=isCuratedMallPhoto(place);
+  const hours=place.openingHours||'';
+  if(!hours&&!verified)return null;
+  return {hours,menuURL:verified?VERIFIED_VENUES[0].menuURL:'',
+   menuNote:verified?'Цены на официальном сайте зависят от выбранного региона и могут отличаться в ресторане.':''};
+ }
  const photoCache=new Map();
  const metadataCache=new Map();
  function plainMetadata(value){
@@ -429,7 +446,7 @@
   return metadata?{...updated,...metadata}:updated;
  }
  const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,streetViewURL,
-  photoURL,photoInfo,resolvePhoto,suggestedCity,setPreferredCity});
+  photoURL,photoInfo,venueInfo,resolvePhoto,suggestedCity,setPreferredCity});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.SEYVEO_TASK_PLACES=api;
 })(typeof window!=='undefined'?window:null);

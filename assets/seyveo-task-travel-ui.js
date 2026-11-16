@@ -77,9 +77,22 @@
    return;
   }
   const wrap=el('div','sv-travel-body');section.append(wrap);
-  wrap.append(el('p','sv-travel-muted','Построю дорогу от твоего текущего местоположения. Геолокация используется только для расчёта и не сохраняется в деле.'));
+  wrap.append(el('p','sv-travel-muted','Маршрут можно открыть из дома, с работы или от текущего местоположения. Сохранённый адрес передаётся картам только после нажатия.'));
   if(!origin)wrap.append(button('Определить место отправления',()=>void locate(),'sv-travel-locate'));
   else wrap.append(button('Обновить маршрут',()=>void fetchRoutes(),'sv-travel-locate'));
+  const personal=window.SEYVEO_SAVED_PLACES;
+  const saved=personal?.read?.()||{};
+  const fromSaved=el('div','sv-travel-saved-origins');
+  for(const [kind,labelText] of [['home','Из дома ↗'],['work','С работы ↗']]){
+   if(!saved[kind])continue;
+   fromSaved.append(button(labelText,()=>{
+    const url=core.directionsURL(destination,{address:saved[kind]},'driving');
+    if(url)window.open(url,'_blank','noopener,noreferrer');
+   },'sv-travel-saved-origin'));
+  }
+  if(personal)fromSaved.append(button(saved.home||saved.work?'Адреса · изменить':'Сохранить дом и работу',
+   ()=>personal.openEditor(),'sv-travel-saved-origin'));
+  if(fromSaved.childNodes.length)wrap.append(fromSaved);
   if(loading)wrap.append(el('p','sv-travel-muted','Проверяю маршруты…'));
   const modes=el('div','sv-travel-modes');wrap.append(modes);
   for(const mode of ['driving','transit','walking']){
@@ -144,6 +157,7 @@
   render();
  }
  window.addEventListener('seyveo:task-place-updated',sync);
+ window.addEventListener('seyveo:saved-places-changed',()=>{if(dialog.open)render()});
  dialog.addEventListener('sv-task-editor-sync',sync);
  date.addEventListener('change',render);time.addEventListener('change',render);
  dialog.addEventListener('close',reset);

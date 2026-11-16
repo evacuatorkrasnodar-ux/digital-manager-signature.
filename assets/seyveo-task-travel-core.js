@@ -28,6 +28,11 @@
   u.searchParams.set('api','1');
   u.searchParams.set('destination',to.lat+','+to.lon);
   if(from)u.searchParams.set('origin',from.lat+','+from.lon);
+  else if(typeof origin?.address==='string'&&origin.address.trim().length>=6&&origin.address.length<=160){
+   // Only a user-initiated link shares the stored origin address with Maps;
+   // the route service never receives this private address in the background.
+   u.searchParams.set('origin',origin.address.trim());
+  }
   u.searchParams.set('travelmode',mode==='transit'?'transit':mode==='walking'?'walking':'driving');
   return u.toString();
  }

@@ -36,6 +36,23 @@ test('uses the local same-origin address service without a cross-origin connecti
  assert(result.candidates.some(candidate=>candidate.name.includes('Красная Площадь')&&candidate.address.includes('1-й этаж')));
 });
 
+test('a meeting category can find real venues without making up a restaurant name',async()=>{
+ const window={
+  location:{hostname:'127.0.0.1',href:'http://127.0.0.1:8790/'},
+  localStorage:{getItem:()=>null,setItem:()=>{}},
+  fetch:async()=>({ok:true,json:async()=>({results:[
+   {name:'Ресторан Пример',type:'restaurant',lat:'45.05',lon:'38.97',address:{city:'Краснодар',road:'Красная',house_number:'5'}},
+   {name:'Бар Пример',type:'bar',lat:'45.06',lon:'38.98',address:{city:'Краснодар',road:'Мира',house_number:'2'}},
+   {name:'Ресторан Другой',type:'restaurant',lat:'45.07',lon:'38.98',address:{city:'Краснодар',road:'Горького',house_number:'8'}}
+  ]})})
+ };
+ vm.runInNewContext(source,{window,URL,setTimeout,encodeURIComponent});
+ const value=await window.SEYVEO_TASK_PLACES.lookup({kind:'ресторан',venueName:'',city:'Краснодар',query:'ресторан, Краснодар'});
+ assert.equal(value.ambiguous,true);
+ assert.equal(value.candidates.length,2);
+ assert(value.candidates.every(item=>item.name.includes('Ресторан')));
+});
+
 test('searches within the chosen home city and excludes businesses from other cities',async()=>{
  const urls=[];
  const window={
@@ -169,6 +186,18 @@ test('asks for a city instead of searching the whole country when no city is kno
  const result=await window.SEYVEO_TASK_PLACES.lookup(proposal);
  assert.equal(result.cityRequired,true);
  assert.equal(calls,0);
+});
+
+test('a voluntary saved home city can replace GPS for place searches',()=>{
+ const window={
+  location:{hostname:'127.0.0.1',href:'http://127.0.0.1:8790/'},
+  SEYVEO_SAVED_PLACES:{city:()=> 'Краснодар'},
+  localStorage:{getItem:()=>null,setItem:()=>{}}
+ };
+ vm.runInNewContext(source,{window,URL,setTimeout,encodeURIComponent});
+ const proposal=window.SEYVEO_TASK_PLACES.extract('завтра встреча в кафе Ромашка');
+ assert.equal(proposal.city,'Краснодар');
+ assert.equal(proposal.query,'кафе Ромашка, Краснодар');
 });
 
 test('matches an address inside a shopping mall even when its tenant is absent from OpenStreetMap',async()=>{
