@@ -58,6 +58,7 @@ function events(){
   remind:[-1,15,30,60].includes(Number(x.remind))?Number(x.remind):0,
   note:typeof x.note==='string'?x.note.slice(0,600):'',
   createdAt:typeof x.createdAt==='string'?x.createdAt:'',
+  createdBy:x.createdBy==='sayvi'?'sayvi':x.createdBy==='user'?'user':'',
   updatedAt:typeof x.updatedAt==='string'?x.updatedAt:''
  })).filter(x=>x.title);
 }
@@ -586,6 +587,8 @@ function openEvent(id=null){
 }
 function onSubmit(e){
  e.preventDefault();
+ const createdBy=form.dataset.svCreatedBy==='sayvi'?'sayvi':'user';
+ delete form.dataset.svCreatedBy;
  const name=$('calendarEventName').value.trim().replace(/\s+/g,' ').slice(0,140);
  const date=$('calendarEventDate').value,clock=$('calendarEventTime').value;
  const note=$('calendarEventNote').value.trim().slice(0,600);
@@ -610,7 +613,8 @@ function onSubmit(e){
  }
  const now=new Date().toISOString();
  const entry={id:old?.id||'calendar-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
-  title:name,date,time:clock,kind,duration,travel,remind,note,createdAt:old?.createdAt||now,updatedAt:now};
+  title:name,date,time:clock,kind,duration,travel,remind,note,createdAt:old?.createdAt||now,updatedAt:now,
+  createdBy:old?old.createdBy:createdBy};
  const next=old?all.map(x=>x.id===old.id?entry:x):[...all,entry];
  if(!saveEvents(next)){status.textContent='Не удалось сохранить событие. Проверьте память браузера.';return}
  $('calendarEventDialog').close();
@@ -910,7 +914,7 @@ window.addEventListener('seyveo:calendar-save-from-ask',event=>{
  const now=new Date().toISOString();
  const entry={
   id:'calendar-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
-  title,date,time,kind:'personal',duration:0,travel:0,remind:atTime?-1:0,note:'',createdAt:now,updatedAt:now
+  title,date,time,kind:'personal',duration:0,travel:0,remind:atTime?-1:0,note:'',createdAt:now,updatedAt:now,createdBy:'sayvi'
  };
  if(!saveEvents([...all,entry])){finish('error','Не удалось сохранить событие. Проверь память устройства.');return;}
  if(!page.hidden)updateFocus(at(date));

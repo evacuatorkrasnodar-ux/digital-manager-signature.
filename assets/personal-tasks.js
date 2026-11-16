@@ -60,6 +60,15 @@ const KEY='seyveo-personal-tasks-v1',MAX=150;
 let pendingSourceNoteId='',justCompletedTaskId='',editingTaskId='';
 let taskEditorSavedOnExit=false;
 function safeNoteId(value){return typeof value==='string'&&value.length>0&&value.length<=128?value:'';}
+function creatorOf(item){
+ return item?.createdBy==='sayvi'||item?.source==='sayvi'?'sayvi':item?.createdBy==='user'?'user':'';
+}
+function creatorName(item){return creatorOf(item)==='sayvi'?'Сэйви':creatorOf(item)==='user'?'Вы':'Не указан';}
+function showCreator(item){
+ const label=$('svTaskCreatedBy');if(!label)return;
+ label.hidden=!item;
+ label.textContent=item?'Кто создал: '+creatorName(item):'';
+}
 function safeParse(raw){try{const v=JSON.parse(raw||'[]');return Array.isArray(v)?v:[]}catch{return []}}
 function read(){
  let raw=null;try{raw=localStorage.getItem(KEY)}catch{}
@@ -67,6 +76,7 @@ function read(){
  .slice(-MAX).map(item=>({id:item.id,title:item.title.trim().slice(0,140),
  due:/^\d{4}-\d{2}-\d{2}$/.test(item.due)?item.due:'',time:/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time)?item.time:'',done:item.done===true,
  createdAt:typeof item.createdAt==='string'?item.createdAt:'',doneAt:typeof item.doneAt==='string'?item.doneAt:'',
+ createdBy:creatorOf(item),
  ...(safeNoteId(item.sourceNoteId)?{sourceNoteId:item.sourceNoteId}:{}),
  ...(typeof item.source==='string'&&['sayvi','work','notebook'].includes(item.source)?{source:item.source}:{}),
  category:item.category==='work'||item.category==='personal'?item.category:(item.source==='work'?'work':'personal'),
@@ -94,7 +104,7 @@ function svCalendarAgendaEvents(){
   title:item.title.trim().slice(0,140),due:item.date,
   time:/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'')?item.time:'',
   category:item.kind==='business'?'work':'personal',entryType:'event',done:false,
-  createdAt:typeof item.createdAt==='string'?item.createdAt:''
+  createdAt:typeof item.createdAt==='string'?item.createdAt:'',createdBy:creatorOf(item)
  })).filter(item=>item.title);
 }
 function save(items){
@@ -1009,6 +1019,7 @@ function row(item,compact=false,deferred=false){
   const scheduled=item.due?(strDate(item.due)+(item.time?' · '+item.time:'')):'Не назначено';
   details.append(
    element('div','personal-task-detail-entry','Создано: '+creation),
+   element('div','personal-task-detail-entry','Кто создал: '+creatorName(item)),
    element('div','personal-task-detail-entry',(svTaskEntryType(item)==='event'?'Когда: ':'Выполнить: ')+scheduled),
    element('div','personal-task-detail-entry','Тип: '+(svTaskEntryType(item)==='event'?'Событие':'Задача'))
   );
@@ -1223,6 +1234,7 @@ function focusTaskWriting(){
 }
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;svTaskCategoryTouched=false;svTaskTypeTouched=false;
+ showCreator(null);
  window.SEYVEO_TASK_PLACE_EDITOR?.reset?.();
  window.SEYVEO_TASK_ATTACHMENTS?.reset?.();
  $('personalTaskDialogTitle').textContent='Новое дело';
@@ -1242,6 +1254,8 @@ function openDialog(){
 let taskFileSaving=false;
 async function put(e){
  e.preventDefault();
+ const createdBy=form.dataset.svCreatedBy==='sayvi'?'sayvi':'user';
+ delete form.dataset.svCreatedBy;
  if(taskFileSaving)return;
  if(window.SEYVEO_TASK_SCREEN?.needsReview?.()){
   $('personalTaskStatus').textContent='Сэйви увидела больше четырёх дел. Раздели сообщение на две части, чтобы сохранить все дела.';
@@ -1293,7 +1307,7 @@ async function put(e){
   notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',
   attachment:attachmentMeta,
   repeat:$('personalTaskRepeat')?.value||'none',priority:$('personalTaskPriority')?.value||'none',
-  showOnHome:homeVisibilityForSave(),done:false,createdAt:new Date().toISOString(),doneAt:''};
+  showOnHome:homeVisibilityForSave(),done:false,createdAt:new Date().toISOString(),doneAt:'',createdBy};
  const suggestedPlace=window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null;
  const additions=drafts.map(draft=>{
   const category=draft.category==='work'?'work':'personal';
@@ -1395,6 +1409,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  }
  openDialog();
  editingTaskId=id;
+ showCreator(task);
  $('personalTaskDialogTitle').textContent='Изменить дело';
  $('personalTaskSave').setAttribute('aria-label','Сохранить изменения');$('personalTaskSave').title='Сохранить изменения';
  input.value=task.title;syncTaskSaveState();
@@ -1815,9 +1830,10 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
    message:'Для плана не хватает места в списке дел. Освободите место и повторите.'};return;
  }
  const stamp=Date.now(),createdAt=new Date(stamp).toISOString();
+ const createdBy=detail.createdBy==='sayvi'?'sayvi':'user';
  const next=all.concat(pending.map((draft,index)=>({
   id:'personal-'+stamp+'-'+index+'-'+Math.random().toString(36).slice(2,9),
-  title:draft.title,due:draft.due,time:draft.time||'',category:svSuggestTaskCategory(draft.title),entryType:svInferEntryType(draft.title),done:false,createdAt,doneAt:'',
+  title:draft.title,due:draft.due,time:draft.time||'',category:svSuggestTaskCategory(draft.title),entryType:svInferEntryType(draft.title),done:false,createdAt,doneAt:'',createdBy,
   ...(sourceNoteId?{sourceNoteId}:{})
  })));
  if(!save(next)){

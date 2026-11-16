@@ -7,7 +7,7 @@
 function execute(kind,draft){
  if(draft.status!=='ready')return {kind,status:'clarify',message:draft.message||'Уточните поручение.'};
  if(kind==='task'){
-  const detail={items:[{title:draft.title,due:draft.date||'',time:draft.time||''}]};
+  const detail={createdBy:'sayvi',items:[{title:draft.title,due:draft.date||'',time:draft.time||''}]};
   window.dispatchEvent(new CustomEvent('seyveo:tasks-plan-batch',{detail}));
   const result=detail.result||{status:'error',message:'Раздел дел пока недоступен.'};
   if(result.status==='saved')return {kind,status:'saved',
@@ -284,7 +284,8 @@ async function taskFlow(j){
  const form=$('personalTaskForm');
  if(!form?.checkValidity())throw new Error('Редактор не принял обязательные поля');
  j.committing=true;j.internalSubmit=true;
- try{form.requestSubmit()}finally{j.internalSubmit=false;j.committing=false}
+ form.dataset.svCreatedBy='sayvi';
+ try{form.requestSubmit()}finally{delete form.dataset.svCreatedBy;j.internalSubmit=false;j.committing=false}
  const entry=rows(TASKS).find(x=>!before.has(x.id)&&x.title===d.title&&x.due===(d.date||'')&&(x.time||'')===(d.time||''));
  if(!entry||j.dialog?.open)throw new Error('Сохранение дела не подтверждено');
  j.saved=entry;queueClear(j);receiptWrite(j);
@@ -323,7 +324,8 @@ async function calendarFlow(j){
  const form=$('calendarEventForm');
  if(!form?.checkValidity())throw new Error('Редактор календаря не принял дату или название');
  j.committing=true;j.internalSubmit=true;
- try{form.requestSubmit()}finally{j.internalSubmit=false;j.committing=false}
+ form.dataset.svCreatedBy='sayvi';
+ try{form.requestSubmit()}finally{delete form.dataset.svCreatedBy;j.internalSubmit=false;j.committing=false}
  const entry=rows(CAL).find(x=>!before.has(x.id)&&x.title===d.title&&x.date===d.date&&
   (x.time||'')===(d.time||'')&&(!d.remindAtStart||x.remind===-1));
  if(!entry||j.dialog?.open)throw new Error('Календарь не подтвердил сохранение. Проверь время и пересечения.');

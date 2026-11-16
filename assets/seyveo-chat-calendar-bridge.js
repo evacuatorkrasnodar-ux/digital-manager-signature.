@@ -52,7 +52,7 @@ function fallback(plan){
  const now=new Date().toISOString();
  const entry={id:'calendar-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
   title,date,time,kind:'personal',duration:0,travel:0,
-  remind:plan.remindAtStart===true?-1:0,note:'',createdAt:now,updatedAt:now};
+  remind:plan.remindAtStart===true?-1:0,note:'',createdAt:now,updatedAt:now,createdBy:'sayvi'};
  if(!write([...rows,entry]))return {status:'error',message:'Не удалось сохранить. Проверь память браузера.'};
  window.dispatchEvent(new Event('seyveo:calendar-changed'));
  return {status:'saved',message:'Событие добавлено в календарь.'};

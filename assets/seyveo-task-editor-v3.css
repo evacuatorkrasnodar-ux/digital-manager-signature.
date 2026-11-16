@@ -295,6 +295,13 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskStatus{
  color:#B93429!important;font:500 12px/1.4 system-ui!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskStatus:empty{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-created-by{
+ margin:5px 20px 0!important;padding:0 1px!important;
+ background:transparent!important;color:#707782!important;
+ font:470 12px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:.005em!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-created-by[hidden]{display:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{
  position:absolute!important;z-index:2!important;bottom:max(8px,env(safe-area-inset-bottom,0px))!important;
  left:17px!important;right:17px!important;display:grid!important;grid-template-columns:repeat(5,1fr)!important;
