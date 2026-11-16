@@ -13,6 +13,21 @@
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
  };
+ function viewerIcon(name){
+  const icons={
+   down:'<path d="m6 9 6 6 6-6"/>',
+   close:'<path d="M6 6l12 12M18 6 6 18"/>',
+   plus:'<path d="M12 5v14M5 12h14"/>',
+   minus:'<path d="M5 12h14"/>',
+   center:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/>',
+   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7h.01"/>'
+  };
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 24 24');
+  svg.setAttribute('aria-hidden','true');
+  svg.innerHTML=icons[name]||'';
+  return svg;
+ }
  function closePhotoViewer(){if(photoViewer){photoViewer.remove();photoViewer=null}}
  function closeMapViewer(){
   if(!mapViewer)return;
@@ -28,16 +43,16 @@
   const header=node('div','sv-place-map-header');
   const headline=node('div','sv-place-map-headline');
   headline.append(node('strong','',target.name),node('span','',target.address));
-  const close=node('button','sv-place-map-close','⌄');close.type='button';
+  const close=node('button','sv-place-map-close');close.type='button';close.append(viewerIcon('down'));
   close.setAttribute('aria-label','Свернуть карту');close.addEventListener('click',closeMapViewer);
   header.append(headline,close);
   const viewport=node('div','sv-place-map-viewport');viewport.setAttribute('aria-label','Интерактивная карта: перетаскивай, увеличивай двумя пальцами или кнопками');
   const tilesLayer=node('div','sv-place-map-layer');
   const pin=node('span','sv-place-map-marker');pin.setAttribute('aria-label','Выбранное место');
   const controls=node('div','sv-place-map-controls');
-  const zoomIn=node('button','sv-place-map-zoom','+');zoomIn.type='button';zoomIn.setAttribute('aria-label','Приблизить карту');
-  const zoomOut=node('button','sv-place-map-zoom','−');zoomOut.type='button';zoomOut.setAttribute('aria-label','Отдалить карту');
-  const centerButton=node('button','sv-place-map-center','◎');centerButton.type='button';centerButton.setAttribute('aria-label','Вернуться к месту встречи');
+  const zoomIn=node('button','sv-place-map-zoom');zoomIn.type='button';zoomIn.append(viewerIcon('plus'));zoomIn.setAttribute('aria-label','Приблизить карту');
+  const zoomOut=node('button','sv-place-map-zoom');zoomOut.type='button';zoomOut.append(viewerIcon('minus'));zoomOut.setAttribute('aria-label','Отдалить карту');
+  const centerButton=node('button','sv-place-map-center');centerButton.type='button';centerButton.append(viewerIcon('center'));centerButton.setAttribute('aria-label','Вернуться к месту встречи');
   controls.append(zoomIn,zoomOut,centerButton);
   const attribution=node('a','sv-place-map-credit','© OpenStreetMap contributors');
   attribution.href='https://www.openstreetmap.org/copyright';attribution.target='_blank';attribution.rel='noopener noreferrer';
@@ -137,21 +152,32 @@
   shade.setAttribute('aria-label',info.label);
   const frame=node('div','sv-place-photo-viewer');
   frame.addEventListener('click',event=>event.stopPropagation());
-  const close=node('button','sv-place-photo-close','×');close.type='button';
+  const close=node('button','sv-place-photo-close');close.type='button';close.append(viewerIcon('close'));
   close.setAttribute('aria-label','Закрыть фотографию');close.addEventListener('click',closePhotoViewer);
   const img=node('img','sv-place-photo-large');img.src=src;img.alt=info.label;
   img.addEventListener('error',()=>{
    img.remove();frame.append(node('p','sv-place-photo-unavailable','Не удалось загрузить фото. Открой оригинал ниже.'));
   },{once:true});
-  const caption=node('div','sv-place-photo-caption');caption.append(node('strong','',info.label));
-  const credit=node('div','sv-place-photo-attribution');
+  const caption=node('div','sv-place-photo-caption');
+  const captionHead=node('div','sv-place-photo-caption-head');
+  const captionTitle=node('strong','',info.label);
+  const infoButton=node('button','sv-place-photo-info-toggle');
+  infoButton.type='button';infoButton.append(viewerIcon('info'));
+  infoButton.setAttribute('aria-label','Источник и лицензия фотографии');
+  infoButton.setAttribute('aria-expanded','false');
+  const credit=node('div','sv-place-photo-attribution');credit.hidden=true;
   const source=node('a','',info.author?'Фото: '+info.author:'Источник: Wikimedia Commons');
   source.href=info.sourceURL;source.target='_blank';source.rel='noopener noreferrer';credit.append(source);
   if(info.license){
    const license=node('a','',info.license);license.href=info.licenseURL;
    license.target='_blank';license.rel='noopener noreferrer';credit.append(license);
   }
-  caption.append(credit);frame.append(close,img,caption);shade.append(frame);
+  infoButton.addEventListener('click',()=>{
+   credit.hidden=!credit.hidden;
+   infoButton.setAttribute('aria-expanded',String(!credit.hidden));
+  });
+  captionHead.append(captionTitle,infoButton);
+  caption.append(captionHead,credit);frame.append(close,img,caption);shade.append(frame);
   shade.addEventListener('click',closePhotoViewer);
   shade.addEventListener('keydown',event=>{
    if(event.key==='Escape'){event.preventDefault();closePhotoViewer()}
@@ -251,7 +277,7 @@
     link.className+=' sv-place-map-yandex';
     link.append(node('span','sv-place-map-yandex-label','Открыть\nкарту ↗'));
    }else{
-    for(const tile of places.mapTiles(place,narrow?96:112,photoURL?(narrow?96:112):(narrow?88:96))){
+    for(const tile of places.mapTiles(place,narrow?96:112,photoURL?(narrow?118:132):(narrow?88:96))){
      const img=document.createElement('img');img.className='sv-place-map-tile';img.loading='lazy';
      img.alt='';img.setAttribute('aria-hidden','true');img.decoding='async';
      img.referrerPolicy='strict-origin-when-cross-origin';img.src=tile.url;

@@ -1066,7 +1066,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-card.sv-place-ca
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo{
  position:relative!important;display:grid!important;grid-template-columns:minmax(0,1fr) 112px!important;
- column-gap:9px!important;align-items:center!important;
+ column-gap:9px!important;align-items:stretch!important;
  flex:0 0 auto!important;width:100%!important;height:132px!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-photo-link{
@@ -1096,7 +1096,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-
  display:none!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-map{
- width:112px!important;height:112px!important;border-radius:16px!important;
+ width:112px!important;height:132px!important;border-radius:16px!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-lightbox{
  position:fixed!important;inset:0!important;z-index:10000!important;
@@ -1159,7 +1159,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-unavailabl
   height:118px!important;
  }
  html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-map{
-  width:96px!important;height:96px!important;
+  width:96px!important;height:118px!important;
  }
 }
 
@@ -1261,4 +1261,37 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice-ma
  border:0!important;border-radius:50%!important;
  background:transparent!important;box-shadow:none!important;
  object-fit:contain!important;
+}
+
+/* The photo and mini-map are one aligned preview, not two stacked ornaments. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-photo-link::before,
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual.sv-place-visual-has-photo .sv-place-photo-link::after{
+ content:none!important;display:none!important;
+}
+/* Attribution is accessible on request, while the photo stays editorially clean. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-caption-head{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-caption-head strong{
+ min-width:0!important;flex:1 1 auto!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-info-toggle{
+ display:grid!important;place-items:center!important;flex:0 0 34px!important;
+ width:34px!important;height:34px!important;margin:0!important;padding:0!important;
+ border:var(--sv-task-field-rim)!important;border-radius:50%!important;
+ background:rgba(234,237,242,.68)!important;color:#364554!important;
+ box-shadow:var(--sv-task-field-shadow)!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-info-toggle svg,
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-close svg{
+ display:block!important;width:18px!important;height:18px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-attribution[hidden]{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-attribution{
+ padding-top:2px!important;gap:8px 13px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-close{
+ background:rgba(239,242,245,.94)!important;
+ border:var(--sv-task-field-rim)!important;box-shadow:var(--sv-task-field-shadow)!important;
 }

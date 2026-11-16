@@ -5,4 +5,4 @@
 - License: [Creative Commons Attribution–ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/).
 - Local asset: `seyveo-krasnaya-ploshchad-entrance-2024.jpg`, 960 × 636 pixels, resized by Wikimedia's thumbnail service from the original 4928 × 3264 image. No additional retouching.
 
-This photograph shows the **entrance of the shopping centre**, not the doorway of the "Вкусно — и точка" restaurant inside. The attribution and license links are shown in SEYVEO's enlarged photo viewer. The photograph remains under CC BY-SA 4.0; the license does not apply to the unrelated application source code.
+This photograph shows the **entrance of the shopping centre**, not the doorway of the "Вкусно — и точка" restaurant inside. The attribution and license links remain accessible through the information button (ⓘ) in SEYVEO's enlarged photo viewer. The photograph remains under CC BY-SA 4.0; the license does not apply to the unrelated application source code.
