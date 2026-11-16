@@ -63,6 +63,9 @@
  const reviewCards=document.createElement('button');
  reviewCards.type='button';reviewCards.className='control sv-review-cards-control';reviewCards.setAttribute('aria-label','Разобрать карточки');
  reviewCards.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7" width="14" height="13" rx="2"/><path d="M8 4h11a2 2 0 0 1 2 2v10"/><path d="M8 11h8M8 15h5"/></svg>';
+ const reviewBadge=document.createElement('span');
+ reviewBadge.className='sv-review-cards-badge';reviewBadge.hidden=true;reviewBadge.setAttribute('aria-hidden','true');reviewCards.append(reviewBadge);
+ window.addEventListener('seyveo:review-count',event=>{const count=Math.max(0,Number(event.detail?.count)||0);reviewBadge.hidden=count===0;reviewBadge.textContent=count>99?'99+':String(count);reviewCards.setAttribute('aria-label',count?'Разобрать карточки: '+count:'Разобрать карточки');});
  reviewCards.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:open-card-review')));
  const selectHistory=document.createElement('button');
  selectHistory.className='control sv-history-select';
@@ -121,6 +124,8 @@
    display:grid!important;position:relative;
   }
   :host([data-task-tools="true"]) .sv-review-cards-control{display:grid!important}
+  :host([data-task-tools="true"]) .sv-history-dual .sv-review-cards-control{position:relative!important;overflow:visible!important}
+  :host([data-task-tools="true"]) .sv-review-cards-badge:not([hidden]){position:absolute;top:0;right:0;display:grid;place-items:center;min-width:15px;height:15px;box-sizing:border-box;padding:0 3px;border-radius:999px;background:#FF3B30;color:white;border:1.5px solid #fff;font:600 9px/1 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 2px rgba(0,0,0,.08);pointer-events:none}
   :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-review-cards-control{border-radius:999px!important;background:transparent!important;color:#1C1C1E!important;}
   /* No internal dividers or individually raised button surfaces. */
   :host([data-task-tools="true"]) .sv-history-dual .control::after{content:none!important;display:none!important}
