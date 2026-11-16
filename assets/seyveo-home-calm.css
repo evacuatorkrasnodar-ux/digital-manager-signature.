@@ -1,13 +1,12 @@
 /* Home reminders only. Orb dimensions belong to seyveo-sayvi-handoff-demo.css.
    Never set #orb or #orbCluster here: those overrides enlarged Sayvi after
    the greeting, while the initial greeting still used the original size. */
-:root.sv-home-reminder-hidden #homePage #svHomeReviewText,
 :root.sv-home-reminder-hidden #homePage #svHomeCalmDetails{
  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
 }
 #homePage #svHomeCalmDetails{
  position:absolute;z-index:9;
- top:calc(50dvh - 100px + var(--sv-home-orb-half,142.5px) + var(--sv-home-cards-offset,136px));
+ top:calc(50dvh - 100px + var(--sv-home-orb-half,142.5px) + var(--sv-home-cards-offset,80px));
  left:50%;transform:translateX(-50%);
  width:max-content;max-width:calc(100vw - 40px);
  margin:0;padding:4px 8px;
