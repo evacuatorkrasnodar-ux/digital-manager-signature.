@@ -609,3 +609,47 @@ body > #orb.sv-sayvi-handoff-flight {
     transition:none!important;
   }
 }
+
+/* After the last card, the *actual dock miniature* is the departure mark.
+   The weather stays invisible for the whole flight across Home. */
+:root.sv-home-empty-sphere.sv-home-empty-arriving:not(.sv-home-empty-lifted) :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #assistantButton{
+  opacity:1!important;
+  pointer-events:none!important;
+}
+:root.sv-home-empty-sphere.sv-home-empty-arriving #homePage #svSayviHomeWeather{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transition:none!important;
+}
+:root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svSayviHomeWeather{
+  animation:sv-home-weather-after-sayvi .75s cubic-bezier(.22,.8,.22,1) both!important;
+}
+@keyframes sv-home-weather-after-sayvi{
+  from{opacity:0}
+  to{opacity:1}
+}
+/* Leaving an empty Home: pearl surface grows in 630ms while Sayvi's
+   miniature fades into her original dock slot, with no geometry jump. */
+:root.sv-home-empty-sphere.sv-home-empty-route-exit :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+)::before{
+  animation:sv-music-ambient-dock-expand 630ms cubic-bezier(.22,.78,.22,1) both!important;
+}
+:root.sv-home-empty-sphere.sv-home-empty-route-exit :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #assistantButton{
+  opacity:1!important;
+  pointer-events:auto!important;
+  transition:opacity 480ms cubic-bezier(.22,.8,.22,1) 50ms!important;
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svSayviHomeWeather{
+    animation:none!important;
+  }
+}
