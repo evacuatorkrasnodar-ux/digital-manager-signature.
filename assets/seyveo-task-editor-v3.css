@@ -65,17 +65,18 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave{
  display:grid!important;justify-self:center!important;align-self:center!important;
  width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;
  margin:0!important;padding:0!important;border-radius:50%!important;
- border:1.25px solid rgba(231,53,68,.65)!important;
- background:var(--sv-task-action-fill)!important;color:#181B21!important;
+ border:1.25px solid rgba(220,34,52,.82)!important;
+ /* The same translucent card polymer, tinted red rather than painted flat. */
+ background:rgba(255,51,65,.90)!important;color:#FFFFFF!important;
  box-shadow:var(--sv-task-action-shadow)!important;opacity:1!important;
  -webkit-backdrop-filter:var(--sv-task-action-blur)!important;
  backdrop-filter:var(--sv-task-action-blur)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave:disabled{
- opacity:.4!important;cursor:default!important;
+ opacity:.70!important;cursor:default!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave svg{
- width:27px!important;height:27px!important;fill:none!important;stroke:#181B21!important;
+ width:27px!important;height:27px!important;fill:none!important;stroke:#FFFFFF!important;
  stroke-width:2.2!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskForm{
@@ -676,19 +677,13 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{displ
  html body dialog#personalTaskDialog.sv-task-editor-v3 *,
  html body dialog#personalTaskDialog.sv-task-editor-v3 *::after{transition:none!important;scroll-behavior:auto!important}
 }
-/* Header controls use the same transparent pearl material as the three
-   approved Home card actions. Confirm differs only by its fine red rim. */
+/* The Home card polymer is shared: transparent pearl for Close, red-tinted
+   translucent pearl with a red rim and white glyph for Confirm. */
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskCancel{
  border-radius:50%!important;aspect-ratio:1!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave{
  border-radius:50%!important;aspect-ratio:1!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave:disabled{
- opacity:.38!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave svg{
- stroke:#181B21!important;
 }
 /* One unified transparent pearl finish on the lower action capsule. */
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-quick-actions{
