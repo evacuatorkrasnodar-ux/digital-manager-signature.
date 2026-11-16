@@ -2000,6 +2000,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <link rel="stylesheet" href="assets/seyveo-weather-brief.css?v=2">
 <script src="assets/seyveo-weather-brief.js?v=2"></script>
 <script src="assets/seyveo-open-sources.js?v=1"></script>
+<script src="assets/seyveo-task-handoff.js?v=1"></script>
 <script>
 (()=>{
  'use strict';
@@ -4394,6 +4395,15 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   }
  }
  async function ask(question,options={}){
+  if(!options.skipUser&&!options.attachments?.length){
+   const newTask=window.SEYVEO_TASK_HANDOFF?.extract?.(question);
+   if(newTask){
+    if(window.SEYVEO_TASK_HANDOFF.remember(newTask))
+     window.location.assign('./index.html#tasks');
+    else status.textContent='Не удалось передать дело. Попробуй открыть «Новое дело» вручную.';
+    return;
+   }
+  }
   if(!options.skipUser&&!options.attachments?.length){
    const laSetting=window.SEYVEO_LIVE_ACTION?.configure?.(question);
    if(laSetting){

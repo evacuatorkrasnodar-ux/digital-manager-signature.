@@ -1757,6 +1757,21 @@ window.addEventListener('seyveo:task-plan-note',event=>{
  $('personalTaskStatus').textContent='SEYVEO заметил возможное дело в заметке. Проверьте название и срок, затем сохраните.';
  focusTaskWriting();
 });
+/* A draft explicitly requested in Sayvi's separate chat opens this same
+   validated editor; neither the chat nor this handoff saves the task. */
+function openSayviTaskDraft(){
+ const handoff=window.SEYVEO_TASK_HANDOFF;
+ const title=handoff?.take?.();
+ if(!title||dialog.open)return;
+ handoff.clear();
+ openDialog();
+ input.value=title;
+ input.dispatchEvent(new Event('input',{bubbles:true}));
+ dialog.dispatchEvent(new Event('sv-task-editor-sync'));
+ $('personalTaskStatus').textContent='Сэйви подготовила дело. Проверь дату, филиал и адрес, затем нажми сохранить.';
+ syncTaskSaveState();
+}
+setTimeout(openSayviTaskDraft,0);
 /* Explicit one-click approval of up to five tasks from a reviewed Notebook plan.
    Same local task store and renderer as the normal task editor. Atomic write,
    existing and within-plan duplicates are skipped; never truncate old tasks. */
