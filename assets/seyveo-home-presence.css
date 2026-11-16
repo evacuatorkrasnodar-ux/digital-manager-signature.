@@ -51,7 +51,7 @@
    greeting has faded. It is not a card, toast, popover or second dock. */
 :root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svHomeLivingLine[data-sv-presence="idle"]{
  position:absolute!important;
- top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 70px)!important;
+ top:calc(50dvh - 100px + var(--sv-home-orb-half,142.5px) + 70px)!important;
  left:50%!important;
  width:min(380px,calc(100% - 32px))!important;
  max-height:135px!important;
@@ -140,7 +140,7 @@
    The top status already names Sayvi: no second speaker label or bubble. */
 :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svHomeLivingLine[data-sv-presence="reply"]{
  position:absolute!important;
- top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 70px)!important;
+ top:calc(50dvh - 100px + var(--sv-home-orb-half,142.5px) + 70px)!important;
  left:50%!important;
  width:min(380px,calc(100% - 32px))!important;
  max-height:130px!important;
@@ -232,10 +232,10 @@
 }
 @media(max-height:600px){
  :root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svHomeLivingLine[data-sv-presence="idle"]{
-  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 60px)!important;
+  top:calc(50dvh - 100px + var(--sv-home-orb-half,142.5px) + 60px)!important;
  }
  :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svHomeLivingLine[data-sv-presence="reply"]{
-  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 60px)!important;
+  top:calc(50dvh - 100px + var(--sv-home-orb-half,142.5px) + 60px)!important;
  }
 }
 @media(prefers-reduced-motion:no-preference){
