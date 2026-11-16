@@ -121,7 +121,7 @@
    display:grid!important;position:relative;
   }
   :host([data-task-tools="true"]) .sv-review-cards-control{display:grid!important}
-  :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-review-cards-control{border-radius:14px!important;background:#38383A!important;color:#F7F7F8!important;}
+  :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-review-cards-control{border-radius:999px!important;background:transparent!important;color:#1C1C1E!important;}
   /* No internal dividers or individually raised button surfaces. */
   :host([data-task-tools="true"]) .sv-history-dual .control::after{content:none!important;display:none!important}
   :host([data-task-tools="true"]) .sv-history-dual .control:active{
