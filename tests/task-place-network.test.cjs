@@ -5,6 +5,13 @@ const vm=require('node:vm');
 const path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../assets/seyveo-task-places.js'),'utf8');
 
+test('compact map shows the surrounding streets rather than only the mall roof',()=>{
+ const places=require('../assets/seyveo-task-places.js');
+ const thumbnails=places.mapTiles({name:'ТЦ Красная Площадь',address:'Дзержинского, 100 · Краснодар',lat:45.10221,lon:38.983892},112,96);
+ assert(thumbnails.length>0);
+ assert(thumbnails.every(tile=>tile.url.includes('/14/')));
+});
+
 test('uses the local same-origin address service without a cross-origin connection',async()=>{
  const urls=[];
  const window={

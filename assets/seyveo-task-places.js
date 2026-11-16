@@ -229,7 +229,9 @@
   url.searchParams.set('layer','mapnik');url.searchParams.set('marker',lat.toFixed(6)+','+lon.toFixed(6));
   return url.toString();
  }
- function mapTiles(place,width=127,height=96,zoom=16){
+ // The thumbnail is only 112 × 96 px. A close zoom shows one roof instead of
+ // a usable map; keep enough surrounding streets visible at this size.
+ function mapTiles(place,width=127,height=96,zoom=14){
   const p=cleanPlace(place);if(!p)return [];
   const z=Math.max(1,Math.min(18,Math.floor(zoom))),size=2**z;
   const latitude=Math.max(-85.0511,Math.min(85.0511,p.lat))*Math.PI/180;
