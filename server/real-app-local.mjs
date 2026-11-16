@@ -13,6 +13,7 @@ import {dirname,resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {respond} from './brain.mjs';
 import {analyzeLocalTasks} from './task-language-ai.mjs';
+import {routeOptions} from './seyveo-route-service.mjs';
 import {askLocalStream} from './local-stream.mjs';
 import {isDocumentWritingRequest} from './russian-writing.mjs';
 import {loadKnowledgeLibrary,retrieveKnowledge,knowledgeContext} from './knowledge-engine.mjs';
@@ -66,7 +67,7 @@ const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
 const TYPES={'.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.woff2':'font/woff2','.woff':'font/woff','.avif':'image/avif','.gif':'image/gif','.mp4':'video/mp4','.webm':'video/webm','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.wav':'audio/wav','.mp3':'audio/mpeg','.json':'application/json','.webmanifest':'application/manifest+json','.ico':'image/x-icon'};
 const HEADERS={
  'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','x-frame-options':'DENY','cross-origin-resource-policy':'same-origin',
- 'content-security-policy':"default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://upload.wikimedia.org https://planetary.s3.amazonaws.com; media-src 'self' blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-src 'self' blob: https:; worker-src 'self' blob:; manifest-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+ 'content-security-policy':"default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org https://commons.wikimedia.org https://upload.wikimedia.org https://planetary.s3.amazonaws.com; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' https://nominatim.openstreetmap.org https://www.wikidata.org; object-src 'none'; frame-src 'self' blob: https:; worker-src 'self' blob:; manifest-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
 };
 // Only the private Notebook drawing sheet may embed the Home UI inside Sayvi.
 // All other pages, paths, APIs and top-level navigations remain unframeable.
@@ -169,6 +170,13 @@ async function readQuestion(req,{withHistory=false}={}){
  }
  return data.message;
 }
+async function readTravelPoints(req){
+ let size=0,chunks=[];
+ for await(const part of req){size+=part.length;if(size>2200)throw Error('large');chunks.push(part)}
+ const data=JSON.parse(Buffer.concat(chunks).toString('utf8'));
+ if(!data||typeof data!=='object'||Array.isArray(data))throw Error('invalid');
+ return {origin:data.origin,destination:data.destination};
+}
 function localFile(path){
  if(path==='/manifest.webmanifest')return resolve(ROOT,'manifest.webmanifest');
  if(!/^\/assets\/[a-zA-Z0-9._/-]+$/.test(path)||path.split('/').includes('..'))return null;
@@ -183,6 +191,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
  let busy=false,minute=0,count=0;
  let taskAnalyzeBusy=false;
+ let routeMinute=0,routeCount=0;
  const imageAttachments=createImageAttachments();
  const liveSearch=searchProvider===undefined?(createBraveContextProvider()||createSeyveoWebProvider()):searchProvider;
  let searchMinute=0,searchCount=0;
@@ -242,6 +251,19 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
     send(res,200,await analyzeLocalTasks(phrase));
    }catch{send(res,503,{error:'Локальный ИИ сейчас недоступен. Доступен обычный разбор дела.'})}
    finally{taskAnalyzeBusy=false}
+   return;
+  }
+  if(req.method==='POST'&&path==='/api/seyveo-route-options'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){send(res,415,{error:'Ожидается JSON.'});return}
+   const minute=Math.floor(Date.now()/60000);
+   if(routeMinute!==minute){routeMinute=minute;routeCount=0}
+   if(routeCount>=8){send(res,429,{error:'Подожди минуту перед новым расчётом маршрута.'});return}
+   routeCount++;
+   try{
+    const points=await readTravelPoints(req);
+    send(res,200,await routeOptions(points.origin,points.destination));
+   }catch{send(res,503,{status:'unavailable',routes:[],message:'Сервис маршрутов пока недоступен.'})}
    return;
   }
   if(req.method==='GET'&&path==='/api/seyveo-index-status'){

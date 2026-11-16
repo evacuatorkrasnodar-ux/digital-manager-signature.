@@ -1023,3 +1023,79 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-visual .sv-place
   width:96px!important;height:88px!important;
  }
 }
+
+/* Travel to task · a light expandable section, never a second dock. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-travel[hidden]{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-travel{
+ box-sizing:border-box!important;margin:12px 0 4px!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-heading{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ padding:0 5px 7px!important;gap:8px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-heading strong{
+ color:#555D69!important;font:590 14px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-expand{
+ min-height:37px!important;padding:6px 12px!important;border-radius:999px!important;
+ border:var(--sv-task-field-rim)!important;background:var(--sv-task-field-fill)!important;
+ box-shadow:var(--sv-task-field-shadow)!important;color:#22252D!important;
+ font:540 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-body{
+ display:flex!important;flex-direction:column!important;gap:9px!important;
+ padding:13px 15px!important;border-radius:22px!important;
+ border:var(--sv-task-field-rim)!important;background:var(--sv-task-field-fill)!important;
+ box-shadow:var(--sv-task-field-shadow)!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-muted{
+ margin:0!important;color:#747B86!important;
+ font:440 12.5px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 :is(.sv-travel-route-lines,.sv-travel-traffic){
+ margin:0!important;color:#566576!important;
+ font:500 12.5px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-modes{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-modes button,
+html body dialog#personalTaskDialog.sv-task-editor-v3 :is(.sv-travel-locate,.sv-travel-manual){
+ display:grid!important;place-items:center!important;min-width:0!important;min-height:44px!important;
+ padding:8px 10px!important;border:1px solid rgba(255,255,255,.50)!important;
+ border-radius:14px!important;background:rgba(245,246,248,.75)!important;
+ box-shadow:none!important;color:#242730!important;
+ font:520 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-modes button.is-selected{
+ background:#26282E!important;color:#FFF!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-controls{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-field{
+ display:flex!important;flex-direction:column!important;gap:6px!important;
+ color:#6E747E!important;font:500 12px/1.2 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-field input,
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-manual-entry input{
+ box-sizing:border-box!important;width:100%!important;min-height:43px!important;
+ padding:8px 12px!important;border:1px solid rgba(168,178,190,.15)!important;
+ border-radius:13px!important;background:#FFF!important;color:#17191F!important;
+ font:570 16px/1.2 system-ui!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-manual-entry{
+ display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-depart{
+ margin:0!important;padding:9px 11px!important;border-radius:13px!important;
+ background:rgba(229,239,252,.63)!important;color:#315F8B!important;
+ font:560 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-travel-clear{
+ align-self:flex-end!important;min-height:36px!important;border:0!important;background:transparent!important;
+ color:#767C85!important;font:520 12px/1.2 system-ui!important;
+}
+#tasksPage .sv-travel-list-notice{display:block!important;margin-top:4px!important;color:#4775A8!important;font:530 12px/1.3 system-ui!important}
+#tasksPage .sv-task-travel-link{display:inline-block;margin:6px 14px 2px 0;color:#3A6FA3;font:530 13px/1.2 system-ui;text-decoration:none}

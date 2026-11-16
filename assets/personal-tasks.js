@@ -77,6 +77,7 @@ function read(){
  attachment:item.attachment&&typeof item.attachment.name==='string'&&Number.isFinite(item.attachment.size)&&item.attachment.size>0&&item.attachment.size<=10*1024*1024?
   {name:item.attachment.name.slice(0,130),type:String(item.attachment.type||'').slice(0,110),size:item.attachment.size}:null,
  place:window.SEYVEO_TASK_PLACES?.cleanPlace?.(item.place)||null,
+ travel:window.SEYVEO_TASK_TRAVEL_CORE?.clean?.(item.travel)||null,
  remindBefore:[15,30,60].includes(item.remindBefore)?item.remindBefore:0,
  showOnHome:item.showOnHome!==false,
  repeat:['none','daily','weekly','monthly'].includes(item.repeat)?item.repeat:'none',
@@ -968,6 +969,14 @@ function row(item,compact=false,deferred=false){
   label.append(element('span','sv-agenda-entry-time',timeLabel));
  }
  label.append(name);
+ if(!compact&&!item.done&&item.travel&&item.due&&item.time){
+  const departure=window.SEYVEO_TASK_TRAVEL_CORE?.departure?.(item.due,item.time,item.travel);
+  const left=departure?departure.at-Date.now():NaN;
+  if(Number.isFinite(left)&&left>-15*60000&&left<3*3600000){
+   const line=left<=0?'Пора выходить':left<=5*60000?'Выходить скоро · '+departure.time:'Лучше выйти в '+departure.time;
+   label.append(element('small','sv-travel-list-notice',line));
+  }
+ }
  const due=displayDate(item);
  if(compact&&(due||item.done||deferred))label.append(element('small','',item.done?'Завершено':deferred?'Отложено':due));
  if(!compact){
@@ -1003,6 +1012,19 @@ function row(item,compact=false,deferred=false){
    element('div','personal-task-detail-entry',(svTaskEntryType(item)==='event'?'Когда: ':'Выполнить: ')+scheduled),
    element('div','personal-task-detail-entry','Тип: '+(svTaskEntryType(item)==='event'?'Событие':'Задача'))
   );
+  if(item.travel&&item.due&&item.time){
+   const departure=window.SEYVEO_TASK_TRAVEL_CORE?.departure?.(item.due,item.time,item.travel);
+   if(departure)details.append(element('div','personal-task-detail-entry','Дорога: '+item.travel.minutes+' мин · выход в '+departure.time));
+  }
+  if(item.place){
+   const routeUrl=window.SEYVEO_TASK_TRAVEL_CORE?.directionsURL?.(item.place);
+   const taxiUrl=window.SEYVEO_TASK_TRAVEL_CORE?.taxiURL?.(item.place);
+   for(const [caption,href] of [['Открыть маршрут ↗',routeUrl],['Такси · заказать или запланировать ↗',taxiUrl]]){
+    if(!href)continue;
+    const link=element('a','sv-task-travel-link',caption);link.href=href;
+    link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';details.append(link);
+   }
+  }
   if(item.attachment){
    const attachmentButton=element('button','personal-task-detail-attachment','📎 '+item.attachment.name);
    attachmentButton.type='button';attachmentButton.dataset.taskAttachment=item.id;
@@ -1244,6 +1266,7 @@ async function put(e){
   record.url=$('personalTaskURL')?.value.trim().slice(0,500)||'';
   record.attachment=attachmentMeta;
   record.place=window.SEYVEO_TASK_PLACE_EDITOR?.placeForSave?.()||null;
+  record.travel=window.SEYVEO_TASK_TRAVEL_EDITOR?.forSave?.()||null;
   record.repeat=$('personalTaskRepeat')?.value||'none';
   record.priority=$('personalTaskPriority')?.value||'none';
   record.showOnHome=homeVisibilityForSave();
@@ -1281,6 +1304,7 @@ async function put(e){
    tone:category==='work'?'blue':(multiple?draft.tone||'orange':'orange'),
    entryType:draft.entryType==='event'?'event':'task',
    place:multiple&&draft.entryType!=='event'?null:suggestedPlace,
+   travel:(!multiple||draft.entryType==='event')?(window.SEYVEO_TASK_TRAVEL_EDITOR?.forSave?.()||null):null,
    remindBefore:[15,30,60].includes(draft.remindBefore)?draft.remindBefore:0,
    ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})};
  });
@@ -1388,6 +1412,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  if($('personalTaskTime'))$('personalTaskTime').value=task.time||'';
  dialog.dispatchEvent(new Event('sv-task-editor-sync'));
  window.SEYVEO_TASK_PLACE_EDITOR?.load?.(task.place);
+ window.SEYVEO_TASK_TRAVEL_EDITOR?.load?.(task.travel);
  window.SEYVEO_TASK_ATTACHMENTS?.load?.(task.id,task.attachment);
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='Изменения сохраняются только после вашего подтверждения.';
