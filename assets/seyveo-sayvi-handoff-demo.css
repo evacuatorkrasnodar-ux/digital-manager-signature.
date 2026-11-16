@@ -151,7 +151,8 @@
    The title/weather/card rail BELOW her stays in a separate fixed lane. */
 :root.sv-cinema-greeting-active.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage > .message{
   position:absolute!important;
-  top:calc(50dvh - 100px - var(--sv-home-orb-half) - 122px)!important;
+  /* Bottom-anchor the speech card to Sayvi; its height may vary by device. */
+  top:calc(50dvh - 100px - var(--sv-home-orb-half) - 4px)!important;
   left:50%!important;
   width:min(350px,calc(100vw - 38px))!important;
   max-height:104px!important;
@@ -163,7 +164,7 @@
   border-radius:22px!important;
   background:rgba(255,255,255,.91)!important;
   box-shadow:0 5px 22px rgba(41,65,75,.045)!important;
-  transform:translateX(-50%)!important;
+  transform:translate(-50%,-100%)!important;
   pointer-events:none!important;
 }
 :root.sv-cinema-greeting-active.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage > .message::after{
