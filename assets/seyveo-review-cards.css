@@ -1,15 +1,6 @@
 /* One stable sphere on Home; decisions live in their own reading room. */
 #homePage > :is(#seyveoLivingMoment,#dynamic,#svcpWorkHomePreview,#workTimeline,#svSmartStartHome,.sv-sayvi-handoff-today){display:none!important}
 #homePage #stage ~ :is(#seyveoLivingMoment,#dynamic,#svcpWorkHomePreview,#workTimeline,#svSmartStartHome,.sv-sayvi-handoff-today){display:none!important}
-#homePage #svHomeReviewText{
- display:block;max-width:calc(100vw - 40px);margin:10px auto 0;padding:2px 4px;
- border:0;border-radius:0;background:none;box-shadow:none;
- color:#30343B;font:500 14px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;
- text-align:center;cursor:pointer;text-decoration:none;
- -webkit-tap-highlight-color:transparent;
-}
-#homePage #svHomeReviewText[hidden]{display:none!important}
-#homePage #svHomeReviewText:active{opacity:.55}
 .sv-review-header svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .sv-review-room{position:fixed;inset:0;z-index:1800;overflow-y:auto;overscroll-behavior:contain;background:#fff;padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 32px);animation:sv-review-appear .32s cubic-bezier(.2,.75,.25,1) both}
 .sv-review-room[hidden]{display:none!important}
@@ -34,7 +25,7 @@
  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
 }
 :root.sv-home-empty-arriving #homePage #stage > :not(#orbCluster),
-:root.sv-home-empty-arriving #homePage :is(#svHomeCalmDetails,#svHomeReviewText,#svHomeLivingLine,#svSayviHomeWeather,#svBroadcastStartOffer,#svBroadcastReturnLine,.sv-sayvi-handoff-today,.lm-caption,.lm-field,[data-owner-advice]){
+:root.sv-home-empty-arriving #homePage :is(#svHomeCalmDetails,#svHomeLivingLine,#svSayviHomeWeather,#svBroadcastStartOffer,#svBroadcastReturnLine,.sv-sayvi-handoff-today,.lm-caption,.lm-field,[data-owner-advice]){
  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
 }
 :root.sv-home-empty-sphere:not(.sv-home-empty-arrived):not(.sv-home-empty-at-launch) #homePage #svHomeCalmDetails{
