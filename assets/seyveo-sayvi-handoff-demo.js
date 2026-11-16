@@ -339,6 +339,10 @@
     if(voiceFileUrl){URL.revokeObjectURL(voiceFileUrl);voiceFileUrl=null;}
     clearTimeout(greetingDelay);
     clearTimeout(greetingTicker);
+    // Show the lower information at its destination, without moving the
+    // upper spoken welcome through the sphere.
+    const revealHomeInfo=!!greeting&&keepHomeSphere;
+    if(revealHomeInfo)root.classList.add('sv-home-info-enter');
     greeting?.remove();
     greeting=null;
     root.classList.remove('sv-cinema-greeting-active');
@@ -364,6 +368,7 @@
     if(smallOpacity)small.style.setProperty('opacity',smallOpacity,smallOpacityPriority);
     else small.style.removeProperty('opacity');
     root.classList.remove('sv-sayvi-handoff-inflight');
+    if(revealHomeInfo)setTimeout(()=>root.classList.remove('sv-home-info-enter'),900);
     const cluster=document.getElementById('orbCluster');
     if(cluster){
       cluster.setAttribute('aria-hidden',keepHomeSphere?'false':'true');
