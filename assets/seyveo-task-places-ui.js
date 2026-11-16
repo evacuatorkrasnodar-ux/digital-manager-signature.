@@ -264,7 +264,8 @@
     const actions=node('div','sv-place-confirm-actions');
     const accept=node('button','sv-place-confirm','Это место');accept.type='button';
     accept.addEventListener('click',()=>{confirmed=true;refining=false;refineText='';render();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
-    const change=node('button','sv-place-refine-trigger','Другой адрес');change.type='button';
+    const change=node('button','sv-place-refine-trigger',refining?'Отмена':'Другой адрес');change.type='button';
+    change.setAttribute('aria-expanded',String(refining));
     change.addEventListener('click',()=>{refining=!refining;render()});
     actions.append(accept,change);panel.append(actions);
    }
@@ -283,7 +284,7 @@
      });
      body(content);row.append(toggle,content);strip.append(row);
     };
-    if(details.hours)addRow(details.hoursSourceURL?'График · справочник':'График работы',details.hours,content=>{
+    if(details.hours)addRow('Часы работы',details.hours,content=>{
      if(details.hoursNote)content.append(node('p','sv-place-info-note',details.hoursNote));
      if(details.hoursSourceURL){
       const source=node('a','sv-place-info-source','Источник графика ↗');
@@ -324,7 +325,8 @@
     const more=node('button','sv-place-refine-trigger','Показать ещё');more.type='button';
     more.addEventListener('click',()=>{choicesExpanded=true;render()});card.append(more);
    }
-   const other=node('button','sv-place-refine-trigger','Другой адрес');other.type='button';
+   const other=node('button','sv-place-refine-trigger',refining?'Отмена':'Другой адрес');other.type='button';
+   other.setAttribute('aria-expanded',String(refining));
    other.addEventListener('click',()=>{refining=!refining;render()});card.append(other);
   }else{
    const copy=node('div','sv-place-copy');
@@ -362,7 +364,7 @@
    const row=node('div','sv-place-refine-row');
    const input=node('input','sv-place-refine-input');input.type='text';input.maxLength=140;
    input.value=refineText;input.addEventListener('input',()=>{refineText=input.value});
-   input.placeholder='Улица, район или точный адрес';input.setAttribute('aria-label','Уточнить место встречи');
+   input.placeholder='Улица или точный адрес';input.setAttribute('aria-label','Уточнить место встречи');
    const apply=node('button','sv-place-refine-apply','Найти');apply.type='button';
    apply.addEventListener('click',()=>{
     const detail=input.value.replace(/\s+/gu,' ').trim();
@@ -374,7 +376,11 @@
     void lookup();
    });
    input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();apply.click()}});
-   row.append(input,apply);panel.append(row);
+   row.append(input,apply);
+   // Keep address refinement next to its trigger, before opening hours/menu.
+   const strip=panel.querySelector('.sv-place-venue-details, .sv-place-manual-map');
+   if(strip)panel.insertBefore(row,strip);
+   else panel.append(row);
   }
  }
  function sync(){
