@@ -9,7 +9,7 @@
  const line=document.createElement('button');
  line.id='svReviewEntry';line.type='button';line.className='sv-review-entry';
  line.innerHTML='<span class="sv-review-entry-copy">Разобрать дела <span id="svReviewCount"></span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
- stage.after(line);
+ // The permanent Home button is retired; only the Work capsule opens review.
  const room=document.createElement('section');
  room.id='svReviewRoom';room.className='sv-review-room';room.hidden=true;
  room.setAttribute('role','dialog');room.setAttribute('aria-modal','true');room.setAttribute('aria-label','Разобрать дела');
@@ -17,6 +17,7 @@
  document.body.append(room);
  const content=room.querySelector('#svReviewContent');
  let open=false;
+ let lastCount=-1,returnFocus=null;
  function sources(){return ids.map(id=>document.getElementById(id)).filter(Boolean)}
  // The Home CSS deliberately masks cards, so count logical visibility,
  // not computed display (which is none until the room opens).
@@ -35,7 +36,8 @@
  }
  function update(){
   const total=count();
-  line.hidden=!total;
+  line.hidden=true;
+  if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
   const number=total?'· '+total:'';
   const progress=total?total+' осталось':'Всё разобрано';
   if(document.getElementById('svReviewCount').textContent!==number)document.getElementById('svReviewCount').textContent=number;
@@ -65,6 +67,7 @@
  }
  function enter(){
   if(open)return;
+  returnFocus=document.activeElement;
   open=true;
   sources().forEach(moveIn);
   moveIn(document.querySelector('.sv-sayvi-handoff-today'));
@@ -84,9 +87,8 @@
   document.documentElement.classList.remove('sv-review-open');
   room.hidden=true;
   update();
-  line.focus({preventScroll:true});
+  if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
  }
- line.addEventListener('click',enter);
  window.addEventListener('seyveo:open-card-review',enter);
  room.querySelector('#svReviewBack').addEventListener('click',leave);
  window.addEventListener('keydown',event=>{if(open&&event.key==='Escape')leave()});
