@@ -68,12 +68,12 @@
   let startGreeting=()=>{};
   let welcomeSpeech='';
   if(showCinema&&message){
-    // Silent, unhurried handwriting: three gentle thoughts with breathing
-    // pauses. Keep the approved wording and original large-Sayvi artwork.
+    // Three complete thoughts, written with a human rhythm. Shorter key beats
+    // avoid leaving one lonely letter in the bubble for too long.
     const greetingLines=[
-      {text:'Привет!',kind:'welcome',type:105,hold:560,erase:62},
-      {text:'Я Сэйви.',kind:'name',type:102,hold:570,erase:62},
-      {text:'Рада тебя видеть!',kind:'wish',type:105}
+      {text:'Привет!',kind:'welcome',type:72,hold:720,erase:48},
+      {text:'Я Сэйви.',kind:'name',type:74,hold:780,erase:48},
+      {text:'Рада тебя видеть!',kind:'wish',type:76}
     ];
     welcomeSpeech=greetingLines.map(line=>line.text).join(' ');
     greeting=document.createElement('p');
