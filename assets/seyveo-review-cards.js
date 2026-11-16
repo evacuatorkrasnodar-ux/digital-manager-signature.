@@ -31,7 +31,8 @@
  function count(){
   const living=document.getElementById('seyveoLivingMoment');
   const tiles=document.getElementById('seyveoLivingTiles');
-  const livingCount=living&&active(living)?Math.max(1,tiles?.querySelectorAll('.lm-field').length||0):0;
+  const pendingPreview=Number(window.SEYVEO_LIVING_MOMENT?.reviewCount?.())||0;
+  const livingCount=pendingPreview>0?1:(living&&active(living)?Math.max(1,tiles?.querySelectorAll('.lm-field').length||0):0);
   const dynamic=document.getElementById('dynamic');
   const decisions=dynamic&&!dynamic.hidden?Array.from(dynamic.children).filter(el=>!el.hidden).length:0;
   const others=['svcpWorkHomePreview','workTimeline','svSmartStartHome'].filter(id=>{
@@ -83,6 +84,8 @@
  }
  function enter(){
   if(open)return;
+  // Rebuild an undecided preview before moving cards into their room.
+  window.SEYVEO_LIVING_MOMENT?.ensureReviewCards?.();
   returnFocus=document.activeElement;
   open=true;
   sources().forEach(moveIn);
