@@ -530,7 +530,7 @@
   offer=document.createElement('button');
   offer.id='svBroadcastStartOffer';
   offer.type='button';offer.className='sv-broadcast-start-offer';
-  offer.textContent='♡  Расскажи мне о себе';
+  offer.textContent='Расскажи мне о себе';
   offer.addEventListener('click',()=>openProfile());
   stage.appendChild(offer);
   setTimeout(()=>{offer?.remove();offer=null},22000);
@@ -540,6 +540,13 @@
   const person=readProfile();
   const missing=Object.values(PROFILE_SECTIONS).some(section=>
    !Object.prototype.hasOwnProperty.call(person,section.key));
+  // One quiet invitation, not a recurring profile prompt.
+  const profileInviteKey='seyveo.my-broadcast.profile-invite-shown.v1';
+  if(missing&&read(profileInviteKey)!=='1'){
+   write(profileInviteKey,'1');
+   return {text:'Расскажи немного о себе — так я смогу помогать точнее.',
+    action:{kind:'profile',label:'Мои анкеты',icon:''}};
+  }
   const life=Array.isArray(person.lifeInterests)?person.lifeInterests:[];
   const needs=Array.isArray(person.assistanceNeeds)?person.assistanceNeeds:[];
   const personalAction=life.includes('music')?
@@ -554,11 +561,9 @@
   const topics=prefs.topics;
   const favorite=topics.find(topic=>topic!=='news'&&topic!=='music');
   const choices=[
-   missing?{text:'♡ Хочешь рассказать немного о себе? Так мне будет легче тебя понимать.',action:{kind:'profile',label:'Расскажу о себе',icon:'♡'}}:null,
    personalAction,
    {text:'☀️ Если захочешь, я могу устроить для тебя небольшое утреннее шоу — с рассказами и музыкой.',action:{kind:'broadcast-preferences',label:'Настроить моё утро',icon:'☀️'}},
-   favorite?{text:`✨ Я могу рассказывать о том, что тебе интересно, например: ${labelFor(favorite).toLowerCase()}.`,action:{kind:'broadcast',label:'Послушать',icon:'✨'}}:null,
-   {text:'♡ Расскажи, что сейчас важно для тебя. Я запомню только то, что ты сам выберешь.',action:{kind:'profile',label:'Мои анкеты',icon:'♡'}}
+   favorite?{text:`✨ Я могу рассказывать о том, что тебе интересно, например: ${labelFor(favorite).toLowerCase()}.`,action:{kind:'broadcast',label:'Послушать',icon:'✨'}}:null
   ].filter(Boolean);
   const next=Number(read('seyveo.my-broadcast.hint-index.v1')||0);
   write('seyveo.my-broadcast.hint-index.v1',String((next+1)%choices.length));

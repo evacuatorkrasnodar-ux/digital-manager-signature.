@@ -17,6 +17,9 @@
  mark.className='sv-home-living-mark';
  mark.setAttribute('aria-hidden','true');
  mark.classList.add('sv-sayvi-symbol');
+ const heading=document.createElement('strong');
+ heading.className='sv-home-living-heading';
+ heading.hidden=true;
  const content=document.createElement('span');
  content.className='sv-home-living-copy';
  const actionRow=document.createElement('span');
@@ -43,7 +46,7 @@
  announcement.setAttribute('role','status');
  announcement.setAttribute('aria-live','polite');
  announcement.setAttribute('aria-atomic','true');
- line.append(mark,content,actionRow,announcement);
+ line.append(mark,heading,content,actionRow,announcement);
  message.insertAdjacentElement('afterend',line);
  // Position short thoughts relative to Sayvi's painted globe, not other text.
  function positionThought(){
@@ -237,6 +240,9 @@
    const phrase=replyVisible?miniReply:idleHint;
    const written=replyVisible?miniTyped:idleTyped;
    const typing=replyVisible?miniTyping:idleTyping;
+   const profileInvite=!replyVisible&&idleAction?.kind==='profile';
+   heading.hidden=!profileInvite;
+   if(profileInvite)heading.textContent='Давай познакомимся';
    if(ghost.textContent!==phrase)ghost.textContent=phrase;
    if(typed.textContent!==written)typed.textContent=written;
    if(!replyVisible&&idleAction){
@@ -248,6 +254,7 @@
      actionLabel.textContent=idleAction.label;
      actionButton.setAttribute('aria-label',idleAction.label);
     }
+    actionIcon.hidden=!idleAction.icon;
    }else actionRow.hidden=true;
    line.dataset.svPresence=replyVisible?'reply':'idle';
    line.dataset.svTyping=typing?'true':'false';
@@ -260,6 +267,7 @@
   }
   if(idleMarkupMounted){content.replaceChildren();idleMarkupMounted=false;}
   actionRow.hidden=true;
+  heading.hidden=true;
   actionRow.dataset.revealed='false';
   line.dataset.svTyping='false';
   line.setAttribute('aria-label','');
@@ -318,29 +326,12 @@
   dropIdle({resetClock:false});
  }
  function typeIdle(sequence){
-  const letters=Array.from(idleHint);
-  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
-   idleTyped=idleHint;idleTyping=false;update();
-   idleHideTimer=setTimeout(()=>finishIdle(sequence),idleAction?HINT_HOLD_MS+6500:HINT_HOLD_MS);
-   return;
-  }
-  let cursor=0;
-  const next=()=>{
-   idleTypeTimer=0;
-   if(sequence!==idleSequence||!idleHint||!quietHome())return;
-   if(cursor>=letters.length){
-    idleTyping=false;update();
-    idleHideTimer=setTimeout(()=>finishIdle(sequence),idleAction?HINT_HOLD_MS+6500:HINT_HOLD_MS);
-    return;
-   }
-   const letter=letters[cursor++];
-   idleTyped+=letter;
-   update();
-   // Natural cadence, with a short breath after punctuation.
-   const pause=/[.!?…]/.test(letter)?190:/[,—:;]/.test(letter)?95:30+cursor%5*4;
-   idleTypeTimer=setTimeout(next,pause);
-  };
-  idleTypeTimer=setTimeout(next,250);
+  if(sequence!==idleSequence||!idleHint||!quietHome())return;
+  // Calm editorial reveal: show the whole thought at once.
+  idleTyped=idleHint;
+  idleTyping=false;
+  update();
+  idleHideTimer=setTimeout(()=>finishIdle(sequence),idleAction?HINT_HOLD_MS+6500:HINT_HOLD_MS);
  }
  function beginSuggestion(suggestion){
   idleHint=typeof suggestion==='string'?suggestion:suggestion.text;
@@ -419,30 +410,14 @@
   dropIdle();
   if(voiceTimer){clearTimeout(voiceTimer);voiceTimer=null;}
   resetMini();
-  miniReply=response;miniTyped='';miniTyping=true;
+  miniReply=response;miniTyped=response;miniTyping=false;
   voicePhase='reply';
   const sequence=++miniSequence;
   update();
-  const finish=()=>{
-   if(sequence!==miniSequence)return;
-   miniTyping=false;update();
-   announcement.textContent=miniReply;
-   miniHideTimer=setTimeout(clearVoice,11500);
-  };
-  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
-   miniTyped=response;finish();return true;
-  }
-  const letters=Array.from(response);
-  let cursor=0;
-  const next=()=>{
-   miniTimer=0;
-   if(sequence!==miniSequence||!canDisplayReply())return;
-   if(cursor>=letters.length){finish();return;}
-   const letter=letters[cursor++];
-   miniTyped+=letter;update();
-   miniTimer=setTimeout(next,/[.!?…]/.test(letter)?125:26+cursor%4*3);
-  };
-  miniTimer=setTimeout(next,180);
+  announcement.textContent=response;
+  miniHideTimer=setTimeout(()=>{
+   if(sequence===miniSequence)clearVoice();
+  },11500);
   return true;
  }
  function onPresence(event){

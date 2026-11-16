@@ -68,60 +68,25 @@
   let startGreeting=()=>{};
   let welcomeSpeech='';
   if(showCinema&&message){
-    // Three complete thoughts, written with a human rhythm. Shorter key beats
-    // avoid leaving one lonely letter in the bubble for too long.
-    const greetingLines=[
-      {text:'Привет!',kind:'welcome',type:72,hold:720,erase:48},
-      {text:'Я Сэйви.',kind:'name',type:74,hold:780,erase:48},
-      {text:'Рада тебя видеть!',kind:'wish',type:76}
-    ];
-    welcomeSpeech=greetingLines.map(line=>line.text).join(' ');
+    // The opening greeting is complete, instantly readable, and restrained.
+    // Sayvi's approved orbital entrance and voice remain unchanged.
+    welcomeSpeech='Привет! Я Сэйви. Рада тебя видеть!';
     greeting=document.createElement('p');
     greeting.className='sv-cinema-written-hello';
     greeting.setAttribute('aria-label',welcomeSpeech);
     greeting.setAttribute('aria-live','off');
     const writing=document.createElement('span');
-    writing.className='sv-cinema-written-line sv-cinema-written-line--welcome';
+    writing.className='sv-cinema-written-line sv-cinema-written-line--plain';
+    writing.textContent=welcomeSpeech;
     greeting.appendChild(writing);
     message.appendChild(greeting);
     root.classList.add('sv-cinema-greeting-active');
-    startGreeting=()=>{greetingDelay=setTimeout(()=>{
-      if(done)return;
-      greeting.classList.add('sv-cinema-written-hello--visible');
-      // Three distinct thoughts, never three lines at once: Sayvi writes,
-      // pauses and gently erases the first two before signing the final one.
-      const playPhrase=index=>{
+    startGreeting=()=>{
+      greetingDelay=setTimeout(()=>{
         if(done||!greeting)return;
-        const phrase=greetingLines[index];
-        writing.className='sv-cinema-written-line sv-cinema-written-line--'+phrase.kind;
-        writing.removeAttribute('data-sv-shine-text');
-        writing.textContent='';
-        greeting.setAttribute('aria-label',phrase.text);
-        let cursor=0;
-        const type=()=>{
-          if(done||!greeting)return;
-          cursor=Math.min(phrase.text.length,cursor+1);
-          writing.textContent=phrase.text.slice(0,cursor);
-          if(cursor<phrase.text.length)greetingTicker=setTimeout(type,phrase.type);
-          else if(index<greetingLines.length-1)greetingTicker=setTimeout(erase,phrase.hold);
-          else if(phrase.kind==='wish'){
-            // A single light follows the finished letters, never the caret.
-            writing.setAttribute('data-sv-shine-text',phrase.text);
-            void writing.offsetWidth;
-            writing.classList.add('sv-cinema-wish-light-running');
-          }
-        };
-        const erase=()=>{
-          if(done||!greeting)return;
-          cursor=Math.max(0,cursor-1);
-          writing.textContent=phrase.text.slice(0,cursor);
-          if(cursor>0)greetingTicker=setTimeout(erase,phrase.erase);
-          else greetingTicker=setTimeout(()=>playPhrase(index+1),220);
-        };
-        greetingTicker=setTimeout(type,phrase.type);
-      };
-      playPhrase(0);
-    },160);};
+        greeting.classList.add('sv-cinema-written-hello--visible');
+      },160);
+    };
   }
   // The HTML fallback is dark. Synchronize the already-selected white theme
   // before the first cinematic frame to avoid a dark-to-white visual flash.

@@ -143,40 +143,35 @@
   font-weight:490;
   letter-spacing:-.037em;
 }
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--plain{
+ max-width:100%;
+ font-size:clamp(19px,4.8vw,22px);
+ font-weight:480;
+ line-height:1.4;
+ letter-spacing:-.022em;
+ white-space:normal;
+}
 :root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello--visible{
   opacity:1;
   transform:translate3d(0,0,0);
 }
-/* Spoken cinema belongs in Sayvi's thought bubble ABOVE the sphere.
-   The title/weather/card rail BELOW her stays in a separate fixed lane. */
+/* Cinematic greeting is typography above the sphere, not a speech card.
+   Keep its existing anchor so the painted globe and dock do not jump. */
 :root.sv-cinema-greeting-active.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage > .message{
-  position:absolute!important;
-  /* Bottom-anchor the speech card to Sayvi; its height may vary by device. */
-  /* The tail sits at the same optical distance as Sayvi's idle speech. */
-  top:calc(50dvh - 100px - var(--sv-home-orb-half) + 7px)!important;
-  left:50%!important;
-  width:min(316px,calc(100vw - 40px))!important;
-  max-height:144px!important;
-  min-height:70px!important;
-  box-sizing:border-box!important;
-  margin:0!important;
-  padding:14px 17px!important;
-  border:1px solid rgba(158,176,183,.24)!important;
-  border-radius:22px!important;
-  background:rgba(255,255,255,.91)!important;
-  box-shadow:0 5px 22px rgba(41,65,75,.045)!important;
-  transform:translate(-50%,-100%)!important;
-  pointer-events:none!important;
+ position:absolute!important;
+ top:calc(50dvh - 100px - var(--sv-home-orb-half) + 7px)!important;
+ left:50%!important;
+ width:min(350px,calc(100vw - 40px))!important;
+ max-height:144px!important;min-height:70px!important;
+ box-sizing:border-box!important;margin:0!important;padding:0 12px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:translate(-50%,-100%)!important;
+ pointer-events:none!important;
 }
 :root.sv-cinema-greeting-active.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage > .message::after{
-  content:"";
-  position:absolute;
-  left:50%;bottom:-6px;
-  width:10px;height:10px;
-  background:rgba(255,255,255,.91);
-  border-right:1px solid rgba(158,176,183,.24);
-  border-bottom:1px solid rgba(158,176,183,.24);
-  transform:translateX(-50%) rotate(45deg);
+ content:none!important;display:none!important;
 }
 :root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello{
   width:100%;min-height:0;

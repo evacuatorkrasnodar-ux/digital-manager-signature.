@@ -43,48 +43,48 @@
  :root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage #stage > .message,
  :root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage :is(#svHomeCalmDetails,#svHomeLivingLine,#svBroadcastStartOffer,#svBroadcastReturnLine){animation:none}
 }
-/* Quiet speech card above the actual orb. It never shares the weather row. */
+/* Quiet editorial copy above the original sphere. No speech balloon,
+   tail, glass panel or box shadow; the orb never moves with the text. */
 :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svHomeLivingLine[data-sv-presence]:not([hidden]){
  position:absolute!important;z-index:12!important;
  top:var(--sv-thought-top,68px)!important;left:50%!important;
- width:max-content!important;max-width:min(310px,calc(100vw - 44px))!important;
- max-height:126px!important;min-height:0!important;
- box-sizing:border-box!important;margin:0!important;padding:11px 15px!important;
+ width:min(350px,calc(100vw - 40px))!important;max-width:350px!important;
+ max-height:155px!important;min-height:0!important;
+ box-sizing:border-box!important;margin:0!important;padding:0!important;
  display:flex!important;flex-direction:column!important;align-items:center!important;
- gap:5px!important;text-align:center!important;
- color:#30343b!important;font:400 15.5px/1.42 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif!important;
- border:1px solid rgba(158,176,183,.23)!important;border-radius:19px!important;
- background:rgba(255,255,255,.89)!important;
- box-shadow:0 5px 22px rgba(41,65,75,.045),inset 0 1px 0 rgba(255,255,255,.92)!important;
- -webkit-backdrop-filter:blur(14px) saturate(105%)!important;
- backdrop-filter:blur(14px) saturate(105%)!important;
+ gap:6px!important;text-align:center!important;
+ color:#343B43!important;
+ font:440 15.5px/1.43 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  transform:translateX(-50%)!important;overflow:visible!important;
 }
 :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svHomeLivingLine[data-sv-presence]:not([hidden])::after{
- content:"";position:absolute;left:50%;bottom:-6px;
- width:10px;height:10px;transform:translateX(-50%) rotate(45deg);
- background:rgba(255,255,255,.91);border-right:1px solid rgba(158,176,183,.23);
- border-bottom:1px solid rgba(158,176,183,.23);
+ content:none!important;display:none!important;
+}
+#homePage #svHomeLivingLine .sv-home-living-heading[hidden]{display:none!important}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine .sv-home-living-heading{
+ display:block;color:#20252B;font:560 18px/1.28 -apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;
+ letter-spacing:-.018em;text-align:center;
 }
 :root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence] .sv-home-living-copy{
  width:100%!important;max-width:100%!important;text-align:center!important;
 }
-/* iPhone: readable thought and a proper touch target, without changing the
-   desktop composition or introducing another sphere animation. */
-@media (max-width:649px) and (pointer:coarse){
+:root[data-theme="dark"].sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence]{
+ color:#E6EBF0!important;
+}
+:root[data-theme="dark"].sv-home-empty-sphere #homePage #svHomeLivingLine .sv-home-living-heading{
+ color:#F6F8FA;
+}
+@media(max-width:649px) and (pointer:coarse){
  :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svHomeLivingLine[data-sv-presence]:not([hidden]){
-  max-width:min(346px,calc(100vw - 36px))!important;
-  max-height:160px!important;
-  padding:13px 17px!important;
-  border-radius:21px!important;
-  font-size:clamp(15px,4.1vw,16px)!important;
-  line-height:1.43!important;
+  width:min(340px,calc(100vw - 40px))!important;max-width:340px!important;
+  max-height:168px!important;padding:0!important;
+  font-size:15.5px!important;line-height:1.43!important;
  }
  :root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence] .sv-home-living-action{
-  min-height:39px;
-  height:39px;
-  padding-inline:13px 16px;
-  font-size:clamp(13.5px,3.8vw,14.5px);
+  min-height:44px;height:44px;padding-inline:17px;font-size:14px;
  }
 }
 #tasksPage #svReviewTasksButton{position:relative;display:grid;place-items:center;width:42px;height:42px;padding:8px;border:0;border-radius:50%;background:rgba(120,120,128,.12);color:#1b1b1d;cursor:pointer}
