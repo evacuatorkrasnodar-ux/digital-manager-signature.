@@ -82,8 +82,9 @@
    localDistanceKm(place.lat,place.lon,location.latitude,location.longitude)>45;
   if(forecast&&location&&!separateCity)parts.unshift(weatherText(forecast,location.name));
   if(!parts.length)return;
-  const mark=document.createElement('span');mark.className='sv-task-meeting-advice-mark';
-  mark.textContent='✦';mark.setAttribute('aria-hidden','true');
+  const mark=document.createElement('img');mark.className='sv-task-meeting-advice-mark';
+  mark.src='assets/seyveo-sayvi-assistant-mark.svg?v=1';mark.alt='';
+  mark.decoding='async';mark.setAttribute('aria-hidden','true');
   const copy=document.createElement('p');copy.textContent=parts.join(' ');
   advice.append(mark,copy);advice.hidden=false;
  }

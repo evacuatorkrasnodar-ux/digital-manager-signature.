@@ -1248,3 +1248,14 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-input:foc
  outline:2px solid rgba(79,112,143,.42)!important;
  outline-offset:1px!important;
 }
+
+/* Sayvi advice: one restrained brand avatar replaces decorative sparkles. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice-mark{
+ display:block!important;
+ flex:0 0 26px!important;
+ width:26px!important;height:26px!important;min-width:26px!important;
+ box-sizing:border-box!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+ object-fit:contain!important;
+}
