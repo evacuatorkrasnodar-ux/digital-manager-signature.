@@ -43,16 +43,33 @@
   attribution.href='https://www.openstreetmap.org/copyright';attribution.target='_blank';attribution.rel='noopener noreferrer';
   viewport.append(tilesLayer,pin,controls,attribution);
   const footer=node('div','sv-place-map-footer');
-  const navigatorLink=node('a','sv-place-map-route-primary','Маршрут в Навигаторе ↗');
+  const navigatorLink=node('a','sv-place-map-route-primary','Маршрут в Навигаторе');
   navigatorLink.href=places.navigatorRouteURL(target);
   navigatorLink.setAttribute('aria-label','Передать адрес в Яндекс Навигатор');
-  const mapsLink=node('a','sv-place-map-route-secondary','Яндекс Карты ↗');
+  const mapsLink=node('a','sv-place-map-route-secondary','Яндекс Карты');
   mapsLink.href=places.yandexRouteURL(target);mapsLink.target='_blank';mapsLink.rel='noopener noreferrer';
   mapsLink.setAttribute('aria-label','Маршрут в Яндекс Картах, если Навигатор не установлен');
   footer.append(navigatorLink,mapsLink);
   sheet.append(handle,header,viewport,footer);shade.append(sheet);
   shade.addEventListener('click',closeMapViewer);
   shade.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeMapViewer()}});
+  // A downward swipe from the sheet header dismisses it. Map gestures stay
+  // independent so dragging the streets never accidentally closes the panel.
+  let dismissGesture=null;
+  const startDismiss=event=>{
+   if(event.target.closest?.('button,a'))return;
+   dismissGesture={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY};
+  };
+  const endDismiss=event=>{
+   if(!dismissGesture||dismissGesture.pointerId!==event.pointerId)return;
+   const {startX,startY}=dismissGesture;dismissGesture=null;
+   if(event.clientY-startY>90&&Math.abs(event.clientX-startX)<110)closeMapViewer();
+  };
+  for(const area of [handle,header]){
+   area.addEventListener('pointerdown',startDismiss);
+   area.addEventListener('pointerup',endDismiss);
+   area.addEventListener('pointercancel',()=>{dismissGesture=null});
+  }
   mapViewer=shade;dialog.append(shade);
   let centerLat=target.lat,centerLon=target.lon,zoom=16;
   const activePointers=new Map(),tileNodes=new Map();let pinchDistance=0;

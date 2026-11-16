@@ -79,6 +79,13 @@ test('a found branch stays a suggestion until the user confirms the real address
  viewport.listeners.pointerup[0]({pointerId:1});
  descendants(map).find(node=>node.className==='sv-place-map-close').click();
  assert(!descendants(dialog).some(node=>node.className==='sv-place-map-overlay'));
+ mapButton.click();
+ const anotherMap=descendants(dialog).find(node=>node.className==='sv-place-map-overlay');
+ const header=descendants(anotherMap).find(node=>node.className==='sv-place-map-header');
+ header.listeners.pointerdown[0]({pointerId:3,clientX:100,clientY:180,target:{closest:()=>null}});
+ header.listeners.pointerup[0]({pointerId:3,clientX:105,clientY:310});
+ assert(!descendants(dialog).some(node=>node.className==='sv-place-map-overlay'),
+  'swiping down the header closes the in-app map without changing the task');
  const button=descendants(panel).find(node=>node.className==='sv-place-confirm');
  assert(button,'the confirmed-location action is visible');
  button.click();
