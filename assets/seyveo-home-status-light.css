@@ -1,0 +1,50 @@
+/* The original 12px top caption never moves. Only its letter-shaped
+   highlight passes once on activity, then the exact dark ink returns. */
+:root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online{
+ isolation:isolate;
+}
+:root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online .sv-home-status-letters{
+ display:block;
+ white-space:nowrap;
+ color:inherit;
+}
+:root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online .sv-home-status-light-pass{
+ position:absolute;
+ inset:0;
+ display:block;
+ white-space:nowrap;
+ pointer-events:none;
+ color:transparent!important;
+ -webkit-text-fill-color:transparent!important;
+ background-image:linear-gradient(105deg,
+  transparent 0%,transparent 39%,
+  rgba(118,158,188,.2) 44%,rgba(188,213,233,.94) 50%,
+  rgba(118,158,188,.2) 56%,transparent 61%,transparent 100%);
+ background-size:230% 100%;
+ background-position:100% 50%;
+ -webkit-background-clip:text;
+ background-clip:text;
+ opacity:0;
+}
+:root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online.sv-home-status-light-running .sv-home-status-light-pass{
+ animation:svHomeStatusLetterLight 1.32s cubic-bezier(.28,.04,.2,1) 1 both;
+}
+@keyframes svHomeStatusLetterLight{
+ 0%{background-position:100% 50%;opacity:0}
+ 15%{opacity:1}
+ 85%{opacity:1}
+ 100%{background-position:0% 50%;opacity:0}
+}
+:root.sv-sayvi-handoff-demo[data-theme="light"] #homePage .sv-sayvi-home-online[data-sv-sayvi-state="thinking"]{color:#466778}
+:root.sv-sayvi-handoff-demo[data-theme="light"] #homePage .sv-sayvi-home-online[data-sv-sayvi-state="speaking"]{color:#38728A}
+:root.sv-sayvi-handoff-demo[data-theme="light"] #homePage .sv-sayvi-home-online[data-sv-sayvi-state="offline"]{color:#A35755}
+:root.sv-sayvi-handoff-demo[data-theme="dark"] #homePage .sv-sayvi-home-online[data-sv-sayvi-state="thinking"]{color:#AAC8D7}
+:root.sv-sayvi-handoff-demo[data-theme="dark"] #homePage .sv-sayvi-home-online[data-sv-sayvi-state="speaking"]{color:#B7DCEB}
+:root.sv-sayvi-handoff-demo[data-theme="dark"] #homePage .sv-sayvi-home-online[data-sv-sayvi-state="offline"]{color:#E2A39F}
+@media(prefers-reduced-motion:reduce){
+ :root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online .sv-home-status-light-pass,
+ :root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online.sv-home-status-light-running .sv-home-status-light-pass{
+  animation:none!important;
+  opacity:0!important;
+ }
+}

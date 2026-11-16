@@ -60,9 +60,10 @@
  function update(){
   const visible=ready&&homeVisible();
   // The quiet line supplements the original greeting, it never replaces it.
+  // Thinking and speaking now live in the persistent top status. Keep only
+  // the microphone acknowledgement here, never duplicate the same words.
   const status=voicePhase==='listening'?'Слушаю…'
-   :voicePhase==='speaking'?'Сэйви отвечает…'
-   :voicePhase==='thinking'?'Сэйви думает…'
+   :voicePhase?''
    :idleHint&&quietHome()?idleHint:'';
   if(!visible||!status){
    if(!line.hidden)line.hidden=true;
