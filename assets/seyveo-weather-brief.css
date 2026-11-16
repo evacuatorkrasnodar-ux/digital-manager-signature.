@@ -21,7 +21,7 @@
   flex-wrap:nowrap;
   white-space:nowrap;
   gap:8px;
-  font-size:clamp(12.5px,3.4vw,14px);
+  font-size:clamp(13.5px,3.5vw,15px);
   letter-spacing:-.012em;
 }
 @media (max-width:649px) and (pointer:coarse){
