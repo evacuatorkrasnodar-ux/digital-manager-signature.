@@ -1,38 +1,44 @@
-/* The Home opening must wait for the written greeting and approved voice. */
+/* SEYVEO cinema handoff: empty Home, dock-first departure, weather reveal.
+ * Static control-flow checks. Real iPhone Safari motion still needs device QA.
+ */
+'use strict';
 const assert=require('node:assert/strict');
 const {readFileSync}=require('node:fs');
 const {join}=require('node:path');
-const vm=require('node:vm');
-
 const source=readFileSync(join(__dirname,'../assets/seyveo-sayvi-handoff-demo.js'),'utf8');
-const begin=source.indexOf('  function scheduleFlightWhenReady(){');
-const end=source.indexOf('  // The Home greeting is a welcome',begin);
-assert.ok(begin>=0&&end>begin,'the handoff readiness gate exists');
-const gate=source.slice(begin,end);
-assert.match(source,/\{text:'Привет!',kind:'welcome'/,'opening never says a saved personal name');
-assert.doesNotMatch(source,/10400/,'a hard-coded 10.4-second wait cannot cut off letters');
-assert.match(source,/writtenGreetingComplete=true;\s*scheduleFlightWhenReady\(\)/);
-assert.match(source,/voiceMedia\.onended=\(\)=>\{\s*if\(done\)return;\s*narrationComplete=true;/);
+const css=readFileSync(join(__dirname,'../assets/seyveo-sayvi-handoff-demo.css'),'utf8');
+const section=(begin,end)=>{
+ const a=source.indexOf(begin),b=source.indexOf(end,a+begin.length);
+ assert.ok(a>=0&&b>a,'Cinema stage exists: '+begin);
+ return source.slice(a,b);
+};
 
-function check({written,narration,finished=false,started=100}={}){
-  const timers=[];
-  let flights=0;
-  const context={
-    done:finished,openingStartedAt:started,introTimer:0,
-    writtenGreetingComplete:written,narrationComplete:narration,
-    setTimeout:(fn,ms)=>{timers.push({fn,ms});return timers.length;},
-    begin:()=>{flights++;}
-  };
-  vm.runInNewContext(gate+'\nscheduleFlightWhenReady();scheduleFlightWhenReady();',context);
-  if(timers.length)timers[0].fn();
-  return {timers,flights};
-}
-assert.equal(check({written:false,narration:true}).flights,0,'writing still in progress');
-assert.equal(check({written:true,narration:false}).flights,0,'voice still speaking');
-assert.equal(check({written:true,narration:true,finished:true}).flights,0,'already dismissed');
-assert.equal(check({written:true,narration:true,started:0}).flights,0,'opening not started');
-const ready=check({written:true,narration:true});
-assert.equal(ready.timers.length,1,'flight scheduled exactly once');
-assert.equal(ready.timers[0].ms,1250,'final sentence receives a calm pause');
-assert.equal(ready.flights,1);
-process.stdout.write('PASS: no name; flight waits for all letters and narration, with one calm pause.\n');
+const flight=section('  function begin(){','  function runOpening(');
+assert.match(flight,/if\(!shouldDockHome\(\)\)\{finish\(\{stayHome:true\}\);return;\}/,
+ 'Empty Home retains the full-size original Sayvi');
+assert.match(flight,/growDock\(180\*speed,3650\*speed\)/,
+ 'Pearl dock opens before the miniature lands');
+assert.match(flight,/duration:4200\*speed/,'Full sphere has a continuous dock flight');
+
+const finish=section('  function finish(','  function begin(){');
+assert.match(finish,/root\.classList\.add\('sv-home-empty-at-launch','sv-home-empty-sphere'\)/,
+ 'No-card launch retains the three-slot dock without a full-to-short flash');
+assert.match(finish,/if\(spark\)root\.classList\.add\('sv-sayvi-handoff-arrived'\)/,
+ 'Dock landing waits for the end of its flight');
+
+const emptyReturn=section('  function enterEmptySphere(){','  function leaveEmptySphere(');
+assert.match(emptyReturn,/duration:1540/,'Original Sayvi rises from the miniature');
+assert.match(emptyReturn,/motion\.finished\.then\(complete\)/,
+ 'Home arrival is tied to completion of the actual animation');
+assert.match(emptyReturn,/root\.classList\.add\('sv-home-empty-arrived'\)/,
+ 'Weather gate opens only after the large sphere arrives');
+assert.match(css,/:root\.sv-home-empty-sphere\.sv-home-empty-arriving #homePage #svSayviHomeWeather\{\s*opacity:0!important/,
+ 'Weather remains invisible during the flight');
+assert.match(css,/:root\.sv-home-empty-sphere\.sv-home-empty-arrived #homePage #svSayviHomeWeather\{/,
+ 'Weather appears in the completed-arrival state');
+assert.match(css,/:root\.sv-home-empty-sphere\.sv-home-empty-route-exit[\s\S]*?animation:sv-music-ambient-dock-expand 460ms/,
+ 'Route departure expands the original dock promptly');
+
+assert.match(source,/\{text:'Привет!',kind:'welcome'/,'Welcome remains handwritten');
+assert.match(source,/No automatic spoken welcome/,'No unsolicited voice playback');
+console.log('PASS: empty Home, dock-first flight, returned sphere, delayed weather, route exit.');

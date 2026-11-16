@@ -9,14 +9,13 @@ const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const css=fs.readFileSync('assets/seyveo-fullscreen-workspaces.css','utf8');
 const source=fs.readFileSync('assets/seyveo-dock-continuity.js','utf8');
-assert.equal((html.match(/<footer class="dock"/g)||[]).length,1,'Exactly one real dock');
+assert.equal((html.match(/<footer class="dock sv-shared-dock"/g)||[]).length,1,'Exactly one real dock');
 for(const id of ['navHome','navTasks','assistantButton','navPicture','navManage']){
  assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,'No duplicate navigation: '+id);
 }
 assert.match(html,/assets\/seyveo-dock-continuity\.js\?v=\d+/,'Dock continuity controller loaded');
-assert.match(html,/assets\/seyveo-fullscreen-workspaces\.css\?v=2/,'Current dock-safe viewport style');
-const last=html.slice(-1200);
-assert.ok(last.indexOf('seyveo-business-command.js')<last.indexOf('seyveo-dock-continuity.js'),
+assert.match(html,/assets\/seyveo-fullscreen-workspaces\.css\?v=\d+/,'Current dock-safe viewport style');
+assert.ok(html.indexOf('assets/seyveo-business-command.js')<html.indexOf('assets/seyveo-dock-continuity.js'),
  'Bind after existing business/dialog handlers');
 assert.match(source,/dock\.parentNode\.insertBefore\(origin,dock\)/,'Preserve original anchor');
 assert.match(source,/next\.appendChild\(dock\)/,'Move existing dock, not create another');

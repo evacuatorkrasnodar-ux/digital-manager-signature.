@@ -20,6 +20,7 @@ let pendingUpdate=false;
 // decisions always take precedence; these examples never enter task storage.
 const previewArmed=true;
 let previewSeen=false,previewRearmAt=0;
+let previewSuspended=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
  timers.push(id);return id;
@@ -48,10 +49,29 @@ function resetSpace(){
  tip.textContent='';
 }
 function rest(){
- cancel();mode='idle';key='';readingUntil=0;
+ cancel();mode='idle';key='';readingUntil=0;previewSuspended=false;
  resetSpace();focus(false);
  clearRecommendation();
  scheduleRefresh();
+}
+// Navigation never completes a card. Keep the current featured card, its
+// compact neighbours and any unfinished editor mounted while Home is away.
+// Only actual card actions may remove an item from this presentation.
+function suspendPreview(){
+ if(mode!=='preview'||space.hidden||space.classList.contains('lm-disappear'))return false;
+ cancel();previewSuspended=true;
+ return true;
+}
+function resumePreview(){
+ if(!previewSuspended||mode!=='preview')return false;
+ if(!available())return true;
+ previewSuspended=false;
+ // The original three-card layout is retained. Complete an interrupted
+ // entrance once, without recreating or rotating the user's cards.
+ if(!space.classList.contains('lm-gather')){
+  later(()=>{if(mode==='preview'&&available())gatherPreview()},420);
+ }
+ return true;
 }
 function scheduleRefresh(){
  if(pendingUpdate)return;
@@ -1626,8 +1646,8 @@ const observer=new MutationObserver(scheduleRefresh);
 observer.observe(dynamic,{childList:true,attributes:true,attributeFilter:['hidden']});
 const viewObserver=new MutationObserver(()=>{
  if(document.documentElement.classList.contains('seyveo-conversation')){
-  if(mode!=='idle')rest();
- }else scheduleRefresh();
+  if(!suspendPreview()&&mode!=='idle'&&!previewSuspended)rest();
+ }else if(!resumePreview())scheduleRefresh();
 });
 viewObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 // Keep date-based suggestions current even if the app remains open across 18:00
@@ -1648,16 +1668,26 @@ window.addEventListener('seyveo:card-snoozes-changed',()=>{
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
+ const atHome=!location.hash||location.hash==='#home';
+ // Switching sections is not a swipe, a postponement or a decision.
+ // Keep the complete training queue so the Home screen cannot go empty
+ // simply because someone opened Tasks, My World or Documents.
+ if(!atHome&&(previewSuspended||suspendPreview()))return;
+ if(atHome&&previewSuspended){
+  later(()=>{if(resumePreview())scheduleRefresh()},160);
+  return;
+ }
  // The original intro can be replayed on revisiting Home, but real cards take priority.
- if(!location.hash||location.hash==='#home')previewSeen=false;
+ if(atHome)previewSeen=false;
  if(mode!=='idle')rest();
  else focus(false);
  // Sync after the main router updates Home visibility.
  later(scheduleRefresh,160);
 });
 document.addEventListener('visibilitychange',()=>{
- if(document.hidden&&mode!=='idle')rest();
- else if(!document.hidden)scheduleRefresh();
+ if(document.hidden){
+  if(!suspendPreview()&&mode!=='idle'&&!previewSuspended)rest();
+ }else if(!resumePreview())scheduleRefresh();
 });
 document.addEventListener('close',()=>later(scheduleRefresh,130),true);
 window.addEventListener('pagehide',()=>{cancel();resetSpace();focus(false)});

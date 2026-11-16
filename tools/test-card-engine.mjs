@@ -92,7 +92,7 @@ console.log('SEYVEO Card Engine visibility preferences: tests passed');
 
 const lineup=allStudioCards.slice(0,3);
 const rotated=browserEngine.rotateQueue(lineup,lineup[0].id);
-assert.deepEqual(rotated.map(x=>x.id),[lineup[1].id,lineup[2].id,lineup[0].id],'swiped card goes to end of the queue');
+assert.deepEqual(Array.from(rotated,x=>x.id),[lineup[1].id,lineup[2].id,lineup[0].id],'swiped card goes to end of the queue');
 assert.equal(lineup[0].id,allStudioCards[0].id,'original event order remains unchanged');
 assert.equal(browserEngine.rotateQueue([lineup[0]],lineup[0].id).length,1,'single item remains in source queue');
 const now=Date.now();
@@ -117,12 +117,15 @@ const homeSceneSource=readFileSync(new URL('../assets/living-moment.js',import.m
 assert.match(homeSceneSource,/workOwn=polymer\('Исправить'/,'manual work edit is called Исправить');
 assert.match(homeSceneSource,/mailEdit\.hidden=!active\|\|mailStep!=='draft'/,'manual mail edit is initially available');
 assert.match(homeSceneSource,/documentEdit\.hidden=!active\|\|documentStep!=='summary'/,'manual document edit is initially available');
-assert.match(homeSceneSource,/documentSave\.hidden=!active\|\|!\['preview','edit'\]\.includes\(documentStep\)/);
+assert.match(homeSceneSource,/documentSave\.hidden=!active\|\|!\(reviewChoice\|\|editing\)/,
+ 'Send is shown for a prepared proposal or a manually edited document');
 assert.match(homeSceneSource,/const mailSave=polymer\('Отправить'/,'developer can see Send in manual mail flow');
 assert.match(homeSceneSource,/execute\.textContent='Отправить'/,'developer can see Send after Sayvi mail proposal');
-assert.match(homeSceneSource,/mailStep='sent-demo'/,'explicit demo Send shows no real delivery');
+assert.match(homeSceneSource,/Local preview finishes here; no external mailbox is contacted/,
+ 'Demo Send cannot be mistaken for delivery through a real mail provider');
 assert.match(homeSceneSource,/documentStep='preview'/,'Sayvi opens proposed amendment before Save');
-assert.match(homeSceneSource,/documentStep='saved'/,'document Save creates a local draft state');
+assert.match(homeSceneSource,/localStorage\.setItem\(documentDraftKey,JSON\.stringify/,
+ 'Document Save creates a local draft without sending a real document');
 assert.match(homeSceneSource,/open\.textContent='Перейти'/,'third choice is navigation');
 assert.match(homeSceneSource,/function syncDocumentTitleTap\(\)/,'title navigation is preserved');
 assert.ok(!homeSceneSource.includes("documentStep==='review'?'Ознакомлен'"),'no fake acknowledgement button');
@@ -142,14 +145,15 @@ assert.match(iconEngineSource,/createElementNS\('http:\/\/www\.w3\.org\/2000\/sv
 assert.match(iconEngineSource,/decorateActionButton\(button,action\.id\)/,'new cards receive icons automatically');
 assert.match(iconHomeSource,/cardIconize\(mailSave,'send'\)/,'mail Send has paper-plane icon');
 assert.match(iconHomeSource,/cardIconize\(execute,'send'\)/,'Sayvi draft Send has paper-plane icon');
-assert.match(iconHomeSource,/\[documentSave,'save'\]/,'document Save icon is wired');
+assert.match(iconHomeSource,/\[documentSave,'send'\]/,
+ 'Document proposal uses the approved Send arrow instead of a floppy-disk icon');
 assert.match(iconSharedStyles,/min-height:48px!important/,'regular card targets are >=44px');
 assert.match(iconHomeStyles,/min-height:48px!important/,'Home card targets are >=44px');
 console.log('SEYVEO official Sayvi-orb and iPhone action icon contract: tests passed');
 assert.match(iconEngineSource,/classList\.remove\('sv-sayvi-label'\)/,
  'replaced Sayvi action must lose obsolete pseudo-icon class');
-assert.match(iconHomeStyles,/sv-ref-card-sayvi\.sv-card-icon-button\[data-sv-card-icon="sayvi"\]/,
- 'Mail and Document use their final shared Sayvi graphite capsule');
+assert.match(iconHomeStyles,/\.lm-polymer\.sv-card-icon-button\[data-sv-card-icon="sayvi"\]/,
+ 'Home Mail and Document use the approved shared Sayvi action');
 assert.match(iconHomeStyles,/mask:none!important/,
  'legacy masked Sayvi star is explicitly disabled');
 console.log('SEYVEO single Sayvi mark and shared graphite background: tests passed');
@@ -157,12 +161,17 @@ console.log('SEYVEO single Sayvi mark and shared graphite background: tests pass
 // Standard iPhone editing glyph and uniform button silhouette.
 // Use our own vectors; do not ship or redistribute Apple's symbol assets.
 assert.match(iconEngineSource,/edit:'<path d="M12\.7 4H7/,'Edit is a recognizable square-and-pencil symbol');
-assert.match(iconSharedStyles,/Premium Rounded Squares v1/,'Card Engine uses rounded-square actions');
-assert.match(iconHomeStyles,/3 identical soft-rounded squares/,'Home matches Card Engine action shapes');
-assert.match(iconSharedStyles,/width:48px!important;min-width:48px!important/,'three action targets are identical');
-assert.match(iconHomeStyles,/background:#38383A!important/,'Sayvi stays premium graphite');
-assert.match(iconHomeStyles,/background:rgba\(169,180,192,\.12\)!important/,'Edit and Navigate share restrained matte backing');
-console.log('SEYVEO rounded-square icon actions and square-pencil edit glyph: tests passed');
+assert.match(iconSharedStyles,/The new assistant emblem is artwork inside the existing 50px button/,
+ 'Shared Card Engine uses the approved 50px actions');
+assert.match(iconHomeStyles,/Work, Mail and Document share 50px circles/,
+ 'Home keeps its approved circular action shapes');
+assert.match(iconHomeStyles,/flex:0 0 50px!important;width:50px!important;min-width:50px!important/,
+ 'Composing action targets remain identical 50px circles');
+assert.match(iconHomeStyles,/background:transparent!important/,
+ 'White-theme Home actions retain the approved transparent pearl fill');
+assert.match(iconHomeStyles,/background:#38383A!important/,
+ 'Dark-theme graphite remains available');
+console.log('SEYVEO 50px pearl action icons and square-pencil edit glyph: tests passed');
 
 // Original incoming mail must not be replaced by the generated reply draft.
 // Initial state and both answer paths display the immutable email first.
@@ -193,8 +202,8 @@ assert.match(homeSceneSource,/input\.style\.height=Math\.min\(260,Math\.max\(112
  'editor grows with text until a safe 260px limit');
 assert.match(homeSceneSource,/input\.style\.overflowY=natural>260\?'auto':'hidden'/,
  'ordinary drafts are never visually clipped');
-assert.match(homeSceneSource,/prepareMailReply\(preview\)/,
- 'Sayvi proposal preview grows to reveal its text');
+assert.match(homeSceneSource,/const preview=create\('p','lm-mail-draft',mailDraft\)/,
+ 'Sayvi proposal preview renders the full draft as readable text');
 assert.match(homeSceneSource,/prepareMailReply\(input\)/,
  'manual edit grows to reveal its text');
 assert.ok(!homeSceneSource.includes("create('label','lm-mail-edit-label','Исправить и отправить')"),
@@ -222,20 +231,18 @@ assert.match(iconHomeStyles,/min-height:88px!important/,
  'empty work reply no longer occupies a tall block');
 console.log('SEYVEO focused Home card editors, safe queue and textarea sizing: tests passed');
 
-// Production Home only displays user-sourced events; tutorial warnings belong
-// in the developer Studio, not the Home queue.
-assert.match(homeSceneSource,/const sample=\[\];/,
- 'no mock mail, document or Elena chat is in the Home queue');
-assert.match(homeSceneSource,/function startPreview\(\)\{return false\}/,
- 'retired sample warnings cannot be started on Home');
-assert.match(homeSceneSource,/preview:\(\)=>false,state:\(\)=>mode/,
- 'external preview trigger cannot revive sample cards');
-assert.match(homeSceneSource,/function deferredPreview\(\)\{return \[\]\}/,
- 'old deferred fake email/contract notices are gone');
+// The user-approved three training cards fill an otherwise empty Home.
+// They remain local UI examples; no fictional mail or document is stored.
+assert.match(homeSceneSource,/const sample=\[[\s\S]*?kind:'contract'[\s\S]*?kind:'work'[\s\S]*?kind:'mail'/,
+ 'Document, Elena chat and Mail examples are present in the approved Home queue');
+assert.match(homeSceneSource,/const previewArmed=true/,
+ 'The approved teaching cards are enabled');
+assert.match(homeSceneSource,/Preview entries never enter the real user's stored personal tasks/,
+ 'Training examples never become genuine personal tasks');
+assert.match(homeSceneSource,/if\(previewArmed&&!previewSeen&&!pending&&available\(\)&&startPreview\(\)\)return/,
+ 'Training cards appear only when real owner recommendations do not take priority');
 assert.ok(!homeSceneSource.includes("JSON.parse(localStorage.getItem('seyveo-business-command-tasks-demo-v1')"),
  'fake manager task data cannot become a real Home alert');
-assert.match(homeSceneSource,/window\.SEYVEO_LIFE_EVENTS\?\.attentionTasks\?\.\(\)/,
- 'genuine personal deadlines still display');
 assert.match(homeSceneSource,/function showExistingAdvice\(\)/,
  'verified source recommendations remain supported');
-console.log('SEYVEO live Home has no training mail, mock documents or fake warnings: tests passed');
+console.log('SEYVEO three training cards never invent real mail, documents or tasks: tests passed');

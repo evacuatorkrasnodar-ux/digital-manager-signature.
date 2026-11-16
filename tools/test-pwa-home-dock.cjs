@@ -7,6 +7,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const rootDir=path.resolve(__dirname,'..');
 const css=fs.readFileSync(path.join(rootDir,'assets/floating-navigation.css'),'utf8');
+const approvedDock=fs.readFileSync(path.join(rootDir,'assets/seyveo-home-dock-preview.css'),'utf8');
 const source=fs.readFileSync(path.join(rootDir,'assets/future-presence.js'),'utf8');
 const html=fs.readFileSync(path.join(rootDir,'index.html'),'utf8');
 
@@ -14,7 +15,10 @@ const html=fs.readFileSync(path.join(rootDir,'index.html'),'utf8');
 assert.match(css,/--seyveo-dock-bottom:max\(7px,calc\(env\(safe-area-inset-bottom,0px\) - 20px\)\)/);
 assert.match(css,/\.dock\{\s*position:fixed!important;\s*z-index:30!important;/);
 assert.match(css,/bottom:var\(--seyveo-dock-bottom\)!important/);
-assert.match(css,/--seyveo-dock-height:58px/,'Current shared dock height');
+assert.match(approvedDock,/:root\[data-theme="light"\]\{--seyveo-dock-height:60px\}/,
+ 'Approved white-theme dock is 60px; earlier split-dock foundations are overridden');
+assert.match(approvedDock,/height:60px!important;min-height:60px!important/,
+ 'Approved dock height is applied to the live footer');
 assert.doesNotMatch(css,/--seyveo-dock-bottom:[^;]*safe-area-inset-top/);
 const dockOffset=bottomSafeArea=>Math.max(7,bottomSafeArea-20);
 assert.equal(dockOffset(34),14,'Current iPhone bottom compensation');
@@ -32,7 +36,7 @@ assert.match(css,/overscroll-behavior-y:contain/);
 assert.match(css,/-webkit-overflow-scrolling:touch/);
 assert.match(html,/assets\/floating-navigation\.css\?v=\d+/);
 assert.match(html,/assets\/future-presence\.js\?v=4/);
-assert.ok(html.includes('</div></div><footer class="dock"'),'Dock is not inside app scroller');
+assert.match(html,/<footer class="dock sv-shared-dock"/,'One shared footer remains mounted');
 
 function simulate({mediaStandalone=false,appleStandalone=false,view='home',chat=false}={}){
  const pages=Object.fromEntries(['calendar','picture','tasks','life','manage','home'].map(n=>

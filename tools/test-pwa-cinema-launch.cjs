@@ -1,5 +1,5 @@
-/* The long dock flight is once daily. The short written welcome is independent
-   and replays on every visible Home load, including Safari/PWA restarts. */
+/* Explicit Safari reload and fresh installed-PWA launch replay the artwork.
+   Ordinary tab navigation still respects the one-per-day gate. */
 const assert=require('node:assert/strict');
 const {readFileSync}=require('node:fs');
 const {join}=require('node:path');
@@ -27,16 +27,16 @@ function evaluate({standalone=false,legacy=false,type='navigate',hash='',query='
 }
 
 assert.equal(evaluate(),false,'normal Safari navigation respects once-a-day setting');
-assert.equal(evaluate({type:'reload'}),false,'Safari reload does not repeat the long flight');
-assert.equal(evaluate({standalone:true}),false,'installed PWA does not repeat the long flight');
-assert.equal(evaluate({legacy:true}),false,'older standalone mode uses the same flight gate');
+assert.equal(evaluate({type:'reload'}),true,'Safari reload replays the approved opening');
+assert.equal(evaluate({standalone:true}),true,'installed PWA opens with the full greeting');
+assert.equal(evaluate({legacy:true}),true,'iPhone Safari standalone flag behaves the same');
 assert.equal(evaluate({standalone:true,query:'?sayvi-intro=0'}),false,'explicit skip is respected');
 assert.equal(evaluate({standalone:true,hash:'#tasks'}),false,'a task deep link keeps its route');
 assert.equal(evaluate({seen:false}),true,'first normal visit of the day still plays');
 assert.equal(evaluate({query:'?sayvi-intro=1'}),true,'explicit preview replays the long scene');
-assert.match(source,/function showHomeWelcome\(\)/,'the short written welcome has its own lifecycle');
-assert.match(source,/renderToday\(\);\s*beginHomeGreetingLifetime\(\);\s*if\(!greetingPlayed\)showHomeWelcome\(\)/,
- 'the short welcome runs even when the long film was skipped');
+assert.match(source,/function beginHomeGreetingLifetime\(\)/,'the Home written greeting has its own lifetime');
+assert.match(source,/renderToday\(\);\s*beginHomeGreetingLifetime\(\)/,
+ 'Home content returns when the film finishes or is skipped');
 assert.match(source,/document\.addEventListener\('visibilitychange',onVisible\)/,
  'a backgrounded PWA waits to become visible before starting its film');
-process.stdout.write('PASS: short PWA welcome, once-daily flight, explicit replay, deep links, visibility.\n');
+process.stdout.write('PASS: Safari/PWA relaunch, daily navigation gate, explicit replay, deep links, visibility.\n');
