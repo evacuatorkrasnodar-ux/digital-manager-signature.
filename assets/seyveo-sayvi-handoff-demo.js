@@ -36,7 +36,10 @@
   const standaloneLaunch=matchMedia('(display-mode: standalone)').matches
     ||navigator.standalone===true;
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||pageReload||standaloneLaunch||!alreadySeen);
+  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||pageReload||
+    standaloneLaunch||!alreadySeen||
+    (typeof document!=='undefined'&&
+      document.documentElement.classList.contains('sv-broadcast-onboarding')));
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
