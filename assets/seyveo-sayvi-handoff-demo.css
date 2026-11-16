@@ -4,8 +4,8 @@
 :root.sv-sayvi-handoff-demo{
  --sv-home-orb-size:clamp(230px,68vw,315px);
  --sv-home-orb-half:clamp(115px,34vw,157.5px);
- --sv-home-weather-offset:84px;
- --sv-home-cards-offset:136px;
+ --sv-home-cards-offset:80px;
+ --sv-home-weather-offset:128px;
 }
 /* A touch phone needs more presence than a desktop preview. The two values
    stay constant through greeting and idle; both use the same geometry. The
@@ -310,7 +310,16 @@
 }
 :root.sv-cinema-stagger-enter #homePage #stage > .message{
   transition:none!important;
-  animation:sv-cinema-rise-in 1200ms cubic-bezier(.22,.82,.22,1) 190ms both!important;
+  animation:sv-cinema-page-wake .6s ease 190ms both!important;
+}
+/* The speech bubble and the information headline never travel through Sayvi.
+   Both are revealed at their final coordinates with opacity only. */
+@keyframes sv-home-info-fade-in{from{opacity:0}to{opacity:1}}
+:root.sv-home-info-enter #homePage #stage > .message{
+  animation:sv-home-info-fade-in .52s ease .16s both!important;
+}
+:root.sv-home-info-enter #homePage #svHomeCalmDetails:not([hidden]){
+  animation:sv-home-info-fade-in .52s ease .3s both!important;
 }
 :root.sv-cinema-stagger-enter #homePage #seyveoLivingMoment:not([hidden]) .lm-caption:not(:empty){
   animation:sv-cinema-caption-in 1100ms cubic-bezier(.22,.82,.22,1) 550ms both;
@@ -642,7 +651,7 @@ body > #orb.sv-sayvi-handoff-flight {
   width:min(385px,calc(100% - 32px))!important;
   margin:0!important;
   transform:translate3d(-50%,0,0)!important;
-  transition:top .9s cubic-bezier(.22,.8,.22,1),opacity .55s ease!important;
+  transition:opacity .55s ease!important;
 }
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #svSayviHomeWeather,
 :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #svSayviHomeWeather{
@@ -653,8 +662,8 @@ body > #orb.sv-sayvi-handoff-flight {
   transform:translateX(-50%)!important;
   transition:opacity .7s ease!important;
 }
-/* Below Sayvi: a single concise greeting, never another speech paragraph.
-   Weather and card count each keep their own reserved coordinates. */
+/* Below Sayvi: one greeting, card count, then weather. Each has a stable
+   coordinate, regardless of visibility or greeting timers. */
 :root.sv-home-empty-sphere #homePage #stage > .message #subline{
   display:none!important;
 }
@@ -685,6 +694,9 @@ body > #orb.sv-sayvi-handoff-flight {
   visibility:visible!important;
   pointer-events:auto!important;
   animation:sv-home-weather-after-sayvi .75s cubic-bezier(.22,.8,.22,1) both!important;
+}
+:root.sv-home-info-enter.sv-home-empty-sphere.sv-home-empty-arrived:not(.sv-music-ambient) #homePage #svSayviHomeWeather:not([hidden]){
+  animation:sv-home-info-fade-in .52s ease .44s both!important;
 }
 @keyframes sv-home-weather-after-sayvi{
   from{opacity:0}
