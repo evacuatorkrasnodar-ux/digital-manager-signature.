@@ -121,12 +121,10 @@
    display:grid!important;position:relative;
   }
   :host([data-task-tools="true"]) .sv-review-cards-control{display:grid!important}
-  :host([data-task-tools="true"]) .sv-history-search::after{
-   content:"";position:absolute;top:10px;bottom:10px;right:0;width:1px;
-   background:rgba(100,106,119,.19);pointer-events:none;
-  }
+  /* No internal dividers or individually raised button surfaces. */
+  :host([data-task-tools="true"]) .sv-history-dual .control::after{content:none!important;display:none!important}
   :host([data-task-tools="true"]) .sv-history-dual .control:active{
-   background:rgba(120,125,140,.12)!important;
+   background:transparent!important;opacity:.65;
   }
   :host([data-task-tools="true"]) .sv-history-select[aria-pressed="true"]{
    background:transparent!important;
