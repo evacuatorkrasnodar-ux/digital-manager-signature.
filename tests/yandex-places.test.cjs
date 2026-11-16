@@ -1,7 +1,21 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
 const yandex=require('../assets/seyveo-yandex-places.js');
 const places=require('../assets/seyveo-task-places.js');
+
+test('public SEYVEO does not request the licensed Yandex API directly',async()=>{
+ let networkCalls=0;
+ const browser={location:{origin:'https://example.github.io',protocol:'https:',
+  href:'https://example.github.io/app/'},fetch:async()=>{networkCalls++;throw Error('blocked by CSP')}};
+ const source=fs.readFileSync(path.join(__dirname,'../assets/seyveo-yandex-places.js'),'utf8');
+ vm.runInNewContext(source,{window:browser,URL,setTimeout,clearTimeout});
+ const result=await browser.SEYVEO_YANDEX_PLACES.lookup({query:'кафе Ромашка Краснодар',city:'Краснодар'});
+ assert.equal(result,null);
+ assert.equal(networkCalls,0,'no red CSP violations or billable calls');
+});
 
 function response(name,address,{lon=38.98,lat=45.04,hours='ежедневно, 10:00–22:00'}={}){
  return {type:'FeatureCollection',features:[{
@@ -15,12 +29,13 @@ function response(name,address,{lon=38.98,lat=45.04,hours='ежедневно, 1
 test('Yandex venue lookup sends only a category/place query and reads business hours',async()=>{
  let received;
  const proposal={query:'кафе Ромашка, Краснодар',kind:'кафе',venueName:'Ромашка',city:'Краснодар'};
- const value=await yandex.lookup(proposal,{fetcher:async(url,options)=>{
+ const value=await yandex.lookup(proposal,{apiKey:'test-key',fetcher:async(url,options)=>{
   received={url:new URL(url),options};
   return {ok:true,status:200,json:async()=>response('Ромашка','Краснодар, улица Красная, 5')};
  }});
  assert.equal(received.url.hostname,'search-maps.yandex.ru');
  assert.equal(received.url.searchParams.get('type'),'biz');
+ assert.equal(received.url.searchParams.get('apikey'),'test-key');
  assert.equal(received.url.searchParams.get('text'),proposal.query);
  assert(!received.url.searchParams.get('text').includes('Роман'));
  assert.equal(received.options.credentials,'omit');
