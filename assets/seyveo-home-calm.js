@@ -6,7 +6,7 @@
  const stage=document.getElementById('stage');
  if(!home||!stage)return;
  const FIRST_HIDE_MS=60000,NOTICE_MS=15000,REMINDER_MS=180000;
- let hideTimer=0,lastCount=0,suppressBlankClickUntil=0;
+ let hideTimer=0,lastCount=0;
  const notice=document.createElement('button');
  notice.id='svHomeCalmDetails';notice.type='button';notice.hidden=true;
  notice.setAttribute('aria-label','Открыть карточки для разбора');
@@ -39,13 +39,11 @@
  document.addEventListener('pointerdown',event=>{
   if(!isHome()||!lastCount||!root.classList.contains('sv-home-reminder-hidden'))return;
   if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
-  suppressBlankClickUntil=Date.now()+850;
   show();event.stopPropagation();
  },{capture:true,passive:true});
  document.addEventListener('click',event=>{
   if(!isHome())return;
   if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
-  suppressBlankClickUntil=0;
   // No invisible full-screen chat shortcut: Chat belongs to the sphere.
   event.preventDefault();event.stopImmediatePropagation();
  },true);
