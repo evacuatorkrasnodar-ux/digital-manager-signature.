@@ -47,7 +47,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-close{
  flex:0 0 42px!important;width:42px!important;height:42px!important;
  margin:0!important;padding:0!important;border:1px solid rgba(101,111,124,.13)!important;
  border-radius:50%!important;background:#F5F6F8!important;color:#181B20!important;
- font:400 27px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font:450 31px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.95)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-viewport{
