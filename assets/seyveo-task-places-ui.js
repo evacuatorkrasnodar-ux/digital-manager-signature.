@@ -81,7 +81,7 @@
     img.referrerPolicy='strict-origin-when-cross-origin';img.src=tile.url;
     img.style.left=tile.left+'px';img.style.top=tile.top+'px';link.append(img);
    }
-   link.append(node('span','sv-place-map-pin','●'),node('span','sv-place-attribution','© OSM'));
+   link.append(node('span','sv-place-map-pin','●'));
    visual.append(link);card.append(visual);
    if(!confirmed){
     const actions=node('div','sv-place-confirm-actions');

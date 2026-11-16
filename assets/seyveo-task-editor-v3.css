@@ -647,11 +647,6 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-pin{
  border:2px solid #FFF!important;border-radius:50%!important;background:#FF9F0A!important;color:#FFF!important;
  font:500 11px/1 system-ui!important;box-shadow:0 2px 5px #0003!important;pointer-events:none!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-attribution{
- position:absolute!important;right:3px!important;bottom:3px!important;padding:1px 3px!important;
- border-radius:4px!important;background:#FFFFFFE8!important;color:#3E4751!important;
- font:550 8.2px/1.15 system-ui!important;pointer-events:none!important;
-}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-link{
  display:block!important;align-self:flex-start!important;width:64px!important;height:44px!important;
  border-radius:10px!important;overflow:hidden!important;margin-top:5px!important;background:#F1F2F5!important;
