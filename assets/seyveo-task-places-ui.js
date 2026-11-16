@@ -57,11 +57,12 @@
  }
  function placeForSave(){return confirmed?places.cleanPlace(place):null}
  async function resolvePlacePhoto(){
-  if(!place||place.photo||!place.wikidata)return;
+  if(!place||place.source==='known-address'||
+   (!place.photo&&!place.wikidata)||(place.photo&&place.photoAuthor&&place.photoLicense))return;
   const token=++photoRequest,target=place;
   const updated=await (search?.findPlacePhoto(target)||places.resolvePhoto(target));
   if(token!==photoRequest||!dialog.open||!place||place.lat!==target.lat||place.lon!==target.lon)return;
-  if(updated?.photo){place=updated;render()}
+  if(updated?.photo){place=places.cleanPlace(updated);render()}
  }
  function render(){
   if(!dialog.open)return;

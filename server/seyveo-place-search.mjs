@@ -29,6 +29,7 @@ export async function searchPlace(query,{fetcher=fetch}={}){
     .filter(key=>typeof row.address[key]==='string').map(key=>[key,row.address[key].slice(0,110)])): {},
   namedetails:{name:String(row?.namedetails?.name||'').slice(0,100)},
   extratags:{wikidata:String(row?.extratags?.wikidata||'').slice(0,20),
-   wikimedia_commons:String(row?.extratags?.wikimedia_commons||'').slice(0,160)}
+   wikimedia_commons:String(row?.extratags?.wikimedia_commons||'').slice(0,160),
+   image:String(row?.extratags?.image||'').slice(0,240)}
  }));
 }

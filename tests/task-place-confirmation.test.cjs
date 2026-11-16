@@ -92,3 +92,31 @@ test('the confirmed mall entrance photo previews over the map and enlarges with 
  descendants(viewer).find(el=>el.className==='sv-place-photo-close').click();
  assert(!descendants(dialog).some(el=>el.className==='sv-place-photo-lightbox'));
 });
+
+test('Sayvi enriches a non-curated venue photo and displays its real credit',async()=>{
+ const dialog=new Node('dialog');dialog.open=true;
+ const title=new Node('textarea');title.value='завтра встреча в кафе Ромашка Краснодар';
+ const panel=new Node('section');dialog.append(panel);
+ const store={personalTaskDialog:dialog,personalTaskTitle:title,svNewTaskPlacePanel:panel};
+ let photoRequests=0;
+ const window={SEYVEO_TASK_PLACES:places,SEYVEO_SEARCH_HUB:{
+  findPlace:async()=>({name:'Кафе Ромашка',address:'ул. Красная, Краснодар',lat:45.05,lon:38.97,
+   photo:'Romashka exterior.jpg'}),
+  findPlacePhoto:async candidate=>{
+   photoRequests++;return {...candidate,photoAuthor:'Автор снимка',photoLicense:'CC BY-SA 4.0',
+    photoLicenseURL:'https://creativecommons.org/licenses/by-sa/4.0/'};
+  }
+ },matchMedia:()=>({matches:false}),dispatchEvent:()=>{},addEventListener:()=>{}};
+ const document={getElementById:id=>store[id],createElement:tag=>new Node(tag)};
+ class MutationObserver{observe(){}}
+ vm.runInNewContext(script,{window,document,MutationObserver,Event:class{},setTimeout,clearTimeout,encodeURIComponent});
+ const editor=window.SEYVEO_TASK_PLACE_EDITOR;
+ editor.sync();await editor.lookup();await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(photoRequests,1,'a direct photo still needs licensing metadata');
+ const thumbnail=descendants(panel).find(el=>el.className==='sv-place-photo-link');
+ assert(thumbnail);
+ thumbnail.click();
+ const viewer=descendants(dialog).find(el=>el.className==='sv-place-photo-lightbox');
+ assert(descendants(viewer).some(el=>el.tagName==='a'&&el.textContent==='Фото: Автор снимка'));
+ assert(descendants(viewer).some(el=>el.tagName==='strong'&&el.textContent==='Фото места'));
+});

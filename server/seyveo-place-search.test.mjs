@@ -10,7 +10,7 @@ test('sends only a short location query to the fixed official provider',async()=
    return {ok:true,json:async()=>[{
     name:'Вкусно — и точка',display_name:'Вкусно — и точка, Краснодар',type:'fast_food',
     lat:'45.03',lon:'38.97',address:{city:'Краснодар'},
-    extratags:{wikidata:'Q123',private_extra:'must-be-removed'}
+    extratags:{wikidata:'Q123',image:'File:My Cafe.jpg',private_extra:'must-be-removed'}
    }]};
   }
  });
@@ -18,7 +18,7 @@ test('sends only a short location query to the fixed official provider',async()=
  assert.equal(url.searchParams.get('q'),'кафе вкусно и точка, Краснодар');
  assert.match(options.headers['User-Agent'],/SEYVEO/);
  assert.equal(result[0].name,'Вкусно — и точка');
- assert.deepEqual(result[0].extratags,{wikidata:'Q123',wikimedia_commons:''});
+ assert.deepEqual(result[0].extratags,{wikidata:'Q123',wikimedia_commons:'',image:'File:My Cafe.jpg'});
 });
 
 test('rejects empty and too-long place queries',async()=>{

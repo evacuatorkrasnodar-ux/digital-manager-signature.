@@ -103,13 +103,34 @@
   const known=verified?VERIFIED_VENUES.find(row=>
    Math.abs(lat-row.lat)<.00001&&Math.abs(lon-row.lon)<.00001&&
    searchText(name).includes(row.venue)&&searchText(address).includes('дзержинского')):null;
+  const photo=cleanPhoto(value.photo)||known?.photo||'';
+  const photoAuthor=photo&&typeof value.photoAuthor==='string'?value.photoAuthor.replace(/\s+/gu,' ').trim().slice(0,120):'';
+  const photoLicense=photo&&typeof value.photoLicense==='string'?value.photoLicense.replace(/\s+/gu,' ').trim().slice(0,80):'';
+  const photoLicenseURL=photo?safeLicenseURL(value.photoLicenseURL):'';
   return {name,address,lat,lon,source:verified?'known-address':'openstreetmap',
-   sourceUrl,precision:verified?'building':'point',photo:cleanPhoto(value.photo)||known?.photo||'',wikidata};
+   sourceUrl,precision:verified?'building':'point',photo,wikidata,photoAuthor,photoLicense,photoLicenseURL};
  }
  function cleanPhoto(value){
   if(typeof value!=='string')return '';
-  const file=value.replace(/^File:/i,'').trim();
+  let file=value.trim();
+  // OSM may link directly to a Commons file page. Never hotlink arbitrary
+  // commercial pages, photos or image URLs with unknown permissions.
+  if(/^https:\/\/commons\.wikimedia\.org\/wiki\/(?:File:|Special:FilePath\/)/iu.test(file)){
+   file=file.replace(/^https:\/\/commons\.wikimedia\.org\/wiki\/(?:File:|Special:FilePath\/)/iu,'').split(/[?#]/u)[0];
+   try{file=decodeURIComponent(file)}catch{return ''}
+  }else if(/^[a-z]+:\/\//iu.test(file))return '';
+  file=file.replace(/^File:/iu,'').replace(/_/gu,' ').trim();
   return /^[\p{L}\p{N} _().,+-]{4,160}\.(?:jpg|jpeg|png|webp)$/iu.test(file)?file:'';
+ }
+ function safeLicenseURL(value){
+  if(typeof value!=='string')return '';
+  try{
+   const url=new URL(value);
+   if(url.hostname==='creativecommons.org'&&/^\/(?:licenses|publicdomain)\/[a-z0-9/.-]+\/?$/iu.test(url.pathname)){
+    url.protocol='https:';url.search='';url.hash='';return url.toString();
+   }
+  }catch{}
+  return '';
  }
  function locationLabel(result){
   const a=result?.address||{};
@@ -161,14 +182,14 @@
  function cacheGet(key){
   const local=cache.get(key);if(local&&Date.now()-local.at<30*86400000)return local.value;
   try{
-   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v4:'+key)||'null');
+   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v5:'+key)||'null');
    if(stored&&Date.now()-stored.at<30*86400000){cache.set(key,stored);return stored.value;}
   }catch{}
   return undefined;
  }
  function cacheSet(key,value){
   const record={at:Date.now(),value};cache.set(key,record);
-  try{root.localStorage.setItem('seyveo-place:v4:'+key,JSON.stringify(record))}catch{}
+  try{root.localStorage.setItem('seyveo-place:v5:'+key,JSON.stringify(record))}catch{}
  }
  async function lookup(proposal){
   if(!proposal||!proposal.query||proposal.query.length>140)return null;
@@ -222,7 +243,8 @@
    const candidate=cleanPlace({
     name:proposal.explicitAddress?(match.name||'Место встречи'):(match.name||proposal.label),
     address:locationLabel(match),lat:match.lat,lon:match.lon,
-    photo:match.extratags?.wikimedia_commons||'',wikidata:match.extratags?.wikidata||''
+    photo:cleanPhoto(match.extratags?.wikimedia_commons)||cleanPhoto(match.extratags?.image)||'',
+    wikidata:match.extratags?.wikidata||''
    });
    if(candidate&&!candidates.some(item=>item.name===candidate.name&&item.address===candidate.address))candidates.push(candidate);
   }
@@ -278,28 +300,63 @@
    Math.abs(place.lat-VERIFIED_VENUES[0].lat)<.00001&&Math.abs(place.lon-VERIFIED_VENUES[0].lon)<.00001;
   return {
    label:mall?'Вход в ТРЦ «Красная Площадь»':'Фото места',
-   author:mall?'Andrew Butko':'',license:mall?'CC BY-SA 4.0':'',
-   licenseURL:mall?'https://creativecommons.org/licenses/by-sa/4.0/':'',
+   author:mall?'Andrew Butko':place.photoAuthor,
+   license:mall?'CC BY-SA 4.0':place.photoLicense,
+   licenseURL:mall?'https://creativecommons.org/licenses/by-sa/4.0/':place.photoLicenseURL,
    sourceURL:'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(place.photo)
   };
  }
  const photoCache=new Map();
+ const metadataCache=new Map();
+ function plainMetadata(value){
+  if(typeof value!=='string')return '';
+  return value.replace(/<[^>]*>/gu,' ').replace(/&(?:amp|nbsp|quot|lt|gt);/giu,entity=>({
+   '&amp;':'&','&nbsp;':' ','&quot;':'"','&lt;':'<','&gt;':'>'
+  })[entity.toLowerCase()]||' ').replace(/&#(\d+);/gu,(_,number)=>{
+   const code=Number(number);return code>=32&&code<=0x10ffff?String.fromCodePoint(code):' ';
+  }).replace(/\s+/gu,' ').trim();
+ }
+ async function photoMetadata(file){
+  if(metadataCache.has(file))return metadataCache.get(file);
+  const url=new URL('https://commons.wikimedia.org/w/api.php');
+  for(const [key,value] of Object.entries({action:'query',format:'json',origin:'*',prop:'imageinfo',
+   titles:'File:'+file,iiprop:'extmetadata',iiextmetadatalanguage:'en',iiextmetadatafilter:'Artist|LicenseShortName|LicenseUrl'}))url.searchParams.set(key,value);
+  try{
+   const response=await root.fetch(url.toString(),{credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
+   if(!response.ok)return null;
+   const data=await response.json();
+   const pages=Object.values(data?.query?.pages||{});
+   const metadata=pages[0]?.imageinfo?.[0]?.extmetadata;
+   if(!metadata)return null;
+   const value={photoAuthor:plainMetadata(metadata.Artist?.value).slice(0,120),
+    photoLicense:plainMetadata(metadata.LicenseShortName?.value).slice(0,80),
+    photoLicenseURL:safeLicenseURL(metadata.LicenseUrl?.value)};
+   metadataCache.set(file,value);return value;
+  }catch{return null}
+ }
  async function resolvePhoto(value){
-  const place=cleanPlace(value);if(!place||place.photo||!place.wikidata)return place;
-  let file=photoCache.get(place.wikidata);
-  if(file===undefined){
-   const url=new URL('https://www.wikidata.org/w/api.php');
-   url.searchParams.set('action','wbgetentities');url.searchParams.set('ids',place.wikidata);
-   url.searchParams.set('props','claims');url.searchParams.set('format','json');url.searchParams.set('origin','*');
-   try{
-    const response=await root.fetch(url.toString(),{credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
-    if(!response.ok)return place;
-    const data=await response.json();
-    file=cleanPhoto(data?.entities?.[place.wikidata]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value);
-    photoCache.set(place.wikidata,file);
-   }catch{return place}
+  const place=cleanPlace(value);if(!place)return place;
+  let file=place.photo;
+  if(!file&&place.wikidata){
+   file=photoCache.get(place.wikidata);
+   if(file===undefined){
+    const url=new URL('https://www.wikidata.org/w/api.php');
+    url.searchParams.set('action','wbgetentities');url.searchParams.set('ids',place.wikidata);
+    url.searchParams.set('props','claims');url.searchParams.set('format','json');url.searchParams.set('origin','*');
+    try{
+     const response=await root.fetch(url.toString(),{credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
+     if(!response.ok)return place;
+     const data=await response.json();
+     file=cleanPhoto(data?.entities?.[place.wikidata]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value);
+     photoCache.set(place.wikidata,file);
+    }catch{return place}
+   }
   }
-  return {...place,photo:file||''};
+  if(!file)return place;
+  const updated={...place,photo:file};
+  if(place.source==='known-address'||place.photoAuthor&&place.photoLicense)return updated;
+  const metadata=await photoMetadata(file);
+  return metadata?{...updated,...metadata}:updated;
  }
  const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,streetViewURL,
   photoURL,photoInfo,resolvePhoto,suggestedCity,setPreferredCity});

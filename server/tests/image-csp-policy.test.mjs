@@ -10,7 +10,7 @@ test('local CSP accepts only explicitly approved external image hosts',()=>{
  // Blob URLs belong to this page's local previews; do not allow arbitrary network image hosts.
  const hosts=[...policy.matchAll(/https:\/\/[^\s]+/g)].map(m=>new URL(m[0]).hostname);
  assert.deepEqual(hosts,['tile.openstreetmap.org','commons.wikimedia.org','upload.wikimedia.org','planetary.s3.amazonaws.com']);
- assert.match(server,/connect-src 'self' https:\/\/nominatim\.openstreetmap\.org https:\/\/www\.wikidata\.org;/);
+ assert.match(server,/connect-src 'self' https:\/\/nominatim\.openstreetmap\.org https:\/\/www\.wikidata\.org https:\/\/commons\.wikimedia\.org;/);
  assert.match(server,/object-src 'none';/);
  assert.doesNotMatch(policy,/\*/);
 });
