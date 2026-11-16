@@ -396,16 +396,28 @@
  #tasksPage #svTasksDateNav .sv-agenda-day{
   min-height:clamp(116px,32vw,140px);
  }
- /* Apple's today column gets a fine right-edge depth cue, not a raised tile.
-    Keep the other four columns flat and all five dates fully visible. */
- :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day:first-child[data-today="true"]{
-  z-index:1;
- }
- :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day:first-child[data-today="true"]::after{
+ /* The chosen day opens like a slim page: depth moves to whichever date is
+    tapped, without shifting the grid or changing today's blue circle. */
+ :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day::after{
   content:"";position:absolute;top:1px;bottom:1px;right:-8px;width:8px;
   pointer-events:none;
   background:linear-gradient(90deg,rgba(37,48,65,.09) 0%,rgba(37,48,65,.035) 47%,transparent 100%);
+  opacity:0;transition:opacity .18s ease;
  }
+ :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
+  z-index:1;
+ }
+ :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]::after{
+  opacity:1;
+ }
+ /* Fifth is the last fully visible day: its shadow opens inward, never clips. */
+ :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day:nth-child(5)::after{
+  left:-8px;right:auto;
+  background:linear-gradient(270deg,rgba(37,48,65,.09) 0%,rgba(37,48,65,.035) 47%,transparent 100%);
+ }
+}
+@media(max-width:767px) and (prefers-reduced-motion:reduce){
+ :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day::after{transition:none}
 }
 @media(max-width:380px){
  #tasksPage #svTasksDateNav{padding-inline:8px!important}
