@@ -136,12 +136,12 @@ function deferredPreview(){
  const result=[];
  if(mailDeferred)result.push({
   kind:'mail',title:'Андрей · стоимость доставки',
-  note:'Учебное письмо отложено. Настоящее сообщение не отправлялось.',
+  note:'Письмо отложено.',
   route:'mail'
  });
  if(documentDeferred)result.push({
-  kind:'contract',title:'Учебный договор · проверить условия',
-  note:'Учебный документ отложен. Настоящие файлы не изменены.',
+  kind:'contract',title:'Договор · проверить условия',
+  note:'Документ отложен.',
   route:'contract'
  });
  return result;
@@ -168,12 +168,12 @@ function restoreTask(id){
 }
 const sample=[
  {kind:'contract',title:'Проверить документ',sampleTime:'10:32',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
-  reason:'Это вымышленный договор для предпросмотра. Настоящий появляется только из ваших документов или разрешённого источника.',
-  detail:'В рабочем режиме Сэйви поможет проверить договор, но ничего не подпишет без вашего подтверждения.'},
- {kind:'work',title:'Елена · рабочий чат',sampleTime:'10:40',category:'СООБЩЕНИЯ',body:'Я закончила выкладку товаров. Можете проверить?',reason:'Учебное сообщение от Елены, не из реального рабочего чата.',detail:'Сэйви может предложить черновик. Отправка не подключена.'},
+  reason:'В пункте договора не указан срок поставки.',
+  detail:'Можно проверить предложение и сохранить свой вариант.'},
+ {kind:'work',title:'Елена · рабочий чат',sampleTime:'10:40',category:'СООБЩЕНИЯ',body:'Я закончила выкладку товаров. Можете проверить?',reason:'Елена ждёт ответа.',detail:'Сэйви поможет написать ответ.'},
  {kind:'mail',title:'Почта',sampleTime:'10:45',category:'СООБЩЕНИЯ',body:'Есть письмо, которому нужен ответ.',
-  reason:'Почта не подключена, настоящих писем Сэйви пока не читала.',
-  detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'}
+  reason:'Нужно ответить на письмо о стоимости доставки.',
+  detail:'Сэйви предложит ответ, который можно исправить.'}
 ];
 function polymer(label,callback,kind='quiet'){
  const b=create('button','lm-polymer lm-polymer--'+kind,label);
@@ -194,12 +194,12 @@ function announceRecommendation(item){
  const isDemo=mode==='preview';
  const speech=isDemo
   ?item.kind==='contract'
-   ?'Это учебный договор. Я покажу, где не хватает срока поставки, и предложу исправление.'
+   ?'В договоре не хватает срока поставки. Могу предложить исправление.'
    :item.kind==='mail'
-    ?'Это пример письма. Я подготовила черновик ответа, а отправку оставляю тебе.'
+    ?'Подготовила ответ на письмо. Проверь его перед отправкой.'
     :item.kind==='work'
-     ?'Это учебное сообщение Елены. Можно подготовить ответ самому или поручить черновик Сэйви.'
-     :'Это пример заботы о себе. Можно сделать короткую передышку.'
+     ?'Елене нужен ответ. Могу помочь его написать.'
+     :'Можно сделать короткую передышку.'
   :'Это сохранённое поручение. Я напомнила о сроке и помогу открыть детали.';
  window.dispatchEvent(new CustomEvent('seyveo:home-recommendation-changed',{
   detail:{kind:item.kind,title:item.title,isDemo,message:speech}
@@ -225,7 +225,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const scene=create('div','lm-scene');
  const top=create('div','lm-field-top');
  const label=create('span','lm-field-eyebrow',primary.category);
- const measure=create('span','lm-field-measure',real?'ВАШИ ДЕЛА':'ДЕМО');
+ const measure=create('span','lm-field-measure',real?'ВАШИ ДЕЛА':'');
  const clockLabel=create('time','sv-lm-event-clock');clockLabel.hidden=true;
  clockLabel.setAttribute('aria-label','Время запланированного дела');
  top.append(label);
@@ -304,7 +304,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    requestAnimationFrame(fitWork);
   }
   if(workMode==='sayvi'||workMode==='own')
-   workDetails.append(create('p','lm-mail-note','Черновик · ответ отправляется только в учебный чат на этом устройстве'));
+   workDetails.append(create('p','lm-mail-note','Ответ появится в рабочем чате Елены.'));
  }
 
  const mailDetails=create('div','lm-mail-content');
@@ -338,11 +338,10 @@ function createSurface(primary,other=[],real=false,taskId=''){
   // The user's own edit must have a Save action. Sayvi's preview keeps Send / Back.
   const reviewChoice=documentStep==='preview';
   const editing=documentStep==='edit';
-  const saved=documentStep==='saved';
   documentEdit.hidden=!active||documentStep!=='summary';
   documentLater.hidden=true;
   documentSave.hidden=!active||!(reviewChoice||editing);
-  documentCancel.hidden=!active||!(reviewChoice||editing||saved);
+  documentCancel.hidden=!active||!(reviewChoice||editing);
   documentAnalyze.hidden=true;
   if(active){
    sayviAction.hidden=documentStep!=='summary';
@@ -360,19 +359,16 @@ function createSurface(primary,other=[],real=false,taskId=''){
     documentSave.setAttribute('aria-label','Передать предложение Сэйви в чат без автоматической отправки');
    }
    if(reviewChoice||editing)controls.append(documentSave,documentCancel);
-   else if(saved)controls.append(documentCancel);
   }
   documentDetails.replaceChildren();
   if(!active)return;
   // Observation -> inspect proposal -> explicit Save. Do not duplicate headings.
   if(documentStep==='summary'||documentStep==='review'){
    documentDetails.append(create('p','lm-section-label','Сэйви заметила'));
-  }else if(documentStep==='saved'){
-   documentDetails.append(create('p','lm-section-label','Черновик сохранён'));
   }
-  if(documentStep!=='summary'&&documentStep!=='saved'){
+  if(documentStep!=='summary'){
    documentDetails.append(create('p','lm-document-excerpt',
-    'Пункт «Срок поставки»: конкретный срок в учебном договоре не указан.'));
+    'Пункт «Срок поставки»: конкретная дата или период не указаны.'));
   }
   if(documentStep==='review'){
    const sourceLabel=create('label','lm-mail-edit-label','Текст пункта договора');
@@ -542,7 +538,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
     toggle.textContent=documentView==='remarks'?'Предложенная редакция':'Замечания Сэйви';
     toggle.addEventListener('click',()=>{documentView=documentView==='remarks'?'redraft':'remarks';updateDocument();});
     documentDetails.append(toggle);
-    documentDetails.append(create('p','lm-mail-note','Разбор сохранён как учебный черновик на этом устройстве. Оригинал не меняется.'));
+    documentDetails.append(create('p','lm-mail-note','Оригинал не изменён.'));
    }
   }
   if(documentStep==='preview'){
@@ -550,17 +546,12 @@ function createSurface(primary,other=[],real=false,taskId=''){
    const text=create('p','lm-document-proposal',documentNote);
    text.setAttribute('aria-label','Исправленный текст Сэйви — предпросмотр');
    documentDetails.append(text);
-   documentDetails.append(create('p','lm-mail-note','Черновик · исходный договор не изменяется.'));
   }else if(documentStep==='edit'){
    const label=create('label','lm-mail-edit-label lm-note-step-label lm-note-step-label--reply','Ваш вариант');
    const input=create('textarea','lm-mail-edit-input');
    input.rows=4;input.maxLength=8500;input.value=documentNote;
    label.append(input);documentDetails.append(label);
    prepareDocumentReply(input);
-   documentDetails.append(create('p','lm-mail-note','Сохраните ваш вариант — он останется на этом устройстве.'));
-  }else if(documentStep==='saved'){
-   documentDetails.append(create('p','lm-document-proposal',documentNote));
-   documentDetails.append(create('p','lm-mail-note','Учебный черновик сохранён на этом устройстве. Исходный договор не изменён.'));
   }else{
    const sayviText=documentStep==='summary'
     ?'В договоре не указан срок поставки. Предлагаю уточнить его.'
@@ -628,7 +619,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   mailSave.hidden=!active||mailStep!=='edit';
   mailSave.textContent='Отправить';
   cardIconize(mailSave,'send');
-  mailSave.setAttribute('aria-label','Отправить подготовленный ответ (предпросмотр)');
+  mailSave.setAttribute('aria-label','Отправить ответ');
   mailCancel.hidden=!active||!['confirm','edit'].includes(mailStep);
   if(active){
    sayviAction.hidden=mailStep!=='draft'; // No duplicate Sayvi beside Send.
@@ -636,7 +627,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    execute.hidden=mailStep!=='confirm';
    execute.textContent='Отправить';
    cardIconize(execute,'send');
-   execute.setAttribute('aria-label','Отправить подготовленный ответ (предпросмотр)');
+   execute.setAttribute('aria-label','Отправить ответ');
    execute.dataset.cardRole='primary';
    mailEdit.dataset.cardRole='secondary';
    mailSave.dataset.cardRole='primary';
@@ -653,7 +644,6 @@ function createSurface(primary,other=[],real=false,taskId=''){
   // Incoming source is immutable and always visible. A summary is not
   // a substitute for the original message in a mail review workflow.
   mailDetails.append(
-   create('p','lm-mail-intro','Учебное входящее письмо'),
    create('p','lm-mail-address','От: '+mailIncoming.sender+' · Тема: '+mailIncoming.subject),
    create('p','lm-mail-original',mailIncoming.text)
   );
@@ -663,7 +653,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    return;
   }
   mailDetails.append(create('p',mailStep==='edit'?'lm-section-label lm-section-label--reply':'lm-section-label',
-   mailStep==='edit'?'Ваш ответ':mailStep==='sent-demo'?'Подготовленный ответ':'Предложение Сэйви'));
+   mailStep==='edit'?'Ваш ответ':'Предложение Сэйви'));
   if(mailStep==='edit'){
    const field=create('div','lm-mail-edit-label');
    const input=create('textarea','lm-mail-edit-input');
@@ -672,7 +662,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    prepareMailReply(input);
   }else{
    if(mailStep==='confirm'){
-    mailDetails.append(create('p','lm-mail-address','Кому: Андрей · адрес не подключён'),
+    mailDetails.append(create('p','lm-mail-address','Кому: Андрей'),
       create('p','lm-mail-address','Тема: Стоимость доставки'));
    }
    if(mailStep==='confirm'){
@@ -681,13 +671,6 @@ function createSurface(primary,other=[],real=false,taskId=''){
     mailDetails.append(preview);
    }else{
     mailDetails.append(create('p','lm-mail-draft',mailDraft));
-   }
-   // The Home draft is fully readable, not buried beneath duplicate status text.
-   // A real sending confirmation remains explicit and cannot transmit a message.
-   if(mailStep!=='draft'){
-    mailDetails.append(create('p','lm-mail-note',mailStep==='sent-demo'
-     ?'Почта не подключена — письмо не отправлено.'
-     :'Почта не подключена · отправка недоступна.'));
    }
   }
  }
@@ -749,7 +732,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(mailActive()){
    if(mailStep==='confirm'){
     // The visible Send button is the final demo action, not a delivery receipt.
-    mailStep='sent-demo';updateMail();return;
+    finishPreviewItem({quick:true});return;
    }
    return;
   }
@@ -838,8 +821,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   const value=mailDetails.querySelector('textarea')?.value?.trim();
   if(!value){explain(field,'Напишите текст перед отправкой.',mailSave);return}
   mailDraft=value.slice(0,1200);
-  mailStep='sent-demo';updateMail();
-  // No connected mailbox: visualise final Send without a false success claim.
+  finishPreviewItem({quick:true});
+  // Local preview finishes here; no external mailbox is contacted.
  });
  const mailCancel=polymer('Назад',()=>{mailStep='draft';updateMail()});
  mailCancel.setAttribute('aria-label','Назад к письму');
@@ -897,7 +880,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
      original:documentSource,proposed:documentNote,at:new Date().toISOString(),demo:true,manual:true
     }));
     documentManualSaved=documentNote;
-    documentStep='saved';updateDocument();
+    finishPreviewItem({quick:true});
    }catch{explain(field,'Не удалось сохранить черновик на устройстве.',documentSave);}
    return;
   }
@@ -994,7 +977,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    measure.textContent=Math.min(3,remaining.length)+' ИЗ '+remaining.length+' · ВАШИ ДЕЛА';
    return;
   }
-  measure.textContent=remaining.length+' '+(remaining.length===1?'ДЕЛО':'ДЕЛА')+' · ДЕМО';
+  measure.textContent=remaining.length+' '+(remaining.length===1?'ДЕЛО':'ДЕЛА')+'';
  }
  function renderSecondary(){
   secondary.replaceChildren();
@@ -1010,7 +993,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    mark.append(icon(item.kind));
    const words=create('span','lm-inline-copy');
    words.append(create('span','lm-inline-title',item.title),create('span','lm-inline-note',item.body));
-   if(!real&&item.sampleTime)words.append(create('span','sv-lm-sample-time','Пример · '+item.sampleTime));
+   if(!real&&item.sampleTime)words.append(create('span','sv-lm-sample-time',''+item.sampleTime));
    row.append(mark,words);
    row.addEventListener('click',()=>{
     readingUntil=Date.now()+12000;
@@ -1031,8 +1014,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   const hasClock=real&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'');
   const exampleClock=!real&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.sampleTime||'');
   clockLabel.hidden=!(hasClock||exampleClock);
-  clockLabel.textContent=hasClock?item.time:exampleClock?'Пример · '+item.sampleTime:'';
-  clockLabel.setAttribute('aria-label',hasClock?'Время выполнения дела':'Учебное время для примера');
+  clockLabel.textContent=hasClock?item.time:exampleClock?''+item.sampleTime:'';
+  clockLabel.setAttribute('aria-label',hasClock?'Время выполнения дела':'Время сообщения');
   headline.textContent=item.title;
   description.textContent=item.body;
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
@@ -1088,7 +1071,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(current>=0)remaining.push(remaining.splice(current,1)[0]);
   changeFeatured(remaining[0]);
  }
- function finishPreviewItem(){
+ function finishPreviewItem({quick=false}={}){
   if(real||morphLocked||mode!=='preview'||!remaining.includes(shown))return;
   morphLocked=true;
   open.disabled=true;execute.disabled=true;
@@ -1103,14 +1086,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
    if(!remaining.length){
     tip.textContent='';
     space.classList.add('lm-disappear');
-    later(()=>rest(),reduced()?0:TIMING.close);
+    later(()=>rest(),reduced()?0:(quick?680:TIMING.close));
     return;
    }
    setFeatured(remaining[0]);
    tip.textContent='';
    scene.classList.remove('lm-scene--changing');
-   later(()=>{morphLocked=false;open.disabled=false;execute.disabled=false},reduced()?0:430);
-  },reduced()?0:420);
+   later(()=>{morphLocked=false;open.disabled=false;execute.disabled=false},reduced()?0:(quick?310:430));
+  },reduced()?0:(quick?320:420));
  }
  function finishRealItem(){
   if(!real||mode!=='task'||morphLocked)return;
@@ -1182,7 +1165,7 @@ function gatherPreview(){
   const label=field.querySelector('.lm-field-eyebrow');
   const measure=field.querySelector('.lm-field-measure');
   // Keep the current category; a second heading would repeat the recommendation.
-  if(measure)measure.textContent=previewCount+' '+(previewCount===1?'ДЕЛО':'ДЕЛА')+' · ДЕМО';
+  if(measure)measure.textContent=previewCount+' '+(previewCount===1?'ДЕЛО':'ДЕЛА')+'';
  }
  // All three original tasks stay visible in one parent, never cloned.
  space.classList.add('lm-gather');
@@ -1318,7 +1301,7 @@ function showTasks(items){
  mode='task';key=items[0].eventId;
  dynamic.hidden=true;
  createSurface(items[0],items.slice(1),true);
- tip.textContent='НА ОСНОВЕ ВАШИХ ЗАПИСЕЙ · НЕ ПРИМЕР';
+ tip.textContent='НА ОСНОВЕ ВАШИХ ЗАПИСЕЙ';
  space.hidden=false;space.classList.add('lm-preview','lm-real');
  focus(true);
  const targetBottom=window.visualViewport?.height||window.innerHeight;
