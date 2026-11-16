@@ -17,3 +17,6 @@
  transition:opacity .36s ease,visibility .36s ease;
 }
 #homePage #svHomeCalmDetails[hidden]{display:none!important}
+@media (max-width:649px) and (pointer:coarse){
+ #homePage #svHomeCalmDetails{font-size:clamp(14px,3.9vw,15.5px)}
+}
