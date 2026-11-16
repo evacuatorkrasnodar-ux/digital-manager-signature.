@@ -27,6 +27,8 @@ test('An undecided card reminder is available for iPhone screen taps',async()=>{
  assert.match(reminder,/lastCount=Math\.max\(0,Number\(window\.SEYVEO_REVIEW_CARDS\?\.count\?\.\(\)\)/);
  assert.match(reminder,/window\.addEventListener\('pointerdown',wakeOnBlank/);
  assert.match(reminder,/window\.addEventListener\('touchstart',wakeOnBlank/);
+ assert.match(reminder,/stage\.append\(notice\)/);
+ assert.doesNotMatch(reminder,/stage\.after\(notice\)/);
  assert.match(reminder,/isHome\(\)&&sayviSettled\(\)&&!reviewOpen\(\)/);
  assert.doesNotMatch(review,/svReviewEntry|sv-review-entry|positionEntry/);
  new Script(reminder);new Script(review);
