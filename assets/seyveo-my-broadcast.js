@@ -187,7 +187,9 @@
   const controls=[...overlay.querySelectorAll('input,button')]
    .filter(item=>!item.disabled&&!item.hidden);
   const first=controls[0],last=controls[controls.length-1];
-  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+  if(event.shiftKey&&[first,overlay.querySelector('#svBroadcastTitle')].includes(document.activeElement)){
+   event.preventDefault();last.focus();
+  }
   if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
  });
  function maybeStartOnboarding(){
