@@ -22,6 +22,10 @@ assert.match(source,/Скоро научусь/,
  'not-yet-released features are honestly labeled');
 assert.match(source,/Твоё время ценно/,
  'Sayvi conveys the value of the person, not just product features');
+assert.match(css,/sv-home-living-action:active[\s\S]*?scale\(\.975\)/,
+ 'the tiny optional action has a gentle press, separate from the dock');
+assert.match(source,/Apple Color Emoji/,
+ 'emoji are rendered by the platform, not copied artwork');
 
 let now=0,seq=0,line;
 const classes=new Set(['sv-home-empty-sphere','sv-home-empty-arrived','sv-home-greeting-expired']);
@@ -38,10 +42,14 @@ const schedule=(handler,delay,interval=false)=>{
 };
 class Element{
  constructor(){this.hidden=false;this.dataset={};this.children=[];this.textContent='';
+  this.listeners=new Map();
   const own=new Set();this.classList={add:name=>own.add(name),remove:name=>own.delete(name),contains:name=>own.has(name)};}
  setAttribute(){}
  append(...children){this.children.push(...children)}
  replaceChildren(...children){this.children=children}
+ addEventListener(name,handler){this.listeners.set(name,handler)}
+ click(){this.listeners.get('click')?.({preventDefault(){},stopPropagation(){}})}
+ closest(selector){return selector.includes('data-sv-sayvi-action')&&this.dataset.svSayviAction?this:null}
 }
 const home={hidden:false};
 const message={insertAdjacentElement:(_side,element)=>{line=element;}};
@@ -114,4 +122,78 @@ home.hidden=false;
 classes.delete('sv-home-empty-sphere');
 advance(550_000);
 assert.equal(line.hidden,true,'real cards and tasks suppress idle thoughts');
-console.log('PASS: two handwritten onboarding messages, rotating thoughts and unobtrusive timing.');
+
+// An offered button must remain tappable on mobile: a document-level
+// pointerdown/touchstart handler otherwise removes the whole line before click.
+function probeAction(next,kind,label){
+ let clock=0,id=0,offered,opened='';
+ const tickers=new Map(),events=new Map();
+ const add=(type,handler)=>{
+  if(!events.has(type))events.set(type,[]);
+  events.get(type).push(handler);
+ };
+ const scheduleNext=(handler,delay,interval=false)=>{
+  const key=++id;tickers.set(key,{handler,at:clock+delay,interval:interval?delay:0});return key;
+ };
+ const localClasses=new Set(['sv-home-empty-sphere','sv-home-empty-arrived','sv-home-greeting-expired']);
+ const localHome={hidden:false};
+ const localLocation={hash:'#home'};
+ const localDocument={
+  hidden:false,activeElement:{matches:()=>false},
+  documentElement:{classList:{contains:name=>localClasses.has(name)}},
+  getElementById:key=>({homePage:localHome,stage:{querySelector:()=>({
+   insertAdjacentElement:(_where,element)=>{offered=element;}
+  })},headline:{},navTasks:{click:()=>{opened='tasks';}}}[key]||null),
+  createElement:()=>new Element(),querySelector:()=>null,addEventListener:add
+ };
+ const localWindow={
+  addEventListener:add,dispatchEvent:event=>(events.get(event.type)||[]).forEach(fn=>fn(event)),
+  setTimeout:(fn,delay)=>scheduleNext(fn,delay),
+  setInterval:(fn,delay)=>scheduleNext(fn,delay,true),
+  matchMedia:()=>({matches:false}),
+  SEYVEO_MUSIC:{open:()=>{opened='music';}},
+  SEYVEO_PAPER:{open:()=>{opened='drawing';}},
+  SEYVEO_NOTES_API:{openNotes:()=>{opened='notes';}},
+  SEYVEO_SAYVI_SURFACES:{open:()=>{opened='documents';return true;}},
+  SEYVEO_CONVERSATION:{open:()=>{opened='chat';}}
+ };
+ const localStore=new Map([['seyveo.sayvi.quiet-home-hint.v2',
+  JSON.stringify({at:0,next,introDone:true})]]);
+ vm.runInNewContext(source,{
+  document:localDocument,window:localWindow,location:localLocation,
+  sessionStorage:{getItem:key=>localStore.get(key),setItem:(key,value)=>localStore.set(key,value)},
+  Date:{now:()=>clock},Event:class{constructor(type){this.type=type}},
+  setTimeout:localWindow.setTimeout,clearTimeout:key=>tickers.delete(key)
+ },{filename:'seyveo-home-presence.js'});
+ function step(until){
+  while(true){
+   const item=[...tickers].sort((a,b)=>a[1].at-b[1].at)[0];
+   if(!item||item[1].at>until)break;
+   const [key,timer]=item;clock=timer.at;
+   if(timer.interval)timer.at+=timer.interval;else tickers.delete(key);
+   timer.handler();
+  }
+  clock=until;
+ }
+ step(69_000);
+ const row=offered.children[2],button=row.children[0];
+ assert.equal(offered.hidden,false,kind+' is offered on quiet Home');
+ assert.equal(row.hidden,false,kind+' has an action row');
+ assert.equal(row.dataset.revealed,'true',kind+' reveals its action after typing');
+ assert.equal(button.children[1].textContent,label,kind+' has a clear label');
+ for(const type of ['pointerdown','touchstart']){
+  for(const handler of events.get(type)||[])handler({target:button});
+  assert.equal(offered.hidden,false,kind+' survives '+type+' before click');
+ }
+ button.click();
+ assert.equal(opened,kind==='calendar'?'':kind,kind+' activates its actual route');
+ if(kind==='calendar')assert.equal(localLocation.hash,'#calendar');
+ assert.equal(offered.hidden,true,kind+' clears the invitation when opening');
+}
+for(const [next,kind,label] of [
+ [2,'music','Открыть музыку'],[3,'drawing','Открыть планшет'],
+ [4,'tasks','Мои дела'],[5,'documents','Документы'],
+ [6,'calendar','Календарь'],[13,'chat','Поговорим'],
+ [14,'notes','Блокнот']
+])probeAction(next,kind,label);
+console.log('PASS: gentle handwritten onboarding, native emoji actions, seven real routes and safe touch gestures.');

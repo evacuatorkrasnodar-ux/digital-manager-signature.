@@ -19,7 +19,26 @@
  mark.classList.add('sv-sayvi-symbol');
  const content=document.createElement('span');
  content.className='sv-home-living-copy';
- line.append(mark,content);
+ const actionRow=document.createElement('span');
+ actionRow.className='sv-home-living-actions';
+ actionRow.hidden=true;
+ actionRow.dataset.revealed='false';
+ const actionButton=document.createElement('button');
+ actionButton.type='button';
+ actionButton.className='sv-home-living-action';
+ actionButton.dataset.svSayviAction='';
+ const actionIcon=document.createElement('span');
+ actionIcon.className='sv-home-living-action-icon';
+ actionIcon.setAttribute('aria-hidden','true');
+ const actionLabel=document.createElement('span');
+ actionLabel.className='sv-home-living-action-label';
+ const actionArrow=document.createElement('span');
+ actionArrow.className='sv-home-living-action-arrow';
+ actionArrow.setAttribute('aria-hidden','true');
+ actionArrow.textContent='↗';
+ actionButton.append(actionIcon,actionLabel,actionArrow);
+ actionRow.append(actionButton);
+ line.append(mark,content,actionRow);
  message.insertAdjacentElement('afterend',line);
 
  const HELLO_MS=3600;
@@ -34,24 +53,28 @@
   'Хочешь поговорить? Нажми на сферу — откроем чат.',
   'Удерживай сферу — поговорим голосом. Зови меня Сэйви или Сэй.'
  ];
+ // Native Unicode Emoji: iOS paints these with Apple Color Emoji. No
+ // copyrighted Apple glyph images need to be copied into the PWA.
+ const invitation=(text,kind,label,icon)=>({text,action:{kind,label,icon}});
  // A quiet, slowly rotating conversation, not a carousel of product ads.
  // Current actions are phrased as invitations; future actions say "soon".
  // No personal history, emergencies or abilities are ever fabricated here.
  const ideas=[
   'Не нужно подбирать особые команды. Просто расскажи своими словами.',
   'Твоё время ценно. Давай оставим больше минут для того, что любишь.',
-  'Хочешь музыку? Заглянем в SEYVEO SOUND — выберем под настроение.',
-  'Если дел накопилось много, начнём с одного. Шаг за шагом.',
-  'Документы тоже могут быть проще. Покажи, с чем нужна помощь.',
-  'Важное лучше не держать в голове. Запишем в дела или календарь.',
+  invitation('🎵 Хочешь музыку? Заглянем в SEYVEO SOUND — выберем под настроение.','music','Открыть музыку','🎵'),
+  invitation('🎨 Может, порисуем? У нас есть настоящий планшет с кистями.','drawing','Открыть планшет','🎨'),
+  invitation('Если дел накопилось много, начнём с одного. Шаг за шагом.','tasks','Мои дела','✅'),
+  invitation('📄 Документы тоже могут быть проще. Покажи, с чем нужна помощь.','documents','Документы','📄'),
+  invitation('📅 Важное лучше не держать в голове. Запишем в дела или календарь.','calendar','Календарь','📅'),
   'Ты для меня не просто список задач. Важно, что важно именно тебе.',
   'Для SEYVEO главное — человек. Кнопки нужны лишь для того, чтобы помогать.',
   'Я учусь быть полезной, не отвлекая тебя по пустякам.',
   'Скоро научусь помогать готовить документы к подписи.',
   'Мы скоро это сделаем: я смогу взять больше мелких дел на себя — с твоего согласия.',
   'Хочешь необычный факт? У осьминога три сердца.',
-  'Можно просто поболтать. Не обязательно приходить ко мне с делами.',
-  'В SEYVEO есть блокнот. Туда можно отправить внезапную идею.',
+  invitation('💬 Можно просто поболтать. Не обязательно приходить ко мне с делами.','chat','Поговорим','💬'),
+  invitation('📝 В SEYVEO есть блокнот. Туда можно отправить внезапную идею.','notes','Блокнот','📝'),
   'Скоро смогу лучше подбирать музыку под твой вкус и настроение.',
   'Если хочется выдохнуть, давай оставим несрочное на потом.',
   'Дела, встречи, маленькие планы — всё это можно держать рядом.',
@@ -77,7 +100,7 @@
  ghost.setAttribute('aria-hidden','true');
  const typed=document.createElement('span');
  typed.className='sv-home-living-copy-typed';
- let idleSince=Date.now(),idleHint='',idleTyped='',idleTyping=false;
+ let idleSince=Date.now(),idleHint='',idleTyped='',idleTyping=false,idleAction=null;
  let idleRevealTimer=0,idleTypeTimer=0,idleHideTimer=0;
  let idleLastShownAt=0,idleIdeaIndex=0,introDone=false,introStep=0;
  let idleMarkupMounted=false,idleSequence=0;
@@ -100,6 +123,44 @@
   !document.querySelector('dialog[open]')&&
   !document.activeElement?.matches?.('input,textarea,[contenteditable="true"]');
 
+ function navigateSuggestion(kind){
+  if(kind==='music'){
+   if(!window.SEYVEO_MUSIC?.open)return false;
+   window.SEYVEO_MUSIC.open();return true;
+  }
+  if(kind==='drawing'){
+   if(!window.SEYVEO_PAPER?.open)return false;
+   window.SEYVEO_PAPER.open();return true;
+  }
+  if(kind==='notes'){
+   if(!window.SEYVEO_NOTES_API?.openNotes)return false;
+   window.SEYVEO_NOTES_API.openNotes();return true;
+  }
+  if(kind==='documents'){
+   if(window.SEYVEO_SAYVI_SURFACES?.open?.('contract')===true)return true;
+   location.hash='#sayvi-documents';return true;
+  }
+  if(kind==='tasks'){
+   const nav=document.getElementById('navTasks');
+   if(nav){nav.click();return true;}
+   location.hash='#tasks';return true;
+  }
+  if(kind==='calendar'){location.hash='#calendar';return true;}
+  if(kind==='chat'){
+   if(!window.SEYVEO_CONVERSATION?.open)return false;
+   window.SEYVEO_CONVERSATION.open();return true;
+  }
+  return false;
+ }
+ actionButton.addEventListener('click',event=>{
+  event.preventDefault();event.stopPropagation();
+  if(!idleAction||idleTyping||!quietHome())return;
+  const kind=idleAction.kind;
+  // Dismiss first, so the new page never inherits a Home suggestion.
+  dropIdle();
+  navigateSuggestion(kind);
+ });
+
  function update(){
   const visible=ready&&homeVisible();
   const idleVisible=visible&&!!idleHint&&quietHome();
@@ -110,6 +171,16 @@
    }
    if(ghost.textContent!==idleHint)ghost.textContent=idleHint;
    if(typed.textContent!==idleTyped)typed.textContent=idleTyped;
+   if(idleAction){
+    actionRow.hidden=false;
+    actionRow.dataset.revealed=idleTyping?'false':'true';
+    if(actionButton.dataset.svSayviAction!==idleAction.kind){
+     actionButton.dataset.svSayviAction=idleAction.kind;
+     actionIcon.textContent=idleAction.icon;
+     actionLabel.textContent=idleAction.label;
+     actionButton.setAttribute('aria-label',idleAction.label);
+    }
+   }else actionRow.hidden=true;
    line.dataset.svPresence='idle';
    line.dataset.svTyping=idleTyping?'true':'false';
    line.setAttribute('aria-label',idleHint);
@@ -117,6 +188,8 @@
    return;
   }
   if(idleMarkupMounted){content.replaceChildren();idleMarkupMounted=false;}
+  actionRow.hidden=true;
+  actionRow.dataset.revealed='false';
   line.dataset.svTyping='false';
   line.setAttribute('aria-label','');
   // Thinking and speaking appear in the persistent top status. Only the
@@ -145,10 +218,13 @@
   if(resetClock&&!introDone)introStep=0;
   line.classList.remove('sv-home-idle-fading');
   if(!idleHint&&!idleMarkupMounted)return;
-  idleHint='';idleTyped='';idleTyping=false;update();
+  idleHint='';idleTyped='';idleTyping=false;idleAction=null;update();
  }
- function noteActivity(){
+ function noteActivity(event){
   if(!homeVisible())return;
+  // Safari emits pointerdown and touchstart before click. Do not remove an
+  // offered button during those events or its click would be lost.
+  if(event?.target?.closest?.('#svHomeLivingLine [data-sv-sayvi-action]'))return;
   dropIdle();
  }
  function finishIdle(sequence){
@@ -173,7 +249,7 @@
   const letters=Array.from(idleHint);
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
    idleTyped=idleHint;idleTyping=false;update();
-   idleHideTimer=setTimeout(()=>finishIdle(sequence),HINT_HOLD_MS);
+   idleHideTimer=setTimeout(()=>finishIdle(sequence),idleAction?HINT_HOLD_MS+6500:HINT_HOLD_MS);
    return;
   }
   let cursor=0;
@@ -182,7 +258,7 @@
    if(sequence!==idleSequence||!idleHint||!quietHome())return;
    if(cursor>=letters.length){
     idleTyping=false;update();
-    idleHideTimer=setTimeout(()=>finishIdle(sequence),HINT_HOLD_MS);
+    idleHideTimer=setTimeout(()=>finishIdle(sequence),idleAction?HINT_HOLD_MS+6500:HINT_HOLD_MS);
     return;
    }
    const letter=letters[cursor++];
@@ -201,7 +277,9 @@
   if(!quietHome()||(!continuation&&now-idleSince<delay))return;
   if(root.classList.contains('sv-home-greeting-fading')&&
      !root.classList.contains('sv-home-greeting-expired'))return;
-  idleHint=introDone?ideas[idleIdeaIndex++%ideas.length]:intro[introStep];
+  const suggestion=introDone?ideas[idleIdeaIndex++%ideas.length]:intro[introStep];
+  idleHint=typeof suggestion==='string'?suggestion:suggestion.text;
+  idleAction=typeof suggestion==='string'?null:suggestion.action;
   idleTyped='';idleTyping=true;
   const sequence=++idleSequence;
   update();

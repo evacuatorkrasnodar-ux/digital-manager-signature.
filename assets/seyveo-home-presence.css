@@ -34,6 +34,7 @@
  max-width:100%;
  overflow-wrap:break-word;
 }
+#homePage #svHomeLivingLine .sv-home-living-actions[hidden]{display:none!important}
 /* A single whisper below the weather, only on an empty Home after the
    greeting has faded. It is not a card, toast, popover or second dock. */
 :root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svHomeLivingLine[data-sv-presence="idle"]{
@@ -41,15 +42,80 @@
  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 80px)!important;
  left:50%!important;
  width:min(380px,calc(100% - 32px))!important;
- max-height:84px!important;
+ max-height:135px!important;
  margin:0!important;
  padding:0 8px!important;
+ flex-direction:column!important;
+ gap:8px!important;
  color:#4F5D65!important;
  font-size:clamp(13px,3.45vw,14px)!important;
  font-weight:410!important;
  line-height:1.45!important;
  transform:translateX(-50%)!important;
  overflow:hidden;
+}
+/* One real destination, revealed only after Sayvi finishes typing. Reserve
+   its place from the start so the weather and globe never jump. */
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-actions{
+ display:inline-flex;
+ flex:none;
+ justify-content:center;
+ align-items:center;
+ min-height:35px;
+ transition:opacity .28s ease,transform .28s cubic-bezier(.22,1,.36,1),visibility .28s;
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-actions[data-revealed="false"]{
+ opacity:0;
+ visibility:hidden;
+ transform:translateY(4px);
+ pointer-events:none;
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-action{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:7px;
+ min-width:0;
+ height:35px;
+ padding:0 14px 0 11px;
+ border-radius:999px;
+ border:1px solid rgba(151,164,174,.43);
+ background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(243,247,249,.92));
+ box-shadow:0 2px 8px rgba(67,88,105,.055),inset 0 1px 0 rgba(255,255,255,.96);
+ color:#263541;
+ font:500 12.5px/1.1 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+ letter-spacing:.008em;
+ white-space:nowrap;
+ cursor:pointer;
+ touch-action:manipulation;
+ -webkit-tap-highlight-color:transparent;
+ transition:background .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-action-icon{
+ font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;
+ font-size:16px;
+ line-height:1;
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-action-arrow{
+ margin-left:3px;
+ font-size:16px;
+ font-weight:400;
+ line-height:1;
+ opacity:.65;
+}
+@media(hover:hover){
+ :root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-action:hover{
+  background:#fff;
+  box-shadow:0 3px 10px rgba(67,88,105,.10),inset 0 1px 0 #fff;
+ }
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-action:active{
+ transform:scale(.975);
+ box-shadow:inset 0 1px 4px rgba(67,88,105,.10);
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-action:focus-visible{
+ outline:2px solid #648FBB;
+ outline-offset:3px;
 }
 :root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-copy{
  position:relative;
@@ -103,6 +169,11 @@
 @media(max-width:375px){
  #homePage #svHomeLivingLine{font-size:12px;padding:0 9px;margin-top:5px;margin-bottom:6px}
 }
+@media(max-height:600px){
+ :root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svHomeLivingLine[data-sv-presence="idle"]{
+  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 68px)!important;
+ }
+}
 @media(prefers-reduced-motion:no-preference){
  #homePage #svHomeLivingLine:not([hidden]){animation:svHomeLivingAppear .45s ease-out both}
  :root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"]{
@@ -120,5 +191,8 @@
 @media(prefers-reduced-motion:reduce){
  :root.sv-home-empty-sphere #homePage #svHomeLivingLine .sv-home-living-copy-typed::after{
   animation:none!important;
+ }
+ :root.sv-home-empty-sphere #homePage #svHomeLivingLine .sv-home-living-actions{
+  transition:none!important;
  }
 }
