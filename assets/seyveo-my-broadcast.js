@@ -120,6 +120,7 @@
  const interestsPanel=overlay.querySelector('#svBroadcastInterestsPanel');
  const profileMenu=overlay.querySelector('#svBroadcastProfileMenu');
  const profileForm=overlay.querySelector('#svBroadcastProfileForm');
+ const forgetButton=overlay.querySelector('#svBroadcastForgetProfile');
  const stepLabel=overlay.querySelector('#svBroadcastStepLabel');
  const title=overlay.querySelector('#svBroadcastTitle');
  const explainer=overlay.querySelector('#svBroadcastExplainer');
@@ -142,6 +143,21 @@
   saveButton.hidden=introStep==='profile-menu';
   saveButton.textContent=onboarding?'Начнём':introStep==='profile-form'?'Запомнить':'Сохранить';
   laterButton.textContent=introStep==='profile-form'?'Назад':onboarding?'Пока без имени':'Закрыть';
+  if(introStep==='profile-menu'){
+   const current=readProfile();
+   let savedAny=false;
+   for(const button of profileMenu.querySelectorAll('[data-sv-profile]')){
+    const entry=PROFILE_SECTIONS[button.dataset.svProfile];
+    const value=entry&&current[entry.key];
+    const done=Array.isArray(value)?value.length>0:!!value;
+    if(done){savedAny=true;button.querySelector('small').textContent='Сохранено · можно изменить';}
+    else button.querySelector('small').textContent={life:'Увлечения и интересы',
+     help:'Повседневные задачи',talk:'Твой комфортный стиль'}[button.dataset.svProfile];
+   }
+   forgetButton.hidden=!savedAny;
+   forgetButton.textContent='Удалить ответы анкеты';
+   forgetButton.dataset.confirm='false';
+  }
   title.focus({preventScroll:true});
  }
  function showProfileSection(id){
@@ -164,12 +180,17 @@
   const option=event.target.closest('[data-sv-profile]');
   if(option)showProfileSection(option.dataset.svProfile);
  });
- overlay.querySelector('#svBroadcastForgetProfile').addEventListener('click',()=>{
-  if(!window.confirm('Удалить ответы на анкеты? Имя останется.'))return;
+ forgetButton.addEventListener('click',()=>{
+  if(forgetButton.dataset.confirm!=='true'){
+   forgetButton.dataset.confirm='true';
+   forgetButton.textContent='Нажми ещё раз, чтобы удалить ответы';
+   return;
+  }
   profile=readProfile();
   for(const section of Object.values(PROFILE_SECTIONS))delete profile[section.key];
   profile.updatedAt=new Date().toISOString();write(PROFILE_KEY,JSON.stringify(profile));
   window.dispatchEvent(new Event('seyveo:profile-changed'));
+  renderStep();
  });
  let previousFocus=null,firstReturnTimer=0,returnTyping=0;
  const returnLine=document.createElement('p');

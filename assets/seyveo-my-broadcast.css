@@ -22,27 +22,18 @@
 .sv-broadcast-sheet h2{font-size:clamp(27px,6.2vw,33px);font-weight:590;
  letter-spacing:-.046em;line-height:1.13;margin:0;text-align:center;color:inherit}
 .sv-broadcast-sheet h2:focus{outline:none!important;border:0!important;box-shadow:none!important}
-.sv-broadcast-description{max-width:315px;margin:9px auto 22px;text-align:center;
- color:#6b7882;font-size:13.5px;line-height:1.43;font-weight:420}
+.sv-broadcast-description{max-width:330px;margin:9px auto 22px;text-align:center;
+ color:#566571;font-size:14.5px;line-height:1.43;font-weight:430}
 .sv-broadcast-name-panel{padding:8px 2px 4px}
 .sv-broadcast-name-panel label{display:block;margin:0 0 8px 3px;color:#5b6773;
- font-size:12px;font-weight:510}
+ font-size:13px;font-weight:510}
 .sv-broadcast-name-panel input{display:block;width:100%;box-sizing:border-box;
  min-height:52px;padding:13px 15px;font:470 16px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  color:inherit;background:#f7f9fa;border:1px solid #dce3e9;border-radius:15px;
  outline-offset:2px;box-shadow:inset 0 1px 3px rgba(26,43,59,.035)}
 .sv-broadcast-name-panel input:focus{outline:2px solid #2687c7;border-color:transparent}
-.sv-broadcast-name-panel p{margin:11px 3px 0;color:#8b969f;font-size:11.5px;line-height:1.45}
-.sv-broadcast-business-choices{display:grid;gap:9px}
-.sv-broadcast-business-choices button{display:flex;align-items:center;justify-content:space-between;
- gap:10px;text-align:left;padding:13px 16px;min-height:56px;width:100%;border-radius:17px;
- background:#f6f8fa;border:1px solid #e0e5ea;color:#263544;font:550 15px/1.3
- -apple-system,BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer;transition:background .2s,border-color .2s}
-.sv-broadcast-business-choices button span{font-size:11px;font-weight:420;color:#7f8c98}
-.sv-broadcast-business-choices button[aria-pressed="true"]{background:#eaf3fb;border-color:#8cb8da}
-:root[data-theme="dark"] .sv-broadcast-name-panel input,
-:root[data-theme="dark"] .sv-broadcast-business-choices button{background:#303841;color:#f9fbfd;border-color:#4d5b68}
-:root[data-theme="dark"] .sv-broadcast-business-choices button[aria-pressed="true"]{background:#29455c;border-color:#83add0}
+.sv-broadcast-name-panel p{margin:11px 3px 0;color:#8b969f;font-size:12px;line-height:1.45}
+:root[data-theme="dark"] .sv-broadcast-name-panel input{background:#303841;color:#f9fbfd;border-color:#4d5b68}
 .sv-broadcast-name-panel[hidden],#svBroadcastInterestsPanel[hidden],
 #svBroadcastProfileMenu[hidden],#svBroadcastProfileForm[hidden]{display:none!important}
 .sv-broadcast-profile-menu{display:grid;gap:9px}
@@ -68,6 +59,7 @@
 .sv-broadcast-profile-menu .sv-broadcast-profile-forget{
  background:none;border:0;min-height:34px;color:#84919c;font-size:11px;cursor:pointer;
 }
+.sv-broadcast-profile-menu .sv-broadcast-profile-forget[data-confirm="true"]{color:#ba4950}
 .sv-broadcast-profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .sv-broadcast-profile-choice{display:flex;align-items:center;justify-content:space-between;
  gap:7px;min-height:49px;padding:9px 11px;box-sizing:border-box;border:1px solid #e5e9ee;
@@ -112,7 +104,7 @@
 .sv-broadcast-awake-note{margin:5px 0 0;font-size:10px;color:#89929d;text-align:center}
 .sv-broadcast-sheet-actions{display:flex;gap:10px;margin:23px 0 0}
 .sv-broadcast-sheet-actions button{flex:1;min-height:48px;border-radius:16px;
- border:1px solid rgba(143,157,169,.3);font:510 14px/1 -apple-system,
+ border:1px solid rgba(143,157,169,.3);font:510 15px/1 -apple-system,
  BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer;
  -webkit-tap-highlight-color:transparent;transition:transform .15s ease}
 .sv-broadcast-sheet-actions button:active{transform:scale(.98)}
