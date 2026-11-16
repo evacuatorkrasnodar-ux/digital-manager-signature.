@@ -40,7 +40,8 @@
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
   const number=total?'· '+total:'';
   const progress=total?total+' осталось':'Всё разобрано';
-  if(document.getElementById('svReviewCount').textContent!==number)document.getElementById('svReviewCount').textContent=number;
+  const retiredCount=line.querySelector('#svReviewCount');
+  if(retiredCount&&retiredCount.textContent!==number)retiredCount.textContent=number;
   if(document.getElementById('svReviewProgress').textContent!==progress)document.getElementById('svReviewProgress').textContent=progress;
   room.classList.toggle('sv-review-empty',!total);
   positionEntry();
