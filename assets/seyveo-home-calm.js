@@ -20,13 +20,13 @@
  };
  function paint(){
   const visible=lastCount>0&&isHome()&&!reviewOpen()&&
-   !root.classList.contains('sv-home-calm')&&root.classList.contains('sv-home-greeting-expired');
+   !root.classList.contains('sv-home-reminder-hidden')&&root.classList.contains('sv-home-greeting-expired');
   notice.hidden=!visible;
   if(lastCount&&notice.textContent!==label())notice.textContent=label();
  }
  function hide(){
   if(!isHome()||reviewOpen())return;
-  root.classList.add('sv-home-calm');paint();
+  root.classList.add('sv-home-reminder-hidden');paint();
  }
  function scheduleHide(delay=NOTICE_MS){
   clearTimeout(hideTimer);
@@ -34,10 +34,10 @@
  }
  function show(delay=NOTICE_MS){
   if(!isHome()||reviewOpen()||!lastCount)return;
-  root.classList.remove('sv-home-calm');paint();scheduleHide(delay);
+  root.classList.remove('sv-home-reminder-hidden');paint();scheduleHide(delay);
  }
  document.addEventListener('pointerdown',event=>{
-  if(!isHome()||!lastCount||!root.classList.contains('sv-home-calm'))return;
+  if(!isHome()||!lastCount||!root.classList.contains('sv-home-reminder-hidden'))return;
   if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
   suppressBlankClickUntil=Date.now()+850;
   show();event.stopPropagation();
@@ -54,14 +54,14 @@
   lastCount=Math.max(0,Number(event.detail?.count)||0);paint();
  });
  window.addEventListener('seyveo:home-sayvi-arrived',()=>{
-  root.classList.remove('sv-home-calm');paint();scheduleHide(FIRST_HIDE_MS);
+  root.classList.remove('sv-home-reminder-hidden');paint();scheduleHide(FIRST_HIDE_MS);
  });
  window.addEventListener('hashchange',()=>{
-  root.classList.remove('sv-home-calm');paint();
+  root.classList.remove('sv-home-reminder-hidden');paint();
   if(isHome())scheduleHide(FIRST_HIDE_MS);else clearTimeout(hideTimer);
  });
  window.addEventListener('seyveo:route-changed',()=>{
-  if(isHome()){root.classList.remove('sv-home-calm');paint();scheduleHide(FIRST_HIDE_MS)}
+  if(isHome()){root.classList.remove('sv-home-reminder-hidden');paint();scheduleHide(FIRST_HIDE_MS)}
   else clearTimeout(hideTimer);
  });
  document.addEventListener('visibilitychange',()=>{
