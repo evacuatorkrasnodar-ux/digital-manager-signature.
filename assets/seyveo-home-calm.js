@@ -36,14 +36,18 @@
   if(!isHome()||reviewOpen()||!lastCount)return;
   root.classList.remove('sv-home-reminder-hidden');paint();scheduleHide(delay);
  }
- document.addEventListener('pointerdown',event=>{
+ function wakeOnBlank(event){
   if(!isHome()||!lastCount||!root.classList.contains('sv-home-reminder-hidden'))return;
-  if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
+  if(event.target.closest?.('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
   show();event.stopPropagation();
- },{capture:true,passive:true});
+ }
+ // Catch blank touches before older document handlers; support iPhone touch events.
+ window.addEventListener('pointerdown',wakeOnBlank,{capture:true,passive:true});
+ window.addEventListener('touchstart',wakeOnBlank,{capture:true,passive:true});
  document.addEventListener('click',event=>{
   if(!isHome())return;
-  if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
+  if(event.target.closest?.('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
+  if(root.classList.contains('sv-home-reminder-hidden'))show();
   // No invisible full-screen chat shortcut: Chat belongs to the sphere.
   event.preventDefault();event.stopImmediatePropagation();
  },true);
@@ -69,6 +73,8 @@
  // Independently of taps, unresolved cards reappear every three minutes.
  setInterval(()=>show(NOTICE_MS),REMINDER_MS);
  new MutationObserver(paint).observe(root,{attributes:true,attributeFilter:['class']});
+ // The card component's first event fires before this script is loaded.
+ lastCount=Math.max(0,Number(window.SEYVEO_REVIEW_CARDS?.count?.())||0);
  if(isHome())scheduleHide(FIRST_HIDE_MS);
  paint();
 })();
