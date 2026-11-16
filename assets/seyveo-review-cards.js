@@ -10,6 +10,12 @@
  line.id='svReviewEntry';line.type='button';line.className='sv-review-entry';
  line.innerHTML='<span class="sv-review-entry-copy">Разобрать дела <span id="svReviewCount"></span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
  // The permanent Home button is retired; only the Work capsule opens review.
+ const greetingSubline=document.getElementById('subline');
+ const greetingAction=document.createElement('button');
+ greetingAction.type='button';greetingAction.id='svHomeReviewText';
+ greetingAction.className='sv-home-review-text';greetingAction.hidden=true;
+ greetingAction.setAttribute('aria-label','Открыть карточки для разбора');
+ greetingSubline?.after(greetingAction);
  const room=document.createElement('section');
  room.id='svReviewRoom';room.className='sv-review-room';room.hidden=true;
  room.setAttribute('role','dialog');room.setAttribute('aria-modal','true');room.setAttribute('aria-label','Разобрать дела');
@@ -38,8 +44,16 @@
   const total=count();
   line.hidden=true;
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
+  greetingAction.hidden=!total;
+  if(total){
+   const form=total%10===1&&total%100!==11?'карточка':total%10>=2&&total%10<=4&&(total%100<12||total%100>14)?'карточки':'карточек';
+   const label=`Есть ${total} ${form} для разбора`;
+   const text=label+'  ›';
+   if(greetingAction.textContent!==text)greetingAction.textContent=text;
+  }
   const number=total?'· '+total:'';
   const progress=total?total+' осталось':'Всё разобрано';
+  // The retired Home control is deliberately detached from document.
   const retiredCount=line.querySelector('#svReviewCount');
   if(retiredCount&&retiredCount.textContent!==number)retiredCount.textContent=number;
   if(document.getElementById('svReviewProgress').textContent!==progress)document.getElementById('svReviewProgress').textContent=progress;
@@ -91,6 +105,7 @@
   if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
  }
  window.addEventListener('seyveo:open-card-review',enter);
+ greetingAction.addEventListener('click',enter);
  room.querySelector('#svReviewBack').addEventListener('click',leave);
  window.addEventListener('keydown',event=>{if(open&&event.key==='Escape')leave()});
  window.addEventListener('hashchange',()=>{if(open&&location.hash&&location.hash!=='#home')leave()});
