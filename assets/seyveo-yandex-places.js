@@ -1,11 +1,9 @@
-/* SEYVEO · Optional Yandex organization search for the public demo.
- * The demo key was explicitly provided by the owner; rotate before release.
- * This is a business-search key, not a Geocoder/JavaScript Maps key.
- * Only a committed venue or category query is transmitted, never a task.
- * A 403 / network failure gracefully falls back to the existing provider. */
+/* SEYVEO · Optional licensed Yandex organization search.
+ * The public app never sends requests directly to the paid Yandex API.
+ * A future server-side, same-origin endpoint may be opted in explicitly.
+ * OpenStreetMap remains the working, key-free fallback. */
 ((root)=>{
  'use strict';
- const demoKey='d20cd060-d7d6-4508-9789-1b9d2894f72b';
  let disabledUntil=0;
  const recent=new Map();
  const tidy=value=>String(value||'').replace(/\s+/gu,' ').trim();
@@ -44,19 +42,34 @@
   }
   return result.slice(0,15);
  }
- async function lookup(proposal,{fetcher}={}){
+ async function lookup(proposal,{fetcher,apiKey}={}){
   const query=tidy(proposal?.query);
-  if(!demoKey||query.length<3||query.length>140||Date.now()<disabledUntil)return null;
+  if(query.length<3||query.length>140||Date.now()<disabledUntil)return null;
   // Avoid a country-wide business search without enough geographic context.
   if(!proposal.city&&!proposal.explicitAddress)return null;
+  // An unauthenticated static site has no licensed business-search backend.
+  // Do not attempt a blocked cross-origin fetch or expose a billing key.
+  const configured=tidy(root?.SEYVEO_YANDEX_PLACES_ENDPOINT);
+  let url;
+  if(fetcher){
+   // Test/integration injection only. No key is bundled with SEYVEO.
+   if(!apiKey)return null;
+   url=new URL('https://search-maps.yandex.ru/v1/');
+   url.searchParams.set('apikey',apiKey);
+  }else{
+   if(!configured||!root?.location?.origin)return null;
+   try{url=new URL(configured,root.location.href)}catch{return null}
+   if(url.origin!==root.location.origin||url.protocol!==root.location.protocol||
+      !url.pathname.startsWith('/api/'))return null;
+  }
   const cached=recent.get(query);
   if(cached&&Date.now()-cached.at<300000)return cached.value;
-  const url=new URL('https://search-maps.yandex.ru/v1/');
   for(const [key,value] of Object.entries({text:query,type:proposal.explicitAddress?'geo':'biz',
-   lang:'ru_RU',results:'15',apikey:demoKey}))url.searchParams.set(key,value);
+   lang:'ru_RU',results:'15'}))url.searchParams.set(key,value);
   try{
    const response=await (fetcher||root.fetch.bind(root))(url.toString(),{
-    method:'GET',mode:'cors',credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
+    method:'GET',mode:fetcher?'cors':'same-origin',credentials:fetcher?'omit':'same-origin',
+    referrerPolicy:'strict-origin-when-cross-origin'});
    if(response.status===403){disabledUntil=Date.now()+900000;return null}
    if(response.status===429){disabledUntil=Date.now()+60000;return null}
    if(!response.ok)return null;
