@@ -26,7 +26,7 @@
  };
  function paint(){
   const visible=lastCount>0&&isHome()&&sayviSettled()&&!reviewOpen()&&
-   !root.classList.contains('sv-home-reminder-hidden')&&root.classList.contains('sv-home-greeting-expired');
+   !root.classList.contains('sv-home-reminder-hidden');
   notice.hidden=!visible;
   if(lastCount&&notice.textContent!==label())notice.textContent=label();
  }
