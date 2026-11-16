@@ -729,19 +729,22 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{displ
   border-radius:20px!important;border:1px solid #E7EAF0!important;
  }
 }
-/* On iPhone the native status area stays behind a separate rounded sheet.
-   The system keyboard supplies its own grey bottom surface. */
+/* New Task is a complete white workspace on phones, not a nested sheet.
+   Preserve the old header/control positions with a safe-area-aware header inset. */
 @media (max-width:620px){
  html body dialog#personalTaskDialog.sv-task-editor-v3{
-  background:#D6D7DB!important;
+  --sv-task-top-inset:max(22px,env(safe-area-inset-top,0px));
+  background:#FFFFFF!important;
  }
  html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
-  margin:max(22px,env(safe-area-inset-top,0px)) auto 0!important;
-  height:calc(100% - max(22px,env(safe-area-inset-top,0px)))!important;
-  border-radius:32px 32px 0 0!important;
+  margin:0 auto!important;height:100%!important;
+  border:0!important;border-radius:0!important;
  }
  html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header{
-  padding-top:7px!important;
+  box-sizing:border-box!important;
+  height:calc(72px + var(--sv-task-top-inset))!important;
+  min-height:calc(72px + var(--sv-task-top-inset))!important;
+  padding-top:calc(var(--sv-task-top-inset) + 7px)!important;
  }
 }
 @media (prefers-reduced-motion:reduce){
