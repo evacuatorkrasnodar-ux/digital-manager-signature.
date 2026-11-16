@@ -34,11 +34,11 @@
 @media(max-width:600px){
  :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orbCluster,
  :root.sv-home-empty-sphere.sv-home-reminder-hidden.sv-sayvi-handoff-docked #homePage #orbCluster{
-  height:clamp(240px,72vw,310px)!important;
+  height:clamp(250px,77vw,320px)!important;
  }
  :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orb,
  :root.sv-home-empty-sphere.sv-home-reminder-hidden.sv-sayvi-handoff-docked #homePage #orb{
-  width:clamp(240px,72vw,310px)!important;
-  height:clamp(240px,72vw,310px)!important;
+  width:clamp(250px,77vw,320px)!important;
+  height:clamp(250px,77vw,320px)!important;
  }
 }
