@@ -62,12 +62,14 @@ assert.match(brief,/document\.addEventListener\('DOMContentLoaded',sync,\{once:t
  'Home checks loaded weather after DOM initialization');
 assert.match(brief,/window\.addEventListener\('seyveo:route-changed',sync\)/,
  'Home rechecks the current forecast after navigation');
-assert.match(dockCss,/--sv-indicator-depth:0px;\s*--sv-indicator-scale:1;\s*box-shadow:none!important/,
- 'Dock selection does not sink on a tap');
-assert.match(dockCss,/> #navManage#navManage:active\{\s*transform:none!important;\s*box-shadow:none!important/,
- 'Search button does not compress on a tap');
-assert.match(homeDockCss,/background:radial-gradient\(ellipse 100% 90% at 50% 50%,rgba\(10,132,255,\.09\)/,
- 'Active search receives a subtle glow, not a deep inset');
+assert.match(dockCss,/box-shadow:inset 0 2\.1px 3\.2px rgba\(31,42,58,\.17\)/,
+ 'The approved selected button retains its original recessed glass');
+assert.match(dockCss,/--sv-indicator-depth:\.28px;\s*--sv-indicator-scale:\.992;/,
+ 'Touch travel is a microstep, not the previous full depression');
+assert.match(dockCss,/> #navManage#navManage:active\{\s*transform:translateY\(\.2px\) scale\(\.992\)!important/,
+ 'Search circle has equally light touch movement');
+assert.match(homeDockCss,/background:radial-gradient\(ellipse 110% 95% at 50% 5%,rgba\(10,132,255,\.19\)/,
+ 'Selected search restores the approved recessed blue glow');
 assert.match(css,/:root\.sv-home-empty-sphere\.sv-home-empty-route-exit[\s\S]*?animation:sv-music-ambient-dock-expand 460ms/,
  'Route departure expands the original dock promptly');
 
