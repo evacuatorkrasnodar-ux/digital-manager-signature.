@@ -21,6 +21,9 @@ let pendingUpdate=false;
 const previewArmed=true;
 let previewSeen=false,previewRearmAt=0;
 let previewDecided=false;
+// Unresolved examples survive temporary hiding and navigation.
+let previewPending=0;
+const resolvedPreviewKinds=new Set();
 let previewSuspended=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -1099,6 +1102,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    if(!real){
     previewRearmAt=Date.now()+(engine?.cardPolicy?.singleCardSnoozeMs||3600000);
     previewSeen=true;
+    previewPending=0;
    }
    space.classList.add('lm-disappear');
    later(()=>rest(),reduced()?0:TIMING.close);
@@ -1121,6 +1125,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
     return;
    }
    remaining=remaining.filter(item=>item!==shown&&mayShow(item));
+   resolvedPreviewKinds.add(shown.kind);
+   previewPending=remaining.length;
+   window.dispatchEvent(new Event('seyveo:card-visibility-changed'));
    if(!remaining.length){
     tip.textContent='';
     space.classList.add('lm-disappear');
@@ -1182,12 +1189,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
 let previewScene=null,previewCount=0;
 function buildExamples(){
  // A deferred training example cannot return Home until explicitly restored.
- const present=sample.filter(item=>mayShow(item)&&
+ const present=sample.filter(item=>mayShow(item)&&!resolvedPreviewKinds.has(item.kind)&&
   !(item.kind==='mail'&&mailDeferred) &&
   !(item.kind==='contract'&&documentDeferred));
  // Unified ordering is opt-in; the original Quiet Cinema layout remains unchanged.
  const ordered=window.SEYVEO_CARD_LIFECYCLE?.orderPreview?.(present)||present;
  previewCount=ordered.length;
+ previewPending=ordered.length;
  previewScene=ordered.length?createSurface(ordered[0],ordered.slice(1)):null;
  return present.length;
 }
@@ -1732,6 +1740,14 @@ dynamic.addEventListener('click',event=>{
 },true);
 window.SEYVEO_LIVING_MOMENT=Object.freeze({
  preview:()=>startPreview(),state:()=>mode,
+ // Count logical, unfinished decisions; hidden DOM alone never dismisses a card.
+ reviewCount:()=>previewRearmAt?0:previewPending,
+ ensureReviewCards:()=>{
+  if(mode==='preview'&&!space.hidden)return true;
+  if(mode!=='idle'||previewPending<=0||!available())return false;
+  previewSeen=false;
+  return startPreview();
+ },
  inspectReview:id=>({queued:dueTasks().some(t=>t.businessTask&&t.taskId===id),visible:mode==='task'&&key==='mail-review:'+id&&!space.hidden}),
  deferred:()=>deferredPreview(),
  deferredTaskIds:()=>Array.from(postponedTaskIds),
