@@ -11,7 +11,7 @@ export async function searchPlace(query,{fetcher=fetch}={}){
  const cleaned=safePlaceQuery(query);
  if(!cleaned)throw Error('invalid-place-query');
  const url=new URL('https://nominatim.openstreetmap.org/search');
- for(const [name,value] of Object.entries({q:cleaned,format:'jsonv2',addressdetails:'1',extratags:'1',namedetails:'1',limit:'5','accept-language':'ru'}))url.searchParams.set(name,value);
+ for(const [name,value] of Object.entries({q:cleaned,format:'jsonv2',addressdetails:'1',extratags:'1',namedetails:'1',limit:'15','accept-language':'ru'}))url.searchParams.set(name,value);
  const response=await fetcher(url.toString(),{
   method:'GET',redirect:'error',signal:AbortSignal.timeout(10000),
   headers:{'User-Agent':'SEYVEO-Local-PlaceSearch/1.0 (https://seyveo.com)',Accept:'application/json'}
@@ -19,7 +19,7 @@ export async function searchPlace(query,{fetcher=fetch}={}){
  if(!response.ok)throw Error('place-provider-unavailable');
  const data=await response.json();
  if(!Array.isArray(data))throw Error('invalid-place-provider-response');
- return data.slice(0,5).map(row=>({
+ return data.slice(0,15).map(row=>({
   name:String(row?.name||'').slice(0,100),
   display_name:String(row?.display_name||'').slice(0,500),
   type:String(row?.type||'').slice(0,70),

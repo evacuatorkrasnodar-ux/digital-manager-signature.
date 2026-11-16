@@ -24,6 +24,30 @@
  function normalize(value){return String(value||'').replace(/[«»"“”]/g,'').replace(/\s+/g,' ').trim()}
  function searchText(value){return normalize(value).toLocaleLowerCase('ru-RU').replace(/[—–-]/gu,' ').replace(/\s+/gu,' ').trim()}
  function validCity(value){return typeof value==='string'&&/^[\p{L} -]{2,60}$/u.test(value.trim())?value.trim():''}
+ // Location is used only in memory for ordering search results. Never ask
+ // the OS for a fresh permission as a side effect of typing a task.
+ async function grantedLocation(){
+  const navigator=root?.navigator;
+  if(!navigator?.permissions?.query||!navigator?.geolocation?.getCurrentPosition)return null;
+  try{
+   const permission=await navigator.permissions.query({name:'geolocation'});
+   if(permission?.state!=='granted')return null;
+   return await new Promise(resolve=>{
+    let complete=false;
+    const finish=value=>{if(!complete){complete=true;resolve(value)}};
+    const timer=setTimeout(()=>finish(null),5500);
+    try{
+     navigator.geolocation.getCurrentPosition(position=>{
+      clearTimeout(timer);
+      const lat=Number(position?.coords?.latitude),lon=Number(position?.coords?.longitude),accuracy=Number(position?.coords?.accuracy);
+      finish(Number.isFinite(lat)&&Math.abs(lat)<=90&&Number.isFinite(lon)&&Math.abs(lon)<=180&&
+       Number.isFinite(accuracy)&&accuracy>=0&&accuracy<=20000?{lat,lon}:null);
+     },()=>{clearTimeout(timer);finish(null)},
+     {enableHighAccuracy:false,maximumAge:300000,timeout:5000});
+    }catch{clearTimeout(timer);finish(null)}
+   });
+  }catch{return null}
+ }
  function suggestedCity(){
   // Explicit place preference wins; then a saved business city; then the city
   // the person sees in SEYVEO's weather. Never infer GPS without consent.
@@ -58,7 +82,7 @@
    if(addressDetail.length<6)return null;
    city=city||validCity(options.city)||suggestedCity();
    return {label:'Место встречи',query:[addressDetail,city].filter(Boolean).join(', '),
-    explicitAddress:true,city,explicitCity:Boolean(cityMatch)};
+    explicitAddress:true,city,explicitCity:Boolean(cityMatch),citySelected:Boolean(options.city)};
   }
   const kind=KIND_FORMS[venue[1].toLocaleLowerCase('ru-RU')];
   let name=normalize(venue[2]);
@@ -87,7 +111,8 @@
   const label=kind+' «'+name+'»';
   const detail=addressDetail||locationHint;
   return {label,query:[kind+' '+searchName,detail,city].filter(Boolean).join(', ').slice(0,140),
-   explicitAddress:false,city,explicitCity:Boolean(cityMatch||atEnd),venueName:name,kind,locationHint:detail};
+   explicitAddress:false,city,explicitCity:Boolean(cityMatch||atEnd),citySelected:Boolean(options.city),
+   venueName:name,kind,locationHint:detail};
  }
  function cleanPlace(value){
   if(!value||typeof value!=='object')return null;
@@ -155,48 +180,76 @@
   const found=searchText([candidate.name,candidate.namedetails?.name,candidate.display_name?.split(',')[0]].filter(Boolean).join(' '));
   return found.includes(requested)||requested.includes(found)&&found.length>=4;
  }
+ const HINT_SKIP=new Set(['в','во','на','по','это','адрес','адресу','дом','дома','д','ул','улица','улице',
+  'пр','проспект','проспекте','пер','переулок','переулке','тц','трц','торговый','центр','мегацентр',
+  'город','г']);
+ function words(value){return searchText(value).match(/[\p{L}\p{N}]+(?:\/[\p{N}]+)?/gu)||[]}
+ function wordBase(value){return value.replace(/(?:ая|ой|ую|ого|его)$/u,'')}
+ function addressTokens(proposal){
+  const text=proposal?.locationHint||(proposal?.explicitAddress?proposal.query:'');
+  return words(text).filter(word=>!HINT_SKIP.has(word)&&
+   (word.length>=3||/^\d/u.test(word))&&wordBase(word)!==wordBase(searchText(proposal?.city)));
+ }
+ function matchesTokens(value,tokens){
+  if(!tokens.length)return true;
+  const present=words(value).map(wordBase);
+  return tokens.every(word=>present.includes(wordBase(word)));
+ }
  function verifiedCandidates(proposal){
   if(!proposal?.venueName)return [];
   const request=searchText(proposal.venueName),city=searchText(proposal.city);
-  const hint=searchText(proposal.locationHint);
+  const tokens=addressTokens(proposal);
   return VERIFIED_VENUES.filter(row=>{
    if(request!==row.venue||city&&searchText(row.city)!==city)return false;
-   if(hint){
-    const full=searchText(row.address+' '+row.name);
-    const terms=hint.replace(/^(?:в\s+)?(?:тц|трц|торговый\s+центр|мегацентр|на\s+улице|на\s+ул\.?|улица|ул\.?)\s+/u,'').split(/[\s,]+/u).filter(word=>word.length>=3||/^\d+$/u.test(word));
-    if(!terms.length||!terms.every(word=>full.includes(word)))return false;
-   }
-   return true;
+   return matchesTokens(row.address+' '+row.name,tokens);
   }).map(cleanPlace).filter(Boolean);
  }
  function matchesAddressHint(candidate,proposal){
-  const hint=searchText(proposal.locationHint);
-  if(!hint)return true;
-  const tokens=hint.replace(/^(?:в\s+)?(?:тц|трц|торговый\s+центр|мегацентр|на\s+улице|на\s+ул\.?|улица|ул\.?)\s+/u,'')
-   .split(/[\s,]+/u).filter(word=>word.length>=3||/^\d+$/u.test(word));
-  if(!tokens.length)return true;
-  const combined=searchText([candidate.display_name,candidate.name,...Object.values(candidate.address||{})].join(' '));
-  return tokens.every(word=>combined.includes(word));
+  const tokens=addressTokens(proposal);
+  // A requested house 10 must never match house 100. The whole street name
+  // must also match; do not quietly move a task to another branch.
+  return matchesTokens([candidate.display_name,candidate.name,...Object.values(candidate.address||{})].join(' '),tokens);
+ }
+ function distanceKm(a,b){
+  const radians=n=>n*Math.PI/180,latDelta=radians(a.lat-b.lat),lonDelta=radians(a.lon-b.lon);
+  const h=Math.sin(latDelta/2)**2+Math.cos(radians(a.lat))*Math.cos(radians(b.lat))*Math.sin(lonDelta/2)**2;
+  return 12742*Math.asin(Math.min(1,Math.sqrt(h)));
+ }
+ function orderByLocation(value,location){
+  if(!location||!value||value.cityRequired)return value;
+  if(value.ambiguous){
+   return {...value,nearby:true,candidates:[...value.candidates].sort((a,b)=>distanceKm(a,location)-distanceKm(b,location))};
+  }
+  return value;
  }
  const cache=new Map();let earliest=0;
  function cacheGet(key){
   const local=cache.get(key);if(local&&Date.now()-local.at<30*86400000)return local.value;
   try{
-   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v5:'+key)||'null');
+   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v6:'+key)||'null');
    if(stored&&Date.now()-stored.at<30*86400000){cache.set(key,stored);return stored.value;}
   }catch{}
   return undefined;
  }
  function cacheSet(key,value){
   const record={at:Date.now(),value};cache.set(key,record);
-  try{root.localStorage.setItem('seyveo-place:v5:'+key,JSON.stringify(record))}catch{}
+  try{root.localStorage.setItem('seyveo-place:v6:'+key,JSON.stringify(record))}catch{}
  }
  async function lookup(proposal){
   if(!proposal||!proposal.query||proposal.query.length>140)return null;
-  if(!proposal.city&&!proposal.explicitAddress)return {cityRequired:true};
+  const hasHouse=addressTokens(proposal).some(word=>/^\d/u.test(word));
+  // Start GPS and the public place lookup concurrently when a city is known,
+  // so slow device positioning does not delay the request to the map service.
+  const locationPromise=proposal.explicitAddress||hasHouse||proposal.explicitCity||proposal.citySelected?
+   Promise.resolve(null):grantedLocation();
+  let origin=null;
+  if(!proposal.city&&!proposal.explicitAddress)origin=await locationPromise;
+  if(!proposal.city&&!proposal.explicitAddress&&!origin)return {cityRequired:true};
   const localMatches=verifiedCandidates(proposal);
   const key=encodeURIComponent(proposal.query.toLocaleLowerCase('ru-RU'));
-  const cached=cacheGet(key);if(cached!==undefined)return cached;
+  const cacheable=Boolean(proposal.city||proposal.explicitAddress);
+  const cached=cacheable?cacheGet(key):undefined;
+  if(cached!==undefined)return orderByLocation(cached,await locationPromise);
   const now=Date.now();const pause=Math.max(0,earliest-now);
   earliest=now+pause+1250;
   if(pause)await new Promise(resolve=>setTimeout(resolve,pause));
@@ -228,7 +281,7 @@
    if(url.protocol!=='https:')throw Error('Insecure map search endpoint');
    url.searchParams.set('q',proposal.query);url.searchParams.set('format','jsonv2');
    url.searchParams.set('addressdetails','1');url.searchParams.set('extratags','1');
-   url.searchParams.set('namedetails','1');url.searchParams.set('limit','5');url.searchParams.set('accept-language','ru');
+   url.searchParams.set('namedetails','1');url.searchParams.set('limit','15');url.searchParams.set('accept-language','ru');
    try{
     const response=await root.fetch(url.toString(),{method:'GET',mode:'cors',credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
     if(!response.ok)throw Error('Place search unavailable');
@@ -236,9 +289,13 @@
    }catch(error){if(!localMatches.length)throw error;results=[]}
   }
   if(!Array.isArray(results))throw Error('Invalid place response');
+  origin=await locationPromise;
   const found=results.filter(row=>sameVenue(row,proposal)&&matchesAddressHint(row,proposal)&&Number.isFinite(Number(row.lat))&&Number.isFinite(Number(row.lon))&&
    (!proposal.city||searchText(row.address?.city||row.address?.town||row.address?.village||row.display_name).includes(searchText(proposal.city))));
-  const candidates=[...localMatches];
+  // With GPS but no identified city, never suggest unrelated results from
+  // another region. The user's coordinates never leave the device.
+  const local=origin&&!proposal.city?localMatches.filter(row=>distanceKm(row,origin)<=50):localMatches;
+  const candidates=[...local];
   for(const match of found){
    const candidate=cleanPlace({
     name:proposal.explicitAddress?(match.name||'Место встречи'):(match.name||proposal.label),
@@ -246,10 +303,12 @@
     photo:cleanPhoto(match.extratags?.wikimedia_commons)||cleanPhoto(match.extratags?.image)||'',
     wikidata:match.extratags?.wikidata||''
    });
-   if(candidate&&!candidates.some(item=>item.name===candidate.name&&item.address===candidate.address))candidates.push(candidate);
+   if(candidate&&(!origin||proposal.city||distanceKm(candidate,origin)<=50)&&
+    !candidates.some(item=>item.name===candidate.name&&item.address===candidate.address))candidates.push(candidate);
   }
-  const value=candidates.length>1?{ambiguous:true,candidates:candidates.slice(0,4)}:candidates[0]||null;
-  cacheSet(key,value);return value;
+  const value=candidates.length>1?{ambiguous:true,candidates:candidates.slice(0,16)}:candidates[0]||null;
+  if(cacheable)cacheSet(key,value);
+  return orderByLocation(value,origin)||(!proposal.city&&origin?{cityRequired:true}:null);
  }
  function mapURL(place){
   const p=cleanPlace(place);if(!p)return '';

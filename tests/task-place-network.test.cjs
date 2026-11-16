@@ -59,6 +59,103 @@ test('searches within the chosen home city and excludes businesses from other ci
  assert(result.address.includes('Москва'));
 });
 
+test('orders all returned city branches from the already granted device location',async()=>{
+ let permissionChecks=0,positionCalls=0;
+ const requests=[];
+ const window={
+  location:{hostname:'127.0.0.1',href:'http://127.0.0.1:8790/'},
+  SAYVI_WEATHER:{getLocation:()=>({name:'Краснодар'})},
+  navigator:{permissions:{query:async({name})=>{assert.equal(name,'geolocation');permissionChecks++;return {state:'granted'}}},
+   geolocation:{getCurrentPosition:success=>{positionCalls++;success({coords:{latitude:45.053,longitude:38.976,accuracy:30}})}}},
+  localStorage:{getItem:()=>null,setItem:()=>{}},
+  fetch:async(url,options)=>{
+   requests.push({url,body:JSON.parse(options.body)});
+   return {ok:true,json:async()=>({results:[
+    {name:'Ромашка',type:'cafe',lat:'45.145',lon:'39.05',address:{city:'Краснодар',road:'Северная',house_number:'2'}},
+    {name:'Ромашка',type:'cafe',lat:'45.054',lon:'38.976',address:{city:'Краснодар',road:'Красная',house_number:'5'}},
+    {name:'Ромашка',type:'cafe',lat:'45.08',lon:'38.98',address:{city:'Краснодар',road:'Тургенева',house_number:'40'}}
+   ]})};
+  }
+ };
+ vm.runInNewContext(source,{window,URL,setTimeout,clearTimeout,encodeURIComponent});
+ const proposal=window.SEYVEO_TASK_PLACES.extract('завтра встреча в кафе Ромашка');
+ const result=await window.SEYVEO_TASK_PLACES.lookup(proposal);
+ assert.equal(permissionChecks,1);assert.equal(positionCalls,1);
+ assert.equal(result.nearby,true);
+ assert.deepEqual(Array.from(result.candidates,c=>c.address.split(' · ')[0]),['Красная, 5','Тургенева, 40','Северная, 2']);
+ assert.equal(requests.length,1);
+ assert.equal(requests[0].body.query,'кафе Ромашка, Краснодар');
+ assert.deepEqual(Object.keys(requests[0].body),['query'],'the GPS position never leaves the browser');
+});
+
+test('never requests a new OS location permission when it is not already granted',async()=>{
+ let positionCalls=0;
+ const window={
+  location:{hostname:'127.0.0.1',href:'http://127.0.0.1:8790/'},
+  navigator:{permissions:{query:async()=>({state:'prompt'})},geolocation:{getCurrentPosition:()=>{positionCalls++}}},
+  localStorage:{getItem:()=>null,setItem:()=>{}},
+  fetch:async()=>({ok:true,json:async()=>({results:[
+   {name:'Ромашка',type:'cafe',lat:'45.06',lon:'38.97',address:{city:'Краснодар',road:'Красная'}}
+  ]})})
+ };
+ vm.runInNewContext(source,{window,URL,setTimeout,clearTimeout,encodeURIComponent});
+ const proposal=window.SEYVEO_TASK_PLACES.extract('завтра встреча в кафе Ромашка',{city:'Краснодар'});
+ const result=await window.SEYVEO_TASK_PLACES.lookup(proposal);
+ assert(result.address.includes('Краснодар'));
+ assert.equal(positionCalls,0);
+});
+
+test('filters only the requested street, including Russian grammatical endings',async()=>{
+ const window={
+  location:{hostname:'127.0.0.1',href:'http://127.0.0.1:8790/'},
+  localStorage:{getItem:()=>null,setItem:()=>{}},
+  fetch:async()=>({ok:true,json:async()=>({results:[
+   {name:'Ромашка',type:'cafe',lat:'45.02',lon:'38.97',address:{city:'Краснодар',road:'Дзержинского',house_number:'100'}},
+   {name:'Ромашка',type:'cafe',lat:'45.03',lon:'38.98',address:{city:'Краснодар',road:'Красная',house_number:'41'}},
+   {name:'Ромашка',type:'cafe',lat:'45.04',lon:'38.99',address:{city:'Москва',road:'Красная',house_number:'42'}}
+  ]})})
+ };
+ vm.runInNewContext(source,{window,URL,setTimeout,clearTimeout,encodeURIComponent});
+ const proposal=window.SEYVEO_TASK_PLACES.extract('завтра встреча в кафе Ромашка на улице Красной',{city:'Краснодар'});
+ assert.equal(proposal.locationHint,'на улице Красной');
+ const result=await window.SEYVEO_TASK_PLACES.lookup(proposal);
+ assert(!result.ambiguous);assert.match(result.address,/Красная, 41/);
+});
+
+test('requires the exact house, never silently replacing 10 with 100',async()=>{
+ const window={
+  location:{hostname:'127.0.0.1',href:'http://127.0.0.1:8790/'},
+  localStorage:{getItem:()=>null,setItem:()=>{}},
+  fetch:async()=>({ok:true,json:async()=>({results:[
+   {name:'Ромашка',type:'cafe',lat:'45.02',lon:'38.97',address:{city:'Краснодар',road:'Красная',house_number:'100'}},
+   {name:'Ромашка',type:'cafe',lat:'45.03',lon:'38.98',address:{city:'Краснодар',road:'Красная',house_number:'10'}}
+  ]})})
+ };
+ vm.runInNewContext(source,{window,URL,setTimeout,clearTimeout,encodeURIComponent});
+ const proposal=window.SEYVEO_TASK_PLACES.extract('завтра встреча в кафе Ромашка ул Красная 10',{city:'Краснодар'});
+ const result=await window.SEYVEO_TASK_PLACES.lookup(proposal);
+ assert(!result.ambiguous);assert.match(result.address,/Красная, 10/);
+ assert.doesNotMatch(result.address,/100/);
+});
+
+test('with GPS but no saved city, shows only nearby results, never other regions',async()=>{
+ const window={
+  location:{hostname:'127.0.0.1',href:'http://127.0.0.1:8790/'},
+  navigator:{permissions:{query:async()=>({state:'granted'})},
+   geolocation:{getCurrentPosition:success=>success({coords:{latitude:45.05,longitude:38.97,accuracy:40}})}},
+  localStorage:{getItem:()=>null,setItem:()=>{}},
+  fetch:async()=>({ok:true,json:async()=>({results:[
+   {name:'Ромашка',type:'cafe',lat:'55.75',lon:'37.62',address:{city:'Москва',road:'Тверская'}},
+   {name:'Ромашка',type:'cafe',lat:'45.06',lon:'38.97',address:{city:'Краснодар',road:'Красная'}}
+  ]})})
+ };
+ vm.runInNewContext(source,{window,URL,setTimeout,clearTimeout,encodeURIComponent});
+ const proposal=window.SEYVEO_TASK_PLACES.extract('завтра встреча в кафе Ромашка');
+ assert.equal(proposal.city,'');
+ const result=await window.SEYVEO_TASK_PLACES.lookup(proposal);
+ assert(!result.ambiguous);assert.match(result.address,/Краснодар/);
+});
+
 test('asks for a city instead of searching the whole country when no city is known',async()=>{
  let calls=0;
  const window={

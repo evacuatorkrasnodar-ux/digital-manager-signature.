@@ -8,7 +8,7 @@
  const title=document.getElementById('personalTaskTitle');
  const panel=document.getElementById('svNewTaskPlacePanel');
  if(!places||!dialog||!title||!panel)return;
- let proposal=null,place=null,confirmed=false,choices=[],query='',sourceQuery='',status='idle',request=0,photoRequest=0,searchTimer=0,refining=false,refineText='',cityEditing=false,photoViewer=null;
+ let proposal=null,place=null,confirmed=false,choices=[],choicesExpanded=false,choicesNearby=false,query='',sourceQuery='',status='idle',request=0,photoRequest=0,searchTimer=0,refining=false,refineText='',cityEditing=false,photoViewer=null;
  const node=(tag,cls,text)=>{
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
@@ -47,12 +47,12 @@
  function reset(){
   clearTimeout(searchTimer);
   closePhotoViewer();
-  request++;photoRequest++;proposal=null;place=null;confirmed=false;choices=[];query='';sourceQuery='';status='idle';refining=false;refineText='';cityEditing=false;
+  request++;photoRequest++;proposal=null;place=null;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;query='';sourceQuery='';status='idle';refining=false;refineText='';cityEditing=false;
   panel.replaceChildren();panel.hidden=true;
  }
  function load(saved){
   closePhotoViewer();
-  place=places.cleanPlace(saved);confirmed=Boolean(place);choices=[];proposal=places.extract(title.value);
+  place=places.cleanPlace(saved);confirmed=Boolean(place);choices=[];choicesExpanded=false;choicesNearby=false;proposal=places.extract(title.value);
   query=proposal?.query||'';sourceQuery=query;status=place?'found':'idle';request++;render();resolvePlacePhoto();
  }
  function placeForSave(){return confirmed?places.cleanPlace(place):null}
@@ -142,12 +142,18 @@
    }
   }else if(choices.length){
    card.classList.add('sv-place-choices');
-   card.append(node('p','sv-place-choice-intro',proposal?.city?'Нашла места в городе '+proposal.city+'. Выбери нужное:':'Нашла несколько похожих мест. Уточни город:'));
-   for(const candidate of choices){
+   card.append(node('p','sv-place-choice-intro',choicesNearby?
+    'Сначала ближайшие'+(proposal?.city?' в городе '+proposal.city:' к тебе')+'. Выбери нужное:':
+    proposal?.city?'Нашла места в городе '+proposal.city+'. Выбери нужное:':'Нашла несколько похожих мест. Выбери нужное:'));
+   for(const candidate of (choicesExpanded?choices:choices.slice(0,5))){
     const option=node('button','sv-place-choice');option.type='button';
     option.append(node('strong','',candidate.name),node('small','',candidate.address));
-    option.addEventListener('click',()=>{place=candidate;confirmed=false;choices=[];status='found';render();resolvePlacePhoto();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
+    option.addEventListener('click',()=>{place=candidate;confirmed=false;choices=[];choicesExpanded=false;status='found';render();resolvePlacePhoto();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
     card.append(option);
+   }
+   if(!choicesExpanded&&choices.length>5){
+    const more=node('button','sv-place-refine-trigger','Показать ещё');more.type='button';
+    more.addEventListener('click',()=>{choicesExpanded=true;render()});card.append(more);
    }
    const other=node('button','sv-place-refine-trigger','Другой адрес');other.type='button';
    other.addEventListener('click',()=>{refining=!refining;render()});card.append(other);
@@ -182,7 +188,7 @@
     const city=input.value.replace(/\s+/gu,' ').trim();
     if(!places.setPreferredCity(city))return;
     proposal=places.extract(title.value,{city});query=proposal?.query||'';sourceQuery=query;
-    request++;photoRequest++;place=null;confirmed=false;choices=[];status='idle';cityEditing=false;refining=false;
+    request++;photoRequest++;place=null;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;status='idle';cityEditing=false;refining=false;
     render();void lookup();
    });
    input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();apply.click()}});
@@ -198,8 +204,9 @@
     const detail=input.value.replace(/\s+/gu,' ').trim();
     if(detail.length<4)return;
     const base=proposal.kind&&proposal.venueName?proposal.kind+' '+proposal.venueName+', '+detail:detail;
-    proposal={...proposal,query:base.slice(0,140),city:'',explicitAddress:Boolean(!proposal.kind)};
-    query=proposal.query;place=null;confirmed=false;choices=[];status='idle';refining=false;refineText='';
+    proposal={...proposal,query:[base,proposal.city].filter(Boolean).join(', ').slice(0,140),
+     explicitAddress:Boolean(!proposal.kind),locationHint:detail};
+    query=proposal.query;place=null;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;status='idle';refining=false;refineText='';
     void lookup();
    });
    input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();apply.click()}});
@@ -212,7 +219,7 @@
   const next=places.extract(title.value);
   const nextQuery=next?.query||'';
   if(nextQuery!==sourceQuery){
-   request++;photoRequest++;place=null;confirmed=false;choices=[];status='idle';query=nextQuery;sourceQuery=nextQuery;refining=false;refineText='';cityEditing=false;
+   request++;photoRequest++;place=null;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;status='idle';query=nextQuery;sourceQuery=nextQuery;refining=false;refineText='';cityEditing=false;
    proposal=next;
   }
   if(!proposal)proposal=next;
@@ -232,6 +239,7 @@
    else if(result?.cityRequired){status='city';choices=[];place=null;confirmed=false;cityEditing=true}
    else if(result?.ambiguous&&Array.isArray(result.candidates)){
     choices=result.candidates.map(places.cleanPlace).filter(Boolean);
+    choicesExpanded=false;choicesNearby=Boolean(result.nearby);
     place=null;confirmed=false;status=choices.length?'choose':'not-found';
    }else{place=places.cleanPlace(result);confirmed=Boolean(place&&proposal?.explicitAddress);choices=[];status=place?'found':'not-found'}
   }catch(error){

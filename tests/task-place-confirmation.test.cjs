@@ -10,6 +10,7 @@ class Node{
  constructor(tag='div'){
   this.tagName=tag;this.children=[];this.listeners={};this.attributes={};this.hidden=false;
   this.style={};this.className='';this.textContent='';this.value='';
+  this.classList={add:name=>{this.className+=(this.className?' ':'')+name}};
  }
  append(...nodes){for(const node of nodes){node.parent=this;this.children.push(node)}}
  replaceChildren(...nodes){for(const child of this.children)child.parent=null;this.children=[];this.append(...nodes)}
@@ -56,6 +57,29 @@ test('a found branch stays a suggestion until the user confirms the real address
  assert(button,'the confirmed-location action is visible');
  button.click();
  assert.equal(editor.placeForSave()?.address,'Западный Обход, 41 · Краснодар');
+});
+
+test('more city branches can be revealed without losing nearest-first ordering',async()=>{
+ const dialog=new Node('dialog');dialog.open=true;
+ const title=new Node('textarea');title.value='завтра встреча в кафе Ромашка Краснодар';
+ const panel=new Node('section');
+ const store={personalTaskDialog:dialog,personalTaskTitle:title,svNewTaskPlacePanel:panel};
+ const branches=Array.from({length:8},(_,i)=>({name:'Ромашка '+(i+1),
+  address:'Красная, '+(i+1)+' · Краснодар',lat:45+i*.001,lon:38.9}));
+ const window={SEYVEO_TASK_PLACES:places,SEYVEO_SEARCH_HUB:{findPlace:async()=>({ambiguous:true,nearby:true,candidates:branches})},
+  matchMedia:()=>({matches:false}),dispatchEvent:()=>{},addEventListener:()=>{}};
+ const document={getElementById:id=>store[id],createElement:tag=>new Node(tag)};
+ class MutationObserver{observe(){}}
+ vm.runInNewContext(script,{window,document,MutationObserver,Event:class{},setTimeout,clearTimeout,encodeURIComponent});
+ const editor=window.SEYVEO_TASK_PLACE_EDITOR;
+ editor.sync();await editor.lookup();
+ assert.equal(descendants(panel).filter(el=>el.className==='sv-place-choice').length,5);
+ assert(descendants(panel).some(el=>el.className==='sv-place-choice-intro'&&el.textContent.includes('ближайшие')));
+ const showMore=descendants(panel).find(el=>el.className==='sv-place-refine-trigger'&&el.textContent.includes('Показать ещё'));
+ assert(showMore);showMore.click();
+ const visible=descendants(panel).filter(el=>el.className==='sv-place-choice');
+ assert.equal(visible.length,8);
+ assert.equal(descendants(visible[7]).find(el=>el.tagName==='strong').textContent,'Ромашка 8');
 });
 
 test('the confirmed mall entrance photo previews over the map and enlarges with attribution',async()=>{
