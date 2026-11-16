@@ -95,7 +95,7 @@
  background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(243,247,249,.92));
  box-shadow:0 2px 8px rgba(67,88,105,.055),inset 0 1px 0 rgba(255,255,255,.96);
  color:#263541;
- font:500 12.5px/1.1 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+ font:500 14px/1.15 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
  letter-spacing:.008em;
  white-space:nowrap;
  cursor:pointer;
