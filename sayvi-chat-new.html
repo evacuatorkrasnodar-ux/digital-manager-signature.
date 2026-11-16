@@ -1999,6 +1999,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <script src="./assets/sayvi-rich-replies.js?v=5"></script>
 <link rel="stylesheet" href="assets/seyveo-weather-brief.css?v=2">
 <script src="assets/seyveo-weather-brief.js?v=2"></script>
+<script src="assets/seyveo-open-sources.js?v=1"></script>
 <script>
 (()=>{
  'use strict';
@@ -4196,8 +4197,18 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 
  // Explicit public lookup: do not submit ordinary/private chat messages.
  function webRequest(text){
-  const m=/^(?:(?:сэй|сэйви)[,! ]+)?(?:найди|поищи|поиск\s*:|покажи\s+в\s+интернете)\s+(.+)$/iu.exec(text.trim());
-  return m?m[1].trim().replace(/^(?:в интернете|в сети)\s+/iu,'').slice(0,550):'';
+  const raw=text.trim();
+  const m=/^(?:(?:сэй|сэйви)[,! ]+)?(?:найди|поищи|поиск\s*:|покажи\s+в\s+интернете|проверь\s+в\s+интернете)\s+(.+)$/iu.exec(raw);
+  const fresh=/^(?:(?:сэй|сэйви)[,! ]+)?(?:что нового|какие (?:последние|свежие) новости|правда ли|проверь факт|покажи фото)\s+(.+)$/iu.exec(raw);
+  const q=(m?.[1]||fresh?.[0]||'').trim().replace(/^(?:в интернете|в сети)\s+/iu,'').slice(0,550);
+  return window.SEYVEO_OPEN_SOURCES?.publicQuery(q)?q:'';
+ }
+ function consentToPublicLookup(){
+  const key='seyveo-public-web-search-consent-v1';
+  try{if(localStorage.getItem(key)==='yes')return true}catch{}
+  const allowed=window.confirm('Разрешить Сэйви искать этот публичный вопрос в интернете? Во внешний источник уйдёт только поисковая фраза, без истории, файлов и памяти.');
+  if(allowed){try{localStorage.setItem(key,'yes')}catch{}}
+  return allowed;
  }
  function vettedWebResults(rows){
   if(!Array.isArray(rows))return [];
@@ -4213,7 +4224,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
     snippet:item.snippet.slice(0,450),image,imageCredit:String(item.imageCredit||'').slice(0,100)}];
   });
  }
- function renderWebResults(id,rows){
+ function renderWebResults(id,rows,sourceType='web'){
   const bubble=answers.get(id);if(!bubble)return;
   const turn=bubble.closest('.turn');
   turn.querySelector('.sv-web-results')?.remove();
@@ -4221,7 +4232,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   if(!items.length)return;
   const group=document.createElement('div');group.className='sv-web-results';
   const label=document.createElement('span');label.className='sv-web-results-label';
-  label.textContent='Источники · открыть в SEYVEO Browser';group.append(label);
+  label.textContent=sourceType==='wikipedia'?'Открытая энциклопедия · проверяемые статьи':'Источники · открыть в SEYVEO Browser';group.append(label);
   for(const item of items){
    const button=document.createElement('button');button.type='button';button.className='sv-web-result';
    button.setAttribute('aria-label','Открыть '+item.title+' в SEYVEO Browser');
@@ -4246,19 +4257,32 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   append('user','user-'+sequence,question);
   const stop=showThinking();
   try{
-   const response=await fetch('/api/seyveo-live-search',{
-    method:'POST',credentials:'same-origin',
-    headers:{'content-type':'application/json'},
-    body:JSON.stringify({message:query}),signal:ctrl.signal
-   });
-   const data=await response.json().catch(()=>({}));
-   if(!response.ok)throw Error(data.error||'Поиск временно недоступен.');
+   if(!consentToPublicLookup()){
+    stop();append('assistant',id,'Без твоего разрешения я не отправляю запросы в интернет.');
+    return;
+   }
+   let data=null;
+   // Local server can provide broader, verified search. GitHub Pages has no
+   // server: use the anonymous Wikimedia API instead of showing a fake answer.
+   try{
+    const response=await fetch('/api/seyveo-live-search',{
+     method:'POST',credentials:'same-origin',
+     headers:{'content-type':'application/json'},
+     body:JSON.stringify({message:query}),signal:ctrl.signal
+    });
+    if(response.ok){const payload=await response.json();if(payload.status==='results')data=payload}
+   }catch(error){if(ctrl.signal.aborted)throw error}
+   if(!data){
+    status.textContent='Проверяю открытые источники…';
+    data=await window.SEYVEO_OPEN_SOURCES.lookup(query,{signal:ctrl.signal});
+   }
    const sources=vettedWebResults(data.results);
    const answer=sources.length?
-    (typeof data.answer==='string'&&data.answer.trim()?data.answer.trim().slice(0,1800):'Нашла несколько источников — посмотри, какие пригодятся.'):
+    (typeof data.answer==='string'&&data.answer.trim()?data.answer.trim().slice(0,1800):
+     data.sourceType==='wikipedia'?'Нашла статьи в открытой энциклопедии. Это справочная информация, не актуальная лента новостей. Проверь даты и первоисточники.':'Нашла несколько источников — посмотри, какие пригодятся.'):
     (typeof data.message==='string'?data.message:'Пока нет проверенных источников.');
-   stop();append('assistant',id,answer);
-   renderWebResults(id,sources.map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit})));
+   stop();status.textContent='';append('assistant',id,answer);
+   renderWebResults(id,sources.map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit})),data.sourceType);
    const idx=Number(answers.get(id)?.dataset.savedIndex);
    if(Number.isInteger(idx)&&idx>=0&&idx<savedTurns.length){
     savedTurns[idx].sources=sources.map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit}));
@@ -4852,6 +4876,17 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   }
  }catch{}
  updateControls();
+ // A public lookup explicitly requested on Home continues in this real chat.
+ // The short-lived query is never included in a navigation URL.
+ try{
+  const raw=sessionStorage.getItem('seyveo.sayvi.search-handoff.v1');
+  sessionStorage.removeItem('seyveo.sayvi.search-handoff.v1');
+  const pending=raw?JSON.parse(raw):null;
+  if(pending&&typeof pending.question==='string'&&Date.now()-pending.at<60000&&
+     !input.value.trim()&&window.SEYVEO_OPEN_SOURCES?.publicQuery(pending.question)){
+   setTimeout(()=>{if(!active)searchInChat(pending.question,window.SEYVEO_OPEN_SOURCES.publicQuery(pending.question))},100);
+  }
+ }catch{}
 })();
 </script>
 <script src="assets/seyveo-chat-calendar-bridge.js?v=2"></script>

@@ -8,7 +8,7 @@
  function isSearchQuestion(value){
   const q=String(value||'').trim();
   if(q.length<5||q.length>600||excludes.test(q))return false;
-  return /(?:в интернете|в сети|поищи|найди (?:новост|стать|фото|картин|публикац|сведения|информац)|что нового|последн(?:ие|яя|ий)|новост|сегодня|завтра|вчера|погод|прогноз погоды|температур|курс(?:ы)? валют|курс доллар|курс евро|пробк|расписани[ея] (?:рейс|поезд|автобус)|правда(?: ли| что)?|свеж(?:ие|ая|ий)|актуальн|проверь факт|покажи (?:фото|картин))/i.test(q);
+  return /(?:в интернете|в сети|поищи|найди (?:новост|стать|фото|картин|публикац|сведения|информац)|что нового|последн(?:ие|яя|ий)|новост|(?:события|произошло|случилось)\s+(?:сегодня|завтра|вчера)|погод|прогноз погоды|температур|курс(?:ы)? валют|курс доллар|курс евро|пробк|расписани[ея] (?:рейс|поезд|автобус)|правда(?: ли| что)?|свеж(?:ие|ая|ий)|актуальн|проверь факт|покажи (?:фото|картин))/i.test(q);
  }
  function userAllowedSearch(provider){
   const key='seyveo-public-web-search-consent-v1';
@@ -22,7 +22,7 @@
  }
  function isLocalQuestion(value){
   const q=String(value||'').trim();
-  return q.length>=5&&q.length<=600&&/^(?:сэйви[, ]*)?(?:найди|поищи|ищи|поиск)\s+(?:в\s+)?(?:моей\s+)?(?:локальн(?:ой|ых)\s+)?(?:библиотек(?:е|и)|знаниях|материалах\s+seyveo)\b/iu.test(q);
+  return q.length>=5&&q.length<=600&&/^(?:сэйви[, ]*)?(?:найди|поищи|ищи|поиск)\s+(?:в\s+)?(?:моей\s+)?(?:локальн(?:ой|ых)\s+)?(?:библиотек(?:е|и)|знаниях|материалах\s+seyveo)(?![\p{L}\p{N}])/iu.test(q);
  }
  function startLocal(question){
   const conversation=window.SEYVEO_CONVERSATION;
@@ -105,7 +105,15 @@
       message:'Поиск не запущен без разрешения.'});
      return;
     }
-    const payload=await window.SEYVEO_SEARCH_HUB?.searchPublic(question,{signal:controller.signal});
+    let payload;
+    if(window.SEYVEO_SEARCH_HUB?.searchPublic)payload=await window.SEYVEO_SEARCH_HUB.searchPublic(question,{signal:controller.signal});
+    else{
+     const response=await fetch('/api/seyveo-live-search',{
+      method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},
+      body:JSON.stringify({message:question}),signal:controller.signal});
+     if(!response.ok)throw Error('search-unavailable');
+     payload=await response.json();
+    }
     if(controller.signal.aborted)return;
     if(!payload||typeof payload!=='object')throw Error('invalid-response');
     if(payload.status==='unavailable'||payload.status==='consent-required'){
