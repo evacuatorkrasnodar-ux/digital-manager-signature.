@@ -79,36 +79,28 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  }
 }
 
-/* Light dock · optical inset, not a new button surface.
-   Only the existing selection indicator reacts; shell, geometry, sphere and
-   navigation handlers are unchanged. */
+/* Light dock · restrained selection glow. A tap must never look like a
+   button sinking into the pearl glass; keep the original 60px geometry. */
 :root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock) > .sv-dock-active-indicator{
- box-shadow:inset 0 2.1px 3.2px rgba(31,42,58,.17),
-            inset 0 -1px .75px rgba(255,255,255,.47),
-            inset 0 0 0 .45px rgba(31,42,58,.055)!important;
+ border-color:transparent!important;
+ background:radial-gradient(ellipse 100% 90% at 50% 50%,rgba(var(--sv-selected-glow,10,132,255),.09),transparent 78%)!important;
+ box-shadow:none!important;
  transition:transform 360ms cubic-bezier(.22,1,.36,1),
-   width 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease,
-   box-shadow 180ms ease!important;
+   width 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease!important;
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-indicator-pressing:not(.seyveo-music-dock):not(.seyveo-browser-dock) > .sv-dock-active-indicator{
- --sv-indicator-depth:1px;
- --sv-indicator-scale:.965;
- box-shadow:inset 0 3.5px 4.5px rgba(31,42,58,.29),
-            inset 0 -1.2px 1px rgba(255,255,255,.57),
-            inset 0 0 0 .55px rgba(31,42,58,.085)!important;
- transition:transform 105ms ease-out,width 360ms cubic-bezier(.22,1,.36,1),
-   opacity 200ms ease,box-shadow 105ms ease-out!important;
+ --sv-indicator-depth:0px;
+ --sv-indicator-scale:1;
+ box-shadow:none!important;
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
  > :is(#navHome,#navTasks,#navPicture).sv-dock-nav-press > svg{
- transform:translateY(.7px)!important;
+ transform:none!important;
 }
-/* Separate Search circle: the same tiny inward movement on touch only. */
+/* Search stays at its natural size even during a long or repeated touch. */
 :root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock) > #navManage#navManage:active{
- transform:translateY(1px) scale(.967)!important;
- box-shadow:inset 0 3px 4px rgba(31,42,58,.25),
-            inset 0 -1px 1px rgba(255,255,255,.52)!important;
- transition:transform 105ms ease-out,box-shadow 105ms ease-out!important;
+ transform:none!important;
+ box-shadow:none!important;
 }
 @media(prefers-reduced-motion:reduce){
  :root[data-theme="light"] footer.dock.sv-shared-dock > .sv-dock-active-indicator,

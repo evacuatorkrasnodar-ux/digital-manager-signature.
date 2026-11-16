@@ -625,7 +625,10 @@ body > #orb.sv-sayvi-handoff-flight {
   pointer-events:none!important;
   transition:none!important;
 }
-:root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svSayviHomeWeather{
+:root.sv-home-empty-sphere.sv-home-empty-arrived:not(.sv-music-ambient) #homePage #svSayviHomeWeather:not([hidden]){
+  display:inline-flex!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
   animation:sv-home-weather-after-sayvi .75s cubic-bezier(.22,.8,.22,1) both!important;
 }
 @keyframes sv-home-weather-after-sayvi{
@@ -649,7 +652,7 @@ body > #orb.sv-sayvi-handoff-flight {
   transition:opacity 370ms cubic-bezier(.2,.85,.2,1) 145ms!important;
 }
 @media(prefers-reduced-motion:reduce){
-  :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svSayviHomeWeather{
+  :root.sv-home-empty-sphere.sv-home-empty-arrived:not(.sv-music-ambient) #homePage #svSayviHomeWeather:not([hidden]){
     animation:none!important;
   }
 }

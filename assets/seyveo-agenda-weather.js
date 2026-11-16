@@ -220,6 +220,7 @@
  window.SAYVI_WEATHER=Object.freeze({
   refresh:()=>refresh(true),setLocation,
   getLocation:()=>({...location}),
+  getUpdatedAt:()=>updatedAt,
   getForecast:date=>days.has(date)?{...days.get(date)}:null
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});

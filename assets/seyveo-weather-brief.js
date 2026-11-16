@@ -44,8 +44,10 @@
     const source=window.SAYVI_WEATHER;
     if(!source?.getForecast||!source?.getLocation)return null;
     const city=source.getLocation()?.name||'';
-    let updatedAt=0;
-    try{
+    // The live feed is authoritative. Safari/PWA can have an empty or blocked
+    // localStorage even when the validated forecast is already in memory.
+    let updatedAt=Number(source.getUpdatedAt?.())||0;
+    if(!updatedAt)try{
       const cache=JSON.parse(localStorage.getItem('seyveo.agenda-weather.cache.v2')||'null');
       updatedAt=Number(cache?.updatedAt)||0;
     }catch{}
@@ -90,21 +92,45 @@
       if(message)message.insertAdjacentElement('afterend',button);
       else cluster.insertAdjacentElement('afterend',button);
       let current=null;
+      let forecastUnavailable=false;
       const sync=()=>{
         current=getBrief();
         const today=current?.days[0];
-        button.hidden=!today;
-        if(!today)return;
+        // The Home weather row must not vanish when the feed is loading or
+        // temporarily offline. Never invent temperatures for this fallback.
+        button.hidden=false;
+        if(!today){
+          const city=window.SAYVI_WEATHER?.getLocation?.()?.name||'Погода';
+          mark.innerHTML=weatherGlyph(2);
+          label.textContent=city+' · '+(forecastUnavailable?'Прогноз пока недоступен':'Обновляем прогноз');
+          button.title='Обновить прогноз погоды';
+          button.setAttribute('aria-label','Обновить прогноз погоды');
+          return;
+        }
         mark.innerHTML=weatherGlyph(today.code);
         label.textContent=current.city+' · '+temperature(today.max)+' / '+temperature(today.min)+' · '+condition(today.code);
         button.title='Открыть прогноз Сэйви';
+        button.setAttribute('aria-label','Спросить Сэйви подробный прогноз погоды');
       };
       sync();
-      window.addEventListener('seyveo:weather-updated',sync);
+      window.addEventListener('seyveo:weather-updated',()=>{
+        forecastUnavailable=!getBrief();
+        sync();
+      });
+      window.addEventListener('seyveo:home-sayvi-arrived',()=>{
+        forecastUnavailable=false;
+        sync();
+        if(!current)window.SAYVI_WEATHER?.refresh?.();
+      });
       document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
       button.addEventListener('click',()=>{
         current=getBrief();
-        if(!current){sync();return;}
+        if(!current){
+          forecastUnavailable=false;
+          sync();
+          window.SAYVI_WEATHER?.refresh?.();
+          return;
+        }
         try{sessionStorage.setItem(HANDOFF_KEY,JSON.stringify({...current,at:Date.now()}));}
         catch{return;}
         if(window.SEYVEO_CONVERSATION?.open)window.SEYVEO_CONVERSATION.open();

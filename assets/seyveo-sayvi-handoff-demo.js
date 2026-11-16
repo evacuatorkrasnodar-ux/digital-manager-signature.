@@ -339,11 +339,12 @@
       root.classList.remove('sv-home-empty-sphere-leaving');
       // The short three-slot pearl dock was already present throughout the
       // welcome. Do not replay a full-to-short animation on empty launch.
-      root.classList.add('sv-home-empty-at-launch','sv-home-empty-sphere');
+      root.classList.add('sv-home-empty-at-launch','sv-home-empty-sphere','sv-home-empty-arrived');
     }
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
     restoreDock();
+    if(keepHomeSphere)window.dispatchEvent(new Event('seyveo:home-sayvi-arrived'));
     if(smallOpacity)small.style.setProperty('opacity',smallOpacity,smallOpacityPriority);
     else small.style.removeProperty('opacity');
     root.classList.remove('sv-sayvi-handoff-inflight');
@@ -908,7 +909,7 @@
   const emptyOrbCluster=document.getElementById('orbCluster');
   let emptySphere=false,emptyEntering=false,emptyLeaving=false;
   let emptyMotion=null,emptySyncTimer=0,emptyEpoch=0;
-  let emptyLiftTimer=0,emptyRouteTimer=0,emptyRouteLeaving=false;
+  let emptyLiftTimer=0,emptyArrivalGuardTimer=0,emptyRouteTimer=0,emptyRouteLeaving=false;
   function hasHomeCards(){
     const living=document.getElementById('seyveoLivingMoment');
     const advice=document.getElementById('dynamic');
@@ -941,6 +942,7 @@
   }
   function clearEmptyArrival(){
     clearTimeout(emptyLiftTimer);emptyLiftTimer=0;
+    clearTimeout(emptyArrivalGuardTimer);emptyArrivalGuardTimer=0;
     root.classList.remove('sv-home-empty-arriving','sv-home-empty-lifted');
   }
   function enterEmptySphere(){
@@ -957,8 +959,20 @@
     root.classList.add('sv-home-empty-arriving','sv-home-empty-sphere');
     if(emptyOrbCluster){emptyOrbCluster.inert=false;emptyOrbCluster.removeAttribute('aria-hidden');}
     const to=orb.getBoundingClientRect();
+    const complete=()=>{
+      if(epoch!==emptyEpoch||!emptySphere||
+         (!emptyEntering&&!root.classList.contains('sv-home-empty-arriving')))return;
+      emptyEntering=false;
+      restoreEmptyMotion();
+      clearEmptyArrival();
+      // Never strand the weather behind the flight gate on Safari, even if
+      // Web Animations is interrupted or cannot start.
+      root.classList.add('sv-home-empty-arrived');
+      window.dispatchEvent(new Event('seyveo:home-sayvi-arrived'));
+      if(!canShowEmptySphere())leaveEmptySphere();
+    };
     if(reduceMotion()||!from.width||!to.width||typeof orb.animate!=='function'){
-      clearEmptyArrival();return;
+      complete();return;
     }
     const dx=from.left+from.width/2-(to.left+to.width/2);
     const dy=from.top+from.height/2-(to.top+to.height/2);
@@ -973,17 +987,10 @@
       emptyLiftTimer=setTimeout(()=>{
         if(epoch===emptyEpoch)root.classList.add('sv-home-empty-lifted');
       },160);
-      const complete=()=>{
-        if(epoch!==emptyEpoch)return;
-        emptyEntering=false;
-        restoreEmptyMotion();
-        clearEmptyArrival();
-        // The weather enters only after Sayvi has reached her fixed position.
-        root.classList.add('sv-home-empty-arrived');
-        if(!canShowEmptySphere())leaveEmptySphere();
-      };
+      // A missing animation.finished callback must not permanently hide Home.
+      emptyArrivalGuardTimer=setTimeout(complete,1900);
       motion.finished.then(complete).catch(complete);
-    }catch{emptyEntering=false;restoreEmptyMotion();clearEmptyArrival();}
+    }catch{complete();}
   }
   function leaveEmptySphere({animate=true}={}){
     // Root-class observers must not cut off a dock expansion in progress.
