@@ -13,6 +13,9 @@ test('Sayvi uses one constant size before and after the greeting',async()=>{
  const css=await read('assets/seyveo-sayvi-handoff-demo.css');
  const html=await read('index.html');
  assert.match(css,/--sv-home-orb-size:clamp\(230px,68vw,315px\)/);
+ assert.match(css,/@media \(max-width:649px\) and \(pointer:coarse\)/);
+ assert.match(css,/--sv-home-orb-size:min\(78vw,325px,42dvh\)/);
+ assert.match(css,/--sv-home-orb-half:min\(39vw,162\.5px,21dvh\)/);
  assert.equal(css.match(/width:var\(--sv-home-orb-size\)/g)?.length,2);
  assert.equal(css.match(/height:var\(--sv-home-orb-size\)/g)?.length,4);
  assert.doesNotMatch(html,/seyveo-home-conversation\.css/);
