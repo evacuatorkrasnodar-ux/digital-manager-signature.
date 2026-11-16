@@ -1238,6 +1238,7 @@ function closeEarly(){
 }
 function hold(callback,delay){
  const check=()=>{
+  if(document.documentElement.classList.contains('sv-review-open'))return;
   if(mode==='idle'||!available()){if(!available())return rest();return}
   if(engaged()){later(check,1800);return}
   callback();
@@ -1674,6 +1675,7 @@ window.addEventListener('seyveo:home-agenda-visibility-changed',scheduleRefresh)
 window.addEventListener('seyveo:fan-workshop-changed',scheduleRefresh);
 window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:card-visibility-changed',scheduleRefresh);
+window.addEventListener('seyveo:review-closed',()=>{if(mode==='idle'&&!previewRearmAt)previewSeen=false;scheduleRefresh()});
 window.addEventListener('seyveo:card-snoozes-changed',()=>{
  // When the user restores paused cards manually, restore the demo queue too.
  if(!(window.SEYVEO_CARD_ENGINE?.getSnoozes?.()||[]).length){previewRearmAt=0;previewSeen=false;}
