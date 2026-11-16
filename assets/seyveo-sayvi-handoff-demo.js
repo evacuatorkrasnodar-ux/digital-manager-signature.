@@ -300,8 +300,12 @@
     const label=isToday?'Сегодня':date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(date):'Без даты';
     meta.textContent=label+(item.time?' · '+item.time:'');
   }
-  function finish({spark=false}={}){
+  function finish({spark=false,stayHome=false}={}){
     if(done)return;
+    // An empty Home keeps the original large Sayvi in place. There is no
+    // pointless trip to the dock and back after the written welcome.
+    const keepHomeSphere=!spark&&(stayHome||!shouldDockHome())&&
+      (!location.hash||location.hash==='#home')&&!home.hidden;
     done=true;
     voiceButton?.remove();
     voiceButton=null;
@@ -327,6 +331,14 @@
     clearTimeout(safetyTimer);
     if(spark)root.classList.add('sv-cinema-stagger-enter');
     root.classList.add('sv-sayvi-handoff-docked');
+    if(keepHomeSphere){
+      emptySphere=true;
+      emptyEntering=false;
+      emptyLeaving=false;
+      ++emptyEpoch;
+      root.classList.remove('sv-home-empty-sphere-leaving');
+      root.classList.add('sv-home-empty-sphere');
+    }
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
     restoreDock();
@@ -334,7 +346,10 @@
     else small.style.removeProperty('opacity');
     root.classList.remove('sv-sayvi-handoff-inflight');
     const cluster=document.getElementById('orbCluster');
-    if(cluster){cluster.setAttribute('aria-hidden','true');cluster.inert=true;}
+    if(cluster){
+      cluster.setAttribute('aria-hidden',keepHomeSphere?'false':'true');
+      cluster.inert=!keepHomeSphere;
+    }
     if(spark){
       const flash=document.createElement('span');
       flash.className='sv-cinema-dock-spark';
@@ -358,6 +373,7 @@
   function begin(){
     if(done)return;
     if(document.hidden||!atHome||matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return;}
+    if(!shouldDockHome()){finish({stayHome:true});return;}
     // Address bars and safe-area insets may settle during the long logo scene.
     // Measure the dock again immediately before beginning the actual flight.
     prepareDock();
@@ -405,7 +421,8 @@
 
   function runOpening({waitForNarration=false}={}){
     if(done)return;
-    prepareDock();
+    // A quiet, task-free launch has no miniature destination to prepare.
+    if(shouldDockHome())prepareDock();
     root.classList.remove('sv-cinema-boot');
     // Start the approved 9.3-second mark/word/signature on the large sphere.
     // The Home controller waits two frames for its final visible geometry.
@@ -900,6 +917,11 @@
       if(section&&!section.hidden)return true;
     }
     return false;
+  }
+  function shouldDockHome(){
+    // The agenda card is constructed only after finish(), so check storage
+    // as well when deciding the destination during the opening itself.
+    return hasHomeCards()||!!nextAgenda();
   }
   function canShowEmptySphere(){
     return done&&!document.hidden&&!home.hidden&&
