@@ -121,13 +121,13 @@
   previewDate=value;
   dayAgenda.replaceChildren();
   const items=savedDayEntries(value);
-  if(!items.length){dayAgenda.hidden=true;return}
   dayAgenda.hidden=false;
   const [y,m,d]=value.split('-').map(Number);
   const heading=document.createElement('div');heading.className='sv-task-day-agenda-heading';
   const label=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'}).format(new Date(y,m-1,d));
   heading.textContent=label+' · '+items.length+' '+(items.length===1?'дело':items.length<5?'дела':'дел');
   dayAgenda.append(heading);
+  if(!items.length){heading.textContent=label+' · дел нет';}
   const list=document.createElement('div');list.className='sv-task-day-agenda-list';
   for(const entry of items){
    const row=document.createElement('div');
@@ -141,10 +141,6 @@
    list.append(row);
   }
   dayAgenda.append(list);
-  const select=document.createElement('button');select.type='button';
-  select.className='sv-task-day-agenda-select';select.textContent='Выбрать эту дату';
-  select.addEventListener('click',()=>chooseCalendarDate(value));
-  dayAgenda.append(select);
  }
  function moveCalendarMonth(direction){
   const next=new Date(shownYear,shownMonth+direction,1);
@@ -158,7 +154,7 @@
   previewDate='';dayAgenda.hidden=true;dayAgenda.replaceChildren();
   if(open){
    const [year,month]=(date.value||today()).split('-').map(Number);
-   shownYear=year;shownMonth=month-1;draw();
+   shownYear=year;shownMonth=month-1;renderDayAgenda(date.value||today());draw();
   }
  }
  function draw(){
@@ -187,8 +183,11 @@
    }
    button.append(number,marks);
    button.addEventListener('click',()=>{
-    if(dayMarks.length&&previewDate!==value){renderDayAgenda(value);draw();return}
-    chooseCalendarDate(value);
+    manualDate=true;
+    date.value=value;
+    date.dispatchEvent(new Event('change',{bubbles:true}));
+    renderDayAgenda(value);
+    draw();
    });
    days.append(button);
   }
