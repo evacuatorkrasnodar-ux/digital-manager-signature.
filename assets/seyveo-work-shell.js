@@ -88,12 +88,12 @@
    justify-self:end;align-self:center;
    box-sizing:border-box;display:flex;align-items:center;justify-content:center;
    gap:0;width:130px;height:42px;padding:0 2px;
-   border:var(--sv-header-circle-border,1.75px solid rgba(255,255,255,.94));
+   border:1.75px solid rgba(255,255,255,.94);
    border-radius:999px;
-   background:var(--sv-header-circle,rgba(190,193,202,.43));
-   box-shadow:var(--sv-header-circle-shadow,0 0 0 .7px rgba(164,170,184,.3));
-   -webkit-backdrop-filter:var(--sv-header-circle-filter,blur(12px));
-   backdrop-filter:var(--sv-header-circle-filter,blur(12px));
+   background:rgba(190,193,202,.43);
+   box-shadow:0 0 0 .7px rgba(164,170,184,.30),inset 0 1px 1px rgba(75,82,96,.055),inset 0 -1px 0 rgba(255,255,255,.18),inset .6px 0 .7px rgba(255,255,255,.16),inset -.6px 0 .8px rgba(75,82,96,.055),0 1px 2px rgba(82,88,103,.045);
+   -webkit-backdrop-filter:blur(12px) saturate(108%);
+   backdrop-filter:blur(12px) saturate(108%);
   }
   :host([data-task-tools="true"]) .sv-history-dual .control{
    display:grid!important;flex:0 0 42px!important;
