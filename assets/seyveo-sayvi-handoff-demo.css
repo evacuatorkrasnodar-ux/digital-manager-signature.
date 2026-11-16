@@ -154,12 +154,12 @@
   /* Bottom-anchor the speech card to Sayvi; its height may vary by device. */
   top:calc(50dvh - 100px - var(--sv-home-orb-half) - 4px)!important;
   left:50%!important;
-  width:min(350px,calc(100vw - 38px))!important;
-  max-height:104px!important;
-  min-height:92px!important;
+  width:min(316px,calc(100vw - 40px))!important;
+  max-height:144px!important;
+  min-height:70px!important;
   box-sizing:border-box!important;
   margin:0!important;
-  padding:13px 17px!important;
+  padding:14px 17px!important;
   border:1px solid rgba(158,176,183,.24)!important;
   border-radius:22px!important;
   background:rgba(255,255,255,.91)!important;
@@ -183,6 +183,8 @@
 :root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--welcome,
 :root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--wish{
   font-size:clamp(19px,4.8vw,23px);
+  white-space:normal;
+  overflow-wrap:break-word;
 }
 /* Private voice controls: local PC stream or an owner-imported Safari file.
    No audio is hosted publicly; the control appears when a tap is required. */
