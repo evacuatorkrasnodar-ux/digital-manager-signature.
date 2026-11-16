@@ -653,3 +653,32 @@ body > #orb.sv-sayvi-handoff-flight {
     animation:none!important;
   }
 }
+
+/* From the VERY FIRST visible Home frame, the dock has only three slots.
+   The original fourth Sayvi slot is revealed exclusively by the handoff
+   growth animation when actual cards are waiting. */
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked):not(.sv-cinema-dock-growing) :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+)::before{
+  max-width:calc(var(--sv-feng-capsule) * .75)!important;
+  animation:none!important;
+}
+/* The fourth, empty Sayvi button must not be painted beside the short dock
+   while the ORIGINAL large Sayvi is on Home. */
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+) > #assistantButton{
+  opacity:0!important;
+  pointer-events:none!important;
+}
+/* Empty right from launch: preserve exactly that same 3-slot width when the
+   handwritten greeting ends. No flash of a fourth, empty Sayvi slot. */
+:root.sv-home-empty-sphere.sv-home-empty-at-launch :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+)::before{
+  max-width:calc(var(--sv-feng-capsule) * .75)!important;
+  animation:none!important;
+}
