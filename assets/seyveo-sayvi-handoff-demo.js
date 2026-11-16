@@ -906,6 +906,7 @@
   const emptyOrbCluster=document.getElementById('orbCluster');
   let emptySphere=false,emptyEntering=false,emptyLeaving=false;
   let emptyMotion=null,emptySyncTimer=0,emptyEpoch=0;
+  let emptyLiftTimer=0,emptyRouteTimer=0,emptyRouteLeaving=false;
   function hasHomeCards(){
     const living=document.getElementById('seyveoLivingMoment');
     const advice=document.getElementById('dynamic');
@@ -932,61 +933,83 @@
       !document.querySelector('dialog[open]')&&
       !hasHomeCards();
   }
+
   function restoreEmptyMotion(){
     emptyMotion?.cancel();emptyMotion=null;
+  }
+  function clearEmptyArrival(){
+    clearTimeout(emptyLiftTimer);emptyLiftTimer=0;
+    root.classList.remove('sv-home-empty-arriving','sv-home-empty-lifted');
   }
   function enterEmptySphere(){
     if(emptySphere||emptyLeaving||!canShowEmptySphere())return;
     emptySphere=true;
     const epoch=++emptyEpoch;
     cancelAmbientTimer();
+    // Use the painted dock miniature as the actual physical departure point.
+    // Keep it visible for the first lift-off beat, then fade it under the globe.
     const from=small.getBoundingClientRect();
-    root.classList.add('sv-home-empty-sphere');
+    root.classList.remove('sv-home-empty-arrived');
+    root.classList.add('sv-home-empty-arriving','sv-home-empty-sphere');
     if(emptyOrbCluster){emptyOrbCluster.inert=false;emptyOrbCluster.removeAttribute('aria-hidden');}
     const to=orb.getBoundingClientRect();
-    if(reduceMotion()||!from.width||!to.width||typeof orb.animate!=='function')return;
+    if(reduceMotion()||!from.width||!to.width||typeof orb.animate!=='function'){
+      clearEmptyArrival();return;
+    }
     const dx=from.left+from.width/2-(to.left+to.width/2);
     const dy=from.top+from.height/2-(to.top+to.height/2);
     const scale=Math.min(1,from.width/to.width);
     try{
       emptyEntering=true;
       const motion=orb.animate([
-        {transform:`translate3d(${dx}px,${dy}px,0) scale(${scale})`,opacity:.98},
+        {transform:`translate3d(${dx}px,${dy}px,0) scale(${scale})`,opacity:1},
         {transform:'translate3d(0,0,0) scale(1)',opacity:1}
-      ],{duration:1360,easing:'cubic-bezier(.2,.72,.16,1)',fill:'both'});
+      ],{duration:1540,easing:'cubic-bezier(.36,.02,.16,1)',fill:'both'});
       emptyMotion=motion;
+      emptyLiftTimer=setTimeout(()=>{
+        if(epoch===emptyEpoch)root.classList.add('sv-home-empty-lifted');
+      },160);
       const complete=()=>{
         if(epoch!==emptyEpoch)return;
         emptyEntering=false;
         restoreEmptyMotion();
+        clearEmptyArrival();
+        // The weather enters only after Sayvi has reached her fixed position.
+        root.classList.add('sv-home-empty-arrived');
         if(!canShowEmptySphere())leaveEmptySphere();
       };
       motion.finished.then(complete).catch(complete);
-    }catch{emptyEntering=false;restoreEmptyMotion();}
+    }catch{emptyEntering=false;restoreEmptyMotion();clearEmptyArrival();}
   }
   function leaveEmptySphere({animate=true}={}){
+    // Root-class observers must not cut off a dock expansion in progress.
+    if(emptyRouteLeaving)return;
     if(emptyLeaving){
       if(!animate){
         ++emptyEpoch;
         restoreEmptyMotion();
+        clearEmptyArrival();
         emptyLeaving=false;
         if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
-        root.classList.remove('sv-home-empty-sphere','sv-home-empty-sphere-leaving');
+        root.classList.remove('sv-home-empty-sphere','sv-home-empty-sphere-leaving','sv-home-empty-arrived','sv-home-empty-route-exit');
       }
       return;
     }
     if(!emptySphere)return;
-    if(emptyEntering&&animate)return; // Complete the arrival before reversing.
+    if(emptyEntering&&animate)return;
     emptySphere=false;
     emptyLeaving=true;
     const epoch=++emptyEpoch;
     restoreEmptyMotion();
+    clearEmptyArrival();
+    root.classList.remove('sv-home-empty-arrived');
     const settle=()=>{
       if(epoch!==emptyEpoch)return;
+      clearTimeout(emptyRouteTimer);emptyRouteTimer=0;emptyRouteLeaving=false;
       emptyLeaving=false;
       restoreEmptyMotion();
       if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
-      root.classList.remove('sv-home-empty-sphere','sv-home-empty-sphere-leaving');
+      root.classList.remove('sv-home-empty-sphere','sv-home-empty-sphere-leaving','sv-home-empty-route-exit');
       if(!home.hidden&&hasHomeCards()){
         root.classList.add('sv-cinema-stagger-enter');
         setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),4200);
@@ -994,6 +1017,17 @@
       scheduleEmptySphereSync(300);
       if(canShowMusicAmbient())scheduleMusicAmbient();
     };
+    // A page transition needs a shorter coordinated dock expansion and mini
+    // fade-in, not a second, backwards flight of the big Home sphere.
+    const routeExit=!animate&&!reduceMotion()&&!document.hidden&&
+      (home.hidden||(location.hash&&location.hash!=='#home'));
+    if(routeExit){
+      emptyRouteLeaving=true;
+      if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
+      root.classList.add('sv-home-empty-sphere-leaving','sv-home-empty-route-exit');
+      emptyRouteTimer=setTimeout(settle,720);
+      return;
+    }
     if(!animate||reduceMotion()||home.hidden||typeof orb.animate!=='function'){
       settle();return;
     }
@@ -1018,6 +1052,15 @@
   }
   function syncEmptySphere(){
     emptySyncTimer=0;
+    // If Back is tapped during the dock expansion, return to one original orb.
+    if(emptyRouteLeaving&&!home.hidden&&
+      (!location.hash||location.hash==='#home')&&!hasHomeCards()){
+      clearTimeout(emptyRouteTimer);emptyRouteTimer=0;emptyRouteLeaving=false;
+      emptyLeaving=false;emptySphere=true;
+      root.classList.remove('sv-home-empty-route-exit','sv-home-empty-sphere-leaving');
+      if(emptyOrbCluster){emptyOrbCluster.inert=false;emptyOrbCluster.removeAttribute('aria-hidden');}
+      return;
+    }
     if(canShowEmptySphere()){enterEmptySphere();return;}
     const stillHome=!home.hidden&&(!location.hash||location.hash==='#home')&&
       !root.classList.contains('seyveo-conversation')&&!document.hidden;
