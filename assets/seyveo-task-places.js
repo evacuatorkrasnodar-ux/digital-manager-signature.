@@ -290,8 +290,12 @@
   url.searchParams.set('viewpoint',p.lat.toFixed(6)+','+p.lon.toFixed(6));
   return url.toString();
  }
- function photoURL(place,width=240){
-  const file=cleanPhoto(place?.photo),size=Math.max(120,Math.min(960,Math.round(Number(width)||240)));
+ function photoURL(place,width=500){
+  // Wikimedia's 2026 thumbnail CDN accepts predefined steps. An arbitrary
+  // width (the former 240px) can fail on Safari and silently hide the photo.
+  const file=cleanPhoto(place?.photo);
+  const requested=Math.max(120,Math.min(960,Math.round(Number(width)||500)));
+  const size=[120,250,330,500,960].find(step=>step>=requested)||960;
   return file?'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width='+size:'';
  }
  function photoInfo(value){

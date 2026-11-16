@@ -98,6 +98,8 @@ test('matches an address inside a shopping mall even when its tenant is absent f
  assert.equal(info.author,'Andrew Butko');
  assert.equal(info.license,'CC BY-SA 4.0');
  assert(window.SEYVEO_TASK_PLACES.photoURL(result,960).includes('width=960'));
+ assert(window.SEYVEO_TASK_PLACES.photoURL(result).includes('width=500'));
+ assert(window.SEYVEO_TASK_PLACES.photoURL(result,240).includes('width=250'));
  const previousSave={...result};delete previousSave.photo;
  assert.equal(window.SEYVEO_TASK_PLACES.cleanPlace(previousSave).photo,result.photo,
   'previously saved tasks must acquire the verified photo too');

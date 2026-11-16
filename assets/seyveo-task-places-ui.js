@@ -60,7 +60,7 @@
   if(!place||place.source==='known-address'||
    (!place.photo&&!place.wikidata)||(place.photo&&place.photoAuthor&&place.photoLicense))return;
   const token=++photoRequest,target=place;
-  const updated=await (search?.findPlacePhoto(target)||places.resolvePhoto(target));
+  const updated=await (search?.findPlacePhoto?.(target)||places.resolvePhoto(target));
   if(token!==photoRequest||!dialog.open||!place||place.lat!==target.lat||place.lon!==target.lon)return;
   if(updated?.photo){place=places.cleanPlace(updated);render()}
  }
@@ -96,20 +96,28 @@
    const visual=node('div','sv-place-visual');
    const photoURL=places.photoURL(place);
    if(photoURL){
+    card.className+=' sv-place-card-has-photo';
+    visual.className+=' sv-place-visual-has-photo';
     const photo=document.createElement('button');photo.className='sv-place-photo-link';photo.type='button';
     const info=places.photoInfo(place);
     photo.title=info?.label||'Фото места';
     photo.setAttribute('aria-label',(info?.label||'Фото места')+' — увеличить');
+    photo.setAttribute('data-caption',info?.label?.startsWith('Вход в ТРЦ')?'Вход в ТРЦ':'Фото места');
     photo.addEventListener('click',()=>openPhotoViewer(place));
     const img=document.createElement('img');img.src=photoURL;img.loading='lazy';
-    img.alt=info?.label||'Фото места';img.addEventListener('error',()=>photo.remove(),{once:true});
+    img.alt=info?.label||'Фото места';
+    let retried=false;
+    img.addEventListener('error',()=>{
+     if(!retried){retried=true;img.src=places.photoURL(place,250);return}
+     photo.remove();card.className='sv-place-card';visual.className='sv-place-visual';
+    });
     photo.append(img);visual.append(photo);
    }
    const link=document.createElement('a');link.className='sv-place-map';
    link.href=places.fullMapURL(place);link.target='_blank';link.rel='noopener noreferrer';
    link.setAttribute('aria-label','Открыть место на OpenStreetMap');
    const narrow=window.matchMedia('(max-width:370px)').matches;
-   for(const tile of places.mapTiles(place,narrow?96:112,narrow?88:96)){
+   for(const tile of places.mapTiles(place,narrow?96:112,photoURL?(narrow?96:112):(narrow?88:96))){
     const img=document.createElement('img');img.className='sv-place-map-tile';img.loading='lazy';
     img.alt='';img.setAttribute('aria-hidden','true');img.decoding='async';
     // OSM tile servers require an identifying Referer; the page-wide private

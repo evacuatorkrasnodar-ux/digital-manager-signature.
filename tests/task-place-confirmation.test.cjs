@@ -78,8 +78,11 @@ test('the confirmed mall entrance photo previews over the map and enlarges with 
  assert(thumbnail,'the verified mall has a photo beside its map');
  assert.equal(thumbnail.tagName,'button','photo opens in the app rather than navigating away');
  assert.match(thumbnail.attributes['aria-label'],/Вход в ТРЦ/);
+ assert(descendants(panel).some(el=>el.className==='sv-place-card sv-place-card-has-photo'),
+  'a real photo must be large in its own card row, not hidden over the map');
  const photo=descendants(thumbnail).find(el=>el.tagName==='img');
  assert(photo.src.includes('commons.wikimedia.org'));
+ assert(photo.src.includes('width=500'),'the thumbnail uses a supported Wikimedia width');
  assert(descendants(panel).some(el=>el.className==='sv-place-map'),'the original map remains visible');
  thumbnail.click();
  const viewer=descendants(dialog).find(el=>el.className==='sv-place-photo-lightbox');
@@ -91,6 +94,29 @@ test('the confirmed mall entrance photo previews over the map and enlarges with 
  assert(descendants(viewer).some(el=>el.tagName==='a'&&el.href.includes('creativecommons.org')));
  descendants(viewer).find(el=>el.className==='sv-place-photo-close').click();
  assert(!descendants(dialog).some(el=>el.className==='sv-place-photo-lightbox'));
+});
+
+test('a temporarily unavailable photo retries a standard size before returning to the compact map',async()=>{
+ const dialog=new Node('dialog');dialog.open=true;
+ const title=new Node('textarea');title.value='завтра встреча в кафе Ромашка Краснодар';
+ const panel=new Node('section');
+ const store={personalTaskDialog:dialog,personalTaskTitle:title,svNewTaskPlacePanel:panel};
+ const candidate={name:'Ромашка',address:'Краснодар',lat:45,lon:38.9,photo:'Romashka.jpg'};
+ const window={SEYVEO_TASK_PLACES:places,SEYVEO_SEARCH_HUB:{findPlace:async()=>candidate},
+  matchMedia:()=>({matches:false}),dispatchEvent:()=>{},addEventListener:()=>{}};
+ const document={getElementById:id=>store[id],createElement:tag=>new Node(tag)};
+ class MutationObserver{observe(){}}
+ vm.runInNewContext(script,{window,document,MutationObserver,Event:class{},setTimeout,clearTimeout,encodeURIComponent});
+ const editor=window.SEYVEO_TASK_PLACE_EDITOR;
+ editor.sync();await editor.lookup();
+ const photo=descendants(panel).find(el=>el.className==='sv-place-photo-link');
+ const img=descendants(photo).find(el=>el.tagName==='img');
+ img.listeners.error[0]();
+ assert(img.src.includes('width=250'),'retry uses a second standard Wikimedia size');
+ img.listeners.error[0]();
+ assert(!descendants(panel).some(el=>el.className==='sv-place-photo-link'));
+ assert(descendants(panel).some(el=>el.className==='sv-place-card'),
+  'the original compact map card is restored when images are unavailable');
 });
 
 test('Sayvi enriches a non-curated venue photo and displays its real credit',async()=>{
