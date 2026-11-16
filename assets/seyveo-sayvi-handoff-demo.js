@@ -930,6 +930,8 @@
   let emptyMotion=null,emptySyncTimer=0,emptyEpoch=0;
   let emptyLiftTimer=0,emptyArrivalGuardTimer=0,emptyRouteTimer=0,emptyRouteLeaving=false;
   function hasHomeCards(){
+    // Review cards do not alter Home sphere geometry.
+    if(!document.documentElement.classList.contains('sv-review-open'))return false;
     const living=document.getElementById('seyveoLivingMoment');
     const advice=document.getElementById('dynamic');
     if(living&&!living.hidden)return true;
