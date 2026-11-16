@@ -28,8 +28,8 @@
   const header=node('div','sv-place-map-header');
   const headline=node('div','sv-place-map-headline');
   headline.append(node('strong','',target.name),node('span','',target.address));
-  const close=node('button','sv-place-map-close','×');close.type='button';
-  close.setAttribute('aria-label','Закрыть карту');close.addEventListener('click',closeMapViewer);
+  const close=node('button','sv-place-map-close','⌄');close.type='button';
+  close.setAttribute('aria-label','Свернуть карту');close.addEventListener('click',closeMapViewer);
   header.append(headline,close);
   const viewport=node('div','sv-place-map-viewport');viewport.setAttribute('aria-label','Интерактивная карта: перетаскивай, увеличивай двумя пальцами или кнопками');
   const tilesLayer=node('div','sv-place-map-layer');
