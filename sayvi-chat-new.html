@@ -1919,6 +1919,44 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   backdrop-filter:none!important;
  }
 }
+/* A real, editable task confirmation stays inside the Sayvi conversation.
+   It never navigates to the New Task editor or saves without a tap. */
+#sayviMessages .sv-chat-task-card{
+ width:min(100%,420px);padding:15px;border-radius:19px;
+ border:1px solid rgba(91,109,124,.16);background:rgba(244,246,248,.96);
+ color:#252930;white-space:normal;font:450 14px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+#sayviMessages .sv-chat-task-heading{color:#66717c;font-size:12px;letter-spacing:.01em;margin-bottom:6px}
+#sayviMessages .sv-chat-task-title{display:block;color:#1e2329;font-size:16px;font-weight:570;line-height:1.35}
+#sayviMessages .sv-chat-task-when{margin:10px 0 12px;color:#46515c;font-size:13px}
+#sayviMessages .sv-chat-task-actions{display:flex;align-items:center;gap:9px;margin-top:13px}
+#sayviMessages .sv-chat-task-actions button{
+ min-height:44px;border-radius:22px;padding:9px 16px;cursor:pointer;
+ font:550 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ -webkit-tap-highlight-color:transparent;
+}
+#sayviMessages .sv-chat-task-save{border:1px solid rgba(255,255,255,.2);background:#38383a;color:white;flex:1}
+#sayviMessages .sv-chat-task-edit{border:1px solid rgba(91,109,124,.16);background:rgba(255,255,255,.62);color:#303943}
+#sayviMessages .sv-chat-task-actions button:disabled{opacity:.62;cursor:default}
+#sayviMessages .sv-chat-task-status{margin-top:8px;font-size:12.5px;color:#586678}
+#sayviMessages .sv-chat-task-status[data-state="saved"]{color:#236b55}
+#sayviMessages .sv-chat-task-status[data-state="error"]{color:#bf4545}
+#sayviMessages .sv-chat-task-fields{display:grid;gap:10px;margin-top:12px}
+#sayviMessages .sv-chat-task-fields[hidden]{display:none}
+#sayviMessages .sv-chat-task-fields label{display:grid;gap:4px;font-size:12px;color:#69727c}
+#sayviMessages .sv-chat-task-fields input{
+ width:100%;min-height:42px;border-radius:12px;border:1px solid rgba(82,105,125,.19);
+ background:white;color:#20252b;padding:9px 11px;font:450 15px system-ui,sans-serif;
+}
+#sayviMessages .sv-chat-task-field-pair{display:grid;grid-template-columns:1fr 105px;gap:8px}
+:root:not([data-theme="light"]) #sayviMessages .sv-chat-task-card{
+ background:rgba(48,54,60,.98);border-color:rgba(255,255,255,.11);color:#eef1f4
+}
+:root:not([data-theme="light"]) #sayviMessages .sv-chat-task-title{color:#fff}
+:root:not([data-theme="light"]) #sayviMessages .sv-chat-task-when,
+:root:not([data-theme="light"]) #sayviMessages .sv-chat-task-heading{color:#b7c1c8}
+:root:not([data-theme="light"]) #sayviMessages .sv-chat-task-edit{background:rgba(255,255,255,.1);color:#f6f6f6;border-color:rgba(255,255,255,.12)}
+:root:not([data-theme="light"]) #sayviMessages .sv-chat-task-fields input{background:#343b42;color:#fff;border-color:rgba(255,255,255,.18)}
 </style>
 <link rel="stylesheet" href="assets/sayvi-notifications.css?v=4">
 <link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=4">
@@ -2000,7 +2038,9 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <link rel="stylesheet" href="assets/seyveo-weather-brief.css?v=2">
 <script src="assets/seyveo-weather-brief.js?v=2"></script>
 <script src="assets/seyveo-open-sources.js?v=1"></script>
-<script src="assets/seyveo-task-handoff.js?v=2"></script>
+<script src="assets/seyveo-task-handoff.js?v=3"></script>
+<script src="assets/seyveo-task-smart-nl.js?v=7"></script>
+<script src="assets/seyveo-task-commit.js?v=1"></script>
 <script>
 (()=>{
  'use strict';
@@ -2286,6 +2326,11 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
    append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos,turn.files,turn.at,turn.fileRefs);
+   if(turn.role==='assistant'&&turn.taskReview&&typeof turn.taskReview==='object'){
+    const index=savedTurns.length-1;
+    savedTurns[index].taskReview={...turn.taskReview};
+    showChatTaskCard(answers.get('loaded-'+index),savedTurns[index].taskReview);
+   }
    if(turn.role==='assistant'&&turn.sources?.length){
     const index=savedTurns.length-1;
     savedTurns[index].sources=vettedWebResults(turn.sources).map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit}));
@@ -3706,6 +3751,89 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   }
   if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
  }
+ function showChatTaskCard(bubble,review){
+  if(!bubble||!review||typeof review.title!=='string'||review.title.length>140||
+     !/^\d{4}-\d{2}-\d{2}$/.test(review.date||'')||
+     !/^([01]\d|2[0-3]):[0-5]\d$/.test(review.time||''))return;
+  const turn=bubble.closest('.turn');if(!turn)return;
+  turn.querySelector('.sv-chat-task-card')?.remove();
+  const card=document.createElement('section');card.className='sv-chat-task-card';
+  card.setAttribute('aria-label','Проверь и сохрани дело');
+  const heading=document.createElement('div');heading.className='sv-chat-task-heading';heading.textContent='Проверь детали';
+  const title=document.createElement('strong');title.className='sv-chat-task-title';
+  const when=document.createElement('div');when.className='sv-chat-task-when';
+  const actions=document.createElement('div');actions.className='sv-chat-task-actions';
+  const save=document.createElement('button');save.type='button';save.className='sv-chat-task-save';save.textContent='Сохранить';
+  const edit=document.createElement('button');edit.type='button';edit.className='sv-chat-task-edit';edit.textContent='Изменить';
+  const statusLine=document.createElement('div');statusLine.className='sv-chat-task-status';statusLine.setAttribute('role','status');
+  const fields=document.createElement('div');fields.className='sv-chat-task-fields';fields.hidden=true;
+  const makeField=(label,type,value)=>{
+   const wrapper=document.createElement('label');wrapper.textContent=label;
+   const field=document.createElement('input');field.type=type;field.value=value;field.required=true;
+   if(type==='text')field.maxLength=140;
+   wrapper.append(field);return {wrapper,field};
+  };
+  const nameField=makeField('Название','text',review.title);
+  const dateField=makeField('Дата','date',review.date);
+  const timeField=makeField('Время','time',review.time);
+  const pair=document.createElement('div');pair.className='sv-chat-task-field-pair';
+  pair.append(dateField.wrapper,timeField.wrapper);
+  fields.append(nameField.wrapper,pair);
+  actions.append(save,edit);card.append(heading,title,when,fields,actions,statusLine);
+  turn.insertBefore(card,turn.querySelector('.sv-reply-actions')||null);
+  const entry=()=>{
+   const index=Number(bubble.dataset.savedIndex);
+   const item=Number.isInteger(index)&&index>=0?savedTurns[index]:null;
+   return item?.taskReview?.token===review.token?item:null;
+  };
+  const display=()=>{
+   title.textContent=review.title;
+   const date=new Date(review.date+'T12:00:00');
+   when.textContent=Number.isNaN(date.getTime())?review.date+' · '+review.time:
+    new Intl.DateTimeFormat('ru-RU',{weekday:'short',day:'numeric',month:'long',year:'numeric'}).format(date)+' · '+review.time;
+  };
+  let saved=Boolean(window.SEYVEO_TASK_COMMIT?.find?.(review));
+  function markSaved(already=false,write=true){
+   saved=true;fields.hidden=true;
+   save.disabled=true;save.textContent='Сохранено ✓';
+   edit.textContent='Посмотреть в делах';
+   statusLine.dataset.state='saved';
+   statusLine.textContent=already?'Это дело уже есть в календаре дел.':'Запись сохранена в «Моих делах». Создала Сэйви.';
+   const item=entry();if(item&&write){item.taskReview.saved=true;persist()}
+  }
+  display();if(saved)markSaved(true,false);
+  edit.addEventListener('click',()=>{
+   if(saved){
+    try{sessionStorage.setItem('seyveo.sayvi.task-focus-date.v1',review.date)}catch{}
+    window.location.assign('./index.html#tasks');return;
+   }
+   fields.hidden=!fields.hidden;
+   if(!fields.hidden){
+    nameField.field.value=review.title;dateField.field.value=review.date;timeField.field.value=review.time;
+    nameField.field.focus({preventScroll:true});
+   }
+  });
+  save.addEventListener('click',()=>{
+   if(saved)return;
+   const item=entry();
+   if(!item){statusLine.dataset.state='error';statusLine.textContent='Не удалось найти черновик. Повтори просьбу Сэйви.';return}
+   const proposed=fields.hidden?{title:review.title,date:review.date,time:review.time}:{
+    title:nameField.field.value.trim(),date:dateField.field.value,time:timeField.field.value
+   };
+   if(!proposed.title||!proposed.date||!proposed.time){
+    statusLine.dataset.state='error';statusLine.textContent='Уточни название, дату и время.';return;
+   }
+   const outcome=window.SEYVEO_TASK_COMMIT?.saveBatch?.([{
+    title:proposed.title,due:proposed.date,time:proposed.time
+   }],{createdBy:'sayvi'});
+   if(!['saved','already'].includes(outcome?.status)){
+    statusLine.dataset.state='error';statusLine.textContent=outcome?.message||'Не удалось записать. Попробуй ещё раз.';return;
+   }
+   review.title=proposed.title.slice(0,140);review.date=proposed.date;review.time=proposed.time;
+   item.taskReview={...review,saved:true};
+   display();markSaved(outcome.status==='already');
+  });
+ }
  function showThinking(){
   const turn=document.createElement('div');
   turn.className='turn sayvi-thinking';
@@ -4397,10 +4525,26 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  async function ask(question,options={}){
   if(!options.skipUser&&!options.attachments?.length){
    const newTask=window.SEYVEO_TASK_HANDOFF?.extract?.(question);
+   const meeting=window.SEYVEO_TASK_HANDOFF?.extractMeeting?.(question);
+   const draft=meeting||newTask?window.SEYVEO_TASK_SMART_NL?.(meeting||newTask):null;
+   if(draft?.title&&draft?.date&&draft?.time){
+    const id=++sequence;
+    const message='Подготовила встречу. Проверь детали и нажми «Сохранить» — только тогда она появится в твоих делах.';
+    append('user','user-'+id,options.displayMessage??question,true);
+    append('assistant','reply-'+id,message);
+    const review={token:'task-review-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
+     title:draft.title,date:draft.date,time:draft.time,saved:false};
+    savedTurns[savedTurns.length-1].taskReview=review;
+    persist();showChatTaskCard(answers.get('reply-'+id),review);
+    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:message});
+    if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+    return;
+   }
    if(newTask){
+    // An incomplete request still requires the full manual editor.
     if(window.SEYVEO_TASK_HANDOFF.remember(newTask))
      window.location.assign('./index.html#tasks');
-    else status.textContent='Не удалось передать дело. Попробуй открыть «Новое дело» вручную.';
+    else status.textContent='Не удалось подготовить дело. Попробуй ещё раз.';
     return;
    }
   }
@@ -4903,7 +5047,7 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <script src="assets/reminder-dialogue.js?v=1"></script>
 <script src="assets/task-natural.js?v=2"></script>
 <script src="assets/calendar-natural.js?v=1"></script>
-<script src="assets/assistant-local-actions.js?v=10"></script>
+<script src="assets/assistant-local-actions.js?v=11"></script>
 <script src="assets/seyveo-card-voice.js?v=3"></script>
 <script src="assets/seyveo-intelligence-core.js?v=1"></script>
 <script src="assets/sayvi-notifications.js?v=3"></script>

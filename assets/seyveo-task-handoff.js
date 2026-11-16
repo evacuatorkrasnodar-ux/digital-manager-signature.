@@ -1,6 +1,6 @@
-/* SEYVEO · Hand a spoken task draft to the one canonical New Task editor.
- * A clear dated meeting statement is an offer to review, never proof of a save.
- * No task is silently saved; addresses must still be checked and confirmed. */
+/* SEYVEO · Explicit task drafts use the canonical New Task editor.
+ * A clear, dated meeting statement may instead be committed by Live Action,
+ * which verifies the real saved record before announcing success. */
 ((root)=>{
  'use strict';
  const KEY='seyveo.sayvi.new-task-handoff.v1';
@@ -9,9 +9,15 @@
   const text=String(value||'').trim().slice(0,650);
   const pattern=/^(?:(?:сэй|сэйви)[,! ]+)?(?:создай|добавь|запиши|оформи|сохрани|поставь)\s+(?:мне\s+)?(?:(?:новое|новую)\s+)?(?:дело|задачу|встречу|напоминание)(?:\s*[:—-]\s*|\s+)(.{8,500})$/iu;
   const match=pattern.exec(text);
-  // The user often just states a complete meeting with a date and time.
-  // This must open the review editor instead of asking a text model to claim
-  // that it has already written an event into Calendar.
+  const draft=(match?.[1]||'').trim().replace(/\s+/gu,' ');
+  if(draft.length<8||/[<>\r\n]/u.test(draft))return '';
+  return draft;
+ }
+ function extractMeeting(value){
+  const text=String(value||'').trim();
+  if(text.length<12||text.length>500||/[<>\r\n]/u.test(text))return '';
+  // A full statement with a meeting, day and hour is an actionable request.
+  // Questions, hypothetical situations and cancellations stay normal chat.
   const candidate=text.replace(/^(?:сэй|сэйви)[,!\s]+/iu,'').trim();
   const safeStatement=!/[?]/u.test(candidate)&&
    !/(?:^|[\s,.])(?:если|возможно|наверное|допустим|предположим|не\s+записывай|не\s+сохраняй)(?=$|[\s,.!?])/iu.test(candidate);
@@ -19,10 +25,7 @@
   const hasDate=/(?:^|[\s,.])(?:сегодня|завтра|послезавтра)(?=$|[\s,.!?])/iu.test(candidate);
   const hasTime=/(?:^|[\s,.])в\s+(?:[01]?\d|2[0-3])(?::[0-5]\d)?(?=$|[\s,.!?])/iu.test(candidate);
   const hasMeeting=/(?:^|[\s,.])(?:встреча|созвон|совещание)(?=$|[\s,.!?])/iu.test(candidate);
-  const draft=(match?match[1]:safeStatement&&startsLikePlan&&hasDate&&hasTime&&hasMeeting?candidate:'')
-   .trim().replace(/\s+/gu,' ');
-  if(draft.length<8||/[<>\r\n]/u.test(draft))return '';
-  return draft;
+  return safeStatement&&startsLikePlan&&hasDate&&hasTime&&hasMeeting?candidate.replace(/\s+/gu,' '):'';
  }
  function remember(draft){
   const title=String(draft||'').trim();
@@ -43,7 +46,7 @@
   }catch{return ''}
  }
  function clear(){try{root?.sessionStorage?.removeItem(KEY)}catch{}}
- const api=Object.freeze({extract,remember,take,clear});
+ const api=Object.freeze({extract,extractMeeting,remember,take,clear});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.SEYVEO_TASK_HANDOFF=api;
 })(typeof window!=='undefined'?window:null);

@@ -226,6 +226,19 @@ function finishNow(){
 }
 function check(j){if(j.cancelled||job!==j)throw new Error('Остановлено')}
 async function pause(j,ms){await delay(ms);check(j)}
+// The Tasks submit handler is asynchronous (attachment persistence happens
+// before the write). requestSubmit() only dispatches submit; it does not wait
+// for the record to reach storage. Poll the owner store and the editor state
+// before reporting success or switching to the recovery writer.
+async function awaitSaved(j,key,match){
+ for(let attempt=0;attempt<40;attempt++){
+  check(j);
+  const record=rows(key).find(match);
+  if(record&&!j.dialog?.open)return record;
+  await delay(100);
+ }
+ return null;
+}
 function focus(j,node){
  j.focused?.classList.remove('sv-live-focus');
  j.focused=node;
@@ -285,11 +298,18 @@ async function taskFlow(j){
  if(!form?.checkValidity())throw new Error('Редактор не принял обязательные поля');
  j.committing=true;j.internalSubmit=true;
  form.dataset.svCreatedBy='sayvi';
- try{form.requestSubmit()}finally{delete form.dataset.svCreatedBy;j.internalSubmit=false;j.committing=false}
- const entry=rows(TASKS).find(x=>!before.has(x.id)&&x.title===d.title&&x.due===(d.date||'')&&(x.time||'')===(d.time||''));
- if(!entry||j.dialog?.open)throw new Error('Сохранение дела не подтверждено');
- j.saved=entry;queueClear(j);receiptWrite(j);
- return entry;
+ try{
+  form.requestSubmit();
+  j.internalSubmit=false;
+  const entry=await awaitSaved(j,TASKS,x=>!before.has(x.id)&&x.title===d.title&&
+   x.due===(d.date||'')&&(x.time||'')===(d.time||'')&&x.createdBy==='sayvi');
+  if(!entry)throw new Error('Сохранение дела не подтверждено');
+  j.saved=entry;queueClear(j);receiptWrite(j);
+  return entry;
+ }finally{
+  delete form.dataset.svCreatedBy;
+  j.internalSubmit=false;j.committing=false;
+ }
 }
 async function calendarFlow(j){
  const d=j.plan.draft;
@@ -344,7 +364,12 @@ function showReceipt(j,result){
  const view=document.createElement('button');view.type='button';view.textContent='Проверить';
  view.addEventListener('click',()=>{
   receipt?.remove();receipt=null;
-  if(j.plan.kind==='task'){window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();location.hash='#tasks'}
+  if(j.plan.kind==='task'){
+   window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();location.hash='#tasks';
+   window.requestAnimationFrame(()=>window.dispatchEvent(new CustomEvent('seyveo:tasks-focus-date',{
+    detail:{date:j.plan.draft.date}
+   })));
+  }
   else{location.hash='#calendar';window.dispatchEvent(new CustomEvent('seyveo:calendar-focus-date',{detail:{date:j.plan.draft.date}}))}
  });
  receipt.append(top,title,when,view);

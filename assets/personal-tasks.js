@@ -718,6 +718,12 @@ window.addEventListener('seyveo:agenda-go-today',()=>{
  svTaskWindowStart=today;
  svAgendaJumpToDate(today);
 });
+// A verified Sayvi save can take the person to the exact date of that task.
+// This only moves the existing agenda viewport; it never creates a record.
+window.addEventListener('seyveo:tasks-focus-date',event=>{
+ const iso=event.detail?.date;
+ if(svTaskDate(iso))svAgendaJumpToDate(iso);
+});
 function svAgendaSyncFromScroll(){
  if(Date.now()<svAgendaJumpThrough||document.getElementById('svWorkShell')?.dataset.agendaScroll!=='true')return;
  const scrollRange=list.scrollHeight-list.clientHeight;
@@ -1799,6 +1805,18 @@ else setTimeout(openSayviTaskDraft,0);
    existing and within-plan duplicates are skipped; never truncate old tasks. */
 window.addEventListener('seyveo:tasks-plan-batch',event=>{
  const detail=event.detail;
+ if(window.SEYVEO_TASK_COMMIT?.saveBatch){
+  const result=window.SEYVEO_TASK_COMMIT.saveBatch(detail?.items,{
+   createdBy:detail?.createdBy,sourceNoteId:safeNoteId(detail?.sourceNoteId),
+   classify:window.SEYVEO_TASK_CLASSIFY
+  });
+  if(detail)detail.result=result;
+  if(result.status==='saved'){
+   justCompletedTaskId='';render();
+   window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
+  }
+  return;
+ }
  if(!detail||!Array.isArray(detail.items)||!detail.items.length||detail.items.length>5){
   if(detail)detail.result={status:'invalid',message:'Не удалось прочитать план.'};
   return;
@@ -1889,4 +1907,10 @@ new MutationObserver(()=>{
 if(svAgendaDockMedia.addEventListener)svAgendaDockMedia.addEventListener('change',svAgendaPauseDockMotion);
 render();
 requestAnimationFrame(svAgendaAlignInitial);
+// The optional “Посмотреть в делах” action from Sayvi selects the saved day.
+try{
+ const focused=sessionStorage.getItem('seyveo.sayvi.task-focus-date.v1');
+ sessionStorage.removeItem('seyveo.sayvi.task-focus-date.v1');
+ if(svTaskDate(focused))requestAnimationFrame(()=>svAgendaJumpToDate(focused));
+}catch{}
 })();
