@@ -391,6 +391,11 @@
  #tasksPage #svTasksDateNav .sv-agenda-week{
   padding:0 1px;
  }
+ /* Match Apple's slimmer day-card aspect ratio (roughly .32 of screen width)
+    without squeezing a sixth date into view or clipping the outer rules. */
+ #tasksPage #svTasksDateNav .sv-agenda-day{
+  min-height:clamp(116px,32vw,140px);
+ }
  /* Apple's today column gets a fine right-edge depth cue, not a raised tile.
     Keep the other four columns flat and all five dates fully visible. */
  :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day:first-child[data-today="true"]{
