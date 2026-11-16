@@ -60,10 +60,10 @@ test('capitalizes unfamiliar names in personal contexts without changing nouns',
  assert.equal(plan('написать письмо',now).items[0].title,'Написать письмо');
 });
 
-test('never silently loses additional tasks beyond visible review capacity', () => {
+test('can preview five distinct tasks without losing any', () => {
  const result = plan('купить хлеб и позвонить мише и оплатить счет и отправить письмо и забрать посылку', now);
- assert.equal(result.needsReview, true);
- assert.equal(result.items.length, 4);
+ assert.equal(result.needsReview, false);
+ assert.equal(result.items.length, 5);
 });
 
 test('understands mixed meeting and action requests in a single line',()=>{
