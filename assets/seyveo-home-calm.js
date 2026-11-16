@@ -6,7 +6,7 @@
  const stage=document.getElementById('stage');
  if(!home||!stage)return;
  const IDLE_MS=60000,PEEK_MS=15000;
- let timer=0,lastCount=0;
+ let timer=0,lastCount=0,suppressBlankClickUntil=0;
  const calmDetails=document.createElement('button');
  calmDetails.id='svHomeCalmDetails';calmDetails.type='button';calmDetails.hidden=true;
  calmDetails.setAttribute('aria-label','Открыть карточки для разбора');
@@ -50,9 +50,19 @@
  }
  document.addEventListener('pointerdown',event=>{
   if(!root.classList.contains('sv-home-calm')||!isHome())return;
-  if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orbCluster,#svHomeLivingLine'))return;
+  if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
+  suppressBlankClickUntil=Date.now()+850;
   reveal();
- },{passive:true});
+  event.stopPropagation();
+ },{capture:true,passive:true});
+ // A single tap must not wake Home *and* open Chat through a later click
+ // listener on the stage/body. Leave all real buttons untouched.
+ document.addEventListener('click',event=>{
+  if(Date.now()>suppressBlankClickUntil)return;
+  if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
+  suppressBlankClickUntil=0;
+  event.preventDefault();event.stopImmediatePropagation();
+ },true);
  calmDetails.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:open-card-review')));
  window.addEventListener('seyveo:review-count',event=>{
   lastCount=Math.max(0,Number(event.detail?.count)||0);updateDetails();
