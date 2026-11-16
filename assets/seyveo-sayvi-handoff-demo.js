@@ -381,7 +381,6 @@
     }
     rememberOpening();
     renderToday();
-    root.classList.toggle('sv-home-card-sphere',hasHomeCards());
     beginHomeGreetingLifetime();
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
@@ -954,7 +953,6 @@
   }
   function syncHomeCardPresence(){
     const withCards=hasHomeCards();
-    root.classList.toggle('sv-home-card-sphere',withCards);
     if(withCards)hadCardsBeforeEmpty=true;
     if(lastHasCard&&!withCards&&emptySphere&&
        root.classList.contains('sv-home-empty-arrived')&&
