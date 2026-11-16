@@ -638,7 +638,7 @@ body > #orb.sv-sayvi-handoff-flight {
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
   body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
 )::before{
-  animation:sv-music-ambient-dock-expand 630ms cubic-bezier(.22,.78,.22,1) both!important;
+  animation:sv-music-ambient-dock-expand 460ms cubic-bezier(.2,.85,.2,1) both!important;
 }
 :root.sv-home-empty-sphere.sv-home-empty-route-exit :is(
   body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
@@ -646,7 +646,7 @@ body > #orb.sv-sayvi-handoff-flight {
 ) > #assistantButton{
   opacity:1!important;
   pointer-events:auto!important;
-  transition:opacity 480ms cubic-bezier(.22,.8,.22,1) 50ms!important;
+  transition:opacity 370ms cubic-bezier(.2,.85,.2,1) 145ms!important;
 }
 @media(prefers-reduced-motion:reduce){
   :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svSayviHomeWeather{
@@ -681,4 +681,15 @@ body > #orb.sv-sayvi-handoff-flight {
 )::before{
   max-width:calc(var(--sv-feng-capsule) * .75)!important;
   animation:none!important;
+}
+
+/* The dock stays full until Sayvi actually lifts from its fourth slot.
+   Retraction starts only after the first 160ms of the upward flight, so
+   the miniature never appears to depart from outside its own capsule. */
+:root.sv-home-empty-sphere.sv-home-empty-arriving:not(.sv-home-empty-lifted) :is(
+  body > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock),
+  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)
+)::before{
+  animation:none!important;
+  max-width:var(--sv-feng-capsule)!important;
 }
