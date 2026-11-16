@@ -562,3 +562,50 @@ body > #orb.sv-sayvi-handoff-flight {
 :root.sv-sayvi-handoff-demo[data-theme="light"] #homePage .sv-sayvi-home-online{color:#3d444a}
 :root.sv-sayvi-handoff-demo[data-theme="dark"] #homePage .sv-sayvi-home-online{color:#dfe6ec}
 :root.sv-sayvi-handoff-demo #homePage #stage > .message #kicker{display:none!important}
+
+/* Large Sayvi has its own physical anchor, independent of changing headline
+   height and the weather line. The *copy* makes room for her, never vice versa.
+   This also makes the opening and the empty Home share the same exact center. */
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage{
+  margin-top:-11px!important;
+}
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #orbCluster,
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage.lm-focus #orbCluster,
+:root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orbCluster,
+:root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
+  position:absolute!important;
+  top:calc(50dvh - 100px)!important;
+  left:0!important;
+  right:0!important;
+  transform:translateY(-50%)!important;
+}
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage > .message,
+:root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #stage > .message{
+  position:absolute!important;
+  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 19px)!important;
+  left:50%!important;
+  width:min(385px,calc(100% - 32px))!important;
+  margin:0!important;
+  transform:translate3d(-50%,0,0)!important;
+  transition:top .9s cubic-bezier(.22,.8,.22,1),opacity .55s ease!important;
+}
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #svSayviHomeWeather,
+:root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #svSayviHomeWeather{
+  position:absolute!important;
+  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 135px)!important;
+  left:50%!important;
+  margin:0!important;
+  transform:translateX(-50%)!important;
+  transition:top 1s cubic-bezier(.22,.8,.22,1),opacity .7s ease!important;
+}
+/* When the welcome has done its job, the weather gently moves closer to
+   Sayvi. Her coordinate never changes, even while the copy fades away. */
+:root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svSayviHomeWeather{
+  top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 27px)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  :root.sv-home-empty-sphere #homePage #svSayviHomeWeather,
+  :root.sv-home-empty-sphere #homePage #stage > .message{
+    transition:none!important;
+  }
+}
