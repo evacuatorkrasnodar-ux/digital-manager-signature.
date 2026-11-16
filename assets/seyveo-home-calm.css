@@ -11,7 +11,7 @@
  width:max-content;max-width:calc(100vw - 40px);
  margin:0;padding:4px 8px;
  border:0;background:transparent;box-shadow:none;
- color:#30343B;font:500 14px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;
+ color:#30343B;font:500 15px/1.45 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
  white-space:nowrap;cursor:pointer;
  transition:opacity .36s ease,visibility .36s ease;
 }
