@@ -91,13 +91,18 @@
    copy.append(node('strong','sv-place-name',headline));
    const text=status==='loading'?'Ищу адрес и точку на карте…':
     status==='not-found'?'Точный адрес не найден. Уточни название или город в тексте.':
-    status==='error'?'Поиск места временно недоступен. Можно сохранить дело без карты.':
+    status==='error'?'Не удалось связаться с картой. Можно проверить адрес вручную.':
     status==='permission'?'Для поиска адреса нужно разрешение.':
     proposal?'Сэйви проверит адрес, когда закончишь ввод.':'Добавь название кафе или адрес — Сэйви найдёт место.';
    copy.append(node('p','sv-place-address',text));card.append(copy);
    if(proposal&&status!=='loading'){
     const retry=node('button','sv-place-retry',status==='idle'?'Найти на карте':'Проверить снова');
     retry.type='button';retry.addEventListener('click',lookup);card.append(retry);
+   }
+   if(proposal&&(status==='error'||status==='not-found')){
+    const fallback=node('a','sv-place-manual-map','Найти в картах ↗');
+    fallback.href='https://www.openstreetmap.org/search?query='+encodeURIComponent(proposal.query);
+    fallback.target='_blank';fallback.rel='noopener noreferrer';panel.append(fallback);
    }
   }
  }

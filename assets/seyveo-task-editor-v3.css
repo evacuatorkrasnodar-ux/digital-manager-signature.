@@ -665,6 +665,11 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-retry{
  border-radius:99px!important;background:#EAF3FD!important;color:#176ABD!important;
  font:560 12px/1.2 system-ui!important;
 }
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-manual-map{
+ display:inline-block!important;margin:7px 0 0 12px!important;color:#3D73A8!important;
+ font:520 12.5px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-decoration:none!important;
+}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-card.sv-place-choices{
  display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important;
 }

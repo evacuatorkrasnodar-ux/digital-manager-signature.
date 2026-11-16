@@ -25,6 +25,8 @@ test('does not split ordinary list items into separate tasks', () => {
 test('normalizes venue spelling while retaining one task', () => {
  assert.equal(plan('в пятницу встретиться с наташей в кафе вкусно и точка', now).items[0].title,
   'Встретиться с Наташей в кафе «Вкусно — и точка»');
+ assert.equal(plan('завтра в 18 встретиться с романом в кафе вкусно и точка краснодар»',now).items[0].title,
+  'Встретиться с Романом в кафе «Вкусно — и точка», Краснодар');
 });
 
 test('corrects safe common misspellings before reading the schedule', () => {

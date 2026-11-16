@@ -151,6 +151,11 @@
    commonPeople[person.toLocaleLowerCase('ru-RU')]||/^(?:письмо|сообщение|смс|всем|кому|ещё)$/iu.test(person)?match:prefix+verb+' '+cap(person));
   value=value.replace(/(^|[\s,])(встретиться|встреча|поговорить|увидеться|созвониться)\s+с\s+([а-яё]{3,30})(?=$|[\s,.!?])/giu,(match,prefix,verb,person)=>
    commonPeople[person.toLocaleLowerCase('ru-RU')]?match:prefix+verb+' с '+cap(person));
+  // A casually typed city belongs to the location, not inside the venue name.
+  // Handle a stray closing quote as in "кафе вкусно и точка краснодар»".
+  const cities={краснодар:'Краснодар',краснодаре:'Краснодар',москва:'Москва',москве:'Москва',сочи:'Сочи',казань:'Казань',казани:'Казань'};
+  value=value.replace(/(кафе|ресторане|ресторана|ресторан|кофейне|магазин)\s+(?:«|")?(вкусно\s+и\s+точка)(?:»|")?\s*,?\s+(краснодаре?|москв[ае]|сочи|казан[ьи])(?:»|")?/giu,
+   (_,kind,brand,city)=>kind+' «Вкусно — и точка», '+cities[city.toLocaleLowerCase('ru-RU')]);
   value=value.replace(/(кафе|ресторане|ресторана|ресторан|кофейне|магазин)\s+(?:«|")?(вкусно\s+и\s+точка)(?:»|")?/giu,(_,kind)=>kind+' «Вкусно — и точка»');
   value=value.replace(/\s+([,;:!?])/g,'$1').replace(/([,;:!?])(?=\p{L})/gu,'$1 ');
   return cap(value).slice(0,140);

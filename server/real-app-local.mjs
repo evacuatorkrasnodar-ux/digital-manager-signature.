@@ -14,6 +14,7 @@ import {fileURLToPath} from 'node:url';
 import {respond} from './brain.mjs';
 import {analyzeLocalTasks} from './task-language-ai.mjs';
 import {routeOptions} from './seyveo-route-service.mjs';
+import {safePlaceQuery,searchPlace} from './seyveo-place-search.mjs';
 import {askLocalStream} from './local-stream.mjs';
 import {isDocumentWritingRequest} from './russian-writing.mjs';
 import {loadKnowledgeLibrary,retrieveKnowledge,knowledgeContext} from './knowledge-engine.mjs';
@@ -177,6 +178,14 @@ async function readTravelPoints(req){
  if(!data||typeof data!=='object'||Array.isArray(data))throw Error('invalid');
  return {origin:data.origin,destination:data.destination};
 }
+async function readPlaceQuery(req){
+ let size=0;const chunks=[];
+ for await(const part of req){size+=part.length;if(size>480)throw Error('large-place-query');chunks.push(part)}
+ const data=JSON.parse(Buffer.concat(chunks).toString('utf8'));
+ const query=safePlaceQuery(data?.query);
+ if(!query)throw Error('invalid-place-query');
+ return query;
+}
 function localFile(path){
  if(path==='/manifest.webmanifest')return resolve(ROOT,'manifest.webmanifest');
  if(!/^\/assets\/[a-zA-Z0-9._/-]+$/.test(path)||path.split('/').includes('..'))return null;
@@ -192,6 +201,8 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  let busy=false,minute=0,count=0;
  let taskAnalyzeBusy=false;
  let routeMinute=0,routeCount=0;
+ let placeMinute=0,placeCount=0,placeLast=0;
+ const placeCache=new Map();
  const imageAttachments=createImageAttachments();
  const liveSearch=searchProvider===undefined?(createBraveContextProvider()||createSeyveoWebProvider()):searchProvider;
  let searchMinute=0,searchCount=0;
@@ -264,6 +275,26 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
     const points=await readTravelPoints(req);
     send(res,200,await routeOptions(points.origin,points.destination));
    }catch{send(res,503,{status:'unavailable',routes:[],message:'Сервис маршрутов пока недоступен.'})}
+   return;
+  }
+  if(req.method==='POST'&&path==='/api/seyveo-place-lookup'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){send(res,415,{error:'Ожидается JSON.'});return}
+   let query;
+   try{query=await readPlaceQuery(req)}catch{send(res,400,{error:'Уточни название места.'});return}
+   const key=query.toLocaleLowerCase('ru-RU');
+   const cached=placeCache.get(key);
+   if(cached&&Date.now()-cached.at<86400000){send(res,200,{results:cached.results});return}
+   const minute=Math.floor(Date.now()/60000);
+   if(placeMinute!==minute){placeMinute=minute;placeCount=0}
+   if(placeCount>=6||Date.now()-placeLast<1100){send(res,429,{error:'Поиск места ограничен. Попробуй через несколько секунд.'});return}
+   placeCount++;placeLast=Date.now();
+   try{
+    const results=await searchPlace(query);
+    if(placeCache.size>=100)placeCache.delete(placeCache.keys().next().value);
+    placeCache.set(key,{at:Date.now(),results});
+    send(res,200,{results});
+   }catch{send(res,503,{error:'Сервис адресов пока недоступен.'})}
    return;
   }
   if(req.method==='GET'&&path==='/api/seyveo-index-status'){

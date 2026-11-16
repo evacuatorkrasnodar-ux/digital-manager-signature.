@@ -4,7 +4,7 @@
  * SEYVEO_PLACE_SEARCH_ENDPOINT for a dedicated service before scaling. */
 ((root)=>{
  'use strict';
- const CITY_FORMS={краснодаре:'Краснодар',москве:'Москва',сочи:'Сочи',казани:'Казань',новосибирске:'Новосибирск',екатеринбурге:'Екатеринбург',петербурге:'Санкт-Петербург'};
+ const CITY_FORMS={краснодар:'Краснодар',краснодаре:'Краснодар',москва:'Москва',москве:'Москва',сочи:'Сочи',казань:'Казань',казани:'Казань',новосибирск:'Новосибирск',новосибирске:'Новосибирск',екатеринбург:'Екатеринбург',екатеринбурге:'Екатеринбург',петербург:'Санкт-Петербург',петербурге:'Санкт-Петербург'};
  const KIND_FORMS={кафе:'кафе',кофейне:'кофейня',ресторане:'ресторан',баре:'бар',пабе:'паб',пиццерии:'пиццерия',бистро:'бистро',пекарне:'пекарня',отеле:'отель',гостинице:'гостиница',коворкинге:'коворкинг',музее:'музей',кинотеатре:'кинотеатр'};
  const meeting=/(?:^|[\s,.!?])(?:встреч[а-яё]*|встрет[а-яё]*|переговор[а-яё]*|пообед[а-яё]*|поужин[а-яё]*|позавтрак[а-яё]*|обед|ужин|завтрак|кофе|посид[а-яё]*)(?=$|[\s,.!?])/iu;
  function normalize(value){return String(value||'').replace(/[«»"“”]/g,'').replace(/\s+/g,' ').trim()}
@@ -13,7 +13,7 @@
   if(!meeting.test(phrase))return null;
   const cityMatch=phrase.match(/(?:^|[\s,.!?])(?:в\s+городе\s+|г\.\s*)([А-ЯЁ][А-ЯЁа-яё-]{2,}(?:\s+[А-ЯЁ][А-ЯЁа-яё-]+)?)/u)
    ||phrase.match(/(?:^|[\s,.!?])в\s+(Краснодаре|Москве|Сочи|Казани|Новосибирске|Екатеринбурге|Петербурге)(?=$|[\s,.!?])/iu);
-  const city=cityMatch?(CITY_FORMS[cityMatch[1]?.toLocaleLowerCase('ru-RU')]||cityMatch[1]):'';
+  let city=cityMatch?(CITY_FORMS[cityMatch[1]?.toLocaleLowerCase('ru-RU')]||cityMatch[1]):'';
   const address=phrase.match(/(?:^|[\s,.!?])(?:по\s+адресу|это\s+адрес|адрес\s*[:—]?)\s*([^!?\n]{6,110})/iu);
   if(address){
    const detail=normalize(address[1].replace(/\s+(?:сегодня|завтра|послезавтра|в\s+\d{1,2}(?::\d{2})?)(?=$|[\s,.!?]).*$/iu,'')
@@ -24,12 +24,21 @@
   if(!venue)return null;
   const kind=KIND_FORMS[venue[1].toLocaleLowerCase('ru-RU')];
   let name=normalize(venue[2]);
+  // People frequently finish a venue phrase with an unmarked city, e.g.
+  // "кафе вкусно и точка краснодар". Never send "краснодар" as a brand word.
+  const atEnd=name.match(/(?:\s+|,\s*)(краснодаре?|москв[ае]|сочи|казан[ьи]|новосибирск(?:е)?|екатеринбург(?:е)?|петербург(?:е)?)(?:[»"])?$/iu);
+  if(atEnd){
+   city=city||CITY_FORMS[atEnd[1].toLocaleLowerCase('ru-RU')]||'';
+   name=normalize(name.slice(0,atEnd.index));
+  }
   if(!/^[«"]/.test(venue[2])){
    name=name.split(/\s+(?:сегодня|завтра|послезавтра|в\s+(?:понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье|\d{1,2}(?::\d{2})?|городе|Краснодаре|Москве|Сочи|Казани)|на\s+\d|по\s+адресу|с\s+[А-ЯЁ])(?=$|[\s,.!?])/iu)[0].trim();
   }
   if(name.length<2||/^(?:кем|ним|ней|другом|подругой|коллегой|анн[а-яё]*|лен[а-яё]*|друг[а-яё]*)$/iu.test(name))return null;
+  const searchName=name;
+  if(/^вкусно\s+(?:[—–-]\s*)?и\s+точка$/iu.test(name))name='Вкусно — и точка';
   const label=kind+' «'+name+'»';
-  return {label,query:kind+' '+name+(city?', '+city:''),explicitAddress:false,city,venueName:name,kind};
+  return {label,query:kind+' '+searchName+(city?', '+city:''),explicitAddress:false,city,venueName:name,kind};
  }
  function cleanPlace(value){
   if(!value||typeof value!=='object')return null;
@@ -56,7 +65,7 @@
   if(proposal.explicitAddress)return true;
   const type=String(candidate.type||'').toLocaleLowerCase('en-US');
   const accepted={
-   кафе:['cafe','restaurant','coffee_shop','bakery','confectionery'],
+   кафе:['cafe','restaurant','coffee_shop','bakery','confectionery','fast_food'],
    кофейня:['cafe','coffee_shop','bakery'],ресторан:['restaurant','cafe'],
    бар:['bar','pub'],паб:['pub','bar'],пиццерия:['restaurant','fast_food'],
    бистро:['restaurant','cafe','fast_food'],пекарня:['bakery','cafe'],
@@ -64,8 +73,9 @@
    коворкинг:['coworking_space','office'],музей:['museum'],кинотеатр:['cinema']
   };
   if(!accepted[proposal.kind]?.includes(type))return false;
-  const requested=normalize(proposal.venueName).toLocaleLowerCase('ru-RU');
-  const found=normalize([candidate.name,candidate.namedetails?.name,candidate.display_name?.split(',')[0]].filter(Boolean).join(' ')).toLocaleLowerCase('ru-RU');
+  const searchable=value=>normalize(value).toLocaleLowerCase('ru-RU').replace(/[—–-]/gu,' ').replace(/\s+/gu,' ').trim();
+  const requested=searchable(proposal.venueName);
+  const found=searchable([candidate.name,candidate.namedetails?.name,candidate.display_name?.split(',')[0]].filter(Boolean).join(' '));
   return found.includes(requested)||requested.includes(found)&&found.length>=4;
  }
  const cache=new Map();let earliest=0;
@@ -89,15 +99,29 @@
   earliest=now+pause+1250;
   if(pause)await new Promise(resolve=>setTimeout(resolve,pause));
   const configured=String(root?.SEYVEO_PLACE_SEARCH_ENDPOINT||'').trim();
-  const endpoint=configured||'https://nominatim.openstreetmap.org/search';
-  const url=new URL(endpoint,root?.location?.href||'https://seyveo.com');
-  if(url.protocol!=='https:')throw Error('Insecure map search endpoint');
-  url.searchParams.set('q',proposal.query);url.searchParams.set('format','jsonv2');
-  url.searchParams.set('addressdetails','1');url.searchParams.set('extratags','1');
-  url.searchParams.set('namedetails','1');url.searchParams.set('limit','5');url.searchParams.set('accept-language','ru');
-  const response=await root.fetch(url.toString(),{method:'GET',mode:'cors',credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
-  if(!response.ok)throw Error('Place search unavailable');
-  const results=await response.json();if(!Array.isArray(results))throw Error('Invalid place response');
+  let results=null;
+  // A same-origin local bridge works even when a secure browser policy blocks
+  // outgoing requests. Public static hosting has no such backend.
+  if(!configured&&!/github\.io$/iu.test(String(root?.location?.hostname||''))){
+   const response=await root.fetch('/api/seyveo-place-lookup',{
+    method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},
+    body:JSON.stringify({query:proposal.query})
+   });
+   if(response.ok){const payload=await response.json();results=payload?.results}
+   else if(response.status!==404&&response.status!==405)throw Error('Local place search unavailable');
+  }
+  if(results===null){
+   const endpoint=configured||'https://nominatim.openstreetmap.org/search';
+   const url=new URL(endpoint,root?.location?.href||'https://seyveo.com');
+   if(url.protocol!=='https:')throw Error('Insecure map search endpoint');
+   url.searchParams.set('q',proposal.query);url.searchParams.set('format','jsonv2');
+   url.searchParams.set('addressdetails','1');url.searchParams.set('extratags','1');
+   url.searchParams.set('namedetails','1');url.searchParams.set('limit','5');url.searchParams.set('accept-language','ru');
+   const response=await root.fetch(url.toString(),{method:'GET',mode:'cors',credentials:'omit',referrerPolicy:'strict-origin-when-cross-origin'});
+   if(!response.ok)throw Error('Place search unavailable');
+   results=await response.json();
+  }
+  if(!Array.isArray(results))throw Error('Invalid place response');
   const found=results.filter(row=>sameVenue(row,proposal)&&Number.isFinite(Number(row.lat))&&Number.isFinite(Number(row.lon)));
   const candidates=[];
   for(const match of found){
