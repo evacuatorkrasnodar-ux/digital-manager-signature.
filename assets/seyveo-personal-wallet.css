@@ -1,0 +1,59 @@
+/* SEYVEO · Personal Wallet. Isolated from dock and other screens. */
+#seyveoPayDialog .sw-screen{color:#17171b;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Arial,sans-serif;padding:0 0 calc(28px + env(safe-area-inset-bottom))}
+#seyveoPayDialog .syp-shell:has(.sw-screen:not([hidden])){background:#fff}
+#seyveoPayDialog .syp-top:has(+ .sw-screen:not([hidden])){background:#fff}
+#seyveoPayDialog .sw-summary{margin:8px 16px 20px;padding:20px;border:1px solid #ebebee;border-radius:22px;background:#f7f7f9}
+#seyveoPayDialog .sw-month{display:flex;align-items:center;justify-content:space-between;margin-bottom:21px;color:#202024;text-transform:capitalize}
+#seyveoPayDialog .sw-month button{width:44px;height:44px;border-radius:50%;border:0;background:#ededf0;color:#171719;font-size:28px;line-height:1;cursor:pointer}
+#seyveoPayDialog .sw-month strong{font-size:16px;font-weight:600}
+#seyveoPayDialog .sw-overline{display:block;font-size:13px;color:#777981;margin-bottom:5px}
+#seyveoPayDialog .sw-balance{display:block;font-size:clamp(32px,8vw,40px);font-weight:600;letter-spacing:-1.5px;line-height:1.15;color:#131316}
+#seyveoPayDialog .sw-balance-note{font-size:11px;color:#8a8b90;line-height:1.45;margin:8px 0 20px}
+#seyveoPayDialog .sw-totals{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#seyveoPayDialog .sw-totals>div{min-width:0;border-radius:15px;background:#fff;padding:13px}
+#seyveoPayDialog .sw-totals span{display:block;color:#777981;font-size:13px;margin-bottom:7px}
+#seyveoPayDialog .sw-totals strong{display:block;font-size:clamp(17px,5vw,22px);font-weight:600;white-space:nowrap}
+#seyveoPayDialog .sw-income{color:#247d58!important}
+#seyveoPayDialog .sw-editor,#seyveoPayDialog .sw-block{margin:0 16px 22px}
+#seyveoPayDialog .sw-editor{padding:17px;background:#fff;border:1px solid #e8e8ec;border-radius:20px}
+#seyveoPayDialog .sw-title-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+#seyveoPayDialog .sw-title-row h3{font-size:19px;font-weight:600;letter-spacing:-.3px;margin:0;color:#16161a}
+#seyveoPayDialog .sw-title-row span{font-size:11px;color:#84858d;text-align:right}
+#seyveoPayDialog .sw-kind{display:flex;background:#f1f1f4;border-radius:13px;padding:3px;margin-bottom:14px}
+#seyveoPayDialog .sw-kind button{flex:1;min-height:42px;border:0;background:transparent;border-radius:10px;color:#55565e;font-size:15px;cursor:pointer}
+#seyveoPayDialog .sw-kind button[aria-pressed=true]{background:#fff;color:#141418;box-shadow:0 1px 5px #00000012;font-weight:600}
+#seyveoPayDialog .sw-field{display:block}
+#seyveoPayDialog .sw-field span,#seyveoPayDialog .sw-manual label{display:block;font-size:13px;color:#767780}
+#seyveoPayDialog .sw-field textarea{display:block;width:100%;box-sizing:border-box;margin-top:7px;resize:vertical;min-height:74px;background:#f7f7f9;border:1px solid #e6e6ea;border-radius:14px;padding:13px;font:16px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#171719}
+#seyveoPayDialog .sw-hint{font-size:12px;color:#888990;line-height:1.4;margin:9px 0 15px}
+#seyveoPayDialog .sw-editor-actions{display:flex;gap:9px}
+#seyveoPayDialog .sw-primary,#seyveoPayDialog .sw-secondary{min-height:44px;padding:10px 16px;border-radius:13px;cursor:pointer;font-size:15px;font-weight:500;border:1px solid #dedee3}
+#seyveoPayDialog .sw-primary{background:#38383a;color:#fff;border-color:#38383a}
+#seyveoPayDialog .sw-secondary{background:#f4f4f6;color:#29292d}
+#seyveoPayDialog .sw-manual{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#seyveoPayDialog .sw-manual[hidden],#seyveoPayDialog .sw-review[hidden]{display:none}
+#seyveoPayDialog .sw-manual label{min-width:0}
+#seyveoPayDialog .sw-manual input,#seyveoPayDialog .sw-manual select{display:block;margin-top:6px;box-sizing:border-box;width:100%;height:44px;border-radius:11px;border:1px solid #e1e1e6;background:#f8f8fa;padding:0 9px;font-size:15px;color:#19191d}
+#seyveoPayDialog .sw-manual button{min-width:0}
+#seyveoPayDialog .sw-review{margin-top:15px;padding:14px;border-radius:13px;background:#f4f4f7;font-size:14px}
+#seyveoPayDialog .sw-review p{margin:8px 0}
+#seyveoPayDialog .sw-review button{margin:6px 5px 0 0}
+#seyveoPayDialog .sw-message{font-size:12px;color:#666875;line-height:1.4;margin:10px 0 0}
+#seyveoPayDialog .sw-message:empty{display:none}
+#seyveoPayDialog .sw-category{display:grid;grid-template-columns:1fr auto;gap:8px 10px;margin:14px 0}
+#seyveoPayDialog .sw-category-label{font-size:15px;color:#35353a}
+#seyveoPayDialog .sw-category strong{font-size:15px;font-weight:600}
+#seyveoPayDialog .sw-bar{grid-column:1/-1;height:5px;border-radius:5px;background:#ededf0;overflow:hidden}
+#seyveoPayDialog .sw-bar i{display:block;height:100%;background:#8b8c95;border-radius:5px}
+#seyveoPayDialog .sw-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:12px 0;border-bottom:1px solid #efeff1;align-items:center}
+#seyveoPayDialog .sw-row-main{display:flex;gap:11px;align-items:center;min-width:0}
+#seyveoPayDialog .sw-row-icon{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:#f2f2f5;color:#333;font-size:20px;flex:none}
+#seyveoPayDialog .sw-row-main strong{display:block;font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#seyveoPayDialog .sw-row-main small{display:block;color:#92939b;font-size:12px;margin-top:4px}
+#seyveoPayDialog .sw-row>strong{font-weight:600;white-space:nowrap;font-size:15px}
+#seyveoPayDialog .sw-row-tools{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px}
+#seyveoPayDialog .sw-row-tools button{border:0;border-radius:10px;background:#f4f4f6;color:#55565b;min-width:38px;min-height:34px;font-size:20px}
+#seyveoPayDialog .sw-empty{font-size:14px;color:#898a91;line-height:1.5;padding:10px 0}
+#seyveoPayDialog .sw-privacy{margin:26px 20px 0;color:#92939a;font-size:11px;line-height:1.5}
+@media(prefers-color-scheme:dark){html[data-theme=dark] #seyveoPayDialog .sw-screen{color:#f5f5f7}}
+@media(max-width:360px){#seyveoPayDialog .sw-summary{padding:15px}#seyveoPayDialog .sw-totals strong{font-size:17px}#seyveoPayDialog .sw-title-row{flex-wrap:wrap}}
