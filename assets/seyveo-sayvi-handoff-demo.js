@@ -730,6 +730,7 @@
        (location.hash&&location.hash!=='#home')||
        !musicIsPlaying()||!musicMini||musicMini.hidden||
        root.classList.contains('seyveo-conversation')||
+       root.classList.contains('sv-home-empty-sphere')||
        document.querySelector('dialog[open]')||
        document.activeElement?.matches('input,textarea,[contenteditable="true"]'))return false;
     const composer=document.getElementById('ask');
@@ -882,4 +883,138 @@
     if(document.hidden){leaveMusicAmbient({animate:false});cancelAmbientTimer();}
     else if(canShowMusicAmbient())scheduleMusicAmbient();
   });
+
+  // Empty Home: the ORIGINAL Sayvi comes back when no actionable card remains.
+  // This is independent of the music-only ambient mode and never clones #orb.
+  const emptyOrbCluster=document.getElementById('orbCluster');
+  let emptySphere=false,emptyEntering=false,emptyLeaving=false;
+  let emptyMotion=null,emptySyncTimer=0,emptyEpoch=0;
+  function hasHomeCards(){
+    const living=document.getElementById('seyveoLivingMoment');
+    const advice=document.getElementById('dynamic');
+    if(living&&!living.hidden)return true;
+    if(advice&&!advice.hidden&&Array.from(advice.children).some(child=>!child.hidden))return true;
+    if(todayCard&&!todayCard.hidden)return true;
+    for(const id of ['svSmartStartHome','svcpWorkHomePreview','workTimeline']){
+      const section=document.getElementById(id);
+      if(section&&!section.hidden)return true;
+    }
+    return false;
+  }
+  function canShowEmptySphere(){
+    return done&&!document.hidden&&!home.hidden&&
+      (!location.hash||location.hash==='#home')&&
+      !root.classList.contains('seyveo-conversation')&&
+      !root.classList.contains('sv-music-ambient')&&
+      !root.classList.contains('sv-music-ambient-leaving')&&
+      !document.querySelector('dialog[open]')&&
+      !hasHomeCards();
+  }
+  function restoreEmptyMotion(){
+    emptyMotion?.cancel();emptyMotion=null;
+  }
+  function enterEmptySphere(){
+    if(emptySphere||emptyLeaving||!canShowEmptySphere())return;
+    emptySphere=true;
+    const epoch=++emptyEpoch;
+    cancelAmbientTimer();
+    const from=small.getBoundingClientRect();
+    root.classList.add('sv-home-empty-sphere');
+    if(emptyOrbCluster){emptyOrbCluster.inert=false;emptyOrbCluster.removeAttribute('aria-hidden');}
+    const to=orb.getBoundingClientRect();
+    if(reduceMotion()||!from.width||!to.width||typeof orb.animate!=='function')return;
+    const dx=from.left+from.width/2-(to.left+to.width/2);
+    const dy=from.top+from.height/2-(to.top+to.height/2);
+    const scale=Math.min(1,from.width/to.width);
+    try{
+      emptyEntering=true;
+      const motion=orb.animate([
+        {transform:`translate3d(${dx}px,${dy}px,0) scale(${scale})`,opacity:.98},
+        {transform:'translate3d(0,0,0) scale(1)',opacity:1}
+      ],{duration:1360,easing:'cubic-bezier(.2,.72,.16,1)',fill:'both'});
+      emptyMotion=motion;
+      const complete=()=>{
+        if(epoch!==emptyEpoch)return;
+        emptyEntering=false;
+        restoreEmptyMotion();
+        if(!canShowEmptySphere())leaveEmptySphere();
+      };
+      motion.finished.then(complete).catch(complete);
+    }catch{emptyEntering=false;restoreEmptyMotion();}
+  }
+  function leaveEmptySphere({animate=true}={}){
+    if(emptyLeaving){
+      if(!animate){
+        ++emptyEpoch;
+        restoreEmptyMotion();
+        emptyLeaving=false;
+        if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
+        root.classList.remove('sv-home-empty-sphere','sv-home-empty-sphere-leaving');
+      }
+      return;
+    }
+    if(!emptySphere)return;
+    if(emptyEntering&&animate)return; // Complete the arrival before reversing.
+    emptySphere=false;
+    emptyLeaving=true;
+    const epoch=++emptyEpoch;
+    restoreEmptyMotion();
+    const settle=()=>{
+      if(epoch!==emptyEpoch)return;
+      emptyLeaving=false;
+      restoreEmptyMotion();
+      if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
+      root.classList.remove('sv-home-empty-sphere','sv-home-empty-sphere-leaving');
+      if(!home.hidden&&hasHomeCards()){
+        root.classList.add('sv-cinema-stagger-enter');
+        setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),4200);
+      }
+      scheduleEmptySphereSync(300);
+      if(canShowMusicAmbient())scheduleMusicAmbient();
+    };
+    if(!animate||reduceMotion()||home.hidden||typeof orb.animate!=='function'){
+      settle();return;
+    }
+    const from=orb.getBoundingClientRect();
+    const to=small.getBoundingClientRect();
+    if(!from.width||!to.width){settle();return;}
+    root.classList.add('sv-home-empty-sphere-leaving');
+    const dx=to.left+to.width/2-(from.left+from.width/2);
+    const dy=to.top+to.height/2-(from.top+from.height/2);
+    const scale=Math.min(1,to.width/from.width);
+    try{
+      const motion=orb.animate([
+        {transform:'translate3d(0,0,0) scale(1)',opacity:1},
+        {transform:`translate3d(${dx}px,${dy}px,0) scale(${scale})`,opacity:1}
+      ],{duration:1160,easing:'cubic-bezier(.44,0,.16,1)',fill:'forwards'});
+      emptyMotion=motion;
+      let settled=false;
+      const complete=()=>{if(!settled){settled=true;settle();}};
+      motion.finished.then(complete).catch(complete);
+      setTimeout(complete,1500);
+    }catch{settle();}
+  }
+  function syncEmptySphere(){
+    emptySyncTimer=0;
+    if(canShowEmptySphere()){enterEmptySphere();return;}
+    const stillHome=!home.hidden&&(!location.hash||location.hash==='#home')&&
+      !root.classList.contains('seyveo-conversation')&&!document.hidden;
+    leaveEmptySphere({animate:stillHome});
+  }
+  function scheduleEmptySphereSync(delay=260){
+    clearTimeout(emptySyncTimer);
+    emptySyncTimer=setTimeout(syncEmptySphere,delay);
+  }
+  // Card actions update hidden flags. Re-evaluate after the actual outgoing
+  // animation has ended, not when a placeholder simply changes text.
+  const emptyObserver=new MutationObserver(()=>scheduleEmptySphereSync());
+  emptyObserver.observe(home,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','class']});
+  const emptyRootObserver=new MutationObserver(()=>scheduleEmptySphereSync(180));
+  emptyRootObserver.observe(root,{attributes:true,attributeFilter:['class']});
+  for(const name of ['seyveo:cinema-finished','seyveo:route-changed','seyveo:tasks-changed',
+    'seyveo:calendar-changed','seyveo:card-visibility-changed','seyveo:home-agenda-visibility-changed'])
+    window.addEventListener(name,()=>scheduleEmptySphereSync(name==='seyveo:cinema-finished'?850:260));
+  window.addEventListener('hashchange',()=>scheduleEmptySphereSync(150));
+  document.addEventListener('visibilitychange',()=>scheduleEmptySphereSync(160));
+  scheduleEmptySphereSync(1600);
 })();
