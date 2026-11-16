@@ -17,6 +17,7 @@
  font-weight:560;text-align:center;margin:0 0 10px}
 .sv-section-discovery-sheet h2{font-size:clamp(26px,6vw,31px);line-height:1.18;
  font-weight:580;letter-spacing:-.04em;text-align:center;margin:0}
+.sv-section-discovery-sheet h2:focus{outline:none!important;border:0!important;box-shadow:none!important}
 .sv-section-discovery-copy{max-width:335px;margin:12px auto 20px;
  text-align:center;color:#63717d;font-size:14px;line-height:1.48;font-weight:425}
 .sv-section-genre-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}

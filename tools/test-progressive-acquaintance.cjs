@@ -23,8 +23,10 @@ assert.match(progressive,/location\.hash==='#sayvi-documents'/,
  'Document features are shown in the actual Documents screen');
 assert.match(progressive,/location\.hash==='#manage'/,
  'Cabinet assistance appears in the actual Business screen');
-assert.match(progressive,/SEYVEO_SMART_START\?\.begin/,
- 'Business setup continues in the existing wizard');
+assert.match(progressive,/SEYVEO_SMART_CABINET\?\.open/,
+ 'Business setup opens the active goal-first cabinet constructor');
+assert.doesNotMatch(progressive,/SEYVEO_SMART_START\?\.begin/,
+ 'Retired inline-chat onboarding cannot misroute to standalone Sayvi chat');
 assert.match(progressive,/seyveo\.music\.preferences\.v1/,
  'Musical genres are saved on the device');
 assert.match(progressive,/!type\|\|\(!force&&seen\[type\]\)/,
@@ -37,6 +39,6 @@ assert.match(home,/#seyveoLivingMoment \.lm-secondary\{\s*display:none!important
  'Home exposes one featured card, not the full task list');
 assert.match(index,/seyveo-home-conversation\.css\?v=1/,
  'Compact Home geometry is included');
-assert.match(index,/seyveo-progressive-discovery\.js\?v=1/,
+assert.match(index,/seyveo-progressive-discovery\.js\?v=2/,
  'Section-specific introduction is included');
 process.stdout.write('PASS: concise first meeting, progressive screens, one-card Home and persistent orb.\n');

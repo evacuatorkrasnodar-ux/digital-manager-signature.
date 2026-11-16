@@ -21,6 +21,7 @@
  text-align:center;font-size:10px;font-weight:540}
 .sv-broadcast-sheet h2{font-size:clamp(27px,6.2vw,33px);font-weight:590;
  letter-spacing:-.046em;line-height:1.13;margin:0;text-align:center;color:inherit}
+.sv-broadcast-sheet h2:focus{outline:none!important;border:0!important;box-shadow:none!important}
 .sv-broadcast-description{max-width:315px;margin:9px auto 22px;text-align:center;
  color:#6b7882;font-size:13.5px;line-height:1.43;font-weight:420}
 .sv-broadcast-name-panel{padding:8px 2px 4px}

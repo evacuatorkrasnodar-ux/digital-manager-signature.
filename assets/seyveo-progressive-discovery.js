@@ -99,6 +99,13 @@
  }
  function finish(){
   const type=active;if(!type)return;
+  if(type==='business'&&!window.SEYVEO_PREVIEW?.isManager?.()){
+   if(content.querySelector('[data-requires-business]')){close();return}
+   const hint=document.createElement('p');hint.className='sv-section-discovery-note';
+   hint.dataset.requiresBusiness='true';
+   hint.textContent='Сейчас открыт личный режим. Если захочешь попробовать бизнес-кабинет, выбери RISE или AUTONOM в «Управлении». Подписку это не оформляет.';
+   content.append(hint);done.textContent='Понятно';later.textContent='Закрыть';return;
+  }
   if(type==='music'){
    const values=[...content.querySelectorAll('input:checked')].map(item=>item.value);
    save(GENRES_KEY,{genres:values,updatedAt:new Date().toISOString()});
@@ -106,8 +113,12 @@
   }
   close();
   if(type==='business'){
-   // The existing guided cabinet builder owns its questions and persistence.
-   window.SEYVEO_SMART_START?.begin?.({resume:true});
+   // The old inline-chat wizard was retired when Sayvi got her standalone
+   // chat. Use the active, goal-first cabinet constructor instead.
+   if(window.SEYVEO_PREVIEW?.isManager?.()){
+    window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('manage');
+    window.setTimeout(()=>window.SEYVEO_SMART_CABINET?.open?.(),380);
+   }
   }
  }
  later.addEventListener('click',()=>close());
