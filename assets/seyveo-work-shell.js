@@ -60,6 +60,10 @@
  const searchTasks=document.createElement('button');searchTasks.type='button';searchTasks.className='control sv-history-search';
  searchTasks.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5v5h5"/><path d="M3.7 9.5a8.5 8.5 0 1 1-.2 4"/><path d="M12 7.5V12l3 2"/></svg>';
  searchTasks.setAttribute('aria-label','История и все дела');
+ const reviewCards=document.createElement('button');
+ reviewCards.type='button';reviewCards.className='control sv-review-cards-control';reviewCards.setAttribute('aria-label','Разобрать карточки');
+ reviewCards.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7" width="14" height="13" rx="2"/><path d="M8 4h11a2 2 0 0 1 2 2v10"/><path d="M8 11h8M8 15h5"/></svg>';
+ reviewCards.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:open-card-review')));
  const selectHistory=document.createElement('button');
  selectHistory.className='control sv-history-select';
  selectHistory.type='button';
@@ -68,7 +72,7 @@
  selectHistory.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.2" width="17" height="12.2" rx="2.3"/><path d="M7 7.1h10M7 10.7h10M5.1 18.3h13.8M5.1 21h13.8"/></svg>';
  if(historyBar){
   historyBar.append(historyGroup);
-  historyGroup.append(searchTasks,selectHistory,add);
+  historyGroup.append(searchTasks,selectHistory,add,reviewCards);
   const design=document.createElement('style');
   design.textContent=`
   /* Both task actions occupy the SAME 62px header grid row as the title.
@@ -83,7 +87,7 @@
    grid-column:3;grid-row:1;
    justify-self:end;align-self:center;
    box-sizing:border-box;display:flex;align-items:center;justify-content:center;
-   gap:0;width:88px;height:42px;padding:0 2px;
+   gap:0;width:130px;height:42px;padding:0 2px;
    border:var(--sv-header-circle-border,1.75px solid rgba(255,255,255,.94));
    border-radius:999px;
    background:var(--sv-header-circle,rgba(190,193,202,.43));
@@ -116,6 +120,7 @@
   :host([data-task-tools="true"]) .sv-history-search{
    display:grid!important;position:relative;
   }
+  :host([data-task-tools="true"]) .sv-review-cards-control{display:grid!important}
   :host([data-task-tools="true"]) .sv-history-search::after{
    content:"";position:absolute;top:10px;bottom:10px;right:0;width:1px;
    background:rgba(100,106,119,.19);pointer-events:none;
