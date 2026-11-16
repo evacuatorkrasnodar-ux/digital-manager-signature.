@@ -61,5 +61,12 @@ function scene(){
   s.advance(10000);assert.equal(s.classes.has('sv-home-greeting-fading'),false,
     'tapping the welcome copy does not dismiss it');
 }
+{
+  const s=scene();s.context.startGreeting();
+  s.classes.add('sv-home-empty-sphere');
+  s.dispatch('seyveo:home-idle-prompt');
+  assert.equal(s.classes.has('sv-home-greeting-fading'),true,
+    'an empty Home can yield the welcome to a quiet suggestion');
+}
 
 process.stdout.write('PASS: greeting lifts, stays for reading, fades after interaction or 5 minutes.\n');

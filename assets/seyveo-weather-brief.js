@@ -83,6 +83,7 @@
       const mark=document.createElement('span');
       mark.className='sv-sayvi-home-weather-mark';
       mark.setAttribute('aria-hidden','true');
+      mark.dataset.weatherKind='sun';
       mark.innerHTML=weatherGlyph(0);
       const label=document.createElement('span');
       button.append(mark,label);
@@ -101,16 +102,25 @@
         button.hidden=false;
         if(!today){
           const city=window.SAYVI_WEATHER?.getLocation?.()?.name||'Погода';
+          mark.dataset.weatherKind='cloud';
           mark.innerHTML=weatherGlyph(2);
           label.textContent=city+' · '+(forecastUnavailable?'Прогноз пока недоступен':'Обновляем прогноз');
           button.title='Обновить прогноз погоды';
           button.setAttribute('aria-label','Обновить прогноз погоды');
           return;
         }
+        mark.dataset.weatherKind=today.code===0?'sun':
+          today.code>=51&&today.code<=67||today.code>=80&&today.code<=82?'rain':
+          today.code>=71&&today.code<=77||today.code>=85&&today.code<=86?'snow':
+          today.code>=95?'storm':today.code===45||today.code===48?'fog':'cloud';
         mark.innerHTML=weatherGlyph(today.code);
-        label.textContent=current.city+' · '+temperature(today.max)+' / '+temperature(today.min)+' · '+condition(today.code);
+        // One clean line on iPhone: the icon carries the condition visually.
+        // Full conditions remain available in accessibility text and the chat.
+        label.textContent=current.city+' · '+temperature(today.max)+' / '+temperature(today.min);
         button.title='Открыть прогноз Сэйви';
-        button.setAttribute('aria-label','Спросить Сэйви подробный прогноз погоды');
+        button.setAttribute('aria-label',
+          'Погода: '+current.city+', '+temperature(today.max)+' / '+temperature(today.min)+
+          ', '+condition(today.code)+'. Спросить Сэйви подробный прогноз');
       };
       sync();
       window.addEventListener('seyveo:weather-updated',()=>{

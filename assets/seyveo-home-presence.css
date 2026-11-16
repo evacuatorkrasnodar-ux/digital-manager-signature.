@@ -35,6 +35,33 @@
  max-width:100%;
  overflow-wrap:break-word;
 }
+/* A single whisper below the weather, only on an empty Home after the
+   greeting has faded. It is not a card, toast, popover or second dock. */
+:root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svHomeLivingLine[data-sv-presence="idle"]{
+ position:absolute!important;
+ top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 73px)!important;
+ left:50%!important;
+ width:min(380px,calc(100% - 32px))!important;
+ max-height:44px!important;
+ margin:0!important;
+ padding:0 8px!important;
+ color:#65737A!important;
+ font-size:12.8px!important;
+ font-weight:400!important;
+ line-height:1.45!important;
+ transform:translateX(-50%)!important;
+ overflow:hidden;
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-mark{
+ display:none!important;
+}
+:root:is(.sv-home-empty-arriving,.sv-home-empty-sphere-leaving,.sv-music-ambient)
+ #homePage #svHomeLivingLine[data-sv-presence="idle"]{
+ display:none!important;
+}
+:root:not(.sv-home-empty-sphere) #homePage #svHomeLivingLine[data-sv-presence="idle"]{
+ display:none!important;
+}
 /* The full welcome and contextual description are never hidden. */
 /* Keep the approved orb geometry and 3-card composition untouched.
    The line has no separate panel and remains compact on small phones. */
@@ -43,6 +70,13 @@
 }
 @media(prefers-reduced-motion:no-preference){
  #homePage #svHomeLivingLine:not([hidden]){animation:svHomeLivingAppear .45s ease-out both}
+ :root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"]{
+  animation:svHomeIdleWhisper .55s ease-out both!important;
+ }
+ @keyframes svHomeIdleWhisper{
+  from{opacity:0}
+  to{opacity:1}
+ }
  @keyframes svHomeLivingAppear{
   from{opacity:0;transform:translateY(3px)}
   to{opacity:1;transform:translateY(0)}

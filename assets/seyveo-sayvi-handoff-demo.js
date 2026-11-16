@@ -168,6 +168,12 @@
     homeGreetingDeadline=homeGreetingStartedAt+homeGreetingMaxMs;
     homeGreetingTimer=setTimeout(expireHomeGreeting,homeGreetingMaxMs);
   }
+  // On an entirely empty, idle Home, a rare quiet suggestion may gently
+  // replace the welcome after one minute without interrupting any card.
+  window.addEventListener('seyveo:home-idle-prompt',()=>{
+    if(done&&!home.hidden&&root.classList.contains('sv-home-empty-sphere'))
+      expireHomeGreeting();
+  });
   // A first purposeful touch or keyboard action means the visitor is already
   // working. Do not consume the event: the real control must still respond.
   document.addEventListener('pointerdown',event=>{

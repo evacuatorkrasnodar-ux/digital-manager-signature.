@@ -16,6 +16,33 @@
   min-height:30px;
   line-height:1.35;
 }
+/* Compact iPhone weather: icon + city + high/low, never a broken extra row. */
+#homePage #svSayviHomeWeather:not([hidden]){
+  flex-wrap:nowrap;
+  white-space:nowrap;
+  gap:8px;
+  font-size:clamp(12.5px,3.4vw,14px);
+  letter-spacing:-.012em;
+}
+#homePage #svSayviHomeWeather .sv-sayvi-home-weather-mark{
+  width:19px;height:19px;
+}
+#homePage #svSayviHomeWeather .sv-sayvi-home-weather-mark svg{
+  width:19px;height:19px;
+  stroke-width:1.65;
+}
+#homePage #svSayviHomeWeather .sv-sayvi-home-weather-mark[data-weather-kind="sun"]{
+  color:#D5A037;
+}
+#homePage #svSayviHomeWeather .sv-sayvi-home-weather-mark[data-weather-kind="sun"] svg circle{
+  fill:#FFD45C;stroke:#D99E29;
+}
+#homePage #svSayviHomeWeather .sv-sayvi-home-weather-mark[data-weather-kind="sun"] svg path{
+  stroke:#E1A72F;
+}
+#homePage #svSayviHomeWeather .sv-sayvi-home-weather-mark[data-weather-kind="rain"]{color:#598EB8}
+#homePage #svSayviHomeWeather .sv-sayvi-home-weather-mark[data-weather-kind="snow"]{color:#76A7BE}
+#homePage #svSayviHomeWeather .sv-sayvi-home-weather-mark[data-weather-kind="storm"]{color:#9A85B8}
 
 /* The restored voice-cinema Home no longer uses home-idle/home-cards modes.
    Show a valid forecast after the opening; keep the cinema itself uncluttered. */
