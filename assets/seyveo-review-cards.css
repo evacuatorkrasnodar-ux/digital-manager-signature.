@@ -29,18 +29,28 @@
 @media(prefers-reduced-motion:reduce){.sv-review-room{animation:none}}
 /* A returning Sayvi owns the frame until her dock-to-Home flight completes.
    Gate every generation of Home copy together, never individual text timers. */
+:root.sv-sayvi-handoff-docked:not(.sv-home-empty-arrived) #homePage #stage > .message,
+:root.sv-sayvi-handoff-docked:not(.sv-home-empty-arrived) #homePage :is(#svHomeCalmDetails,#svHomeLivingLine,#svSayviHomeWeather,#svBroadcastStartOffer,#svBroadcastReturnLine){
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+}
 :root.sv-home-empty-arriving #homePage #stage > :not(#orbCluster),
-:root.sv-home-empty-arriving #homePage :is(#svHomeLivingLine,#svSayviHomeWeather,#svBroadcastStartOffer,#svBroadcastReturnLine,.sv-sayvi-handoff-today,.lm-caption,.lm-field,[data-owner-advice]){
+:root.sv-home-empty-arriving #homePage :is(#svHomeCalmDetails,#svHomeReviewText,#svHomeLivingLine,#svSayviHomeWeather,#svBroadcastStartOffer,#svBroadcastReturnLine,.sv-sayvi-handoff-today,.lm-caption,.lm-field,[data-owner-advice]){
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+}
+:root.sv-home-empty-sphere:not(.sv-home-empty-arrived):not(.sv-home-empty-at-launch) #homePage #svHomeCalmDetails{
  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
 }
 :root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage #stage > .message,
 :root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage :is(#svHomeLivingLine,#svBroadcastStartOffer,#svBroadcastReturnLine){
  animation:sv-home-copy-after-arrival .52s ease-out both;
 }
+:root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage #svHomeCalmDetails:not([hidden]){
+ animation:sv-home-copy-after-arrival .52s ease-out .12s both;
+}
 @keyframes sv-home-copy-after-arrival{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){
  :root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage #stage > .message,
- :root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage :is(#svHomeLivingLine,#svBroadcastStartOffer,#svBroadcastReturnLine){animation:none}
+ :root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage :is(#svHomeCalmDetails,#svHomeLivingLine,#svBroadcastStartOffer,#svBroadcastReturnLine){animation:none}
 }
 /* Quiet speech card above the actual orb. It never shares the weather row. */
 :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svHomeLivingLine[data-sv-presence]:not([hidden]){
