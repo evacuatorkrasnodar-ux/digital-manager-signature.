@@ -36,3 +36,32 @@
 :root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage :is(#svHomeLivingLine,#svReviewEntry,#svBroadcastStartOffer,#svBroadcastReturnLine){animation:sv-home-copy-after-arrival .52s ease-out both}
 @keyframes sv-home-copy-after-arrival{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){:root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage #stage > .message,:root.sv-home-empty-arrived:not(.sv-home-empty-at-launch) #homePage :is(#svHomeLivingLine,#svReviewEntry,#svBroadcastStartOffer,#svBroadcastReturnLine){animation:none}}
+
+/* Quiet speech card above the actual orb. It never shares the weather row. */
+:root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svHomeLivingLine[data-sv-presence]:not([hidden]){
+ position:absolute!important;z-index:12!important;
+ top:var(--sv-thought-top,68px)!important;left:50%!important;
+ width:max-content!important;max-width:min(310px,calc(100vw - 44px))!important;
+ max-height:126px!important;min-height:0!important;
+ box-sizing:border-box!important;margin:0!important;padding:11px 15px!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ gap:5px!important;text-align:center!important;
+ color:#303941!important;font:450 13px/1.42 -apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif!important;
+ border:1px solid rgba(158,176,183,.23)!important;border-radius:19px!important;
+ background:rgba(255,255,255,.89)!important;
+ box-shadow:0 5px 22px rgba(41,65,75,.045),inset 0 1px 0 rgba(255,255,255,.92)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(105%)!important;
+ backdrop-filter:blur(14px) saturate(105%)!important;
+ transform:translateX(-50%)!important;overflow:visible!important;
+}
+:root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svHomeLivingLine[data-sv-presence]:not([hidden])::after{
+ content:"";position:absolute;left:50%;bottom:-6px;
+ width:10px;height:10px;transform:translateX(-50%) rotate(45deg);
+ background:rgba(255,255,255,.91);border-right:1px solid rgba(158,176,183,.23);
+ border-bottom:1px solid rgba(158,176,183,.23);
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence] .sv-home-living-copy{
+ width:100%!important;max-width:100%!important;text-align:center!important;
+}
+#tasksPage #svReviewTasksButton{position:relative;display:grid;place-items:center;width:42px;height:42px;padding:8px;border:0;border-radius:50%;background:rgba(120,120,128,.12);color:#1b1b1d;cursor:pointer}
+#tasksPage #svReviewTasksButton svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
