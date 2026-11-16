@@ -1191,6 +1191,14 @@ function homeVisibilityForSave(){
  // This legacy option is hidden in the current editor; do not silently opt out.
  return control?.closest('[hidden]')?true:control?.checked!==false;
 }
+function focusTaskWriting(){
+ if(!dialog.open||input.disabled)return;
+ // Keep iPhone keyboard activation inside the opening tap; do not pan the
+ // whole Home screen just to reveal a caret in the task's own editor.
+ input.focus({preventScroll:true});
+ const end=input.value.length;
+ input.setSelectionRange(end,end);
+}
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';taskEditorSavedOnExit=false;svTaskCategoryTouched=false;svTaskTypeTouched=false;
  window.SEYVEO_TASK_PLACE_EDITOR?.reset?.();
@@ -1207,7 +1215,7 @@ function openDialog(){
  dialog.dispatchEvent(new Event('sv-task-editor-sync'));syncDueDateDisplay();syncTaskSaveState();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
- /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
+ focusTaskWriting();
 }
 let taskFileSaving=false;
 async function put(e){
@@ -1377,7 +1385,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  window.SEYVEO_TASK_ATTACHMENTS?.load?.(task.id,task.attachment);
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='Изменения сохраняются только после вашего подтверждения.';
- /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
+ focusTaskWriting();
  if(detail)detail.result={status:'opened'};
 });
 /* Home collections do not own a second database. Completing a saved task
@@ -1680,7 +1688,7 @@ list.addEventListener('click',e=>{
   pendingSourceNoteId=suggestion.sourceNoteId;
   date.value='';syncDueDateDisplay();
   $('personalTaskStatus').textContent='Из исходной заметки. Проверьте текст и укажите срок, если он нужен. Сохранение — только по вашему решению.';
-  /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
+  focusTaskWriting();
  }
  else if(btn.dataset.taskOrigin){
   const target=read().find(row=>row.id===btn.dataset.taskOrigin);
@@ -1716,7 +1724,7 @@ window.addEventListener('seyveo:task-plan-note',event=>{
  if(strDate(requested))date.value=requested;
  syncDueDateDisplay();
  $('personalTaskStatus').textContent='SEYVEO заметил возможное дело в заметке. Проверьте название и срок, затем сохраните.';
- /* Do not auto-focus: mobile keyboard viewport pan moved the Task header. */
+ focusTaskWriting();
 });
 /* Explicit one-click approval of up to five tasks from a reviewed Notebook plan.
    Same local task store and renderer as the normal task editor. Atomic write,

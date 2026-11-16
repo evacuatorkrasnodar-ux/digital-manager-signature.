@@ -816,7 +816,18 @@ function createSurface(primary,other=[],real=false,taskId=''){
    }
   }finally{clearTimeout(timeout);button.disabled=false;}
  });
- const workOwn=polymer('Исправить',()=>{workMode='own';workDraft='';updateWork()});
+ // Focus inside the original tap handler. iOS Safari only raises its native
+ // keyboard reliably while the user's writing gesture is still active.
+ const focusDraftField=host=>{
+  const editor=host.querySelector('textarea:not([hidden])');
+  if(!editor||!editor.isConnected)return;
+  editor.focus({preventScroll:true});
+  const end=editor.value.length;
+  editor.setSelectionRange(end,end);
+ };
+ const workOwn=polymer('Исправить',()=>{
+  workMode='own';workDraft='';updateWork();focusDraftField(workDetails);
+ });
  workSayvi.classList.add('sv-work-assistant');
  workSayvi.setAttribute('aria-label','Подготовить черновик ответа с Сэйви');
  workOwn.classList.add('sv-work-own');
@@ -836,7 +847,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
      Removing it before the transition collapses the iPhone keyboard and shifts Home. */
   workDraft=typed;workMode='done';finishPreviewItem();
  });
- const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
+ const mailEdit=polymer('Исправить',()=>{
+  mailStep='edit';updateMail();focusDraftField(mailDetails);
+ });
  const mailSave=polymer('Отправить',()=>{
   const value=mailDetails.querySelector('textarea')?.value?.trim();
   if(!value){explain(field,'Напишите текст перед отправкой.',mailSave);return}
@@ -889,7 +902,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const documentEdit=polymer('Исправить',()=>{
   // A manually saved version survives returning to the card and reloading.
   if(documentStep==='summary')documentNote=documentManualSaved??documentSource;
-  documentStep='edit';updateDocument();
+  documentStep='edit';updateDocument();focusDraftField(documentDetails);
  });
  const documentSave=polymer('Отправить',()=>{
   if(!documentNote.trim()){explain(field,'Текст предложения пуст.',documentSave);return}
