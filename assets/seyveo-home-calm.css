@@ -7,7 +7,7 @@
 }
 #homePage #svHomeCalmDetails{
  position:absolute;z-index:9;
- top:calc(50dvh - 100px + var(--sv-home-orb-half,142.5px) + 83px);
+ top:calc(50dvh - 100px + var(--sv-home-orb-half,142.5px) + var(--sv-home-cards-offset,136px));
  left:50%;transform:translateX(-50%);
  width:max-content;max-width:calc(100vw - 40px);
  margin:0;padding:4px 8px;
