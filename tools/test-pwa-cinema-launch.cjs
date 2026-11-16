@@ -35,7 +35,7 @@ assert.equal(evaluate({standalone:true,hash:'#tasks'}),false,'a task deep link k
 assert.equal(evaluate({seen:false}),true,'first normal visit of the day still plays');
 assert.equal(evaluate({query:'?sayvi-intro=1'}),true,'explicit preview replays the long scene');
 assert.match(source,/function beginHomeGreetingLifetime\(\)/,'the Home written greeting has its own lifetime');
-assert.match(source,/renderToday\(\);\s*beginHomeGreetingLifetime\(\)/,
+assert.match(source,/renderToday\(\);\s*root\.classList\.toggle\('sv-home-card-sphere',hasHomeCards\(\)\);\s*beginHomeGreetingLifetime\(\)/,
  'Home content returns when the film finishes or is skipped');
 assert.match(source,/document\.addEventListener\('visibilitychange',onVisible\)/,
  'a backgrounded PWA waits to become visible before starting its film');

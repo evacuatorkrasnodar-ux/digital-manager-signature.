@@ -8,7 +8,8 @@
  const stage=document.getElementById('stage');
  if(!home||!stage)return;
  const PREF_KEY='seyveo.my-broadcast.preferences.v1';
- const SEEN_KEY='seyveo.my-broadcast.onboarding-seen.v1';
+ const SEEN_KEY='seyveo.my-broadcast.onboarding-seen.v2';
+ const PROFILE_KEY='seyveo-first-acquaintance-v1';
  const OPTIONS=[
   ['animals','🐾','Животные'],['humor','😄','Юмор'],
   ['music','🎵','Музыка'],['science','🚀','Наука'],
@@ -23,6 +24,7 @@
  const reviewIntro=params.get('broadcast-intro')==='1';
  const read=(key)=>{try{return localStorage.getItem(key)}catch{return null}};
  const write=(key,value)=>{try{localStorage.setItem(key,value)}catch{}};
+ const readProfile=()=>{try{return JSON.parse(read(PROFILE_KEY)||'null')||{}}catch{return {}}};
  const validTopics=value=>Array.isArray(value)
   ?[...new Set(value.filter(topic=>allowed.has(topic)))]:[];
  const readPrefs=()=>{
@@ -35,6 +37,7 @@
   return {topics:[...DEFAULT_TOPICS],keepAwake:false};
  };
  let prefs=readPrefs();
+ let profile=readProfile(),introStep='name',businessChoice='later';
  let onboarding=!qaSkip&&(reviewIntro||read(SEEN_KEY)!=='1')&&
    (!location.hash||location.hash==='#home');
  if(onboarding)root.classList.add('sv-broadcast-onboarding');
@@ -54,16 +57,31 @@
  overlay.innerHTML=`
   <section class="sv-broadcast-sheet" role="dialog" aria-modal="true"
       aria-labelledby="svBroadcastTitle" aria-describedby="svBroadcastExplainer">
-   <p class="sv-broadcast-eyebrow">СЭЙВИ · ЗНАКОМСТВО</p>
-   <h2 id="svBroadcastTitle" tabindex="-1">Что тебе интересно?</h2>
-   <p id="svBroadcastExplainer" class="sv-broadcast-description">Выбери несколько тем. Я подстрою подсказки на главной и твоё утреннее шоу.</p>
-   <div class="sv-broadcast-topic-grid" role="group" aria-label="Темы моего эфира"></div>
-   <p class="sv-broadcast-fineprint">Новости подключим позже, когда появятся проверенные источники. Пока не будем их выдумывать.</p>
-   <label class="sv-broadcast-awake"><input type="checkbox" id="svBroadcastAwake"><span>Не гасить экран во время эфира</span></label>
-   <p class="sv-broadcast-awake-note">Работает только на поддерживаемых устройствах, пока приложение открыто.</p>
+   <p class="sv-broadcast-eyebrow" id="svBroadcastStepLabel">СЭЙВИ · ЗНАКОМСТВО</p>
+   <h2 id="svBroadcastTitle" tabindex="-1">Привет! Давай знакомиться</h2>
+   <p id="svBroadcastExplainer" class="sv-broadcast-description">Меня зовут Сэйви. Друзья зовут просто Сэй. А как обращаться к тебе?</p>
+   <div id="svBroadcastNamePanel" class="sv-broadcast-name-panel">
+    <label for="svBroadcastName">Твоё имя</label>
+    <input id="svBroadcastName" type="text" autocomplete="given-name" maxlength="60" enterkeyhint="next" placeholder="Например, Роман">
+    <p>Можно пропустить. Потом скажи: «Сэйви, запомни моё имя».</p>
+   </div>
+   <div id="svBroadcastInterestsPanel" hidden>
+    <div class="sv-broadcast-topic-grid" role="group" aria-label="Темы моего эфира"></div>
+    <p class="sv-broadcast-fineprint">Новости подключим, когда появятся проверенные источники.</p>
+    <label class="sv-broadcast-awake"><input type="checkbox" id="svBroadcastAwake"><span>Не гасить экран во время эфира</span></label>
+    <p class="sv-broadcast-awake-note">Только на поддерживаемых устройствах, пока приложение открыто.</p>
+   </div>
+   <div id="svBroadcastBusinessPanel" class="sv-broadcast-business-panel" hidden>
+    <div class="sv-broadcast-business-choices" role="group" aria-label="Использование SEYVEO">
+     <button type="button" data-sv-business="personal">Для себя <span>Личный помощник</span></button>
+     <button type="button" data-sv-business="business">Для бизнеса <span>Кабинет и команда</span></button>
+     <button type="button" data-sv-business="later">Решу позже <span>Всё можно настроить потом</span></button>
+    </div>
+    <p class="sv-broadcast-fineprint">Кабинет настроим вместе, когда захочешь. Сейчас не создаём подписку и не подключаем внешние сервисы.</p>
+   </div>
    <div class="sv-broadcast-sheet-actions">
     <button type="button" id="svBroadcastLater" class="sv-broadcast-later">Позже</button>
-    <button type="button" id="svBroadcastSave" class="sv-broadcast-save">Готово</button>
+    <button type="button" id="svBroadcastSave" class="sv-broadcast-save">Продолжить</button>
    </div>
   </section>`;
  document.body.appendChild(overlay);
@@ -83,6 +101,37 @@
  }
  const wakeCheckbox=overlay.querySelector('#svBroadcastAwake');
  const saveButton=overlay.querySelector('#svBroadcastSave');
+ const nameField=overlay.querySelector('#svBroadcastName');
+ const namePanel=overlay.querySelector('#svBroadcastNamePanel');
+ const interestsPanel=overlay.querySelector('#svBroadcastInterestsPanel');
+ const businessPanel=overlay.querySelector('#svBroadcastBusinessPanel');
+ const stepLabel=overlay.querySelector('#svBroadcastStepLabel');
+ const title=overlay.querySelector('#svBroadcastTitle');
+ const explainer=overlay.querySelector('#svBroadcastExplainer');
+ const laterButton=overlay.querySelector('#svBroadcastLater');
+ const businessButtons=[...businessPanel.querySelectorAll('[data-sv-business]')];
+ function renderStep(){
+  namePanel.hidden=introStep!=='name';
+  interestsPanel.hidden=introStep!=='interests';
+  businessPanel.hidden=introStep!=='business';
+  stepLabel.textContent=onboarding?`СЭЙВИ · ${introStep==='name'?'1 / 3':introStep==='interests'?'2 / 3':'3 / 3'}`:'СЭЙВИ · ТВОИ ИНТЕРЕСЫ';
+  title.textContent=introStep==='name'?'Привет! Давай знакомиться':
+   introStep==='interests'?'Что тебе интересно?':'Как будем дружить?';
+  explainer.textContent=introStep==='name'?'Меня зовут Сэйви, друзья зовут Сэй. А как обращаться к тебе?':
+   introStep==='interests'?'Выбери несколько тем. Я буду рассказывать о них иногда, когда у тебя есть время.':
+   'Я могу помогать тебе лично или с бизнесом. Всё это можно настроить позже.';
+  saveButton.textContent=introStep==='business'||!onboarding?'Готово':'Продолжить';
+  laterButton.textContent=introStep==='name'?'Позже': 'Назад';
+  for(const button of businessButtons){
+   const checked=button.dataset.svBusiness===businessChoice;
+   button.setAttribute('aria-pressed',checked?'true':'false');
+  }
+  title.focus({preventScroll:true});
+ }
+ businessButtons.forEach(button=>button.addEventListener('click',()=>{
+  businessChoice=button.dataset.svBusiness;
+  renderStep();
+ }));
  let previousFocus=null,firstReturnTimer=0,returnTyping=0;
  const returnLine=document.createElement('p');
  returnLine.id='svBroadcastReturnLine';
@@ -115,9 +164,12 @@
   previousFocus=document.activeElement;
   setSelected(prefs.topics);
   wakeCheckbox.checked=prefs.keepAwake;
+  profile=readProfile();
+  nameField.value=profile.name||'';
+  introStep=onboarding?'name':'interests';
   overlay.hidden=false;
   root.classList.add('sv-broadcast-sheet-open');
-  overlay.querySelector('#svBroadcastTitle').focus({preventScroll:true});
+  renderStep();
   return true;
  }
  function finishFirstReturn(){
@@ -134,7 +186,10 @@
  function writeFirstReturn(){
   if(!root.classList.contains('sv-broadcast-first-return')||!isHome())return;
   window.dispatchEvent(new Event('seyveo:home-idle-prompt'));
-  const letters=Array.from('Я запомнила, что тебе интересно. ✨');
+  const userName=readProfile().name;
+  const letters=Array.from(userName?
+   `Рада знакомству, ${userName}! Я запомнила твои интересы. ✨`:
+   'Я запомнила, что тебе интересно. ✨');
   returnLine.textContent='';returnLine.hidden=false;
   let i=0;
   const tick=()=>{
@@ -153,6 +208,17 @@
    const topics=validTopics(selected());
    prefs={topics:topics.length?topics:[...DEFAULT_TOPICS],keepAwake:wakeCheckbox.checked};
    write(PREF_KEY,JSON.stringify(prefs));
+   if(onboarding){
+    const providedName=nameField.value.trim().replace(/\s+/g,' ').slice(0,60);
+    const focus=businessChoice==='personal'?'life':
+     businessChoice==='business'?'pro':(profile.focus||'life');
+    profile={...profile,schemaVersion:1,name:providedName||profile.name||'',
+     assistantName:'Сэйви',assistantVoice:'female',
+     assistantAliases:['Сэйви','Сэй','SEYVEO'],focus,lifeIncluded:true,
+     updatedAt:new Date().toISOString()};
+    write(PROFILE_KEY,JSON.stringify(profile));
+    window.dispatchEvent(new CustomEvent('seyveo:profile-changed',{detail:{focus}}));
+   }
   }
   overlay.hidden=true;
   root.classList.remove('sv-broadcast-sheet-open');
@@ -177,15 +243,31 @@
    },2550);
   }
  }
- saveButton.addEventListener('click',()=>closePreferences({save:true}));
- overlay.querySelector('#svBroadcastLater').addEventListener('click',()=>closePreferences());
+ saveButton.addEventListener('click',()=>{
+  if(onboarding&&introStep==='name'){
+   introStep='interests';renderStep();return;
+  }
+  if(onboarding&&introStep==='interests'){
+   introStep='business';renderStep();return;
+  }
+  closePreferences({save:true});
+ });
+ laterButton.addEventListener('click',()=>{
+  if(onboarding&&introStep==='business'){
+   introStep='interests';renderStep();return;
+  }
+  if(onboarding&&introStep==='interests'){
+   introStep='name';renderStep();return;
+  }
+  closePreferences();
+ });
  overlay.addEventListener('keydown',event=>{
   if(event.key==='Escape'){
    event.preventDefault();closePreferences();return;
   }
   if(event.key!=='Tab')return;
   const controls=[...overlay.querySelectorAll('input,button')]
-   .filter(item=>!item.disabled&&!item.hidden);
+   .filter(item=>!item.disabled&&item.getClientRects().length>0);
   const first=controls[0],last=controls[controls.length-1];
   if(event.shiftKey&&[first,overlay.querySelector('#svBroadcastTitle')].includes(document.activeElement)){
    event.preventDefault();last.focus();
@@ -427,5 +509,13 @@
  // silently restarts the microphone, audio or the daily program.
  window.SEYVEO_BROADCAST=Object.freeze({start,stop,openPreferences,
   getPreferences:()=>({topics:[...prefs.topics],keepAwake:prefs.keepAwake}),
-  nextSuggestion,isActive:()=>active,isOnboarding:()=>onboarding});
+  nextSuggestion,isActive:()=>active,isOnboarding:()=>onboarding,
+  rememberName(name){
+   const clean=String(name||'').trim().replace(/\s+/g,' ').slice(0,60);
+   if(!clean)return false;
+   profile={...readProfile(),schemaVersion:1,name:clean,updatedAt:new Date().toISOString()};
+   write(PROFILE_KEY,JSON.stringify(profile));
+   window.dispatchEvent(new Event('seyveo:profile-changed'));
+   return true;
+  }});
 })();

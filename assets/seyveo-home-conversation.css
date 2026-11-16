@@ -1,0 +1,80 @@
+/* SEYVEO · Definitive Home: one original Sayvi, one actionable card.
+   The remaining tasks are in Tasks; never clone the orb or the dock. */
+:root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #stage{
+  min-height:clamp(300px,43dvh,390px)!important;
+  height:clamp(300px,43dvh,390px)!important;
+  flex:0 0 auto!important;
+  padding:0!important;
+  margin-top:0!important;
+  overflow:visible!important;
+}
+:root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orbCluster,
+:root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage.lm-focus #orbCluster{
+  top:clamp(172px,24dvh,228px)!important;
+  height:clamp(148px,42vw,180px)!important;
+  transform:translateY(-50%)!important;
+}
+:root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orb,
+:root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage.lm-focus #orb{
+  width:clamp(148px,42vw,180px)!important;
+  height:clamp(148px,42vw,180px)!important;
+}
+:root.sv-home-card-sphere.sv-home-empty-sphere #homePage #stage > .message{
+  display:none!important;
+}
+:root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #svSayviHomeWeather{
+  top:calc(clamp(172px,24dvh,228px) + clamp(74px,21vw,90px) + 15px)!important;
+  z-index:6;
+}
+/* Show the same real featured card, not a recreated list or a fake task. */
+:root.sv-home-card-sphere.sv-home-empty-sphere #homePage #seyveoLivingMoment:not([hidden]),
+:root.sv-home-card-sphere.sv-home-empty-sphere #homePage #dynamic:not([hidden]),
+:root.sv-home-card-sphere.sv-home-empty-sphere #homePage #svSmartStartHome:not([hidden]),
+:root.sv-home-card-sphere.sv-home-empty-sphere #homePage #svcpWorkHomePreview:not([hidden]),
+:root.sv-home-card-sphere.sv-home-empty-sphere #homePage #workTimeline:not([hidden]),
+:root.sv-home-card-sphere.sv-home-empty-sphere #homePage .sv-sayvi-handoff-today:not([hidden]){
+  display:block!important;
+  pointer-events:auto!important;
+  opacity:1;
+}
+/* Only one featured action on Home. The rest remain accessible in Tasks. */
+:root.sv-home-card-sphere #homePage #seyveoLivingMoment .lm-secondary{
+  display:none!important;
+}
+:root.sv-home-card-sphere #homePage #dynamic > :not([hidden]) ~ :not([hidden]){
+  display:none!important;
+}
+:root.sv-home-card-sphere #homePage:has(#seyveoLivingMoment:not([hidden]))
+ :is(#dynamic,#svcpWorkHomePreview,#workTimeline,.sv-sayvi-handoff-today){
+  display:none!important;
+}
+:root.sv-home-card-sphere #homePage:has(#dynamic:not([hidden]))
+ :is(#svcpWorkHomePreview,#workTimeline,.sv-sayvi-handoff-today){
+  display:none!important;
+}
+/* Calm thoughts and the longer 'My morning' remain exclusive to empty Home. */
+:root.sv-home-card-sphere #homePage :is(#svHomeLivingLine,#svBroadcastStage,#svBroadcastStartOffer,#svBroadcastReturnLine){
+  display:none!important;
+}
+:root.sv-home-card-sphere.sv-broadcast-first-return #homePage
+ :is(#seyveoLivingMoment,#dynamic,#svSmartStartHome,#svcpWorkHomePreview,#workTimeline,.sv-sayvi-handoff-today){
+  opacity:0!important;pointer-events:none!important;
+}
+/* The first return stays full-size; real cards then gently shrink the same orb. */
+:root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #orbCluster{
+  transition:top .85s cubic-bezier(.22,.8,.22,1),height .85s cubic-bezier(.22,.8,.22,1)!important;
+}
+:root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #orb{
+  transition:width .85s cubic-bezier(.22,.8,.22,1),height .85s cubic-bezier(.22,.8,.22,1)!important;
+}
+@media(max-height:700px){
+  :root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #stage{
+   min-height:295px!important;height:295px!important;
+  }
+  :root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orbCluster{
+   top:154px!important;
+  }
+  :root.sv-home-card-sphere:not(.sv-broadcast-first-return).sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #svSayviHomeWeather{
+   top:253px!important;
+  }
+}

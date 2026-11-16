@@ -381,6 +381,7 @@
     }
     rememberOpening();
     renderToday();
+    root.classList.toggle('sv-home-card-sphere',hasHomeCards());
     beginHomeGreetingLifetime();
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
@@ -943,13 +944,27 @@
   // Distinguish resolving the last visible card from merely returning to
   // an already-empty Home. Only the former deserves a celebratory line.
   let hadCardsBeforeEmpty=hasHomeCards();
+  let lastHasCard=hadCardsBeforeEmpty;
   function shouldDockHome(){
-    // The agenda card is constructed only after finish(), so check storage
-    // as well when deciding the destination during the opening itself.
-    // First meeting is the one deliberate exception: Sayvi docks while the
-    // person chooses interests, then returns if there are no cards.
-    return root.classList.contains('sv-broadcast-onboarding')||
-      hasHomeCards()||!!nextAgenda();
+    // Definitive Home: the original sphere remains a chat / voice button,
+    // with or without the one featured card. Only onboarding needs a dock flight.
+    return root.classList.contains('sv-broadcast-onboarding');
+  }
+  function syncHomeCardPresence(){
+    const withCards=hasHomeCards();
+    root.classList.toggle('sv-home-card-sphere',withCards);
+    if(withCards)hadCardsBeforeEmpty=true;
+    if(lastHasCard&&!withCards&&emptySphere&&
+       root.classList.contains('sv-home-empty-arrived')&&
+       !root.classList.contains('sv-broadcast-first-return')&&
+       !root.classList.contains('sv-broadcast-onboarding')){
+      hadCardsBeforeEmpty=false;
+      window.dispatchEvent(new CustomEvent('seyveo:home-sayvi-arrived',{
+       detail:{afterCards:true}
+      }));
+    }
+    lastHasCard=withCards;
+    return withCards;
   }
   function canShowEmptySphere(){
     return done&&!document.hidden&&!home.hidden&&
@@ -959,8 +974,7 @@
       !root.classList.contains('sv-broadcast-sheet-open')&&
       !root.classList.contains('sv-music-ambient')&&
       !root.classList.contains('sv-music-ambient-leaving')&&
-      !document.querySelector('dialog[open]')&&
-      (!hasHomeCards()||root.classList.contains('sv-broadcast-first-return'));
+      !document.querySelector('dialog[open]');
   }
 
   function restoreEmptyMotion(){
@@ -973,7 +987,7 @@
   }
   function enterEmptySphere(){
     if(emptySphere||emptyLeaving||!canShowEmptySphere())return;
-    const afterCards=hadCardsBeforeEmpty&&
+    const afterCards=hadCardsBeforeEmpty&&!hasHomeCards()&&
       !root.classList.contains('sv-broadcast-first-return');
     hadCardsBeforeEmpty=false;
     emptySphere=true;
@@ -1097,11 +1111,12 @@
   }
   function syncEmptySphere(){
     emptySyncTimer=0;
+    syncHomeCardPresence();
     // Rapid Back used to teleport the full-size sphere into position while
     // the dock was still expanding. Reverse that handoff properly: restore
     // the miniature, let Home settle one frame, then fly the ORIGINAL orb out.
     if(emptyRouteLeaving&&!home.hidden&&
-      (!location.hash||location.hash==='#home')&&!hasHomeCards()){
+      (!location.hash||location.hash==='#home')){
       clearTimeout(emptyRouteTimer);emptyRouteTimer=0;emptyRouteLeaving=false;
       emptyLeaving=false;emptySphere=false;
       ++emptyEpoch;
@@ -1120,7 +1135,7 @@
     leaveEmptySphere({animate:stillHome});
   }
   function scheduleEmptySphereSync(delay=260){
-    if(hasHomeCards())hadCardsBeforeEmpty=true;
+    syncHomeCardPresence();
     // Route changes take priority over the normal card-observer debounce.
     // The pearl dock must begin opening promptly, ahead of the mini orb.
     if(emptySphere&&!document.hidden&&

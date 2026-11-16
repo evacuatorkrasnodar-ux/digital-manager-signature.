@@ -8,11 +8,11 @@ const source=readFileSync(join(root,'assets/seyveo-my-broadcast.js'),'utf8');
 const style=readFileSync(join(root,'assets/seyveo-my-broadcast.css'),'utf8');
 const cinema=readFileSync(join(root,'assets/seyveo-sayvi-handoff-demo.js'),'utf8');
 const index=readFileSync(join(root,'index.html'),'utf8');
-assert.match(index,/seyveo-my-broadcast\.js\?v=3[\s\S]*seyveo-sayvi-handoff-demo\.js\?v=92/,
+assert.match(index,/seyveo-my-broadcast\.js\?v=4[\s\S]*seyveo-sayvi-handoff-demo\.js\?v=93/,
  'The preference flag must initialize before the original cinematic');
 assert.match(source,/root\.classList\.add\('sv-broadcast-onboarding'\)/,
  'First meeting is a deliberate one-time state');
-assert.match(cinema,/return root\.classList\.contains\('sv-broadcast-onboarding'\)\|\|/,
+assert.match(cinema,/return root\.classList\.contains\('sv-broadcast-onboarding'\);/,
  'Initial travel to the dock is requested by the onboarding');
 assert.match(cinema,/!alreadySeen\|\|\s*\(typeof document!=='undefined'&&\s*document\.documentElement\.classList\.contains\('sv-broadcast-onboarding'\)/,
  'An already-used installation still plays the one-time introduction');
@@ -22,8 +22,12 @@ assert.match(source,/window\.dispatchEvent\(new Event\('seyveo:broadcast-setup-c
  'Finishing preferences resumes the original Home sphere controller');
 assert.match(source,/root\.classList\.add\('sv-broadcast-first-return'\)/,
  'The original sphere returns once even if demonstration cards are waiting');
-assert.match(cinema,/!hasHomeCards\(\)\|\|root\.classList\.contains\('sv-broadcast-first-return'\)/,
- 'The existing sphere return temporarily gives first-meeting priority');
+assert.match(cinema,/function syncHomeCardPresence\(\)/,
+ 'The original sphere stays clickable alongside one featured Home card');
+assert.match(source,/const PROFILE_KEY='seyveo-first-acquaintance-v1'/,
+ 'The first meeting and existing profile editor share one data record');
+assert.match(source,/introStep==='name'\?'Привет! Давай знакомиться'/,
+ 'First introduction includes a short personal-name step');
 assert.match(source,/read\(SEEN_KEY\)!=='1'/,
  'The menu never becomes a recurring interruption');
 assert.match(source,/localStorage\.setItem\(key,value\)/,
@@ -54,8 +58,12 @@ async function browserSmoke(){
   await page.locator('#svBroadcastPreferences:not([hidden])').waitFor({timeout:35000});
   assert.equal(await page.locator('.sv-broadcast-topic').count(),10);
   assert.equal(await page.locator('html').evaluate(el=>el.classList.contains('sv-broadcast-onboarding')),true);
+  await page.locator('#svBroadcastName').fill('Роман');
+  await page.locator('#svBroadcastSave').click();
   await page.locator('input[value="animals"]').uncheck();
   await page.locator('input[value="science"]').check();
+  await page.locator('#svBroadcastSave').click();
+  await page.locator('[data-sv-business="later"]').click();
   await page.locator('#svBroadcastSave').click();
   await page.waitForTimeout(350);
   assert.equal(await page.locator('#svBroadcastPreferences').isHidden(),true);
@@ -63,7 +71,8 @@ async function browserSmoke(){
   const prefs=await page.evaluate(()=>window.SEYVEO_BROADCAST?.getPreferences());
   assert.ok(prefs?.topics.includes('science'),'New topic is stored');
   assert.ok(!prefs?.topics.includes('animals'),'Deselected topic is removed');
-  assert.equal(await page.evaluate(()=>localStorage.getItem('seyveo.my-broadcast.onboarding-seen.v1')),'1');
+  assert.equal(await page.evaluate(()=>localStorage.getItem('seyveo.my-broadcast.onboarding-seen.v2')),'1');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')).name),'Роман');
   await page.waitForTimeout(2700);
   const canShow=await page.evaluate(()=>document.documentElement.classList.contains('sv-home-empty-sphere'));
   if(canShow){
