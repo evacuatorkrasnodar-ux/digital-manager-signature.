@@ -36,9 +36,27 @@
  function update(){
   const total=count();
   line.hidden=!total;
-  document.getElementById('svReviewCount').textContent=total?'· '+total:'';
-  document.getElementById('svReviewProgress').textContent=total?total+' осталось':'Всё разобрано';
+  const number=total?'· '+total:'';
+  const progress=total?total+' осталось':'Всё разобрано';
+  if(document.getElementById('svReviewCount').textContent!==number)document.getElementById('svReviewCount').textContent=number;
+  if(document.getElementById('svReviewProgress').textContent!==progress)document.getElementById('svReviewProgress').textContent=progress;
   room.classList.toggle('sv-review-empty',!total);
+  positionEntry();
+ }
+ function positionEntry(){
+  if(line.hidden||home.hidden||open)return;
+  const base=home.getBoundingClientRect().top;
+  let bottom=0;
+  for(const selector of ['#stage > .message','#svSayviHomeWeather','#svHomeLivingLine']){
+   const node=home.querySelector(selector);
+   if(!node||node.hidden)continue;
+   const style=getComputedStyle(node);
+   if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)<.05)continue;
+   bottom=Math.max(bottom,node.getBoundingClientRect().bottom);
+  }
+  if(!bottom)return;
+  const next=Math.round(bottom-base+14)+'px';
+  if(line.style.getPropertyValue('--sv-review-top')!==next)line.style.setProperty('--sv-review-top',next);
  }
  function moveIn(element){
   if(!element||original.has(element))return;
@@ -76,7 +94,13 @@
  const observer=new MutationObserver(()=>{if(!document.hidden)requestAnimationFrame(update)});
  for(const element of sources())observer.observe(element,{childList:true,subtree:false,attributes:true,attributeFilter:['hidden','class']});
  observer.observe(home,{childList:true,subtree:false});
+ const textObserver=new MutationObserver(()=>requestAnimationFrame(positionEntry));
+ for(const element of [home.querySelector('#stage > .message'),document.getElementById('svSayviHomeWeather'),document.getElementById('svHomeLivingLine')].filter(Boolean)){
+  textObserver.observe(element,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden','class']});
+ }
+ textObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+ window.addEventListener('resize',positionEntry);
  ['seyveo:tasks-changed','seyveo:calendar-changed','seyveo:card-visibility-changed','seyveo:home-recommendation-changed'].forEach(name=>window.addEventListener(name,update));
- setInterval(update,2500);
+ setInterval(update,900);
  update();
 })();
