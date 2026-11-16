@@ -40,8 +40,8 @@ assert.match(emptyReturn,/if\(reduceMotion\(\)\|\|!from\.width\|\|!to\.width\|\|
  'Reduced motion or unavailable animation still completes weather reveal');
 assert.match(emptyReturn,/root\.classList\.add\('sv-home-empty-arrived'\)/,
  'Weather gate opens only after the large sphere arrives');
-assert.match(emptyReturn,/dispatchEvent\(new Event\('seyveo:home-sayvi-arrived'\)\)/,
- 'Landing invites the weather feed to recover if needed');
+assert.match(emptyReturn,/dispatchEvent\(new CustomEvent\('seyveo:home-sayvi-arrived',[\s\S]*?detail:\{afterCards\}/,
+ 'Landing refreshes weather and distinguishes the last resolved card');
 assert.match(css,/:root\.sv-home-empty-sphere\.sv-home-empty-arriving #homePage #svSayviHomeWeather\{\s*opacity:0!important/,
  'Weather remains invisible during the flight');
 assert.match(css,/:root\.sv-home-empty-sphere\.sv-home-empty-arrived:not\(\.sv-music-ambient\) #homePage #svSayviHomeWeather:not\(\[hidden\]\)\{\s*display:inline-flex!important;\s*visibility:visible!important/,

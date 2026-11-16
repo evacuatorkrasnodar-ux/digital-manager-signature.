@@ -14,6 +14,8 @@ assert.match(css,/sv-home-living-copy-ghost[\s\S]*?visibility:hidden/,
  'the full phrase reserves its dimensions while letters appear');
 assert.match(css,/prefers-reduced-motion:reduce/,
  'the typewriter respects reduced-motion preferences');
+assert.match(css,/data-sv-presence="reply"[\s\S]*?sv-home-living-copy-typed/,
+ 'short spoken answers use the same unboxed writing area');
 assert.match(source,/!document\.querySelector\('dialog\[open\]'\)/,
  'no suggestion while a dialog is open');
 assert.match(source,/HINT_COOLDOWN_MS=90\*1000/,
@@ -196,4 +198,25 @@ for(const [next,kind,label] of [
  [6,'calendar','Календарь'],[13,'chat','Поговорим'],
  [14,'notes','Блокнот']
 ])probeAction(next,kind,label);
-console.log('PASS: gentle handwritten onboarding, native emoji actions, seven real routes and safe touch gestures.');
+
+// Last-card return is a distinct milestone; an ordinary empty Home arrival
+// does not trigger it. The celebration then yields to an actual voice reply.
+classes.add('sv-home-empty-sphere');
+emit('seyveo:home-sayvi-arrived',{afterCards:true});
+advance(552_000);
+assert.equal(line.hidden,false,'last-card completion writes immediately after the sphere arrives');
+assert.match(ghost(),/Ого, на главной всё разобрали/,
+ 'Sayvi celebrates this Home milestone without claiming all tasks are complete');
+advance(557_000);
+assert.equal(line.children[2].dataset.revealed,'true',
+ 'the celebration offers a music shortcut after typing');
+emit('seyveo:assistant-presence',{phase:'ack',reply:'Рада помочь! Можем просто поговорить.'});
+advance(559_000);
+assert.equal(line.dataset.svPresence,'reply',
+ 'voice replies take priority over optional Home suggestions');
+assert.equal(ghost(),'Рада помочь! Можем просто поговорить.');
+advance(563_000);
+assert.equal(copy(),ghost(),'the actual answer appears letter by letter');
+advance(576_000);
+assert.equal(line.hidden,true,'voice reply clears after a calm reading period');
+console.log('PASS: onboarding, seven routes, last-card celebration and live mini voice transcript.');

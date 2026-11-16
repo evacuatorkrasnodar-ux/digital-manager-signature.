@@ -49,6 +49,7 @@
  const HINT_HOLD_MS=8500;
  const HINT_COOLDOWN_MS=90*1000;
  const HINT_KEY='seyveo.sayvi.quiet-home-hint.v2';
+ const CELEBRATION_KEY='seyveo.sayvi.completed-cards-greeting.v1';
  const intro=[
   'Хочешь поговорить? Нажми на сферу — откроем чат.',
   'Удерживай сферу — поговорим голосом. Зови меня Сэйви или Сэй.'
@@ -95,12 +96,36 @@
   'Я ещё многому учусь. Обещаю, моя помощь будет становиться умнее.',
   'И если захочешь просто тишины — всё хорошо. Я подожду.'
  ];
+ const celebrationIdeas=[
+  invitation('🎉 Ого, на главной всё разобрали! Может, включим музыку?','music','Включить музыку','🎵'),
+  invitation('☀️ Ура, карточки закончились! Хочешь немного порисовать?','drawing','Открыть планшет','🎨'),
+  invitation('✨ Вот это темп! На главной снова спокойно. Поболтаем?','chat','Поговорим','💬'),
+  invitation('🎵 Всё, что было здесь, разобрали. Подберём музыку для настроения?','music','Открыть музыку','🎵'),
+  invitation('🎨 Красота! Можно немного выдохнуть и открыть чистый лист.','drawing','Порисовать','🎨'),
+  invitation('📝 Карточек больше нет. Хочешь записать новую идею?','notes','Открыть блокнот','📝'),
+  '💫 Ну вот, на главной спокойно. Давай немного насладимся моментом.',
+  invitation('🎧 Сэйви довольна: здесь всё решено. Включим что-нибудь приятное?','music','SEYVEO SOUND','🎵')
+ ];
+ // Small, verified evergreen curiosities and gentle, original jokes. Quotes
+ // with unverified celebrity attribution never appear as invented facts.
+ ideas.push(
+  '☀️ Маленький факт: солнечный свет идёт до Земли около восьми минут.',
+  '🙂 Почему календарь спокоен? У него всё по дням.',
+  '🐧 У пингвинов тоже бывают важные дела. Например, найти свой камешек.',
+  '💫 Хорошая мысль на сегодня: необязательно делать всё сразу.',
+  '🌍 На Земле есть холодные пустыни. Антарктида — одна из них.',
+  '😄 Я хотела пошутить про список дел, но он попросил выходной.',
+  '📖 Чехов однажды написал: «Краткость — сестра таланта». Кажется, он прав.',
+  '📖 Лев Толстой писал: «И нет величия там, где нет простоты, добра и правды».'
+ );
  const ghost=document.createElement('span');
  ghost.className='sv-home-living-copy-ghost';
  ghost.setAttribute('aria-hidden','true');
  const typed=document.createElement('span');
  typed.className='sv-home-living-copy-typed';
  let idleSince=Date.now(),idleHint='',idleTyped='',idleTyping=false,idleAction=null;
+ let miniReply='',miniTyped='',miniTyping=false,miniTimer=0,miniHideTimer=0,miniSequence=0;
+ let celebrationTimer=0,celebrationPending=false,celebrationIndex=0;
  let idleRevealTimer=0,idleTypeTimer=0,idleHideTimer=0;
  let idleLastShownAt=0,idleIdeaIndex=0,introDone=false,introStep=0;
  let idleMarkupMounted=false,idleSequence=0;
@@ -109,6 +134,13 @@
   if(Number.isFinite(stored?.at))idleLastShownAt=stored.at;
   if(Number.isInteger(stored?.next)&&stored.next>=0)idleIdeaIndex=stored.next;
   introDone=stored?.introDone===true;
+  celebrationIndex=Number.isInteger(stored?.celebration)&&stored.celebration>=0?
+   stored.celebration:0;
+ }catch{}
+ try{
+  const raw=localStorage.getItem(CELEBRATION_KEY);
+  const saved=raw===null?NaN:Number(raw);
+  if(Number.isInteger(saved)&&saved>=0)celebrationIndex=saved;
  }catch{}
  const homeVisible=()=>!home.hidden&&!document.hidden&&
   (!location.hash||location.hash==='#home')&&
@@ -122,6 +154,12 @@
   !root.classList.contains('sv-global-search-open')&&
   !document.querySelector('dialog[open]')&&
   !document.activeElement?.matches?.('input,textarea,[contenteditable="true"]');
+ const canDisplayReply=()=>ready&&homeVisible()&&
+  root.classList.contains('sv-home-empty-sphere')&&
+  root.classList.contains('sv-home-empty-arrived')&&
+  !root.classList.contains('sv-home-empty-sphere-leaving')&&
+  !root.classList.contains('sv-music-ambient')&&
+  !document.querySelector('dialog[open]');
 
  function navigateSuggestion(kind){
   if(kind==='music'){
@@ -163,17 +201,21 @@
 
  function update(){
   const visible=ready&&homeVisible();
-  const idleVisible=visible&&!!idleHint&&quietHome();
-  if(idleVisible){
+  const replyVisible=visible&&!!miniReply&&canDisplayReply();
+  const idleVisible=!replyVisible&&visible&&!!idleHint&&quietHome();
+  if(replyVisible||idleVisible){
    if(!idleMarkupMounted){
     content.replaceChildren(ghost,typed);
     idleMarkupMounted=true;
    }
-   if(ghost.textContent!==idleHint)ghost.textContent=idleHint;
-   if(typed.textContent!==idleTyped)typed.textContent=idleTyped;
-   if(idleAction){
+   const phrase=replyVisible?miniReply:idleHint;
+   const written=replyVisible?miniTyped:idleTyped;
+   const typing=replyVisible?miniTyping:idleTyping;
+   if(ghost.textContent!==phrase)ghost.textContent=phrase;
+   if(typed.textContent!==written)typed.textContent=written;
+   if(!replyVisible&&idleAction){
     actionRow.hidden=false;
-    actionRow.dataset.revealed=idleTyping?'false':'true';
+    actionRow.dataset.revealed=typing?'false':'true';
     if(actionButton.dataset.svSayviAction!==idleAction.kind){
      actionButton.dataset.svSayviAction=idleAction.kind;
      actionIcon.textContent=idleAction.icon;
@@ -181,9 +223,10 @@
      actionButton.setAttribute('aria-label',idleAction.label);
     }
    }else actionRow.hidden=true;
-   line.dataset.svPresence='idle';
-   line.dataset.svTyping=idleTyping?'true':'false';
-   line.setAttribute('aria-label',idleHint);
+   line.dataset.svPresence=replyVisible?'reply':'idle';
+   line.dataset.svTyping=typing?'true':'false';
+   line.setAttribute('aria-label',phrase);
+   line.setAttribute('aria-live',replyVisible?'polite':'off');
    if(line.hidden)line.hidden=false;
    return;
   }
@@ -192,6 +235,7 @@
   actionRow.dataset.revealed='false';
   line.dataset.svTyping='false';
   line.setAttribute('aria-label','');
+  line.setAttribute('aria-live','off');
   // Thinking and speaking appear in the persistent top status. Only the
   // microphone acknowledgement belongs beneath the sphere.
   const status=voicePhase==='listening'?'Слушаю…':'';
@@ -206,7 +250,7 @@
  }
  function persistIdle(){
   try{sessionStorage.setItem(HINT_KEY,JSON.stringify({
-   at:idleLastShownAt,next:idleIdeaIndex,introDone
+   at:idleLastShownAt,next:idleIdeaIndex,introDone,celebration:celebrationIndex
   }));}catch{}
  }
  function dropIdle({resetClock=true}={}){
@@ -270,6 +314,14 @@
   };
   idleTypeTimer=setTimeout(next,250);
  }
+ function beginSuggestion(suggestion){
+  idleHint=typeof suggestion==='string'?suggestion:suggestion.text;
+  idleAction=typeof suggestion==='string'?null:suggestion.action;
+  idleTyped='';idleTyping=true;
+  const sequence=++idleSequence;
+  update();
+  typeIdle(sequence);
+ }
  function showIdle({continuation=false}={}){
   idleRevealTimer=0;
   const now=Date.now();
@@ -278,12 +330,26 @@
   if(root.classList.contains('sv-home-greeting-fading')&&
      !root.classList.contains('sv-home-greeting-expired'))return;
   const suggestion=introDone?ideas[idleIdeaIndex++%ideas.length]:intro[introStep];
-  idleHint=typeof suggestion==='string'?suggestion:suggestion.text;
-  idleAction=typeof suggestion==='string'?null:suggestion.action;
-  idleTyped='';idleTyping=true;
-  const sequence=++idleSequence;
-  update();
-  typeIdle(sequence);
+  beginSuggestion(suggestion);
+ }
+ function showCelebration(){
+  celebrationTimer=0;
+  if(!celebrationPending)return;
+  if(!ready){celebrationTimer=setTimeout(showCelebration,450);return;}
+  if(!quietHome()){celebrationPending=false;return;}
+  if(!root.classList.contains('sv-home-greeting-expired')){
+   window.dispatchEvent(new Event('seyveo:home-idle-prompt'));
+   celebrationTimer=setTimeout(showCelebration,550);
+   return;
+  }
+  celebrationPending=false;
+  // A completed stack is a milestone, not the first-use tutorial.
+  introDone=true;
+  const suggestion=celebrationIdeas[celebrationIndex++%celebrationIdeas.length];
+  try{localStorage.setItem(CELEBRATION_KEY,String(celebrationIndex));}catch{}
+  idleSince=Date.now();
+  persistIdle();
+  beginSuggestion(suggestion);
  }
  function checkIdle(){
   if(!quietHome()){
@@ -303,16 +369,58 @@
    idleRevealTimer=setTimeout(showIdle,520);
   }else showIdle();
  }
+ function resetMini(){
+  clearTimeout(miniTimer);miniTimer=0;
+  clearTimeout(miniHideTimer);miniHideTimer=0;
+  ++miniSequence;
+  miniReply='';miniTyped='';miniTyping=false;
+ }
  function clearVoice(){
   if(voiceTimer){clearTimeout(voiceTimer);voiceTimer=null}
+  resetMini();
   voicePhase='';update();
+ }
+ function showMiniReply(value){
+  const response=String(value||'').trim();
+  if(!canDisplayReply()||!response||response.length>190||
+    /(?:https?:\/\/|www\.|\n|\.(?:pdf|docx?|png|jpe?g)\b|<img|!\[|data:image|фотографи|изображени|вложени|прикреп|скриншот)/iu.test(response))return false;
+  dropIdle();
+  if(voiceTimer){clearTimeout(voiceTimer);voiceTimer=null;}
+  resetMini();
+  miniReply=response;miniTyped='';miniTyping=true;
+  voicePhase='reply';
+  const sequence=++miniSequence;
+  update();
+  const finish=()=>{
+   if(sequence!==miniSequence)return;
+   miniTyping=false;update();
+   miniHideTimer=setTimeout(clearVoice,11500);
+  };
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+   miniTyped=response;finish();return true;
+  }
+  const letters=Array.from(response);
+  let cursor=0;
+  const next=()=>{
+   miniTimer=0;
+   if(sequence!==miniSequence||!canDisplayReply())return;
+   if(cursor>=letters.length){finish();return;}
+   const letter=letters[cursor++];
+   miniTyped+=letter;update();
+   miniTimer=setTimeout(next,/[.!?…]/.test(letter)?125:26+cursor%4*3);
+  };
+  miniTimer=setTimeout(next,180);
+  return true;
  }
  function onPresence(event){
   const phase=event.detail?.phase;
+  if(phase==='ack'&&event.detail?.reply&&showMiniReply(event.detail.reply))return;
   if(phase==='listening')voicePhase='listening';
   else if(phase==='speaking')voicePhase='speaking';
-  else if(phase==='ack')voicePhase='thinking';
-  else if(['listening-end','end','stop','text'].includes(phase))voicePhase='';
+  else if(phase==='ack'){resetMini();voicePhase='thinking';}
+  else if(['listening-end','end','stop','text'].includes(phase)){
+   resetMini();voicePhase='';
+  }
   else return;
   if(voicePhase)dropIdle();
   if(voiceTimer)clearTimeout(voiceTimer);
@@ -334,7 +442,15 @@
   document.addEventListener(name,noteActivity,{capture:true,passive:true});
  window.addEventListener('hashchange',()=>{dropIdle();update();});
  window.addEventListener('seyveo:route-changed',()=>{dropIdle();update();});
- window.addEventListener('seyveo:home-sayvi-arrived',()=>{dropIdle();update();});
+ window.addEventListener('seyveo:home-sayvi-arrived',event=>{
+  dropIdle();
+  if(event.detail?.afterCards){
+   celebrationPending=true;
+   clearTimeout(celebrationTimer);
+   celebrationTimer=setTimeout(showCelebration,850);
+  }
+  update();
+ });
  window.addEventListener('storage',e=>{
   if(!e.key||['seyveo-personal-tasks-v1','seyveo-calendar-events-v1'].includes(e.key))update();
  });
@@ -348,4 +464,7 @@
  window.setInterval(()=>{if(homeVisible())update()},5*60*1000);
  window.setInterval(checkIdle,3500);
  window.setTimeout(()=>{ready=true;update()},HELLO_MS);
+ // The existing voice recognizer can ask to display a short answer without
+ // forcing a full conversation screen. No independent microphone or TTS.
+ window.SEYVEO_HOME_PRESENCE=Object.freeze({canDisplayReply});
 })();

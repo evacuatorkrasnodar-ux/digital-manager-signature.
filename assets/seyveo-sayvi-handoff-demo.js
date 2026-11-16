@@ -935,6 +935,9 @@
     }
     return false;
   }
+  // Distinguish resolving the last visible card from merely returning to
+  // an already-empty Home. Only the former deserves a celebratory line.
+  let hadCardsBeforeEmpty=hasHomeCards();
   function shouldDockHome(){
     // The agenda card is constructed only after finish(), so check storage
     // as well when deciding the destination during the opening itself.
@@ -960,6 +963,8 @@
   }
   function enterEmptySphere(){
     if(emptySphere||emptyLeaving||!canShowEmptySphere())return;
+    const afterCards=hadCardsBeforeEmpty;
+    hadCardsBeforeEmpty=false;
     emptySphere=true;
     const epoch=++emptyEpoch;
     cancelAmbientTimer();
@@ -981,7 +986,9 @@
       // Never strand the weather behind the flight gate on Safari, even if
       // Web Animations is interrupted or cannot start.
       root.classList.add('sv-home-empty-arrived');
-      window.dispatchEvent(new Event('seyveo:home-sayvi-arrived'));
+      window.dispatchEvent(new CustomEvent('seyveo:home-sayvi-arrived',{
+        detail:{afterCards}
+      }));
       if(!canShowEmptySphere())leaveEmptySphere();
     };
     if(reduceMotion()||!from.width||!to.width||typeof orb.animate!=='function'){
@@ -1102,6 +1109,7 @@
     leaveEmptySphere({animate:stillHome});
   }
   function scheduleEmptySphereSync(delay=260){
+    if(hasHomeCards())hadCardsBeforeEmpty=true;
     // Route changes take priority over the normal card-observer debounce.
     // The pearl dock must begin opening promptly, ahead of the mini orb.
     if(emptySphere&&!document.hidden&&

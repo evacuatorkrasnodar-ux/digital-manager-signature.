@@ -645,7 +645,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 #picturePage .seyveo-picture-back svg{width:18px;height:18px;stroke:var(--seyveo-emerald);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
 #picturePage .seyveo-picture-back:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 </style><link rel="stylesheet" href="assets/seyveo-pay.css?v=7"><style id="seyveo-youtube-white-theme">:root[data-theme=light] .seyveo-youtube-white{background:#24372e;border-radius:6px;padding:2px}</style><link rel="stylesheet" href="assets/seyveo-family-chat.css?v=11"><link rel="stylesheet" href="assets/seyveo-business-command.css?v=117"><link rel="stylesheet" href="assets/seyveo-employee-schedule.css?v=5"><link rel="stylesheet" href="assets/seyveo-scroll-clean.css?v=1"><link rel="stylesheet" href="assets/seyveo-fullscreen-workspaces.css?v=21"><link rel="stylesheet" href="assets/seyveo-typography.css?v=9"><link rel="stylesheet" href="assets/seyveo-work-chat-screen.css?v=245">
-<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=22"><link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=4"><script src="assets/seyveo-type-scale.js?v=1" defer></script><link rel="stylesheet" href="assets/life-tiles-accents.css?v=32"><link rel="stylesheet" href="assets/seyveo-global-search.css?v=6"><script src="assets/seyveo-life-events.js?v=7"></script><script src="assets/my-world-air.js?v=10" defer></script><link rel="stylesheet" href="assets/seyveo-card-studio.css?v=19"><link rel="stylesheet" href="assets/seyveo-fan-workshop.css?v=11"><link rel="stylesheet" href="assets/seyveo-connect.css?v=6"><link rel="stylesheet" href="assets/seyveo-velvet-system.css?v=15"><link rel="stylesheet" href="assets/seyveo-card-mobile-density.css?v=7"><link rel="stylesheet" href="assets/seyveo-card-system.css?v=35"><link rel="stylesheet" href="assets/seyveo-discovery.css?v=1"><link rel="stylesheet" href="assets/seyveo-recruitment.css?v=3"><link rel="stylesheet" href="assets/sayvi-onboarding.css?v=20261113-live2"><link rel="stylesheet" href="assets/seyveo-liquid-glass-26.css?v=24"><link rel="stylesheet" href="assets/seyveo-home-presence.css?v=5"><style id="sv-cabinet-screen-polish">
+<link rel="stylesheet" href="assets/seyveo-chat-attachments-unified.css?v=22"><link rel="stylesheet" href="assets/seyveo-chat-jump.css?v=4"><script src="assets/seyveo-type-scale.js?v=1" defer></script><link rel="stylesheet" href="assets/life-tiles-accents.css?v=32"><link rel="stylesheet" href="assets/seyveo-global-search.css?v=6"><script src="assets/seyveo-life-events.js?v=7"></script><script src="assets/my-world-air.js?v=10" defer></script><link rel="stylesheet" href="assets/seyveo-card-studio.css?v=19"><link rel="stylesheet" href="assets/seyveo-fan-workshop.css?v=11"><link rel="stylesheet" href="assets/seyveo-connect.css?v=6"><link rel="stylesheet" href="assets/seyveo-velvet-system.css?v=15"><link rel="stylesheet" href="assets/seyveo-card-mobile-density.css?v=7"><link rel="stylesheet" href="assets/seyveo-card-system.css?v=35"><link rel="stylesheet" href="assets/seyveo-discovery.css?v=1"><link rel="stylesheet" href="assets/seyveo-recruitment.css?v=3"><link rel="stylesheet" href="assets/sayvi-onboarding.css?v=20261113-live2"><link rel="stylesheet" href="assets/seyveo-liquid-glass-26.css?v=24"><link rel="stylesheet" href="assets/seyveo-home-presence.css?v=6"><style id="sv-cabinet-screen-polish">
 /* SEYVEO 26 — quiet, flat actions; shared proportions across the cabinet. */
 #tasksPage[data-work-view="business"] .tasks-heading{margin-bottom:14px!important}
 #tasksPage[data-work-view="business"] .tasks-heading h1{
@@ -5778,9 +5778,9 @@ question.addEventListener('keydown',e=>{
   }
 });
 
-/* Quiet voice: dialog stays invisible on Home. Text is shown only for
-   explicit writing/calendar actions. Speech is optional and supported by
-   the browser; history remains available from the expanded typed composer. */
+/* Quiet voice: short recognized requests receive a typed answer below the
+   Home sphere. Rich replies remain in the full chat with its history/tools.
+   Audio output is reserved for the approved Sayvi voice, not browser TTS. */
 /* "Рядом люди" never reads personal content aloud. A playful, generic
    response is only available on an explicit "между нами" voice request.
    This is communication etiquette, NOT identity verification or a lock. */
@@ -5796,8 +5796,8 @@ function nextNeutralAside(){
  return text;
 }
 let presenceSpeechRevision=0;
-function notifyOrbPresence(phase){
- document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase}}));
+function notifyOrbPresence(phase,detail={}){
+ document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase,...detail}}));
 }
 /* Only the actual Sayvi voice may speak. Generic browser TTS is disabled
    across the Home assistant; keep text/history and speech-stop API working. */
@@ -5811,14 +5811,39 @@ function speakAssistantReply(message){
  const response=String(message||'').trim();
  if(!response)return;
  ++presenceSpeechRevision;
- notifyOrbPresence('ack');
- setHint('Ответ Сэйви сохранён в истории. Голос недоступен без подключения Сэйви.');
+ notifyOrbPresence('ack',{reply:response});
+ // The original, approved Sayvi voice is not connected here. Do not claim
+ // a synthetic speech engine is talking; give a truthful one-time reminder
+ // while the compact Home response appears as live writing.
+ if(!window.SEYVEO_HOME_PRESENCE?.canDisplayReply?.())
+  setHint('Ответ Сэйви сохранён. Голос пока не подключён.');
+ else if(!window.SEYVEO_HOME_VOICE_TEXT_NOTICED){
+  window.SEYVEO_HOME_VOICE_TEXT_NOTICED=true;
+  setHint('Голос пока не подключён — отвечаю текстом.');
+ }
 }
 window.SEYVEO_CONVERSATION_STOP_SPEECH=()=>{
  ++presenceSpeechRevision;
  notifyOrbPresence('stop');
 };
 window.SEYVEO_CONVERSATION_READ_REPLY=(message)=>speakAssistantReply(message);
+function showSpokenReply(question,answer,options={}){
+ const response=String(answer||'').trim();
+ const compact=!options.privateReply&&
+  window.SEYVEO_HOME_PRESENCE?.canDisplayReply?.()===true&&
+  response.length>0&&response.length<=190&&
+  !/(?:https?:\/\/|www\.|\n|\.(?:pdf|docx?|png|jpe?g)\b|<img|!\[|data:image|фотографи|изображени|вложени|прикреп|скриншот)/iu.test(response);
+ if(compact){
+  if(!options.privateReply)window.SEYVEO_CHAT_HISTORY?.add({
+   question,answer:response,kind:'voice-mini'
+  });
+  return true;
+ }
+ // Longer replies and any rich content keep the full conversation's tools,
+ // history, link targets and attachments. Home never clips their meaning.
+ showWrittenReply(question,answer,options);
+ return false;
+}
 function handleSpokenAssistant(raw){
  const phrase=String(raw||'').trim();
  if(!phrase)return;
@@ -5848,12 +5873,12 @@ function handleSpokenAssistant(raw){
  }
  const keepAwake=window.SEYVEO_SCREEN_AWAKE?.handle?.(phrase);
  if(keepAwake){
-  showWrittenReply(phrase,keepAwake.message);speakAssistantReply(keepAwake.message);
+  showSpokenReply(phrase,keepAwake.message);speakAssistantReply(keepAwake.message);
   return;
  }
  const musicAction=window.SEYVEO_MUSIC_ACTIONS?.handle?.(phrase);
  if(musicAction){
-  showWrittenReply(phrase,musicAction.message);speakAssistantReply(musicAction.message);
+  showSpokenReply(phrase,musicAction.message);speakAssistantReply(musicAction.message);
   return;
  }
  const musicIntent=window.SEYVEO_MUSIC?.understand(phrase);
@@ -5872,7 +5897,7 @@ function handleSpokenAssistant(raw){
  }
  const laSetting=window.SEYVEO_LIVE_ACTION?.configure?.(phrase);
  if(laSetting){
-   showWrittenReply(phrase,laSetting.message);speakAssistantReply(laSetting.message);
+   showSpokenReply(phrase,laSetting.message);speakAssistantReply(laSetting.message);
    return;
  }
  if(window.SEYVEO_LIVE_ACTION?.navigate?.(phrase)){
@@ -5895,15 +5920,15 @@ function handleSpokenAssistant(raw){
  }
  const cardAction=window.SEYVEO_CARD_VOICE?.handle(phrase);
  if(cardAction){
-   showWrittenReply(phrase,cardAction.message);
-   if(composer.hidden)openComposer();
+   const mini=showSpokenReply(phrase,cardAction.message);
+   if(!mini&&composer.hidden)openComposer();
    speakAssistantReply(cardAction.message);
    return;
  }
  const localAction=window.SEYVEO_LOCAL_ACTIONS?.handle(phrase);
  if(localAction){
-   showWrittenReply(phrase,localAction.message);
-   if(composer.hidden)openComposer();
+   const mini=showSpokenReply(phrase,localAction.message);
+   if(!mini&&composer.hidden)openComposer();
    speakAssistantReply(localAction.message);
    return;
  }
@@ -5911,15 +5936,15 @@ function handleSpokenAssistant(raw){
    discreet:window.SEYVEO_DISCREET_MODE===true
  });
  if(privatePlan){
-   showWrittenReply(phrase,privatePlan.message,{privateReply:true});
-   if(composer.hidden)openComposer();
+   const mini=showSpokenReply(phrase,privatePlan.message,{privateReply:true});
+   if(!mini&&composer.hidden)openComposer();
    speakAssistantReply(privatePlan.message);
    return;
  }
  const answer=getDemoAnswer(phrase);
- showWrittenReply(phrase,answer);
+ const mini=showSpokenReply(phrase,answer);
  // Voice requests must leave both text entry and mic available afterwards.
- if(composer.hidden)openComposer();
+ if(!mini&&composer.hidden)openComposer();
  speakAssistantReply(answer);
 }
 window.SEYVEO_VOICE_EXECUTE=handleSpokenAssistant;
@@ -6515,7 +6540,7 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=11"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=24"></script><script src="assets/seyveo-work-shell.js?v=79"></script><script src="assets/seyveo-task-smart-nl.js?v=2"></script><script src="assets/seyveo-task-places.js?v=3"></script><script src="assets/seyveo-task-editor-v3.js?v=13"></script><script src="assets/seyveo-task-places-ui.js?v=5"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
+</script><script src="assets/seyveo-home-presence.js?v=12"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=24"></script><script src="assets/seyveo-work-shell.js?v=79"></script><script src="assets/seyveo-task-smart-nl.js?v=2"></script><script src="assets/seyveo-task-places.js?v=3"></script><script src="assets/seyveo-task-editor-v3.js?v=13"></script><script src="assets/seyveo-task-places-ui.js?v=5"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
  // Only the actual viewport HEIGHT affects editor geometry. Scroll events
@@ -6651,7 +6676,7 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=1">
 <script src="assets/seyveo-sayvi-mini-copy.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=70">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=88"></script>
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=89"></script>
 <link rel="stylesheet" href="assets/seyveo-home-status-light.css?v=2">
 <script src="assets/seyveo-home-status-light.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-weather-brief.css?v=7">
