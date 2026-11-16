@@ -419,23 +419,20 @@
    }
    if(!empty){
     const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+item.category;
-    if(multi&&item.category!=='work')dot.classList.add('is-tone-'+item.tone);
+
     dot.setAttribute('aria-hidden','true');main.append(dot);
    }
    main.append(copy);
    if(multi){
     const row=document.createElement('div');row.className='sv-task-smart-row';
-    const toggle=document.createElement('button');toggle.type='button';
-    toggle.className='sv-task-smart-category-toggle';
-    toggle.textContent=item.category==='work'?'Работа':'Личное';
-    toggle.setAttribute('aria-label','Изменить категорию: '+toggle.textContent);
-    toggle.addEventListener('click',()=>{
-     categoryOverrides.set(index,item.category==='work'?'personal':'work');
-     updateSmartPreview();
-    });
-    row.append(main,toggle);smartDetails.append(row);
+    const badge=document.createElement('span');
+    badge.className='sv-task-smart-category-label is-'+(item.category==='work'?'work':'personal');
+    badge.textContent=item.category==='work'?'Работа':'Личное';
+    badge.setAttribute('aria-label','Тип дела: '+badge.textContent);
+    row.append(main,badge);smartDetails.append(row);
    }else smartDetails.append(main);
   }
+  if(!multi){
   const when=document.createElement('button');when.type='button';when.className='sv-task-smart-when';
   when.setAttribute('aria-label',multi?'Изменить дату и время обоих дел':'Изменить дату и время дела');
   when.setAttribute('aria-expanded',String(quickDateOpen));
@@ -454,6 +451,7 @@
   when.addEventListener('click',()=>{quickDateOpen=!quickDateOpen;if(quickDateOpen)quickWheelMode='date';updateSmartPreview()});
   smartDetails.append(when);
   if(quickDateOpen)smartDetails.append(makeWheelEditor(whenDate,whenTime));
+  }
   const meta=document.createElement('div');meta.className='sv-task-smart-meta';
   if(!multi&&!empty){
    if(category==='work')meta.append(createText('category','Работа'));

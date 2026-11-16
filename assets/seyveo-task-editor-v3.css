@@ -1454,3 +1454,26 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-one-field-hint-do
  width:6px!important;height:6px!important;border-radius:50%!important;
  background:#6B9DC3!important;
 }
+
+/* Smart multi-task summary: labels are information, not additional controls. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-preview.is-multi .sv-task-smart-row .sv-task-smart-main{
+ padding-right:74px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-category-label{
+ position:absolute!important;top:50%!important;right:13px!important;
+ transform:translateY(-50%)!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+ background:none!important;box-shadow:none!important;pointer-events:none!important;
+ font:520 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#986B3D!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-category-label.is-work{
+ color:#537DA4!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-preview.is-multi .sv-task-smart-dot.is-personal{
+ background:#DAA060!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-preview.is-multi .sv-task-smart-dot.is-work{
+ background:#5789B1!important;
+}
