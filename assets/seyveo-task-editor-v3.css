@@ -1359,3 +1359,53 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-category-to
  box-shadow:var(--sv-task-action-shadow)!important;
  font:540 11.5px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
+
+/* Dotted calendar dates reveal actual saved items without committing a date. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-popover{
+ max-height:calc(100dvh - 135px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-agenda-preview .sv-task-cal-number{
+ outline:2px solid rgba(69,112,153,.48)!important;outline-offset:2px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda[hidden]{display:none!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda{
+ display:flex!important;flex-direction:column!important;gap:7px!important;
+ margin:10px 1px 0!important;padding:10px 0 1px!important;
+ border-top:1px solid rgba(103,111,124,.14)!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda-heading{
+ padding:0 5px 2px!important;color:#5E6976!important;
+ font:550 12px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda-list{
+ display:flex!important;flex-direction:column!important;gap:5px!important;
+ max-height:164px!important;overflow-y:auto!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda-item{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ gap:7px!important;min-height:32px!important;padding:7px 9px!important;
+ border-radius:11px!important;background:rgba(220,235,247,.82)!important;
+ color:#283846!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda-item.is-personal{
+ background:rgba(252,235,211,.83)!important;color:#47372B!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda-dot{
+ flex:0 0 7px!important;width:7px!important;height:7px!important;
+ border-radius:50%!important;background:#4F88B6!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda-item.is-personal .sv-task-day-agenda-dot{background:#D69A54!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda-title{
+ flex:1 1 auto!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ white-space:nowrap!important;font:560 12.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda-item time{
+ flex:0 0 auto!important;font:550 11.5px/1.15 system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda-select{
+ align-self:stretch!important;min-height:36px!important;margin-top:2px!important;
+ padding:7px 11px!important;border:var(--sv-task-action-rim)!important;border-radius:999px!important;
+ background:rgba(247,248,250,.65)!important;color:#2B3642!important;
+ box-shadow:var(--sv-task-action-shadow)!important;
+ font:560 12.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}

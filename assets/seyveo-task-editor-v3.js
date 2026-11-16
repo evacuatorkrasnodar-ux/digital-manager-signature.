@@ -55,6 +55,14 @@
  const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  const iso=(y,m,d)=>[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');
  let shownYear=new Date().getFullYear(),shownMonth=new Date().getMonth();
+ let previewDate='';
+ const dayAgenda=document.createElement('div');
+ dayAgenda.className='sv-task-day-agenda';
+ dayAgenda.hidden=true;dayAgenda.setAttribute('role','region');
+ dayAgenda.setAttribute('aria-label','Дела выбранного дня');
+ dayAgenda.setAttribute('aria-live','polite');
+ calendarPopover?.append(dayAgenda);
+
  /* The dots come from the user's actual saved tasks and calendar events.
     Never fabricate busy days to imitate the Apple reference. */
  function monthMarkers(){
@@ -69,25 +77,77 @@
    try{const rows=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(rows)?rows:[]}
    catch{return []}
   };
-  for(const item of read('seyveo-calendar-events-v1').slice(-300)){
+  for(const item of read('seyveo-calendar-events-v1')){
    if(!item||typeof item.title!=='string')continue;
    add(item.date,item.kind==='business'?'blue':'orange');
   }
   const tones=new Set(['blue','purple','orange','green','red','yellow']);
-  for(const item of read('seyveo-personal-tasks-v1').slice(-150)){
+  for(const item of read('seyveo-personal-tasks-v1')){
    if(!item||typeof item.title!=='string'||item.done===true)continue;
    add(item.due,tones.has(item.tone)?item.tone:item.category==='work'?'blue':'purple');
   }
   return result;
  }
+ function savedDayEntries(day){
+  const read=key=>{
+   try{const data=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(data)?data:[]}
+   catch{return []}
+  };
+  const entries=[];
+  for(const entry of read('seyveo-calendar-events-v1')){
+   if(entry?.date!==day||typeof entry.title!=='string')continue;
+   entries.push({title:entry.title,time:entry.time||entry.startTime||'',category:entry.kind==='business'?'work':'personal'});
+  }
+  for(const entry of read('seyveo-personal-tasks-v1')){
+   if(entry?.due!==day||entry.done===true||typeof entry.title!=='string')continue;
+   entries.push({title:entry.title,time:entry.time||'',category:entry.category==='work'?'work':'personal'});
+  }
+  return entries.sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
+ }
+ function chooseCalendarDate(value){
+  manualDate=true;
+  date.value=value;date.dispatchEvent(new Event('change',{bubbles:true}));
+  setCalendarOpen(false);
+ }
+ function renderDayAgenda(value){
+  previewDate=value;
+  dayAgenda.replaceChildren();
+  const items=savedDayEntries(value);
+  if(!items.length){dayAgenda.hidden=true;return}
+  dayAgenda.hidden=false;
+  const [y,m,d]=value.split('-').map(Number);
+  const heading=document.createElement('div');heading.className='sv-task-day-agenda-heading';
+  const label=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'}).format(new Date(y,m-1,d));
+  heading.textContent=label+' · '+items.length+' '+(items.length===1?'дело':items.length<5?'дела':'дел');
+  dayAgenda.append(heading);
+  const list=document.createElement('div');list.className='sv-task-day-agenda-list';
+  for(const entry of items){
+   const row=document.createElement('div');
+   row.className='sv-task-day-agenda-item '+(entry.category==='work'?'is-work':'is-personal');
+   const dot=document.createElement('span');dot.className='sv-task-day-agenda-dot';dot.setAttribute('aria-hidden','true');
+   const titleText=document.createElement('span');titleText.className='sv-task-day-agenda-title';titleText.textContent=entry.title;
+   row.append(dot,titleText);
+   if(/^([01]\d|2[0-3]):[0-5]\d$/.test(entry.time)){
+    const timeText=document.createElement('time');timeText.textContent=entry.time;row.append(timeText);
+   }
+   list.append(row);
+  }
+  dayAgenda.append(list);
+  const select=document.createElement('button');select.type='button';
+  select.className='sv-task-day-agenda-select';select.textContent='Выбрать эту дату';
+  select.addEventListener('click',()=>chooseCalendarDate(value));
+  dayAgenda.append(select);
+ }
  function moveCalendarMonth(direction){
   const next=new Date(shownYear,shownMonth+direction,1);
-  shownYear=next.getFullYear();shownMonth=next.getMonth();draw();
+  shownYear=next.getFullYear();shownMonth=next.getMonth();
+  previewDate='';dayAgenda.hidden=true;dayAgenda.replaceChildren();draw();
  }
  function setCalendarOpen(open){
   if(!calendarButton||!calendarPopover)return;
   calendarPopover.hidden=!open;
   calendarButton.setAttribute('aria-expanded',String(open));
+  previewDate='';dayAgenda.hidden=true;dayAgenda.replaceChildren();
   if(open){
    const [year,month]=(date.value||today()).split('-').map(Number);
    shownYear=year;shownMonth=month-1;draw();
@@ -108,19 +168,19 @@
    button.setAttribute('aria-label',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(new Date(shownYear,shownMonth,d)));
    if(value===(date.value||today())){button.classList.add('is-selected');button.setAttribute('aria-current','date')}
    if(value===today())button.classList.add('is-today');
+   if(value===previewDate)button.classList.add('is-agenda-preview');
    const number=document.createElement('span');number.className='sv-task-cal-number';number.textContent=String(d);
    const marks=document.createElement('span');marks.className='sv-task-cal-marks';marks.setAttribute('aria-hidden','true');
    const dayMarks=markers.get(value)||[];
-   if(dayMarks.length)button.setAttribute('aria-label',button.getAttribute('aria-label')+` · ${dayMarks.length}${dayMarks.length===1?' дело':dayMarks.length<5?' дела':' дел'}`);
+   if(dayMarks.length)button.setAttribute('aria-label',button.getAttribute('aria-label')+' · есть дела, нажми для просмотра');
    for(const tone of dayMarks){
     const mark=document.createElement('i');mark.className='sv-task-cal-mark sv-task-cal-'+tone;
     marks.append(mark);
    }
    button.append(number,marks);
    button.addEventListener('click',()=>{
-    manualDate=true;
-    date.value=value;date.dispatchEvent(new Event('change',{bubbles:true}));
-    setCalendarOpen(false);
+    if(dayMarks.length&&previewDate!==value){renderDayAgenda(value);draw();return}
+    chooseCalendarDate(value);
    });
    days.append(button);
   }
