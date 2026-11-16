@@ -45,9 +45,9 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-headline spa
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-close{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  flex:0 0 42px!important;width:42px!important;height:42px!important;
- margin:0!important;padding:0!important;border:1px solid rgba(101,111,124,.13)!important;
- border-radius:50%!important;background:rgba(239,242,245,.94)!important;color:#181B20!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.76),0 0 0 .45px rgba(164,170,184,.16)!important;
+ margin:0!important;padding:0!important;border:1px solid rgba(166,173,184,.24)!important;
+ border-radius:50%!important;background:rgba(251,251,252,.97)!important;color:#181B20!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 1px 3px rgba(76,83,99,.065)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-viewport{
  position:relative!important;isolation:isolate!important;flex:1 1 auto!important;
@@ -82,9 +82,9 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 :is(.sv-place-map-zoom,.sv
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  width:43px!important;height:43px!important;min-width:43px!important;
  margin:0!important;padding:0!important;
- border:1px solid rgba(112,119,131,.16)!important;border-radius:50%!important;
- background:rgba(239,242,245,.94)!important;color:#242831!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.76),0 1px 4px rgba(25,35,47,.08)!important;
+ border:1px solid rgba(166,173,184,.24)!important;border-radius:50%!important;
+ background:rgba(251,251,252,.97)!important;color:#242831!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 1px 3px rgba(76,83,99,.065)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-center{font-size:28px!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-zoom:disabled{opacity:.36!important}
@@ -109,8 +109,10 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-route-primar
  font:570 13.5px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-route-primary{
- flex:1!important;background:#38383A!important;color:#fff!important;
- border-color:#38383A!important;
+ flex:1!important;background:var(--sv-task-field-fill)!important;color:#202329!important;
+ border:var(--sv-task-field-rim)!important;
+ box-shadow:var(--sv-task-field-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-task-field-blur)!important;backdrop-filter:var(--sv-task-field-blur)!important;
 }
 @keyframes sv-place-map-shade-in{from{opacity:0}to{opacity:1}}
 @keyframes sv-place-map-sheet-up{from{transform:translateY(45px);opacity:.55}to{transform:translateY(0);opacity:1}}
