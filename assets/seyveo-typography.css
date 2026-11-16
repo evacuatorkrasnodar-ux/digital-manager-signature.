@@ -238,7 +238,7 @@ html.seyveo-conversation :is(#ask,.seyveo-conversation-expand){font-size:calc(va
 /* Home cards: native system text, softer Apple-style hierarchy.
    Preserve all existing geometry, icons and the approved dock. */
 #homePage{
- font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",sans-serif;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text",system-ui,sans-serif;
  font-optical-sizing:auto;
  font-kerning:normal;
 }
