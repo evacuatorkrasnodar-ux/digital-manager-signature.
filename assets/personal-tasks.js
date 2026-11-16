@@ -588,7 +588,10 @@ function svTaskDotTone(item){
 }
 function svSuggestTaskCategory(title){
  const value=String(title||'').toLocaleLowerCase('ru-RU');
- return /(^|[^а-яё])(клиент|заказчик|поставщик|сотрудник|коллега|контрагент|офис|договор|счёт|счет|отчёт|отчет|совещани|проект|работ|начальник|бухгалтер|зарплат|командиров|брифинг|планерк)/u.test(value)?'work':'personal';
+ // Explicit intent takes priority over keywords in the remaining phrase.
+ if(/^(?:личное|личный|для себя|по личным делам|домашнее)(?=$|[^а-яё])/u.test(value))return 'personal';
+ if(/^(?:рабочее|рабочий|рабочая|по работе|для работы|бизнес)(?=$|[^а-яё])/u.test(value))return 'work';
+ return /(^|[^а-яё])(клиент|заказчик|поставщик|сотрудник|коллега|контрагент|офис|договор|счёт|счет|отчёт|отчет|совещани|проект|работ|рабоч|бизнес|делов|начальник|бухгалтер|зарплат|командиров|брифинг|планерк)/u.test(value)?'work':'personal';
 }
 window.SEYVEO_TASK_CLASSIFY=Object.freeze({type:svInferEntryType,category:svSuggestTaskCategory});
 function svTaskISO(d){
@@ -1307,7 +1310,8 @@ async function put(e){
   entryType:form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task',
   remindBefore:Array.isArray(planned)&&planned[0]?.remindBefore||0
  }];
- if(drafts.some(draft=>!draft.title?.trim())||drafts.length>4){$('personalTaskStatus').textContent='Проверь названия дел перед сохранением.';return}
+ if(window.SEYVEO_TASK_SCREEN?.needsReview?.()||drafts.length>12){$('personalTaskStatus').textContent='В сообщении больше 12 дел. Раздели список на части, чтобы ничего не потерялось.';return}
+ if(drafts.some(draft=>!draft.title?.trim())){$('personalTaskStatus').textContent='Проверь названия дел перед сохранением.';return}
  if(all.length+drafts.length>MAX){$('personalTaskStatus').textContent='Не хватает места для всех дел. Удалите ненужные завершённые дела.';return}
  const common={due:date.value,time:date.value?($('personalTaskTime')?.value||''):'',
   notes:$('personalTaskNotes')?.value.trim().slice(0,1000)||'',url:$('personalTaskURL')?.value.trim().slice(0,500)||'',

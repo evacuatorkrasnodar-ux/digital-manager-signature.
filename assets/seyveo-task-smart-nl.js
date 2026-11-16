@@ -115,10 +115,13 @@
  /* Multi-action review. Split only at an explicit conjunction followed by a
     second actionable verb; do not split 'чай и кофе' or a person's full name. */
  const ACTIONS='позвонить|созвониться|встретиться|купить|забрать|отправить|написать|подготовить|проверить|оплатить|сделать|заказать|сходить|поехать|отвезти|привезти|обсудить|согласовать|записаться|получить|передать|пригласить|провести|организовать|навестить|заехать|поговорить';
- // Missing punctuation is normal speech. A conjunction creates a new task
- // only when followed by another action verb, never in "хлеб и молоко".
- const actionSeparator=new RegExp('(?:\\s*;\\s*|\\s+(?:и|а\\s+потом|затем|потом|после\\s+этого)\\s+)(?=(?:(?:в|к)\\s+\\d{1,2}(?::\\d{2})?\\s+)?(?:'+ACTIONS+')(?=$|[\\s,.!?]))','iu');
- const datedActionSeparator=new RegExp('\\s+(?=(?:сегодня|завтра|послезавтра)\\s+(?:(?:в|к)\\s+\\d{1,2}(?::\\d{2})?\\s+)?(?:'+ACTIONS+')(?=$|[\\s,.!?]))','giu');
+ const EVENTS='встреча|совещание|приём|прием|тренировка|занятие|конференция|собрание|осмотр|поездка';
+ const TASK_HEADS='(?:'+ACTIONS+'|'+EVENTS+')';
+ const TASK_PREFIX='(?:(?:сегодня|завтра|послезавтра)\\s+)?(?:(?:в|к)\\s+\\d{1,2}(?::\\d{2})?\\s+)?';
+ // Split on explicit semicolons or a clearly new action. Ordinary lists,
+ // personal names and brands such as "Вкусно — и точка" remain one task.
+ const actionSeparator=new RegExp('(?:\\s*;\\s*|,\\s+(?='+TASK_PREFIX+TASK_HEADS+'(?=$|[\\s,.!?]))|\\s+(?:и|а\\s+потом|затем|потом|после\\s+этого)\\s+(?='+TASK_PREFIX+TASK_HEADS+'(?=$|[\\s,.!?])))','iu');
+ const datedActionSeparator=new RegExp('\\s+(?=(?:сегодня|завтра|послезавтра)\\s+(?:(?:в|к)\\s+\\d{1,2}(?::\\d{2})?\\s+)?'+TASK_HEADS+'(?=$|[\\s,.!?]))','giu');
  const names=new Set(('мирон мирону мирона мироном анна анне анну анной анны елена елене елену еленой елены андрей андрею андрея андреем ' +
   'алексей алексею алексея алексеем роман роману романа романом игорь игорю игоря игорем мария марии марию марией ' +
   'михаил михаилу михаила михаилом дмитрий дмитрию дмитрия дмитрием сергей сергею сергея сергеем ' +
@@ -192,8 +195,8 @@
   }).filter(item=>item.title);
   const unique=[...new Map(candidates.map(item=>[item.title.toLocaleLowerCase('ru-RU')+'|'+item.date+'|'+item.time,item])).values()];
   // Never silently combine five separate requests into one misleading task.
-  const needsReview=unique.length>4;
-  const items=needsReview?unique.slice(0,4):unique;
+  const needsReview=unique.length>12;
+  const items=unique.slice(0,12);
   return {items,date:items[0]?.date||'',time:items[0]?.time||'',leadMinutes,needsReview};
  }
  if(typeof module!=='undefined'&&module.exports)module.exports={parse,signals,plan,polishTitle};

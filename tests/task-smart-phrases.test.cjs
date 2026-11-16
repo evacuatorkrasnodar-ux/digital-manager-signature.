@@ -65,3 +65,19 @@ test('never silently loses additional tasks beyond visible review capacity', () 
  assert.equal(result.needsReview, true);
  assert.equal(result.items.length, 4);
 });
+
+test('understands mixed meeting and action requests in a single line',()=>{
+ const result=plan('завтра в 10 встреча с клиентом, в 12 купить молоко; в 17 совещание с командой',now);
+ assert.deepEqual(result.items.map(({title,date,time})=>({title,date,time})),[
+  {title:'Встреча с клиентом',date:'2026-11-17',time:'10:00'},
+  {title:'Купить молоко',date:'2026-11-17',time:'12:00'},
+  {title:'Совещание с командой',date:'2026-11-17',time:'17:00'}
+ ]);
+});
+
+test('asks for review instead of silently saving more than twelve tasks',()=>{
+ const input=Array.from({length:13},(_,index)=>'купить товар '+(index+1)).join('; ');
+ const result=plan(input,now);
+ assert.equal(result.items.length,12);
+ assert.equal(result.needsReview,true);
+});

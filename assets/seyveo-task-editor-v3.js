@@ -21,6 +21,37 @@
  const readSignals=window.SEYVEO_TASK_SMART_SIGNALS;
  const readPlan=window.SEYVEO_TASK_SMART_PLAN;
  if(!dialog||!form||!date||!days||!title||!hasDate)return;
+ const mainSection=title.closest('.sv-new-task-main');
+ const addMoreButton=document.createElement('button');
+ addMoreButton.type='button';
+ addMoreButton.className='sv-task-add-more';
+ addMoreButton.textContent='＋ Добавить дело';
+ addMoreButton.setAttribute('aria-label','Добавить ещё одно отдельное дело');
+ mainSection?.insertAdjacentElement('afterend',addMoreButton);
+ const extraFields=()=>[...form.querySelectorAll('.sv-task-extra-field')];
+ function addSeparateTask(){
+  if(!mainSection||extraFields().length>=11)return;
+  const row=document.createElement('div');row.className='sv-task-manual-extra-row';
+  const label=document.createElement('label');
+  label.className='sv-task-input-capsule sv-task-extra-capsule';
+  const subtitle=document.createElement('span');
+  subtitle.textContent='Отдельное дело';
+  const field=document.createElement('textarea');
+  field.className='sv-task-extra-field';field.rows=2;field.maxLength=500;
+  field.placeholder='Напиши следующее дело';
+  field.setAttribute('aria-label','Текст дополнительного дела');
+  field.addEventListener('input',updateSmartPreview);
+  label.append(subtitle,field);
+  const remove=document.createElement('button');remove.type='button';
+  remove.className='sv-task-remove-extra';
+  remove.setAttribute('aria-label','Убрать дополнительное дело');
+  remove.textContent='−';
+  remove.addEventListener('click',()=>{row.remove();updateSmartPreview()});
+  row.append(label,remove);mainSection.append(row);
+  field.focus({preventScroll:true});
+  updateSmartPreview();
+ }
+ addMoreButton.addEventListener('click',addSeparateTask);
  const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  const iso=(y,m,d)=>[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');
  let shownYear=new Date().getFullYear(),shownMonth=new Date().getMonth();
@@ -136,18 +167,38 @@
   if(isEditing())return null;
   return window.SEYVEO_TASK_AI?.plan(title.value.trim())||(typeof readPlan==='function'?readPlan(title.value):null);
  }
+ const categoryOverrides=new Map();
+ let categorySource='';
  function draftsForSave(){
+  const source=[title.value,...extraFields().map(field=>field.value)].join('\u001f');
+  if(source!==categorySource){categorySource=source;categoryOverrides.clear()}
   const plan=proposedPlan();
-  if(!plan?.items?.length)return [];
+  const separate=extraFields().map(field=>field.value.trim()).filter(Boolean);
+  if(!plan?.items?.length&&!separate.length)return [];
   const classifier=window.SEYVEO_TASK_CLASSIFY;
-  return plan.items.map((item,index)=>({
+  const candidates=plan?.items?.length?plan.items.map(item=>({...item,leadMinutes:plan.leadMinutes||0})):[{
+   title:effectiveTitle(),date:date.value||'',time:timeInput?.value||'',leadMinutes:0
+  }];
+  for(const raw of separate){
+   const extraPlan=window.SEYVEO_TASK_SMART_PLAN?.(raw);
+   const parsed=extraPlan?.items?.length?extraPlan.items:[{title:raw,date:'',time:''}];
+   candidates.push(...parsed.map(item=>({...item,leadMinutes:extraPlan?.leadMinutes||0})));
+  }
+  return candidates.map((item,index)=>({
    title:item.title,
    date:manualDate?date.value:item.date||'',time:manualTime?(timeInput?.value||''):item.time||'',
-   category:classifier?.category?.(item.title)||selectedCategory(),
+   category:categoryOverrides.get(index)||classifier?.category?.(item.title)||selectedCategory(),
    entryType:classifier?.type?.(item.title)||selectedType(),
-   tone:index===0?'orange':(['green','purple','yellow'][index-1]||'orange'),
-   remindBefore:plan.leadMinutes||0
+   tone:['orange','green','purple','yellow','red','blue'][index%6],
+   remindBefore:item.leadMinutes||0
   }));
+ }
+ function batchNeedsReview(){
+  const plan=proposedPlan();
+  if(plan?.needsReview)return true;
+  const parse=window.SEYVEO_TASK_SMART_PLAN;
+  if(extraFields().some(field=>parse?.(field.value.trim())?.needsReview))return true;
+  return draftsForSave().length>12;
  }
  function effectiveTitle(){
   const planned=proposedPlan();
@@ -272,9 +323,10 @@
  }
  function updateSmartPreview(){
   if(!smartPreview||!smartDetails)return;
+  addMoreButton.hidden=isEditing();
   const raw=title.value.trim().replace(/\s+/g,' ');
   const empty=!raw;
-  const recognized=Boolean((typeof readPhrase==='function'&&readPhrase(raw))||date.value||timeInput?.value||proposedPlan()?.items?.length>1);
+  const recognized=Boolean((typeof readPhrase==='function'&&readPhrase(raw))||date.value||timeInput?.value||proposedPlan()?.items?.length>1||extraFields().some(field=>field.value.trim()));
   // Show structured cards only when Sayvi has something useful to extract.
   // A plain phrase remains a simple input; manual details are then available.
   smartPreview.hidden=empty||!recognized;
@@ -288,7 +340,7 @@
   const category=displayed[0].category,kind=displayed[0].entryType;
   smartPreview.classList.toggle('is-work',category==='work');
   smartPreview.classList.toggle('is-multi',multi);
-  for(const item of displayed){
+  for(const [index,item] of displayed.entries()){
    const main=document.createElement('button');main.type='button';main.className='sv-task-smart-main';
    main.setAttribute('aria-label',empty?'Ввести название дела':'Изменить название дела');
    main.addEventListener('click',()=>title.focus({preventScroll:true}));
@@ -296,14 +348,26 @@
    copy.append(createText('name',item.title));
    if(multi){
     const whenText=item.date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(new Date(item.date+'T12:00:00')):'';
-    copy.append(createText('item-detail',[(item.category==='work'?'Работа':'Личное'),whenText,item.time].filter(Boolean).join(' · ')));
+    if(whenText||item.time)copy.append(createText('item-detail',[whenText,item.time].filter(Boolean).join(' · ')));
    }
    if(!empty){
     const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+item.category;
     if(multi&&item.category!=='work')dot.classList.add('is-tone-'+item.tone);
     dot.setAttribute('aria-hidden','true');main.append(dot);
    }
-   main.append(copy);smartDetails.append(main);
+   main.append(copy);
+   if(multi){
+    const row=document.createElement('div');row.className='sv-task-smart-row';
+    const toggle=document.createElement('button');toggle.type='button';
+    toggle.className='sv-task-smart-category-toggle';
+    toggle.textContent=item.category==='work'?'Работа':'Личное';
+    toggle.setAttribute('aria-label','Изменить категорию: '+toggle.textContent);
+    toggle.addEventListener('click',()=>{
+     categoryOverrides.set(index,item.category==='work'?'personal':'work');
+     updateSmartPreview();
+    });
+    row.append(main,toggle);smartDetails.append(row);
+   }else smartDetails.append(main);
   }
   const when=document.createElement('button');when.type='button';when.className='sv-task-smart-when';
   when.setAttribute('aria-label',multi?'Изменить дату и время обоих дел':'Изменить дату и время дела');
@@ -330,7 +394,7 @@
   }
   const plan=proposedPlan();
   if(plan?.fromLocalAI)meta.append(createText('category','Сэйви уточнила · проверь'));
-  if(plan?.needsReview)smartDetails.append(createText('notice','В одном сообщении больше четырёх дел. Раздели запись на две части, чтобы ничего не потерялось.'));
+  if(batchNeedsReview())smartDetails.append(createText('notice','Больше 12 дел за один раз. Сохрани часть списка отдельно, чтобы ничего не потерять.'));
   const lead=plan?.leadMinutes||0;
   if(lead)meta.append(createText('lead',`За ${lead===60?'1 час':lead+' мин.'} до начала`));
   const priority=document.getElementById('personalTaskPriority')?.value;
@@ -463,7 +527,9 @@
   sheet?.classList.remove('sv-task-keyboard-visible');
   quickDateOpen=false;
   title.style.height='';
+  mainSection?.querySelectorAll('.sv-task-manual-extra-row').forEach(row=>row.remove());
+  categoryOverrides.clear();categorySource='';
   form.scrollTop=0;
  });
- window.SEYVEO_TASK_SCREEN=Object.freeze({version:6,sync,titleForSave:effectiveTitle,draftsForSave,needsReview:()=>Boolean(proposedPlan()?.needsReview)});
+ window.SEYVEO_TASK_SCREEN=Object.freeze({version:7,sync,titleForSave:effectiveTitle,draftsForSave,needsReview:batchNeedsReview});
 })();
