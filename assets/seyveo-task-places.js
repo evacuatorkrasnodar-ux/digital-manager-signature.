@@ -15,6 +15,9 @@
   address:'ул. Дзержинского, 100 · Краснодар · 1-й этаж',
   lat:45.102210,lon:38.983892,precision:'building',
   source:'known-address',sourceUrl:'',
+  // Real photograph of the shopping centre entrance, NOT the cafe doorway.
+  // Andrew Butko · CC BY-SA 4.0 · Wikimedia Commons (11 July 2024).
+  photo:'2024-07-11. Краснодар DSC 2268.jpg',
   keywords:['красная площадь','дзержинского','100']
  })];
  const meeting=/(?:^|[\s,.!?])(?:встреч[а-яё]*|встрет[а-яё]*|переговор[а-яё]*|пообед[а-яё]*|поужин[а-яё]*|позавтрак[а-яё]*|обед|ужин|завтрак|кофе|посид[а-яё]*)(?=$|[\s,.!?])/iu;
@@ -95,8 +98,13 @@
   const wikidata=/^Q[1-9]\d{0,11}$/.test(String(value.wikidata||''))?value.wikidata:'';
   const verified=value.source==='known-address';
   const sourceUrl=verified&&/^https:\/\/vkusnoitochka\.ru\//.test(value.sourceUrl||'')?value.sourceUrl:'';
+  // Older saved tasks/cache entries predate the entrance photo. Enrich only
+  // this exact curated mall, never a nearby restaurant or unrelated address.
+  const known=verified?VERIFIED_VENUES.find(row=>
+   Math.abs(lat-row.lat)<.00001&&Math.abs(lon-row.lon)<.00001&&
+   searchText(name).includes(row.venue)&&searchText(address).includes('дзержинского')):null;
   return {name,address,lat,lon,source:verified?'known-address':'openstreetmap',
-   sourceUrl,precision:verified?'building':'point',photo:cleanPhoto(value.photo),wikidata};
+   sourceUrl,precision:verified?'building':'point',photo:cleanPhoto(value.photo)||known?.photo||'',wikidata};
  }
  function cleanPhoto(value){
   if(typeof value!=='string')return '';
@@ -260,8 +268,20 @@
   url.searchParams.set('viewpoint',p.lat.toFixed(6)+','+p.lon.toFixed(6));
   return url.toString();
  }
- function photoURL(place){
-  const file=cleanPhoto(place?.photo);return file?'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width=240':'';
+ function photoURL(place,width=240){
+  const file=cleanPhoto(place?.photo),size=Math.max(120,Math.min(960,Math.round(Number(width)||240)));
+  return file?'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width='+size:'';
+ }
+ function photoInfo(value){
+  const place=cleanPlace(value);if(!place?.photo)return null;
+  const mall=place.source==='known-address'&&place.photo===VERIFIED_VENUES[0].photo&&
+   Math.abs(place.lat-VERIFIED_VENUES[0].lat)<.00001&&Math.abs(place.lon-VERIFIED_VENUES[0].lon)<.00001;
+  return {
+   label:mall?'Вход в ТРЦ «Красная Площадь»':'Фото места',
+   author:mall?'Andrew Butko':'',license:mall?'CC BY-SA 4.0':'',
+   licenseURL:mall?'https://creativecommons.org/licenses/by-sa/4.0/':'',
+   sourceURL:'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(place.photo)
+  };
  }
  const photoCache=new Map();
  async function resolvePhoto(value){
@@ -282,7 +302,7 @@
   return {...place,photo:file||''};
  }
  const api=Object.freeze({extract,lookup,cleanPlace,mapURL,mapTiles,fullMapURL,streetViewURL,
-  photoURL,resolvePhoto,suggestedCity,setPreferredCity});
+  photoURL,photoInfo,resolvePhoto,suggestedCity,setPreferredCity});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.SEYVEO_TASK_PLACES=api;
 })(typeof window!=='undefined'?window:null);

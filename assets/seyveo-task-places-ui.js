@@ -8,17 +8,50 @@
  const title=document.getElementById('personalTaskTitle');
  const panel=document.getElementById('svNewTaskPlacePanel');
  if(!places||!dialog||!title||!panel)return;
- let proposal=null,place=null,confirmed=false,choices=[],query='',sourceQuery='',status='idle',request=0,photoRequest=0,searchTimer=0,refining=false,refineText='',cityEditing=false;
+ let proposal=null,place=null,confirmed=false,choices=[],query='',sourceQuery='',status='idle',request=0,photoRequest=0,searchTimer=0,refining=false,refineText='',cityEditing=false,photoViewer=null;
  const node=(tag,cls,text)=>{
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
  };
+ function closePhotoViewer(){if(photoViewer){photoViewer.remove();photoViewer=null}}
+ function openPhotoViewer(location){
+  const info=places.photoInfo(location),src=places.photoURL(location,960);
+  if(!info||!src)return;
+  closePhotoViewer();
+  const shade=node('div','sv-place-photo-lightbox');
+  shade.setAttribute('role','dialog');shade.setAttribute('aria-modal','true');
+  shade.setAttribute('aria-label',info.label);
+  const frame=node('div','sv-place-photo-viewer');
+  frame.addEventListener('click',event=>event.stopPropagation());
+  const close=node('button','sv-place-photo-close','×');close.type='button';
+  close.setAttribute('aria-label','Закрыть фотографию');close.addEventListener('click',closePhotoViewer);
+  const img=node('img','sv-place-photo-large');img.src=src;img.alt=info.label;
+  img.addEventListener('error',()=>{
+   img.remove();frame.append(node('p','sv-place-photo-unavailable','Не удалось загрузить фото. Открой оригинал ниже.'));
+  },{once:true});
+  const caption=node('div','sv-place-photo-caption');caption.append(node('strong','',info.label));
+  const credit=node('div','sv-place-photo-attribution');
+  const source=node('a','',info.author?'Фото: '+info.author:'Источник: Wikimedia Commons');
+  source.href=info.sourceURL;source.target='_blank';source.rel='noopener noreferrer';credit.append(source);
+  if(info.license){
+   const license=node('a','',info.license);license.href=info.licenseURL;
+   license.target='_blank';license.rel='noopener noreferrer';credit.append(license);
+  }
+  caption.append(credit);frame.append(close,img,caption);shade.append(frame);
+  shade.addEventListener('click',closePhotoViewer);
+  shade.addEventListener('keydown',event=>{
+   if(event.key==='Escape'){event.preventDefault();closePhotoViewer()}
+  });
+  photoViewer=shade;dialog.append(shade);close.focus?.({preventScroll:true});
+ }
  function reset(){
   clearTimeout(searchTimer);
+  closePhotoViewer();
   request++;photoRequest++;proposal=null;place=null;confirmed=false;choices=[];query='';sourceQuery='';status='idle';refining=false;refineText='';cityEditing=false;
   panel.replaceChildren();panel.hidden=true;
  }
  function load(saved){
+  closePhotoViewer();
   place=places.cleanPlace(saved);confirmed=Boolean(place);choices=[];proposal=places.extract(title.value);
   query=proposal?.query||'';sourceQuery=query;status=place?'found':'idle';request++;render();resolvePlacePhoto();
  }
@@ -62,11 +95,13 @@
    const visual=node('div','sv-place-visual');
    const photoURL=places.photoURL(place);
    if(photoURL){
-    const photo=document.createElement('a');photo.className='sv-place-photo-link';
-    photo.href='https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(place.photo);
-    photo.target='_blank';photo.rel='noopener noreferrer';photo.title='Фото из Wikimedia Commons';
+    const photo=document.createElement('button');photo.className='sv-place-photo-link';photo.type='button';
+    const info=places.photoInfo(place);
+    photo.title=info?.label||'Фото места';
+    photo.setAttribute('aria-label',(info?.label||'Фото места')+' — увеличить');
+    photo.addEventListener('click',()=>openPhotoViewer(place));
     const img=document.createElement('img');img.src=photoURL;img.loading='lazy';
-    img.alt='Фотография места из Wikimedia Commons';img.addEventListener('error',()=>photo.remove(),{once:true});
+    img.alt=info?.label||'Фото места';img.addEventListener('error',()=>photo.remove(),{once:true});
     photo.append(img);visual.append(photo);
    }
    const link=document.createElement('a');link.className='sv-place-map';
@@ -159,6 +194,7 @@
  }
  function sync(){
   clearTimeout(searchTimer);
+  closePhotoViewer();
   const next=places.extract(title.value);
   const nextQuery=next?.query||'';
   if(nextQuery!==sourceQuery){
