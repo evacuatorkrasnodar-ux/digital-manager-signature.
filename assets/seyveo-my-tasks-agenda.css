@@ -68,19 +68,19 @@
  padding:5px 0 5px;margin:0;
  color:var(--agenda-text);background:#FFFFFF;
  border:0;border-right:1px solid #E5E8ED;border-radius:0;
- box-shadow:inset 0 1px 2px rgba(40,51,64,.035);
- transition:box-shadow .18s ease,transform .18s ease,border-color .18s ease;
+ box-shadow:none;
+ transition:background-color .18s ease,color .18s ease;
  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day:first-child{
  margin-left:0;border-left:1px solid #E5E8ED;
 }
 #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
- z-index:1;transform:translateY(-1px);
- border:1px solid #DFE3E9;border-top-color:#F4F5F7;
- border-radius:3px 3px 0 0;
+ /* Apple Calendar: one flat uninterrupted rail, no raised selected tile. */
+ z-index:0;transform:none;
+ border-radius:0;
  background:#FFFFFF;
- box-shadow:0 2px 10px rgba(33,43,61,.13),0 0 0 .5px rgba(137,148,166,.12);
+ box-shadow:none;
 }
 @media(prefers-reduced-motion:reduce){
  #tasksPage #svTasksDateNav .sv-agenda-day{transition:none}
@@ -383,22 +383,18 @@
 }
 /* On phones the workspace shell has a 13px outer inset. Align the first day with the screen edge. */
 @media(max-width:767px){
- #tasksPage #svTasksDateNav .sv-agenda-handle{transform:translateX(-2.5vw)}
  #tasksPage #svTasksDateNav .sv-agenda-ticker{
   width:100vw;margin-left:-26px;margin-right:0;
  }
- /* Five complete dates plus a visible sixth: the first border and the
-    last full card's right border stay inside the iPhone viewport. */
+ /* Five FULL columns like Apple Calendar, with both outside borders visible.
+    The following date is reached by a swipe, not clipped into this frame. */
  #tasksPage #svTasksDateNav .sv-agenda-week{
-  padding:3px 0 3px 8px;
- }
- #tasksPage #svTasksDateNav .sv-agenda-day{
-  flex:0 0 calc(100% / 5.75);
-  width:calc(100% / 5.75);
+  padding:0 10px;
  }
 }
 @media(max-width:380px){
  #tasksPage #svTasksDateNav{padding-inline:8px!important}
+ #tasksPage #svTasksDateNav .sv-agenda-week{padding-inline:8px}
  #tasksPage #svTasksDateNav .sv-agenda-ticker{
   width:100vw;margin-left:-21px;margin-right:0;
  }
@@ -414,14 +410,14 @@
 }
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day{
  background:#25282F;border-right-color:#3D414B;
- box-shadow:inset 0 1px 2px rgba(0,0,0,.12);
+ box-shadow:none;
 }
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day:first-child{
  border-left-color:#3D414B;
 }
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
- background:#2D323C;border-color:#4A515D;
- box-shadow:0 2px 11px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.05);
+ background:#25282F;border-color:#4A515D;
+ box-shadow:none;
 }
 :root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day-number{
  color:#E9EBF0;
