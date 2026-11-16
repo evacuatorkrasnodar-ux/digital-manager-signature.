@@ -44,6 +44,21 @@ test('handoff opens one canonical editor and still requires Save and place confi
  assert.match(chat,/SEYVEO_TASK_HANDOFF\.remember\(newTask\)/);
  assert.match(tasks,/handoff\.clear\(\);\s*openDialog\(\);/);
  assert.match(tasks,/input\.dispatchEvent\(new Event\('input'/);
- assert.match(tasks,/Проверь дату, филиал и адрес, затем нажми сохранить/);
+ assert.match(tasks,/document\.addEventListener\('DOMContentLoaded',openSayviTaskDraft/,
+  'the editor must finish loading before a handed-off draft is parsed');
+ assert.match(tasks,/SEYVEO_TASK_SMART_NL\|\|!window\.SEYVEO_TASK_PLACE_EDITOR/);
+ assert.doesNotMatch(tasks,/Сэйви подготовила дело\. Проверь дату/,
+  'a normal task draft must not display a red error status');
  assert.match(tasks,/SEYVEO_TASK_PLACE_EDITOR\?\.placeForSave/);
+});
+test('the exact meeting phrase is parsed into date, time, and a venue proposal',()=>{
+ const {parse}=require('../assets/seyveo-task-smart-nl.js');
+ const places=require('../assets/seyveo-task-places.js');
+ const phrase='завтра в 18:00 встреча с Романом в кафе Вкусно — и точка, Красная Площадь.';
+ const scheduled=parse(phrase,new Date(2026,10,16,12));
+ const location=places.extract(phrase);
+ assert.equal(scheduled.date,'2026-11-17');
+ assert.equal(scheduled.time,'18:00');
+ assert.equal(location.venueName,'Вкусно — и точка');
+ assert.equal(location.locationHint,'Красная Площадь');
 });

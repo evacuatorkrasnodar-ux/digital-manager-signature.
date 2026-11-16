@@ -1763,15 +1763,22 @@ function openSayviTaskDraft(){
  const handoff=window.SEYVEO_TASK_HANDOFF;
  const title=handoff?.take?.();
  if(!title||dialog.open)return;
+ // Personal Tasks is loaded before the date/venue readers on Home. The
+ // handoff must wait for DOMContentLoaded: timers may run while the HTML
+ // parser is still waiting for later scripts on a slower phone connection.
+ if(!window.SEYVEO_TASK_SMART_NL||!window.SEYVEO_TASK_PLACE_EDITOR||!window.SEYVEO_TASK_SCREEN)return;
  handoff.clear();
  openDialog();
  input.value=title;
  input.dispatchEvent(new Event('input',{bubbles:true}));
  dialog.dispatchEvent(new Event('sv-task-editor-sync'));
- $('personalTaskStatus').textContent='Сэйви подготовила дело. Проверь дату, филиал и адрес, затем нажми сохранить.';
+ // Recognition and venue selection are shown in their proper cards; do not
+ // show a red error/status message for a normal draft handoff.
+ $('personalTaskStatus').textContent='';
  syncTaskSaveState();
 }
-setTimeout(openSayviTaskDraft,0);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',openSayviTaskDraft,{once:true});
+else setTimeout(openSayviTaskDraft,0);
 /* Explicit one-click approval of up to five tasks from a reviewed Notebook plan.
    Same local task store and renderer as the normal task editor. Atomic write,
    existing and within-plan duplicates are skipped; never truncate old tasks. */
