@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const {plan} = require('../assets/seyveo-task-smart-nl.js');
+const {plan,parse} = require('../assets/seyveo-task-smart-nl.js');
 
 const now = new Date(2026, 10, 16, 10, 0);
 
@@ -27,6 +27,18 @@ test('normalizes venue spelling while retaining one task', () => {
   'Встретиться с Наташей в кафе «Вкусно — и точка»');
  assert.equal(plan('завтра в 18 встретиться с романом в кафе вкусно и точка краснодар»',now).items[0].title,
   'Встретиться с Романом в кафе «Вкусно — и точка», Краснодар');
+});
+
+test('recognizes dates inside an entirely quoted phrase without swallowing venue quotes',()=>{
+ const phrase='«завтра в 18 встретиться с романом в кафе вкусно и точка краснодар»';
+ assert.equal(parse(phrase,now).date,'2026-11-17');
+ assert.equal(parse(phrase,now).time,'18:00');
+ assert.deepEqual(plan(phrase,now).items.map(({title,date,time})=>({title,date,time})),[
+  {title:'Встретиться с Романом в кафе «Вкусно — и точка», Краснодар',date:'2026-11-17',time:'18:00'}
+ ]);
+ assert.deepEqual(plan('«завтра в 10 позвонить мише и в 12 купить хлеб»',now).items.map(item=>item.date),[
+  '2026-11-17','2026-11-17'
+ ]);
 });
 
 test('corrects safe common misspellings before reading the schedule', () => {

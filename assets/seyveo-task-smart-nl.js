@@ -15,6 +15,18 @@
   const replacement=commonTypos[word.toLocaleLowerCase('ru-RU')];
   return replacement?(word[0]===word[0].toLocaleUpperCase('ru-RU')?replacement[0].toLocaleUpperCase('ru-RU')+replacement.slice(1):replacement):word;
  });
+ // Copying a quoted example from a chat must not turn "завтра" into part
+ // of the task title. Only unwrap quotes enclosing the entire utterance;
+ // internal venue names like кафе «Вкусно — и точка» must stay intact.
+ function unwrapOuterQuotes(input){
+  let value=String(input||'').trim();
+  for(let n=0;n<2;n++){
+   const start=value[0],end=value.at(-1);
+   if(!((start==='«'&&end==='»')||(start==='“'&&end==='”')||(start==='"'&&end==='"')||(start==="'"&&end==="'")))break;
+   value=value.slice(1,-1).trim();
+  }
+  return value;
+ }
  function validDay(year,month,day){
   if(!Number.isInteger(year)||year<1900||year>2100||month<0||month>11||day<1||day>31)return null;
   const date=new Date(year,month,day);
@@ -34,7 +46,7 @@
  }
  function parse(input,now=new Date()){
   if(typeof input!=='string'||input.length>700||!Number.isFinite(now?.getTime?.()))return null;
-  let body=correctKnownTypos(input).replace(/\s+/g,' ').trim();
+  let body=unwrapOuterQuotes(correctKnownTypos(input).replace(/\s+/g,' '));
   if(!body)return null;
   body=body.replace(/^(?:(?:сэйви|сейви|сэй|сей|сейвео|seyveo)[,!:.\s]+)?(?:пожалуйста[,]?\s+)?/iu,'');
   body=body.replace(/^(?:напомни(?:те)?(?:\s+мне)?|запланируй|запиши|назначь|создай|добавь)\s+(?:(?:(?:мне|в\s+(?:календарь|дела)|дело|задачу|событие)\s+){0,2})/iu,'');
@@ -105,7 +117,7 @@
  const ACTIONS='позвонить|созвониться|встретиться|купить|забрать|отправить|написать|подготовить|проверить|оплатить|сделать|заказать|сходить|поехать|отвезти|привезти|обсудить|согласовать|записаться|получить|передать|пригласить|провести|организовать|навестить|заехать|поговорить';
  // Missing punctuation is normal speech. A conjunction creates a new task
  // only when followed by another action verb, never in "хлеб и молоко".
- const actionSeparator=new RegExp('(?:\\s*;\\s*|\\s+(?:и|а\\s+потом|затем|потом|после\\s+этого)\\s+)(?=(?:'+ACTIONS+')(?=$|[\\s,.!?]))','iu');
+ const actionSeparator=new RegExp('(?:\\s*;\\s*|\\s+(?:и|а\\s+потом|затем|потом|после\\s+этого)\\s+)(?=(?:(?:в|к)\\s+\\d{1,2}(?::\\d{2})?\\s+)?(?:'+ACTIONS+')(?=$|[\\s,.!?]))','iu');
  const datedActionSeparator=new RegExp('\\s+(?=(?:сегодня|завтра|послезавтра)\\s+(?:(?:в|к)\\s+\\d{1,2}(?::\\d{2})?\\s+)?(?:'+ACTIONS+')(?=$|[\\s,.!?]))','giu');
  const names=new Set(('мирон мирону мирона мироном анна анне анну анной анны елена елене елену еленой елены андрей андрею андрея андреем ' +
   'алексей алексею алексея алексеем роман роману романа романом игорь игорю игоря игорем мария марии марию марией ' +
@@ -162,7 +174,7 @@
  }
  function plan(input,now=new Date()){
   if(typeof input!=='string'||!input.trim()||input.length>700)return null;
-  let body=correctKnownTypos(input).replace(/\s+/g,' ').trim()
+  let body=unwrapOuterQuotes(correctKnownTypos(input).replace(/\s+/g,' '))
    .replace(/^(?:(?:сэйви|сейви|сэй|сей)[,!:.,\s]+)?(?:пожалуйста[,]?\s+)?/iu,'')
    .replace(/^(?:напомни(?:те)?(?:\s+мне)?|запланируй|запиши|назначь|создай|добавь)\s+/iu,'');
   body=body.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'');
