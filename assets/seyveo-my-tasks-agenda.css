@@ -391,6 +391,16 @@
  #tasksPage #svTasksDateNav .sv-agenda-week{
   padding:0 10px;
  }
+ /* Apple's today column gets a fine right-edge depth cue, not a raised tile.
+    Keep the other four columns flat and all five dates fully visible. */
+ :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day:first-child[data-today="true"]{
+  z-index:1;
+ }
+ :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day:first-child[data-today="true"]::after{
+  content:"";position:absolute;top:1px;bottom:1px;right:-9px;width:9px;
+  pointer-events:none;
+  background:linear-gradient(90deg,rgba(37,48,65,.12) 0%,rgba(37,48,65,.055) 47%,transparent 100%);
+ }
 }
 @media(max-width:380px){
  #tasksPage #svTasksDateNav{padding-inline:8px!important}
