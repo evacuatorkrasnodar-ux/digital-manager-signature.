@@ -27,3 +27,16 @@ test('uses the local same-origin address service without a cross-origin connecti
  assert.equal(result.name,'Вкусно и точка');
  assert.equal(result.address.includes('Краснодар'),true);
 });
+
+test('recognizes an older running local server and does not retry a blocked external address request',async()=>{
+ const urls=[];
+ const window={
+  location:{hostname:'127.0.0.1',href:'http://127.0.0.1:8790/'},
+  localStorage:{getItem:()=>null,setItem:()=>{}},
+  fetch:async url=>{urls.push(url);return {ok:false,status:404}}
+ };
+ vm.runInNewContext(source,{window,URL,setTimeout,encodeURIComponent});
+ const proposal=window.SEYVEO_TASK_PLACES.extract('встретиться в кафе вкусно и точка краснодар');
+ await assert.rejects(()=>window.SEYVEO_TASK_PLACES.lookup(proposal),/seyveo-place-server-restart-needed/);
+ assert.deepEqual(urls,['/api/seyveo-place-lookup']);
+});

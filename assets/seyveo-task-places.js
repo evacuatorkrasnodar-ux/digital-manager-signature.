@@ -99,16 +99,22 @@
   earliest=now+pause+1250;
   if(pause)await new Promise(resolve=>setTimeout(resolve,pause));
   const configured=String(root?.SEYVEO_PLACE_SEARCH_ENDPOINT||'').trim();
+  const host=String(root?.location?.hostname||'').toLocaleLowerCase('en-US');
+  const loopback=host==='127.0.0.1'||host==='localhost';
   let results=null;
   // A same-origin local bridge works even when a secure browser policy blocks
   // outgoing requests. Public static hosting has no such backend.
-  if(!configured&&!/github\.io$/iu.test(String(root?.location?.hostname||''))){
+  if(!configured&&!/github\.io$/iu.test(host)){
    const response=await root.fetch('/api/seyveo-place-lookup',{
     method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},
     body:JSON.stringify({query:proposal.query})
    });
    if(response.ok){const payload=await response.json();results=payload?.results}
-   else if(response.status!==404&&response.status!==405)throw Error('Local place search unavailable');
+   else if((response.status===404||response.status===405)&&loopback){
+    // A reloaded HTML file does not restart the already running Node server.
+    // Don't issue a doomed cross-origin request against its older CSP.
+    throw Error('seyveo-place-server-restart-needed');
+   }else if(response.status!==404&&response.status!==405)throw Error('Local place search unavailable');
   }
   if(results===null){
    const endpoint=configured||'https://nominatim.openstreetmap.org/search';

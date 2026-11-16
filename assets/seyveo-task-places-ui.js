@@ -8,21 +8,21 @@
  const title=document.getElementById('personalTaskTitle');
  const panel=document.getElementById('svNewTaskPlacePanel');
  if(!places||!dialog||!title||!panel)return;
- let proposal=null,place=null,choices=[],query='',status='idle',request=0,photoRequest=0,searchTimer=0;
+ let proposal=null,place=null,confirmed=false,choices=[],query='',sourceQuery='',status='idle',request=0,photoRequest=0,searchTimer=0,refining=false,refineText='';
  const node=(tag,cls,text)=>{
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
  };
  function reset(){
   clearTimeout(searchTimer);
-  request++;photoRequest++;proposal=null;place=null;choices=[];query='';status='idle';
+  request++;photoRequest++;proposal=null;place=null;confirmed=false;choices=[];query='';sourceQuery='';status='idle';refining=false;refineText='';
   panel.replaceChildren();panel.hidden=true;
  }
  function load(saved){
-  place=places.cleanPlace(saved);choices=[];proposal=places.extract(title.value);
-  query=proposal?.query||'';status=place?'found':'idle';request++;render();resolvePlacePhoto();
+  place=places.cleanPlace(saved);confirmed=Boolean(place);choices=[];proposal=places.extract(title.value);
+  query=proposal?.query||'';sourceQuery=query;status=place?'found':'idle';request++;render();resolvePlacePhoto();
  }
- function placeForSave(){return places.cleanPlace(place)}
+ function placeForSave(){return confirmed?places.cleanPlace(place):null}
  async function resolvePlacePhoto(){
   if(!place||place.photo||!place.wikidata)return;
   const token=++photoRequest,target=place;
@@ -37,7 +37,7 @@
   if(panel.hidden)return;
   const heading=node('div','sv-place-heading');
   heading.append(node('strong','','Место'));
-  if(place)heading.append(node('span','','Найдено на карте'));
+  if(place)heading.append(node('span','',confirmed?'Место подтверждено':'Уточни адрес'));
   panel.append(heading);
   const card=node('div','sv-place-card');panel.append(card);
   if(!place&&!proposal){
@@ -67,7 +67,10 @@
    const narrow=window.matchMedia('(max-width:370px)').matches;
    for(const tile of places.mapTiles(place,narrow?96:112,narrow?88:96)){
     const img=document.createElement('img');img.className='sv-place-map-tile';img.loading='lazy';
-    img.alt='';img.setAttribute('aria-hidden','true');img.decoding='async';img.src=tile.url;
+    img.alt='';img.setAttribute('aria-hidden','true');img.decoding='async';
+    // OSM tile servers require an identifying Referer; the page-wide private
+    // no-referrer policy was causing an "Access blocked" picture in the map.
+    img.referrerPolicy='strict-origin-when-cross-origin';img.src=tile.url;
     img.style.left=tile.left+'px';img.style.top=tile.top+'px';link.append(img);
    }
    link.append(node('span','sv-place-map-pin','●'),node('span','sv-place-attribution','© OSM'));
@@ -76,13 +79,21 @@
    const source=document.createElement('a');source.href='https://www.openstreetmap.org/copyright';
    source.target='_blank';source.rel='noopener noreferrer';source.textContent='© OpenStreetMap contributors';
    credit.append(node('span','','Проверь адрес перед сохранением'),source);panel.append(credit);
+   if(!confirmed){
+    const actions=node('div','sv-place-confirm-actions');
+    const accept=node('button','sv-place-confirm','Это место');accept.type='button';
+    accept.addEventListener('click',()=>{confirmed=true;refining=false;refineText='';render();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
+    const change=node('button','sv-place-refine-trigger','Другой адрес');change.type='button';
+    change.addEventListener('click',()=>{refining=!refining;render()});
+    actions.append(accept,change);panel.append(actions);
+   }
   }else if(choices.length){
    card.classList.add('sv-place-choices');
    card.append(node('p','sv-place-choice-intro','Нашла несколько похожих мест. Выбери нужное:'));
    for(const candidate of choices){
     const option=node('button','sv-place-choice');option.type='button';
     option.append(node('strong','',candidate.name),node('small','',candidate.address));
-    option.addEventListener('click',()=>{place=candidate;choices=[];status='found';render();resolvePlacePhoto();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
+    option.addEventListener('click',()=>{place=candidate;confirmed=false;choices=[];status='found';render();resolvePlacePhoto();window.dispatchEvent(new Event('seyveo:task-place-updated'))});
     card.append(option);
    }
   }else{
@@ -91,29 +102,49 @@
    copy.append(node('strong','sv-place-name',headline));
    const text=status==='loading'?'Ищу адрес и точку на карте…':
     status==='not-found'?'Точный адрес не найден. Уточни название или город в тексте.':
+    status==='restart'?'Сервер SEYVEO работает в старой версии. Перезапусти его для поиска мест.':
     status==='error'?'Не удалось связаться с картой. Можно проверить адрес вручную.':
     status==='permission'?'Для поиска адреса нужно разрешение.':
     proposal?'Сэйви проверит адрес, когда закончишь ввод.':'Добавь название кафе или адрес — Сэйви найдёт место.';
    copy.append(node('p','sv-place-address',text));card.append(copy);
-   if(proposal&&status!=='loading'){
+   if(proposal&&status!=='loading'&&status!=='restart'){
     const retry=node('button','sv-place-retry',status==='idle'?'Найти на карте':'Проверить снова');
     retry.type='button';retry.addEventListener('click',lookup);card.append(retry);
    }
-   if(proposal&&(status==='error'||status==='not-found')){
+   if(proposal&&(status==='error'||status==='not-found'||status==='restart')){
     const fallback=node('a','sv-place-manual-map','Найти в картах ↗');
     fallback.href='https://www.openstreetmap.org/search?query='+encodeURIComponent(proposal.query);
     fallback.target='_blank';fallback.rel='noopener noreferrer';panel.append(fallback);
    }
+  }
+  if(refining&&proposal){
+   const row=node('div','sv-place-refine-row');
+   const input=node('input','sv-place-refine-input');input.type='text';input.maxLength=140;
+   input.value=refineText;input.addEventListener('input',()=>{refineText=input.value});
+   input.placeholder='Улица, район или точный адрес';input.setAttribute('aria-label','Уточнить место встречи');
+   const apply=node('button','sv-place-refine-apply','Найти');apply.type='button';
+   apply.addEventListener('click',()=>{
+    const detail=input.value.replace(/\s+/gu,' ').trim();
+    if(detail.length<4)return;
+    const base=proposal.kind&&proposal.venueName?proposal.kind+' '+proposal.venueName+', '+detail:detail;
+    proposal={...proposal,query:base.slice(0,140),city:'',explicitAddress:Boolean(!proposal.kind)};
+    query=proposal.query;place=null;confirmed=false;choices=[];status='idle';refining=false;refineText='';
+    void lookup();
+   });
+   input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();apply.click()}});
+   row.append(input,apply);panel.append(row);
   }
  }
  function sync(){
   clearTimeout(searchTimer);
   const next=places.extract(title.value);
   const nextQuery=next?.query||'';
-  if(nextQuery!==query){
-   request++;photoRequest++;place=null;choices=[];status='idle';query=nextQuery;
+  if(nextQuery!==sourceQuery){
+   request++;photoRequest++;place=null;confirmed=false;choices=[];status='idle';query=nextQuery;sourceQuery=nextQuery;refining=false;refineText='';
+   proposal=next;
   }
-  proposal=next;render();
+  if(!proposal)proposal=next;
+  render();
   if(proposal&&status==='idle'&&search?.hasPlaceConsent?.())searchTimer=setTimeout(()=>{
    if(dialog.open&&status==='idle')void lookup();
   },950);
@@ -125,14 +156,14 @@
   try{
    const result=await (search?.findPlace(proposal)||places.lookup(proposal));
    if(sequence!==request||requestedQuery!==query||!dialog.open)return;
-   if(result?.consentRequired){status='permission';choices=[];place=null}
+   if(result?.consentRequired){status='permission';choices=[];place=null;confirmed=false}
    else if(result?.ambiguous&&Array.isArray(result.candidates)){
     choices=result.candidates.map(places.cleanPlace).filter(Boolean);
-    place=null;status=choices.length?'choose':'not-found';
-   }else{place=places.cleanPlace(result);choices=[];status=place?'found':'not-found'}
-  }catch{
+    place=null;confirmed=false;status=choices.length?'choose':'not-found';
+   }else{place=places.cleanPlace(result);confirmed=Boolean(place&&proposal?.explicitAddress);choices=[];status=place?'found':'not-found'}
+  }catch(error){
    if(sequence!==request||requestedQuery!==query||!dialog.open)return;
-   status='error';
+   status=error?.message==='seyveo-place-server-restart-needed'?'restart':'error';
   }
   render();resolvePlacePhoto();
   window.dispatchEvent(new Event('seyveo:task-place-updated'));

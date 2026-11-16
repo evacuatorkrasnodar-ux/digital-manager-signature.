@@ -660,6 +660,31 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-credit{
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-credit a{
  color:#647B90!important;text-decoration:none!important;
 }
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm-actions{
+ display:flex!important;align-items:center!important;gap:10px!important;margin:10px 2px 2px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm{
+ min-height:40px!important;padding:8px 16px!important;border:1px solid rgba(169,174,182,.30)!important;
+ border-radius:999px!important;background:rgba(221,225,231,.42)!important;color:#171A1F!important;
+ font:590 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-trigger{
+ min-height:40px!important;padding:8px 10px!important;border:0!important;background:transparent!important;
+ color:#6A7481!important;font:510 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-row{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important;margin:8px 0 4px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-input{
+ box-sizing:border-box!important;min-width:0!important;min-height:44px!important;padding:9px 12px!important;
+ border:1px solid rgba(169,174,182,.25)!important;border-radius:15px!important;background:#F5F6F8!important;
+ color:#15171C!important;font:520 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-refine-apply{
+ min-height:44px!important;padding:8px 13px!important;border:1px solid rgba(169,174,182,.25)!important;
+ border-radius:15px!important;background:rgba(221,225,231,.42)!important;color:#171A1F!important;
+ font:580 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-retry{
  display:block!important;flex:0 0 auto!important;padding:8px 10px!important;border:0!important;
  border-radius:99px!important;background:#EAF3FD!important;color:#176ABD!important;

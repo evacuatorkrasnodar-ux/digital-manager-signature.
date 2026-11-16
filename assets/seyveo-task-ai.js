@@ -27,6 +27,9 @@
     time:/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'')?item.time:''
    }));
    if(items.some(item=>item.title.length<3))return;
+   const baseline=window.SEYVEO_TASK_SMART_PLAN?.(phrase);
+   const guard=window.SEYVEO_TASK_AI_POLICY;
+   if(guard&&!guard.accept(phrase,items,baseline,window.SEYVEO_TASK_PLACES?.extract))return;
    current=phrase;draft={items,date:items[0].date,time:items[0].time,leadMinutes:0,fromLocalAI:true};notify();
   }catch{/* Local model is optional: the on-device rule parser remains active. */}
  }
@@ -34,6 +37,8 @@
   reset();if(!onLocalHost||!dialog.open)return;
   const phrase=field.value.trim();
   if(phrase.length<12)return;
+  const baseline=window.SEYVEO_TASK_SMART_PLAN?.(phrase);
+  if(baseline?.items?.length&&baseline.items.every(item=>item.date&&item.time&&item.title))return;
   const token=sequence;
   timer=setTimeout(()=>void analyze(phrase,token),1100);
  });
