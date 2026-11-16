@@ -12,6 +12,7 @@ import {join} from 'node:path';
 import {dirname,resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {respond} from './brain.mjs';
+import {analyzeLocalTasks} from './task-language-ai.mjs';
 import {askLocalStream} from './local-stream.mjs';
 import {isDocumentWritingRequest} from './russian-writing.mjs';
 import {loadKnowledgeLibrary,retrieveKnowledge,knowledgeContext} from './knowledge-engine.mjs';
@@ -181,6 +182,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  process.env.SEYVEO_ENABLE_CLOUD='0';
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
  let busy=false,minute=0,count=0;
+ let taskAnalyzeBusy=false;
  const imageAttachments=createImageAttachments();
  const liveSearch=searchProvider===undefined?(createBraveContextProvider()||createSeyveoWebProvider()):searchProvider;
  let searchMinute=0,searchCount=0;
@@ -225,6 +227,21 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
     const results=await searchLocalIndex(q,ROOT);
     send(res,200,{status:results.length?'local':'empty',query:q,results,external:false});
    }catch{send(res,400,{error:'Локальный поиск недоступен.'})}
+   return;
+  }
+  if(req.method==='POST'&&path==='/api/seyveo-task-analyze'){
+   // Local loopback only. A draft is returned for the user's review; the
+   // model is never allowed to save tasks or forward text to cloud services.
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){send(res,415,{error:'Ожидается JSON.'});return}
+   if(taskAnalyzeBusy){send(res,429,{error:'Сэйви завершает предыдущий разбор. Пока доступен быстрый локальный алгоритм.'});return}
+   taskAnalyzeBusy=true;
+   try{
+    const phrase=await readQuestion(req);
+    if(phrase.length>500){send(res,400,{error:'Слишком длинная запись.'});return}
+    send(res,200,await analyzeLocalTasks(phrase));
+   }catch{send(res,503,{error:'Локальный ИИ сейчас недоступен. Доступен обычный разбор дела.'})}
+   finally{taskAnalyzeBusy=false}
    return;
   }
   if(req.method==='GET'&&path==='/api/seyveo-index-status'){

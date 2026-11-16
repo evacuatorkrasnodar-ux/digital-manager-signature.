@@ -1221,6 +1221,10 @@ let taskFileSaving=false;
 async function put(e){
  e.preventDefault();
  if(taskFileSaving)return;
+ if(window.SEYVEO_TASK_SCREEN?.needsReview?.()){
+  $('personalTaskStatus').textContent='Сэйви увидела больше четырёх дел. Раздели сообщение на две части, чтобы сохранить все дела.';
+  return;
+ }
  const title=(window.SEYVEO_TASK_SCREEN?.titleForSave?.()||input.value).trim().replace(/\s+/g,' ');
  if(!title){$('personalTaskStatus').textContent='Напишите, что нужно сделать.';input.focus();return}
  const attachments=window.SEYVEO_TASK_ATTACHMENTS;
@@ -1271,6 +1275,8 @@ async function put(e){
  const additions=drafts.map(draft=>{
   const category=draft.category==='work'?'work':'personal';
   return {...common,id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),
+   due:multiple?(draft.date||''):common.due,
+   time:multiple?(draft.date?draft.time||'':''):common.time,
    title:draft.title.trim().replace(/\s+/g,' ').slice(0,140),category,
    tone:category==='work'?'blue':(multiple?draft.tone||'orange':'orange'),
    entryType:draft.entryType==='event'?'event':'task',

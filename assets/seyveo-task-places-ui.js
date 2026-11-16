@@ -3,16 +3,18 @@
 (()=>{
  'use strict';
  const places=window.SEYVEO_TASK_PLACES;
+ const search=window.SEYVEO_SEARCH_HUB;
  const dialog=document.getElementById('personalTaskDialog');
  const title=document.getElementById('personalTaskTitle');
  const panel=document.getElementById('svNewTaskPlacePanel');
  if(!places||!dialog||!title||!panel)return;
- let proposal=null,place=null,choices=[],query='',status='idle',request=0,photoRequest=0;
+ let proposal=null,place=null,choices=[],query='',status='idle',request=0,photoRequest=0,searchTimer=0;
  const node=(tag,cls,text)=>{
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
  };
  function reset(){
+  clearTimeout(searchTimer);
   request++;photoRequest++;proposal=null;place=null;choices=[];query='';status='idle';
   panel.replaceChildren();panel.hidden=true;
  }
@@ -24,15 +26,15 @@
  async function resolvePlacePhoto(){
   if(!place||place.photo||!place.wikidata)return;
   const token=++photoRequest,target=place;
-  const updated=await places.resolvePhoto(target);
+  const updated=await (search?.findPlacePhoto(target)||places.resolvePhoto(target));
   if(token!==photoRequest||!dialog.open||!place||place.lat!==target.lat||place.lon!==target.lon)return;
   if(updated?.photo){place=updated;render()}
  }
  function render(){
   if(!dialog.open)return;
-  // Location is part of the structured form even when Sayvi has not yet
-  // found a venue. Never display a fake address or map.
-  panel.hidden=false;panel.replaceChildren();
+  // Reveal the place card only once a place is actually mentioned or loaded.
+  panel.hidden=!place&&!proposal;panel.replaceChildren();
+  if(panel.hidden)return;
   const heading=node('div','sv-place-heading');
   heading.append(node('strong','','Место'));
   if(place)heading.append(node('span','','Найдено на карте'));
@@ -48,6 +50,8 @@
    const copy=node('div','sv-place-copy');
    copy.append(node('strong','sv-place-name',place.name));
    copy.append(node('p','sv-place-address',place.address));
+   card.append(copy);
+   const visual=node('div','sv-place-visual');
    const photoURL=places.photoURL(place);
    if(photoURL){
     const photo=document.createElement('a');photo.className='sv-place-photo-link';
@@ -55,20 +59,19 @@
     photo.target='_blank';photo.rel='noopener noreferrer';photo.title='Фото из Wikimedia Commons';
     const img=document.createElement('img');img.src=photoURL;img.loading='lazy';
     img.alt='Фотография места из Wikimedia Commons';img.addEventListener('error',()=>photo.remove(),{once:true});
-    photo.append(img);copy.append(photo);
+    photo.append(img);visual.append(photo);
    }
-   card.append(copy);
    const link=document.createElement('a');link.className='sv-place-map';
    link.href=places.fullMapURL(place);link.target='_blank';link.rel='noopener noreferrer';
    link.setAttribute('aria-label','Открыть место на OpenStreetMap');
    const narrow=window.matchMedia('(max-width:370px)').matches;
-   for(const tile of places.mapTiles(place,narrow?104:127,narrow?90:96)){
+   for(const tile of places.mapTiles(place,narrow?96:112,narrow?88:96)){
     const img=document.createElement('img');img.className='sv-place-map-tile';img.loading='lazy';
     img.alt='';img.setAttribute('aria-hidden','true');img.decoding='async';img.src=tile.url;
     img.style.left=tile.left+'px';img.style.top=tile.top+'px';link.append(img);
    }
    link.append(node('span','sv-place-map-pin','●'),node('span','sv-place-attribution','© OSM'));
-   card.append(link);
+   visual.append(link);card.append(visual);
    const credit=node('div','sv-place-credit');
    const source=document.createElement('a');source.href='https://www.openstreetmap.org/copyright';
    source.target='_blank';source.rel='noopener noreferrer';source.textContent='© OpenStreetMap contributors';
@@ -89,6 +92,7 @@
    const text=status==='loading'?'Ищу адрес и точку на карте…':
     status==='not-found'?'Точный адрес не найден. Уточни название или город в тексте.':
     status==='error'?'Поиск места временно недоступен. Можно сохранить дело без карты.':
+    status==='permission'?'Для поиска адреса нужно разрешение.':
     proposal?'Сэйви проверит адрес, когда закончишь ввод.':'Добавь название кафе или адрес — Сэйви найдёт место.';
    copy.append(node('p','sv-place-address',text));card.append(copy);
    if(proposal&&status!=='loading'){
@@ -98,21 +102,26 @@
   }
  }
  function sync(){
+  clearTimeout(searchTimer);
   const next=places.extract(title.value);
   const nextQuery=next?.query||'';
   if(nextQuery!==query){
    request++;photoRequest++;place=null;choices=[];status='idle';query=nextQuery;
   }
   proposal=next;render();
+  if(proposal&&status==='idle'&&search?.hasPlaceConsent?.())searchTimer=setTimeout(()=>{
+   if(dialog.open&&status==='idle')void lookup();
+  },950);
  }
  async function lookup(){
   if(!proposal||!dialog.open||status==='loading')return;
   const sequence=++request,requestedQuery=query;
   status='loading';render();
   try{
-   const result=await places.lookup(proposal);
+   const result=await (search?.findPlace(proposal)||places.lookup(proposal));
    if(sequence!==request||requestedQuery!==query||!dialog.open)return;
-   if(result?.ambiguous&&Array.isArray(result.candidates)){
+   if(result?.consentRequired){status='permission';choices=[];place=null}
+   else if(result?.ambiguous&&Array.isArray(result.candidates)){
     choices=result.candidates.map(places.cleanPlace).filter(Boolean);
     place=null;status=choices.length?'choose':'not-found';
    }else{place=places.cleanPlace(result);choices=[];status=place?'found':'not-found'}
@@ -124,7 +133,7 @@
   window.dispatchEvent(new Event('seyveo:task-place-updated'));
  }
  title.addEventListener('input',sync);
- title.addEventListener('blur',()=>{if(proposal&&status==='idle')lookup()});
+ title.addEventListener('blur',()=>{if(proposal&&status==='idle'&&search?.hasPlaceConsent?.())void lookup()});
  const openObserver=new MutationObserver(()=>{if(dialog.open)sync()});
  openObserver.observe(dialog,{attributes:true,attributeFilter:['open']});
  dialog.addEventListener('close',reset);

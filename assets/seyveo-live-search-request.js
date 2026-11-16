@@ -105,16 +105,10 @@
       message:'Поиск не запущен без разрешения.'});
      return;
     }
-    const response=await fetch('/api/seyveo-live-search',{
-     method:'POST',credentials:'same-origin',
-     headers:{'content-type':'application/json'},
-     body:JSON.stringify({message:question}),
-     signal:controller.signal
-    });
-    const payload=await response.json().catch(()=>null);
+    const payload=await window.SEYVEO_SEARCH_HUB?.searchPublic(question,{signal:controller.signal});
     if(controller.signal.aborted)return;
     if(!payload||typeof payload!=='object')throw Error('invalid-response');
-    if(!response.ok){
+    if(payload.status==='unavailable'||payload.status==='consent-required'){
      conversation.showSearchResults({query:question,status:'unavailable',results:[],
       message:String(payload.message||payload.error||'Сервис поиска временно недоступен.').slice(0,240)});
     }else conversation.showSearchResults({...payload,query:question});

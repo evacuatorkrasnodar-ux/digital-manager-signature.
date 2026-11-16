@@ -14,9 +14,10 @@
   const cityMatch=phrase.match(/(?:^|[\s,.!?])(?:в\s+городе\s+|г\.\s*)([А-ЯЁ][А-ЯЁа-яё-]{2,}(?:\s+[А-ЯЁ][А-ЯЁа-яё-]+)?)/u)
    ||phrase.match(/(?:^|[\s,.!?])в\s+(Краснодаре|Москве|Сочи|Казани|Новосибирске|Екатеринбурге|Петербурге)(?=$|[\s,.!?])/iu);
   const city=cityMatch?(CITY_FORMS[cityMatch[1]?.toLocaleLowerCase('ru-RU')]||cityMatch[1]):'';
-  const address=phrase.match(/(?:^|[\s,.!?])(?:по\s+адресу|адрес\s*[:—])\s*([^!?\n]{6,110})/iu);
+  const address=phrase.match(/(?:^|[\s,.!?])(?:по\s+адресу|это\s+адрес|адрес\s*[:—]?)\s*([^!?\n]{6,110})/iu);
   if(address){
-   const detail=normalize(address[1].replace(/\s+(?:сегодня|завтра|послезавтра|в\s+\d{1,2}(?::\d{2})?)(?=$|[\s,.!?]).*$/iu,''));
+   const detail=normalize(address[1].replace(/\s+(?:сегодня|завтра|послезавтра|в\s+\d{1,2}(?::\d{2})?)(?=$|[\s,.!?]).*$/iu,'')
+    .replace(/^((?:улица|ул\.?\s*)?\s*[А-ЯЁа-яё][А-ЯЁа-яё\s.-]{2,55}?\s+\d+[А-ЯЁа-яё]?(?:\/\d+)?)(?:\s+.*)?$/iu,'$1'));
    if(detail.length>=6)return {label:'Место встречи',query:detail,explicitAddress:true,city};
   }
   const venue=phrase.match(/(?:^|[\s,.!?])(?:в|во|у)\s+(кафе|кофейне|ресторане|баре|пабе|пиццерии|бистро|пекарне|отеле|гостинице|коворкинге|музее|кинотеатре)\s+(«[^»]{2,70}»|"[^"]{2,70}"|[^,.!?\n]{2,100})/iu);

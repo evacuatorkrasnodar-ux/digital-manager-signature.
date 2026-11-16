@@ -75,11 +75,13 @@
    const value=iso(shownYear,shownMonth,d);
    button.dataset.iso=value;
    button.setAttribute('aria-label',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(new Date(shownYear,shownMonth,d)));
-   if(value===date.value){button.classList.add('is-selected');button.setAttribute('aria-current','date')}
+   if(value===(date.value||today())){button.classList.add('is-selected');button.setAttribute('aria-current','date')}
    if(value===today())button.classList.add('is-today');
    const number=document.createElement('span');number.className='sv-task-cal-number';number.textContent=String(d);
    const marks=document.createElement('span');marks.className='sv-task-cal-marks';marks.setAttribute('aria-hidden','true');
-   for(const tone of markers.get(value)||[]){
+   const dayMarks=markers.get(value)||[];
+   if(dayMarks.length)button.setAttribute('aria-label',button.getAttribute('aria-label')+` · ${dayMarks.length}${dayMarks.length===1?' дело':dayMarks.length<5?' дела':' дел'}`);
+   for(const tone of dayMarks){
     const mark=document.createElement('i');mark.className='sv-task-cal-mark sv-task-cal-'+tone;
     marks.append(mark);
    }
@@ -130,13 +132,17 @@
  }
  function selectedCategory(){return form.querySelector('input[name="personalTaskCategory"]:checked')?.value==='work'?'work':'personal';}
  function selectedType(){return form.querySelector('input[name="personalTaskType"]:checked')?.value==='event'?'event':'task';}
- function proposedPlan(){return !isEditing()&&typeof readPlan==='function'?readPlan(title.value):null;}
+ function proposedPlan(){
+  if(isEditing())return null;
+  return window.SEYVEO_TASK_AI?.plan(title.value.trim())||(typeof readPlan==='function'?readPlan(title.value):null);
+ }
  function draftsForSave(){
   const plan=proposedPlan();
   if(!plan?.items?.length)return [];
   const classifier=window.SEYVEO_TASK_CLASSIFY;
   return plan.items.map((item,index)=>({
    title:item.title,
+   date:manualDate?date.value:item.date||'',time:manualTime?(timeInput?.value||''):item.time||'',
    category:classifier?.category?.(item.title)||selectedCategory(),
    entryType:classifier?.type?.(item.title)||selectedType(),
    tone:index===0?'orange':(['green','purple','yellow'][index-1]||'orange'),
@@ -268,15 +274,17 @@
   if(!smartPreview||!smartDetails)return;
   const raw=title.value.trim().replace(/\s+/g,' ');
   const empty=!raw;
-  // Keep the structured editor visible before the user types. These are
-  // actual editable controls, not fabricated tasks or pre-filled dates.
-  smartPreview.hidden=false;
+  const recognized=Boolean((typeof readPhrase==='function'&&readPhrase(raw))||date.value||timeInput?.value||proposedPlan()?.items?.length>1);
+  // Show structured cards only when Sayvi has something useful to extract.
+  // A plain phrase remains a simple input; manual details are then available.
+  smartPreview.hidden=empty||!recognized;
+  dialog.classList.toggle('sv-task-needs-manual',!empty&&!recognized);
   smartPreview.classList.toggle('is-empty',empty);
   smartDetails.replaceChildren();
+  if(empty||!recognized)return;
   const drafts=empty?[]:draftsForSave();
   const multi=drafts.length>1;
-  const displayed=empty?[{title:'Название дела',category:'personal',entryType:'task',tone:'orange'}]:
-   drafts.length?drafts:[{title:effectiveTitle(),category:selectedCategory(),entryType:selectedType(),tone:'orange'}];
+  const displayed=drafts.length?drafts:[{title:effectiveTitle(),category:selectedCategory(),entryType:selectedType(),tone:'orange'}];
   const category=displayed[0].category,kind=displayed[0].entryType;
   smartPreview.classList.toggle('is-work',category==='work');
   smartPreview.classList.toggle('is-multi',multi);
@@ -286,7 +294,10 @@
    main.addEventListener('click',()=>title.focus({preventScroll:true}));
    const copy=document.createElement('div');copy.className='sv-task-smart-item-copy';
    copy.append(createText('name',item.title));
-   if(multi)copy.append(createText('item-detail',(item.category==='work'?'Работа':'Личное')+' · '+(item.entryType==='event'?'Событие':'Напоминание')));
+   if(multi){
+    const whenText=item.date?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(new Date(item.date+'T12:00:00')):'';
+    copy.append(createText('item-detail',[(item.category==='work'?'Работа':'Личное'),whenText,item.time].filter(Boolean).join(' · ')));
+   }
    if(!empty){
     const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+item.category;
     if(multi&&item.category!=='work')dot.classList.add('is-tone-'+item.tone);
@@ -299,11 +310,14 @@
   when.setAttribute('aria-expanded',String(quickDateOpen));
   const whenDate=document.createElement('span');whenDate.className='sv-task-smart-when-date';
   const whenTime=document.createElement('span');whenTime.className='sv-task-smart-when-time';
-  if(date.value){
+  const differingDates=multi&&new Set(displayed.map(item=>(item.date||'')+' '+(item.time||''))).size>1;
+  if(differingDates){
+   whenDate.textContent='Разные даты';whenTime.textContent='По карточкам';
+  }else if(date.value){
    const [year,month,day]=date.value.split('-').map(Number);
    whenDate.textContent=new Intl.DateTimeFormat('ru-RU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(new Date(year,month-1,day));
   }else whenDate.textContent='Добавить дату';
-  whenTime.textContent=timeInput?.value||'Время';
+  if(!differingDates)whenTime.textContent=timeInput?.value||'Время';
   const arrow=document.createElement('span');arrow.className='sv-task-smart-when-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');
   when.append(whenDate,whenTime,arrow);
   when.addEventListener('click',()=>{quickDateOpen=!quickDateOpen;if(quickDateOpen)quickWheelMode='date';updateSmartPreview()});
@@ -314,7 +328,10 @@
    if(category==='work')meta.append(createText('category','Работа'));
    if(kind==='event')meta.append(createText('kind','Событие'));
   }
-  const lead=proposedPlan()?.leadMinutes||0;
+  const plan=proposedPlan();
+  if(plan?.fromLocalAI)meta.append(createText('category','Сэйви уточнила · проверь'));
+  if(plan?.needsReview)smartDetails.append(createText('notice','В одном сообщении больше четырёх дел. Раздели запись на две части, чтобы ничего не потерялось.'));
+  const lead=plan?.leadMinutes||0;
   if(lead)meta.append(createText('lead',`За ${lead===60?'1 час':lead+' мин.'} до начала`));
   const priority=document.getElementById('personalTaskPriority')?.value;
   if(priority&&priority!=='none')meta.append(createText('priority',({low:'Без спешки',medium:'Важно',high:'Срочно'})[priority]||'Приоритет'));
@@ -326,13 +343,14 @@
  }
  function applyPhrase(){
   const parsed=typeof readPhrase==='function'?readPhrase(title.value):null;
+  const combined=proposedPlan();
   const signals=typeof readSignals==='function'?readSignals(title.value):{priority:'none',repeat:'none'};
   if(!manualDate&&(!isEditing()||parsed?.date)){
-   const next=parsed?.date||'';
+   const next=parsed?.date||combined?.date||'';
    if(date.value!==next){date.value=next;date.dispatchEvent(new Event('change',{bubbles:true}));}
   }
   if(timeInput&&!manualTime&&(!isEditing()||parsed?.time)){
-   const next=parsed?.time||'';
+   const next=parsed?.time||combined?.time||'';
    if(timeInput.value!==next){timeInput.value=next;timeInput.dispatchEvent(new Event('change',{bubbles:true}));}
   }
   const priority=document.getElementById('personalTaskPriority');
@@ -342,6 +360,7 @@
   updateSmartPreview();
  }
  title.addEventListener('input',()=>{sizePhrase();applyPhrase()});
+ dialog.addEventListener('sv-task-ai-updated',()=>{applyPhrase();sizePhrase()});
  calendarButton?.addEventListener('click',()=>{
   title.blur();setCalendarOpen(Boolean(calendarPopover?.hidden));
  });
@@ -376,7 +395,7 @@
    rec.onresult=event=>{
     const transcript=String(event.results?.[0]?.[0]?.transcript||'').trim();
     if(!transcript)return;
-    title.value=[title.value.trim(),transcript].filter(Boolean).join(' ').slice(0,140);
+    title.value=[title.value.trim(),transcript].filter(Boolean).join(' ').slice(0,500);
     title.dispatchEvent(new Event('input',{bubbles:true}));
    };
    rec.onerror=()=>{const status=document.getElementById('personalTaskStatus');if(status)status.textContent='Не удалось распознать речь. Можно написать или использовать микрофон клавиатуры.'};
@@ -446,5 +465,5 @@
   title.style.height='';
   form.scrollTop=0;
  });
- window.SEYVEO_TASK_SCREEN=Object.freeze({version:5,sync,titleForSave:effectiveTitle,draftsForSave});
+ window.SEYVEO_TASK_SCREEN=Object.freeze({version:6,sync,titleForSave:effectiveTitle,draftsForSave,needsReview:()=>Boolean(proposedPlan()?.needsReview)});
 })();

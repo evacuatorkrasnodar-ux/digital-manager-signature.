@@ -7,6 +7,14 @@
  const shift=(now,days)=>new Date(now.getFullYear(),now.getMonth(),now.getDate()+days);
  const months={января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
  const weekdays={понедельник:1,вторник:2,среду:3,четверг:4,пятницу:5,субботу:6,воскресенье:0};
+ // Conservative fixes only: an unknown proper name is never autocorrected.
+ const commonTypos={сегдня:'сегодня',севодня:'сегодня',зафтра:'завтра',завтро:'завтра',
+  пазвонить:'позвонить',позванить:'позвонить',встретится:'встретиться',
+  напесать:'написать',адресс:'адрес',улитса:'улица'};
+ const correctKnownTypos=value=>String(value||'').replace(/\p{L}+/gu,word=>{
+  const replacement=commonTypos[word.toLocaleLowerCase('ru-RU')];
+  return replacement?(word[0]===word[0].toLocaleUpperCase('ru-RU')?replacement[0].toLocaleUpperCase('ru-RU')+replacement.slice(1):replacement):word;
+ });
  function validDay(year,month,day){
   if(!Number.isInteger(year)||year<1900||year>2100||month<0||month>11||day<1||day>31)return null;
   const date=new Date(year,month,day);
@@ -26,7 +34,7 @@
  }
  function parse(input,now=new Date()){
   if(typeof input!=='string'||input.length>700||!Number.isFinite(now?.getTime?.()))return null;
-  let body=input.replace(/\s+/g,' ').trim();
+  let body=correctKnownTypos(input).replace(/\s+/g,' ').trim();
   if(!body)return null;
   body=body.replace(/^(?:(?:сэйви|сейви|сэй|сей|сейвео|seyveo)[,!:.\s]+)?(?:пожалуйста[,]?\s+)?/iu,'');
   body=body.replace(/^(?:напомни(?:те)?(?:\s+мне)?|запланируй|запиши|назначь|создай|добавь)\s+(?:(?:(?:мне|в\s+(?:календарь|дела)|дело|задачу|событие)\s+){0,2})/iu,'');
@@ -95,41 +103,81 @@
  /* Multi-action review. Split only at an explicit conjunction followed by a
     second actionable verb; do not split 'чай и кофе' or a person's full name. */
  const ACTIONS='позвонить|созвониться|встретиться|купить|забрать|отправить|написать|подготовить|проверить|оплатить|сделать|заказать|сходить|поехать|отвезти|привезти|обсудить|согласовать|записаться|получить|передать|пригласить|провести|организовать|навестить|заехать|поговорить';
- const actionSeparator=new RegExp('(?:\\s*;\\s*|\\s+(?:и|а\\s+потом|затем|потом)\\s+)(?=(?:'+ACTIONS+')(?=$|[\\s,.!?]))','iu');
+ // Missing punctuation is normal speech. A conjunction creates a new task
+ // only when followed by another action verb, never in "хлеб и молоко".
+ const actionSeparator=new RegExp('(?:\\s*;\\s*|\\s+(?:и|а\\s+потом|затем|потом|после\\s+этого)\\s+)(?=(?:'+ACTIONS+')(?=$|[\\s,.!?]))','iu');
+ const datedActionSeparator=new RegExp('\\s+(?=(?:сегодня|завтра|послезавтра)\\s+(?:(?:в|к)\\s+\\d{1,2}(?::\\d{2})?\\s+)?(?:'+ACTIONS+')(?=$|[\\s,.!?]))','giu');
  const names=new Set(('мирон мирону мирона мироном анна анне анну анной анны елена елене елену еленой елены андрей андрею андрея андреем ' +
   'алексей алексею алексея алексеем роман роману романа романом игорь игорю игоря игорем мария марии марию марией ' +
   'михаил михаилу михаила михаилом дмитрий дмитрию дмитрия дмитрием сергей сергею сергея сергеем ' +
   'павел павлу павла павлом иван ивану ивана иваном пётр петру петра петром николай николаю николая николаем ' +
   'ольга ольге ольгу ольгой ольги наталья наталье наталью натальей натальи татьяна татьяне татьяну татьяной ' +
   'юлия юлии юлию юлией светлана светлане светлану светланой екатерина екатерине екатерину екатериной ' +
-  'максим максиму максима максимом артём артёму артёма артёмом краснодар краснодаре москва москве сочи').split(' '));
+  'максим максиму максима максимом артём артёму артёма артёмом наташа наташей наташу наташе наташи ' +
+  'миша мише мишу миши мишей вася васе васю васи васей катя кате катю кати катей ' +
+  'романе романов романы ' +
+  'краснодар краснодаре москва москве сочи петербург петербурге').split(' '));
  const cap=value=>value.charAt(0).toLocaleUpperCase('ru-RU')+value.slice(1);
+ const commonPeople={маме:1,мамой:1,маму:1,папе:1,папой:1,папу:1,другу:1,другом:1,друзьям:1,коллеге:1,коллегой:1,
+  сотруднику:1,сотрудником:1,начальнику:1,начальником:1,клиенту:1,клиентом:1,оператору:1,оператором:1,
+  врачу:1,врачом:1,мастеру:1,мастером:1,курьеру:1,курьером:1,человеком:1,девушкой:1,парнем:1,соседом:1};
+ function contactWords(){
+  try{
+   const list=JSON.parse(root?.localStorage?.getItem('seyveo-private-contacts-v1')||'[]');
+   if(!Array.isArray(list))return new Set();
+   return new Set(list.slice(0,500).flatMap(person=>typeof person?.name==='string'?person.name.toLocaleLowerCase('ru-RU').split(/[\s-]+/u):[])
+    .filter(word=>/^[а-яё]{3,30}$/u.test(word)));
+  }catch{return new Set()}
+ }
  function polishTitle(input){
-  let value=String(input||'').replace(/\s+/g,' ').trim().replace(/^[\s,;.!?:—–-]+|[\s,;.!?:—–-]+$/gu,'');
+  let value=correctKnownTypos(input).replace(/\s+/g,' ').trim().replace(/^[\s,;.!?:—–-]+|[\s,;.!?:—–-]+$/gu,'');
   value=value.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'');
-  value=value.replace(/(?:^|[\s,])(?:на|по|улице|ул\.?)\s+([а-яё][а-яё-]{2,})\s*,?\s*(\d+[а-яё]?(?:\/\d+)?)(?=$|[\s,.!?])/giu,(match,street,num)=>{
+  value=value.replace(/(?:^|[\s,])(?:на|по|адрес|улице|ул\.?)\s+([а-яё][а-яё-]{2,})\s*,?\s*(\d+[а-яё]?(?:\/\d+)?)(?=$|[\s,.!?])/giu,(match,street,num)=>{
    const before=match.slice(0,match.toLocaleLowerCase('ru-RU').indexOf(street.toLocaleLowerCase('ru-RU')));
    return before+cap(street)+', '+num;
   });
-  value=value.replace(/\p{L}+/gu,word=>names.has(word.toLocaleLowerCase('ru-RU'))?cap(word):word);
+  const contacts=contactWords();
+  value=value.replace(/\p{L}+/gu,(word,index,source)=>{
+   const lower=word.toLocaleLowerCase('ru-RU');
+   if(!names.has(lower)&&!contacts.has(lower))return word;
+   const before=source.slice(Math.max(0,index-28),index).toLocaleLowerCase('ru-RU');
+   // "роман" is also a book; keep ordinary nouns lowercase.
+   if(/^роман(?:а|е|ов|ы)?$/u.test(lower)&&/(?:купить|прочитать|читать|дочитать|перечитать|книг[ауе]|в)\s+$/u.test(before))return word;
+   return cap(word);
+  });
+  // For unfamiliar names, capitalize in an unambiguous person-directed
+  // construction. Never replace spelling or guess a different person's name.
+  value=value.replace(/(^|[\s,])(позвонить|созвониться|списаться|написать)\s+([а-яё]{3,30})(?=$|[\s,.!?])/giu,(match,prefix,verb,person)=>
+   commonPeople[person.toLocaleLowerCase('ru-RU')]||/^(?:письмо|сообщение|смс|всем|кому|ещё)$/iu.test(person)?match:prefix+verb+' '+cap(person));
+  value=value.replace(/(^|[\s,])(встретиться|встреча|поговорить|увидеться|созвониться)\s+с\s+([а-яё]{3,30})(?=$|[\s,.!?])/giu,(match,prefix,verb,person)=>
+   commonPeople[person.toLocaleLowerCase('ru-RU')]?match:prefix+verb+' с '+cap(person));
+  value=value.replace(/(кафе|ресторане|ресторана|ресторан|кофейне|магазин)\s+(?:«|")?(вкусно\s+и\s+точка)(?:»|")?/giu,(_,kind)=>kind+' «Вкусно — и точка»');
   value=value.replace(/\s+([,;:!?])/g,'$1').replace(/([,;:!?])(?=\p{L})/gu,'$1 ');
   return cap(value).slice(0,140);
  }
  function plan(input,now=new Date()){
   if(typeof input!=='string'||!input.trim()||input.length>700)return null;
-  const parsed=parse(input,now);
-  let body=parsed?.title||input.replace(/\s+/g,' ').trim()
+  let body=correctKnownTypos(input).replace(/\s+/g,' ').trim()
    .replace(/^(?:(?:сэйви|сейви|сэй|сей)[,!:.,\s]+)?(?:пожалуйста[,]?\s+)?/iu,'')
    .replace(/^(?:напомни(?:те)?(?:\s+мне)?|запланируй|запиши|назначь|создай|добавь)\s+/iu,'');
   body=body.replace(/^(?:срочно|немедленно|очень\s+важно|важно)\s*[:,!—–-]?\s*/iu,'');
   let leadMinutes=0;
   const lead=body.match(/^за\s+(час|один\s+час|1\s+час|полчаса|30\s+минут|15\s+минут)(?=$|[\s,.!?])/iu);
   if(lead){leadMinutes=/15/u.test(lead[1])?15:/полчаса|30/u.test(lead[1])?30:60;body=body.slice(lead[0].length).trim()}
-  const parts=body.split(actionSeparator).map(polishTitle).filter(Boolean);
+  const parts=body.split(actionSeparator).flatMap(fragment=>fragment.split(datedActionSeparator)).map(part=>part.trim()).filter(Boolean);
   if(!parts.length)return null;
-  const unique=[...new Map(parts.map(value=>[value.toLocaleLowerCase('ru-RU'),value])).values()];
-  const titles=unique.length>4?[polishTitle(body)]:unique;
-  return {items:titles.map(title=>({title})),date:parsed?.date||'',time:parsed?.time||'',leadMinutes};
+  let inheritedDate='';
+  const candidates=parts.map(part=>{
+   const parsed=parse(part,now);
+   const date=parsed?.date||inheritedDate;
+   if(parsed?.date)inheritedDate=parsed.date;
+   return {title:polishTitle(parsed?.title||part),date,time:parsed?.time||''};
+  }).filter(item=>item.title);
+  const unique=[...new Map(candidates.map(item=>[item.title.toLocaleLowerCase('ru-RU')+'|'+item.date+'|'+item.time,item])).values()];
+  // Never silently combine five separate requests into one misleading task.
+  const needsReview=unique.length>4;
+  const items=needsReview?unique.slice(0,4):unique;
+  return {items,date:items[0]?.date||'',time:items[0]?.time||'',leadMinutes,needsReview};
  }
  if(typeof module!=='undefined'&&module.exports)module.exports={parse,signals,plan,polishTitle};
  if(root){root.SEYVEO_TASK_SMART_NL=parse;root.SEYVEO_TASK_SMART_SIGNALS=signals;root.SEYVEO_TASK_SMART_PLAN=plan;}
