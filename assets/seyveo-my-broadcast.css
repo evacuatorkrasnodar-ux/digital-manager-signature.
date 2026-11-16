@@ -1,0 +1,123 @@
+/* First meeting: Sayvi docks, a quiet preferences surface takes the stage.
+   One original dock, no duplicate miniature, no replacement of Home. */
+#svBroadcastPreferences[hidden],#svBroadcastStage[hidden],#svBroadcastStartOffer[hidden]{display:none!important}
+#svBroadcastPreferences{
+ position:fixed;inset:0 0 calc(83px + env(safe-area-inset-bottom,0px)) 0;
+ z-index:29;box-sizing:border-box;display:flex;align-items:center;
+ justify-content:center;overflow-y:auto;overscroll-behavior:contain;
+ padding:calc(26px + env(safe-area-inset-top,0px)) 18px 18px;
+ background:rgba(255,255,255,.975);-webkit-backdrop-filter:blur(18px);
+ backdrop-filter:blur(18px);color:#18212b;
+ animation:sv-broadcast-appear .5s cubic-bezier(.22,.8,.22,1) both;
+}
+:root[data-theme="dark"] #svBroadcastPreferences{background:rgba(23,26,31,.98);color:#fff}
+.sv-broadcast-sheet{
+ box-sizing:border-box;width:min(100%,405px);max-height:100%;overflow:auto;
+ overscroll-behavior:contain;padding:10px 8px 9px;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ -webkit-font-smoothing:antialiased;
+}
+.sv-broadcast-eyebrow{margin:0 0 8px;color:#75808b;letter-spacing:.13em;
+ text-align:center;font-size:10px;font-weight:540}
+.sv-broadcast-sheet h2{font-size:clamp(27px,6.2vw,33px);font-weight:590;
+ letter-spacing:-.046em;line-height:1.13;margin:0;text-align:center;color:inherit}
+.sv-broadcast-description{max-width:315px;margin:9px auto 22px;text-align:center;
+ color:#6b7882;font-size:13.5px;line-height:1.43;font-weight:420}
+.sv-broadcast-topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sv-broadcast-topic{display:flex;align-items:center;gap:9px;min-width:0;
+ min-height:49px;box-sizing:border-box;padding:7px 10px;border-radius:15px;
+ border:1px solid rgba(153,165,177,.29);background:rgba(243,246,249,.75);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+ color:inherit;cursor:pointer;font-size:clamp(11.5px,3.2vw,13.5px);
+ font-weight:460;line-height:1.2;transition:background .18s,border-color .18s,transform .18s;
+ -webkit-tap-highlight-color:transparent}
+.sv-broadcast-topic:has(input:checked){border-color:rgba(78,129,176,.45);
+ background:rgba(222,236,249,.66)}
+.sv-broadcast-topic:active{transform:scale(.988)}
+.sv-broadcast-topic input{position:absolute;opacity:0;width:1px;height:1px}
+.sv-broadcast-topic:has(input:focus-visible){outline:2px solid #2287c8;outline-offset:2px}
+.sv-broadcast-topic-emoji{flex:none;font-size:21px;line-height:1;font-family:
+ "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.sv-broadcast-topic-check{display:grid;place-items:center;flex:none;
+ margin-left:auto;border-radius:50%;width:17px;height:17px;
+ font-size:11px;font-weight:650;color:#fff;background:#1683d0;
+ opacity:0;transform:scale(.72);transition:opacity .16s,transform .16s}
+.sv-broadcast-topic:has(input:checked) .sv-broadcast-topic-check{opacity:1;transform:scale(1)}
+.sv-broadcast-fineprint{margin:14px 4px 0;text-align:center;
+ font-size:11px;line-height:1.36;color:#89929d}
+.sv-broadcast-awake{display:flex;align-items:center;gap:10px;width:max-content;
+ max-width:100%;margin:16px auto 0;font-size:12.5px;color:inherit;cursor:pointer}
+.sv-broadcast-awake input{accent-color:#1683d0;width:16px;height:16px}
+.sv-broadcast-awake-note{margin:5px 0 0;font-size:10px;color:#89929d;text-align:center}
+.sv-broadcast-sheet-actions{display:flex;gap:10px;margin:23px 0 0}
+.sv-broadcast-sheet-actions button{flex:1;min-height:48px;border-radius:16px;
+ border:1px solid rgba(143,157,169,.3);font:510 14px/1 -apple-system,
+ BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer;
+ -webkit-tap-highlight-color:transparent;transition:transform .15s ease}
+.sv-broadcast-sheet-actions button:active{transform:scale(.98)}
+.sv-broadcast-later{background:#f5f7f9;color:#50606c}
+.sv-broadcast-save{background:#222c36!important;border-color:#222c36!important;
+ color:#fff!important}
+.sv-broadcast-save span{margin-left:9px;font-size:17px;font-weight:350}
+:root[data-theme="dark"] .sv-broadcast-description,
+:root[data-theme="dark"] .sv-broadcast-fineprint,
+:root[data-theme="dark"] .sv-broadcast-awake-note{color:#acb3bc}
+:root[data-theme="dark"] .sv-broadcast-topic{background:#2e333b;border-color:#434b54}
+:root[data-theme="dark"] .sv-broadcast-topic:has(input:checked){background:#344c61}
+:root[data-theme="dark"] .sv-broadcast-later{background:#343942;color:#fff}
+/* The dock remains visible beneath the sheet, as Sayvi's destination. */
+:root.sv-broadcast-sheet-open body > footer.dock{pointer-events:none!important}
+@keyframes sv-broadcast-appear{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+
+/* The show reuses the generous whitespace under the original orb/weather.
+   It has no glass card and never pushes the globe down while letters arrive. */
+:root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svBroadcastStage{
+ position:absolute!important;top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 73px)!important;
+ left:50%!important;transform:translateX(-50%)!important;
+ display:flex;flex-direction:column;align-items:stretch;gap:8px;
+ width:min(375px,calc(100vw - 38px));margin:0;padding:0 6px;
+ box-sizing:border-box;background:transparent;border:0;box-shadow:none;
+ text-align:center;z-index:4;color:#44535e;
+}
+.sv-broadcast-stage-head{display:flex;align-items:center;justify-content:space-between;
+ width:100%;gap:8px;font-size:10px;letter-spacing:.11em;color:#85909a;font-weight:550}
+.sv-broadcast-story{display:block;box-sizing:border-box;min-height:58px;
+ max-height:93px;overflow:hidden;margin:0;text-align:left;color:#344652;
+ font-size:clamp(13px,3.4vw,14px);font-weight:440;line-height:1.48}
+.sv-broadcast-progress{height:2px;width:100%;border-radius:2px;
+ background:rgba(136,157,174,.19);overflow:hidden}
+#svBroadcastProgress{display:block;height:100%;width:0;background:#5397c4;
+ transition:width .5s ease}
+.sv-broadcast-controls{display:flex;align-items:center;justify-content:center;gap:11px}
+.sv-broadcast-controls button{display:grid;place-items:center;height:32px;
+ min-width:34px;padding:0 9px;border:1px solid rgba(143,165,180,.35);
+ border-radius:999px;background:rgba(250,252,254,.94);color:#2a3945;
+ font:500 13px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ cursor:pointer;box-shadow:inset 0 1px 0 #fff}
+.sv-broadcast-controls button:active{transform:scale(.975)}
+.sv-broadcast-controls #svBroadcastStop{padding:0 13px;font-size:11.5px}
+:root[data-theme="dark"] .sv-broadcast-story{color:#e3e8eb}
+:root[data-theme="dark"] .sv-broadcast-controls button{background:#343941;color:#f5f6f7}
+:root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svBroadcastStartOffer{
+ position:absolute;left:50%;transform:translateX(-50%);
+ top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 71px);
+ display:inline-flex;align-items:center;justify-content:center;min-height:38px;
+ padding:0 16px;border:1px solid rgba(133,156,173,.32);border-radius:999px;
+ background:rgba(251,253,255,.96);box-shadow:0 2px 9px rgba(52,74,91,.07);
+ color:#365164;font:500 12.5px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ white-space:nowrap;cursor:pointer;z-index:5;
+}
+@media(max-height:700px){
+ #svBroadcastPreferences{padding-top:10px;padding-bottom:7px}
+ .sv-broadcast-description{margin-bottom:12px}
+ .sv-broadcast-topic-grid{gap:6px}
+ .sv-broadcast-topic{min-height:41px;padding:5px 9px}
+ .sv-broadcast-fineprint{margin-top:8px}
+ .sv-broadcast-awake{margin-top:8px}
+ .sv-broadcast-sheet-actions{margin-top:10px}
+ .sv-broadcast-sheet-actions button{min-height:42px}
+}
+@media(prefers-reduced-motion:reduce){
+ #svBroadcastPreferences{animation:none}
+ #svBroadcastProgress,.sv-broadcast-topic,.sv-broadcast-sheet-actions button{transition:none}
+}

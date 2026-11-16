@@ -763,6 +763,8 @@
        (location.hash&&location.hash!=='#home')||
        !musicIsPlaying()||!musicMini||musicMini.hidden||
        root.classList.contains('seyveo-conversation')||
+       root.classList.contains('sv-broadcast-active')||
+       root.classList.contains('sv-broadcast-onboarding')||
        root.classList.contains('sv-home-empty-sphere')||
        document.querySelector('dialog[open]')||
        document.activeElement?.matches('input,textarea,[contenteditable="true"]'))return false;
@@ -941,12 +943,17 @@
   function shouldDockHome(){
     // The agenda card is constructed only after finish(), so check storage
     // as well when deciding the destination during the opening itself.
-    return hasHomeCards()||!!nextAgenda();
+    // First meeting is the one deliberate exception: Sayvi docks while the
+    // person chooses interests, then returns if there are no cards.
+    return root.classList.contains('sv-broadcast-onboarding')||
+      hasHomeCards()||!!nextAgenda();
   }
   function canShowEmptySphere(){
     return done&&!document.hidden&&!home.hidden&&
       (!location.hash||location.hash==='#home')&&
       !root.classList.contains('seyveo-conversation')&&
+      !root.classList.contains('sv-broadcast-onboarding')&&
+      !root.classList.contains('sv-broadcast-sheet-open')&&
       !root.classList.contains('sv-music-ambient')&&
       !root.classList.contains('sv-music-ambient-leaving')&&
       !document.querySelector('dialog[open]')&&
@@ -1126,7 +1133,8 @@
   const emptyRootObserver=new MutationObserver(()=>scheduleEmptySphereSync(180));
   emptyRootObserver.observe(root,{attributes:true,attributeFilter:['class']});
   for(const name of ['seyveo:cinema-finished','seyveo:route-changed','seyveo:tasks-changed',
-    'seyveo:calendar-changed','seyveo:card-visibility-changed','seyveo:home-agenda-visibility-changed'])
+    'seyveo:calendar-changed','seyveo:card-visibility-changed','seyveo:home-agenda-visibility-changed',
+    'seyveo:broadcast-setup-complete'])
     window.addEventListener(name,()=>scheduleEmptySphereSync(name==='seyveo:cinema-finished'?850:260));
   window.addEventListener('hashchange',()=>scheduleEmptySphereSync(150));
   document.addEventListener('visibilitychange',()=>scheduleEmptySphereSync(160));

@@ -153,6 +153,9 @@
  const quietHome=()=>ready&&homeVisible()&&!voicePhase&&
   root.classList.contains('sv-home-empty-sphere')&&
   root.classList.contains('sv-home-empty-arrived')&&
+  !root.classList.contains('sv-broadcast-onboarding')&&
+  !root.classList.contains('sv-broadcast-sheet-open')&&
+  !root.classList.contains('sv-broadcast-active')&&
   !root.classList.contains('sv-home-empty-arriving')&&
   !root.classList.contains('sv-home-empty-sphere-leaving')&&
   !root.classList.contains('sv-music-ambient')&&
@@ -162,11 +165,15 @@
  const canDisplayReply=()=>ready&&homeVisible()&&
   root.classList.contains('sv-home-empty-sphere')&&
   root.classList.contains('sv-home-empty-arrived')&&
+  !root.classList.contains('sv-broadcast-sheet-open')&&
+  !root.classList.contains('sv-broadcast-active')&&
   !root.classList.contains('sv-home-empty-sphere-leaving')&&
   !root.classList.contains('sv-music-ambient')&&
   !document.querySelector('dialog[open]');
 
  function navigateSuggestion(kind){
+  if(kind==='broadcast')return window.SEYVEO_BROADCAST?.start?.({gesture:true})===true;
+  if(kind==='broadcast-preferences')return window.SEYVEO_BROADCAST?.openPreferences?.()===true;
   if(kind==='music'){
    if(!window.SEYVEO_MUSIC?.open)return false;
    window.SEYVEO_MUSIC.open();return true;
@@ -336,7 +343,10 @@
   if(!quietHome()||(!continuation&&now-idleSince<delay))return;
   if(root.classList.contains('sv-home-greeting-fading')&&
      !root.classList.contains('sv-home-greeting-expired'))return;
-  const suggestion=introDone?ideas[idleIdeaIndex++%ideas.length]:intro[introStep];
+  const position=introDone?idleIdeaIndex++:idleIdeaIndex;
+  const personalized=introDone&&position%4===0?
+   window.SEYVEO_BROADCAST?.nextSuggestion?.():null;
+  const suggestion=introDone?(personalized||ideas[position%ideas.length]):intro[introStep];
   beginSuggestion(suggestion);
  }
  function showCelebration(){
