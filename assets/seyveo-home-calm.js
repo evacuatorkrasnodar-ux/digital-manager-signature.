@@ -49,8 +49,8 @@
   schedule(PEEK_MS);
  }
  document.addEventListener('pointerdown',event=>{
-  if(!root.classList.contains('sv-home-calm')||!home.contains(event.target))return;
-  if(event.target.closest('button,a,input,textarea,select,[role="button"],#orbCluster,#svHomeLivingLine'))return;
+  if(!root.classList.contains('sv-home-calm')||!isHome())return;
+  if(event.target.closest('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orbCluster,#svHomeLivingLine'))return;
   reveal();
  },{passive:true});
  calmDetails.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:open-card-review')));
