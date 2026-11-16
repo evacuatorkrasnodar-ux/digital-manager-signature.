@@ -337,7 +337,9 @@
       emptyLeaving=false;
       ++emptyEpoch;
       root.classList.remove('sv-home-empty-sphere-leaving');
-      root.classList.add('sv-home-empty-sphere');
+      // The short three-slot pearl dock was already present throughout the
+      // welcome. Do not replay a full-to-short animation on empty launch.
+      root.classList.add('sv-home-empty-at-launch','sv-home-empty-sphere');
     }
     if(spark)root.classList.add('sv-sayvi-handoff-arrived');
     restoreOrb();
@@ -946,6 +948,8 @@
     emptySphere=true;
     const epoch=++emptyEpoch;
     cancelAmbientTimer();
+    // This later return is a real dock-to-Home flight, not the first launch.
+    root.classList.remove('sv-home-empty-at-launch');
     // Use the painted dock miniature as the actual physical departure point.
     // Keep it visible for the first lift-off beat, then fade it under the globe.
     const from=small.getBoundingClientRect();
@@ -997,6 +1001,8 @@
     }
     if(!emptySphere)return;
     if(emptyEntering&&animate)return;
+    // A genuine exit may expand the pearl dock; release the launch-only hold.
+    root.classList.remove('sv-home-empty-at-launch');
     emptySphere=false;
     emptyLeaving=true;
     const epoch=++emptyEpoch;
