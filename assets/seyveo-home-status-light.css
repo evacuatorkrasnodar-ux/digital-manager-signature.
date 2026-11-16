@@ -1,5 +1,19 @@
-/* The original 12px top caption never moves. Only its letter-shaped
-   highlight passes once on activity, then the exact dark ink returns. */
+/* The original 12px top caption never moves. Only a distinctly visible
+   pearl-blue light travels across the actual letterforms, then ink returns. */
+:root.sv-sayvi-handoff-demo{
+ --sv-home-letter-shine:linear-gradient(105deg,
+  transparent 0%,transparent 35%,
+  rgba(78,127,160,.18) 41%,rgba(99,154,191,.92) 47%,
+  rgba(228,244,252,.98) 50%,rgba(91,149,190,.95) 53%,
+  rgba(83,133,166,.18) 59%,transparent 65%,transparent 100%);
+}
+:root.sv-sayvi-handoff-demo[data-theme="dark"]{
+ --sv-home-letter-shine:linear-gradient(105deg,
+  transparent 0%,transparent 35%,
+  rgba(160,207,234,.2) 41%,rgba(189,228,250,.96) 47%,
+  rgba(255,255,255,1) 50%,rgba(188,226,249,.96) 53%,
+  rgba(160,207,234,.2) 59%,transparent 65%,transparent 100%);
+}
 :root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online{
  isolation:isolate;
 }
@@ -16,10 +30,7 @@
  pointer-events:none;
  color:transparent!important;
  -webkit-text-fill-color:transparent!important;
- background-image:linear-gradient(105deg,
-  transparent 0%,transparent 39%,
-  rgba(118,158,188,.2) 44%,rgba(188,213,233,.94) 50%,
-  rgba(118,158,188,.2) 56%,transparent 61%,transparent 100%);
+ background-image:var(--sv-home-letter-shine);
  background-size:230% 100%;
  background-position:100% 50%;
  -webkit-background-clip:text;
@@ -27,13 +38,39 @@
  opacity:0;
 }
 :root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online.sv-home-status-light-running .sv-home-status-light-pass{
- animation:svHomeStatusLetterLight 1.32s cubic-bezier(.28,.04,.2,1) 1 both;
+ animation:svHomeStatusLetterLight 1.65s cubic-bezier(.26,.06,.2,1) 1 both;
 }
 @keyframes svHomeStatusLetterLight{
  0%{background-position:100% 50%;opacity:0}
- 15%{opacity:1}
- 85%{opacity:1}
+ 12%{opacity:1}
+ 88%{opacity:1}
  100%{background-position:0% 50%;opacity:0}
+}
+/* The last handwritten greeting receives precisely one matching light pass
+   once its final letter is typed. No extra text, glow panel or layout change. */
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--wish{
+ position:relative;
+ isolation:isolate;
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--wish::after{
+ content:attr(data-sv-shine-text);
+ position:absolute;
+ inset:0;
+ display:block;
+ white-space:inherit;
+ text-align:inherit;
+ pointer-events:none;
+ color:transparent!important;
+ -webkit-text-fill-color:transparent!important;
+ background-image:var(--sv-home-letter-shine);
+ background-size:230% 100%;
+ background-position:100% 50%;
+ -webkit-background-clip:text;
+ background-clip:text;
+ opacity:0;
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--wish.sv-cinema-wish-light-running::after{
+ animation:svHomeStatusLetterLight 1.65s cubic-bezier(.26,.06,.2,1) 1 both;
 }
 :root.sv-sayvi-handoff-demo[data-theme="light"] #homePage .sv-sayvi-home-online[data-sv-sayvi-state="thinking"]{color:#466778}
 :root.sv-sayvi-handoff-demo[data-theme="light"] #homePage .sv-sayvi-home-online[data-sv-sayvi-state="speaking"]{color:#38728A}
@@ -43,7 +80,9 @@
 :root.sv-sayvi-handoff-demo[data-theme="dark"] #homePage .sv-sayvi-home-online[data-sv-sayvi-state="offline"]{color:#E2A39F}
 @media(prefers-reduced-motion:reduce){
  :root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online .sv-home-status-light-pass,
- :root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online.sv-home-status-light-running .sv-home-status-light-pass{
+ :root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online.sv-home-status-light-running .sv-home-status-light-pass,
+ :root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--wish::after,
+ :root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--wish.sv-cinema-wish-light-running::after{
   animation:none!important;
   opacity:0!important;
  }

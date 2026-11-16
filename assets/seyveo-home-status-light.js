@@ -30,8 +30,7 @@
   !document.querySelector('dialog[open]');
  function passLight(force=false){
   if(!homeVisible()||reduceMotion()||
-     root.classList.contains('sv-cinema-boot')||
-     root.classList.contains('sv-cinema-intro-active'))return;
+     root.classList.contains('sv-cinema-boot'))return;
   const now=Date.now();
   // One pass for a whole card/route transition, even if several events fire.
   if(!force&&now-lastPassAt<8500)return;
@@ -41,7 +40,7 @@
   // Safari needs one measured frame to replay an animation on the same text.
   void light.offsetWidth;
   line.classList.add('sv-home-status-light-running');
-  lightTimer=setTimeout(()=>line.classList.remove('sv-home-status-light-running'),1500);
+  lightTimer=setTimeout(()=>line.classList.remove('sv-home-status-light-running'),1850);
  }
  function refresh({onEntry=false}={}){
   const next=navigator.onLine===false?'offline':assistantPhase;
@@ -75,7 +74,7 @@
  window.addEventListener('offline',()=>refresh());
  window.addEventListener('online',()=>refresh({onEntry:true}));
  const transition=()=>passLight();
- for(const name of ['seyveo:cinema-finished','seyveo:home-sayvi-arrived',
+ for(const name of ['seyveo:cinema-opening','seyveo:cinema-finished','seyveo:home-sayvi-arrived',
   'seyveo:home-recommendation-changed','seyveo:tasks-changed'])
   window.addEventListener(name,transition);
  window.addEventListener('hashchange',()=>{

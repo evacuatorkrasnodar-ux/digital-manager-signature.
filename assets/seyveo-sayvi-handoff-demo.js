@@ -91,6 +91,7 @@
         if(done||!greeting)return;
         const phrase=greetingLines[index];
         writing.className='sv-cinema-written-line sv-cinema-written-line--'+phrase.kind;
+        writing.removeAttribute('data-sv-shine-text');
         writing.textContent='';
         greeting.setAttribute('aria-label',phrase.text);
         let cursor=0;
@@ -100,6 +101,12 @@
           writing.textContent=phrase.text.slice(0,cursor);
           if(cursor<phrase.text.length)greetingTicker=setTimeout(type,phrase.type);
           else if(index<greetingLines.length-1)greetingTicker=setTimeout(erase,phrase.hold);
+          else if(phrase.kind==='wish'){
+            // A single light follows the finished letters, never the caret.
+            writing.setAttribute('data-sv-shine-text',phrase.text);
+            void writing.offsetWidth;
+            writing.classList.add('sv-cinema-wish-light-running');
+          }
         };
         const erase=()=>{
           if(done||!greeting)return;

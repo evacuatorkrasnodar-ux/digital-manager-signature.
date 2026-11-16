@@ -6,8 +6,15 @@ const {join}=require('node:path');
 const vm=require('node:vm');
 const js=readFileSync(join(__dirname,'../assets/seyveo-home-status-light.js'),'utf8');
 const css=readFileSync(join(__dirname,'../assets/seyveo-home-status-light.css'),'utf8');
+const greeting=readFileSync(join(__dirname,'../assets/seyveo-sayvi-handoff-demo.js'),'utf8');
 assert.match(css,/background-clip:text/,'the glint follows letter shapes');
-assert.match(css,/animation:svHomeStatusLetterLight 1\.32s/,'one short light pass');
+assert.match(css,/animation:svHomeStatusLetterLight 1\.65s/,'one gentle, visible pass');
+assert.match(css,/--sv-home-letter-shine:linear-gradient/,'white and dark themes get a clear pearly highlight');
+assert.match(css,/sv-cinema-written-line--wish\.sv-cinema-wish-light-running::after/,
+ 'the completed welcome receives the same per-letter light');
+assert.match(css,/content:attr\(data-sv-shine-text\)/,'the welcome shine exactly matches its written letters');
+assert.match(greeting,/writing\.setAttribute\('data-sv-shine-text',phrase\.text\)/,
+ 'the welcome shines only when Sayvi finishes typing');
 assert.match(css,/@media\(prefers-reduced-motion:reduce\)/,'reduced-motion is respected');
 assert.doesNotMatch(css,/animation:[^;]*infinite/,'there is no permanent shimmer');
 
@@ -53,6 +60,10 @@ emit('window','seyveo:home-recommendation-changed');
 assert.equal(passCount,1,'card render does not duplicate a fresh glint');
 now+=9500;emit('window','seyveo:home-recommendation-changed');
 assert.equal(passCount,2,'a later card transition receives its own glint');
+now+=9000;rootClasses.add('sv-cinema-intro-active');
+emit('window','seyveo:cinema-opening');
+assert.equal(passCount,3,'the top caption can shine during the handwritten opening');
+rootClasses.delete('sv-cinema-intro-active');
 
 emit('document','seyveo:assistant-presence',{phase:'ack'});
 assert.equal(label.textContent,'Сэйви · думает');
