@@ -24,6 +24,11 @@
   font-size:clamp(12.5px,3.4vw,14px);
   letter-spacing:-.012em;
 }
+@media (max-width:649px) and (pointer:coarse){
+ #homePage #svSayviHomeWeather:not([hidden]){
+  font-size:clamp(14px,3.9vw,15.5px);
+ }
+}
 #homePage #svSayviHomeWeather .sv-sayvi-home-weather-mark{
   width:19px;height:19px;
 }
