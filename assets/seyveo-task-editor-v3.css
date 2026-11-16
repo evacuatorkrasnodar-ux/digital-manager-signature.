@@ -8,6 +8,10 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-shared-dock{
  display:none!important;visibility:hidden!important;pointer-events:none!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3{
+ --sv-task-action-fill:var(--sv-card-action-neutral-bg,transparent);
+ --sv-task-action-rim:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));
+ --sv-task-action-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16));
+ --sv-task-action-blur:var(--sv-card-action-blur,blur(12px) saturate(108%));
  box-sizing:border-box!important;position:fixed!important;inset:0!important;
  width:100vw!important;max-width:none!important;height:100dvh!important;max-height:none!important;
  margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
@@ -46,9 +50,11 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header button
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskCancel{
  display:grid!important;width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;
- border:var(--sv-header-circle-border,1.75px solid #FFF)!important;
- background:var(--sv-header-circle,rgba(190,193,202,.43))!important;
- color:#181B21!important;box-shadow:var(--sv-header-circle-shadow,0 0 0 .7px #A4AAB84D)!important;
+ border:var(--sv-task-action-rim)!important;
+ background:var(--sv-task-action-fill)!important;
+ color:#181B21!important;box-shadow:var(--sv-task-action-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;
+ backdrop-filter:var(--sv-task-action-blur)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskCancel svg{
  width:23px!important;height:23px!important;fill:none!important;stroke:currentColor!important;
@@ -59,9 +65,11 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave{
  display:grid!important;justify-self:center!important;align-self:center!important;
  width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;
  margin:0!important;padding:0!important;border-radius:50%!important;
- border:var(--sv-header-circle-border,1.75px solid #FFF)!important;
- background:var(--sv-header-circle,rgba(190,193,202,.43))!important;color:#181B21!important;
- box-shadow:var(--sv-header-circle-shadow,0 0 0 .7px #A4AAB84D)!important;opacity:1!important;
+ border:1.25px solid rgba(231,53,68,.65)!important;
+ background:var(--sv-task-action-fill)!important;color:#181B21!important;
+ box-shadow:var(--sv-task-action-shadow)!important;opacity:1!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;
+ backdrop-filter:var(--sv-task-action-blur)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave:disabled{
  opacity:.4!important;cursor:default!important;
@@ -323,8 +331,10 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-intro{
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-quick-actions{
  display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;
  gap:0!important;min-height:38px!important;margin-left:0!important;padding:1px!important;
- border:1px solid #DCE0E7!important;border-radius:99px!important;
- background:#E9EAEE!important;box-shadow:none!important;
+ border:var(--sv-task-action-rim)!important;border-radius:99px!important;
+ background:var(--sv-task-action-fill)!important;box-shadow:var(--sv-task-action-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;
+ backdrop-filter:var(--sv-task-action-blur)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-quick-divider{
  display:block!important;flex:0 0 1px!important;width:1px!important;height:20px!important;
@@ -337,7 +347,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 :is(#svNewTaskVoice,#svNew
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskVoice[hidden]{display:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskVoice[aria-pressed="true"]{
- background:#FF3341!important;color:#FFF!important;
+ background:transparent!important;color:#181B21!important;
+ border:1px solid rgba(231,53,68,.58)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCalendarButton[aria-expanded="true"]{
  background:#FFF!important;color:#007AFF!important;
@@ -500,8 +511,12 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-wheel-clear{
  font:530 12.5px/1.2 system-ui!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-quick-done{
- min-height:36px!important;margin:0!important;padding:7px 13px!important;border:0!important;border-radius:11px!important;
- background:#E8F2FC!important;color:#1E6FBF!important;font:590 13px/1.2 system-ui!important;
+ min-height:36px!important;margin:0!important;padding:7px 13px!important;
+ border:var(--sv-task-action-rim)!important;border-radius:11px!important;
+ background:var(--sv-task-action-fill)!important;color:#1E6FBF!important;font:590 13px/1.2 system-ui!important;
+ box-shadow:var(--sv-task-action-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;
+ backdrop-filter:var(--sv-task-action-blur)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-smart-meta{
  display:flex!important;align-items:center!important;gap:5px 8px!important;flex-wrap:wrap!important;
@@ -661,29 +676,25 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{displ
  html body dialog#personalTaskDialog.sv-task-editor-v3 *,
  html body dialog#personalTaskDialog.sv-task-editor-v3 *::after{transition:none!important;scroll-behavior:auto!important}
 }
-/* Two matching 50px header circles: close in pearl silver, confirm in Apple red. */
+/* Header controls use the same transparent pearl material as the three
+   approved Home card actions. Confirm differs only by its fine red rim. */
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskCancel{
  border-radius:50%!important;aspect-ratio:1!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave{
  border-radius:50%!important;aspect-ratio:1!important;
- border:1.5px solid #FFF!important;
- background:#FF3341!important;color:#FFF!important;
- box-shadow:0 1px 2px #FF334121,0 0 0 .5px #E7283D66!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave:disabled{
- opacity:.62!important;background:#FF6671!important;color:#FFF!important;
+ opacity:.38!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #personalTaskSave svg{
- stroke:#FFF!important;
+ stroke:#181B21!important;
 }
-/* Quiet, flat silver controls: no bevel, highlight or raised shadow. */
+/* One unified transparent pearl finish on the lower action capsule. */
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-quick-actions{
  box-sizing:border-box!important;width:116px!important;min-height:50px!important;height:50px!important;
  padding:2px!important;gap:0!important;
- border:1px solid #D4D8E0!important;border-radius:999px!important;
- background:#E9EBF1!important;
- box-shadow:none!important;
+ border-radius:999px!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 :is(#svNewTaskVoice,#svNewTaskCalendarButton){
  box-sizing:border-box!important;flex:0 0 52px!important;width:52px!important;height:44px!important;
@@ -703,12 +714,14 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera{
 html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCameraButton{
  display:grid!important;place-items:center!important;box-sizing:border-box!important;
  width:50px!important;height:50px!important;margin:0!important;padding:0!important;
- border:1px solid #D4D8E0!important;border-radius:50%!important;
- background:#E9EBF1!important;color:#181B21!important;
- box-shadow:none!important;
+ border:var(--sv-task-action-rim)!important;border-radius:50%!important;
+ background:var(--sv-task-action-fill)!important;color:#181B21!important;
+ box-shadow:var(--sv-task-action-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;
+ backdrop-filter:var(--sv-task-action-blur)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCameraButton[aria-expanded="true"]{
- background:#FFF!important;color:#007AFF!important;
+ background:var(--sv-task-action-fill)!important;color:#007AFF!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 #svNewTaskCameraButton svg,
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu svg{
@@ -765,8 +778,11 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-copy s
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-remove{
  display:grid!important;place-items:center!important;flex:none!important;width:28px!important;height:28px!important;
- padding:0!important;border:0!important;border-radius:50%!important;
- background:#F1F2F6!important;color:#747B87!important;font:400 22px/1 system-ui!important;
+ padding:0!important;border:var(--sv-task-action-rim)!important;border-radius:50%!important;
+ background:var(--sv-task-action-fill)!important;color:#747B87!important;font:400 22px/1 system-ui!important;
+ box-shadow:var(--sv-task-action-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;
+ backdrop-filter:var(--sv-task-action-blur)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion{
  display:flex!important;align-items:center!important;gap:8px!important;padding:9px 12px!important;
@@ -777,8 +793,11 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion p{
  font:480 12px/1.4 system-ui!important;overflow-wrap:anywhere!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion button{
- flex:none!important;padding:8px 10px!important;border:0!important;border-radius:12px!important;
- background:#FFF!important;color:#A46D2D!important;font:600 12px/1.2 system-ui!important;
+ flex:none!important;padding:8px 10px!important;border:var(--sv-task-action-rim)!important;border-radius:12px!important;
+ background:var(--sv-task-action-fill)!important;color:#A46D2D!important;font:600 12px/1.2 system-ui!important;
+ box-shadow:var(--sv-task-action-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-task-action-blur)!important;
+ backdrop-filter:var(--sv-task-action-blur)!important;
 }
 
 /* Apple-style month sheet: real saved work is shown only as quiet, colored
