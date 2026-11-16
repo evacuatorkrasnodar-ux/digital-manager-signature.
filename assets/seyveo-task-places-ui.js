@@ -9,6 +9,12 @@
  const panel=document.getElementById('svNewTaskPlacePanel');
  if(!places||!dialog||!title||!panel)return;
  let proposal=null,place=null,confirmed=false,choices=[],choicesExpanded=false,choicesNearby=false,query='',sourceQuery='',status='idle',request=0,photoRequest=0,searchTimer=0,refining=false,refineText='',cityEditing=false,photoViewer=null,mapViewer=null,mapCleanup=null;
+ function phraseForPlace(){
+  // In multi-task input use only the meeting, never the following errands.
+  const drafts=window.SEYVEO_TASK_SCREEN?.draftsForSave?.()||[];
+  const meeting=drafts.find(item=>/(?:встреча|встретиться|кафе|ресторан|совещание|приём)/iu.test(item.title||''));
+  return meeting?.title||title.value;
+ }
  const node=(tag,cls,text)=>{
   const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;
   return el;
@@ -192,7 +198,7 @@
  }
  function load(saved){
   closePhotoViewer();closeMapViewer();
-  place=places.cleanPlace(saved);confirmed=Boolean(place);choices=[];choicesExpanded=false;choicesNearby=false;proposal=places.extract(title.value);
+  place=places.cleanPlace(saved);confirmed=Boolean(place);choices=[];choicesExpanded=false;choicesNearby=false;proposal=places.extract(phraseForPlace());
   query=proposal?.query||'';sourceQuery=query;status=place?'found':'idle';request++;render();resolvePlacePhoto();
  }
  function placeForSave(){return confirmed?places.cleanPlace(place):null}
@@ -360,7 +366,7 @@
    copy.append(node('strong','sv-place-name',headline));
    const text=status==='loading'?'Ищу адрес и точку на карте…':
     status==='city'?'Укажи город — Сэйви найдёт место рядом, а не по всей России.':
-    status==='not-found'?'Точный адрес не найден. Уточни название или город в тексте.':
+    status==='not-found'?(proposal?.city?'Точный адрес не найден. Уточни название места.':'Точный адрес не найден. Уточни название места или город.'):
     status==='restart'?'Сервер SEYVEO работает в старой версии. Перезапусти его для поиска мест.':
     status==='error'?'Не удалось связаться с картой. Можно проверить адрес вручную.':
     status==='permission'?'Для поиска адреса нужно разрешение.':
@@ -379,7 +385,7 @@
    apply.addEventListener('click',()=>{
     const city=input.value.replace(/\s+/gu,' ').trim();
     if(!places.setPreferredCity(city))return;
-    proposal=places.extract(title.value,{city});query=proposal?.query||'';sourceQuery=query;
+    proposal=places.extract(phraseForPlace(),{city});query=proposal?.query||'';sourceQuery=query;
     request++;photoRequest++;place=null;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;status='idle';cityEditing=false;refining=false;
     render();void lookup();
    });
@@ -412,7 +418,7 @@
  function sync(){
   clearTimeout(searchTimer);
   closePhotoViewer();closeMapViewer();
-  const next=places.extract(title.value);
+  const next=places.extract(phraseForPlace());
   const nextQuery=next?.query||'';
   if(nextQuery!==sourceQuery){
    request++;photoRequest++;place=null;confirmed=false;choices=[];choicesExpanded=false;choicesNearby=false;status='idle';query=nextQuery;sourceQuery=nextQuery;refining=false;refineText='';cityEditing=false;
