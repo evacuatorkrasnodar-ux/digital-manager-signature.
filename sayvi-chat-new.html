@@ -5054,5 +5054,38 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
 <script src="assets/seyveo-chat-jump.js?v=2"></script>
 <script src="assets/seyveo-chat-paper-sheet.js?v=2"></script>
 <script src="assets/seyveo-writing-focus.js?v=1"></script>
+
+<script>
+/* Hand off locally recognized document text from Tasks to the existing Sayvi chat.
+   Never auto-send private content or imply the original photo was uploaded. */
+(()=>{
+ const params=new URLSearchParams(location.search);
+ if(params.get('attachmentHandoff')!=='1')return;
+ let payload=null;
+ try{payload=JSON.parse(sessionStorage.getItem('seyveo.sayvi.attachment-handoff.v1')||'null')}catch{}
+ if(!payload||Date.now()-Number(payload.time||0)>15*60*1000||typeof payload.text!=='string'){
+  params.delete('attachmentHandoff');history.replaceState(history.state,'',location.pathname+(params.size?'?'+params:'')+location.hash);return;
+ }
+ const introductions={
+  medical:'Сэйви, это распознанный текст рецепта или назначения. Помоги мне сверить лекарства, дозировки и время с оригиналом. Ничего не назначай и не создавай напоминания до моего подтверждения.',
+  schedule:'Сэйви, я сфотографировал расписание. Помоги проверить дни и время, затем предложи дела и напоминания.',
+  receipt:'Сэйви, это текст чека. Разбери сумму, дату и покупки, предложи категории расходов для Кошелька. Не записывай ничего без проверки.',
+  graph:'Сэйви, я сфотографировал график. Помоги проверить цифры, предложи, как его аккуратно перерисовать и сохранить в Документы.',
+  document:'Сэйви, помоги понять этот документ и предложи, что с ним сделать. Не выполняй действий без моего согласия.'
+ };
+ const draft=(introductions[payload.type]||introductions.document)+'\n\nФайл: '+String(payload.name||'фото').slice(0,100)+'\nРаспознанный текст (может содержать ошибки):\n'+payload.text.slice(0,1500);
+ let tries=0;
+ const ready=()=>{
+  const input=document.getElementById('sayviInput');
+  if(!input){if(++tries<45)setTimeout(ready,200);return}
+  if(input.value.trim()){return}
+  input.value=draft;input.dispatchEvent(new Event('input',{bubbles:true}));
+  try{sessionStorage.removeItem('seyveo.sayvi.attachment-handoff.v1')}catch{}
+  params.delete('attachmentHandoff');history.replaceState(history.state,'',location.pathname+(params.size?'?'+params:'')+location.hash);
+  input.focus({preventScroll:true});
+ };
+ ready();
+})();
+</script>
 </body>
 </html>
