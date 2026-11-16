@@ -30,14 +30,21 @@
  }
  function render(){
   if(!dialog.open)return;
-  const visible=Boolean(place||proposal);
-  panel.hidden=!visible;panel.replaceChildren();if(!visible)return;
+  // Location is part of the structured form even when Sayvi has not yet
+  // found a venue. Never display a fake address or map.
+  panel.hidden=false;panel.replaceChildren();
   const heading=node('div','sv-place-heading');
-  heading.append(node('strong','','Место встречи'));
+  heading.append(node('strong','','Место'));
   if(place)heading.append(node('span','','Найдено на карте'));
   panel.append(heading);
   const card=node('div','sv-place-card');panel.append(card);
-  if(place){
+  if(!place&&!proposal){
+   card.classList.add('is-empty');
+   const action=node('button','sv-place-empty-action');action.type='button';
+   action.append(node('strong','','Добавить место'),node('small','','Напиши название места или адрес в поле выше'));
+   action.addEventListener('click',()=>title.focus({preventScroll:true}));
+   card.append(action);
+  }else if(place){
    const copy=node('div','sv-place-copy');
    copy.append(node('strong','sv-place-name',place.name));
    copy.append(node('p','sv-place-address',place.address));
@@ -118,6 +125,8 @@
  }
  title.addEventListener('input',sync);
  title.addEventListener('blur',()=>{if(proposal&&status==='idle')lookup()});
+ const openObserver=new MutationObserver(()=>{if(dialog.open)sync()});
+ openObserver.observe(dialog,{attributes:true,attributeFilter:['open']});
  dialog.addEventListener('close',reset);
  window.SEYVEO_TASK_PLACE_EDITOR=Object.freeze({reset,load,placeForSave,lookup,sync});
 })();
