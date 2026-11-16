@@ -45,6 +45,18 @@
  announcement.setAttribute('aria-atomic','true');
  line.append(mark,content,actionRow,announcement);
  message.insertAdjacentElement('afterend',line);
+ // Position short thoughts relative to Sayvi's painted globe, not other text.
+ function positionThought(){
+  if(line.hidden||home.hidden)return;
+  const sphere=document.getElementById('orb');if(!sphere)return;
+  const top=Math.max(58,Math.round(sphere.getBoundingClientRect().top-home.getBoundingClientRect().top-line.getBoundingClientRect().height-16));
+  const value=top+'px';
+  if(line.style.getPropertyValue('--sv-thought-top')!==value)line.style.setProperty('--sv-thought-top',value);
+ }
+ const thoughtObserver=new ResizeObserver(()=>requestAnimationFrame(positionThought));
+ thoughtObserver.observe(line);
+ if(document.getElementById('orb'))thoughtObserver.observe(document.getElementById('orb'));
+ window.addEventListener('resize',positionThought);
 
  const HELLO_MS=3600;
  let ready=false,voicePhase='',voiceTimer=null;
@@ -213,6 +225,7 @@
  });
 
  function update(){
+  requestAnimationFrame(positionThought);
   const visible=ready&&homeVisible();
   const replyVisible=visible&&!!miniReply&&canDisplayReply();
   const idleVisible=!replyVisible&&visible&&!!idleHint&&quietHome();
