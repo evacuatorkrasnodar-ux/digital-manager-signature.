@@ -380,9 +380,10 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-popo
  position:absolute!important;z-index:14!important;right:16px!important;
  bottom:calc(var(--sv-task-float-bottom) + 48px)!important;
  display:block!important;box-sizing:border-box!important;
- width:min(calc(100% - 32px),360px)!important;margin:0!important;padding:13px 15px!important;
- border:1px solid #E7EAF0!important;border-radius:24px!important;
- background:#FFF!important;box-shadow:none!important;
+ width:min(calc(100% - 34px),324px)!important;margin:0!important;padding:11px 12px 12px!important;
+ border:var(--sv-task-field-rim)!important;border-radius:22px!important;
+ background:rgba(241,243,246,.97)!important;box-shadow:var(--sv-task-field-shadow),0 5px 18px rgba(61,70,83,.075)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(105%)!important;backdrop-filter:blur(14px) saturate(105%)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .personal-task-sheet.sv-task-keyboard-visible{
  --sv-task-float-bottom:calc(12px + var(--sv-task-keyboard-inset,0px));
@@ -798,21 +799,23 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-previe
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu{
  position:absolute!important;z-index:18!important;left:16px!important;
  bottom:calc(var(--sv-task-float-bottom) + 60px)!important;
- box-sizing:border-box!important;display:grid!important;width:min(272px,calc(100% - 32px))!important;
- padding:5px!important;border:1px solid #E1E4EC!important;border-radius:20px!important;
- background:#FFF!important;box-shadow:0 6px 22px #2A34401C!important;
+ box-sizing:border-box!important;display:grid!important;width:min(244px,calc(100% - 36px))!important;
+ padding:4px!important;border:var(--sv-task-field-rim)!important;border-radius:19px!important;
+ background:rgba(241,243,246,.97)!important;
+ box-shadow:var(--sv-task-field-shadow),0 5px 18px rgba(61,70,83,.075)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(105%)!important;backdrop-filter:blur(14px) saturate(105%)!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu button{
  display:flex!important;align-items:center!important;gap:11px!important;
- width:100%!important;min-height:48px!important;padding:9px 12px!important;
+ width:100%!important;min-height:44px!important;padding:8px 11px!important;
  text-align:left!important;border:0!important;border-radius:15px!important;
  background:transparent!important;color:#202329!important;
- font:560 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font:530 13.5px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu button + button{
- border-top:1px solid #E9EBF0!important;border-radius:0 0 15px 15px!important;
+ border-top:1px solid rgba(98,109,125,.12)!important;border-radius:0 0 15px 15px!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu svg{flex:none!important;width:20px!important;height:20px!important}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-camera-menu svg{flex:none!important;width:18px!important;height:18px!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-attachment-preview{
  display:grid!important;gap:7px!important;margin:3px 0 10px!important;min-width:0!important;
 }
@@ -881,20 +884,20 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar{
  padding:0!important;touch-action:pan-y;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-weekdays{
- padding:6px 0 8px!important;
+ padding:3px 0 5px!important;
  font:500 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  color:#8E939C!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days{
- grid-auto-rows:43px!important;align-items:stretch!important;justify-items:stretch!important;
+ grid-auto-rows:39px!important;align-items:stretch!important;justify-items:stretch!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > :is(button,.sv-new-task-empty-day){
- box-sizing:border-box!important;width:100%!important;min-width:0!important;height:43px!important;
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;height:39px!important;
  border-top:1px solid #E9ECF0!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button{
  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;
- gap:1px!important;margin:0!important;padding:5px 0 0!important;border-radius:0!important;
+ gap:1px!important;margin:0!important;padding:3px 0 0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
  color:#17191D!important;font:550 14px/1 system-ui!important;
 }
@@ -930,10 +933,10 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-cal-yellow{backgr
 @media(max-width:620px){
  html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar{
   display:flex!important;align-items:flex-end!important;justify-content:flex-start!important;
-  min-height:43px!important;padding:0 2px 8px!important;text-align:left!important;
+  min-height:35px!important;padding:0 2px 6px!important;text-align:left!important;
  }
  html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar strong{
-  font:650 25px/1.12 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+  font:620 21px/1.16 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
   letter-spacing:-.035em!important;text-align:left!important;
  }
  html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-month-bar button{
@@ -987,8 +990,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days
  font-size:14px!important;font-weight:600!important;letter-spacing:-.025em!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days .sv-task-cal-number{
- width:29px!important;height:29px!important;
- font:600 14px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ width:27px!important;height:27px!important;
+ font:580 13.5px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-selected .sv-task-cal-number{
  background:#111113!important;color:#fff!important;
