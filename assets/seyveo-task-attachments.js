@@ -104,7 +104,24 @@
     else report('Сэйви перенесла текст в поле. Проверь распознанные дела перед сохранением.');
     title.focus({preventScroll:true});
    });
-   suggestion.append(heading,hint,caution,use);preview.append(suggestion);
+   const graph=/(?:график|диаграмм|ось x|ось y|процент|выручк|показател)/iu.test(ocrSuggestion);
+   const receipt=/(?:кассовый чек|фискальн|итого|ндс|сумма покупки|оплата картой|чек №)/iu.test(ocrSuggestion);
+   const fileKind=medical?'medical':timetable?'schedule':receipt?'receipt':graph?'graph':'document';
+   const discuss=document.createElement('button');discuss.type='button';
+   discuss.textContent=medical?'Проверить с Сэйви':timetable?'Обсудить расписание':receipt?'Разобрать расходы':graph?'Оформить график':'Обсудить с Сэйви';
+   discuss.addEventListener('click',()=>{
+    // Private OCR text stays in same-tab sessionStorage, never in a URL.
+    // Chat displays a draft. No medical or financial action is executed automatically.
+    try{
+     sessionStorage.setItem('seyveo.sayvi.attachment-handoff.v1',JSON.stringify({
+      type:fileKind,text:ocrSuggestion.slice(0,2000),name:String(meta.name||'Вложение').slice(0,130),time:Date.now()
+     }));
+     window.location.assign('./sayvi-chat-new.html?attachmentHandoff=1');
+    }catch{report('Не удалось передать текст в чат. Скопируй его из предпросмотра вручную.')}
+   });
+   const actionHint=document.createElement('small');actionHint.className='sv-task-ocr-caution';
+   actionHint.textContent=medical?'Сначала сверь название, дозировку и время с оригиналом и врачебным назначением. Сэйви ничего не назначает.':receipt?'Сэйви предложит категории и суммы, но сохранит расходы только после твоей проверки.':graph?'Если цифры неразборчивы, Сэйви должна их уточнить.':'Сначала обсудим содержимое, потом выберем действие.';
+   suggestion.append(heading,hint,caution,use,discuss,actionHint);preview.append(suggestion);
   }
  }
  function reset(){
