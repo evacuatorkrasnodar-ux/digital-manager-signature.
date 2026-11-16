@@ -1,0 +1,39 @@
+/**
+ * Home cleanup regression contract. Run with:
+ * node --test scripts/home-cleanup.smoke.test.mjs
+ */
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {Script} from 'node:vm';
+
+const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
+
+test('Sayvi uses one constant size before and after the greeting',async()=>{
+ const css=await read('assets/seyveo-sayvi-handoff-demo.css');
+ const html=await read('index.html');
+ assert.match(css,/--sv-home-orb-size:clamp\(230px,68vw,315px\)/);
+ assert.equal(css.match(/width:var\(--sv-home-orb-size\)/g)?.length,2);
+ assert.equal(css.match(/height:var\(--sv-home-orb-size\)/g)?.length,4);
+ assert.doesNotMatch(html,/seyveo-home-conversation\.css/);
+});
+
+test('An undecided card reminder is available for iPhone screen taps',async()=>{
+ const [reminder,review]=await Promise.all([
+  read('assets/seyveo-home-calm.js'),
+  read('assets/seyveo-review-cards.js')
+ ]);
+ assert.match(review,/window\.SEYVEO_REVIEW_CARDS=Object\.freeze\(\{count\}\)/);
+ assert.match(reminder,/lastCount=Math\.max\(0,Number\(window\.SEYVEO_REVIEW_CARDS\?\.count\?\.\(\)\)/);
+ assert.match(reminder,/window\.addEventListener\('pointerdown',wakeOnBlank/);
+ assert.match(reminder,/window\.addEventListener\('touchstart',wakeOnBlank/);
+ assert.doesNotMatch(review,/svReviewEntry|sv-review-entry|positionEntry/);
+ new Script(reminder);new Script(review);
+});
+
+test('Review page has no obsolete button styles or geometry observers',async()=>{
+ const css=await read('assets/seyveo-review-cards.css');
+ assert.doesNotMatch(css,/sv-review-entry|svReviewEntry|sv-home-card-sphere/);
+ assert.match(css,/\.sv-review-room\{/);
+ assert.match(css,/#homePage #svHomeReviewText\{/);
+});
