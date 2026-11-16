@@ -24,6 +24,14 @@
   // produces a grammatically plausible but wrong replacement.
   const companion=String(phrase).match(/(?:встретиться|встреча|увидеться|поговорить)\s+(?:с|со)\s+([а-яё]{3,30})(?=$|[\s,.!?])/iu);
   if(companion&&!items.some(item=>new RegExp('(?:^|[^а-яё])'+companion[1]+'(?=$|[^а-яё])','iu').test(item.title)))return false;
+  // Names are user data, not spelling suggestions. In particular,
+  // «позвонить Мише» must never turn into «позвонить Михаю».
+  const contactCalls=[...String(phrase).matchAll(/(?:позвонить|набрать|написать|отправить\s+сообщение|созвониться\s+с)\s+([а-яё]{3,30})(?=$|[\s,.!?;])/giu)];
+  for(const contact of contactCalls){
+   const written=contact[1].toLocaleLowerCase('ru-RU');
+   const preserved=items.some(item=>plain(item.title).split(' ').includes(written));
+   if(!preserved)return false;
+  }
   return true;
  }
  const api=Object.freeze({accept});
