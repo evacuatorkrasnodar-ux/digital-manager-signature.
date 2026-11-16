@@ -54,6 +54,8 @@ assert.match(brief,/Number\(source\.getUpdatedAt\?\.\(\)\)\|\|0/,
  'Weather reads live feed freshness without depending on Safari localStorage');
 assert.match(feed,/getUpdatedAt:\(\)=>updatedAt/,
  'Source exposes validated refresh timestamp to the Home weather line');
+assert.match(feed,/readCache\(\);paint\(\);\s*\/\/ Home's weather row[\s\S]*?window\.dispatchEvent\(new Event\('seyveo:weather-updated'\)\);\s*refresh\(\);/,
+ 'Cached forecast announces its availability before the next network refresh');
 assert.match(dockCss,/--sv-indicator-depth:0px;\s*--sv-indicator-scale:1;\s*box-shadow:none!important/,
  'Dock selection does not sink on a tap');
 assert.match(dockCss,/> #navManage#navManage:active\{\s*transform:none!important;\s*box-shadow:none!important/,

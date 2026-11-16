@@ -206,7 +206,12 @@
   return inFlight?inFlight.then(()=>refresh(true)):refresh(true);
  }
  function init(){
-  readCache();paint();refresh();
+  readCache();paint();
+  // Home's weather row subscribes before DOMContentLoaded, while the feed
+  // cache is hydrated here. Notify it even when refresh() can return early
+  // because the cached forecast is still fresh.
+  window.dispatchEvent(new Event('seyveo:weather-updated'));
+  refresh();
   document.addEventListener('seyveo:agenda-rendered',()=>{paint();refresh();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
   document.addEventListener('pointerdown',event=>{
