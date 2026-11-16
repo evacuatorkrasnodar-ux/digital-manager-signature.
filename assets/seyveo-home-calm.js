@@ -22,10 +22,11 @@
   !home.querySelector('input:focus,textarea:focus')&&
   !document.querySelector('dialog[open]');
  function updateDetails(){
-  calmDetails.hidden=!lastCount||!root.classList.contains('sv-home-greeting-expired')||
+  calmDetails.hidden=!root.classList.contains('sv-home-greeting-expired')||
     !root.classList.contains('sv-home-info-awake')||!isHome();
+  calmDetails.disabled=!lastCount;
   const form=lastCount%10===1&&lastCount%100!==11?'карточка':lastCount%10>=2&&lastCount%10<=4&&(lastCount%100<12||lastCount%100>14)?'карточки':'карточек';
-  const message=`Есть ${lastCount} ${form} для разбора  ›`;
+  const message=lastCount?`Есть ${lastCount} ${form} для разбора  ›`:'Пока нет карточек для разбора';
   if(calmDetails.textContent!==message)calmDetails.textContent=message;
  }
  function calm(on){
