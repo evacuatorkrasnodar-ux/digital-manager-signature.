@@ -151,6 +151,7 @@
   if(!Number.isFinite(lat)||Math.abs(lat)>90||!Number.isFinite(lon)||Math.abs(lon)>180)return null;
   const name=String(value.name||'').slice(0,110).trim(),address=String(value.address||'').slice(0,250).trim();
   if(!name||!address)return null;
+  const fromYandex=value.source==='yandex';
   const wikidata=/^Q[1-9]\d{0,11}$/.test(String(value.wikidata||''))?value.wikidata:'';
   const verified=value.source==='known-address';
   const sourceUrl=verified&&/^https:\/\/vkusnoitochka\.ru\//.test(value.sourceUrl||'')?value.sourceUrl:'';
@@ -163,10 +164,13 @@
   const photoAuthor=photo&&typeof value.photoAuthor==='string'?value.photoAuthor.replace(/\s+/gu,' ').trim().slice(0,120):'';
   const photoLicense=photo&&typeof value.photoLicense==='string'?value.photoLicense.replace(/\s+/gu,' ').trim().slice(0,80):'';
   const photoLicenseURL=photo?safeLicenseURL(value.photoLicenseURL):'';
-  const openingHours=typeof value.openingHours==='string'&&/^[\p{L}\p{N}\s:;,+\-/]+$/u.test(value.openingHours.trim())?
-   value.openingHours.trim().slice(0,95):'';
-  return {name,address,lat,lon,source:verified?'known-address':'openstreetmap',
-   sourceUrl,precision:verified?'building':'point',photo,wikidata,photoAuthor,photoLicense,photoLicenseURL,openingHours};
+  const openingHours=typeof value.openingHours==='string'&&/^[\p{L}\p{N}\s:;,+\-/—–().]+$/u.test(value.openingHours.trim())?
+   value.openingHours.trim().slice(0,120):'';
+  const websiteURL=fromYandex&&typeof value.websiteURL==='string'&&
+   /^https?:\/\/[^\s<>]{4,230}$/iu.test(value.websiteURL)?value.websiteURL:'';
+  return {name,address,lat,lon,source:verified?'known-address':fromYandex?'yandex':'openstreetmap',
+   sourceUrl,precision:verified?'building':'point',photo,wikidata,photoAuthor,photoLicense,photoLicenseURL,
+   openingHours,websiteURL};
  }
  function cleanPhoto(value){
   if(typeof value!=='string')return '';
@@ -280,6 +284,17 @@
   if(!proposal.city&&!proposal.explicitAddress)origin=await locationPromise;
   if(!proposal.city&&!proposal.explicitAddress&&!origin)return {cityRequired:true};
   const localMatches=verifiedCandidates(proposal);
+  // Prefer named, address-aware Yandex organizations when the owner has an
+  // active business-search key. An exact curated location remains usable even
+  // during key activation or a temporary API outage.
+  if(!localMatches.length&&!proposal.explicitAddress&&root?.SEYVEO_YANDEX_PLACES?.lookup){
+   const yandex=await root.SEYVEO_YANDEX_PLACES.lookup(proposal);
+   if(yandex){
+    const candidates=yandex.ambiguous?yandex.candidates:[yandex];
+    const safe=candidates.map(cleanPlace).filter(Boolean);
+    if(safe.length)return orderByLocation(safe.length>1?{ambiguous:true,candidates:safe}:safe[0],await locationPromise);
+   }
+  }
   const key=encodeURIComponent(proposal.query.toLocaleLowerCase('ru-RU'));
   const cacheable=Boolean(proposal.city||proposal.explicitAddress);
   const cached=cacheable?cacheGet(key):undefined;

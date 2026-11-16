@@ -92,6 +92,28 @@ test('a meeting category can find real venues without making up a restaurant nam
  assert(value.candidates.every(item=>item.name.includes('Ресторан')));
 });
 
+test('an available Yandex business result takes priority without another OSM request',async()=>{
+ let nominatimCalls=0,providerCalls=0;
+ const window={
+  location:{hostname:'demo.github.io',href:'https://demo.github.io/'},
+  localStorage:{getItem:()=>null,setItem:()=>{}},
+  SEYVEO_YANDEX_PLACES:{lookup:async proposal=>{
+   providerCalls++;
+   assert.equal(proposal.city,'Краснодар');
+   return {name:'Кофейня Ромашка',address:'Краснодар, улица Красная, 5',
+    lat:45.05,lon:38.97,source:'yandex',openingHours:'ежедневно, 10:00–21:00'};
+  }},
+  fetch:async()=>{nominatimCalls++;throw Error('Unexpected map call')}
+ };
+ vm.runInNewContext(source,{window,URL,setTimeout,encodeURIComponent});
+ const found=await window.SEYVEO_TASK_PLACES.lookup({query:'кофейня Ромашка, Краснодар',
+  city:'Краснодар',kind:'кофейня',venueName:'Ромашка'});
+ assert.equal(found.source,'yandex');
+ assert.match(found.openingHours,/10:00–21:00/);
+ assert.equal(providerCalls,1);
+ assert.equal(nominatimCalls,0);
+});
+
 test('searches within the chosen home city and excludes businesses from other cities',async()=>{
  const urls=[];
  const window={

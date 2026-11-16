@@ -130,17 +130,22 @@
    }
    const link=document.createElement('a');link.className='sv-place-map';
    link.href=places.fullMapURL(place);link.target='_blank';link.rel='noopener noreferrer';
-   link.setAttribute('aria-label','Открыть место на OpenStreetMap');
+   link.setAttribute('aria-label',place.source==='yandex'?'Открыть место в Яндекс Картах':'Открыть место на OpenStreetMap');
    const narrow=window.matchMedia('(max-width:370px)').matches;
-   for(const tile of places.mapTiles(place,narrow?96:112,photoURL?(narrow?96:112):(narrow?88:96))){
-    const img=document.createElement('img');img.className='sv-place-map-tile';img.loading='lazy';
-    img.alt='';img.setAttribute('aria-hidden','true');img.decoding='async';
-    // OSM tile servers require an identifying Referer; the page-wide private
-    // no-referrer policy was causing an "Access blocked" picture in the map.
-    img.referrerPolicy='strict-origin-when-cross-origin';img.src=tile.url;
-    img.style.left=tile.left+'px';img.style.top=tile.top+'px';link.append(img);
+   if(place.source==='yandex'){
+    // Keep Yandex business data on the Yandex directory, not on OSM tiles.
+    link.href=places.yandexSearchURL(place.name+' '+place.address);
+    link.className+=' sv-place-map-yandex';
+    link.append(node('span','sv-place-map-yandex-label','Яндекс\nКарты ↗'));
+   }else{
+    for(const tile of places.mapTiles(place,narrow?96:112,photoURL?(narrow?96:112):(narrow?88:96))){
+     const img=document.createElement('img');img.className='sv-place-map-tile';img.loading='lazy';
+     img.alt='';img.setAttribute('aria-hidden','true');img.decoding='async';
+     img.referrerPolicy='strict-origin-when-cross-origin';img.src=tile.url;
+     img.style.left=tile.left+'px';img.style.top=tile.top+'px';link.append(img);
+    }
+    link.append(node('span','sv-place-map-pin','●'));
    }
-   link.append(node('span','sv-place-map-pin','●'));
    visual.append(link);card.append(visual);
    if(!confirmed){
     const actions=node('div','sv-place-confirm-actions');
@@ -162,6 +167,10 @@
      strip.append(menu);
     }
     panel.append(strip);
+   }
+   if(place.websiteURL){
+    const website=node('a','sv-place-manual-map','Сайт заведения ↗');
+    website.href=place.websiteURL;website.target='_blank';website.rel='noopener noreferrer';panel.append(website);
    }
    // Photo galleries, reviews and hours belong to the verified place listing.
    // Open Yandex's directory on an explicit tap; do not scrape it or claim

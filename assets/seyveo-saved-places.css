@@ -18,3 +18,5 @@ dialog#personalTaskDialog .sv-travel-saved-origins button{min-height:37px;border
 dialog#personalTaskDialog .sv-place-venue-details{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;padding:5px 5px 1px;font-size:12px}
 dialog#personalTaskDialog .sv-place-venue-details .sv-place-hours{color:#667181}
 dialog#personalTaskDialog .sv-place-venue-details .sv-place-menu-link{color:#456c9f;font-weight:600;text-decoration:none}
+dialog#personalTaskDialog .sv-place-map.sv-place-map-yandex{display:grid!important;place-items:center!important;background:#f2f4f7!important;text-align:center!important;color:#3e5169!important;text-decoration:none!important}
+dialog#personalTaskDialog .sv-place-map-yandex-label{white-space:pre-line;font:600 12px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;letter-spacing:-.01em}
