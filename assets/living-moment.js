@@ -20,6 +20,7 @@ let pendingUpdate=false;
 // decisions always take precedence; these examples never enter task storage.
 const previewArmed=true;
 let previewSeen=false,previewRearmAt=0;
+let previewDecided=false;
 let previewSuspended=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -50,7 +51,9 @@ function resetSpace(){
  tip.textContent='';
 }
 function rest(){
+ const rearm=mode==='preview'&&!previewDecided&&!previewRearmAt;
  cancel();mode='idle';key='';readingUntil=0;previewSuspended=false;
+ if(rearm)previewSeen=false;
  resetSpace();focus(false);
  clearRecommendation();
  scheduleRefresh();
@@ -1107,6 +1110,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  }
  function finishPreviewItem({quick=false}={}){
   if(real||morphLocked||mode!=='preview'||!remaining.includes(shown))return;
+  previewDecided=true;
   morphLocked=true;
   open.disabled=true;execute.disabled=true;
   scene.classList.add('lm-scene--changing');
@@ -1255,6 +1259,7 @@ function startPreview(){
  if(!available()||editing()||dueTasks().length||dynamic.querySelector('[data-owner-advice]'))return false;
  if(mode!=='idle')rest();
  mode='preview';key='preview';previewSeen=true;
+ previewDecided=false;
  dynamic.hidden=true;
  if(!buildExamples()){previewSeen=true;rest();return false}
  tip.textContent='';
