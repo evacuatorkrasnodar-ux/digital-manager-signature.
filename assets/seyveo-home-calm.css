@@ -19,3 +19,13 @@
  transition:opacity .36s ease,visibility .36s ease;
 }
 #homePage #svHomeCalmDetails[hidden]{display:none!important}
+/* Slightly fuller original Sayvi on phones, never an animated size mode. */
+@media(max-width:600px){
+ :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orbCluster{
+  height:clamp(230px,68vw,300px)!important;
+ }
+ :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orb{
+  width:clamp(230px,68vw,300px)!important;
+  height:clamp(230px,68vw,300px)!important;
+ }
+}
