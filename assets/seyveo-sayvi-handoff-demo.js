@@ -1031,7 +1031,7 @@
       emptyRouteLeaving=true;
       if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
       root.classList.add('sv-home-empty-sphere-leaving','sv-home-empty-route-exit');
-      emptyRouteTimer=setTimeout(settle,720);
+      emptyRouteTimer=setTimeout(settle,620);
       return;
     }
     if(!animate||reduceMotion()||home.hidden||typeof orb.animate!=='function'){
@@ -1058,13 +1058,20 @@
   }
   function syncEmptySphere(){
     emptySyncTimer=0;
-    // If Back is tapped during the dock expansion, return to one original orb.
+    // Rapid Back used to teleport the full-size sphere into position while
+    // the dock was still expanding. Reverse that handoff properly: restore
+    // the miniature, let Home settle one frame, then fly the ORIGINAL orb out.
     if(emptyRouteLeaving&&!home.hidden&&
       (!location.hash||location.hash==='#home')&&!hasHomeCards()){
       clearTimeout(emptyRouteTimer);emptyRouteTimer=0;emptyRouteLeaving=false;
-      emptyLeaving=false;emptySphere=true;
-      root.classList.remove('sv-home-empty-route-exit','sv-home-empty-sphere-leaving');
-      if(emptyOrbCluster){emptyOrbCluster.inert=false;emptyOrbCluster.removeAttribute('aria-hidden');}
+      emptyLeaving=false;emptySphere=false;
+      ++emptyEpoch;
+      restoreEmptyMotion();
+      clearEmptyArrival();
+      root.classList.remove('sv-home-empty-route-exit','sv-home-empty-sphere-leaving',
+        'sv-home-empty-sphere','sv-home-empty-arrived');
+      if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
+      requestAnimationFrame(()=>enterEmptySphere());
       return;
     }
     if(canShowEmptySphere()){enterEmptySphere();return;}
@@ -1073,6 +1080,11 @@
     leaveEmptySphere({animate:stillHome});
   }
   function scheduleEmptySphereSync(delay=260){
+    // Route changes take priority over the normal card-observer debounce.
+    // The pearl dock must begin opening promptly, ahead of the mini orb.
+    if(emptySphere&&!document.hidden&&
+      (home.hidden||(location.hash&&location.hash!=='#home')))
+      delay=Math.min(delay,32);
     clearTimeout(emptySyncTimer);
     emptySyncTimer=setTimeout(syncEmptySphere,delay);
   }
