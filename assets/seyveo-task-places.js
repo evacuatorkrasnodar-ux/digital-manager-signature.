@@ -264,14 +264,14 @@
  function cacheGet(key){
   const local=cache.get(key);if(local&&Date.now()-local.at<30*86400000)return local.value;
   try{
-   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v6:'+key)||'null');
+   const stored=JSON.parse(root.localStorage.getItem('seyveo-place:v7:'+key)||'null');
    if(stored&&Date.now()-stored.at<30*86400000){cache.set(key,stored);return stored.value;}
   }catch{}
   return undefined;
  }
  function cacheSet(key,value){
   const record={at:Date.now(),value};cache.set(key,record);
-  try{root.localStorage.setItem('seyveo-place:v6:'+key,JSON.stringify(record))}catch{}
+  try{root.localStorage.setItem('seyveo-place:v7:'+key,JSON.stringify(record))}catch{}
  }
  async function lookup(proposal){
   if(!proposal||!proposal.query||proposal.query.length>140)return null;
@@ -284,15 +284,20 @@
   if(!proposal.city&&!proposal.explicitAddress)origin=await locationPromise;
   if(!proposal.city&&!proposal.explicitAddress&&!origin)return {cityRequired:true};
   const localMatches=verifiedCandidates(proposal);
+  // A chain name without a branch, street or landmark is a request for
+  // options, not permission to assign our one curated branch automatically.
+  // When Yandex is available, search its wider city directory first; retain
+  // the curated branch as a selectable fallback while the API is unavailable.
+  const needsChoice=Boolean(localMatches.length&&proposal.venueName&&!proposal.explicitAddress&&!addressTokens(proposal).length);
   // Prefer named, address-aware Yandex organizations when the owner has an
   // active business-search key. An exact curated location remains usable even
   // during key activation or a temporary API outage.
-  if(!localMatches.length&&!proposal.explicitAddress&&root?.SEYVEO_YANDEX_PLACES?.lookup){
+  if((!localMatches.length||needsChoice)&&!proposal.explicitAddress&&root?.SEYVEO_YANDEX_PLACES?.lookup){
    const yandex=await root.SEYVEO_YANDEX_PLACES.lookup(proposal);
    if(yandex){
     const candidates=yandex.ambiguous?yandex.candidates:[yandex];
     const safe=candidates.map(cleanPlace).filter(Boolean);
-    if(safe.length)return orderByLocation(safe.length>1?{ambiguous:true,candidates:safe}:safe[0],await locationPromise);
+    if(safe.length)return orderByLocation(needsChoice||safe.length>1?{ambiguous:true,candidates:safe}:safe[0],await locationPromise);
    }
   }
   const key=encodeURIComponent(proposal.query.toLocaleLowerCase('ru-RU'));
@@ -355,7 +360,8 @@
    if(candidate&&(!origin||proposal.city||distanceKm(candidate,origin)<=50)&&
     !candidates.some(item=>item.name===candidate.name&&item.address===candidate.address))candidates.push(candidate);
   }
-  const value=candidates.length>1?{ambiguous:true,candidates:candidates.slice(0,16)}:candidates[0]||null;
+  const value=candidates.length?(needsChoice||candidates.length>1?
+   {ambiguous:true,candidates:candidates.slice(0,16)}:candidates[0]):null;
   if(cacheable)cacheSet(key,value);
   return orderByLocation(value,origin)||(!proposal.city&&origin?{cityRequired:true}:null);
  }

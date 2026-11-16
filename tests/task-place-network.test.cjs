@@ -44,6 +44,18 @@ test('the known shopping-mall branch still resolves when the map service is offl
  assert.match(found.address,/Дзержинского, 100/);
 });
 
+test('a chain name without a branch stays a choice, even when only one known place is available',async()=>{
+ const window={location:{hostname:'demo.github.io',href:'https://demo.github.io/'},
+  localStorage:{getItem:()=>null,setItem:()=>{}},fetch:async()=>{throw Error('offline')}};
+ vm.runInNewContext(source,{window,URL,setTimeout,encodeURIComponent});
+ const proposal=window.SEYVEO_TASK_PLACES.extract('Завтра в 18 встреча с Романом в кафе Вкусно и точка',{city:'Краснодар'});
+ assert.equal(proposal.locationHint,'');
+ const options=await window.SEYVEO_TASK_PLACES.lookup(proposal);
+ assert.equal(options.ambiguous,true,'the user must select a specific branch');
+ assert.equal(options.candidates.length,1);
+ assert.match(options.candidates[0].name,/Красная Площадь/);
+});
+
 test('compact map shows the surrounding streets rather than only the mall roof',()=>{
  const places=require('../assets/seyveo-task-places.js');
  const thumbnails=places.mapTiles({name:'ТЦ Красная Площадь',address:'Дзержинского, 100 · Краснодар',lat:45.10221,lon:38.983892},112,96);
@@ -112,6 +124,26 @@ test('an available Yandex business result takes priority without another OSM req
  assert.match(found.openingHours,/10:00–21:00/);
  assert.equal(providerCalls,1);
  assert.equal(nominatimCalls,0);
+});
+
+test('an unqualified chain asks Yandex for city-wide branches before the local example',async()=>{
+ let providerCalls=0,nominatimCalls=0;
+ const window={location:{hostname:'demo.github.io',href:'https://demo.github.io/'},
+  localStorage:{getItem:()=>null,setItem:()=>{}},
+  SEYVEO_YANDEX_PLACES:{lookup:async proposal=>{
+   providerCalls++;
+   assert.equal(proposal.locationHint,'');
+   return {name:'Вкусно — и точка',address:'Краснодар, ул. Красная, 1',
+    lat:45.05,lon:38.97,source:'yandex'};
+  }},fetch:async()=>{nominatimCalls++;throw Error('unexpected fallback')}};
+ vm.runInNewContext(source,{window,URL,setTimeout,encodeURIComponent});
+ const proposal=window.SEYVEO_TASK_PLACES.extract('Завтра встреча в кафе Вкусно и точка',{city:'Краснодар'});
+ const options=await window.SEYVEO_TASK_PLACES.lookup(proposal);
+ assert.equal(providerCalls,1);
+ assert.equal(nominatimCalls,0);
+ assert.equal(options.ambiguous,true);
+ assert.equal(options.candidates.length,1);
+ assert.match(options.candidates[0].address,/Красная, 1/);
 });
 
 test('searches within the chosen home city and excludes businesses from other cities',async()=>{
