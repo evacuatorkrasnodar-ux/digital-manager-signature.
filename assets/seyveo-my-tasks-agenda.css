@@ -397,6 +397,11 @@
   flex:0 0 18.3486%;width:18.3486%;
   min-height:clamp(116px,32vw,140px);
  }
+ /* The handle belongs under day three, not under the viewport midpoint now
+    that five and almost half of the sixth day are visible. */
+ #tasksPage #svTasksDateNav .sv-agenda-handle{
+  transform:translateX(-5.5vw);
+ }
  /* The chosen day opens like a slim page: depth moves to whichever date is
     tapped, without shifting the grid or changing today's blue circle. */
  :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day::after{
