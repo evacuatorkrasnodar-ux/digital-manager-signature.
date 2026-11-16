@@ -4522,7 +4522,33 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
    if(active===controller){active=null;updateControls()}
   }
  }
+ function localWalletAnswer(question){
+  const q=String(question||'').toLowerCase();
+  if(!/(сколько|покажи|посчитай|итого)/u.test(q)||!/(потрат|расход|доход|кофе|зарплат|остаток)/u.test(q))return null;
+  let rows=[];try{const v=JSON.parse(localStorage.getItem('seyveo-personal-wallet-v1')||'[]');if(Array.isArray(v))rows=v;}catch{}
+  const now=new Date();let year=now.getFullYear(),month=now.getMonth();
+  if(/прошл.{0,4} месяц/u.test(q)){month--;if(month<0){month=11;year--;}}
+  const names=['январ','феврал','март','апрел','ма[йяе]','июн','июл','август','сентябр','октябр','ноябр','декабр'];
+  for(let i=0;i<12;i++)if(new RegExp(names[i]).test(q)){month=i;break;}
+  const prefix=year+'-'+String(month+1).padStart(2,'0');
+  const money=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n)+' ₽';
+  if(/остаток/u.test(q)){const n=rows.reduce((a,x)=>a+(x.kind==='income'?Number(x.amount||0):-Number(x.amount||0)),0);return 'По твоим записям в Кошельке осталось '+money(n)+'. Это не банковский баланс: незаписанные покупки и начальная сумма не учтены.';}
+  const coffee=/кофе|капучино|латте|американо|эспрессо/u.test(q),income=/доход|зарплат/u.test(q);
+  const found=rows.filter(x=>String(x.date||'').startsWith(prefix)&&(income?x.kind==='income':x.kind==='expense'&&(!coffee||x.category==='Кофе'||/кофе|латте|капучино/i.test(x.title||''))));
+  const amount=found.reduce((a,x)=>a+Number(x.amount||0),0);
+  const label=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(new Date(year,month,1));
+  return 'За '+label+(income?' доходы составили ':coffee?' на кофе потрачено ':' расходы составили ')+money(amount)+'. Записей: '+found.length+'. Считаю только операции, сохранённые в SEYVEO Кошельке.';
+ }
  async function ask(question,options={}){
+  if(!options.skipUser&&!options.attachments?.length){
+   const walletReply=localWalletAnswer(question);
+   if(walletReply){
+    const id=++sequence;append('user','user-'+id,options.displayMessage??question,true);append('assistant','reply-'+id,walletReply);
+    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:walletReply.slice(0,450)});
+    if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+    return;
+   }
+  }
   if(!options.skipUser&&!options.attachments?.length){
    const newTask=window.SEYVEO_TASK_HANDOFF?.extract?.(question);
    const meeting=window.SEYVEO_TASK_HANDOFF?.extractMeeting?.(question);
