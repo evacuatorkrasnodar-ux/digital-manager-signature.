@@ -1026,7 +1026,8 @@
     // A page transition needs a shorter coordinated dock expansion and mini
     // fade-in, not a second, backwards flight of the big Home sphere.
     const routeExit=!animate&&!reduceMotion()&&!document.hidden&&
-      (home.hidden||(location.hash&&location.hash!=='#home'));
+      (home.hidden||(location.hash&&location.hash!=='#home')||
+       !!document.querySelector('dialog[open]'));
     if(routeExit){
       emptyRouteLeaving=true;
       if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
@@ -1076,14 +1077,16 @@
     }
     if(canShowEmptySphere()){enterEmptySphere();return;}
     const stillHome=!home.hidden&&(!location.hash||location.hash==='#home')&&
-      !root.classList.contains('seyveo-conversation')&&!document.hidden;
+      !root.classList.contains('seyveo-conversation')&&!document.hidden&&
+      !document.querySelector('dialog[open]');
     leaveEmptySphere({animate:stillHome});
   }
   function scheduleEmptySphereSync(delay=260){
     // Route changes take priority over the normal card-observer debounce.
     // The pearl dock must begin opening promptly, ahead of the mini orb.
     if(emptySphere&&!document.hidden&&
-      (home.hidden||(location.hash&&location.hash!=='#home')))
+      (home.hidden||(location.hash&&location.hash!=='#home')||
+       !!document.querySelector('dialog[open]')))
       delay=Math.min(delay,32);
     clearTimeout(emptySyncTimer);
     emptySyncTimer=setTimeout(syncEmptySphere,delay);
