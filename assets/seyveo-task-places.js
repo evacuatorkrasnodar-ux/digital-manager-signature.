@@ -92,12 +92,20 @@
   }
   const kind=KIND_FORMS[venue[1].toLocaleLowerCase('ru-RU')];
   let name=normalize(venue[2]);
-  const qualifier=name.match(/\s+(?=(?:тц|трц|торговый\s+центр|мегацентр|ул\.?|улица|на\s+(?:улице|ул\.?|дзержинского)|это\s+адрес|по\s+адресу)(?:\s|$))/iu);
+  const qualifier=name.match(/\s+(?=(?:(?:в|во)\s+)?(?:тц|трц|торговый\s+центр|торговом\s+центре|мегацентр|ул\.?|улица|на\s+(?:улице|ул\.?|дзержинского)|это\s+адрес|по\s+адресу)(?:\s|$))/iu);
   let locationHint=qualifier?name.slice(qualifier.index).trim():'';
   if(qualifier)name=name.slice(0,qualifier.index).trim();
   if(!locationHint&&/[»"]$/.test(venue[2])){
-   const tail=phrase.slice(venue.index+venue[0].length).match(/^\s*,?\s*((?:в\s+)?(?:тц|трц|торговый\s+центр|мегацентр|на\s+улице|на\s+ул\.?|улица|ул\.?)\s+[^,.!?\n]{3,90})/iu);
+   const tail=phrase.slice(venue.index+venue[0].length).match(/^\s*,?\s*((?:(?:в|во)\s+)?(?:тц|трц|торговый\s+центр|торговом\s+центре|мегацентр|на\s+улице|на\s+ул\.?|улица|ул\.?)\s+[^,.!?\n]{3,90})/iu);
    if(tail)locationHint=normalize(tail[1]);
+  }
+  if(!locationHint){
+   // "кафе Вкусно и точка, Красная Площадь" is a common short form.
+   // Only accept a known branch landmark here; a comma can also separate
+   // unrelated tasks, which must never become part of the location.
+   const suffix=phrase.slice(venue.index+venue[0].length).match(/^\s*,\s*([^,.!?\n]{4,75})/u);
+   if(suffix&&VERIFIED_VENUES.some(row=>row.keywords.some(word=>
+    searchText(suffix[1]).includes(searchText(word)))))locationHint=normalize(suffix[1]);
   }
   // People frequently finish a venue phrase with an unmarked city, e.g.
   // "кафе вкусно и точка краснодар". Never send "краснодар" as a brand word.
@@ -108,6 +116,23 @@
   }
   if(!/^[«"]/.test(venue[2])){
    name=name.split(/\s+(?:сегодня|завтра|послезавтра|в\s+(?:понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье|\d{1,2}(?::\d{2})?|городе|Краснодаре|Москве|Сочи|Казани)|на\s+\d|по\s+адресу|с\s+[А-ЯЁ])(?=$|[\s,.!?])/iu)[0].trim();
+  }
+  // The person may write a branch landmark directly after the chain name:
+  // "Вкусно и точка Красная Площадь", without saying "ТРЦ". A known exact
+  // business/landmark pair is a location hint, not part of the brand.
+  // We do not guess unknown brands or new addresses from arbitrary words.
+  const chain=name.match(/^(вкусно\s+(?:[—–-]\s*)?и\s+точка)(?:\s+(.+))?$/iu);
+  if(chain){
+   const addition=normalize(String(chain[2]||'').replace(/^(?:(?:добавил[аи]?|уточн[ьи]л[аи]?|это|в|во|на)\s+)+/iu,''));
+   const venueKey=searchText(chain[1]);
+   const branchHint=[locationHint,addition].filter(Boolean).join(' ');
+   const exactBranch=branchHint&&VERIFIED_VENUES.find(row=>row.venue===venueKey&&
+    row.keywords.some(word=>searchText(branchHint).includes(searchText(word))));
+   if(exactBranch){
+    locationHint=locationHint||addition;
+    name=chain[1];
+    if(!city)city=exactBranch.city;
+   }
   }
   if(name.length<2||/^(?:кем|ним|ней|другом|подругой|коллегой|анн[а-яё]*|лен[а-яё]*|друг[а-яё]*)$/iu.test(name))return null;
   const searchName=name;

@@ -14,6 +14,36 @@ test('Yandex Maps handoff passes only the place query after a user click',()=>{
  assert.equal(places.yandexSearchURL(''),'');
 });
 
+test('a shopping-mall landmark qualifies a familiar restaurant, not its brand',async()=>{
+ const places=require('../assets/seyveo-task-places.js');
+ const examples=[
+  'Завтра в 18 встреча с Романом в кафе Вкусно и точка Красная Площадь',
+  'Завтра в 18 встреча с Романом в кафе Вкусно и точка добавил Красная Площадь',
+  'Завтра в 18 встреча с Романом в кафе Вкусно и точка, Красная Площадь',
+  'Завтра в 18 встреча с Романом в кафе Вкусно и точка в ТРЦ Красная Площадь',
+  'Завтра в 18 встреча с Романом в кафе Вкусно и точка на Дзержинского 100'
+ ];
+ for(const phrase of examples){
+  const info=places.extract(phrase);
+  assert.equal(info?.venueName,'Вкусно — и точка',phrase);
+  assert.equal(info.city,'Краснодар',phrase);
+  assert.match(info.locationHint,/Красная Площадь|Дзержинского 100/,phrase);
+  assert(!/Роман|встреча|18/.test(info.query),'private task text must not enter a place lookup');
+ }
+ const unknown=places.extract('Завтра встреча в кафе Вкусно и точка на Тверской');
+ assert.notEqual(unknown?.city,'Краснодар','an unverified branch should not be moved to Krasnodar');
+});
+
+test('the known shopping-mall branch still resolves when the map service is offline',async()=>{
+ const window={location:{hostname:'example.github.io',href:'https://example.github.io/'},
+  localStorage:{getItem:()=>null,setItem:()=>{}},fetch:async()=>{throw Error('offline')}};
+ vm.runInNewContext(source,{window,URL,setTimeout,encodeURIComponent});
+ const proposed=window.SEYVEO_TASK_PLACES.extract('Завтра в 18 встреча с Романом в кафе Вкусно и точка Красная Площадь');
+ const found=await window.SEYVEO_TASK_PLACES.lookup(proposed);
+ assert.equal(found.name,'Вкусно — и точка · ТРЦ «Красная Площадь»');
+ assert.match(found.address,/Дзержинского, 100/);
+});
+
 test('compact map shows the surrounding streets rather than only the mall roof',()=>{
  const places=require('../assets/seyveo-task-places.js');
  const thumbnails=places.mapTiles({name:'ТЦ Красная Площадь',address:'Дзержинского, 100 · Краснодар',lat:45.10221,lon:38.983892},112,96);
