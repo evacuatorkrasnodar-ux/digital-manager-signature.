@@ -102,6 +102,7 @@
   original.clear();
   document.documentElement.classList.remove('sv-review-open');
   room.hidden=true;
+  window.dispatchEvent(new Event('seyveo:review-closed'));
   update();
   if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
  }
