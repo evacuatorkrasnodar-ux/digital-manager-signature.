@@ -38,7 +38,12 @@
  actionArrow.textContent='↗';
  actionButton.append(actionIcon,actionLabel,actionArrow);
  actionRow.append(actionButton);
- line.append(mark,content,actionRow);
+ const announcement=document.createElement('span');
+ announcement.className='sv-home-reply-announcement';
+ announcement.setAttribute('role','status');
+ announcement.setAttribute('aria-live','polite');
+ announcement.setAttribute('aria-atomic','true');
+ line.append(mark,content,actionRow,announcement);
  message.insertAdjacentElement('afterend',line);
 
  const HELLO_MS=3600;
@@ -226,7 +231,9 @@
    line.dataset.svPresence=replyVisible?'reply':'idle';
    line.dataset.svTyping=typing?'true':'false';
    line.setAttribute('aria-label',phrase);
-   line.setAttribute('aria-live',replyVisible?'polite':'off');
+   // The live region announces the finished reply once, not every typed
+   // character. Rapid per-letter announcements overwhelm VoiceOver on iOS.
+   line.setAttribute('aria-live','off');
    if(line.hidden)line.hidden=false;
    return;
   }
@@ -374,6 +381,7 @@
   clearTimeout(miniHideTimer);miniHideTimer=0;
   ++miniSequence;
   miniReply='';miniTyped='';miniTyping=false;
+  announcement.textContent='';
  }
  function clearVoice(){
   if(voiceTimer){clearTimeout(voiceTimer);voiceTimer=null}
@@ -394,6 +402,7 @@
   const finish=()=>{
    if(sequence!==miniSequence)return;
    miniTyping=false;update();
+   announcement.textContent=miniReply;
    miniHideTimer=setTimeout(clearVoice,11500);
   };
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){

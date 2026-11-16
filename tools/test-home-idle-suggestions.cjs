@@ -217,6 +217,8 @@ assert.equal(line.dataset.svPresence,'reply',
 assert.equal(ghost(),'Рада помочь! Можем просто поговорить.');
 advance(563_000);
 assert.equal(copy(),ghost(),'the actual answer appears letter by letter');
+assert.equal(line.children[3].textContent,ghost(),
+ 'VoiceOver receives one finished answer, not every changing character');
 advance(576_000);
 assert.equal(line.hidden,true,'voice reply clears after a calm reading period');
 console.log('PASS: onboarding, seven routes, last-card celebration and live mini voice transcript.');

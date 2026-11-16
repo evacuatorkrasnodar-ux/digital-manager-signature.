@@ -35,6 +35,18 @@
  overflow-wrap:break-word;
 }
 #homePage #svHomeLivingLine .sv-home-living-actions[hidden]{display:none!important}
+#homePage #svHomeLivingLine .sv-home-reply-announcement{
+ position:absolute!important;
+ width:1px!important;
+ height:1px!important;
+ padding:0!important;
+ margin:-1px!important;
+ border:0!important;
+ overflow:hidden!important;
+ clip:rect(0 0 0 0)!important;
+ white-space:nowrap!important;
+ pointer-events:none!important;
+}
 /* A single whisper below the weather, only on an empty Home after the
    greeting has faded. It is not a card, toast, popover or second dock. */
 :root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svHomeLivingLine[data-sv-presence="idle"]{
