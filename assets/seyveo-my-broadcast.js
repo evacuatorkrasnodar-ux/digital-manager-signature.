@@ -8,8 +8,22 @@
  const stage=document.getElementById('stage');
  if(!home||!stage)return;
  const PREF_KEY='seyveo.my-broadcast.preferences.v1';
- const SEEN_KEY='seyveo.my-broadcast.onboarding-seen.v2';
+ const SEEN_KEY='seyveo.my-broadcast.onboarding-seen.v3';
+ const PREVIOUS_SEEN_KEY='seyveo.my-broadcast.onboarding-seen.v2';
  const PROFILE_KEY='seyveo-first-acquaintance-v1';
+ const PROFILE_SECTIONS={
+  life:{title:'Что тебе нравится?',description:'Выбери то, что близко именно тебе. Всё необязательно.',
+   key:'lifeInterests',options:[['music','Музыка'],['films','Кино'],['books','Книги'],
+    ['travel','Путешествия'],['animals','Животные'],['nature','Природа'],
+    ['sport','Спорт'],['food','Кулинария'],['tech','Технологии'],['art','Творчество']]},
+  help:{title:'В чём тебе помогать?',description:'Я буду лучше понимать, когда предложить помощь.',
+   key:'assistanceNeeds',options:[['plans','Дела и планы'],['reminders','Напоминания'],
+    ['learning','Обучение'],['home','Дом и быт'],['family','Семья'],
+    ['wellness','Забота о себе'],['creative','Идеи и творчество']]},
+  talk:{title:'Как нам общаться?',description:'Выбери привычный для тебя стиль. Его всегда можно изменить.',
+   key:'conversationStyle',single:true,options:[['balanced','По ситуации'],
+    ['brief','Коротко и по делу'],['detailed','С объяснениями']]}
+ };
  const OPTIONS=[
   ['animals','🐾','Животные'],['humor','😄','Юмор'],
   ['music','🎵','Музыка'],['science','🚀','Наука'],
@@ -37,8 +51,9 @@
   return {topics:[...DEFAULT_TOPICS],keepAwake:false};
  };
  let prefs=readPrefs();
- let profile=readProfile(),introStep='name',businessChoice='later';
- let onboarding=!qaSkip&&(reviewIntro||read(SEEN_KEY)!=='1')&&
+ let profile=readProfile(),introStep='name',profileSection=null;
+ let onboarding=!qaSkip&&(reviewIntro||
+  (read(SEEN_KEY)!=='1'&&read(PREVIOUS_SEEN_KEY)!=='1'))&&
    (!location.hash||location.hash==='#home');
  if(onboarding)root.classList.add('sv-broadcast-onboarding');
  const reduced=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -67,18 +82,17 @@
    </div>
    <div id="svBroadcastInterestsPanel" hidden>
     <div class="sv-broadcast-topic-grid" role="group" aria-label="Темы моего эфира"></div>
-    <p class="sv-broadcast-fineprint">Новости подключим, когда появятся проверенные источники.</p>
     <label class="sv-broadcast-awake"><input type="checkbox" id="svBroadcastAwake"><span>Не гасить экран во время эфира</span></label>
     <p class="sv-broadcast-awake-note">Только на поддерживаемых устройствах, пока приложение открыто.</p>
    </div>
-   <div id="svBroadcastBusinessPanel" class="sv-broadcast-business-panel" hidden>
-    <div class="sv-broadcast-business-choices" role="group" aria-label="Использование SEYVEO">
-     <button type="button" data-sv-business="personal">Для себя <span>Личный помощник</span></button>
-     <button type="button" data-sv-business="business">Для бизнеса <span>Кабинет и команда</span></button>
-     <button type="button" data-sv-business="later">Решу позже <span>Всё можно настроить потом</span></button>
-    </div>
-    <p class="sv-broadcast-fineprint">Кабинет настроим вместе, когда захочешь. Сейчас не создаём подписку и не подключаем внешние сервисы.</p>
+   <div id="svBroadcastProfileMenu" class="sv-broadcast-profile-menu" hidden>
+    <button type="button" data-sv-profile="life"><span>♡</span><strong>Моя жизнь</strong><small>Увлечения и интересы</small><b aria-hidden="true">›</b></button>
+    <button type="button" data-sv-profile="help"><span>✧</span><strong>Чем мне помочь</strong><small>Повседневные задачи</small><b aria-hidden="true">›</b></button>
+    <button type="button" data-sv-profile="talk"><span>◌</span><strong>Как общаться</strong><small>Твой комфортный стиль</small><b aria-hidden="true">›</b></button>
+    <p class="sv-broadcast-fineprint">Только то, что ты сам расскажешь. Ответы остаются на этом устройстве, их можно изменить или удалить.</p>
+    <button type="button" id="svBroadcastForgetProfile" class="sv-broadcast-profile-forget">Удалить ответы анкеты</button>
    </div>
+   <div id="svBroadcastProfileForm" class="sv-broadcast-profile-form" hidden></div>
    <div class="sv-broadcast-sheet-actions">
     <button type="button" id="svBroadcastLater" class="sv-broadcast-later">Позже</button>
     <button type="button" id="svBroadcastSave" class="sv-broadcast-save">Продолжить</button>
@@ -104,34 +118,59 @@
  const nameField=overlay.querySelector('#svBroadcastName');
  const namePanel=overlay.querySelector('#svBroadcastNamePanel');
  const interestsPanel=overlay.querySelector('#svBroadcastInterestsPanel');
- const businessPanel=overlay.querySelector('#svBroadcastBusinessPanel');
+ const profileMenu=overlay.querySelector('#svBroadcastProfileMenu');
+ const profileForm=overlay.querySelector('#svBroadcastProfileForm');
  const stepLabel=overlay.querySelector('#svBroadcastStepLabel');
  const title=overlay.querySelector('#svBroadcastTitle');
  const explainer=overlay.querySelector('#svBroadcastExplainer');
  const laterButton=overlay.querySelector('#svBroadcastLater');
- const businessButtons=[...businessPanel.querySelectorAll('[data-sv-business]')];
  function renderStep(){
   namePanel.hidden=introStep!=='name';
   interestsPanel.hidden=introStep!=='interests';
-  businessPanel.hidden=introStep!=='business';
-  stepLabel.textContent=onboarding?`СЭЙВИ · ${introStep==='name'?'1 / 3':introStep==='interests'?'2 / 3':'3 / 3'}`:'СЭЙВИ · ТВОИ ИНТЕРЕСЫ';
+  profileMenu.hidden=introStep!=='profile-menu';
+  profileForm.hidden=introStep!=='profile-form';
+  const section=PROFILE_SECTIONS[profileSection];
+  stepLabel.textContent=onboarding?'СЭЙВИ · ЗНАКОМСТВО':
+   introStep==='interests'?'СЭЙВИ · МОЁ УТРО':'СЭЙВИ · ОБО МНЕ';
   title.textContent=introStep==='name'?'Привет! Давай знакомиться':
-   introStep==='interests'?'Что тебе интересно?':'Как будем дружить?';
-  explainer.textContent=introStep==='name'?'Меня зовут Сэйви, друзья зовут Сэй. А как обращаться к тебе?':
-   introStep==='interests'?'Выбери несколько тем. Я буду рассказывать о них иногда, когда у тебя есть время.':
-   'Я могу помогать тебе лично или с бизнесом. Всё это можно настроить позже.';
-  saveButton.textContent=introStep==='business'||!onboarding?'Готово':'Продолжить';
-  laterButton.textContent=introStep==='name'?'Позже': 'Назад';
-  for(const button of businessButtons){
-   const checked=button.dataset.svBusiness===businessChoice;
-   button.setAttribute('aria-pressed',checked?'true':'false');
-  }
+   introStep==='interests'?'О чём рассказывать?':
+   introStep==='profile-menu'?'Расскажи о себе':section?.title||'Твои интересы';
+  explainer.textContent=introStep==='name'?'Я Сэйви, друзья зовут Сэй. А как мне к тебе обращаться?':
+   introStep==='interests'?'Это отдельная настройка «Моего утра». Выбирай темы только если захочешь слушать эфир.':
+   introStep==='profile-menu'?'Я буду узнавать тебя постепенно, чтобы помогать именно так, как тебе удобно.':
+   section?.description||'';
+  saveButton.hidden=introStep==='profile-menu';
+  saveButton.textContent=onboarding?'Начнём':introStep==='profile-form'?'Запомнить':'Сохранить';
+  laterButton.textContent=introStep==='profile-form'?'Назад':onboarding?'Пока без имени':'Закрыть';
   title.focus({preventScroll:true});
  }
- businessButtons.forEach(button=>button.addEventListener('click',()=>{
-  businessChoice=button.dataset.svBusiness;
-  renderStep();
- }));
+ function showProfileSection(id){
+  const section=PROFILE_SECTIONS[id];if(!section)return;
+  profileSection=id;profile=readProfile();profileForm.replaceChildren();
+  const grid=document.createElement('div');grid.className='sv-broadcast-profile-grid';
+  const saved=section.single?[profile[section.key]]:
+   (Array.isArray(profile[section.key])?profile[section.key]:[]);
+  for(const [value,label] of section.options){
+   const row=document.createElement('label');row.className='sv-broadcast-profile-choice';
+   const input=document.createElement('input');input.type=section.single?'radio':'checkbox';
+   input.name='sv-profile-'+id;input.value=value;input.checked=saved.includes(value);
+   const name=document.createElement('span');name.textContent=label;
+   const check=document.createElement('span');check.textContent='✓';check.setAttribute('aria-hidden','true');
+   row.append(input,name,check);grid.append(row);
+  }
+  profileForm.append(grid);introStep='profile-form';renderStep();
+ }
+ profileMenu.addEventListener('click',event=>{
+  const option=event.target.closest('[data-sv-profile]');
+  if(option)showProfileSection(option.dataset.svProfile);
+ });
+ overlay.querySelector('#svBroadcastForgetProfile').addEventListener('click',()=>{
+  if(!window.confirm('Удалить ответы на анкеты? Имя останется.'))return;
+  profile=readProfile();
+  for(const section of Object.values(PROFILE_SECTIONS))delete profile[section.key];
+  profile.updatedAt=new Date().toISOString();write(PROFILE_KEY,JSON.stringify(profile));
+  window.dispatchEvent(new Event('seyveo:profile-changed'));
+ });
  let previousFocus=null,firstReturnTimer=0,returnTyping=0;
  const returnLine=document.createElement('p');
  returnLine.id='svBroadcastReturnLine';
@@ -157,21 +196,23 @@
   const keys=new Set(topics);
   for(const field of grid.querySelectorAll('input'))field.checked=keys.has(field.value);
  }
- function openPreferences(){
-  if(!isHome()||(!onboarding&&!noCards())||
-    document.querySelector('dialog[open]'))return false;
+ function openSheet(mode){
+  if(!isHome()||!overlay.hidden||document.querySelector('dialog[open]'))return false;
   if(active)stop();
   previousFocus=document.activeElement;
   setSelected(prefs.topics);
   wakeCheckbox.checked=prefs.keepAwake;
   profile=readProfile();
   nameField.value=profile.name||'';
-  introStep=onboarding?'name':'interests';
+  introStep=onboarding?'name':mode;
+  profileSection=null;
   overlay.hidden=false;
   root.classList.add('sv-broadcast-sheet-open');
   renderStep();
   return true;
  }
+ const openPreferences=()=>openSheet('interests');
+ const openProfile=()=>!onboarding&&openSheet('profile-menu');
  function finishFirstReturn(){
   clearTimeout(firstReturnTimer);firstReturnTimer=0;
   clearTimeout(returnTyping);returnTyping=0;
@@ -188,8 +229,8 @@
   window.dispatchEvent(new Event('seyveo:home-idle-prompt'));
   const userName=readProfile().name;
   const letters=Array.from(userName?
-   `Рада знакомству, ${userName}! Я запомнила твои интересы. ✨`:
-   'Я запомнила, что тебе интересно. ✨');
+   `Рада знакомству, ${userName}! Я рядом. ✨`:
+   'Рада знакомству! Я рядом. ✨');
   returnLine.textContent='';returnLine.hidden=false;
   let i=0;
   const tick=()=>{
@@ -205,19 +246,29 @@
  function closePreferences({save=false}={}){
   if(overlay.hidden)return;
   if(save){
-   const topics=validTopics(selected());
-   prefs={topics:topics.length?topics:[...DEFAULT_TOPICS],keepAwake:wakeCheckbox.checked};
-   write(PREF_KEY,JSON.stringify(prefs));
    if(onboarding){
     const providedName=nameField.value.trim().replace(/\s+/g,' ').slice(0,60);
-    const focus=businessChoice==='personal'?'life':
-     businessChoice==='business'?'pro':(profile.focus||'life');
     profile={...profile,schemaVersion:1,name:providedName||profile.name||'',
      assistantName:'Сэйви',assistantVoice:'female',
-     assistantAliases:['Сэйви','Сэй','SEYVEO'],focus,lifeIncluded:true,
+     assistantAliases:['Сэйви','Сэй','SEYVEO'],
      updatedAt:new Date().toISOString()};
     write(PROFILE_KEY,JSON.stringify(profile));
-    window.dispatchEvent(new CustomEvent('seyveo:profile-changed',{detail:{focus}}));
+    window.dispatchEvent(new Event('seyveo:profile-changed'));
+   }else if(introStep==='interests'){
+    const topics=validTopics(selected());
+    prefs={topics,keepAwake:wakeCheckbox.checked};
+    write(PREF_KEY,JSON.stringify(prefs));
+   }else if(introStep==='profile-form'){
+    const section=PROFILE_SECTIONS[profileSection];
+    if(section){
+     const values=[...profileForm.querySelectorAll('input:checked')].map(input=>input.value);
+     profile={...readProfile(),schemaVersion:1,[section.key]:section.single?
+      (values[0]||'balanced'):values,updatedAt:new Date().toISOString()};
+     write(PROFILE_KEY,JSON.stringify(profile));
+     window.dispatchEvent(new CustomEvent('seyveo:profile-changed',
+      {detail:{section:profileSection}}));
+     introStep='profile-menu';renderStep();return;
+    }
    }
   }
   overlay.hidden=true;
@@ -225,6 +276,7 @@
   const wasOnboarding=onboarding;
   onboarding=false;
   write(SEEN_KEY,'1');
+  write(PREVIOUS_SEEN_KEY,'1');
   if(wasOnboarding)root.classList.add('sv-broadcast-first-return');
   root.classList.remove('sv-broadcast-onboarding');
   // The ORIGINAL miniature flies home once after the choice. If there are
@@ -244,20 +296,11 @@
   }
  }
  saveButton.addEventListener('click',()=>{
-  if(onboarding&&introStep==='name'){
-   introStep='interests';renderStep();return;
-  }
-  if(onboarding&&introStep==='interests'){
-   introStep='business';renderStep();return;
-  }
   closePreferences({save:true});
  });
  laterButton.addEventListener('click',()=>{
-  if(onboarding&&introStep==='business'){
-   introStep='interests';renderStep();return;
-  }
-  if(onboarding&&introStep==='interests'){
-   introStep='name';renderStep();return;
+  if(introStep==='profile-form'){
+   introStep='profile-menu';renderStep();return;
   }
   closePreferences();
  });
@@ -466,20 +509,35 @@
   offer=document.createElement('button');
   offer.id='svBroadcastStartOffer';
   offer.type='button';offer.className='sv-broadcast-start-offer';
-  offer.textContent='▶  Попробовать моё утро';
-  offer.addEventListener('click',()=>start({gesture:true}));
+  offer.textContent='♡  Расскажи мне о себе';
+  offer.addEventListener('click',()=>openProfile());
   stage.appendChild(offer);
   setTimeout(()=>{offer?.remove();offer=null},22000);
  }
  function nextSuggestion(){
   if(onboarding||active||!overlay.hidden)return null;
+  const person=readProfile();
+  const missing=Object.values(PROFILE_SECTIONS).some(section=>
+   !Object.prototype.hasOwnProperty.call(person,section.key));
+  const life=Array.isArray(person.lifeInterests)?person.lifeInterests:[];
+  const needs=Array.isArray(person.assistanceNeeds)?person.assistanceNeeds:[];
+  const personalAction=life.includes('music')?
+   {text:'🎵 Ты рассказывал, что тебе нравится музыка. Заглянем в SEYVEO SOUND?',
+    action:{kind:'music',label:'Открыть музыку',icon:'🎵'}}:
+   life.includes('art')?
+    {text:'✏️ Помню, тебе интересно творчество. Хочешь немного порисовать?',
+     action:{kind:'drawing',label:'Порисовать',icon:'✏️'}}:
+   needs.includes('plans')?
+    {text:'✨ Ты просил помогать с планами. Посмотрим, что на сегодня?',
+     action:{kind:'tasks',label:'Мои дела',icon:'✓'}}:null;
   const topics=prefs.topics;
   const favorite=topics.find(topic=>topic!=='news'&&topic!=='music');
   const choices=[
-   {text:'☀️ Хочешь короткое утреннее шоу с твоими любимыми темами?',action:{kind:'broadcast',label:'Начать моё утро',icon:'☀️'}},
-   favorite?{text:`✨ Ты любишь тему «${labelFor(favorite)}». Добавим её в твоё утро?`,action:{kind:'broadcast',label:'Мой эфир',icon:'✨'}}:null,
-   {text:'🎧 Я могу собрать маленькое утро из фактов, юмора и твоих любимых тем.',action:{kind:'broadcast',label:'Попробовать эфир',icon:'🎧'}},
-   {text:'⚙️ Хочешь поменять темы? Выбирай, что тебе интересно, в любое время.',action:{kind:'broadcast-preferences',label:'Мои интересы',icon:'⚙️'}}
+   missing?{text:'♡ Хочешь рассказать немного о себе? Так мне будет легче тебя понимать.',action:{kind:'profile',label:'Расскажу о себе',icon:'♡'}}:null,
+   personalAction,
+   {text:'☀️ Если захочешь, я могу устроить для тебя небольшое утреннее шоу — с рассказами и музыкой.',action:{kind:'broadcast-preferences',label:'Настроить моё утро',icon:'☀️'}},
+   favorite?{text:`✨ Я могу рассказывать о том, что тебе интересно, например: ${labelFor(favorite).toLowerCase()}.`,action:{kind:'broadcast',label:'Послушать',icon:'✨'}}:null,
+   {text:'♡ Расскажи, что сейчас важно для тебя. Я запомню только то, что ты сам выберешь.',action:{kind:'profile',label:'Мои анкеты',icon:'♡'}}
   ].filter(Boolean);
   const next=Number(read('seyveo.my-broadcast.hint-index.v1')||0);
   write('seyveo.my-broadcast.hint-index.v1',String((next+1)%choices.length));
@@ -507,8 +565,9 @@
  window.addEventListener('seyveo:card-visibility-changed',()=>{if(active&&!noCards())stop()});
  // A user returning to the app may request the show again, but nothing
  // silently restarts the microphone, audio or the daily program.
- window.SEYVEO_BROADCAST=Object.freeze({start,stop,openPreferences,
+ window.SEYVEO_BROADCAST=Object.freeze({start,stop,openPreferences,openProfile,
   getPreferences:()=>({topics:[...prefs.topics],keepAwake:prefs.keepAwake}),
+  getProfile:()=>({...readProfile()}),
   nextSuggestion,isActive:()=>active,isOnboarding:()=>onboarding,
   rememberName(name){
    const clean=String(name||'').trim().replace(/\s+/g,' ').slice(0,60);

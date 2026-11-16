@@ -174,6 +174,7 @@
  function navigateSuggestion(kind){
   if(kind==='broadcast')return window.SEYVEO_BROADCAST?.start?.({gesture:true})===true;
   if(kind==='broadcast-preferences')return window.SEYVEO_BROADCAST?.openPreferences?.()===true;
+  if(kind==='profile')return window.SEYVEO_BROADCAST?.openProfile?.()===true;
   if(kind==='music'){
    if(!window.SEYVEO_MUSIC?.open)return false;
    window.SEYVEO_MUSIC.open();return true;

@@ -8,6 +8,10 @@
  const routeFor=()=>location.hash==='#sayvi-music'?'music':
   location.hash==='#sayvi-documents'?'documents':
   location.hash==='#manage'?'business':null;
+ // A manager demo or a visible business tab is not a paid subscription.
+ // Only a verified entitlement may trigger business questions automatically.
+ const hasBusinessSubscription=()=>
+  window.SEYVEO_SUBSCRIPTION?.hasBusinessAccess?.()===true;
  const read=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}};
  const save=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
  let seen=read(KEY)||{},active=null,previousFocus=null,routeTimer=0;
@@ -43,6 +47,7 @@
  }
  function open(type,{force=false}={}){
   if(active||sheet.hidden===false||!type||(!force&&seen[type])||
+   (type==='business'&&!force&&!hasBusinessSubscription())||
    root.classList.contains('sv-broadcast-onboarding')||
    root.classList.contains('sv-broadcast-sheet-open')||
    root.classList.contains('seyveo-conversation')||
@@ -103,7 +108,7 @@
    if(content.querySelector('[data-requires-business]')){close();return}
    const hint=document.createElement('p');hint.className='sv-section-discovery-note';
    hint.dataset.requiresBusiness='true';
-   hint.textContent='Сейчас открыт личный режим. Если захочешь попробовать бизнес-кабинет, выбери RISE или AUTONOM в «Управлении». Подписку это не оформляет.';
+   hint.textContent='Бизнес-кабинет откроется после подключения Business. В деморежиме можно посмотреть RISE или AUTONOM, но это не подписка.';
    content.append(hint);done.textContent='Понятно';later.textContent='Закрыть';return;
   }
   if(type==='music'){

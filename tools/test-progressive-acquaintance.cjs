@@ -12,10 +12,13 @@ const index=read('index.html');
 assert.match(intro,/const PROFILE_KEY='seyveo-first-acquaintance-v1'/,
  'First meeting reuses the existing profile instead of creating another account');
 assert.match(intro,/introStep==='name'/,'Name comes first');
-assert.match(intro,/introStep==='interests'/,'Interest choice follows');
-assert.match(intro,/introStep==='business'/,'Optional business setup follows');
-assert.match(intro,/businessChoice==='business'\?'pro'/,
- 'Only an explicit business selection changes the profile focus');
+assert.match(intro,/onboarding\?'Начнём'/,'First meeting is one short name step');
+assert.doesNotMatch(intro,/businessChoice|introStep='business'/,
+ 'Business never interrupts personal acquaintance');
+assert.match(intro,/openProfile/,'Home offers a separate opt-in personal questionnaire');
+assert.match(intro,/const PROFILE_SECTIONS=/,'Life, help and conversation are separate questionnaires');
+assert.match(intro,/profileForm\.replaceChildren\(\)/,'Profile choices are rendered fresh when requested');
+assert.match(intro,/Удалить ответы анкеты/,'Personal questionnaire answers can be erased');
 assert.match(intro,/seyveo:profile-changed/,'Other screens hear profile updates');
 assert.match(index,/SEYVEO_BROADCAST\?\.rememberName\?\.\(name\)/,
  'The explicit voice request can remember a name in the same profile');
@@ -25,6 +28,8 @@ assert.match(progressive,/location\.hash==='#sayvi-documents'/,
  'Document features are shown in the actual Documents screen');
 assert.match(progressive,/location\.hash==='#manage'/,
  'Cabinet assistance appears in the actual Business screen');
+assert.match(progressive,/!force&&!hasBusinessSubscription\(\)/,
+ 'Automatic business introduction requires verified Business access');
 assert.match(progressive,/SEYVEO_SMART_CABINET\?\.open/,
  'Business setup opens the active goal-first cabinet constructor');
 assert.doesNotMatch(progressive,/SEYVEO_SMART_START\?\.begin/,
@@ -43,6 +48,6 @@ assert.match(home,/#svHomeLivingLine:is\(\[data-sv-presence="reply"\],\[data-sv-
  'Mini voice replies remain visible on Home while a card is present');
 assert.match(index,/seyveo-home-conversation\.css\?v=2/,
  'Compact Home geometry is included');
-assert.match(index,/seyveo-progressive-discovery\.js\?v=2/,
+assert.match(index,/seyveo-progressive-discovery\.js\?v=3/,
  'Section-specific introduction is included');
-process.stdout.write('PASS: concise first meeting, progressive screens, one-card Home and persistent orb.\n');
+process.stdout.write('PASS: single-step personal meeting, voluntary Home questionnaires, subscription-gated business, one-card Home and persistent orb.\n');

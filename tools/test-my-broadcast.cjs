@@ -8,7 +8,7 @@ const source=readFileSync(join(root,'assets/seyveo-my-broadcast.js'),'utf8');
 const style=readFileSync(join(root,'assets/seyveo-my-broadcast.css'),'utf8');
 const cinema=readFileSync(join(root,'assets/seyveo-sayvi-handoff-demo.js'),'utf8');
 const index=readFileSync(join(root,'index.html'),'utf8');
-assert.match(index,/seyveo-my-broadcast\.js\?v=5[\s\S]*seyveo-sayvi-handoff-demo\.js\?v=93/,
+assert.match(index,/seyveo-my-broadcast\.js\?v=6[\s\S]*seyveo-sayvi-handoff-demo\.js\?v=93/,
  'The preference flag must initialize before the original cinematic');
 assert.match(source,/root\.classList\.add\('sv-broadcast-onboarding'\)/,
  'First meeting is a deliberate one-time state');
@@ -28,7 +28,7 @@ assert.match(source,/const PROFILE_KEY='seyveo-first-acquaintance-v1'/,
  'The first meeting and existing profile editor share one data record');
 assert.match(source,/introStep==='name'\?'Привет! Давай знакомиться'/,
  'First introduction includes a short personal-name step');
-assert.match(source,/read\(SEEN_KEY\)!=='1'/,
+assert.match(source,/read\(SEEN_KEY\)!=='1'&&read\(PREVIOUS_SEEN_KEY\)!=='1'/,
  'The menu never becomes a recurring interruption');
 assert.match(source,/localStorage\.setItem\(key,value\)/,
  'Interests stay local to the device');
@@ -56,24 +56,35 @@ async function browserSmoke(){
   await page.goto('http://127.0.0.1:8799/index.html?sayvi-intro=1',
    {waitUntil:'domcontentloaded',timeout:30000});
   await page.locator('#svBroadcastPreferences:not([hidden])').waitFor({timeout:35000});
-  assert.equal(await page.locator('.sv-broadcast-topic').count(),10);
+  assert.equal(await page.locator('#svBroadcastNamePanel').isVisible(),true);
+  assert.equal(await page.locator('#svBroadcastInterestsPanel').isHidden(),true);
+  assert.equal(await page.locator('#svBroadcastProfileMenu').isHidden(),true);
   assert.equal(await page.locator('html').evaluate(el=>el.classList.contains('sv-broadcast-onboarding')),true);
   await page.locator('#svBroadcastName').fill('Роман');
-  await page.locator('#svBroadcastSave').click();
-  await page.locator('input[value="animals"]').uncheck();
-  await page.locator('input[value="science"]').check();
-  await page.locator('#svBroadcastSave').click();
-  await page.locator('[data-sv-business="later"]').click();
   await page.locator('#svBroadcastSave').click();
   await page.waitForTimeout(350);
   assert.equal(await page.locator('#svBroadcastPreferences').isHidden(),true);
   assert.equal(await page.locator('html').evaluate(el=>el.classList.contains('sv-broadcast-onboarding')),false);
-  const prefs=await page.evaluate(()=>window.SEYVEO_BROADCAST?.getPreferences());
-  assert.ok(prefs?.topics.includes('science'),'New topic is stored');
-  assert.ok(!prefs?.topics.includes('animals'),'Deselected topic is removed');
-  assert.equal(await page.evaluate(()=>localStorage.getItem('seyveo.my-broadcast.onboarding-seen.v2')),'1');
+  assert.equal(await page.evaluate(()=>localStorage.getItem('seyveo.my-broadcast.onboarding-seen.v3')),'1');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')).name),'Роман');
+  assert.equal(await page.evaluate(()=>localStorage.getItem('seyveo.my-broadcast.preferences.v1')),null,
+   'The first meeting does not silently configure the morning show');
   await page.waitForTimeout(2700);
+  await page.evaluate(()=>window.SEYVEO_BROADCAST.openProfile());
+  assert.equal(await page.locator('#svBroadcastProfileMenu').isVisible(),true);
+  await page.locator('[data-sv-profile="life"]').click();
+  await page.locator('#svBroadcastProfileForm input[value="books"]').check();
+  await page.locator('#svBroadcastSave').click();
+  assert.equal(await page.locator('#svBroadcastProfileMenu').isVisible(),true);
+  assert.ok((await page.evaluate(()=>JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')).lifeInterests)).includes('books'));
+  await page.locator('#svBroadcastLater').click();
+  await page.evaluate(()=>window.SEYVEO_BROADCAST.openPreferences());
+  await page.locator('#svBroadcastInterestsPanel input[value="animals"]').uncheck();
+  await page.locator('#svBroadcastInterestsPanel input[value="science"]').check();
+  await page.locator('#svBroadcastSave').click();
+  const prefs=await page.evaluate(()=>window.SEYVEO_BROADCAST?.getPreferences());
+  assert.ok(prefs?.topics.includes('science'),'Broadcast preferences are stored separately');
+  assert.ok(!prefs?.topics.includes('animals'),'Deselected broadcast topic is removed');
   const canShow=await page.evaluate(()=>document.documentElement.classList.contains('sv-home-empty-sphere'));
   if(canShow){
    assert.equal(await page.locator('html').evaluate(el=>el.classList.contains('sv-home-empty-arrived')),true,
@@ -91,10 +102,10 @@ async function browserSmoke(){
   assert.equal(await page.locator('#svBroadcastPreferences').isHidden(),true,
    'Onboarding does not repeat after refresh');
   assert.equal(errors.length,0,'No uncaught errors: '+errors.join('; '));
-  console.log('PASS: real Chromium first-run topic selection, persistence and broadcast controls.');
+  console.log('PASS: real Chromium short introduction, optional Home questionnaire, and separate broadcast preferences.');
  }finally{await browser.close()}
 }
 if(process.env.SEYVEO_BROADCAST_BROWSER==='1')browserSmoke().catch(error=>{
  console.error(error);process.exitCode=1;
 });
-else console.log('PASS: intro handoff, local preferences, honest news and opt-in morning show.');
+else console.log('PASS: short personal intro, local opt-in profiles, honest news and optional morning show.');
