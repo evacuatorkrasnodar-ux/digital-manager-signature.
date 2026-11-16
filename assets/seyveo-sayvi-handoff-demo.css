@@ -5,6 +5,18 @@
  --sv-home-orb-size:clamp(230px,68vw,315px);
  --sv-home-orb-half:clamp(115px,34vw,157.5px);
 }
+/* A touch phone needs more presence than a desktop preview. The two values
+   stay constant through greeting and idle; both use the same geometry. The
+   height cap protects shorter iPhones and standalone PWA viewports. */
+@media (max-width:649px) and (pointer:coarse){
+  :root.sv-sayvi-handoff-demo{
+    --sv-home-orb-size:min(78vw,325px,42dvh);
+    --sv-home-orb-half:min(39vw,162.5px,21dvh);
+  }
+  :root.sv-sayvi-handoff-demo #homePage .sv-sayvi-home-online{
+    font-size:13px!important;
+  }
+}
 /* Match the dock's high-specificity light-theme rule, otherwise its
    !important opacity can reveal a second sphere during the flight. */
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked)[data-theme="light"] :is(
