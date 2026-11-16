@@ -1,6 +1,5 @@
-/* SEYVEO Quiet Presence. The Home greeting uses its existing component.
-   After the short introduction, one line remains under the original sphere.
-   No surface, border, glass capsule, new color theme, or moving text. */
+/* SEYVEO Quiet Presence. Sayvi writes beneath the weather without altering
+   the original sphere, its welcome, its dock or the cards. No new panels. */
 #homePage #svHomeLivingLine{
  display:flex;
  width:min(100%,385px);
@@ -39,18 +38,54 @@
    greeting has faded. It is not a card, toast, popover or second dock. */
 :root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svHomeLivingLine[data-sv-presence="idle"]{
  position:absolute!important;
- top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 73px)!important;
+ top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 80px)!important;
  left:50%!important;
  width:min(380px,calc(100% - 32px))!important;
- max-height:44px!important;
+ max-height:84px!important;
  margin:0!important;
  padding:0 8px!important;
- color:#65737A!important;
- font-size:12.8px!important;
- font-weight:400!important;
+ color:#4F5D65!important;
+ font-size:clamp(13px,3.45vw,14px)!important;
+ font-weight:410!important;
  line-height:1.45!important;
  transform:translateX(-50%)!important;
  overflow:hidden;
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-copy{
+ position:relative;
+ display:inline-block;
+ width:max-content;
+ max-width:100%;
+ text-align:left;
+}
+/* Reserve the complete phrase invisibly. Typing changes no widths, height,
+   sphere geometry or weather positioning; only the letters become visible. */
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-copy-ghost{
+ display:block;
+ visibility:hidden;
+ white-space:normal;
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-copy-typed{
+ position:absolute;
+ inset:0;
+ display:block;
+ white-space:normal;
+}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"][data-sv-typing="true"] .sv-home-living-copy-typed::after{
+ content:"";
+ display:inline-block;
+ height:.95em;
+ width:1px;
+ margin-left:2px;
+ vertical-align:-.12em;
+ background:#7C9EA9;
+ animation:svHomeLivingCursor .85s steps(1,end) infinite;
+}
+@keyframes svHomeLivingCursor{50%{opacity:0}}
+:root.sv-home-empty-sphere #homePage #svHomeLivingLine.sv-home-idle-fading[data-sv-presence="idle"]{
+ animation:none!important;
+ opacity:0!important;
+ transition:opacity .45s ease!important;
 }
 :root.sv-home-empty-sphere #homePage #svHomeLivingLine[data-sv-presence="idle"] .sv-home-living-mark{
  display:none!important;
@@ -80,5 +115,10 @@
  @keyframes svHomeLivingAppear{
   from{opacity:0;transform:translateY(3px)}
   to{opacity:1;transform:translateY(0)}
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ :root.sv-home-empty-sphere #homePage #svHomeLivingLine .sv-home-living-copy-typed::after{
+  animation:none!important;
  }
 }

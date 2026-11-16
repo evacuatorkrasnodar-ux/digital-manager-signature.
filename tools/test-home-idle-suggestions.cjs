@@ -1,5 +1,5 @@
-/* SEYVEO: a quiet, infrequent thought only while the original sphere is home.
-   Simulated time, no network, storage writes or actual UI interaction. */
+/* SEYVEO: Sayvi's handwritten thoughts on a quiet, card-free Home.
+   Simulated time and a tiny DOM, no network or real browser storage. */
 'use strict';
 const assert=require('node:assert/strict');
 const {readFileSync}=require('node:fs');
@@ -10,10 +10,18 @@ const source=readFileSync(join(__dirname,'../assets/seyveo-home-presence.js'),'u
 const css=readFileSync(join(__dirname,'../assets/seyveo-home-presence.css'),'utf8');
 assert.match(css,/sv-home-empty-sphere\.sv-home-greeting-expired[\s\S]*?data-sv-presence="idle"/,
  'suggestions use the single unboxed line below the weather');
+assert.match(css,/sv-home-living-copy-ghost[\s\S]*?visibility:hidden/,
+ 'the full phrase reserves its dimensions while letters appear');
+assert.match(css,/prefers-reduced-motion:reduce/,
+ 'the typewriter respects reduced-motion preferences');
 assert.match(source,/!document\.querySelector\('dialog\[open\]'\)/,
  'no suggestion while a dialog is open');
-assert.match(source,/HINT_COOLDOWN_MS=25\*60\*1000/,
- 'only one nudge per 25 minutes');
+assert.match(source,/HINT_COOLDOWN_MS=90\*1000/,
+ 'later thoughts are spaced out');
+assert.match(source,/Скоро научусь/,
+ 'not-yet-released features are honestly labeled');
+assert.match(source,/Твоё время ценно/,
+ 'Sayvi conveys the value of the person, not just product features');
 
 let now=0,seq=0,line;
 const classes=new Set(['sv-home-empty-sphere','sv-home-empty-arrived','sv-home-greeting-expired']);
@@ -30,9 +38,10 @@ const schedule=(handler,delay,interval=false)=>{
 };
 class Element{
  constructor(){this.hidden=false;this.dataset={};this.children=[];this.textContent='';
-  const own=new Set();this.classList={add:name=>own.add(name),contains:name=>own.has(name)};}
+  const own=new Set();this.classList={add:name=>own.add(name),remove:name=>own.delete(name),contains:name=>own.has(name)};}
  setAttribute(){}
  append(...children){this.children.push(...children)}
+ replaceChildren(...children){this.children=children}
 }
 const home={hidden:false};
 const message={insertAdjacentElement:(_side,element)=>{line=element;}};
@@ -47,7 +56,8 @@ const document={
 const window={
  addEventListener:on,dispatchEvent:event=>emit(event.type),
  setTimeout:(fn,delay)=>schedule(fn,delay),
- setInterval:(fn,delay)=>schedule(fn,delay,true)
+ setInterval:(fn,delay)=>schedule(fn,delay,true),
+ matchMedia:()=>({matches:false})
 };
 const context={window,document,location:{hash:'#home'},sessionStorage:{
  getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value)
@@ -65,22 +75,43 @@ const advance=until=>{
  now=until;
 };
 
-advance(59_000);
-assert.equal(line.hidden,true,'no prompt before a minute');
-advance(65_000);
-assert.equal(line.hidden,false,'first idea appears after a quiet minute');
-assert.match(line.children[1].textContent,/музык/,'first idea offers a relevant capability');
+const copy=()=>line.children[1].children[1].textContent;
+const ghost=()=>line.children[1].children[0].textContent;
+advance(13_900);
+assert.equal(line.hidden,true,'the opening sentence waits for a quiet moment');
+advance(15_000);
+assert.equal(line.hidden,false,'the first message appears, without a new card');
+assert.match(ghost(),/Нажми на сферу/,'Sayvi teaches how to open the chat');
 assert.equal(line.dataset.svPresence,'idle');
-advance(85_000);
-assert.equal(line.hidden,true,'the thought disappears without user action');
-advance(100_000);
-assert.equal(line.hidden,true,'cooldown prevents nagging');
-home.hidden=true;advance(160_000);
-assert.equal(line.hidden,true,'nothing appears while away from Home');
-home.hidden=false;
+assert.equal(line.dataset.svTyping,'true');
+assert.ok(copy().length>0&&copy().length<ghost().length,
+ 'the first message appears letter by letter');
+const initiallyTyped=copy();
+advance(16_000);
+assert.ok(copy().length>initiallyTyped.length,'the message continues to type');
+advance(22_000);
+assert.equal(copy(),ghost(),'the message becomes complete');
+assert.equal(line.dataset.svTyping,'false','the cursor stops after the message');
+advance(28_000);
+assert.match(ghost(),/Удерживай сферу/,'the second hint explains voice and nickname');
+advance(43_000);
+assert.equal(line.hidden,true,'the introduction disappears without a tap');
+const saved=JSON.parse(storage.get('seyveo.sayvi.quiet-home-hint.v2'));
+assert.equal(saved.introDone,true,'the introduction is stored per session');
+advance(125_000);
+assert.equal(line.hidden,true,'later messages observe a long cooldown');
+advance(133_000);
+assert.equal(line.hidden,false,'a human-first thought arrives only after prolonged calm');
+assert.match(ghost(),/особые команды/,'the next hint is helpful rather than promotional');
 emit('pointerdown');
-assert.equal(line.hidden,true,'touch cancels any pending idea');
+assert.equal(line.hidden,true,'touch immediately stops typing');
+advance(136_000);
+assert.equal(line.hidden,true,'touch resets the idle timer');
+home.hidden=true;
+advance(350_000);
+assert.equal(line.hidden,true,'no messages while away from Home');
+home.hidden=false;
 classes.delete('sv-home-empty-sphere');
-advance(2_000_000);
-assert.equal(line.hidden,true,'real work/cards suppress idle prompts');
-console.log('PASS: one discreet idle hint, delayed, expiring, cooldown and task-aware.');
+advance(550_000);
+assert.equal(line.hidden,true,'real cards and tasks suppress idle thoughts');
+console.log('PASS: two handwritten onboarding messages, rotating thoughts and unobtrusive timing.');

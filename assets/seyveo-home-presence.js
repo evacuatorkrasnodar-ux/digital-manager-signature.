@@ -1,6 +1,6 @@
 /* SEYVEO · Quiet Presence under the original sphere.
- * Listening status wins; very occasional idle ideas live in the same line.
- * No fabricated emergencies, auto-play, card changes or dock mutations. */
+ * A little handwritten onboarding, then rare useful thoughts and honest
+ * "soon" possibilities. Never invent emergencies or alter cards/dock/orb. */
 (()=>{
  'use strict';
  const home=document.getElementById('homePage');
@@ -25,24 +25,67 @@
  const HELLO_MS=3600;
  let ready=false,voicePhase='',voiceTimer=null;
  const root=document.documentElement;
- const IDLE_MS=60*1000;
- const HINT_VISIBLE_MS=18*1000;
- const HINT_COOLDOWN_MS=25*60*1000;
- const HINT_KEY='seyveo.sayvi.quiet-home-hint.v1';
- const ideas=[
-  'Хочешь немного музыки? Подберу под настроение.',
-  'Могу помочь с письмом, документом или планом на день.',
-  'Маленький факт: у осьминога три сердца. Удивительно, правда?',
-  'Если захочешь поболтать — я здесь.',
-  'У меня нет кофе-брейков. Но идеи иногда лучше приходят на паузе.',
-  'Можем придумать что-нибудь приятное на вечер.'
+ const FIRST_IDLE_MS=14000;
+ const REPEAT_IDLE_MS=60*1000;
+ const HINT_HOLD_MS=8500;
+ const HINT_COOLDOWN_MS=90*1000;
+ const HINT_KEY='seyveo.sayvi.quiet-home-hint.v2';
+ const intro=[
+  'Хочешь поговорить? Нажми на сферу — откроем чат.',
+  'Удерживай сферу — поговорим голосом. Зови меня Сэйви или Сэй.'
  ];
- let idleSince=Date.now(),idleHint='',idleVisibleUntil=0;
- let idleRevealTimer=0,idleLastShownAt=0,idleIdeaIndex=0;
+ // A quiet, slowly rotating conversation, not a carousel of product ads.
+ // Current actions are phrased as invitations; future actions say "soon".
+ // No personal history, emergencies or abilities are ever fabricated here.
+ const ideas=[
+  'Не нужно подбирать особые команды. Просто расскажи своими словами.',
+  'Твоё время ценно. Давай оставим больше минут для того, что любишь.',
+  'Хочешь музыку? Заглянем в SEYVEO SOUND — выберем под настроение.',
+  'Если дел накопилось много, начнём с одного. Шаг за шагом.',
+  'Документы тоже могут быть проще. Покажи, с чем нужна помощь.',
+  'Важное лучше не держать в голове. Запишем в дела или календарь.',
+  'Ты для меня не просто список задач. Важно, что важно именно тебе.',
+  'Для SEYVEO главное — человек. Кнопки нужны лишь для того, чтобы помогать.',
+  'Я учусь быть полезной, не отвлекая тебя по пустякам.',
+  'Скоро научусь помогать готовить документы к подписи.',
+  'Мы скоро это сделаем: я смогу взять больше мелких дел на себя — с твоего согласия.',
+  'Хочешь необычный факт? У осьминога три сердца.',
+  'Можно просто поболтать. Не обязательно приходить ко мне с делами.',
+  'В SEYVEO есть блокнот. Туда можно отправить внезапную идею.',
+  'Скоро смогу лучше подбирать музыку под твой вкус и настроение.',
+  'Если хочется выдохнуть, давай оставим несрочное на потом.',
+  'Дела, встречи, маленькие планы — всё это можно держать рядом.',
+  'Я могу быть серьёзной. А могу иногда рассказать что-нибудь смешное.',
+  'Скоро научусь находить главное в длинных документах ещё точнее.',
+  'Я здесь не для того, чтобы торопить. У каждого свой ритм.',
+  'Хочешь навести порядок в мыслях? Расскажи, что тебя занимает.',
+  'В моём мире есть музыка, записи и пространство для твоих идей.',
+  'Скоро смогу помогать с повседневными делами ещё самостоятельнее.',
+  'Если день непростой, можешь просто рассказать мне об этом.',
+  'Мне нравится мысль, что технологии должны давать человеку свободу.',
+  'Иногда достаточно одной хорошей идеи, чтобы день стал легче.',
+  'Скоро хочу научиться мягко напоминать о действительно важном.',
+  'Знаешь, у Венеры один оборот вокруг оси длится дольше года.',
+  'Ты всегда решаешь сам. Моя задача — подсказать и помочь.',
+  'Когда появится свободная минутка, можем вместе разобрать планы.',
+  'Спроси, что я уже умею. А о том, что появится позже, расскажу честно.',
+  'Я ещё многому учусь. Обещаю, моя помощь будет становиться умнее.',
+  'И если захочешь просто тишины — всё хорошо. Я подожду.'
+ ];
+ const ghost=document.createElement('span');
+ ghost.className='sv-home-living-copy-ghost';
+ ghost.setAttribute('aria-hidden','true');
+ const typed=document.createElement('span');
+ typed.className='sv-home-living-copy-typed';
+ let idleSince=Date.now(),idleHint='',idleTyped='',idleTyping=false;
+ let idleRevealTimer=0,idleTypeTimer=0,idleHideTimer=0;
+ let idleLastShownAt=0,idleIdeaIndex=0,introDone=false,introStep=0;
+ let idleMarkupMounted=false,idleSequence=0;
  try{
   const stored=JSON.parse(sessionStorage.getItem(HINT_KEY)||'null');
   if(Number.isFinite(stored?.at))idleLastShownAt=stored.at;
   if(Number.isInteger(stored?.next)&&stored.next>=0)idleIdeaIndex=stored.next;
+  introDone=stored?.introDone===true;
  }catch{}
  const homeVisible=()=>!home.hidden&&!document.hidden&&
   (!location.hash||location.hash==='#home')&&
@@ -59,56 +102,121 @@
 
  function update(){
   const visible=ready&&homeVisible();
-  // The quiet line supplements the original greeting, it never replaces it.
-  // Thinking and speaking now live in the persistent top status. Keep only
-  // the microphone acknowledgement here, never duplicate the same words.
-  const status=voicePhase==='listening'?'Слушаю…'
-   :voicePhase?''
-   :idleHint&&quietHome()?idleHint:'';
+  const idleVisible=visible&&!!idleHint&&quietHome();
+  if(idleVisible){
+   if(!idleMarkupMounted){
+    content.replaceChildren(ghost,typed);
+    idleMarkupMounted=true;
+   }
+   if(ghost.textContent!==idleHint)ghost.textContent=idleHint;
+   if(typed.textContent!==idleTyped)typed.textContent=idleTyped;
+   line.dataset.svPresence='idle';
+   line.dataset.svTyping=idleTyping?'true':'false';
+   line.setAttribute('aria-label',idleHint);
+   if(line.hidden)line.hidden=false;
+   return;
+  }
+  if(idleMarkupMounted){content.replaceChildren();idleMarkupMounted=false;}
+  line.dataset.svTyping='false';
+  line.setAttribute('aria-label','');
+  // Thinking and speaking appear in the persistent top status. Only the
+  // microphone acknowledgement belongs beneath the sphere.
+  const status=voicePhase==='listening'?'Слушаю…':'';
   if(!visible||!status){
    if(!line.hidden)line.hidden=true;
    return;
   }
   if(content.textContent!==status)content.textContent=status;
   if(line.hidden)line.hidden=false;
-  const phase=voicePhase||(idleHint?'idle':'quiet');
+  const phase=voicePhase||'quiet';
   if(line.dataset.svPresence!==phase)line.dataset.svPresence=phase;
+ }
+ function persistIdle(){
+  try{sessionStorage.setItem(HINT_KEY,JSON.stringify({
+   at:idleLastShownAt,next:idleIdeaIndex,introDone
+  }));}catch{}
  }
  function dropIdle({resetClock=true}={}){
   clearTimeout(idleRevealTimer);idleRevealTimer=0;
+  clearTimeout(idleTypeTimer);idleTypeTimer=0;
+  clearTimeout(idleHideTimer);idleHideTimer=0;
+  ++idleSequence;
   if(resetClock)idleSince=Date.now();
-  if(!idleHint)return;
-  idleHint='';idleVisibleUntil=0;update();
+  if(resetClock&&!introDone)introStep=0;
+  line.classList.remove('sv-home-idle-fading');
+  if(!idleHint&&!idleMarkupMounted)return;
+  idleHint='';idleTyped='';idleTyping=false;update();
  }
  function noteActivity(){
   if(!homeVisible())return;
   dropIdle();
  }
- function showIdle(){
+ function finishIdle(sequence){
+  idleHideTimer=0;
+  if(sequence!==idleSequence||!quietHome())return;
+  if(!introDone&&introStep<intro.length-1){
+   introStep++;
+   line.classList.add('sv-home-idle-fading');
+   idleHideTimer=setTimeout(()=>{
+    if(sequence!==idleSequence||!quietHome())return;
+    line.classList.remove('sv-home-idle-fading');
+    showIdle({continuation:true});
+   },470);
+   return;
+  }
+  introDone=true;
+  idleLastShownAt=Date.now();
+  persistIdle();
+  dropIdle({resetClock:false});
+ }
+ function typeIdle(sequence){
+  const letters=Array.from(idleHint);
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+   idleTyped=idleHint;idleTyping=false;update();
+   idleHideTimer=setTimeout(()=>finishIdle(sequence),HINT_HOLD_MS);
+   return;
+  }
+  let cursor=0;
+  const next=()=>{
+   idleTypeTimer=0;
+   if(sequence!==idleSequence||!idleHint||!quietHome())return;
+   if(cursor>=letters.length){
+    idleTyping=false;update();
+    idleHideTimer=setTimeout(()=>finishIdle(sequence),HINT_HOLD_MS);
+    return;
+   }
+   const letter=letters[cursor++];
+   idleTyped+=letter;
+   update();
+   // Natural cadence, with a short breath after punctuation.
+   const pause=/[.!?…]/.test(letter)?190:/[,—:;]/.test(letter)?95:30+cursor%5*4;
+   idleTypeTimer=setTimeout(next,pause);
+  };
+  idleTypeTimer=setTimeout(next,250);
+ }
+ function showIdle({continuation=false}={}){
   idleRevealTimer=0;
   const now=Date.now();
-  if(!quietHome()||now-idleSince<IDLE_MS)return;
+  const delay=introDone?REPEAT_IDLE_MS:FIRST_IDLE_MS;
+  if(!quietHome()||(!continuation&&now-idleSince<delay))return;
   if(root.classList.contains('sv-home-greeting-fading')&&
      !root.classList.contains('sv-home-greeting-expired'))return;
-  idleHint=ideas[idleIdeaIndex%ideas.length];
-  idleIdeaIndex++;
-  idleVisibleUntil=now+HINT_VISIBLE_MS;
-  idleLastShownAt=now;
-  try{sessionStorage.setItem(HINT_KEY,JSON.stringify({at:now,next:idleIdeaIndex}));}catch{}
+  idleHint=introDone?ideas[idleIdeaIndex++%ideas.length]:intro[introStep];
+  idleTyped='';idleTyping=true;
+  const sequence=++idleSequence;
   update();
+  typeIdle(sequence);
  }
  function checkIdle(){
   if(!quietHome()){
-   if(idleHint||idleRevealTimer)dropIdle({resetClock:false});
+   if(idleHint||idleRevealTimer||idleTypeTimer||idleHideTimer)
+    dropIdle({resetClock:false});
    return;
   }
   const now=Date.now();
-  if(idleHint){
-   if(now>=idleVisibleUntil)dropIdle({resetClock:false});
-   return;
-  }
-  if(idleRevealTimer||now-idleSince<IDLE_MS)return;
-  if(idleLastShownAt&&now>=idleLastShownAt&&
+  if(idleHint||idleRevealTimer||now-idleSince<
+     (introDone?REPEAT_IDLE_MS:FIRST_IDLE_MS))return;
+  if(introDone&&idleLastShownAt&&now>=idleLastShownAt&&
      now-idleLastShownAt<HINT_COOLDOWN_MS)return;
   // The original greeting fades before a new thought appears. Never stack
   // a second text block over it or move the approved globe/weather layout.
