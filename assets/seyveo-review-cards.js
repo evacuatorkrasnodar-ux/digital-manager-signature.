@@ -124,6 +124,7 @@
  textObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
  window.addEventListener('resize',positionEntry);
  ['seyveo:tasks-changed','seyveo:calendar-changed','seyveo:card-visibility-changed','seyveo:home-recommendation-changed'].forEach(name=>window.addEventListener(name,update));
+ window.SEYVEO_REVIEW_CARDS=Object.freeze({count});
  setInterval(update,900);
  update();
 })();
