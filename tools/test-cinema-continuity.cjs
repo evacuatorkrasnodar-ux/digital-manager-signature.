@@ -56,6 +56,12 @@ assert.match(feed,/getUpdatedAt:\(\)=>updatedAt/,
  'Source exposes validated refresh timestamp to the Home weather line');
 assert.match(feed,/readCache\(\);paint\(\);\s*\/\/ Home's weather row[\s\S]*?window\.dispatchEvent\(new Event\('seyveo:weather-updated'\)\);\s*refresh\(\);/,
  'Cached forecast announces its availability before the next network refresh');
+assert.match(feed,/if\(!force&&updatedAt&&Date\.now\(\)-updatedAt<REFRESH_MS\)\{[\s\S]*?dispatchEvent\(new Event\('seyveo:weather-updated'\)\)/,
+ 'Cache hit announces fresh weather instead of silently returning');
+assert.match(brief,/document\.addEventListener\('DOMContentLoaded',sync,\{once:true\}\)/,
+ 'Home checks loaded weather after DOM initialization');
+assert.match(brief,/window\.addEventListener\('seyveo:route-changed',sync\)/,
+ 'Home rechecks the current forecast after navigation');
 assert.match(dockCss,/--sv-indicator-depth:0px;\s*--sv-indicator-scale:1;\s*box-shadow:none!important/,
  'Dock selection does not sink on a tap');
 assert.match(dockCss,/> #navManage#navManage:active\{\s*transform:none!important;\s*box-shadow:none!important/,

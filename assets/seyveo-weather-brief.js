@@ -122,6 +122,12 @@
         sync();
         if(!current)window.SAYVI_WEATHER?.refresh?.();
       });
+      // The weather source can hydrate from cache before this late Home
+      // component subscribes. Reconcile again after parsing and navigation.
+      if(document.readyState==='loading')
+        document.addEventListener('DOMContentLoaded',sync,{once:true});
+      window.addEventListener('load',sync,{once:true});
+      window.addEventListener('seyveo:route-changed',sync);
       document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
       button.addEventListener('click',()=>{
         current=getBrief();

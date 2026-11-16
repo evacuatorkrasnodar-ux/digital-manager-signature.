@@ -162,7 +162,12 @@
  }
  async function refresh(force=false){
   if(inFlight)return inFlight;
-  if(!force&&updatedAt&&Date.now()-updatedAt<REFRESH_MS){paint();return;}
+  if(!force&&updatedAt&&Date.now()-updatedAt<REFRESH_MS){
+   paint();
+   // A cached forecast is still a fresh update for late-mounted Home widgets.
+   window.dispatchEvent(new Event('seyveo:weather-updated'));
+   return;
+  }
   if(!force&&Date.now()-lastAttemptAt<60*1000){paint();return;}
   lastAttemptAt=Date.now();
   const activeLocation=location;
