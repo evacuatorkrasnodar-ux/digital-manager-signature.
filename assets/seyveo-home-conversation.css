@@ -53,8 +53,14 @@
   display:none!important;
 }
 /* Calm thoughts and the longer 'My morning' remain exclusive to empty Home. */
-:root.sv-home-card-sphere #homePage :is(#svHomeLivingLine[data-sv-presence="idle"],#svBroadcastStage,#svBroadcastStartOffer,#svBroadcastReturnLine){
+:root.sv-home-card-sphere #homePage :is(#svHomeLivingLine[data-sv-presence="idle"],#svBroadcastStage,#svBroadcastReturnLine){
   display:none!important;
+}
+/* A single, time-limited invitation can sit between the weather and the one
+   featured card. It is not a second card and never changes dock geometry. */
+:root.sv-home-card-sphere.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svBroadcastStartOffer{
+ top:calc(clamp(172px,24dvh,228px) + clamp(74px,21vw,90px) + 34px)!important;
+ z-index:9;
 }
 :root.sv-home-card-sphere.sv-broadcast-first-return #homePage
  :is(#seyveoLivingMoment,#dynamic,#svSmartStartHome,#svcpWorkHomePreview,#workTimeline,.sv-sayvi-handoff-today){

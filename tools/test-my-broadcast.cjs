@@ -8,7 +8,7 @@ const source=readFileSync(join(root,'assets/seyveo-my-broadcast.js'),'utf8');
 const style=readFileSync(join(root,'assets/seyveo-my-broadcast.css'),'utf8');
 const cinema=readFileSync(join(root,'assets/seyveo-sayvi-handoff-demo.js'),'utf8');
 const index=readFileSync(join(root,'index.html'),'utf8');
-assert.match(index,/seyveo-my-broadcast\.js\?v=6[\s\S]*seyveo-sayvi-handoff-demo\.js\?v=93/,
+assert.match(index,/seyveo-my-broadcast\.js\?v=7[\s\S]*seyveo-sayvi-handoff-demo\.js\?v=93/,
  'The preference flag must initialize before the original cinematic');
 assert.match(source,/root\.classList\.add\('sv-broadcast-onboarding'\)/,
  'First meeting is a deliberate one-time state');

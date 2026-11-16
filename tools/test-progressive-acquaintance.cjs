@@ -46,7 +46,7 @@ assert.match(home,/#seyveoLivingMoment \.lm-secondary\{\s*display:none!important
  'Home exposes one featured card, not the full task list');
 assert.match(home,/#svHomeLivingLine:is\(\[data-sv-presence="reply"\],\[data-sv-presence="listening"\]\):not\(\[hidden\]\)/,
  'Mini voice replies remain visible on Home while a card is present');
-assert.match(index,/seyveo-home-conversation\.css\?v=2/,
+assert.match(index,/seyveo-home-conversation\.css\?v=3/,
  'Compact Home geometry is included');
 assert.match(index,/seyveo-progressive-discovery\.js\?v=3/,
  'Section-specific introduction is included');

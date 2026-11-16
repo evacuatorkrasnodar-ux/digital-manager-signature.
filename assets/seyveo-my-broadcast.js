@@ -240,8 +240,8 @@
   returnLine.hidden=true;
   root.classList.remove('sv-broadcast-first-return');
   window.dispatchEvent(new Event('seyveo:broadcast-first-return-ended'));
-  if(isHome()&&!hasActualCards()){
-   window.dispatchEvent(new Event('seyveo:home-idle-prompt'));
+  if(isHome()){
+   if(!hasActualCards())window.dispatchEvent(new Event('seyveo:home-idle-prompt'));
    window.setTimeout(offerAfterSetup,460);
   }
  }
@@ -526,7 +526,7 @@
  });
  stageBox.querySelector('#svBroadcastStop').addEventListener('click',stop);
  function offerAfterSetup(){
-  if(onboarding||!overlay.hidden||active||!canBroadcast()||!isHome()||offer)return;
+  if(onboarding||!overlay.hidden||active||!isHome()||offer)return;
   offer=document.createElement('button');
   offer.id='svBroadcastStartOffer';
   offer.type='button';offer.className='sv-broadcast-start-offer';
