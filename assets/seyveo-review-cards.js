@@ -7,11 +7,6 @@
  const ids=['seyveoLivingMoment','dynamic','svcpWorkHomePreview','workTimeline','svSmartStartHome'];
  const original=new Map();
  const greetingSubline=document.getElementById('subline');
- const greetingAction=document.createElement('button');
- greetingAction.type='button';greetingAction.id='svHomeReviewText';
- greetingAction.className='sv-home-review-text';greetingAction.hidden=true;
- greetingAction.setAttribute('aria-label','Открыть карточки для разбора');
- greetingSubline?.after(greetingAction);
  const room=document.createElement('section');
  room.id='svReviewRoom';room.className='sv-review-room';room.hidden=true;
  room.setAttribute('role','dialog');room.setAttribute('aria-modal','true');room.setAttribute('aria-label','Разобрать дела');
@@ -40,15 +35,8 @@
  function update(){
   const total=count();
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
-  greetingAction.hidden=!total;
-  // One message under the greeting, never generic copy plus a second CTA.
+  // The fixed Home reminder owns the card count; no second copy.
   if(greetingSubline)greetingSubline.hidden=total>0;
-  if(total){
-   const form=total%10===1&&total%100!==11?'карточка':total%10>=2&&total%10<=4&&(total%100<12||total%100>14)?'карточки':'карточек';
-   const label=`Есть ${total} ${form} для разбора`;
-   const text=label+'  ›';
-   if(greetingAction.textContent!==text)greetingAction.textContent=text;
-  }
   const progress=total?total+' осталось':'Всё разобрано';
   if(document.getElementById('svReviewProgress').textContent!==progress)document.getElementById('svReviewProgress').textContent=progress;
   room.classList.toggle('sv-review-empty',!total);
@@ -86,7 +74,6 @@
   if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
  }
  window.addEventListener('seyveo:open-card-review',enter);
- greetingAction.addEventListener('click',enter);
  room.querySelector('#svReviewBack').addEventListener('click',leave);
  window.addEventListener('keydown',event=>{if(open&&event.key==='Escape')leave()});
  window.addEventListener('hashchange',()=>{if(open&&location.hash&&location.hash!=='#home')leave()});
