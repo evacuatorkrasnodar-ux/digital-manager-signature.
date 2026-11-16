@@ -73,6 +73,6 @@ test('unnamed category objects are not presented as recommended restaurants',asy
  const shown=descendants(section).filter(x=>x.className==='sv-meeting-place-choice');
  assert.equal(shown.length,1);
  assert.equal(shown[0].children[0].textContent,'Кофейня Романтика');
- const maps=descendants(section).find(x=>x.tagName==='a');
- assert.equal(new URL(maps.href).origin,'https://yandex.ru');
+ assert(!descendants(section).some(x=>x.tagName==='a'),
+  'suggestions remain in New Task without an unrelated Yandex Maps directory link');
 });

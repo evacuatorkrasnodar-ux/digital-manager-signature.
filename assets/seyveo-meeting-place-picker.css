@@ -13,7 +13,6 @@ dialog#personalTaskDialog .sv-meeting-place-choice{display:grid;width:100%;text-
 dialog#personalTaskDialog .sv-meeting-place-choice strong{font-size:13px;font-weight:600}
 dialog#personalTaskDialog .sv-meeting-place-choice small{font-size:11px;color:#7c8794;line-height:1.4}
 dialog#personalTaskDialog :is(.sv-meeting-place-more,.sv-meeting-place-dismiss){padding:8px 3px;margin-top:9px;background:transparent;border:0;color:#728092;font-size:12px}
-dialog#personalTaskDialog .sv-meeting-place-map{display:inline-block;margin-top:11px;font-size:12px;font-weight:600;color:#3a73b7;text-decoration:none}
 dialog#personalTaskDialog .sv-meeting-place-city{display:flex;gap:7px;margin-top:12px}
 dialog#personalTaskDialog .sv-meeting-place-city input{min-width:0;flex:1;min-height:39px;border:1px solid #e3e7eb;border-radius:12px;padding:8px 10px;font-size:14px;background:#fff}
 dialog#personalTaskDialog .sv-meeting-place-city button{border:0;border-radius:12px;background:#2c333d;color:#fff;padding:8px 12px;font-size:12px}
