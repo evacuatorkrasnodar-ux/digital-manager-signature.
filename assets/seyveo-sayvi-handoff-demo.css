@@ -4,6 +4,8 @@
 :root.sv-sayvi-handoff-demo{
  --sv-home-orb-size:clamp(230px,68vw,315px);
  --sv-home-orb-half:clamp(115px,34vw,157.5px);
+ --sv-home-weather-offset:84px;
+ --sv-home-cards-offset:136px;
 }
 /* A touch phone needs more presence than a desktop preview. The two values
    stay constant through greeting and idle; both use the same geometry. The
@@ -144,6 +146,42 @@
 :root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello--visible{
   opacity:1;
   transform:translate3d(0,0,0);
+}
+/* Spoken cinema belongs in Sayvi's thought bubble ABOVE the sphere.
+   The title/weather/card rail BELOW her stays in a separate fixed lane. */
+:root.sv-cinema-greeting-active.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage > .message{
+  position:absolute!important;
+  top:calc(50dvh - 100px - var(--sv-home-orb-half) - 122px)!important;
+  left:50%!important;
+  width:min(350px,calc(100vw - 38px))!important;
+  max-height:104px!important;
+  min-height:92px!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+  padding:13px 17px!important;
+  border:1px solid rgba(158,176,183,.24)!important;
+  border-radius:22px!important;
+  background:rgba(255,255,255,.91)!important;
+  box-shadow:0 5px 22px rgba(41,65,75,.045)!important;
+  transform:translateX(-50%)!important;
+  pointer-events:none!important;
+}
+:root.sv-cinema-greeting-active.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #stage > .message::after{
+  content:"";
+  position:absolute;
+  left:50%;bottom:-6px;
+  width:10px;height:10px;
+  background:rgba(255,255,255,.91);
+  border-right:1px solid rgba(158,176,183,.24);
+  border-bottom:1px solid rgba(158,176,183,.24);
+  transform:translateX(-50%) rotate(45deg);
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-hello{
+  width:100%;min-height:0;
+}
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--welcome,
+:root.sv-cinema-greeting-active #homePage .sv-cinema-written-line--wish{
+  font-size:clamp(19px,4.8vw,23px);
 }
 /* Private voice controls: local PC stream or an owner-imported Safari file.
    No audio is hosted publicly; the control appears when a tap is required. */
@@ -609,16 +647,16 @@ body > #orb.sv-sayvi-handoff-flight {
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #svSayviHomeWeather,
 :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #svSayviHomeWeather{
   position:absolute!important;
-  top:calc(50dvh - 100px + var(--sv-home-orb-half) + 135px)!important;
+  top:calc(50dvh - 100px + var(--sv-home-orb-half) + var(--sv-home-weather-offset))!important;
   left:50%!important;
   margin:0!important;
   transform:translateX(-50%)!important;
-  transition:top 1s cubic-bezier(.22,.8,.22,1),opacity .7s ease!important;
+  transition:opacity .7s ease!important;
 }
-/* When the welcome has done its job, the weather gently moves closer to
-   Sayvi. Her coordinate never changes, even while the copy fades away. */
-:root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svSayviHomeWeather{
-  top:calc(50dvh - 100px + var(--sv-home-orb-half) + 27px)!important;
+/* Below Sayvi: a single concise greeting, never another speech paragraph.
+   Weather and card count each keep their own reserved coordinates. */
+:root.sv-home-empty-sphere #homePage #stage > .message #subline{
+  display:none!important;
 }
 @media(prefers-reduced-motion:reduce){
   :root.sv-home-empty-sphere #homePage #svSayviHomeWeather,
