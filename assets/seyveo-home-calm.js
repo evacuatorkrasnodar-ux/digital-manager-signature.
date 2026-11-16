@@ -13,13 +13,17 @@
  stage.after(notice);
  const isHome=()=>!home.hidden&&(!location.hash||location.hash==='#home')&&
    !document.hidden&&!root.classList.contains('seyveo-conversation');
+ // Home copy never outruns Sayvi's physical return from the dock.
+ const sayviSettled=()=>root.classList.contains('sv-home-empty-arrived')&&
+   !root.classList.contains('sv-home-empty-arriving')&&
+   !root.classList.contains('sv-home-empty-sphere-leaving');
  const reviewOpen=()=>root.classList.contains('sv-review-open')||!!document.querySelector('dialog[open]');
  const label=()=>{
   const form=lastCount%10===1&&lastCount%100!==11?'карточка':lastCount%10>=2&&lastCount%10<=4&&(lastCount%100<12||lastCount%100>14)?'карточки':'карточек';
   return `Есть ${lastCount} ${form} для разбора  ›`;
  };
  function paint(){
-  const visible=lastCount>0&&isHome()&&!reviewOpen()&&
+  const visible=lastCount>0&&isHome()&&sayviSettled()&&!reviewOpen()&&
    !root.classList.contains('sv-home-reminder-hidden')&&root.classList.contains('sv-home-greeting-expired');
   notice.hidden=!visible;
   if(lastCount&&notice.textContent!==label())notice.textContent=label();
@@ -33,7 +37,7 @@
   hideTimer=setTimeout(()=>{if(reviewOpen())scheduleHide(NOTICE_MS);else hide()},delay);
  }
  function show(delay=NOTICE_MS){
-  if(!isHome()||reviewOpen()||!lastCount)return;
+  if(!isHome()||!sayviSettled()||reviewOpen()||!lastCount)return;
   root.classList.remove('sv-home-reminder-hidden');paint();scheduleHide(delay);
  }
  function wakeOnBlank(event){
@@ -41,12 +45,13 @@
   if(event.target.closest?.('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
   show();event.stopPropagation();
  }
- // Catch blank touches before older document handlers; support iPhone touch events.
+ // Window capture runs before older document-level handlers. Touch is an iOS fallback.
  window.addEventListener('pointerdown',wakeOnBlank,{capture:true,passive:true});
  window.addEventListener('touchstart',wakeOnBlank,{capture:true,passive:true});
  document.addEventListener('click',event=>{
   if(!isHome())return;
   if(event.target.closest?.('button,a,input,textarea,select,[role="button"],header,footer,nav,dialog,#orb,#svHomeLivingLine'))return;
+  // Fallback when an older script intercepted pointerdown on iPhone.
   if(root.classList.contains('sv-home-reminder-hidden'))show();
   // No invisible full-screen chat shortcut: Chat belongs to the sphere.
   event.preventDefault();event.stopImmediatePropagation();
@@ -73,7 +78,7 @@
  // Independently of taps, unresolved cards reappear every three minutes.
  setInterval(()=>show(NOTICE_MS),REMINDER_MS);
  new MutationObserver(paint).observe(root,{attributes:true,attributeFilter:['class']});
- // The card component's first event fires before this script is loaded.
+ // Review cards announce their count before this late-loaded script exists.
  lastCount=Math.max(0,Number(window.SEYVEO_REVIEW_CARDS?.count?.())||0);
  if(isHome())scheduleHide(FIRST_HIDE_MS);
  paint();
