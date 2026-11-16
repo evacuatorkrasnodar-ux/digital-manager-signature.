@@ -10,7 +10,9 @@
  const notice=document.createElement('button');
  notice.id='svHomeCalmDetails';notice.type='button';notice.hidden=true;
  notice.setAttribute('aria-label','Открыть карточки для разбора');
- stage.after(notice);
+ // Weather is also inside #stage. Sharing this positioned parent prevents
+ // iOS standalone PWA safe-area offsets from placing cards over weather.
+ stage.append(notice);
  const isHome=()=>!home.hidden&&(!location.hash||location.hash==='#home')&&
    !document.hidden&&!root.classList.contains('seyveo-conversation');
  // Home copy never outruns Sayvi's physical return from the dock.
