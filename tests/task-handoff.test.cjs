@@ -19,12 +19,22 @@ test('Sayvi understands a natural explicit New Task request',()=>{
  assert.equal(api.extract('добавь новую встречу с коллегой в кафе на Красной'),'с коллегой в кафе на Красной');
  assert.equal(api.extract('Запиши дело завтра купить цветы'),'завтра купить цветы');
 });
-test('ordinary chat and ambiguous names do not silently create tasks',()=>{
+test('a stated meeting with a real date and time opens the review editor',()=>{
  const {api}=browser();
- assert.equal(api.extract('Завтра в 18 встреча с Романом'), '');
+ assert.equal(api.extract('Завтра в 18 встреча с Романом'),'Завтра в 18 встреча с Романом');
+ assert.equal(api.extract('завтра в 18:00 встреча с Романом в кафе Вкусно — и точка, Красная Площадь.'),
+  'завтра в 18:00 встреча с Романом в кафе Вкусно — и точка, Красная Площадь.');
+ assert.equal(api.extract('Встреча с Романом завтра в 18:00'),'Встреча с Романом завтра в 18:00');
+});
+test('ordinary conversation and uncertain plans never trigger a task handoff',()=>{
+ const {api}=browser();
  assert.equal(api.extract('Найди информацию о кафе'), '');
  assert.equal(api.extract('Создай дело'), '');
  assert.equal(api.extract('Создай дело: <script>действие</script>'), '');
+ assert.equal(api.extract('Завтра в 18 встреча с Романом?'), '');
+ assert.equal(api.extract('Если завтра в 18 встреча с Романом, что делать?'), '');
+ assert.equal(api.extract('Возможно завтра в 18 встреча с Романом'), '');
+ assert.equal(api.extract('Завтра в 18 созвон с Романом — не записывай'), '');
 });
 test('task handoff uses only short-lived sessionStorage, never URL or permanent storage',()=>{
  const {api,memory}=browser();
