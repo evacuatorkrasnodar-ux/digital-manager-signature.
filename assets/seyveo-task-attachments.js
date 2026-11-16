@@ -85,13 +85,26 @@
   card.append(thumb,copy,remove);preview.append(card);
   if(ocrSuggestion){
    const suggestion=document.createElement('div');suggestion.className='sv-task-ocr-suggestion';
-   const hint=document.createElement('p');hint.textContent='Сэйви прочитала: '+ocrSuggestion;
-   const use=document.createElement('button');use.type='button';use.textContent='Добавить текст';
+   const heading=document.createElement('strong');heading.className='sv-task-ocr-heading';
+   const medical=/(?:\bmg\b|мг|мл|таблет|капсул|дозиров|рецепт|препарат|принимать|приём лекарств)/iu.test(ocrSuggestion);
+   const timetable=/(?:понедельник|вторник|среда|четверг|пятница|суббота|воскресенье|расписание|урок|заняти)/iu.test(ocrSuggestion);
+   heading.textContent=medical?'Сэйви прочитала назначение':timetable?'Сэйви нашла расписание':'Сэйви прочитала файл';
+   const hint=document.createElement('p');hint.className='sv-task-ocr-text';hint.textContent=ocrSuggestion;
+   const caution=document.createElement('small');caution.className='sv-task-ocr-caution';
+   caution.textContent=medical
+    ?'Проверь каждое слово с оригиналом. По фото нельзя подтверждать дозировки или начинать приём лекарств.'
+    :'Проверь распознанный текст и даты перед созданием дел.';
+   const use=document.createElement('button');use.type='button';use.textContent='Перенести в поле дел';
    use.addEventListener('click',()=>{
-    title.value=[title.value.trim(),ocrSuggestion].filter(Boolean).join(' ').slice(0,140);
-    title.dispatchEvent(new Event('input',{bubbles:true}));ocrSuggestion='';ocrMessage='Текст добавлен';render();
+    const combined=[title.value.trim(),ocrSuggestion].filter(Boolean).join('\n');
+    const max=title.maxLength>0?title.maxLength:500;
+    title.value=combined.slice(0,max);
+    title.dispatchEvent(new Event('input',{bubbles:true}));
+    if(combined.length>max)report('Перенесены первые '+max+' символов. Полный текст остаётся в предпросмотре для проверки.');
+    else report('Сэйви перенесла текст в поле. Проверь распознанные дела перед сохранением.');
+    title.focus({preventScroll:true});
    });
-   suggestion.append(hint,use);preview.append(suggestion);
+   suggestion.append(heading,hint,caution,use);preview.append(suggestion);
   }
  }
  function reset(){
@@ -143,7 +156,12 @@
   pending=file;removed=false;ocrSuggestion='';ocrMessage=IMAGE.test(file.type)?'Читаю надписи…':'Добавлено';
   render();report('Файл прикреплён. Напиши, что с ним нужно сделать.');
   if(IMAGE.test(file.type)&&file.size<=6*1024*1024)await recognize(file,token);
-  else if(IMAGE.test(file.type)){ocrMessage='Фото прикреплено';render()}
+  else if(file.type==='text/plain'||/\.txt$/i.test(file.name)){
+   try{
+    const content=String(await file.text()).trim();
+    if(token===generation&&content){ocrSuggestion=content.slice(0,2500);ocrMessage='Текст найден';render()}
+   }catch{if(token===generation){ocrMessage='Файл прикреплён';render()}}
+  }else if(IMAGE.test(file.type)){ocrMessage='Фото прикреплено';render()}
  }
  function loadOcr(){
   if(window.Tesseract)return Promise.resolve(window.Tesseract);
@@ -165,9 +183,9 @@
    if(token!==generation||!dialog.open)return;
    const result=await worker.recognize(file);
    if(token!==generation||!dialog.open)return;
-   const text=String(result?.data?.text||'').replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
+   const text=String(result?.data?.text||'').replace(/\r/g,'').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
    const confidence=Number(result?.data?.confidence||0);
-   if(confidence>=45&&text.length>=5){ocrSuggestion=text.slice(0,120);ocrMessage='Текст найден'}
+   if(confidence>=45&&text.length>=5){ocrSuggestion=text.slice(0,2500);ocrMessage='Текст найден'}
    else ocrMessage='Фото прикреплено';
   }catch{if(token===generation)ocrMessage='Фото прикреплено'}
   finally{if(worker)try{await worker.terminate()}catch{};if(token===generation)render()}

@@ -1477,3 +1477,26 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-preview
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-smart-preview.is-multi .sv-task-smart-dot.is-work{
  background:#5789B1!important;
 }
+
+/* Smart local file reading: full preview before any task is created. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ gap:8px!important;padding:13px!important;background:rgba(247,248,250,.83)!important;
+ border:1px solid rgba(200,206,216,.55)!important;border-radius:17px!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-heading{
+ color:#22262B!important;font:600 13px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion p.sv-task-ocr-text{
+ flex:none!important;display:block!important;max-height:152px!important;overflow-y:auto!important;
+ margin:0!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important;
+ color:#414953!important;font:440 13px/1.46 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-caution{
+ display:block!important;color:#707986!important;
+ font:460 11.5px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion button{
+ align-self:flex-start!important;border-radius:999px!important;padding:10px 14px!important;
+ color:#27394A!important;background:var(--sv-task-action-fill)!important;
+}
