@@ -41,7 +41,8 @@ function engaged(){
    ||document.querySelector('dialog[open]')!==null;
 }
 function focus(on){
- if(home.classList.contains('lm-focus')!==on)home.classList.toggle('lm-focus',on);
+ // Card layout never changes the main sphere's size.
+ if(home.classList.contains('lm-focus'))home.classList.remove('lm-focus');
 }
 function resetSpace(){
  space.classList.remove('lm-reveal','lm-gather','lm-condense','lm-disappear','lm-preview','lm-real');
