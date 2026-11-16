@@ -2,7 +2,7 @@
 #homePage .sv-sayvi-home-weather{display:none;align-items:center;justify-content:center;
   gap:7px;max-width:calc(100vw - 32px);margin:-4px auto -2px;padding:9px 10px;
   border:0;border-radius:12px;box-shadow:none;background:transparent;
-  color:#3c4950;font:400 14px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  color:#3c4950;font:400 14.5px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
   letter-spacing:0;text-align:center;white-space:normal;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
 #homePage .sv-sayvi-home-weather[hidden]{display:none!important}
