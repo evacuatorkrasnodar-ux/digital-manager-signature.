@@ -83,15 +83,6 @@
    }
    link.append(node('span','sv-place-map-pin','●'),node('span','sv-place-attribution','© OSM'));
    visual.append(link);card.append(visual);
-   const credit=node('div','sv-place-credit');
-   const source=document.createElement('a');source.href='https://www.openstreetmap.org/copyright';
-   source.target='_blank';source.rel='noopener noreferrer';source.textContent='© OpenStreetMap contributors';
-   credit.append(node('span','',place.source==='known-address'?'На карте — здание, не вход в кафе':'Проверь адрес перед сохранением'),source);
-   const street=document.createElement('a');street.href=places.streetViewURL(place);
-   street.target='_blank';street.rel='noopener noreferrer';street.textContent='Улица ↗';
-   street.setAttribute('aria-label','Посмотреть улицу в Google Картах, если есть панорама');
-   if(street.href)credit.append(street);
-   panel.append(credit);
    if(!confirmed){
     const actions=node('div','sv-place-confirm-actions');
     const accept=node('button','sv-place-confirm','Это место');accept.type='button';

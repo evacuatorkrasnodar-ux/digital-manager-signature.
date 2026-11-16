@@ -659,13 +659,6 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-link{
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-photo-link img{
  display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-credit{
- display:flex!important;justify-content:space-between!important;align-items:center!important;flex-wrap:wrap!important;gap:3px 8px!important;
- margin:6px 6px 0!important;color:#7D838C!important;font:450 10.6px/1.3 system-ui!important;
-}
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-credit a{
- color:#647B90!important;text-decoration:none!important;
-}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-confirm-actions{
  display:flex!important;align-items:center!important;gap:10px!important;margin:10px 2px 2px!important;
 }

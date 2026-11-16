@@ -45,6 +45,10 @@ test('a found branch stays a suggestion until the user confirms the real address
  assert(tiles.length>0);
  assert(tiles.every(tile=>tile.referrerPolicy==='strict-origin-when-cross-origin'),
   'map tiles must identify their source so OpenStreetMap does not send an Access blocked image');
+ assert.equal(descendants(panel).filter(node=>node.className==='sv-place-credit').length,0,
+  'technical map footnotes must not take space beneath the small map');
+ assert(descendants(panel).some(node=>node.className==='sv-place-attribution'),
+  'compact map keeps its unobtrusive source mark');
  const button=descendants(panel).find(node=>node.className==='sv-place-confirm');
  assert(button,'the confirmed-location action is visible');
  button.click();
