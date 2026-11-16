@@ -22,36 +22,44 @@
  const readPlan=window.SEYVEO_TASK_SMART_PLAN;
  if(!dialog||!form||!date||!days||!title||!hasDate)return;
  const mainSection=title.closest('.sv-new-task-main');
- const addMoreButton=document.createElement('button');
- addMoreButton.type='button';
- addMoreButton.className='sv-task-add-more';
- addMoreButton.textContent='＋ Добавить дело';
- addMoreButton.setAttribute('aria-label','Добавить ещё одно отдельное дело');
- mainSection?.insertAdjacentElement('afterend',addMoreButton);
  const extraFields=()=>[...form.querySelectorAll('.sv-task-extra-field')];
- function addSeparateTask(){
-  if(!mainSection||extraFields().length>=11)return;
-  const row=document.createElement('div');row.className='sv-task-manual-extra-row';
-  const label=document.createElement('label');
-  label.className='sv-task-input-capsule sv-task-extra-capsule';
-  const subtitle=document.createElement('span');
-  subtitle.textContent='Отдельное дело';
-  const field=document.createElement('textarea');
-  field.className='sv-task-extra-field';field.rows=2;field.maxLength=500;
-  field.placeholder='Напиши следующее дело';
-  field.setAttribute('aria-label','Текст дополнительного дела');
-  field.addEventListener('input',updateSmartPreview);
-  label.append(subtitle,field);
-  const remove=document.createElement('button');remove.type='button';
-  remove.className='sv-task-remove-extra';
-  remove.setAttribute('aria-label','Убрать дополнительное дело');
-  remove.textContent='−';
-  remove.addEventListener('click',()=>{row.remove();updateSmartPreview()});
-  row.append(label,remove);mainSection.append(row);
-  field.focus({preventScroll:true});
-  updateSmartPreview();
+ const titleCapsule=title.closest('.sv-task-title-capsule');
+ const groupedPreview=document.createElement('div');
+ groupedPreview.className='sv-task-one-field-summary';
+ groupedPreview.hidden=true;
+ groupedPreview.setAttribute('aria-label','Распознанные дела в одном поле');
+ title.insertAdjacentElement('afterend',groupedPreview);
+ const groupedHint=document.createElement('div');
+ groupedHint.className='sv-task-one-field-hint';
+ groupedHint.hidden=true;
+ title.insertAdjacentElement('afterend',groupedHint);
+ const taskCountText=n=>n===1?'дело':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'дела':'дел';
+ function refreshOneField(){
+  const values=title.value.trim();
+  const items=!isEditing()&&values?draftsForSave():[];
+  const multiple=items.length>1;
+  const focused=document.activeElement===title;
+  titleCapsule?.classList.toggle('is-grouped',multiple);
+  titleCapsule?.classList.toggle('is-editing',focused);
+  groupedHint.hidden=!multiple||!focused;
+  groupedPreview.hidden=!multiple||focused;
+  if(!multiple){groupedPreview.replaceChildren();groupedHint.replaceChildren();return}
+  groupedHint.replaceChildren();
+  const badge=document.createElement('span');badge.className='sv-task-one-field-hint-dot';
+  groupedHint.append(badge,document.createTextNode('Сэйви распознала '+items.length+' '+taskCountText(items.length)));
+  if(focused)return;
+  groupedPreview.replaceChildren();
+  for(const item of items){
+   const row=document.createElement('div');row.className='sv-task-one-field-item';
+   const dot=document.createElement('span');dot.className='sv-task-one-field-dot is-'+(item.category==='work'?'work':'personal');
+   dot.setAttribute('aria-hidden','true');
+   const name=document.createElement('span');name.className='sv-task-one-field-name';name.textContent=item.title;
+   row.append(dot,name);groupedPreview.append(row);
+  }
  }
- addMoreButton.addEventListener('click',addSeparateTask);
+ groupedPreview.addEventListener('click',()=>title.focus({preventScroll:true}));
+ title.addEventListener('focus',refreshOneField);
+ title.addEventListener('blur',()=>queueMicrotask(refreshOneField));
  const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  const iso=(y,m,d)=>[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');
  let shownYear=new Date().getFullYear(),shownMonth=new Date().getMonth();
@@ -383,7 +391,7 @@
  }
  function updateSmartPreview(){
   if(!smartPreview||!smartDetails)return;
-  addMoreButton.hidden=isEditing();
+  refreshOneField();
   const raw=title.value.trim().replace(/\s+/g,' ');
   const empty=!raw;
   const recognized=Boolean((typeof readPhrase==='function'&&readPhrase(raw))||date.value||timeInput?.value||proposedPlan()?.items?.length>1||extraFields().some(field=>field.value.trim()));
