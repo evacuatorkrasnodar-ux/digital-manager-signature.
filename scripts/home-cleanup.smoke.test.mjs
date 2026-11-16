@@ -27,6 +27,7 @@ test('An undecided card reminder is available for iPhone screen taps',async()=>{
  assert.match(reminder,/lastCount=Math\.max\(0,Number\(window\.SEYVEO_REVIEW_CARDS\?\.count\?\.\(\)\)/);
  assert.match(reminder,/window\.addEventListener\('pointerdown',wakeOnBlank/);
  assert.match(reminder,/window\.addEventListener\('touchstart',wakeOnBlank/);
+ assert.match(reminder,/isHome\(\)&&sayviSettled\(\)&&!reviewOpen\(\)/);
  assert.doesNotMatch(review,/svReviewEntry|sv-review-entry|positionEntry/);
  new Script(reminder);new Script(review);
 });
@@ -36,4 +37,7 @@ test('Review page has no obsolete button styles or geometry observers',async()=>
  assert.doesNotMatch(css,/sv-review-entry|svReviewEntry|sv-home-card-sphere/);
  assert.match(css,/\.sv-review-room\{/);
  assert.match(css,/#homePage #svHomeReviewText\{/);
+ assert.match(css,/:root\.sv-home-empty-arriving #homePage :is\(#svHomeCalmDetails/);
+ assert.match(css,/:root\.sv-sayvi-handoff-docked:not\(\.sv-home-empty-arrived\) #homePage #stage > \.message/);
+ assert.match(css,/sv-home-empty-arrived:not\(\.sv-home-empty-at-launch\) #homePage #svHomeCalmDetails:not\(\[hidden\]\)/);
 });
