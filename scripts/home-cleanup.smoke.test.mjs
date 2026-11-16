@@ -16,6 +16,10 @@ test('Sayvi uses one constant size before and after the greeting',async()=>{
  assert.match(css,/@media \(max-width:649px\) and \(pointer:coarse\)/);
  assert.match(css,/--sv-home-orb-size:min\(78vw,325px,42dvh\)/);
  assert.match(css,/--sv-home-orb-half:min\(39vw,162\.5px,21dvh\)/);
+ assert.match(css,/--sv-home-weather-offset:84px/);
+ assert.match(css,/--sv-home-cards-offset:136px/);
+ assert.doesNotMatch(css,/transition:top 1s cubic-bezier/);
+ assert.match(css,/:root\.sv-cinema-greeting-active\.sv-sayvi-handoff-demo:not\(\.sv-sayvi-handoff-docked\) #homePage #stage > \.message/);
  assert.equal(css.match(/width:var\(--sv-home-orb-size\)/g)?.length,2);
  assert.equal(css.match(/height:var\(--sv-home-orb-size\)/g)?.length,4);
  assert.doesNotMatch(html,/seyveo-home-conversation\.css/);
