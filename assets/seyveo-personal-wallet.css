@@ -57,3 +57,10 @@
 #seyveoPayDialog .sw-privacy{margin:26px 20px 0;color:#92939a;font-size:11px;line-height:1.5}
 @media(prefers-color-scheme:dark){html[data-theme=dark] #seyveoPayDialog .sw-screen{color:#f5f5f7}}
 @media(max-width:360px){#seyveoPayDialog .sw-summary{padding:15px}#seyveoPayDialog .sw-totals strong{font-size:17px}#seyveoPayDialog .sw-title-row{flex-wrap:wrap}}
+
+#seyveoPayDialog .sw-photos{display:flex;gap:9px;flex-wrap:wrap;margin-top:11px}
+#seyveoPayDialog .sw-photos button{flex:1 1 145px;font-size:13px;padding:9px 7px}
+#seyveoPayDialog .sw-receipt{margin-top:12px;padding:12px;background:#f7f7f9;border-radius:14px}
+#seyveoPayDialog .sw-receipt[hidden]{display:none}
+#seyveoPayDialog .sw-receipt img{display:block;width:auto;max-width:100%;max-height:180px;margin:0 auto;object-fit:contain;border-radius:8px}
+#seyveoPayDialog .sw-receipt p{font-size:13px;color:#666872;line-height:1.4;margin:10px 0}
