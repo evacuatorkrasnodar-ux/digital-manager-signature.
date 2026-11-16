@@ -1,11 +1,9 @@
-/* The exact same Home layout on iPhone and desktop: no sphere zoom. */
+/* Home reminders only. Orb dimensions belong to seyveo-sayvi-handoff-demo.css.
+   Never set #orb or #orbCluster here: those overrides enlarged Sayvi after
+   the greeting, while the initial greeting still used the original size. */
 :root.sv-home-reminder-hidden #homePage #svHomeReviewText,
 :root.sv-home-reminder-hidden #homePage #svHomeCalmDetails{
  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
-}
-/* Weather always sits below Sayvi, including after the greeting fades. */
-:root.sv-home-empty-sphere.sv-home-greeting-expired #homePage #svSayviHomeWeather{
- top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 28px)!important;
 }
 #homePage #svHomeCalmDetails{
  position:absolute;z-index:9;
@@ -19,26 +17,3 @@
  transition:opacity .36s ease,visibility .36s ease;
 }
 #homePage #svHomeCalmDetails[hidden]{display:none!important}
-/* One physical size from arrival onward; reminder timers only change copy.
-   Explicit geometry also isolates Sayvi from older cached calm styles. */
-:root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orbCluster,
-:root.sv-home-empty-sphere.sv-home-reminder-hidden.sv-sayvi-handoff-docked #homePage #orbCluster{
- height:clamp(210px,62vw,285px)!important;
-}
-:root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orb,
-:root.sv-home-empty-sphere.sv-home-reminder-hidden.sv-sayvi-handoff-docked #homePage #orb{
- width:clamp(210px,62vw,285px)!important;
- height:clamp(210px,62vw,285px)!important;
-}
-/* Slightly fuller Sayvi on phones, at the same size before and after reminders. */
-@media(max-width:600px){
- :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orbCluster,
- :root.sv-home-empty-sphere.sv-home-reminder-hidden.sv-sayvi-handoff-docked #homePage #orbCluster{
-  height:clamp(250px,77vw,320px)!important;
- }
- :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #orb,
- :root.sv-home-empty-sphere.sv-home-reminder-hidden.sv-sayvi-handoff-docked #homePage #orb{
-  width:clamp(250px,77vw,320px)!important;
-  height:clamp(250px,77vw,320px)!important;
- }
-}
