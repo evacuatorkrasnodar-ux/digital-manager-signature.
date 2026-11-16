@@ -65,12 +65,12 @@
   let startGreeting=()=>{};
   let welcomeSpeech='';
   if(showCinema&&message){
-    // Written phrases match the exact approved 3.36-second spoken greeting.
-    // Do not insert an owner's name: the recording says only "Привет!".
+    // Silent, unhurried handwriting: three gentle thoughts with breathing
+    // pauses. Keep the approved wording and original large-Sayvi artwork.
     const greetingLines=[
-      {text:'Привет!',kind:'welcome',type:52,hold:260,erase:30},
-      {text:'Я Сэйви.',kind:'name',type:48,hold:260,erase:30},
-      {text:'Рада тебя видеть!',kind:'wish',type:60}
+      {text:'Привет!',kind:'welcome',type:105,hold:560,erase:62},
+      {text:'Я Сэйви.',kind:'name',type:102,hold:570,erase:62},
+      {text:'Рада тебя видеть!',kind:'wish',type:105}
     ];
     welcomeSpeech=greetingLines.map(line=>line.text).join(' ');
     greeting=document.createElement('p');
@@ -106,7 +106,7 @@
           cursor=Math.max(0,cursor-1);
           writing.textContent=phrase.text.slice(0,cursor);
           if(cursor>0)greetingTicker=setTimeout(erase,phrase.erase);
-          else greetingTicker=setTimeout(()=>playPhrase(index+1),120);
+          else greetingTicker=setTimeout(()=>playPhrase(index+1),220);
         };
         greetingTicker=setTimeout(type,phrase.type);
       };
@@ -350,7 +350,7 @@
     beginHomeGreetingLifetime();
     // Remove animation control once every delayed card has settled, so any
     // later live updates keep their normal transitions and touch behaviour.
-    if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);
+    if(spark)setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),4200);
     setTimeout(()=>root.classList.remove('sv-sayvi-handoff-arrived'),850);
     window.dispatchEvent(new Event('seyveo:cinema-finished'));
   }
@@ -645,47 +645,8 @@
     });
   }
 
-  // The approved recording is now publicly available for all SEYVEO visitors.
-  // Browsers that block autoplay receive a clear one-tap play control.
-  function showPublicVoiceWelcome(){
-    runOpening();
-    voiceMedia=new Audio('assets/SEYVEO-Sayvi-welcome.wav?v=1');
-    voiceMedia.preload='auto';
-    const showPlayButton=()=>{
-      if(done||!voiceMedia)return;
-      if(!voiceButton){
-        voiceButton=document.createElement('button');
-        voiceButton.type='button';
-        voiceButton.className='sv-cinema-local-voice';
-        voiceButton.setAttribute('aria-label','Включить голосовое приветствие Сэйви');
-        document.body.appendChild(voiceButton);
-        voiceButton.addEventListener('click',()=>{
-          if(!voiceMedia||done)return;
-          voiceButton.disabled=true;
-          voiceButton.textContent='Включаю голос Сэйви…';
-          playWelcome();
-        });
-      }
-      voiceButton.textContent='▶ Включить голос Сэйви';
-      voiceButton.hidden=false;
-      voiceButton.disabled=false;
-    };
-    const playWelcome=()=>{
-      if(!voiceMedia||done)return;
-      voiceMedia.play().then(()=>{
-        if(voiceButton){voiceButton.remove();voiceButton=null;}
-      }).catch(error=>{
-        if(done)return;
-        if(error?.name==='NotAllowedError')showPlayButton();
-        else{
-          console.warn('[SEYVEO] Voice playback:',error?.message||error);
-          showPlayButton();
-        }
-      });
-    };
-    voiceMedia.onerror=()=>showPlayButton();
-    playWelcome();
-  }
+  // No automatic spoken welcome: the public launch is intentionally silent.
+  // An explicitly requested private preview (?sayvi-voice=1) remains separate.
 
   // One opening per LOCAL calendar day; route changes never replay the film.
   const launch=()=>{
@@ -709,7 +670,7 @@
       prepareDock();
       root.classList.remove('sv-cinema-boot');
       showPrivateFileVoicePreview();
-    }else showPublicVoiceWelcome();
+    }else runOpening();
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
@@ -842,7 +803,7 @@
       restoreAmbientMotion();
       if(afterTap&&!home.hidden){
         root.classList.add('sv-cinema-stagger-enter');
-        setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),2800);
+        setTimeout(()=>root.classList.remove('sv-cinema-stagger-enter'),4200);
       }
       if(canShowMusicAmbient())scheduleMusicAmbient();
     };
