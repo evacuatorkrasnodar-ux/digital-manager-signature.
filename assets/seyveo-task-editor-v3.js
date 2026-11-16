@@ -155,7 +155,7 @@
  function sizePhrase(){
   if(!dialog.open)return;
   title.style.height='auto';
-  title.style.height=Math.max(80,Math.min(174,title.scrollHeight))+'px';
+  title.style.height=Math.max(56,Math.min(128,title.scrollHeight))+'px';
  }
  const wheelRowHeight=40;
  const wheelMonths=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2020,i,1)));
@@ -267,24 +267,32 @@
  function updateSmartPreview(){
   if(!smartPreview||!smartDetails)return;
   const raw=title.value.trim().replace(/\s+/g,' ');
-  smartPreview.hidden=!raw;
+  const empty=!raw;
+  // Keep the structured editor visible before the user types. These are
+  // actual editable controls, not fabricated tasks or pre-filled dates.
+  smartPreview.hidden=false;
+  smartPreview.classList.toggle('is-empty',empty);
   smartDetails.replaceChildren();
-  if(!raw)return;
-  const drafts=draftsForSave();
+  const drafts=empty?[]:draftsForSave();
   const multi=drafts.length>1;
-  const displayed=drafts.length?drafts:[{title:effectiveTitle(),category:selectedCategory(),entryType:selectedType(),tone:'orange'}];
+  const displayed=empty?[{title:'Название дела',category:'personal',entryType:'task',tone:'orange'}]:
+   drafts.length?drafts:[{title:effectiveTitle(),category:selectedCategory(),entryType:selectedType(),tone:'orange'}];
   const category=displayed[0].category,kind=displayed[0].entryType;
   smartPreview.classList.toggle('is-work',category==='work');
   smartPreview.classList.toggle('is-multi',multi);
   for(const item of displayed){
-   const main=document.createElement('div');main.className='sv-task-smart-main';
-   const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+item.category;
-   if(multi&&item.category!=='work')dot.classList.add('is-tone-'+item.tone);
-   dot.setAttribute('aria-hidden','true');
+   const main=document.createElement('button');main.type='button';main.className='sv-task-smart-main';
+   main.setAttribute('aria-label',empty?'Ввести название дела':'Изменить название дела');
+   main.addEventListener('click',()=>title.focus({preventScroll:true}));
    const copy=document.createElement('div');copy.className='sv-task-smart-item-copy';
    copy.append(createText('name',item.title));
    if(multi)copy.append(createText('item-detail',(item.category==='work'?'Работа':'Личное')+' · '+(item.entryType==='event'?'Событие':'Напоминание')));
-   main.append(dot,copy);smartDetails.append(main);
+   if(!empty){
+    const dot=document.createElement('span');dot.className='sv-task-smart-dot is-'+item.category;
+    if(multi&&item.category!=='work')dot.classList.add('is-tone-'+item.tone);
+    dot.setAttribute('aria-hidden','true');main.append(dot);
+   }
+   main.append(copy);smartDetails.append(main);
   }
   const when=document.createElement('button');when.type='button';when.className='sv-task-smart-when';
   when.setAttribute('aria-label',multi?'Изменить дату и время обоих дел':'Изменить дату и время дела');
@@ -294,17 +302,17 @@
   if(date.value){
    const [year,month,day]=date.value.split('-').map(Number);
    whenDate.textContent=new Intl.DateTimeFormat('ru-RU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(new Date(year,month-1,day));
-  }else whenDate.textContent='Без даты';
-  whenTime.textContent=timeInput?.value||'Время не выбрано';
+  }else whenDate.textContent='Добавить дату';
+  whenTime.textContent=timeInput?.value||'Время';
   const arrow=document.createElement('span');arrow.className='sv-task-smart-when-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');
   when.append(whenDate,whenTime,arrow);
   when.addEventListener('click',()=>{quickDateOpen=!quickDateOpen;if(quickDateOpen)quickWheelMode='date';updateSmartPreview()});
   smartDetails.append(when);
   if(quickDateOpen)smartDetails.append(makeWheelEditor(whenDate,whenTime));
   const meta=document.createElement('div');meta.className='sv-task-smart-meta';
-  if(!multi){
-   meta.append(createText('category',category==='work'?'Работа':'Личное'));
-   meta.append(createText('kind',kind==='event'?'Событие':'Напоминание'));
+  if(!multi&&!empty){
+   if(category==='work')meta.append(createText('category','Работа'));
+   if(kind==='event')meta.append(createText('kind','Событие'));
   }
   const lead=proposedPlan()?.leadMinutes||0;
   if(lead)meta.append(createText('lead',`За ${lead===60?'1 час':lead+' мин.'} до начала`));
@@ -312,7 +320,7 @@
   if(priority&&priority!=='none')meta.append(createText('priority',({low:'Без спешки',medium:'Важно',high:'Срочно'})[priority]||'Приоритет'));
   const repeat=document.getElementById('personalTaskRepeat')?.value;
   if(repeat&&repeat!=='none')meta.append(createText('repeat',({daily:'Каждый день',weekly:'Каждую неделю',monthly:'Каждый месяц'})[repeat]||'Повтор'));
-  smartDetails.append(meta);
+  if(meta.childElementCount)smartDetails.append(meta);
   if(lead)smartDetails.append(createText('notice','Уведомление за час пока недоступно.'));
   if(timeInput?.value&&!date.value)smartDetails.append(createText('notice','Укажи дату для напоминания по времени.'));
  }
