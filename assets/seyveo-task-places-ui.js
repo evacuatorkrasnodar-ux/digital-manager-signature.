@@ -46,10 +46,7 @@
   const navigatorLink=node('a','sv-place-map-route-primary','Маршрут в Навигаторе');
   navigatorLink.href=places.navigatorRouteURL(target);
   navigatorLink.setAttribute('aria-label','Передать адрес в Яндекс Навигатор');
-  const mapsLink=node('a','sv-place-map-route-secondary','Яндекс Карты');
-  mapsLink.href=places.yandexRouteURL(target);mapsLink.target='_blank';mapsLink.rel='noopener noreferrer';
-  mapsLink.setAttribute('aria-label','Маршрут в Яндекс Картах, если Навигатор не установлен');
-  footer.append(navigatorLink,mapsLink);
+  footer.append(navigatorLink);
   sheet.append(handle,header,viewport,footer);shade.append(sheet);
   shade.addEventListener('click',closeMapViewer);
   shade.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeMapViewer()}});
@@ -274,13 +271,37 @@
    const details=places.venueInfo?.(place);
    if(details){
     const strip=node('div','sv-place-venue-details');
-    if(details.hours)strip.append(node('span','sv-place-hours','Часы · '+details.hours));
+    const addRow=(label,value,body)=>{
+     const row=node('div','sv-place-info-row');
+     const toggle=node('button','sv-place-info-toggle');toggle.type='button';
+     const id='sv-place-info-'+strip.children.length;
+     toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls',id);
+     toggle.append(node('span','sv-place-info-label',label),node('strong','sv-place-info-value',value),node('span','sv-place-info-chevron','⌄'));
+     const content=node('div','sv-place-info-content');content.id=id;content.hidden=true;
+     toggle.addEventListener('click',()=>{
+      content.hidden=!content.hidden;toggle.setAttribute('aria-expanded',String(!content.hidden));
+     });
+     body(content);row.append(toggle,content);strip.append(row);
+    };
+    if(details.hours)addRow(details.hoursSourceURL?'График · справочник':'График работы',details.hours,content=>{
+     if(details.hoursNote)content.append(node('p','sv-place-info-note',details.hoursNote));
+     if(details.hoursSourceURL){
+      const source=node('a','sv-place-info-source','Источник графика ↗');
+      source.href=details.hoursSourceURL;source.target='_blank';source.rel='noopener noreferrer';content.append(source);
+     }
+    });
     if(details.menuURL){
-     const menu=node('a','sv-place-menu-link','Меню и цены ↗');
-     menu.href=details.menuURL;menu.target='_blank';menu.rel='noopener noreferrer';
-     menu.title=details.menuNote||'Открыть меню на официальном сайте';
-     menu.setAttribute('aria-label','Открыть официальное меню. Цены могут отличаться в выбранном ресторане');
-     strip.append(menu);
+     addRow('Меню и цены','Посмотреть',content=>{
+      for(const item of details.menuPreview||[]){
+       const line=node('div','sv-place-price-row');
+       line.append(node('span','',item.name),node('strong','',item.price));content.append(line);
+      }
+      if(details.menuNote)content.append(node('p','sv-place-info-note',details.menuNote));
+      const menu=node('a','sv-place-menu-link','Всё меню на официальном сайте ↗');
+      menu.href=details.menuURL;menu.target='_blank';menu.rel='noopener noreferrer';
+      menu.setAttribute('aria-label','Открыть полное официальное меню, цены могут отличаться');
+      content.append(menu);
+     });
     }
     panel.append(strip);
    }
@@ -288,12 +309,6 @@
     const website=node('a','sv-place-manual-map','Сайт заведения ↗');
     website.href=place.websiteURL;website.target='_blank';website.rel='noopener noreferrer';panel.append(website);
    }
-   // Photo galleries, reviews and hours belong to the verified place listing.
-   // Open Yandex's directory on an explicit tap; do not scrape it or claim
-   // that the matching business page has already been verified.
-   const yandex=node('a','sv-place-manual-map','Посмотреть в Яндекс Картах ↗');
-   yandex.href=places.yandexSearchURL(place.name+' '+place.address);
-   yandex.target='_blank';yandex.rel='noopener noreferrer';panel.append(yandex);
   }else if(choices.length){
    card.classList.add('sv-place-choices');
    card.append(node('p','sv-place-choice-intro',choicesNearby?
@@ -326,11 +341,6 @@
    if(proposal&&status!=='loading'&&status!=='restart'&&status!=='city'){
     const retry=node('button','sv-place-retry',status==='idle'?'Найти на карте':'Проверить снова');
     retry.type='button';retry.addEventListener('click',lookup);card.append(retry);
-   }
-   if(proposal&&(status==='error'||status==='not-found'||status==='restart')){
-    const fallback=node('a','sv-place-manual-map','Найти в Яндекс Картах ↗');
-    fallback.href=places.yandexSearchURL(proposal.query);
-    fallback.target='_blank';fallback.rel='noopener noreferrer';panel.append(fallback);
    }
   }
   if(cityEditing&&proposal&&!proposal.explicitCity){

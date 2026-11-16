@@ -18,9 +18,18 @@
   // Real photograph of the shopping centre entrance, NOT the cafe doorway.
   // Andrew Butko · CC BY-SA 4.0 · Wikimedia Commons (11 July 2024).
   photo:'2024-07-11. Краснодар DSC 2268.jpg',
-  // Chain-wide official menu; its prices are region-dependent and NOT a quote
-  // for this particular branch. No opening hours are asserted without data.
+  // Opening hours are from a public directory for THIS first-floor branch,
+  // not a live confirmation by the restaurant. Never mix in floor 3 (10–22).
+  openingHours:'06:00–04:00',
+  hoursSourceURL:'https://tastyandpoint.com/restaurants/krasnodar/',
+  // Chain-wide official menu; prices are region-dependent and NOT a quote
+  // for the restaurant on the first floor. A small labelled preview only.
   menuURL:'https://vkusnoitochka.ru/menu',
+  menuPreview:Object.freeze([
+   Object.freeze({name:'Особый Супер Бокс',price:'от 539 ₽'}),
+   Object.freeze({name:'Биг Спешиал Три сыра',price:'от 369 ₽'}),
+   Object.freeze({name:'Корн-доги мини',price:'от 199 ₽'})
+  ]),
   keywords:['красная площадь','дзержинского','100']
  })];
  const meeting=/(?:^|[\s,.!?])(?:встреч[а-яё]*|встрет[а-яё]*|переговор[а-яё]*|пообед[а-яё]*|поужин[а-яё]*|позавтрак[а-яё]*|обед|ужин|завтрак|кофе|посид[а-яё]*)(?=$|[\s,.!?])/iu;
@@ -460,10 +469,13 @@
  function venueInfo(value){
   const place=cleanPlace(value);if(!place)return null;
   const verified=isCuratedMallPhoto(place);
-  const hours=place.openingHours||'';
+  const curated=verified?VERIFIED_VENUES[0]:null;
+  const hours=place.openingHours||curated?.openingHours||'';
   if(!hours&&!verified)return null;
-  return {hours,menuURL:verified?VERIFIED_VENUES[0].menuURL:'',
-   menuNote:verified?'Цены на официальном сайте зависят от выбранного региона и могут отличаться в ресторане.':''};
+  return {hours,hoursSourceURL:!place.openingHours?curated?.hoursSourceURL||'':'',
+   hoursNote:curated&&!place.openingHours?'По открытому справочнику для 1-го этажа. График мог измениться.':'',
+   menuURL:curated?.menuURL||'',menuPreview:curated?.menuPreview||[],
+   menuNote:curated?'Цены «от» на официальном сайте для выбранного региона. В этом ресторане они могут отличаться.':''};
  }
  const photoCache=new Map();
  const metadataCache=new Map();

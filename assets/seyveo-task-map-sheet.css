@@ -102,7 +102,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-footer{
  width:100%!important;padding:15px 17px calc(17px + env(safe-area-inset-bottom,0px))!important;
  background:#fff!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 :is(.sv-place-map-route-primary,.sv-place-map-route-secondary){
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-route-primary{
  box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
  height:52px!important;min-width:0!important;padding:0 12px!important;
  border:1px solid rgba(102,111,123,.15)!important;border-radius:999px!important;
@@ -111,10 +111,9 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 :is(.sv-place-map-route-pr
  font:570 13.5px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-route-primary{
- flex:1.45!important;background:#38383A!important;color:#fff!important;
+ flex:1!important;background:#38383A!important;color:#fff!important;
  border-color:#38383A!important;
 }
-html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-place-map-route-secondary{flex:1!important}
 @keyframes sv-place-map-shade-in{from{opacity:0}to{opacity:1}}
 @keyframes sv-place-map-sheet-up{from{transform:translateY(45px);opacity:.55}to{transform:translateY(0);opacity:1}}
 @media(min-width:650px){

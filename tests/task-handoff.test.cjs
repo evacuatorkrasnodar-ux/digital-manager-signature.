@@ -40,7 +40,8 @@ test('handoff opens one canonical editor and still requires Save and place confi
  const home=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
  const chat=fs.readFileSync(path.join(__dirname,'../sayvi-chat-new.html'),'utf8');
  const tasks=fs.readFileSync(path.join(__dirname,'../assets/personal-tasks.js'),'utf8');
- assert(home.indexOf('seyveo-task-handoff.js?v=1')<home.indexOf('personal-tasks.js?v=116'));
+ assert(home.indexOf('seyveo-task-handoff.js?v=1')<home.search(/personal-tasks\.js\?v=\d+/),
+  'task handoff loads before the currently versioned personal tasks script');
  assert.match(chat,/SEYVEO_TASK_HANDOFF\.remember\(newTask\)/);
  assert.match(tasks,/handoff\.clear\(\);\s*openDialog\(\);/);
  assert.match(tasks,/input\.dispatchEvent\(new Event\('input'/);

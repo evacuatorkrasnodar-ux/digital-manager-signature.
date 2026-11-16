@@ -15,8 +15,18 @@
 @media(min-width:540px){.sv-personal-places-overlay{align-items:center;padding:24px}.sv-personal-places-sheet{border-radius:28px}}
 dialog#personalTaskDialog .sv-travel-saved-origins{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 dialog#personalTaskDialog .sv-travel-saved-origins button{min-height:37px;border-radius:18px;padding:7px 13px;background:#f4f5f7;border:1px solid #e6e9ed;color:#303743;font-size:12px;font-weight:600}
-dialog#personalTaskDialog .sv-place-venue-details{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;padding:5px 5px 1px;font-size:12px}
-dialog#personalTaskDialog .sv-place-venue-details .sv-place-hours{color:#667181}
-dialog#personalTaskDialog .sv-place-venue-details .sv-place-menu-link{color:#456c9f;font-weight:600;text-decoration:none}
+dialog#personalTaskDialog .sv-place-venue-details{display:grid;gap:0;margin:9px 10px 0;border:1px solid #eceef1;border-radius:17px;overflow:hidden;background:#f8f9fa;font:450 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+dialog#personalTaskDialog .sv-place-info-row+.sv-place-info-row{border-top:1px solid #e9ebef}
+dialog#personalTaskDialog .sv-place-info-toggle{display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;min-height:47px;padding:10px 12px;border:0;background:transparent;text-align:left;color:#22262d;font:inherit;cursor:pointer}
+dialog#personalTaskDialog .sv-place-info-label{flex:1;min-width:0;color:#5c6570}
+dialog#personalTaskDialog .sv-place-info-value{color:#22262d;font-size:13px;font-weight:570;white-space:nowrap}
+dialog#personalTaskDialog .sv-place-info-chevron{color:#89919b;font-size:16px;transition:transform .2s ease}
+dialog#personalTaskDialog .sv-place-info-toggle[aria-expanded="true"] .sv-place-info-chevron{transform:rotate(180deg)}
+dialog#personalTaskDialog .sv-place-info-content{padding:1px 12px 13px;color:#29303a}
+dialog#personalTaskDialog .sv-place-info-content[hidden]{display:none!important}
+dialog#personalTaskDialog .sv-place-price-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid #e9ebef}
+dialog#personalTaskDialog .sv-place-price-row strong{flex:0 0 auto;font-weight:570;color:#22262d}
+dialog#personalTaskDialog .sv-place-info-note{margin:8px 0 5px;color:#6a737e;font-size:11.6px;line-height:1.5}
+dialog#personalTaskDialog .sv-place-venue-details :is(.sv-place-menu-link,.sv-place-info-source){display:inline-block;margin-top:7px;color:#456c9f;font-size:12.5px;font-weight:550;text-decoration:none}
 dialog#personalTaskDialog .sv-place-map.sv-place-map-yandex{display:grid!important;place-items:center!important;background:#f2f4f7!important;text-align:center!important;color:#3e5169!important;text-decoration:none!important}
 dialog#personalTaskDialog .sv-place-map-yandex-label{white-space:pre-line;font:600 12px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;letter-spacing:-.01em}

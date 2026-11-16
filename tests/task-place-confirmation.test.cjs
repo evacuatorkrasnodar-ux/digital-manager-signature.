@@ -62,8 +62,8 @@ test('a found branch stays a suggestion until the user confirms the real address
   'expanded map loads tiles only when the user opens it');
  const navigatorLink=descendants(map).find(node=>node.className==='sv-place-map-route-primary');
  assert.match(navigatorLink.href,/^yandexnavi:\/\/build_route_on_map\?lat_to=45\.02&lon_to=38\.9$/);
- const mapsFallback=descendants(map).find(node=>node.className==='sv-place-map-route-secondary');
- assert.match(mapsFallback.href,/yandex\.ru\/maps\/\?mode=routes/);
+ assert(!descendants(map).some(node=>node.className==='sv-place-map-route-secondary'),
+  'only the Navigator handoff remains; this task screen does not advertise Yandex Maps');
  assert(descendants(map).some(node=>node.className==='sv-place-map-credit'&&node.href.includes('openstreetmap.org/copyright')));
  const zoomButton=descendants(map).find(node=>node.className==='sv-place-map-zoom'&&node.textContent==='+');
  assert(zoomButton);
@@ -141,9 +141,25 @@ test('the confirmed mall entrance photo previews over the map and enlarges with 
  assert(photo.src.endsWith('assets/seyveo-krasnaya-ploshchad-entrance-2024.jpg'),
   'a known verified entrance photo must load from SEYVEO, not a fragile external hotlink');
  assert(descendants(panel).some(el=>el.className==='sv-place-map'),'the original map remains visible');
- const menu=descendants(panel).find(el=>el.className==='sv-place-menu-link');
+ assert(!descendants(panel).some(el=>el.textContent.includes('Яндекс Картах')),
+  'the place card should not turn into a Yandex Maps directory');
+ const info=descendants(panel).find(el=>el.className==='sv-place-venue-details');
+ assert(info,'a compact native card shows hours and menu inline');
+ const toggles=descendants(info).filter(el=>el.className==='sv-place-info-toggle');
+ assert.equal(toggles.length,2);
+ assert(descendants(toggles[0]).some(el=>el.textContent==='06:00–04:00'),
+  'hours belong to the verified first-floor branch, not the third-floor restaurant');
+ const hoursContent=descendants(info).find(el=>el.className==='sv-place-info-content');
+ assert(hoursContent.hidden);
+ toggles[0].click();assert(!hoursContent.hidden);
+ assert(descendants(hoursContent).some(el=>el.className==='sv-place-info-source'),
+  'unverified hours retain a public source and caution');
+ toggles[1].click();
+ const prices=descendants(info).filter(el=>el.className==='sv-place-price-row');
+ assert.equal(prices.length,3,'official site example prices appear inside the task screen');
+ const menu=descendants(info).find(el=>el.className==='sv-place-menu-link');
  assert(menu&&menu.href==='https://vkusnoitochka.ru/menu',
-  'the official menu link is visible without inventing branch-specific prices');
+  'full official menu is optional and region-dependent');
  thumbnail.click();
  const viewer=descendants(dialog).find(el=>el.className==='sv-place-photo-lightbox');
  assert(viewer,'tapping opens a larger in-app image');
