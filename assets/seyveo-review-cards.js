@@ -45,6 +45,7 @@
   line.hidden=true;
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
   greetingAction.hidden=!total;
+  if(greetingSubline)greetingSubline.hidden=total>0;
   if(total){
    const form=total%10===1&&total%100!==11?'карточка':total%10>=2&&total%10<=4&&(total%100<12||total%100>14)?'карточки':'карточек';
    const label=`Есть ${total} ${form} для разбора`;
