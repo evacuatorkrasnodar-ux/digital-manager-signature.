@@ -34,6 +34,23 @@
  white-space:nowrap;cursor:pointer;
 }
 #homePage #svHomeCalmDetails[hidden]{display:none!important}
+#homePage #svHomeCalmDetails:disabled{cursor:default;color:#737982}
+/* Expired greeting must never pull weather into the physical sphere. */
+:root.sv-home-empty-sphere.sv-home-greeting-expired:not(.sv-home-calm) #homePage #svSayviHomeWeather{
+ top:calc(50dvh - 100px + clamp(105px,31vw,142.5px) + 28px)!important;
+}
+/* The XR/compact phone deserves the full calm composition, not a tiny orb. */
+@media(max-width:600px){
+ :root.sv-home-calm.sv-home-empty-arrived #homePage #orbCluster,
+ :root.sv-home-calm.sv-home-empty-arrived #homePage.lm-focus #orbCluster{
+  height:clamp(290px,82vw,342px)!important;
+ }
+ :root.sv-home-calm.sv-home-empty-arrived #homePage #orb,
+ :root.sv-home-calm.sv-home-empty-arrived #homePage.lm-focus #orb{
+  width:clamp(290px,82vw,342px)!important;
+  height:clamp(290px,82vw,342px)!important;
+ }
+}
 @media(prefers-reduced-motion:reduce){
  :root.sv-home-calm #homePage #orbCluster,:root.sv-home-calm #homePage #orb,
  :root.sv-home-empty-arrived:not(.sv-home-calm) #homePage #orbCluster,
