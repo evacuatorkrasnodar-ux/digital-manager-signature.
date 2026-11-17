@@ -27,7 +27,7 @@ for(const [name,value] of Object.entries({
 }))assert.ok(tokens.includes(`${name}:${value};`),`${name} must be ${value}`);
 
 assert.match(shell,/var\(--sv-nav-triple-width,134px\)/);
-assert.match(shell,/var\(--sv-nav-double-width,92px\)/);
+assert.match(shell,/:host\(\[data-task-selecting="true"\]\) \.sv-history-dual\{\s*display:flex!important;width:var\(--sv-nav-single-size,44px\)/);
 assert.match(shell,/sv-review-cards-badge:not\(\[hidden\]\)\{position:absolute;top:4px;right:1px;/);
 assert.match(home,/\.lm-polymer\.sv-card-icon-button:is\([\s\S]*?flex:0 0 var\(--sv-action-circle-size,44px\)!important;/);
 assert.match(cards,/:root\[data-theme="light"\],[\s\S]*?--sv-card-icon-touch:var\(--sv-action-circle-size,44px\)/,

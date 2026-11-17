@@ -95,6 +95,18 @@ html.sv-task-selection-active #svAllTasksView .sv-tool-results{padding-bottom:76
  -webkit-backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%));
  backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%));
 }
+/* The single selection entry fits the same 44px control standard as the
+   header. On activation, the capsule expands to its existing bulk actions. */
+#svTaskActionCapsule.sv-task-selection-idle{
+ display:flex;justify-content:center;
+ width:134px;max-width:calc(100% - 30px);
+ height:44px;min-height:44px;padding:2px;
+}
+#svTaskActionCapsule.sv-task-selection-idle .sv-task-choose{
+ height:40px;min-height:40px;
+ background:rgba(255,255,255,.7);
+ font-size:12.5px;
+}
 :root[data-theme="dark"] #svTaskActionCapsule{
  border:var(--sv-nav-pearl-border);
  background:var(--sv-nav-pearl-bg);

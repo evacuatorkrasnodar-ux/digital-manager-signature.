@@ -50,9 +50,8 @@
  const {host:heading,back,title,month,calendarJump,add}=workHeader;
  const plusIcon=workHeader.icons.plus;
  const searchIcon=workHeader.icons.search;
- // A single Apple-style grouped action: Select + Search in the History header.
- // The existing Search control is reused, not cloned. The group collapses
- // to display:contents elsewhere, keeping every other header unchanged.
+ // The landing uses the three-action capsule. In nested All Tasks, Search
+ // becomes one 44px circle; choosing records lives in the bottom capsule.
  const historyBar=heading.shadowRoot?.querySelector('.bar');
  const historyGroup=document.createElement('div');
  historyGroup.className='sv-history-dual';
@@ -136,11 +135,10 @@
   :host([data-task-tools="true"]) .sv-history-select[aria-pressed="true"]{
    background:transparent!important;
   }
-  /* The nested All Tasks capsule contains Search and Select. */
-  /* SEYVEO page actions: 44px circle, 92×44 paired capsule, main dock stays 60px.
-     Only the two-action All Tasks header uses this paired layout. */
+  /* All Tasks: a single 44px magnifier, aligned with the 44px Back circle.
+     The bottom capsule owns selection. The 60px global dock is untouched. */
   :host([data-task-selecting="true"]) .sv-history-dual{
-   display:flex!important;width:var(--sv-nav-double-width,92px)!important;height:var(--sv-nav-capsule-height,44px)!important;padding:0 3px!important;
+   display:flex!important;width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;padding:0 1px!important;
   }
   :host([data-task-selecting="true"]) .sv-history-dual .control{
    flex:0 0 var(--sv-nav-capsule-cell,42px)!important;width:var(--sv-nav-capsule-cell,42px)!important;min-width:var(--sv-nav-capsule-cell,42px)!important;
@@ -149,8 +147,8 @@
   :host([data-task-selecting="true"]) .sv-history-dual .control svg{
    width:20px!important;height:20px!important;stroke-width:1.6!important;
   }
-  :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select{display:grid!important}
-  :host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search):not(.sv-history-select){display:none!important}
+  :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select{display:none!important}
+  :host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search){display:none!important}
   /* Selection is conveyed by the icon, not a second grey pill inside
      the already finished pearl capsule. */
   :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select[aria-pressed="true"]{background:transparent!important}
@@ -372,6 +370,10 @@
    cancel.setAttribute('aria-label','Отменить выбор дел');
    cancel.addEventListener('click',toggleSelection);
    actionCapsule.append(selectAll,counter,deleteButton,cancel);
+  }else{
+   const choose=make('button','sv-task-choose','Выбрать дела');choose.type='button';
+   choose.addEventListener('click',toggleSelection);
+   actionCapsule.append(choose);
   }
   function paintResults(){
    results.replaceChildren();
@@ -431,7 +433,8 @@
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   const selectionVisible=selectionActive&&nested;
-  actionCapsule.hidden=!selectionVisible;
+  actionCapsule.hidden=!nested;
+  actionCapsule.classList.toggle('sv-task-selection-idle',nested&&!selectionActive);
   document.documentElement.classList.toggle('sv-task-selection-active',selectionVisible);
   selectHistory.setAttribute('aria-pressed',String(selectionActive));
   selectHistory.setAttribute('aria-label',selectionActive?'Закончить выбор дел':'Выбрать дела');
