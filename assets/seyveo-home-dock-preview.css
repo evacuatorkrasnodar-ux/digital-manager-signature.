@@ -3,7 +3,21 @@
  * Existing route and touch handlers remain intact. Dark theme / Health
  * keep their independent styles. No extra overlays or duplicate icons.
  */
-:root[data-theme="light"]{--seyveo-dock-height:60px}
+:root[data-theme="light"]{
+ --seyveo-dock-height:60px;
+ /* Shared matte-silver finish for the approved Home dock and Work
+    action/segmented capsules; component dimensions remain independent. */
+ --sv-dock-pearl-border:.7px solid rgba(255,255,255,.28);
+ --sv-dock-pearl-bg:rgba(190,193,202,.10);
+ --sv-dock-pearl-blur:blur(4px) saturate(100%);
+ --sv-dock-pearl-shadow:
+   0 0 0 .45px rgba(164,170,184,.16),
+   inset 0 1px 1px rgba(75,82,96,.055),
+   inset 0 -1px 0 rgba(255,255,255,.18),
+   inset .6px 0 .7px rgba(255,255,255,.16),
+   inset -.6px 0 .8px rgba(75,82,96,.055),
+   0 1px 2px rgba(82,88,103,.045);
+}
 :root[data-theme="light"] :is(
  body > footer.dock.sv-shared-dock,
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
@@ -39,17 +53,12 @@
  top:0!important;bottom:0!important;
  height:60px!important;
  /* Trial: the exact transparent pearl material approved for Home card actions. */
- border:.7px solid rgba(255,255,255,.28)!important;
+ border:var(--sv-dock-pearl-border)!important;
  border-radius:999px!important;
- background:rgba(190,193,202,.10)!important;
- -webkit-backdrop-filter:blur(4px) saturate(100%)!important;
- backdrop-filter:blur(4px) saturate(100%)!important;
- box-shadow:0 0 0 .45px rgba(164,170,184,.16),
-   inset 0 1px 1px rgba(75,82,96,.055),
-   inset 0 -1px 0 rgba(255,255,255,.18),
-   inset .6px 0 .7px rgba(255,255,255,.16),
-   inset -.6px 0 .8px rgba(75,82,96,.055),
-   0 1px 2px rgba(82,88,103,.045)!important;
+ background:var(--sv-dock-pearl-bg)!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ box-shadow:var(--sv-dock-pearl-shadow)!important;
 }
 :root[data-theme="light"] :is(
  body > footer.dock.sv-shared-dock,
@@ -58,12 +67,7 @@
  left:0!important;right:auto!important;
  width:var(--sv-feng-capsule)!important;
  /* Same ring as the search circle: one continuous edge while the dock grows. */
- box-shadow:0 0 0 .45px rgba(164,170,184,.16),
-   inset 0 1px 1px rgba(75,82,96,.055),
-   inset 0 -1px 0 rgba(255,255,255,.18),
-   inset .6px 0 .7px rgba(255,255,255,.16),
-   inset -.6px 0 .8px rgba(75,82,96,.055),
-   0 1px 2px rgba(82,88,103,.045)!important;
+ box-shadow:var(--sv-dock-pearl-shadow)!important;
 }
 :root[data-theme="light"] :is(
  body > footer.dock.sv-shared-dock,
