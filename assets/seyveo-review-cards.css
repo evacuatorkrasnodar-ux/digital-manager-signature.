@@ -112,6 +112,8 @@
  border:1px solid rgba(255,250,241,.40)!important;
  background:#EE8529!important;
  opacity:.88!important;
+ /* Only the numeral glows through the ice; never blur the disc's edges. */
+ text-shadow:0 0 .8px rgba(255,255,255,.72)!important;
  box-shadow:inset 0 1.1px 1.5px rgba(103,56,19,.12),
             inset 0 -1px 1.1px rgba(255,255,255,.40)!important;
 }
@@ -119,20 +121,23 @@
    the disc for 1, 12 or 99+, so the number really sits behind the frost. */
 #navTasks[data-sv-review-count]::before{
  z-index:4!important;color:transparent!important;
- border:1px solid rgba(255,255,255,.52)!important;
- background:linear-gradient(160deg,rgba(255,255,255,.46),rgba(237,241,245,.31) 64%,rgba(255,255,255,.23))!important;
+ border:1px solid rgba(247,252,255,.68)!important;
+ background:radial-gradient(circle at 28% 16%,rgba(255,255,255,.61),rgba(247,251,255,.12) 64%,transparent 79%),
+            linear-gradient(155deg,rgba(235,242,248,.48),rgba(218,230,241,.31) 58%,rgba(245,249,252,.32))!important;
  /* A physical-looking milk-glass film, without backdrop blur: blurring a
     tiny glyph inside another filtered dock causes colored Safari fringes. */
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
- box-shadow:inset 0 .9px 1px rgba(255,255,255,.53),
-            inset 0 -.7px 1px rgba(119,76,43,.085)!important;
+ box-shadow:inset 0 1px 1.2px rgba(255,255,255,.82),
+            inset 0 -1px 1.3px rgba(110,138,159,.15),
+            0 0 .5px rgba(191,204,215,.17)!important;
 }
 /* The button stays recessed, but its counter becomes a sharp flat disc. */
 :root[data-theme="light"] #navTasks[data-sv-review-count]:is(.active,.sv-dock-nav-press)::after{
  background:#F58A24!important;
  color:#FFFFFF!important;
  opacity:1!important;
+ text-shadow:none!important;
  border-color:rgba(255,255,255,.95)!important;
  box-shadow:0 .2px .5px rgba(125,72,25,.08)!important;
  transform:none!important;
