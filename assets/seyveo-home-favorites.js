@@ -85,8 +85,6 @@ const add=document.createElement('button');add.type='button';add.className='sv-h
 add.setAttribute('aria-label','Добавить приложение на главную');
 add.innerHTML='<span class="sv-home-favorite-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="sv-home-favorite-label">Добавить</span>';
 rail.append(add);
-const doneEdit=document.createElement('button');doneEdit.type='button';doneEdit.className='sv-home-favorites-done';
-doneEdit.textContent='Готово';doneEdit.hidden=true;document.body.append(doneEdit);
 stage.append(rail);
 card.addEventListener('click',e=>{
  if(editing||suppressClick){e.preventDefault();suppressClick=false;return}
@@ -111,7 +109,6 @@ function totalSlots(){return preference.items.length+(preference.showSmart?1:0)}
 function syncEditControls(){
  smartTile.hidden=!preference.showSmart;
  rail.classList.toggle('is-editing',editing);
- doneEdit.hidden=!editing;
  add.hidden=!editing||totalSlots()>=MAX_COUNT;
 }
 function enterEdit(){
@@ -122,7 +119,6 @@ function exitEdit(){
  if(!editing)return;
  editing=false;suppressClick=false;syncEditControls();renderItems();show();
 }
-doneEdit.addEventListener('click',exitEdit);
 add.addEventListener('click',()=>openCustomize());
 function removeSlot(id){
  if(!editing)return;
@@ -289,7 +285,6 @@ const show=()=>{
   editing=false;syncEditControls();renderItems();
  }
  rail.hidden=!visible||(!editing&&totalSlots()===0);
- doneEdit.hidden=!editing||!visible;
  if(visible&&!rail.hidden)requestAnimationFrame(place);
 };
 function updateCount(){
