@@ -448,25 +448,3 @@ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button[aria-press
  background:rgba(224,231,240,.77)!important;
  border-color:rgba(135,151,170,.68)!important;
 }
-
-/* When Sayvi is docked, the Home hero is deliberately hidden.
-   Preserve the dock state, but reveal her visual through the editor curtain. */
-:root.sv-sayvi-handoff-docked:not(.sv-home-empty-sphere)
- dialog.sv-home-favorites-editor[open]::before{
- content:"";
- position:absolute;
- z-index:0;
- top:calc(50dvh - 230px);
- left:50%;
- width:min(68vw,275px);
- aspect-ratio:1;
- transform:translateX(-50%);
- background:url("./plasma-signature.svg?v=20") center/contain no-repeat;
- opacity:.67;
- filter:blur(1.1px);
- pointer-events:none;
-}
-dialog.sv-home-favorites-editor .sv-home-favorites-editor-shell{
- position:relative;
- z-index:1;
-}
