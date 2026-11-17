@@ -66,7 +66,7 @@
 #seyveoCardStudio .scs-gallery-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
 #seyveoCardStudio .scs-gallery-head h3{font-size:18px;font-weight:560;margin:0}
 #seyveoCardStudio .scs-gallery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
-#seyveoCardStudio .scs-gallery-item{min-width:0;padding:14px;border:0;border-radius:var(--sv-master-card-radius,20px);background:var(--sv-velvet-panel-quiet,var(--card2))}
+#seyveoCardStudio .scs-gallery-item{min-width:0;padding:14px;border:0;border-bottom:1px solid rgba(103,116,128,.16);border-radius:0;background:transparent}
 #seyveoCardStudio .scs-gallery-name{font-size:11px;color:var(--secondary);margin:0 0 8px}
 #seyveoCardStudio .scs-gallery-feedback{font-size:11px;color:var(--secondary);min-height:0;margin:4px 0 0}
 #seyveoCardStudio .scs-gallery-item .sv-card-training{font-size:10px}
@@ -131,7 +131,7 @@
 #seyveoCardStudio .scs-theme-switch button{min-height:36px;padding:7px 11px;border:0;border-radius:999px;background:transparent;color:var(--secondary);font-size:11px}
 #seyveoCardStudio .scs-theme-switch button[aria-pressed=true]{background:#38383A;color:#f4f5f6;-webkit-backdrop-filter:none;backdrop-filter:none}
 #seyveoCardStudio .scs-phone{--sv-master-secondary-glass:rgba(184,195,201,.095);--sv-master-glass:rgba(184,195,201,.19);--text:#fff;--secondary:#c7d2d9;--sv-velvet-divider:rgba(202,217,228,.12);--sv-lg26-control:linear-gradient(155deg,rgba(230,241,249,.15),rgba(175,204,222,.075) 65%,rgba(205,224,238,.09));width:min(100%,390px);min-height:340px;margin:auto;padding:23px 18px 28px;border:0;border-radius:27px;background:linear-gradient(180deg,#0e1419 0%,#141b21 28%,#1b252d 55%,#212d36 78%,#10161b 100%);color:var(--text);overflow:hidden}
-#seyveoCardStudio .scs-phone[data-preview-theme=light]{--sv-master-secondary-glass:rgba(99,121,133,.13);--sv-master-glass:rgba(99,121,133,.26);--text:#26313b;--secondary:#626e74;--sv-velvet-divider:rgba(55,72,85,.13);--sv-lg26-control:linear-gradient(155deg,rgba(255,255,255,.65) 0%,rgba(232,235,240,.30) 58%,rgba(255,255,255,.45) 100%);background:linear-gradient(180deg,#fafbfc 0%,#f6f8fa 58%,#f0f3f7 100%)}
+#seyveoCardStudio .scs-phone[data-preview-theme=light]{--sv-master-secondary-glass:rgba(99,121,133,.13);--sv-master-glass:rgba(99,121,133,.26);--text:#26313b;--secondary:#626e74;--sv-velvet-divider:rgba(55,72,85,.13);--sv-lg26-control:linear-gradient(155deg,rgba(255,255,255,.65) 0%,rgba(232,235,240,.30) 58%,rgba(255,255,255,.45) 100%);background:#fff}
 #seyveoCardStudio .scs-phone-label{margin:0 0 18px;color:var(--secondary);font-size:10px;font-weight:550;letter-spacing:.12em}
 #seyveoCardStudio .scs-phone .sv-card-system--rendered{color:var(--text)}
 #seyveoCardStudio .scs-phone :is(.sv-card-source,.sv-card-label,.sv-card-training,.scs-state-detail){color:var(--secondary)}
@@ -171,7 +171,7 @@
  color:var(--text);
 }
 #seyveoCardStudio .scs-gallery-item[data-preview-theme=light]{
- background:linear-gradient(180deg,#fafbfc,#eef3f4);
+ background:#fff;
  color:var(--text);
 }
 #seyveoCardStudio .scs-gallery-item :is(.sv-card-source,.sv-card-label,.sv-card-training,.scs-gallery-name,.scs-gallery-feedback){
