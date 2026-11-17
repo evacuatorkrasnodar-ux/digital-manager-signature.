@@ -670,7 +670,7 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
   box-sizing:border-box!important;
   grid-template-rows:repeat(var(--cal-month-weeks,6),minmax(0,1fr))!important;
   grid-auto-rows:minmax(0,1fr)!important;
-  height:min(var(--cal-month-max-height,588px),calc(100dvh - 206px - env(safe-area-inset-bottom)))!important;
+  height:min(var(--cal-month-max-height,588px),max(var(--cal-month-min-height,432px),calc(100dvh - 206px - env(safe-area-inset-bottom))))!important;
   min-height:0!important;overflow:hidden!important;
  }
  html body #calendarPage #calendarView[data-mode="month"] .cal-month-grid .cal-day{
