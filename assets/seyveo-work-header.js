@@ -122,16 +122,22 @@
  }
  /* Larger back chevron, same delicate hairline. Keep the button rim and Plus untouched. */
  .back svg{width:var(--sv-header-back-icon,25px);height:var(--sv-header-back-icon,25px);stroke-width:var(--sv-header-back-weight,1.45)}
- /* All Tasks: exact material and 50px geometry of the Home favourites. */
- :host([data-task-selecting="true"][data-theme="light"]) .back{
+ /* One freshly rebuilt All Tasks Back. Silver-mist material follows the Home dock,
+    with a visible hairline rim on the pure-white header. No extra pseudo layers. */
+ :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back{
   width:50px;height:50px;min-width:50px;min-height:50px;
-  background:var(--sv-card-action-neutral-bg,transparent);
-  border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));
-  box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16));
-  -webkit-backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
-  backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
+  border:1px solid rgba(155,166,181,.34);border-radius:50%;
+  background:rgba(190,193,202,.10);
+  box-shadow:0 0 0 .45px rgba(164,170,184,.16),
+   inset 0 1px 1px rgba(75,82,96,.055),
+   inset 0 -1px 0 rgba(255,255,255,.18),
+   inset .6px 0 .7px rgba(255,255,255,.16),
+   inset -.6px 0 .8px rgba(75,82,96,.055),
+   0 1px 2px rgba(82,88,103,.045);
+  -webkit-backdrop-filter:blur(4px) saturate(100%);
+  backdrop-filter:blur(4px) saturate(100%);
  }
- :host([data-task-selecting="true"][data-theme="light"]) .back svg{
+ :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back svg{
   width:23px;height:23px;stroke-width:1.6;stroke:#0B0B0D;
   shape-rendering:geometricPrecision;
  }
@@ -161,7 +167,7 @@
  function create(){
   const host=document.createElement('seyveo-work-head');
   const shadow=host.attachShadow({mode:'open'});
-  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="calendar-jump" type="button" aria-label="Открыть все календари" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Все календари</span></button><button class="month" type="button" aria-label="Открыть календарь" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
+  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back sv-canonical-back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="calendar-jump" type="button" aria-label="Открыть все календари" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Все календари</span></button><button class="month" type="button" aria-label="Открыть календарь" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
   const back=shadow.querySelector('.back');
   const title=shadow.querySelector('.title');
   const month=shadow.querySelector('.month');
