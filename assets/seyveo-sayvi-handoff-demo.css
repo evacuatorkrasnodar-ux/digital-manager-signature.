@@ -5,7 +5,7 @@
  --sv-home-orb-size:clamp(230px,68vw,315px);
  --sv-home-orb-half:clamp(115px,34vw,157.5px);
  --sv-home-cards-offset:80px;
- --sv-home-weather-offset:128px;
+ --sv-home-weather-offset:110px;
 }
 /* A touch phone needs more presence than a desktop preview. The two values
    stay constant through greeting and idle; both use the same geometry. The
