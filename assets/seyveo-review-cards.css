@@ -14,6 +14,44 @@
 .sv-review-content .lm-space{opacity:1!important;visibility:visible!important}
 .sv-review-content .lm-tiles{transform:none!important;opacity:1!important}
 .sv-review-content .lm-field{max-width:100%!important}
+/* Review-room training cards share the approved quiet Card Studio material.
+   They exist only for UI inspection and never imply real unread content. */
+.sv-review-demo-list{display:grid;gap:12px;width:100%;min-width:0;padding:0 0 18px}
+.sv-review-demo-card{
+ box-sizing:border-box;min-width:0;padding:14px 14px 10px;
+ border:.7px solid rgba(184,190,201,.25);border-radius:20px;
+ background:rgba(241,243,247,.42);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
+ color:#202329;
+}
+.sv-review-demo-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;color:#777E88;font:550 10px/1.25 -apple-system,BlinkMacSystemFont,sans-serif;letter-spacing:.05em}
+.sv-review-demo-top span:last-child{color:#A1A7B0;font-size:9px;letter-spacing:.055em}
+.sv-review-demo-hero{display:grid;grid-template-columns:42px minmax(0,1fr);align-items:center;gap:11px}
+.sv-review-demo-art{box-sizing:border-box;display:grid;place-items:center;width:42px;height:42px;border:1px solid rgba(178,187,200,.24);border-radius:14px;background:rgba(255,255,255,.56);color:#333941}
+.sv-review-demo-art svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+.sv-review-demo-copy{min-width:0}
+.sv-review-demo-copy strong{display:block;font:560 16px/1.3 -apple-system,BlinkMacSystemFont,sans-serif;letter-spacing:-.022em}
+.sv-review-demo-copy p{margin:4px 0 0;color:#646B74;font:420 13px/1.42 -apple-system,BlinkMacSystemFont,sans-serif}
+.sv-review-demo-detail{margin:14px 0 0;padding:12px 13px;border-radius:13px;background:rgba(255,255,255,.62);color:#555D67;font:430 13px/1.5 -apple-system,BlinkMacSystemFont,sans-serif}
+.sv-review-demo-detail[hidden]{display:none!important}
+.sv-review-demo-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:11px 0 0 53px}
+.sv-review-demo-actions button{
+ position:relative;isolation:isolate;box-sizing:border-box;display:grid;place-items:center;
+ min-height:44px;min-width:0;padding:0 11px;border:0;border-radius:999px;
+ background:transparent;box-shadow:none;color:#292E35;
+ font:550 12px/1.2 -apple-system,BlinkMacSystemFont,sans-serif;cursor:pointer;
+}
+.sv-review-demo-actions button::before{
+ content:'';position:absolute;inset:5px 0;border-radius:999px;z-index:-1;
+ background:var(--sv-master-secondary-glass,rgba(184,195,201,.095));
+ -webkit-backdrop-filter:var(--sv-master-glass-blur,blur(6px));backdrop-filter:var(--sv-master-glass-blur,blur(6px));
+}
+.sv-review-demo-actions button.sv-review-demo-primary::before{background:var(--sv-master-glass,rgba(188,196,203,.2))}
+.sv-review-demo-actions button:last-child::before{content:none}
+.sv-review-demo-actions button:active{opacity:.67}
+.sv-review-demo-actions button:focus-visible{outline:2px solid #6D8FB8;outline-offset:2px}
+.sv-review-demo-done .sv-review-demo-copy strong{color:#737D87}
+@media(max-width:380px){.sv-review-demo-actions{margin-left:0;gap:5px}.sv-review-demo-actions button{padding-inline:9px}}
 .sv-review-empty .sv-review-content::after{content:'На сегодня всё разобрано';display:block;text-align:center;padding:72px 12px;font-size:17px;color:#707078}
 :root.sv-review-open #homePage.lm-focus #stage{min-height:initial}
 @keyframes sv-review-appear{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
