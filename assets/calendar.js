@@ -183,7 +183,29 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
  if(personalTasks.some(x=>x.date===key&&!x.done))dots.append(text('i','cal-dot-task'));
  if(personal.length)dots.append(text('i','cal-dot-life'));
  if(datedNotes.length)dots.append(text('i','cal-dot-note'));
- btn.append(dots);return btn;
+ btn.append(dots);
+ // Month layout: compact, readable event tags below the date, Apple-style.
+ if(!week&&btn.dataset.outside!=='true'){
+  const entries=[
+   ...calendarEvents.filter(item=>item.date===key).map(item=>({kind:'event',title:item.title})),
+   ...personalTasks.filter(item=>item.date===key&&!item.done).map(item=>({kind:'task',title:item.title})),
+   ...personal.map(item=>({kind:'life',title:item.title||item.name||'Личное'})),
+   ...datedNotes.map(item=>({kind:'note',title:item.text.split('\n')[0].trim()||'Заметка'}))
+  ];
+  if(entries.length){
+   const tags=text('span','cal-day-labels');
+   entries.slice(0,2).forEach(entry=>{
+    const chip=text('span','cal-day-chip',entry.title);
+    chip.dataset.kind=entry.kind;
+    chip.title=entry.title;
+    tags.append(chip);
+   });
+   if(entries.length>2)tags.append(text('span','cal-day-more','+'+(entries.length-2)));
+   btn.append(tags);
+   btn.dataset.hasEntries='true';
+  }
+ }
+ return btn;
 }
 function renderMonth(){
  const selected=new Date(focus.getFullYear(),focus.getMonth(),1);
