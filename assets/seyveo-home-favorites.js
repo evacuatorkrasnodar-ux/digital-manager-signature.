@@ -132,6 +132,21 @@ function openCustomize(){
  dialog.showModal();
 }
 renderItems();
+function place(){
+ if(rail.hidden)return;
+ rail.style.removeProperty('top');
+ const weather=document.getElementById('svSayviHomeWeather');
+ if(!weather||weather.hidden||getComputedStyle(weather).display==='none'||getComputedStyle(weather).visibility==='hidden')return;
+ const w=weather.getBoundingClientRect(),r=rail.getBoundingClientRect();
+ if(!w.height||!r.height||r.top>=w.bottom+12)return;
+ const dock=document.getElementById('navHome')?.getBoundingClientRect();
+ const maximum=(dock?.top||window.innerHeight-64)-r.height-18;
+ const wanted=w.bottom+14;
+ // Move below the weather; when a tiny viewport cannot fit both,
+ // use the last safe position above the dock instead of covering its buttons.
+ const next=Math.min(wanted,maximum);
+ rail.style.top=Math.round(next-stage.getBoundingClientRect().top)+'px';
+}
 const show=()=>{
  const visible=!home.hidden&&!document.hidden&&(!location.hash||location.hash==='#home')&&
  !root.classList.contains('seyveo-conversation')&&
@@ -142,6 +157,7 @@ const show=()=>{
  !document.querySelector('dialog[open]')&&
  !(document.getElementById('svSmartStartHome')?.hidden===false);
  rail.hidden=!visible;
+ if(visible)requestAnimationFrame(place);
 };
 function updateCount(){
  badge.hidden=cardCount<1;
@@ -154,6 +170,9 @@ window.addEventListener('seyveo:review-count',e=>{cardCount=Math.max(0,Number(e.
 for(const name of ['seyveo:home-sayvi-arrived','seyveo:route-changed','seyveo:cinema-finished','hashchange','focus'])
  window.addEventListener(name,show);
 document.addEventListener('visibilitychange',show);
+window.addEventListener('resize',show);
+const weather=document.getElementById('svSayviHomeWeather');
+if(weather){new ResizeObserver(show).observe(weather);new MutationObserver(show).observe(weather,{attributes:true,attributeFilter:['hidden','class','style']});}
 new MutationObserver(show).observe(root,{attributes:true,attributeFilter:['class']});
 new MutationObserver(show).observe(home,{attributes:true,attributeFilter:['hidden']});
 document.addEventListener('click',e=>{
