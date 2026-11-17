@@ -70,7 +70,10 @@
   const height=Math.max(line.getBoundingClientRect().height,line.scrollHeight);
   if(!height||!orb.height)return;
   const above=visibleSphereTop-host.top-height-clearance;
-  let top=above,placement='above';
+  // Center the complete thought (copy + action) in the real free gap between
+  // “СЭЙВИ · НА СВЯЗИ” and the visible glass, not against the sphere's edge.
+  // Both free margins stay equal when the text wraps or the button appears.
+  let top=(minimumTop+above)/2,placement='above';
   if(above<minimumTop){
    // Only truly short phones use the lower gap; do not jump there because
    // the safe top margin was a few pixels too conservative.
