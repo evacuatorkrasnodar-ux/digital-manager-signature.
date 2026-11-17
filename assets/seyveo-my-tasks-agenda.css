@@ -47,8 +47,7 @@
  align-items:center;position:relative;
  /* One in-flow rail with visible first and last rules, no viewport bleed. */
  width:100%;margin:0;
- border-top:1px solid var(--agenda-rule);
- border-bottom:1px solid var(--agenda-rule);
+ border:1px solid var(--agenda-rule);
  padding:0;
 }
 #tasksPage #svTasksDateNav .sv-agenda-week{
@@ -72,9 +71,7 @@
  transition:background-color .18s ease,color .18s ease;
  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
-#tasksPage #svTasksDateNav .sv-agenda-day:first-child{
- margin-left:0;border-left:1px solid #E5E8ED;
-}
+#tasksPage #svTasksDateNav .sv-agenda-day:first-child{margin-left:0}
 #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
  /* Apple Calendar: one flat uninterrupted rail, no raised selected tile. */
  z-index:0;transform:none;
