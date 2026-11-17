@@ -558,7 +558,9 @@
   nav.hidden=!visible||history||calendarOnly;
   heading.dataset.workTabs=String(!nav.hidden);
   heading.dataset.history=String(history);
-  reviewCards.hidden=history||calendarOnly;
+  // Notebook is a top-level tab: its Back and card-review shortcuts repeat
+  // controls that belong to the tabs/dock or to My Tasks, respectively.
+  reviewCards.hidden=history||calendarOnly||active==='notes';
   nav.dataset.employee=String(employeeMode);
   nav.dataset.one=String(!managerPreview&&!employeeMode);
   nav.dataset.business=String(managerPreview&&!employeeMode);
@@ -624,7 +626,7 @@
   }
   // In the personal landing use the same approved circle for History.
   // Every nested view (including History) retains the real Back arrow.
-  back.hidden=active==='personal'&&!history&&!nested;
+  back.hidden=(active==='personal'&&!history&&!nested)||active==='notes';
   if(back.dataset.svHeaderIcon!=='back'){back.innerHTML=backIcon;back.dataset.svHeaderIcon='back'}
   back.setAttribute('aria-label',history||nested?'Вернуться к моим делам':'Вернуться назад');
   back.title='';
