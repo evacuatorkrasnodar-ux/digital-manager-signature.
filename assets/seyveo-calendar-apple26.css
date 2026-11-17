@@ -1115,8 +1115,13 @@ html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu:not([hidd
 /* :is() in the base month rule carries an ID specificity; explicitly restore the selected-day heading in List. */
 html body #calendarPage #calendarView#calendarView[data-mode="month"][data-month-layout="list"] .cal-day-summary{display:flex!important}
 
-/* Detailed month: as compact as List while preserving one readable event title. */
+/* Detailed month: exactly the List row height, with the first title under its date. */
 html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day{padding-top:2px!important;gap:0!important}
 html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-labels{margin:1px 0 0!important;gap:1px!important}
 html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-chip{height:13px!important;min-height:13px!important;font-size:8.3px!important;line-height:10px!important}
-html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-more{font:600 8px/9px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;margin:0!important}
+/* Additional entries sit beside the date, not in a second row that stretches the week. */
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-more{
+ position:absolute!important;right:1px!important;top:3px!important;z-index:2!important;
+ margin:0!important;color:#7B8490!important;
+ font:600 8px/9px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}

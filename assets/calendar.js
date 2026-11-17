@@ -221,7 +221,8 @@ function renderMonth(){
  grid.style.setProperty('--cal-month-weeks',String(weeks));
  grid.style.setProperty('--cal-month-max-height',String(weeks*98)+'px');
  grid.style.setProperty('--cal-month-min-height',String(weeks*72)+'px');
- const rowHeight={compact:48,stacked:68,details:56,list:48}[monthLayout];
+ // Detailed month shares the List rhythm; one title fits below each date.
+ const rowHeight={compact:48,stacked:68,details:48,list:48}[monthLayout];
  grid.style.setProperty('--cal-month-layout-height',String(weeks*rowHeight)+'px');
  const isoWeekNumber=date=>{
   const value=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
