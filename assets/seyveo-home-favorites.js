@@ -45,6 +45,7 @@ function save(key,value){try{localStorage.setItem(key,JSON.stringify(value));ret
 let preference=stored(STORAGE);
 if(!preference||!Array.isArray(preference.items))preference={items:defaultIds.slice(),custom:false,showSmart:true};
 if(typeof preference.showSmart!=='boolean')preference.showSmart=true;
+if(typeof preference.autoSelect!=='boolean')preference.autoSelect=false;
 if(!preference.custom&&preference.items.join(',')==='music,documents,notebook,wallet,calendar')preference.items=defaultIds.slice();
 function normalize(ids){
  const unique=[...new Set(ids)].filter(id=>byId[id]);
@@ -61,6 +62,13 @@ if(!preference.custom){
   save(STORAGE,preference);
  }
 }
+function autoFavorites(smartEnabled=preference.showSmart){
+ const ranked=apps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
+ const limit=MAX_COUNT-(smartEnabled?1:0);
+ const current=preference.items.filter(id=>byId[id]);
+ return [...ranked.map(a=>a.id),...current,...defaultIds,...apps.map(a=>a.id)].filter((id,i,all)=>all.indexOf(id)===i).slice(0,limit);
+}
+if(preference.autoSelect)preference.items=autoFavorites();
 /* One smart slot: pending decisions when present, otherwise a useful Life app.
    Selection is stable during the session and ignores the three pinned apps. */
 const fallbackOrder=['browser','music','notebook','calendar','health','mail','documents','wallet','contacts','family','smart-home','care'];
@@ -101,6 +109,7 @@ function launch(id){
   if(source)source.click();else return;
  }else if(result===false)return;
  if(item.action){usage[id]=Math.min(10000,(Number(usage[id])||0)+1);save(USAGE,usage);}
+ if(preference.autoSelect){const next=autoFavorites();if(next.join(',')!==preference.items.join(',')){preference.items=next;save(STORAGE,preference);renderItems();show();}}
 }
 let longTimer=0,suppressClick=false,holding=false,editing=false,ignoreOutsideUntil=0;
 function persist(){
@@ -215,7 +224,7 @@ function openCustomize(){
  const help=document.createElement('p');help.className='sv-home-favorites-editor-help';
  const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
  grid.setAttribute('role','group');grid.setAttribute('aria-label','Приложения на главной');
- let selection=preference.items.slice(),smart=preference.showSmart;
+ let selection=preference.items.slice(),smart=preference.showSmart,auto=preference.autoSelect;
  let curtainBottom=null;
  const positionCurtain=(force=false)=>{
   if(curtainBottom!==null&&!force)return;
@@ -231,11 +240,14 @@ function openCustomize(){
  };
  activeCurtainPosition=positionCurtain;
  const preview=()=>{
-  preference={...preference,items:selection.slice(),showSmart:smart,custom:true};
+  preference={...preference,items:selection.slice(),showSmart:smart,autoSelect:auto,custom:true};
   renderItems();updateCount();show();
  };
  const redraw=()=>{
-  help.textContent='Выбрано '+(selection.length+(smart?1:0))+' из '+MAX_COUNT+' · меняется сразу';
+  help.textContent=auto?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(selection.length+(smart?1:0))+' из '+MAX_COUNT+' · меняется сразу';
+  autoButton.setAttribute('aria-pressed',String(auto));
+  autoButton.textContent=auto?'✦ Автовыбор включён':'✦ Автовыбор';
+  if(auto){selection=autoFavorites(smart);}
   grid.replaceChildren();
   const options=[{id:'smart',name:'Умная кнопка'},...apps];
   for(const app of options){
@@ -247,6 +259,7 @@ function openCustomize(){
    const mark=document.createElement('small');mark.textContent=chosen?'✓':'';
    b.append(t,mark);
    b.addEventListener('click',()=>{
+    if(auto){auto=false;selection=preference.items.slice();}
     if(app.id==='smart'){
      if(smart)smart=false;else if(selection.length<MAX_COUNT)smart=true;
     }else if(chosen)selection=selection.filter(x=>x!==app.id);
@@ -256,7 +269,15 @@ function openCustomize(){
    grid.append(b);
   }
  };
- redraw();shell.append(head,help,grid);dialog.append(shell);document.body.append(dialog);
+ const autoButton=document.createElement('button');
+ autoButton.type='button';autoButton.className='sv-home-favorites-auto';
+ autoButton.setAttribute('aria-label','Автовыбор часто используемых кнопок');
+ autoButton.addEventListener('click',()=>{
+  auto=!auto;
+  if(auto){selection=autoFavorites(smart);}
+  redraw();preview();
+ });
+ redraw();shell.append(head,autoButton,help,grid);dialog.append(shell);document.body.append(dialog);
  let closed=false;
  function close(saveChanges){
   if(closed)return;closed=true;
@@ -406,7 +427,9 @@ document.addEventListener('click',e=>{
  const target=e.target.closest?.('[data-world-space],[data-calendar-space]');if(!target)return;
  const key=target.getAttribute('data-world-space')||target.getAttribute('data-calendar-space');
  const entry=byId[key]?key:null;
- if(entry){usage[entry]=Math.min(10000,(Number(usage[entry])||0)+1);save(USAGE,usage)}
+ if(entry){usage[entry]=Math.min(10000,(Number(usage[entry])||0)+1);save(USAGE,usage);
+  if(preference.autoSelect){const next=autoFavorites();if(next.join(',')!==preference.items.join(',')){preference.items=next;save(STORAGE,preference);renderItems();show();}}
+ }
 },{capture:true,passive:true});
 updateCount();show();
 window.SEYVEO_HOME_FAVORITES=Object.freeze({openCustomize,enterEdit,getItems:()=>preference.items.slice(),isEditing:()=>editing});
