@@ -1336,3 +1336,16 @@
 }
 :root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
  .sv-card-draft-hint{display:none!important}
+
+/* Studio uses an independent theme attribute with an ID; it must never inherit
+   the retired decorative SVG painted behind the new blue Potok artwork. */
+#seyveoCardStudio [data-preview-theme="light"]
+ .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+ .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"]{
+ background-image:none!important;background-color:transparent!important;
+}
+#seyveoCardStudio [data-preview-theme="light"]
+ .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+ .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] img.sv-card-symbol{
+ visibility:visible!important;opacity:1!important;
+}
