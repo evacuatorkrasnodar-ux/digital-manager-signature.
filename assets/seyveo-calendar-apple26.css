@@ -180,3 +180,9 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice p{
 #calendarPage .cal-year-mini-day.is-today{background:#ED454D;border-radius:50%;color:white}
 #calendarPage #calendarView[data-mode="year"] :is(.cal-day-summary,#calendarAgenda,#calendarHoliday,#calendarAdvice){display:none!important}
 @media(max-width:370px){#calendarPage .cal-year-grid{gap:20px 8px}#calendarPage .cal-year-mini-day{font-size:9px}}
+
+/* Calendar period now lives in the centered permanent Work header. */
+#calendarPage .cal-nav h2{display:none!important}
+@media(max-width:620px){
+ #calendarPage .cal-nav{display:none!important}
+}
