@@ -314,13 +314,23 @@ function place(){
  rail.style.top=Math.round(next-stage.getBoundingClientRect().top)+'px';
  if(activeCurtainPosition)activeCurtainPosition();
 }
+let firstHomeEntrancePlayed=false;
+let launchPreviewActive=false;
 const show=()=>{
  const curtainOpen=!!document.getElementById('svHomeFavoritesEditor')?.open;
  const homeUsable=!home.hidden&&!document.hidden&&(!location.hash||location.hash==='#home');
+ // During first launch the full-size sphere shows its brand logo before
+ // the ordinary "arrived" state. Let shortcuts gently enter at that moment.
+ const launchLogoVisible=root.classList.contains('sv-home-launch-logo-visible')&&
+  !root.classList.contains('sv-cinema-boot')&&
+  !root.classList.contains('sv-home-prelayout');
+ if(!firstHomeEntrancePlayed&&launchLogoVisible)launchPreviewActive=true;
+ if(root.classList.contains('sv-home-empty-arrived')&&
+    !root.classList.contains('sv-home-empty-arriving'))launchPreviewActive=false;
  const visible=curtainOpen?homeUsable:homeUsable&&
  !root.classList.contains('seyveo-conversation')&&
- root.classList.contains('sv-home-empty-arrived')&&
- !root.classList.contains('sv-home-empty-arriving')&&
+ (root.classList.contains('sv-home-empty-arrived')||launchPreviewActive)&&
+ (!root.classList.contains('sv-home-empty-arriving')||launchPreviewActive)&&
  !root.classList.contains('sv-home-empty-sphere-leaving')&&
  !root.classList.contains('sv-review-open')&&
  !document.querySelector('dialog[open]:not(#svHomeFavoritesEditor)')&&
@@ -329,7 +339,14 @@ const show=()=>{
   editing=false;syncEditControls();renderItems();
  }
  rail.hidden=!visible||(!editing&&totalSlots()===0);
- if(visible&&!rail.hidden)requestAnimationFrame(place);
+ if(visible&&!rail.hidden){
+  if(!firstHomeEntrancePlayed&&!editing&&!curtainOpen){
+   firstHomeEntrancePlayed=true;
+   rail.classList.add('sv-home-favorites-enter');
+   setTimeout(()=>rail.classList.remove('sv-home-favorites-enter'),850);
+  }
+  requestAnimationFrame(place);
+ }
 };
 function updateCount(){
  const pending=cardCount>0;
