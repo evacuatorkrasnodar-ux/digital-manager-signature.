@@ -194,6 +194,8 @@ function restoreTask(id){
  scheduleRefresh();
  return true;
 }
+const sampleStamp=()=>new Intl.DateTimeFormat('ru-RU',{timeZone:'Europe/Moscow',day:'2-digit',month:'2-digit'}).format(new Date());
+const sampleMoment=time=>'Пример · '+sampleStamp()+' · '+time;
 const sample=[
  {kind:'contract',title:'Проверить документ',sampleTime:'10:32',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
   reason:'В пункте договора не указан срок поставки.',
@@ -392,7 +394,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(!active)return;
   // Observation -> inspect proposal -> explicit Save. Do not duplicate headings.
   if(documentStep==='summary'||documentStep==='review'){
-   documentDetails.append(create('p','lm-section-label','Сэйви заметила'));
+   documentDetails.append(create('p','lm-section-label sv-sayvi-observation','✧ Сэйви заметила'));
   }
   if(documentStep!=='summary'){
    documentDetails.append(create('p','lm-document-excerpt',
@@ -1033,8 +1035,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
    const mark=create('span','lm-inline-art');
    mark.append(icon(item.kind));
    const words=create('span','lm-inline-copy');
-   words.append(create('span','lm-inline-title',item.title),create('span','lm-inline-note',item.body));
-   if(!real&&item.sampleTime)words.append(create('span','sv-lm-sample-time',''+item.sampleTime));
+   const heading=create('span','sv-lm-inline-heading');
+   heading.append(create('span','lm-inline-title',item.title));
+   if(!real&&item.sampleTime){
+    const stamp=create('span','sv-lm-sample-time',sampleMoment(item.sampleTime));
+    stamp.setAttribute('aria-label','Учебный пример, условная дата и время: '+sampleMoment(item.sampleTime));
+    heading.append(stamp);
+   }
+   words.append(heading,create('span','lm-inline-note',item.body));
    row.append(mark,words);
    row.addEventListener('click',()=>{
     readingUntil=Date.now()+12000;
@@ -1055,8 +1063,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   const hasClock=real&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time||'');
   const exampleClock=!real&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.sampleTime||'');
   clockLabel.hidden=!(hasClock||exampleClock);
-  clockLabel.textContent=hasClock?item.time:exampleClock?''+item.sampleTime:'';
-  clockLabel.setAttribute('aria-label',hasClock?'Время выполнения дела':'Время сообщения');
+  clockLabel.textContent=hasClock?item.time:exampleClock?sampleMoment(item.sampleTime):'';
+  clockLabel.setAttribute('aria-label',hasClock?'Время выполнения дела':'Учебный пример, условная дата и время');
   headline.textContent=item.title;
   description.textContent=item.body;
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
