@@ -48,6 +48,19 @@
  const workHeader=window.SEYVEO_WORK_HEADER?.create();
  if(!workHeader)throw new Error('SEYVEO Work header module is missing');
  const {host:heading,back,title,month,calendarJump,add}=workHeader;
+ // The current calendar period occupies the center of the shared header,
+ // aligned between Back and Add; the month grid retains its original structure.
+ const calendarPeriodLabel=document.getElementById('calendarPeriodTitle');
+ const syncCalendarPeriod=()=>{
+  if(calendar.hidden||!calendarPeriodLabel)return;
+  title.textContent=calendarPeriodLabel.textContent.trim()||'Календарь';
+ };
+ if(calendarPeriodLabel){
+  new MutationObserver(syncCalendarPeriod).observe(calendarPeriodLabel,{childList:true,characterData:true,subtree:true});
+ }
+ const calendarHeaderStyle=document.createElement('style');
+ calendarHeaderStyle.textContent=':host([data-calendar-period="true"]) .title{font-size:19px;font-weight:620;letter-spacing:-.025em;overflow:visible}';
+ heading.shadowRoot?.append(calendarHeaderStyle);
  const plusIcon=workHeader.icons.plus;
  const searchIcon=workHeader.icons.search;
  // The landing uses the three-action capsule. In nested All Tasks, Search
@@ -564,7 +577,9 @@
   title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // Top-level sections are named in the permanent tab capsule below.
   // Keep titles for nested «Все дела», «История», and the employee workspace.
-  title.hidden=!history&&!nested&&['personal','calendar','notes','business'].includes(active);
+  title.hidden=!history&&!nested&&['personal','notes','business'].includes(active);
+  heading.dataset.calendarPeriod=String(active==='calendar'&&!history&&!nested);
+  if(active==='calendar'&&!history&&!nested)syncCalendarPeriod();
   const showMonth=active==='personal'&&!history&&!nested&&visible;
   month.hidden=!showMonth;
   calendarJump.hidden=!showMonth;
