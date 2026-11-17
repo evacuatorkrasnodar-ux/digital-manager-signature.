@@ -125,9 +125,9 @@
  /* One freshly rebuilt All Tasks Back. Silver-mist material follows the Home dock,
     with a visible hairline rim on the pure-white header. No extra pseudo layers. */
  :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back{
-  width:50px;height:50px;min-width:50px;min-height:50px;
-  border:1px solid rgba(155,166,181,.34);border-radius:50%;
-  background:rgba(190,193,202,.10);
+  width:var(--sv-nav-single-size,50px);height:var(--sv-nav-single-size,50px);min-width:var(--sv-nav-single-size,50px);min-height:var(--sv-nav-single-size,50px);
+  border:var(--sv-nav-pearl-border,1px solid rgba(155,166,181,.34));border-radius:50%;
+  background:var(--sv-nav-pearl-bg,rgba(190,193,202,.10));
   box-shadow:0 0 0 .45px rgba(164,170,184,.16),
    inset 0 1px 1px rgba(75,82,96,.055),
    inset 0 -1px 0 rgba(255,255,255,.18),
@@ -138,7 +138,7 @@
   backdrop-filter:blur(4px) saturate(100%);
  }
  :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back svg{
-  width:23px;height:23px;stroke-width:1.6;stroke:#0B0B0D;
+  width:var(--sv-nav-icon-size,23px);height:var(--sv-nav-icon-size,23px);stroke-width:1.6;stroke:#0B0B0D;
   shape-rendering:geometricPrecision;
  }
 
