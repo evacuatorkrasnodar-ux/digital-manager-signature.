@@ -125,3 +125,8 @@ html.sv-task-search-focus #svTaskActionCapsule{visibility:hidden!important;point
  #svTaskActionCapsule .sv-task-count{font-size:10.5px}
 }
 @media(prefers-reduced-motion:reduce){#svAllTasksView *{scroll-behavior:auto!important}}
+
+/* All Tasks is a focused workspace: the Home dock returns on exit. */
+html:has(#svWorkShell[data-task-tool-mode="all"]) body > footer.dock.sv-shared-dock{
+ display:none!important;
+}
