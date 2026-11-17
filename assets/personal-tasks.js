@@ -571,6 +571,7 @@ const SV_AGENDA_IDLE_TODAY_MS=12000;
 let svAgendaTodayTimer=0,svAgendaRouletteFrame=0,svAgendaRouletteToken=0;
 let svAgendaRolling=false,svAgendaIgnoreStripScrollUntil=0;
 let svAgendaPointerHeld=false,svAgendaUserInteracted=false;
+let svAgendaRouletteOverlay=null;
 function svAgendaCanReturnToday(){
  return !document.hidden&&!dialog.open&&!svAgendaPointerHeld&&
   document.documentElement.classList.contains('sv-agenda-scroll-active')&&
@@ -583,6 +584,7 @@ function svAgendaStopRoulette(){
  svAgendaRouletteFrame=0;svAgendaRolling=false;
  const strip=document.querySelector('#svTasksDateNav .sv-agenda-week');
  strip?.style.removeProperty('scroll-snap-type');
+ svAgendaRouletteOverlay?.remove();svAgendaRouletteOverlay=null;
 }
 function svAgendaQueueToday(){
  clearTimeout(svAgendaTodayTimer);
@@ -590,6 +592,65 @@ function svAgendaQueueToday(){
  svAgendaTodayTimer=setTimeout(()=>{
   if(svAgendaCanReturnToday())svAgendaReturnToday();
  },SV_AGENDA_IDLE_TODAY_MS);
+}
+/* A long trip can put today outside the 105-day rail. In that case spin a
+   temporary, purely visual rail through representative dates, retaining the
+   exact beginning and end columns. No task data or navigation is changed. */
+function svAgendaDistantTodayRail(strip,track,today,width){
+ const current=track.children[Math.min(track.children.length-1,
+  Math.max(0,Math.round(strip.scrollLeft/width)))]?.dataset.day;
+ if(!svTaskDate(current))return null;
+ const serial=iso=>{const [y,m,d]=iso.split('-').map(Number);return Date.UTC(y,m-1,d)/86400000;};
+ const offset=serial(today)-serial(current);
+ if(!offset)return null;
+ const earliest=offset>0?current:today;
+ const latest=offset>0?today:current;
+ const span=Math.abs(offset);
+ const dates=new Set();
+ for(let n=0;n<=6;n++)dates.add(svTaskShiftDay(earliest,n));
+ for(let n=1;n<=18;n++)dates.add(svTaskShiftDay(earliest,
+  Math.round(6+(span-6)*n/19)));
+ for(let n=0;n<=6;n++)dates.add(svTaskShiftDay(latest,n));
+ const ordered=[...dates].sort();
+ const ticker=strip.parentElement;
+ if(!ticker)return null;
+ const overlay=element('div','sv-agenda-week sv-agenda-roulette-week');
+ overlay.setAttribute('aria-hidden','true');
+ overlay.style.cssText='position:absolute;inset:0;z-index:4;overflow:hidden!important;'+
+  'pointer-events:none;scroll-snap-type:none!important;touch-action:none!important;'+
+  'background:'+(document.documentElement.dataset.theme==='dark'?'#25282F':'#FFFFFF');
+ const fakeTrack=element('div','sv-agenda-track');
+ const byDate=new Map();
+ for(const item of svAgendaLastRows){
+  if(!item.due)continue;
+  if(!byDate.has(item.due))byDate.set(item.due,[]);
+  byDate.get(item.due).push(item);
+ }
+ for(const iso of ordered){
+  const date=svTaskDate(iso),items=byDate.get(iso)||[];
+  const day=element('div','sv-agenda-day');
+  day.dataset.day=iso;day.dataset.weekday=String(date.getDay());
+  if(iso===today)day.dataset.today='true';
+  if(iso===svTaskSelectedDate)day.dataset.selected='true';
+  const weekday=new Intl.DateTimeFormat('ru-RU',{weekday:'short'}).format(date).replace('.','');
+  day.append(element('span','sv-agenda-weekday',weekday),
+   element('span','sv-agenda-day-number',String(date.getDate())));
+  const marks=element('span','sv-agenda-marks');
+  if(items.some(item=>svTaskEntryType(item)==='task'&&!item.done))day.dataset.hasTasks='true';
+  items.slice(0,5).forEach(item=>{
+   const dot=element('i','sv-agenda-mark');
+   dot.dataset.kind=svTaskCategory(item);dot.dataset.tone=svTaskDotTone(item);
+   marks.append(dot);
+  });
+  day.append(marks);fakeTrack.append(day);
+ }
+ overlay.append(fakeTrack);ticker.append(overlay);
+ // The first painted frame must show the dates the visitor was looking at.
+ const beginning=ordered.indexOf(current)*width;
+ const ending=ordered.indexOf(today)*width;
+ overlay.scrollLeft=beginning;
+ svAgendaRouletteOverlay=overlay;
+ return {surface:overlay,start:beginning,target:ending};
 }
 /* A gentle date-wheel return. Only the horizontal rail is animated;
    the content changes once it has settled on the current day. */
@@ -601,36 +662,41 @@ function svAgendaReturnToday(){
  const track=strip?.querySelector('.sv-agenda-track');
  const day=track?.querySelector('.sv-agenda-day[data-day="'+today+'"]');
  const width=track?.firstElementChild?.getBoundingClientRect().width||0;
- if(!strip||!day||!width){
-  svTaskWindowStart=today;
-  svAgendaJumpToDate(today);
-  return;
- }
- const target=[...track.children].indexOf(day)*width;
- const start=strip.scrollLeft,distance=target-start;
- const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- if(reduced||Math.abs(distance)<1){
-  svAgendaIgnoreStripScrollUntil=Date.now()+450;
-  strip.scrollLeft=target;
+ if(!strip||!width){
   svTaskWindowStart=today;
   svAgendaJumpToDate(today);
   return;
  }
  svAgendaStopRoulette();
+ const journey=day?{
+  surface:strip,start:strip.scrollLeft,target:[...track.children].indexOf(day)*width
+ }:svAgendaDistantTodayRail(strip,track,today,width);
+ if(!journey){svTaskWindowStart=today;svAgendaJumpToDate(today);return;}
+ const {surface,start,target}=journey,distance=target-start;
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(reduced||Math.abs(distance)<1){
+  svAgendaIgnoreStripScrollUntil=Date.now()+450;
+  surface.scrollLeft=target;
+  svAgendaStopRoulette();
+  svTaskWindowStart=today;
+  svAgendaJumpToDate(today);
+  return;
+ }
  const token=svAgendaRouletteToken;
  svAgendaRolling=true;
- strip.style.setProperty('scroll-snap-type','none','important');
- const duration=Math.min(1500,Math.max(780,850+Math.abs(distance)/width*18));
+ if(surface===strip)strip.style.setProperty('scroll-snap-type','none','important');
+ const duration=Math.min(1550,Math.max(850,850+Math.abs(distance)/width*22));
  const started=performance.now();
  const advance=now=>{
   if(token!==svAgendaRouletteToken||!svAgendaCanReturnToday()){
    svAgendaStopRoulette();svAgendaQueueToday();return;
   }
   const progress=Math.min(1,(now-started)/duration);
-  const eased=1-Math.pow(1-progress,4);
-  strip.scrollLeft=start+distance*eased;
+  const eased=progress<.5?4*progress*progress*progress:
+   1-Math.pow(-2*progress+2,3)/2;
+  surface.scrollLeft=start+distance*eased;
   if(progress<1){svAgendaRouletteFrame=requestAnimationFrame(advance);return;}
-  strip.scrollLeft=target;
+  surface.scrollLeft=target;
   svAgendaIgnoreStripScrollUntil=Date.now()+450;
   svAgendaStopRoulette();
   svTaskWindowStart=today;
@@ -925,6 +991,7 @@ function svAgendaRenderNav(rows){
  };
  const railObserver=window.ResizeObserver?new ResizeObserver(alignInitial):null;
  railObserver?.observe(strip);
+ alignInitial();
  requestAnimationFrame(alignInitial);
  const commitScroll=()=>{
   clearTimeout(settleTimer);
@@ -1987,10 +2054,10 @@ document.addEventListener('pointerdown',event=>{
  if(!event.target.closest?.('#tasksPage'))return;
  svAgendaPointerHeld=true;
  clearTimeout(svAgendaTodayTimer);
+ if(svAgendaRolling)svAgendaStopRoulette();
  if(event.target.closest?.('#svTasksDateNav')){
   svAgendaPauseDockMotion();
   svAgendaUserInteracted=true;
-  if(svAgendaRolling)svAgendaStopRoulette();
  }
 },{passive:true,capture:true});
 window.addEventListener('pointerup',()=>{if(svAgendaPointerHeld){svAgendaPointerHeld=false;svAgendaQueueToday();}},{passive:true});
