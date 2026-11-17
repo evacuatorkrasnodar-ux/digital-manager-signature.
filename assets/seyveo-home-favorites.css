@@ -473,3 +473,16 @@ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button[aria-press
  opacity:0!important;visibility:hidden!important;
  transition:none!important;
 }
+
+/* Navigation from the Home editor sends the curtain back up. */
+dialog.sv-home-favorites-editor.is-leaving{
+ pointer-events:none!important;
+ animation:sv-home-editor-retract .28s cubic-bezier(.55,.05,.8,.25) both!important;
+}
+@keyframes sv-home-editor-retract{
+ from{opacity:1;clip-path:inset(0 0 0 0 round 0 0 30px 30px)}
+ to{opacity:0;clip-path:inset(0 0 100% 0 round 0 0 30px 30px)}
+}
+@media(prefers-reduced-motion:reduce){
+ dialog.sv-home-favorites-editor.is-leaving{animation:none!important}
+}
