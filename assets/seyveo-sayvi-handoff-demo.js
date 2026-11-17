@@ -70,7 +70,7 @@
   if(showCinema&&message){
     // The opening greeting is complete, instantly readable, and restrained.
     // Sayvi's approved orbital entrance and voice remain unchanged.
-    welcomeSpeech='Привет! Я Сэйви. Рада тебя видеть!';
+    welcomeSpeech='Привет! Рада тебя видеть!';
     greeting=document.createElement('p');
     greeting.className='sv-cinema-written-hello';
     greeting.setAttribute('aria-label',welcomeSpeech);
