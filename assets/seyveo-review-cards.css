@@ -217,6 +217,64 @@
  display:block!important;width:17px!important;height:17px!important;object-fit:contain;filter:none!important;
 }
 
+/* Master 17.11: the original three review cards use contextual, readable
+   action captions. The composing step keeps its existing confirm/back controls. */
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+ .lm-actions .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
+ display:inline-flex!important;box-sizing:border-box!important;
+ flex:0 1 auto!important;width:auto!important;min-width:0!important;
+ max-width:100%!important;min-height:44px!important;height:auto!important;
+ margin:0!important;padding:5px 1px!important;gap:3px!important;
+ align-items:center!important;justify-content:flex-start!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font-size:11px!important;line-height:1.3!important;font-weight:520!important;
+ letter-spacing:-.01em!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+ .lm-actions{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:2px 9px!important}
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+ .lm-actions .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"])
+ .sv-card-icon-caption{
+ display:inline!important;visibility:visible!important;
+ font-size:11px!important;line-height:1.2!important;white-space:nowrap!important;
+ font-weight:520!important;letter-spacing:-.01em!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+ .lm-actions .lm-polymer.sv-card-icon-button:is(
+ [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"])
+ .sv-card-symbol{
+ display:block!important;visibility:visible!important;
+ width:18px!important;height:18px!important;flex:0 0 18px!important;
+ opacity:1!important;filter:none!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+ .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="sayvi"]{
+ color:#217FCD!important;
+}
+/* Field material is copied from the 60px dock: matte silver, translucent
+   pearl rim and a soft inner silver highlight, without the retired mint. */
+:root[data-theme="light"] #svReviewRoom #seyveoLivingMoment .lm-mail-edit-input{
+ min-height:112px!important;
+ border:1px solid rgba(196,202,213,.48)!important;
+ border-radius:15px!important;
+ background:linear-gradient(150deg,rgba(250,251,252,.91),
+   rgba(220,226,234,.38) 68%,rgba(246,247,249,.78))!important;
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.84),
+  inset 0 -1px 1px rgba(106,119,134,.07),0 1px 3px rgba(55,69,85,.035)!important;
+ -webkit-backdrop-filter:blur(17px) saturate(108%)!important;
+ backdrop-filter:blur(17px) saturate(108%)!important;
+ color:#202429!important;font:430 13px/1.5 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif!important;
+}
+@media(max-width:355px){
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions{column-gap:6px!important}
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+  .lm-actions .lm-polymer.sv-card-icon-button .sv-card-icon-caption{font-size:10px!important}
+}
+
 /* Quiet Cinema · entering the full-page decision room.
    Three ORIGINAL cards rise one by one from below; no clones, sheets,
    moving header, or layout-height animation. */
