@@ -501,3 +501,24 @@ dialog.sv-home-favorites-editor.is-leaving{
  body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock) > #navManage{
  grid-column:5!important;
 }
+
+/* Business subscriptions: seamless Personal / Cabinet segmented switch. */
+dialog.sv-home-favorites-editor .sv-home-favorites-tabs{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ align-self:stretch;flex:none;gap:0;height:36px;padding:2px;margin-top:9px;
+ border:1px solid rgba(194,202,211,.46);border-radius:19px;
+ background:rgba(220,225,231,.36);
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-tabs[hidden]{display:none!important}
+dialog.sv-home-favorites-editor .sv-home-favorites-tabs button{
+ min-width:0;border:0;border-radius:17px;
+ background:transparent;color:#636873;
+ font:550 13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-tabs button[aria-selected=true]{
+ background:rgba(255,255,255,.88);color:#111216;
+ box-shadow:0 1px 3px rgba(38,45,56,.09),inset 0 0 0 .5px rgba(199,207,216,.6);
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-tabs button:focus-visible{
+ outline:2px solid #7a8da5;outline-offset:1px;
+}
