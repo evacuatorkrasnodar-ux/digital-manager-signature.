@@ -503,6 +503,8 @@
   const showDraft=(editable)=>{
    draftPane.hidden=false;actions.hidden=true;
    draftTitle.textContent=editable?'Ваш вариант':'Предложение Сэйви';
+   decorateActionButton(draftSend,editable?'save':'send');
+   draftSend.setAttribute('aria-label',editable?'Сохранить свой вариант':'Отправить предложенный вариант');
    draftInput.value=card.suggestion||card.fact||'';
    draftText.textContent=draftInput.value;
    draftInput.hidden=!editable;draftText.hidden=editable;
@@ -530,7 +532,7 @@
   return article;
  }
  root.SEYVEO_CARD_ENGINE=Object.freeze({
-  version:9,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
+  version:10,catalog,eventType,actionLabels,safety,cardPolicy,actionRole,visibleActions,isDeferSwipe,
    isProtected,isSuppressed,isSnoozed,hideCard,muteFamily,getVisibility,restoreVisibility,visibleCards,
    rotateQueue,snoozeCards,getSnoozes,clearSnoozes,
   presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome,decorateActionButton
