@@ -212,7 +212,23 @@ function renderMonth(){
  const grid=$('calendarMonthGrid');grid.replaceChildren();
  const first=monday(selected),calendarEvents=visibleEvents(),personalTasks=selectedScope()==='business'?[]:tasks();
  const total=Math.ceil((((new Date(focus.getFullYear(),focus.getMonth()+1,0)).getDate())+(selected.getDay()+6)%7)/7)*7;
- for(let i=0;i<total;i++)grid.append(dayButton(step(first,i),false,calendarEvents,personalTasks));
+ const weeks=total/7,nowWeek=monday(new Date());
+ grid.style.setProperty('--cal-month-weeks',String(weeks));
+ grid.style.setProperty('--cal-month-max-height',String(weeks*98)+'px');
+ const isoWeekNumber=date=>{
+  const value=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
+  value.setUTCDate(value.getUTCDate()+4-(value.getUTCDay()||7));
+  const jan1=new Date(Date.UTC(value.getUTCFullYear(),0,1));
+  return Math.ceil(((value-jan1)/86400000+1)/7);
+ };
+ for(let i=0;i<total;i++){
+  const date=step(first,i),button=dayButton(date,false,calendarEvents,personalTasks);
+  if(i%7===0){
+   button.dataset.weekNumber=String(isoWeekNumber(date));
+   button.dataset.currentWeek=String(format(date)===format(nowWeek));
+  }
+  grid.append(button);
+ }
  $('calendarMonth').hidden=false;
  $('calendarWeek').hidden=true;
 }
