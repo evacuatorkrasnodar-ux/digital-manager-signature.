@@ -1374,7 +1374,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-popo
  max-height:calc(100dvh - 135px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-agenda-preview .sv-task-cal-number{
- outline:2px solid rgba(69,112,153,.48)!important;outline-offset:2px!important;
+ outline:none!important;outline-offset:0!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda[hidden]{display:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-day-agenda{
@@ -1508,4 +1508,11 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-caution{
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-ocr-suggestion button{
  align-self:flex-start!important;border-radius:999px!important;padding:10px 14px!important;
  color:#27394A!important;background:var(--sv-task-action-fill)!important;
+}
+
+/* Unified date selection: one solid ink circle, never a decorative outer halo. */
+html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-calendar-days > button.is-selected .sv-task-cal-number{
+ background:#17191D!important;color:#FFF!important;
+ border:0!important;outline:0!important;outline-offset:0!important;
+ box-shadow:none!important;border-radius:50%!important;
 }
