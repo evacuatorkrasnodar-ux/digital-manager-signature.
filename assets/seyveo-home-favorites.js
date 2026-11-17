@@ -272,7 +272,7 @@ function openCustomize(){
  const autoButton=document.createElement('button');
  autoButton.type='button';autoButton.className='sv-home-favorites-auto';
  autoButton.setAttribute('aria-label','Автовыбор часто используемых кнопок');
- autoButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.7 8.8A8 8 0 1 0 20 13"/><path d="m16.9 5.3 3.1 3.5 2.4-3.9"/><path d="m8.8 16 3.2-8 3.2 8M9.8 13.5h4.4"/></svg>';
+ autoButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 8.2A8.8 8.8 0 1 0 20.8 12"/><path d="M19.5 3.7v4.5H15"/><path d="m9.2 15.8 2.8-7 2.8 7M10.2 13.4h3.6"/></svg>';
  autoButton.addEventListener('click',()=>{
   auto=!auto;
   if(auto){selection=autoFavorites(smart);}
