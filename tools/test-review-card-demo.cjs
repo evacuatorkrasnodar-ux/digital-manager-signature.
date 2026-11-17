@@ -1,19 +1,20 @@
-/* Review-room demo content must remain presentation-only. */
+/* Review must reuse the real Living Moment card, not a second imitation. */
 'use strict';
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
-const js=fs.readFileSync('assets/seyveo-review-cards.js','utf8');
+const review=fs.readFileSync('assets/seyveo-review-cards.js','utf8');
+const living=fs.readFileSync('assets/living-moment.js','utf8');
 const css=fs.readFileSync('assets/seyveo-review-cards.css','utf8');
-assert.match(js,/const designExamples=\[/);
-for(const label of ['Проверить договор','Елена · сообщение','Ответить на письмо']){
- assert.ok(js.includes(label),`Missing training card: ${label}`);
-}
-assert.match(js,/renderDesignCards\(\);\s*room\.hidden=false/);
-assert.match(js,/content\.querySelector\('\.sv-review-demo-list'\)\?\.remove\(\)/);
-assert.match(js,/const progress=demoCount\?/);
-assert.match(css,/\.sv-review-demo-actions button\{[\s\S]*?min-height:44px/);
+assert.match(review,/SEYVEO_LIVING_MOMENT\?\.showReviewExamples\?\.\(\)/);
+assert.match(living,/function showReviewExamples\(\)/);
+assert.match(living,/previewScene=createSurface\(sample\[0\],sample\.slice\(1\)\)/);
+assert.match(living,/gatherPreview\(\)/);
+assert.match(living,/if\(!reviewExamplesActive\)resolvedPreviewKinds\.add/);
+assert.match(living,/if\(!reviewExamplesActive\)engine\?\.snoozeCards/);
+assert.match(living,/if\(reviewExamplesActive\)\{reviewExamplesActive=false;previewCount=0;previewPending=0;rest\(\);return;\}/);
+assert.doesNotMatch(review,/sv-review-demo-card|renderDesignCards/,'Duplicated mock cards must be removed');
+assert.doesNotMatch(css,/sv-review-demo-card/,'No imitation card CSS should remain');
 assert.match(css,/grid-template-columns:78px minmax\(0,1fr\) 78px/,'The review heading must be centered between equal slots');
-assert.match(css,/#svReviewProgress\{[^}]*white-space:nowrap/,'The training count must remain on one line');
-assert.match(css,/\.sv-review-header button\{[^}]*width:44px;height:44px/,'Review Back uses the approved round size');
-assert.doesNotMatch(js,/localStorage\.setItem|fetch\(|removeMany\(/,'Training cards must never mutate the task store');
-console.log('PASS: Three isolated review design examples with 44px actions.');
+assert.match(css,/#svReviewProgress\{[^}]*white-space:nowrap/);
+assert.match(css,/\.sv-review-header button\{[^}]*width:44px;height:44px/);
+console.log('PASS: Review Room displays original interactive Living Moment cards.');

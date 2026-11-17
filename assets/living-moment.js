@@ -21,6 +21,7 @@ let pendingUpdate=false;
 const previewArmed=true;
 let previewSeen=false,previewRearmAt=0;
 let previewDecided=false;
+let reviewExamplesActive=false;
 // Unresolved examples survive temporary hiding and navigation.
 let previewPending=0;
 const resolvedPreviewKinds=new Set();
@@ -1098,7 +1099,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   swipedInRound.add(homeCard(shown).id);
   // A single card pauses; a complete pass pauses the queue without endless cycling.
   if(remaining.length<=1||remaining.every(item=>swipedInRound.has(homeCard(item).id))){
-   engine?.snoozeCards?.(remaining.map(homeCard));
+   if(!reviewExamplesActive)engine?.snoozeCards?.(remaining.map(homeCard));
    if(!real){
     previewRearmAt=Date.now()+(engine?.cardPolicy?.singleCardSnoozeMs||3600000);
     previewSeen=true;
@@ -1125,7 +1126,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
     return;
    }
    remaining=remaining.filter(item=>item!==shown&&mayShow(item));
-   resolvedPreviewKinds.add(shown.kind);
+   if(!reviewExamplesActive)resolvedPreviewKinds.add(shown.kind);
    previewPending=remaining.length;
    window.dispatchEvent(new Event('seyveo:card-visibility-changed'));
    if(!remaining.length){
@@ -1283,6 +1284,22 @@ function startPreview(){
  // Each of the three independent cards rises from below the screen.
  // After their arrival, they join a SINGLE card that remains readable.
  hold(()=>gatherPreview(),(reduced()?0:4700)+TIMING.open);
+ return true;
+}
+/* The Review Room displays the ORIGINAL Quiet Cinema card component, not
+   newly drawn imitation cards. These three examples exist in memory only;
+   no real work item, message, snooze or draft is created on entry. */
+function showReviewExamples(){
+ if(mode==='preview'&&!space.hidden)return true;
+ if(mode==='preview'&&space.hidden)rest();
+ if(mode!=='idle')return false; // A genuine recommendation retains priority.
+ cancel();mode='preview';key='review-preview';previewSeen=true;previewDecided=false;
+ previewRearmAt=0;reviewExamplesActive=true;
+ previewCount=sample.length;previewPending=sample.length;
+ previewScene=createSurface(sample[0],sample.slice(1));
+ dynamic.hidden=true;space.hidden=false;
+ space.classList.add('lm-preview','lm-reveal');
+ gatherPreview();
  return true;
 }
 /* Defer an evening heads-up for this calendar day only.
@@ -1688,7 +1705,11 @@ window.addEventListener('seyveo:home-agenda-visibility-changed',scheduleRefresh)
 window.addEventListener('seyveo:fan-workshop-changed',scheduleRefresh);
 window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:card-visibility-changed',scheduleRefresh);
-window.addEventListener('seyveo:review-closed',()=>{if(mode==='idle'&&!previewRearmAt)previewSeen=false;scheduleRefresh()});
+window.addEventListener('seyveo:review-closed',()=>{
+ if(reviewExamplesActive){reviewExamplesActive=false;previewCount=0;previewPending=0;rest();return;}
+ if(mode==='idle'&&!previewRearmAt)previewSeen=false;
+ scheduleRefresh();
+});
 window.addEventListener('seyveo:card-snoozes-changed',()=>{
  // When the user restores paused cards manually, restore the demo queue too.
  if(!(window.SEYVEO_CARD_ENGINE?.getSnoozes?.()||[]).length){previewRearmAt=0;previewSeen=false;}
@@ -1742,6 +1763,8 @@ window.SEYVEO_LIVING_MOMENT=Object.freeze({
  preview:()=>startPreview(),state:()=>mode,
  // Count logical, unfinished decisions; hidden DOM alone never dismisses a card.
  reviewCount:()=>previewRearmAt?0:previewPending,
+ reviewExamplesActive:()=>reviewExamplesActive,
+ showReviewExamples,
  ensureReviewCards:()=>{
   if(mode==='preview'&&!space.hidden)return true;
   if(mode!=='idle'||previewPending<=0||!available())return false;
