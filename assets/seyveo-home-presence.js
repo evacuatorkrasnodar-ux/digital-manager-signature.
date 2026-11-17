@@ -52,11 +52,14 @@
  function positionThought(){
   if(line.hidden||home.hidden)return;
   const sphere=document.getElementById('orb');if(!sphere)return;
-  const host=home.getBoundingClientRect(),orb=sphere.getBoundingClientRect();
-  // Measure the actual globe, not a fixed viewport midpoint. On an iPhone
-  // the reserved 44px action made the old 40px threshold place the whole
-  // suggestion below Sayvi even when the upper reading area was usable.
-  const clearance=10,minimumTop=28;
+  // The thought is absolutely positioned INSIDE #stage. Its old top value
+  // was measured from #homePage, an entirely different origin. In Safari
+  // that pushed "Красота!" below the globe even when the upper slot fit.
+  const host=(line.offsetParent||stage).getBoundingClientRect();
+  const orb=sphere.getBoundingClientRect();
+  const online=home.querySelector('.sv-sayvi-home-online')?.getBoundingClientRect();
+  const minViewportTop=online?.height?Math.max(30,online.bottom+8):32;
+  const clearance=10,minimumTop=minViewportTop-host.top;
   const availableAbove=orb.top-host.top-minimumTop-clearance;
   line.dataset.svThoughtDensity=availableAbove<116?'compact':'regular';
   const height=Math.max(line.getBoundingClientRect().height,line.scrollHeight);
