@@ -2824,9 +2824,9 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  <button type="button" data-manager-calendar-tab="business" aria-pressed="false"><span class="sv-mini-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1"/></svg></span><span>Кабинет</span></button>
 </div>
 <div id="calendarViewModes" class="cal-periods" role="group" aria-label="Вид календаря" hidden>
-<button type="button" data-calendar-mode="week" aria-pressed="false">Неделя</button>
-<button type="button" data-calendar-mode="month" aria-pressed="true">Месяц</button>
-<button type="button" data-calendar-mode="year" aria-pressed="false">Год</button>
+<button type="button" data-calendar-mode="week" aria-pressed="false"><span class="cal-mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.7"/><path d="M3.5 10h17M8 3.7v3M16 3.7v3M7.5 14.3h9"/></svg></span><span class="cal-mode-label">Неделя</span></button>
+<button type="button" data-calendar-mode="month" aria-pressed="true"><span class="cal-mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.7"/><path d="M3.5 10h17M8 3.7v3M16 3.7v3M7.7 13.5h1.6M11.2 13.5h1.6M14.7 13.5h1.6M7.7 17h1.6M11.2 17h1.6M14.7 17h1.6"/></svg></span><span class="cal-mode-label">Месяц</span></button>
+<button type="button" data-calendar-mode="year" aria-pressed="false"><span class="cal-mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M12 3.5v17M3.5 12h17"/></svg></span><span class="cal-mode-label">Год</span></button>
 </div>
 <section id="calendarView" aria-label="Даты и события">
 <div class="cal-nav"><h2><button id="calendarToday" type="button" class="cal-period-title" aria-label="Вернуться к сегодняшней дате" title="Вернуться к сегодняшней дате"><span id="calendarPeriodTitle">Месяц</span></button></h2>
@@ -3506,7 +3506,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 </dialog>
 <script src="assets/seyveo-task-attachments.js?v=4" defer></script>
 <script src="assets/seyveo-meeting-guidance.js?v=4" defer></script>
-<link rel="stylesheet" href="assets/seyveo-calendar-apple26.css?v=24">
+<link rel="stylesheet" href="assets/seyveo-calendar-apple26.css?v=25">
 <dialog id="seyveoContactsDialog" class="cal-form-dialog personal-contacts-dialog" aria-labelledby="seyveoContactsTitle">
  <button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" id="seyveoContactsClose" aria-label="Вернуться в Мой мир"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
  <header class="sv-phonebook-toolbar">
