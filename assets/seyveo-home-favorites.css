@@ -1,0 +1,95 @@
+/* SEYVEO · favourites: one quiet row; orb/dock geometry intentionally untouched. */
+#homePage #svHomeCalmDetails{display:none!important}
+#homePage #svHomeFavorites[hidden]{display:none!important}
+#homePage #svHomeFavorites{
+ position:absolute;z-index:11;
+ top:min(calc(50dvh - 110px + var(--sv-home-orb-half,142.5px) + var(--sv-home-cards-offset,80px)),calc(100dvh - 156px));
+ left:50%;transform:translateX(-50%);
+ width:min(380px,calc(100vw - 28px));
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,5fr);
+ align-items:start;gap:0;
+ opacity:1;visibility:visible;
+ transition:opacity .24s ease,visibility .24s ease;
+ contain:layout style;
+}
+#homePage #svHomeFavorites .sv-home-favorite-items{
+ display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;
+ min-width:0;
+}
+#homePage #svHomeFavorites .sv-home-favorite{
+ display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;
+ margin:0;padding:0 2px;border:0;background:transparent!important;box-shadow:none!important;
+ color:#1d1d20;cursor:pointer;touch-action:manipulation;
+ font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+}
+#homePage #svHomeFavorites .sv-home-favorite-icon{
+ position:relative;display:grid;place-items:center;width:47px;height:47px;
+ box-sizing:border-box;border-radius:15px;
+ background:rgba(242,242,245,.94);
+ border:1px solid rgba(220,220,225,.73);
+ box-shadow:inset 0 1px .5px rgba(255,255,255,.96);
+ transition:background .18s ease,transform .16s ease;
+}
+#homePage #svHomeFavorites .sv-home-favorite:active .sv-home-favorite-icon{
+ background:#e8e8ec;transform:scale(.96)
+}
+#homePage #svHomeFavorites .sv-home-favorite-icon svg{
+ width:25px;height:25px;fill:none;stroke:#19191c;stroke-width:1.75;
+ stroke-linecap:round;stroke-linejoin:round
+}
+#homePage #svHomeFavorites .sv-home-favorite-label{
+ display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;
+ white-space:nowrap;font-size:10.5px;font-weight:500;line-height:1.4;letter-spacing:-.08px;
+ color:#34343a;
+}
+#homePage #svHomeFavorites .sv-home-review-entry .sv-home-favorite-icon{
+ background:rgba(239,239,243,.98);
+}
+#homePage #svHomeFavorites .sv-home-review-badge{
+ position:absolute;top:-7px;right:-7px;min-width:18px;height:18px;padding:0 3px;
+ box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+ border-radius:12px;border:1.6px solid #fff;background:#f12e3c;color:white;
+ font:650 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ box-shadow:0 1px 2px rgba(170,0,0,.12);z-index:1;
+}
+#homePage #svHomeFavorites .sv-home-review-badge[hidden]{display:none}
+#homePage #svHomeFavorites button:focus-visible{
+ outline:2px solid #52525d;outline-offset:4px;border-radius:12px;
+}
+.sv-home-favorites-editor{
+ border:0;background:transparent;padding:0;
+ width:min(420px,calc(100vw - 28px));max-height:90dvh;
+ color:#19191c;
+}
+.sv-home-favorites-editor::backdrop{
+ background:rgba(15,16,20,.32);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.sv-home-favorites-editor-shell{
+ padding:20px;border-radius:23px;background:#fff;box-shadow:0 20px 68px rgba(0,0,0,.16);
+ font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+}
+.sv-home-favorites-editor-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sv-home-favorites-editor-head strong{font-size:20px;font-weight:600}
+.sv-home-favorites-editor-head button{
+ min-height:44px;padding:0 15px;border:0;border-radius:14px;background:#38383a;
+ color:white;font:500 15px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+.sv-home-favorites-editor-shell p{margin:10px 0 16px;font-size:13px;line-height:1.5;color:#787981}
+.sv-home-favorites-editor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.sv-home-favorites-editor-grid button{
+ display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;
+ min-height:85px;padding:9px 5px;border:1px solid #e7e7ea;border-radius:15px;
+ background:#f7f7f9;color:#1d1d21;font:500 12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+.sv-home-favorites-editor-grid button[aria-pressed=true]{border-color:#a2a2ac;background:#ebebf0}
+.sv-home-favorites-editor-grid button svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sv-home-favorites-editor-grid button small{font-size:12px;color:#686970}
+@media(max-width:370px){
+ #homePage #svHomeFavorites{width:calc(100vw - 16px)}
+ #homePage #svHomeFavorites .sv-home-favorite-icon{width:43px;height:43px;border-radius:13px}
+ #homePage #svHomeFavorites .sv-home-favorite-icon svg{width:23px;height:23px}
+ #homePage #svHomeFavorites .sv-home-favorite-label{font-size:9.5px}
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage #svHomeFavorites,#homePage #svHomeFavorites .sv-home-favorite-icon{transition:none}
+}
