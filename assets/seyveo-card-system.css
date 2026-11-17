@@ -1302,3 +1302,37 @@
 #seyveoCardStudio [data-preview-theme="dark"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]{
  --sv-card-ink:#f1f4f6;--sv-card-subtle:#aebbc3;--sv-card-eyebrow-ink:#ced4d9;
 }
+
+/* The approved edit step has the same quiet inline actions as the review row.
+   A 44px hit area remains even though the visual control has no capsule. */
+.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+ .sv-card-draft-actions{
+ display:flex!important;align-items:center!important;flex-wrap:wrap!important;
+ gap:2px 13px!important;margin-top:5px!important;
+}
+.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+ .sv-card-draft-actions :is(.sv-card-draft-confirm,.sv-card-draft-option).sv-card-icon-button{
+ display:inline-flex!important;flex:0 1 auto!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;
+ height:auto!important;min-height:44px!important;max-height:none!important;
+ padding:6px 1px!important;gap:4px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--sv-card-ink)!important;font-size:11px!important;
+ font-weight:530!important;line-height:1.3!important;
+}
+.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+ .sv-card-draft-actions .sv-card-icon-caption{
+ display:inline!important;visibility:visible!important;
+ font-size:11px!important;line-height:1.25!important;font-weight:530!important;
+ white-space:nowrap!important;
+}
+.sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+ .sv-card-draft-actions .sv-card-symbol{
+ display:block!important;visibility:visible!important;
+ width:18px!important;height:18px!important;flex:0 0 18px!important;
+}
+:root[data-theme="light"] .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+ .sv-card-draft-hint{display:none!important}
