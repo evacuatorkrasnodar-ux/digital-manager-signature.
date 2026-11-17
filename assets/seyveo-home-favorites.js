@@ -83,7 +83,8 @@ symbol.append(badge);card.append(symbol,caption);smartTile.append(card);rail.app
 const list=document.createElement('div');list.className='sv-home-favorite-items';rail.append(list);
 const add=document.createElement('button');add.type='button';add.className='sv-home-favorite sv-home-add-entry';add.hidden=true;
 add.setAttribute('aria-label','Добавить приложение на главную');
-add.innerHTML='<span class="sv-home-favorite-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="sv-home-favorite-label">Добавить</span>';
+// A plain plus by design: no tile surface or visible caption, even with older CSS.
+add.innerHTML='<svg class="sv-home-plain-plus" style="width:27px;height:27px;flex:none;margin-top:11.5px;fill:none;stroke:#141417;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
 rail.append(add);
 stage.append(rail);
 card.addEventListener('click',e=>{
