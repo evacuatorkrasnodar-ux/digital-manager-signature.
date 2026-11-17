@@ -205,10 +205,11 @@ function openCustomize(){
  const title=document.createElement('strong');title.textContent='Настроить главную';
  const done=document.createElement('button');done.type='button';done.textContent='Готово';
  head.append(title,done);
- const help=document.createElement('p');help.textContent='Выбери до четырёх кнопок. Умная кнопка показывает дела или любимое приложение.';
+ const help=document.createElement('p');help.className='sv-home-favorites-editor-help';
  const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
  let selection=preference.items.slice(),smart=preference.showSmart;
  const redraw=()=>{
+  help.textContent='На главной: '+(selection.length+(smart?1:0))+' из '+MAX_COUNT+'. Выбери нужные приложения.';
   grid.replaceChildren();
   const options=[{id:'smart',name:'Умная кнопка'},...apps];
   for(const app of options){
