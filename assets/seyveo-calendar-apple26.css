@@ -929,3 +929,185 @@ html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu #calendarV
 html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"]{
  background:rgba(190,193,202,.12)!important;color:#17191D!important;
 }
+
+
+/* Four iOS-style presentations of the SAME month data.
+   The layout is a persisted preference, independent of Week / Month / Year. */
+html body #calendarPage #calendarView[data-mode="month"] .cal-month>.cal-month-grid{
+ display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;
+ grid-template-rows:repeat(var(--cal-month-weeks,6),minmax(0,1fr))!important;
+ grid-auto-rows:minmax(0,1fr)!important;
+ box-sizing:border-box!important;
+ height:var(--cal-month-layout-height,288px)!important;min-height:0!important;
+ overflow:hidden!important;row-gap:0!important;
+ transition:height .28s cubic-bezier(.2,.75,.22,1)!important;
+}
+html body #calendarPage #calendarView[data-mode="month"] .cal-month-grid .cal-day{
+ box-sizing:border-box!important;height:100%!important;min-height:0!important;
+ padding:3px 1px 1px!important;gap:0!important;
+ border-bottom:1px solid #EAECF0!important;
+}
+html body #calendarPage #calendarView[data-mode="month"] .cal-month-grid .cal-day-number{
+ width:28px!important;min-width:28px!important;
+ height:28px!important;min-height:28px!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day{
+ padding-top:9px!important;gap:2px!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day{
+ padding-top:7px!important;gap:1px!important;
+}
+html body #calendarPage #calendarView[data-mode="month"] .cal-month-grid .cal-day[data-week-number]::before{
+ top:1px!important;font-size:8px!important;
+}
+/* Compact and List use a single small group of source-colored indicators. */
+html body #calendarPage #calendarView[data-mode="month"]:is([data-month-layout="compact"],[data-month-layout="list"])
+ .cal-month-grid .cal-day .cal-day-labels{display:none!important}
+html body #calendarPage #calendarView[data-mode="month"]:is([data-month-layout="compact"],[data-month-layout="list"])
+ .cal-month-grid .cal-day .cal-day-dots{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;height:6px!important;margin:1px 0 0!important;gap:2px!important;
+}
+html body #calendarPage #calendarView[data-mode="month"]:is([data-month-layout="compact"],[data-month-layout="list"])
+ .cal-month-grid .cal-day-dots i{
+ display:block!important;flex:0 0 8px!important;
+ width:8px!important;height:4px!important;border-radius:999px!important;opacity:.95!important;
+}
+/* Stacked uses one colored stripe per saved entry, no tiny unreadable text. */
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-dots{display:none!important}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-labels{
+ display:flex!important;flex-direction:column!important;gap:2px!important;
+ width:100%!important;margin:2px 0 0!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-chip{
+ display:block!important;box-sizing:border-box!important;
+ width:88%!important;height:5px!important;min-height:5px!important;
+ padding:0!important;margin:0 auto!important;border:0!important;
+ border-radius:3px!important;color:transparent!important;
+ font-size:0!important;line-height:0!important;text-indent:-1000px!important;
+ overflow:hidden!important;text-overflow:clip!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-chip::before{display:none!important}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-chip[data-kind="event"]{background:#64B9E5!important}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-chip[data-kind="task"]{background:#E9AD59!important}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-chip[data-kind="life"]{background:#9B8AE1!important}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-chip[data-kind="note"]{background:#A4ADB9!important}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="stacked"] .cal-month-grid .cal-day-more{
+ font:600 8px/9px system-ui!important;margin:0!important;
+}
+/* Details shows names on the monthly canvas, with taller but equal weeks. */
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-dots{
+ display:none!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-labels{
+ display:flex!important;flex-direction:column!important;gap:2px!important;
+ width:100%!important;margin:2px 0 0!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-chip{
+ height:15px!important;min-height:15px!important;font-size:8.7px!important;
+}
+/* Only List reveals the separate agenda; other styles stay visually calm. */
+html body #calendarPage #calendarView[data-mode="month"]:not([data-month-layout="list"]) #calendarAgenda,
+html body #calendarPage #calendarView[data-mode="month"]:not([data-month-layout="list"]) .cal-day-summary{
+ display:none!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] .cal-day-summary{
+ display:flex!important;margin:12px 6px 5px!important;padding:9px 0 0!important;
+ border-top:1px solid #E8EAEE!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] #calendarAgenda:not([hidden]){
+ display:flex!important;flex-direction:column!important;gap:0!important;
+ margin:0 6px 16px!important;padding:0!important;
+ background:transparent!important;border:0!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] #calendarAgenda .cal-entry{
+ display:flex!important;align-items:center!important;
+ min-height:48px!important;height:48px!important;
+ padding:6px 8px!important;margin:0!important;gap:10px!important;
+ border:0!important;border-bottom:1px solid #ECEEF1!important;
+ border-radius:0!important;background:#FFF!important;color:#1B2027!important;
+ box-shadow:none!important;overflow:hidden!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] #calendarAgenda .cal-entry .cal-entry-copy strong{
+ font:560 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#1B2027!important;
+}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="list"] #calendarAgenda .cal-entry .cal-entry-time{
+ font:500 10.5px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#777D87!important;opacity:1!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html body #calendarPage #calendarView[data-mode="month"] .cal-month>.cal-month-grid{transition:none!important}
+}
+/* Month sub-menu inherits the exact approved dock material from its parent. */
+#svWorkShell #calendarCreateMenu[data-panel="month"] #calendarViewModes,
+#calendarPage #calendarCreateMenu[data-panel="month"] #calendarViewModes{display:none!important}
+#svWorkShell #calendarCreateMenu[data-panel="views"] #calendarMonthModes,
+#calendarPage #calendarCreateMenu[data-panel="views"] #calendarMonthModes,
+#svWorkShell #calendarCreateMenu #calendarMonthModes[hidden],
+#calendarPage #calendarCreateMenu #calendarMonthModes[hidden]{display:none!important}
+html body #svWorkShell > #calendarCreateMenu #calendarMonthModes:not([hidden]),
+html body #calendarPage > #calendarCreateMenu #calendarMonthModes:not([hidden]){
+ display:flex!important;flex-direction:column!important;
+ width:100%!important;gap:1px!important;margin:0!important;padding:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarMonthModes > button,
+html body #calendarPage > #calendarCreateMenu #calendarMonthModes > button{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ box-sizing:border-box!important;width:100%!important;height:45px!important;min-height:45px!important;
+ margin:0!important;padding:0 11px!important;gap:12px!important;
+ border:0!important;border-radius:13px!important;background:transparent!important;
+ color:#181C22!important;box-shadow:none!important;
+ font:550 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;
+}
+html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"],
+html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"]{
+ background:rgba(190,193,202,.12)!important;color:#17191D!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"]::after,
+html body #calendarPage > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"]::after{
+ content:"✓"!important;display:block!important;margin-left:auto!important;
+ font:650 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:#17191D!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarMonthModes > .cal-month-modes-back,
+html body #calendarPage > #calendarCreateMenu #calendarMonthModes > .cal-month-modes-back{
+ border-bottom:1px solid rgba(127,133,148,.12)!important;
+ border-radius:0!important;margin-bottom:3px!important;
+ font-weight:620!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarMonthModes .cal-mode-icon,
+html body #calendarPage > #calendarCreateMenu #calendarMonthModes .cal-mode-icon{
+ display:grid!important;place-items:center!important;
+ flex:0 0 20px!important;width:20px!important;height:20px!important;color:#17191D!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarMonthModes .cal-mode-icon svg,
+html body #calendarPage > #calendarCreateMenu #calendarMonthModes .cal-mode-icon svg,
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes .cal-month-mode-next svg,
+html body #calendarPage > #calendarCreateMenu #calendarViewModes .cal-month-mode-next svg{
+ display:block!important;width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes > button[data-calendar-mode="month"]::after,
+html body #calendarPage > #calendarCreateMenu #calendarViewModes > button[data-calendar-mode="month"]::after{
+ display:none!important;content:none!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes .cal-month-mode-next,
+html body #calendarPage > #calendarCreateMenu #calendarViewModes .cal-month-mode-next{
+ display:grid!important;place-items:center!important;
+ width:17px!important;height:20px!important;flex:none!important;
+ margin-left:auto!important;color:#6F7885!important;opacity:.75!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes .cal-month-mode-next svg,
+html body #calendarPage > #calendarCreateMenu #calendarViewModes .cal-month-mode-next svg{
+ width:17px!important;height:17px!important;
+}
+html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu:not([hidden]),
+html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu:not([hidden]){
+ max-height:calc(100dvh - 95px)!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior:contain!important;scrollbar-width:none!important;
+}
+#calendarCreateMenu::-webkit-scrollbar{display:none!important}
