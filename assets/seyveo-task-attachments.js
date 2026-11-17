@@ -8,6 +8,7 @@
  const menu=document.getElementById('svNewTaskCameraMenu');
  const take=document.getElementById('svNewTaskTakePhoto');
  const choose=document.getElementById('svNewTaskChooseFile');
+ const snapshot=document.getElementById('svNewTaskSmartSnapshot');
  const capture=document.getElementById('svNewTaskCaptureInput');
  const picker=document.getElementById('svNewTaskFileInput');
  const preview=document.getElementById('svNewTaskAttachmentPreview');
@@ -210,6 +211,7 @@
  button.addEventListener('click',()=>{title.blur();setMenu(menu.hidden)});
  take?.addEventListener('click',()=>{setMenu(false);capture.click()});
  choose?.addEventListener('click',()=>{setMenu(false);picker.click()});
+ snapshot?.addEventListener('click',()=>{setMenu(false);void window.SEYVEO_TASK_SNAPSHOT?.openForDraft?.()});
  capture.addEventListener('change',()=>{const file=capture.files?.[0];capture.value='';void selectFile(file)});
  picker.addEventListener('change',()=>{const file=picker.files?.[0];picker.value='';void selectFile(file)});
  dialog.addEventListener('pointerdown',event=>{
