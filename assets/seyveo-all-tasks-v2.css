@@ -132,15 +132,10 @@ html:has(#svWorkShell[data-task-tool-mode="all"]) body > footer.dock.sv-shared-d
 }
 
 /* All Tasks mobile surface: don't reveal the legacy tinted workspace frame.
-   Keep the isolated header inside the clipped scroll shell, including its rim. */
+   The shared header now owns its own mobile sizing across all Work routes. */
 @media(max-width:699px){
  html.sv-agenda-scroll-active:has(#svWorkShell[data-task-tool-mode="all"]) .app{
   background:#FFF!important;background-image:none!important;
   border:0!important;border-radius:0!important;box-shadow:none!important;
- }
- #svWorkShell[data-task-tool-mode="all"] > seyveo-work-head{
-  --gutter-l:14px!important;--gutter-r:14px!important;
-  box-sizing:border-box!important;align-self:stretch!important;
-  width:100%!important;max-width:100%!important;margin-left:0!important;
  }
 }
