@@ -122,6 +122,15 @@
  }
  /* Larger back chevron, same delicate hairline. Keep the button rim and Plus untouched. */
  .back svg{width:var(--sv-header-back-icon,25px);height:var(--sv-header-back-icon,25px);stroke-width:var(--sv-header-back-weight,1.45)}
+ /* All Tasks: use the approved airy pearl circle, not the heavy filled disc. */
+ :host([data-task-selecting="true"][data-theme="light"]) .back{
+  background:rgba(190,193,202,.10);
+  border:1.75px solid rgba(255,255,255,.96);
+  box-shadow:0 0 0 .7px rgba(164,170,184,.30),inset 0 1px 0 rgba(255,255,255,.88);
+  -webkit-backdrop-filter:blur(12px) saturate(108%);
+  backdrop-filter:blur(12px) saturate(108%);
+ }
+
  .action svg{width:var(--sv-header-action-icon,22px);height:var(--sv-header-action-icon,22px);stroke-width:var(--sv-header-action-weight,1.85)}
  .control:active{opacity:.72}
  .control:focus-visible{outline:2px solid currentColor;outline-offset:2px}
