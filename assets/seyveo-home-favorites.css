@@ -486,3 +486,18 @@ dialog.sv-home-favorites-editor.is-leaving{
 @media(prefers-reduced-motion:reduce){
  dialog.sv-home-favorites-editor.is-leaving{animation:none!important}
 }
+
+/* Three-button Home dock: the real Sayvi is on the Home canvas, so no empty fourth track. */
+:root[data-theme="light"]:is(.sv-home-empty-sphere,:has(dialog#svHomeFavoritesEditor[open]))
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock){
+ --sv-feng-capsule:clamp(174px,calc(100vw - 165px),198px)!important;
+ grid-template-columns:repeat(3,minmax(0,calc(var(--sv-feng-capsule) / 3))) minmax(0,1fr) 60px!important;
+}
+:root[data-theme="light"]:is(.sv-home-empty-sphere,:has(dialog#svHomeFavoritesEditor[open]))
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock) > #assistantButton{
+ display:none!important;
+}
+:root[data-theme="light"]:is(.sv-home-empty-sphere,:has(dialog#svHomeFavoritesEditor[open]))
+ body > footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock) > #navManage{
+ grid-column:5!important;
+}
