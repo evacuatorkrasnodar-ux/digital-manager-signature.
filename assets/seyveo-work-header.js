@@ -6,18 +6,18 @@
  'use strict';
  const styles=String.raw`
  :host {
-  --gutter-l:max(20px,calc(12px + env(safe-area-inset-left,0px)));
-  --gutter-r:max(20px,calc(12px + env(safe-area-inset-right,0px)));
-  --gutter-t:calc(24px + env(safe-area-inset-top,0px));
+  --gutter-l:14px;
+  --gutter-r:14px;
+  --gutter-t:0px;
   display:block;
   box-sizing:border-box;
   flex:none;
   order:0;
-  align-self:flex-start;
-  width:calc(100% + var(--gutter-l) + var(--gutter-r));
+  align-self:stretch;
+  width:100%;max-width:100%;
   min-height:calc(var(--sv-header-row,62px) + var(--gutter-t));
   height:calc(var(--sv-header-row,62px) + var(--gutter-t));
-  margin:calc(-1 * var(--gutter-t)) 0 0 calc(-1 * var(--gutter-l));
+  margin:0;
   color:var(--sv-header-ink,#1C1C1E);
   background:transparent;
   border:0;
@@ -26,21 +26,10 @@
   filter:none;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
  }
- @media(max-width:649px){
-  :host { --gutter-t:calc(16px + env(safe-area-inset-top,0px)); }
- }
- /* The old negative side gutters pushed this header outside the mobile
-    workspace. Its parent clips overflow for agenda scrolling, so the left
-    and right portions of the buttons/rims were cut off. Keep the header
-    inside the same content box as the tabs on every Work route. */
- @media(max-width:699px){
-  :host {
-   --gutter-l:14px;
-   --gutter-r:14px;
-   align-self:stretch;
-   width:100%;max-width:100%;
-   margin-left:0;
-  }
+ /* No negative viewport gutters or translated header stage: the Work shell
+    keeps the header in normal flow on both mobile and desktop. */
+ @media(max-width:380px){
+  :host { --gutter-l:8px;--gutter-r:8px; }
  }
  :host([hidden]){display:none!important}
  *,*::before,*::after{box-sizing:border-box}
