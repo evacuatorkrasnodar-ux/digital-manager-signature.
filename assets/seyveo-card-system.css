@@ -1349,3 +1349,31 @@
  .sv-card-actions .sv-card-action.sv-card-icon-button[data-sv-card-icon="sayvi"] img.sv-card-symbol{
  visibility:visible!important;opacity:1!important;
 }
+
+
+/* iPhone: semantic labels stay explicit for VoiceOver, while only the
+   destination is optically shortened to keep all three actions on one row. */
+@media(max-width:420px){
+ .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+  .sv-card-actions .sv-card-action.sv-card-icon-button
+  .sv-card-icon-caption[data-sv-compact-caption]{font-size:0!important}
+ .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+  .sv-card-actions .sv-card-action.sv-card-icon-button
+  .sv-card-icon-caption[data-sv-compact-caption]::after{
+   content:attr(data-sv-compact-caption);
+   font:520 11px/1.2 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+   letter-spacing:-.015em;white-space:nowrap;
+ }
+}
+@media(max-width:365px){
+ .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+  .sv-card-actions .sv-card-action.sv-card-icon-button
+  .sv-card-icon-caption[data-sv-tiny-caption]{font-size:0!important}
+ .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]
+  .sv-card-actions .sv-card-action.sv-card-icon-button
+  .sv-card-icon-caption[data-sv-tiny-caption]::after{
+   content:attr(data-sv-tiny-caption);
+   font:520 11px/1.2 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+   letter-spacing:-.015em;white-space:nowrap;
+ }
+}
