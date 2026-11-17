@@ -35,7 +35,7 @@ test('My World header keeps its title on the real screen centerline', () => {
   assert.match(tiles, /#lifePage \.life-heading \.sv-continuity-titlebar\{[\s\S]*?display:grid!important;[\s\S]*?grid-template-columns:44px minmax\(0,1fr\) 44px!important;/);
   assert.match(tiles, /#lifePage \.life-heading \.sv-continuity-space\{[\s\S]*?display:block!important;grid-column:3!important/);
   assert.match(tiles, /> h1#lifeTitle \{[\s\S]*?grid-column:2!important;[\s\S]*?text-align:center!important;/);
-  assert.match(html, /assets\/life-tiles-accents\.css\?v=34/);
+  assert.match(html, /assets\/life-tiles-accents\.css\?v=35/);
 });
 
 test('My World keeps even Apple-style rows, icon scale, and quiet grouped spacing', () => {
@@ -45,4 +45,13 @@ test('My World keeps even Apple-style rows, icon scale, and quiet grouped spacin
   assert.match(tiles, /#calendarSpaces \.calendar-space-button > svg\s*\{[\s\S]*?width:27px!important/);
   assert.match(tiles, /#calendarSpaces \.calendar-space-button > span\s*\{[\s\S]*?font-size:calc\(15\.6px \* var\(--sv-text-scale,1\)\)!important/);
   assert.match(tiles, /#lifePage \.sv-world-manage-link\s*\{[\s\S]*?min-height:64px/);
+});
+
+test('Management uses the clean three-slider outline symbol', () => {
+  const icon = html.match(/<svg class="sv-world-manage-icon"[\s\S]*?<\/svg>/)?.[0];
+  assert.ok(icon);
+  assert.match(icon, /viewBox="0 0 28 28"/);
+  assert.equal((icon.match(/<circle\b/g) || []).length, 3);
+  assert.match(icon, /<path d="M3\.5 6\.5/);
+  assert.match(tiles, /\.sv-world-manage-icon\{[\s\S]*?stroke:var\(--text\);stroke-width:1\.8/);
 });
