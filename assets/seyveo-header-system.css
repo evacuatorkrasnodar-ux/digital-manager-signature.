@@ -50,6 +50,16 @@
  --sv-header-segment:#EDEDED;
 }
 :root[data-theme="dark"]{
+ /* Preserve the approved dark-theme navigation until its own design pass. */
+ --sv-nav-pearl-border:1.5px solid rgba(255,255,255,.96);
+ --sv-nav-pearl-bg:rgba(190,193,202,.10);
+ --sv-nav-pearl-shadow:
+   0 0 0 .85px rgba(164,170,184,.22),
+   inset 0 1px 1px rgba(75,82,96,.055),
+   inset 0 -1px 0 rgba(255,255,255,.18),
+   inset .6px 0 .7px rgba(255,255,255,.16),
+   inset -.6px 0 .8px rgba(75,82,96,.055),
+   0 1px 2px rgba(82,88,103,.045);
  --sv-header-surface:#202023;
  --sv-header-ink:#F6F6F8;
  --sv-header-icon-ink:#F6F6F8;
