@@ -38,7 +38,12 @@ function sheet(item){
  const dlg=document.createElement('dialog');dlg.className='sv-share-dialog';dlg.setAttribute('aria-label','Сэйви получила файл');
  const shell=document.createElement('div');shell.className='sv-share-shell';
  shell.innerHTML='<div class="sv-share-head"><h2>Сэйви получила файл</h2><button type="button" data-share="dismiss" aria-label="Закрыть">×</button></div><p class="sv-share-lead">Что сделать с этим? Я помогу разобраться и попрошу подтверждение перед сохранением.</p><div class="sv-share-preview" id="svSharePreview"></div><div class="sv-share-choices"><button type="button" data-share="chat">Обсудить с Сэйви</button><button type="button" data-share="tasks">Добавить в Дела</button><button type="button" data-share="wallet">Записать расход в Кошелёк</button></div><p class="sv-share-foot">Ничего не сохранится в Дела или Кошелёк без твоего подтверждения. Полученный файл остаётся на этом устройстве.</p><p class="sv-share-error" id="svShareStatus" role="status"></p>';
- const files=(item?.files||[]).filter(x=>x&&x.size);
+ const files=(item?.files||[]).filter(x=>x&&x.size).map(f=>{
+  if(f.type)return f;
+  const ext=String(f.name||'').split('.').pop().toLowerCase();
+  const type={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',pdf:'application/pdf',txt:'text/plain',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation'}[ext]||'application/octet-stream';
+  return new File([f],f.name||'Вложение',{type,lastModified:f.lastModified||Date.now()});
+ });
  const preview=shell.querySelector('#svSharePreview'),previewName=document.createElement('div');
  const title=document.createElement('strong');title.textContent=files[0]?.name||item?.title||'Текст и ссылка';
  const details=document.createElement('small');details.textContent=files.length?(files.length+' вложений'):(item?.text||item?.url||'').slice(0,180);
