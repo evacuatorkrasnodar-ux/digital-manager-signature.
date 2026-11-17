@@ -44,13 +44,15 @@ html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-she
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header{
  box-sizing:border-box!important;flex:0 0 auto!important;display:grid!important;
  grid-template-columns:60px minmax(0,1fr) 60px!important;align-items:center!important;
- height:72px!important;min-height:72px!important;margin:0!important;
- padding:calc(env(safe-area-inset-top,0px) + 5px) 15px 3px!important;
+ grid-template-rows:44px!important;align-content:start!important;
+ height:62px!important;min-height:62px!important;margin:0!important;
+ padding:6px 13px 0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header h2{
  margin:0!important;text-align:center!important;color:#17191E!important;
- font:640 20px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ font:590 20px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ letter-spacing:-.02em!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header button{
  display:grid!important;place-items:center!important;justify-self:center!important;
@@ -328,7 +330,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 :is(button,input,select,te
 /* Smart-first New screen. Detailed calendar controls remain available on demand. */
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header{
  grid-template-columns:54px minmax(0,1fr) 54px!important;gap:8px!important;
- padding:7px 13px 5px!important;height:72px!important;min-height:72px!important;
+ padding:6px 13px 0!important;height:62px!important;min-height:62px!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-type[hidden]{display:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header h2.sv-new-task-visually-hidden{
@@ -730,11 +732,11 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{displ
   border-radius:20px!important;border:1px solid #E7EAF0!important;
  }
 }
-/* New Task is a complete white workspace on phones, not a nested sheet.
-   Preserve the old header/control positions with a safe-area-aware header inset. */
+/* One 44px navigation row aligned to Work. Add only the actual iPhone safe area;
+   the former artificial 22px inset made this page jump below every other header. */
 @media (max-width:620px){
  html body dialog#personalTaskDialog.sv-task-editor-v3{
-  --sv-task-top-inset:max(22px,env(safe-area-inset-top,0px));
+  --sv-task-top-inset:env(safe-area-inset-top,0px);
   background:#FFFFFF!important;
  }
  html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
@@ -743,9 +745,9 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{displ
  }
  html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header{
   box-sizing:border-box!important;
-  height:calc(72px + var(--sv-task-top-inset))!important;
-  min-height:calc(72px + var(--sv-task-top-inset))!important;
-  padding-top:calc(var(--sv-task-top-inset) + 7px)!important;
+  height:calc(62px + var(--sv-task-top-inset))!important;
+  min-height:calc(62px + var(--sv-task-top-inset))!important;
+  padding-top:calc(var(--sv-task-top-inset) + 6px)!important;
  }
 }
 @media (prefers-reduced-motion:reduce){
