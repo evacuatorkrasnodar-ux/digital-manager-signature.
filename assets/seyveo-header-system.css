@@ -144,7 +144,9 @@ html[data-theme="light"].sv-space-active body #lifePage:not([hidden]) > .life-he
  background:transparent!important;background-image:none!important;
  border:0!important;box-shadow:none!important;
 }
-html[data-theme="light"].sv-space-active body #lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar > button#lifeBack.life-back{
+/* Legacy :is() navigation groups contain three ID selectors; the extra IDs
+   here isolate My World's approved material without changing their cascade. */
+html[data-theme="light"].sv-space-active body #lifePage#lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar > button#lifeBack#lifeBack.life-back{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;
  height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;
@@ -155,7 +157,7 @@ html[data-theme="light"].sv-space-active body #lifePage:not([hidden]) > .life-he
  -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
  backdrop-filter:var(--sv-header-circle-filter)!important;
 }
-html[data-theme="light"].sv-space-active body #lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar > button#lifeBack.life-back svg{
+html[data-theme="light"].sv-space-active body #lifePage#lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar > button#lifeBack#lifeBack.life-back svg{
  width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
  stroke-width:var(--sv-header-back-weight)!important;
 }

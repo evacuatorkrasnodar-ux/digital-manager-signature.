@@ -20,12 +20,12 @@ test('My World retains one real back control and one titlebar', () => {
 });
 
 test('My World has exactly the white Home canvas with no green spotlight', () => {
-  assert.match(canvas, /:root\[data-theme="light"\]\.sv-space-active:has\(#lifePage:not\(\[hidden\]\)\) body\s*\{\s*background:#FFFFFF!important;\s*background-image:none!important;/);
+  assert.match(canvas, /html\.sv-space-active:root\[data-theme="light"\]:has\(#lifePage:not\(\[hidden\]\)\) body\s*\{\s*background:#FFFFFF!important;\s*background-image:none!important;/);
   assert.match(header, /#lifePage:not\(\[hidden\]\) > \.life-heading > \.sv-continuity-titlebar\{\s*background:transparent!important;background-image:none!important;/);
 });
 
 test('My World back button uses shared 44px circle material and black chevron', () => {
   assert.match(header, /--sv-header-slot:44px;/);
-  assert.match(header, /button#lifeBack\.life-back\{[\s\S]*?border:var\(--sv-header-circle-border\)!important;[\s\S]*?box-shadow:var\(--sv-header-circle-shadow\)!important;/);
-  assert.match(header, /button#lifeBack\.life-back svg\{[\s\S]*?stroke-width:var\(--sv-header-back-weight\)!important;/);
+  assert.match(header, /#lifePage#lifePage:not\(\[hidden\]\)[^\n]*button#lifeBack#lifeBack\.life-back\{[\s\S]*?border:var\(--sv-header-circle-border\)!important;[\s\S]*?box-shadow:var\(--sv-header-circle-shadow\)!important;/);
+  assert.match(header, /button#lifeBack#lifeBack\.life-back svg\{[\s\S]*?stroke-width:var\(--sv-header-back-weight\)!important;/);
 });

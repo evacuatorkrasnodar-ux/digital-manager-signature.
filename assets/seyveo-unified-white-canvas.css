@@ -67,7 +67,7 @@
   background-image:none!important;
 }
 /* My World is the Home canvas, without the older mint spotlight on body. */
-:root[data-theme="light"].sv-space-active:has(#lifePage:not([hidden])) body {
+html.sv-space-active:root[data-theme="light"]:has(#lifePage:not([hidden])) body {
   background:#FFFFFF!important;
   background-image:none!important;
 }
