@@ -4069,6 +4069,10 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   }
   renderAttachments();updateControls();
  }
+ window.addEventListener('seyveo:shared-attachment',event=>{
+  const files=event.detail?.files;
+  if(files?.length){addAttachments(files);status.textContent='Фото или файл из меню «Поделиться» прикреплён. Проверь сообщение перед отправкой.';}
+ });
 
  // Desktop drag-and-drop and clipboard images join the exact same draft tray
  // as files picked through +. Do not navigate away on an accidental drop.
@@ -5111,6 +5115,26 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
   input.focus({preventScroll:true});
  };
  ready();
+})();
+</script>
+
+<script>
+/* Restore an explicitly shared Android file into the existing chat draft. */
+(async()=>{
+ const params=new URLSearchParams(location.search);
+ if(params.get('seyveoSharedChat')!=='1')return;
+ try{
+  const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('seyveo-system-share-v1',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+  const item=await new Promise((resolve,reject)=>{const r=db.transaction('incoming','readonly').objectStore('incoming').get('pendingChat');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+  if(!item?.files?.length)throw Error('no files');
+  const files=item.files.map((f,i)=>f instanceof File?f:new File([f],f.name||'Вложение-'+(i+1),{type:f.type||'application/octet-stream'}));
+  window.dispatchEvent(new CustomEvent('seyveo:shared-attachment',{detail:{files}}));
+  const input=document.getElementById('sayviInput');
+  if(input&&!input.value.trim()){input.value='Сэйви, посмотри приложенный файл и предложи, что с ним можно сделать. Ничего не сохраняй без моего подтверждения.';input.dispatchEvent(new Event('input',{bubbles:true}));}
+  await new Promise((resolve,reject)=>{const tx=db.transaction('incoming','readwrite');tx.objectStore('incoming').delete('pendingChat');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
+  db.close();
+ }catch{const status=document.getElementById('sayviStatus');if(status)status.textContent='Не удалось восстановить отправленное фото. Добавь его через кнопку «+».';}
+ params.delete('seyveoSharedChat');history.replaceState(history.state,'',location.pathname+(params.size?'?'+params:'')+location.hash);
 })();
 </script>
 </body>
