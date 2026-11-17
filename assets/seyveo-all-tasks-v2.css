@@ -19,13 +19,15 @@
 
 #svAllTasksView .sv-tool-input{
  box-sizing:border-box;flex:0 0 auto;width:100%;height:46px;min-height:46px;
- margin:0 0 12px;padding:0 14px;border:1px solid #E7EAF0;
- border-radius:13px;background:#F5F5F7;color:#17191E;
+ margin:0 0 12px;padding:0 18px;border:1.6px solid rgba(255,255,255,.96);
+ border-radius:999px;background:rgba(190,193,202,.12);color:#17191E;
+ box-shadow:0 0 0 .7px rgba(164,170,184,.28),inset 0 1px 0 rgba(255,255,255,.86);
+ -webkit-backdrop-filter:blur(14px) saturate(108%);backdrop-filter:blur(14px) saturate(108%);
  outline:none;font:500 16px/1.2 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
 }
 #svAllTasksView .sv-tool-input[hidden]{display:none!important}
 #svAllTasksView .sv-tool-input::placeholder{color:#707782;opacity:1}
-#svAllTasksView .sv-tool-input:focus-visible{border-color:#BFC6D0;outline:2px solid #DDE8F1;outline-offset:1px}
+#svAllTasksView .sv-tool-input:focus-visible{border-color:rgba(145,170,206,.5);outline:none;box-shadow:0 0 0 2px rgba(111,156,216,.18),inset 0 1px 0 rgba(255,255,255,.9)}
 
 #svAllTasksView .sv-tool-results{
  box-sizing:border-box;display:block;flex:1 1 auto;min-width:0;min-height:0;
@@ -83,22 +85,23 @@ html.sv-task-selection-active #svAllTasksView .sv-tool-results{padding-bottom:76
 #svTaskActionCapsule{
  box-sizing:border-box;display:grid;align-items:center;
  position:fixed;z-index:110;
- left:50%;bottom:max(8px,env(safe-area-inset-bottom,0px));
+ left:50%;bottom:max(12px,env(safe-area-inset-bottom,0px));
  transform:translateX(-50%);
- grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr) minmax(0,.85fr) minmax(0,.75fr);
- gap:3px;width:calc(100% - 16px);max-width:490px;height:60px;min-height:60px;padding:4px;
- border:1.75px solid rgba(255,255,255,.94);border-radius:999px;
- background:rgba(190,193,202,.43);
- box-shadow:0 0 0 .7px rgba(164,170,184,.30),inset 0 1px 1px rgba(75,82,96,.055);
+ grid-template-columns:minmax(0,1.28fr) minmax(0,.82fr) minmax(0,.82fr) minmax(0,.76fr);
+ gap:2px;width:min(350px,calc(100% - 28px));max-width:350px;height:56px;min-height:56px;padding:4px;
+ border:1.6px solid rgba(255,255,255,.96);border-radius:999px;
+ background:rgba(190,193,202,.24);
+ box-shadow:0 0 0 .7px rgba(164,170,184,.28),inset 0 1px 1px rgba(255,255,255,.85),0 3px 13px rgba(30,39,50,.055);
+ -webkit-backdrop-filter:blur(16px) saturate(108%);backdrop-filter:blur(16px) saturate(108%);
 }
 #svTaskActionCapsule button{
  appearance:none;-webkit-appearance:none;display:grid;place-items:center;
- width:100%;height:50px;min-width:0;margin:0;padding:0 3px;
+ width:100%;height:46px;min-width:0;margin:0;padding:0 2px;
  border:0;border-radius:999px;background:transparent;box-shadow:none;
- color:#202329;font:550 12.8px/1.15 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
+ color:#202329;font:550 12.4px/1.15 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
  white-space:nowrap;cursor:pointer;
 }
-#svTaskActionCapsule .sv-task-all{background:rgba(255,255,255,.82)}
+#svTaskActionCapsule .sv-task-all{background:rgba(255,255,255,.78)}
 #svTaskActionCapsule .sv-task-count{display:grid;place-items:center;min-width:0;color:#707782;font-size:11.8px;white-space:nowrap}
 #svTaskActionCapsule .sv-task-count[data-has-selection="true"]{color:#3769A9;font-weight:570}
 #svTaskActionCapsule .sv-task-delete{color:#B34750}
