@@ -1106,9 +1106,15 @@ function createSurface(primary,other=[],real=false,taskId=''){
   // The same three actions have clear, contextual names in every old/new card.
   const destinations={mail:'в почту',work:'в чат',contract:'в документы',
    task:'в дела',health:'в здоровье',breath:'в заботу'};
-  const destinationLabel='Перейти '+(destinations[item.kind]||'к делу');
+  const place=destinations[item.kind]||'к делу';
+  const destinationLabel='Перейти '+place;
   const destinationCaption=open.querySelector('.sv-card-icon-caption');
-  if(destinationCaption)destinationCaption.textContent=destinationLabel;
+  if(destinationCaption){
+   destinationCaption.textContent=destinationLabel;
+   const shortLabel=place.replace(/^в /,'В ');
+   destinationCaption.dataset.svCompactCaption=shortLabel;
+   destinationCaption.dataset.svTinyCaption=shortLabel;
+  }
   open.setAttribute('title',destinationLabel);
   open.setAttribute('aria-label',destinationLabel);
   updateCount();
