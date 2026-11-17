@@ -908,3 +908,27 @@ html.sv-agenda-scroll-active .app{
  color:#A8D4FF;font:600 13px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
 }
 
+
+/* iOS day rail: native momentum, magnetic one-day stops, unrestricted multi-day flicks. */
+#tasksPage #svTasksDateNav .sv-agenda-week{
+ overflow-x:auto!important;
+ overflow-y:hidden!important;
+ touch-action:pan-x pan-y!important;
+ -webkit-overflow-scrolling:touch!important;
+ overscroll-behavior-x:contain!important;
+ scroll-snap-type:x mandatory!important;
+ scroll-padding-inline:0!important;
+ scrollbar-width:none!important;
+}
+#tasksPage #svTasksDateNav .sv-agenda-week::-webkit-scrollbar{display:none!important}
+#tasksPage #svTasksDateNav .sv-agenda-track{
+ transform:none!important;
+ transition:none!important;
+}
+#tasksPage #svTasksDateNav .sv-agenda-day{
+ scroll-snap-align:start!important;
+ scroll-snap-stop:normal!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #tasksPage #svTasksDateNav .sv-agenda-week{scroll-behavior:auto!important}
+}
