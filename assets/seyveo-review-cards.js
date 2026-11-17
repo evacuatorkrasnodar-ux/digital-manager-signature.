@@ -14,7 +14,7 @@
  document.body.append(room);
  const content=room.querySelector('#svReviewContent');
  let open=false;
- let lastCount=-1,returnFocus=null;
+ let lastCount=-1,returnFocus=null,emptyExitTimer=0;
  function sources(){return ids.map(id=>document.getElementById(id)).filter(Boolean)}
  // The Home CSS deliberately masks cards, so count logical visibility,
  // not computed display (which is none until the room opens).
@@ -40,6 +40,10 @@
   const progress=total?total+' осталось':'Всё разобрано';
   if(document.getElementById('svReviewProgress').textContent!==progress)document.getElementById('svReviewProgress').textContent=progress;
   room.classList.toggle('sv-review-empty',!total);
+  // When the final decision is resolved, return to Home rather than trapping
+  // the user in an empty full-screen decision room.
+  if(open&&total===0&&!emptyExitTimer)emptyExitTimer=setTimeout(()=>{emptyExitTimer=0;if(open&&count()===0)leave()},450);
+  else if(total>0&&emptyExitTimer){clearTimeout(emptyExitTimer);emptyExitTimer=0;}
  }
  function moveIn(element){
   if(!element||original.has(element))return;
@@ -60,7 +64,8 @@
   room.querySelector('#svReviewBack').focus({preventScroll:true});
  }
  function leave(){
-  if(!open)return;
+  clearTimeout(emptyExitTimer);emptyExitTimer=0;
+  if(!open){room.hidden=true;document.documentElement.classList.remove('sv-review-open');return;}
   open=false;
   original.forEach((position,element)=>{
    if(position.next?.parentNode===position.parent)position.parent.insertBefore(element,position.next);
@@ -74,7 +79,7 @@
   if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
  }
  window.addEventListener('seyveo:open-card-review',enter);
- room.querySelector('#svReviewBack').addEventListener('click',leave);
+ room.querySelector('#svReviewBack').addEventListener('click',event=>{event.preventDefault();event.stopPropagation();leave()});
  window.addEventListener('keydown',event=>{if(open&&event.key==='Escape')leave()});
  window.addEventListener('hashchange',()=>{if(open&&location.hash&&location.hash!=='#home')leave()});
  const observer=new MutationObserver(()=>{if(!document.hidden)requestAnimationFrame(update)});
