@@ -22,7 +22,7 @@
  --agenda-rule:#ECEEF1;
  --agenda-red:#EC636E;
  box-sizing:border-box;width:100%!important;max-width:none!important;
- padding:3px 13px 6px!important;margin:0!important;
+ padding:3px 8px 6px!important;margin:0!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
  font-family:-apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
@@ -45,8 +45,8 @@
 #tasksPage #svTasksDateNav .sv-agenda-ticker{
  box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);
  align-items:center;position:relative;
- /* Bleed only the date rail to the screen edge; tabs and task rows keep gutters. */
- width:calc(100% + 26px);margin-inline:-13px;
+ /* One in-flow rail with visible first and last rules, no viewport bleed. */
+ width:100%;margin:0;
  border-top:1px solid var(--agenda-rule);
  border-bottom:1px solid var(--agenda-rule);
  padding:0;
@@ -381,12 +381,8 @@
  #tasksPage #svTasksDateNav .sv-agenda-week-step:first-child{left:8px}
  #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:8px}
 }
-/* On phones the date rail belongs to the Work shell, not the viewport.
-   The old 100vw / -26px offset escaped the clipped app and erased edge rules. */
+/* On phones the rail stays inside the same clean page container. */
 @media(max-width:767px){
- #tasksPage #svTasksDateNav .sv-agenda-ticker{
-  width:calc(100% + 26px);margin-inline:-13px;
- }
  /* Five complete days plus a 45% preview of the sixth, as in Apple Calendar.
     Keep the rail within its parent, with 1px to protect the first rule. */
  #tasksPage #svTasksDateNav .sv-agenda-week{
@@ -427,11 +423,7 @@
  :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day::after{transition:none}
 }
 @media(max-width:380px){
- #tasksPage #svTasksDateNav{padding-inline:8px!important}
  #tasksPage #svTasksDateNav .sv-agenda-week{padding-inline:1px}
- #tasksPage #svTasksDateNav .sv-agenda-ticker{
-  width:calc(100% + 16px);margin-inline:-8px;
- }
  #tasksPage #personalTaskList .sv-agenda-section-heading{padding-inline:8px!important}
  #tasksPage #personalTaskList .sv-agenda-entry{padding-inline:8px!important}
  #tasksPage #personalTaskList .sv-agenda-empty-day{padding-inline:10px!important}
