@@ -95,7 +95,7 @@
 #navTasks[data-sv-review-count]::after{
  content:attr(data-sv-review-count)!important;
  position:absolute!important;z-index:20!important;
- top:1px!important;right:3px!important;
+ top:5px!important;right:14px!important;
  display:flex!important;align-items:center!important;justify-content:center!important;
  min-width:17px!important;height:17px!important;padding:0 3px!important;
  box-sizing:border-box!important;border-radius:12px!important;
