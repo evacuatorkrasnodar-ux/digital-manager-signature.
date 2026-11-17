@@ -66,7 +66,7 @@ function tasks(){
  const data=parse(raw(TASKS));
  return (Array.isArray(data)?data:[])
  .filter(x=>x&&typeof x.id==='string'&&typeof x.title==='string')
- .map(x=>({id:x.id,title:x.title.trim().slice(0,140),date:at(x.due)?x.due:'',done:x.done===true}))
+ .map(x=>({id:x.id,title:x.title.trim().slice(0,140),date:at(x.due)?x.due:'',time:/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(x.time||'')?x.time:'',done:x.done===true}))
  .filter(x=>x.title);
 }
 function saveEvents(list){
@@ -95,7 +95,7 @@ const visibleEvents=()=>events().filter(x=>selectedScope()==='all'||x.kind===sel
 const iso=()=>format(focus);
 function dayItems(dayKey,includeDone=true){
  const meeting=visibleEvents().filter(x=>x.date===dayKey).map(x=>({...x,source:'event',sort:x.time||'99:00'}));
- const todo=selectedScope()==='business'?[]:tasks().filter(x=>x.date===dayKey&&(includeDone||!x.done)).map(x=>({...x,source:'task',sort:'98:00'}));
+ const todo=selectedScope()==='business'?[]:tasks().filter(x=>x.date===dayKey&&(includeDone||!x.done)).map(x=>({...x,source:'task',sort:x.time||'98:00'}));
  const personal=selectedScope()==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(dayKey)||[]);
  const notes=(window.SEYVEO_NOTES_API?.getNotes?.()||[])
   .filter(note=>note.calendarDate===dayKey&&typeof note.text==='string'&&note.text.trim())
@@ -260,6 +260,77 @@ function renderDay(){
  $('calendarMonth').hidden=true;
  $('calendarWeek').hidden=true;
 }
+
+/* Week keeps seven-day navigation, with Apple's hourly schedule for the selected date. */
+function renderWeekTimeline(list){
+ const panel=$('calendarWeekTimeline'),allDay=$('calendarWeekAllDay');
+ const root=$('calendarWeekHours'),scroll=$('calendarWeekTimelineScroll');
+ panel.hidden=false;allDay.replaceChildren();root.replaceChildren();
+ const parseMinutes=time=>{
+  if(typeof time!=='string'||!/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(time))return null;
+  const [hours,minutes]=time.split(':').map(Number);
+  return hours*60+minutes;
+ };
+ const scheduled=[],untimed=[];
+ for(const item of list){
+  const start=parseMinutes(item.time);
+  if(start===null)untimed.push(item);else scheduled.push({item,start,end:Math.min(1440,start+Math.max(30,Math.min(180,Number(item.duration)||60)))});
+ }
+ allDay.hidden=!untimed.length;
+ for(const item of untimed){
+  const button=createEntry(item);
+  button.classList.add('cal-timeline-all-day');
+  button.dataset.tone=item.source;
+  const label=text('span','cal-timeline-all-day-time','весь день');
+  button.append(label);allDay.append(button);
+ }
+ for(let hour=0;hour<24;hour++){
+  const line=text('div','cal-week-hour-row');
+  line.append(text('time','cal-week-hour-label',String(hour).padStart(2,'0')+':00'));
+  root.append(line);
+ }
+ const layer=text('div','cal-week-event-layer');root.append(layer);
+ scheduled.sort((a,b)=>a.start-b.start||a.end-b.end);
+ // Events overlapping in time share the available width instead of covering each other.
+ const groups=[];let group=[],groupEnd=-1;
+ for(const slot of scheduled){
+  if(group.length&&slot.start>=groupEnd){groups.push(group);group=[];groupEnd=-1}
+  group.push(slot);groupEnd=Math.max(groupEnd,slot.end);
+ }
+ if(group.length)groups.push(group);
+ for(const group of groups){
+  const lanes=[];
+  for(const slot of group){
+   let lane=lanes.findIndex(end=>end<=slot.start);
+   if(lane<0){lane=lanes.length;lanes.push(slot.end)}else lanes[lane]=slot.end;
+   slot.lane=lane;
+  }
+  const laneCount=lanes.length;
+  for(const slot of group){
+   const button=createEntry(slot.item);
+   button.classList.add('cal-timeline-timed');
+   button.dataset.tone=slot.item.source;
+   button.style.top=slot.start+'px';
+   button.style.height=Math.max(36,slot.end-slot.start-2)+'px';
+   button.style.left=(slot.lane*100/laneCount)+'%';
+   button.style.width=(100/laneCount)+'%';
+   button.append(text('span','cal-timeline-time-label',slot.item.time));
+   layer.append(button);
+  }
+ }
+ if(format(focus)===format(new Date())){
+  const now=new Date(),minute=now.getHours()*60+now.getMinutes();
+  const marker=text('div','cal-week-now-marker');
+  marker.style.top=minute+'px';marker.setAttribute('aria-label','Сейчас');
+  layer.append(marker);
+ }
+ window.requestAnimationFrame(()=>{
+  if(panel.hidden||mode!=='week')return;
+  // Show the first timed event when available; otherwise open at the morning hours.
+  const anchor=scheduled.length?scheduled[0].start:8*60;
+  scroll.scrollTop=Math.max(0,anchor-105);
+ });
+}
 function renderAgenda(){
  const list=dayItems(iso());
  $('calendarSelectedTitle').textContent=mode==='day'?'Планы на день':niceFirst(fmtShort.format(focus));
@@ -274,8 +345,11 @@ function renderAgenda(){
   $('calendarHolidayName').textContent=holiday.name;
  }else $('calendarHolidayName').textContent='';
  const agenda=$('calendarAgenda');
- agenda.hidden=count===0;
- if(count)fillAgenda(agenda,list);
+ const timeline=$('calendarWeekTimeline');
+ timeline.hidden=mode!=='week';
+ agenda.hidden=mode==='week'||count===0;
+ if(mode==='week'){agenda.replaceChildren();renderWeekTimeline(list)}
+ else if(count)fillAgenda(agenda,list);
  else agenda.replaceChildren();
 }
 /* Smart Calendar v1: local rule-based assistance, not an external AI model. */
@@ -795,7 +869,7 @@ for(const id of ['calendarMonthGrid','calendarWeekGrid']){
   revealSelectedDay();
  });
 }
-for(const id of ['calendarAgenda','calendarDeadlineList']){
+for(const id of ['calendarAgenda','calendarDeadlineList','calendarWeekTimeline']){
  $(id).addEventListener('click',event=>{
   const entry=event.target.closest('.cal-entry');
   if(!entry)return;
