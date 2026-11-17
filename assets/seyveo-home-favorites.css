@@ -204,3 +204,15 @@
  display:block;width:27px;height:27px;flex:none;margin-top:11.5px;
  fill:none;stroke:#141417;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
 }
+
+/* Minimal edit crosses: no circular discs, but still finger-sized tap areas. */
+#homePage #svHomeFavorites .sv-home-edit-minus{
+ top:-10px;left:3px;width:28px;height:28px;
+ padding:0;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#202126;
+}
+#homePage #svHomeFavorites .sv-home-edit-minus svg{
+ width:13px;height:13px;fill:none;stroke:#202126;stroke-width:1.75;
+ stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
+}
