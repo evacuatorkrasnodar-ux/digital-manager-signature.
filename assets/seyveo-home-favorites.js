@@ -50,19 +50,29 @@ if(!preference.custom){
   save(STORAGE,preference);
  }
 }
-const rail=document.createElement('nav');rail.id='svHomeFavorites';rail.className='sv-home-favorites';rail.setAttribute('aria-label','Любимые приложения и карточки Сэйви');rail.hidden=true;
+/* One smart slot: pending decisions when present, otherwise a useful Life app.
+   Selection is stable during the session and ignores the three pinned apps. */
+const fallbackOrder=['browser','music','notebook','calendar','health','mail','documents','wallet'];
+function chooseFallback(){
+ const pinned=new Set(preference.items);
+ return apps.filter(a=>!pinned.has(a.id))
+  .sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0)||
+    fallbackOrder.indexOf(a.id)-fallbackOrder.indexOf(b.id))[0]?.id||'browser';
+}
+let fallbackId=chooseFallback();
+const rail=document.createElement('nav');rail.id='svHomeFavorites';rail.className='sv-home-favorites';rail.setAttribute('aria-label','Быстрый доступ SEYVEO');rail.hidden=true;
 const card=document.createElement('button');card.type='button';card.className='sv-home-favorite sv-home-review-entry';
-card.setAttribute('aria-label','Карточки Сэйви');card.setAttribute('title','Карточки для разбора');
+card.setAttribute('aria-label','Открыть дела Сэйви');card.setAttribute('title','Дела для разбора');card.dataset.icon='cards';
 const symbol=document.createElement('span');symbol.className='sv-home-favorite-icon';
 symbol.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
 const badge=document.createElement('span');badge.className='sv-home-review-badge';badge.hidden=true;badge.setAttribute('aria-hidden','true');
-const caption=document.createElement('span');caption.className='sv-home-favorite-label';caption.textContent='Карточки';
+const caption=document.createElement('span');caption.className='sv-home-favorite-label';caption.textContent='Дела';
 symbol.append(badge);card.append(symbol,caption);rail.append(card);
 const list=document.createElement('div');list.className='sv-home-favorite-items';rail.append(list);
 stage.append(rail);
 card.addEventListener('click',()=>{
  if(cardCount>0)window.dispatchEvent(new Event('seyveo:open-card-review'));
- else location.hash='#tasks';
+ else launch(fallbackId);
 });
 function icon(id){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(favoriteGlyphs[id]||'<path d="'+paths[id]+'"/>')+'</svg>'}
 function launch(id){
@@ -133,7 +143,7 @@ function openCustomize(){
  };
  redraw();shell.append(head,help,grid);dialog.append(shell);document.body.append(dialog);
  function close(){dialog.close();dialog.remove();setTimeout(()=>{suppressClick=false},60)}
- done.addEventListener('click',()=>{if(selection.length===LIMIT){preference={items:selection,custom:true};save(STORAGE,preference);renderItems();close()}else{help.textContent='Выбери ровно три приложения.'}});
+ done.addEventListener('click',()=>{if(selection.length===LIMIT){preference={items:selection,custom:true};save(STORAGE,preference);renderItems();updateCount();close()}else{help.textContent='Выбери ровно три приложения.'}});
  dialog.addEventListener('cancel',e=>{e.preventDefault();close()});
  dialog.addEventListener('click',e=>{if(e.target===dialog)close()});
  dialog.showModal();
@@ -167,11 +177,29 @@ const show=()=>{
  if(visible)requestAnimationFrame(place);
 };
 function updateCount(){
- badge.hidden=cardCount<1;
- caption.textContent=cardCount?'Карточки':'Дела';
+ const pending=cardCount>0;
+ badge.hidden=!pending;
  badge.textContent=cardCount>99?'99+':String(cardCount);
- card.setAttribute('aria-label',cardCount?('Открыть карточки Сэйви: '+cardCount):'Открыть Мои дела');
- card.title=cardCount?('Карточек для разбора: '+cardCount):'Мои дела';
+ card.classList.toggle('sv-home-review-entry',pending);
+ if(pending){
+  if(card.dataset.icon!=='cards'){
+   symbol.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
+   symbol.append(badge);card.dataset.icon='cards';
+  }
+  caption.textContent='Дела';
+  card.setAttribute('aria-label','Открыть дела Сэйви: '+cardCount);
+  card.title='Дел для разбора: '+cardCount;
+ }else{
+  fallbackId=chooseFallback();
+  const item=byId[fallbackId];
+  if(card.dataset.icon!==fallbackId){
+   symbol.innerHTML=icon(fallbackId);
+   symbol.append(badge);card.dataset.icon=fallbackId;
+  }
+  caption.textContent=item.name;
+  card.setAttribute('aria-label','Открыть '+item.name);
+  card.title=item.name+' · умный быстрый доступ';
+ }
 }
 window.addEventListener('seyveo:review-count',e=>{cardCount=Math.max(0,Number(e.detail?.count)||0);updateCount();show()});
 for(const name of ['seyveo:home-sayvi-arrived','seyveo:route-changed','seyveo:cinema-finished','hashchange','focus'])
