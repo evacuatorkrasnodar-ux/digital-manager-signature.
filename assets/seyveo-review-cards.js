@@ -63,7 +63,10 @@
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
   // The fixed Home reminder owns the card count; no second copy.
   if(greetingSubline)greetingSubline.hidden=total>0;
-  const progress=total?total+' осталось':'Всё разобрано';
+  const demoCount=window.SEYVEO_LIVING_MOMENT?.reviewExamplesActive?.()?
+   Number(window.SEYVEO_LIVING_MOMENT?.reviewCount?.())||0:0;
+  const demoLabel=demoCount===1?'карточка':demoCount>=2&&demoCount<=4?'карточки':'карточек';
+  const progress=demoCount?demoCount+' '+demoLabel:total?total+' осталось':'Всё разобрано';
   if(document.getElementById('svReviewProgress').textContent!==progress)document.getElementById('svReviewProgress').textContent=progress;
   room.classList.toggle('sv-review-empty',!total);
   // When the final decision is resolved, return to Home rather than trapping
