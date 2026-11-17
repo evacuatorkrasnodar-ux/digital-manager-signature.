@@ -396,3 +396,29 @@ dialog.sv-home-favorites-editor .sv-home-favorites-auto[aria-pressed=true] svg{s
   padding-top:calc(12px + env(safe-area-inset-top,0px))!important;
  }
 }
+
+/* Match the exact Home action-button material; no custom grey gradient or heavy rim. */
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-head button,
+dialog.sv-home-favorites-editor .sv-home-favorites-auto{
+ width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;
+ background:var(--sv-card-action-neutral-bg,transparent)!important;
+ border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28))!important;
+ box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16))!important;
+ -webkit-backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%))!important;
+ backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%))!important;
+ color:#0b0b0d!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-auto[aria-pressed=true]{
+ background:var(--sv-card-action-neutral-bg,transparent)!important;
+ border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28))!important;
+ box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16)),
+ inset 0 0 0 1px rgba(50,67,87,.22)!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-head button svg{
+ width:25px!important;height:25px!important;
+ stroke:#090a0c!important;stroke-width:1.9!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-auto svg{
+ width:28px!important;height:28px!important;
+ stroke:#090a0c!important;stroke-width:1.55!important;
+}
