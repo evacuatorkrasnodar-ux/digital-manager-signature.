@@ -625,12 +625,18 @@ function svAgendaMarkSelected(iso){
  svTaskSelectedDate=iso;
  if(!svTaskWindowStart)svTaskWindowStart=iso;
  const nav=document.getElementById('svTasksDateNav');
- const lastVisible=svTaskShiftDay(svTaskWindowStart,4);
- if(iso<svTaskWindowStart||iso>lastVisible)svTaskWindowStart=svTaskShiftDay(iso,-2);
- const firstButton=nav?.querySelector('.sv-agenda-day');
- if(!nav||firstButton?.dataset.day!==svTaskWindowStart||nav.dataset.monthSelected!==iso.slice(0,7)){
+ const currentDay=nav?.querySelector('.sv-agenda-day[data-day="'+iso+'"]');
+ if(!nav||!currentDay){
+  svTaskWindowStart=iso;
   svAgendaRenderNav(svAgendaLastRows);
   return;
+ }
+ if(nav.dataset.monthSelected!==iso.slice(0,7)){
+  nav.dataset.monthSelected=iso.slice(0,7);
+  const date=svTaskDate(iso),month=new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(date);
+  const name=nav.querySelector('.sv-agenda-month-name'),year=nav.querySelector('.sv-agenda-year');
+  if(name)name.textContent=month.charAt(0).toLocaleUpperCase('ru-RU')+month.slice(1);
+  if(year)year.textContent=String(date.getFullYear());
  }
  for(const button of nav.querySelectorAll('.sv-agenda-day')){
   const selected=button.dataset.day===iso;
@@ -757,8 +763,9 @@ function svAgendaRenderNav(rows){
  if(!svTaskWindowStart)svTaskWindowStart=svTaskISO(new Date());
  // Updating a task must not replace the entire calendar strip if its seven
  // days are unchanged. This keeps taps and transitions steady.
- const visibleThrough=svTaskShiftDay(svTaskWindowStart,6);
- const previewSignature=rows.filter(item=>item.due>=svTaskWindowStart&&item.due<=visibleThrough)
+ const visibleThrough=svTaskShiftDay(svTaskWindowStart,83);
+ const previewStart=svTaskShiftDay(svTaskWindowStart,-21);
+ const previewSignature=rows.filter(item=>item.due>=previewStart&&item.due<=visibleThrough)
   .map(item=>[item.id,item.due,item.done,svTaskCategory(item),svTaskDotTone(item)].join(':')).join(';');
  const signature=[svTaskWindowStart,svTaskSelectedDate.slice(0,7),svTaskISO(new Date()),previewSignature].join('|');
  if(nav.dataset.modelSignature===signature&&nav.querySelector('.sv-agenda-day')){
@@ -795,14 +802,14 @@ function svAgendaRenderNav(rows){
  strip.setAttribute('role','group');strip.setAttribute('aria-label','Дни недели');
  const track=element('div','sv-agenda-track');
  strip.append(track);
- const first=svTaskDate(svTaskWindowStart);
+ const first=svTaskDate(svTaskShiftDay(svTaskWindowStart,-21));
  const today=svTaskISO(new Date()),byDate=new Map();
  for(const item of rows){
   if(!item.due)continue;
   if(!byDate.has(item.due))byDate.set(item.due,[]);
   byDate.get(item.due).push(item);
  }
- for(let i=0;i<7;i++){
+ for(let i=0;i<105;i++){
   const day=new Date(first);day.setDate(first.getDate()+i);
   const iso=svTaskISO(day),entries=byDate.get(iso)||[];
   const btn=element('button','sv-agenda-day');
@@ -831,50 +838,34 @@ function svAgendaRenderNav(rows){
   btn.addEventListener('click',()=>svAgendaJumpToDate(iso));
   track.append(btn);
  }
- // Five equal day columns form one uninterrupted rail; swipe advances the window.
- // The window advances by one day, preserving today at the left on entry.
- let touchStart=null,ignoreTapUntil=0,gestureActive=false;
- const clearMotion=()=>{
-  track.style.transition='transform .16s cubic-bezier(.22,.75,.35,1)';
-  track.style.transform='translate3d(0,0,0)';
+ // Native iPhone momentum permits a fast flick across multiple dates.
+ // Snap always lands on a complete day rather than stopping between columns.
+ let settleTimer=0,ignoreScrollUntil=0,settledIso=svTaskWindowStart;
+ const dayWidth=()=>track.firstElementChild?.getBoundingClientRect().width||strip.clientWidth/5.45;
+ const alignInitial=()=>{if(strip.isConnected)strip.scrollLeft=21*dayWidth();};
+ requestAnimationFrame(alignInitial);
+ const commitScroll=()=>{
+  clearTimeout(settleTimer);
+  if(Date.now()<ignoreScrollUntil)return;
+  const unit=dayWidth();if(!unit)return;
+  const index=Math.min(track.children.length-1,Math.max(0,Math.round(strip.scrollLeft/unit)));
+  const iso=track.children[index]?.dataset.day;
+  if(!iso||iso===settledIso)return;
+  settledIso=iso;
+  svTaskWindowStart=iso;
+  svAgendaMarkSelected(iso);
+  if(!svAgendaScrollToDate(iso))render();
  };
- strip.addEventListener('touchstart',event=>{
-  if(event.touches.length!==1)return;
-  const touch=event.touches[0];
-  touchStart={x:touch.clientX,y:touch.clientY};
-  gestureActive=false;
-  track.style.transition='none';
+ strip.addEventListener('scroll',()=>{
+  clearTimeout(settleTimer);
+  settleTimer=setTimeout(commitScroll,150);
  },{passive:true});
- strip.addEventListener('touchmove',event=>{
-  if(!touchStart||event.touches.length!==1)return;
-  const touch=event.touches[0],dx=touch.clientX-touchStart.x,dy=touch.clientY-touchStart.y;
-  if(Math.abs(dx)<8||Math.abs(dx)<Math.abs(dy)*1.3)return;
-  gestureActive=true;
-  const limit=track.firstElementChild?.getBoundingClientRect().width||strip.clientWidth/5;
-  track.style.transform='translate3d('+Math.max(-limit,Math.min(limit,dx))+'px,0,0)';
- },{passive:true});
- strip.addEventListener('touchend',event=>{
-  if(!touchStart||!event.changedTouches.length)return;
-  const touch=event.changedTouches[0];
-  const dx=touch.clientX-touchStart.x,dy=touch.clientY-touchStart.y;
-  touchStart=null;
-  if(!gestureActive||Math.abs(dx)<35||Math.abs(dx)<Math.abs(dy)*1.25){
-   clearMotion();gestureActive=false;return;
-  }
-  if(event.cancelable)event.preventDefault();
-  ignoreTapUntil=Date.now()+500;
-  const direction=dx<0?1:-1;
-  const tile=track.firstElementChild?.getBoundingClientRect().width||strip.clientWidth/5;
-  track.style.transition='transform .16s cubic-bezier(.22,.75,.35,1)';
-  track.style.transform='translate3d('+(dx<0?-tile:tile)+'px,0,0)';
-  setTimeout(()=>svAgendaChangeWeek(direction),160);
-  gestureActive=false;
- },{passive:false});
- strip.addEventListener('touchcancel',()=>{
-  touchStart=null;gestureActive=false;clearMotion();
- },{passive:true});
+ strip.addEventListener('scrollend',commitScroll,{passive:true});
  strip.addEventListener('click',event=>{
-  if(Date.now()<=ignoreTapUntil){event.preventDefault();event.stopPropagation();}
+  const day=event.target.closest('.sv-agenda-day');
+  if(!day)return;
+  ignoreScrollUntil=Date.now()+350;
+  clearTimeout(settleTimer);
  },true);
  ticker.append(back,strip,next);
  const handle=element('div','sv-agenda-handle');
