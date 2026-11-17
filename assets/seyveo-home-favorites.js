@@ -112,9 +112,15 @@ function syncEditControls(){
  rail.classList.toggle('is-editing',editing);
  add.hidden=!editing||totalSlots()>=MAX_COUNT;
 }
-function enterEdit(){
- if(editing||home.hidden||!root.classList.contains('sv-home-empty-arrived'))return;
- editing=true;suppressClick=true;ignoreOutsideUntil=Date.now()+550;syncEditControls();renderItems();show();
+function enterEdit(openPicker=false){
+ if(home.hidden||!root.classList.contains('sv-home-empty-arrived'))return;
+ if(!editing){
+  editing=true;suppressClick=true;ignoreOutsideUntil=Date.now()+550;
+  syncEditControls();renderItems();show();
+ }
+ // With four selected apps there is no add tile. Holding an icon must
+ // still open the chooser, not strand the user in the jiggling state.
+ if(openPicker)openCustomize();
 }
 function exitEdit(){
  if(!editing)return;
@@ -141,12 +147,12 @@ function bindHold(button){
  button.addEventListener('pointerdown',e=>{
   if(editing||e.pointerType==='mouse'&&e.button!==0)return;
   holding=true;clearTimeout(longTimer);
-  longTimer=setTimeout(()=>{if(holding){suppressClick=true;enterEdit()}},620);
+  longTimer=setTimeout(()=>{if(holding){suppressClick=true;enterEdit(true)}},620);
  });
  for(const type of ['pointerup','pointercancel','pointerleave'])button.addEventListener(type,()=>{
   holding=false;clearTimeout(longTimer);
  });
- button.addEventListener('contextmenu',e=>{e.preventDefault();suppressClick=true;enterEdit()});
+ button.addEventListener('contextmenu',e=>{e.preventDefault();suppressClick=true;enterEdit(true)});
 }
 bindHold(card);
 let dragged=null;
