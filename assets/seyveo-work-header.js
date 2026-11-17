@@ -8,7 +8,10 @@
  :host {
   --gutter-l:14px;
   --gutter-r:14px;
-  --gutter-t:0px;
+  /* The Work shell clips overflow for its scrolling content. A 50px
+     control in a 42px row protrudes 4px upward. Keep the pearl rim
+     and shadow entirely inside the shell instead of clipping them. */
+  --gutter-t:6px;
   display:block;
   box-sizing:border-box;
   flex:none;
