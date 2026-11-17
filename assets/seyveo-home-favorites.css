@@ -482,3 +482,32 @@ dialog.sv-home-favorites-editor .sv-home-favorites-tabs button[aria-selected=tru
 dialog.sv-home-favorites-editor .sv-home-favorites-tabs button:focus-visible{
  outline:2px solid #7a8da5;outline-offset:1px;
 }
+
+/* Personal / Cabinet: the same Silver Mist material as the approved Home dock. */
+dialog.sv-home-favorites-editor .sv-home-favorites-tabs{
+ padding:3px!important;
+ border:.7px solid rgba(255,255,255,.28)!important;
+ border-radius:999px!important;
+ background:rgba(190,193,202,.10)!important;
+ -webkit-backdrop-filter:blur(4px) saturate(100%)!important;
+ backdrop-filter:blur(4px) saturate(100%)!important;
+ box-shadow:0 0 0 .45px rgba(164,170,184,.16),
+   inset 0 1px 1px rgba(75,82,96,.055),
+   inset 0 -1px 0 rgba(255,255,255,.18),
+   inset .6px 0 .7px rgba(255,255,255,.16),
+   inset -.6px 0 .8px rgba(75,82,96,.055),
+   0 1px 2px rgba(82,88,103,.045)!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-tabs button{
+ border-radius:999px!important;
+ background:transparent!important;
+ color:#555a64!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-tabs button[aria-selected=true]{
+ background:rgba(255,255,255,.53)!important;
+ color:#0b0b0d!important;
+ border:.6px solid rgba(255,255,255,.56)!important;
+ box-shadow:0 0 0 .4px rgba(165,173,187,.19),
+   inset 0 1px .6px rgba(255,255,255,.75),
+   0 1px 2px rgba(75,82,96,.065)!important;
+}
