@@ -158,5 +158,5 @@ $('swCamera').addEventListener('change',ev=>{const file=ev.target.files?.[0];if(
 $('swPhoto').addEventListener('change',ev=>{const file=ev.target.files?.[0];if(file)void scanReceipt(file);});
 dialog.addEventListener('close',discardReceipt);
 render();
-window.SEYVEO_WALLET={open:()=>{if(!dialog.open)dialog.showModal();dialog.querySelectorAll('.syp-screen').forEach(el=>el.hidden=el!==screen);render();},getSummary:()=>({entries:entries.length,balance:entries.reduce((a,x)=>a+(x.kind==='income'?x.amount:-x.amount),0)})};
+window.SEYVEO_WALLET={open:()=>{if(!dialog.open)dialog.showModal();dialog.querySelectorAll('.syp-screen').forEach(el=>el.hidden=el!==screen);render();},importReceipt:scanReceipt,getSummary:()=>({entries:entries.length,balance:entries.reduce((a,x)=>a+(x.kind==='income'?x.amount:-x.amount),0)})};
 })();
