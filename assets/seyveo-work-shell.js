@@ -51,15 +51,28 @@
  // The current calendar period occupies the center of the shared header,
  // aligned between Back and Add; the month grid retains its original structure.
  const calendarPeriodLabel=document.getElementById('calendarPeriodTitle');
+ const zodiacNames=['Крысы','Быка','Тигра','Кролика','Дракона','Змеи','Лошади','Козы','Обезьяны','Петуха','Собаки','Свиньи'];
+ const zodiacEmoji=['🐀','🐂','🐅','🐇','🐉','🐍','','🐐','🐒','🐓','🐕','🐖'];
+ const horseArt='<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="horseGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E9C58D"/><stop offset=".55" stop-color="#BD784C"/><stop offset="1" stop-color="#914E38"/></linearGradient></defs><path class="horse-heat" d="M18 36Q10 29 18 20M21 33Q15 24 23 16" fill="none" stroke="#EBA767" stroke-width="1.5" stroke-linecap="round"/><path d="M15 48c1-7 7-13 9-19l-1-12 7 3 7-12 4 16c8 5 11 11 10 17-2 4-6 6-11 5l-6-7-8-3-3 12z" fill="url(#horseGold)" stroke="#AE6A45" stroke-width=".7" stroke-linejoin="round"/><path d="M28 19c-1 7-4 13-8 20m6-20c2 9-2 16-5 20m9-20c3 7 0 13-3 17" fill="none" stroke="#F1AD69" stroke-width="2.5" stroke-linecap="round"/><path d="M37 8l1 12-5-1z" fill="#EBC18F"/><circle cx="41" cy="30" r="1.4" fill="#593D39"/><path d="M44 36c2 0 4 1 5 2" fill="none" stroke="#7B4539" stroke-width="1.15" stroke-linecap="round"/><path class="horse-spark" d="M12 15v7m-3.5-3.5h7M45 9v5m-2.5-2.5h5" fill="none" stroke="#EBA25E" stroke-width="1.1" stroke-linecap="round"/></svg>';
  const syncCalendarPeriod=()=>{
   if(calendar.hidden||!calendarPeriodLabel)return;
-  title.textContent=calendarPeriodLabel.textContent.trim()||'Календарь';
+  const label=calendarPeriodLabel.textContent.trim()||'Календарь';
+  title.textContent=label;
+  const year=Number(label);
+  if(!/^[0-9]{4}$/.test(label)||year<1900)return;
+  const index=((year-2020)%12+12)%12;
+  const symbol=document.createElement('span');
+  symbol.className='sv-zodiac-symbol';
+  symbol.setAttribute('aria-hidden','true');
+  symbol.innerHTML=index===6?horseArt:zodiacEmoji[index];
+  symbol.title=year+' — год '+zodiacNames[index]+' по китайскому календарю';
+  title.append(symbol);
  };
  if(calendarPeriodLabel){
   new MutationObserver(syncCalendarPeriod).observe(calendarPeriodLabel,{childList:true,characterData:true,subtree:true});
  }
  const calendarHeaderStyle=document.createElement('style');
- calendarHeaderStyle.textContent=':host([data-calendar-period="true"]) .title{font-size:19px;font-weight:620;letter-spacing:-.025em;overflow:visible}';
+ calendarHeaderStyle.textContent=':host([data-calendar-period="true"]) .title{display:flex;align-items:center;justify-content:center;gap:5px;font-size:19px;font-weight:620;letter-spacing:-.025em;overflow:visible}.sv-zodiac-symbol{display:inline-grid;place-items:center;flex:none;width:39px;height:39px;font-size:27px;line-height:1;filter:drop-shadow(0 2px 4px rgba(172,98,56,.12))}.sv-zodiac-symbol svg{display:block;width:39px;height:39px;overflow:visible;animation:horseBreathe 4.8s ease-in-out infinite}.horse-heat{animation:horseGlow 4.8s ease-in-out infinite}.horse-spark{animation:horseSpark 4.8s ease-in-out infinite}@keyframes horseBreathe{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-1.3px) rotate(1.3deg)}}@keyframes horseGlow{0%,100%{opacity:.2}50%{opacity:.75}}@keyframes horseSpark{0%,100%{opacity:.15}45%{opacity:.78}65%{opacity:.35}}@media(prefers-reduced-motion:reduce){.sv-zodiac-symbol svg,.horse-heat,.horse-spark{animation:none!important}}';
  heading.shadowRoot?.append(calendarHeaderStyle);
  const plusIcon=workHeader.icons.plus;
  const searchIcon=workHeader.icons.search;
