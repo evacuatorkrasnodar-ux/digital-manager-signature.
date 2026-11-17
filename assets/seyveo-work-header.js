@@ -29,6 +29,19 @@
  @media(max-width:649px){
   :host { --gutter-t:calc(16px + env(safe-area-inset-top,0px)); }
  }
+ /* The old negative side gutters pushed this header outside the mobile
+    workspace. Its parent clips overflow for agenda scrolling, so the left
+    and right portions of the buttons/rims were cut off. Keep the header
+    inside the same content box as the tabs on every Work route. */
+ @media(max-width:699px){
+  :host {
+   --gutter-l:14px;
+   --gutter-r:14px;
+   align-self:stretch;
+   width:100%;max-width:100%;
+   margin-left:0;
+  }
+ }
  :host([hidden]){display:none!important}
  *,*::before,*::after{box-sizing:border-box}
  .bar {
