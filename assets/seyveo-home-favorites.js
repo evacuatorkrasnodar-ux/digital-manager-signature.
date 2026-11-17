@@ -213,9 +213,12 @@ function openCustomize(){
  const positionCurtain=()=>{
   if(!dialog.open)return;
   const row=rail.getBoundingClientRect();
-  const top=12;
-  const desired=Math.round(window.innerHeight-row.top+12);
-  const bottom=Math.min(Math.max(88,desired),Math.max(88,window.innerHeight-top-190));
+  const dock=document.getElementById('navHome')?.getBoundingClientRect();
+  const safeRowTop=row.height>0&&row.top>100&&row.top<window.innerHeight-45
+   ?row.top:(dock?.top||window.innerHeight-70)-90;
+  // End just above the Home shortcuts, including when the user has chosen zero.
+  const bottom=Math.max(78,Math.min(window.innerHeight-180,
+   Math.round(window.innerHeight-safeRowTop+12)));
   dialog.style.setProperty('--sv-home-editor-bottom',bottom+'px');
  };
  activeCurtainPosition=positionCurtain;
