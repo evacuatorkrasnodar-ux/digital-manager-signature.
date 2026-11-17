@@ -215,6 +215,7 @@ function renderMonth(){
  const weeks=total/7,nowWeek=monday(new Date());
  grid.style.setProperty('--cal-month-weeks',String(weeks));
  grid.style.setProperty('--cal-month-max-height',String(weeks*98)+'px');
+ grid.style.setProperty('--cal-month-min-height',String(weeks*72)+'px');
  const isoWeekNumber=date=>{
   const value=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
   value.setUTCDate(value.getUTCDate()+4-(value.getUTCDay()||7));
