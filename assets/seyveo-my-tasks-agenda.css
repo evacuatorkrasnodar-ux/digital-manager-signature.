@@ -22,7 +22,8 @@
  --agenda-rule:#ECEEF1;
  --agenda-red:#EC636E;
  box-sizing:border-box;width:100%!important;max-width:none!important;
- padding:3px 8px 6px!important;margin:0!important;
+ /* Work shell already provides the page gutters; don't inset the grid twice. */
+ padding:3px 0 6px!important;margin:0!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
  font-family:-apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
@@ -387,6 +388,11 @@
  #tasksPage #svTasksDateNav .sv-agenda-day{
   flex:0 0 20%;width:20%;
   min-height:clamp(116px,32vw,140px);
+ }
+ /* Apple reference: a quiet edge shadow on the selected date only. */
+ #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
+  z-index:1;
+  box-shadow:2px 0 6px rgba(37,48,65,.09),-1px 0 2px rgba(37,48,65,.025)!important;
  }
  #tasksPage #svTasksDateNav .sv-agenda-handle{
   transform:none;
