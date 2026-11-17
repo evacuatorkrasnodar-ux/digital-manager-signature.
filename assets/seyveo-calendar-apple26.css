@@ -422,3 +422,22 @@ html body #calendarPage#calendarPage[data-apple-layout="compact"] .cal-month-gri
 @media(prefers-reduced-motion:reduce){
  #calendarPage .sv-cal-view-menu{-webkit-backdrop-filter:none;backdrop-filter:none}
 }
+
+/* In the yearly overview Today is always available above our 60px dock. */
+#calendarPage .sv-cal-year-today[hidden]{display:none!important}
+#calendarPage .sv-cal-year-today:not([hidden]){
+ position:fixed;z-index:950;left:max(20px,env(safe-area-inset-left,0px));
+ bottom:calc(85px + env(safe-area-inset-bottom,0px));
+ display:inline-flex;align-items:center;justify-content:center;
+ box-sizing:border-box;min-width:100px;height:44px;padding:0 20px;
+ border:1px solid rgba(255,255,255,.82);border-radius:999px;
+ background:rgba(234,236,239,.86);
+ box-shadow:0 2px 10px rgba(39,47,58,.1),0 0 0 .5px rgba(153,157,166,.25);
+ color:#24262C;font:580 15px/1 system-ui,sans-serif;
+ -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+ cursor:pointer;
+}
+:root[data-theme="dark"] #calendarPage .sv-cal-year-today:not([hidden]){
+ color:#F7F7FB;background:rgba(59,60,65,.89);border-color:rgba(255,255,255,.18);
+}
+#calendarPage .sv-cal-year-today:focus-visible{outline:2px solid #4D8AD3;outline-offset:3px}
