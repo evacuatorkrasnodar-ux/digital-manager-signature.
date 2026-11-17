@@ -655,7 +655,7 @@ body > #orb.sv-sayvi-handoff-flight {
 :root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked) #homePage #svSayviHomeWeather,
 :root.sv-home-empty-sphere.sv-sayvi-handoff-docked #homePage #svSayviHomeWeather{
   position:absolute!important;
-  top:calc(50dvh - 100px + var(--sv-home-orb-half) + var(--sv-home-weather-offset))!important;
+  top:var(--sv-home-weather-top,calc(50dvh - 100px + var(--sv-home-orb-half) + var(--sv-home-weather-offset)))!important;
   left:50%!important;
   margin:0!important;
   transform:translateX(-50%)!important;
