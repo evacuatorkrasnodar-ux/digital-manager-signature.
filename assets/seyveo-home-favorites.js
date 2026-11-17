@@ -5,16 +5,21 @@ if(!home||!stage||document.getElementById('svHomeFavorites'))return;
 const root=document.documentElement;
 const STORAGE='seyveo.home.favorites.v1',USAGE='seyveo.home.favorite-usage.v1';
 const paths={
- music:'M9 18V5l11-2v12M9 8l11-2 M9 18a3.5 3.5 0 1 1-3.5-3.5A3.5 3.5 0 0 1 9 18Zm11-3a3.5 3.5 0 1 1-3.5-3.5A3.5 3.5 0 0 1 20 15Z',
- documents:'M7 3.5h8l4.5 4.5v12.5H7z M15 3.5V8h4.5 M10 12h7 M10 16h7',
  notebook:'M6 4h13v16H6z M9 4v16 M12 9h4 M12 13h4 M12 17h3',
- wallet:'M4 7h16v13H4z M4 10h16 M15 15h3 M7 7V4h12',
  calendar:'M5 5h14v15H5z M5 9h14 M9 3v4 M15 3v4 M9 13h2 M14 13h2 M9 17h2',
  health:'M3 12h4l3-6 4 12 3-6h4',
  browser:'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18 M3 12h18 M12 3c5 5 5 13 0 18 M12 3c-5 5-5 13 0 18',
  home:'M4 11l8-7 8 7 M6 10v10h12V10 M10 20v-6h4v6',
  mail:'M3.5 6h17v12h-17z M3.5 7l8.5 7 8.5-7',
  tasks:'M8 7h12 M8 12h12 M8 17h12 M3.5 7l1 1 2-2 M3.5 12l1 1 2-2 M3.5 17l1 1 2-2'
+};
+/* Four custom optical glyphs use the same stroke and rounded geometry.
+   Inline SVG stays crisp on retina phones; no image sprites or icon fonts. */
+const favoriteGlyphs={
+ cards:'<rect x="6.5" y="6" width="13" height="14.5" rx="2.3"/><path d="M4 16.5V5.7c0-1.3 1-2.3 2.3-2.3H16"/><path d="M9.7 10.3h6.7M9.7 13.8h5.2"/>',
+ music:'<path d="M9 17.5V6l10-2v11.7M9 8.8l10-2"/><ellipse cx="6.3" cy="17.9" rx="2.7" ry="1.95" transform="rotate(-17 6.3 17.9)" fill="currentColor" stroke="none"/><ellipse cx="16.3" cy="16.1" rx="2.7" ry="1.95" transform="rotate(-17 16.3 16.1)" fill="currentColor" stroke="none"/>',
+ documents:'<path d="M7 3.5h7.5L19 8v11c0 1.1-.9 2-2 2H7a2 2 0 0 1-2-2V5.5c0-1.1.9-2 2-2Z"/><path d="M14.5 3.5V8H19M8.8 12h6.8M8.8 15.4h6.8M8.8 18.8h4.4"/>',
+ wallet:'<rect x="3.5" y="6.4" width="17" height="13.7" rx="2.5"/><path d="M5.1 6.4V5.6c0-1.4 1.1-2.5 2.5-2.5H18"/><path d="M14.9 11.3H20.5v5H14.9a2.5 2.5 0 0 1 0-5Z"/><circle cx="16.5" cy="13.8" r=".75" fill="currentColor" stroke="none"/>'
 };
 const apps=[
  {id:'music',name:'Музыка',selector:'[data-calendar-space="music"]'},
@@ -49,7 +54,7 @@ const rail=document.createElement('nav');rail.id='svHomeFavorites';rail.classNam
 const card=document.createElement('button');card.type='button';card.className='sv-home-favorite sv-home-review-entry';
 card.setAttribute('aria-label','Карточки Сэйви');card.setAttribute('title','Карточки для разбора');
 const symbol=document.createElement('span');symbol.className='sv-home-favorite-icon';
-symbol.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="14" height="15" rx="2"/><path d="M4 7H3v14h13v-2M9 7h8M9 11h6M9 15h4"/></svg>';
+symbol.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
 const badge=document.createElement('span');badge.className='sv-home-review-badge';badge.hidden=true;badge.setAttribute('aria-hidden','true');
 const caption=document.createElement('span');caption.className='sv-home-favorite-label';caption.textContent='Карточки';
 symbol.append(badge);card.append(symbol,caption);rail.append(card);
@@ -59,7 +64,7 @@ card.addEventListener('click',()=>{
  if(cardCount>0)window.dispatchEvent(new Event('seyveo:open-card-review'));
  else location.hash='#tasks';
 });
-function icon(id){return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+paths[id]+'"/></svg>'}
+function icon(id){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(favoriteGlyphs[id]||'<path d="'+paths[id]+'"/>')+'</svg>'}
 function launch(id){
  const item=byId[id];if(!item)return;
  const result=item.action?.();
