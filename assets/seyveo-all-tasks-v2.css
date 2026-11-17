@@ -70,11 +70,14 @@ html.sv-task-selection-active #svAllTasksView .sv-tool-results{padding-bottom:76
  border:1.5px solid #A3A8B0;border-radius:50%;background:transparent;
  cursor:pointer;
 }
-#svAllTasksView .sv-tool-result input[type="checkbox"]:checked{background:#38383A;border-color:#38383A}
-#svAllTasksView .sv-tool-result input[type="checkbox"]:checked::after{
- content:"";width:10px;height:6px;border-left:2px solid #FFF;
- border-bottom:2px solid #FFF;transform:translateY(-1px) rotate(-45deg);
+/* A single vector check is optically centered inside every 22px circle.
+   No rotated border or font glyph: stable across Safari and Chromium. */
+#svAllTasksView .sv-tool-result input[type="checkbox"]:checked{
+ background-color:#38383A;border-color:#38383A;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.1L6.45 11.25L12.9 4.75' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+ background-repeat:no-repeat;background-position:center;background-size:16px 16px;
 }
+#svAllTasksView .sv-tool-result input[type="checkbox"]:checked::after{content:none}
 #svAllTasksView .sv-tool-result input[type="checkbox"]:focus-visible{outline:2px solid #38383A;outline-offset:3px}
 #svAllTasksView .sv-tool-empty{
  padding:52px 8px;text-align:center;color:#707782;
