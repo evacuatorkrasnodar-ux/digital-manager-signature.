@@ -506,9 +506,14 @@ function render(){
  document.querySelector('#calendarPage .cal-actions').dataset.deadlines=String(deadline);
  document.querySelectorAll('[data-calendar-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.calendarMode===mode)));
  $('calendarYear').hidden=mode!=='year';
+ const weekStart=monday(focus),weekEnd=step(weekStart,6);
+ const shortMonth=date=>new Intl.DateTimeFormat('ru-RU',{month:'short'}).format(date);
+ const weekTitle=weekStart.getMonth()===weekEnd.getMonth()&&weekStart.getFullYear()===weekEnd.getFullYear()
+  ?weekStart.getDate()+'–'+weekEnd.getDate()+' '+shortMonth(weekEnd)
+  :weekStart.getDate()+' '+shortMonth(weekStart)+' – '+weekEnd.getDate()+' '+shortMonth(weekEnd);
  $('calendarPeriodTitle').textContent=mode==='year'?String(focus.getFullYear()):mode==='month'?niceFirst(fmtMonth.format(focus).replace(/\s*г\.$/u,'')):
-  mode==='week'?fmtLong.format(monday(focus)).replace(/\s+\d{4}\s*г?\.?/,'')+' — '+fmtLong.format(step(monday(focus),6)):
-  mode==='day'?niceFirst(fmtShort.format(focus)):'Сроки';
+  mode==='week'?weekTitle:mode==='day'?niceFirst(fmtShort.format(focus)):'Сроки';
+ $('calendarPeriodTitle').title=mode==='week'?fmtLong.format(weekStart)+' — '+fmtLong.format(weekEnd):'';
  if(deadline){renderDeadlines();renderAdvice();return}
  if(mode==='month')renderMonth();
  if(mode==='week')renderWeek();
