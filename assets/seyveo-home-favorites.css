@@ -37,8 +37,8 @@
  opacity:.92;transform:scale(.965)
 }
 #homePage #svHomeFavorites .sv-home-favorite-icon svg{
- width:23px;height:23px;fill:none;stroke:#0B0B0D;stroke-width:var(--sv-card-icon-stroke,1.7);
- stroke-linecap:round;stroke-linejoin:round
+ width:23px;height:23px;fill:none;stroke:#0B0B0D;stroke-width:1.6;
+ stroke-linecap:round;stroke-linejoin:round;shape-rendering:geometricPrecision
 }
 #homePage #svHomeFavorites .sv-home-favorite-label{
  display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;
