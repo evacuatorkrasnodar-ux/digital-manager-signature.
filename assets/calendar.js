@@ -279,6 +279,7 @@ function renderDay(){
 }
 
 /* Week keeps seven-day navigation, with Apple's hourly schedule for the selected date. */
+let lastWeekTimelineFocus='';
 function renderWeekTimeline(list){
  const panel=$('calendarWeekTimeline'),allDay=$('calendarWeekAllDay');
  const root=$('calendarWeekHours'),scroll=$('calendarWeekTimelineScroll');
@@ -343,9 +344,21 @@ function renderWeekTimeline(list){
  }
  window.requestAnimationFrame(()=>{
   if(panel.hidden||mode!=='week')return;
-  // Show the first timed event when available; otherwise open at the morning hours.
-  const anchor=scheduled.length?scheduled[0].start:8*60;
-  scroll.scrollTop=Math.max(0,anchor-105);
+  const selected=iso();
+  // Preserve a manual scroll while the same date is being re-rendered.
+  if(selected===lastWeekTimelineFocus)return;
+  const now=new Date(),isToday=selected===format(now);
+  const minutesNow=now.getHours()*60+now.getMinutes();
+  // Current date opens around the present hour; other dates open near the
+  // earliest meeting, or at 08:00 when the selected day has no appointments.
+  const anchor=isToday?Math.max(0,minutesNow-150):
+   scheduled.length?Math.max(0,scheduled[0].start-135):8*60;
+  const target=Math.max(0,Math.round(anchor/30)*30);
+  const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if(lastWeekTimelineFocus&&!reducedMotion){
+   scroll.scrollTo({top:target,behavior:'smooth'});
+  }else scroll.scrollTop=target;
+  lastWeekTimelineFocus=selected;
  });
 }
 function renderAgenda(){
