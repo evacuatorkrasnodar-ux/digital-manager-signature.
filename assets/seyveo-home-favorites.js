@@ -27,19 +27,21 @@ const apps=[
  {id:'mail',name:'Почта',selector:'[data-calendar-space="mail"]'}
 ];
 const byId=Object.fromEntries(apps.map(a=>[a.id,a]));
-const defaultIds=['music','documents','notebook','wallet','calendar'];
+const defaultIds=['music','documents','wallet'];
+const LIMIT=3;
 function stored(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
 function save(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
 let preference=stored(STORAGE);
 if(!preference||!Array.isArray(preference.items))preference={items:defaultIds.slice(),custom:false};
-function normalize(ids){const unique=[...new Set(ids)].filter(id=>byId[id]);return [...unique,...defaultIds.filter(id=>!unique.includes(id))].slice(0,5)}
+if(!preference.custom&&preference.items.join(',')==='music,documents,notebook,wallet,calendar')preference.items=defaultIds.slice();
+function normalize(ids){const unique=[...new Set(ids)].filter(id=>byId[id]);return [...unique,...defaultIds.filter(id=>!unique.includes(id))].slice(0,LIMIT)}
 preference.items=normalize(preference.items);
 let usage=stored(USAGE)||{},cardCount=Number(window.SEYVEO_REVIEW_CARDS?.count?.())||0;
 if(!preference.custom){
  const candidates=apps.slice().sort((a,b)=>(usage[b.id]||0)-(usage[a.id]||0));
- if(candidates.filter(a=>(usage[a.id]||0)>0).length>=5&&
-  candidates[4]&&((usage[candidates[4].id]||0)>=3)){
-  preference.items=normalize(candidates.slice(0,5).map(a=>a.id));
+ if(candidates.filter(a=>(usage[a.id]||0)>0).length>=LIMIT&&
+  candidates[LIMIT-1]&&((usage[candidates[LIMIT-1].id]||0)>=3)){
+  preference.items=normalize(candidates.slice(0,LIMIT).map(a=>a.id));
   save(STORAGE,preference);
  }
 }
@@ -103,7 +105,7 @@ function openCustomize(){
  const title=document.createElement('strong');title.textContent='Любимые приложения';
  const done=document.createElement('button');done.type='button';done.textContent='Готово';
  head.append(title,done);
- const help=document.createElement('p');help.textContent='Выбери пять приложений. Их порядок останется таким, как ты выбрал.';
+ const help=document.createElement('p');help.textContent='Выбери три приложения. Их порядок останется таким, как ты выбрал.';
  const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
  let selection=preference.items.slice();
  const redraw=()=>{
@@ -118,7 +120,7 @@ function openCustomize(){
    b.append(t,number);
    b.addEventListener('click',()=>{
     if(chosen>=0)selection=selection.filter(x=>x!==app.id);
-    else if(selection.length<5)selection.push(app.id);
+    else if(selection.length<LIMIT)selection.push(app.id);
     else return;
     redraw();
    });grid.append(b);
@@ -126,7 +128,7 @@ function openCustomize(){
  };
  redraw();shell.append(head,help,grid);dialog.append(shell);document.body.append(dialog);
  function close(){dialog.close();dialog.remove();setTimeout(()=>{suppressClick=false},60)}
- done.addEventListener('click',()=>{if(selection.length===5){preference={items:selection,custom:true};save(STORAGE,preference);renderItems();close()}else{help.textContent='Выбери ровно пять приложений.'}});
+ done.addEventListener('click',()=>{if(selection.length===LIMIT){preference={items:selection,custom:true};save(STORAGE,preference);renderItems();close()}else{help.textContent='Выбери ровно три приложения.'}});
  dialog.addEventListener('cancel',e=>{e.preventDefault();close()});
  dialog.addEventListener('click',e=>{if(e.target===dialog)close()});
  dialog.showModal();
