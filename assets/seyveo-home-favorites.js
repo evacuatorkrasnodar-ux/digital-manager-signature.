@@ -21,6 +21,12 @@ const favoriteGlyphs={
  care:'<path d="M12 11.2S8.7 9.1 8.7 7a2.1 2.1 0 0 1 3.3-1.6A2.1 2.1 0 0 1 15.3 7c0 2.1-3.3 4.2-3.3 4.2Z"/><path d="M4 15.2 7.9 13l3 1.7h2.2l3-1.7 3.9 2.2M3.5 15.5v2.2c0 .6.3 1.1.8 1.4l3.8 2h7.8l3.8-2c.5-.3.8-.8.8-1.4v-2.2"/>',
  family:'<circle cx="8.7" cy="8.7" r="2.4"/><circle cx="16.6" cy="9.7" r="1.9"/><path d="M3.9 19.3v-2.2c0-2.6 2-4.3 4.8-4.3s4.8 1.7 4.8 4.3v2.2M15.2 14.5c2.9-.2 4.9 1.4 4.9 4.1v.7"/>',
  'smart-home':'<path d="m3.4 11.2 8.6-7.4 8.6 7.4M6.1 10.3v9.9h11.8v-9.9"/><path d="M8.7 13.6a5 5 0 0 1 6.6 0M10.2 15.6a2.7 2.7 0 0 1 3.6 0"/><circle cx="12" cy="17.9" r=".7" fill="currentColor" stroke="none"/>',
+ 'business-pulse':'<path d="M2.5 13h4.8l3-7.2 4.1 12 3.2-7h3.9"/>',
+ 'business-chats':'<path d="M4 5.5h16v11H9l-5 3v-14Z"/><path d="M8 10.5h8"/>',
+ 'business-mail':'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/>',
+ 'business-documents':'<path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h7M9 16h7"/>',
+ 'business-company':'<rect x="4" y="7" width="16" height="14" rx="2"/><path d="M8 7V4h8v3M8 12h8M8 16h5"/>',
+ 'business-people':'<circle cx="9" cy="8" r="2.5"/><path d="M3.5 20v-2a5.5 5.5 0 0 1 11 0v2M15.5 6a3 3 0 0 1 0 5.6M17 14a4.5 4.5 0 0 1 3.5 4.4V20"/>',
  generic:'<rect x="4.2" y="4.2" width="15.6" height="15.6" rx="3"/><path d="M8.2 12h7.6M12 8.2v7.6"/>'
 };
 const apps=[
@@ -37,7 +43,29 @@ const apps=[
  {id:'family',name:'Семья',selector:'[data-calendar-space="family"]'},
  {id:'smart-home',name:'Умный дом',selector:'[data-calendar-space="smart-home"]'}
 ];
-const byId=Object.fromEntries(apps.map(a=>[a.id,a]));
+const businessApps=[
+ {id:'business-pulse',name:'Пульс бизнеса',hub:'pulse'},
+ {id:'business-chats',name:'Чаты команды',hub:'chats'},
+ {id:'business-mail',name:'Рабочая почта',hub:'mail'},
+ {id:'business-documents',name:'Документы бизнеса',hub:'documents'},
+ {id:'business-company',name:'Моя компания',hub:'company'},
+ {id:'business-people',name:'Сотрудники и кадры',hub:'people'}
+].map(app=>({...app,action:()=>{
+  const api=window.SEYVEO_UNIFIED_TASKS;
+  if(!api?.openBusiness)return false;
+  api.openBusiness('home');
+  const row=document.querySelector('[data-business-hub="'+app.hub+'"]');
+  if(row)row.click();
+  return !!row;
+}}));
+const allApps=[...apps,...businessApps];
+/* Real entitlement in production, subscription preview only in this prototype. */
+function businessEnabled(){
+ const access=window.SEYVEO_ENTITLEMENTS;
+ if(access?.business===true||['business','rise','autonom','enterprise'].includes(String(access?.plan||'').toLowerCase()))return true;
+ return ['rise','autonom','large','employee'].includes(window.SEYVEO_PREVIEW?.getMode?.()||document.getElementById('seyveoDemoModeSelect')?.value||'');
+}
+const byId=Object.fromEntries(allApps.map(a=>[a.id,a]));
 const defaultIds=['music','documents','wallet'];
 const AUTO_COUNT=3,MAX_COUNT=4;
 function stored(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
@@ -48,7 +76,7 @@ if(typeof preference.showSmart!=='boolean')preference.showSmart=true;
 if(typeof preference.autoSelect!=='boolean')preference.autoSelect=false;
 if(!preference.custom&&preference.items.join(',')==='music,documents,notebook,wallet,calendar')preference.items=defaultIds.slice();
 function normalize(ids){
- const unique=[...new Set(ids)].filter(id=>byId[id]);
+ const unique=[...new Set(ids)].filter(id=>byId[id]&&(businessEnabled()||!id.startsWith('business-')));
  const selected=preference.custom?unique:[...unique,...defaultIds.filter(id=>!unique.includes(id))];
  return selected.slice(0,preference.showSmart?MAX_COUNT-1:MAX_COUNT);
 }
@@ -63,10 +91,11 @@ if(!preference.custom){
  }
 }
 function autoFavorites(smartEnabled=preference.showSmart){
- const ranked=apps.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
+ const eligible=businessEnabled()?allApps:apps;
+ const ranked=eligible.filter(a=>Number(usage[a.id])>0).sort((a,b)=>(Number(usage[b.id])||0)-(Number(usage[a.id])||0));
  const limit=MAX_COUNT-(smartEnabled?1:0);
  const current=preference.items.filter(id=>byId[id]);
- return [...ranked.map(a=>a.id),...current,...defaultIds,...apps.map(a=>a.id)].filter((id,i,all)=>all.indexOf(id)===i).slice(0,limit);
+ return [...ranked.map(a=>a.id),...current,...defaultIds,...eligible.map(a=>a.id)].filter((id,i,all)=>all.indexOf(id)===i).slice(0,limit);
 }
 if(preference.autoSelect)preference.items=autoFavorites();
 /* One smart slot: pending decisions when present, otherwise a useful Life app.
@@ -102,7 +131,7 @@ card.addEventListener('click',e=>{
 });
 function icon(id){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(favoriteGlyphs[id]||favoriteGlyphs.generic)+'</svg>'}
 function launch(id){
- const item=byId[id];if(!item)return;
+ const item=byId[id];if(!item||(id.startsWith('business-')&&!businessEnabled()))return;
  const result=item.action?.();
  if(!item.action){
   const source=document.querySelector(item.selector);
@@ -224,7 +253,13 @@ function openCustomize(){
  const help=document.createElement('p');help.className='sv-home-favorites-editor-help';
  const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
  grid.setAttribute('role','group');grid.setAttribute('aria-label','Приложения на главной');
- let selection=preference.items.slice(),smart=preference.showSmart,auto=preference.autoSelect;
+ let selection=preference.items.slice(),smart=preference.showSmart,auto=preference.autoSelect,activeTab='personal';
+ const tabbar=document.createElement('div');tabbar.className='sv-home-favorites-tabs';tabbar.setAttribute('role','tablist');tabbar.setAttribute('aria-label','Разделы главной');
+ const personalTab=document.createElement('button'),cabinetTab=document.createElement('button');
+ for(const [button,name,mode] of [[personalTab,'Личное','personal'],[cabinetTab,'Кабинет','business']]){
+  button.type='button';button.textContent=name;button.setAttribute('role','tab');
+  button.addEventListener('click',()=>{activeTab=mode;redraw();});tabbar.append(button);
+ }
  let curtainBottom=null;
  const positionCurtain=(force=false)=>{
   if(curtainBottom!==null&&!force)return;
@@ -244,12 +279,18 @@ function openCustomize(){
   renderItems();updateCount();show();
  };
  const redraw=()=>{
+  const enabled=businessEnabled();
+  tabbar.hidden=!enabled;
+  if(!enabled)activeTab='personal';
+  for(const [button,mode] of [[personalTab,'personal'],[cabinetTab,'business']]){
+   button.setAttribute('aria-selected',String(activeTab===mode));button.tabIndex=activeTab===mode?0:-1;
+  }
   help.textContent=auto?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(selection.length+(smart?1:0))+' из '+MAX_COUNT+' · меняется сразу';
   autoButton.setAttribute('aria-pressed',String(auto));
   autoButton.title=auto?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
   if(auto){selection=autoFavorites(smart);}
   grid.replaceChildren();
-  const options=[{id:'smart',name:'Умная кнопка'},...apps];
+  const options=activeTab==='business'?businessApps:[{id:'smart',name:'Умная кнопка'},...apps];
   for(const app of options){
    const b=document.createElement('button');b.type='button';
    const chosen=app.id==='smart'?smart:selection.includes(app.id);
@@ -279,7 +320,7 @@ function openCustomize(){
   redraw();preview();
  });
  head.insertBefore(autoButton,done);
- redraw();shell.append(head,help,grid);dialog.append(shell);document.body.append(dialog);
+ redraw();shell.append(head,tabbar,help,grid);dialog.append(shell);document.body.append(dialog);
  let closed=false;
  function close(saveChanges,animate=false){
   if(closed)return;closed=true;
