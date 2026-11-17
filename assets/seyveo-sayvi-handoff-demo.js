@@ -944,7 +944,7 @@
       !root.classList.contains('sv-broadcast-sheet-open')&&
       !root.classList.contains('sv-music-ambient')&&
       !root.classList.contains('sv-music-ambient-leaving')&&
-      !document.querySelector('dialog[open]');
+      !document.querySelector('dialog[open]:not(#svHomeFavoritesEditor)');
   }
 
   function restoreEmptyMotion(){
@@ -1049,7 +1049,7 @@
     // fade-in, not a second, backwards flight of the big Home sphere.
     const routeExit=!animate&&!reduceMotion()&&!document.hidden&&
       (home.hidden||(location.hash&&location.hash!=='#home')||
-       !!document.querySelector('dialog[open]'));
+       !!document.querySelector('dialog[open]:not(#svHomeFavoritesEditor)'));
     if(routeExit){
       emptyRouteLeaving=true;
       if(emptyOrbCluster){emptyOrbCluster.inert=true;emptyOrbCluster.setAttribute('aria-hidden','true');}
@@ -1101,7 +1101,7 @@
     if(canShowEmptySphere()){enterEmptySphere();return;}
     const stillHome=!home.hidden&&(!location.hash||location.hash==='#home')&&
       !root.classList.contains('seyveo-conversation')&&!document.hidden&&
-      !document.querySelector('dialog[open]');
+      !document.querySelector('dialog[open]:not(#svHomeFavoritesEditor)');
     leaveEmptySphere({animate:stillHome});
   }
   function scheduleEmptySphereSync(delay=260){
@@ -1110,7 +1110,7 @@
     // The pearl dock must begin opening promptly, ahead of the mini orb.
     if(emptySphere&&!document.hidden&&
       (home.hidden||(location.hash&&location.hash!=='#home')||
-       !!document.querySelector('dialog[open]')))
+       !!document.querySelector('dialog[open]:not(#svHomeFavoritesEditor)')))
       delay=Math.min(delay,32);
     clearTimeout(emptySyncTimer);
     emptySyncTimer=setTimeout(syncEmptySphere,delay);
