@@ -1114,3 +1114,9 @@ html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu:not([hidd
 
 /* :is() in the base month rule carries an ID specificity; explicitly restore the selected-day heading in List. */
 html body #calendarPage #calendarView#calendarView[data-mode="month"][data-month-layout="list"] .cal-day-summary{display:flex!important}
+
+/* Detailed month: as compact as List while preserving one readable event title. */
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day{padding-top:2px!important;gap:0!important}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-labels{margin:1px 0 0!important;gap:1px!important}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-chip{height:13px!important;min-height:13px!important;font-size:8.3px!important;line-height:10px!important}
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-more{font:600 8px/9px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;margin:0!important}
