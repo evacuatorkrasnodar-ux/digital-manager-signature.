@@ -249,3 +249,56 @@ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid{
 @media(prefers-reduced-motion:reduce){
  dialog.sv-home-favorites-editor{animation:none!important}
 }
+
+/* SEYVEO · full-width Home curtain and fixed five-row chooser.
+   The selector itself is the only removal control; Home crosses are redundant. */
+#homePage #svHomeFavorites .sv-home-edit-minus,
+#homePage #svHomeFavorites.is-editing .sv-home-edit-minus{display:none!important}
+dialog.sv-home-favorites-editor{
+ left:0!important;right:0!important;top:0!important;
+ width:100vw!important;max-width:100vw!important;
+ border:0!important;border-radius:0 0 22px 22px!important;
+ box-shadow:0 8px 22px rgba(45,53,65,.055)!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-shell{
+ border:0!important;border-bottom:1px solid rgba(225,229,235,.58)!important;
+ border-radius:0 0 22px 22px!important;
+ padding:calc(22px + env(safe-area-inset-top,0px)) 18px 13px!important;
+ box-shadow:none!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-help{
+ margin:8px 1px 12px!important;font-size:12px!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid{
+ flex:1 1 0!important;min-height:0!important;
+ overflow:hidden!important;scrollbar-width:none!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ grid-template-rows:repeat(5,minmax(0,1fr))!important;
+ grid-auto-rows:minmax(0,1fr)!important;
+ gap:7px!important;padding:0 1px 1px!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button{
+ min-height:0!important;height:100%!important;
+ padding:3px 2px!important;gap:4px!important;
+ border-radius:15px!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button svg{
+ width:22px!important;height:22px!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button span{
+ font-size:11px!important;line-height:1.15!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button small{
+ top:4px!important;right:5px!important;
+ width:15px!important;height:15px!important;font-size:10px!important;
+}
+@media(max-height:690px){
+ dialog.sv-home-favorites-editor .sv-home-favorites-editor-shell{
+  padding-top:calc(14px + env(safe-area-inset-top,0px))!important;
+  padding-bottom:9px!important;
+ }
+ dialog.sv-home-favorites-editor .sv-home-favorites-editor-head strong{font-size:18px!important}
+ dialog.sv-home-favorites-editor .sv-home-favorites-editor-help{margin:5px 1px 8px!important}
+ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid{gap:5px!important}
+ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button svg{width:20px!important;height:20px!important}
+}
