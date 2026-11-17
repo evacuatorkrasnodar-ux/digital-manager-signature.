@@ -74,6 +74,13 @@
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  transform:translateX(-50%)!important;overflow:visible!important;
 }
+/* iPhone reading geometry: one compact editorial thought above the globe.
+   The action keeps its 44px tap target; only type rhythm compresses gently. */
+:root.sv-home-empty-sphere.sv-home-empty-arrived #homePage
+ #svHomeLivingLine[data-sv-thought-density="compact"][data-sv-presence]:not([hidden]){
+ font-size:14.3px!important;line-height:1.36!important;
+ gap:4px!important;max-height:148px!important;
+}
 :root.sv-home-empty-sphere.sv-home-empty-arrived #homePage #svHomeLivingLine[data-sv-presence]:not([hidden])::after{
  content:none!important;display:none!important;
 }
@@ -309,5 +316,33 @@
  #svReviewRoom.sv-review-entering #seyveoLivingMoment :is(.lm-field-top,.lm-primary,.lm-inline-item),
  #svReviewRoom.sv-review-entering #dynamic > .decision-card{
   animation:none!important;opacity:1!important;transform:none!important;will-change:auto;
+ }
+}
+
+
+/* Contextual labels on iPhone XR/compact Safari: never wrap the action row.
+   Full verbs remain on the button's accessible name and title. */
+@media(max-width:420px){
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+  .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="navigate"]
+  .sv-card-icon-caption[data-sv-compact-caption]{font-size:0!important}
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+  .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="navigate"]
+  .sv-card-icon-caption[data-sv-compact-caption]::after{
+   content:attr(data-sv-compact-caption);
+   font:520 11px/1.2 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+   white-space:nowrap;letter-spacing:-.01em;
+ }
+}
+@media(max-width:365px){
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+  .lm-actions .lm-polymer.sv-card-icon-button
+  .sv-card-icon-caption[data-sv-tiny-caption]{font-size:0!important}
+ #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"])
+  .lm-actions .lm-polymer.sv-card-icon-button
+  .sv-card-icon-caption[data-sv-tiny-caption]::after{
+   content:attr(data-sv-tiny-caption);
+   font:520 11px/1.2 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+   white-space:nowrap;letter-spacing:-.01em;
  }
 }
