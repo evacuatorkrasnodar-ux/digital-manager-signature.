@@ -57,14 +57,19 @@
   // that pushed "Красота!" below the globe even when the upper slot fit.
   const host=(line.offsetParent||stage).getBoundingClientRect();
   const orb=sphere.getBoundingClientRect();
+  // The touch target is larger than the painted glass sphere. Its empty
+  // transparent upper rim must not steal the room reserved for Sayvi's text.
+  const visualInset=Math.min(45,orb.height*.135);
+  const visibleSphereTop=orb.top+visualInset;
+  const visibleSphereBottom=orb.bottom-visualInset;
   const online=home.querySelector('.sv-sayvi-home-online')?.getBoundingClientRect();
   const minViewportTop=online?.height?Math.max(30,online.bottom+8):32;
-  const clearance=10,minimumTop=minViewportTop-host.top;
-  const availableAbove=orb.top-host.top-minimumTop-clearance;
+  const clearance=12,minimumTop=minViewportTop-host.top;
+  const availableAbove=visibleSphereTop-host.top-minimumTop-clearance;
   line.dataset.svThoughtDensity=availableAbove<116?'compact':'regular';
   const height=Math.max(line.getBoundingClientRect().height,line.scrollHeight);
   if(!height||!orb.height)return;
-  const above=orb.top-host.top-height-clearance;
+  const above=visibleSphereTop-host.top-height-clearance;
   let top=above,placement='above';
   if(above<minimumTop){
    // Only truly short phones use the lower gap; do not jump there because
@@ -74,7 +79,7 @@
    const weather=document.getElementById('svSayviHomeWeather');
    const weatherTop=weather&&!weather.hidden&&getComputedStyle(weather).display!=='none'
     ?weather.getBoundingClientRect().top:window.innerHeight-105;
-   const below=orb.bottom-host.top+14;
+   const below=visibleSphereBottom-host.top+16;
    if(weatherTop-host.top-below-height>=12){top=below;placement='below';}
    else{top=minimumTop;placement='no-room';}
   }
