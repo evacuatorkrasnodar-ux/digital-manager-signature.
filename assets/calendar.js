@@ -74,6 +74,10 @@ function saveEvents(list){
  catch{return false}
 }
 let focus=new Date(),mode='month',editing=null,scope='all';
+/* Month presentation changes only the view; events and tasks stay in their own stores. */
+const MONTH_LAYOUT_STORE='seyveo-calendar-month-layout-v1';
+const MONTH_LAYOUTS=['compact','stacked','details','list'];
+let monthLayout=MONTH_LAYOUTS.includes(raw(MONTH_LAYOUT_STORE))?raw(MONTH_LAYOUT_STORE):'compact';
 /* Return to the real source page; never use history.back() to leave SEYVEO. */
 let calendarReturnRoute='#life';
 let calendarLastRoute=location.hash||'#home';
@@ -194,13 +198,14 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
   ];
   if(entries.length){
    const tags=text('span','cal-day-labels');
-   entries.slice(0,2).forEach(entry=>{
+   const maxTags=monthLayout==='stacked'?4:monthLayout==='details'?3:2;
+   entries.slice(0,maxTags).forEach(entry=>{
     const chip=text('span','cal-day-chip',entry.title);
     chip.dataset.kind=entry.kind;
     chip.title=entry.title;
     tags.append(chip);
    });
-   if(entries.length>2)tags.append(text('span','cal-day-more','+'+(entries.length-2)));
+   if(entries.length>maxTags)tags.append(text('span','cal-day-more','+'+(entries.length-maxTags)));
    btn.append(tags);
    btn.dataset.hasEntries='true';
   }
@@ -216,6 +221,8 @@ function renderMonth(){
  grid.style.setProperty('--cal-month-weeks',String(weeks));
  grid.style.setProperty('--cal-month-max-height',String(weeks*98)+'px');
  grid.style.setProperty('--cal-month-min-height',String(weeks*72)+'px');
+ const rowHeight={compact:48,stacked:68,details:88,list:48}[monthLayout];
+ grid.style.setProperty('--cal-month-layout-height',String(weeks*rowHeight)+'px');
  const isoWeekNumber=date=>{
   const value=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
   value.setUTCDate(value.getUTCDate()+4-(value.getUTCDay()||7));
@@ -607,6 +614,9 @@ function render(){
  // Keep the compact period title available even in the Deadlines mode.
  $('calendarView').hidden=false;
  $('calendarView').dataset.mode=mode;
+ $('calendarView').dataset.monthLayout=monthLayout;
+ document.querySelectorAll('#calendarMonthModes [data-month-layout]').forEach(btn=>
+  btn.setAttribute('aria-pressed',String(btn.dataset.monthLayout===monthLayout)));
  $('calendarDeadlineView').hidden=!deadline;
  // The header '+' is the only event shortcut; keep its duplicate parked.
  $('calendarAddInline').hidden=true;
@@ -818,6 +828,8 @@ function closeCreateMenu(){
  if(!createMenu)return;
  createMenu.hidden=true;
  createMenu.dataset.panel='views';
+ $('calendarMonthModes').hidden=true;
+ $('calendarViewModes').hidden=false;
  createMenu.querySelector('#calendarModeChoose')?.setAttribute('aria-expanded','false');
  createToggle?.setAttribute('aria-expanded','false');
  const shared=document.getElementById('svWorkAdd');
@@ -826,7 +838,11 @@ function closeCreateMenu(){
 function toggleCreateMenu(){
  if(!createMenu)return;
  const next=createMenu.hidden;
- if(next)createMenu.dataset.panel='views';
+ if(next){
+  createMenu.dataset.panel='views';
+  $('calendarMonthModes').hidden=true;
+  $('calendarViewModes').hidden=false;
+ }
  createMenu.hidden=!next;
  createMenu.querySelector('#calendarModeChoose')?.setAttribute('aria-expanded','false');
  createToggle?.setAttribute('aria-expanded',String(next));
@@ -878,8 +894,30 @@ if(calendarViewModes&&calendarViewButton&&createMenu){
  calendarViewButton.addEventListener('click',()=>{
   mode='month';updateFocus(new Date());closeCreateMenu();
  });
+ const monthModes=$('calendarMonthModes');
  calendarViewModes.addEventListener('click',event=>{
-  if(event.target.closest('[data-calendar-mode]'))closeCreateMenu();
+  const choice=event.target.closest('[data-calendar-mode]');
+  if(!choice)return;
+  if(choice.dataset.calendarMode==='month'){
+   createMenu.dataset.panel='month';
+   calendarViewModes.hidden=true;
+   monthModes.hidden=false;
+  }else closeCreateMenu();
+ });
+ monthModes.addEventListener('click',event=>{
+  if(event.target.closest('#calendarMonthModesBack')){
+   monthModes.hidden=true;
+   calendarViewModes.hidden=false;
+   createMenu.dataset.panel='views';
+   return;
+  }
+  const option=event.target.closest('[data-month-layout]');
+  if(!option||!MONTH_LAYOUTS.includes(option.dataset.monthLayout))return;
+  monthLayout=option.dataset.monthLayout;
+  try{localStorage.setItem(MONTH_LAYOUT_STORE,monthLayout)}catch{}
+  mode='month';
+  render();
+  closeCreateMenu();
  });
 }
 document.querySelectorAll('#calendarPage [data-calendar-step]').forEach(button=>{
