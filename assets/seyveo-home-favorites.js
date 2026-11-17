@@ -219,7 +219,7 @@ function openCustomize(){
  const shell=document.createElement('div');shell.className='sv-home-favorites-editor-shell';
  const head=document.createElement('div');head.className='sv-home-favorites-editor-head';
  const title=document.createElement('strong');title.textContent='Настроить главную';
- const done=document.createElement('button');done.type='button';done.textContent='Готово';
+ const done=document.createElement('button');done.type='button';done.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>';done.setAttribute('aria-label','Готово');done.title='Готово';
  head.append(title,done);
  const help=document.createElement('p');help.className='sv-home-favorites-editor-help';
  const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
@@ -246,7 +246,7 @@ function openCustomize(){
  const redraw=()=>{
   help.textContent=auto?'Сэйви выбирает часто используемые кнопки':'Выбрано '+(selection.length+(smart?1:0))+' из '+MAX_COUNT+' · меняется сразу';
   autoButton.setAttribute('aria-pressed',String(auto));
-  autoButton.textContent=auto?'✦ Автовыбор включён':'✦ Автовыбор';
+  autoButton.title=auto?'Автовыбор включён':'Автовыбор: Сэйви подбирает частые кнопки';
   if(auto){selection=autoFavorites(smart);}
   grid.replaceChildren();
   const options=[{id:'smart',name:'Умная кнопка'},...apps];
@@ -272,12 +272,14 @@ function openCustomize(){
  const autoButton=document.createElement('button');
  autoButton.type='button';autoButton.className='sv-home-favorites-auto';
  autoButton.setAttribute('aria-label','Автовыбор часто используемых кнопок');
+ autoButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.7 8.8A8 8 0 1 0 20 13"/><path d="m16.9 5.3 3.1 3.5 2.4-3.9"/><path d="m8.8 16 3.2-8 3.2 8M9.8 13.5h4.4"/></svg>';
  autoButton.addEventListener('click',()=>{
   auto=!auto;
   if(auto){selection=autoFavorites(smart);}
   redraw();preview();
  });
- redraw();shell.append(head,autoButton,help,grid);dialog.append(shell);document.body.append(dialog);
+ head.insertBefore(autoButton,done);
+ redraw();shell.append(head,help,grid);dialog.append(shell);document.body.append(dialog);
  let closed=false;
  function close(saveChanges){
   if(closed)return;closed=true;
