@@ -3,7 +3,7 @@
 const dialog=document.getElementById('seyveoPayDialog');if(!dialog)return;
 let launchButton=null;
 const css=document.createElement('link');css.rel='stylesheet';css.href='assets/seyveo-personal-wallet.css?v=2';document.head.appendChild(css);
-const ready=new Promise(resolve=>{const script=document.createElement('script');script.src='assets/seyveo-personal-wallet.js?v=2';script.onload=()=>resolve(true);script.onerror=()=>resolve(false);document.body.appendChild(script);});
+const ready=new Promise(resolve=>{const script=document.createElement('script');script.src='assets/seyveo-personal-wallet.js?v=3';script.onload=()=>resolve(true);script.onerror=()=>resolve(false);document.body.appendChild(script);});
 async function open(){
  launchButton=document.activeElement;
  if(!await ready){window.alert('Кошелёк пока не загрузился. Попробуй обновить страницу.');return;}
