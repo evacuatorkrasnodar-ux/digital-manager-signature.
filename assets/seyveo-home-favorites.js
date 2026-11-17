@@ -294,9 +294,9 @@ home.addEventListener('click',e=>{
  if(Date.now()>=ignoreOutsideUntil)exitEdit();
 },true);
 renderItems();
-function place(){
- if(rail.hidden)return;
- rail.style.removeProperty('top');
+let homeShortcutTopLocked=false;
+function place(force=false){
+ if(rail.hidden||homeShortcutTopLocked&&!force)return;
  const weather=document.getElementById('svSayviHomeWeather');
  const r=rail.getBoundingClientRect();
  if(!r.height)return;
@@ -306,10 +306,9 @@ function place(){
  if(weather&&!weather.hidden&&getComputedStyle(weather).display!=='none'&&getComputedStyle(weather).visibility!=='hidden'){
   const w=weather.getBoundingClientRect();if(w.height)wanted=w.bottom+24;
  }
- // During customization keep the preview visible even if the sphere enters its dock.
- if(wanted===null&&document.getElementById('svHomeFavoritesEditor')?.open)
-  wanted=(dock?.top||window.innerHeight-64)-r.height-64;
- if(wanted===null)return;
+ // Always resolve the fallback before first paint. The row must not start at
+ // the CSS placeholder position and jump when the weather finishes loading.
+ if(wanted===null)wanted=maximum;
  const next=Math.min(wanted,maximum);
  rail.style.top=Math.round(next-stage.getBoundingClientRect().top)+'px';
  if(activeCurtainPosition)activeCurtainPosition();
@@ -338,15 +337,30 @@ const show=()=>{
  if(!visible&&editing&&!document.querySelector('dialog[open]')){
   editing=false;syncEditControls();renderItems();
  }
- rail.hidden=!visible||(!editing&&totalSlots()===0);
- if(visible&&!rail.hidden){
-  if(!firstHomeEntrancePlayed&&!editing&&!curtainOpen){
-   firstHomeEntrancePlayed=true;
-   rail.classList.add('sv-home-favorites-enter');
-   setTimeout(()=>rail.classList.remove('sv-home-favorites-enter'),850);
+ const shouldShow=visible&&(editing||totalSlots()>0);
+ const entering=shouldShow&&rail.hidden;
+ if(entering)rail.style.visibility='hidden';
+ rail.hidden=!shouldShow;
+ if(shouldShow){
+  if(entering){
+   // Measure while visually hidden, place synchronously, then fade the
+   // individual tiles at their FINAL coordinates on the following frame.
+   homeShortcutTopLocked=false;
+   place(true);
+   homeShortcutTopLocked=true;
+   requestAnimationFrame(()=>{
+    if(rail.hidden)return;
+    if(!firstHomeEntrancePlayed&&!editing&&!curtainOpen){
+     firstHomeEntrancePlayed=true;
+     rail.classList.add('sv-home-favorites-enter');
+     setTimeout(()=>rail.classList.remove('sv-home-favorites-enter'),850);
+    }
+    rail.style.visibility='';
+   });
+  }else if(!homeShortcutTopLocked){
+   place(true);homeShortcutTopLocked=true;
   }
-  requestAnimationFrame(place);
- }
+ }else homeShortcutTopLocked=false;
 };
 function updateCount(){
  const pending=cardCount>0;
@@ -377,7 +391,7 @@ window.addEventListener('seyveo:review-count',e=>{cardCount=Math.max(0,Number(e.
 for(const name of ['seyveo:home-sayvi-arrived','seyveo:route-changed','seyveo:cinema-finished','hashchange','focus'])
  window.addEventListener(name,show);
 document.addEventListener('visibilitychange',show);
-window.addEventListener('resize',show);
+window.addEventListener('resize',()=>{homeShortcutTopLocked=false;show()});
 const weather=document.getElementById('svSayviHomeWeather');
 if(weather){new ResizeObserver(show).observe(weather);new MutationObserver(show).observe(weather,{attributes:true,attributeFilter:['hidden','class','style']});}
 new MutationObserver(show).observe(root,{attributes:true,attributeFilter:['class']});
