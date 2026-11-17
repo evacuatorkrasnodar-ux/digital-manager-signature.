@@ -258,7 +258,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const measure=create('span','lm-field-measure',real?'ВАШИ ДЕЛА':'');
  const clockLabel=create('time','sv-lm-event-clock');
  const initialTime=real?primary.time:primary.sampleTime;
- const initialClock=/^([01]\\d|2[0-3]):[0-5]\\d$/.test(initialTime||'');
+ const initialClock=/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(initialTime||'');
  clockLabel.hidden=!initialClock;
  clockLabel.textContent=initialClock?(real?initialTime:sampleMoment(initialTime)):'';
  clockLabel.setAttribute('aria-label',real?'Время выполнения дела':'Учебный пример, условная дата и время');
