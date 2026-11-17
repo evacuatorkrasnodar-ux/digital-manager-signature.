@@ -27,6 +27,7 @@ const favoriteGlyphs={
  'business-documents':'<path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h7M9 16h7"/>',
  'business-company':'<rect x="4" y="7" width="16" height="14" rx="2"/><path d="M8 7V4h8v3M8 12h8M8 16h5"/>',
  'business-people':'<circle cx="9" cy="8" r="2.5"/><path d="M3.5 20v-2a5.5 5.5 0 0 1 11 0v2M15.5 6a3 3 0 0 1 0 5.6M17 14a4.5 4.5 0 0 1 3.5 4.4V20"/>',
+ management:'<rect x="3.5" y="3.5" width="7.2" height="7.2" rx="1.6"/><rect x="13.3" y="3.5" width="7.2" height="7.2" rx="1.6"/><rect x="3.5" y="13.3" width="7.2" height="7.2" rx="1.6"/><rect x="13.3" y="13.3" width="7.2" height="7.2" rx="1.6"/>',
  generic:'<rect x="4.2" y="4.2" width="15.6" height="15.6" rx="3"/><path d="M8.2 12h7.6M12 8.2v7.6"/>'
 };
 const apps=[
@@ -41,7 +42,8 @@ const apps=[
  {id:'contacts',name:'Контакты',selector:'[data-calendar-space="contacts"]'},
  {id:'care',name:'Забота',selector:'[data-calendar-space="care"]'},
  {id:'family',name:'Семья',selector:'[data-calendar-space="family"]'},
- {id:'smart-home',name:'Умный дом',selector:'[data-calendar-space="smart-home"]'}
+ {id:'smart-home',name:'Умный дом',selector:'[data-calendar-space="smart-home"]'},
+ {id:'management',name:'Управление',action:()=>{location.hash='#manage'}}
 ];
 const businessApps=[
  {id:'business-pulse',name:'Пульс бизнеса',hub:'pulse'},
