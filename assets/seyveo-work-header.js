@@ -126,14 +126,9 @@
     with a visible hairline rim on the pure-white header. No extra pseudo layers. */
  :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back{
   width:var(--sv-nav-single-size,50px);height:var(--sv-nav-single-size,50px);min-width:var(--sv-nav-single-size,50px);min-height:var(--sv-nav-single-size,50px);
-  border:var(--sv-nav-pearl-border,1px solid rgba(155,166,181,.34));border-radius:50%;
+  border:var(--sv-nav-pearl-border,1.5px solid rgba(255,255,255,.96));border-radius:50%;
   background:var(--sv-nav-pearl-bg,rgba(190,193,202,.10));
-  box-shadow:0 0 0 .45px rgba(164,170,184,.16),
-   inset 0 1px 1px rgba(75,82,96,.055),
-   inset 0 -1px 0 rgba(255,255,255,.18),
-   inset .6px 0 .7px rgba(255,255,255,.16),
-   inset -.6px 0 .8px rgba(75,82,96,.055),
-   0 1px 2px rgba(82,88,103,.045);
+  box-shadow:var(--sv-nav-pearl-shadow,0 0 0 .85px rgba(164,170,184,.22));
   -webkit-backdrop-filter:blur(4px) saturate(100%);
   backdrop-filter:blur(4px) saturate(100%);
  }
