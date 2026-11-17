@@ -77,6 +77,11 @@ let focus=new Date(),mode='month',editing=null,scope='all';
 /* Month presentation changes only the view; events and tasks stay in their own stores. */
 const MONTH_LAYOUT_STORE='seyveo-calendar-month-layout-v1';
 const MONTH_LAYOUTS=['compact','stacked','details','list'];
+const DETAILS_MAX_LABELS=4;
+const detailsWeekHeight=entryCount=>{
+ const shown=Math.min(DETAILS_MAX_LABELS,entryCount);
+ return 52+Math.max(0,shown-1)*17+(entryCount>DETAILS_MAX_LABELS?13:0);
+};
 let monthLayout=MONTH_LAYOUTS.includes(raw(MONTH_LAYOUT_STORE))?raw(MONTH_LAYOUT_STORE):'compact';
 /* Return to the real source page; never use history.back() to leave SEYVEO. */
 let calendarReturnRoute='#life';
@@ -198,7 +203,7 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
   ];
   if(entries.length){
    const tags=text('span','cal-day-labels');
-   const maxTags=monthLayout==='stacked'?4:monthLayout==='details'?1:2;
+   const maxTags=monthLayout==='stacked'||monthLayout==='details'?DETAILS_MAX_LABELS:2;
    entries.slice(0,maxTags).forEach(entry=>{
     const chip=text('span','cal-day-chip',entry.title);
     chip.dataset.kind=entry.kind;
@@ -209,6 +214,7 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
    btn.append(tags);
    btn.dataset.hasEntries='true';
   }
+  btn.dataset.monthEntryCount=String(entries.length);
  }
  return btn;
 }
@@ -221,9 +227,10 @@ function renderMonth(){
  grid.style.setProperty('--cal-month-weeks',String(weeks));
  grid.style.setProperty('--cal-month-max-height',String(weeks*98)+'px');
  grid.style.setProperty('--cal-month-min-height',String(weeks*72)+'px');
- // Detailed month shares the List rhythm; one title fits below each date.
+ // Detailed weeks grow only when their busiest day has more entries.
  const rowHeight={compact:48,stacked:68,details:48,list:48}[monthLayout];
- grid.style.setProperty('--cal-month-layout-height',String(weeks*rowHeight)+'px');
+ const rowHeights=[];
+ let busiestDay=0;
  const isoWeekNumber=date=>{
   const value=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
   value.setUTCDate(value.getUTCDate()+4-(value.getUTCDay()||7));
@@ -232,12 +239,21 @@ function renderMonth(){
  };
  for(let i=0;i<total;i++){
   const date=step(first,i),button=dayButton(date,false,calendarEvents,personalTasks);
+  busiestDay=Math.max(busiestDay,Number(button.dataset.monthEntryCount)||0);
   if(i%7===0){
    button.dataset.weekNumber=String(isoWeekNumber(date));
    button.dataset.currentWeek=String(format(date)===format(nowWeek));
   }
   grid.append(button);
+  if(i%7===6){
+   rowHeights.push(monthLayout==='details'?detailsWeekHeight(busiestDay):rowHeight);
+   busiestDay=0;
+  }
  }
+ grid.style.setProperty('--cal-month-detail-rows',rowHeights.map(height=>height+'px').join(' '));
+ // Calendar's shared canvas reserves 8px above and 2px below its row tracks.
+ const height=monthLayout==='details'?rowHeights.reduce((sum,row)=>sum+row,10):weeks*rowHeight;
+ grid.style.setProperty('--cal-month-layout-height',String(height)+'px');
  $('calendarMonth').hidden=false;
  $('calendarWeek').hidden=true;
 }

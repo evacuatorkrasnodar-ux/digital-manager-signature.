@@ -1115,13 +1115,22 @@ html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu:not([hidd
 /* :is() in the base month rule carries an ID specificity; explicitly restore the selected-day heading in List. */
 html body #calendarPage #calendarView#calendarView[data-mode="month"][data-month-layout="list"] .cal-day-summary{display:flex!important}
 
-/* Detailed month: exactly the List row height, with the first title under its date. */
+/* Detailed month grows per week according to the busiest day, not the whole month.
+   All seven days in a week share one height, like the Apple Calendar reference. */
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month>.cal-month-grid{
+ grid-template-rows:var(--cal-month-detail-rows,repeat(var(--cal-month-weeks,6),48px))!important;
+ grid-auto-rows:48px!important;
+ transition:height .32s cubic-bezier(.2,.75,.22,1),grid-template-rows .32s cubic-bezier(.2,.75,.22,1)!important;
+}
 html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day{padding-top:2px!important;gap:0!important}
 html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-labels{margin:1px 0 0!important;gap:1px!important}
-html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-chip{height:13px!important;min-height:13px!important;font-size:8.3px!important;line-height:10px!important}
-/* Additional entries sit beside the date, not in a second row that stretches the week. */
+html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-chip{height:15px!important;min-height:15px!important;font-size:9px!important;line-height:11px!important}
+/* On busy days +N follows the visible titles, instead of covering the date. */
 html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month-grid .cal-day-more{
- position:absolute!important;right:1px!important;top:3px!important;z-index:2!important;
- margin:0!important;color:#7B8490!important;
+ position:static!important;display:block!important;width:100%!important;
+ margin:1px 0 0!important;color:#7B8490!important;text-align:center!important;
  font:600 8px/9px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html body #calendarPage #calendarView[data-mode="month"][data-month-layout="details"] .cal-month>.cal-month-grid{transition:none!important}
 }
