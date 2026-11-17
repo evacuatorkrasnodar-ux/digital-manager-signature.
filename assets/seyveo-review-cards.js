@@ -33,7 +33,7 @@
  const backgroundApp=document.querySelector('body > .app');
  let wasAppInert=false,wasDockInert=false;
  let open=false;
- let lastCount=-1,returnFocus=null,emptyExitTimer=0;
+ let lastCount=-1,returnFocus=null,emptyExitTimer=0,entranceTimer=0;
  function sources(){return ids.map(id=>document.getElementById(id)).filter(Boolean)}
  // The Home CSS deliberately masks cards, so count logical visibility,
  // not computed display (which is none until the room opens).
@@ -90,7 +90,15 @@
   open=true;
   sources().forEach(moveIn);
   moveIn(document.querySelector('.sv-sayvi-handoff-today'));
+  // The original three cards enter in sequence each time this page opens.
+  // Keep the page, header and dock coordinates fixed throughout the reveal.
+  room.classList.add('sv-review-entering');
   room.hidden=false;
+  clearTimeout(entranceTimer);
+  entranceTimer=setTimeout(()=>{
+   room.classList.remove('sv-review-entering');
+   entranceTimer=0;
+  },1500);
   document.documentElement.classList.add('sv-review-open');
   if(backgroundApp){wasAppInert=backgroundApp.inert;backgroundApp.inert=true}
   if(dock){wasDockInert=dock.inert;dock.inert=true}
@@ -99,6 +107,8 @@
  }
  function leave(){
   clearTimeout(emptyExitTimer);emptyExitTimer=0;
+  clearTimeout(entranceTimer);entranceTimer=0;
+  room.classList.remove('sv-review-entering');
   if(!open){room.hidden=true;document.documentElement.classList.remove('sv-review-open');return;}
   open=false;
   original.forEach((position,element)=>{
