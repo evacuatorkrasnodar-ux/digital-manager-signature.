@@ -59,34 +59,78 @@
 #homePage #svHomeFavorites button:focus-visible{
  outline:2px solid #52525d;outline-offset:4px;border-radius:12px;
 }
+/* Light iOS-style personalisation sheet, separate from the approved Home dock. */
 .sv-home-favorites-editor{
- border:0;background:transparent;padding:0;overflow-y:auto;overscroll-behavior:contain;
- width:min(420px,calc(100vw - 28px));max-height:90dvh;
- color:#19191c;
+ width:min(410px,calc(100vw - 28px));max-height:min(84dvh,730px);
+ margin:auto;padding:0;border:0;border-radius:26px;background:transparent;
+ color:#111115;overflow-y:auto;overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
 }
 .sv-home-favorites-editor::backdrop{
- background:rgba(15,16,20,.32);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+ background:rgba(22,25,31,.28);
+ -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
 }
 .sv-home-favorites-editor-shell{
- padding:20px;border-radius:23px;background:#fff;box-shadow:0 20px 68px rgba(0,0,0,.16);
+ padding:22px 18px 20px;border:1px solid rgba(225,227,232,.8);
+ border-radius:26px;background:#fff;
+ box-shadow:0 18px 60px rgba(33,40,50,.13);
  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
 }
-.sv-home-favorites-editor-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.sv-home-favorites-editor-head strong{font-size:20px;font-weight:600}
+.sv-home-favorites-editor-head{
+ display:flex;align-items:center;justify-content:space-between;gap:14px;
+}
+.sv-home-favorites-editor-head strong{
+ font-size:19px;line-height:1.25;font-weight:600;letter-spacing:-.35px;color:#17171b;
+}
 .sv-home-favorites-editor-head button{
- min-height:44px;padding:0 15px;border:0;border-radius:14px;background:#38383a;
- color:white;font:500 15px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ flex:0 0 auto;min-width:74px;min-height:38px;padding:0 14px;
+ border:1px solid rgba(208,211,218,.8);border-radius:19px;
+ background:#f6f7f9;color:#17171b;
+ font:550 14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ box-shadow:0 1px 2px rgba(0,0,0,.025);
 }
-.sv-home-favorites-editor-shell p{margin:10px 0 16px;font-size:13px;line-height:1.5;color:#787981}
-.sv-home-favorites-editor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.sv-home-favorites-editor-help{
+ margin:10px 2px 18px;font-size:13px;line-height:1.42;color:#717681;
+}
+.sv-home-favorites-editor-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;
+}
 .sv-home-favorites-editor-grid button{
- display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;
- min-height:85px;padding:9px 5px;border:1px solid #e7e7ea;border-radius:15px;
- background:#f7f7f9;color:#1d1d21;font:500 12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ gap:6px;min-width:0;min-height:104px;padding:11px 4px 9px;
+ border:1px solid #e9eaee;border-radius:19px;background:#fff;
+ color:#1d1d21;font:500 12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ transition:background .16s ease,border-color .16s ease,transform .16s ease;
 }
-.sv-home-favorites-editor-grid button[aria-pressed=true]{border-color:#a2a2ac;background:#ebebf0}
-.sv-home-favorites-editor-grid button svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.sv-home-favorites-editor-grid button small{font-size:12px;color:#686970}
+.sv-home-favorites-editor-grid button:active{transform:scale(.97)}
+.sv-home-favorites-editor-grid button[aria-pressed=true]{
+ border-color:#cbd1da;background:#f4f6f9;
+}
+.sv-home-favorites-editor-grid button svg{
+ display:block;width:27px;height:27px;margin:0 0 2px;
+ fill:none;stroke:#111216;stroke-width:1.65;stroke-linecap:round;
+ stroke-linejoin:round;shape-rendering:geometricPrecision;
+}
+.sv-home-favorites-editor-grid button span{
+ display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-weight:500;color:#27272d;
+}
+.sv-home-favorites-editor-grid button small{
+ display:grid;place-items:center;position:absolute;top:7px;right:8px;
+ width:18px;height:18px;border-radius:50%;font-size:13px;line-height:1;
+ color:#8c919a;font-weight:550;
+}
+.sv-home-favorites-editor-grid button[aria-pressed=true] small{
+ background:#34363c;color:#fff;font-size:11px;
+}
+.sv-home-favorites-editor-grid button:focus-visible{
+ outline:2px solid #646f80;outline-offset:2px;
+}
+@media(max-width:355px){
+ .sv-home-favorites-editor-shell{padding:18px 13px}
+ .sv-home-favorites-editor-grid{gap:7px}
+ .sv-home-favorites-editor-grid button{min-height:94px}
+}
 @media(max-width:370px){
  #homePage #svHomeFavorites{max-width:calc(100vw - 16px)}
  #homePage #svHomeFavorites .sv-home-favorite-icon{width:50px;height:50px;border-radius:50%}
