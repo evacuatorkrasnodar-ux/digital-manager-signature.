@@ -852,3 +852,72 @@ html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
   border-radius:50%!important;box-shadow:none!important;
  }
 }
+
+
+/* Calendar mode popover: the approved dock's pale silver glass, with
+   Apple-like outlined view icons and a clean gap below the + button. */
+html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu:not([hidden]),
+html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu:not([hidden]),
+html:not([data-theme]) body #svWorkShell > #calendarCreateMenu:not([hidden]),
+html:not([data-theme]) body #calendarPage > #calendarCreateMenu:not([hidden]){
+ position:absolute!important;top:72px!important;right:14px!important;
+ left:auto!important;bottom:auto!important;z-index:200!important;
+ display:flex!important;flex-direction:column!important;
+ box-sizing:border-box!important;width:min(236px,calc(100vw - 28px))!important;
+ max-width:calc(100vw - 28px)!important;height:auto!important;
+ margin:0!important;padding:6px!important;gap:0!important;
+ border:1px solid rgba(255,255,255,.48)!important;border-radius:19px!important;
+ background:rgba(205,210,220,.38)!important;background-image:none!important;
+ color:#191C21!important;
+ -webkit-backdrop-filter:blur(18px) saturate(1.1)!important;
+ backdrop-filter:blur(18px) saturate(1.1)!important;
+ box-shadow:0 0 0 .6px rgba(164,170,184,.22),0 10px 28px rgba(77,83,97,.13),
+  inset 0 1px 0 rgba(255,255,255,.58),inset 0 -1px 0 rgba(82,88,103,.08)!important;
+ overflow:hidden!important;transform:none!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes,
+html body #calendarPage > #calendarCreateMenu #calendarViewModes{
+ display:flex!important;flex-direction:column!important;
+ box-sizing:border-box!important;width:100%!important;gap:1px!important;
+ padding:0!important;margin:0!important;background:transparent!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes > button,
+html body #calendarPage > #calendarCreateMenu #calendarViewModes > button{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ box-sizing:border-box!important;width:100%!important;height:45px!important;min-height:45px!important;
+ margin:0!important;padding:0 11px!important;gap:12px!important;
+ border:0!important;border-radius:13px!important;background:transparent!important;
+ color:#181C22!important;box-shadow:none!important;
+ font:550 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"],
+html body #calendarPage > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"]{
+ background:rgba(255,255,255,.55)!important;color:#17191D!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes > button::after,
+html body #calendarPage > #calendarCreateMenu #calendarViewModes > button::after{
+ content:""!important;display:block!important;flex:none!important;
+ width:15px!important;margin-left:auto!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"]::after,
+html body #calendarPage > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"]::after{
+ content:"✓"!important;font:650 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#17191D!important;
+}
+#svWorkShell #calendarCreateMenu #calendarViewModes .cal-mode-icon,
+#calendarPage #calendarCreateMenu #calendarViewModes .cal-mode-icon{
+ display:grid!important;place-items:center!important;
+ flex:0 0 20px!important;width:20px!important;height:20px!important;
+ color:#17191D!important;opacity:1!important;
+}
+#svWorkShell #calendarCreateMenu #calendarViewModes .cal-mode-icon svg,
+#calendarPage #calendarCreateMenu #calendarViewModes .cal-mode-icon svg{
+ display:block!important;width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#svWorkShell #calendarCreateMenu #calendarViewModes .cal-mode-label,
+#calendarPage #calendarCreateMenu #calendarViewModes .cal-mode-label{
+ flex:1 1 auto!important;min-width:0!important;white-space:nowrap!important;
+}
