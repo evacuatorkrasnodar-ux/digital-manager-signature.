@@ -204,10 +204,10 @@ function openCustomize(){
  const done=document.createElement('button');done.type='button';done.textContent='Готово';
  head.append(title,done);
  const help=document.createElement('p');help.className='sv-home-favorites-editor-help';
- const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
+ const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';grid.setAttribute('role','group');grid.setAttribute('aria-label','Приложения на главной');
  let selection=preference.items.slice(),smart=preference.showSmart;
  const redraw=()=>{
-  help.textContent='На главной: '+(selection.length+(smart?1:0))+' из '+MAX_COUNT+'. Выбери нужные приложения.';
+  help.textContent='Выбрано '+(selection.length+(smart?1:0))+' из '+MAX_COUNT;
   grid.replaceChildren();
   const options=[{id:'smart',name:'Умная кнопка'},...apps];
   for(const app of options){
@@ -216,7 +216,7 @@ function openCustomize(){
    b.setAttribute('aria-pressed',String(chosen));
    b.innerHTML=app.id==='smart'?'<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>':icon(app.id);
    const t=document.createElement('span');t.textContent=app.name;
-   const number=document.createElement('small');number.textContent=chosen?'✓':'+';
+   const number=document.createElement('small');number.textContent=chosen?'✓':'';
    b.append(t,number);
    b.addEventListener('click',()=>{
     if(app.id==='smart'){
