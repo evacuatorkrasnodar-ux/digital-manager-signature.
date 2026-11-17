@@ -195,6 +195,7 @@ function renderItems(){
  }
  syncEditControls();
 }
+let activeCurtainPosition=null;
 function openCustomize(){
  if(document.getElementById('svHomeFavoritesEditor'))return;
  const before={...preference,items:preference.items.slice()};
@@ -217,6 +218,7 @@ function openCustomize(){
   const bottom=Math.min(Math.max(88,desired),Math.max(88,window.innerHeight-top-190));
   dialog.style.setProperty('--sv-home-editor-bottom',bottom+'px');
  };
+ activeCurtainPosition=positionCurtain;
  const preview=()=>{
   preference={...preference,items:selection.slice(),showSmart:smart,custom:true};
   renderItems();updateCount();show();
@@ -249,6 +251,7 @@ function openCustomize(){
  function close(saveChanges){
   if(closed)return;closed=true;
   window.removeEventListener('resize',positionCurtain);
+  activeCurtainPosition=null;
   if(saveChanges){
    save(STORAGE,preference);
    editing=false;
@@ -303,6 +306,7 @@ function place(){
  if(wanted===null)return;
  const next=Math.min(wanted,maximum);
  rail.style.top=Math.round(next-stage.getBoundingClientRect().top)+'px';
+ if(activeCurtainPosition)activeCurtainPosition();
 }
 const show=()=>{
  const curtainOpen=!!document.getElementById('svHomeFavoritesEditor')?.open;
