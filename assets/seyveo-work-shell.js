@@ -525,10 +525,14 @@
   }
   // Apple-style agenda: month heading flows directly into the day strip.
   // Other work sections retain their own navigation; no dock changes.
-  nav.hidden=!visible||history;
+  // Calendar is a quiet, dedicated page: no cross-section capsule or
+  // duplicate card-review shortcut above the month grid. Back, Add and
+  // the permanent dock remain available; other Work views are unchanged.
+  const calendarOnly=active==='calendar';
+  nav.hidden=!visible||history||calendarOnly;
   heading.dataset.workTabs=String(!nav.hidden);
   heading.dataset.history=String(history);
-  reviewCards.hidden=history;
+  reviewCards.hidden=history||calendarOnly;
   nav.dataset.employee=String(employeeMode);
   nav.dataset.one=String(!managerPreview&&!employeeMode);
   nav.dataset.business=String(managerPreview&&!employeeMode);
