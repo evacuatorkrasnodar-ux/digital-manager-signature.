@@ -116,8 +116,12 @@
         const dockTop=dockBox?.top||window.innerHeight-64;
         // 24px before shortcuts and 32px before the dock, as approved.
         const beforeShortcuts=dockTop-32-railHeight-24-rowHeight;
-        const afterSphere=sphereBox.bottom+17;
-        const absoluteTop=Math.max(afterSphere,beforeShortcuts);
+        const visualInset=Math.min(45,sphereBox.height*.135);
+        const afterSphere=sphereBox.bottom-visualInset+18;
+        const beforeDock=dockTop-rowHeight-12;
+        // Keep weather visible even when the mobile browser chrome makes
+        // the viewport unusually short. Never place the row under the dock.
+        const absoluteTop=Math.min(Math.max(afterSphere,beforeShortcuts),beforeDock);
         const relativeTop=Math.round(absoluteTop-stageBox.top)+'px';
         if(button.style.getPropertyValue('--sv-home-weather-top')!==relativeTop)
           button.style.setProperty('--sv-home-weather-top',relativeTop);
