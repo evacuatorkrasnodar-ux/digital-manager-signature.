@@ -89,10 +89,16 @@ html.sv-task-selection-active #svAllTasksView .sv-tool-results{padding-bottom:76
  transform:translateX(-50%);
  grid-template-columns:minmax(0,1.30fr) minmax(0,.95fr) minmax(0,.85fr) minmax(0,.85fr);
  gap:2px;width:min(312px,calc(100% - 30px));max-width:312px;height:54px;min-height:54px;padding:4px;
- border:var(--sv-nav-pearl-border,1.5px solid rgba(255,255,255,.96));border-radius:999px;
- background:var(--sv-nav-pearl-bg,rgba(190,193,202,.10));
- box-shadow:var(--sv-nav-pearl-shadow,0 0 0 .85px rgba(164,170,184,.22));
- -webkit-backdrop-filter:blur(4px) saturate(100%);backdrop-filter:blur(4px) saturate(100%);
+ border:var(--sv-dock-pearl-border,.7px solid rgba(255,255,255,.28));border-radius:999px;
+ background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10));
+ box-shadow:var(--sv-dock-pearl-shadow,0 0 0 .45px rgba(164,170,184,.16));
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%));
+ backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%));
+}
+:root[data-theme="dark"] #svTaskActionCapsule{
+ border:var(--sv-nav-pearl-border);
+ background:var(--sv-nav-pearl-bg);
+ box-shadow:var(--sv-nav-pearl-shadow);
 }
 #svTaskActionCapsule button{
  appearance:none;-webkit-appearance:none;display:grid;place-items:center;
