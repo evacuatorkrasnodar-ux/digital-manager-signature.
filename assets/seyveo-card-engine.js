@@ -361,6 +361,8 @@
   symbol.setAttribute('aria-hidden','true');
   const caption=document.createElement('span');caption.className='sv-card-icon-caption';
   caption.textContent=cardIconLabels[kind];
+  if(kind==='sayvi')caption.dataset.svTinyCaption='Сэйви';
+  if(kind==='edit')caption.dataset.svTinyCaption='Самому';
   button.replaceChildren(symbol,caption);
   // Living Moment's old Sayvi SVG and masked ::before are obsolete once
   // the single canonical action glyph is installed. Never paint both.
@@ -470,8 +472,12 @@
    button.type='button';button.dataset.cardAction=action.id;button.dataset.cardRole=action.role;
    decorateActionButton(button,action.id);
    if(action.id==='navigate'){
-    const title='Перейти '+(destination[card.family]||'в раздел');
-    button.querySelector('.sv-card-icon-caption').textContent=title;
+    const place=destination[card.family]||'в раздел';
+    const title='Перейти '+place;
+    const caption=button.querySelector('.sv-card-icon-caption');
+    caption.textContent=title;
+    caption.dataset.svCompactCaption=place.replace(/^в /,'В ');
+    caption.dataset.svTinyCaption=caption.dataset.svCompactCaption;
     button.setAttribute('aria-label',title);button.title=title;
    }
    button.disabled=typeof onAction!=='function';
