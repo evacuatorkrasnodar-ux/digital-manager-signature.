@@ -5,15 +5,15 @@
  position:absolute;z-index:11;
  top:min(calc(50dvh - 110px + var(--sv-home-orb-half,142.5px) + var(--sv-home-cards-offset,80px)),calc(100dvh - 156px));
  left:50%;transform:translateX(-50%);
- width:min(380px,calc(100vw - 28px));
- display:grid;grid-template-columns:minmax(0,1fr) minmax(0,5fr);
+ width:min(288px,calc(100vw - 32px));
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);
  align-items:start;gap:0;
  opacity:1;visibility:visible;
  transition:opacity .24s ease,visibility .24s ease;
  contain:layout style;
 }
 #homePage #svHomeFavorites .sv-home-favorite-items{
- display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
  min-width:0;
 }
 #homePage #svHomeFavorites .sv-home-favorite{
@@ -39,7 +39,7 @@
 }
 #homePage #svHomeFavorites .sv-home-favorite-label{
  display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;
- white-space:nowrap;font-size:10.5px;font-weight:500;line-height:1.4;letter-spacing:-.08px;
+ white-space:nowrap;font-size:11.5px;font-weight:500;line-height:1.4;letter-spacing:-.08px;
  color:#34343a;
 }
 #homePage #svHomeFavorites .sv-home-review-entry .sv-home-favorite-icon{
@@ -85,10 +85,10 @@
 .sv-home-favorites-editor-grid button svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .sv-home-favorites-editor-grid button small{font-size:12px;color:#686970}
 @media(max-width:370px){
- #homePage #svHomeFavorites{width:calc(100vw - 16px)}
+ #homePage #svHomeFavorites{width:min(288px,calc(100vw - 22px))}
  #homePage #svHomeFavorites .sv-home-favorite-icon{width:43px;height:43px;border-radius:13px}
  #homePage #svHomeFavorites .sv-home-favorite-icon svg{width:23px;height:23px}
- #homePage #svHomeFavorites .sv-home-favorite-label{font-size:9.5px}
+ #homePage #svHomeFavorites .sv-home-favorite-label{font-size:10.5px}
 }
 @media(prefers-reduced-motion:reduce){
  #homePage #svHomeFavorites,#homePage #svHomeFavorites .sv-home-favorite-icon{transition:none}
