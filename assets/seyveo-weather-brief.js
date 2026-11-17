@@ -4,7 +4,7 @@
   'use strict';
   const HANDOFF_KEY='seyveo.sayvi.weather-handoff.v1';
   const PREFIX='⟦SEYVEO-WEATHER-1⟧';
-  const MAX_AGE=18*60*60*1000;
+  const MAX_AGE=36*60*60*1000;
   const MAX_HANDOFF_AGE=3*60*1000;
   const condition=code=>{
     if(code===0)return 'ясно';
