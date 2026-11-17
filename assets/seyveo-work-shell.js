@@ -361,7 +361,7 @@
    deleteButton=make('button','sv-task-delete','Удалить');deleteButton.type='button';
    deleteButton.addEventListener('click',()=>{
     const ids=[...selected];if(!ids.length)return;
-    if(!window.confirm('Удалить выбранные дела ('+ids.length+')? Восстановить их нельзя.'))return;
+    if(!window.confirm('Переместить выбранные дела ('+ids.length+') в «Недавно удалённые»? Их можно вернуть в течение 30 дней.'))return;
     if(!window.SEYVEO_PERSONAL_TASK_TOOLS?.removeMany?.(ids)){
      window.alert('Не удалось удалить выбранные дела');return;
     }

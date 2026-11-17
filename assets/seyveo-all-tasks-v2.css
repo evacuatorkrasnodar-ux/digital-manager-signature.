@@ -41,7 +41,7 @@ html.sv-task-selection-active #svAllTasksView .sv-tool-results{padding-bottom:76
 
 #svAllTasksView .sv-tool-result{
  box-sizing:border-box;display:flex;align-items:center;gap:11px;
- min-height:70px;padding:11px 3px;border-bottom:1px solid #E7EAF0;
+ min-height:70px;padding:11px 14px;border-bottom:1px solid #E7EAF0;
  background:transparent;
 }
 #svAllTasksView .sv-tool-result:last-child{border-bottom-color:transparent}

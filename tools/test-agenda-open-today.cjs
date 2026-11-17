@@ -6,7 +6,8 @@ const vm=require('node:vm');
 
 const source=fs.readFileSync(path.join(__dirname,'../assets/personal-tasks.js'),'utf8');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
-assert.match(html,/personal-tasks\.js\?v=127/,'The calendar fix must bypass the old mobile cache');
+const loadedVersion=Number(html.match(/personal-tasks\.js\?v=(\d+)/)?.[1]||0);
+assert.ok(loadedVersion>=128,'The calendar fix must bypass the old mobile cache');
 const start=source.indexOf('function svAgendaOpenAtToday(){');
 const end=source.indexOf('new MutationObserver(',start);
 assert.ok(start>0&&end>start,'The actual opening handler must exist');

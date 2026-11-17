@@ -246,15 +246,29 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
  fallbackSearch.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 5 5"/></svg>';
  heading.append(back,title,fallbackSearch);
  const intro=document.createElement('p');intro.className='sah-history-intro';intro.textContent='Сохранённые события и результаты действий';
+ const filters=document.createElement('div');filters.className='sah-history-filters';filters.setAttribute('role','tablist');filters.setAttribute('aria-label','Разделы истории');
+ let historyView='all';
+ for(const [mode,label] of [['all','Все'],['done','Выполненные'],['deleted','Удалённые']]){
+  const button=document.createElement('button');button.type='button';button.textContent=label;
+  button.dataset.historyView=mode;button.setAttribute('role','tab');
+  button.setAttribute('aria-selected',String(mode===historyView));
+  button.addEventListener('click',()=>{
+   if(historyView===mode)return;
+   historyView=mode;selecting=false;chosen.clear();visibleCount=4;render();
+  });
+  filters.append(button);
+ }
+ const retention=document.createElement('p');retention.className='sah-history-retention';
+ retention.textContent='Удалённые дела можно восстановить в течение 30 дней.';retention.hidden=true;
  const search=document.createElement('input');search.type='search';search.className='sah-search';search.placeholder='Поиск по имени, делу или дате';search.setAttribute('aria-label','Поиск в истории действий');
  search.hidden=true;search.id='sahHistorySearch';
- const list=document.createElement('div');panel.append(heading,intro,search,list);
+ const list=document.createElement('div');panel.append(heading,intro,filters,retention,search,list);
  head.append(open);
  personal.append(panel);
  const studio=new URLSearchParams(location.search).has('seyveoStudio');
  const hiddenKey='seyveo-personal-history-hidden-v1';
  const readHidden=()=>{try{const a=JSON.parse(localStorage.getItem(hiddenKey)||'[]');return new Set(Array.isArray(a)?a:[])}catch{return new Set()}};
- const eventKey=e=>e.taskId?'task:'+e.taskId:'card:'+String(e.eventId||'')+':'+String(e.at||'');
+ const eventKey=e=>e.deleted?'deleted:'+e.taskId:e.taskId?'task:'+e.taskId:'card:'+String(e.eventId||'')+':'+String(e.at||'');
  const hideEvents=items=>{const keys=readHidden();items.filter(e=>!e.taskId).forEach(e=>keys.add(eventKey(e)));try{localStorage.setItem(hiddenKey,JSON.stringify([...keys].slice(-4000)));return true}catch{return false}};
  const cleanTitle=e=>{const t=String(e.title||'').trim();if(t&&!/^(?:[a-z]{1,4}[0-9a-f]{5,}|[0-9a-f]{7,}|[a-z0-9_-]{7,})$/i.test(t))return t;const type=({'personal-task':'дело',mail:'письмо',contract:'документ',work:'сообщение'}[e.cardType]||'действие Сэйви');return e.to==='canceled'?'Отменено: '+type:'История: '+type};
  let selecting=false;
@@ -278,28 +292,43 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
  };
  option('Найти','search',()=>{if(!searchOpen)toggleSearch();else search.focus({preventScroll:true})});
  option('Выбрать','select',()=>{selecting=true;chosen.clear();render()});
- option('Очистить историю','trash',()=>{
-  if(!confirm('Очистить личную историю? Завершённые дела удалятся; события Сэйви будут скрыты из списка на этом устройстве. Служебные журналы компании сохранятся.'))return;
-  if(!window.SEYVEO_CARD_LIFECYCLE?.clearPersonalHistory?.()){alert('Не удалось очистить историю');return}
-  if(!window.SEYVEO_PERSONAL_TASK_HISTORY?.clearCompleted?.()){alert('Не удалось очистить завершённые дела');return}
+ option('Очистить действия','trash',()=>{
+  if(!confirm('Очистить историю действий Сэйви на этом устройстве? Выполненные и удалённые дела останутся на месте.'))return;
+  if(!window.SEYVEO_CARD_LIFECYCLE?.clearPersonalHistory?.()){alert('Не удалось очистить историю действий');return}
   selecting=false;chosen.clear();render();
  });
  const selection=document.createElement('div');selection.id='sahHistorySelection';selection.hidden=true;
  const selectAll=document.createElement('button');selectAll.type='button';selectAll.id='sahSelectAll';selectAll.textContent='Выбрать все';
- const count=document.createElement('span');count.textContent='Выбрано: 0';count.setAttribute('aria-live','polite');
+ const count=document.createElement('span');count.className='sah-bulk-count';count.textContent='Выбрано: 0';count.setAttribute('aria-live','polite');
+ const restoreChosen=document.createElement('button');restoreChosen.type='button';restoreChosen.className='sah-bulk-restore';restoreChosen.textContent='Вернуть';restoreChosen.hidden=true;
  const removeChosen=document.createElement('button');removeChosen.type='button';removeChosen.textContent='Удалить';
- selection.append(selectAll,count,removeChosen);panel.insertBefore(selection,list);
+ const cancelChosen=document.createElement('button');cancelChosen.type='button';cancelChosen.className='sah-bulk-cancel';cancelChosen.textContent='Отмена';
+ selection.append(selectAll,count,restoreChosen,removeChosen,cancelChosen);panel.insertBefore(selection,list);
  const broadcastSelection=()=>window.dispatchEvent(new CustomEvent('seyveo:history-selection-changed',{detail:{active:selecting}}));
  const leaveSelection=()=>{selecting=false;chosen.clear();popup.hidden=true;render()};
  const showCount=()=>{
+  selection.dataset.view=historyView;
   const keys=selectableEntries.map(eventKey);
   const all=keys.length>0&&keys.every(key=>chosen.has(key));
   count.textContent='Выбрано: '+chosen.size;
   removeChosen.disabled=!chosen.size;
+  restoreChosen.hidden=historyView!=='deleted';
+  restoreChosen.disabled=!chosen.size;
+  removeChosen.textContent=historyView==='deleted'?'Навсегда':'Удалить';
+  removeChosen.setAttribute('aria-label',historyView==='deleted'?'Удалить выбранные дела навсегда':'Удалить выбранные записи');
   selectAll.disabled=!keys.length;
   selectAll.textContent=all?'Снять всё':'Выбрать все';
   selectAll.setAttribute('aria-pressed',String(all));
  };
+ cancelChosen.addEventListener('click',leaveSelection);
+ restoreChosen.addEventListener('click',()=>{
+  const ids=[...chosen].filter(key=>key.startsWith('deleted:')).map(key=>key.slice(8));
+  if(!ids.length)return;
+  if(!window.SEYVEO_PERSONAL_TASK_TRASH?.restore?.(ids)){
+   alert('Не удалось восстановить выбранные дела. Проверьте доступное место.');return;
+  }
+  chosen.clear();selecting=false;render();
+ });
  selectAll.addEventListener('click',()=>{
   const keys=selectableEntries.map(eventKey);
   if(!keys.length)return;
@@ -308,7 +337,16 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
   render();
  });
  removeChosen.addEventListener('click',()=>{
-  if(!chosen.size||!confirm('Удалить выбранные записи?'))return;
+  if(!chosen.size)return;
+  if(historyView==='deleted'){
+   const ids=[...chosen].filter(key=>key.startsWith('deleted:')).map(key=>key.slice(8));
+   if(!ids.length||!confirm('Удалить навсегда '+ids.length+' дел? Восстановить их больше не получится.'))return;
+   if(!window.SEYVEO_PERSONAL_TASK_TRASH?.removePermanently?.(ids)){
+    alert('Не удалось удалить выбранные дела');return;
+   }
+   chosen.clear();selecting=false;render();return;
+  }
+  if(!confirm('Удалить выбранные записи? Выполненные дела попадут в «Недавно удалённые» на 30 дней.'))return;
   const events=window.SEYVEO_CARD_LIFECYCLE?.history?.()||[];
   for(const e of events.filter(e=>chosen.has(eventKey(e)))){
    if(!window.SEYVEO_CARD_LIFECYCLE?.removeHistoryEntry?.(e.eventId)){alert('Не удалось удалить запись');return}
@@ -362,20 +400,133 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
 
  `;document.head.append(css);
 
+ /* Apple-like information hierarchy, with our approved pearl material and
+    a clear distinction between outcomes, completed work, and recoverable loss. */
+ const iosHistoryStyle=document.createElement('style');
+ iosHistoryStyle.textContent=`
+ #seyveoActionHistoryPanel.sah-inline-panel{
+  box-sizing:border-box!important;width:100%!important;
+  padding:4px 13px calc(104px + env(safe-area-inset-bottom,0px))!important;
+  background:#FFF!important;color:#17191E!important;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif!important;
+ }
+ #seyveoActionHistoryPanel .sah-history-filters{
+  box-sizing:border-box;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:3px;width:100%;height:37px;margin:3px 0 15px;padding:3px;
+  border:1px solid #ECEEF1;border-radius:999px;background:#F5F6F8;
+ }
+ #seyveoActionHistoryPanel .sah-history-filters button{
+  display:grid;place-items:center;min-width:0;padding:0 3px;
+  border:0;border-radius:999px;background:transparent;box-shadow:none;
+  color:#454950;font:550 12px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  cursor:pointer;white-space:nowrap;
+ }
+ #seyveoActionHistoryPanel .sah-history-filters button[aria-selected="true"]{
+  background:#FFF;color:#2871BE;
+  box-shadow:0 .6px 2px rgba(35,42,56,.055);
+ }
+ #seyveoActionHistoryPanel .sah-history-retention{
+  margin:1px 4px 15px;color:#7A818C;
+  font:450 12px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ }
+ #seyveoActionHistoryPanel .sah-history-retention[hidden]{display:none!important}
+ #seyveoActionHistoryPanel .sah-date-heading{
+  margin:18px 4px 7px!important;color:#777F89!important;
+  font-size:12px!important;font-weight:580!important;
+ }
+ #seyveoActionHistoryPanel .sah-row{
+  min-height:72px!important;padding:12px 4px!important;
+  border-top:1px solid #E9EBEF!important;color:#17191E!important;
+ }
+ #seyveoActionHistoryPanel .sah-row > strong{
+  color:#191C21!important;font-size:15px!important;font-weight:560!important;
+ }
+ #seyveoActionHistoryPanel .sah-row.sah-has-restore:not(.sah-selecting){
+  grid-template-columns:minmax(0,1fr) 42px 42px!important;gap:3px 4px!important;
+ }
+ #seyveoActionHistoryPanel .sah-row.sah-has-restore:not(.sah-selecting) .sah-restore-task{
+  grid-column:2!important;grid-row:1 / span 2!important;
+  width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+  border-radius:50%!important;background:rgba(190,193,202,.13)!important;
+  color:#2476BC!important;
+ }
+ #seyveoActionHistoryPanel .sah-row.sah-has-restore:not(.sah-selecting) .sah-delete{
+  grid-column:3!important;grid-row:1 / span 2!important;
+  width:42px!important;height:42px!important;border-radius:50%!important;
+  color:#9B6464!important;
+ }
+ #seyveoActionHistoryPanel .sah-row.sah-trash-row .sah-state{
+  color:#A16B45!important;
+ }
+ #sahHistoryPopup{
+  box-sizing:border-box!important;border:1px solid #ECEEF1!important;border-radius:17px!important;
+  background:rgba(255,255,255,.96)!important;color:#1C1C1E!important;
+  box-shadow:0 12px 35px rgba(31,40,53,.13)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(110%);backdrop-filter:blur(18px) saturate(110%);
+ }
+ #sahHistoryPopup button{color:#202329!important;font-size:13.5px!important}
+ #sahHistoryPopup button:active{background:#F3F4F6!important}
+ #sahHistorySelection{
+  position:fixed!important;z-index:120!important;left:50%!important;
+  bottom:max(12px,env(safe-area-inset-bottom,0px))!important;
+  transform:translateX(-50%)!important;box-sizing:border-box!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:2px!important;width:min(354px,calc(100% - 28px))!important;min-height:58px!important;
+  padding:5px!important;border:var(--sv-dock-pearl-border,.7px solid rgba(255,255,255,.38))!important;
+  border-radius:999px!important;background:var(--sv-dock-pearl-bg,rgba(190,193,202,.16))!important;
+  box-shadow:var(--sv-dock-pearl-shadow,0 0 0 .6px rgba(164,170,184,.18))!important;
+  -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
+  backdrop-filter:blur(12px) saturate(108%)!important;
+ }
+ #sahHistorySelection[hidden],#sahHistorySelection .sah-bulk-restore[hidden]{display:none!important}
+ #sahHistorySelection button{
+  flex:1 1 0!important;display:grid!important;place-items:center!important;
+  box-sizing:border-box!important;min-width:0!important;min-height:46px!important;
+  padding:0 4px!important;border:0!important;border-radius:999px!important;
+  background:transparent!important;color:#252A32!important;
+  font:550 11.3px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+  white-space:nowrap!important;
+ }
+ #sahHistorySelection #sahSelectAll{flex:1.18 1 0!important;background:rgba(255,255,255,.72)!important}
+ #sahHistorySelection .sah-bulk-count{flex:1 1 0!important;min-width:0!important;text-align:center!important;
+  font-size:11px!important;color:#757C86!important;white-space:nowrap!important}
+ #sahHistorySelection[data-view="deleted"] .sah-bulk-count{display:none!important}
+ #sahHistorySelection .sah-bulk-restore{color:#2A72B9!important}
+ #sahHistorySelection .sah-bulk-cancel{color:#606773!important}
+ #sahHistorySelection button:disabled{opacity:.34!important}
+ #sahHistorySelection button:last-of-type:not(.sah-bulk-cancel){color:#BB4754!important}
+ #sahHistorySelection button:nth-last-of-type(2){color:#BB4754!important}
+ :root[data-theme="dark"] #seyveoActionHistoryPanel.sah-inline-panel{background:#191A1E!important;color:#F3F4F6!important}
+ :root[data-theme="dark"] #seyveoActionHistoryPanel .sah-history-filters{background:#303138;border-color:#41434A}
+ :root[data-theme="dark"] #seyveoActionHistoryPanel .sah-history-filters button{color:#D1D3DA}
+ :root[data-theme="dark"] #seyveoActionHistoryPanel .sah-history-filters button[aria-selected="true"]{background:#4B4D56;color:#FFF}
+ :root[data-theme="dark"] #seyveoActionHistoryPanel .sah-row{border-top-color:#3A3C42!important}
+ :root[data-theme="dark"] #seyveoActionHistoryPanel .sah-row > strong{color:#F3F4F6!important}
+ `;
+ document.head.append(iosHistoryStyle);
+
  let visibleCount=4;
  let searchOpen=false;
  const more=document.createElement('button');more.type='button';more.className='sah-inline-toggle';more.style.marginTop='10px';more.hidden=true;more.textContent='Показать ещё';panel.append(more);
  const stateOf=v=>v==='failed'?'failed':['shown','deferred','action_pending','executing'].includes(v)?'pending':['succeeded','archived'].includes(v)?'done':'other';
- const statuses={shown:'Не завершено',deferred:'Отложено',action_pending:'Ожидает действия',executing:'Выполняется',succeeded:'Выполнено',archived:'В архиве',failed:'Ошибка',canceled:'Отменено',expired:'Истекло'};
+ const statuses={shown:'Не завершено',deferred:'Отложено',action_pending:'Ожидает действия',executing:'Выполняется',succeeded:'Выполнено',archived:'В архиве',failed:'Ошибка',canceled:'Отменено',expired:'Истекло',deleted:'Удалено'};
  function render(){
   broadcastSelection();
   list.replaceChildren();
+  for(const button of filters.children)button.setAttribute('aria-selected',String(button.dataset.historyView===historyView));
+  retention.hidden=historyView!=='deleted';
   const api=window.SEYVEO_CARD_LIFECYCLE;
   const cardEvents=api?.history?.()||[];
   const tasks=window.SEYVEO_PERSONAL_TASK_HISTORY?.completed?.()||[];
   const taskEvents=tasks.map(task=>({eventId:task.id,title:task.title,cardType:'personal-task',to:'succeeded',at:task.doneAt||task.createdAt,taskId:task.id}));
-  const events=[...cardEvents,...taskEvents].filter(e=>!readHidden().has(eventKey(e))).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
- selection.hidden=!selecting;
+  const trashEvents=(window.SEYVEO_PERSONAL_TASK_TRASH?.list?.()||[]).map(task=>({
+   eventId:task.id,title:task.title,cardType:'personal-task',to:'deleted',
+   at:task.deletedAt,taskId:task.id,deleted:true,expiresAt:task.expiresAt
+  }));
+  const collection=historyView==='deleted'?trashEvents:historyView==='done'?taskEvents:[...cardEvents,...taskEvents];
+  const events=collection.filter(e=>!readHidden().has(eventKey(e)))
+   .sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
+  selection.hidden=!selecting;
   panel.classList.toggle('is-empty-history',events.length===0);
   more.hidden=true;
   search.hidden=!searchOpen;
@@ -387,8 +538,12 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
    ring.setAttribute('cx','32');ring.setAttribute('cy','32');ring.setAttribute('r','22');svg.append(ring);
    const hands=document.createElementNS('http://www.w3.org/2000/svg','path');
    hands.setAttribute('d','M32 18v15l10 6');svg.append(hands);
-   const heading=document.createElement('strong');heading.className='sah-empty-title';heading.textContent='Пока нет действий';
-   const copy=document.createElement('span');copy.className='sah-empty-copy';copy.textContent='Здесь появится история дел и действий Сэйви.';
+   const heading=document.createElement('strong');heading.className='sah-empty-title';
+   heading.textContent=historyView==='deleted'?'Корзина пуста':historyView==='done'?'Выполненных дел пока нет':'Пока нет действий';
+   const copy=document.createElement('span');copy.className='sah-empty-copy';
+   copy.textContent=historyView==='deleted'?'Удалённые дела появятся здесь. Их можно вернуть в течение 30 дней.':
+    historyView==='done'?'Завершённые дела сохраняются и при необходимости возвращаются в активные.':
+    'Здесь появится история дел и действий Сэйви.';
    empty.append(svg,heading,copy);list.append(empty);return;
   }
   // Ordinary users see one latest outcome per card; developer mode shows its full trace.
@@ -405,7 +560,7 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
   const dateKey=d=>[d.getFullYear(),d.getMonth(),d.getDate()].join('-');
   const today=new Date(),yesterday=new Date(today.getFullYear(),today.getMonth(),today.getDate()-1);
   let lastDay='';
-  for(const e of selected.slice(0,Math.min(visibleCount,40))){
+  for(const e of selected.slice(0,visibleCount)){
    const date=e.at?new Date(e.at):null;
    const valid=date&&!Number.isNaN(date.getTime());
    const day=valid?dateKey(date):'unknown';
@@ -415,10 +570,14 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
     list.append(group);lastDay=day;
    }
    const item=document.createElement('div');item.className='sah-row';item.dataset.state=stateOf(e.to);
+   if(e.taskId)item.classList.add('sah-has-restore');
+   if(e.deleted)item.classList.add('sah-trash-row');
    const name=document.createElement('strong');name.textContent=cleanTitle(e);
    const line=document.createElement('small');line.textContent=(statuses[e.to]||e.to||'Событие')+' · '+(valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано');
    const status=document.createElement('span');status.className='sah-state';status.dataset.state=stateOf(e.to);status.textContent=statuses[e.to]||e.to||'Событие';
-   line.textContent=valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано';
+   const daysLeft=e.deleted?Math.max(0,Math.ceil((Date.parse(e.expiresAt)-Date.now())/86400000)):0;
+   line.textContent=e.deleted?'Можно восстановить · ещё '+daysLeft+' дн.':
+    valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано';
    const meta=document.createElement('div');
    meta.className='sah-row-meta';
    meta.append(status,line);
@@ -438,10 +597,13 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
      const del=document.createElement('button');del.type='button';del.className='sah-delete';
      del.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 10v7M14 10v7"/></svg>';
      del.title='Удалить запись';
-     del.setAttribute('aria-label','Удалить запись: '+cleanTitle(e));
+     del.setAttribute('aria-label',(e.deleted?'Удалить навсегда: ':'Удалить запись: ')+cleanTitle(e));
      del.addEventListener('click',event=>{
       event.preventDefault();event.stopPropagation();
-      const ok=e.taskId?window.SEYVEO_PERSONAL_TASK_HISTORY?.removeCompleted?.(e.taskId):window.SEYVEO_CARD_LIFECYCLE?.removeHistoryEntry?.(e.eventId);
+      if(e.deleted&&!confirm('Удалить дело «'+e.title+'» навсегда? Восстановить его больше не получится.'))return;
+      const ok=e.deleted?window.SEYVEO_PERSONAL_TASK_TRASH?.removePermanently?.(e.taskId):
+       e.taskId?window.SEYVEO_PERSONAL_TASK_HISTORY?.removeCompleted?.(e.taskId):
+       window.SEYVEO_CARD_LIFECYCLE?.removeHistoryEntry?.(e.eventId);
       if(ok)render();else alert('Не удалось удалить запись. Проверьте хранилище браузера.');
      });
      item.append(del);
@@ -449,10 +611,11 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
    if(e.taskId&&!selecting){
     const recover=document.createElement('button');recover.type='button';recover.className='sah-restore-task';
     recover.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M4 12h10a6 6 0 0 1 6 6"/></svg>';
-    recover.title='Вернуть в дела';
-    recover.setAttribute('aria-label','Вернуть в дела: '+e.title);
+    recover.title=e.deleted?'Восстановить удалённое дело':'Вернуть в активные дела';
+    recover.setAttribute('aria-label',(e.deleted?'Восстановить удалённое дело: ':'Вернуть в активные дела: ')+e.title);
     recover.addEventListener('click',()=>{
-     const ok=window.SEYVEO_PERSONAL_TASK_HISTORY?.restore?.(e.taskId);
+     const ok=e.deleted?window.SEYVEO_PERSONAL_TASK_TRASH?.restore?.(e.taskId):
+      window.SEYVEO_PERSONAL_TASK_HISTORY?.restore?.(e.taskId);
      if(ok)render();else {recover.setAttribute('aria-label','Не удалось восстановить дело');recover.title='Не удалось восстановить';}
     });
     item.append(recover);
@@ -461,7 +624,7 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
    list.append(item);
   }
   more.hidden=selected.length<=visibleCount;
-  if(!more.hidden)more.textContent='Показать ещё · '+Math.min(4,selected.length-visibleCount);
+  if(!more.hidden)more.textContent='Показать ещё · '+Math.min(8,selected.length-visibleCount);
  }
  const toggleSearch=()=>{
   if(panel.hidden)return;
@@ -485,9 +648,18 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
   render();
  });
  search.addEventListener('input',()=>{visibleCount=4;render();});
- more.addEventListener('click',()=>{visibleCount=Math.min(visibleCount+4,40);render();});
+ more.addEventListener('click',()=>{visibleCount+=8;render();});
  const page=document.getElementById('tasksPage');
  const scroller=document.querySelector('.app');
+ // Long histories load naturally as the user approaches the bottom;
+ // the "Показать ещё" control remains as an accessible fallback.
+ if('IntersectionObserver'in window){
+  const historyLoader=new IntersectionObserver(entries=>{
+   if(!entries[0]?.isIntersecting||panel.hidden||more.hidden)return;
+   visibleCount+=8;render();
+  },{root:scroller||null,rootMargin:'0px 0px 220px 0px'});
+  historyLoader.observe(more);
+ }
  // The shared dock is the same DOM node on every page. The existing
  // CSS-only history suppression can lose against later !important rules.
  // Preserve the original inline display state and lock it only while the

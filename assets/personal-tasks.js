@@ -1519,8 +1519,8 @@ function change(id,del=false){
  const all=read(),target=all.find(item=>item.id===id);if(!target)return;
  if(del){
    if(!window.confirm('Удалить дело «'+target.title+'»?'))return;
-   if(!save(all.filter(item=>item.id!==id))){showTaskError('Не удалось удалить дело. Проверьте память устройства.');return}
-   void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.([id]);
+   if(!svTrashArchiveMany([id])){showTaskError('Не удалось переместить дело в «Недавно удалённые». Проверьте память устройства.');return}
+   return;
  }else{
    target.done=!target.done;target.doneAt=target.done?new Date().toISOString():'';
    if(!save(all)){showTaskError('Не удалось сохранить изменение. Проверьте память устройства.');return}
@@ -1530,23 +1530,90 @@ function change(id,del=false){
  window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
 }
+/* SEYVEO · Recently Deleted. Deletion is reversible for thirty days;
+   attachments stay attached until final disposal, not until a toast expires. */
+const SV_TASK_TRASH_KEY='seyveo-personal-tasks-trash-v1';
+const SV_TASK_TRASH_AGE_MS=30*24*60*60*1000;
+const SV_TASK_TRASH_LIMIT=600;
+function svTrashWrite(entries){
+ try{localStorage.setItem(SV_TASK_TRASH_KEY,JSON.stringify(entries));return true}
+ catch{return false}
+}
+function svTrashRead(){
+ let parsed=[];
+ try{const value=JSON.parse(localStorage.getItem(SV_TASK_TRASH_KEY)||'[]');if(Array.isArray(value))parsed=value}catch{}
+ const now=Date.now(),active=[],expired=[];
+ for(const row of parsed){
+  if(!row?.task||typeof row.task.id!=='string'||typeof row.task.title!=='string'||
+     !Number.isFinite(Date.parse(row.deletedAt)))continue;
+  if(now-Date.parse(row.deletedAt)>=SV_TASK_TRASH_AGE_MS)expired.push(row.task.id);
+  else active.push(row);
+ }
+ if(expired.length&&svTrashWrite(active))void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.(expired);
+ return active;
+}
+function svTrashChanged(){
+ justCompletedTaskId='';render();
+ window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
+ window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
+}
+function svTrashArchiveMany(ids){
+ if(!Array.isArray(ids)||!ids.length)return false;
+ const wanted=new Set(ids.filter(id=>typeof id==='string'));
+ const all=read(),moving=all.filter(item=>wanted.has(item.id));
+ if(!moving.length)return false;
+ const previous=svTrashRead();
+ const remainingTrash=previous.filter(row=>!wanted.has(row.task.id));
+ if(remainingTrash.length+moving.length>SV_TASK_TRASH_LIMIT)return false;
+ const deletedAt=new Date().toISOString();
+ if(!svTrashWrite([...remainingTrash,...moving.map(task=>({task,deletedAt}))]))return false;
+ if(!save(all.filter(item=>!wanted.has(item.id)))){
+  svTrashWrite(previous);return false;
+ }
+ svTrashChanged();return true;
+}
+function svTrashRestoreMany(ids){
+ if(!Array.isArray(ids)||!ids.length)return false;
+ const wanted=new Set(ids.filter(id=>typeof id==='string'));
+ const trash=svTrashRead(),found=trash.filter(row=>wanted.has(row.task.id));
+ const all=read(),existing=new Set(all.map(item=>item.id));
+ const restoring=found.filter(row=>!existing.has(row.task.id)).map(row=>row.task);
+ if(!found.length||all.length+restoring.length>MAX)return false;
+ if(!save([...all,...restoring]))return false;
+ if(!svTrashWrite(trash.filter(row=>!wanted.has(row.task.id)))){
+  save(all);return false;
+ }
+ svTrashChanged();return true;
+}
+function svTrashRemoveMany(ids){
+ if(!Array.isArray(ids)||!ids.length)return false;
+ const wanted=new Set(ids.filter(id=>typeof id==='string'));
+ const trash=svTrashRead(),removed=trash.filter(row=>wanted.has(row.task.id));
+ if(!removed.length||!svTrashWrite(trash.filter(row=>!wanted.has(row.task.id))))return false;
+ void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.(removed.map(row=>row.task.id));
+ window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
+ return true;
+}
+window.SEYVEO_PERSONAL_TASK_TRASH=Object.freeze({
+ list:()=>svTrashRead().map(row=>({id:row.task.id,title:row.task.title,
+  due:row.task.due,done:row.task.done,deletedAt:row.deletedAt,
+  expiresAt:new Date(Date.parse(row.deletedAt)+SV_TASK_TRASH_AGE_MS).toISOString()}))
+  .sort((a,b)=>b.deletedAt.localeCompare(a.deletedAt)),
+ restore:ids=>svTrashRestoreMany(Array.isArray(ids)?ids:[ids]),
+ removePermanently:ids=>svTrashRemoveMany(Array.isArray(ids)?ids:[ids]),
+ archive:ids=>svTrashArchiveMany(Array.isArray(ids)?ids:[ids])
+});
 /* Completed personal tasks remain in the original local store for History. */
 window.SEYVEO_PERSONAL_TASK_HISTORY=Object.freeze({
  completed:()=>read().filter(item=>item.done).sort((a,b)=>(b.doneAt||b.createdAt).localeCompare(a.doneAt||a.createdAt)),
  removeCompleted:id=>{
   const all=read(),item=all.find(task=>task.id===id&&task.done);
   if(!item)return false;
-  if(!save(all.filter(task=>task.id!==id)))return false;
-  void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.([id]);
-  render();window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
-  return true;
+  return svTrashArchiveMany([id]);
  },
  clearCompleted:()=>{
-  const all=read();
-  if(!save(all.filter(task=>!task.done)))return false;
-  void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.(all.filter(item=>item.done).map(item=>item.id));
-  render();window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
-  return true;
+  const ids=read().filter(item=>item.done).map(item=>item.id);
+  return ids.length?svTrashArchiveMany(ids):true;
  },
  restore:id=>{
   const all=read(),task=all.find(item=>item.id===id&&item.done);
@@ -1566,15 +1633,7 @@ window.SEYVEO_PERSONAL_TASK_TOOLS=Object.freeze({
   createdAt:item.createdAt,doneAt:item.doneAt})),
  removeMany:ids=>{
   if(!Array.isArray(ids)||!ids.length||ids.length>MAX)return false;
-  const chosen=new Set(ids.filter(id=>typeof id==='string'));
-  const all=read(),remaining=all.filter(task=>!chosen.has(task.id));
-  if(remaining.length===all.length)return false;
-  if(!save(remaining))return false;
-  void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.(all.filter(task=>chosen.has(task.id)).map(task=>task.id));
-  justCompletedTaskId='';render();
-  window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
-  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
-  return true;
+  return svTrashArchiveMany(ids);
  }
 });
 /* Task edits from the Center of Decisions use the existing local editor.
@@ -1721,34 +1780,28 @@ function svFinalizeTaskUndo(){
  if(!svTaskUndo)return;
  const pending=svTaskUndo;svTaskUndo=null;
  clearTimeout(pending.timeout);pending.toast.remove();
- // Attachments are retained during Undo and cleaned only when it expires.
- if(!read().some(item=>item.id===pending.task.id))
-  void window.SEYVEO_TASK_ATTACHMENTS?.removeFor?.([pending.task.id]);
+ // The archived task and its attachments remain recoverable for 30 days.
 }
 function svDeleteTaskWithUndo(id){
  const all=read(),index=all.findIndex(task=>task.id===id);
  if(index<0)return;
  svFinalizeTaskUndo();
- if(!save(all.filter(task=>task.id!==id))){
-  showTaskError('Не удалось удалить дело. Проверьте память устройства.');return;
+ if(!svTrashArchiveMany([id])){
+  showTaskError('Не удалось переместить дело в «Недавно удалённые». Проверьте память устройства.');return;
  }
- svCloseTaskSwipe();svCloseTaskContext();justCompletedTaskId='';render();svNotifyTaskStoreChanged();
+ svCloseTaskSwipe();svCloseTaskContext();
  const toast=element('div','sv-task-undo-toast');
  toast.setAttribute('role','status');
- const message=element('span','','Дело удалено');
+ const message=element('span','','Дело в «Недавно удалённых»');
  const undo=element('button','','Отменить');undo.type='button';
  toast.append(message,undo);document.body.append(toast);
  const pending={task:all[index],index,toast,timeout:0};svTaskUndo=pending;
  undo.addEventListener('click',()=>{
   if(svTaskUndo!==pending)return;
-  const current=read();
-  if(!current.some(task=>task.id===pending.task.id)){
-   if(current.length>=MAX){showTaskError('Нет места, чтобы вернуть дело.');return;}
-   current.splice(Math.min(pending.index,current.length),0,pending.task);
-   if(!save(current)){showTaskError('Не удалось вернуть дело. Проверьте память устройства.');return;}
+  if(!svTrashRestoreMany([pending.task.id])){
+   showTaskError('Не удалось вернуть дело. Проверьте память устройства.');return;
   }
   clearTimeout(pending.timeout);pending.toast.remove();svTaskUndo=null;
-  render();svNotifyTaskStoreChanged();
  });
  pending.timeout=window.setTimeout(svFinalizeTaskUndo,6000);
 }
