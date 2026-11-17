@@ -115,10 +115,10 @@
   }
   :host([data-task-tools="true"]) .sv-history-select svg{
    width:20px!important;height:20px!important;
-   fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
+   fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
   }
   :host([data-task-tools="true"]) .sv-history-dual .control svg{
-   width:var(--sv-nav-icon-size,23px);height:var(--sv-nav-icon-size,23px);stroke-width:1.6;
+   width:20px;height:20px;stroke-width:1.6;
   }
   :host([data-task-tools="true"]) .sv-history-search{
    display:grid!important;position:relative;
@@ -126,7 +126,7 @@
   :host([data-task-tools="true"]) .sv-review-cards-control{display:grid!important}
   :host([data-history="true"]) .sv-review-cards-control{display:none!important}
   :host([data-task-tools="true"]) .sv-history-dual .sv-review-cards-control{position:relative!important;overflow:visible!important}
-  :host([data-task-tools="true"]) .sv-review-cards-badge:not([hidden]){position:absolute;top:0;right:0;display:grid;place-items:center;min-width:15px;height:15px;box-sizing:border-box;padding:0 3px;border-radius:999px;background:#D6534A;color:white;border:1.5px solid #fff;font:600 9px/1 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 2px rgba(0,0,0,.08);pointer-events:none}
+  :host([data-task-tools="true"]) .sv-review-cards-badge:not([hidden]){position:absolute;top:5px;right:4px;display:grid;place-items:center;min-width:15px;height:15px;box-sizing:border-box;padding:0 3px;border-radius:999px;background:#D6534A;color:white;border:1.5px solid #fff;font:600 9px/1 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 2px rgba(0,0,0,.08);pointer-events:none}
   :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-review-cards-control{border-radius:999px!important;background:transparent!important;color:#1C1C1E!important;}
   /* No internal dividers or individually raised button surfaces. */
   :host([data-task-tools="true"]) .sv-history-dual .control::after{content:none!important;display:none!important}
@@ -147,14 +147,14 @@
    height:var(--sv-nav-capsule-cell,48px)!important;min-height:var(--sv-nav-capsule-cell,48px)!important;
   }
   :host([data-task-selecting="true"]) .sv-history-dual .control svg{
-   width:var(--sv-nav-icon-size,23px)!important;height:var(--sv-nav-icon-size,23px)!important;stroke-width:1.6!important;
+   width:20px!important;height:20px!important;stroke-width:1.6!important;
   }
   :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select{display:grid!important}
   :host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search):not(.sv-history-select){display:none!important}
   /* Selection is conveyed by the icon, not a second grey pill inside
      the already finished pearl capsule. */
   :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select[aria-pressed="true"]{background:transparent!important}
-  :host([data-task-selecting="true"]) .sv-history-select[aria-pressed="true"] svg{stroke-width:2!important}
+  :host([data-task-selecting="true"]) .sv-history-select[aria-pressed="true"] svg{stroke-width:1.6!important}
   /* All Tasks has only the standard Back in the shared header.
      Select and Select All are below the list, never over the Back. */
   :host([data-task-tools="true"][data-theme="dark"]) .sv-history-select,

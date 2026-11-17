@@ -18,6 +18,12 @@ assert.match(badge,/\.sv-dock-review-underlay-digit\{background:#D6534A;opacity:
  'The selected counter disc must match the red Tasks icon');
 assert.match(workShell,/sv-review-cards-badge:not\(\[hidden\]\)[^\n]*background:#D6534A/,
  'The header task badge must share the same red');
+assert.match(workShell,/sv-review-cards-badge:not\(\[hidden\]\)\{position:absolute;top:5px;right:4px;/,
+ 'The header badge must sit lower and closer to the icon');
+assert.match(workShell,/\.sv-history-dual \.control svg\{\s*width:20px;height:20px;stroke-width:1\.6;/,
+ 'All three header glyphs must stay small and delicate like Home actions');
+assert.match(workShell,/data-task-selecting="true"\]\) \.sv-history-dual \.control svg\{\s*width:20px!important;height:20px!important;stroke-width:1\.6!important;/,
+ 'The same compact glyph scale must survive the two-action header state');
 assert.match(taskEditor,/background:#D6534A!important;color:#FFFFFF!important/,
  'The round Save check must share the same red while keeping its white icon');
 assert.match(taskEditor,/#personalTaskSave:disabled\{\s*opacity:1!important/,
