@@ -562,7 +562,7 @@
   const favorite=topics.find(topic=>topic!=='news'&&topic!=='music');
   const choices=[
    personalAction,
-   {text:'☀️ Если захочешь, я могу устроить для тебя небольшое утреннее шоу — с рассказами и музыкой.',action:{kind:'broadcast-preferences',label:'Настроить моё утро',icon:'☀️'}},
+   {text:'Хочешь небольшое утреннее шоу с рассказами и музыкой?',action:{kind:'broadcast-preferences',label:'Настроить моё утро',icon:'☀️'}},
    favorite?{text:`✨ Я могу рассказывать о том, что тебе интересно, например: ${labelFor(favorite).toLowerCase()}.`,action:{kind:'broadcast',label:'Послушать',icon:'✨'}}:null
   ].filter(Boolean);
   const next=Number(read('seyveo.my-broadcast.hint-index.v1')||0);
