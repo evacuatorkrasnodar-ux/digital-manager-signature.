@@ -53,12 +53,19 @@
   if(line.hidden||home.hidden)return;
   const sphere=document.getElementById('orb');if(!sphere)return;
   const host=home.getBoundingClientRect(),orb=sphere.getBoundingClientRect();
+  // Measure the actual globe, not a fixed viewport midpoint. On an iPhone
+  // the reserved 44px action made the old 40px threshold place the whole
+  // suggestion below Sayvi even when the upper reading area was usable.
+  const clearance=10,minimumTop=28;
+  const availableAbove=orb.top-host.top-minimumTop-clearance;
+  line.dataset.svThoughtDensity=availableAbove<116?'compact':'regular';
   const height=Math.max(line.getBoundingClientRect().height,line.scrollHeight);
   if(!height||!orb.height)return;
-  const clearance=14,minimumTop=40;
   const above=orb.top-host.top-height-clearance;
   let top=above,placement='above';
   if(above<minimumTop){
+   // Only truly short phones use the lower gap; do not jump there because
+   // the safe top margin was a few pixels too conservative.
    // A short phone has less space above the orb. Use the gap beneath it
    // only if the entire thought fits before the weather/shortcut row.
    const weather=document.getElementById('svSayviHomeWeather');
