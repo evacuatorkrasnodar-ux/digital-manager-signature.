@@ -422,3 +422,14 @@ dialog.sv-home-favorites-editor .sv-home-favorites-auto svg{
  width:28px!important;height:28px!important;
  stroke:#090a0c!important;stroke-width:1.55!important;
 }
+
+/* Translucent SEYVEO curtain: reveal the Home orb behind the sheet. */
+dialog.sv-home-favorites-editor{
+ background:rgba(255,255,255,.85)!important;
+ -webkit-backdrop-filter:blur(9px) saturate(110%)!important;
+ backdrop-filter:blur(9px) saturate(110%)!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-shell{
+ background:transparent!important;
+ border-color:rgba(216,221,229,.55)!important;
+}
