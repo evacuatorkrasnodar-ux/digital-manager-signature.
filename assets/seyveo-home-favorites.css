@@ -194,3 +194,13 @@
 #homePage #svHomeFavorites .sv-home-add-entry .sv-home-favorite-label{
  display:none!important;
 }
+
+/* Direct SVG plus; no Card Workshop tile, circle or caption in its markup. */
+#homePage #svHomeFavorites .sv-home-add-entry{
+ min-height:50px;justify-content:flex-start;align-items:center;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#homePage #svHomeFavorites .sv-home-add-entry > .sv-home-plain-plus{
+ display:block;width:27px;height:27px;flex:none;margin-top:11.5px;
+ fill:none;stroke:#141417;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
+}
