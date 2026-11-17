@@ -124,6 +124,7 @@
    display:grid!important;position:relative;
   }
   :host([data-task-tools="true"]) .sv-review-cards-control{display:grid!important}
+  :host([data-history="true"]) .sv-review-cards-control{display:none!important}
   :host([data-task-tools="true"]) .sv-history-dual .sv-review-cards-control{position:relative!important;overflow:visible!important}
   :host([data-task-tools="true"]) .sv-review-cards-badge:not([hidden]){position:absolute;top:0;right:0;display:grid;place-items:center;min-width:15px;height:15px;box-sizing:border-box;padding:0 3px;border-radius:999px;background:#FF3B30;color:white;border:1.5px solid #fff;font:600 9px/1 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 2px rgba(0,0,0,.08);pointer-events:none}
   :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-review-cards-control{border-radius:999px!important;background:transparent!important;color:#1C1C1E!important;}
@@ -579,6 +580,8 @@
   // Other work sections retain their own navigation; no dock changes.
   nav.hidden=!visible||history;
   heading.dataset.workTabs=String(!nav.hidden);
+  heading.dataset.history=String(history);
+  reviewCards.hidden=history;
   nav.dataset.employee=String(employeeMode);
   nav.dataset.one=String(!managerPreview&&!employeeMode);
   nav.dataset.business=String(managerPreview&&!employeeMode);
