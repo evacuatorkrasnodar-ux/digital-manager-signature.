@@ -216,3 +216,40 @@
 #svReviewRoom #seyveoLivingMoment .sv-sayvi-observation img.sv-potok-symbol{
  display:block!important;width:17px!important;height:17px!important;object-fit:contain;filter:none!important;
 }
+
+/* Quiet Cinema · entering the full-page decision room.
+   Three ORIGINAL cards rise one by one from below; no clones, sheets,
+   moving header, or layout-height animation. */
+@keyframes sv-review-quick-rise{
+ from{opacity:0;transform:translate3d(0,var(--sv-review-rise,34dvh),0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+#svReviewRoom.sv-review-entering #seyveoLivingMoment .lm-field-top,
+#svReviewRoom.sv-review-entering #seyveoLivingMoment .lm-primary,
+#svReviewRoom.sv-review-entering #seyveoLivingMoment .lm-secondary > .lm-inline-item,
+#svReviewRoom.sv-review-entering #dynamic > .decision-card{
+ animation:sv-review-quick-rise 950ms cubic-bezier(.22,1,.36,1) both!important;
+ will-change:opacity,transform;
+}
+#svReviewRoom.sv-review-entering #seyveoLivingMoment .lm-field-top,
+#svReviewRoom.sv-review-entering #seyveoLivingMoment .lm-primary{
+ --sv-review-rise:min(34dvh,260px);
+ animation-delay:0ms!important;
+}
+#svReviewRoom.sv-review-entering #seyveoLivingMoment .lm-secondary > .lm-inline-item:nth-child(1){
+ --sv-review-rise:min(42dvh,320px);
+ animation-delay:190ms!important;
+}
+#svReviewRoom.sv-review-entering #seyveoLivingMoment .lm-secondary > .lm-inline-item:nth-child(2){
+ --sv-review-rise:min(50dvh,380px);
+ animation-delay:380ms!important;
+}
+#svReviewRoom.sv-review-entering #dynamic > .decision-card{
+ --sv-review-rise:min(34dvh,260px);
+}
+@media(prefers-reduced-motion:reduce){
+ #svReviewRoom.sv-review-entering #seyveoLivingMoment :is(.lm-field-top,.lm-primary,.lm-inline-item),
+ #svReviewRoom.sv-review-entering #dynamic > .decision-card{
+  animation:none!important;opacity:1!important;transform:none!important;will-change:auto;
+ }
+}
