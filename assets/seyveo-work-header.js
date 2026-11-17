@@ -126,11 +126,11 @@
     with a visible hairline rim on the pure-white header. No extra pseudo layers. */
  :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back{
   width:var(--sv-nav-single-size,50px);height:var(--sv-nav-single-size,50px);min-width:var(--sv-nav-single-size,50px);min-height:var(--sv-nav-single-size,50px);
-  border:var(--sv-nav-pearl-border,1.5px solid rgba(255,255,255,.96));border-radius:50%;
-  background:var(--sv-nav-pearl-bg,rgba(190,193,202,.10));
-  box-shadow:var(--sv-nav-pearl-shadow,0 0 0 .85px rgba(164,170,184,.22));
-  -webkit-backdrop-filter:blur(4px) saturate(100%);
-  backdrop-filter:blur(4px) saturate(100%);
+  border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));border-radius:50%;
+  background:var(--sv-card-action-neutral-bg,transparent);
+  box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16));
+  -webkit-backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
+  backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
  }
  :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back svg{
   width:var(--sv-nav-icon-size,23px);height:var(--sv-nav-icon-size,23px);stroke-width:1.6;stroke:#0B0B0D;
