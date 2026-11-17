@@ -222,6 +222,7 @@
 #svWorkShell[data-active="notes"] #notesDialog #notesList .note-open{
  box-sizing:border-box!important;
  display:flex!important;
+ flex-direction:row!important;
  flex:1 1 auto!important;
  align-items:center!important;
  justify-content:flex-start!important;
