@@ -181,3 +181,16 @@
   animation:none!important;
  }
 }
+
+/* In Home edit mode the add affordance is a naked plus, not an app tile.
+   Keep the invisible 72px touch target for comfortable use on iPhone. */
+#homePage #svHomeFavorites .sv-home-add-entry .sv-home-favorite-icon{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#homePage #svHomeFavorites .sv-home-add-entry .sv-home-favorite-icon svg{
+ width:27px;height:27px;stroke:#141417;stroke-width:1.65;
+}
+#homePage #svHomeFavorites .sv-home-add-entry .sv-home-favorite-label{
+ display:none!important;
+}
