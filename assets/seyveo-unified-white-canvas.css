@@ -26,6 +26,11 @@
 :root[data-theme="light"] body > .app {
   background-color:transparent!important;
   background-image:none!important;
+  /* A route is a full-bleed canvas, not a framed floating card. */
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  box-shadow:none!important;
 }
 
 /* Only large route canvases, never the controls or content cards inside. */
