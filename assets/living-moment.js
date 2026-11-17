@@ -1103,6 +1103,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
   updateMail();
   updateDocument();updateWork();syncDocumentTitleTap();
   cardIconize(open,'navigate');
+  // The same three actions have clear, contextual names in every old/new card.
+  const destinations={mail:'в почту',work:'в чат',contract:'в документы',
+   task:'в дела',health:'в здоровье',breath:'в заботу'};
+  const destinationLabel='Перейти '+(destinations[item.kind]||'к делу');
+  const destinationCaption=open.querySelector('.sv-card-icon-caption');
+  if(destinationCaption)destinationCaption.textContent=destinationLabel;
+  open.setAttribute('title',destinationLabel);
+  open.setAttribute('aria-label',destinationLabel);
   updateCount();
   renderSecondary();
   announceRecommendation(item);
