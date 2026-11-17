@@ -571,6 +571,7 @@ const SV_AGENDA_IDLE_TODAY_MS=12000;
 let svAgendaTodayTimer=0,svAgendaRouletteFrame=0,svAgendaRouletteToken=0;
 let svAgendaRolling=false,svAgendaIgnoreStripScrollUntil=0;
 let svAgendaPointerHeld=false,svAgendaUserInteracted=false;
+let svAgendaWasOpen=false,svAgendaOpeningUntil=0,svAgendaExplicitFocus=false;
 let svAgendaRouletteOverlay=null;
 function svAgendaCanReturnToday(){
  return !document.hidden&&!dialog.open&&!svAgendaPointerHeld&&
@@ -588,7 +589,9 @@ function svAgendaStopRoulette(){
 }
 function svAgendaQueueToday(){
  clearTimeout(svAgendaTodayTimer);
- if(!svAgendaCanReturnToday()||svAgendaRolling||svTaskSelectedDate===svTaskISO(new Date()))return;
+ // Never start the date-wheel because layout or scroll restoration changed
+ // the selection during launch. The idle return belongs to a human gesture.
+ if(!svAgendaUserInteracted||!svAgendaCanReturnToday()||svAgendaRolling||svTaskSelectedDate===svTaskISO(new Date()))return;
  svAgendaTodayTimer=setTimeout(()=>{
   if(svAgendaCanReturnToday())svAgendaReturnToday();
  },SV_AGENDA_IDLE_TODAY_MS);
@@ -872,7 +875,7 @@ window.addEventListener('seyveo:tasks-focus-date',event=>{
  if(svTaskDate(iso))svAgendaJumpToDate(iso);
 });
 function svAgendaSyncFromScroll(){
- if(!svAgendaInitiallyAligned||Date.now()<svAgendaJumpThrough||document.getElementById('svWorkShell')?.dataset.agendaScroll!=='true')return;
+ if(!svAgendaInitiallyAligned||Date.now()<svAgendaJumpThrough||Date.now()<svAgendaOpeningUntil||document.getElementById('svWorkShell')?.dataset.agendaScroll!=='true')return;
  const scrollRange=list.scrollHeight-list.clientHeight;
  if(scrollRange<35)return; // All days fit on screen: retain the explicitly chosen date.
  // A long inertial flick stays on the browser's native compositor. Only
@@ -975,7 +978,31 @@ function svAgendaRenderNav(rows){
  }
  // Native iPhone momentum permits a fast flick across multiple dates.
  // Snap always lands on a complete day rather than stopping between columns.
- let settleTimer=0,ignoreScrollUntil=0,settledIso=svTaskWindowStart;
+ let settleTimer=0,ignoreScrollUntil=0;
+ let railPointer=null,railTouch=null,railUserScrolling=false;
+ // Programmatic alignment and Safari's restored scroll position also emit
+ // scroll/scrollend. Only an actual swipe, wheel or keyboard action may
+ // change the chosen date from the rail.
+ strip.addEventListener('pointerdown',event=>{railPointer={x:event.clientX,y:event.clientY};},{passive:true});
+ strip.addEventListener('pointermove',event=>{
+  if(railPointer&&Math.abs(event.clientX-railPointer.x)>7&&
+     Math.abs(event.clientX-railPointer.x)>Math.abs(event.clientY-railPointer.y))railUserScrolling=true;
+ },{passive:true});
+ strip.addEventListener('pointerup',()=>{railPointer=null;},{passive:true});
+ strip.addEventListener('pointercancel',()=>{railPointer=null;},{passive:true});
+ strip.addEventListener('touchstart',event=>{
+  const touch=event.touches[0];railTouch=touch?{x:touch.clientX,y:touch.clientY}:null;
+ },{passive:true});
+ strip.addEventListener('touchmove',event=>{
+  const touch=event.touches[0];
+  if(railTouch&&touch&&Math.abs(touch.clientX-railTouch.x)>7&&
+     Math.abs(touch.clientX-railTouch.x)>Math.abs(touch.clientY-railTouch.y))railUserScrolling=true;
+ },{passive:true});
+ strip.addEventListener('touchend',()=>{railTouch=null;},{passive:true});
+ strip.addEventListener('wheel',()=>{railUserScrolling=true;},{passive:true});
+ strip.addEventListener('keydown',event=>{
+  if(['ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(event.key))railUserScrolling=true;
+ });
  const dayWidth=()=>track.firstElementChild?.getBoundingClientRect().width||strip.clientWidth/5.4;
  // The rail is often rendered while My Tasks is hidden. Align only once
  // its real width is known, otherwise the browser shows today minus 21 days.
@@ -995,12 +1022,13 @@ function svAgendaRenderNav(rows){
  requestAnimationFrame(alignInitial);
  const commitScroll=()=>{
   clearTimeout(settleTimer);
-  if(svAgendaRolling||Date.now()<svAgendaIgnoreStripScrollUntil||Date.now()<ignoreScrollUntil)return;
+  if(!railUserScrolling||svAgendaRolling||Date.now()<svAgendaIgnoreStripScrollUntil||Date.now()<ignoreScrollUntil)return;
   const unit=dayWidth();if(!unit)return;
   const index=Math.min(track.children.length-1,Math.max(0,Math.round(strip.scrollLeft/unit)));
   const iso=track.children[index]?.dataset.day;
-  if(!iso||iso===settledIso)return;
-  settledIso=iso;
+  railUserScrolling=false;
+  if(!iso||iso===svTaskSelectedDate)return;
+  svAgendaUserInteracted=true;
   svTaskWindowStart=iso;
   svAgendaMarkSelected(iso);
   if(!svAgendaScrollToDate(iso))render();
@@ -1014,6 +1042,7 @@ function svAgendaRenderNav(rows){
  strip.addEventListener('click',event=>{
   const day=event.target.closest('.sv-agenda-day');
   if(!day)return;
+  railUserScrolling=false;
   ignoreScrollUntil=Date.now()+350;
   clearTimeout(settleTimer);
  },true);
@@ -2020,27 +2049,45 @@ function svAgendaAlignInitial(){
  const track=strip?.querySelector('.sv-agenda-track');
  const unit=track?.firstElementChild?.getBoundingClientRect().width||0;
  if(!strip?.clientWidth||!unit)return;
- svAgendaInitiallyAligned=true;
  const today=svTaskISO(new Date());
- svTaskSelectedDate=today;svTaskWindowStart=today;
  const todayDay=track.querySelector('.sv-agenda-day[data-day="'+today+'"]');
- if(todayDay){
-  svAgendaIgnoreStripScrollUntil=Date.now()+450;
-  strip.scrollLeft=[...track.children].indexOf(todayDay)*unit;
- }
+ if(!todayDay)return;
+ svAgendaInitiallyAligned=true;
+ svTaskSelectedDate=today;svTaskWindowStart=today;
+ svAgendaIgnoreStripScrollUntil=Date.now()+800;
+ strip.scrollTo({left:[...track.children].indexOf(todayDay)*unit,behavior:'instant'});
  svAgendaMarkSelected(today);
  svAgendaAnchorCache=null;
  const anchor=svAgendaGetAnchors().find(item=>item.iso===today);
  if(anchor){
   svAgendaDockPreviousY=anchor.top;
-  list.scrollTop=anchor.top;
+  list.scrollTo({top:anchor.top,behavior:'instant'});
  }
+}
+/* Every fresh entry into My Tasks starts at today, including a PWA resume.
+   A user may then browse other dates; that browsing is never overwritten
+   during the same visit except by the deliberately requested Today action. */
+function svAgendaOpenAtToday(){
+ const open=!$('tasksPage')?.hidden&&document.documentElement.classList.contains('sv-agenda-scroll-active');
+ if(!open){svAgendaWasOpen=false;return;}
+ if(svAgendaWasOpen)return;
+ svAgendaWasOpen=true;
+ if(svAgendaExplicitFocus){svAgendaExplicitFocus=false;return;}
+ svAgendaStopRoulette();clearTimeout(svAgendaTodayTimer);
+ svAgendaUserInteracted=false;svAgendaInitiallyAligned=false;
+ svAgendaOpeningUntil=Date.now()+900;
+ svTaskSelectedDate=svTaskISO(new Date());svTaskWindowStart=svTaskSelectedDate;
+ render();
+ requestAnimationFrame(svAgendaAlignInitial);
 }
 new MutationObserver(()=>{svAgendaAnchorCache=null;})
  .observe(list,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
-if(window.ResizeObserver)new ResizeObserver(()=>{svAgendaAnchorCache=null;}).observe(list);
+if(window.ResizeObserver)new ResizeObserver(()=>{
+ svAgendaAnchorCache=null;
+ if(!svAgendaInitiallyAligned)requestAnimationFrame(svAgendaAlignInitial);
+}).observe(list);
 window.addEventListener('resize',()=>{svAgendaAnchorCache=null;if(!svAgendaInitiallyAligned)requestAnimationFrame(svAgendaAlignInitial);},{passive:true});
-document.fonts?.ready?.then(()=>{svAgendaAnchorCache=null;});
+document.fonts?.ready?.then(()=>{svAgendaAnchorCache=null;if(!svAgendaInitiallyAligned)requestAnimationFrame(svAgendaAlignInitial);});
 list.addEventListener('scroll',()=>{
  svAgendaSyncDockFromScroll();
  if(svAgendaInitiallyAligned&&!svAgendaRolling)svAgendaQueueToday();
@@ -2064,29 +2111,28 @@ window.addEventListener('pointerup',()=>{if(svAgendaPointerHeld){svAgendaPointer
 window.addEventListener('pointercancel',()=>{svAgendaPointerHeld=false;svAgendaQueueToday();},{passive:true});
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden){clearTimeout(svAgendaTodayTimer);svAgendaStopRoulette();}
- else{requestAnimationFrame(svAgendaAlignInitial);svAgendaQueueToday();}
+ else{svAgendaWasOpen=false;requestAnimationFrame(svAgendaOpenAtToday);}
 });
 dialog.addEventListener('close',svAgendaPauseDockMotion);
 new MutationObserver(()=>{
  if(!document.documentElement.classList.contains('sv-agenda-scroll-active')&&
     document.documentElement.classList.contains('sv-agenda-dock-minimized'))svAgendaPauseDockMotion();
- if(!svAgendaInitiallyAligned&&document.documentElement.classList.contains('sv-agenda-scroll-active'))
-  requestAnimationFrame(svAgendaAlignInitial);
+ requestAnimationFrame(svAgendaOpenAtToday);
 }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(svAgendaOpenAtToday));
 if(svAgendaDockMedia.addEventListener)svAgendaDockMedia.addEventListener('change',svAgendaPauseDockMotion);
 render();
-requestAnimationFrame(svAgendaAlignInitial);
+requestAnimationFrame(svAgendaOpenAtToday);
 window.addEventListener('pageshow',()=>{
- if(svAgendaUserInteracted)return;
- window.setTimeout(()=>{
-  if(!svAgendaUserInteracted&&!svAgendaInitiallyAligned)svAgendaAlignInitial();
- },100);
+ svAgendaWasOpen=false;
+ requestAnimationFrame(svAgendaOpenAtToday);
 });
 // The optional “Посмотреть в делах” action from Sayvi selects the saved day.
 try{
  const focused=sessionStorage.getItem('seyveo.sayvi.task-focus-date.v1');
  sessionStorage.removeItem('seyveo.sayvi.task-focus-date.v1');
  if(svTaskDate(focused)){
+  svAgendaExplicitFocus=true;
   svAgendaUserInteracted=true;
   requestAnimationFrame(()=>svAgendaJumpToDate(focused));
  }
