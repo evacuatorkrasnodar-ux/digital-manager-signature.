@@ -693,8 +693,19 @@
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
+ // Reveal once every deferred Work/agenda initializer has run.
+ // The route's old markup must never be painted as the first frame.
+ const finishFirstPaint=()=>{
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   document.documentElement.classList.remove('sv-work-first-paint');
+   delete document.documentElement.dataset.svWorkEntry;
+  }));
+ };
+ if(document.readyState==='loading')
+  document.addEventListener('DOMContentLoaded',finishFirstPaint,{once:true});
+ else finishFirstPaint();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:26,sync,
+  version:27,sync,
   isNotesInline:()=>true
  });
 })();
