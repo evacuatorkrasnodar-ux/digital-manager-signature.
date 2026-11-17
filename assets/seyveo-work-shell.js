@@ -165,10 +165,61 @@
   `;
   heading.shadowRoot.append(design);
  }
+ // The shared upper-right list control is one discreet menu in All Tasks:
+ // selection, action history and Recently Deleted stay reachable without
+ // adding another permanent icon to the approved two-button header.
+ const taskHistoryMenu=document.createElement('div');
+ taskHistoryMenu.id='svTaskHistoryMenu';taskHistoryMenu.hidden=true;
+ taskHistoryMenu.setAttribute('role','menu');taskHistoryMenu.setAttribute('aria-label','Действия с делами');
+ for(const [label,action] of [
+  ['Выбрать дела',()=>window.SEYVEO_TASK_INLINE?.select()],
+  ['История действий',()=>openTaskHistory('all')],
+  ['Недавно удалённые',()=>openTaskHistory('deleted')]
+ ]){
+  const item=document.createElement('button');item.type='button';item.textContent=label;
+  item.setAttribute('role','menuitem');
+  item.addEventListener('click',()=>{taskHistoryMenu.hidden=true;selectHistory.setAttribute('aria-expanded','false');action()});
+  taskHistoryMenu.append(item);
+ }
+ document.body.append(taskHistoryMenu);
+ const historyMenuStyle=document.createElement('style');
+ historyMenuStyle.textContent=`
+  #svTaskHistoryMenu[hidden]{display:none!important}
+  #svTaskHistoryMenu{position:fixed;z-index:260;width:210px;box-sizing:border-box;
+   padding:5px;border:1px solid rgba(221,224,231,.95);border-radius:17px;
+   background:rgba(250,251,253,.95);box-shadow:0 12px 33px rgba(30,38,50,.13);
+   -webkit-backdrop-filter:blur(17px) saturate(110%);backdrop-filter:blur(17px) saturate(110%)}
+  #svTaskHistoryMenu button{display:block;width:100%;min-height:44px;padding:8px 12px;
+   text-align:left;border:0;border-radius:12px;background:transparent;color:#252931;
+   font:500 13.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+  #svTaskHistoryMenu button:active{background:rgba(168,175,187,.15)}
+ `;document.head.append(historyMenuStyle);
+ const openTaskHistory=mode=>{
+  window.SEYVEO_TASK_INLINE?.close();
+  requestAnimationFrame(()=>window.SEYVEO_ACTION_HISTORY_OPEN?.(mode));
+ };
  selectHistory.addEventListener('click',event=>{
   event.stopPropagation();
-  window.SEYVEO_TASK_INLINE?.select();
+  if(!window.SEYVEO_TASK_INLINE?.current?.()){
+   window.SEYVEO_TASK_INLINE?.select();return;
+  }
+  const open=taskHistoryMenu.hidden;
+  taskHistoryMenu.hidden=!open;
+  selectHistory.setAttribute('aria-expanded',String(open));
+  if(open){
+   const rect=selectHistory.getBoundingClientRect();
+   taskHistoryMenu.style.top=Math.round(rect.bottom+7)+'px';
+   taskHistoryMenu.style.left=Math.round(Math.max(12,Math.min(innerWidth-222,rect.right-210)))+'px';
+  }
  });
+ document.addEventListener('pointerdown',event=>{
+  if(!event.composedPath().includes(selectHistory)&&!taskHistoryMenu.contains(event.target)){
+   taskHistoryMenu.hidden=true;selectHistory.setAttribute('aria-expanded','false');
+  }
+ });
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'){
+  taskHistoryMenu.hidden=true;selectHistory.setAttribute('aria-expanded','false');
+ }});
  searchTasks.addEventListener('click',event=>{
   event.stopPropagation();
   if(window.SEYVEO_TASK_INLINE?.current?.())window.SEYVEO_TASK_INLINE.toggleSearch();
@@ -433,7 +484,9 @@
   actionCapsule.hidden=!selectionVisible;
   document.documentElement.classList.toggle('sv-task-selection-active',selectionVisible);
   selectHistory.setAttribute('aria-pressed',String(selectionActive));
-  selectHistory.setAttribute('aria-label',selectionActive?'Отменить выбор дел':'Выбрать дела');
+  selectHistory.setAttribute('aria-label','Действия с делами');
+  selectHistory.setAttribute('aria-haspopup','menu');
+  selectHistory.setAttribute('aria-expanded',String(!taskHistoryMenu.hidden));
   searchTasks.setAttribute('aria-expanded',String(nested&&searchOpen));
   if(inPersonal){
    back.hidden=!nested;

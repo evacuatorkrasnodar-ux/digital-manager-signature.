@@ -6,6 +6,7 @@ const source=fs.readFileSync('assets/seyveo-work-shell.js','utf8');
 const css=fs.readFileSync('assets/seyveo-all-tasks-v2.css','utf8');
 const html=fs.readFileSync('index.html','utf8');
 const taskData=fs.readFileSync('assets/personal-tasks.js','utf8');
+const history=fs.readFileSync('assets/seyveo-action-history.mjs','utf8');
 
 assert.match(source,/toolPanel\.id='svAllTasksView'/);
 assert.match(source,/actionCapsule\.id='svTaskActionCapsule'/);
@@ -27,5 +28,9 @@ assert.match(source,/SEYVEO_PERSONAL_TASK_TOOLS\?\.removeMany/);
 assert.match(source,/SEYVEO_PERSONAL_TASK_HISTORY\?\.restore/);
 assert.match(taskData,/window\.SEYVEO_PERSONAL_TASK_TOOLS=Object\.freeze/);
 assert.match(taskData,/window\.SEYVEO_PERSONAL_TASK_HISTORY=Object\.freeze/);
+assert.match(source,/taskHistoryMenu\.id='svTaskHistoryMenu'/);
+assert.match(source,/\['Недавно удалённые',\(\)=>openTaskHistory\('deleted'\)\]/);
+assert.match(history,/window\.SEYVEO_ACTION_HISTORY_OPEN=/);
+assert.match(history,/sah-history-filters/);
 assert.match(html,/assets\/seyveo-all-tasks-v2\.css\?v=\d+/);
 console.log('PASS: All Tasks uses one standalone action capsule and preserves the original task store.');

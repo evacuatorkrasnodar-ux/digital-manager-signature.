@@ -705,6 +705,11 @@ html.sah-history-no-dock #seyveoActionHistoryPanel{
    });
   }
  };
+ window.SEYVEO_ACTION_HISTORY_OPEN=(view='all')=>{
+  historyView=['all','done','deleted'].includes(view)?view:'all';
+  if(!panel.hidden){selecting=false;chosen.clear();render();return;}
+  toggle(true);
+ };
  open.addEventListener('click',()=>toggle(true));
  back.addEventListener('click',()=>{if(selecting)leaveSelection();else toggle(false)});
  panel.addEventListener('keydown',event=>{
