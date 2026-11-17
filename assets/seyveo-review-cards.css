@@ -162,3 +162,48 @@
  #homePage #svHomeLivingLine[data-sv-presence="idle"][data-sv-space="no-room"]:not([hidden]){
  visibility:hidden!important;opacity:0!important;pointer-events:none!important;
 }
+
+/* Review reader: a date and a time belong to the same quiet metadata line.
+   Sample timestamps are visibly marked as examples, never actual arrivals. */
+#svReviewRoom .lm-inline-item .lm-inline-copy{display:flex;flex-direction:column;gap:3px;min-width:0;width:100%}
+#svReviewRoom .sv-lm-inline-heading{
+ display:flex;align-items:baseline;justify-content:space-between;
+ flex-wrap:wrap;column-gap:9px;row-gap:2px;min-width:0;width:100%;
+}
+#svReviewRoom .sv-lm-inline-heading .lm-inline-title{
+ min-width:0;color:#25282D;font-size:12.5px;font-weight:540;line-height:1.35;
+}
+#svReviewRoom .sv-lm-inline-heading .sv-lm-sample-time,
+#svReviewRoom .lm-field-top .sv-lm-event-clock{
+ display:inline-block;flex:0 0 auto;margin-left:auto;
+ color:#858B95;font:450 10.5px/1.35 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+ letter-spacing:-.012em;font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+#svReviewRoom .lm-inline-item .lm-inline-note{
+ color:#59616A;font-size:11.5px;line-height:1.4;
+}
+/* Blue is reserved for Sayvi's own observation and canonical orbit mark.
+   All regular copy keeps the dark, readable Apple-like ink. */
+#svReviewRoom #seyveoLivingMoment .lm-section-label.sv-sayvi-observation{
+ display:flex;align-items:center;gap:5px;
+ margin:10px 0 5px;color:#217FCD!important;
+ font-size:12px;font-weight:550;line-height:1.4;letter-spacing:.005em;
+ text-transform:none;
+}
+#svReviewRoom #seyveoLivingMoment .sv-sayvi-observation svg.lm-sayvi-mark{
+ color:#217FCD!important;stroke:currentColor;
+ width:17px!important;height:17px!important;min-width:17px!important;
+ max-width:17px!important;min-height:17px!important;max-height:17px!important;
+ margin:0!important;flex:0 0 17px!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-actions .sv-card-icon-button[data-sv-card-icon="sayvi"],
+#svReviewRoom #seyveoLivingMoment .lm-actions .sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-symbol,
+#svReviewRoom #seyveoLivingMoment .lm-actions .sv-card-icon-button[data-sv-card-icon="sayvi"] .sv-card-icon-caption{
+ color:#217FCD!important;
+}
+#svReviewRoom #seyveoLivingMoment .lm-document-content .lm-document-note{
+ color:#454C55!important;font-weight:425;line-height:1.5;
+}
+@media(max-width:350px){
+ #svReviewRoom .sv-lm-inline-heading .sv-lm-sample-time{font-size:10px}
+}
