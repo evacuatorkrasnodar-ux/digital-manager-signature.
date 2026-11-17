@@ -398,3 +398,77 @@ html:not([data-theme]) #calendarPage .cal-month-grid .cal-day{
   grid-auto-rows:9px!important;
  }
 }
+
+/* Week view: Apple's compact colored event strips, not expanded agenda cards.
+   Existing entry buttons and their open/edit handlers remain intact. */
+#calendarPage #calendarView[data-mode="week"] :is(.cal-day-summary,#calendarAdvice,#calendarHoliday){
+ display:none!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda{
+ display:flex!important;flex-direction:column!important;gap:3px!important;
+ margin:9px 8px 0!important;padding:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda[hidden]{
+ display:none!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ width:100%!important;min-height:23px!important;height:23px!important;
+ margin:0!important;padding:2px 7px!important;gap:5px!important;
+ border:0!important;border-radius:7px!important;
+ background:#DCEFFC!important;color:#27587A!important;
+ box-shadow:none!important;transform:none!important;overflow:hidden!important;
+ text-align:left!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-task]{
+ background:#FFF0D8!important;color:#845B21!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-space-record]{
+ background:#EAE8FC!important;color:#655499!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-note]{
+ background:#EDF0F5!important;color:#5A6474!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry::before{
+ content:""!important;display:block!important;flex:0 0 9px!important;
+ width:9px!important;height:9px!important;border-radius:50%!important;
+ background:#1EAAEE!important;border:2.5px solid rgba(255,255,255,.88)!important;
+ box-shadow:0 0 0 .6px #1EAAEE!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-task]::before{
+ background:#E9A532!important;box-shadow:0 0 0 .6px #E9A532!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-space-record]::before{
+ background:#9582DF!important;box-shadow:0 0 0 .6px #9582DF!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-note]::before{
+ background:#97A2B3!important;box-shadow:0 0 0 .6px #97A2B3!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry .cal-entry-copy{
+ order:1!important;flex:1 1 auto!important;min-width:0!important;
+ display:block!important;margin:0!important;padding:0!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry .cal-entry-copy strong{
+ display:block!important;min-width:0!important;max-width:100%!important;
+ font:600 11px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:inherit!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry :is(.cal-entry-copy small,.cal-entry-chevron){
+ display:none!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry .cal-entry-time{
+ order:2!important;flex:0 0 auto!important;min-width:0!important;
+ margin:0!important;padding:0!important;border:0!important;background:transparent!important;
+ font:500 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:inherit!important;opacity:.75!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-task] .cal-entry-time,
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-note] .cal-entry-time{
+ font-size:0!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-task] .cal-entry-time::after,
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry[data-calendar-note] .cal-entry-time::after{
+ content:"весь день"!important;font:500 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry-time i{display:none!important}
