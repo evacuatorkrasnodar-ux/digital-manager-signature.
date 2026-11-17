@@ -12,5 +12,8 @@ assert.match(js,/renderDesignCards\(\);\s*room\.hidden=false/);
 assert.match(js,/content\.querySelector\('\.sv-review-demo-list'\)\?\.remove\(\)/);
 assert.match(js,/const progress=demoCount\?/);
 assert.match(css,/\.sv-review-demo-actions button\{[\s\S]*?min-height:44px/);
+assert.match(css,/grid-template-columns:78px minmax\(0,1fr\) 78px/,'The review heading must be centered between equal slots');
+assert.match(css,/#svReviewProgress\{[^}]*white-space:nowrap/,'The training count must remain on one line');
+assert.match(css,/\.sv-review-header button\{[^}]*width:44px;height:44px/,'Review Back uses the approved round size');
 assert.doesNotMatch(js,/localStorage\.setItem|fetch\(|removeMany\(/,'Training cards must never mutate the task store');
 console.log('PASS: Three isolated review design examples with 44px actions.');
