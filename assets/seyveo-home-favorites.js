@@ -197,17 +197,33 @@ function renderItems(){
 }
 function openCustomize(){
  if(document.getElementById('svHomeFavoritesEditor'))return;
+ const before={...preference,items:preference.items.slice()};
  const dialog=document.createElement('dialog');dialog.id='svHomeFavoritesEditor';dialog.className='sv-home-favorites-editor';
+ dialog.setAttribute('aria-label','Настроить главную');
  const shell=document.createElement('div');shell.className='sv-home-favorites-editor-shell';
  const head=document.createElement('div');head.className='sv-home-favorites-editor-head';
  const title=document.createElement('strong');title.textContent='Настроить главную';
  const done=document.createElement('button');done.type='button';done.textContent='Готово';
  head.append(title,done);
  const help=document.createElement('p');help.className='sv-home-favorites-editor-help';
- const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';grid.setAttribute('role','group');grid.setAttribute('aria-label','Приложения на главной');
+ const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
+ grid.setAttribute('role','group');grid.setAttribute('aria-label','Приложения на главной');
  let selection=preference.items.slice(),smart=preference.showSmart;
+ const positionCurtain=()=>{
+  if(!dialog.open)return;
+  const row=rail.getBoundingClientRect();
+  const top=12;
+  const desired=Math.round(window.innerHeight-row.top+12);
+  const bottom=Math.min(Math.max(88,desired),Math.max(88,window.innerHeight-top-190));
+  dialog.style.setProperty('--sv-home-editor-bottom',bottom+'px');
+ };
+ const preview=()=>{
+  preference={...preference,items:selection.slice(),showSmart:smart,custom:true};
+  renderItems();updateCount();show();
+  requestAnimationFrame(positionCurtain);
+ };
  const redraw=()=>{
-  help.textContent='Выбрано '+(selection.length+(smart?1:0))+' из '+MAX_COUNT;
+  help.textContent='Выбрано '+(selection.length+(smart?1:0))+' из '+MAX_COUNT+' · меняется сразу';
   grid.replaceChildren();
   const options=[{id:'smart',name:'Умная кнопка'},...apps];
   for(const app of options){
@@ -216,28 +232,38 @@ function openCustomize(){
    b.setAttribute('aria-pressed',String(chosen));
    b.innerHTML=app.id==='smart'?'<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>':icon(app.id);
    const t=document.createElement('span');t.textContent=app.name;
-   const number=document.createElement('small');number.textContent=chosen?'✓':'';
-   b.append(t,number);
+   const mark=document.createElement('small');mark.textContent=chosen?'✓':'';
+   b.append(t,mark);
    b.addEventListener('click',()=>{
     if(app.id==='smart'){
      if(smart)smart=false;else if(selection.length<MAX_COUNT)smart=true;
     }else if(chosen)selection=selection.filter(x=>x!==app.id);
     else if(selection.length+(smart?1:0)<MAX_COUNT)selection.push(app.id);
-    redraw();
-   });grid.append(b);
+    redraw();preview();
+   });
+   grid.append(b);
   }
  };
  redraw();shell.append(head,help,grid);dialog.append(shell);document.body.append(dialog);
- function close(){dialog.close();dialog.remove();setTimeout(()=>{suppressClick=false;show()},60)}
- done.addEventListener('click',()=>{
-  preference={...preference,items:selection,showSmart:smart,custom:true};
-  save(STORAGE,preference);
-  if(totalSlots()===0)editing=false;
-  renderItems();updateCount();close();
- });
- dialog.addEventListener('cancel',e=>{e.preventDefault();close()});
- dialog.addEventListener('click',e=>{if(e.target===dialog)close()});
- dialog.showModal();
+ let closed=false;
+ function close(saveChanges){
+  if(closed)return;closed=true;
+  window.removeEventListener('resize',positionCurtain);
+  if(saveChanges){
+   save(STORAGE,preference);
+   editing=false;
+  }else{
+   preference=before;
+  }
+  dialog.close();dialog.remove();
+  renderItems();updateCount();show();
+  suppressClick=false;
+ }
+ done.addEventListener('click',()=>close(true));
+ dialog.addEventListener('cancel',e=>{e.preventDefault();close(false)});
+ dialog.show();
+ window.addEventListener('resize',positionCurtain);
+ show();requestAnimationFrame(positionCurtain);
 }
 let backgroundTimer=0,backgroundPoint=null;
 home.addEventListener('pointerdown',e=>{
@@ -254,7 +280,7 @@ for(const type of ['pointerup','pointercancel','pointerleave']){
  home.addEventListener(type,()=>{clearTimeout(backgroundTimer);backgroundPoint=null});
 }
 home.addEventListener('click',e=>{
- if(!editing||e.target.closest('#svHomeFavorites'))return;
+ if(!editing||document.getElementById('svHomeFavoritesEditor')||e.target.closest('#svHomeFavorites'))return;
  e.preventDefault();e.stopImmediatePropagation();
  if(Date.now()>=ignoreOutsideUntil)exitEdit();
 },true);
@@ -281,7 +307,7 @@ const show=()=>{
  !root.classList.contains('sv-home-empty-arriving')&&
  !root.classList.contains('sv-home-empty-sphere-leaving')&&
  !root.classList.contains('sv-review-open')&&
- !document.querySelector('dialog[open]')&&
+ !document.querySelector('dialog[open]:not(#svHomeFavoritesEditor)')&&
  !(document.getElementById('svSmartStartHome')?.hidden===false);
  if(!visible&&editing&&!document.querySelector('dialog[open]')){
   editing=false;syncEditControls();renderItems();
