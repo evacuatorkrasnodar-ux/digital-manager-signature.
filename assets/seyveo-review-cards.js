@@ -26,10 +26,12 @@
 
  const room=document.createElement('section');
  room.id='svReviewRoom';room.className='sv-review-room';room.hidden=true;
- room.setAttribute('role','dialog');room.setAttribute('aria-modal','true');room.setAttribute('aria-label','Разобрать дела');
- room.innerHTML='<header class="sv-review-header"><button type="button" id="svReviewBack" aria-label="Назад на главную"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h2>Разобрать дела</h2><span id="svReviewProgress"></span></header><div class="sv-review-content" id="svReviewContent"></div>';
+ room.setAttribute('role','main');room.setAttribute('aria-label','Разобрать дела');
+ room.innerHTML='<header class="sv-review-header"><button type="button" id="svReviewBack" aria-label="Вернуться назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h2>Разобрать дела</h2><span id="svReviewProgress"></span></header><div class="sv-review-content" id="svReviewContent"></div>';
  document.body.append(room);
  const content=room.querySelector('#svReviewContent');
+ const backgroundApp=document.querySelector('body > .app');
+ let wasAppInert=false,wasDockInert=false;
  let open=false;
  let lastCount=-1,returnFocus=null,emptyExitTimer=0;
  function sources(){return ids.map(id=>document.getElementById(id)).filter(Boolean)}
@@ -90,6 +92,8 @@
   moveIn(document.querySelector('.sv-sayvi-handoff-today'));
   room.hidden=false;
   document.documentElement.classList.add('sv-review-open');
+  if(backgroundApp){wasAppInert=backgroundApp.inert;backgroundApp.inert=true}
+  if(dock){wasDockInert=dock.inert;dock.inert=true}
   update();
   room.querySelector('#svReviewBack').focus({preventScroll:true});
  }
@@ -103,6 +107,8 @@
   });
   original.clear();
   document.documentElement.classList.remove('sv-review-open');
+  if(backgroundApp)backgroundApp.inert=wasAppInert;
+  if(dock)dock.inert=wasDockInert;
   room.hidden=true;
   window.dispatchEvent(new Event('seyveo:review-closed'));
   update();
