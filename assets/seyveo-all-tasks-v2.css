@@ -87,21 +87,26 @@ html.sv-task-selection-active #svAllTasksView .sv-tool-results{padding-bottom:76
  position:fixed;z-index:110;
  left:50%;bottom:max(12px,env(safe-area-inset-bottom,0px));
  transform:translateX(-50%);
- grid-template-columns:minmax(0,1.28fr) minmax(0,.82fr) minmax(0,.82fr) minmax(0,.76fr);
- gap:2px;width:min(350px,calc(100% - 28px));max-width:350px;height:56px;min-height:56px;padding:4px;
- border:1.6px solid rgba(255,255,255,.96);border-radius:999px;
- background:rgba(190,193,202,.24);
- box-shadow:0 0 0 .7px rgba(164,170,184,.28),inset 0 1px 1px rgba(255,255,255,.85),0 3px 13px rgba(30,39,50,.055);
- -webkit-backdrop-filter:blur(16px) saturate(108%);backdrop-filter:blur(16px) saturate(108%);
+ grid-template-columns:minmax(0,1.30fr) minmax(0,.95fr) minmax(0,.85fr) minmax(0,.85fr);
+ gap:2px;width:min(312px,calc(100% - 30px));max-width:312px;height:54px;min-height:54px;padding:4px;
+ border:1px solid rgba(155,166,181,.34);border-radius:999px;
+ background:rgba(190,193,202,.10);
+ box-shadow:0 0 0 .45px rgba(164,170,184,.16),
+  inset 0 1px 1px rgba(75,82,96,.055),
+  inset 0 -1px 0 rgba(255,255,255,.18),
+  inset .6px 0 .7px rgba(255,255,255,.16),
+  inset -.6px 0 .8px rgba(75,82,96,.055),
+  0 1px 2px rgba(82,88,103,.045);
+ -webkit-backdrop-filter:blur(4px) saturate(100%);backdrop-filter:blur(4px) saturate(100%);
 }
 #svTaskActionCapsule button{
  appearance:none;-webkit-appearance:none;display:grid;place-items:center;
- width:100%;height:46px;min-width:0;margin:0;padding:0 2px;
+ width:100%;height:44px;min-width:0;margin:0;padding:0 2px;
  border:0;border-radius:999px;background:transparent;box-shadow:none;
- color:#202329;font:550 12.4px/1.15 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
+ color:#202329;font:550 12.2px/1.15 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif;
  white-space:nowrap;cursor:pointer;
 }
-#svTaskActionCapsule .sv-task-all{background:rgba(255,255,255,.78)}
+#svTaskActionCapsule .sv-task-all{background:rgba(255,255,255,.74)}
 #svTaskActionCapsule .sv-task-count{display:grid;place-items:center;min-width:0;color:#707782;font-size:11.8px;white-space:nowrap}
 #svTaskActionCapsule .sv-task-count[data-has-selection="true"]{color:#3769A9;font-weight:570}
 #svTaskActionCapsule .sv-task-delete{color:#B34750}
