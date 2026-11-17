@@ -90,10 +90,10 @@
    grid-column:3;grid-row:1;
    justify-self:end;align-self:center;
    box-sizing:border-box;display:flex;align-items:center;justify-content:center;
-   gap:0;width:130px;height:42px;padding:0 2px;
-   border:1px solid rgba(155,166,181,.34);
+   gap:0;width:var(--sv-nav-triple-width,154px);height:var(--sv-nav-capsule-height,50px);padding:0 4px;
+   border:var(--sv-nav-pearl-border,1px solid rgba(155,166,181,.34));
    border-radius:999px;
-   background:rgba(190,193,202,.10);
+   background:var(--sv-nav-pearl-bg,rgba(190,193,202,.10));
    box-shadow:0 0 0 .45px rgba(164,170,184,.16),
     inset 0 1px 1px rgba(75,82,96,.055),
     inset 0 -1px 0 rgba(255,255,255,.18),
@@ -104,17 +104,17 @@
    backdrop-filter:blur(4px) saturate(100%);
   }
   :host([data-task-tools="true"]) .sv-history-dual .control{
-   display:grid!important;flex:0 0 42px!important;
-   width:42px!important;height:40px!important;min-width:42px!important;
-   min-height:40px!important;margin:0!important;padding:0!important;
+   display:grid!important;flex:0 0 var(--sv-nav-capsule-cell,48px)!important;
+   width:var(--sv-nav-capsule-cell,48px)!important;height:var(--sv-nav-capsule-cell,48px)!important;min-width:var(--sv-nav-capsule-cell,48px)!important;
+   min-height:var(--sv-nav-capsule-cell,48px)!important;margin:0!important;padding:0!important;
    border:0!important;border-radius:999px!important;
    background:transparent!important;box-shadow:none!important;
    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
    color:var(--sv-header-icon-ink,#0B0B0D)!important;
   }
-  /* The landing calendar needs just History and Add. A third, hidden
+  /* The landing calendar shows three controls; the fourth, hidden
      Select control previously inherited display:grid!important above and
-     overflowed the 88px capsule, clipping Add at the right screen edge. */
+     overflowed the capsule, clipping Add at the right screen edge. */
   :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-history-select{
    display:none!important;
   }
@@ -123,7 +123,7 @@
    fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
   }
   :host([data-task-tools="true"]) .sv-history-dual .control svg{
-   width:21px;height:21px;stroke-width:1.7;
+   width:var(--sv-nav-icon-size,23px);height:var(--sv-nav-icon-size,23px);stroke-width:1.6;
   }
   :host([data-task-tools="true"]) .sv-history-search{
    display:grid!important;position:relative;
@@ -144,14 +144,14 @@
   /* SEYVEO dimensions: Home round 50×50, paired capsule 104×50, main dock 60px.
      Only the two-action All Tasks header uses this compact paired size. */
   :host([data-task-selecting="true"]) .sv-history-dual{
-   display:flex!important;width:104px!important;height:50px!important;padding:0 3px!important;
+   display:flex!important;width:var(--sv-nav-double-width,104px)!important;height:var(--sv-nav-capsule-height,50px)!important;padding:0 3px!important;
   }
   :host([data-task-selecting="true"]) .sv-history-dual .control{
-   flex:0 0 48px!important;width:48px!important;min-width:48px!important;
-   height:48px!important;min-height:48px!important;
+   flex:0 0 var(--sv-nav-capsule-cell,48px)!important;width:var(--sv-nav-capsule-cell,48px)!important;min-width:var(--sv-nav-capsule-cell,48px)!important;
+   height:var(--sv-nav-capsule-cell,48px)!important;min-height:var(--sv-nav-capsule-cell,48px)!important;
   }
   :host([data-task-selecting="true"]) .sv-history-dual .control svg{
-   width:23px!important;height:23px!important;stroke-width:1.6!important;
+   width:var(--sv-nav-icon-size,23px)!important;height:var(--sv-nav-icon-size,23px)!important;stroke-width:1.6!important;
   }
   :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select{display:grid!important}
   :host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search):not(.sv-history-select){display:none!important}
