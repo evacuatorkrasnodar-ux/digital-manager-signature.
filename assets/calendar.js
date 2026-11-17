@@ -513,7 +513,7 @@ function render(){
   :weekStart.getDate()+' '+shortMonth(weekStart)+' – '+weekEnd.getDate()+' '+shortMonth(weekEnd);
  $('calendarPeriodTitle').textContent=mode==='year'?String(focus.getFullYear()):mode==='month'?niceFirst(fmtMonth.format(focus).replace(/\s*г\.$/u,'')):
   mode==='week'?weekTitle:mode==='day'?niceFirst(fmtShort.format(focus)):'Сроки';
- $('calendarPeriodTitle').title=mode==='week'?fmtLong.format(weekStart)+' — '+fmtLong.format(weekEnd):'';
+ $('calendarPeriodTitle').title=mode==='week'?(fmtLong.format(weekStart)+' — '+fmtLong.format(weekEnd)).replace(/\s*г[.]/gu,''):'';
  if(deadline){renderDeadlines();renderAdvice();return}
  if(mode==='month')renderMonth();
  if(mode==='week')renderWeek();
