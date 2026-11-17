@@ -424,8 +424,8 @@ html body #calendarPage#calendarPage[data-apple-layout="compact"] .cal-month-gri
 }
 
 /* In the yearly overview Today is always available above our 60px dock. */
-#calendarPage .sv-cal-year-today[hidden]{display:none!important}
-#calendarPage .sv-cal-year-today:not([hidden]){
+body > #svCalYearToday[hidden]{display:none!important}
+body > #svCalYearToday:not([hidden]){
  position:fixed;z-index:950;left:max(20px,env(safe-area-inset-left,0px));
  bottom:calc(85px + env(safe-area-inset-bottom,0px));
  display:inline-flex;align-items:center;justify-content:center;
@@ -437,7 +437,7 @@ html body #calendarPage#calendarPage[data-apple-layout="compact"] .cal-month-gri
  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
  cursor:pointer;
 }
-:root[data-theme="dark"] #calendarPage .sv-cal-year-today:not([hidden]){
+:root[data-theme="dark"] body > #svCalYearToday:not([hidden]){
  color:#F7F7FB;background:rgba(59,60,65,.89);border-color:rgba(255,255,255,.18);
 }
-#calendarPage .sv-cal-year-today:focus-visible{outline:2px solid #4D8AD3;outline-offset:3px}
+body > #svCalYearToday:focus-visible{outline:2px solid #4D8AD3;outline-offset:3px}
