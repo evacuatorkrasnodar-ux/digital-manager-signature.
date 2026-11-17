@@ -94,12 +94,50 @@
       else cluster.insertAdjacentElement('afterend',button);
       let current=null;
       let forecastUnavailable=false;
+      // Weather sits between the painted globe and the bottom shortcut rail.
+      // Coordinates are measured in the actual page, then converted to the
+      // positioned stage. A raw 50dvh offset previously pushed this element
+      // behind shortcuts or the dock on some iPhone/Safari layouts.
+      let placeFrame=0;
+      const positionHomeWeather=()=>{
+        placeFrame=0;
+        if(button.hidden||home.hidden||
+           !document.documentElement.classList.contains('sv-home-empty-sphere'))return;
+        const orb=document.getElementById('orb');
+        const stage=home.querySelector('#stage');
+        if(!orb||!stage)return;
+        const stageBox=stage.getBoundingClientRect();
+        const sphereBox=orb.getBoundingClientRect();
+        const dockBox=document.querySelector('body > footer.dock.sv-shared-dock')?.getBoundingClientRect();
+        const favorites=document.getElementById('svHomeFavorites');
+        const railBox=favorites&&!favorites.hidden?favorites.getBoundingClientRect():null;
+        const rowHeight=Math.max(30,button.getBoundingClientRect().height||35);
+        const railHeight=Math.max(64,railBox?.height||0);
+        const dockTop=dockBox?.top||window.innerHeight-64;
+        // 24px before shortcuts and 32px before the dock, as approved.
+        const beforeShortcuts=dockTop-32-railHeight-24-rowHeight;
+        const afterSphere=sphereBox.bottom+17;
+        const absoluteTop=Math.max(afterSphere,beforeShortcuts);
+        const relativeTop=Math.round(absoluteTop-stageBox.top)+'px';
+        if(button.style.getPropertyValue('--sv-home-weather-top')!==relativeTop)
+          button.style.setProperty('--sv-home-weather-top',relativeTop);
+      };
+      const schedulePlace=()=>{
+        if(placeFrame)cancelAnimationFrame(placeFrame);
+        placeFrame=requestAnimationFrame(positionHomeWeather);
+      };
+      window.addEventListener('resize',schedulePlace,{passive:true});
+      const resizeObserver=new ResizeObserver(schedulePlace);
+      resizeObserver.observe(button);
+      const homeOrb=document.getElementById('orb');
+      if(homeOrb)resizeObserver.observe(homeOrb);
       const sync=()=>{
         current=getBrief();
         const today=current?.days[0];
         // The Home weather row must not vanish when the feed is loading or
         // temporarily offline. Never invent temperatures for this fallback.
         button.hidden=false;
+        schedulePlace();
         if(!today){
           const city=window.SAYVI_WEATHER?.getLocation?.()?.name||'Погода';
           mark.dataset.weatherKind='cloud';
@@ -138,6 +176,7 @@
         document.addEventListener('DOMContentLoaded',sync,{once:true});
       window.addEventListener('load',sync,{once:true});
       window.addEventListener('seyveo:route-changed',sync);
+      window.addEventListener('seyveo:home-sayvi-arrived',schedulePlace);
       document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
       button.addEventListener('click',()=>{
         current=getBrief();
