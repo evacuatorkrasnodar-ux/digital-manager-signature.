@@ -1111,3 +1111,6 @@ html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu:not([hidd
  overscroll-behavior:contain!important;scrollbar-width:none!important;
 }
 #calendarCreateMenu::-webkit-scrollbar{display:none!important}
+
+/* :is() in the base month rule carries an ID specificity; explicitly restore the selected-day heading in List. */
+html body #calendarPage #calendarView#calendarView[data-mode="month"][data-month-layout="list"] .cal-day-summary{display:flex!important}
