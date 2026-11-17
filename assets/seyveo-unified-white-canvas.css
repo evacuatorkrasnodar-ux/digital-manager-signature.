@@ -66,5 +66,10 @@
   background-color:var(--sv-unified-white-canvas)!important;
   background-image:none!important;
 }
+/* My World is the Home canvas, without the older mint spotlight on body. */
+:root[data-theme="light"].sv-space-active:has(#lifePage:not([hidden])) body {
+  background:#FFFFFF!important;
+  background-image:none!important;
+}
 /* The Health page is the source of truth; do not override its internal
  * surfaces, status colors, scrolling content or approved translucent dock. */

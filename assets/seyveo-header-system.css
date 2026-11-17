@@ -138,6 +138,27 @@ html[data-theme="light"] body :is(#lifePage,#picturePage,#managePage,#sayviSurfa
  width:var(--sv-header-slot)!important;height:var(--sv-header-slot)!important;
  grid-column:3!important;grid-row:1!important;
 }
+/* My World uses the clean Home canvas and our canonical round Back control.
+   Keep the same single header row and original button/navigation handler. */
+html[data-theme="light"].sv-space-active body #lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar{
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+}
+html[data-theme="light"].sv-space-active body #lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar > button#lifeBack.life-back{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;
+ height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;
+ padding:0!important;border:var(--sv-header-circle-border)!important;
+ border-radius:50%!important;background:var(--sv-header-circle)!important;
+ background-image:none!important;color:var(--sv-header-icon-ink)!important;
+ box-shadow:var(--sv-header-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-header-circle-filter)!important;
+ backdrop-filter:var(--sv-header-circle-filter)!important;
+}
+html[data-theme="light"].sv-space-active body #lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar > button#lifeBack.life-back svg{
+ width:var(--sv-header-back-icon)!important;height:var(--sv-header-back-icon)!important;
+ stroke-width:var(--sv-header-back-weight)!important;
+}
 /* The Documents/Mail titlebar has older 50px rules. Correct its existing
    header without creating a second top bar, and preserve its search action. */
 html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] .sv-deep-top{
