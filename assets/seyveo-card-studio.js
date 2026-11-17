@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Утверждённый эталон SEYVEO для всех карточек: в белой теме три круглые кнопки 50×50 с прозрачным стеклом без серой заливки, матовостью 12 px и нежным перламутровым ободком 0,7 px (белый 28%) плюс внешним серебряным контуром 0,45 px (16%). Сэйви — знак «Поток», Исправить — карандаш, Перейти — стрелка. В тёмной теме пока сохраняется прежний графит. Подписей на кнопках нет, VoiceOver называет действия. После нажатия на Сэйви остаются только две кнопки: самолётик «Отправить» и стрелка «Назад». Отправка требует действия пользователя. Свайп листает очередь, удержание открывает управление карточкой.';
+policyGuide.textContent='Эталон SEYVEO · «Разобрать дела» (17.11): белый цельный фон, компактная категория и дата события, тонкая контурная иконка, читаемый текст и три понятных действия: «Сэйви поможет», «Исправить самому», «Перейти в нужный раздел». Сэйви обозначена голубым знаком «Поток». Редактор «Ваш вариант» — матовое перламутровое серебро нашего дока, без зелёной заливки. Нажатие на Сэйви открывает подготовленное предложение и требует подтверждения человека. Все 16 типов, старые и будущие, наследуют этот договор интерфейса. Тёмная тема остаётся графитовой.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
@@ -70,8 +70,8 @@ function renderGallery(){
   const roles=(view?.actions||[]).map(action=>action.role);
   const required=['sayvi','edit','navigate'];
   const sayviStandard=engine.cardPolicy.sayviButtonStandard;
-  if(!sayviStandard||sayviStandard.touchPx!==50||sayviStandard.ringPx!==.7||
-     sayviStandard.outerRingPx!==.45||sayviStandard.mark!=='potok'||sayviStandard.fill!=='clear-pearl'){
+  if(!sayviStandard||sayviStandard.touchPx!==44||sayviStandard.shape!=='inline'||
+     sayviStandard.mark!=='potok'||sayviStandard.ink!=='#217FCD'){
    errors.push(event[0]+' · отклонение от утверждённого стандарта Сэйви');
   }
   const same=(actual,expected)=>actual.length===expected.length&&
@@ -101,7 +101,7 @@ function renderGallery(){
     return;
    }
    if(note)note.textContent=id==='confirm-preview'?'Финальное подтверждение показано · в демо реальной отправки нет.':
-      id==='sayvi'?'Предложение Сэйви открыто для чтения: отправьте или вернитесь назад.':
+      id==='sayvi'?'Сэйви подготовила предложение. Для завершения проверьте и подтвердите.':
       id==='edit'?'Открыт ручной редактор. После правки требуется отдельное подтверждение.':
       id==='navigate'?'Запрошен переход: Мастерская не выполняет настоящую навигацию.':'Только демонстрация.';
   }});
@@ -109,7 +109,12 @@ function renderGallery(){
   const buttons=[...surface.querySelectorAll('.sv-card-actions [data-card-action]')];
   if(!same(buttons.map(b=>b.dataset.cardAction),required)||
      !same(buttons.map(b=>b.dataset.svCardIcon),required)||
-     buttons.some(b=>!b.querySelector('svg.sv-card-symbol')||!b.getAttribute('aria-label'))){
+     buttons.some(b=>!b.querySelector('.sv-card-symbol')||!b.getAttribute('aria-label'))||
+     !buttons[0]?.querySelector('img.sv-potok-symbol')||
+     !buttons[1]?.textContent.includes('Исправить самому')||
+     !buttons[2]?.textContent.includes('Перейти')||
+     !surface.querySelector('.sv-card-category')||
+     !surface.querySelector('.sv-card-moment')){
    errors.push(event[0]+' · значки или доступность отличаются от эталона');
   }
   const label=document.createElement('p');label.className='scs-gallery-name';
@@ -120,7 +125,7 @@ function renderGallery(){
  }
  policyAudit.textContent=errors.length||tested!==entries.length
   ?'Проверка стандарта: '+(errors.join('; ')||'не все зарегистрированные типы отображены')
-  :'Стандарт проверен: '+tested+' типов · белая тема: три круга 50×50 без серой заливки, «Поток», кольцо 0,7 px · тёмная тема сохранена';
+  :'Стандарт проверен: '+tested+' типов · плоские карточки, голубой «Поток», 44px цели, понятные подписи и матовое серебро поля · тёмная тема сохранена';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
@@ -167,7 +172,7 @@ function render(){
  phone.className='scs-phone';phone.dataset.previewTheme=previewTheme;
  phone.setAttribute('aria-label','Карточка на экране iPhone, '+(previewTheme==='light'?'светлая':'тёмная')+' тема');
  const phoneTitle=document.createElement('p');
- phoneTitle.className='scs-phone-label';phoneTitle.textContent='SEYVEO · СЭЙВИ';
+ phoneTitle.className='scs-phone-label';phoneTitle.textContent='РАЗОБРАТЬ ДЕЛА · ЭТАЛОН';
  phone.append(phoneTitle);preview.append(phone);
  if(card){
   const surface=engine.renderCard(card,{onAction:id=>{
