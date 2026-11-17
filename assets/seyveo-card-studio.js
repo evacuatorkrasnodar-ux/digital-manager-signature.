@@ -159,7 +159,7 @@ function render(){
  preview.replaceChildren();
  const toolbar=document.createElement('div');
  toolbar.className='scs-preview-toolbar';
- const caption=document.createElement('strong');caption.textContent='Эталон SEYVEO · Silver Flat · iPhone';
+ const caption=document.createElement('strong');caption.textContent='Эталон «Разобрать дела» · iPhone';
  const toggles=document.createElement('div');toggles.className='scs-theme-switch';toggles.setAttribute('role','group');toggles.setAttribute('aria-label','Тема эталонной карточки');
  for(const [theme,label] of [['dark','Black Velvet'],['light','Белая тема']]){
   const choice=document.createElement('button');choice.type='button';choice.textContent=label;
