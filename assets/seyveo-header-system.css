@@ -12,11 +12,12 @@
  --sv-nav-double-width:104px;
  --sv-nav-triple-width:154px;
  --sv-nav-icon-size:23px;
- /* White pearl rim from Home: a fine outer shadow supplies contrast on white. */
- --sv-nav-pearl-border:1.5px solid rgba(255,255,255,.96);
- --sv-nav-pearl-bg:rgba(190,193,202,.10);
+ /* Exact Home action finish: transparent body, hairline white rim.
+    Keep the tiny inset reflections; never build a second grey outline. */
+ --sv-nav-pearl-border:.7px solid rgba(255,255,255,.28);
+ --sv-nav-pearl-bg:transparent;
  --sv-nav-pearl-shadow:
-   0 0 0 .85px rgba(164,170,184,.22),
+   0 0 0 .45px rgba(164,170,184,.16),
    inset 0 1px 1px rgba(75,82,96,.055),
    inset 0 -1px 0 rgba(255,255,255,.18),
    inset .6px 0 .7px rgba(255,255,255,.16),
@@ -36,10 +37,10 @@
  --sv-header-surface:#F2F1F6;
  --sv-header-ink:#1C1C1E;
  --sv-header-icon-ink:#0B0B0D;
- --sv-header-circle:rgba(190,193,202,.43);
- --sv-header-circle-border:1.75px solid rgba(255,255,255,.94);
+ --sv-header-circle:transparent;
+ --sv-header-circle-border:.7px solid rgba(255,255,255,.28);
  --sv-header-circle-shadow:
-    0 0 0 .7px rgba(164,170,184,.30),
+    0 0 0 .45px rgba(164,170,184,.16),
     inset 0 1px 1px rgba(75,82,96,.055),
     inset 0 -1px 0 rgba(255,255,255,.18),
     inset .6px 0 .7px rgba(255,255,255,.16),
