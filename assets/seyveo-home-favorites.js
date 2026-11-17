@@ -289,19 +289,25 @@ function place(){
  if(rail.hidden)return;
  rail.style.removeProperty('top');
  const weather=document.getElementById('svSayviHomeWeather');
- if(!weather||weather.hidden||getComputedStyle(weather).display==='none'||getComputedStyle(weather).visibility==='hidden')return;
- const w=weather.getBoundingClientRect(),r=rail.getBoundingClientRect();
- if(!w.height||!r.height)return;
+ const r=rail.getBoundingClientRect();
+ if(!r.height)return;
  const dock=document.getElementById('navHome')?.getBoundingClientRect();
- // Protect actual finger-sized hit rectangles, not only visible glyphs.
- // Keep 24px between weather and shortcuts and at least 32px above the dock.
  const maximum=(dock?.top||window.innerHeight-64)-r.height-32;
- const wanted=w.bottom+24;
+ let wanted=null;
+ if(weather&&!weather.hidden&&getComputedStyle(weather).display!=='none'&&getComputedStyle(weather).visibility!=='hidden'){
+  const w=weather.getBoundingClientRect();if(w.height)wanted=w.bottom+24;
+ }
+ // During customization keep the preview visible even if the sphere enters its dock.
+ if(wanted===null&&document.getElementById('svHomeFavoritesEditor')?.open)
+  wanted=(dock?.top||window.innerHeight-64)-r.height-64;
+ if(wanted===null)return;
  const next=Math.min(wanted,maximum);
  rail.style.top=Math.round(next-stage.getBoundingClientRect().top)+'px';
 }
 const show=()=>{
- const visible=!home.hidden&&!document.hidden&&(!location.hash||location.hash==='#home')&&
+ const curtainOpen=!!document.getElementById('svHomeFavoritesEditor')?.open;
+ const homeUsable=!home.hidden&&!document.hidden&&(!location.hash||location.hash==='#home');
+ const visible=curtainOpen?homeUsable:homeUsable&&
  !root.classList.contains('seyveo-conversation')&&
  root.classList.contains('sv-home-empty-arrived')&&
  !root.classList.contains('sv-home-empty-arriving')&&
