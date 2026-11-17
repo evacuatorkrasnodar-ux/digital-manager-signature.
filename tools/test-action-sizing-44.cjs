@@ -33,10 +33,10 @@ assert.match(home,/\.lm-polymer\.sv-card-icon-button:is\([\s\S]*?flex:0 0 var\(-
 assert.match(cards,/:root\[data-theme="light"\],[\s\S]*?--sv-card-icon-touch:var\(--sv-action-circle-size,44px\)/,
  'Card Studio and live Home actions must share 44px');
 assert.match(editor,/#personalTaskSave\{[\s\S]*?width:var\(--sv-action-circle-size,44px\)!important/);
-assert.match(editor,/\.sv-new-task-header\{[\s\S]*?grid-template-rows:44px!important;align-content:start!important;[\s\S]*?height:62px!important;min-height:62px!important/,
+assert.match(editor,/\.sv-new-task-header\{[\s\S]*?grid-template-rows:44px!important;align-content:start!important;[\s\S]*?height:calc\(62px \+ var\(--sv-task-top-inset\)\)!important;/,
  'New Task header must use the same 44px action row as Work');
-assert.match(editor,/--sv-task-top-inset:env\(safe-area-inset-top,0px\)/,
- 'New Task must not add an artificial top inset on phones');
+assert.match(editor,/--sv-task-top-inset:calc\(16px \+ env\(safe-area-inset-top,0px\)\)/,
+ 'New Task must align to the regular 16px phone page gutter');
 assert.doesNotMatch(editor,/--sv-task-top-inset:max\(22px/,
  'The former 22px offset must stay removed');
 assert.match(health,/sv-health-header-add:not\(\[hidden\]\)\{[\s\S]*?width:var\(--sv-action-circle-size,44px\)!important/);
@@ -44,7 +44,7 @@ assert.match(favorites,/sv-home-favorite-icon\{\s*position:relative;display:grid
 assert.match(generic,/\.sv-header-material-circle\{\s*box-sizing:border-box!important;\s*width:var\(--sv-action-circle-size,44px\)!important/);
 for(const [name,version] of Object.entries({
  'seyveo-header-system.css':15,'seyveo-work-header.js':34,'seyveo-work-shell.js':98,
- 'seyveo-home-work-actions-flat.css':71,'seyveo-task-editor-v3.css':55,
+ 'seyveo-home-work-actions-flat.css':71,'seyveo-task-editor-v3.css':56,
  'seyveo-home-favorites.css':34,'seyveo-back-silver-flat.css':7,'seyveo-health-graphite-flat.css':82,
  'seyveo-card-system.css':36
 }))assert.ok(html.includes(`${name}?v=${version}`),`${name} needs a fresh asset version`);

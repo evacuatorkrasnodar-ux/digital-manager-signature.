@@ -8,6 +8,8 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-shared-dock{
  display:none!important;visibility:hidden!important;pointer-events:none!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3{
+ /* Match the page's own top safe-area gutter before the 44px header row. */
+ --sv-task-top-inset:calc(24px + env(safe-area-inset-top,0px));
  --sv-task-action-fill:var(--sv-card-action-neutral-bg,transparent);
  --sv-task-action-rim:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));
  --sv-task-action-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16));
@@ -45,8 +47,9 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header{
  box-sizing:border-box!important;flex:0 0 auto!important;display:grid!important;
  grid-template-columns:60px minmax(0,1fr) 60px!important;align-items:center!important;
  grid-template-rows:44px!important;align-content:start!important;
- height:62px!important;min-height:62px!important;margin:0!important;
- padding:6px 13px 0!important;
+ height:calc(62px + var(--sv-task-top-inset))!important;
+ min-height:calc(62px + var(--sv-task-top-inset))!important;margin:0!important;
+ padding:calc(6px + var(--sv-task-top-inset)) 13px 0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header h2{
@@ -330,7 +333,9 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 :is(button,input,select,te
 /* Smart-first New screen. Detailed calendar controls remain available on demand. */
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header{
  grid-template-columns:54px minmax(0,1fr) 54px!important;gap:8px!important;
- padding:6px 13px 0!important;height:62px!important;min-height:62px!important;
+ padding:calc(6px + var(--sv-task-top-inset)) 13px 0!important;
+ height:calc(62px + var(--sv-task-top-inset))!important;
+ min-height:calc(62px + var(--sv-task-top-inset))!important;
 }
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-type[hidden]{display:none!important}
 html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-header h2.sv-new-task-visually-hidden{
@@ -732,11 +737,12 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-new-task-toolbar{displ
   border-radius:20px!important;border:1px solid #E7EAF0!important;
  }
 }
-/* One 44px navigation row aligned to Work. Add only the actual iPhone safe area;
-   the former artificial 22px inset made this page jump below every other header. */
-@media (max-width:620px){
+/* Fullscreen New Task starts at viewport zero, while the normal Work header
+   starts after .app's 16px phone gutter (24px on desktop). Reuse that gutter
+   plus the same 6px title-row inset, never an independent 22px minimum. */
+@media (max-width:649px){
  html body dialog#personalTaskDialog.sv-task-editor-v3{
-  --sv-task-top-inset:env(safe-area-inset-top,0px);
+  --sv-task-top-inset:calc(16px + env(safe-area-inset-top,0px));
   background:#FFFFFF!important;
  }
  html body dialog#personalTaskDialog.sv-task-editor-v3[open] > .personal-task-sheet{
