@@ -359,7 +359,7 @@ const show=()=>{
     if(!firstHomeEntrancePlayed&&!editing&&!curtainOpen){
      firstHomeEntrancePlayed=true;
      rail.classList.add('sv-home-favorites-enter');
-     setTimeout(()=>rail.classList.remove('sv-home-favorites-enter'),1550);
+     setTimeout(()=>rail.classList.remove('sv-home-favorites-enter'),3100);
     }
     rail.style.visibility='';
    });
