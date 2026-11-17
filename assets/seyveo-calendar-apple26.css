@@ -350,24 +350,34 @@ html:not([data-theme]) #calendarPage .cal-month-grid .cal-day{
  #calendarPage .cal-year-mini-grid{grid-auto-rows:10px!important;row-gap:1px!important}
 }
 
-/* Tall iPhones: give the 12 months air without oversized empty bands.
-   Short devices keep the compact, scroll-free year grid above. */
-@media(min-width:375px) and (max-width:620px) and (min-height:780px){
+
+/* Year overview matches Apple's compact, regular three-column rhythm.
+   Keep all twelve months visible on one iPhone screen. */
+@media(max-width:620px){
+ #calendarPage #calendarYear{
+  padding:8px 12px 14px!important;
+  height:auto!important;min-height:0!important;overflow:visible!important;
+ }
  #calendarPage .cal-year-grid{
-  row-gap:clamp(34px,5.4dvh,49px)!important;
-  column-gap:clamp(10px,2.5vw,14px)!important;
+  grid-template-rows:repeat(4,max-content)!important;
+  height:auto!important;
+  row-gap:clamp(16px,2.6dvh,23px)!important;
+  column-gap:clamp(10px,2.7vw,13px)!important;
+  align-items:start!important;
  }
  #calendarPage .cal-year-month-title{
-  font-size:16.5px!important;font-weight:650!important;
-  height:23px!important;min-height:23px!important;line-height:23px!important;
-  margin-bottom:4px!important;
+  font-size:clamp(14px,3.8vw,16px)!important;
+  line-height:21px!important;height:21px!important;min-height:21px!important;
+  margin:0 0 3px!important;
+  font-weight:660!important;
  }
  #calendarPage .cal-year-mini-grid{
-  grid-auto-rows:15px!important;
-  row-gap:2px!important;
+  grid-auto-rows:clamp(11px,1.55dvh,13px)!important;
+  row-gap:1px!important;
  }
  #calendarPage .cal-year-mini-day{
-  font-size:10.5px!important;
+  font-size:clamp(8.8px,2.45vw,10.4px)!important;
   font-weight:520!important;
+  font-variant-numeric:tabular-nums!important;
  }
 }
