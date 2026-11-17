@@ -185,12 +185,207 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
  if(datedNotes.length)dots.append(text('i','cal-dot-note'));
  btn.append(dots);return btn;
 }
+
+/* SEYVEO Calendar · Apple-style year overview and four real month layouts.
+   They use the existing Calendar/Tasks/Notes stores and editing handlers. */
+const CAL_LAYOUT_KEY='seyveo-calendar-layout-v1';
+const CAL_LAYOUTS=['compact','stacked','details','list'];
+let calendarLayout=(()=>{
+ try{const saved=localStorage.getItem(CAL_LAYOUT_KEY);return CAL_LAYOUTS.includes(saved)?saved:'details'}
+ catch{return 'details'}
+})();
+let yearOverview=false;
+const monthNames=Array.from({length:12},(_,i)=>niceFirst(new Intl.DateTimeFormat('ru-RU',{month:'long'}).format(new Date(2026,i,1))));
+const calNavigation=page.querySelector('.cal-nav');
+const yearJump=text('button','sv-cal-year-jump');
+yearJump.type='button';yearJump.id='svCalYearJump';
+const calViewToggle=text('button','sv-cal-view-toggle');
+calViewToggle.type='button';calViewToggle.id='svCalViewToggle';
+calViewToggle.setAttribute('aria-label','Выбрать вид календаря');
+calViewToggle.setAttribute('aria-haspopup','menu');
+calViewToggle.setAttribute('aria-expanded','false');
+calViewToggle.setAttribute('aria-controls','svCalViewMenu');
+calViewToggle.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="7" height="6" rx="1.5"/><path d="M14 6h6M14 9h6"/><rect x="3.5" y="13.5" width="7" height="6" rx="1.5"/><path d="M14 15h6M14 18h6"/></svg>';
+const calViewMenu=text('div','sv-cal-view-menu');
+calViewMenu.id='svCalViewMenu';calViewMenu.hidden=true;
+calViewMenu.setAttribute('role','menu');
+calViewMenu.setAttribute('aria-label','Показать календарь');
+const viewLabels=[
+ ['compact','Компактно','<rect x="3" y="6" width="18" height="12" rx="3"/><path d="M7 10h10M7 14h10"/>'],
+ ['stacked','Блоками','<rect x="4" y="3" width="16" height="7" rx="2"/><rect x="4" y="14" width="16" height="7" rx="2"/>'],
+ ['details','Подробно','<rect x="4" y="3" width="16" height="6" rx="2"/><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 15h8M8 18h5"/>'],
+ ['list','Список','<rect x="4" y="4" width="16" height="10" rx="2"/><path d="M4 18h16M4 21h16"/>']
+];
+for(const [key,label,art] of viewLabels){
+ const option=text('button','sv-cal-view-option');
+ option.type='button';option.dataset.svCalLayout=key;
+ option.setAttribute('role','menuitemradio');
+ option.innerHTML='<span class="sv-cal-view-check" aria-hidden="true">✓</span><svg viewBox="0 0 24 24" aria-hidden="true">'+art+'</svg><span class="sv-cal-view-label"></span>';
+ option.querySelector('.sv-cal-view-label').textContent=label;
+ calViewMenu.append(option);
+}
+calNavigation.classList.add('sv-cal-nav');
+calNavigation.prepend(yearJump);
+calNavigation.append(calViewToggle,calViewMenu);
+const yearBoard=text('section','sv-cal-year-overview');
+yearBoard.id='svCalYearOverview';yearBoard.hidden=true;
+yearBoard.setAttribute('aria-label','Календарь на год');
+const listBoard=text('section','sv-cal-list-view');
+listBoard.id='svCalListView';listBoard.hidden=true;
+listBoard.setAttribute('aria-label','Список записей за месяц');
+$('calendarView').insertBefore(yearBoard,$('calendarMonth'));
+$('calendarView').insertBefore(listBoard,document.querySelector('#calendarPage .cal-day-summary'));
+function closeViewMenu(){
+ calViewMenu.hidden=true;
+ calViewToggle.setAttribute('aria-expanded','false');
+}
+function syncAppleControls(){
+ const isMonth=mode==='month',isYear=isMonth&&yearOverview;
+ page.dataset.appleLayout=calendarLayout;
+ page.dataset.yearOverview=String(isYear);
+ yearJump.hidden=!isMonth;
+ yearJump.textContent=isYear?'‹ Месяц':'‹ '+focus.getFullYear();
+ yearJump.setAttribute('aria-label',isYear?'Вернуться к месяцу':'Показать '+focus.getFullYear()+' год');
+ calViewToggle.hidden=isYear;
+ if(isMonth)$('calendarPeriodTitle').textContent=isYear?String(focus.getFullYear()):monthNames[focus.getMonth()];
+ yearBoard.hidden=!isYear;
+ listBoard.hidden=!isMonth||isYear||calendarLayout!=='list';
+ for(const button of calViewMenu.querySelectorAll('[data-sv-cal-layout]')){
+  const on=button.dataset.svCalLayout===calendarLayout;
+  button.setAttribute('aria-checked',String(on));
+ }
+}
+function setCalendarLayout(layout){
+ if(!CAL_LAYOUTS.includes(layout))return;
+ calendarLayout=layout;yearOverview=false;mode='month';
+ try{localStorage.setItem(CAL_LAYOUT_KEY,layout)}catch{}
+ closeViewMenu();render();
+}
+calViewToggle.addEventListener('click',event=>{
+ event.stopPropagation();
+ const next=calViewMenu.hidden;
+ calViewMenu.hidden=!next;
+ calViewToggle.setAttribute('aria-expanded',String(next));
+});
+calViewMenu.addEventListener('click',event=>{
+ const option=event.target.closest('[data-sv-cal-layout]');
+ if(option)setCalendarLayout(option.dataset.svCalLayout);
+});
+yearJump.addEventListener('click',()=>{
+ closeViewMenu();yearOverview=!yearOverview;mode='month';render();
+});
+document.addEventListener('click',event=>{
+ if(!calViewMenu.hidden&&!calViewMenu.contains(event.target)&&event.target!==calViewToggle)closeViewMenu();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!calViewMenu.hidden){event.preventDefault();closeViewMenu();calViewToggle.focus({preventScroll:true})}
+});
+window.addEventListener('hashchange',closeViewMenu);
+function calendarInlineItems(day,button){
+ const key=format(day);
+ const records=dayItems(key,false);
+ const holiday=publicHoliday(day);
+ const box=text('span','sv-cal-inline-items');
+ const max=calendarLayout==='details'?3:1;
+ if(holiday){
+  const holidayChip=text('span','sv-cal-inline-chip sv-cal-kind-holiday',holiday.name);
+  holidayChip.title=holiday.name;box.append(holidayChip);
+ }
+ for(const entry of records.slice(0,max)){
+  const label=(calendarLayout==='details'&&entry.time?entry.time+' ':'')+entry.title;
+  const chip=text('span','sv-cal-inline-chip sv-cal-kind-'+entry.source,label);
+  chip.title=label;
+  chip.dataset.svCalInline=entry.source;
+  chip.dataset.svCalId=entry.id;
+  if(entry.space)chip.dataset.svCalSpace=entry.space;
+  box.append(chip);
+ }
+ if(records.length>max)box.append(text('span','sv-cal-inline-more','+'+(records.length-max)));
+ button.append(box);
+}
+function renderAppleList(){
+ listBoard.replaceChildren();
+ const start=new Date(focus.getFullYear(),focus.getMonth(),1);
+ const days=new Date(focus.getFullYear(),focus.getMonth()+1,0).getDate();
+ let total=0;
+ for(let n=1;n<=days;n++){
+  const day=new Date(start.getFullYear(),start.getMonth(),n),items=dayItems(format(day),false);
+  if(!items.length)continue;
+  total+=items.length;
+  const group=text('section','sv-cal-list-group');
+  const label=text('h3','sv-cal-list-date',niceFirst(fmtShort.format(day)));
+  if(same(day,new Date()))label.dataset.today='true';
+  group.append(label);
+  const entries=text('div','cal-agenda sv-cal-list-entries');
+  for(const item of items)entries.append(createEntry(item));
+  group.append(entries);listBoard.append(group);
+ }
+ if(!total){
+  const empty=text('div','sv-cal-list-empty');
+  empty.append(text('strong','','В этом месяце пока нет записей'),text('span','','Нажми +, чтобы добавить событие или дело.'));
+  listBoard.append(empty);
+ }
+}
+function renderAppleYear(){
+ yearBoard.replaceChildren();
+ const year=focus.getFullYear(),now=format(new Date());
+ const eventDates=new Set(visibleEvents().map(x=>x.date));
+ const taskDates=new Set((selectedScope()==='business'?[]:tasks()).filter(x=>!x.done).map(x=>x.date));
+ for(let month=0;month<12;month++){
+  const mini=text('section','sv-cal-mini-month');
+  mini.dataset.current=String(year===new Date().getFullYear()&&month===new Date().getMonth());
+  const title=text('button','sv-cal-mini-heading',monthNames[month]);
+  title.type='button';title.dataset.svCalMiniMonth=String(month);
+  title.setAttribute('aria-label','Открыть '+monthNames[month]+' '+year);
+  const days=text('div','sv-cal-mini-days');
+  const start=new Date(year,month,1),offset=(start.getDay()+6)%7;
+  for(let j=0;j<offset;j++)days.append(text('span','sv-cal-mini-blank'));
+  const length=new Date(year,month+1,0).getDate();
+  for(let d=1;d<=length;d++){
+   const value=new Date(year,month,d),key=format(value);
+   const day=text('button','sv-cal-mini-day',String(d));day.type='button';
+   day.dataset.svCalMiniDate=key;
+   day.dataset.today=String(key===now);
+   day.dataset.hasEntries=String(eventDates.has(key)||taskDates.has(key));
+   day.setAttribute('aria-label',fmtLong.format(value)+(key===now?' · сегодня':''));
+   days.append(day);
+  }
+  mini.append(title,days);yearBoard.append(mini);
+ }
+}
+yearBoard.addEventListener('click',event=>{
+ const day=event.target.closest('[data-sv-cal-mini-date]');
+ const monthButton=event.target.closest('[data-sv-cal-mini-month]');
+ if(!day&&!monthButton)return;
+ const next=day?at(day.dataset.svCalMiniDate):new Date(focus.getFullYear(),Number(monthButton.dataset.svCalMiniMonth),1);
+ if(!next)return;
+ yearOverview=false;mode='month';updateFocus(next);
+ const scrolling=document.querySelector('.app');
+ if(scrolling)scrolling.scrollTop=0;
+});
+
 function renderMonth(){
  const selected=new Date(focus.getFullYear(),focus.getMonth(),1);
  const grid=$('calendarMonthGrid');grid.replaceChildren();
  const first=monday(selected),calendarEvents=visibleEvents(),personalTasks=selectedScope()==='business'?[]:tasks();
  const total=Math.ceil((((new Date(focus.getFullYear(),focus.getMonth()+1,0)).getDate())+(selected.getDay()+6)%7)/7)*7;
- for(let i=0;i<total;i++)grid.append(dayButton(step(first,i),false,calendarEvents,personalTasks));
+ if(yearOverview){
+  renderAppleYear();yearBoard.hidden=false;listBoard.hidden=true;
+  $('calendarMonth').hidden=true;$('calendarWeek').hidden=true;return;
+ }
+ yearBoard.hidden=true;
+ if(calendarLayout==='list'){
+  renderAppleList();listBoard.hidden=false;
+  $('calendarMonth').hidden=true;$('calendarWeek').hidden=true;return;
+ }
+ listBoard.hidden=true;
+ for(let i=0;i<total;i++){
+  const day=step(first,i);
+  const cell=dayButton(day,false,calendarEvents,personalTasks);
+  if(day.getMonth()===focus.getMonth()&&(calendarLayout==='stacked'||calendarLayout==='details'))
+   calendarInlineItems(day,cell);
+  grid.append(cell);
+ }
  $('calendarMonth').hidden=false;
  $('calendarWeek').hidden=true;
 }
@@ -453,6 +648,7 @@ function render(){
  $('calendarPeriodTitle').textContent=mode==='month'?niceFirst(fmtMonth.format(focus).replace(/\s*г\.$/u,'')):
   mode==='week'?fmtLong.format(monday(focus)).replace(/\s+\d{4}\s*г?\.?/,'')+' — '+fmtLong.format(step(monday(focus),6)):
   mode==='day'?niceFirst(fmtShort.format(focus)):'Сроки';
+ syncAppleControls();
  if(deadline){renderDeadlines();renderAdvice();return}
  if(mode==='month')renderMonth();
  if(mode==='week')renderWeek();
@@ -488,7 +684,7 @@ function revealSelectedDay(){
 function updateFocus(date){focus=new Date(date.getFullYear(),date.getMonth(),date.getDate());render()}
 function animatePeriod(direction){
  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- const surface=mode==='month'?$('calendarMonth'):mode==='week'?$('calendarWeek'):document.querySelector('#calendarPage .cal-day-summary');
+ const surface=yearOverview&&mode==='month'?yearBoard:mode==='month'?(calendarLayout==='list'?listBoard:$('calendarMonth')):mode==='week'?$('calendarWeek'):document.querySelector('#calendarPage .cal-day-summary');
  if(!surface||surface.hidden)return;
  surface.classList.remove('cal-swipe-next','cal-swipe-prev');
  void surface.offsetWidth;
@@ -496,6 +692,10 @@ function animatePeriod(direction){
 }
 function move(direction){
  if(mode==='deadlines')return;
+ if(yearOverview&&mode==='month'){
+  updateFocus(new Date(focus.getFullYear()+direction,focus.getMonth(),Math.min(focus.getDate(),28)));
+  animatePeriod(direction);return;
+ }
  const d=mode==='day'?step(focus,direction):mode==='week'?step(focus,direction*7):new Date(focus.getFullYear(),focus.getMonth()+direction,Math.min(focus.getDate(),new Date(focus.getFullYear(),focus.getMonth()+direction+1,0).getDate()));
  updateFocus(d);
  animatePeriod(direction);
@@ -745,10 +945,10 @@ if(calendarViewModes&&calendarViewButton&&createMenu){
  calendarViewButton.removeAttribute('aria-expanded');
  calendarViewButton.title='Сегодня';
  calendarViewButton.addEventListener('click',()=>{
-  mode='month';updateFocus(new Date());closeCreateMenu();
+  yearOverview=false;mode='month';updateFocus(new Date());closeViewMenu();closeCreateMenu();
  });
  todayOption.addEventListener('click',()=>{
-  mode='month';updateFocus(new Date());closeCreateMenu();
+  yearOverview=false;mode='month';updateFocus(new Date());closeViewMenu();closeCreateMenu();
  });
  calendarViewModes.addEventListener('click',event=>{
   if(event.target.closest('[data-calendar-mode]'))closeCreateMenu();
@@ -764,17 +964,26 @@ document.querySelectorAll('#calendarPage [data-calendar-scope]').forEach(btn=>bt
  render();
 }));
 document.querySelectorAll('[data-calendar-mode]').forEach(btn=>btn.addEventListener('click',()=>{
- mode=btn.dataset.calendarMode;render();
+ yearOverview=false;mode=btn.dataset.calendarMode;render();
 }));
 for(const id of ['calendarMonthGrid','calendarWeekGrid']){
  $(id).addEventListener('click',event=>{
+  const chip=event.target.closest('[data-sv-cal-inline]');
+  if(chip){
+   const source=chip.dataset.svCalInline,id=chip.dataset.svCalId;
+   if(source==='event')openEvent(id);
+   else if(source==='task')routeTask(id);
+   else if(source==='note')window.SEYVEO_NOTES_API?.openCalendarNote?.(id);
+   else if(source==='space')window.dispatchEvent(new CustomEvent('seyveo:space-edit',{detail:{space:chip.dataset.svCalSpace,id}}));
+   return;
+  }
   const day=event.target.closest('[data-calendar-date]');if(!day||Date.now()-lastCalendarSwipe<400)return;
   const chosen=at(day.dataset.calendarDate);if(!chosen)return;
   updateFocus(chosen);
   revealSelectedDay();
  });
 }
-for(const id of ['calendarAgenda','calendarDeadlineList']){
+for(const id of ['calendarAgenda','calendarDeadlineList','svCalListView']){
  $(id).addEventListener('click',event=>{
   const entry=event.target.closest('.cal-entry');
   if(!entry)return;
@@ -853,7 +1062,7 @@ window.addEventListener('seyveo:calendar-focus-date',event=>{
  const day=at(event.detail?.date);
  if(!day)return;
  if(mode==='deadlines')mode='month';
- updateFocus(day);
+ yearOverview=false;updateFocus(day);
  revealSelectedDay();
 });
 window.addEventListener('seyveo:calendar-open',()=>{render()});
