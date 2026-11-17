@@ -164,3 +164,261 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice p{
 @media(max-width:620px){
  html body #calendarPage .cal-nav-arrows{display:none!important}
 }
+
+
+/* SEYVEO Calendar · iOS-inspired full views: Year / Compact / Stacked / Details / List.
+   The approved header, fixed 60px dock and original event data remain unchanged. */
+#calendarPage .sv-cal-year-overview[hidden],
+#calendarPage .sv-cal-list-view[hidden],
+#calendarPage .sv-cal-view-menu[hidden],
+#calendarPage .sv-cal-year-jump[hidden],
+#calendarPage .sv-cal-view-toggle[hidden]{display:none!important}
+
+html body #calendarPage .cal-nav.sv-cal-nav{
+ position:relative!important;z-index:25!important;
+ display:grid!important;grid-template-columns:minmax(0,1fr) 48px!important;
+ grid-template-rows:38px auto!important;align-items:center!important;
+ column-gap:6px!important;row-gap:7px!important;
+ min-height:100px!important;margin:5px 0 6px!important;
+ padding:0 4px 5px!important;
+ border:0!important;background:transparent!important;overflow:visible!important;
+}
+html body #calendarPage .cal-nav.sv-cal-nav h2{
+ grid-column:1 / -1!important;grid-row:2!important;
+ margin:0!important;min-width:0!important;
+ font:680 clamp(29px,7.5vw,36px)/1.12 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
+ letter-spacing:-.043em!important;text-align:left!important;
+ color:#17191D!important;
+}
+#calendarPage .sv-cal-nav .cal-period-title{
+ max-width:100%;min-height:40px!important;padding:0!important;
+ font:inherit!important;letter-spacing:inherit!important;
+}
+#calendarPage .sv-cal-year-jump{
+ grid-column:1;grid-row:1;justify-self:start;
+ display:inline-flex;align-items:center;min-width:75px;height:36px;
+ padding:0 11px 0 9px;appearance:none;border:1px solid #F0F1F4;
+ border-radius:999px;background:rgba(245,246,248,.85);
+ box-shadow:0 1px 2px rgba(50,57,68,.035);
+ color:#353B46;font:580 15px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#calendarPage .sv-cal-view-toggle{
+ grid-column:2;grid-row:1;justify-self:end;
+ display:grid;place-items:center;
+ width:44px;height:44px;min-height:44px;min-width:44px;padding:0;
+ appearance:none;border:1px solid rgba(255,255,255,.95);border-radius:50%;
+ background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10));
+ box-shadow:0 0 0 .6px rgba(164,170,184,.24);
+ -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+ color:#202126;cursor:pointer;
+}
+#calendarPage .sv-cal-view-toggle svg{
+ width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.65;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#calendarPage .sv-cal-nav .cal-nav-arrows{
+ grid-column:1 / -1;grid-row:1;justify-self:center;z-index:2;
+}
+#calendarPage .sv-cal-nav .cal-nav-arrows button{width:32px;min-width:32px}
+#calendarPage .sv-cal-view-menu{
+ box-sizing:border-box;position:absolute;z-index:800;
+ top:42px;right:2px;width:min(252px,calc(100vw - 36px));
+ display:flex;flex-direction:column;gap:0;padding:8px;
+ border:1px solid rgba(234,235,238,.94);border-radius:24px;
+ background:rgba(250,250,252,.96);
+ box-shadow:0 16px 40px rgba(20,25,34,.12),0 1px 4px rgba(20,25,34,.055);
+ -webkit-backdrop-filter:blur(22px) saturate(115%);
+ backdrop-filter:blur(22px) saturate(115%);
+}
+#calendarPage .sv-cal-view-option{
+ appearance:none;display:grid;grid-template-columns:20px 27px minmax(0,1fr);
+ align-items:center;gap:10px;width:100%;min-height:54px;padding:0 12px;
+ margin:0;border:0;border-radius:15px;
+ background:transparent;color:#202127;text-align:left;
+ font:540 16px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ cursor:pointer;
+}
+#calendarPage .sv-cal-view-option:last-child{
+ margin-top:7px;padding-top:7px;border-top:1px solid rgba(120,126,134,.14);
+ border-top-left-radius:0;border-top-right-radius:0;min-height:62px;
+}
+#calendarPage .sv-cal-view-option[aria-checked="true"]{background:rgba(226,229,234,.58)}
+#calendarPage .sv-cal-view-check{font-size:17px;font-weight:700;opacity:0;color:#191B20}
+#calendarPage .sv-cal-view-option[aria-checked="true"] .sv-cal-view-check{opacity:1}
+#calendarPage .sv-cal-view-option svg{
+ display:block;width:25px;height:25px;fill:none;stroke:currentColor;
+ stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round;
+}
+#calendarPage .sv-cal-year-jump:focus-visible,
+#calendarPage .sv-cal-view-toggle:focus-visible,
+#calendarPage .sv-cal-view-option:focus-visible,
+#calendarPage .sv-cal-mini-month button:focus-visible{
+ outline:2px solid #4D8AD3;outline-offset:2px;
+}
+
+/* Existing compact view remains the approved number-and-dot grid. */
+html body #calendarPage[data-apple-layout="compact"] .cal-month>.cal-month-grid{
+ grid-auto-rows:49px!important;
+}
+html body #calendarPage[data-apple-layout="stacked"] .cal-month>.cal-month-grid{
+ grid-auto-rows:minmax(75px,auto)!important;
+}
+html body #calendarPage[data-apple-layout="details"] .cal-month>.cal-month-grid{
+ grid-auto-rows:minmax(127px,auto)!important;
+}
+html body #calendarPage[data-apple-layout="stacked"] .cal-month-grid .cal-day,
+html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day{
+ display:flex!important;flex-direction:column!important;
+ justify-content:flex-start!important;align-items:flex-start!important;
+ gap:3px!important;text-align:left!important;
+ height:100%!important;min-width:0!important;min-height:0!important;
+ border-radius:0!important;padding:6px 3px 5px!important;
+ overflow:hidden!important;
+}
+html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day{
+ padding-top:8px!important;gap:5px!important;
+}
+html body #calendarPage[data-apple-layout="stacked"] .cal-month-grid .cal-day-number,
+html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day-number{
+ flex:0 0 30px!important;width:30px!important;height:30px!important;
+ min-width:30px!important;align-self:flex-start!important;
+ font-weight:580!important;
+}
+#calendarPage .sv-cal-inline-items{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ align-items:stretch;justify-content:flex-start;gap:2px;
+ min-width:0;width:100%;max-width:100%;overflow:hidden;
+}
+#calendarPage .sv-cal-inline-chip{
+ display:block;box-sizing:border-box;min-width:0;max-width:100%;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ padding:3px 3px;border-radius:5px;
+ font:560 10px/1.22 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.012em;color:#27608E;background:#E4F1FD;
+}
+#calendarPage .sv-cal-kind-event{background:#E5F2FF;color:#27618D}
+#calendarPage .sv-cal-kind-task{background:#F0E9FB;color:#715A98}
+#calendarPage .sv-cal-kind-note{background:#EEF0F4;color:#606977}
+#calendarPage .sv-cal-kind-space{background:#F9EEE2;color:#966A44}
+#calendarPage .sv-cal-kind-holiday{background:#FFF0F1;color:#C14F59}
+#calendarPage .sv-cal-inline-more{
+ align-self:flex-start;font:530 10px/1.2 system-ui,sans-serif;
+ color:#89909A;padding:2px 3px;
+}
+html body #calendarPage[data-apple-layout="stacked"] .sv-cal-inline-chip{
+ font-size:9.5px;padding:2px 3px;
+}
+html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day[data-today="true"] .cal-day-number,
+html body #calendarPage[data-apple-layout="stacked"] .cal-month-grid .cal-day[data-today="true"] .cal-day-number,
+html body #calendarPage[data-apple-layout="compact"] .cal-month-grid .cal-day[data-today="true"] .cal-day-number{
+ background:#E9484C!important;color:#FFF!important;box-shadow:none!important;
+}
+
+/* iOS-style twelve-month overview: no duplicate outer cards or grey panels. */
+#calendarPage .sv-cal-year-overview{
+ box-sizing:border-box;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ align-items:start;column-gap:10px;row-gap:26px;
+ width:100%;min-width:0;padding:9px 5px 96px;margin:0;
+ background:transparent;color:#191A1E;
+}
+#calendarPage .sv-cal-mini-month{min-width:0;padding:0;margin:0}
+#calendarPage .sv-cal-mini-heading{
+ display:block;width:100%;min-height:31px;margin:0 0 5px;padding:0 1px;
+ appearance:none;background:transparent;border:0;text-align:left;
+ color:#191A1E;font:660 clamp(15px,4.15vw,19px)/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.035em;cursor:pointer;
+}
+#calendarPage .sv-cal-mini-month[data-current="true"] .sv-cal-mini-heading{color:#D64A4F}
+#calendarPage .sv-cal-mini-days{
+ display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:17px;
+ align-items:center;justify-items:center;gap:1px;
+ width:100%;min-width:0;margin:0;padding:0;
+}
+#calendarPage .sv-cal-mini-day,
+#calendarPage .sv-cal-mini-blank{
+ display:grid;place-items:center;
+ width:100%;height:17px;min-width:0;min-height:0;
+ margin:0;padding:0;border:0;background:transparent;box-shadow:none;
+ font:510 clamp(9.1px,2.58vw,11.6px)/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ font-variant-numeric:tabular-nums;color:#24262C;cursor:pointer;
+}
+#calendarPage .sv-cal-mini-day[data-today="true"]{
+ border-radius:50%;background:#E9484C;color:#FFF;font-weight:690;
+}
+#calendarPage .sv-cal-mini-day[data-has-entries="true"]:not([data-today="true"]){
+ text-decoration:underline;text-decoration-color:#6EAFE4;
+ text-underline-offset:3px;text-decoration-thickness:1px;
+}
+
+/* A genuine month list, grouped by day and backed by saved entries. */
+#calendarPage .sv-cal-list-view{min-width:0;padding:5px 4px 100px;background:transparent}
+#calendarPage .sv-cal-list-group{margin:0 0 12px}
+#calendarPage .sv-cal-list-date{
+ margin:0;padding:10px 4px 9px;border-bottom:1px solid #EBEDF1;
+ font:650 15px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.02em;color:#272A32;
+}
+#calendarPage .sv-cal-list-date[data-today="true"]{color:#D9484C}
+#calendarPage .sv-cal-list-entries{margin:0;padding:0 2px}
+#calendarPage .sv-cal-list-entries .cal-entry{min-height:64px;border-bottom:1px solid #EEF0F3}
+#calendarPage .sv-cal-list-empty{
+ display:flex;flex-direction:column;align-items:center;gap:7px;
+ padding:90px 20px;text-align:center;color:#6D7580;
+}
+#calendarPage .sv-cal-list-empty strong{font:600 16px/1.35 system-ui;color:#353A43}
+#calendarPage .sv-cal-list-empty span{font:480 13px/1.5 system-ui}
+
+/* In Year view the entire month grid and old agenda are replaced by mini months. */
+#calendarPage[data-year-overview="true"] .cal-month,
+#calendarPage[data-year-overview="true"] .cal-day-summary,
+#calendarPage[data-year-overview="true"] #calendarAgenda,
+#calendarPage[data-year-overview="true"] #calendarHoliday,
+#calendarPage[data-year-overview="true"] #calendarAdvice{display:none!important}
+#calendarPage[data-apple-layout="list"] #calendarView[data-mode="month"] .cal-month{display:none!important}
+#calendarPage[data-apple-layout="list"] #calendarView[data-mode="month"] .cal-day-summary{display:none!important}
+
+/* Dark mode retains the approved black SEYVEO background. */
+:root[data-theme="dark"] #calendarPage .sv-cal-nav.sv-cal-nav h2{color:#F6F7FA!important}
+:root[data-theme="dark"] #calendarPage .sv-cal-year-jump{
+ color:#F0F1F4;background:rgba(64,65,70,.78);border-color:rgba(255,255,255,.14);
+}
+:root[data-theme="dark"] #calendarPage .sv-cal-view-toggle{
+ color:#F4F6FA;background:rgba(80,80,84,.38);border-color:rgba(255,255,255,.16);
+}
+:root[data-theme="dark"] #calendarPage .sv-cal-view-menu{
+ color:#F6F6FA;background:rgba(48,49,54,.96);border-color:rgba(255,255,255,.11);
+ box-shadow:0 16px 40px rgba(0,0,0,.4);
+}
+:root[data-theme="dark"] #calendarPage .sv-cal-view-option{color:#F6F6FA}
+:root[data-theme="dark"] #calendarPage .sv-cal-view-option[aria-checked="true"]{background:rgba(255,255,255,.11)}
+:root[data-theme="dark"] #calendarPage .sv-cal-view-check{color:#FFF}
+:root[data-theme="dark"] #calendarPage .sv-cal-year-overview{color:#F6F6F9}
+:root[data-theme="dark"] #calendarPage .sv-cal-mini-heading,
+:root[data-theme="dark"] #calendarPage .sv-cal-mini-day{color:#F5F5F8}
+:root[data-theme="dark"] #calendarPage .sv-cal-mini-month[data-current="true"] .sv-cal-mini-heading{color:#F0777B}
+:root[data-theme="dark"] #calendarPage .sv-cal-mini-day[data-today="true"]{background:#E9484C;color:#FFF}
+:root[data-theme="dark"] #calendarPage .sv-cal-list-date,
+:root[data-theme="dark"] #calendarPage .sv-cal-list-empty strong{color:#F6F6FA}
+:root[data-theme="dark"] #calendarPage .sv-cal-list-date,
+:root[data-theme="dark"] #calendarPage .sv-cal-list-entries .cal-entry{border-color:rgba(255,255,255,.11)}
+:root[data-theme="dark"] #calendarPage .sv-cal-list-empty{color:#B7BAC3}
+:root[data-theme="dark"] #calendarPage .sv-cal-kind-event{background:#253F56;color:#BFDFF9}
+:root[data-theme="dark"] #calendarPage .sv-cal-kind-task{background:#453754;color:#E2C7FF}
+:root[data-theme="dark"] #calendarPage .sv-cal-kind-note{background:#3B3C45;color:#D2D4DC}
+:root[data-theme="dark"] #calendarPage .sv-cal-kind-space{background:#51412F;color:#F0D2A8}
+:root[data-theme="dark"] #calendarPage .sv-cal-kind-holiday{background:#55343B;color:#FFC1C9}
+
+@media(max-width:390px){
+ #calendarPage .sv-cal-year-overview{column-gap:8px;row-gap:20px;padding-left:1px;padding-right:1px}
+ #calendarPage .sv-cal-mini-days{grid-auto-rows:16px}
+ #calendarPage .sv-cal-mini-day,#calendarPage .sv-cal-mini-blank{height:16px;font-size:9.2px}
+ html body #calendarPage[data-apple-layout="details"] .cal-month>.cal-month-grid{grid-auto-rows:minmax(115px,auto)!important}
+ #calendarPage .sv-cal-inline-chip{font-size:9.6px}
+}
+@media(max-width:620px){
+ #calendarPage .sv-cal-nav .cal-nav-arrows{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #calendarPage .sv-cal-view-menu{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
