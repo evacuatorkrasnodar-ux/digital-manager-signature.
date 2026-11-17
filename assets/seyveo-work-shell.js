@@ -91,12 +91,12 @@
    justify-self:end;align-self:center;
    box-sizing:border-box;display:flex;align-items:center;justify-content:center;
    gap:0;width:var(--sv-nav-triple-width,154px);height:var(--sv-nav-capsule-height,50px);padding:0 4px;
-   border:var(--sv-nav-pearl-border,1.5px solid rgba(255,255,255,.96));
+   border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));
    border-radius:999px;
-   background:var(--sv-nav-pearl-bg,rgba(190,193,202,.10));
-   box-shadow:var(--sv-nav-pearl-shadow,0 0 0 .85px rgba(164,170,184,.22));
-   -webkit-backdrop-filter:blur(4px) saturate(100%);
-   backdrop-filter:blur(4px) saturate(100%);
+   background:var(--sv-card-action-neutral-bg,transparent);
+   box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16));
+   -webkit-backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
+   backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
   }
   :host([data-task-tools="true"]) .sv-history-dual .control{
    display:grid!important;flex:0 0 var(--sv-nav-capsule-cell,48px)!important;
@@ -705,7 +705,7 @@
   document.addEventListener('DOMContentLoaded',finishFirstPaint,{once:true});
  else finishFirstPaint();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:27,sync,
+  version:28,sync,
   isNotesInline:()=>true
  });
 })();
