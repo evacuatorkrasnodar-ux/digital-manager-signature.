@@ -261,7 +261,7 @@ dialog.sv-home-favorites-editor{
  box-shadow:0 8px 22px rgba(45,53,65,.055)!important;
 }
 dialog.sv-home-favorites-editor .sv-home-favorites-editor-shell{
- border:0!important;border-bottom:1px solid rgba(225,229,235,.58)!important;
+ border:1px solid rgba(222,227,233,.65)!important;border-top:0!important;
  border-radius:0 0 22px 22px!important;
  padding:calc(22px + env(safe-area-inset-top,0px)) 18px 13px!important;
  box-shadow:none!important;
