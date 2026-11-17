@@ -83,9 +83,9 @@
  const HELLO_MS=3600;
  let ready=false,voicePhase='',voiceTimer=null;
  const root=document.documentElement;
- const FIRST_IDLE_MS=14000;
+ const FIRST_IDLE_MS=4200;
  const REPEAT_IDLE_MS=60*1000;
- const HINT_HOLD_MS=8500;
+ const HINT_HOLD_MS=18000;
  const HINT_COOLDOWN_MS=90*1000;
  const HINT_KEY='seyveo.sayvi.quiet-home-hint.v2';
  const CELEBRATION_KEY='seyveo.sayvi.completed-cards-greeting.v1';
@@ -167,6 +167,7 @@
  let celebrationTimer=0,celebrationPending=false,celebrationIndex=0;
  let idleRevealTimer=0,idleTypeTimer=0,idleHideTimer=0;
  let idleLastShownAt=0,idleIdeaIndex=0,introDone=false,introStep=0;
+ let firstThoughtPending=true;
  let idleMarkupMounted=false,idleSequence=0;
  try{
   const stored=JSON.parse(sessionStorage.getItem(HINT_KEY)||'null');
@@ -360,13 +361,14 @@
    idleHint=idleHint.slice(idleAction.icon.length).trimStart();
   idleTyped='';idleTyping=true;
   const sequence=++idleSequence;
+  firstThoughtPending=false;
   update();
   typeIdle(sequence);
  }
  function showIdle({continuation=false}={}){
   idleRevealTimer=0;
   const now=Date.now();
-  const delay=introDone?REPEAT_IDLE_MS:FIRST_IDLE_MS;
+  const delay=firstThoughtPending?FIRST_IDLE_MS:(introDone?REPEAT_IDLE_MS:FIRST_IDLE_MS);
   if(!quietHome()||(!continuation&&now-idleSince<delay))return;
   if(root.classList.contains('sv-home-greeting-fading')&&
      !root.classList.contains('sv-home-greeting-expired'))return;
@@ -403,8 +405,8 @@
   }
   const now=Date.now();
   if(idleHint||idleRevealTimer||now-idleSince<
-     (introDone?REPEAT_IDLE_MS:FIRST_IDLE_MS))return;
-  if(introDone&&idleLastShownAt&&now>=idleLastShownAt&&
+     (firstThoughtPending?FIRST_IDLE_MS:(introDone?REPEAT_IDLE_MS:FIRST_IDLE_MS)))return;
+  if(!firstThoughtPending&&introDone&&idleLastShownAt&&now>=idleLastShownAt&&
      now-idleLastShownAt<HINT_COOLDOWN_MS)return;
   // The original greeting fades before a new thought appears. Never stack
   // a second text block over it or move the approved globe/weather layout.
