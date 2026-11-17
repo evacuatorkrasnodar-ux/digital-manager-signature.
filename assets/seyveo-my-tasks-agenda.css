@@ -45,9 +45,10 @@
 #tasksPage #svTasksDateNav .sv-agenda-ticker{
  box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);
  align-items:center;position:relative;
- /* One in-flow rail with visible first and last rules, no viewport bleed. */
+ /* Flat day rail: horizontal dividers only, never an outer box. */
  width:100%;margin:0;
- border:1px solid var(--agenda-rule);
+ border-top:1px solid var(--agenda-rule);
+ border-bottom:1px solid var(--agenda-rule);
  padding:0;
 }
 #tasksPage #svTasksDateNav .sv-agenda-week{
@@ -378,46 +379,18 @@
  #tasksPage #svTasksDateNav .sv-agenda-week-step:first-child{left:8px}
  #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:8px}
 }
-/* On phones the rail stays inside the same clean page container. */
+/* Five fully visible days on phones. Swipe remains native and unlimited. */
 @media(max-width:767px){
- /* Five complete days plus a 45% preview of the sixth, as in Apple Calendar.
-    Keep the rail within its parent, with 1px to protect the first rule. */
  #tasksPage #svTasksDateNav .sv-agenda-week{
   padding:0 1px;
  }
- /* 100 / 5.45 = 18.3486% per day; the remaining 8.26% of the rail
-    reveals 45% of day six as a natural swipe affordance. */
  #tasksPage #svTasksDateNav .sv-agenda-day{
-  flex:0 0 18.3486%;width:18.3486%;
+  flex:0 0 20%;width:20%;
   min-height:clamp(116px,32vw,140px);
  }
- /* The handle belongs under day three, not under the viewport midpoint now
-    that five and almost half of the sixth day are visible. */
  #tasksPage #svTasksDateNav .sv-agenda-handle{
-  transform:translateX(-5.5vw);
+  transform:none;
  }
- /* The chosen day opens like a slim page: depth moves to whichever date is
-    tapped, without shifting the grid or changing today's blue circle. */
- :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day::after{
-  content:"";position:absolute;top:1px;bottom:1px;right:-8px;width:8px;
-  pointer-events:none;
-  background:linear-gradient(90deg,rgba(37,48,65,.09) 0%,rgba(37,48,65,.035) 47%,transparent 100%);
-  opacity:0;transition:opacity .18s ease;
- }
- :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]{
-  z-index:1;
- }
- :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"]::after{
-  opacity:1;
- }
- /* The partially revealed sixth day opens inward when selected. */
- :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day:nth-child(6)::after{
-  left:-8px;right:auto;
-  background:linear-gradient(270deg,rgba(37,48,65,.09) 0%,rgba(37,48,65,.035) 47%,transparent 100%);
- }
-}
-@media(max-width:767px) and (prefers-reduced-motion:reduce){
- :root:not([data-theme="dark"]) #tasksPage #svTasksDateNav .sv-agenda-day::after{transition:none}
 }
 @media(max-width:380px){
  #tasksPage #svTasksDateNav .sv-agenda-week{padding-inline:1px}
