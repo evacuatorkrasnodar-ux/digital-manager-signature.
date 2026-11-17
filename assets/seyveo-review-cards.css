@@ -89,3 +89,17 @@
 }
 #tasksPage #svReviewTasksButton{position:relative;display:grid;place-items:center;width:42px;height:42px;padding:8px;border:0;border-radius:50%;background:rgba(120,120,128,.12);color:#1b1b1d;cursor:pointer}
 #tasksPage #svReviewTasksButton svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+
+/* A small warm-orange badge on the existing Tasks dock control.
+   It mirrors the review queue without altering the approved dock surface. */
+#navTasks{position:relative}
+#navTasks .sv-dock-review-count{
+ position:absolute;z-index:5;top:1px;right:3px;
+ display:flex;align-items:center;justify-content:center;
+ min-width:17px;height:17px;padding:0 3px;box-sizing:border-box;
+ border-radius:12px;border:1.5px solid #fff;background:#f58a24;color:#fff;
+ font:650 10px/1 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
+ letter-spacing:0;white-space:nowrap;pointer-events:none;
+ box-shadow:0 1px 2px rgba(153,78,5,.12);
+}
+#navTasks .sv-dock-review-count[hidden]{display:none!important}
