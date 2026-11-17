@@ -5,6 +5,15 @@
  * Do not style the main dock, card actions, editor body or chat composer.
  */
 :root{
+ /* SEYVEO navigation geometry: the one shared scale for single and grouped controls. */
+ --sv-nav-single-size:50px;
+ --sv-nav-capsule-height:50px;
+ --sv-nav-capsule-cell:48px;
+ --sv-nav-double-width:104px;
+ --sv-nav-triple-width:154px;
+ --sv-nav-icon-size:23px;
+ --sv-nav-pearl-border:1px solid rgba(155,166,181,.34);
+ --sv-nav-pearl-bg:rgba(190,193,202,.10);
  --sv-header-row:62px;
  --sv-header-slot:42px;
  --sv-header-gap:8px;
