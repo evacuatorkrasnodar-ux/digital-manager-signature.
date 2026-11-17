@@ -43,12 +43,12 @@
   content:none!important;display:none!important;
 }
 :root[data-theme="light"] #svWorkShell[data-shared-work="true"] #svWorkTabs{
-  /* The tab selector is flat, not another dock: no stacked pearl frame. */
-  background:#F5F6F8!important;
-  border:0!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-  box-shadow:none!important;
+  /* Compact segmented controls use exactly the approved Home dock material. */
+  background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10))!important;
+  border:var(--sv-dock-pearl-border,.7px solid rgba(255,255,255,.28))!important;
+  -webkit-backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%))!important;
+  backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%))!important;
+  box-shadow:var(--sv-dock-pearl-shadow,0 0 0 .45px rgba(164,170,184,.16))!important;
   padding:2px!important;
 }
 :root[data-theme="dark"] #svWorkShell[data-shared-work="true"] #svWorkTabs{
