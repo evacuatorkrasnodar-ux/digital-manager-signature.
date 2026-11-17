@@ -208,7 +208,12 @@
  function updateKeyboardPosition(){
   if(!dialog.open||!sheet)return;
   const viewport=window.visualViewport;
-  const remaining=viewport?Math.max(0,window.innerHeight-viewport.height-viewport.offsetTop):0;
+  // On iOS Safari, innerHeight may shrink with the keyboard while the
+  // full-screen dialog keeps its old size. Measure the actual sheet edge
+  // against the visible viewport edge, in the SAME coordinate system.
+  const viewportBottom=viewport?viewport.offsetTop+viewport.height:window.innerHeight;
+  const sheetBottom=sheet.getBoundingClientRect().bottom;
+  const remaining=Math.max(0,sheetBottom-viewportBottom);
   const inset=remaining>110?Math.round(remaining):0;
   if(Math.abs(inset-lastKeyboardInset)<3)return;
   lastKeyboardInset=inset;
