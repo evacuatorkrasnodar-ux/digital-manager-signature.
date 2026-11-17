@@ -526,3 +526,129 @@ html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-ent
  border:0!important;border-radius:50%!important;
  outline:0!important;outline-offset:0!important;box-shadow:none!important;
 }
+
+/* Week view: Apple-like hourly timeline beneath the seven-day strip. */
+#calendarPage #calendarWeekTimeline[hidden],
+#calendarPage #calendarWeekAllDay[hidden]{display:none!important}
+html body #calendarPage #calendarWeekTimeline{
+ display:flex!important;flex-direction:column!important;
+ width:100%!important;min-width:0!important;margin:5px 0 0!important;
+ padding:0 4px!important;border:0!important;background:#FFF!important;
+}
+html body #calendarPage #calendarWeekAllDay{
+ display:flex!important;flex-direction:column!important;gap:3px!important;
+ flex:none!important;margin:3px 2px 9px 46px!important;padding:0!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day{
+ display:flex!important;align-items:center!important;box-sizing:border-box!important;
+ width:100%!important;height:23px!important;min-height:23px!important;
+ padding:2px 7px!important;margin:0!important;gap:6px!important;
+ border:0!important;border-radius:6px!important;
+ background:#DFEEFB!important;color:#2E638E!important;box-shadow:none!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day[data-tone="task"]{
+ background:#FFF0D8!important;color:#80551F!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day[data-tone="space"]{
+ background:#ECE8FA!important;color:#6D579A!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day[data-tone="note"]{
+ background:#EEF0F3!important;color:#67707C!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day::before{
+ content:""!important;display:block!important;width:9px!important;height:9px!important;
+ flex:none!important;border-radius:50%!important;background:#2D9BD7!important;
+ box-shadow:inset 0 0 0 2px #FFF!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day[data-tone="task"]::before{background:#EAA543!important}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day[data-tone="space"]::before{background:#A191DC!important}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day[data-tone="note"]::before{background:#A9B0BC!important}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day .cal-entry-copy{
+ display:block!important;flex:1!important;min-width:0!important;margin:0!important;padding:0!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day .cal-entry-copy strong{
+ display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ font:590 11px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:inherit!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day :is(.cal-entry-time,.cal-entry-chevron,.cal-entry-copy small){
+ display:none!important;
+}
+html body #calendarPage #calendarWeekAllDay .cal-timeline-all-day-time{
+ margin-left:auto!important;flex:none!important;
+ font:500 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ opacity:.73!important;color:inherit!important;
+}
+html body #calendarPage #calendarWeekTimelineScroll{
+ box-sizing:border-box!important;position:relative!important;
+ flex:none!important;width:100%!important;
+ height:min(640px,calc(100dvh - 232px - env(safe-area-inset-bottom)))!important;
+ min-height:280px!important;overflow-y:auto!important;overflow-x:hidden!important;
+ margin:0!important;padding:9px 0 5px!important;
+ overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
+ scrollbar-width:none!important;background:#FFF!important;
+}
+#calendarPage #calendarWeekTimelineScroll::-webkit-scrollbar{display:none!important}
+#calendarPage .cal-week-hours{position:relative!important;width:100%!important;min-height:1440px!important}
+#calendarPage .cal-week-hour-row{
+ position:relative!important;box-sizing:border-box!important;
+ height:60px!important;border:0!important;
+ border-bottom:1px solid #EAECEF!important;background:transparent!important;
+}
+#calendarPage .cal-week-hour-row::before{
+ content:""!important;position:absolute!important;left:49px!important;right:0!important;top:0!important;
+ height:1px!important;background:#EAECEF!important;
+}
+#calendarPage .cal-week-hour-label{
+ position:absolute!important;left:3px!important;top:-6px!important;
+ font:500 10.5px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#8B9099!important;font-variant-numeric:tabular-nums!important;
+}
+#calendarPage .cal-week-event-layer{
+ position:absolute!important;top:0!important;bottom:0!important;left:51px!important;right:5px!important;
+ pointer-events:none!important;z-index:2!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed{
+ position:absolute!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ box-sizing:border-box!important;min-width:0!important;min-height:34px!important;
+ margin:0!important;padding:5px 7px!important;gap:3px!important;
+ background:#DDECFB!important;color:#285B80!important;
+ border:0!important;border-left:3px solid #2B91D3!important;border-radius:4px!important;
+ box-shadow:none!important;text-align:left!important;overflow:hidden!important;
+ pointer-events:auto!important;touch-action:manipulation!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-tone="task"]{
+ background:#FCE7E3!important;border-left-color:#DB776C!important;color:#8A453D!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-tone="space"]{
+ background:#EBE8F9!important;border-left-color:#9580DA!important;color:#67529A!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed[data-tone="note"]{
+ background:#EDEFF4!important;border-left-color:#9CA7B9!important;color:#626E7E!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed :is(.cal-entry-time,.cal-entry-chevron,.cal-entry-copy small){
+ display:none!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed .cal-entry-copy{
+ display:block!important;flex:none!important;min-width:0!important;margin:0!important;padding:0!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-timed .cal-entry-copy strong{
+ display:block!important;min-width:0!important;
+ overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;
+ font:600 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;color:inherit!important;
+}
+html body #calendarPage #calendarWeekTimeline .cal-timeline-time-label{
+ display:block!important;flex:none!important;
+ font:500 10px/1.1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ opacity:.8!important;color:inherit!important;
+}
+#calendarPage .cal-week-now-marker{
+ position:absolute!important;left:0!important;right:0!important;
+ height:1.5px!important;background:#EF4D59!important;z-index:5!important;pointer-events:none!important;
+}
+#calendarPage .cal-week-now-marker::before{
+ content:""!important;position:absolute!important;left:-4px!important;top:-3px!important;
+ width:8px!important;height:8px!important;border-radius:50%!important;background:#EF4D59!important;
+}
+@media(max-width:370px){
+ html body #calendarPage #calendarWeekTimelineScroll{height:calc(100dvh - 215px - env(safe-area-inset-bottom))!important}
+}
