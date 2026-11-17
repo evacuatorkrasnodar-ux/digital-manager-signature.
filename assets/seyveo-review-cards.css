@@ -136,7 +136,7 @@
 :root[data-theme="light"] body > footer.dock.sv-shared-dock:has(> #navTasks:is(.active,.sv-dock-nav-press))
  > .sv-dock-review-underlay{z-index:2!important}
 :root[data-theme="light"] body > footer.dock.sv-shared-dock:has(> #navTasks:is(.active,.sv-dock-nav-press))
- > .sv-dock-review-underlay .sv-dock-review-underlay-digit{background:#F58A24;opacity:1}
+ > .sv-dock-review-underlay .sv-dock-review-underlay-digit{background:#D6534A;opacity:1}
 :root[data-theme="light"] #navTasks[data-sv-review-count]:is(.active,.sv-dock-nav-press)::after{opacity:1!important}
 @media(prefers-reduced-motion:reduce){
  .dock.sv-shared-dock .sv-dock-review-underlay-digit{transition:none!important}
