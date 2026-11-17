@@ -1048,6 +1048,12 @@ function row(item,compact=false,deferred=false){
   if(item.sourceStore==='calendar')editButton.dataset.calendarOpen=item.calendarId;
   else editButton.dataset.taskEdit=item.id;
   menu.prepend(editButton);
+  if(item.done&&item.sourceStore!=='calendar'){
+   const share=element('button','personal-task-menu-details','Поделиться результатом');
+   share.type='button';share.dataset.taskShare=item.id;
+   share.setAttribute('aria-label','Поделиться выполненным делом: '+item.title);
+   menu.append(share);
+  }
   const remove=element('button','personal-task-menu-delete','Удалить дело');
   remove.type='button';remove.dataset.taskDelete=item.id;
   remove.setAttribute('aria-label','Удалить дело: '+item.title);
@@ -1694,6 +1700,10 @@ list.addEventListener('click',e=>{
   window.SEYVEO_LIVING_MOMENT?.restoreTask?.(btn.dataset.taskResume);
  }
  else if(btn.dataset.taskToggle)change(btn.dataset.taskToggle);
+ else if(btn.dataset.taskShare){
+  const task=read().find(item=>item.id===btn.dataset.taskShare&&item.done);
+  if(task)void window.SEYVEO_TASK_SNAPSHOT?.openForTask?.(task);
+ }
  else if(btn.dataset.taskMenu){
   const taskRow=btn.closest('.personal-task-row');
   if(!taskRow)return;
