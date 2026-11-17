@@ -9,6 +9,20 @@
  const greetingSubline=document.getElementById('subline');
  // One orange count for the dock; same source as the Home review indicator.
  const tasksButton=document.getElementById('navTasks');
+ const dock=tasksButton?.closest('footer.dock');
+ // A direct sibling of the dock pane can really sit BEHIND its backdrop-filter.
+ // A pseudo-element inside the Tasks button cannot: the button is painted above
+ // the pane as a single stacking layer, regardless of a negative child z-index.
+ const countUnderlay=dock?document.createElement('span'):null;
+ const countDigit=countUnderlay?document.createElement('span'):null;
+ if(countUnderlay&&countDigit){
+  countUnderlay.className='sv-dock-review-underlay';
+  countUnderlay.setAttribute('aria-hidden','true');
+  countUnderlay.hidden=true;
+  countDigit.className='sv-dock-review-underlay-digit';
+  countUnderlay.append(countDigit);
+  dock.prepend(countUnderlay);
+ }
 
  const room=document.createElement('section');
  room.id='svReviewRoom';room.className='sv-review-room';room.hidden=true;
@@ -41,6 +55,10 @@
    if(total>0)tasksButton.setAttribute('data-sv-review-count',total>99?'99+':String(total));
    else tasksButton.removeAttribute('data-sv-review-count');
    tasksButton.setAttribute('aria-label',total?'Открыть дела · '+total+' для разбора':'Открыть дела');
+  }
+  if(countUnderlay&&countDigit){
+   countUnderlay.hidden=total===0;
+   if(total>0)countDigit.textContent=total>99?'99+':String(total);
   }
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
   // The fixed Home reminder owns the card count; no second copy.
