@@ -43,7 +43,7 @@ assert.match(health,/sv-health-header-add:not\(\[hidden\]\)\{[\s\S]*?width:var\(
 assert.match(favorites,/sv-home-favorite-icon\{\s*position:relative;display:grid;place-items:center;width:var\(--sv-action-circle-size,44px\)/);
 assert.match(generic,/\.sv-header-material-circle\{\s*box-sizing:border-box!important;\s*width:var\(--sv-action-circle-size,44px\)!important/);
 for(const [name,version] of Object.entries({
- 'seyveo-header-system.css':15,'seyveo-work-header.js':34,'seyveo-work-shell.js':99,
+ 'seyveo-header-system.css':15,'seyveo-work-header.js':34,'seyveo-work-shell.js':100,
  'seyveo-home-work-actions-flat.css':71,'seyveo-task-editor-v3.css':56,
  'seyveo-home-favorites.css':34,'seyveo-back-silver-flat.css':7,'seyveo-health-graphite-flat.css':82,
  'seyveo-card-system.css':36

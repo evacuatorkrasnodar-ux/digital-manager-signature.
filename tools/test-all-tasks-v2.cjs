@@ -33,9 +33,10 @@ assert.doesNotMatch(source,/svTaskHistoryMenu/,'The All Tasks screen must not ha
 assert.match(source,/window\.SEYVEO_TASK_INLINE\?\.select\(\)/,'The selection control works in one tap');
 assert.match(source,/:host\(\[data-task-selecting="true"\]\) \.sv-history-dual\{\s*display:flex!important;width:var\(--sv-nav-single-size,44px\)/,'All Tasks has a 44px search circle');
 assert.match(source,/:host\(\[data-task-selecting="true"\]\) \.sv-history-dual \.sv-history-select\{display:none!important\}/,'The duplicate header selection icon is hidden');
-assert.match(source,/const choose=make\('button','sv-task-choose','Выбрать дела'\)/,'Selection remains available in the bottom capsule');
+assert.match(source,/selectionActive=!!toolMode/,'Selecting is available immediately when All Tasks opens');
+assert.match(source,/cancel\.addEventListener\('click',\(\)=>\{selected\.clear\(\);paint\(\)\}\)/,'Cancel clears the selection without collapsing the capsule');
 assert.match(source,/actionCapsule\.hidden=!nested/,'The bottom capsule is available before choosing records');
-assert.match(css,/#svTaskActionCapsule\.sv-task-selection-idle\{/,'The idle selection control has a compact 44px capsule');
+assert.match(css,/max-width:312px;height:44px;min-height:44px;padding:2px/,'The full bottom capsule stays 44px tall');
 assert.match(history,/window\.SEYVEO_ACTION_HISTORY_OPEN=/);
 assert.match(history,/sah-history-filters/);
 assert.match(html,/assets\/seyveo-all-tasks-v2\.css\?v=\d+/);

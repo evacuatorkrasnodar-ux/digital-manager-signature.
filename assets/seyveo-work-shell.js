@@ -368,12 +368,8 @@
    });
    const cancel=make('button','sv-task-cancel','Отмена');cancel.type='button';
    cancel.setAttribute('aria-label','Отменить выбор дел');
-   cancel.addEventListener('click',toggleSelection);
+   cancel.addEventListener('click',()=>{selected.clear();paint()});
    actionCapsule.append(selectAll,counter,deleteButton,cancel);
-  }else{
-   const choose=make('button','sv-task-choose','Выбрать дела');choose.type='button';
-   choose.addEventListener('click',toggleSelection);
-   actionCapsule.append(choose);
   }
   function paintResults(){
    results.replaceChildren();
@@ -398,7 +394,7 @@
     else if(overdue)subtitle.dataset.status='overdue';
     body.append(subtitle);
     row.append(body);
-    if(!selectionActive){
+    {
      const btn=make('button','',task.done?'Вернуть':'Открыть');btn.type='button';
      btn.addEventListener('click',()=>{
       if(task.done){if(window.SEYVEO_PERSONAL_TASK_HISTORY?.restore?.(task.id))paint()}
@@ -434,7 +430,6 @@
   heading.dataset.selectionActive=String(selectionActive);
   const selectionVisible=selectionActive&&nested;
   actionCapsule.hidden=!nested;
-  actionCapsule.classList.toggle('sv-task-selection-idle',nested&&!selectionActive);
   document.documentElement.classList.toggle('sv-task-selection-active',selectionVisible);
   selectHistory.setAttribute('aria-pressed',String(selectionActive));
   selectHistory.setAttribute('aria-label',selectionActive?'Закончить выбор дел':'Выбрать дела');
@@ -452,7 +447,7 @@
  function setMode(mode){
   toolMode=mode?'all':'';
   filter='all';query='';searchOpen=false;selected.clear();
-  selectionActive=false;
+  selectionActive=!!toolMode;
   shell.dataset.taskToolMode=toolMode;
   toolPanel.hidden=!toolMode;
   if(!toolMode){
@@ -480,7 +475,7 @@
  }
  function toggleSelection(){
   if(!toolMode)setMode('all');
-  selectionActive=!selectionActive;
+  selectionActive=true;
   selected.clear();
   syncToolHeader();
   paint();
