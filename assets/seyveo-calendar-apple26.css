@@ -511,3 +511,18 @@ html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-ent
 @media(max-width:370px){
  #calendarPage .cal-month-grid .cal-day-chip{font-size:8.2px!important}
 }
+
+/* SEYVEO calendar selection standard: a single flat black disc, white numeral. */
+#calendarPage .cal-month-grid .cal-day[data-selected="true"] .cal-day-number,
+#calendarPage .cal-week-grid .cal-day[data-selected="true"] .cal-day-number,
+#tasksPage #svTasksDateNav .sv-agenda-day[data-selected="true"] .sv-agenda-day-number{
+ background:#17191D!important;color:#FFF!important;
+ border:0!important;border-radius:50%!important;
+ outline:0!important;outline-offset:0!important;box-shadow:none!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected,
+#calendarSpaceDialog .cal-velvet-days button[aria-pressed="true"]{
+ background:#17191D!important;color:#FFF!important;
+ border:0!important;border-radius:50%!important;
+ outline:0!important;outline-offset:0!important;box-shadow:none!important;
+}
