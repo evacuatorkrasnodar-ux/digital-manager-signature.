@@ -381,13 +381,14 @@
  #tasksPage #svTasksDateNav .sv-agenda-week-step:first-child{left:8px}
  #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:8px}
 }
-/* On phones the workspace shell has a 13px outer inset. Align the first day with the screen edge. */
+/* On phones the date rail belongs to the Work shell, not the viewport.
+   The old 100vw / -26px offset escaped the clipped app and erased edge rules. */
 @media(max-width:767px){
  #tasksPage #svTasksDateNav .sv-agenda-ticker{
-  width:100vw;margin-left:-26px;margin-right:0;
+  width:calc(100% + 26px);margin-inline:-13px;
  }
  /* Five complete days plus a 45% preview of the sixth, as in Apple Calendar.
-    Keep the rail edge-to-edge, with just 1px to protect the first rule. */
+    Keep the rail within its parent, with 1px to protect the first rule. */
  #tasksPage #svTasksDateNav .sv-agenda-week{
   padding:0 1px;
  }
@@ -429,7 +430,7 @@
  #tasksPage #svTasksDateNav{padding-inline:8px!important}
  #tasksPage #svTasksDateNav .sv-agenda-week{padding-inline:1px}
  #tasksPage #svTasksDateNav .sv-agenda-ticker{
-  width:100vw;margin-left:-21px;margin-right:0;
+  width:calc(100% + 16px);margin-inline:-8px;
  }
  #tasksPage #personalTaskList .sv-agenda-section-heading{padding-inline:8px!important}
  #tasksPage #personalTaskList .sv-agenda-entry{padding-inline:8px!important}
