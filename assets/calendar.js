@@ -252,7 +252,10 @@ function renderYear(){
   const max=new Date(year,month+1,0).getDate();
   for(let date=1;date<=max;date++){
    const cell=document.createElement('span');cell.className='cal-year-mini-day';
-   cell.textContent=String(date);
+   const numeral=document.createElement('span');
+   numeral.className='cal-year-number';
+   numeral.textContent=String(date);
+   cell.append(numeral);
    if(year===today.getFullYear()&&month===today.getMonth()&&date===today.getDate())cell.classList.add('is-today');
    days.append(cell);
   }
