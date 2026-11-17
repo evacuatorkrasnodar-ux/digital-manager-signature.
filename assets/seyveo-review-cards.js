@@ -7,6 +7,12 @@
  const ids=['seyveoLivingMoment','dynamic','svcpWorkHomePreview','workTimeline','svSmartStartHome'];
  const original=new Map();
  const greetingSubline=document.getElementById('subline');
+ // One orange count for the dock; same source as the Home review indicator.
+ const tasksButton=document.getElementById('navTasks');
+ const dockCount=document.createElement('span');
+ dockCount.className='sv-dock-review-count';dockCount.hidden=true;
+ dockCount.setAttribute('aria-hidden','true');
+ if(tasksButton)tasksButton.append(dockCount);
  const room=document.createElement('section');
  room.id='svReviewRoom';room.className='sv-review-room';room.hidden=true;
  room.setAttribute('role','dialog');room.setAttribute('aria-modal','true');room.setAttribute('aria-label','Разобрать дела');
@@ -34,6 +40,11 @@
  }
  function update(){
   const total=count();
+  if(tasksButton){
+   dockCount.hidden=total===0;
+   dockCount.textContent=total>99?'99+':String(total);
+   tasksButton.setAttribute('aria-label',total?'Открыть дела · '+total+' для разбора':'Открыть дела');
+  }
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
   // The fixed Home reminder owns the card count; no second copy.
   if(greetingSubline)greetingSubline.hidden=total>0;
