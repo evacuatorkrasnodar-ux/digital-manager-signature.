@@ -90,7 +90,7 @@
    grid-column:3;grid-row:1;
    justify-self:end;align-self:center;
    box-sizing:border-box;display:flex;align-items:center;justify-content:center;
-   gap:0;width:var(--sv-nav-triple-width,154px);height:var(--sv-nav-capsule-height,50px);padding:0 4px;
+   gap:0;width:var(--sv-nav-triple-width,134px);height:var(--sv-nav-capsule-height,44px);padding:0 4px;
    border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));
    border-radius:999px;
    background:var(--sv-card-action-neutral-bg,transparent);
@@ -99,9 +99,9 @@
    backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
   }
   :host([data-task-tools="true"]) .sv-history-dual .control{
-   display:grid!important;flex:0 0 var(--sv-nav-capsule-cell,48px)!important;
-   width:var(--sv-nav-capsule-cell,48px)!important;height:var(--sv-nav-capsule-cell,48px)!important;min-width:var(--sv-nav-capsule-cell,48px)!important;
-   min-height:var(--sv-nav-capsule-cell,48px)!important;margin:0!important;padding:0!important;
+   display:grid!important;flex:0 0 var(--sv-nav-capsule-cell,42px)!important;
+   width:var(--sv-nav-capsule-cell,42px)!important;height:var(--sv-nav-capsule-cell,42px)!important;min-width:var(--sv-nav-capsule-cell,42px)!important;
+   min-height:var(--sv-nav-capsule-cell,42px)!important;margin:0!important;padding:0!important;
    border:0!important;border-radius:999px!important;
    background:transparent!important;box-shadow:none!important;
    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
@@ -126,7 +126,7 @@
   :host([data-task-tools="true"]) .sv-review-cards-control{display:grid!important}
   :host([data-history="true"]) .sv-review-cards-control{display:none!important}
   :host([data-task-tools="true"]) .sv-history-dual .sv-review-cards-control{position:relative!important;overflow:visible!important}
-  :host([data-task-tools="true"]) .sv-review-cards-badge:not([hidden]){position:absolute;top:5px;right:4px;display:grid;place-items:center;min-width:15px;height:15px;box-sizing:border-box;padding:0 3px;border-radius:999px;background:#D6534A;color:white;border:1.5px solid #fff;font:600 9px/1 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 2px rgba(0,0,0,.08);pointer-events:none}
+  :host([data-task-tools="true"]) .sv-review-cards-badge:not([hidden]){position:absolute;top:4px;right:1px;display:grid;place-items:center;min-width:14px;height:14px;box-sizing:border-box;padding:0 3px;border-radius:999px;background:#D6534A;color:white;border:1.5px solid #fff;font:600 9px/1 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 2px rgba(0,0,0,.08);pointer-events:none}
   :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-review-cards-control{border-radius:999px!important;background:transparent!important;color:#1C1C1E!important;}
   /* No internal dividers or individually raised button surfaces. */
   :host([data-task-tools="true"]) .sv-history-dual .control::after{content:none!important;display:none!important}
@@ -137,14 +137,14 @@
    background:transparent!important;
   }
   /* The nested All Tasks capsule contains Search and Select. */
-  /* SEYVEO dimensions: Home round 50×50, paired capsule 104×50, main dock 60px.
-     Only the two-action All Tasks header uses this compact paired size. */
+  /* SEYVEO page actions: 44px circle, 92×44 paired capsule, main dock stays 60px.
+     Only the two-action All Tasks header uses this paired layout. */
   :host([data-task-selecting="true"]) .sv-history-dual{
-   display:flex!important;width:var(--sv-nav-double-width,104px)!important;height:var(--sv-nav-capsule-height,50px)!important;padding:0 3px!important;
+   display:flex!important;width:var(--sv-nav-double-width,92px)!important;height:var(--sv-nav-capsule-height,44px)!important;padding:0 3px!important;
   }
   :host([data-task-selecting="true"]) .sv-history-dual .control{
-   flex:0 0 var(--sv-nav-capsule-cell,48px)!important;width:var(--sv-nav-capsule-cell,48px)!important;min-width:var(--sv-nav-capsule-cell,48px)!important;
-   height:var(--sv-nav-capsule-cell,48px)!important;min-height:var(--sv-nav-capsule-cell,48px)!important;
+   flex:0 0 var(--sv-nav-capsule-cell,42px)!important;width:var(--sv-nav-capsule-cell,42px)!important;min-width:var(--sv-nav-capsule-cell,42px)!important;
+   height:var(--sv-nav-capsule-cell,42px)!important;min-height:var(--sv-nav-capsule-cell,42px)!important;
   }
   :host([data-task-selecting="true"]) .sv-history-dual .control svg{
    width:20px!important;height:20px!important;stroke-width:1.6!important;

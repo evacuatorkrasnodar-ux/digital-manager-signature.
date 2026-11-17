@@ -26,7 +26,7 @@
  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
 }
 #homePage #svHomeFavorites .sv-home-favorite-icon{
- position:relative;display:grid;place-items:center;width:50px;height:50px;
+ position:relative;display:grid;place-items:center;width:var(--sv-action-circle-size,44px);height:var(--sv-action-circle-size,44px);
  box-sizing:border-box;border-radius:50%;
  /* Exact Card Workshop action contract: white pearl circles with a hairline rim. */
  background:var(--sv-card-action-neutral-bg,transparent);
@@ -40,7 +40,7 @@
  opacity:.92;transform:scale(.965)
 }
 #homePage #svHomeFavorites .sv-home-favorite-icon svg{
- width:23px;height:23px;fill:none;stroke:#0B0B0D;stroke-width:1.6;
+ width:var(--sv-action-glyph-size,20px);height:var(--sv-action-glyph-size,20px);fill:none;stroke:#0B0B0D;stroke-width:1.6;
  stroke-linecap:round;stroke-linejoin:round;shape-rendering:geometricPrecision
 }
 #homePage #svHomeFavorites .sv-home-favorite-label{
@@ -138,8 +138,8 @@
 }
 @media(max-width:370px){
  #homePage #svHomeFavorites{max-width:calc(100vw - 16px)}
- #homePage #svHomeFavorites .sv-home-favorite-icon{width:50px;height:50px;border-radius:50%}
- #homePage #svHomeFavorites .sv-home-favorite-icon svg{width:23px;height:23px}
+ #homePage #svHomeFavorites .sv-home-favorite-icon{width:var(--sv-action-circle-size,44px);height:var(--sv-action-circle-size,44px);border-radius:50%}
+ #homePage #svHomeFavorites .sv-home-favorite-icon svg{width:var(--sv-action-glyph-size,20px);height:var(--sv-action-glyph-size,20px)}
  #homePage #svHomeFavorites .sv-home-favorite-label{font-size:10.5px}
 }
 @media(prefers-reduced-motion:reduce){
@@ -400,7 +400,7 @@ dialog.sv-home-favorites-editor .sv-home-favorites-auto[aria-pressed=true] svg{s
 /* Match the exact Home action-button material; no custom grey gradient or heavy rim. */
 dialog.sv-home-favorites-editor .sv-home-favorites-editor-head button,
 dialog.sv-home-favorites-editor .sv-home-favorites-auto{
- width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;
+ width:var(--sv-action-circle-size,44px)!important;height:var(--sv-action-circle-size,44px)!important;min-width:var(--sv-action-circle-size,44px)!important;min-height:var(--sv-action-circle-size,44px)!important;
  background:var(--sv-card-action-neutral-bg,transparent)!important;
  border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28))!important;
  box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16))!important;
@@ -415,11 +415,11 @@ dialog.sv-home-favorites-editor .sv-home-favorites-auto[aria-pressed=true]{
  inset 0 0 0 1px rgba(50,67,87,.22)!important;
 }
 dialog.sv-home-favorites-editor .sv-home-favorites-editor-head button svg{
- width:25px!important;height:25px!important;
+ width:22px!important;height:22px!important;
  stroke:#090a0c!important;stroke-width:1.9!important;
 }
 dialog.sv-home-favorites-editor .sv-home-favorites-auto svg{
- width:28px!important;height:28px!important;
+ width:23px!important;height:23px!important;
  stroke:#090a0c!important;stroke-width:1.55!important;
 }
 

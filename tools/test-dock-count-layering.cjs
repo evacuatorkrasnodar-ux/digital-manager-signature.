@@ -18,7 +18,7 @@ assert.match(badge,/\.sv-dock-review-underlay-digit\{background:#D6534A;opacity:
  'The selected counter disc must match the red Tasks icon');
 assert.match(workShell,/sv-review-cards-badge:not\(\[hidden\]\)[^\n]*background:#D6534A/,
  'The header task badge must share the same red');
-assert.match(workShell,/sv-review-cards-badge:not\(\[hidden\]\)\{position:absolute;top:5px;right:4px;/,
+assert.match(workShell,/sv-review-cards-badge:not\(\[hidden\]\)\{position:absolute;top:4px;right:1px;/,
  'The header badge must sit lower and closer to the icon');
 assert.match(workShell,/\.sv-history-dual \.control svg\{\s*width:20px;height:20px;stroke-width:1\.6;/,
  'All three header glyphs must stay small and delicate like Home actions');

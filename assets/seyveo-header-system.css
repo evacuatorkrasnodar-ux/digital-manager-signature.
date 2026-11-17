@@ -6,12 +6,15 @@
  */
 :root{
  /* SEYVEO navigation geometry: the one shared scale for single and grouped controls. */
- --sv-nav-single-size:50px;
- --sv-nav-capsule-height:50px;
- --sv-nav-capsule-cell:48px;
- --sv-nav-double-width:104px;
- --sv-nav-triple-width:154px;
- --sv-nav-icon-size:23px;
+ /* One SEYVEO page-action scale. The permanent 60px dock is excluded. */
+ --sv-action-circle-size:44px;
+ --sv-action-glyph-size:20px;
+ --sv-nav-single-size:44px;
+ --sv-nav-capsule-height:44px;
+ --sv-nav-capsule-cell:42px;
+ --sv-nav-double-width:92px;
+ --sv-nav-triple-width:134px;
+ --sv-nav-icon-size:20px;
  /* Exact Home action finish: transparent body, hairline white rim.
     Keep the tiny inset reflections; never build a second grey outline. */
  --sv-nav-pearl-border:.7px solid rgba(255,255,255,.28);
@@ -24,15 +27,15 @@
    inset -.6px 0 .8px rgba(75,82,96,.055),
    0 1px 2px rgba(82,88,103,.045);
  --sv-header-row:62px;
- --sv-header-slot:42px;
+ --sv-header-slot:44px;
  --sv-header-gap:8px;
  --sv-header-title-size:20px;
  --sv-header-title-weight:590;
  --sv-header-title-leading:1.2;
  --sv-header-title-tracking:-.02em;
- --sv-header-back-icon:25px;
+ --sv-header-back-icon:22px;
  --sv-header-back-weight:1.45;
- --sv-header-action-icon:22px;
+ --sv-header-action-icon:20px;
  --sv-header-action-weight:1.85;
  --sv-header-surface:#F2F1F6;
  --sv-header-ink:#1C1C1E;

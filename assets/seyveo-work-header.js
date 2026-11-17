@@ -40,7 +40,7 @@
   width:100%;
   height:100%;
   display:grid;
-  grid-template-columns:var(--sv-header-slot,42px) minmax(0,1fr) var(--sv-header-slot,42px);
+  grid-template-columns:var(--sv-header-slot,44px) minmax(0,1fr) var(--sv-header-slot,44px);
   align-items:center;
   column-gap:var(--sv-header-gap,8px);
   padding:var(--gutter-t) var(--gutter-r) 0 var(--gutter-l);
@@ -66,7 +66,7 @@
   height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 18px);
  }
  :host([data-work-tabs="true"]) .bar{
-  grid-template-rows:42px minmax(0,1fr);
+  grid-template-rows:44px minmax(0,1fr);
  }
  :host([data-agenda="true"]) .bar{
   padding-left:calc(var(--gutter-l) + 4px);
@@ -103,7 +103,7 @@
  .control {
   appearance:none;-webkit-appearance:none;
   grid-row:1;
-  width:var(--sv-header-slot,42px);height:var(--sv-header-slot,42px);min-width:var(--sv-header-slot,42px);min-height:var(--sv-header-slot,42px);
+  width:var(--sv-header-slot,44px);height:var(--sv-header-slot,44px);min-width:var(--sv-header-slot,44px);min-height:var(--sv-header-slot,44px);
   display:grid;place-items:center;
   padding:0;margin:0;
   border-radius:50%;
@@ -130,7 +130,7 @@
  /* One freshly rebuilt All Tasks Back. Silver-mist material follows the Home dock,
     with a visible hairline rim on the pure-white header. No extra pseudo layers. */
  :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back{
-  width:var(--sv-nav-single-size,50px);height:var(--sv-nav-single-size,50px);min-width:var(--sv-nav-single-size,50px);min-height:var(--sv-nav-single-size,50px);
+  width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);min-height:var(--sv-nav-single-size,44px);
   border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));border-radius:50%;
   background:var(--sv-card-action-neutral-bg,transparent);
   box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16));
@@ -138,7 +138,7 @@
   backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
  }
  :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back svg{
-  width:var(--sv-nav-icon-size,23px);height:var(--sv-nav-icon-size,23px);stroke-width:1.6;stroke:#0B0B0D;
+  width:var(--sv-nav-icon-size,20px);height:var(--sv-nav-icon-size,20px);stroke-width:1.6;stroke:#0B0B0D;
   shape-rendering:geometricPrecision;
  }
 

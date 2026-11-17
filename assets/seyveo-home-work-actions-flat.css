@@ -113,9 +113,9 @@
 }
 #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="send"]:not([hidden]){
- display:inline-flex!important;flex:0 0 50px!important;
- box-sizing:border-box!important;width:50px!important;min-width:50px!important;max-width:50px!important;
- height:50px!important;min-height:50px!important;max-height:50px!important;
+ display:inline-flex!important;flex:0 0 var(--sv-action-circle-size,44px)!important;
+ box-sizing:border-box!important;width:var(--sv-action-circle-size,44px)!important;min-width:var(--sv-action-circle-size,44px)!important;max-width:var(--sv-action-circle-size,44px)!important;
+ height:var(--sv-action-circle-size,44px)!important;min-height:var(--sv-action-circle-size,44px)!important;max-height:var(--sv-action-circle-size,44px)!important;
  margin:0!important;padding:0!important;gap:0!important;justify-content:center!important;align-items:center!important;
  border:0!important;border-radius:50%!important;background:#38383A!important;color:#FFFFFF!important;
  box-shadow:none!important;
@@ -124,7 +124,7 @@
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="send"] .sv-card-icon-caption{display:none!important}
 #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button[data-sv-card-icon="send"] svg.sv-card-symbol{
- display:block!important;width:23px!important;height:23px!important;flex:0 0 23px!important;
+ display:block!important;width:20px!important;height:20px!important;flex:0 0 20px!important;
  fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;filter:none!important;
 }
@@ -133,8 +133,8 @@
 #homePage #seyveoLivingMoment .lm-field:is([data-lm-subject="contract"],[data-lm-subject="mail"])
  .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="back"]:not([hidden]){
  display:inline-flex!important;box-sizing:border-box!important;
- flex:0 0 50px!important;width:50px!important;min-width:50px!important;max-width:50px!important;
- height:50px!important;min-height:50px!important;max-height:50px!important;
+ flex:0 0 var(--sv-action-circle-size,44px)!important;width:var(--sv-action-circle-size,44px)!important;min-width:var(--sv-action-circle-size,44px)!important;max-width:var(--sv-action-circle-size,44px)!important;
+ height:var(--sv-action-circle-size,44px)!important;min-height:var(--sv-action-circle-size,44px)!important;max-height:var(--sv-action-circle-size,44px)!important;
  padding:0!important;margin:0!important;align-items:center!important;justify-content:center!important;
  border:0!important;border-radius:50%!important;
  background:#F0F1F3!important;color:#111113!important;box-shadow:none!important;
@@ -145,7 +145,7 @@
 }
 #homePage #seyveoLivingMoment .lm-field
  .lm-actions .lm-polymer.sv-card-icon-button[data-sv-card-icon="back"] svg.sv-card-symbol{
- width:25px!important;height:25px!important;flex:0 0 25px!important;
+ width:22px!important;height:22px!important;flex:0 0 22px!important;
  stroke:currentColor!important;stroke-width:1.45!important;fill:none!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
@@ -325,7 +325,7 @@
 
 
 /* SEYVEO / Home card actions — approved asymmetric Apple composition.
-   All three match New Task: 50px hit circles and 23px icons. The Home
+   All three match New Task: 44px circles and 20px icons. The Home
    quick-action group stays leading-aligned with its card's text, with
    one shared white optical material and a flat, subtle hairline contour.
    Send/Save/Confirm text actions above remain unchanged. */
@@ -342,9 +342,9 @@
  [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
  box-sizing:border-box!important;
  display:inline-flex!important;
- flex:0 0 50px!important;
- width:50px!important;min-width:50px!important;max-width:50px!important;
- height:50px!important;min-height:50px!important;max-height:50px!important;
+ flex:0 0 var(--sv-action-circle-size,44px)!important;
+ width:var(--sv-action-circle-size,44px)!important;min-width:var(--sv-action-circle-size,44px)!important;max-width:var(--sv-action-circle-size,44px)!important;
+ height:var(--sv-action-circle-size,44px)!important;min-height:var(--sv-action-circle-size,44px)!important;max-height:var(--sv-action-circle-size,44px)!important;
  padding:0!important;margin:0!important;gap:0!important;
  position:relative!important;
  isolation:isolate!important;
@@ -384,9 +384,9 @@
  [data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]) .sv-card-symbol{
  box-sizing:border-box!important;
  display:block!important;
- flex:0 0 23px!important;
- width:23px!important;min-width:23px!important;max-width:23px!important;
- height:23px!important;min-height:23px!important;max-height:23px!important;
+ flex:0 0 var(--sv-action-glyph-size,20px)!important;
+ width:var(--sv-action-glyph-size,20px)!important;min-width:var(--sv-action-glyph-size,20px)!important;max-width:var(--sv-action-glyph-size,20px)!important;
+ height:var(--sv-action-glyph-size,20px)!important;min-height:var(--sv-action-glyph-size,20px)!important;max-height:var(--sv-action-glyph-size,20px)!important;
  margin:0!important;padding:0!important;
  stroke:currentColor!important;stroke-width:1.7!important;fill:none!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
@@ -409,7 +409,7 @@
  backdrop-filter:var(--sv-card-action-blur,none)!important;
  color:#111113!important;
 }
-/* Approved dock optics on three 50px Home actions. First white-theme polish:
+/* Approved dock optics on three 44px Home actions. First white-theme polish:
    transparent fill, unchanged pearl rim and restrained microshadows. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-field .lm-actions
  .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
@@ -481,7 +481,7 @@
 
 
 /* Card Studio / Home · one action grammar while composing a reply.
-   Work, Mail and Document share 50px circles and 23px black SVGs.
+   Work, Mail and Document share 44px circles and 20px black SVGs.
    No changes to the global dock, sphere, or the initial card choices. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment
  .lm-field[data-lm-composing="true"] .lm-actions{
@@ -493,8 +493,8 @@
  .lm-field[data-lm-composing="true"] .lm-actions
  .lm-polymer.sv-card-icon-button:not([hidden]){
  box-sizing:border-box!important;display:inline-flex!important;
- flex:0 0 50px!important;width:50px!important;min-width:50px!important;max-width:50px!important;
- height:50px!important;min-height:50px!important;max-height:50px!important;
+ flex:0 0 var(--sv-action-circle-size,44px)!important;width:var(--sv-action-circle-size,44px)!important;min-width:var(--sv-action-circle-size,44px)!important;max-width:var(--sv-action-circle-size,44px)!important;
+ height:var(--sv-action-circle-size,44px)!important;min-height:var(--sv-action-circle-size,44px)!important;max-height:var(--sv-action-circle-size,44px)!important;
  margin:0!important;padding:0!important;gap:0!important;
  align-items:center!important;justify-content:center!important;flex-direction:row!important;
  border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28))!important;
@@ -527,8 +527,8 @@
  .lm-field[data-lm-composing="true"] .lm-actions
  .lm-polymer.sv-card-icon-button svg.sv-card-symbol{
  display:block!important;
- box-sizing:border-box!important;flex:0 0 23px!important;
- width:23px!important;height:23px!important;min-width:23px!important;max-width:23px!important;
+ box-sizing:border-box!important;flex:0 0 var(--sv-action-glyph-size,20px)!important;
+ width:var(--sv-action-glyph-size,20px)!important;height:var(--sv-action-glyph-size,20px)!important;min-width:var(--sv-action-glyph-size,20px)!important;max-width:var(--sv-action-glyph-size,20px)!important;
  margin:0!important;padding:0!important;
  color:#111315!important;fill:none!important;stroke:currentColor!important;
  stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;
