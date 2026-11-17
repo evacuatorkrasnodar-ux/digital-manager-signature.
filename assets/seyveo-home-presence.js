@@ -52,14 +52,33 @@
  function positionThought(){
   if(line.hidden||home.hidden)return;
   const sphere=document.getElementById('orb');if(!sphere)return;
-  const top=Math.max(58,Math.round(sphere.getBoundingClientRect().top-home.getBoundingClientRect().top-line.getBoundingClientRect().height-16));
-  const value=top+'px';
-  if(line.style.getPropertyValue('--sv-thought-top')!==value)line.style.setProperty('--sv-thought-top',value);
+  const host=home.getBoundingClientRect(),orb=sphere.getBoundingClientRect();
+  const height=Math.max(line.getBoundingClientRect().height,line.scrollHeight);
+  if(!height||!orb.height)return;
+  const clearance=14,minimumTop=40;
+  const above=orb.top-host.top-height-clearance;
+  let top=above,placement='above';
+  if(above<minimumTop){
+   // A short phone has less space above the orb. Use the gap beneath it
+   // only if the entire thought fits before the weather/shortcut row.
+   const weather=document.getElementById('svSayviHomeWeather');
+   const weatherTop=weather&&!weather.hidden&&getComputedStyle(weather).display!=='none'
+    ?weather.getBoundingClientRect().top:window.innerHeight-105;
+   const below=orb.bottom-host.top+14;
+   if(weatherTop-host.top-below-height>=12){top=below;placement='below';}
+   else{top=minimumTop;placement='no-room';}
+  }
+  line.dataset.svSpace=placement;
+  const value=Math.round(top)+'px';
+  if(line.style.getPropertyValue('--sv-thought-top')!==value)
+   line.style.setProperty('--sv-thought-top',value);
  }
  const thoughtObserver=new ResizeObserver(()=>requestAnimationFrame(positionThought));
  thoughtObserver.observe(line);
  if(document.getElementById('orb'))thoughtObserver.observe(document.getElementById('orb'));
  window.addEventListener('resize',positionThought);
+ window.addEventListener('seyveo:home-sayvi-arrived',()=>requestAnimationFrame(positionThought));
+ document.getElementById('orb')?.addEventListener('transitionend',()=>requestAnimationFrame(positionThought));
 
  const HELLO_MS=3600;
  let ready=false,voicePhase='',voiceTimer=null;
@@ -336,6 +355,9 @@
  function beginSuggestion(suggestion){
   idleHint=typeof suggestion==='string'?suggestion:suggestion.text;
   idleAction=typeof suggestion==='string'?null:suggestion.action;
+  // The pictogram belongs on the action button, not twice in one thought.
+  if(idleAction?.icon&&idleHint.startsWith(idleAction.icon))
+   idleHint=idleHint.slice(idleAction.icon.length).trimStart();
   idleTyped='';idleTyping=true;
   const sequence=++idleSequence;
   update();
