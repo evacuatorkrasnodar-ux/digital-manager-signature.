@@ -11,8 +11,10 @@ html.sv-space-active #lifePage {
 /* One visible Back control, in the approved 44px Premium Graphite circle. */
 html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar{
   box-sizing:border-box!important;
-  display:flex!important;align-items:center!important;
-  justify-content:flex-start!important;gap:11px!important;
+  display:grid!important;align-items:center!important;
+  grid-template-columns:44px minmax(0,1fr) 44px!important;
+  grid-template-rows:54px!important;
+  justify-content:stretch!important;gap:0!important;
   width:100%!important;min-height:48px!important;
   margin:0!important;padding:0!important;
 }
@@ -40,7 +42,9 @@ html.sv-space-active #lifePage .life-heading #lifeBack.life-back > span{
   display:none!important;
 }
 html.sv-space-active #lifePage .life-heading .sv-continuity-space{
-  display:none!important;
+  display:block!important;grid-column:3!important;grid-row:1!important;
+  width:44px!important;height:44px!important;
+  visibility:hidden!important;pointer-events:none!important;
 }
 html.sv-space-active #lifePage .life-heading #lifeBack.life-back:focus-visible{
   outline:2px solid var(--text)!important;outline-offset:2px!important;
@@ -346,10 +350,12 @@ html body #lifePage:not([hidden]) > .life-heading {
   box-sizing:border-box!important;
 }
 html body #lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar {
-  display:flex!important;
+  display:grid!important;
   align-items:center!important;
-  justify-content:flex-start!important;
-  gap:11px!important;
+  grid-template-columns:44px minmax(0,1fr) 44px!important;
+  grid-template-rows:54px!important;
+  justify-content:stretch!important;
+  gap:0!important;
   width:100%!important;
   height:54px!important;
   min-height:54px!important;
@@ -396,6 +402,10 @@ html body #lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar > bu
 html body #lifePage:not([hidden]) > .life-heading > .sv-continuity-titlebar > h1#lifeTitle {
   margin:0!important;
   padding:0!important;
+  grid-column:2!important;
+  grid-row:1!important;
+  width:100%!important;
+  text-align:center!important;
   min-width:0!important;
   font-size:clamp(28px,7.2vw,31px)!important;
   font-weight:620!important;

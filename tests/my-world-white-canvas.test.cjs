@@ -31,6 +31,13 @@ test('My World back button uses shared 44px circle material and black chevron', 
   assert.match(header, /button#lifeBack#lifeBack\.life-back svg\{[\s\S]*?stroke-width:var\(--sv-header-back-weight\)!important;/);
 });
 
+test('My World header keeps its title on the real screen centerline', () => {
+  assert.match(tiles, /#lifePage \.life-heading \.sv-continuity-titlebar\{[\s\S]*?display:grid!important;[\s\S]*?grid-template-columns:44px minmax\(0,1fr\) 44px!important;/);
+  assert.match(tiles, /#lifePage \.life-heading \.sv-continuity-space\{[\s\S]*?display:block!important;grid-column:3!important/);
+  assert.match(tiles, /> h1#lifeTitle \{[\s\S]*?grid-column:2!important;[\s\S]*?text-align:center!important;/);
+  assert.match(html, /assets\/life-tiles-accents\.css\?v=34/);
+});
+
 test('My World keeps even Apple-style rows, icon scale, and quiet grouped spacing', () => {
   assert.match(tiles, /#calendarSpaces\.calendar-spaces-grid\s*\{[\s\S]*?gap:18px!important/);
   assert.match(tiles, /#calendarSpaces \.sv-life-category-grid\s*\{[\s\S]*?grid-auto-rows:minmax\(64px,auto\)!important/);
