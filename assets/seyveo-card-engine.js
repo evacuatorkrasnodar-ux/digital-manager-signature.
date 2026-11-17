@@ -47,19 +47,19 @@
   'review-recognition':'Проверить благодарность','review-document':'Проверить документ',
   'open-release':'Открыть альбом','not-interested':'Неинтересно'
  });
- // SEYVEO Card Studio · approved transparent pearl actions (15.11.2026).
+ // SEYVEO Card Studio · approved editorial review standard (17.11.2026).
  // A visible Sayvi proposal is already an explanation. Do not create a
  // second button that merely repeats it. Preserve actual distinct operations:
  // composing drafts, opening chats, reviewing, sending (with confirmation).
  const cardPolicy=Object.freeze({
-  id:'pearl-clear-v1',
+  id:'review-editorial-v1',
   darkMaterial:'#38383A',lightMaterial:'transparent',
   primaryActionsMax:1,primaryPillsMax:1,visibleActionLimit:3,secondaryPresentation:'text',
   // Approved source-of-truth: future Card Engine families inherit this white-theme style.
   sayviButtonStandard:Object.freeze({
-   theme:'light',shape:'circle',touchPx:50,ringPx:.7,outerRingPx:.45,
+   theme:'light',shape:'inline',touchPx:44,ringPx:0,outerRingPx:0,
    rimOpacity:.28,outerRimOpacity:.16,glyphPx:30,
-   mark:'potok',fill:'clear-pearl',ink:'#0B0B0D',
+   mark:'potok',fill:'transparent',ink:'#217FCD',
    darkTheme:'preserve-current'
   }),
   deferGesture:'swipe-both-cycle',dismissGesture:'long-press-only',contextGesture:'long-press',deferMinPixels:75,
@@ -92,7 +92,7 @@
   const config=catalog[card.family];
   return Object.freeze({
    family:config.family,icon:config.icon,accent:config.accent,
-   source:card.source||'Источник не указан',title:card.title,fact:card.fact,
+   source:card.source||'Источник не указан',title:card.title,fact:card.fact,occurredAt:card.occurredAt||'',
    suggestion:card.suggestion,priority:card.priority,demo:card.demo===true,
    sections:safety.sections,
    actions:Object.freeze(visibleActions(card).map((id,index)=>Object.freeze({
@@ -105,7 +105,10 @@
   const family=eventType[event.type],config=catalog[family];
   const id=trim(event.id,128),title=trim(event.title,140),fact=trim(event.fact,1200);
   if(!id||!title||!fact)return null;
-  const card={id,family,eventType:event.type,title,fact,
+  const eventDate=event.occurredAt??event.receivedAt??event.createdAt??event.timestamp??null;
+  const parsedAt=eventDate!==null?new Date(typeof eventDate==='number'&&eventDate<1e11?eventDate*1000:eventDate):null;
+  const occurredAt=parsedAt&&Number.isFinite(parsedAt.getTime())?parsedAt.toISOString():'';
+  const card={id,family,eventType:event.type,title,fact,occurredAt,
    suggestion:trim(event.suggestion,1200),
    source:trim(event.source,100)||(event.demo===true?'Студия · учебный пример':'Источник не указан'),
    icon:config.icon,accent:config.accent,
@@ -144,6 +147,7 @@
   field.dataset.svCardFamily=family;
   field.dataset.svCardDemo=String(!real);
   field.dataset.svCardVersion='2';
+   field.dataset.svCardStandard=cardPolicy.id;
   return family;
  }
  // Visibility applies ONLY to the Home presentation, never the source.
@@ -335,21 +339,29 @@
   confirm:'<path d="m5 12 4.5 4.5L19 7"/>',
   back:'<path d="m14.5 5-7 7 7 7"/>'
  });
- const cardIconLabels=Object.freeze({sayvi:'Сэйви',edit:'Исправить',navigate:'Перейти',
+ const cardIconLabels=Object.freeze({sayvi:'Сэйви поможет',edit:'Исправить самому',navigate:'Перейти',
   send:'Отправить',save:'Сохранить',confirm:'Подтвердить',back:'Назад'});
  function decorateActionButton(button,kind){
   if(!button||!Object.prototype.hasOwnProperty.call(cardGlyphs,kind))return button;
   if(button.dataset.svCardIcon===kind&&button.querySelector?.('.sv-card-symbol'))return button;
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('class','sv-card-symbol');
-  svg.setAttribute('viewBox','0 0 24 24');
-  svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
-  svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
-  svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');
-  svg.setAttribute('stroke-linejoin','round');svg.innerHTML=cardGlyphs[kind];
+  let symbol;
+  if(kind==='sayvi'){
+   symbol=document.createElement('img');
+   symbol.className='sv-card-symbol sv-potok-symbol';
+   symbol.src='assets/seyveo-potok-blue.svg?v=1';
+   symbol.alt='';
+  }else{
+   symbol=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   symbol.setAttribute('class','sv-card-symbol');
+   symbol.setAttribute('viewBox','0 0 24 24');
+   symbol.setAttribute('fill','none');symbol.setAttribute('stroke','currentColor');
+   symbol.setAttribute('stroke-width','1.8');symbol.setAttribute('stroke-linecap','round');
+   symbol.setAttribute('stroke-linejoin','round');symbol.innerHTML=cardGlyphs[kind];
+  }
+  symbol.setAttribute('aria-hidden','true');
   const caption=document.createElement('span');caption.className='sv-card-icon-caption';
   caption.textContent=cardIconLabels[kind];
-  button.replaceChildren(svg,caption);
+  button.replaceChildren(symbol,caption);
   // Living Moment's old Sayvi SVG and masked ::before are obsolete once
   // the single canonical action glyph is installed. Never paint both.
   if(kind==='sayvi')button.classList.remove('sv-sayvi-label');
@@ -367,34 +379,89 @@
  };
  // Pure rendering: buttons call only the supplied onAction callback; without it
  // they are disabled. This UI does NOT send, approve, pay, sign or close tasks.
+
+ const familyGlyphs=Object.freeze({
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+  message:'<path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/>',
+  document:'<path d="M6 2.7h8l4 4V21H6Z"/><path d="M14 3v4h4M9 11h6M9 14h6M9 17h4"/>',
+  secureFlow:'<path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v4h4M9 11h6M9 14h5M10 18l1.5 1.5 3-3"/>',
+  task:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 12 3 3 7-7"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18M8 14h3m2 0h3m-8 4h3"/>',
+  health:'<path d="M12 21 4.5 13.5C.5 9.5 6 3.5 12 9c6-5.5 11.5.5 7.5 4.5Z"/>',
+  care:'<path d="M12 21 4.5 13.5C.5 9.5 6 3.5 12 9c6-5.5 11.5.5 7.5 4.5Z"/><path d="M8.5 14h7"/>',
+  finance:'<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 9h19M6 15h5"/>',
+  business:'<rect x="4" y="7" width="16" height="14" rx="2"/><path d="M9 7V4h6v3M4 12h16M10 12v2h4v-2"/>',
+  employee:'<circle cx="12" cy="7" r="4"/><path d="M4 21v-2c0-7 16-7 16 0v2"/>',
+  shelf:'<path d="M4 4h16v16H4Z M4 10h16M4 15h16M8 10V4m8 11v5"/>',
+  home:'<path d="m3 11 9-8 9 8M5.5 9v12h13V9M10 21v-7h4v7"/>',
+  security:'<path d="m12 2 8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6Z"/><path d="m9 12 2 2 4-4"/>',
+  recognition:'<path d="m12 2 3 6 7 .8-5 4.8 1.2 7-6.2-3.3-6.2 3.3 1.2-7-5-4.8L9 8Z"/>',
+  music:'<path d="M9 18V5l11-2v13M9 18a3 2 0 1 1-6 0 3 2 0 0 1 6 0Zm11-2a3 2 0 1 1-6 0 3 2 0 0 1 6 0Z"/>'
+ });
+ const destination=Object.freeze({
+  mail:'в почту',message:'в чат',employee:'в команду',shelf:'в рабочий чат',
+  document:'в документы',secureFlow:'в документы',task:'в дела',
+  calendar:'в календарь',health:'в здоровье',care:'в заботу',
+  finance:'в финансы',business:'в управление',home:'в умный дом',
+  security:'в безопасность',recognition:'в команду',music:'в музыку'
+ });
+ const familyIcon=family=>{
+  const mark=el('span','sv-card-mark');
+  mark.setAttribute('aria-hidden','true');
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 24 24');
+  svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
+  svg.setAttribute('stroke-width','1.35');svg.setAttribute('stroke-linecap','round');
+  svg.setAttribute('stroke-linejoin','round');
+  svg.innerHTML=familyGlyphs[family]||familyGlyphs.task;
+  mark.append(svg);return mark;
+ };
+ const momentText=value=>{
+  if(value===null||value===undefined||value==='')return '';
+  const d=new Date(value);
+  if(!Number.isFinite(d.getTime()))return '';
+  return new Intl.DateTimeFormat('ru-RU',{timeZone:'Europe/Moscow',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(d).replace(/,?\s+в?\s*(?=\d{2}:\d{2})/,' · ');
+ };
+ const categoryFor=card=>card.priority==='urgent'?'СРОЧНО':
+  card.family==='mail'||card.family==='message'||card.family==='employee'||card.family==='shelf'?'СООБЩЕНИЯ':
+  ['document','secureFlow','security'].includes(card.family)||card.priority==='important'?'ВАЖНОЕ':
+  (catalog[card.family]?.family||'ДЕЛА').toUpperCase();
  function renderCard(card,{onAction}={}){
   const p=presentation(card);
   if(!p)return null;
   const article=el('article','sv-card-system sv-card-system--rendered');
   article.dataset.svCardFamily=card.family;
   article.dataset.svCardDemo=String(p.demo);
-  article.dataset.svCardVersion='3';
+  article.dataset.svCardVersion='4';
+  article.dataset.svCardStandard=cardPolicy.id;
   article.setAttribute('aria-label',p.family+': '+p.title);
+  const eyebrow=el('div','sv-card-eyebrow');
+  eyebrow.append(el('span','sv-card-category',categoryFor(card)));
+  const when=momentText(p.occurredAt||(p.demo?Date.now():null));
+  if(when){
+   const stamp=el('time','sv-card-moment',(p.demo?'Пример · ':'')+when);
+   if(p.occurredAt)stamp.dateTime=p.occurredAt;
+   stamp.setAttribute('aria-label',p.demo?'Учебный пример, условная дата и время':'Время события');
+   eyebrow.append(stamp);
+  }
+  article.append(eyebrow);
   const head=el('div','sv-card-header');
-  const mark=el('span','sv-card-mark',p.icon);
-  mark.setAttribute('aria-hidden','true');
+  const mark=familyIcon(card.family);
   mark.style.setProperty('--sv-card-accent',p.accent);
   const headCopy=el('div','sv-card-header-copy');
-  headCopy.append(el('span','sv-card-source',p.family+' · '+p.source),
-   el('strong','sv-card-title',p.title));
-  head.append(mark,headCopy);
-  article.append(head);
+  headCopy.append(el('strong','sv-card-title',p.title));
+  if(p.source&&!p.demo)headCopy.append(el('span','sv-card-source',p.source));
+  head.append(mark,headCopy);article.append(head);
   const fact=el('div','sv-card-fact');
-  fact.append(el('span','sv-card-label','Что произошло'),
-   el('p','sv-card-value',p.fact));
-  article.append(fact);
+  fact.append(el('p','sv-card-value',p.fact));article.append(fact);
   if(p.suggestion){
    const proposal=el('div','sv-card-proposal');
-   proposal.append(el('span','sv-card-label','Сэйви предлагает'),
-    el('p','sv-card-value',p.suggestion));
-   article.append(proposal);
+   const label=el('span','sv-card-label sv-card-sayvi-observation','Сэйви заметила');
+   const potok=el('img','sv-card-potok');
+   potok.src='assets/seyveo-potok-blue.svg?v=1';potok.width=16;potok.height=16;
+   potok.alt='';potok.setAttribute('aria-hidden','true');label.prepend(potok);
+   proposal.append(label,el('p','sv-card-value',p.suggestion));article.append(proposal);
   }
-  if(p.demo)article.append(el('small','sv-card-training','Учебный пример · внешние действия не выполняются'));
   const actions=el('div','sv-card-actions');
   actions.setAttribute('role','group');
   actions.setAttribute('aria-label','Действия с карточкой');
@@ -402,6 +469,11 @@
    const button=el('button','sv-card-action',action.label);
    button.type='button';button.dataset.cardAction=action.id;button.dataset.cardRole=action.role;
    decorateActionButton(button,action.id);
+   if(action.id==='navigate'){
+    const title='Перейти '+(destination[card.family]||'в раздел');
+    button.querySelector('.sv-card-icon-caption').textContent=title;
+    button.setAttribute('aria-label',title);button.title=title;
+   }
    button.disabled=typeof onAction!=='function';
    if(!button.disabled)button.addEventListener('click',()=>onAction(action.id,card));
    actions.append(button);
