@@ -95,13 +95,12 @@ function create(tag,klass,words){
    // The card's legacy CSS suppresses ::before. Draw the approved icon
    // as a real inline SVG instead, identical to the Work Chat button.
    el.classList.add('sv-sayvi-label');
-   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-   svg.setAttribute('class','lm-sayvi-mark');
-   svg.setAttribute('viewBox','0 0 24 24');
-   svg.setAttribute('aria-hidden','true');
-   svg.setAttribute('focusable','false');
-   svg.innerHTML='<path d="M12 2.5C13.65 2.5 14.25 7 16.4 8.6 18 10.05 21.5 10.4 21.5 12S18 13.95 16.4 15.4C14.25 17 13.65 21.5 12 21.5S9.75 17 7.6 15.4C6 13.95 2.5 13.6 2.5 12S6 10.05 7.6 8.6C9.75 7 10.35 2.5 12 2.5Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/>';
-   el.prepend(svg);
+   const mark=document.createElement('img');
+   mark.className='lm-sayvi-mark sv-potok-symbol';
+   mark.src='assets/seyveo-potok-blue.svg?v=1';
+   mark.width=18;mark.height=18;mark.alt='';
+   mark.setAttribute('aria-hidden','true');
+   el.prepend(mark);
   }
  }
  return el;
@@ -275,7 +274,21 @@ function createSurface(primary,other=[],real=false,taskId=''){
  copy.append(headline,description);
  hero.append(artwork,copy);
  const controls=create('div','lm-actions');
- const cardIconize=(button,name)=>window.SEYVEO_CARD_ENGINE?.decorateActionButton?.(button,name);
+ const cardIconize=(button,name)=>{
+  const result=window.SEYVEO_CARD_ENGINE?.decorateActionButton?.(button,name);
+  if(name==='sayvi'){
+   const oldMark=button.querySelector('.sv-card-symbol');
+   if(oldMark&&!oldMark.classList.contains('sv-potok-symbol')){
+    const potok=document.createElement('img');
+    potok.className='sv-card-symbol sv-potok-symbol';
+    potok.src='assets/seyveo-potok-blue.svg?v=1';
+    potok.width=20;potok.height=20;potok.alt='';
+    potok.setAttribute('aria-hidden','true');
+    oldMark.replaceWith(potok);
+   }
+  }
+  return result;
+ };
  let remaining=[primary,...other],shown=primary,morphLocked=false;
  const swipedInRound=new Set();
  const seenQueueRows=new Set(real&&primary.eventId?[primary.eventId]:[]);
