@@ -841,7 +841,7 @@ function svAgendaRenderNav(rows){
  // Native iPhone momentum permits a fast flick across multiple dates.
  // Snap always lands on a complete day rather than stopping between columns.
  let settleTimer=0,ignoreScrollUntil=0,settledIso=svTaskWindowStart;
- const dayWidth=()=>track.firstElementChild?.getBoundingClientRect().width||strip.clientWidth/5;
+ const dayWidth=()=>track.firstElementChild?.getBoundingClientRect().width||strip.clientWidth/5.4;
  const alignInitial=()=>{if(strip.isConnected)strip.scrollLeft=21*dayWidth();};
  requestAnimationFrame(alignInitial);
  const commitScroll=()=>{
