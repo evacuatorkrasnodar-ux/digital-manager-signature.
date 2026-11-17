@@ -231,14 +231,14 @@ const yearBoard=text('section','sv-cal-year-overview');
 yearBoard.id='svCalYearOverview';yearBoard.hidden=true;
 yearBoard.setAttribute('aria-label','Календарь на год');
 const yearToday=text('button','sv-cal-year-today','Сегодня');
-yearToday.type='button';yearToday.hidden=true;
+yearToday.type='button';yearToday.id='svCalYearToday';yearToday.hidden=true;
 yearToday.setAttribute('aria-label','Вернуться к сегодняшней дате');
 const listBoard=text('section','sv-cal-list-view');
 listBoard.id='svCalListView';listBoard.hidden=true;
 listBoard.setAttribute('aria-label','Список записей за месяц');
 $('calendarView').insertBefore(yearBoard,$('calendarMonth'));
 $('calendarView').insertBefore(listBoard,document.querySelector('#calendarPage .cal-day-summary'));
-$('calendarView').append(yearToday);
+document.body.append(yearToday);
 function closeViewMenu(){
  calViewMenu.hidden=true;
  calViewToggle.setAttribute('aria-expanded','false');
@@ -251,7 +251,7 @@ function syncAppleControls(){
  yearJump.textContent=isYear?'‹ Месяц':'‹ '+focus.getFullYear();
  yearJump.setAttribute('aria-label',isYear?'Вернуться к месяцу':'Показать '+focus.getFullYear()+' год');
  calViewToggle.hidden=isYear;
- yearToday.hidden=!isYear;
+ yearToday.hidden=!isYear||page.hidden;
  if(isMonth)$('calendarPeriodTitle').textContent=isYear?String(focus.getFullYear()):monthNames[focus.getMonth()];
  yearBoard.hidden=!isYear;
  listBoard.hidden=!isMonth||isYear||calendarLayout!=='list';
@@ -286,7 +286,7 @@ document.addEventListener('click',event=>{
 document.addEventListener('keydown',event=>{
  if(event.key==='Escape'&&!calViewMenu.hidden){event.preventDefault();closeViewMenu();calViewToggle.focus({preventScroll:true})}
 });
-window.addEventListener('hashchange',closeViewMenu);
+window.addEventListener('hashchange',()=>{closeViewMenu();yearToday.hidden=true});
 function calendarInlineItems(day,button){
  const key=format(day);
  const records=dayItems(key,false);
