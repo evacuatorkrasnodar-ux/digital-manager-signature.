@@ -136,7 +136,18 @@
    background:transparent!important;
   }
   /* The nested All Tasks capsule contains Search and Select. */
-  :host([data-task-selecting="true"]) .sv-history-dual{display:flex!important}
+  /* SEYVEO dimensions: Home round 50×50, paired capsule 104×50, main dock 60px.
+     Only the two-action All Tasks header uses this compact paired size. */
+  :host([data-task-selecting="true"]) .sv-history-dual{
+   display:flex!important;width:104px!important;height:50px!important;padding:0 3px!important;
+  }
+  :host([data-task-selecting="true"]) .sv-history-dual .control{
+   flex:0 0 48px!important;width:48px!important;min-width:48px!important;
+   height:48px!important;min-height:48px!important;
+  }
+  :host([data-task-selecting="true"]) .sv-history-dual .control svg{
+   width:23px!important;height:23px!important;stroke-width:1.6!important;
+  }
   :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select{display:grid!important}
   :host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search):not(.sv-history-select){display:none!important}
   /* Selection is conveyed by the icon, not a second grey pill inside
