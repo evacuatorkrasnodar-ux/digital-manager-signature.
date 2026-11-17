@@ -56,11 +56,9 @@
    else tasksButton.removeAttribute('data-sv-review-count');
    tasksButton.setAttribute('aria-label',total?'Открыть дела · '+total+' для разбора':'Открыть дела');
   }
-  // Both the disc and its quiet numeral sit behind the glass until selected.
-  if(countUnderlay&&countDigit){
-   countUnderlay.hidden=total===0;
-   countDigit.textContent=total>0?(total>99?'99+':String(total)):'';
-  }
+  // Only the disc sits below the glass; a single translucent white digit
+  // is painted by the Tasks button to avoid a blurry second numeral.
+  if(countUnderlay)countUnderlay.hidden=total===0;
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
   // The fixed Home reminder owns the card count; no second copy.
   if(greetingSubline)greetingSubline.hidden=total>0;

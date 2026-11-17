@@ -8,16 +8,17 @@ const badgeLogic=fs.readFileSync(path.join(root,'assets/seyveo-review-cards.js')
 const material=fs.readFileSync(path.join(root,'assets/seyveo-home-dock-preview.css'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 
-assert.match(badge,/#navTasks\[data-sv-review-count\]::before,\s*#navTasks\[data-sv-review-count\]::after\{content:none!important;display:none!important\}/);
-assert.match(badge, /color:rgba\(255,255,255,\.82\);background:#F4A66D;opacity:\.62/);
+assert.match(badge,/#navTasks\[data-sv-review-count\]::before\{content:none!important;display:none!important\}/);
+assert.match(badge,/#navTasks\[data-sv-review-count\]::after\s*\{\s*content:attr\(data-sv-review-count\)!important/);
+assert.match(badge,/color:#FFF!important;opacity:\.64!important/);
+assert.match(badge,/color:transparent;background:#F4A66D;opacity:\.68/);
 assert.match(badge,/\.dock\.sv-shared-dock > \.sv-dock-review-underlay\s*\{[\s\S]*?z-index:-1!important/);
 assert.match(badge,/body > footer\.dock\.sv-shared-dock:has\(> #navTasks:is\(\.active,\.sv-dock-nav-press\)\)/);
 assert.match(badge,/\.sv-dock-review-underlay\{z-index:2!important\}/);
 assert.match(badgeLogic,/dock\.prepend\(countUnderlay\)/);
-assert.match(badgeLogic,/countDigit\.textContent=total>0/);
-assert.match(badgeLogic,/if\(countUnderlay&&countDigit\)/);
+assert.match(badgeLogic,/if\(countUnderlay\)countUnderlay\.hidden=total===0/);
 assert.doesNotMatch(badge,/radial-gradient\(circle at 28%/);
 assert.match(material,/--sv-dock-pearl-blur:blur\(4px\)/);
-assert.match(html,/seyveo-review-cards\.css\?v=30/);
-assert.match(html,/seyveo-review-cards\.js\?v=18/);
-console.log('PASS: one quiet counter is under pearl glass until Tasks is selected.');
+assert.match(html,/seyveo-review-cards\.css\?v=31/);
+assert.match(html,/seyveo-review-cards\.js\?v=19/);
+console.log('PASS: quiet disc beneath pearl glass and one translucent white digit.');
