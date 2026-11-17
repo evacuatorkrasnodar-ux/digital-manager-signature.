@@ -281,9 +281,12 @@ function openCustomize(){
  head.insertBefore(autoButton,done);
  redraw();shell.append(head,help,grid);dialog.append(shell);document.body.append(dialog);
  let closed=false;
- function close(saveChanges){
+ function close(saveChanges,animate=false){
   if(closed)return;closed=true;
   window.removeEventListener('resize',onCurtainResize);
+  document.removeEventListener('click',onDockNavigation,true);
+  window.removeEventListener('seyveo:route-changed',onRouteChange);
+  window.removeEventListener('hashchange',onRouteChange);
   activeCurtainPosition=null;
   if(saveChanges){
    save(STORAGE,preference);
@@ -291,16 +294,26 @@ function openCustomize(){
   }else{
    preference=before;
   }
-  dialog.close();dialog.remove();
   renderItems();updateCount();show();
   suppressClick=false;
+  if(animate){
+   dialog.classList.add('is-leaving');
+   window.setTimeout(()=>{dialog.close();dialog.remove();},300);
+  }else{dialog.close();dialog.remove();}
  }
- done.addEventListener('click',()=>close(true));
- dialog.addEventListener('cancel',e=>{e.preventDefault();close(false)});
+ const onDockNavigation=e=>{
+  if(e.target.closest?.('#navTasks,#navPicture,#navManage'))close(true,true);
+ };
+ const onRouteChange=()=>close(true,true);
+ done.addEventListener('click',()=>close(true,true));
+ dialog.addEventListener('cancel',e=>{e.preventDefault();close(false,true)});
  positionCurtain(); // establish final geometry before the opening animation
  dialog.show();
  const onCurtainResize=()=>positionCurtain(true);
  window.addEventListener('resize',onCurtainResize);
+ document.addEventListener('click',onDockNavigation,true);
+ window.addEventListener('seyveo:route-changed',onRouteChange);
+ window.addEventListener('hashchange',onRouteChange);
  show();
 }
 let backgroundTimer=0,backgroundPoint=null;
