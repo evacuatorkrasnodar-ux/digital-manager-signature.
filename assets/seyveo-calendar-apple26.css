@@ -174,7 +174,7 @@ html body dialog#personalTaskDialog.sv-task-editor-v3 .sv-task-meeting-advice p{
 #calendarPage .sv-cal-year-jump[hidden],
 #calendarPage .sv-cal-view-toggle[hidden]{display:none!important}
 
-html body #calendarPage .cal-nav.sv-cal-nav{
+html body #calendarPage#calendarPage .cal-nav.sv-cal-nav{
  position:relative!important;z-index:25!important;
  display:grid!important;grid-template-columns:minmax(0,1fr) 48px!important;
  grid-template-rows:38px auto!important;align-items:center!important;
@@ -183,7 +183,7 @@ html body #calendarPage .cal-nav.sv-cal-nav{
  padding:0 4px 5px!important;
  border:0!important;background:transparent!important;overflow:visible!important;
 }
-html body #calendarPage .cal-nav.sv-cal-nav h2{
+html body #calendarPage#calendarPage .cal-nav.sv-cal-nav h2{
  grid-column:1 / -1!important;grid-row:2!important;
  margin:0!important;min-width:0!important;
  font:680 clamp(29px,7.5vw,36px)/1.12 -apple-system,BlinkMacSystemFont,"SEYVEO Calendar",system-ui,sans-serif!important;
@@ -258,17 +258,17 @@ html body #calendarPage .cal-nav.sv-cal-nav h2{
 }
 
 /* Existing compact view remains the approved number-and-dot grid. */
-html body #calendarPage[data-apple-layout="compact"] .cal-month>.cal-month-grid{
+html body #calendarPage#calendarPage[data-apple-layout="compact"] .cal-month>.cal-month-grid{
  grid-auto-rows:49px!important;
 }
-html body #calendarPage[data-apple-layout="stacked"] .cal-month>.cal-month-grid{
+html body #calendarPage#calendarPage[data-apple-layout="stacked"] .cal-month>.cal-month-grid{
  grid-auto-rows:minmax(75px,auto)!important;
 }
-html body #calendarPage[data-apple-layout="details"] .cal-month>.cal-month-grid{
+html body #calendarPage#calendarPage[data-apple-layout="details"] .cal-month>.cal-month-grid{
  grid-auto-rows:minmax(127px,auto)!important;
 }
-html body #calendarPage[data-apple-layout="stacked"] .cal-month-grid .cal-day,
-html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day{
+html body #calendarPage#calendarPage[data-apple-layout="stacked"] .cal-month-grid .cal-day,
+html body #calendarPage#calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day{
  display:flex!important;flex-direction:column!important;
  justify-content:flex-start!important;align-items:flex-start!important;
  gap:3px!important;text-align:left!important;
@@ -276,11 +276,11 @@ html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day{
  border-radius:0!important;padding:6px 3px 5px!important;
  overflow:hidden!important;
 }
-html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day{
+html body #calendarPage#calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day{
  padding-top:8px!important;gap:5px!important;
 }
-html body #calendarPage[data-apple-layout="stacked"] .cal-month-grid .cal-day-number,
-html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day-number{
+html body #calendarPage#calendarPage[data-apple-layout="stacked"] .cal-month-grid .cal-day-number,
+html body #calendarPage#calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day-number{
  flex:0 0 30px!important;width:30px!important;height:30px!important;
  min-width:30px!important;align-self:flex-start!important;
  font-weight:580!important;
@@ -306,12 +306,12 @@ html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day-nu
  align-self:flex-start;font:530 10px/1.2 system-ui,sans-serif;
  color:#89909A;padding:2px 3px;
 }
-html body #calendarPage[data-apple-layout="stacked"] .sv-cal-inline-chip{
+html body #calendarPage#calendarPage[data-apple-layout="stacked"] .sv-cal-inline-chip{
  font-size:9.5px;padding:2px 3px;
 }
-html body #calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day[data-today="true"] .cal-day-number,
-html body #calendarPage[data-apple-layout="stacked"] .cal-month-grid .cal-day[data-today="true"] .cal-day-number,
-html body #calendarPage[data-apple-layout="compact"] .cal-month-grid .cal-day[data-today="true"] .cal-day-number{
+html body #calendarPage#calendarPage[data-apple-layout="details"] .cal-month-grid .cal-day[data-today="true"] .cal-day-number,
+html body #calendarPage#calendarPage[data-apple-layout="stacked"] .cal-month-grid .cal-day[data-today="true"] .cal-day-number,
+html body #calendarPage#calendarPage[data-apple-layout="compact"] .cal-month-grid .cal-day[data-today="true"] .cal-day-number{
  background:#E9484C!important;color:#FFF!important;box-shadow:none!important;
 }
 
@@ -413,7 +413,7 @@ html body #calendarPage[data-apple-layout="compact"] .cal-month-grid .cal-day[da
  #calendarPage .sv-cal-year-overview{column-gap:8px;row-gap:20px;padding-left:1px;padding-right:1px}
  #calendarPage .sv-cal-mini-days{grid-auto-rows:16px}
  #calendarPage .sv-cal-mini-day,#calendarPage .sv-cal-mini-blank{height:16px;font-size:9.2px}
- html body #calendarPage[data-apple-layout="details"] .cal-month>.cal-month-grid{grid-auto-rows:minmax(115px,auto)!important}
+ html body #calendarPage#calendarPage[data-apple-layout="details"] .cal-month>.cal-month-grid{grid-auto-rows:minmax(115px,auto)!important}
  #calendarPage .sv-cal-inline-chip{font-size:9.6px}
 }
 @media(max-width:620px){
