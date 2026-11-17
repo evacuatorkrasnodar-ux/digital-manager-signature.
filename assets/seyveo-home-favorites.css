@@ -433,3 +433,18 @@ dialog.sv-home-favorites-editor .sv-home-favorites-editor-shell{
  background:transparent!important;
  border-color:rgba(216,221,229,.55)!important;
 }
+
+/* Visible orbital depth: the curtain and tiles must both transmit the scene. */
+dialog.sv-home-favorites-editor{
+ background:rgba(255,255,255,.60)!important;
+ -webkit-backdrop-filter:blur(3px) saturate(106%)!important;
+ backdrop-filter:blur(3px) saturate(106%)!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button{
+ background:rgba(249,250,252,.72)!important;
+ border-color:rgba(181,190,201,.64)!important;
+}
+dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button[aria-pressed=true]{
+ background:rgba(224,231,240,.77)!important;
+ border-color:rgba(135,151,170,.68)!important;
+}
