@@ -472,3 +472,42 @@ html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-ent
  content:"весь день"!important;font:500 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
 }
 html body #calendarPage #calendarView[data-mode="week"] #calendarAgenda .cal-entry-time i{display:none!important}
+
+/* Month view uses the same crisp compact event-strip language as Week. */
+#calendarPage .cal-month-grid .cal-day-labels{
+ gap:2px!important;width:100%!important;margin:1px 0 0!important;
+}
+#calendarPage .cal-month-grid .cal-day-chip{
+ display:block!important;width:100%!important;
+ height:15px!important;min-height:15px!important;
+ padding:2px 2px 1px 10px!important;
+ border-radius:5px!important;
+ background:#DCEFFC!important;color:#27587A!important;
+ font:600 9px/12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-overflow:ellipsis!important;letter-spacing:-.025em!important;
+}
+#calendarPage .cal-month-grid .cal-day-chip::before{
+ left:3px!important;top:5px!important;width:6px!important;height:6px!important;
+ background:#1EAAEE!important;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.9)!important;
+}
+#calendarPage .cal-month-grid .cal-day-chip[data-kind="task"]{
+ background:#FFF0D8!important;color:#845B21!important;
+}
+#calendarPage .cal-month-grid .cal-day-chip[data-kind="task"]::before{
+ background:#E9A532!important;
+}
+#calendarPage .cal-month-grid .cal-day-chip[data-kind="life"]{
+ background:#EAE8FC!important;color:#655499!important;
+}
+#calendarPage .cal-month-grid .cal-day-chip[data-kind="life"]::before{
+ background:#9582DF!important;
+}
+#calendarPage .cal-month-grid .cal-day-chip[data-kind="note"]{
+ background:#EDF0F5!important;color:#5A6474!important;
+}
+#calendarPage .cal-month-grid .cal-day-chip[data-kind="note"]::before{
+ background:#97A2B3!important;
+}
+@media(max-width:370px){
+ #calendarPage .cal-month-grid .cal-day-chip{font-size:8.2px!important}
+}
