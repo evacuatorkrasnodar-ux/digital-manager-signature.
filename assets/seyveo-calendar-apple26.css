@@ -381,3 +381,20 @@ html:not([data-theme]) #calendarPage .cal-month-grid .cal-day{
   font-variant-numeric:tabular-nums!important;
  }
 }
+
+/* Exact equal-height mini months: six invisible grid tracks in every month.
+   February no longer pulls the next whole row upward. */
+@media(max-width:620px){
+ #calendarPage .cal-year-mini-grid{
+  grid-template-rows:repeat(6,clamp(11px,1.5dvh,13px))!important;
+  grid-auto-rows:clamp(11px,1.5dvh,13px)!important;
+  row-gap:1px!important;
+ }
+ #calendarPage .cal-year-month{align-self:start!important}
+}
+@media(max-width:370px) and (max-height:690px){
+ #calendarPage .cal-year-mini-grid{
+  grid-template-rows:repeat(6,9px)!important;
+  grid-auto-rows:9px!important;
+ }
+}
