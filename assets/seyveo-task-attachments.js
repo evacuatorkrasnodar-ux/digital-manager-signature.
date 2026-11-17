@@ -217,5 +217,5 @@
  },true);
  dialog.addEventListener('cancel',event=>{if(!menu.hidden){event.preventDefault();setMenu(false)}});
  dialog.addEventListener('close',reset);
- window.SEYVEO_TASK_ATTACHMENTS=Object.freeze({reset,load,getMeta,persist,afterSave,removeFor,openFor});
+ window.SEYVEO_TASK_ATTACHMENTS=Object.freeze({reset,load,getMeta,persist,afterSave,removeFor,openFor,importFile:selectFile});
 })();
