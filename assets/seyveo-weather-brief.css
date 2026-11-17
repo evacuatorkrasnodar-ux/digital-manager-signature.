@@ -1,11 +1,19 @@
 /* Weather remains a quiet line beneath the original Home sphere. */
-#homePage .sv-sayvi-home-weather{display:none;align-items:center;justify-content:center;
+#homePage .sv-sayvi-home-weather{display:inline-flex;align-items:center;justify-content:center;
   gap:7px;max-width:calc(100vw - 32px);margin:-4px auto -2px;padding:9px 10px;
   border:0;border-radius:12px;box-shadow:none;background:transparent;
   color:#3c4950;font:400 14.5px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
   letter-spacing:0;text-align:center;white-space:normal;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
 #homePage .sv-sayvi-home-weather[hidden]{display:none!important}
+/* The forecast is a Home element, not a dock state indicator. It must remain
+   available if an optional handoff class never arrives (Safari/PWA resume).
+   Only the real intro flight and music ambient intentionally conceal it. */
+:root.sv-sayvi-handoff-demo:not(.sv-sayvi-handoff-docked):not(.sv-home-empty-sphere) #homePage #svSayviHomeWeather,
+:root.sv-music-ambient #homePage #svSayviHomeWeather{
+  display:none!important;
+}
+
 /* One separate, centered weather row AFTER the greeting on the restored Home.
    It is never allowed to share the fixed top status line. */
 #homePage #stage > .sv-sayvi-home-weather{
