@@ -210,8 +210,9 @@ function openCustomize(){
  const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
  grid.setAttribute('role','group');grid.setAttribute('aria-label','Приложения на главной');
  let selection=preference.items.slice(),smart=preference.showSmart;
- const positionCurtain=()=>{
-  if(!dialog.open)return;
+ let curtainBottom=null;
+ const positionCurtain=(force=false)=>{
+  if(curtainBottom!==null&&!force)return;
   const row=rail.getBoundingClientRect();
   const dock=document.getElementById('navHome')?.getBoundingClientRect();
   const safeRowTop=row.height>0&&row.top>100&&row.top<window.innerHeight-45
@@ -219,13 +220,13 @@ function openCustomize(){
   // End just above the Home shortcuts, including when the user has chosen zero.
   const bottom=Math.max(78,Math.min(window.innerHeight-180,
    Math.round(window.innerHeight-safeRowTop+12)));
+  curtainBottom=bottom;
   dialog.style.setProperty('--sv-home-editor-bottom',bottom+'px');
  };
  activeCurtainPosition=positionCurtain;
  const preview=()=>{
   preference={...preference,items:selection.slice(),showSmart:smart,custom:true};
   renderItems();updateCount();show();
-  requestAnimationFrame(positionCurtain);
  };
  const redraw=()=>{
   help.textContent='Выбрано '+(selection.length+(smart?1:0))+' из '+MAX_COUNT+' · меняется сразу';
@@ -253,7 +254,7 @@ function openCustomize(){
  let closed=false;
  function close(saveChanges){
   if(closed)return;closed=true;
-  window.removeEventListener('resize',positionCurtain);
+  window.removeEventListener('resize',onCurtainResize);
   activeCurtainPosition=null;
   if(saveChanges){
    save(STORAGE,preference);
@@ -267,9 +268,11 @@ function openCustomize(){
  }
  done.addEventListener('click',()=>close(true));
  dialog.addEventListener('cancel',e=>{e.preventDefault();close(false)});
+ positionCurtain(); // establish final geometry before the opening animation
  dialog.show();
- window.addEventListener('resize',positionCurtain);
- show();requestAnimationFrame(positionCurtain);
+ const onCurtainResize=()=>positionCurtain(true);
+ window.addEventListener('resize',onCurtainResize);
+ show();
 }
 let backgroundTimer=0,backgroundPoint=null;
 home.addEventListener('pointerdown',e=>{
