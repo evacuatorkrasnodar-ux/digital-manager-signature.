@@ -17,6 +17,7 @@ assert.doesNotMatch(source,/svInlineTaskTools|svTaskSelectionBar/);
 assert.doesNotMatch(source,/document\.head\.append\(style\)/);
 
 assert.match(css,/#svAllTasksView \.sv-tool-results\{/);
+assert.match(css,/align-self:center;width:min\(86%,340px\);height:40px;min-height:40px/,'The task search field remains compact and centered');
 assert.match(css,/overflow-y:auto/);
 assert.match(css,/#svTaskActionCapsule\{/);
 assert.doesNotMatch(css,/#svAllTasksFooter|sv-tool-action-row/);
