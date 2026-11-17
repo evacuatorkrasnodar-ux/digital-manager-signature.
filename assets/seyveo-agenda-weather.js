@@ -7,7 +7,8 @@
  const LOCATION_KEY='seyveo.agenda-weather.location.v1';
  const FEED_URL='assets/seyveo-weather-krasnodar.json';
  const REFRESH_MS=75*60*1000;
- const STALE_MS=18*60*60*1000;
+ // Keep a verified forecast available through a short scheduled-feed outage.
+ const STALE_MS=36*60*60*1000;
  const DEFAULT_LOCATION=Object.freeze({name:'Краснодар',latitude:45.0355,longitude:38.9753});
  let location=readLocation();
  let days=new Map();
@@ -197,7 +198,7 @@
     if(!updatedAt||Date.now()-updatedAt>STALE_MS){days.clear();updatedAt=0;}
     paint();
     window.dispatchEvent(new Event('seyveo:weather-updated'));
-    console.info('SEYVEO weather temporarily unavailable:',error?.message||String(error));
+    console.debug('SEYVEO weather refresh pending:',error?.message||String(error));
    }finally{clearTimeout(timer);inFlight=null;}
   })();
   return inFlight;
