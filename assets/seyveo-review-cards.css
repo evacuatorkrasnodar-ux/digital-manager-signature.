@@ -190,7 +190,7 @@
  font-size:12px;font-weight:550;line-height:1.4;letter-spacing:.005em;
  text-transform:none;
 }
-#svReviewRoom #seyveoLivingMoment .sv-sayvi-observation svg.lm-sayvi-mark{
+#svReviewRoom #seyveoLivingMoment .sv-sayvi-observation img.lm-sayvi-mark{
  color:#217FCD!important;stroke:currentColor;
  width:17px!important;height:17px!important;min-width:17px!important;
  max-width:17px!important;min-height:17px!important;max-height:17px!important;
@@ -206,4 +206,13 @@
 }
 @media(max-width:350px){
  #svReviewRoom .sv-lm-inline-heading .sv-lm-sample-time{font-size:10px}
+}
+
+/* Original SEYVEO POTOK artwork, not the retired star. */
+#svReviewRoom #seyveoLivingMoment .lm-actions img.sv-potok-symbol{
+ display:block!important;width:20px!important;height:20px!important;flex:0 0 20px!important;
+ object-fit:contain;visibility:visible!important;opacity:1!important;filter:none!important;
+}
+#svReviewRoom #seyveoLivingMoment .sv-sayvi-observation img.sv-potok-symbol{
+ display:block!important;width:17px!important;height:17px!important;object-fit:contain;filter:none!important;
 }
