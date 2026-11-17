@@ -131,7 +131,8 @@ function removeSlot(id){
 }
 function minusButton(id,label){
  const b=document.createElement('button');b.type='button';b.className='sv-home-edit-minus';
- b.setAttribute('aria-label','Убрать с главной: '+label);b.textContent='−';
+ b.setAttribute('aria-label','Убрать с главной: '+label);
+ b.innerHTML='<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>';
  b.addEventListener('click',e=>{e.stopPropagation();removeSlot(id)});
  return b;
 }
