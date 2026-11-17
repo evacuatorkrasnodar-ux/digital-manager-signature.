@@ -39,20 +39,25 @@ const apps=[
 ];
 const byId=Object.fromEntries(apps.map(a=>[a.id,a]));
 const defaultIds=['music','documents','wallet'];
-const LIMIT=3;
+const AUTO_COUNT=3,MAX_COUNT=4;
 function stored(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
 function save(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
 let preference=stored(STORAGE);
-if(!preference||!Array.isArray(preference.items))preference={items:defaultIds.slice(),custom:false};
+if(!preference||!Array.isArray(preference.items))preference={items:defaultIds.slice(),custom:false,showSmart:true};
+if(typeof preference.showSmart!=='boolean')preference.showSmart=true;
 if(!preference.custom&&preference.items.join(',')==='music,documents,notebook,wallet,calendar')preference.items=defaultIds.slice();
-function normalize(ids){const unique=[...new Set(ids)].filter(id=>byId[id]);return [...unique,...defaultIds.filter(id=>!unique.includes(id))].slice(0,LIMIT)}
+function normalize(ids){
+ const unique=[...new Set(ids)].filter(id=>byId[id]);
+ const selected=preference.custom?unique:[...unique,...defaultIds.filter(id=>!unique.includes(id))];
+ return selected.slice(0,preference.showSmart?MAX_COUNT-1:MAX_COUNT);
+}
 preference.items=normalize(preference.items);
 let usage=stored(USAGE)||{},cardCount=Number(window.SEYVEO_REVIEW_CARDS?.count?.())||0;
 if(!preference.custom){
  const candidates=apps.slice().sort((a,b)=>(usage[b.id]||0)-(usage[a.id]||0));
- if(candidates.filter(a=>(usage[a.id]||0)>0).length>=LIMIT&&
-  candidates[LIMIT-1]&&((usage[candidates[LIMIT-1].id]||0)>=3)){
-  preference.items=normalize(candidates.slice(0,LIMIT).map(a=>a.id));
+ if(candidates.filter(a=>(usage[a.id]||0)>0).length>=AUTO_COUNT&&
+  candidates[AUTO_COUNT-1]&&((usage[candidates[AUTO_COUNT-1].id]||0)>=3)){
+  preference.items=normalize(candidates.slice(0,AUTO_COUNT).map(a=>a.id));
   save(STORAGE,preference);
  }
 }
@@ -67,16 +72,24 @@ function chooseFallback(){
 }
 let fallbackId=chooseFallback();
 const rail=document.createElement('nav');rail.id='svHomeFavorites';rail.className='sv-home-favorites';rail.setAttribute('aria-label','Быстрый доступ SEYVEO');rail.hidden=true;
+const smartTile=document.createElement('div');smartTile.className='sv-home-favorite-tile';smartTile.dataset.favoriteId='smart';
 const card=document.createElement('button');card.type='button';card.className='sv-home-favorite sv-home-review-entry';
 card.setAttribute('aria-label','Открыть дела Сэйви');card.setAttribute('title','Дела для разбора');card.dataset.icon='cards';
 const symbol=document.createElement('span');symbol.className='sv-home-favorite-icon';
 symbol.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
 const badge=document.createElement('span');badge.className='sv-home-review-badge';badge.hidden=true;badge.setAttribute('aria-hidden','true');
 const caption=document.createElement('span');caption.className='sv-home-favorite-label';caption.textContent='Дела';
-symbol.append(badge);card.append(symbol,caption);rail.append(card);
+symbol.append(badge);card.append(symbol,caption);smartTile.append(card);rail.append(smartTile);
 const list=document.createElement('div');list.className='sv-home-favorite-items';rail.append(list);
+const add=document.createElement('button');add.type='button';add.className='sv-home-favorite sv-home-add-entry';add.hidden=true;
+add.setAttribute('aria-label','Добавить приложение на главную');
+add.innerHTML='<span class="sv-home-favorite-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="sv-home-favorite-label">Добавить</span>';
+rail.append(add);
+const doneEdit=document.createElement('button');doneEdit.type='button';doneEdit.className='sv-home-favorites-done';
+doneEdit.textContent='Готово';doneEdit.hidden=true;document.body.append(doneEdit);
 stage.append(rail);
-card.addEventListener('click',()=>{
+card.addEventListener('click',e=>{
+ if(editing||suppressClick){e.preventDefault();suppressClick=false;return}
  if(cardCount>0)window.dispatchEvent(new Event('seyveo:open-card-review'));
  else launch(fallbackId);
 });
@@ -90,70 +103,158 @@ function launch(id){
  }else if(result===false)return;
  if(item.action){usage[id]=Math.min(10000,(Number(usage[id])||0)+1);save(USAGE,usage);}
 }
-let longTimer=0,suppressClick=false,holding=false;
+let longTimer=0,suppressClick=false,holding=false,editing=false,ignoreOutsideUntil=0;
+function persist(){
+ preference.custom=true;save(STORAGE,preference);
+}
+function totalSlots(){return preference.items.length+(preference.showSmart?1:0)}
+function syncEditControls(){
+ smartTile.hidden=!preference.showSmart;
+ rail.classList.toggle('is-editing',editing);
+ doneEdit.hidden=!editing;
+ add.hidden=!editing||totalSlots()>=MAX_COUNT;
+}
+function enterEdit(){
+ if(editing||home.hidden||!root.classList.contains('sv-home-empty-arrived'))return;
+ editing=true;suppressClick=true;ignoreOutsideUntil=Date.now()+550;syncEditControls();renderItems();show();
+}
+function exitEdit(){
+ if(!editing)return;
+ editing=false;suppressClick=false;syncEditControls();renderItems();show();
+}
+doneEdit.addEventListener('click',exitEdit);
+add.addEventListener('click',()=>openCustomize());
+function removeSlot(id){
+ if(!editing)return;
+ if(id==='smart')preference.showSmart=false;
+ else preference.items=preference.items.filter(x=>x!==id);
+ persist();renderItems();updateCount();show();
+}
+function minusButton(id,label){
+ const b=document.createElement('button');b.type='button';b.className='sv-home-edit-minus';
+ b.setAttribute('aria-label','Убрать с главной: '+label);b.textContent='−';
+ b.addEventListener('click',e=>{e.stopPropagation();removeSlot(id)});
+ return b;
+}
+smartTile.append(minusButton('smart','Умная кнопка'));
 function bindHold(button){
  button.addEventListener('pointerdown',e=>{
-  if(e.pointerType==='mouse'&&e.button!==0)return;
+  if(editing||e.pointerType==='mouse'&&e.button!==0)return;
   holding=true;clearTimeout(longTimer);
-  longTimer=setTimeout(()=>{if(!holding)return;suppressClick=true;openCustomize();},650);
+  longTimer=setTimeout(()=>{if(holding){suppressClick=true;enterEdit()}},620);
  });
  for(const type of ['pointerup','pointercancel','pointerleave'])button.addEventListener(type,()=>{
   holding=false;clearTimeout(longTimer);
  });
- button.addEventListener('contextmenu',e=>{e.preventDefault();suppressClick=true;openCustomize()});
+ button.addEventListener('contextmenu',e=>{e.preventDefault();suppressClick=true;enterEdit()});
+}
+bindHold(card);
+let dragged=null;
+function bindReorder(button,tile,id){
+ button.addEventListener('pointerdown',e=>{
+  if(!editing||e.button!==0)return;
+  dragged={id,x:e.clientX,y:e.clientY,moved:false};
+  try{button.setPointerCapture(e.pointerId)}catch{}
+ });
+ button.addEventListener('pointermove',e=>{
+  if(!editing||dragged?.id!==id)return;
+  if(Math.hypot(e.clientX-dragged.x,e.clientY-dragged.y)>9){
+   dragged.moved=true;tile.classList.add('is-dragging');
+  }
+ });
+ button.addEventListener('pointerup',e=>{
+  if(!dragged||dragged.id!==id)return;
+  const wasMoved=dragged.moved;dragged=null;tile.classList.remove('is-dragging');
+  if(!wasMoved)return;
+  const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('.sv-home-favorite-tile');
+  const to=target?.dataset.favoriteId;
+  suppressClick=true;
+  if(!to||to==='smart'||to===id)return;
+  const a=preference.items.slice(),from=a.indexOf(id),where=a.indexOf(to);
+  if(from<0||where<0)return;
+  a.splice(from,1);a.splice(where,0,id);
+  preference.items=a;persist();renderItems();show();
+ });
+ button.addEventListener('pointercancel',()=>{dragged=null;tile.classList.remove('is-dragging')});
 }
 function renderItems(){
  list.replaceChildren();
  for(const id of preference.items){
   const app=byId[id];if(!app)continue;
+  const tile=document.createElement('div');tile.className='sv-home-favorite-tile';tile.dataset.favoriteId=id;
   const button=document.createElement('button');button.className='sv-home-favorite';button.type='button';
   button.setAttribute('aria-label','Открыть '+app.name);
-  button.title=app.name+' · удерживай, чтобы настроить';
+  button.title=app.name+' · удерживай, чтобы изменить главную';
   const surface=document.createElement('span');surface.className='sv-home-favorite-icon';surface.innerHTML=icon(id);
   const label=document.createElement('span');label.className='sv-home-favorite-label';label.textContent=app.name;
   button.append(surface,label);button.addEventListener('click',e=>{
-   if(suppressClick){suppressClick=false;e.preventDefault();return}
+   if(editing||suppressClick){suppressClick=false;e.preventDefault();return}
    launch(id);
   });
-  bindHold(button);list.append(button);
+  tile.append(button,minusButton(id,app.name));bindHold(button);bindReorder(button,tile,id);list.append(tile);
  }
+ syncEditControls();
 }
 function openCustomize(){
  if(document.getElementById('svHomeFavoritesEditor'))return;
  const dialog=document.createElement('dialog');dialog.id='svHomeFavoritesEditor';dialog.className='sv-home-favorites-editor';
  const shell=document.createElement('div');shell.className='sv-home-favorites-editor-shell';
  const head=document.createElement('div');head.className='sv-home-favorites-editor-head';
- const title=document.createElement('strong');title.textContent='Любимые приложения';
+ const title=document.createElement('strong');title.textContent='Настроить главную';
  const done=document.createElement('button');done.type='button';done.textContent='Готово';
  head.append(title,done);
- const help=document.createElement('p');help.textContent='Выбери три приложения. Их порядок останется таким, как ты выбрал.';
+ const help=document.createElement('p');help.textContent='Выбери до четырёх кнопок. Умная кнопка показывает дела или любимое приложение.';
  const grid=document.createElement('div');grid.className='sv-home-favorites-editor-grid';
- let selection=preference.items.slice();
+ let selection=preference.items.slice(),smart=preference.showSmart;
  const redraw=()=>{
   grid.replaceChildren();
-  for(const app of apps){
+  const options=[{id:'smart',name:'Умная кнопка'},...apps];
+  for(const app of options){
    const b=document.createElement('button');b.type='button';
-   const chosen=selection.indexOf(app.id);
-   b.setAttribute('aria-pressed',String(chosen>=0));
-   b.innerHTML=icon(app.id);
+   const chosen=app.id==='smart'?smart:selection.includes(app.id);
+   b.setAttribute('aria-pressed',String(chosen));
+   b.innerHTML=app.id==='smart'?'<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>':icon(app.id);
    const t=document.createElement('span');t.textContent=app.name;
-   const number=document.createElement('small');number.textContent=chosen>=0?String(chosen+1):'+';
+   const number=document.createElement('small');number.textContent=chosen?'✓':'+';
    b.append(t,number);
    b.addEventListener('click',()=>{
-    if(chosen>=0)selection=selection.filter(x=>x!==app.id);
-    else if(selection.length<LIMIT)selection.push(app.id);
-    else return;
+    if(app.id==='smart'){
+     if(smart)smart=false;else if(selection.length<MAX_COUNT)smart=true;
+    }else if(chosen)selection=selection.filter(x=>x!==app.id);
+    else if(selection.length+(smart?1:0)<MAX_COUNT)selection.push(app.id);
     redraw();
    });grid.append(b);
   }
  };
  redraw();shell.append(head,help,grid);dialog.append(shell);document.body.append(dialog);
- function close(){dialog.close();dialog.remove();setTimeout(()=>{suppressClick=false},60)}
- done.addEventListener('click',()=>{if(selection.length===LIMIT){preference={items:selection,custom:true};save(STORAGE,preference);renderItems();updateCount();close()}else{help.textContent='Выбери ровно три приложения.'}});
+ function close(){dialog.close();dialog.remove();setTimeout(()=>{suppressClick=false;show()},60)}
+ done.addEventListener('click',()=>{
+  preference={...preference,items:selection,showSmart:smart,custom:true};
+  save(STORAGE,preference);renderItems();updateCount();close();
+ });
  dialog.addEventListener('cancel',e=>{e.preventDefault();close()});
  dialog.addEventListener('click',e=>{if(e.target===dialog)close()});
  dialog.showModal();
 }
+let backgroundTimer=0,backgroundPoint=null;
+home.addEventListener('pointerdown',e=>{
+ if(editing||e.target.closest('button,a,input,textarea,select,[role="button"]'))return;
+ backgroundPoint={x:e.clientX,y:e.clientY};clearTimeout(backgroundTimer);
+ backgroundTimer=setTimeout(()=>{backgroundPoint=null;enterEdit()},650);
+});
+home.addEventListener('pointermove',e=>{
+ if(backgroundPoint&&Math.hypot(e.clientX-backgroundPoint.x,e.clientY-backgroundPoint.y)>10){
+  clearTimeout(backgroundTimer);backgroundPoint=null;
+ }
+});
+for(const type of ['pointerup','pointercancel','pointerleave']){
+ home.addEventListener(type,()=>{clearTimeout(backgroundTimer);backgroundPoint=null});
+}
+home.addEventListener('click',e=>{
+ if(!editing||e.target.closest('#svHomeFavorites'))return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(Date.now()>=ignoreOutsideUntil)exitEdit();
+},true);
 renderItems();
 function place(){
  if(rail.hidden)return;
@@ -179,8 +280,12 @@ const show=()=>{
  !root.classList.contains('sv-review-open')&&
  !document.querySelector('dialog[open]')&&
  !(document.getElementById('svSmartStartHome')?.hidden===false);
- rail.hidden=!visible;
- if(visible)requestAnimationFrame(place);
+ if(!visible&&editing&&!document.querySelector('dialog[open]')){
+  editing=false;syncEditControls();renderItems();
+ }
+ rail.hidden=!visible||(!editing&&totalSlots()===0);
+ doneEdit.hidden=!editing||!visible;
+ if(visible&&!rail.hidden)requestAnimationFrame(place);
 };
 function updateCount(){
  const pending=cardCount>0;
@@ -223,5 +328,5 @@ document.addEventListener('click',e=>{
  if(entry){usage[entry]=Math.min(10000,(Number(usage[entry])||0)+1);save(USAGE,usage)}
 },{capture:true,passive:true});
 updateCount();show();
-window.SEYVEO_HOME_FAVORITES=Object.freeze({openCustomize,getItems:()=>preference.items.slice()});
+window.SEYVEO_HOME_FAVORITES=Object.freeze({openCustomize,enterEdit,getItems:()=>preference.items.slice(),isEditing:()=>editing});
 })();
