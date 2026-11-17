@@ -128,7 +128,9 @@ function removeSlot(id){
  if(!editing)return;
  if(id==='smart')preference.showSmart=false;
  else preference.items=preference.items.filter(x=>x!==id);
- persist();renderItems();updateCount();show();
+ persist();
+ if(totalSlots()===0){exitEdit();updateCount();return;}
+ renderItems();updateCount();show();
 }
 function minusButton(id,label){
  const b=document.createElement('button');b.type='button';b.className='sv-home-edit-minus';
@@ -230,7 +232,9 @@ function openCustomize(){
  function close(){dialog.close();dialog.remove();setTimeout(()=>{suppressClick=false;show()},60)}
  done.addEventListener('click',()=>{
   preference={...preference,items:selection,showSmart:smart,custom:true};
-  save(STORAGE,preference);renderItems();updateCount();close();
+  save(STORAGE,preference);
+  if(totalSlots()===0)editing=false;
+  renderItems();updateCount();close();
  });
  dialog.addEventListener('cancel',e=>{e.preventDefault();close()});
  dialog.addEventListener('click',e=>{if(e.target===dialog)close()});
