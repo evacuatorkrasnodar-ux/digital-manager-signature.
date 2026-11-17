@@ -1191,3 +1191,11 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #homePage #seyveoLivingMoment.lm-preview.lm-reveal .lm-inline-item:nth-child(1){transition-delay:670ms}
 #homePage #seyveoLivingMoment.lm-preview.lm-reveal .lm-inline-item:nth-child(2){transition-delay:1360ms}
 @media(prefers-reduced-motion:reduce){#homePage #seyveoLivingMoment.lm-preview :is(.lm-primary,.lm-inline-item){opacity:1!important;transform:none!important;transition:none!important}}
+
+/* Inline Sayvi labels now use the exact POTOK artwork, with a real image
+   instead of the retired four-point SVG. Preserve the original line height. */
+#seyveoLivingMoment .sv-sayvi-label > img.lm-sayvi-mark{
+ display:inline-block;box-sizing:border-box;width:18px;height:18px;
+ min-width:18px;max-width:18px;min-height:18px;max-height:18px;
+ margin:0 5px 0 0;vertical-align:middle;object-fit:contain;filter:none;
+}
