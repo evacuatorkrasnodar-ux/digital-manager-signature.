@@ -1,4 +1,19 @@
-<!doctype html><html lang="ru" data-theme="light" data-palette="white"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#ffffff">
+<!doctype html><html lang="ru" class="sv-work-first-paint" data-theme="light" data-palette="white"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#ffffff">
+<style id="sv-work-first-paint-guard">
+/* Keep legacy Work markup offscreen until the unified shell and deferred
+   agenda renderer have completed their first synchronous pass. */
+html.sv-work-first-paint body #tasksPage,
+html.sv-work-first-paint body #calendarPage,
+html.sv-work-first-paint body #svWorkShell{
+ visibility:hidden!important;opacity:0!important;
+}
+html.sv-work-first-paint[data-sv-work-entry="true"] body #homePage{
+ visibility:hidden!important;opacity:0!important;
+}
+@media(prefers-reduced-motion:no-preference){
+ #svWorkShell{transition:opacity 180ms cubic-bezier(.22,1,.36,1)}
+}
+</style>
 <script>
 /* Restore the selected appearance BEFORE the first stylesheet or first paint.
    The normal app controller below remains the single owner of theme changes. */
@@ -23,6 +38,15 @@ if(!location.hash||location.hash==='#home'){
   document.documentElement.classList.add('sv-cinema-boot');
   setTimeout(()=>document.documentElement.classList.remove('sv-cinema-boot'),3200);
 }
+// On a direct Work reload, suppress the Home fallback frame as well.
+// Fallback guard prevents an empty screen if an old PWA script fails.
+if(/^#(?:tasks|calendar|work|notes)(?:$|[/?])/.test(location.hash)){
+ document.documentElement.dataset.svWorkEntry='true';
+}
+setTimeout(()=>{
+ document.documentElement.classList.remove('sv-work-first-paint');
+ delete document.documentElement.dataset.svWorkEntry;
+},3000);
 </script>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="description" content="Цифровой управляющий SEYVEO — персональный помощник для жизни и бизнеса."><title>Цифровой управляющий · Living Interface</title><link rel="manifest" href="manifest.webmanifest?v=10"><link rel="icon" type="image/svg+xml" href="assets/app-icon.svg?v=6"><link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=3"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Управляющий"><style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-kerning:normal;font-optical-sizing:auto;--type-display:28px;--type-heading:22px;--type-body:15px;--type-body-compact:14px;--type-label:13px;--type-caption:12px;--type-eyebrow:11px;color-scheme:dark;--bg:#111917;--card:#192a25;--card2:#21332c;--text:#ffffff;--secondary:#d9dde1;--line:#35534a;--glass:#edf7f2;--shadow:#0007;--soft-line:#abcaba24;--seyveo-emerald:#91c9b5;--seyveo-emerald-deep:#345d50;--seyveo-velvet:#14241f;--seyveo-metal-peak:#fbfffd;--seyveo-metal-mid:#c6dcd2;--seyveo-specular:rgba(249,255,252,.072);--seyveo-hdr-outline:rgba(165,208,190,.20);--seyveo-hdr-active:rgba(148,197,173,.11);--seyveo-hdr-stage:radial-gradient(ellipse 100% 52% at 50% 0%,rgba(203,255,233,.050),transparent 78%),radial-gradient(ellipse 105% 58% at 55% 100%,rgba(95,175,144,.030),transparent 80%);--seyveo-hdr-glint:rgba(251,255,251,.115)}
@@ -6564,7 +6588,7 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=19"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=29"></script><script src="assets/seyveo-work-shell.js?v=89"></script><script src="assets/seyveo-task-smart-nl.js?v=9"></script><script src="assets/seyveo-task-places.js?v=20"></script><script src="assets/seyveo-search-hub.js?v=1"></script><script src="assets/seyveo-task-ai-policy.js?v=2"></script><script src="assets/seyveo-task-ai.js?v=2"></script><script src="assets/seyveo-task-travel-core.js?v=2"></script><script src="assets/seyveo-task-editor-v3.js?v=24"></script><script src="assets/seyveo-task-places-ui.js?v=29"></script><script src="assets/seyveo-meeting-place-picker.js?v=3"></script><script src="assets/seyveo-task-travel-ui.js?v=3"></script><script src="assets/seyveo-task-travel-reminders.js?v=1"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
+</script><script src="assets/seyveo-home-presence.js?v=19"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=29"></script><script src="assets/seyveo-work-shell.js?v=90"></script><script src="assets/seyveo-task-smart-nl.js?v=9"></script><script src="assets/seyveo-task-places.js?v=20"></script><script src="assets/seyveo-search-hub.js?v=1"></script><script src="assets/seyveo-task-ai-policy.js?v=2"></script><script src="assets/seyveo-task-ai.js?v=2"></script><script src="assets/seyveo-task-travel-core.js?v=2"></script><script src="assets/seyveo-task-editor-v3.js?v=24"></script><script src="assets/seyveo-task-places-ui.js?v=29"></script><script src="assets/seyveo-meeting-place-picker.js?v=3"></script><script src="assets/seyveo-task-travel-ui.js?v=3"></script><script src="assets/seyveo-task-travel-reminders.js?v=1"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
  // Only the actual viewport HEIGHT affects editor geometry. Scroll events
