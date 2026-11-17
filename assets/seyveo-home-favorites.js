@@ -140,12 +140,12 @@ function place(){
  const weather=document.getElementById('svSayviHomeWeather');
  if(!weather||weather.hidden||getComputedStyle(weather).display==='none'||getComputedStyle(weather).visibility==='hidden')return;
  const w=weather.getBoundingClientRect(),r=rail.getBoundingClientRect();
- if(!w.height||!r.height||r.top>=w.bottom+12)return;
+ if(!w.height||!r.height)return;
  const dock=document.getElementById('navHome')?.getBoundingClientRect();
- const maximum=(dock?.top||window.innerHeight-64)-r.height-18;
- const wanted=w.bottom+14;
- // Move below the weather; when a tiny viewport cannot fit both,
- // use the last safe position above the dock instead of covering its buttons.
+ // Protect actual finger-sized hit rectangles, not only visible glyphs.
+ // Keep 24px between weather and shortcuts and at least 32px above the dock.
+ const maximum=(dock?.top||window.innerHeight-64)-r.height-32;
+ const wanted=w.bottom+24;
  const next=Math.min(wanted,maximum);
  rail.style.top=Math.round(next-stage.getBoundingClientRect().top)+'px';
 }
