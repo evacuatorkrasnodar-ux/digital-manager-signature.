@@ -448,3 +448,28 @@ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button[aria-press
  background:rgba(224,231,240,.77)!important;
  border-color:rgba(135,151,170,.68)!important;
 }
+
+/* Home editor must keep the REAL Sayvi on Home, never duplicate her in the dock. */
+:root:has(dialog#svHomeFavoritesEditor[open]) #homePage #orbCluster,
+:root:has(dialog#svHomeFavoritesEditor[open]) #homePage.lm-focus #orbCluster{
+ position:absolute!important;
+ top:calc(50dvh - 100px)!important;
+ left:0!important;right:0!important;
+ transform:translateY(-50%)!important;
+ height:var(--sv-home-orb-size,285px)!important;
+ min-height:0!important;margin:0!important;overflow:visible!important;
+ visibility:visible!important;opacity:1!important;
+ pointer-events:none!important;
+ transition:none!important;
+}
+:root:has(dialog#svHomeFavoritesEditor[open]) #homePage #orb{
+ width:var(--sv-home-orb-size,285px)!important;
+ height:var(--sv-home-orb-size,285px)!important;
+ min-width:0!important;min-height:0!important;
+ visibility:visible!important;opacity:1!important;
+ transform:none!important;pointer-events:none!important;
+}
+:root:has(dialog#svHomeFavoritesEditor[open]) #assistantButton .sv-sayvi-velvet-sphere{
+ opacity:0!important;visibility:hidden!important;
+ transition:none!important;
+}
