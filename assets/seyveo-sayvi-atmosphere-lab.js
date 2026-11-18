@@ -51,10 +51,7 @@
       transition:opacity .46s cubic-bezier(.2,.7,.25,1);
     }
     html.sv-sayvi-atmosphere-preview[data-theme="dark"] #orbCluster > .sv-sayvi-atmosphere,
-    html.sv-sayvi-atmosphere-preview.sv-sayvi-handoff-inflight #orbCluster > .sv-sayvi-atmosphere,
-    html.sv-sayvi-atmosphere-preview.sv-sayvi-handoff-docked #orbCluster > .sv-sayvi-atmosphere,
-    html.sv-sayvi-atmosphere-preview.sv-music-ambient #orbCluster > .sv-sayvi-atmosphere,
-    html.sv-sayvi-atmosphere-preview.sv-music-ambient-leaving #orbCluster > .sv-sayvi-atmosphere {
+    html.sv-sayvi-atmosphere-preview.sv-sayvi-handoff-inflight #orbCluster > .sv-sayvi-atmosphere {
       opacity:0 !important;
     }
     /* The canvas stays round: only the same tiny, spring-soft return motion
