@@ -48,7 +48,7 @@
   button.className='sv-newdock-button';
   const key=names[index];
   button.innerHTML=key==='sayvi'
-   ?'<img class="sv-newdock-potok" src="assets/seyveo-ribbon-mark-white.svg?v=1" alt="" aria-hidden="true" draggable="false">'
+   ?'<img class="sv-newdock-potok" src="assets/seyveo-circular-interlace-mono-white-512.png?v=1" alt="" aria-hidden="true" draggable="false">'
    :icon(icons[key]);
   button.dataset.svAction=key;
   button.setAttribute('data-sv-active','false');
