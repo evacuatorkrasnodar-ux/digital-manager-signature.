@@ -4,13 +4,15 @@
    ?sayvi-model=9 is the original SVG silk as a GPU-independent diagnostic.
    ?sayvi-model=10 uses soft fabric/smoke instead of mapped old filaments,
    with the new ribbon silhouette constrained to a precise outer circle.
+   ?sayvi-model=11 ensures that the whole outer silhouette is a TRUE circle:
+   scale up the sculpture enough to cover the circle, then feather its edge.
    Four watertight 3D bands exported from Blender with physical depth,
    normal-based pearl/frost material and gentle motion. The public home
    keeps its established Sayvi picture unless this experiment is enabled. */
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9'&&mode!=='10')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9'&&mode!=='10'&&mode!=='11')return;
   const layeredGlass=mode!=='1';
   const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6'||mode==='7'||mode==='8';
   const smokeBottle=mode==='4'||mode==='5';
@@ -23,8 +25,9 @@
   const home=document.getElementById('homePage');
   if(!orb||!hero||!home)return;
 
-  if(mode==='9'||mode==='10'){
-    const softCircle=mode==='10';
+  if(mode==='9'||mode==='10'||mode==='11'){
+    const softCircle=mode==='10'||mode==='11';
+    const preciseCircle=mode==='11';
     // Isolate the question 'does the archived silk look alive in our new
     // shape?' from the separate question 'does this device permit WebGL?'.
     // Reuse the REAL old light sphere's path data and its alternating motion.
@@ -193,6 +196,37 @@
           </g>
         </svg>
       `;
+    }
+    if(preciseCircle){
+      // The transparent PNG's actual outer radial extent is 385–427px,
+      // relative to the 1024px square: a 10% variation. Merely clipping
+      // at radius 41% left dents wherever the art had no pixels. At 1.11x,
+      // even the narrowest radius covers our desired 412px target circle.
+      // The image's centre/hole remains transparent; only the outer contour
+      // is mathematically fixed, with a tiny feathered glass lip.
+      style.textContent+=`
+        html.sv-living-ribbon.sv-precision-circle #orb #plasmaVisual {
+          animation:sv-ribbon-pearl-breathe 7.2s ease-in-out infinite !important;
+          transform:scale(1.11) !important;
+          clip-path:none !important;
+          -webkit-mask-image:radial-gradient(circle closest-side at 50% 50%,
+            #000 0 72.30%,rgba(0,0,0,.96) 72.58%,transparent 72.86%);
+          mask-image:radial-gradient(circle closest-side at 50% 50%,
+            #000 0 72.30%,rgba(0,0,0,.96) 72.58%,transparent 72.86%);
+        }
+        html.sv-precision-circle #orb > .sv-sayvi-soft-flow {
+          transform:scale(1.11) !important;
+          clip-path:circle(36.43% at 50% 50%) !important;
+        }
+        html.sv-precision-circle #orb::before,
+        html.sv-precision-circle #orb::after {opacity:0!important}
+        @media(prefers-reduced-motion:reduce){
+          html.sv-living-ribbon.sv-precision-circle #orb #plasmaVisual{
+            animation:none!important
+          }
+        }
+      `;
+      document.documentElement.classList.add('sv-precision-circle');
     }
     document.head.appendChild(style);
     orb.appendChild(visual);
