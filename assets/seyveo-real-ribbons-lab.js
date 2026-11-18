@@ -372,6 +372,11 @@
           alpha=.20+.13*polishedLip;
         }
         alpha*=smoothstep(.075,.72,approved);
+        if(uApprovedContour>.5){
+          // Nearly edge-on side walls should read as transparent glass,
+          // not as large opaque rectangular panels across the opening.
+          alpha*=mix(.14,1.,smoothstep(.10,.46,facing));
+        }
         gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.18,.97));
         return;
       }
@@ -874,7 +879,18 @@
       gl.uniform1f(u.threads,visibleThreads?1:0);
       gl.uniform1f(u.clean,cleanGlass?1:0);
       gl.uniform1f(u.approved,independentPetals?1:0);
-      if(archiveSilk){
+      if(independentPetals){
+        // One front-surface pass for four interwoven ribbons. Opaque rear
+        // passes created dark rectangular overlaps in the aperture.
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthMask(true);
+        gl.enable(gl.CULL_FACE);
+        gl.cullFace(gl.BACK);
+        gl.uniform1f(u.layer,1);
+        gl.uniform1f(u.shellOffset,0);
+        drawMeshes();
+        gl.disable(gl.CULL_FACE);
+      }else if(archiveSilk){
         // Three separate translucent depths, matching the source artwork's
         // silk -> smoke/filaments -> external clear/frosted glass order.
         gl.enable(gl.CULL_FACE);
