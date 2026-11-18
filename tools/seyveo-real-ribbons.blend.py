@@ -5,13 +5,17 @@ remains untouched. Geometry uses volumetric swept bands, not an alpha-map relief
 """
 import bpy
 import math
+import os
 from mathutils import Vector
+from pathlib import Path
 
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 
-PREVIEW = '/workspace/scratch/3ee1e8e658ec/seyveo-ribbon-preview/real-ribbons-preview.png'
-MODEL = '/workspace/scratch/3ee1e8e658ec/seyveo-ribbon-preview/seyveo-real-ribbons.glb'
+OUTPUT_DIR = Path(os.environ.get('SEYVEO_RENDER_OUT', str(Path(__file__).resolve().parent)))
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+PREVIEW = str(OUTPUT_DIR / 'real-ribbons-preview.png')
+MODEL = str(OUTPUT_DIR / 'seyveo-real-ribbons-uv.glb')
 
 def make_material():
     mat = bpy.data.materials.new('SAYVI • aqua pearl / frosted glass')
@@ -89,6 +93,13 @@ def add_blade(index):
     mesh = bpy.data.meshes.new(f'SAYVI • ribbon {index+1}')
     mesh.from_pydata(verts, [], faces)
     mesh.update()
+    # Intrinsic coordinates travel WITH the physical ribbon. They let the
+    # internal glass filaments flow along the bands, not across the screen.
+    flow_uv = mesh.uv_layers.new(name='Sayvi internal light flow')
+    for polygon in mesh.polygons:
+        for loop_index in polygon.loop_indices:
+            vertex_index = mesh.loops[loop_index].vertex_index
+            flow_uv.data[loop_index].uv = uv[vertex_index]
     obj = bpy.data.objects.new(f'SAYVI ribbon {index+1}',mesh)
     bpy.context.collection.objects.link(obj)
     for p in mesh.polygons:

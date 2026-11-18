@@ -1,13 +1,14 @@
-/* SEYVEO · real swept-ribbon mesh. ?sayvi-model=1 retains the approved
-   current preview; ?sayvi-model=2 is the experimental layered glass look.
+/* SEYVEO · real swept-ribbon mesh. Modes 1/2 remain as visual controls;
+   ?sayvi-model=3 adds frosted velvet with moving light INSIDE each ribbon.
    Four watertight 3D bands exported from Blender with physical depth,
    normal-based pearl/frost material and gentle motion. The public home
    keeps its established Sayvi picture unless this experiment is enabled. */
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2')return;
-  const layeredGlass=mode==='2';
+  if(mode!=='1'&&mode!=='2'&&mode!=='3')return;
+  const layeredGlass=mode!=='1';
+  const velvetFlow=mode==='3';
   const orb=document.getElementById('orb');
   const hero=document.getElementById('plasmaVisual');
   const home=document.getElementById('homePage');
@@ -16,12 +17,14 @@
   const vertexSource=`
     attribute vec3 aPosition;
     attribute vec3 aNormal;
+    attribute vec2 aFlowUv;
     uniform vec3 uRotation;
     uniform float uTime;
     uniform float uBlade;
     varying vec3 vNormal;
     varying vec3 vPosition;
     varying float vBlade;
+    varying vec2 vFlowUv;
     void main(){
       float cx=cos(uRotation.x),sx=sin(uRotation.x);
       float cy=cos(uRotation.y),sy=sin(uRotation.y);
@@ -39,6 +42,7 @@
       vPosition=p;
       vNormal=n;
       vBlade=uBlade;
+      vFlowUv=aFlowUv;
     }
   `;
 
@@ -47,11 +51,13 @@
     varying vec3 vNormal;
     varying vec3 vPosition;
     varying float vBlade;
+    varying vec2 vFlowUv;
     uniform float uTime;
     uniform float uEnergy;
     uniform float uState;
     uniform float uLayeredGlass;
     uniform float uLayer;
+    uniform float uVelvetFlow;
 
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p){
@@ -70,6 +76,13 @@
     float gaussian(vec2 p,vec2 c,float k){
       vec2 d=p-c;return exp(-dot(d,d)*k);
     }
+    float fineFbm(vec2 p){
+      float v=0.,a=.5;
+      for(int i=0;i<3;i++){
+        v+=a*noise(p);p=p*2.07+vec2(4.7,11.3);a*=.5;
+      }
+      return v;
+    }
     void main(){
       vec3 n=normalize(vNormal);
       if(!gl_FrontFacing)n=-n;
@@ -79,8 +92,20 @@
       vec2 q=vPosition.xy;
       if(uLayeredGlass>.5&&uLayer<.5){
         // Efficient first pass: translucent inner/back surfaces only.
-        // No costly fluid noise is needed behind the front velvet shell.
         vec3 inner=mix(vec3(.43,.66,.69),vec3(.73,.90,.91),facing*.46);
+        if(uVelvetFlow>.5){
+          // Living liquid silk moves on the reverse surface in intrinsic
+          // ribbon coordinates, so it visibly parallax-shifts under glass.
+          vec2 strand=vFlowUv;
+          float mist=fineFbm(vec2(strand.x*3.7-uTime*.075,
+                                   strand.y*2.4+uTime*.026)+vBlade*.37);
+          float strandGlow=pow(max(0.,1.-abs(sin(strand.x*17.+strand.y*3.2+
+                                  mist*2.1-uTime*.54))),8.);
+          inner=mix(inner,vec3(.67,.94,.95),mist*.38);
+          inner+=vec3(.13,.20,.19)*strandGlow*.65;
+          gl_FragColor=vec4(clamp(inner,0.,1.),.15+.10*mist);
+          return;
+        }
         gl_FragColor=vec4(inner,.115+.095*fresnel);
         return;
       }
@@ -154,6 +179,20 @@
         // Second pass: front velvet and smooth transparent glass.
         alpha=mix(.955,.655,smoothGlass)+fresnel*.085;
       }
+      if(uVelvetFlow>.5){
+        // Frosted velvet on the exterior. The soft aqua silk and filaments
+        // travel underneath it, especially visible through polished patches.
+        vec2 strand=vFlowUv;
+        float mist=fineFbm(vec2(strand.x*3.35-uTime*.080,
+                                 strand.y*2.75+uTime*.032)+vBlade*.31);
+        float filament=pow(max(0.,1.-abs(sin(strand.x*16.+strand.y*3.6+
+                          mist*2.2-uTime*.48))),9.);
+        color=mix(color,vec3(.47,.77,.79),mist*(.065+.14*smoothGlass));
+        color+=vec3(.095,.16,.16)*filament*(.24+.62*smoothGlass);
+        color+=vec3(.025,.045,.045)*(.5+.5*sin(uTime*.69+strand.x*4.))
+          *(.30+.70*smoothGlass);
+        alpha=mix(.96,.61,smoothGlass)+fresnel*.075;
+      }
       gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.61,.99));
     }
   `;
@@ -171,8 +210,10 @@
   // Small glTF 2.0 binary reader: only float3 position/normal + uint16 index.
   // All ribbons are baked into mesh coordinates. Blender stores Z-up in glTF
   // as Y-up, so restore the app's expected XY face plane during decoding.
-  async function loadRibbons(){
-    const response=await fetch('assets/seyveo-real-ribbons.glb?v=1');
+  async function loadRibbons(useFlowModel){
+    const source=useFlowModel?'assets/seyveo-real-ribbons-uv.glb?v=1':
+      'assets/seyveo-real-ribbons.glb?v=1';
+    const response=await fetch(source);
     if(!response.ok)throw Error('3D ribbon model unavailable');
     const binary=await response.arrayBuffer();
     const dv=new DataView(binary);
@@ -194,7 +235,7 @@
       const start=binOffset+(view.byteOffset||0)+(a.byteOffset||0);
       if(a.bufferView===undefined||view.byteStride)
         throw Error('Unsupported ribbon vertex stream');
-      const bytes=a.type==='VEC3'?3:1;
+      const bytes=a.type==='VEC3'?3:a.type==='VEC2'?2:1;
       if(a.componentType===5126)return new Float32Array(binary,start,a.count*bytes);
       if(a.componentType===5123)return new Uint16Array(binary,start,a.count*bytes);
       throw Error('Unsupported ribbon index format');
@@ -203,20 +244,24 @@
       const p=mesh.primitives[0];
       const coords=read(p.attributes.POSITION);
       const normals=read(p.attributes.NORMAL);
+      const flows=p.attributes.TEXCOORD_0===undefined?null:read(p.attributes.TEXCOORD_0);
       const indices=read(p.indices);
-      if(coords.length!==normals.length||coords.length/3>65535)
+      if(coords.length!==normals.length||coords.length/3>65535||
+         (useFlowModel&&(!flows||flows.length!==coords.length/3*2)))
         throw Error('3D ribbon vertex count invalid');
-      const vertex=new Float32Array(coords.length*2);
+      const vertex=new Float32Array(coords.length/3*8);
       for(let i=0;i<coords.length;i+=3){
-        const j=i*2;
+        const j=i/3*8;
         vertex[j]=coords[i];vertex[j+1]=-coords[i+2];vertex[j+2]=coords[i+1];
         vertex[j+3]=normals[i];vertex[j+4]=-normals[i+2];vertex[j+5]=normals[i+1];
+        vertex[j+6]=flows?flows[i/3*2]:0;
+        vertex[j+7]=flows?flows[i/3*2+1]:0;
       }
       return {vertex,indexBuffer:new Uint16Array(indices),blade:index};
     });
   }
 
-  function setup(gl,ribbons,layeredGlass){
+  function setup(gl,ribbons,layeredGlass,velvetFlow){
     const program=gl.createProgram();
     gl.attachShader(program,compile(gl,gl.VERTEX_SHADER,vertexSource));
     gl.attachShader(program,compile(gl,gl.FRAGMENT_SHADER,fragmentSource));
@@ -226,6 +271,7 @@
     gl.useProgram(program);
     const locPos=gl.getAttribLocation(program,'aPosition');
     const locNormal=gl.getAttribLocation(program,'aNormal');
+    const locFlowUv=gl.getAttribLocation(program,'aFlowUv');
     const meshes=ribbons.map(r=>{
       const positions=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,positions);
       gl.bufferData(gl.ARRAY_BUFFER,r.vertex,gl.STATIC_DRAW);
@@ -240,7 +286,8 @@
       blade:gl.getUniformLocation(program,'uBlade'),
       rotation:gl.getUniformLocation(program,'uRotation'),
       layered:gl.getUniformLocation(program,'uLayeredGlass'),
-      layer:gl.getUniformLocation(program,'uLayer')
+      layer:gl.getUniformLocation(program,'uLayer'),
+      velvet:gl.getUniformLocation(program,'uVelvetFlow')
     };
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
@@ -250,9 +297,11 @@
       for(const mesh of meshes){
         gl.bindBuffer(gl.ARRAY_BUFFER,mesh.positions);
         gl.enableVertexAttribArray(locPos);
-        gl.vertexAttribPointer(locPos,3,gl.FLOAT,false,24,0);
+        gl.vertexAttribPointer(locPos,3,gl.FLOAT,false,32,0);
         gl.enableVertexAttribArray(locNormal);
-        gl.vertexAttribPointer(locNormal,3,gl.FLOAT,false,24,12);
+        gl.vertexAttribPointer(locNormal,3,gl.FLOAT,false,32,12);
+        gl.enableVertexAttribArray(locFlowUv);
+        gl.vertexAttribPointer(locFlowUv,2,gl.FLOAT,false,32,24);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.indices);
         gl.uniform1f(u.blade,mesh.blade);
         gl.drawElements(gl.TRIANGLES,mesh.count,gl.UNSIGNED_SHORT,0);
@@ -264,6 +313,7 @@
       gl.uniform1f(u.time,time);gl.uniform1f(u.energy,energy);
       gl.uniform1f(u.state,state);gl.uniform3fv(u.rotation,rotation);
       gl.uniform1f(u.layered,layeredGlass?1:0);
+      gl.uniform1f(u.velvet,velvetFlow?1:0);
       if(layeredGlass){
         // Back surfaces scatter a little light through the foreground.
         // Front surfaces then occlude according to real 3D depth.
@@ -289,7 +339,7 @@
   (async()=>{
     let canvas;
     try{
-      const ribbons=await loadRibbons();
+      const ribbons=await loadRibbons(velvetFlow);
       canvas=document.createElement('canvas');
       canvas.className='sv-sayvi-real3d-canvas';
       canvas.setAttribute('aria-hidden','true');
@@ -298,7 +348,7 @@
         premultipliedAlpha:false,powerPreference:'low-power'
       });
       if(!gl)throw Error('iPhone WebGL unsupported');
-      const render=setup(gl,ribbons,layeredGlass);
+      const render=setup(gl,ribbons,layeredGlass,velvetFlow);
       const style=document.createElement('style');
       style.textContent=`
         #orb > .sv-sayvi-real3d-canvas {
@@ -325,7 +375,7 @@
         const bounds=orb.getBoundingClientRect();
         // Higher internal resolution keeps the glass rim smooth on Retina;
         // capped for the iPhone XR's mobile GPU.
-        const dpr=Math.min(1.50,devicePixelRatio||1);
+        const dpr=Math.min(velvetFlow?1.40:1.50,devicePixelRatio||1);
         const length=Math.max(64,Math.round(Math.max(bounds.width,bounds.height)*dpr));
         if(canvas.width!==length||canvas.height!==length){
           canvas.width=canvas.height=length;gl.viewport(0,0,length,length);
