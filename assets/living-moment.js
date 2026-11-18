@@ -1309,7 +1309,16 @@ function startPreview(){
  mode='preview';key='preview';previewSeen=true;
  previewDecided=false;
  dynamic.hidden=true;
- if(!buildExamples()){previewSeen=true;rest();return false}
+ if(!buildExamples()){
+  // All three training cards can have been resolved in the Review Room.
+  // rest() re-arms an *undecided* preview; without marking this empty queue
+  // decided, it schedules refresh() -> startPreview() -> rest() forever in
+  // microtasks, freezing both Safari and desktop browsers on return Home.
+  previewSeen=true;
+  previewDecided=true;
+  rest();
+  return false;
+ }
  tip.textContent='';
  space.hidden=false;space.classList.add('lm-preview');
  focus(true);
