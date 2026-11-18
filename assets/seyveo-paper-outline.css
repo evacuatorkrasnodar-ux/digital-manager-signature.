@@ -31,11 +31,11 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock >
 html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > #notePaperSayvi > img.sv-newdock-potok{
  display:block!important;
  /* The approved S has intentional transparent breathing room in its source.
-    Render larger so its visible circle matches the neighbouring 21px glyphs. */
- width:36px!important;
- height:36px!important;
- min-width:36px!important;
- min-height:36px!important;
+    Render at 40px so its visible circle matches the neighbouring 21px glyphs. */
+ width:40px!important;
+ height:40px!important;
+ min-width:40px!important;
+ min-height:40px!important;
  object-fit:contain!important;
  filter:none!important;
  opacity:.91!important;
