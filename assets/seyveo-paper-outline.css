@@ -8,6 +8,14 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
+
+/* Drawing studio is an immersive dark surface in both app themes.
+   Do not inherit the general white page-header surface here. */
+html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top,
+html[data-theme="dark"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+ background:transparent!important;
+ background-image:none!important;
+}
 /* When opened from Sayvi, the existing full-viewport tablet lives inside
    an iframe whose viewport is just the bottom sheet. */
 html.sv-sayvi-paper-embed,
