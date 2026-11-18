@@ -17,9 +17,7 @@ test('SEYVEO FLOW is the only installed-app and browser-tab identity', () => {
     [
       'assets/seyveo-app-icon-192.png',
       'assets/seyveo-app-icon-512.png',
-      'assets/seyveo-app-icon.svg',
       'assets/seyveo-app-icon-maskable-512.png',
-      'assets/seyveo-app-icon-maskable.svg',
     ],
   );
   for (const {src} of manifest.icons) {
@@ -34,10 +32,35 @@ test('SEYVEO FLOW is the only installed-app and browser-tab identity', () => {
   for (const name of ['seyveo-favicon-32.png', 'seyveo-favicon-48.png']) {
     assert.ok(existsSync(join(root, 'assets', name)), name);
   }
-  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-apple-touch-icon\.png/);
-  assert.match(page, /assets\/seyveo-app-icon\.svg\?v=1/);
+  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-apple-touch-icon\.png\?v=2/);
+  assert.match(page, /assets\/seyveo-app-icon-192\.png\?v=2/);
   assert.match(notifications, /assets\/seyveo-app-icon-192\.png/);
   assert.doesNotMatch(page + notifications + JSON.stringify(manifest), /assets\/(?:app-icon(?:-maskable)?\.svg|apple-touch-icon\.png|brand-tile\.svg)/);
+});
+
+test('3D light and dark source icons are kept for native platform packaging', () => {
+  for (const name of [
+    'seyveo-flow-silver-3d-source.png',
+    'seyveo-app-icon-light-1024.png',
+    'seyveo-app-icon-dark-1024.png',
+  ]) {
+    assert.ok(existsSync(join(root, 'assets', name)), name);
+  }
+  assert.doesNotMatch(text('manifest.webmanifest'), /seyveo-app-icon(?:-maskable)?\.svg/);
+  const expectedSizes = {
+    'seyveo-app-icon-light-1024.png': 1024,
+    'seyveo-app-icon-dark-1024.png': 1024,
+    'seyveo-app-icon-192.png': 192,
+    'seyveo-app-icon-512.png': 512,
+    'seyveo-app-icon-maskable-512.png': 512,
+    'seyveo-apple-touch-icon.png': 180,
+  };
+  for (const [name, size] of Object.entries(expectedSizes)) {
+    const png = readFileSync(join(root, 'assets', name));
+    assert.equal(png.subarray(1, 4).toString(), 'PNG', name);
+    assert.equal(png.readUInt32BE(16), size, name);
+    assert.equal(png.readUInt32BE(20), size, name);
+  }
 });
 
 test('Greeting reveal and still-used card icons are retained for their own migration', () => {

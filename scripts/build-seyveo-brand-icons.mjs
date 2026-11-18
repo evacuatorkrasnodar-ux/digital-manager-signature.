@@ -1,55 +1,61 @@
-// SEYVEO FLOW · one approved silhouette, all application icon sizes.
-// Source of truth: assets/seyveo-flow-icon-air-dark.svg.
-import { readFileSync, writeFileSync } from 'node:fs';
+// SEYVEO FLOW · original continuous silver 3D ribbons for app icons.
+// The approved vector in seyveo-flow-icon-air-dark.svg remains for tiny UI controls.
+// Installed web apps use one fallback icon; native Light/Dark variants are prepared separately.
+import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const assets = resolve(root, 'assets');
-const source = readFileSync(resolve(assets, 'seyveo-flow-icon-air-dark.svg'), 'utf8');
-const inner = source.replace(/^<svg[^>]*>\s*/, '').replace(/<\/svg>\s*$/, '');
-if (!inner.includes('pearlA') || !inner.includes('<path')) {
-  throw new Error('Approved SEYVEO FLOW vector source is missing');
+const assets = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'assets');
+const silver = resolve(assets, 'seyveo-flow-silver-3d-source.png');
+const faviconSource = resolve(assets, 'seyveo-favicon-silver-source.png');
+if (!existsSync(silver) || !existsSync(faviconSource)) {
+  throw new Error('An approved SEYVEO silver source image is missing');
+}
+const output = (name) => resolve(assets, name);
+const magick = (...args) => execFileSync('magick', args, { stdio: 'ignore' });
+
+// Two true-to-reference app icons. Light is slightly deepened to keep silver
+// visible against a nearly white Home Screen; Dark preserves the original metal.
+magick(
+  '-size', '1024x1024', 'radial-gradient:#FFFFFF-#F2F3F5',
+  '(', silver, '-channel', 'RGB', '-evaluate', 'multiply', '0.89', '+channel', ')',
+  '-compose', 'Over', '-composite',
+  output('seyveo-app-icon-light-1024.png'),
+);
+magick(
+  '-size', '1024x1024', 'radial-gradient:#26272B-#17181B', silver,
+  '-compose', 'Over', '-composite',
+  output('seyveo-app-icon-dark-1024.png'),
+);
+
+// PWA/iOS installation icon: one universally legible graphite version.
+// Apple-touch-icon wins over manifest icons on iOS; native dynamic switching
+// of Light/Dark icon assets is not promised for an installed web app.
+for (const [size, name] of [
+  [192, 'seyveo-app-icon-192.png'],
+  [512, 'seyveo-app-icon-512.png'],
+  [180, 'seyveo-apple-touch-icon.png'],
+]) {
+  magick(
+    output('seyveo-app-icon-dark-1024.png'),
+    '-filter', 'Lanczos', '-resize', `${size}x${size}`, output(name),
+  );
 }
 
-function squareIcon(markSize) {
-  const inset = (512 - markSize) / 2;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="SEYVEO FLOW">
-  <defs><radialGradient id="graphite" cx=".47" cy=".42" r=".88"><stop stop-color="#25262A"/><stop offset="1" stop-color="#1A1B1E"/></radialGradient></defs>
-  <rect width="512" height="512" fill="url(#graphite)"/>
-  <svg x="${inset}" y="${inset}" width="${markSize}" height="${markSize}" viewBox="36 10 665 665">
-    ${inner}
-  </svg>
-</svg>
-`;
-}
+// Keep the silver sphere fully inside Android's circular maskable safe zone.
+magick(
+  '-size', '512x512', 'radial-gradient:#26272B-#17181B',
+  '(', silver, '-filter', 'Lanczos', '-resize', '410x410', ')',
+  '-gravity', 'center', '-compose', 'Over', '-composite',
+  output('seyveo-app-icon-maskable-512.png'),
+);
 
-writeFileSync(resolve(assets, 'seyveo-app-icon.svg'), squareIcon(394));
-writeFileSync(resolve(assets, 'seyveo-app-icon-maskable.svg'), squareIcon(304));
-
-const exports = [
-  ['seyveo-app-icon.svg', 'seyveo-app-icon-192.png', 192],
-  ['seyveo-app-icon.svg', 'seyveo-app-icon-512.png', 512],
-  ['seyveo-app-icon-maskable.svg', 'seyveo-app-icon-maskable-512.png', 512],
-  ['seyveo-app-icon.svg', 'seyveo-apple-touch-icon.png', 180],
-];
-for (const [input, output, width] of exports) {
-  execFileSync('inkscape', [
-    resolve(assets, input),
-    '--export-type=png',
-    `--export-width=${width}`,
-    `--export-filename=${resolve(assets, output)}`,
-  ], { stdio: 'ignore' });
-}
-// The browser tab uses the original silver surface, without an app-tile background.
-const silverSource = resolve(assets, 'seyveo-favicon-silver-source.png');
+// The tiny browser-tab sign has no app-tile background and remains transparent.
 for (const size of [32, 48]) {
-  execFileSync('magick', [
-    silverSource,
-    '-filter', 'Lanczos',
-    '-resize', `${size}x${size}`,
-    resolve(assets, `seyveo-favicon-${size}.png`),
-  ], { stdio: 'ignore' });
+  magick(
+    faviconSource, '-filter', 'Lanczos', '-resize', `${size}x${size}`,
+    output(`seyveo-favicon-${size}.png`),
+  );
 }
-console.log('Built SEYVEO application, iOS and transparent silver browser-tab icons.');
+console.log('Built SEYVEO 3D light/dark, PWA, iOS, maskable and tab icons.');
