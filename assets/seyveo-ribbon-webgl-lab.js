@@ -99,9 +99,9 @@
         .48+.18*sin(q.x*6.0+q.y*3.7+vBlade*1.6)+.28*glassFlow);
       smoothGlass=mix(smoothGlass,.86,clamp(vSide,0.,1.));
       float matte=1.-smoothGlass;
-      vec3 pearl=vec3(.95,.985,.981);
-      vec3 glass=vec3(.76,.89,.89);
-      vec3 depthColor=vec3(.39,.61,.62);
+      vec3 pearl=vec3(.96,.995,.99);
+      vec3 glass=vec3(.78,.92,.925);
+      vec3 depthColor=vec3(.48,.68,.70);
       float depth=pow(clamp(length(q),0.,1.),1.8);
       vec3 color=mix(pearl,glass,depth*.36);
       color=mix(color,depthColor,(1.-fluid)*(.10+uEnergy*.06));
@@ -122,7 +122,7 @@
       // The reference's own glass gradients contain the curvature and
       // interweaving that a procedural flat tint could not reproduce.
       // The highlight remains responsive to the REAL mesh normals below.
-      color=mix(color,reference.rgb,.76);
+      color=mix(color,reference.rgb,.69);
 
       // Broad frontal studio lights produce a white pearl highlight rather
       // than the dark metallic roll-off seen in the first mesh draft.
@@ -135,21 +135,25 @@
       float specGlass=pow(dotA,78.)*.74+pow(dotB,90.)*.25;
       color+=vec3(.23,.28,.27)*mix(specMatte,specGlass,smoothGlass);
       color+=vec3(.05,.16,.15)*pow(dotB,32.)*(.3+.50*smoothGlass);
-      color=mix(color,depthColor,fresnel*(.17+.14*smoothGlass));
+      // Frosted glass scatters light toward its edges; dark metal does not.
+      color=mix(color,depthColor,fresnel*(.095+.09*smoothGlass));
       color+=vec3(.12,.15,.14)*gaussian(q,vec2(-.34,.57),35.)*.40;
       color+=vec3(.06,.10,.09)*gaussian(q,vec2(.49,-.58),80.)*.36;
-      color=mix(color,vec3(.47,.66,.66),clamp(vSide,0.,1.)*.23);
+      color=mix(color,vec3(.50,.72,.72),clamp(vSide,0.,1.)*.18);
+      // Subsurface pearl illumination prevents the translucent parts from
+      // collapsing into dark steel against the green graphite backdrop.
+      color+=vec3(.044,.078,.086)*(.70+.30*smoothGlass);
       // A delicate opal seam is brighter than the milky face of each ribbon.
       float softEdge=smoothstep(.10,.36,reference.a)-smoothstep(.58,.88,reference.a);
       color+=vec3(.14,.24,.23)*softEdge*.28;
-      color=pow(clamp(color,0.,1.),vec3(.98));
+      color=pow(clamp(color,0.,1.),vec3(.93));
 
       // Frosted ribbons carry and scatter light; only polished sections are
       // notably translucent. Edgewalls have a visible, glassy teal rim.
-      float alpha=mix(.94,.59,smoothGlass);
+      float alpha=mix(.965,.795,smoothGlass);
       alpha+=fresnel*.08;
       color=mix(color,vec3(.27,.48,.48),clamp(vSide,0.,1.)*.26);
-      alpha=mix(alpha,.21,clamp(vSide,0.,1.));
+      alpha=mix(alpha,.16,clamp(vSide,0.,1.));
       alpha*=smoothstep(.095,.78,reference.a);
       gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,0.,.99));
     }
