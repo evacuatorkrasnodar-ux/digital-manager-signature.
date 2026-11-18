@@ -1,10 +1,13 @@
-/* SEYVEO · real independent swept-ribbon mesh, opt-in ?sayvi-model=1.
+/* SEYVEO · real swept-ribbon mesh. ?sayvi-model=1 retains the approved
+   current preview; ?sayvi-model=2 is the experimental layered glass look.
    Four watertight 3D bands exported from Blender with physical depth,
    normal-based pearl/frost material and gentle motion. The public home
    keeps its established Sayvi picture unless this experiment is enabled. */
 (() => {
   'use strict';
-  if(new URLSearchParams(location.search).get('sayvi-model')!=='1')return;
+  const mode=new URLSearchParams(location.search).get('sayvi-model');
+  if(mode!=='1'&&mode!=='2')return;
+  const layeredGlass=mode==='2';
   const orb=document.getElementById('orb');
   const hero=document.getElementById('plasmaVisual');
   const home=document.getElementById('homePage');
@@ -47,6 +50,8 @@
     uniform float uTime;
     uniform float uEnergy;
     uniform float uState;
+    uniform float uLayeredGlass;
+    uniform float uLayer;
 
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p){
@@ -72,6 +77,13 @@
       float facing=clamp(abs(dot(n,eye)),0.,1.);
       float fresnel=pow(1.-facing,2.25);
       vec2 q=vPosition.xy;
+      if(uLayeredGlass>.5&&uLayer<.5){
+        // Efficient first pass: translucent inner/back surfaces only.
+        // No costly fluid noise is needed behind the front velvet shell.
+        vec3 inner=mix(vec3(.43,.66,.69),vec3(.73,.90,.91),facing*.46);
+        gl_FragColor=vec4(inner,.115+.095*fresnel);
+        return;
+      }
       float speech=uState>2.5?abs(sin(uTime*5.1)*sin(uTime*2.5)):1.;
       float active=uEnergy*(.73+.27*speech);
       // Original Sayvi pearl-sphere's two independently advected refraction
@@ -127,6 +139,21 @@
 
       // Airy on polished stretches, opaque-white velvet on the frosted areas.
       float alpha=mix(.94,.76,smoothGlass)+fresnel*.08;
+      if(uLayeredGlass>.5){
+        // An environment reflection moves across TRUE curved 3D normals.
+        // This adds a clear-glass reflection that diffuse pearl alone lacks.
+        vec3 reflected=reflect(-eye,n);
+        float panelA=exp(-29.*pow(reflected.x+.34-.17*sin(uTime*.16),2.));
+        float panelB=exp(-46.*pow(reflected.y-.25+.12*cos(uTime*.13),2.));
+        float panel=panelA*(.56+.44*max(reflected.y,0.))+panelB*.31;
+        color+=vec3(.11,.20,.205)*panel*(.26+.74*smoothGlass);
+
+        // Frost remains pearl-white; polished windows reveal ice-blue volume.
+        color=mix(color,vec3(.56,.82,.84),smoothGlass*(1.-fluid)*.19);
+        color+=vec3(.075,.14,.145)*fresnel*.35;
+        // Second pass: front velvet and smooth transparent glass.
+        alpha=mix(.955,.655,smoothGlass)+fresnel*.085;
+      }
       gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.61,.99));
     }
   `;
@@ -189,7 +216,7 @@
     });
   }
 
-  function setup(gl,ribbons){
+  function setup(gl,ribbons,layeredGlass){
     const program=gl.createProgram();
     gl.attachShader(program,compile(gl,gl.VERTEX_SHADER,vertexSource));
     gl.attachShader(program,compile(gl,gl.FRAGMENT_SHADER,fragmentSource));
@@ -211,17 +238,15 @@
       energy:gl.getUniformLocation(program,'uEnergy'),
       state:gl.getUniformLocation(program,'uState'),
       blade:gl.getUniformLocation(program,'uBlade'),
-      rotation:gl.getUniformLocation(program,'uRotation')
+      rotation:gl.getUniformLocation(program,'uRotation'),
+      layered:gl.getUniformLocation(program,'uLayeredGlass'),
+      layer:gl.getUniformLocation(program,'uLayer')
     };
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-    return (time,energy,state,rotation)=>{
-      gl.clearColor(0,0,0,0);gl.clearDepth(1.);
-      gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-      gl.uniform1f(u.time,time);gl.uniform1f(u.energy,energy);
-      gl.uniform1f(u.state,state);gl.uniform3fv(u.rotation,rotation);
+    const drawMeshes=()=>{
       for(const mesh of meshes){
         gl.bindBuffer(gl.ARRAY_BUFFER,mesh.positions);
         gl.enableVertexAttribArray(locPos);
@@ -231,6 +256,32 @@
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.indices);
         gl.uniform1f(u.blade,mesh.blade);
         gl.drawElements(gl.TRIANGLES,mesh.count,gl.UNSIGNED_SHORT,0);
+      }
+    };
+    return (time,energy,state,rotation)=>{
+      gl.clearColor(0,0,0,0);gl.clearDepth(1.);
+      gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+      gl.uniform1f(u.time,time);gl.uniform1f(u.energy,energy);
+      gl.uniform1f(u.state,state);gl.uniform3fv(u.rotation,rotation);
+      gl.uniform1f(u.layered,layeredGlass?1:0);
+      if(layeredGlass){
+        // Back surfaces scatter a little light through the foreground.
+        // Front surfaces then occlude according to real 3D depth.
+        gl.enable(gl.CULL_FACE);
+        gl.disable(gl.DEPTH_TEST);
+        gl.depthMask(false);
+        gl.cullFace(gl.FRONT);
+        gl.uniform1f(u.layer,0);
+        drawMeshes();
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthMask(true);
+        gl.cullFace(gl.BACK);
+        gl.uniform1f(u.layer,1);
+        drawMeshes();
+        gl.disable(gl.CULL_FACE);
+      }else{
+        gl.uniform1f(u.layer,1);
+        drawMeshes();
       }
     };
   }
@@ -247,7 +298,7 @@
         premultipliedAlpha:false,powerPreference:'low-power'
       });
       if(!gl)throw Error('iPhone WebGL unsupported');
-      const render=setup(gl,ribbons);
+      const render=setup(gl,ribbons,layeredGlass);
       const style=document.createElement('style');
       style.textContent=`
         #orb > .sv-sayvi-real3d-canvas {
