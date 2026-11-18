@@ -141,19 +141,19 @@
   rgba(255,255,255,.70),rgba(237,247,255,.17) 62%,transparent 100%);
 }
 #orb .orb-logo-mist.is-breathing{
- animation:seyveo-pearl-signature 7.8s ease-in-out both;
+ animation:seyveo-pearl-signature 5.2s ease-in-out both;
 }
 #orb .orb-logo-mist.is-breathing .orb-logo-cloud--a{
- animation:seyveo-pearl-cloud-a 7.8s ease-in-out both;
+ animation:seyveo-pearl-cloud-a 5.2s ease-in-out both;
 }
 #orb .orb-logo-mist.is-breathing .orb-logo-cloud--b{
- animation:seyveo-pearl-cloud-b 7.8s ease-in-out both;
+ animation:seyveo-pearl-cloud-b 5.2s ease-in-out both;
 }
 #orb .orb-logo-mist.is-breathing .orb-logo-cloud--c{
- animation:seyveo-pearl-cloud-c 7.8s ease-in-out both;
+ animation:seyveo-pearl-cloud-c 5.2s ease-in-out both;
 }
 #orb .orb-logo-mist.is-breathing::after{
- animation:seyveo-pearl-center 7.8s ease-in-out both;
+ animation:seyveo-pearl-center 5.2s ease-in-out both;
 }
 /* The signature has priority over voice refraction; no opaque double layer. */
 #orb.seyveo-logo-reveal .orb-mist{animation:none!important;opacity:0!important}

@@ -397,7 +397,11 @@
    skipped=localStorage.getItem(SKIP_KEY)==='1';
    optedOut=localStorage.getItem(OPT_OUT_KEY)==='1';
   }catch{}
-  const visible=isHomeRoute()&&!greetingDismissedInSession&&!skipped&&!optedOut&&
+  // The name invitation belongs to a genuine first visit, not every PWA
+  // restart. A returning user may still open acquaintance explicitly in Chat.
+  let hasOpenedBefore=false;
+  try{hasOpenedBefore=!!localStorage.getItem('seyveo-sayvi-cinema-last-day-v4')}catch{}
+  const visible=isHomeRoute()&&!hasOpenedBefore&&!greetingDismissedInSession&&!skipped&&!optedOut&&
    !session&&!get('seyveo-first-acquaintance-v1')&&!get(PLAN_KEY)&&!get(DRAFT_KEY);
   home.hidden=!visible;
   if(!visible)home.classList.remove('is-greeting');
@@ -517,6 +521,7 @@
   if(session&&location.hash&&!['#home','#'].includes(location.hash))pause(true);
  });
  window.addEventListener('seyveo:profile-changed',syncHome);
+ window.addEventListener('seyveo:cinema-finished',syncHome);
  window.addEventListener('storage',event=>{
   if([PLAN_KEY,DRAFT_KEY,'seyveo-first-acquaintance-v1',SKIP_KEY,OPT_OUT_KEY].includes(event.key))syncHome();
  });

@@ -61,7 +61,7 @@ test('White PWA wakes quickly and Sayvi writes a welcome without moving Home',as
   assert.match(html,/data-theme="light" data-palette="white"/);
   assert.match(html,/setTimeout\(\(\)=>document\.documentElement\.classList\.remove\('sv-cinema-boot'\),8000\)/);
   assert.doesNotMatch(html,/setTimeout\(\(\)=>document\.documentElement\.classList\.remove\('sv-cinema-boot'\),3200/);
-  assert.match(homeJs,/const openingDuration=5200/);
+  assert.match(homeJs,/const openingDuration=5700/);
   assert.match(homeJs,/duration:2600\*speed/);
   assert.match(homeJs,/function showHomeWelcome\(\)/);
   assert.match(homeJs,/text:'Я Сэйви\.',kind:'name',type:89,hold:1000,erase:55/);

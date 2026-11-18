@@ -8,7 +8,8 @@
   const replay=params.get('sayvi-intro')==='1'||params.get('sayvi-handoff')==='1';
   const noIntro=params.get('sayvi-intro')==='0';
   const speed=params.get('sayvi-slow')==='1'?1.8:1;
-  const openingDuration=5200;
+  // Allow the 5.2s logo and pearl mist to finish before the first dock motion.
+  const openingDuration=5700;
   // The approved Sayvi voice is available via the trusted local server, or
   // from a file the owner explicitly imports into this browser's private data.
   // No recording is published with SEYVEO; other visitors remain silent.
