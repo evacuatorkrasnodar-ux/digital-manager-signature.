@@ -14,6 +14,7 @@
     attribute vec3 aPosition;
     attribute vec3 aNormal;
     uniform vec3 uRotation;
+    uniform float uTime;
     uniform float uBlade;
     varying vec3 vNormal;
     varying vec3 vPosition;
@@ -26,7 +27,9 @@
       mat3 ry=mat3(cy,0.,-sy,0.,1.,0.,sy,0.,cy);
       mat3 rz=mat3(cz,sz,0.,-sz,cz,0.,0.,1.);
       mat3 r=rz*ry*rx;
-      vec3 p=r*aPosition;
+      // Breathing is barely visible, but makes the model feel inhabited.
+      float breath=1.+.0045*sin(uTime*.62);
+      vec3 p=r*(aPosition*breath);
       vec3 n=normalize(r*aNormal);
       float perspective=3.1/(3.1-p.z*.64);
       gl_Position=vec4(p.xy*.91*perspective,-.27*p.z,1.);
@@ -76,6 +79,9 @@
       float inside=.17+.14*(1.-facing)+.09*(1.-fold);
       vec3 color=mix(pearl,deepGlass,inside);
       color=mix(color,vec3(.61,.84,.85),silk*.12);
+      // A trailing ribbon is deeper inside the glass weave, not darker metal.
+      float behind=1.-smoothstep(.075,.28,vPosition.z);
+      color=mix(color,deepGlass,behind*(.045+.05*(1.-smoothGlass)));
 
       vec3 lightA=normalize(vec3(-.33+.17*sin(uTime*.21),.55,1.));
       vec3 lightB=normalize(vec3(.53,-.31+.13*cos(uTime*.18),1.));
@@ -86,6 +92,11 @@
                      pow(max(dot(reflect(-lightB,n),eye),0.),78.)*.43;
       color+=vec3(.17,.24,.23)*mix(studio,polished,smoothGlass);
       color+=vec3(.12,.21,.21)*fresnel*(.49+.28*smoothGlass);
+      // A broad, faint reflection glides across polished glass without
+      // disturbing the approved pearl base colour.
+      float travel=dot(q,vec2(.94,.34))-.20*sin(uTime*.24+vBlade*.21);
+      float caustic=exp(-32.*travel*travel);
+      color+=vec3(.065,.11,.105)*caustic*smoothGlass*.24;
       color+=vec3(.035,.062,.067)*(.65+.35*sin(uTime*1.1+fold*2.));
       float energyGlow=.5+.5*sin(uTime*(uState>2.5?6.:1.4));
       color+=vec3(.085,.13,.125)*energyGlow*uEnergy*.16;
@@ -259,9 +270,9 @@
         const state=speaking?3:listening?1:0;
         energy+=((speaking?.9:listening?.45:0)-energy)*.075;
         const motion=document.documentElement.classList.contains('sv-motion-lab-active');
-        const rx=motion?angle('--sv-motion-rx'):Math.sin(time*.33)*.085;
-        const ry=motion?angle('--sv-motion-ry'):Math.sin(time*.29+.55)*.11;
-        const rz=motion?angle('--sv-motion-rz'):Math.sin(time*.21)*.015;
+        const rx=motion?angle('--sv-motion-rx'):Math.sin(time*.33)*.094;
+        const ry=motion?angle('--sv-motion-ry'):Math.sin(time*.29+.55)*.13;
+        const rz=motion?angle('--sv-motion-rz'):Math.sin(time*.21)*.018;
         render(time,energy,state,new Float32Array([rx,ry,rz]));
       }
       size();render(0,0,0,new Float32Array([0,0,0]));
