@@ -1,65 +1,27 @@
-// Rebuild only the installed PWA icon. The approved two-wave mark is taken
-// pixel-for-pixel from the existing HDR tile; its shape is never regenerated.
-// Browser favicons, the Sayvi orb, and in-app brand artwork stay untouched.
+// Reproduce the approved SEYVEO PWA icon from its two HDR material masters.
+// The background and the two petals are original approved raster artwork;
+// resize/composite only. Browser-tab marks and the Home sphere are separate.
 const path = require('node:path');
 const sharp = require('sharp');
 
 const assets = path.resolve(__dirname, '..', 'assets');
-const original = path.join(assets, 'seyveo-app-icon-light-1024.png');
-const size = 1024;
-
-const velvet = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <defs>
-    <radialGradient id="velvet" cx="50%" cy="49%" r="83%">
-      <stop offset="0" stop-color="#064936"/>
-      <stop offset=".25" stop-color="#053f30"/>
-      <stop offset=".53" stop-color="#032d23"/>
-      <stop offset=".78" stop-color="#021b17"/>
-      <stop offset="1" stop-color="#010f0e"/>
-    </radialGradient>
-    <linearGradient id="air" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#6dbaa3" stop-opacity=".035"/>
-      <stop offset=".5" stop-color="#001b13" stop-opacity="0"/>
-      <stop offset="1" stop-color="#002016" stop-opacity=".12"/>
-    </linearGradient>
-  </defs>
-  <rect width="1024" height="1024" fill="url(#velvet)"/>
-  <rect width="1024" height="1024" fill="url(#air)"/>
-  <rect x="4" y="4" width="1016" height="1016" rx="226" fill="none" stroke="#72978b" stroke-width="3" stroke-opacity=".18"/>
-</svg>`);
-
-const smooth = (v) => {
-  const t = Math.min(1, Math.max(0, (v - 12) / 22));
-  return t * t * (3 - 2 * t);
-};
+const background = path.join(assets, 'seyveo-velvet-hdr-source.jpg');
+const petals = path.join(assets, 'seyveo-petals-hdr-source.png');
 
 async function main() {
-  const { data, info } = await sharp(original).raw().toBuffer({ resolveWithObject: true });
-  if (info.width !== size || info.height !== size || info.channels < 3) {
-    throw new Error('Unexpected source icon dimensions');
-  }
-  const petals = Buffer.alloc(size * size * 4);
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      // Avoid bringing over the old almost-black background or tile outline.
-      if (x < 58 || x > 954 || y < 265 || y > 744) continue;
-      const from = (y * size + x) * info.channels;
-      const alpha = Math.round(smooth(data[from]) * 255);
-      if (!alpha) continue;
-      const to = (y * size + x) * 4;
-      petals[to] = data[from];
-      petals[to + 1] = data[from + 1];
-      petals[to + 2] = data[from + 2];
-      petals[to + 3] = alpha;
-    }
-  }
-
-  // Old ribbon width ~860px; new width ~655px with ample green around it.
-  const mark = await sharp(petals, { raw: { width: size, height: size, channels: 4 } })
-    .resize(780, 780, { kernel: 'lanczos3' })
+  const base = await sharp(background)
+    .resize(1024, 1024, { kernel: 'lanczos3' })
     .png().toBuffer();
-  const icon = await sharp(velvet)
-    .composite([{ input: mark, left: 122, top: 122 }])
+
+  // Crop only transparent margins from the original two-petal artwork.
+  // Preserve the approved contours, highlights, relative spacing and color.
+  const mark = await sharp(petals)
+    .extract({ left: 174, top: 463, width: 868, height: 340 })
+    .resize({ width: 730, kernel: 'lanczos3' })
+    .png().toBuffer();
+  const { width, height } = await sharp(mark).metadata();
+  const icon = await sharp(base)
+    .composite([{input: mark, left: Math.round((1024 - width) / 2), top: Math.round((1024 - height) / 2)}])
     .png().toBuffer();
 
   const outputs = [
@@ -71,9 +33,9 @@ async function main() {
   ];
   for (const [edge, name] of outputs) {
     await sharp(icon).resize(edge, edge, { kernel: 'lanczos3' })
-      .png({ compressionLevel: 9 }).toFile(path.join(assets, name));
+      .png({compressionLevel:9}).toFile(path.join(assets, name));
   }
-  console.log('Built SEYVEO PWA icon with broader emerald velvet and smaller original ribbons.');
+  console.log('Built SEYVEO PWA from the approved dark velvet and HDR platinum/green petals.');
 }
 
-main().catch((error) => { console.error(error); process.exitCode = 1; });
+main().catch(error=>{console.error(error);process.exitCode=1;});

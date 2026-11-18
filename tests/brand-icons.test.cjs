@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const { existsSync, readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const { runInNewContext } = require('node:vm');
+const sharp = require('sharp');
 
 const root = join(__dirname, '..');
 const text = (name) => readFileSync(join(root, name), 'utf8');
@@ -24,11 +25,11 @@ test('SEYVEO uses the emerald velvet PWA icon and bare twin-wave browser favicon
   for (const {src} of manifest.icons) {
     assert.ok(existsSync(join(root, src.split('?')[0])), src);
   }
-  assert.match(page, /rel="icon"[^>]+seyveo-favicon-32\.png\?v=6/);
-  assert.match(page, /rel="icon"[^>]+seyveo-favicon-48\.png\?v=6/);
+  assert.match(page, /rel="icon"[^>]+seyveo-favicon-32\.png\?v=7/);
+  assert.match(page, /rel="icon"[^>]+seyveo-favicon-48\.png\?v=7/);
   assert.match(page, /assets\/seyveo-tab-favicon\.js\?v=1/);
-  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-32\.png\?v=1"/);
-  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-48\.png\?v=1"/);
+  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-32\.png\?v=2"/);
+  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-48\.png\?v=2"/);
   assert.doesNotMatch(page, /rel="icon"[^>]+seyveo-favicon\.svg/);
   assert.match(page, /<title>SEYVEO<\/title>/);
   assert.match(page, /document\.title=[^\n]+:'SEYVEO';/);
@@ -41,7 +42,7 @@ test('SEYVEO uses the emerald velvet PWA icon and bare twin-wave browser favicon
   assert.match(tabSvg, /prefers-color-scheme:dark/);
   assert.equal((tabSvg.match(/<path\b/g) || []).length, 2);
   assert.doesNotMatch(tabSvg, /<(?:rect|circle)\b/);
-  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-pwa-velvet-apple-180\.png\?v=2/);
+  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-pwa-velvet-apple-180\.png\?v=3/);
   assert.match(page, /assets\/seyveo-app-icon-192\.png\?v=5/);
   assert.match(notifications, /assets\/seyveo-app-icon-192\.png/);
   assert.doesNotMatch(page + notifications + JSON.stringify(manifest), /assets\/(?:app-icon(?:-maskable)?\.svg|apple-touch-icon\.png|brand-tile\.svg)/);
@@ -52,6 +53,8 @@ test('3D light and dark source icons are kept for native platform packaging', ()
     'seyveo-flow-silver-3d-source.png',
     'seyveo-app-icon-light-1024.png',
     'seyveo-app-icon-dark-1024.png',
+    'seyveo-petals-hdr-source.png',
+    'seyveo-velvet-hdr-source.jpg',
   ]) {
     assert.ok(existsSync(join(root, 'assets', name)), name);
   }
@@ -86,10 +89,10 @@ test('Greeting reveal and still-used card icons are retained for their own migra
 
 test('Browser favicon switches between graphite and silver as system theme changes', () => {
   const links = [32, 48].map(size => ({
-    href: `assets/seyveo-favicon-${size}.png?v=6`,
+    href: `assets/seyveo-favicon-${size}.png?v=7`,
     dataset: {
-      iconLight: `assets/seyveo-favicon-${size}.png?v=6`,
-      iconDark: `assets/seyveo-favicon-dark-${size}.png?v=1`,
+      iconLight: `assets/seyveo-favicon-${size}.png?v=7`,
+      iconDark: `assets/seyveo-favicon-dark-${size}.png?v=2`,
     },
     getAttribute(key) { return this[key]; },
     setAttribute(key, value) { this[key] = value; },
@@ -107,4 +110,19 @@ test('Browser favicon switches between graphite and silver as system theme chang
   theme.matches = false;
   changed();
   assert.ok(links.every(link => link.href === link.dataset.iconLight));
+});
+
+test('Browser favicon petals fill nearly the entire tab width without a tile', async () => {
+  for (const size of [32, 48]) {
+    for (const flavor of ['', 'dark-']) {
+      const filename=join(root, 'assets', `seyveo-favicon-${flavor}${size}.png`);
+      const {data,info}=await sharp(filename).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+      let left=size,right=-1;
+      for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+        if(data[(y*size+x)*info.channels+3]>64){left=Math.min(left,x);right=Math.max(right,x)}
+      }
+      assert.ok(right-left+1>=size*.84, `${flavor}${size}: petals are too small in the tab`);
+      assert.equal(data[3],0, `${flavor}${size}: favicon must have a transparent canvas`);
+    }
+  }
 });

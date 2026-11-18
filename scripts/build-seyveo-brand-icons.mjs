@@ -8,8 +8,7 @@ import { dirname, resolve } from 'node:path';
 
 const assets = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'assets');
 const silver = resolve(assets, 'seyveo-flow-silver-3d-source.png');
-const faviconSource = resolve(assets, 'seyveo-favicon-silver-source.png');
-if (!existsSync(silver) || !existsSync(faviconSource)) {
+if (!existsSync(silver)) {
   throw new Error('An approved SEYVEO silver source image is missing');
 }
 const output = (name) => resolve(assets, name);
@@ -51,11 +50,6 @@ magick(
   output('seyveo-app-icon-maskable-512.png'),
 );
 
-// The tiny browser-tab sign has no app-tile background and remains transparent.
-for (const size of [32, 48]) {
-  magick(
-    faviconSource, '-filter', 'Lanczos', '-resize', `${size}x${size}`,
-    output(`seyveo-favicon-${size}.png`),
-  );
-}
+// Preserve the enlarged two-petal tab sign on any full native icon rebuild.
+execFileSync(process.execPath, [resolve(dirname(fileURLToPath(import.meta.url)), 'build-seyveo-tab-favicons.cjs')], {stdio:'ignore'});
 console.log('Built SEYVEO 3D light/dark, PWA, iOS, maskable and tab icons.');
