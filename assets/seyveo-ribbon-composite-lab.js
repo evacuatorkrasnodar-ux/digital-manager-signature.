@@ -151,9 +151,34 @@
         ctx.fillRect(0, 0, resolution, resolution);
         ctx.restore();
       }
+
+      if (lightMatte) {
+        // Soft subsurface studio light, confined to existing ribbon pixels.
+        // The vapor stays frozen and the original sculpture colors remain intact.
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-atop';
+        const pearl = ctx.createRadialGradient(
+          resolution * .34, resolution * .24, resolution * .015,
+          resolution * .42, resolution * .44, resolution * .58
+        );
+        pearl.addColorStop(0, 'rgba(255,255,255,.31)');
+        pearl.addColorStop(.38, 'rgba(241,247,255,.13)');
+        pearl.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = pearl;
+        ctx.fillRect(0, 0, resolution, resolution);
+        const rim = ctx.createRadialGradient(
+          resolution * .76, resolution * .77, 0,
+          resolution * .72, resolution * .72, resolution * .43
+        );
+        rim.addColorStop(0, 'rgba(217,232,251,.13)');
+        rim.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = rim;
+        ctx.fillRect(0, 0, resolution, resolution);
+        ctx.restore();
+      }
     };
 
-    // Show the replacement only after the first real composite exists.
+    // Show the replacement only after the first real composite exists;
     render(0);
     if (params.get('sayvi-qa') === '1') {
       window.__sayviCompositeRenderAt = render;
