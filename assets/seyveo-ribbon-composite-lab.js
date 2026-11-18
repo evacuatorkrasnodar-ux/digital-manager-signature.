@@ -97,7 +97,8 @@
     const renderField = seconds => {
       for (let i = 0, cell = 0; i < fieldPixels.length; i += 4, cell += 3) {
         const angle = cells[cell], radius = cells[cell + 1], ring = cells[cell + 2];
-        if (ring < .008) {fieldPixels[i + 3] = 0; continue;}
+        // Full-coverage vapour: every painted ribbon pixel receives mist.
+        // The source-atop mask below still preserves the real clear openings.
         let body = 0;
         for (const p of pockets) {
           const delta = angle - p.at - seconds * p.speed;
@@ -111,11 +112,13 @@
         const broad = noise(angle * 8 + seconds * .18, radial + seconds * .026, 8);
         const detail = noise(angle * 16 - seconds * .20, radial * 2.15, 16);
         const cloud = Math.max(.12, Math.min(1, (broad * .65 + detail * .35 - .27) * 2.5));
-        const density = Math.min(1, body) * ring * cloud;
+        // Continuous soft base with higher-density clouds: no clear patches
+        // inside the glass, yet the light can still reveal its depth.
+        const density = .44 + .12 * cloud + .32 * Math.min(1, body) * ring * cloud;
         fieldPixels[i] = 42;
         fieldPixels[i + 1] = 80;
         fieldPixels[i + 2] = 83;
-        fieldPixels[i + 3] = Math.round(Math.min(255, density * (fullSmoke ? 450 : 225)));
+        fieldPixels[i + 3] = Math.round(Math.min(255, density * (fullSmoke ? 265 : 210)));
       }
       fieldCtx.putImageData(fieldImage, 0, 0);
     };
