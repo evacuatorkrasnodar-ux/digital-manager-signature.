@@ -327,6 +327,58 @@
     };
   }
 
+  function showCleanCanvasFallback(image) {
+    // Same original four-ribbon alpha, but no RGB from the smoky photograph.
+    const clean=document.createElement('canvas');
+    clean.className='sv-sayvi-programmable-glass';
+    clean.setAttribute('aria-hidden','true');
+    const size=640;
+    clean.width=clean.height=size;
+    const context=clean.getContext('2d',{alpha:true,willReadFrequently:true});
+    if(!context)return;
+    context.drawImage(image,0,0,size,size);
+    const frame=context.getImageData(0,0,size,size);
+    const data=frame.data;
+    const originalAlpha=new Uint8Array(size*size);
+    for(let n=0;n<originalAlpha.length;n++)originalAlpha[n]=data[n*4+3];
+    const alphaAt=(x,y)=>originalAlpha[Math.max(0,Math.min(size-1,y))*size+
+      Math.max(0,Math.min(size-1,x))]/255;
+    const clamp=v=>Math.max(0,Math.min(255,v));
+    for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+      const i=(y*size+x)*4,a=originalAlpha[y*size+x]/255;
+      if(a<.016){data[i+3]=0;continue;}
+      const u=x/size,v=y/size;
+      // Broad studio illumination, not noise, smoke, or moving fog.
+      const pearl=Math.exp(-((u-.34)**2/.23+(v-.20)**2/.19));
+      const reflected=Math.exp(-((u-.73)**2/.12+(v-.76)**2/.21));
+      const shade=.49+.18*pearl+.10*reflected+.055*(1-v);
+      const nearEdge=1-Math.min(alphaAt(x-4,y),alphaAt(x+4,y),
+        alphaAt(x,y-4),alphaAt(x,y+4));
+      const bevel=Math.pow(Math.max(0,nearEdge),.6)*.27;
+      const shine=shade+bevel;
+      data[i]=clamp(151+104*shine);
+      data[i+1]=clamp(184+86*shine);
+      data[i+2]=clamp(188+83*shine);
+      data[i+3]=originalAlpha[y*size+x];
+    }
+    context.putImageData(frame,0,0);
+    const css=document.createElement('style');
+    css.textContent=`
+      #orb > .sv-sayvi-programmable-glass {
+        position:absolute;inset:0;width:100%;height:100%;z-index:4;
+        pointer-events:none;transform-origin:50% 50%;
+        animation:sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
+      }
+      html.sv-clean-fallback-ready #orb #plasmaVisual,
+      html.sv-clean-fallback-ready #orb > .sv-ribbon-glass-composite,
+      html.sv-clean-fallback-ready #orb::before,
+      html.sv-clean-fallback-ready #orb::after {opacity:0!important}
+    `;
+    document.head.appendChild(css);
+    orb.appendChild(clean);
+    document.documentElement.classList.add('sv-clean-fallback-ready');
+  }
+
   (async () => {
     let canvas;
     try {
@@ -406,6 +458,7 @@
       console.warn('SEYVEO ribbon material preview:',error);
       canvas?.remove();
       document.documentElement.classList.remove('sv-3d-glass-ready');
+      if(cleanMaterial)showCleanCanvasFallback(hero);
     }
   })();
 })();
