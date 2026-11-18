@@ -12,9 +12,10 @@
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9'&&mode!=='10'&&mode!=='11'&&mode!=='12')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9'&&mode!=='10'&&mode!=='11'&&mode!=='12'&&mode!=='13')return;
   const layeredGlass=mode!=='1';
-  const cleanGlass=mode==='12';
+  const cleanGlass=mode==='12'||mode==='13';
+  const precisePetals=mode==='13';
   const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6'||mode==='7'||mode==='8';
   const smokeBottle=mode==='4'||mode==='5';
   const darkVelvet=mode==='5';
@@ -712,7 +713,8 @@
   // All ribbons are baked into mesh coordinates. Blender stores Z-up in glTF
   // as Y-up, so restore the app's expected XY face plane during decoding.
   async function loadRibbons(useFlowModel){
-    const source=useFlowModel?'assets/seyveo-real-ribbons-uv.glb?v=1':
+    const source=precisePetals?'assets/seyveo-petals-precise-v1.glb?v=1':
+      useFlowModel?'assets/seyveo-real-ribbons-uv.glb?v=1':
       'assets/seyveo-real-ribbons.glb?v=1';
     const response=await fetch(source);
     if(!response.ok)throw Error('3D ribbon model unavailable');
