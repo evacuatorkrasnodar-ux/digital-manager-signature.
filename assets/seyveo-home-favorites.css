@@ -37,7 +37,7 @@
  opacity:.92;transform:scale(.965)
 }
 #homePage #svHomeFavorites .sv-home-favorite-icon svg{
- width:31px;height:31px;fill:none;stroke:#22242a;stroke-width:1.18;
+ width:33px;height:33px;fill:none;stroke:#24272c;stroke-width:1.18;
  stroke-linecap:round;stroke-linejoin:round;shape-rendering:geometricPrecision
 }
 #homePage #svHomeFavorites .sv-home-favorite-label{
@@ -113,8 +113,8 @@
  border-color:#d1d7df;background:#f5f7fa;
 }
 .sv-home-favorites-editor-grid button svg{
- display:block;width:25px;height:25px;flex:none;
- fill:none;stroke:#15161a;stroke-width:1.65;
+ display:block;width:28px;height:28px;flex:none;
+ fill:none;stroke:#24272c;stroke-width:1.18;
  stroke-linecap:round;stroke-linejoin:round;shape-rendering:geometricPrecision;
 }
 .sv-home-favorites-editor-grid button span{
@@ -138,7 +138,7 @@
 @media(max-width:370px){
  #homePage #svHomeFavorites{max-width:calc(100vw - 16px)}
  #homePage #svHomeFavorites .sv-home-favorite-icon{width:var(--sv-action-circle-size,44px);height:var(--sv-action-circle-size,44px);border-radius:0}
- #homePage #svHomeFavorites .sv-home-favorite-icon svg{width:31px;height:31px}
+ #homePage #svHomeFavorites .sv-home-favorite-icon svg{width:32px;height:32px}
  #homePage #svHomeFavorites .sv-home-favorite-label{font-size:10.5px}
 }
 @media(prefers-reduced-motion:reduce){
@@ -282,7 +282,7 @@ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button{
  border-radius:15px!important;
 }
 dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button svg{
- width:22px!important;height:22px!important;
+ width:28px!important;height:28px!important;
 }
 dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button span{
  font-size:11px!important;line-height:1.15!important;
@@ -299,7 +299,7 @@ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button small{
  dialog.sv-home-favorites-editor .sv-home-favorites-editor-head strong{font-size:18px!important}
  dialog.sv-home-favorites-editor .sv-home-favorites-editor-help{margin:5px 1px 8px!important}
  dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid{gap:5px!important}
- dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button svg{width:20px!important;height:20px!important}
+ dialog.sv-home-favorites-editor .sv-home-favorites-editor-grid button svg{width:25px!important;height:25px!important}
 }
 
 /* One-time first-launch reveal, while the sphere's brand logo is still visible.

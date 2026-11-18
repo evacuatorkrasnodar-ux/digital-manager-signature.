@@ -4,30 +4,31 @@ const home=document.getElementById('homePage'),stage=document.getElementById('st
 if(!home||!stage||document.getElementById('svHomeFavorites'))return;
 const root=document.documentElement;
 const STORAGE='seyveo.home.favorites.v1',USAGE='seyveo.home.favorite-usage.v1';
-/* SEYVEO Home · gentle pen-line icons in the same visual language as Notebook.
-   Each symbol is clean, delicate and distinct. The touch area stays generous. */
+/* SEYVEO Atelier: bespoke, gentle ink drawings, made for 24x24 Retina marks.
+   A little illustrated detail makes each symbol memorable without adding noise.
+   All glyphs are pure vector and share the Notebook's fine graphite stroke. */
 const favoriteGlyphs={
- cards:'<rect x="6.5" y="6" width="13" height="14.5" rx="2.3"/><path d="M4 16.5V5.7c0-1.3 1-2.3 2.3-2.3H16"/><path d="M9.7 10.3h6.7M9.7 13.8h5.2"/>',
- music:'<path d="M9.3 7.1 18.1 5v10.9M9.3 7.1v10.7M9.3 9.8 18.1 7.7"/><ellipse cx="6.6" cy="18" rx="2.7" ry="1.7" transform="rotate(-17 6.6 18)"/><ellipse cx="15.5" cy="16.5" rx="2.7" ry="1.7" transform="rotate(-17 15.5 16.5)"/>',
- documents:'<path d="M7 3.5h7.5L19 8v11c0 1.1-.9 2-2 2H7a2 2 0 0 1-2-2V5.5c0-1.1.9-2 2-2Z"/><path d="M14.5 3.5V8H19M8.8 12h6.8M8.8 15.4h6.8M8.8 18.8h4.4"/>',
- wallet:'<rect x="3.5" y="6.4" width="17" height="13.7" rx="2.5"/><path d="M5.1 6.4V5.6c0-1.4 1.1-2.5 2.5-2.5H18"/><path d="M14.9 11.3H20.5v5H14.9a2.5 2.5 0 0 1 0-5Z"/><circle cx="16.5" cy="13.8" r=".75" fill="currentColor" stroke="none"/>',
- notebook:'<path d="M6.1 3.9h10.8c.9 0 1.4.6 1.4 1.5v13.3c0 1-.5 1.6-1.5 1.6H6.1c-1 0-1.5-.6-1.5-1.6V5.4c0-1 .5-1.5 1.5-1.5Z"/><path d="M7.8 8.4h5.3M7.8 11.5h5.6M7.8 14.6h4.1M7.8 17.7h7"/><path d="m15.2 12.4 4.3-5.6 1.6 1.3-4.2 5.5-2.3.8Z"/>',
- calendar:'<rect x="4" y="5.4" width="16" height="15" rx="2.3"/><path d="M4 9.8h16M8 3.5v4M16 3.5v4M8.2 13.4h2.2M13.5 13.4h2.2M8.2 17.2h2.2M13.5 17.2h2.2"/>',
- health:'<path d="M12 20S3.5 14.3 3.5 9.2c0-2.7 1.9-4.6 4.4-4.6 1.8 0 3.2.9 4.1 2.3.9-1.4 2.3-2.3 4.1-2.3 2.5 0 4.4 1.9 4.4 4.6C20.5 14.3 12 20 12 20Z"/><path d="M7.3 11.8h2.1l1.2-2.3 2.4 4.7 1.2-2.4h2.5"/>',
- browser:'<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.8 2.8 4.3 5.7 4.3 8.5s-1.5 5.7-4.3 8.5M12 3.5c-2.8 2.8-4.3 5.7-4.3 8.5s1.5 5.7 4.3 8.5M5.4 8.3h13.2M5.4 15.8h13.2"/>',
- mail:'<rect x="3.5" y="5.8" width="17" height="12.7" rx="2.3"/><path d="m4.2 7.3 7.1 5.7a1.2 1.2 0 0 0 1.4 0l7.1-5.7"/>',
- contacts:'<rect x="4.2" y="3.5" width="15.6" height="17" rx="2.3"/><circle cx="12" cy="9.3" r="2.3"/><path d="M7.5 17c.5-2.3 2.2-3.4 4.5-3.4s4 1.1 4.5 3.4"/>',
- care:'<path d="M12 11.2S8.7 9.1 8.7 7a2.1 2.1 0 0 1 3.3-1.6A2.1 2.1 0 0 1 15.3 7c0 2.1-3.3 4.2-3.3 4.2Z"/><path d="M4 15.2 7.9 13l3 1.7h2.2l3-1.7 3.9 2.2M3.5 15.5v2.2c0 .6.3 1.1.8 1.4l3.8 2h7.8l3.8-2c.5-.3.8-.8.8-1.4v-2.2"/>',
- family:'<circle cx="8.7" cy="8.7" r="2.4"/><circle cx="16.6" cy="9.7" r="1.9"/><path d="M3.9 19.3v-2.2c0-2.6 2-4.3 4.8-4.3s4.8 1.7 4.8 4.3v2.2M15.2 14.5c2.9-.2 4.9 1.4 4.9 4.1v.7"/>',
- 'smart-home':'<path d="m3.4 11.2 8.6-7.4 8.6 7.4M6.1 10.3v9.9h11.8v-9.9"/><path d="M8.7 13.6a5 5 0 0 1 6.6 0M10.2 15.6a2.7 2.7 0 0 1 3.6 0"/><circle cx="12" cy="17.9" r=".7" fill="currentColor" stroke="none"/>',
- 'business-pulse':'<path d="M2.5 13h4.8l3-7.2 4.1 12 3.2-7h3.9"/>',
- 'business-chats':'<path d="M4 5.5h16v11H9l-5 3v-14Z"/><path d="M8 10.5h8"/>',
- 'business-mail':'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/>',
- 'business-documents':'<path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h7M9 16h7"/>',
- 'business-company':'<rect x="4" y="7" width="16" height="14" rx="2"/><path d="M8 7V4h8v3M8 12h8M8 16h5"/>',
- 'business-people':'<circle cx="9" cy="8" r="2.5"/><path d="M3.5 20v-2a5.5 5.5 0 0 1 11 0v2M15.5 6a3 3 0 0 1 0 5.6M17 14a4.5 4.5 0 0 1 3.5 4.4V20"/>',
- management:'<rect x="3.5" y="3.5" width="7.2" height="7.2" rx="1.6"/><rect x="13.3" y="3.5" width="7.2" height="7.2" rx="1.6"/><rect x="3.5" y="13.3" width="7.2" height="7.2" rx="1.6"/><rect x="13.3" y="13.3" width="7.2" height="7.2" rx="1.6"/>',
- generic:'<rect x="4.2" y="4.2" width="15.6" height="15.6" rx="3"/><path d="M8.2 12h7.6M12 8.2v7.6"/>'
+ cards:'<path d="M8.1 3.3H17a1.9 1.9 0 0 1 1.9 1.9v1.5M6 6.1h11.2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-10a2 2 0 0 1 2-2Z"/><path d="m11.6 9.3.85 2.7 2.7.85-2.7.85-.85 2.7-.85-2.7-2.7-.85 2.7-.85Z"/><circle cx="16.5" cy="8.8" r=".6" fill="currentColor" stroke="none"/>',
+ music:'<path d="M9.4 6.9 18.1 4.8v11M9.4 6.9v11M9.4 9.1l8.7-2.1"/><path d="M9.2 17.8c0 1.5-1.3 2.6-3.1 2.8-1.7.2-3-.4-3-1.6 0-1.4 1.5-2.5 3.2-2.7 1.7-.2 2.9.3 2.9 1.5ZM18 15.8c0 1.5-1.4 2.6-3.1 2.8-1.8.2-3-.4-3-1.6 0-1.4 1.4-2.5 3.2-2.7 1.7-.2 2.9.3 2.9 1.5Z"/><path d="M4.8 11.4c.8-.5 1.7-.8 2.8-.9" opacity=".48"/>',
+ documents:'<path d="M6.9 3.1h7l4.4 4.5v11.2c0 1.1-.9 2-2 2H6.9c-1.1 0-2-.9-2-2V5.1c0-1.1.9-2 2-2Z"/><path d="M13.9 3.2v4.7h4.4M8.2 10.9h7.1M8.2 13.6h5.2"/><path d="M8.3 17.4c1.1-1.5 1.2 1.6 2.3.1.6-.8.9-.4 1.2.2.35.75 1.3.35 2.2-.15" opacity=".75"/>',
+ wallet:'<path d="M5.2 6.2V5a2 2 0 0 1 2-2h9.5M4.9 6.1h13.7a2 2 0 0 1 2 2v10.1a2 2 0 0 1-2 2H4.9a2 2 0 0 1-2-2V8.1a2 2 0 0 1 2-2Z"/><path d="M14.8 11.1h5.8v5.6h-5.8a2.8 2.8 0 0 1 0-5.6Z"/><circle cx="16" cy="13.9" r=".8" fill="currentColor" stroke="none"/><path d="M6.4 8.2h4.2" opacity=".4"/>',
+ notebook:'<path d="M7 3.6h9.8c.9 0 1.6.7 1.6 1.6v13.5c0 .9-.7 1.6-1.6 1.6H7c-.9 0-1.6-.7-1.6-1.6V5.2c0-.9.7-1.6 1.6-1.6Z"/><path d="M8.1 3.7v16.5M4.2 7.5h3M4.2 12h3M4.2 16.5h3" opacity=".75"/><path d="M10.3 14.8c.6-.9.9-2.7 1.5-2.7.7 0 .1 2.9.9 2.9.6 0 1-1.6 1.6-1.6.5 0 .5 1.3 1.2 1.3"/><path d="m16.4 10.8 3.5-4.6 1.4 1.1-3.5 4.6-1.7.7Z"/>',
+ calendar:'<rect x="3.7" y="5.2" width="16.6" height="15.2" rx="2.1"/><path d="M3.7 9.7h16.6M8 3.5v3.7M16 3.5v3.7"/><path d="m8.4 15.3 2.2 2.1 4.8-5.1"/><path d="M17.3 12.9h.1" opacity=".5"/>',
+ health:'<path d="M12 20.5S3.3 15 3.3 9.4c0-2.8 1.9-4.8 4.4-4.8 1.9 0 3.3 1 4.3 2.5 1-1.5 2.4-2.5 4.3-2.5 2.5 0 4.4 2 4.4 4.8 0 5.6-8.7 11.1-8.7 11.1Z"/><path d="M6.6 12.2h2.9l1.4-2.7 2.2 5.1 1.2-2.4h3"/><circle cx="17.8" cy="8.1" r=".65" fill="currentColor" stroke="none" opacity=".55"/>',
+ browser:'<circle cx="12" cy="12" r="8.9"/><path d="M3.3 12h17.4M12 3.1c-2.7 2.7-4.3 5.7-4.3 8.9s1.6 6.1 4.3 8.9M12 3.1c2.7 2.7 4.3 5.7 4.3 8.9s-1.6 6.1-4.3 8.9"/><path d="M5.3 7.6c3.8 1.4 9.6 1.4 13.4 0M5.3 16.4c3.8-1.4 9.6-1.4 13.4 0" opacity=".75"/><circle cx="17.8" cy="6.1" r=".7" fill="currentColor" stroke="none"/>',
+ mail:'<path d="M4.1 8V6.5c0-1.2 1-2.1 2.2-2.1h9.4c1.2 0 2.2.9 2.2 2.1V8" opacity=".6"/><rect x="3.5" y="8" width="17" height="11.5" rx="2"/><path d="m4.3 9.1 7 5.3c.4.3 1 .3 1.4 0l7-5.3M4.7 18l5.4-4.6M19.3 18l-5.4-4.6"/>',
+ contacts:'<rect x="4.6" y="3.1" width="14.8" height="17.8" rx="2.1"/><path d="M8.7 3.1v2.2h6.6V3.1"/><circle cx="12" cy="10" r="2.3"/><path d="M7.9 17.2c.3-2.3 1.8-3.4 4.1-3.4 2.3 0 3.8 1.1 4.1 3.4M8.4 18.8h7.2"/>',
+ care:'<path d="M12 11.2c-2.6-1.8-3.6-3.3-3.1-5.1.4-1.9 2.1-2.2 3.1-.6 1-1.6 2.7-1.3 3.1.6.5 1.8-.5 3.3-3.1 5.1Z"/><path d="M3.1 14.2c1.5-1.1 2.9-1.1 4.5 0l2.5 1.8h3.8l2.5-1.8c1.6-1.1 3-1.1 4.5 0M3.7 16.3c.8 2 2.5 3.5 4.7 4.2h7.2c2.2-.7 3.9-2.2 4.7-4.2"/><path d="M10.1 16.1c-1.1-.2-1.8.2-2.3.7M13.9 16.1c1.1-.2 1.8.2 2.3.7" opacity=".55"/>',
+ family:'<circle cx="9.1" cy="8.3" r="2.25"/><circle cx="16.8" cy="9.6" r="1.75"/><path d="M3.4 19.7v-2.2c0-2.8 2.3-4.5 5.7-4.5s5.7 1.7 5.7 4.5v2.2M15.8 14.3c3.1 0 4.8 1.5 4.8 4.1v1.3"/><path d="M6.5 4.4c1.2-1.1 3.7-1.5 5.2-.5" opacity=".48"/>',
+ 'smart-home':'<path d="m3.5 10.9 8.5-7.2 8.5 7.2M5.8 9.8v9.9h12.4V9.8"/><path d="M8.2 13.5a5.7 5.7 0 0 1 7.6 0M10 15.6a2.8 2.8 0 0 1 4 0"/><circle cx="12" cy="17.8" r=".85" fill="currentColor" stroke="none"/><path d="M19.8 4.4v3M18.3 5.9h3" opacity=".7"/>',
+ 'business-pulse':'<path d="M4.5 6.7a2.2 2.2 0 0 1 2.2-2.2h10.6a2.2 2.2 0 0 1 2.2 2.2v10.6a2.2 2.2 0 0 1-2.2 2.2H6.7a2.2 2.2 0 0 1-2.2-2.2" opacity=".5"/><path d="M2.1 12.5h4.7l2.1-4.7 3.4 9 2.9-6.6 1.5 2.3h5.2"/><circle cx="19.7" cy="12.5" r=".6" fill="currentColor" stroke="none"/>',
+ 'business-chats':'<path d="M5 4.5h12.7a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2H10l-5 3v-13a2 2 0 0 1 2-2Z"/><path d="M9 9h6.8M9 12.1h4.9"/><path d="M19.7 8.3h.6c1 0 1.7.8 1.7 1.8v7.5c0 1-.8 1.7-1.8 1.7h-2.5" opacity=".55"/>',
+ 'business-mail':'<rect x="3.4" y="6.3" width="17.2" height="13" rx="2.2"/><path d="m4.2 7.9 7.1 5.8a1.2 1.2 0 0 0 1.5 0l7-5.8"/><path d="M9 6.3V4.5h6v1.8"/><circle cx="12" cy="16.9" r=".9" fill="currentColor" stroke="none" opacity=".62"/>',
+ 'business-documents':'<path d="M7 3.1h7.4l4.4 4.5V19a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5.1a2 2 0 0 1 2-2Z"/><path d="M14.4 3.2v4.5h4.4M8.4 11h6.8M8.4 13.8h7.2"/><path d="m9.4 17.4 1.5 1.5 3-3.1"/><circle cx="15.3" cy="17.4" r="2.6" opacity=".45"/>',
+ 'business-company':'<path d="M5 20.4V7.2c0-1 .8-1.8 1.8-1.8h10.4c1 0 1.8.8 1.8 1.8v13.2M3.2 20.4h17.6"/><path d="M9.1 5.4v-2h5.8v2M8.2 9.2h2.6v2.6H8.2zM13.2 9.2h2.6v2.6h-2.6zM8.2 14h2.6v2.6H8.2zM13.2 14h2.6v6.4h-2.6z"/>',
+ 'business-people':'<circle cx="10.2" cy="7.9" r="2.7"/><path d="M4.8 19.5V18c0-3.5 2.1-5.3 5.4-5.3s5.4 1.8 5.4 5.3v1.5H4.8Z"/><path d="M16.7 5.6a2.5 2.5 0 0 1 .1 4.6M17.6 13.3c2.2.5 3.5 2 3.5 4.6v1.6M3.2 9.3h2.1"/><path d="M4.2 8.3v2" opacity=".5"/>',
+ management:'<rect x="3.4" y="3.4" width="7.3" height="7.3" rx="1.5"/><rect x="13.3" y="3.4" width="7.3" height="7.3" rx="1.5"/><rect x="3.4" y="13.3" width="7.3" height="7.3" rx="1.5"/><rect x="13.3" y="13.3" width="7.3" height="7.3" rx="1.5"/><path d="M5.3 8.5h3.5M17 5.4v3.4M15.3 7.1h3.4M5.3 17h3.5M7.1 15.3v3.4" opacity=".5"/><circle cx="17" cy="17" r="1.1" fill="currentColor" stroke="none"/>',
+ generic:'<rect x="4.1" y="4.1" width="15.8" height="15.8" rx="3"/><path d="M8 12h8M12 8v8"/><circle cx="18" cy="6" r=".8" fill="currentColor" stroke="none"/>'
 };
 const apps=[
  {id:'music',name:'Музыка',selector:'[data-calendar-space="music"]'},
