@@ -1,5 +1,5 @@
 /* SEYVEO Paper · NEW top toolbar, November 2026.
-   Independent seven-button component; no legacy toolbar markup, wrappers,
+   Independent five-button component; no legacy toolbar markup, wrappers,
    pseudo-selection circles, or accumulated toolbar event handlers.
    Existing notebook-paper.js retains ownership of drawing and saving. */
 (()=>{
@@ -48,7 +48,7 @@
   button.className='sv-newdock-button';
   const key=names[index];
   button.innerHTML=key==='sayvi'
-   ?'<img class="sv-newdock-potok" src="assets/seyveo-seven-petal-toolbar.svg?v=3" alt="" aria-hidden="true" draggable="false">'
+   ?'<img class="sv-newdock-potok" src="assets/seyveo-five-petal-toolbar.svg?v=1" alt="" aria-hidden="true" draggable="false">'
    :icon(icons[key]);
   button.dataset.svAction=key;
   button.setAttribute('data-sv-active','false');
