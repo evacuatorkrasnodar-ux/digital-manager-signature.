@@ -132,45 +132,6 @@
     }
     return shader;
   }
-  function cross(a,b,c) {
-    return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
-  }
-  function inside(p,a,b,c) {
-    const e=.000001;
-    return cross(a,b,p)>=-e&&cross(b,c,p)>=-e&&cross(c,a,p)>=-e;
-  }
-  function polygonTriangles(points) {
-    let area=0;
-    for(let i=0;i<points.length;i++) {
-      const a=points[i],b=points[(i+1)%points.length];
-      area+=a.x*b.y-b.x*a.y;
-    }
-    if(area<0) points.reverse();
-    const ids=points.map((_,i)=>i),triangles=[];
-    let guard=0;
-    while(ids.length>3&&guard++<points.length*3) {
-      let found=false;
-      for(let j=0;j<ids.length;j++) {
-        const a=ids[(j+ids.length-1)%ids.length],b=ids[j],c=ids[(j+1)%ids.length];
-        if(cross(points[a],points[b],points[c])<=.00001)continue;
-        let contains=false;
-        for(let k=0;k<ids.length;k++) {
-          const p=ids[k];
-          if(p===a||p===b||p===c)continue;
-          if(inside(points[p],points[a],points[b],points[c])) {
-            contains=true;break;
-          }
-        }
-        if(contains)continue;
-        triangles.push(a,b,c);
-        ids.splice(j,1);
-        found=true;break;
-      }
-      if(!found)throw Error('Ribbon polygon is not triangulatable');
-    }
-    if(ids.length===3)triangles.push(ids[0],ids[1],ids[2]);
-    return triangles;
-  }
   function buildGeometry(svgText) {
     const doc=new DOMParser().parseFromString(svgText,'image/svg+xml');
     const paths=[...doc.querySelectorAll('path[d]')].slice(0,4);
@@ -206,7 +167,15 @@
         points.push({x:(p.x-374)/350,y:(355-p.y)/350});
       }
       path.remove();
-      const triangles=polygonTriangles(points);
+      let area=0;
+      for(let j=0;j<points.length;j++) {
+        const a=points[j],b=points[(j+1)%points.length];
+        area+=a.x*b.y-b.x*a.y;
+      }
+      if(area<0)points.reverse();
+      const flat=points.flatMap(p=>[p.x,p.y]);
+      const triangles=window.seyveoEarcut(flat,null,2);
+      if(!triangles.length)throw Error('Could not triangulate ribbon '+i);
       for(let t=0;t<triangles.length;t+=3) {
         vertex(points[triangles[t]],i);
         vertex(points[triangles[t+1]],i);
@@ -268,6 +237,16 @@
   (async () => {
     let canvas;
     try {
+      // Earcut is fetched only for the explicit 3D material experiment.
+      if(!window.seyveoEarcut) {
+        await new Promise((resolve,reject)=>{
+          const script=document.createElement('script');
+          script.src='assets/seyveo-earcut-v2.js?v=1';
+          script.onload=resolve;
+          script.onerror=()=>reject(Error('Ribbon triangulator unavailable'));
+          document.head.appendChild(script);
+        });
+      }
       const response=await fetch('assets/seyveo-flow-traced.svg?v=1');
       if(!response.ok)throw Error('Ribbon geometry is unavailable');
       const geometry=buildGeometry(await response.text());
