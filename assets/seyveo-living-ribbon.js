@@ -8,7 +8,7 @@
   const orb = document.getElementById('orb');
   if (!hero || !orb) return;
 
-  const source = 'assets/seyveo-living-ribbon-v2.webp?v=1';
+  const source = 'assets/seyveo-living-ribbon-v3.webp?v=1';
   const root = document.documentElement;
   root.classList.add('sv-living-ribbon');
   orb.classList.add('sv-living-ribbon');
@@ -28,6 +28,7 @@
     /* Keep the approved main sphere layout, button hit area and handoff unchanged. */
     html.sv-living-ribbon #orb #plasmaVisual {
       --sv-ribbon-light: drop-shadow(0 0 12px rgba(108,177,179,.15));
+      --sv-ribbon-soft-glass: brightness(1) saturate(1);
       transform-origin: 50% 50%;
       backface-visibility: hidden;
       will-change: filter, transform;
@@ -37,6 +38,7 @@
     }
     html.sv-living-ribbon[data-theme="light"] #orb #plasmaVisual {
       --sv-ribbon-light: drop-shadow(0 6px 13px rgba(77,129,130,.20));
+      --sv-ribbon-soft-glass: brightness(1.10) saturate(.87);
     }
     /* A very slow liquid-pearl current inside the sculpted glass ribbons.
        Multiple broad caustics drift independently without moving the silhouette. */
@@ -46,18 +48,18 @@
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      opacity: .46;
+      opacity: .38;
       background:
-        radial-gradient(ellipse 38% 44% at 27% 51%,
-          rgba(75,138,140,.52) 0%, rgba(122,183,181,.24) 48%, transparent 85%),
-        radial-gradient(ellipse 45% 50% at 75% 45%,
-          rgba(255,255,255,.82) 0%, rgba(235,255,252,.30) 47%, transparent 84%),
-        radial-gradient(ellipse 42% 37% at 48% 76%,
-          rgba(90,158,158,.36) 0%, rgba(178,220,214,.15) 47%, transparent 88%);
+        radial-gradient(ellipse 34% 48% at 27% 51%,
+          rgba(35,93,94,.43) 0%, rgba(91,158,153,.20) 48%, transparent 85%),
+        radial-gradient(ellipse 48% 52% at 75% 45%,
+          rgba(234,255,252,.42) 0%, rgba(212,247,242,.15) 47%, transparent 84%),
+        radial-gradient(ellipse 38% 41% at 48% 76%,
+          rgba(48,113,113,.34) 0%, rgba(149,197,189,.14) 47%, transparent 88%);
       background-size: 142% 127%, 133% 146%, 152% 131%;
       background-position: 8% 17%, 85% 74%, 31% 93%;
-      -webkit-mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
-      mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
+      -webkit-mask: url("assets/seyveo-living-ribbon-v3.webp?v=1") center / contain no-repeat;
+      mask: url("assets/seyveo-living-ribbon-v3.webp?v=1") center / contain no-repeat;
       mix-blend-mode: soft-light;
       transform-origin: 50% 50%;
       animation:
@@ -65,7 +67,7 @@
         sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
     }
     html.sv-living-ribbon[data-theme="light"] #orb::before {
-      opacity: .43;
+      opacity: .29;
       mix-blend-mode: multiply;
     }
     html.sv-living-ribbon #orb::after {
@@ -74,44 +76,44 @@
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      opacity: .27;
+      opacity: .16;
       background: linear-gradient(106deg,
         transparent 22%, rgba(223,251,248,.02) 35%,
-        rgba(255,255,255,.65) 48%,
+        rgba(255,255,255,.39) 48%,
         rgba(210,246,243,.07) 60%, transparent 78%);
       background-size: 250% 100%;
       background-position: 0% 50%;
-      -webkit-mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
-      mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
+      -webkit-mask: url("assets/seyveo-living-ribbon-v3.webp?v=1") center / contain no-repeat;
+      mask: url("assets/seyveo-living-ribbon-v3.webp?v=1") center / contain no-repeat;
       mix-blend-mode: screen;
       transform-origin: 50% 50%;
       animation:
-        sv-ribbon-glass-caustic 9s ease-in-out infinite,
+        sv-ribbon-glass-caustic 13.8s ease-in-out infinite,
         sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
     }
     /* Voice mist is refracted INSIDE the ribbons, never across the open center. */
     html.sv-living-ribbon #orb .orb-mist,
     html.sv-living-ribbon #orb .orb-logo-mist {
-      -webkit-mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
-      mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
+      -webkit-mask: url("assets/seyveo-living-ribbon-v3.webp?v=1") center / contain no-repeat;
+      mask: url("assets/seyveo-living-ribbon-v3.webp?v=1") center / contain no-repeat;
     }
     html.sv-living-ribbon #orb.seyveo-presence-listening #plasmaVisual {
       animation-duration: 3.5s,15.2s;
     }
     html.sv-living-ribbon #orb.seyveo-presence-listening::before {
-      opacity: .54;
+      opacity: .44;
       animation-duration: 6.4s,15.2s;
     }
     html.sv-living-ribbon #orb.seyveo-presence-speaking #plasmaVisual {
       animation-duration: 2.5s,15.2s;
     }
     html.sv-living-ribbon #orb.seyveo-presence-speaking::before {
-      opacity: .65;
+      opacity: .52;
       animation-duration: 4.7s,15.2s;
     }
     html.sv-living-ribbon #orb.seyveo-presence-listening::after,
     html.sv-living-ribbon #orb.seyveo-presence-speaking::after {
-      opacity: .42;
+      opacity: .29;
       animation-duration: 4.5s,15.2s;
     }
     /* Use the exact same Home artwork in the mini, including dark mode. */
@@ -139,8 +141,8 @@
       filter: drop-shadow(0 0 4px rgba(118,177,176,.16)) !important;
     }
     @keyframes sv-ribbon-pearl-breathe {
-      0%,100% {filter: var(--sv-ribbon-light) brightness(.985) saturate(.96)}
-      52% {filter: var(--sv-ribbon-light) brightness(1.065) saturate(1.10)}
+      0%,100% {filter: var(--sv-ribbon-light) var(--sv-ribbon-soft-glass) brightness(.995) saturate(.99)}
+      52% {filter: var(--sv-ribbon-light) var(--sv-ribbon-soft-glass) brightness(1.035) saturate(1.02)}
     }
     /* The actual #orb never moves here: only its three matched visual layers
        lean gently together. Handoff transforms and hit targets stay intact. */
