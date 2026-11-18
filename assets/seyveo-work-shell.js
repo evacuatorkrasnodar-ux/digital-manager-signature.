@@ -24,13 +24,13 @@
  // Only Notebook CONTENT mounts into Work; its old screen chrome is gone.
  const notesPage=document.getElementById('notesDialog');
  if(notesPage)shell.append(notesPage);
- // Reuse the three real Notebook launch buttons as a compact creation menu.
+ // Reuse the three real Notebook launch buttons in the spare top header area.
  // Their original listeners continue to open the editors and save real notes.
  const notebookChoices=document.getElementById('svNotebookCreateTiles');
  if(notebookChoices){
   shell.append(notebookChoices);
   notebookChoices.hidden=true;
-  notebookChoices.setAttribute('aria-label','Выберите тип заметки');
+  notebookChoices.setAttribute('aria-label','Создать заметку');
  }
  // The legacy heading must never paint beside the permanent work heading.
  // Inline important wins against old, later-loaded stylesheets without
@@ -56,19 +56,6 @@
  const workHeader=window.SEYVEO_WORK_HEADER?.create();
  if(!workHeader)throw new Error('SEYVEO Work header module is missing');
  const {host:heading,back,title,month,calendarJump,add}=workHeader;
- function closeNotebookCreateMenu(returnFocus=false){
-  if(!notebookChoices||notebookChoices.hidden)return;
-  notebookChoices.hidden=true;
-  add.setAttribute('aria-expanded','false');
-  if(returnFocus)add.focus({preventScroll:true});
- }
- function toggleNotebookCreateMenu(){
-  if(!notebookChoices)return;
-  if(!notebookChoices.hidden){closeNotebookCreateMenu(true);return;}
-  notebookChoices.hidden=false;
-  add.setAttribute('aria-expanded','true');
-  notebookChoices.querySelector('button')?.focus({preventScroll:true});
- }
  // The current calendar period occupies the center of the shared header,
  // aligned between Back and Add; the month grid retains its original structure.
  const calendarPeriodLabel=document.getElementById('calendarPeriodTitle');
@@ -276,16 +263,9 @@
  });
  document.addEventListener('pointerdown',event=>{
   if(!businessCreate.hidden&&!businessCreate.contains(event.target)&&!add.contains(event.target))closeBusinessCreate();
-  if(notebookChoices&&!notebookChoices.hidden){
-   const path=event.composedPath();
-   if(!path.includes(notebookChoices)&&!path.includes(add))closeNotebookCreateMenu();
-  }
  });
  document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&!businessCreate.hidden){closeBusinessCreate();add.focus({preventScroll:true})}
-  if(event.key==='Escape'&&notebookChoices&&!notebookChoices.hidden){
-   event.preventDefault();closeNotebookCreateMenu(true);
-  }
  });
  // Keep one visible + in the permanent work header. The original
  // calendar button remains the logic controller; its chooser sits in flow
@@ -331,7 +311,7 @@
    calendarAdd?.click();
    add.setAttribute('aria-expanded',String(calendarAdd?.getAttribute('aria-expanded')==='true'));
   }else if(section==='personal')personalAdd?.click();
-  else if(section==='notes')toggleNotebookCreateMenu();
+  // Notebook's three visible creation actions replace its redundant +.
   else if(section==='business'){
    if(!window.SEYVEO_PREVIEW?.isManager?.())return;
    businessCreate.hidden=!businessCreate.hidden;
@@ -560,7 +540,7 @@
  let svAgendaWasVisible=null;
  function sync(){
   const active=activeSection();
-  if(active!=='notes')closeNotebookCreateMenu();
+  if(notebookChoices)notebookChoices.hidden=active!=='notes';
   const managerTasks=!tasks.hidden&&oldTasks.dataset.manager==='true';
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
   // The employee's existing workspace is a top-level Tasks view.
@@ -664,7 +644,7 @@
   // including History. Do not write inline visual overrides here.
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
-  add.hidden=active==='employee';
+  add.hidden=active==='employee'||active==='notes';
   const nextIcon=history?'search':'add';
   if(add.dataset.svHeaderIcon!==nextIcon){
    add.innerHTML=history?searchIcon:plusIcon;
@@ -672,9 +652,9 @@
   }
   add.setAttribute('aria-label',history?'Поиск в истории действий':active==='notes'?'Создать заметку':active==='personal'?'Добавить дело':active==='calendar'?'Открыть меню календаря':'Действия кабинета');
   add.title=history?'Поиск по истории':'';
-  add.setAttribute('aria-haspopup',String(!history&&(active==='calendar'||active==='business'||active==='notes')));
-  add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':active==='notes'?'svNotebookCreateTiles':'');
-  add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistorySearch')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):active==='notes'?String(!notebookChoices?.hidden):'false');
+  add.setAttribute('aria-haspopup',String(!history&&(active==='calendar'||active==='business')));
+  add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
+  add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistorySearch')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
   shell.dataset.active=active;
   for(const button of nav.querySelectorAll('[data-sv-work-tab]')){
    button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===active));
