@@ -8,27 +8,27 @@ const STORAGE='seyveo.home.favorites.v1',USAGE='seyveo.home.favorite-usage.v1';
    A little illustrated detail makes each symbol memorable without adding noise.
    All glyphs are pure vector and share the Notebook's fine graphite stroke. */
 const favoriteGlyphs={
- cards:'<path d="M8.1 3.3H17a1.9 1.9 0 0 1 1.9 1.9v1.5M6 6.1h11.2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-10a2 2 0 0 1 2-2Z"/><path d="m11.6 9.3.85 2.7 2.7.85-2.7.85-.85 2.7-.85-2.7-2.7-.85 2.7-.85Z"/><circle cx="16.5" cy="8.8" r=".6" fill="currentColor" stroke="none"/>',
- music:'<path d="M9.4 6.9 18.1 4.8v11M9.4 6.9v11M9.4 9.1l8.7-2.1"/><path d="M9.2 17.8c0 1.5-1.3 2.6-3.1 2.8-1.7.2-3-.4-3-1.6 0-1.4 1.5-2.5 3.2-2.7 1.7-.2 2.9.3 2.9 1.5ZM18 15.8c0 1.5-1.4 2.6-3.1 2.8-1.8.2-3-.4-3-1.6 0-1.4 1.4-2.5 3.2-2.7 1.7-.2 2.9.3 2.9 1.5Z"/><path d="M4.8 11.4c.8-.5 1.7-.8 2.8-.9" opacity=".48"/>',
- documents:'<path d="M6.9 3.1h7l4.4 4.5v11.2c0 1.1-.9 2-2 2H6.9c-1.1 0-2-.9-2-2V5.1c0-1.1.9-2 2-2Z"/><path d="M13.9 3.2v4.7h4.4M8.2 10.9h7.1M8.2 13.6h5.2"/><path d="M8.3 17.4c1.1-1.5 1.2 1.6 2.3.1.6-.8.9-.4 1.2.2.35.75 1.3.35 2.2-.15" opacity=".75"/>',
- wallet:'<path d="M5.2 6.2V5a2 2 0 0 1 2-2h9.5M4.9 6.1h13.7a2 2 0 0 1 2 2v10.1a2 2 0 0 1-2 2H4.9a2 2 0 0 1-2-2V8.1a2 2 0 0 1 2-2Z"/><path d="M14.8 11.1h5.8v5.6h-5.8a2.8 2.8 0 0 1 0-5.6Z"/><circle cx="16" cy="13.9" r=".8" fill="currentColor" stroke="none"/><path d="M6.4 8.2h4.2" opacity=".4"/>',
- notebook:'<path d="M7 3.6h9.8c.9 0 1.6.7 1.6 1.6v13.5c0 .9-.7 1.6-1.6 1.6H7c-.9 0-1.6-.7-1.6-1.6V5.2c0-.9.7-1.6 1.6-1.6Z"/><path d="M8.1 3.7v16.5M4.2 7.5h3M4.2 12h3M4.2 16.5h3" opacity=".75"/><path d="M10.3 14.8c.6-.9.9-2.7 1.5-2.7.7 0 .1 2.9.9 2.9.6 0 1-1.6 1.6-1.6.5 0 .5 1.3 1.2 1.3"/><path d="m16.4 10.8 3.5-4.6 1.4 1.1-3.5 4.6-1.7.7Z"/>',
- calendar:'<rect x="3.7" y="5.2" width="16.6" height="15.2" rx="2.1"/><path d="M3.7 9.7h16.6M8 3.5v3.7M16 3.5v3.7"/><path d="m8.4 15.3 2.2 2.1 4.8-5.1"/><path d="M17.3 12.9h.1" opacity=".5"/>',
- health:'<path d="M12 20.5S3.3 15 3.3 9.4c0-2.8 1.9-4.8 4.4-4.8 1.9 0 3.3 1 4.3 2.5 1-1.5 2.4-2.5 4.3-2.5 2.5 0 4.4 2 4.4 4.8 0 5.6-8.7 11.1-8.7 11.1Z"/><path d="M6.6 12.2h2.9l1.4-2.7 2.2 5.1 1.2-2.4h3"/><circle cx="17.8" cy="8.1" r=".65" fill="currentColor" stroke="none" opacity=".55"/>',
- browser:'<circle cx="12" cy="12" r="8.9"/><path d="M3.3 12h17.4M12 3.1c-2.7 2.7-4.3 5.7-4.3 8.9s1.6 6.1 4.3 8.9M12 3.1c2.7 2.7 4.3 5.7 4.3 8.9s-1.6 6.1-4.3 8.9"/><path d="M5.3 7.6c3.8 1.4 9.6 1.4 13.4 0M5.3 16.4c3.8-1.4 9.6-1.4 13.4 0" opacity=".75"/><circle cx="17.8" cy="6.1" r=".7" fill="currentColor" stroke="none"/>',
- mail:'<path d="M4.1 8V6.5c0-1.2 1-2.1 2.2-2.1h9.4c1.2 0 2.2.9 2.2 2.1V8" opacity=".6"/><rect x="3.5" y="8" width="17" height="11.5" rx="2"/><path d="m4.3 9.1 7 5.3c.4.3 1 .3 1.4 0l7-5.3M4.7 18l5.4-4.6M19.3 18l-5.4-4.6"/>',
- contacts:'<rect x="4.6" y="3.1" width="14.8" height="17.8" rx="2.1"/><path d="M8.7 3.1v2.2h6.6V3.1"/><circle cx="12" cy="10" r="2.3"/><path d="M7.9 17.2c.3-2.3 1.8-3.4 4.1-3.4 2.3 0 3.8 1.1 4.1 3.4M8.4 18.8h7.2"/>',
- care:'<path d="M12 11.2c-2.6-1.8-3.6-3.3-3.1-5.1.4-1.9 2.1-2.2 3.1-.6 1-1.6 2.7-1.3 3.1.6.5 1.8-.5 3.3-3.1 5.1Z"/><path d="M3.1 14.2c1.5-1.1 2.9-1.1 4.5 0l2.5 1.8h3.8l2.5-1.8c1.6-1.1 3-1.1 4.5 0M3.7 16.3c.8 2 2.5 3.5 4.7 4.2h7.2c2.2-.7 3.9-2.2 4.7-4.2"/><path d="M10.1 16.1c-1.1-.2-1.8.2-2.3.7M13.9 16.1c1.1-.2 1.8.2 2.3.7" opacity=".55"/>',
- family:'<circle cx="9.1" cy="8.3" r="2.25"/><circle cx="16.8" cy="9.6" r="1.75"/><path d="M3.4 19.7v-2.2c0-2.8 2.3-4.5 5.7-4.5s5.7 1.7 5.7 4.5v2.2M15.8 14.3c3.1 0 4.8 1.5 4.8 4.1v1.3"/><path d="M6.5 4.4c1.2-1.1 3.7-1.5 5.2-.5" opacity=".48"/>',
- 'smart-home':'<path d="m3.5 10.9 8.5-7.2 8.5 7.2M5.8 9.8v9.9h12.4V9.8"/><path d="M8.2 13.5a5.7 5.7 0 0 1 7.6 0M10 15.6a2.8 2.8 0 0 1 4 0"/><circle cx="12" cy="17.8" r=".85" fill="currentColor" stroke="none"/><path d="M19.8 4.4v3M18.3 5.9h3" opacity=".7"/>',
- 'business-pulse':'<path d="M4.5 6.7a2.2 2.2 0 0 1 2.2-2.2h10.6a2.2 2.2 0 0 1 2.2 2.2v10.6a2.2 2.2 0 0 1-2.2 2.2H6.7a2.2 2.2 0 0 1-2.2-2.2" opacity=".5"/><path d="M2.1 12.5h4.7l2.1-4.7 3.4 9 2.9-6.6 1.5 2.3h5.2"/><circle cx="19.7" cy="12.5" r=".6" fill="currentColor" stroke="none"/>',
- 'business-chats':'<path d="M5 4.5h12.7a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2H10l-5 3v-13a2 2 0 0 1 2-2Z"/><path d="M9 9h6.8M9 12.1h4.9"/><path d="M19.7 8.3h.6c1 0 1.7.8 1.7 1.8v7.5c0 1-.8 1.7-1.8 1.7h-2.5" opacity=".55"/>',
- 'business-mail':'<rect x="3.4" y="6.3" width="17.2" height="13" rx="2.2"/><path d="m4.2 7.9 7.1 5.8a1.2 1.2 0 0 0 1.5 0l7-5.8"/><path d="M9 6.3V4.5h6v1.8"/><circle cx="12" cy="16.9" r=".9" fill="currentColor" stroke="none" opacity=".62"/>',
- 'business-documents':'<path d="M7 3.1h7.4l4.4 4.5V19a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5.1a2 2 0 0 1 2-2Z"/><path d="M14.4 3.2v4.5h4.4M8.4 11h6.8M8.4 13.8h7.2"/><path d="m9.4 17.4 1.5 1.5 3-3.1"/><circle cx="15.3" cy="17.4" r="2.6" opacity=".45"/>',
- 'business-company':'<path d="M5 20.4V7.2c0-1 .8-1.8 1.8-1.8h10.4c1 0 1.8.8 1.8 1.8v13.2M3.2 20.4h17.6"/><path d="M9.1 5.4v-2h5.8v2M8.2 9.2h2.6v2.6H8.2zM13.2 9.2h2.6v2.6h-2.6zM8.2 14h2.6v2.6H8.2zM13.2 14h2.6v6.4h-2.6z"/>',
- 'business-people':'<circle cx="10.2" cy="7.9" r="2.7"/><path d="M4.8 19.5V18c0-3.5 2.1-5.3 5.4-5.3s5.4 1.8 5.4 5.3v1.5H4.8Z"/><path d="M16.7 5.6a2.5 2.5 0 0 1 .1 4.6M17.6 13.3c2.2.5 3.5 2 3.5 4.6v1.6M3.2 9.3h2.1"/><path d="M4.2 8.3v2" opacity=".5"/>',
- management:'<rect x="3.4" y="3.4" width="7.3" height="7.3" rx="1.5"/><rect x="13.3" y="3.4" width="7.3" height="7.3" rx="1.5"/><rect x="3.4" y="13.3" width="7.3" height="7.3" rx="1.5"/><rect x="13.3" y="13.3" width="7.3" height="7.3" rx="1.5"/><path d="M5.3 8.5h3.5M17 5.4v3.4M15.3 7.1h3.4M5.3 17h3.5M7.1 15.3v3.4" opacity=".5"/><circle cx="17" cy="17" r="1.1" fill="currentColor" stroke="none"/>',
- generic:'<rect x="4.1" y="4.1" width="15.8" height="15.8" rx="3"/><path d="M8 12h8M12 8v8"/><circle cx="18" cy="6" r=".8" fill="currentColor" stroke="none"/>'
+ cards:'<path d="M19 9h27a6 6 0 0 1 6 6v32a6 6 0 0 1-6 6H19a6 6 0 0 1-6-6V15a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)"/><path d="M11 17H9a4 4 0 0 0-4 4v28a4 4 0 0 0 4 4h2" opacity=".55"/><path d="m32 22 3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#d6dbe0" stroke-width="1.8"/><circle cx="45" cy="19" r="2" fill="#d6dbe0" stroke="none"/>',
+ music:'<path d="m27 20 23-6v28M27 20v26M27 26l23-6" stroke-width="2.2"/><path d="M26.8 46.5c0 4.3-4.2 7.4-9.5 7.4-5.2 0-8.2-2.7-7-6.1 1-3.3 4.5-5.5 9.5-5.5 4.2 0 7 1.6 7 4.2ZM49.8 42.5c0 4.3-4.2 7.4-9.5 7.4-5.2 0-8.2-2.7-7-6.1 1-3.3 4.5-5.5 9.5-5.5 4.2 0 7 1.6 7 4.2Z" fill="rgba(213,219,224,.45)" stroke-width="2"/><path d="m29 21 20-5v3l-20 5Z" fill="#dce1e5" stroke="none" opacity=".55"/>',
+ documents:'<path d="M17 7h24l10 10v32a6 6 0 0 1-6 6H17a6 6 0 0 1-6-6V13a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)"/><path d="M41 7v8a3 3 0 0 0 3 3h7" stroke-width="1.9"/><path d="M20 28h23M20 35h18" stroke-width="2.1" opacity=".85"/><path d="M20 46c4-5 5 3 9-1 3-3 4-3 6 0 2 2 5-1 8-1" stroke-width="2.5"/><circle cx="46" cy="44" r="3.2" fill="#d6dbe0" stroke-width="1.7"/>',
+ wallet:'<path d="M14 17v-5a6 6 0 0 1 6-6h28M11 17h39a6 6 0 0 1 6 6v24a7 7 0 0 1-7 7H11a7 7 0 0 1-7-7V24a7 7 0 0 1 7-7Z" fill="rgba(255,255,255,.065)"/><path d="M42 30h14v14H42a7 7 0 0 1 0-14Z" fill="#e4e7eb" stroke-width="1.9"/><circle cx="44" cy="37" r="2.5" fill="#aeb7c0" stroke="none"/><path d="M14 23h20" opacity=".45" stroke-width="1.8"/>',
+ notebook:'<path d="M16 8h28l8 8v33a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)"/><path d="M44 8v6a2 2 0 0 0 2 2h6" stroke-width="1.9"/><path d="M17 42c5-8 7-14 10-12 3 2-4 12 1 11 4-1 6-10 9-10 3 0-1 8 2 8 2 0 4-2 6-4" stroke-width="2.6"/><path d="m40 23 10-10a3.4 3.4 0 0 1 5 5L45 28l-7 2Z" fill="#c9ced3" stroke-width="1.7"/><path d="m48 15 5 5M19 49h14" stroke-width="1.8" opacity=".7"/>',
+ calendar:'<rect x="9" y="12" width="46" height="44" rx="6" fill="rgba(255,255,255,.065)"/><path d="M9 24h46M21 7v12M43 7v12" stroke-width="2.2"/><path d="M18 32h8M39 32h8M18 42h8M39 42h8" opacity=".56" stroke-width="2.2"/><circle cx="43" cy="43" r="9" fill="#e1e5e9" stroke-width="1.8"/><path d="m39 43 3 3 6-7" stroke-width="2.1"/>',
+ health:'<path d="M32 55S8 41 8 24c0-8 5.7-14 13-14 5.2 0 8.7 2.5 11 6.3 2.3-3.8 5.8-6.3 11-6.3 7.3 0 13 6 13 14 0 17-24 31-24 31Z" fill="rgba(255,255,255,.065)"/><path d="M16 32h9l5-9 8 19 5-10h7" stroke-width="2.35"/><path d="M24 16c-3 0-6 2-7 6" opacity=".38" stroke-width="1.8"/><circle cx="44" cy="17" r="2.2" fill="#d6dbe0" stroke="none"/>',
+ browser:'<circle cx="32" cy="32" r="24" fill="rgba(255,255,255,.045)"/><path d="M8 32h48M32 8c-8 7-12 16-12 24s4 17 12 24M32 8c8 7 12 16 12 24s-4 17-12 24" stroke-width="2"/><path d="M13 20c11 5 27 5 38 0M13 44c11-5 27-5 38 0" opacity=".68" stroke-width="1.8"/><circle cx="46.2" cy="14.5" r="3.6" fill="#cbd2d8" stroke="none"/>',
+ mail:'<path d="M14 15V9a5 5 0 0 1 5-5h26a5 5 0 0 1 5 5v6" opacity=".53"/><rect x="7" y="15" width="50" height="37" rx="6" fill="rgba(255,255,255,.065)"/><path d="m9 19 20 16a5 5 0 0 0 6 0l20-16M10 48l16-14M54 48 38 34" stroke-width="2"/><path d="M21 10h22" stroke-width="1.8" opacity=".48"/><circle cx="48" cy="22" r="2.3" fill="#d6dbe0" stroke="none"/>',
+ contacts:'<rect x="11" y="6" width="42" height="51" rx="6" fill="rgba(255,255,255,.065)"/><path d="M24 6v7h16V6" stroke-width="1.8"/><circle cx="32" cy="27" r="7" fill="#e0e4e8" stroke-width="1.9"/><path d="M19 45c1-9 6-13 13-13s12 4 13 13M21 50h22" stroke-width="2"/><circle cx="47" cy="17" r="2.2" fill="#cbd2d8" stroke="none"/>',
+ care:'<path d="M32 27C25 22 23 18 24 13c1-5 5-7 8-3 3-4 7-2 8 3 1 5-1 9-8 14Z" fill="#dce1e5" stroke-width="1.9"/><path d="M7 37c5-4 9-3 14 0l7 5h8l7-5c5-3 9-4 14 0M7 42c3 9 10 14 19 15h12c9-1 16-6 19-15" stroke-width="2.3"/><path d="M17 43c5-2 8 0 11 2M47 43c-5-2-8 0-11 2" opacity=".64" stroke-width="1.8"/>',
+ family:'<circle cx="23" cy="24" r="7" fill="#e0e4e8" stroke-width="1.9"/><circle cx="43" cy="28" r="5.7" fill="rgba(255,255,255,.065)" stroke-width="1.9"/><path d="M7 54v-6c0-10 6-16 16-16s16 6 16 16v6M38 39c10-1 17 5 17 14v1" stroke-width="2.2"/><path d="M15 12c4-4 10-5 15-2" opacity=".43" stroke-width="1.7"/>',
+ 'smart-home':'<path d="M7 27 32 7l25 20M13 23v30h38V23" fill="rgba(255,255,255,.065)" stroke-width="2.2"/><path d="M20 36c7-7 17-7 24 0M25 42c4-4 10-4 14 0" stroke-width="1.9"/><circle cx="32" cy="48" r="3" fill="#c9ced3" stroke-width="1.7"/><path d="M53 8v9M48.5 12.5h9" stroke-width="1.7" opacity=".58"/>',
+ 'business-pulse':'<rect x="10" y="10" width="44" height="44" rx="7" fill="rgba(255,255,255,.065)" stroke-width="2"/><path d="M5 33h14l7-16 11 29 8-18 5 5h9" stroke-width="2.5"/><circle cx="49" cy="33" r="3" fill="#d6dbe0" stroke-width="1.8"/><path d="M17 50h30" stroke-width="1.7" opacity=".4"/>',
+ 'business-chats':'<path d="M13 10h33a7 7 0 0 1 7 7v22a7 7 0 0 1-7 7H26L12 55V17a7 7 0 0 1 7-7Z" fill="rgba(255,255,255,.065)"/><path d="M22 24h21M22 32h15" stroke-width="2.1"/><path d="M53 21h2a4 4 0 0 1 4 4v22a4 4 0 0 1-4 4h-8" opacity=".5" stroke-width="1.8"/><circle cx="44" cy="32" r="2.2" fill="#d2d8dd" stroke="none"/>',
+ 'business-mail':'<rect x="7" y="16" width="50" height="37" rx="6" fill="rgba(255,255,255,.065)"/><path d="m9 20 20 16a5 5 0 0 0 6 0l20-16" stroke-width="2.1"/><path d="M24 16v-5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v5" stroke-width="1.9"/><circle cx="32" cy="44" r="4" fill="#d3d9de" stroke-width="1.7"/><path d="M32 42v4" stroke-width="1.7"/>',
+ 'business-documents':'<path d="M17 7h24l10 10v32a6 6 0 0 1-6 6H17a6 6 0 0 1-6-6V13a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)"/><path d="M41 7v8a3 3 0 0 0 3 3h7M20 27h23M20 34h19" stroke-width="2"/><circle cx="40" cy="44" r="9" fill="#e3e7ea" stroke-width="1.7"/><path d="m35 44 4 4 7-8" stroke-width="2.2"/>',
+ 'business-company':'<path d="M13 56V17a6 6 0 0 1 6-6h26a6 6 0 0 1 6 6v39M7 56h50" fill="rgba(255,255,255,.065)" stroke-width="2.2"/><path d="M24 11V6h16v5M21 23h9v9h-9zM35 23h9v9h-9zM21 38h9v9h-9z" stroke-width="1.8"/><path d="M35 56V38h9v18" fill="#d7dce1" stroke-width="1.8"/><circle cx="41" cy="48" r="1.3" fill="#9ba6af" stroke="none"/>',
+ 'business-people':'<circle cx="26" cy="22" r="9" fill="#e2e6e9" stroke-width="2"/><path d="M9 54v-5c0-12 6-19 17-19s17 7 17 19v5H9Z" stroke-width="2.2"/><path d="M45 13c7 0 11 4 11 10 0 5-3 8-7 10M47 39c7 2 11 7 11 15" opacity=".7" stroke-width="2"/><path d="M51 7v8M47 11h8" stroke-width="1.9"/>',
+ management:'<rect x="8" y="8" width="21" height="21" rx="5" fill="rgba(255,255,255,.065)"/><rect x="35" y="8" width="21" height="21" rx="5" fill="#e7eaed"/><rect x="8" y="35" width="21" height="21" rx="5" fill="#e7eaed"/><rect x="35" y="35" width="21" height="21" rx="5" fill="rgba(255,255,255,.065)"/><path d="M14 19h9M45 14v9M40.5 18.5h9M14 45h9M18.5 40.5v9" opacity=".6" stroke-width="1.8"/><circle cx="45.5" cy="45.5" r="4" fill="#b9c3cb" stroke="none"/>',
+ generic:'<rect x="10" y="10" width="44" height="44" rx="7" fill="rgba(255,255,255,.065)"/><path d="M22 32h20M32 22v20" stroke-width="2.3"/><circle cx="47" cy="17" r="3" fill="#cdd4da" stroke="none"/>'
 };
 const apps=[
  {id:'music',name:'Музыка',selector:'[data-calendar-space="music"]'},
@@ -115,7 +115,7 @@ const smartTile=document.createElement('div');smartTile.className='sv-home-favor
 const card=document.createElement('button');card.type='button';card.className='sv-home-favorite sv-home-review-entry';
 card.setAttribute('aria-label','Открыть дела Сэйви');card.setAttribute('title','Дела для разбора');card.dataset.icon='cards';
 const symbol=document.createElement('span');symbol.className='sv-home-favorite-icon';
-symbol.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
+symbol.innerHTML='<svg viewBox="0 0 64 64" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
 const badge=document.createElement('span');badge.className='sv-home-review-badge';badge.hidden=true;badge.setAttribute('aria-hidden','true');
 const caption=document.createElement('span');caption.className='sv-home-favorite-label';caption.textContent='Дела';
 symbol.append(badge);card.append(symbol,caption);smartTile.append(card);rail.append(smartTile);
@@ -131,7 +131,7 @@ card.addEventListener('click',e=>{
  if(cardCount>0)window.dispatchEvent(new Event('seyveo:open-card-review'));
  else launch(fallbackId);
 });
-function icon(id){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(favoriteGlyphs[id]||favoriteGlyphs.generic)+'</svg>'}
+function icon(id){return '<svg viewBox="0 0 64 64" aria-hidden="true">'+(favoriteGlyphs[id]||favoriteGlyphs.generic)+'</svg>'}
 function launch(id){
  const item=byId[id];if(!item||(id.startsWith('business-')&&!businessEnabled()))return;
  const result=item.action?.();
@@ -297,7 +297,7 @@ function openCustomize(){
    const b=document.createElement('button');b.type='button';
    const chosen=app.id==='smart'?smart:selection.includes(app.id);
    b.setAttribute('aria-pressed',String(chosen));
-   b.innerHTML=app.id==='smart'?'<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>':icon(app.id);
+   b.innerHTML=app.id==='smart'?'<svg viewBox="0 0 64 64" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>':icon(app.id);
    const t=document.createElement('span');t.textContent=app.name;
    const mark=document.createElement('small');mark.textContent=chosen?'✓':'';
    b.append(t,mark);
@@ -454,7 +454,7 @@ function updateCount(){
  card.classList.toggle('sv-home-review-entry',pending);
  if(pending){
   if(card.dataset.icon!=='cards'){
-   symbol.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
+   symbol.innerHTML='<svg viewBox="0 0 64 64" aria-hidden="true">'+favoriteGlyphs.cards+'</svg>';
    symbol.append(badge);card.dataset.icon='cards';
   }
   caption.textContent='Дела';
