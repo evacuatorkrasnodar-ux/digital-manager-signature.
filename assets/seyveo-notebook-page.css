@@ -172,7 +172,7 @@
  min-width:0!important;
  min-height:0!important;
  height:auto!important;
- max-height:calc(100svh - 330px)!important;
+ max-height:calc(100svh - 220px)!important;
  margin:0!important;
  padding:0!important;
  border:0!important;
@@ -241,15 +241,15 @@
 }
 #svWorkShell[data-active="notes"] #notesDialog #notesList .note-open > .note-paper-preview{
  display:block!important;
- flex:0 0 46px!important;
- width:46px!important;
- height:64px!important;
+ flex:0 0 54px!important;
+ width:54px!important;
+ height:76px!important;
  margin:0!important;
  border:0!important;
- border-radius:5px!important;
+ border-radius:6px!important;
  object-fit:contain!important;
  background:#282B2F!important;
- box-shadow:none!important;
+ box-shadow:0 0 0 .6px rgba(85,90,99,.20)!important;
 }
 #svWorkShell[data-active="notes"] #notesDialog #notesList .note-row-copy{
  box-sizing:border-box!important;
@@ -268,7 +268,7 @@
  overflow:hidden!important;
  margin:0!important;
  padding:0!important;
- font-size:13.5px!important;
+ font-size:14.5px!important;
  line-height:1.34!important;
  font-weight:570!important;
  white-space:pre-wrap!important;
@@ -279,7 +279,7 @@
  display:block!important;
  margin:0!important;
  padding:0!important;
- font-size:10.5px!important;
+ font-size:11.3px!important;
  line-height:1.35!important;
  color:var(--secondary)!important;
 }
@@ -346,4 +346,108 @@
 @media(max-width:360px){
  #svWorkShell[data-active="notes"] #notesDialog > #svNotebookCreateTiles{column-gap:7px!important}
  #svWorkShell[data-active="notes"] #notesDialog #svNotebookCreateTiles .paper-choice-icon{border-radius:17px!important}
+}
+
+/* Notebook · Apple-style creation popover.
+   The original three buttons are moved into the Work shell by JS, so their
+   existing editor handlers remain intact and no giant tiles occupy the list. */
+#svWorkShell > #svNotebookCreateTiles[hidden]{display:none!important}
+#svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){
+ box-sizing:border-box!important;
+ position:absolute!important;
+ z-index:80!important;
+ top:65px!important;
+ right:14px!important;
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ gap:1px!important;
+ width:min(246px,calc(100% - 28px))!important;
+ height:auto!important;
+ margin:0!important;
+ padding:7px!important;
+ border:1px solid rgba(175,180,190,.36)!important;
+ border-radius:19px!important;
+ background:rgba(247,248,250,.96)!important;
+ background-image:none!important;
+ box-shadow:0 10px 30px rgba(41,45,54,.12),inset 0 1px rgba(255,255,255,.92)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(135%)!important;
+ backdrop-filter:blur(22px) saturate(135%)!important;
+}
+#svWorkShell[data-active="notes"] > #svNotebookCreateTiles > .paper-choice-item{
+ box-sizing:border-box!important;
+ display:flex!important;
+ flex-direction:row!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ gap:11px!important;
+ width:100%!important;
+ min-width:0!important;
+ min-height:50px!important;
+ height:50px!important;
+ margin:0!important;
+ padding:7px 10px!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+ text-align:left!important;
+}
+#svWorkShell[data-active="notes"] > #svNotebookCreateTiles > .paper-choice-item:active{
+ background:rgba(120,128,143,.10)!important;
+ transform:none!important;
+}
+#svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-icon{
+ box-sizing:border-box!important;
+ display:grid!important;
+ flex:0 0 33px!important;
+ place-items:center!important;
+ width:33px!important;
+ max-width:33px!important;
+ height:33px!important;
+ aspect-ratio:auto!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+}
+#svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-icon svg{
+ display:block!important;
+ width:30px!important;
+ height:30px!important;
+ fill:none!important;
+ stroke:currentColor!important;
+ pointer-events:none!important;
+}
+#svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-copy{
+ display:flex!important;
+ flex:1 1 auto!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ width:auto!important;
+ min-width:0!important;
+ min-height:0!important;
+ margin:0!important;
+ padding:0!important;
+}
+#svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-copy strong{
+ font-size:14.8px!important;
+ font-weight:540!important;
+ line-height:1.3!important;
+ letter-spacing:-.015em!important;
+ color:var(--text)!important;
+ white-space:nowrap!important;
+}
+#svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-copy small{display:none!important}
+html[data-theme="dark"] #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){
+ background:rgba(43,43,46,.96)!important;
+ border-color:rgba(255,255,255,.16)!important;
+ box-shadow:0 10px 30px rgba(0,0,0,.28)!important;
+}
+@media(max-width:360px){
+ #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){right:10px!important;width:min(246px,calc(100% - 20px))!important}
 }

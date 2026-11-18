@@ -13,6 +13,6 @@ test('saved notebook notes keep thumbnail and copy on a single horizontal row', 
   assert.match(rule, /display:flex!important/);
   assert.match(rule, /flex-direction:row!important/);
   assert.match(rule, /align-items:center!important/);
-  assert.match(css, /\.note-open > \.note-paper-preview\{[\s\S]*?width:46px!important/);
-  assert.match(html, /assets\/seyveo-notebook-page\.css\?v=4/);
+  assert.match(css, /\.note-open > \.note-paper-preview\{[\s\S]*?width:54px!important/);
+  assert.match(html, /assets\/seyveo-notebook-page\.css\?v=5/);
 });
