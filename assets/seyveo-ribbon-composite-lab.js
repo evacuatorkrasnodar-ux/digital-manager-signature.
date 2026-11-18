@@ -5,6 +5,9 @@
 (() => {
   'use strict';
   const params = new URLSearchParams(location.search);
+  // Controlled comparison: real diffuse frosting on the pale theme. The
+  // approved default remains unchanged until its material is confirmed.
+  const mattePreview = params.get('sayvi-matte') === '1';
   if (params.get('sayvi-engine') === 'image' ||
       params.get('sayvi-engine') === 'legacy' ||
       params.get('sayvi-ribbon') === '0' ||
@@ -129,6 +132,18 @@
       ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
       ctx.drawImage(field, 0, 0, resolution, resolution);
       ctx.restore();
+
+      if (mattePreview && document.documentElement.dataset.theme === 'light') {
+        // A milky subsurface scattering layer turns clear polished glass into
+        // frosted velvet. Source-atop keeps the exact petal transparency,
+        // sharp openings and outer silhouette pixel-identical.
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-atop';
+        ctx.globalAlpha = .25;
+        ctx.fillStyle = '#dcebe8';
+        ctx.fillRect(0, 0, resolution, resolution);
+        ctx.restore();
+      }
     };
 
     // Show the replacement only after the first real composite exists.
@@ -157,11 +172,15 @@
         --sv-ribbon-light:drop-shadow(0 6px 13px rgba(56,116,114,.18));
         --sv-ribbon-soft-glass:brightness(.97) saturate(1.06);
       }
+      html.sv-ribbon-composite-ready.sv-ribbon-matte-preview[data-theme="light"] #orb > .sv-ribbon-glass-composite {
+        --sv-ribbon-soft-glass:brightness(1.01) saturate(.94);
+      }
       html.sv-ribbon-composite-ready #orb::before {opacity:.17}
       html.sv-ribbon-composite-ready #orb::after {opacity:.09}
     `;
     document.head.appendChild(style);
     document.documentElement.classList.add('sv-ribbon-composite-ready');
+    if (mattePreview) document.documentElement.classList.add('sv-ribbon-matte-preview');
 
     let lastTime = -Infinity;
     let startTime = null;
