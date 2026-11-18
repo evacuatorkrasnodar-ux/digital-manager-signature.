@@ -35,6 +35,33 @@
     html.sv-ribbon-preview[data-theme="light"] #orb #plasmaVisual {
       --sv-ribbon-light: drop-shadow(0 6px 13px rgba(77,129,130,.20));
     }
+    /* A very slow liquid-pearl current inside the sculpted glass ribbons.
+       Multiple broad caustics drift independently without moving the silhouette. */
+    html.sv-ribbon-preview #orb::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: .46;
+      background:
+        radial-gradient(ellipse 38% 44% at 27% 51%,
+          rgba(75,138,140,.52) 0%, rgba(122,183,181,.24) 48%, transparent 85%),
+        radial-gradient(ellipse 45% 50% at 75% 45%,
+          rgba(255,255,255,.82) 0%, rgba(235,255,252,.30) 47%, transparent 84%),
+        radial-gradient(ellipse 42% 37% at 48% 76%,
+          rgba(90,158,158,.36) 0%, rgba(178,220,214,.15) 47%, transparent 88%);
+      background-size: 142% 127%, 133% 146%, 152% 131%;
+      background-position: 8% 17%, 85% 74%, 31% 93%;
+      -webkit-mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
+      mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
+      mix-blend-mode: soft-light;
+      animation: sv-ribbon-liquid-flow 12.6s cubic-bezier(.4,0,.6,1) infinite alternate;
+    }
+    html.sv-ribbon-preview[data-theme="light"] #orb::before {
+      opacity: .43;
+      mix-blend-mode: multiply;
+    }
     html.sv-ribbon-preview #orb::after {
       content: "";
       position: absolute;
@@ -62,8 +89,16 @@
     html.sv-ribbon-preview #orb.seyveo-presence-listening #plasmaVisual {
       animation-duration: 3.5s;
     }
+    html.sv-ribbon-preview #orb.seyveo-presence-listening::before {
+      opacity: .54;
+      animation-duration: 6.4s;
+    }
     html.sv-ribbon-preview #orb.seyveo-presence-speaking #plasmaVisual {
       animation-duration: 2.5s;
+    }
+    html.sv-ribbon-preview #orb.seyveo-presence-speaking::before {
+      opacity: .65;
+      animation-duration: 4.7s;
     }
     html.sv-ribbon-preview #orb.seyveo-presence-listening::after,
     html.sv-ribbon-preview #orb.seyveo-presence-speaking::after {
@@ -98,6 +133,20 @@
       0%,100% {filter: var(--sv-ribbon-light) brightness(.985) saturate(.96)}
       52% {filter: var(--sv-ribbon-light) brightness(1.065) saturate(1.10)}
     }
+    @keyframes sv-ribbon-liquid-flow {
+      0% {
+        background-position: 8% 17%, 85% 74%, 31% 93%;
+      }
+      37% {
+        background-position: 43% 45%, 56% 44%, 68% 63%;
+      }
+      72% {
+        background-position: 75% 81%, 28% 21%, 42% 33%;
+      }
+      100% {
+        background-position: 91% 59%, 10% 67%, 16% 15%;
+      }
+    }
     @keyframes sv-ribbon-glass-caustic {
       0%,8% {background-position: 0% 50%;opacity:.10}
       45%,58% {opacity:.30}
@@ -105,10 +154,12 @@
     }
     @media (prefers-reduced-motion: reduce) {
       html.sv-ribbon-preview #orb #plasmaVisual,
+      html.sv-ribbon-preview #orb::before,
       html.sv-ribbon-preview #orb::after {
         animation: none !important;
         will-change: auto;
       }
+      html.sv-ribbon-preview #orb::before {opacity:.22}
       html.sv-ribbon-preview #orb::after {opacity:.12}
     }
   `;
