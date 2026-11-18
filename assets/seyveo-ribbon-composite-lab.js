@@ -8,6 +8,9 @@
   // The approved velvet material is now standard in the white theme.
   // ?sayvi-matte=0 restores the previous glossy light rendering for QA.
   const matteEnabled = params.get('sayvi-matte') !== '0';
+  // ?sayvi-smoke=100 is a reversible full-strength vapor experiment. The
+  // gaps between plumes stay clear, so the glass never becomes a solid disc.
+  const fullSmoke = params.get('sayvi-smoke') === '100';
   if (params.get('sayvi-engine') === 'image' ||
       params.get('sayvi-engine') === 'legacy' ||
       params.get('sayvi-ribbon') === '0' ||
@@ -100,8 +103,8 @@
           const delta = angle - p.at - seconds * p.speed;
           const wrapped = delta - Math.round(delta);
           const bend = Math.sin(wrapped * 30 + seconds * .14) * .032;
-          const a = wrapped / p.span;
-          const r = (radius - p.radius - bend) / p.depth;
+          const a = wrapped / (p.span * (fullSmoke ? 1.28 : 1));
+          const r = (radius - p.radius - bend) / (p.depth * (fullSmoke ? 1.14 : 1));
           body += p.strength * Math.exp(-.5 * (a * a + r * r));
         }
         const radial = radius * 7.9;
@@ -112,7 +115,7 @@
         fieldPixels[i] = 42;
         fieldPixels[i + 1] = 80;
         fieldPixels[i + 2] = 83;
-        fieldPixels[i + 3] = Math.round(Math.min(255, density * 225));
+        fieldPixels[i + 3] = Math.round(Math.min(255, density * (fullSmoke ? 450 : 225)));
       }
       fieldCtx.putImageData(fieldImage, 0, 0);
     };
@@ -129,9 +132,9 @@
       // the aperture and side air gap stay truly transparent. This also avoids
       // rebuilding a second full-resolution mask every animation frame.
       ctx.save();
-      // Exact intensity from the approved ?sayvi-matte=1 preview. Do not
-      // change density between its link and the ordinary Home page.
-      ctx.globalAlpha = .78;
+      // The ordinary Home stays pixel-matched to the approved velvet look.
+      // In the explicit experiment the plume reaches full opacity.
+      ctx.globalAlpha = fullSmoke ? 1 : .78;
       ctx.globalCompositeOperation = 'source-atop';
       ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
       ctx.drawImage(field, 0, 0, resolution, resolution);
