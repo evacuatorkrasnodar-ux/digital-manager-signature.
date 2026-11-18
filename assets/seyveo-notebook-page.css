@@ -348,7 +348,7 @@
  #svWorkShell[data-active="notes"] #notesDialog #svNotebookCreateTiles .paper-choice-icon{border-radius:17px!important}
 }
 
-/* Notebook · three direct 50px actions in the unused permanent header area.
+/* Notebook · three direct unframed icons in the unused permanent header area.
    Keep one-tap launchers, no extra plus, popover, or shifting page content. */
 #svWorkShell > #svNotebookCreateTiles[hidden]{display:none!important}
 #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){
@@ -411,16 +411,17 @@
  aspect-ratio:1/1!important;
  margin:0!important;
  padding:0!important;
- border:1px solid rgba(213,216,222,.55)!important;
- border-radius:50%!important;
- background:rgba(248,249,251,.92)!important;
- box-shadow:inset 0 1px rgba(255,255,255,.96),0 0 0 .55px rgba(172,177,188,.16)!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
  color:var(--text)!important;
 }
 #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-icon svg{
  display:block!important;
- width:28px!important;
- height:28px!important;
+ width:36px!important;
+ height:36px!important;
  fill:none!important;
  stroke:currentColor!important;
  pointer-events:none!important;
@@ -452,8 +453,8 @@ html[data-theme="dark"] #svWorkShell[data-active="notes"] > #svNotebookCreateTil
  box-shadow:none!important;
 }
 html[data-theme="dark"] #svWorkShell[data-active="notes"] > #svNotebookCreateTiles .paper-choice-icon{
- background:#38383A!important;
- border-color:rgba(255,255,255,.18)!important;
+ background:transparent!important;
+ border-color:transparent!important;
 }
 @media(max-width:360px){
  #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){width:min(300px,calc(100% - 20px))!important;gap:3px!important}
