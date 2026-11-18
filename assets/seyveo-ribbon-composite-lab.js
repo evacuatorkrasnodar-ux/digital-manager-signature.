@@ -134,24 +134,22 @@
       // as the mask. There is no extra downsampled edge or double-alpha pass:
       // the aperture and side air gap stay truly transparent. This also avoids
       // rebuilding a second full-resolution mask every animation frame.
-      ctx.save();
-      // The ordinary Home stays pixel-matched to the approved velvet look.
-      // In the explicit experiment the plume reaches full opacity.
-      ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = 'source-atop';
-      ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
-      ctx.drawImage(field, 0, 0, resolution, resolution);
-      ctx.restore();
-
       if (lightMatte) {
-        // A milky subsurface scattering layer turns clear polished glass into
-        // frosted velvet. Source-atop keeps the exact petal transparency,
-        // sharp openings and outer silhouette pixel-identical.
+        // True milky-white fill under the glass: no distinguishable smoke
+        // pockets. Source-atop retains the ribbon silhouette and clear holes.
         ctx.save();
         ctx.globalCompositeOperation = 'source-atop';
-        ctx.globalAlpha = .25;
-        ctx.fillStyle = '#dcebe8';
+        ctx.globalAlpha = .94;
+        ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, resolution, resolution);
+        ctx.restore();
+      } else {
+        // Keep the original colored vapour behavior for the dark theme.
+        ctx.save();
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-atop';
+        ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
+        ctx.drawImage(field, 0, 0, resolution, resolution);
         ctx.restore();
       }
 
