@@ -112,10 +112,9 @@
         const detail = noise(angle * 16 - seconds * .20, radial * 2.15, 16);
         const cloud = Math.max(.12, Math.min(1, (broad * .65 + detail * .35 - .27) * 2.5));
         const density = Math.min(1, body) * ring * cloud;
-        const neutralMatte = matteEnabled && document.documentElement.dataset.theme === 'light';
-        fieldPixels[i] = neutralMatte ? 58 : 42;
-        fieldPixels[i + 1] = neutralMatte ? 76 : 80;
-        fieldPixels[i + 2] = neutralMatte ? 107 : 83;
+        fieldPixels[i] = 42;
+        fieldPixels[i + 1] = 80;
+        fieldPixels[i + 2] = 83;
         fieldPixels[i + 3] = Math.round(Math.min(255, density * (fullSmoke ? 450 : 225)));
       }
       fieldCtx.putImageData(fieldImage, 0, 0);
@@ -127,11 +126,7 @@
       const lightMatte = matteEnabled &&
         document.documentElement.dataset.theme === 'light';
       ctx.clearRect(0, 0, resolution, resolution);
-      // Remove the green pigment from the original artwork before adding
-      // neutral pearl smoke. This preserves its geometry and alpha exactly.
-      if (lightMatte) ctx.filter = 'grayscale(1) sepia(.40) hue-rotate(167deg) saturate(1.55) brightness(1.025)';
       ctx.drawImage(image, 0, 0, resolution, resolution);
-      ctx.filter = 'none';
       // A source-atop blend uses the sculpture's EXISTING full-resolution alpha
       // as the mask. There is no extra downsampled edge or double-alpha pass:
       // the aperture and side air gap stay truly transparent. This also avoids
@@ -152,7 +147,7 @@
         ctx.save();
         ctx.globalCompositeOperation = 'source-atop';
         ctx.globalAlpha = .25;
-        ctx.fillStyle = '#dce8f5';
+        ctx.fillStyle = '#dcebe8';
         ctx.fillRect(0, 0, resolution, resolution);
         ctx.restore();
       }
@@ -179,12 +174,12 @@
                   sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
       }
       html.sv-ribbon-composite-ready[data-theme="light"] #orb > .sv-ribbon-glass-composite {
-        /* Neutral pearl material for the white theme; no green cast. */
-        --sv-ribbon-light:drop-shadow(0 6px 13px rgba(70,79,94,.17));
+        /* Retain the approved natural tint of the glass in the white theme. */
+        --sv-ribbon-light:drop-shadow(0 6px 13px rgba(56,116,114,.18));
         --sv-ribbon-soft-glass:brightness(.97) saturate(1.06);
       }
       html.sv-ribbon-composite-ready.sv-ribbon-matte-velvet[data-theme="light"] #orb > .sv-ribbon-glass-composite {
-        --sv-ribbon-soft-glass:brightness(1.01) saturate(1.05);
+        --sv-ribbon-soft-glass:brightness(1.01) saturate(.94);
       }
       html.sv-ribbon-composite-ready #orb::before {opacity:.17}
       html.sv-ribbon-composite-ready #orb::after {opacity:.09}
