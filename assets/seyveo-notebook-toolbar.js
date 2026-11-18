@@ -47,7 +47,9 @@
  buttons.forEach((button,index)=>{
   button.className='sv-newdock-button';
   const key=names[index];
-  button.innerHTML=icon(icons[key]);
+  button.innerHTML=key==='sayvi'
+   ?'<img class="sv-newdock-potok" src="assets/seyveo-potok.svg?v=1" alt="" aria-hidden="true" draggable="false">'
+   :icon(icons[key]);
   button.dataset.svAction=key;
   button.setAttribute('data-sv-active','false');
  });
