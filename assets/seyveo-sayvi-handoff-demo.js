@@ -1107,21 +1107,37 @@
     leaveEmptySphere({animate:stillHome});
   }
   function scheduleEmptySphereSync(delay=260){
-    syncHomeCardPresence();
+    // A review-card return changes dozens of descendant classes in one burst.
+    // Keep the first scheduled reconciliation: resetting its timer for every
+    // mutation could indefinitely postpone the sphere on slower iPhones.
     // Route changes take priority over the normal card-observer debounce.
     // The pearl dock must begin opening promptly, ahead of the mini orb.
-    if(emptySphere&&!document.hidden&&
+    const urgent=emptySphere&&!document.hidden&&
       (home.hidden||(location.hash&&location.hash!=='#home')||
-       !!document.querySelector('dialog[open]:not(#svHomeFavoritesEditor)')))
-      delay=Math.min(delay,32);
+       !!document.querySelector('dialog[open]:not(#svHomeFavoritesEditor)'));
+    if(urgent)delay=Math.min(delay,32);
+    if(emptySyncTimer&&!urgent)return;
     clearTimeout(emptySyncTimer);
     emptySyncTimer=setTimeout(syncEmptySphere,delay);
   }
   // Card actions update hidden flags. Re-evaluate after the actual outgoing
   // animation has ended, not when a placeholder simply changes text.
   const emptyObserver=new MutationObserver(()=>scheduleEmptySphereSync());
-  emptyObserver.observe(home,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','class']});
-  const emptyRootObserver=new MutationObserver(()=>scheduleEmptySphereSync(180));
+  // Card visibility and the room's DOM moves matter; transient CSS animation
+  // classes do not. Observing every class generated an excessive update storm.
+  emptyObserver.observe(home,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden']});
+  const homeStateFlags=()=>[
+    'sv-review-open','seyveo-conversation','sv-broadcast-onboarding',
+    'sv-broadcast-sheet-open','sv-music-ambient','sv-music-ambient-leaving',
+    'sv-home-empty-sphere'
+  ].map(flag=>root.classList.contains(flag)?'1':'0').join('');
+  let lastHomeStateFlags=homeStateFlags();
+  const emptyRootObserver=new MutationObserver(()=>{
+    const next=homeStateFlags();
+    if(next===lastHomeStateFlags)return;
+    lastHomeStateFlags=next;
+    scheduleEmptySphereSync(180);
+  });
   emptyRootObserver.observe(root,{attributes:true,attributeFilter:['class']});
   for(const name of ['seyveo:cinema-finished','seyveo:route-changed','seyveo:tasks-changed',
     'seyveo:calendar-changed','seyveo:card-visibility-changed','seyveo:home-agenda-visibility-changed',

@@ -61,10 +61,10 @@
   }
   // Only the disc sits below the glass; a single translucent white digit
   // is painted by the Tasks button to avoid a blurry second numeral.
-  if(countUnderlay)countUnderlay.hidden=total===0;
+  if(countUnderlay&&countUnderlay.hidden!==(total===0))countUnderlay.hidden=total===0;
   if(total!==lastCount){lastCount=total;window.dispatchEvent(new CustomEvent('seyveo:review-count',{detail:{count:total}}));}
   // The fixed Home reminder owns the card count; no second copy.
-  if(greetingSubline)greetingSubline.hidden=total>0;
+  if(greetingSubline&&greetingSubline.hidden!==(total>0))greetingSubline.hidden=total>0;
   const demoCount=window.SEYVEO_LIVING_MOMENT?.reviewExamplesActive?.()?
    Number(window.SEYVEO_LIVING_MOMENT?.reviewCount?.())||0:0;
   const demoLabel=demoCount===1?'карточка':demoCount>=2&&demoCount<=4?'карточки':'карточек';
