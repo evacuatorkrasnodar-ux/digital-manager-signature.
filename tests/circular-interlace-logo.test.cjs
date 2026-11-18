@@ -14,12 +14,28 @@ test('Approved circular jade/platinum artwork is preserved byte for byte',()=>{
     '12ed6769c0c6f430b0a64ac1f7ba6a07f19dc8cbe68b88d1e3a51acc90f9158a');
 });
 
-test('Monochrome circular logo has genuine open gaps and no metallic effects',()=>{
+test('Monochrome SVG traces the approved petal silhouette with open gaps',()=>{
   const svg=readFileSync(asset('seyveo-circular-interlace-mono.svg'),'utf8');
-  assert.match(svg,/<circle cx="500" cy="500" r="410"/);
-  assert.equal((svg.match(/stroke="#000" stroke-width="48"/g)||[]).length,2);
-  assert.match(svg,/mask="url\(#seyveo-petal-gaps\)"/);
+  assert.match(svg,/fill-rule="evenodd"/);
+  assert.equal((svg.match(/<path d=/g)||[]).length,3);
   assert.doesNotMatch(svg,/(linearGradient|radialGradient|filter|opacity|<image)/i);
+});
+
+test('Traced vector matches the exact approved artwork mask',async()=>{
+  const approved=await sharp(asset('seyveo-circular-interlace-approved-color.png'))
+    .ensureAlpha().raw().toBuffer({resolveWithObject:true});
+  const svg=await sharp(asset('seyveo-circular-interlace-mono.svg'))
+    .resize(approved.info.width,approved.info.height)
+    .ensureAlpha().raw().toBuffer({resolveWithObject:true});
+  let disagreement=0,ink=0;
+  for(let i=3;i<approved.data.length;i+=4){
+    const source=approved.data[i]>=225;
+    const traced=svg.data[i]>=127;
+    if(source)ink++;
+    if(source!==traced)disagreement++;
+  }
+  assert.ok(ink>300000);
+  assert.ok(disagreement/ink<.016,`SVG must closely follow original petals, disagreement=${disagreement}`);
 });
 
 test('Black and white variants have matching transparent contours at 512px',async()=>{
@@ -39,6 +55,6 @@ test('Black and white variants have matching transparent contours at 512px',asyn
     }
     if(black.data[i+3]===0)empty++;
   }
-  assert.ok(ink>60000,'large readable one-ink mark');
+  assert.ok(ink>55000,'readable one-ink mark at 512px');
   assert.ok(empty>100000,'gaps and outer background must remain transparent');
 });

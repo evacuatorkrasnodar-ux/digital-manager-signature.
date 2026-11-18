@@ -9,7 +9,7 @@ const source=fs.readFileSync(path.join(assets,'seyveo-circular-interlace-mono.sv
 async function build(){
   const rendered={};
   for(const [label,color] of [['black','#111718'],['white','#ffffff']]){
-    const svg=source.replace('fill="#111718" mask=',`fill="${color}" mask=`);
+    const svg=source.replace('<g fill="#111718"','<g fill="'+color+'"');
     if(svg===source&&label==='white')throw Error('Could not recolor monochrome mark');
     await sharp(Buffer.from(svg),{density:600})
       .resize(512,512,{kernel:'lanczos3'})
