@@ -351,14 +351,15 @@
       // Broad studio illumination, not noise, smoke, or moving fog.
       const pearl=Math.exp(-((u-.34)**2/.23+(v-.20)**2/.19));
       const reflected=Math.exp(-((u-.73)**2/.12+(v-.76)**2/.21));
-      const shade=.49+.18*pearl+.10*reflected+.055*(1-v);
+      const shade=.42+.22*pearl+.13*reflected+.075*(1-v);
       const nearEdge=1-Math.min(alphaAt(x-4,y),alphaAt(x+4,y),
         alphaAt(x,y-4),alphaAt(x,y+4));
-      const bevel=Math.pow(Math.max(0,nearEdge),.6)*.27;
-      const shine=shade+bevel;
-      data[i]=clamp(151+104*shine);
-      data[i+1]=clamp(184+86*shine);
-      data[i+2]=clamp(188+83*shine);
+      const bevel=Math.pow(Math.max(0,nearEdge),.6);
+      const shine=shade+bevel*.18;
+      const rimShadow=bevel*.10;
+      data[i]=clamp(128+90*shine-40*rimShadow);
+      data[i+1]=clamp(163+88*shine-37*rimShadow);
+      data[i+2]=clamp(170+84*shine-32*rimShadow);
       data[i+3]=originalAlpha[y*size+x];
     }
     context.putImageData(frame,0,0);
