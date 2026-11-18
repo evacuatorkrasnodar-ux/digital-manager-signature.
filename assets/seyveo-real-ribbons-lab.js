@@ -1,17 +1,18 @@
-/* SEYVEO · real swept-ribbon mesh. Modes 1–4 are visual controls;
-   ?sayvi-model=5 applies the OLD White Velvet principle: dark moving
-   inner smoke, thin frosted surface, clear polished glass at the rim.
+/* SEYVEO · real swept-ribbon mesh. Modes 1–5 remain comparison previews;
+   ?sayvi-model=6 uses the ORIGINAL Sayvi pearl sphere's material math,
+   adapted from a round 2D lens to normals/UVs of four physical ribbons.
    Four watertight 3D bands exported from Blender with physical depth,
    normal-based pearl/frost material and gentle motion. The public home
    keeps its established Sayvi picture unless this experiment is enabled. */
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6')return;
   const layeredGlass=mode!=='1';
-  const velvetFlow=mode==='3'||mode==='4'||mode==='5';
+  const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6';
   const smokeBottle=mode==='4'||mode==='5';
   const darkVelvet=mode==='5';
+  const originalMaterial=mode==='6';
   const orb=document.getElementById('orb');
   const hero=document.getElementById('plasmaVisual');
   const home=document.getElementById('homePage');
@@ -63,6 +64,7 @@
     uniform float uVelvetFlow;
     uniform float uSmokeBottle;
     uniform float uDarkVelvet;
+    uniform float uOriginalMaterial;
 
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p){
@@ -95,6 +97,64 @@
       float facing=clamp(abs(dot(n,eye)),0.,1.);
       float fresnel=pow(1.-facing,2.25);
       vec2 q=vPosition.xy;
+      if(uOriginalMaterial>.5){
+        // This is the old seyveo-sayvi-dock-sphere.js White Velvet shader:
+        // same pearl/glass/depth palette, twin advected fBM refraction,
+        // moving cloud, Fresnel and two studio highlights. The necessary
+        // adaptation is replacing the round sphere's artificial normal and
+        // screen UV with real ribbon normals and intrinsic ribbon UV.
+        vec2 oldQ=(vFlowUv-.5)*2.;
+        float t=uTime;
+        float speech=uState>2.5?abs(sin(t*5.1)*sin(t*2.5)):1.;
+        float active=uEnergy*(.73+.27*speech);
+        float z=facing;
+        vec2 drift=vec2(sin(t*.24),cos(t*.22))*.21;
+        vec2 refractPos=oldQ*(1.12+.25*(1.-z));
+        float n1=fbm(refractPos*2.2+drift+vec2(t*.044,-t*.03));
+        float n2=fbm(refractPos*3.-drift*.7+vec2(-t*.031,t*.039));
+        float fluid=smoothstep(.27,.77,n1*.65+n2*.35);
+        vec3 pearl=vec3(.95,.976,.993);
+        vec3 glass=vec3(.75,.84,.90);
+        vec3 depthColor=vec3(.43,.59,.71);
+        float depth=pow(clamp(length(oldQ),0.,1.),1.8);
+        float clearEdge=smoothstep(.43,.96,abs(vFlowUv.y-.5)*2.);
+        float matteCore=1.-clearEdge;
+        float filament=pow(max(0.,1.-abs(sin(oldQ.x*5.1+oldQ.y*3.2+
+                        n2*1.1+t*.087))),11.);
+
+        if(uLayer<.5){
+          float fog=smoothstep(.31,.68,n1*.60+n2*.40);
+          vec3 inside=mix(vec3(.29,.47,.56),vec3(.68,.82,.87),fog*.82);
+          inside=mix(inside,vec3(.24,.43,.51),filament*.40);
+          gl_FragColor=vec4(clamp(inside,0.,1.),.19+.29*fog*matteCore);
+          return;
+        }
+
+        vec3 color=mix(pearl,glass,depth*.63);
+        color=mix(color,depthColor,(1.-fluid)*(.19+active*.10));
+        color+=vec3(.10,.12,.13)*fluid*.20;
+        float cloud=gaussian(oldQ,vec2(sin(t*.31)*.09,cos(t*.27)*.09),10.);
+        float beating=.75+.25*sin(t*(uState>2.5?8.:uState>.5?4.:1.6));
+        color+=vec3(.11,.15,.17)*cloud*beating*(.7+active*.75);
+        vec3 lightA=normalize(vec3(-.5,.63,1.));
+        vec3 lightB=normalize(vec3(.68,-.30,1.));
+        float specA=pow(max(dot(n,lightA),0.),55.);
+        float specB=pow(max(dot(n,lightB),0.),105.);
+        // The original sphere's bright studio spots are softened because
+        // four truly curved strips catch them more frequently than a disc.
+        color+=vec3(.53,.55,.57)*specA*.27;
+        color+=vec3(.14,.26,.31)*specB*.27;
+        color=mix(color,depthColor,fresnel*.12);
+        color+=vec3(.16,.22,.24)*smoothstep(.84,1.,length(oldQ))*.055;
+        color+=vec3(.31,.33,.35)*gaussian(oldQ,vec2(-.34,.57),35.)*.27;
+        color+=vec3(.09,.15,.18)*gaussian(oldQ,vec2(.49,-.58),80.)*.27;
+        // The moving dark strand is UNDER the pearl frost, not a glow.
+        color=mix(color,depthColor,filament*matteCore*.12);
+        color=mix(color,pearl,matteCore*.12);
+        float alpha=mix(.80,.355,clearEdge)+fresnel*.075;
+        gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.22,.94));
+        return;
+      }
       if(uLayeredGlass>.5&&uLayer<.5){
         // Efficient first pass: translucent inner/back surfaces only.
         vec3 inner=mix(vec3(.43,.66,.69),vec3(.73,.90,.91),facing*.46);
@@ -346,7 +406,7 @@
     });
   }
 
-  function setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet){
+  function setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial){
     const program=gl.createProgram();
     gl.attachShader(program,compile(gl,gl.VERTEX_SHADER,vertexSource));
     gl.attachShader(program,compile(gl,gl.FRAGMENT_SHADER,fragmentSource));
@@ -374,7 +434,8 @@
       layer:gl.getUniformLocation(program,'uLayer'),
       velvet:gl.getUniformLocation(program,'uVelvetFlow'),
       smoke:gl.getUniformLocation(program,'uSmokeBottle'),
-      darkVelvet:gl.getUniformLocation(program,'uDarkVelvet')
+      darkVelvet:gl.getUniformLocation(program,'uDarkVelvet'),
+      original:gl.getUniformLocation(program,'uOriginalMaterial')
     };
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
@@ -403,6 +464,7 @@
       gl.uniform1f(u.velvet,velvetFlow?1:0);
       gl.uniform1f(u.smoke,smokeBottle?1:0);
       gl.uniform1f(u.darkVelvet,darkVelvet?1:0);
+      gl.uniform1f(u.original,originalMaterial?1:0);
       if(layeredGlass){
         // Back surfaces scatter a little light through the foreground.
         // Front surfaces then occlude according to real 3D depth.
@@ -437,7 +499,7 @@
         premultipliedAlpha:false,powerPreference:'low-power'
       });
       if(!gl)throw Error('iPhone WebGL unsupported');
-      const render=setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet);
+      const render=setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial);
       const style=document.createElement('style');
       style.textContent=`
         #orb > .sv-sayvi-real3d-canvas {
