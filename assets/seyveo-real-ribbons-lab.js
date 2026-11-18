@@ -12,10 +12,10 @@
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9'&&mode!=='10'&&mode!=='11'&&mode!=='12'&&mode!=='13'&&mode!=='14')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9'&&mode!=='10'&&mode!=='11'&&mode!=='12'&&mode!=='13'&&mode!=='14'&&mode!=='15')return;
   const layeredGlass=mode!=='1';
-  const cleanGlass=mode==='12'||mode==='13'||mode==='14';
-  const independentPetals=mode==='14';
+  const cleanGlass=mode==='12'||mode==='13'||mode==='14'||mode==='15';
+  const independentPetals=mode==='14'||mode==='15';
   const precisePetals=mode==='13';
   const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6'||mode==='7'||mode==='8';
   const smokeBottle=mode==='4'||mode==='5';
@@ -747,7 +747,8 @@
   // All ribbons are baked into mesh coordinates. Blender stores Z-up in glTF
   // as Y-up, so restore the app's expected XY face plane during decoding.
   async function loadRibbons(useFlowModel){
-    const source=independentPetals?'assets/seyveo-independent-ribbons-v1.glb?v=1':
+    const source=mode==='15'?'assets/seyveo-independent-ribbons-v5.glb?v=1':
+      independentPetals?'assets/seyveo-independent-ribbons-v1.glb?v=1':
       precisePetals?'assets/seyveo-petals-precise-v1.glb?v=1':
       useFlowModel?'assets/seyveo-real-ribbons-uv.glb?v=1':
       'assets/seyveo-real-ribbons.glb?v=1';
@@ -835,7 +836,7 @@
       clean:gl.getUniformLocation(program,'uCleanGlass'),
       approved:gl.getUniformLocation(program,'uApprovedContour')
     };
-    if(independentPetals){
+    if(mode==='14'){
       const mask=gl.createTexture();
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D,mask);
@@ -878,7 +879,7 @@
       gl.uniform1f(u.archiveSilk,archiveSilk?1:0);
       gl.uniform1f(u.threads,visibleThreads?1:0);
       gl.uniform1f(u.clean,cleanGlass?1:0);
-      gl.uniform1f(u.approved,independentPetals?1:0);
+      gl.uniform1f(u.approved,mode==='14'?1:0);
       if(independentPetals){
         // One front-surface pass for four interwoven ribbons. Opaque rear
         // passes created dark rectangular overlaps in the aperture.
