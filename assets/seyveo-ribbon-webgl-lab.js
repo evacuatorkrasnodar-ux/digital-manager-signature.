@@ -83,41 +83,55 @@
       float n2=fbm(refractPos*3.-drift*.7+vec2(-uTime*.031,uTime*.039));
       float fluid=smoothstep(.27,.77,n1*.65+n2*.35);
 
-      // Alternate matte/frosted and smooth transparent glass like Sayvi.
+      // The HOME Sayvi's White Velvet material: mostly milky frost, with
+      // narrow smooth-glass patches and pearl/teal silk deep inside.
       float glassFlow=fbm(q*2.2+vec2(vBlade*1.7,uTime*.035));
-      float smoothGlass=smoothstep(.34,.79,
-        .5+.25*sin(q.x*6.0+q.y*3.7+vBlade*1.6)+.25*glassFlow);
-      smoothGlass=mix(smoothGlass,.78,clamp(vSide,0.,1.));
+      float smoothGlass=.12+.70*smoothstep(.64,.89,
+        .45+.16*sin(q.x*6.0+q.y*3.7+vBlade*1.6)+.28*glassFlow);
+      smoothGlass=mix(smoothGlass,.85,clamp(vSide,0.,1.));
       float matte=1.-smoothGlass;
-      vec3 pearl=vec3(.95,.976,.993);
-      vec3 glass=vec3(.75,.84,.90);
-      vec3 depthColor=vec3(.43,.59,.71);
+      vec3 pearl=vec3(.98,.995,.993);
+      vec3 glass=vec3(.79,.88,.88);
+      vec3 depthColor=vec3(.45,.63,.64);
       float depth=pow(clamp(length(q),0.,1.),1.8);
-      vec3 color=mix(pearl,glass,depth*.63);
-      color=mix(color,depthColor,(1.-fluid)*(.19+uEnergy*.10));
-      color+=vec3(.10,.12,.13)*fluid*.20;
+      vec3 color=mix(pearl,glass,depth*.36);
+      color=mix(color,depthColor,(1.-fluid)*(.10+uEnergy*.06));
+      color+=vec3(.05,.09,.085)*fluid*.20;
 
       float cloud=gaussian(q,vec2(sin(uTime*.31)*.09,cos(uTime*.27)*.09),10.);
       float beating=.75+.25*sin(uTime*(uState>2.5?8.:uState>.5?4.:1.6));
-      color+=vec3(.11,.15,.17)*cloud*beating*(.7+uEnergy*.75);
+      color+=vec3(.10,.15,.14)*cloud*beating*(.55+uEnergy*.65);
 
-      vec3 lightA=normalize(vec3(-.5,.63,1.));
-      vec3 lightB=normalize(vec3(.68,-.30,1.));
+      // The old animated filament and silk: a soft translucent thread,
+      // continuously refracted INSIDE the real ribbon surface.
+      float silk=fbm(q*3.7+drift*.6+vec2(uTime*.03,-uTime*.02));
+      color=mix(color,vec3(.48,.68,.67),silk*(.07+.07*smoothGlass));
+      float filament=pow(max(0.,1.-abs(sin(q.x*5.2+q.y*3.1+
+        vBlade*.95+silk*.8+uTime*.085))),12.);
+      color=mix(color,vec3(.38,.57,.57),filament*.12);
+
+      // Broad frontal studio lights produce a white pearl highlight rather
+      // than the dark metallic roll-off seen in the first mesh draft.
+      vec3 lightA=normalize(vec3(-.19,.25,1.));
+      vec3 lightB=normalize(vec3(.33,-.19,1.));
       float dotA=max(dot(n,lightA),0.);
       float dotB=max(dot(n,lightB),0.);
-      float specMatte=pow(dotA,16.)*.38;
-      float specGlass=pow(dotA,100.)*1.2+pow(dotB,120.)*.45;
-      color+=vec3(.53,.55,.57)*mix(specMatte,specGlass,smoothGlass);
-      color+=vec3(.14,.26,.31)*pow(dotB,40.)*(.25+.55*smoothGlass);
-      color=mix(color,depthColor,fresnel*(.20+.20*smoothGlass));
-      color+=vec3(.31,.33,.35)*gaussian(q,vec2(-.34,.57),35.)*.43;
-      color+=vec3(.09,.15,.18)*gaussian(q,vec2(.49,-.58),80.)*.53;
-      color*=1.-clamp(vSide,0.,1.)*.20;
+      float specMatte=pow(dotA,18.)*.26;
+      float specGlass=pow(dotA,86.)*.75+pow(dotB,90.)*.23;
+      color+=vec3(.23,.28,.27)*mix(specMatte,specGlass,smoothGlass);
+      color+=vec3(.06,.16,.15)*pow(dotB,35.)*(.3+.50*smoothGlass);
+      color=mix(color,depthColor,fresnel*(.17+.14*smoothGlass));
+      color+=vec3(.12,.15,.14)*gaussian(q,vec2(-.34,.57),35.)*.40;
+      color+=vec3(.06,.10,.09)*gaussian(q,vec2(.49,-.58),80.)*.36;
+      color=mix(color,vec3(.47,.66,.66),clamp(vSide,0.,1.)*.23);
+      color=pow(clamp(color,0.,1.),vec3(.89));
 
-      float alpha=mix(.89,.66,smoothGlass);
-      alpha+=fresnel*.20;
-      alpha=mix(alpha,.78,clamp(vSide,0.,1.));
-      gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.45,.98));
+      // Frosted ribbons carry and scatter light; only polished sections are
+      // notably translucent. Edgewalls have a visible, glassy teal rim.
+      float alpha=mix(.965,.75,smoothGlass);
+      alpha+=fresnel*.08;
+      alpha=mix(alpha,.92,clamp(vSide,0.,1.));
+      gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.68,.99));
     }
   `;
 
