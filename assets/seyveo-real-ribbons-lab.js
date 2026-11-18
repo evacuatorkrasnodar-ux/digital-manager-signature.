@@ -273,7 +273,7 @@
       float cz=cos(uRotation.z),sz=sin(uRotation.z);
       mat3 rx=mat3(1.,0.,0.,0.,cx,sx,0.,-sx,cx);
       mat3 ry=mat3(cy,0.,-sy,0.,1.,0.,sy,0.,cy);
-      mat3 rz=mat3(cz,sz,0.,-sz,cz,0.,0.,1.);
+      mat3 rz=mat3(cz,sz,0.,-sz,cz,0.,0.,0.,1.);
       mat3 r=rz*ry*rx;
       // Breathing is barely visible, but makes the model feel inhabited.
       float breath=1.+.0045*sin(uTime*.62);
