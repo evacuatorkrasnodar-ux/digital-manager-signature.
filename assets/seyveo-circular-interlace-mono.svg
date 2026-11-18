@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" role="img" aria-label="SEYVEO — круговой знак из переплетённых лепестков">
+  <title>SEYVEO</title>
+  <!-- A one-ink companion to the approved jade/platinum circular logo.
+       Two actual transparent slits separate the three visible ribbon planes.
+       Their 48px width survives reduction to 24px buttons and monochrome print. -->
+  <defs>
+    <mask id="seyveo-petal-gaps" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+      <circle cx="500" cy="500" r="410" fill="#fff"/>
+      <path d="M335 72 C282 185 322 294 462 362 C624 441 747 467 798 616 C829 697 814 741 878 792"
+            fill="none" stroke="#000" stroke-width="48" stroke-linecap="round"/>
+      <path d="M70 594 C200 568 301 644 402 714 C524 798 601 791 642 935"
+            fill="none" stroke="#000" stroke-width="48" stroke-linecap="round"/>
+    </mask>
+  </defs>
+  <circle cx="500" cy="500" r="410" fill="#111718" mask="url(#seyveo-petal-gaps)"/>
+</svg>
