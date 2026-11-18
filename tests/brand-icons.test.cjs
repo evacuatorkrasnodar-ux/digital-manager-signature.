@@ -3,12 +3,13 @@ const assert = require('node:assert/strict');
 const { existsSync, readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const { runInNewContext } = require('node:vm');
+const { createHash } = require('node:crypto');
 const sharp = require('sharp');
 
 const root = join(__dirname, '..');
 const text = (name) => readFileSync(join(root, name), 'utf8');
 
-test('SEYVEO uses the emerald velvet PWA icon and bare twin-wave browser favicon', () => {
+test('SEYVEO restores the November 16 PWA icon without changing browser favicons', () => {
   const manifest = JSON.parse(text('manifest.webmanifest'));
   const page = text('index.html');
   const notifications = text('sw.js');
@@ -17,9 +18,8 @@ test('SEYVEO uses the emerald velvet PWA icon and bare twin-wave browser favicon
   assert.deepEqual(
     manifest.icons.map(({ src }) => src.split('?')[0]),
     [
-      'assets/seyveo-pwa-velvet-192.png',
-      'assets/seyveo-pwa-velvet-512.png',
-      'assets/seyveo-pwa-velvet-maskable-512.png',
+      'assets/app-icon.svg',
+      'assets/app-icon-maskable.svg',
     ],
   );
   for (const {src} of manifest.icons) {
@@ -42,10 +42,19 @@ test('SEYVEO uses the emerald velvet PWA icon and bare twin-wave browser favicon
   assert.match(tabSvg, /prefers-color-scheme:dark/);
   assert.equal((tabSvg.match(/<path\b/g) || []).length, 2);
   assert.doesNotMatch(tabSvg, /<(?:rect|circle)\b/);
-  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-pwa-velvet-apple-180\.png\?v=3/);
+  assert.match(page, /rel="apple-touch-icon"[^>]+apple-touch-icon\.png\?v=4/);
   assert.match(page, /assets\/seyveo-app-icon-192\.png\?v=5/);
   assert.match(notifications, /assets\/seyveo-app-icon-192\.png/);
-  assert.doesNotMatch(page + notifications + JSON.stringify(manifest), /assets\/(?:app-icon(?:-maskable)?\.svg|apple-touch-icon\.png|brand-tile\.svg)/);
+  assert.match(page, /manifest\.webmanifest\?v=19/);
+  const restoredSources = {
+    'app-icon.svg': 'b1811d771ca325830e11b392a1bc3f63c4ceb00a6d033cb642f21e12747465d4',
+    'app-icon-maskable.svg': 'cff181af2ffc363f4290a5cb1aca7cfd8ceac86bb05c257be7ccd769f4ed5f37',
+    'apple-touch-icon.png': 'bf205c9ad256d94268c0c0906cbe73a0df544e845e5af3e0d6d721c042229dec',
+  };
+  for (const [name, expected] of Object.entries(restoredSources)) {
+    const actual = createHash('sha256').update(readFileSync(join(root, 'assets', name))).digest('hex');
+    assert.equal(actual, expected, `${name} must match the November 16 original`);
+  }
 });
 
 test('3D light and dark source icons are kept for native platform packaging', () => {
