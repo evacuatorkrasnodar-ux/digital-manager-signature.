@@ -365,3 +365,8 @@ html[data-theme] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #
 html[data-theme] body #notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save svg{
  stroke:#F2F3F6!important;
 }
+
+/* Keep the five glyphs legible against the approved dark oval. */
+html[data-theme] body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button > svg.sv-newdock-glyph{
+ stroke:currentColor!important;
+}
