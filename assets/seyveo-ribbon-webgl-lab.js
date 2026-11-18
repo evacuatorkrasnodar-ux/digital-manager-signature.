@@ -1,6 +1,7 @@
-/* SEYVEO · original Sayvi pearl shader on real extruded ribbon geometry.
+/* SEYVEO · Sayvi frosted pearl material on a dimensional relief mesh.
    Opt-in experiment: ?sayvi-material=1
-   Reuses the approved four ribbon paths. WebGL1, no third-party dependencies.
+   Builds a curved 3D front and translucent back shell from the EXACT
+   approved four-ribbon silhouette, not an unrelated flat vector outline.
    On shader/geometry failure the established living PNG remains intact. */
 (() => {
   'use strict';
@@ -57,6 +58,7 @@
     uniform float uTime;
     uniform float uEnergy;
     uniform float uState;
+    uniform sampler2D uShape;
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p) {
       vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
@@ -72,6 +74,11 @@
       vec2 d=p-c;return exp(-dot(d,d)*k);
     }
     void main() {
+      // This is a geometry/matcap guide, not an image pasted onto a plane.
+      // The alpha is the actual approved SEYVEO silhouette and the RGB only
+      // gives the material the original pearl/aqua distribution.
+      vec4 reference=texture2D(uShape,vUv);
+      if(reference.a<.025)discard;
       vec2 q=vUv*2.-1.;
       vec3 n=normalize(vNormal);
       vec3 viewDir=normalize(vec3(-vPosition.xy*.12,1.));
@@ -88,7 +95,7 @@
       float glassFlow=fbm(q*2.2+vec2(vBlade*1.7,uTime*.035));
       float smoothGlass=.12+.70*smoothstep(.64,.89,
         .45+.16*sin(q.x*6.0+q.y*3.7+vBlade*1.6)+.28*glassFlow);
-      smoothGlass=mix(smoothGlass,.85,clamp(vSide,0.,1.));
+      smoothGlass=mix(smoothGlass,.82,clamp(vSide,0.,1.));
       float matte=1.-smoothGlass;
       vec3 pearl=vec3(.98,.995,.993);
       vec3 glass=vec3(.79,.88,.88);
@@ -110,16 +117,22 @@
         vBlade*.95+silk*.8+uTime*.085))),12.);
       color=mix(color,vec3(.38,.57,.57),filament*.12);
 
+      // The reference's own glass gradients contain the curvature and
+      // interweaving that a procedural flat tint could not reproduce.
+      // The highlight remains responsive to the REAL mesh normals below.
+      color=mix(color,reference.rgb,.57);
+
       // Broad frontal studio lights produce a white pearl highlight rather
       // than the dark metallic roll-off seen in the first mesh draft.
-      vec3 lightA=normalize(vec3(-.19,.25,1.));
-      vec3 lightB=normalize(vec3(.33,-.19,1.));
+      // Studio reflections travel independently of the slow body turn.
+      vec3 lightA=normalize(vec3(-.19+.17*sin(uTime*.19),.25+.12*cos(uTime*.16),1.));
+      vec3 lightB=normalize(vec3(.33+.14*sin(uTime*.13),-.19+.09*sin(uTime*.21),1.));
       float dotA=max(dot(n,lightA),0.);
       float dotB=max(dot(n,lightB),0.);
-      float specMatte=pow(dotA,18.)*.26;
-      float specGlass=pow(dotA,86.)*.75+pow(dotB,90.)*.23;
-      color+=vec3(.23,.28,.27)*mix(specMatte,specGlass,smoothGlass);
-      color+=vec3(.06,.16,.15)*pow(dotB,35.)*(.3+.50*smoothGlass);
+      float specMatte=pow(dotA,12.)*.33;
+      float specGlass=pow(dotA,78.)*.78+pow(dotB,90.)*.29;
+      color+=vec3(.28,.33,.32)*mix(specMatte,specGlass,smoothGlass);
+      color+=vec3(.06,.19,.17)*pow(dotB,32.)*(.3+.50*smoothGlass);
       color=mix(color,depthColor,fresnel*(.17+.14*smoothGlass));
       color+=vec3(.12,.15,.14)*gaussian(q,vec2(-.34,.57),35.)*.40;
       color+=vec3(.06,.10,.09)*gaussian(q,vec2(.49,-.58),80.)*.36;
@@ -128,10 +141,12 @@
 
       // Frosted ribbons carry and scatter light; only polished sections are
       // notably translucent. Edgewalls have a visible, glassy teal rim.
-      float alpha=mix(.965,.75,smoothGlass);
+      float alpha=mix(.95,.70,smoothGlass);
       alpha+=fresnel*.08;
-      alpha=mix(alpha,.92,clamp(vSide,0.,1.));
-      gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.68,.99));
+      color=mix(color,vec3(.27,.48,.48),clamp(vSide,0.,1.)*.26);
+      alpha=mix(alpha,.21,clamp(vSide,0.,1.));
+      alpha*=smoothstep(.025,.68,reference.a);
+      gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,0.,.99));
     }
   `;
 
@@ -146,69 +161,73 @@
     }
     return shader;
   }
-  function buildGeometry(svgText) {
-    const doc=new DOMParser().parseFromString(svgText,'image/svg+xml');
-    const paths=[...doc.querySelectorAll('path[d]')].slice(0,4);
-    if(paths.length!==4)throw Error('Missing four SEYVEO ribbon paths');
-    const svgNS='http://www.w3.org/2000/svg';
-    const measure=document.createElementNS(svgNS,'svg');
-    measure.setAttribute('viewBox','0 0 800 800');
-    measure.style.cssText='position:fixed;width:0;height:0;opacity:0;pointer-events:none';
-    document.body.appendChild(measure);
-    const out=[];
-    const offsets=[.055,.083,.042,.070];
-    function pointZ(p,i) {
-      const r2=p.x*p.x+p.y*p.y;
-      return offsets[i]+.115*(1.-Math.min(1,r2));
+  async function buildGeometry(image) {
+    if(!image.complete || !image.naturalWidth)await image.decode();
+    const samples=97;
+    const divisions=samples-1;
+    const copy=document.createElement('canvas');
+    copy.width=copy.height=samples;
+    const context=copy.getContext('2d',{willReadFrequently:true});
+    if(!context)throw Error('Cannot reconstruct glass surface');
+    context.clearRect(0,0,samples,samples);
+    context.drawImage(image,0,0,samples,samples);
+    const pixels=context.getImageData(0,0,samples,samples).data;
+    const z=new Float32Array(samples*samples);
+    const luminance=new Float32Array(samples*samples);
+    const alpha=new Float32Array(samples*samples);
+    const at=(x,y)=>Math.min(samples-1,Math.max(0,y))*samples+
+      Math.min(samples-1,Math.max(0,x));
+    for(let y=0;y<samples;y++)for(let x=0;x<samples;x++){
+      const i=y*samples+x,p=i*4;
+      const a=pixels[p+3]/255;
+      const l=(pixels[p]*.213+pixels[p+1]*.715+pixels[p+2]*.072)/255;
+      const nx=x/divisions*2-1,ny=1-y/divisions*2;
+      const radius=Math.hypot(nx,ny);
+      const theta=Math.atan2(ny,nx);
+      // Continuous curved shell, rippling around four overlapping ribbons.
+      // Interior teal cavities sink deeper, opal highlights swell toward us.
+      const dome=.125*(1.-Math.min(1,radius*radius));
+      const braid=.045*Math.sin(theta*4.+radius*5.8+.3);
+      z[i]=a*(.075+dome+braid+.22*(l-.68));
+      luminance[i]=l;
+      alpha[i]=a;
     }
-    function vertex(p,i,side=0,normalOverride=null,back=false) {
-      const z=pointZ(p,i)-(back ? .037 : 0);
-      const n=normalOverride||[p.x*.23,p.y*.23,back?-1:1];
-      const mag=Math.hypot(...n)||1;
-      out.push(p.x,p.y,z,n[0]/mag,n[1]/mag,n[2]/mag,
-        (p.x+1)*.5,(p.y+1)*.5,i,side);
-    }
-    // Draw far leaves first so their translucent overlaps remain visible.
-    for(const i of [2,0,3,1]) {
-      const path=document.createElementNS(svgNS,'path');
-      path.setAttribute('d',paths[i].getAttribute('d'));
-      measure.appendChild(path);
-      const length=path.getTotalLength();
-      const count=Math.min(160,Math.max(105,Math.ceil(length/8)));
-      const points=[];
-      for(let j=0;j<count;j++) {
-        const p=path.getPointAtLength(length*j/count);
-        points.push({x:(p.x-374)/350,y:(355-p.y)/350});
+    const vertices=[];
+    const makeShell=(back)=>{
+      for(let y=0;y<samples;y++)for(let x=0;x<samples;x++){
+        const i=y*samples+x;
+        const xx=x/divisions*2-1,yy=1-y/divisions*2;
+        const left=z[at(x-1,y)],right=z[at(x+1,y)];
+        const up=z[at(x,y-1)],down=z[at(x,y+1)];
+        const dzdx=(right-left)*divisions*.25;
+        const dzdy=(up-down)*divisions*.25;
+        let nx=-dzdx,ny=-dzdy,nz=1;
+        const norm=Math.hypot(nx,ny,nz);
+        nx/=norm;ny/=norm;nz/=norm;
+        const w=alpha[i];
+        vertices.push(xx,yy,z[i]+(back?-.062*(.25+w):0),
+          back?-nx:nx,back?-ny:ny,back?-nz:nz,
+          x/divisions,1-y/divisions,luminance[i],back?1:0);
       }
-      path.remove();
-      let area=0;
-      for(let j=0;j<points.length;j++) {
-        const a=points[j],b=points[(j+1)%points.length];
-        area+=a.x*b.y-b.x*a.y;
-      }
-      if(area<0)points.reverse();
-      const flat=points.flatMap(p=>[p.x,p.y]);
-      const triangles=window.seyveoEarcut(flat,null,2);
-      if(!triangles.length)throw Error('Could not triangulate ribbon '+i);
-      for(let t=0;t<triangles.length;t+=3) {
-        vertex(points[triangles[t]],i);
-        vertex(points[triangles[t+1]],i);
-        vertex(points[triangles[t+2]],i);
-      }
-      // Thin physical edgewalls give real depth on slow perspective turns.
-      for(let j=0;j<points.length;j++) {
-        const a=points[j],b=points[(j+1)%points.length];
-        const dx=b.x-a.x,dy=b.y-a.y;
-        const n=[dy,-dx,.12];
-        vertex(a,i,1,n,false);vertex(a,i,1,n,true);vertex(b,i,1,n,false);
-        vertex(b,i,1,n,false);vertex(a,i,1,n,true);vertex(b,i,1,n,true);
+    };
+    makeShell(true);
+    makeShell(false);
+    const indices=[];
+    const shellVertices=samples*samples;
+    for(let shell=0;shell<2;shell++){
+      const offset=shell*shellVertices;
+      for(let y=0;y<divisions;y++)for(let x=0;x<divisions;x++){
+        const a=offset+y*samples+x,b=a+1,c=a+samples,d=c+1;
+        if(shell===0)indices.push(a,c,b,b,c,d);
+        else indices.push(a,b,c,b,d,c);
       }
     }
-    measure.remove();
-    return new Float32Array(out);
+    // 2 curved shells of 97² vertices fit WebGL1 unsigned-short indices.
+    if(vertices.length/10>65535)throw Error('3D mesh too dense for iPhone');
+    return {vertices:new Float32Array(vertices),indices:new Uint16Array(indices)};
   }
 
-  function setup(gl,geometry) {
+  function setup(gl,geometry,image) {
     const vs=compile(gl,gl.VERTEX_SHADER,vertexShader);
     const fs=compile(gl,gl.FRAGMENT_SHADER,fragmentShader);
     const program=gl.createProgram();
@@ -219,7 +238,10 @@
     gl.useProgram(program);
     const buffer=gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
-    gl.bufferData(gl.ARRAY_BUFFER,geometry,gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER,geometry.vertices,gl.STATIC_DRAW);
+    const elements=gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,elements);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,geometry.indices,gl.STATIC_DRAW);
     const stride=10*4;
     const attrs=[['aPosition',3,0],['aNormal',3,3],['aUv',2,6],['aBlade',1,8],['aSide',1,9]];
     for(const [name,size,offset] of attrs) {
@@ -231,6 +253,16 @@
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
     gl.disable(gl.DEPTH_TEST);
+    const texture=gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D,texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.uniform1i(gl.getUniformLocation(program,'uShape'),0);
     const uniforms={
       time:gl.getUniformLocation(program,'uTime'),
       energy:gl.getUniformLocation(program,'uEnergy'),
@@ -244,26 +276,14 @@
       gl.uniform1f(uniforms.energy,energy);
       gl.uniform1f(uniforms.state,state);
       gl.uniform3fv(uniforms.rotation,rotation);
-      gl.drawArrays(gl.TRIANGLES,0,geometry.length/10);
+      gl.drawElements(gl.TRIANGLES,geometry.indices.length,gl.UNSIGNED_SHORT,0);
     };
   }
 
   (async () => {
     let canvas;
     try {
-      // Earcut is fetched only for the explicit 3D material experiment.
-      if(!window.seyveoEarcut) {
-        await new Promise((resolve,reject)=>{
-          const script=document.createElement('script');
-          script.src='assets/seyveo-earcut-v2.js?v=1';
-          script.onload=resolve;
-          script.onerror=()=>reject(Error('Ribbon triangulator unavailable'));
-          document.head.appendChild(script);
-        });
-      }
-      const response=await fetch('assets/seyveo-flow-traced.svg?v=1');
-      if(!response.ok)throw Error('Ribbon geometry is unavailable');
-      const geometry=buildGeometry(await response.text());
+      const geometry=await buildGeometry(hero);
       canvas=document.createElement('canvas');
       canvas.className='sv-sayvi-webgl-ribbons';
       canvas.setAttribute('aria-hidden','true');
@@ -272,7 +292,7 @@
         premultipliedAlpha:false,powerPreference:'low-power'
       });
       if(!gl)throw Error('WebGL unsupported');
-      const render=setup(gl,geometry);
+      const render=setup(gl,geometry,hero);
       const style=document.createElement('style');
       style.textContent=`
         #orb > .sv-sayvi-webgl-ribbons {
@@ -291,6 +311,10 @@
       `;
       document.head.appendChild(style);
       orb.appendChild(canvas);
+      canvas.addEventListener('webglcontextlost',event=>{
+        event.preventDefault();
+        document.documentElement.classList.remove('sv-3d-glass-ready');
+      },{once:true});
 
       let last=0,energy=0,ready=false;
       const reduce=matchMedia('(prefers-reduced-motion: reduce)');
@@ -318,14 +342,15 @@
         const target=speaking ? .91 : listening ? .46 : 0;
         energy+=(target-energy)*.075;
         const motion=document.documentElement.classList.contains('sv-motion-lab-active');
-        const rx=motion?readAngle('--sv-motion-rx'):Math.sin(time*.41)*.028;
-        const ry=motion?readAngle('--sv-motion-ry'):Math.sin(time*.35+.5)*.038;
-        const rz=motion?readAngle('--sv-motion-rz'):Math.sin(time*.31)*.009;
+        const rx=motion?readAngle('--sv-motion-rx'):Math.sin(time*.41)*.049;
+        const ry=motion?readAngle('--sv-motion-ry'):Math.sin(time*.35+.5)*.064;
+        const rz=motion?readAngle('--sv-motion-rz'):Math.sin(time*.31)*.014;
         render(time,energy,state,new Float32Array([rx,ry,rz]));
         if(!ready){ready=true;document.documentElement.classList.add('sv-3d-glass-ready');}
       }
       sizeCanvas();
       render(0,0,0,new Float32Array([0,0,0]));
+      if(gl.getError()!==gl.NO_ERROR)throw Error('3D material could not render');
       document.documentElement.classList.add('sv-3d-glass-ready');
       ready=true;
       requestAnimationFrame(tick);
