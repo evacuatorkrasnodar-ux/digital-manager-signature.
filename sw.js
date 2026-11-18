@@ -15,7 +15,7 @@ self.addEventListener('push',event=>{
  const tag=typeof safe.tag==='string'&&/^[a-zA-Z0-9_-]{1,64}$/.test(safe.tag)?safe.tag:'seyveo-calendar';
  // One user-visible notification for every push. Never send silent pushes.
  event.waitUntil(self.registration.showNotification(title,{
-  body,lang:'ru',tag,icon:new URL('assets/apple-touch-icon.png',self.registration.scope).href,
+  body,lang:'ru',tag,icon:new URL('assets/seyveo-app-icon-192.png',self.registration.scope).href,
   data:{open:'calendar'}
  }));
 });
