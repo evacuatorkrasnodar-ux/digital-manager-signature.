@@ -9,10 +9,13 @@
   const orb = document.getElementById('orb');
   if (!hero || !orb) return;
 
-  // Keep the last approved matte finish available for side-by-side review.
-  const source = params.get('sayvi-look') === 'v3'
+  // Previous approved looks remain available for direct visual comparison.
+  const look = params.get('sayvi-look');
+  const source = look === 'v3'
     ? 'assets/seyveo-living-ribbon-v3.webp?v=1'
-    : 'assets/seyveo-living-ribbon-v4.webp?v=1';
+    : look === 'v4'
+      ? 'assets/seyveo-living-ribbon-v4.webp?v=1'
+      : 'assets/seyveo-living-ribbon-v5.webp?v=1';
   const root = document.documentElement;
   root.classList.add('sv-living-ribbon');
   orb.classList.add('sv-living-ribbon');
