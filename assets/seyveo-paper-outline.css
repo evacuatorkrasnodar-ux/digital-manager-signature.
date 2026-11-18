@@ -1,11 +1,10 @@
-/* SEYVEO Paper · fine hairline for the real five-tool graphite capsule.
+/* SEYVEO Paper · fine hairline for the real five-tool silver capsule.
    No duplicate controls and no change to tools, shortcuts or canvas geometry. */
 html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
- border:1px solid rgba(245,246,250,.24)!important;
+ border:1px solid rgba(190,193,201,.55)!important;
  border-radius:16px!important;
- background:#38383A!important;
- background-image:none!important;
- box-shadow:none!important;
+ background:linear-gradient(180deg,rgba(250,250,251,.98),rgba(233,234,237,.97))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.98),inset 0 -1px 2px rgba(123,129,142,.10),0 1px 3px rgba(37,41,48,.05)!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
