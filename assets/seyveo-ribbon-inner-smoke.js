@@ -38,7 +38,7 @@
       pointer-events: none;
       transform-origin: 50% 50%;
       image-rendering: auto;
-      opacity: .56;
+      opacity: .62;
       mix-blend-mode: multiply;
       filter: blur(1.9px);
       -webkit-mask: url("${source}") center / contain no-repeat;
@@ -46,13 +46,13 @@
       animation: sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
     }
     html.sv-living-ribbon[data-theme="light"] #orb > .sv-ribbon-inner-smoke {
-      opacity: .39;
+      opacity: .49;
     }
     html.sv-living-ribbon #orb.seyveo-presence-listening > .sv-ribbon-inner-smoke {
-      opacity: .64;
+      opacity: .71;
     }
     html.sv-living-ribbon #orb.seyveo-presence-speaking > .sv-ribbon-inner-smoke {
-      opacity: .73;
+      opacity: .79;
     }
     @media (prefers-reduced-motion: reduce) {
       html.sv-living-ribbon #orb > .sv-ribbon-inner-smoke {
@@ -84,6 +84,14 @@
   const {width, height} = smoke;
   const image = ctx.createImageData(width, height);
   const pixels = image.data;
+  // Separated vapour pockets, each with its own slow orbital direction.
+  // Clear glass always remains BETWEEN them; there is no uniform fog sheet.
+  const vapour = [
+    {at: .045, speed: .012, radius: .45, span: .068, depth: .16, strength: 1},
+    {at: .285, speed: -.009, radius: .57, span: .062, depth: .13, strength: .84},
+    {at: .535, speed: .011, radius: .41, span: .071, depth: .16, strength: .93},
+    {at: .775, speed: -.008, radius: .56, span: .058, depth: .14, strength: .81}
+  ];
   const cells = [];
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -101,6 +109,7 @@
   let visible = true;
   let lastFrame = -Infinity;
   let running = false;
+  let renderedFrames = 0;
   const interval = 1000 / 16; // Gentle smoke, inexpensive on iPhone XR.
   const render = (milliseconds) => {
     const seconds = milliseconds / 1000;
@@ -108,13 +117,29 @@
       const angle = cells[c], radius = cells[c + 1], ring = cells[c + 2];
       if (ring < .005) {pixels[k + 3] = 0; continue;}
 
-      // Oppositely drifting vapour layers travel along the ribbon curvature.
+      // Four distinct translucent pockets glide along the curved glass.
+      // Their soft gaussian tails dissipate completely in the clear gaps.
+      let pocket = 0;
+      for (const wisp of vapour) {
+        const phase = angle - wisp.at - seconds * wisp.speed;
+        const delta = phase - Math.round(phase); // continuous around the ring
+        const curl = Math.sin(delta * 31 + seconds * .19) * .024;
+        const radialOffset = (radius - wisp.radius - curl) / wisp.depth;
+        const angularOffset = delta / wisp.span;
+        pocket += wisp.strength * Math.exp(-.5 * (
+          angularOffset * angularOffset + radialOffset * radialOffset
+        ));
+      }
+
+      // Fine turbulence changes the silhouette of each wisp while its
+      // overall path continues smoothly, independent of the glass tilt.
       const radial = radius * 7.6;
-      const wave = Math.sin(angle * Math.PI * 6 + seconds * .11) * .25;
-      const broad = noise(angle * 8 + seconds * .095, radial + wave, 8);
-      const fine = noise(angle * 16 - seconds * .14, radial * 2.0 - wave, 16);
-      const density = Math.max(0, (broad * .67 + fine * .33 - .39) * 2.8);
-      const alpha = Math.min(255, Math.round(density * ring * 146));
+      const wave = Math.sin(angle * Math.PI * 6 + seconds * .13) * .19;
+      const broad = noise(angle * 8 + seconds * .18, radial + wave, 8);
+      const fine = noise(angle * 16 - seconds * .24, radial * 2 - wave, 16);
+      const texture = Math.max(0, Math.min(1, (broad * .62 + fine * .38 - .28) * 2.4));
+      const density = Math.min(1, pocket) * ring * (.28 + .72 * texture);
+      const alpha = Math.min(255, Math.round(density * 225));
       // The dark teal current is inside the glass, never a dark line on top.
       pixels[k] = 41;
       pixels[k + 1] = 83;
@@ -122,6 +147,12 @@
       pixels[k + 3] = alpha;
     }
     ctx.putImageData(image, 0, 0);
+    renderedFrames++;
+    // A tiny diagnostics hook lets us distinguish a browser that really
+    // stopped animating from smoke that is simply too subtle to perceive.
+    if (renderedFrames === 1 || renderedFrames % 16 === 0) {
+      smoke.dataset.renderedFrames = String(renderedFrames);
+    }
   };
 
   const frame = now => {
