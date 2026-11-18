@@ -114,11 +114,11 @@
         const cloud = Math.max(.12, Math.min(1, (broad * .65 + detail * .35 - .27) * 2.5));
         // Continuous soft base with higher-density clouds: no clear patches
         // inside the glass, yet the light can still reveal its depth.
-        const density = .44 + .12 * cloud + .32 * Math.min(1, body) * ring * cloud;
-        fieldPixels[i] = 42;
-        fieldPixels[i + 1] = 80;
-        fieldPixels[i + 2] = 83;
-        fieldPixels[i + 3] = Math.round(Math.min(255, density * (fullSmoke ? 265 : 210)));
+        const density = .87 + .07 * cloud + .06 * Math.min(1, body) * ring * cloud;
+        fieldPixels[i] = 112;
+        fieldPixels[i + 1] = 145;
+        fieldPixels[i + 2] = 149;
+        fieldPixels[i + 3] = Math.round(Math.min(255, density * 255));
       }
       fieldCtx.putImageData(fieldImage, 0, 0);
     };
@@ -137,7 +137,7 @@
       ctx.save();
       // The ordinary Home stays pixel-matched to the approved velvet look.
       // In the explicit experiment the plume reaches full opacity.
-      ctx.globalAlpha = fullSmoke ? 1 : .78;
+      ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'source-atop';
       ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
       ctx.drawImage(field, 0, 0, resolution, resolution);
