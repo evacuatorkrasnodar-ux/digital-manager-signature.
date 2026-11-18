@@ -294,7 +294,7 @@ html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper
  padding:calc(12px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px))
   8px max(14px,env(safe-area-inset-left,0px))!important;
  border:0!important;border-radius:0!important;
- background:var(--sv-header-surface)!important;background-image:none!important;
+ background:transparent!important;background-image:none!important;
  box-shadow:none!important;
 }
 html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top
