@@ -152,8 +152,10 @@
                   sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
       }
       html.sv-ribbon-composite-ready[data-theme="light"] #orb > .sv-ribbon-glass-composite {
-        --sv-ribbon-light:drop-shadow(0 6px 13px rgba(77,129,130,.20));
-        --sv-ribbon-soft-glass:brightness(1.10) saturate(.87);
+        /* On a white surface, do not wash the frosted mint into pale silver.
+           Match the approved dark-theme material without touching its shape. */
+        --sv-ribbon-light:drop-shadow(0 6px 13px rgba(56,116,114,.18));
+        --sv-ribbon-soft-glass:brightness(.97) saturate(1.06);
       }
       html.sv-ribbon-composite-ready #orb::before {opacity:.17}
       html.sv-ribbon-composite-ready #orb::after {opacity:.09}
