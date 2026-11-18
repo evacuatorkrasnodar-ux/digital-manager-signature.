@@ -1,18 +1,19 @@
-/* SEYVEO · real swept-ribbon mesh. Modes 1–5 remain comparison previews;
-   ?sayvi-model=6 uses the ORIGINAL Sayvi pearl sphere's material math,
-   adapted from a round 2D lens to normals/UVs of four physical ribbons.
+/* SEYVEO · real swept-ribbon mesh. Modes 1–6 remain comparison previews;
+   ?sayvi-model=7 restores the old animated plasma-signature-light.svg's
+   physical layer order: moving silk, smoky filaments, still glass shell.
    Four watertight 3D bands exported from Blender with physical depth,
    normal-based pearl/frost material and gentle motion. The public home
    keeps its established Sayvi picture unless this experiment is enabled. */
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7')return;
   const layeredGlass=mode!=='1';
-  const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6';
+  const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6'||mode==='7';
   const smokeBottle=mode==='4'||mode==='5';
   const darkVelvet=mode==='5';
   const originalMaterial=mode==='6';
+  const archiveSilk=mode==='7';
   const orb=document.getElementById('orb');
   const hero=document.getElementById('plasmaVisual');
   const home=document.getElementById('homePage');
@@ -25,6 +26,7 @@
     uniform vec3 uRotation;
     uniform float uTime;
     uniform float uBlade;
+    uniform float uShellOffset;
     varying vec3 vNormal;
     varying vec3 vPosition;
     varying float vBlade;
@@ -39,7 +41,7 @@
       mat3 r=rz*ry*rx;
       // Breathing is barely visible, but makes the model feel inhabited.
       float breath=1.+.0045*sin(uTime*.62);
-      vec3 p=r*(aPosition*breath);
+      vec3 p=r*((aPosition+aNormal*uShellOffset)*breath);
       vec3 n=normalize(r*aNormal);
       float perspective=3.1/(3.1-p.z*.64);
       gl_Position=vec4(p.xy*.91*perspective,-.27*p.z,1.);
@@ -65,6 +67,7 @@
     uniform float uSmokeBottle;
     uniform float uDarkVelvet;
     uniform float uOriginalMaterial;
+    uniform float uArchiveSilk;
 
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p){
@@ -97,6 +100,78 @@
       float facing=clamp(abs(dot(n,eye)),0.,1.);
       float fresnel=pow(1.-facing,2.25);
       vec2 q=vPosition.xy;
+      if(uArchiveSilk>.5){
+        // The ORIGINAL light sphere SVG isn't a single opaque pearl paint.
+        // Its markup, in order: body -> g-b silk -> blurred g-a filaments
+        // -> crisp independently moving threads -> glass glint -> still rim.
+        // The three draws below project those components through the four
+        // real curved glass strips. Never paint a studio-white specular spot.
+        vec2 uv=vFlowUv;
+        float clearLips=smoothstep(.43,.98,abs(uv.y-.5)*2.);
+        float softMiddle=1.-clearLips;
+        float breathA=sin(uTime*.44+vBlade*.91);
+        float breathB=cos(uTime*.35-vBlade*.77);
+        vec2 driftA=vec2(breathA*.075,-breathB*.045);
+        vec2 driftB=vec2(-breathB*.095,breathA*.06);
+
+        if(uLayer<.5){
+          // g-b: the actual #silk gradient (muted sea-glass / pearl fabric),
+          // two wide flowing veils fading at their edges, never a metal fill.
+          float veilA=.5+.5*sin(uv.x*8.6+uv.y*4.2+driftA.x*7.+
+                            .38*sin(uv.x*6.4+uTime*.29));
+          float veilB=.5+.5*sin(uv.x*5.5-uv.y*8.3+driftB.y*6.+
+                            .29*cos(uv.x*7.5-uTime*.31));
+          float silk=pow(veilA,.9)*.58+pow(veilB,1.3)*.42;
+          float tissue=fineFbm(uv*vec2(3.3,2.0)+driftA+vBlade*.27);
+          vec3 shade=mix(vec3(.21,.39,.41),vec3(.68,.84,.85),
+                         clamp(.28+.48*silk+.24*tissue,0.,1.));
+          float alpha=(.16+.36*silk+.13*tissue)*(.56+.44*softMiddle);
+          gl_FragColor=vec4(shade,clamp(alpha,.13,.66));
+          return;
+        }
+        if(uLayer<1.5){
+          // g-a: smoke is a blurred shadow of fine, dark filaments.
+          // Their travel follows the original 7.2s / 9.1s alternating
+          // inner animations; they sway, not endlessly spin or shine.
+          vec2 smokeUv=uv*vec2(3.4,2.55)+driftB+vBlade*.29;
+          float hazeA=fineFbm(smokeUv+vec2(breathA*.14,breathB*.09));
+          float hazeB=fineFbm(smokeUv*1.7+vec2(.7,-uTime*.028));
+          float haze=smoothstep(.28,.65,hazeA*.65+hazeB*.35);
+          float curveA=uv.y-(.24+.51*uv.x+.105*sin(uv.x*7.0+
+                        breathA*.6+vBlade*.49));
+          float curveB=uv.y-(.83-.53*uv.x+.09*sin(uv.x*6.1+
+                        breathB*.63-vBlade*.44));
+          float curveC=uv.y-(.52+.20*sin(uv.x*10.3+breathA*.7+
+                        vBlade*.38));
+          float blurry=exp(-115.*curveA*curveA)*.65+
+                        exp(-90.*curveB*curveB)*.55;
+          float threads=exp(-1300.*curveA*curveA)*.62+
+                        exp(-1700.*curveB*curveB)*.48+
+                        exp(-2200.*curveC*curveC)*.32;
+          float shadow=clamp(blurry*.6+threads*.67,0.,1.);
+          vec3 fog=mix(vec3(.43,.63,.65),vec3(.64,.81,.82),haze*.58);
+          fog=mix(fog,vec3(.19,.37,.40),shadow*.87);
+          gl_FragColor=vec4(fog,clamp((.18+.24*haze+.37*shadow)*
+                            (.56+.44*softMiddle),.12,.80));
+          return;
+        }
+        // The outer shell: velvet-white in its middle, optically clean on
+        // the lips. Old #body, #edgewash and #rim are toned for dark velvet.
+        // Importantly this shell NEVER takes part in the silk drift above.
+        float velvet=fineFbm(uv*vec2(2.4,1.8)+vBlade*.21);
+        vec3 pearl=vec3(.87,.945,.948);
+        vec3 coolGlass=vec3(.67,.84,.85);
+        vec3 color=mix(coolGlass,pearl,clamp(.67+.15*velvet+
+                         .10*max(dot(n,normalize(vec3(-.5,.66,1.))),0.),0.,1.));
+        color=mix(color,vec3(.59,.78,.80),fresnel*.25);
+        // Broad diffused light, like cloth behind a wet glass surface.
+        float satin=pow(max(dot(n,normalize(vec3(-.38,.56,1.))),0.),7.);
+        color+=vec3(.028,.042,.042)*satin;
+        color=mix(color,vec3(.67,.86,.86),clearLips*.18);
+        float alpha=mix(.69,.255,clearLips)+fresnel*.095;
+        gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.23,.80));
+        return;
+      }
       if(uOriginalMaterial>.5){
         // This is the old seyveo-sayvi-dock-sphere.js White Velvet shader:
         // same pearl/glass/depth palette, twin advected fBM refraction,
@@ -406,7 +481,7 @@
     });
   }
 
-  function setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial){
+  function setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk){
     const program=gl.createProgram();
     gl.attachShader(program,compile(gl,gl.VERTEX_SHADER,vertexSource));
     gl.attachShader(program,compile(gl,gl.FRAGMENT_SHADER,fragmentSource));
@@ -429,13 +504,15 @@
       energy:gl.getUniformLocation(program,'uEnergy'),
       state:gl.getUniformLocation(program,'uState'),
       blade:gl.getUniformLocation(program,'uBlade'),
+      shellOffset:gl.getUniformLocation(program,'uShellOffset'),
       rotation:gl.getUniformLocation(program,'uRotation'),
       layered:gl.getUniformLocation(program,'uLayeredGlass'),
       layer:gl.getUniformLocation(program,'uLayer'),
       velvet:gl.getUniformLocation(program,'uVelvetFlow'),
       smoke:gl.getUniformLocation(program,'uSmokeBottle'),
       darkVelvet:gl.getUniformLocation(program,'uDarkVelvet'),
-      original:gl.getUniformLocation(program,'uOriginalMaterial')
+      original:gl.getUniformLocation(program,'uOriginalMaterial'),
+      archiveSilk:gl.getUniformLocation(program,'uArchiveSilk')
     };
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
@@ -465,7 +542,28 @@
       gl.uniform1f(u.smoke,smokeBottle?1:0);
       gl.uniform1f(u.darkVelvet,darkVelvet?1:0);
       gl.uniform1f(u.original,originalMaterial?1:0);
-      if(layeredGlass){
+      gl.uniform1f(u.archiveSilk,archiveSilk?1:0);
+      if(archiveSilk){
+        // Three separate translucent depths, matching the source artwork's
+        // silk -> smoke/filaments -> external clear/frosted glass order.
+        gl.enable(gl.CULL_FACE);
+        gl.disable(gl.DEPTH_TEST);
+        gl.depthMask(false);
+        gl.cullFace(gl.FRONT);
+        gl.uniform1f(u.layer,0);
+        gl.uniform1f(u.shellOffset,-.009);
+        drawMeshes();
+        gl.uniform1f(u.layer,1);
+        gl.uniform1f(u.shellOffset,-.004);
+        drawMeshes();
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthMask(true);
+        gl.cullFace(gl.BACK);
+        gl.uniform1f(u.layer,2);
+        gl.uniform1f(u.shellOffset,0);
+        drawMeshes();
+        gl.disable(gl.CULL_FACE);
+      }else if(layeredGlass){
         // Back surfaces scatter a little light through the foreground.
         // Front surfaces then occlude according to real 3D depth.
         gl.enable(gl.CULL_FACE);
@@ -473,6 +571,7 @@
         gl.depthMask(false);
         gl.cullFace(gl.FRONT);
         gl.uniform1f(u.layer,0);
+        gl.uniform1f(u.shellOffset,0);
         drawMeshes();
         gl.enable(gl.DEPTH_TEST);
         gl.depthMask(true);
@@ -482,6 +581,7 @@
         gl.disable(gl.CULL_FACE);
       }else{
         gl.uniform1f(u.layer,1);
+        gl.uniform1f(u.shellOffset,0);
         drawMeshes();
       }
     };
@@ -499,7 +599,7 @@
         premultipliedAlpha:false,powerPreference:'low-power'
       });
       if(!gl)throw Error('iPhone WebGL unsupported');
-      const render=setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial);
+      const render=setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk);
       const style=document.createElement('style');
       style.textContent=`
         #orb > .sv-sayvi-real3d-canvas {
