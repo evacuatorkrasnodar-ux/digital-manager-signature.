@@ -5,9 +5,9 @@
 (() => {
   'use strict';
   const params = new URLSearchParams(location.search);
-  // Controlled comparison: real diffuse frosting on the pale theme. The
-  // approved default remains unchanged until its material is confirmed.
-  const mattePreview = params.get('sayvi-matte') === '1';
+  // The approved velvet material is now standard in the white theme.
+  // ?sayvi-matte=0 restores the previous glossy light rendering for QA.
+  const matteEnabled = params.get('sayvi-matte') !== '0';
   if (params.get('sayvi-engine') === 'image' ||
       params.get('sayvi-engine') === 'legacy' ||
       params.get('sayvi-ribbon') === '0' ||
@@ -120,6 +120,8 @@
     const render = seconds => {
       resize();
       renderField(seconds);
+      const lightMatte = matteEnabled &&
+        document.documentElement.dataset.theme === 'light';
       ctx.clearRect(0, 0, resolution, resolution);
       ctx.drawImage(image, 0, 0, resolution, resolution);
       // A source-atop blend uses the sculpture's EXISTING full-resolution alpha
@@ -127,13 +129,15 @@
       // the aperture and side air gap stay truly transparent. This also avoids
       // rebuilding a second full-resolution mask every animation frame.
       ctx.save();
-      ctx.globalAlpha = .78;
+      // Slightly fuller vapor under white glass compensates for the bright
+      // background; the dark-theme material stays exactly as approved.
+      ctx.globalAlpha = lightMatte ? .90 : .78;
       ctx.globalCompositeOperation = 'source-atop';
       ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
       ctx.drawImage(field, 0, 0, resolution, resolution);
       ctx.restore();
 
-      if (mattePreview && document.documentElement.dataset.theme === 'light') {
+      if (lightMatte) {
         // A milky subsurface scattering layer turns clear polished glass into
         // frosted velvet. Source-atop keeps the exact petal transparency,
         // sharp openings and outer silhouette pixel-identical.
@@ -172,7 +176,7 @@
         --sv-ribbon-light:drop-shadow(0 6px 13px rgba(56,116,114,.18));
         --sv-ribbon-soft-glass:brightness(.97) saturate(1.06);
       }
-      html.sv-ribbon-composite-ready.sv-ribbon-matte-preview[data-theme="light"] #orb > .sv-ribbon-glass-composite {
+      html.sv-ribbon-composite-ready.sv-ribbon-matte-velvet[data-theme="light"] #orb > .sv-ribbon-glass-composite {
         --sv-ribbon-soft-glass:brightness(1.01) saturate(.94);
       }
       html.sv-ribbon-composite-ready #orb::before {opacity:.17}
@@ -180,7 +184,7 @@
     `;
     document.head.appendChild(style);
     document.documentElement.classList.add('sv-ribbon-composite-ready');
-    if (mattePreview) document.documentElement.classList.add('sv-ribbon-matte-preview');
+    if (matteEnabled) document.documentElement.classList.add('sv-ribbon-matte-velvet');
 
     let lastTime = -Infinity;
     let startTime = null;
