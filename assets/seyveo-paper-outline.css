@@ -30,10 +30,10 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock >
 }
 html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > #notePaperSayvi > img.sv-newdock-potok{
  display:block!important;
- width:24px!important;
- height:24px!important;
- min-width:24px!important;
- min-height:24px!important;
+ width:30px!important;
+ height:30px!important;
+ min-width:30px!important;
+ min-height:30px!important;
  object-fit:contain!important;
  filter:none!important;
  opacity:1!important;
