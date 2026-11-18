@@ -170,8 +170,13 @@
       html.sv-ribbon-composite-ready.sv-ribbon-matte-velvet[data-theme="light"] #orb > .sv-ribbon-glass-composite {
         --sv-ribbon-soft-glass:brightness(1.01) saturate(.94);
       }
-      html.sv-ribbon-composite-ready #orb::before {opacity:.17}
-      html.sv-ribbon-composite-ready #orb::after {opacity:.09}
+      /* Remove the old animated caustic/fog overlays as well as the canvas vapour. */
+      html.sv-ribbon-composite-ready #orb::before,
+      html.sv-ribbon-composite-ready #orb::after {opacity:0 !important;animation:none !important}
+      html.sv-ribbon-composite-ready #orb .orb-mist,
+      html.sv-ribbon-composite-ready #orb .orb-logo-mist,
+      html.sv-ribbon-composite-ready #orb > .sv-ribbon-inner-smoke,
+      html.sv-ribbon-composite-ready #orb > .sv-ribbon-traveling-veil {display:none !important}
     `;
     document.head.appendChild(style);
     document.documentElement.classList.add('sv-ribbon-composite-ready');
