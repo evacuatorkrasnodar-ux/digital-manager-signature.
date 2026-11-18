@@ -5,7 +5,9 @@
    On shader/geometry failure the established living PNG remains intact. */
 (() => {
   'use strict';
-  if (new URLSearchParams(location.search).get('sayvi-material') !== '1') return;
+  const materialMode = new URLSearchParams(location.search).get('sayvi-material');
+  if (materialMode !== '1' && materialMode !== 'clean') return;
+  const cleanMaterial = materialMode === 'clean';
   const orb = document.getElementById('orb');
   const hero = document.getElementById('plasmaVisual');
   const home = document.getElementById('homePage');
@@ -58,6 +60,7 @@
     uniform float uTime;
     uniform float uEnergy;
     uniform float uState;
+    uniform float uClean;
     uniform sampler2D uShape;
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p) {
@@ -86,6 +89,29 @@
       vec3 viewDir=normalize(vec3(-vPosition.xy*.12,1.));
       float facing=clamp(dot(n,viewDir),0.,1.);
       float fresnel=pow(1.-facing,2.25);
+      if (uClean > .5) {
+        // True procedural frosted glass: texture contributes ONLY the
+        // approved silhouette alpha, never smoky RGB or baked grain.
+        vec3 lightA=normalize(vec3(-.25+.10*sin(uTime*.18),.29,1.));
+        vec3 lightB=normalize(vec3(.40,-.18+.10*cos(uTime*.14),1.));
+        float key=max(dot(n,lightA),0.);
+        float fill=max(dot(n,lightB),0.);
+        float curve=clamp(.5+.5*n.y,0.,1.);
+        vec3 pearl=vec3(.85,.935,.945);
+        vec3 coolGlass=vec3(.67,.82,.84);
+        vec3 color=mix(coolGlass,pearl,.48+.20*curve);
+        color*=.91+.12*key;
+        color+=vec3(.19,.22,.225)*pow(key,24.);
+        color+=vec3(.12,.19,.20)*pow(fill,65.);
+        color+=vec3(.14,.20,.21)*fresnel*.48;
+        // Smooth side walls are clearer and slightly deeper than the face.
+        float side=clamp(vSide,0.,1.);
+        color=mix(color,vec3(.49,.69,.72),side*.38);
+        float alpha=mix(.945,.33,side);
+        alpha*=smoothstep(.095,.74,reference.a);
+        gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,0.,.98));
+        return;
+      }
       vec2 drift=vec2(sin(uTime*.24),cos(uTime*.22))*.21;
       vec2 refractPos=q*(1.12+.25*(1.-facing));
       float n1=fbm(refractPos*2.2+drift+vec2(uTime*.044,-uTime*.03));
@@ -197,7 +223,7 @@
       // Interior teal cavities sink deeper, opal highlights swell toward us.
       const dome=.125*(1.-Math.min(1,radius*radius));
       const braid=.045*Math.sin(theta*4.+radius*5.8+.3);
-      z[i]=a*(.075+dome+braid+.22*(l-.68));
+      z[i]=a*(.075+dome+braid+(cleanMaterial?0:.22*(l-.68)));
       luminance[i]=l;
       alpha[i]=a;
     }
@@ -283,6 +309,7 @@
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
     gl.uniform1i(gl.getUniformLocation(program,'uShape'),0);
+    gl.uniform1f(gl.getUniformLocation(program,'uClean'),cleanMaterial?1:0);
     const uniforms={
       time:gl.getUniformLocation(program,'uTime'),
       energy:gl.getUniformLocation(program,'uEnergy'),
@@ -317,12 +344,13 @@
       style.textContent=`
         #orb > .sv-sayvi-webgl-ribbons {
           position:absolute;inset:0;width:100%;height:100%;
-          pointer-events:none;opacity:0;z-index:1;
+          pointer-events:none;opacity:0;z-index:3;
           transition:opacity 450ms ease-out;
         }
         html.sv-3d-glass-ready #orb > .sv-sayvi-webgl-ribbons {opacity:1}
         #orb #plasmaVisual {transition:opacity 450ms ease-out}
-        html.sv-3d-glass-ready #orb #plasmaVisual {opacity:0!important}
+        html.sv-3d-glass-ready #orb #plasmaVisual,
+        html.sv-3d-glass-ready #orb > .sv-ribbon-glass-composite {opacity:0!important}
         html.sv-3d-glass-ready #orb::before,
         html.sv-3d-glass-ready #orb::after {opacity:0!important}
         @media(prefers-reduced-motion:reduce) {
