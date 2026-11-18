@@ -1,20 +1,19 @@
-/* Opt-in study: ?sayvi-ribbon=1
-   One shared frosted-glass ribbon for Home and dock; no geometry changes.
-   The original Sayvi artwork remains the default without the query flag. */
+/* SEYVEO · approved living Sayvi ribbon.
+   One frosted-glass artwork for Home and dock; no geometry changes.
+   ?sayvi-ribbon=0 temporarily restores the original sphere for QA. */
 (() => {
   'use strict';
-  if (new URLSearchParams(location.search).get('sayvi-ribbon') !== '1') return;
+  if (new URLSearchParams(location.search).get('sayvi-ribbon') === '0') return;
   const hero = document.getElementById('plasmaVisual');
   const orb = document.getElementById('orb');
   if (!hero || !orb) return;
 
   const source = 'assets/seyveo-living-ribbon.png?v=1';
   const root = document.documentElement;
-  root.classList.add('sv-ribbon-preview');
-  orb.classList.add('sv-ribbon-preview');
+  root.classList.add('sv-living-ribbon');
+  orb.classList.add('sv-living-ribbon');
 
-  // The regular theme controller still owns appearance and may reset the src.
-  // This isolated preview reapplies its artwork without modifying that controller.
+  // Keep the approved artwork synchronized even if legacy theme code rewrites src.
   const syncArtwork = () => {
     if (hero.getAttribute('src') !== source) hero.setAttribute('src', source);
   };
@@ -24,10 +23,10 @@
   syncArtwork();
 
   const style = document.createElement('style');
-  style.id = 'sv-ribbon-living-preview-style';
+  style.id = 'sv-ribbon-living-style';
   style.textContent = `
     /* Keep the approved main sphere layout, button hit area and handoff unchanged. */
-    html.sv-ribbon-preview #orb #plasmaVisual {
+    html.sv-living-ribbon #orb #plasmaVisual {
       --sv-ribbon-light: drop-shadow(0 0 12px rgba(108,177,179,.15));
       transform-origin: 50% 50%;
       backface-visibility: hidden;
@@ -36,12 +35,12 @@
         sv-ribbon-pearl-breathe 7.2s ease-in-out infinite,
         sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
     }
-    html.sv-ribbon-preview[data-theme="light"] #orb #plasmaVisual {
+    html.sv-living-ribbon[data-theme="light"] #orb #plasmaVisual {
       --sv-ribbon-light: drop-shadow(0 6px 13px rgba(77,129,130,.20));
     }
     /* A very slow liquid-pearl current inside the sculpted glass ribbons.
        Multiple broad caustics drift independently without moving the silhouette. */
-    html.sv-ribbon-preview #orb::before {
+    html.sv-living-ribbon #orb::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -65,11 +64,11 @@
         sv-ribbon-liquid-flow 12.6s cubic-bezier(.4,0,.6,1) infinite alternate,
         sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
     }
-    html.sv-ribbon-preview[data-theme="light"] #orb::before {
+    html.sv-living-ribbon[data-theme="light"] #orb::before {
       opacity: .43;
       mix-blend-mode: multiply;
     }
-    html.sv-ribbon-preview #orb::after {
+    html.sv-living-ribbon #orb::after {
       content: "";
       position: absolute;
       inset: 0;
@@ -91,35 +90,35 @@
         sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
     }
     /* Voice mist is refracted INSIDE the ribbons, never across the open center. */
-    html.sv-ribbon-preview #orb .orb-mist,
-    html.sv-ribbon-preview #orb .orb-logo-mist {
+    html.sv-living-ribbon #orb .orb-mist,
+    html.sv-living-ribbon #orb .orb-logo-mist {
       -webkit-mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
       mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
     }
-    html.sv-ribbon-preview #orb.seyveo-presence-listening #plasmaVisual {
+    html.sv-living-ribbon #orb.seyveo-presence-listening #plasmaVisual {
       animation-duration: 3.5s,15.2s;
     }
-    html.sv-ribbon-preview #orb.seyveo-presence-listening::before {
+    html.sv-living-ribbon #orb.seyveo-presence-listening::before {
       opacity: .54;
       animation-duration: 6.4s,15.2s;
     }
-    html.sv-ribbon-preview #orb.seyveo-presence-speaking #plasmaVisual {
+    html.sv-living-ribbon #orb.seyveo-presence-speaking #plasmaVisual {
       animation-duration: 2.5s,15.2s;
     }
-    html.sv-ribbon-preview #orb.seyveo-presence-speaking::before {
+    html.sv-living-ribbon #orb.seyveo-presence-speaking::before {
       opacity: .65;
       animation-duration: 4.7s,15.2s;
     }
-    html.sv-ribbon-preview #orb.seyveo-presence-listening::after,
-    html.sv-ribbon-preview #orb.seyveo-presence-speaking::after {
+    html.sv-living-ribbon #orb.seyveo-presence-listening::after,
+    html.sv-living-ribbon #orb.seyveo-presence-speaking::after {
       opacity: .42;
       animation-duration: 4.5s,15.2s;
     }
     /* Use the exact same Home artwork in the mini, including dark mode. */
-    html.sv-ribbon-preview #assistantButton.sv-sayvi-velvet-ready > svg.button-art {
+    html.sv-living-ribbon #assistantButton.sv-sayvi-velvet-ready > svg.button-art {
       opacity: 0 !important;
     }
-    html.sv-ribbon-preview #assistantButton > .sv-sayvi-mini-copy {
+    html.sv-living-ribbon #assistantButton > .sv-sayvi-mini-copy {
       display: block !important;
       position: absolute !important;
       left: 50% !important;
@@ -173,14 +172,14 @@
       92%,100% {background-position: 100% 50%;opacity:.10}
     }
     @media (prefers-reduced-motion: reduce) {
-      html.sv-ribbon-preview #orb #plasmaVisual,
-      html.sv-ribbon-preview #orb::before,
-      html.sv-ribbon-preview #orb::after {
+      html.sv-living-ribbon #orb #plasmaVisual,
+      html.sv-living-ribbon #orb::before,
+      html.sv-living-ribbon #orb::after {
         animation: none !important;
         will-change: auto;
       }
-      html.sv-ribbon-preview #orb::before {opacity:.22}
-      html.sv-ribbon-preview #orb::after {opacity:.12}
+      html.sv-living-ribbon #orb::before {opacity:.22}
+      html.sv-living-ribbon #orb::after {opacity:.12}
     }
   `;
   document.head.appendChild(style);
