@@ -74,11 +74,12 @@
         radial-gradient(ellipse 42% 40%
           at var(--sv-shadow-x, 52%) var(--sv-shadow-y, 55%),
           rgba(66,132,135,.25),transparent 85%);
-      -webkit-mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
-      mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
+      -webkit-mask: url("assets/seyveo-living-ribbon-v5.webp?v=1") center / contain no-repeat;
+      mask: url("assets/seyveo-living-ribbon-v5.webp?v=1") center / contain no-repeat;
       mix-blend-mode: soft-light;
     }
     html.sv-motion-lab-active #orb #plasmaVisual,
+    html.sv-motion-lab-active #orb > .sv-ribbon-glass-composite,
     html.sv-motion-lab-active #orb::before,
     html.sv-motion-lab-active #orb::after,
     html.sv-motion-lab-active #orb > .sv-motion-lab-reflection {
@@ -90,6 +91,9 @@
     html.sv-motion-lab-active #orb #plasmaVisual {
       animation: sv-ribbon-pearl-breathe 7.2s ease-in-out infinite;
     }
+    html.sv-motion-lab-active #orb > .sv-ribbon-glass-composite {
+      animation: sv-ribbon-pearl-breathe 7.2s ease-in-out infinite;
+    }
     html.sv-motion-lab-active #orb::before {
       animation: sv-ribbon-liquid-flow 12.6s cubic-bezier(.4,0,.6,1) infinite alternate;
     }
@@ -97,10 +101,10 @@
       animation: sv-ribbon-glass-caustic 9s ease-in-out infinite;
     }
     html.sv-motion-lab-active #orb > .sv-motion-lab-reflection {display: block}
-    html.sv-motion-lab-active #orb.seyveo-presence-listening #plasmaVisual {
+    html.sv-motion-lab-active #orb.seyveo-presence-listening :is(#plasmaVisual,.sv-ribbon-glass-composite) {
       animation-duration: 3.5s;
     }
-    html.sv-motion-lab-active #orb.seyveo-presence-speaking #plasmaVisual {
+    html.sv-motion-lab-active #orb.seyveo-presence-speaking :is(#plasmaVisual,.sv-ribbon-glass-composite) {
       animation-duration: 2.5s;
     }
     html.sv-motion-lab-active #orb.seyveo-presence-listening::before {
@@ -111,6 +115,7 @@
     }
     @media (prefers-reduced-motion: reduce) {
       html.sv-motion-lab-active #orb #plasmaVisual,
+      html.sv-motion-lab-active #orb > .sv-ribbon-glass-composite,
       html.sv-motion-lab-active #orb::before,
       html.sv-motion-lab-active #orb::after,
       html.sv-motion-lab-active #orb > .sv-motion-lab-reflection {
