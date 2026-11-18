@@ -1,14 +1,16 @@
-/* SEYVEO · real swept-ribbon mesh. Modes 1/2 remain as visual controls;
-   ?sayvi-model=3 adds frosted velvet with moving light INSIDE each ribbon.
+/* SEYVEO · real swept-ribbon mesh. Modes 1/2/3 remain visual controls;
+   ?sayvi-model=4 is a glass-bottle experiment: clear rims, matte velvet
+   centres, and drifting translucent smoke contained inside each ribbon.
    Four watertight 3D bands exported from Blender with physical depth,
    normal-based pearl/frost material and gentle motion. The public home
    keeps its established Sayvi picture unless this experiment is enabled. */
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4')return;
   const layeredGlass=mode!=='1';
-  const velvetFlow=mode==='3';
+  const velvetFlow=mode==='3'||mode==='4';
+  const smokeBottle=mode==='4';
   const orb=document.getElementById('orb');
   const hero=document.getElementById('plasmaVisual');
   const home=document.getElementById('homePage');
@@ -58,6 +60,7 @@
     uniform float uLayeredGlass;
     uniform float uLayer;
     uniform float uVelvetFlow;
+    uniform float uSmokeBottle;
 
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p){
@@ -93,6 +96,21 @@
       if(uLayeredGlass>.5&&uLayer<.5){
         // Efficient first pass: translucent inner/back surfaces only.
         vec3 inner=mix(vec3(.43,.66,.69),vec3(.73,.90,.91),facing*.46);
+        if(uSmokeBottle>.5){
+          // A soft three-dimensional-looking vapour lives on the INNER shell.
+          // It billows along the ribbon while fading toward its clear edges.
+          vec2 uv=vFlowUv;
+          float core=1.-smoothstep(.45,.93,abs(uv.y-.5)*2.);
+          vec2 driftSmoke=vec2(uv.x*3.35-uTime*.050,
+                               uv.y*2.35+.12*sin(uTime*.13));
+          float smokeA=fineFbm(driftSmoke+vBlade*.37);
+          float smokeB=fineFbm(driftSmoke*1.61+vec2(.7,-uTime*.020));
+          float density=smoothstep(.28,.67,smokeA*.66+smokeB*.34);
+          inner=mix(vec3(.45,.68,.71),vec3(.77,.95,.94),density*.78);
+          inner+=vec3(.055,.12,.12)*density*core;
+          gl_FragColor=vec4(clamp(inner,0.,1.),.11+.25*density*core);
+          return;
+        }
         if(uVelvetFlow>.5){
           // Living liquid silk moves on the reverse surface in intrinsic
           // ribbon coordinates, so it visibly parallax-shifts under glass.
@@ -179,7 +197,7 @@
         // Second pass: front velvet and smooth transparent glass.
         alpha=mix(.955,.655,smoothGlass)+fresnel*.085;
       }
-      if(uVelvetFlow>.5){
+      if(uVelvetFlow>.5&&uSmokeBottle<.5){
         // Frosted velvet on the exterior. The soft aqua silk and filaments
         // travel underneath it, especially visible through polished patches.
         vec2 strand=vFlowUv;
@@ -192,6 +210,29 @@
         color+=vec3(.025,.045,.045)*(.5+.5*sin(uTime*.69+strand.x*4.))
           *(.30+.70*smoothGlass);
         alpha=mix(.96,.61,smoothGlass)+fresnel*.075;
+      }
+      if(uSmokeBottle>.5){
+        // The bottle analogy: matte milk at the band's centre, transparent
+        // polished glass on its edges, with smoke visibly moving beneath.
+        vec2 uv=vFlowUv;
+        float across=abs(uv.y-.5)*2.;
+        float clearEdge=smoothstep(.42,.94,across);
+        float frostedCore=1.-clearEdge;
+        vec2 smokeUv=vec2(uv.x*3.2-uTime*.052,
+                           uv.y*2.6+.12*sin(uTime*.12))+vBlade*.29;
+        float mist=fineFbm(smokeUv);
+        float fog=smoothstep(.25,.70,mist);
+        float wisps=sin(uv.x*11.+uv.y*4.5+mist*2.7-uTime*.24);
+        float billow=.5+.5*wisps;
+
+        color=mix(color,vec3(.88,.975,.973),frostedCore*.36);
+        color=mix(color,vec3(.49,.73,.76),fog*frostedCore*.17);
+        color+=vec3(.062,.12,.13)*billow*fog*frostedCore*.14;
+        // Clean light-catching glass lips are distinct from the cloudy core.
+        color=mix(color,vec3(.67,.90,.91),clearEdge*.22);
+        color+=vec3(.09,.16,.17)*pow(clearEdge,3.)*.32;
+        color+=vec3(.09,.16,.17)*fresnel*.32;
+        alpha=mix(.90,.57,clearEdge)+fresnel*.085;
       }
       gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.61,.99));
     }
@@ -261,7 +302,7 @@
     });
   }
 
-  function setup(gl,ribbons,layeredGlass,velvetFlow){
+  function setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle){
     const program=gl.createProgram();
     gl.attachShader(program,compile(gl,gl.VERTEX_SHADER,vertexSource));
     gl.attachShader(program,compile(gl,gl.FRAGMENT_SHADER,fragmentSource));
@@ -287,7 +328,8 @@
       rotation:gl.getUniformLocation(program,'uRotation'),
       layered:gl.getUniformLocation(program,'uLayeredGlass'),
       layer:gl.getUniformLocation(program,'uLayer'),
-      velvet:gl.getUniformLocation(program,'uVelvetFlow')
+      velvet:gl.getUniformLocation(program,'uVelvetFlow'),
+      smoke:gl.getUniformLocation(program,'uSmokeBottle')
     };
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
@@ -314,6 +356,7 @@
       gl.uniform1f(u.state,state);gl.uniform3fv(u.rotation,rotation);
       gl.uniform1f(u.layered,layeredGlass?1:0);
       gl.uniform1f(u.velvet,velvetFlow?1:0);
+      gl.uniform1f(u.smoke,smokeBottle?1:0);
       if(layeredGlass){
         // Back surfaces scatter a little light through the foreground.
         // Front surfaces then occlude according to real 3D depth.
@@ -348,7 +391,7 @@
         premultipliedAlpha:false,powerPreference:'low-power'
       });
       if(!gl)throw Error('iPhone WebGL unsupported');
-      const render=setup(gl,ribbons,layeredGlass,velvetFlow);
+      const render=setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle);
       const style=document.createElement('style');
       style.textContent=`
         #orb > .sv-sayvi-real3d-canvas {
