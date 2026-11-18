@@ -7,7 +7,8 @@
   const params = new URLSearchParams(location.search);
   if (params.get('sayvi-ribbon') === '0' ||
       params.get('sayvi-smoke') === '0' ||
-      params.get('sayvi-engine') === 'canvas') return;
+      (params.get('sayvi-engine') !== 'image' &&
+       params.get('sayvi-engine') !== 'legacy')) return;
 
   const orb = document.getElementById('orb');
   const hero = document.getElementById('plasmaVisual');

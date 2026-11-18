@@ -1,11 +1,14 @@
-/* SEYVEO · optional true composited living glass experiment.
-   ?sayvi-engine=canvas uses one visible high-resolution canvas for both
-   the existing approved sculpture and its independently moving vapour.
-   The ordinary image remains untouched as a reliable fallback. */
+/* SEYVEO · production living glass: sharp approved sculpture and moving vapour.
+   The canvas preserves the exact 4-petal alpha silhouette and draws soft,
+   intermittent smoke directly under the glass. ?sayvi-engine=image restores
+   the previous static-image renderer; reduced-motion keeps a still image. */
 (() => {
   'use strict';
   const params = new URLSearchParams(location.search);
-  if (params.get('sayvi-engine') !== 'canvas') return;
+  if (params.get('sayvi-engine') === 'image' ||
+      params.get('sayvi-engine') === 'legacy' ||
+      params.get('sayvi-ribbon') === '0' ||
+      params.get('sayvi-smoke') === '0') return;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const orb = document.getElementById('orb');
   const hero = document.getElementById('plasmaVisual');
@@ -13,7 +16,6 @@
 
   const image = new Image();
   image.decoding = 'async';
-  image.src = hero.currentSrc || hero.src;
   image.onload = () => {
     const composite = document.createElement('canvas');
     composite.className = 'sv-ribbon-glass-composite';
@@ -22,7 +24,9 @@
     if (!ctx) return;
 
     const field = document.createElement('canvas');
-    const size = 216;
+    // The smoke is intentionally low frequency. A separate small field keeps
+    // its noise soft while the glass itself stays at retina resolution.
+    const size = 176;
     field.width = field.height = size;
     const fieldCtx = field.getContext('2d', {alpha: true});
     if (!fieldCtx) return;
@@ -76,12 +80,18 @@
     let resolution = 0;
     const resize = () => {
       const diameter = Math.max(140, orb.getBoundingClientRect().width);
-      const dpr = Math.min(3, window.devicePixelRatio || 1);
-      const target = Math.min(1050, Math.ceil(diameter * dpr));
+      // Supersample even on non-retina desktops: the oblique, thin glass lips
+      // must not staircase when the sphere makes its gentle CSS 3D tilt.
+      const dpr = Math.max(2.5, Math.min(3.5, window.devicePixelRatio || 1));
+      const target = Math.min(1200, Math.ceil(diameter * dpr));
       if (Math.abs(target - resolution) < 40) return;
       resolution = target;
       composite.width = composite.height = target;
       maskedSmoke.width = maskedSmoke.height = target;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      maskCtx.imageSmoothingEnabled = true;
+      maskCtx.imageSmoothingQuality = 'high';
     };
     resize();
 
@@ -145,6 +155,7 @@
       html.sv-ribbon-composite-ready #orb > .sv-ribbon-glass-composite {
         position:absolute;inset:0;width:100%;height:100%;display:block;
         z-index:2;pointer-events:none;background:transparent;
+        image-rendering:auto;
         transform-origin:50% 50%;backface-visibility:hidden;
         --sv-ribbon-light:drop-shadow(0 0 12px rgba(108,177,179,.15));
         --sv-ribbon-soft-glass:brightness(1) saturate(1);
@@ -162,12 +173,16 @@
     document.documentElement.classList.add('sv-ribbon-composite-ready');
 
     let lastTime = -Infinity;
+    let startTime = null;
     let frames = 0;
     let visible = true;
-    const refreshMs = 1000 / 20;
+    // A gentle vapor current needs fewer redraws than the 60fps CSS movement.
+    // The lighter mobile cadence also protects older iPhones from heating up.
+    const refreshMs = 1000 / (matchMedia('(max-width:600px)').matches ? 16 : 20);
     const tick = now => {
       if (!document.hidden && visible && now - lastTime >= refreshMs) {
-        render(now / 1000);
+        if (startTime === null) startTime = now;
+        render((now - startTime) / 1000);
         lastTime = now;
         frames++;
         if (frames % 20 === 0) composite.dataset.renderedFrames = String(frames);
@@ -181,4 +196,6 @@
     }
     requestAnimationFrame(tick);
   };
+  image.onerror = () => {}; // Retain the original glass image on decode failure.
+  image.src = hero.getAttribute('src') || hero.currentSrc || hero.src;
 })();
