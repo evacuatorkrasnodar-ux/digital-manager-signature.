@@ -31,6 +31,7 @@
  --sv-master-glass-blur:blur(18px) saturate(145%);
  --sv-master-card-radius:20px;
 }
+
 :root[data-theme=light]{--sv-master-glass:rgba(99,121,133,.26)}
 :root[data-theme=dark][data-palette=emerald]{--sv-master-glass:rgba(184,195,201,.20)}
 :root[data-theme=dark][data-palette=sapphire]{--sv-master-glass:rgba(184,195,201,.22)}
@@ -1364,6 +1365,14 @@
    font:520 11px/1.2 -apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;
    letter-spacing:-.015em;white-space:nowrap;
  }
+}
+
+/* The ribbon SVG applies to every present and future Card Engine family. */
+:root[data-theme="dark"] .sv-card-system--rendered img.sv-card-potok,
+:root[data-theme="dark"] .sv-card-system--rendered img.sv-potok-symbol,
+#seyveoCardStudio [data-preview-theme="dark"] img.sv-card-potok,
+#seyveoCardStudio [data-preview-theme="dark"] img.sv-potok-symbol{
+ filter:invert(1)!important;
 }
 @media(max-width:365px){
  .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"]

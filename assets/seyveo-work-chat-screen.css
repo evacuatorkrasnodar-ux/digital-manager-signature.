@@ -3233,6 +3233,22 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  stroke:none!important;
 }
 
+/* Shared SEYVEO ribbon mark: work-chat header and document preview. */
+#svcpWorkChatScreen img.svcp-header-sayvi-mark,
+.svcp-doc-sayvi-trigger img.svcp-header-sayvi-mark{
+ display:block!important;width:22px!important;height:22px!important;
+ object-fit:contain!important;filter:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage img.sv-sayvi-minimal-mark{
+ display:block!important;width:24px!important;height:24px!important;
+ min-width:24px!important;flex:0 0 24px!important;object-fit:contain!important;
+}
+:root[data-theme="dark"] #svcpWorkChatScreen img.svcp-header-sayvi-mark,
+:root[data-theme="dark"] .svcp-doc-sayvi-trigger img.svcp-header-sayvi-mark,
+:root[data-theme="dark"] #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage img.sv-sayvi-minimal-mark{
+ filter:invert(1)!important;
+}
+
 /* v190 · iPhone keyboard / multiline stabilizer.
    Measured height is provided by JS without resetting the live composer.
    Keep the approved Liquid Glass material, 50px Plus and two laser marks. */
