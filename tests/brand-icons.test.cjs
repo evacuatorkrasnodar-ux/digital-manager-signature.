@@ -9,7 +9,7 @@ const sharp = require('sharp');
 const root = join(__dirname, '..');
 const text = (name) => readFileSync(join(root, name), 'utf8');
 
-test('SEYVEO restores the November 16 PWA icon without changing browser favicons', () => {
+test('SEYVEO restores the November 16 PWA icon and uses its petals in browser tabs', () => {
   const manifest = JSON.parse(text('manifest.webmanifest'));
   const page = text('index.html');
   const notifications = text('sw.js');
@@ -25,11 +25,11 @@ test('SEYVEO restores the November 16 PWA icon without changing browser favicons
   for (const {src} of manifest.icons) {
     assert.ok(existsSync(join(root, src.split('?')[0])), src);
   }
-  assert.match(page, /rel="icon"[^>]+seyveo-favicon-32\.png\?v=7/);
-  assert.match(page, /rel="icon"[^>]+seyveo-favicon-48\.png\?v=7/);
+  assert.match(page, /rel="icon"[^>]+seyveo-favicon-32\.png\?v=8/);
+  assert.match(page, /rel="icon"[^>]+seyveo-favicon-48\.png\?v=8/);
   assert.match(page, /assets\/seyveo-tab-favicon\.js\?v=1/);
-  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-32\.png\?v=2"/);
-  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-48\.png\?v=2"/);
+  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-32\.png\?v=3"/);
+  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-48\.png\?v=3"/);
   assert.doesNotMatch(page, /rel="icon"[^>]+seyveo-favicon\.svg/);
   assert.match(page, /<title>SEYVEO<\/title>/);
   assert.match(page, /document\.title=[^\n]+:'SEYVEO';/);
@@ -42,6 +42,11 @@ test('SEYVEO restores the November 16 PWA icon without changing browser favicons
   assert.match(tabSvg, /prefers-color-scheme:dark/);
   assert.equal((tabSvg.match(/<path\b/g) || []).length, 2);
   assert.doesNotMatch(tabSvg, /<(?:rect|circle)\b/);
+  const pwaPetals = [...text('assets/app-icon.svg').matchAll(/<path d="([^"]+)" fill="url\(#(?:steel|platinum)\)"\/>/g)].map(m => m[1]);
+  const tabPetals = [...tabSvg.matchAll(/<path class="(?:left|right)" d="([^"]+)"/g)].map(m => m[1]);
+  assert.equal(pwaPetals.length, 2);
+  assert.deepEqual(tabPetals, pwaPetals, 'tab geometry must be copied exactly from the old PWA button');
+  assert.match(text('scripts/build-seyveo-tab-favicons.cjs'), /readFileSync\(path\.join\(assets, 'app-icon\.svg'\)/);
   assert.match(page, /rel="apple-touch-icon"[^>]+apple-touch-icon\.png\?v=4/);
   assert.match(page, /assets\/seyveo-app-icon-192\.png\?v=5/);
   assert.match(notifications, /assets\/seyveo-app-icon-192\.png/);
@@ -98,10 +103,10 @@ test('Greeting reveal and still-used card icons are retained for their own migra
 
 test('Browser favicon switches between graphite and silver as system theme changes', () => {
   const links = [32, 48].map(size => ({
-    href: `assets/seyveo-favicon-${size}.png?v=7`,
+    href: `assets/seyveo-favicon-${size}.png?v=8`,
     dataset: {
-      iconLight: `assets/seyveo-favicon-${size}.png?v=7`,
-      iconDark: `assets/seyveo-favicon-dark-${size}.png?v=2`,
+      iconLight: `assets/seyveo-favicon-${size}.png?v=8`,
+      iconDark: `assets/seyveo-favicon-dark-${size}.png?v=3`,
     },
     getAttribute(key) { return this[key]; },
     setAttribute(key, value) { this[key] = value; },
