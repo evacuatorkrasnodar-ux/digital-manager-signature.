@@ -62,23 +62,44 @@
       }
       return v;
     }
+    float gaussian(vec2 p,vec2 c,float k){
+      vec2 d=p-c;return exp(-dot(d,d)*k);
+    }
     void main(){
       vec3 n=normalize(vNormal);
       if(!gl_FrontFacing)n=-n;
       vec3 eye=normalize(vec3(-vPosition.xy*.18,1.));
       float facing=clamp(abs(dot(n,eye)),0.,1.);
-      float fresnel=pow(1.-facing,2.5);
+      float fresnel=pow(1.-facing,2.25);
       vec2 q=vPosition.xy;
-      vec2 drift=vec2(sin(uTime*.19),cos(uTime*.22))*.22;
+      float speech=uState>2.5?abs(sin(uTime*5.1)*sin(uTime*2.5)):1.;
+      float active=uEnergy*(.73+.27*speech);
+      // Original Sayvi pearl-sphere's two independently advected refraction
+      // fields. Apply them to 3D ribbons instead of the former round disc.
+      vec2 drift=vec2(sin(uTime*.24),cos(uTime*.22))*.21;
+      vec2 refractPos=q*(1.12+.25*(1.-facing));
+      float n1=fbm(refractPos*2.2+drift+vec2(uTime*.044,-uTime*.03));
+      float n2=fbm(refractPos*3.-drift*.7+vec2(-uTime*.031,uTime*.039));
+      float fluid=smoothstep(.27,.77,n1*.65+n2*.35);
       float fold=fbm(q*2.8+drift+vec2(vBlade*.71,-vBlade*.46));
-      float silk=fbm(q*5.4-drift*.5+vec2(uTime*.035,-uTime*.028));
       float smoothGlass=smoothstep(.39,.75,
         .33+.40*fold+.23*sin(q.x*5.9+q.y*3.6+uTime*.11+vBlade));
-      vec3 pearl=vec3(.83,.965,.958);
-      vec3 deepGlass=vec3(.48,.72,.735);
-      float inside=.17+.14*(1.-facing)+.09*(1.-fold);
-      vec3 color=mix(pearl,deepGlass,inside);
-      color=mix(color,vec3(.61,.84,.85),silk*.12);
+      // The familiar White Velvet / pearl / ice-blue depth from old Sayvi,
+      // gently warmed with SEYVEO's new aqua rather than a silver metal tint.
+      vec3 pearl=vec3(.89,.975,.983);
+      vec3 glass=vec3(.72,.87,.90);
+      vec3 deepGlass=vec3(.44,.64,.70);
+      float depth=pow(clamp(length(q),0.,1.),1.8);
+      vec3 color=mix(pearl,glass,depth*.43);
+      color=mix(color,deepGlass,(1.-fluid)*(.13+active*.075));
+      color+=vec3(.065,.10,.12)*fluid*.20;
+
+      // Sayvi's older breathing pearl cloud, now seen through the glass
+      // volumes of separate overlapping ribbons.
+      float cloud=gaussian(q,vec2(sin(uTime*.31)*.09,cos(uTime*.27)*.09),10.);
+      float beating=.75+.25*sin(uTime*(uState>2.5?8.:uState>.5?4.:1.6));
+      color+=vec3(.075,.11,.12)*cloud*beating*(.56+active*.60);
+      color=mix(color,vec3(.56,.79,.81),n2*(.055+.075*smoothGlass));
       // A trailing ribbon is deeper inside the glass weave, not darker metal.
       float behind=1.-smoothstep(.075,.28,vPosition.z);
       color=mix(color,deepGlass,behind*(.045+.05*(1.-smoothGlass)));
@@ -92,12 +113,14 @@
                      pow(max(dot(reflect(-lightB,n),eye),0.),78.)*.43;
       color+=vec3(.17,.24,.23)*mix(studio,polished,smoothGlass);
       color+=vec3(.12,.21,.21)*fresnel*(.49+.28*smoothGlass);
+      color+=vec3(.10,.14,.15)*gaussian(q,vec2(-.34,.57),35.)*.34;
+      color+=vec3(.045,.065,.08)*gaussian(q,vec2(.49,-.58),80.)*.28;
       // A broad, faint reflection glides across polished glass without
       // disturbing the approved pearl base colour.
       float travel=dot(q,vec2(.94,.34))-.20*sin(uTime*.24+vBlade*.21);
       float caustic=exp(-32.*travel*travel);
       color+=vec3(.065,.11,.105)*caustic*smoothGlass*.24;
-      color+=vec3(.035,.062,.067)*(.65+.35*sin(uTime*1.1+fold*2.));
+      color+=vec3(.030,.056,.063)*(.65+.35*sin(uTime*1.1+fold*2.));
       float energyGlow=.5+.5*sin(uTime*(uState>2.5?6.:1.4));
       color+=vec3(.085,.13,.125)*energyGlow*uEnergy*.16;
       color=pow(clamp(color,0.,1.),vec3(.93));
@@ -249,7 +272,9 @@
       const reduce=matchMedia('(prefers-reduced-motion: reduce)');
       const size=()=>{
         const bounds=orb.getBoundingClientRect();
-        const dpr=Math.min(1.35,devicePixelRatio||1);
+        // Higher internal resolution keeps the glass rim smooth on Retina;
+        // capped for the iPhone XR's mobile GPU.
+        const dpr=Math.min(1.50,devicePixelRatio||1);
         const length=Math.max(64,Math.round(Math.max(bounds.width,bounds.height)*dpr));
         if(canvas.width!==length||canvas.height!==length){
           canvas.width=canvas.height=length;gl.viewport(0,0,length,length);
