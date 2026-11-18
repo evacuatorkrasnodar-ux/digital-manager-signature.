@@ -113,9 +113,9 @@
         const cloud = Math.max(.12, Math.min(1, (broad * .65 + detail * .35 - .27) * 2.5));
         const density = Math.min(1, body) * ring * cloud;
         const neutralMatte = matteEnabled && document.documentElement.dataset.theme === 'light';
-        fieldPixels[i] = neutralMatte ? 63 : 42;
-        fieldPixels[i + 1] = neutralMatte ? 66 : 80;
-        fieldPixels[i + 2] = neutralMatte ? 72 : 83;
+        fieldPixels[i] = neutralMatte ? 58 : 42;
+        fieldPixels[i + 1] = neutralMatte ? 76 : 80;
+        fieldPixels[i + 2] = neutralMatte ? 107 : 83;
         fieldPixels[i + 3] = Math.round(Math.min(255, density * (fullSmoke ? 450 : 225)));
       }
       fieldCtx.putImageData(fieldImage, 0, 0);
@@ -129,7 +129,7 @@
       ctx.clearRect(0, 0, resolution, resolution);
       // Remove the green pigment from the original artwork before adding
       // neutral pearl smoke. This preserves its geometry and alpha exactly.
-      if (lightMatte) ctx.filter = 'grayscale(1) brightness(1.035)';
+      if (lightMatte) ctx.filter = 'grayscale(1) sepia(.40) hue-rotate(167deg) saturate(1.55) brightness(1.025)';
       ctx.drawImage(image, 0, 0, resolution, resolution);
       ctx.filter = 'none';
       // A source-atop blend uses the sculpture's EXISTING full-resolution alpha
@@ -152,7 +152,7 @@
         ctx.save();
         ctx.globalCompositeOperation = 'source-atop';
         ctx.globalAlpha = .25;
-        ctx.fillStyle = '#e7e9ee';
+        ctx.fillStyle = '#dce8f5';
         ctx.fillRect(0, 0, resolution, resolution);
         ctx.restore();
       }
@@ -184,7 +184,7 @@
         --sv-ribbon-soft-glass:brightness(.97) saturate(1.06);
       }
       html.sv-ribbon-composite-ready.sv-ribbon-matte-velvet[data-theme="light"] #orb > .sv-ribbon-glass-composite {
-        --sv-ribbon-soft-glass:brightness(1.01) saturate(.78);
+        --sv-ribbon-soft-glass:brightness(1.01) saturate(1.05);
       }
       html.sv-ribbon-composite-ready #orb::before {opacity:.17}
       html.sv-ribbon-composite-ready #orb::after {opacity:.09}
