@@ -5,7 +5,9 @@
 (() => {
   'use strict';
   const params = new URLSearchParams(location.search);
-  if (params.get('sayvi-ribbon') === '0' || params.get('sayvi-smoke') === '0') return;
+  if (params.get('sayvi-ribbon') === '0' ||
+      params.get('sayvi-smoke') === '0' ||
+      params.get('sayvi-engine') === 'canvas') return;
 
   const orb = document.getElementById('orb');
   const hero = document.getElementById('plasmaVisual');
