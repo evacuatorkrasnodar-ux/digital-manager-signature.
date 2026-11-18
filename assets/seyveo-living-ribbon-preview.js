@@ -29,8 +29,12 @@
     /* Keep the approved main sphere layout, button hit area and handoff unchanged. */
     html.sv-ribbon-preview #orb #plasmaVisual {
       --sv-ribbon-light: drop-shadow(0 0 12px rgba(108,177,179,.15));
-      will-change: filter;
-      animation: sv-ribbon-pearl-breathe 7.2s ease-in-out infinite;
+      transform-origin: 50% 50%;
+      backface-visibility: hidden;
+      will-change: filter, transform;
+      animation:
+        sv-ribbon-pearl-breathe 7.2s ease-in-out infinite,
+        sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
     }
     html.sv-ribbon-preview[data-theme="light"] #orb #plasmaVisual {
       --sv-ribbon-light: drop-shadow(0 6px 13px rgba(77,129,130,.20));
@@ -56,7 +60,10 @@
       -webkit-mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
       mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
       mix-blend-mode: soft-light;
-      animation: sv-ribbon-liquid-flow 12.6s cubic-bezier(.4,0,.6,1) infinite alternate;
+      transform-origin: 50% 50%;
+      animation:
+        sv-ribbon-liquid-flow 12.6s cubic-bezier(.4,0,.6,1) infinite alternate,
+        sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
     }
     html.sv-ribbon-preview[data-theme="light"] #orb::before {
       opacity: .43;
@@ -78,7 +85,10 @@
       -webkit-mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
       mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
       mix-blend-mode: screen;
-      animation: sv-ribbon-glass-caustic 9s ease-in-out infinite;
+      transform-origin: 50% 50%;
+      animation:
+        sv-ribbon-glass-caustic 9s ease-in-out infinite,
+        sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
     }
     /* Voice mist is refracted INSIDE the ribbons, never across the open center. */
     html.sv-ribbon-preview #orb .orb-mist,
@@ -87,23 +97,23 @@
       mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
     }
     html.sv-ribbon-preview #orb.seyveo-presence-listening #plasmaVisual {
-      animation-duration: 3.5s;
+      animation-duration: 3.5s,15.2s;
     }
     html.sv-ribbon-preview #orb.seyveo-presence-listening::before {
       opacity: .54;
-      animation-duration: 6.4s;
+      animation-duration: 6.4s,15.2s;
     }
     html.sv-ribbon-preview #orb.seyveo-presence-speaking #plasmaVisual {
-      animation-duration: 2.5s;
+      animation-duration: 2.5s,15.2s;
     }
     html.sv-ribbon-preview #orb.seyveo-presence-speaking::before {
       opacity: .65;
-      animation-duration: 4.7s;
+      animation-duration: 4.7s,15.2s;
     }
     html.sv-ribbon-preview #orb.seyveo-presence-listening::after,
     html.sv-ribbon-preview #orb.seyveo-presence-speaking::after {
       opacity: .42;
-      animation-duration: 4.5s;
+      animation-duration: 4.5s,15.2s;
     }
     /* Use the exact same Home artwork in the mini, including dark mode. */
     html.sv-ribbon-preview #assistantButton.sv-sayvi-velvet-ready > svg.button-art {
@@ -132,6 +142,16 @@
     @keyframes sv-ribbon-pearl-breathe {
       0%,100% {filter: var(--sv-ribbon-light) brightness(.985) saturate(.96)}
       52% {filter: var(--sv-ribbon-light) brightness(1.065) saturate(1.10)}
+    }
+    /* The actual #orb never moves here: only its three matched visual layers
+       lean gently together. Handoff transforms and hit targets stay intact. */
+    @keyframes sv-ribbon-floating-tilt {
+      0%,100% {
+        transform: perspective(900px) rotateX(-1.1deg) rotateY(-2.2deg) rotateZ(-.8deg);
+      }
+      50% {
+        transform: perspective(900px) rotateX(1.3deg) rotateY(2.2deg) rotateZ(.8deg);
+      }
     }
     @keyframes sv-ribbon-liquid-flow {
       0% {
