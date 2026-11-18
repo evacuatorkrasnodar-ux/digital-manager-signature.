@@ -4311,7 +4311,8 @@ document.addEventListener('seyveo:silk-touch',()=>playFeedback('select'));
 
 
 /* Orb glyphs are now defined only once in assets/orb-language.js. */
-const BRAND_LOCKUP_HTML='<span class="brand-lockup"><img class="brand-mark" src="assets/seyveo-circular-interlace-mono.svg?v=1" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
+// The opening sphere itself is the emblem: use a quiet wordmark inside it.
+const BRAND_LOCKUP_HTML='<span class="brand-lockup"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
 const BRAND_STORE_KEY='dm-seyveo-signature-v2';
 const BRAND_MAX_DAILY=1,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=5400;
 let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
