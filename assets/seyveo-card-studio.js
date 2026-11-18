@@ -48,7 +48,7 @@ page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 const policyGuide=document.createElement('p');
 policyGuide.className='scs-note';
-policyGuide.textContent='Эталон SEYVEO · «Разобрать дела» (17.11): белый цельный фон, компактная категория и дата события, тонкая контурная иконка, читаемый текст и три понятных действия: «Сэйви поможет», «Исправить самому», «Перейти в нужный раздел». Сэйви обозначена голубым знаком «Поток». Редактор «Ваш вариант» — матовое перламутровое серебро нашего дока, без зелёной заливки. Нажатие на Сэйви открывает подготовленное предложение и требует подтверждения человека. Все 16 типов, старые и будущие, наследуют этот договор интерфейса. Тёмная тема остаётся графитовой.';
+policyGuide.textContent='Эталон SEYVEO · «Разобрать дела» (17.11): белый цельный фон, компактная категория и дата события, тонкая контурная иконка, читаемый текст и три понятных действия: «Сэйви поможет», «Исправить самому», «Перейти в нужный раздел». Сэйви обозначена новым монохромным ленточным знаком SEYVEO. Редактор «Ваш вариант» — матовое перламутровое серебро нашего дока, без зелёной заливки. Нажатие на Сэйви открывает подготовленное предложение и требует подтверждения человека. Все 16 типов, старые и будущие, наследуют этот договор интерфейса. Тёмная тема остаётся графитовой.';
 galleryGrid.insertAdjacentElement('beforebegin',policyGuide);
 const policyAudit=document.createElement('p');
 policyAudit.className='scs-note';
@@ -71,7 +71,7 @@ function renderGallery(){
   const required=['sayvi','edit','navigate'];
   const sayviStandard=engine.cardPolicy.sayviButtonStandard;
   if(!sayviStandard||sayviStandard.touchPx!==44||sayviStandard.shape!=='inline'||
-     sayviStandard.mark!=='potok'||sayviStandard.ink!=='#217FCD'){
+     sayviStandard.mark!=='ribbon'||sayviStandard.ink!=='#161B1B'){
    errors.push(event[0]+' · отклонение от утверждённого стандарта Сэйви');
   }
   const same=(actual,expected)=>actual.length===expected.length&&
@@ -125,7 +125,7 @@ function renderGallery(){
  }
  policyAudit.textContent=errors.length||tested!==entries.length
   ?'Проверка стандарта: '+(errors.join('; ')||'не все зарегистрированные типы отображены')
-  :'Стандарт проверен: '+tested+' типов · плоские карточки, голубой «Поток», 44px цели, понятные подписи и матовое серебро поля · тёмная тема сохранена';
+  :'Стандарт проверен: '+tested+' типов · плоские карточки, монохромный знак SEYVEO, 44px цели, понятные подписи и матовое серебро поля · тёмная тема сохранена';
 }
 renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');

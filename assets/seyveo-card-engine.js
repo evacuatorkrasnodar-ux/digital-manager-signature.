@@ -59,7 +59,7 @@
   sayviButtonStandard:Object.freeze({
    theme:'light',shape:'inline',touchPx:44,ringPx:0,outerRingPx:0,
    rimOpacity:.28,outerRimOpacity:.16,glyphPx:30,
-   mark:'potok',fill:'transparent',ink:'#217FCD',
+   mark:'ribbon',fill:'transparent',ink:'#161B1B',
    darkTheme:'preserve-current'
   }),
   deferGesture:'swipe-both-cycle',dismissGesture:'long-press-only',contextGesture:'long-press',deferMinPixels:75,
@@ -348,7 +348,7 @@
   if(kind==='sayvi'){
    symbol=document.createElement('img');
    symbol.className='sv-card-symbol sv-potok-symbol';
-   symbol.src='assets/seyveo-potok-blue.svg?v=1';
+   symbol.src='assets/seyveo-ribbon-mark-dark.svg?v=1';
    symbol.alt='';
   }else{
    symbol=document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -460,7 +460,7 @@
    const proposal=el('div','sv-card-proposal');
    const label=el('span','sv-card-label sv-card-sayvi-observation','Сэйви заметила');
    const potok=el('img','sv-card-potok');
-   potok.src='assets/seyveo-potok-blue.svg?v=1';potok.width=16;potok.height=16;
+   potok.src='assets/seyveo-ribbon-mark-dark.svg?v=1';potok.width=16;potok.height=16;
    potok.alt='';potok.setAttribute('aria-hidden','true');label.prepend(potok);
    proposal.append(label,el('p','sv-card-value',p.suggestion));article.append(proposal);
   }

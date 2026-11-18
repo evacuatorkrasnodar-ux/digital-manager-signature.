@@ -1214,7 +1214,7 @@
 }
 .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-sayvi-observation{
  display:flex;align-items:center;gap:4px;
- color:#217FCD!important;font-weight:550;letter-spacing:.01em;
+ color:#161B1B!important;font-weight:550;letter-spacing:.01em;
 }
 .sv-card-system--rendered[data-sv-card-standard="review-editorial-v1"] .sv-card-potok{
  display:inline-block;width:16px;height:16px;object-fit:contain;flex:0 0 16px;
