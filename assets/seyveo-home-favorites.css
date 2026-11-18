@@ -27,20 +27,17 @@
 }
 #homePage #svHomeFavorites .sv-home-favorite-icon{
  position:relative;display:grid;place-items:center;width:var(--sv-action-circle-size,44px);height:var(--sv-action-circle-size,44px);
- box-sizing:border-box;border-radius:50%;
- /* Exact Card Workshop action contract: white pearl circles with a hairline rim. */
- background:var(--sv-card-action-neutral-bg,transparent);
- border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));
- -webkit-backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
- backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
- box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16));
+ box-sizing:border-box;border-radius:0;
+ /* A finger-sized invisible target, with nothing behind Sayvi's pen drawing. */
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  transition:opacity .18s ease,transform .22s cubic-bezier(.22,1,.36,1);
 }
 #homePage #svHomeFavorites .sv-home-favorite:active .sv-home-favorite-icon{
  opacity:.92;transform:scale(.965)
 }
 #homePage #svHomeFavorites .sv-home-favorite-icon svg{
- width:var(--sv-action-glyph-size,20px);height:var(--sv-action-glyph-size,20px);fill:none;stroke:#0B0B0D;stroke-width:1.6;
+ width:32px;height:32px;fill:none;stroke:#17181b;stroke-width:1.28;
  stroke-linecap:round;stroke-linejoin:round;shape-rendering:geometricPrecision
 }
 #homePage #svHomeFavorites .sv-home-favorite-label{
@@ -48,8 +45,10 @@
  white-space:nowrap;font-size:11.5px;font-weight:500;line-height:1.4;letter-spacing:-.08px;
  color:#34343a;
 }
+:root[data-theme=dark] #homePage #svHomeFavorites .sv-home-favorite-icon svg{stroke:#edf1f2}
+:root[data-theme=dark] #homePage #svHomeFavorites .sv-home-favorite-label{color:#e0e5e7}
 #homePage #svHomeFavorites .sv-home-review-badge{
- position:absolute;top:-7px;right:-7px;min-width:18px;height:18px;padding:0 3px;
+ position:absolute;top:-2px;right:-4px;min-width:18px;height:18px;padding:0 3px;
  box-sizing:border-box;display:flex;align-items:center;justify-content:center;
  border-radius:12px;border:1.6px solid #fff;background:#f12e3c;color:white;
  font:650 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
@@ -138,8 +137,8 @@
 }
 @media(max-width:370px){
  #homePage #svHomeFavorites{max-width:calc(100vw - 16px)}
- #homePage #svHomeFavorites .sv-home-favorite-icon{width:var(--sv-action-circle-size,44px);height:var(--sv-action-circle-size,44px);border-radius:50%}
- #homePage #svHomeFavorites .sv-home-favorite-icon svg{width:var(--sv-action-glyph-size,20px);height:var(--sv-action-glyph-size,20px)}
+ #homePage #svHomeFavorites .sv-home-favorite-icon{width:var(--sv-action-circle-size,44px);height:var(--sv-action-circle-size,44px);border-radius:0}
+ #homePage #svHomeFavorites .sv-home-favorite-icon svg{width:31px;height:31px}
  #homePage #svHomeFavorites .sv-home-favorite-label{font-size:10.5px}
 }
 @media(prefers-reduced-motion:reduce){
