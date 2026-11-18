@@ -32,9 +32,9 @@ test('Launch logo waits for Home scene, and local voice bridge survives',async()
   assert.match(html,/sv-home-launch-logo-visible/);
   assert.match(brand,/sv-sayvi-home-cards:not\(\.sv-home-launch-logo-visible\)/);
   assert.match(brand,/#homePage #signal\.is-pearl \.brand-lockup\{\s*transform:scale\(1\)/);
-  assert.match(html,/\.brand-mark\{\s*animation:cinema-mark 9\.3s/);
-  assert.match(html,/\.brand-word\{\s*animation:cinema-word 9\.3s/);
-  assert.match(html,/\.brand-specialty\{\s*animation:cinema-specialty 9\.3s/);
+  assert.match(html,/\.brand-mark\{\s*animation:cinema-mark 5\.2s/);
+  assert.match(html,/\.brand-word\{\s*animation:cinema-word 5\.2s/);
+  assert.match(html,/\.brand-specialty\{\s*animation:cinema-specialty 5\.2s/);
   assert.doesNotMatch(brand,/animation:cinema-(?:mark|word|specialty) 5\.4s/);
   assert.match(brand,/Original Silk Motion \/ Pearl Mist/);
   assert.match(homeCss,/sv-home-cinema-orb \.78s/);
@@ -59,8 +59,10 @@ test('White PWA wakes quickly and Sayvi writes a welcome without moving Home',as
   assert.equal(pwa.background_color,'#ffffff');
   assert.equal(pwa.theme_color,'#ffffff');
   assert.match(html,/data-theme="light" data-palette="white"/);
-  assert.match(html,/setTimeout\(\(\)=>document\.documentElement\.classList\.remove\('sv-cinema-boot'\),1500\)/);
-  assert.doesNotMatch(html,/classList\.remove\('sv-cinema-boot'\),3200/);
+  assert.match(html,/setTimeout\(\(\)=>document\.documentElement\.classList\.remove\('sv-cinema-boot'\),8000\)/);
+  assert.doesNotMatch(html,/setTimeout\(\(\)=>document\.documentElement\.classList\.remove\('sv-cinema-boot'\),3200/);
+  assert.match(homeJs,/const openingDuration=5200/);
+  assert.match(homeJs,/duration:2600\*speed/);
   assert.match(homeJs,/function showHomeWelcome\(\)/);
   assert.match(homeJs,/text:'Я Сэйви\.',kind:'name',type:89,hold:1000,erase:55/);
   assert.match(homeJs,/text:'Рада тебя видеть!',kind:'wish',type:81/);

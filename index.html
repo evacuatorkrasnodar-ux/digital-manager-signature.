@@ -31,12 +31,12 @@ html.sv-work-first-paint[data-sv-work-entry="true"] body #homePage{
   document.documentElement.dataset.palette=isLight?'white':resolved==='graphite'?'graphite':resolved==='sapphire'?'sapphire':resolved==='plum'?'plum':'emerald';
   document.querySelector('meta[name="theme-color"]').content=isLight?'#f9fafb':resolved==='graphite'?'#11161b':resolved==='sapphire'?'#101724':resolved==='plum'?'#1c1b1a':'#111917';
 }catch{}})();
-// A short, light first-paint veil keeps the old generic orb from jumping
-// before its final Home size is known. Never leave an empty black screen for
-// several seconds if iOS PWA resources or the local voice hook load slowly.
+// Keep legacy Home markup covered until the cinematic controller is ready.
+// A fixed 3.2s reveal could expose stale screens on slower iOS cold starts.
 if(!location.hash||location.hash==='#home'){
   document.documentElement.classList.add('sv-cinema-boot');
-  setTimeout(()=>document.documentElement.classList.remove('sv-cinema-boot'),3200);
+  // Failure-only watchdog: the controller clears this on its first frame.
+  setTimeout(()=>document.documentElement.classList.remove('sv-cinema-boot'),8000);
 }
 // On a direct Work reload, suppress the Home fallback frame as well.
 // Fallback guard prevents an empty screen if an old PWA script fails.
@@ -143,16 +143,16 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
  opacity:0;transform:translateZ(0);backface-visibility:hidden
 }
 .signal.is-pearl.is-appearing .pearl-stage::before{
- animation:cinema-inner-light 9.3s linear both
+ animation:cinema-inner-light 5.2s linear both
 }
 .signal.is-pearl.is-appearing .brand-mark{
- animation:cinema-mark 9.3s linear both;will-change:opacity
+ animation:cinema-mark 5.2s linear both;will-change:opacity
 }
 .signal.is-pearl.is-appearing .brand-word{
- animation:cinema-word 9.3s linear both;will-change:opacity
+ animation:cinema-word 5.2s linear both;will-change:opacity
 }
 .signal.is-pearl.is-appearing .brand-specialty{
- animation:cinema-specialty 9.3s linear both;will-change:opacity
+ animation:cinema-specialty 5.2s linear both;will-change:opacity
 }
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
@@ -6732,7 +6732,7 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-my-broadcast.css?v=5">
 <script src="assets/seyveo-my-broadcast.js?v=9"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=81">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=100"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=44"><script src="assets/seyveo-review-cards.js?v=24"></script>
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=101"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=44"><script src="assets/seyveo-review-cards.js?v=24"></script>
 <link rel="stylesheet" href="assets/seyveo-progressive-discovery.css?v=2">
 <script src="assets/seyveo-progressive-discovery.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-home-status-light.css?v=2">

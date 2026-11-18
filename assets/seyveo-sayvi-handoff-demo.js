@@ -8,6 +8,7 @@
   const replay=params.get('sayvi-intro')==='1'||params.get('sayvi-handoff')==='1';
   const noIntro=params.get('sayvi-intro')==='0';
   const speed=params.get('sayvi-slow')==='1'?1.8:1;
+  const openingDuration=5200;
   // The approved Sayvi voice is available via the trusted local server, or
   // from a file the owner explicitly imports into this browser's private data.
   // No recording is published with SEYVEO; other visitors remain silent.
@@ -390,7 +391,7 @@
     root.classList.add('sv-sayvi-handoff-inflight');
     // Unveil the fourth slot while Sayvi is still travelling. The capsule
     // completes its long, smooth expansion just before the sphere docks.
-    growDock(180*speed,3650*speed);
+    growDock(120*speed,2200*speed);
 
     requestAnimationFrame(()=>{
       if(done)return;
@@ -401,8 +402,8 @@
           // intermediate keyframes; the miniature remains a complete sphere.
           {offset:0,transform:'translate3d(0,0,0) scale(1)',opacity:1},
           {offset:1,transform:land,opacity:1}
-        ],{duration:4200*speed,easing:'cubic-bezier(.45,0,.16,1)',fill:'forwards'});
-        safetyTimer=setTimeout(()=>finish({spark:true}),4850*speed);
+        ],{duration:2600*speed,easing:'cubic-bezier(.45,0,.16,1)',fill:'forwards'});
+        safetyTimer=setTimeout(()=>finish({spark:true}),3200*speed);
         animation.finished.then(()=>finish({spark:true})).catch(()=>{});
       }catch{finish();}
     });
@@ -413,7 +414,7 @@
     // A quiet, task-free launch has no miniature destination to prepare.
     if(shouldDockHome())prepareDock();
     root.classList.remove('sv-cinema-boot');
-    // Start the approved 9.3-second mark/word/signature on the large sphere.
+    // Start the original mark/word/signature choreography at a faster pace.
     // The Home controller waits two frames for its final visible geometry.
     window.dispatchEvent(new Event('seyveo:cinema-opening'));
     // The artwork is already loaded. Changing its URL on voice playback
@@ -422,7 +423,7 @@
     startGreeting();
     // The sphere never flies away while the private project narration speaks.
     // Its audio onended event starts the flight after the final spoken word.
-    if(!waitForNarration)introTimer=setTimeout(begin,10400);
+    if(!waitForNarration)introTimer=setTimeout(begin,openingDuration);
   }
 
   function showLocalVoicePreview(){
@@ -456,7 +457,7 @@
     };
     voiceMedia.onended=()=>{
       if(done)return;
-      const remaining=Math.max(700,10400-(performance.now()-openingStartedAt));
+      const remaining=Math.max(700,openingDuration-(performance.now()-openingStartedAt));
       introTimer=setTimeout(begin,remaining);
     };
     const fallback=(error)=>{
@@ -613,7 +614,7 @@
       };
       voiceMedia.onended=()=>{
         if(done)return;
-        introTimer=setTimeout(begin,Math.max(700,10400-(performance.now()-openingStartedAt)));
+        introTimer=setTimeout(begin,Math.max(700,openingDuration-(performance.now()-openingStartedAt)));
       };
       voiceMedia.onerror=()=>importControl('Голос недоступен · Выбрать WAV снова');
       play();
