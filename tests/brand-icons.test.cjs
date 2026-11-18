@@ -7,7 +7,7 @@ const { runInNewContext } = require('node:vm');
 const root = join(__dirname, '..');
 const text = (name) => readFileSync(join(root, name), 'utf8');
 
-test('SEYVEO uses the approved PWA icon and bare twin-wave browser favicon', () => {
+test('SEYVEO uses the emerald velvet PWA icon and bare twin-wave browser favicon', () => {
   const manifest = JSON.parse(text('manifest.webmanifest'));
   const page = text('index.html');
   const notifications = text('sw.js');
@@ -16,9 +16,9 @@ test('SEYVEO uses the approved PWA icon and bare twin-wave browser favicon', () 
   assert.deepEqual(
     manifest.icons.map(({ src }) => src.split('?')[0]),
     [
-      'assets/seyveo-app-icon-192.png',
-      'assets/seyveo-app-icon-512.png',
-      'assets/seyveo-app-icon-maskable-512.png',
+      'assets/seyveo-pwa-velvet-192.png',
+      'assets/seyveo-pwa-velvet-512.png',
+      'assets/seyveo-pwa-velvet-maskable-512.png',
     ],
   );
   for (const {src} of manifest.icons) {
@@ -41,7 +41,7 @@ test('SEYVEO uses the approved PWA icon and bare twin-wave browser favicon', () 
   assert.match(tabSvg, /prefers-color-scheme:dark/);
   assert.equal((tabSvg.match(/<path\b/g) || []).length, 2);
   assert.doesNotMatch(tabSvg, /<(?:rect|circle)\b/);
-  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-apple-touch-icon\.png\?v=5/);
+  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-pwa-velvet-apple-180\.png\?v=1/);
   assert.match(page, /assets\/seyveo-app-icon-192\.png\?v=5/);
   assert.match(notifications, /assets\/seyveo-app-icon-192\.png/);
   assert.doesNotMatch(page + notifications + JSON.stringify(manifest), /assets\/(?:app-icon(?:-maskable)?\.svg|apple-touch-icon\.png|brand-tile\.svg)/);
@@ -63,6 +63,11 @@ test('3D light and dark source icons are kept for native platform packaging', ()
     'seyveo-app-icon-512.png': 512,
     'seyveo-app-icon-maskable-512.png': 512,
     'seyveo-apple-touch-icon.png': 180,
+    'seyveo-pwa-velvet-1024.png': 1024,
+    'seyveo-pwa-velvet-192.png': 192,
+    'seyveo-pwa-velvet-512.png': 512,
+    'seyveo-pwa-velvet-maskable-512.png': 512,
+    'seyveo-pwa-velvet-apple-180.png': 180,
   };
   for (const [name, size] of Object.entries(expectedSizes)) {
     const png = readFileSync(join(root, 'assets', name));
