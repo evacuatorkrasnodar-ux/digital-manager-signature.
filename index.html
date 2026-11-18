@@ -105,6 +105,11 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:8px 0 14px;min-height:385px}
 .plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer}
 .plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
+/* One SVG owns the Home sphere. Hide residual legacy fog/signature overlays. */
+#homePage #orb > .orb-mist,
+#homePage #orb > .orb-logo-mist {display:none!important}
+#homePage #orb::before,
+#homePage #orb::after {content:none!important;display:none!important}
 /* The HTML image fallback is dark. Never paint the wrong sphere for a single
    frame while applyTheme() swaps it to the saved White Velvet artwork. */
 :root[data-theme=light] #plasmaVisual[src*="plasma-signature.svg"],
@@ -2109,7 +2114,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 </button><button id="seyveoCompanyMiniQr" type="button" class="sv-mini-qr" aria-label="Создать QR-визитку компании"><span id="seyveoCompanyMiniQrCode" class="sv-mini-qr-code" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM5.5 5.5h2M16.5 5.5h2M5.5 16.5h2M14 14h3v3h-3zM19 14h2v7h-5v-2"/></svg></span><span id="seyveoCompanyMiniQrLabel">Создать визитку</span></button></div>
 </div>
 </section>
-</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Общаться с Сэйви: нажмите для сообщения, удерживайте для голоса"><img id="plasmaVisual" class="plasma-art" src="assets/seyveo-living-ribbon.png?v=1" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline">Добро пожаловать в SEYVEO</h2><p id="subline">Здесь будут ваши дела, сообщения и полезные рекомендации.</p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
+</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Общаться с Сэйви: нажмите для сообщения, удерживайте для голоса"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature-light.svg?v=24" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline">Добро пожаловать в SEYVEO</h2><p id="subline">Здесь будут ваши дела, сообщения и полезные рекомендации.</p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
 <aside id="seyveoNameTip" class="seyveo-name-tip" role="note" hidden><span><strong>Я Сэйви.</strong> Можешь называть меня Сэй.</span><button id="seyveoNameTipClose" type="button" aria-label="Скрыть подсказку об имени">Понятно</button></aside>
 <section id="svSmartStartHome" class="sv-smart-start-home" hidden aria-labelledby="svSmartStartHomeTitle">
  <p class="sv-smart-start-home-kicker">SEYVEO · знакомство</p>
@@ -4219,7 +4224,7 @@ function applyTheme(){
   // Keep the browser's top chrome consistent with the selected app theme.
   const browserTheme=document.querySelector('meta[name="theme-color"]');
   if(browserTheme)browserTheme.setAttribute('content',isLight?'#f9fafb':palette==='graphite'?'#11161b':palette==='sapphire'?'#101724':palette==='plum'?'#1c1b1a':'#111917');
-  const svg=new URLSearchParams(location.search).get('sayvi-ribbon')==='0'?(isLight?'assets/plasma-signature-light.svg?v=24':'assets/plasma-signature.svg?v=20'):'assets/seyveo-living-ribbon.png?v=1';
+  const svg=isLight?'assets/plasma-signature-light.svg?v=24':'assets/plasma-signature.svg?v=20';
   for(const id of ['plasmaVisual']){
     const el=$(id);if(el&&el.getAttribute('src')!==svg)el.setAttribute('src',svg);
   }
@@ -6722,7 +6727,7 @@ window.addEventListener('load',()=>{
 </script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=2"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=9"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=41"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=8"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=7">
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
-<link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=1">
+<link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=2">
 <script src="assets/seyveo-sayvi-mini-copy.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-my-broadcast.css?v=5">
 <script src="assets/seyveo-my-broadcast.js?v=9"></script>
@@ -6735,4 +6740,4 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-weather-brief.css?v=12">
 <script src="assets/seyveo-weather-brief.js?v=10"></script>
 <script src="assets/seyveo-writing-focus.js?v=1"></script>
-<link rel="stylesheet" href="assets/seyveo-home-calm.css?v=12"><script src="assets/seyveo-home-calm.js?v=12"></script><link rel="stylesheet" href="assets/seyveo-home-favorites.css?v=34"><script src="assets/seyveo-home-favorites.js?v=29" defer></script><script src="assets/seyveo-share-inbox.js?v=2" defer></script><script src="assets/seyveo-living-ribbon.js?v=5"></script><script src="assets/seyveo-ribbon-inner-smoke.js?v=5"></script><script src="assets/seyveo-ribbon-composite-lab.js?v=20"></script><script src="assets/seyveo-sayvi-atmosphere-lab.js?v=3"></script><script src="assets/seyveo-orientation-lab.js?v=2"></script><script src="assets/seyveo-ribbon-webgl-lab.js?v=10"></script><script src="assets/seyveo-real-ribbons-lab.js?v=20"></script></body></html>
+<link rel="stylesheet" href="assets/seyveo-home-calm.css?v=12"><script src="assets/seyveo-home-calm.js?v=12"></script><link rel="stylesheet" href="assets/seyveo-home-favorites.css?v=34"><script src="assets/seyveo-home-favorites.js?v=29" defer></script><script src="assets/seyveo-share-inbox.js?v=2" defer></script><script src="assets/seyveo-orientation-lab.js?v=2"></script></body></html>
