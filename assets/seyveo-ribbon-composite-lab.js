@@ -97,8 +97,7 @@
     const renderField = seconds => {
       for (let i = 0, cell = 0; i < fieldPixels.length; i += 4, cell += 3) {
         const angle = cells[cell], radius = cells[cell + 1], ring = cells[cell + 2];
-        // Full-coverage vapour: every painted ribbon pixel receives mist.
-        // The source-atop mask below still preserves the real clear openings.
+        if (ring < .008) {fieldPixels[i + 3] = 0; continue;}
         let body = 0;
         for (const p of pockets) {
           const delta = angle - p.at - seconds * p.speed;
@@ -112,20 +111,18 @@
         const broad = noise(angle * 8 + seconds * .18, radial + seconds * .026, 8);
         const detail = noise(angle * 16 - seconds * .20, radial * 2.15, 16);
         const cloud = Math.max(.12, Math.min(1, (broad * .65 + detail * .35 - .27) * 2.5));
-        // Continuous soft base with higher-density clouds: no clear patches
-        // inside the glass, yet the light can still reveal its depth.
-        const density = .87 + .07 * cloud + .06 * Math.min(1, body) * ring * cloud;
-        fieldPixels[i] = 112;
-        fieldPixels[i + 1] = 145;
-        fieldPixels[i + 2] = 149;
-        fieldPixels[i + 3] = Math.round(Math.min(255, density * 255));
+        const density = Math.min(1, body) * ring * cloud;
+        fieldPixels[i] = 42;
+        fieldPixels[i + 1] = 80;
+        fieldPixels[i + 2] = 83;
+        fieldPixels[i + 3] = Math.round(Math.min(255, density * (fullSmoke ? 450 : 225)));
       }
       fieldCtx.putImageData(fieldImage, 0, 0);
     };
 
     const render = seconds => {
       resize();
-      renderField(0); // Freeze the internal vapour; keep the pearl-glass sphere animation.
+      renderField(seconds);
       const lightMatte = matteEnabled &&
         document.documentElement.dataset.theme === 'light';
       ctx.clearRect(0, 0, resolution, resolution);
@@ -134,52 +131,29 @@
       // as the mask. There is no extra downsampled edge or double-alpha pass:
       // the aperture and side air gap stay truly transparent. This also avoids
       // rebuilding a second full-resolution mask every animation frame.
-      if (lightMatte) {
-        // True milky-white fill under the glass: no distinguishable smoke
-        // pockets. Source-atop retains the ribbon silhouette and clear holes.
-        ctx.save();
-        ctx.globalCompositeOperation = 'source-atop';
-        ctx.globalAlpha = .94;
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, resolution, resolution);
-        ctx.restore();
-      } else {
-        // Keep the original colored vapour behavior for the dark theme.
-        ctx.save();
-        ctx.globalAlpha = 1;
-        ctx.globalCompositeOperation = 'source-atop';
-        ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
-        ctx.drawImage(field, 0, 0, resolution, resolution);
-        ctx.restore();
-      }
+      ctx.save();
+      // The ordinary Home stays pixel-matched to the approved velvet look.
+      // In the explicit experiment the plume reaches full opacity.
+      ctx.globalAlpha = fullSmoke ? 1 : .78;
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
+      ctx.drawImage(field, 0, 0, resolution, resolution);
+      ctx.restore();
 
       if (lightMatte) {
-        // Soft subsurface studio light, confined to existing ribbon pixels.
-        // The vapor stays frozen and the original sculpture colors remain intact.
+        // A milky subsurface scattering layer turns clear polished glass into
+        // frosted velvet. Source-atop keeps the exact petal transparency,
+        // sharp openings and outer silhouette pixel-identical.
         ctx.save();
         ctx.globalCompositeOperation = 'source-atop';
-        const pearl = ctx.createRadialGradient(
-          resolution * .34, resolution * .24, resolution * .015,
-          resolution * .42, resolution * .44, resolution * .58
-        );
-        pearl.addColorStop(0, 'rgba(255,255,255,.31)');
-        pearl.addColorStop(.38, 'rgba(241,247,255,.13)');
-        pearl.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = pearl;
-        ctx.fillRect(0, 0, resolution, resolution);
-        const rim = ctx.createRadialGradient(
-          resolution * .76, resolution * .77, 0,
-          resolution * .72, resolution * .72, resolution * .43
-        );
-        rim.addColorStop(0, 'rgba(217,232,251,.13)');
-        rim.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = rim;
+        ctx.globalAlpha = .25;
+        ctx.fillStyle = '#dcebe8';
         ctx.fillRect(0, 0, resolution, resolution);
         ctx.restore();
       }
     };
 
-    // Show the replacement only after the first real composite exists;
+    // Show the replacement only after the first real composite exists.
     render(0);
     if (params.get('sayvi-qa') === '1') {
       window.__sayviCompositeRenderAt = render;
@@ -200,7 +174,8 @@
                   sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
       }
       html.sv-ribbon-composite-ready[data-theme="light"] #orb > .sv-ribbon-glass-composite {
-        /* Retain the approved natural tint of the glass in the white theme. */
+        /* On a white surface, do not wash the frosted mint into pale silver.
+           Match the approved dark-theme material without touching its shape. */
         --sv-ribbon-light:drop-shadow(0 6px 13px rgba(56,116,114,.18));
         --sv-ribbon-soft-glass:brightness(.97) saturate(1.06);
       }
