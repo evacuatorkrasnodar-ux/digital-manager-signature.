@@ -41,7 +41,7 @@ test('SEYVEO uses the emerald velvet PWA icon and bare twin-wave browser favicon
   assert.match(tabSvg, /prefers-color-scheme:dark/);
   assert.equal((tabSvg.match(/<path\b/g) || []).length, 2);
   assert.doesNotMatch(tabSvg, /<(?:rect|circle)\b/);
-  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-pwa-velvet-apple-180\.png\?v=1/);
+  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-pwa-velvet-apple-180\.png\?v=2/);
   assert.match(page, /assets\/seyveo-app-icon-192\.png\?v=5/);
   assert.match(notifications, /assets\/seyveo-app-icon-192\.png/);
   assert.doesNotMatch(page + notifications + JSON.stringify(manifest), /assets\/(?:app-icon(?:-maskable)?\.svg|apple-touch-icon\.png|brand-tile\.svg)/);

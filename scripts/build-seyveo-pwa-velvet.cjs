@@ -10,22 +10,22 @@ const size = 1024;
 
 const velvet = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <defs>
-    <radialGradient id="velvet" cx="50%" cy="49%" r="78%">
-      <stop offset="0" stop-color="#096049"/>
-      <stop offset=".30" stop-color="#08583f"/>
-      <stop offset=".60" stop-color="#074b36"/>
-      <stop offset=".82" stop-color="#063c2c"/>
-      <stop offset="1" stop-color="#052f24"/>
+    <radialGradient id="velvet" cx="50%" cy="49%" r="83%">
+      <stop offset="0" stop-color="#064936"/>
+      <stop offset=".25" stop-color="#053f30"/>
+      <stop offset=".53" stop-color="#032d23"/>
+      <stop offset=".78" stop-color="#021b17"/>
+      <stop offset="1" stop-color="#010f0e"/>
     </radialGradient>
     <linearGradient id="air" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#6dbaa3" stop-opacity=".07"/>
+      <stop offset="0" stop-color="#6dbaa3" stop-opacity=".035"/>
       <stop offset=".5" stop-color="#001b13" stop-opacity="0"/>
-      <stop offset="1" stop-color="#002016" stop-opacity=".09"/>
+      <stop offset="1" stop-color="#002016" stop-opacity=".12"/>
     </linearGradient>
   </defs>
   <rect width="1024" height="1024" fill="url(#velvet)"/>
   <rect width="1024" height="1024" fill="url(#air)"/>
-  <rect x="4" y="4" width="1016" height="1016" rx="226" fill="none" stroke="#6caa96" stroke-width="3" stroke-opacity=".28"/>
+  <rect x="4" y="4" width="1016" height="1016" rx="226" fill="none" stroke="#72978b" stroke-width="3" stroke-opacity=".18"/>
 </svg>`);
 
 const smooth = (v) => {
