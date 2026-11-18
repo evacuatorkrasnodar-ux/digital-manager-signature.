@@ -1,15 +1,16 @@
 /* SEYVEO · real swept-ribbon mesh. Modes 1–8 remain comparison previews;
    ?sayvi-model=8 restores the old animated plasma-signature-light.svg's
    physical layer order: moving silk, smoky filaments, still glass shell.
-   ?sayvi-model=9 is the original SVG silk as a GPU-independent diagnostic,
-   clipped precisely to the new pearl ribbons' transparent image silhouette.
+   ?sayvi-model=9 is the original SVG silk as a GPU-independent diagnostic.
+   ?sayvi-model=10 uses soft fabric/smoke instead of mapped old filaments,
+   with the new ribbon silhouette constrained to a precise outer circle.
    Four watertight 3D bands exported from Blender with physical depth,
    normal-based pearl/frost material and gentle motion. The public home
    keeps its established Sayvi picture unless this experiment is enabled. */
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9'&&mode!=='10')return;
   const layeredGlass=mode!=='1';
   const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6'||mode==='7'||mode==='8';
   const smokeBottle=mode==='4'||mode==='5';
@@ -22,7 +23,8 @@
   const home=document.getElementById('homePage');
   if(!orb||!hero||!home)return;
 
-  if(mode==='9'){
+  if(mode==='9'||mode==='10'){
+    const softCircle=mode==='10';
     // Isolate the question 'does the archived silk look alive in our new
     // shape?' from the separate question 'does this device permit WebGL?'.
     // Reuse the REAL old light sphere's path data and its alternating motion.
@@ -137,6 +139,61 @@
         </g>
       </svg>
     `;
+    if(softCircle){
+      // Avoid overlaying the old circular sphere's thin path geometry on a
+      // completely different four-ribbon shape. It read as scratches.
+      // Only diffuse silk and smoke remain, moving underneath an unchanged
+      // copy of the approved glass reflections.
+      style.textContent+=`
+        #orb #plasmaVisual {clip-path:circle(41% at 50% 50%)}
+        #orb > .sv-sayvi-soft-flow {clip-path:circle(41% at 50% 50%)}
+        #orb > .sv-sayvi-soft-flow svg {opacity:.54;mix-blend-mode:multiply}
+        #orb > .sv-sayvi-soft-flow::after {
+          content:"";position:absolute;inset:0;z-index:1;
+          background:url('assets/seyveo-living-ribbon.png?v=1') center/contain no-repeat;
+          opacity:.19;pointer-events:none;
+        }
+      `;
+      visual.classList.add('sv-sayvi-soft-flow');
+      visual.innerHTML=`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="40 30 440 440">
+          <defs>
+            <radialGradient id="sv-soft-velvet" cx=".48" cy=".48" r=".59">
+              <stop stop-color="#355f63" stop-opacity=".27"/>
+              <stop offset=".43" stop-color="#639fa1" stop-opacity=".16"/>
+              <stop offset=".81" stop-color="#aed8d6" stop-opacity=".07"/>
+              <stop offset="1" stop-color="#e4f9f5" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sv-soft-fabric" cx=".5" cy=".5" r=".5">
+              <stop stop-color="#456e70" stop-opacity=".24"/>
+              <stop offset=".47" stop-color="#79acae" stop-opacity=".15"/>
+              <stop offset="1" stop-color="#bbdfe0" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="sv-soft-vapour" x="-45%" y="-45%" width="190%" height="190%">
+              <feGaussianBlur stdDeviation="12"/>
+            </filter>
+            <filter id="sv-soft-silk" x="-45%" y="-45%" width="190%" height="190%">
+              <feGaussianBlur stdDeviation="9"/>
+            </filter>
+          </defs>
+          <g class="sv-fabric-a" filter="url(#sv-soft-silk)" fill="none"
+             stroke="#456f72" stroke-linecap="round" opacity=".22">
+            <path d="M111 269C177 109 317 105 418 225" stroke-width="30"/>
+            <path d="M127 347C214 413 349 395 425 284" stroke-width="37"/>
+          </g>
+          <g class="sv-fabric-b" filter="url(#sv-soft-silk)" fill="none"
+             stroke="#6da3a4" stroke-linecap="round" opacity=".19">
+            <path d="M112 235C204 143 321 169 414 325" stroke-width="44"/>
+            <path d="M134 375C233 292 312 200 390 148" stroke-width="35"/>
+          </g>
+          <g class="sv-smoke-b" filter="url(#sv-soft-vapour)">
+            <ellipse cx="221" cy="166" rx="130" ry="49" fill="url(#sv-soft-velvet)"/>
+            <ellipse cx="313" cy="319" rx="141" ry="64" fill="url(#sv-soft-fabric)"/>
+            <ellipse cx="157" cy="289" rx="91" ry="91" fill="url(#sv-soft-velvet)"/>
+          </g>
+        </svg>
+      `;
+    }
     document.head.appendChild(style);
     orb.appendChild(visual);
     document.documentElement.classList.add('sv-archived-silk-ready');
