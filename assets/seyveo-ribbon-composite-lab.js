@@ -26,16 +26,12 @@
     const field = document.createElement('canvas');
     // The smoke is intentionally low frequency. A separate small field keeps
     // its noise soft while the glass itself stays at retina resolution.
-    const size = 176;
+    const size = 112;
     field.width = field.height = size;
     const fieldCtx = field.getContext('2d', {alpha: true});
     if (!fieldCtx) return;
     const fieldImage = fieldCtx.createImageData(size, size);
     const fieldPixels = fieldImage.data;
-
-    const maskedSmoke = document.createElement('canvas');
-    const maskCtx = maskedSmoke.getContext('2d', {alpha: true});
-    if (!maskCtx) return;
 
     const smooth = value => value * value * (3 - 2 * value);
     const hash = (x, y) => {
@@ -87,11 +83,8 @@
       if (Math.abs(target - resolution) < 40) return;
       resolution = target;
       composite.width = composite.height = target;
-      maskedSmoke.width = maskedSmoke.height = target;
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-      maskCtx.imageSmoothingEnabled = true;
-      maskCtx.imageSmoothingQuality = 'high';
     };
     resize();
 
@@ -126,19 +119,15 @@
       renderField(seconds);
       ctx.clearRect(0, 0, resolution, resolution);
       ctx.drawImage(image, 0, 0, resolution, resolution);
-
-      maskCtx.clearRect(0, 0, resolution, resolution);
-      maskCtx.filter = `blur(${Math.max(3, resolution / 170)}px)`;
-      maskCtx.drawImage(field, 0, 0, resolution, resolution);
-      maskCtx.filter = 'none';
-      maskCtx.globalCompositeOperation = 'destination-in';
-      maskCtx.drawImage(image, 0, 0, resolution, resolution);
-      maskCtx.globalCompositeOperation = 'source-over';
-
+      // A source-atop blend uses the sculpture's EXISTING full-resolution alpha
+      // as the mask. There is no extra downsampled edge or double-alpha pass:
+      // the aperture and side air gap stay truly transparent. This also avoids
+      // rebuilding a second full-resolution mask every animation frame.
       ctx.save();
-      ctx.globalAlpha = .84;
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.drawImage(maskedSmoke, 0, 0);
+      ctx.globalAlpha = .78;
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
+      ctx.drawImage(field, 0, 0, resolution, resolution);
       ctx.restore();
     };
 
