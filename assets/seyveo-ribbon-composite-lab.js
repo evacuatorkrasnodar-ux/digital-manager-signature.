@@ -123,7 +123,7 @@
 
     const render = seconds => {
       resize();
-      renderField(seconds);
+      renderField(0); // Freeze the internal vapour; keep the pearl-glass sphere animation.
       const lightMatte = matteEnabled &&
         document.documentElement.dataset.theme === 'light';
       ctx.clearRect(0, 0, resolution, resolution);
