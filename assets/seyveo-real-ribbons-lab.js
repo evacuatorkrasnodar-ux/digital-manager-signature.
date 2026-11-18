@@ -1,13 +1,15 @@
-/* SEYVEO · real swept-ribbon mesh. Modes 1–7 remain comparison previews;
+/* SEYVEO · real swept-ribbon mesh. Modes 1–8 remain comparison previews;
    ?sayvi-model=8 restores the old animated plasma-signature-light.svg's
    physical layer order: moving silk, smoky filaments, still glass shell.
+   ?sayvi-model=9 is the original SVG silk as a GPU-independent diagnostic,
+   clipped precisely to the new pearl ribbons' transparent image silhouette.
    Four watertight 3D bands exported from Blender with physical depth,
    normal-based pearl/frost material and gentle motion. The public home
    keeps its established Sayvi picture unless this experiment is enabled. */
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9')return;
   const layeredGlass=mode!=='1';
   const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6'||mode==='7'||mode==='8';
   const smokeBottle=mode==='4'||mode==='5';
@@ -19,6 +21,127 @@
   const hero=document.getElementById('plasmaVisual');
   const home=document.getElementById('homePage');
   if(!orb||!hero||!home)return;
+
+  if(mode==='9'){
+    // Isolate the question 'does the archived silk look alive in our new
+    // shape?' from the separate question 'does this device permit WebGL?'.
+    // Reuse the REAL old light sphere's path data and its alternating motion.
+    // The existing 3D artwork is still the outer shell; only flowing
+    // internal semi-transparent details are overlaid and masked to its alpha.
+    const style=document.createElement('style');
+    style.textContent=`
+      #orb > .sv-sayvi-archived-flow {
+        position:absolute;inset:0;width:100%;height:100%;z-index:2;
+        pointer-events:none;overflow:hidden;
+        -webkit-mask-image:url('assets/seyveo-living-ribbon.png?v=1');
+        mask-image:url('assets/seyveo-living-ribbon.png?v=1');
+        -webkit-mask-position:center;mask-position:center;
+        -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+        -webkit-mask-size:contain;mask-size:contain;
+      }
+      #orb > .sv-sayvi-archived-flow svg{width:100%;height:100%;display:block;overflow:visible}
+      #orb .sv-sayvi-archived-flow .sv-fabric-a,
+      #orb .sv-sayvi-archived-flow .sv-threads-a,
+      #orb .sv-sayvi-archived-flow .sv-soft-threads-a {
+        transform-box:view-box;transform-origin:260px 250px;
+        animation:sv-archive-silk-a 7.2s ease-in-out infinite alternate;
+      }
+      #orb .sv-sayvi-archived-flow .sv-fabric-b,
+      #orb .sv-sayvi-archived-flow .sv-threads-b,
+      #orb .sv-sayvi-archived-flow .sv-smoke-b {
+        transform-box:view-box;transform-origin:260px 250px;
+        animation:sv-archive-silk-b 9.1s ease-in-out infinite alternate;
+      }
+      @keyframes sv-archive-silk-a {
+        0%{transform:translate(-9px,5px) rotate(-9deg) scale(.98);opacity:.68}
+        48%{transform:translate(1px,-2px) rotate(.8deg) scale(1.003);opacity:1}
+        100%{transform:translate(9px,-6px) rotate(9deg) scale(1.02);opacity:.83}
+      }
+      @keyframes sv-archive-silk-b {
+        0%{transform:translate(8px,-7px) rotate(8deg) scale(1.018);opacity:.83}
+        52%{transform:translate(-2px,2px) rotate(-1.8deg) scale(.998);opacity:1}
+        100%{transform:translate(-10px,6px) rotate(-9deg) scale(.98);opacity:.64}
+      }
+      @media(prefers-reduced-motion:reduce){
+        #orb .sv-sayvi-archived-flow :is(.sv-fabric-a,.sv-fabric-b,
+          .sv-threads-a,.sv-threads-b,.sv-soft-threads-a,.sv-smoke-b){
+          animation:none!important;
+        }
+      }
+    `;
+    const visual=document.createElement('div');
+    visual.className='sv-sayvi-archived-flow';
+    visual.setAttribute('aria-hidden','true');
+    visual.innerHTML=`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="40 30 440 440">
+        <defs>
+          <linearGradient id="sv-archive-silk" x1=".13" y1=".15" x2=".87" y2=".95">
+            <stop stop-color="#d9f4f0" stop-opacity="0"/>
+            <stop offset=".2" stop-color="#487c7b" stop-opacity=".30"/>
+            <stop offset=".5" stop-color="#eaf9f6" stop-opacity=".04"/>
+            <stop offset=".8" stop-color="#477b7b" stop-opacity=".30"/>
+            <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="sv-archive-ink" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#577c80" stop-opacity=".04"/>
+            <stop offset=".24" stop-color="#25494e" stop-opacity=".74"/>
+            <stop offset=".48" stop-color="#7bafad" stop-opacity=".24"/>
+            <stop offset=".7" stop-color="#254950" stop-opacity=".65"/>
+            <stop offset="1" stop-color="#5d9798" stop-opacity=".09"/>
+          </linearGradient>
+          <radialGradient id="sv-archive-smoke">
+            <stop stop-color="#456e71" stop-opacity=".25"/>
+            <stop offset=".48" stop-color="#7faeb0" stop-opacity=".17"/>
+            <stop offset="1" stop-color="#8eb7b7" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="sv-archive-blur" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="4.3"/>
+          </filter>
+          <filter id="sv-archive-vapour" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="11"/>
+          </filter>
+        </defs>
+        <g class="sv-smoke-b" filter="url(#sv-archive-vapour)">
+          <ellipse cx="230" cy="166" rx="146" ry="49" fill="url(#sv-archive-smoke)"/>
+          <ellipse cx="315" cy="325" rx="135" ry="64" fill="url(#sv-archive-smoke)"/>
+          <ellipse cx="150" cy="307" rx="89" ry="75" fill="url(#sv-archive-smoke)"/>
+        </g>
+        <g class="sv-fabric-b" fill="url(#sv-archive-silk)">
+          <path d="M99 254C124 155 206 101 316 111C392 120 445 187 448 257C418 181 358 150 290 156C194 164 140 222 99 254Z" opacity=".60"/>
+          <path d="M102 290C142 372 254 422 358 373C421 343 445 268 431 210C438 312 347 386 264 375C183 367 134 329 102 290Z" opacity=".42"/>
+          <path d="M133 143C236 71 370 121 423 221C442 255 446 290 431 330C422 239 353 169 276 162C215 154 159 161 133 143Z" opacity=".48"/>
+        </g>
+        <g class="sv-fabric-a" fill="url(#sv-archive-silk)" opacity=".34">
+          <path d="M110 298C190 164 310 144 426 259C368 203 268 204 190 276C154 308 127 319 110 298Z"/>
+        </g>
+        <g class="sv-soft-threads-a" stroke="url(#sv-archive-ink)" stroke-linecap="round"
+           fill="none" filter="url(#sv-archive-blur)" opacity=".86">
+          <path d="M104 270C172 93 314 87 425 228" stroke-width="12"/>
+          <path d="M115 315C212 435 352 411 431 281" stroke-width="9"/>
+          <path d="M134 143C231 106 328 168 398 335" stroke-width="8"/>
+        </g>
+        <g class="sv-threads-a" fill="none" stroke="url(#sv-archive-ink)"
+           stroke-linecap="round" stroke-linejoin="round">
+          <path d="M101 278C128 188 204 118 288 112C348 109 394 150 427 229" stroke-width="2.7" opacity=".86"/>
+          <path d="M105 276C157 162 254 127 331 163C384 189 418 249 428 306" stroke-width="1.3" opacity=".41"/>
+          <path d="M117 211C165 124 272 89 352 125C397 145 426 197 436 255" stroke-width="2" opacity=".73"/>
+          <path d="M130 139C232 110 351 181 403 314" stroke-width="1.5" opacity=".52"/>
+          <path d="M109 327C176 402 291 415 378 348C417 318 439 278 444 229" stroke-width="1.9" opacity=".65"/>
+          <path d="M123 349C177 432 305 451 394 366" stroke-width="1.7" opacity=".65"/>
+        </g>
+        <g class="sv-threads-b" fill="none" stroke="url(#sv-archive-ink)"
+           stroke-linecap="round">
+          <path d="M111 212C199 125 261 174 310 246C341 295 367 348 414 378" stroke-width="2.4" opacity=".59"/>
+          <path d="M133 403C192 338 214 260 278 175C315 126 368 120 403 153" stroke-width="1.5" opacity=".42"/>
+          <path d="M99 273C145 353 228 409 331 414C388 416 431 373 440 309" stroke-width="1.5" opacity=".47"/>
+        </g>
+      </svg>
+    `;
+    document.head.appendChild(style);
+    orb.appendChild(visual);
+    document.documentElement.classList.add('sv-archived-silk-ready');
+    return;
+  }
 
   const vertexSource=`
     attribute vec3 aPosition;
