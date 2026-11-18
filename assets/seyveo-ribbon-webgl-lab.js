@@ -97,17 +97,21 @@
         float key=max(dot(n,lightA),0.);
         float fill=max(dot(n,lightB),0.);
         float curve=clamp(.5+.5*n.y,0.,1.);
-        vec3 pearl=vec3(.85,.935,.945);
-        vec3 coolGlass=vec3(.67,.82,.84);
-        vec3 color=mix(coolGlass,pearl,.48+.20*curve);
-        color*=.91+.12*key;
-        color+=vec3(.19,.22,.225)*pow(key,24.);
-        color+=vec3(.12,.19,.20)*pow(fill,65.);
-        color+=vec3(.14,.20,.21)*fresnel*.48;
-        // Smooth side walls are clearer and slightly deeper than the face.
+        vec3 pearl=vec3(.86,.94,.955);
+        vec3 coolGlass=vec3(.64,.81,.845);
+        vec3 color=mix(coolGlass,pearl,.44+.24*curve);
+        // Broad diffuse pearl reflection over a restrained glass body.
+        color*=.87+.13*key;
+        float wideSpec=pow(key,17.)*.22;
+        float fineSpec=pow(key,78.)*.48+pow(fill,105.)*.18;
+        color+=vec3(.18,.225,.235)*wideSpec;
+        color+=vec3(.34,.40,.42)*fineSpec;
+        // Grazing-angle reflection forms the delicate glass rim.
+        color=mix(color,vec3(.92,.98,1.),fresnel*.30);
         float side=clamp(vSide,0.,1.);
-        color=mix(color,vec3(.49,.69,.72),side*.38);
-        float alpha=mix(.945,.33,side);
+        color=mix(color,vec3(.46,.68,.73),side*.34);
+        float alpha=mix(.89,.29,side);
+        alpha+=fresnel*.075;
         alpha*=smoothstep(.095,.74,reference.a);
         gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,0.,.98));
         return;
@@ -355,11 +359,12 @@
       const nearEdge=1-Math.min(alphaAt(x-4,y),alphaAt(x+4,y),
         alphaAt(x,y-4),alphaAt(x,y+4));
       const bevel=Math.pow(Math.max(0,nearEdge),.6);
-      const shine=shade+bevel*.18;
-      const rimShadow=bevel*.10;
-      data[i]=clamp(128+90*shine-40*rimShadow);
-      data[i+1]=clamp(163+88*shine-37*rimShadow);
-      data[i+2]=clamp(170+84*shine-32*rimShadow);
+      const glassRim=Math.pow(bevel,2.1);
+      const shine=shade+glassRim*.19;
+      const innerContour=Math.max(0,bevel-glassRim)*.36;
+      data[i]=clamp(126+94*shine-42*innerContour);
+      data[i+1]=clamp(160+92*shine-36*innerContour);
+      data[i+2]=clamp(169+87*shine-31*innerContour);
       data[i+3]=originalAlpha[y*size+x];
     }
     context.putImageData(frame,0,0);
