@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" role="img" aria-label="SEYVEO — семь стеклянных лепестков">
+  <defs>
+    <linearGradient id="sevenPearl" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FAFCFE"/>
+      <stop offset=".44" stop-color="#DFE7EB"/>
+      <stop offset=".80" stop-color="#B5C3C8"/>
+      <stop offset="1" stop-color="#F4F8FA"/>
+    </linearGradient>
+    <path id="sevenBlade" d="M19.2 15.8C32.0 5.8 50.3 1.2 69.4 8.3C84.0 16.0 87.5 32.6 69.8 47.0C74.4 31.1 58.6 21.2 44.8 20.5C34.1 19.3 25.1 18.3 19.2 15.8Z"/>
+  </defs>
+  <g fill="url(#sevenPearl)" stroke="#E7EEF0" stroke-width=".65" stroke-linejoin="round">
+    <use xlink:href="#sevenBlade"/>
+    <use xlink:href="#sevenBlade" transform="rotate(51.428571 50 50)"/>
+    <use xlink:href="#sevenBlade" transform="rotate(102.857143 50 50)"/>
+    <use xlink:href="#sevenBlade" transform="rotate(154.285714 50 50)"/>
+    <use xlink:href="#sevenBlade" transform="rotate(205.714286 50 50)"/>
+    <use xlink:href="#sevenBlade" transform="rotate(257.142857 50 50)"/>
+    <use xlink:href="#sevenBlade" transform="rotate(308.571429 50 50)"/>
+  </g>
+  <circle cx="50" cy="50" r="46.15" fill="none" stroke="#ECF4F6" stroke-opacity=".83" stroke-width=".48"/>
+</svg>
