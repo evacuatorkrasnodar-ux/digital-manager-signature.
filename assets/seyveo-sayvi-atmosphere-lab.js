@@ -64,6 +64,14 @@
       0%,100% {transform:perspective(980px) rotateX(-1.4deg) rotateY(-2.6deg) rotateZ(-1.15deg)}
       50% {transform:perspective(980px) rotateX(1.7deg) rotateY(2.8deg) rotateZ(1.15deg)}
     }
+    /* On unusually short landscape/browser windows the old Home compact
+       layout overlaps the orb with status and shortcut text. Never put a
+       dark backlight under black text in that constrained arrangement. */
+    @media (max-height:600px) {
+      html.sv-sayvi-atmosphere-preview #orbCluster > .sv-sayvi-atmosphere {
+        opacity:0 !important;
+      }
+    }
     @media (prefers-reduced-motion:reduce) {
       html.sv-sayvi-atmosphere-preview #orb > .sv-ribbon-glass-composite {
         animation:none !important;transform:none !important;
