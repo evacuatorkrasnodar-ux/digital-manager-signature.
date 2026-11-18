@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="8 10 34 33" aria-label="Сэйви · Поток">
+  <defs><clipPath id="seyveo-flow-disc"><circle cx="25" cy="25" r="14.6"/></clipPath></defs>
+  <g clip-path="url(#seyveo-flow-disc)" fill="none" stroke="#F1F1F3" stroke-linecap="round">
+    <path d="M9 28.6C16.6 16.6 23.2 14.4 31.4 17.5c4.1 1.5 7.3 2.6 10.1 2.5" stroke-width="3.2"/>
+    <path d="M11.5 35.2C19.6 24.9 25.6 24 34.8 26.9c3 1 5.1 1.6 7.1 2.2" stroke-width="2.9"/>
+    <path d="M23.3 42.4C29 34.8 34.2 33.3 41.5 34.3" stroke-width="2.6"/>
+  </g>
+</svg>
