@@ -25,7 +25,15 @@ test('SEYVEO FLOW is the only installed-app and browser-tab identity', () => {
   for (const {src} of manifest.icons) {
     assert.ok(existsSync(join(root, src.split('?')[0])), src);
   }
-  assert.match(page, /rel="icon"[^>]+seyveo-favicon\.svg/);
+  assert.match(page, /rel="icon"[^>]+seyveo-favicon-32\.png\?v=2/);
+  assert.match(page, /rel="icon"[^>]+seyveo-favicon-48\.png\?v=2/);
+  assert.doesNotMatch(page, /rel="icon"[^>]+seyveo-favicon\.svg/);
+  assert.match(page, /<title>SEYVEO<\/title>/);
+  assert.match(page, /document\.title=[^\n]+:'SEYVEO';/);
+  assert.doesNotMatch(page, /Цифровой управляющий · Living Interface/);
+  for (const name of ['seyveo-favicon-32.png', 'seyveo-favicon-48.png']) {
+    assert.ok(existsSync(join(root, 'assets', name)), name);
+  }
   assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-apple-touch-icon\.png/);
   assert.match(page, /assets\/seyveo-app-icon\.svg\?v=1/);
   assert.match(notifications, /assets\/seyveo-app-icon-192\.png/);
