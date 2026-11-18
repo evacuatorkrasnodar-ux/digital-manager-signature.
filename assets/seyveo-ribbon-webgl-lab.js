@@ -78,7 +78,9 @@
       // The alpha is the actual approved SEYVEO silhouette and the RGB only
       // gives the material the original pearl/aqua distribution.
       vec4 reference=texture2D(uShape,vUv);
-      if(reference.a<.025)discard;
+      // The generated alpha has occasional almost-transparent stray pixels;
+      // clipping those avoids the hairline fringe on iPhone screens.
+      if(reference.a<.095)discard;
       vec2 q=vUv*2.-1.;
       vec3 n=normalize(vNormal);
       vec3 viewDir=normalize(vec3(-vPosition.xy*.12,1.));
@@ -93,13 +95,13 @@
       // The HOME Sayvi's White Velvet material: mostly milky frost, with
       // narrow smooth-glass patches and pearl/teal silk deep inside.
       float glassFlow=fbm(q*2.2+vec2(vBlade*1.7,uTime*.035));
-      float smoothGlass=.12+.70*smoothstep(.64,.89,
-        .45+.16*sin(q.x*6.0+q.y*3.7+vBlade*1.6)+.28*glassFlow);
-      smoothGlass=mix(smoothGlass,.82,clamp(vSide,0.,1.));
+      float smoothGlass=.10+.77*smoothstep(.51,.76,
+        .48+.18*sin(q.x*6.0+q.y*3.7+vBlade*1.6)+.28*glassFlow);
+      smoothGlass=mix(smoothGlass,.86,clamp(vSide,0.,1.));
       float matte=1.-smoothGlass;
-      vec3 pearl=vec3(.98,.995,.993);
-      vec3 glass=vec3(.79,.88,.88);
-      vec3 depthColor=vec3(.45,.63,.64);
+      vec3 pearl=vec3(.95,.985,.981);
+      vec3 glass=vec3(.76,.89,.89);
+      vec3 depthColor=vec3(.39,.61,.62);
       float depth=pow(clamp(length(q),0.,1.),1.8);
       vec3 color=mix(pearl,glass,depth*.36);
       color=mix(color,depthColor,(1.-fluid)*(.10+uEnergy*.06));
@@ -120,7 +122,7 @@
       // The reference's own glass gradients contain the curvature and
       // interweaving that a procedural flat tint could not reproduce.
       // The highlight remains responsive to the REAL mesh normals below.
-      color=mix(color,reference.rgb,.57);
+      color=mix(color,reference.rgb,.76);
 
       // Broad frontal studio lights produce a white pearl highlight rather
       // than the dark metallic roll-off seen in the first mesh draft.
@@ -129,23 +131,26 @@
       vec3 lightB=normalize(vec3(.33+.14*sin(uTime*.13),-.19+.09*sin(uTime*.21),1.));
       float dotA=max(dot(n,lightA),0.);
       float dotB=max(dot(n,lightB),0.);
-      float specMatte=pow(dotA,12.)*.33;
-      float specGlass=pow(dotA,78.)*.78+pow(dotB,90.)*.29;
-      color+=vec3(.28,.33,.32)*mix(specMatte,specGlass,smoothGlass);
-      color+=vec3(.06,.19,.17)*pow(dotB,32.)*(.3+.50*smoothGlass);
+      float specMatte=pow(dotA,12.)*.22;
+      float specGlass=pow(dotA,78.)*.74+pow(dotB,90.)*.25;
+      color+=vec3(.23,.28,.27)*mix(specMatte,specGlass,smoothGlass);
+      color+=vec3(.05,.16,.15)*pow(dotB,32.)*(.3+.50*smoothGlass);
       color=mix(color,depthColor,fresnel*(.17+.14*smoothGlass));
       color+=vec3(.12,.15,.14)*gaussian(q,vec2(-.34,.57),35.)*.40;
       color+=vec3(.06,.10,.09)*gaussian(q,vec2(.49,-.58),80.)*.36;
       color=mix(color,vec3(.47,.66,.66),clamp(vSide,0.,1.)*.23);
-      color=pow(clamp(color,0.,1.),vec3(.89));
+      // A delicate opal seam is brighter than the milky face of each ribbon.
+      float softEdge=smoothstep(.10,.36,reference.a)-smoothstep(.58,.88,reference.a);
+      color+=vec3(.14,.24,.23)*softEdge*.28;
+      color=pow(clamp(color,0.,1.),vec3(.98));
 
       // Frosted ribbons carry and scatter light; only polished sections are
       // notably translucent. Edgewalls have a visible, glassy teal rim.
-      float alpha=mix(.95,.70,smoothGlass);
+      float alpha=mix(.94,.59,smoothGlass);
       alpha+=fresnel*.08;
       color=mix(color,vec3(.27,.48,.48),clamp(vSide,0.,1.)*.26);
       alpha=mix(alpha,.21,clamp(vSide,0.,1.));
-      alpha*=smoothstep(.025,.68,reference.a);
+      alpha*=smoothstep(.095,.78,reference.a);
       gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,0.,.99));
     }
   `;
@@ -191,6 +196,17 @@
       z[i]=a*(.075+dome+braid+.22*(l-.68));
       luminance[i]=l;
       alpha[i]=a;
+    }
+    // Blur the inferred height, not the texture. This gets rid of noisy
+    // polygon normals while keeping the original ribbon silhouette crisp.
+    for(let pass=0;pass<2;pass++){
+      const softened=new Float32Array(z.length);
+      for(let y=0;y<samples;y++)for(let x=0;x<samples;x++){
+        const i=y*samples+x;
+        softened[i]=(z[i]*4+z[at(x-1,y)]+z[at(x+1,y)]+
+          z[at(x,y-1)]+z[at(x,y+1)])/8;
+      }
+      z.set(softened);
     }
     const vertices=[];
     const makeShell=(back)=>{
