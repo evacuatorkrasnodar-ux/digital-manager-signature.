@@ -8,7 +8,7 @@
   const orb = document.getElementById('orb');
   if (!hero || !orb) return;
 
-  const source = 'assets/seyveo-living-ribbon.png?v=1';
+  const source = 'assets/seyveo-living-ribbon-v2.webp?v=1';
   const root = document.documentElement;
   root.classList.add('sv-living-ribbon');
   orb.classList.add('sv-living-ribbon');
@@ -56,8 +56,8 @@
           rgba(90,158,158,.36) 0%, rgba(178,220,214,.15) 47%, transparent 88%);
       background-size: 142% 127%, 133% 146%, 152% 131%;
       background-position: 8% 17%, 85% 74%, 31% 93%;
-      -webkit-mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
-      mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
+      -webkit-mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
+      mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
       mix-blend-mode: soft-light;
       transform-origin: 50% 50%;
       animation:
@@ -81,8 +81,8 @@
         rgba(210,246,243,.07) 60%, transparent 78%);
       background-size: 250% 100%;
       background-position: 0% 50%;
-      -webkit-mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
-      mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
+      -webkit-mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
+      mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
       mix-blend-mode: screen;
       transform-origin: 50% 50%;
       animation:
@@ -92,8 +92,8 @@
     /* Voice mist is refracted INSIDE the ribbons, never across the open center. */
     html.sv-living-ribbon #orb .orb-mist,
     html.sv-living-ribbon #orb .orb-logo-mist {
-      -webkit-mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
-      mask: url("assets/seyveo-living-ribbon.png?v=1") center / contain no-repeat;
+      -webkit-mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
+      mask: url("assets/seyveo-living-ribbon-v2.webp?v=1") center / contain no-repeat;
     }
     html.sv-living-ribbon #orb.seyveo-presence-listening #plasmaVisual {
       animation-duration: 3.5s,15.2s;
