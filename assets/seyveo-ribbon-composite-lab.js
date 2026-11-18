@@ -129,9 +129,9 @@
       // the aperture and side air gap stay truly transparent. This also avoids
       // rebuilding a second full-resolution mask every animation frame.
       ctx.save();
-      // Slightly fuller vapor under white glass compensates for the bright
-      // background; the dark-theme material stays exactly as approved.
-      ctx.globalAlpha = lightMatte ? .90 : .78;
+      // Exact intensity from the approved ?sayvi-matte=1 preview. Do not
+      // change density between its link and the ordinary Home page.
+      ctx.globalAlpha = .78;
       ctx.globalCompositeOperation = 'source-atop';
       ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
       ctx.drawImage(field, 0, 0, resolution, resolution);
