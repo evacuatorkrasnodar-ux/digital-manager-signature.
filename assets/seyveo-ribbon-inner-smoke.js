@@ -19,12 +19,68 @@
   smoke.height = 192;
   const ctx = smoke.getContext('2d', {alpha: true});
   if (!ctx) return;
-  hero.insertAdjacentElement('afterend', smoke);
+  // A slow CSS-only current remains visible even on browsers that throttle
+  // canvas paints. Its clear gaps also make the moving vapour easy to read.
+  const veil = document.createElement('span');
+  veil.className = 'sv-ribbon-traveling-veil';
+  veil.setAttribute('aria-hidden', 'true');
+  hero.insertAdjacentElement('afterend', veil);
+  veil.insertAdjacentElement('afterend', smoke);
 
   const source = hero.getAttribute('src') || 'assets/seyveo-living-ribbon-v5.webp?v=1';
   const styles = document.createElement('style');
   styles.id = 'sv-ribbon-inner-smoke-styles';
   styles.textContent = `
+    html.sv-living-ribbon #orb > .sv-ribbon-traveling-veil {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: block;
+      overflow: hidden;
+      pointer-events: none;
+      transform-origin: 50% 50%;
+      opacity: .76;
+      mix-blend-mode: multiply;
+      -webkit-mask: url("${source}") center / contain no-repeat;
+      mask: url("${source}") center / contain no-repeat;
+      animation: sv-ribbon-floating-tilt 15.2s ease-in-out infinite;
+    }
+    html.sv-living-ribbon #orb > .sv-ribbon-traveling-veil::before,
+    html.sv-living-ribbon #orb > .sv-ribbon-traveling-veil::after {
+      content: "";
+      position: absolute;
+      inset: -17%;
+      border-radius: 50%;
+      pointer-events: none;
+      transform-origin: 50% 50%;
+      filter: blur(13px);
+      background: conic-gradient(from 8deg at 50% 50%,
+        transparent 0deg 16deg,
+        rgba(33,79,80,.04) 28deg,
+        rgba(21,59,62,.46) 57deg,
+        rgba(45,96,96,.10) 91deg,
+        transparent 118deg 185deg,
+        rgba(22,63,67,.06) 199deg,
+        rgba(22,63,67,.37) 228deg,
+        rgba(34,83,85,.06) 264deg,
+        transparent 286deg 360deg);
+      animation: sv-ribbon-vapour-circulate 43s linear infinite;
+    }
+    html.sv-living-ribbon #orb > .sv-ribbon-traveling-veil::after {
+      opacity: .58;
+      background: conic-gradient(from 182deg at 50% 50%,
+        transparent 0deg 53deg,
+        rgba(27,67,69,.08) 70deg,
+        rgba(21,58,62,.34) 103deg,
+        rgba(40,85,86,.06) 139deg,
+        transparent 159deg 300deg,
+        rgba(28,73,74,.19) 324deg,
+        transparent 350deg 360deg);
+      animation: sv-ribbon-vapour-counter 61s linear infinite;
+    }
+    html.sv-living-ribbon[data-theme="light"] #orb > .sv-ribbon-traveling-veil {
+      opacity: .62;
+    }
     html.sv-living-ribbon #orb > .sv-ribbon-inner-smoke {
       position: absolute;
       inset: 0;
@@ -54,7 +110,21 @@
     html.sv-living-ribbon #orb.seyveo-presence-speaking > .sv-ribbon-inner-smoke {
       opacity: .79;
     }
+    @keyframes sv-ribbon-vapour-circulate {
+      from {transform: rotate(-28deg)}
+      to {transform: rotate(332deg)}
+    }
+    @keyframes sv-ribbon-vapour-counter {
+      from {transform: rotate(36deg)}
+      to {transform: rotate(-324deg)}
+    }
     @media (prefers-reduced-motion: reduce) {
+      html.sv-living-ribbon #orb > .sv-ribbon-traveling-veil,
+      html.sv-living-ribbon #orb > .sv-ribbon-traveling-veil::before,
+      html.sv-living-ribbon #orb > .sv-ribbon-traveling-veil::after {
+        animation: none !important;
+      }
+      html.sv-living-ribbon #orb > .sv-ribbon-traveling-veil {opacity: .22}
       html.sv-living-ribbon #orb > .sv-ribbon-inner-smoke {
         animation: none !important;
         filter: blur(2px);
