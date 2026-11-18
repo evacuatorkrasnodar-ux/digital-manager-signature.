@@ -1,5 +1,5 @@
-/* SEYVEO · real swept-ribbon mesh. Modes 1–6 remain comparison previews;
-   ?sayvi-model=7 restores the old animated plasma-signature-light.svg's
+/* SEYVEO · real swept-ribbon mesh. Modes 1–7 remain comparison previews;
+   ?sayvi-model=8 restores the old animated plasma-signature-light.svg's
    physical layer order: moving silk, smoky filaments, still glass shell.
    Four watertight 3D bands exported from Blender with physical depth,
    normal-based pearl/frost material and gentle motion. The public home
@@ -7,13 +7,14 @@
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8')return;
   const layeredGlass=mode!=='1';
-  const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6'||mode==='7';
+  const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6'||mode==='7'||mode==='8';
   const smokeBottle=mode==='4'||mode==='5';
   const darkVelvet=mode==='5';
   const originalMaterial=mode==='6';
-  const archiveSilk=mode==='7';
+  const archiveSilk=mode==='7'||mode==='8';
+  const visibleThreads=mode==='8';
   const orb=document.getElementById('orb');
   const hero=document.getElementById('plasmaVisual');
   const home=document.getElementById('homePage');
@@ -68,6 +69,7 @@
     uniform float uDarkVelvet;
     uniform float uOriginalMaterial;
     uniform float uArchiveSilk;
+    uniform float uVisibleThreads;
 
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p){
@@ -167,8 +169,44 @@
         // Broad diffused light, like cloth behind a wet glass surface.
         float satin=pow(max(dot(n,normalize(vec3(-.38,.56,1.))),0.),7.);
         color+=vec3(.028,.042,.042)*satin;
+        if(uVisibleThreads>.5){
+          // A curved lens must transmit the dark moving texture BELOW it.
+          // V7 put the threads only on the backfaces, so the milk-white front
+          // scattered them away. Refract a subdued view of those same
+          // under-glass currents THROUGH the front surface instead.
+          vec2 behind=uv+vec2(.028*(1.-facing)*n.x,
+                              .028*(1.-facing)*n.y);
+          float flowingA=behind.y-(.24+.51*behind.x+
+             .105*sin(behind.x*7.+breathA*.6+vBlade*.49));
+          float flowingB=behind.y-(.83-.53*behind.x+
+             .09*sin(behind.x*6.1+breathB*.63-vBlade*.44));
+          float flowingC=behind.y-(.52+.20*sin(behind.x*10.3+
+             breathA*.7+vBlade*.38));
+          float filamentA=exp(-1250.*flowingA*flowingA);
+          float filamentB=exp(-1500.*flowingB*flowingB);
+          float filamentC=exp(-1900.*flowingC*flowingC);
+          float softness=exp(-95.*flowingA*flowingA)*.59+
+                         exp(-100.*flowingB*flowingB)*.42;
+          float strand=clamp(filamentA*.75+filamentB*.65+
+                             filamentC*.45+softness*.38,0.,1.);
+          float movingSilk=.5+.5*sin(behind.x*7.3+behind.y*3.1+
+                     .48*sin(uTime*.44+vBlade*.9));
+          float vaporA=fineFbm(behind*vec2(3.0,2.35)+
+                          vec2(breathA*.16,breathB*.11)+vBlade*.23);
+          float vaporB=fineFbm(behind*vec2(5.5,3.8)+
+                          vec2(-uTime*.032,breathA*.15));
+          float vapor=smoothstep(.24,.68,vaporA*.64+vaporB*.36);
+          // Delicate blue-grey ink is visible through the milky membrane;
+          // both fabric and fog gently migrate, while the shell stays still.
+          float smoked=.13+.21*vapor+.12*movingSilk;
+          color=mix(color,vec3(.52,.73,.74),smoked*softMiddle);
+          color=mix(color,vec3(.24,.47,.51),
+                    strand*(.34+.15*vapor)*(.30+.70*softMiddle));
+          color=mix(color,vec3(.72,.88,.88),clearLips*.15);
+        }
         color=mix(color,vec3(.67,.86,.86),clearLips*.18);
-        float alpha=mix(.69,.255,clearLips)+fresnel*.095;
+        float alpha=mix(uVisibleThreads>.5?.72:.69,
+                        uVisibleThreads>.5?.31:.255,clearLips)+fresnel*.095;
         gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.23,.80));
         return;
       }
@@ -481,7 +519,7 @@
     });
   }
 
-  function setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk){
+  function setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk,visibleThreads){
     const program=gl.createProgram();
     gl.attachShader(program,compile(gl,gl.VERTEX_SHADER,vertexSource));
     gl.attachShader(program,compile(gl,gl.FRAGMENT_SHADER,fragmentSource));
@@ -512,7 +550,8 @@
       smoke:gl.getUniformLocation(program,'uSmokeBottle'),
       darkVelvet:gl.getUniformLocation(program,'uDarkVelvet'),
       original:gl.getUniformLocation(program,'uOriginalMaterial'),
-      archiveSilk:gl.getUniformLocation(program,'uArchiveSilk')
+      archiveSilk:gl.getUniformLocation(program,'uArchiveSilk'),
+      threads:gl.getUniformLocation(program,'uVisibleThreads')
     };
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
@@ -543,6 +582,7 @@
       gl.uniform1f(u.darkVelvet,darkVelvet?1:0);
       gl.uniform1f(u.original,originalMaterial?1:0);
       gl.uniform1f(u.archiveSilk,archiveSilk?1:0);
+      gl.uniform1f(u.threads,visibleThreads?1:0);
       if(archiveSilk){
         // Three separate translucent depths, matching the source artwork's
         // silk -> smoke/filaments -> external clear/frosted glass order.
@@ -599,7 +639,7 @@
         premultipliedAlpha:false,powerPreference:'low-power'
       });
       if(!gl)throw Error('iPhone WebGL unsupported');
-      const render=setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk);
+      const render=setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk,visibleThreads);
       const style=document.createElement('style');
       style.textContent=`
         #orb > .sv-sayvi-real3d-canvas {
