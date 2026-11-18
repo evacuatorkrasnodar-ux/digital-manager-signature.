@@ -27,6 +27,23 @@
   const hero=document.getElementById('plasmaVisual');
   const home=document.getElementById('homePage');
   if(!orb||!hero||!home)return;
+  const qaBadge = (independentPetals && new URLSearchParams(location.search).get('sayvi-qa')==='1')
+    ? document.createElement('div') : null;
+  if(qaBadge){
+    qaBadge.id='sv-real-petals-diagnostic';
+    qaBadge.setAttribute('aria-live','polite');
+    qaBadge.style.cssText='position:fixed;z-index:2147483000;top:80px;right:12px;'+
+      'border:1px solid rgba(90,112,120,.3);border-radius:13px;'+
+      'padding:7px 10px;background:rgba(255,255,255,.95);color:#202a30;'+
+      'font:600 12px/1.3 -apple-system,system-ui,sans-serif;'+
+      'box-shadow:0 3px 12px rgba(0,0,0,.1);pointer-events:none';
+    qaBadge.textContent='SEYVEO · загрузка 3D…';
+    document.body.appendChild(qaBadge);
+  }
+  const reportRenderer = status => {
+    if(qaBadge)qaBadge.textContent='SEYVEO · '+status;
+    if(independentPetals)document.documentElement.dataset.svPetalRenderer=status;
+  };
 
   if(mode==='9'||mode==='10'||mode==='11'){
     const softCircle=mode==='10'||mode==='11';
@@ -973,9 +990,11 @@
       size();render(0,0,0,new Float32Array([0,0,0]));
       if(gl.getError()!==gl.NO_ERROR)throw Error('3D model could not draw');
       document.documentElement.classList.add('sv-real3d-ready');
+      reportRenderer('3D GLB активна');
       requestAnimationFrame(tick);
     }catch(error){
       console.warn('SEYVEO real 3D ribbon preview:',error);
+      reportRenderer('2D · '+(error?.message||'ошибка WebGL'));
       canvas?.remove();document.documentElement.classList.remove('sv-real3d-ready');
     }
   })();
