@@ -97,7 +97,7 @@ function create(tag,klass,words){
    el.classList.add('sv-sayvi-label');
    const mark=document.createElement('img');
    mark.className='lm-sayvi-mark sv-potok-symbol';
-   mark.src='assets/seyveo-ribbon-mark-dark.svg?v=1';
+   mark.src='assets/seyveo-circular-interlace-mono.svg?v=1';
    mark.width=18;mark.height=18;mark.alt='';
    mark.setAttribute('aria-hidden','true');
    el.prepend(mark);
@@ -281,7 +281,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    if(oldMark&&!oldMark.classList.contains('sv-potok-symbol')){
     const potok=document.createElement('img');
     potok.className='sv-card-symbol sv-potok-symbol';
-    potok.src='assets/seyveo-ribbon-mark-dark.svg?v=1';
+    potok.src='assets/seyveo-circular-interlace-mono.svg?v=1';
     potok.width=20;potok.height=20;potok.alt='';
     potok.setAttribute('aria-hidden','true');
     oldMark.replaceWith(potok);

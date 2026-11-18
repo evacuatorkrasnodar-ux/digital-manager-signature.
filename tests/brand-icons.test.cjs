@@ -9,7 +9,7 @@ const sharp = require('sharp');
 const root = join(__dirname, '..');
 const text = (name) => readFileSync(join(root, name), 'utf8');
 
-test('SEYVEO restores the November 16 PWA icon and uses its petals in browser tabs', () => {
+test('SEYVEO PWA uses the approved color circular S, and browser tabs are transparent', () => {
   const manifest = JSON.parse(text('manifest.webmanifest'));
   const page = text('index.html');
   const notifications = text('sw.js');
@@ -18,39 +18,33 @@ test('SEYVEO restores the November 16 PWA icon and uses its petals in browser ta
   assert.deepEqual(
     manifest.icons.map(({ src }) => src.split('?')[0]),
     [
-      'assets/app-icon.svg',
-      'assets/app-icon-maskable.svg',
+      'assets/seyveo-pwa-circular-s-192.png',
+      'assets/seyveo-pwa-circular-s-512.png',
+      'assets/seyveo-pwa-circular-s-maskable-512.png',
     ],
   );
   for (const {src} of manifest.icons) {
     assert.ok(existsSync(join(root, src.split('?')[0])), src);
   }
-  assert.match(page, /rel="icon"[^>]+seyveo-favicon-32\.png\?v=8/);
-  assert.match(page, /rel="icon"[^>]+seyveo-favicon-48\.png\?v=8/);
+  assert.match(page, /rel="icon"[^>]+seyveo-tab-circular-s-32\.png\?v=1/);
+  assert.match(page, /rel="icon"[^>]+seyveo-tab-circular-s-48\.png\?v=1/);
   assert.match(page, /assets\/seyveo-tab-favicon\.js\?v=1/);
-  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-32\.png\?v=3"/);
-  assert.match(page, /data-icon-dark="assets\/seyveo-favicon-dark-48\.png\?v=3"/);
+  assert.match(page, /data-icon-dark="assets\/seyveo-tab-circular-s-dark-32\.png\?v=1"/);
+  assert.match(page, /data-icon-dark="assets\/seyveo-tab-circular-s-dark-48\.png\?v=1"/);
   assert.doesNotMatch(page, /rel="icon"[^>]+seyveo-favicon\.svg/);
   assert.match(page, /<title>SEYVEO<\/title>/);
   assert.match(page, /document\.title=[^\n]+:'SEYVEO';/);
   assert.doesNotMatch(page, /Цифровой управляющий · Living Interface/);
-  for (const name of ['seyveo-favicon-32.png', 'seyveo-favicon-48.png', 'seyveo-favicon-dark-32.png', 'seyveo-favicon-dark-48.png']) {
+  for (const name of ['seyveo-tab-circular-s-32.png', 'seyveo-tab-circular-s-48.png', 'seyveo-tab-circular-s-dark-32.png', 'seyveo-tab-circular-s-dark-48.png']) {
     assert.ok(existsSync(join(root, 'assets', name)), name);
   }
   assert.match(text('assets/seyveo-tab-favicon.js'), /prefers-color-scheme: dark/);
-  const tabSvg = text('assets/seyveo-tab-mark.svg');
-  assert.match(tabSvg, /prefers-color-scheme:dark/);
-  assert.equal((tabSvg.match(/<path\b/g) || []).length, 2);
-  assert.doesNotMatch(tabSvg, /<(?:rect|circle)\b/);
-  const pwaPetals = [...text('assets/app-icon.svg').matchAll(/<path d="([^"]+)" fill="url\(#(?:steel|platinum)\)"\/>/g)].map(m => m[1]);
-  const tabPetals = [...tabSvg.matchAll(/<path class="(?:left|right)" d="([^"]+)"/g)].map(m => m[1]);
-  assert.equal(pwaPetals.length, 2);
-  assert.deepEqual(tabPetals, pwaPetals, 'tab geometry must be copied exactly from the old PWA button');
-  assert.match(text('scripts/build-seyveo-tab-favicons.cjs'), /readFileSync\(path\.join\(assets, 'app-icon\.svg'\)/);
-  assert.match(page, /rel="apple-touch-icon"[^>]+apple-touch-icon\.png\?v=4/);
-  assert.match(page, /assets\/seyveo-app-icon-192\.png\?v=5/);
-  assert.match(notifications, /assets\/seyveo-app-icon-192\.png/);
-  assert.match(page, /manifest\.webmanifest\?v=19/);
+  assert.match(page, /rel="apple-touch-icon"[^>]+seyveo-pwa-circular-s-apple-180\.png\?v=1/);
+  assert.match(page, /assets\/seyveo-pwa-circular-s-192\.png\?v=1/);
+  assert.match(notifications, /assets\/seyveo-pwa-circular-s-192\.png/);
+  assert.match(page, /manifest\.webmanifest\?v=20/);
+  assert.match(text('scripts/build-seyveo-circular-brand-icons.cjs'), /seyveo-circular-interlace-approved-color\.png/);
+  // Original two-petal masters remain byte-for-byte available for rollback.
   const restoredSources = {
     'app-icon.svg': 'b1811d771ca325830e11b392a1bc3f63c4ceb00a6d033cb642f21e12747465d4',
     'app-icon-maskable.svg': 'cff181af2ffc363f4290a5cb1aca7cfd8ceac86bb05c257be7ccd769f4ed5f37',
@@ -85,6 +79,12 @@ test('3D light and dark source icons are kept for native platform packaging', ()
     'seyveo-pwa-velvet-512.png': 512,
     'seyveo-pwa-velvet-maskable-512.png': 512,
     'seyveo-pwa-velvet-apple-180.png': 180,
+    'seyveo-pwa-circular-s-1024.png': 1024,
+    'seyveo-pwa-circular-s-512.png': 512,
+    'seyveo-pwa-circular-s-192.png': 192,
+    'seyveo-pwa-circular-s-apple-180.png': 180,
+    'seyveo-pwa-circular-s-maskable-1024.png': 1024,
+    'seyveo-pwa-circular-s-maskable-512.png': 512,
   };
   for (const [name, size] of Object.entries(expectedSizes)) {
     const png = readFileSync(join(root, 'assets', name));
@@ -94,8 +94,9 @@ test('3D light and dark source icons are kept for native platform packaging', ()
   }
 });
 
-test('Greeting reveal and still-used card icons are retained for their own migration', () => {
-  assert.match(text('index.html'), /assets\/official-logo\.svg\?v=10/);
+test('Greeting reveal uses the new circular S while legacy art remains for rollback', () => {
+  assert.match(text('index.html'), /class="brand-mark" src="assets\/seyveo-circular-interlace-mono\.svg\?v=1"/);
+  assert.ok(existsSync(join(root, 'assets/official-logo.svg')));
   assert.ok(existsSync(join(root, 'assets/seyveo-potok.svg')));
   assert.ok(existsSync(join(root, 'assets/seyveo-potok-blue.svg')));
   assert.ok(existsSync(join(root, 'assets/seyveo-flow-icon-air-dark.svg')));
@@ -103,10 +104,10 @@ test('Greeting reveal and still-used card icons are retained for their own migra
 
 test('Browser favicon switches between graphite and silver as system theme changes', () => {
   const links = [32, 48].map(size => ({
-    href: `assets/seyveo-favicon-${size}.png?v=8`,
+    href: `assets/seyveo-tab-circular-s-${size}.png?v=1`,
     dataset: {
-      iconLight: `assets/seyveo-favicon-${size}.png?v=8`,
-      iconDark: `assets/seyveo-favicon-dark-${size}.png?v=3`,
+      iconLight: `assets/seyveo-tab-circular-s-${size}.png?v=1`,
+      iconDark: `assets/seyveo-tab-circular-s-dark-${size}.png?v=1`,
     },
     getAttribute(key) { return this[key]; },
     setAttribute(key, value) { this[key] = value; },
@@ -126,16 +127,16 @@ test('Browser favicon switches between graphite and silver as system theme chang
   assert.ok(links.every(link => link.href === link.dataset.iconLight));
 });
 
-test('Browser favicon petals fill nearly the entire tab width without a tile', async () => {
+test('Colored S fills nearly the entire browser tab without a tile', async () => {
   for (const size of [32, 48]) {
     for (const flavor of ['', 'dark-']) {
-      const filename=join(root, 'assets', `seyveo-favicon-${flavor}${size}.png`);
+      const filename=join(root, 'assets', `seyveo-tab-circular-s-${flavor}${size}.png`);
       const {data,info}=await sharp(filename).ensureAlpha().raw().toBuffer({resolveWithObject:true});
       let left=size,right=-1;
       for(let y=0;y<size;y++)for(let x=0;x<size;x++){
         if(data[(y*size+x)*info.channels+3]>64){left=Math.min(left,x);right=Math.max(right,x)}
       }
-      assert.ok(right-left+1>=size*.84, `${flavor}${size}: petals are too small in the tab`);
+      assert.ok(right-left+1>=size*.88, `${flavor}${size}: circular mark is too small in the tab`);
       assert.equal(data[3],0, `${flavor}${size}: favicon must have a transparent canvas`);
     }
   }

@@ -1,4 +1,4 @@
-/* SEYVEO · approved silver waves with a restrained emerald velvet tile.
+/* SEYVEO · approved circular S with a restrained emerald velvet tile.
    Brand-only accent; does not recolor the interface, orb or dock. */
 #homeHeader button.seyveo-brand-trigger{
  display:flex;align-items:center;justify-content:flex-start;gap:9px;
@@ -23,10 +23,10 @@
 :root[data-theme=light] #homeHeader .seyveo-brand-specialty{color:#55666b}
 #homeHeader .seyveo-brand-trigger:hover .seyveo-brand-name{opacity:.90}
 #homeHeader .seyveo-brand-trigger:focus-visible{outline:2px solid var(--text);outline-offset:3px}
-/* The two-wave mark is now landscape; give it room to read inside Pearl Mist.
+/* Circular S mark, with the original Pearl Mist reveal and timing intact.
    The existing reveal timing and central glass sphere are unchanged. */
-#signal.is-brand .brand-mark{width:98px;height:46px;object-fit:contain}
-:root[data-theme=light] #signal.is-brand .brand-mark{filter:drop-shadow(0 1px 1px #ffffff15)}
+#signal.is-brand .brand-mark{width:64px;height:64px;object-fit:contain;filter:brightness(0) invert(1)}
+:root[data-theme=light] #signal.is-brand .brand-mark{filter:none}
 @media(max-width:370px){
  #homeHeader button.seyveo-brand-trigger{gap:8px;height:40px}
  #homeHeader .seyveo-brand-trigger img{width:40px;height:40px}
@@ -35,8 +35,7 @@
 }
 @media(prefers-reduced-motion:reduce){#homeHeader .seyveo-brand-trigger:hover .seyveo-brand-name{opacity:1}}
 
-/* Restored original full-size logo (2026-10-27): the 98x46 two-wave mark,
-   24px wordmark and 9px descriptor are no longer scaled down to 70%. */
+/* Full-size logo: circular mark, wordmark and descriptor are not scaled down. */
 #homePage #signal.is-pearl .brand-lockup{
  transform:scale(1);
  transform-origin:center center;
@@ -58,8 +57,7 @@
   }
 }
 
-/* The owner's silver-platinum reference: a light, letterspaced engraving.
-   Preserve the original wave artwork and the 9.3s reveal choreography. */
+/* A light, letterspaced engraving. Preserve the 9.3s reveal choreography. */
 #homePage #signal.is-pearl .brand-word{
   font-size:22px;
   font-weight:520;

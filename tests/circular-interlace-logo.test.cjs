@@ -58,3 +58,36 @@ test('Black and white variants have matching transparent contours at 512px',asyn
   assert.ok(ink>55000,'readable one-ink mark at 512px');
   assert.ok(empty>100000,'gaps and outer background must remain transparent');
 });
+
+test('Circular S is the mark on the splash, Sayvi actions, and business cards',()=>{
+  const source='seyveo-circular-interlace-mono.svg?v=1';
+  for(const file of [
+    'index.html',
+    'assets/seyveo-business-command.js',
+    'assets/seyveo-card-engine.js',
+    'assets/living-moment.js',
+  ]){
+    const content=readFileSync(path.join(root,file),'utf8');
+    assert.ok(content.includes(source),`${file} must use the approved circular S`);
+    assert.ok(!content.includes('seyveo-ribbon-mark-dark.svg?v=1'),`${file} still references the old mark`);
+  }
+  const studio=readFileSync(path.join(root,'assets/seyveo-card-studio.js'),'utf8');
+  assert.match(studio,/seyveo-circular-interlace-mono\.svg/);
+});
+
+test('Color PWA icon retains existing SVG background at every untouched pixel',async()=>{
+  const source=readFileSync(asset('app-icon.svg'),'utf8');
+  const head=source.split('<g transform=')[0];
+  const background=await sharp(Buffer.from(head+'</svg>')).resize(1024,1024)
+    .ensureAlpha().raw().toBuffer();
+  const icon=await sharp(asset('seyveo-pwa-circular-s-1024.png'))
+    .ensureAlpha().raw().toBuffer();
+  for(const [x,y] of [[0,0],[8,512],[512,8],[1015,512],[512,1015],[180,180],[840,840]]){
+    const i=(y*1024+x)*4;
+    assert.deepEqual([...icon.subarray(i,i+4)],[...background.subarray(i,i+4)],
+      `Old PWA background changed at (${x},${y})`);
+  }
+  const transparent=await sharp(asset('seyveo-circular-interlace-color-clean.png'))
+    .ensureAlpha().raw().toBuffer({resolveWithObject:true});
+  assert.equal(transparent.data[3],0,'Color logo must have transparent outer margins');
+});

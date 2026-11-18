@@ -110,8 +110,8 @@ function renderGallery(){
   if(!same(buttons.map(b=>b.dataset.cardAction),required)||
      !same(buttons.map(b=>b.dataset.svCardIcon),required)||
      buttons.some(b=>!b.querySelector('.sv-card-symbol')||!b.getAttribute('aria-label'))||
-     !buttons[0]?.querySelector('img.sv-potok-symbol[src*="seyveo-ribbon-mark-dark.svg"]')||
-     (surface.querySelector('.sv-card-potok')&&!surface.querySelector('.sv-card-potok[src*="seyveo-ribbon-mark-dark.svg"]'))||
+     !buttons[0]?.querySelector('img.sv-potok-symbol[src*="seyveo-circular-interlace-mono.svg"]')||
+     (surface.querySelector('.sv-card-potok')&&!surface.querySelector('.sv-card-potok[src*="seyveo-circular-interlace-mono.svg"]'))||
      !buttons[1]?.textContent.includes('Исправить самому')||
      !buttons[2]?.textContent.includes('Перейти')||
      !surface.querySelector('.sv-card-category')||

@@ -276,7 +276,7 @@ function svcpOpenDocument(file,sourceMessage=null){
  sayviTrigger.title='Помощь Сэйви с документом';
  sayviTrigger.setAttribute('aria-expanded','false');
  if(!['word','pdf','text'].includes(kind))sayviTrigger.hidden=true;
- sayviTrigger.innerHTML='<img class="svcp-header-sayvi-mark" src="assets/seyveo-ribbon-mark-dark.svg?v=1" alt="" aria-hidden="true">';
+ sayviTrigger.innerHTML='<img class="svcp-header-sayvi-mark" src="assets/seyveo-circular-interlace-mono.svg?v=1" alt="" aria-hidden="true">';
  top.append(back,heading,sayviTrigger);
  const body=el('div','svcp-doc-body');
  const info=el('p','svcp-doc-info');info.setAttribute('role','status');
@@ -2927,7 +2927,7 @@ $('svcpCallSayvi')?.addEventListener('click',()=>{
   header.insertBefore(sayviButton,info);
   // Reuse the approved etched Sayvi mark instead of the legacy decorative span.
   // Keep the existing button, label, and mention handler untouched.
-  sayviButton.innerHTML='<img class="svcp-header-sayvi-mark" src="assets/seyveo-ribbon-mark-dark.svg?v=1" alt="" aria-hidden="true">';
+  sayviButton.innerHTML='<img class="svcp-header-sayvi-mark" src="assets/seyveo-circular-interlace-mono.svg?v=1" alt="" aria-hidden="true">';
  }
 }
 /* Camera is a single entry point, with user-initiated system capture on mobile. */
