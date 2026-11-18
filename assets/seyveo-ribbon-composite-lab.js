@@ -122,23 +122,11 @@
 
     const render = seconds => {
       resize();
-      renderField(seconds);
       const lightMatte = matteEnabled &&
         document.documentElement.dataset.theme === 'light';
       ctx.clearRect(0, 0, resolution, resolution);
       ctx.drawImage(image, 0, 0, resolution, resolution);
-      // A source-atop blend uses the sculpture's EXISTING full-resolution alpha
-      // as the mask. There is no extra downsampled edge or double-alpha pass:
-      // the aperture and side air gap stay truly transparent. This also avoids
-      // rebuilding a second full-resolution mask every animation frame.
-      ctx.save();
-      // The ordinary Home stays pixel-matched to the approved velvet look.
-      // In the explicit experiment the plume reaches full opacity.
-      ctx.globalAlpha = fullSmoke ? 1 : .78;
-      ctx.globalCompositeOperation = 'source-atop';
-      ctx.filter = `blur(${Math.max(3, resolution / 180)}px)`;
-      ctx.drawImage(field, 0, 0, resolution, resolution);
-      ctx.restore();
+      // No internal smoke layer: the original glass artwork remains visible.
 
       if (lightMatte) {
         // A milky subsurface scattering layer turns clear polished glass into
