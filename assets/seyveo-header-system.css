@@ -340,3 +340,28 @@ html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* Drawing studio · approved bare silver navigation icons.
+   Keep the 44px hit targets, fixed header grid and dark canvas untouched. */
+html[data-theme] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > :is(#notePaperBack,#notePaperUndo){
+ border:0!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:#D1D1D6!important;
+}
+html[data-theme] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack::before{
+ content:none!important;
+ display:none!important;
+}
+html[data-theme] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > :is(#notePaperBack,#notePaperUndo) svg{
+ stroke:#D1D1D6!important;
+}
+html[data-theme] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperUndo:disabled{
+ opacity:.46!important;
+}
+html[data-theme] body #notePaperDialog.sv-paper-studio[open] #notePaperSave.sv-paper-save svg{
+ stroke:#F2F3F6!important;
+}
