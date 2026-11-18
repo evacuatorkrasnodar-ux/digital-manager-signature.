@@ -12,8 +12,9 @@
 (() => {
   'use strict';
   const mode=new URLSearchParams(location.search).get('sayvi-model');
-  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9'&&mode!=='10'&&mode!=='11')return;
+  if(mode!=='1'&&mode!=='2'&&mode!=='3'&&mode!=='4'&&mode!=='5'&&mode!=='6'&&mode!=='7'&&mode!=='8'&&mode!=='9'&&mode!=='10'&&mode!=='11'&&mode!=='12')return;
   const layeredGlass=mode!=='1';
+  const cleanGlass=mode==='12';
   const velvetFlow=mode==='3'||mode==='4'||mode==='5'||mode==='6'||mode==='7'||mode==='8';
   const smokeBottle=mode==='4'||mode==='5';
   const darkVelvet=mode==='5';
@@ -284,6 +285,7 @@
     uniform float uOriginalMaterial;
     uniform float uArchiveSilk;
     uniform float uVisibleThreads;
+    uniform float uCleanGlass;
 
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p){
@@ -316,6 +318,33 @@
       float facing=clamp(abs(dot(n,eye)),0.,1.);
       float fresnel=pow(1.-facing,2.25);
       vec2 q=vPosition.xy;
+      if(uCleanGlass>.5){
+        // Real GLB ribbon geometry, entirely procedural pearl glass.
+        // No sampled pictures, fog fields, filaments or baked smoke.
+        float across=abs(vFlowUv.y-.5)*2.;
+        float polishedLip=smoothstep(.57,.97,across);
+        vec3 keyLight=normalize(vec3(-.34+.08*sin(uTime*.17),.49,1.));
+        vec3 fillLight=normalize(vec3(.51,-.30+.06*cos(uTime*.13),1.));
+        float key=max(dot(n,keyLight),0.);
+        float fill=max(dot(n,fillLight),0.);
+        float spec=pow(max(dot(reflect(-keyLight,n),eye),0.),64.)*.48+
+                   pow(max(dot(reflect(-fillLight,n),eye),0.),94.)*.21;
+        vec3 cool=vec3(.63,.80,.835);
+        vec3 pearl=vec3(.86,.94,.955);
+        vec3 color=mix(cool,pearl,.54+.16*key);
+        color*=.88+.12*key;
+        color+=vec3(.25,.29,.30)*pow(key,16.)*.23;
+        color+=vec3(.34,.40,.43)*spec;
+        color=mix(color,vec3(.91,.97,.99),fresnel*.34);
+        color=mix(color,vec3(.54,.74,.78),polishedLip*.23);
+        float alpha=mix(.89,.51,polishedLip)+fresnel*.07;
+        if(uLayer<.5){
+          color=mix(color,vec3(.47,.69,.72),.28);
+          alpha=.20+.13*polishedLip;
+        }
+        gl_FragColor=vec4(clamp(color,0.,1.),clamp(alpha,.18,.97));
+        return;
+      }
       if(uArchiveSilk>.5){
         // The ORIGINAL light sphere SVG isn't a single opaque pearl paint.
         // Its markup, in order: body -> g-b silk -> blurred g-a filaments
@@ -733,7 +762,7 @@
     });
   }
 
-  function setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk,visibleThreads){
+  function setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk,visibleThreads,cleanGlass){
     const program=gl.createProgram();
     gl.attachShader(program,compile(gl,gl.VERTEX_SHADER,vertexSource));
     gl.attachShader(program,compile(gl,gl.FRAGMENT_SHADER,fragmentSource));
@@ -765,7 +794,8 @@
       darkVelvet:gl.getUniformLocation(program,'uDarkVelvet'),
       original:gl.getUniformLocation(program,'uOriginalMaterial'),
       archiveSilk:gl.getUniformLocation(program,'uArchiveSilk'),
-      threads:gl.getUniformLocation(program,'uVisibleThreads')
+      threads:gl.getUniformLocation(program,'uVisibleThreads'),
+      clean:gl.getUniformLocation(program,'uCleanGlass')
     };
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
@@ -797,6 +827,7 @@
       gl.uniform1f(u.original,originalMaterial?1:0);
       gl.uniform1f(u.archiveSilk,archiveSilk?1:0);
       gl.uniform1f(u.threads,visibleThreads?1:0);
+      gl.uniform1f(u.clean,cleanGlass?1:0);
       if(archiveSilk){
         // Three separate translucent depths, matching the source artwork's
         // silk -> smoke/filaments -> external clear/frosted glass order.
@@ -844,7 +875,7 @@
   (async()=>{
     let canvas;
     try{
-      const ribbons=await loadRibbons(velvetFlow);
+      const ribbons=await loadRibbons(velvetFlow||cleanGlass);
       canvas=document.createElement('canvas');
       canvas.className='sv-sayvi-real3d-canvas';
       canvas.setAttribute('aria-hidden','true');
@@ -853,17 +884,20 @@
         premultipliedAlpha:false,powerPreference:'low-power'
       });
       if(!gl)throw Error('iPhone WebGL unsupported');
-      const render=setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk,visibleThreads);
+      const render=setup(gl,ribbons,layeredGlass,velvetFlow,smokeBottle,darkVelvet,originalMaterial,archiveSilk,visibleThreads,cleanGlass);
       const style=document.createElement('style');
       style.textContent=`
         #orb > .sv-sayvi-real3d-canvas {
           position:absolute;inset:0;width:100%;height:100%;
-          pointer-events:none;opacity:0;z-index:1;
+          pointer-events:none;opacity:0;z-index:5;
           transition:opacity 500ms ease-out;
         }
         html.sv-real3d-ready #orb > .sv-sayvi-real3d-canvas {opacity:1}
         #orb #plasmaVisual {transition:opacity 500ms ease-out}
-        html.sv-real3d-ready #orb #plasmaVisual {opacity:0!important}
+        html.sv-real3d-ready #orb #plasmaVisual,
+        html.sv-real3d-ready #orb > .sv-ribbon-glass-composite,
+        html.sv-real3d-ready #orb > .sv-sayvi-programmable-glass,
+        html.sv-real3d-ready #orb > .sv-sayvi-webgl-ribbons {opacity:0!important}
         html.sv-real3d-ready #orb::before,
         html.sv-real3d-ready #orb::after {opacity:0!important}
         @media(prefers-reduced-motion:reduce) {
