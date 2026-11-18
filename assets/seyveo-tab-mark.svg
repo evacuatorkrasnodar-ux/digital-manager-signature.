@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 180" role="img" aria-label="SEYVEO">
+  <defs>
+    <linearGradient id="graphite" x1=".10" y1="0" x2=".91" y2="1">
+      <stop stop-color="#35454b"/>
+      <stop offset=".42" stop-color="#25343a"/>
+      <stop offset="1" stop-color="#101f25"/>
+    </linearGradient>
+    <linearGradient id="silver" x1=".18" y1="0" x2=".84" y2="1">
+      <stop stop-color="#647780"/>
+      <stop offset=".5" stop-color="#40545d"/>
+      <stop offset="1" stop-color="#293b43"/>
+    </linearGradient>
+    <linearGradient id="pearl" x1=".10" y1="0" x2=".91" y2="1">
+      <stop stop-color="#e5eef0"/>
+      <stop offset=".55" stop-color="#b5c5ca"/>
+      <stop offset="1" stop-color="#849ca4"/>
+    </linearGradient>
+    <linearGradient id="platinum" x1=".18" y1="0" x2=".84" y2="1">
+      <stop stop-color="#ffffff"/>
+      <stop offset=".56" stop-color="#edf5f7"/>
+      <stop offset="1" stop-color="#b9ccd3"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .left{fill:url(#graphite)}
+    .right{fill:url(#silver)}
+    @media (prefers-color-scheme:dark){
+      .left{fill:url(#pearl)}
+      .right{fill:url(#platinum)}
+    }
+  </style>
+  <!-- Identical twin-wave geometry to the original Sayvi splash mark. -->
+  <path class="left" d="M20 39C66 22 97 31 128 65C156 96 167 131 194 145C206 152 220 151 232 149C211 171 181 176 157 162C129 146 116 120 90 89C61 53 45 41 20 39Z"/>
+  <path class="right" d="M150 39C200 20 228 29 259 64C286 95 299 132 327 147C337 152 348 152 362 149C337 176 307 176 284 160C258 141 246 118 219 88C189 53 173 41 150 39Z"/>
+</svg>
