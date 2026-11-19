@@ -20,6 +20,11 @@ const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPa
 let data={pattern:'blank',background:'dark',height:H,strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
 let undoStack=[],lastInkMotionAt=0;
+function rememberUndo(action){
+ undoStack.push(action);
+ // Each replaced sheet may be large; keep mobile memory bounded.
+ if(undoStack.length>32)undoStack.shift();
+}
 // Live strokes paint incrementally; old strokes are not recomputed per pointer event.
 let liveTail=null,liveMid=null,shapeFrame=0;
 const shapeSnapshot=document.createElement('canvas');
@@ -387,7 +392,7 @@ function finishStroke(e,addEndpoint=true){
  }
  const snapped=addEndpoint&&pending.tool==='pen'&&Date.now()-lastInkMotionAt>=520?snapFreehandShape(pending):null;
  data.strokes.push(snapped||pending);
- undoStack.push({type:'add',count:1});
+ rememberUndo({type:'add',count:1});
  pending=null;pointerID=null;liveTail=null;liveMid=null;changed=true;
  dialog.classList.remove('sv-paper-inking');
  render(Boolean(snapped)); // Snap redraws the one finished freehand line/figure.
@@ -562,7 +567,7 @@ $('notePaperDuplicate')?.addEventListener('click',()=>{
  if(!data.strokes.length||data.strokes.length>=MAX_STROKES)return;
  const last=data.strokes[data.strokes.length-1];
  const copy={...last,points:last.points.map(([x,y,p,t])=>[clamp(x+25,W),clamp(y+25,data.height||H),p,t||0])};
- data.strokes.push(copy);undoStack.push({type:'add',count:1});changed=true;render();report('Последний штрих дублирован.');
+ data.strokes.push(copy);rememberUndo({type:'add',count:1});changed=true;render();report('Последний штрих дублирован.');
 });
 function open(note=null){
  dialog.classList.remove('sv-paper-inking');
@@ -691,7 +696,12 @@ window.SEYVEO_PAPER=Object.freeze({
  hasChatContent:()=>Boolean(data.strokes.length||data.photo),
  hasChatChanges:()=>changed,
  getEditGeometry:()=>({width:W,height:data.height||H}),
- getEditableStrokes:()=>data.strokes.map(s=>({...s,points:s.points.map(p=>p.slice())})),
+ getEditableStrokes:indices=>{
+  // For live dragging, only clone the affected strokes; unrelated ink stays
+  // immutable and shares storage until the edit is committed.
+  const selected=Array.isArray(indices)?new Set(indices):null;
+  return data.strokes.map((s,i)=>selected&&!selected.has(i)?s:{...s,points:s.points.map(p=>p.slice())});
+ },
  previewStrokeEdit:next=>{
   if(!pending&&Array.isArray(next))paint(canvas,{...data,strokes:next});
  },
@@ -711,9 +721,10 @@ window.SEYVEO_PAPER=Object.freeze({
  },
  applyStrokeEdit:next=>{
   if(pending||!Array.isArray(next)||next.length>MAX_STROKES)return false;
-  const before=data.strokes.map(s=>({...s,points:s.points.map(p=>p.slice())}));
+  // Committed ink is immutable: a shallow snapshot makes Undo inexpensive.
+  const before=data.strokes.slice();
   data.strokes=normalize({...data,strokes:next}).strokes;
-  undoStack.push({type:'replace',previous:before});
+  rememberUndo({type:'replace',previous:before});
   changed=true;render();return true;
  },
  getInkStrokes:()=>data.strokes.filter(s=>(s.tool==='pen'||s.tool==='pencil')&&s.points.length)
