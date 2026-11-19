@@ -135,6 +135,14 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradien
  width:100%!important;height:100%!important;border:0!important;
  border-radius:8px!important;box-shadow:none!important;
 }
+/* Safari: draw the six color transitions as real images, not as a CSS
+   background inside a tab that began hidden. Retain the CSS fallback behind. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets .sv-gradient-chip > img.sv-gradient-raster{
+ display:block!important;width:100%!important;height:100%!important;
+ object-fit:cover!important;opacity:1!important;visibility:visible!important;
+ border:0!important;border-radius:inherit!important;
+ box-shadow:none!important;pointer-events:none!important;
+}
 html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button > span:last-child:not(.sv-gradient-chip){
  display:none!important;
 }

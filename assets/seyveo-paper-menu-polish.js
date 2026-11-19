@@ -130,6 +130,33 @@
    };
    document.getElementById('notePaperColorTrigger')?.addEventListener('click',resetGradientEditor);
   }
+  // iPhone Safari can fail to paint a CSS gradient inside a tab that was
+  // display:none during layout. Rasterize only the SIX small thumbnails once;
+  // the actual stroke gradients and their two editable colors remain vector.
+  const raster=document.createElement('canvas');
+  raster.width=192;raster.height=84;
+  let rasterContext=null;
+  try{rasterContext=raster.getContext?.('2d')}catch(_error){}
+  if(rasterContext){
+   presets?.querySelectorAll('[data-paper-gradient]').forEach(button=>{
+    const stops=(button.dataset.paperGradient||'').split(',');
+    const chip=button.querySelector('.sv-gradient-chip');
+    if(!chip||stops.length!==2)return;
+    try{
+     const ink=rasterContext.createLinearGradient(0,0,raster.width,raster.height);
+     ink.addColorStop(0,stops[0]);ink.addColorStop(1,stops[1]);
+     rasterContext.fillStyle=ink;rasterContext.fillRect(0,0,raster.width,raster.height);
+     const image=document.createElement('img');
+     image.className='sv-gradient-raster';
+     image.alt='';image.setAttribute('aria-hidden','true');
+     image.width=raster.width;image.height=raster.height;
+     const source=raster.toDataURL('image/png');
+     if(source.startsWith('data:image/png;base64,')){
+      image.src=source;chip.append(image);
+     }
+    }catch(_error){/* Keep the existing CSS fallback on older devices. */}
+   });
+  }
   // iOS Safari: explicit color stops avoid custom-property paint failures in nested chips.
   presets?.querySelectorAll('[data-paper-gradient]').forEach(button=>{
    const colors=(button.dataset.paperGradient||'').split(',');
