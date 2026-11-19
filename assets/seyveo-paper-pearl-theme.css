@@ -38,10 +38,16 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-pape
  stroke:currentColor!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #notePaperUndo{
- color:#444952!important;opacity:1!important;
+ color:#282d35!important;opacity:1!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #notePaperUndo:disabled{
- color:#b0b4bc!important;opacity:.68!important;
+ color:#505760!important;opacity:1!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #notePaperUndo svg{
+ stroke:currentColor!important;stroke-width:1.75!important;opacity:1!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #notePaperUndo:disabled svg{
+ opacity:.78!important;
 }
 
 /* Delicate but legible thickness ruler on white.
@@ -102,7 +108,7 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#not
  color:#787d85!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-segments{
- background:#ededef!important;border:1px solid rgba(34,38,45,.045)!important;
+ background:rgba(234,237,242,.38)!important;border:1px solid rgba(34,43,56,.07)!important;
  box-shadow:none!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) button.sv-polish-segment{
@@ -114,7 +120,7 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#not
 }
 /* Choice rows: pale inline segmented controls, not stacked grey tiles. */
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-backgrounds{
- background:#ededef!important;
+ background:rgba(234,237,242,.38)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-newdock-backgrounds > button{
  color:#616671!important;background:transparent!important;
@@ -132,11 +138,13 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePap
 
 /* Paper and shapes are light material with a single selected state. */
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid) > button{
- background:#f0f1f3!important;color:#343840!important;
- border:1px solid rgba(55,63,78,.07)!important;
+ background:#fff!important;color:#282e36!important;
+ border:1px solid rgba(34,43,54,.09)!important;
+ box-shadow:0 1px 2px rgba(20,29,40,.035)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid) > button[aria-pressed="true"]{
- background:#e1e4e9!important;border-color:#bfc5ce!important;
+ background:#fff!important;border-color:rgba(45,59,74,.32)!important;
+ box-shadow:inset 0 0 0 .5px rgba(45,59,74,.14)!important;
 }
 
 /* Precision editors: light readable values, untouched saturation/hue canvas. */
@@ -156,16 +164,18 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePap
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu .sv-ink-values input,
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu .sv-gradient-field input[type=text]{
- background:#f1f2f4!important;color:#23262d!important;
+ background:#fff!important;color:#23262d!important;
  -webkit-text-fill-color:#23262d!important;
- border:1px solid rgba(43,50,65,.12)!important;
+ border:1px solid rgba(43,50,65,.10)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu button.sv-ink-pipette{
- background:#edf0f3!important;color:#30343b!important;
+ background:#fff!important;color:#30343b!important;
+ border:1px solid rgba(34,43,54,.09)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu #noteGradientApply{
- background:#e6e8ec!important;color:#292c32!important;
- border:1px solid rgba(39,44,56,.09)!important;
+ background:#fff!important;color:#292c32!important;
+ border:1px solid rgba(34,43,54,.09)!important;
+ box-shadow:0 1px 2px rgba(20,29,40,.035)!important;
 }
 
 /* More specific than the graphite compact-layout rules: do not allow white
@@ -209,20 +219,21 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-pape
  filter:brightness(0)!important;
  opacity:.82!important;
 }
-/* Match the Calendar's quiet silver circular action, not the graphite save. */
+/* Calendar reference: white, almost invisible edge, black glyph; retain the
+   already approved 47px Ink Studio geometry and the graphite dark theme. */
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-ink-confirm{
- background:#e4e7e9!important;
+ background:#fff!important;
  background-image:none!important;
- border:0!important;
- color:#33414a!important;
- box-shadow:none!important;
+ border:1px solid rgba(34,43,54,.09)!important;
+ color:#252b32!important;
+ box-shadow:0 1px 3px rgba(20,29,40,.045)!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-ink-confirm svg{
- stroke:currentColor!important;
+ stroke:currentColor!important;stroke-width:1.7!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-ink-confirm:active{
- background:#d8dde1!important;
+ background:#f3f5f7!important;
  transform:scale(.975)!important;
 }

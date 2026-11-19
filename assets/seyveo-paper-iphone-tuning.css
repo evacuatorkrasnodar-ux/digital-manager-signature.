@@ -20,14 +20,17 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradien
  -webkit-background-clip:padding-box!important;background-clip:padding-box!important;
 }
 /* iPhone: lower the palette without creating a backing strip or obscuring
-   the system home indicator. Move Save by exactly the same amount. */
+   the system home indicator. The separate Save button used to have the
+   .sv-paper-save class; the rebuilt .sv-ink-confirm must follow the palette
+   in Pearl mode. Adjust its fixed bottom inset instead of transform so the
+   pressed-scale animation never makes the button jump vertically. */
 @supports (-webkit-touch-callout:none){
  @media(min-height:650px){
   html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette{
    transform:translateY(20px)!important;
   }
-  html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-paper-save{
-   transform:translateY(20px)!important;
+  html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-ink-confirm{
+   bottom:calc(env(safe-area-inset-bottom,0px) - 9px)!important;
   }
  }
 }
