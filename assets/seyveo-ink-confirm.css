@@ -104,7 +104,7 @@ html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom
  padding:0 2px!important;
  overflow-x:auto!important;
  overflow-y:hidden!important;
- scroll-snap-type:x proximity!important;
+ scroll-snap-type:none!important;
  -webkit-mask-image:none!important;
  mask-image:none!important;
  background:transparent!important;
