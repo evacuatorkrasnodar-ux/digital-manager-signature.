@@ -44,7 +44,7 @@ test('iPhone photo sampling does not create a stroke and shows a live HEX previe
  assert.match(picker,/\.sv-ink-sample-value/);
  assert.match(picker,/overlay\.addEventListener\('touchend'/);
  assert.match(picker,/overlay\.addEventListener\('pointercancel'/);
- assert.match(html,/assets\/seyveo-paper-custom-color\.js\?v=7/);
+ assert.match(html,/assets\/seyveo-paper-custom-color\.js\?v=8/);
  assert.match(html,/assets\/notebook-paper\.js\?v=39/);
 });
 
@@ -76,10 +76,11 @@ test('the pipette stays visible despite the legacy rule hiding header subtitles'
 });
 
 test('eyedropper has a connected silhouette and shares one centerline with Palette',()=>{
- assert.match(picker,/m15\.25 6\.45 2\.3-2\.3a2\.6 2\.6/);
- assert.match(picker,/m15\.25 6\.45 3\.68 3\.68/);
- assert.match(picker,/m15\.25 6\.45-9\.8 9\.8/);
- assert.doesNotMatch(picker,/m3\.5 20\.5-1 1/,'remove the stray disconnected tip stroke');
+ assert.match(picker,/transform="rotate\(45 12 12\)"/);
+ assert.match(picker,/<circle cx="12" cy="5\.2" r="2\.9"\/>/,'a round rubber bulb replaces the pencil-like cap');
+ assert.match(picker,/M10\.2 8v7\.4c0 \.75/,'a slender glass tube with a tapered nozzle');
+ assert.match(picker,/M12 20\.2c-\.65\.98[\s\S]*?fill="currentColor" stroke="none"/,'a visible liquid drop sits below the nozzle');
+ assert.doesNotMatch(picker,/m15\.25 6\.45-9\.8 9\.8/,'remove the pencil-like old silhouette');
  assert.match(pickerStyle,/\.sv-gradient-head\{\s*display:flex!important;flex-direction:row!important;align-items:center!important/);
  assert.match(pickerStyle,/\.sv-gradient-head > button\.sv-ink-pipette\{\s*position:static!important/);
  assert.match(pickerStyle,/\.sv-ink-pipette-icon\{\s*color:#28313d!important/);
