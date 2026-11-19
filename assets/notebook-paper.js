@@ -19,7 +19,7 @@ const dialog=$('notePaperDialog'),canvas=$('notePaperCanvas');
 if(!dialog||!canvas||!canvas.getContext('2d'))return;
 const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
 const iosFingerInk=/iPhone|iPod/i.test(navigator.userAgent||'');
-let data={pattern:'blank',background:'dark',height:H,strokes:[],texts:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
+let data={pattern:'blank',background:'dark',height:H,strokes:[],texts:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false,sayviHandoffBusy=false;
 let hiddenTextIndex=-1;
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
 let brushSizes={pen:5,pencil:3,eraser:36};
@@ -1179,11 +1179,32 @@ window.SEYVEO_PAPER=Object.freeze({
   else if(!activeGradient&&background==='dark'&&activeColor==='#171e29')
    report('Чёрный цвет сохранён. На тёмном листе он почти не виден.');
  },
- openSayvi:()=>{
+ openSayvi:async()=>{
   const chat=window.SEYVEO_CONVERSATION;
   if(typeof chat?.open!=='function'){report('Сэйви пока недоступна.');return}
-  if(changed&&!window.confirm('Открыть Сэйви? Несохранённые изменения листа будут потеряны.'))return;
-  returnToList=false;dialog.close();chat.open();
+  if(pending||sayviHandoffBusy){report('Сначала закончи штрих.');return}
+  const hasContent=Boolean(data.strokes.length||data.photo||data.texts?.length);
+  if(changed&&!window.confirm(hasContent
+   ?'Передать копию листа Сэйви? Несохранённый оригинал не останется в Блокноте. Чтобы сохранить его, сначала нажми галочку.'
+   :'Открыть Сэйви? Несохранённые настройки листа будут потеряны.'))return;
+  if(!hasContent){returnToList=false;dialog.close();chat.open();return}
+  if(!window.SEYVEO_CHAT_FILES?.remember){report('Вложения Сэйви пока недоступны. Лист остаётся открытым.');return}
+  sayviHandoffBusy=true;report('Готовлю лист для Сэйви…');
+  try{
+   const encoded=await png(normalize(data));
+   if(!encoded.startsWith('data:image/png;base64,'))throw Error('Не удалось подготовить изображение.');
+   const binary=atob(encoded.slice(encoded.indexOf(',')+1));
+   const bytes=new Uint8Array(binary.length);
+   for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+   const file=new File([bytes],'Лист SEYVEO.png',{type:'image/png'});
+   const refs=await window.SEYVEO_CHAT_FILES.remember([file]);
+   if(!refs?.[file.name])throw Error('Не удалось прикрепить лист. Он остался в Блокноте.');
+   sessionStorage.setItem('seyveo.sayvi.paper-handoff.v1',JSON.stringify({
+    state:'ready',at:Date.now(),ref:refs[file.name],draft:'Сэйви, посмотри мой лист и помоги с ним.'
+   }));
+   returnToList=false;dialog.close();chat.open();
+  }catch(error){report(error?.message||'Не удалось передать лист Сэйви. Попробуй снова.')}
+  finally{sayviHandoffBusy=false}
  },
  open,preview:(target,p)=>{target.height=Math.round(target.width*normalize(p).height/W);paint(target,p,true)},share,print,normalize,importPhoto,compressPhoto});
 })();

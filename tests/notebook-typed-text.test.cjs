@@ -93,7 +93,7 @@ test('text mode reuses Settings actions and supports touch placement, drag, font
  assert.match(style,/\.sv-paper-text-hit\.sv-paper-text-dragging/);
  assert.match(html,/assets\/seyveo-paper-typed-text\.js\?v=4/);
  assert.match(html,/assets\/seyveo-paper-typed-text\.css\?v=2/);
- assert.match(html,/assets\/notebook-paper\.js\?v=41/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=42/);
 });
 
 test('text starts at a consistent page margin rather than hanging off the right edge',()=>{
