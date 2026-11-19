@@ -5389,6 +5389,29 @@ function deleteNoteWithUndo(note){
  pendingNoteDeletion={note,index,timer:window.setTimeout(settleNoteDeletion,6500)};
  renderNotes();
 }
+async function deleteAllNotebookNotes(){
+ const notes=getNotes();
+ if(!notes.length)return;
+ const count=notes.length;
+ if(!window.confirm(`Удалить все записи блокнота (${count})?\n\nЭто действие нельзя отменить.`))return;
+ // Preserve any protected Health journal records sharing the storage key.
+ let stored;
+ try{stored=JSON.parse(localStorage.getItem(NOTES_KEY)||'[]')}catch{
+  notesMessage('Не удалось прочитать записи. Удаление отменено.');return;
+ }
+ if(!Array.isArray(stored)){
+  notesMessage('Не удалось прочитать записи. Удаление отменено.');return;
+ }
+ const ids=new Set(notes.map(note=>note.id));
+ if(!putNotes(stored.filter(note=>!ids.has(note?.id)))){
+  notesMessage('Не удалось удалить записи.');return;
+ }
+ // Pending swipe Undo must not restore a note after bulk deletion.
+ if(pendingNoteDeletion)settleNoteDeletion();
+ renderNotes();
+ notesMessage(`Удалено записей: ${count}.`);
+ await Promise.allSettled(notes.map(note=>window.SEYVEO_NOTE_ATTACHMENTS?.deleteForNote(note.id)));
+}
 function renderNotes(){
  const container=$('notesList');container.replaceChildren();
  const notes=getNotes();
@@ -5559,6 +5582,12 @@ function renderNotes(){
   controls.append(open,more);swipe.append(swipeMore,swipeDelete,controls);
   card.append(swipe,menu);container.append(card);
  });
+ const clearAll=document.createElement('button');
+ clearAll.type='button';clearAll.className='sv-nb4-clear-all';
+ clearAll.textContent='Удалить все записи';
+ clearAll.setAttribute('aria-label',`Удалить все записи блокнота (${n})`);
+ clearAll.addEventListener('click',()=>deleteAllNotebookNotes());
+ container.append(clearAll);
 }
 function openNotes(){
  renderNotes();
