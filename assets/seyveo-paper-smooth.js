@@ -716,6 +716,9 @@
  before.setAttribute('aria-label','Посмотреть исходный почерк');
  const after=document.createElement('button');after.type='button';after.textContent='После';
  after.setAttribute('aria-label','Посмотреть аккуратный почерк');
+ const scope=document.createElement('button');scope.type='button';scope.textContent='Штрих';
+ scope.setAttribute('aria-label','Исправлять только последний штрих или весь рисунок');
+ scope.setAttribute('aria-pressed','false');
  const hint=document.createElement('button');hint.type='button';hint.textContent='Это…';
  hint.setAttribute('aria-label','Подсказать Сэйви, что ты хотел нарисовать');
  hint.setAttribute('aria-expanded','false');
@@ -732,9 +735,9 @@
   button.setAttribute('aria-label',description);button.dataset.svShape=shape;
   choices.append(button);
  }
- bar.append(before,after,hint,cancel,apply,choices);layer.append(bar);sheet.append(layer);
+ bar.append(before,after,hint,cancel,apply,choices,scope);layer.append(bar);sheet.append(layer);
  let active=false,original=null,proposal=null,showAfter=true,hasChanges=false,suggested=null;
- let houseIndices=null;
+ let houseIndices=null,wholeSheet=false;
  function labelSuggestion(shape){
   suggested=shape;
   const label=shape==='c'?'С':shape==='o'?'О':shape==='heart'?'♥':shape==='house'?'Дом':null;
@@ -773,12 +776,13 @@
   if(dialog.classList.contains('sv-paper-photo-mode'))document.getElementById('notePaperEditPhoto')?.click();
   paper.cancelActiveStroke?.();
   original=paper.getEditableStrokes([]);
-  const indices=original.flatMap((stroke,index)=>eligible(stroke)?[index]:[]);
+  const eligibleIndices=original.flatMap((stroke,index)=>eligible(stroke)?[index]:[]);
+  const indices=wholeSheet?eligibleIndices:eligibleIndices.slice(-1);
   if(!indices.length){original=null;paper.announce?.('Сначала напиши или нарисуй что-нибудь ручкой.');return}
   proposal=paper.getEditableStrokes(indices);
   let changed=0,guess=null;
   houseIndices=null;
-  if(indices.length>=4)houseIndices=findHouseOutline(original,indices);
+  if(wholeSheet&&indices.length>=4)houseIndices=findHouseOutline(original,indices);
   const lastIndex=indices.at(-1);
   for(const index of indices){
    const stroke=proposal[index];
@@ -794,6 +798,8 @@
   if(!changed&&!houseIndices)paper.announce?.('Штрихи уже ровные — исправлять нечего. Можно подсказать Сэйви через «Это…».');
   active=true;layer.hidden=false;
   dialog.classList.add('sv-paper-smooth-mode');action.setAttribute('aria-pressed','true');
+  scope.textContent=wholeSheet?'Лист':'Штрих';scope.setAttribute('aria-pressed',String(wholeSheet));
+  scope.setAttribute('aria-label',wholeSheet?'Сейчас исправляется весь рисунок. Нажми для последнего штриха':'Сейчас исправляется последний штрих. Нажми для всего рисунка');
   labelSuggestion(houseIndices?'house':guess);
   positionBar();compare(true);
  }
@@ -803,6 +809,10 @@
  });
  before.addEventListener('click',()=>compare(false));
  after.addEventListener('click',()=>compare(true));
+ scope.addEventListener('click',()=>{
+  if(!active)return;
+  stop(false);wholeSheet=!wholeSheet;start();
+ });
  function chooseShape(shape){
   if(!active||!shape)return;
   if(shape==='house'){

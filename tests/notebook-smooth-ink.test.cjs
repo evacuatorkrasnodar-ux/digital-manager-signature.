@@ -476,6 +476,7 @@ test('live controls compare without committing, Cancel restores and Apply commit
  assert.equal(action.hidden,false);
  const overlay=sheet.children[0],bar=overlay.children[0];
  const [before,after,hint,cancel,apply,choices]=bar.children;
+ const scope=bar.children[6];
  action.click();
  assert.equal(overlay.hidden,false);
  assert.equal(dialog.classList.contains('sv-paper-smooth-mode'),true);
@@ -558,6 +559,9 @@ test('live controls compare without committing, Cancel restores and Apply commit
   {tool:'pen',color:'#aa5c22',points:[[275,390,60],[275,330,60],[315,330,60],[315,390,60],[315,390,60]]});
  const houseOriginal=structuredClone(source);
  action.click();
+ assert.equal(scope.textContent,'Штрих','last pen stroke is the safe default');
+ scope.click();
+ assert.equal(scope.textContent,'Лист','whole-sheet cleanup is an explicit choice');
  assert.equal(hint.textContent,'Дом?','a complete house earns a compact suggestion');
  assert.deepEqual(source,houseOriginal,'recognition has not replaced the drawn house');
  hint.click();
@@ -584,6 +588,7 @@ test('live controls compare without committing, Cancel restores and Apply commit
  cancel.click();
  assert.deepEqual(source,vRoofOriginal,'Cancel keeps the one-stroke roof untouched');
  assert.equal(applied.length,4,'Cancel does not create an edit');
+ action.click();scope.click();cancel.click();
 
  const zig=[[100,300],[205,145],[310,300]],points=[];
  for(let k=0;k<2;k++)for(let i=0;i<28;i++){
@@ -600,6 +605,17 @@ test('live controls compare without committing, Cancel restores and Apply commit
  assert.deepEqual(previews.at(-1)[1],angularOriginal[1],'eraser strokes are not affected');
  cancel.click();
  assert.deepEqual(source,angularOriginal,'general drawing correction is reversible too');
+ source=[structuredClone(angularOriginal[0]),structuredClone(angularOriginal[0])];
+ const separate=structuredClone(source);
+ action.click();
+ assert.deepEqual(previews.at(-1)[0],separate[0],'the previous pen stroke is untouched by default');
+ assert.notDeepEqual(previews.at(-1)[1].points,separate[1].points,'the last pen stroke is smoothed');
+ scope.click();
+ assert.notDeepEqual(previews.at(-1)[0].points,separate[0].points,'whole-sheet mode updates earlier strokes in preview');
+ scope.click();
+ assert.deepEqual(previews.at(-1)[0],separate[0],'switching back restores the original earlier stroke');
+ apply.click();
+ assert.deepEqual(source[0],separate[0],'Apply respects last-stroke scope');
 });
 
 test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',()=>{
