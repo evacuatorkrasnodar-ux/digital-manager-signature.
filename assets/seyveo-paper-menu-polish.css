@@ -322,3 +322,103 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu > #noteP
 html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu > #notePaperDuplicate[disabled]{
  display:none!important;
 }
+
+
+/* Menu Studio v2 · two short focused views instead of long scrolling lists. */
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-segments{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:3px!important;
+ box-sizing:border-box!important;
+ width:100%!important;min-height:44px!important;
+ margin:0 0 7px!important;padding:3px!important;
+ border:0!important;border-radius:12px!important;
+ background:#2E2E30!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-segment{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;width:100%!important;
+ height:38px!important;min-height:38px!important;
+ margin:0!important;padding:7px 4px!important;
+ border:0!important;border-radius:9px!important;
+ background:transparent!important;
+ color:#C7C7CC!important;
+ box-shadow:none!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ font-size:13px!important;font-weight:570!important;
+ line-height:1.2!important;letter-spacing:-.01em!important;
+ cursor:pointer!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-segment[aria-selected="true"]{
+ background:#5B5B5E!important;
+ color:#FFFFFF!important;
+ box-shadow:inset 0 0 0 1px rgba(255,255,255,.09)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-menu-frames{
+ display:block!important;width:100%!important;min-width:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-menu-pane[hidden]{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-polish-menu-pane .sv-paper-menu-section{
+ border-top:0!important;
+ padding:3px 0 0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperPatternMenu .sv-polish-menu-pane .sv-paper-menu-section-label,
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-polish-menu-pane .sv-gradient-section-caption{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-polish-menu-pane details.sv-gradient-custom{
+ margin-top:9px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"]{
+ padding:3px 0 0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] .sv-newdock-menu-title{
+ margin:0 2px 7px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] .sv-newdock-backgrounds{
+ margin-bottom:12px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > .sv-newdock-actions-heading{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ width:100%!important;min-height:44px!important;height:44px!important;
+ margin:0!important;padding:8px 10px!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#F5F5F7!important;
+ font-size:13px!important;font-weight:530!important;line-height:1.2!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button:disabled{
+ opacity:.34!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button:not(:disabled):active{
+ background:rgba(255,255,255,.08)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button > svg{
+ display:block!important;flex:0 0 19px!important;
+ width:19px!important;height:19px!important;min-width:19px!important;min-height:19px!important;
+ margin:0 11px 0 0!important;
+ stroke-width:1.65!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > .sv-newdock-clear{
+ margin-top:5px!important;padding-top:12px!important;
+ border-top:1px solid rgba(255,255,255,.11)!important;
+ color:#E9B9B9!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane > #notePaperRemovePhoto[hidden],
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane > #notePaperDuplicate[disabled]{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-segment:focus-visible{
+ outline:2px solid #F5F5F7!important;outline-offset:1px!important;
+}
+@media(prefers-reduced-motion:no-preference){
+ html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-segment{
+  transition:background-color .14s ease,color .14s ease!important;
+ }
+}
