@@ -108,7 +108,7 @@ test('uses the same editable printed-text mode and three compact iPhone actions'
  assert.match(textEditor,/if\(!active\)startMode\(\);\s*openEditor\(count-1\)/);
  assert.match(styles,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
  assert.match(styles,/\.sv-pr-chat \.sv-pr-actions\{grid-template-columns:1fr\}/);
- assert.match(html,/seyveo-paper-recognition\.js\?v=7/);
+ assert.match(html,/seyveo-paper-recognition\.js\?v=8/);
  assert.match(html,/seyveo-paper-recognition\.css\?v=4/);
  assert.match(html,/seyveo-paper-typed-text\.js\?v=4/);
 });

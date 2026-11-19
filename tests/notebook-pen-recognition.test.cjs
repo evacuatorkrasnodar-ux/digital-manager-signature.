@@ -35,7 +35,7 @@ test('saved pressure strokes render with changing line widths',()=>{
  const paintStroke=vm.runInNewContext(`${weightSource}\n${paintSource};paintStroke`,{
   clamp:(n,max)=>Math.max(0,Math.min(max,Math.round(Number(n)||0))),
   SHAPE_TOOLS:new Set(['line','arrow','rect','circle','triangle','diamond']),
-  COLORS:['#171e29'],validGradient:()=>false
+  COLORS:['#171e29'],validGradient:()=>false,validInkColor:()=>true
  });
  const weights=[];
  const context={
@@ -57,14 +57,14 @@ test('handwriting recognition stays opt-in, preserves ink and offers review',()=
  assert.match(recognition,/textarea class="sv-pr-text"/);
  assert.match(recognition,/data-pr-save/);
  assert.match(paper,/exportInkOcrPng/);
- assert.match(html,/assets\/seyveo-paper-recognition\.js\?v=2/);
- assert.match(html,/assets\/notebook-paper\.js\?v=24/);
+ assert.match(html,/assets\/seyveo-paper-recognition\.js\?v=8/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=44/);
 });
 
 test('recognition review prevents empty scans and accidental duplicate notes',()=>{
  const source=recognition.match(/const sync=\(\)=>\{[\s\S]*?\n \};/)?.[0];
- const context={busy:false,inkAvailable:true,savedText:'Привет, мир',
-  text:{value:'Привет, мир'},runButton:{},copyButton:{},saveButton:{}};
+ const context={busy:false,inkAvailable:true,savedText:'Привет, мир',chatMode:false,
+  text:{value:'Привет, мир'},runButton:{},copyButton:{},sheetButton:{},saveButton:{}};
  const sync=vm.runInNewContext(`${source}\nsync`,context);
  sync();
  assert.equal(context.saveButton.disabled,true,'same result cannot be saved twice');
@@ -74,4 +74,22 @@ test('recognition review prevents empty scans and accidental duplicate notes',()
  assert.equal(context.runButton.disabled,true,'empty handwritten page cannot start OCR');
  assert.match(recognition,/savedText=value/);
  assert.match(recognition,/data-pr-close aria-label="Закрыть распознавание">Готово/);
+});
+
+test('weak handwritten OCR retries sparse lines only once and keeps the stronger reading',()=>{
+ const start=recognition.indexOf(' function ocrReading(result){');
+ const end=recognition.indexOf(' async function imageRecognition(){',start);
+ assert.ok(start>0&&end>start,'the retry decision is independently testable');
+ const evaluate=vm.runInNewContext(recognition.slice(start,end)+'\n({ocrReading,retrySparse,bestReading})',{});
+ const paragraph=evaluate.ocrReading({data:{text:'  Привет, Роман!  ',confidence:83}});
+ assert.equal(paragraph.text,'Привет, Роман!');
+ assert.equal(evaluate.retrySparse(paragraph),false,'a clear sentence does not waste iPhone CPU');
+ assert.equal(evaluate.retrySparse({text:'',confidence:null}),true);
+ assert.equal(evaluate.retrySparse({text:'Првет',confidence:29}),true);
+ const sparse={text:'Привет, Роман!',confidence:72};
+ assert.equal(evaluate.bestReading({text:'Првет, Роман',confidence:37},sparse),sparse);
+ assert.equal(evaluate.bestReading(paragraph,{text:'П',confidence:96}),paragraph,
+  'one confident character must not replace a whole sentence');
+ assert.equal(evaluate.bestReading(paragraph,{text:'Привeт',confidence:63}),paragraph);
+ assert.match(recognition,/tessedit_pageseg_mode:'11'/);
 });

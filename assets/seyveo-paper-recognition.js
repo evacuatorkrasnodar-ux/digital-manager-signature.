@@ -115,6 +115,25 @@
   }).catch(error=>{loader=null;throw error});
   return loader;
  }
+ // The normal paragraph layout can miss short lines scattered around a page.
+ // Retry once in sparse-text mode only when the first local OCR pass is weak.
+ function ocrReading(result){
+  const data=result?.data||{};
+  return {text:String(data.text||'').trim(),
+   confidence:Number.isFinite(data.confidence)?data.confidence:null};
+ }
+ function retrySparse(reading){
+  return !reading.text||reading.confidence!==null&&reading.confidence<55;
+ }
+ function bestReading(first,second){
+  if(!second?.text)return first;
+  if(!first.text)return second;
+  if(first.confidence===null)return first;
+  if(second.confidence===null)return first;
+  // Avoid accepting a confidently recognised stray symbol over a sentence.
+  if(second.text.length<first.text.length*.55)return first;
+  return second.confidence>first.confidence+3?second:first;
+ }
  async function imageRecognition(){
   message('Подготавливаю рукопись и загружаю распознавание…');
   const image=paper.exportInkOcrPng();
@@ -140,9 +159,12 @@
     }
    });
    await worker.setParameters?.({tessedit_pageseg_mode:'6',preserve_interword_spaces:'1'});
-   const result=await worker.recognize(image);
-   return {text:String(result?.data?.text||'').trim(),
-    confidence:Number.isFinite(result?.data?.confidence)?result.data.confidence:null};
+   const first=ocrReading(await worker.recognize(image));
+   if(!retrySparse(first))return first;
+   message('Проверяю раздельные строки другим способом…');
+   await worker.setParameters?.({tessedit_pageseg_mode:'11'});
+   const second=ocrReading(await worker.recognize(image));
+   return bestReading(first,second);
   }finally{try{await worker?.terminate()}catch{}}
  }
  runButton.addEventListener('click',async()=>{
