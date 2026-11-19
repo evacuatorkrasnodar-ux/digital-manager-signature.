@@ -107,7 +107,7 @@ function normalize(obj){
  photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
- .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(stroke.tool==='eraser'?80:28,stroke.width)):undefined,...(stroke.pressureSensitive===true?{pressureSensitive:true}:{}),...(stroke.tool==='pencil'&&stroke.brushProfile==='graphite2'?{brushProfile:'graphite2'}:{}),points:stroke.points.slice(0,MAX_POINTS)
+ .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(stroke.tool==='eraser'?80:28,stroke.width)):undefined,...(stroke.pressureSensitive===true?{pressureSensitive:true}:{}),...(stroke.tool==='pencil'&&['graphite2','graphite3'].includes(stroke.brushProfile)?{brushProfile:stroke.brushProfile}:{}),points:stroke.points.slice(0,MAX_POINTS)
  .filter(point=>Array.isArray(point)&&point.length>=2&&Number.isFinite(Number(point[0]))&&Number.isFinite(Number(point[1])))
  .map(point=>{
   const values=[inkCoord(point[0],W),inkCoord(point[1],height),clamp(point.length>2?point[2]:50,100)];
@@ -119,6 +119,11 @@ function inkWeight(s,p){
  const base=Number.isFinite(s.width)?Math.max(1,Math.min(s.tool==='eraser'?80:28,s.width)):5;
  if(!s.pressureSensitive||s.tool==='eraser'||SHAPE_TOOLS.has(s.tool))return base;
  const force=clamp(p?.[2]??50,100)/100;
+ if(s.tool==='pencil'&&s.brushProfile==='graphite3'){
+  const angle=clamp(p?.[3]??0,90);
+  const side=Math.max(0,Math.min(1,(angle-18)/55));
+  return base*(.56+.68*force)*(1+1.4*side);
+ }
  // Graphite 2 is opt-in on NEW pencil strokes, so saved sketches retain
  // their original geometry. Sideways Pencil/S Pen shading widens naturally.
  const angle=clamp(p?.[3]??0,90);
@@ -128,8 +133,89 @@ function inkWeight(s,p){
   :1;
  return base*(.58+.84*force)*tilt;
 }
+// Deterministic paper grain: one tiny tile per ink color, created on device.
+// No network texture, per-frame randomness or full-canvas postprocessing.
+const graphiteTiles=new Map(),graphitePatterns=new WeakMap();
+function graphiteGrain(ctx,color){
+ let tile=graphiteTiles.get(color);
+ if(!tile){
+  tile=document.createElement('canvas');tile.width=48;tile.height=48;
+  const g=tile.getContext('2d');
+  if(!g)return null;
+  const image=g.createImageData(48,48);
+  const red=Number.parseInt(color.slice(1,3),16),green=Number.parseInt(color.slice(3,5),16),blue=Number.parseInt(color.slice(5,7),16);
+  let seed=0x9e3779b9;
+  for(let i=0;i<48*48;i++){
+   seed=(Math.imul(seed,1664525)+1013904223)>>>0;
+   const noise=((seed>>>8)&0xffffff)/0xffffff;
+   const grain=.14+.86*noise*noise;
+   const at=i*4;
+   image.data[at]=red;image.data[at+1]=green;image.data[at+2]=blue;
+   image.data[at+3]=Math.round(255*grain);
+  }
+  g.putImageData(image,0,0);graphiteTiles.set(color,tile);
+ }
+ let patterns=graphitePatterns.get(ctx);
+ if(!patterns){patterns=new Map();graphitePatterns.set(ctx,patterns)}
+ if(!patterns.has(color))patterns.set(color,ctx.createPattern(tile,'repeat'));
+ return patterns.get(color);
+}
+function graphiteSegment(ctx,s,from,to,control=null,dot=false){
+ const width=dot?inkWeight(s,from)
+  :(inkWeight(s,from)+inkWeight(s,to)+(control?inkWeight(s,control):0))/(control?3:2);
+ const count=control?3:2;
+ const force=s.pressureSensitive
+  ?((from[2]??50)+(to[2]??50)+(control?.[2]??0)*(count===3?1:0))/(count*100)
+  :.5;
+ const angle=s.pressureSensitive
+  ?((from[3]??0)+(to[3]??0)+(control?.[3]??0)*(count===3?1:0))/count:0;
+ const side=Math.max(0,Math.min(1,(angle-18)/55));
+ const opacity=Math.max(.08,Math.min(.9,(.13+.72*force)*(1-.33*side)));
+ const colored=COLORS.includes(s.color)?s.color:'#171e29';
+ const gradient=validGradient(s.gradient);
+ const trace=()=>{
+  ctx.beginPath();
+  if(dot)ctx.arc(from[0],from[1],width/2,0,Math.PI*2);
+  else{
+   ctx.moveTo(from[0],from[1]);
+   if(control)ctx.quadraticCurveTo(control[0],control[1],to[0],to[1]);
+   else ctx.lineTo(to[0],to[1]);
+  }
+ };
+ ctx.save();
+ ctx.globalCompositeOperation='source-over';
+ ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';
+ ctx.strokeStyle=ctx.fillStyle=gradient?gradientPaint(ctx,s.gradient):colored;
+ ctx.globalAlpha=opacity*(gradient?.88:.68);
+ trace();if(dot)ctx.fill();else ctx.stroke();
+ if(!gradient){
+  const grain=graphiteGrain(ctx,colored);
+  if(grain){
+   ctx.strokeStyle=ctx.fillStyle=grain;
+   ctx.globalAlpha=opacity*.55;
+   trace();if(dot)ctx.fill();else ctx.stroke();
+  }
+ }
+ ctx.restore();
+}
+function paintGraphite(ctx,s){
+ const pts=s.points;
+ if(pts.length===1){graphiteSegment(ctx,s,pts[0],pts[0],null,true);return}
+ if(pts.length===2){graphiteSegment(ctx,s,pts[0],pts[1]);return}
+ const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,(a[3]+b[3])/2];
+ let from=mid(pts[0],pts[1]);
+ graphiteSegment(ctx,s,pts[0],from);
+ for(let i=1;i<pts.length-1;i++){
+  const to=mid(pts[i],pts[i+1]);
+  graphiteSegment(ctx,s,from,to,pts[i]);from=to;
+ }
+ graphiteSegment(ctx,s,from,pts[pts.length-1]);
+}
 function paintStroke(ctx,s){
  if(!s.points.length)return;
+ if(s.tool==='pencil'&&s.brushProfile==='graphite3'){
+  paintGraphite(ctx,s);return;
+ }
  // Store geometric figures as precise two-point strokes; their coordinates
  // survive note saving, undo, duplication, rendering and PNG export.
  if(SHAPE_TOOLS.has(s.tool)){
@@ -357,6 +443,10 @@ const midpoint=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,(a[3]+b[3])/2];
 function drawLivePart(kind,from,to,control=null,dot=false){
  const ctx=canvas.getContext('2d');if(!ctx||!pending)return;
  ctx.save();ctx.setTransform(canvas.width/W,0,0,canvas.height/(data.height||H),0,0);
+ if(pending.tool==='pencil'&&pending.brushProfile==='graphite3'){
+  graphiteSegment(ctx,pending,from,to,control,dot);
+  ctx.restore();return;
+ }
  const erase=pending.tool==='eraser';
  ctx.globalCompositeOperation=erase?'destination-out':'source-over';
  ctx.fillStyle=ctx.strokeStyle=erase?'#000':validGradient(pending.gradient)?gradientPaint(ctx,pending.gradient):pending.tool==='pencil'?pending.color+'a3':pending.color;
@@ -444,7 +534,7 @@ function down(e){
  if(e.pointerType==='touch'&&(Date.now()<penTime||Math.max(e.width||0,e.height||0)>27))return;
  if(data.strokes.length>=MAX_STROKES){report('Лист заполнен. Начните следующий.');return}
  e.preventDefault();pointerID=e.pointerId;
- pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,pressureSensitive:e.pointerType==='pen',...(currentTool()==='pencil'?{brushProfile:'graphite2'}:{}),points:[point(e)]};
+ pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,pressureSensitive:e.pointerType==='pen',...(currentTool()==='pencil'?{brushProfile:'graphite3'}:{}),points:[point(e)]};
  liveTail=pending.points[0];liveMid=null;
  lastInkMotionAt=Date.now();
  if(SHAPE_TOOLS.has(pending.tool)&&shapeSnapshotCtx){
@@ -900,7 +990,9 @@ window.SEYVEO_PAPER=Object.freeze({
   const raw=document.createElement('canvas');raw.width=W;raw.height=data.height||H;
   const ctx=raw.getContext('2d');
   for(const stroke of data.strokes){
-   paintStroke(ctx,{...stroke,color:'#171e29',gradient:undefined});
+   // OCR needs dense black ink, not the intentionally pale graphite preview.
+   paintStroke(ctx,{...stroke,tool:stroke.tool==='pencil'?'pen':stroke.tool,
+    color:'#171e29',gradient:undefined,brushProfile:undefined});
   }
   let x0=W,y0=raw.height,x1=0,y1=0;
   for(const stroke of writing)for(const p of stroke.points){
