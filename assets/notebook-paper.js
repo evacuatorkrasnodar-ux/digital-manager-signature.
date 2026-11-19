@@ -353,6 +353,7 @@ if(typeof ResizeObserver!=='undefined'&&stage){
  observer.observe(stage);
 }
 function render(redrawInk=true){
+ dialog.classList.toggle('sv-paper-light-surface',data.background==='light');
  sheet.dataset.pattern=data.pattern;sheet.dataset.inkBackground=data.background;pattern.value=data.pattern;syncPatternMenu();
  if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
  if($('notePaperRemovePhoto'))$('notePaperRemovePhoto').hidden=!data.photo;
