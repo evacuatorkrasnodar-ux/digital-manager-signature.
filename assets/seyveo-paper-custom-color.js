@@ -39,11 +39,10 @@
    '<div class="sv-ink-hue-row">'+
     '<button type="button" class="sv-ink-pipette" aria-label="Пипетка: взять точный цвет с фотографии или рисунка" title="Пипетка — взять цвет с листа">'+
      '<span class="sv-ink-pipette-caption" aria-hidden="true">Пипетка</span>'+
-     '<span class="sv-ink-pipette-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">'+
-      '<path d="m13.9 6.3 2.6-2.6a2.6 2.6 0 0 1 3.7 3.7L17.6 10"/>'+
-      '<path d="m12.8 7.4 4 4"/>'+
-      '<path d="m14.7 9.3-8.6 8.6a2.7 2.7 0 0 0-.8 1.9V21h1.2a2.7 2.7 0 0 0 1.9-.8l8.6-8.6"/>'+
-      '<path d="m3.5 20.5-1 1"/>'+
+     '<span class="sv-ink-pipette-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+
+      '<path d="m15.25 6.45 2.3-2.3a2.6 2.6 0 0 1 3.68 3.68l-2.3 2.3"/>'+
+      '<path d="m15.25 6.45 3.68 3.68"/>'+
+      '<path d="m15.25 6.45-9.8 9.8a3.8 3.8 0 0 0-1.05 2.65v1.7h1.7a3.8 3.8 0 0 0 2.65-1.05l10.18-9.42"/>'+
      '</svg></span></button>'+
     '<input class="sv-ink-hue" type="range" min="0" max="360" step="1" value="265" aria-label="Оттенок">'+
     '<span class="sv-ink-preview" role="img" aria-label="Выбранный цвет"></span>'+

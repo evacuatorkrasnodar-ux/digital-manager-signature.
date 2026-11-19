@@ -44,7 +44,7 @@ test('iPhone photo sampling does not create a stroke and shows a live HEX previe
  assert.match(picker,/\.sv-ink-sample-value/);
  assert.match(picker,/overlay\.addEventListener\('touchend'/);
  assert.match(picker,/overlay\.addEventListener\('pointercancel'/);
- assert.match(html,/assets\/seyveo-paper-custom-color\.js\?v=6/);
+ assert.match(html,/assets\/seyveo-paper-custom-color\.js\?v=7/);
  assert.match(html,/assets\/notebook-paper\.js\?v=39/);
 });
 
@@ -56,7 +56,7 @@ test('blank sheet never enters sampling mode or paints a dark bubble over toolba
  assert.match(pickerStyle,/top:calc\(90px \+ env\(safe-area-inset-top,0px\)\)/);
  assert.match(pickerStyle,/\.sv-paper-light-surface \.sv-ink-sample-instruction\{[\s\S]*?background:rgba\(255,255,255,\.96\)/);
  assert.match(picker,/trigger\.addEventListener\('click',\(\)=>\{if\(picking\)stopSampling\(false\)\}/);
- assert.match(html,/assets\/seyveo-paper-custom-color\.css\?v=5/);
+ assert.match(html,/assets\/seyveo-paper-custom-color\.css\?v=6/);
 });
 
 test('Palette contains one labeled pipette with a crisp vector icon',()=>{
@@ -73,4 +73,14 @@ test('the pipette stays visible despite the legacy rule hiding header subtitles'
  assert.match(pickerStyle,/\.sv-gradient-head > button\.sv-ink-pipette > \.sv-ink-pipette-caption\{\s*display:block!important/);
  assert.match(pickerStyle,/\.sv-gradient-head > button\.sv-ink-pipette > \.sv-ink-pipette-icon\{\s*display:grid!important/);
  assert.match(pickerStyle,/\.sv-paper-light-surface #notePaperColorMenu\.paper-color-menu \.sv-ink-sv\{\s*border:1px solid rgba\(48,60,75,\.16\)!important/);
+});
+
+test('eyedropper has a connected silhouette and shares one centerline with Palette',()=>{
+ assert.match(picker,/m15\.25 6\.45 2\.3-2\.3a2\.6 2\.6/);
+ assert.match(picker,/m15\.25 6\.45 3\.68 3\.68/);
+ assert.match(picker,/m15\.25 6\.45-9\.8 9\.8/);
+ assert.doesNotMatch(picker,/m3\.5 20\.5-1 1/,'remove the stray disconnected tip stroke');
+ assert.match(pickerStyle,/\.sv-gradient-head\{\s*display:flex!important;flex-direction:row!important;align-items:center!important/);
+ assert.match(pickerStyle,/\.sv-gradient-head > button\.sv-ink-pipette\{\s*position:static!important/);
+ assert.match(pickerStyle,/\.sv-ink-pipette-icon\{\s*color:#28313d!important/);
 });

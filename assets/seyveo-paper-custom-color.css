@@ -246,3 +246,28 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePap
  background-clip:padding-box!important;
  -webkit-background-clip:padding-box!important;
 }
+
+/* Align Palette and Pipette on ONE true centerline, not separate absolute
+   offsets. The old caption rule also tinted the icon light blue; reset it. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color-menu .sv-gradient-head{
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:space-between!important;gap:8px!important;
+ height:36px!important;min-height:36px!important;
+ padding:0 2px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette{
+ position:static!important;top:auto!important;right:auto!important;
+ flex:0 0 auto!important;height:36px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette > .sv-ink-pipette-icon{
+ color:var(--sv-menu-ink,#f6f6f8)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette > .sv-ink-pipette-icon{
+ color:#28313d!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette > .sv-ink-pipette-caption{
+ color:#626a75!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette > .sv-ink-pipette-icon > svg{
+ stroke:currentColor!important;stroke-width:1.7!important;
+}
