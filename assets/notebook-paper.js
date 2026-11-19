@@ -38,8 +38,15 @@ function snapshotSheet(){
  return {strokes:data.strokes.slice(),photo:data.photo||'',pattern:data.pattern,background:data.background};
 }
 function restoreSheet(snapshot){
+ const oldBackground=data.background;
  data.strokes=snapshot.strokes.slice();
  data.photo=snapshot.photo;data.pattern=snapshot.pattern;data.background=snapshot.background;
+ // Keep default ink readable after undo/redo switches between light and dark.
+ if(oldBackground!==data.background){
+  if(data.background==='light'&&activeColor==='#f6f7fb')activeColor='#171e29';
+  else if(data.background==='dark'&&activeColor==='#171e29')activeColor='#f6f7fb';
+  syncColorMenu();
+ }
 }
 function travelHistory(from,to){
  if(pending||!from.length)return false;
