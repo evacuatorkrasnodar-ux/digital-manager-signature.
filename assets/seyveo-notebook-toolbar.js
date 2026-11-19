@@ -221,14 +221,49 @@
    wrap.dataset.width=String(n);range.setAttribute('aria-valuetext',String(n));
   };
   let last=Number(range.value);
+  let collapseTimer=0,draggingSize=false;
+  const expandWedge=()=>{
+   clearTimeout(collapseTimer);
+   wrap.classList.add('sv-wedge-expanded');
+  };
+  const collapseWedge=(delay=700)=>{
+   clearTimeout(collapseTimer);
+   collapseTimer=window.setTimeout(()=>{
+    if(!draggingSize)wrap.classList.remove('sv-wedge-expanded');
+   },delay);
+  };
   range.addEventListener('input',event=>{
    const now=Number(range.value);
    if(event.isTrusted&&now!==last&&typeof navigator.vibrate==='function')navigator.vibrate(5);
    last=now;syncWidth();
+   if(event.isTrusted&&!draggingSize){expandWedge();collapseWedge(900)}
   });
-  range.addEventListener('pointerdown',()=>wrap.classList.add('sv-paper-size-active'));
-  for(const name of ['pointerup','pointercancel','blur','change'])
-   range.addEventListener(name,()=>wrap.classList.remove('sv-paper-size-active'));
+  range.addEventListener('pointerenter',event=>{
+   if(event.pointerType==='mouse')expandWedge();
+  });
+  range.addEventListener('pointerleave',()=>{if(!draggingSize)collapseWedge(700)});
+  range.addEventListener('pointerdown',()=>{
+   draggingSize=true;expandWedge();wrap.classList.add('sv-paper-size-active');
+  });
+  const finishWedge=()=>{
+   if(!draggingSize)return;
+   draggingSize=false;wrap.classList.remove('sv-paper-size-active');
+   collapseWedge(700);
+  };
+  for(const name of ['pointerup','pointercancel'])range.addEventListener(name,finishWedge);
+  window.addEventListener('pointerup',finishWedge,{passive:true});
+  window.addEventListener('pointercancel',finishWedge,{passive:true});
+  range.addEventListener('focus',expandWedge);
+  range.addEventListener('blur',()=>{
+   draggingSize=false;wrap.classList.remove('sv-paper-size-active');
+   collapseWedge(700);
+  });
+  range.addEventListener('keydown',expandWedge);
+  range.addEventListener('keyup',()=>collapseWedge(900));
+  dialog.addEventListener('close',()=>{
+   clearTimeout(collapseTimer);draggingSize=false;
+   wrap.classList.remove('sv-wedge-expanded','sv-paper-size-active');
+  });
   window.addEventListener('resize',syncWidth,{passive:true});
   new MutationObserver(syncWidth).observe(dialog,{attributes:true,attributeFilter:['open']});
   syncWidth();
