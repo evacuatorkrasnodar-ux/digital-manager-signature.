@@ -37,6 +37,22 @@ test('compact light Notebook dock inherits exactly the live Home pearl tokens',(
  assert.match(editorStyles,/\.sv-note-tools-compact>button:not\(\[hidden\]\),[\s\S]*?color:#0b0b0d!important;/);
 });
 
+test('resting Notebook capsule stretches to the 270px reference while its new-note circle stays separate',()=>{
+ const mobileCss=editorStyles.slice(editorStyles.indexOf('/* Notebook footer parity'));
+ assert.match(mobileCss,/--sv-note-home-left:max\(12px, calc\(50vw - 175px\)\);/);
+ assert.match(mobileCss,/--sv-note-home-search:calc\(100vw - var\(--sv-note-home-left\) - 60px\);/);
+ assert.match(mobileCss,/--sv-note-capsule-width:min\(270px, calc\(100vw - 104px\)\);/);
+ assert.match(mobileCss,/\.sv-note-tool-row\.sv-shared-dock::before\{[\s\S]*?width:var\(--sv-note-capsule-width\)!important;/);
+ assert.match(mobileCss,/\.sv-note-tools-compact\{[\s\S]*?width:var\(--sv-note-capsule-width\)!important;/);
+ const geometry=(viewport)=>({left:Math.max(12,viewport/2-175),width:Math.min(270,viewport-104)});
+ for(const viewport of [320,337,375,390,454]){
+  const {left,width}=geometry(viewport);
+  const circleLeft=viewport-left-60;
+  assert.ok(circleLeft-(left+width)>=20-1e-6,`${viewport}px must have a 20px gap`);
+ }
+ assert.equal(geometry(375).width,270);
+});
+
 test('Apple-style header reuses real note actions and keeps four dock icons',()=>{
  for(const id of ['svNoteUndo','svNoteShare','svNoteMore','svNoteDone']){
   assert.match(html,new RegExp('<button id="'+id+'"[^>]*aria-label="[^"]+"'));

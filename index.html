@@ -2023,12 +2023,13 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 }
 
 /* Notebook footer parity with the approved 60px Home dock.
-   Only the writing editor toolbar; keep four Notes tools and the separate new-note
-   control, with their original right edge and no added outer frame. */
+   Give the resting four-icon capsule the Apple Notes reference's ~270px length;
+   preserve a 20px gap before the separate new-note circle on narrow phones. */
 @media(max-width:699px){
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
-  --sv-note-home-left:calc(50vw - 138.25px);
-  --sv-note-home-search:calc(81.5vw - 9.0325px);
+  --sv-note-home-left:max(12px, calc(50vw - 175px));
+  --sv-note-home-search:calc(100vw - var(--sv-note-home-left) - 60px);
+  --sv-note-capsule-width:min(270px, calc(100vw - 104px));
   /* The dialog has 20px horizontal padding; extend the row back to screen X=0. */
   box-sizing:border-box!important;
   position:relative!important;
@@ -2040,7 +2041,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  }
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
   left:var(--sv-note-home-left)!important;right:auto!important;
-  width:var(--sv-split-capsule,226px)!important;
+  width:var(--sv-note-capsule-width)!important;
   top:0!important;bottom:0!important;height:60px!important;
  }
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
@@ -2051,7 +2052,7 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   position:absolute!important;
   left:var(--sv-note-home-left)!important;right:auto!important;
   top:0!important;bottom:auto!important;
-  width:var(--sv-split-capsule,226px)!important;
+  width:var(--sv-note-capsule-width)!important;
   min-width:0!important;max-width:none!important;
   margin:0!important;padding:2px 12px!important;
   display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
@@ -2065,12 +2066,6 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   width:60px!important;min-width:60px!important;max-width:60px!important;
   height:60px!important;min-height:60px!important;max-height:60px!important;
   transform:none!important;
- }
-}
-@media(max-width:389px){
- #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
-  --sv-note-home-left:calc(50vw - 35.714286vw + .857143px);
-  --sv-note-home-search:calc(89.428571vw - 39.914286px);
  }
 }
 /* Apple Notes-style writing state: the SAME four engraved buttons spread across
