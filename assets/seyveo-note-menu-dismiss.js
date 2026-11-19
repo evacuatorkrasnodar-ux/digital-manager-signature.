@@ -87,10 +87,10 @@
   const list=document.getElementById('notesList');
   if(!list)return;
   function upgrade(){
-    for(const row of list.querySelectorAll('.sv-nb3-row')){
+    for(const row of list.querySelectorAll('.sv-nb4-note')){
       // The source note retains its text, including checklist characters.
       // Only the 2-line summary in the list hides stray square glyphs.
-      const summary=row.querySelector('.sv-nb3-copy > p');
+      const summary=row.querySelector('.sv-nb4-details > p');
       if(summary&&!summary.dataset.svCleanSummary){
         const before=summary.textContent||'';
         const after=before.replace(/^[\s]*[☐☑☒□■][\s]*/gm,'').trim();
@@ -100,17 +100,17 @@
     }
   }
   function closeActions(){
-    for(const row of list.querySelectorAll('.sv-nb3-row')){
-      const menu=row.querySelector('.sv-nb3-popover');
-      const toggle=row.querySelector('.sv-nb3-menu-trigger');
-      const swipeToggle=row.querySelector('.sv-nb3-more-action');
+    for(const row of list.querySelectorAll('.sv-nb4-note')){
+      const menu=row.querySelector('.sv-nb4-actions');
+      const toggle=row.querySelector('.sv-nb4-dots');
+      const swipeToggle=row.querySelector('.sv-nb4-more');
       if(menu)menu.hidden=true;
       if(toggle)toggle.setAttribute('aria-expanded','false');
       if(swipeToggle)swipeToggle.setAttribute('aria-expanded','false');
     }
   }
   document.addEventListener('pointerdown',event=>{
-    if(!list.contains(event.target)||!event.target.closest('.sv-nb3-popover,.sv-nb3-menu-trigger,.sv-nb3-more-action'))closeActions();
+    if(!list.contains(event.target)||!event.target.closest('.sv-nb4-actions,.sv-nb4-dots,.sv-nb4-more'))closeActions();
   },true);
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape')closeActions();

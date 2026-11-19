@@ -1,37 +1,37 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const {readFileSync}=require('node:fs');
+const {readFileSync,existsSync}=require('node:fs');
 const {join}=require('node:path');
 
 const root=join(__dirname,'..');
 const html=readFileSync(join(root,'index.html'),'utf8');
-const layout=readFileSync(join(root,'assets/seyveo-notebook-list-v3.css'),'utf8');
-const retired=readFileSync(join(root,'assets/seyveo-notebook-page.css'),'utf8');
+const css=readFileSync(join(root,'assets/seyveo-notebook-list-clean-v4.css'),'utf8');
+const header=readFileSync(join(root,'assets/seyveo-notebook-page.css'),'utf8');
 
-test('the Notebook list has one fresh stylesheet and independent row classes',()=>{
- assert.match(html,/assets\/seyveo-notebook-list-v3\.css\?v=3/);
- assert.match(html,/assets\/seyveo-notebook-page\.css\?v=15/);
- assert.match(html,/card\.className='sv-nb3-row'/);
- assert.match(html,/open\.className='sv-nb3-open'/);
- assert.match(html,/thumbnail\.className='sv-nb3-thumb'/);
- assert.doesNotMatch(retired,/\.note-item\s*\{/,'old list card styles are retired');
- assert.doesNotMatch(retired,/\.note-paper-preview/,'old thumbnail styles are retired');
+test('Notebook saved-page generation 4 has no legacy list container or list stylesheet',()=>{
+ assert.match(html,/id="notesList" class="sv-note-clean-list" data-list-generation="4"/);
+ assert.match(html,/assets\/seyveo-notebook-list-clean-v4\.css\?v=1/);
+ assert.doesNotMatch(html,/assets\/seyveo-notebook-list-v3\.css/);
+ assert.equal(existsSync(join(root,'assets/seyveo-notebook-list-v3.css')),false);
+ assert.match(html,/card\.className='sv-nb4-note'/);
+ assert.match(html,/open\.className='sv-nb4-open'/);
+ assert.match(html,/thumbnail\.className='sv-nb4-preview'/);
+ assert.doesNotMatch(header,/\.note-item\s*\{|\.note-paper-preview/);
 });
 
-test('Notebook rows have no dividers, frames, grey panels or rounded corners',()=>{
- assert.match(layout,/\#notesList\.notes-list\{[\s\S]*?padding:0!important/);
- assert.match(layout,/\.sv-nb3-row\{[\s\S]*?border-bottom:0!important/);
- assert.doesNotMatch(layout,/border-bottom:1px solid/);
- assert.match(layout,/\.sv-nb3-row\{[\s\S]*?border-radius:0!important;[\s\S]*?background:transparent!important/);
- assert.match(layout,/\.sv-nb3-content\{[\s\S]*?background:#fff!important/);
- assert.match(layout,/\.sv-nb3-swipe\{[\s\S]*?border-radius:0!important/);
- assert.match(layout,/\.sv-nb3-row::after\{\s*content:none!important;/);
- assert.match(layout,/#notesList\.notes-list::after\{\s*content:none!important;/);
+test('entire iPhone saved-page canvas and list have no outside frame or decoration',()=>{
+ assert.match(css,/\> #notesDialog\.sv-notebook-content\[open\]\{[\s\S]*?border:0!important;border-radius:0!important;outline:0!important/);
+ assert.match(css,/#notesList\.sv-note-clean-list\{[\s\S]*?border:0!important;border-radius:0!important;outline:0!important/);
+ assert.match(css,/#notesList\.sv-note-clean-list::after\{\s*content:none!important;display:none!important/);
+ assert.match(css,/\.sv-nb4-note\{[\s\S]*?border:0!important;border-top:0!important;border-bottom:0!important/);
+ assert.match(css,/\.sv-nb4-note::after\{\s*content:none!important;display:none!important/);
+ assert.match(css,/\.sv-nb4-front\{[\s\S]*?background:#fff!important;background-image:none!important;box-shadow:none!important/);
+ assert.doesNotMatch(css,/border-bottom:1px solid|border-top:1px solid/);
 });
 
-test('saved ink is a compact single-row preview with dark and light backgrounds',()=>{
- assert.match(layout,/\.sv-nb3-open\{[\s\S]*?flex-direction:row!important/);
- assert.match(layout,/\.sv-nb3-thumb\{[\s\S]*?width:45px!important/);
- assert.match(layout,/\.sv-nb3-thumb\[data-paper-background="dark"\]\{\s*background:#202124!important/);
+test('saved paper is a compact full-width row with correct light or dark preview',()=>{
+ assert.match(css,/\.sv-nb4-open\{[\s\S]*?gap:10px!important/);
+ assert.match(css,/\.sv-nb4-preview\{[\s\S]*?width:45px!important/);
+ assert.match(css,/\.sv-nb4-preview\[data-paper-background="dark"\]\{\s*background:#202124!important/);
  assert.match(html,/thumbnail\.dataset\.paperBackground=note\.paper\.background==='dark'\?'dark':'light'/);
 });
