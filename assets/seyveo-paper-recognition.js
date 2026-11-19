@@ -19,11 +19,11 @@
  overlay.setAttribute('aria-labelledby','svPaperRecognitionTitle');
  overlay.innerHTML=`
   <div class="sv-pr-head"><h2 id="svPaperRecognitionTitle">Рукопись → текст</h2><button type="button" data-pr-close aria-label="Закрыть распознавание">Готово</button></div>
-  <p class="sv-pr-help">Распознаём только по вашему нажатию. Если встроенный движок недоступен, используем модели распознавания SEYVEO. Обработка рисунка — на вашем устройстве.</p>
-  <div class="sv-pr-status" role="status" aria-live="polite">Нарисуйте несколько слов, затем нажмите «Распознать».</div>
-  <textarea class="sv-pr-text" aria-label="Распознанный текст, можно исправить" placeholder="Здесь появится текст. Его можно исправить вручную." spellcheck="true" rows="7"></textarea>
+  <p class="sv-pr-help">Напишите от руки и нажмите «Распознать». Текст можно проверить и исправить перед сохранением.</p>
+  <div class="sv-pr-status" role="status" aria-live="polite">Напишите несколько слов на листе.</div>
+  <textarea class="sv-pr-text" aria-label="Распознанный текст, можно исправить" placeholder="Здесь появится распознанный текст" spellcheck="true" rows="7"></textarea>
   <div class="sv-pr-actions"><button type="button" data-pr-run class="sv-pr-primary">Распознать</button><button type="button" data-pr-copy disabled>Копировать</button><button type="button" data-pr-save disabled>В заметку</button></div>
-  <p class="sv-pr-note">Оригинальные штрихи остаются на листе. Проверьте имена, числа и назначения перед использованием текста.</p>`;
+  <p class="sv-pr-note">Штрихи останутся на листе. Проверьте имена, числа и другие важные данные.</p>`;
  document.body.append(overlay);
  const runButton=overlay.querySelector('[data-pr-run]');
  const copyButton=overlay.querySelector('[data-pr-copy]');
