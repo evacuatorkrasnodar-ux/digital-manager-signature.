@@ -113,3 +113,64 @@ html body dialog.sv-paper-recognition[open]{
   animation:none!important;
  }
 }
+
+
+/* Calendar view picker uses the SAME Satin surface in Pearl. The calendar
+   itself and the large white month card are content, not glass. */
+html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu:not([hidden]),
+html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu:not([hidden]),
+html:not([data-theme]) body #svWorkShell > #calendarCreateMenu:not([hidden]),
+html:not([data-theme]) body #calendarPage > #calendarCreateMenu:not([hidden]){
+ border:1px solid var(--sv-satin-pearl-border)!important;
+ border-radius:var(--sv-satin-radius)!important;
+ background:var(--sv-satin-pearl)!important;
+ background-image:none!important;
+ color:#17191d!important;
+ box-shadow:0 12px 29px rgba(30,39,51,.115),inset 0 1px 0 rgba(255,255,255,.82)!important;
+ -webkit-backdrop-filter:var(--sv-satin-blur)!important;
+ backdrop-filter:var(--sv-satin-blur)!important;
+ animation:sv-satin-open-down var(--sv-satin-motion) var(--sv-satin-ease) both!important;
+}
+html body #svWorkShell > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"],
+html body #calendarPage > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"]{
+ background:rgba(42,50,64,.075)!important;
+}
+html:root[data-theme="dark"] body #svWorkShell > #calendarCreateMenu:not([hidden]),
+html:root[data-theme="dark"] body #calendarPage > #calendarCreateMenu:not([hidden]){
+ border:1px solid var(--sv-satin-graphite-border)!important;
+ border-radius:var(--sv-satin-radius)!important;
+ background:var(--sv-satin-graphite)!important;
+ color:#f6f6f8!important;
+ box-shadow:0 15px 32px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.12)!important;
+ -webkit-backdrop-filter:var(--sv-satin-blur)!important;
+ backdrop-filter:var(--sv-satin-blur)!important;
+ animation:sv-satin-open-down var(--sv-satin-motion) var(--sv-satin-ease) both!important;
+}
+html:root[data-theme="dark"] body #svWorkShell > #calendarCreateMenu #calendarViewModes > button,
+html:root[data-theme="dark"] body #calendarPage > #calendarCreateMenu #calendarViewModes > button,
+html:root[data-theme="dark"] body #svWorkShell > #calendarCreateMenu #calendarViewModes .cal-mode-icon,
+html:root[data-theme="dark"] body #calendarPage > #calendarCreateMenu #calendarViewModes .cal-mode-icon{
+ color:#f6f6f8!important;
+}
+html:root[data-theme="dark"] body #svWorkShell > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"],
+html:root[data-theme="dark"] body #calendarPage > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"]{
+ background:rgba(255,255,255,.16)!important;color:#fff!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu:not([hidden]),
+ html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu:not([hidden]){
+  background:#f9fafc!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ html:root[data-theme="dark"] body #svWorkShell > #calendarCreateMenu:not([hidden]),
+ html:root[data-theme="dark"] body #calendarPage > #calendarCreateMenu:not([hidden]){
+  background:#38383A!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html body #svWorkShell > #calendarCreateMenu:not([hidden]),
+ html body #calendarPage > #calendarCreateMenu:not([hidden]){
+  animation:none!important;
+ }
+}
