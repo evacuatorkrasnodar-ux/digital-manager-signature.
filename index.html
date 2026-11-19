@@ -2073,6 +2073,35 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   --sv-note-home-search:calc(89.428571vw - 39.914286px);
  }
 }
+/* Apple Notes-style writing state: the SAME four engraved buttons spread across
+   one wide pearl capsule immediately above the keyboard. No extra icon layer. */
+@media(max-width:699px){
+ #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+  left:20px!important;
+  right:auto!important;
+  width:calc(100vw - 40px)!important;
+ }
+ #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+  display:none!important;
+ }
+ #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
+  left:20px!important;
+  right:auto!important;
+  width:calc(100vw - 40px)!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  padding:2px 12px!important;
+  justify-items:center!important;
+ }
+ #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]){
+  width:44px!important;
+  min-width:44px!important;
+  height:44px!important;
+  min-height:44px!important;
+ }
+ #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
+  display:none!important;
+ }
+}
 </style><link rel="stylesheet" href="assets/seyveo-note-attachments.css?v=12"><link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=7"><style id="seyveo-pulse-nov09-polish">
 /* Pulse only: flat graphite and compact Sayvi explanation. */
 #picturePage .picture-quick-insight.picture-sayvi{border:0;box-shadow:none;background:#38383A;border-radius:18px;padding:15px 16px}
@@ -6777,17 +6806,25 @@ window.addEventListener('load',()=>{
 </script><script src="assets/seyveo-home-presence.js?v=23"></script><script src="assets/seyveo-intelligence-core.js?v=2"></script><script src="assets/seyveo-work-header.js?v=34"></script><script src="assets/seyveo-work-shell.js?v=106"></script><script src="assets/seyveo-task-smart-nl.js?v=9"></script><script src="assets/seyveo-task-places.js?v=20"></script><script src="assets/seyveo-search-hub.js?v=1"></script><script src="assets/seyveo-task-ai-policy.js?v=2"></script><script src="assets/seyveo-task-ai.js?v=2"></script><script src="assets/seyveo-task-travel-core.js?v=2"></script><script src="assets/seyveo-task-editor-v3.js?v=24"></script><script src="assets/seyveo-task-places-ui.js?v=29"></script><script src="assets/seyveo-meeting-place-picker.js?v=3"></script><script src="assets/seyveo-task-travel-ui.js?v=3"></script><script src="assets/seyveo-task-travel-reminders.js?v=1"></script><script src="assets/seyveo-smart-connections.js?v=1"></script><script id="sv-note-editor-tools">
 (function(){
  const dlg=document.getElementById('noteReviewDialog'),field=document.getElementById('noteReviewText');if(!dlg||!field)return;
- // Only the actual viewport HEIGHT affects editor geometry. Scroll events
- // and subpixel toolbar oscillations used to repeatedly move the entire form.
- let lastNoteHeight=0,noteViewportFrame=0;
+ // Keyboard visibility is measured from the resting visual viewport, not a
+ // focus event: hardware keyboards must leave the dock in its resting state.
+ // Subpixel viewport noise never moves the form or repeatedly resizes it.
+ let lastNoteHeight=0,noteViewportFrame=0,restingNoteHeight=0;
  const sync=()=>{
   if(!dlg.open)return;
   const v=window.visualViewport;
   const height=Math.round(v?v.height:window.innerHeight);
-  if(Math.abs(height-lastNoteHeight)<3)return;
-  lastNoteHeight=height;
-  dlg.style.setProperty('--sv-note-height',height+'px');
-  dlg.style.setProperty('--sv-note-top','0px');
+  const focused=dlg.contains(document.activeElement)&&
+   document.activeElement.matches('textarea,input:not([type="file"]),[contenteditable="true"]');
+  if(!restingNoteHeight)restingNoteHeight=Math.max(height,Math.round(window.innerHeight));
+  if(!focused&&height>restingNoteHeight-25)restingNoteHeight=Math.max(restingNoteHeight,height);
+  const keyboardOpen=focused&&restingNoteHeight-height>=120;
+  dlg.classList.toggle('sv-note-keyboard-open',keyboardOpen);
+  if(Math.abs(height-lastNoteHeight)>=3){
+   lastNoteHeight=height;
+   dlg.style.setProperty('--sv-note-height',height+'px');
+   dlg.style.setProperty('--sv-note-top','0px');
+  }
  };
  const queueNoteViewportSync=()=>{
   if(noteViewportFrame)return;
@@ -6796,9 +6833,12 @@ window.addEventListener('load',()=>{
  window.visualViewport?.addEventListener('resize',queueNoteViewportSync);
  window.addEventListener('resize',queueNoteViewportSync);
  dlg.addEventListener('focusin',queueNoteViewportSync);
+ dlg.addEventListener('focusout',queueNoteViewportSync);
+ window.addEventListener('orientationchange',()=>{restingNoteHeight=0;queueNoteViewportSync();});
  dlg.addEventListener('close',()=>{
   if(noteViewportFrame){cancelAnimationFrame(noteViewportFrame);noteViewportFrame=0;}
-  lastNoteHeight=0;
+  lastNoteHeight=0;restingNoteHeight=0;
+  dlg.classList.remove('sv-note-keyboard-open');
   dlg.style.removeProperty('--sv-note-height');
   dlg.style.removeProperty('--sv-note-top');
  });
