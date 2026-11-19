@@ -89,6 +89,42 @@ test('a user can identify an unrecognisable scribble as С, О or a heart',()=>{
  assert.equal(redraw(scribble,'unknown'),null,'unknown labels cannot create ink');
 });
 
+test('Sayvi suggests a rough С or О that is too shaky for automatic refitting',()=>{
+ const guess=shapeFitter('guessIntent'),fitC=shapeFitter('fitLetterC'),fitO=shapeFitter('fitOval');
+ const n=91;
+ const roughC=Array.from({length:n},(_,i)=>{
+  const t=-.85-(Math.PI*2-1.7)*i/(n-1);
+  const r=80+40*Math.sin(10*t)+14*Math.cos(16*t);
+  return [300+r*Math.cos(t),250+r*Math.sin(t),50+i%12];
+ });
+ const roughO=Array.from({length:n},(_,i)=>{
+  const t=Math.PI*2*i/(n-1);
+  const r=80+17*Math.sin(10*t)+5.95*Math.cos(16*t);
+  return [300+r*Math.cos(t),250+r*Math.sin(t),50+i%12];
+ });
+ const cOriginal=structuredClone(roughC),oOriginal=structuredClone(roughO);
+ assert.equal(fitC(roughC),null,'too much wobble to modify С automatically');
+ assert.equal(fitO(roughO),null,'too much wobble to modify О automatically');
+ assert.equal(guess(roughC),'c','a fuzzy С earns an optional suggestion');
+ assert.equal(guess(roughO),'o','a fuzzy О earns an optional suggestion');
+ assert.equal(guess(roughC.slice().reverse()),'c','drawing direction is not important');
+ assert.equal(guess(roughO.slice().reverse()),'o','reverse closed loop is recognised');
+ assert.deepEqual(roughC,cOriginal);assert.deepEqual(roughO,oOriginal);
+});
+
+test('a guess never guesses shapes from a square, a line or tiny disconnected ink',()=>{
+ const guess=shapeFitter('guessIntent');
+ const corners=[[100,100],[220,100],[220,220],[100,220],[100,100]],square=[];
+ for(let k=0;k<4;k++)for(let i=0;i<25;i++){
+  const t=i/25;
+  square.push([corners[k][0]*(1-t)+corners[k+1][0]*t,corners[k][1]*(1-t)+corners[k+1][1]*t,50]);
+ }
+ square.push([100,100,50]);
+ assert.equal(guess(square),null,'a rectangular frame must not become О');
+ assert.equal(guess(Array.from({length:41},(_,i)=>[100+i*4,200+i*.4,50])),null,'a line is not a letter');
+ assert.equal(guess([[1,1,50],[2,3,50],[4,2,50]]),null,'short accidental marks get no guess');
+});
+
 test('a closed О, a U-shaped letter and a straight stroke are not mistaken for С',()=>{
  const fit=shapeFitter('fitLetterC'),count=75;
  const o=Array.from({length:count},(_,i)=>{
@@ -341,6 +377,26 @@ test('live controls compare without committing, Cancel restores and Apply commit
  assert.equal(announcements.at(-1),'Сначала напиши или нарисуй что-нибудь ручкой.');
  assert.equal(overlay.hidden,true);
  assert.equal(applied.length,3,'blank-page tip never commits an edit');
+
+ source=[{tool:'pen',color:'#111111',points:Array.from({length:91},(_,i)=>{
+  const t=2*Math.PI*i/90,r=80+17*Math.sin(10*t)+5.95*Math.cos(16*t);
+  return [300+r*Math.cos(t),250+r*Math.sin(t),40+i%16];
+ })}];
+ const roughOriginal=structuredClone(source);
+ action.click();
+ assert.equal(hint.textContent,'О?','a tiny guess takes the place of the existing «Это…» control');
+ assert.match(hint.attributes['aria-label'],/предполагает букву О/);
+ assert.equal(choices.hidden,true,'no extra menu appeared');
+ assert.deepEqual(source,roughOriginal,'the first guess did not change the drawing');
+ hint.click();
+ assert.equal(hint.textContent,'Это…','after preview the familiar manual choices remain available');
+ assert.equal(previews.at(-1)[0].points.length>=65,true,'one tap previews an elegant О');
+ assert.deepEqual(source,roughOriginal,'even a guessed shape is not committed automatically');
+ hint.click();
+ assert.equal(choices.hidden,false,'author can correct Sayvi’s guess');
+ cancel.click();
+ assert.deepEqual(source,roughOriginal,'Cancel restores a guessed shape too');
+ assert.equal(applied.length,3,'the new prediction does not secretly save ink');
 });
 
 test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',()=>{
@@ -367,7 +423,9 @@ test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',
 test('preview edits only pen and pencil, preserving text, photos and undo history',()=>{
  assert.match(script,/const eligible=stroke=>\['pen','pencil'\]\.includes\(stroke\.tool\)/);
  assert.match(script,/proposal=paper\.getEditableStrokes\(indices\)/);
- assert.match(script,/next=fitHeart\(stroke\.points\)\|\|fitOval\(stroke\.points\)\|\|fitLetterC\(stroke\.points\)\|\|fitStraight\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
+ assert.match(script,/const next=heart\|\|oval\|\|letterC\|\|fitStraight\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
+ assert.match(script,/guess=heart\?'heart':oval\?'o':letterC\?'c':guessIntent\(stroke\.points,true\)/);
+ assert.match(script,/if\(suggested\)\{chooseShape\(suggested\);return\}/);
  assert.match(script,/paper\.previewStrokeEdit\(next\?proposal:original\)/);
  assert.match(script,/if\(commit\)\{\s*if\(hasChanges\)\{if\(!paper\.applyStrokeEdit\(proposal\)/);
  assert.match(script,/else if\(restore\)paper\.previewStrokeEdit\(original\)/);
@@ -382,5 +440,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=2/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=8/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=9/);
 });

@@ -336,6 +336,54 @@
   });
  }
 
+ // A suggestion, never an automatic replacement. Loose geometry here can
+ // recognise a shaky open С or a hand-drawn О that the strict fitters rightly
+ // refuse to reshape without the author's confirmation.
+ function guessIntent(points,heartChecked=false){
+  if(!Array.isArray(points)||points.length<18)return null;
+  if(!heartChecked&&fitHeart(points))return 'heart';
+  const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+  const width=maxX-minX,height=maxY-minY,size=Math.min(width,height);
+  if(size<36||Math.max(width,height)>size*2.35)return null;
+  const cx=(minX+maxX)/2,cy=(minY+maxY)/2,rx=width/2,ry=height/2;
+  const first=points[0],last=points.at(-1);
+  const gap=Math.hypot(first[0]-last[0],first[1]-last[1]);
+  const polar=points.map(p=>{
+   const u=(p[0]-cx)/rx,v=(p[1]-cy)/ry;
+   return {angle:Math.atan2(v,u),radius:Math.hypot(u,v)};
+  });
+  let sweep=0,backwards=0;
+  const deltas=[];
+  for(let i=1;i<polar.length;i++){
+   let delta=polar[i].angle-polar[i-1].angle;
+   if(delta>Math.PI)delta-=Math.PI*2;
+   if(delta< -Math.PI)delta+=Math.PI*2;
+   deltas.push(delta);sweep+=delta;
+  }
+  const direction=Math.sign(sweep);
+  for(const delta of deltas)backwards+=Math.max(0,-direction*delta);
+  const radiusError=polar.reduce((sum,p)=>sum+Math.abs(p.radius-1),0)/polar.length;
+  // Require a nearly complete, consistently traversed loop. A straight line,
+  // a U, overlapping scribbles or disconnected fragments have no suggestion.
+  if(gap<=Math.max(12,size*.27)&&Math.abs(sweep)>Math.PI*1.66
+   &&Math.abs(sweep)<Math.PI*2.34&&backwards<Math.PI*.51&&radiusError<.32){
+   // The pointed bottom and indented top of a heart are intentional, not О.
+   const nearTop=points.filter(p=>p[1]<minY+height*.15);
+   const topSpread=nearTop.length>1?(Math.max(...nearTop.map(p=>p[0]))-Math.min(...nearTop.map(p=>p[0])))/width:0;
+   // Hearts and rectangular frames occupy much more of their top edge than
+   // the narrow rounded crown of an О. Withhold the guess for those shapes.
+   if(topSpread<.72)return 'o';
+  }
+  const endsRight=Math.min(first[0],last[0])>minX+width*.48;
+  const endsOpposite=(first[1]<cy-height*.10&&last[1]>cy+height*.10)
+   ||(last[1]<cy-height*.10&&first[1]>cy+height*.10);
+  if(gap>size*.24&&gap<size*1.6&&endsRight&&endsOpposite
+   &&Math.abs(sweep)>Math.PI*1.13&&Math.abs(sweep)<Math.PI*2.15
+   &&backwards<Math.PI*.63&&radiusError<.43)return 'c';
+  return null;
+ }
+
  const action=document.createElement('button');
  action.type='button';action.id='notePaperSmoothInk';action.className='sv-newdock-menu-action';
  action.setAttribute('aria-label','Сэйви: сделать рисунок и почерк аккуратнее');
@@ -367,7 +415,15 @@
   choices.append(button);
  }
  bar.append(before,after,hint,cancel,apply,choices);layer.append(bar);sheet.append(layer);
- let active=false,original=null,proposal=null,showAfter=true,hasChanges=false;
+ let active=false,original=null,proposal=null,showAfter=true,hasChanges=false,suggested=null;
+ function labelSuggestion(shape){
+  suggested=shape;
+  const label=shape==='c'?'С':shape==='o'?'О':shape==='heart'?'♥':null;
+  hint.textContent=label?label+'?':'Это…';
+  hint.setAttribute('aria-label',label
+   ?`Сэйви предполагает ${shape==='heart'?'сердечко':'букву '+label}. Посмотреть её аккуратный вариант`
+   :'Подсказать Сэйви, что ты хотел нарисовать');
+ }
  function positionBar(){
   const top=sheet.getBoundingClientRect().top;
   const bottom=dock?.getBoundingClientRect().bottom||top+60;
@@ -385,6 +441,7 @@
   dialog.classList.remove('sv-paper-smooth-mode');
   action.setAttribute('aria-pressed','false');
   choices.hidden=true;hint.setAttribute('aria-expanded','false');
+  labelSuggestion(null);
   if(commit){
    if(hasChanges){if(!paper.applyStrokeEdit(proposal)&&restore)paper.previewStrokeEdit(original)}
    else if(restore)paper.previewStrokeEdit(original);
@@ -400,9 +457,15 @@
   const indices=original.flatMap((stroke,index)=>eligible(stroke)?[index]:[]);
   if(!indices.length){original=null;paper.announce?.('Сначала напиши или нарисуй что-нибудь ручкой.');return}
   proposal=paper.getEditableStrokes(indices);
-  let changed=0;
+  let changed=0,guess=null;
+  const lastIndex=indices.at(-1);
   for(const index of indices){
-   const stroke=proposal[index],next=fitHeart(stroke.points)||fitOval(stroke.points)||fitLetterC(stroke.points)||fitStraight(stroke.points)||smoothPoints(stroke.points);
+   const stroke=proposal[index];
+   const heart=fitHeart(stroke.points);
+   const oval=heart?null:fitOval(stroke.points);
+   const letterC=heart||oval?null:fitLetterC(stroke.points);
+   const next=heart||oval||letterC||fitStraight(stroke.points)||smoothPoints(stroke.points);
+   if(index===lastIndex)guess=heart?'heart':oval?'o':letterC?'c':guessIntent(stroke.points,true);
    for(let i=0;i<next.length;i++)if(Math.hypot(next[i][0]-stroke.points[i][0],next[i][1]-stroke.points[i][1])>.1)changed++;
    stroke.points=next;
   }
@@ -410,6 +473,7 @@
   if(!changed)paper.announce?.('Штрихи уже ровные — исправлять нечего. Можно подсказать Сэйви через «Это…».');
   active=true;layer.hidden=false;
   dialog.classList.add('sv-paper-smooth-mode');action.setAttribute('aria-pressed','true');
+  labelSuggestion(guess);
   positionBar();compare(true);
  }
  action.addEventListener('click',()=>{
@@ -418,13 +482,7 @@
  });
  before.addEventListener('click',()=>compare(false));
  after.addEventListener('click',()=>compare(true));
- hint.addEventListener('click',()=>{
-  if(!active)return;
-  choices.hidden=!choices.hidden;
-  hint.setAttribute('aria-expanded',String(!choices.hidden));
- });
- choices.addEventListener('click',event=>{
-  const shape=event.target.closest('[data-sv-shape]')?.dataset.svShape;
+ function chooseShape(shape){
   if(!active||!shape)return;
   let index=-1;
   for(let i=original.length-1;i>=0;i--)if(eligible(original[i])){index=i;break}
@@ -434,7 +492,18 @@
   proposal=paper.getEditableStrokes([index]);
   proposal[index].points=points;
   hasChanges=true;choices.hidden=true;hint.setAttribute('aria-expanded','false');
+  labelSuggestion(null);
   compare(true);
+ }
+ hint.addEventListener('click',()=>{
+  if(!active)return;
+  if(suggested){chooseShape(suggested);return}
+  choices.hidden=!choices.hidden;
+  hint.setAttribute('aria-expanded',String(!choices.hidden));
+ });
+ choices.addEventListener('click',event=>{
+  const shape=event.target.closest('[data-sv-shape]')?.dataset.svShape;
+  chooseShape(shape);
  });
  cancel.addEventListener('click',()=>stop(false));
  apply.addEventListener('click',()=>stop(true));
