@@ -210,7 +210,7 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-pape
  opacity:.82!important;
 }
 /* Match the Calendar's quiet silver circular action, not the graphite save. */
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-paper-save{
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-ink-confirm{
  background:#e4e7e9!important;
  background-image:none!important;
  border:0!important;
@@ -219,10 +219,10 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #noteP
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-paper-save svg{
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-ink-confirm svg{
  stroke:currentColor!important;
 }
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-paper-save:active{
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-ink-confirm:active{
  background:#d8dde1!important;
  transform:scale(.975)!important;
 }
