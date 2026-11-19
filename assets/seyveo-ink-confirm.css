@@ -6,8 +6,8 @@ html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom{
  align-items:center!important;
  left:0!important;
  right:auto!important;
- width:calc(100% - 56px)!important;
- max-width:calc(100% - 56px)!important;
+ width:calc(100% - 66px)!important;
+ max-width:calc(100% - 66px)!important;
  padding-right:0!important;
 }
 html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette{
@@ -76,4 +76,19 @@ html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm
 html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-ink-confirm:focus-visible{
  outline:2px solid #fff!important;
  outline-offset:2px!important;
+}
+
+/* Soft horizontal palette curtain: no hard square cut-off behind Save.
+   A 10px gap separates the scroll viewport from the round action.
+   Trailing scroll space lets the final color become fully visible. */
+html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom
+ .sv-paper-palette > .sv-paper-swatches{
+ padding-right:27px!important;
+ -webkit-mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 27px),transparent 100%)!important;
+ mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 27px),transparent 100%)!important;
+ -webkit-mask-repeat:no-repeat!important;
+ mask-repeat:no-repeat!important;
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
 }
