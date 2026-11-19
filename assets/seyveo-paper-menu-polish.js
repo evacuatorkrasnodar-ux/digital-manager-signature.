@@ -122,7 +122,21 @@
   const solid=colorMenu.querySelector('.sv-gradient-solid-grid');
   const presets=colorMenu.querySelector('.sv-gradient-presets');
   const custom=colorMenu.querySelector('details.sv-gradient-custom');
-  if(custom)custom.addEventListener('toggle',()=>colorMenu.classList.toggle('sv-gradient-editing',custom.open));
+  if(custom){
+   custom.addEventListener('toggle',()=>colorMenu.classList.toggle('sv-gradient-editing',custom.open));
+   const resetGradientEditor=()=>{
+    custom.open=false;
+    colorMenu.classList.remove('sv-gradient-editing');
+   };
+   document.getElementById('notePaperColorTrigger')?.addEventListener('click',resetGradientEditor);
+   colorMenu.querySelector('#notePaperColorMenu-gradients-tab')?.addEventListener('click',resetGradientEditor);
+  }
+  // iOS Safari: explicit color stops avoid custom-property paint failures in nested chips.
+  presets?.querySelectorAll('[data-paper-gradient]').forEach(button=>{
+   const colors=(button.dataset.paperGradient||'').split(',');
+   const chip=button.querySelector('.sv-gradient-chip');
+   if(chip&&colors.length===2)chip.style.backgroundImage='linear-gradient(115deg,'+colors[0]+','+colors[1]+')';
+  });
   const view=buildSegments(colorMenu,[
    {key:'colors',label:'Цвета',nodes:[captions[0],solid]},
    {key:'gradients',label:'Градиенты',nodes:[captions[1],presets,custom]}
