@@ -9,7 +9,7 @@ const layout=readFileSync(join(root,'assets/seyveo-notebook-list-v3.css'),'utf8'
 const retired=readFileSync(join(root,'assets/seyveo-notebook-page.css'),'utf8');
 
 test('the Notebook list has one fresh stylesheet and independent row classes',()=>{
- assert.match(html,/assets\/seyveo-notebook-list-v3\.css\?v=2/);
+ assert.match(html,/assets\/seyveo-notebook-list-v3\.css\?v=3/);
  assert.match(html,/assets\/seyveo-notebook-page\.css\?v=15/);
  assert.match(html,/card\.className='sv-nb3-row'/);
  assert.match(html,/open\.className='sv-nb3-open'/);
@@ -18,12 +18,15 @@ test('the Notebook list has one fresh stylesheet and independent row classes',()
  assert.doesNotMatch(retired,/\.note-paper-preview/,'old thumbnail styles are retired');
 });
 
-test('Notebook rows use full-width dividers without cards, frames, grey panels or rounded corners',()=>{
+test('Notebook rows have no dividers, frames, grey panels or rounded corners',()=>{
  assert.match(layout,/\#notesList\.notes-list\{[\s\S]*?padding:0!important/);
- assert.match(layout,/\.sv-nb3-row\{[\s\S]*?border-bottom:1px solid rgba\(60,60,67,\.10\)!important/);
+ assert.match(layout,/\.sv-nb3-row\{[\s\S]*?border-bottom:0!important/);
+ assert.doesNotMatch(layout,/border-bottom:1px solid/);
  assert.match(layout,/\.sv-nb3-row\{[\s\S]*?border-radius:0!important;[\s\S]*?background:transparent!important/);
  assert.match(layout,/\.sv-nb3-content\{[\s\S]*?background:#fff!important/);
  assert.match(layout,/\.sv-nb3-swipe\{[\s\S]*?border-radius:0!important/);
+ assert.match(layout,/\.sv-nb3-row::after\{\s*content:none!important;/);
+ assert.match(layout,/#notesList\.notes-list::after\{\s*content:none!important;/);
 });
 
 test('saved ink is a compact single-row preview with dark and light backgrounds',()=>{

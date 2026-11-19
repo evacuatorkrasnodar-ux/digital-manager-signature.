@@ -31,7 +31,7 @@ test('three-dot actions are a compact iOS popover rather than a second card',()=
  assert.match(button,/height:42px!important/);
  assert.match(button,/background:transparent!important/);
  assert.match(button,/font:500 14px/);
- assert.match(html,/assets\/seyveo-notebook-list-v3\.css\?v=2/);
+ assert.match(html,/assets\/seyveo-notebook-list-v3\.css\?v=3/);
  assert.match(css,/\.sv-nb3-menu-trigger\{[\s\S]*?visibility:visible!important/);
  assert.match(css,/\.sv-nb3-menu-trigger svg\{[\s\S]*?width:21px!important/);
  assert.match(html,/<circle cx="5" cy="12" r="1\.75"\/>/);
