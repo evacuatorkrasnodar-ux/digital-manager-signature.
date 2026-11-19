@@ -315,10 +315,15 @@ function snapFreehandShape(stroke){
  }
  return shape?{...stroke,tool:shape,pressureSensitive:false,points:ends}:null;
 }
-function point(e){
- const box=canvas.getBoundingClientRect();
+function point(e,box=canvas.getBoundingClientRect()){
  const force=e.pointerType==='pen'&&Number.isFinite(e.pressure)?e.pressure:.5;
- const tilt=e.pointerType==='pen'?Math.hypot(Number(e.tiltX)||0,Number(e.tiltY)||0):0;
+ // WebKit exposes Apple Pencil's altitudeAngle in newer Safari versions.
+ // Use it alongside tiltX/tiltY so older iPads and S Pen still work.
+ const planarTilt=Math.hypot(Number(e.tiltX)||0,Number(e.tiltY)||0);
+ const altitude=Number(e.altitudeAngle);
+ const altitudeTilt=Number.isFinite(altitude)&&altitude>=0&&altitude<=Math.PI/2
+  ?90-altitude*180/Math.PI:0;
+ const tilt=e.pointerType==='pen'?Math.max(planarTilt,altitudeTilt):0;
  return [inkCoord((e.clientX-box.left)/box.width*W,W),inkCoord((e.clientY-box.top)/box.height*(data.height||H),data.height||H),clamp(force*100,100),clamp(tilt,90)];
 }
 // Live ink pipeline: draw ONLY the new Bézier segment, keeping previously
@@ -351,7 +356,7 @@ function addInkPoint(next,force=false){
  // or the final point so the tip still follows the user's exact position.
  if(pending.pressureSensitive&&(pending.tool==='pen'||pending.tool==='pencil')){
   const gap=Math.hypot(next[0]-prev[0],next[1]-prev[1]);
-  const positionGain=force||gap>=14?1:gap<5?.74:.88;
+  const positionGain=force||gap>=14?1:gap<5?.82:.93;
   const pressureGain=force?1:.68;
   next=[
    inkCoord(prev[0]+(next[0]-prev[0])*positionGain,W),
@@ -361,7 +366,10 @@ function addInkPoint(next,force=false){
   ];
  }
  const distance=Math.hypot(next[0]-prev[0],next[1]-prev[1]);
- if(distance<(force?0.65:1.4))return;
+ // Fine stylus lettering needs subpixel moves; finger ink keeps its proven
+ // threshold so older iPhones don't turn tiny touch jitter into stray marks.
+ const minStep=pending.pressureSensitive?(force?.45:.85):(force?.65:1.4);
+ if(distance<minStep)return;
  // Reconstruct sparse Safari moves; the spline now stays gap-free even
  // when coalesced events arrive after a dropped frame.
  const count=Math.max(1,Math.min(42,Math.ceil(distance/12)));
@@ -428,16 +436,19 @@ function move(e){
  if(e.pointerType==='pen')penTime=Date.now()+2800;
  if(!pending||e.pointerId!==pointerID)return;
  e.preventDefault();
- const nextPoint=point(e);
+ // Coalesced pen samples share the same canvas geometry. Reading the layout
+ // just once per event removes work from high-frequency Pencil/S Pen strokes.
+ const box=canvas.getBoundingClientRect();
+ const nextPoint=point(e,box);
  if(liveTail&&Math.hypot(nextPoint[0]-liveTail[0],nextPoint[1]-liveTail[1])>2)lastInkMotionAt=Date.now();
  if(SHAPE_TOOLS.has(pending.tool)){
   pending.points[1]=nextPoint;queueShapePreview();return;
  }
  const batches=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[e];
  const events=batches&&batches.length?batches:[e];
- for(const ev of events)addInkPoint(point(ev));
+ for(const ev of events)addInkPoint(point(ev,box));
  // Some WebKit versions omit the parent event from the coalesced set.
- if(events[events.length-1]!==e)addInkPoint(point(e));
+ if(events[events.length-1]!==e)addInkPoint(point(e,box));
 }
 function finishStroke(e,addEndpoint=true){
  if(!pending||(e&&e.pointerId!==pointerID))return;
