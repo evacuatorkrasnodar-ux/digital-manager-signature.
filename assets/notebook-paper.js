@@ -623,7 +623,13 @@ function open(note=null){
  $('notePaperTitle').textContent=editID?'Мой лист':'Чистый лист';selectTool('pen');report('');
  if(!dialog.open)dialog.showModal();
  document.documentElement.classList.add('sv-paper-drawing');
- requestAnimationFrame(()=>{fitPaper();render()});
+ requestAnimationFrame(()=>{
+  // Start each sheet at the beginning of the seamless palette: the white
+  // swatch must be fully visible beside (not underneath) the gradient picker.
+  const swatches=dialog.querySelector('.sv-paper-swatches');
+  if(swatches)swatches.scrollLeft=0;
+  fitPaper();render();
+ });
 }
 function discard(){
  if(changed&&!window.confirm('Закрыть лист без сохранения?'))return;
