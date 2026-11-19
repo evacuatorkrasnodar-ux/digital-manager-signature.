@@ -22,6 +22,7 @@
  const icon=paths=>'<svg class="sv-newdock-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg>';
  const icons={
   pen:'<path d="M4.4 17.8c2-1.4 4.1-5.7 6.3-5.7 2.1 0 .1 4.3 2 4.3 1.1 0 2.6-2.2 4.2-2.2 1.2 0 .3 2.2 2.9 1.7M16.5 6.1l2.8-2.8 1.8 1.8-2.8 2.8-3 1.1z"/>',
+  pencil:'<path d="m4.6 19.4 4.4-1.5L19.2 7.7a2.2 2.2 0 0 0-3.1-3.1L5.9 14.8l-1.3 4.6Z"/><path d="m13.8 7 3.2 3.2M5.9 14.8l3.1 3.1"/>',
   eraser:'<path d="m4.5 14.1 9-9a2.2 2.2 0 0 1 3.1 0l3.3 3.3a2.2 2.2 0 0 1 0 3.1L11.6 20H8.2l-3.7-3.7a1.6 1.6 0 0 1 0-2.2Z"/><path d="m10.5 8.2 6 6M11.6 20h9.2"/>',
   duplicate:'<rect x="8.8" y="8.6" width="12" height="12" rx="2.5"/><path d="M16.8 8.6V6.2a2.4 2.4 0 0 0-2.4-2.4H6.2a2.4 2.4 0 0 0-2.4 2.4v8.2a2.4 2.4 0 0 0 2.4 2.4h2.6"/>',
   settings:'<path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="2.5" fill="#202124"/><circle cx="16" cy="12" r="2.5" fill="#202124"/><circle cx="10" cy="18" r="2.5" fill="#202124"/>',
@@ -85,7 +86,19 @@
  photo.className='sv-newdock-menu-action';
  photo.innerHTML=icon(icons.photo)+'<span>Добавить фото</span>';
  photo.title='Добавить фото';
- settingsMenu.append(actionHeading,redo,photo,duplicate,removePhoto,clear);
+ // Keep the five-button top dock. Pen and pencil are a compact choice
+ // inside Settings, with the active nib reflected by the top icon.
+ const inkHeading=document.createElement('span');
+ inkHeading.className='sv-newdock-menu-title';inkHeading.textContent='Тип пера';
+ const inkChoices=document.createElement('div');
+ inkChoices.className='sv-newdock-backgrounds sv-newdock-ink-choices';
+ inkChoices.setAttribute('role','group');inkChoices.setAttribute('aria-label','Выбор пера');
+ const penChoice=document.createElement('button');
+ penChoice.type='button';penChoice.dataset.svToolChoice='pen';penChoice.textContent='Ручка';
+ const pencilChoice=document.createElement('button');
+ pencilChoice.type='button';pencilChoice.dataset.svToolChoice='pencil';pencilChoice.textContent='Карандаш';
+ inkChoices.append(penChoice,pencilChoice);
+ settingsMenu.append(inkHeading,inkChoices,actionHeading,redo,photo,duplicate,removePhoto,clear);
  const backgroundButtons=[...settingsMenu.querySelectorAll('[data-paper-background]')];
  const syncBackground=()=>{
   const value=window.SEYVEO_PAPER?.getBackground?.();
@@ -117,11 +130,26 @@
  photo.addEventListener('click',()=>closeSettings());
  sayvi.addEventListener('click',()=>window.SEYVEO_PAPER?.openSayvi?.());
  const activeTool=()=>dialog.querySelector('[data-paper-tool][aria-pressed="true"]')?.dataset.paperTool||'pen';
+ for(const choice of [penChoice,pencilChoice])choice.addEventListener('click',()=>{
+  const original=dialog.querySelector('[data-paper-tool="'+choice.dataset.svToolChoice+'"]');
+  original?.click();
+  closeSettings();
+  requestAnimationFrame(syncActive);
+ });
  const shapeNames=new Set(['line','arrow','rect','circle','triangle','diamond']);
  const paperChoices=[...paperMenu.querySelectorAll('[data-paper-pattern]')];
  let pickedPaper=false;
  function syncActive(){
   const tool=activeTool();
+  for(const choice of [penChoice,pencilChoice])
+   choice.setAttribute('aria-pressed',String(choice.dataset.svToolChoice===tool));
+  const pencilActive=tool==='pencil';
+  if(pen.dataset.svPencilActive!==String(pencilActive)){
+   pen.innerHTML=icon(pencilActive?icons.pencil:icons.pen);
+   pen.dataset.svPencilActive=String(pencilActive);
+   pen.setAttribute('aria-label',pencilActive?'Карандаш · нажмите для ручки':'Ручка');
+   pen.title=pencilActive?'Вернуться к ручке':'Ручка';
+  }
   const current=settingsMenu.hidden
    ?(!paperMenu.hidden||pickedPaper||shapeNames.has(tool)?'sheet':tool==='eraser'?'eraser':'pen')
    :'settings';
@@ -225,7 +253,9 @@
    ring.style.left=(x-root.left)+'px';ring.style.top=(y-root.top)+'px';
    const erase=activeTool()==='eraser';
    const px=(Number(range?.value)||5)*box.width/840;
-   const dia=Math.max(erase?19:15,Math.min(44,(erase?15:12)+px*1.4));
+   // The circle marks the exact eraser footprint, including canvas zoom.
+   const dia=erase?Math.max(8,Math.min(240,px))
+    :Math.max(15,Math.min(44,12+px*1.4));
    ring.style.width=dia+'px';ring.style.height=dia+'px';
    ring.classList.toggle('sv-paper-cursor-brush',!erase);
    ring.classList.toggle('sv-paper-cursor-eraser',erase);
