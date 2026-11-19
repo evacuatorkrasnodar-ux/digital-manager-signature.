@@ -5,6 +5,10 @@
 #notePaperDialog.sv-paper-studio[open] #notePaperStage{
  touch-action:none!important;
 }
+/* iOS: retain the original single-finger ink surface, with no gesture layer. */
+html.sv-paper-ios-ink-safe #notePaperDialog.sv-paper-studio[open] #notePaperStage{
+ touch-action:auto!important;
+}
 #notePaperDialog #notePaperSheet > canvas.sv-paper-selection-overlay{
  position:absolute!important;inset:0!important;z-index:5!important;
  display:block!important;width:100%!important;height:100%!important;
