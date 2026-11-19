@@ -6,6 +6,7 @@ const vm=require('node:vm');
 
 const root=path.resolve(__dirname,'..');
 const picker=fs.readFileSync(path.join(root,'assets/seyveo-paper-custom-color.js'),'utf8');
+const pickerStyle=fs.readFileSync(path.join(root,'assets/seyveo-paper-custom-color.css'),'utf8');
 const paper=fs.readFileSync(path.join(root,'assets/notebook-paper.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const photoColorSource=picker.match(/function photoColor\(x,y\)\{[\s\S]*?\n \}/)?.[0];
@@ -43,6 +44,17 @@ test('iPhone photo sampling does not create a stroke and shows a live HEX previe
  assert.match(picker,/\.sv-ink-sample-value/);
  assert.match(picker,/overlay\.addEventListener\('touchend'/);
  assert.match(picker,/overlay\.addEventListener\('pointercancel'/);
- assert.match(html,/assets\/seyveo-paper-custom-color\.js\?v=4/);
+ assert.match(html,/assets\/seyveo-paper-custom-color\.js\?v=5/);
  assert.match(html,/assets\/notebook-paper\.js\?v=39/);
+});
+
+test('blank sheet never enters sampling mode or paints a dark bubble over toolbar',()=>{
+ const guard=picker.indexOf('if(!photoReady&&!hasInk)');
+ const enter=picker.indexOf("dialog.classList.add('sv-ink-sampling')",guard);
+ assert.ok(guard>=0&&enter>guard,'the source check runs before full-screen sampling starts');
+ assert.match(picker,/pickerNotice\(photoLoading\?/);
+ assert.match(pickerStyle,/top:calc\(90px \+ env\(safe-area-inset-top,0px\)\)/);
+ assert.match(pickerStyle,/\.sv-paper-light-surface \.sv-ink-sample-instruction\{[\s\S]*?background:rgba\(255,255,255,\.96\)/);
+ assert.match(picker,/trigger\.addEventListener\('click',\(\)=>\{if\(picking\)stopSampling\(false\)\}/);
+ assert.match(html,/assets\/seyveo-paper-custom-color\.css\?v=3/);
 });

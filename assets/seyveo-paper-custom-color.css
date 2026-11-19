@@ -126,13 +126,33 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.sv-ink-menu
  touch-action:none!important;-webkit-tap-highlight-color:transparent!important;
 }
 #notePaperDialog .sv-ink-sample-instruction{
- position:absolute;left:50%;top:14px;transform:translateX(-50%);
+ position:absolute;left:50%;top:calc(90px + env(safe-area-inset-top,0px));transform:translateX(-50%);
  max-width:calc(100% - 24px);white-space:nowrap;pointer-events:none;
  padding:9px 14px;border-radius:999px;
  color:#fff;background:rgba(35,35,38,.88);
  box-shadow:0 3px 15px rgba(0,0,0,.18);
  border:1px solid rgba(255,255,255,.2);
  font:600 12px/1.2 -apple-system,BlinkMacSystemFont,sans-serif;
+}
+/* The eyedropper status must never sit BEHIND the 60px top capsule.
+   Match the actual white page instead of casting a graphite halo over it. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-ink-sample-instruction{
+ color:#2b3037;
+ background:rgba(255,255,255,.96);
+ border:1px solid rgba(44,54,67,.12);
+ box-shadow:0 2px 7px rgba(26,35,45,.06);
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-ink-sample-preview{
+ border-color:rgba(50,60,74,.18);
+}
+/* A short explanation on a blank sheet stays inside the open Palette menu;
+   no full-screen touch overlay is created until there is ink or a photo. */
+#notePaperDialog .sv-ink-picker-unavailable[hidden]{display:none!important}
+#notePaperDialog .sv-ink-picker-unavailable{
+ margin:2px 1px 7px;padding:6px 8px;border-radius:9px;
+ color:var(--sv-menu-muted,#a6a8ae);
+ background:transparent;
+ font:450 11px/1.35 -apple-system,BlinkMacSystemFont,sans-serif;
 }
 /* One discoverable eyedropper beside the Palette title, not hidden in the
    advanced color editor. All other controls keep their approved geometry. */

@@ -65,6 +65,19 @@
   colorHead.append(pipette);
   details.querySelector('.sv-ink-hue-row')?.classList.add('sv-ink-hue-row-full');
  }
+ const unavailableNotice=document.createElement('div');
+ unavailableNotice.className='sv-ink-picker-unavailable';
+ unavailableNotice.setAttribute('role','status');
+ unavailableNotice.hidden=true;
+ colorHead?.after(unavailableNotice);
+ let noticeTimer=0;
+ function pickerNotice(message){
+  if(!colorHead)return;
+  clearTimeout(noticeTimer);
+  unavailableNotice.textContent=message;
+  unavailableNotice.hidden=false;
+  noticeTimer=setTimeout(()=>{unavailableNotice.hidden=true},2600);
+ }
  function render(commit,source){
   const rgb=hsvRgb(state.h,state.s,state.v);
   const hex=rgbHex(...rgb);
@@ -222,10 +235,20 @@
   stopSampling(true);
  }
  pipette.addEventListener('click',()=>{
+  const photo=document.getElementById('notePaperPhotoPreview');
+  const photoReady=Boolean(photo&&!photo.hidden&&photo.complete&&photo.naturalWidth);
+  const photoLoading=Boolean(photo&&!photo.hidden&&!photoReady);
+  const hasInk=Boolean(paper.getEditableStrokes?.([])?.length);
+  // Nothing to sample on a fresh blank or ruled sheet. Keep the menu in
+  // place rather than leaving iPhone in a full-screen intercepting mode.
+  if(!photoReady&&!hasInk){
+   pickerNotice(photoLoading?'Подождите, фотография ещё загружается.':'Сначала добавьте фото или нарисуйте штрих.');
+   return;
+  }
+  clearTimeout(noticeTimer);unavailableNotice.hidden=true;
   picking=true;
   menu.hidden=true;trigger.setAttribute('aria-expanded','false');
-  const photo=document.getElementById('notePaperPhotoPreview');
-  sampleMessage.textContent=photo&&!photo.hidden?'Проведи по фото, отпусти для выбора':'Проведи по листу, отпусти для выбора';
+  sampleMessage.textContent=photoReady?'Проведи по фото, отпусти для выбора':'Проведи по рисунку, отпусти для выбора';
   samplePreview.style.backgroundColor=paper.getInkColor()||'#171e29';
   sampleValue.textContent=(paper.getInkColor()||'#171e29').toUpperCase();
   overlay.hidden=false;dialog.classList.add('sv-ink-sampling');
@@ -255,6 +278,13 @@
  },{passive:false});
  overlay.addEventListener('touchcancel',()=>stopSampling(true));
  overlay.addEventListener('click',event=>{event.preventDefault();event.stopPropagation()});
+ // On iPhone there is no Escape key: tapping the palette again or another
+ // visible toolbar control cancels sampling without committing any color.
+ trigger.addEventListener('click',()=>{if(picking)stopSampling(false)},{capture:true});
+ dialog.addEventListener('pointerdown',event=>{
+  if(!picking)return;
+  if(event.target.closest('.sv-paper-top,.sv-paper-bottom,#notePaperSave'))stopSampling(false);
+ },{capture:true});
  document.addEventListener('keydown',event=>{if(picking&&event.key==='Escape'){event.preventDefault();stopSampling(true)}});
- dialog.addEventListener('close',()=>stopSampling(false));
+ dialog.addEventListener('close',()=>{clearTimeout(noticeTimer);stopSampling(false)});
 })();
