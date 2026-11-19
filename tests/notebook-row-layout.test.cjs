@@ -1,40 +1,34 @@
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const {readFileSync} = require('node:fs');
-const {join} = require('node:path');
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {readFileSync}=require('node:fs');
+const {join}=require('node:path');
 
-const root = join(__dirname, '..');
-const html = readFileSync(join(root, 'index.html'), 'utf8');
-const css = readFileSync(join(root, 'assets/seyveo-notebook-page.css'), 'utf8');
+const root=join(__dirname,'..');
+const html=readFileSync(join(root,'index.html'),'utf8');
+const layout=readFileSync(join(root,'assets/seyveo-notebook-list-v3.css'),'utf8');
+const retired=readFileSync(join(root,'assets/seyveo-notebook-page.css'),'utf8');
 
-test('saved notebook notes keep thumbnail and copy on a single horizontal row', () => {
-  const rule = css.match(/#svWorkShell\[data-active="notes"\] #notesDialog #notesList \.note-open\s*\{([^}]*)\}/)?.[1];
-  assert.ok(rule, 'single owner of the notebook note-open layout');
-  assert.match(rule, /display:flex!important/);
-  assert.match(rule, /flex-direction:row!important/);
-  assert.match(rule, /align-items:center!important/);
-  assert.match(css, /\.note-open > \.note-paper-preview\{[\s\S]*?width:46px!important/);
-  assert.match(html, /assets\/seyveo-notebook-page\.css\?v=14/);
+test('the Notebook list has one fresh stylesheet and independent row classes',()=>{
+ assert.match(html,/assets\/seyveo-notebook-list-v3\.css\?v=1/);
+ assert.match(html,/assets\/seyveo-notebook-page\.css\?v=15/);
+ assert.match(html,/card\.className='sv-nb3-row'/);
+ assert.match(html,/open\.className='sv-nb3-open'/);
+ assert.match(html,/thumbnail\.className='sv-nb3-thumb'/);
+ assert.doesNotMatch(retired,/\.note-item\s*\{/,'old list card styles are retired');
+ assert.doesNotMatch(retired,/\.note-paper-preview/,'old thumbnail styles are retired');
 });
 
-test('the iPhone notebook list has no grey row cards or full outlines',()=>{
-  assert.match(css, /#notesList \.note-item\{[\s\S]*?border-radius:0!important;[\s\S]*?background:transparent!important;/);
-  assert.match(css, /#notesList \.note-item-actions\{[\s\S]*?background:#FFFFFF!important;/);
-  assert.match(css, /html\[data-theme="dark"\] #svWorkShell\[data-active="notes"\] #notesDialog #notesList \.note-item-actions\{\s*background:var\(--bg\)!important/);
-  assert.match(css, /#notesList \.note-swipe-shell\{[\s\S]*?border-radius:0!important/);
-  assert.match(css, /#notesList\.notes-list\{[\s\S]*?padding:0!important/);
-  assert.match(css, /#notesList \.note-item\{[\s\S]*?padding:2px 12px!important/);
+test('Notebook rows use full-width dividers without cards, frames, grey panels or rounded corners',()=>{
+ assert.match(layout,/\#notesList\.notes-list\{[\s\S]*?padding:0!important/);
+ assert.match(layout,/\.sv-nb3-row\{[\s\S]*?border-bottom:1px solid rgba\(60,60,67,\.10\)!important/);
+ assert.match(layout,/\.sv-nb3-row\{[\s\S]*?border-radius:0!important;[\s\S]*?background:transparent!important/);
+ assert.match(layout,/\.sv-nb3-content\{[\s\S]*?background:#fff!important/);
+ assert.match(layout,/\.sv-nb3-swipe\{[\s\S]*?border-radius:0!important/);
 });
 
-test('paper rows stay compact despite retired 86px !important rules', () => {
-  assert.match(css, /#notesList \.paper-note \.note-item-actions,\s*#svWorkShell\[data-active="notes"\] #notesDialog #notesList \.paper-note \.note-open\s*\{\s*min-height:62px!important/);
-  assert.match(css, /#notesList \.note-item\s*\{[\s\S]*?min-height:66px!important/);
-  assert.match(css, /#notesList\.notes-list\s*\{[\s\S]*?padding:0!important/);
-  assert.match(css, /#notesList \.note-more-button\s*\{[\s\S]*?width:44px!important/);
-});
-
-test('full paper previews use matching light or dark letterbox backgrounds', () => {
-  assert.match(html, /thumbnail\.dataset\.paperBackground=note\.paper\.background==='dark'\?'dark':'light'/);
-  assert.match(css, /\.note-open > \.note-paper-preview\{[\s\S]*?object-fit:contain!important;[\s\S]*?background:#FFFFFF!important/);
-  assert.match(css, /\.note-paper-preview\[data-paper-background="dark"\]\{\s*background:#202124!important/);
+test('saved ink is a compact single-row preview with dark and light backgrounds',()=>{
+ assert.match(layout,/\.sv-nb3-open\{[\s\S]*?flex-direction:row!important/);
+ assert.match(layout,/\.sv-nb3-thumb\{[\s\S]*?width:45px!important/);
+ assert.match(layout,/\.sv-nb3-thumb\[data-paper-background="dark"\]\{\s*background:#202124!important/);
+ assert.match(html,/thumbnail\.dataset\.paperBackground=note\.paper\.background==='dark'\?'dark':'light'/);
 });

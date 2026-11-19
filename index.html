@@ -5397,8 +5397,8 @@ function renderNotes(){
  $('notesCount').textContent=n?(n+' '+(n%10===1&&n%100!==11?'запись':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'записи':'записей')):'Пространство для мыслей';
  if(!notes.length)return;
  notes.forEach(note=>{
-  const card=document.createElement('article');card.className='note-item';
-  if(note.paper)card.classList.add('paper-note');
+  const card=document.createElement('article');card.className='sv-nb3-row';
+  if(note.paper)card.classList.add('has-paper');
   const date=document.createElement('small');const when=new Date(note.updatedAt||note.createdAt);
   const scheduled=typeof note.calendarDate==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(note.calendarDate);
   if(scheduled){
@@ -5408,25 +5408,25 @@ function renderNotes(){
   const content=document.createElement('p');content.textContent=note.paper?'Рукописный лист':(note.text.trim()?note.text:(note.attachmentsCount?'Вложения · '+note.attachmentsCount:'Пустая заметка'));
   let thumbnail=null;
   if(note.paper){
-   thumbnail=document.createElement('canvas');thumbnail.className='note-paper-preview';
+   thumbnail=document.createElement('canvas');thumbnail.className='sv-nb3-thumb';
    thumbnail.width=210;thumbnail.height=297;
    thumbnail.dataset.paperBackground=note.paper.background==='dark'?'dark':'light';
    thumbnail.setAttribute('aria-label','Предпросмотр рукописного листа');
    window.SEYVEO_PAPER?.preview(thumbnail,note.paper);
   }
-  const swipe=document.createElement('div');swipe.className='note-swipe-shell';
+  const swipe=document.createElement('div');swipe.className='sv-nb3-swipe';
   const swipeDelete=document.createElement('button');swipeDelete.type='button';
-  swipeDelete.className='note-swipe-delete';swipeDelete.setAttribute('aria-label','Удалить заметку');
+  swipeDelete.className='sv-nb3-delete';swipeDelete.setAttribute('aria-label','Удалить заметку');
   swipeDelete.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9 7V5.5h6V7m-9 0 .7 12h10.6L18 7M10 10.5v5.5m4-5.5v5.5"/></svg><span>Удалить</span>';
   swipeDelete.addEventListener('click',()=>deleteNoteWithUndo(note));
   const swipeMore=document.createElement('button');swipeMore.type='button';
-  swipeMore.className='note-swipe-more';swipeMore.setAttribute('aria-label','Другие действия с заметкой');
+  swipeMore.className='sv-nb3-more-action';swipeMore.setAttribute('aria-label','Другие действия с заметкой');
   swipeMore.setAttribute('aria-expanded','false');
   swipeMore.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11v8h12v-8M12 3v11M8.5 6.5 12 3l3.5 3.5"/></svg><span>Ещё</span>';
-  const controls=document.createElement('div');controls.className='note-item-actions';
+  const controls=document.createElement('div');controls.className='sv-nb3-content';
   let suppressNoteClickUntil=0;
-  const open=document.createElement('button');open.type='button';open.className='note-open';open.setAttribute('aria-label','Открыть запись');
-  const copy=document.createElement('span');copy.className='note-row-copy';copy.append(content,date);
+  const open=document.createElement('button');open.type='button';open.className='sv-nb3-open';open.setAttribute('aria-label','Открыть запись');
+  const copy=document.createElement('span');copy.className='sv-nb3-copy';copy.append(content,date);
   if(thumbnail)open.append(thumbnail);
   open.append(copy);
   open.addEventListener('click',()=>{
@@ -5447,10 +5447,10 @@ function renderNotes(){
     detail:{text:note.text,...(hint?{date:hint.date}:{})}
    }));
   });
-  const more=document.createElement('button');more.type='button';more.className='note-more-button';
+  const more=document.createElement('button');more.type='button';more.className='sv-nb3-menu-trigger';
   more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>';more.setAttribute('aria-label','Действия с записью');
   more.setAttribute('aria-expanded','false');
-  const menu=document.createElement('div');menu.className='note-more-options';menu.hidden=true;
+  const menu=document.createElement('div');menu.className='sv-nb3-popover';menu.hidden=true;
   function action(label,callback,cls=''){
    const button=document.createElement('button');button.type='button';button.textContent=label;
    if(cls)button.className=cls;
@@ -5461,17 +5461,17 @@ function renderNotes(){
   }
   action('Поделиться',()=>{shareNote(note)});
   action('Распечатать',()=>{printNote(note)});
-  action('Удалить',()=>deleteNoteWithUndo(note),'note-delete');
+  action('Удалить',()=>deleteNoteWithUndo(note),'sv-nb3-danger');
   function toggleActions(fromSwipe=false){
    if(!fromSwipe&&Date.now()<suppressNoteClickUntil)return;
-   container.querySelectorAll('.note-swipe-shell.is-open').forEach(el=>el.classList.remove('is-open'));
+   container.querySelectorAll('.sv-nb3-swipe.is-open').forEach(el=>el.classList.remove('is-open'));
    const expanding=menu.hidden;
-   container.querySelectorAll('.note-more-options').forEach(el=>{el.hidden=true});
-   container.querySelectorAll('.note-more-button').forEach(el=>el.setAttribute('aria-expanded','false'));
-   container.querySelectorAll('.note-swipe-more').forEach(el=>el.setAttribute('aria-expanded','false'));
+   container.querySelectorAll('.sv-nb3-popover').forEach(el=>{el.hidden=true});
+   container.querySelectorAll('.sv-nb3-menu-trigger').forEach(el=>el.setAttribute('aria-expanded','false'));
+   container.querySelectorAll('.sv-nb3-more-action').forEach(el=>el.setAttribute('aria-expanded','false'));
    if(expanding){
     const box=container.getBoundingClientRect(),rect=card.getBoundingClientRect();
-    card.classList.toggle('note-menu-above',rect.bottom+151>box.bottom&&rect.top-151>=box.top);
+    card.classList.toggle('sv-nb3-menu-above',rect.bottom+151>box.bottom&&rect.top-151>=box.top);
    }
    menu.hidden=!expanding;more.setAttribute('aria-expanded',String(expanding));
    swipeMore.setAttribute('aria-expanded',String(expanding));
@@ -5483,7 +5483,7 @@ function renderNotes(){
   let touch=null;
   controls.addEventListener('touchstart',event=>{
    if(event.touches.length!==1)return;
-   for(const other of container.querySelectorAll('.note-swipe-shell.is-open'))if(other!==swipe)other.classList.remove('is-open');
+   for(const other of container.querySelectorAll('.sv-nb3-swipe.is-open'))if(other!==swipe)other.classList.remove('is-open');
    const point=event.touches[0];
    touch={x:point.clientX,y:point.clientY,startOpen:swipe.classList.contains('is-open'),dragging:false,vertical:false};
   },{passive:true});
@@ -5494,10 +5494,10 @@ function renderNotes(){
     if(Math.abs(dy)>9&&Math.abs(dy)>Math.abs(dx)){touch.vertical=true;return}
     if(Math.abs(dx)<9||Math.abs(dx)<Math.abs(dy))return;
     touch.dragging=true;swipe.classList.add('is-dragging');
-    for(const other of container.querySelectorAll('.note-swipe-shell.is-open'))if(other!==swipe)other.classList.remove('is-open');
-    container.querySelectorAll('.note-more-options').forEach(el=>{el.hidden=true});
-    container.querySelectorAll('.note-more-button').forEach(el=>el.setAttribute('aria-expanded','false'));
-    container.querySelectorAll('.note-swipe-more').forEach(el=>el.setAttribute('aria-expanded','false'));
+    for(const other of container.querySelectorAll('.sv-nb3-swipe.is-open'))if(other!==swipe)other.classList.remove('is-open');
+    container.querySelectorAll('.sv-nb3-popover').forEach(el=>{el.hidden=true});
+    container.querySelectorAll('.sv-nb3-menu-trigger').forEach(el=>el.setAttribute('aria-expanded','false'));
+    container.querySelectorAll('.sv-nb3-more-action').forEach(el=>el.setAttribute('aria-expanded','false'));
    }
    // Claim horizontal drags on Safari, but never block vertical scrolling.
    if(event.cancelable)event.preventDefault();
@@ -5533,9 +5533,9 @@ function renderNotes(){
     if(Math.abs(dx)<9||Math.abs(dx)<Math.abs(dy))return;
     pointerDrag.dragging=true;swipe.classList.add('is-dragging');
     try{controls.setPointerCapture(event.pointerId)}catch{}
-    container.querySelectorAll('.note-swipe-shell.is-open').forEach(el=>{if(el!==swipe)el.classList.remove('is-open')});
-    container.querySelectorAll('.note-more-options').forEach(el=>{el.hidden=true});
-    container.querySelectorAll('.note-more-button,.note-swipe-more').forEach(el=>el.setAttribute('aria-expanded','false'));
+    container.querySelectorAll('.sv-nb3-swipe.is-open').forEach(el=>{if(el!==swipe)el.classList.remove('is-open')});
+    container.querySelectorAll('.sv-nb3-popover').forEach(el=>{el.hidden=true});
+    container.querySelectorAll('.sv-nb3-menu-trigger,.sv-nb3-more-action').forEach(el=>el.setAttribute('aria-expanded','false'));
    }
    event.preventDefault();
    const offset=Math.max(-168,Math.min(0,(pointerDrag.startOpen?-168:0)+dx));
@@ -6857,7 +6857,7 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=3"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=41"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=14"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=4"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=41"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=15"><link rel="stylesheet" href="assets/seyveo-notebook-list-v3.css?v=1"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=7">
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=2">
