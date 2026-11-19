@@ -1,0 +1,36 @@
+/* SEYVEO Paper · iPhone tune-up.
+   Keep the proven iOS ink touch pipeline unchanged. */
+
+/* The white marker must track the value immediately, not chase the finger
+   with a 70ms top-transition that causes visible lag and rubber-banding. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size::after{
+ transition:transform .13s cubic-bezier(.2,.8,.2,1)!important;
+ will-change:top,transform!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size.sv-paper-size-active::before,
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage > .sv-paper-size.sv-paper-size-active::after{
+ transition:none!important;
+}
+/* Explicit WebKit previews, including when the preview chip lives in a hidden
+   panel at initialization. Script supplies literal start/end colors as backup. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button .sv-gradient-chip{
+ background-color:var(--grad-a,#a7b7cc)!important;
+ background-image:linear-gradient(115deg,var(--grad-a,#e9eff8),var(--grad-b,#809ebd))!important;
+ background-repeat:no-repeat!important;background-size:100% 100%!important;
+ -webkit-background-clip:padding-box!important;background-clip:padding-box!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button .sv-gradient-chip[style*="background-image"]{
+ background-image:inherit;
+}
+/* iPhone: lower the palette without creating a backing strip or obscuring
+   the system home indicator. Move Save by exactly the same amount. */
+@supports (-webkit-touch-callout:none){
+ @media(min-height:650px){
+  html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette{
+   transform:translateY(20px)!important;
+  }
+  html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom #notePaperSave.sv-paper-save{
+   transform:translateY(20px)!important;
+  }
+ }
+}
