@@ -115,7 +115,7 @@
  overlay.setAttribute('aria-hidden','true');sheet.append(overlay);
  const actionBar=document.createElement('div');actionBar.className='sv-paper-selection-actions';
  actionBar.hidden=true;actionBar.setAttribute('role','toolbar');actionBar.setAttribute('aria-label','Действия с выделением');
- actionBar.innerHTML='<button type="button" data-edit="copy" aria-label="Дублировать выделение" title="Копировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button><button type="button" data-edit="smaller" aria-label="Уменьшить выделение" title="Уменьшить">−</button><button type="button" data-edit="bigger" aria-label="Увеличить выделение" title="Увеличить">+</button><button type="button" data-edit="done" aria-label="Завершить выделение" title="Готово">✓</button>';
+ actionBar.innerHTML='<span class="sv-paper-selection-drag" aria-label="Перетащите выделение для перемещения" title="Перетащите для перемещения"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v18M3 12h18m-10-7 1-2 1 2m-2 14 1 2 1-2M5 11l-2 1 2 1m14-2 2 1-2 1"/></svg></span><button type="button" data-edit="copy" aria-label="Копировать выделение" title="Копировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button><button type="button" data-edit="smaller" aria-label="Уменьшить выделение" title="Уменьшить">−</button><button type="button" data-edit="bigger" aria-label="Увеличить выделение" title="Увеличить">+</button><button type="button" data-edit="delete" aria-label="Удалить выделение" title="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 10v7m4-7v7"/></svg></button><button type="button" data-edit="done" aria-label="Завершить выделение" title="Готово">✓</button>';
  stage.append(actionBar);
  const zoomBadge=document.createElement('div');zoomBadge.className='sv-paper-zoom-badge';zoomBadge.setAttribute('aria-live','off');zoomBadge.hidden=true;stage.append(zoomBadge);
 
@@ -261,6 +261,12 @@
   const key=event.target.closest('[data-edit]')?.dataset.edit;
   if(!key||!selection)return;
   if(key==='done'){clearSelection();return}
+   if(key==='delete'){
+    const selected=new Set(selection.indices);
+    const remaining=paper.getEditableStrokes([]).filter((_,index)=>!selected.has(index));
+    if(paper.applyStrokeEdit(remaining))clearSelection();
+    return;
+   }
   if(key==='smaller'||key==='bigger'){scaleSelection(key==='bigger'?1.2:1/1.2);return}
   if(key==='copy'){
    const strokes=paper.getEditableStrokes([]),copies=selection.indices.map(i=>strokes[i]);
