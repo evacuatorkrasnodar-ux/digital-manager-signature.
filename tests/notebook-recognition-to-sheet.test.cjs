@@ -13,7 +13,7 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 function mount({chat=false,dark=false,confirm=()=>true,ink=[[[150,200],[200,310]]]}={}){
  const nodes={};
  const make=()=>({hidden:false,disabled:false,open:false,value:'',textContent:'',className:'',
-  handlers:{},attributes:{},classList:{add(){}},
+  handlers:{},attributes:{},classList:{values:new Set(),add(value){this.values.add(value)},toggle(value,on){if(on)this.values.add(value);else this.values.delete(value)}},
   addEventListener(type,fn){this.handlers[type]=fn},
   fire(type){return this.handlers[type]?.({})},
   setAttribute(name,value){this.attributes[name]=value},
@@ -24,7 +24,7 @@ function mount({chat=false,dark=false,confirm=()=>true,ink=[[[150,200],[200,310]
  tablet.open=true;
  menu.insertBefore=node=>{nodes.entry=node};
  const buttons=['[data-pr-run]','[data-pr-sheet]','[data-pr-copy]','[data-pr-save]',
-  '[data-pr-close]','textarea','.sv-pr-status'];
+  '[data-pr-close]','textarea','.sv-pr-status','.sv-pr-help'];
  overlay.children=Object.fromEntries(buttons.map(key=>[key,make()]));
  const body={append(node){nodes.overlay=node}};
  const added=[];
@@ -85,11 +85,30 @@ test('chat drawings do not expose save-to-sheet or save-to-notes',()=>{
  assert.equal(ui.added.length,0);
 });
 
+test('empty paper gives a short helpful state instead of displaying dead controls',()=>{
+ const ui=mount({ink:[]});ui.entry.fire('click');
+ assert.equal(ui.overlay.classList.values.has('sv-pr-empty'),true);
+ assert.match(ui.buttons['.sv-pr-status'].textContent,/Напиши несколько слов ручкой/);
+ assert.match(styles,/sv-pr-empty \.sv-pr-actions[\s\S]*?display:none!important/);
+ const populated=mount();populated.entry.fire('click');
+ assert.equal(populated.overlay.classList.values.has('sv-pr-empty'),false);
+});
+
+test('Pearl recognition palette defeats forced Graphite style without changing dark mode',()=>{
+ assert.match(styles,/html\[data-theme="light"\] body dialog\.sv-paper-recognition\[open\]/);
+ assert.match(styles,/background:#fff!important;color:#1b2027!important/);
+ assert.match(styles,/html\[data-theme="light"\] body \.sv-paper-recognition \.sv-pr-text\{/);
+ assert.match(styles,/min-height:116px!important;max-height:23dvh!important/);
+ assert.match(styles,/background:#fafbfc!important;color:#1b2027!important/);
+ assert.doesNotMatch(styles,/html\[data-theme="dark"\]/);
+});
+
 test('uses the same editable printed-text mode and three compact iPhone actions',()=>{
  assert.match(textEditor,/window\.SEYVEO_PAPER_TEXT=Object\.freeze\(\{editLast\(\)/);
  assert.match(textEditor,/if\(!active\)startMode\(\);\s*openEditor\(count-1\)/);
  assert.match(styles,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
  assert.match(styles,/\.sv-pr-chat \.sv-pr-actions\{grid-template-columns:1fr\}/);
- assert.match(html,/seyveo-paper-recognition\.js\?v=6/);
+ assert.match(html,/seyveo-paper-recognition\.js\?v=7/);
+ assert.match(html,/seyveo-paper-recognition\.css\?v=4/);
  assert.match(html,/seyveo-paper-typed-text\.js\?v=2/);
 });

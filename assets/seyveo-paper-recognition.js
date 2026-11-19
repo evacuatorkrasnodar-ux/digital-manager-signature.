@@ -31,6 +31,7 @@
  const saveButton=overlay.querySelector('[data-pr-save]');
  const text=overlay.querySelector('textarea');
  const status=overlay.querySelector('.sv-pr-status');
+ const help=overlay.querySelector('.sv-pr-help');
  const chatMode=new URLSearchParams(location.search).get('seyveo-draw')==='chat';
  if(chatMode){saveButton.hidden=true;sheetButton.hidden=true;overlay.classList.add('sv-pr-chat')}
  let busy=false,loader=null,inkAvailable=false,savedText='';
@@ -61,9 +62,11 @@
   if(!tablet.open||busy)return;
   const strokes=paper.getInkStrokes();
   inkAvailable=Boolean(strokes.length);savedText='';
+  overlay.classList.toggle('sv-pr-empty',!inkAvailable);
   if(!strokes.length){
-   message('На листе пока нет рукописных штрихов.');
+   message('На листе пока нет рукописи. Напиши несколько слов ручкой или карандашом, затем вернись сюда.');
   }else message('Готово к распознаванию. Ваш рисунок останется без изменений.');
+  help.textContent='Напишите от руки и нажмите «Распознать». Проверьте текст, а затем добавьте его на лист или в заметку.';
   text.value='';sync();
   menu.hidden=true;
   document.getElementById('notePaperSettings')?.setAttribute('aria-expanded','false');
