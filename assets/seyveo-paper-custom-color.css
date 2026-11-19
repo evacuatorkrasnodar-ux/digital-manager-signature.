@@ -218,3 +218,31 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu .sv-ink-pipette-icon{
  background:#edf0f3;
 }
+
+/* An older rule hides ALL spans in .sv-gradient-head (the former SEYVEO COLOR
+   subtitle). The pipette now uses spans for its label and icon, so explicitly
+   reveal those two children without bringing back the old subtitle. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette > .sv-ink-pipette-caption{
+ display:block!important;
+ color:var(--sv-menu-muted,#c8c8cd)!important;
+ font-size:11.5px!important;font-weight:500!important;
+ line-height:1!important;letter-spacing:-.01em!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette > .sv-ink-pipette-icon{
+ display:grid!important;place-items:center!important;
+ background:rgba(255,255,255,.10)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette > .sv-ink-pipette-icon{
+ background:#edf0f3!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette > .sv-ink-pipette-icon > svg{
+ display:block!important;width:21px!important;height:21px!important;
+}
+
+/* The left/top corner of the white-to-blue saturation square disappeared
+   into the white Pearl menu. A continuous fine outline reveals its radius. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu.paper-color-menu .sv-ink-sv{
+ border:1px solid rgba(48,60,75,.16)!important;
+ background-clip:padding-box!important;
+ -webkit-background-clip:padding-box!important;
+}

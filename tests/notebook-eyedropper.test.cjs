@@ -56,7 +56,7 @@ test('blank sheet never enters sampling mode or paints a dark bubble over toolba
  assert.match(pickerStyle,/top:calc\(90px \+ env\(safe-area-inset-top,0px\)\)/);
  assert.match(pickerStyle,/\.sv-paper-light-surface \.sv-ink-sample-instruction\{[\s\S]*?background:rgba\(255,255,255,\.96\)/);
  assert.match(picker,/trigger\.addEventListener\('click',\(\)=>\{if\(picking\)stopSampling\(false\)\}/);
- assert.match(html,/assets\/seyveo-paper-custom-color\.css\?v=4/);
+ assert.match(html,/assets\/seyveo-paper-custom-color\.css\?v=5/);
 });
 
 test('Palette contains one labeled pipette with a crisp vector icon',()=>{
@@ -65,4 +65,12 @@ test('Palette contains one labeled pipette with a crisp vector icon',()=>{
  assert.match(pickerStyle,/\.sv-ink-pipette-icon\{[\s\S]*?width:36px;height:36px/);
  assert.match(pickerStyle,/\.sv-gradient-head\{\s*padding-right:124px!important/);
  assert.match(picker,/colorHead\.append\(pipette\)/,'there should be only one functional dropper');
+});
+
+test('the pipette stays visible despite the legacy rule hiding header subtitles',()=>{
+ const oldToolbar=fs.readFileSync(path.join(root,'assets/seyveo-notebook-toolbar.css'),'utf8');
+ assert.match(oldToolbar,/\.sv-gradient-head span\{\s*display:none!important/);
+ assert.match(pickerStyle,/\.sv-gradient-head > button\.sv-ink-pipette > \.sv-ink-pipette-caption\{\s*display:block!important/);
+ assert.match(pickerStyle,/\.sv-gradient-head > button\.sv-ink-pipette > \.sv-ink-pipette-icon\{\s*display:grid!important/);
+ assert.match(pickerStyle,/\.sv-paper-light-surface #notePaperColorMenu\.paper-color-menu \.sv-ink-sv\{\s*border:1px solid rgba\(48,60,75,\.16\)!important/);
 });
