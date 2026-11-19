@@ -2713,3 +2713,26 @@ html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-
  content:none!important;
  display:none!important;
 }
+
+
+/* iPhone ink editor · strictly circular Save compositing.
+   Safari must not paint a rectangular native/button layer around this glyph. */
+html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom
+ #notePaperSave.sv-paper-save{
+ position:relative!important;
+ display:grid!important;
+ width:47px!important;height:47px!important;
+ min-width:47px!important;min-height:47px!important;
+ padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background-color:#38383A!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ outline:0!important;
+ overflow:hidden!important;
+ isolation:isolate!important;
+ -webkit-clip-path:circle(50% at 50% 50%)!important;
+ clip-path:circle(50% at 50% 50%)!important;
+ -webkit-appearance:none!important;
+ appearance:none!important;
+}
