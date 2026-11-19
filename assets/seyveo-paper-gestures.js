@@ -6,7 +6,99 @@
  // layer is validated in Safari, it must not intercept ANY finger strokes.
  const iosTouch=/iPhone|iPad|iPod/i.test(navigator.userAgent||'')
   ||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
- if(iosTouch){document.documentElement.classList.add('sv-paper-ios-ink-safe');return}
+ if(iosTouch){
+  // iPhone/iPad keep their proven single-finger TouchEvents ink pipeline.
+  // Navigation uses a separate two-finger path; no PointerEvent capture
+  // listeners are installed on iOS (they previously interrupted writing).
+  document.documentElement.classList.add('sv-paper-ios-ink-safe');
+  const paper=window.SEYVEO_PAPER;
+  const dialog=document.getElementById('notePaperDialog');
+  const stage=document.getElementById('notePaperStage');
+  const sheet=document.getElementById('notePaperSheet');
+  if(!paper?.cancelActiveStroke||!paper?.refreshInkResolution||!dialog||!stage||!sheet)return;
+  const badge=document.createElement('div');
+  badge.className='sv-paper-zoom-badge';badge.hidden=true;badge.setAttribute('aria-live','off');
+  stage.append(badge);
+  const zoom={scale:1,x:0,y:0};
+  let pinch=null,frame=0,badgeTimer=0;
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  const area=()=>{const r=stage.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2,w:r.width,h:r.height}};
+  const pair=event=>{
+   const a=event.touches[0],b=event.touches[1];
+   if(!a||!b)return null;
+   return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2,
+    distance:Math.max(1,Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY))};
+  };
+  const constrain=()=>{
+   const r=area();
+   zoom.x=clamp(zoom.x,-(zoom.scale-1)*r.w/2,(zoom.scale-1)*r.w/2);
+   zoom.y=clamp(zoom.y,-(zoom.scale-1)*r.h/2,(zoom.scale-1)*r.h/2);
+   if(zoom.scale<=1.001){zoom.scale=1;zoom.x=0;zoom.y=0}
+  };
+  const apply=()=>{
+   sheet.style.transformOrigin='center center';
+   sheet.style.transform='translate3d('+zoom.x.toFixed(2)+'px,'+zoom.y.toFixed(2)+'px,0) scale('+zoom.scale.toFixed(3)+')';
+  };
+  const showBadge=()=>{
+   badge.textContent=Math.round(zoom.scale*100)+'%';badge.hidden=false;
+   clearTimeout(badgeTimer);
+   badgeTimer=setTimeout(()=>{badge.hidden=true},950);
+  };
+  const schedule=()=>{
+   if(frame)return;
+   frame=requestAnimationFrame(()=>{frame=0;apply();showBadge()});
+  };
+  sheet.addEventListener('touchstart',event=>{
+   if(!dialog.open||event.touches.length!==2||pinch||paper.isPenNearby?.())return;
+   // Both contacts must originate on the sheet; palette and thickness
+   // controls never become part of a drawing gesture.
+   if(!sheet.contains(event.touches[0].target)||!sheet.contains(event.touches[1].target))return;
+   const p=pair(event);if(!p)return;
+   // The first finger may have started a provisional dot. Cancel it before
+   // the second finger turns the interaction into zoom/pan.
+   paper.cancelActiveStroke();
+   const r=area();
+   pinch={distance:p.distance,scale:zoom.scale,
+    anchorX:(p.x-r.x-zoom.x)/zoom.scale,
+    anchorY:(p.y-r.y-zoom.y)/zoom.scale};
+   if(event.cancelable)event.preventDefault();
+  },{capture:true,passive:false});
+  sheet.addEventListener('touchmove',event=>{
+   if(!dialog.open||!pinch)return;
+   if(event.cancelable)event.preventDefault();
+   if(event.touches.length!==2)return;
+   const p=pair(event);if(!p)return;
+   const r=area();
+   zoom.scale=clamp(pinch.scale*p.distance/pinch.distance,1,4);
+   zoom.x=p.x-r.x-pinch.anchorX*zoom.scale;
+   zoom.y=p.y-r.y-pinch.anchorY*zoom.scale;
+   constrain();schedule();
+  },{capture:true,passive:false});
+  const finish=event=>{
+   if(!pinch||event.touches.length>=2)return;
+   pinch=null;
+   if(frame){cancelAnimationFrame(frame);frame=0}
+   constrain();apply();showBadge();
+   paper.refreshInkResolution(zoom.scale);
+  };
+  sheet.addEventListener('touchend',finish,{capture:true,passive:true});
+  sheet.addEventListener('touchcancel',finish,{capture:true,passive:true});
+  // Safari has a separate native pinch recognizer in addition to TouchEvents.
+  // Keep viewport zoom from competing with the zoom of the drawing sheet.
+  for(const name of ['gesturestart','gesturechange']){
+   sheet.addEventListener(name,event=>{
+    if(dialog.open&&event.cancelable)event.preventDefault();
+   },{passive:false});
+  }
+  window.addEventListener('resize',()=>{if(dialog.open&&zoom.scale>1){constrain();apply()}},{passive:true});
+  dialog.addEventListener('close',()=>{
+   pinch=null;if(frame){cancelAnimationFrame(frame);frame=0}
+   clearTimeout(badgeTimer);badge.hidden=true;
+   zoom.scale=1;zoom.x=0;zoom.y=0;
+   sheet.style.removeProperty('transform');sheet.style.removeProperty('transform-origin');
+  });
+  return;
+ }
  const paper=window.SEYVEO_PAPER;
  const dialog=document.getElementById('notePaperDialog');
  const stage=document.getElementById('notePaperStage');
