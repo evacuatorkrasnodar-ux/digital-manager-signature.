@@ -2,7 +2,7 @@
 #notePaperDialog .paper-sheet > .paper-photo-image{
  inset:auto;object-fit:fill;max-width:none;max-height:none;transform:none;visibility:hidden;
 }
-#notePaperDialog #notePaperEditPhoto[hidden],
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > #notePaperEditPhoto[hidden],
 #notePaperDialog .sv-paper-photo-edit-layer[hidden]{display:none!important}
 #notePaperDialog .sv-paper-photo-edit-layer{
  position:absolute;inset:0;z-index:9;pointer-events:auto;

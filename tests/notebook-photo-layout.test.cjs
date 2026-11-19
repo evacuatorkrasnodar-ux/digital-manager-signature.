@@ -76,7 +76,8 @@ test('compact editor has drag and resize, iPhone touch handlers and no extra per
  assert.match(gestures,/dialog\.classList\.contains\('sv-paper-photo-mode'\)/);
  assert.match(engine,/dialog\.classList\.contains\('sv-paper-photo-mode'\)/);
  assert.match(html,/assets\/seyveo-paper-photo-edit\.js\?v=1/);
- assert.match(html,/assets\/seyveo-paper-photo-edit\.css\?v=1/);
+ assert.match(html,/assets\/seyveo-paper-photo-edit\.css\?v=2/);
+ assert.match(css,/> #notePaperEditPhoto\[hidden\],\s*#notePaperDialog \.sv-paper-photo-edit-layer\[hidden\]\{display:none!important\}/);
  assert.match(html,/assets\/notebook-paper\.js\?v=41/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=8/);
 });
