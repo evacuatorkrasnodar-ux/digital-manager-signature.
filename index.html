@@ -1582,6 +1582,12 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  background-color:var(--bg)!important;
  background-image:none!important;
 }
+/* The light editor is paper-white, matching the approved SEYVEO canvas. */
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open]{
+ background:#fff!important;
+ background-color:#fff!important;
+ background-image:none!important;
+}
 /* Unified Notes toolbar glyphs — SF-inspired proportions, drawn in our own SVG. */
 #noteReviewDialog.note-review-dialog[open] .sv-note-tools svg{
  display:block!important;width:21px!important;height:21px!important;
@@ -1804,8 +1810,8 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  width:100%!important;
  padding:0!important;margin:0!important;
  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif!important;
- font-size:23px!important;
- font-weight:600!important;
+ font-size:22px!important;
+ font-weight:550!important;
  color:rgba(243,246,248,.96)!important;
  line-height:1.25!important;
  letter-spacing:-.035em!important;
@@ -1849,13 +1855,13 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  color:#242a31!important;
 }
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-document-capsule input#svNoteTitle.sv-note-title-input::placeholder{
- color:rgba(40,52,62,.72)!important;
+ color:rgba(54,63,72,.67)!important;
 }
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #noteReviewText{
  color:#242a31!important;
 }
 :root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] #noteReviewText::placeholder{
- color:rgba(51,64,75,.50)!important;
+ color:rgba(75,85,95,.57)!important;
 }
 
 /* SEYVEO Notebook · native Notes-style icon drawing, no change to dock material. */
@@ -2016,31 +2022,30 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{transition:none!important}
 }
 
-/* Notebook footer parity with the approved Home dock (2026-11-10).
-   Only the Notebook writing editor toolbar: do not affect Home, Music, drawing
-   studio, or any chat composer. Share Home's capsule width and physical X origins,
-   while keeping the four Notes tools and its 50px new-note control unchanged. */
+/* Notebook footer parity with the approved 60px Home dock.
+   Only the writing editor toolbar; keep four Notes tools and the separate new-note
+   control, with their original right edge and no added outer frame. */
 @media(max-width:699px){
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
   --sv-note-home-left:calc(50vw - 138.25px);
-  --sv-note-home-search:calc(81.5vw + .9675px);
+  --sv-note-home-search:calc(81.5vw - 9.0325px);
   /* The dialog has 20px horizontal padding; extend the row back to screen X=0. */
   box-sizing:border-box!important;
   position:relative!important;
   display:block!important;
   left:-20px!important;right:auto!important;transform:none!important;
   width:100vw!important;min-width:100vw!important;max-width:none!important;
-  height:50px!important;min-height:50px!important;
+  height:60px!important;min-height:60px!important;
   margin:0!important;padding:0!important;column-gap:0!important;
  }
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
   left:var(--sv-note-home-left)!important;right:auto!important;
   width:var(--sv-split-capsule,226px)!important;
-  top:0!important;bottom:0!important;height:50px!important;
+  top:0!important;bottom:0!important;height:60px!important;
  }
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
   left:var(--sv-note-home-search)!important;right:auto!important;
-  width:50px!important;height:50px!important;top:0!important;bottom:auto!important;
+  width:60px!important;height:60px!important;top:0!important;bottom:auto!important;
  }
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
   position:absolute!important;
@@ -2051,21 +2056,21 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   margin:0!important;padding:2px 12px!important;
   display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
   gap:0!important;
-  height:50px!important;min-height:50px!important;max-height:50px!important;
+  height:60px!important;min-height:60px!important;max-height:60px!important;
  }
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
   position:absolute!important;
   left:var(--sv-note-home-search)!important;right:auto!important;
   top:0!important;bottom:auto!important;
-  width:50px!important;min-width:50px!important;max-width:50px!important;
-  height:50px!important;min-height:50px!important;max-height:50px!important;
+  width:60px!important;min-width:60px!important;max-width:60px!important;
+  height:60px!important;min-height:60px!important;max-height:60px!important;
   transform:none!important;
  }
 }
 @media(max-width:389px){
  #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
   --sv-note-home-left:calc(50vw - 35.714286vw + .857143px);
-  --sv-note-home-search:calc(89.428571vw - 29.914286px);
+  --sv-note-home-search:calc(89.428571vw - 39.914286px);
  }
 }
 </style><link rel="stylesheet" href="assets/seyveo-note-attachments.css?v=12"><link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=7"><style id="seyveo-pulse-nov09-polish">
