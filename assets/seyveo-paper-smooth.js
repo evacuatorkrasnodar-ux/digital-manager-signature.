@@ -304,6 +304,76 @@
   });
  }
 
+ // Shape-independent cleanup for angular sketches: recognize *corners*, not
+ // named objects. The same routine handles roofs, arrows, stars, diagrams,
+ // folded lines and future drawings without adding a template for each one.
+ // Only confidently angular ink qualifies; natural curves stay with the
+ // lighter smoother. Pen pressure and tilt remain attached to every sample.
+ function fitAngularContour(points){
+  const n=points?.length;if(n<12)return null;
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for(const p of points){
+   minX=Math.min(minX,p[0]);maxX=Math.max(maxX,p[0]);
+   minY=Math.min(minY,p[1]);maxY=Math.max(maxY,p[1]);
+  }
+  const diagonal=Math.hypot(maxX-minX,maxY-minY),tolerance=clamp(diagonal*.032,4,10);
+  if(diagonal<65||Math.min(maxX-minX,maxY-minY)<24)return null;
+  const anchors=[0,n-1],pending=[[0,n-1]];
+  while(pending.length){
+   const [begin,end]=pending.pop();if(end-begin<3)continue;
+   const a=points[begin],b=points[end],dx=b[0]-a[0],dy=b[1]-a[1];
+   const len2=Math.max(.0001,dx*dx+dy*dy);
+   let largest=0,chosen=-1;
+   for(let i=begin+1;i<end;i++){
+    const projection=clamp(((points[i][0]-a[0])*dx+(points[i][1]-a[1])*dy)/len2,0,1);
+    const distance=Math.hypot(points[i][0]-a[0]-projection*dx,points[i][1]-a[1]-projection*dy);
+    if(distance>largest){largest=distance;chosen=i}
+   }
+   if(largest>tolerance&&chosen>begin&&chosen<end){
+    anchors.push(chosen);
+    if(anchors.length>12)return null;
+    pending.push([begin,chosen],[chosen,end]);
+   }
+  }
+  anchors.sort((a,b)=>a-b);
+  if(anchors.length<3)return null;
+  let longEdges=0,sharpCorners=0;
+  for(let i=1;i<anchors.length;i++){
+   const a=points[anchors[i-1]],b=points[anchors[i]];
+   const chord=Math.hypot(b[0]-a[0],b[1]-a[1]);
+   if(chord<tolerance*2.1)return null;
+   if(chord>diagonal*.18)longEdges++;
+   let length=0;
+   for(let k=anchors[i-1]+1;k<=anchors[i];k++)
+    length+=Math.hypot(points[k][0]-points[k-1][0],points[k][1]-points[k-1][1]);
+   if(length>chord*1.45)return null;
+  }
+  if(longEdges<2)return null;
+  for(let i=1;i<anchors.length-1;i++){
+   const a=points[anchors[i-1]],b=points[anchors[i]],c=points[anchors[i+1]];
+   const ux=b[0]-a[0],uy=b[1]-a[1],vx=c[0]-b[0],vy=c[1]-b[1];
+   const cosine=clamp((ux*vx+uy*vy)/(Math.hypot(ux,uy)*Math.hypot(vx,vy)),-1,1);
+   if(cosine<.42)sharpCorners++; // deliberate turn > ~65 degrees
+  }
+  const closed=Math.hypot(points[0][0]-points.at(-1)[0],points[0][1]-points.at(-1)[1])<tolerance*2;
+  if(sharpCorners<(closed?2:1))return null;
+  const corrected=points.map(p=>p.slice());
+  let moved=0;
+  for(let i=1;i<anchors.length;i++){
+   const begin=anchors[i-1],end=anchors[i],a=points[begin],b=points[end];
+   const distances=[0];
+   for(let k=begin+1;k<=end;k++)distances.push(distances.at(-1)
+    +Math.hypot(points[k][0]-points[k-1][0],points[k][1]-points[k-1][1]));
+   const total=Math.max(.001,distances.at(-1));
+   for(let k=begin+1;k<end;k++){
+    const t=distances[k-begin]/total,x=round(a[0]+(b[0]-a[0])*t),y=round(a[1]+(b[1]-a[1])*t);
+    moved=Math.max(moved,Math.hypot(points[k][0]-x,points[k][1]-y));
+    corrected[k][0]=x;corrected[k][1]=y;
+   }
+  }
+  return moved>.6?corrected:null;
+ }
+
  // When a scribble is too ambiguous to recognise, its author can tell Sayvi
  // what they intended. Redraw only that last ink stroke, with the same ink and
  // pressure samples; the whole operation is still previewed and Undo-able.
@@ -715,7 +785,7 @@
    const heart=fitHeart(stroke.points);
    const oval=heart?null:fitOval(stroke.points);
    const letterC=heart||oval?null:fitLetterC(stroke.points);
-   const next=heart||oval||letterC||fitStraight(stroke.points)||smoothPoints(stroke.points);
+   const next=heart||oval||letterC||fitStraight(stroke.points)||fitAngularContour(stroke.points)||smoothPoints(stroke.points);
    if(index===lastIndex)guess=heart?'heart':oval?'o':letterC?'c':guessIntent(stroke.points,true);
    for(let i=0;i<next.length;i++)if(Math.hypot(next[i][0]-stroke.points[i][0],next[i][1]-stroke.points[i][1])>.1)changed++;
    stroke.points=next;

@@ -30,6 +30,62 @@ function shapeFitter(name){
  return vm.runInNewContext(script.slice(begin,end)+'\n'+name);
 }
 
+test('universal angular cleanup straightens new objects without named templates',()=>{
+ const fit=shapeFitter('fitAngularContour');
+ const corners=[[80,260],[180,110],[290,260],[390,95]],perfect=[],rough=[];
+ for(let edge=0;edge<corners.length-1;edge++)for(let i=0;i<24;i++){
+  const t=i/24,a=corners[edge],b=corners[edge+1];
+  const x=a[0]+(b[0]-a[0])*t,y=a[1]+(b[1]-a[1])*t;
+  const noise=6*Math.sin(Math.PI*t)*Math.sin(i*1.45);
+  perfect.push([x,y]);rough.push([x+noise,y-noise,40+i%20,12]);
+ }
+ perfect.push(corners.at(-1).slice());rough.push([...corners.at(-1),45,12]);
+ const before=structuredClone(rough),clean=fit(rough);
+ assert.ok(clean,'an unnamed angular object can be cleaned without a semantic label');
+ assert.deepEqual(rough,before,'the original is left untouched');
+ assert.equal(clean.length,rough.length);
+ assert.equal(JSON.stringify(clean.map(p=>p.slice(2))),JSON.stringify(rough.map(p=>p.slice(2))));
+ const error=pts=>pts.reduce((sum,p,i)=>{
+  const edge=Math.min(2,Math.floor(i/24)),a=corners[edge],b=corners[edge+1];
+  return sum+Math.abs((p[0]-a[0])*(b[1]-a[1])-(p[1]-a[1])*(b[0]-a[0]))
+   /Math.hypot(b[0]-a[0],b[1]-a[1]);
+ },0)/pts.length;
+ assert.ok(error(clean)<error(rough)*.7,'the angular edges become noticeably straighter');
+ assert.deepEqual(Array.from(clean[0]),rough[0]);
+ assert.deepEqual(Array.from(clean.at(-1)),rough.at(-1));
+ const circular=Array.from({length:97},(_,i)=>{
+  const t=Math.PI*2*i/96;return [250+80*Math.cos(t),250+80*Math.sin(t),55];
+ });
+ assert.equal(fit(circular),null,'a circle is not turned into a polygon');
+ const sweep=Array.from({length:65},(_,i)=>{
+  const t=Math.PI*.3+Math.PI*1.45*i/64;return [280+90*Math.cos(t),260+95*Math.sin(t),55];
+ });
+ assert.equal(fit(sweep),null,'a rounded handwritten curve keeps its character');
+ assert.equal(fit(Array.from({length:25},(_,i)=>[20+i*10,140,50])),null,'a straight line needs no corner fit');
+});
+
+test('universal cleanup preserves pointed closed compositions, not only house outlines',()=>{
+ const fit=shapeFitter('fitAngularContour');
+ const vertices=Array.from({length:11},(_,i)=>{
+  const angle=-Math.PI/2+i*Math.PI/5,r=i%2===0?105:48;
+  return [280+r*Math.cos(angle),280+r*Math.sin(angle)];
+ });
+ const star=[];
+ for(let i=0;i<10;i++)for(let j=0;j<17;j++){
+  const t=j/17,a=vertices[i],b=vertices[i+1];
+  const deviation=3*Math.sin(t*Math.PI)*Math.sin(j*1.8);
+  star.push([a[0]+(b[0]-a[0])*t+deviation,a[1]+(b[1]-a[1])*t-deviation,46+j%13,4]);
+ }
+ star.push([...vertices.at(-1),55,4]);
+ const original=structuredClone(star),corrected=fit(star);
+ assert.ok(corrected,'a star drawn as one line is eligible without a star template');
+ assert.deepEqual(star,original);
+ assert.equal(corrected.length,star.length);
+ assert.equal(JSON.stringify(corrected.map(p=>p.slice(2))),JSON.stringify(star.map(p=>p.slice(2))));
+ assert.deepEqual(Array.from(corrected[0]),star[0]);
+ assert.deepEqual(Array.from(corrected.at(-1)),star.at(-1));
+});
+
 test('Sayvi recognizes a whole five-stroke house and previews straight walls and roof',()=>{
  const fit=shapeFitter('fitHouse');
  const edges=[[[300,160],[206,248]],[[300,160],[393,248]],
@@ -528,6 +584,22 @@ test('live controls compare without committing, Cancel restores and Apply commit
  cancel.click();
  assert.deepEqual(source,vRoofOriginal,'Cancel keeps the one-stroke roof untouched');
  assert.equal(applied.length,4,'Cancel does not create an edit');
+
+ const zig=[[100,300],[205,145],[310,300]],points=[];
+ for(let k=0;k<2;k++)for(let i=0;i<28;i++){
+  const t=i/28,a=zig[k],b=zig[k+1],wobble=5*Math.sin(i*1.6)*Math.sin(Math.PI*t);
+  points.push([a[0]+(b[0]-a[0])*t+wobble,a[1]+(b[1]-a[1])*t-wobble,52]);
+ }
+ points.push([...zig[2],52]);
+ source=[{tool:'pen',color:'#171e29',points},
+  {tool:'eraser',points:[[20,20,50],[30,20,50],[40,20,50],[50,20,50],[60,20,50]]}];
+ const angularOriginal=structuredClone(source);
+ action.click();
+ assert.notDeepEqual(previews.at(-1)[0].points,angularOriginal[0].points,
+  'a generic angular drawing is cleaned in the same preview without a named template');
+ assert.deepEqual(previews.at(-1)[1],angularOriginal[1],'eraser strokes are not affected');
+ cancel.click();
+ assert.deepEqual(source,angularOriginal,'general drawing correction is reversible too');
 });
 
 test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',()=>{
@@ -554,7 +626,7 @@ test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',
 test('preview edits only pen and pencil, preserving text, photos and undo history',()=>{
  assert.match(script,/const eligible=stroke=>\['pen','pencil'\]\.includes\(stroke\.tool\)/);
  assert.match(script,/proposal=paper\.getEditableStrokes\(indices\)/);
- assert.match(script,/const next=heart\|\|oval\|\|letterC\|\|fitStraight\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
+ assert.match(script,/const next=heart\|\|oval\|\|letterC\|\|fitStraight\(stroke\.points\)\|\|fitAngularContour\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
  assert.match(script,/guess=heart\?'heart':oval\?'o':letterC\?'c':guessIntent\(stroke\.points,true\)/);
  assert.match(script,/if\(suggested\)\{chooseShape\(suggested\);return\}/);
  assert.match(script,/paper\.previewStrokeEdit\(next\?proposal:original\)/);
@@ -571,5 +643,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=2/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=12/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=13/);
 });
