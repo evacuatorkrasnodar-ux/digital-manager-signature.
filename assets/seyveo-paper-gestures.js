@@ -360,8 +360,30 @@
  window.addEventListener('pointerup',releaseOutsideCanvas,true);
  window.addEventListener('pointercancel',releaseOutsideCanvas,true);
  window.addEventListener('blur',()=>{fingers.clear();pinch=null;skipTouchUntil=0});
+ // Desktop trackpads generate Ctrl+wheel for pinch-to-zoom. Zoom around
+ // the cursor, not the canvas center; plain scrolling remains untouched.
+ let wheelFinishTimer=0;
+ stage.addEventListener('wheel',event=>{
+  if(!dialog.open||!(event.ctrlKey||event.metaKey))return;
+  if(event.cancelable)event.preventDefault();
+  const speed=event.deltaMode===1?.04:event.deltaMode===2?.7:.0025;
+  const next=range(zoom.scale*Math.exp(-event.deltaY*speed),1,4);
+  if(Math.abs(next-zoom.scale)<.0001)return;
+  const center=stageCenter(),old=zoom.scale;
+  const anchorX=(event.clientX-center.x-zoom.x)/old;
+  const anchorY=(event.clientY-center.y-zoom.y)/old;
+  zoom.scale=next;
+  zoom.x=event.clientX-center.x-anchorX*next;
+  zoom.y=event.clientY-center.y-anchorY*next;
+  clampZoom();applyZoom();showZoom();
+  clearTimeout(wheelFinishTimer);
+  wheelFinishTimer=setTimeout(()=>{
+   paper.refreshInkResolution?.(zoom.scale);
+   drawOverlay();
+  },150);
+ },{passive:false});
  dialog.addEventListener('close',()=>{
-  fingers.clear();pinch=null;setLasso(false);
+  fingers.clear();pinch=null;setLasso(false);clearTimeout(wheelFinishTimer);
   zoom.scale=1;zoom.x=0;zoom.y=0;applyZoom();
   zoomBadge.hidden=true;
  });
