@@ -44,7 +44,7 @@ test('iPhone photo sampling does not create a stroke and shows a live HEX previe
  assert.match(picker,/\.sv-ink-sample-value/);
  assert.match(picker,/overlay\.addEventListener\('touchend'/);
  assert.match(picker,/overlay\.addEventListener\('pointercancel'/);
- assert.match(html,/assets\/seyveo-paper-custom-color\.js\?v=5/);
+ assert.match(html,/assets\/seyveo-paper-custom-color\.js\?v=6/);
  assert.match(html,/assets\/notebook-paper\.js\?v=39/);
 });
 
@@ -56,5 +56,13 @@ test('blank sheet never enters sampling mode or paints a dark bubble over toolba
  assert.match(pickerStyle,/top:calc\(90px \+ env\(safe-area-inset-top,0px\)\)/);
  assert.match(pickerStyle,/\.sv-paper-light-surface \.sv-ink-sample-instruction\{[\s\S]*?background:rgba\(255,255,255,\.96\)/);
  assert.match(picker,/trigger\.addEventListener\('click',\(\)=>\{if\(picking\)stopSampling\(false\)\}/);
- assert.match(html,/assets\/seyveo-paper-custom-color\.css\?v=3/);
+ assert.match(html,/assets\/seyveo-paper-custom-color\.css\?v=4/);
+});
+
+test('Palette contains one labeled pipette with a crisp vector icon',()=>{
+ assert.match(picker,/class="sv-ink-pipette-caption" aria-hidden="true">Пипетка<\/span>/);
+ assert.match(picker,/class="sv-ink-pipette-icon" aria-hidden="true"><svg viewBox="0 0 24 24"/);
+ assert.match(pickerStyle,/\.sv-ink-pipette-icon\{[\s\S]*?width:36px;height:36px/);
+ assert.match(pickerStyle,/\.sv-gradient-head\{\s*padding-right:124px!important/);
+ assert.match(picker,/colorHead\.append\(pipette\)/,'there should be only one functional dropper');
 });
