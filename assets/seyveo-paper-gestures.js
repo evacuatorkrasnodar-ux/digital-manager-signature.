@@ -49,7 +49,7 @@
    frame=requestAnimationFrame(()=>{frame=0;apply();showBadge()});
   };
   sheet.addEventListener('touchstart',event=>{
-   if(!dialog.open||event.touches.length!==2||pinch||paper.isPenNearby?.())return;
+   if(!dialog.open||dialog.classList.contains('sv-paper-photo-mode')||event.touches.length!==2||pinch||paper.isPenNearby?.())return;
    // Both contacts must originate on the sheet; palette and thickness
    // controls never become part of a drawing gesture.
    if(!sheet.contains(event.touches[0].target)||!sheet.contains(event.touches[1].target))return;

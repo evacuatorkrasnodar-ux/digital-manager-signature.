@@ -34,7 +34,7 @@ test('printed text survives normalization with exact Russian text and strict lim
 });
 
 test('full sheet normalization preserves typed text alongside old ink and paper',()=>{
- const code=extract('function normalizeTextObject(item,height){','function inkWeight(s,p){');
+ const code=extract('function normalizePhotoLayout(layout,height){','function inkWeight(s,p){');
  const sandbox={W:840,H:1188,MAX_PAGE_HEIGHT:2600,MAX_STROKES:250,MAX_POINTS:1300,
   MAX_PHOTO:155000,MAX_TEXTS:24,MAX_TEXT_LENGTH:500,
   patterns:['blank','lines','dots','grid'],tools:['pen','pencil','eraser','lasso','line','arrow','rect','circle','triangle','diamond'],
@@ -77,8 +77,8 @@ test('typed text has native undo, save, reopen, clearing and iPhone ink isolatio
  assert.match(source,/data\.strokes=\[\];data\.texts=\[\];data\.photo=''/);
  assert.match(source,/if\(!data\.strokes\.length&&!data\.photo&&!data\.texts\?\.length\)/);
  assert.match(source,/text:page\.texts\.length&&!page\.strokes\.length&&!page\.photo\?'Лист с текстом'/);
- assert.match(source,/dialog\.classList\.contains\('sv-paper-text-mode'\)\)return;/);
- assert.match(source,/dialog\.classList\.contains\('sv-paper-text-mode'\)\|\|finger!==null/);
+ assert.match(source,/dialog\.classList\.contains\('sv-paper-text-mode'\)\|\|dialog\.classList\.contains\('sv-paper-photo-mode'\)\)return;/);
+ assert.match(source,/dialog\.classList\.contains\('sv-paper-text-mode'\)\|\|dialog\.classList\.contains\('sv-paper-photo-mode'\)\|\|finger!==null/);
 });
 
 test('text mode reuses Settings actions and supports touch placement, drag, font and color',()=>{
@@ -93,7 +93,7 @@ test('text mode reuses Settings actions and supports touch placement, drag, font
  assert.match(style,/\.sv-paper-text-hit\.sv-paper-text-dragging/);
  assert.match(html,/assets\/seyveo-paper-typed-text\.js\?v=4/);
  assert.match(html,/assets\/seyveo-paper-typed-text\.css\?v=2/);
- assert.match(html,/assets\/notebook-paper\.js\?v=40/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=41/);
 });
 
 test('text starts at a consistent page margin rather than hanging off the right edge',()=>{

@@ -38,12 +38,13 @@ function rememberUndo(action){
  updateHistoryControls();
 }
 function snapshotSheet(){
- return {strokes:data.strokes.slice(),texts:(data.texts||[]).slice(),photo:data.photo||'',pattern:data.pattern,background:data.background};
+ return {strokes:data.strokes.slice(),texts:(data.texts||[]).slice(),photo:data.photo||'',photoLayout:data.photoLayout?{...data.photoLayout}:null,pattern:data.pattern,background:data.background};
 }
 function restoreSheet(snapshot){
  data.strokes=snapshot.strokes.slice();
  data.texts=(snapshot.texts||[]).slice();
- data.photo=snapshot.photo;data.pattern=snapshot.pattern;data.background=snapshot.background;
+ data.photo=snapshot.photo;data.photoLayout=snapshot.photoLayout?{...snapshot.photoLayout}:null;
+ data.pattern=snapshot.pattern;data.background=snapshot.background;
  // The chosen ink is independent of the page. Undo/redo must never recolor it.
  syncColorMenu();
 }
@@ -101,6 +102,18 @@ function photoImage(photo,redraw){
 const clamp=(n,max)=>Math.max(0,Math.min(max,Math.round(Number(n)||0)));
 // Preserve subpixel positions while keeping saved strokes compact.
 const inkCoord=(n,max)=>Math.max(0,Math.min(max,Math.round((Number(n)||0)*10)/10));
+function normalizePhotoLayout(layout,height){
+ if(!layout||typeof layout!=='object')return null;
+ const number=(value,fallback,min,max)=>Number.isFinite(Number(value))?Math.max(min,Math.min(max,Math.round(Number(value)*10)/10)):fallback;
+ return {x:number(layout.x,W/2,32,W-32),y:number(layout.y,height/2,32,height-32),scale:number(layout.scale,1,.25,3.2)};
+}
+function photoBounds(obj,image){
+ if(!image?.naturalWidth||!image?.naturalHeight)return null;
+ const height=obj.height||H,layout=normalizePhotoLayout(obj.photoLayout,height)||{x:W/2,y:height/2,scale:1};
+ const fit=Math.min(W/image.naturalWidth,height/image.naturalHeight)*layout.scale;
+ const width=image.naturalWidth*fit,photoHeight=image.naturalHeight*fit;
+ return {x:layout.x-width/2,y:layout.y-photoHeight/2,width,height:photoHeight};
+}
 function normalizeTextObject(item,height){
  if(!item||typeof item!=='object'||typeof item.text!=='string')return null;
  const text=item.text.replace(/\r\n?/g,'\n').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g,'').slice(0,MAX_TEXT_LENGTH).trim();
@@ -117,6 +130,7 @@ function normalize(obj){
  const height=Number.isFinite(Number(p.height))&&Number(p.height)>=H?Math.min(MAX_PAGE_HEIGHT,Math.round(Number(p.height))):H;
  return{pattern:patterns.includes(p.pattern)?p.pattern:'blank',background:p.background==='dark'?'dark':'light',height,
  photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
+ photoLayout:normalizePhotoLayout(p.photoLayout,height),
  texts:(Array.isArray(p.texts)?p.texts:[]).slice(0,MAX_TEXTS).map(item=>normalizeTextObject(item,height)).filter(Boolean),
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
@@ -352,9 +366,9 @@ function paint(target,obj,background=false){
   const bitmap=photoImage(photo,()=>paint(target,p,true));
   if(bitmap){
    ctx.save();ctx.globalCompositeOperation='destination-over';
-   const scale=Math.min(W/bitmap.naturalWidth,pageH/bitmap.naturalHeight);
-   const w=bitmap.naturalWidth*scale,h=bitmap.naturalHeight*scale;
-   ctx.drawImage(bitmap,(W-w)/2,(pageH-h)/2,w,h);ctx.restore();
+   const bounds=photoBounds(p,bitmap);
+   if(bounds)ctx.drawImage(bitmap,bounds.x,bounds.y,bounds.width,bounds.height);
+   ctx.restore();
   }
   // Add the template beneath strokes so the eraser never damages the paper.
   ctx.save();ctx.globalCompositeOperation='destination-over';
@@ -390,16 +404,30 @@ function fitPaper(){
   canvas.width=backingWidth;canvas.height=backingHeight;
   paint(canvas,data);
  }
+ placePhotoPreview();
 }
 window.addEventListener('resize',()=>{if(dialog.open)requestAnimationFrame(fitPaper)});
 if(typeof ResizeObserver!=='undefined'&&stage){
  const observer=new ResizeObserver(()=>{if(dialog.open)fitPaper()});
  observer.observe(stage);
 }
+function placePhotoPreview(){
+ if(!photoView)return;
+ if(!data.photo){photoView.style.visibility='hidden';return}
+ const bounds=photoBounds(data,photoView);
+ if(!bounds){photoView.style.visibility='hidden';return}
+ photoView.style.left=bounds.x/W*100+'%';photoView.style.top=bounds.y/(data.height||H)*100+'%';
+ photoView.style.width=bounds.width/W*100+'%';photoView.style.height=bounds.height/(data.height||H)*100+'%';
+ photoView.style.visibility='visible';
+}
+photoView?.addEventListener('load',()=>{
+ placePhotoPreview();dialog.dispatchEvent(new Event('sv-paper-photo-ready'));
+});
 function render(redrawInk=true){
  dialog.classList.toggle('sv-paper-light-surface',data.background==='light');
  sheet.dataset.pattern=data.pattern;sheet.dataset.inkBackground=data.background;pattern.value=data.pattern;syncPatternMenu();
  if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
+ placePhotoPreview();
  if($('notePaperRemovePhoto'))$('notePaperRemovePhoto').hidden=!data.photo;
  if(redrawInk)paint(canvas,data);updateHistoryControls();
  dialog.dispatchEvent(new Event('sv-paper-render'));
@@ -572,7 +600,7 @@ function queueShapePreview(){
  shapeFrame=requestAnimationFrame(redrawShapePreview);
 }
 function down(e){
- if(dialog.classList.contains('sv-paper-text-mode'))return;
+ if(dialog.classList.contains('sv-paper-text-mode')||dialog.classList.contains('sv-paper-photo-mode'))return;
  if(iosFingerInk&&e.pointerType==='touch'&&!e.iosTouchFallback)return;
  if(currentTool()==='lasso')return;
  if(pending||pointerID!==null||e.button!==0||e.isPrimary===false)return;
@@ -659,7 +687,7 @@ if(iosFingerInk&&sheet){
  const matching=event=>Array.from(event.changedTouches||[]).find(t=>t.identifier===finger);
  sheet.addEventListener('touchstart',event=>{
   // The pipette overlay lives on this sheet; its tap must never create ink.
-  if(!dialog.open||dialog.classList.contains('sv-ink-sampling')||dialog.classList.contains('sv-paper-text-mode')||finger!==null||event.touches.length!==1)return;
+  if(!dialog.open||dialog.classList.contains('sv-ink-sampling')||dialog.classList.contains('sv-paper-text-mode')||dialog.classList.contains('sv-paper-photo-mode')||finger!==null||event.touches.length!==1)return;
   const t=event.changedTouches[0];if(!t)return;
   finger=t.identifier;const input=asInkEvent(t);
   down(input);
@@ -860,7 +888,7 @@ function open(note=null){
  dialog.classList.remove('sv-paper-inking');
  if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
  liveTail=null;liveMid=null;
- data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:document.documentElement.dataset.theme==='dark'?'dark':'light',height:H,strokes:[],texts:[]};
+ data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',photoLayout:null,background:document.documentElement.dataset.theme==='dark'?'dark':'light',height:H,strokes:[],texts:[]};
   dialog.classList.toggle('sv-paper-light-surface',data.background==='light');
   editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;undoStack=[];redoStack=[];returnToList=true;hiddenTextIndex=-1;
  closePatternMenu();closeColorMenu();
@@ -979,7 +1007,7 @@ async function importPhoto(file){
  try{
   const image=await compressPhoto(file);
   rememberUndo({type:'sheet',previous:snapshotSheet()});
-   data.photo=image;data.pattern='blank';changed=true;render();
+   data.photo=image;data.photoLayout=null;data.pattern='blank';changed=true;render();
   report('Фото добавлено. Можно писать поверх и сохранить лист.');
  }catch(error){report(error?.message||'Не получилось добавить фотографию.')}
 }
@@ -992,7 +1020,7 @@ $('notePaperRemovePhoto')?.addEventListener('click',()=>{
  if(!data.photo)return;
  if(!window.confirm('Убрать фотографию с листа? Штрихи останутся.'))return;
  rememberUndo({type:'sheet',previous:snapshotSheet()});
-  data.photo='';changed=true;render();report('Фотография убрана.');
+  data.photo='';data.photoLayout=null;changed=true;render();report('Фотография убрана.');
 });
 window.SEYVEO_PAPER=Object.freeze({
  // Chat handoff: export from the same approved tablet, without creating
@@ -1000,6 +1028,17 @@ window.SEYVEO_PAPER=Object.freeze({
  hasChatContent:()=>Boolean(data.strokes.length||data.photo||data.texts?.length),
  hasChatChanges:()=>changed,
  getEditGeometry:()=>({width:W,height:data.height||H}),
+ hasPhoto:()=>Boolean(data.photo),
+ getPhotoLayout:()=>data.photo?{...(normalizePhotoLayout(data.photoLayout,data.height||H)||{x:W/2,y:(data.height||H)/2,scale:1})}:null,
+ getPhotoBounds:()=>data.photo?photoBounds(data,photoView):null,
+ setPhotoLayout:next=>{
+  if(!data.photo||pending||!next||!Number.isFinite(next.x)||!Number.isFinite(next.y)||!Number.isFinite(next.scale))return false;
+  const layout=normalizePhotoLayout(next,data.height||H);
+  const previous=normalizePhotoLayout(data.photoLayout,data.height||H)||{x:W/2,y:(data.height||H)/2,scale:1};
+  if(JSON.stringify(layout)===JSON.stringify(previous))return true;
+  rememberUndo({type:'sheet',previous:snapshotSheet()});
+  data.photoLayout=layout;changed=true;render();return true;
+ },
  getEditableStrokes:indices=>{
   // For live dragging, only clone the affected strokes; unrelated ink stays
   // immutable and shares storage until the edit is committed.
@@ -1081,7 +1120,7 @@ window.SEYVEO_PAPER=Object.freeze({
   if(hasContent&&!window.confirm('Очистить весь лист? Рисунок, текст и фото можно вернуть кнопкой отмены.'))return false;
   if(!hasContent&&data.pattern==='blank'){report('Лист уже чистый.');return true}
   rememberUndo({type:'sheet',previous:snapshotSheet()});
-  data.strokes=[];data.texts=[];data.photo='';data.pattern='blank';
+  data.strokes=[];data.texts=[];data.photo='';data.photoLayout=null;data.pattern='blank';
   changed=true;render();
   report('Лист очищен.');return true;
  },
