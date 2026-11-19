@@ -15,3 +15,10 @@ dialog.sv-paper-ai-workbench{
 .sv-paper-ai-workbench .sv-pa-step{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:8px 0;border-bottom:1px solid #eff0f2;color:#272d35}
 .sv-paper-ai-workbench .sv-pa-step button{flex:none;min-height:36px;padding:0 11px;border:1px solid #e3e6e9;border-radius:10px;background:#f7f8f9;color:#20242b;font-size:13px}
 .sv-paper-ai-workbench .sv-pa-step button:disabled{opacity:.56}
+.sv-paper-ai-workbench .sv-pa-preview[hidden]{display:none!important}
+.sv-paper-ai-workbench .sv-pa-preview{margin-top:12px;border-top:1px solid #eceef1;padding-top:12px;text-align:center}
+.sv-paper-ai-workbench .sv-pa-preview p{margin:0 0 9px;color:#343a42;font-size:13px}
+.sv-paper-ai-workbench .sv-pa-preview canvas{display:block;width:auto;height:min(35dvh,290px);max-width:100%;margin:0 auto;background:#fff;border:1px solid #e5e8ec;border-radius:6px}
+.sv-paper-ai-workbench .sv-pa-preview-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+.sv-paper-ai-workbench .sv-pa-preview-actions button{min-height:40px;padding:0 16px;border:1px solid #dce1e6;border-radius:11px;background:#f6f7f8;color:#20242b;font-size:14px}
+.sv-paper-ai-workbench .sv-pa-preview-actions [data-pa-apply]{background:#303237;color:#fff;border-color:#303237}

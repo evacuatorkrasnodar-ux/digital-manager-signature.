@@ -4,6 +4,7 @@
  */
 import {createServer} from 'node:http';
 import {createImageAttachments} from './image-attachments.mjs';
+import {proposeLocalPaperDraft} from './paper-vision-draft.mjs';
 import {readDocumentUpload} from './document-attachments.mjs';
 import {createDocx} from './document-export.mjs';
 import {readFile,mkdtemp,rm} from 'node:fs/promises';
@@ -200,6 +201,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
  let busy=false,minute=0,count=0;
  let taskAnalyzeBusy=false;
+ let paperDraftBusy=false,paperDraftMinute=0,paperDraftCount=0;
  let routeMinute=0,routeCount=0;
  let placeMinute=0,placeCount=0,placeLast=0;
  const placeCache=new Map();
@@ -227,6 +229,37 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  // PC-only visual model. Public GitHub Pages has no such endpoint.
+  if(req.method==='GET'&&path==='/api/seyveo-paper-status'){
+   send(res,200,{localOnly:true,enabled:process.env.SEYVEO_ENABLE_PAPER_AI==='1'});return;
+  }
+  if(req.method==='POST'&&path==='/api/seyveo-paper-draft'){
+   if(req.headers.origin!==ORIGIN||req.headers['sec-fetch-site']==='cross-site'){
+    send(res,403,{error:'Недоверенная страница.'});return;
+   }
+   if(process.env.SEYVEO_ENABLE_PAPER_AI!=='1'){
+    send(res,503,{error:'Локальная модель рисования ещё не включена.'});return;
+   }
+   if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
+    send(res,415,{error:'Ожидается JSON.'});return;
+   }
+   const minuteNow=Math.floor(Date.now()/60000);
+   if(paperDraftMinute!==minuteNow){paperDraftMinute=minuteNow;paperDraftCount=0}
+   if(paperDraftBusy||paperDraftCount>=2){send(res,429,{error:'Сэйви ещё рисует или достигнут лимит двух попыток в минуту.'});return}
+   paperDraftBusy=true;paperDraftCount++;
+   try{
+    let size=0;const chunks=[];
+    for await(const chunk of req){size+=chunk.length;if(size>2400)throw Error('large');chunks.push(chunk)}
+    const input=JSON.parse(Buffer.concat(chunks).toString('utf8'));
+    const proposal=await proposeLocalPaperDraft(input);
+    send(res,200,proposal);
+   }catch(error){
+    const reason=String(error?.message||'');
+    const invalid=/^(?:large|invalid-|unsupported-)/.test(reason);
+    send(res,invalid?400:503,{error:invalid?'Нужна короткая просьба до 500 символов.':'Локальная модель не ответила. Лист не изменён.'});
+   }finally{paperDraftBusy=false}
+   return;
+  }
   if(req.method==='GET'&&path==='/api/seyveo-approved-welcome'){
    try{
     const master=await readApprovedWelcome();

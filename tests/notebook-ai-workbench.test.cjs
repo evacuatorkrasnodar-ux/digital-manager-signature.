@@ -32,7 +32,23 @@ test('workbench reuses genuine Paper tools without mutating the page or calling 
  assert.match(client,/button\.disabled=true/);
  assert.match(client,/results\.replaceChildren\(\)/);
  assert.match(client,/Ничего не изменено/);
- assert.match(html,/seyveo-paper-ai-requests\.js\?v=1/);
- assert.match(html,/seyveo-paper-ai-workbench\.js\?v=1/);
- assert.match(html,/seyveo-paper-ai-workbench\.css\?v=1/);
+ assert.match(html,/seyveo-paper-ai-requests\.js\?v=2/);
+ assert.match(html,/seyveo-paper-ai-workbench\.js\?v=2/);
+ assert.match(html,/seyveo-paper-ai-workbench\.css\?v=2/);
+});
+
+test('a model proposal must satisfy geometry and consent before joining the original ink',()=>{
+ const valid={kind:'paper-preview',requiresConfirmation:true,originalUntouched:true,title:'Дерево',
+  strokes:[{tool:'pen',color:'#171e29',width:4,points:[[30,40,50],[50,60,50]]}]};
+ const normalized=requests.verifyDraft(valid);
+ assert.ok(normalized);
+ assert.deepEqual(normalized.strokes[0].points[0],[30,40,50]);
+ assert.equal(requests.verifyDraft({...valid,requiresConfirmation:false}),null);
+ assert.equal(requests.verifyDraft({...valid,strokes:[{...valid.strokes[0],points:[[30,40,50],[10000,60,50]]}]}),null);
+ assert.equal(requests.verifyDraft({...valid,strokes:[{...valid.strokes[0],color:'url(javascript:alert(1))'}]}),null);
+ assert.equal(requests.verifyDraft({...valid,strokes:Array.from({length:61},()=>valid.strokes[0])}),null);
+ assert.match(client,/\[\.\.\.old,\.\.\.draft\.strokes\]/);
+ assert.match(client,/paper\.applyStrokeEdit/);
+ assert.match(client,/localPC\(\)/);
+ assert.match(client,/\/api\/seyveo-paper-draft/);
 });

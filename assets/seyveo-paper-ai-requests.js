@@ -25,5 +25,22 @@
   const planned=future.filter(action=>action.match.test(request)).map(({id,label})=>({id,label,status:'future'}));
   return {request,steps:[...available,...planned],unmatched:!available.length&&!planned.length};
  }
- return Object.freeze({plan});
+ function verifyDraft(raw,{width=840,height=1188}={}){
+  if(!Number.isFinite(width)||!Number.isFinite(height)||width<100||height<100||!raw||
+   raw.kind!=='paper-preview'||raw.requiresConfirmation!==true||raw.originalUntouched!==true||
+   !Array.isArray(raw.strokes)||!raw.strokes.length||raw.strokes.length>60)return null;
+  let total=0;
+  const strokes=[];
+  for(const s of raw.strokes){
+   if(s?.tool!=='pen'||typeof s.color!=='string'||!/^#[0-9a-f]{6}$/i.test(s.color)||
+    !Number.isFinite(s.width)||s.width<1||s.width>20||!Array.isArray(s.points)||
+    s.points.length<2||s.points.length>700)return null;
+   total+=s.points.length;if(total>5000)return null;
+   if(s.points.some(p=>!Array.isArray(p)||p.length!==3||!p.every(Number.isFinite)||
+    p[0]<0||p[0]>width||p[1]<0||p[1]>height||p[2]<0||p[2]>100))return null;
+   strokes.push({tool:'pen',color:s.color,width:s.width,points:s.points.map(p=>p.slice())});
+  }
+  return {title:String(raw.title||'Рисунок Сэйви').slice(0,100),strokes};
+ }
+ return Object.freeze({plan,verifyDraft});
 });

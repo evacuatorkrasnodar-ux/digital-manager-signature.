@@ -57,4 +57,9 @@ test('bad model output and unsafe requests never reach the Paper editor',async()
  assert.match(server,/\/v1\/paper-draft/);
  assert.match(server,/validToken\(req\.headers\.authorization\)/);
  assert.match(server,/validOrigin\(req\.headers\.origin\)/);
+ const local=readFileSync(resolve(root,'server/real-app-local.mjs'),'utf8');
+ assert.match(local,/\/api\/seyveo-paper-draft/);
+ assert.match(local,/req\.headers\.origin!==ORIGIN/);
+ assert.match(local,/SEYVEO_ENABLE_PAPER_AI/);
+ assert.match(local,/paperDraftCount>=2/);
 }));
