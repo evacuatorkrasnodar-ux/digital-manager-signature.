@@ -31,11 +31,11 @@
  modal.innerHTML=`
   <div class="sv-lh-shell">
    <header class="sv-lh-head"><div><small>SEYVEO LIVING HANDWRITING · БЕТА</small><h2 id="svLivingHandwritingTitle">Мой почерк</h2></div><button type="button" data-lh-close>Готово</button></header>
-   <p class="sv-lh-intro">Покажи Сэйви, как ты пишешь буквы. Она соберёт из твоих штрихов текст — без чужого шрифта.</p>
+   <p class="sv-lh-intro">Покажи Сэйви свои буквы и их настоящие соединения. Можно запомнить до трёх вариантов каждого образца.</p>
    <section class="sv-lh-section" aria-labelledby="svLhSampleTitle">
-    <div class="sv-lh-row"><h3 id="svLhSampleTitle">1. Образец буквы</h3><label>Буква <input data-lh-letter aria-label="Буква для образца" autocomplete="off" spellcheck="false" maxlength="1" value="м"></label></div>
+    <div class="sv-lh-row"><h3 id="svLhSampleTitle">1. Покажи почерк</h3><label>Буква или связка <input data-lh-letter aria-label="Буква или две соединённые буквы" autocomplete="off" spellcheck="false" maxlength="2" value="м"></label></div>
     <div class="sv-lh-sample-pad"><canvas data-lh-pad width="640" height="340" aria-label="Напиши выбранную букву пальцем или стилусом"></canvas></div>
-    <div class="sv-lh-row sv-lh-controls"><button type="button" data-lh-clear>Очистить</button><button type="button" class="sv-lh-primary" data-lh-remember>Запомнить букву</button></div>
+    <div class="sv-lh-row sv-lh-controls"><button type="button" data-lh-clear>Очистить</button><button type="button" class="sv-lh-primary" data-lh-remember>Запомнить образец</button></div>
     <p class="sv-lh-count" data-lh-count>Нет образцов</p>
    </section>
    <section class="sv-lh-section" aria-labelledby="svLhTypeTitle">
@@ -45,7 +45,7 @@
     <div class="sv-lh-row sv-lh-controls"><p class="sv-lh-hint" data-lh-hint></p><button type="button" class="sv-lh-primary" data-lh-apply disabled>На лист</button></div>
    </section>
    <footer class="sv-lh-foot"><span data-lh-status role="status" aria-live="polite">Образцы остаются на этом устройстве. Удалить их можно здесь.</span><button type="button" data-lh-forget>Удалить мои образцы</button></footer>
-   <p class="sv-lh-note">Первая версия: одна буква — один образец. Соединения букв ещё не изучаются. Подписи и документы Сэйви не воспроизводит. Экспорт «Мои данные» содержит образцы в обычном JSON.</p>
+   <p class="sv-lh-note">Напиши, например, «м», затем «а», а потом целиком «ма» — Сэйви использует настоящую связку в словах. Естественный ритм целых предложений ещё не изучается. Подписи и документы не воспроизводятся. Экспорт «Мои данные» содержит образцы в обычном JSON.</p>
   </div>`;
  document.body.append(modal);
  const $=selector=>modal.querySelector(selector);
@@ -117,8 +117,12 @@
 
  const lettersMissing=()=>core.composeText(typed.value,alphabet,{height:2000}).missing;
  function setCount(){
-  const n=Object.keys(alphabet).length;
-  count.textContent=n?n+' букв и знаков сохранено на этом устройстве':'Пока нет образцов';
+  const keys=Object.keys(alphabet),variants=keys.reduce((total,key)=>
+   total+core.variantsFor(alphabet[key],{units:[...key].length}).length,0);
+  const pairs=keys.filter(key=>[...key].length===2).length;
+  count.textContent=variants
+   ?variants+' образцов · '+keys.length+' букв и связок'+(pairs?' · '+pairs+' соединений':'')
+   :'Пока нет образцов';
  }
  function strokePreview(result){
   const h=Math.max(250,Math.min(1800,Math.ceil(result.bottom+75)||370));
@@ -151,20 +155,23 @@
  typed.addEventListener('input',previewText);
  remember.addEventListener('click',()=>{
   const letter=sampleLetter.value.trim();
-  if(!core.supported(letter)){say('Выбери одну русскую или латинскую букву, цифру либо знак.');return}
-  const glyph=core.makeGlyph(sample);
-  if(!glyph){say('Напиши выбранную букву в поле, затем нажми «Запомнить».');return}
-  if(alphabet[letter]&&!window.confirm('Образец «'+letter+'» уже есть. Заменить его новым?'))return;
+  if(!core.supported(letter)){say('Выбери букву, знак или две соединённые буквы русского/латинского алфавита.');return}
+  const units=[...letter].length;
+  const glyph=core.makeGlyph(sample,{units});
+  if(!glyph){say('Напиши «'+letter+'» в поле, затем нажми «Запомнить образец».');return}
+  const old=core.variantsFor(alphabet[letter],{units});
+  if(old.length===core.MAX_VARIANTS&&!window.confirm('Для «'+letter+'» уже три образца. Заменить самый старый новым?'))return;
   if(!alphabet[letter]&&Object.keys(alphabet).length>=core.MAX_GLYPHS){say('Лимит образцов достигнут. Можно удалить ненужные и начать заново.');return}
-  const next={...alphabet,[letter]:glyph};
+  const next={...alphabet,[letter]:[...old,glyph].slice(-core.MAX_VARIANTS)};
   const raw=JSON.stringify({version:1,glyphs:next,updatedAt:Date.now()});
   if(raw.length>900000){say('На этом устройстве образцы слишком большие. Попробуй более короткие штрихи.');return}
   try{localStorage.setItem(KEY,raw)}
   catch{say('Не удалось сохранить почерк: возможно, память браузера заполнена.');return}
   alphabet=next;sample=[];active=null;pointerId=null;drawSample();setCount();previewText();
   const missing=lettersMissing();
-  if(missing.length){sampleLetter.value=missing[0];say('Букву «'+letter+'» запомнила. Теперь покажи «'+missing[0]+'».')}
-  else say('Букву «'+letter+'» запомнила. Теперь твой текст готов к просмотру.');
+  const kind=units===2?'Связку':'Букву';
+  if(missing.length){sampleLetter.value=missing[0];say(kind+' «'+letter+'» запомнила. Теперь покажи «'+missing[0]+'».')}
+  else say(kind+' «'+letter+'» запомнила ('+Math.min(old.length+1,core.MAX_VARIANTS)+' вариант). Твой текст готов к просмотру.');
  });
  apply.addEventListener('click',()=>{
   if(!tablet.open||!typed.value.trim())return;
