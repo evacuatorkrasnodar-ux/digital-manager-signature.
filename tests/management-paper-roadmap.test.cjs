@@ -32,5 +32,5 @@ test('Paper roadmap lists every feature once and preserves known progress keys',
 
 test('the current UI requests a fresh management script instead of cached roadmap',()=>{
  const html=readFileSync(join(root,'index.html'),'utf8');
- assert.match(html,/assets\/management\.js\?v=64/);
+ assert.match(html,/assets\/management\.js\?v=65/);
 });

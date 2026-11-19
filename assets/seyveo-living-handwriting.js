@@ -121,7 +121,7 @@
    total+core.variantsFor(alphabet[key],{units:[...key].length}).length,0);
   const pairs=keys.filter(key=>[...key].length===2).length;
   count.textContent=variants
-   ?variants+' образцов · '+keys.length+' букв и связок'+(pairs?' · '+pairs+' соединений':'')
+   ?'Образцы: '+variants+' · Буквы: '+(keys.length-pairs)+(pairs?' · Связки: '+pairs:'')
    :'Пока нет образцов';
  }
  function strokePreview(result){
@@ -171,7 +171,7 @@
   const missing=lettersMissing();
   const kind=units===2?'Связку':'Букву';
   if(missing.length){sampleLetter.value=missing[0];say(kind+' «'+letter+'» запомнила. Теперь покажи «'+missing[0]+'».')}
-  else say(kind+' «'+letter+'» запомнила ('+Math.min(old.length+1,core.MAX_VARIANTS)+' вариант). Твой текст готов к просмотру.');
+  else say(kind+' «'+letter+'» запомнила. Образцы: '+Math.min(old.length+1,core.MAX_VARIANTS)+'/3. Твой текст готов к просмотру.');
  });
  apply.addEventListener('click',()=>{
   if(!tablet.open||!typed.value.trim())return;

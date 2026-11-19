@@ -613,7 +613,7 @@ function drawData(){
   ['Знакомство',record.introduction?'Сохранено':'Нет'],
   ['Сведения о деле',record.businessMap?(record.businessMap.resources?.length||0)+' ресурсов · на устройстве':'Пока нет сведений'],
   ['Мои записи',String(countOf(record.notes))],
-  ['Мой почерк',handwritingSamples?String(handwritingSamples)+' образцов · только на устройстве':'Нет образцов'],
+  ['Мой почерк',handwritingSamples?'Образцы: '+handwritingSamples+' · только на устройстве':'Нет образцов'],
    ['История обращений',String(countOf(record.assistantChatHistory))+' локальных запросов'],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
   ['Мой мир · Контакты',String(countOf(record.privateContacts))+' контактов'],

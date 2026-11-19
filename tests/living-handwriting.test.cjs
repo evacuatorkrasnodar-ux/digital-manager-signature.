@@ -109,7 +109,7 @@ test('the existing Paper settings menu hosts Living Handwriting, and management 
  const index=readFileSync(join(root,'index.html'),'utf8');
  const management=readFileSync(join(root,'assets/management.js'),'utf8');
  const client=readFileSync(join(root,'assets/seyveo-living-handwriting.js'),'utf8');
- assert.match(index,/assets\/seyveo-living-handwriting\.js\?v=4/);
+ assert.match(index,/assets\/seyveo-living-handwriting\.js\?v=5/);
  assert.match(index,/assets\/seyveo-living-handwriting-core\.js\?v=3/);
  assert.match(client,/clearAction\.parentElement\.insertBefore\(entry,clearAction\)/);
  assert.match(client,/localStorage\.setItem\(KEY,raw\)/);
