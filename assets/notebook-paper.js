@@ -7,6 +7,7 @@ const tools=['pen','pencil','eraser','lasso','line','arrow','rect','circle','tri
 const SHAPE_TOOLS=new Set(['line','arrow','rect','circle','triangle','diamond']);
 const COLORS=['#171e29','#556174','#27609b','#c54a51','#258463','#7954a3','#f6f7fb','#8e99aa','#aa5c22','#e73b39','#ff7a27','#ffb525','#2fb35f','#0c9999','#14b4cd','#3b77df','#6650d2','#983cde','#bd397b'];
 const HEX_RE=/^#[0-9a-fA-F]{6}$/;
+const validInkColor=c=>typeof c==='string'&&HEX_RE.test(c);
 const validGradient=g=>Array.isArray(g)&&g.length===2&&g.every(c=>typeof c==='string'&&HEX_RE.test(c));
 const gradientPaint=(ctx,g)=>{
  const paint=ctx.createLinearGradient(0,0,W,0);
@@ -107,7 +108,7 @@ function normalize(obj){
  photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
- .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(stroke.tool==='eraser'?80:28,stroke.width)):undefined,...(stroke.pressureSensitive===true?{pressureSensitive:true}:{}),...(stroke.tool==='pencil'&&['graphite2','graphite3'].includes(stroke.brushProfile)?{brushProfile:stroke.brushProfile}:{}),points:stroke.points.slice(0,MAX_POINTS)
+ .map(stroke=>({tool:stroke.tool,color:validInkColor(stroke.color)?stroke.color.toLowerCase():undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(stroke.tool==='eraser'?80:28,stroke.width)):undefined,...(stroke.pressureSensitive===true?{pressureSensitive:true}:{}),...(stroke.tool==='pencil'&&['graphite2','graphite3'].includes(stroke.brushProfile)?{brushProfile:stroke.brushProfile}:{}),points:stroke.points.slice(0,MAX_POINTS)
  .filter(point=>Array.isArray(point)&&point.length>=2&&Number.isFinite(Number(point[0]))&&Number.isFinite(Number(point[1])))
  .map(point=>{
   const values=[inkCoord(point[0],W),inkCoord(point[1],height),clamp(point.length>2?point[2]:50,100)];
@@ -171,7 +172,7 @@ function graphiteSegment(ctx,s,from,to,control=null,dot=false){
   ?((from[3]??0)+(to[3]??0)+(control?.[3]??0)*(count===3?1:0))/count:0;
  const side=Math.max(0,Math.min(1,(angle-18)/55));
  const opacity=Math.max(.08,Math.min(.9,(.13+.72*force)*(1-.33*side)));
- const colored=COLORS.includes(s.color)?s.color:'#171e29';
+ const colored=validInkColor(s.color)?s.color:'#171e29';
  const gradient=validGradient(s.gradient);
  const trace=()=>{
   ctx.beginPath();
@@ -223,7 +224,7 @@ function paintStroke(ctx,s){
   const [x,y]=s.points[0],[u,v]=s.points[1],dx=u-x,dy=v-y;
   const weight=Number.isFinite(s.width)?Math.max(1,Math.min(28,s.width)):5;
   ctx.save();ctx.globalCompositeOperation='source-over';
-  ctx.strokeStyle=ctx.fillStyle=validGradient(s.gradient)?gradientPaint(ctx,s.gradient):COLORS.includes(s.color)?s.color:'#f6f7fb';
+  ctx.strokeStyle=ctx.fillStyle=validGradient(s.gradient)?gradientPaint(ctx,s.gradient):validInkColor(s.color)?s.color:'#f6f7fb';
   ctx.lineWidth=weight;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();
   if(s.tool==='line'||s.tool==='arrow'){
    ctx.moveTo(x,y);ctx.lineTo(u,v);
@@ -251,7 +252,7 @@ function paintStroke(ctx,s){
  }
  const erase=s.tool==='eraser';
  const base=Number.isFinite(s.width)?Math.max(1,Math.min(erase?80:28,s.width)):(erase?36:s.tool==='pencil'?3.5:4.8);
- const chosen=COLORS.includes(s.color)?s.color:null;
+ const chosen=validInkColor(s.color)?s.color:null;
  const width=base*(erase?1:1); // consistent width independent of frame frequency
  ctx.save();ctx.globalCompositeOperation=erase?'destination-out':'source-over';
  ctx.strokeStyle=ctx.fillStyle=erase?'#000':validGradient(s.gradient)?gradientPaint(ctx,s.gradient):chosen?(s.tool==='pencil'?chosen+'a3':chosen):'#171e29';
@@ -812,7 +813,7 @@ function open(note=null){
  liveTail=null;liveMid=null;
  data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;undoStack=[];redoStack=[];returnToList=true;
  closePatternMenu();closeColorMenu();
- activeColor=[...data.strokes].reverse().find(stroke=>COLORS.includes(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
+ activeColor=[...data.strokes].reverse().find(stroke=>validInkColor(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
  activeGradient=null;
  // Each instrument remembers its own tip size; the eraser never inherits a
  // thin handwriting nib. Existing notes restore their last saved sizes.
@@ -1040,6 +1041,15 @@ window.SEYVEO_PAPER=Object.freeze({
   data.pattern='blank';changed=true;render();report('Выбрана чистая бумага.');return true;
  },
  getBackground:()=>data.background,
+ getInkColor:()=>activeColor,
+ setInkColor:value=>{
+  const hex=String(value||'').trim().toLowerCase();
+  if(!validInkColor(hex))return false;
+  activeColor=hex;activeGradient=null;
+  syncColorMenu();
+  if(currentTool()==='eraser')selectTool('pen');
+  return true;
+ },
   undo:undoInk,redo:redoInk,
   canUndo:()=>undoStack.length>0,canRedo:()=>redoStack.length>0,
  setBackground:(background)=>{
