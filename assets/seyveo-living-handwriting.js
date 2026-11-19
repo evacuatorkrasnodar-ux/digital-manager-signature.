@@ -173,7 +173,7 @@
   if(remaining<1){say('На этом листе больше нет места для новых штрихов.');return}
   const geometry=paper.getEditGeometry();
   if(!geometry){say('Размер листа сейчас недоступен. Попробуй открыть его снова.');return}
-  let base=175;
+  let base=core.firstBaseline(geometry.height);
   for(const stroke of previous)for(const p of stroke.points||[])base=Math.max(base,p[1]+110);
   for(const item of paper.getTextObjects?.()||[])base=Math.max(base,item.y+item.size*2+65);
   const color=paper.getBackground?.()==='dark'?'#f6f7fb':'#171e29';

@@ -58,6 +58,8 @@ test('unknown letters are surfaced, not silently replaced with a fake handwritin
 });
 
 test('line wrapping and sheet bounds block oversized text before application',()=>{
+ assert.ok(core.firstBaseline(1188)>=350);
+ assert.ok(core.firstBaseline(2600)>=750);
  const glyphs={м:core.makeGlyph(letterM)};
  const wrapped=core.composeText('мммммммммммммммммммм',glyphs,{width:380,height:1800,size:60});
  assert.ok(wrapped.lines>1);
@@ -74,8 +76,8 @@ test('the existing Paper settings menu hosts Living Handwriting, and management 
  const index=readFileSync(join(root,'index.html'),'utf8');
  const management=readFileSync(join(root,'assets/management.js'),'utf8');
  const client=readFileSync(join(root,'assets/seyveo-living-handwriting.js'),'utf8');
- assert.match(index,/assets\/seyveo-living-handwriting\.js\?v=2/);
- assert.match(index,/assets\/seyveo-living-handwriting-core\.js\?v=1/);
+ assert.match(index,/assets\/seyveo-living-handwriting\.js\?v=3/);
+ assert.match(index,/assets\/seyveo-living-handwriting-core\.js\?v=2/);
  assert.match(client,/clearAction\.parentElement\.insertBefore\(entry,clearAction\)/);
  assert.match(client,/localStorage\.setItem\(KEY,raw\)/);
  assert.match(client,/localStorage\.removeItem\(KEY\)/);

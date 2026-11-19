@@ -12,6 +12,9 @@
  const round=n=>Math.round(n*1000)/1000;
  const bounded=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
  const supported=character=>typeof character==='string'&&[...character].length===1&&LETTER.test(character);
+ // Paper's top toolbar overlays the canvas. Give newly typeset ink comfortable
+ // breathing room on both 1188px legacy pages and taller full-screen pages.
+ const firstBaseline=height=>Math.max(350,Math.round((Number.isFinite(height)?height:1188)*.30));
 
  function makeGlyph(raw){
   if(!Array.isArray(raw)||!raw.length||raw.length>12)return null;
@@ -131,6 +134,6 @@
   return {strokes,missing:[...missing],overflow,lines,top,bottom};
  }
 
- return Object.freeze({WIDTH,HEIGHT,BASELINE,MAX_GLYPHS,supported,makeGlyph,validGlyph,
+ return Object.freeze({WIDTH,HEIGHT,BASELINE,MAX_GLYPHS,supported,firstBaseline,makeGlyph,validGlyph,
   cleanAlphabet,composeText});
 });
