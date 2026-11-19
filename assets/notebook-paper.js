@@ -3,7 +3,7 @@
 (function(){
 'use strict';
 const W=840,H=1188,MAX_PAGE_HEIGHT=2600,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000,MAX_PHOTO=155000;
-const tools=['pen','pencil','eraser','line','arrow','rect','circle','triangle','diamond'],patterns=['blank','lines','dots','grid'];
+const tools=['pen','pencil','eraser','lasso','line','arrow','rect','circle','triangle','diamond'],patterns=['blank','lines','dots','grid'];
 const SHAPE_TOOLS=new Set(['line','arrow','rect','circle','triangle','diamond']);
 const COLORS=['#171e29','#556174','#27609b','#c54a51','#258463','#7954a3','#f6f7fb','#8e99aa','#aa5c22','#e73b39','#ff7a27','#ffb525','#2fb35f','#0c9999','#14b4cd','#3b77df','#6650d2','#983cde','#bd397b'];
 const HEX_RE=/^#[0-9a-fA-F]{6}$/;
@@ -19,6 +19,7 @@ if(!dialog||!canvas||!canvas.getContext('2d'))return;
 const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
 let data={pattern:'blank',background:'dark',height:H,strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
+let undoStack=[],lastInkMotionAt=0;
 // Live strokes paint incrementally; old strokes are not recomputed per pointer event.
 let liveTail=null,liveMid=null,shapeFrame=0;
 const shapeSnapshot=document.createElement('canvas');
@@ -234,6 +235,33 @@ function currentTool(){return document.querySelector('[data-paper-tool][aria-pre
 function selectTool(name){if(!tools.includes(name))return;
  document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.paperTool===name)));
 }
+function snapFreehandShape(stroke){
+ if(stroke.tool!=='pen'||stroke.points.length<9)return null;
+ const pts=stroke.points;
+ let x0=W,y0=data.height||H,x1=0,y1=0;
+ for(const p of pts){x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1])}
+ const w=x1-x0,h=y1-y0,diag=Math.hypot(w,h);
+ if(diag<54)return null;
+ const first=pts[0],last=pts[pts.length-1];
+ const closed=Math.hypot(last[0]-first[0],last[1]-first[1])<diag*.18;
+ let shape=null,ends=null;
+ if(closed&&w>40&&h>40){
+  const cx=(x0+x1)/2,cy=(y0+y1)/2;
+  const radius=Math.min(w,h)/2;
+  const circleError=pts.reduce((total,p)=>total+Math.abs(Math.hypot(p[0]-cx,p[1]-cy)-radius),0)/pts.length;
+  const edgeDistance=pts.filter(p=>Math.min(Math.abs(p[0]-x0),Math.abs(p[0]-x1),Math.abs(p[1]-y0),Math.abs(p[1]-y1))<Math.min(w,h)*.07).length/pts.length;
+  if(edgeDistance>.87)shape='rect';
+  else if(Math.abs(w-h)/Math.max(w,h)<.28&&circleError<radius*.28)shape='circle';
+  if(shape)ends=shape==='circle'?[[x0,cy,50,0],[x1,cy,50,0]]:[[x0,y0,50,0],[x1,y1,50,0]];
+ }else if(!closed){
+  const dx=last[0]-first[0],dy=last[1]-first[1],length=Math.hypot(dx,dy);
+  if(length>55){
+   const error=pts.reduce((total,p)=>total+Math.abs((p[0]-first[0])*dy-(p[1]-first[1])*dx)/length,0)/pts.length;
+   if(error<Math.max(5,length*.035)){shape='line';ends=[first,last]}
+  }
+ }
+ return shape?{...stroke,tool:shape,pressureSensitive:false,points:ends}:null;
+}
 function point(e){
  const box=canvas.getBoundingClientRect();
  const force=e.pointerType==='pen'&&Number.isFinite(e.pressure)?e.pressure:.5;
@@ -307,6 +335,7 @@ function queueShapePreview(){
  shapeFrame=requestAnimationFrame(redrawShapePreview);
 }
 function down(e){
+ if(currentTool()==='lasso')return;
  if(pending||pointerID!==null||e.button!==0||e.isPrimary===false)return;
  if(e.pointerType==='pen')penTime=Date.now()+2800;
  // Large touch contacts are commonly the side of the hand resting on an iPad
@@ -316,6 +345,7 @@ function down(e){
  e.preventDefault();pointerID=e.pointerId;
  pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,pressureSensitive:e.pointerType==='pen',points:[point(e)]};
  liveTail=pending.points[0];liveMid=null;
+ lastInkMotionAt=Date.now();
  if(SHAPE_TOOLS.has(pending.tool)&&shapeSnapshotCtx){
   if(shapeSnapshot.width!==canvas.width)shapeSnapshot.width=canvas.width;
   if(shapeSnapshot.height!==canvas.height)shapeSnapshot.height=canvas.height;
@@ -329,8 +359,10 @@ function move(e){
  if(e.pointerType==='pen')penTime=Date.now()+2800;
  if(!pending||e.pointerId!==pointerID)return;
  e.preventDefault();
+ const nextPoint=point(e);
+ if(liveTail&&Math.hypot(nextPoint[0]-liveTail[0],nextPoint[1]-liveTail[1])>2)lastInkMotionAt=Date.now();
  if(SHAPE_TOOLS.has(pending.tool)){
-  pending.points[1]=point(e);queueShapePreview();return;
+  pending.points[1]=nextPoint;queueShapePreview();return;
  }
  const batches=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[e];
  const events=batches&&batches.length?batches:[e];
@@ -353,10 +385,12 @@ function finishStroke(e,addEndpoint=true){
   if(addEndpoint&&e)addInkPoint(point(e),true);
   if(liveMid&&liveTail)drawLivePart('end',liveMid,liveTail);
  }
- data.strokes.push(pending);
+ const snapped=addEndpoint&&pending.tool==='pen'&&Date.now()-lastInkMotionAt>=520?snapFreehandShape(pending):null;
+ data.strokes.push(snapped||pending);
+ undoStack.push({type:'add',count:1});
  pending=null;pointerID=null;liveTail=null;liveMid=null;changed=true;
  dialog.classList.remove('sv-paper-inking');
- render(false); // only refresh controls, not the full history on every stroke
+ render(Boolean(snapped)); // Snap redraws the one finished freehand line/figure.
 }
 canvas.addEventListener('pointerdown',down);
 canvas.addEventListener('pointermove',move);
@@ -516,18 +550,25 @@ document.addEventListener('pointerdown',event=>{
  if(!colorMenu.hidden&&!event.target.closest('.paper-color-control'))closeColorMenu();
 });
 
-$('notePaperUndo').addEventListener('click',()=>{if(!data.strokes.length)return;data.strokes.pop();changed=true;render();report('Последний штрих отменён.')});
+$('notePaperUndo').addEventListener('click',()=>{
+ if(!data.strokes.length)return;
+ const action=undoStack.pop();
+ if(action?.type==='replace')data.strokes=action.previous;
+ else if(action?.type==='add')data.strokes.splice(-action.count);
+ else data.strokes.pop();
+ changed=true;render();report('Последнее действие отменено.');
+});
 $('notePaperDuplicate')?.addEventListener('click',()=>{
  if(!data.strokes.length||data.strokes.length>=MAX_STROKES)return;
  const last=data.strokes[data.strokes.length-1];
  const copy={...last,points:last.points.map(([x,y,p,t])=>[clamp(x+25,W),clamp(y+25,data.height||H),p,t||0])};
- data.strokes.push(copy);changed=true;render();report('Последний штрих дублирован.');
+ data.strokes.push(copy);undoStack.push({type:'add',count:1});changed=true;render();report('Последний штрих дублирован.');
 });
 function open(note=null){
  dialog.classList.remove('sv-paper-inking');
  if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
  liveTail=null;liveMid=null;
- data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
+ data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;undoStack=[];returnToList=true;
  closePatternMenu();closeColorMenu();
  activeColor=[...data.strokes].reverse().find(stroke=>COLORS.includes(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
  activeGradient=null;
@@ -649,6 +690,32 @@ window.SEYVEO_PAPER=Object.freeze({
  // a second editor or silently saving a Notebook record.
  hasChatContent:()=>Boolean(data.strokes.length||data.photo),
  hasChatChanges:()=>changed,
+ getEditGeometry:()=>({width:W,height:data.height||H}),
+ getEditableStrokes:()=>data.strokes.map(s=>({...s,points:s.points.map(p=>p.slice())})),
+ previewStrokeEdit:next=>{
+  if(!pending&&Array.isArray(next))paint(canvas,{...data,strokes:next});
+ },
+ isPenNearby:()=>Date.now()<penTime,
+ refreshInkResolution:scale=>{
+  if(!dialog.open||pending||!sheet)return;
+  const width=Math.max(1,sheet.clientWidth),height=Math.max(1,sheet.clientHeight);
+  const scaleFactor=Math.min(3,Math.max(1,(window.devicePixelRatio||1)*Math.min(4,Math.max(1,scale||1))),Math.sqrt(9000000/(width*height)));
+  const bw=Math.round(width*scaleFactor),bh=Math.round(height*scaleFactor);
+  if(canvas.width!==bw||canvas.height!==bh){canvas.width=bw;canvas.height=bh;paint(canvas,data)}
+ },
+ cancelActiveStroke:()=>{
+  if(!pending)return;
+  if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
+  pending=null;pointerID=null;liveTail=null;liveMid=null;
+  dialog.classList.remove('sv-paper-inking');paint(canvas,data);
+ },
+ applyStrokeEdit:next=>{
+  if(pending||!Array.isArray(next)||next.length>MAX_STROKES)return false;
+  const before=data.strokes.map(s=>({...s,points:s.points.map(p=>p.slice())}));
+  data.strokes=normalize({...data,strokes:next}).strokes;
+  undoStack.push({type:'replace',previous:before});
+  changed=true;render();return true;
+ },
  getInkStrokes:()=>data.strokes.filter(s=>(s.tool==='pen'||s.tool==='pencil')&&s.points.length)
   .map(s=>s.points.map(p=>[p[0],p[1],p[2]])),
  exportInkOcrPng:()=>{
@@ -696,7 +763,7 @@ window.SEYVEO_PAPER=Object.freeze({
   const hasContent=Boolean(data.strokes.length||data.photo);
   if(hasContent&&!window.confirm('Очистить весь лист? Рисунок и фото будут удалены. Это действие нельзя отменить.'))return false;
   if(!hasContent&&data.pattern==='blank'){report('Лист уже чистый.');return true}
-  data.strokes=[];data.photo='';data.pattern='blank';
+  data.strokes=[];data.photo='';data.pattern='blank';undoStack=[];
   changed=true;render();
   report('Лист очищен.');return true;
  },
