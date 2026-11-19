@@ -704,6 +704,7 @@ function updateGradientEditor(){
 }
 function syncColorMenu(){
  colorDot.style.setProperty('--sv-active-ink',activeGradient?'linear-gradient(115deg,'+activeGradient[0]+','+activeGradient[1]+')':'conic-gradient(#e73b39,#ffb525,#2fb35f,#14b4cd,#6650d2,#bd397b,#e73b39)');
+ colorDot.style.setProperty('--sv-selected-ink',activeGradient?'linear-gradient(115deg,'+activeGradient[0]+','+activeGradient[1]+')':activeColor);
  colorChoices.forEach(button=>button.setAttribute('aria-pressed',String(!activeGradient&&button.dataset.paperColor===activeColor)));
  gradientPresets.forEach(button=>{
   const colors=button.dataset.paperGradient.split(',');
