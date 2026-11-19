@@ -45,6 +45,7 @@ test('Apple-style header reuses real note actions and keeps four dock icons',()=
  assert.match(editorStyles,/\.sv-note-nav-brand\{\s*visibility:hidden!important;/);
  assert.match(editorStyles,/\.sv-note-nav-actions :is\(#svNoteUndo,#svNoteShare,#svNoteMore,#svNoteDone\)/);
  assert.match(editorStyles,/\.sv-note-nav-actions #svNoteDone\{\s*background:#c69c09!important;color:#fff!important;/);
+ assert.match(editorStyles,/html\[data-theme="light"\] body dialog#noteReviewDialog\.note-review-dialog\[open\]\s*\.sv-note-nav-actions > #svNoteDone\{\s*background:#c69c09!important;\s*color:#fff!important;/);
  assert.match(html,/\$\('svNoteDone'\)\.addEventListener\('click',closeNoteReviewSafely\)/);
  assert.match(viewportScript,/getElementById\('svNoteUndo'\)[\s\S]*?execCommand\('undo'\)/);
  assert.match(viewportScript,/getElementById\('svNoteShare'\)[\s\S]*?navigator\.share\(\{title,text\}\)/);

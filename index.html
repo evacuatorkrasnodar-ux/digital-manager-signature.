@@ -2176,6 +2176,14 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
 #noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions #svNoteDone{
  background:#c69c09!important;color:#fff!important;
 }
+/* The shared header stylesheet loads later; Done is intentionally gold. */
+html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
+ .sv-note-nav-actions > #svNoteDone{
+ background:#c69c09!important;
+ color:#fff!important;
+ border:0!important;
+ box-shadow:none!important;
+}
 #noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions :is(#svNoteUndo,#svNoteShare,#svNoteMore,#svNoteDone):active{
  opacity:.72!important;
 }
