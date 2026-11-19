@@ -9,7 +9,7 @@ const layout=readFileSync(join(root,'assets/seyveo-notebook-list-v3.css'),'utf8'
 const retired=readFileSync(join(root,'assets/seyveo-notebook-page.css'),'utf8');
 
 test('the Notebook list has one fresh stylesheet and independent row classes',()=>{
- assert.match(html,/assets\/seyveo-notebook-list-v3\.css\?v=1/);
+ assert.match(html,/assets\/seyveo-notebook-list-v3\.css\?v=2/);
  assert.match(html,/assets\/seyveo-notebook-page\.css\?v=15/);
  assert.match(html,/card\.className='sv-nb3-row'/);
  assert.match(html,/open\.className='sv-nb3-open'/);

@@ -187,6 +187,8 @@ html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesDialog #notesLis
  flex:0 0 42px!important;
  place-items:center!important;
  width:42px!important;
+ min-width:42px!important;
+ max-width:42px!important;
  height:44px!important;
  margin:0!important;
  padding:0!important;
@@ -195,13 +197,21 @@ html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesDialog #notesLis
  background:transparent!important;
  box-shadow:none!important;
  color:var(--text)!important;
+ opacity:1!important;
+ visibility:visible!important;
+ pointer-events:auto!important;
 }
 #svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb3-menu-trigger svg{
  display:block!important;
- width:17px!important;
- height:17px!important;
+ width:21px!important;
+ height:21px!important;
  fill:currentColor!important;
  stroke:none!important;
+ opacity:1!important;
+}
+#svWorkShell[data-active="notes"] #notesDialog #notesList .sv-nb3-menu-trigger svg circle{
+ fill:currentColor!important;
+ opacity:1!important;
 }
 /* Keep the original three-dot menu on iPhone as an accessible fallback.
    Horizontal swiping is a shortcut, never the sole way to delete a note. */
