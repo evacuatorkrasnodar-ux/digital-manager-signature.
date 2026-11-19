@@ -18,7 +18,7 @@
  overlay.className='sv-paper-recognition';overlay.id='svPaperRecognition';
  overlay.setAttribute('aria-labelledby','svPaperRecognitionTitle');
  overlay.innerHTML=`
-  <div class="sv-pr-head"><h2 id="svPaperRecognitionTitle">Рукопись → текст</h2><button type="button" data-pr-close aria-label="Закрыть">×</button></div>
+  <div class="sv-pr-head"><h2 id="svPaperRecognitionTitle">Рукопись → текст</h2><button type="button" data-pr-close aria-label="Закрыть распознавание">Готово</button></div>
   <p class="sv-pr-help">Распознаём только по вашему нажатию. Если встроенный движок недоступен, загрузим языковые модели. Обработка рисунка — на вашем устройстве.</p>
   <div class="sv-pr-status" role="status" aria-live="polite">Нарисуйте несколько слов, затем нажмите «Распознать».</div>
   <textarea class="sv-pr-text" aria-label="Распознанный текст, можно исправить" placeholder="Здесь появится текст. Его можно исправить вручную." spellcheck="true" rows="7"></textarea>
@@ -31,17 +31,18 @@
  const text=overlay.querySelector('textarea');
  const status=overlay.querySelector('.sv-pr-status');
  const chatMode=new URLSearchParams(location.search).get('seyveo-draw')==='chat';
- if(chatMode)saveButton.hidden=true;
- let busy=false,loader=null;
+ if(chatMode){saveButton.hidden=true;overlay.classList.add('sv-pr-chat')}
+ let busy=false,loader=null,inkAvailable=false,savedText='';
  const message=value=>{status.textContent=value};
  const sync=()=>{
   const hasText=Boolean(text.value.trim());
-  runButton.disabled=busy;copyButton.disabled=busy||!hasText;
-  saveButton.disabled=busy||!hasText;
+  runButton.disabled=busy||!inkAvailable;copyButton.disabled=busy||!hasText;
+  saveButton.disabled=busy||!hasText||text.value.trim().slice(0,8000)===savedText;
  };
  function show(){
   if(!tablet.open||busy)return;
   const strokes=paper.getInkStrokes();
+  inkAvailable=Boolean(strokes.length);savedText='';
   if(!strokes.length){
    message('На листе пока нет рукописных штрихов.');
   }else message('Готово к распознаванию. Ваш рисунок останется без изменений.');
@@ -140,7 +141,8 @@
   const value=text.value.trim().slice(0,8000);
   const newNote={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:value,createdAt:Date.now()};
   if(!api.putNotes([newNote,...list])){message('Недостаточно памяти для новой заметки.');return}
+  savedText=value;
   message('Создана отдельная текстовая заметка. Рисунок остался без изменений.');
-  saveButton.disabled=true;
+  sync();
  });
 })();
