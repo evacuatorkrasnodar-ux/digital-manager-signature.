@@ -464,6 +464,53 @@
   return corrected;
  }
 
+ // A window or a door is normally drawn after the five outline strokes.
+ // Search only the most recent ink, and only accept extra strokes that lie
+ // inside the walls. That prevents an older house elsewhere on the page from
+ // stealing the suggestion for a new, unrelated sketch.
+ function findHouseOutline(strokes,indices){
+  if(indices.length<5)return null;
+  const last=indices.slice(-5);
+  if(fitHouse(last.map(index=>strokes[index])))return last;
+  const allRecent=indices.slice(-9);
+  for(let length=6;length<=allRecent.length;length++){
+   const recent=allRecent.slice(-length);
+   const result=searchWithin(recent);
+   if(result)return result;
+  }
+  return null;
+  function searchWithin(recent){
+  const choose=[];
+  function search(start){
+   if(choose.length===5){
+    const corrected=fitHouse(choose.map(index=>strokes[index]));
+    if(!corrected)return null;
+    const endpoints=corrected.flatMap(stroke=>[stroke.points[0],stroke.points.at(-1)]);
+    const left=Math.min(...endpoints.map(p=>p[0])),right=Math.max(...endpoints.map(p=>p[0]));
+    const ys=endpoints.map(p=>p[1]).sort((a,b)=>a-b);
+    const roofY=(ys[2]+ys[3]+ys[4]+ys[5])/4,baseY=(ys[6]+ys[7]+ys[8]+ys[9])/4;
+    const margin=Math.max(8,Math.min(15,(right-left)*.06));
+    const selected=new Set(choose);
+    for(const index of recent){
+     if(selected.has(index))continue;
+     for(const p of strokes[index].points){
+      if(p[0]<left-margin||p[0]>right+margin||p[1]<roofY-margin||p[1]>baseY+margin)return null;
+     }
+    }
+    return choose.slice();
+   }
+   for(let i=start;i<=recent.length-(5-choose.length);i++){
+    choose.push(recent[i]);
+    const result=search(i+1);
+    choose.pop();
+    if(result)return result;
+   }
+   return null;
+  }
+   return search(0);
+  }
+ }
+
  const action=document.createElement('button');
  action.type='button';action.id='notePaperSmoothInk';action.className='sv-newdock-menu-action';
  action.setAttribute('aria-label','Сэйви: сделать рисунок и почерк аккуратнее');
@@ -540,10 +587,7 @@
   proposal=paper.getEditableStrokes(indices);
   let changed=0,guess=null;
   houseIndices=null;
-  if(indices.length>=5){
-   const candidate=indices.slice(-5);
-   if(fitHouse(candidate.map(index=>original[index])))houseIndices=candidate;
-  }
+  if(indices.length>=5)houseIndices=findHouseOutline(original,indices);
   const lastIndex=indices.at(-1);
   for(const index of indices){
    const stroke=proposal[index];

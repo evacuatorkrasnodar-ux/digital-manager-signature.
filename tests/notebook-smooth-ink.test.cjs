@@ -66,6 +66,30 @@ test('Sayvi recognizes a whole five-stroke house and previews straight walls and
   'the eraser is never interpreted as part of the drawing');
 });
 
+test('a house remains recognisable after adding a window and a door',()=>{
+ const find=shapeFitter('findHouseOutline');
+ const line=(a,b)=>({tool:'pen',color:'#171e29',points:Array.from({length:15},(_,i)=>[
+  a[0]+(b[0]-a[0])*i/14,a[1]+(b[1]-a[1])*i/14+Math.sin(Math.PI*i/14)*2,55])});
+ const outline=[line([300,135],[195,238]),line([300,135],[405,238]),
+  line([195,238],[195,420]),line([405,238],[405,420]),line([195,420],[405,420])];
+ const window={tool:'pencil',color:'#27609b',points:[
+  [220,270,30],[252,270,31],[252,304,32],[220,304,33],[220,270,34]]};
+ const door={tool:'pen',color:'#aa5c22',points:[
+  [320,420,42],[320,370,44],[365,370,46],[365,420,48],[365,420,48]]};
+ const withDetails=[...outline,window,door];
+ assert.equal(JSON.stringify(find(withDetails,[0,1,2,3,4,5,6])),JSON.stringify([0,1,2,3,4]),
+  'the two interior details are not mistaken for the roof or walls');
+ const older=line([20,20],[120,70]);
+ const withOldInk=[older,...withDetails];
+ assert.equal(JSON.stringify(find(withOldInk,[0,1,2,3,4,5,6,7])),JSON.stringify([1,2,3,4,5]),
+  'an earlier unrelated drawing does not prevent recognition');
+ const unrelated=line([520,280],[620,340]);
+ assert.equal(find([...withDetails,unrelated],[0,1,2,3,4,5,6,7]),null,
+  'an exterior new stroke should not trigger the old house');
+ assert.equal(find([...outline.slice(0,4),window,door],[0,1,2,3,4,5]),null,
+  'windows and doors cannot complete a missing wall or floor');
+});
+
 test('Sayvi recognises a one-stroke Cyrillic С and makes the open arc smoother',()=>{
  const fit=shapeFitter('fitLetterC'),count=75,ideal=[],wobbly=[];
  for(let i=0;i<count;i++){
@@ -438,6 +462,8 @@ test('live controls compare without committing, Cancel restores and Apply commit
   [[375,235],[375,390]],[[185,390],[375,390]]].map(([a,b])=>({tool:'pen',color:'#171e29',
    points:Array.from({length:20},(_,i)=>[a[0]+(b[0]-a[0])*i/19,
     a[1]+(b[1]-a[1])*i/19+Math.sin(Math.PI*i/19)*3,55])}));
+ source.push({tool:'pen',color:'#27609b',points:[[215,260,60],[245,260,60],[245,290,60],[215,290,60],[215,260,60]]},
+  {tool:'pen',color:'#aa5c22',points:[[275,390,60],[275,330,60],[315,330,60],[315,390,60],[315,390,60]]});
  const houseOriginal=structuredClone(source);
  action.click();
  assert.equal(hint.textContent,'Дом?','a complete house earns a compact suggestion');
@@ -447,8 +473,9 @@ test('live controls compare without committing, Cancel restores and Apply commit
  assert.notDeepEqual(previews.at(-1),houseOriginal,'the house correction is visible before approval');
  assert.deepEqual(source,houseOriginal,'the preview is not an edit');
  apply.click();
- assert.equal(applied.length,4,'Apply commits the five-stroke house in one edit');
- assert.equal(source.length,5,'the original number of strokes stays intact');
+ assert.equal(applied.length,4,'Apply commits the house with its interior details in one edit');
+ assert.equal(source.length,7,'the original number of strokes stays intact');
+ assert.deepEqual(source.slice(5),houseOriginal.slice(5),'windows and doors are preserved exactly');
 });
 
 test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',()=>{
@@ -492,5 +519,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=2/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=10/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=11/);
 });
