@@ -17,23 +17,24 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock >
  border-radius:50%!important;
  color:#DADADD!important;
 }
-/* The Graphite press mirrors Pearl's recessed geometry, using inverse light.
-   Keep the approved dark capsule, five-tool layout and icon sizes intact. */
+/* A selected tool changes only its glyph, never draws a second circular plate. */
 html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-top #svPaperNewDock > button.sv-newdock-button{
- transition:background-color .16s ease,box-shadow .16s ease!important;
+ transition:color .16s ease,opacity .16s ease!important;
 }
 html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]{
- background:rgba(225,229,240,.12)!important;
+ background:transparent!important;
  color:#F4F4F6!important;
- box-shadow:inset 0 1.5px 2px rgba(0,0,0,.45),inset 0 -1px .75px rgba(255,255,255,.11)!important;
+ box-shadow:none!important;
 }
 html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not([data-sv-active="true"]):active{
- background:rgba(225,229,240,.08)!important;
- box-shadow:inset 0 1.5px 2px rgba(0,0,0,.38),inset 0 -1px .75px rgba(255,255,255,.08)!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ opacity:.78!important;
 }
 html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]:active{
- background:rgba(225,229,240,.095)!important;
- box-shadow:inset 0 2px 3px rgba(0,0,0,.52),inset 0 -1px .75px rgba(255,255,255,.08)!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ opacity:.78!important;
 }
 html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button:disabled{
  color:#929298!important;

@@ -202,11 +202,18 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-pape
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]{
  color:#171b21!important;
- background:rgba(106,123,138,.12)!important;
- box-shadow:inset 0 1.5px 2px rgba(31,42,58,.11),inset 0 -1px .75px rgba(255,255,255,.34)!important;
+ background:transparent!important;
+ box-shadow:none!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not([data-sv-active="true"]):active{
- background:rgba(106,123,138,.08)!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ opacity:.78!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]:active{
+ background:transparent!important;
+ box-shadow:none!important;
+ opacity:.78!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > button.sv-newdock-button:disabled{
  color:#a0a6b0!important;
