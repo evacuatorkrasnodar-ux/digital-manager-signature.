@@ -19,7 +19,11 @@
  const entry=document.createElement('button');
  entry.type='button';entry.id='notePaperMyHandwriting';entry.className='sv-newdock-menu-action';
  entry.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 18c2-2.6 3.6-8.7 5.5-8.7 2 0-.1 7.6 2.2 7.6 1.9 0 2.4-6.3 4.7-6.3 2.5 0-.5 5.7 1.4 5.7 1 0 2.3-.9 3.1-2"/><path d="M16.2 5.2 18.4 3l2.3 2.3-2.2 2.2-3.6 1.1z"/></svg><span>Мой почерк</span>';
- menu.insertBefore(entry,menu.querySelector('.sv-newdock-clear'));
+ // Later Apple-style menu polish moves actions into a nested pane.
+ // Insert beside Clear in its *actual* parent, never against a stale menu root.
+ const clearAction=menu.querySelector('.sv-newdock-clear');
+ if(clearAction?.parentElement)clearAction.parentElement.insertBefore(entry,clearAction);
+ else menu.append(entry);
 
  const modal=document.createElement('dialog');
  modal.id='svLivingHandwriting';modal.className='sv-lh-dialog';
