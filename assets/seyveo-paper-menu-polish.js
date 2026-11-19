@@ -13,8 +13,8 @@
   heading.textContent='Настройки';
   menu.prepend(heading);
   const labels=[...menu.querySelectorAll('.sv-newdock-menu-title')];
-  if(labels[0])labels[0].textContent='Фон листа';
-  if(labels[1])labels[1].textContent='Инструмент';
+  if(labels[0])labels[0].textContent='Фон';
+  if(labels[1])labels[1].textContent='Перо';
   if(labels[2])labels[2].textContent='Действия';
   // Move real nodes, keeping every registered event listener and undo action.
   for(const id of ['notePaperAddPhoto','notePaperRemovePhoto',
@@ -139,7 +139,7 @@
   const inks=menu.querySelector('.sv-newdock-ink-choices');
   const actions=[...menu.children].filter(node=>node.tagName==='BUTTON');
   buildSegments(menu,[
-   {key:'drawing',label:'Лист и перо',nodes:[labels[0],backgrounds,labels[1],inks]},
+   {key:'drawing',label:'Основное',nodes:[labels[0],backgrounds,labels[1],inks]},
    {key:'actions',label:'Действия',nodes:[labels[2],...actions]}
   ],'drawing');
  }
