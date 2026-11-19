@@ -122,6 +122,7 @@
   const solid=colorMenu.querySelector('.sv-gradient-solid-grid');
   const presets=colorMenu.querySelector('.sv-gradient-presets');
   const custom=colorMenu.querySelector('details.sv-gradient-custom');
+  if(custom)custom.addEventListener('toggle',()=>colorMenu.classList.toggle('sv-gradient-editing',custom.open));
   const view=buildSegments(colorMenu,[
    {key:'colors',label:'Цвета',nodes:[captions[0],solid]},
    {key:'gradients',label:'Градиенты',nodes:[captions[1],presets,custom]}
