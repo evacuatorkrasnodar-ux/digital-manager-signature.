@@ -24,7 +24,7 @@
 
  const fingers=new Map();let pinch=null,skipTouchUntil=0;
  const zoom={scale:1,x:0,y:0};
- let mode=false,selection=null,trace=null,drag=null,frame=0,badgeTimer=0;
+ let mode=false,lastTool='pen',selection=null,trace=null,drag=null,frame=0,badgeTimer=0;
  const range=(v,min,max)=>Math.max(min,Math.min(max,v));
  const geometry=()=>paper.getEditGeometry();
  const stageCenter=()=>{const b=stage.getBoundingClientRect();return {x:b.left+b.width/2,y:b.top+b.height/2,width:b.width,height:b.height}};
@@ -69,9 +69,30 @@
   }
   return inside;
  }
+ function strokePath(stroke){
+  const pts=stroke.points||[];
+  if(pts.length<2)return pts;
+  const [x,y]=pts[0],[u,v]=pts[1],dx=u-x,dy=v-y;
+  let anchors=null;
+  if(stroke.tool==='circle'){
+   const cx=(x+u)/2,cy=(y+v)/2,r=Math.hypot(dx,dy)/2;
+   return Array.from({length:65},(_,i)=>[cx+Math.cos(i*Math.PI/32)*r,cy+Math.sin(i*Math.PI/32)*r]);
+  }
+  if(stroke.tool==='rect')anchors=[[x,y],[u,y],[u,v],[x,v],[x,y]];
+  else if(stroke.tool==='triangle')anchors=[[(x+u)/2,Math.min(y,v)],[Math.max(x,u),Math.max(y,v)],[Math.min(x,u),Math.max(y,v)],[(x+u)/2,Math.min(y,v)]];
+  else if(stroke.tool==='diamond')anchors=[[(x+u)/2,Math.min(y,v)],[Math.max(x,u),(y+v)/2],[(x+u)/2,Math.max(y,v)],[Math.min(x,u),(y+v)/2],[(x+u)/2,Math.min(y,v)]];
+  else if(stroke.tool==='line'||stroke.tool==='arrow')anchors=[[x,y],[u,v]];
+  if(!anchors)return pts;
+  const sampled=[];
+  for(let i=1;i<anchors.length;i++){
+   const a=anchors[i-1],b=anchors[i],steps=Math.max(1,Math.ceil(distance(a,b)/12));
+   for(let j=0;j<steps;j++)sampled.push([a[0]+(b[0]-a[0])*j/steps,a[1]+(b[1]-a[1])*j/steps]);
+  }
+  sampled.push(anchors[anchors.length-1]);return sampled;
+ }
  function bounds(indices,strokes){
   let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
-  for(const id of indices)for(const p of strokes[id]?.points||[]){
+  for(const id of indices)for(const p of strokePath(strokes[id]||{})){
    x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1]);
   }
   return Number.isFinite(x0)?{x0,y0,x1,y1}:null;
@@ -91,7 +112,7 @@
    for(const p of trace.slice(1))ctx.lineTo(p[0],p[1]);ctx.stroke();
   }
   if(selection){
-   const box=bounds(selection.indices,paper.getEditableStrokes());
+   const box=bounds(selection.indices,paper.getEditableStrokes([]));
    if(box){
     const dx=drag?.delta?.[0]||0,dy=drag?.delta?.[1]||0,pad=11;
     ctx.beginPath();ctx.rect(box.x0-pad+dx,box.y0-pad+dy,box.x1-box.x0+2*pad,box.y1-box.y0+2*pad);
@@ -102,17 +123,18 @@
  function clearSelection(){selection=null;trace=null;drag=null;actionBar.hidden=true;drawOverlay()}
  function chooseFromTrace(){
   if(!trace||trace.length<8){trace=null;drawOverlay();return}
-  const snapshot=paper.getEditableStrokes(),chosen=[];
+  const snapshot=paper.getEditableStrokes([]),chosen=[];
   snapshot.forEach((stroke,index)=>{
    if(stroke.tool==='eraser')return;
-   if(stroke.points.some(p=>pointInside(p,trace)))chosen.push(index);
+   const path=strokePath(stroke),stride=Math.max(1,Math.ceil(path.length/130));
+   for(let i=0;i<path.length;i+=stride){if(pointInside(path[i],trace)){chosen.push(index);break}}
   });
   selection=chosen.length?{indices:chosen}:null;trace=null;
   actionBar.hidden=!selection;drawOverlay();
  }
  function moveSelection(dx,dy){
   if(!selection)return;
-  const g=geometry(),strokes=paper.getEditableStrokes();
+  const g=geometry(),strokes=paper.getEditableStrokes(selection.indices);
   for(const index of selection.indices){
    strokes[index].points=strokes[index].points.map(p=>[range(p[0]+dx,0,g.width),range(p[1]+dy,0,g.height),...p.slice(2)]);
   }
@@ -120,7 +142,7 @@
  }
  function previewMove(){
   if(!selection||!drag||drag.lasso)return;
-  const [dx,dy]=drag.delta,g=geometry(),strokes=paper.getEditableStrokes();
+  const [dx,dy]=drag.delta,g=geometry(),strokes=paper.getEditableStrokes(selection.indices);
   for(const index of selection.indices){
    strokes[index].points=strokes[index].points.map(p=>[range(p[0]+dx,0,g.width),range(p[1]+dy,0,g.height),...p.slice(2)]);
   }
@@ -128,7 +150,7 @@
  }
  function scaleSelection(factor){
   if(!selection)return;
-  const g=geometry(),strokes=paper.getEditableStrokes();
+  const g=geometry(),strokes=paper.getEditableStrokes(selection.indices);
   const box=bounds(selection.indices,strokes);if(!box)return;
   const cx=(box.x0+box.x1)/2,cy=(box.y0+box.y1)/2;
   for(const index of selection.indices){
@@ -144,7 +166,7 @@
   if(key==='done'){clearSelection();return}
   if(key==='smaller'||key==='bigger'){scaleSelection(key==='bigger'?1.2:1/1.2);return}
   if(key==='copy'){
-   const strokes=paper.getEditableStrokes(),copies=selection.indices.map(i=>strokes[i]);
+   const strokes=paper.getEditableStrokes([]),copies=selection.indices.map(i=>strokes[i]);
    if(strokes.length+copies.length>250)return;
    const first=strokes.length,g=geometry();
    copies.forEach(s=>strokes.push({...s,points:s.points.map(p=>[range(p[0]+18,0,g.width),range(p[1]+18,0,g.height),...p.slice(2)])}));
@@ -155,9 +177,13 @@
  });
 
  function setLasso(enabled){
+  if(enabled){
+   const active=dialog.querySelector('[data-paper-tool][aria-pressed="true"]')?.dataset.paperTool;
+   if(active&&active!=='lasso')lastTool=active;
+  }
   mode=enabled;
   for(const button of dialog.querySelectorAll('[data-paper-tool]')){
-   button.setAttribute('aria-pressed',String(button.dataset.paperTool===(enabled?'lasso':'pen')));
+   button.setAttribute('aria-pressed',String(button.dataset.paperTool===(enabled?'lasso':lastTool)));
   }
   if(!enabled)clearSelection();
   lassoButton.setAttribute('aria-pressed',String(mode));
@@ -184,7 +210,7 @@
   }
   if(!mode||pinch)return;
   event.preventDefault();event.stopImmediatePropagation();
-  const p=visualPoint(event),box=selection?bounds(selection.indices,paper.getEditableStrokes()):null;
+  const p=visualPoint(event),box=selection?bounds(selection.indices,paper.getEditableStrokes([])):null;
   if(box&&p[0]>=box.x0-18&&p[0]<=box.x1+18&&p[1]>=box.y0-18&&p[1]<=box.y1+18){
    drag={id:event.pointerId,start:p,delta:[0,0]};
   }else{clearSelection();trace=[p];drag={id:event.pointerId,lasso:true}}
