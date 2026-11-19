@@ -18,12 +18,12 @@ test('Notebook reuses three existing editors as direct header actions', () => {
   assert.match(css, /#svWorkShell > #svNotebookCreateTiles\[hidden\]\{display:none!important\}/);
   assert.match(css, /#svWorkShell\[data-active="notes"\] > #svNotebookCreateTiles:not\(\[hidden\]\)\{/);
   assert.match(css, /grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
-  assert.match(css, /flex:0 0 50px!important/);
+  assert.match(css, /flex:0 0 44px!important/);
 });
 
 test('Notebook replaces the plus without changing its shared header geometry', () => {
   assert.match(shell, /add\.hidden=active==='employee'\|\|active==='notes'/);
-  assert.match(css, /top:2px!important/);
+  assert.match(css, /top:6px!important/);
   assert.match(css, /left:50%!important/);
   assert.match(css, /transform:translateX\(-50%\)!important/);
 });
