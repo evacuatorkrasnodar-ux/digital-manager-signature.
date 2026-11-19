@@ -782,7 +782,10 @@
   proposal=paper.getEditableStrokes(indices);
   let changed=0,guess=null;
   houseIndices=null;
-  if(wholeSheet&&indices.length>=4)houseIndices=findHouseOutline(original,indices);
+  // Read neighbouring ink for recognition even in single-stroke mode.
+  // Seeing a multi-stroke figure must not silently expand the edit scope:
+  // only an explicit tap on its suggestion can replace those other strokes.
+  if(eligibleIndices.length>=4)houseIndices=findHouseOutline(original,eligibleIndices);
   const lastIndex=indices.at(-1);
   for(const index of indices){
    const stroke=proposal[index];

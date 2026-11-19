@@ -560,6 +560,16 @@ test('live controls compare without committing, Cancel restores and Apply commit
  const houseOriginal=structuredClone(source);
  action.click();
  assert.equal(scope.textContent,'Штрих','last pen stroke is the safe default');
+ assert.equal(hint.textContent,'Дом?','Sayvi can read neighbouring strokes without changing them');
+ assert.deepEqual(previews.at(-1).slice(0,4),houseOriginal.slice(0,4),
+  'multi-stroke recognition is read-only until the author taps its suggestion');
+ hint.click();
+ assert.notDeepEqual(previews.at(-1).slice(0,5),houseOriginal.slice(0,5),
+  'tapping the suggested figure reveals the corrected neighbouring strokes');
+ assert.deepEqual(source,houseOriginal,'suggesting a figure is never an automatic edit');
+ cancel.click();
+ assert.deepEqual(source,houseOriginal,'cancelling the figure keeps every original line');
+ action.click();
  scope.click();
  assert.equal(scope.textContent,'Лист','whole-sheet cleanup is an explicit choice');
  assert.equal(hint.textContent,'Дом?','a complete house earns a compact suggestion');
