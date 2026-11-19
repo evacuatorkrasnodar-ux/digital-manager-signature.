@@ -17,6 +17,7 @@ const $=id=>document.getElementById(id);
 const dialog=$('notePaperDialog'),canvas=$('notePaperCanvas');
 if(!dialog||!canvas||!canvas.getContext('2d'))return;
 const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
+const iosFingerInk=/iPhone|iPod/i.test(navigator.userAgent||'');
 let data={pattern:'blank',background:'dark',height:H,strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
 let undoStack=[],lastInkMotionAt=0;
@@ -340,6 +341,7 @@ function queueShapePreview(){
  shapeFrame=requestAnimationFrame(redrawShapePreview);
 }
 function down(e){
+ if(iosFingerInk&&e.pointerType==='touch'&&!e.iosTouchFallback)return;
  if(currentTool()==='lasso')return;
  if(pending||pointerID!==null||e.button!==0||e.isPrimary===false)return;
  if(e.pointerType==='pen')penTime=Date.now()+2800;
@@ -361,6 +363,7 @@ function down(e){
  try{canvas.setPointerCapture(e.pointerId)}catch{}
 }
 function move(e){
+ if(iosFingerInk&&e.pointerType==='touch'&&!e.iosTouchFallback)return;
  if(e.pointerType==='pen')penTime=Date.now()+2800;
  if(!pending||e.pointerId!==pointerID)return;
  e.preventDefault();
@@ -399,9 +402,45 @@ function finishStroke(e,addEndpoint=true){
 }
 canvas.addEventListener('pointerdown',down);
 canvas.addEventListener('pointermove',move);
-canvas.addEventListener('pointerup',e=>finishStroke(e,true));
-canvas.addEventListener('pointercancel',e=>finishStroke(e,false));
-canvas.addEventListener('lostpointercapture',e=>finishStroke(e,false));
+canvas.addEventListener('pointerup',e=>{if(!(iosFingerInk&&e.pointerType==='touch'))finishStroke(e,true)});
+canvas.addEventListener('pointercancel',e=>{if(!(iosFingerInk&&e.pointerType==='touch'))finishStroke(e,false)});
+canvas.addEventListener('lostpointercapture',e=>{if(!(iosFingerInk&&e.pointerType==='touch'))finishStroke(e,false)});
+if(iosFingerInk&&sheet){
+ // iPhone Safari can cancel or retarget PointerEvents around fullscreen
+ // dialogs. TouchEvents reliably follow the original contact instead.
+ let finger=null;
+ const asInkEvent=t=>({iosTouchFallback:true,pointerType:'touch',pointerId:100000+(t.identifier||0),
+  clientX:t.clientX,clientY:t.clientY,button:0,isPrimary:true,width:1,height:1,
+  preventDefault(){}});
+ const matching=event=>Array.from(event.changedTouches||[]).find(t=>t.identifier===finger);
+ sheet.addEventListener('touchstart',event=>{
+  if(!dialog.open||finger!==null||event.touches.length!==1)return;
+  const t=event.changedTouches[0];if(!t)return;
+  finger=t.identifier;const input=asInkEvent(t);
+  down(input);
+  if(pointerID!==input.pointerId){finger=null;return}
+  dialog.dataset.iosInkInput='drawing';event.preventDefault();
+ },{capture:true,passive:false});
+ sheet.addEventListener('touchmove',event=>{
+  if(finger===null)return;
+  if(event.touches.length!==1){
+   pending=null;pointerID=null;liveTail=null;liveMid=null;finger=null;
+   dialog.classList.remove('sv-paper-inking');paint(canvas,data);
+   return;
+  }
+  const t=matching(event);if(!t)return;
+  move(asInkEvent(t));event.preventDefault();
+ },{capture:true,passive:false});
+ const touchFinish=(event,commit)=>{
+  if(finger===null)return;
+  const t=matching(event);if(!t)return;
+  finishStroke(asInkEvent(t),commit);
+  finger=null;dialog.dataset.iosInkInput='ready';event.preventDefault();
+ };
+ sheet.addEventListener('touchend',event=>touchFinish(event,true),{capture:true,passive:false});
+ sheet.addEventListener('touchcancel',event=>touchFinish(event,false),{capture:true,passive:false});
+ dialog.addEventListener('close',()=>{finger=null});
+}
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden&&dialog.open)finishStroke(null,false);
 });
