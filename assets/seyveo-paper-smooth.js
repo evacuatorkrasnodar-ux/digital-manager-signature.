@@ -464,31 +464,152 @@
   return corrected;
  }
 
+ // The roof is commonly a single zigzag, drawn without lifting the pen.
+ // The other three strokes are the two walls and the floor. Require a clear
+ // central peak and matching corners so ordinary handwriting stays untouched.
+ function fitHouseRoofV(strokes){
+  if(!Array.isArray(strokes)||strokes.length!==4||strokes.some(s=>
+   !['pen','pencil'].includes(s?.tool)||s.points?.length<5))return null;
+  const endpoints=strokes.map(stroke=>{
+   const a=stroke.points[0],b=stroke.points.at(-1);
+   return {a,b,dx:b[0]-a[0],dy:b[1]-a[1]};
+  });
+  const roofs=[];
+  for(let i=0;i<4;i++){
+   const stroke=strokes[i],ends=endpoints[i],points=stroke.points;
+   const width=Math.abs(ends.dx);
+   if(width<75||points.length<11||Math.abs(ends.dy)>width*.22)continue;
+   const apexIndex=points.reduce((best,p,index)=>p[1]<points[best][1]?index:best,0);
+   if(apexIndex<5||apexIndex>points.length-6)continue;
+   const apex=points[apexIndex];
+   if(Math.min(ends.a[1],ends.b[1])-apex[1]<width*.23)continue;
+   const side=Math.min(ends.a[0],ends.b[0]);
+   if(apex[0]<side+width*.30||apex[0]>side+width*.70)continue;
+   const nearLeft=points[Math.max(0,apexIndex-Math.max(3,Math.round(apexIndex*.28)))];
+   const nearRight=points[Math.min(points.length-1,apexIndex+Math.max(3,Math.round((points.length-1-apexIndex)*.28)))];
+   const cornered=[{near:nearLeft,far:ends.a},{near:nearRight,far:ends.b}].every(({near,far})=>{
+    const expected=Math.abs(far[1]-apex[1])*Math.abs(near[0]-apex[0])
+     /Math.max(1,Math.abs(far[0]-apex[0]));
+    return Math.abs(near[1]-apex[1])>=expected*.49;
+   });
+   if(!cornered)continue;
+   let error=0,largest=0,backwards=0;
+   const direction=Math.sign(ends.dx);
+   for(let j=0;j<points.length;j++){
+    const first=j<=apexIndex?ends.a:apex,last=j<=apexIndex?apex:ends.b;
+    const d=Math.hypot(last[0]-first[0],last[1]-first[1]);
+    const offset=Math.abs((points[j][0]-first[0])*(last[1]-first[1])
+     -(points[j][1]-first[1])*(last[0]-first[0]))/Math.max(1,d);
+    error+=offset;largest=Math.max(largest,offset);
+    if(j)backwards+=Math.max(0,-direction*(points[j][0]-points[j-1][0]));
+   }
+   if(error/points.length>Math.max(8,width*.07)
+    ||largest>Math.max(17,width*.14)||backwards>width*.13)continue;
+   roofs.push({index:i,apexIndex,apex});
+  }
+  if(roofs.length!==1)return null;
+  const roof=roofs[0],roofEnds=endpoints[roof.index];
+  const eaves=[roofEnds.a,roofEnds.b].sort((a,b)=>a[0]-b[0]);
+  const walls=[],floors=[];
+  for(let i=0;i<4;i++){
+   if(i===roof.index)continue;
+   const edge=endpoints[i],dx=Math.abs(edge.dx),dy=Math.abs(edge.dy);
+   if(dx>dy*1.8)floors.push(i);
+   else if(dy>dx*2)walls.push(i);
+  }
+  if(floors.length!==1||walls.length!==2)return null;
+  walls.sort((a,b)=>Math.min(endpoints[a].a[0],endpoints[a].b[0])
+   -Math.min(endpoints[b].a[0],endpoints[b].b[0]));
+  const top=walls.map(index=>[endpoints[index].a,endpoints[index].b].sort((a,b)=>a[1]-b[1])[0]);
+  const bottom=walls.map(index=>[endpoints[index].a,endpoints[index].b].sort((a,b)=>b[1]-a[1])[0]);
+  const floorEnds=[endpoints[floors[0]].a,endpoints[floors[0]].b].sort((a,b)=>a[0]-b[0]);
+  const width=eaves[1][0]-eaves[0][0];
+  const roofY=(eaves[0][1]+eaves[1][1]+top[0][1]+top[1][1])/4;
+  const baseY=(bottom[0][1]+bottom[1][1]+floorEnds[0][1]+floorEnds[1][1])/4;
+  const apexY=roof.apex[1],height=baseY-apexY;
+  const tolerance=Math.min(25,Math.max(12,width*.12));
+  if(height<75||width/height<.55||width/height>2.1
+   ||roofY-apexY<height*.19||baseY-roofY<height*.34
+   ||Math.abs(top[0][1]-top[1][1])>height*.17
+   ||Math.abs(bottom[0][1]-bottom[1][1])>height*.17)return null;
+  for(let j=0;j<2;j++){
+   if(Math.hypot(eaves[j][0]-top[j][0],eaves[j][1]-top[j][1])>tolerance
+    ||Math.hypot(bottom[j][0]-floorEnds[j][0],bottom[j][1]-floorEnds[j][1])>tolerance)return null;
+  }
+  const leftX=(eaves[0][0]+top[0][0]+bottom[0][0]+floorEnds[0][0])/4;
+  const rightX=(eaves[1][0]+top[1][0]+bottom[1][0]+floorEnds[1][0])/4;
+  const target=[[[leftX,roofY],[leftX,baseY]],[[rightX,roofY],[rightX,baseY]]];
+  const corrected=strokes.map(stroke=>({...stroke,points:stroke.points.map(p=>p.slice())}));
+  function straighten(index,start,end){
+   const points=strokes[index].points,distances=[0];
+   for(let j=1;j<points.length;j++)distances.push(distances.at(-1)
+    +Math.hypot(points[j][0]-points[j-1][0],points[j][1]-points[j-1][1]));
+   const total=Math.max(1,distances.at(-1));
+   corrected[index].points=points.map((p,j)=>{
+    const t=distances[j]/total;
+    return [round(start[0]+(end[0]-start[0])*t),round(start[1]+(end[1]-start[1])*t),...p.slice(2)];
+   });
+  }
+  walls.forEach((index,j)=>{
+   const ends=endpoints[index],start=ends.a[1]<ends.b[1]?target[j][0]:target[j][1],
+    end=ends.a[1]<ends.b[1]?target[j][1]:target[j][0];
+   straighten(index,start,end);
+  });
+  const floor=endpoints[floors[0]],left=[leftX,baseY],right=[rightX,baseY];
+  straighten(floors[0],floor.a[0]<floor.b[0]?left:right,floor.a[0]<floor.b[0]?right:left);
+  const roofPoints=strokes[roof.index].points;
+  const leftEave=[leftX,roofY],rightEave=[rightX,roofY],apex=[(leftX+rightX)/2,apexY];
+  const first=roofEnds.a[0]<roofEnds.b[0]?leftEave:rightEave;
+  const last=roofEnds.a[0]<roofEnds.b[0]?rightEave:leftEave;
+  let running=0;const distances=[0];
+  for(let j=1;j<roofPoints.length;j++){
+   running+=Math.hypot(roofPoints[j][0]-roofPoints[j-1][0],roofPoints[j][1]-roofPoints[j-1][1]);
+   distances.push(running);
+  }
+  const split=Math.max(.001,distances[roof.apexIndex]),tail=Math.max(.001,running-split);
+  corrected[roof.index].points=roofPoints.map((p,j)=>{
+   const from=j<=roof.apexIndex?first:apex,to=j<=roof.apexIndex?apex:last;
+   const t=j<=roof.apexIndex?distances[j]/split:(distances[j]-split)/tail;
+   return [round(from[0]+(to[0]-from[0])*t),round(from[1]+(to[1]-from[1])*t),...p.slice(2)];
+  });
+  return corrected;
+ }
+ const fitHouseAny=strokes=>strokes.length===5?fitHouse(strokes)
+  :strokes.length===4?fitHouseRoofV(strokes):null;
+
  // A window or a door is normally drawn after the five outline strokes.
  // Search only the most recent ink, and only accept extra strokes that lie
  // inside the walls. That prevents an older house elsewhere on the page from
  // stealing the suggestion for a new, unrelated sketch.
  function findHouseOutline(strokes,indices){
-  if(indices.length<5)return null;
-  const last=indices.slice(-5);
-  if(fitHouse(last.map(index=>strokes[index])))return last;
+  if(indices.length<4)return null;
+  for(const size of [5,4]){
+   if(indices.length<size)continue;
+   const last=indices.slice(-size);
+   if(fitHouseAny(last.map(index=>strokes[index])))return last;
+  }
   const allRecent=indices.slice(-9);
-  for(let length=6;length<=allRecent.length;length++){
+  for(let length=5;length<=allRecent.length;length++){
    const recent=allRecent.slice(-length);
-   const result=searchWithin(recent);
-   if(result)return result;
+   for(const size of [5,4]){
+    if(length<=size)continue;
+    const result=searchWithin(recent,size);
+    if(result)return result;
+   }
   }
   return null;
-  function searchWithin(recent){
+  function searchWithin(recent,size){
   const choose=[];
   function search(start){
-   if(choose.length===5){
-    const corrected=fitHouse(choose.map(index=>strokes[index]));
+   if(choose.length===size){
+    const corrected=fitHouseAny(choose.map(index=>strokes[index]));
     if(!corrected)return null;
     const endpoints=corrected.flatMap(stroke=>[stroke.points[0],stroke.points.at(-1)]);
     const left=Math.min(...endpoints.map(p=>p[0])),right=Math.max(...endpoints.map(p=>p[0]));
     const ys=endpoints.map(p=>p[1]).sort((a,b)=>a-b);
-    const roofY=(ys[2]+ys[3]+ys[4]+ys[5])/4,baseY=(ys[6]+ys[7]+ys[8]+ys[9])/4;
+    const skip=size===5?2:0;
+    const roofY=(ys[skip]+ys[skip+1]+ys[skip+2]+ys[skip+3])/4,
+     baseY=(ys[ys.length-4]+ys[ys.length-3]+ys[ys.length-2]+ys[ys.length-1])/4;
     const margin=Math.max(8,Math.min(15,(right-left)*.06));
     const selected=new Set(choose);
     for(const index of recent){
@@ -499,7 +620,7 @@
     }
     return choose.slice();
    }
-   for(let i=start;i<=recent.length-(5-choose.length);i++){
+   for(let i=start;i<=recent.length-(size-choose.length);i++){
     choose.push(recent[i]);
     const result=search(i+1);
     choose.pop();
@@ -587,7 +708,7 @@
   proposal=paper.getEditableStrokes(indices);
   let changed=0,guess=null;
   houseIndices=null;
-  if(indices.length>=5)houseIndices=findHouseOutline(original,indices);
+  if(indices.length>=4)houseIndices=findHouseOutline(original,indices);
   const lastIndex=indices.at(-1);
   for(const index of indices){
    const stroke=proposal[index];
@@ -600,7 +721,7 @@
    stroke.points=next;
   }
   hasChanges=changed>0;
-  if(!changed)paper.announce?.('Штрихи уже ровные — исправлять нечего. Можно подсказать Сэйви через «Это…».');
+  if(!changed&&!houseIndices)paper.announce?.('Штрихи уже ровные — исправлять нечего. Можно подсказать Сэйви через «Это…».');
   active=true;layer.hidden=false;
   dialog.classList.add('sv-paper-smooth-mode');action.setAttribute('aria-pressed','true');
   labelSuggestion(houseIndices?'house':guess);
@@ -616,8 +737,8 @@
   if(!active||!shape)return;
   if(shape==='house'){
    const indices=houseIndices;
-   if(!indices){paper.announce?.('Нарисуй контур домика пятью линиями: крышу, две стены и низ.');return}
-   const corrected=fitHouse(indices.map(index=>original[index]));
+   if(!indices){paper.announce?.('Нарисуй крышу одним или двумя штрихами, две стены и нижнюю линию.');return}
+   const corrected=fitHouseAny(indices.map(index=>original[index]));
    if(!corrected)return;
    proposal=paper.getEditableStrokes(indices);
    indices.forEach((index,i)=>{proposal[index]=corrected[i]});

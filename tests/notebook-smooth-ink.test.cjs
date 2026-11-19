@@ -90,6 +90,42 @@ test('a house remains recognisable after adding a window and a door',()=>{
   'windows and doors cannot complete a missing wall or floor');
 });
 
+test('a roof drawn without lifting the pen is recognised with walls, floor and details',()=>{
+ const fit=shapeFitter('fitHouseRoofV'),find=shapeFitter('findHouseOutline');
+ const line=(a,b)=>({tool:'pen',color:'#171e29',points:Array.from({length:17},(_,i)=>{
+  const t=i/16,wobble=Math.sin(Math.PI*t)*3;
+  return [a[0]+(b[0]-a[0])*t+wobble,a[1]+(b[1]-a[1])*t,40+i%15,12];
+ })});
+ const first=line([200,250],[300,145]).points;
+ const second=line([300,145],[400,250]).points;
+ const roof={tool:'pen',color:'#171e29',points:[...first,...second.slice(1)]};
+ const outline=[roof,line([200,250],[200,415]),line([400,250],[400,415]),line([200,415],[400,415])];
+ const original=structuredClone(outline),corrected=fit(outline);
+ assert.ok(corrected,'one continuous V-shaped roof is a real house');
+ assert.equal(corrected.length,4);
+ assert.deepEqual(outline,original,'the sketch is not edited during recognition');
+ for(let i=0;i<4;i++){
+  assert.equal(JSON.stringify(corrected[i].points.map(p=>p.slice(2))),
+   JSON.stringify(original[i].points.map(p=>p.slice(2))),'pressure and tilt are preserved');
+ }
+ assert.ok(Math.abs(corrected[0].points[16][0]-300)<2,'the roof ridge is centred');
+ assert.ok(corrected[0].points.every((p,i)=>i===0||i===16||i===32
+  ||Math.abs((p[1]-corrected[0].points[i<=16?0:16][1])
+  *(corrected[0].points[i<=16?16:32][0]-corrected[0].points[i<=16?0:16][0])
+  -(p[0]-corrected[0].points[i<=16?0:16][0])
+  *(corrected[0].points[i<=16?16:32][1]-corrected[0].points[i<=16?0:16][1]))<20),
+  'both sides of the roof are straight');
+ assert.ok(fit([outline[3],outline[1],{...roof,points:roof.points.slice().reverse()},
+  {...outline[2],points:outline[2].points.slice().reverse()}]),'drawing order and direction can vary');
+ const window={tool:'pen',color:'#27609b',points:[[225,278,45],[258,278,45],[258,309,45],[225,309,45],[225,278,45]]};
+ const door={tool:'pen',color:'#aa5c22',points:[[320,415,45],[320,355,45],[370,355,45],[370,415,45],[370,415,45]]};
+ assert.equal(JSON.stringify(find([...outline,window,door],[0,1,2,3,4,5])),JSON.stringify([0,1,2,3]),
+  'door and window do not hide a continuous roof');
+ assert.equal(fit([roof,...outline.slice(1,3),window]),null,'a window is not a missing floor');
+ const wave={...roof,points:roof.points.map((p,i)=>[p[0],245-55*Math.sin(Math.PI*i/(roof.points.length-1)),...p.slice(2)])};
+ assert.equal(fit([wave,...outline.slice(1)]),null,'a smooth arch is not a pointed roof');
+});
+
 test('Sayvi recognises a one-stroke Cyrillic С and makes the open arc smoother',()=>{
  const fit=shapeFitter('fitLetterC'),count=75,ideal=[],wobbly=[];
  for(let i=0;i<count;i++){
@@ -476,6 +512,22 @@ test('live controls compare without committing, Cancel restores and Apply commit
  assert.equal(applied.length,4,'Apply commits the house with its interior details in one edit');
  assert.equal(source.length,7,'the original number of strokes stays intact');
  assert.deepEqual(source.slice(5),houseOriginal.slice(5),'windows and doors are preserved exactly');
+
+ const edge=(a,b)=>({tool:'pen',color:'#171e29',points:Array.from({length:21},(_,i)=>[
+  a[0]+(b[0]-a[0])*i/20,a[1]+(b[1]-a[1])*i/20,55])});
+ const roofA=edge([185,235],[280,140]),roofB=edge([280,140],[375,235]);
+ source=[{tool:'pen',color:'#171e29',points:[...roofA.points,...roofB.points.slice(1)]},
+  edge([185,235],[185,390]),edge([375,235],[375,390]),edge([185,390],[375,390])];
+ const vRoofOriginal=structuredClone(source);
+ const notices=announcements.length;
+ action.click();
+ assert.equal(hint.textContent,'Дом?','a roof made with one stroke still earns the house hint');
+ assert.equal(announcements.length,notices,'no redundant toast covers a valid house suggestion');
+ hint.click();
+ assert.deepEqual(source,vRoofOriginal,'the V-roof preview is reversible');
+ cancel.click();
+ assert.deepEqual(source,vRoofOriginal,'Cancel keeps the one-stroke roof untouched');
+ assert.equal(applied.length,4,'Cancel does not create an edit');
 });
 
 test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',()=>{
@@ -511,7 +563,7 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(engine,/applyStrokeEdit:next=>\{[\s\S]*rememberUndo\(\{type:'replace',previous:before\}\)/);
  assert.match(engine,/previewStrokeEdit:next=>\{\s*if\(!pending&&Array\.isArray\(next\)\)paint\(canvas,\{\.\.\.data,strokes:next\}\)/);
  assert.match(script,/if\(active\)stop\(false,false\)/);
- assert.match(script,/paper\.announce\?\.\('Штрихи уже ровные — исправлять нечего\. Можно подсказать Сэйви через «Это…»\.'\)/);
+ assert.match(script,/if\(!changed&&!houseIndices\)paper\.announce\?\.\('Штрихи уже ровные — исправлять нечего\. Можно подсказать Сэйви через «Это…»\.'\)/);
  assert.match(engine,/announce:message=>report\(message\)/);
  assert.match(script,/event\.key==='Escape'/);
  assert.match(engine,/dialog\.classList\.contains\('sv-paper-smooth-mode'\)\)return;/);
@@ -519,5 +571,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=2/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=11/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=12/);
 });
