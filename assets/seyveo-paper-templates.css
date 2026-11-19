@@ -1,0 +1,50 @@
+/* SEYVEO Paper · visible ruled, dotted and graph templates.
+   The drawing canvas remains transparent; the template lives on the sheet.
+   Pattern selection, brush input, undo, export and saved ink stay unchanged. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage #notePaperSheet.paper-sheet[data-pattern="blank"]{
+ background-image:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage #notePaperSheet.paper-sheet[data-pattern="lines"][data-ink-background="dark"]{
+ background-color:#202124!important;
+ background-image:repeating-linear-gradient(to bottom,
+  transparent 0px,transparent 30px,
+  rgba(232,236,243,.23) 30px,rgba(232,236,243,.23) 31px,
+  transparent 31px,transparent 32px)!important;
+ background-size:100% 32px!important;
+ background-position:0 0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage #notePaperSheet.paper-sheet[data-pattern="lines"][data-ink-background="light"]{
+ background-color:#FFFFFF!important;
+ background-image:repeating-linear-gradient(to bottom,
+  transparent 0px,transparent 30px,
+  rgba(79,96,123,.22) 30px,rgba(79,96,123,.22) 31px,
+  transparent 31px,transparent 32px)!important;
+ background-size:100% 32px!important;
+ background-position:0 0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage #notePaperSheet.paper-sheet[data-pattern="dots"][data-ink-background="dark"]{
+ background-color:#202124!important;
+ background-image:radial-gradient(circle,rgba(236,240,246,.42) 1px,transparent 1.55px)!important;
+ background-size:22px 22px!important;
+ background-position:0 0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage #notePaperSheet.paper-sheet[data-pattern="dots"][data-ink-background="light"]{
+ background-color:#FFFFFF!important;
+ background-image:radial-gradient(circle,rgba(86,100,125,.34) 1px,transparent 1.55px)!important;
+ background-size:22px 22px!important;
+ background-position:0 0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage #notePaperSheet.paper-sheet[data-pattern="grid"][data-ink-background="dark"]{
+ background-color:#202124!important;
+ background-image:linear-gradient(to right,rgba(232,236,243,.19) 1px,transparent 1px),
+                  linear-gradient(to bottom,rgba(232,236,243,.19) 1px,transparent 1px)!important;
+ background-size:26px 26px!important;
+ background-position:0 0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperStage #notePaperSheet.paper-sheet[data-pattern="grid"][data-ink-background="light"]{
+ background-color:#FFFFFF!important;
+ background-image:linear-gradient(to right,rgba(86,100,125,.18) 1px,transparent 1px),
+                  linear-gradient(to bottom,rgba(86,100,125,.18) 1px,transparent 1px)!important;
+ background-size:26px 26px!important;
+ background-position:0 0!important;
+}
