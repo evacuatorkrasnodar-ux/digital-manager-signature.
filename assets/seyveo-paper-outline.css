@@ -17,13 +17,23 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock >
  border-radius:50%!important;
  color:#DADADD!important;
 }
-html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]{
- background:#353538!important;
- color:#F4F4F6!important;
- box-shadow:none!important;
+/* The Graphite press mirrors Pearl's recessed geometry, using inverse light.
+   Keep the approved dark capsule, five-tool layout and icon sizes intact. */
+html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-top #svPaperNewDock > button.sv-newdock-button{
+ transition:background-color .16s ease,box-shadow .16s ease!important;
 }
-html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not([data-sv-active="true"]):active{
- background:#2D2D30!important;
+html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]{
+ background:rgba(225,229,240,.12)!important;
+ color:#F4F4F6!important;
+ box-shadow:inset 0 1.5px 2px rgba(0,0,0,.45),inset 0 -1px .75px rgba(255,255,255,.11)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not([data-sv-active="true"]):active{
+ background:rgba(225,229,240,.08)!important;
+ box-shadow:inset 0 1.5px 2px rgba(0,0,0,.38),inset 0 -1px .75px rgba(255,255,255,.08)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]:active{
+ background:rgba(225,229,240,.095)!important;
+ box-shadow:inset 0 2px 3px rgba(0,0,0,.52),inset 0 -1px .75px rgba(255,255,255,.08)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button:disabled{
  color:#929298!important;
@@ -47,6 +57,9 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock >
   min-height:46px!important;
   max-height:46px!important;
  }
+}
+@media(prefers-reduced-motion:reduce){
+ html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-top #svPaperNewDock > button.sv-newdock-button{transition:none!important}
 }
 /* Drawing studio is an immersive dark surface in both app themes.
    Do not inherit the general white page-header surface here. */
