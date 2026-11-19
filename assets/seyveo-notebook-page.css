@@ -226,8 +226,12 @@
  min-height:62px!important;
  margin:0!important;
  padding:0!important;
- background:var(--bg)!important;
+ /* Match the actual white notebook canvas, not the global grey app token. */
+ background:#FFFFFF!important;
  touch-action:pan-y!important;
+}
+html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesDialog #notesList .note-item-actions{
+ background:var(--bg)!important;
 }
 /* Swipe-left is the primary iPhone delete action, hidden behind a normal row. */
 #svWorkShell[data-active="notes"] #notesDialog #notesList .note-swipe-shell{
@@ -397,8 +401,8 @@ html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesDialog #notesLis
  fill:currentColor!important;
  stroke:none!important;
 }
-@media(pointer:coarse){
- /* On iPhone there is one clean row: actions live behind the swipe. */
+@media(max-width:600px), (pointer:coarse){
+ /* Also hide the dots in desktop mobile previews without touch emulation. */
  #svWorkShell[data-active="notes"] #notesDialog #notesList .note-more-button{
   display:none!important;
  }
