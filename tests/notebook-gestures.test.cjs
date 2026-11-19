@@ -10,6 +10,8 @@ const gestures=fs.readFileSync(path.join(root,'assets/seyveo-paper-gestures.js')
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const source=paper.match(/function snapFreehandShape\(stroke\)\{[\s\S]*?\n\}/)?.[0];
 const snap=vm.runInNewContext(`${source}\nsnapFreehandShape`,{W:840,H:1188,data:{height:1188}});
+const strokePathSource=gestures.match(/function strokePath\(stroke\)\{[\s\S]*?\n \}/)?.[0];
+const strokePath=vm.runInNewContext(`${strokePathSource}\nstrokePath`,{distance:(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1])});
 
 test('long-pressed circular handwriting becomes exact circle geometry',()=>{
  const points=Array.from({length:41},(_,i)=>{
@@ -37,13 +39,29 @@ test('hand-drawn closed rectangle snaps to a rectangle',()=>{
  assert.equal(snap({tool:'pen',width:4,points})?.tool,'rect');
 });
 
+test('lasso measures the real outline of circles, rectangles and long lines',()=>{
+ const circle=strokePath({tool:'circle',points:[[100,200],[300,200]]});
+ assert.ok(Math.min(...circle.map(p=>p[1]))<=100.1,'circle top is included');
+ assert.ok(Math.max(...circle.map(p=>p[1]))>=299.9,'circle bottom is included');
+ const rectangle=strokePath({tool:'rect',points:[[100,120],[300,280]]});
+ assert.ok(rectangle.some(p=>p[0]===300&&p[1]===120),'top-right corner is selectable');
+ const line=strokePath({tool:'line',points:[[0,0],[360,0]]});
+ assert.ok(line.length>20,'long straight line has selectable intermediate points');
+});
+
+test('undo history uses bounded lightweight stroke snapshots',()=>{
+ assert.match(paper,/if\(undoStack\.length>32\)undoStack\.shift\(\)/);
+ assert.match(paper,/const before=data\.strokes\.slice\(\)/);
+ assert.match(paper,/getEditableStrokes:indices=>/);
+});
+
 test('two-finger navigation and lasso remain transient and do not overwrite ink',()=>{
  assert.match(gestures,/fingers\.size===2/);
  assert.match(gestures,/paper\.cancelActiveStroke\(\)/);
  assert.match(gestures,/getBoundingClientRect\(\)/);
- assert.match(gestures,/pointInside\(p,trace\)/);
+ assert.match(gestures,/pointInside\(path\[i\],trace\)/);
  assert.match(gestures,/paper\.applyStrokeEdit\(strokes\)/);
  assert.match(gestures,/data-edit="copy"/);
- assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=1/);
- assert.match(html,/assets\/notebook-paper\.js\?v=22/);
+ assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=2/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=23/);
 });
