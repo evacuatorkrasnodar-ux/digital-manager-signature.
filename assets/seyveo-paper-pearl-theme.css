@@ -1,0 +1,162 @@
+/* SEYVEO Paper · Pearl / Graphite drawing surfaces.
+   A blank sheet follows the app theme; existing sheets keep their saved ink.
+   This file changes visuals only, never canvas events or stroke rendering. */
+
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface{
+ --sv-menu-surface:rgba(251,251,252,.965);
+ --sv-menu-tile:rgba(25,28,35,.045);
+ --sv-menu-selected:rgba(30,34,42,.11);
+ --sv-menu-ink:#24262b;
+ --sv-menu-muted:#777c85;
+ --sv-menu-rule:rgba(36,43,56,.105);
+ background:#fff!important;
+ background-image:none!important;
+ color:#25282e!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperStage.sv-paper-stage,
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > #notePaperSheet.paper-sheet,
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSheet[data-ink-background="light"]{
+ background:#fff!important;background-image:none;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > #notePaperSheet > #notePaperCanvas{
+ background:transparent!important;
+}
+
+/* Upper navigation must be visible on pure white, while keeping the
+   charcoal drawing tool capsule unchanged. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #notePaperBack{
+ color:#383c44!important;opacity:1!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #notePaperBack svg{
+ stroke:currentColor!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #notePaperUndo{
+ color:#444952!important;opacity:1!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #notePaperUndo:disabled{
+ color:#b0b4bc!important;opacity:.68!important;
+}
+
+/* Delicate but legible thickness ruler on white.
+   On dark pages the approved wedge stays exactly as before. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size::before{
+ background:#a5aab4!important;opacity:.70!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size.sv-wedge-expanded::before{
+ background:#868d98!important;opacity:.75!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size::after{
+ background:#fff!important;border:1px solid #d1d5dc!important;
+ box-shadow:0 1px 5px rgba(42,48,60,.18)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size input::-webkit-slider-runnable-track{
+ background:#c5cad2!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > .sv-paper-size input::-moz-range-track{
+ background:#c5cad2!important;
+}
+/* No backing rectangle behind palette or Save on white. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > footer.sv-paper-bottom,
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > footer.sv-paper-bottom > .sv-paper-palette{
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-swatches > button::before{
+ border:1px solid rgba(54,62,74,.14)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-swatches > button[aria-pressed="true"]::before{
+ outline:1.8px solid #8f96a3!important;
+ outline-offset:2px!important;
+ box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-swatches > button[aria-label="Белый"]::before{
+ border:1px solid #d7dbe2!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-paper-save{
+ background:#38383a!important;color:#fff!important;border:0!important;box-shadow:none!important;
+}
+
+/* Pearl menus: same geometry as graphite; only materials and contrast change. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperPatternMenu.sv-paper-tool-menu:not([hidden]),
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu.sv-newdock-settings-panel:not([hidden]),
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .paper-color-control #notePaperColorMenu.paper-color-menu:not([hidden]),
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperExtras.sv-paper-extras-panel:not([hidden]){
+ background:rgba(251,251,252,.965)!important;
+ background-image:none!important;
+ color:#24262b!important;
+ border:1px solid rgba(50,54,64,.10)!important;
+ box-shadow:0 12px 30px rgba(30,34,46,.11),inset 0 1px 0 rgba(255,255,255,.95)!important;
+ -webkit-backdrop-filter:blur(20px) saturate(112%)!important;
+ backdrop-filter:blur(20px) saturate(112%)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) :is(.sv-paper-menu-head > strong,.sv-gradient-head > strong,.sv-polish-menu-heading){
+ color:#25272c!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) :is(.sv-paper-menu-section-label,.sv-gradient-section-caption,.sv-newdock-menu-title){
+ color:#787d85!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-segments{
+ background:#ededef!important;border:1px solid rgba(34,38,45,.045)!important;
+ box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) button.sv-polish-segment{
+ color:#626773!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) button.sv-polish-segment[aria-selected="true"]{
+ background:#fff!important;color:#22252b!important;
+ box-shadow:0 1px 3px rgba(36,40,50,.11)!important;
+}
+/* Choice rows: pale inline segmented controls, not stacked grey tiles. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-backgrounds{
+ background:#ededef!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-newdock-backgrounds > button{
+ color:#616671!important;background:transparent!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-newdock-backgrounds > button[aria-pressed="true"]{
+ background:#fff!important;color:#24262b!important;
+ box-shadow:0 1px 3px rgba(35,39,49,.09)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button{
+ background:transparent!important;color:#343840!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button:disabled{
+ color:#a1a6af!important;
+}
+
+/* Paper and shapes are light material with a single selected state. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid) > button{
+ background:#f0f1f3!important;color:#343840!important;
+ border:1px solid rgba(55,63,78,.07)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid) > button[aria-pressed="true"]{
+ background:#e1e4e9!important;border-color:#bfc5ce!important;
+}
+
+/* Precision editors: light readable values, untouched saturation/hue canvas. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu :is(details.sv-ink-custom,details.sv-gradient-custom){
+ border-top-color:rgba(43,48,59,.12)!important;color:#272b32!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu :is(details.sv-ink-custom,details.sv-gradient-custom) > summary{
+ color:#34383f!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu :is(details.sv-ink-custom,details.sv-gradient-custom) > summary::after{
+ border-right-color:#858b95!important;border-bottom-color:#858b95!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu .sv-ink-rgb label,
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu .sv-ink-hex-label,
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu .sv-gradient-field > span{
+ color:#777d88!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu .sv-ink-values input,
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu .sv-gradient-field input[type=text]{
+ background:#f1f2f4!important;color:#23262d!important;
+ -webkit-text-fill-color:#23262d!important;
+ border:1px solid rgba(43,50,65,.12)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu button.sv-ink-pipette{
+ background:#edf0f3!important;color:#30343b!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperColorMenu #noteGradientApply{
+ background:#e6e8ec!important;color:#292c32!important;
+ border:1px solid rgba(39,44,56,.09)!important;
+}
