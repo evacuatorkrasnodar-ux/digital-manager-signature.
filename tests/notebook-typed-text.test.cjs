@@ -77,8 +77,8 @@ test('typed text has native undo, save, reopen, clearing and iPhone ink isolatio
  assert.match(source,/data\.strokes=\[\];data\.texts=\[\];data\.photo=''/);
  assert.match(source,/if\(!data\.strokes\.length&&!data\.photo&&!data\.texts\?\.length\)/);
  assert.match(source,/text:page\.texts\.length&&!page\.strokes\.length&&!page\.photo\?'Лист с текстом'/);
- assert.match(source,/dialog\.classList\.contains\('sv-paper-text-mode'\)\|\|dialog\.classList\.contains\('sv-paper-photo-mode'\)\)return;/);
- assert.match(source,/dialog\.classList\.contains\('sv-paper-text-mode'\)\|\|dialog\.classList\.contains\('sv-paper-photo-mode'\)\|\|finger!==null/);
+ assert.match(source,/dialog\.classList\.contains\('sv-paper-text-mode'\)\|\|dialog\.classList\.contains\('sv-paper-photo-mode'\)\|\|dialog\.classList\.contains\('sv-paper-smooth-mode'\)\)return;/);
+ assert.match(source,/dialog\.classList\.contains\('sv-paper-text-mode'\)\|\|dialog\.classList\.contains\('sv-paper-photo-mode'\)\|\|dialog\.classList\.contains\('sv-paper-smooth-mode'\)\|\|finger!==null/);
 });
 
 test('text mode reuses Settings actions and supports touch placement, drag, font and color',()=>{
@@ -93,7 +93,7 @@ test('text mode reuses Settings actions and supports touch placement, drag, font
  assert.match(style,/\.sv-paper-text-hit\.sv-paper-text-dragging/);
  assert.match(html,/assets\/seyveo-paper-typed-text\.js\?v=4/);
  assert.match(html,/assets\/seyveo-paper-typed-text\.css\?v=2/);
- assert.match(html,/assets\/notebook-paper\.js\?v=42/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=43/);
 });
 
 test('text starts at a consistent page margin rather than hanging off the right edge',()=>{

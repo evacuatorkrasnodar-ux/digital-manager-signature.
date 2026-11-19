@@ -64,7 +64,7 @@ test('empty sheet opens Sayvi directly without adding a blank attachment',async(
 });
 
 test('paper handoff uses the current cache-busted drawing engine',()=>{
- assert.match(html,/assets\/notebook-paper\.js\?v=42/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=43/);
  assert.match(html,/assets\/sayvi-session-files\.js\?v=1/);
  assert.match(source,/if\(pending\|\|sayviHandoffBusy\)/);
 });

@@ -600,7 +600,7 @@ function queueShapePreview(){
  shapeFrame=requestAnimationFrame(redrawShapePreview);
 }
 function down(e){
- if(dialog.classList.contains('sv-paper-text-mode')||dialog.classList.contains('sv-paper-photo-mode'))return;
+ if(dialog.classList.contains('sv-paper-text-mode')||dialog.classList.contains('sv-paper-photo-mode')||dialog.classList.contains('sv-paper-smooth-mode'))return;
  if(iosFingerInk&&e.pointerType==='touch'&&!e.iosTouchFallback)return;
  if(currentTool()==='lasso')return;
  if(pending||pointerID!==null||e.button!==0||e.isPrimary===false)return;
@@ -687,7 +687,7 @@ if(iosFingerInk&&sheet){
  const matching=event=>Array.from(event.changedTouches||[]).find(t=>t.identifier===finger);
  sheet.addEventListener('touchstart',event=>{
   // The pipette overlay lives on this sheet; its tap must never create ink.
-  if(!dialog.open||dialog.classList.contains('sv-ink-sampling')||dialog.classList.contains('sv-paper-text-mode')||dialog.classList.contains('sv-paper-photo-mode')||finger!==null||event.touches.length!==1)return;
+  if(!dialog.open||dialog.classList.contains('sv-ink-sampling')||dialog.classList.contains('sv-paper-text-mode')||dialog.classList.contains('sv-paper-photo-mode')||dialog.classList.contains('sv-paper-smooth-mode')||finger!==null||event.touches.length!==1)return;
   const t=event.changedTouches[0];if(!t)return;
   finger=t.identifier;const input=asInkEvent(t);
   down(input);

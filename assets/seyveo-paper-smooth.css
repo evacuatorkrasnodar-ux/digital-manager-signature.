@@ -1,0 +1,42 @@
+/* Quiet, reversible handwriting preview in the original paper studio. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > #notePaperSmoothInk[hidden],
+#notePaperDialog .sv-paper-smooth-layer[hidden]{display:none!important}
+#notePaperDialog .sv-paper-smooth-layer{
+ position:absolute;inset:0;z-index:10;pointer-events:auto;
+ touch-action:none;-webkit-tap-highlight-color:transparent;
+}
+#notePaperDialog .sv-paper-smooth-bar{
+ box-sizing:border-box;position:absolute;top:74px;left:50%;
+ transform:translateX(-50%);display:flex;align-items:center;justify-content:center;
+ gap:4px;width:max-content;max-width:calc(100% - 18px);padding:5px;
+ border:1px solid rgba(255,255,255,.14);border-radius:14px;
+ background:rgba(55,55,58,.96);color:#f5f5f7;
+ box-shadow:0 3px 14px rgba(0,0,0,.13);
+ -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+}
+#notePaperDialog .sv-paper-smooth-bar > button{
+ box-sizing:border-box;display:grid;place-items:center;flex:0 1 auto;
+ min-width:42px;min-height:34px;margin:0;padding:0 8px;
+ border:0;border-radius:10px;background:transparent;box-shadow:none;
+ color:inherit;font:580 11.5px/1 -apple-system,BlinkMacSystemFont,sans-serif;
+ white-space:nowrap;
+}
+#notePaperDialog .sv-paper-smooth-bar > button[aria-pressed="true"]{
+ background:rgba(255,255,255,.16);box-shadow:inset 0 1px 3px rgba(0,0,0,.13);
+}
+#notePaperDialog .sv-paper-smooth-bar > .sv-paper-smooth-apply{
+ background:rgba(255,255,255,.19);font-weight:630;
+}
+#notePaperDialog .sv-paper-smooth-bar > button:focus-visible{
+ outline:2px solid #a8c8ff;outline-offset:1px;
+}
+#notePaperDialog.sv-paper-light-surface .sv-paper-smooth-bar{
+ background:rgba(251,251,252,.98);color:#292d34;
+ border-color:rgba(46,56,72,.1);box-shadow:0 3px 12px rgba(27,37,52,.09);
+}
+#notePaperDialog.sv-paper-light-surface .sv-paper-smooth-bar > button[aria-pressed="true"]{
+ background:#e8ebef;box-shadow:inset 0 1px 3px rgba(78,87,104,.10);
+}
+#notePaperDialog.sv-paper-light-surface .sv-paper-smooth-bar > .sv-paper-smooth-apply{
+ background:#e8ebef;
+}
