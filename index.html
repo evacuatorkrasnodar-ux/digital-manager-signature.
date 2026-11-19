@@ -2198,14 +2198,43 @@ html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
  border:1px solid rgba(234,237,242,.68)!important;
  box-shadow:0 1px 3px rgba(63,72,86,.045)!important;
 }
+/* Apple segmented control: one continuous capsule, no circle around each icon.
+   The navigation is a direct child of the dialog so Back and all actions share
+   exactly the same top anchor across short and tall iPhone viewports. */
+html body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions,
+html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow{
+ top:max(26px, env(safe-area-inset-top,0px))!important;
+}
+html body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions .sv-note-action-pair{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ flex:0 0 84px!important;
+ width:84px!important;height:44px!important;
+ padding:0!important;
+ border-radius:999px!important;
+ overflow:hidden!important;
+ align-items:stretch!important;
+}
+html body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions .sv-note-action-pair > :is(button#svNoteShare,button#svNoteMore){
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ flex:none!important;
+ width:100%!important;min-width:0!important;max-width:none!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions .sv-note-action-pair > button#svNoteMore{
+ border-left:1px solid rgba(219,223,229,.68)!important;
+}
 html:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow{
  background:rgba(248,249,251,.90)!important;
  color:#161719!important;
  border:1px solid rgba(234,237,242,.68)!important;
  box-shadow:0 1px 3px rgba(63,72,86,.045)!important;
-}
-@media(max-height:530px){
- #noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions{top:-23px!important}
 }
 </style><link rel="stylesheet" href="assets/seyveo-note-attachments.css?v=12"><link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=7"><style id="seyveo-pulse-nov09-polish">
 /* Pulse only: flat graphite and compact Sayvi explanation. */
@@ -4105,6 +4134,7 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[op
 <button id="noteReviewBack" type="button" class="seyveo-close-control seyveo-dialog-close sv-note-back-arrow" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <div class="sv-note-header">
  <div class="sv-note-nav-brand"><strong>Блокнот</strong></div>
+ </div>
  <div class="sv-note-nav-actions">
  <button id="svNoteSearch" class="sv-note-nav-circle" type="button" aria-label="Поиск заметок" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.3"/><path d="m15.2 15.2 5.1 5.1"/></svg></button>
  <button id="svNoteUndo" class="sv-note-nav-circle" type="button" aria-label="Отменить ввод" title="Отменить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.4 7.2-5 5 5 5M4.6 12.2h8.7a5.6 5.6 0 0 1 0 11.2"/></svg></button>
@@ -4115,7 +4145,6 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[op
  <button id="svNoteDone" class="sv-note-nav-circle" type="button" aria-label="Готово — сохранить заметку" title="Готово"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4.8 12.1 5 4.7 9.5-10"/></svg></button>
 
  </div>
-</div>
 <div id="svNoteTopMenu" class="sv-note-top-menu" hidden>
  <button type="button" data-sv-note-menu="copy">Копировать текст</button>
  <button type="button" data-sv-note-menu="notes">Мои записи</button>

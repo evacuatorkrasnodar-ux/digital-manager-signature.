@@ -68,6 +68,15 @@ test('Apple-style header reuses real note actions and keeps four dock icons',()=
  assert.deepEqual([...toolMarkup.matchAll(/data-note-tool="([^"]+)"/g)].map(m=>m[1]),['checklist','attachment','heading','draw']);
 });
 
+test('header controls share one top anchor and Share/More render as one capsule',()=>{
+ const navMarkup=html.split('<button id="noteReviewBack"')[1]?.split('<div id="svNoteTopMenu"')[0]||'';
+ assert.match(navMarkup,/<div class="sv-note-header">\s*<div class="sv-note-nav-brand">[\s\S]*?<\/div>\s*<\/div>\s*<div class="sv-note-nav-actions">/);
+ assert.match(editorStyles,/\.sv-note-nav-actions,\s*html body dialog#noteReviewDialog\.note-review-dialog\[open\] button#noteReviewBack\.sv-note-back-arrow\{\s*top:max\(26px, env\(safe-area-inset-top,0px\)\)!important;/);
+ assert.match(editorStyles,/\.sv-note-action-pair\{\s*display:grid!important;\s*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important;/);
+ assert.match(editorStyles,/\.sv-note-action-pair > :is\(button#svNoteShare,button#svNoteMore\)\{[\s\S]*?border:0!important;border-radius:0!important;[\s\S]*?box-shadow:none!important;/);
+ assert.match(editorStyles,/\.sv-note-action-pair > button#svNoteMore\{\s*border-left:1px solid/);
+});
+
 test('keyboard state follows viewport shrink and recovers without focus-only jumps',()=>{
  const start=viewportScript.indexOf('let lastNoteHeight=0,noteViewportFrame=0,restingNoteHeight=0;');
  const end=viewportScript.indexOf('const queueNoteViewportSync=',start);
