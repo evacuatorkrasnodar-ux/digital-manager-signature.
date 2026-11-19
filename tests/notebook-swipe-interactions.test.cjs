@@ -68,6 +68,8 @@ test('a mouse drag reveals both actions without opening a note',()=>{
  const more=f.swipe.children[0],menu=f.card.children[1];
  more.fire('click');
  assert.equal(menu.hidden,false,'more opens the same actions menu');
+ assert.match(menu.style.values['--sv-nb-actions-top'],/^\d+px$/,'menu has a viewport anchor');
+ assert.match(menu.style.values['--sv-nb-actions-left'],/^\d+px$/,'menu is aligned horizontally');
 });
 
 test('an iPhone horizontal swipe opens, while scrolling vertically remains native',()=>{

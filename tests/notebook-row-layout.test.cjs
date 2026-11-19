@@ -10,7 +10,7 @@ const header=readFileSync(join(root,'assets/seyveo-notebook-page.css'),'utf8');
 
 test('Notebook saved-page generation 4 has no legacy list container or list stylesheet',()=>{
  assert.match(html,/id="notesList" class="sv-note-clean-list" data-list-generation="4"/);
- assert.match(html,/assets\/seyveo-notebook-list-clean-v4\.css\?v=3/);
+ assert.match(html,/assets\/seyveo-notebook-list-clean-v4\.css\?v=4/);
  assert.doesNotMatch(html,/assets\/seyveo-notebook-list-v3\.css/);
  assert.equal(existsSync(join(root,'assets/seyveo-notebook-list-v3.css')),false);
  assert.match(html,/card\.className='sv-nb4-note'/);
@@ -38,7 +38,9 @@ test('saved paper is a compact full-width row with correct light or dark preview
  assert.match(css,/\.sv-nb4-dots\{[\s\S]*?margin:0 8px 0 0!important/);
  assert.match(css,/\.sv-nb4-remove\{\s*right:0!important/);
  assert.match(css,/\.sv-nb4-open\{[\s\S]*?gap:10px!important/);
+ assert.match(css,/\.sv-nb4-front\{[\s\S]*?grid-template-columns:minmax\(0,1fr\) 50px!important/);
  assert.match(css,/\.sv-nb4-preview\{[\s\S]*?width:45px!important/);
  assert.match(css,/\.sv-nb4-preview\[data-paper-background="dark"\]\{\s*background:#202124!important/);
+ assert.match(css,/\.sv-nb4-preview\[data-paper-background="light"\]\{[\s\S]*?filter:brightness\(\.96\)!important/);
  assert.match(html,/thumbnail\.dataset\.paperBackground=note\.paper\.background==='dark'\?'dark':'light'/);
 });

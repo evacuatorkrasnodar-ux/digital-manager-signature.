@@ -15,6 +15,9 @@ test('the fresh Notebook row retains its original real actions and three dots',(
  assert.match(html,/action\('Удалить',\(\)=>deleteNoteWithUndo\(note\),'sv-nb4-danger'\)/);
  assert.match(css,/\.sv-nb4-dots\{[\s\S]*?display:grid!important/);
  assert.match(css,/\.sv-nb4-dots\{[\s\S]*?opacity:1!important;visibility:visible!important/);
+ assert.match(css,/\.sv-nb4-actions:not\(\[hidden\]\)\{[\s\S]*?position:fixed!important/);
+ assert.match(html,/menu\.style\.setProperty\('--sv-nb-actions-top'/);
+ assert.match(html,/menu\.style\.setProperty\('--sv-nb-actions-left'/);
  assert.match(menu,/list\.querySelectorAll\('\.sv-nb4-note'\)/);
  assert.match(html,/assets\/seyveo-note-menu-dismiss\.js\?v=5/);
 });

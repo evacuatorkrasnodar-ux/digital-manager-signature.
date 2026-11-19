@@ -5493,8 +5493,21 @@ function renderNotes(){
    container.querySelectorAll('.sv-nb4-dots').forEach(el=>el.setAttribute('aria-expanded','false'));
    container.querySelectorAll('.sv-nb4-more').forEach(el=>el.setAttribute('aria-expanded','false'));
    if(expanding){
-    const box=container.getBoundingClientRect(),rect=card.getBoundingClientRect();
-    card.classList.toggle('sv-nb4-actions-above',rect.bottom+151>box.bottom&&rect.top-151>=box.top);
+    // Use viewport coordinates: the scrolling list clips absolute menus,
+    // especially the last saved note and its Delete action.
+    const rect=(fromSwipe?swipeMore:more).getBoundingClientRect();
+    const viewportWidth=window.innerWidth||document.documentElement?.clientWidth||390;
+    const viewportHeight=window.innerHeight||document.documentElement?.clientHeight||720;
+    const menuWidth=Math.min(190,viewportWidth-24);
+    const menuHeight=menu.children.length*42+10;
+    const bottomInset=viewportHeight>550?100:12;
+    const anchorRight=Number.isFinite(rect.right)?rect.right:viewportWidth-12;
+    const left=Math.max(12,Math.min(viewportWidth-menuWidth-12,anchorRight-menuWidth+10));
+    let top=rect.bottom+6;
+    if(top+menuHeight>viewportHeight-bottomInset)top=rect.top-menuHeight-6;
+    top=Math.max(8,Math.min(top,viewportHeight-menuHeight-bottomInset));
+    menu.style.setProperty('--sv-nb-actions-top',Math.round(top)+'px');
+    menu.style.setProperty('--sv-nb-actions-left',Math.round(left)+'px');
    }
    menu.hidden=!expanding;more.setAttribute('aria-expanded',String(expanding));
    swipeMore.setAttribute('aria-expanded',String(expanding));
@@ -6886,7 +6899,7 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=41"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=15"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=3"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=41"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=15"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=4"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=7">
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=2">
