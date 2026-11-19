@@ -2102,6 +2102,108 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   display:none!important;
  }
 }
+/* Light Notebook shares the LIVE Home dock's approved pearl material, not the
+   legacy blue glass. The same original pseudo-surfaces are reused in both
+   compact and keyboard-expanded states; no extra overlay is added. */
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ border:var(--sv-dock-pearl-border)!important;
+ background:var(--sv-dock-pearl-bg)!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ box-shadow:var(--sv-dock-pearl-shadow)!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]),
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
+ color:#0b0b0d!important;
+}
+/* Notebook's native four-action header: Back | Undo · Share/More · Done.
+   The old centered wordmark is visually replaced by Apple-like controls. */
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-brand{
+ visibility:hidden!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions{
+ position:absolute!important;
+ top:-43px!important;
+ right:0!important;
+ left:auto!important;
+ z-index:25!important;
+ display:flex!important;
+ flex-direction:row!important;
+ align-items:center!important;
+ justify-content:flex-end!important;
+ gap:7px!important;
+ width:auto!important;
+ pointer-events:auto!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions :is(#svNoteUndo,#svNoteShare,#svNoteMore,#svNoteDone){
+ box-sizing:border-box!important;
+ display:grid!important;
+ place-items:center!important;
+ flex:0 0 43px!important;
+ width:43px!important;min-width:43px!important;max-width:43px!important;
+ height:43px!important;min-height:43px!important;max-height:43px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:rgba(244,247,250,.14)!important;
+ box-shadow:none!important;
+ color:#f1f3f6!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions .sv-note-action-pair{
+ box-sizing:border-box!important;
+ display:flex!important;flex:0 0 auto!important;
+ align-items:center!important;justify-content:center!important;
+ height:43px!important;
+ padding:0 1px!important;
+ border:1px solid rgba(236,240,246,.16)!important;
+ border-radius:999px!important;
+ background:rgba(244,247,250,.12)!important;
+ box-shadow:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions .sv-note-action-pair :is(#svNoteShare,#svNoteMore){
+ width:39px!important;min-width:39px!important;max-width:39px!important;
+ background:transparent!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions :is(#svNoteUndo,#svNoteShare,#svNoteMore,#svNoteDone) svg{
+ display:block!important;width:21px!important;height:21px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions #svNoteMore svg circle{
+ fill:currentColor!important;stroke:none!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions #svNoteDone{
+ background:#c69c09!important;color:#fff!important;
+}
+#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions :is(#svNoteUndo,#svNoteShare,#svNoteMore,#svNoteDone):active{
+ opacity:.72!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions :is(#svNoteUndo,#svNoteShare,#svNoteMore){
+ color:#161719!important;
+ background:rgba(248,249,251,.90)!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions .sv-note-action-pair{
+ border-color:rgba(234,237,242,.68)!important;
+ background:rgba(248,249,251,.91)!important;
+ box-shadow:0 1px 3px rgba(63,72,86,.045)!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions .sv-note-action-pair :is(#svNoteShare,#svNoteMore){
+ background:transparent!important;
+}
+:root[data-theme="light"] #noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions #svNoteUndo{
+ border:1px solid rgba(234,237,242,.68)!important;
+ box-shadow:0 1px 3px rgba(63,72,86,.045)!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow{
+ background:rgba(248,249,251,.90)!important;
+ color:#161719!important;
+ border:1px solid rgba(234,237,242,.68)!important;
+ box-shadow:0 1px 3px rgba(63,72,86,.045)!important;
+}
+@media(max-height:530px){
+ #noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions{top:-23px!important}
+}
 </style><link rel="stylesheet" href="assets/seyveo-note-attachments.css?v=12"><link rel="stylesheet" href="assets/seyveo-back-silver-flat.css?v=7"><style id="seyveo-pulse-nov09-polish">
 /* Pulse only: flat graphite and compact Sayvi explanation. */
 #picturePage .picture-quick-insight.picture-sayvi{border:0;box-shadow:none;background:#38383A;border-radius:18px;padding:15px 16px}
@@ -4002,7 +4104,12 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
  <div class="sv-note-nav-brand"><strong>Блокнот</strong></div>
  <div class="sv-note-nav-actions">
  <button id="svNoteSearch" class="sv-note-nav-circle" type="button" aria-label="Поиск заметок" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.3"/><path d="m15.2 15.2 5.1 5.1"/></svg></button>
+ <button id="svNoteUndo" class="sv-note-nav-circle" type="button" aria-label="Отменить ввод" title="Отменить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.4 7.2-5 5 5 5M4.6 12.2h8.7a5.6 5.6 0 0 1 0 11.2"/></svg></button>
+ <div class="sv-note-action-pair">
+ <button id="svNoteShare" class="sv-note-nav-circle" type="button" aria-label="Поделиться заметкой" title="Поделиться"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M5.8 11v8.4a1.6 1.6 0 0 0 1.6 1.6h9.2a1.6 1.6 0 0 0 1.6-1.6V11"/></svg></button>
  <button id="svNoteMore" class="sv-note-nav-circle" type="button" aria-label="Действия с заметкой" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>
+ </div>
+ <button id="svNoteDone" class="sv-note-nav-circle" type="button" aria-label="Готово — сохранить заметку" title="Готово"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4.8 12.1 5 4.7 9.5-10"/></svg></button>
 
  </div>
 </div>
@@ -5881,6 +5988,7 @@ $('noteReviewBack').addEventListener('click',event=>{
  event.stopImmediatePropagation();
  closeNoteReviewSafely();
 },true);
+$('svNoteDone').addEventListener('click',closeNoteReviewSafely);
 $('noteReviewDialog').addEventListener('cancel',event=>{
  clearTimeout(noteAutosaveTimer);noteAutosaveTimer=0;
  if(!persistNoteReview())event.preventDefault();
@@ -6845,6 +6953,28 @@ window.addEventListener('load',()=>{
  new MutationObserver(queueNoteViewportSync).observe(dlg,{attributes:true,attributeFilter:['open']});
  const status=(msg)=>{const el=document.getElementById('noteReviewStatus');el.hidden=false;el.textContent=msg};
  const insert=(value)=>{const a=field.selectionStart,b=field.selectionEnd;field.setRangeText(value,a,b,'end');field.dispatchEvent(new Event('input',{bubbles:true}));field.focus()};
+ let lastNoteEditable=field;
+ dlg.addEventListener('focusin',event=>{
+  if(event.target.matches?.('#svNoteTitle,#noteReviewText,#svNoteRichEditor'))lastNoteEditable=event.target;
+ });
+ document.getElementById('svNoteUndo')?.addEventListener('click',()=>{
+  const editable=lastNoteEditable?.isConnected?lastNoteEditable:field;
+  editable.focus({preventScroll:true});
+  const undone=typeof document.execCommand==='function'&&document.execCommand('undo');
+  if(!undone){status('Отменить пока нечего.');return;}
+  window.SEYVEO_NOTE_RICH?.sync();
+  editable.dispatchEvent(new Event('input',{bubbles:true}));
+ });
+ document.getElementById('svNoteShare')?.addEventListener('click',async()=>{
+  const title=document.getElementById('svNoteTitle').value.trim()||'Заметка SEYVEO';
+  const body=field.value.trim();
+  const text=(title+'\n\n'+body).trim();
+  if(!body&&!document.getElementById('svNoteTitle').value.trim()){status('Сначала напишите заметку.');return;}
+  try{
+   if(typeof navigator.share==='function')await navigator.share({title,text});
+   else{await navigator.clipboard.writeText(text);status('Заметка скопирована — её можно отправить.');}
+  }catch(error){if(error?.name!=='AbortError')status('Не удалось поделиться заметкой.');}
+ });
  const printCurrent=()=>{
   const title=document.getElementById('svNoteTitle').value.trim();
   const content=field.value.trim();

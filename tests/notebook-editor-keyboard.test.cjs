@@ -6,6 +6,7 @@ const vm=require('node:vm');
 
 const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
 const editorStyles=html.match(/<style id="sv-note-editor-v2">([\s\S]*?)<\/style>/)?.[1]||'';
+const homeMaterial=fs.readFileSync(path.join(__dirname,'..','assets/seyveo-home-dock-preview.css'),'utf8');
 const toolMarkup=html.split('<div class="sv-note-tools sv-note-tools-compact"')[1]?.split('<div id="svNoteAttachmentMenu"')[0]||'';
 const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split('</script>')[0]||'';
 
@@ -24,6 +25,30 @@ test('mobile keyboard gets one full-width material surface with no extra circle'
  assert.match(keyboardCss,/\.sv-note-tool-row\.sv-shared-dock::before\{\s*left:20px!important;[\s\S]*?width:calc\(100vw - 40px\)!important;/);
  assert.match(keyboardCss,/\.sv-note-tool-row\.sv-shared-dock::after\{\s*display:none!important;/);
  assert.match(keyboardCss,/width:44px!important;\s*min-width:44px!important;\s*height:44px!important;\s*min-height:44px!important;/);
+});
+
+test('compact light Notebook dock inherits exactly the live Home pearl tokens',()=>{
+ for(const token of ['--sv-dock-pearl-border','--sv-dock-pearl-bg','--sv-dock-pearl-blur','--sv-dock-pearl-shadow']){
+  assert.ok(homeMaterial.includes(token+':'),'Home dock owns '+token);
+  assert.ok(editorStyles.includes('var('+token+')!important;'),'Notebook shares '+token);
+ }
+ assert.match(editorStyles,/:root\[data-theme="light"\] #noteReviewDialog\.note-review-dialog\[open\] \.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::before,/);
+ assert.match(editorStyles,/:root\[data-theme="light"\] #noteReviewDialog\.note-review-dialog\[open\] \.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::after\{/);
+ assert.match(editorStyles,/\.sv-note-tools-compact>button:not\(\[hidden\]\),[\s\S]*?color:#0b0b0d!important;/);
+});
+
+test('Apple-style header reuses real note actions and keeps four dock icons',()=>{
+ for(const id of ['svNoteUndo','svNoteShare','svNoteMore','svNoteDone']){
+  assert.match(html,new RegExp('<button id="'+id+'"[^>]*aria-label="[^"]+"'));
+ }
+ assert.match(html,/<div class="sv-note-action-pair">[\s\S]*?id="svNoteShare"[\s\S]*?id="svNoteMore"[\s\S]*?<\/div>/);
+ assert.match(editorStyles,/\.sv-note-nav-brand\{\s*visibility:hidden!important;/);
+ assert.match(editorStyles,/\.sv-note-nav-actions :is\(#svNoteUndo,#svNoteShare,#svNoteMore,#svNoteDone\)/);
+ assert.match(editorStyles,/\.sv-note-nav-actions #svNoteDone\{\s*background:#c69c09!important;color:#fff!important;/);
+ assert.match(html,/\$\('svNoteDone'\)\.addEventListener\('click',closeNoteReviewSafely\)/);
+ assert.match(viewportScript,/getElementById\('svNoteUndo'\)[\s\S]*?execCommand\('undo'\)/);
+ assert.match(viewportScript,/getElementById\('svNoteShare'\)[\s\S]*?navigator\.share\(\{title,text\}\)/);
+ assert.deepEqual([...toolMarkup.matchAll(/data-note-tool="([^"]+)"/g)].map(m=>m[1]),['checklist','attachment','heading','draw']);
 });
 
 test('keyboard state follows viewport shrink and recovers without focus-only jumps',()=>{
