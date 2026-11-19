@@ -298,6 +298,9 @@ function syncBrushControl(){
  brushControl.max=String(currentTool()==='eraser'?80:28);
  brushControl.value=String(brushSize);
  brushControl.setAttribute('aria-valuetext',String(brushSize));
+ // The floating number/knob is owned by the toolbar component; emit one
+ // synthetic input so its visual position tracks programmatic tool changes.
+ brushControl.dispatchEvent(new Event('input',{bubbles:true}));
 }
 function selectTool(name,keepSize=false){
  if(!tools.includes(name))return;
