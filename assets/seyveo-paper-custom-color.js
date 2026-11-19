@@ -33,7 +33,7 @@
  const details=document.createElement('details');
  details.className='sv-ink-custom';
  details.innerHTML=
-  '<summary><span class="sv-ink-summary-title"><span class="sv-ink-summary-icon" aria-hidden="true">＋</span>Свой цвет</span><span class="sv-ink-summary-hint">Спектр · RGB · HEX</span></summary>'+
+  '<summary><span class="sv-ink-summary-title">Настроить цвет</span></summary>'+
   '<div class="sv-ink-custom-body">'+
    '<div class="sv-ink-sv" role="slider" tabindex="0" aria-label="Насыщенность и яркость" aria-valuemin="0" aria-valuemax="100"><span class="sv-ink-sv-thumb" aria-hidden="true"></span></div>'+
    '<div class="sv-ink-hue-row">'+
