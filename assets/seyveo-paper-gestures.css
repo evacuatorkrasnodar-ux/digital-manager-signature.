@@ -1,0 +1,39 @@
+/* Gesture-only layer. No change to the five-button drawing toolbar. */
+#notePaperDialog.sv-paper-studio[open] #notePaperSheet{
+ transform-origin:center center!important;will-change:transform;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage{
+ touch-action:none!important;
+}
+#notePaperDialog #notePaperSheet > canvas.sv-paper-selection-overlay{
+ position:absolute!important;inset:0!important;z-index:5!important;
+ display:block!important;width:100%!important;height:100%!important;
+ padding:0!important;margin:0!important;border:0!important;
+ pointer-events:none!important;background:transparent!important;
+}
+#notePaperDialog .sv-paper-selection-actions[hidden],
+#notePaperDialog .sv-paper-zoom-badge[hidden]{display:none!important}
+#notePaperDialog .sv-paper-selection-actions{
+ position:absolute!important;z-index:30!important;top:14px!important;left:50%!important;
+ transform:translateX(-50%)!important;display:flex!important;align-items:center!important;gap:5px!important;
+ padding:5px!important;border:1px solid rgba(183,190,199,.55)!important;border-radius:999px!important;
+ background:rgba(241,243,246,.96)!important;color:#181b20!important;
+ box-shadow:0 3px 12px rgba(0,0,0,.12)!important;
+ backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+#notePaperDialog .sv-paper-selection-actions>button{
+ display:grid;place-items:center;flex:none;width:38px;height:38px;min-width:38px;
+ border:0!important;border-radius:50%!important;background:transparent!important;
+ color:#1e2328!important;font:500 21px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+#notePaperDialog .sv-paper-selection-actions>button:active{
+ background:rgba(151,159,171,.20)!important;
+}
+#notePaperDialog .sv-paper-selection-actions svg{width:21px;height:21px;stroke:currentColor;fill:none}
+#notePaperDialog .sv-paper-zoom-badge{
+ position:absolute!important;z-index:25!important;top:16px!important;right:17px!important;
+ padding:7px 11px!important;background:rgba(48,51,56,.88)!important;
+ color:#fff!important;border-radius:999px!important;
+ font:500 12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ pointer-events:none!important;
+}
