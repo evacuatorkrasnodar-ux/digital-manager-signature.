@@ -23,6 +23,71 @@ function ovalFitter(){
  assert.ok(begin>=0&&end>begin);
  return vm.runInNewContext(script.slice(begin,end)+'\nfitOval');
 }
+function shapeFitter(name){
+ const begin=script.indexOf('const clamp=(n,min,max)=>');
+ const end=script.indexOf('\n const action=document.createElement',begin);
+ assert.ok(begin>=0&&end>begin);
+ return vm.runInNewContext(script.slice(begin,end)+'\n'+name);
+}
+
+test('Sayvi restores a shaky tilted heart without changing the artist’s ink pressure',()=>{
+ const fit=shapeFitter('fitHeart');
+ for(const direction of [1,-1]){
+  const n=97,angle=.32,ideal=[],drawing=[];
+  for(let i=0;i<n;i++){
+   const t=direction*Math.PI*2*i/(n-1);
+   const u=16*Math.sin(t)**3,v=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+   const x=300+u*3.9*Math.cos(angle)-v*3.9*Math.sin(angle);
+   const y=290+u*3.9*Math.sin(angle)+v*3.9*Math.cos(angle);
+   ideal.push([x,y]);
+   drawing.push([x+2.4*Math.sin(t*11),y+2.2*Math.cos(t*9),55+i%15]);
+  }
+  const before=structuredClone(drawing),after=fit(drawing);
+  assert.ok(after,`recognised a closed heart in direction ${direction}`);
+  assert.deepEqual(drawing,before);
+  assert.deepEqual(after.map(p=>p[2]),drawing.map(p=>p[2]));
+  assert.deepEqual(after[0].slice(0,2),after.at(-1).slice(0,2));
+  const error=points=>points.reduce((sum,p,i)=>sum+Math.hypot(p[0]-ideal[i][0],p[1]-ideal[i][1]),0)/n;
+  assert.ok(error(after)<error(drawing)*.8,`heart error improved: ${error(drawing)} -> ${error(after)}`);
+ }
+});
+
+test('heart detector ignores circles, squares and open handwriting',()=>{
+ const heart=shapeFitter('fitHeart'),n=97;
+ const circle=Array.from({length:n},(_,i)=>{
+  const t=2*Math.PI*i/(n-1);return [200+60*Math.cos(t),200+60*Math.sin(t),50];
+ });
+ assert.equal(heart(circle),null,'a circle must never turn into a heart');
+ const oval=circle.map((p,i)=>[p[0]+(p[0]-200)*.65,p[1]-(p[1]-200)*.22,p[2]]);
+ assert.equal(heart(oval),null,'a tilted or elongated letter O must not become a heart');
+ const corners=[[100,100],[220,100],[220,220],[100,220],[100,100]],square=[];
+ for(let k=0;k<4;k++)for(let i=0;i<24;i++){
+  const t=i/24;
+  square.push([corners[k][0]*(1-t)+corners[k+1][0]*t,corners[k][1]*(1-t)+corners[k+1][1]*t,50]);
+ }
+ square.push([100,100,50]);
+ assert.equal(heart(square),null,'a box must stay a box');
+ assert.equal(heart([[30,30,50],[42,41,50],[54,56,50],[66,78,50]]),null);
+});
+
+test('a wobbly straight leg of a letter becomes straight; curves and endpoints remain safe',()=>{
+ const straight=shapeFitter('fitStraight'),n=20;
+ const points=Array.from({length:n},(_,i)=>[120+i*7,240+i*.8+(i%2?1.9:-1.9),40+i%15]);
+ const source=structuredClone(points),result=straight(points);
+ assert.ok(result,'confidently near-straight pen stroke recognised');
+ assert.deepEqual(points,source);
+ assert.deepEqual(Array.from(result[0]),points[0]);assert.deepEqual(Array.from(result.at(-1)),points.at(-1));
+ assert.deepEqual(result.map(p=>p[2]),points.map(p=>p[2]));
+ const deviation=path=>{
+  const a=path[0],b=path.at(-1),dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy);
+  return path.reduce((sum,p)=>sum+Math.abs((p[0]-a[0])*dy-(p[1]-a[1])*dx)/length,0);
+ };
+ assert.ok(deviation(result)<deviation(points)*.05);
+ const curved=Array.from({length:25},(_,i)=>{
+  const t=Math.PI*i/24;return [200+75*Math.cos(t),260+75*Math.sin(t),50];
+ });
+ assert.equal(straight(curved),null,'a curved letter is not flattened into a line');
+});
 
 test('Sayvi squares up a wobbly, tilted oval while preserving pressure and closing its seam',()=>{
  const fit=ovalFitter(),n=65,tilt=.44,center=[280,340];
@@ -194,7 +259,7 @@ test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',
 test('preview edits only pen and pencil, preserving text, photos and undo history',()=>{
  assert.match(script,/const eligible=stroke=>\['pen','pencil'\]\.includes\(stroke\.tool\)/);
  assert.match(script,/proposal=paper\.getEditableStrokes\(indices\)/);
- assert.match(script,/next=fitOval\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
+ assert.match(script,/next=fitHeart\(stroke\.points\)\|\|fitOval\(stroke\.points\)\|\|fitStraight\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
  assert.match(script,/paper\.previewStrokeEdit\(next\?proposal:original\)/);
  assert.match(script,/if\(commit\)\{\s*if\(!paper\.applyStrokeEdit\(proposal\)/);
  assert.match(script,/else if\(restore\)paper\.previewStrokeEdit\(original\)/);
@@ -209,5 +274,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=1/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=4/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=5/);
 });

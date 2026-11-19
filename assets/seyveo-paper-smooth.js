@@ -110,9 +110,116 @@
   return corrected;
  }
 
+ // Equal-distance samples let a heart be drawn quickly or slowly without
+ // changing the recognised outline. This stays entirely on the device.
+ const HEART_SAMPLES=96;
+ function resampleClosed(points,count){
+  const loop=points.map(p=>p.slice(0,2));
+  if(Math.hypot(loop[0][0]-loop.at(-1)[0],loop[0][1]-loop.at(-1)[1])>.01)loop.push(loop[0]);
+  const lengths=[0];
+  for(let i=1;i<loop.length;i++)lengths.push(lengths.at(-1)+Math.hypot(loop[i][0]-loop[i-1][0],loop[i][1]-loop[i-1][1]));
+  const total=lengths.at(-1);if(total<1)return null;
+  let k=1;
+  return Array.from({length:count},(_,i)=>{
+   const distance=total*i/count;
+   while(k<lengths.length-1&&lengths[k]<distance)k++;
+   const part=(distance-lengths[k-1])/Math.max(.0001,lengths[k]-lengths[k-1]);
+   return [loop[k-1][0]+(loop[k][0]-loop[k-1][0])*part,loop[k-1][1]+(loop[k][1]-loop[k-1][1])*part];
+  });
+ }
+ const heartDraft=Array.from({length:257},(_,i)=>{
+  const t=Math.PI*2*i/256;
+  return [16*Math.sin(t)**3,-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))];
+ });
+ const HEART_TEMPLATE=resampleClosed(heartDraft,HEART_SAMPLES);
+ const meanOf=points=>points.reduce((sum,p)=>[sum[0]+p[0],sum[1]+p[1]],[0,0]).map(n=>n/points.length);
+ const heartMean=meanOf(HEART_TEMPLATE);
+ const heartSize=HEART_TEMPLATE.reduce((sum,p)=>sum+(p[0]-heartMean[0])**2+(p[1]-heartMean[1])**2,0);
+ const wrap=(i,count)=>(i%count+count)%count;
+ function heartAt(index){
+  const whole=Math.floor(index),mix=index-whole;
+  const a=HEART_TEMPLATE[wrap(whole,HEART_SAMPLES)],b=HEART_TEMPLATE[wrap(whole+1,HEART_SAMPLES)];
+  return [a[0]+(b[0]-a[0])*mix-heartMean[0],a[1]+(b[1]-a[1])*mix-heartMean[1]];
+ }
+ function fitHeart(points){
+  const n=points?.length;if(n<24)return null;
+  const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+  const width=Math.max(...xs)-Math.min(...xs),height=Math.max(...ys)-Math.min(...ys);
+  const size=Math.min(width,height);
+  if(size<42||Math.max(width,height)>size*1.9)return null;
+  if(Math.hypot(xs[0]-xs.at(-1),ys[0]-ys.at(-1))>Math.max(9,size*.17))return null;
+  const sampled=resampleClosed(points,HEART_SAMPLES);if(!sampled)return null;
+  const [cx,cy]=meanOf(sampled);
+  let best=null;
+  for(const direction of [1,-1])for(let phase=0;phase<HEART_SAMPLES;phase++){
+   let dot=0,cross=0;
+   for(let i=0;i<HEART_SAMPLES;i++){
+    const t=HEART_TEMPLATE[wrap(phase+direction*i,HEART_SAMPLES)];
+    const tx=t[0]-heartMean[0],ty=t[1]-heartMean[1];
+    const sx=sampled[i][0]-cx,sy=sampled[i][1]-cy;
+    dot+=tx*sx+ty*sy;cross+=tx*sy-ty*sx;
+   }
+   const a=dot/heartSize,b=cross/heartSize;
+   let error=0;
+   for(let i=0;i<HEART_SAMPLES;i++){
+    const t=HEART_TEMPLATE[wrap(phase+direction*i,HEART_SAMPLES)];
+    const tx=t[0]-heartMean[0],ty=t[1]-heartMean[1];
+    error+=(a*tx-b*ty-(sampled[i][0]-cx))**2+(b*tx+a*ty-(sampled[i][1]-cy))**2;
+   }
+   if(!best||error<best.error)best={direction,phase,a,b,error};
+  }
+  if(!best||Math.sqrt(best.error/HEART_SAMPLES)/size>.078)return null;
+  // Project each original point onto the fitted heart, rather than guessing
+  // its speed along the line. A shaky finger draws at irregular speed.
+  const outline=Array.from({length:HEART_SAMPLES},(_,i)=>{
+   const t=heartAt(i);
+   return [cx+best.a*t[0]-best.b*t[1],cy+best.b*t[0]+best.a*t[1]];
+  });
+  const corrected=points.map((p,i)=>{
+   let nearest=null,nearDistance=Infinity;
+   for(let j=0;j<outline.length;j++){
+    const a=outline[j],b=outline[(j+1)%outline.length];
+    const dx=b[0]-a[0],dy=b[1]-a[1];
+    const t=clamp(((p[0]-a[0])*dx+(p[1]-a[1])*dy)/Math.max(.001,dx*dx+dy*dy),0,1);
+    const x=a[0]+t*dx,y=a[1]+t*dy;
+    const d=(p[0]-x)**2+(p[1]-y)**2;
+    if(d<nearDistance){nearest=[x,y];nearDistance=d}
+   }
+   return [round(nearest[0]),round(nearest[1]),...p.slice(2)];
+  });
+  corrected[n-1][0]=corrected[0][0];corrected[n-1][1]=corrected[0][1];
+  return corrected;
+ }
+
+ // A nearly straight stroke is often one leg of a handwritten letter.
+ // Preserve its endpoints and pressure, and only remove small sideways wobble.
+ function fitStraight(points){
+  if(!Array.isArray(points)||points.length<8)return null;
+  const first=points[0],last=points.at(-1);
+  const dx=last[0]-first[0],dy=last[1]-first[1],length=Math.hypot(dx,dy);
+  if(length<38)return null;
+  let travelled=0,largest=0,deviation=0,backwards=0,prior=0;
+  const along=[];
+  for(let i=0;i<points.length;i++){
+   const p=points[i],x=p[0]-first[0],y=p[1]-first[1];
+   const t=(x*dx+y*dy)/(length*length);
+   along.push(t);
+   const side=Math.abs(x*dy-y*dx)/length;
+   largest=Math.max(largest,side);deviation+=side;
+   if(i){travelled+=Math.hypot(p[0]-points[i-1][0],p[1]-points[i-1][1]);backwards+=Math.max(0,(prior-t)*length)}
+   prior=t;
+  }
+  if(travelled>length*1.23||backwards>length*.06||largest>Math.min(9,Math.max(3.5,length*.06))||deviation/points.length<.65)return null;
+  return points.map((p,i)=>{
+   if(i===0||i===points.length-1)return p.slice();
+   const t=clamp(along[i],0,1);
+   return [round(first[0]+t*dx),round(first[1]+t*dy),...p.slice(2)];
+  });
+ }
+
  const action=document.createElement('button');
  action.type='button';action.id='notePaperSmoothInk';action.className='sv-newdock-menu-action';
- action.setAttribute('aria-label','Сэйви: сделать рукописный почерк аккуратнее');
+ action.setAttribute('aria-label','Сэйви: сделать рисунок и почерк аккуратнее');
  action.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 15.5c3.5-5.6 5.2-5.6 8.1-1.6s5.3 3.9 8.9-2.1"/><path d="M4 20h16M16.5 6.5l1-3 1 3 3 1-3 1-1 3-1-3-3-1z"/></svg><span>Сделать аккуратнее</span>';
  actions.insertBefore(action,actions.querySelector('#notePaperAddPhoto'));
 
@@ -163,7 +270,7 @@
   proposal=paper.getEditableStrokes(indices);
   let changed=0;
   for(const index of indices){
-   const stroke=proposal[index],next=fitOval(stroke.points)||smoothPoints(stroke.points);
+   const stroke=proposal[index],next=fitHeart(stroke.points)||fitOval(stroke.points)||fitStraight(stroke.points)||smoothPoints(stroke.points);
    for(let i=0;i<next.length;i++)if(Math.hypot(next[i][0]-stroke.points[i][0],next[i][1]-stroke.points[i][1])>.1)changed++;
    stroke.points=next;
   }
