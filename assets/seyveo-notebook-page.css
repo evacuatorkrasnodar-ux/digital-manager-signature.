@@ -237,11 +237,11 @@
  width:100%!important;
  min-width:0!important;
  overflow:hidden!important;
- border-radius:9px!important;
+ border-radius:0!important;
  --note-swipe-offset:0px;
 }
 #svWorkShell[data-active="notes"] #notesDialog #notesList .note-swipe-shell.is-open{
- --note-swipe-offset:-84px;
+ --note-swipe-offset:-168px;
 }
 #svWorkShell[data-active="notes"] #notesDialog #notesList .note-swipe-shell > .note-item-actions{
  transform:translate3d(var(--note-swipe-offset),0,0)!important;
@@ -251,24 +251,41 @@
 #svWorkShell[data-active="notes"] #notesDialog #notesList .note-swipe-shell.is-dragging > .note-item-actions{
  transition:none!important;
 }
-#svWorkShell[data-active="notes"] #notesDialog #notesList .note-swipe-delete{
+#svWorkShell[data-active="notes"] #notesDialog #notesList :is(.note-swipe-delete,.note-swipe-more){
  -webkit-appearance:none!important;
  appearance:none!important;
  box-sizing:border-box!important;
  position:absolute!important;
- top:0!important;right:0!important;bottom:0!important;
+ top:0!important;bottom:0!important;
  display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:center!important;
  gap:4px!important;
  width:84px!important;min-width:84px!important;
  padding:0!important;margin:0!important;
  border:0!important;border-radius:0!important;
- background:#FF3B30!important;color:#fff!important;
+ color:#fff!important;
  box-shadow:none!important;
  font-size:11px!important;line-height:1.2!important;font-weight:550!important;
  -webkit-tap-highlight-color:transparent!important;
+ opacity:0!important;
+ pointer-events:none!important;
 }
-#svWorkShell[data-active="notes"] #notesDialog #notesList .note-swipe-delete svg{
+#svWorkShell[data-active="notes"] #notesDialog #notesList .note-swipe-delete{
+ right:0!important;
+ background:#FF3B30!important;
+}
+#svWorkShell[data-active="notes"] #notesDialog #notesList .note-swipe-more{
+ right:84px!important;
+ background:#9399A2!important;
+}
+html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesDialog #notesList .note-swipe-more{
+ background:#585E68!important;
+}
+#svWorkShell[data-active="notes"] #notesDialog #notesList :is(.note-swipe-shell.is-open,.note-swipe-shell.is-dragging) > :is(.note-swipe-delete,.note-swipe-more){
+ opacity:1!important;
+ pointer-events:auto!important;
+}
+#svWorkShell[data-active="notes"] #notesDialog #notesList :is(.note-swipe-delete,.note-swipe-more) svg{
  display:block!important;width:21px!important;height:21px!important;
  fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
@@ -379,6 +396,15 @@
  height:18px!important;
  fill:currentColor!important;
  stroke:none!important;
+}
+@media(pointer:coarse){
+ /* On iPhone there is one clean row: actions live behind the swipe. */
+ #svWorkShell[data-active="notes"] #notesDialog #notesList .note-more-button{
+  display:none!important;
+ }
+ #svWorkShell[data-active="notes"] #notesDialog #notesList .note-more-options > .note-delete{
+  display:none!important;
+ }
 }
 #svWorkShell[data-active="notes"] #notesDialog #notesList .note-more-options[hidden]{
  display:none!important;

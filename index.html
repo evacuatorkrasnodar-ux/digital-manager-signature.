@@ -5419,6 +5419,10 @@ function renderNotes(){
   swipeDelete.className='note-swipe-delete';swipeDelete.setAttribute('aria-label','Удалить заметку');
   swipeDelete.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9 7V5.5h6V7m-9 0 .7 12h10.6L18 7M10 10.5v5.5m4-5.5v5.5"/></svg><span>Удалить</span>';
   swipeDelete.addEventListener('click',()=>deleteNoteWithUndo(note));
+  const swipeMore=document.createElement('button');swipeMore.type='button';
+  swipeMore.className='note-swipe-more';swipeMore.setAttribute('aria-label','Другие действия с заметкой');
+  swipeMore.setAttribute('aria-expanded','false');
+  swipeMore.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11v8h12v-8M12 3v11M8.5 6.5 12 3l3.5 3.5"/></svg><span>Ещё</span>';
   const controls=document.createElement('div');controls.className='note-item-actions';
   let suppressNoteClickUntil=0;
   const open=document.createElement('button');open.type='button';open.className='note-open';open.setAttribute('aria-label','Открыть запись');
@@ -5451,25 +5455,29 @@ function renderNotes(){
    const button=document.createElement('button');button.type='button';button.textContent=label;
    if(cls)button.className=cls;
    button.addEventListener('click',()=>{
-    menu.hidden=true;more.setAttribute('aria-expanded','false');callback();
+    menu.hidden=true;more.setAttribute('aria-expanded','false');swipeMore.setAttribute('aria-expanded','false');callback();
    });
    menu.append(button);
   }
   action('Поделиться',()=>{shareNote(note)});
   action('Распечатать',()=>{printNote(note)});
   action('Удалить',()=>deleteNoteWithUndo(note),'note-delete');
-  more.addEventListener('click',()=>{
-   if(Date.now()<suppressNoteClickUntil)return;
+  function toggleActions(fromSwipe=false){
+   if(!fromSwipe&&Date.now()<suppressNoteClickUntil)return;
    container.querySelectorAll('.note-swipe-shell.is-open').forEach(el=>el.classList.remove('is-open'));
    const expanding=menu.hidden;
    container.querySelectorAll('.note-more-options').forEach(el=>{el.hidden=true});
    container.querySelectorAll('.note-more-button').forEach(el=>el.setAttribute('aria-expanded','false'));
+   container.querySelectorAll('.note-swipe-more').forEach(el=>el.setAttribute('aria-expanded','false'));
    if(expanding){
     const box=container.getBoundingClientRect(),rect=card.getBoundingClientRect();
     card.classList.toggle('note-menu-above',rect.bottom+151>box.bottom&&rect.top-151>=box.top);
    }
    menu.hidden=!expanding;more.setAttribute('aria-expanded',String(expanding));
-  });
+   swipeMore.setAttribute('aria-expanded',String(expanding));
+  }
+  more.addEventListener('click',()=>toggleActions(false));
+  swipeMore.addEventListener('click',()=>toggleActions(true));
   // Ignore vertical scrolling. Only a deliberate horizontal gesture reveals
   // the red action; a normal tap still opens the saved page.
   let touch=null;
@@ -5489,16 +5497,17 @@ function renderNotes(){
     for(const other of container.querySelectorAll('.note-swipe-shell.is-open'))if(other!==swipe)other.classList.remove('is-open');
     container.querySelectorAll('.note-more-options').forEach(el=>{el.hidden=true});
     container.querySelectorAll('.note-more-button').forEach(el=>el.setAttribute('aria-expanded','false'));
+    container.querySelectorAll('.note-swipe-more').forEach(el=>el.setAttribute('aria-expanded','false'));
    }
-   const offset=Math.max(-84,Math.min(0,(touch.startOpen?-84:0)+dx));
+   const offset=Math.max(-168,Math.min(0,(touch.startOpen?-168:0)+dx));
    swipe.style.setProperty('--note-swipe-offset',offset+'px');
   },{passive:true});
   function finishSwipe(event){
    if(!touch)return;
    if(touch.dragging){
     const point=event.changedTouches?.[0],dx=point?point.clientX-touch.x:0;
-    const offset=Math.max(-84,Math.min(0,(touch.startOpen?-84:0)+dx));
-    swipe.classList.toggle('is-open',offset<-42);
+    const offset=Math.max(-168,Math.min(0,(touch.startOpen?-168:0)+dx));
+    swipe.classList.toggle('is-open',offset<-72);
     suppressNoteClickUntil=Date.now()+450;
    }
    touch=null;swipe.classList.remove('is-dragging');
@@ -5507,7 +5516,7 @@ function renderNotes(){
   controls.addEventListener('touchend',finishSwipe,{passive:true});
   controls.addEventListener('touchcancel',finishSwipe,{passive:true});
   if(!note.paper)menu.prepend(calendar);
-  controls.append(open,more);swipe.append(swipeDelete,controls);
+  controls.append(open,more);swipe.append(swipeMore,swipeDelete,controls);
   card.append(swipe,menu);container.append(card);
  });
 }
@@ -6808,7 +6817,7 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=3"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=41"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=11"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=3"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=41"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=12"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=7">
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=2">

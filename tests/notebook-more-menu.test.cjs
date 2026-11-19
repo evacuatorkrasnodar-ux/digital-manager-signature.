@@ -30,7 +30,7 @@ test('three-dot actions are a compact iOS popover, never a new full-width row',(
  assert.match(button,/background:transparent!important/);
  assert.match(button,/font-size:14px!important/);
  assert.match(css,/\.note-more-options > button svg\{[\s\S]*?max-width:19px!important/);
- assert.match(html,/assets\/seyveo-notebook-page\.css\?v=11/);
+ assert.match(html,/assets\/seyveo-notebook-page\.css\?v=12/);
  assert.match(html,/assets\/seyveo-note-menu-dismiss\.js\?v=3/);
 });
 
@@ -40,8 +40,19 @@ test('iPhone swipe reveals a red delete action while keeping normal taps and ver
  assert.match(html,/controls\.addEventListener\('touchmove'/);
  assert.match(html,/controls\.addEventListener\('touchend',finishSwipe/);
  assert.match(html,/Math\.abs\(dy\)>9&&Math\.abs\(dy\)>Math\.abs\(dx\)/);
- assert.match(css,/\.note-swipe-shell\.is-open\{\s*--note-swipe-offset:-84px/);
- assert.match(css,/\.note-swipe-delete\{[\s\S]*?background:#FF3B30!important/);
+ assert.match(css,/\.note-swipe-shell\.is-open\{\s*--note-swipe-offset:-168px/);
+ assert.match(css,/\.note-swipe-delete\{\s*right:0!important;\s*background:#FF3B30!important/);
+ assert.match(css,/\.note-swipe-more\{\s*right:84px!important/);
+});
+
+test('iPhone hides the permanent dots, with actions accessible only on a swipe',()=>{
+ assert.match(html,/swipeMore\.className='note-swipe-more'/);
+ assert.match(html,/swipeMore\.addEventListener\('click',\(\)=>toggleActions\(true\)\)/);
+ assert.match(html,/swipe\.append\(swipeMore,swipeDelete,controls\)/);
+ assert.match(css,/@media\(pointer:coarse\)\{[\s\S]*?\.note-more-button\{\s*display:none!important/);
+ assert.match(css,/\.note-more-options > \.note-delete\{\s*display:none!important/);
+ assert.match(css,/\.note-swipe-shell\{[\s\S]*?border-radius:0!important/);
+ assert.match(css,/\.note-swipe-delete,\.note-swipe-more\)\{[\s\S]*?opacity:0!important;\s*pointer-events:none!important/);
 });
 
 test('swipe and menu deletion both offer a short undo without destroying attachments immediately',()=>{

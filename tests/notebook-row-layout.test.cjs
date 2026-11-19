@@ -14,7 +14,7 @@ test('saved notebook notes keep thumbnail and copy on a single horizontal row', 
   assert.match(rule, /flex-direction:row!important/);
   assert.match(rule, /align-items:center!important/);
   assert.match(css, /\.note-open > \.note-paper-preview\{[\s\S]*?width:46px!important/);
-  assert.match(html, /assets\/seyveo-notebook-page\.css\?v=11/);
+  assert.match(html, /assets\/seyveo-notebook-page\.css\?v=12/);
 });
 
 test('paper rows stay compact despite retired 86px !important rules', () => {
