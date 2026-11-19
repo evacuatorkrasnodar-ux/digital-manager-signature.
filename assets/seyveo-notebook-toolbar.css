@@ -2693,3 +2693,23 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock >
  color:#8b9099!important;
  opacity:.53!important;
 }
+
+
+/* SEYVEO Ink Studio · remove the rectangular save-area plate.
+   Only the footer/palette backing is flattened; the circular Save action,
+   swatches and touch targets retain their approved styling. */
+html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom,
+html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette{
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette::before,
+html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette::after{
+ content:none!important;
+ display:none!important;
+}
