@@ -2,6 +2,11 @@
    Gestures are view-only until the person confirms an ink edit. */
 (()=>{
  'use strict';
+ // The iPhone's native drawing pipeline has priority. Until the multi-touch
+ // layer is validated in Safari, it must not intercept ANY finger strokes.
+ const iosTouch=/iPhone|iPad|iPod/i.test(navigator.userAgent||'')
+  ||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ if(iosTouch){document.documentElement.classList.add('sv-paper-ios-ink-safe');return}
  const paper=window.SEYVEO_PAPER;
  const dialog=document.getElementById('notePaperDialog');
  const stage=document.getElementById('notePaperStage');
