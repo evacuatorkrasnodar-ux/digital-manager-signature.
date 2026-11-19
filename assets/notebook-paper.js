@@ -20,6 +20,7 @@ const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPa
 const iosFingerInk=/iPhone|iPod/i.test(navigator.userAgent||'');
 let data={pattern:'blank',background:'dark',height:H,strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
+let brushSizes={pen:5,pencil:3,eraser:36};
 let undoStack=[],redoStack=[],lastInkMotionAt=0;
 const HISTORY_LIMIT=32;
 function updateHistoryControls(){
@@ -78,6 +79,33 @@ let liveTail=null,liveMid=null,shapeFrame=0;
 const shapeSnapshot=document.createElement('canvas');
 const shapeSnapshotCtx=shapeSnapshot.getContext('2d');
 const brushControl=$('notePaperWidth'),moreButton=$('notePaperMore'),extras=$('notePaperExtras');
+// A precise, border-only footprint while hovering with an eraser. It has no
+// opaque tile/backplate and never handles touches or blocks ink events.
+const eraserPreview=stage?document.createElement('div'):null;
+if(eraserPreview){
+ eraserPreview.className='sv-paper-eraser-preview';
+ eraserPreview.hidden=true;
+ eraserPreview.setAttribute('aria-hidden','true');
+ stage.append(eraserPreview);
+}
+function hideEraserPreview(){if(eraserPreview)eraserPreview.hidden=true}
+function moveEraserPreview(event){
+ if(!eraserPreview||!dialog.open||currentTool()!=='eraser'||event.pointerType==='touch'){
+  hideEraserPreview();return;
+ }
+ const stageBox=stage.getBoundingClientRect(),canvasBox=canvas.getBoundingClientRect();
+ const diameter=Math.max(8,Math.min(240,brushSize*canvasBox.width/W));
+ eraserPreview.style.left=(event.clientX-stageBox.left)+'px';
+ eraserPreview.style.top=(event.clientY-stageBox.top)+'px';
+ eraserPreview.style.width=diameter+'px';
+ eraserPreview.style.height=diameter+'px';
+ eraserPreview.style.borderColor=data.background==='dark'
+  ?'rgba(248,249,252,.72)':'rgba(36,40,48,.54)';
+ eraserPreview.hidden=false;
+}
+canvas.addEventListener('pointermove',moveEraserPreview,{passive:true});
+canvas.addEventListener('pointerleave',hideEraserPreview,{passive:true});
+dialog.addEventListener('close',hideEraserPreview);
 const photoView=$('notePaperPhotoPreview'),photoFile=$('notePaperPhotoFile');
 const photoCache=new Map();
 function photoImage(photo,redraw){
@@ -106,7 +134,7 @@ function normalize(obj){
  photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
- .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(28,stroke.width)):undefined,...(stroke.pressureSensitive===true?{pressureSensitive:true}:{}),points:stroke.points.slice(0,MAX_POINTS)
+ .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(stroke.tool==='eraser'?80:28,stroke.width)):undefined,...(stroke.pressureSensitive===true?{pressureSensitive:true}:{}),...(stroke.tool==='pencil'&&stroke.brushProfile==='graphite2'?{brushProfile:'graphite2'}:{}),points:stroke.points.slice(0,MAX_POINTS)
  .filter(point=>Array.isArray(point)&&point.length>=2&&Number.isFinite(Number(point[0]))&&Number.isFinite(Number(point[1])))
  .map(point=>{
   const values=[inkCoord(point[0],W),inkCoord(point[1],height),clamp(point.length>2?point[2]:50,100)];
@@ -115,10 +143,16 @@ function normalize(obj){
  })}))};
 }
 function inkWeight(s,p){
- const base=Number.isFinite(s.width)?Math.max(1,Math.min(28,s.width)):5;
+ const base=Number.isFinite(s.width)?Math.max(1,Math.min(s.tool==='eraser'?80:28,s.width)):5;
  if(!s.pressureSensitive||s.tool==='eraser'||SHAPE_TOOLS.has(s.tool))return base;
  const force=clamp(p?.[2]??50,100)/100;
- const tilt=s.tool==='pencil'?1+Math.min(.32,clamp(p?.[3]??0,90)/220):1;
+ // Graphite 2 is opt-in on NEW pencil strokes, so saved sketches retain
+ // their original geometry. Sideways Pencil/S Pen shading widens naturally.
+ const angle=clamp(p?.[3]??0,90);
+ const tilt=s.tool==='pencil'
+  ?s.brushProfile==='graphite2'?1+.65*Math.max(0,Math.min(1,(angle-22)/50))
+   :1+Math.min(.32,angle/220)
+  :1;
  return base*(.58+.84*force)*tilt;
 }
 function paintStroke(ctx,s){
@@ -157,7 +191,7 @@ function paintStroke(ctx,s){
   ctx.stroke();ctx.restore();return;
  }
  const erase=s.tool==='eraser';
- const base=Number.isFinite(s.width)?Math.max(1,Math.min(28,s.width)):(erase?28:s.tool==='pencil'?3.5:4.8);
+ const base=Number.isFinite(s.width)?Math.max(1,Math.min(erase?80:28,s.width)):(erase?36:s.tool==='pencil'?3.5:4.8);
  const chosen=COLORS.includes(s.color)?s.color:null;
  const width=base*(erase?1:1); // consistent width independent of frame frequency
  ctx.save();ctx.globalCompositeOperation=erase?'destination-out':'source-over';
@@ -285,8 +319,24 @@ dialog.addEventListener('pointerdown',event=>{
  if(event.target===canvas&&status.textContent)report('');
 },{passive:true});
 function currentTool(){return document.querySelector('[data-paper-tool][aria-pressed=true]')?.dataset.paperTool||'pen'}
-function selectTool(name){if(!tools.includes(name))return;
+const brushGroup=name=>name==='eraser'?'eraser':name==='pencil'?'pencil':'pen';
+function syncBrushControl(){
+ if(!brushControl)return;
+ brushControl.max=String(currentTool()==='eraser'?80:28);
+ brushControl.value=String(brushSize);
+ brushControl.setAttribute('aria-valuetext',String(brushSize));
+}
+function selectTool(name,keepSize=false){
+ if(!tools.includes(name))return;
+ const previous=currentTool();
+ if(!keepSize&&previous!==name){
+  brushSizes[brushGroup(previous)]=brushSize;
+  brushSize=brushSizes[brushGroup(name)];
+ }
  document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.paperTool===name)));
+ syncBrushControl();
+ if(name!=='eraser')hideEraserPreview();
+ canvas.style.cursor=name==='eraser'?'none':'';
 }
 function snapFreehandShape(stroke){
  if(stroke.tool!=='pen'||stroke.points.length<9)return null;
@@ -419,7 +469,7 @@ function down(e){
  if(e.pointerType==='touch'&&(Date.now()<penTime||Math.max(e.width||0,e.height||0)>27))return;
  if(data.strokes.length>=MAX_STROKES){report('Лист заполнен. Начните следующий.');return}
  e.preventDefault();pointerID=e.pointerId;
- pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,pressureSensitive:e.pointerType==='pen',points:[point(e)]};
+ pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,pressureSensitive:e.pointerType==='pen',...(currentTool()==='pencil'?{brushProfile:'graphite2'}:{}),points:[point(e)]};
  liveTail=pending.points[0];liveMid=null;
  lastInkMotionAt=Date.now();
  if(SHAPE_TOOLS.has(pending.tool)&&shapeSnapshotCtx){
@@ -650,7 +700,8 @@ $('noteGradientApply')?.addEventListener('click',()=>{
 });
 updateGradientEditor();
 if(brushControl)brushControl.addEventListener('input',()=>{
- brushSize=Math.max(1,Math.min(28,Number(brushControl.value)||5));
+ brushSize=Math.max(1,Math.min(currentTool()==='eraser'?80:28,Number(brushControl.value)||5));
+ brushSizes[brushGroup(currentTool())]=brushSize;
  brushControl.setAttribute('aria-valuetext',String(brushSize));
 });
 function closeExtras(){
@@ -698,11 +749,18 @@ function open(note=null){
  closePatternMenu();closeColorMenu();
  activeColor=[...data.strokes].reverse().find(stroke=>COLORS.includes(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
  activeGradient=null;
- brushSize=[...data.strokes].reverse().find(stroke=>Number.isFinite(stroke.width))?.width||5;
- if(brushControl){brushControl.value=String(brushSize);brushControl.setAttribute('aria-valuetext',String(brushSize));}
+ // Each instrument remembers its own tip size; the eraser never inherits a
+ // thin handwriting nib. Existing notes restore their last saved sizes.
+ const recent=data.strokes.slice().reverse();
+ brushSizes={
+  pen:recent.find(s=>s.tool!=='eraser'&&s.tool!=='pencil'&&Number.isFinite(s.width))?.width||5,
+  pencil:recent.find(s=>s.tool==='pencil'&&Number.isFinite(s.width))?.width||3,
+  eraser:recent.find(s=>s.tool==='eraser'&&Number.isFinite(s.width))?.width||36
+ };
+ brushSize=brushSizes.pen;
  if(extras)extras.hidden=true;if(moreButton)moreButton.setAttribute('aria-expanded','false');
  syncColorMenu();
- $('notePaperTitle').textContent=editID?'Мой лист':'Чистый лист';selectTool('pen');report('');
+ $('notePaperTitle').textContent=editID?'Мой лист':'Чистый лист';selectTool('pen',true);report('');
  if(!dialog.open)dialog.showModal();
  document.documentElement.classList.add('sv-paper-drawing');
  requestAnimationFrame(()=>{
