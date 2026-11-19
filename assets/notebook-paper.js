@@ -324,6 +324,17 @@ function paintStroke(ctx,s){
  }
  ctx.restore();
 }
+// OCR bounds are measured on the actual rendered ink. An erased word must not
+// stretch the crop, and a completely erased page is not handwriting.
+function visibleInkBounds(pixels,width,height){
+ let left=width,top=height,right=-1,bottom=-1;
+ for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+  if(pixels[(y*width+x)*4+3]<24)continue;
+  if(x<left)left=x;if(x>right)right=x;
+  if(y<top)top=y;if(y>bottom)bottom=y;
+ }
+ return right<left?null:{left,right,top,bottom};
+}
 function paintText(ctx,item,pageH){
  ctx.save();
  ctx.font=`${item.size}px -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif`;
@@ -1086,15 +1097,12 @@ window.SEYVEO_PAPER=Object.freeze({
    paintStroke(ctx,{...stroke,tool:stroke.tool==='pencil'?'pen':stroke.tool,
     color:'#171e29',gradient:undefined,brushProfile:undefined});
   }
-  let x0=W,y0=raw.height,x1=0,y1=0;
-  for(const stroke of writing)for(const p of stroke.points){
-   x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);
-   y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);
-  }
-  const left=Math.max(0,Math.floor(x0-32));
-  const right=Math.min(W,Math.ceil(x1+32));
-  const top=Math.max(0,Math.floor(y0-32));
-  const bottom=Math.min(raw.height,Math.ceil(y1+32));
+  const visible=visibleInkBounds(ctx.getImageData(0,0,W,raw.height).data,W,raw.height);
+  if(!visible)throw Error('На листе не осталось видимых чернил. Напишите текст ещё раз.');
+  const left=Math.max(0,visible.left-32);
+  const right=Math.min(W,visible.right+33);
+  const top=Math.max(0,visible.top-32);
+  const bottom=Math.min(raw.height,visible.bottom+33);
   const w=Math.max(1,right-left),h=Math.max(1,bottom-top);
   const out=document.createElement('canvas');
   const scale=Math.min(2,2600/Math.max(w,h));
