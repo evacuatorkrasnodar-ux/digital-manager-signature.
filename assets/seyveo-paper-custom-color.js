@@ -37,7 +37,7 @@
   '<div class="sv-ink-custom-body">'+
    '<div class="sv-ink-sv" role="slider" tabindex="0" aria-label="Насыщенность и яркость" aria-valuemin="0" aria-valuemax="100"><span class="sv-ink-sv-thumb" aria-hidden="true"></span></div>'+
    '<div class="sv-ink-hue-row">'+
-    '<button type="button" class="sv-ink-pipette" aria-label="Пипетка: взять цвет с рисунка" title="Взять цвет с листа"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5.5 4-4 4 4-4 4m-4-4 4 4-10.7 10.7a3.5 3.5 0 0 1-3 1l-2.2.6.6-2.2a3.5 3.5 0 0 1 1-3L14.5 5.5ZM5 19l-2 2"/></svg></button>'+
+    '<button type="button" class="sv-ink-pipette" aria-label="Пипетка: взять точный цвет с фотографии или рисунка" title="Взять цвет с листа"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5.5 4-4 4 4-4 4m-4-4 4 4-10.7 10.7a3.5 3.5 0 0 1-3 1l-2.2.6.6-2.2a3.5 3.5 0 0 1 1-3L14.5 5.5ZM5 19l-2 2"/></svg></button>'+
     '<input class="sv-ink-hue" type="range" min="0" max="360" step="1" value="265" aria-label="Оттенок">'+
     '<span class="sv-ink-preview" role="img" aria-label="Выбранный цвет"></span>'+
    '</div>'+
@@ -58,6 +58,13 @@
  const hexInput=details.querySelector('.sv-ink-hex');
  const rgbInputs=['r','g','b'].map(c=>details.querySelector('.sv-ink-'+c));
  const pipette=details.querySelector('.sv-ink-pipette');
+ // The same working pipette belongs beside the Palette title, not behind
+ // "Настроить цвет". Move the real button rather than creating a duplicate.
+ const colorHead=menu.querySelector('.sv-gradient-head');
+ if(colorHead){
+  colorHead.append(pipette);
+  details.querySelector('.sv-ink-hue-row')?.classList.add('sv-ink-hue-row-full');
+ }
  function render(commit,source){
   const rgb=hsvRgb(state.h,state.s,state.v);
   const hex=rgbHex(...rgb);
@@ -139,11 +146,20 @@
  const overlay=document.createElement('div');
  overlay.className='sv-ink-sample-overlay';
  overlay.hidden=true;
- overlay.innerHTML='<span class="sv-ink-sample-instruction">Коснись цвета на листе</span>';
+ overlay.innerHTML='<span class="sv-ink-sample-instruction"><span class="sv-ink-sample-message">Проведи по листу, отпусти для выбора</span><span class="sv-ink-sample-preview" aria-hidden="true"></span><span class="sv-ink-sample-value">#171E29</span></span>';
  sheet.append(overlay);
+ const sampleMessage=overlay.querySelector('.sv-ink-sample-message');
+ const samplePreview=overlay.querySelector('.sv-ink-sample-preview');
+ const sampleValue=overlay.querySelector('.sv-ink-sample-value');
+ const sampleCanvas=document.createElement('canvas');
+ sampleCanvas.width=1;sampleCanvas.height=1;
+ const sampleCtx=sampleCanvas.getContext('2d',{willReadFrequently:true});
  let picking=false;
+ let sampleFrame=0,lastPointer=null;
  function stopSampling(reopen){
   if(!picking)return;
+  if(sampleFrame){cancelAnimationFrame(sampleFrame);sampleFrame=0}
+  lastPointer=null;
   picking=false;overlay.hidden=true;dialog.classList.remove('sv-ink-sampling');
   if(reopen&&dialog.open)requestAnimationFrame(()=>{if(menu.hidden)trigger.click();details.open=true});
  }
@@ -156,13 +172,14 @@
   const scale=fit==='cover'?Math.max(imgRect.width/width,imgRect.height/height):Math.min(imgRect.width/width,imgRect.height/height);
   const renderedW=width*scale,renderedH=height*scale;
   const offsetX=imgRect.left+(imgRect.width-renderedW)/2,offsetY=imgRect.top+(imgRect.height-renderedH)/2;
-  const ix=(x-offsetX)/scale,iy=(y-offsetY)/scale;
+  const ix=Math.floor((x-offsetX)/scale),iy=Math.floor((y-offsetY)/scale);
   if(ix<0||iy<0||ix>=width||iy>=height)return null;
   try{
-   const sample=document.createElement('canvas');sample.width=1;sample.height=1;
-   const ctx=sample.getContext('2d',{willReadFrequently:true});
-   ctx.drawImage(photo,ix,iy,1,1,0,0,1,1);
-   const pixel=ctx.getImageData(0,0,1,1).data;
+   if(!sampleCtx)return null;
+   sampleCtx.clearRect(0,0,1,1);
+   sampleCtx.imageSmoothingEnabled=false;
+   sampleCtx.drawImage(photo,ix,iy,1,1,0,0,1,1);
+   const pixel=sampleCtx.getImageData(0,0,1,1).data;
    return pixel[3]>0?rgbHex(pixel[0],pixel[1],pixel[2]):null;
   }catch{return null}
  }
@@ -170,7 +187,9 @@
   const rect=canvas.getBoundingClientRect();
   let background=paper.getBackground()==='light'?'#ffffff':'#202124';
   const photo=photoColor(clientX,clientY);
-  if(photo)background=photo;
+  // Selecting from a photograph must sample its own pixel, even if there
+  // are pen strokes above it. Empty photo margins still sample the paper.
+  if(photo)return photo;
   if(clientX<rect.left||clientX>rect.right||clientY<rect.top||clientY>rect.bottom)return background;
   const x=Math.floor(clamp((clientX-rect.left)/rect.width*canvas.width,0,canvas.width-1));
   const y=Math.floor(clamp((clientY-rect.top)/rect.height*canvas.height,0,canvas.height-1));
@@ -183,18 +202,58 @@
    return rgbHex(...[0,1,2].map(i=>pixel[i]*a+bg[i]*(1-a)));
   }catch{return background}
  }
+ function previewAt(clientX,clientY){
+  const color=sampleAt(clientX,clientY);
+  samplePreview.style.backgroundColor=color;
+  sampleValue.textContent=color.toUpperCase();
+  return color;
+ }
+ function schedulePreview(clientX,clientY){
+  lastPointer=[clientX,clientY];
+  if(sampleFrame)return;
+  sampleFrame=requestAnimationFrame(()=>{
+   sampleFrame=0;
+   if(picking&&lastPointer)previewAt(...lastPointer);
+  });
+ }
+ function applySample(clientX,clientY){
+  if(!picking)return;
+  setColor(previewAt(clientX,clientY),true);
+  stopSampling(true);
+ }
  pipette.addEventListener('click',()=>{
   picking=true;
   menu.hidden=true;trigger.setAttribute('aria-expanded','false');
+  const photo=document.getElementById('notePaperPhotoPreview');
+  sampleMessage.textContent=photo&&!photo.hidden?'Проведи по фото, отпусти для выбора':'Проведи по листу, отпусти для выбора';
+  samplePreview.style.backgroundColor=paper.getInkColor()||'#171e29';
+  sampleValue.textContent=(paper.getInkColor()||'#171e29').toUpperCase();
   overlay.hidden=false;dialog.classList.add('sv-ink-sampling');
  });
- overlay.addEventListener('pointerdown',event=>{event.preventDefault();event.stopPropagation()});
- overlay.addEventListener('pointerup',event=>{
-  if(!picking)return;
+ overlay.addEventListener('pointerdown',event=>{
   event.preventDefault();event.stopPropagation();
-  setColor(sampleAt(event.clientX,event.clientY),true);
-  stopSampling(true);
+  try{overlay.setPointerCapture(event.pointerId)}catch{}
+  schedulePreview(event.clientX,event.clientY);
  });
+ overlay.addEventListener('pointermove',event=>{if(picking)schedulePreview(event.clientX,event.clientY)});
+ overlay.addEventListener('pointerup',event=>{
+  event.preventDefault();event.stopPropagation();
+  applySample(event.clientX,event.clientY);
+ });
+ overlay.addEventListener('pointercancel',()=>stopSampling(true));
+ // Safari may cancel PointerEvents around a modal. TouchEvents provide a
+ // single safe fallback; applySample is idempotent after pointerup.
+ overlay.addEventListener('touchmove',event=>{
+  const touch=event.touches[0];if(!picking||!touch)return;
+  if(event.cancelable)event.preventDefault();
+  schedulePreview(touch.clientX,touch.clientY);
+ },{passive:false});
+ overlay.addEventListener('touchend',event=>{
+  const touch=event.changedTouches[0];if(!picking||!touch)return;
+  if(event.cancelable)event.preventDefault();
+  applySample(touch.clientX,touch.clientY);
+ },{passive:false});
+ overlay.addEventListener('touchcancel',()=>stopSampling(true));
  overlay.addEventListener('click',event=>{event.preventDefault();event.stopPropagation()});
  document.addEventListener('keydown',event=>{if(picking&&event.key==='Escape'){event.preventDefault();stopSampling(true)}});
  dialog.addEventListener('close',()=>stopSampling(false));

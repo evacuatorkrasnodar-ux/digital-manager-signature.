@@ -612,7 +612,8 @@ if(iosFingerInk&&sheet){
   preventDefault(){}});
  const matching=event=>Array.from(event.changedTouches||[]).find(t=>t.identifier===finger);
  sheet.addEventListener('touchstart',event=>{
-  if(!dialog.open||finger!==null||event.touches.length!==1)return;
+  // The pipette overlay lives on this sheet; its tap must never create ink.
+  if(!dialog.open||dialog.classList.contains('sv-ink-sampling')||finger!==null||event.touches.length!==1)return;
   const t=event.changedTouches[0];if(!t)return;
   finger=t.identifier;const input=asInkEvent(t);
   down(input);

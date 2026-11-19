@@ -134,6 +134,36 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.sv-ink-menu
  border:1px solid rgba(255,255,255,.2);
  font:600 12px/1.2 -apple-system,BlinkMacSystemFont,sans-serif;
 }
+/* One discoverable eyedropper beside the Palette title, not hidden in the
+   advanced color editor. All other controls keep their approved geometry. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color-menu .sv-gradient-head{
+ position:relative!important;
+ min-height:38px!important;
+ padding-right:45px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.paper-color-menu .sv-gradient-head > button.sv-ink-pipette{
+ position:absolute!important;right:1px!important;top:0!important;
+ margin:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-hue-row.sv-ink-hue-row-full{
+ grid-template-columns:minmax(0,1fr)!important;
+}
+#notePaperDialog .sv-ink-sample-instruction{
+ display:grid;grid-template-columns:19px auto;align-items:center;justify-content:start;
+ gap:3px 8px;white-space:normal;max-width:calc(100% - 24px);
+}
+#notePaperDialog .sv-ink-sample-preview{
+ display:block;width:19px;height:19px;border-radius:50%;
+ border:1px solid rgba(255,255,255,.72);
+ box-shadow:0 0 0 .5px rgba(0,0,0,.22);
+}
+#notePaperDialog .sv-ink-sample-value{
+ font:600 12px/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;
+ letter-spacing:.03em;
+}
+#notePaperDialog .sv-ink-sample-message{
+ grid-column:1/-1;grid-row:2;font-weight:450;font-size:11px;opacity:.85;
+}
 @media (prefers-reduced-motion:reduce){
  #notePaperColorMenu .sv-ink-summary-icon{transition:none}
 }
