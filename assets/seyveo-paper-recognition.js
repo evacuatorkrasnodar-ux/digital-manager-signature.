@@ -22,6 +22,7 @@
   <p class="sv-pr-help">Напишите от руки и нажмите «Распознать». Проверьте текст, а затем добавьте его на лист или в заметку.</p>
   <div class="sv-pr-status" role="status" aria-live="polite">Напишите несколько слов на листе.</div>
   <textarea class="sv-pr-text" aria-label="Распознанный текст, можно исправить" placeholder="Здесь появится распознанный текст" spellcheck="true" rows="7"></textarea>
+  <button type="button" class="sv-pr-script-fix" data-pr-fix-script hidden>Проверить похожие буквы</button>
   <div class="sv-pr-actions"><button type="button" data-pr-run class="sv-pr-primary">Распознать</button><button type="button" data-pr-sheet disabled>На лист</button><button type="button" data-pr-copy disabled>Копировать</button><button type="button" data-pr-save disabled>В заметку</button></div>
   <p class="sv-pr-note">Штрихи останутся на листе. Проверьте имена, числа и другие важные данные.</p>`;
  document.body.append(overlay);
@@ -30,12 +31,34 @@
  const copyButton=overlay.querySelector('[data-pr-copy]');
  const saveButton=overlay.querySelector('[data-pr-save]');
  const text=overlay.querySelector('textarea');
+ const fixButton=overlay.querySelector('[data-pr-fix-script]');
  const status=overlay.querySelector('.sv-pr-status');
  const help=overlay.querySelector('.sv-pr-help');
  const chatMode=new URLSearchParams(location.search).get('seyveo-draw')==='chat';
  if(chatMode){saveButton.hidden=true;sheetButton.hidden=true;overlay.classList.add('sv-pr-chat')}
- let busy=false,loader=null,inkAvailable=false,savedText='';
+ let busy=false,loader=null,inkAvailable=false,savedText='',previousText='';
  const message=value=>{status.textContent=value};
+ const latinTwins=Object.freeze({A:'А',B:'В',C:'С',E:'Е',H:'Н',K:'К',M:'М',O:'О',P:'Р',T:'Т',X:'Х',a:'а',c:'с',e:'е',k:'к',m:'м',o:'о',p:'р',t:'т',x:'х',y:'у'});
+ // Suggest only visually confusable Latin glyphs inside predominantly Russian
+ // words. Never invent a dictionary correction, translate, or change a name
+ // without the author's explicit tap.
+ function mixedScriptProposal(value){
+  let count=0;
+  const suggested=String(value).replace(/[A-Za-zА-Яа-яЁё]+/g,word=>{
+   const russian=(word.match(/[А-Яа-яЁё]/g)||[]).length;
+   const latin=(word.match(/[A-Za-z]/g)||[]);
+   if(russian<2||!latin.length||russian<latin.length||!latin.every(letter=>latinTwins[letter]))return word;
+   count+=latin.length;
+   return word.replace(/[A-Za-z]/g,letter=>latinTwins[letter]);
+  });
+  return {text:suggested,count};
+ }
+ function updateScriptSuggestion(){
+  if(previousText){fixButton.hidden=false;fixButton.textContent='Вернуть исходный текст';return}
+  const proposal=mixedScriptProposal(text.value);
+  fixButton.hidden=!proposal.count;
+  fixButton.textContent=proposal.count===1?'Исправить похожую букву':'Исправить похожие буквы · '+proposal.count;
+ }
  const sync=()=>{
   const hasText=Boolean(text.value.trim());
   runButton.disabled=busy||!inkAvailable;copyButton.disabled=busy||!hasText;
@@ -67,7 +90,7 @@
    message('На листе пока нет рукописи. Напиши несколько слов ручкой или карандашом, затем вернись сюда.');
   }else message('Готово к распознаванию. Ваш рисунок останется без изменений.');
   help.textContent='Напишите от руки и нажмите «Распознать». Проверьте текст, а затем добавьте его на лист или в заметку.';
-  text.value='';sync();
+  text.value='';previousText='';updateScriptSuggestion();sync();
   menu.hidden=true;
   document.getElementById('notePaperSettings')?.setAttribute('aria-expanded','false');
   if(!overlay.open)overlay.showModal();
@@ -75,7 +98,18 @@
  entry.addEventListener('click',show);
  overlay.querySelector('[data-pr-close]').addEventListener('click',()=>{if(!busy)overlay.close()});
  overlay.addEventListener('cancel',event=>{if(busy)event.preventDefault()});
- text.addEventListener('input',sync);
+ text.addEventListener('input',()=>{previousText='';updateScriptSuggestion();sync()});
+ fixButton.addEventListener('click',()=>{
+  if(busy)return;
+  if(previousText){text.value=previousText;previousText='';message('Исходный распознанный текст восстановлен.');}
+  else{
+   const proposal=mixedScriptProposal(text.value);
+   if(!proposal.count)return;
+   previousText=text.value;text.value=proposal.text;
+   message('Похожие буквы исправлены. Проверьте результат перед сохранением.');
+  }
+  updateScriptSuggestion();sync();
+ });
 
  async function nativeRecognition(strokes){
   if(typeof navigator.createHandwritingRecognizer!=='function'||typeof window.HandwritingStroke!=='function'||window.top!==window)return '';
@@ -182,7 +216,7 @@
    }
    if(!overlay.open)return;
    if(!found){message('Текст не удалось определить. Попробуйте написать крупнее или исправить вручную.');return}
-   text.value=found.slice(0,8000);
+   text.value=found.slice(0,8000);previousText='';updateScriptSuggestion();
    const compact=found.replace(/\s/g,'');
    const letters=(compact.match(/[A-Za-zА-Яа-яЁё0-9]/g)||[]).length;
    const uncertain=(confidence!==null&&confidence<55)

@@ -24,7 +24,7 @@ function mount({chat=false,dark=false,confirm=()=>true,ink=[[[150,200],[200,310]
  tablet.open=true;
  menu.insertBefore=node=>{nodes.entry=node};
  const buttons=['[data-pr-run]','[data-pr-sheet]','[data-pr-copy]','[data-pr-save]',
-  '[data-pr-close]','textarea','.sv-pr-status','.sv-pr-help'];
+  '[data-pr-close]','[data-pr-fix-script]','textarea','.sv-pr-status','.sv-pr-help'];
  overlay.children=Object.fromEntries(buttons.map(key=>[key,make()]));
  const body={append(node){nodes.overlay=node}};
  const added=[];
@@ -53,6 +53,22 @@ test('recognized copy goes onto original ink sheet and immediately opens existin
  assert.ok(ui.added[0].y>310,'put new text beneath handwriting when there is space');
  assert.equal(ui.getEditCalls(),1);
  assert.equal(ui.overlay.open,false);
+});
+
+test('mixed-alphabet repair is optional and can be undone before saving',()=>{
+ const ui=mount();ui.entry.fire('click');
+ const field=ui.buttons.textarea,fix=ui.buttons['[data-pr-fix-script]'];
+ field.value='Привeт, Рoман!';field.fire('input');
+ assert.equal(fix.hidden,false);
+ assert.deepEqual(ui.added,[]);
+ fix.fire('click');
+ assert.equal(field.value,'Привет, Роман!');
+ assert.match(fix.textContent,/Вернуть/);
+ assert.deepEqual(ui.added,[],'no edit is committed until the author chooses it');
+ fix.fire('click');
+ assert.equal(field.value,'Привeт, Рoман!');
+ field.value='Hello Apple';field.fire('input');
+ assert.equal(fix.hidden,true,'ordinary English text has no false suggestion');
 });
 
 test('text placement chooses the free upper part when handwriting fills bottom',()=>{
@@ -108,7 +124,7 @@ test('uses the same editable printed-text mode and three compact iPhone actions'
  assert.match(textEditor,/if\(!active\)startMode\(\);\s*openEditor\(count-1\)/);
  assert.match(styles,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
  assert.match(styles,/\.sv-pr-chat \.sv-pr-actions\{grid-template-columns:1fr\}/);
- assert.match(html,/seyveo-paper-recognition\.js\?v=8/);
- assert.match(html,/seyveo-paper-recognition\.css\?v=4/);
+ assert.match(html,/seyveo-paper-recognition\.js\?v=9/);
+ assert.match(html,/seyveo-paper-recognition\.css\?v=5/);
  assert.match(html,/seyveo-paper-typed-text\.js\?v=4/);
 });

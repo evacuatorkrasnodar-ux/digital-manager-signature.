@@ -57,7 +57,7 @@ test('handwriting recognition stays opt-in, preserves ink and offers review',()=
  assert.match(recognition,/textarea class="sv-pr-text"/);
  assert.match(recognition,/data-pr-save/);
  assert.match(paper,/exportInkOcrPng/);
- assert.match(html,/assets\/seyveo-paper-recognition\.js\?v=8/);
+ assert.match(html,/assets\/seyveo-paper-recognition\.js\?v=9/);
  assert.match(html,/assets\/notebook-paper\.js\?v=45/);
 });
 
@@ -92,4 +92,19 @@ test('weak handwritten OCR retries sparse lines only once and keeps the stronger
   'one confident character must not replace a whole sentence');
  assert.equal(evaluate.bestReading(paragraph,{text:'Привeт',confidence:63}),paragraph);
  assert.match(recognition,/tessedit_pageseg_mode:'11'/);
+});
+
+test('only confusable Latin letters in predominantly Cyrillic words are suggested',()=>{
+ const start=recognition.indexOf(' const latinTwins=Object.freeze(');
+ const end=recognition.indexOf(' function updateScriptSuggestion(){',start);
+ assert.ok(start>0&&end>start);
+ const proposal=vm.runInNewContext(recognition.slice(start,end)+'\nmixedScriptProposal',{});
+ const result=proposal('Привeт, Рoман!');
+ assert.equal(result.text,'Привет, Роман!');
+ assert.equal(result.count,2);
+ assert.equal(proposal('Hello Apple 2026').count,0);
+ assert.equal(proposal('Иванov').count,0,'unknown characters must not be guessed');
+ assert.equal(proposal('Роман').count,0);
+ assert.equal(proposal('Aа').count,0,'a two-character ambiguous token is not confidently Russian');
+ assert.match(recognition,/data-pr-fix-script hidden/);
 });
