@@ -5,7 +5,7 @@
 #notePaperDialog.sv-paper-studio[open] #notePaperStage{
  touch-action:none!important;
 }
-/* iOS: retain the original single-finger ink surface, with no gesture layer. */
+/* iOS: preserve single-finger ink; only the separate two-finger handlers pan/zoom. */
 html.sv-paper-ios-ink-safe #notePaperDialog.sv-paper-studio[open] #notePaperStage{
  touch-action:auto!important;
 }
@@ -34,10 +34,24 @@ html.sv-paper-ios-ink-safe #notePaperDialog.sv-paper-studio[open] #notePaperStag
  background:rgba(151,159,171,.20)!important;
 }
 #notePaperDialog .sv-paper-selection-actions svg{width:21px;height:21px;stroke:currentColor;fill:none}
+/* Transient zoom readout: below the canvas, just above the seamless color strip.
+   Match the Save circle's viewport/safe-area anchor, never the status bar. */
 #notePaperDialog .sv-paper-zoom-badge{
- position:absolute!important;z-index:25!important;top:16px!important;right:17px!important;
- padding:7px 11px!important;background:rgba(48,51,56,.88)!important;
- color:#fff!important;border-radius:999px!important;
- font:500 12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ position:fixed!important;z-index:34!important;
+ top:auto!important;right:auto!important;
+ bottom:calc(11px + env(safe-area-inset-bottom,0px) + 47px + 14px)!important;
+ left:50%!important;transform:translateX(-50%)!important;
+ box-sizing:border-box!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;
+ min-width:58px!important;height:29px!important;padding:0 11px!important;
+ border:1px solid rgba(235,240,248,.20)!important;
+ border-radius:999px!important;
+ background:rgba(56,56,58,.88)!important;color:#f6f7fb!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 3px 12px rgba(0,0,0,.13)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(108%)!important;
+ backdrop-filter:blur(14px) saturate(108%)!important;
+ font:500 12px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums!important;
+ letter-spacing:.015em!important;white-space:nowrap!important;
  pointer-events:none!important;
 }
