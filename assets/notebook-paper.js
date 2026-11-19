@@ -20,11 +20,56 @@ const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPa
 const iosFingerInk=/iPhone|iPod/i.test(navigator.userAgent||'');
 let data={pattern:'blank',background:'dark',height:H,strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
-let undoStack=[],lastInkMotionAt=0;
+let undoStack=[],redoStack=[],lastInkMotionAt=0;
+const HISTORY_LIMIT=32;
+function updateHistoryControls(){
+ const undo=$('notePaperUndo'),redo=$('notePaperRedo');
+ if(undo)undo.disabled=undoStack.length===0;
+ if(redo)redo.disabled=redoStack.length===0;
+}
 function rememberUndo(action){
  undoStack.push(action);
- // Each replaced sheet may be large; keep mobile memory bounded.
- if(undoStack.length>32)undoStack.shift();
+ // Keep memory bounded on older iPhones; a new edit starts a new history branch.
+ if(undoStack.length>HISTORY_LIMIT)undoStack.shift();
+ redoStack=[];
+ updateHistoryControls();
+}
+function snapshotSheet(){
+ return {strokes:data.strokes.slice(),photo:data.photo||'',pattern:data.pattern,background:data.background};
+}
+function restoreSheet(snapshot){
+ data.strokes=snapshot.strokes.slice();
+ data.photo=snapshot.photo;data.pattern=snapshot.pattern;data.background=snapshot.background;
+}
+function travelHistory(from,to){
+ if(pending||!from.length)return false;
+ const action=from.pop();
+ let inverse;
+ if(action.type==='add'){
+  const strokes=data.strokes.splice(-action.count);
+  inverse={type:'restore',strokes};
+ }else if(action.type==='restore'){
+  if(data.strokes.length+action.strokes.length>MAX_STROKES){from.push(action);return false}
+  data.strokes.push(...action.strokes);
+  inverse={type:'add',count:action.strokes.length};
+ }else if(action.type==='replace'){
+  inverse={type:'replace',previous:data.strokes.slice()};
+  data.strokes=action.previous.slice();
+ }else if(action.type==='sheet'){
+  inverse={type:'sheet',previous:snapshotSheet()};
+  restoreSheet(action.previous);
+ }else{from.push(action);return false}
+ to.push(inverse);
+ if(to.length>HISTORY_LIMIT)to.shift();
+ changed=true;render();return true;
+}
+function undoInk(){
+ if(!travelHistory(undoStack,redoStack))return false;
+ report('Действие отменено.');return true;
+}
+function redoInk(){
+ if(!travelHistory(redoStack,undoStack))return false;
+ report('Действие возвращено.');return true;
 }
 // Live strokes paint incrementally; old strokes are not recomputed per pointer event.
 let liveTail=null,liveMid=null,shapeFrame=0;
@@ -215,7 +260,7 @@ function render(redrawInk=true){
  sheet.dataset.pattern=data.pattern;sheet.dataset.inkBackground=data.background;pattern.value=data.pattern;syncPatternMenu();
  if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
  if($('notePaperRemovePhoto'))$('notePaperRemovePhoto').hidden=!data.photo;
- if(redrawInk)paint(canvas,data);$('notePaperUndo').disabled=!data.strokes.length;
+ if(redrawInk)paint(canvas,data);updateHistoryControls();
  const duplicate=$('notePaperDuplicate');if(duplicate)duplicate.disabled=!data.strokes.length||data.strokes.length>=MAX_STROKES;
 }
 // Status notices are temporary. Cancel the previous timer so repeated
@@ -446,7 +491,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.addEventListener('click',()=>{selectTool(btn.dataset.paperTool);if(btn.closest('.sv-paper-extras-panel'))closeExtras();if(btn.closest('#notePaperPatternMenu'))closePatternMenu(true);}));
-pattern.addEventListener('change',()=>{if(!patterns.includes(pattern.value))return;data.pattern=pattern.value;changed=true;render()});
+pattern.addEventListener('change',()=>{if(!patterns.includes(pattern.value)||data.pattern===pattern.value)return;rememberUndo({type:'sheet',previous:snapshotSheet()});data.pattern=pattern.value;changed=true;render()});
 /* Glass-pattern picker. The original hidden select remains the only paper
    template value so saved notes and rendering logic stay unchanged. */
 const patternTrigger=$('notePaperPatternTrigger');
@@ -594,13 +639,14 @@ document.addEventListener('pointerdown',event=>{
  if(!colorMenu.hidden&&!event.target.closest('.paper-color-control'))closeColorMenu();
 });
 
-$('notePaperUndo').addEventListener('click',()=>{
- if(!data.strokes.length)return;
- const action=undoStack.pop();
- if(action?.type==='replace')data.strokes=action.previous;
- else if(action?.type==='add')data.strokes.splice(-action.count);
- else data.strokes.pop();
- changed=true;render();report('Последнее действие отменено.');
+$('notePaperUndo').addEventListener('click',undoInk);
+dialog.addEventListener('keydown',event=>{
+ if(!dialog.open||!(event.metaKey||event.ctrlKey)||event.altKey||event.isComposing)return;
+ if(event.target instanceof Element&&event.target.closest('input,textarea,[contenteditable="true"]'))return;
+ const key=event.key.toLowerCase();
+ if(key==='z'){
+  if(event.shiftKey?redoInk():undoInk())event.preventDefault();
+ }else if(key==='y'&&!event.shiftKey&&redoInk())event.preventDefault();
 });
 $('notePaperDuplicate')?.addEventListener('click',()=>{
  if(!data.strokes.length||data.strokes.length>=MAX_STROKES)return;
@@ -612,7 +658,7 @@ function open(note=null){
  dialog.classList.remove('sv-paper-inking');
  if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
  liveTail=null;liveMid=null;
- data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;undoStack=[];returnToList=true;
+ data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;undoStack=[];redoStack=[];returnToList=true;
  closePatternMenu();closeColorMenu();
  activeColor=[...data.strokes].reverse().find(stroke=>COLORS.includes(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
  activeGradient=null;
@@ -721,7 +767,8 @@ async function importPhoto(file){
  report('Готовлю фотографию…');
  try{
   const image=await compressPhoto(file);
-  data.photo=image;data.pattern='blank';changed=true;render();
+  rememberUndo({type:'sheet',previous:snapshotSheet()});
+   data.photo=image;data.pattern='blank';changed=true;render();
   report('Фото добавлено. Можно писать поверх и сохранить лист.');
  }catch(error){report(error?.message||'Не получилось добавить фотографию.')}
 }
@@ -733,7 +780,8 @@ photoFile?.addEventListener('change',()=>{
 $('notePaperRemovePhoto')?.addEventListener('click',()=>{
  if(!data.photo)return;
  if(!window.confirm('Убрать фотографию с листа? Штрихи останутся.'))return;
- data.photo='';changed=true;render();report('Фотография убрана.');
+ rememberUndo({type:'sheet',previous:snapshotSheet()});
+  data.photo='';changed=true;render();report('Фотография убрана.');
 });
 window.SEYVEO_PAPER=Object.freeze({
  // Chat handoff: export from the same approved tablet, without creating
@@ -817,21 +865,26 @@ window.SEYVEO_PAPER=Object.freeze({
  clearSheet:()=>{
   if(pending)return false;
   const hasContent=Boolean(data.strokes.length||data.photo);
-  if(hasContent&&!window.confirm('Очистить весь лист? Рисунок и фото будут удалены. Это действие нельзя отменить.'))return false;
+  if(hasContent&&!window.confirm('Очистить весь лист? Рисунок и фото можно вернуть кнопкой отмены.'))return false;
   if(!hasContent&&data.pattern==='blank'){report('Лист уже чистый.');return true}
-  data.strokes=[];data.photo='';data.pattern='blank';undoStack=[];
+  rememberUndo({type:'sheet',previous:snapshotSheet()});
+  data.strokes=[];data.photo='';data.pattern='blank';
   changed=true;render();
   report('Лист очищен.');return true;
  },
  blankPaper:()=>{
   if(pending)return false;
   if(data.pattern==='blank'){report('Уже выбран чистый лист.');return true}
+  rememberUndo({type:'sheet',previous:snapshotSheet()});
   data.pattern='blank';changed=true;render();report('Выбрана чистая бумага.');return true;
  },
  getBackground:()=>data.background,
+  undo:undoInk,redo:redoInk,
+  canUndo:()=>undoStack.length>0,canRedo:()=>redoStack.length>0,
  setBackground:(background)=>{
   if(background!=='dark'&&background!=='light')return;
   if(data.background===background)return;
+  rememberUndo({type:'sheet',previous:snapshotSheet()});
   data.background=background;
   if(background==='light'&&activeColor==='#f6f7fb')activeColor='#171e29';
   else if(background==='dark'&&activeColor==='#171e29')activeColor='#f6f7fb';
