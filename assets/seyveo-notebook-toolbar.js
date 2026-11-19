@@ -213,7 +213,11 @@
   const hide=()=>ring.classList.remove('is-visible');
   const update=e=>{
    if(!dialog.open)return;
-   if(e.pointerType==='touch'&&e.buttons===0)return;
+   // A finger already covers its own contact point. Keep the screen clean on
+   // iPhone; stylus hover still previews brush size without a ring over ink.
+   if(e.pointerType==='touch'||(e.pointerType==='pen'&&e.buttons>0&&activeTool()!=='eraser')){
+    hide();return;
+   }
    const box=canvas.getBoundingClientRect(),root=stage.getBoundingClientRect();
    if(!box.width)return;
    const x=Math.max(box.left,Math.min(box.right,e.clientX));
