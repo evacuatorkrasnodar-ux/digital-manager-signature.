@@ -68,7 +68,7 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-cus
  transform:rotate(225deg);
 }
 /* Same geometry and typography for all four settings choices. */
-html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"]{
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"]:not([hidden]){
  display:flex!important;flex-direction:column!important;align-items:stretch!important;
 }
 html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-menu-title{
