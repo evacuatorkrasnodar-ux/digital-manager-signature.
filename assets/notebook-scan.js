@@ -83,8 +83,8 @@ function loadEngine(){
  loading=new Promise((resolve,reject)=>{
   const script=document.createElement('script');
   const timer=window.setTimeout(()=>reject(new Error('Долгая загрузка распознавания. Проверьте интернет.')),25000);
-  // CSP permits cdnjs.cloudflare.com; jsDelivr is not in the site's script-src allowlist.
-  script.src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/tesseract.min.js';
+  // Load the runtime from our own origin, including in Safari PWA mode.
+  script.src='assets/seyveo-ocr-tesseract.min.js';
   script.async=true;script.crossOrigin='anonymous';
   script.onload=()=>{window.clearTimeout(timer);window.Tesseract?.createWorker?resolve(window.Tesseract):reject(new Error('Движок распознавания недоступен.'))};
   script.onerror=()=>{window.clearTimeout(timer);script.remove();reject(new Error('Не удалось загрузить OCR: проверьте сеть и разрешённые источники скриптов.'))};
@@ -102,8 +102,10 @@ async function recognize(){
   const lib=await loadEngine();
   if(token!==session)return;
   worker=await lib.createWorker(['rus','eng'],1,{
-   // Use the same allowed, version-pinned CDN for the worker code.
-   workerPath:'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/worker.min.js',
+   workerPath:new URL('assets/seyveo-ocr-worker.min.js',document.baseURI).href,
+   corePath:new URL('assets/seyveo-ocr-core-lstm.wasm.js',document.baseURI).href,
+   langPath:new URL('assets/',document.baseURI).href,
+   gzip:false,
    logger:info=>{
    if(token!==session||!dialog.open)return;
    if(info.status==='recognizing text'&&Number.isFinite(info.progress))
