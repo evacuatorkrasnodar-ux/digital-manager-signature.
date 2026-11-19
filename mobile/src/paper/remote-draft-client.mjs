@@ -88,7 +88,7 @@ export function createRemotePaperDraftClient({
       return sessionValid(session,now())?session:null;
     }catch{return null;}
   }
-  async function requestDraft({request,width,height,confirmTextSend}={}){
+  async function requestDraft({request,width,height,confirmTextSend,signal}={}){
     if(typeof request!=='string'||!request.trim()||request.length>500||
        !Number.isInteger(width)||width<100||width>2000||
        !Number.isInteger(height)||height<100||height>4000)
@@ -98,20 +98,27 @@ export function createRemotePaperDraftClient({
     // Match the server's streaming request limit, including JSON escaping.
     if(new TextEncoder().encode(body).byteLength>1800)
       return {status:'invalid-request'};
+    if(signal?.aborted)return {status:'cancelled'};
     if(busy)return {status:'busy'};
     if(typeof confirmTextSend!=='function')return {status:'consent-required'};
     busy=true;
     let timeout;
+    let controller;
+    const cancel=()=>controller?.abort();
     try{
       // Call the actual UI confirmation for EACH request, never reuse consent.
       let allowed=false;
       try{allowed=(await confirmTextSend(Object.freeze({request:text,
         recipient:api,purpose:'paper-preview'})))===true;}
       catch{return {status:'consent-required'};}
+      if(signal?.aborted)return {status:'cancelled'};
       if(!allowed)return {status:'consent-required'};
       const before=await current();
+      if(signal?.aborted)return {status:'cancelled'};
       if(!before)return {status:'sign-in-required'};
-      const controller=new AbortController();
+      controller=new AbortController();
+      signal?.addEventListener?.('abort',cancel,{once:true});
+      if(signal?.aborted)return {status:'cancelled'};
       timeout=setTimeout(()=>controller.abort(),timeoutMs);
       let response;
       try{
@@ -124,8 +131,12 @@ export function createRemotePaperDraftClient({
           redirect:'manual',credentials:'omit',cache:'no-store',
           referrerPolicy:'no-referrer',signal:controller.signal
         });
-      }catch{return {status:'unavailable'};}
+      }catch{return {status:signal?.aborted?'cancelled':'unavailable'};}
+      if(signal?.aborted)return {status:'cancelled'};
+      if(controller.signal.aborted)return {status:'unavailable'};
       const after=await current();
+      if(signal?.aborted)return {status:'cancelled'};
+      if(controller.signal.aborted)return {status:'unavailable'};
       if(!unchanged(before,after,now()))return {status:'sign-in-required'};
       if(response?.status===401||response?.status===403)
         return {status:'sign-in-required'};
@@ -140,16 +151,24 @@ export function createRemotePaperDraftClient({
       let raw;
       try{
         const body=await response.text();
+        if(signal?.aborted)return {status:'cancelled'};
+        if(controller.signal.aborted)return {status:'unavailable'};
         if(typeof body!=='string'||body.length>MAX_RESPONSE_BYTES||
            new TextEncoder().encode(body).byteLength>MAX_RESPONSE_BYTES)
           return {status:'invalid-preview'};
         raw=JSON.parse(body);
-      }catch{return {status:'invalid-preview'};}
+      }catch{return {status:signal?.aborted?'cancelled':'invalid-preview'};}
       const final=await current();
+      if(signal?.aborted)return {status:'cancelled'};
+      if(controller.signal.aborted)return {status:'unavailable'};
       if(!unchanged(before,final,now()))return {status:'sign-in-required'};
       const preview=verifyPreview(raw,{width,height});
       return preview?{status:'ready',preview}:{status:'invalid-preview'};
-    }finally{clearTimeout(timeout);busy=false;}
+    }finally{
+      clearTimeout(timeout);
+      signal?.removeEventListener?.('abort',cancel);
+      busy=false;
+    }
   }
   return Object.freeze({requestDraft});
 }

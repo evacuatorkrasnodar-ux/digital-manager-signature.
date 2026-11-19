@@ -207,3 +207,29 @@ test('a stalled native network request is aborted without exposing private text'
   const result=await f.requestDraft({...input,confirmTextSend:consent});
   assert.deepEqual(result,{status:'unavailable'});
 });
+
+test('owner cancellation before consent or during transport never displays a draft',async()=>{
+  const cancelled=new AbortController();
+  cancelled.abort();
+  const a=fixture();
+  assert.equal((await a.client.requestDraft({...input,
+    confirmTextSend:consent,signal:cancelled.signal})).status,'cancelled');
+  assert.equal(a.calls.length,0);
+  const before=fixture();
+  const duringConsent=new AbortController();
+  assert.equal((await before.client.requestDraft({...input,
+    signal:duringConsent.signal,confirmTextSend:async()=>{
+      duringConsent.abort();return true;
+    }})).status,'cancelled');
+  assert.equal(before.calls.length,0);
+  const transport=new AbortController();
+  const online=fixture({fetchImpl:async(_url,opts)=>new Promise((_,reject)=>{
+    opts.signal.addEventListener('abort',()=>reject(Error('cancelled')),{once:true});
+  })});
+  const promise=online.client.requestDraft({...input,
+    confirmTextSend:consent,signal:transport.signal});
+  // Allow the identity adapter to finish and the transport to start.
+  await new Promise(resolve=>setTimeout(resolve,0));
+  transport.abort();
+  assert.equal((await promise).status,'cancelled');
+});

@@ -13,12 +13,14 @@ export type PaperPreview={
 export type PaperDraftResult=
   | {status:'ready';preview:PaperPreview}
   | {status:'invalid-request'|'busy'|'consent-required'|'sign-in-required'|
-    'unavailable'|'invalid-preview'};
+    'unavailable'|'invalid-preview'|'cancelled'};
 
 export interface RemotePaperDraftClient {
   /** Never applies the returned preview. UI must separately confirm insertion. */
   requestDraft(args:{
     request:string;width:number;height:number;
+    /** Optional cancellation when the owner leaves this editor. */
+    signal?:AbortSignal;
     /** Per-call UI dialog displaying the exact text and remote recipient. */
     confirmTextSend:(details:{readonly request:string;
       readonly recipient:string;readonly purpose:'paper-preview'})=>Promise<boolean>;
