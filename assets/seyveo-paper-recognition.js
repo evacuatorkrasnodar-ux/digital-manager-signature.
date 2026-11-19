@@ -106,13 +106,22 @@
     langPath:new URL('assets/',document.baseURI).href,
     gzip:false,
     logger:info=>{
-     if(overlay.open&&info.status==='recognizing text'&&Number.isFinite(info.progress))
-      message('Распознавание: '+Math.round(info.progress*100)+'%');
+     if(!overlay.open)return;
+     const stages={
+      'loading tesseract core':'Загружаю движок',
+      'initializing tesseract':'Запускаю распознавание',
+      'loading language traineddata':'Загружаю языковые модели',
+      'initializing api':'Подготавливаю русский язык',
+      'recognizing text':'Читаю рукопись'
+     };
+     const label=stages[info.status];
+     if(label)message(label+(Number.isFinite(info.progress)?': '+Math.round(info.progress*100)+'%':'…'));
     }
    });
    await worker.setParameters?.({tessedit_pageseg_mode:'6',preserve_interword_spaces:'1'});
    const result=await worker.recognize(image);
-   return String(result?.data?.text||'').trim();
+   return {text:String(result?.data?.text||'').trim(),
+    confidence:Number.isFinite(result?.data?.confidence)?result.data.confidence:null};
   }finally{try{await worker?.terminate()}catch{}}
  }
  runButton.addEventListener('click',async()=>{
@@ -123,11 +132,21 @@
   try{
    message('Проверяю встроенное распознавание…');
    let found=await nativeRecognition(strokes);
-   if(!found)found=await imageRecognition();
+   let confidence=null;
+   if(!found){
+    const local=await imageRecognition();
+    found=local.text;confidence=local.confidence;
+   }
    if(!overlay.open)return;
    if(!found){message('Текст не удалось определить. Попробуйте написать крупнее или исправить вручную.');return}
    text.value=found.slice(0,8000);
-   message('Готово. Проверьте результат — рукописный лист не изменён.');
+   const compact=found.replace(/\s/g,'');
+   const letters=(compact.match(/[A-Za-zА-Яа-яЁё0-9]/g)||[]).length;
+   const uncertain=(confidence!==null&&confidence<55)
+    ||(compact.length>0&&letters/compact.length<.4);
+   message(uncertain
+    ?'Результат неуверенный: возможно, это рисунок или отдельные символы. Проверьте и исправьте текст вручную.'
+    :'Готово. Проверьте результат — рукописный лист не изменён.');
   }catch(error){
    message((error?.message||'Распознавание недоступно.')+' Рисунок сохранён на листе.');
   }finally{busy=false;sync()}
