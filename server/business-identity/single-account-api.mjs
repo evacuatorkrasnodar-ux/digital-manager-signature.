@@ -12,6 +12,7 @@
 import {createWorkspaceManifestContract} from './workspace-manifest.mjs';
 import {createOwnerInvitationHttpContract} from './owner-invitation-http.mjs';
 import {createPersonalSessionHttpContract} from './personal-session-http.mjs';
+import {createRemotePaperDraftHandler} from '../paper-remote-contract.mjs';
 
 const NOT_FOUND=Object.freeze({
   'Content-Type':'application/json; charset=utf-8',
@@ -23,7 +24,8 @@ const INVITATIONS=/^\/v1\/organizations\/[A-Za-z0-9_-]{1,96}\/invitations(?:\/[A
 
 export function createSingleAccountApi({
   apiOrigin,identity,listCurrentMemberships,resolveVerifiedRecipient,
-  issueInvitationAtomic,revokeInvitationAtomic,now=Date.now,random,makeId
+  issueInvitationAtomic,revokeInvitationAtomic,now=Date.now,random,makeId,
+  paperAI
 }={}){
   const spaces=createWorkspaceManifestContract({
     apiOrigin,identity,listCurrentMemberships,now
@@ -33,6 +35,12 @@ export function createSingleAccountApi({
     apiOrigin,identity,resolveVerifiedRecipient,
     issueInvitationAtomic,revokeInvitationAtomic,now,
     ...(random?{random}:{}),...(makeId?{makeId}:{})
+  });
+  // Private opt-in composition only. The deployment must supply a real model
+  // adapter and allowed native/web app origins; no model is started here.
+  const paper=paperAI===undefined?null:createRemotePaperDraftHandler({
+    apiOrigin,appOrigins:paperAI?.appOrigins,identity,
+    generateSketchJson:paperAI?.generateSketchJson,now
   });
   async function handle(request){
     // Both handlers enforce their own authorization and origin checks.
@@ -47,6 +55,7 @@ export function createSingleAccountApi({
     });}
     if(url.pathname==='/v1/me/session')return personSession.handle(request);
     if(url.pathname==='/v1/me/workspaces')return spaces.handle(request);
+    if(url.pathname==='/v1/paper/draft'&&paper)return paper(request);
     if(url.pathname==='/v1/invitations/accept'||INVITATIONS.test(url.pathname))
       return invitations.handle(request);
     return new Response('{"error":"not-found"}',{

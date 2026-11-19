@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {resolve,dirname} from 'node:path';
-import {proposeLocalPaperDraft} from '../paper-vision-draft.mjs';
+import {proposeLocalPaperDraft,generateLocalPaperSketchJson} from '../paper-vision-draft.mjs';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const output={version:1,title:'Дерево',strokes:[{points:[[.4,.2],[.4,.8]]}]};
@@ -62,4 +62,40 @@ test('bad model output and unsafe requests never reach the Paper editor',async()
  assert.match(local,/req\.headers\.origin!==ORIGIN/);
  assert.match(local,/SEYVEO_ENABLE_PAPER_AI/);
  assert.match(local,/paperDraftCount>=2/);
+}));
+
+test('trusted remote server may reuse the real local provider with its abort signal',async()=>withOptIn(async()=>{
+ const controller=new AbortController();
+ const raw=await generateLocalPaperSketchJson({
+  mode:'draw',request:'Придумай зимний лес, реку и птиц',width:840,height:1188
+ },{model:'qwen2.5vl:3b',signal:controller.signal,fetcher:async(url,opts)=>{
+  assert.equal(opts.signal,controller.signal);
+  assert.equal(url,'http://127.0.0.1:11434/api/chat');
+  assert.match(JSON.parse(opts.body).messages[0].content,/зимний лес/);
+  return {ok:true,json:async()=>({message:{content:JSON.stringify(output)}})};
+ }});
+ assert.deepEqual(JSON.parse(raw),output);
+ await assert.rejects(()=>generateLocalPaperSketchJson({
+  mode:'draw',request:'дерево',width:840,height:1188
+ },{signal:'not-an-abort-signal',fetcher:()=>{throw Error('must not call')}}),
+ /invalid-signal/);
+}));
+
+test('model cannot stream an oversized response into the authenticated Paper API',async()=>withOptIn(async()=>{
+ const tooLarge='x'.repeat(430_000);
+ const fake=async()=>new Response(tooLarge,{
+  status:200,headers:{'content-type':'application/json'}
+ });
+ await assert.rejects(()=>generateLocalPaperSketchJson({
+  mode:'draw',request:'город у моря',width:840,height:1188
+ },{fetcher:fake}),/model-response-too-large/);
+ let ran=false;
+ await assert.rejects(()=>generateLocalPaperSketchJson({
+  mode:'draw',request:'город у моря',width:840,height:1188
+ },{fetcher:async()=>{
+  ran=true;
+  return new Response('{}',{status:200,
+   headers:{'content-length':'600000'}});
+ }}),/model-response-too-large/);
+ assert.equal(ran,true);
 }));

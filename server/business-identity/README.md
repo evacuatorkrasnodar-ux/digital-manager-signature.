@@ -8,6 +8,33 @@ not discover or operate a real provider. No real user data should be supplied.
 
 ## Проверка личного сеанса перед корпоративным доступом
 
+### SEYVEO Paper · модель за тем же подтверждённым аккаунтом (19 ноября 2026)
+
+`single-account-api.mjs` теперь может **по явному выбору оператора** принимать `paperAI:{appOrigins,generateSketchJson}`. Без этого аргумента путь `/v1/paper/draft` не существует (404): ни авторизация, ни установка модели, ни платные запросы сами не включаются. С включённым аргументом запрос переходит в `paper-remote-contract.mjs`, который проверяет точный HTTPS Origin, отдельное согласие, текущий личный Bearer, лимиты и повторную проверку сеанса **после** генерации. Ответ — только проверенный черновик векторных штрихов без записи в документ.
+
+Генератор можно связать с `generateLocalPaperSketchJson` из `../paper-vision-draft.mjs`: тот обращается **только** к Ollama на `127.0.0.1:11434`, принимает произвольную текстовую просьбу (без заранее прописанных предметов), передаёт сигнал отмены и ограничивает размер потока ответа. Требуются **оба** условия: реальный локально работающий Ollama с установленной моделью и `SEYVEO_ENABLE_PAPER_AI=1`. Пример составления обработчика внутри доверенного будущего HTTPS-процесса:
+
+```js
+import {createSingleAccountApi} from './single-account-api.mjs';
+import {generateLocalPaperSketchJson} from '../paper-vision-draft.mjs';
+
+const api=createSingleAccountApi({
+  apiOrigin:configuredHttpsApiOrigin,
+  identity:realVerifiedIdentity,
+  listCurrentMemberships,resolveVerifiedRecipient,
+  issueInvitationAtomic,revokeInvitationAtomic,
+  paperAI:{
+    appOrigins:reviewedAppOrigins,
+    generateSketchJson:request=>generateLocalPaperSketchJson(request)
+  }
+});
+// api.handle(request) must be mounted ONLY by the reviewed HTTPS deployment.
+```
+
+Здесь переменные `configuredHttpsApiOrigin`, `realVerifiedIdentity`, `reviewedAppOrigins` и адаптеры приглашений — **обязательные внешние зависимости**, не значения из демо и не существующие серверы. Нельзя копировать код в публичный GitHub Pages и нельзя подменять проверку личности `Origin` или просто наличием токена. Локальная модель может выдавать грубые или ошибочные эскизы, качество произвольных рисунков не доказано; требуется оценка на реальных запросах, контроль нагрузки и стоимости, затем предпросмотр и отдельное Undo на телефоне.
+
+Интеграционный тест соединяет *синтетическую* проверенную мобильную сессию → согласие → единый API → Ollama-адаптер с тестовым ответом → векторный предпросмотр. Запуск: `node --test server/business-identity/single-account-api.test.mjs server/tests/paper-vision-draft.test.mjs`. **Это не означает, что настоящий HTTPS-сервер, Keycloak или модель уже запущены.**
+
 `personal-session-http.mjs` добавляет к `single-account-api.mjs` запрос **`GET /v1/me/session`**. Подлинность и отзыв личного Bearer-токена подтверждает исключительно доверенная серверная `identity.identifyVerifiedPerson`, как минимум до и после подготовки ответа. API возвращает только `kind`, `userId`, `sessionId` и `expiresAt` — срок **следующей обязательной проверки**, а не настоящий срок JWT. Роль, компания, email, ФИО или личные документы в ответ не включаются. Ответ всегда `no-store` и `Vary: Authorization`.
 
 Мобильный `mobile/src/auth/verified-account-bridge.mjs` использует этот запрос перед доступом к `GET /v1/me/workspaces` и после каждой смены OAuth-сеанса. Любой корпоративный API обязан повторно проверить токен, активное членство и свою организацию: `GET /v1/me/session` **не является авторизацией на рабочие данные**.

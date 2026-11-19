@@ -2,6 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {createSingleAccountApi} from './single-account-api.mjs';
+import {generateLocalPaperSketchJson} from '../paper-vision-draft.mjs';
+import {createVerifiedAccountBridge}
+  from '../../mobile/src/auth/verified-account-bridge.mjs';
 
 const origin='https://api.seyveo.example';
 const now=Date.parse('2026-11-08T12:00:00Z');
@@ -10,7 +13,7 @@ const employeeToken='E'.repeat(48);
 const outsiderToken='X'.repeat(48);
 const digest=s=>createHash('sha256').update(s).digest('hex');
 
-function fixture(){
+function fixture({paperAI}={}){
   let enabled=true;
   const memberships=new Map([['owner:shop-1','owner']]);
   const pending=new Map();
@@ -41,6 +44,7 @@ function fixture(){
   };
   const api=createSingleAccountApi({
     apiOrigin:origin,identity,now:()=>now,
+    ...(paperAI?{paperAI}:{}),
     listCurrentMemberships:async({userId})=>[...memberships.entries()]
       .filter(([key])=>key.startsWith(userId+':'))
       .map(([key,role])=>{
@@ -128,4 +132,81 @@ test('invalid identity, unknown routes and broken request do not create a worksp
   assert.equal((await f.api.handle(null)).status,400);
   f.disable();
   assert.equal((await f.request('/v1/me/workspaces','GET',ownerToken)).status,401);
+});
+
+test('Paper model is absent from the unified account API until explicit provider opt-in',async()=>{
+ const f=fixture();
+ const response=await f.api.handle(new Request(origin+'/v1/paper/draft',{
+  method:'POST',headers:{origin:'https://app.seyveo.example',
+   authorization:'Bearer '+ownerToken,'content-type':'application/json',
+   'x-seyveo-paper-consent':'yes'},
+  body:JSON.stringify({mode:'draw',request:'Нарисуй маяк',width:840,height:1188})
+ }));
+ assert.equal(response.status,404);
+ assert.throws(()=>fixture({paperAI:{appOrigins:['https://app.seyveo.example']}}),
+  /verified-identity-and-provider-required/);
+});
+
+test('native verified identity → consent → single account API → open-ended Ollama prompt → preview',async()=>{
+ const old=process.env.SEYVEO_ENABLE_PAPER_AI;
+ process.env.SEYVEO_ENABLE_PAPER_AI='1';
+ try{
+  const promptCalls=[];
+  const f=fixture({paperAI:{
+   appOrigins:['https://app.seyveo.example'],
+   generateSketchJson:input=>generateLocalPaperSketchJson(input,{
+    model:'qwen2.5vl:3b',fetcher:async(url,opts)=>{
+     promptCalls.push({url,opts});
+     return {ok:true,json:async()=>({message:{content:JSON.stringify({
+      version:1,title:'Маяк на берегу',
+      strokes:[{points:[[.1,.2],[.3,.7],[.5,.3]]}]
+     })}})};
+    }
+   })
+  }});
+  const issuer='https://login.seyveo.example';
+  const bridge=createVerifiedAccountBridge({
+   apiOrigin:origin,issuer,paperAppOrigin:'https://app.seyveo.example',
+   credentialVault:{getAccessCredential:async()=>({
+    token:ownerToken,subject:'oidc-owner',issuer,clientId:'seyveo-native',
+    expiresAt:now+200_000
+   })},
+   fetchImpl:(url,opts)=>f.api.handle(new Request(url,opts)),
+   now:()=>now
+  });
+  const text='Нарисуй маяк на берегу и волны вокруг него';
+  const denied=await bridge.paperDraft.requestDraft({
+   request:text,width:840,height:1188,confirmTextSend:async()=>false
+  });
+  assert.equal(denied.status,'consent-required');
+  assert.equal(promptCalls.length,0);
+  const result=await bridge.paperDraft.requestDraft({
+   request:text,width:840,height:1188,
+   confirmTextSend:async details=>{
+    assert.equal(details.recipient,origin);
+    assert.equal(details.request,text);
+    return true;
+   }
+  });
+  assert.equal(result.status,'ready');
+  assert.equal(result.preview.title,'Маяк на берегу');
+  assert.deepEqual(result.preview.strokes[0].points[0],[84,237.6,50]);
+  assert.equal(result.preview.requiresConfirmation,true);
+  assert.equal(result.preview.originalUntouched,true);
+  assert.equal(promptCalls.length,1);
+  assert.equal(promptCalls[0].url,'http://127.0.0.1:11434/api/chat');
+  const modelBody=JSON.parse(promptCalls[0].opts.body);
+  assert.match(modelBody.messages[0].content,/Нарисуй маяк на берегу/);
+  assert.equal(modelBody.messages[0].images,undefined);
+  assert.equal(JSON.stringify(modelBody).includes(ownerToken),false);
+  assert.equal(JSON.stringify(result).includes(ownerToken),false);
+  f.disable();
+  assert.equal((await bridge.paperDraft.requestDraft({
+   request:text,width:840,height:1188,confirmTextSend:async()=>true
+  })).status,'sign-in-required');
+  assert.equal(promptCalls.length,1);
+ }finally{
+  if(old===undefined)delete process.env.SEYVEO_ENABLE_PAPER_AI;
+  else process.env.SEYVEO_ENABLE_PAPER_AI=old;
+ }
 });
