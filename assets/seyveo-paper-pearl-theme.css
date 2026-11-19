@@ -13,10 +13,12 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface{
  background-image:none!important;
  color:#25282e!important;
 }
-html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperStage.sv-paper-stage,
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperStage.sv-paper-stage{
+ background:#fff!important;background-image:none!important;
+}
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > #notePaperSheet.paper-sheet,
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSheet[data-ink-background="light"]{
- background:#fff!important;background-image:none;
+ background-color:#fff!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperStage > #notePaperSheet > #notePaperCanvas{
  background:transparent!important;
