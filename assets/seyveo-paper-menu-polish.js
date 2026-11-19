@@ -40,7 +40,7 @@
   const custom=document.createElement('details');
   custom.className='sv-gradient-custom';
   const summary=document.createElement('summary');
-  summary.textContent='Свой градиент';
+  summary.textContent='Настроить градиент';
   custom.append(summary);
   if(section?.classList.contains('sv-gradient-section-caption'))section.replaceWith(custom);
   else editor.before(custom);
