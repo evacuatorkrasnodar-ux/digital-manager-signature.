@@ -1,0 +1,98 @@
+/* SEYVEO · precision alignment pass for drawing popovers.
+   Existing controls and their handlers stay intact. */
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-segments{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:3px!important;padding:3px!important;margin:0 0 13px!important;
+ min-height:44px!important;box-sizing:border-box!important;
+ border-radius:12px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperColorMenu,#notePaperSettingsMenu) button.sv-polish-segment{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ place-items:center!important;text-align:center!important;
+ width:100%!important;min-width:0!important;height:38px!important;min-height:38px!important;
+ margin:0!important;padding:0 8px!important;border-radius:9px!important;
+ font-size:13px!important;font-weight:590!important;letter-spacing:-.01em!important;
+ line-height:1!important;white-space:nowrap!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-menu-frames,
+html body #notePaperDialog.sv-paper-studio[open] :is(#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-menu-pane{
+ min-width:0!important;width:100%!important;box-sizing:border-box!important;
+}
+/* Evenly spaced circles without any rectangular selected tile. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid{
+ display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;
+ gap:1px!important;align-items:center!important;justify-items:center!important;
+ width:100%!important;margin:0!important;padding:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid > button{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;width:43px!important;min-width:0!important;
+ height:43px!important;min-height:43px!important;padding:5px!important;margin:0!important;
+ border:1.5px solid transparent!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid > button[aria-pressed="true"]{
+ background:transparent!important;border-color:rgba(245,246,250,.86)!important;
+ box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid > button :is(.paper-swatch,.sv-gradient-color-dot,span){
+ border-radius:50%!important;
+}
+/* No duplicate section title before a single row of colors. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-polish-menu-pane[data-sv-menu-panel="colors"] > .sv-gradient-section-caption{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-custom{
+ margin:9px 0 0!important;padding:4px 0 0!important;
+ border-top:1px solid rgba(255,255,255,.12)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-custom > summary{
+ min-height:43px!important;padding:3px 5px!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ font-size:13px!important;font-weight:560!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-summary-icon{
+ width:21px!important;height:21px!important;border-radius:50%!important;
+ background:rgba(255,255,255,.11)!important;
+ font-size:16px!important;font-weight:450!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-summary-hint{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-custom > summary::after{
+ content:'';display:block;width:7px;height:7px;
+ border-right:1.5px solid #c9c9cd;border-bottom:1.5px solid #c9c9cd;
+ transform:rotate(45deg);margin-right:8px;transition:transform .18s;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-custom[open] > summary::after{
+ transform:rotate(225deg);
+}
+/* Same geometry and typography for all four settings choices. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"]{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-menu-title{
+ margin:2px 2px 7px!important;padding:0!important;
+ font-size:11px!important;font-weight:590!important;line-height:16px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-backgrounds{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ align-items:stretch!important;gap:8px!important;margin:0 0 13px!important;
+ width:100%!important;min-width:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-newdock-backgrounds > button{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;
+ height:44px!important;min-height:44px!important;padding:0 6px!important;
+ border:1px solid transparent!important;border-radius:12px!important;
+ font-size:13px!important;font-weight:570!important;line-height:1.15!important;text-align:center!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-newdock-backgrounds > button[aria-pressed="true"]{
+ border-color:rgba(255,255,255,.20)!important;
+ background:rgba(255,255,255,.18)!important;
+}
+@media(max-width:350px){
+ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid > button{
+  width:39px!important;height:39px!important;min-height:39px!important;padding:4px!important;
+ }
+}
