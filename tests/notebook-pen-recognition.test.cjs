@@ -58,5 +58,5 @@ test('handwriting recognition stays opt-in, preserves ink and offers review',()=
  assert.match(recognition,/data-pr-save/);
  assert.match(paper,/exportInkOcrPng/);
  assert.match(html,/assets\/seyveo-paper-recognition\.js\?v=1/);
- assert.match(html,/assets\/notebook-paper\.js\?v=23/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=24/);
 });
