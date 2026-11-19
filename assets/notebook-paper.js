@@ -1,5 +1,5 @@
-/* SEYVEO Paper · offline editable ink (no cloud, no automatic saving).
-   Basic stroke smoothing only; handwriting correction needs a future AI service. */
+/* SEYVEO Paper · editable vector ink, pen-pressure and tilt-aware rendering.
+   Recognition is an explicit user action and never changes the original ink. */
 (function(){
 'use strict';
 const W=840,H=1188,MAX_PAGE_HEIGHT=2600,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000,MAX_PHOTO=155000;
@@ -52,9 +52,20 @@ function normalize(obj){
  photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
- .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(28,stroke.width)):undefined,points:stroke.points.slice(0,MAX_POINTS)
+ .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(28,stroke.width)):undefined,...(stroke.pressureSensitive===true?{pressureSensitive:true}:{}),points:stroke.points.slice(0,MAX_POINTS)
  .filter(point=>Array.isArray(point)&&point.length>=2&&Number.isFinite(Number(point[0]))&&Number.isFinite(Number(point[1])))
- .map(point=>[inkCoord(point[0],W),inkCoord(point[1],height),clamp(point.length>2?point[2]:50,100)])}))};
+ .map(point=>{
+  const values=[inkCoord(point[0],W),inkCoord(point[1],height),clamp(point.length>2?point[2]:50,100)];
+  if(stroke.pressureSensitive===true)values.push(clamp(point.length>3?point[3]:0,90));
+  return values;
+ })}))};
+}
+function inkWeight(s,p){
+ const base=Number.isFinite(s.width)?Math.max(1,Math.min(28,s.width)):5;
+ if(!s.pressureSensitive||s.tool==='eraser'||SHAPE_TOOLS.has(s.tool))return base;
+ const force=clamp(p?.[2]??50,100)/100;
+ const tilt=s.tool==='pencil'?1+Math.min(.32,clamp(p?.[3]??0,90)/220):1;
+ return base*(.58+.84*force)*tilt;
 }
 function paintStroke(ctx,s){
  if(!s.points.length)return;
@@ -99,7 +110,29 @@ function paintStroke(ctx,s){
  ctx.strokeStyle=ctx.fillStyle=erase?'#000':validGradient(s.gradient)?gradientPaint(ctx,s.gradient):chosen?(s.tool==='pencil'?chosen+'a3':chosen):'#171e29';
  ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';
  const pts=s.points;
- if(pts.length===1){
+ if(s.pressureSensitive&&!erase){
+  // Segment-by-segment Béziers retain true S Pen / Apple Pencil pressure in
+  // saved notes, Undo, print and PNG export. Legacy strokes remain unchanged.
+  ctx.beginPath();ctx.arc(pts[0][0],pts[0][1],inkWeight(s,pts[0])/2,0,2*Math.PI);ctx.fill();
+  const segment=(from,to,control=null)=>{
+   ctx.lineWidth=(inkWeight(s,from)+inkWeight(s,to)+(control?inkWeight(s,control):0))/(control?3:2);
+   ctx.beginPath();ctx.moveTo(from[0],from[1]);
+   if(control)ctx.quadraticCurveTo(control[0],control[1],to[0],to[1]);
+   else ctx.lineTo(to[0],to[1]);
+   ctx.stroke();
+  };
+  if(pts.length===2)segment(pts[0],pts[1]);
+  else if(pts.length>2){
+   let from=[(pts[0][0]+pts[1][0])/2,(pts[0][1]+pts[1][1])/2,(pts[0][2]+pts[1][2])/2,(pts[0][3]+pts[1][3])/2];
+   segment(pts[0],from);
+   for(let i=1;i<pts.length-1;i++){
+    const p=pts[i],q=pts[i+1];
+    const to=[(p[0]+q[0])/2,(p[1]+q[1])/2,(p[2]+q[2])/2,(p[3]+q[3])/2];
+    segment(from,to,p);from=to;
+   }
+   segment(from,pts[pts.length-1]);
+  }
+ }else if(pts.length===1){
   ctx.beginPath();ctx.arc(pts[0][0],pts[0][1],width/2,0,2*Math.PI);ctx.fill();
  }else{
   const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
@@ -203,20 +236,23 @@ function selectTool(name){if(!tools.includes(name))return;
 }
 function point(e){
  const box=canvas.getBoundingClientRect();
- return [inkCoord((e.clientX-box.left)/box.width*W,W),inkCoord((e.clientY-box.top)/box.height*(data.height||H),data.height||H),clamp((e.pointerType==='pen'?e.pressure:.5)*100,100)];
+ const force=e.pointerType==='pen'&&Number.isFinite(e.pressure)?e.pressure:.5;
+ const tilt=e.pointerType==='pen'?Math.hypot(Number(e.tiltX)||0,Number(e.tiltY)||0):0;
+ return [inkCoord((e.clientX-box.left)/box.width*W,W),inkCoord((e.clientY-box.top)/box.height*(data.height||H),data.height||H),clamp(force*100,100),clamp(tilt,90)];
 }
 // Live ink pipeline: draw ONLY the new Bézier segment, keeping previously
 // painted pixels intact. Historic strokes are replayed for Undo/export only.
-const midpoint=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+const midpoint=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,(a[3]+b[3])/2];
 function drawLivePart(kind,from,to,control=null,dot=false){
  const ctx=canvas.getContext('2d');if(!ctx||!pending)return;
  ctx.save();ctx.setTransform(canvas.width/W,0,0,canvas.height/(data.height||H),0,0);
  const erase=pending.tool==='eraser';
  ctx.globalCompositeOperation=erase?'destination-out':'source-over';
  ctx.fillStyle=ctx.strokeStyle=erase?'#000':validGradient(pending.gradient)?gradientPaint(ctx,pending.gradient):pending.tool==='pencil'?pending.color+'a3':pending.color;
- ctx.lineWidth=pending.width;ctx.lineJoin='round';ctx.lineCap='round';
+ ctx.lineWidth=dot?inkWeight(pending,from):(inkWeight(pending,from)+inkWeight(pending,to)+(control?inkWeight(pending,control):0))/(control?3:2);
+ ctx.lineJoin='round';ctx.lineCap='round';
  ctx.beginPath();
- if(dot){ctx.arc(from[0],from[1],pending.width/2,0,2*Math.PI);ctx.fill()}
+ if(dot){ctx.arc(from[0],from[1],ctx.lineWidth/2,0,2*Math.PI);ctx.fill()}
  else {
   ctx.moveTo(from[0],from[1]);
   if(control)ctx.quadraticCurveTo(control[0],control[1],to[0],to[1]);
@@ -236,7 +272,9 @@ function addInkPoint(next,force=false){
  const count=Math.max(1,Math.min(42,Math.ceil(distance/12)));
  for(let step=1;step<=count;step++){
   const p=[prev[0]+(next[0]-prev[0])*step/count,
-           prev[1]+(next[1]-prev[1])*step/count,next[2]];
+           prev[1]+(next[1]-prev[1])*step/count,
+           prev[2]+(next[2]-prev[2])*step/count,
+           prev[3]+(next[3]-prev[3])*step/count];
   const points=pending.points;
   const last=liveTail;
   const middle=midpoint(last,p);
@@ -271,10 +309,12 @@ function queueShapePreview(){
 function down(e){
  if(pending||pointerID!==null||e.button!==0||e.isPrimary===false)return;
  if(e.pointerType==='pen')penTime=Date.now()+2800;
- if(e.pointerType==='touch'&&Date.now()<penTime)return;
+ // Large touch contacts are commonly the side of the hand resting on an iPad
+ // or Galaxy Tab. Ignore them and any finger while the stylus is nearby.
+ if(e.pointerType==='touch'&&(Date.now()<penTime||Math.max(e.width||0,e.height||0)>27))return;
  if(data.strokes.length>=MAX_STROKES){report('Лист заполнен. Начните следующий.');return}
  e.preventDefault();pointerID=e.pointerId;
- pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,points:[point(e)]};
+ pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,pressureSensitive:e.pointerType==='pen',points:[point(e)]};
  liveTail=pending.points[0];liveMid=null;
  if(SHAPE_TOOLS.has(pending.tool)&&shapeSnapshotCtx){
   if(shapeSnapshot.width!==canvas.width)shapeSnapshot.width=canvas.width;
@@ -286,6 +326,7 @@ function down(e){
  try{canvas.setPointerCapture(e.pointerId)}catch{}
 }
 function move(e){
+ if(e.pointerType==='pen')penTime=Date.now()+2800;
  if(!pending||e.pointerId!==pointerID)return;
  e.preventDefault();
  if(SHAPE_TOOLS.has(pending.tool)){
@@ -479,7 +520,7 @@ $('notePaperUndo').addEventListener('click',()=>{if(!data.strokes.length)return;
 $('notePaperDuplicate')?.addEventListener('click',()=>{
  if(!data.strokes.length||data.strokes.length>=MAX_STROKES)return;
  const last=data.strokes[data.strokes.length-1];
- const copy={...last,points:last.points.map(([x,y,p])=>[clamp(x+25,W),clamp(y+25,data.height||H),p])};
+ const copy={...last,points:last.points.map(([x,y,p,t])=>[clamp(x+25,W),clamp(y+25,data.height||H),p,t||0])};
  data.strokes.push(copy);changed=true;render();report('Последний штрих дублирован.');
 });
 function open(note=null){
@@ -608,6 +649,36 @@ window.SEYVEO_PAPER=Object.freeze({
  // a second editor or silently saving a Notebook record.
  hasChatContent:()=>Boolean(data.strokes.length||data.photo),
  hasChatChanges:()=>changed,
+ getInkStrokes:()=>data.strokes.filter(s=>(s.tool==='pen'||s.tool==='pencil')&&s.points.length)
+  .map(s=>s.points.map(p=>[p[0],p[1],p[2]])),
+ exportInkOcrPng:()=>{
+  if(!dialog.open||pending)throw Error('Завершите рисование перед распознаванием.');
+  const writing=data.strokes.filter(s=>(s.tool==='pen'||s.tool==='pencil')&&s.points.length);
+  if(!writing.length)throw Error('На листе пока нет рукописного текста.');
+  // Render ink only, preserving erased areas. Convert any color/background to
+  // high-contrast black-on-white and crop blank margins for better mobile OCR.
+  const raw=document.createElement('canvas');raw.width=W;raw.height=data.height||H;
+  const ctx=raw.getContext('2d');
+  for(const stroke of data.strokes){
+   paintStroke(ctx,{...stroke,color:'#171e29',gradient:undefined});
+  }
+  let x0=W,y0=raw.height,x1=0,y1=0;
+  for(const stroke of writing)for(const p of stroke.points){
+   x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);
+   y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);
+  }
+  const left=Math.max(0,Math.floor(x0-32));
+  const right=Math.min(W,Math.ceil(x1+32));
+  const top=Math.max(0,Math.floor(y0-32));
+  const bottom=Math.min(raw.height,Math.ceil(y1+32));
+  const w=Math.max(1,right-left),h=Math.max(1,bottom-top);
+  const out=document.createElement('canvas');
+  const scale=Math.min(2,2600/Math.max(w,h));
+  out.width=Math.max(1,Math.round(w*scale));out.height=Math.max(1,Math.round(h*scale));
+  const target=out.getContext('2d');target.fillStyle='#fff';target.fillRect(0,0,out.width,out.height);
+  target.drawImage(raw,left,top,w,h,0,0,out.width,out.height);
+  return out.toDataURL('image/png');
+ },
  exportChatPng:async()=>{
   if(!dialog.open)throw Error('Планшет не открыт.');
   if(pending)throw Error('Заверши штрих перед прикреплением.');
