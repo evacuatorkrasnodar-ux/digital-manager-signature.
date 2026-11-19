@@ -2068,23 +2068,29 @@ body:has(#noteReviewDialog[open]) .home-dock{visibility:hidden!important;pointer
   transform:none!important;
  }
 }
-/* Apple Notes-style writing state: the SAME four engraved buttons spread across
-   one wide pearl capsule immediately above the keyboard. No extra icon layer. */
+/* Apple Notes keyboard toolbar: wide and SLIM, not the 60px resting Home dock.
+   The same four engraved controls remain 44px touch targets inside a 42px pearl
+   capsule, with 14px side insets like the approved iPhone reference. */
 @media(max-width:699px){
+ #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+ }
  #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
-  left:20px!important;
+  left:14px!important;
   right:auto!important;
-  width:calc(100vw - 40px)!important;
+  width:calc(100vw - 28px)!important;
+  top:1px!important;bottom:auto!important;height:42px!important;
  }
  #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
   display:none!important;
  }
  #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
-  left:20px!important;
+  left:14px!important;
   right:auto!important;
-  width:calc(100vw - 40px)!important;
+  width:calc(100vw - 28px)!important;
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  padding:2px 12px!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+  padding:0 8px!important;
   justify-items:center!important;
  }
  #noteReviewDialog.note-review-dialog[open].sv-note-keyboard-open .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact>button:not([hidden]){

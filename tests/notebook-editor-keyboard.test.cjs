@@ -13,17 +13,19 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 test('expanded editor reuses exactly the four existing capsule icons',()=>{
  const tools=[...toolMarkup.matchAll(/data-note-tool="([^"]+)"/g)].map(m=>m[1]);
  assert.deepEqual(tools,['checklist','attachment','heading','draw']);
- assert.match(editorStyles,/\.sv-note-keyboard-open[\s\S]*?width:calc\(100vw - 40px\)!important;/);
+ assert.match(editorStyles,/\.sv-note-keyboard-open[\s\S]*?width:calc\(100vw - 28px\)!important;/);
  assert.match(editorStyles,/\.sv-note-keyboard-open[\s\S]*?grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important;/);
  assert.match(editorStyles,/\.sv-note-keyboard-open[\s\S]*?\.sv-note-draw-standalone\{\s*display:none!important;/);
 });
 
 test('mobile keyboard gets one full-width material surface with no extra circle',()=>{
- const start=editorStyles.indexOf('/* Apple Notes-style writing state:');
+ const start=editorStyles.indexOf('/* Apple Notes keyboard toolbar:');
  const keyboardCss=editorStyles.slice(start);
  assert.ok(start>0);
- assert.match(keyboardCss,/\.sv-note-tool-row\.sv-shared-dock::before\{\s*left:20px!important;[\s\S]*?width:calc\(100vw - 40px\)!important;/);
+ assert.match(keyboardCss,/\.sv-note-tool-row\.sv-shared-dock\{\s*height:44px!important;min-height:44px!important;max-height:44px!important;/);
+ assert.match(keyboardCss,/\.sv-note-tool-row\.sv-shared-dock::before\{\s*left:14px!important;[\s\S]*?width:calc\(100vw - 28px\)!important;\s*top:1px!important;bottom:auto!important;height:42px!important;/);
  assert.match(keyboardCss,/\.sv-note-tool-row\.sv-shared-dock::after\{\s*display:none!important;/);
+ assert.match(keyboardCss,/\.sv-note-tools-compact\{[\s\S]*?width:calc\(100vw - 28px\)!important;[\s\S]*?height:44px!important;min-height:44px!important;max-height:44px!important;/);
  assert.match(keyboardCss,/width:44px!important;\s*min-width:44px!important;\s*height:44px!important;\s*min-height:44px!important;/);
 });
 
