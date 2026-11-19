@@ -19,26 +19,44 @@
  overlay.setAttribute('aria-labelledby','svPaperRecognitionTitle');
  overlay.innerHTML=`
   <div class="sv-pr-head"><h2 id="svPaperRecognitionTitle">Рукопись → текст</h2><button type="button" data-pr-close aria-label="Закрыть распознавание">Готово</button></div>
-  <p class="sv-pr-help">Напишите от руки и нажмите «Распознать». Текст можно проверить и исправить перед сохранением.</p>
+  <p class="sv-pr-help">Напишите от руки и нажмите «Распознать». Проверьте текст, а затем добавьте его на лист или в заметку.</p>
   <div class="sv-pr-status" role="status" aria-live="polite">Напишите несколько слов на листе.</div>
   <textarea class="sv-pr-text" aria-label="Распознанный текст, можно исправить" placeholder="Здесь появится распознанный текст" spellcheck="true" rows="7"></textarea>
-  <div class="sv-pr-actions"><button type="button" data-pr-run class="sv-pr-primary">Распознать</button><button type="button" data-pr-copy disabled>Копировать</button><button type="button" data-pr-save disabled>В заметку</button></div>
+  <div class="sv-pr-actions"><button type="button" data-pr-run class="sv-pr-primary">Распознать</button><button type="button" data-pr-sheet disabled>На лист</button><button type="button" data-pr-copy disabled>Копировать</button><button type="button" data-pr-save disabled>В заметку</button></div>
   <p class="sv-pr-note">Штрихи останутся на листе. Проверьте имена, числа и другие важные данные.</p>`;
  document.body.append(overlay);
  const runButton=overlay.querySelector('[data-pr-run]');
+ const sheetButton=overlay.querySelector('[data-pr-sheet]');
  const copyButton=overlay.querySelector('[data-pr-copy]');
  const saveButton=overlay.querySelector('[data-pr-save]');
  const text=overlay.querySelector('textarea');
  const status=overlay.querySelector('.sv-pr-status');
  const chatMode=new URLSearchParams(location.search).get('seyveo-draw')==='chat';
- if(chatMode){saveButton.hidden=true;overlay.classList.add('sv-pr-chat')}
+ if(chatMode){saveButton.hidden=true;sheetButton.hidden=true;overlay.classList.add('sv-pr-chat')}
  let busy=false,loader=null,inkAvailable=false,savedText='';
  const message=value=>{status.textContent=value};
  const sync=()=>{
   const hasText=Boolean(text.value.trim());
   runButton.disabled=busy||!inkAvailable;copyButton.disabled=busy||!hasText;
+  sheetButton.disabled=busy||!hasText||chatMode;
   saveButton.disabled=busy||!hasText||text.value.trim().slice(0,8000)===savedText;
  };
+ // Choose the larger clear region above or below the handwriting. The text
+ // remains independently movable and editable on the original page.
+ function textPlacement(value,strokes,height){
+  const size=36,width=688,margin=76;
+  const estimatedLines=value.split('\n').reduce((total,line)=>total+Math.max(1,Math.ceil(line.length/36)),0);
+  const needed=estimatedLines*size*1.28;
+  let first=height,last=0;
+  for(const stroke of strokes)for(const point of stroke){
+   first=Math.min(first,point[1]);last=Math.max(last,point[1]);
+  }
+  const belowStart=Math.max(margin,Math.ceil(last+38));
+  const aboveRoom=Math.max(0,first-margin-24);
+  const belowRoom=Math.max(0,height-belowStart-24);
+  const y=belowRoom>=needed||belowRoom>=aboveRoom?belowStart:margin;
+  return {text:value,x:margin,y:Math.min(height-120,y),size,width};
+ }
  function show(){
   if(!tablet.open||busy)return;
   const strokes=paper.getInkStrokes();
@@ -155,6 +173,26 @@
   if(busy||!text.value.trim())return;
   try{await navigator.clipboard.writeText(text.value);message('Текст скопирован. Лист не изменён.');}
   catch{message('Копирование недоступно. Выделите текст вручную.');text.focus();text.select()}
+ });
+ sheetButton.addEventListener('click',()=>{
+  if(busy||chatMode||!text.value.trim())return;
+  const value=text.value.trim();
+  if(value.length>500&&!window.confirm('На лист можно добавить до 500 символов за раз. Добавить первые 500? Полный текст остаётся здесь для копирования или заметки.'))return;
+  const content=value.slice(0,500);
+  const geometry=paper.getEditGeometry?.();
+  if(!geometry){message('Не удалось определить размер листа.');return}
+  const item=textPlacement(content,paper.getInkStrokes(),geometry.height);
+  item.color=paper.getBackground?.()==='dark'?'#f6f7fb':'#171e29';
+  if(!paper.addTextObject?.(item)){
+   message('Не удалось добавить текст. Возможно, на листе уже слишком много текстовых блоков.');
+   return;
+  }
+  overlay.close();
+  const opened=window.SEYVEO_PAPER_TEXT?.editLast?.();
+  if(!opened){
+   const paperStatus=document.getElementById('notePaperStatus');
+   if(paperStatus)paperStatus.textContent='Текст добавлен. Его можно изменить через «Добавить текст» в действиях.';
+  }
  });
  saveButton.addEventListener('click',()=>{
   if(busy||!text.value.trim())return;

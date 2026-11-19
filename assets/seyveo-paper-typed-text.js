@@ -214,4 +214,14 @@
   action.setAttribute('aria-pressed','false');paper.setTextEditing(-1);
  });
  window.addEventListener('resize',()=>{if(active){if(editor){place(editor,draft);autoHeight()}else renderBoxes()}});
+ // Recognition can hand a newly inserted text object to this same editor.
+ // No extra toolbar or second text-editing surface is created.
+ window.SEYVEO_PAPER_TEXT=Object.freeze({editLast(){
+  if(!dialog.open)return false;
+  const count=paper.getTextObjects().length;
+  if(!count)return false;
+  if(!active)startMode();
+  openEditor(count-1);
+  return true;
+ }});
 })();

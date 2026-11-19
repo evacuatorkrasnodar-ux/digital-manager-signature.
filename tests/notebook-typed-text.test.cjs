@@ -91,7 +91,7 @@ test('text mode reuses Settings actions and supports touch placement, drag, font
  assert.match(controls,/textarea|createElement\('textarea'\)/);
  assert.match(style,/\.sv-paper-text-layer\[hidden\]\{display:none!important\}/);
  assert.match(style,/\.sv-paper-text-hit\.sv-paper-text-dragging/);
- assert.match(html,/assets\/seyveo-paper-typed-text\.js\?v=1/);
+ assert.match(html,/assets\/seyveo-paper-typed-text\.js\?v=2/);
  assert.match(html,/assets\/seyveo-paper-typed-text\.css\?v=1/);
  assert.match(html,/assets\/notebook-paper\.js\?v=40/);
 });
