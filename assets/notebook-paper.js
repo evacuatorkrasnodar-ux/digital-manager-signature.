@@ -351,6 +351,20 @@ function addInkPoint(next,force=false){
  if(!pending||SHAPE_TOOLS.has(pending.tool))return;
  const prev=liveTail;
  if(!prev)return;
+ // The stylus is very sensitive to hand tremor and pressure spikes. Gently
+ // filter only pen/pencil samples, and remove the filter for fast movements
+ // or the final point so the tip still follows the user's exact position.
+ if(pending.pressureSensitive&&(pending.tool==='pen'||pending.tool==='pencil')){
+  const gap=Math.hypot(next[0]-prev[0],next[1]-prev[1]);
+  const positionGain=force||gap>=14?1:gap<5?.74:.88;
+  const pressureGain=force?1:.68;
+  next=[
+   inkCoord(prev[0]+(next[0]-prev[0])*positionGain,W),
+   inkCoord(prev[1]+(next[1]-prev[1])*positionGain,data.height||H),
+   inkCoord(prev[2]+(next[2]-prev[2])*pressureGain,100),
+   inkCoord(prev[3]+(next[3]-prev[3])*(force?1:.62),90)
+  ];
+ }
  const distance=Math.hypot(next[0]-prev[0],next[1]-prev[1]);
  if(distance<(force?0.65:1.4))return;
  // Reconstruct sparse Safari moves; the spline now stays gap-free even
@@ -442,7 +456,16 @@ function finishStroke(e,addEndpoint=true){
   }
   redrawShapePreview();
  }else{
-  if(addEndpoint&&e)addInkPoint(point(e),true);
+  if(addEndpoint&&e){
+   const tip=point(e);
+   // W3C Pointer Events specifies pressure=0 on pointerup. That does not
+   // represent a real final sample: keep the last measured pen pressure
+   // instead of making every handwritten stroke end in a thin needle.
+   if(pending.pressureSensitive&&e.pointerType==='pen'&&e.pressure===0&&liveTail){
+    tip[2]=liveTail[2];tip[3]=liveTail[3];
+   }
+   addInkPoint(tip,true);
+  }
   if(liveMid&&liveTail)drawLivePart('end',liveMid,liveTail);
  }
  const snapped=addEndpoint&&pending.tool==='pen'&&Date.now()-lastInkMotionAt>=520?snapFreehandShape(pending):null;
