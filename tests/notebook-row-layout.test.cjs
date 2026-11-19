@@ -10,7 +10,7 @@ const header=readFileSync(join(root,'assets/seyveo-notebook-page.css'),'utf8');
 
 test('Notebook saved-page generation 4 has no legacy list container or list stylesheet',()=>{
  assert.match(html,/id="notesList" class="sv-note-clean-list" data-list-generation="4"/);
- assert.match(html,/assets\/seyveo-notebook-list-clean-v4\.css\?v=1/);
+ assert.match(html,/assets\/seyveo-notebook-list-clean-v4\.css\?v=2/);
  assert.doesNotMatch(html,/assets\/seyveo-notebook-list-v3\.css/);
  assert.equal(existsSync(join(root,'assets/seyveo-notebook-list-v3.css')),false);
  assert.match(html,/card\.className='sv-nb4-note'/);
@@ -20,6 +20,9 @@ test('Notebook saved-page generation 4 has no legacy list container or list styl
 });
 
 test('entire iPhone saved-page canvas and list have no outside frame or decoration',()=>{
+ assert.match(css,/--sv-nb-edge:7px;/);
+ assert.match(css,/margin-inline:calc\(0px - var\(--sv-nb-edge\)\)!important/);
+ assert.match(css,/@media\(max-width:355px\)/);
  assert.match(css,/\> #notesDialog\.sv-notebook-content\[open\]\{[\s\S]*?border:0!important;border-radius:0!important;outline:0!important/);
  assert.match(css,/#notesList\.sv-note-clean-list\{[\s\S]*?border:0!important;border-radius:0!important;outline:0!important/);
  assert.match(css,/#notesList\.sv-note-clean-list::after\{\s*content:none!important;display:none!important/);

@@ -3,6 +3,21 @@
  * classes can reach this surface. Document, editor, notes and attachments
  * remain owned by their original controllers. */
 
+/* Full-bleed notebook paper: the shared Work shell keeps a 7px gutter,
+ * but the list must reach the screen edges without shifting tabs or dock. */
+#svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{
+ --sv-nb-edge:7px;
+ width:calc(100% + var(--sv-nb-edge) + var(--sv-nb-edge))!important;
+ max-width:none!important;
+ margin-inline:calc(0px - var(--sv-nb-edge))!important;
+}
+@media(max-width:355px){
+ #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{--sv-nb-edge:4px}
+}
+@media(min-width:700px){
+ #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{--sv-nb-edge:20px}
+}
+
 #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{
  border:0!important;border-radius:0!important;outline:0!important;
  background:#fff!important;background-image:none!important;
