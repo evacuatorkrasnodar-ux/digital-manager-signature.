@@ -129,7 +129,6 @@
     colorMenu.classList.remove('sv-gradient-editing');
    };
    document.getElementById('notePaperColorTrigger')?.addEventListener('click',resetGradientEditor);
-   colorMenu.querySelector('#notePaperColorMenu-gradients-tab')?.addEventListener('click',resetGradientEditor);
   }
   // iOS Safari: explicit color stops avoid custom-property paint failures in nested chips.
   presets?.querySelectorAll('[data-paper-gradient]').forEach(button=>{
@@ -141,6 +140,10 @@
    {key:'colors',label:'Цвета',nodes:[captions[0],solid]},
    {key:'gradients',label:'Градиенты',nodes:[captions[1],presets,custom]}
   ],'colors');
+  colorMenu.querySelector('#notePaperColorMenu-gradients-tab')?.addEventListener('click',()=>{
+   if(custom)custom.open=false;
+   colorMenu.classList.remove('sv-gradient-editing');
+  });
   document.getElementById('notePaperColorTrigger')?.addEventListener('click',()=>{
    if(colorMenu.hidden||!view)return;
    view.activate(colorMenu.querySelector('[data-paper-gradient][aria-pressed="true"]')?'gradients':'colors');
