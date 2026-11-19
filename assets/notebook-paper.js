@@ -394,6 +394,56 @@ function paint(target,obj,background=false){
  }
  ctx.restore();
 }
+/* List thumbnails focus on the actual drawing, never on empty virtual paper.
+ * The original page, saved strokes and full-page exports are untouched. */
+function previewWindow(p,bitmap){
+ let left=W,top=p.height,right=0,bottom=0,found=false;
+ function include(x1,y1,x2,y2){
+  if(![x1,y1,x2,y2].every(Number.isFinite))return;
+  left=Math.min(left,x1);top=Math.min(top,y1);
+  right=Math.max(right,x2);bottom=Math.max(bottom,y2);found=true;
+ }
+ for(const stroke of p.strokes){
+  if(stroke.tool==='eraser'||stroke.tool==='lasso')continue;
+  const radius=Math.max(4,(stroke.width||5)*1.5);
+  for(const point of stroke.points)include(point[0]-radius,point[1]-radius,point[0]+radius,point[1]+radius);
+ }
+ for(const item of p.texts){
+  const lines=Math.max(1,item.text.split('\n').length);
+  include(item.x,item.y,item.x+Math.min(item.width,W-item.x),item.y+item.size*1.28*lines);
+ }
+ if(bitmap){
+  const photo=photoBounds(p,bitmap);
+  if(photo)include(photo.x,photo.y,photo.x+photo.width,photo.y+photo.height);
+ }
+ if(!found)return{x:0,y:0,width:W,height:p.height};
+ left=Math.max(0,left-52);top=Math.max(0,top-66);
+ right=Math.min(W,right+52);bottom=Math.min(p.height,bottom+66);
+ const contentWidth=right-left,contentHeight=bottom-top;
+ const ratio=46/60;
+ const width=Math.min(W,Math.max(360,contentWidth,Math.min(W,contentHeight*ratio)));
+ const height=Math.min(p.height,Math.max(470,contentHeight,width/ratio));
+ const x=Math.max(0,Math.min(W-width,(left+right-width)/2));
+ const y=Math.max(0,Math.min(p.height-height,(top+bottom-height)/2));
+ return{x,y,width,height};
+}
+function previewList(target,obj){
+ const p=normalize(obj);
+ const bitmap=p.photo?photoImage(p.photo,()=>previewList(target,p)):null;
+ const source=document.createElement('canvas');
+ source.width=target.width;source.height=Math.round(source.width*p.height/W);
+ paint(source,p,true);
+ target.height=Math.round(target.width*60/46);
+ const ctx=target.getContext('2d');if(!ctx)return;
+ ctx.fillStyle=p.background==='dark'?'#202124':'#FFFFFF';
+ ctx.fillRect(0,0,target.width,target.height);
+ const crop=previewWindow(p,bitmap);
+ const sx=crop.x*source.width/W,sy=crop.y*source.height/p.height;
+ const sw=crop.width*source.width/W,sh=crop.height*source.height/p.height;
+ const fit=Math.min(target.width/sw,target.height/sh);
+ const dw=sw*fit,dh=sh*fit;
+ ctx.drawImage(source,sx,sy,sw,sh,(target.width-dw)/2,(target.height-dh)/2,dw,dh);
+}
 function fitPaper(){
  if(!dialog.open||!stage||!sheet)return;
  const rect=stage.getBoundingClientRect();
@@ -1215,5 +1265,5 @@ window.SEYVEO_PAPER=Object.freeze({
   }catch(error){report(error?.message||'Не удалось передать лист Сэйви. Попробуй снова.')}
   finally{sayviHandoffBusy=false}
  },
- open,preview:(target,p)=>{target.height=Math.round(target.width*normalize(p).height/W);paint(target,p,true)},share,print,normalize,importPhoto,compressPhoto});
+ open,preview:previewList,share,print,normalize,importPhoto,compressPhoto});
 })();
