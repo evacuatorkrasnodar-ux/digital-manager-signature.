@@ -79,33 +79,6 @@ let liveTail=null,liveMid=null,shapeFrame=0;
 const shapeSnapshot=document.createElement('canvas');
 const shapeSnapshotCtx=shapeSnapshot.getContext('2d');
 const brushControl=$('notePaperWidth'),moreButton=$('notePaperMore'),extras=$('notePaperExtras');
-// A precise, border-only footprint while hovering with an eraser. It has no
-// opaque tile/backplate and never handles touches or blocks ink events.
-const eraserPreview=stage?document.createElement('div'):null;
-if(eraserPreview){
- eraserPreview.className='sv-paper-eraser-preview';
- eraserPreview.hidden=true;
- eraserPreview.setAttribute('aria-hidden','true');
- stage.append(eraserPreview);
-}
-function hideEraserPreview(){if(eraserPreview)eraserPreview.hidden=true}
-function moveEraserPreview(event){
- if(!eraserPreview||!dialog.open||currentTool()!=='eraser'||event.pointerType==='touch'){
-  hideEraserPreview();return;
- }
- const stageBox=stage.getBoundingClientRect(),canvasBox=canvas.getBoundingClientRect();
- const diameter=Math.max(8,Math.min(240,brushSize*canvasBox.width/W));
- eraserPreview.style.left=(event.clientX-stageBox.left)+'px';
- eraserPreview.style.top=(event.clientY-stageBox.top)+'px';
- eraserPreview.style.width=diameter+'px';
- eraserPreview.style.height=diameter+'px';
- eraserPreview.style.borderColor=data.background==='dark'
-  ?'rgba(248,249,252,.72)':'rgba(36,40,48,.54)';
- eraserPreview.hidden=false;
-}
-canvas.addEventListener('pointermove',moveEraserPreview,{passive:true});
-canvas.addEventListener('pointerleave',hideEraserPreview,{passive:true});
-dialog.addEventListener('close',hideEraserPreview);
 const photoView=$('notePaperPhotoPreview'),photoFile=$('notePaperPhotoFile');
 const photoCache=new Map();
 function photoImage(photo,redraw){
@@ -335,7 +308,6 @@ function selectTool(name,keepSize=false){
  }
  document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.paperTool===name)));
  syncBrushControl();
- if(name!=='eraser')hideEraserPreview();
  canvas.style.cursor=name==='eraser'?'none':'';
 }
 function snapFreehandShape(stroke){
