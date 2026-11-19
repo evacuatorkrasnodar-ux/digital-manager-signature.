@@ -5499,15 +5499,17 @@ function renderNotes(){
     container.querySelectorAll('.note-more-button').forEach(el=>el.setAttribute('aria-expanded','false'));
     container.querySelectorAll('.note-swipe-more').forEach(el=>el.setAttribute('aria-expanded','false'));
    }
+   // Claim horizontal drags on Safari, but never block vertical scrolling.
+   if(event.cancelable)event.preventDefault();
    const offset=Math.max(-168,Math.min(0,(touch.startOpen?-168:0)+dx));
    swipe.style.setProperty('--note-swipe-offset',offset+'px');
-  },{passive:true});
+  },{passive:false});
   function finishSwipe(event){
    if(!touch)return;
    if(touch.dragging){
     const point=event.changedTouches?.[0],dx=point?point.clientX-touch.x:0;
     const offset=Math.max(-168,Math.min(0,(touch.startOpen?-168:0)+dx));
-    swipe.classList.toggle('is-open',offset<-72);
+    swipe.classList.toggle('is-open',offset<-48);
     suppressNoteClickUntil=Date.now()+450;
    }
    touch=null;swipe.classList.remove('is-dragging');
@@ -5515,6 +5517,44 @@ function renderNotes(){
   }
   controls.addEventListener('touchend',finishSwipe,{passive:true});
   controls.addEventListener('touchcancel',finishSwipe,{passive:true});
+  // Desktop mobile previews do not emit TouchEvents: a mouse/pen drag must
+  // exercise the same visible swipe instead of silently opening the note.
+  let pointerDrag=null;
+  controls.addEventListener('pointerdown',event=>{
+   if(event.pointerType==='touch'||event.button!==0)return;
+   pointerDrag={id:event.pointerId,x:event.clientX,y:event.clientY,
+    startOpen:swipe.classList.contains('is-open'),dragging:false,vertical:false};
+  });
+  controls.addEventListener('pointermove',event=>{
+   if(!pointerDrag||pointerDrag.id!==event.pointerId||pointerDrag.vertical)return;
+   const dx=event.clientX-pointerDrag.x,dy=event.clientY-pointerDrag.y;
+   if(!pointerDrag.dragging){
+    if(Math.abs(dy)>9&&Math.abs(dy)>Math.abs(dx)){pointerDrag.vertical=true;return}
+    if(Math.abs(dx)<9||Math.abs(dx)<Math.abs(dy))return;
+    pointerDrag.dragging=true;swipe.classList.add('is-dragging');
+    try{controls.setPointerCapture(event.pointerId)}catch{}
+    container.querySelectorAll('.note-swipe-shell.is-open').forEach(el=>{if(el!==swipe)el.classList.remove('is-open')});
+    container.querySelectorAll('.note-more-options').forEach(el=>{el.hidden=true});
+    container.querySelectorAll('.note-more-button,.note-swipe-more').forEach(el=>el.setAttribute('aria-expanded','false'));
+   }
+   event.preventDefault();
+   const offset=Math.max(-168,Math.min(0,(pointerDrag.startOpen?-168:0)+dx));
+   swipe.style.setProperty('--note-swipe-offset',offset+'px');
+  });
+  function finishPointerSwipe(event){
+   if(!pointerDrag||pointerDrag.id!==event.pointerId)return;
+   if(pointerDrag.dragging){
+    const dx=event.clientX-pointerDrag.x;
+    const offset=Math.max(-168,Math.min(0,(pointerDrag.startOpen?-168:0)+dx));
+    swipe.classList.toggle('is-open',offset<-48);
+    suppressNoteClickUntil=Date.now()+450;
+   }
+   pointerDrag=null;swipe.classList.remove('is-dragging');
+   swipe.style.removeProperty('--note-swipe-offset');
+   try{if(controls.hasPointerCapture(event.pointerId))controls.releasePointerCapture(event.pointerId)}catch{}
+  }
+  controls.addEventListener('pointerup',finishPointerSwipe);
+  controls.addEventListener('pointercancel',finishPointerSwipe);
   if(!note.paper)menu.prepend(calendar);
   controls.append(open,more);swipe.append(swipeMore,swipeDelete,controls);
   card.append(swipe,menu);container.append(card);
@@ -6817,7 +6857,7 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=3"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=41"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=13"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
+</script><script src="assets/seyveo-note-richtext.js?v=2"></script><script src="assets/seyveo-note-attachments.js?v=3"></script><script src="assets/seyveo-note-menu-dismiss.js?v=3"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=41"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=14"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=7">
 <script src="assets/seyveo-dock-active-glass.js?v=2"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=2">

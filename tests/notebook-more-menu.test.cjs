@@ -30,7 +30,7 @@ test('three-dot actions are a compact iOS popover, never a new full-width row',(
  assert.match(button,/background:transparent!important/);
  assert.match(button,/font-size:14px!important/);
  assert.match(css,/\.note-more-options > button svg\{[\s\S]*?max-width:19px!important/);
- assert.match(html,/assets\/seyveo-notebook-page\.css\?v=13/);
+ assert.match(html,/assets\/seyveo-notebook-page\.css\?v=14/);
  assert.match(html,/assets\/seyveo-note-menu-dismiss\.js\?v=3/);
 });
 
@@ -53,6 +53,17 @@ test('iPhone hides the permanent dots, with actions accessible only on a swipe',
  assert.match(css,/\.note-more-options > \.note-delete\{\s*display:none!important/);
  assert.match(css,/\.note-swipe-shell\{[\s\S]*?border-radius:0!important/);
  assert.match(css,/\.note-swipe-delete,\.note-swipe-more\)\{[\s\S]*?opacity:0!important;\s*pointer-events:none!important/);
+});
+
+test('swiping works with mouse or pen and Safari explicitly owns only horizontal movement',()=>{
+ assert.match(html,/controls\.addEventListener\('pointerdown'/);
+ assert.match(html,/controls\.addEventListener\('pointermove'/);
+ assert.match(html,/controls\.addEventListener\('pointerup',finishPointerSwipe\)/);
+ assert.match(html,/event\.pointerType==='touch'\|\|event\.button!==0/);
+ assert.match(html,/controls\.setPointerCapture\(event\.pointerId\)/);
+ assert.match(html,/if\(event\.cancelable\)event\.preventDefault\(\)/);
+ assert.match(html,/\},\{passive:false\}\);/);
+ assert.match(html,/swipe\.classList\.toggle\('is-open',offset<-48\)/);
 });
 
 test('swipe and menu deletion both offer a short undo without destroying attachments immediately',()=>{

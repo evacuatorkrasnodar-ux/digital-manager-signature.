@@ -179,7 +179,8 @@
  height:auto!important;
  max-height:calc(100svh - 198px)!important;
  margin:0!important;
- padding:0 12px!important;
+ /* The separators run full-bleed; only note CONTENT is inset. */
+ padding:0!important;
  border:0!important;
  border-radius:0!important;
  outline:0!important;
@@ -207,7 +208,7 @@
  width:100%!important;
  min-width:0!important;
  min-height:66px!important;
- padding:2px 0!important;
+ padding:2px 12px!important;
  margin:0!important;
  border:0!important;
  border-bottom:1px solid rgba(140,145,150,.13)!important;
@@ -229,6 +230,8 @@
  /* Match the actual white notebook canvas, not the global grey app token. */
  background:#FFFFFF!important;
  touch-action:pan-y!important;
+ -webkit-user-select:none!important;
+ user-select:none!important;
 }
 html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesDialog #notesList .note-item-actions{
  background:var(--bg)!important;
