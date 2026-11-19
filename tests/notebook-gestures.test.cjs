@@ -78,6 +78,18 @@ test('iPhone loads native drawing without installing gesture interception',()=>{
  assert.match(html,/assets\/seyveo-paper-gestures\.css\?v=2/);
 });
 
+test('iPhone finger ink has a direct TouchEvents path independent of PointerEvents',()=>{
+ assert.match(paper,/const iosFingerInk=\/iPhone\|iPod\/i\.test/);
+ assert.match(paper,/sheet\.addEventListener\('touchstart'/);
+ assert.match(paper,/sheet\.addEventListener\('touchmove'/);
+ assert.match(paper,/sheet\.addEventListener\('touchend'/);
+ assert.match(paper,/sheet\.addEventListener\('touchcancel'/);
+ assert.match(paper,/down\(input\)/);
+ assert.match(paper,/move\(asInkEvent\(t\)\)/);
+ assert.match(paper,/finishStroke\(asInkEvent\(t\),commit\)/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=24/);
+});
+
 test('two-finger navigation and lasso remain transient and do not overwrite ink',()=>{
  assert.match(gestures,/fingers\.size===2/);
  assert.match(gestures,/paper\.cancelActiveStroke\(\)/);
@@ -86,5 +98,5 @@ test('two-finger navigation and lasso remain transient and do not overwrite ink'
  assert.match(gestures,/paper\.applyStrokeEdit\(strokes\)/);
  assert.match(gestures,/data-edit="copy"/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=4/);
- assert.match(html,/assets\/notebook-paper\.js\?v=23/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=24/);
 });
