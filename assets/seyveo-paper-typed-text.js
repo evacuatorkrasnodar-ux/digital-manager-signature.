@@ -133,15 +133,18 @@
    draft.color=paper.getInkColor()||draft.color;
    place(editor,draft);syncColor();editor.focus({preventScroll:true});
   });
-  done.addEventListener('click',()=>stopEditor(true));
+  // One "Готово" commits and exits text mode. There must not be another
+  // identical completion button immediately after this one.
+  done.addEventListener('click',stopMode);
   remove.addEventListener('click',()=>{
    if(editingIndex>=0)paper.removeTextObject(editingIndex);
    stopEditor(false);
+   stopMode();
   });
   editor.addEventListener('input',autoHeight);
   editor.addEventListener('keydown',event=>{
    if(event.key==='Escape'){event.preventDefault();stopEditor(false)}
-   else if(event.key==='Enter'&&(event.metaKey||event.ctrlKey)){event.preventDefault();stopEditor(true)}
+   else if(event.key==='Enter'&&(event.metaKey||event.ctrlKey)){event.preventDefault();stopMode()}
   });
   syncColor();autoHeight();
   editor.focus({preventScroll:true});

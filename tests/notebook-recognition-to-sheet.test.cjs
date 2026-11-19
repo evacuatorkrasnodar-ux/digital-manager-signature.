@@ -110,5 +110,5 @@ test('uses the same editable printed-text mode and three compact iPhone actions'
  assert.match(styles,/\.sv-pr-chat \.sv-pr-actions\{grid-template-columns:1fr\}/);
  assert.match(html,/seyveo-paper-recognition\.js\?v=7/);
  assert.match(html,/seyveo-paper-recognition\.css\?v=4/);
- assert.match(html,/seyveo-paper-typed-text\.js\?v=3/);
+ assert.match(html,/seyveo-paper-typed-text\.js\?v=4/);
 });

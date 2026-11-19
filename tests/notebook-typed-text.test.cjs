@@ -91,7 +91,7 @@ test('text mode reuses Settings actions and supports touch placement, drag, font
  assert.match(controls,/textarea|createElement\('textarea'\)/);
  assert.match(style,/\.sv-paper-text-layer\[hidden\]\{display:none!important\}/);
  assert.match(style,/\.sv-paper-text-hit\.sv-paper-text-dragging/);
- assert.match(html,/assets\/seyveo-paper-typed-text\.js\?v=3/);
+ assert.match(html,/assets\/seyveo-paper-typed-text\.js\?v=4/);
  assert.match(html,/assets\/seyveo-paper-typed-text\.css\?v=2/);
  assert.match(html,/assets\/notebook-paper\.js\?v=40/);
 });
@@ -119,4 +119,11 @@ test('text controls always sit below the top capsule and editor focus is subtle'
  assert.match(style,/\.sv-paper-text-hint\{\s*position:absolute;z-index:3;top:74px/);
  assert.match(style,/\.sv-paper-text-controls\{\s*position:absolute;z-index:3;top:74px/);
  assert.match(style,/textarea\.sv-paper-text-editor:focus-visible\{\s*outline:none!important/);
+});
+
+test('one Done completes text editing and leaves no second Done prompt',()=>{
+ assert.match(controls,/done\.addEventListener\('click',stopMode\)/);
+ assert.match(controls,/function stopMode\(\)\{[\s\S]*?stopEditor\(true\);active=false;layer\.hidden=true/);
+ assert.match(controls,/if\(editingIndex>=0\)paper\.removeTextObject\(editingIndex\);\s*stopEditor\(false\);\s*stopMode\(\)/);
+ assert.match(controls,/event\.key==='Enter'&&\(event\.metaKey\|\|event\.ctrlKey\)\)[\s\S]*?stopMode\(\)/);
 });
