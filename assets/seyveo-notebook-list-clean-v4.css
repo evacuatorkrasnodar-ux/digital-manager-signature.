@@ -42,12 +42,13 @@
  content:none!important;display:none!important;
 }
 
-/* Real pages, never cards: no lines above, below or around notes. */
+/* Real full-width pages, never inset cards. Leave only a reading inset INSIDE
+ * the front row, so the swipe/delete surfaces reach the viewport's edge. */
 #svWorkShell[data-active="notes"] #notesList > .sv-nb4-note{
  box-sizing:border-box!important;position:relative!important;
  display:block!important;width:100%!important;
  min-width:0!important;height:68px!important;min-height:68px!important;
- margin:0!important;padding:0 16px!important;
+ margin:0!important;padding:0!important;
  border:0!important;border-top:0!important;border-bottom:0!important;
  border-radius:0!important;outline:0!important;
  background:transparent!important;background-image:none!important;
@@ -90,7 +91,7 @@
  flex:1 1 auto!important;align-items:center!important;justify-content:flex-start!important;
  gap:10px!important;width:auto!important;min-width:0!important;
  height:68px!important;min-height:68px!important;
- margin:0!important;padding:4px 0!important;
+ margin:0!important;padding:4px 0 4px 16px!important;
  border:0!important;border-radius:0!important;outline:0!important;
  background:transparent!important;box-shadow:none!important;
  color:var(--text)!important;text-align:left!important;
@@ -137,7 +138,7 @@
  -webkit-appearance:none!important;appearance:none!important;
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  flex:0 0 42px!important;width:42px!important;min-width:42px!important;
- height:44px!important;margin:0!important;padding:0!important;
+ height:44px!important;margin:0 8px 0 0!important;padding:0!important;
  border:0!important;border-radius:0!important;outline:0!important;
  background:transparent!important;box-shadow:none!important;
  color:var(--text)!important;opacity:1!important;visibility:visible!important;
