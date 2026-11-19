@@ -30,6 +30,48 @@ function shapeFitter(name){
  return vm.runInNewContext(script.slice(begin,end)+'\n'+name);
 }
 
+test('Sayvi recognises a one-stroke Cyrillic С and makes the open arc smoother',()=>{
+ const fit=shapeFitter('fitLetterC'),count=75,ideal=[],wobbly=[];
+ for(let i=0;i<count;i++){
+  const t=-.78-(Math.PI*2-1.56)*i/(count-1);
+  ideal.push([280+85*Math.cos(t),310+96*Math.sin(t)]);
+  const shake=2.4*Math.sin(t*9)+1.7*Math.cos(t*14);
+  wobbly.push([280+(85+shake)*Math.cos(t),310+(96+shake)*Math.sin(t),45+i%20]);
+ }
+ for(const data of [wobbly,wobbly.slice().reverse()]){
+  const before=structuredClone(data),after=fit(data);
+  assert.ok(after,'recognised a well-formed open С in either writing direction');
+  assert.deepEqual(data,before,'preview never mutates the original');
+  assert.deepEqual(Array.from(after[0]),data[0]);
+  assert.deepEqual(Array.from(after.at(-1)),data.at(-1));
+  assert.deepEqual(after.map(p=>p[2]),data.map(p=>p[2]));
+  const reference=data===wobbly?ideal:ideal.slice().reverse();
+  const error=points=>points.reduce((sum,p,i)=>sum+Math.hypot(p[0]-reference[i][0],p[1]-reference[i][1]),0)/count;
+  assert.ok(error(after)<error(data),`the С curve improved: ${error(data)} -> ${error(after)}`);
+ }
+});
+
+test('a closed О, a U-shaped letter and a straight stroke are not mistaken for С',()=>{
+ const fit=shapeFitter('fitLetterC'),count=75;
+ const o=Array.from({length:count},(_,i)=>{
+  const t=Math.PI*2*i/(count-1);return [260+80*Math.cos(t),260+90*Math.sin(t),60];
+ });
+ assert.equal(fit(o),null,'a completed О stays closed');
+ const u=Array.from({length:count},(_,i)=>{
+  const t=Math.PI-(Math.PI*i/(count-1));return [200+80*Math.cos(t),200+100*Math.sin(t),60];
+ });
+ assert.equal(fit(u),null,'a У-образный штрих stays distinct');
+ const line=Array.from({length:count},(_,i)=>[100+i*3,250+i*.4,60]);
+ assert.equal(fit(line),null,'a straight letter stem stays straight');
+ const corners=[[220,100],[100,100],[100,220],[220,220]],angular=[];
+ for(let k=0;k<3;k++)for(let i=0;i<25;i++){
+  const t=i/25;
+  angular.push([corners[k][0]*(1-t)+corners[k+1][0]*t,corners[k][1]*(1-t)+corners[k+1][1]*t,60]);
+ }
+ angular.push([220,220,60]);
+ assert.equal(fit(angular),null,'a three-sided angular bracket must stay angular');
+});
+
 test('Sayvi restores a shaky tilted heart without changing the artist’s ink pressure',()=>{
  const fit=shapeFitter('fitHeart');
  for(const direction of [1,-1]){
@@ -259,7 +301,7 @@ test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',
 test('preview edits only pen and pencil, preserving text, photos and undo history',()=>{
  assert.match(script,/const eligible=stroke=>\['pen','pencil'\]\.includes\(stroke\.tool\)/);
  assert.match(script,/proposal=paper\.getEditableStrokes\(indices\)/);
- assert.match(script,/next=fitHeart\(stroke\.points\)\|\|fitOval\(stroke\.points\)\|\|fitStraight\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
+ assert.match(script,/next=fitHeart\(stroke\.points\)\|\|fitOval\(stroke\.points\)\|\|fitLetterC\(stroke\.points\)\|\|fitStraight\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
  assert.match(script,/paper\.previewStrokeEdit\(next\?proposal:original\)/);
  assert.match(script,/if\(commit\)\{\s*if\(!paper\.applyStrokeEdit\(proposal\)/);
  assert.match(script,/else if\(restore\)paper\.previewStrokeEdit\(original\)/);
@@ -274,5 +316,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=1/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=5/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=6/);
 });

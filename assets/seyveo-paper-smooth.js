@@ -110,6 +110,68 @@
   return corrected;
  }
 
+ // A first handwritten Cyrillic letter: С. Its open right edge separates it
+ // from the closed О. Only confidently rounded, one-stroke С-shapes qualify;
+ // other letters keep their own character and use ordinary gentle smoothing.
+ function fitLetterC(points){
+  if(!Array.isArray(points)||points.length<18)return null;
+  const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+  const width=maxX-minX,height=maxY-minY,size=Math.min(width,height);
+  if(size<38||Math.max(width,height)>size*2.2)return null;
+  const first=points[0],last=points.at(-1);
+  const gap=Math.hypot(first[0]-last[0],first[1]-last[1]);
+  if(gap<size*.36||gap>size*1.25)return null;
+  // Both ends live on the right, one above and one below the centre.
+  const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
+  if(Math.min(first[0],last[0])<minX+width*.68)return null;
+  if(!((first[1]<cy-height*.17&&last[1]>cy+height*.17)
+   ||(last[1]<cy-height*.17&&first[1]>cy+height*.17)))return null;
+  let rx=width/2,ry=height/2;
+  const median=points.map(p=>Math.hypot((p[0]-cx)/rx,(p[1]-cy)/ry)).sort((a,b)=>a-b);
+  const scale=clamp(median[Math.floor(points.length/2)],.83,1.08);
+  rx*=scale;ry*=scale;
+  const polar=points.map(p=>{
+   const u=(p[0]-cx)/rx,v=(p[1]-cy)/ry;
+   return {angle:Math.atan2(v,u),radius:Math.hypot(u,v)};
+  });
+  const errors=polar.map(p=>Math.abs(p.radius-1)).sort((a,b)=>a-b);
+  if(errors.reduce((sum,e)=>sum+e,0)/errors.length>.17
+   ||errors[Math.floor(errors.length*.9)]>.31||errors.at(-1)>.47)return null;
+  const angles=[polar[0].angle];let wrongWay=0;
+  for(let i=1;i<points.length;i++){
+   let delta=polar[i].angle-polar[i-1].angle;
+   if(delta>Math.PI)delta-=Math.PI*2;
+   else if(delta< -Math.PI)delta+=Math.PI*2;
+   angles.push(angles.at(-1)+delta);
+  }
+  const sweep=angles.at(-1)-angles[0],direction=Math.sign(sweep);
+  if(Math.abs(sweep)<Math.PI*1.30||Math.abs(sweep)>Math.PI*1.83)return null;
+  for(let i=1;i<angles.length;i++)wrongWay+=Math.max(0,-(angles[i]-angles[i-1])*direction);
+  if(wrongWay>Math.PI*.22)return null;
+  const stride=Math.max(3,Math.floor(points.length/16));
+  for(let i=stride;i<points.length-stride;i++){
+   const a=points[i-stride],b=points[i],c=points[i+stride];
+   const ux=b[0]-a[0],uy=b[1]-a[1],vx=c[0]-b[0],vy=c[1]-b[1];
+   const side=Math.hypot(ux,uy)*Math.hypot(vx,vy);
+   if(side>12&&(ux*vx+uy*vy)/side<.26)return null;
+  }
+  // Smooth the radius of a С along the path. This retains an individual's
+  // rounded / narrow handwriting style instead of forcing a generic font.
+  const weights=[1,2,3,4,3,2,1];
+  const corrected=points.map((p,i)=>{
+   if(i<3||i>=points.length-3)return p.slice();
+   let radius=0;
+   for(let k=-3;k<=3;k++)radius+=polar[i+k].radius*weights[k+3];
+   radius/=16;
+   const weight=.92*Math.sin(Math.PI*i/(points.length-1))**.6;
+   const next=polar[i].radius+(radius-polar[i].radius)*weight;
+   const t=angles[i];
+   return [round(cx+rx*next*Math.cos(t)),round(cy+ry*next*Math.sin(t)),...p.slice(2)];
+  });
+  return smoothPoints(corrected);
+ }
+
  // Equal-distance samples let a heart be drawn quickly or slowly without
  // changing the recognised outline. This stays entirely on the device.
  const HEART_SAMPLES=96;
@@ -270,7 +332,7 @@
   proposal=paper.getEditableStrokes(indices);
   let changed=0;
   for(const index of indices){
-   const stroke=proposal[index],next=fitHeart(stroke.points)||fitOval(stroke.points)||fitStraight(stroke.points)||smoothPoints(stroke.points);
+   const stroke=proposal[index],next=fitHeart(stroke.points)||fitOval(stroke.points)||fitLetterC(stroke.points)||fitStraight(stroke.points)||smoothPoints(stroke.points);
    for(let i=0;i<next.length;i++)if(Math.hypot(next[i][0]-stroke.points[i][0],next[i][1]-stroke.points[i][1])>.1)changed++;
    stroke.points=next;
   }
