@@ -89,7 +89,7 @@
   paper.cancelActiveStroke?.();
   original=paper.getEditableStrokes([]);
   const indices=original.flatMap((stroke,index)=>eligible(stroke)?[index]:[]);
-  if(!indices.length){original=null;return}
+  if(!indices.length){original=null;paper.announce?.('Сначала напиши или нарисуй что-нибудь ручкой.');return}
   proposal=paper.getEditableStrokes(indices);
   let changed=0;
   for(const index of indices){
@@ -114,7 +114,6 @@
   if(active&&event.target.closest('#svPaperNewDock [data-paper-tool],#notePaperSave,#notePaperBack,#notePaperSayvi'))stop(false);
  },{capture:true});
  dialog.addEventListener('sv-paper-render',()=>{
-  action.hidden=!paper.getEditableStrokes([]).some(eligible);
   // Undo or another external edit wins; never apply a stale proposal.
   if(active)stop(false,false);
  });
@@ -123,5 +122,4 @@
  document.addEventListener('keydown',event=>{
   if(active&&event.key==='Escape'){event.preventDefault();stop(false)}
  });
- action.hidden=!paper.getEditableStrokes([]).some(eligible);
 })();

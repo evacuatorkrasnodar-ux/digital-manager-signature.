@@ -66,11 +66,11 @@ test('live controls compare without committing, Cancel restores and Apply commit
   svPaperNewDock:dock,notePaperSettings:settings};
  let source=[{tool:'pen',points:Array.from({length:11},(_,i)=>[i*4,50+(i%2?3:-3),60]),color:'#111111'},
   {tool:'eraser',points:[[0,0,80],[5,5,80],[10,10,80],[15,15,80],[20,20,80]],color:'#ffffff'}];
- const original=structuredClone(source),previews=[],applied=[];
+ const original=structuredClone(source),previews=[],applied=[],announcements=[];
  const paper={getEditableStrokes:indices=>source.map((s,i)=>indices.includes(i)?structuredClone(s):s),
   previewStrokeEdit:strokes=>previews.push(structuredClone(strokes)),
   applyStrokeEdit:strokes=>{applied.push(structuredClone(strokes));source=strokes;dialog.fire('sv-paper-render');return true},
-  cancelActiveStroke:()=>{}};
+  cancelActiveStroke:()=>{},announce:message=>announcements.push(message)};
  const document={getElementById:id=>nodes[id]||null,
   createElement:()=>new Node(),addEventListener:()=>{}};
  const window={SEYVEO_PAPER:paper,addEventListener:()=>{}};
@@ -101,11 +101,19 @@ test('live controls compare without committing, Cancel restores and Apply commit
  assert.notDeepEqual(source[0].points,original[0].points);
  assert.deepEqual(source[1],original[1]);
  assert.equal(overlay.hidden,true);
+ source=[];
+ dialog.fire('sv-paper-render');
+ assert.equal(action.hidden,false,'the command remains visible on a blank page');
+ action.click();
+ assert.equal(announcements.at(-1),'Сначала напиши или нарисуй что-нибудь ручкой.');
+ assert.equal(overlay.hidden,true);
+ assert.equal(applied.length,1,'blank-page tip never commits an edit');
 });
 
 test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',()=>{
  assert.match(script,/actions\.insertBefore\(action,actions\.querySelector\('#notePaperAddPhoto'\)\)/);
- assert.match(script,/action\.hidden=!paper\.getEditableStrokes\(\[\]\)\.some\(eligible\)/);
+ assert.doesNotMatch(script,/action\.hidden=/,'the command cannot disappear on a clean sheet');
+ assert.match(script,/paper\.announce\?\.\('Сначала напиши или нарисуй что-нибудь ручкой\.'\)/);
  assert.match(script,/const before=document\.createElement\('button'\);before\.type='button';before\.textContent='До'/);
  assert.match(script,/const after=document\.createElement\('button'\);after\.type='button';after\.textContent='После'/);
  assert.match(script,/const cancel=document\.createElement\('button'\);cancel\.type='button';cancel\.textContent='Отмена'/);
@@ -137,5 +145,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=1/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=2/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=3/);
 });
