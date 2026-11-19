@@ -178,3 +178,51 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePap
  background:#fff!important;color:#24262b!important;
  box-shadow:0 1px 3px rgba(35,39,49,.09)!important;
 }
+
+/* Studio light · unified with the actual Home dock and Calendar controls.
+   Dark graphite surfaces, dimensions and all canvas input handlers are untouched. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock{
+ border:var(--sv-dock-pearl-border,.7px solid rgba(255,255,255,.28))!important;
+ background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10))!important;
+ background-image:none!important;
+ box-shadow:var(--sv-dock-pearl-shadow,0 0 0 .45px rgba(164,170,184,.16),inset 0 1px 1px rgba(75,82,96,.055),inset 0 -1px 0 rgba(255,255,255,.18),0 1px 2px rgba(82,88,103,.045))!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%))!important;
+ backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(100%))!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > button.sv-newdock-button{
+ color:#303640!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]{
+ color:#171b21!important;
+ background:rgba(106,123,138,.12)!important;
+ box-shadow:inset 0 1.5px 2px rgba(31,42,58,.11),inset 0 -1px .75px rgba(255,255,255,.34)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not([data-sv-active="true"]):active{
+ background:rgba(106,123,138,.08)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > button.sv-newdock-button:disabled{
+ color:#a0a6b0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface .sv-paper-top #svPaperNewDock > #notePaperSayvi > img.sv-newdock-potok{
+ filter:brightness(0)!important;
+ opacity:.82!important;
+}
+/* Match the Calendar's quiet silver circular action, not the graphite save. */
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-paper-save{
+ background:#e4e7e9!important;
+ background-image:none!important;
+ border:0!important;
+ color:#33414a!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-paper-save svg{
+ stroke:currentColor!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #notePaperSave.sv-paper-save:active{
+ background:#d8dde1!important;
+ transform:scale(.975)!important;
+}
