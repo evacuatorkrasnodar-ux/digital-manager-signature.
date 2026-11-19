@@ -26,10 +26,19 @@ test('compact preview zooms toward sparse handwriting without changing its coord
  assert.equal(JSON.stringify(source),original,'saved ink is immutable');
 });
 
-test('preview keeps handwriting spanning the entire tall page visible',()=>{
+test('tall handwriting shows its first detail without dark letterbox bars',()=>{
  const frame=previewWindow(page([{tool:'pen',width:5,points:[[40,15],[800,2390]]}]),null);
  assert.ok(frame.x<=40&&frame.x+frame.width>=800);
- assert.ok(frame.y<=15&&frame.y+frame.height>=2390);
+ assert.ok(frame.y<=15,'preview opens at the start of the handwriting');
+ assert.ok(frame.height<1200,'a tall note is not compressed into a tiny stripe');
+ assert.ok(Math.abs(frame.width/frame.height-46/60)<.0001,'the canvas is full-bleed');
+});
+
+test('a blank tall page also produces a full-width clean paper preview',()=>{
+ const frame=previewWindow(page([],[],2600),null);
+ assert.ok(frame.height<1200);
+ assert.equal(frame.y,0);
+ assert.ok(Math.abs(frame.width/frame.height-46/60)<.0001);
 });
 
 test('photo position contributes to preview focus, including photos without ink',()=>{
@@ -42,6 +51,7 @@ test('photo position contributes to preview focus, including photos without ink'
 test('full Paper exports stay independent from notebook list previews',()=>{
  assert.match(engine,/open,preview:previewList,share,print,normalize,importPhoto,compressPhoto/);
  assert.match(engine,/function previewList\(target,obj\)\{[\s\S]*?paint\(source,p,true\)/);
+ assert.match(engine,/ctx\.drawImage\(source,sx,sy,sw,sh,0,0,target\.width,target\.height\)/);
  assert.match(engine,/async function png\(p\)\{[\s\S]*?paint\(out,p,true\)/);
- assert.match(html,/assets\/notebook-paper\.js\?v=46/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=47/);
 });

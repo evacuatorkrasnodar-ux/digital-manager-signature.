@@ -666,7 +666,7 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(script,/event\.key==='Escape'/);
  assert.match(engine,/dialog\.classList\.contains\('sv-paper-smooth-mode'\)\)return;/);
  assert.match(gestures,/dialog\.classList\.contains\('sv-paper-smooth-mode'\)/);
- assert.match(html,/assets\/notebook-paper\.js\?v=45/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=47/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=2/);
  assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=13/);

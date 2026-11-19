@@ -394,8 +394,10 @@ function paint(target,obj,background=false){
  }
  ctx.restore();
 }
-/* List thumbnails focus on the actual drawing, never on empty virtual paper.
- * The original page, saved strokes and full-page exports are untouched. */
+/* A thumbnail is a glance at the first meaningful part of the sheet, not a
+ * squeezed printout of a 2600px page. Keep its crop at the thumbnail's aspect
+ * ratio so tall sheets cannot produce dark letterbox bars in the note list.
+ * The original drawing and full-page exports remain untouched. */
 function previewWindow(p,bitmap){
  let left=W,top=p.height,right=0,bottom=0,found=false;
  function include(x1,y1,x2,y2){
@@ -416,15 +418,20 @@ function previewWindow(p,bitmap){
   const photo=photoBounds(p,bitmap);
   if(photo)include(photo.x,photo.y,photo.x+photo.width,photo.y+photo.height);
  }
- if(!found)return{x:0,y:0,width:W,height:p.height};
+ const ratio=46/60;
+ if(!found){
+  const height=Math.min(p.height,W/ratio);
+  return{x:0,y:0,width:height*ratio,height};
+ }
  left=Math.max(0,left-52);top=Math.max(0,top-66);
  right=Math.min(W,right+52);bottom=Math.min(p.height,bottom+66);
  const contentWidth=right-left,contentHeight=bottom-top;
- const ratio=46/60;
  const width=Math.min(W,Math.max(360,contentWidth,Math.min(W,contentHeight*ratio)));
- const height=Math.min(p.height,Math.max(470,contentHeight,width/ratio));
+ // Never stretch the crop to the full height of an unusually tall sheet.
+ // When the drawing exceeds one viewport, begin at its first visible ink.
+ const height=width/ratio;
  const x=Math.max(0,Math.min(W-width,(left+right-width)/2));
- const y=Math.max(0,Math.min(p.height-height,(top+bottom-height)/2));
+ const y=Math.max(0,Math.min(p.height-height,contentHeight>height?top:(top+bottom-height)/2));
  return{x,y,width,height};
 }
 function previewList(target,obj){
@@ -440,9 +447,9 @@ function previewList(target,obj){
  const crop=previewWindow(p,bitmap);
  const sx=crop.x*source.width/W,sy=crop.y*source.height/p.height;
  const sw=crop.width*source.width/W,sh=crop.height*source.height/p.height;
- const fit=Math.min(target.width/sw,target.height/sh);
- const dw=sw*fit,dh=sh*fit;
- ctx.drawImage(source,sx,sy,sw,sh,(target.width-dw)/2,(target.height-dh)/2,dw,dh);
+ // Fill the entire bitmap. The crop is already exactly 46:60, so Safari
+ // cannot introduce visible dark sidebars when a saved page is very tall.
+ ctx.drawImage(source,sx,sy,sw,sh,0,0,target.width,target.height);
 }
 function fitPaper(){
  if(!dialog.open||!stage||!sheet)return;
