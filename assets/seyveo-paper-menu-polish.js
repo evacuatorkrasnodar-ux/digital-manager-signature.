@@ -116,6 +116,8 @@
  }
 
  if(colorMenu){
+  const title=colorMenu.querySelector('.sv-gradient-head strong');
+  if(title)title.textContent='Палитра';
   const captions=[...colorMenu.querySelectorAll('.sv-gradient-section-caption')];
   const solid=colorMenu.querySelector('.sv-gradient-solid-grid');
   const presets=colorMenu.querySelector('.sv-gradient-presets');
@@ -136,7 +138,7 @@
   const inks=menu.querySelector('.sv-newdock-ink-choices');
   const actions=[...menu.children].filter(node=>node.tagName==='BUTTON');
   buildSegments(menu,[
-   {key:'drawing',label:'Рисование',nodes:[labels[0],backgrounds,labels[1],inks]},
+   {key:'drawing',label:'Лист и перо',nodes:[labels[0],backgrounds,labels[1],inks]},
    {key:'actions',label:'Действия',nodes:[labels[2],...actions]}
   ],'drawing');
  }
