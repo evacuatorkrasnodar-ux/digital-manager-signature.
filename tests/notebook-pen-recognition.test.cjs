@@ -30,6 +30,26 @@ test('pencil tilt changes shading while pen strokes do not depend on tilt',()=>{
  assert.equal(inkWeight(pen,[0,0,50,70]),inkWeight(pen,[0,0,50,0]));
 });
 
+test('saved pressure strokes render with changing line widths',()=>{
+ const paintSource=paper.match(/function paintStroke\(ctx,s\)\{[\s\S]*?\n\}/)?.[0];
+ const paintStroke=vm.runInNewContext(`${weightSource}\n${paintSource};paintStroke`,{
+  clamp:(n,max)=>Math.max(0,Math.min(max,Math.round(Number(n)||0))),
+  SHAPE_TOOLS:new Set(['line','arrow','rect','circle','triangle','diamond']),
+  COLORS:['#171e29'],validGradient:()=>false
+ });
+ const weights=[];
+ const context={
+  save(){},restore(){},beginPath(){},arc(){},fill(){},moveTo(){},lineTo(){},quadraticCurveTo(){},
+  stroke(){weights.push(this.lineWidth)}
+ };
+ paintStroke(context,{
+  tool:'pen',color:'#171e29',width:10,pressureSensitive:true,
+  points:[[0,0,10,0],[10,5,30,0],[20,10,95,0],[30,10,95,0]]
+ });
+ assert.ok(weights.length>=3);
+ assert.ok(Math.max(...weights)-Math.min(...weights)>2);
+});
+
 test('handwriting recognition stays opt-in, preserves ink and offers review',()=>{
  assert.match(recognition,/entry\.addEventListener\('click',show\)/);
  assert.match(recognition,/createHandwritingRecognizer/);
