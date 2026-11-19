@@ -221,9 +221,9 @@
    wrap.dataset.width=String(n);range.setAttribute('aria-valuetext',String(n));
   };
   let last=Number(range.value);
-  range.addEventListener('input',()=>{
+  range.addEventListener('input',event=>{
    const now=Number(range.value);
-   if(now!==last&&typeof navigator.vibrate==='function')navigator.vibrate(5);
+   if(event.isTrusted&&now!==last&&typeof navigator.vibrate==='function')navigator.vibrate(5);
    last=now;syncWidth();
   });
   range.addEventListener('pointerdown',()=>wrap.classList.add('sv-paper-size-active'));
