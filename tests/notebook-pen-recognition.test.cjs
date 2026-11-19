@@ -57,6 +57,21 @@ test('handwriting recognition stays opt-in, preserves ink and offers review',()=
  assert.match(recognition,/textarea class="sv-pr-text"/);
  assert.match(recognition,/data-pr-save/);
  assert.match(paper,/exportInkOcrPng/);
- assert.match(html,/assets\/seyveo-paper-recognition\.js\?v=1/);
+ assert.match(html,/assets\/seyveo-paper-recognition\.js\?v=2/);
  assert.match(html,/assets\/notebook-paper\.js\?v=24/);
+});
+
+test('recognition review prevents empty scans and accidental duplicate notes',()=>{
+ const source=recognition.match(/const sync=\(\)=>\{[\s\S]*?\n \};/)?.[0];
+ const context={busy:false,inkAvailable:true,savedText:'Привет, мир',
+  text:{value:'Привет, мир'},runButton:{},copyButton:{},saveButton:{}};
+ const sync=vm.runInNewContext(`${source}\nsync`,context);
+ sync();
+ assert.equal(context.saveButton.disabled,true,'same result cannot be saved twice');
+ context.text.value='Привет, мир!';sync();
+ assert.equal(context.saveButton.disabled,false,'edited text can be saved');
+ context.inkAvailable=false;sync();
+ assert.equal(context.runButton.disabled,true,'empty handwritten page cannot start OCR');
+ assert.match(recognition,/savedText=value/);
+ assert.match(recognition,/data-pr-close aria-label="Закрыть распознавание">Готово/);
 });
