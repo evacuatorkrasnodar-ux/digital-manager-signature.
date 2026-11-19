@@ -13,6 +13,8 @@
  */
 import {createVerifiedWorkspaceClient}
   from '../business/verified-workspace-client.mjs';
+import {createRemotePaperDraftClient}
+  from '../paper/remote-draft-client.mjs';
 const ID=/^[A-Za-z0-9_-]{1,128}$/;
 const MAX_BYTES=2048;
 const TOKEN=/^(?:[A-Za-z0-9_-]{40,512}|[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/;
@@ -42,7 +44,7 @@ const sameCredential=(a,b,issuer,clientId,now)=>
 
 export function createVerifiedAccountBridge({
   apiOrigin,issuer,clientId='seyveo-native',
-  credentialVault,fetchImpl,now=Date.now
+  credentialVault,fetchImpl,now=Date.now,paperAppOrigin
 }={}){
   const origin=exactOrigin(apiOrigin);
   if(typeof issuer!=='string'||!issuer.startsWith('https://')||
@@ -97,5 +99,10 @@ export function createVerifiedAccountBridge({
   const workspaces=createVerifiedWorkspaceClient({
     apiOrigin:origin,getPersonalSession,fetchImpl,now
   });
-  return Object.freeze({getPersonalSession,workspaces});
+  // Deliberately not enabled by default. A reviewed native application
+  // configuration must pin the allowed origin before any paper AI request.
+  const paperDraft=paperAppOrigin===undefined?null:createRemotePaperDraftClient({
+    apiOrigin:origin,appOrigin:paperAppOrigin,getPersonalSession,fetchImpl,now
+  });
+  return Object.freeze({getPersonalSession,workspaces,paperDraft});
 }

@@ -4,14 +4,20 @@ import type {
 import type {
   VerifiedWorkspaceClient,NativePersonalSession
 } from '../business/verified-workspace-client.mjs';
+import type {RemotePaperDraftClient}
+  from '../paper/remote-draft-client.mjs';
 
 export interface VerifiedAccountBridge {
   /** Native network layer only; never hand bearer to a React component. */
   getPersonalSession():Promise<NativePersonalSession|null>;
   workspaces:VerifiedWorkspaceClient;
+  /** Null until a native build explicitly pins a remote Paper app origin. */
+  paperDraft:RemotePaperDraftClient|null;
 }
 export interface VerifiedAccountBridgeConfig {
   apiOrigin:string;
+  /** Opt-in for a reviewed native build; must be an exact trusted HTTPS origin. */
+  paperAppOrigin?:string;
   issuer:string;
   clientId?:string;
   credentialVault:{
