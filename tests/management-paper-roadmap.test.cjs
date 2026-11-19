@@ -32,5 +32,17 @@ test('Paper roadmap lists every feature once and preserves known progress keys',
 
 test('the current UI requests a fresh management script instead of cached roadmap',()=>{
  const html=readFileSync(join(root,'index.html'),'utf8');
- assert.match(html,/assets\/management\.js\?v=65/);
+ assert.match(html,/assets\/management\.js\?v=66/);
+});
+
+test('the unified Paper mission is recorded without duplicating roadmap items',()=>{
+ const mission=readFileSync(join(root,'docs/SEYVEO-PAPER-AI-UNIFIED-SPEC.md'),'utf8');
+ const master=readFileSync(join(root,'docs/SEYVEO-IDEAS-MASTER.md'),'utf8');
+ for(const id of ['paper_ai_drawing','paper_ai_understanding','paper_handwriting_ocr',
+  'paper_spelling','paper_living_handwriting','paper_typeset_hand','paper_documents']){
+  assert.match(mission,new RegExp('`'+id+'`'),id+' is included in the unified brief');
+ }
+ assert.match(master,/SEYVEO-PAPER-AI-UNIFIED-SPEC\.md/);
+ assert.match(mission,/не обещание|не означает|нельзя объявлять/);
+ assert.equal(roadmap.length,19,'no extra management card is added');
 });
