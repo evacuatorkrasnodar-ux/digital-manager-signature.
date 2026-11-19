@@ -1,0 +1,179 @@
+/* SEYVEO Paper · quiet, precise palette. No duplicate tiles or decorative pluses.
+   Only the palette popover is restyled; ink, touch and save logic stay intact. */
+html body #notePaperDialog.sv-paper-studio[open] .paper-color-control #notePaperColorMenu.paper-color-menu:not([hidden]){
+ width:min(302px,calc(100vw - 20px))!important;
+ padding:11px!important;border-radius:18px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-head{
+ margin:0 0 8px!important;padding:0 2px!important;border:0!important;
+ min-height:22px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-head > span{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-head > strong{
+ font-size:14px!important;font-weight:620!important;line-height:22px!important;
+ letter-spacing:-.02em!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-polish-segments{
+ min-height:37px!important;margin:0 0 10px!important;
+ padding:2px!important;gap:2px!important;border-radius:11px!important;
+ background:rgba(0,0,0,.17)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu button.sv-polish-segment{
+ height:33px!important;min-height:33px!important;
+ padding:0 4px!important;border-radius:9px!important;
+ font-size:12px!important;font-weight:580!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu button.sv-polish-segment[aria-selected="true"]{
+ background:rgba(255,255,255,.16)!important;box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-polish-menu-pane > .sv-gradient-section-caption{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid{
+ gap:0!important;margin:2px 0 0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid > button{
+ width:40px!important;height:40px!important;min-height:40px!important;
+ padding:5px!important;border-radius:50%!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid .paper-swatch{
+ width:28px!important;height:28px!important;border-radius:50%!important;
+}
+/* A single typographic disclosure row, with one subtle chevron. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu :is(details.sv-ink-custom,details.sv-gradient-custom){
+ margin:9px 0 0!important;padding:4px 0 0!important;
+ border-top:1px solid rgba(255,255,255,.12)!important;
+ border-bottom:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu :is(details.sv-ink-custom,details.sv-gradient-custom) > summary{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ justify-content:space-between!important;width:100%!important;
+ margin:0!important;padding:0 4px!important;min-height:38px!important;height:38px!important;
+ color:#ededf0!important;font-size:12.5px!important;font-weight:570!important;
+ line-height:1!important;text-align:left!important;list-style:none!important;
+ background:transparent!important;border:0!important;border-radius:9px!important;
+}
+#notePaperColorMenu details.sv-gradient-custom > summary::-webkit-details-marker{display:none!important}
+#notePaperColorMenu details.sv-gradient-custom > summary::marker{content:''}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-summary-title{
+ gap:0!important;font:inherit!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-summary-icon,
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-summary-hint{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu :is(details.sv-ink-custom,details.sv-gradient-custom) > summary::after{
+ content:''!important;display:block!important;
+ flex:none!important;width:7px!important;height:7px!important;margin:0 7px 3px 0!important;
+ border:0!important;border-right:1.5px solid #bfc0c6!important;
+ border-bottom:1.5px solid #bfc0c6!important;border-radius:0!important;
+ background:none!important;box-shadow:none!important;
+ transform:rotate(45deg)!important;transition:transform .18s ease!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu :is(details.sv-ink-custom,details.sv-gradient-custom)[open] > summary::after{
+ transform:translateY(4px) rotate(225deg)!important;
+}
+/* Saturation is useful; duplicate color preview is not (the dock displays it). */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-custom-body{
+ gap:8px!important;padding:5px 0 1px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-sv{
+ height:134px!important;min-height:134px!important;border-radius:10px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-hue-row{
+ grid-template-columns:36px minmax(0,1fr)!important;
+ gap:9px!important;min-height:36px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu button.sv-ink-pipette{
+ width:36px!important;min-width:36px!important;height:36px!important;
+ padding:0!important;border:0!important;border-radius:10px!important;
+ background:rgba(255,255,255,.10)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-pipette svg{
+ width:19px!important;height:19px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-preview{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu input.sv-ink-hue{
+ height:26px!important;min-height:26px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-values{
+ grid-template-columns:1.25fr 1.85fr!important;gap:7px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-hex-label,
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-rgb label{
+ gap:4px!important;font-size:10px!important;font-weight:520!important;
+ letter-spacing:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-rgb{
+ gap:5px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-ink-values input{
+ height:34px!important;min-height:34px!important;border-radius:8px!important;
+ background:rgba(0,0,0,.17)!important;font-size:11px!important;
+}
+/* Six gradients are the color itself, not a tile + another tile + a number. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:7px!important;margin:2px 0 0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button{
+ display:block!important;position:relative!important;box-sizing:border-box!important;
+ height:45px!important;min-height:45px!important;padding:3px!important;margin:0!important;
+ border:1px solid transparent!important;border-radius:11px!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button[aria-pressed="true"]{
+ border:1px solid rgba(255,255,255,.95)!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button .sv-gradient-chip{
+ display:block!important;box-sizing:border-box!important;
+ width:100%!important;height:100%!important;border:0!important;
+ border-radius:8px!important;box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button > span:last-child:not(.sv-gradient-chip){
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu.sv-gradient-editing .sv-gradient-presets{
+ display:none!important;
+}
+/* Manual gradient remains precise but no longer forms a long grey stack. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu details.sv-gradient-custom[open] .sv-gradient-manual{
+ gap:7px!important;padding:5px 0 1px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field{
+ grid-template-columns:48px 30px minmax(0,1fr)!important;
+ gap:7px!important;min-height:35px!important;font-size:11px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field > span{
+ font-size:11px!important;color:#c8c8cd!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field input[type=color]{
+ width:30px!important;height:30px!important;padding:2px!important;
+ border-radius:9px!important;background:rgba(255,255,255,.08)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-field input[type=text]{
+ height:33px!important;border-radius:9px!important;
+ background:rgba(0,0,0,.18)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-live-preview{
+ height:19px!important;border-radius:8px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu #noteGradientApply{
+ height:36px!important;min-height:36px!important;border-radius:10px!important;
+ font-size:12px!important;font-weight:570!important;
+ background:rgba(255,255,255,.14)!important;
+}
+/* Narrow devices: keep all six swatches and every input within the popover. */
+@media(max-width:350px){
+ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid > button{
+  width:36px!important;height:36px!important;min-height:36px!important;padding:4px!important;
+ }
+ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-solid-grid .paper-swatch{
+  width:26px!important;height:26px!important;
+ }
+}
