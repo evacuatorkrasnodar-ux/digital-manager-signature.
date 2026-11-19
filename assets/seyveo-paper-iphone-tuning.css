@@ -19,9 +19,6 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradien
  background-repeat:no-repeat!important;background-size:100% 100%!important;
  -webkit-background-clip:padding-box!important;background-clip:padding-box!important;
 }
-html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradient-presets > button .sv-gradient-chip[style*="background-image"]{
- background-image:inherit;
-}
 /* iPhone: lower the palette without creating a backing strip or obscuring
    the system home indicator. Move Save by exactly the same amount. */
 @supports (-webkit-touch-callout:none){
