@@ -141,4 +141,24 @@
   ],'drawing');
  }
 
+
+ // Only one popover may be visible at once, even on fast taps and iOS.
+ const settingsTrigger=document.getElementById('notePaperSettings');
+ const colorTrigger=document.getElementById('notePaperColorTrigger');
+ const sheetTrigger=document.getElementById('notePaperPatternTrigger');
+ const hidePanel=(panel,trigger)=>{
+  if(!panel||panel.hidden)return;
+  panel.hidden=true;
+  trigger?.setAttribute('aria-expanded','false');
+ };
+ settingsTrigger?.addEventListener('click',()=>{
+  if(!menu?.hidden){hidePanel(colorMenu,colorTrigger);hidePanel(paper,sheetTrigger)}
+ });
+ colorTrigger?.addEventListener('click',()=>{
+  if(!colorMenu?.hidden){hidePanel(menu,settingsTrigger);hidePanel(paper,sheetTrigger)}
+ });
+ sheetTrigger?.addEventListener('click',()=>{
+  if(!paper?.hidden){hidePanel(menu,settingsTrigger);hidePanel(colorMenu,colorTrigger)}
+ });
+
 })();
