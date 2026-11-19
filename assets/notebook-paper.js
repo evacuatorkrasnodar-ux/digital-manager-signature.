@@ -812,7 +812,9 @@ function open(note=null){
  dialog.classList.remove('sv-paper-inking');
  if(shapeFrame){cancelAnimationFrame(shapeFrame);shapeFrame=0}
  liveTail=null;liveMid=null;
- data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:'dark',height:H,strokes:[]};editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;undoStack=[];redoStack=[];returnToList=true;
+ data=note?.paper?normalize(note.paper):{pattern:'blank',photo:'',background:document.documentElement.dataset.theme==='dark'?'dark':'light',height:H,strokes:[]};
+  dialog.classList.toggle('sv-paper-light-surface',data.background==='light');
+  editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;undoStack=[];redoStack=[];returnToList=true;
  closePatternMenu();closeColorMenu();
  activeColor=[...data.strokes].reverse().find(stroke=>validInkColor(stroke.color))?.color||(data.background==='dark'?'#f6f7fb':'#171e29');
  activeGradient=null;
