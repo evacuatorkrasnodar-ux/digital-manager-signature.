@@ -55,16 +55,3 @@ html.sv-paper-ios-ink-safe #notePaperDialog.sv-paper-studio[open] #notePaperStag
  letter-spacing:.015em!important;white-space:nowrap!important;
  pointer-events:none!important;
 }
-
-/* Actual eraser footprint for mouse / hovering Pencil or S Pen.
-   Transparent outline only: no square panel behind the drawing tools. */
-#notePaperDialog .sv-paper-eraser-preview[hidden]{display:none!important}
-#notePaperDialog .sv-paper-eraser-preview{
- position:absolute!important;z-index:8!important;display:block!important;
- transform:translate(-50%,-50%)!important;box-sizing:border-box!important;
- margin:0!important;padding:0!important;border:1px solid rgba(248,249,252,.72);
- border-radius:50%!important;background:rgba(151,161,175,.075)!important;
- box-shadow:0 0 0 1px rgba(18,22,28,.08)!important;
- pointer-events:none!important;touch-action:none!important;
- transition:none!important;
-}
