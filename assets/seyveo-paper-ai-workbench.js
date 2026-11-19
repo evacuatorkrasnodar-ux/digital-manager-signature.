@@ -28,13 +28,14 @@
  const canvas=preview.querySelector('canvas');
  let draft=null,busy=false;
  const localPC=()=>['127.0.0.1','localhost'].includes(location.hostname);
- async function localModelEnabled(){
-  if(!localPC())return false;
+ async function localModelStatus(){
+  if(!localPC())return {enabled:false,status:'public'};
   try{
    const response=await fetch('/api/seyveo-paper-status',{credentials:'same-origin'});
    const data=response.ok?await response.json():null;
-   return data?.localOnly===true&&data.enabled===true;
-  }catch{return false}
+   if(data?.localOnly!==true)return {enabled:false,status:'unavailable'};
+   return {enabled:data.enabled===true&&data.status==='ready',status:data.status};
+  }catch{return {enabled:false,status:'unavailable'}}
  }
  function clearPreview(){draft=null;preview.hidden=true;canvas.getContext('2d')?.clearRect(0,0,canvas.width,canvas.height)}
  function show(){
@@ -77,7 +78,8 @@
   const result=engine.plan(field.value);
   if(!result.request){results.textContent='Напиши просьбу — например, «прочитай и выровняй».';return}
   if(result.unmatched){results.textContent='Пока не могу надёжно выбрать действие. Попробуй «выровнять», «распознать рукопись», «мой почерк» или «нарисуй». Ничего не изменено.';return}
-  const localReady=await localModelEnabled();
+  const localStatus=await localModelStatus();
+  const localReady=localStatus.enabled;
   for(const step of result.steps){
    const row=document.createElement('div');row.className='sv-pa-step';
    const label=document.createElement('span');label.textContent=step.label;
@@ -95,6 +97,17 @@
     });
    }
    row.append(label,button);results.append(row);
+  }
+  if(localPC()&&!localReady&&result.steps.some(step=>step.id==='draw')){
+   const help=document.createElement('p');help.className='sv-pa-model-hint';
+   help.textContent=localStatus.status==='model-not-installed'
+    ?'На ПК ещё нет модели рисования. Запусти server/start-paper-ai.cmd — он спросит разрешение на скачивание.'
+    :localStatus.status==='ollama-offline'
+    ?'Ollama на ПК не запущена. Открой Ollama, затем server/start-paper-ai.cmd.'
+    :localStatus.status==='disabled'
+    ?'Локальный ИИ выключен. Запусти server/start-paper-ai.cmd.'
+    :'Модель сейчас недоступна. Исходный рисунок не изменён.';
+   results.append(help);
   }
  }
  modal.querySelector('[data-pa-plan]').addEventListener('click',render);

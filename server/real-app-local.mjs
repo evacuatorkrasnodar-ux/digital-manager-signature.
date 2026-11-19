@@ -5,6 +5,7 @@
 import {createServer} from 'node:http';
 import {createImageAttachments} from './image-attachments.mjs';
 import {proposeLocalPaperDraft} from './paper-vision-draft.mjs';
+import {inspectLocalPaperModel} from './paper-model-health.mjs';
 import {readDocumentUpload} from './document-attachments.mjs';
 import {createDocx} from './document-export.mjs';
 import {readFile,mkdtemp,rm} from 'node:fs/promises';
@@ -231,7 +232,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
   const path=(req.url||'').split('?')[0];
   // PC-only visual model. Public GitHub Pages has no such endpoint.
   if(req.method==='GET'&&path==='/api/seyveo-paper-status'){
-   send(res,200,{localOnly:true,enabled:process.env.SEYVEO_ENABLE_PAPER_AI==='1'});return;
+   send(res,200,await inspectLocalPaperModel());return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-paper-draft'){
    if(req.headers.origin!==ORIGIN||req.headers['sec-fetch-site']==='cross-site'){
