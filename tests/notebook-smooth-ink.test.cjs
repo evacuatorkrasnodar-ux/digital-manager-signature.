@@ -70,6 +70,25 @@ test('a very shaky Cyrillic С is still corrected with explicit before/after app
  assert.ok(error(result)<error(rough)*.8,`rough С improved from ${error(rough)} to ${error(result)}`);
 });
 
+test('a user can identify an unrecognisable scribble as С, О or a heart',()=>{
+ const redraw=shapeFitter('redrawAs');
+ const scribble=Array.from({length:17},(_,i)=>[170+i%3*22,200+i*3+(i%2?7:-7),30+i]);
+ const original=structuredClone(scribble);
+ for(const type of ['c','o','heart']){
+  const result=redraw(scribble,type);
+  assert.ok(result.length>=65,`${type} is smooth even from a few points`);
+  assert.equal(result[0][2],scribble[0][2]);
+  assert.equal(result.at(-1)[2],scribble.at(-1)[2]);
+  assert.ok(result.every(p=>Number.isFinite(p[0])&&Number.isFinite(p[1])));
+  const distance=Math.hypot(result[0][0]-result.at(-1)[0],result[0][1]-result.at(-1)[1]);
+  if(type==='c')assert.ok(distance>20,'letter С remains open');
+  else assert.ok(distance<.2,'letter О and the heart are closed');
+ }
+ assert.deepEqual(scribble,original,'choices cannot mutate the source stroke');
+ assert.equal(redraw([[2,2,60],[3,3,60],[4,4,60],[5,5,60],[6,6,60]],'heart'),null,'too tiny to infer size');
+ assert.equal(redraw(scribble,'unknown'),null,'unknown labels cannot create ink');
+});
+
 test('a closed О, a U-shaped letter and a straight stroke are not mistaken for С',()=>{
  const fit=shapeFitter('fitLetterC'),count=75;
  const o=Array.from({length:count},(_,i)=>{
@@ -235,7 +254,7 @@ test('short and long strokes are safe, and deliberate corners are not moved far'
 
 test('live controls compare without committing, Cancel restores and Apply commits exactly once',()=>{
  class Node{
-  constructor(id=''){this.id=id;this.children=[];this.listeners={};this.attributes={};this.style={};
+  constructor(id=''){this.id=id;this.children=[];this.listeners={};this.attributes={};this.style={};this.dataset={};
    this.hidden=false;this.classNames=new Set();this.classList={
     contains:name=>this.classNames.has(name),add:name=>this.classNames.add(name),
     remove:name=>this.classNames.delete(name)};}
@@ -268,7 +287,7 @@ test('live controls compare without committing, Cancel restores and Apply commit
  const action=actions.children[0];
  assert.equal(action.hidden,false);
  const overlay=sheet.children[0],bar=overlay.children[0];
- const [before,after,cancel,apply]=bar.children;
+ const [before,after,hint,cancel,apply,choices]=bar.children;
  action.click();
  assert.equal(overlay.hidden,false);
  assert.equal(dialog.classList.contains('sv-paper-smooth-mode'),true);
@@ -290,13 +309,38 @@ test('live controls compare without committing, Cancel restores and Apply commit
  assert.notDeepEqual(source[0].points,original[0].points);
  assert.deepEqual(source[1],original[1]);
  assert.equal(overlay.hidden,true);
+ source=structuredClone(original);
+ action.click();hint.click();
+ assert.equal(choices.hidden,false,'the small intention chips only appear when requested');
+ choices.listeners.click[0]({target:{closest:()=>({dataset:{svShape:'c'}})}});
+ assert.equal(choices.hidden,true);
+ assert.equal(previews.at(-1)[0].points.length>=65,true,'a hand-drawn letter template is previewed');
+ assert.deepEqual(source,original,'the hint has not modified saved ink');
+ cancel.click();
+ assert.deepEqual(source,original,'Cancel restores the scribble before manual correction');
+ assert.equal(applied.length,1);
+ action.click();hint.click();
+ choices.listeners.click[0]({target:{closest:()=>({dataset:{svShape:'o'}})}});
+ apply.click();
+ assert.equal(applied.length,2,'explicit Apply commits the chosen letter just once');
+ assert.equal(source[0].points.length>=65,true);
+ assert.deepEqual(source[1],original[1],'unrelated eraser strokes remain intact');
+ source=[{tool:'pen',points:Array.from({length:20},(_,i)=>[40+i*6,100,50]),color:'#111111'}];
+ dialog.fire('sv-paper-render');action.click();
+ assert.equal(overlay.hidden,false,'a perfectly straight line can still be intentionally relabelled');
+ assert.match(announcements.at(-1),/Штрихи уже ровные/);
+ hint.click();
+ choices.listeners.click[0]({target:{closest:()=>({dataset:{svShape:'heart'}})}});
+ apply.click();
+ assert.equal(applied.length,3,'an explicit label can create one Undo-able edit from otherwise straight ink');
+ assert.ok(source[0].points.length>=65);
  source=[];
  dialog.fire('sv-paper-render');
  assert.equal(action.hidden,false,'the command remains visible on a blank page');
  action.click();
  assert.equal(announcements.at(-1),'Сначала напиши или нарисуй что-нибудь ручкой.');
  assert.equal(overlay.hidden,true);
- assert.equal(applied.length,1,'blank-page tip never commits an edit');
+ assert.equal(applied.length,3,'blank-page tip never commits an edit');
 });
 
 test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',()=>{
@@ -305,6 +349,7 @@ test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',
  assert.match(script,/paper\.announce\?\.\('Сначала напиши или нарисуй что-нибудь ручкой\.'\)/);
  assert.match(script,/const before=document\.createElement\('button'\);before\.type='button';before\.textContent='До'/);
  assert.match(script,/const after=document\.createElement\('button'\);after\.type='button';after\.textContent='После'/);
+ assert.match(script,/const hint=document\.createElement\('button'\);hint\.type='button';hint\.textContent='Это…'/);
  assert.match(script,/const cancel=document\.createElement\('button'\);cancel\.type='button';cancel\.textContent='Отмена'/);
  assert.match(script,/const apply=document\.createElement\('button'\);apply\.type='button';apply\.textContent='Применить'/);
  assert.match(script,/before\.addEventListener\('click',\(\)=>compare\(false\)\)/);
@@ -313,6 +358,8 @@ test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',
  assert.match(script,/apply\.addEventListener\('click',\(\)=>stop\(true\)\)/);
  assert.match(script,/dock\?\.getBoundingClientRect\(\)\.bottom/);
  assert.match(style,/\.sv-paper-smooth-layer\[hidden\]\{display:none!important\}/);
+ assert.match(style,/\.sv-paper-smooth-choices\[hidden\]\{display:none!important\}/);
+ assert.match(style,/sv-paper-light-surface \.sv-paper-smooth-choices/);
  assert.match(style,/\.sv-paper-smooth-bar > button\[aria-pressed="true"\]/);
  assert.match(style,/sv-paper-light-surface \.sv-paper-smooth-bar/);
 });
@@ -322,18 +369,18 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(script,/proposal=paper\.getEditableStrokes\(indices\)/);
  assert.match(script,/next=fitHeart\(stroke\.points\)\|\|fitOval\(stroke\.points\)\|\|fitLetterC\(stroke\.points\)\|\|fitStraight\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
  assert.match(script,/paper\.previewStrokeEdit\(next\?proposal:original\)/);
- assert.match(script,/if\(commit\)\{\s*if\(!paper\.applyStrokeEdit\(proposal\)/);
+ assert.match(script,/if\(commit\)\{\s*if\(hasChanges\)\{if\(!paper\.applyStrokeEdit\(proposal\)/);
  assert.match(script,/else if\(restore\)paper\.previewStrokeEdit\(original\)/);
  assert.match(engine,/applyStrokeEdit:next=>\{[\s\S]*rememberUndo\(\{type:'replace',previous:before\}\)/);
  assert.match(engine,/previewStrokeEdit:next=>\{\s*if\(!pending&&Array\.isArray\(next\)\)paint\(canvas,\{\.\.\.data,strokes:next\}\)/);
  assert.match(script,/if\(active\)stop\(false,false\)/);
- assert.match(script,/paper\.announce\?\.\('Штрихи уже ровные — исправлять нечего\.'\)/);
+ assert.match(script,/paper\.announce\?\.\('Штрихи уже ровные — исправлять нечего\. Можно подсказать Сэйви через «Это…»\.'\)/);
  assert.match(engine,/announce:message=>report\(message\)/);
  assert.match(script,/event\.key==='Escape'/);
  assert.match(engine,/dialog\.classList\.contains\('sv-paper-smooth-mode'\)\)return;/);
  assert.match(gestures,/dialog\.classList\.contains\('sv-paper-smooth-mode'\)/);
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
- assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=1/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=7/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=2/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=8/);
 });

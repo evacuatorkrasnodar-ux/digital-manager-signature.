@@ -304,6 +304,38 @@
   });
  }
 
+ // When a scribble is too ambiguous to recognise, its author can tell Sayvi
+ // what they intended. Redraw only that last ink stroke, with the same ink and
+ // pressure samples; the whole operation is still previewed and Undo-able.
+ function redrawAs(points,shape){
+  if(!Array.isArray(points)||points.length<5||!['c','o','heart'].includes(shape))return null;
+  const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+  const width=maxX-minX,height=maxY-minY,extent=Math.max(width,height);
+  if(extent<28)return null;
+  const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
+  const rx=Math.max(17,width/2),ry=Math.max(17,height/2);
+  const count=Math.min(350,Math.max(65,points.length));
+  return Array.from({length:count},(_,i)=>{
+   const fraction=i/(count-1),t=Math.PI*2*fraction;
+   let x,y;
+   if(shape==='c'){
+    const arc=-.72-(Math.PI*2-1.44)*fraction;
+    const r=Math.max(20,width/1.77);
+    x=minX+r+r*Math.cos(arc);y=cy+ry*Math.sin(arc);
+   }else if(shape==='o'){
+    x=cx+rx*Math.cos(t);y=cy+ry*Math.sin(t);
+   }else{
+    const hx=16*Math.sin(t)**3;
+    const hy=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+    x=cx+hx*Math.max(1,width/32);
+    y=cy+(hy-2.5)*Math.max(1,height/30);
+   }
+   const pressure=points[Math.round(fraction*(points.length-1))].slice(2);
+   return [round(x),round(y),...pressure];
+  });
+ }
+
  const action=document.createElement('button');
  action.type='button';action.id='notePaperSmoothInk';action.className='sv-newdock-menu-action';
  action.setAttribute('aria-label','Сэйви: сделать рисунок и почерк аккуратнее');
@@ -318,13 +350,24 @@
  before.setAttribute('aria-label','Посмотреть исходный почерк');
  const after=document.createElement('button');after.type='button';after.textContent='После';
  after.setAttribute('aria-label','Посмотреть аккуратный почерк');
+ const hint=document.createElement('button');hint.type='button';hint.textContent='Это…';
+ hint.setAttribute('aria-label','Подсказать Сэйви, что ты хотел нарисовать');
+ hint.setAttribute('aria-expanded','false');
  const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';
  cancel.setAttribute('aria-label','Не менять исходный почерк');
  const apply=document.createElement('button');apply.type='button';apply.textContent='Применить';
  apply.className='sv-paper-smooth-apply';
  apply.setAttribute('aria-label','Применить аккуратный почерк с возможностью отмены');
- bar.append(before,after,cancel,apply);layer.append(bar);sheet.append(layer);
- let active=false,original=null,proposal=null,showAfter=true;
+ const choices=document.createElement('div');choices.className='sv-paper-smooth-choices';choices.hidden=true;
+ choices.setAttribute('role','group');choices.setAttribute('aria-label','Это буква или фигура');
+ const choiceButtons=[['c','С','Это буква С'],['o','О','Это буква О'],['heart','♥','Это сердечко']];
+ for(const [shape,label,description] of choiceButtons){
+  const button=document.createElement('button');button.type='button';button.textContent=label;
+  button.setAttribute('aria-label',description);button.dataset.svShape=shape;
+  choices.append(button);
+ }
+ bar.append(before,after,hint,cancel,apply,choices);layer.append(bar);sheet.append(layer);
+ let active=false,original=null,proposal=null,showAfter=true,hasChanges=false;
  function positionBar(){
   const top=sheet.getBoundingClientRect().top;
   const bottom=dock?.getBoundingClientRect().bottom||top+60;
@@ -341,10 +384,12 @@
   active=false;layer.hidden=true;
   dialog.classList.remove('sv-paper-smooth-mode');
   action.setAttribute('aria-pressed','false');
+  choices.hidden=true;hint.setAttribute('aria-expanded','false');
   if(commit){
-   if(!paper.applyStrokeEdit(proposal)&&restore)paper.previewStrokeEdit(original);
+   if(hasChanges){if(!paper.applyStrokeEdit(proposal)&&restore)paper.previewStrokeEdit(original)}
+   else if(restore)paper.previewStrokeEdit(original);
   }else if(restore)paper.previewStrokeEdit(original);
-  original=null;proposal=null;
+  original=null;proposal=null;hasChanges=false;
  }
  function start(){
   if(active){stop();return}
@@ -361,7 +406,8 @@
    for(let i=0;i<next.length;i++)if(Math.hypot(next[i][0]-stroke.points[i][0],next[i][1]-stroke.points[i][1])>.1)changed++;
    stroke.points=next;
   }
-  if(!changed){original=null;proposal=null;paper.announce?.('Штрихи уже ровные — исправлять нечего.');return}
+  hasChanges=changed>0;
+  if(!changed)paper.announce?.('Штрихи уже ровные — исправлять нечего. Можно подсказать Сэйви через «Это…».');
   active=true;layer.hidden=false;
   dialog.classList.add('sv-paper-smooth-mode');action.setAttribute('aria-pressed','true');
   positionBar();compare(true);
@@ -372,6 +418,24 @@
  });
  before.addEventListener('click',()=>compare(false));
  after.addEventListener('click',()=>compare(true));
+ hint.addEventListener('click',()=>{
+  if(!active)return;
+  choices.hidden=!choices.hidden;
+  hint.setAttribute('aria-expanded',String(!choices.hidden));
+ });
+ choices.addEventListener('click',event=>{
+  const shape=event.target.closest('[data-sv-shape]')?.dataset.svShape;
+  if(!active||!shape)return;
+  let index=-1;
+  for(let i=original.length-1;i>=0;i--)if(eligible(original[i])){index=i;break}
+  if(index<0)return;
+  const points=redrawAs(original[index].points,shape);
+  if(!points){paper.announce?.('Нарисуй букву немного крупнее, чтобы Сэйви поняла размер.');return}
+  proposal=paper.getEditableStrokes([index]);
+  proposal[index].points=points;
+  hasChanges=true;choices.hidden=true;hint.setAttribute('aria-expanded','false');
+  compare(true);
+ });
  cancel.addEventListener('click',()=>stop(false));
  apply.addEventListener('click',()=>stop(true));
  dialog.addEventListener('click',event=>{

@@ -30,6 +30,23 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-poli
 #notePaperDialog .sv-paper-smooth-bar > button:focus-visible{
  outline:2px solid #a8c8ff;outline-offset:1px;
 }
+#notePaperDialog .sv-paper-smooth-choices[hidden]{display:none!important}
+#notePaperDialog .sv-paper-smooth-choices{
+ box-sizing:border-box;position:absolute;top:calc(100% + 7px);left:50%;
+ transform:translateX(-50%);display:flex;align-items:center;gap:6px;
+ padding:5px;border:1px solid rgba(255,255,255,.14);border-radius:12px;
+ background:rgba(55,55,58,.96);color:#f5f5f7;
+ box-shadow:0 3px 12px rgba(0,0,0,.12);
+ -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+}
+#notePaperDialog .sv-paper-smooth-choices > button{
+ display:grid;place-items:center;width:46px;height:34px;padding:0;margin:0;
+ border:0;border-radius:9px;background:rgba(255,255,255,.1);color:inherit;
+ font:650 15px/1 -apple-system,BlinkMacSystemFont,sans-serif;
+}
+#notePaperDialog .sv-paper-smooth-choices > button:focus-visible{
+ outline:2px solid #a8c8ff;outline-offset:1px;
+}
 #notePaperDialog.sv-paper-light-surface .sv-paper-smooth-bar{
  background:rgba(251,251,252,.98);color:#292d34;
  border-color:rgba(46,56,72,.1);box-shadow:0 3px 12px rgba(27,37,52,.09);
@@ -39,4 +56,11 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu .sv-poli
 }
 #notePaperDialog.sv-paper-light-surface .sv-paper-smooth-bar > .sv-paper-smooth-apply{
  background:#e8ebef;
+}
+#notePaperDialog.sv-paper-light-surface .sv-paper-smooth-choices{
+ background:rgba(251,251,252,.98);color:#292d34;
+ border-color:rgba(46,56,72,.1);box-shadow:0 3px 12px rgba(27,37,52,.09);
+}
+#notePaperDialog.sv-paper-light-surface .sv-paper-smooth-choices > button{
+ background:#eceef1;
 }
