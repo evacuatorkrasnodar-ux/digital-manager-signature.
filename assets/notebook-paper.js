@@ -640,7 +640,7 @@ document.addEventListener('pointerdown',event=>{
 });
 
 $('notePaperUndo').addEventListener('click',undoInk);
-dialog.addEventListener('keydown',event=>{
+document.addEventListener('keydown',event=>{
  if(!dialog.open||!(event.metaKey||event.ctrlKey)||event.altKey||event.isComposing)return;
  if(event.target instanceof Element&&event.target.closest('input,textarea,[contenteditable="true"]'))return;
  const key=event.key.toLowerCase();
