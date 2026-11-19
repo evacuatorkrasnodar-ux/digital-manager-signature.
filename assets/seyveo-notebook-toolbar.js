@@ -75,13 +75,17 @@
  const actionHeading=document.createElement('span');
  actionHeading.className='sv-newdock-menu-title sv-newdock-actions-heading';
  actionHeading.textContent='Действия';
+ const redo=document.createElement('button');
+ redo.type='button';redo.id='notePaperRedo';redo.className='sv-newdock-menu-action';
+ redo.disabled=true;redo.setAttribute('aria-label','Повторить отменённое действие');
+ redo.innerHTML=icon('<path d="m15 8 4 4-4 4"/><path d="M19 12H9a4 4 0 1 0 0 8"/>')+'<span>Повторить действие</span>';
  duplicate.className='sv-newdock-menu-action';
  duplicate.innerHTML=icon(icons.duplicate)+'<span>Дублировать штрих</span>';
  duplicate.title='Дублировать последний штрих';
  photo.className='sv-newdock-menu-action';
  photo.innerHTML=icon(icons.photo)+'<span>Добавить фото</span>';
  photo.title='Добавить фото';
- settingsMenu.append(actionHeading,photo,duplicate,removePhoto,clear);
+ settingsMenu.append(actionHeading,redo,photo,duplicate,removePhoto,clear);
  const backgroundButtons=[...settingsMenu.querySelectorAll('[data-paper-background]')];
  const syncBackground=()=>{
   const value=window.SEYVEO_PAPER?.getBackground?.();
@@ -107,6 +111,7 @@
   syncBackground();closeSettings();syncActive();
  }));
  clear.addEventListener('click',()=>{if(window.SEYVEO_PAPER?.clearSheet?.())closeSettings()});
+ redo.addEventListener('click',()=>{if(window.SEYVEO_PAPER?.redo?.())closeSettings()});
  removePhoto.addEventListener('click',()=>closeSettings());
  duplicate.addEventListener('click',()=>closeSettings());
  photo.addEventListener('click',()=>closeSettings());
