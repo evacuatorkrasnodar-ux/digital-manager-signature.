@@ -129,11 +129,13 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(engine,/applyStrokeEdit:next=>\{[\s\S]*rememberUndo\(\{type:'replace',previous:before\}\)/);
  assert.match(engine,/previewStrokeEdit:next=>\{\s*if\(!pending&&Array\.isArray\(next\)\)paint\(canvas,\{\.\.\.data,strokes:next\}\)/);
  assert.match(script,/if\(active\)stop\(false,false\)/);
+ assert.match(script,/paper\.announce\?\.\('Штрихи уже ровные — исправлять нечего\.'\)/);
+ assert.match(engine,/announce:message=>report\(message\)/);
  assert.match(script,/event\.key==='Escape'/);
  assert.match(engine,/dialog\.classList\.contains\('sv-paper-smooth-mode'\)\)return;/);
  assert.match(gestures,/dialog\.classList\.contains\('sv-paper-smooth-mode'\)/);
- assert.match(html,/assets\/notebook-paper\.js\?v=43/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=1/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=1/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=2/);
 });

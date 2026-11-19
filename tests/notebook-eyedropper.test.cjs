@@ -45,7 +45,7 @@ test('iPhone photo sampling does not create a stroke and shows a live HEX previe
  assert.match(picker,/overlay\.addEventListener\('touchend'/);
  assert.match(picker,/overlay\.addEventListener\('pointercancel'/);
  assert.match(html,/assets\/seyveo-paper-custom-color\.js\?v=8/);
- assert.match(html,/assets\/notebook-paper\.js\?v=43/);
+ assert.match(html,/assets\/notebook-paper\.js\?v=44/);
 });
 
 test('blank sheet never enters sampling mode or paints a dark bubble over toolbar',()=>{

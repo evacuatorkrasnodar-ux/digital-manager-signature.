@@ -1023,6 +1023,7 @@ $('notePaperRemovePhoto')?.addEventListener('click',()=>{
   data.photo='';data.photoLayout=null;changed=true;render();report('Фотография убрана.');
 });
 window.SEYVEO_PAPER=Object.freeze({
+ announce:message=>report(message),
  // Chat handoff: export from the same approved tablet, without creating
  // a second editor or silently saving a Notebook record.
  hasChatContent:()=>Boolean(data.strokes.length||data.photo||data.texts?.length),

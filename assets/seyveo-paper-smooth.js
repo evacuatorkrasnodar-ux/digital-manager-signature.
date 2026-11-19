@@ -97,7 +97,7 @@
    for(let i=0;i<next.length;i++)if(Math.hypot(next[i][0]-stroke.points[i][0],next[i][1]-stroke.points[i][1])>.1)changed++;
    stroke.points=next;
   }
-  if(!changed){original=null;proposal=null;return}
+  if(!changed){original=null;proposal=null;paper.announce?.('Штрихи уже ровные — исправлять нечего.');return}
   active=true;layer.hidden=false;
   dialog.classList.add('sv-paper-smooth-mode');action.setAttribute('aria-pressed','true');
   positionBar();compare(true);
