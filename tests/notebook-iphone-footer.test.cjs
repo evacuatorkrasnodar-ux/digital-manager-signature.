@@ -21,5 +21,6 @@ test('Pearl keeps the Calendar white action material without resizing Save',()=>
  assert.match(pearl,/border:1px solid rgba\(34,43,54,\.09\)!important/);
  assert.match(confirm,/width:47px!important;\s*height:47px!important/);
  assert.match(pearl,/\.sv-paper-light-surface \.sv-paper-top #notePaperUndo:disabled svg\s*\{\s*opacity:\.78!important/);
- assert.match(pearl,/#notePaperPatternMenu :is\(\.sv-paper-layouts,\.sv-paper-shape-grid\) > button\s*\{\s*background:#fff!important/);
+ assert.match(pearl,/#notePaperPatternMenu :is\(\.sv-paper-layouts,\.sv-paper-shape-grid\) > button\s*\{\s*background:#f0f1f3!important/);
+ assert.match(pearl,/\.sv-polish-segments\s*\{\s*background:#ededef!important/);
 });
