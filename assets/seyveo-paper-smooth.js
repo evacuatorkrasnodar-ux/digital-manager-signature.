@@ -384,6 +384,86 @@
   return null;
  }
 
+ // A small complete sketch, not a single glyph: recognise a house outlined
+ // with five separate strokes (two roof edges, two walls and the floor).
+ // Match shared endpoints before guessing the meaning; this deliberately
+ // refuses incomplete roofs, random lines, letters and open polygons.
+ function fitHouse(strokes){
+  if(!Array.isArray(strokes)||strokes.length!==5||strokes.some(s=>
+   !['pen','pencil'].includes(s?.tool)||s.points?.length<5))return null;
+  const ends=[],lengths=[];
+  for(let index=0;index<strokes.length;index++){
+   const points=strokes[index].points;
+   const first=points[0],last=points.at(-1);
+   const direct=Math.hypot(last[0]-first[0],last[1]-first[1]);
+   let travelled=0;
+   for(let i=1;i<points.length;i++)travelled+=Math.hypot(points[i][0]-points[i-1][0],points[i][1]-points[i-1][1]);
+   if(direct<32||travelled>direct*1.55)return null;
+   lengths.push(direct);
+   ends.push({index,side:0,point:first},{index,side:1,point:last});
+  }
+  const xx=ends.map(p=>p.point[0]),yy=ends.map(p=>p.point[1]);
+  const width=Math.max(...xx)-Math.min(...xx),height=Math.max(...yy)-Math.min(...yy);
+  if(width<75||height<75||width/height<.55||width/height>2.1)return null;
+  const tolerance=Math.min(23,Math.max(9,Math.min(width,height)*.13));
+  const pairs=[],used=new Set(),matches=[];
+  for(let i=0;i<ends.length;i++)for(let j=i+1;j<ends.length;j++){
+   if(ends[i].index===ends[j].index)continue;
+   const distance=Math.hypot(ends[i].point[0]-ends[j].point[0],ends[i].point[1]-ends[j].point[1]);
+   if(distance<=tolerance)matches.push({i,j,distance});
+  }
+  matches.sort((a,b)=>a.distance-b.distance);
+  for(const pair of matches){
+   if(used.has(pair.i)||used.has(pair.j))continue;
+   used.add(pair.i);used.add(pair.j);pairs.push(pair);
+  }
+  if(pairs.length!==5||used.size!==10)return null;
+  const vertices=pairs.map(pair=>({
+   x:(ends[pair.i].point[0]+ends[pair.j].point[0])/2,
+   y:(ends[pair.i].point[1]+ends[pair.j].point[1])/2
+  }));
+  const vertexOf=new Map();
+  pairs.forEach((pair,i)=>{vertexOf.set(pair.i,i);vertexOf.set(pair.j,i)});
+  const edges=strokes.map((_,index)=>{
+   const first=vertexOf.get(index*2),last=vertexOf.get(index*2+1);
+   return first===last?null:[first,last];
+  });
+  if(edges.some(edge=>!edge))return null;
+  const sorted=vertices.map((v,i)=>({...v,i})).sort((a,b)=>a.y-b.y);
+  const apex=sorted[0],eaves=sorted.slice(1,3).sort((a,b)=>a.x-b.x),
+   bases=sorted.slice(3).sort((a,b)=>a.x-b.x);
+  const [leftEave,rightEave]=eaves,[leftBase,rightBase]=bases;
+  const roofY=(leftEave.y+rightEave.y)/2,baseY=(leftBase.y+rightBase.y)/2;
+  const leftX=(leftEave.x+leftBase.x)/2,rightX=(rightEave.x+rightBase.x)/2;
+  const breadth=rightX-leftX;
+  if(breadth<width*.64||Math.abs(apex.x-(leftX+rightX)/2)>breadth*.28
+   ||roofY-apex.y<height*.19||baseY-roofY<height*.34
+   ||Math.abs(leftEave.y-rightEave.y)>height*.17
+   ||Math.abs(leftBase.y-rightBase.y)>height*.17
+   ||Math.abs(leftEave.x-leftBase.x)>width*.19
+   ||Math.abs(rightEave.x-rightBase.x)>width*.19)return null;
+  const expected=[[apex.i,leftEave.i],[apex.i,rightEave.i],
+   [leftEave.i,leftBase.i],[rightEave.i,rightBase.i],[leftBase.i,rightBase.i]];
+  if(!expected.every(([a,b])=>edges.some(edge=>(edge[0]===a&&edge[1]===b)||(edge[0]===b&&edge[1]===a))))return null;
+  const verticesNew=new Map([
+   [apex.i,[(leftX+rightX)/2,apex.y]],
+   [leftEave.i,[leftX,roofY]],[rightEave.i,[rightX,roofY]],
+   [leftBase.i,[leftX,baseY]],[rightBase.i,[rightX,baseY]]
+  ]);
+  const corrected=strokes.map((stroke,index)=>{
+   const [from,to]=edges[index],start=verticesNew.get(from),end=verticesNew.get(to);
+   const points=stroke.points,total=points.reduce((sum,p,i)=>i
+    ?sum+Math.hypot(p[0]-points[i-1][0],p[1]-points[i-1][1]):sum,0);
+   let travelled=0;
+   return {...stroke,points:points.map((p,i)=>{
+    if(i)travelled+=Math.hypot(p[0]-points[i-1][0],p[1]-points[i-1][1]);
+    const t=clamp(travelled/Math.max(1,total),0,1);
+    return [round(start[0]+(end[0]-start[0])*t),round(start[1]+(end[1]-start[1])*t),...p.slice(2)];
+   })};
+  });
+  return corrected;
+ }
+
  const action=document.createElement('button');
  action.type='button';action.id='notePaperSmoothInk';action.className='sv-newdock-menu-action';
  action.setAttribute('aria-label','Сэйви: сделать рисунок и почерк аккуратнее');
@@ -408,7 +488,7 @@
  apply.setAttribute('aria-label','Применить аккуратный почерк с возможностью отмены');
  const choices=document.createElement('div');choices.className='sv-paper-smooth-choices';choices.hidden=true;
  choices.setAttribute('role','group');choices.setAttribute('aria-label','Это буква или фигура');
- const choiceButtons=[['c','С','Это буква С'],['o','О','Это буква О'],['heart','♥','Это сердечко']];
+ const choiceButtons=[['c','С','Это буква С'],['o','О','Это буква О'],['heart','♥','Это сердечко'],['house','⌂','Это домик']];
  for(const [shape,label,description] of choiceButtons){
   const button=document.createElement('button');button.type='button';button.textContent=label;
   button.setAttribute('aria-label',description);button.dataset.svShape=shape;
@@ -416,12 +496,13 @@
  }
  bar.append(before,after,hint,cancel,apply,choices);layer.append(bar);sheet.append(layer);
  let active=false,original=null,proposal=null,showAfter=true,hasChanges=false,suggested=null;
+ let houseIndices=null;
  function labelSuggestion(shape){
   suggested=shape;
-  const label=shape==='c'?'С':shape==='o'?'О':shape==='heart'?'♥':null;
+  const label=shape==='c'?'С':shape==='o'?'О':shape==='heart'?'♥':shape==='house'?'Дом':null;
   hint.textContent=label?label+'?':'Это…';
   hint.setAttribute('aria-label',label
-   ?`Сэйви предполагает ${shape==='heart'?'сердечко':'букву '+label}. Посмотреть её аккуратный вариант`
+   ?`Сэйви предполагает ${shape==='house'?'домик':shape==='heart'?'сердечко':'букву '+label}. Посмотреть её аккуратный вариант`
    :'Подсказать Сэйви, что ты хотел нарисовать');
  }
  function positionBar(){
@@ -446,7 +527,7 @@
    if(hasChanges){if(!paper.applyStrokeEdit(proposal)&&restore)paper.previewStrokeEdit(original)}
    else if(restore)paper.previewStrokeEdit(original);
   }else if(restore)paper.previewStrokeEdit(original);
-  original=null;proposal=null;hasChanges=false;
+  original=null;proposal=null;hasChanges=false;houseIndices=null;
  }
  function start(){
   if(active){stop();return}
@@ -458,6 +539,11 @@
   if(!indices.length){original=null;paper.announce?.('Сначала напиши или нарисуй что-нибудь ручкой.');return}
   proposal=paper.getEditableStrokes(indices);
   let changed=0,guess=null;
+  houseIndices=null;
+  if(indices.length>=5){
+   const candidate=indices.slice(-5);
+   if(fitHouse(candidate.map(index=>original[index])))houseIndices=candidate;
+  }
   const lastIndex=indices.at(-1);
   for(const index of indices){
    const stroke=proposal[index];
@@ -473,7 +559,7 @@
   if(!changed)paper.announce?.('Штрихи уже ровные — исправлять нечего. Можно подсказать Сэйви через «Это…».');
   active=true;layer.hidden=false;
   dialog.classList.add('sv-paper-smooth-mode');action.setAttribute('aria-pressed','true');
-  labelSuggestion(guess);
+  labelSuggestion(houseIndices?'house':guess);
   positionBar();compare(true);
  }
  action.addEventListener('click',()=>{
@@ -484,6 +570,16 @@
  after.addEventListener('click',()=>compare(true));
  function chooseShape(shape){
   if(!active||!shape)return;
+  if(shape==='house'){
+   const indices=houseIndices;
+   if(!indices){paper.announce?.('Нарисуй контур домика пятью линиями: крышу, две стены и низ.');return}
+   const corrected=fitHouse(indices.map(index=>original[index]));
+   if(!corrected)return;
+   proposal=paper.getEditableStrokes(indices);
+   indices.forEach((index,i)=>{proposal[index]=corrected[i]});
+   hasChanges=true;choices.hidden=true;hint.setAttribute('aria-expanded','false');
+   labelSuggestion(null);compare(true);return;
+  }
   let index=-1;
   for(let i=original.length-1;i>=0;i--)if(eligible(original[i])){index=i;break}
   if(index<0)return;

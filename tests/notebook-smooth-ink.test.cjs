@@ -30,6 +30,42 @@ function shapeFitter(name){
  return vm.runInNewContext(script.slice(begin,end)+'\n'+name);
 }
 
+test('Sayvi recognizes a whole five-stroke house and previews straight walls and roof',()=>{
+ const fit=shapeFitter('fitHouse');
+ const edges=[[[300,160],[206,248]],[[300,160],[393,248]],
+  [[206,248],[205,411]],[[393,248],[394,411]],[[205,411],[394,411]]];
+ const input=edges.map(([a,b],edge)=>({tool:'pen',color:'#171e29',width:6,
+  points:Array.from({length:21},(_,i)=>{
+   const t=i/20;
+   const offset=(i===0||i===20?0:6*Math.sin(i*.9));
+   const x=a[0]+(b[0]-a[0])*t+(edge%2===0?offset:0);
+   const y=a[1]+(b[1]-a[1])*t+(edge%2?offset:0);
+   return [x,y,40+i%20,15];
+  })}));
+ const before=structuredClone(input),corrected=fit(input);
+ assert.ok(corrected,'roof plus two walls and a base is classified as a house');
+ assert.deepEqual(input,before,'no original ink changes during recognition');
+ assert.equal(corrected.length,5,'the five original strokes are retained');
+ for(let index=0;index<corrected.length;index++){
+  assert.equal(corrected[index].points.length,input[index].points.length);
+  assert.equal(JSON.stringify(corrected[index].points.map(p=>p.slice(2))),
+   JSON.stringify(input[index].points.map(p=>p.slice(2))),
+   'pressure and pen tilt are retained');
+  assert.equal(corrected[index].color,input[index].color);
+ }
+ const roof=corrected[0].points;
+ const walls=corrected.slice(2,4);
+ assert.ok(roof.every((p,i)=>i===0||Math.abs((p[1]-roof[0][1])*(roof.at(-1)[0]-roof[0][0])
+  -(p[0]-roof[0][0])*(roof.at(-1)[1]-roof[0][1]))<15),'roof edge is straight');
+ assert.ok(walls.every(stroke=>stroke.points.every(p=>Math.abs(p[0]-stroke.points[0][0])<.2)),
+  'both walls are vertical');
+ assert.equal(fit(input.slice(0,4)),null,'an unfinished sketch is not inferred to be a house');
+ const unrelated=[...input.slice(0,4),{...input[4],points:input[4].points.map(p=>[p[0]+250,p[1]+100,...p.slice(2)])}];
+ assert.equal(fit(unrelated),null,'unconnected lines do not produce a house');
+ assert.equal(fit(input.map((stroke,i)=>i===0?{...stroke,tool:'eraser'}:stroke)),null,
+  'the eraser is never interpreted as part of the drawing');
+});
+
 test('Sayvi recognises a one-stroke Cyrillic С and makes the open arc smoother',()=>{
  const fit=shapeFitter('fitLetterC'),count=75,ideal=[],wobbly=[];
  for(let i=0;i<count;i++){
@@ -397,6 +433,22 @@ test('live controls compare without committing, Cancel restores and Apply commit
  cancel.click();
  assert.deepEqual(source,roughOriginal,'Cancel restores a guessed shape too');
  assert.equal(applied.length,3,'the new prediction does not secretly save ink');
+
+ source=[[[280,140],[185,235]],[[280,140],[375,235]],[[185,235],[185,390]],
+  [[375,235],[375,390]],[[185,390],[375,390]]].map(([a,b])=>({tool:'pen',color:'#171e29',
+   points:Array.from({length:20},(_,i)=>[a[0]+(b[0]-a[0])*i/19,
+    a[1]+(b[1]-a[1])*i/19+Math.sin(Math.PI*i/19)*3,55])}));
+ const houseOriginal=structuredClone(source);
+ action.click();
+ assert.equal(hint.textContent,'Дом?','a complete house earns a compact suggestion');
+ assert.deepEqual(source,houseOriginal,'recognition has not replaced the drawn house');
+ hint.click();
+ assert.equal(hint.textContent,'Это…','after seeing the house the author may choose another intent');
+ assert.notDeepEqual(previews.at(-1),houseOriginal,'the house correction is visible before approval');
+ assert.deepEqual(source,houseOriginal,'the preview is not an edit');
+ apply.click();
+ assert.equal(applied.length,4,'Apply commits the five-stroke house in one edit');
+ assert.equal(source.length,5,'the original number of strokes stays intact');
 });
 
 test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',()=>{
@@ -440,5 +492,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=2/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=9/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=10/);
 });
