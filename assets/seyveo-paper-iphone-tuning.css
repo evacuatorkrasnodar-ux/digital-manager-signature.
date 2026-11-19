@@ -26,7 +26,7 @@ html body #notePaperDialog.sv-paper-studio[open] #notePaperColorMenu .sv-gradien
   html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom > .sv-paper-palette{
    transform:translateY(20px)!important;
   }
-  html body #notePaperDialog.sv-paper-studio[open] > footer.sv-paper-bottom #notePaperSave.sv-paper-save{
+  html body #notePaperDialog.sv-paper-studio[open] > #notePaperSave.sv-paper-save{
    transform:translateY(20px)!important;
   }
  }
