@@ -202,9 +202,10 @@
  canvas.addEventListener('pointerdown',event=>{
   if(event.pointerType==='touch'&&paper.isPenNearby())return;
   if(event.pointerType==='touch'&&!paper.isPenNearby()){
+   // iOS Safari sometimes loses the final up/cancel after native navigation.
+   // A new primary contact must always be able to draw again.
+   if(event.isPrimary&&fingers.size){fingers.clear();pinch=null}
    fingers.set(event.pointerId,[event.clientX,event.clientY]);
-   // Keep both contacts tracked when one finger moves beyond the sheet edge.
-   try{canvas.setPointerCapture(event.pointerId)}catch{}
    if(fingers.size===2){startPinch();event.preventDefault();event.stopImmediatePropagation();return}
    if(pinch||Date.now()<skipTouchUntil){event.preventDefault();event.stopImmediatePropagation();return}
   }
@@ -251,6 +252,17 @@
  canvas.addEventListener('pointerup',finish,true);
  canvas.addEventListener('pointercancel',finish,true);
  canvas.addEventListener('lostpointercapture',finish,true);
+ function releaseOutsideCanvas(event){
+  if(event.pointerType!=='touch'||!fingers.delete(event.pointerId))return;
+  if(pinch&&fingers.size<2){
+   pinch=null;skipTouchUntil=Date.now()+350;
+   paper.refreshInkResolution?.(zoom.scale);drawOverlay();
+  }
+ }
+ // Safari can deliver the end event to the window instead of the canvas.
+ window.addEventListener('pointerup',releaseOutsideCanvas,true);
+ window.addEventListener('pointercancel',releaseOutsideCanvas,true);
+ window.addEventListener('blur',()=>{fingers.clear();pinch=null;skipTouchUntil=0});
  dialog.addEventListener('close',()=>{
   fingers.clear();pinch=null;setLasso(false);
   zoom.scale=1;zoom.x=0;zoom.y=0;applyZoom();
