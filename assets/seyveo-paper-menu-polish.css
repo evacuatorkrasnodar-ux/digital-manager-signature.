@@ -316,3 +316,9 @@ html body .sv-paper-recognition .sv-pr-note{
   transition:none!important;
  }
 }
+
+/* Conditional actions must stay genuinely hidden until their content exists. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu > #notePaperRemovePhoto[hidden],
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu > #notePaperDuplicate[disabled]{
+ display:none!important;
+}
