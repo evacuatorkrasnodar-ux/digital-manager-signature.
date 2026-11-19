@@ -5,6 +5,7 @@
  const dialog=document.getElementById('notePaperDialog');
  const sheet=document.getElementById('notePaperSheet');
  const menu=document.getElementById('notePaperSettingsMenu');
+ const dock=document.getElementById('svPaperNewDock');
  const actions=menu?.querySelector('[data-sv-menu-panel="actions"]');
  const paper=window.SEYVEO_PAPER;
  if(!dialog||!sheet||!actions||!paper?.addTextObject||actions.querySelector('#notePaperTextAction'))return;
@@ -35,6 +36,28 @@
   return {x:Math.max(0,Math.min(g.width-140,Math.round((clientX-rect.left)/rect.width*g.width))),
    y:Math.max(0,Math.min(g.height-120,Math.round((clientY-rect.top)/rect.height*g.height)))};
  };
+ // The drawing sheet begins behind the floating tool dock, not below it.
+ // Keep both text controls outside the dock's bounds on every iPhone inset.
+ const controlsTop=()=>{
+  const sheetTop=sheet.getBoundingClientRect().top;
+  const dockBottom=dock?.getBoundingClientRect().bottom||sheetTop+60;
+  return Math.max(74,Math.ceil(dockBottom-sheetTop+14));
+ };
+ function placeControls(){
+  const top=controlsTop()+'px';
+  hint.style.top=top;
+  if(toolbar)toolbar.style.top=top;
+ }
+ // Apple Notes-like text: a consistent page margin, while the tap still sets
+ // the vertical position. A text block can be dragged freely after saving.
+ function textStartPosition(position){
+  const g=geometry(),rect=sheet.getBoundingClientRect();
+  const margin=Math.round(g.width*.075);
+  const clearTop=controlsTop()+64;
+  const clearY=rect.height?Math.round(clearTop/rect.height*g.height):0;
+  return {x:margin,y:Math.max(0,Math.min(g.height-120,Math.max(position.y,clearY))),
+   width:g.width-margin*2};
+ }
  function place(node,item){
   const g=geometry();
   node.style.left=toCss(item.x,g.width);
@@ -68,8 +91,9 @@
   if(editor)stopEditor(true);
   const objects=paper.getTextObjects();
   editingIndex=Number.isInteger(index)?index:-1;
+  const start=editingIndex<0?textStartPosition(position):null;
   draft=editingIndex>=0?{...objects[editingIndex]}:{
-   text:'',x:position.x,y:position.y,size:44,width:Math.min(520,geometry().width-position.x),
+   text:'',...start,size:44,
    color:(()=>{
     const current=paper.getInkColor()||'#171e29';
     if(paper.getBackground()==='light'&&current==='#f6f7fb')return '#171e29';
@@ -98,7 +122,7 @@
   const done=document.createElement('button');done.type='button';done.className='sv-paper-text-done';done.textContent='Готово';
   const remove=document.createElement('button');remove.type='button';remove.className='sv-paper-text-remove';remove.setAttribute('aria-label','Удалить текст');
   remove.innerHTML=icon('<path d="M4.5 7h15M9 7V4.5h6V7M7 7l.8 12.5h8.4L17 7M10 10.5v6M14 10.5v6"/>');
-  toolbar.append(minus,plus,color,done,remove);layer.append(toolbar);
+  toolbar.append(minus,plus,color,done,remove);layer.append(toolbar);placeControls();
   const syncColor=()=>{color.style.setProperty('--sv-text-color',draft.color)};
   const resize=step=>{
    draft.size=Math.max(24,Math.min(104,draft.size+step));
@@ -184,7 +208,7 @@
  function startMode(){
   if(active){stopMode();return}
   active=true;layer.hidden=false;dialog.classList.add('sv-paper-text-mode');
-  action.setAttribute('aria-pressed','true');renderBoxes();
+  action.setAttribute('aria-pressed','true');placeControls();renderBoxes();
  }
  action.addEventListener('click',()=>{
   const settings=document.getElementById('notePaperSettings');
@@ -207,13 +231,13 @@
    toolbar?.querySelector('.sv-paper-text-color')?.style.setProperty('--sv-text-color',draft.color);
   });
  });
- dialog.addEventListener('sv-paper-render',()=>{if(active&&!editor)renderBoxes()});
+ dialog.addEventListener('sv-paper-render',()=>{if(active){placeControls();if(!editor)renderBoxes()}});
  dialog.addEventListener('close',()=>{
   if(editor)stopEditor(false);
   active=false;layer.hidden=true;clearBoxes();dialog.classList.remove('sv-paper-text-mode');
   action.setAttribute('aria-pressed','false');paper.setTextEditing(-1);
  });
- window.addEventListener('resize',()=>{if(active){if(editor){place(editor,draft);autoHeight()}else renderBoxes()}});
+ window.addEventListener('resize',()=>{if(active){placeControls();if(editor){place(editor,draft);autoHeight()}else renderBoxes()}});
  // Recognition can hand a newly inserted text object to this same editor.
  // No extra toolbar or second text-editing surface is created.
  window.SEYVEO_PAPER_TEXT=Object.freeze({editLast(){

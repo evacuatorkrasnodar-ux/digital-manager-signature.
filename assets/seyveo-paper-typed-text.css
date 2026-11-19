@@ -6,7 +6,7 @@
 }
 #notePaperDialog .sv-paper-text-hint[hidden]{display:none!important}
 #notePaperDialog .sv-paper-text-hint{
- position:absolute;z-index:3;top:11px;left:50%;transform:translateX(-50%);
+ position:absolute;z-index:3;top:74px;left:50%;transform:translateX(-50%);
  display:flex;align-items:center;gap:9px;max-width:calc(100% - 18px);
  box-sizing:border-box;padding:5px 6px 5px 11px;
  border-radius:13px;border:1px solid rgba(255,255,255,.14);
@@ -43,8 +43,8 @@
 #notePaperDialog .sv-paper-text-editor{
  position:absolute;z-index:2;box-sizing:border-box;
  min-width:90px;min-height:44px;max-width:100%;margin:0;padding:2px 3px;
- border:1px solid rgba(89,118,156,.5);border-radius:5px;
- outline:1px solid rgba(89,118,156,.14);outline-offset:2px;
+ border:1px solid rgba(80,90,106,.2);border-radius:8px;
+ outline:none;outline-offset:0;
  background:transparent;box-shadow:none;resize:none;
  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
  font-weight:400;line-height:1.28;letter-spacing:normal;text-align:left;
@@ -58,7 +58,7 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-text-layer > textarea
 }
 #notePaperDialog .sv-paper-text-editor::placeholder{color:#9da4ae;opacity:.76}
 #notePaperDialog .sv-paper-text-controls{
- position:absolute;z-index:3;top:11px;left:50%;transform:translateX(-50%);
+ position:absolute;z-index:3;top:74px;left:50%;transform:translateX(-50%);
  display:flex;align-items:center;justify-content:center;gap:3px;
  box-sizing:border-box;max-width:calc(100% - 22px);
  padding:4px;border:1px solid rgba(255,255,255,.16);border-radius:13px;
@@ -99,3 +99,6 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-text-layer > textarea
 #notePaperDialog.sv-paper-light-surface .sv-paper-text-controls > .sv-paper-text-done{background:#eceef1}
 #notePaperDialog.sv-paper-light-surface .sv-paper-text-controls > .sv-paper-text-color::before{border-color:#fff;box-shadow:0 0 0 1px rgba(39,47,61,.16)}
 #notePaperDialog .sv-paper-text-layer > .sv-paper-text-controls button:focus-visible{outline:2px solid #7a9ad0;outline-offset:1px}
+html body #notePaperDialog.sv-paper-studio[open] .sv-paper-text-layer > textarea.sv-paper-text-editor:focus-visible{
+ outline:none!important;box-shadow:0 0 0 1px rgba(82,98,120,.08)!important;
+}

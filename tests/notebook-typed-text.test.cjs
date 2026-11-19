@@ -91,7 +91,32 @@ test('text mode reuses Settings actions and supports touch placement, drag, font
  assert.match(controls,/textarea|createElement\('textarea'\)/);
  assert.match(style,/\.sv-paper-text-layer\[hidden\]\{display:none!important\}/);
  assert.match(style,/\.sv-paper-text-hit\.sv-paper-text-dragging/);
- assert.match(html,/assets\/seyveo-paper-typed-text\.js\?v=2/);
- assert.match(html,/assets\/seyveo-paper-typed-text\.css\?v=1/);
+ assert.match(html,/assets\/seyveo-paper-typed-text\.js\?v=3/);
+ assert.match(html,/assets\/seyveo-paper-typed-text\.css\?v=2/);
  assert.match(html,/assets\/notebook-paper\.js\?v=40/);
+});
+
+test('text starts at a consistent page margin rather than hanging off the right edge',()=>{
+ const start=controls.indexOf('function textStartPosition(position){');
+ const end=controls.indexOf('function place(node,item){',start);
+ assert.ok(start>=0&&end>start);
+ const getPosition=vm.runInNewContext(controls.slice(start,end)+'\ntextStartPosition',{
+  geometry:()=>({width:840,height:1188}),
+  sheet:{getBoundingClientRect:()=>({height:800})},
+  controlsTop:()=>74,Math});
+ const left=getPosition({x:20,y:300}),right=getPosition({x:785,y:300});
+ assert.equal(left.x,63);
+ assert.equal(right.x,63,'tapping on the right never creates a clipped text field');
+ assert.equal(left.width,714);
+ assert.equal(left.y,300,'tap still defines the height of the line');
+ assert.ok(getPosition({x:500,y:10}).y>200,'text starts below the tool dock');
+});
+
+test('text controls always sit below the top capsule and editor focus is subtle',()=>{
+ assert.match(controls,/const dock=document\.getElementById\('svPaperNewDock'\)/);
+ assert.match(controls,/dockBottom-sheetTop\+14/);
+ assert.match(controls,/placeControls\(\);renderBoxes\(\)/);
+ assert.match(style,/\.sv-paper-text-hint\{\s*position:absolute;z-index:3;top:74px/);
+ assert.match(style,/\.sv-paper-text-controls\{\s*position:absolute;z-index:3;top:74px/);
+ assert.match(style,/textarea\.sv-paper-text-editor:focus-visible\{\s*outline:none!important/);
 });
