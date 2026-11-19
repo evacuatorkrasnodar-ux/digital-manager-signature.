@@ -55,6 +55,20 @@ test('undo history uses bounded lightweight stroke snapshots',()=>{
  assert.match(paper,/getEditableStrokes:indices=>/);
 });
 
+test('Safari touch release outside canvas exits stuck pinch state',()=>{
+ const source=gestures.match(/function releaseOutsideCanvas\(event\)\{[\s\S]*?\n \}/)?.[0];
+ let refreshed=0;
+ const sandbox={fingers:new Map([[5,[20,20]],[6,[30,30]]]),pinch:{distance:12},skipTouchUntil:0,
+  paper:{refreshInkResolution:()=>{refreshed++}},zoom:{scale:2},drawOverlay:()=>{}};
+ vm.runInNewContext(`${source}\nreleaseOutsideCanvas({pointerType:'touch',pointerId:5})`,sandbox);
+ assert.equal(sandbox.fingers.size,1);
+ assert.equal(sandbox.pinch,null);
+ assert.equal(refreshed,1);
+ assert.match(gestures,/if\(event\.isPrimary&&fingers\.size\)\{fingers\.clear\(\);pinch=null\}/);
+ const touchNavigation=gestures.slice(gestures.indexOf("if(event.pointerType==='touch'&&!paper.isPenNearby())"),gestures.indexOf('if(!mode||pinch)return'));
+ assert.doesNotMatch(touchNavigation,/canvas\.setPointerCapture\(event\.pointerId\)/);
+});
+
 test('two-finger navigation and lasso remain transient and do not overwrite ink',()=>{
  assert.match(gestures,/fingers\.size===2/);
  assert.match(gestures,/paper\.cancelActiveStroke\(\)/);
@@ -62,6 +76,6 @@ test('two-finger navigation and lasso remain transient and do not overwrite ink'
  assert.match(gestures,/pointInside\(path\[i\],trace\)/);
  assert.match(gestures,/paper\.applyStrokeEdit\(strokes\)/);
  assert.match(gestures,/data-edit="copy"/);
- assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=2/);
+ assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=3/);
  assert.match(html,/assets\/notebook-paper\.js\?v=23/);
 });
