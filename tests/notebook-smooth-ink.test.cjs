@@ -17,6 +17,69 @@ function smoother(){
  assert.ok(begin>=0&&end>begin);
  return vm.runInNewContext(script.slice(begin,end)+'\nsmoothPoints');
 }
+function ovalFitter(){
+ const begin=script.indexOf('const clamp=(n,min,max)=>');
+ const end=script.indexOf('\n const action=document.createElement',begin);
+ assert.ok(begin>=0&&end>begin);
+ return vm.runInNewContext(script.slice(begin,end)+'\nfitOval');
+}
+
+test('Sayvi squares up a wobbly, tilted oval while preserving pressure and closing its seam',()=>{
+ const fit=ovalFitter(),n=65,tilt=.44,center=[280,340];
+ const ideal=[],wobbly=[];
+ for(let i=0;i<n;i++){
+  const t=Math.PI*2*i/(n-1),wobble=3*Math.sin(t*9)+2*Math.cos(t*13);
+  const u=92*Math.cos(t),v=52*Math.sin(t);
+  ideal.push([center[0]+u*Math.cos(tilt)-v*Math.sin(tilt),center[1]+u*Math.sin(tilt)+v*Math.cos(tilt)]);
+  const nu=(92+wobble)*Math.cos(t),nv=(52+wobble)*Math.sin(t);
+  wobbly.push([center[0]+nu*Math.cos(tilt)-nv*Math.sin(tilt),center[1]+nu*Math.sin(tilt)+nv*Math.cos(tilt),40+i%16]);
+ }
+ const original=structuredClone(wobbly);
+ const result=fit(wobbly);
+ assert.ok(result,'the recogniser accepts a closed, mildly shaky oval');
+ assert.equal(result.length,wobbly.length);
+ assert.deepEqual(result.map(p=>p[2]),wobbly.map(p=>p[2]));
+ assert.deepEqual(wobbly,original,'the original is immutable during preview');
+ assert.deepEqual(result[0].slice(0,2),result.at(-1).slice(0,2),'closed ink has no open seam');
+ const error=points=>points.reduce((sum,p,i)=>sum+Math.hypot(p[0]-ideal[i][0],p[1]-ideal[i][1]),0)/n;
+ assert.ok(error(result)<error(wobbly),`oval deviation fell from ${error(wobbly)} to ${error(result)}`);
+});
+
+test('hand-drawn circles stay circular with different sampling densities and drawing directions',()=>{
+ const fit=ovalFitter();
+ for(const count of [33,49,97])for(const direction of [1,-1]){
+  const circle=Array.from({length:count},(_,i)=>{
+   const t=direction*Math.PI*2*i/(count-1);
+   const wave=Math.sin(t*5)*2+Math.cos(t*11)*1.2;
+   return [200+(65+wave)*Math.cos(t),200+(65+wave)*Math.sin(t),50+i%13];
+  });
+  const result=fit(circle);
+  assert.ok(result,`recognised a ${count}-point circle in direction ${direction}`);
+  const centerError=points=>points.reduce((sum,p)=>sum+Math.abs(Math.hypot(p[0]-200,p[1]-200)-65),0)/points.length;
+  assert.ok(centerError(result)<centerError(circle),`circularity improved at ${count} points`);
+ }
+});
+
+test('shape recognition will not turn an open letter, a heart or a square into an oval',()=>{
+ const fit=ovalFitter(),n=65;
+ const open=Array.from({length:n},(_,i)=>{
+  const t=Math.PI*1.7*i/(n-1);return [180+80*Math.cos(t),200+80*Math.sin(t),60];
+ });
+ assert.equal(fit(open),null,'a letter C is not a circle');
+ const heart=Array.from({length:n},(_,i)=>{
+  const t=Math.PI*2*i/(n-1);
+  return [300+3.5*16*Math.sin(t)**3,250-3.5*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t)),60];
+ });
+ assert.equal(fit(heart),null,'the point and lobes of a heart are intentional');
+ const square=[];
+ const corners=[[100,100],[220,100],[220,220],[100,220],[100,100]];
+ for(let k=0;k<4;k++)for(let i=0;i<20;i++){
+  const t=i/20;
+  square.push([corners[k][0]*(1-t)+corners[k+1][0]*t,corners[k][1]*(1-t)+corners[k+1][1]*t,60]);
+ }
+ square.push([100,100,60]);
+ assert.equal(fit(square),null,'square corners remain square');
+});
 
 test('smoothing reduces short jitter without changing endpoints, pen pressure or the source',()=>{
  const smooth=smoother();
@@ -131,6 +194,7 @@ test('a tiny, material-matched comparison bar offers explicit Apply and Cancel',
 test('preview edits only pen and pencil, preserving text, photos and undo history',()=>{
  assert.match(script,/const eligible=stroke=>\['pen','pencil'\]\.includes\(stroke\.tool\)/);
  assert.match(script,/proposal=paper\.getEditableStrokes\(indices\)/);
+ assert.match(script,/next=fitOval\(stroke\.points\)\|\|smoothPoints\(stroke\.points\)/);
  assert.match(script,/paper\.previewStrokeEdit\(next\?proposal:original\)/);
  assert.match(script,/if\(commit\)\{\s*if\(!paper\.applyStrokeEdit\(proposal\)/);
  assert.match(script,/else if\(restore\)paper\.previewStrokeEdit\(original\)/);
@@ -145,5 +209,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=1/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=3/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=4/);
 });

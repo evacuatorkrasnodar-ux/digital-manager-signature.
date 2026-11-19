@@ -40,6 +40,76 @@
   return current;
  }
 
+ // Recognise only a confidently closed, rounded loop. Fit its principal axes
+ // so a slanted oval stays slanted; leave letters, hearts and sharp corners to
+ // the gentle filter above. Never alter point count or pen-pressure samples.
+ function fitOval(points){
+  if(!Array.isArray(points)||points.length<18)return null;
+  const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+  const width=Math.max(...xs)-Math.min(...xs),height=Math.max(...ys)-Math.min(...ys);
+  const size=Math.min(width,height);
+  if(size<30||Math.max(width,height)>size*3)return null;
+  if(Math.hypot(xs[0]-xs.at(-1),ys[0]-ys.at(-1))>Math.max(8,size*.15))return null;
+  const n=points.length;
+  const meanX=xs.reduce((sum,x)=>sum+x,0)/n,meanY=ys.reduce((sum,y)=>sum+y,0)/n;
+  let xx=0,xy=0,yy=0;
+  for(const p of points){
+   const x=p[0]-meanX,y=p[1]-meanY;
+   xx+=x*x;xy+=x*y;yy+=y*y;
+  }
+  const angle=Math.abs(xx-yy)+Math.abs(xy)*2<1e-4?0:Math.atan2(xy*2,xx-yy)/2;
+  const ca=Math.cos(angle),sa=Math.sin(angle);
+  const uv=points.map(p=>[p[0]*ca+p[1]*sa,-p[0]*sa+p[1]*ca]);
+  const us=uv.map(p=>p[0]),vs=uv.map(p=>p[1]);
+  const minU=Math.min(...us),maxU=Math.max(...us),minV=Math.min(...vs),maxV=Math.max(...vs);
+  let ru=(maxU-minU)/2,rv=(maxV-minV)/2;
+  if(Math.min(ru,rv)<15||Math.max(ru,rv)>Math.min(ru,rv)*3)return null;
+  const cu=(maxU+minU)/2,cv=(maxV+minV)/2;
+  // The farthest shaky point should not set the whole ellipse's radius.
+  const radiusScale=uv.map(([u,v])=>Math.hypot((u-cu)/ru,(v-cv)/rv)).sort((a,b)=>a-b);
+  const scale=clamp(radiusScale[Math.floor(n/2)],.83,1.08);
+  ru*=scale;rv*=scale;
+  const polar=uv.map(([u,v])=>{
+   const a=(u-cu)/ru,b=(v-cv)/rv;
+   return {theta:Math.atan2(b,a),radius:Math.hypot(a,b)};
+  });
+  const errors=polar.map(p=>Math.abs(p.radius-1));
+  const meanError=errors.reduce((sum,e)=>sum+e,0)/n;
+  const sorted=errors.slice().sort((a,b)=>a-b);
+  if(meanError>.16||sorted[Math.floor(n*.9)]>.30||sorted.at(-1)>.45)return null;
+  const angles=[polar[0].theta];let backwards=0,length=0;
+  for(let i=1;i<n;i++){
+   let delta=polar[i].theta-polar[i-1].theta;
+   if(delta>Math.PI)delta-=Math.PI*2;
+   else if(delta< -Math.PI)delta+=Math.PI*2;
+   angles.push(angles.at(-1)+delta);
+   length+=Math.hypot(xs[i]-xs[i-1],ys[i]-ys[i-1]);
+  }
+  const sweep=angles.at(-1)-angles[0],direction=Math.sign(sweep);
+  if(Math.abs(sweep)<Math.PI*1.7||Math.abs(sweep)>Math.PI*2.3)return null;
+  for(let i=1;i<n;i++)backwards+=Math.max(0,-(angles[i]-angles[i-1])*direction);
+  const perimeter=Math.PI*2*Math.sqrt((ru*ru+rv*rv)/2);
+  if(backwards>Math.PI*.24||length<perimeter*.75||length>perimeter*1.5)return null;
+  // A square, heart cusp or an intentional handwritten corner must never
+  // become a circle. Look across several samples to ignore fine hand jitter.
+  const stride=Math.max(3,Math.floor(n/16));
+  for(let i=stride;i<n-stride;i++){
+   const a=points[i-stride],b=points[i],c=points[i+stride];
+   const ux=b[0]-a[0],uy=b[1]-a[1],vx=c[0]-b[0],vy=c[1]-b[1];
+   const side=Math.hypot(ux,uy)*Math.hypot(vx,vy);
+   if(side>12&&(ux*vx+uy*vy)/side<.30)return null;
+  }
+  const correction=(direction*Math.PI*2-sweep)/(n-1);
+  const corrected=points.map((p,i)=>{
+   const t=angles[i]+correction*i;
+   const u=cu+ru*Math.cos(t),v=cv+rv*Math.sin(t);
+   return [round(u*ca-v*sa),round(u*sa+v*ca),...p.slice(2)];
+  });
+  // The start and end meet, but retain the original ink's pressure and tilt.
+  corrected[n-1][0]=corrected[0][0];corrected[n-1][1]=corrected[0][1];
+  return corrected;
+ }
+
  const action=document.createElement('button');
  action.type='button';action.id='notePaperSmoothInk';action.className='sv-newdock-menu-action';
  action.setAttribute('aria-label','Сэйви: сделать рукописный почерк аккуратнее');
@@ -93,7 +163,7 @@
   proposal=paper.getEditableStrokes(indices);
   let changed=0;
   for(const index of indices){
-   const stroke=proposal[index],next=smoothPoints(stroke.points);
+   const stroke=proposal[index],next=fitOval(stroke.points)||smoothPoints(stroke.points);
    for(let i=0;i<next.length;i++)if(Math.hypot(next[i][0]-stroke.points[i][0],next[i][1]-stroke.points[i][1])>.1)changed++;
    stroke.points=next;
   }
