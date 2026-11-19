@@ -51,6 +51,25 @@ test('Sayvi recognises a one-stroke Cyrillic С and makes the open arc smoother'
  }
 });
 
+test('a very shaky Cyrillic С is still corrected with explicit before/after approval',()=>{
+ const fit=shapeFitter('fitLetterC'),count=81,ideal=[],rough=[];
+ for(let i=0;i<count;i++){
+  const t=-.85-(Math.PI*2-1.7)*i/(count-1);
+  const x=300+86*Math.cos(t),y=310+93*Math.sin(t);
+  ideal.push([x,y]);
+  const wobble=14*Math.sin(t*8)+9*Math.cos(t*13);
+  rough.push([x+wobble*Math.cos(t)+4*Math.sin(t*3),y+wobble*Math.sin(t),40+i%23]);
+ }
+ const original=structuredClone(rough),result=fit(rough);
+ assert.ok(result,'a deeply wobbly yet recognisable С is offered for correction');
+ assert.deepEqual(rough,original);
+ assert.deepEqual(Array.from(result[0]),rough[0]);
+ assert.deepEqual(Array.from(result.at(-1)),rough.at(-1));
+ assert.deepEqual(result.map(p=>p[2]),rough.map(p=>p[2]));
+ const error=points=>points.reduce((sum,p,i)=>sum+Math.hypot(p[0]-ideal[i][0],p[1]-ideal[i][1]),0)/count;
+ assert.ok(error(result)<error(rough)*.8,`rough С improved from ${error(rough)} to ${error(result)}`);
+});
+
 test('a closed О, a U-shaped letter and a straight stroke are not mistaken for С',()=>{
  const fit=shapeFitter('fitLetterC'),count=75;
  const o=Array.from({length:count},(_,i)=>{
@@ -316,5 +335,5 @@ test('preview edits only pen and pencil, preserving text, photos and undo histor
  assert.match(html,/assets\/notebook-paper\.js\?v=44/);
  assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-smooth\.css\?v=1/);
- assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=6/);
+ assert.match(html,/assets\/seyveo-paper-smooth\.js\?v=7/);
 });

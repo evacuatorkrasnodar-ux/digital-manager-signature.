@@ -121,12 +121,12 @@
   if(size<38||Math.max(width,height)>size*2.2)return null;
   const first=points[0],last=points.at(-1);
   const gap=Math.hypot(first[0]-last[0],first[1]-last[1]);
-  if(gap<size*.36||gap>size*1.25)return null;
+  if(gap<size*.24||gap>size*1.48)return null;
   // Both ends live on the right, one above and one below the centre.
   const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
-  if(Math.min(first[0],last[0])<minX+width*.68)return null;
-  if(!((first[1]<cy-height*.17&&last[1]>cy+height*.17)
-   ||(last[1]<cy-height*.17&&first[1]>cy+height*.17)))return null;
+  if(Math.min(first[0],last[0])<minX+width*.54)return null;
+  if(!((first[1]<cy-height*.12&&last[1]>cy+height*.12)
+   ||(last[1]<cy-height*.12&&first[1]>cy+height*.12)))return null;
   let rx=width/2,ry=height/2;
   const median=points.map(p=>Math.hypot((p[0]-cx)/rx,(p[1]-cy)/ry)).sort((a,b)=>a-b);
   const scale=clamp(median[Math.floor(points.length/2)],.83,1.08);
@@ -136,8 +136,8 @@
    return {angle:Math.atan2(v,u),radius:Math.hypot(u,v)};
   });
   const errors=polar.map(p=>Math.abs(p.radius-1)).sort((a,b)=>a-b);
-  if(errors.reduce((sum,e)=>sum+e,0)/errors.length>.17
-   ||errors[Math.floor(errors.length*.9)]>.31||errors.at(-1)>.47)return null;
+  const meanError=errors.reduce((sum,e)=>sum+e,0)/errors.length;
+  if(meanError>.31||errors[Math.floor(errors.length*.9)]>.62||errors.at(-1)>.90)return null;
   const angles=[polar[0].angle];let wrongWay=0;
   for(let i=1;i<points.length;i++){
    let delta=polar[i].angle-polar[i-1].angle;
@@ -146,15 +146,40 @@
    angles.push(angles.at(-1)+delta);
   }
   const sweep=angles.at(-1)-angles[0],direction=Math.sign(sweep);
-  if(Math.abs(sweep)<Math.PI*1.30||Math.abs(sweep)>Math.PI*1.83)return null;
+  if(Math.abs(sweep)<Math.PI*1.12||Math.abs(sweep)>Math.PI*1.96)return null;
   for(let i=1;i<angles.length;i++)wrongWay+=Math.max(0,-(angles[i]-angles[i-1])*direction);
-  if(wrongWay>Math.PI*.22)return null;
+  if(wrongWay>Math.PI*.42)return null;
   const stride=Math.max(3,Math.floor(points.length/16));
+  let sharpTurns=0;
   for(let i=stride;i<points.length-stride;i++){
    const a=points[i-stride],b=points[i],c=points[i+stride];
    const ux=b[0]-a[0],uy=b[1]-a[1],vx=c[0]-b[0],vy=c[1]-b[1];
    const side=Math.hypot(ux,uy)*Math.hypot(vx,vy);
-   if(side>12&&(ux*vx+uy*vy)/side<.26)return null;
+   if(side>12&&(ux*vx+uy*vy)/side<.08)sharpTurns++;
+  }
+  // Two deliberate corners describe a bracket, not С. Many small turns are
+  // shaky handwriting; they can be offered as a reversible correction.
+  if(sharpTurns&&sharpTurns<Math.max(5,points.length*.085))return null;
+  if(meanError>.14||wrongWay>Math.PI*.20){
+   // A severely wobbly С should not inherit a generic typeface or an
+   // outlier-sized ellipse. Use a stronger local curve filter that preserves
+   // the user's overall C and fixes shaky short-range turns.
+   const weights=[1,2,3,4,5,4,3,2,1];
+   let current=points.map(p=>p.slice());
+   for(let pass=0;pass<2;pass++){
+    const next=current.map(p=>p.slice());
+    for(let i=4;i<points.length-4;i++){
+     let x=0,y=0;
+     for(let k=-4;k<=4;k++){
+      x+=current[i+k][0]*weights[k+4];y+=current[i+k][1]*weights[k+4];
+     }
+     const strength=.92*Math.sin(Math.PI*i/(points.length-1))**.55;
+     next[i][0]=round(current[i][0]+(x/25-current[i][0])*strength);
+     next[i][1]=round(current[i][1]+(y/25-current[i][1])*strength);
+    }
+    current=next;
+   }
+   return current;
   }
   // Smooth the radius of a С along the path. This retains an individual's
   // rounded / narrow handwriting style instead of forcing a generic font.
