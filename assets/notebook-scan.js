@@ -65,7 +65,7 @@ function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}}
 function reset(){
  selected=null;consented=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
- text.value='';text.wrap=keepLines?.checked!==false?'off':'soft';button.disabled=true;message('Фото остаётся на устройстве. Проверьте текст перед сохранением.');
+ text.value='';text.wrap='soft';button.disabled=true;message('Фото остаётся на устройстве. Проверьте текст перед сохранением.');
 }
 function open(){if(dialog.open)return;reset();dialog.showModal()}
 function select(file){
@@ -155,7 +155,9 @@ for(const id of ['noteScanCamera','noteScanGallery']){
   select(file);
  });
 }
-keepLines?.addEventListener('change',()=>{text.wrap=keepLines.checked?'off':'soft'});
+// Soft wrapping only changes how long lines LOOK on a narrow iPhone screen.
+// Actual newlines and the user's "preserve lines" OCR choice stay untouched.
+keepLines?.addEventListener('change',()=>{text.wrap='soft'});
 button.addEventListener('click',()=>{
  if(running||!selected)return;
  if(!consented){
