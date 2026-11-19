@@ -38,15 +38,10 @@ function snapshotSheet(){
  return {strokes:data.strokes.slice(),photo:data.photo||'',pattern:data.pattern,background:data.background};
 }
 function restoreSheet(snapshot){
- const oldBackground=data.background;
  data.strokes=snapshot.strokes.slice();
  data.photo=snapshot.photo;data.pattern=snapshot.pattern;data.background=snapshot.background;
- // Keep default ink readable after undo/redo switches between light and dark.
- if(oldBackground!==data.background){
-  if(data.background==='light'&&activeColor==='#f6f7fb')activeColor='#171e29';
-  else if(data.background==='dark'&&activeColor==='#171e29')activeColor='#f6f7fb';
-  syncColorMenu();
- }
+ // The chosen ink is independent of the page. Undo/redo must never recolor it.
+ syncColorMenu();
 }
 function travelHistory(from,to){
  if(pending||!from.length)return false;
@@ -916,9 +911,13 @@ window.SEYVEO_PAPER=Object.freeze({
   if(data.background===background)return;
   rememberUndo({type:'sheet',previous:snapshotSheet()});
   data.background=background;
-  if(background==='light'&&activeColor==='#f6f7fb')activeColor='#171e29';
-  else if(background==='dark'&&activeColor==='#171e29')activeColor='#f6f7fb';
+  // Page color is a background property, not an ink conversion.
+  // Retain the selected pen and every stored stroke exactly as drawn.
   changed=true;syncColorMenu();render();
+  if(!activeGradient&&background==='light'&&activeColor==='#f6f7fb')
+   report('Белый цвет сохранён. На белом листе он почти не виден.');
+  else if(!activeGradient&&background==='dark'&&activeColor==='#171e29')
+   report('Чёрный цвет сохранён. На тёмном листе он почти не виден.');
  },
  openSayvi:()=>{
   const chat=window.SEYVEO_CONVERSATION;
