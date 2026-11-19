@@ -1,0 +1,41 @@
+/* SEYVEO Living Handwriting · compact white Apple-style paper workspace. */
+.sv-lh-dialog{box-sizing:border-box;width:min(520px,calc(100vw - 22px));max-width:none;max-height:min(92dvh,940px);padding:0;border:1px solid #e3e6ea;border-radius:23px;background:#f7f8fa;color:#171b23;box-shadow:0 24px 70px #11182727;overflow:hidden;overscroll-behavior:contain}
+.sv-lh-dialog::backdrop{background:rgba(12,17,26,.45);backdrop-filter:blur(7px)}
+.sv-lh-dialog *{box-sizing:border-box}
+.sv-lh-dialog .sv-lh-shell{max-height:inherit;overflow-y:auto;overscroll-behavior:contain;padding:20px 20px 22px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.sv-lh-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:8px}
+.sv-lh-head small{display:block;font-size:10px;font-weight:600;letter-spacing:.12em;color:#767d87}
+.sv-lh-head h2{margin:5px 0 0;font-size:25px;line-height:1.2;font-weight:600;letter-spacing:-.035em;color:#16191f}
+.sv-lh-dialog button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sv-lh-head button{flex:none;padding:9px 12px;border:0;border-radius:12px;background:transparent;color:#202c3d;font-size:14px;font-weight:600}
+.sv-lh-dialog button:focus-visible,.sv-lh-dialog input:focus-visible,.sv-lh-dialog textarea:focus-visible{outline:2px solid #64748b;outline-offset:2px}
+.sv-lh-intro{font-size:13px;line-height:1.5;color:#545e6b;margin:0 0 17px}
+.sv-lh-section{border-top:1px solid #e5e8ed;padding-top:14px;margin-top:13px}
+.sv-lh-section h3{font-size:15px;line-height:1.35;font-weight:600;letter-spacing:-.015em;margin:0 0 12px;color:#252c35}
+.sv-lh-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+.sv-lh-row label{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:12px;color:#6b7480}
+.sv-lh-row input{width:44px;height:36px;border:1px solid #d9dee6;border-radius:10px;background:white;color:#1e2530;text-align:center;font-size:22px;line-height:1;padding:3px}
+.sv-lh-sample-pad{width:100%;border:1px solid #e0e4e9;border-radius:15px;background:#fff;overflow:hidden}
+.sv-lh-sample-pad canvas{display:block;width:100%;height:auto;aspect-ratio:320/170;touch-action:none;user-select:none;-webkit-user-select:none}
+.sv-lh-controls{margin-top:10px}
+.sv-lh-controls button{flex:none;padding:10px 14px;min-height:39px;border:1px solid #dae0e8;border-radius:12px;background:#fff;color:#2d3746;font-size:13px;font-weight:600;box-shadow:0 1px 2px #1624350b}
+.sv-lh-controls .sv-lh-primary{background:#38383a;border-color:#38383a;color:#fff}
+.sv-lh-controls button:active{box-shadow:inset 0 2px 5px #0002;transform:translateY(1px)}
+.sv-lh-controls button:disabled{opacity:.45;cursor:default;box-shadow:none;transform:none}
+.sv-lh-count{margin:9px 1px 0;font-size:12px;color:#727d8b}
+.sv-lh-dialog textarea{display:block;width:100%;min-height:64px;max-height:130px;resize:vertical;padding:12px 13px;border:1px solid #dfe4ea;border-radius:13px;background:white;color:#171b23;font-size:15px;font-weight:400;line-height:1.45;font-family:inherit;outline:none}
+.sv-lh-preview-frame{margin-top:11px;max-height:215px;overflow:auto;border:1px solid #e1e5eb;border-radius:14px;background:#fff;overscroll-behavior:contain}
+.sv-lh-preview-frame canvas{display:block;width:100%;height:auto}
+.sv-lh-hint{min-width:0;flex:1;margin:0;color:#707987;font-size:12px;line-height:1.38}
+.sv-lh-foot{border-top:1px solid #e5e8ed;margin-top:18px;padding-top:13px;display:flex;align-items:flex-start;justify-content:space-between;gap:15px}
+.sv-lh-foot span{flex:1;font-size:12px;line-height:1.5;color:#687382}
+.sv-lh-foot button{flex:none;background:transparent;border:0;padding:5px 0;font-size:12px;color:#a6464c;text-align:right}
+.sv-lh-note{margin:11px 0 0;font-size:11px;line-height:1.5;color:#8b929b}
+@media(max-width:580px){
+ .sv-lh-dialog{width:100vw;height:100dvh;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none}
+ .sv-lh-dialog .sv-lh-shell{height:100%;max-height:none;padding:calc(env(safe-area-inset-top,0px) + 18px) 17px calc(env(safe-area-inset-bottom,0px) + 24px)}
+ .sv-lh-head h2{font-size:23px}
+ .sv-lh-intro{font-size:13px}
+ .sv-lh-foot{gap:9px}
+ .sv-lh-controls button{padding:10px 12px}
+}

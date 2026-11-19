@@ -179,8 +179,8 @@ const roadmap=[
   ['paper_ai_understanding','Сэйви понимает и исправляет рисунки','Распознавать замысел произвольного рисунка, предлагать исправленный вариант без отдельных шаблонов для каждого предмета. Нужны защищённый сервер и визуальная модель.','plan'],
   ['paper_spelling','Проверить ошибки на листе','Подсветить возможные опечатки после распознавания; исправлять только с подтверждения человека.','plan'],
   ['paper_beauty','Сделать красиво · умная композиция','Красиво расположить текст, рисунок и фото, показать вариант рядом с исходной страницей.','plan'],
-  ['paper_typeset_hand','Печатный текст → рукописный стиль','Клавиатура и диктовка превращаются в красиво оформленный рукописный текст с предпросмотром; пока не реализовано.','plan'],
-  ['paper_living_handwriting','Мой почерк · SEYVEO Living Handwriting','Добровольно собирать образцы собственных букв, изучать наклон/соединения/интервалы, воспроизводить стиль при печати и диктовке; хранить локально с удалением образцов, не имитировать подпись. Пока в планах.','plan'],
+  ['paper_typeset_hand','Печатный текст → рукописный стиль','Пробный набор: текст преобразуется в векторные штрихи из сохранённых образцов букв с предпросмотром и добавлением на лист вручную. Диктовка и связное письмо пока не интегрированы.','demo'],
+  ['paper_living_handwriting','Мой почерк · SEYVEO Living Handwriting','Пробный локальный набор собственных букв пальцем или стилусом, удаление образцов, воспроизведение печатного текста ими. Пока по одной букве: соединения, наклон и естественные варианты букв ещё не изучаются, подпись не воспроизводится.','demo'],
   ['paper_documents','Черновик заметки → Документы','Передавать черновики в отдельный редактор договоров и А4/PDF; юридически значимая подпись только с разрешением.','plan']
  ]},
  {id:'client_pulse_approved',name:'Утверждено · Клиенты и обращения в Пульсе бизнеса',items:[
@@ -520,6 +520,7 @@ const KEYS=Object.freeze({
  privateWellness:'seyveo-private-health-care-v1',
  company:'seyveo-company-passport-v1',
  pictureWidgets:'seyveo-home-widgets-v1',
+ personalHandwriting:'seyveo-paper-personal-ink-v1',
  roadmapProgress:'seyveo-roadmap-progress-v1',
  businessMap:'seyveo-business-map-v1'
 });
@@ -542,6 +543,7 @@ function snapshot(){
  const privateWellness=parsed(read(KEYS.privateWellness),null);
  const company=parsed(read(KEYS.company),null);
  const pictureWidgets=parsed(read(KEYS.pictureWidgets),null);
+ const personalHandwriting=parsed(read(KEYS.personalHandwriting),null);
  const roadmapProgress=parsed(read(KEYS.roadmapProgress),null);
  const businessMap=parsed(read(KEYS.businessMap),null);
  const rawTierPreview=read('seyveo-developer-tier-preview-v1');
@@ -563,6 +565,9 @@ function snapshot(){
   privateWellness:privateWellness&&typeof privateWellness==='object'&&!Array.isArray(privateWellness)?privateWellness:null,
   companyPassport:company&&typeof company==='object'&&!Array.isArray(company)?company:null,
   pictureWidgets:pictureWidgets&&Array.isArray(pictureWidgets.ids)?pictureWidgets:null,
+  personalHandwriting:personalHandwriting&&personalHandwriting.version===1
+   &&personalHandwriting.glyphs&&typeof personalHandwriting.glyphs==='object'
+   &&!Array.isArray(personalHandwriting.glyphs)?personalHandwriting:null,
   roadmapProgress:roadmapProgress&&roadmapProgress.version===1&&roadmapProgress.marks?roadmapProgress:null,
   businessMap:businessMap&&businessMap.version===1&&typeof businessMap.description==='string'?businessMap:null,
   developerTierPreview,
@@ -606,6 +611,7 @@ function drawData(){
   ['Знакомство',record.introduction?'Сохранено':'Нет'],
   ['Сведения о деле',record.businessMap?(record.businessMap.resources?.length||0)+' ресурсов · на устройстве':'Пока нет сведений'],
   ['Мои записи',String(countOf(record.notes))],
+  ['Мой почерк',record.personalHandwriting?String(Object.keys(record.personalHandwriting.glyphs).length)+' образцов · только на устройстве':'Нет образцов'],
    ['История обращений',String(countOf(record.assistantChatHistory))+' локальных запросов'],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
   ['Мой мир · Контакты',String(countOf(record.privateContacts))+' контактов'],

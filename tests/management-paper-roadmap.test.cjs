@@ -14,7 +14,7 @@ test('Paper roadmap lists every feature once and preserves known progress keys',
  assert.equal(roadmap.length,19);
  assert.equal(new Set(roadmap.map(item=>item.id)).size,19);
  const count=status=>roadmap.filter(item=>item.status===status).length;
- assert.deepEqual([count('ready'),count('demo'),count('plan')],[8,3,8]);
+ assert.deepEqual([count('ready'),count('demo'),count('plan')],[8,5,6]);
  const status=id=>roadmap.find(item=>item.id===id)?.status;
  assert.equal(status('paper_smooth'),'demo');
  assert.equal(status('paper_handwriting_ocr'),'demo');
@@ -22,8 +22,8 @@ test('Paper roadmap lists every feature once and preserves known progress keys',
  assert.equal(status('paper_ai_drawing'),'plan');
  assert.equal(status('paper_ai_understanding'),'plan');
  assert.equal(status('paper_spelling'),'plan');
- assert.equal(status('paper_typeset_hand'),'plan');
- assert.equal(status('paper_living_handwriting'),'plan');
+ assert.equal(status('paper_typeset_hand'),'demo');
+ assert.equal(status('paper_living_handwriting'),'demo');
  for(const id of ['paper_text','paper_actions','paper_to_calendar','paper_sheet','paper_tools',
   'paper_stylus','paper_photo','paper_export','paper_scanner','paper_handwriting_ocr',
   'paper_picture_layers','paper_smooth','paper_spelling','paper_beauty','paper_typeset_hand',
@@ -32,5 +32,5 @@ test('Paper roadmap lists every feature once and preserves known progress keys',
 
 test('the current UI requests a fresh management script instead of cached roadmap',()=>{
  const html=readFileSync(join(root,'index.html'),'utf8');
- assert.match(html,/assets\/management\.js\?v=62/);
+ assert.match(html,/assets\/management\.js\?v=63/);
 });
