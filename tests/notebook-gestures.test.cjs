@@ -69,6 +69,15 @@ test('Safari touch release outside canvas exits stuck pinch state',()=>{
  assert.doesNotMatch(touchNavigation,/canvas\.setPointerCapture\(event\.pointerId\)/);
 });
 
+test('iPhone loads native drawing without installing gesture interception',()=>{
+ const classes=[];
+ const context={navigator:{userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)',platform:'iPhone',maxTouchPoints:5},
+  document:{documentElement:{classList:{add:value=>classes.push(value)}},getElementById:()=>{throw Error('Gesture layer should not start')}}};
+ assert.doesNotThrow(()=>vm.runInNewContext(gestures,context));
+ assert.deepEqual(classes,['sv-paper-ios-ink-safe']);
+ assert.match(html,/assets\/seyveo-paper-gestures\.css\?v=2/);
+});
+
 test('two-finger navigation and lasso remain transient and do not overwrite ink',()=>{
  assert.match(gestures,/fingers\.size===2/);
  assert.match(gestures,/paper\.cancelActiveStroke\(\)/);
@@ -76,6 +85,6 @@ test('two-finger navigation and lasso remain transient and do not overwrite ink'
  assert.match(gestures,/pointInside\(path\[i\],trace\)/);
  assert.match(gestures,/paper\.applyStrokeEdit\(strokes\)/);
  assert.match(gestures,/data-edit="copy"/);
- assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=3/);
+ assert.match(html,/assets\/seyveo-paper-gestures\.js\?v=4/);
  assert.match(html,/assets\/notebook-paper\.js\?v=23/);
 });
