@@ -120,6 +120,7 @@
   setColor(rgbHex(...nums),true);
  }
  rgbInputs.forEach(input=>{
+  input.addEventListener('input',applyRgb);
   input.addEventListener('change',applyRgb);
   input.addEventListener('keydown',event=>{if(event.key==='Enter'){input.blur();event.preventDefault()}});
  });
