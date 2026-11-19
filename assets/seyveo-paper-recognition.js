@@ -19,7 +19,7 @@
  overlay.setAttribute('aria-labelledby','svPaperRecognitionTitle');
  overlay.innerHTML=`
   <div class="sv-pr-head"><h2 id="svPaperRecognitionTitle">Рукопись → текст</h2><button type="button" data-pr-close aria-label="Закрыть распознавание">Готово</button></div>
-  <p class="sv-pr-help">Распознаём только по вашему нажатию. Если встроенный движок недоступен, загрузим языковые модели. Обработка рисунка — на вашем устройстве.</p>
+  <p class="sv-pr-help">Распознаём только по вашему нажатию. Если встроенный движок недоступен, используем модели распознавания SEYVEO. Обработка рисунка — на вашем устройстве.</p>
   <div class="sv-pr-status" role="status" aria-live="polite">Нарисуйте несколько слов, затем нажмите «Распознать».</div>
   <textarea class="sv-pr-text" aria-label="Распознанный текст, можно исправить" placeholder="Здесь появится текст. Его можно исправить вручную." spellcheck="true" rows="7"></textarea>
   <div class="sv-pr-actions"><button type="button" data-pr-run class="sv-pr-primary">Распознать</button><button type="button" data-pr-copy disabled>Копировать</button><button type="button" data-pr-save disabled>В заметку</button></div>
@@ -82,8 +82,8 @@
   loader=new Promise((resolve,reject)=>{
    const script=document.createElement('script');
    const timer=window.setTimeout(()=>reject(new Error('Загрузка распознавания заняла слишком много времени.')),30000);
-   script.src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/tesseract.min.js';
-   script.async=true;script.crossOrigin='anonymous';
+   script.src=new URL('assets/seyveo-ocr-tesseract.min.js',document.baseURI).href;
+   script.async=true;
    script.onload=()=>{
     clearTimeout(timer);
     if(window.Tesseract?.createWorker)resolve(window.Tesseract);
@@ -101,7 +101,10 @@
   let worker;
   try{
    worker=await lib.createWorker(['rus','eng'],1,{
-    workerPath:'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/worker.min.js',
+    workerPath:new URL('assets/seyveo-ocr-worker.min.js',document.baseURI).href,
+    corePath:new URL('assets/seyveo-ocr-core-lstm.wasm.js',document.baseURI).href,
+    langPath:new URL('assets/',document.baseURI).href,
+    gzip:false,
     logger:info=>{
      if(overlay.open&&info.status==='recognizing text'&&Number.isFinite(info.progress))
       message('Распознавание: '+Math.round(info.progress*100)+'%');
