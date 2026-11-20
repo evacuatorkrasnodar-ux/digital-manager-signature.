@@ -139,39 +139,6 @@
  ];
  const INK_WIDTHS=[3,5,9];
 
- const hsvToHex=(h,s,v)=>{
-  const toChannel=n=>{
-   const k=(n+h/60)%6;
-   return Math.round(255*(v-v*s*Math.max(Math.min(k,4-k,1),0))).toString(16).padStart(2,'0');
-  };
-  return '#'+toChannel(5)+toChannel(3)+toChannel(1);
- };
- const hexToHsv=value=>{
-  const rgb=[1,3,5].map(i=>parseInt(value.slice(i,i+2),16)/255);
-  const [r,g,b]=rgb,max=Math.max(...rgb),min=Math.min(...rgb),delta=max-min;
-  let h=0;
-  if(delta){
-   if(max===r)h=((g-b)/delta)%6;
-   else if(max===g)h=(b-r)/delta+2;
-   else h=(r-g)/delta+4;
-   h=(h*60+360)%360;
-  }
-  return [Math.round(h),Math.round(max===0?0:delta/max*100),Math.round(max*100)];
- };
- const QUICK_INK_COLORS=[
-  ['#171e29','Графит'],['#0866ed','Синий'],['#24bd69','Зелёный'],
-  ['#ffcc00','Жёлтый'],['#f44336','Красный']
- ];
- const INK_HUES=[198,224,247,270,296,320,0,22,43,62,101,152];
- const INK_SHADE_ROWS=[[.82,.30],[.88,.43],[.94,.58],[.99,.80],[.96,.98],[.73,1],[.54,1],[.30,1]];
- const INK_GRID=[
-  ...Array.from({length:12},(_,i)=>{
-   const level=Math.round(255*(1-i/11));
-   const val=level.toString(16).padStart(2,'0');
-   return '#'+val+val+val;
-  }),
-  ...INK_SHADE_ROWS.flatMap(([s,v])=>INK_HUES.map(h=>hsvToHex(h,s,v)))
- ];
  const validColor=value=>/^#[0-9a-f]{6}$/i.test(String(value||''))?String(value).toLowerCase():null;
  let penColor='#171e29',penWidth=5;
  const inkPicker=document.createElement('section');
@@ -179,46 +146,15 @@
  inkPicker.setAttribute('role','group');inkPicker.setAttribute('aria-label','Параметры пера');
 
  inkPicker.innerHTML=`<div data-sv-ink-picker="width" hidden>
-  <strong>Толщина линии</strong><div class="sv-smart-ink-width-options">${INK_WIDTHS.map(width=>`<button type="button" data-sv-pen-width="${width}" aria-label="${width===3?'Тонкая':width===5?'Средняя':'Широкая'} линия"><i style="height:${width===3?1:width===5?2:3.5}px"></i></button>`).join('')}</div></div>
-  <div data-sv-ink-picker="color" hidden>
-   <header class="sv-ink-sheet-head">
-    <button type="button" class="sv-ink-dropper" data-sv-color-eyedropper aria-label="Пипетка">${icon('<path d="m14 5 5 5M5 19l7.7-7.7 3.9 3.9L9 22H5v-3ZM12.7 11.3l5.8-5.8a2.1 2.1 0 0 1 3 3l-5.8 5.8" />')}</button>
-    <strong>Цвета</strong>
-    <button type="button" data-sv-color-close aria-label="Закрыть палитру">${icon('<path d="M5 5 19 19M19 5 5 19"/>')}</button>
-   </header>
-   <div class="sv-ink-tabs" role="tablist" aria-label="Режим выбора цвета">
-    <button type="button" role="tab" data-sv-color-tab="grid" aria-selected="true">Сетка</button>
-    <button type="button" role="tab" data-sv-color-tab="spectrum" aria-selected="false">Спектр</button>
-    <button type="button" role="tab" data-sv-color-tab="sliders" aria-selected="false">Бегунки</button>
-   </div>
-   <div class="sv-ink-views">
-    <div data-sv-color-view="grid" role="tabpanel">
-     <div class="sv-ink-spectrum-grid" aria-label="Палитра оттенков">
-      ${INK_GRID.map(color=>`<button type="button" data-sv-pen-color="${color}" aria-label="Цвет ${color}" style="--sv-ink-choice:${color}"></button>`).join('')}
-     </div>
-    </div>
-    <div data-sv-color-view="spectrum" role="tabpanel" hidden>
-     <div class="sv-ink-spectrum" role="slider" tabindex="0" aria-label="Выбор оттенка и насыщенности" aria-valuemin="0" aria-valuemax="360" aria-valuenow="0">
-      <span class="sv-ink-spectrum-thumb" aria-hidden="true"></span>
-     </div>
-     <p class="sv-ink-spectrum-caption">Проведи пальцем по спектру, чтобы выбрать оттенок.</p>
-    </div>
-    <div data-sv-color-view="sliders" role="tabpanel" hidden>
-     <label class="sv-ink-slider sv-ink-slider-h">Тон <input type="range" min="0" max="360" value="0" data-sv-color-slider="h"></label>
-     <label class="sv-ink-slider sv-ink-slider-s">Насыщенность <input type="range" min="0" max="100" value="0" data-sv-color-slider="s"></label>
-     <label class="sv-ink-slider sv-ink-slider-v">Яркость <input type="range" min="0" max="100" value="0" data-sv-color-slider="v"></label>
-     <label class="sv-ink-hex-label">HEX <input type="text" data-sv-color-hex maxlength="7" autocapitalize="characters" spellcheck="false" value="#171E29" aria-label="Шестнадцатеричный код цвета"></label>
-    </div>
-   </div>
-   <footer class="sv-ink-palette-footer">
-    <span class="sv-ink-current" aria-label="Выбранный цвет"></span>
-    <div class="sv-ink-quick-swatches">
-     ${QUICK_INK_COLORS.map(([value,name])=>`<button type="button" data-sv-pen-color="${value}" aria-label="${name}" style="--sv-ink-choice:${value}"><span aria-hidden="true"></span></button>`).join('')}
-     <label class="sv-ink-more-color" title="Другой цвет"><span aria-hidden="true">+</span><input type="color" data-sv-pen-custom-color value="#171e29" aria-label="Другой цвет"></label>
-    </div>
-   </footer>
-  </div>`;
+  <strong>Толщина линии</strong><div class="sv-smart-ink-width-options">${INK_WIDTHS.map(width=>`<button type="button" data-sv-pen-width="${width}" aria-label="${width===3?'Тонкая':width===5?'Средняя':'Широкая'} линия"><i style="height:${width===3?1:width===5?2:3.5}px"></i></button>`).join('')}</div></div>`;
  dlg.append(inkPicker);
+ // Let Safari on iPhone and Chrome on Android present THEIR own color picker.
+ // Keep the native input mounted and focusable by browser picker APIs.
+ const nativeColorPicker=document.createElement('input');
+ nativeColorPicker.type='color';nativeColorPicker.className='sv-smart-ink-native-color';
+ nativeColorPicker.setAttribute('aria-label','Выбрать цвет пера');
+ nativeColorPicker.value=penColor;
+ dlg.append(nativeColorPicker);
  const closeInkPicker=()=>{
   inkPicker.hidden=true;
   inkWidthBtn.setAttribute('aria-expanded','false');inkColorBtn.setAttribute('aria-expanded','false');
@@ -226,21 +162,7 @@
  const syncInkPicker=()=>{
   inkColorBtn.style.setProperty('--sv-ink-color',penColor);
   inkPicker.querySelectorAll('[data-sv-pen-width]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.svPenWidth)===penWidth)));
-  inkPicker.querySelectorAll('[data-sv-pen-color]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.svPenColor===penColor)));
-  inkPicker.querySelector('[data-sv-pen-custom-color]').value=penColor;
-  const [h,s,v]=hexToHsv(penColor),sheet=inkPicker.querySelector('[data-sv-ink-picker="color"]');
-  sheet.style.setProperty('--sv-picker-color',penColor);
-  sheet.style.setProperty('--sv-picker-hue',hsvToHex(h,1,1));
-  sheet.querySelector('.sv-ink-current').style.backgroundColor=penColor;
-  sheet.querySelector('[data-sv-color-hex]').value=penColor.toUpperCase();
-  sheet.querySelectorAll('[data-sv-color-slider]').forEach(input=>{
-   input.value=({h,s,v})[input.dataset.svColorSlider];
-  });
-  const thumb=sheet.querySelector('.sv-ink-spectrum-thumb');
-  const posY=s<100?(s/100)*50:50+(100-v)/2;
-  thumb.style.left=(h/360*100)+'%';
-  thumb.style.top=posY+'%';
-  sheet.querySelector('.sv-ink-spectrum').setAttribute('aria-valuenow',String(h));
+  nativeColorPicker.value=penColor;
  };
  const syncPaper=()=>{
   dlg.dataset.svPaperStyle=paperStyle;
@@ -275,17 +197,25 @@
  };
  const toggleInkPicker=kind=>{
   closePaper();closeVoiceMenu();if(!sayviPanel.hidden)closeSayvi();
-  const opening=inkPicker.hidden||inkPicker.dataset.kind!==kind;
-  inkPicker.dataset.kind=kind;inkPicker.hidden=!opening;
-  inkPicker.querySelectorAll('[data-sv-ink-picker]').forEach(panel=>{
-   panel.hidden=panel.dataset.svInkPicker!==kind;
-  });
-  inkWidthBtn.setAttribute('aria-expanded',String(opening&&kind==='width'));
-  inkColorBtn.setAttribute('aria-expanded',String(opening&&kind==='color'));
+  const opening=inkPicker.hidden;
+  inkPicker.dataset.kind='width';inkPicker.hidden=!opening;
+  inkPicker.querySelectorAll('[data-sv-ink-picker]').forEach(panel=>{panel.hidden=!opening;});
+  inkWidthBtn.setAttribute('aria-expanded',String(opening));
+  inkColorBtn.setAttribute('aria-expanded','false');
   syncInkPicker();
  };
+ const openSystemColors=()=>{
+  closePaper();closeInkPicker();closeVoiceMenu();
+  if(!sayviPanel.hidden)closeSayvi();
+  nativeColorPicker.value=penColor;
+  // Must run in the same real tap for Apple/Android native picker permission.
+  try{
+   if(typeof nativeColorPicker.showPicker==='function')nativeColorPicker.showPicker();
+   else nativeColorPicker.click();
+  }catch(error){nativeColorPicker.click();}
+ };
  inkWidthBtn.addEventListener('click',()=>toggleInkPicker('width'));
- inkColorBtn.addEventListener('click',()=>toggleInkPicker('color'));
+ inkColorBtn.addEventListener('click',openSystemColors);
  inkPicker.querySelectorAll('[data-sv-pen-width]').forEach(button=>button.addEventListener('click',()=>{
   const next=Number(button.dataset.svPenWidth);
   if(!INK_WIDTHS.includes(next))return;
@@ -294,82 +224,12 @@
  }));
  function selectInkColor(value,persist=true){
   const next=validColor(value);if(!next)return;
-  penColor=next;if(mode!=='pen')setMode('pen');
+  penColor=next;
   syncInkPicker();
   if(persist&&strokes.length)save();
  }
- inkPicker.querySelectorAll('[data-sv-pen-color]').forEach(button=>
-  button.addEventListener('click',()=>selectInkColor(button.dataset.svPenColor)));
- inkPicker.querySelector('[data-sv-pen-custom-color]').addEventListener('change',event=>selectInkColor(event.target.value));
- inkPicker.querySelector('[data-sv-color-close]').addEventListener('click',closeInkPicker);
- inkPicker.querySelector('[data-sv-color-eyedropper]').addEventListener('click',async()=>{
-  if(typeof window.EyeDropper==='function'){
-   try{
-    const picked=await new window.EyeDropper().open();
-    if(picked?.sRGBHex)selectInkColor(picked.sRGBHex);
-   }catch(error){if(error?.name!=='AbortError')report('Пипетка недоступна на этом устройстве.')}
-  }else{
-   inkPicker.querySelector('[data-sv-pen-custom-color]').click();
-  }
- });
- const changeColorTab=tab=>{
-  inkPicker.querySelectorAll('[data-sv-color-tab]').forEach(button=>
-   button.setAttribute('aria-selected',String(button.dataset.svColorTab===tab)));
-  inkPicker.querySelectorAll('[data-sv-color-view]').forEach(panel=>
-   panel.hidden=panel.dataset.svColorView!==tab);
- };
- inkPicker.querySelectorAll('[data-sv-color-tab]').forEach(button=>
-  button.addEventListener('click',()=>changeColorTab(button.dataset.svColorTab)));
- const spectrum=inkPicker.querySelector('.sv-ink-spectrum');
- const pickSpectrum=event=>{
-  const rect=spectrum.getBoundingClientRect();
-  if(!rect.width||!rect.height)return;
-  const x=Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width));
-  const y=Math.max(0,Math.min(1,(event.clientY-rect.top)/rect.height));
-  selectInkColor(hsvToHex(x*360,Math.min(1,y*2),Math.min(1,(1-y)*2)),false);
- };
- let spectrumDragging=false;
- spectrum.addEventListener('pointerdown',event=>{
-  if(event.pointerType==='mouse'&&event.button!==0)return;
-  event.preventDefault();spectrumDragging=true;
-  try{spectrum.setPointerCapture(event.pointerId)}catch{}
-  pickSpectrum(event);
- });
- spectrum.addEventListener('pointermove',event=>{
-  if(!spectrumDragging)return;
-  event.preventDefault();pickSpectrum(event);
- });
- const finishSpectrum=()=>{
-  if(!spectrumDragging)return;
-  spectrumDragging=false;if(strokes.length)save();
- };
- spectrum.addEventListener('pointerup',finishSpectrum);
- spectrum.addEventListener('pointercancel',finishSpectrum);
- spectrum.addEventListener('keydown',event=>{
-  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
-  event.preventDefault();
-  let [h,s,v]=hexToHsv(penColor);
-  if(event.key==='ArrowLeft')h=Math.max(0,h-5);
-  if(event.key==='ArrowRight')h=Math.min(360,h+5);
-  if(event.key==='ArrowUp')v=Math.min(100,v+5);
-  if(event.key==='ArrowDown')v=Math.max(0,v-5);
-  selectInkColor(hsvToHex(h,s/100,v/100));
- });
- const sliders=inkPicker.querySelectorAll('[data-sv-color-slider]');
- const fromSliders=persist=>{
-  const vals={};sliders.forEach(input=>{vals[input.dataset.svColorSlider]=Number(input.value)});
-  selectInkColor(hsvToHex(vals.h,vals.s/100,vals.v/100),persist);
- };
- sliders.forEach(input=>{
-  input.addEventListener('input',()=>fromSliders(false));
-  input.addEventListener('change',()=>fromSliders(true));
- });
- const hexField=inkPicker.querySelector('[data-sv-color-hex]');
- hexField.addEventListener('change',()=>{
-  const value=hexField.value.trim();
-  selectInkColor(/^#[0-9a-f]{6}$/i.test(value)?value:
-   /^[0-9a-f]{6}$/i.test(value)?'#'+value:penColor);
- });
+ nativeColorPicker.addEventListener('input',event=>selectInkColor(event.target.value,false));
+ nativeColorPicker.addEventListener('change',event=>selectInkColor(event.target.value,true));
  function selectPaper(next){
   if(!PAPER_STYLES.has(next))return;
   if(next===paperStyle){closePaper();return}
