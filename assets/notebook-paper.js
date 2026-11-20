@@ -835,6 +835,7 @@ dialog.addEventListener('keydown',event=>{
 /* Color picker: store an allowlisted color per stroke. Old notes without
    a color still render exactly as before. Eraser behavior is unchanged. */
 const colorTrigger=$('notePaperColorTrigger');
+const nativeColorInput=$('notePaperNativeColor');
 const colorMenu=$('notePaperColorMenu');
 const colorDot=$('notePaperColorDot');
 const colorChoices=Array.from(dialog.querySelectorAll('[data-paper-color]'));
@@ -847,6 +848,7 @@ function updateGradientEditor(){
  if(gradientPreview)gradientPreview.style.setProperty('--sv-gradient-preview','linear-gradient(115deg,'+a+','+b+')');
 }
 function syncColorMenu(){
+ if(nativeColorInput&&!activeGradient)nativeColorInput.value=activeColor;
  colorDot.style.setProperty('--sv-active-ink',activeGradient?'linear-gradient(115deg,'+activeGradient[0]+','+activeGradient[1]+')':'conic-gradient(#e73b39,#ffb525,#2fb35f,#14b4cd,#6650d2,#bd397b,#e73b39)');
  colorDot.style.setProperty('--sv-selected-ink',activeGradient?'linear-gradient(115deg,'+activeGradient[0]+','+activeGradient[1]+')':activeColor);
  colorChoices.forEach(button=>button.setAttribute('aria-pressed',String(!activeGradient&&button.dataset.paperColor===activeColor)));
@@ -866,6 +868,20 @@ colorTrigger.addEventListener('click',()=>{
  colorMenu.hidden=!opening;
  colorTrigger.setAttribute('aria-expanded',String(opening));
  if(opening)syncColorMenu();
+});
+nativeColorInput?.addEventListener('input',event=>{
+ const hex=String(event.target.value||'').toLowerCase();
+ if(!validInkColor(hex))return;
+ activeColor=hex;activeGradient=null;
+ if(currentTool()==='eraser')selectTool('pen');
+ syncColorMenu();
+});
+nativeColorInput?.addEventListener('change',event=>{
+ const hex=String(event.target.value||'').toLowerCase();
+ if(!validInkColor(hex))return;
+ activeColor=hex;activeGradient=null;
+ if(currentTool()==='eraser')selectTool('pen');
+ syncColorMenu();
 });
 colorChoices.forEach(button=>button.addEventListener('click',()=>{
  if(!COLORS.includes(button.dataset.paperColor))return;
