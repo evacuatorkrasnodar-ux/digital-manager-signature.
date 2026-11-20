@@ -15,7 +15,7 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=29">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=9">\s*<\/body>/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=31">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=9">\s*<\/body>/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
  assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
@@ -110,7 +110,7 @@ test('software keyboard switches dock to one narrow 42px full-width capsule',()=
 
 test('a real note text focus leaves pen mode before the keyboard accessory appears',()=>{
  const smart=fs.readFileSync(path.join(root,'assets/seyveo-smart-note-ink.js'),'utf8');
- assert.match(html,/seyveo-smart-note-ink\.js\?v=15/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=16/);
  const start=smart.indexOf(" dlg.addEventListener('focusin',event=>{");
  const end=smart.indexOf('\n function load(id){',start);
  assert.ok(start>=0&&end>start);
