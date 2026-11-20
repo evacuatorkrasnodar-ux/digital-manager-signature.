@@ -9,7 +9,7 @@ const css=read('assets/seyveo-notebook-editor-v3.css');
 const script=read('assets/seyveo-smart-note-ink.js');
 
 test('single Smart Note has scrollable keyboard toolbar with partial next action visible',()=>{
- assert.match(html,/seyveo-smart-note-ink\.js\?v=1/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=2/);
  assert.match(css,/\.sv-note-tools-compact\{[\s\S]*?display:flex!important;grid-template-columns:none!important;/);
  assert.match(css,/overflow-x:auto!important;overflow-y:hidden!important/);
  assert.match(css,/scrollbar-width:none/);
@@ -21,7 +21,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=5/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=6/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -68,4 +68,28 @@ test('popovers keep their original nodes and work outside clipped toolbar',()=>{
  assert.match(script,/for\(const id of \['svNoteAttachmentMenu','svNoteFormatMenu'\]\)/);
  assert.match(script,/dlg\.append\(menu\)/);
  assert.match(css,/> :is\(#svNoteAttachmentMenu,#svNoteFormatMenu\):not\(\[hidden\]\)/);
+});
+
+test('resting dock never scrolls: Aa, pen, Sayvi and eraser stay visible',()=>{
+ assert.match(css,/:not\(\.sv-note-keyboard-open\)[\s\S]*?grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important/);
+ assert.match(css,/:not\(\.sv-note-keyboard-open\)[\s\S]*?overflow:hidden!important;scroll-snap-type:none!important/);
+ for(const action of ['text','sayvi','eraser'])assert.match(css,new RegExp('data-sv-smart-tool="'+action+'"'));
+ assert.match(css,/data-note-tool="draw"/);
+ assert.match(script,/bar\.insertBefore\(draw,check\)/);
+ assert.match(script,/bar\.insertBefore\(sayviBtn,check\)/);
+ assert.match(script,/bar\.insertBefore\(eraserBtn,check\)/);
+ assert.match(css,/\.sv-note-keyboard-open[\s\S]*?width:calc\(100vw - 28px\)!important/);
+});
+
+test('Sayvi provides in-note edit actions, never redirects to chat',()=>{
+ assert.match(script,/sayviPanel\.id='svSmartNoteSayviPanel'/);
+ assert.match(script,/data-sv-sayvi-action="recognize"/);
+ assert.match(script,/data-sv-sayvi-action="correct"/);
+ assert.match(script,/data-sv-sayvi-action="smooth"/);
+ assert.match(script,/data-sv-sayvi-action="format"/);
+ assert.match(script,/createWorker\(\['rus','eng'\]/);
+ assert.match(script,/fetch\('\/api\/seyveo-ask'/);
+ assert.match(script,/sayviApply\.addEventListener\('click'/);
+ assert.doesNotMatch(script,/chat\.open\(|location\.assign\(|note-handoff\.v1/);
+ assert.match(css,/#svSmartNoteSayviPanel\.sv-smart-sayvi-panel:not\(\[hidden\]\)/);
 });

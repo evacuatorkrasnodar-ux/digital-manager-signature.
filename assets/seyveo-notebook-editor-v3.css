@@ -498,3 +498,117 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
  :is(#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu)>button:is(:hover,:active){
  background:rgba(116,130,143,.095)!important;
 }
+
+/* The resting dock is fixed: Aa, pen, Sayvi and eraser. Only the thin
+   keyboard accessory is horizontally scrollable. No duplicate dock. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ justify-content:stretch!important;justify-items:center!important;
+ overflow:hidden!important;scroll-snap-type:none!important;
+ touch-action:manipulation!important;padding:0 8px!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tools-compact>button:not([hidden]):not(:is([data-sv-smart-tool="text"],[data-note-tool="draw"],[data-sv-smart-tool="sayvi"],[data-sv-smart-tool="eraser"])){
+ display:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tools-compact>button:is([data-sv-smart-tool="text"],[data-note-tool="draw"],[data-sv-smart-tool="sayvi"],[data-sv-smart-tool="eraser"]){
+ box-sizing:border-box!important;justify-self:center!important;
+ width:48px!important;min-width:48px!important;max-width:48px!important;
+ height:48px!important;min-height:48px!important;max-height:48px!important;
+ flex:none!important;scroll-snap-align:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tools-compact>button .sv-smart-sayvi-icon{
+ display:block!important;width:23px!important;height:23px!important;
+ color:var(--note-ink)!important;transform:none!important;
+}
+
+/* Sayvi edits IN the note. An action tray, not a second chat or a new page. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartNoteSayviPanel.sv-smart-sayvi-panel:not([hidden]){
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ position:absolute!important;z-index:85!important;
+ left:16px!important;right:16px!important;top:auto!important;
+ bottom:calc(74px + env(safe-area-inset-bottom,0px))!important;
+ width:auto!important;max-height:min(68dvh,500px)!important;overflow-y:auto!important;
+ gap:9px!important;padding:13px!important;margin:0!important;
+ border:var(--sv-dock-pearl-border,.7px solid rgba(255,255,255,.28))!important;
+ border-radius:21px!important;outline:0!important;
+ background:rgba(247,248,250,.97)!important;
+ box-shadow:var(--sv-dock-pearl-shadow,0 0 0 .5px rgba(164,170,184,.16)),0 12px 30px rgba(46,57,70,.16)!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-head{
+ display:flex!important;align-items:center!important;gap:9px!important;
+ min-height:30px!important;flex:0 0 auto!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-head>.sv-sayvi-symbol{width:24px!important;height:24px!important;color:var(--note-ink)!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-head>strong{flex:1!important;font:600 15px/1.2 -apple-system,BlinkMacSystemFont,sans-serif!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-head>button{
+ display:grid!important;place-items:center!important;
+ width:32px!important;height:32px!important;min-width:32px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+ background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10))!important;
+ box-shadow:var(--sv-dock-pearl-shadow)!important;color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-head>button svg{width:17px!important;height:17px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.75!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(.sv-smart-sayvi-intro,.sv-smart-sayvi-status){
+ margin:0!important;padding:0!important;font:400 12.5px/1.4 -apple-system,BlinkMacSystemFont,sans-serif!important;
+ color:#56616b!important;overflow-wrap:anywhere!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-actions{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:7px!important;margin:0!important;padding:0!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-actions>button{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ gap:8px!important;min-width:0!important;min-height:44px!important;height:44px!important;
+ margin:0!important;padding:0 9px!important;
+ border:var(--sv-dock-pearl-border,.7px solid rgba(255,255,255,.28))!important;border-radius:13px!important;
+ background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10))!important;
+ box-shadow:var(--sv-dock-pearl-shadow,0 0 0 .5px rgba(164,170,184,.16))!important;
+ color:var(--note-ink)!important;
+ font:500 13px/1.1 -apple-system,BlinkMacSystemFont,sans-serif!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-actions>button svg{flex:0 0 19px!important;width:19px!important;height:19px!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(.sv-smart-sayvi-preview-text,.sv-smart-sayvi-preview-ink){
+ box-sizing:border-box!important;display:block!important;
+ width:100%!important;max-width:100%!important;margin:0!important;padding:9px!important;
+ border:1px solid rgba(101,115,130,.13)!important;border-radius:12px!important;
+ background:rgba(255,255,255,.74)!important;box-shadow:none!important;
+ color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-preview-text{min-height:95px!important;max-height:175px!important;resize:vertical!important;font:400 14px/1.45 -apple-system,BlinkMacSystemFont,sans-serif!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-preview-ink{height:150px!important;object-fit:contain!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-sayvi-apply{
+ display:block!important;align-self:stretch!important;min-height:40px!important;
+ border:0!important;border-radius:13px!important;padding:8px 12px!important;
+ background:#c69c09!important;color:#fff!important;
+ font:600 14px/1.2 -apple-system,BlinkMacSystemFont,sans-serif!important;
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.23)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartNoteSayviPanel.sv-smart-sayvi-panel [hidden]{display:none!important}
+@media(max-width:699px){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  #svSmartNoteSayviPanel.sv-smart-sayvi-panel:not([hidden]){
+  bottom:52px!important;max-height:min(62dvh,440px)!important;
+ }
+}
