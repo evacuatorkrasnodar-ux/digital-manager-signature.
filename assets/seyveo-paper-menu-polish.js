@@ -117,9 +117,7 @@
 
  if(colorMenu){
   const title=colorMenu.querySelector('.sv-gradient-head strong');
-  if(title)title.textContent='Палитра';
-  const captions=[...colorMenu.querySelectorAll('.sv-gradient-section-caption')];
-  const solid=colorMenu.querySelector('.sv-gradient-solid-grid');
+  if(title)title.textContent='Градиенты';
   const presets=colorMenu.querySelector('.sv-gradient-presets');
   const custom=colorMenu.querySelector('details.sv-gradient-custom');
   if(custom){
@@ -162,18 +160,6 @@
    const colors=(button.dataset.paperGradient||'').split(',');
    const chip=button.querySelector('.sv-gradient-chip');
    if(chip&&colors.length===2)chip.style.setProperty('background-image','linear-gradient(115deg,'+colors[0]+','+colors[1]+')','important');
-  });
-  const view=buildSegments(colorMenu,[
-   {key:'colors',label:'Цвета',nodes:[captions[0],solid]},
-   {key:'gradients',label:'Градиенты',nodes:[captions[1],presets,custom]}
-  ],'colors');
-  colorMenu.querySelector('#notePaperColorMenu-gradients-tab')?.addEventListener('click',()=>{
-   if(custom)custom.open=false;
-   colorMenu.classList.remove('sv-gradient-editing');
-  });
-  document.getElementById('notePaperColorTrigger')?.addEventListener('click',()=>{
-   if(colorMenu.hidden||!view)return;
-   view.activate(colorMenu.querySelector('[data-paper-gradient][aria-pressed="true"]')?'gradients':'colors');
   });
  }
 
