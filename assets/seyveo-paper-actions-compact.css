@@ -21,11 +21,7 @@
 #notesDialog button.sv-note-personal-ink:focus-visible{
  outline:2px solid #267ee0;outline-offset:2px;
 }
-@media (prefers-color-scheme:dark){
- #notesDialog:not(.sv-paper-light-surface) button.sv-note-personal-ink{
-  border-color:rgba(255,255,255,.12);background:rgba(55,57,61,.9);color:#f5f5f7;
- }
-}
+/* The Notebook's own explicit theme controls its colors, not the OS. */
 /* Retired commands remain in the DOM for legacy editing handlers and Sayvi
    dispatch but must never take visual or keyboard room in Drawing. */
 #notePaperDialog #notePaperSettingsMenu [data-sv-retired="true"]{
@@ -47,4 +43,19 @@ html body #notePaperDialog.sv-paper-studio[open]
 html body #notePaperDialog.sv-paper-studio[open]
  #notePaperSettingsMenu [data-sv-menu-panel="actions"] #notePaperColorTrigger span{
  display:block!important;font:inherit!important;white-space:nowrap!important;
+}
+
+/* Photo actions are contextual, inside the existing lightweight edit strip. */
+#notePaperDialog .sv-paper-photo-hint button.sv-photo-remove{
+ display:grid;place-items:center;flex:0 0 32px;
+ width:32px;min-width:32px;max-width:32px;
+ height:30px;min-height:30px;padding:0;margin:0;
+ color:#d34a49;border-radius:8px;
+}
+#notePaperDialog .sv-paper-photo-hint .sv-photo-remove svg{
+ width:17px;height:17px;display:block;pointer-events:none;
+}
+@media (max-width:420px){
+ #notePaperDialog .sv-paper-photo-hint{gap:6px;padding:4px 5px 4px 9px}
+ #notePaperDialog .sv-paper-photo-hint span{max-width:128px;font-size:10px}
 }
