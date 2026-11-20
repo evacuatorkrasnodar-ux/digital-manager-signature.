@@ -249,12 +249,47 @@
   const title=document.createElement('strong');title.textContent=audioDisplayName(item);
   title.title=item.name||'';
   const waveform=document.createElement('div');waveform.className='sv-note-audio-wave';
-  waveform.setAttribute('aria-hidden','true');
-  [6,10,15,9,17,21,13,19,16,23,16,19,13,21,17,9,15,10,6].forEach(height=>{
-   const bar=document.createElement('i');bar.style.height=height+'px';waveform.append(bar);
+  waveform.setAttribute('role','slider');waveform.tabIndex=0;
+  waveform.setAttribute('aria-label','Перемотать голосовую запись');
+  waveform.setAttribute('aria-valuemin','0');waveform.setAttribute('aria-valuemax','100');
+  waveform.setAttribute('aria-valuenow','0');
+  [5,9,13,8,15,18,11,21,14,17,10,22,16,20,13,23,17,26,17,23,13,20,16,22,10,17,14,21,11,18,15,8,13,9,5].forEach((height,index)=>{
+   const bar=document.createElement('i');bar.style.height=height+'px';
+   bar.style.setProperty('--sv-wave-duration',(0.58+(index*7%9)*.065)+'s');
+   bar.style.setProperty('--sv-wave-delay',(-((index*11)%17)*.083)+'s');
+   waveform.append(bar);
   });
   const time=document.createElement('small');time.textContent=durationLabel(item.durationMs||0);
   detail.append(title,waveform);card.append(play,detail,time);
+  const duration=()=>Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:(item.durationMs||0)/1000;
+  const seek=ratio=>{
+   const total=duration();
+   if(total>0)audio.currentTime=Math.max(0,Math.min(total,ratio*total));
+  };
+  const seekAt=event=>{
+   const box=waveform.getBoundingClientRect();
+   if(box.width>0)seek((event.clientX-box.left)/box.width);
+  };
+  waveform.addEventListener('click',seekAt);
+  let scrubbing=false;
+  waveform.addEventListener('pointerdown',event=>{
+   if(event.pointerType==='mouse'&&event.button!==0)return;
+   scrubbing=true;
+   if(waveform.setPointerCapture)waveform.setPointerCapture(event.pointerId);
+   seekAt(event);
+  });
+  waveform.addEventListener('pointermove',event=>{if(scrubbing)seekAt(event);});
+  for(const kind of ['pointerup','pointercancel','lostpointercapture']){
+   waveform.addEventListener(kind,()=>{scrubbing=false;});
+  }
+  waveform.addEventListener('keydown',event=>{
+   if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+   event.preventDefault();
+   const total=duration();
+   if(event.key==='Home')seek(0);
+   else if(event.key==='End')seek(1);
+   else if(total>0)seek((audio.currentTime+(event.key==='ArrowRight'?1:-1))/total);
+  });
   play.addEventListener('click',async()=>{
    if(!audio.paused){audio.pause();return;}
    for(const other of playingAudio)if(other!==audio)other.pause();
@@ -268,8 +303,13 @@
    if(playing)playingAudio.add(audio);else playingAudio.delete(audio);
    const total=Number.isFinite(audio.duration)?audio.duration*1000:item.durationMs||0;
    time.textContent=durationLabel(audio.currentTime*1000)+' / '+durationLabel(total);
+   const percent=total>0?Math.max(0,Math.min(1,audio.currentTime*1000/total)):0;
+   const heard=Math.round(percent*waveform.children.length);
+   for(let i=0;i<waveform.children.length;i++)waveform.children[i].classList.toggle('sv-note-audio-heard',i<heard);
+   waveform.setAttribute('aria-valuenow',String(Math.round(percent*100)));
+   waveform.setAttribute('aria-valuetext',durationLabel(audio.currentTime*1000)+' из '+durationLabel(total));
   };
-  for(const kind of ['play','pause','ended','timeupdate','loadedmetadata'])audio.addEventListener(kind,sync);
+  for(const kind of ['play','pause','ended','timeupdate','loadedmetadata','seeked'])audio.addEventListener(kind,sync);
   if(canRemove){
    const toText=document.createElement('button');toText.type='button';
    toText.className='sv-note-audio-text';toText.textContent='Распознать';
