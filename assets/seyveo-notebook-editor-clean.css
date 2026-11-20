@@ -84,3 +84,32 @@ html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
  outline:2px solid rgba(52,101,155,.65)!important;
  outline-offset:2px!important;
 }
+
+/* Legacy UI selectors carried extra :root / ID / class specificity.
+   These are the final, explicit frame-free native elements. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteUndo.sv-note-nav-circle){
+ border:0!important;
+ box-shadow:none!important;
+ outline:0!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-nav-actions .sv-note-action-pair{
+ border:0!important;
+ box-shadow:none!important;
+ outline:0!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-document-capsule input#svNoteTitle.sv-note-title-input{
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+}

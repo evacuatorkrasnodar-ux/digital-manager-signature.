@@ -82,13 +82,14 @@ test('header controls share one top anchor and Share/More render as one capsule'
 });
 
 test('clean notebook layout is last-loaded and strips all permanent inner frames',()=>{
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-clean\.css\?v=1">\s*<\/body>/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-clean\.css\?v=2">\s*<\/body>/);
  assert.match(cleanStyles,/dialog#noteReviewDialog\.note-review-dialog\[open\]\{[\s\S]*?border:0!important;border-radius:0!important;[\s\S]*?outline:0!important;box-shadow:none!important;/);
  assert.match(cleanStyles,/dialog#noteReviewDialog\.note-review-dialog\[open\]::backdrop\{\s*background:#fff!important;\s*-webkit-backdrop-filter:none!important;backdrop-filter:none!important;/);
  for(const key of ['.sv-note-document-capsule','.sv-note-title-input','#noteReviewText','button#noteReviewBack','button#svNoteUndo','button#svNoteShare','button#svNoteMore','.sv-note-action-pair','.sv-note-tool-row.sv-shared-dock::before','.sv-note-tool-row.sv-shared-dock::after']){
   assert.ok(cleanStyles.includes(key),'clean skin covers '+key);
  }
  assert.match(cleanStyles,/\.sv-note-nav-actions \.sv-note-action-pair > :is\(button#svNoteShare,button#svNoteMore\)\{\s*border:0!important;/);
+ assert.match(cleanStyles,/html:root\[data-theme="light"\] body dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\][\s\S]*?button#noteReviewBack\.sv-note-back-arrow/);
 });
 
 test('keyboard state follows viewport shrink and recovers without focus-only jumps',()=>{
