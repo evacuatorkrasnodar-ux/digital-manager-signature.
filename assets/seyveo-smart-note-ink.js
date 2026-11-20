@@ -20,6 +20,9 @@
  const sayviBtn=create('sayvi','Сэйви — помочь с заметкой',sayviMark);
  const tableBtn=create('table','Вставить таблицу',icon('<rect x="3.1" y="4.5" width="17.8" height="15" rx="1.4"/><path d="M3.1 10h17.8M3.1 15h17.8M10 4.5v15M16 4.5v15"/>'));
  const eraserBtn=create('eraser','Стереть рукопись',icon('<path d="m4.5 14 8.7-8.7a2.3 2.3 0 0 1 3.2 0l3.1 3.1a2.3 2.3 0 0 1 0 3.2L11.3 20H8.2zM9.4 9.1l7.1 7.1M12 20h8.5"/>'));
+ const paperBtn=create('paper','Стиль бумаги',icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>'));
+ paperBtn.setAttribute('aria-controls','svSmartNotePaperPanel');
+ paperBtn.setAttribute('aria-expanded','false');
  const moreBtn=create('more','Дополнительные действия',icon('<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>'));
  const check=bar.querySelector('[data-note-tool="checklist"]');
  const attach=bar.querySelector('[data-note-tool="attachment"]');
@@ -34,6 +37,7 @@
  bar.insertBefore(sayviBtn,check);
  bar.insertBefore(eraserBtn,check);
  bar.insertBefore(tableBtn,bar.querySelector('[data-note-tool="heading"]'));
+ bar.insertBefore(paperBtn,bar.querySelector('[data-note-tool="heading"]'));
  bar.append(moreBtn);
  // Popovers must live outside the horizontally clipped scroller. Keep the
  // original nodes and their delegated handlers, never clone a working menu.
@@ -92,7 +96,7 @@
  </div>`;
  dlg.append(paperPanel);
  let paperStyle='plain';
- const paperTrigger=document.querySelector('#svNoteTopMenu [data-sv-note-menu="paper"]');
+ const paperTrigger=paperBtn;
  const inkTools=document.createElement('div');
  inkTools.className='sv-smart-ink-tools';inkTools.hidden=true;
  inkTools.setAttribute('role','toolbar');inkTools.setAttribute('aria-label','Инструменты рукописного ввода');
@@ -103,6 +107,9 @@
   <button type="button" data-sv-ink-tool="clear" aria-label="Очистить рукопись">${icon('<path d="M5.8 7h12.4M9.2 7V5.5h5.6V7M7.2 7.1l.7 12h8.2l.7-12M10.5 10.5v5.5M13.5 10.5v5.5"/>')}</button>`;
  dlg.append(inkTools);
  const inkEraser=inkTools.querySelector('[data-sv-ink-tool="eraser"]');
+ const inkPaperBtn=inkTools.querySelector('[data-sv-ink-tool="paper"]');
+ inkPaperBtn.setAttribute('aria-controls','svSmartNotePaperPanel');
+ inkPaperBtn.setAttribute('aria-expanded','false');
  const inkWidthBtn=inkTools.querySelector('[data-sv-ink-tool="width"]');
  const inkColorBtn=inkTools.querySelector('[data-sv-ink-tool="color"]');
  const inkClearBtn=inkTools.querySelector('[data-sv-ink-tool="clear"]');
@@ -137,12 +144,18 @@
    button.setAttribute('aria-pressed',String(button.dataset.svPaperChoice===paperStyle));
   });
  };
- const closePaper=()=>{paperPanel.hidden=true;paperTrigger?.setAttribute('aria-expanded','false')};
+ const closePaper=()=>{
+  paperPanel.hidden=true;
+  paperTrigger.setAttribute('aria-expanded','false');
+  inkPaperBtn.setAttribute('aria-expanded','false');
+ };
  const togglePaper=()=>{
   if(!sayviPanel.hidden)closeSayvi();
   closeInkPicker();
   const opening=paperPanel.hidden;
-  paperPanel.hidden=!opening;paperTrigger?.setAttribute('aria-expanded',String(opening));
+  paperPanel.hidden=!opening;
+  paperTrigger.setAttribute('aria-expanded',String(opening));
+  inkPaperBtn.setAttribute('aria-expanded',String(opening));
  };
  const toggleInkPicker=kind=>{
   closePaper();if(!sayviPanel.hidden)closeSayvi();
@@ -190,8 +203,8 @@
  }
  paperPanel.querySelectorAll('[data-sv-paper-choice]').forEach(button=>
   button.addEventListener('click',()=>selectPaper(button.dataset.svPaperChoice)));
- paperTrigger?.addEventListener('click',togglePaper);
- inkTools.querySelector('[data-sv-ink-tool="paper"]').addEventListener('click',togglePaper);
+ paperTrigger.addEventListener('click',togglePaper);
+ inkPaperBtn.addEventListener('click',togglePaper);
  inkEraser.addEventListener('click',()=>setMode(mode==='eraser'?'pen':'eraser'));
  document.addEventListener('pointerdown',event=>{
   if(!dlg.open||paperPanel.hidden||paperPanel.contains(event.target)||paperTrigger?.contains(event.target)||inkTools.contains(event.target))return;

@@ -14,7 +14,7 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=12">\s*<\/body>/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=13">\s*<\/body>/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
  assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
@@ -24,16 +24,21 @@ test('editor is one rebuilt borderless full-screen page, with no legacy inline s
  }
 });
 
-test('top navigation keeps Back, Undo, paired Share/More and golden Done',()=>{
- for(const id of ['noteReviewBack','svNoteUndo','svNoteShare','svNoteMore','svNoteDone']){
+test('top navigation keeps only Back, Undo, More and golden Done',()=>{
+ for(const id of ['noteReviewBack','svNoteUndo','svNoteMore','svNoteDone']){
   assert.match(editor,new RegExp('<button id="'+id+'"[^>]*aria-label="[^\"]+"'));
  }
- assert.match(editor,/<div class="sv-note-action-pair">[\s\S]*?id="svNoteShare"[\s\S]*?id="svNoteMore"[\s\S]*?<\/div>/);
- assert.match(css,/\.sv-note-nav-actions \.sv-note-action-pair\{[\s\S]*?grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important;/);
+ assert.doesNotMatch(editor,/id="svNoteShare"|id="svNoteSearch"|id="svNoteSearchPanel"|class="sv-note-action-pair"|id="svNotePrintTop"/);
+ assert.match(css,/\.sv-note-nav-actions :is\(button#svNoteUndo,button#svNoteMore,button#svNoteDone\)\{/);
+ assert.doesNotMatch(css,/\.sv-note-nav-actions \.sv-note-action-pair/);
  assert.match(css,/\.sv-note-nav-actions button#svNoteDone\{\s*background:#c69c09!important;color:#fff!important;/);
  assert.match(html,/\$\('svNoteDone'\)\.addEventListener\('click',closeNoteReviewSafely\)/);
  assert.match(viewportScript,/getElementById\('svNoteUndo'\)[\s\S]*?execCommand\('undo'\)/);
- assert.match(viewportScript,/getElementById\('svNoteShare'\)[\s\S]*?navigator\.share\(\{title,text\}\)/);
+ assert.doesNotMatch(viewportScript,/getElementById\('svNoteShare'\)|printCurrent/);
+ const menu=editor.split('<div id="svNoteTopMenu"')[1]?.split('</div>')[0]||'';
+ assert.deepEqual([...menu.matchAll(/data-sv-note-menu="([^"]+)"/g)].map(m=>m[1]),['copy','clear']);
+ assert.match(html,/action\('Поделиться',\(\)=>\{shareNote\(note\)\}\)/);
+ assert.match(html,/action\('Распечатать',\(\)=>\{printNote\(note\)\}\)/);
 });
 
 test('bottom uses the four original icons and a separate new-note circle',()=>{

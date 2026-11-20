@@ -2756,31 +2756,19 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <div id="svNotebookCreateTiles" class="sv-notebook-create-tiles" role="group" aria-label="Создать запись"><button id="noteModeText" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M17 7h23l8 8v36a6 6 0 0 1-6 6H17a6 6 0 0 1-6-6V13a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="M40 7v7a3 3 0 0 0 3 3h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m19 39 8-18h4l8 18M22.8 32h12.5" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 46h22M19 51h15" fill="none" stroke="currentColor" opacity=".63" stroke-width="2" stroke-linecap="round"/></svg></span><span class="paper-choice-copy"><strong>Текст</strong><small>Клавиатура и диктовка</small></span></button><button id="noteModePaper" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M15 8h27l7 7v35a6 6 0 0 1-6 6H15a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6Z" fill="rgba(255,255,255,.065)" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="M42 8v6a2 2 0 0 0 2 2h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M17 42c5-8 7-14 10-12 3 2-4 12 1 11 4-1 6-10 9-10 3 0-1 8 2 8 2 0 4-2 6-4" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/><path d="m40 23 10-10a3.4 3.4 0 0 1 5 5L45 28l-7 2Z" fill="#c9ced3" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m48 15 5 5M19 49h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".7"/></svg></span><span class="paper-choice-copy"><strong>От руки</strong><small>Пальцем или стилусом</small></span></button><button id="noteModeScan" class="paper-choice-item" type="button"><span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect x="13" y="9" width="38" height="46" rx="6" fill="rgba(255,255,255,.065)" stroke="currentColor" stroke-width="2.1"/><rect x="19" y="16" width="26" height="19" rx="3" fill="rgba(255,255,255,.09)" stroke="currentColor" stroke-width="1.8"/><circle cx="37" cy="22" r="3" fill="#d6dbe0"/><path d="m21 33 8-8 7 7 4-4 5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 41h22M21 46h17" fill="none" stroke="currentColor" opacity=".78" stroke-width="2.2" stroke-linecap="round"/><path d="M7 19v-6a5 5 0 0 1 5-5h5M57 19v-6a5 5 0 0 0-5-5h-2M7 45v6a5 5 0 0 0 5 5h5M57 45v6a5 5 0 0 1-5 5h-2" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="paper-choice-copy"><strong>Фото → текст</strong><small>Сфотографировать или выбрать файл</small></span></button></div><div id="notesList" class="sv-note-clean-list" data-list-generation="4"></div><p id="notesStatus" role="status" aria-live="polite" hidden></p></section><script src="assets/seyveo-notebook-screen.js?v=2"></script><dialog id="noteReviewDialog" class="notes-dialog note-review-dialog" aria-labelledby="noteReviewTitle">
 <button id="noteReviewBack" type="button" class="seyveo-close-control seyveo-dialog-close sv-note-back-arrow" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
  <div class="sv-note-nav-actions">
- <button id="svNoteSearch" class="sv-note-nav-circle" type="button" aria-label="Поиск заметок" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.3"/><path d="m15.2 15.2 5.1 5.1"/></svg></button>
  <button id="svNoteUndo" class="sv-note-nav-circle" type="button" aria-label="Отменить ввод" title="Отменить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.4 7.2-5 5 5 5M4.6 12.2h8.7a5.6 5.6 0 0 1 0 11.2"/></svg></button>
- <div class="sv-note-action-pair">
- <button id="svNoteShare" class="sv-note-nav-circle" type="button" aria-label="Поделиться заметкой" title="Поделиться"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M5.8 11v8.4a1.6 1.6 0 0 0 1.6 1.6h9.2a1.6 1.6 0 0 0 1.6-1.6V11"/></svg></button>
  <button id="svNoteMore" class="sv-note-nav-circle" type="button" aria-label="Действия с заметкой" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>
- </div>
  <button id="svNoteDone" class="sv-note-nav-circle" type="button" aria-label="Готово — сохранить заметку" title="Готово"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4.8 12.1 5 4.7 9.5-10"/></svg></button>
 
  </div>
 <div id="svNoteTopMenu" class="sv-note-top-menu" hidden>
  <button type="button" data-sv-note-menu="copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Копировать текст</span></button>
- <button type="button" data-sv-note-menu="notes"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="14" height="18" rx="2"/><path d="M4 7v12M10 9h6M10 13h6M10 17h4"/></svg><span>Мои записи</span></button>
- <button type="button" data-sv-note-menu="paper" aria-expanded="false" aria-controls="svSmartNotePaperPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.6"/><path d="M8.3 8h7.4M8.3 12h7.4M8.3 16h7.4"/></svg><span>Стиль бумаги</span></button>
  <button type="button" data-sv-note-menu="clear"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 15 9.7-9.7a2 2 0 0 1 2.8 0l4.2 4.2a2 2 0 0 1 0 2.8l-6.7 6.7H7.5zM9.5 19l-4-4M14 19h7"/></svg><span>Очистить текст</span></button>
- <button type="button" data-sv-note-menu="print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8V3h12v5M6 17H4V9h16v8h-2M6 14h12v7H6zM17 11.5h.01"/></svg><span>Печать заметки</span></button>
-</div>
-<div id="svNoteSearchPanel" class="sv-note-search-panel" hidden>
- <input id="svNoteSearchInput" type="search" placeholder="Найти сохранённую заметку…" aria-label="Поиск заметок">
- <div id="svNoteSearchResults" class="sv-note-search-results"></div>
 </div>
 <form id="noteReviewForm" class="sv-note-editor">
 <h2 id="noteReviewTitle" class="sv-note-visually-hidden">Новая заметка</h2>
 <label for="svNoteTitle" class="sv-note-title-label">Название заметки</label>
 <input id="svNoteTitle" class="sv-note-title-input" type="text" maxlength="120" placeholder="Название заметки" autocomplete="off">
-<button id="svNotePrintTop" type="button" aria-label="Распечатать заметку" title="Печать" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8V3h12v5M6 17H4V9h16v8h-2M6 14h12v7H6zM17 11.7h.01"/></svg><span>Печать</span></button>
 <small id="svNoteCalendarLabel" class="sv-note-calendar-label" hidden></small>
 <label for="noteReviewText" class="sv-note-label">Текст заметки</label>
 <textarea id="noteReviewText" maxlength="8000" rows="4" required placeholder="Что нужно запомнить?" spellcheck="true" autocorrect="on" autocapitalize="sentences"></textarea>
@@ -5619,56 +5607,31 @@ window.addEventListener('load',()=>{
   window.SEYVEO_NOTE_RICH?.sync();
   editable.dispatchEvent(new Event('input',{bubbles:true}));
  });
- document.getElementById('svNoteShare')?.addEventListener('click',async()=>{
-  const title=document.getElementById('svNoteTitle').value.trim()||'Заметка SEYVEO';
-  const body=field.value.trim();
-  const text=(title+'\n\n'+body).trim();
-  if(!body&&!document.getElementById('svNoteTitle').value.trim()){status('Сначала напишите заметку.');return;}
-  try{
-   if(typeof navigator.share==='function')await navigator.share({title,text});
-   else{await navigator.clipboard.writeText(text);status('Заметка скопирована — её можно отправить.');}
-  }catch(error){if(error?.name!=='AbortError')status('Не удалось поделиться заметкой.');}
- });
- const printCurrent=()=>{
-  const title=document.getElementById('svNoteTitle').value.trim();
-  const content=field.value.trim();
-  const w=window.open('','_blank');
-  if(!w){status('Разрешите всплывающие окна для печати.');return}
-  const head=w.document.createElement('h1');head.textContent=title||'Заметка';
-  const pre=w.document.createElement('pre');pre.style.cssText='font:16px/1.55 system-ui;white-space:pre-wrap;overflow-wrap:anywhere';
-  pre.textContent=content;
-  w.document.body.style.cssText='padding:28px;color:#18202a;background:white';
-  w.document.body.append(head,pre);w.focus();w.print();
- };
- 
- document.getElementById('svNotePrintTop')?.addEventListener('click',printCurrent);
  const topMenu=document.getElementById('svNoteTopMenu');
- const searchPanel=document.getElementById('svNoteSearchPanel');
- const setPanel=(which)=>{
-  const menuOpen=which==='menu'&&topMenu.hidden;
-  const searchOpen=which==='search'&&searchPanel.hidden;
-  topMenu.hidden=!menuOpen;searchPanel.hidden=!searchOpen;
-  document.getElementById('svNoteMore').setAttribute('aria-expanded',String(menuOpen));
-  document.getElementById('svNoteSearch').setAttribute('aria-expanded',String(searchOpen));
-  if(searchOpen){document.getElementById('svNoteSearchInput').focus();renderNoteSearch()}
- };
- document.getElementById('svNoteMore')?.addEventListener('click',()=>setPanel('menu'));
- document.getElementById('svNoteSearch')?.addEventListener('click',()=>setPanel('search'));
- function renderNoteSearch(){
-  const query=document.getElementById('svNoteSearchInput').value.trim().toLocaleLowerCase('ru');
-  const list=document.getElementById('svNoteSearchResults');list.replaceChildren();
-  const items=(typeof getNotes==='function'?getNotes():[]).filter(n=>!query||n.text.toLocaleLowerCase('ru').includes(query)).slice(0,12);
-  if(!items.length){const p=document.createElement('p');p.textContent='Записи не найдены';list.append(p);return}
-  for(const n of items){const b=document.createElement('button');b.type='button';b.textContent=n.text.split(String.fromCharCode(10))[0].slice(0,90)||'Заметка';b.addEventListener('click',()=>{setPanel('close');if(field.value.trim()||document.getElementById('svNoteTitle').value.trim()){if(!window.confirm('Открыть сохранённую заметку? Несохранённый текст останется без изменений только до закрытия редактора.'))return}dlg.close();if(typeof openNoteRead==='function')openNoteRead(n)});list.append(b)}
- }
- document.getElementById('svNoteSearchInput')?.addEventListener('input',renderNoteSearch);
+ const moreButton=document.getElementById('svNoteMore');
+ const closeMenu=()=>{topMenu.hidden=true;moreButton.setAttribute('aria-expanded','false')};
+ moreButton.addEventListener('click',()=>{
+  topMenu.hidden=!topMenu.hidden;
+  moreButton.setAttribute('aria-expanded',String(!topMenu.hidden));
+ });
+ document.addEventListener('pointerdown',event=>{
+  if(dlg.open&&!topMenu.hidden&&!topMenu.contains(event.target)&&!moreButton.contains(event.target))closeMenu();
+ },true);
+ dlg.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!topMenu.hidden){event.preventDefault();event.stopImmediatePropagation();closeMenu();}
+ },true);
+ dlg.addEventListener('close',closeMenu);
  topMenu?.addEventListener('click',async e=>{
   const b=e.target.closest('[data-sv-note-menu]');if(!b)return;
-  const a=b.dataset.svNoteMenu;setPanel('close');
-  if(a==='print'){printCurrent();return}
-  if(a==='copy'){try{await navigator.clipboard.writeText(field.value);status('Текст скопирован.')}catch{field.select();status('Текст выделен для копирования.')}}
-  if(a==='clear'){if(field.value&&window.confirm('Очистить текст этой заметки?')){field.value='';field.focus()}}
-  if(a==='notes'){if(field.value.trim()||document.getElementById('svNoteTitle').value.trim()){if(!window.confirm('Вернуться к списку? Несохранённые изменения могут быть потеряны.'))return}dlg.close();if(typeof openNotes==='function')openNotes()}
+  const a=b.dataset.svNoteMenu;closeMenu();
+  const rich=window.SEYVEO_NOTE_RICH;
+  const richField=rich?.isActive?.()?document.getElementById('svNoteRichEditor'):null;
+  const value=richField?.innerText??field.value;
+  if(a==='copy'){try{await navigator.clipboard.writeText(value);status('Текст скопирован.')}catch{field.select();status('Текст выделен для копирования.')}}
+  if(a==='clear'&&value&&window.confirm('Очистить текст этой заметки?')){
+   if(richField){richField.replaceChildren();richField.dispatchEvent(new Event('input',{bubbles:true}));richField.focus();}
+   else{field.value='';field.dispatchEvent(new Event('input',{bubbles:true}));field.focus();}
+  }
  });
  document.getElementById('svNoteFormatMenu')?.addEventListener('click',e=>{
   const btn=e.target.closest('[data-note-format]');if(!btn)return;
@@ -5701,7 +5664,6 @@ window.addEventListener('load',()=>{
   dlg.querySelector('.sv-note-tool-row')?.addEventListener('click',async(e)=>{
  const btn=e.target.closest('[data-note-tool]');if(!btn)return;
  const action=btn.dataset.noteTool;
- if(action==='print'){printCurrent();return}
  if(action==='attachment'){
   const menu=document.getElementById('svNoteAttachmentMenu'),format=document.getElementById('svNoteFormatMenu');
   format.hidden=true;
@@ -5777,8 +5739,8 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-paper-ai-workbench.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-handwriting-page.css?v=2">
 <script src="assets/seyveo-handwriting-page.js?v=2"></script>
-<script src="assets/seyveo-smart-note-ink.js?v=6"></script>
+<script src="assets/seyveo-smart-note-ink.js?v=7"></script>
 <script src="assets/seyveo-note-voice.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-note-voice.css?v=6">
-<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=12">
+<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=13">
 </body></html>

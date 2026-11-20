@@ -56,7 +56,7 @@ body:has(#noteReviewDialog[open]) :is(.dock,.dock-search,.floating-dock,.home-do
 }
 #noteReviewDialog[open] [hidden]{display:none!important}
 
-/* Header: the live five controls, no extra title surface. */
+/* Header: Back at left; Undo, More and Done are three equal circles at right. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow,
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-nav-actions{
  position:absolute!important;top:max(26px,env(safe-area-inset-top,0px))!important;
@@ -78,7 +78,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv
  gap:7px!important;pointer-events:auto!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-nav-actions :is(button#svNoteUndo,button#svNoteDone){
+ .sv-note-nav-actions :is(button#svNoteUndo,button#svNoteMore,button#svNoteDone){
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
  flex:0 0 44px!important;
  width:44px!important;min-width:44px!important;max-width:44px!important;
@@ -88,31 +88,11 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  background:var(--note-control)!important;color:var(--note-ink)!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-nav-actions .sv-note-action-pair{
- box-sizing:border-box!important;display:grid!important;
- grid-template-columns:repeat(2,minmax(0,1fr))!important;
- flex:0 0 84px!important;width:84px!important;height:44px!important;
- padding:1px!important;margin:0!important;
- border:0!important;border-radius:999px!important;outline:0!important;
- box-shadow:none!important;overflow:hidden!important;
- background:var(--note-control)!important;
-}
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-nav-actions .sv-note-action-pair > :is(button#svNoteShare,button#svNoteMore){
- display:grid!important;place-items:center!important;
- box-sizing:border-box!important;
- width:100%!important;min-width:0!important;max-width:none!important;
- height:42px!important;min-height:42px!important;max-height:42px!important;
- padding:0!important;margin:0!important;
- border:0!important;border-radius:0!important;outline:0!important;
- box-shadow:none!important;background:transparent!important;color:var(--note-ink)!important;
-}
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-nav-actions button#svNoteDone{
  background:#c69c09!important;color:#fff!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- :is(button#noteReviewBack,button#svNoteUndo,button#svNoteShare,button#svNoteMore,button#svNoteDone) svg{
+ :is(button#noteReviewBack,button#svNoteUndo,button#svNoteMore,button#svNoteDone) svg{
  display:block!important;width:21px!important;height:21px!important;
  fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
@@ -120,7 +100,6 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  #svNoteMore svg circle{fill:currentColor!important;stroke:none!important}
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] #svNoteSearch{display:none!important}
 
 /* Editor: a title and open writing canvas; zero nested cards. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] #noteReviewTitle.sv-note-visually-hidden{
@@ -137,7 +116,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] for
  background:transparent!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- :is(.sv-note-title-label,#svNotePrintTop,.sv-note-label,.sv-note-calendar-label){
+ :is(.sv-note-title-label,.sv-note-label,.sv-note-calendar-label){
  display:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
@@ -293,7 +272,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 
 /* Popovers stay functional; no persistent decoration on the writing canvas. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- :is(.sv-note-top-menu,.sv-note-search-panel):not([hidden]){
+ .sv-note-top-menu:not([hidden]){
  box-sizing:border-box!important;position:absolute!important;z-index:55!important;
  top:78px!important;right:20px!important;left:auto!important;
  display:grid!important;gap:3px!important;
@@ -314,7 +293,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  background:var(--note-control)!important;color:var(--note-ink)!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- :is(.sv-note-top-menu,.sv-note-search-panel,.sv-note-attachment-menu,.sv-note-format-menu) button{
+ :is(.sv-note-top-menu,.sv-note-attachment-menu,.sv-note-format-menu) button{
  min-height:35px!important;padding:7px 9px!important;
  border:0!important;border-radius:10px!important;box-shadow:none!important;
  background:transparent!important;color:var(--note-ink)!important;
@@ -438,9 +417,7 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
 /* One Silver Mist family for the editor's navigation and its keyboard dock.
    This replaces flat fillings on existing controls; it creates no new layer. */
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteUndo.sv-note-nav-circle),
-html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-nav-actions .sv-note-action-pair{
+ :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteUndo.sv-note-nav-circle,button#svNoteMore.sv-note-nav-circle){
  border:var(--sv-dock-pearl-border)!important;
  background:var(--sv-dock-pearl-bg)!important;
  box-shadow:var(--sv-dock-pearl-shadow)!important;
@@ -472,7 +449,7 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
 /* Dropdowns: an elevated, slightly denser Silver Mist surface so labels stay
    legible over a note. The shared border/inset highlights are unchanged. */
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- :is(#svNoteTopMenu.sv-note-top-menu,#svNoteSearchPanel.sv-note-search-panel):not([hidden]),
+ #svNoteTopMenu.sv-note-top-menu:not([hidden]),
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  > :is(#svNoteAttachmentMenu.sv-note-attachment-menu,#svNoteFormatMenu.sv-note-format-menu):not([hidden]){
  border:var(--sv-dock-pearl-border)!important;
@@ -525,7 +502,7 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
  :is(#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu)>button:is(:hover,:active){
  background:rgba(116,130,143,.095)!important;
 }
-/* A quieter five-row Apple-style menu: identical baselines and icon weight. */
+/* A quiet two-row Apple-style menu: identical baselines and icon weight. */
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  #svNoteTopMenu.sv-note-top-menu>button{
  grid-template-columns:20px minmax(0,1fr)!important;gap:11px!important;
@@ -558,6 +535,20 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
  width:48px!important;min-width:48px!important;max-width:48px!important;
  height:48px!important;min-height:48px!important;max-height:48px!important;
  flex:none!important;scroll-snap-align:none!important;
+}
+/* On desktop there is no rising software keyboard. Expose Paper as the fifth,
+   evenly spaced contextual tool so desktop users can still change the sheet. */
+@media (hover:hover) and (pointer:fine){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open):not(.sv-smart-inking)
+  .sv-note-bottom .sv-note-tools-compact{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ }
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open):not(.sv-smart-inking)
+  .sv-note-bottom .sv-note-tools-compact>button[data-sv-smart-tool="paper"]:not([hidden]){
+  box-sizing:border-box!important;display:grid!important;justify-self:center!important;
+  width:44px!important;min-width:44px!important;max-width:44px!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+ }
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tools-compact>button .sv-smart-sayvi-icon{
@@ -775,10 +766,8 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:has
  .sv-smart-ink-tools,
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:has(> #svNoteTopMenu:not([hidden]))
  .sv-smart-ink-tools{display:none!important}
-/* The same Paper command lives in More when typing, and in the pen palette
-   when handwriting. Never render both copies in one mode. */
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking
- #svNoteTopMenu [data-sv-note-menu="paper"]{display:none!important}
+/* Paper lives only in the contextual bottom tools: keyboard toolbar for text,
+   and thin pen palette for handwriting. It never duplicates the More menu. */
 
 /* Color and width use one light contextual popover, only on demand. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
@@ -879,8 +868,23 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  backdrop-filter:var(--sv-dock-pearl-blur)!important;
  color:var(--note-ink)!important;
 }
-/* In handwriting mode, paper choices rise from the same thin tool capsule.
-   Typing keeps the original header-menu placement. */
+/* Both writing modes open paper choices next to their contextual tool capsule. */
+@media (hover:hover) and (pointer:fine){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open):not(.sv-smart-inking)
+  #svSmartNotePaperPanel.sv-smart-paper-panel:not([hidden]){
+  top:auto!important;right:auto!important;
+  left:50%!important;bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+  transform:translateX(-50%)!important;
+  width:min(280px,calc(100vw - 36px))!important;
+ }
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open:not(.sv-smart-inking)
+ #svSmartNotePaperPanel.sv-smart-paper-panel:not([hidden]){
+ top:auto!important;right:auto!important;
+ left:50%!important;bottom:calc(54px + env(safe-area-inset-bottom,0px))!important;
+ transform:translateX(-50%)!important;
+ width:min(280px,calc(100vw - 36px))!important;
+}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
  #svSmartNotePaperPanel.sv-smart-paper-panel:not([hidden]){
  top:auto!important;right:auto!important;
