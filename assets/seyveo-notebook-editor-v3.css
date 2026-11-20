@@ -28,7 +28,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]{
  height:var(--sv-note-height,100dvh)!important;
  min-height:0!important;max-height:var(--sv-note-height,100dvh)!important;
  margin:0!important;
- padding:clamp(76px,14vh,110px) 20px max(10px,env(safe-area-inset-bottom,0px))!important;
+ padding:clamp(76px,20vh,140px) 20px max(10px,env(safe-area-inset-bottom,0px))!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;
  background:var(--note-page,#fff)!important;background-image:none!important;
@@ -112,6 +112,11 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] #svNoteSearch{display:none!important}
 
 /* Editor: a title and open writing canvas; zero nested cards. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] #noteReviewTitle.sv-note-visually-hidden{
+ position:absolute!important;width:1px!important;height:1px!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+ clip-path:inset(50%)!important;white-space:nowrap!important;
+}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] form#noteReviewForm.sv-note-editor{
  display:flex!important;flex-direction:column!important;flex:1 1 auto!important;
  min-width:0!important;min-height:0!important;
