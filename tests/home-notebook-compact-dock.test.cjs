@@ -18,7 +18,7 @@ test('Home and Notebook use one 248px Apple-like track with 60px round actions',
  assert.match(html,/seyveo-home-dock-preview\.css\?v=42/);
  assert.match(html,/seyveo-dock-active-glass\.css\?v=10/);
  assert.match(html,/seyveo-dock-active-glass\.js\?v=4/);
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=24/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=25/);
  assert.match(home,/--sv-feng-capsule:clamp\(176px,calc\(100vw[\s\S]*?- 80px\),248px\);/);
  assert.match(notes,/--note-width:clamp\(176px,calc\(100vw - var\(--note-left\) - var\(--note-left\) - 80px\),248px\);/);
  assert.match(home,/grid-template-columns:repeat\(4,minmax\(0,calc\(var\(--sv-feng-capsule\) \/ 4\)\)\) minmax\(0,1fr\) 60px!important/);
@@ -55,6 +55,27 @@ test('Notebook aligns to the Home edge and has no fifth wrapped icon or underlin
  assert.doesNotMatch(notes.slice(notes.lastIndexOf('/* Notes dock polish v18')),/button\[aria-pressed="true"\]::after\{/);
  assert.match(notes,/width:52px!important;min-width:0!important;max-width:52px!important/);
  assert.match(notes,/border:1px solid rgba\(255,255,255,\.30\)!important/);
+});
+
+test('Notebook first inset circle shares the Home dock end clearance',()=>{
+ const restingStart=notes.indexOf('/* The resting dock is fixed:');
+ const restingEnd=notes.indexOf('/* The resting capsule always has FOUR tools',restingStart);
+ assert.ok(restingStart>=0&&restingEnd>restingStart);
+ const resting=notes.slice(restingStart,restingEnd);
+ assert.match(resting,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important/);
+ assert.match(resting,/justify-items:center!important/);
+ assert.match(resting,/padding:0!important/);
+ assert.doesNotMatch(resting,/padding:0\s+8px!important/);
+ assert.match(home,/grid-template-columns:repeat\(4,minmax\(0,calc\(var\(--sv-feng-capsule\) \/ 4\)\)\)/);
+ for(const pillWidth of [176,216,248]){
+  const trackWidth=pillWidth/4;
+  const activeDiameter=pillWidth===176?44:52;
+  const homeClearance=(trackWidth-activeDiameter)/2;
+  const notebookPadding=0; // Enforced by the resting-dock CSS assertion above.
+  const notebookClearance=notebookPadding+(pillWidth-2*notebookPadding)/8-activeDiameter/2;
+  assert.equal(notebookClearance,homeClearance,`first circle matches Home at capsule width ${pillWidth}px`);
+  assert.ok(notebookClearance>=0,`pressed circle remains inside the capsule at ${pillWidth}px`);
+ }
 });
 
 test('Home inset is mathematically circular and centered in each icon track',()=>{

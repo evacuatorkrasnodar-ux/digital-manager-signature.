@@ -541,13 +541,15 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
 }
 
 /* The resting dock is fixed: Aa, pen, attachment and Sayvi. Only the thin
-   keyboard accessory is horizontally scrollable. No duplicate dock. */
+   keyboard accessory is horizontally scrollable. Match Home's four equal
+   full-width slots: inset padding pushed Aa away from the capsule's round
+   left end, while Home's first circle sits just 5px inside that end. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
  justify-content:stretch!important;justify-items:center!important;
  overflow:hidden!important;scroll-snap-type:none!important;
- touch-action:manipulation!important;padding:0 8px!important;
+ touch-action:manipulation!important;padding:0!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
  .sv-note-bottom .sv-note-tools-compact>button:not([hidden]):not(:is([data-sv-smart-tool="text"],[data-note-tool="draw"],[data-note-tool="attachment"],[data-sv-smart-tool="sayvi"])){
