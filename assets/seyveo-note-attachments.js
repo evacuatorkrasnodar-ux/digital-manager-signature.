@@ -68,6 +68,7 @@
    type:contentType,
    size:file.size,
    createdAt:Date.now(),
+   fileLastModified:Number.isFinite(file.lastModified)&&file.lastModified>946684800000&&file.lastModified<Date.now()+86400000?file.lastModified:null,
    blob:file.slice(0,file.size,contentType),
    ...(metadata.kind==='voice'?{
     kind:'voice',durationMs:Math.max(0,Math.round(metadata.durationMs||0)),
@@ -200,6 +201,19 @@
   const seconds=Math.max(0,Math.floor(milliseconds/1000));
   return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
  }
+ function audioDisplayName(item){
+  const name=String(item?.name||'').trim();
+  const stem=name.replace(/\.(?:m4a|mp3|wav|webm|ogg|opus)$/i,'').trim();
+  const unnamed=!stem||/^[\d\s._-]{8,}$/.test(stem)||
+   /^(?:audio|recording|voice|rec)[\s_-]*\d{6,}$/i.test(stem)||
+   /^Голосовая запись(?:\s+\d{1,2}:\d{2})?$/i.test(stem);
+  if(!unnamed)return name;
+  const when=Number(item?.fileLastModified)||Number(item?.createdAt);
+  const date=Number.isFinite(when)&&when>946684800000?new Date(when):new Date();
+  const day=date.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+  const time=date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  return 'Запись · '+day+', '+time;
+ }
  function appendRemove(card,item,canRemove){
   if(!canRemove)return;
   const remove=document.createElement('button');remove.type='button';
@@ -227,7 +241,8 @@
   const play=document.createElement('button');play.type='button';play.className='sv-note-audio-play';
   play.setAttribute('aria-label','Воспроизвести запись');play.textContent='▶';
   const detail=document.createElement('div');detail.className='sv-note-audio-detail';
-  const title=document.createElement('strong');title.textContent=item.imported||item.kind!=='voice'?item.name:'Голосовая запись';
+  const title=document.createElement('strong');title.textContent=audioDisplayName(item);
+  title.title=item.name||'';
   const waveform=document.createElement('div');waveform.className='sv-note-audio-wave';
   waveform.setAttribute('aria-hidden','true');
   [8,14,9,20,13,25,16,11,21,27,15,9,22,17,11,23,14,19,9,13].forEach(height=>{
