@@ -41,6 +41,19 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
  :is(button#noteReviewBack,button#svNoteDone):focus-visible{
  outline:2px solid #087df1!important;outline-offset:2px!important;
 }
+/* Navigation circles should not carry a border AND a separate outer halo. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#noteReviewBack.sv-note-back-arrow:not(:active){
+ border:0!important;
+ box-shadow:inset 0 0 0 .6px rgba(153,165,177,.13),
+   inset 0 1px 1px rgba(255,255,255,.26)!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#svNoteDone.sv-note-nav-circle:not(:active){
+ border:0!important;
+ box-shadow:inset 0 0 0 .6px rgba(144,107,7,.20),
+   inset 0 1px 1px rgba(255,255,255,.25)!important;
+}
 
 /* Aa opens three icon-only text actions in a true tiny capsule above the
    bottom dock: Undo · Copy · Clear typed text. No top-right dropdown. */
@@ -108,24 +121,34 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
  padding:6px 4px!important;
  opacity:1!important;transition:opacity .18s ease!important;
 }
-/* The side rail shares the Home dock's matte-silver fill and pearl edge.
-   Less blur is needed on ruled paper: a full 4px blur erases the fine lines,
-   while zero blur looks like clear plastic rather than frosted glass. */
+/* A single hairline is enough. The old border PLUS outer 0 0 shadow drew
+   two concentric frames around the rail and the two lower dock capsules.
+   Keep the approved matte material and one subtle inner pearl reflection. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ border:0!important;outline:0!important;
+ box-shadow:inset 0 0 0 .6px rgba(153,165,177,.13),
+   inset 0 1px 1px rgba(255,255,255,.26)!important;
+}
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
  .sv-smart-ink-tools:not([hidden]){
- border:var(--sv-dock-pearl-border)!important;
+ border:0!important;outline:0!important;
  background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10))!important;
- box-shadow:var(--sv-dock-pearl-shadow)!important;
- -webkit-backdrop-filter:blur(1.2px) saturate(100%)!important;
- backdrop-filter:blur(1.2px) saturate(100%)!important;
+ box-shadow:inset 0 0 0 .6px rgba(153,165,177,.13),
+   inset 0 1px 1px rgba(255,255,255,.26)!important;
+ -webkit-backdrop-filter:blur(2.3px) saturate(100%)!important;
+ backdrop-filter:blur(2.3px) saturate(100%)!important;
 }
 html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
  .sv-smart-ink-tools:not([hidden]){
- border:.7px solid rgba(255,255,255,.16)!important;
+ border:0!important;outline:0!important;
  background:rgba(143,150,163,.16)!important;
- box-shadow:inset 0 1px 1px rgba(255,255,255,.055),0 0 0 .45px rgba(0,0,0,.24)!important;
- -webkit-backdrop-filter:blur(1.2px) saturate(100%)!important;
- backdrop-filter:blur(1.2px) saturate(100%)!important;
+ box-shadow:inset 0 0 0 .6px rgba(255,255,255,.12),
+   inset 0 1px 1px rgba(255,255,255,.04)!important;
+ -webkit-backdrop-filter:blur(2.3px) saturate(100%)!important;
+ backdrop-filter:blur(2.3px) saturate(100%)!important;
 }
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-tools > button{
