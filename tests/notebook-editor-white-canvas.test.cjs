@@ -35,3 +35,12 @@ test('no footer sheet: editor reserves safe space and dock floats transparently 
  assert.match(css,/\.sv-note-bottom::before,[\s\S]*?\.sv-note-bottom::after\{[\s\S]*?content:none!important;display:none!important;/);
  assert.match(css,/:root\[data-theme="light"\]:has\(dialog#noteReviewDialog\[open\]\)/);
 });
+
+test('attachments occupy the note content after typing, not the bottom dock',()=>{
+ assert.match(css,/form#noteReviewForm\.sv-note-editor:has\(#svNoteAttachments:not\(\[hidden\]\)\)/);
+ assert.match(css,/flex:0 1 auto!important;[\s\S]*?field-sizing:content;/);
+ assert.match(css,/#svNoteAttachments\.sv-note-attachments:not\(\[hidden\]\)\{[\s\S]*?margin:10px 0 0!important;/);
+ assert.match(attachmentsLayout(),/editForm\.insertBefore\(editorList,editBottom\)/);
+});
+
+function attachmentsLayout(){return fs.readFileSync(path.join(root,'assets/seyveo-note-attachments.js'),'utf8')}
