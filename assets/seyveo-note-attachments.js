@@ -313,10 +313,13 @@
   for(const kind of ['play','pause','ended','timeupdate','loadedmetadata','seeked'])audio.addEventListener(kind,sync);
   if(canRemove){
    const toText=document.createElement('button');toText.type='button';
-   toText.className='sv-note-audio-text';toText.textContent='Распознать';
-   toText.title='Превратить голосовую запись в текст';
-   toText.setAttribute('aria-label','Распознать речь в текст: '+item.name);
-   toText.addEventListener('click',()=>window.SEYVEO_NOTE_VOICE?.transcribe(item));
+   const savedNote=window.SEYVEO_NOTES_API?.getNotes?.().find(note=>note.id===item.noteId);
+   const inserted=Array.isArray(savedNote?.voiceTranscriptIds)&&savedNote.voiceTranscriptIds.includes(item.id);
+   toText.className='sv-note-audio-text';toText.textContent=inserted?'В заметке':'Распознать';
+   toText.dataset.voiceState=inserted?'done':'idle';toText.disabled=inserted;
+   toText.title=inserted?'Распознанный текст уже в заметке':'Превратить голосовую запись в текст';
+   toText.setAttribute('aria-label',inserted?'Распознанный текст уже в заметке':'Распознать речь в текст: '+item.name);
+   toText.addEventListener('click',()=>window.SEYVEO_NOTE_VOICE?.transcribe(item,toText));
    controls.append(toText);
   }
   appendRemove(card,item,canRemove);
@@ -416,7 +419,7 @@
    const after=await attachmentsFor(noteId);
    setCount(noteId,after.length);
    await refreshEditor();
-   tell(inserted===1&&audioTypeFor(files[0])?'Аудиофайл сохранён. Нажми «В текст».':
+   tell(inserted===1&&audioTypeFor(files[0])?'Аудиофайл сохранён. Нажми «Распознать».':
     inserted===1?'Вложение сохранено на устройстве.':'Сохранено вложений: '+inserted+'.');
   }catch(error){
    console.warn('SEYVEO: attachment save failed',error);
