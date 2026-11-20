@@ -67,3 +67,13 @@ test('text actions open only in typing mode and close without leaving a selected
  inkMode=true;window.SEYVEO_NOTE_TEXT_ACTIONS.toggle();
  assert.equal(menu.hidden,true,'ink mode cannot show text-only actions');
 });
+
+test('color tool has a visible rainbow ring around the live selected ink color',()=>{
+ assert.match(html,/seyveo-notebook-context-actions\.css\?v=2/);
+ assert.match(script,/data-sv-ink-tool="color"[^>]*><span class="sv-smart-ink-color-preview"/);
+ assert.match(css,/\.sv-smart-ink-color-preview\{[\s\S]*?width:27px!important;[\s\S]*?height:27px!important/);
+ assert.match(css,/background:conic-gradient\(from 0deg,#d96a6b[\s\S]*?#467fc6[\s\S]*?#d96a6b 360deg\)!important/);
+ assert.match(css,/\.sv-smart-ink-color-preview::after\{[\s\S]*?inset:4\.5px!important/);
+ assert.match(css,/background:var\(--sv-ink-color,#171e29\)!important/);
+ assert.match(script,/inkColorBtn\.style\.setProperty\('--sv-ink-color',penColor\)/);
+});

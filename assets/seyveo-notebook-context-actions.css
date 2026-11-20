@@ -118,6 +118,26 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
  .sv-smart-ink-tools > button:focus-visible{
  outline:2px solid #087df1!important;outline-offset:1px!important;
 }
+
+/* A slim rainbow rim advertises the full palette. The center always shows
+   the actual selected ink color, including the default graphite black. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > button[data-sv-ink-tool="color"] > .sv-smart-ink-color-preview{
+ box-sizing:border-box!important;display:block!important;position:relative!important;
+ width:27px!important;min-width:27px!important;max-width:27px!important;
+ height:27px!important;min-height:27px!important;max-height:27px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:conic-gradient(from 0deg,#d96a6b 0deg,#d9ae50 55deg,#58ac79 115deg,#2c9fa9 175deg,#467fc6 235deg,#9b70b5 305deg,#d96a6b 360deg)!important;
+ box-shadow:0 0 0 .5px rgba(68,80,93,.12)!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > button[data-sv-ink-tool="color"] > .sv-smart-ink-color-preview::after{
+ content:""!important;display:block!important;position:absolute!important;
+ inset:4.5px!important;border:1px solid rgba(255,255,255,.84)!important;
+ border-radius:50%!important;background:var(--sv-ink-color,#171e29)!important;
+ box-shadow:0 0 0 .4px rgba(34,43,55,.12)!important;pointer-events:none!important;
+}
 @media(max-width:319px){
  html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
   .sv-smart-ink-tools:not([hidden]){width:calc(100vw - 24px)!important;padding:3px 4px!important}
