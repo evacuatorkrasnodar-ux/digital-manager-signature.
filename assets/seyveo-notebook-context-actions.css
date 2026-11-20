@@ -108,22 +108,24 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
  padding:6px 4px!important;
  opacity:1!important;transition:opacity .18s ease!important;
 }
-/* Unlike the Home dock, this rail floats over ruled paper. A 4px backdrop
-   blur washed the faint lines out, making the material look solid white.
-   Keep the identical pearl rim/shadow but let the actual sheet show through. */
+/* The side rail shares the Home dock's matte-silver fill and pearl edge.
+   Less blur is needed on ruled paper: a full 4px blur erases the fine lines,
+   while zero blur looks like clear plastic rather than frosted glass. */
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
  .sv-smart-ink-tools:not([hidden]){
  border:var(--sv-dock-pearl-border)!important;
- background:rgba(190,193,202,.06)!important;
+ background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10))!important;
  box-shadow:var(--sv-dock-pearl-shadow)!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ -webkit-backdrop-filter:blur(1.2px) saturate(100%)!important;
+ backdrop-filter:blur(1.2px) saturate(100%)!important;
 }
 html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
  .sv-smart-ink-tools:not([hidden]){
  border:.7px solid rgba(255,255,255,.16)!important;
- background:rgba(143,150,163,.10)!important;
+ background:rgba(143,150,163,.16)!important;
  box-shadow:inset 0 1px 1px rgba(255,255,255,.055),0 0 0 .45px rgba(0,0,0,.24)!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ -webkit-backdrop-filter:blur(1.2px) saturate(100%)!important;
+ backdrop-filter:blur(1.2px) saturate(100%)!important;
 }
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-tools > button{

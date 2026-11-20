@@ -24,7 +24,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=20/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=21/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);

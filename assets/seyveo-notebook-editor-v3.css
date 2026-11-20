@@ -689,27 +689,34 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="lined"]
  :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
- background-image:linear-gradient(to bottom,transparent calc(100% - 1px),rgba(126,146,166,.23) calc(100% - 1px))!important;
- background-size:100% 24px!important;background-repeat:repeat!important;
- /* The first rule sits below the 24px text line, never across its glyphs. */
- background-position:0 8px!important;
- background-attachment:local!important;
-}
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="grid"]
- :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
- background-image:linear-gradient(to right,rgba(126,146,166,.18) 1px,transparent 1px),
-   linear-gradient(to bottom,rgba(126,146,166,.18) 1px,transparent 1px)!important;
- background-size:24px 24px!important;background-repeat:repeat!important;
+ /* Repeating tiles also paint a line ABOVE the first text row. Mask only
+    that first tile so the hint and first entered line are entirely clear. */
+ background-image:linear-gradient(to bottom,var(--note-page) 0 24px,transparent 24px),
+   linear-gradient(to bottom,transparent calc(100% - 1px),rgba(126,146,166,.23) calc(100% - 1px))!important;
+ background-size:100% 100%,100% 24px!important;
+ background-repeat:no-repeat,repeat!important;
  background-position:0 0,0 8px!important;
  background-attachment:local,local!important;
 }
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="grid"]
+ :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
+ background-image:linear-gradient(to bottom,var(--note-page) 0 24px,transparent 24px),
+   linear-gradient(to right,rgba(126,146,166,.18) 1px,transparent 1px),
+   linear-gradient(to bottom,rgba(126,146,166,.18) 1px,transparent 1px)!important;
+ background-size:100% 100%,24px 24px,24px 24px!important;
+ background-repeat:no-repeat,repeat,repeat!important;
+ background-position:0 0,0 0,0 8px!important;
+ background-attachment:local,local,local!important;
+}
 html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="lined"]
  :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
- background-image:linear-gradient(to bottom,transparent calc(100% - 1px),rgba(205,214,226,.22) calc(100% - 1px))!important;
+ background-image:linear-gradient(to bottom,var(--note-page) 0 24px,transparent 24px),
+   linear-gradient(to bottom,transparent calc(100% - 1px),rgba(205,214,226,.22) calc(100% - 1px))!important;
 }
 html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="grid"]
  :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
- background-image:linear-gradient(to right,rgba(205,214,226,.14) 1px,transparent 1px),
+ background-image:linear-gradient(to bottom,var(--note-page) 0 24px,transparent 24px),
+   linear-gradient(to right,rgba(205,214,226,.14) 1px,transparent 1px),
    linear-gradient(to bottom,rgba(205,214,226,.14) 1px,transparent 1px)!important;
 }
 /* The read-only view uses the same stored paper pattern. */
