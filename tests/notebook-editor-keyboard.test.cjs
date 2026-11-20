@@ -15,7 +15,7 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=18">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=2">\s*<\/body>/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=19">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=2">\s*<\/body>/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
  assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
@@ -44,6 +44,18 @@ test('top navigation keeps only Back, mode label and golden Done',()=>{
  assert.match(contextCss,/grid-template-columns:repeat\(3,40px\)!important/);
  assert.match(html,/action\('Поделиться',\(\)=>\{shareNote\(note\)\}\)/);
  assert.match(html,/action\('Распечатать',\(\)=>\{printNote\(note\)\}\)/);
+});
+
+test('note title sits immediately beneath navigation, even on a notched iPhone',()=>{
+ assert.match(css,/padding:max\(84px,calc\(env\(safe-area-inset-top,0px\) \+ 56px\)\) 20px max\(10px,env\(safe-area-inset-bottom,0px\)\)!important/);
+ assert.doesNotMatch(css,/clamp\(76px,20vh,140px\)/);
+ for(const safeTop of [0,20,44,60]){
+  const navBottom=Math.max(26,safeTop)+44;
+  const editorTop=Math.max(84,safeTop+56);
+  assert.ok(editorTop-navBottom>=12,`title clears navigation at ${safeTop}px safe area`);
+  assert.ok(editorTop-navBottom<=14,`title is not stranded below navigation at ${safeTop}px`);
+ }
+ assert.match(css,/height:48px!important;min-height:48px!important;max-height:48px!important/);
 });
 
 test('bottom uses the four original icons and a separate new-note circle',()=>{

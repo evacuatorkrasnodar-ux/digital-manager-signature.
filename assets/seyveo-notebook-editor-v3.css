@@ -39,7 +39,9 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]{
  height:var(--sv-note-height,100dvh)!important;
  min-height:0!important;max-height:var(--sv-note-height,100dvh)!important;
  margin:0!important;
- padding:clamp(76px,20vh,140px) 20px max(10px,env(safe-area-inset-bottom,0px))!important;
+ /* Keep the title directly below the 44px navigation row. On notched
+    iPhones the safe-area inset grows the gap just enough, never the page. */
+ padding:max(84px,calc(env(safe-area-inset-top,0px) + 56px)) 20px max(10px,env(safe-area-inset-bottom,0px))!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;
  background:var(--note-page,#fff)!important;background-image:none!important;
