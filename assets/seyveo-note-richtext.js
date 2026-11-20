@@ -130,6 +130,13 @@
   catch{const sel=getSelection();if(sel?.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(document.createTextNode(String(text)));r.collapse(false);}}
   remember();sync();return true;
  }
+ function appendText(text){
+  if(!active)return false;
+  // A transcription is appended, never substituted for a highlighted passage.
+  const range=document.createRange();range.selectNodeContents(rich);range.collapse(false);
+  savedRange=range.cloneRange();
+  return insertText(text);
+ }
  textarea.addEventListener('select',()=>{
   if(!active)plainSelection={start:textarea.selectionStart,end:textarea.selectionEnd};
  });
@@ -150,7 +157,7 @@
  dialog.addEventListener('close',()=>{savedRange=null});
  window.SEYVEO_NOTE_RICH=Object.freeze({
   load,format:applyFormat,getHTML,safeHTML,isActive:()=>active,
-  sync,insertText,rememberSelection:remember,
+  sync,insertText,appendText,rememberSelection:remember,
   focus:()=>active&&rich.focus({preventScroll:true})
  });
 })();
