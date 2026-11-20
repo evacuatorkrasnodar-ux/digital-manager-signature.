@@ -15,7 +15,7 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/seyveo-notebook-editor-v3\\.css\\?v=33/);
+ assert.match(html,/seyveo-notebook-editor-v3\\.css\\?v=34/);
  assert.match(html,/seyveo-universal-dock-inset\\.css\\?v=1/);
  assert.match(html,/seyveo-notebook-context-actions\\.css\\?v=9/);
  assert.match(html,/seyveo-native-paper-color\\.css\\?v=1/);
@@ -114,7 +114,7 @@ test('software keyboard switches dock to one narrow 42px full-width capsule',()=
 
 test('a real note text focus leaves pen mode before the keyboard accessory appears',()=>{
  const smart=fs.readFileSync(path.join(root,'assets/seyveo-smart-note-ink.js'),'utf8');
- assert.match(html,/seyveo-smart-note-ink\.js\?v=18/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=19/);
  const start=smart.indexOf(" dlg.addEventListener('focusin',event=>{");
  const end=smart.indexOf('\n function load(id){',start);
  assert.ok(start>=0&&end>start);
