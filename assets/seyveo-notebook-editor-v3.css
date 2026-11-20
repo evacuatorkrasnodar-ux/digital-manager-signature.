@@ -1126,7 +1126,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  > #svNoteAttachmentMenu.sv-note-attachment-menu:not([hidden]){
  box-sizing:border-box!important;position:absolute!important;
  left:var(--sv-attach-menu-left,16px)!important;right:auto!important;
- top:auto!important;bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
+ top:auto!important;bottom:calc(90px + env(safe-area-inset-bottom,0px))!important;
  width:min(184px,calc(100vw - 32px))!important;
  min-width:0!important;max-width:184px!important;
  height:auto!important;min-height:0!important;max-height:none!important;
@@ -1161,6 +1161,6 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 @media(max-width:699px){
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
   > #svNoteAttachmentMenu.sv-note-attachment-menu:not([hidden]){
-  bottom:calc(55px + env(safe-area-inset-bottom,0px))!important;
+  bottom:calc(73px + env(safe-area-inset-bottom,0px))!important;
  }
 }
