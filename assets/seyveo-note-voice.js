@@ -1,6 +1,6 @@
-/* SEYVEO Smart Notebook · in-note voice recording.
-   Audio stays in the note's IndexedDB. Live speech recognition is explicit opt-in;
-   the browser may use an online recognition service. No audio is sent by this module. */
+/* SEYVEO Smart Notebook · one-touch in-note voice transcription.
+   Original audio stays in IndexedDB. Offline Whisper runs only on the user's
+   own localhost server; live browser recognition remains explicit opt-in. */
 (function(){
  'use strict';
  const dialog=document.getElementById('noteReviewDialog');
@@ -18,21 +18,12 @@
   <label class="sv-note-voice-recognize"><input type="checkbox" data-voice-recognize><span>Подготовить текст во время записи <small>Если браузер поддерживает распознавание речи. Оно может использовать интернет.</small></span></label>
   <div class="sv-note-voice-actions"><button type="button" data-voice-pause>Пауза</button><button type="button" data-voice-cancel>Отменить</button><button type="button" data-voice-stop>Сохранить запись</button></div>`;
  form.insertBefore(capture,attachmentList);
- const transcriptPanel=document.createElement('section');
- transcriptPanel.id='svNoteVoiceTranscript';transcriptPanel.className='sv-note-voice-transcript';
- transcriptPanel.hidden=true;transcriptPanel.setAttribute('aria-label','Текст голосовой записи');
- transcriptPanel.innerHTML=`<div class="sv-note-voice-transcript-head"><strong>Голосовая запись → текст</strong><button type="button" data-transcript-close aria-label="Закрыть">✕</button></div>
-  <p data-transcript-hint></p><button type="button" class="sv-note-voice-run" data-transcript-run><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.7" width="6" height="12" rx="3"/><path d="M5.5 11.3a6.5 6.5 0 0 0 13 0M12 18v3.5m-4 0h8"/></svg><span>Распознать запись</span></button><textarea data-transcript-text rows="4" maxlength="8000" spellcheck="true" placeholder="Здесь появится расшифровка…" aria-label="Проверить расшифровку"></textarea>
-  <div class="sv-note-voice-transcript-actions"><button type="button" data-transcript-add>Добавить в заметку</button><button type="button" data-transcript-sayvi>Добавить и открыть Сэйви</button></div><small data-transcript-status role="status" aria-live="polite"></small>`;
- form.insertBefore(transcriptPanel,attachmentList);
  const $=selector=>capture.querySelector(selector);
  const timer=$('[data-voice-timer]'),hint=$('[data-voice-hint]'),state=$('[data-voice-state]');
  const pauseBtn=$('[data-voice-pause]'),stopBtn=$('[data-voice-stop]'),cancelBtn=$('[data-voice-cancel]');
  const recognize=$('[data-voice-recognize]');
- const preview=selector=>transcriptPanel.querySelector(selector);
- const previewText=preview('[data-transcript-text]');
- const previewStatus=preview('[data-transcript-status]');
- let current=null,previewItem=null,serial=0,pending=false,pendingDownload=null,transcriptAbort=null;
+ let current=null,serial=0,pending=false,pendingDownload=null,transcriptAbort=null;
+ const undoTimers=new Map(),undoHandlers=new Map();
  const wave=$('.sv-note-voice-wave');
  [9,15,21,12,28,18,10,24,15,31,20,12,26,17,11,23,14,29,18,12,21,15,26,9].forEach((height,i)=>{
   const bar=document.createElement('i');bar.style.height=height+'px';bar.style.animationDelay=(i%8)*-0.13+'s';wave.append(bar);
@@ -94,7 +85,7 @@
   }
  }
  async function start(){
-  if(!dialog.open||current||pending)return;
+  if(!dialog.open||current||pending||transcriptAbort)return;
   if(pendingDownload){URL.revokeObjectURL(pendingDownload.url);pendingDownload=null;}
   if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){
    capture.hidden=false;state.textContent='Микрофон недоступен';
@@ -104,7 +95,6 @@
   }
   ++serial;pending=true;
   const id=serial;
-  transcriptPanel.hidden=true;
   capture.hidden=false;capture.classList.remove('sv-note-voice-paused');
   state.textContent='Подключаем микрофон…';hint.textContent='Запись останется только в этой заметке';
   timer.textContent='0:00';stopBtn.disabled=true;stopBtn.textContent='Сохранить запись';pauseBtn.disabled=true;
@@ -199,92 +189,155 @@
    stopRecognition(record);hint.textContent='Распознавание выключено. Аудио продолжает записываться.';
   }
  });
- function transcribe(item){
-  if(!dialog.open||current||pending||dialog.dataset.noteId!==item.noteId)return;
-  transcriptAbort?.abort();transcriptAbort=null;
-  capture.hidden=true;
-  previewItem=item;
-  const existing=String(item.transcript||'').trim();
-  previewText.value=existing;previewStatus.textContent='';
-  preview('[data-transcript-run] span').textContent=existing?'Распознать заново':'Распознать запись';
-  preview('[data-transcript-hint]').textContent=existing?
-   'Черновик уже есть. Можно проверить его или распознать запись заново. Оригинальный звук останется в заметке.':
-   location.origin==='http://127.0.0.1:8790'?
-    'Сэйви может разобрать даже старую запись локальным Whisper. После распознавания проверь текст перед добавлением.':
-    'Оригинальная запись сохранена. Автоматическое распознавание доступно через локальный SEYVEO на ПК; здесь можно прослушать аудио и вписать текст.';
-  transcriptPanel.hidden=false;
+ const notesApi=()=>window.SEYVEO_NOTES_API;
+ const noteFor=item=>notesApi()?.getNotes?.().find(note=>note.id===item.noteId);
+ const sameNote=item=>dialog.open&&dialog.dataset.noteId===item.noteId;
+ const isInserted=(note,id)=>Array.isArray(note?.voiceTranscriptIds)&&note.voiceTranscriptIds.includes(id);
+ function transcriptPresent(note,text){
+  const value=String(text||'').trim(),body=String(note?.text||'');
+  return Boolean(value)&&(body===value||body.endsWith('\n\n'+value)||
+   body.startsWith(value+'\n\n')||body.includes('\n\n'+value+'\n\n'));
  }
- function closeTranscript(){
-  transcriptAbort?.abort();transcriptAbort=null;
-  transcriptPanel.hidden=true;previewItem=null;
+ function setButton(button,label,mode){
+  if(!button)return;
+  button.textContent=label;
+  button.dataset.voiceState=mode;
+  button.setAttribute('aria-label',mode==='done'?'Распознанный текст уже в заметке':
+   mode==='undo'?'Отменить вставку текста':label);
+  button.disabled=mode==='busy'||mode==='done';
+  if(mode==='busy')button.setAttribute('aria-busy','true');
+  else button.removeAttribute('aria-busy');
  }
- preview('[data-transcript-close]').addEventListener('click',closeTranscript);
- preview('[data-transcript-run]').addEventListener('click',async()=>{
-  const item=previewItem;
-  if(!item||transcriptAbort||!dialog.open)return;
-  // Public GitHub Pages cannot run private models. Never POST a private audio
-  // file to its 404 endpoint, even as an attempted fallback.
-  if(location.origin!=='http://127.0.0.1:8790'){
-   previewStatus.textContent='Для автоматической расшифровки открой локальный SEYVEO на компьютере. Аудио никуда не отправлено.';
+ function feedback(button,message){
+  const card=button?.closest('.sv-note-audio');if(!card)return;
+  let status=card.querySelector('.sv-note-audio-feedback');
+  if(!status){status=document.createElement('small');status.className='sv-note-audio-feedback';
+   status.setAttribute('role','status');status.setAttribute('aria-live','polite');card.append(status);}
+  status.textContent=message||'';status.hidden=!message;
+ }
+ function markInserted(item,inserted){
+  const api=notesApi(),notes=api?.getNotes?.();
+  if(!Array.isArray(notes)||!notes.some(note=>note.id===item.noteId))throw Error('Заметка не найдена.');
+  const next=notes.map(note=>{
+   if(note.id!==item.noteId)return note;
+   const ids=Array.isArray(note.voiceTranscriptIds)?note.voiceTranscriptIds:[];
+   return {...note,voiceTranscriptIds:inserted?[...new Set([...ids,item.id])]:ids.filter(id=>id!==item.id)};
+  });
+  if(!api.putNotes(next))throw Error('Не удалось сохранить результат в заметке.');
+ }
+ function snapshot(){return {body:textField.value,rich:window.SEYVEO_NOTE_RICH?.getHTML?.()||''};}
+ function restore(saved){
+  window.SEYVEO_NOTE_RICH?.load?.(saved.rich);
+  textField.value=saved.body;
+  textField.dispatchEvent(new Event('input',{bubbles:true}));
+ }
+ function insertIntoNote(item,text){
+  if(!sameNote(item)||!noteFor(item))throw Error('Заметка уже закрыта.');
+  if(isInserted(noteFor(item),item.id))return {already:true};
+  const existing=snapshot();
+  const insertion=(existing.body.trim()?'\n\n':'')+text;
+  const title=document.getElementById('svNoteTitle')?.value.trim()||'';
+  if(existing.body.length+insertion.length+title.length+(title?2:0)>8000)
+   throw Error('В заметке недостаточно места для текста записи.');
+  try{
+   if(window.SEYVEO_NOTE_RICH?.isActive?.()){
+    if(!window.SEYVEO_NOTE_RICH.appendText(insertion))throw Error('Не удалось вставить текст.');
+   }else{
+    textField.value+=insertion;
+    textField.dispatchEvent(new Event('input',{bubbles:true}));
+   }
+   if(window.SEYVEO_NOTES_EDITOR?.ensureRecord?.()!==item.noteId)
+    throw Error('Не удалось сохранить текст заметки.');
+   markInserted(item,true);
+  }catch(error){
+   restore(existing);window.SEYVEO_NOTES_EDITOR?.ensureRecord?.();
+   throw error;
+  }
+  const inserted=snapshot();
+  return {undo(){
+   if(!sameNote(item)||!isInserted(noteFor(item),item.id))return false;
+   const now=snapshot();
+   if(now.body!==inserted.body||now.rich!==inserted.rich)return false;
+   restore(existing);
+   if(window.SEYVEO_NOTES_EDITOR?.ensureRecord?.()!==item.noteId){restore(inserted);return false;}
+   try{markInserted(item,false);return true;}
+   catch{restore(inserted);window.SEYVEO_NOTES_EDITOR?.ensureRecord?.();return false;}
+  }};
+ }
+ function presentUndo(item,button,undo){
+  const previous=undoTimers.get(item.id);if(previous)clearTimeout(previous);
+  undoHandlers.set(item.id,undo);
+  setButton(button,'Отменить','undo');
+  const timer=setTimeout(()=>{
+   undoTimers.delete(item.id);undoHandlers.delete(item.id);
+   if(sameNote(item))setButton(button,'В заметке','done');
+  },10000);
+  undoTimers.set(item.id,timer);
+ }
+ async function transcribe(item,button){
+  if(!sameNote(item)||current||pending||!button)return;
+  if(button.dataset.voiceState==='undo'){
+   const undo=undoHandlers.get(item.id);
+   if(!undo)return;
+   clearTimeout(undoTimers.get(item.id));undoTimers.delete(item.id);undoHandlers.delete(item.id);
+   if(undo()){setButton(button,'Распознать','idle');feedback(button,'Вставка отменена.');}
+   else{setButton(button,'В заметке','done');feedback(button,'Текст уже изменён. Его можно исправить вручную.');}
    return;
   }
-  if(previewText.value.trim()&&previewText.value.trim()!==String(item.transcript||'').trim()&&
-     !window.confirm('Заменить набранный текст результатом распознавания?'))return;
+  if(transcriptAbort||button.dataset.voiceState==='busy'){
+   if(button.dataset.voiceState!=='busy')feedback(button,'Дождись завершения текущего распознавания.');
+   return;
+  }
+  const oldNote=noteFor(item);
+  if(!oldNote)return;
+  if(isInserted(oldNote,item.id)||transcriptPresent(oldNote,item.transcript)){
+   if(!isInserted(oldNote,item.id))try{markInserted(item,true);}catch{}
+   setButton(button,'В заметке','done');feedback(button,'');return;
+  }
+  const cached=String(item.transcript||'').trim();
+  if(!cached&&location.origin!=='http://127.0.0.1:8790'){
+   feedback(button,'Распознавание доступно в локальном SEYVEO на ПК. Аудио сохранено.');return;
+  }
+  setButton(button,'Распознаю…','busy');feedback(button,'');
   const controller=new AbortController();transcriptAbort=controller;
-  const run=preview('[data-transcript-run]'),label=run.querySelector('span');
-  run.disabled=true;run.setAttribute('aria-busy','true');
-  label.textContent='Сэйви слушает запись…';previewStatus.textContent='Распознавание на этом компьютере. Может занять несколько минут.';
   const timeout=setTimeout(()=>controller.abort(),270000);
   try{
-   const response=await fetch('/api/seyveo-note-transcribe',{
-    method:'POST',credentials:'same-origin',
-    headers:{'Content-Type':item.type||'audio/webm'},body:item.blob,signal:controller.signal
-   });
-   const data=await response.json().catch(()=>({}));
-   if(!response.ok)throw Error(data.error||'Локальное распознавание недоступно. Запусти установщик server/install-note-transcription.cmd.');
-   if(typeof data.text!=='string'||!data.text.trim())throw Error('Речь не распознана. Исходное аудио сохранено.');
-   if(controller.signal.aborted||previewItem!==item||!dialog.open)return;
-   previewText.value=data.text.trim().slice(0,8000);
-   previewStatus.textContent='Готово. Проверь слова и нажми «Добавить в заметку». Запись не изменена.';
-   preview('[data-transcript-hint]').textContent='Текст подготовлен локальным Whisper. Можно отредактировать его перед добавлением.';
-   label.textContent='Распознать заново';
+   let text=cached;
+   if(!text){
+    const response=await fetch('/api/seyveo-note-transcribe',{
+     method:'POST',credentials:'same-origin',
+     headers:{'Content-Type':item.type||'audio/webm'},body:item.blob,signal:controller.signal
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw Error(data.error||'Локальное распознавание недоступно.');
+    if(typeof data.text!=='string'||!data.text.trim())throw Error('Речь не распознана. Аудио сохранено.');
+    text=data.text.trim();
+    if(controller.signal.aborted||!sameNote(item))return;
+    await window.SEYVEO_NOTE_ATTACHMENTS.updateTranscript(item.noteId,item.id,text);
+    item.transcript=text;
+   }
+   if(controller.signal.aborted||!sameNote(item))return;
+   if(transcriptPresent(noteFor(item),text)){
+    markInserted(item,true);setButton(button,'В заметке','done');return;
+   }
+   const result=insertIntoNote(item,text);
+   if(result.already){setButton(button,'В заметке','done');return;}
+   presentUndo(item,button,result.undo);
   }catch(error){
-   if(!controller.signal.aborted&&previewItem===item)
-    previewStatus.textContent=error?.message||'Не удалось разобрать звук. Исходное аудио сохранено.';
-   else if(previewItem===item)previewStatus.textContent='Распознавание прервано. Аудио сохранено.';
+   if(sameNote(item)){
+    setButton(button,'Распознать','idle');
+    feedback(button,controller.signal.aborted?'Распознавание не завершилось вовремя. Аудио сохранено.':
+     error?.message||'Не удалось распознать речь. Аудио сохранено.');
+   }
   }finally{
    clearTimeout(timeout);if(transcriptAbort===controller)transcriptAbort=null;
-   if(previewItem===item){
-    run.disabled=false;run.removeAttribute('aria-busy');
-    if(label.textContent==='Сэйви слушает запись…')label.textContent=item.transcript?'Распознать заново':'Распознать запись';
-   }
+   if(button.dataset.voiceState==='busy')setButton(button,'Распознать','idle');
   }
- });
- async function applyTranscript(openSayvi){
-  const item=previewItem,text=previewText.value.trim();
-  if(!item||!dialog.open||dialog.dataset.noteId!==item.noteId)return;
-  if(!text){previewStatus.textContent='Пока нет текста. Впиши расшифровку или подготовь её во время новой записи.';return;}
-  if(textField.value.length+text.length+2>8000){previewStatus.textContent='Заметка заполнена. Сократи текст перед вставкой.';return;}
-  const buttons=transcriptPanel.querySelectorAll('button');buttons.forEach(button=>button.disabled=true);
-  try{
-   await window.SEYVEO_NOTE_ATTACHMENTS.updateTranscript(item.noteId,item.id,text);
-   const insertion=(textField.value.trim()?'\n\n':'')+text;
-   if(window.SEYVEO_NOTE_RICH?.isActive?.())window.SEYVEO_NOTE_RICH.insertText(insertion);
-   else{textField.value+=insertion;textField.dispatchEvent(new Event('input',{bubbles:true}));}
-   transcriptPanel.hidden=true;previewItem=null;
-   void window.SEYVEO_NOTE_ATTACHMENTS.refreshEditor();
-   if(openSayvi){
-    const sayviButton=dialog.querySelector('[data-sv-smart-tool="sayvi"]');
-    // Open the in-note helper, never the global chat.
-    sayviButton?.click();
-   }
-  }catch(error){previewStatus.textContent=error?.message||'Не удалось сохранить расшифровку.';}
-  finally{buttons.forEach(button=>button.disabled=false);}
  }
- preview('[data-transcript-add]').addEventListener('click',()=>{void applyTranscript(false);});
- preview('[data-transcript-sayvi]').addEventListener('click',()=>{void applyTranscript(true);});
  dialog.addEventListener('close',()=>{
-  ++serial;pending=false;closeTranscript();
+  ++serial;pending=false;transcriptAbort?.abort();transcriptAbort=null;
+  for(const timer of undoTimers.values())clearTimeout(timer);
+  undoTimers.clear();undoHandlers.clear();
   if(pendingDownload){URL.revokeObjectURL(pendingDownload.url);pendingDownload=null;}
   if(current){const record=current;record.canceled=true;stopRecognition(record);
    try{if(record.recorder.state!=='inactive')record.recorder.stop();}catch{}release(record);current=null;}
