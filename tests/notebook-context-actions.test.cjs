@@ -8,6 +8,7 @@ const read=name=>fs.readFileSync(path.join(root,name),'utf8');
 const html=read('index.html');
 const script=read('assets/seyveo-smart-note-ink.js');
 const css=read('assets/seyveo-notebook-context-actions.css');
+const editorCss=read('assets/seyveo-notebook-editor-v3.css');
 const editor=html.split('<dialog id="noteReviewDialog"')[1]?.split('</dialog>')[0]||'';
 
 test('Notebook header has just Back, centered mode, and Done',()=>{
@@ -76,13 +77,30 @@ test('text actions open only in typing mode and close without leaving a selected
 });
 
 test('color tool has a visible rainbow ring around the live selected ink color',()=>{
- assert.match(html,/seyveo-notebook-context-actions\.css\?v=4/);
+ assert.match(html,/seyveo-notebook-context-actions\.css\?v=5/);
  assert.match(script,/data-sv-ink-tool="color"[^>]*><span class="sv-smart-ink-color-preview"/);
  assert.match(css,/\.sv-smart-ink-color-preview\{[\s\S]*?width:25px!important;[\s\S]*?height:25px!important/);
  assert.match(css,/background:conic-gradient\(from 0deg,#d96a6b[\s\S]*?#467fc6[\s\S]*?#d96a6b 360deg\)!important/);
  assert.match(css,/\.sv-smart-ink-color-preview::after\{[\s\S]*?inset:4px!important/);
  assert.match(css,/background:var\(--sv-ink-color,#171e29\)!important/);
  assert.match(script,/inkColorBtn\.style\.setProperty\('--sv-ink-color',penColor\)/);
+});
+
+test('the floating rail stays translucent over lined paper in both themes',()=>{
+ assert.match(css,/data-theme="light"[\s\S]*?\.sv-smart-ink-tools:not\(\[hidden\]\)\{[\s\S]*?background:rgba\(190,193,202,\.06\)!important/);
+ assert.match(css,/border:var\(--sv-dock-pearl-border\)!important/);
+ assert.match(css,/box-shadow:var\(--sv-dock-pearl-shadow\)!important/);
+ assert.match(css,/-webkit-backdrop-filter:none!important;backdrop-filter:none!important/);
+ assert.match(css,/data-theme="dark"[\s\S]*?background:rgba\(143,150,163,\.10\)!important/);
+});
+
+test('paper rules stay below typed glyphs and the placeholder, not through them',()=>{
+ assert.match(editorCss,/input#svNoteTitle\.sv-note-title-input\{[\s\S]*?flex:0 0 48px!important;margin:0!important/);
+ assert.match(editorCss,/textarea#noteReviewText\{[\s\S]*?padding:5px 4px!important/);
+ assert.match(editorCss,/data-sv-paper-style="lined"[\s\S]*?background-position:0 8px!important/);
+ assert.match(editorCss,/data-sv-paper-style="grid"[\s\S]*?background-position:0 0,0 8px!important/);
+ const textLineHeight=16*1.5,topPadding=5,firstRule=24-1+8;
+ assert.ok(firstRule>topPadding+textLineHeight,'the first rule is beneath the entire 24px text line');
 });
 
 test('both docks disappear during ink strokes and return after a short pause',()=>{

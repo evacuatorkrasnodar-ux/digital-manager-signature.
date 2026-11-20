@@ -126,7 +126,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  box-sizing:border-box!important;display:block!important;
  width:100%!important;min-width:0!important;max-width:none!important;
  height:48px!important;min-height:48px!important;max-height:48px!important;
- flex:0 0 48px!important;margin:0 0 4px!important;padding:0 4px!important;
+ flex:0 0 48px!important;margin:0!important;padding:0 4px!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;background:transparent!important;
  color:var(--note-ink)!important;
@@ -141,7 +141,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  flex:1 1 0!important;width:100%!important;min-width:0!important;
  height:auto!important;min-height:64px!important;max-height:none!important;
  resize:none!important;overflow-y:auto!important;
- margin:0!important;padding:7px 4px!important;
+ margin:0!important;padding:5px 4px!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;background:transparent!important;
  color:var(--note-ink)!important;
@@ -662,7 +662,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  display:block!important;box-sizing:border-box!important;flex:1 1 0!important;
  width:100%!important;min-width:0!important;min-height:64px!important;
  height:auto!important;max-height:none!important;overflow-y:auto!important;
- margin:0!important;padding:7px 4px!important;
+ margin:0!important;padding:5px 4px!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;background:transparent!important;
  color:var(--note-ink)!important;
@@ -691,6 +691,8 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][dat
  :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
  background-image:linear-gradient(to bottom,transparent calc(100% - 1px),rgba(126,146,166,.23) calc(100% - 1px))!important;
  background-size:100% 24px!important;background-repeat:repeat!important;
+ /* The first rule sits below the 24px text line, never across its glyphs. */
+ background-position:0 8px!important;
  background-attachment:local!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="grid"]
@@ -698,6 +700,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][dat
  background-image:linear-gradient(to right,rgba(126,146,166,.18) 1px,transparent 1px),
    linear-gradient(to bottom,rgba(126,146,166,.18) 1px,transparent 1px)!important;
  background-size:24px 24px!important;background-repeat:repeat!important;
+ background-position:0 0,0 8px!important;
  background-attachment:local,local!important;
 }
 html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="lined"]
@@ -713,11 +716,13 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
 html:root body dialog#noteReadDialog.notes-dialog[open][data-sv-paper-style="lined"] #noteReadContent{
  background-image:linear-gradient(to bottom,transparent calc(100% - 1px),rgba(126,146,166,.23) calc(100% - 1px))!important;
  background-size:100% 24px!important;background-repeat:repeat!important;
+ background-position:0 8px!important;
 }
 html:root body dialog#noteReadDialog.notes-dialog[open][data-sv-paper-style="grid"] #noteReadContent{
  background-image:linear-gradient(to right,rgba(126,146,166,.18) 1px,transparent 1px),
    linear-gradient(to bottom,rgba(126,146,166,.18) 1px,transparent 1px)!important;
  background-size:24px 24px!important;background-repeat:repeat!important;
+ background-position:0 0,0 8px!important;
 }
 
 /* One slim, centered handwriting palette above the fixed four-action dock.
