@@ -6,6 +6,7 @@
  const dlg=document.getElementById('noteReviewDialog');
  const form=document.getElementById('noteReviewForm');
  const bar=dlg?.querySelector('.sv-note-tools-compact');
+ const modeLabel=dlg?.querySelector('#svNoteInputModeLabel');
  const textarea=document.getElementById('noteReviewText');
  const rich=document.getElementById('svNoteRichEditor');
  if(!dlg||!form||!bar||!textarea)return;
@@ -16,6 +17,7 @@
  };
  const icon=d=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>';
  const textBtn=create('text','Печатать текст','<span class="sv-smart-aa">Aa</span>');
+ textBtn.setAttribute('aria-controls','svNoteTopMenu');textBtn.setAttribute('aria-expanded','false');
  const sayviMark='<span class="sv-smart-sayvi-icon" aria-hidden="true"></span>';
  const sayviBtn=create('sayvi','Сэйви — помочь с заметкой',sayviMark);
  const tableBtn=create('table','Вставить таблицу',icon('<rect x="3.1" y="4.5" width="17.8" height="15" rx="1.4"/><path d="M3.1 10h17.8M3.1 15h17.8M10 4.5v15M16 4.5v15"/>'));
@@ -26,7 +28,6 @@
  const paperBtn=create('paper','Стиль бумаги',icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>'));
  paperBtn.setAttribute('aria-controls','svSmartNotePaperPanel');
  paperBtn.setAttribute('aria-expanded','false');
- const moreBtn=create('more','Дополнительные действия',icon('<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>'));
  const check=bar.querySelector('[data-note-tool="checklist"]');
  const attach=bar.querySelector('[data-note-tool="attachment"]');
  const draw=bar.querySelector('[data-note-tool="draw"]');
@@ -42,7 +43,6 @@
  bar.insertBefore(eraserBtn,check);
  bar.insertBefore(tableBtn,bar.querySelector('[data-note-tool="heading"]'));
  bar.insertBefore(paperBtn,bar.querySelector('[data-note-tool="heading"]'));
- bar.append(moreBtn);
  // Popovers must live outside the horizontally clipped scroller. Keep the
  // original nodes and their delegated handlers, never clone a working menu.
  for(const id of ['svNoteAttachmentMenu','svNoteFormatMenu']){
@@ -104,19 +104,23 @@
  const inkTools=document.createElement('div');
  inkTools.className='sv-smart-ink-tools';inkTools.hidden=true;
  inkTools.setAttribute('role','toolbar');inkTools.setAttribute('aria-label','Инструменты рукописного ввода');
- inkTools.innerHTML=`<button type="button" data-sv-ink-tool="eraser" aria-label="Ластик">${icon('<path d="m5 14.5 8.3-8.3a2.1 2.1 0 0 1 3 0l2.3 2.3a2.1 2.1 0 0 1 0 3l-7.3 7.3H8.8zM9.4 10l6.1 6.1M12.4 18.8H20"/>')}</button>
+ inkTools.innerHTML=`<button type="button" data-sv-ink-tool="undo" aria-label="Отменить штрих" title="Отменить штрих">${icon('<path d="m9.5 8-4.6 4 4.6 4M4.9 12h9c4.5 0 6.5 3.5 5.5 7.2"/>')}</button>
+  <button type="button" data-sv-ink-tool="eraser" aria-label="Ластик">${icon('<path d="m5 14.5 8.3-8.3a2.1 2.1 0 0 1 3 0l2.3 2.3a2.1 2.1 0 0 1 0 3l-7.3 7.3H8.8zM9.4 10l6.1 6.1M12.4 18.8H20"/>')}</button>
   <button type="button" data-sv-ink-tool="width" aria-label="Толщина пера" aria-expanded="false">${icon('<path d="M5 6.5h7" stroke-width="1.2"/><path d="M5 12h11" stroke-width="1.6"/><path d="M5 17.5h15" stroke-width="2"/>')}</button>
   <button type="button" data-sv-ink-tool="color" aria-label="Цвет пера" aria-expanded="false"><span class="sv-smart-ink-color-preview" aria-hidden="true"></span></button>
   <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>')}</button>
-  <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>`;
+  <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>
+  <button type="button" data-sv-ink-tool="clear" aria-label="Удалить нарисованные штрихи" title="Удалить штрихи">${icon('<path d="M5 7h14M9 7V5h6v2M7.5 7l.9 12h7.2l.9-12M10.5 10v6M13.5 10v6"/>')}</button>`;
  dlg.append(inkTools);
  const inkEraser=inkTools.querySelector('[data-sv-ink-tool="eraser"]');
+ const inkUndoBtn=inkTools.querySelector('[data-sv-ink-tool="undo"]');
  const inkPaperBtn=inkTools.querySelector('[data-sv-ink-tool="paper"]');
  inkPaperBtn.setAttribute('aria-controls','svSmartNotePaperPanel');
  inkPaperBtn.setAttribute('aria-expanded','false');
  const inkWidthBtn=inkTools.querySelector('[data-sv-ink-tool="width"]');
  const inkColorBtn=inkTools.querySelector('[data-sv-ink-tool="color"]');
  const inkVoiceBtn=inkTools.querySelector('[data-sv-ink-tool="voice"]');
+ const inkClearBtn=inkTools.querySelector('[data-sv-ink-tool="clear"]');
  const voiceMenu=document.createElement('div');
  voiceMenu.id='svSmartVoiceMenu';voiceMenu.className='sv-smart-voice-menu';voiceMenu.hidden=true;
  voiceMenu.setAttribute('role','group');voiceMenu.setAttribute('aria-label','Голосовые инструменты');
@@ -244,6 +248,8 @@
   }
  });
  inkEraser.addEventListener('click',()=>setMode(mode==='eraser'?'pen':'eraser'));
+ inkUndoBtn.addEventListener('click',()=>travelHistory());
+ inkClearBtn.addEventListener('click',()=>clearHandwriting());
  document.addEventListener('pointerdown',event=>{
   if(!dlg.open||voiceMenu.hidden||voiceMenu.contains(event.target)||voiceBtn.contains(event.target)||inkVoiceBtn.contains(event.target))return;
   closeVoiceMenu();
@@ -273,6 +279,7 @@
  const report=text=>{const el=document.getElementById('noteReviewStatus');if(el){el.textContent=text;el.hidden=!text}};
  const buttons=[textBtn,draw,eraserBtn];
  function syncButtons(){
+  if(modeLabel)modeLabel.textContent=mode==='text'?'Печатный текст':'Рукописный ввод';
   textBtn.setAttribute('aria-pressed',String(mode==='text'));
   draw.setAttribute('aria-pressed',String(mode!=='text'));
   eraserBtn.setAttribute('aria-pressed',String(mode==='eraser'));
@@ -351,7 +358,7 @@
  }
  function clearHandwriting(){
   if(!strokes.length){report('Рукопись уже чистая.');return;}
-  if(!window.confirm('Очистить только рукопись? Печатный текст и вложения сохранятся.'))return;
+  if(!window.confirm('Удалить все нарисованные штрихи на этом листе? Печатный текст и вложения останутся.'))return;
   const previous=strokes;
   strokes=[];redo=[];render();
   if(!save()){strokes=previous;render();report('Не удалось очистить рукопись.');return;}
@@ -377,8 +384,7 @@
   if(!['text','pen','eraser'].includes(next))return;
   if(next!=='text'&&!sayviPanel.hidden)closeSayvi();
   mode=next;dlg.classList.toggle('sv-smart-inking',next!=='text');
-  const clearInkAction=dlg.querySelector('[data-sv-note-menu="clear-ink"]');
-  if(clearInkAction)clearInkAction.hidden=next==='text';
+  if(next!=='text')window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
   inkTools.hidden=next==='text';
   closePaper();closeInkPicker();closeVoiceMenu();
   ink.hidden=next==='text';
@@ -388,8 +394,7 @@
  }
  function load(id){
   closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();sayviStatus.textContent='';clearSayviPreview();
-  const clearInkAction=dlg.querySelector('[data-sv-note-menu="clear-ink"]');
-  if(clearInkAction)clearInkAction.hidden=true;
+  window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
   pointerId=null;active=null;mode='text';noteId=id||'';redo=[];smoothUndo=null;smoothRedo=null;
   const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
   paperStyle=normalizePaper(note?.notePaperStyle);syncPaper();
@@ -412,15 +417,13 @@
  // Capture ahead of the legacy drawing launcher: a pen now writes directly
  // on this very note, rather than navigating to the separate art tablet.
  dlg.addEventListener('click',event=>{
-  if(mode!=='text'&&event.target.closest?.('#svNoteUndo')){
-   event.preventDefault();event.stopImmediatePropagation();travelHistory();return;
-  }
   const btn=event.target.closest?.('[data-note-tool="draw"]');if(!btn)return;
   event.preventDefault();event.stopImmediatePropagation();setMode('pen');
  },true);
  textBtn.addEventListener('click',()=>{
   if(mode!=='text'){setMode('text',true);return}
-  getTarget().focus({preventScroll:true});
+  closePaper();closeInkPicker();closeVoiceMenu();
+  window.SEYVEO_NOTE_TEXT_ACTIONS?.toggle?.();
  });
  eraserBtn.addEventListener('click',()=>setMode('eraser'));
  sayviBtn.addEventListener('click',()=>{
@@ -618,7 +621,6 @@
   textarea.setRangeText(text,start,end,'end');textarea.dispatchEvent(new Event('input',{bubbles:true}));
   textarea.focus({preventScroll:true});
  });
- moreBtn.addEventListener('click',()=>document.getElementById('svNoteMore')?.click());
  dlg.addEventListener('keydown',event=>{
   if(!dlg.open||mode==='text'||!((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'))return;
   event.preventDefault();travelHistory(event.shiftKey);

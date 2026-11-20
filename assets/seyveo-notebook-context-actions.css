@@ -1,0 +1,129 @@
+/* SEYVEO Notebook · one calm header, two contextual sets of editing tools.
+   The four-icon main dock and its separate New Note circle do not change. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteInputModeLabel.sv-note-input-mode-label{
+ box-sizing:border-box!important;position:absolute!important;z-index:26!important;
+ top:max(26px,env(safe-area-inset-top,0px))!important;left:50%!important;right:auto!important;
+ transform:translateX(-50%)!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:min(190px,calc(100vw - 168px))!important;height:44px!important;
+ padding:0!important;margin:0!important;pointer-events:none!important;
+ color:var(--note-ink)!important;
+ font:550 14px/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:-.012em!important;white-space:nowrap!important;text-align:center!important;
+}
+
+/* Only Back and Done are in the header. Their actual 44×44 circles clip
+   old decorative layers, keeping the laser-drawn vectors clean. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteDone.sv-note-nav-circle){
+ box-sizing:border-box!important;width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;max-width:44px!important;max-height:44px!important;
+ border-radius:50%!important;overflow:hidden!important;isolation:isolate!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteDone.sv-note-nav-circle)::before,
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteDone.sv-note-nav-circle)::after{
+ content:none!important;display:none!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#noteReviewBack.sv-note-back-arrow:active{
+ border:var(--sv-inset-rim)!important;background:var(--sv-inset-fill)!important;
+ box-shadow:var(--sv-inset-depth)!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#svNoteDone.sv-note-nav-circle:active{
+ background:#c69c09!important;
+ box-shadow:inset 0 2.3px 3.3px rgba(78,54,8,.27),inset 0 -1px 1px rgba(255,255,255,.22)!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(button#noteReviewBack,button#svNoteDone):focus-visible{
+ outline:2px solid #087df1!important;outline-offset:2px!important;
+}
+
+/* Aa opens three icon-only text actions in a true tiny capsule above the
+   bottom dock: Undo · Copy · Clear typed text. No top-right dropdown. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ > #svNoteTopMenu.sv-note-top-menu:not([hidden]){
+ box-sizing:border-box!important;position:absolute!important;z-index:86!important;
+ top:auto!important;right:auto!important;
+ left:max(clamp(14px,5vw,22px),env(safe-area-inset-left,0px))!important;
+ bottom:calc(77px + env(safe-area-inset-bottom,0px))!important;
+ display:grid!important;grid-template-columns:repeat(3,40px)!important;
+ align-items:center!important;justify-content:center!important;gap:4px!important;
+ width:140px!important;min-width:140px!important;max-width:140px!important;
+ height:52px!important;min-height:52px!important;max-height:52px!important;
+ padding:6px!important;margin:0!important;
+ border:var(--sv-dock-pearl-border,.7px solid rgba(169,177,187,.28))!important;
+ border-radius:999px!important;outline:0!important;
+ background:var(--sv-dock-pearl-bg,var(--note-control))!important;
+ box-shadow:var(--sv-dock-pearl-shadow,0 3px 14px rgba(54,66,77,.10))!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur,blur(7px))!important;
+ backdrop-filter:var(--sv-dock-pearl-blur,blur(7px))!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteTopMenu.sv-note-top-menu > button{
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:1fr!important;
+ place-items:center!important;justify-self:center!important;
+ width:40px!important;min-width:40px!important;max-width:40px!important;
+ height:40px!important;min-height:40px!important;max-height:40px!important;
+ margin:0!important;padding:0!important;gap:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;color:var(--note-ink)!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteTopMenu.sv-note-top-menu > button > svg{
+ display:block!important;justify-self:center!important;
+ width:20px!important;min-width:20px!important;max-width:20px!important;
+ height:20px!important;min-height:20px!important;max-height:20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ color:var(--note-ink)!important;filter:none!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteTopMenu.sv-note-top-menu > button:is(:active,:focus-visible){
+ border:var(--sv-inset-rim)!important;background:var(--sv-inset-fill)!important;
+ box-shadow:var(--sv-inset-depth)!important;
+}
+@media(max-width:699px){
+ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  > #svNoteTopMenu.sv-note-top-menu:not([hidden]){
+  bottom:calc(53px + env(safe-area-inset-bottom,0px))!important;
+ }
+}
+
+/* Seven handwritten tools still fit as exact, evenly spaced 36×36 circles
+   inside one 284px pearl capsule, with Undo first and Clear last. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ .sv-smart-ink-tools:not([hidden]){
+ width:min(284px,calc(100vw - 36px))!important;
+ justify-content:space-between!important;gap:2px!important;
+ padding:3px 8px!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > button{
+ box-sizing:border-box!important;flex:0 0 36px!important;
+ width:36px!important;min-width:36px!important;max-width:36px!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ padding:0!important;margin:0!important;
+ border-radius:50%!important;overflow:hidden!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > button:is([aria-pressed="true"],:active){
+ border:var(--sv-inset-rim)!important;background:var(--sv-inset-fill)!important;
+ box-shadow:var(--sv-inset-depth)!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > button:focus-visible{
+ outline:2px solid #087df1!important;outline-offset:1px!important;
+}
+@media(max-width:319px){
+ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+  .sv-smart-ink-tools:not([hidden]){width:calc(100vw - 24px)!important;padding:3px 4px!important}
+ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+  .sv-smart-ink-tools > button{
+  flex-basis:32px!important;width:32px!important;min-width:32px!important;max-width:32px!important;
+  height:32px!important;min-height:32px!important;max-height:32px!important;
+ }
+}

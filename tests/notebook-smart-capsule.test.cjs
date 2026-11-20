@@ -6,17 +6,19 @@ const root=path.join(__dirname,'..');
 const read=name=>fs.readFileSync(path.join(root,name),'utf8');
 const html=read('index.html');
 const css=read('assets/seyveo-notebook-editor-v3.css');
+const contextCss=read('assets/seyveo-notebook-context-actions.css');
 const script=read('assets/seyveo-smart-note-ink.js');
 const sayviMark=read('assets/seyveo-circular-interlace-mono.svg');
 
 test('single Smart Note has scrollable keyboard toolbar with partial next action visible',()=>{
- assert.match(html,/seyveo-smart-note-ink\.js\?v=8/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=9/);
  assert.match(css,/\.sv-note-tools-compact\{[\s\S]*?display:flex!important;grid-template-columns:none!important;/);
  assert.match(css,/overflow-x:auto!important;overflow-y:hidden!important/);
  assert.match(css,/scrollbar-width:none/);
  assert.match(css,/\.sv-note-keyboard-open[\s\S]*?flex:0 0 50px!important/);
  assert.match(css,/--sv-dock-pearl-bg/);
- for(const action of ['text','table','eraser','more'])assert.match(script,new RegExp("create\\('"+action+"'"));
+ for(const action of ['text','table','eraser'])assert.match(script,new RegExp("create\\('"+action+"'"));
+ assert.doesNotMatch(script,/create\('more'/);
  assert.match(script,/bar\.insertBefore\(textBtn,check\)/);
  assert.match(script,/bar\.insertBefore\(tableBtn,bar\.querySelector\('\[data-note-tool="heading"\]'\)\)/);
 });
@@ -32,10 +34,9 @@ test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=
  assert.match(pearl,/data-theme="light"/);
 });
 
-test('navigation and every dropdown reuse Silver Mist with inline menu icons',()=>{
+test('header and contextual text capsule reuse Silver Mist without a three-dot button',()=>{
  const pearl=css.slice(css.lastIndexOf('/* One Silver Mist family'));
- for(const selector of ['button#noteReviewBack.sv-note-back-arrow','button#svNoteUndo.sv-note-nav-circle',
-  'button#svNoteMore.sv-note-nav-circle','button#svNoteDone',
+ for(const selector of ['button#noteReviewBack.sv-note-back-arrow','button#svNoteDone',
   '#svNoteTopMenu.sv-note-top-menu','#svNoteAttachmentMenu.sv-note-attachment-menu',
   '#svNoteFormatMenu.sv-note-format-menu']){
   assert.ok(pearl.includes(selector),`matches ${selector}`);
@@ -43,9 +44,11 @@ test('navigation and every dropdown reuse Silver Mist with inline menu icons',()
  for(const token of ['--sv-dock-pearl-border','--sv-dock-pearl-bg','--sv-dock-pearl-shadow','--sv-dock-pearl-blur']){
   assert.ok(pearl.includes(token),`reuses ${token}`);
  }
- for(const action of ['copy','clear']){
-  assert.match(html,new RegExp('data-sv-note-menu="'+action+'"[^>]*><svg[\\s\\S]*?</svg><span>'));
+ for(const action of ['undo','copy','clear']){
+  assert.match(html,new RegExp('data-sv-note-menu="'+action+'"[^>]*><svg[\\s\\S]*?</svg></button>'));
  }
+ assert.doesNotMatch(html,/id="svNoteMore"/);
+ assert.match(contextCss,/#svNoteTopMenu\.sv-note-top-menu:not\(\[hidden\]\)/);
  assert.doesNotMatch(html,/data-sv-note-menu="(?:notes|paper|print)"/);
  for(const fmt of ['heading','bold','italic','underline']){
   assert.match(html,new RegExp('data-note-format="'+fmt+'"[^>]*><svg[\\s\\S]*?</svg><span>'));
@@ -120,13 +123,13 @@ test('eraser and quick paper are only contextual ink tools',()=>{
  assert.match(script,/inkPaperBtn\.addEventListener\('click',togglePaper\)/);
 });
 
-test('thin centered handwriting capsule offers pen sizes, colors and one microphone',()=>{
- for(const action of ['width','color','voice']){
+test('thin centered handwriting capsule has its own Undo, pen controls and clear action',()=>{
+ for(const action of ['undo','eraser','width','color','paper','voice','clear']){
   assert.match(script,new RegExp('data-sv-ink-tool="'+action+'"'));
  }
- assert.doesNotMatch(script,/data-sv-ink-tool="clear"/);
- assert.match(html,/data-sv-note-menu="clear-ink" hidden/);
- assert.match(script,/clearInkAction\.hidden=next==='text'/);
+ assert.match(script,/inkUndoBtn\.addEventListener\('click',\(\)=>travelHistory\(\)\)/);
+ assert.match(script,/inkClearBtn\.addEventListener\('click',\(\)=>clearHandwriting\(\)\)/);
+ assert.match(script,/if\(modeLabel\)modeLabel\.textContent=mode==='text'\?'Печатный текст':'Рукописный ввод'/);
  assert.match(script,/INK_WIDTHS=\[3,5,9\]/);
  assert.match(script,/INK_COLORS=\[/);
  assert.match(script,/data-sv-pen-custom-color/);
@@ -135,10 +138,12 @@ test('thin centered handwriting capsule offers pen sizes, colors and one microph
  assert.match(script,/strokeStyle=ctx\.fillStyle=validColor\(s\.color\)/);
  assert.match(script,/color:validColor\(s\.color\)/);
  assert.match(script,/function clearHandwriting\(\)/);
- assert.match(script,/window\.confirm\('Очистить только рукопись/);
+ assert.match(script,/window\.confirm\('Удалить все нарисованные штрихи/);
  assert.match(script,/smoothUndo=previous/);
  assert.match(css,/left:50%!important;right:auto!important;bottom:calc\(82px/);
  assert.match(css,/width:min\(272px,calc\(100vw - 40px\)\)!important;height:42px/);
+ assert.match(contextCss,/width:min\(284px,calc\(100vw - 36px\)\)!important/);
+ assert.match(contextCss,/width:36px!important;min-width:36px!important;max-width:36px!important/);
  assert.match(css,/#svSmartInkPicker\.sv-smart-ink-picker:not\(\[hidden\]\)/);
  assert.match(css,/\.sv-note-keyboard-open:not\(\.sv-smart-inking\)[\s\S]*?#svSmartNotePaperPanel\.sv-smart-paper-panel:not\(\[hidden\]\)/);
  assert.doesNotMatch(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)!important/);
@@ -147,13 +152,14 @@ test('thin centered handwriting capsule offers pen sizes, colors and one microph
  assert.match(css,/#svSmartNotePaperPanel\.sv-smart-paper-panel:not\(\[hidden\]\)\{[\s\S]*?top:auto!important/);
 });
 
-test('color chooser and More menu have a balanced Apple-like icon grid',()=>{
+test('color chooser and compact text capsule have balanced Apple-like icon grids',()=>{
  assert.match(css,/\.sv-smart-ink-color-options\{\s*display:grid!important;grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
  assert.match(script,/label class="sv-smart-custom-color"/);
  assert.match(css,/\.sv-smart-custom-color>span\{[\s\S]*?conic-gradient\(/);
  assert.match(css,/\.sv-smart-custom-color>input\{[\s\S]*?opacity:0!important/);
  assert.match(css,/#svNoteTopMenu\.sv-note-top-menu>button\{[\s\S]*?height:39px!important;min-height:39px!important;max-height:39px!important/);
  assert.match(css,/#svNoteTopMenu\.sv-note-top-menu>button>svg\{[\s\S]*?stroke-width:1\.5!important/);
+ assert.match(contextCss,/grid-template-columns:repeat\(3,40px\)!important/);
  assert.match(script,/data-sv-ink-tool="width"[\s\S]*?M5 6\.5h7/);
 });
 

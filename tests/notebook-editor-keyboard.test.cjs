@@ -7,6 +7,7 @@ const vm=require('node:vm');
 const root=path.join(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const css=fs.readFileSync(path.join(root,'assets/seyveo-notebook-editor-v3.css'),'utf8');
+const contextCss=fs.readFileSync(path.join(root,'assets/seyveo-notebook-context-actions.css'),'utf8');
 const home=fs.readFileSync(path.join(root,'assets/seyveo-home-dock-preview.css'),'utf8');
 const editor=html.split('<dialog id="noteReviewDialog"')[1]?.split('</dialog>')[0]||'';
 const toolbar=editor.split('<div class="sv-note-tools sv-note-tools-compact"')[1]?.split('<div id="svNoteAttachmentMenu"')[0]||'';
@@ -14,7 +15,7 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=18">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<\/body>/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=18">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=1">\s*<\/body>/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
  assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
@@ -24,20 +25,23 @@ test('editor is one rebuilt borderless full-screen page, with no legacy inline s
  }
 });
 
-test('top navigation keeps only Back, Undo, More and golden Done',()=>{
- for(const id of ['noteReviewBack','svNoteUndo','svNoteMore','svNoteDone']){
+test('top navigation keeps only Back, mode label and golden Done',()=>{
+ for(const id of ['noteReviewBack','svNoteDone']){
   assert.match(editor,new RegExp('<button id="'+id+'"[^>]*aria-label="[^\"]+"'));
  }
- assert.doesNotMatch(editor,/id="svNoteShare"|id="svNoteSearch"|id="svNoteSearchPanel"|class="sv-note-action-pair"|id="svNotePrintTop"/);
- assert.match(css,/\.sv-note-nav-actions :is\(button#svNoteUndo,button#svNoteMore,button#svNoteDone\)\{/);
+ assert.doesNotMatch(editor,/id="svNoteUndo"|id="svNoteMore"|id="svNoteShare"|id="svNoteSearch"|id="svNoteSearchPanel"|class="sv-note-action-pair"|id="svNotePrintTop"/);
+ assert.match(editor,/id="svNoteInputModeLabel"[^>]*>Печатный текст<\/span>/);
+ assert.match(contextCss,/#svNoteInputModeLabel\.sv-note-input-mode-label/);
  assert.doesNotMatch(css,/\.sv-note-nav-actions \.sv-note-action-pair/);
  assert.match(css,/\.sv-note-nav-actions button#svNoteDone\{\s*background:#c69c09!important;color:#fff!important;/);
  assert.match(html,/\$\('svNoteDone'\)\.addEventListener\('click',closeNoteReviewSafely\)/);
- assert.match(viewportScript,/getElementById\('svNoteUndo'\)[\s\S]*?execCommand\('undo'\)/);
+ assert.match(viewportScript,/const undoTyped=\(\)=>\{[\s\S]*?execCommand\('undo'\)/);
+ assert.match(viewportScript,/window\.SEYVEO_NOTE_TEXT_UNDO=undoTyped/);
  assert.doesNotMatch(viewportScript,/getElementById\('svNoteShare'\)|printCurrent/);
  const menu=editor.split('<div id="svNoteTopMenu"')[1]?.split('</div>')[0]||'';
- assert.deepEqual([...menu.matchAll(/data-sv-note-menu="([^"]+)"/g)].map(m=>m[1]),['copy','clear','clear-ink']);
- assert.match(menu,/data-sv-note-menu="clear-ink" hidden/);
+ assert.deepEqual([...menu.matchAll(/data-sv-note-menu="([^"]+)"/g)].map(m=>m[1]),['undo','copy','clear']);
+ assert.doesNotMatch(menu,/clear-ink/);
+ assert.match(contextCss,/grid-template-columns:repeat\(3,40px\)!important/);
  assert.match(html,/action\('Поделиться',\(\)=>\{shareNote\(note\)\}\)/);
  assert.match(html,/action\('Распечатать',\(\)=>\{printNote\(note\)\}\)/);
 });
