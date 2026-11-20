@@ -1,7 +1,9 @@
 /* SEYVEO Paper: use the device's real color control, not a duplicate
    palette. Solid colors are native; gradient brushes keep one separate entry. */
 html body #notePaperDialog.sv-paper-studio .paper-color-control{
- position:relative!important;
+ box-sizing:border-box!important;position:relative!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+ height:44px!important;min-height:44px!important;
 }
 html body #notePaperDialog.sv-paper-studio #notePaperColorTrigger{
  pointer-events:none!important;
@@ -39,4 +41,10 @@ html body #notePaperDialog.sv-paper-studio #notePaperColorMenu .sv-polish-segmen
 }
 html body #notePaperDialog.sv-paper-studio #notePaperColorMenu [data-sv-menu-panel="colors"]{
  display:none!important;
+}
+
+/* The shared swatch style paints ::before for regular solid color chips.
+   It must not cover the gradient entry's real two-color illustration. */
+html body #notePaperDialog.sv-paper-studio .sv-paper-swatches > button#notePaperGradientTrigger::before{
+ content:none!important;display:none!important;
 }
