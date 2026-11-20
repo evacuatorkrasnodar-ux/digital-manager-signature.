@@ -27,7 +27,11 @@
  const label=document.createElement('span');label.textContent='Двигай фото · угол меняет размер';
  const done=document.createElement('button');done.type='button';done.textContent='Готово';
  done.setAttribute('aria-label','Завершить настройку фотографии');
- hint.append(label,done);layer.append(frame,hint);sheet.append(layer);
+ const remove=document.createElement('button');remove.type='button';
+ remove.className='sv-photo-remove';remove.title='Убрать фото';
+ remove.setAttribute('aria-label','Убрать фотографию с листа');
+ remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v6M14 11v6"/></svg>';
+ hint.append(label,remove,done);layer.append(frame,hint);sheet.append(layer);
  const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
  const geometry=()=>paper.getEditGeometry();
@@ -141,6 +145,12 @@
   startMode();
  });
  done.addEventListener('click',stopMode);
+ remove.addEventListener('click',()=>{
+  // Photo deletion is available only while the photo itself is being edited.
+  // Delegate to the existing confirmed, undoable remove-photo handler.
+  document.getElementById('notePaperRemovePhoto')?.click();
+  if(!paper.hasPhoto())stopMode();
+ });
  dialog.addEventListener('click',event=>{
   if(active&&event.target.closest('#svPaperNewDock [data-paper-tool],#notePaperSave,#notePaperBack,#notePaperSayvi'))stopMode();
  },{capture:true});
