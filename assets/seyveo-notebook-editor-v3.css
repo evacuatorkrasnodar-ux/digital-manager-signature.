@@ -1,0 +1,297 @@
+/* SEYVEO Notebook editor, rebuilt 20 Nov 2026.
+   One native fullscreen page, no nested card or editor frame. */
+
+:root[data-theme="light"] body #noteReviewDialog{
+ --note-page:#fff;
+ --note-ink:#121418;
+ --note-title:#69737c;
+ --note-placeholder:#9da6ae;
+ --note-control:rgba(246,247,249,.96);
+ --note-pill:var(--sv-dock-pearl-bg,rgba(246,247,249,.95));
+}
+:root[data-theme="dark"] body #noteReviewDialog{
+ --note-page:#111214;
+ --note-ink:#f3f4f6;
+ --note-title:#e3e5e7;
+ --note-placeholder:#858b91;
+ --note-control:rgba(70,71,76,.78);
+ --note-pill:rgba(65,67,72,.86);
+}
+
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]{
+ box-sizing:border-box!important;
+ position:fixed!important;
+ inset:0 0 auto 0!important;
+ transform:none!important;
+ display:flex!important;flex-direction:column!important;
+ width:100vw!important;min-width:100vw!important;max-width:none!important;
+ height:var(--sv-note-height,100dvh)!important;
+ min-height:0!important;max-height:var(--sv-note-height,100dvh)!important;
+ margin:0!important;
+ padding:clamp(76px,14vh,110px) 20px max(10px,env(safe-area-inset-bottom,0px))!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;
+ background:var(--note-page,#fff)!important;background-image:none!important;
+ color:var(--note-ink,#121418)!important;
+ overflow:hidden!important;clip-path:none!important;
+ z-index:2147483647!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]::backdrop{
+ background:var(--note-page,#fff)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+body:has(#noteReviewDialog[open]) :is(.dock,.dock-search,.floating-dock,.home-dock){
+ visibility:hidden!important;pointer-events:none!important;
+}
+#noteReviewDialog[open] [hidden]{display:none!important}
+
+/* Header: the live five controls, no extra title surface. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow,
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-nav-actions{
+ position:absolute!important;top:max(26px,env(safe-area-inset-top,0px))!important;
+ z-index:25!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow{
+ left:19px!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;outline:0!important;
+ box-shadow:none!important;background:var(--note-control)!important;
+ color:var(--note-ink)!important;transform:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-nav-actions{
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ left:auto!important;right:19px!important;width:auto!important;
+ gap:7px!important;pointer-events:auto!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-nav-actions :is(button#svNoteUndo,button#svNoteDone){
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;
+ outline:0!important;box-shadow:none!important;
+ background:var(--note-control)!important;color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-nav-actions .sv-note-action-pair{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ flex:0 0 84px!important;width:84px!important;height:44px!important;
+ padding:1px!important;margin:0!important;
+ border:0!important;border-radius:999px!important;outline:0!important;
+ box-shadow:none!important;overflow:hidden!important;
+ background:var(--note-control)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-nav-actions .sv-note-action-pair > :is(button#svNoteShare,button#svNoteMore){
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;max-width:none!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;background:transparent!important;color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-nav-actions button#svNoteDone{
+ background:#c69c09!important;color:#fff!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(button#noteReviewBack,button#svNoteUndo,button#svNoteShare,button#svNoteMore,button#svNoteDone) svg{
+ display:block!important;width:21px!important;height:21px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ filter:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svNoteMore svg circle{fill:currentColor!important;stroke:none!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] #svNoteSearch{display:none!important}
+
+/* Editor: a title and open writing canvas; zero nested cards. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] form#noteReviewForm.sv-note-editor{
+ display:flex!important;flex-direction:column!important;flex:1 1 auto!important;
+ min-width:0!important;min-height:0!important;
+ gap:0!important;margin:0!important;padding:0!important;
+ border:0!important;outline:0!important;box-shadow:none!important;
+ background:transparent!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(.sv-note-title-label,#svNotePrintTop,.sv-note-label,.sv-note-calendar-label){
+ display:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ input#svNoteTitle.sv-note-title-input{
+ box-sizing:border-box!important;display:block!important;
+ width:100%!important;min-width:0!important;max-width:none!important;
+ height:48px!important;min-height:48px!important;max-height:48px!important;
+ flex:0 0 48px!important;margin:0 0 4px!important;padding:0 4px!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;background:transparent!important;
+ color:var(--note-ink)!important;
+ font:600 21px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:-.025em!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ input#svNoteTitle::placeholder{color:var(--note-title)!important;opacity:1!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ textarea#noteReviewText{
+ box-sizing:border-box!important;display:block!important;
+ flex:1 1 0!important;width:100%!important;min-width:0!important;
+ height:auto!important;min-height:64px!important;max-height:none!important;
+ resize:none!important;overflow-y:auto!important;
+ margin:0!important;padding:7px 4px!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;background:transparent!important;
+ color:var(--note-ink)!important;
+ font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:0!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ textarea#noteReviewText::placeholder{color:var(--note-placeholder)!important;opacity:1!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #noteReviewStatus:not([hidden]){font:400 12px/1.4 -apple-system,sans-serif!important;color:var(--note-title)!important}
+
+/* Bottom: original four icons, 270px resting pearl + separate 60px new-note.
+   The pearl is a soft fill, not a shadow, border, overlay or frame. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-bottom{
+ position:relative!important;display:block!important;flex:0 0 60px!important;
+ height:60px!important;min-height:60px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;outline:0!important;box-shadow:none!important;
+ background:transparent!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
+ --note-left:max(12px,calc(50vw - 175px));
+ --note-width:min(270px,calc(100vw - 104px));
+ --note-right:calc(100vw - var(--note-left) - 60px);
+ box-sizing:border-box!important;display:block!important;position:relative!important;
+ left:-20px!important;top:0!important;right:auto!important;
+ width:100vw!important;min-width:100vw!important;max-width:none!important;
+ height:60px!important;min-height:60px!important;
+ margin:0!important;padding:0!important;transform:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ content:""!important;display:block!important;position:absolute!important;
+ top:0!important;bottom:auto!important;height:60px!important;
+ border:0!important;border-radius:999px!important;outline:0!important;
+ box-shadow:none!important;
+ background:var(--note-pill)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ pointer-events:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+ left:var(--note-left)!important;right:auto!important;width:var(--note-width)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ left:var(--note-right)!important;right:auto!important;width:60px!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
+ box-sizing:border-box!important;position:absolute!important;z-index:1!important;
+ left:var(--note-left)!important;top:0!important;right:auto!important;
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-items:center!important;justify-items:center!important;
+ width:var(--note-width)!important;min-width:0!important;max-width:none!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
+ gap:0!important;margin:0!important;padding:0 9px!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;background:transparent!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tools-compact>button:not([hidden]){
+ display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+ outline:0!important;box-shadow:none!important;background:transparent!important;
+ color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ position:absolute!important;z-index:1!important;
+ left:var(--note-right)!important;top:0!important;right:auto!important;
+ width:60px!important;min-width:60px!important;max-width:60px!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
+ padding:0!important;margin:0!important;transform:none!important;
+ border:0!important;border-radius:50%!important;outline:0!important;
+ box-shadow:none!important;background:transparent!important;color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row svg{
+ display:block!important;width:22px!important;height:22px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ filter:none!important;
+}
+
+/* Writing mode: narrow 42px Apple toolbar immediately above iOS keyboard. */
+@media(max-width:699px){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom{flex-basis:44px!important;height:44px!important;min-height:44px!important}
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
+  height:44px!important;min-height:44px!important;
+ }
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+  left:14px!important;width:calc(100vw - 28px)!important;
+  top:1px!important;height:42px!important;
+ }
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{display:none!important}
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
+  left:14px!important;width:calc(100vw - 28px)!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+ }
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{display:none!important}
+}
+
+/* Popovers stay functional; no persistent decoration on the writing canvas. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(.sv-note-top-menu,.sv-note-search-panel):not([hidden]){
+ box-sizing:border-box!important;position:absolute!important;z-index:55!important;
+ top:78px!important;right:20px!important;left:auto!important;
+ display:grid!important;gap:3px!important;
+ width:min(230px,calc(100vw - 40px))!important;
+ margin:0!important;padding:8px!important;
+ border:0!important;border-radius:17px!important;
+ box-shadow:0 9px 24px rgba(0,0,0,.11)!important;
+ background:var(--note-control)!important;color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(.sv-note-attachment-menu,.sv-note-format-menu):not([hidden]){
+ box-sizing:border-box!important;display:grid!important;position:absolute!important;
+ z-index:60!important;left:0!important;bottom:calc(100% + 10px)!important;
+ width:175px!important;max-width:none!important;
+ gap:3px!important;margin:0!important;padding:8px!important;
+ border:0!important;border-radius:16px!important;
+ box-shadow:0 8px 24px rgba(0,0,0,.1)!important;
+ background:var(--note-control)!important;color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(.sv-note-top-menu,.sv-note-search-panel,.sv-note-attachment-menu,.sv-note-format-menu) button{
+ min-height:35px!important;padding:7px 9px!important;
+ border:0!important;border-radius:10px!important;box-shadow:none!important;
+ background:transparent!important;color:var(--note-ink)!important;
+ text-align:left!important;font:500 13px -apple-system,BlinkMacSystemFont,sans-serif!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(button,input,textarea):focus-visible{
+ outline:2px solid rgba(68,109,160,.7)!important;outline-offset:2px!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #noteReviewDialog[open] *{transition:none!important}
+}

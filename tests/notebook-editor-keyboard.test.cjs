@@ -4,92 +4,59 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 
-const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
-const editorStyles=html.match(/<style id="sv-note-editor-v2">([\s\S]*?)<\/style>/)?.[1]||'';
-const cleanStyles=fs.readFileSync(path.join(__dirname,'..','assets/seyveo-notebook-editor-clean.css'),'utf8');
-const homeMaterial=fs.readFileSync(path.join(__dirname,'..','assets/seyveo-home-dock-preview.css'),'utf8');
-const toolMarkup=html.split('<div class="sv-note-tools sv-note-tools-compact"')[1]?.split('<div id="svNoteAttachmentMenu"')[0]||'';
+const root=path.join(__dirname,'..');
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const css=fs.readFileSync(path.join(root,'assets/seyveo-notebook-editor-v3.css'),'utf8');
+const home=fs.readFileSync(path.join(root,'assets/seyveo-home-dock-preview.css'),'utf8');
+const editor=html.split('<dialog id="noteReviewDialog"')[1]?.split('</dialog>')[0]||'';
+const toolbar=editor.split('<div class="sv-note-tools sv-note-tools-compact"')[1]?.split('<div id="svNoteAttachmentMenu"')[0]||'';
 const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split('</script>')[0]||'';
 
-test('expanded editor reuses exactly the four existing capsule icons',()=>{
- const tools=[...toolMarkup.matchAll(/data-note-tool="([^"]+)"/g)].map(m=>m[1]);
- assert.deepEqual(tools,['checklist','attachment','heading','draw']);
- assert.match(editorStyles,/\.sv-note-keyboard-open[\s\S]*?width:calc\(100vw - 28px\)!important;/);
- assert.match(editorStyles,/\.sv-note-keyboard-open[\s\S]*?grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important;/);
- assert.match(editorStyles,/\.sv-note-keyboard-open[\s\S]*?\.sv-note-draw-standalone\{\s*display:none!important;/);
-});
-
-test('mobile keyboard gets one full-width material surface with no extra circle',()=>{
- const start=editorStyles.indexOf('/* Apple Notes keyboard toolbar:');
- const keyboardCss=editorStyles.slice(start);
- assert.ok(start>0);
- assert.match(keyboardCss,/\.sv-note-tool-row\.sv-shared-dock\{\s*height:44px!important;min-height:44px!important;max-height:44px!important;/);
- assert.match(keyboardCss,/\.sv-note-tool-row\.sv-shared-dock::before\{\s*left:14px!important;[\s\S]*?width:calc\(100vw - 28px\)!important;\s*top:1px!important;bottom:auto!important;height:42px!important;/);
- assert.match(keyboardCss,/\.sv-note-tool-row\.sv-shared-dock::after\{\s*display:none!important;/);
- assert.match(keyboardCss,/\.sv-note-tools-compact\{[\s\S]*?width:calc\(100vw - 28px\)!important;[\s\S]*?height:44px!important;min-height:44px!important;max-height:44px!important;/);
- assert.match(keyboardCss,/width:44px!important;\s*min-width:44px!important;\s*height:44px!important;\s*min-height:44px!important;/);
-});
-
-test('compact light Notebook dock inherits exactly the live Home pearl tokens',()=>{
- for(const token of ['--sv-dock-pearl-border','--sv-dock-pearl-bg','--sv-dock-pearl-blur','--sv-dock-pearl-shadow']){
-  assert.ok(homeMaterial.includes(token+':'),'Home dock owns '+token);
-  assert.ok(editorStyles.includes('var('+token+')!important;'),'Notebook shares '+token);
+test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
+ assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=1">\s*<\/body>/);
+ assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
+ assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
+ assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
+ assert.match(editor,/<form id="noteReviewForm" class="sv-note-editor">[\s\S]*?<input id="svNoteTitle"[\s\S]*?<textarea id="noteReviewText"/);
+ for(const selector of ['form#noteReviewForm.sv-note-editor','input#svNoteTitle.sv-note-title-input','textarea#noteReviewText']){
+  assert.ok(css.includes(selector),`new style owns ${selector}`);
  }
- assert.match(editorStyles,/:root\[data-theme="light"\] #noteReviewDialog\.note-review-dialog\[open\] \.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::before,/);
- assert.match(editorStyles,/:root\[data-theme="light"\] #noteReviewDialog\.note-review-dialog\[open\] \.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::after\{/);
- assert.match(editorStyles,/\.sv-note-tools-compact>button:not\(\[hidden\]\),[\s\S]*?color:#0b0b0d!important;/);
 });
 
-test('resting Notebook capsule stretches to the 270px reference while its new-note circle stays separate',()=>{
- const mobileCss=editorStyles.slice(editorStyles.indexOf('/* Notebook footer parity'));
- assert.match(mobileCss,/--sv-note-home-left:max\(12px, calc\(50vw - 175px\)\);/);
- assert.match(mobileCss,/--sv-note-home-search:calc\(100vw - var\(--sv-note-home-left\) - 60px\);/);
- assert.match(mobileCss,/--sv-note-capsule-width:min\(270px, calc\(100vw - 104px\)\);/);
- assert.match(mobileCss,/\.sv-note-tool-row\.sv-shared-dock::before\{[\s\S]*?width:var\(--sv-note-capsule-width\)!important;/);
- assert.match(mobileCss,/\.sv-note-tools-compact\{[\s\S]*?width:var\(--sv-note-capsule-width\)!important;/);
- const geometry=(viewport)=>({left:Math.max(12,viewport/2-175),width:Math.min(270,viewport-104)});
- for(const viewport of [320,337,375,390,454]){
-  const {left,width}=geometry(viewport);
-  const circleLeft=viewport-left-60;
-  assert.ok(circleLeft-(left+width)>=20-1e-6,`${viewport}px must have a 20px gap`);
+test('top navigation keeps Back, Undo, paired Share/More and golden Done',()=>{
+ for(const id of ['noteReviewBack','svNoteUndo','svNoteShare','svNoteMore','svNoteDone']){
+  assert.match(editor,new RegExp('<button id="'+id+'"[^>]*aria-label="[^\"]+"'));
  }
- assert.equal(geometry(375).width,270);
-});
-
-test('Apple-style header reuses real note actions and keeps four dock icons',()=>{
- for(const id of ['svNoteUndo','svNoteShare','svNoteMore','svNoteDone']){
-  assert.match(html,new RegExp('<button id="'+id+'"[^>]*aria-label="[^"]+"'));
- }
- assert.match(html,/<div class="sv-note-action-pair">[\s\S]*?id="svNoteShare"[\s\S]*?id="svNoteMore"[\s\S]*?<\/div>/);
- assert.match(editorStyles,/\.sv-note-nav-brand\{\s*visibility:hidden!important;/);
- assert.match(editorStyles,/\.sv-note-nav-actions :is\(#svNoteUndo,#svNoteShare,#svNoteMore,#svNoteDone\)/);
- assert.match(editorStyles,/\.sv-note-nav-actions #svNoteDone\{\s*background:#c69c09!important;color:#fff!important;/);
- assert.match(editorStyles,/html\[data-theme="light"\] body dialog#noteReviewDialog\.note-review-dialog\[open\]\s*\.sv-note-nav-actions > #svNoteDone\{\s*background:#c69c09!important;\s*color:#fff!important;/);
+ assert.match(editor,/<div class="sv-note-action-pair">[\s\S]*?id="svNoteShare"[\s\S]*?id="svNoteMore"[\s\S]*?<\/div>/);
+ assert.match(css,/\.sv-note-nav-actions \.sv-note-action-pair\{[\s\S]*?grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important;/);
+ assert.match(css,/\.sv-note-nav-actions button#svNoteDone\{\s*background:#c69c09!important;color:#fff!important;/);
  assert.match(html,/\$\('svNoteDone'\)\.addEventListener\('click',closeNoteReviewSafely\)/);
  assert.match(viewportScript,/getElementById\('svNoteUndo'\)[\s\S]*?execCommand\('undo'\)/);
  assert.match(viewportScript,/getElementById\('svNoteShare'\)[\s\S]*?navigator\.share\(\{title,text\}\)/);
- assert.deepEqual([...toolMarkup.matchAll(/data-note-tool="([^"]+)"/g)].map(m=>m[1]),['checklist','attachment','heading','draw']);
 });
 
-test('header controls share one top anchor and Share/More render as one capsule',()=>{
- const navMarkup=html.split('<button id="noteReviewBack"')[1]?.split('<div id="svNoteTopMenu"')[0]||'';
- assert.match(navMarkup,/<div class="sv-note-header">\s*<div class="sv-note-nav-brand">[\s\S]*?<\/div>\s*<\/div>\s*<div class="sv-note-nav-actions">/);
- assert.match(editorStyles,/\.sv-note-nav-actions,\s*html body dialog#noteReviewDialog\.note-review-dialog\[open\] button#noteReviewBack\.sv-note-back-arrow\{\s*top:max\(26px, env\(safe-area-inset-top,0px\)\)!important;/);
- assert.match(editorStyles,/html body dialog#noteReviewDialog\.note-review-dialog\[open\] \.sv-note-nav-actions\{\s*right:19px!important;/);
- assert.match(editorStyles,/\.sv-note-action-pair\{\s*display:grid!important;\s*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important;/);
- assert.match(editorStyles,/\.sv-note-action-pair > :is\(button#svNoteShare,button#svNoteMore\)\{[\s\S]*?border:0!important;border-radius:0!important;[\s\S]*?box-shadow:none!important;/);
- assert.match(editorStyles,/\.sv-note-action-pair > button#svNoteMore\{\s*border-left:1px solid/);
-});
-
-test('clean notebook layout is last-loaded and strips all permanent inner frames',()=>{
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-clean\.css\?v=2">\s*<\/body>/);
- assert.match(cleanStyles,/dialog#noteReviewDialog\.note-review-dialog\[open\]\{[\s\S]*?border:0!important;border-radius:0!important;[\s\S]*?outline:0!important;box-shadow:none!important;/);
- assert.match(cleanStyles,/dialog#noteReviewDialog\.note-review-dialog\[open\]::backdrop\{\s*background:#fff!important;\s*-webkit-backdrop-filter:none!important;backdrop-filter:none!important;/);
- for(const key of ['.sv-note-document-capsule','.sv-note-title-input','#noteReviewText','button#noteReviewBack','button#svNoteUndo','button#svNoteShare','button#svNoteMore','.sv-note-action-pair','.sv-note-tool-row.sv-shared-dock::before','.sv-note-tool-row.sv-shared-dock::after']){
-  assert.ok(cleanStyles.includes(key),'clean skin covers '+key);
+test('bottom uses the four original icons and a separate new-note circle',()=>{
+ assert.deepEqual([...toolbar.matchAll(/data-note-tool="([^"]+)"/g)].map(m=>m[1]),[
+  'checklist','attachment','heading','draw'
+ ]);
+ assert.match(editor,/id="svNoteNewStandalone" class="sv-note-draw-standalone"/);
+ assert.match(css,/--note-width:min\(270px,calc\(100vw - 104px\)\);/);
+ assert.match(css,/--note-left:max\(12px,calc\(50vw - 175px\)\);/);
+ assert.match(css,/--note-right:calc\(100vw - var\(--note-left\) - 60px\);/);
+ assert.ok(home.includes('--sv-dock-pearl-bg:'));
+ assert.match(css,/--note-pill:var\(--sv-dock-pearl-bg,/);
+ for(const width of [320,337,375,390,454]){
+  const left=Math.max(12,width/2-175),pill=Math.min(270,width-104),circle=width-left-60;
+  assert.ok(circle-left-pill>=20-1e-6,`maintain a 20px gap at ${width}px`);
  }
- assert.match(cleanStyles,/\.sv-note-nav-actions \.sv-note-action-pair > :is\(button#svNoteShare,button#svNoteMore\)\{\s*border:0!important;/);
- assert.match(cleanStyles,/html:root\[data-theme="light"\] body dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\][\s\S]*?button#noteReviewBack\.sv-note-back-arrow/);
+});
+
+test('software keyboard switches dock to one narrow 42px full-width capsule',()=>{
+ assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom\{/);
+ assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::before\{[\s\S]*?left:14px!important;width:calc\(100vw - 28px\)!important;[\s\S]*?height:42px!important;/);
+ assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::after\{display:none!important\}/);
+ assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock>\.sv-note-draw-standalone\{display:none!important\}/);
 });
 
 test('keyboard state follows viewport shrink and recovers without focus-only jumps',()=>{
