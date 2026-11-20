@@ -80,6 +80,11 @@ test('header controls share one top anchor and Share/More render as one capsule'
  assert.match(editorStyles,/\.sv-note-action-pair > button#svNoteMore\{\s*border-left:1px solid/);
 });
 
+test('fullscreen light Notebook has square borderless edges and no dark backdrop',()=>{
+ assert.match(editorStyles,/html\[data-theme="light"\] body dialog#noteReviewDialog\.note-review-dialog\[open\]\{\s*border:0!important;\s*border-radius:0!important;\s*outline:0!important;\s*box-shadow:none!important;/);
+ assert.match(editorStyles,/html\[data-theme="light"\] body dialog#noteReviewDialog\.note-review-dialog\[open\]::backdrop\{\s*background:#fff!important;\s*-webkit-backdrop-filter:none!important;\s*backdrop-filter:none!important;/);
+});
+
 test('keyboard state follows viewport shrink and recovers without focus-only jumps',()=>{
  const start=viewportScript.indexOf('let lastNoteHeight=0,noteViewportFrame=0,restingNoteHeight=0;');
  const end=viewportScript.indexOf('const queueNoteViewportSync=',start);
