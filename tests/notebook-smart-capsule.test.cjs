@@ -22,7 +22,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=14/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=15/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -167,4 +167,35 @@ test('Sayvi provides in-note edit actions, never redirects to chat',()=>{
  assert.match(script,/sayviApply\.addEventListener\('click'/);
  assert.doesNotMatch(script,/chat\.open\(|location\.assign\(|note-handoff\.v1/);
  assert.match(css,/#svSmartNoteSayviPanel\.sv-smart-sayvi-panel:not\(\[hidden\]\)/);
+});
+
+test('attachment popover has just two compact choices and follows the paperclip',()=>{
+ const popup=css.slice(css.lastIndexOf('/* Notes dock polish v15'));
+ for(const choice of ['camera','file'])assert.match(html,new RegExp('data-note-attachment="'+choice+'"'));
+ assert.equal([...html.matchAll(/data-note-attachment="(?:camera|file)"/g)].length,2);
+ assert.match(html,/anchor=btn\.getBoundingClientRect\(\),bounds=dlg\.getBoundingClientRect\(\)/);
+ assert.match(html,/menu\.style\.setProperty\('--sv-attach-menu-left'/);
+ assert.match(popup,/width:min\(184px,calc\(100vw - 32px\)\)!important/);
+ assert.match(popup,/grid-template-columns:minmax\(0,1fr\)!important/);
+ assert.match(popup,/height:40px!important;min-height:40px!important;max-height:40px!important/);
+ assert.match(popup,/\.sv-note-keyboard-open[\s\S]*?bottom:calc\(55px/);
+});
+
+test('resting dock keeps unified glyph sizes, centered new note and visible Sayvi',()=>{
+ const polish=css.slice(css.lastIndexOf('/* Notes dock polish v15'));
+ assert.match(polish,/width:44px!important;min-width:0!important;max-width:44px!important/);
+ assert.match(polish,/width:25px!important;min-width:25px!important;max-width:25px!important/);
+ assert.match(polish,/#svNoteNewStandalone\.sv-note-draw-standalone\{[\s\S]*?place-items:center!important/);
+ assert.match(polish,/color:#27313a!important/);
+ assert.match(polish,/width:34px!important;min-width:34px!important;max-width:34px!important/);
+ assert.match(polish,/button\[aria-pressed="true"\]::after\{/);
+ // The polish must not reveal the hidden checklist, eraser or other tools.
+ const restingTools=polish.split('> button:not([hidden]){')[1].split('}\n')[0];
+ assert.doesNotMatch(restingTools,/display:grid!important/);
+ for(const viewport of [320,375,390,428]){
+  const left=Math.max(12,viewport/2-175),width=Math.min(270,viewport-104);
+  const newNoteLeft=viewport-left-60;
+  assert.ok(newNoteLeft-(left+width)>=19.9,`dock gap at ${viewport}px`);
+  assert.ok(Math.abs((viewport-(newNoteLeft+60))-left)<.001,`outer margins at ${viewport}px`);
+ }
 });

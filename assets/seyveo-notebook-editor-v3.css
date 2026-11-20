@@ -962,3 +962,115 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  background-image:linear-gradient(to right,rgba(126,146,166,.24) 1px,transparent 1px),linear-gradient(to bottom,rgba(126,146,166,.24) 1px,transparent 1px)!important;
  background-size:18px 18px!important;
 }
+
+/* Notes dock polish v15: one optical grid and one ink tone.
+   The four resting tools and the independent New Note action share their
+   glyph box, stroke weight and vertical center. The selected pen does not
+   introduce a large grey disc among otherwise unfilled buttons. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]){
+ box-sizing:border-box!important;position:relative!important;
+ width:44px!important;min-width:0!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ place-items:center!important;justify-self:center!important;
+ margin:0!important;padding:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--note-ink)!important;opacity:1!important;filter:none!important;
+ transform:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]) > svg,
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone > svg{
+ box-sizing:border-box!important;display:block!important;
+ width:25px!important;min-width:25px!important;max-width:25px!important;
+ height:25px!important;min-height:25px!important;max-height:25px!important;
+ margin:0!important;padding:0!important;
+ color:inherit!important;opacity:1!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.75!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ transform:none!important;filter:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone{
+ display:grid!important;place-items:center!important;
+ width:60px!important;min-width:60px!important;max-width:60px!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
+ padding:0!important;margin:0!important;
+ color:var(--note-ink)!important;opacity:1!important;
+ transform:none!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]),
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone{
+ color:#27313a!important;
+}
+/* The Sayvi SVG uses just 63% of its square viewBox. A larger mask box
+   makes the *visible* mark match the 25px outline icons, not dwarf them. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button[data-sv-smart-tool="sayvi"] > .sv-smart-sayvi-icon{
+ display:block!important;flex:0 0 34px!important;
+ width:34px!important;min-width:34px!important;max-width:34px!important;
+ height:34px!important;min-height:34px!important;max-height:34px!important;
+ margin:0!important;color:inherit!important;background-color:currentColor!important;
+ transform:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tools-compact > button[data-sv-smart-tool="text"] > .sv-smart-aa{
+ display:block!important;font:600 20px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:-.06em!important;color:inherit!important;transform:none!important;
+}
+/* Small active underline instead of an oversized grey selected circle. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tools-compact > button[aria-pressed="true"]::after{
+ content:""!important;position:absolute!important;display:block!important;
+ left:50%!important;bottom:1px!important;width:12px!important;height:2px!important;
+ border-radius:999px!important;background:currentColor!important;opacity:.45!important;
+ transform:translateX(-50%)!important;pointer-events:none!important;
+}
+
+/* Exactly two attachment choices: compact, centered on the paperclip.
+   The JS sets the horizontal anchor from the actual tapped button. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteAttachmentMenu.sv-note-attachment-menu:not([hidden]){
+ box-sizing:border-box!important;position:absolute!important;
+ left:var(--sv-attach-menu-left,16px)!important;right:auto!important;
+ top:auto!important;bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
+ width:min(184px,calc(100vw - 32px))!important;
+ min-width:0!important;max-width:184px!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ gap:2px!important;margin:0!important;padding:6px!important;
+ overflow:hidden!important;border-radius:16px!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteAttachmentMenu.sv-note-attachment-menu > button{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:22px minmax(0,1fr)!important;
+ align-items:center!important;justify-content:start!important;gap:10px!important;
+ width:100%!important;min-width:0!important;
+ height:40px!important;min-height:40px!important;max-height:40px!important;
+ margin:0!important;padding:0 10px!important;
+ border-radius:10px!important;
+ font:500 14px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteAttachmentMenu.sv-note-attachment-menu > button > svg{
+ display:block!important;justify-self:center!important;align-self:center!important;
+ width:21px!important;min-width:21px!important;max-width:21px!important;
+ height:21px!important;min-height:21px!important;max-height:21px!important;
+ margin:0!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.75!important;transform:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteAttachmentMenu.sv-note-attachment-menu > button > span{
+ display:block!important;min-width:0!important;line-height:1.2!important;
+ text-align:left!important;white-space:nowrap!important;transform:none!important;
+}
+@media(max-width:699px){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  > #svNoteAttachmentMenu.sv-note-attachment-menu:not([hidden]){
+  bottom:calc(55px + env(safe-area-inset-bottom,0px))!important;
+ }
+}

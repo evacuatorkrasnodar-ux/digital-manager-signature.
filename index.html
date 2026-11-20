@@ -5659,6 +5659,14 @@ window.addEventListener('load',()=>{
  if(action==='attachment'){
   const menu=document.getElementById('svNoteAttachmentMenu'),format=document.getElementById('svNoteFormatMenu');
   format.hidden=true;dlg.querySelector('[data-note-tool="heading"]')?.setAttribute('aria-expanded','false');
+  // Center the two-choice popover over the paperclip, within the dialog edge.
+  // It is portalled to the dialog to avoid the dock's horizontal scroll clip.
+  if(menu.hidden){
+   const anchor=btn.getBoundingClientRect(),bounds=dlg.getBoundingClientRect();
+   const width=Math.min(184,Math.max(0,bounds.width-32));
+   const left=Math.max(16,Math.min(bounds.width-width-16,anchor.left-bounds.left+anchor.width/2-width/2));
+   menu.style.setProperty('--sv-attach-menu-left',`${Math.round(left)}px`);
+  }
   menu.hidden=!menu.hidden;btn.setAttribute('aria-expanded',String(!menu.hidden));return;
  }
  if(action==='heading'){
@@ -5732,5 +5740,5 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-smart-note-ink.js?v=8"></script>
 <script src="assets/seyveo-note-voice.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-note-voice.css?v=6">
-<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=14">
+<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=15">
 </body></html>
