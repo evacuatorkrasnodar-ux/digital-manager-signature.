@@ -4214,13 +4214,13 @@ function renderNotes(){
    const [y,m,d]=note.calendarDate.split('-').map(Number);
    date.textContent='На '+new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',year:'numeric'}).format(new Date(y,m-1,d));
   }else date.textContent=Number.isNaN(when.getTime())?'Моя запись':new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(when);
-  const content=document.createElement('p');content.textContent=note.paper?'Рукописный лист':(note.text.trim()?note.text:(note.attachmentsCount?'Вложения · '+note.attachmentsCount:'Пустая заметка'));
+  const content=document.createElement('p');content.textContent=note.noteKind==='handwriting'?(note.title||'Рукописная заметка'):note.noteKind==='art'?'Рисунок':note.paper?'Рукописный лист':(note.text.trim()?note.text:(note.attachmentsCount?'Вложения · '+note.attachmentsCount:'Пустая заметка'));
   let thumbnail=null;
   if(note.paper){
    thumbnail=document.createElement('canvas');thumbnail.className='sv-nb4-preview';
    thumbnail.width=210;thumbnail.height=297;
    thumbnail.dataset.paperBackground=note.paper.background==='dark'?'dark':'light';
-   thumbnail.setAttribute('aria-label','Предпросмотр рукописного листа');
+   thumbnail.setAttribute('aria-label',note.noteKind==='art'?'Предпросмотр рисунка':'Предпросмотр рукописного листа');
    window.SEYVEO_PAPER?.preview(thumbnail,note.paper);
   }
   const swipe=document.createElement('div');swipe.className='sv-nb4-slide';
@@ -4242,7 +4242,8 @@ function renderNotes(){
    if(Date.now()<suppressNoteClickUntil)return;
    if(swipe.classList.contains('is-open')){swipe.classList.remove('is-open');return}
    $('notesDialog').close();
-   if(note.paper)window.SEYVEO_PAPER?.open(note);
+   if(note.noteKind==='handwriting')window.SEYVEO_HANDWRITING?.open(note);
+   else if(note.paper)window.SEYVEO_PAPER?.open(note);
    else openNoteRead(note);
   });
   const hint=window.SEYVEO_NOTE_SCHEDULE_HINT?.(note.text)||null;
@@ -4737,7 +4738,7 @@ $('moreComposer').addEventListener('click',()=>{
 });
 $('viewNotes').addEventListener('click',openNotes);
 window.addEventListener('seyveo:notes-open',openNotes);
-// The three Notebook creation tiles are handled by one independent
+// The four Notebook creation tiles are handled by one independent
 // entry controller (seyveo-notebook-launch.js). Avoid competing listeners.
 $('notesNew').addEventListener('click',()=>{if($('notesDialog').open)$('notesDialog').close();openNoteReview('')});
 $('clearText').addEventListener('click',()=>{question.value='';syncComposer();composerMessage('Поле очищено')});
@@ -5762,5 +5763,7 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-paper-ai-workbench.css?v=3">
 <script src="assets/seyveo-paper-ai-requests.js?v=2"></script>
 <script src="assets/seyveo-paper-ai-workbench.js?v=3"></script>
+<link rel="stylesheet" href="assets/seyveo-handwriting-page.css?v=1">
+<script src="assets/seyveo-handwriting-page.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=2">
 </body></html>

@@ -1,0 +1,108 @@
+/* SEYVEO · a separate, edge-to-edge handwriting page.  The art studio is untouched. */
+html body #svHandwritingDialog.sv-handwriting-dialog[open]{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ position:fixed!important;inset:0!important;top:0!important;left:0!important;
+ width:100vw!important;width:100dvw!important;min-width:0!important;max-width:none!important;
+ height:100vh!important;height:100dvh!important;min-height:0!important;max-height:none!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+ outline:0!important;box-shadow:none!important;filter:none!important;
+ transform:none!important;transition:none!important;animation:none!important;
+ background:#fff!important;background-image:none!important;color:#191c20!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ overflow:hidden!important;z-index:2147483000!important;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+#svHandwritingDialog::backdrop{background:#fff!important;opacity:1!important}
+#svHandwritingDialog,#svHandwritingDialog *{box-sizing:border-box}
+#svHandwritingDialog .sv-hw-header{
+ position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;
+ flex:0 0 auto;min-height:76px;margin:0;padding:calc(12px + env(safe-area-inset-top,0px)) 20px 10px;
+ border:0;background:transparent;box-shadow:none;
+}
+#svHandwritingDialog .sv-hw-header h2{
+ position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+ margin:0;font-size:16px;font-weight:650;white-space:nowrap;pointer-events:none;
+}
+#svHandwritingDialog .sv-hw-header button{
+ -webkit-appearance:none;appearance:none;display:grid;place-items:center;
+ flex:0 0 42px;width:42px;height:42px;margin:0;padding:0;
+ border:0!important;border-radius:50%;outline-offset:2px;
+ background:#f6f8f9;color:#1d242a;box-shadow:none;cursor:pointer;
+}
+#svHandwritingDialog .sv-hw-header button:disabled{opacity:.35;cursor:default}
+#svHandwritingDialog .sv-hw-header button svg,#svHandwritingDialog .sv-hw-tools svg{
+ display:block;width:22px;height:22px;fill:none;stroke:currentColor;
+ stroke-linecap:round;stroke-linejoin:round;stroke-width:1.7;
+}
+#svHandwritingDialog .sv-hw-nav{display:flex;align-items:center;gap:4px;margin-left:auto}
+#svHandwritingDialog .sv-hw-header button.sv-hw-done{
+ margin-left:5px;background:#cca000;color:white;
+}
+#svHandwritingDialog .sv-hw-main{
+ display:flex;flex:1 1 auto;flex-direction:column;min-height:0;min-width:0;
+ padding:24px 22px 0;border:0;background:#fff;overflow:hidden;
+}
+#svHandwritingDialog .sv-hw-title{
+ box-sizing:border-box!important;flex:0 0 43px;display:block;width:100%;min-width:0;height:43px;
+ margin:0 0 5px!important;padding:0!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#1c2328!important;font:600 20px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+#svHandwritingDialog .sv-hw-title::placeholder{color:#7c858c;opacity:1}
+#svHandwritingDialog .sv-hw-stage{
+ display:flex;flex:1 1 auto;align-items:flex-start;justify-content:center;
+ position:relative;min-height:0;min-width:0;width:100%;
+ margin:0;padding:0;border:0;border-radius:0;background:white;box-shadow:none;overflow:hidden;
+}
+#svHandwritingDialog .sv-hw-stage.is-ruled{
+ background:repeating-linear-gradient(to bottom,#fff 0,#fff 31px,#e9edf1 32px);
+}
+#svHandwritingDialog #svHandwritingCanvas{
+ display:block;flex:0 0 auto;max-width:100%;max-height:100%;
+ margin:0;padding:0;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ touch-action:none;user-select:none;-webkit-user-select:none;
+}
+#svHandwritingDialog .sv-hw-footer{
+ box-sizing:border-box!important;display:flex;flex:0 0 auto;align-items:center;
+ justify-content:center;min-height:73px;width:100%;
+ margin:0;padding:7px 15px calc(8px + env(safe-area-inset-bottom,0px));
+ border:0!important;background:#fff!important;box-shadow:none!important;
+}
+#svHandwritingDialog .sv-hw-tools{
+ box-sizing:border-box;display:flex;align-items:center;justify-content:space-evenly;
+ gap:8px;flex:0 1 auto;width:min(310px,100%);height:48px;
+ margin:0;padding:3px 9px;border:0!important;border-radius:999px!important;
+ background:linear-gradient(135deg,rgba(249,250,251,.96),rgba(239,245,248,.9));
+ box-shadow:0 3px 15px rgba(117,139,153,.07);
+}
+#svHandwritingDialog .sv-hw-tools>button,#svHandwritingDialog .sv-hw-width{
+ -webkit-appearance:none;appearance:none;display:grid;place-items:center;
+ flex:0 0 44px;width:44px;height:40px;margin:0;padding:0;
+ border:0!important;border-radius:999px;background:transparent!important;
+ color:#63747e;box-shadow:none!important;cursor:pointer;
+}
+#svHandwritingDialog .sv-hw-tools>button[aria-pressed="true"]{
+ background:#e4ebef!important;color:#222f37;
+}
+#svHandwritingDialog .sv-hw-width{position:relative}
+#svHandwritingDialog .sv-hw-width input{
+ position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;
+}
+#svHandwritingDialog .sv-hw-status{
+ position:absolute;bottom:90px;left:50%;transform:translateX(-50%);
+ max-width:calc(100vw - 35px);margin:0;padding:10px 16px;
+ border:0;border-radius:14px;background:#27313a;color:#fff;font-size:13px;text-align:center;
+ box-shadow:0 4px 16px #0002;z-index:2;
+}
+#svHandwritingDialog .sv-hw-status[hidden]{display:none!important}
+@media(max-width:420px){
+ #svHandwritingDialog .sv-hw-header{padding-left:16px;padding-right:16px;gap:4px}
+ #svHandwritingDialog .sv-hw-header h2{font-size:14px}
+ #svHandwritingDialog .sv-hw-nav{gap:1px}
+ #svHandwritingDialog .sv-hw-header button{flex-basis:40px;width:40px;height:40px}
+ #svHandwritingDialog .sv-hw-main{padding:23px 20px 0}
+}
+@media(max-width:340px){#svHandwritingDialog .sv-hw-header h2{display:none}}

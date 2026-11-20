@@ -1002,7 +1002,7 @@ $('notePaperSave').addEventListener('click',()=>{
  if(editID){
   if(!list.some(n=>n.id===editID)){report('Запись не найдена.');return}
   updated=list.map(n=>n.id===editID?{...n,paper:page,updatedAt:Date.now()}:n);
- }else updated=[{id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:page.texts.length&&!page.strokes.length&&!page.photo?'Лист с текстом':'Рукописный лист',paper:page,createdAt:Date.now()},...list];
+ }else updated=[{id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:'Рисунок',noteKind:'art',paper:page,createdAt:Date.now()},...list];
  if(!api.putNotes(updated)){report('Не хватает места для сохранения. Лист пока открыт.');return}
  changed=false;dialog.close();
 });
