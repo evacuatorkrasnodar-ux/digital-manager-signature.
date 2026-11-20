@@ -3,14 +3,15 @@
  'use strict';
  const dialog=document.getElementById('notePaperDialog');
  const menu=document.getElementById('notePaperSettingsMenu');
- const actions=menu?.querySelector('[data-sv-menu-panel="actions"]');
+ const sayvi=document.getElementById('notePaperSayvi');
  const paper=window.SEYVEO_PAPER;
  const engine=window.SEYVEO_PAPER_REQUESTS;
- if(!dialog||!actions||!engine?.plan||actions.querySelector('#notePaperAskSayvi'))return;
- const entry=document.createElement('button');
- entry.id='notePaperAskSayvi';entry.type='button';entry.className='sv-newdock-menu-action';
- entry.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6.5h16M4 12h12M4 17.5h8"/><path d="m18.5 15 1.1 2.9 2.9 1.1-2.9 1.1-1.1 2.9-1.1-2.9-2.9-1.1 2.9-1.1z"/></svg><span>Попросить Сэйви</span>';
- actions.insertBefore(entry,actions.firstElementChild);
+ if(!dialog||!sayvi||!engine?.plan)return;
+ // One entry point: the existing Sayvi symbol in the drawing toolbar.
+ // Capture prevents the older hand-off handler from navigating to chat before
+ // the person can choose whether to edit this drawing or open a conversation.
+ sayvi.setAttribute('aria-label','Сэйви — помощь с рисунком или чат');
+ sayvi.title='Сэйви';
 
  const modal=document.createElement('dialog');modal.id='svPaperAskSayvi';modal.className='sv-paper-ai-workbench';
  modal.setAttribute('aria-labelledby','svPaperAskSayviTitle');
@@ -18,6 +19,7 @@
   <p class="sv-pa-intro">Расскажи, что сделать с листом. Я покажу доступные инструменты и честно отмечу, что ещё требует ИИ-модели.</p>
   <textarea data-pa-request aria-label="Что Сэйви должна сделать с листом" placeholder="Например: сделай линии ровнее, прочитай рукопись и проверь ошибки" maxlength="600" rows="3"></textarea>
   <button type="button" class="sv-pa-plan" data-pa-plan>Разобрать просьбу</button>
+  <button type="button" class="sv-pa-chat" data-pa-chat>Перейти в чат с Сэйви</button>
   <div data-pa-steps class="sv-pa-steps" role="status" aria-live="polite"></div>
   <div data-pa-preview class="sv-pa-preview" hidden><p data-pa-preview-title>Эскиз Сэйви · предварительный просмотр</p><canvas width="840" height="1188" aria-label="Предложенный моделью эскиз"></canvas><div class="sv-pa-preview-actions"><button type="button" data-pa-cancel>Отмена</button><button type="button" data-pa-apply>На лист</button></div></div>
   <p class="sv-pa-foot">Действия запускаются только по твоему нажатию. В локальной версии ПК команда «Создать» передаёт текст просьбы локальной модели; рисунок и личные образцы не отправляются. На публичном сайте модель не подключена.</p>`;
@@ -43,7 +45,16 @@
   menu.hidden=true;document.getElementById('notePaperSettings')?.setAttribute('aria-expanded','false');
   results.replaceChildren();clearPreview();if(!modal.open)modal.showModal();
  }
- entry.addEventListener('click',show);
+ sayvi.addEventListener('click',event=>{
+  if(!dialog.open)return;
+  event.preventDefault();event.stopImmediatePropagation();
+  show();
+ },true);
+ modal.querySelector('[data-pa-chat]').addEventListener('click',()=>{
+  if(busy)return;
+  modal.close();
+  paper?.openSayvi?.();
+ });
  modal.querySelector('[data-pa-close]').addEventListener('click',()=>modal.close());
  async function drawDraft(request){
   if(busy||!localPC()||!paper?.getEditableStrokes)return;
