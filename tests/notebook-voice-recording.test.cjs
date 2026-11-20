@@ -14,8 +14,8 @@ test('recording lives in attachment menu and does not replace the approved dock'
  assert.match(html,/data-note-attachment="voice"[\s\S]*?<span>Диктовка<\/span>/);
  assert.match(html,/action==='record'[\s\S]*?SEYVEO_NOTE_VOICE\?\.start\(\)/);
  assert.match(html,/seyveo-note-attachments\.js\?v=3/);
- assert.match(html,/seyveo-note-voice\.js\?v=1/);
- assert.match(html,/seyveo-note-voice\.css\?v=1/);
+ assert.match(html,/seyveo-note-voice\.js\?v=2/);
+ assert.match(html,/seyveo-note-voice\.css\?v=2/);
  assert.match(voice,/form\.insertBefore\(capture,attachmentList\)/);
  assert.doesNotMatch(voice,/location\.href|location\.assign|openChat/);
 });
@@ -31,7 +31,7 @@ test('recording is real and stored as an audio blob beside the note, without upl
  assert.match(attachments,/DB_NAME='seyveo-notebook-files-v1'/);
  assert.match(attachments,/kind:'voice',durationMs/);
  assert.match(attachments,/MAX_FILE=10\*1024\*1024,MAX_PER_NOTE=12/);
- assert.doesNotMatch(voice,/fetch\(|XMLHttpRequest|WebSocket/);
+ assert.doesNotMatch(voice,/fetch\(['"]https?:\/\/|XMLHttpRequest|WebSocket/);
 });
 
 test('transcription requires explicit opt-in and user review before text insertion',()=>{
@@ -40,6 +40,12 @@ test('transcription requires explicit opt-in and user review before text inserti
  assert.match(voice,/window\.SpeechRecognition\|\|window\.webkitSpeechRecognition/);
  assert.match(voice,/speech\.onresult/);
  assert.match(voice,/data-transcript-add/);
+ assert.match(voice,/data-transcript-run/);
+ assert.match(voice,/location\.origin!=='http:\/\/127\.0\.0\.1:8790'/);
+ assert.match(voice,/fetch\('\/api\/seyveo-note-transcribe'/);
+ assert.match(voice,/body:item\.blob,signal:controller\.signal/);
+ assert.match(voice,/transcriptAbort\?\.abort\(\)/);
+ assert.match(voice,/if\(!response\.ok\)throw Error/);
  assert.match(voice,/updateTranscript\(item\.noteId,item\.id,text\)/);
  assert.match(voice,/textField\.dispatchEvent\(new Event\('input'/);
  assert.match(voice,/data-sv-smart-tool="sayvi"/);

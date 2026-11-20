@@ -31,6 +31,7 @@ import {analyzeBusinessMail} from './mail-intelligence.mjs';
 import {addApprovedExample,learningStats,findApprovedExamples} from './approved-learning.mjs';
 import {createLearningQueue} from './learning-queue.mjs';
 import {createVoiceWorker} from './voice-worker.mjs';
+import {transcribeNoteAudio,noteAudioFormat,MAX_NOTE_AUDIO_BYTES} from './note-audio-transcriber.mjs';
 import {readApprovedWelcome,prepareWelcomeForPlayback} from './sayvi-approved-welcome.mjs';
 import {createBraveContextProvider,searchWithSources} from './live-search.mjs';
 import {createSeyveoWebProvider} from './seyveo-web.mjs';
@@ -195,13 +196,14 @@ function localFile(path){
  if(!file.startsWith(resolve(ROOT,'assets')+sep))return null;
  return TYPES[extname(file).toLowerCase()]?file:null;
 }
-export function createRealLocalServer({memoryStore,learningQueue,searchProvider}={}){
+export function createRealLocalServer({memoryStore,learningQueue,searchProvider,noteTranscriber=transcribeNoteAudio}={}){
  // Force offline AI, even if a paid API key exists in the environment.
  process.env.SEYVEO_ENABLE_LOCAL='1';
  process.env.SEYVEO_ENABLE_CLOUD='0';
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
  let busy=false,minute=0,count=0;
  let taskAnalyzeBusy=false;
+ let noteAudioBusy=false,noteAudioMinute=0,noteAudioCount=0;
  let paperDraftBusy=false,paperDraftMinute=0,paperDraftCount=0;
  let routeMinute=0,routeCount=0;
  let placeMinute=0,placeCount=0,placeLast=0;
@@ -230,6 +232,46 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='POST'&&path==='/api/seyveo-note-transcribe'){
+   // Only the actual local notebook may submit raw audio. The recording is
+   // processed on this PC and its temporary copy is deleted after recognition.
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   const type=String(req.headers['content-type']||'');
+   if(!noteAudioFormat(type)){send(res,415,{error:'Неподдерживаемый формат аудио.'});return}
+   if(Number(req.headers['content-length'])>MAX_NOTE_AUDIO_BYTES){send(res,413,{error:'Запись слишком большая (максимум 10 МБ).'});return}
+   const now=Math.floor(Date.now()/60000);
+   if(noteAudioMinute!==now){noteAudioMinute=now;noteAudioCount=0}
+   if(noteAudioBusy||noteAudioCount>=4){send(res,429,{error:'Сэйви ещё распознаёт запись. Дождись результата.'});return}
+   noteAudioBusy=true;noteAudioCount++;
+   try{
+    const chunks=[];let bytes=0,tooLarge=false;
+    for await(const chunk of req){
+     bytes+=chunk.length;
+     if(bytes>MAX_NOTE_AUDIO_BYTES){tooLarge=true;continue;}
+     chunks.push(chunk);
+    }
+    if(tooLarge){send(res,413,{error:'Запись слишком большая (максимум 10 МБ).'});return}
+    if(!bytes){send(res,400,{error:'Пустая аудиозапись.'});return}
+    const result=await noteTranscriber(Buffer.concat(chunks),type);
+    if(!res.destroyed)send(res,200,{text:result.text,local:true,engine:'local-whisper'});
+   }catch(error){
+    if(res.destroyed)return;
+    const messages={
+     'engine-missing':'Локальный Whisper не установлен. Запусти server/install-note-transcription.cmd.',
+     'dependency-missing':'Не установлен faster-whisper. Запусти server/install-note-transcription.cmd.',
+     'model-unavailable':'Модель Whisper не готова. Запусти установщик распознавания ещё раз.',
+     'bad-audio':'Не удалось прочитать звук. Исходная запись сохранена.',
+     'no-speech':'На записи не удалось распознать речь.',
+     'too-long':'Максимальная длительность записи — 5 минут.',
+     'timeout':'Распознавание заняло слишком много времени. Попробуй ещё раз.',
+    };
+    const code=String(error?.code||'');
+    const status=['engine-missing','dependency-missing','model-unavailable'].includes(code)?503:
+     code==='timeout'?504:['bad-audio','no-speech','too-long'].includes(code)?422:500;
+    send(res,status,{error:messages[code]||'Не удалось распознать запись на этом компьютере.'});
+   }finally{noteAudioBusy=false}
+   return;
+  }
   // PC-only visual model. Public GitHub Pages has no such endpoint.
   if(req.method==='GET'&&path==='/api/seyveo-paper-status'){
    send(res,200,await inspectLocalPaperModel());return;

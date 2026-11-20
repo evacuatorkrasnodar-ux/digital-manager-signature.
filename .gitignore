@@ -5,3 +5,4 @@ server/stress-report.jsonl
 __pycache__/
 *.pyc
 .venv-seyveo-docs/
+.venv-seyveo-asr/
