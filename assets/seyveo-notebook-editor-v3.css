@@ -1385,3 +1385,14 @@ html:root body #noteReviewDialog[open] #svSmartInkPicker .sv-ink-sheet-head butt
  border:0!important;border-radius:50%!important;padding:0!important;margin:0!important;
  color:#2586ed!important;background:transparent!important;box-shadow:none!important;
 }
+
+
+/* Keep the color editor a compact floating palette on tablets and desktop. */
+@media(min-width:700px){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+  #svSmartInkPicker.sv-smart-ink-picker[data-kind="color"]:not([hidden]){
+  left:50%!important;right:auto!important;width:420px!important;max-width:min(420px,calc(100vw - 48px))!important;
+  bottom:80px!important;transform:translateX(-50%)!important;
+  border-radius:24px!important;padding-bottom:17px!important;
+ }
+}
