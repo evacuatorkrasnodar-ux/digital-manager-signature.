@@ -9,6 +9,23 @@
  if(!editor||!reader||!editForm||!editBottom)return;
  const DB_NAME='seyveo-notebook-files-v1',STORE='attachments';
  const MAX_FILE=10*1024*1024,MAX_PER_NOTE=12;
+ const AUDIO_TYPES=Object.freeze({
+  'audio/mp4':'audio/mp4','audio/m4a':'audio/mp4','audio/x-m4a':'audio/mp4',
+  'audio/mpeg':'audio/mpeg','audio/mp3':'audio/mpeg','audio/x-mp3':'audio/mpeg',
+  'audio/wav':'audio/wav','audio/x-wav':'audio/wav','audio/wave':'audio/wav',
+  'audio/webm':'audio/webm','audio/ogg':'audio/ogg','audio/opus':'audio/ogg'
+ });
+ const AUDIO_EXTENSIONS=Object.freeze({
+  m4a:'audio/mp4',mp3:'audio/mpeg',wav:'audio/wav',webm:'audio/webm',
+  ogg:'audio/ogg',opus:'audio/ogg'
+ });
+ function audioTypeFor(file){
+  const type=String(file?.type||'').split(';')[0].trim().toLowerCase();
+  if(AUDIO_TYPES[type])return AUDIO_TYPES[type];
+  if(type&&!['application/octet-stream','application/x-unknown'].includes(type)&&!type.startsWith('audio/'))return null;
+  const extension=String(file?.name||'').split('.').pop().toLowerCase();
+  return AUDIO_EXTENSIONS[extension]||null;
+ }
  let dbPromise=null,editGeneration=0,readGeneration=0;
  let editUrls=[],readUrls=[];
  const playingAudio=new Set();
@@ -43,17 +60,19 @@
  }
  async function addAttachment(noteId,file,metadata={}){
   const db=await openDatabase();
+  const contentType=String(metadata.mimeType||file.type||'application/octet-stream').slice(0,110);
   const entry={
    id:String(Date.now())+'-'+Math.random().toString(36).slice(2),
    noteId,
    name:String(file.name||'Вложение').slice(0,180),
-   type:String(file.type||'application/octet-stream').slice(0,110),
+   type:contentType,
    size:file.size,
    createdAt:Date.now(),
-   blob:file.slice(0,file.size,file.type),
+   blob:file.slice(0,file.size,contentType),
    ...(metadata.kind==='voice'?{
     kind:'voice',durationMs:Math.max(0,Math.round(metadata.durationMs||0)),
-    transcript:String(metadata.transcript||'').slice(0,16000)
+    transcript:String(metadata.transcript||'').slice(0,16000),
+    ...(metadata.imported===true?{imported:true}:{})
    }:{})
   };
   return new Promise((resolve,reject)=>{
@@ -71,7 +90,7 @@
    const store=tx.objectStore(STORE),request=store.get(id);
    request.onsuccess=()=>{
     const entry=request.result;
-    if(!entry||entry.noteId!==noteId||entry.kind!=='voice'){tx.abort();return;}
+    if(!entry||entry.noteId!==noteId||!(entry.kind==='voice'||audioTypeFor(entry))){tx.abort();return;}
     store.put({...entry,transcript:String(transcript||'').slice(0,16000)});
    };
    tx.oncomplete=()=>resolve(true);
@@ -137,7 +156,7 @@
   if(!target)return;
   target.textContent=message;
   target.hidden=!message;
-  if(message&&/^(Вложение сохранено|Сохранено вложений|Вложение удалено)/.test(message)){
+  if(message&&/^(Вложение сохранено|Сохранено вложений|Аудиофайл сохранён|Вложение удалено)/.test(message)){
    statusTimeout=setTimeout(()=>{target.hidden=true;target.textContent='';statusTimeout=null;},2600);
   }
  }
@@ -208,7 +227,7 @@
   const play=document.createElement('button');play.type='button';play.className='sv-note-audio-play';
   play.setAttribute('aria-label','Воспроизвести запись');play.textContent='▶';
   const detail=document.createElement('div');detail.className='sv-note-audio-detail';
-  const title=document.createElement('strong');title.textContent='Голосовая запись';
+  const title=document.createElement('strong');title.textContent=item.imported||item.kind!=='voice'?item.name:'Голосовая запись';
   const waveform=document.createElement('div');waveform.className='sv-note-audio-wave';
   waveform.setAttribute('aria-hidden','true');
   [8,14,9,20,13,25,16,11,21,27,15,9,22,17,11,23,14,19,9,13].forEach(height=>{
@@ -234,7 +253,7 @@
   if(canRemove){
    const toText=document.createElement('button');toText.type='button';
    toText.className='sv-note-audio-text';toText.textContent='В текст';
-   toText.setAttribute('aria-label','Перевести голосовую запись в текст');
+   toText.setAttribute('aria-label','Перевести аудио в текст: '+item.name);
    toText.addEventListener('click',()=>window.SEYVEO_NOTE_VOICE?.transcribe(item));
    card.append(toText);
   }
@@ -242,7 +261,12 @@
   return card;
  }
  function fileCard(item,canRemove,urls){
-  if(item.kind==='voice'&&item.type.startsWith('audio/'))return audioCard(item,canRemove,urls);
+  const audioType=audioTypeFor(item);
+  if(audioType){
+   const playable=audioType===item.blob?.type&&audioType===item.type?item:
+    {...item,type:audioType,blob:item.blob.slice(0,item.blob.size,audioType)};
+   return audioCard(playable,canRemove,urls);
+  }
   const card=document.createElement('div');card.className='sv-note-file';
   let icon;
   if(previewableImage(item.type)){
@@ -321,13 +345,17 @@
    }
    let inserted=0;
    for(const file of files){
-    await addAttachment(noteId,file);
+    const audioType=audioTypeFor(file);
+    await addAttachment(noteId,file,audioType?{
+     kind:'voice',imported:true,durationMs:0,transcript:'',mimeType:audioType
+    }:{});
     inserted++;
    }
    const after=await attachmentsFor(noteId);
    setCount(noteId,after.length);
    await refreshEditor();
-   tell(inserted===1?'Вложение сохранено на устройстве.':'Сохранено вложений: '+inserted+'.');
+   tell(inserted===1&&audioTypeFor(files[0])?'Аудиофайл сохранён. Нажми «В текст».':
+    inserted===1?'Вложение сохранено на устройстве.':'Сохранено вложений: '+inserted+'.');
   }catch(error){
    console.warn('SEYVEO: attachment save failed',error);
    const after=await attachmentsFor(noteId).catch(()=>null);

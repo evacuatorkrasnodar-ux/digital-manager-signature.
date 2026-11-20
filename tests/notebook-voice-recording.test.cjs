@@ -13,7 +13,7 @@ test('recording lives in attachment menu and does not replace the approved dock'
  assert.match(html,/data-note-attachment="record"[\s\S]*?<span>Записать аудио<\/span>/);
  assert.match(html,/data-note-attachment="voice"[\s\S]*?<span>Диктовка<\/span>/);
  assert.match(html,/action==='record'[\s\S]*?SEYVEO_NOTE_VOICE\?\.start\(\)/);
- assert.match(html,/seyveo-note-attachments\.js\?v=3/);
+ assert.match(html,/seyveo-note-attachments\.js\?v=4/);
  assert.match(html,/seyveo-note-voice\.js\?v=2/);
  assert.match(html,/seyveo-note-voice\.css\?v=2/);
  assert.match(voice,/form\.insertBefore\(capture,attachmentList\)/);
@@ -53,4 +53,21 @@ test('transcription requires explicit opt-in and user review before text inserti
  assert.match(attachments,/const audio=new Audio\(url\)/);
  assert.match(attachments,/toText\.textContent='В текст'/);
  assert.match(css,/--sv-dock-pearl-bg/);
+});
+
+test('the existing File action recognizes imported voice recordings without a second menu item',()=>{
+ const block=attachments.slice(attachments.indexOf(' const AUDIO_TYPES='),attachments.indexOf(' let dbPromise='));
+ const audioTypeFor=new Function(block+'\nreturn audioTypeFor;')();
+ assert.equal(audioTypeFor({name:'Голос.m4a',type:'audio/x-m4a'}),'audio/mp4');
+ assert.equal(audioTypeFor({name:'Голос.m4a',type:''}),'audio/mp4');
+ assert.equal(audioTypeFor({name:'Лекция.mp3',type:'audio/mpeg'}),'audio/mpeg');
+ assert.equal(audioTypeFor({name:'Заметка.wav',type:'audio/x-wav'}),'audio/wav');
+ assert.equal(audioTypeFor({name:'Запись.webm',type:'audio/webm;codecs=opus'}),'audio/webm');
+ assert.equal(audioTypeFor({name:'Видео.mp4',type:'video/mp4'}),null);
+ assert.equal(audioTypeFor({name:'Документ.pdf',type:'application/pdf'}),null);
+ assert.match(attachments,/kind:'voice',imported:true,durationMs:0,transcript:''/);
+ assert.match(attachments,/audioCard\(playable,canRemove,urls\)/);
+ assert.match(attachments,/entry\.kind==='voice'\|\|audioTypeFor\(entry\)/);
+ assert.match(html,/data-note-attachment="file"/);
+ assert.doesNotMatch(html,/data-note-attachment="audio"/);
 });
