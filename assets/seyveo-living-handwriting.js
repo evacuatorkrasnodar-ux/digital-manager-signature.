@@ -7,7 +7,8 @@
  const paper=window.SEYVEO_PAPER;
  const menu=document.getElementById('notePaperSettingsMenu');
  const tablet=document.getElementById('notePaperDialog');
- if(!core||!paper?.applyStrokeEdit||!paper?.getEditableStrokes||!menu||!tablet)return;
+ const notebook=document.getElementById('notesDialog');
+ if(!core||!paper?.applyStrokeEdit||!paper?.getEditableStrokes||!tablet||!notebook)return;
  const KEY='seyveo-paper-personal-ink-v1';
  let alphabet={};
  const read=()=>{
@@ -19,11 +20,17 @@
  const entry=document.createElement('button');
  entry.type='button';entry.id='notePaperMyHandwriting';entry.className='sv-newdock-menu-action';
  entry.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 18c2-2.6 3.6-8.7 5.5-8.7 2 0-.1 7.6 2.2 7.6 1.9 0 2.4-6.3 4.7-6.3 2.5 0-.5 5.7 1.4 5.7 1 0 2.3-.9 3.1-2"/><path d="M16.2 5.2 18.4 3l2.3 2.3-2.2 2.2-3.6 1.1z"/></svg><span>Мой почерк</span>';
- // Later Apple-style menu polish moves actions into a nested pane.
- // Insert beside Clear in its *actual* parent, never against a stale menu root.
- const clearAction=menu.querySelector('.sv-newdock-clear');
- if(clearAction?.parentElement)clearAction.parentElement.insertBefore(entry,clearAction);
- else menu.append(entry);
+ // A personal handwriting library belongs to Notebook, not painting settings.
+ // Move the real, wired action rather than making a duplicate button.
+ entry.classList.remove('sv-newdock-menu-action');
+ entry.classList.add('sv-note-personal-ink');
+ entry.title='Обучить Сэйви своему почерку';
+ const libraryRow=document.createElement('div');
+ libraryRow.className='sv-note-personal-ink-row';
+ libraryRow.setAttribute('role','group');
+ libraryRow.setAttribute('aria-label','Инструменты личного почерка');
+ libraryRow.append(entry);
+ notebook.insertBefore(libraryRow,document.getElementById('notesList')||null);
 
  const modal=document.createElement('dialog');
  modal.id='svLivingHandwriting';modal.className='sv-lh-dialog';
@@ -201,9 +208,14 @@
   alphabet={};setCount();previewText();say('Все образцы удалены с этого устройства. Ранее сохранённые листы не изменены.');
  });
  entry.addEventListener('click',()=>{
-  if(!tablet.open)return;
+  if(!tablet.open&&!notebook.open)return;
   alphabet=read();setCount();sample=[];active=null;pointerId=null;drawSample();previewText();
-  menu.hidden=true;document.getElementById('notePaperSettings')?.setAttribute('aria-expanded','false');
+  // Samples can be trained in Notebook without opening a painting.
+  // Applying vector text to a drawing remains available only if it is open.
+  apply.hidden=!tablet.open;
+  apply.title=tablet.open?'Добавить мои рукописные буквы на рисунок':'Сначала открой рисунок, чтобы применить почерк';
+  if(menu)menu.hidden=true;
+  document.getElementById('notePaperSettings')?.setAttribute('aria-expanded','false');
   if(!modal.open)modal.showModal();
  });
  $('[data-lh-close]').addEventListener('click',()=>modal.close());
