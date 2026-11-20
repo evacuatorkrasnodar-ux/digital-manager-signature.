@@ -2239,20 +2239,6 @@ html body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions 
 html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open] .sv-note-nav-actions .sv-note-action-pair > button#svNoteMore{
  border-left:1px solid rgba(219,223,229,.68)!important;
 }
-/* The notebook editor is a FULLSCREEN white page, never a rounded card.
-   A dark blurred dialog backdrop can leak at the OS/PWA viewport corners and
-   appear as a black perimeter even when the dialog's own radius is zero. */
-html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]{
- border:0!important;
- border-radius:0!important;
- outline:0!important;
- box-shadow:none!important;
-}
-html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]::backdrop{
- background:#fff!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
-}
 html:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow{
  background:rgba(248,249,251,.90)!important;
  color:#161719!important;
@@ -7172,4 +7158,5 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-paper-ai-workbench.css?v=3">
 <script src="assets/seyveo-paper-ai-requests.js?v=2"></script>
 <script src="assets/seyveo-paper-ai-workbench.js?v=3"></script>
+<link rel="stylesheet" href="assets/seyveo-notebook-editor-clean.css?v=1">
 </body></html>

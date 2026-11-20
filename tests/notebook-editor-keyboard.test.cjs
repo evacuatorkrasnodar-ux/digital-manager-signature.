@@ -6,6 +6,7 @@ const vm=require('node:vm');
 
 const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
 const editorStyles=html.match(/<style id="sv-note-editor-v2">([\s\S]*?)<\/style>/)?.[1]||'';
+const cleanStyles=fs.readFileSync(path.join(__dirname,'..','assets/seyveo-notebook-editor-clean.css'),'utf8');
 const homeMaterial=fs.readFileSync(path.join(__dirname,'..','assets/seyveo-home-dock-preview.css'),'utf8');
 const toolMarkup=html.split('<div class="sv-note-tools sv-note-tools-compact"')[1]?.split('<div id="svNoteAttachmentMenu"')[0]||'';
 const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split('</script>')[0]||'';
@@ -80,9 +81,14 @@ test('header controls share one top anchor and Share/More render as one capsule'
  assert.match(editorStyles,/\.sv-note-action-pair > button#svNoteMore\{\s*border-left:1px solid/);
 });
 
-test('fullscreen light Notebook has square borderless edges and no dark backdrop',()=>{
- assert.match(editorStyles,/html\[data-theme="light"\] body dialog#noteReviewDialog\.note-review-dialog\[open\]\{\s*border:0!important;\s*border-radius:0!important;\s*outline:0!important;\s*box-shadow:none!important;/);
- assert.match(editorStyles,/html\[data-theme="light"\] body dialog#noteReviewDialog\.note-review-dialog\[open\]::backdrop\{\s*background:#fff!important;\s*-webkit-backdrop-filter:none!important;\s*backdrop-filter:none!important;/);
+test('clean notebook layout is last-loaded and strips all permanent inner frames',()=>{
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-clean\.css\?v=1">\s*<\/body>/);
+ assert.match(cleanStyles,/dialog#noteReviewDialog\.note-review-dialog\[open\]\{[\s\S]*?border:0!important;border-radius:0!important;[\s\S]*?outline:0!important;box-shadow:none!important;/);
+ assert.match(cleanStyles,/dialog#noteReviewDialog\.note-review-dialog\[open\]::backdrop\{\s*background:#fff!important;\s*-webkit-backdrop-filter:none!important;backdrop-filter:none!important;/);
+ for(const key of ['.sv-note-document-capsule','.sv-note-title-input','#noteReviewText','button#noteReviewBack','button#svNoteUndo','button#svNoteShare','button#svNoteMore','.sv-note-action-pair','.sv-note-tool-row.sv-shared-dock::before','.sv-note-tool-row.sv-shared-dock::after']){
+  assert.ok(cleanStyles.includes(key),'clean skin covers '+key);
+ }
+ assert.match(cleanStyles,/\.sv-note-nav-actions \.sv-note-action-pair > :is\(button#svNoteShare,button#svNoteMore\)\{\s*border:0!important;/);
 });
 
 test('keyboard state follows viewport shrink and recovers without focus-only jumps',()=>{
