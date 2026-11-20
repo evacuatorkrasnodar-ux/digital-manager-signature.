@@ -217,10 +217,13 @@
  function appendRemove(card,item,canRemove){
   if(!canRemove)return;
   const remove=document.createElement('button');remove.type='button';
-  remove.className='sv-note-file-remove';
-  remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 7h15M9 7V4.5h6V7m3 0-.8 13H6.8L6 7M10 11v5m4-5v5"/></svg>';
-  remove.title='Удалить вложение';
-  remove.setAttribute('aria-label','Удалить вложение '+item.name);
+  const isAudio=card.classList.contains('sv-note-audio');
+  remove.className='sv-note-file-remove'+(isAudio?' sv-note-audio-remove':'');
+  remove.innerHTML=isAudio?
+   '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg>':
+   '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 7h15M9 7V4.5h6V7m3 0-.8 13H6.8L6 7M10 11v5m4-5v5"/></svg>';
+  remove.title=isAudio?'Убрать запись':'Удалить вложение';
+  remove.setAttribute('aria-label',(isAudio?'Удалить аудиозапись ':'Удалить вложение ')+item.name);
   remove.addEventListener('click',async()=>{
    if(!window.confirm('Удалить вложение «'+item.name+'»?'))return;
    remove.disabled=true;
@@ -239,13 +242,15 @@
   const url=URL.createObjectURL(item.blob);urls.push(url);
   const audio=new Audio(url);audio.preload='metadata';
   const play=document.createElement('button');play.type='button';play.className='sv-note-audio-play';
-  play.setAttribute('aria-label','Воспроизвести запись');play.textContent='▶';
+  const playIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5.8v12.4l9.4-6.2Z" fill="currentColor" stroke="none"/></svg>';
+  const pauseIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6v12M16 6v12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>';
+  play.setAttribute('aria-label','Воспроизвести запись');play.innerHTML=playIcon;
   const detail=document.createElement('div');detail.className='sv-note-audio-detail';
   const title=document.createElement('strong');title.textContent=audioDisplayName(item);
   title.title=item.name||'';
   const waveform=document.createElement('div');waveform.className='sv-note-audio-wave';
   waveform.setAttribute('aria-hidden','true');
-  [8,14,9,20,13,25,16,11,21,27,15,9,22,17,11,23,14,19,9,13].forEach(height=>{
+  [6,10,15,9,17,21,13,19,16,23,16,19,13,21,17,9,15,10,6].forEach(height=>{
    const bar=document.createElement('i');bar.style.height=height+'px';waveform.append(bar);
   });
   const time=document.createElement('small');time.textContent=durationLabel(item.durationMs||0);
@@ -257,7 +262,7 @@
   });
   const sync=()=>{
    const playing=!audio.paused&&!audio.ended;
-   play.textContent=playing?'Ⅱ':'▶';
+   play.innerHTML=playing?pauseIcon:playIcon;
    play.setAttribute('aria-label',playing?'Пауза':'Воспроизвести запись');
    card.classList.toggle('sv-note-audio-playing',playing);
    if(playing)playingAudio.add(audio);else playingAudio.delete(audio);
@@ -267,8 +272,9 @@
   for(const kind of ['play','pause','ended','timeupdate','loadedmetadata'])audio.addEventListener(kind,sync);
   if(canRemove){
    const toText=document.createElement('button');toText.type='button';
-   toText.className='sv-note-audio-text';toText.textContent='В текст';
-   toText.setAttribute('aria-label','Перевести аудио в текст: '+item.name);
+   toText.className='sv-note-audio-text';toText.textContent='Распознать';
+   toText.title='Превратить голосовую запись в текст';
+   toText.setAttribute('aria-label','Распознать речь в текст: '+item.name);
    toText.addEventListener('click',()=>window.SEYVEO_NOTE_VOICE?.transcribe(item));
    card.append(toText);
   }
