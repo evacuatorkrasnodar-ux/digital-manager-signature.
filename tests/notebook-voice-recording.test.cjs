@@ -22,7 +22,7 @@ test('one contextual microphone offers separate voice recording and dictation',(
  assert.doesNotMatch(html,/data-note-attachment="(?:record|voice|photo)"/);
  assert.match(html,/SEYVEO_NOTE_SCANNER\?\.scanIntoNote\?\.\(\)/);
  assert.match(html,/SEYVEO_NOTE_ATTACHMENTS\?\.choose\('file'\)/);
- assert.match(html,/seyveo-smart-note-ink\.js\?v=13/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=14/);
  assert.match(html,/seyveo-note-richtext\.js\?v=3/);
  assert.match(html,/seyveo-note-attachments\.js\?v=9/);
  assert.match(html,/seyveo-note-voice\.js\?v=3/);

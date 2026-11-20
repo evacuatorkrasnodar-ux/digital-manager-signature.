@@ -23,7 +23,8 @@ test('one separate paper plane fills the width and continues below the dock',()=
  assert.match(script,/paperSheet\.hidden=true;[\s\S]*?dlg\.prepend\(paperSheet\)/);
  assert.match(script,/paperSheet\.style\.top=Math\.max\(0,Math\.ceil\(field\.top-g\.rect\.top\+30\)\)/);
  assert.match(script,/paperSheet\.hidden=paperStyle==='plain'/);
- assert.match(script,/paperSheet\.style\.setProperty\('--sv-note-paper-scroll',-\(getTarget\(\)\.scrollTop\|\|0\)\+'px'\)/);
+ assert.match(script,/const textScroll=mode==='text'\?\(getTarget\(\)\.scrollTop\|\|0\):0/);
+ assert.match(script,/paperSheet\.style\.setProperty\('--sv-note-paper-scroll',-\(textScroll\+inkScrollY\*g\.width\/W\)\+'px'\)/);
  assert.match(css,/> #svNotePaperSheet\.sv-note-paper-sheet\{[\s\S]*?top:0;right:0!important;bottom:0!important;left:0!important/);
  assert.match(css,/background-position:0 var\(--sv-note-paper-scroll,0px\)!important/);
  assert.match(css,/data-sv-paper-style="grid"[\s\S]*?background-size:24px 24px!important/);
@@ -44,22 +45,23 @@ test('the display canvas retains full-page coordinates for saved notes',()=>{
  const pointStart=script.indexOf(' function point(event){');
  const pointEnd=script.indexOf('\n function save(){',pointStart);
  assert.ok(pointStart>=0&&pointEnd>pointStart);
- const point=vm.runInNewContext(script.slice(pointStart,pointEnd)+'\npoint',{W:840,geometry:pair.geometry});
+ const point=vm.runInNewContext(script.slice(pointStart,pointEnd)+'\npoint',{W:840,geometry:pair.geometry,inkScrollY:0});
  assert.deepEqual(JSON.parse(JSON.stringify(point({clientX:0,clientY:0,pressure:.5}))),[0,0,50]);
  const endPoint=point({clientX:390,clientY:760,pressure:.5});
  assert.equal(endPoint[0],840,'right edge is not inset');
  assert.ok(endPoint[1]>1600,'bottom edge is below the old form boundary');
- assert.doesNotMatch(script.slice(pointStart,pointEnd),/scrollTop/);
- assert.match(script,/ctx\.setTransform\(scale,0,0,scale,0,0\)/);
+ assert.match(script.slice(pointStart,pointEnd),/\+inkScrollY/);
+ assert.match(script,/ctx\.setTransform\(scale,0,0,scale,0,-inkScrollY\*scale\)/);
 });
 
-test('new handwriting starts only inside an invisible safe writing rectangle',()=>{
+test('new handwriting reaches all four paper edges below the protected heading',()=>{
  assert.match(script,/inkSafeArea\.id='svSmartNoteInkSafeArea'/);
  assert.match(script,/inkSafeArea\.hidden=true;[\s\S]*?dlg\.append\(inkSafeArea\)/);
  assert.match(script,/inkSafeArea\.style\.top=Math\.max\(0,Math\.ceil\(field\.top-g\.rect\.top\+32\)\)/);
- assert.match(css,/> #svSmartNoteInkSafeArea\.sv-smart-ink-safe-area\{[\s\S]*?bottom:76px!important/);
- assert.match(css,/left:max\(14px,env\(safe-area-inset-left,0px\)\)!important/);
- assert.match(css,/right:max\(14px,env\(safe-area-inset-right,0px\)\)!important/);
+ assert.match(css,/> #svSmartNoteInkSafeArea\.sv-smart-ink-safe-area\{[\s\S]*?bottom:0!important/);
+ assert.match(css,/left:0!important;right:0!important/);
+ assert.match(css,/\.sv-note-bottom\{[\s\S]*?pointer-events:none!important/);
+ assert.match(css,/\.sv-note-bottom :is\(button,\[role="button"\]\)\{pointer-events:auto!important\}/);
  assert.match(css,/background:transparent!important;box-shadow:none!important/);
  assert.match(css,/> #svSmartNoteInkSafeArea\[hidden\]\{display:none!important\}/);
  assert.match(css,/\.sv-smart-inking[\s\S]*?> #svSmartNoteInkSafeArea\.sv-smart-ink-safe-area:not\(\[hidden\]\)\{pointer-events:auto!important\}/);
@@ -90,5 +92,36 @@ test('old padded-form handwriting migrates to full-bleed coordinates without mov
  assert.ok(Math.abs(converted[0].width*390/840-5*350/840)<.01);
  assert.equal(previous[0].points[0][0],0,'no mutation of stored version 1 strokes');
  assert.match(script,/Number\(note\?\.inlineInk\?\.version\|\|1\)<2\)strokes=migrateLegacyInk\(strokes\)/);
- assert.match(script,/inlineInk=\{version:2,width:W,strokes:/);
+ assert.match(script,/inlineInk=\{version:2,width:W,pageHeight:Math\.ceil\(inkPageHeight\),strokes:/);
+});
+
+test('long handwritten notes scroll vertically and expand without replacing prior ink',()=>{
+ const start=script.indexOf(' function point(event){');
+ const end=script.indexOf('\n function save(){',start);
+ assert.ok(start>0&&end>start);
+ const snippet=script.slice(start,end);
+ let drawn=0,offsetUpdates=0;
+ const sandbox={W:840,inkScrollY:0,inkPageHeight:1680,mode:'pen',
+  geometry:()=>({rect:{left:0,top:0},width:420,height:840}),
+  syncPaperOffset:()=>{offsetUpdates++;},render:()=>{drawn++;}};
+ const api=vm.runInNewContext(snippet+'\n({point,scrollInk})',sandbox);
+ const first=api.point({clientX:0,clientY:840,pressure:.5});
+ assert.equal(first[0],0);
+ assert.equal(first[1],1680);
+ api.scrollInk(240);
+ assert.equal(sandbox.inkScrollY,480,'paper moves in document coordinates');
+ assert.ok(sandbox.inkPageHeight>1680,'blank paper grows beneath the viewport');
+ const later=api.point({clientX:420,clientY:840,pressure:.5});
+ assert.equal(later[0],840);
+ assert.equal(later[1],2160,'stroke points include the page offset');
+ for(let i=0;i<8;i++)api.scrollInk(740);
+ assert.ok(sandbox.inkScrollY>9000,'one long note continues beyond the first screen');
+ api.scrollInk(-100000);
+ assert.equal(sandbox.inkScrollY,0,'scrolling back returns to the beginning');
+ assert.ok(drawn>=10&&offsetUpdates>=10,'scroll repaints ink and background together');
+ assert.match(script,/touchPointers\.size>=2/);
+ assert.match(script,/inkSafeArea\.addEventListener\('wheel'/);
+ assert.match(script,/pageHeight:Math\.ceil\(inkPageHeight\)/);
+ assert.doesNotMatch(script,/maxY=Math\.min\(5000,/,'OCR must not crop long notes at the old fixed height');
+ assert.match(script,/raw\.height=Math\.max\(1,Math\.round\(height\*scale\)\)/);
 });

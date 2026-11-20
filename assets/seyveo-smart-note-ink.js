@@ -286,21 +286,24 @@
   }
  },true);
 
- const W=840,STROKE_LIMIT=180,POINT_LIMIT=1200,BYTE_LIMIT=300000;
+ const W=840,STROKE_LIMIT=1000,POINT_LIMIT=1200,BYTE_LIMIT=900000;
  // The old canvas lived INSIDE the 20px-padded text form, so handwriting
  // stopped at an invisible four-sided rectangle. Mount one canvas directly
  // on the full-screen page; header and dock remain higher stacking layers.
  const ink=document.createElement('canvas');ink.id='svSmartNoteInkCanvas';
  ink.className='sv-smart-ink-canvas';ink.setAttribute('aria-label','Рукопись на всей странице');
  ink.hidden=true;dlg.append(ink);
- // An invisible hit region guards the title, placeholder, page edges and
- // bottom dock. The painted canvas stays full-size to preserve old ink data;
- // only this region can start a new finger or Pencil stroke.
+ // An invisible hit region guards the heading, but reaches the physical
+ // left, right and bottom edges. The dock's real buttons intercept their taps.
  const inkSafeArea=document.createElement('div');inkSafeArea.id='svSmartNoteInkSafeArea';
  inkSafeArea.className='sv-smart-ink-safe-area';inkSafeArea.hidden=true;
  inkSafeArea.setAttribute('aria-hidden','true');dlg.append(inkSafeArea);
  const ctx=ink.getContext('2d');if(!ctx)return;
  let strokes=[],redo=[],mode='text',active=null,pointerId=null,noteId='';
+ // A single note owns an expandable vertical sheet. Stored Y coordinates
+ // are document coordinates, while this canvas is only its visible window.
+ let inkScrollY=0,inkPageHeight=0;
+ const touchPointers=new Map();let multiTouchPan=false,panLastY=0;
  let smoothUndo=null,smoothRedo=null;
  let inkToolsRevealTimer=0;
  const resetInkToolsVisibility=()=>{
@@ -332,6 +335,11 @@
   if(!rect.width||!rect.height)return null;
   return {rect,width:rect.width,height:rect.height};
  }
+ function syncPaperOffset(){
+  const g=geometry();if(!g)return;
+  const textScroll=mode==='text'?(getTarget().scrollTop||0):0;
+  paperSheet.style.setProperty('--sv-note-paper-scroll',-(textScroll+inkScrollY*g.width/W)+'px');
+ }
  // Version 1 ink used text-field coordinates, including its title offset and
  // side padding. Convert saved strokes ONCE in memory before saving version 2,
  // keeping existing notes in the same visual place after the rebuild.
@@ -352,14 +360,17 @@
  function resize(){
   if(!dlg.open)return;
   const g=geometry();if(!g)return;
+  const viewportHeight=g.height*W/g.width;
+  inkPageHeight=Math.max(inkPageHeight,viewportHeight);
+  inkScrollY=Math.max(0,Math.min(inkScrollY,inkPageHeight-viewportHeight));
   ink.style.left='0px';ink.style.top='0px';
   ink.style.width=g.width+'px';ink.style.height=g.height+'px';
   const field=getTarget().getBoundingClientRect();
   // First visible rule sits just below the text placeholder (24px row).
   paperSheet.style.top=Math.max(0,Math.ceil(field.top-g.rect.top+30))+'px';
-  // 32px after the text field starts: no ink over its first line or hint.
+  // Keep the heading and its hint legible, even when the long sheet scrolls.
   inkSafeArea.style.top=Math.max(0,Math.ceil(field.top-g.rect.top+32))+'px';
-  paperSheet.style.setProperty('--sv-note-paper-scroll',-(getTarget().scrollTop||0)+'px');
+  syncPaperOffset();
   paperSheet.hidden=paperStyle==='plain';
   const dpr=Math.min(2,window.devicePixelRatio||1);
   const w=Math.max(1,Math.round(g.width*dpr)),h=Math.max(1,Math.round(g.height*dpr));
@@ -389,7 +400,7 @@
    safe.width*width/g.width,safe.height*width/g.width);
   ctx.clip();
   const scale=width/W;
-  ctx.setTransform(scale,0,0,scale,0,0);
+  ctx.setTransform(scale,0,0,scale,0,-inkScrollY*scale);
   strokes.forEach(drawStroke);if(active)drawStroke(active);
   ctx.restore();ctx.setTransform(1,0,0,1,0,0);
  }
@@ -397,14 +408,26 @@
   const g=geometry();if(!g)return [0,0,50];
   const k=W/g.width;
   return [Math.round(Math.max(0,Math.min(W,(event.clientX-g.rect.left)*k))*10)/10,
-   Math.round(Math.max(0,(event.clientY-g.rect.top)*k)*10)/10,
+   Math.round(Math.max(0,(event.clientY-g.rect.top)*k+inkScrollY)*10)/10,
    Math.round(Math.min(100,Math.max(1,(event.pressure||.5)*100)))];
+ }
+ function scrollInk(deltaPixels){
+  const g=geometry();if(!g||mode==='text'||!Number.isFinite(deltaPixels))return;
+  const viewportHeight=g.height*W/g.width;
+  const desired=Math.max(0,inkScrollY+deltaPixels*W/g.width);
+  // Add another half-screen of paper on demand, without a fixed page count.
+  if(deltaPixels>0&&desired+viewportHeight>inkPageHeight){
+   inkPageHeight=Math.ceil((desired+viewportHeight+viewportHeight*.25)/(viewportHeight*.5))*(viewportHeight*.5);
+  }
+  const next=Math.min(desired,Math.max(0,inkPageHeight-viewportHeight));
+  if(next===inkScrollY)return;
+  inkScrollY=next;syncPaperOffset();render();
  }
  function save(){
   const api=window.SEYVEO_NOTES_API,editor=window.SEYVEO_NOTES_EDITOR;
   const id=editor?.ensureRecord?.();if(!id||!api)return false;
   const list=api.getNotes(),old=list.find(n=>n.id===id);if(!old)return false;
-  const inlineInk={version:2,width:W,strokes:strokes.map(s=>({tool:s.tool,width:s.width,color:validColor(s.color)||'#171e29',points:s.points.map(p=>p.slice())}))};
+  const inlineInk={version:2,width:W,pageHeight:Math.ceil(inkPageHeight),strokes:strokes.map(s=>({tool:s.tool,width:s.width,color:validColor(s.color)||'#171e29',points:s.points.map(p=>p.slice())}))};
   if(JSON.stringify(inlineInk).length>BYTE_LIMIT){report('Слишком много рукописного текста на этом листе.');return false}
   const next=list.map(n=>n.id===id?{...n,inlineInk,inkPenColor:penColor,inkPenWidth:penWidth,updatedAt:Date.now()}:n);
   if(!api.putNotes(next)){report('Не удалось сохранить рукопись.');return false}
@@ -412,8 +435,11 @@
  }
  function finish(event){
   if(pointerId===null||!active||event&&event.pointerId!==pointerId)return;
-  if(strokes.length<STROKE_LIMIT&&active.points.length){strokes.push(active);redo=[];smoothUndo=null;smoothRedo=null;}
-  pointerId=null;active=null;render();save();revealInkToolsSoon();
+  const appended=strokes.length<STROKE_LIMIT&&active.points.length>0;
+  if(appended){strokes.push(active);redo=[];smoothUndo=null;smoothRedo=null;}
+  pointerId=null;active=null;render();
+  if(appended&&!save()){strokes.pop();render();} // Never show a stroke that could not be saved.
+  revealInkToolsSoon();
  }
  function travelHistory(isRedo=false){
   if(active)return;
@@ -432,9 +458,22 @@
   smoothUndo=previous;smoothRedo=null;
   report('Рукопись очищена. Стрелка отмены вернёт штрихи.');
  }
+ const averageTouchY=()=>[...touchPointers.values()].reduce((sum,y)=>sum+y,0)/Math.max(1,touchPointers.size);
  inkSafeArea.addEventListener('pointerdown',event=>{
-  if(mode==='text'||pointerId!==null||event.isPrimary===false||event.button>0)return;
-  if(strokes.length>=STROKE_LIMIT){report('Лист заполнен. Сохраните заметку.');return}
+  if(mode==='text'||event.button>0)return;
+  if(event.pointerType==='touch'){
+   touchPointers.set(event.pointerId,event.clientY);
+   if(touchPointers.size>=2){
+    // The second finger changes a tentative ink stroke into a paper pan.
+    multiTouchPan=true;panLastY=averageTouchY();active=null;pointerId=null;
+    resetInkToolsVisibility();
+    try{inkSafeArea.setPointerCapture(event.pointerId)}catch{}
+    event.preventDefault();render();return;
+   }
+   if(multiTouchPan)return;
+  }
+  if(pointerId!==null||event.isPrimary===false)return;
+  if(strokes.length>=STROKE_LIMIT){report('Лимит рукописи в этой заметке. Сохраните её и создайте следующую.');return}
   event.preventDefault();pointerId=event.pointerId;
   closePaper();closeInkPicker();closeVoiceMenu();if(!sayviPanel.hidden)closeSayvi();
   clearTimeout(inkToolsRevealTimer);
@@ -444,6 +483,14 @@
   render();
  });
  inkSafeArea.addEventListener('pointermove',event=>{
+  if(event.pointerType==='touch'&&touchPointers.has(event.pointerId)){
+   touchPointers.set(event.pointerId,event.clientY);
+   if(multiTouchPan){
+    event.preventDefault();
+    if(touchPointers.size>=2){const current=averageTouchY();scrollInk(panLastY-current);panLastY=current;}
+    return;
+   }
+  }
   if(!active||event.pointerId!==pointerId)return;
   event.preventDefault();
   const safe=inkSafeArea.getBoundingClientRect();
@@ -451,11 +498,28 @@
   const p=point(event),last=active.points.at(-1);
   if(Math.hypot(p[0]-last[0],p[1]-last[1])>=1&&active.points.length<POINT_LIMIT){active.points.push(p);render();}
  });
- inkSafeArea.addEventListener('pointerup',finish);inkSafeArea.addEventListener('pointercancel',finish);
- inkSafeArea.addEventListener('lostpointercapture',finish);
+ function endInkPointer(event){
+  if(event.pointerType==='touch'){
+   touchPointers.delete(event.pointerId);
+   if(multiTouchPan){
+    if(touchPointers.size<2)panLastY=averageTouchY();
+    if(!touchPointers.size)multiTouchPan=false;
+    return;
+   }
+  }
+  finish(event);
+ }
+ inkSafeArea.addEventListener('pointerup',endInkPointer);
+ inkSafeArea.addEventListener('pointercancel',endInkPointer);
+ inkSafeArea.addEventListener('lostpointercapture',endInkPointer);
+ inkSafeArea.addEventListener('wheel',event=>{
+  if(mode==='text')return;
+  event.preventDefault();scrollInk(event.deltaY);
+ },{passive:false});
  function setMode(next,focus=false){
   if(!['text','pen','eraser'].includes(next))return;
   resetInkToolsVisibility();
+  touchPointers.clear();multiTouchPan=false;pointerId=null;active=null;
   if(next!=='text'&&!sayviPanel.hidden)closeSayvi();
   mode=next;dlg.classList.toggle('sv-smart-inking',next!=='text');
   if(next!=='text')window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
@@ -471,6 +535,7 @@
   closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();sayviStatus.textContent='';clearSayviPreview();
   window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
   pointerId=null;active=null;mode='text';noteId=id||'';redo=[];smoothUndo=null;smoothRedo=null;
+  touchPointers.clear();multiTouchPan=false;inkScrollY=0;inkPageHeight=0;
   paperSheet.hidden=true;
   const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
   paperStyle=normalizePaper(note?.notePaperStyle);syncPaper();
@@ -481,13 +546,15 @@
     color:validColor(s.color)||'#171e29',
     points:Array.isArray(s.points)?s.points.slice(0,POINT_LIMIT).map(p=>p.slice(0,3)):[]})):[];
   if(strokes.length&&Number(note?.inlineInk?.version||1)<2)strokes=migrateLegacyInk(strokes);
+  const lastPointY=strokes.reduce((max,stroke)=>Math.max(max,...stroke.points.map(point=>Number(point[1])||0)),0);
+  inkPageHeight=Math.max(0,Number(note?.inlineInk?.pageHeight)||0,lastPointY+100);
   ink.hidden=true;inkSafeArea.hidden=true;inkTools.hidden=true;dlg.classList.remove('sv-smart-inking');syncButtons();
   requestAnimationFrame(resize);
  }
  dlg.addEventListener('seyveo:smart-note-open',event=>load(event.detail?.id||null));
- dlg.addEventListener('close',()=>{resetInkToolsVisibility();closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();mode='text';ink.hidden=true;inkSafeArea.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
+ dlg.addEventListener('close',()=>{resetInkToolsVisibility();closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();mode='text';ink.hidden=true;inkSafeArea.hidden=true;inkTools.hidden=true;pointerId=null;active=null;touchPointers.clear();multiTouchPan=false;dlg.classList.remove('sv-smart-inking');});
  dlg.addEventListener('scroll',()=>{
-  paperSheet.style.setProperty('--sv-note-paper-scroll',-(getTarget().scrollTop||0)+'px');
+  syncPaperOffset();
   render();
  },true);
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
@@ -574,10 +641,17 @@
   if(!pen.length)throw Error('Сначала напиши что-нибудь от руки.');
   const box=inkBounds(pen);
   const minX=Math.max(0,box.minX-32),maxX=Math.min(W,box.maxX+32);
-  const minY=Math.max(0,box.minY-32),maxY=Math.min(5000,box.maxY+32);
+  const minY=Math.max(0,box.minY-32),maxY=box.maxY+32;
   if(maxY<=minY||maxX<=minX)throw Error('Рукопись вне области распознавания.');
-  const raw=document.createElement('canvas');raw.width=W;raw.height=Math.ceil(maxY);
+  // Rasterise only the stroke bounds, downsampled to the OCR budget. A long
+  // scrollable page must never allocate a 25,000px bitmap or lose lower ink.
+  const width=maxX-minX,height=maxY-minY;
+  const scale=Math.min(2,2600/Math.max(width,height));
+  const raw=document.createElement('canvas');
+  raw.width=Math.max(1,Math.round(width*scale));
+  raw.height=Math.max(1,Math.round(height*scale));
   const c=raw.getContext('2d');if(!c)throw Error('Не удалось прочитать рукопись.');
+  c.setTransform(scale,0,0,scale,-minX*scale,-minY*scale);
   for(const s of strokes){if(!s.points.length)continue;
    c.save();c.globalCompositeOperation=s.tool==='eraser'?'destination-out':'source-over';
    c.strokeStyle='#111';c.fillStyle='#111';c.lineWidth=s.width||5;c.lineCap='round';c.lineJoin='round';
@@ -585,11 +659,10 @@
    if(s.points.length===1){c.arc(s.points[0][0],s.points[0][1],c.lineWidth/2,0,Math.PI*2);c.fill();}
    else{for(const p of s.points.slice(1))c.lineTo(p[0],p[1]);c.stroke()}c.restore();
   }
-  const out=document.createElement('canvas'),width=Math.ceil(maxX-minX),height=Math.ceil(maxY-minY);
-  const scale=Math.min(2,2600/Math.max(width,height));
-  out.width=Math.max(1,Math.round(width*scale));out.height=Math.max(1,Math.round(height*scale));
+  const out=document.createElement('canvas');
+  out.width=raw.width;out.height=raw.height;
   const x=out.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,out.width,out.height);
-  x.drawImage(raw,minX,minY,width,height,0,0,out.width,out.height);
+  x.drawImage(raw,0,0);
   return out.toDataURL('image/png');
  }
  async function recognizeInk(){
