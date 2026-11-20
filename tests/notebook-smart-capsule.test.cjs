@@ -10,7 +10,7 @@ const script=read('assets/seyveo-smart-note-ink.js');
 const sayviMark=read('assets/seyveo-circular-interlace-mono.svg');
 
 test('single Smart Note has scrollable keyboard toolbar with partial next action visible',()=>{
- assert.match(html,/seyveo-smart-note-ink\.js\?v=4/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=5/);
  assert.match(css,/\.sv-note-tools-compact\{[\s\S]*?display:flex!important;grid-template-columns:none!important;/);
  assert.match(css,/overflow-x:auto!important;overflow-y:hidden!important/);
  assert.match(css,/scrollbar-width:none/);
@@ -22,7 +22,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=10/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=11/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -57,7 +57,7 @@ test('typing and handwriting share ONE note ID, with vector ink persisted separa
  assert.match(script,/setMode\('pen'\)/);
  assert.match(script,/setMode\('text',true\)/);
  assert.match(script,/editor\?\.ensureRecord\?\.\(\)/);
- assert.match(script,/\{\.\.\.n,inlineInk,updatedAt:Date\.now\(\)\}/);
+ assert.match(script,/\{\.\.\.n,inlineInk,inkPenColor:penColor,inkPenWidth:penWidth,updatedAt:Date\.now\(\)\}/);
  assert.match(script,/api\.putNotes\(next\)/);
  assert.match(script,/dlg\.addEventListener\('seyveo:smart-note-open'/);
  assert.match(html,/dlg\.dispatchEvent\(new CustomEvent\('seyveo:smart-note-open',\{detail:\{id\}\}\)\)/);
@@ -115,6 +115,27 @@ test('eraser and quick paper are only contextual ink tools',()=>{
  assert.match(script,/inkTools\.hidden=next==='text'/);
  assert.match(css,/\.sv-smart-inking:not\(\.sv-note-keyboard-open\)/);
  assert.match(html,/data-sv-note-menu="paper"/);
+});
+
+test('thin centered handwriting capsule offers real pen sizes, colors and safe erase',()=>{
+ for(const action of ['width','color','clear']){
+  assert.match(script,new RegExp('data-sv-ink-tool="'+action+'"'));
+ }
+ assert.match(script,/INK_WIDTHS=\[3,5,9\]/);
+ assert.match(script,/INK_COLORS=\[/);
+ assert.match(script,/data-sv-pen-custom-color/);
+ assert.match(script,/penColor=next;setMode\('pen'\)/);
+ assert.match(script,/width:mode==='eraser'\?35:penWidth,color:penColor/);
+ assert.match(script,/strokeStyle=ctx\.fillStyle=validColor\(s\.color\)/);
+ assert.match(script,/color:validColor\(s\.color\)/);
+ assert.match(script,/function clearHandwriting\(\)/);
+ assert.match(script,/window\.confirm\('Очистить только рукопись/);
+ assert.match(script,/smoothUndo=previous/);
+ assert.match(css,/left:50%!important;right:auto!important;bottom:calc\(82px/);
+ assert.match(css,/width:min\(272px,calc\(100vw - 40px\)\)!important;height:42px/);
+ assert.match(css,/#svSmartInkPicker\.sv-smart-ink-picker:not\(\[hidden\]\)/);
+ assert.match(css,/#svNoteTopMenu \[data-sv-note-menu="paper"\]\{display:none!important\}/);
+ assert.match(css,/#svSmartNotePaperPanel\.sv-smart-paper-panel:not\(\[hidden\]\)\{[\s\S]*?top:auto!important/);
 });
 
 test('Sayvi provides in-note edit actions, never redirects to chat',()=>{
