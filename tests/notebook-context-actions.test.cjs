@@ -11,11 +11,12 @@ const css=read('assets/seyveo-notebook-context-actions.css');
 const editorCss=read('assets/seyveo-notebook-editor-v3.css');
 const editor=html.split('<dialog id="noteReviewDialog"')[1]?.split('</dialog>')[0]||'';
 
-test('Notebook header has just Back, centered mode, and Done',()=>{
+test('Notebook header has Back, an editable title, and Done; mode is screen-reader only',()=>{
  assert.deepEqual([...editor.matchAll(/<button id="(noteReviewBack|svNoteUndo|svNoteMore|svNoteDone)"/g)].map(m=>m[1]),['noteReviewBack','svNoteDone']);
  assert.match(editor,/id="svNoteInputModeLabel" class="sv-note-input-mode-label" aria-live="polite">Печатный текст/);
  assert.match(script,/modeLabel\.textContent=mode==='text'\?'Печатный текст':'Рукописный ввод'/);
- assert.match(css,/left:50%!important;right:auto!important;[\s\S]*?transform:translateX\(-50%\)!important/);
+ assert.match(editorCss,/input#svNoteTitle\.sv-note-title-input\{[\s\S]*?left:50%!important;right:auto!important;transform:translateX\(-50%\)!important/);
+ assert.match(css,/#svNoteInputModeLabel\.sv-note-input-mode-label\{[\s\S]*?clip-path:inset\(50%\)!important/);
  assert.match(css,/width:44px!important;height:44px!important/);
  assert.match(css,/content:none!important;display:none!important/);
 });
@@ -77,7 +78,7 @@ test('text actions open only in typing mode and close without leaving a selected
 });
 
 test('color tool has a visible rainbow ring around the live selected ink color',()=>{
- assert.match(html,/seyveo-notebook-context-actions\.css\?v=8/);
+ assert.match(html,/seyveo-notebook-context-actions\.css\?v=9/);
  assert.match(script,/data-sv-ink-tool="color"[^>]*><span class="sv-smart-ink-color-preview"/);
  assert.match(css,/\.sv-smart-ink-color-preview\{[\s\S]*?width:25px!important;[\s\S]*?height:25px!important/);
  assert.match(css,/background:conic-gradient\(from 0deg,#d96a6b[\s\S]*?#467fc6[\s\S]*?#d96a6b 360deg\)!important/);
@@ -100,7 +101,8 @@ test('rail and bottom dock have one quiet pearl rim without doubled external fra
 });
 
 test('ruled paper is a full-width layer that starts below the first text row',()=>{
- assert.match(editorCss,/input#svNoteTitle\.sv-note-title-input\{[\s\S]*?flex:0 0 48px!important;margin:0!important/);
+ assert.match(editorCss,/input#svNoteTitle\.sv-note-title-input\{[\s\S]*?position:absolute!important;z-index:26!important/);
+ assert.doesNotMatch(editor.split('<form id="noteReviewForm"')[1]?.split('<textarea id="noteReviewText"')[0]||'',/id="svNoteTitle"/);
  assert.match(editorCss,/textarea#noteReviewText\{[\s\S]*?padding:5px 4px!important/);
  assert.match(editorCss,/> #svNotePaperSheet\.sv-note-paper-sheet\{[\s\S]*?top:0;right:0!important;bottom:0!important;left:0!important/);
  assert.match(editorCss,/data-sv-paper-style="lined"\][\s\S]*?> #svNotePaperSheet\.sv-note-paper-sheet\{[\s\S]*?background-size:100% 24px!important/);
@@ -118,7 +120,7 @@ test('both docks disappear during ink strokes and return after a short pause',()
  assert.match(script,/inkToolsRevealTimer=window\.setTimeout\(\(\)=>\{[\s\S]*?\},800\)/);
  assert.match(script,/resetInkToolsVisibility\(\)/);
  assert.match(css,/\.sv-ink-stroking[\s\S]*?opacity:0!important;pointer-events:none!important/);
- assert.match(css,/\.sv-note-bottom,\.sv-note-nav-actions,#noteReviewBack,#svNoteInputModeLabel/);
+ assert.match(css,/\.sv-note-bottom,\.sv-note-nav-actions,#noteReviewBack,#svNoteTitle/);
  assert.match(css,/right:calc\(max\(14px,env\(safe-area-inset-right,0px\)\) \+ 50px\)!important/);
  assert.match(css,/@media\(max-height:500px\) and \(orientation:landscape\)/);
 });

@@ -39,8 +39,8 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]{
  height:var(--sv-note-height,100dvh)!important;
  min-height:0!important;max-height:var(--sv-note-height,100dvh)!important;
  margin:0!important;
- /* Keep the title directly below the 44px navigation row. On notched
-    iPhones the safe-area inset grows the gap just enough, never the page. */
+ /* The body now begins directly beneath the 44px navigation: the editable
+    note name lives in its centered header slot, not in a second text row. */
  padding:max(84px,calc(env(safe-area-inset-top,0px) + 56px)) 20px max(10px,env(safe-area-inset-bottom,0px))!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;
@@ -124,14 +124,19 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  input#svNoteTitle.sv-note-title-input{
  box-sizing:border-box!important;display:block!important;
- width:100%!important;min-width:0!important;max-width:none!important;
- height:48px!important;min-height:48px!important;max-height:48px!important;
- flex:0 0 48px!important;margin:0!important;padding:0 4px!important;
+ position:absolute!important;z-index:26!important;
+ top:max(26px,env(safe-area-inset-top,0px))!important;
+ left:50%!important;right:auto!important;transform:translateX(-50%)!important;
+ width:min(260px,calc(100vw - 168px))!important;min-width:0!important;max-width:260px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0 2px!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;background:transparent!important;
  color:var(--note-ink)!important;
- font:600 21px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
- letter-spacing:-.025em!important;
+ font:550 14px/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:-.012em!important;text-align:center!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ pointer-events:auto!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  input#svNoteTitle::placeholder{color:var(--note-title)!important;opacity:1!important}

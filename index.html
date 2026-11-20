@@ -2759,6 +2759,8 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <button id="svNoteDone" class="sv-note-nav-circle" type="button" aria-label="Готово — сохранить заметку" title="Готово"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4.8 12.1 5 4.7 9.5-10"/></svg></button>
 
  </div>
+<label for="svNoteTitle" class="sv-note-title-label">Название заметки</label>
+<input id="svNoteTitle" class="sv-note-title-input" type="text" maxlength="120" placeholder="Название заметки" aria-label="Название заметки" autocomplete="off">
 <span id="svNoteInputModeLabel" class="sv-note-input-mode-label" aria-live="polite">Печатный текст</span>
 <div id="svNoteTopMenu" class="sv-note-top-menu" role="toolbar" aria-label="Действия с печатным текстом" hidden>
  <button type="button" data-sv-note-menu="undo" title="Отменить ввод" aria-label="Отменить ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 8-4.6 4 4.6 4M4.9 12h9c4.5 0 6.5 3.5 5.5 7.2"/></svg></button>
@@ -2767,8 +2769,6 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </div>
 <form id="noteReviewForm" class="sv-note-editor">
 <h2 id="noteReviewTitle" class="sv-note-visually-hidden">Новая заметка</h2>
-<label for="svNoteTitle" class="sv-note-title-label">Название заметки</label>
-<input id="svNoteTitle" class="sv-note-title-input" type="text" maxlength="120" placeholder="Название заметки" autocomplete="off">
 <small id="svNoteCalendarLabel" class="sv-note-calendar-label" hidden></small>
 <label for="noteReviewText" class="sv-note-label">Текст заметки</label>
 <textarea id="noteReviewText" maxlength="8000" rows="4" required placeholder="Что нужно запомнить?" spellcheck="true" autocorrect="on" autocapitalize="sentences"></textarea>
@@ -5744,7 +5744,7 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-smart-note-ink.js?v=14"></script>
 <script src="assets/seyveo-note-voice.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-note-voice.css?v=6">
-<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=26">
+<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=27">
 <link rel="stylesheet" href="assets/seyveo-universal-dock-inset.css?v=1">
-<link rel="stylesheet" href="assets/seyveo-notebook-context-actions.css?v=8">
+<link rel="stylesheet" href="assets/seyveo-notebook-context-actions.css?v=9">
 </body></html>

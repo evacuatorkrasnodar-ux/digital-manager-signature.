@@ -15,23 +15,28 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=26">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=8">\s*<\/body>/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=27">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=9">\s*<\/body>/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
  assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
- assert.match(editor,/<form id="noteReviewForm" class="sv-note-editor">[\s\S]*?<input id="svNoteTitle"[\s\S]*?<textarea id="noteReviewText"/);
+ assert.match(editor,/<input id="svNoteTitle"[\s\S]*?<form id="noteReviewForm" class="sv-note-editor">[\s\S]*?<textarea id="noteReviewText"/);
+ assert.doesNotMatch(editor.split('<form id="noteReviewForm"')[1]?.split('<textarea id="noteReviewText"')[0]||'',/id="svNoteTitle"/);
  for(const selector of ['form#noteReviewForm.sv-note-editor','input#svNoteTitle.sv-note-title-input','textarea#noteReviewText']){
   assert.ok(css.includes(selector),`new style owns ${selector}`);
  }
 });
 
-test('top navigation keeps only Back, mode label and golden Done',()=>{
+test('top navigation keeps Back, an editable centered note title and golden Done',()=>{
  for(const id of ['noteReviewBack','svNoteDone']){
   assert.match(editor,new RegExp('<button id="'+id+'"[^>]*aria-label="[^\"]+"'));
  }
  assert.doesNotMatch(editor,/id="svNoteUndo"|id="svNoteMore"|id="svNoteShare"|id="svNoteSearch"|id="svNoteSearchPanel"|class="sv-note-action-pair"|id="svNotePrintTop"/);
  assert.match(editor,/id="svNoteInputModeLabel"[^>]*>Печатный текст<\/span>/);
  assert.match(contextCss,/#svNoteInputModeLabel\.sv-note-input-mode-label/);
+ assert.match(editor,/<input id="svNoteTitle" class="sv-note-title-input"[^>]*placeholder="Название заметки"[^>]*aria-label="Название заметки"/);
+ assert.match(css,/left:50%!important;right:auto!important;transform:translateX\(-50%\)!important/);
+ assert.match(css,/text-align:center!important;[\s\S]*?text-overflow:ellipsis!important/);
+ assert.match(contextCss,/clip-path:inset\(50%\)!important/);
  assert.doesNotMatch(css,/\.sv-note-nav-actions \.sv-note-action-pair/);
  assert.match(css,/\.sv-note-nav-actions button#svNoteDone\{\s*background:#c69c09!important;color:#fff!important;/);
  assert.match(html,/\$\('svNoteDone'\)\.addEventListener\('click',closeNoteReviewSafely\)/);
@@ -46,16 +51,27 @@ test('top navigation keeps only Back, mode label and golden Done',()=>{
  assert.match(html,/action\('Распечатать',\(\)=>\{printNote\(note\)\}\)/);
 });
 
-test('note title sits immediately beneath navigation, even on a notched iPhone',()=>{
+test('note body starts immediately beneath navigation, even on a notched iPhone',()=>{
  assert.match(css,/padding:max\(84px,calc\(env\(safe-area-inset-top,0px\) \+ 56px\)\) 20px max\(10px,env\(safe-area-inset-bottom,0px\)\)!important/);
  assert.doesNotMatch(css,/clamp\(76px,20vh,140px\)/);
  for(const safeTop of [0,20,44,60]){
   const navBottom=Math.max(26,safeTop)+44;
   const editorTop=Math.max(84,safeTop+56);
-  assert.ok(editorTop-navBottom>=12,`title clears navigation at ${safeTop}px safe area`);
-  assert.ok(editorTop-navBottom<=14,`title is not stranded below navigation at ${safeTop}px`);
+  assert.ok(editorTop-navBottom>=12,`body clears navigation at ${safeTop}px safe area`);
+  assert.ok(editorTop-navBottom<=14,`body is not stranded below navigation at ${safeTop}px`);
  }
- assert.match(css,/height:48px!important;min-height:48px!important;max-height:48px!important/);
+ assert.match(css,/top:max\(26px,env\(safe-area-inset-top,0px\)\)!important/);
+ assert.match(css,/height:44px!important;min-height:44px!important;max-height:44px!important/);
+});
+
+test('header title edits keep autosave and never steal the handwriting canvas',()=>{
+ assert.match(editor,/<input id="svNoteTitle"[^>]*maxlength="120"[^>]*autocomplete="off">/);
+ assert.match(html,/\$\('svNoteTitle'\)\.addEventListener\('input',scheduleNoteAutosave\)/);
+ assert.match(html,/const title=\$\('svNoteTitle'\)\.value\.trim\(\)\.replace\(\/\\s\+\/g,' '\)\.slice\(0,120\)/);
+ assert.match(html,/\$\('svNoteTitle'\)\.value=titleMatch\?titleMatch\[1\]:''/);
+ assert.match(css,/width:min\(260px,calc\(100vw - 168px\)\)!important/);
+ assert.match(css,/white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important/);
+ assert.match(contextCss,/\.sv-ink-stroking[\s\S]*?#svNoteTitle\)\{\s*opacity:0!important;pointer-events:none!important/);
 });
 
 test('bottom uses the four original icons and a separate new-note circle',()=>{

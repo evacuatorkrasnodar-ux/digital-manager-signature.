@@ -1,16 +1,14 @@
 /* SEYVEO Notebook · one calm header, two contextual sets of editing tools.
-   The four-icon main dock and its separate New Note circle do not change. */
+   The editable note name now occupies the centered header slot. Mode stays
+   announced for assistive technology, not duplicated as visible text. */
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  > #svNoteInputModeLabel.sv-note-input-mode-label{
- box-sizing:border-box!important;position:absolute!important;z-index:26!important;
- top:max(26px,env(safe-area-inset-top,0px))!important;left:50%!important;right:auto!important;
- transform:translateX(-50%)!important;
- display:flex!important;align-items:center!important;justify-content:center!important;
- width:min(190px,calc(100vw - 168px))!important;height:44px!important;
- padding:0!important;margin:0!important;pointer-events:none!important;
- color:var(--note-ink)!important;
- font:550 14px/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
- letter-spacing:-.012em!important;white-space:nowrap!important;text-align:center!important;
+ box-sizing:border-box!important;position:absolute!important;
+ top:0!important;left:0!important;right:auto!important;transform:none!important;
+ display:block!important;width:1px!important;height:1px!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+ border:0!important;clip-path:inset(50%)!important;
+ white-space:nowrap!important;pointer-events:none!important;
 }
 
 /* Only Back and Done are in the header. Their actual 44×44 circles clip
@@ -185,11 +183,11 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
 /* The full writing canvas takes priority. Once a stroke starts, both docks
    and the header fade away; all controls return after a quiet short pause. */
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- :is(.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteInputModeLabel){
+ :is(.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteTitle){
  transition:opacity .18s ease!important;
 }
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-ink-stroking
- :is(.sv-smart-ink-tools,.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteInputModeLabel){
+ :is(.sv-smart-ink-tools,.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteTitle){
  opacity:0!important;pointer-events:none!important;
 }
 
@@ -254,5 +252,5 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
 }
 @media(prefers-reduced-motion:reduce){
  html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
-  :is(.sv-smart-ink-tools,.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteInputModeLabel){transition:none!important}
+  :is(.sv-smart-ink-tools,.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteTitle){transition:none!important}
 }
