@@ -15,7 +15,7 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=27">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=9">\s*<\/body>/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=28">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=9">\s*<\/body>/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
  assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
@@ -70,8 +70,17 @@ test('header title edits keep autosave and never steal the handwriting canvas',(
  assert.match(html,/const title=\$\('svNoteTitle'\)\.value\.trim\(\)\.replace\(\/\\s\+\/g,' '\)\.slice\(0,120\)/);
  assert.match(html,/\$\('svNoteTitle'\)\.value=titleMatch\?titleMatch\[1\]:''/);
  assert.match(css,/width:min\(260px,calc\(100vw - 168px\)\)!important/);
+ assert.match(css,/font:550 16px\/1\.15 -apple-system/);
  assert.match(css,/white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important/);
  assert.match(contextCss,/\.sv-ink-stroking[\s\S]*?#svNoteTitle\)\{\s*opacity:0!important;pointer-events:none!important/);
+});
+
+test('typing hint hides only in handwriting mode and returns for Aa',()=>{
+ assert.match(css,/textarea#noteReviewText::placeholder\{color:var\(--note-placeholder\)!important;opacity:1!important\}/);
+ assert.match(css,/\.sv-smart-inking\s+textarea#noteReviewText::placeholder\{opacity:0!important\}/);
+ assert.match(css,/\.sv-smart-inking\s+#svNoteRichEditor:empty::before\{opacity:0!important\}/);
+ assert.match(css,/--note-title:#606a74/);
+ assert.match(html,/placeholder="Что нужно запомнить\?"/);
 });
 
 test('bottom uses the four original icons and a separate new-note circle',()=>{
