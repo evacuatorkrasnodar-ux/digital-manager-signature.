@@ -96,11 +96,11 @@
  const inkTools=document.createElement('div');
  inkTools.className='sv-smart-ink-tools';inkTools.hidden=true;
  inkTools.setAttribute('role','toolbar');inkTools.setAttribute('aria-label','Инструменты рукописного ввода');
- inkTools.innerHTML=`<button type="button" data-sv-ink-tool="eraser" aria-label="Ластик">${icon('<path d="m4.5 14 8.7-8.7a2.3 2.3 0 0 1 3.2 0l3.1 3.1a2.3 2.3 0 0 1 0 3.2L11.3 20H8.2zM9.4 9.1l7.1 7.1M12 20h8.5"/>')}</button>
-  <button type="button" data-sv-ink-tool="width" aria-label="Толщина пера" aria-expanded="false">${icon('<path d="M5 7h14M5 12h14M5 18h14" stroke-width="2"/>')}</button>
+ inkTools.innerHTML=`<button type="button" data-sv-ink-tool="eraser" aria-label="Ластик">${icon('<path d="m5 14.5 8.3-8.3a2.1 2.1 0 0 1 3 0l2.3 2.3a2.1 2.1 0 0 1 0 3l-7.3 7.3H8.8zM9.4 10l6.1 6.1M12.4 18.8H20"/>')}</button>
+  <button type="button" data-sv-ink-tool="width" aria-label="Толщина пера" aria-expanded="false">${icon('<path d="M5 6.5h7" stroke-width="1.2"/><path d="M5 12h11" stroke-width="1.6"/><path d="M5 17.5h15" stroke-width="2"/>')}</button>
   <button type="button" data-sv-ink-tool="color" aria-label="Цвет пера" aria-expanded="false"><span class="sv-smart-ink-color-preview" aria-hidden="true"></span></button>
-  <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.1" y="3.5" width="13.8" height="17" rx="1.7"/><path d="M8.3 8h7.2M8.3 12h7.2M8.3 16h7.2"/>')}</button>
-  <button type="button" data-sv-ink-tool="clear" aria-label="Очистить рукопись">${icon('<path d="M4 7h16M8 7V5h8v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/>')}</button>`;
+  <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>')}</button>
+  <button type="button" data-sv-ink-tool="clear" aria-label="Очистить рукопись">${icon('<path d="M5.8 7h12.4M9.2 7V5.5h5.6V7M7.2 7.1l.7 12h8.2l.7-12M10.5 10.5v5.5M13.5 10.5v5.5"/>')}</button>`;
  dlg.append(inkTools);
  const inkEraser=inkTools.querySelector('[data-sv-ink-tool="eraser"]');
  const inkWidthBtn=inkTools.querySelector('[data-sv-ink-tool="width"]');
@@ -119,7 +119,7 @@
  inkPicker.setAttribute('role','group');inkPicker.setAttribute('aria-label','Параметры пера');
  inkPicker.innerHTML=`<div data-sv-ink-picker="width" hidden>
   <strong>Толщина линии</strong><div class="sv-smart-ink-width-options">${INK_WIDTHS.map(width=>`<button type="button" data-sv-pen-width="${width}" aria-label="${width===3?'Тонкая':width===5?'Средняя':'Широкая'} линия"><i style="height:${width===3?1:width===5?2:3.5}px"></i></button>`).join('')}</div></div>
-  <div data-sv-ink-picker="color" hidden><strong>Цвет пера</strong><div class="sv-smart-ink-color-options">${INK_COLORS.map(([value,name])=>`<button type="button" data-sv-pen-color="${value}" aria-label="${name}" style="--sv-ink-choice:${value}"><span aria-hidden="true"></span></button>`).join('')}<input type="color" data-sv-pen-custom-color value="#171e29" aria-label="Другой цвет" title="Другой цвет"></div></div>`;
+  <div data-sv-ink-picker="color" hidden><strong>Цвет пера</strong><div class="sv-smart-ink-color-options">${INK_COLORS.map(([value,name])=>`<button type="button" data-sv-pen-color="${value}" aria-label="${name}" style="--sv-ink-choice:${value}"><span aria-hidden="true"></span></button>`).join('')}<label class="sv-smart-custom-color" title="Выбрать свой цвет"><span aria-hidden="true"></span><input type="color" data-sv-pen-custom-color value="#171e29" aria-label="Выбрать свой цвет"></label></div></div>`;
  dlg.append(inkPicker);
  const closeInkPicker=()=>{
   inkPicker.hidden=true;
@@ -565,6 +565,6 @@
   if(!dlg.open||mode==='text'||!((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'))return;
   event.preventDefault();travelHistory(event.shiftKey);
  });
- window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:5,open:()=>setMode('pen'),text:()=>setMode('text'),getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
+ window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:6,open:()=>setMode('pen'),text:()=>setMode('text'),getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
  syncButtons();
 })();
