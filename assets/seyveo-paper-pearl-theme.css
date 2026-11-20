@@ -240,3 +240,59 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #noteP
  background:#f3f5f7!important;
  transform:scale(.975)!important;
 }
+
+
+/* SEYVEO Drawing: tap the actual native color input, not a JavaScript proxy.
+   The separate tiny diagonal chip opens ONLY the gradient brush presets. */
+html body #notePaperDialog.sv-paper-studio[open] .sv-paper-palette .paper-color-control{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ gap:3px!important;position:relative!important;
+ flex:0 0 85px!important;width:85px!important;min-width:85px!important;max-width:85px!important;
+ margin:0!important;padding:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] .paper-color-control > label.sv-paper-native-color{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;position:relative!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;background:transparent!important;
+ cursor:pointer!important;overflow:hidden!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] .paper-color-control > label.sv-paper-native-color #notePaperColorDot.paper-color-dot{
+ box-sizing:border-box!important;position:relative!important;display:block!important;
+ width:28px!important;height:28px!important;border:0!important;border-radius:50%!important;
+ background:var(--sv-active-ink,conic-gradient(#e73b39,#ffb525,#2fb35f,#14b4cd,#6650d2,#bd397b,#e73b39))!important;
+ box-shadow:0 0 0 .7px rgba(73,83,98,.16)!important;pointer-events:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] .paper-color-control > label.sv-paper-native-color #notePaperColorDot.paper-color-dot::after{
+ content:""!important;position:absolute!important;inset:5px!important;display:block!important;
+ border:1px solid rgba(255,255,255,.9)!important;border-radius:50%!important;
+ background:var(--sv-selected-ink,#171e29)!important;pointer-events:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] .paper-color-control > label.sv-paper-native-color > input#notePaperNativeColor{
+ -webkit-appearance:auto!important;appearance:auto!important;
+ position:absolute!important;inset:0!important;z-index:4!important;
+ width:100%!important;height:100%!important;min-width:44px!important;min-height:44px!important;
+ display:block!important;margin:0!important;padding:0!important;border:0!important;
+ border-radius:50%!important;opacity:.01!important;pointer-events:auto!important;
+ touch-action:manipulation!important;clip:auto!important;clip-path:none!important;cursor:pointer!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] .paper-color-control > button#notePaperColorTrigger{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 36px!important;width:36px!important;min-width:36px!important;max-width:36px!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;cursor:pointer!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] .paper-color-control #notePaperColorTrigger .sv-paper-gradient-glyph{
+ box-sizing:border-box!important;display:block!important;width:23px!important;height:23px!important;
+ border-radius:7px!important;border:.8px solid rgba(92,103,118,.25)!important;
+ background:linear-gradient(130deg,#f3f7fc,#e5aaca 28%,#a3a3ea 55%,#5bc4b8 80%,#f4d486)!important;
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.65)!important;pointer-events:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] .paper-color-control :is(label,button):focus-within{
+ outline:2px solid #287fda!important;outline-offset:1px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] .paper-color-control #notePaperColorMenu:not([hidden]){
+ grid-template-columns:minmax(0,1fr)!important;width:min(278px,calc(100vw - 32px))!important;
+ max-width:278px!important;gap:7px!important;
+}
