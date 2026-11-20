@@ -131,6 +131,18 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
  border:0!important;outline:0!important;
  box-shadow:inset 0 0 0 .6px rgba(153,165,177,.13),
    inset 0 1px 1px rgba(255,255,255,.26)!important;
+ /* Thin 1px paper rules disappear under the shared 4px dock blur.
+    Retain the exact Silver Mist tint, but soften only one physical pixel,
+    so the sheet remains visible through BOTH floating dock surfaces. */
+ -webkit-backdrop-filter:blur(1px) saturate(100%)!important;
+ backdrop-filter:blur(1px) saturate(100%)!important;
+}
+@media(max-width:699px){
+ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+  -webkit-backdrop-filter:blur(1px) saturate(100%)!important;
+  backdrop-filter:blur(1px) saturate(100%)!important;
+ }
 }
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
  .sv-smart-ink-tools:not([hidden]){
