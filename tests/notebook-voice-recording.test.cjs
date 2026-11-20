@@ -13,9 +13,9 @@ test('recording lives in attachment menu and does not replace the approved dock'
  assert.match(html,/data-note-attachment="record"[\s\S]*?<span>Записать аудио<\/span>/);
  assert.match(html,/data-note-attachment="voice"[\s\S]*?<span>Диктовка<\/span>/);
  assert.match(html,/action==='record'[\s\S]*?SEYVEO_NOTE_VOICE\?\.start\(\)/);
- assert.match(html,/seyveo-note-attachments\.js\?v=7/);
+ assert.match(html,/seyveo-note-attachments\.js\?v=8/);
  assert.match(html,/seyveo-note-voice\.js\?v=2/);
- assert.match(html,/seyveo-note-voice\.css\?v=4/);
+ assert.match(html,/seyveo-note-voice\.css\?v=5/);
  assert.match(voice,/form\.insertBefore\(capture,attachmentList\)/);
  assert.doesNotMatch(voice,/location\.href|location\.assign|openChat/);
 });
@@ -90,10 +90,23 @@ test('audio card has centered symmetric waveform, quiet vector play and plain re
  assert.ok(wave,'sound bars must be present');
  const heights=wave[1].split(',').map(Number);
  assert.deepEqual(heights,heights.slice().reverse(),'waveform should mirror around its center');
+ assert.equal(heights.length,49,'long and delicate waveform uses 49 strokes');
+ assert.ok(Math.max(...heights)<=20,'strokes stay thin and quiet');
  assert.match(attachments,/play\.innerHTML=playing\?pauseIcon:playIcon/);
  assert.match(attachments,/remove\.className='sv-note-file-remove'\+\(isAudio\?' sv-note-audio-remove'/);
- assert.match(css,/grid-template-columns:38px minmax\(0,1fr\) max-content max-content!important/);
+ assert.match(css,/grid-template-columns:minmax\(0,1fr\) 26px!important/);
  assert.match(css,/\.sv-note-audio-remove\{[\s\S]*?background:transparent!important/);
+});
+
+test('Apple-style audio layout keeps title and close above one aligned playback row',()=>{
+ assert.match(attachments,/title\.className='sv-note-audio-title'/);
+ assert.match(attachments,/controls\.className='sv-note-audio-controls'/);
+ assert.match(attachments,/controls\.append\(play,waveform,time\);card\.append\(title,controls\)/);
+ assert.match(attachments,/controls\.append\(toText\)/);
+ assert.match(attachments,/playIcon=[^\n]+fill="none" stroke="currentColor"/);
+ assert.match(css,/\.sv-note-audio-title\{[\s\S]*?grid-row:1!important/);
+ assert.match(css,/\.sv-note-audio-controls\{[\s\S]*?grid-row:2!important;[\s\S]*?align-items:center!important/);
+ assert.match(css,/\.sv-note-audio-remove\{[\s\S]*?grid-row:1!important/);
 });
 
 test('waveform animates only while audio plays and tracks seek position',()=>{
