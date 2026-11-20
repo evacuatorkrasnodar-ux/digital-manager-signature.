@@ -47,7 +47,8 @@ test('all six iPhone gradient thumbnails are raster images with original color s
 test('iPhone shows raster images without changing gradient controls or theme',()=>{
  assert.match(paletteCss,/\.sv-gradient-chip > img\.sv-gradient-raster\{[\s\S]*?display:block!important/);
  assert.match(menuScript,/chip\.append\(image\)/);
- assert.match(menuScript,/view=buildSegments\(colorMenu/);
- assert.match(html,/assets\/seyveo-paper-menu-polish\.js\?v=8/);
+ assert.ok(!menuScript.includes('view=buildSegments(colorMenu'));
+ assert.ok(menuScript.includes("if(title)title.textContent='Градиенты'"));
+ assert.match(html,/assets\/seyveo-paper-menu-polish\.js\?v=9/);
  assert.match(html,/assets\/seyveo-paper-palette-refine\.css\?v=2/);
 });
