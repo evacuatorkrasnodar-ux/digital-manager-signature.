@@ -16,7 +16,8 @@
  };
  const icon=d=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>';
  const textBtn=create('text','Печатать текст','<span class="sv-smart-aa">Aa</span>');
- const sayviBtn=create('sayvi','Сэйви — помочь с заметкой','<span class="sv-sayvi-symbol sv-smart-sayvi-icon" aria-hidden="true"></span>');
+ const sayviMark='<span class="sv-smart-sayvi-icon" aria-hidden="true"></span>';
+ const sayviBtn=create('sayvi','Сэйви — помочь с заметкой',sayviMark);
  const tableBtn=create('table','Вставить таблицу',icon('<rect x="3.1" y="4.5" width="17.8" height="15" rx="1.4"/><path d="M3.1 10h17.8M3.1 15h17.8M10 4.5v15M16 4.5v15"/>'));
  const eraserBtn=create('eraser','Стереть рукопись',icon('<path d="m4.5 14 8.7-8.7a2.3 2.3 0 0 1 3.2 0l3.1 3.1a2.3 2.3 0 0 1 0 3.2L11.3 20H8.2zM9.4 9.1l7.1 7.1M12 20h8.5"/>'));
  const moreBtn=create('more','Дополнительные действия',icon('<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>'));
@@ -24,11 +25,14 @@
  const attach=bar.querySelector('[data-note-tool="attachment"]');
  const draw=bar.querySelector('[data-note-tool="draw"]');
  if(!check||!attach||!draw)return;
+ // Resting capsule: Aa · handwriting · attachments · Sayvi. The eraser is
+ // contextual to ink mode; the keyboard accessory remains scrollable.
  bar.insertBefore(textBtn,check);
  bar.insertBefore(draw,check);
+ bar.insertBefore(attach,check);
  bar.insertBefore(sayviBtn,check);
  bar.insertBefore(eraserBtn,check);
- bar.insertBefore(tableBtn,attach);
+ bar.insertBefore(tableBtn,bar.querySelector('[data-note-tool="heading"]'));
  bar.append(moreBtn);
  // Popovers must live outside the horizontally clipped scroller. Keep the
  // original nodes and their delegated handlers, never clone a working menu.
@@ -44,7 +48,7 @@
  sayviPanel.setAttribute('role','region');
  sayviPanel.setAttribute('aria-labelledby','svSmartNoteSayviTitle');
  sayviPanel.hidden=true;
- sayviPanel.innerHTML=`<header class="sv-smart-sayvi-head"><span class="sv-sayvi-symbol" aria-hidden="true"></span><strong id="svSmartNoteSayviTitle">Сэйви · инструменты заметки</strong><button type="button" data-sv-sayvi-close aria-label="Свернуть инструменты Сэйви"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button></header>
+ sayviPanel.innerHTML=`<header class="sv-smart-sayvi-head">${sayviMark}<strong id="svSmartNoteSayviTitle">Сэйви · инструменты заметки</strong><button type="button" data-sv-sayvi-close aria-label="Свернуть инструменты Сэйви"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button></header>
   <p class="sv-smart-sayvi-intro">Выбери действие. Исходный текст и рукопись не изменятся без твоего подтверждения.</p>
   <div class="sv-smart-sayvi-actions">
    <button type="button" data-sv-sayvi-action="recognize">${icon('<path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5M7 12h10M7 16h7"/>')}<span>Распознать</span></button>
@@ -72,6 +76,67 @@
  }
  sayviBtn.setAttribute('aria-expanded','false');
 
+ // Paper is an actual note property. The background is never part of the
+ // saved vector strokes, so changing the template cannot erase handwriting.
+ const PAPER_STYLES=new Set(['plain','lined','grid']);
+ const normalizePaper=value=>PAPER_STYLES.has(value)?value:'plain';
+ const paperPanel=document.createElement('section');
+ paperPanel.id='svSmartNotePaperPanel';paperPanel.className='sv-smart-paper-panel';
+ paperPanel.hidden=true;paperPanel.setAttribute('role','group');
+ paperPanel.setAttribute('aria-label','Выбрать стиль бумаги');
+ paperPanel.innerHTML=`<strong>Стиль бумаги</strong><div class="sv-smart-paper-options">
+  <button type="button" data-sv-paper-choice="plain" aria-label="Чистый белый лист"><span class="sv-smart-paper-swatch" aria-hidden="true"></span><span>Чистый</span></button>
+  <button type="button" data-sv-paper-choice="lined" aria-label="Бумага в линейку"><span class="sv-smart-paper-swatch" aria-hidden="true"></span><span>Линейка</span></button>
+  <button type="button" data-sv-paper-choice="grid" aria-label="Бумага в клетку"><span class="sv-smart-paper-swatch" aria-hidden="true"></span><span>Клетка</span></button>
+ </div>`;
+ dlg.append(paperPanel);
+ let paperStyle='plain';
+ const paperTrigger=document.querySelector('#svNoteTopMenu [data-sv-note-menu="paper"]');
+ const inkTools=document.createElement('div');
+ inkTools.className='sv-smart-ink-tools';inkTools.hidden=true;
+ inkTools.setAttribute('role','toolbar');inkTools.setAttribute('aria-label','Инструменты рукописного ввода');
+ inkTools.innerHTML=`<button type="button" data-sv-ink-tool="eraser" aria-label="Ластик">${icon('<path d="m4.5 14 8.7-8.7a2.3 2.3 0 0 1 3.2 0l3.1 3.1a2.3 2.3 0 0 1 0 3.2L11.3 20H8.2zM9.4 9.1l7.1 7.1M12 20h8.5"/>')}</button>
+  <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.1" y="3.5" width="13.8" height="17" rx="1.7"/><path d="M8.3 8h7.2M8.3 12h7.2M8.3 16h7.2"/>')}</button>`;
+ dlg.append(inkTools);
+ const inkEraser=inkTools.querySelector('[data-sv-ink-tool="eraser"]');
+ const syncPaper=()=>{
+  dlg.dataset.svPaperStyle=paperStyle;
+  paperPanel.querySelectorAll('[data-sv-paper-choice]').forEach(button=>{
+   button.setAttribute('aria-pressed',String(button.dataset.svPaperChoice===paperStyle));
+  });
+ };
+ const closePaper=()=>{paperPanel.hidden=true;paperTrigger?.setAttribute('aria-expanded','false')};
+ const togglePaper=()=>{
+  if(!sayviPanel.hidden)closeSayvi();
+  const opening=paperPanel.hidden;
+  paperPanel.hidden=!opening;paperTrigger?.setAttribute('aria-expanded',String(opening));
+ };
+ function selectPaper(next){
+  if(!PAPER_STYLES.has(next))return;
+  if(next===paperStyle){closePaper();return}
+  const editor=window.SEYVEO_NOTES_EDITOR,api=window.SEYVEO_NOTES_API;
+  const id=editor?.ensureRecord?.();
+  if(!id||!api){report('Не удалось сохранить стиль бумаги.');return}
+  const list=api.getNotes();
+  if(!list.some(note=>note.id===id)){report('Заметка не найдена.');return}
+  if(!api.putNotes(list.map(note=>note.id===id?{...note,notePaperStyle:next,updatedAt:Date.now()}:note))){
+   report('Не удалось сохранить стиль бумаги.');return;
+  }
+  noteId=id;paperStyle=next;syncPaper();closePaper();report('Стиль бумаги сохранён.');
+ }
+ paperPanel.querySelectorAll('[data-sv-paper-choice]').forEach(button=>
+  button.addEventListener('click',()=>selectPaper(button.dataset.svPaperChoice)));
+ paperTrigger?.addEventListener('click',togglePaper);
+ inkTools.querySelector('[data-sv-ink-tool="paper"]').addEventListener('click',togglePaper);
+ inkEraser.addEventListener('click',()=>setMode(mode==='eraser'?'pen':'eraser'));
+ document.addEventListener('pointerdown',event=>{
+  if(!dlg.open||paperPanel.hidden||paperPanel.contains(event.target)||paperTrigger?.contains(event.target)||inkTools.contains(event.target))return;
+  closePaper();
+ },true);
+ dlg.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!paperPanel.hidden){event.preventDefault();event.stopImmediatePropagation();closePaper()}
+ },true);
+
  const W=840,STROKE_LIMIT=180,POINT_LIMIT=1200,BYTE_LIMIT=300000;
  const ink=document.createElement('canvas');ink.id='svSmartNoteInkCanvas';
  ink.className='sv-smart-ink-canvas';ink.setAttribute('aria-label','Рукопись поверх текста');
@@ -86,6 +151,7 @@
   textBtn.setAttribute('aria-pressed',String(mode==='text'));
   draw.setAttribute('aria-pressed',String(mode==='pen'));
   eraserBtn.setAttribute('aria-pressed',String(mode==='eraser'));
+  inkEraser.setAttribute('aria-pressed',String(mode==='eraser'));
  }
  function geometry(){
   const rect=getTarget().getBoundingClientRect(),host=form.getBoundingClientRect();
@@ -173,23 +239,26 @@
   if(!['text','pen','eraser'].includes(next))return;
   if(next!=='text'&&!sayviPanel.hidden)closeSayvi();
   mode=next;dlg.classList.toggle('sv-smart-inking',next!=='text');
+  inkTools.hidden=next==='text';
+  closePaper();
   ink.hidden=next==='text';
   if(next!=='text'&&dlg.contains(document.activeElement))document.activeElement?.blur?.();
   syncButtons();resize();
   if(focus&&next==='text')getTarget().focus({preventScroll:true});
  }
  function load(id){
-  closeSayvi();sayviStatus.textContent='';clearSayviPreview();
+  closeSayvi();closePaper();sayviStatus.textContent='';clearSayviPreview();
   pointerId=null;active=null;mode='text';noteId=id||'';redo=[];smoothUndo=null;smoothRedo=null;
   const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
+  paperStyle=normalizePaper(note?.notePaperStyle);syncPaper();
   strokes=Array.isArray(note?.inlineInk?.strokes)?note.inlineInk.strokes.slice(0,STROKE_LIMIT)
    .map(s=>({tool:s.tool==='eraser'?'eraser':'pen',width:Number(s.width)||5,
     points:Array.isArray(s.points)?s.points.slice(0,POINT_LIMIT).map(p=>p.slice(0,3)):[]})):[];
-  ink.hidden=true;dlg.classList.remove('sv-smart-inking');syncButtons();
+  ink.hidden=true;inkTools.hidden=true;dlg.classList.remove('sv-smart-inking');syncButtons();
   requestAnimationFrame(resize);
  }
  dlg.addEventListener('seyveo:smart-note-open',event=>load(event.detail?.id||null));
- dlg.addEventListener('close',()=>{closeSayvi();mode='text';ink.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
+ dlg.addEventListener('close',()=>{closeSayvi();closePaper();mode='text';ink.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
  dlg.addEventListener('scroll',render,true);
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
  observer?.observe(form);observer?.observe(textarea);if(rich)observer?.observe(rich);
@@ -210,6 +279,7 @@
  });
  eraserBtn.addEventListener('click',()=>setMode('eraser'));
  sayviBtn.addEventListener('click',()=>{
+  closePaper();
   if(!sayviPanel.hidden){closeSayvi();return}
   sayviPanel.hidden=false;sayviBtn.setAttribute('aria-expanded','true');
   clearSayviPreview();sayviStatus.textContent='Выбери, что Сэйви должна сделать с этой заметкой.';
@@ -408,6 +478,6 @@
   if(!dlg.open||mode==='text'||!((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'))return;
   event.preventDefault();travelHistory(event.shiftKey);
  });
- window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:2,open:()=>setMode('pen'),text:()=>setMode('text'),getStrokes:()=>strokes.length});
+ window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:3,open:()=>setMode('pen'),text:()=>setMode('text'),getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
  syncButtons();
 })();

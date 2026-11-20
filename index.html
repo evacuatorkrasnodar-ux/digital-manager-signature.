@@ -2768,6 +2768,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <div id="svNoteTopMenu" class="sv-note-top-menu" hidden>
  <button type="button" data-sv-note-menu="copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Копировать текст</span></button>
  <button type="button" data-sv-note-menu="notes"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="14" height="18" rx="2"/><path d="M4 7v12M10 9h6M10 13h6M10 17h4"/></svg><span>Мои записи</span></button>
+ <button type="button" data-sv-note-menu="paper" aria-expanded="false" aria-controls="svSmartNotePaperPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.6"/><path d="M8.3 8h7.4M8.3 12h7.4M8.3 16h7.4"/></svg><span>Стиль бумаги</span></button>
  <button type="button" data-sv-note-menu="clear"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 15 9.7-9.7a2 2 0 0 1 2.8 0l4.2 4.2a2 2 0 0 1 0 2.8l-6.7 6.7H7.5zM9.5 19l-4-4M14 19h7"/></svg><span>Очистить текст</span></button>
  <button type="button" data-sv-note-menu="print"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8V3h12v5M6 17H4V9h16v8h-2M6 14h12v7H6zM17 11.5h.01"/></svg><span>Печать заметки</span></button>
 </div>
@@ -4427,6 +4428,7 @@ function openNoteRead(note,options=null){
  if(!note||note.paper)return;
  const dlg=$('noteReadDialog');
  dlg.dataset.noteId=note.id;
+ dlg.dataset.svPaperStyle=['lined','grid'].includes(note.notePaperStyle)?note.notePaperStyle:'plain';
  readerOpenedFromTask=options?.fromTask===true;
  readingNoteID=note.id;readerToEditor=false;readerToAction=false;
  // Poems with preserved line breaks remain pure text, with no task guesses.
@@ -5770,6 +5772,6 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-paper-ai-workbench.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-handwriting-page.css?v=2">
 <script src="assets/seyveo-handwriting-page.js?v=2"></script>
-<script src="assets/seyveo-smart-note-ink.js?v=2"></script>
-<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=6">
+<script src="assets/seyveo-smart-note-ink.js?v=3"></script>
+<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=7">
 </body></html>
