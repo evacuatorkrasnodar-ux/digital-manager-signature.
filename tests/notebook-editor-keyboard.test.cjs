@@ -14,7 +14,7 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=15">\s*<\/body>/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=16">\s*<\/body>/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
  assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
@@ -47,13 +47,14 @@ test('bottom uses the four original icons and a separate new-note circle',()=>{
   'checklist','attachment','heading','draw'
  ]);
  assert.match(editor,/id="svNoteNewStandalone" class="sv-note-draw-standalone"/);
- assert.match(css,/--note-width:min\(270px,calc\(100vw - 104px\)\);/);
- assert.match(css,/--note-left:max\(12px,calc\(50vw - 175px\)\);/);
+ assert.match(css,/--note-width:clamp\(176px,calc\(100vw - var\(--note-left\) - var\(--note-left\) - 80px\),248px\);/);
+ assert.match(css,/--note-left:max\(clamp\(14px,5vw,22px\),calc\(50vw - 175px\)\);/);
  assert.match(css,/--note-right:calc\(100vw - var\(--note-left\) - 60px\);/);
  assert.ok(home.includes('--sv-dock-pearl-bg:'));
  assert.match(css,/--note-pill:var\(--sv-dock-pearl-bg,/);
  for(const width of [320,337,375,390,454]){
-  const left=Math.max(12,width/2-175),pill=Math.min(270,width-104),circle=width-left-60;
+  const left=Math.max(Math.max(14,Math.min(width*.05,22)),width/2-175);
+  const pill=Math.min(248,Math.max(176,width-2*left-80)),circle=width-left-60;
   assert.ok(circle-left-pill>=20-1e-6,`maintain a 20px gap at ${width}px`);
  }
 });

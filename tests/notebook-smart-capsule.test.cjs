@@ -22,7 +22,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=15/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=16/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -193,7 +193,8 @@ test('resting dock keeps unified glyph sizes, centered new note and visible Sayv
  const restingTools=polish.split('> button:not([hidden]){')[1].split('}\n')[0];
  assert.doesNotMatch(restingTools,/display:grid!important/);
  for(const viewport of [320,375,390,428]){
-  const left=Math.max(12,viewport/2-175),width=Math.min(270,viewport-104);
+  const left=Math.max(Math.max(14,Math.min(viewport*.05,22)),viewport/2-175);
+  const width=Math.min(248,Math.max(176,viewport-2*left-80));
   const newNoteLeft=viewport-left-60;
   assert.ok(newNoteLeft-(left+width)>=19.9,`dock gap at ${viewport}px`);
   assert.ok(Math.abs((viewport-(newNoteLeft+60))-left)<.001,`outer margins at ${viewport}px`);

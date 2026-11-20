@@ -173,8 +173,10 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
- --note-left:max(12px,calc(50vw - 175px));
- --note-width:min(270px,calc(100vw - 104px));
+ /* Same compact 248px track as Home. Keep the paired controls centered
+    on wide screens and aligned with Home's side inset on phones. */
+ --note-left:max(clamp(14px,5vw,22px),calc(50vw - 175px));
+ --note-width:clamp(176px,calc(100vw - var(--note-left) - var(--note-left) - 80px),248px);
  --note-right:calc(100vw - var(--note-left) - 60px);
  box-sizing:border-box!important;display:block!important;position:relative!important;
  left:0!important;top:0!important;right:auto!important;
