@@ -97,16 +97,16 @@ test('rail and bottom dock have one quiet pearl rim without doubled external fra
  assert.match(css,/button#svNoteDone\.sv-note-nav-circle:not\(:active\)\{[\s\S]*?border:0!important/);
 });
 
-test('the initial background tile is hidden so paper lines start below the whole first text row',()=>{
+test('ruled paper is a full-width layer that starts below the first text row',()=>{
  assert.match(editorCss,/input#svNoteTitle\.sv-note-title-input\{[\s\S]*?flex:0 0 48px!important;margin:0!important/);
  assert.match(editorCss,/textarea#noteReviewText\{[\s\S]*?padding:5px 4px!important/);
- assert.match(editorCss,/data-sv-paper-style="lined"[\s\S]*?background-image:linear-gradient\(to bottom,var\(--note-page\) 0 24px,transparent 24px\)/);
- assert.match(editorCss,/background-size:100% 100%,100% 24px!important/);
- assert.match(editorCss,/background-repeat:no-repeat,repeat!important/);
- assert.match(editorCss,/background-position:0 0,0 8px!important/);
- assert.match(editorCss,/data-sv-paper-style="grid"[\s\S]*?background-size:100% 100%,24px 24px,24px 24px!important/);
- const textLineHeight=16*1.5,topPadding=5,firstVisibleRule=24+8-1;
- assert.ok(firstVisibleRule>topPadding+textLineHeight,'the first visible rule is beneath the complete first row');
+ assert.match(editorCss,/> #svNotePaperSheet\.sv-note-paper-sheet\{[\s\S]*?top:0;right:0!important;bottom:0!important;left:0!important/);
+ assert.match(editorCss,/data-sv-paper-style="lined"\][\s\S]*?> #svNotePaperSheet\.sv-note-paper-sheet\{[\s\S]*?background-size:100% 24px!important/);
+ assert.match(editorCss,/background-position:0 var\(--sv-note-paper-scroll,0px\)!important/);
+ assert.match(editorCss,/data-sv-paper-style="grid"\][\s\S]*?> #svNotePaperSheet\.sv-note-paper-sheet\{[\s\S]*?background-size:24px 24px!important/);
+ assert.match(editorCss,/background-image:none!important;/);
+ const textLineHeight=16*1.5,topPadding=5,firstRule=30;
+ assert.ok(firstRule>topPadding+textLineHeight,'the first visible rule is below the hint');
 });
 
 test('both docks disappear during ink strokes and return after a short pause',()=>{

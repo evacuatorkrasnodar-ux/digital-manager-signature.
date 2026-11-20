@@ -18,6 +18,19 @@ test('handwriting is mounted on the fullscreen dialog, outside padded text and f
  assert.match(script,/observer\?\.observe\(dlg\)/);
 });
 
+test('one separate paper plane fills the width and continues below the dock',()=>{
+ assert.match(script,/paperSheet\.id='svNotePaperSheet'/);
+ assert.match(script,/paperSheet\.hidden=true;[\s\S]*?dlg\.prepend\(paperSheet\)/);
+ assert.match(script,/paperSheet\.style\.top=Math\.max\(0,Math\.ceil\(field\.top-g\.rect\.top\+30\)\)/);
+ assert.match(script,/paperSheet\.hidden=paperStyle==='plain'/);
+ assert.match(script,/paperSheet\.style\.setProperty\('--sv-note-paper-scroll',-\(getTarget\(\)\.scrollTop\|\|0\)\+'px'\)/);
+ assert.match(css,/> #svNotePaperSheet\.sv-note-paper-sheet\{[\s\S]*?top:0;right:0!important;bottom:0!important;left:0!important/);
+ assert.match(css,/background-position:0 var\(--sv-note-paper-scroll,0px\)!important/);
+ assert.match(css,/data-sv-paper-style="grid"[\s\S]*?background-size:24px 24px!important/);
+ assert.match(css,/\[data-sv-paper-style="lined"\][\s\S]*?background-image:none!important/);
+ assert.match(css,/border:0!important;outline:0!important;border-radius:0!important/);
+});
+
 test('the display canvas retains full-page coordinates for saved notes',()=>{
  const start=script.indexOf(' function geometry(){');
  const end=script.indexOf('\n function resize(){',start);
@@ -36,7 +49,7 @@ test('the display canvas retains full-page coordinates for saved notes',()=>{
  const endPoint=point({clientX:390,clientY:760,pressure:.5});
  assert.equal(endPoint[0],840,'right edge is not inset');
  assert.ok(endPoint[1]>1600,'bottom edge is below the old form boundary');
- assert.doesNotMatch(script,/getTarget\(\)\.scrollTop/);
+ assert.doesNotMatch(script.slice(pointStart,pointEnd),/scrollTop/);
  assert.match(script,/ctx\.setTransform\(scale,0,0,scale,0,0\)/);
 });
 

@@ -89,6 +89,13 @@
  // saved vector strokes, so changing the template cannot erase handwriting.
  const PAPER_STYLES=new Set(['plain','lined','grid']);
  const normalizePaper=value=>PAPER_STYLES.has(value)?value:'plain';
+ // The paper pattern is a single full-width sheet behind every control.
+ // It is independent of the inset text field and drawing hit region, so
+ // rules can continue underneath the glass dock down to the screen edge.
+ const paperSheet=document.createElement('div');paperSheet.id='svNotePaperSheet';
+ paperSheet.className='sv-note-paper-sheet';paperSheet.setAttribute('aria-hidden','true');
+ paperSheet.hidden=true;
+ dlg.prepend(paperSheet);
  const paperPanel=document.createElement('section');
  paperPanel.id='svSmartNotePaperPanel';paperPanel.className='sv-smart-paper-panel';
  paperPanel.hidden=true;paperPanel.setAttribute('role','group');
@@ -219,7 +226,7 @@
   if(!api.putNotes(list.map(note=>note.id===id?{...note,notePaperStyle:next,updatedAt:Date.now()}:note))){
    report('Не удалось сохранить стиль бумаги.');return;
   }
-  noteId=id;paperStyle=next;syncPaper();closePaper();report('Стиль бумаги сохранён.');
+  noteId=id;paperStyle=next;syncPaper();resize();closePaper();report('Стиль бумаги сохранён.');
   window.setTimeout(()=>{
    const status=document.getElementById('noteReviewStatus');
    if(dlg.open&&status?.textContent==='Стиль бумаги сохранён.')report('');
@@ -348,8 +355,12 @@
   ink.style.left='0px';ink.style.top='0px';
   ink.style.width=g.width+'px';ink.style.height=g.height+'px';
   const field=getTarget().getBoundingClientRect();
+  // First visible rule sits just below the text placeholder (24px row).
+  paperSheet.style.top=Math.max(0,Math.ceil(field.top-g.rect.top+30))+'px';
   // 32px after the text field starts: no ink over its first line or hint.
   inkSafeArea.style.top=Math.max(0,Math.ceil(field.top-g.rect.top+32))+'px';
+  paperSheet.style.setProperty('--sv-note-paper-scroll',-(getTarget().scrollTop||0)+'px');
+  paperSheet.hidden=paperStyle==='plain';
   const dpr=Math.min(2,window.devicePixelRatio||1);
   const w=Math.max(1,Math.round(g.width*dpr)),h=Math.max(1,Math.round(g.height*dpr));
   if(ink.width!==w||ink.height!==h){ink.width=w;ink.height=h;}
@@ -460,6 +471,7 @@
   closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();sayviStatus.textContent='';clearSayviPreview();
   window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
   pointerId=null;active=null;mode='text';noteId=id||'';redo=[];smoothUndo=null;smoothRedo=null;
+  paperSheet.hidden=true;
   const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
   paperStyle=normalizePaper(note?.notePaperStyle);syncPaper();
   penColor=validColor(note?.inkPenColor)||'#171e29';
@@ -474,7 +486,10 @@
  }
  dlg.addEventListener('seyveo:smart-note-open',event=>load(event.detail?.id||null));
  dlg.addEventListener('close',()=>{resetInkToolsVisibility();closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();mode='text';ink.hidden=true;inkSafeArea.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
- dlg.addEventListener('scroll',render,true);
+ dlg.addEventListener('scroll',()=>{
+  paperSheet.style.setProperty('--sv-note-paper-scroll',-(getTarget().scrollTop||0)+'px');
+  render();
+ },true);
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
  observer?.observe(dlg);observer?.observe(form);observer?.observe(textarea);if(rich)observer?.observe(rich);
  window.visualViewport?.addEventListener('resize',resize);
@@ -690,6 +705,6 @@
   if(!dlg.open||mode==='text'||!((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'))return;
   event.preventDefault();travelHistory(event.shiftKey);
  });
- window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:9,open:()=>setMode('pen'),text:()=>setMode('text'),clearHandwriting,getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
+ window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:10,open:()=>setMode('pen'),text:()=>setMode('text'),clearHandwriting,getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
  syncButtons();
 })();

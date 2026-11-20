@@ -707,37 +707,45 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  margin:10px 0 0!important;padding:0 0 12px!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
+/* Paper is now a continuous page-wide plane, not a background clipped to
+   the text field. Its first rule begins BELOW the hint; it runs beneath the
+   vertical tools, bottom glass dock and all the way to the viewport foot. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNotePaperSheet.sv-note-paper-sheet{
+ box-sizing:border-box!important;position:absolute!important;z-index:0!important;
+ top:0;right:0!important;bottom:0!important;left:0!important;
+ margin:0!important;padding:0!important;
+ border:0!important;outline:0!important;border-radius:0!important;
+ box-shadow:none!important;background-color:transparent!important;
+ pointer-events:none!important;
+}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="lined"]
- :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
- /* Repeating tiles also paint a line ABOVE the first text row. Mask only
-    that first tile so the hint and first entered line are entirely clear. */
- background-image:linear-gradient(to bottom,var(--note-page) 0 24px,transparent 24px),
-   linear-gradient(to bottom,transparent calc(100% - 1px),rgba(126,146,166,.23) calc(100% - 1px))!important;
- background-size:100% 100%,100% 24px!important;
- background-repeat:no-repeat,repeat!important;
- background-position:0 0,0 8px!important;
- background-attachment:local,local!important;
+ > #svNotePaperSheet.sv-note-paper-sheet{
+ background-image:linear-gradient(to bottom,rgba(126,146,166,.23) 1px,transparent 1px)!important;
+ background-size:100% 24px!important;background-repeat:repeat!important;
+ background-position:0 var(--sv-note-paper-scroll,0px)!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="grid"]
- :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
- background-image:linear-gradient(to bottom,var(--note-page) 0 24px,transparent 24px),
-   linear-gradient(to right,rgba(126,146,166,.18) 1px,transparent 1px),
+ > #svNotePaperSheet.sv-note-paper-sheet{
+ background-image:linear-gradient(to right,rgba(126,146,166,.18) 1px,transparent 1px),
    linear-gradient(to bottom,rgba(126,146,166,.18) 1px,transparent 1px)!important;
- background-size:100% 100%,24px 24px,24px 24px!important;
- background-repeat:no-repeat,repeat,repeat!important;
- background-position:0 0,0 0,0 8px!important;
- background-attachment:local,local,local!important;
+ background-size:24px 24px!important;background-repeat:repeat!important;
+ background-position:0 0,0 var(--sv-note-paper-scroll,0px)!important;
 }
 html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="lined"]
- :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
- background-image:linear-gradient(to bottom,var(--note-page) 0 24px,transparent 24px),
-   linear-gradient(to bottom,transparent calc(100% - 1px),rgba(205,214,226,.22) calc(100% - 1px))!important;
+ > #svNotePaperSheet.sv-note-paper-sheet{
+ background-image:linear-gradient(to bottom,rgba(205,214,226,.22) 1px,transparent 1px)!important;
 }
 html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="grid"]
- :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
- background-image:linear-gradient(to bottom,var(--note-page) 0 24px,transparent 24px),
-   linear-gradient(to right,rgba(205,214,226,.14) 1px,transparent 1px),
+ > #svNotePaperSheet.sv-note-paper-sheet{
+ background-image:linear-gradient(to right,rgba(205,214,226,.14) 1px,transparent 1px),
    linear-gradient(to bottom,rgba(205,214,226,.14) 1px,transparent 1px)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="lined"]
+ :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])),
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="grid"]
+ :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
+ background-image:none!important;
 }
 /* The read-only view uses the same stored paper pattern. */
 html:root body dialog#noteReadDialog.notes-dialog[open][data-sv-paper-style="lined"] #noteReadContent{
