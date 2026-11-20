@@ -1376,3 +1376,12 @@ html:root[data-theme="dark"] body #noteReviewDialog[open] #svSmartInkPicker .sv-
   height:23px!important;min-height:23px!important;
  }
 }
+
+
+/* Eyedropper is an interactive control: neutral, exact 42px touch target. */
+html:root body #noteReviewDialog[open] #svSmartInkPicker .sv-ink-sheet-head button.sv-ink-dropper{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+ border:0!important;border-radius:50%!important;padding:0!important;margin:0!important;
+ color:#2586ed!important;background:transparent!important;box-shadow:none!important;
+}
