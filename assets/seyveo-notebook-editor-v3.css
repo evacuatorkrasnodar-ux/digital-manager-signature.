@@ -18,10 +18,21 @@
  --note-pill:rgba(65,67,72,.86);
 }
 
+/* The notebook is the page itself. Keep the viewport behind its native dialog
+   the exact same colour, including the phone safe-area and rounded screen edges. */
+html:root[data-theme="light"]:has(dialog#noteReviewDialog[open]),
+html:root[data-theme="light"] body:has(dialog#noteReviewDialog[open]){
+ background:#fff!important;background-image:none!important;
+}
+html:root[data-theme="dark"]:has(dialog#noteReviewDialog[open]),
+html:root[data-theme="dark"] body:has(dialog#noteReviewDialog[open]){
+ background:#111214!important;background-image:none!important;
+}
+
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]{
  box-sizing:border-box!important;
  position:fixed!important;
- inset:0 0 auto 0!important;
+ inset:0!important;
  transform:none!important;
  display:flex!important;flex-direction:column!important;
  width:100vw!important;min-width:100vw!important;max-width:none!important;
@@ -118,9 +129,10 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] #no
  clip-path:inset(50%)!important;white-space:nowrap!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] form#noteReviewForm.sv-note-editor{
- display:flex!important;flex-direction:column!important;flex:1 1 auto!important;
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;flex:1 1 auto!important;
  min-width:0!important;min-height:0!important;
- gap:0!important;margin:0!important;padding:0!important;
+ gap:0!important;margin:0!important;
+ padding:0 0 calc(70px + env(safe-area-inset-bottom,0px))!important;
  border:0!important;outline:0!important;box-shadow:none!important;
  background:transparent!important;
 }
@@ -160,14 +172,25 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  #noteReviewStatus:not([hidden]){font:400 12px/1.4 -apple-system,sans-serif!important;color:var(--note-title)!important}
 
-/* Bottom: 270px resting pearl + separate 60px new-note.
-   Decorative surfaces belong to the dock controls, never the page canvas. */
+/* The dock floats on the same uninterrupted page. It is OUT of the document
+   flow: no footer sheet, secondary background or nested rounded page.
+   The form reserves space for it so attachments and recordings never sit
+   behind the capsule. Only the two control capsules paint a material. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-bottom{
- position:relative!important;display:block!important;flex:0 0 60px!important;
+ box-sizing:border-box!important;position:absolute!important;display:block!important;
+ z-index:30!important;left:-20px!important;right:-20px!important;bottom:0!important;
+ width:100vw!important;max-width:none!important;flex:none!important;
  height:60px!important;min-height:60px!important;
  margin:0!important;padding:0!important;
  border:0!important;outline:0!important;box-shadow:none!important;
- background:transparent!important;
+ background:transparent!important;background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom::before,
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom::after{
+ content:none!important;display:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
@@ -175,7 +198,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  --note-width:min(270px,calc(100vw - 104px));
  --note-right:calc(100vw - var(--note-left) - 60px);
  box-sizing:border-box!important;display:block!important;position:relative!important;
- left:-20px!important;top:0!important;right:auto!important;
+ left:0!important;top:0!important;right:auto!important;
  width:100vw!important;min-width:100vw!important;max-width:none!important;
  height:60px!important;min-height:60px!important;
  margin:0!important;padding:0!important;transform:none!important;
@@ -242,6 +265,10 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 
 /* Writing mode: narrow 42px Apple toolbar immediately above iOS keyboard. */
 @media(max-width:699px){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  form#noteReviewForm.sv-note-editor{
+  padding-bottom:calc(54px + env(safe-area-inset-bottom,0px))!important;
+ }
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
   .sv-note-bottom{flex-basis:44px!important;height:44px!important;min-height:44px!important}
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
