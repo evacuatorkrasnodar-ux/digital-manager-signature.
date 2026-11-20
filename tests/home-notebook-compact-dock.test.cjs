@@ -16,8 +16,8 @@ const clamp=(min,value,max)=>Math.min(max,Math.max(min,value));
 
 test('Home and Notebook use one 248px Apple-like track with 60px round actions',()=>{
  assert.match(html,/seyveo-home-dock-preview\.css\?v=42/);
- assert.match(html,/seyveo-dock-active-glass\.css\?v=9/);
- assert.match(html,/seyveo-dock-active-glass\.js\?v=3/);
+ assert.match(html,/seyveo-dock-active-glass\.css\?v=10/);
+ assert.match(html,/seyveo-dock-active-glass\.js\?v=4/);
  assert.match(html,/seyveo-notebook-editor-v3\.css\?v=18/);
  assert.match(home,/--sv-feng-capsule:clamp\(176px,calc\(100vw[\s\S]*?- 80px\),248px\);/);
  assert.match(notes,/--note-width:clamp\(176px,calc\(100vw - var\(--note-left\) - var\(--note-left\) - 80px\),248px\);/);

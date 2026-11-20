@@ -15,8 +15,9 @@ function init(){
  dock.appendChild(indicator);
  let press=null,queued=false,releaseTimer=0;
  function normal(){
-  return document.documentElement.dataset.theme==='light'&&
-   !dock.matches('.seyveo-music-dock,.seyveo-browser-dock')&&
+  // One circular inset across standard, Music and Browser dock modes.
+  // Health owns an independent two-tab dock; conversation owns its composer.
+  return ['light','dark'].includes(document.documentElement.dataset.theme)&&
    !document.documentElement.classList.contains('seyveo-conversation')&&
    dock.closest('dialog')?.dataset.space!=='health';
  }
@@ -62,7 +63,7 @@ function init(){
   if(!normal()||event.button!==0)return;
   const button=event.target.closest?.('button');
   const tab=tabs.find(item=>item.element===button);
-  if(!tab)return;
+  if(!tab?.element||tab.element.disabled||tab.element.getAttribute('aria-disabled')==='true')return;
   clearTimeout(releaseTimer);
   press?.element?.classList.remove('sv-dock-nav-press');
   press=tab;

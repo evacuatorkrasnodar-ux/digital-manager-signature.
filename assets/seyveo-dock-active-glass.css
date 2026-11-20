@@ -30,7 +30,7 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
    width 360ms cubic-bezier(.22,1,.36,1),height 360ms cubic-bezier(.22,1,.36,1),
    top 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease!important;
 }
-:root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-selection-ready:not(.seyveo-browser-dock):not(.seyveo-music-dock) > .sv-dock-active-indicator{
+:root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-selection-ready > .sv-dock-active-indicator{
  opacity:1!important;
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-indicator-pressing > .sv-dock-active-indicator{
@@ -87,7 +87,7 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
    top 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease,
    box-shadow 180ms ease!important;
 }
-:root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-indicator-pressing:not(.seyveo-music-dock):not(.seyveo-browser-dock) > .sv-dock-active-indicator{
+:root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-indicator-pressing > .sv-dock-active-indicator{
  --sv-indicator-depth:.28px;
  --sv-indicator-scale:.992;
  box-shadow:inset 0 2.5px 3.4px rgba(31,42,58,.19),

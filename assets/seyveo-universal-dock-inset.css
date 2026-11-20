@@ -1,0 +1,131 @@
+/* SEYVEO · universal circular inset v1.
+   The approved Home 52px glass remains untouched. Its exact geometry and
+   recessed material now carry into Notebook, Ink Studio, Health and the
+   alternate Browser/Music modes of the one shared footer. No layout changes. */
+:root[data-theme="light"]{
+ --sv-inset-rim:1px solid rgba(255,255,255,.30);
+ --sv-inset-fill:radial-gradient(circle at 50% 38%,rgba(116,126,145,.12),transparent 76%),linear-gradient(180deg,rgba(116,126,145,.13),rgba(96,109,129,.11));
+ --sv-inset-depth:inset 0 2.1px 3.2px rgba(31,42,58,.17),inset 0 -1px .75px rgba(255,255,255,.47),inset 0 0 0 .45px rgba(31,42,58,.055);
+ --sv-inset-blur:blur(7px) saturate(110%);
+}
+:root[data-theme="dark"]{
+ --sv-inset-rim:1px solid rgba(247,250,252,.15);
+ --sv-inset-fill:radial-gradient(circle at 50% 38%,rgba(225,234,242,.11),transparent 76%),linear-gradient(180deg,rgba(218,228,239,.11),rgba(185,199,215,.065));
+ --sv-inset-depth:inset 0 2px 3.4px rgba(0,0,0,.27),inset 0 -1px 1px rgba(255,255,255,.11),inset 0 0 0 .45px rgba(0,0,0,.11);
+ --sv-inset-blur:blur(7px) saturate(110%);
+}
+
+/* Music / Browser borrow the real Home dock. The same sliding indicator is
+   shown only while an enabled transport button is held, not as a new tab. */
+:root[data-theme="light"] footer.dock.sv-shared-dock:is(.seyveo-music-dock,.seyveo-browser-dock) > .sv-dock-active-indicator{
+ --sv-selected-glow:116,126,145!important;
+ box-shadow:var(--sv-inset-depth)!important;
+}
+/* Graphite dock is shorter than White: center its measured circular indicator
+   using a percentage of the actual dock height, not a fixed 60px anchor. */
+:root[data-theme="dark"] footer.dock.sv-shared-dock > .sv-dock-active-indicator{
+ box-sizing:border-box!important;display:block!important;
+ position:absolute!important;z-index:1!important;pointer-events:none!important;
+ left:0!important;top:calc((100% - var(--sv-indicator-size,42px)) / 2)!important;
+ width:var(--sv-indicator-size,42px)!important;
+ height:var(--sv-indicator-size,42px)!important;
+ border:var(--sv-inset-rim)!important;border-radius:50%!important;
+ background:var(--sv-inset-fill)!important;box-shadow:var(--sv-inset-depth)!important;
+ -webkit-backdrop-filter:var(--sv-inset-blur)!important;backdrop-filter:var(--sv-inset-blur)!important;
+ opacity:0!important;
+ transform:translate3d(var(--sv-indicator-x,0px),var(--sv-indicator-depth,0px),0) scale(var(--sv-indicator-scale,1))!important;
+ transition:transform 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease!important;
+}
+:root[data-theme="dark"] footer.dock.sv-shared-dock.sv-dock-selection-ready > .sv-dock-active-indicator{opacity:1!important}
+:root[data-theme="dark"] footer.dock.sv-shared-dock.sv-dock-indicator-pressing > .sv-dock-active-indicator{--sv-indicator-scale:.992}
+
+/* Smart Notebook · the four resting icons already have equal round 52px
+   targets (44px on compact devices). Only make their inset MATERIAL exact. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:is([aria-pressed="true"],[aria-expanded="true"],:active),
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:is([aria-pressed="true"],[aria-expanded="true"],:active){
+ box-sizing:border-box!important;aspect-ratio:1/1!important;border-radius:50%!important;
+ border:var(--sv-inset-rim)!important;background:var(--sv-inset-fill)!important;
+ box-shadow:var(--sv-inset-depth)!important;
+ -webkit-backdrop-filter:var(--sv-inset-blur)!important;backdrop-filter:var(--sv-inset-blur)!important;
+ opacity:1!important;
+}
+
+/* New Note is already a 60px pearl circle. On press, a precise 52px inset
+   appears INSIDE it, preserving the outer rim and centered pencil. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone::before{
+ content:""!important;display:block!important;position:absolute!important;
+ top:50%!important;left:50%!important;width:52px!important;height:52px!important;
+ box-sizing:border-box!important;border:var(--sv-inset-rim)!important;border-radius:50%!important;
+ background:var(--sv-inset-fill)!important;box-shadow:var(--sv-inset-depth)!important;
+ -webkit-backdrop-filter:var(--sv-inset-blur)!important;backdrop-filter:var(--sv-inset-blur)!important;
+ transform:translate(-50%,-50%) scale(.99)!important;
+ opacity:0!important;pointer-events:none!important;
+ transition:opacity .18s ease,transform .18s ease!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone:active{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone:active::before{
+ opacity:1!important;transform:translate(-50%,-50%) scale(1)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone > svg{
+ position:relative!important;z-index:1!important;
+}
+
+/* Ink Studio · the existing compact top icons are square by contract.
+   Don't alter their layout or drawing controls, only the active circle. */
+html:root body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not(:disabled):is([data-sv-active="true"],:active){
+ box-sizing:border-box!important;aspect-ratio:1/1!important;border-radius:50%!important;
+ border:var(--sv-inset-rim)!important;background:var(--sv-inset-fill)!important;
+ box-shadow:var(--sv-inset-depth)!important;
+ -webkit-backdrop-filter:var(--sv-inset-blur)!important;backdrop-filter:var(--sv-inset-blur)!important;
+ opacity:1!important;
+}
+
+/* Health · two wide tab hit targets must not turn into two wide ovals.
+   The round 52px inset is centered inside each target, under the icon. */
+html:root body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > footer.dock.sv-shared-dock .sv-health-dock-tab{
+ position:relative!important;isolation:isolate!important;
+}
+html:root body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > footer.dock.sv-shared-dock .sv-health-dock-tab::before{
+ content:""!important;display:block!important;position:absolute!important;
+ z-index:0!important;pointer-events:none!important;
+ left:50%!important;top:50%!important;
+ width:52px!important;height:52px!important;
+ box-sizing:border-box!important;border:var(--sv-inset-rim)!important;border-radius:50%!important;
+ background:var(--sv-inset-fill)!important;box-shadow:var(--sv-inset-depth)!important;
+ -webkit-backdrop-filter:var(--sv-inset-blur)!important;backdrop-filter:var(--sv-inset-blur)!important;
+ transform:translate(-50%,-50%) scale(.99)!important;opacity:0!important;
+ transition:opacity .18s ease,transform .18s ease!important;
+}
+html:root body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > footer.dock.sv-shared-dock .sv-health-dock-tab:is([aria-pressed="true"],:active)::before{
+ opacity:1!important;transform:translate(-50%,-50%) scale(1)!important;
+}
+html:root body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > footer.dock.sv-shared-dock .sv-health-dock-tab > :is(svg,span){position:relative!important;z-index:1!important}
+
+/* Health's separate Search action is a round pearl button already. On
+   contact it takes the same inset finish without changing its footprint. */
+html:root body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > footer.dock.sv-shared-dock > #navManage:active{
+ border-radius:50%!important;border:var(--sv-inset-rim)!important;
+ background:var(--sv-inset-fill)!important;box-shadow:var(--sv-inset-depth)!important;
+ -webkit-backdrop-filter:var(--sv-inset-blur)!important;backdrop-filter:var(--sv-inset-blur)!important;
+ opacity:1!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+ html:root body dialog#noteReviewDialog[open] #svNoteNewStandalone::before,
+ html:root body dialog#calendarSpaceDialog[data-space="health"] .sv-health-dock-tab::before{
+  transition:none!important;
+ }
+}
