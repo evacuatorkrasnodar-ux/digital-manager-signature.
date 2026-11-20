@@ -28,3 +28,10 @@ test('resting dock keeps 60px capsule and accessible separate note button',()=>{
  assert.match(css,/\.sv-note-tool-row\.sv-shared-dock>\.sv-note-draw-standalone\{[\s\S]*?width:60px!important;min-width:60px!important;max-width:60px!important;/);
  assert.match(html,/<button id="svNoteNewStandalone" class="sv-note-draw-standalone" type="button"[^>]*aria-label="Создать новую заметку"/);
 });
+
+test('no footer sheet: editor reserves safe space and dock floats transparently over one page',()=>{
+ assert.match(css,/form#noteReviewForm\.sv-note-editor\{[\s\S]*?padding:0 0 calc\(70px \+ env\(safe-area-inset-bottom,0px\)\)!important;/);
+ assert.match(css,/\.sv-note-bottom\{[\s\S]*?position:absolute!important;[\s\S]*?background:transparent!important;background-image:none!important;/);
+ assert.match(css,/\.sv-note-bottom::before,[\s\S]*?\.sv-note-bottom::after\{[\s\S]*?content:none!important;display:none!important;/);
+ assert.match(css,/:root\[data-theme="light"\]:has\(dialog#noteReviewDialog\[open\]\)/);
+});
