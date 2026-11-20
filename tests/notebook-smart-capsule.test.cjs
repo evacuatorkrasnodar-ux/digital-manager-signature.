@@ -20,6 +20,17 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
  assert.match(script,/bar\.insertBefore\(tableBtn,attach\)/);
 });
 
+test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=4/);
+ const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
+ assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
+ assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
+ for(const token of ['border','bg','shadow','blur']){
+  assert.match(pearl,new RegExp('--sv-dock-pearl-'+token));
+ }
+ assert.match(pearl,/data-theme="light"/);
+});
+
 test('typing and handwriting share ONE note ID, with vector ink persisted separately from text',()=>{
  assert.match(script,/canvas#svSmartNoteInkCanvas|ink\.id='svSmartNoteInkCanvas'/);
  assert.match(script,/setMode\('pen'\)/);

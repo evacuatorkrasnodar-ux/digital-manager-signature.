@@ -160,8 +160,8 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  #noteReviewStatus:not([hidden]){font:400 12px/1.4 -apple-system,sans-serif!important;color:var(--note-title)!important}
 
-/* Bottom: original four icons, 270px resting pearl + separate 60px new-note.
-   The pearl is a soft fill, not a shadow, border, overlay or frame. */
+/* Bottom: 270px resting pearl + separate 60px new-note.
+   Decorative surfaces belong to the dock controls, never the page canvas. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-bottom{
  position:relative!important;display:block!important;flex:0 0 60px!important;
  height:60px!important;min-height:60px!important;
@@ -393,3 +393,17 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  canvas#svSmartNoteInkCanvas[hidden]{display:none!important}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking
  canvas#svSmartNoteInkCanvas.sv-smart-ink-canvas{pointer-events:auto!important}
+
+/* Light Smart Note dock: use the EXACT shared Home-dock Silver Mist finish.
+   Both the scroll capsule and its separate new-note circle use the original
+   pearl edge and inset highlights. No extra frame is added to the page. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ border:var(--sv-dock-pearl-border)!important;
+ background:var(--sv-dock-pearl-bg)!important;
+ box-shadow:var(--sv-dock-pearl-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ backdrop-filter:var(--sv-dock-pearl-blur)!important;
+}
