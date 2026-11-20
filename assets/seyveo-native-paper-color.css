@@ -1,0 +1,42 @@
+/* SEYVEO Paper: use the device's real color control, not a duplicate
+   palette. Solid colors are native; gradient brushes keep one separate entry. */
+html body #notePaperDialog.sv-paper-studio .paper-color-control{
+ position:relative!important;
+}
+html body #notePaperDialog.sv-paper-studio #notePaperColorTrigger{
+ pointer-events:none!important;
+}
+html body #notePaperDialog.sv-paper-studio .paper-color-control > input#notePaperNativeColor{
+ appearance:auto!important;-webkit-appearance:auto!important;
+ box-sizing:border-box!important;position:absolute!important;
+ top:0!important;left:0!important;right:auto!important;bottom:auto!important;
+ z-index:45!important;display:block!important;width:100%!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;max-height:44px!important;
+ opacity:.01!important;pointer-events:auto!important;cursor:pointer!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;
+ clip:auto!important;clip-path:none!important;touch-action:manipulation!important;
+}
+html body #notePaperDialog.sv-paper-studio .sv-paper-swatches > button#notePaperGradientTrigger{
+ box-sizing:border-box!important;position:relative!important;display:grid!important;
+ place-items:center!important;flex:0 0 40px!important;width:40px!important;height:40px!important;
+ min-width:40px!important;min-height:40px!important;
+ border-radius:50%!important;margin:0!important;padding:4px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio #notePaperGradientTrigger > span{
+ display:block!important;width:31px!important;height:31px!important;
+ border-radius:50%!important;background:linear-gradient(120deg,#71d3c6,#4074bc 50%,#f7a45d)!important;
+ border:1px solid rgba(120,129,139,.24)!important;
+}
+html body #notePaperDialog.sv-paper-studio #notePaperGradientTrigger:focus-visible,
+html body #notePaperDialog.sv-paper-studio .paper-color-control:focus-within{
+ outline:2px solid #2586ed!important;outline-offset:2px!important;
+}
+/* The old homemade solid-color tab is deliberately inaccessible. Its DOM
+   remains only because the existing gradient-brush handlers depend on it. */
+html body #notePaperDialog.sv-paper-studio #notePaperColorMenu .sv-polish-segments{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio #notePaperColorMenu [data-sv-menu-panel="colors"]{
+ display:none!important;
+}
