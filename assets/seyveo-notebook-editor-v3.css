@@ -300,3 +300,96 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 @media(prefers-reduced-motion:reduce){
  #noteReviewDialog[open] *{transition:none!important}
 }
+
+/* Smart Note: Apple-like, horizontally scrollable pearl above the keyboard.
+   Keep the approved Home-dock material, and deliberately reveal part of the
+   next tool to show that the capsule scrolls without extra arrows. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
+ display:flex!important;grid-template-columns:none!important;
+ align-items:center!important;justify-content:flex-start!important;
+ flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;
+ overscroll-behavior-x:contain!important;scroll-snap-type:x proximity;
+ -webkit-overflow-scrolling:touch;scrollbar-width:none;
+ padding:0 8px!important;touch-action:pan-x;
+}
+html:root body dialog#noteReviewDialog[open]
+ .sv-note-bottom .sv-note-tools-compact::-webkit-scrollbar{display:none!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tools-compact>button:not([hidden]){
+ flex:0 0 52px!important;min-width:52px!important;max-width:52px!important;
+ scroll-snap-align:start;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tools-compact>button[aria-pressed="true"]{
+ color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tools-compact>button[data-sv-smart-tool="text"]{
+ font:500 21px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:-.045em!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tools-compact>button[data-sv-smart-tool="text"] .sv-smart-aa{
+ display:block!important;color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tools-compact>button[aria-pressed="true"]:is([data-note-tool="draw"],[data-sv-smart-tool="eraser"]){
+ background:rgba(106,129,144,.11)!important;
+}
+@media(max-width:699px){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
+  padding:0 7px!important;
+ }
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tools-compact>button:not([hidden]){
+  flex:0 0 50px!important;min-width:50px!important;max-width:50px!important;
+  width:50px!important;height:38px!important;min-height:38px!important;max-height:38px!important;
+ }
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+  background:var(--sv-dock-pearl-bg,rgba(190,193,202,.10))!important;
+ }
+}
+
+/* The menus are moved outside the scroll clip but remain the original
+   working DOM nodes and are still dismissed by their existing controller. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > :is(#svNoteAttachmentMenu,#svNoteFormatMenu):not([hidden]){
+ box-sizing:border-box!important;position:absolute!important;z-index:70!important;
+ left:20px!important;right:auto!important;top:auto!important;bottom:75px!important;
+ width:min(260px,calc(100vw - 40px))!important;max-width:none!important;
+ display:grid!important;grid-template-columns:1fr!important;gap:3px!important;
+ max-height:min(360px,60vh)!important;overflow-y:auto!important;
+ margin:0!important;padding:9px!important;
+ border:0!important;border-radius:18px!important;
+ background:var(--note-page,#fff)!important;color:var(--note-ink)!important;
+ box-shadow:0 6px 24px rgba(62,79,91,.13)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > :is(#svNoteAttachmentMenu,#svNoteFormatMenu)>button{
+ display:flex!important;align-items:center!important;gap:8px!important;
+ min-height:38px!important;margin:0!important;padding:6px 12px!important;
+ border:0!important;border-radius:9px!important;background:transparent!important;
+ color:var(--note-ink)!important;font:500 13px -apple-system,sans-serif!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteAttachmentMenu button svg{width:20px!important;height:20px!important;stroke:currentColor!important;fill:none!important}
+
+/* Transparent handwriting overlay lives on the SAME text page; no card. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] form#noteReviewForm{
+ position:relative!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ canvas#svSmartNoteInkCanvas.sv-smart-ink-canvas{
+ box-sizing:border-box!important;display:block!important;position:absolute!important;z-index:10!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;background:transparent!important;
+ pointer-events:none!important;touch-action:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ canvas#svSmartNoteInkCanvas[hidden]{display:none!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking
+ canvas#svSmartNoteInkCanvas.sv-smart-ink-canvas{pointer-events:auto!important}

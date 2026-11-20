@@ -8,7 +8,7 @@ const shell = readFileSync(join(root, 'assets/seyveo-work-shell.js'), 'utf8');
 const css = readFileSync(join(root, 'assets/seyveo-notebook-page.css'), 'utf8');
 const launcher = readFileSync(join(root, 'assets/seyveo-notebook-launch.js'), 'utf8');
 
-test('Notebook shows four direct header actions and keeps art in its original editor', () => {
+test('Notebook shows one Smart Note, camera and art; legacy handwriting remains readable', () => {
   assert.match(shell, /shell\.append\(notebookChoices\)/);
   assert.match(shell, /notebookChoices\.hidden=true/);
   assert.match(shell, /notebookChoices\.hidden=active!=='notes'/);
@@ -17,9 +17,12 @@ test('Notebook shows four direct header actions and keeps art in its original ed
   }
   assert.match(launcher, /noteModePaper:\{label:'От руки',run:\(\)=>window\.SEYVEO_HANDWRITING\?\.open/);
   assert.match(launcher, /noteModeDraw:\{label:'Рисовать',run:\(\)=>window\.SEYVEO_PAPER\?\.open/);
+  assert.match(launcher, /if\(legacyInkTile\)legacyInkTile\.hidden=true/);
+  assert.match(launcher, /replaceChildren\(document\.createTextNode\('Заметка'\)\)/);
   assert.match(css, /#svWorkShell > #svNotebookCreateTiles\[hidden\]\{display:none!important\}/);
   assert.match(css, /#svWorkShell\[data-active="notes"\] > #svNotebookCreateTiles:not\(\[hidden\]\)\{/);
-  assert.match(css, /grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important/);
+  assert.match(css, /grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
+  assert.match(css, /#svWorkShell\[data-active="notes"\] #svNotebookCreateTiles > \.paper-choice-item\[hidden\]\{display:none!important\}/);
   assert.match(css, /flex:0 0 44px!important/);
 });
 

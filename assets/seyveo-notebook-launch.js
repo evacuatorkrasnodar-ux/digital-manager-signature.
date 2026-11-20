@@ -1,5 +1,5 @@
-/* SEYVEO Notebook launcher — four direct actions, independent of Work shell.
- * Handwriting owns a NEW editor; art keeps the original painting tablet. */
+/* SEYVEO Notebook launcher — one Smart Note, camera OCR and art tablet.
+ * Legacy handwriting remains accessible from already saved note records. */
 (()=>{
  'use strict';
  if(window.SEYVEO_NOTE_LAUNCH)return;
@@ -15,8 +15,13 @@
   draw.innerHTML='<span class="paper-choice-icon" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M32 5v7"/><rect x="12.5" y="12" width="39" height="35" rx="3.2"/><circle cx="40.2" cy="22.1" r="3.6"/><path d="m17.5 38 10.1-12.7 7.7 9.7 5.8-6.4 5.4 9.4"/><path d="M17.5 41.5c8-2.8 17.7 4.2 29-1.2" opacity=".55"/><path d="M10 49h44M24 49l-5 10M40 49l5 10"/></svg></span><span class="paper-choice-copy"><strong>Рисовать</strong><small>Холст и кисти</small></span>';
   tiles.append(draw);
  }
+ const noteTile=document.getElementById('noteModeText');
+ const legacyInkTile=document.getElementById('noteModePaper');
+ noteTile?.querySelector('.paper-choice-copy strong')?.replaceChildren(document.createTextNode('Заметка'));
+ noteTile?.querySelector('.paper-choice-copy small')?.replaceChildren(document.createTextNode('Текст и от руки'));
+ if(legacyInkTile)legacyInkTile.hidden=true;
  const destinations={
-  noteModeText:{label:'Текст',run:()=>window.SEYVEO_NOTES_API?.reviewText?.('')},
+  noteModeText:{label:'Заметка',run:()=>window.SEYVEO_NOTES_API?.reviewText?.('')},
   noteModePaper:{label:'От руки',run:()=>window.SEYVEO_HANDWRITING?.open?.()},
   noteModeScan:{label:'Фото → текст',run:()=>window.SEYVEO_NOTE_SCANNER?.open?.()},
   noteModeDraw:{label:'Рисовать',run:()=>window.SEYVEO_PAPER?.open?.()}

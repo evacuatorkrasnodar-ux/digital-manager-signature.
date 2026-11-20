@@ -61,11 +61,11 @@
  display:none!important;
 }
 
-/* Four equal creation actions, on the same inset as the Work tab strip. */
+/* Three creation actions; text and ink now share one Smart Note editor. */
 #svWorkShell[data-active="notes"] #notesDialog > #svNotebookCreateTiles{
  box-sizing:border-box!important;
  display:grid!important;
- grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
  column-gap:10px!important;
  row-gap:8px!important;
  align-items:start!important;
@@ -164,8 +164,10 @@
 #svWorkShell[data-active="notes"] #notesDialog #svNotebookCreateTiles > .paper-choice-item:active .paper-choice-icon{
  opacity:.74!important;
 }
+#svWorkShell[data-active="notes"] #svNotebookCreateTiles > .paper-choice-item[hidden]{display:none!important}
+#svWorkShell[data-active="notes"] #notesDialog #svNotebookCreateTiles > .paper-choice-item[hidden]{display:none!important}
 
-/* Notebook · four direct unframed icons in the unused permanent header area.
+/* Notebook · three direct unframed icons in the unused permanent header area.
    Keep one-tap launchers, no extra plus, popover, or shifting page content. */
 #svWorkShell > #svNotebookCreateTiles[hidden]{display:none!important}
 #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){
@@ -176,7 +178,7 @@
  left:50%!important;
  right:auto!important;
  display:grid!important;
- grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
  gap:6px!important;
  width:min(420px,calc(100% - 20px))!important;
  height:72px!important;
