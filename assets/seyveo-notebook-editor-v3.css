@@ -387,22 +387,24 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  > #svNoteAttachmentMenu button svg{width:20px!important;height:20px!important;stroke:currentColor!important;fill:none!important}
 
-/* Transparent handwriting overlay lives on the SAME text page; no card. */
+/* Full-bleed handwriting belongs directly to the page, not to the padded
+   text form. It must have no hidden left/right/bottom drawing boundary. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] form#noteReviewForm{
  position:relative!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- canvas#svSmartNoteInkCanvas.sv-smart-ink-canvas{
+ > canvas#svSmartNoteInkCanvas.sv-smart-ink-canvas{
  box-sizing:border-box!important;display:block!important;position:absolute!important;z-index:10!important;
+ inset:0!important;width:100%!important;height:100%!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;outline:0!important;
- box-shadow:none!important;background:transparent!important;
+ box-shadow:none!important;background:transparent!important;clip-path:none!important;
  pointer-events:none!important;touch-action:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- canvas#svSmartNoteInkCanvas[hidden]{display:none!important}
+ > canvas#svSmartNoteInkCanvas[hidden]{display:none!important}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking
- canvas#svSmartNoteInkCanvas.sv-smart-ink-canvas{pointer-events:auto!important}
+ > canvas#svSmartNoteInkCanvas.sv-smart-ink-canvas{pointer-events:auto!important}
 
 /* Light Smart Note dock: use the EXACT shared Home-dock Silver Mist finish.
    Both the scroll capsule and its separate new-note circle use the original

@@ -280,9 +280,12 @@
  },true);
 
  const W=840,STROKE_LIMIT=180,POINT_LIMIT=1200,BYTE_LIMIT=300000;
+ // The old canvas lived INSIDE the 20px-padded text form, so handwriting
+ // stopped at an invisible four-sided rectangle. Mount one canvas directly
+ // on the full-screen page; header and dock remain higher stacking layers.
  const ink=document.createElement('canvas');ink.id='svSmartNoteInkCanvas';
- ink.className='sv-smart-ink-canvas';ink.setAttribute('aria-label','Рукопись поверх текста');
- ink.hidden=true;form.append(ink);
+ ink.className='sv-smart-ink-canvas';ink.setAttribute('aria-label','Рукопись на всей странице');
+ ink.hidden=true;dlg.append(ink);
  const ctx=ink.getContext('2d');if(!ctx)return;
  let strokes=[],redo=[],mode='text',active=null,pointerId=null,noteId='';
  let smoothUndo=null,smoothRedo=null;
@@ -312,14 +315,31 @@
   syncInkPicker();
  }
  function geometry(){
-  const rect=getTarget().getBoundingClientRect(),host=form.getBoundingClientRect();
+  const rect=dlg.getBoundingClientRect();
   if(!rect.width||!rect.height)return null;
-  return {rect,width:rect.width,height:rect.height,left:rect.left-host.left,top:rect.top-host.top};
+  return {rect,width:rect.width,height:rect.height};
+ }
+ // Version 1 ink used text-field coordinates, including its title offset and
+ // side padding. Convert saved strokes ONCE in memory before saving version 2,
+ // keeping existing notes in the same visual place after the rebuild.
+ function migrateLegacyInk(list){
+  const page=dlg.getBoundingClientRect(),field=getTarget().getBoundingClientRect();
+  if(!page.width||!field.width)return list;
+  const ratio=field.width/page.width;
+  const offsetX=(field.left-page.left)*W/page.width;
+  const offsetY=(field.top-page.top)*W/page.width;
+  return list.map(stroke=>({
+   ...stroke,width:stroke.width*ratio,
+   points:stroke.points.map(p=>[
+    Math.round((p[0]*ratio+offsetX)*10)/10,
+    Math.round((p[1]*ratio+offsetY)*10)/10,...p.slice(2)
+   ])
+  }));
  }
  function resize(){
   if(!dlg.open)return;
   const g=geometry();if(!g)return;
-  ink.style.left=g.left+'px';ink.style.top=g.top+'px';
+  ink.style.left='0px';ink.style.top='0px';
   ink.style.width=g.width+'px';ink.style.height=g.height+'px';
   const dpr=Math.min(2,window.devicePixelRatio||1);
   const w=Math.max(1,Math.round(g.width*dpr)),h=Math.max(1,Math.round(g.height*dpr));
@@ -344,7 +364,7 @@
   const g=geometry();if(!g)return;
   ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,width,height);
   const scale=width/W;
-  ctx.setTransform(scale,0,0,scale,0,-(getTarget().scrollTop||0)*scale*W/g.width);
+  ctx.setTransform(scale,0,0,scale,0,0);
   strokes.forEach(drawStroke);if(active)drawStroke(active);
   ctx.setTransform(1,0,0,1,0,0);
  }
@@ -352,14 +372,14 @@
   const g=geometry();if(!g)return [0,0,50];
   const k=W/g.width;
   return [Math.round(Math.max(0,Math.min(W,(event.clientX-g.rect.left)*k))*10)/10,
-   Math.round(Math.max(0,(event.clientY-g.rect.top+getTarget().scrollTop)*k)*10)/10,
+   Math.round(Math.max(0,(event.clientY-g.rect.top)*k)*10)/10,
    Math.round(Math.min(100,Math.max(1,(event.pressure||.5)*100)))];
  }
  function save(){
   const api=window.SEYVEO_NOTES_API,editor=window.SEYVEO_NOTES_EDITOR;
   const id=editor?.ensureRecord?.();if(!id||!api)return false;
   const list=api.getNotes(),old=list.find(n=>n.id===id);if(!old)return false;
-  const inlineInk={version:1,width:W,strokes:strokes.map(s=>({tool:s.tool,width:s.width,color:validColor(s.color)||'#171e29',points:s.points.map(p=>p.slice())}))};
+  const inlineInk={version:2,width:W,strokes:strokes.map(s=>({tool:s.tool,width:s.width,color:validColor(s.color)||'#171e29',points:s.points.map(p=>p.slice())}))};
   if(JSON.stringify(inlineInk).length>BYTE_LIMIT){report('Слишком много рукописного текста на этом листе.');return false}
   const next=list.map(n=>n.id===id?{...n,inlineInk,inkPenColor:penColor,inkPenWidth:penWidth,updatedAt:Date.now()}:n);
   if(!api.putNotes(next)){report('Не удалось сохранить рукопись.');return false}
@@ -431,6 +451,7 @@
    .map(s=>({tool:s.tool==='eraser'?'eraser':'pen',width:Number(s.width)||5,
     color:validColor(s.color)||'#171e29',
     points:Array.isArray(s.points)?s.points.slice(0,POINT_LIMIT).map(p=>p.slice(0,3)):[]})):[];
+  if(strokes.length&&Number(note?.inlineInk?.version||1)<2)strokes=migrateLegacyInk(strokes);
   ink.hidden=true;inkTools.hidden=true;dlg.classList.remove('sv-smart-inking');syncButtons();
   requestAnimationFrame(resize);
  }
@@ -438,7 +459,7 @@
  dlg.addEventListener('close',()=>{resetInkToolsVisibility();closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();mode='text';ink.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
  dlg.addEventListener('scroll',render,true);
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
- observer?.observe(form);observer?.observe(textarea);if(rich)observer?.observe(rich);
+ observer?.observe(dlg);observer?.observe(form);observer?.observe(textarea);if(rich)observer?.observe(rich);
  window.visualViewport?.addEventListener('resize',resize);
  window.addEventListener('resize',resize);
  // Capture ahead of the legacy drawing launcher: a pen now writes directly
@@ -652,6 +673,6 @@
   if(!dlg.open||mode==='text'||!((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'))return;
   event.preventDefault();travelHistory(event.shiftKey);
  });
- window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:7,open:()=>setMode('pen'),text:()=>setMode('text'),clearHandwriting,getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
+ window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:8,open:()=>setMode('pen'),text:()=>setMode('text'),clearHandwriting,getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
  syncButtons();
 })();
