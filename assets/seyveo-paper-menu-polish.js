@@ -33,6 +33,18 @@
   if(clear)menu.append(clear);
  }
 
+ // The rainbow ring is the only color shortcut in the footer.
+ // Keep gradient brushes available from Settings > Actions, without the extra square.
+ const gradientAction=document.getElementById('notePaperColorTrigger');
+ if(menu&&gradientAction){
+  gradientAction.classList.add('sv-newdock-gradient-action');
+  gradientAction.replaceChildren(document.createTextNode('Градиенты'));
+  gradientAction.title='Градиенты кисти';
+  const clearAction=document.getElementById('notePaperClearSheet');
+  if(clearAction&&menu.contains(clearAction))menu.insertBefore(gradientAction,clearAction);
+  else menu.append(gradientAction);
+ }
+
  const colorMenu=document.getElementById('notePaperColorMenu');
  const editor=colorMenu?.querySelector('.sv-gradient-manual');
  if(editor&&!editor.closest('details')){
