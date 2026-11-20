@@ -114,7 +114,7 @@
  inkTools.innerHTML=`<button type="button" data-sv-ink-tool="undo" aria-label="Отменить штрих" title="Отменить штрих">${icon('<path d="m9.5 8-4.6 4 4.6 4M4.9 12h9c4.5 0 6.5 3.5 5.5 7.2"/>')}</button>
   <button type="button" data-sv-ink-tool="eraser" aria-label="Ластик. Удержать, чтобы удалить все штрихи" title="Ластик · удержать для очистки">${icon('<path d="m5 14.5 8.3-8.3a2.1 2.1 0 0 1 3 0l2.3 2.3a2.1 2.1 0 0 1 0 3l-7.3 7.3H8.8zM9.4 10l6.1 6.1M12.4 18.8H20"/>')}</button>
   <button type="button" data-sv-ink-tool="width" aria-label="Толщина пера" aria-expanded="false">${icon('<path d="M5 6.5h7" stroke-width="1.2"/><path d="M5 12h11" stroke-width="1.6"/><path d="M5 17.5h15" stroke-width="2"/>')}</button>
-  <button type="button" data-sv-ink-tool="color" aria-label="Цвет пера" aria-expanded="false"><span class="sv-smart-ink-color-preview" aria-hidden="true"></span></button>
+  <label data-sv-ink-tool="color" class="sv-smart-ink-native-label" title="Цвет пера"><span class="sv-smart-ink-color-preview" aria-hidden="true"></span><input type="color" value="#171e29" class="sv-smart-ink-native-color" aria-label="Выбрать цвет пера"></label>
   <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>')}</button>
   <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>`;
  dlg.append(inkTools);
@@ -148,13 +148,9 @@
  inkPicker.innerHTML=`<div data-sv-ink-picker="width" hidden>
   <strong>Толщина линии</strong><div class="sv-smart-ink-width-options">${INK_WIDTHS.map(width=>`<button type="button" data-sv-pen-width="${width}" aria-label="${width===3?'Тонкая':width===5?'Средняя':'Широкая'} линия"><i style="height:${width===3?1:width===5?2:3.5}px"></i></button>`).join('')}</div></div>`;
  dlg.append(inkPicker);
- // Let Safari on iPhone and Chrome on Android present THEIR own color picker.
- // Keep the native input mounted and focusable by browser picker APIs.
- const nativeColorPicker=document.createElement('input');
- nativeColorPicker.type='color';nativeColorPicker.className='sv-smart-ink-native-color';
- nativeColorPicker.setAttribute('aria-label','Выбрать цвет пера');
- nativeColorPicker.value=penColor;
- dlg.append(nativeColorPicker);
+ // Native color input sits DIRECTLY over the rainbow ring:
+ // the browser receives a real touch instead of synthetic showPicker()/click().
+ const nativeColorPicker=inkColorBtn.querySelector('input[type="color"]');
  const closeInkPicker=()=>{
   inkPicker.hidden=true;
   inkWidthBtn.setAttribute('aria-expanded','false');inkColorBtn.setAttribute('aria-expanded','false');
@@ -204,18 +200,8 @@
   inkColorBtn.setAttribute('aria-expanded','false');
   syncInkPicker();
  };
- const openSystemColors=()=>{
-  closePaper();closeInkPicker();closeVoiceMenu();
-  if(!sayviPanel.hidden)closeSayvi();
-  nativeColorPicker.value=penColor;
-  // Must run in the same real tap for Apple/Android native picker permission.
-  try{
-   if(typeof nativeColorPicker.showPicker==='function')nativeColorPicker.showPicker();
-   else nativeColorPicker.click();
-  }catch(error){nativeColorPicker.click();}
- };
  inkWidthBtn.addEventListener('click',()=>toggleInkPicker('width'));
- inkColorBtn.addEventListener('click',openSystemColors);
+ nativeColorPicker.addEventListener('pointerdown',()=>{closePaper();closeInkPicker();closeVoiceMenu();});
  inkPicker.querySelectorAll('[data-sv-pen-width]').forEach(button=>button.addEventListener('click',()=>{
   const next=Number(button.dataset.svPenWidth);
   if(!INK_WIDTHS.includes(next))return;
@@ -341,7 +327,7 @@
   eraserBtn.setAttribute('aria-pressed',String(mode==='eraser'));
   inkEraser.setAttribute('aria-pressed',String(mode==='eraser'));
   const chosen=INK_COLORS.find(([value])=>value===penColor);
-  inkColorBtn.setAttribute('aria-label','Цвет пера: '+(chosen?.[1]||'Свой цвет'));
+  nativeColorPicker.setAttribute('aria-label','Цвет пера: '+(chosen?.[1]||'Свой цвет'));
   inkWidthBtn.setAttribute('aria-label','Толщина пера: '+(penWidth===3?'тонкая':penWidth===5?'средняя':'широкая'));
   syncInkPicker();
  }
