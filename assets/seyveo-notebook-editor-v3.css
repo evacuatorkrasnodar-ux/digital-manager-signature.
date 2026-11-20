@@ -538,19 +538,13 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
  height:48px!important;min-height:48px!important;max-height:48px!important;
  flex:none!important;scroll-snap-align:none!important;
 }
-/* On desktop there is no rising software keyboard. Expose Paper as the fifth,
-   evenly spaced contextual tool so desktop users can still change the sheet. */
-@media (hover:hover) and (pointer:fine){
- html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open):not(.sv-smart-inking)
-  .sv-note-bottom .sv-note-tools-compact{
-  grid-template-columns:repeat(5,minmax(0,1fr))!important;
- }
- html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open):not(.sv-smart-inking)
-  .sv-note-bottom .sv-note-tools-compact>button[data-sv-smart-tool="paper"]:not([hidden]){
-  box-sizing:border-box!important;display:grid!important;justify-self:center!important;
-  width:44px!important;min-width:44px!important;max-width:44px!important;
-  height:44px!important;min-height:44px!important;max-height:44px!important;
- }
+/* The resting capsule always has FOUR tools, including on desktop. The
+   former fifth Paper button wrapped onto a hidden second row on fine-pointer
+   devices, leaving a stray black glyph below the capsule. Paper stays in
+   the contextual ink toolbar and the keyboard accessory. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button[data-sv-smart-tool="paper"]:not([hidden]){
+ display:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tools-compact>button .sv-smart-sayvi-icon{
@@ -965,15 +959,15 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  background-size:18px 18px!important;
 }
 
-/* Notes dock polish v15: one optical grid and one ink tone.
+/* Notes dock polish v17: one optical grid and one ink tone.
    The four resting tools and the independent New Note action share their
    glyph box, stroke weight and vertical center. The selected pen does not
    introduce a large grey disc among otherwise unfilled buttons. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]){
  box-sizing:border-box!important;position:relative!important;
- width:44px!important;min-width:0!important;max-width:44px!important;
- height:44px!important;min-height:44px!important;max-height:44px!important;
+ width:54px!important;min-width:0!important;max-width:54px!important;
+ height:54px!important;min-height:54px!important;max-height:54px!important;
  place-items:center!important;justify-self:center!important;
  margin:0!important;padding:0!important;
  background:transparent!important;box-shadow:none!important;
@@ -1023,13 +1017,39 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
  display:block!important;font:600 20px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
  letter-spacing:-.06em!important;color:inherit!important;transform:none!important;
 }
-/* Small active underline instead of an oversized grey selected circle. */
+/* Home's inset selected-glass treatment: pressed or expanded tools become
+   a subtle recessed circle. No underline, extra layer or second dock. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
- .sv-note-bottom .sv-note-tools-compact > button[aria-pressed="true"]::after{
- content:""!important;position:absolute!important;display:block!important;
- left:50%!important;bottom:1px!important;width:12px!important;height:2px!important;
- border-radius:999px!important;background:currentColor!important;opacity:.45!important;
- transform:translateX(-50%)!important;pointer-events:none!important;
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:is([aria-pressed="true"],[aria-expanded="true"],:active){
+ border:1px solid rgba(255,255,255,.14)!important;
+ background:rgba(145,158,170,.13)!important;
+ box-shadow:inset 0 2px 3px rgba(0,0,0,.17),inset 0 -1px 1px rgba(255,255,255,.07)!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:is([aria-pressed="true"],[aria-expanded="true"],:active),
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone:active{
+ border:1px solid rgba(255,255,255,.30)!important;
+ background:radial-gradient(ellipse 115% 92% at 50% 3%,rgba(116,126,145,.12),transparent 76%),linear-gradient(165deg,rgba(116,126,145,.14),rgba(96,109,129,.09))!important;
+ box-shadow:inset 0 2.1px 3.2px rgba(31,42,58,.17),inset 0 -1px .75px rgba(255,255,255,.47),inset 0 0 0 .45px rgba(31,42,58,.055)!important;
+}
+/* A 320px device has 48px tracks; never let the circular tap areas overlap. */
+@media(max-width:359px){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]){
+  width:48px!important;min-width:0!important;max-width:48px!important;
+  height:48px!important;min-height:48px!important;max-height:48px!important;
+ }
+}
+/* On an iPhone the Notebook pair has the EXACT Home dock side insets.
+   Center the complete pair only on wider desktop canvases. */
+@media(max-width:699px){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
+  --note-left:max(clamp(14px,5vw,22px),env(safe-area-inset-left,0px));
+  --note-right:calc(100vw - max(clamp(14px,5vw,22px),env(safe-area-inset-right,0px)) - 60px);
+  --note-width:clamp(176px,calc(100vw - var(--note-left) - max(clamp(14px,5vw,22px),env(safe-area-inset-right,0px)) - 80px),248px);
+ }
 }
 
 /* Exactly two attachment choices: compact, centered on the paperclip.
