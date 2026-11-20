@@ -1133,3 +1133,33 @@ html:root body dialog#noteReviewDialog #svSmartInkPicker ~ input.sv-smart-ink-na
  opacity:0!important;pointer-events:none!important;
  clip-path:inset(50%)!important;
 }
+
+
+/* The label is a real native color control, not a synthetic click.
+   Match the six-button rail's 34px geometry while the invisible color
+   input itself receives the physical tap (required for iPhone Safari). */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > label.sv-smart-ink-native-label{
+ box-sizing:border-box!important;position:relative!important;
+ flex:0 0 34px!important;display:grid!important;place-items:center!important;
+ width:34px!important;min-width:34px!important;max-width:34px!important;
+ height:34px!important;min-height:34px!important;max-height:34px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;overflow:hidden!important;cursor:pointer!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > label.sv-smart-ink-native-label > input.sv-smart-ink-native-color{
+ -webkit-appearance:auto!important;appearance:auto!important;
+ position:absolute!important;inset:0!important;z-index:3!important;
+ display:block!important;width:100%!important;height:100%!important;
+ min-width:34px!important;min-height:34px!important;
+ padding:0!important;margin:0!important;border:0!important;
+ border-radius:50%!important;opacity:.01!important;pointer-events:auto!important;
+ cursor:pointer!important;touch-action:manipulation!important;
+ clip:auto!important;clip-path:none!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > label.sv-smart-ink-native-label:focus-within{
+ outline:2px solid #2586ed!important;outline-offset:1px!important;
+}
