@@ -11,7 +11,7 @@ const script=read('assets/seyveo-smart-note-ink.js');
 const sayviMark=read('assets/seyveo-circular-interlace-mono.svg');
 
 test('single Smart Note has scrollable keyboard toolbar with partial next action visible',()=>{
- assert.match(html,/seyveo-smart-note-ink\.js\?v=15/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=16/);
  assert.match(css,/\.sv-note-tools-compact\{[\s\S]*?display:flex!important;grid-template-columns:none!important;/);
  assert.match(css,/overflow-x:auto!important;overflow-y:hidden!important/);
  assert.match(css,/scrollbar-width:none/);
@@ -24,7 +24,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=29/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=31/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -211,4 +211,21 @@ test('resting dock keeps unified glyph sizes, centered new note and visible Sayv
   assert.ok(newNoteLeft-(left+width)>=19.9,`dock gap at ${viewport}px`);
   assert.ok(Math.abs((viewport-(newNoteLeft+60))-left)<.001,`outer margins at ${viewport}px`);
  }
+});
+
+test('handwriting color picker has working color grid, drag spectrum, HSV sliders and quick swatches',()=>{
+ for(const tab of ['grid','spectrum','sliders'])assert.ok(script.includes('data-sv-color-tab="'+tab+'"'));
+ assert.match(script,/INK_SHADE_ROWS\.flatMap/);
+ assert.match(script,/data-sv-color-view="grid"/);
+ assert.match(script,/data-sv-color-view="spectrum"/);
+ assert.match(script,/data-sv-color-view="sliders"/);
+ assert.match(script,/spectrum\.addEventListener\('pointermove'/);
+ assert.match(script,/sliders\.forEach\(input=>/);
+ assert.match(script,/selectInkColor\(hsvToHex/);
+ assert.match(script,/\[data-sv-pen-custom-color\]/);
+ assert.match(script,/EyeDropper/);
+ assert.match(css,/\.sv-ink-spectrum-grid button/);
+ assert.match(css,/\.sv-ink-spectrum-thumb/);
+ assert.match(css,/\.sv-ink-slider-h input/);
+ assert.match(css,/data-kind="color"/);
 });
