@@ -182,7 +182,7 @@
   <strong>Толщина линии</strong><div class="sv-smart-ink-width-options">${INK_WIDTHS.map(width=>`<button type="button" data-sv-pen-width="${width}" aria-label="${width===3?'Тонкая':width===5?'Средняя':'Широкая'} линия"><i style="height:${width===3?1:width===5?2:3.5}px"></i></button>`).join('')}</div></div>
   <div data-sv-ink-picker="color" hidden>
    <header class="sv-ink-sheet-head">
-    <span class="sv-ink-dropper" aria-hidden="true">${icon('<path d="m14 5 5 5M5 19l7.7-7.7 3.9 3.9L9 22H5v-3ZM12.7 11.3l5.8-5.8a2.1 2.1 0 0 1 3 3l-5.8 5.8" />')}</span>
+    <button type="button" class="sv-ink-dropper" data-sv-color-eyedropper aria-label="Пипетка">${icon('<path d="m14 5 5 5M5 19l7.7-7.7 3.9 3.9L9 22H5v-3ZM12.7 11.3l5.8-5.8a2.1 2.1 0 0 1 3 3l-5.8 5.8" />')}</button>
     <strong>Цвета</strong>
     <button type="button" data-sv-color-close aria-label="Закрыть палитру">${icon('<path d="M5 5 19 19M19 5 5 19"/>')}</button>
    </header>
@@ -302,6 +302,16 @@
   button.addEventListener('click',()=>selectInkColor(button.dataset.svPenColor)));
  inkPicker.querySelector('[data-sv-pen-custom-color]').addEventListener('change',event=>selectInkColor(event.target.value));
  inkPicker.querySelector('[data-sv-color-close]').addEventListener('click',closeInkPicker);
+ inkPicker.querySelector('[data-sv-color-eyedropper]').addEventListener('click',async()=>{
+  if(typeof window.EyeDropper==='function'){
+   try{
+    const picked=await new window.EyeDropper().open();
+    if(picked?.sRGBHex)selectInkColor(picked.sRGBHex);
+   }catch(error){if(error?.name!=='AbortError')report('Пипетка недоступна на этом устройстве.')}
+  }else{
+   inkPicker.querySelector('[data-sv-pen-custom-color]').click();
+  }
+ });
  const changeColorTab=tab=>{
   inkPicker.querySelectorAll('[data-sv-color-tab]').forEach(button=>
    button.setAttribute('aria-selected',String(button.dataset.svColorTab===tab)));
