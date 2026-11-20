@@ -2796,6 +2796,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <button type="button" data-note-attachment="photo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="3"/><circle cx="8.4" cy="8.4" r="1.45"/><path d="m4.6 17.2 5.3-5.1 3.2 3 3-3.4 3.2 3.8"/></svg><span>Фото</span></button>
 <button type="button" data-note-attachment="camera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.3 8.1a2 2 0 0 1 2-2h2.6l1.4-2h5.4l1.4 2h2.6a2 2 0 0 1 2 2v9.5a2 2 0 0 1-2 2H5.3a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.15"/></svg><span>Камера</span></button>
 <button type="button" data-note-attachment="file"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 2.9h7.2l4.8 4.8v12.1a1.6 1.6 0 0 1-1.6 1.6H6.5a1.6 1.6 0 0 1-1.6-1.6V4.5a1.6 1.6 0 0 1 1.6-1.6Z"/><path d="M13.7 3v4.8h4.8M8.3 12.2h7.4M8.3 16h5.2"/></svg><span>Файл</span></button>
+<button type="button" data-note-attachment="record"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5m-4 0h8"/></svg><span>Записать аудио</span></button>
 <button type="button" data-note-attachment="voice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.1" y="2.7" width="5.8" height="12.6" rx="2.9"/><path d="M5.7 11.7a6.3 6.3 0 0 0 12.6 0M12 18v3.2m-3.6 0h7.2"/></svg><span>Диктовка</span></button>
 </div>
 <div id="svNoteFormatMenu" class="sv-note-format-menu" hidden role="group" aria-label="Оформление текста">
@@ -5691,6 +5692,10 @@ window.addEventListener('load',()=>{
    if(!window.SEYVEO_NOTE_ATTACHMENTS?.choose(action))status('Выбор файла пока недоступен.');
    return;
   }
+  if(action==='record'){
+   window.SEYVEO_NOTE_VOICE?.start();
+   return;
+  }
   dlg.querySelector('[data-note-tool="voice"]')?.click();
  });
   dlg.querySelector('.sv-note-tool-row')?.addEventListener('click',async(e)=>{
@@ -5773,5 +5778,7 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-handwriting-page.css?v=2">
 <script src="assets/seyveo-handwriting-page.js?v=2"></script>
 <script src="assets/seyveo-smart-note-ink.js?v=4"></script>
+<script src="assets/seyveo-note-voice.js?v=1"></script>
+<link rel="stylesheet" href="assets/seyveo-note-voice.css?v=1">
 <link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=8">
 </body></html>

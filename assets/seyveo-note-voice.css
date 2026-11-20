@@ -1,0 +1,81 @@
+/* SEYVEO notebook · quiet inline voice controls, matched to the pearl dock. */
+html:root body dialog#noteReviewDialog[open] :is(.sv-note-voice-capture,.sv-note-voice-transcript){
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ flex:0 0 auto!important;width:100%!important;min-width:0!important;
+ margin:8px 0!important;padding:13px 14px!important;gap:9px!important;
+ border:0!important;border-radius:20px!important;outline:0!important;
+ box-shadow:none!important;background:var(--note-pill,var(--sv-dock-pearl-bg,#f5f6f8))!important;
+ color:var(--note-ink,#172029)!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+}
+html:root body dialog#noteReviewDialog[open] :is(.sv-note-voice-capture,.sv-note-voice-transcript)[hidden]{display:none!important}
+#noteReviewDialog .sv-note-voice-main{display:flex;align-items:center;gap:10px;min-width:0}
+#noteReviewDialog .sv-note-voice-icon{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:50%;background:#cb9d0b;color:white}
+#noteReviewDialog .sv-note-voice-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#noteReviewDialog .sv-note-voice-meta{display:flex;flex:1 1 auto;flex-direction:column;min-width:0;gap:2px}
+#noteReviewDialog .sv-note-voice-meta strong{font-size:13px;line-height:1.3;font-weight:600}
+#noteReviewDialog .sv-note-voice-meta small{font-size:11px;line-height:1.2;color:var(--note-title,#77838b);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#noteReviewDialog [data-voice-timer]{flex:none;font-size:13px;line-height:1.2;font-variant-numeric:tabular-nums}
+#noteReviewDialog .sv-note-voice-wave{height:22px;display:flex;align-items:center;justify-content:space-between;gap:3px;overflow:hidden;color:#b48a0b}
+#noteReviewDialog .sv-note-voice-wave i{flex:1 1 2px;max-width:4px;border-radius:10px;background:currentColor;opacity:.65;animation:sv-voice-wave .76s ease-in-out infinite alternate}
+#noteReviewDialog .sv-note-voice-paused .sv-note-voice-wave i{animation-play-state:paused;opacity:.3}
+@keyframes sv-voice-wave{from{transform:scaleY(.36)}to{transform:scaleY(1)}}
+#noteReviewDialog .sv-note-voice-recognize{display:flex;align-items:flex-start;gap:9px;color:var(--note-ink);font-size:12px;line-height:1.3}
+#noteReviewDialog .sv-note-voice-recognize input{flex:none;width:17px;height:17px;margin:0;accent-color:#c49a0c}
+#noteReviewDialog .sv-note-voice-recognize span{display:flex;flex-direction:column;gap:2px;min-width:0}
+#noteReviewDialog .sv-note-voice-recognize small{font-size:10px;color:var(--note-title,#73808a);line-height:1.35}
+#noteReviewDialog .sv-note-voice-actions,#noteReviewDialog .sv-note-voice-transcript-actions{display:flex;gap:6px;min-width:0;align-items:center}
+html:root body #noteReviewDialog[open] :is(.sv-note-voice-actions,.sv-note-voice-transcript-actions)>button{
+ box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:1 1 0!important;width:auto!important;min-width:0!important;height:37px!important;min-height:37px!important;
+ margin:0!important;padding:0 8px!important;border:0!important;border-radius:999px!important;
+ background:rgba(145,155,164,.12)!important;color:var(--note-ink)!important;
+ box-shadow:none!important;font:500 12px/1.2 -apple-system,BlinkMacSystemFont,sans-serif!important;
+ text-align:center!important;white-space:normal!important;
+}
+html:root body #noteReviewDialog[open] [data-voice-stop],
+html:root body #noteReviewDialog[open] [data-transcript-add]{background:#c69c09!important;color:#fff!important}
+html:root body #noteReviewDialog[open] :is(.sv-note-voice-actions,.sv-note-voice-transcript-actions)>button:disabled{opacity:.45!important}
+#noteReviewDialog .sv-note-voice-transcript-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#noteReviewDialog .sv-note-voice-transcript-head strong{font-size:13px;font-weight:600}
+html:root body #noteReviewDialog[open] .sv-note-voice-transcript-head>button{appearance:none!important;border:0!important;width:30px!important;height:30px!important;min-width:30px!important;border-radius:50%!important;background:transparent!important;color:var(--note-ink)!important;box-shadow:none!important;font-size:16px!important}
+#noteReviewDialog .sv-note-voice-transcript p{margin:0;font-size:11px;line-height:1.45;color:var(--note-title,#73808a)}
+html:root body #noteReviewDialog[open] textarea[data-transcript-text]{
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;min-height:95px!important;max-height:170px!important;
+ padding:11px!important;margin:0!important;border:0!important;border-radius:13px!important;
+ background:var(--note-page,#fff)!important;color:var(--note-ink)!important;
+ outline:none!important;box-shadow:none!important;resize:vertical!important;
+ font:400 14px/1.45 -apple-system,BlinkMacSystemFont,sans-serif!important;
+}
+#noteReviewDialog [data-transcript-status]{display:block;min-height:0;font-size:11px;line-height:1.3;color:#b0770a}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-file.sv-note-audio{
+ display:flex!important;align-items:center!important;gap:8px!important;
+ min-height:58px!important;padding:7px 0!important;border-bottom:0!important;
+}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-play{
+ appearance:none!important;box-sizing:border-box!important;flex:0 0 37px!important;
+ display:grid!important;place-items:center!important;width:37px!important;height:37px!important;min-width:37px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;
+ background:var(--note-pill,var(--sv-dock-pearl-bg,#f2f5f6))!important;
+ color:var(--note-ink,#22313a)!important;box-shadow:none!important;
+ font:600 15px/1 -apple-system,sans-serif!important;
+}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-detail{display:flex;flex:1 1 auto;min-width:0;flex-direction:column;gap:7px;overflow:hidden}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-detail strong{font:600 12px/1.1 -apple-system,BlinkMacSystemFont,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-wave{display:flex;align-items:center;gap:2px;height:20px;overflow:hidden;opacity:.7;color:#7a8993}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-wave i{flex:1 1 2px;max-width:3px;min-width:1px;border-radius:5px;background:currentColor}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-playing .sv-note-audio-wave{color:#c69c09;opacity:1}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio>small{flex:none;font:400 10px/1.15 -apple-system,sans-serif;white-space:nowrap;color:var(--note-title,#77818a)}
+html:root body #noteReviewDialog[open] .sv-note-audio-text{
+ box-sizing:border-box!important;flex:0 0 auto!important;width:auto!important;min-width:0!important;
+ height:33px!important;min-height:33px!important;margin:0!important;padding:0 9px!important;
+ border:0!important;border-radius:999px!important;box-shadow:none!important;
+ background:var(--note-pill,var(--sv-dock-pearl-bg,#f2f5f6))!important;color:var(--note-ink)!important;
+ font:500 11px/1 -apple-system,sans-serif!important;
+}
+@media(max-width:360px){
+ :is(#noteReviewDialog,#noteReadDialog) .sv-note-file.sv-note-audio{gap:5px!important}
+ :is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-wave i:nth-child(n+15){display:none}
+ html:root body #noteReviewDialog[open] .sv-note-audio-text{padding:0 6px!important}
+}
+@media(prefers-reduced-motion:reduce){#noteReviewDialog .sv-note-voice-wave i{animation:none!important}}

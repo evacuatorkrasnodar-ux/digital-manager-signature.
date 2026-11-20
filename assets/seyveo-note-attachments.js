@@ -11,6 +11,7 @@
  const MAX_FILE=10*1024*1024,MAX_PER_NOTE=12;
  let dbPromise=null,editGeneration=0,readGeneration=0;
  let editUrls=[],readUrls=[];
+ const playingAudio=new Set();
  const byId=id=>document.getElementById(id);
  function openDatabase(){
   if(!('indexedDB' in window))return Promise.reject(new Error('IndexedDB unavailable'));
@@ -40,7 +41,7 @@
    request.onerror=()=>reject(request.error||new Error('Read failed'));
   });
  }
- async function addAttachment(noteId,file){
+ async function addAttachment(noteId,file,metadata={}){
   const db=await openDatabase();
   const entry={
    id:String(Date.now())+'-'+Math.random().toString(36).slice(2),
@@ -49,7 +50,11 @@
    type:String(file.type||'application/octet-stream').slice(0,110),
    size:file.size,
    createdAt:Date.now(),
-   blob:file.slice(0,file.size,file.type)
+   blob:file.slice(0,file.size,file.type),
+   ...(metadata.kind==='voice'?{
+    kind:'voice',durationMs:Math.max(0,Math.round(metadata.durationMs||0)),
+    transcript:String(metadata.transcript||'').slice(0,16000)
+   }:{})
   };
   return new Promise((resolve,reject)=>{
    const tx=db.transaction(STORE,'readwrite');
@@ -57,6 +62,21 @@
    tx.onerror=()=>reject(tx.error||new Error('Write failed'));
    tx.onabort=()=>reject(tx.error||new Error('Write aborted'));
    tx.objectStore(STORE).put(entry);
+  });
+ }
+ async function updateTranscript(noteId,id,transcript){
+  const db=await openDatabase();
+  return new Promise((resolve,reject)=>{
+   const tx=db.transaction(STORE,'readwrite');
+   const store=tx.objectStore(STORE),request=store.get(id);
+   request.onsuccess=()=>{
+    const entry=request.result;
+    if(!entry||entry.noteId!==noteId||entry.kind!=='voice'){tx.abort();return;}
+    store.put({...entry,transcript:String(transcript||'').slice(0,16000)});
+   };
+   tx.oncomplete=()=>resolve(true);
+   tx.onabort=()=>reject(new Error('Audio attachment not found'));
+   tx.onerror=()=>reject(tx.error||new Error('Transcription save failed'));
   });
  }
  async function removeAttachment(noteId,id){
@@ -105,6 +125,7 @@
   return (size/1024/1024).toFixed(1).replace('.',',')+' МБ';
  }
  function clearUrls(which){
+  for(const audio of playingAudio){audio.pause();playingAudio.delete(audio);}
   const urls=which==='edit'?editUrls:readUrls;
   urls.forEach(url=>URL.revokeObjectURL(url));
   urls.length=0;
@@ -156,7 +177,72 @@
   document.body.append(link);link.click();link.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),60000);
  }
+ function durationLabel(milliseconds){
+  const seconds=Math.max(0,Math.floor(milliseconds/1000));
+  return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
+ }
+ function appendRemove(card,item,canRemove){
+  if(!canRemove)return;
+  const remove=document.createElement('button');remove.type='button';
+  remove.className='sv-note-file-remove';
+  remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 7h15M9 7V4.5h6V7m3 0-.8 13H6.8L6 7M10 11v5m4-5v5"/></svg>';
+  remove.title='Удалить вложение';
+  remove.setAttribute('aria-label','Удалить вложение '+item.name);
+  remove.addEventListener('click',async()=>{
+   if(!window.confirm('Удалить вложение «'+item.name+'»?'))return;
+   remove.disabled=true;
+   try{
+    await removeAttachment(item.noteId,item.id);
+    const remaining=await attachmentsFor(item.noteId);
+    setCount(item.noteId,remaining.length);
+    await refreshEditor();
+    tell('Вложение удалено.');
+   }catch{tell('Не получилось удалить файл. Проверьте память устройства.');remove.disabled=false;}
+  });
+  card.append(remove);
+ }
+ function audioCard(item,canRemove,urls){
+  const card=document.createElement('div');card.className='sv-note-file sv-note-audio';
+  const url=URL.createObjectURL(item.blob);urls.push(url);
+  const audio=new Audio(url);audio.preload='metadata';
+  const play=document.createElement('button');play.type='button';play.className='sv-note-audio-play';
+  play.setAttribute('aria-label','Воспроизвести запись');play.textContent='▶';
+  const detail=document.createElement('div');detail.className='sv-note-audio-detail';
+  const title=document.createElement('strong');title.textContent='Голосовая запись';
+  const waveform=document.createElement('div');waveform.className='sv-note-audio-wave';
+  waveform.setAttribute('aria-hidden','true');
+  [8,14,9,20,13,25,16,11,21,27,15,9,22,17,11,23,14,19,9,13].forEach(height=>{
+   const bar=document.createElement('i');bar.style.height=height+'px';waveform.append(bar);
+  });
+  const time=document.createElement('small');time.textContent=durationLabel(item.durationMs||0);
+  detail.append(title,waveform);card.append(play,detail,time);
+  play.addEventListener('click',async()=>{
+   if(!audio.paused){audio.pause();return;}
+   for(const other of playingAudio)if(other!==audio)other.pause();
+   try{await audio.play();}catch{tell('Не удалось воспроизвести запись.');}
+  });
+  const sync=()=>{
+   const playing=!audio.paused&&!audio.ended;
+   play.textContent=playing?'Ⅱ':'▶';
+   play.setAttribute('aria-label',playing?'Пауза':'Воспроизвести запись');
+   card.classList.toggle('sv-note-audio-playing',playing);
+   if(playing)playingAudio.add(audio);else playingAudio.delete(audio);
+   const total=Number.isFinite(audio.duration)?audio.duration*1000:item.durationMs||0;
+   time.textContent=durationLabel(audio.currentTime*1000)+' / '+durationLabel(total);
+  };
+  for(const kind of ['play','pause','ended','timeupdate','loadedmetadata'])audio.addEventListener(kind,sync);
+  if(canRemove){
+   const toText=document.createElement('button');toText.type='button';
+   toText.className='sv-note-audio-text';toText.textContent='В текст';
+   toText.setAttribute('aria-label','Перевести голосовую запись в текст');
+   toText.addEventListener('click',()=>window.SEYVEO_NOTE_VOICE?.transcribe(item));
+   card.append(toText);
+  }
+  appendRemove(card,item,canRemove);
+  return card;
+ }
  function fileCard(item,canRemove,urls){
+  if(item.kind==='voice'&&item.type.startsWith('audio/'))return audioCard(item,canRemove,urls);
   const card=document.createElement('div');card.className='sv-note-file';
   let icon;
   if(previewableImage(item.type)){
@@ -180,25 +266,7 @@
   open.title=action;
   open.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 5h5v5M19 5l-9 9"/><path d="M19 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg>';
   open.addEventListener('click',()=>fileAction(item));card.append(open);
-  if(canRemove){
-   const remove=document.createElement('button');remove.type='button';
-   remove.className='sv-note-file-remove';
-   remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 7h15M9 7V4.5h6V7m3 0-.8 13H6.8L6 7M10 11v5m4-5v5"/></svg>';
-   remove.title='Удалить вложение';
-   remove.setAttribute('aria-label','Удалить вложение '+item.name);
-   remove.addEventListener('click',async()=>{
-    if(!window.confirm('Удалить вложение «'+item.name+'»?'))return;
-    remove.disabled=true;
-    try{
-     await removeAttachment(item.noteId,item.id);
-     const remaining=await attachmentsFor(item.noteId);
-     setCount(item.noteId,remaining.length);
-     await refreshEditor();
-     tell('Вложение удалено.');
-    }catch{tell('Не получилось удалить файл. Проверьте память устройства.');remove.disabled=false;}
-   });
-   card.append(remove);
-  }
+  appendRemove(card,item,canRemove);
   return card;
  }
  async function refreshEditor(){
@@ -285,6 +353,25 @@
   deleteForNote,
   refreshEditor,
   refreshReader,
+  updateTranscript,
+  async saveRecordedAudio(blob,durationMs,transcript=''){
+   if(!editor.open)throw new Error('Заметка закрыта.');
+   if(!blob?.size)throw new Error('Получилась пустая запись. Повтори ещё раз.');
+   if(blob.size>MAX_FILE)throw new Error('Запись больше 10 МБ. Запиши более короткий фрагмент.');
+   await openDatabase();
+   const noteId=editor.dataset.noteId||window.SEYVEO_NOTES_EDITOR?.ensureRecord?.();
+   if(!noteId)throw new Error('Не удалось создать запись заметки.');
+   const before=await attachmentsFor(noteId);
+   if(before.length>=MAX_PER_NOTE)throw new Error('В этой заметке уже 12 вложений.');
+   const extension=blob.type.includes('mp4')?'m4a':blob.type.includes('ogg')?'ogg':'webm';
+   const name='Голосовая запись '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})+'.'+extension;
+   const file=new File([blob],name,{type:blob.type||'audio/webm'});
+   const entry=await addAttachment(noteId,file,{kind:'voice',durationMs,transcript});
+   setCount(noteId,before.length+1);
+   await refreshEditor();
+   tell('Вложение сохранено на устройстве.');
+   return entry;
+  },
   choose(kind){
    if(!editor.open)return false;
    const input=kind==='photo'?photoInput:kind==='camera'?cameraInput:kind==='file'?fileInput:null;
