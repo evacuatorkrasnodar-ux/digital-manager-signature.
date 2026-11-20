@@ -18,7 +18,7 @@ test('Home and Notebook use one 248px Apple-like track with 60px round actions',
  assert.match(html,/seyveo-home-dock-preview\.css\?v=42/);
  assert.match(html,/seyveo-dock-active-glass\.css\?v=10/);
  assert.match(html,/seyveo-dock-active-glass\.js\?v=4/);
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=32/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=33/);
  assert.match(home,/--sv-feng-capsule:clamp\(176px,calc\(100vw[\s\S]*?- 80px\),248px\);/);
  assert.match(notes,/--note-width:clamp\(176px,calc\(100vw - var\(--note-left\) - var\(--note-left\) - 80px\),248px\);/);
  assert.match(home,/grid-template-columns:repeat\(4,minmax\(0,calc\(var\(--sv-feng-capsule\) \/ 4\)\)\) minmax\(0,1fr\) 60px!important/);
