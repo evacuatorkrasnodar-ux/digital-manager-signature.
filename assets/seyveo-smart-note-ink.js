@@ -286,6 +286,12 @@
  const ink=document.createElement('canvas');ink.id='svSmartNoteInkCanvas';
  ink.className='sv-smart-ink-canvas';ink.setAttribute('aria-label','Рукопись на всей странице');
  ink.hidden=true;dlg.append(ink);
+ // An invisible hit region guards the title, placeholder, page edges and
+ // bottom dock. The painted canvas stays full-size to preserve old ink data;
+ // only this region can start a new finger or Pencil stroke.
+ const inkSafeArea=document.createElement('div');inkSafeArea.id='svSmartNoteInkSafeArea';
+ inkSafeArea.className='sv-smart-ink-safe-area';inkSafeArea.hidden=true;
+ inkSafeArea.setAttribute('aria-hidden','true');dlg.append(inkSafeArea);
  const ctx=ink.getContext('2d');if(!ctx)return;
  let strokes=[],redo=[],mode='text',active=null,pointerId=null,noteId='';
  let smoothUndo=null,smoothRedo=null;
@@ -341,6 +347,9 @@
   const g=geometry();if(!g)return;
   ink.style.left='0px';ink.style.top='0px';
   ink.style.width=g.width+'px';ink.style.height=g.height+'px';
+  const field=getTarget().getBoundingClientRect();
+  // 32px after the text field starts: no ink over its first line or hint.
+  inkSafeArea.style.top=Math.max(0,Math.ceil(field.top-g.rect.top+32))+'px';
   const dpr=Math.min(2,window.devicePixelRatio||1);
   const w=Math.max(1,Math.round(g.width*dpr)),h=Math.max(1,Math.round(g.height*dpr));
   if(ink.width!==w||ink.height!==h){ink.width=w;ink.height=h;}
@@ -363,10 +372,15 @@
   if(!width||!height)return;
   const g=geometry();if(!g)return;
   ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,width,height);
+  const safe=inkSafeArea.getBoundingClientRect();
+  ctx.save();ctx.beginPath();
+  ctx.rect((safe.left-g.rect.left)*width/g.width,(safe.top-g.rect.top)*width/g.width,
+   safe.width*width/g.width,safe.height*width/g.width);
+  ctx.clip();
   const scale=width/W;
   ctx.setTransform(scale,0,0,scale,0,0);
   strokes.forEach(drawStroke);if(active)drawStroke(active);
-  ctx.setTransform(1,0,0,1,0,0);
+  ctx.restore();ctx.setTransform(1,0,0,1,0,0);
  }
  function point(event){
   const g=geometry();if(!g)return [0,0,50];
@@ -407,7 +421,7 @@
   smoothUndo=previous;smoothRedo=null;
   report('Рукопись очищена. Стрелка отмены вернёт штрихи.');
  }
- ink.addEventListener('pointerdown',event=>{
+ inkSafeArea.addEventListener('pointerdown',event=>{
   if(mode==='text'||pointerId!==null||event.isPrimary===false||event.button>0)return;
   if(strokes.length>=STROKE_LIMIT){report('Лист заполнен. Сохраните заметку.');return}
   event.preventDefault();pointerId=event.pointerId;
@@ -415,16 +429,19 @@
   clearTimeout(inkToolsRevealTimer);
   dlg.classList.add('sv-ink-stroking');inkTools.setAttribute('aria-hidden','true');
   active={tool:mode,width:mode==='eraser'?35:penWidth,color:penColor,points:[point(event)]};
-  try{ink.setPointerCapture(event.pointerId)}catch{}
+  try{inkSafeArea.setPointerCapture(event.pointerId)}catch{}
   render();
  });
- ink.addEventListener('pointermove',event=>{
+ inkSafeArea.addEventListener('pointermove',event=>{
   if(!active||event.pointerId!==pointerId)return;
-  event.preventDefault();const p=point(event),last=active.points.at(-1);
+  event.preventDefault();
+  const safe=inkSafeArea.getBoundingClientRect();
+  if(event.clientX<safe.left||event.clientX>safe.right||event.clientY<safe.top||event.clientY>safe.bottom){finish(event);return;}
+  const p=point(event),last=active.points.at(-1);
   if(Math.hypot(p[0]-last[0],p[1]-last[1])>=1&&active.points.length<POINT_LIMIT){active.points.push(p);render();}
  });
- ink.addEventListener('pointerup',finish);ink.addEventListener('pointercancel',finish);
- ink.addEventListener('lostpointercapture',finish);
+ inkSafeArea.addEventListener('pointerup',finish);inkSafeArea.addEventListener('pointercancel',finish);
+ inkSafeArea.addEventListener('lostpointercapture',finish);
  function setMode(next,focus=false){
   if(!['text','pen','eraser'].includes(next))return;
   resetInkToolsVisibility();
@@ -433,7 +450,7 @@
   if(next!=='text')window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
   inkTools.hidden=next==='text';
   closePaper();closeInkPicker();closeVoiceMenu();
-  ink.hidden=next==='text';
+  ink.hidden=next==='text';inkSafeArea.hidden=next==='text';
   if(next!=='text'&&dlg.contains(document.activeElement))document.activeElement?.blur?.();
   syncButtons();resize();
   if(focus&&next==='text')getTarget().focus({preventScroll:true});
@@ -452,11 +469,11 @@
     color:validColor(s.color)||'#171e29',
     points:Array.isArray(s.points)?s.points.slice(0,POINT_LIMIT).map(p=>p.slice(0,3)):[]})):[];
   if(strokes.length&&Number(note?.inlineInk?.version||1)<2)strokes=migrateLegacyInk(strokes);
-  ink.hidden=true;inkTools.hidden=true;dlg.classList.remove('sv-smart-inking');syncButtons();
+  ink.hidden=true;inkSafeArea.hidden=true;inkTools.hidden=true;dlg.classList.remove('sv-smart-inking');syncButtons();
   requestAnimationFrame(resize);
  }
  dlg.addEventListener('seyveo:smart-note-open',event=>load(event.detail?.id||null));
- dlg.addEventListener('close',()=>{resetInkToolsVisibility();closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();mode='text';ink.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
+ dlg.addEventListener('close',()=>{resetInkToolsVisibility();closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();mode='text';ink.hidden=true;inkSafeArea.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
  dlg.addEventListener('scroll',render,true);
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
  observer?.observe(dlg);observer?.observe(form);observer?.observe(textarea);if(rich)observer?.observe(rich);
@@ -673,6 +690,6 @@
   if(!dlg.open||mode==='text'||!((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'))return;
   event.preventDefault();travelHistory(event.shiftKey);
  });
- window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:8,open:()=>setMode('pen'),text:()=>setMode('text'),clearHandwriting,getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
+ window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:9,open:()=>setMode('pen'),text:()=>setMode('text'),clearHandwriting,getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
  syncButtons();
 })();

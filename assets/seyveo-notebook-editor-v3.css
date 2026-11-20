@@ -404,7 +404,25 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  > canvas#svSmartNoteInkCanvas[hidden]{display:none!important}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking
- > canvas#svSmartNoteInkCanvas.sv-smart-ink-canvas{pointer-events:auto!important}
+ > canvas#svSmartNoteInkCanvas.sv-smart-ink-canvas{pointer-events:none!important}
+/* Apple-like writing margins are INPUT bounds, not a visible framed card.
+   Keep 14px at the sides, clear the title/first line, and stop 16px above
+   the fixed 60px dock. Full-page canvas still renders saved ink beneath. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svSmartNoteInkSafeArea.sv-smart-ink-safe-area{
+ box-sizing:border-box!important;position:absolute!important;z-index:11!important;
+ top:0;bottom:76px!important;
+ left:max(14px,env(safe-area-inset-left,0px))!important;
+ right:max(14px,env(safe-area-inset-right,0px))!important;
+ margin:0!important;padding:0!important;
+ border:0!important;outline:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ pointer-events:none!important;touch-action:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svSmartNoteInkSafeArea[hidden]{display:none!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking
+ > #svSmartNoteInkSafeArea.sv-smart-ink-safe-area:not([hidden]){pointer-events:auto!important}
 
 /* Light Smart Note dock: use the EXACT shared Home-dock Silver Mist finish.
    Both the scroll capsule and its separate new-note circle use the original

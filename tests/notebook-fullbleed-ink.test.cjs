@@ -14,11 +14,11 @@ test('handwriting is mounted on the fullscreen dialog, outside padded text and f
  assert.match(css,/> canvas#svSmartNoteInkCanvas\.sv-smart-ink-canvas\{[\s\S]*?inset:0!important;width:100%!important;height:100%!important/);
  assert.match(css,/> canvas#svSmartNoteInkCanvas[\s\S]*?border:0!important;border-radius:0!important;outline:0!important/);
  assert.match(css,/> canvas#svSmartNoteInkCanvas\[hidden\]\{display:none!important\}/);
- assert.match(css,/\.sv-smart-inking[\s\S]*?> canvas#svSmartNoteInkCanvas\.sv-smart-ink-canvas\{pointer-events:auto!important\}/);
+ assert.match(css,/\.sv-smart-inking[\s\S]*?> canvas#svSmartNoteInkCanvas\.sv-smart-ink-canvas\{pointer-events:none!important\}/);
  assert.match(script,/observer\?\.observe\(dlg\)/);
 });
 
-test('canvas geometry and pointer points reach every actual edge of the page',()=>{
+test('the display canvas retains full-page coordinates for saved notes',()=>{
  const start=script.indexOf(' function geometry(){');
  const end=script.indexOf('\n function resize(){',start);
  assert.ok(start>=0&&end>start);
@@ -38,6 +38,26 @@ test('canvas geometry and pointer points reach every actual edge of the page',()
  assert.ok(endPoint[1]>1600,'bottom edge is below the old form boundary');
  assert.doesNotMatch(script,/getTarget\(\)\.scrollTop/);
  assert.match(script,/ctx\.setTransform\(scale,0,0,scale,0,0\)/);
+});
+
+test('new handwriting starts only inside an invisible safe writing rectangle',()=>{
+ assert.match(script,/inkSafeArea\.id='svSmartNoteInkSafeArea'/);
+ assert.match(script,/inkSafeArea\.hidden=true;[\s\S]*?dlg\.append\(inkSafeArea\)/);
+ assert.match(script,/inkSafeArea\.style\.top=Math\.max\(0,Math\.ceil\(field\.top-g\.rect\.top\+32\)\)/);
+ assert.match(css,/> #svSmartNoteInkSafeArea\.sv-smart-ink-safe-area\{[\s\S]*?bottom:76px!important/);
+ assert.match(css,/left:max\(14px,env\(safe-area-inset-left,0px\)\)!important/);
+ assert.match(css,/right:max\(14px,env\(safe-area-inset-right,0px\)\)!important/);
+ assert.match(css,/background:transparent!important;box-shadow:none!important/);
+ assert.match(css,/> #svSmartNoteInkSafeArea\[hidden\]\{display:none!important\}/);
+ assert.match(css,/\.sv-smart-inking[\s\S]*?> #svSmartNoteInkSafeArea\.sv-smart-ink-safe-area:not\(\[hidden\]\)\{pointer-events:auto!important\}/);
+ assert.match(script,/inkSafeArea\.addEventListener\('pointerdown'/);
+ assert.match(script,/inkSafeArea\.addEventListener\('pointermove'/);
+ assert.doesNotMatch(script,/ink\.addEventListener\('pointerdown'/);
+ assert.match(script,/inkSafeArea\.setPointerCapture\(event\.pointerId\)/);
+ assert.match(script,/ctx\.rect\(\(safe\.left-g\.rect\.left\)/);
+ assert.match(script,/ctx\.clip\(\)/);
+ assert.match(script,/if\(event\.clientX<safe\.left\|\|event\.clientX>safe\.right\|\|event\.clientY<safe\.top\|\|event\.clientY>safe\.bottom\)\{finish\(event\);return;\}/);
+ assert.match(script,/ink\.hidden=next==='text';inkSafeArea\.hidden=next==='text'/);
 });
 
 test('old padded-form handwriting migrates to full-bleed coordinates without moving pixels',()=>{
