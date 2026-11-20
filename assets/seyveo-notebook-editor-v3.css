@@ -407,3 +407,94 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
  -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
  backdrop-filter:var(--sv-dock-pearl-blur)!important;
 }
+
+/* One Silver Mist family for the editor's navigation and its keyboard dock.
+   This replaces flat fillings on existing controls; it creates no new layer. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteUndo.sv-note-nav-circle),
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-nav-actions .sv-note-action-pair{
+ border:var(--sv-dock-pearl-border)!important;
+ background:var(--sv-dock-pearl-bg)!important;
+ box-shadow:var(--sv-dock-pearl-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ backdrop-filter:var(--sv-dock-pearl-blur)!important;
+}
+/* Preserve the approved gold action while giving it the same soft relief. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-nav-actions button#svNoteDone{
+ border:.7px solid rgba(163,125,14,.18)!important;
+ background:#c69c09!important;
+ box-shadow:0 0 0 .45px rgba(166,127,11,.13),
+  inset 0 1px 1px rgba(255,255,255,.27),
+  inset 0 -1px 1px rgba(101,76,11,.10),
+  0 1px 2px rgba(83,68,33,.07)!important;
+}
+/* The iOS keyboard state keeps the real pearl ring instead of a flat fill. */
+@media(max-width:699px){
+ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+  border:var(--sv-dock-pearl-border)!important;
+  background:var(--sv-dock-pearl-bg)!important;
+  box-shadow:var(--sv-dock-pearl-shadow)!important;
+  -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
+  backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ }
+}
+
+/* Dropdowns: an elevated, slightly denser Silver Mist surface so labels stay
+   legible over a note. The shared border/inset highlights are unchanged. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svNoteTopMenu.sv-note-top-menu,#svNoteSearchPanel.sv-note-search-panel):not([hidden]),
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > :is(#svNoteAttachmentMenu.sv-note-attachment-menu,#svNoteFormatMenu.sv-note-format-menu):not([hidden]){
+ border:var(--sv-dock-pearl-border)!important;
+ background:rgba(246,247,249,.95)!important;
+ box-shadow:var(--sv-dock-pearl-shadow),0 12px 30px rgba(54,64,76,.13)!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ backdrop-filter:var(--sv-dock-pearl-blur)!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svNoteTopMenu.sv-note-top-menu:not([hidden]){
+ width:min(250px,calc(100vw - 36px))!important;
+ padding:7px!important;gap:2px!important;
+ border-radius:20px!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svNoteTopMenu.sv-note-top-menu>button,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > :is(#svNoteAttachmentMenu.sv-note-attachment-menu,#svNoteFormatMenu.sv-note-format-menu)>button{
+ box-sizing:border-box!important;
+ display:grid!important;grid-template-columns:22px minmax(0,1fr)!important;
+ align-items:center!important;justify-content:stretch!important;
+ gap:12px!important;
+ width:100%!important;min-width:0!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ margin:0!important;padding:0 12px!important;
+ border:0!important;border-radius:12px!important;
+ box-shadow:none!important;background:transparent!important;
+ color:#20272e!important;
+ text-align:left!important;font:500 14px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu)>button>svg{
+ display:block!important;justify-self:center!important;align-self:center!important;
+ width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;
+ margin:0!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.65!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+ color:#35414a!important;filter:none!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu)>button>span{
+ display:block!important;min-width:0!important;
+ line-height:1.25!important;text-align:left!important;
+ white-space:nowrap!important;transform:none!important;
+}
+/* Formatting now uses the actual SVG glyphs, never duplicate letter icons. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu.sv-note-format-menu>button::before{content:none!important;display:none!important}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu)>button:is(:hover,:active){
+ background:rgba(116,130,143,.095)!important;
+}

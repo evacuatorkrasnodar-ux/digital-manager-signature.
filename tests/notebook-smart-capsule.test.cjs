@@ -21,7 +21,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=4/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=5/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -29,6 +29,26 @@ test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=
   assert.match(pearl,new RegExp('--sv-dock-pearl-'+token));
  }
  assert.match(pearl,/data-theme="light"/);
+});
+
+test('navigation and every dropdown reuse Silver Mist with inline menu icons',()=>{
+ const pearl=css.slice(css.lastIndexOf('/* One Silver Mist family'));
+ for(const selector of ['button#noteReviewBack.sv-note-back-arrow','button#svNoteUndo.sv-note-nav-circle',
+  '.sv-note-nav-actions .sv-note-action-pair','button#svNoteDone',
+  '#svNoteTopMenu.sv-note-top-menu','#svNoteAttachmentMenu.sv-note-attachment-menu',
+  '#svNoteFormatMenu.sv-note-format-menu']){
+  assert.ok(pearl.includes(selector),`matches ${selector}`);
+ }
+ for(const token of ['--sv-dock-pearl-border','--sv-dock-pearl-bg','--sv-dock-pearl-shadow','--sv-dock-pearl-blur']){
+  assert.ok(pearl.includes(token),`reuses ${token}`);
+ }
+ for(const action of ['copy','notes','clear','print']){
+  assert.match(html,new RegExp('data-sv-note-menu="'+action+'"[^>]*><svg[\\s\\S]*?</svg><span>'));
+ }
+ for(const fmt of ['heading','bold','italic','underline']){
+  assert.match(html,new RegExp('data-note-format="'+fmt+'"[^>]*><svg[\\s\\S]*?</svg><span>'));
+ }
+ assert.match(pearl,/\.sv-note-keyboard-open[\s\S]*?box-shadow:var\(--sv-dock-pearl-shadow\)/);
 });
 
 test('typing and handwriting share ONE note ID, with vector ink persisted separately from text',()=>{
