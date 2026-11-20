@@ -13,9 +13,9 @@ test('recording lives in attachment menu and does not replace the approved dock'
  assert.match(html,/data-note-attachment="record"[\s\S]*?<span>Записать аудио<\/span>/);
  assert.match(html,/data-note-attachment="voice"[\s\S]*?<span>Диктовка<\/span>/);
  assert.match(html,/action==='record'[\s\S]*?SEYVEO_NOTE_VOICE\?\.start\(\)/);
- assert.match(html,/seyveo-note-attachments\.js\?v=5/);
+ assert.match(html,/seyveo-note-attachments\.js\?v=6/);
  assert.match(html,/seyveo-note-voice\.js\?v=2/);
- assert.match(html,/seyveo-note-voice\.css\?v=2/);
+ assert.match(html,/seyveo-note-voice\.css\?v=3/);
  assert.match(voice,/form\.insertBefore\(capture,attachmentList\)/);
  assert.doesNotMatch(voice,/location\.href|location\.assign|openChat/);
 });
@@ -51,7 +51,7 @@ test('transcription requires explicit opt-in and user review before text inserti
  assert.match(voice,/data-sv-smart-tool="sayvi"/);
  assert.match(voice,/Аудио сохранено/);
  assert.match(attachments,/const audio=new Audio\(url\)/);
- assert.match(attachments,/toText\.textContent='В текст'/);
+ assert.match(attachments,/toText\.textContent='Распознать'/);
  assert.match(css,/--sv-dock-pearl-bg/);
 });
 
@@ -83,4 +83,15 @@ test('numeric and default audio names display a recording date without renaming 
  assert.match(audioDisplayName({name:'Голосовая запись 09:36.webm',createdAt:recordedAt}),/^Запись · /);
  assert.equal(audioDisplayName({name:'Интервью с командой.m4a',createdAt:recordedAt}),'Интервью с командой.m4a');
  assert.match(attachments,/title\.title=item\.name\|\|''/);
+});
+
+test('audio card has centered symmetric waveform, quiet vector play and plain remove cross',()=>{
+ const wave=attachments.match(/\[([\d,\s]+)\]\.forEach\(height=>\{/);
+ assert.ok(wave,'sound bars must be present');
+ const heights=wave[1].split(',').map(Number);
+ assert.deepEqual(heights,heights.slice().reverse(),'waveform should mirror around its center');
+ assert.match(attachments,/play\.innerHTML=playing\?pauseIcon:playIcon/);
+ assert.match(attachments,/remove\.className='sv-note-file-remove'\+\(isAudio\?' sv-note-audio-remove'/);
+ assert.match(css,/grid-template-columns:38px minmax\(0,1fr\) max-content max-content!important/);
+ assert.match(css,/\.sv-note-audio-remove\{[\s\S]*?background:transparent!important/);
 });
