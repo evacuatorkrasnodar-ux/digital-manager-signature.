@@ -247,7 +247,7 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > #noteP
 html body #notePaperDialog.sv-paper-studio[open] .sv-paper-palette .paper-color-control{
  box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
  gap:3px!important;position:relative!important;
- flex:0 0 85px!important;width:85px!important;min-width:85px!important;max-width:85px!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:44px!important;
  margin:0!important;padding:0!important;
 }
 html body #notePaperDialog.sv-paper-studio[open] .paper-color-control > label.sv-paper-native-color{
