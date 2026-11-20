@@ -7,11 +7,10 @@
  const W=840,H=1188,MAX_STROKES=220,MAX_POINTS=1300,MAX_BYTES=340000;
  const root=document.createElement('dialog');
  root.id='svHandwritingDialog';root.className='sv-handwriting-dialog';
- root.setAttribute('aria-labelledby','svHandwritingHeading');
+ root.setAttribute('aria-label','Рукописный лист');
  root.innerHTML=`
   <header class="sv-hw-header">
    <button type="button" class="sv-hw-back" aria-label="Назад к блокноту"><svg viewBox="0 0 24 24"><path d="m14.5 5-7 7 7 7"/></svg></button>
-   <h2 id="svHandwritingHeading">От руки</h2>
    <div class="sv-hw-nav">
     <button type="button" data-hw-action="undo" aria-label="Отменить штрих" disabled><svg viewBox="0 0 24 24"><path d="m9.4 7.2-5 5 5 5M4.6 12.2h8.7a5.6 5.6 0 0 1 0 11.2"/></svg></button>
     <button type="button" data-hw-action="redo" aria-label="Вернуть штрих" disabled><svg viewBox="0 0 24 24"><path d="m14.6 7.2 5 5-5 5m4.8-5H10.7a5.6 5.6 0 0 0 0 11.2"/></svg></button>

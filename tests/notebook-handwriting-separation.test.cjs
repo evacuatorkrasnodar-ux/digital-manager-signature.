@@ -23,6 +23,8 @@ test('four actions lead to independent writing, handwriting, scan and art editor
 
 test('new handwriting page is unframed, supports pen, eraser, undo and persistent strokes',()=>{
  assert.match(handwriting,/root\.id='svHandwritingDialog'/);
+ assert.doesNotMatch(handwriting,/<h2 id="svHandwritingHeading">От руки<\/h2>/);
+ assert.match(handwriting,/root\.setAttribute\('aria-label','Рукописный лист'\)/);
  assert.match(handwriting,/root\.showModal\(\)/);
  assert.match(handwriting,/data-hw-tool="pen"/);
  assert.match(handwriting,/data-hw-tool="eraser"/);
@@ -43,6 +45,6 @@ test('existing art tablet and old saved artwork still use SEYVEO_PAPER',()=>{
  assert.match(html,/if\(note\.noteKind==='handwriting'\)window\.SEYVEO_HANDWRITING\?\.open\(note\)/);
  assert.match(html,/else if\(note\.paper\)window\.SEYVEO_PAPER\?\.open\(note\)/);
  assert.match(html,/window\.SEYVEO_PAPER\?\.preview\(thumbnail,note\.paper\)/);
- assert.match(html,/assets\/seyveo-handwriting-page\.js\?v=1/);
- assert.match(html,/assets\/seyveo-handwriting-page\.css\?v=1/);
+ assert.match(html,/assets\/seyveo-handwriting-page\.js\?v=2/);
+ assert.match(html,/assets\/seyveo-handwriting-page\.css\?v=2/);
 });

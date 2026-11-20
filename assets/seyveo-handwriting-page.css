@@ -20,10 +20,6 @@ html body #svHandwritingDialog.sv-handwriting-dialog[open]{
  flex:0 0 auto;min-height:76px;margin:0;padding:calc(12px + env(safe-area-inset-top,0px)) 20px 10px;
  border:0;background:transparent;box-shadow:none;
 }
-#svHandwritingDialog .sv-hw-header h2{
- position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
- margin:0;font-size:16px;font-weight:650;white-space:nowrap;pointer-events:none;
-}
 #svHandwritingDialog .sv-hw-header button{
  -webkit-appearance:none;appearance:none;display:grid;place-items:center;
  flex:0 0 42px;width:42px;height:42px;margin:0;padding:0;
@@ -100,9 +96,7 @@ html body #svHandwritingDialog.sv-handwriting-dialog[open]{
 #svHandwritingDialog .sv-hw-status[hidden]{display:none!important}
 @media(max-width:420px){
  #svHandwritingDialog .sv-hw-header{padding-left:16px;padding-right:16px;gap:4px}
- #svHandwritingDialog .sv-hw-header h2{font-size:14px}
  #svHandwritingDialog .sv-hw-nav{gap:1px}
  #svHandwritingDialog .sv-hw-header button{flex-basis:40px;width:40px;height:40px}
  #svHandwritingDialog .sv-hw-main{padding:23px 20px 0}
 }
-@media(max-width:340px){#svHandwritingDialog .sv-hw-header h2{display:none}}
