@@ -97,9 +97,40 @@
  inkTools.className='sv-smart-ink-tools';inkTools.hidden=true;
  inkTools.setAttribute('role','toolbar');inkTools.setAttribute('aria-label','Инструменты рукописного ввода');
  inkTools.innerHTML=`<button type="button" data-sv-ink-tool="eraser" aria-label="Ластик">${icon('<path d="m4.5 14 8.7-8.7a2.3 2.3 0 0 1 3.2 0l3.1 3.1a2.3 2.3 0 0 1 0 3.2L11.3 20H8.2zM9.4 9.1l7.1 7.1M12 20h8.5"/>')}</button>
-  <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.1" y="3.5" width="13.8" height="17" rx="1.7"/><path d="M8.3 8h7.2M8.3 12h7.2M8.3 16h7.2"/>')}</button>`;
+  <button type="button" data-sv-ink-tool="width" aria-label="Толщина пера" aria-expanded="false">${icon('<path d="M5 7h14M5 12h14M5 18h14" stroke-width="2"/>')}</button>
+  <button type="button" data-sv-ink-tool="color" aria-label="Цвет пера" aria-expanded="false"><span class="sv-smart-ink-color-preview" aria-hidden="true"></span></button>
+  <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.1" y="3.5" width="13.8" height="17" rx="1.7"/><path d="M8.3 8h7.2M8.3 12h7.2M8.3 16h7.2"/>')}</button>
+  <button type="button" data-sv-ink-tool="clear" aria-label="Очистить рукопись">${icon('<path d="M4 7h16M8 7V5h8v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/>')}</button>`;
  dlg.append(inkTools);
  const inkEraser=inkTools.querySelector('[data-sv-ink-tool="eraser"]');
+ const inkWidthBtn=inkTools.querySelector('[data-sv-ink-tool="width"]');
+ const inkColorBtn=inkTools.querySelector('[data-sv-ink-tool="color"]');
+ const inkClearBtn=inkTools.querySelector('[data-sv-ink-tool="clear"]');
+ const INK_COLORS=[
+  ['#171e29','Графит'],['#77828d','Серебро'],['#2e6fb4','Синий'],
+  ['#169a96','Бирюза'],['#38955b','Зелёный'],['#c59637','Золотой'],
+  ['#d4514d','Красный'],['#8a65b3','Фиолетовый']
+ ];
+ const INK_WIDTHS=[3,5,9];
+ const validColor=value=>/^#[0-9a-f]{6}$/i.test(String(value||''))?String(value).toLowerCase():null;
+ let penColor='#171e29',penWidth=5;
+ const inkPicker=document.createElement('section');
+ inkPicker.id='svSmartInkPicker';inkPicker.className='sv-smart-ink-picker';inkPicker.hidden=true;
+ inkPicker.setAttribute('role','group');inkPicker.setAttribute('aria-label','Параметры пера');
+ inkPicker.innerHTML=`<div data-sv-ink-picker="width" hidden>
+  <strong>Толщина линии</strong><div class="sv-smart-ink-width-options">${INK_WIDTHS.map(width=>`<button type="button" data-sv-pen-width="${width}" aria-label="${width===3?'Тонкая':width===5?'Средняя':'Широкая'} линия"><i style="height:${width===3?1:width===5?2:3.5}px"></i></button>`).join('')}</div></div>
+  <div data-sv-ink-picker="color" hidden><strong>Цвет пера</strong><div class="sv-smart-ink-color-options">${INK_COLORS.map(([value,name])=>`<button type="button" data-sv-pen-color="${value}" aria-label="${name}" style="--sv-ink-choice:${value}"><span aria-hidden="true"></span></button>`).join('')}<input type="color" data-sv-pen-custom-color value="#171e29" aria-label="Другой цвет" title="Другой цвет"></div></div>`;
+ dlg.append(inkPicker);
+ const closeInkPicker=()=>{
+  inkPicker.hidden=true;
+  inkWidthBtn.setAttribute('aria-expanded','false');inkColorBtn.setAttribute('aria-expanded','false');
+ };
+ const syncInkPicker=()=>{
+  inkColorBtn.style.setProperty('--sv-ink-color',penColor);
+  inkPicker.querySelectorAll('[data-sv-pen-width]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.svPenWidth)===penWidth)));
+  inkPicker.querySelectorAll('[data-sv-pen-color]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.svPenColor===penColor)));
+  inkPicker.querySelector('[data-sv-pen-custom-color]').value=penColor;
+ };
  const syncPaper=()=>{
   dlg.dataset.svPaperStyle=paperStyle;
   paperPanel.querySelectorAll('[data-sv-paper-choice]').forEach(button=>{
@@ -109,9 +140,37 @@
  const closePaper=()=>{paperPanel.hidden=true;paperTrigger?.setAttribute('aria-expanded','false')};
  const togglePaper=()=>{
   if(!sayviPanel.hidden)closeSayvi();
+  closeInkPicker();
   const opening=paperPanel.hidden;
   paperPanel.hidden=!opening;paperTrigger?.setAttribute('aria-expanded',String(opening));
  };
+ const toggleInkPicker=kind=>{
+  closePaper();if(!sayviPanel.hidden)closeSayvi();
+  const opening=inkPicker.hidden||inkPicker.dataset.kind!==kind;
+  inkPicker.dataset.kind=kind;inkPicker.hidden=!opening;
+  inkPicker.querySelectorAll('[data-sv-ink-picker]').forEach(panel=>{
+   panel.hidden=panel.dataset.svInkPicker!==kind;
+  });
+  inkWidthBtn.setAttribute('aria-expanded',String(opening&&kind==='width'));
+  inkColorBtn.setAttribute('aria-expanded',String(opening&&kind==='color'));
+  syncInkPicker();
+ };
+ inkWidthBtn.addEventListener('click',()=>toggleInkPicker('width'));
+ inkColorBtn.addEventListener('click',()=>toggleInkPicker('color'));
+ inkPicker.querySelectorAll('[data-sv-pen-width]').forEach(button=>button.addEventListener('click',()=>{
+  const next=Number(button.dataset.svPenWidth);
+  if(!INK_WIDTHS.includes(next))return;
+  penWidth=next;setMode('pen');syncInkPicker();
+  if(strokes.length)save();
+ }));
+ function selectInkColor(value){
+  const next=validColor(value);if(!next)return;
+  penColor=next;setMode('pen');syncInkPicker();
+  if(strokes.length)save();
+ }
+ inkPicker.querySelectorAll('[data-sv-pen-color]').forEach(button=>
+  button.addEventListener('click',()=>selectInkColor(button.dataset.svPenColor)));
+ inkPicker.querySelector('[data-sv-pen-custom-color]').addEventListener('change',event=>selectInkColor(event.target.value));
  function selectPaper(next){
   if(!PAPER_STYLES.has(next))return;
   if(next===paperStyle){closePaper();return}
@@ -138,8 +197,14 @@
   if(!dlg.open||paperPanel.hidden||paperPanel.contains(event.target)||paperTrigger?.contains(event.target)||inkTools.contains(event.target))return;
   closePaper();
  },true);
+ document.addEventListener('pointerdown',event=>{
+  if(!dlg.open||inkPicker.hidden||inkPicker.contains(event.target)||inkTools.contains(event.target))return;
+  closeInkPicker();
+ },true);
  dlg.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&!paperPanel.hidden){event.preventDefault();event.stopImmediatePropagation();closePaper()}
+  if(event.key==='Escape'&&(!paperPanel.hidden||!inkPicker.hidden)){
+   event.preventDefault();event.stopImmediatePropagation();closePaper();closeInkPicker();
+  }
  },true);
 
  const W=840,STROKE_LIMIT=180,POINT_LIMIT=1200,BYTE_LIMIT=300000;
@@ -154,9 +219,13 @@
  const buttons=[textBtn,draw,eraserBtn];
  function syncButtons(){
   textBtn.setAttribute('aria-pressed',String(mode==='text'));
-  draw.setAttribute('aria-pressed',String(mode==='pen'));
+  draw.setAttribute('aria-pressed',String(mode!=='text'));
   eraserBtn.setAttribute('aria-pressed',String(mode==='eraser'));
   inkEraser.setAttribute('aria-pressed',String(mode==='eraser'));
+  const chosen=INK_COLORS.find(([value])=>value===penColor);
+  inkColorBtn.setAttribute('aria-label','Цвет пера: '+(chosen?.[1]||'Свой цвет'));
+  inkWidthBtn.setAttribute('aria-label','Толщина пера: '+(penWidth===3?'тонкая':penWidth===5?'средняя':'широкая'));
+  syncInkPicker();
  }
  function geometry(){
   const rect=getTarget().getBoundingClientRect(),host=form.getBoundingClientRect();
@@ -178,7 +247,7 @@
   ctx.save();
   ctx.globalCompositeOperation=s.tool==='eraser'?'destination-out':'source-over';
   ctx.lineWidth=s.width||5;ctx.lineCap='round';ctx.lineJoin='round';
-  ctx.strokeStyle=ctx.fillStyle='#171e29';
+  ctx.strokeStyle=ctx.fillStyle=validColor(s.color)||'#171e29';
   ctx.beginPath();const pts=s.points;
   ctx.moveTo(pts[0][0],pts[0][1]);
   if(pts.length===1){ctx.arc(pts[0][0],pts[0][1],ctx.lineWidth/2,0,Math.PI*2);ctx.fill();}
@@ -206,9 +275,9 @@
   const api=window.SEYVEO_NOTES_API,editor=window.SEYVEO_NOTES_EDITOR;
   const id=editor?.ensureRecord?.();if(!id||!api)return false;
   const list=api.getNotes(),old=list.find(n=>n.id===id);if(!old)return false;
-  const inlineInk={version:1,width:W,strokes:strokes.map(s=>({tool:s.tool,width:s.width,points:s.points.map(p=>p.slice())}))};
+  const inlineInk={version:1,width:W,strokes:strokes.map(s=>({tool:s.tool,width:s.width,color:validColor(s.color)||'#171e29',points:s.points.map(p=>p.slice())}))};
   if(JSON.stringify(inlineInk).length>BYTE_LIMIT){report('Слишком много рукописного текста на этом листе.');return false}
-  const next=list.map(n=>n.id===id?{...n,inlineInk,updatedAt:Date.now()}:n);
+  const next=list.map(n=>n.id===id?{...n,inlineInk,inkPenColor:penColor,inkPenWidth:penWidth,updatedAt:Date.now()}:n);
   if(!api.putNotes(next)){report('Не удалось сохранить рукопись.');return false}
   noteId=id;return true;
  }
@@ -225,11 +294,21 @@
   else {if(!strokes.length)return;redo.push(strokes.pop());}
   render();save();
  }
+ function clearHandwriting(){
+  if(!strokes.length){report('Рукопись уже чистая.');return;}
+  if(!window.confirm('Очистить только рукопись? Печатный текст и вложения сохранятся.'))return;
+  const previous=strokes;
+  strokes=[];redo=[];render();
+  if(!save()){strokes=previous;render();report('Не удалось очистить рукопись.');return;}
+  smoothUndo=previous;smoothRedo=null;
+  report('Рукопись очищена. Стрелка отмены вернёт штрихи.');
+ }
+ inkClearBtn.addEventListener('click',clearHandwriting);
  ink.addEventListener('pointerdown',event=>{
   if(mode==='text'||pointerId!==null||event.isPrimary===false||event.button>0)return;
   if(strokes.length>=STROKE_LIMIT){report('Лист заполнен. Сохраните заметку.');return}
   event.preventDefault();pointerId=event.pointerId;
-  active={tool:mode,width:mode==='eraser'?35:5,points:[point(event)]};
+  active={tool:mode,width:mode==='eraser'?35:penWidth,color:penColor,points:[point(event)]};
   try{ink.setPointerCapture(event.pointerId)}catch{}
   render();
  });
@@ -245,25 +324,28 @@
   if(next!=='text'&&!sayviPanel.hidden)closeSayvi();
   mode=next;dlg.classList.toggle('sv-smart-inking',next!=='text');
   inkTools.hidden=next==='text';
-  closePaper();
+  closePaper();closeInkPicker();
   ink.hidden=next==='text';
   if(next!=='text'&&dlg.contains(document.activeElement))document.activeElement?.blur?.();
   syncButtons();resize();
   if(focus&&next==='text')getTarget().focus({preventScroll:true});
  }
  function load(id){
-  closeSayvi();closePaper();sayviStatus.textContent='';clearSayviPreview();
+  closeSayvi();closePaper();closeInkPicker();sayviStatus.textContent='';clearSayviPreview();
   pointerId=null;active=null;mode='text';noteId=id||'';redo=[];smoothUndo=null;smoothRedo=null;
   const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
   paperStyle=normalizePaper(note?.notePaperStyle);syncPaper();
+  penColor=validColor(note?.inkPenColor)||'#171e29';
+  penWidth=INK_WIDTHS.includes(Number(note?.inkPenWidth))?Number(note.inkPenWidth):5;
   strokes=Array.isArray(note?.inlineInk?.strokes)?note.inlineInk.strokes.slice(0,STROKE_LIMIT)
    .map(s=>({tool:s.tool==='eraser'?'eraser':'pen',width:Number(s.width)||5,
+    color:validColor(s.color)||'#171e29',
     points:Array.isArray(s.points)?s.points.slice(0,POINT_LIMIT).map(p=>p.slice(0,3)):[]})):[];
   ink.hidden=true;inkTools.hidden=true;dlg.classList.remove('sv-smart-inking');syncButtons();
   requestAnimationFrame(resize);
  }
  dlg.addEventListener('seyveo:smart-note-open',event=>load(event.detail?.id||null));
- dlg.addEventListener('close',()=>{closeSayvi();closePaper();mode='text';ink.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
+ dlg.addEventListener('close',()=>{closeSayvi();closePaper();closeInkPicker();mode='text';ink.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
  dlg.addEventListener('scroll',render,true);
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
  observer?.observe(form);observer?.observe(textarea);if(rich)observer?.observe(rich);
@@ -284,7 +366,7 @@
  });
  eraserBtn.addEventListener('click',()=>setMode('eraser'));
  sayviBtn.addEventListener('click',()=>{
-  closePaper();
+  closePaper();closeInkPicker();
   if(!sayviPanel.hidden){closeSayvi();return}
   sayviPanel.hidden=false;sayviBtn.setAttribute('aria-expanded','true');
   clearSayviPreview();sayviStatus.textContent='Выбери, что Сэйви должна сделать с этой заметкой.';
@@ -329,7 +411,7 @@
   for(const s of list){if(s.tool!=='pen'||!s.points.length)continue;
    c.beginPath();c.moveTo(s.points[0][0],s.points[0][1]);
    for(const p of s.points.slice(1))c.lineTo(p[0],p[1]);
-   c.strokeStyle='#1a2630';c.lineWidth=s.width||5;c.lineCap='round';c.lineJoin='round';c.stroke();
+   c.strokeStyle=validColor(s.color)||'#1a2630';c.lineWidth=s.width||5;c.lineCap='round';c.lineJoin='round';c.stroke();
   }
   c.restore();
  }
@@ -483,6 +565,6 @@
   if(!dlg.open||mode==='text'||!((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'))return;
   event.preventDefault();travelHistory(event.shiftKey);
  });
- window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:4,open:()=>setMode('pen'),text:()=>setMode('text'),getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
+ window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:5,open:()=>setMode('pen'),text:()=>setMode('text'),getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
  syncButtons();
 })();
