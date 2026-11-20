@@ -8,14 +8,16 @@ const html=read('index.html');
 const attachments=read('assets/seyveo-note-attachments.js');
 const voice=read('assets/seyveo-note-voice.js');
 const css=read('assets/seyveo-note-voice.css');
+const rich=read('assets/seyveo-note-richtext.js');
 
 test('recording lives in attachment menu and does not replace the approved dock',()=>{
  assert.match(html,/data-note-attachment="record"[\s\S]*?<span>Записать аудио<\/span>/);
  assert.match(html,/data-note-attachment="voice"[\s\S]*?<span>Диктовка<\/span>/);
  assert.match(html,/action==='record'[\s\S]*?SEYVEO_NOTE_VOICE\?\.start\(\)/);
- assert.match(html,/seyveo-note-attachments\.js\?v=8/);
- assert.match(html,/seyveo-note-voice\.js\?v=2/);
- assert.match(html,/seyveo-note-voice\.css\?v=5/);
+ assert.match(html,/seyveo-note-richtext\.js\?v=3/);
+ assert.match(html,/seyveo-note-attachments\.js\?v=9/);
+ assert.match(html,/seyveo-note-voice\.js\?v=3/);
+ assert.match(html,/seyveo-note-voice\.css\?v=6/);
  assert.match(voice,/form\.insertBefore\(capture,attachmentList\)/);
  assert.doesNotMatch(voice,/location\.href|location\.assign|openChat/);
 });
@@ -34,13 +36,13 @@ test('recording is real and stored as an audio blob beside the note, without upl
  assert.doesNotMatch(voice,/fetch\(['"]https?:\/\/|XMLHttpRequest|WebSocket/);
 });
 
-test('transcription requires explicit opt-in and user review before text insertion',()=>{
+test('one tap transcribes into the note without opening a second editor or chat',()=>{
  assert.match(voice,/input type="checkbox" data-voice-recognize/);
  assert.match(voice,/recognize\.checked=false/);
  assert.match(voice,/window\.SpeechRecognition\|\|window\.webkitSpeechRecognition/);
  assert.match(voice,/speech\.onresult/);
- assert.match(voice,/data-transcript-add/);
- assert.match(voice,/data-transcript-run/);
+ assert.doesNotMatch(voice,/transcriptPanel|previewItem|data-transcript-add|data-transcript-run|data-transcript-text/);
+ assert.doesNotMatch(css,/\.sv-note-voice-transcript|data-transcript-/);
  assert.match(voice,/location\.origin!=='http:\/\/127\.0\.0\.1:8790'/);
  assert.match(voice,/fetch\('\/api\/seyveo-note-transcribe'/);
  assert.match(voice,/body:item\.blob,signal:controller\.signal/);
@@ -48,11 +50,33 @@ test('transcription requires explicit opt-in and user review before text inserti
  assert.match(voice,/if\(!response\.ok\)throw Error/);
  assert.match(voice,/updateTranscript\(item\.noteId,item\.id,text\)/);
  assert.match(voice,/textField\.dispatchEvent\(new Event\('input'/);
- assert.match(voice,/data-sv-smart-tool="sayvi"/);
- assert.match(voice,/Аудио сохранено/);
+ assert.match(voice,/SEYVEO_NOTES_EDITOR\?\.ensureRecord\?\.\(\)/);
+ assert.match(rich,/function appendText\(text\)/);
+ assert.match(voice,/SEYVEO_NOTE_RICH\.appendText\(insertion\)/);
+ assert.doesNotMatch(voice,/data-sv-smart-tool="sayvi"|location\.href|location\.assign|openChat/);
  assert.match(attachments,/const audio=new Audio\(url\)/);
- assert.match(attachments,/toText\.textContent='Распознать'/);
+ assert.match(attachments,/inserted\?'В заметке':'Распознать'/);
+ assert.match(attachments,/transcribe\(item,toText\)/);
  assert.match(css,/--sv-dock-pearl-bg/);
+});
+
+test('insertion is idempotent and offers safe inline undo without removing original audio',()=>{
+ const block=voice.slice(voice.indexOf(' function transcriptPresent('),voice.indexOf(' function setButton('));
+ const transcriptPresent=new Function(block+'\nreturn transcriptPresent;')();
+ assert.equal(transcriptPresent({text:'Название\n\nРаз, два, три.'},'Раз, два, три.'),true);
+ assert.equal(transcriptPresent({text:'Раз, два, три.\n\nДополнение'},'Раз, два, три.'),true);
+ assert.equal(transcriptPresent({text:'Речь содержит три слова'},'три'),false);
+ assert.match(voice,/voiceTranscriptIds/);
+ assert.match(voice,/isInserted\(noteFor\(item\),item\.id\)/);
+ assert.match(voice,/markInserted\(item,true\)/);
+ assert.match(voice,/markInserted\(item,false\)/);
+ assert.match(voice,/setButton\(button,'Отменить','undo'\)/);
+ assert.match(voice,/setTimeout\(\(\)=>\{[\s\S]*?\},10000\)/);
+ assert.match(voice,/now\.body!==inserted\.body\|\|now\.rich!==inserted\.rich/);
+ assert.match(voice,/snapshot\(\)/);
+ assert.match(voice,/restore\(existing\)/);
+ assert.match(attachments,/voiceTranscriptIds/);
+ assert.doesNotMatch(voice,/removeAttachment\(/);
 });
 
 test('the existing File action recognizes imported voice recordings without a second menu item',()=>{
