@@ -143,9 +143,9 @@ test('vertical handwriting capsule has six tools and safe eraser hold',()=>{
  assert.match(script,/smoothUndo=previous/);
  assert.match(css,/left:50%!important;right:auto!important;bottom:calc\(82px/);
  assert.match(css,/width:min\(272px,calc\(100vw - 40px\)\)!important;height:42px/);
- assert.match(contextCss,/width:48px!important;min-width:48px!important;max-width:48px!important/);
- assert.match(contextCss,/height:248px!important;min-height:248px!important;max-height:248px!important/);
- assert.match(contextCss,/width:36px!important;min-width:36px!important;max-width:36px!important/);
+ assert.match(contextCss,/width:42px!important;min-width:42px!important;max-width:42px!important/);
+ assert.match(contextCss,/height:234px!important;min-height:234px!important;max-height:234px!important/);
+ assert.match(contextCss,/width:34px!important;min-width:34px!important;max-width:34px!important/);
  assert.match(css,/#svSmartInkPicker\.sv-smart-ink-picker:not\(\[hidden\]\)/);
  assert.match(css,/\.sv-note-keyboard-open:not\(\.sv-smart-inking\)[\s\S]*?#svSmartNotePaperPanel\.sv-smart-paper-panel:not\(\[hidden\]\)/);
  assert.doesNotMatch(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)!important/);

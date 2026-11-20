@@ -40,13 +40,14 @@ test('vertical ink capsule has six tools and eraser hold for safe full cleanup',
  assert.match(script,/if\(eraserHoldTriggered\)\{event\.preventDefault\(\);eraserHoldTriggered=false;return;\}/);
  assert.match(script,/window\.confirm\('Удалить все нарисованные штрихи на этом листе\? Печатный текст и вложения останутся\.'/);
  assert.match(script,/smoothUndo=previous;smoothRedo=null/);
- assert.match(css,/top:calc\(50% - 124px\)!important;bottom:auto!important/);
- assert.match(css,/right:max\(12px,env\(safe-area-inset-right,0px\)\)!important;left:auto!important/);
- assert.match(css,/width:48px!important;min-width:48px!important;max-width:48px!important/);
- assert.match(css,/height:248px!important;min-height:248px!important;max-height:248px!important/);
+ assert.match(css,/top:calc\(50% - 117px\)!important;bottom:auto!important/);
+ assert.match(css,/right:max\(14px,env\(safe-area-inset-right,0px\)\)!important;left:auto!important/);
+ assert.match(css,/width:42px!important;min-width:42px!important;max-width:42px!important/);
+ assert.match(css,/height:234px!important;min-height:234px!important;max-height:234px!important/);
  assert.match(css,/flex-direction:column!important/);
- assert.match(css,/flex:0 0 36px!important/);
- assert.match(css,/height:36px!important;min-height:36px!important;max-height:36px!important/);
+ assert.match(css,/flex:0 0 34px!important/);
+ assert.match(css,/height:34px!important;min-height:34px!important;max-height:34px!important/);
+ assert.match(css,/\.sv-smart-ink-tools > button svg\{width:19px!important;height:19px!important\}/);
  assert.match(css,/border:var\(--sv-inset-rim\)!important;background:var\(--sv-inset-fill\)!important/);
 });
 
@@ -75,11 +76,11 @@ test('text actions open only in typing mode and close without leaving a selected
 });
 
 test('color tool has a visible rainbow ring around the live selected ink color',()=>{
- assert.match(html,/seyveo-notebook-context-actions\.css\?v=3/);
+ assert.match(html,/seyveo-notebook-context-actions\.css\?v=4/);
  assert.match(script,/data-sv-ink-tool="color"[^>]*><span class="sv-smart-ink-color-preview"/);
- assert.match(css,/\.sv-smart-ink-color-preview\{[\s\S]*?width:27px!important;[\s\S]*?height:27px!important/);
+ assert.match(css,/\.sv-smart-ink-color-preview\{[\s\S]*?width:25px!important;[\s\S]*?height:25px!important/);
  assert.match(css,/background:conic-gradient\(from 0deg,#d96a6b[\s\S]*?#467fc6[\s\S]*?#d96a6b 360deg\)!important/);
- assert.match(css,/\.sv-smart-ink-color-preview::after\{[\s\S]*?inset:4\.5px!important/);
+ assert.match(css,/\.sv-smart-ink-color-preview::after\{[\s\S]*?inset:4px!important/);
  assert.match(css,/background:var\(--sv-ink-color,#171e29\)!important/);
  assert.match(script,/inkColorBtn\.style\.setProperty\('--sv-ink-color',penColor\)/);
 });
@@ -92,6 +93,6 @@ test('both docks disappear during ink strokes and return after a short pause',()
  assert.match(script,/resetInkToolsVisibility\(\)/);
  assert.match(css,/\.sv-ink-stroking[\s\S]*?opacity:0!important;pointer-events:none!important/);
  assert.match(css,/\.sv-note-bottom,\.sv-note-nav-actions,#noteReviewBack,#svNoteInputModeLabel/);
- assert.match(css,/right:calc\(max\(12px,env\(safe-area-inset-right,0px\)\) \+ 56px\)!important/);
+ assert.match(css,/right:calc\(max\(14px,env\(safe-area-inset-right,0px\)\) \+ 50px\)!important/);
  assert.match(css,/@media\(max-height:500px\) and \(orientation:landscape\)/);
 });
