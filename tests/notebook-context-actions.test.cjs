@@ -31,14 +31,20 @@ test('Aa owns a real 140px three-action capsule without duplicate More menus',()
  assert.match(css,/bottom:calc\(53px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 
-test('ink capsule owns Undo and explicit stroke deletion, without touching text',()=>{
+test('vertical ink capsule has six tools and eraser hold for safe full cleanup',()=>{
  const tools=[...script.matchAll(/data-sv-ink-tool="([^"]+)"/g)].map(m=>m[1]);
- for(const action of ['undo','eraser','width','color','paper','voice','clear'])assert.ok(tools.includes(action),action);
+ for(const action of ['undo','eraser','width','color','paper','voice'])assert.ok(tools.includes(action),action);
+ assert.doesNotMatch(script,/data-sv-ink-tool="clear"/);
  assert.match(script,/inkUndoBtn\.addEventListener\('click',\(\)=>travelHistory\(\)\)/);
- assert.match(script,/inkClearBtn\.addEventListener\('click',\(\)=>clearHandwriting\(\)\)/);
+ assert.match(script,/eraserHoldTimer=window\.setTimeout\(\(\)=>\{eraserHoldTriggered=true;clearHandwriting\(\);\},650\)/);
+ assert.match(script,/if\(eraserHoldTriggered\)\{event\.preventDefault\(\);eraserHoldTriggered=false;return;\}/);
  assert.match(script,/window\.confirm\('Удалить все нарисованные штрихи на этом листе\? Печатный текст и вложения останутся\.'/);
  assert.match(script,/smoothUndo=previous;smoothRedo=null/);
- assert.match(css,/width:min\(284px,calc\(100vw - 36px\)\)!important/);
+ assert.match(css,/top:calc\(50% - 124px\)!important;bottom:auto!important/);
+ assert.match(css,/right:max\(12px,env\(safe-area-inset-right,0px\)\)!important;left:auto!important/);
+ assert.match(css,/width:48px!important;min-width:48px!important;max-width:48px!important/);
+ assert.match(css,/height:248px!important;min-height:248px!important;max-height:248px!important/);
+ assert.match(css,/flex-direction:column!important/);
  assert.match(css,/flex:0 0 36px!important/);
  assert.match(css,/height:36px!important;min-height:36px!important;max-height:36px!important/);
  assert.match(css,/border:var\(--sv-inset-rim\)!important;background:var\(--sv-inset-fill\)!important/);
@@ -69,11 +75,23 @@ test('text actions open only in typing mode and close without leaving a selected
 });
 
 test('color tool has a visible rainbow ring around the live selected ink color',()=>{
- assert.match(html,/seyveo-notebook-context-actions\.css\?v=2/);
+ assert.match(html,/seyveo-notebook-context-actions\.css\?v=3/);
  assert.match(script,/data-sv-ink-tool="color"[^>]*><span class="sv-smart-ink-color-preview"/);
  assert.match(css,/\.sv-smart-ink-color-preview\{[\s\S]*?width:27px!important;[\s\S]*?height:27px!important/);
  assert.match(css,/background:conic-gradient\(from 0deg,#d96a6b[\s\S]*?#467fc6[\s\S]*?#d96a6b 360deg\)!important/);
  assert.match(css,/\.sv-smart-ink-color-preview::after\{[\s\S]*?inset:4\.5px!important/);
  assert.match(css,/background:var\(--sv-ink-color,#171e29\)!important/);
  assert.match(script,/inkColorBtn\.style\.setProperty\('--sv-ink-color',penColor\)/);
+});
+
+test('both docks disappear during ink strokes and return after a short pause',()=>{
+ assert.match(script,/dlg\.classList\.add\('sv-ink-stroking'\)/);
+ assert.match(script,/inkTools\.setAttribute\('aria-hidden','true'\)/);
+ assert.match(script,/revealInkToolsSoon\(\)/);
+ assert.match(script,/inkToolsRevealTimer=window\.setTimeout\(\(\)=>\{[\s\S]*?\},800\)/);
+ assert.match(script,/resetInkToolsVisibility\(\)/);
+ assert.match(css,/\.sv-ink-stroking[\s\S]*?opacity:0!important;pointer-events:none!important/);
+ assert.match(css,/\.sv-note-bottom,\.sv-note-nav-actions,#noteReviewBack,#svNoteInputModeLabel/);
+ assert.match(css,/right:calc\(max\(12px,env\(safe-area-inset-right,0px\)\) \+ 56px\)!important/);
+ assert.match(css,/@media\(max-height:500px\) and \(orientation:landscape\)/);
 });

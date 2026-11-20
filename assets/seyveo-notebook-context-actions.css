@@ -93,13 +93,20 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
  }
 }
 
-/* Seven handwritten tools still fit as exact, evenly spaced 36×36 circles
-   inside one 284px pearl capsule, with Undo first and Clear last. */
+/* Handwriting tools are one narrow, floating vertical pearl capsule.
+   Six exact circles fit beside the canvas without a duplicate lower row. */
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
  .sv-smart-ink-tools:not([hidden]){
- width:min(284px,calc(100vw - 36px))!important;
- justify-content:space-between!important;gap:2px!important;
- padding:3px 8px!important;
+ position:absolute!important;z-index:72!important;
+ top:calc(50% - 124px)!important;bottom:auto!important;
+ right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;
+ transform:none!important;
+ display:flex!important;flex-direction:column!important;
+ justify-content:space-evenly!important;align-items:center!important;gap:2px!important;
+ width:48px!important;min-width:48px!important;max-width:48px!important;
+ height:248px!important;min-height:248px!important;max-height:248px!important;
+ padding:7px 5px!important;
+ opacity:1!important;transition:opacity .18s ease!important;
 }
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-tools > button{
@@ -117,6 +124,33 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-tools > button:focus-visible{
  outline:2px solid #087df1!important;outline-offset:1px!important;
+}
+
+/* The full writing canvas takes priority. Once a stroke starts, both docks
+   and the header fade away; all controls return after a quiet short pause. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteInputModeLabel){
+ transition:opacity .18s ease!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-ink-stroking
+ :is(.sv-smart-ink-tools,.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteInputModeLabel){
+ opacity:0!important;pointer-events:none!important;
+}
+
+/* Context menus unfold to the LEFT of the vertical rail. The writing tools
+   themselves never shift position when a color, width or voice menu opens. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ :is(#svSmartInkPicker.sv-smart-ink-picker,#svSmartVoiceMenu.sv-smart-voice-menu,#svSmartNotePaperPanel.sv-smart-paper-panel):not([hidden]){
+ position:absolute!important;z-index:86!important;
+ top:calc(50% - 112px)!important;bottom:auto!important;
+ right:calc(max(12px,env(safe-area-inset-right,0px)) + 56px)!important;
+ left:auto!important;transform:none!important;
+ width:min(236px,calc(100vw - 88px))!important;
+ max-width:236px!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ #svSmartVoiceMenu.sv-smart-voice-menu:not([hidden]){
+ top:calc(50% - 52px)!important;width:min(210px,calc(100vw - 88px))!important;
 }
 
 /* A slim rainbow rim advertises the full palette. The center always shows
@@ -138,12 +172,31 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
  border-radius:50%!important;background:var(--sv-ink-color,#171e29)!important;
  box-shadow:0 0 0 .4px rgba(34,43,55,.12)!important;pointer-events:none!important;
 }
+@media(max-height:500px) and (orientation:landscape){
+ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+  .sv-smart-ink-tools:not([hidden]){
+  top:auto!important;bottom:calc(74px + env(safe-area-inset-bottom,0px))!important;
+  left:50%!important;right:auto!important;transform:translateX(-50%)!important;
+  flex-direction:row!important;width:264px!important;min-width:0!important;max-width:calc(100vw - 32px)!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;padding:3px 8px!important;
+ }
+ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+  :is(#svSmartInkPicker.sv-smart-ink-picker,#svSmartVoiceMenu.sv-smart-voice-menu,#svSmartNotePaperPanel.sv-smart-paper-panel):not([hidden]){
+  left:50%!important;right:auto!important;top:auto!important;
+  bottom:calc(128px + env(safe-area-inset-bottom,0px))!important;
+  transform:translateX(-50%)!important;
+ }
+}
 @media(max-width:319px){
  html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
-  .sv-smart-ink-tools:not([hidden]){width:calc(100vw - 24px)!important;padding:3px 4px!important}
+  .sv-smart-ink-tools:not([hidden]){right:8px!important;width:44px!important;min-width:44px!important;max-width:44px!important;padding:7px 4px!important}
  html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
   .sv-smart-ink-tools > button{
-  flex-basis:32px!important;width:32px!important;min-width:32px!important;max-width:32px!important;
-  height:32px!important;min-height:32px!important;max-height:32px!important;
+  flex-basis:34px!important;width:34px!important;min-width:34px!important;max-width:34px!important;
+  height:34px!important;min-height:34px!important;max-height:34px!important;
  }
+}
+@media(prefers-reduced-motion:reduce){
+ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+  :is(.sv-smart-ink-tools,.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteInputModeLabel){transition:none!important}
 }

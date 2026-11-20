@@ -11,7 +11,7 @@ const script=read('assets/seyveo-smart-note-ink.js');
 const sayviMark=read('assets/seyveo-circular-interlace-mono.svg');
 
 test('single Smart Note has scrollable keyboard toolbar with partial next action visible',()=>{
- assert.match(html,/seyveo-smart-note-ink\.js\?v=9/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=10/);
  assert.match(css,/\.sv-note-tools-compact\{[\s\S]*?display:flex!important;grid-template-columns:none!important;/);
  assert.match(css,/overflow-x:auto!important;overflow-y:hidden!important/);
  assert.match(css,/scrollbar-width:none/);
@@ -123,12 +123,13 @@ test('eraser and quick paper are only contextual ink tools',()=>{
  assert.match(script,/inkPaperBtn\.addEventListener\('click',togglePaper\)/);
 });
 
-test('thin centered handwriting capsule has its own Undo, pen controls and clear action',()=>{
- for(const action of ['undo','eraser','width','color','paper','voice','clear']){
+test('vertical handwriting capsule has six tools and safe eraser hold',()=>{
+ for(const action of ['undo','eraser','width','color','paper','voice']){
   assert.match(script,new RegExp('data-sv-ink-tool="'+action+'"'));
  }
+ assert.doesNotMatch(script,/data-sv-ink-tool="clear"/);
  assert.match(script,/inkUndoBtn\.addEventListener\('click',\(\)=>travelHistory\(\)\)/);
- assert.match(script,/inkClearBtn\.addEventListener\('click',\(\)=>clearHandwriting\(\)\)/);
+ assert.match(script,/eraserHoldTimer=window\.setTimeout\(\(\)=>\{eraserHoldTriggered=true;clearHandwriting\(\);\},650\)/);
  assert.match(script,/if\(modeLabel\)modeLabel\.textContent=mode==='text'\?'Печатный текст':'Рукописный ввод'/);
  assert.match(script,/INK_WIDTHS=\[3,5,9\]/);
  assert.match(script,/INK_COLORS=\[/);
@@ -142,7 +143,8 @@ test('thin centered handwriting capsule has its own Undo, pen controls and clear
  assert.match(script,/smoothUndo=previous/);
  assert.match(css,/left:50%!important;right:auto!important;bottom:calc\(82px/);
  assert.match(css,/width:min\(272px,calc\(100vw - 40px\)\)!important;height:42px/);
- assert.match(contextCss,/width:min\(284px,calc\(100vw - 36px\)\)!important/);
+ assert.match(contextCss,/width:48px!important;min-width:48px!important;max-width:48px!important/);
+ assert.match(contextCss,/height:248px!important;min-height:248px!important;max-height:248px!important/);
  assert.match(contextCss,/width:36px!important;min-width:36px!important;max-width:36px!important/);
  assert.match(css,/#svSmartInkPicker\.sv-smart-ink-picker:not\(\[hidden\]\)/);
  assert.match(css,/\.sv-note-keyboard-open:not\(\.sv-smart-inking\)[\s\S]*?#svSmartNotePaperPanel\.sv-smart-paper-panel:not\(\[hidden\]\)/);

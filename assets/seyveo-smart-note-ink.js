@@ -105,12 +105,11 @@
  inkTools.className='sv-smart-ink-tools';inkTools.hidden=true;
  inkTools.setAttribute('role','toolbar');inkTools.setAttribute('aria-label','Инструменты рукописного ввода');
  inkTools.innerHTML=`<button type="button" data-sv-ink-tool="undo" aria-label="Отменить штрих" title="Отменить штрих">${icon('<path d="m9.5 8-4.6 4 4.6 4M4.9 12h9c4.5 0 6.5 3.5 5.5 7.2"/>')}</button>
-  <button type="button" data-sv-ink-tool="eraser" aria-label="Ластик">${icon('<path d="m5 14.5 8.3-8.3a2.1 2.1 0 0 1 3 0l2.3 2.3a2.1 2.1 0 0 1 0 3l-7.3 7.3H8.8zM9.4 10l6.1 6.1M12.4 18.8H20"/>')}</button>
+  <button type="button" data-sv-ink-tool="eraser" aria-label="Ластик. Удержать, чтобы удалить все штрихи" title="Ластик · удержать для очистки">${icon('<path d="m5 14.5 8.3-8.3a2.1 2.1 0 0 1 3 0l2.3 2.3a2.1 2.1 0 0 1 0 3l-7.3 7.3H8.8zM9.4 10l6.1 6.1M12.4 18.8H20"/>')}</button>
   <button type="button" data-sv-ink-tool="width" aria-label="Толщина пера" aria-expanded="false">${icon('<path d="M5 6.5h7" stroke-width="1.2"/><path d="M5 12h11" stroke-width="1.6"/><path d="M5 17.5h15" stroke-width="2"/>')}</button>
   <button type="button" data-sv-ink-tool="color" aria-label="Цвет пера" aria-expanded="false"><span class="sv-smart-ink-color-preview" aria-hidden="true"></span></button>
   <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>')}</button>
-  <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>
-  <button type="button" data-sv-ink-tool="clear" aria-label="Удалить нарисованные штрихи" title="Удалить штрихи">${icon('<path d="M5 7h14M9 7V5h6v2M7.5 7l.9 12h7.2l.9-12M10.5 10v6M13.5 10v6"/>')}</button>`;
+  <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>`;
  dlg.append(inkTools);
  const inkEraser=inkTools.querySelector('[data-sv-ink-tool="eraser"]');
  const inkUndoBtn=inkTools.querySelector('[data-sv-ink-tool="undo"]');
@@ -120,7 +119,6 @@
  const inkWidthBtn=inkTools.querySelector('[data-sv-ink-tool="width"]');
  const inkColorBtn=inkTools.querySelector('[data-sv-ink-tool="color"]');
  const inkVoiceBtn=inkTools.querySelector('[data-sv-ink-tool="voice"]');
- const inkClearBtn=inkTools.querySelector('[data-sv-ink-tool="clear"]');
  const voiceMenu=document.createElement('div');
  voiceMenu.id='svSmartVoiceMenu';voiceMenu.className='sv-smart-voice-menu';voiceMenu.hidden=true;
  voiceMenu.setAttribute('role','group');voiceMenu.setAttribute('aria-label','Голосовые инструменты');
@@ -247,9 +245,22 @@
    dlg.querySelector('[data-note-tool="voice"]')?.click();
   }
  });
- inkEraser.addEventListener('click',()=>setMode(mode==='eraser'?'pen':'eraser'));
+ // Tap erases individual marks. A deliberate hold offers bulk cleanup with
+ // confirmation; no permanent trash button clutters the handwriting palette.
+ let eraserHoldTimer=0,eraserHoldTriggered=false;
+ inkEraser.addEventListener('pointerdown',event=>{
+  if(event.button!==0)return;
+  eraserHoldTriggered=false;clearTimeout(eraserHoldTimer);
+  eraserHoldTimer=window.setTimeout(()=>{eraserHoldTriggered=true;clearHandwriting();},650);
+ });
+ for(const type of ['pointerup','pointercancel','pointerleave'])
+  inkEraser.addEventListener(type,()=>clearTimeout(eraserHoldTimer));
+ inkEraser.addEventListener('contextmenu',event=>event.preventDefault());
+ inkEraser.addEventListener('click',event=>{
+  if(eraserHoldTriggered){event.preventDefault();eraserHoldTriggered=false;return;}
+  setMode(mode==='eraser'?'pen':'eraser');
+ });
  inkUndoBtn.addEventListener('click',()=>travelHistory());
- inkClearBtn.addEventListener('click',()=>clearHandwriting());
  document.addEventListener('pointerdown',event=>{
   if(!dlg.open||voiceMenu.hidden||voiceMenu.contains(event.target)||voiceBtn.contains(event.target)||inkVoiceBtn.contains(event.target))return;
   closeVoiceMenu();
@@ -275,6 +286,17 @@
  const ctx=ink.getContext('2d');if(!ctx)return;
  let strokes=[],redo=[],mode='text',active=null,pointerId=null,noteId='';
  let smoothUndo=null,smoothRedo=null;
+ let inkToolsRevealTimer=0;
+ const resetInkToolsVisibility=()=>{
+  clearTimeout(inkToolsRevealTimer);
+  dlg.classList.remove('sv-ink-stroking');inkTools.removeAttribute('aria-hidden');
+ };
+ const revealInkToolsSoon=()=>{
+  clearTimeout(inkToolsRevealTimer);
+  inkToolsRevealTimer=window.setTimeout(()=>{
+   dlg.classList.remove('sv-ink-stroking');inkTools.removeAttribute('aria-hidden');
+  },800);
+ };
  const getTarget=()=>rich&&!rich.hidden?rich:textarea;
  const report=text=>{const el=document.getElementById('noteReviewStatus');if(el){el.textContent=text;el.hidden=!text}};
  const buttons=[textBtn,draw,eraserBtn];
@@ -346,7 +368,7 @@
  function finish(event){
   if(pointerId===null||!active||event&&event.pointerId!==pointerId)return;
   if(strokes.length<STROKE_LIMIT&&active.points.length){strokes.push(active);redo=[];smoothUndo=null;smoothRedo=null;}
-  pointerId=null;active=null;render();save();
+  pointerId=null;active=null;render();save();revealInkToolsSoon();
  }
  function travelHistory(isRedo=false){
   if(active)return;
@@ -369,6 +391,9 @@
   if(mode==='text'||pointerId!==null||event.isPrimary===false||event.button>0)return;
   if(strokes.length>=STROKE_LIMIT){report('Лист заполнен. Сохраните заметку.');return}
   event.preventDefault();pointerId=event.pointerId;
+  closePaper();closeInkPicker();closeVoiceMenu();if(!sayviPanel.hidden)closeSayvi();
+  clearTimeout(inkToolsRevealTimer);
+  dlg.classList.add('sv-ink-stroking');inkTools.setAttribute('aria-hidden','true');
   active={tool:mode,width:mode==='eraser'?35:penWidth,color:penColor,points:[point(event)]};
   try{ink.setPointerCapture(event.pointerId)}catch{}
   render();
@@ -382,6 +407,7 @@
  ink.addEventListener('lostpointercapture',finish);
  function setMode(next,focus=false){
   if(!['text','pen','eraser'].includes(next))return;
+  resetInkToolsVisibility();
   if(next!=='text'&&!sayviPanel.hidden)closeSayvi();
   mode=next;dlg.classList.toggle('sv-smart-inking',next!=='text');
   if(next!=='text')window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
@@ -393,6 +419,7 @@
   if(focus&&next==='text')getTarget().focus({preventScroll:true});
  }
  function load(id){
+  resetInkToolsVisibility();
   closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();sayviStatus.textContent='';clearSayviPreview();
   window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
   pointerId=null;active=null;mode='text';noteId=id||'';redo=[];smoothUndo=null;smoothRedo=null;
@@ -408,7 +435,7 @@
   requestAnimationFrame(resize);
  }
  dlg.addEventListener('seyveo:smart-note-open',event=>load(event.detail?.id||null));
- dlg.addEventListener('close',()=>{closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();mode='text';ink.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
+ dlg.addEventListener('close',()=>{resetInkToolsVisibility();closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();mode='text';ink.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
  dlg.addEventListener('scroll',render,true);
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
  observer?.observe(form);observer?.observe(textarea);if(rich)observer?.observe(rich);
