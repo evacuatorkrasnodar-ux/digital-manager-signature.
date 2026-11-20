@@ -530,6 +530,12 @@
   syncButtons();resize();
   if(focus&&next==='text')getTarget().focus({preventScroll:true});
  }
+ // A focused editor is always typing, even if the user had previously
+ // selected the pen. Prevent the keyboard and ink rail from being active
+ // simultaneously after tapping the title or text body on iOS.
+ dlg.addEventListener('focusin',event=>{
+  if(mode!=='text'&&event.target.matches?.('#svNoteTitle,#noteReviewText,#svNoteRichEditor'))setMode('text');
+ });
  function load(id){
   resetInkToolsVisibility();
   closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();sayviStatus.textContent='';clearSayviPreview();

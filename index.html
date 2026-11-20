@@ -5565,7 +5565,7 @@ window.addEventListener('load',()=>{
    document.activeElement.matches('textarea,input:not([type="file"]),[contenteditable="true"]');
   if(!restingNoteHeight)restingNoteHeight=Math.max(height,Math.round(window.innerHeight));
   if(!focused&&height>restingNoteHeight-25)restingNoteHeight=Math.max(restingNoteHeight,height);
-  const keyboardOpen=focused&&restingNoteHeight-height>=120;
+  const keyboardOpen=focused&&!dlg.classList.contains('sv-smart-inking')&&restingNoteHeight-height>=120;
   dlg.classList.toggle('sv-note-keyboard-open',keyboardOpen);
   if(Math.abs(height-lastNoteHeight)>=3){
    lastNoteHeight=height;
@@ -5741,10 +5741,10 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-paper-ai-workbench.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-handwriting-page.css?v=2">
 <script src="assets/seyveo-handwriting-page.js?v=2"></script>
-<script src="assets/seyveo-smart-note-ink.js?v=14"></script>
+<script src="assets/seyveo-smart-note-ink.js?v=15"></script>
 <script src="assets/seyveo-note-voice.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-note-voice.css?v=6">
-<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=28">
+<link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=29">
 <link rel="stylesheet" href="assets/seyveo-universal-dock-inset.css?v=1">
 <link rel="stylesheet" href="assets/seyveo-notebook-context-actions.css?v=9">
 </body></html>

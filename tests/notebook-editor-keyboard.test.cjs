@@ -15,7 +15,7 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=28">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=9">\s*<\/body>/);
+ assert.match(html,/<link rel="stylesheet" href="assets\/seyveo-notebook-editor-v3\.css\?v=29">\s*<link rel="stylesheet" href="assets\/seyveo-universal-dock-inset\.css\?v=1">\s*<link rel="stylesheet" href="assets\/seyveo-notebook-context-actions\.css\?v=9">\s*<\/body>/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
  assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
@@ -105,6 +105,25 @@ test('software keyboard switches dock to one narrow 42px full-width capsule',()=
  assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::before\{[\s\S]*?left:14px!important;width:calc\(100vw - 28px\)!important;[\s\S]*?height:42px!important;/);
  assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::after\{display:none!important\}/);
  assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock>\.sv-note-draw-standalone\{display:none!important\}/);
+ assert.match(css,/\.sv-smart-ink-tools\[hidden\],[\s\S]*?:not\(\.sv-smart-inking\)[\s\S]*?\.sv-note-keyboard-open\s+\.sv-smart-ink-tools\{display:none!important\}/);
+});
+
+test('a real note text focus leaves pen mode before the keyboard accessory appears',()=>{
+ const smart=fs.readFileSync(path.join(root,'assets/seyveo-smart-note-ink.js'),'utf8');
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=15/);
+ const start=smart.indexOf(" dlg.addEventListener('focusin',event=>{");
+ const end=smart.indexOf('\n function load(id){',start);
+ assert.ok(start>=0&&end>start);
+ let callback,mode='pen',switchCount=0;
+ const dlg={addEventListener:(name,listener)=>{if(name==='focusin')callback=listener;}};
+ const setMode=next=>{mode=next;switchCount++;};
+ vm.runInNewContext(smart.slice(start,end),{dlg,setMode,mode});
+ const textEvent={target:{matches:selector=>selector.includes('#noteReviewText')}};
+ callback(textEvent);
+ assert.equal(switchCount,1);
+ assert.equal(mode,'text');
+ callback({target:{matches:()=>false}});
+ assert.equal(switchCount,1,'unrelated buttons never switch writing mode');
 });
 
 test('keyboard state follows viewport shrink and recovers without focus-only jumps',()=>{
@@ -112,9 +131,10 @@ test('keyboard state follows viewport shrink and recovers without focus-only jum
  const end=viewportScript.indexOf('const queueNoteViewportSync=',start);
  assert.ok(start>=0&&end>start,'actual editor viewport logic is present');
  const flags=new Set(),props={};
+ let penMode=false;
  const focusedField={matches:()=>true},document={activeElement:null};
  const dlg={open:true,contains:el=>el===focusedField,
-  classList:{toggle:(name,enabled)=>enabled?flags.add(name):flags.delete(name)},
+  classList:{toggle:(name,enabled)=>enabled?flags.add(name):flags.delete(name),contains:name=>name==='sv-smart-inking'&&penMode},
   style:{setProperty:(key,val)=>props[key]=val}};
  const viewport={height:844},window={visualViewport:viewport,innerHeight:844};
  const sync=vm.runInNewContext(viewportScript.slice(start,end)+'\nsync',{dlg,document,window,Math});
@@ -128,6 +148,12 @@ test('keyboard state follows viewport shrink and recovers without focus-only jum
  sync();
  assert.ok(flags.has('sv-note-keyboard-open'));
  assert.equal(props['--sv-note-height'],'525px');
+ penMode=true;
+ sync();
+ assert.ok(!flags.has('sv-note-keyboard-open'),'hybrid pen and keyboard state is impossible');
+ penMode=false;
+ sync();
+ assert.ok(flags.has('sv-note-keyboard-open'),'typed text restores keyboard state');
  viewport.height=844;
  sync();
  assert.equal(flags.size,0,'dock returns after keyboard closes');

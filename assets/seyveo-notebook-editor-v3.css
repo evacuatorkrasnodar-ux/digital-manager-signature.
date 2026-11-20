@@ -806,6 +806,15 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-tools>button[aria-pressed="true"]{background:rgba(121,139,152,.13)!important}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-tools>button svg{width:20px!important;height:20px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+/* The pen rail must NEVER fall back to an unstyled column when a keyboard
+   opens or the user switches to Aa. Only ink mode without a keyboard may
+   expose this contextual capsule. The [hidden] attribute always wins. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools[hidden],
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ .sv-smart-ink-tools,
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-smart-ink-tools{display:none!important}
 /* One microphone, two different functions. The compact voice popover is
    anchored to the contextual capsule, with the same Silver Mist material. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
