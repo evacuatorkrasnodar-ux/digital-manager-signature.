@@ -11,7 +11,7 @@ const script=read('assets/seyveo-smart-note-ink.js');
 const sayviMark=read('assets/seyveo-circular-interlace-mono.svg');
 
 test('single Smart Note has scrollable keyboard toolbar with partial next action visible',()=>{
- assert.match(html,/seyveo-smart-note-ink\.js\?v=16/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=17/);
  assert.match(css,/\.sv-note-tools-compact\{[\s\S]*?display:flex!important;grid-template-columns:none!important;/);
  assert.match(css,/overflow-x:auto!important;overflow-y:hidden!important/);
  assert.match(css,/scrollbar-width:none/);
@@ -24,7 +24,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=31/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=32/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -134,8 +134,8 @@ test('vertical handwriting capsule has six tools and safe eraser hold',()=>{
  assert.match(script,/if\(modeLabel\)modeLabel\.textContent=mode==='text'\?'Печатный текст':'Рукописный ввод'/);
  assert.match(script,/INK_WIDTHS=\[3,5,9\]/);
  assert.match(script,/INK_COLORS=\[/);
- assert.match(script,/data-sv-pen-custom-color/);
- assert.match(script,/penColor=next;setMode\('pen'\)/);
+ assert.match(script,/nativeColorPicker\.type='color'/);
+ assert.match(script,/penColor=next/);
  assert.match(script,/width:mode==='eraser'\?35:penWidth,color:penColor/);
  assert.match(script,/strokeStyle=ctx\.fillStyle=validColor\(s\.color\)/);
  assert.match(script,/color:validColor\(s\.color\)/);
@@ -156,10 +156,10 @@ test('vertical handwriting capsule has six tools and safe eraser hold',()=>{
 });
 
 test('color chooser and compact text capsule have balanced Apple-like icon grids',()=>{
- assert.match(css,/\.sv-smart-ink-color-options\{\s*display:grid!important;grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
- assert.match(script,/label class="sv-smart-custom-color"/);
- assert.match(css,/\.sv-smart-custom-color>span\{[\s\S]*?conic-gradient\(/);
- assert.match(css,/\.sv-smart-custom-color>input\{[\s\S]*?opacity:0!important/);
+ assert.match(script,/nativeColorPicker\.showPicker\(\)/);
+ assert.match(script,/nativeColorPicker\.click\(\)/);
+ assert.match(css,/\.sv-smart-ink-native-color\{/);
+ assert.doesNotMatch(script,/data-sv-color-tab|sv-ink-spectrum-grid/);
  assert.match(css,/#svNoteTopMenu\.sv-note-top-menu>button\{[\s\S]*?height:39px!important;min-height:39px!important;max-height:39px!important/);
  assert.match(css,/#svNoteTopMenu\.sv-note-top-menu>button>svg\{[\s\S]*?stroke-width:1\.5!important/);
  assert.match(contextCss,/grid-template-columns:repeat\(3,40px\)!important/);
@@ -213,19 +213,15 @@ test('resting dock keeps unified glyph sizes, centered new note and visible Sayv
  }
 });
 
-test('handwriting color picker has working color grid, drag spectrum, HSV sliders and quick swatches',()=>{
- for(const tab of ['grid','spectrum','sliders'])assert.ok(script.includes('data-sv-color-tab="'+tab+'"'));
- assert.match(script,/INK_SHADE_ROWS\.flatMap/);
- assert.match(script,/data-sv-color-view="grid"/);
- assert.match(script,/data-sv-color-view="spectrum"/);
- assert.match(script,/data-sv-color-view="sliders"/);
- assert.match(script,/spectrum\.addEventListener\('pointermove'/);
- assert.match(script,/sliders\.forEach\(input=>/);
- assert.match(script,/selectInkColor\(hsvToHex/);
- assert.match(script,/\[data-sv-pen-custom-color\]/);
- assert.match(script,/EyeDropper/);
- assert.match(css,/\.sv-ink-spectrum-grid button/);
- assert.match(css,/\.sv-ink-spectrum-thumb/);
- assert.match(css,/\.sv-ink-slider-h input/);
- assert.match(css,/data-kind="color"/);
+test('native system colors open from the ink button on iPhone, Android and desktop',()=>{
+ assert.match(script,/nativeColorPicker\.type='color'/);
+ assert.match(script,/inkColorBtn\.addEventListener\('click',openSystemColors\)/);
+ assert.match(script,/nativeColorPicker\.showPicker\(\)/);
+ assert.match(script,/nativeColorPicker\.click\(\)/);
+ assert.match(script,/nativeColorPicker\.addEventListener\('input'/);
+ assert.match(script,/nativeColorPicker\.addEventListener\('change'/);
+ assert.match(script,/nativeColorPicker\.value=penColor/);
+ assert.match(css,/\.sv-smart-ink-native-color\{/);
+ assert.doesNotMatch(css,/\.sv-ink-spectrum-grid|\.sv-ink-tabs/);
+ assert.doesNotMatch(script,/INK_GRID|INK_SHADE_ROWS|data-sv-color-view/);
 });
