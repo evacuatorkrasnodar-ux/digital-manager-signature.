@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Сэйви · SEYVEO">
-  <!-- Monochrome capsule mark: the approved twin SEYVEO ribbon paths
-       (seyveo-tab-mark.svg) seated inside the assistant's round sphere. -->
-  <circle cx="12" cy="12" r="10.5" fill="none" stroke="#000" stroke-width="1.35"/>
-  <g transform="translate(.55 4.25) scale(.0615 .082)" fill="#000">
-    <path d="M20 39C66 22 97 31 128 65C156 96 167 131 194 145C206 152 220 151 232 149C211 171 181 176 157 162C129 146 116 120 90 89C61 53 45 41 20 39Z"/>
-    <path d="M150 39C200 20 228 29 259 64C286 95 299 132 327 147C337 152 348 152 362 149C337 176 307 176 284 160C258 141 246 118 219 88C189 53 173 41 150 39Z"/>
-  </g>
-</svg>

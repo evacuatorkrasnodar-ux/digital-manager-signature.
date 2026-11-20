@@ -7,10 +7,10 @@ const read=name=>fs.readFileSync(path.join(root,name),'utf8');
 const html=read('index.html');
 const css=read('assets/seyveo-notebook-editor-v3.css');
 const script=read('assets/seyveo-smart-note-ink.js');
-const sayviMark=read('assets/seyveo-smart-sayvi-mark.svg');
+const sayviMark=read('assets/seyveo-circular-interlace-mono.svg');
 
 test('single Smart Note has scrollable keyboard toolbar with partial next action visible',()=>{
- assert.match(html,/seyveo-smart-note-ink\.js\?v=3/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=4/);
  assert.match(css,/\.sv-note-tools-compact\{[\s\S]*?display:flex!important;grid-template-columns:none!important;/);
  assert.match(css,/overflow-x:auto!important;overflow-y:hidden!important/);
  assert.match(css,/scrollbar-width:none/);
@@ -22,7 +22,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=7/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=8/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -85,11 +85,10 @@ test('resting dock never scrolls: Aa, pen, attachments and Sayvi stay visible',(
  assert.match(css,/\.sv-note-keyboard-open[\s\S]*?width:calc\(100vw - 28px\)!important/);
 });
 
-test('Sayvi uses the approved twin-ribbon sphere rather than the legacy star',()=>{
- assert.match(css,/seyveo-smart-sayvi-mark\.svg\?v=1/);
- assert.match(sayviMark,/<circle cx="12" cy="12" r="10\.5"/);
- assert.match(sayviMark,/M20 39C66 22 97 31 128 65/);
- assert.match(sayviMark,/M150 39C200 20 228 29 259 64/);
+test('Sayvi uses the original approved circular S instead of the old star',()=>{
+ assert.match(css,/seyveo-circular-interlace-mono\.svg\?v=1/);
+ assert.match(sayviMark,/aria-label="SEYVEO — переплетённые лепестки"/);
+ assert.match(sayviMark,/M580 227L587 228/);
  assert.doesNotMatch(script,/class="sv-sayvi-symbol sv-smart-sayvi-icon"/);
 });
 

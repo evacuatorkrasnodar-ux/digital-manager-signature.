@@ -25,6 +25,7 @@
  const attach=bar.querySelector('[data-note-tool="attachment"]');
  const draw=bar.querySelector('[data-note-tool="draw"]');
  if(!check||!attach||!draw)return;
+ draw.setAttribute('aria-label','Писать от руки');draw.title='Писать от руки';
  // Resting capsule: Aa · handwriting · attachments · Sayvi. The eraser is
  // contextual to ink mode; the keyboard accessory remains scrollable.
  bar.insertBefore(textBtn,check);
@@ -123,6 +124,10 @@
    report('Не удалось сохранить стиль бумаги.');return;
   }
   noteId=id;paperStyle=next;syncPaper();closePaper();report('Стиль бумаги сохранён.');
+  window.setTimeout(()=>{
+   const status=document.getElementById('noteReviewStatus');
+   if(dlg.open&&status?.textContent==='Стиль бумаги сохранён.')report('');
+  },1700);
  }
  paperPanel.querySelectorAll('[data-sv-paper-choice]').forEach(button=>
   button.addEventListener('click',()=>selectPaper(button.dataset.svPaperChoice)));
@@ -478,6 +483,6 @@
   if(!dlg.open||mode==='text'||!((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'))return;
   event.preventDefault();travelHistory(event.shiftKey);
  });
- window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:3,open:()=>setMode('pen'),text:()=>setMode('text'),getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
+ window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:4,open:()=>setMode('pen'),text:()=>setMode('text'),getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
  syncButtons();
 })();
