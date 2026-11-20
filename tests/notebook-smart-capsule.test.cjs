@@ -10,7 +10,7 @@ const script=read('assets/seyveo-smart-note-ink.js');
 const sayviMark=read('assets/seyveo-circular-interlace-mono.svg');
 
 test('single Smart Note has scrollable keyboard toolbar with partial next action visible',()=>{
- assert.match(html,/seyveo-smart-note-ink\.js\?v=5/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=6/);
  assert.match(css,/\.sv-note-tools-compact\{[\s\S]*?display:flex!important;grid-template-columns:none!important;/);
  assert.match(css,/overflow-x:auto!important;overflow-y:hidden!important/);
  assert.match(css,/scrollbar-width:none/);
@@ -22,7 +22,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=11/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=12/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -136,6 +136,16 @@ test('thin centered handwriting capsule offers real pen sizes, colors and safe e
  assert.match(css,/#svSmartInkPicker\.sv-smart-ink-picker:not\(\[hidden\]\)/);
  assert.match(css,/#svNoteTopMenu \[data-sv-note-menu="paper"\]\{display:none!important\}/);
  assert.match(css,/#svSmartNotePaperPanel\.sv-smart-paper-panel:not\(\[hidden\]\)\{[\s\S]*?top:auto!important/);
+});
+
+test('color chooser and More menu have a balanced Apple-like icon grid',()=>{
+ assert.match(css,/\.sv-smart-ink-color-options\{\s*display:grid!important;grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
+ assert.match(script,/label class="sv-smart-custom-color"/);
+ assert.match(css,/\.sv-smart-custom-color>span\{[\s\S]*?conic-gradient\(/);
+ assert.match(css,/\.sv-smart-custom-color>input\{[\s\S]*?opacity:0!important/);
+ assert.match(css,/#svNoteTopMenu\.sv-note-top-menu>button\{[\s\S]*?height:39px!important;min-height:39px!important;max-height:39px!important/);
+ assert.match(css,/#svNoteTopMenu\.sv-note-top-menu>button>svg\{[\s\S]*?stroke-width:1\.5!important/);
+ assert.match(script,/data-sv-ink-tool="width"[\s\S]*?M5 6\.5h7/);
 });
 
 test('Sayvi provides in-note edit actions, never redirects to chat',()=>{
