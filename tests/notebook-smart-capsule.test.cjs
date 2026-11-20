@@ -10,7 +10,7 @@ const script=read('assets/seyveo-smart-note-ink.js');
 const sayviMark=read('assets/seyveo-circular-interlace-mono.svg');
 
 test('single Smart Note has scrollable keyboard toolbar with partial next action visible',()=>{
- assert.match(html,/seyveo-smart-note-ink\.js\?v=7/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=8/);
  assert.match(css,/\.sv-note-tools-compact\{[\s\S]*?display:flex!important;grid-template-columns:none!important;/);
  assert.match(css,/overflow-x:auto!important;overflow-y:hidden!important/);
  assert.match(css,/scrollbar-width:none/);
@@ -22,7 +22,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=13/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=14/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -120,10 +120,13 @@ test('eraser and quick paper are only contextual ink tools',()=>{
  assert.match(script,/inkPaperBtn\.addEventListener\('click',togglePaper\)/);
 });
 
-test('thin centered handwriting capsule offers real pen sizes, colors and safe erase',()=>{
- for(const action of ['width','color','clear']){
+test('thin centered handwriting capsule offers pen sizes, colors and one microphone',()=>{
+ for(const action of ['width','color','voice']){
   assert.match(script,new RegExp('data-sv-ink-tool="'+action+'"'));
  }
+ assert.doesNotMatch(script,/data-sv-ink-tool="clear"/);
+ assert.match(html,/data-sv-note-menu="clear-ink" hidden/);
+ assert.match(script,/clearInkAction\.hidden=next==='text'/);
  assert.match(script,/INK_WIDTHS=\[3,5,9\]/);
  assert.match(script,/INK_COLORS=\[/);
  assert.match(script,/data-sv-pen-custom-color/);

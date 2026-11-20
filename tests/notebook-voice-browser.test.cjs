@@ -47,7 +47,8 @@ browserTest('a voice clip is inserted directly, can be undone and cannot duplica
   await page.goto(`http://127.0.0.1:${server.address().port}/index.html#tasks`,{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>Boolean(window.SEYVEO_NOTE_VOICE&&window.SEYVEO_NOTE_ATTACHMENTS));
   await page.evaluate(()=>window.openNoteReview(''));
-  await page.evaluate(()=>document.querySelector('[data-note-attachment="record"]').click());
+  await page.evaluate(()=>document.querySelector('[data-sv-smart-tool="voice"]').click());
+  await page.evaluate(()=>document.querySelector('[data-sv-voice-action="record"]').click());
   await page.locator('#svNoteVoiceCapture:not([hidden]) [data-voice-stop]').waitFor({state:'visible'});
   await page.locator('[data-voice-recognize]').check();
   await page.waitForFunction(()=>document.querySelector('[data-voice-hint]')?.textContent.includes('Заметка о встрече'));

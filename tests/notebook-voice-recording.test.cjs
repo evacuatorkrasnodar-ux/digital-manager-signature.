@@ -7,13 +7,22 @@ const read=name=>fs.readFileSync(path.join(root,name),'utf8');
 const html=read('index.html');
 const attachments=read('assets/seyveo-note-attachments.js');
 const voice=read('assets/seyveo-note-voice.js');
+const smart=read('assets/seyveo-smart-note-ink.js');
 const css=read('assets/seyveo-note-voice.css');
 const rich=read('assets/seyveo-note-richtext.js');
 
-test('recording lives in attachment menu and does not replace the approved dock',()=>{
- assert.match(html,/data-note-attachment="record"[\s\S]*?<span>Записать аудио<\/span>/);
- assert.match(html,/data-note-attachment="voice"[\s\S]*?<span>Диктовка<\/span>/);
- assert.match(html,/action==='record'[\s\S]*?SEYVEO_NOTE_VOICE\?\.start\(\)/);
+test('one contextual microphone offers separate voice recording and dictation',()=>{
+ assert.match(smart,/data-sv-ink-tool="voice"/);
+ assert.match(smart,/data-sv-voice-action="dictate"/);
+ assert.match(smart,/data-sv-voice-action="record"/);
+ assert.match(smart,/SEYVEO_NOTE_VOICE\.start\(\)/);
+ assert.match(smart,/dlg\.querySelector\('\[data-note-tool="voice"\]'\)\?\.click\(\)/);
+ assert.match(html,/data-note-attachment="camera"/);
+ assert.match(html,/data-note-attachment="file"/);
+ assert.doesNotMatch(html,/data-note-attachment="(?:record|voice|photo)"/);
+ assert.match(html,/SEYVEO_NOTE_SCANNER\?\.scanIntoNote\?\.\(\)/);
+ assert.match(html,/SEYVEO_NOTE_ATTACHMENTS\?\.choose\('file'\)/);
+ assert.match(html,/seyveo-smart-note-ink\.js\?v=8/);
  assert.match(html,/seyveo-note-richtext\.js\?v=3/);
  assert.match(html,/seyveo-note-attachments\.js\?v=9/);
  assert.match(html,/seyveo-note-voice\.js\?v=3/);

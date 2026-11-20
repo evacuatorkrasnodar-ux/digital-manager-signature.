@@ -751,6 +751,47 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-tools>button[aria-pressed="true"]{background:rgba(121,139,152,.13)!important}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-tools>button svg{width:20px!important;height:20px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+/* One microphone, two different functions. The compact voice popover is
+   anchored to the contextual capsule, with the same Silver Mist material. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartVoiceMenu.sv-smart-voice-menu:not([hidden]){
+ box-sizing:border-box!important;position:absolute!important;z-index:86!important;
+ top:auto!important;left:50%!important;right:auto!important;
+ bottom:calc(136px + env(safe-area-inset-bottom,0px))!important;
+ transform:translateX(-50%)!important;
+ display:grid!important;grid-template-columns:1fr!important;gap:2px!important;
+ width:min(246px,calc(100vw - 40px))!important;
+ margin:0!important;padding:6px!important;
+ border:var(--sv-dock-pearl-border,.7px solid rgba(171,178,186,.28))!important;
+ border-radius:18px!important;outline:0!important;
+ background:var(--sv-dock-pearl-bg,rgba(247,248,250,.97))!important;
+ box-shadow:var(--sv-dock-pearl-shadow,0 3px 15px rgba(70,80,90,.12)),0 8px 20px rgba(43,53,62,.09)!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ backdrop-filter:var(--sv-dock-pearl-blur)!important;
+ color:var(--note-ink)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartVoiceMenu.sv-smart-voice-menu>button{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:22px minmax(0,1fr)!important;align-items:center!important;
+ gap:11px!important;width:100%!important;min-height:42px!important;
+ margin:0!important;padding:0 10px!important;
+ border:0!important;border-radius:11px!important;outline:0!important;
+ background:transparent!important;box-shadow:none!important;color:var(--note-ink)!important;
+ font:450 13.5px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ text-align:left!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartVoiceMenu.sv-smart-voice-menu>button>svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartVoiceMenu.sv-smart-voice-menu>button:active{background:rgba(119,131,143,.12)!important}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ #svSmartVoiceMenu.sv-smart-voice-menu:not([hidden]){
+ bottom:calc(54px + env(safe-area-inset-bottom,0px))!important;
+}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-color-preview{
  box-sizing:border-box!important;display:block!important;width:19px!important;height:19px!important;

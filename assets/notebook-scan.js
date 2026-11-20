@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id);
 const dialog=$('noteScanDialog');if(!dialog)return;
 const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanText'),
  button=$('noteScanRecognize');
-let selected=null,localURL='',running=false,session=0,loading=null,consented=false;
+let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
 const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
 /* Preserve OCR's real line breaks. Reject ONLY short, symbol-heavy phone
    status-bar garbage at the very start; never guess the meaning of a poem. */
@@ -67,7 +67,16 @@ function reset(){
  if(consentBox)consentBox.hidden=true;
  text.value='';text.wrap='soft';button.disabled=true;message('Фото остаётся на устройстве. Проверьте текст перед сохранением.');
 }
-function open(){if(dialog.open)return;reset();dialog.showModal()}
+function open(){if(dialog.open)return;intoOpenNote=false;reset();dialog.showModal()}
+function scanIntoNote(){
+ if(dialog.open||!$('noteReviewDialog')?.open)return false;
+ intoOpenNote=true;reset();dialog.showModal();
+ // A direct tap on "Фото" opens the native phone camera. The captured image
+ // is passed through the existing opt-in OCR and review flow.
+ const camera=$('noteScanCamera');
+ if(!camera)return false;
+ camera.click();return true;
+}
 function select(file){
  if(!file)return;
  if(!file.type.startsWith('image/')||file.type==='image/svg+xml'||file.size>15*1024*1024){
@@ -139,7 +148,19 @@ function cancel(){dialog.close()}
 function toNote(){
  const value=keepLines?.checked!==false?text.value.replace(/^\n+|\n+$/g,''):text.value.trim();
  if(!value.trim()){message('Сначала распознайте текст или введите его вручную.');return}
+ const appendToEditor=intoOpenNote&&$('noteReviewDialog')?.open;
+ intoOpenNote=false;
  dialog.close();
+ if(appendToEditor){
+  const field=$('noteReviewText'),rich=window.SEYVEO_NOTE_RICH;
+  if(rich?.isActive?.())rich.appendText((field.value?'\n\n':'')+value.slice(0,8000));
+  else{
+   const separator=field.value?'\n\n':'';
+   field.value=(field.value+separator+value).slice(0,8000);
+   field.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  return;
+ }
  window.SEYVEO_NOTES_API?.reviewText(value.slice(0,8000),{preserveLines:keepLines?.checked!==false});
 }
 function toPaper(){
@@ -181,9 +202,9 @@ $('noteScanToText').addEventListener('click',toNote);
 $('noteScanToPaper').addEventListener('click',toPaper);
 $('noteScanBack').addEventListener('click',cancel);
 dialog.addEventListener('close',()=>{
- session++;reset();
+ session++;reset();intoOpenNote=false;
  if(!$('noteReviewDialog').open&&!$('notePaperDialog').open)
   window.SEYVEO_NOTES_API?.openNotes();
 });
-window.SEYVEO_NOTE_SCANNER=Object.freeze({open});
+window.SEYVEO_NOTE_SCANNER=Object.freeze({open,scanIntoNote});
 })();

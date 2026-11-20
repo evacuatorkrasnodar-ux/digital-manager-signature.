@@ -20,6 +20,9 @@
  const sayviBtn=create('sayvi','Сэйви — помочь с заметкой',sayviMark);
  const tableBtn=create('table','Вставить таблицу',icon('<rect x="3.1" y="4.5" width="17.8" height="15" rx="1.4"/><path d="M3.1 10h17.8M3.1 15h17.8M10 4.5v15M16 4.5v15"/>'));
  const eraserBtn=create('eraser','Стереть рукопись',icon('<path d="m4.5 14 8.7-8.7a2.3 2.3 0 0 1 3.2 0l3.1 3.1a2.3 2.3 0 0 1 0 3.2L11.3 20H8.2zM9.4 9.1l7.1 7.1M12 20h8.5"/>'));
+ const micGlyph=icon('<rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 17.5V21m-3.5 0h7"/>');
+ const voiceBtn=create('voice','Голос — диктовка или запись',micGlyph);
+ voiceBtn.setAttribute('aria-controls','svSmartVoiceMenu');voiceBtn.setAttribute('aria-expanded','false');
  const paperBtn=create('paper','Стиль бумаги',icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>'));
  paperBtn.setAttribute('aria-controls','svSmartNotePaperPanel');
  paperBtn.setAttribute('aria-expanded','false');
@@ -35,6 +38,7 @@
  bar.insertBefore(draw,check);
  bar.insertBefore(attach,check);
  bar.insertBefore(sayviBtn,check);
+ bar.insertBefore(voiceBtn,check);
  bar.insertBefore(eraserBtn,check);
  bar.insertBefore(tableBtn,bar.querySelector('[data-note-tool="heading"]'));
  bar.insertBefore(paperBtn,bar.querySelector('[data-note-tool="heading"]'));
@@ -104,7 +108,7 @@
   <button type="button" data-sv-ink-tool="width" aria-label="Толщина пера" aria-expanded="false">${icon('<path d="M5 6.5h7" stroke-width="1.2"/><path d="M5 12h11" stroke-width="1.6"/><path d="M5 17.5h15" stroke-width="2"/>')}</button>
   <button type="button" data-sv-ink-tool="color" aria-label="Цвет пера" aria-expanded="false"><span class="sv-smart-ink-color-preview" aria-hidden="true"></span></button>
   <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>')}</button>
-  <button type="button" data-sv-ink-tool="clear" aria-label="Очистить рукопись">${icon('<path d="M5.8 7h12.4M9.2 7V5.5h5.6V7M7.2 7.1l.7 12h8.2l.7-12M10.5 10.5v5.5M13.5 10.5v5.5"/>')}</button>`;
+  <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>`;
  dlg.append(inkTools);
  const inkEraser=inkTools.querySelector('[data-sv-ink-tool="eraser"]');
  const inkPaperBtn=inkTools.querySelector('[data-sv-ink-tool="paper"]');
@@ -112,7 +116,13 @@
  inkPaperBtn.setAttribute('aria-expanded','false');
  const inkWidthBtn=inkTools.querySelector('[data-sv-ink-tool="width"]');
  const inkColorBtn=inkTools.querySelector('[data-sv-ink-tool="color"]');
- const inkClearBtn=inkTools.querySelector('[data-sv-ink-tool="clear"]');
+ const inkVoiceBtn=inkTools.querySelector('[data-sv-ink-tool="voice"]');
+ const voiceMenu=document.createElement('div');
+ voiceMenu.id='svSmartVoiceMenu';voiceMenu.className='sv-smart-voice-menu';voiceMenu.hidden=true;
+ voiceMenu.setAttribute('role','group');voiceMenu.setAttribute('aria-label','Голосовые инструменты');
+ voiceMenu.innerHTML=`<button type="button" data-sv-voice-action="dictate">${micGlyph}<span>Диктовка</span></button>
+  <button type="button" data-sv-voice-action="record">${icon('<circle cx="6" cy="12" r="2.1" fill="currentColor" stroke="none"/><path d="M11 9v6M14 6v12M17 9v6M20 10.5v3"/>')}<span>Записать аудио</span></button>`;
+ dlg.append(voiceMenu);
  const INK_COLORS=[
   ['#171e29','Графит'],['#77828d','Серебро'],['#2e6fb4','Синий'],
   ['#169a96','Бирюза'],['#38955b','Зелёный'],['#c59637','Золотой'],
@@ -149,16 +159,28 @@
   paperTrigger.setAttribute('aria-expanded','false');
   inkPaperBtn.setAttribute('aria-expanded','false');
  };
+ const closeVoiceMenu=()=>{
+  voiceMenu.hidden=true;
+  voiceBtn.setAttribute('aria-expanded','false');
+  inkVoiceBtn.setAttribute('aria-expanded','false');
+ };
+ const toggleVoiceMenu=()=>{
+  const opening=voiceMenu.hidden;
+  closePaper();closeInkPicker();if(!sayviPanel.hidden)closeSayvi();
+  voiceMenu.hidden=!opening;
+  voiceBtn.setAttribute('aria-expanded',String(opening));
+  inkVoiceBtn.setAttribute('aria-expanded',String(opening));
+ };
  const togglePaper=()=>{
   if(!sayviPanel.hidden)closeSayvi();
-  closeInkPicker();
+  closeVoiceMenu();closeInkPicker();
   const opening=paperPanel.hidden;
   paperPanel.hidden=!opening;
   paperTrigger.setAttribute('aria-expanded',String(opening));
   inkPaperBtn.setAttribute('aria-expanded',String(opening));
  };
  const toggleInkPicker=kind=>{
-  closePaper();if(!sayviPanel.hidden)closeSayvi();
+  closePaper();closeVoiceMenu();if(!sayviPanel.hidden)closeSayvi();
   const opening=inkPicker.hidden||inkPicker.dataset.kind!==kind;
   inkPicker.dataset.kind=kind;inkPicker.hidden=!opening;
   inkPicker.querySelectorAll('[data-sv-ink-picker]').forEach(panel=>{
@@ -205,7 +227,27 @@
   button.addEventListener('click',()=>selectPaper(button.dataset.svPaperChoice)));
  paperTrigger.addEventListener('click',togglePaper);
  inkPaperBtn.addEventListener('click',togglePaper);
+ voiceBtn.addEventListener('click',toggleVoiceMenu);
+ inkVoiceBtn.addEventListener('click',toggleVoiceMenu);
+ voiceMenu.addEventListener('click',event=>{
+  const action=event.target.closest('[data-sv-voice-action]')?.dataset.svVoiceAction;
+  if(!action)return;
+  closeVoiceMenu();
+  if(action==='record'){
+   if(!window.SEYVEO_NOTE_VOICE?.start)report('Запись голоса сейчас недоступна.');
+   else void window.SEYVEO_NOTE_VOICE.start();
+   return;
+  }
+  if(action==='dictate'){
+   if(mode!=='text')setMode('text');
+   dlg.querySelector('[data-note-tool="voice"]')?.click();
+  }
+ });
  inkEraser.addEventListener('click',()=>setMode(mode==='eraser'?'pen':'eraser'));
+ document.addEventListener('pointerdown',event=>{
+  if(!dlg.open||voiceMenu.hidden||voiceMenu.contains(event.target)||voiceBtn.contains(event.target)||inkVoiceBtn.contains(event.target))return;
+  closeVoiceMenu();
+ },true);
  document.addEventListener('pointerdown',event=>{
   if(!dlg.open||paperPanel.hidden||paperPanel.contains(event.target)||paperTrigger?.contains(event.target)||inkTools.contains(event.target))return;
   closePaper();
@@ -215,8 +257,8 @@
   closeInkPicker();
  },true);
  dlg.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&(!paperPanel.hidden||!inkPicker.hidden)){
-   event.preventDefault();event.stopImmediatePropagation();closePaper();closeInkPicker();
+  if(event.key==='Escape'&&(!paperPanel.hidden||!inkPicker.hidden||!voiceMenu.hidden)){
+   event.preventDefault();event.stopImmediatePropagation();closePaper();closeInkPicker();closeVoiceMenu();
   }
  },true);
 
@@ -316,7 +358,6 @@
   smoothUndo=previous;smoothRedo=null;
   report('Рукопись очищена. Стрелка отмены вернёт штрихи.');
  }
- inkClearBtn.addEventListener('click',clearHandwriting);
  ink.addEventListener('pointerdown',event=>{
   if(mode==='text'||pointerId!==null||event.isPrimary===false||event.button>0)return;
   if(strokes.length>=STROKE_LIMIT){report('Лист заполнен. Сохраните заметку.');return}
@@ -336,15 +377,19 @@
   if(!['text','pen','eraser'].includes(next))return;
   if(next!=='text'&&!sayviPanel.hidden)closeSayvi();
   mode=next;dlg.classList.toggle('sv-smart-inking',next!=='text');
+  const clearInkAction=dlg.querySelector('[data-sv-note-menu="clear-ink"]');
+  if(clearInkAction)clearInkAction.hidden=next==='text';
   inkTools.hidden=next==='text';
-  closePaper();closeInkPicker();
+  closePaper();closeInkPicker();closeVoiceMenu();
   ink.hidden=next==='text';
   if(next!=='text'&&dlg.contains(document.activeElement))document.activeElement?.blur?.();
   syncButtons();resize();
   if(focus&&next==='text')getTarget().focus({preventScroll:true});
  }
  function load(id){
-  closeSayvi();closePaper();closeInkPicker();sayviStatus.textContent='';clearSayviPreview();
+  closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();sayviStatus.textContent='';clearSayviPreview();
+  const clearInkAction=dlg.querySelector('[data-sv-note-menu="clear-ink"]');
+  if(clearInkAction)clearInkAction.hidden=true;
   pointerId=null;active=null;mode='text';noteId=id||'';redo=[];smoothUndo=null;smoothRedo=null;
   const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
   paperStyle=normalizePaper(note?.notePaperStyle);syncPaper();
@@ -358,7 +403,7 @@
   requestAnimationFrame(resize);
  }
  dlg.addEventListener('seyveo:smart-note-open',event=>load(event.detail?.id||null));
- dlg.addEventListener('close',()=>{closeSayvi();closePaper();closeInkPicker();mode='text';ink.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
+ dlg.addEventListener('close',()=>{closeSayvi();closePaper();closeInkPicker();closeVoiceMenu();mode='text';ink.hidden=true;inkTools.hidden=true;pointerId=null;active=null;dlg.classList.remove('sv-smart-inking');});
  dlg.addEventListener('scroll',render,true);
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
  observer?.observe(form);observer?.observe(textarea);if(rich)observer?.observe(rich);
@@ -379,7 +424,7 @@
  });
  eraserBtn.addEventListener('click',()=>setMode('eraser'));
  sayviBtn.addEventListener('click',()=>{
-  closePaper();closeInkPicker();
+  closePaper();closeInkPicker();closeVoiceMenu();
   if(!sayviPanel.hidden){closeSayvi();return}
   sayviPanel.hidden=false;sayviBtn.setAttribute('aria-expanded','true');
   clearSayviPreview();sayviStatus.textContent='Выбери, что Сэйви должна сделать с этой заметкой.';
@@ -578,6 +623,6 @@
   if(!dlg.open||mode==='text'||!((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'))return;
   event.preventDefault();travelHistory(event.shiftKey);
  });
- window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:6,open:()=>setMode('pen'),text:()=>setMode('text'),getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
+ window.SEYVEO_SMART_NOTE_INK=Object.freeze({version:7,open:()=>setMode('pen'),text:()=>setMode('text'),clearHandwriting,getStrokes:()=>strokes.length,getPaperStyle:()=>paperStyle});
  syncButtons();
 })();

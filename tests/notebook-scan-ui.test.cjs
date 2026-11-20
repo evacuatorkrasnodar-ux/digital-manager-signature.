@@ -36,6 +36,16 @@ test('OCR and editable result form remain functional without extra borders or re
  assert.match(scan,/window\.SEYVEO_PAPER\?\.importPhoto\(file\)/);
 });
 
+test('notebook camera sends OCR text into the same open note after review',()=>{
+ assert.match(html,/assets\/notebook-scan\.js\?v=8/);
+ assert.match(scan,/function scanIntoNote\(\)\{/);
+ assert.match(scan,/\$\('noteScanCamera'\)/);
+ assert.match(scan,/const appendToEditor=intoOpenNote&&\$\('noteReviewDialog'\)\?\.open/);
+ assert.match(scan,/if\(rich\?\.isActive\?\.\(\)\)rich\.appendText/);
+ assert.match(scan,/field\.dispatchEvent\(new Event\('input'/);
+ assert.match(scan,/Object\.freeze\(\{open,scanIntoNote\}\)/);
+});
+
 test('OCR online engine still requires explicit consent and supports black theme',()=>{
  assert.match(scan,/if\(!consented\)\{[\s\S]*?consentBox\.hidden=false/);
  assert.match(css,/\.paper-scan-consent\{[\s\S]*?background:#f5f5f7/);
