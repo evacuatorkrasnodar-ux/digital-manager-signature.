@@ -242,25 +242,26 @@
   const url=URL.createObjectURL(item.blob);urls.push(url);
   const audio=new Audio(url);audio.preload='metadata';
   const play=document.createElement('button');play.type='button';play.className='sv-note-audio-play';
-  const playIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5.8v12.4l9.4-6.2Z" fill="currentColor" stroke="none"/></svg>';
-  const pauseIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6v12M16 6v12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>';
+  const playIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5 18 12l-9 5.5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+  const pauseIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 7v10M15 7v10" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>';
   play.setAttribute('aria-label','Воспроизвести запись');play.innerHTML=playIcon;
-  const detail=document.createElement('div');detail.className='sv-note-audio-detail';
-  const title=document.createElement('strong');title.textContent=audioDisplayName(item);
+  const title=document.createElement('strong');title.className='sv-note-audio-title';
+  title.textContent=audioDisplayName(item);
   title.title=item.name||'';
+  const controls=document.createElement('div');controls.className='sv-note-audio-controls';
   const waveform=document.createElement('div');waveform.className='sv-note-audio-wave';
   waveform.setAttribute('role','slider');waveform.tabIndex=0;
   waveform.setAttribute('aria-label','Перемотать голосовую запись');
   waveform.setAttribute('aria-valuemin','0');waveform.setAttribute('aria-valuemax','100');
   waveform.setAttribute('aria-valuenow','0');
-  [5,9,13,8,15,18,11,21,14,17,10,22,16,20,13,23,17,26,17,23,13,20,16,22,10,17,14,21,11,18,15,8,13,9,5].forEach((height,index)=>{
+  [4,7,10,6,12,9,15,8,13,17,10,14,8,18,12,16,9,15,20,11,17,10,14,12,17,12,14,10,17,11,20,15,9,16,12,18,8,14,10,17,13,8,15,9,12,6,10,7,4].forEach((height,index)=>{
    const bar=document.createElement('i');bar.style.height=height+'px';
    bar.style.setProperty('--sv-wave-duration',(0.58+(index*7%9)*.065)+'s');
    bar.style.setProperty('--sv-wave-delay',(-((index*11)%17)*.083)+'s');
    waveform.append(bar);
   });
   const time=document.createElement('small');time.textContent=durationLabel(item.durationMs||0);
-  detail.append(title,waveform);card.append(play,detail,time);
+  controls.append(play,waveform,time);card.append(title,controls);
   const duration=()=>Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:(item.durationMs||0)/1000;
   const seek=ratio=>{
    const total=duration();
@@ -316,7 +317,7 @@
    toText.title='Превратить голосовую запись в текст';
    toText.setAttribute('aria-label','Распознать речь в текст: '+item.name);
    toText.addEventListener('click',()=>window.SEYVEO_NOTE_VOICE?.transcribe(item));
-   card.append(toText);
+   controls.append(toText);
   }
   appendRemove(card,item,canRemove);
   return card;
