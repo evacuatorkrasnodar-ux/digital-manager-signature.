@@ -13,7 +13,7 @@ test('recording lives in attachment menu and does not replace the approved dock'
  assert.match(html,/data-note-attachment="record"[\s\S]*?<span>Записать аудио<\/span>/);
  assert.match(html,/data-note-attachment="voice"[\s\S]*?<span>Диктовка<\/span>/);
  assert.match(html,/action==='record'[\s\S]*?SEYVEO_NOTE_VOICE\?\.start\(\)/);
- assert.match(html,/seyveo-note-attachments\.js\?v=4/);
+ assert.match(html,/seyveo-note-attachments\.js\?v=5/);
  assert.match(html,/seyveo-note-voice\.js\?v=2/);
  assert.match(html,/seyveo-note-voice\.css\?v=2/);
  assert.match(voice,/form\.insertBefore\(capture,attachmentList\)/);
@@ -70,4 +70,17 @@ test('the existing File action recognizes imported voice recordings without a se
  assert.match(attachments,/entry\.kind==='voice'\|\|audioTypeFor\(entry\)/);
  assert.match(html,/data-note-attachment="file"/);
  assert.doesNotMatch(html,/data-note-attachment="audio"/);
+});
+
+test('numeric and default audio names display a recording date without renaming the stored file',()=>{
+ const block=attachments.slice(attachments.indexOf(' function audioDisplayName('),attachments.indexOf(' function appendRemove('));
+ const audioDisplayName=new Function(block+'\nreturn audioDisplayName;')();
+ const recordedAt=Date.UTC(2026,10,20,9,36);
+ const imported={name:'5188286224023987367.ogg',createdAt:recordedAt,imported:true};
+ assert.match(audioDisplayName(imported),/^Запись · /);
+ assert.doesNotMatch(audioDisplayName(imported),/5188286224023987367|\.ogg/);
+ assert.match(audioDisplayName({...imported,fileLastModified:Date.UTC(2026,10,18,9,36)}),/18 нояб/);
+ assert.match(audioDisplayName({name:'Голосовая запись 09:36.webm',createdAt:recordedAt}),/^Запись · /);
+ assert.equal(audioDisplayName({name:'Интервью с командой.m4a',createdAt:recordedAt}),'Интервью с командой.m4a');
+ assert.match(attachments,/title\.title=item\.name\|\|''/);
 });
