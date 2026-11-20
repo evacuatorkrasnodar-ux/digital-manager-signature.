@@ -89,15 +89,27 @@ html:root body #noteReviewDialog[open] textarea[data-transcript-text]{
 :is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-wave{
  grid-column:2!important;grid-row:2!important;
  display:flex!important;align-items:center!important;justify-content:center!important;
- min-width:0!important;height:24px!important;gap:1.8px!important;
- overflow:hidden!important;opacity:.85!important;color:#94a2ad!important;
+ min-width:0!important;height:30px!important;gap:1.9px!important;
+ overflow:hidden!important;opacity:.9!important;color:#a9b4be!important;
+ cursor:pointer!important;touch-action:pan-y!important;
 }
 :is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-wave i{
- flex:0 1 2.7px!important;min-width:1.4px!important;max-width:2.7px!important;
+ flex:0 1 2.4px!important;min-width:1px!important;max-width:2.4px!important;
  border-radius:999px!important;background:currentColor!important;
+ transform-origin:center center!important;will-change:transform;
 }
-:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-playing .sv-note-audio-wave{
- color:#b79b5b!important;opacity:1!important;
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-wave i.sv-note-audio-heard{
+ background:#c4a15b!important;
+}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-playing .sv-note-audio-wave i{
+ animation:sv-note-audio-live var(--sv-wave-duration,.8s) ease-in-out var(--sv-wave-delay,0s) infinite alternate!important;
+}
+@keyframes sv-note-audio-live{
+ from{transform:scaleY(.48)}
+ to{transform:scaleY(1.05)}
+}
+:is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-wave:focus-visible{
+ outline:2px solid #c4a15b!important;outline-offset:2px!important;border-radius:5px!important;
 }
 :is(#noteReviewDialog,#noteReadDialog) .sv-note-audio>small{
  grid-column:3!important;grid-row:2!important;align-self:center!important;
@@ -126,7 +138,10 @@ html:root body #noteReviewDialog[open] .sv-note-audio-remove svg{
 }
 @media(max-width:360px){
  :is(#noteReviewDialog,#noteReadDialog) .sv-note-file.sv-note-audio{column-gap:5px!important}
- :is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-wave i:nth-child(n+16){display:none!important}
+ :is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-wave{gap:1px!important}
  html:root body #noteReviewDialog[open] .sv-note-audio-text{padding:0 6px!important;font-size:10px!important}
 }
-@media(prefers-reduced-motion:reduce){#noteReviewDialog .sv-note-voice-wave i{animation:none!important}}
+@media(prefers-reduced-motion:reduce){
+ #noteReviewDialog .sv-note-voice-wave i{animation:none!important}
+ :is(#noteReviewDialog,#noteReadDialog) .sv-note-audio-playing .sv-note-audio-wave i{animation:none!important}
+}
