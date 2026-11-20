@@ -13,9 +13,9 @@ test('recording lives in attachment menu and does not replace the approved dock'
  assert.match(html,/data-note-attachment="record"[\s\S]*?<span>Записать аудио<\/span>/);
  assert.match(html,/data-note-attachment="voice"[\s\S]*?<span>Диктовка<\/span>/);
  assert.match(html,/action==='record'[\s\S]*?SEYVEO_NOTE_VOICE\?\.start\(\)/);
- assert.match(html,/seyveo-note-attachments\.js\?v=6/);
+ assert.match(html,/seyveo-note-attachments\.js\?v=7/);
  assert.match(html,/seyveo-note-voice\.js\?v=2/);
- assert.match(html,/seyveo-note-voice\.css\?v=3/);
+ assert.match(html,/seyveo-note-voice\.css\?v=4/);
  assert.match(voice,/form\.insertBefore\(capture,attachmentList\)/);
  assert.doesNotMatch(voice,/location\.href|location\.assign|openChat/);
 });
@@ -86,7 +86,7 @@ test('numeric and default audio names display a recording date without renaming 
 });
 
 test('audio card has centered symmetric waveform, quiet vector play and plain remove cross',()=>{
- const wave=attachments.match(/\[([\d,\s]+)\]\.forEach\(height=>\{/);
+ const wave=attachments.match(/\[([\d,\s]+)\]\.forEach\(\(height,index\)=>\{/);
  assert.ok(wave,'sound bars must be present');
  const heights=wave[1].split(',').map(Number);
  assert.deepEqual(heights,heights.slice().reverse(),'waveform should mirror around its center');
@@ -94,4 +94,15 @@ test('audio card has centered symmetric waveform, quiet vector play and plain re
  assert.match(attachments,/remove\.className='sv-note-file-remove'\+\(isAudio\?' sv-note-audio-remove'/);
  assert.match(css,/grid-template-columns:38px minmax\(0,1fr\) max-content max-content!important/);
  assert.match(css,/\.sv-note-audio-remove\{[\s\S]*?background:transparent!important/);
+});
+
+test('waveform animates only while audio plays and tracks seek position',()=>{
+ assert.match(css,/\.sv-note-audio-playing \.sv-note-audio-wave i\{[\s\S]*?animation:sv-note-audio-live/);
+ assert.match(css,/@keyframes sv-note-audio-live/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.match(attachments,/waveform\.setAttribute\('role','slider'\)/);
+ assert.match(attachments,/waveform\.addEventListener\('click'/);
+ assert.match(attachments,/waveform\.addEventListener\('keydown'/);
+ assert.match(attachments,/waveform\.children\[i\]\.classList\.toggle\('sv-note-audio-heard',i<heard\)/);
+ assert.match(attachments,/card\.classList\.toggle\('sv-note-audio-playing',playing\)/);
 });
