@@ -22,7 +22,7 @@ test('single Smart Note has scrollable keyboard toolbar with partial next action
 });
 
 test('both Smart Note dock surfaces reuse approved Home-dock pearl material',()=>{
- assert.match(html,/seyveo-notebook-editor-v3\.css\?v=17/);
+ assert.match(html,/seyveo-notebook-editor-v3\.css\?v=18/);
  const pearl=css.slice(css.lastIndexOf('/* Light Smart Note dock:'));
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::before/);
  assert.match(pearl,/\.sv-note-tool-row\.sv-shared-dock::after/);
@@ -171,7 +171,7 @@ test('Sayvi provides in-note edit actions, never redirects to chat',()=>{
 });
 
 test('attachment popover has just two compact choices and follows the paperclip',()=>{
- const popup=css.slice(css.lastIndexOf('/* Notes dock polish v17'));
+ const popup=css.slice(css.lastIndexOf('/* Notes dock polish v18'));
  for(const choice of ['camera','file'])assert.match(html,new RegExp('data-note-attachment="'+choice+'"'));
  assert.equal([...html.matchAll(/data-note-attachment="(?:camera|file)"/g)].length,2);
  assert.match(html,/anchor=btn\.getBoundingClientRect\(\),bounds=dlg\.getBoundingClientRect\(\)/);
@@ -183,8 +183,8 @@ test('attachment popover has just two compact choices and follows the paperclip'
 });
 
 test('resting dock keeps unified glyph sizes, centered new note and visible Sayvi',()=>{
- const polish=css.slice(css.lastIndexOf('/* Notes dock polish v17'));
- assert.match(polish,/width:54px!important;min-width:0!important;max-width:54px!important/);
+ const polish=css.slice(css.lastIndexOf('/* Notes dock polish v18'));
+ assert.match(polish,/width:52px!important;min-width:0!important;max-width:52px!important/);
  assert.match(polish,/width:25px!important;min-width:25px!important;max-width:25px!important/);
  assert.match(polish,/#svNoteNewStandalone\.sv-note-draw-standalone\{[\s\S]*?place-items:center!important/);
  assert.match(polish,/color:#27313a!important/);

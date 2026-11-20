@@ -27,9 +27,11 @@ function init(){
   if(!tab?.element)return false;
   const r=tab.element.getBoundingClientRect(),outer=dock.getBoundingClientRect();
   if(r.width<20||r.height<20||outer.width<100)return false;
-  const width=Math.max(38,Math.min(r.width-4,82));
-  const x=r.left-outer.left+(r.width-width)/2;
-  indicator.style.setProperty('--sv-indicator-width',`${width.toFixed(2)}px`);
+  // The inset must be a true circle, not a wide oval when tracks resize.
+  // Size from the dock height and available track, then center on the icon.
+  const diameter=Math.max(40,Math.min(52,r.width-8,outer.height-8));
+  const x=r.left-outer.left+(r.width-diameter)/2;
+  indicator.style.setProperty('--sv-indicator-size',`${diameter.toFixed(2)}px`);
   indicator.style.setProperty('--sv-indicator-x',`${x.toFixed(2)}px`);
   indicator.dataset.accent=tab.accent;
   return true;

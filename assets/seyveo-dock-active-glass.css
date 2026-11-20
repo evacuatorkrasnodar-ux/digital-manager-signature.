@@ -11,13 +11,15 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  z-index:1!important;
  pointer-events:none!important;
  box-sizing:border-box!important;
- left:0!important;top:4px!important;
- height:52px!important;width:var(--sv-indicator-width,56px)!important;
- border-radius:999px!important;
+ left:0!important;
+ top:calc((60px - var(--sv-indicator-size,52px)) / 2)!important;
+ width:var(--sv-indicator-size,52px)!important;
+ height:var(--sv-indicator-size,52px)!important;
+ border-radius:50%!important;
  border:1px solid rgba(255,255,255,.30)!important;
- background:radial-gradient(ellipse 115% 92% at 50% 3%,
-   rgba(var(--sv-selected-glow,10,132,255),.16),transparent 76%),
-   linear-gradient(165deg,rgba(116,126,145,.15),rgba(96,109,129,.10))!important;
+ background:radial-gradient(circle at 50% 38%,
+   rgba(var(--sv-selected-glow,10,132,255),.12),transparent 76%),
+   linear-gradient(180deg,rgba(116,126,145,.13),rgba(96,109,129,.11))!important;
  box-shadow:inset 0 1.5px 3px rgba(31,42,58,.12),
             inset 0 -1px 1px rgba(255,255,255,.32)!important;
  -webkit-backdrop-filter:blur(7px) saturate(110%)!important;
@@ -25,7 +27,8 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
  opacity:0!important;
  transform:translate3d(var(--sv-indicator-x,0px),var(--sv-indicator-depth,0px),0) scale(var(--sv-indicator-scale,1))!important;
  transition:transform 360ms cubic-bezier(.22,1,.36,1),
-   width 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease!important;
+   width 360ms cubic-bezier(.22,1,.36,1),height 360ms cubic-bezier(.22,1,.36,1),
+   top 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease!important;
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-selection-ready:not(.seyveo-browser-dock):not(.seyveo-music-dock) > .sv-dock-active-indicator{
  opacity:1!important;
@@ -80,7 +83,8 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
             inset 0 -1px .75px rgba(255,255,255,.47),
             inset 0 0 0 .45px rgba(31,42,58,.055)!important;
  transition:transform 360ms cubic-bezier(.22,1,.36,1),
-   width 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease,
+   width 360ms cubic-bezier(.22,1,.36,1),height 360ms cubic-bezier(.22,1,.36,1),
+   top 360ms cubic-bezier(.22,1,.36,1),opacity 200ms ease,
    box-shadow 180ms ease!important;
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock.sv-dock-indicator-pressing:not(.seyveo-music-dock):not(.seyveo-browser-dock) > .sv-dock-active-indicator{
@@ -90,6 +94,7 @@ footer.dock.sv-shared-dock > .sv-dock-active-indicator{
             inset 0 -1.05px .8px rgba(255,255,255,.49),
             inset 0 0 0 .47px rgba(31,42,58,.06)!important;
  transition:transform 135ms ease-out,width 360ms cubic-bezier(.22,1,.36,1),
+   height 360ms cubic-bezier(.22,1,.36,1),top 360ms cubic-bezier(.22,1,.36,1),
    opacity 200ms ease,box-shadow 135ms ease-out!important;
 }
 :root[data-theme="light"] footer.dock.sv-shared-dock:not(.seyveo-music-dock):not(.seyveo-browser-dock)
