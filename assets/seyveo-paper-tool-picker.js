@@ -13,7 +13,8 @@
   pencil:'<path d="m4 20 4-1 12-12-3-3L5 16l-1 4zM14 7l3 3"/>',
   brush:'<path d="M15 4 20 9 11 18l-4-4 8-10Z"/><path d="M7 14c-4 1-4 4-4 7 3 0 7-1 8-4"/>',
   spray:'<path d="M4 5h8v5H4zM7 10v4h4v6H5v-6"/><path d="M13 5h3M15 9h1M18 6h1M20 10h1M18 14h1M14 17h1"/>',
-  oil:'<path d="M4 19c3-4 6-6 10-9l5-6 2 2-5 6c-3 4-5 7-10 10"/><path d="M8 16c2 0 3 2 5 1M12 12c1 2 3 2 4 2M16 8c1 1 3 2 4 1"/>'
+  // Oil paint: broad, recognisable flat paintbrush, never a thin syringe.
+  oil:'<path d="M17.8 2.8a2.5 2.5 0 0 1 3.4 3.4l-7.6 7.6-3.4-3.4 7.6-7.6Z"/><path d="M10.2 10.4 7.8 12.8l3.4 3.4 2.4-2.4"/><path d="M7.8 12.8C4.5 13.1 3 16 3 21c4.8-.3 7.6-1.9 8.2-4.8"/><path d="M6 16.9c.8-.1 1.4-.5 1.9-1.1"/>'
  };
  const svg=tool=>'<svg viewBox="0 0 24 24" class="sv-newdock-glyph" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+glyphs[tool]+'</svg>';
  // The current settings pane contained a duplicate pen/pencil selector.
