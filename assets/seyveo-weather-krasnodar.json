@@ -1,7 +1,7 @@
 {
   "latitude": 45.027065,
   "longitude": 38.95273,
-  "generationtime_ms": 1.4625787734985352,
+  "generationtime_ms": 1.372694969177246,
   "utc_offset_seconds": 10800,
   "timezone": "Europe/Moscow",
   "timezone_abbreviation": "GMT+3",
@@ -2385,5 +2385,66 @@
       10.8
     ]
   },
-  "fetched_at": "2026-11-21T06:11:06.675Z"
+  "geomagnetic": {
+    "source": "NOAA SWPC",
+    "fetched_at": "2026-11-21T06:11:27.901Z",
+    "days": [
+      {
+        "date": "2026-11-14",
+        "kp": 1.67,
+        "status": "observed"
+      },
+      {
+        "date": "2026-11-15",
+        "kp": 2,
+        "status": "observed"
+      },
+      {
+        "date": "2026-11-16",
+        "kp": 1.33,
+        "status": "observed"
+      },
+      {
+        "date": "2026-11-17",
+        "kp": 2,
+        "status": "observed"
+      },
+      {
+        "date": "2026-11-18",
+        "kp": 3.33,
+        "status": "observed"
+      },
+      {
+        "date": "2026-11-19",
+        "kp": 5,
+        "status": "observed"
+      },
+      {
+        "date": "2026-11-20",
+        "kp": 2,
+        "status": "observed"
+      },
+      {
+        "date": "2026-11-21",
+        "kp": 2.67,
+        "status": "observed"
+      },
+      {
+        "date": "2026-11-22",
+        "kp": 2.33,
+        "status": "estimated"
+      },
+      {
+        "date": "2026-11-23",
+        "kp": 4,
+        "status": "predicted"
+      },
+      {
+        "date": "2026-11-24",
+        "kp": 2,
+        "status": "predicted"
+      }
+    ]
+  },
+  "fetched_at": "2026-11-21T06:11:27.901Z"
 }
