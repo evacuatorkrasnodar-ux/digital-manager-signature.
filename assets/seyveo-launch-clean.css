@@ -59,8 +59,19 @@
 /* A single smooth, physically accelerating lens curve. No intermediate
    keyframe velocities to cause small jerks. High speed at the last frame. */
 @keyframes svLaunchApproach{
- from{transform:translate3d(-50%,-50%,0) scale(1)}
- to  {transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,2.22))}
+ 0%{
+  transform:translate3d(-50%,-50%,0) scale(1);
+  animation-timing-function:cubic-bezier(.58,.035,.89,.48);
+ }
+ /* At 95% the shot is still fast. Only its final 165 ms have a physically
+    matched deceleration, so it joins the resting Home orb without a jerk. */
+ 95%{
+  transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-near-scale,2.189));
+  animation-timing-function:cubic-bezier(.08,.74,.34,1);
+ }
+ 100%{
+  transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,2.22));
+ }
 }
 @keyframes svLaunchMarkOut{
  0%,76% {opacity:1}
@@ -79,7 +90,7 @@
 }
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
- animation:svLaunchApproach 3300ms cubic-bezier(.58,.035,.89,.48) both!important;
+ animation:svLaunchApproach 3300ms linear both!important;
 }
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark::before,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark::before{
