@@ -424,3 +424,61 @@ html:root[data-theme="light"] body :is(
  outline:2px solid rgba(55,65,76,.62)!important;
  outline-offset:3px!important;
 }
+
+/* DRAWING · UNIFIED PEARL CONFIRM (21 Nov).
+   The existing Save/check button is one of our Notebook circles, not a
+   different solid-white style. Borrow the actual shared White Pearl tokens,
+   preserve its position and existing save handlers, and don't add a backing
+   rectangle, duplicate pseudo-surface, or another circle around the palette. */
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
+ > #notePaperSave.sv-ink-confirm{
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:50%!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ color:var(--sv-white-pearl-ink)!important;
+ -webkit-clip-path:none!important;
+ clip-path:none!important;
+ filter:none!important;
+ outline:0!important;
+ transform:scale(1)!important;
+ transform-origin:center center!important;
+ transition:background 135ms ease-out,box-shadow 135ms ease-out,
+   transform 135ms ease-out!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
+ > #notePaperSave.sv-ink-confirm svg{
+ width:21px!important;height:21px!important;
+ stroke:currentColor!important;stroke-width:1.8!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ transform:none!important;filter:none!important;
+}
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]:not(.sv-paper-inking)
+ > #notePaperSave.sv-ink-confirm:active{
+ border:var(--sv-white-pearl-edge)!important;
+ background:var(--sv-white-pearl-press-fill)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow)!important;
+ transform:translateY(.2px) scale(var(--sv-white-pearl-press-scale,.992))!important;
+}
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
+ > #notePaperSave.sv-ink-confirm:focus-visible{
+ outline:2px solid rgba(55,65,76,.60)!important;
+ outline-offset:3px!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
+ > #notePaperSave.sv-ink-confirm{
+  background:#fff!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
+ > #notePaperSave.sv-ink-confirm{
+  transition:none!important;
+ }
+}
