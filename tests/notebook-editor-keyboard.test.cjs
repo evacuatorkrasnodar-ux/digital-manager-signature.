@@ -9,6 +9,7 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const css=fs.readFileSync(path.join(root,'assets/seyveo-notebook-editor-v3.css'),'utf8');
 const contextCss=fs.readFileSync(path.join(root,'assets/seyveo-notebook-context-actions.css'),'utf8');
 const home=fs.readFileSync(path.join(root,'assets/seyveo-home-dock-preview.css'),'utf8');
+const newHomeDock=fs.readFileSync(path.join(root,'assets/seyveo-notebook-home-new-dock.css'),'utf8');
 const editor=html.split('<dialog id="noteReviewDialog"')[1]?.split('</dialog>')[0]||'';
 const toolbar=editor.split('<div class="sv-note-tools sv-note-tools-compact"')[1]?.split('<div id="svNoteAttachmentMenu"')[0]||'';
 const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split('</script>')[0]||'';
@@ -87,11 +88,18 @@ test('typing hint hides only in handwriting mode and returns for Aa',()=>{
  assert.match(html,/placeholder="Что нужно запомнить\?"/);
 });
 
-test('bottom uses the four original icons and a separate new-note circle',()=>{
+test('Notebook replaces the old New Note circle with an independent Home dock surface',()=>{
  assert.deepEqual([...toolbar.matchAll(/data-note-tool="([^"]+)"/g)].map(m=>m[1]),[
   'checklist','attachment','heading','draw'
  ]);
- assert.match(editor,/id="svNoteNewStandalone" class="sv-note-draw-standalone"/);
+ assert.match(editor,/id="svNoteHomeNew" class="sv-note-home-new-button"/);
+ assert.doesNotMatch(editor,/id="svNoteNewStandalone"|class="sv-note-draw-standalone"/);
+ assert.match(newHomeDock,/\.sv-note-home-new-dock::before\{/);
+ assert.match(newHomeDock,/background:var\(--sv-dock-pearl-bg/);
+ assert.match(newHomeDock,/border:var\(--sv-dock-pearl-border/);
+ assert.match(newHomeDock,/width:60px!important;min-width:60px!important;max-width:60px!important;/);
+ assert.match(newHomeDock,/transform:translateY\(\.2px\) scale\(\.992\)!important;/);
+ assert.doesNotMatch(newHomeDock,/52px|svNoteNewStandalone/);
  assert.match(css,/--note-width:clamp\(176px,calc\(100vw - var\(--note-left\) - var\(--note-left\) - 80px\),248px\);/);
  assert.match(css,/--note-left:max\(clamp\(14px,5vw,22px\),calc\(50vw - 175px\)\);/);
  assert.match(css,/--note-right:calc\(100vw - var\(--note-left\) - 60px\);/);
@@ -108,7 +116,7 @@ test('software keyboard switches dock to one narrow 42px full-width capsule',()=
  assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom\{/);
  assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::before\{[\s\S]*?left:14px!important;width:calc\(100vw - 28px\)!important;[\s\S]*?height:42px!important;/);
  assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::after\{display:none!important\}/);
- assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock>\.sv-note-draw-standalone\{display:none!important\}/);
+ assert.match(newHomeDock,/\.sv-note-keyboard-open[\s\S]*?\.sv-note-home-new-dock\{display:none!important\}/);
  assert.match(css,/\.sv-smart-ink-tools\[hidden\],[\s\S]*?:not\(\.sv-smart-inking\)[\s\S]*?\.sv-note-keyboard-open\s+\.sv-smart-ink-tools\{display:none!important\}/);
 });
 
