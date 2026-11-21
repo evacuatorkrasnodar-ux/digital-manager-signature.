@@ -5562,11 +5562,20 @@ window.addEventListener('load',()=>{
   if(!focused&&height>restingNoteHeight-25)restingNoteHeight=Math.max(restingNoteHeight,height);
   const keyboardOpen=focused&&!dlg.classList.contains('sv-smart-inking')&&restingNoteHeight-height>=120;
   dlg.classList.toggle('sv-note-keyboard-open',keyboardOpen);
-  if(Math.abs(height-lastNoteHeight)>=3){
-   lastNoteHeight=height;
-   dlg.style.setProperty('--sv-note-height',height+'px');
-   dlg.style.setProperty('--sv-note-top','0px');
+  // The idle editor must fill the real device viewport including the
+  // home-indicator safe area. visualViewport.height can exclude that region
+  // on iOS, which cropped the floating dock shadow into a hard "step".
+  // Use the measured short viewport only while the software keyboard is up.
+  if(keyboardOpen){
+   if(Math.abs(height-lastNoteHeight)>=3){
+    lastNoteHeight=height;
+    dlg.style.setProperty('--sv-note-height',height+'px');
+   }
+  }else{
+   lastNoteHeight=0;
+   dlg.style.removeProperty('--sv-note-height');
   }
+  dlg.style.setProperty('--sv-note-top','0px');
  };
  const queueNoteViewportSync=()=>{
   if(noteViewportFrame)return;
