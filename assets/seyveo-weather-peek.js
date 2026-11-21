@@ -165,25 +165,64 @@
    healthPanel.id='svWeatherPeekWellness';
    healthPanel.className='sv-weather-peek-health';
    healthPanel.hidden=true;
-   const more=document.createElement('div');more.className='sv-weather-peek-health-more';
-   const title=document.createElement('h3');
-   title.className='sv-weather-peek-health-title';
-   title.textContent='Самочувствие и погода';
-   more.append(title);
+   const more=document.createElement('div');
+   more.className='sv-weather-peek-health-more';
+   const heading=document.createElement('div');
+   heading.className='sv-weather-peek-geo-heading';
+   add('sv-weather-peek-health-title','Геомагнитная активность',heading,'h3');
+   add('sv-weather-peek-geo-scale','Kp · 0–9',heading);
+   more.append(heading);
+   const meters=document.createElement('div');
+   meters.className='sv-weather-peek-geo-grid';
+   for(let index=0;index<3;index++){
+    const key=nextDate(date,index);
+    const record=src?.getGeomagnetic?.(key);
+    const value=Number.isFinite(record?.kp)?record.kp:null;
+    const level=value===null?'unknown':value>=5?'storm':value>=4?'active':'quiet';
+    const label=index===0?'Сегодня':index===1?'Завтра':weekday(key);
+    const status=value===null?'нет прогноза':level==='storm'?'геомагнитная буря':
+     level==='active'?'повышенная активность':'спокойная активность';
+    const figure=document.createElement('div');
+    figure.className='sv-weather-peek-geo-figure';
+    figure.setAttribute('role','img');
+    figure.setAttribute('aria-label',label+': '+
+     (value===null?'прогноз Kp отсутствует':'Kp '+value.toFixed(1)+' из 9, '+status));
+    const dial=document.createElement('div');
+    dial.className='sv-weather-peek-geo-meter';
+    dial.dataset.level=level;
+    dial.style.setProperty('--sv-geo-fill',
+     (value===null?0:Math.min(100,Math.max(0,value/9*100))).toFixed(1)+'%');
+    const core=document.createElement('div');
+    core.className='sv-weather-peek-geo-core';
+    add('sv-weather-peek-geo-number',value===null?'—':value.toFixed(1),core,'strong');
+    dial.append(core);
+    add('sv-weather-peek-geo-day',label,figure);
+    figure.prepend(dial);meters.append(figure);
+   }
+   more.append(meters);
    const station=src?.getStationData?.();
    const pressure=station?.current?.pressure_msl;
-   add('sv-weather-peek-health-detail',
-    'Атмосферное давление · '+(Number.isFinite(pressure)?Math.round(pressure)+' гПа':'нет данных'),more,'p');
-   for(let index=0;index<3;index++){
-    const key=nextDate(date,index),geo=src?.getGeomagnetic?.(key);
-    const label=index===0?'Сегодня':weekday(key);
-    const textValue=geo?('Kp '+geo.kp.toFixed(1)+'/9 · '+(geo.kp>=5?'буря':geo.kp>=4?'повышена':'спокойно')):'нет прогноза';
-    add('sv-weather-peek-health-detail',label+' · '+textValue,more,'p');
-   }
-   add('sv-weather-peek-health-caption',
-    'Kp (NOAA) — индекс геомагнитной активности, а не риск для здоровья. Прогноз обычно до 3 дней.',more,'p');
-   add('sv-weather-peek-health-caption',
-    'Атмосферное давление не равно артериальному. По погоде нельзя предсказать симптомы.',more,'p');
+   const humidity=station?.current?.relative_humidity_2m;
+   const metrics=document.createElement('div');
+   metrics.className='sv-weather-peek-geo-metrics';
+   const metric=(name,val,unit)=>{
+    const cell=document.createElement('div');
+    cell.className='sv-weather-peek-geo-metric';
+    add('sv-weather-peek-geo-metric-label',name,cell);
+    const reading=document.createElement('div');
+    reading.className='sv-weather-peek-geo-metric-reading';
+    add('sv-weather-peek-geo-metric-value',
+     Number.isFinite(val)?String(Math.round(val)):'—',reading,'strong');
+    if(Number.isFinite(val))add('sv-weather-peek-geo-metric-unit',unit,reading);
+    cell.append(reading);metrics.append(cell);
+   };
+   metric('Давление',pressure,'гПа');
+   metric('Влажность',humidity,'%');
+   more.append(metrics);
+   const context=add('sv-weather-peek-geo-source',
+    'NOAA · Kp не оценивает влияние на здоровье',more,'p');
+   context.setAttribute('title',
+    'Магнитная активность Kp не измеряет артериальное давление и не предсказывает симптомы. Атмосферное давление — другое измерение.');
    healthPanel.append(more);
    healthToggle=document.createElement('button');
    healthToggle.type='button';
