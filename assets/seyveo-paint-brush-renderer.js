@@ -69,37 +69,94 @@
    ctx.drawImage(sprite,x-w/2,y-w/2,w,w);
   }
  }
- function oil(ctx,s,a,b,dot=false){
-  const opacity=alphaOf(s),width=(widthOf(s,a)+widthOf(s,b))/2;
-  const base=colorOf(s);
-  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.max(.001,Math.hypot(dx,dy));
-  const nx=-dy/len,ny=dx/len;
-  if(dot){const radius=Math.max(1,width/2);ctx.beginPath();ctx.arc(a[0],a[1],radius,0,Math.PI*2);ctx.fillStyle=base;ctx.globalAlpha=opacity;ctx.fill();return;}
-  const move=(shift)=>[[a[0]+nx*shift,a[1]+ny*shift],[b[0]+nx*shift,b[1]+ny*shift]];
-  // Impression of pigmented impasto: dark edge, opaque body, raised bristles
-  // and a narrow light-catching ridge. This is 2D relief, not fluid physics.
-  const shadow=move(width*.11),light=move(-width*.1);
-  line(ctx,shadow[0],shadow[1],width*.98,blend(base,0,.28),opacity*.57);
-  line(ctx,a,b,width*.9,grad(ctx,s),opacity);
-  line(ctx,light[0],light[1],width*.67,blend(base,255,.1),opacity*.66);
-  const lanes=[-.28,-.12,.08,.22,.35];
-  for(let i=0;i<lanes.length;i++){
-   const p=move(width*lanes[i]);
-   line(ctx,p[0],p[1],Math.max(.65,width*(i%2?.025:.042)),
-    i%2?blend(base,0,.22):blend(base,255,.36),opacity*(i%2?.35:.48));
+ // Smooth continuous paths make oil look like paint, not a string of
+ // overlapping round-capped cords. Saved points remain unchanged.
+ function traceSmooth(ctx,points){
+  if(!points.length)return;
+  ctx.moveTo(points[0][0],points[0][1]);
+  if(points.length===1)return;
+  if(points.length===2){ctx.lineTo(points[1][0],points[1][1]);return;}
+  for(let i=1;i<points.length-1;i++){
+   const p=points[i],q=points[i+1];
+   ctx.quadraticCurveTo(p[0],p[1],(p[0]+q[0])/2,(p[1]+q[1])/2);
   }
+  const end=points[points.length-1];ctx.lineTo(end[0],end[1]);
+ }
+ function geometry(s,points){
+  return points.map((p,i)=>{
+   const before=points[Math.max(0,i-1)],after=points[Math.min(points.length-1,i+1)];
+   const dx=after[0]-before[0],dy=after[1]-before[1];
+   const dist=Math.max(.001,Math.hypot(dx,dy));
+   return {x:p[0],y:p[1],nx:-dy/dist,ny:dx/dist,
+    radius:Math.max(.6,widthOf(s,p)*.5)};
+  });
+ }
+ function outline(ctx,geo,scale=1,shift=0,x=0,y=0){
+  const left=geo.map(p=>[p.x+p.nx*(p.radius*scale+shift)+x,
+                         p.y+p.ny*(p.radius*scale+shift)+y]);
+  const right=geo.map(p=>[p.x+p.nx*(-p.radius*scale+shift)+x,
+                          p.y+p.ny*(-p.radius*scale+shift)+y]).reverse();
+  ctx.beginPath();traceSmooth(ctx,left);
+  for(const p of right)ctx.lineTo(p[0],p[1]);
+  ctx.closePath();
+ }
+ function hairline(ctx,geo,fraction,style,alpha){
+  const path=geo.map(p=>[p.x+p.nx*p.radius*fraction,
+                         p.y+p.ny*p.radius*fraction]);
+  ctx.beginPath();traceSmooth(ctx,path);
+  ctx.lineWidth=Math.max(.45,Math.min(1.15,geo[0].radius*.09));
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.strokeStyle=style;ctx.globalAlpha=alpha;ctx.stroke();
+ }
+ function oilStroke(ctx,s){
+  const points=s.points;
+  if(!points.length)return;
+  const base=colorOf(s),opacity=alphaOf(s);
+  const radius=widthOf(s,points[0])*.5;
+  ctx.save();ctx.globalCompositeOperation='source-over';
+  if(points.length===1){
+   const x=points[0][0],y=points[0][1];
+   ctx.globalAlpha=opacity;
+   ctx.beginPath();ctx.arc(x,y,Math.max(.6,radius),0,Math.PI*2);
+   ctx.fillStyle=base;ctx.fill();ctx.restore();return;
+  }
+  const geo=geometry(s,points);
+  // Continuous single-body silhouette with restrained reflected light.
+  outline(ctx,geo,1.03,0,.65,1);
+  ctx.fillStyle=blend(base,0,.18);ctx.globalAlpha=opacity*.62;ctx.fill();
+  outline(ctx,geo,.97);
+  ctx.fillStyle=grad(ctx,s);ctx.globalAlpha=opacity;ctx.fill();
+  // A broad semi-transparent ridge suggests thickness without roping.
+  outline(ctx,geo,.38,-geo[0].radius*.33,-.35,-.4);
+  ctx.fillStyle=blend(base,255,.18);ctx.globalAlpha=opacity*.24;ctx.fill();
+  hairline(ctx,geo,-.35,blend(base,255,.35),opacity*.18);
+  hairline(ctx,geo,.44,blend(base,0,.28),opacity*.13);
+  ctx.restore();
+ }
+ function oilLive(ctx,s,a,b,dot=false){
+  // While dragging, paint only a clean single stroke. The final textured
+  // body is rendered from the whole saved path once the finger is lifted.
+  const width=(widthOf(s,a)+widthOf(s,b))/2;
+  const color=grad(ctx,s);
+  ctx.globalAlpha=alphaOf(s);
+  ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.fillStyle=ctx.strokeStyle=color;
+  ctx.beginPath();
+  if(dot){ctx.arc(a[0],a[1],Math.max(.5,width/2),0,Math.PI*2);ctx.fill();}
+  else{ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
  }
  function segment(ctx,s,a,b,dot=false){
   if(!KINDS.has(s?.tool)||!a||!b)return false;
   ctx.save();ctx.globalCompositeOperation='source-over';
   if(s.tool==='brush')dot?oil(ctx,{...s,tool:'oil'},a,a,true):brush(ctx,s,a,b);
   else if(s.tool==='spray')spray(ctx,s,a,b,dot);
-  else oil(ctx,s,a,b,dot);
+  else oilLive(ctx,s,a,b,dot);
   ctx.restore();return true;
  }
  function stroke(ctx,s){
   if(!KINDS.has(s?.tool)||!Array.isArray(s.points)||!s.points.length)return false;
   const pts=s.points;
+  if(s.tool==='oil'){oilStroke(ctx,s);return true;}
   if(pts.length===1){segment(ctx,s,pts[0],pts[0],true);return true;}
   for(let i=1;i<pts.length;i++)segment(ctx,s,pts[i-1],pts[i]);
   return true;
