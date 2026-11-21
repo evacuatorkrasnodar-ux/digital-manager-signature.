@@ -244,6 +244,28 @@
           timeZone:'Europe/Moscow',weekday:'short',day:'numeric'
         }).format(timestamp).replace('.','');
       };
+      // Day/night values use the actual hourly Moscow-time forecast where
+      // available: daytime maximum (08:00–19:59), following-night minimum
+      // (20:00–06:59). When hourly data is absent we explicitly show the
+      // daily maximum/minimum, never label them as separate observations.
+      const realDayNight=(date,day)=>{
+        const hourly=window.SAYVI_WEATHER?.getStationData?.()?.hourly;
+        if(!Array.isArray(hourly?.time)||!Array.isArray(hourly?.temperature_2m))
+          return {max:day.max,min:day.min,separated:false};
+        const following=new Date(Date.parse(date+'T12:00:00Z')+86400000)
+          .toISOString().slice(0,10);
+        const daylight=[],night=[];
+        for(let i=0;i<hourly.time.length;i++){
+          const timestamp=hourly.time[i],value=hourly.temperature_2m[i];
+          if(typeof timestamp!=='string'||!Number.isFinite(value))continue;
+          const key=timestamp.slice(0,10),hour=Number(timestamp.slice(11,13));
+          if(key===date&&hour>=8&&hour<20)daylight.push(value);
+          if((key===date&&hour>=20)||(key===following&&hour<7))night.push(value);
+        }
+        if(!daylight.length||!night.length)
+          return {max:day.max,min:day.min,separated:false};
+        return {max:Math.max(...daylight),min:Math.min(...night),separated:true};
+      };
       const renderWeek=()=>{
         if(!homeWeekActive)return;
         const forecast=getBrief();
@@ -260,13 +282,15 @@
           day.code>=71&&day.code<=77||day.code>=85&&day.code<=86?'snow':
           day.code>=95?'storm':day.code===45||day.code===48?'fog':'cloud';
         mark.innerHTML=weatherGlyph(day.code);
-        const textValue=weekName(day.date)+' · '+temperature(day.max)+' днём / '+
-          temperature(day.min)+' ночью';
-        label.textContent=textValue;
+        const values=realDayNight(day.date,day);
+        const valuesLabel=values.separated?
+          temperature(values.max)+' днём / '+temperature(values.min)+' ночью':
+          'макс '+temperature(values.max)+' / мин '+temperature(values.min);
+        label.textContent=weekName(day.date)+' · '+valuesLabel;
         button.title='Неделя · '+forecast.city+' · '+condition(day.code);
         button.setAttribute('aria-label','Погода '+weekName(day.date)+
-          ': днём '+temperature(day.max)+', ночью '+temperature(day.min)+
-          ', '+condition(day.code)+'. Нажми, чтобы закрыть карточку Сэйви');
+          ': '+valuesLabel+', '+condition(day.code)+
+          '. Нажми, чтобы закрыть карточку Сэйви');
         // Restart a soft cross-fade without moving the original button.
         label.classList.remove('sv-home-weather-week-show');
         mark.classList.remove('sv-home-weather-week-show');
