@@ -665,8 +665,8 @@
     const logo=document.createElement('div');
     logo.className='sv-pure-launch-logo';
     const artwork=document.createElement('img');
-    artwork.src='assets/seyveo-launch-original.svg?v=1';
-    artwork.alt='';artwork.width=440;artwork.height=440;artwork.draggable=false;
+    artwork.src='assets/seyveo-circular-interlace-approved-color.png?v=1';
+    artwork.alt='';artwork.width=1254;artwork.height=1254;artwork.draggable=false;
     logo.append(artwork);
     scene.append(logo);
     // This guard also disables the old studio wordmark drawn inside the orb.
