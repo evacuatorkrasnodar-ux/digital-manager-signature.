@@ -318,3 +318,140 @@ html:root body #svcpWorkChatScreen #svcpAttachMenu.svcp-attach-menu:not([hidden]
 html:root body #svcpWorkChatScreen #svcpAttachMenu.svcp-attach-menu > button{
  color:var(--sv-menu-text)!important;
 }
+
+
+/* Single-tap Drawing workspace menu, 2026-11-21. The Apple-like opaque
+   reading surface stays distinct from the translucent drawing dock. */
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu:not([hidden]){
+ width:min(322px,calc(100vw - 24px))!important;
+ max-height:min(610px,calc(100dvh - 150px))!important;
+ padding:12px!important;
+ border-radius:20px!important;
+ background:var(--sv-menu-bg,#fcfcfd)!important;
+ color:var(--sv-menu-text,#252a33)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ scrollbar-width:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu > .sv-polish-segments{
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-unified-workspace-frames{
+ display:flex!important;flex-direction:column!important;gap:8px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-polish-menu-pane[data-sv-menu-panel="drawing"]:not([hidden]){
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ grid-template-rows:none!important;gap:8px!important;
+ padding:0!important;margin:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-menu-title{
+ color:var(--sv-menu-secondary,#747b86)!important;
+ margin:1px 0 0!important;
+ padding:0!important;min-height:14px!important;height:auto!important;
+ font-size:11px!important;font-weight:540!important;line-height:14px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-menu-title:has(+ .sv-newdock-ink-choices){
+ display:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-backgrounds{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ box-sizing:border-box!important;height:38px!important;min-height:38px!important;
+ gap:3px!important;padding:3px!important;margin:0!important;
+ border:0!important;border-radius:11px!important;background:var(--sv-menu-item,#f3f4f6)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-backgrounds > button{
+ display:grid!important;place-items:center!important;
+ min-height:32px!important;height:32px!important;
+ margin:0!important;border:0!important;border-radius:9px!important;
+ background:transparent!important;color:var(--sv-menu-secondary,#747b86)!important;
+ font:500 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-backgrounds > button[aria-pressed="true"]{
+ background:var(--sv-menu-bg,#fcfcfd)!important;color:var(--sv-menu-text,#252a33)!important;
+ box-shadow:0 1px 3px rgba(25,33,45,.10)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-unified-workspace-section{
+ display:flex!important;flex-direction:column!important;gap:7px!important;
+ width:100%!important;margin:0!important;padding:0!important;
+ background:transparent!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-unified-workspace-label{
+ font:540 11px/15px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--sv-menu-secondary,#747b86)!important;letter-spacing:.005em!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ :is(.sv-unified-pattern-grid,.sv-unified-shapes-grid){
+ display:grid!important;align-items:stretch!important;width:100%!important;
+ gap:5px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-unified-pattern-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-unified-shapes-grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ :is(.sv-unified-pattern-choice,.sv-unified-shape-choice){
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ width:100%!important;min-width:0!important;
+ gap:3px!important;padding:6px 2px!important;margin:0!important;
+ border:1px solid var(--sv-menu-item-border,#e9ebef)!important;
+ border-radius:11px!important;background:var(--sv-menu-item,#f3f4f6)!important;
+ color:var(--sv-menu-text,#252a33)!important;box-shadow:none!important;
+ cursor:pointer!important;touch-action:manipulation!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-unified-pattern-choice{
+ height:61px!important;min-height:61px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu .sv-unified-shape-choice{
+ height:42px!important;min-height:42px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ :is(.sv-unified-pattern-choice,.sv-unified-shape-choice)[aria-pressed="true"]{
+ background:var(--sv-menu-item-selected,#e6e9ed)!important;
+ border-color:var(--sv-menu-item-selected-border,#d8dde4)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ :is(.sv-unified-pattern-choice,.sv-unified-shape-choice) svg{
+ display:block!important;flex:none!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-unified-shape-choice span{display:none!important}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-unified-pattern-choice span{
+ display:block!important;max-width:100%!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ font:500 10.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-polish-menu-pane[data-sv-menu-panel="actions"]:not([hidden]){
+ display:flex!important;flex-direction:column!important;gap:2px!important;
+ padding:8px 0 0!important;margin:0!important;
+ border-top:1px solid var(--sv-menu-rule,rgba(130,139,150,.16))!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button:not([data-sv-retired="true"]){
+ min-height:38px!important;height:38px!important;
+ margin:0!important;padding:6px 9px!important;
+ border-radius:10px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ :is(.sv-unified-pattern-choice,.sv-unified-shape-choice):focus-visible{
+ outline:2px solid #397bc6!important;outline-offset:1px!important;
+}
+@media(max-width:350px){
+ html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-unified-shapes-grid{gap:3px!important}
+ html body #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-unified-workspace-menu
+ .sv-unified-shape-choice{height:40px!important;min-height:40px!important}
+}
