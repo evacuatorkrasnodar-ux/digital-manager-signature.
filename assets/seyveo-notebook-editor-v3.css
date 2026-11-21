@@ -883,13 +883,18 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-
  transform:translateX(-50%)!important;
  display:block!important;width:min(236px,calc(100vw - 36px))!important;
  padding:13px 12px!important;margin:0!important;
- border:var(--sv-dock-pearl-border,.6px solid rgba(167,172,181,.28))!important;
- border-radius:18px!important;outline:0!important;
- background:var(--sv-dock-pearl-bg,rgba(247,248,250,.97))!important;
- box-shadow:var(--sv-dock-pearl-shadow,0 3px 15px rgba(70,80,90,.12))!important;
- -webkit-backdrop-filter:var(--sv-dock-pearl-blur)!important;
- backdrop-filter:var(--sv-dock-pearl-blur)!important;
- color:var(--note-ink)!important;
+ /* Contextual reading menu, not the translucent dock material.
+    The former pearl-background selector was more specific than the
+    shared opaque-menu stylesheet and exposed handwriting underneath. */
+ border:var(--sv-menu-border,1px solid rgba(130,139,150,.20))!important;
+ border-radius:var(--sv-menu-radius,20px)!important;outline:0!important;
+ background:var(--sv-menu-bg,#fcfcfd)!important;
+ background-image:none!important;background-clip:padding-box!important;
+ box-shadow:var(--sv-menu-shadow,0 12px 34px rgba(25,33,45,.16))!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ opacity:1!important;isolation:isolate!important;
+ color:var(--sv-menu-text,#252a33)!important;
 }
 html:root body #noteReviewDialog[open] .sv-smart-ink-picker [data-sv-ink-picker]:not([hidden]){
  display:flex!important;flex-direction:column!important;gap:10px!important;
