@@ -17,7 +17,7 @@
  let splash=document.getElementById('svLaunchClean');
  if(!eligible){
   splash?.remove();
-  document.documentElement.classList.remove('sv-cinema-boot','sv-launch-greeting-hold','sv-launch-greeting-enter');
+  document.documentElement.classList.remove('sv-cinema-boot');
   return;
  }
  if(!splash){
@@ -25,11 +25,10 @@
   splash.id='svLaunchClean';
   splash.setAttribute('role','status');
   splash.setAttribute('aria-label','Загрузка SEYVEO');
-  splash.innerHTML='<div class="svLaunchCleanMark" aria-hidden="true"></div><div class="svLaunchCleanSignature" aria-hidden="true"><span class="svLaunchCleanName">SEYVEO</span><span class="svLaunchCleanDescriptor">IT · AI · AUTOMATION</span></div>';
+  splash.innerHTML='<div class="svLaunchCleanMark" aria-hidden="true"></div>';
   document.body.append(splash);
  }
  splash.hidden=false;
- document.documentElement.classList.add('sv-launch-greeting-hold');
  // Match the browser's safe-area/status-bar tone to the velvet opening.
  // Restore the saved app theme color as soon as the opening is dismissed.
  const themeMeta=document.querySelector('meta[name="theme-color"]');
@@ -41,7 +40,7 @@
  }
  const mark=splash.querySelector('.svLaunchCleanMark');
  if(!mark){splash.remove();document.documentElement.classList.remove('sv-cinema-boot');return}
- let finished=false,opening=false,landed=false,phaseTimer=0,landingTimer=0,cleanupTimer=0,watchdog=0;
+ let finished=false,opening=false,phaseTimer=0,landingTimer=0,cleanupTimer=0,watchdog=0;
  const close=()=>{
   if(finished)return;
   finished=true;
@@ -51,28 +50,19 @@
   if(themeMeta&&root.dataset.svLaunchPreviousThemeColor)
    themeMeta.setAttribute('content',root.dataset.svLaunchPreviousThemeColor);
   delete root.dataset.svLaunchPreviousThemeColor;
-  root.classList.remove('sv-cinema-boot','sv-launch-greeting-hold','sv-launch-greeting-enter');
+  root.classList.remove('sv-cinema-boot');
  };
  const reveal=()=>{
   if(finished||opening)return;
   opening=true;
   clearTimeout(landingTimer);
-  root.classList.remove('sv-launch-greeting-hold');
-  root.classList.add('sv-launch-greeting-enter');
-  // The logo text is now exactly beneath the resting sphere. Let the actual
-  // greeting occupy that same whitespace while the velvet scene dissolves.
+  // One uninterrupted final handoff: the moving emblem has become
+  // the real Home orb, and only the velvet curtain dissolves.
   splash.dataset.stage='reveal';
-  cleanupTimer=setTimeout(close,870);
- };
- const land=()=>{
-  if(finished||landed)return;
-  landed=true;
-  clearTimeout(landingTimer);
-  splash.dataset.stage='landed';
-  landingTimer=setTimeout(reveal,520);
+  cleanupTimer=setTimeout(close,690);
  };
  mark.addEventListener('animationend',event=>{
-  if(event.target===mark&&event.animationName==='svLaunchApproach')land();
+  if(event.target===mark&&event.animationName==='svLaunchApproach')reveal();
  });
  splash.addEventListener('animationend',event=>{
   if(event.target===splash&&event.animationName==='svLaunchSceneOpen')close();
@@ -132,14 +122,6 @@
    const initialDiameter=diameter*.45;
    splash.style.setProperty('--sv-launch-x',x+'px');
    splash.style.setProperty('--sv-launch-y',y+'px');
-   // Anchor to the real greeting region (beneath the orb), rather than sending
-   // lettering into the header. The next shot replaces it with Sayvi's hello.
-   const greeting=document.querySelector('#stage > .message');
-   const greetingBox=greeting?.getBoundingClientRect();
-   const naturalStart=greetingBox&&greetingBox.height>0
-    ?greetingBox.top+10:y+diameter*.5+18;
-   const signatureY=Math.max(y+diameter*.5+4,Math.min(height-96,naturalStart));
-   splash.style.setProperty('--sv-launch-word-y',signatureY.toFixed(1)+'px');
    splash.style.setProperty('--sv-launch-d',initialDiameter+'px');
    const finalScale=diameter/initialDiameter;
    splash.style.setProperty('--sv-launch-scale',String(finalScale));
@@ -154,7 +136,7 @@
     splash.dataset.stage='zoom';
     // Safari fallback only. Normal landing is driven by animationend to
     // preserve the final frame even if the device drops frames under load.
-    landingTimer=setTimeout(land,3460);
+    landingTimer=setTimeout(reveal,3460);
    };
    phaseTimer=setTimeout(start,880);
   }));
