@@ -18,14 +18,26 @@
  rich.hidden=true;
  textarea.after(rich);
  let active=false,savedRange=null,locked=false,plainSelection=null;
+ // Only a closed set of tones can be persisted. Do not trust arbitrary
+ // inline CSS when loading a note, pasted HTML or a shared document.
+ const MARKER_TONES=new Set(['lemon','mint','sky','rose']);
+ const MARKER_KINDS=new Set(['highlight','underline']);
+ let markerTone='lemon';
  const allowed=new Set(['B','STRONG','EM','I','U','DIV','P','BR','H2','H3']);
  function cleanup(node,into){
   if(node.nodeType===Node.TEXT_NODE){into.append(document.createTextNode(node.nodeValue||''));return;}
   if(node.nodeType!==Node.ELEMENT_NODE)return;
   const tag=node.tagName.toUpperCase();
   if(['SCRIPT','STYLE','SVG','IFRAME','OBJECT','TEMPLATE'].includes(tag))return;
-  const safe=allowed.has(tag)?tag==='H2'?'H3':tag:null;
+  const markerKind=tag==='SPAN' && MARKER_KINDS.has(node.getAttribute('data-sv-marker'))
+   ?node.getAttribute('data-sv-marker'):null;
+  const safe=allowed.has(tag)?tag==='H2'?'H3':tag:markerKind?'SPAN':null;
   const dest=safe?document.createElement(safe.toLowerCase()):into;
+  if(markerKind){
+   const tone=node.getAttribute('data-sv-marker-tone');
+   dest.setAttribute('data-sv-marker',markerKind);
+   dest.setAttribute('data-sv-marker-tone',MARKER_TONES.has(tone)?tone:'lemon');
+  }
   if(tag==='BR'){into.append(dest);return;}
   for(const child of Array.from(node.childNodes))cleanup(child,dest);
   if(safe)into.append(dest);
@@ -103,7 +115,66 @@
   else rich.replaceChildren();
   locked=false;
  }
+ // Wrap only selected text nodes. Unlike surroundContents(), this also
+ // handles selections crossing paragraph, bold and italic boundaries.
+ // A collapsed caret must never color the entire note.
+ function markSelection(kind){
+  if(!MARKER_KINDS.has(kind))return false;
+  activate();restore();
+  const sel=window.getSelection();
+  if(!sel?.rangeCount)return false;
+  const range=sel.getRangeAt(0).cloneRange();
+  if(range.collapsed||!rich.contains(range.commonAncestorContainer))return false;
+  const walker=document.createTreeWalker(rich,NodeFilter.SHOW_TEXT);
+  const pieces=[];
+  while(walker.nextNode()){
+   const node=walker.currentNode;
+   if(!node.nodeValue||!range.intersectsNode(node))continue;
+   const start=range.startContainer===node?range.startOffset:0;
+   const end=range.endContainer===node?range.endOffset:node.length;
+   if(end>start)pieces.push({node,start,end});
+  }
+  if(!pieces.length)return false;
+  let last=null;
+  for(const {node,start,end} of pieces){
+   if(!node.isConnected)continue;
+   let part=node;
+   if(end<part.length)part.splitText(end);
+   if(start>0)part=part.splitText(start);
+   if(!part.nodeValue)continue;
+   const mark=document.createElement('span');
+   mark.setAttribute('data-sv-marker',kind);
+   mark.setAttribute('data-sv-marker-tone',markerTone);
+   part.before(mark);mark.append(part);
+   last=mark;
+  }
+  if(!last)return false;
+  const cursor=document.createRange();cursor.selectNodeContents(last);cursor.collapse(false);
+  sel.removeAllRanges();sel.addRange(cursor);savedRange=cursor.cloneRange();
+  sync();
+  return true;
+ }
+ const markerMenu=document.getElementById('svNoteFormatMenu');
+ const updateToneButtons=()=>{
+  markerMenu?.querySelectorAll('[data-sv-marker-tone]').forEach(button=>
+   button.setAttribute('aria-pressed',String(button.dataset.svMarkerTone===markerTone)));
+ };
+ markerMenu?.addEventListener('click',event=>{
+  const button=event.target.closest('button[data-sv-marker-tone]');
+  if(!button||!markerMenu.contains(button))return;
+  if(!MARKER_TONES.has(button.dataset.svMarkerTone))return;
+  markerTone=button.dataset.svMarkerTone;
+  updateToneButtons();
+ });
+ // Desktop and iOS: clicking formatting controls must not steal the saved
+ // text selection from the native editor.
+ markerMenu?.addEventListener('mousedown',event=>{
+  if(event.target.closest('button'))event.preventDefault();
+ });
+ updateToneButtons();
  function applyFormat(kind){
+  if(kind==='marker')return markSelection('highlight');
+  if(kind==='marker-underline')return markSelection('underline');
   if(!['bold','italic','underline','heading'].includes(kind))return false;
   activate();
   restore();
@@ -158,6 +229,7 @@
  window.SEYVEO_NOTE_RICH=Object.freeze({
   load,format:applyFormat,getHTML,safeHTML,isActive:()=>active,
   sync,insertText,appendText,rememberSelection:remember,
+  markerTone:()=>markerTone,
   focus:()=>active&&rich.focus({preventScroll:true})
  });
 })();
