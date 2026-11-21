@@ -2105,62 +2105,12 @@ document.addEventListener('pointerdown',event=>{
  closeMessageMenus();
 });
 $('svcpMessages')?.addEventListener('scroll',closeMessageMenus,{passive:true});
-/* Five essential emoji choices live inside the existing message capsule.
- * No popover, no camera tray, no second composer row. */
-const composerEmojiStrip=$('svcpComposerEmojiStrip');
-const composerEmojiButton=$('svcpComposerEmojiToggle');
-const inlineEmojiField=$('svcpChatForm')?.querySelector('.svcp-chat-compose-field');
-const inlineEmojiChoices=['👍','❤️','😂','🙏','✅'];
-if(composerEmojiStrip&&inlineEmojiField)inlineEmojiField.appendChild(composerEmojiStrip);
-function closeComposerEmoji(){
- if(composerEmojiStrip)composerEmojiStrip.hidden=true;
- $('svcpChatForm')?.classList.remove('svcp-emoji-inline-open');
- composerEmojiButton?.setAttribute('aria-expanded','false');
-}
-function insertComposerEmoji(emoji){
- const input=$('svcpChatInput');if(!input)return;
- const from=typeof input.selectionStart==='number'?input.selectionStart:input.value.length;
- const to=typeof input.selectionEnd==='number'?input.selectionEnd:from;
- const value=input.value.slice(0,from)+emoji+input.value.slice(to);
- if(input.maxLength>0&&value.length>input.maxLength)return;
- input.value=value;
- closeComposerEmoji();
- input.focus({preventScroll:true});
- input.setSelectionRange(from+emoji.length,from+emoji.length);
- input.dispatchEvent(new Event('input',{bubbles:true}));
-}
-function renderComposerEmojis(){
- if(!composerEmojiStrip)return;
- composerEmojiStrip.replaceChildren();
- for(const emoji of inlineEmojiChoices){
-  const option=el('button','svcp-composer-emoji-choice',emoji);
-  option.type='button';
-  option.setAttribute('aria-label','Вставить '+emoji);
-  option.addEventListener('click',()=>insertComposerEmoji(emoji));
-  composerEmojiStrip.appendChild(option);
- }
-}
-composerEmojiButton?.addEventListener('click',event=>{
- event.preventDefault();
- const form=$('svcpChatForm');
- if(!form||!composerEmojiStrip)return;
- const opening=!form.classList.contains('svcp-emoji-inline-open');
- closeRecognition();closeMessageMenus();
- closeComposerEmoji();
- if(!opening)return;
- // Emoji works in BOTH composer sizes. The expanded mode places the five
- // choices on its lower action row without covering the typed draft.
- renderComposerEmojis();
- form.classList.add('svcp-emoji-inline-open');
- composerEmojiStrip.hidden=false;
- composerEmojiButton.setAttribute('aria-expanded','true');
-});
-document.addEventListener('pointerdown',event=>{
- const form=$('svcpChatForm');
- if(!form?.classList.contains('svcp-emoji-inline-open'))return;
- if(composerEmojiStrip?.contains(event.target)||composerEmojiButton?.contains(event.target))return;
- closeComposerEmoji();
-});
+/* Emoji belongs to the operating-system keyboard (iOS/Android/macOS/Windows).
+ * Do not mount a duplicate composer picker or try to invoke the native
+ * emoji keyboard programmatically; browsers do not expose that control.
+ * Keep the historical dismissal hook harmless for older close paths. */
+function closeComposerEmoji(){}
+
 function toggleMessageMenu(menu,trigger){
  const opening=menu.hidden;
  closeRecognition();
