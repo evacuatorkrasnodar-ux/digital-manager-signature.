@@ -250,8 +250,9 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 @media(max-width:699px){
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
   form#noteReviewForm.sv-note-editor{
-  /* The text scroller, not a hidden footer block, owns the last-line clearance. */
-  padding-bottom:0!important;
+  /* The keyboard accessory occupies 44px of the existing form,
+     so text cannot sit visibly behind its icons. */
+  padding-bottom:44px!important;
  }
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
   form#noteReviewForm.sv-note-editor:not(:has(#svNoteAttachments:not([hidden])))
@@ -452,12 +453,10 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
 /* Preserve the approved gold action while giving it the same soft relief. */
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-nav-actions button#svNoteDone{
- border:.7px solid rgba(163,125,14,.18)!important;
+ border:.75px solid rgba(255,255,255,.62)!important;
  background:#c69c09!important;
- box-shadow:0 0 0 .45px rgba(166,127,11,.13),
-  inset 0 1px 1px rgba(255,255,255,.27),
-  inset 0 -1px 1px rgba(101,76,11,.10),
-  0 1px 2px rgba(83,68,33,.07)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow),
+  inset 0 1px 1px rgba(255,255,255,.25)!important;
 }
 /* The iOS keyboard state keeps the real pearl ring instead of a flat fill. */
 @media(max-width:699px){
