@@ -16,11 +16,11 @@ const viewportScript=html.split('<script id="sv-note-editor-tools">')[1]?.split(
 
 test('editor is one rebuilt borderless full-screen page, with no legacy inline skin',()=>{
  assert.doesNotMatch(html,/<style id="sv-note-editor-v2"/);
- assert.match(html,/seyveo-notebook-editor-v3\\.css\\?v=\d+/);
- assert.match(html,/seyveo-universal-dock-inset\\.css\\?v=\d+/);
- assert.match(html,/seyveo-notebook-context-actions\\.css\\?v=\d+/);
- assert.match(html,/seyveo-paper-pearl-theme\\.css\\?v=\d+/);
- assert.match(html,/seyveo-notebook-home-new-dock\\.css\\?v=\d+/);
+ assert.ok(html.includes('assets/seyveo-notebook-editor-v3.css?v='),'missing loaded asset: seyveo-notebook-editor-v3.css');
+ assert.ok(html.includes('assets/seyveo-universal-dock-inset.css?v='),'missing loaded asset: seyveo-universal-dock-inset.css');
+ assert.ok(html.includes('assets/seyveo-notebook-context-actions.css?v='),'missing loaded asset: seyveo-notebook-context-actions.css');
+ assert.ok(html.includes('assets/seyveo-paper-pearl-theme.css?v='),'missing loaded asset: seyveo-paper-pearl-theme.css');
+ assert.ok(html.includes('assets/seyveo-notebook-home-new-dock.css?v='),'missing loaded asset: seyveo-notebook-home-new-dock.css');
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]\{[\s\S]*?width:100vw!important;[\s\S]*?border:0!important;border-radius:0!important;outline:0!important;[\s\S]*?box-shadow:none!important;/);
  assert.match(css,/dialog#noteReviewDialog\.notes-dialog\.note-review-dialog\[open\]::backdrop\{[\s\S]*?backdrop-filter:none!important;/);
  assert.doesNotMatch(editor,/sv-note-document-capsule|sv-note-document-icon|sv-note-header/);
@@ -122,7 +122,7 @@ test('software keyboard switches dock to one narrow 42px full-width capsule',()=
 
 test('a real note text focus leaves pen mode before the keyboard accessory appears',()=>{
  const smart=fs.readFileSync(path.join(root,'assets/seyveo-smart-note-ink.js'),'utf8');
- assert.match(html,/seyveo-smart-note-ink\.js\?v=\d+/);
+ assert.ok(html.includes('assets/seyveo-smart-note-ink.js?v='),'missing loaded asset: seyveo-smart-note-ink.js');
  const start=smart.indexOf(" dlg.addEventListener('focusin',event=>{");
  const end=smart.indexOf('\n function load(id){',start);
  assert.ok(start>=0&&end>start);
