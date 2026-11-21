@@ -14,13 +14,13 @@
  const eligible=(!location.hash||location.hash==='#home')
   &&params.get('sayvi-intro')!=='0'
   &&(preview||standalone||navigation?.type==='reload'||!seen);
- // A full first shot establishes the brand; repeat openings continue the
- // iOS icon's natural motion without forcing the whole long intro every time.
- // Explicit ?sayvi-intro=1 always plays the full director's cut.
+ // Full director's cut: 0-.45 hold, .45-3.35 camera approach,
+ // 2.45-3.06 lettering dissolves, 3.35-3.75 Home scene opens.
+ // Daily repeat opens faster; ?sayvi-intro=1 always replays full motion.
  const quick=seen&&!preview;
- const holdMs=quick?360:880;
- const flightMs=quick?1700:3300;
- const fadeMs=quick?410:560;
+ const holdMs=quick?260:450;
+ const flightMs=quick?1550:2900;
+ const fadeMs=quick?340:400;
  let splash=document.getElementById('svLaunchClean');
  if(!eligible){
   splash?.remove();
@@ -38,8 +38,7 @@
  splash.hidden=false;
  splash.style.setProperty('--sv-launch-flight-ms',flightMs+'ms');
  splash.style.setProperty('--sv-launch-fade-ms',fadeMs+'ms');
- splash.style.setProperty('--sv-launch-title-ms',(quick?460:950)+'ms');
- splash.style.setProperty('--sv-launch-subtitle-ms',(quick?550:1050)+'ms');
+ splash.style.setProperty('--sv-launch-type-enter-ms',(quick?210:380)+'ms');
  // Match the browser's safe-area/status-bar tone to the velvet opening.
  // Restore the saved app theme color as soon as the opening is dismissed.
  const themeMeta=document.querySelector('meta[name="theme-color"]');
@@ -133,14 +132,19 @@
    const initialDiameter=diameter*.45;
    splash.style.setProperty('--sv-launch-x',x+'px');
    splash.style.setProperty('--sv-launch-y',y+'px');
-   // Static, independently positioned typesetting: the mark flies towards
-   // the viewer, the wordmark stays anchored below its final sphere.
-   const greeting=document.querySelector('#stage > .message');
-   const greetingBox=greeting?.getBoundingClientRect();
-   const titleY=greetingBox&&greetingBox.height>0
-    ?greetingBox.top+8:y+diameter*.5+25;
-   const wordY=Math.max(y+diameter*.5+10,Math.min(height-98,titleY));
-   splash.style.setProperty('--sv-launch-word-y',wordY.toFixed(1)+'px');
+   // Start the two-line platinum signature just BELOW the small logo.
+   // It follows the orb down/forward on a gentler camera path, but is fully
+   // gone before the original brand mark resolves into the real Home sphere.
+   const initialGap=Math.max(12,Math.min(19,height*.021));
+   const initialWordY=Math.min(height-108,y+initialDiameter*.5+initialGap);
+   const landingWordY=Math.min(height-103,y+diameter*.5+Math.max(16,Math.min(26,height*.027)));
+   const travel=Math.max(0,landingWordY-initialWordY);
+   splash.style.setProperty('--sv-launch-word-y',initialWordY.toFixed(1)+'px');
+   splash.style.setProperty('--sv-launch-text-travel',travel.toFixed(1)+'px');
+   splash.style.setProperty('--sv-launch-text-d35',(travel*.15).toFixed(1)+'px');
+   splash.style.setProperty('--sv-launch-text-d69',(travel*.53).toFixed(1)+'px');
+   splash.style.setProperty('--sv-launch-text-d83',(travel*.84).toFixed(1)+'px');
+   splash.style.setProperty('--sv-launch-text-d90',(travel*.96).toFixed(1)+'px');
    splash.style.setProperty('--sv-launch-d',initialDiameter+'px');
    const finalScale=diameter/initialDiameter;
    splash.style.setProperty('--sv-launch-scale',String(finalScale));
