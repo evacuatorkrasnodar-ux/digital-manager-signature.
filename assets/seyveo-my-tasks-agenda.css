@@ -577,10 +577,10 @@
 #tasksPage #personalTaskList .sv-agenda-weather-icon svg{display:block;width:23px;height:23px;overflow:visible}
 /* Source credit stays out of the agenda list. On touch, tapping the forecast reveals it. */
 @media (hover:none) and (pointer:coarse){
- #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather{
+ #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather{
   position:relative;cursor:pointer;touch-action:manipulation;
  }
- #tasksPage #personalTaskList .sv-agenda-section-heading .sv-agenda-weather::before{
+ #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather::before{
   content:"";position:absolute;inset:-9px -3px;
  }
 }
@@ -910,3 +910,7 @@ html.sv-agenda-scroll-active .app{
 @media(prefers-reduced-motion:reduce){
  #tasksPage #svTasksDateNav .sv-agenda-week{scroll-behavior:auto!important}
 }
+
+/* Today's weather is a quiet, accessible tap target. Other dates stay informational. */
+#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather{cursor:pointer!important;-webkit-tap-highlight-color:transparent;}
+#tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather:focus-visible{outline:2px solid #6e8299;outline-offset:3px;border-radius:5px}
