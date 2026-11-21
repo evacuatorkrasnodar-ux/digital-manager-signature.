@@ -141,3 +141,83 @@
 @media(prefers-reduced-motion:reduce){
  .sv-weather-peek .sv-weather-peek-health-chevron{transition:none}
 }
+
+/* HOME SPHERE-SLOT FORECAST · 22 Nov.
+   Replaces the visible sphere for 30s without changing its allocated
+   dimensions, stage, greeting, quick applications or dock. The calendar
+   card retains its full approved dimensions independently. */
+:root.sv-home-weather-preview.sv-home-empty-sphere #homePage #orbCluster{
+ opacity:0!important;
+ pointer-events:none!important;
+ transition:opacity .25s cubic-bezier(.2,.75,.2,1)!important;
+}
+:root.sv-home-empty-sphere #homePage #orbCluster{
+ transition:opacity .26s cubic-bezier(.2,.75,.2,1);
+}
+.sv-weather-peek[data-origin="home"]{
+ width:min(326px,calc(100vw - 34px))!important;
+ max-height:min(310px,calc(100dvh - 200px))!important;
+ padding:13px 14px 11px!important;
+ border-radius:25px!important;
+ box-shadow:0 19px 44px rgba(24,32,45,.13),
+   0 5px 13px rgba(24,32,45,.07),
+   inset 0 1px 0 rgba(255,255,255,.96)!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-eyebrow{
+ font-size:9px;line-height:1.2;margin-bottom:6px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-main{
+ min-height:58px;gap:6px;padding-bottom:8px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-glyph,
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-glyph svg{
+ width:27px;height:27px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-high{
+ font-size:39px;line-height:1;letter-spacing:-.045em;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-info{
+ padding-left:9px;gap:2px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-city{
+ font-size:13.5px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-condition{
+ font-size:11.5px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-low{
+ font-size:10px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-health{
+ margin-bottom:8px!important;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-health-toggle{
+ min-height:45px;padding:5px 0;gap:8px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-heart{
+ width:20px;min-width:20px;font-size:20px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-health-title{
+ font-size:12px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-health-copy{
+ font-size:10.5px;line-height:1.25;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-actions{
+ gap:7px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-actions button{
+ min-height:41px;font-size:11.5px;padding:7px 3px;
+}
+.sv-weather-peek[data-origin="home"] .sv-weather-peek-source{
+ font-size:9px;margin-top:7px;
+}
+:root[data-theme="dark"] .sv-weather-peek[data-origin="home"]{
+ box-shadow:0 20px 44px rgba(0,0,0,.32),0 5px 14px rgba(0,0,0,.22),
+ inset 0 1px 0 rgba(255,255,255,.11)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ :root.sv-home-weather-preview.sv-home-empty-sphere #homePage #orbCluster{
+  transition:none!important;
+ }
+}
