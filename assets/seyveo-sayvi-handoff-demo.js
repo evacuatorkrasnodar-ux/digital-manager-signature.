@@ -419,13 +419,13 @@
 
   function runBrandSplash(){
     if(done)return;
-    // A separate first-launch brand sphere. Never replace the original
-    // #orb node or its working touch/voice handlers.
+    // Minimal Home-screen launch: the user's logo is already aligned to
+    // Sayvi's final location. One short enlargement, then reveal the app.
     const scene=document.createElement('div');
     scene.id='svLaunchIntro';
     scene.className='sv-launch-scene';
     scene.setAttribute('role','img');
-    scene.setAttribute('aria-label','SEYVEO — IT, AI, Automation. Запуск приложения.');
+    scene.setAttribute('aria-label','Загрузка SEYVEO');
     const backdrop=document.createElement('div');
     backdrop.className='sv-launch-backdrop';
     backdrop.setAttribute('aria-hidden','true');
@@ -433,25 +433,29 @@
     sphere.className='sv-launch-brand';
     const image=document.createElement('img');
     image.src='assets/seyveo-launch-sphere.svg?v=2';
-    image.alt='';
-    image.width=440;image.height=440;image.draggable=false;
+    image.alt='';image.width=440;image.height=440;image.draggable=false;
     sphere.append(image);
     const caption=document.createElement('div');
     caption.className='sv-launch-caption';
-    const name=document.createElement('span');
-    name.className='sv-launch-word';
-    name.textContent='SEYVEO';
-    const specialty=document.createElement('span');
+    caption.textContent='SEYVEO';
+    const specialty=document.createElement('div');
     specialty.className='sv-launch-specialty';
     specialty.textContent='IT · AI · AUTOMATION';
-    caption.append(name,specialty);
-    scene.append(backdrop,sphere,caption);
+    scene.append(backdrop,sphere,caption,specialty);
     document.body.append(scene);
     splashScene=scene;
     root.classList.add('sv-launch-splash-running');
-    // Once the real logo is painted, allow the Home to settle in place
-    // beneath the white scene. The bootstrap watchdog is only a fallback.
     root.classList.remove('sv-cinema-boot');
+    const orbRect=orb.getBoundingClientRect();
+    const viewportWidth=document.documentElement.clientWidth||window.innerWidth;
+    const cx=orbRect.width?orbRect.left+orbRect.width/2:viewportWidth/2;
+    const cy=orbRect.height?orbRect.top+orbRect.height/2:window.innerHeight*.42;
+    const targetSize=orbRect.width||Math.min(viewportWidth*.78,300);
+    const startSize=Math.min(220,Math.max(146,targetSize*.69));
+    scene.style.setProperty('--sv-launch-x',cx+'px');
+    scene.style.setProperty('--sv-launch-y',cy+'px');
+    scene.style.setProperty('--sv-launch-size',startSize+'px');
+    scene.style.setProperty('--sv-launch-scale',String(targetSize/startSize));
     window.dispatchEvent(new Event('seyveo:cinema-opening'));
     let settled=false;
     const complete=()=>{
@@ -459,30 +463,15 @@
       settled=true;
       finish({stayHome:true});
     };
-    const morph=()=>{
+    const enlarge=()=>{
       if(done||!scene.isConnected)return;
-      const from=sphere.getBoundingClientRect();
-      const target=orb.getBoundingClientRect();
-      if(!from.width||!target.width){complete();return;}
-      const dx=(target.left+target.width/2)-(from.left+from.width/2);
-      const dy=(target.top+target.height/2)-(from.top+from.height/2);
-      const scale=target.width/from.width;
-      root.classList.add('sv-launch-splash-morphing');
-      scene.classList.add('is-morphing');
-      const ms=1320*speed;
-      try{
-        splashMotion=sphere.animate([
-          {offset:0,transform:'translate(-50%,-50%) scale(1)',opacity:1},
-          {offset:.68,transform:`translate(calc(-50% + ${dx*.68}px),calc(-50% + ${dy*.68}px)) scale(${1+(scale-1)*.68})`,opacity:1},
-          {offset:1,transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(${scale})`,opacity:0}
-        ],{duration:ms,easing:'cubic-bezier(.24,.72,.18,1)',fill:'forwards'});
-        splashMotion.finished.then(complete).catch(()=>{if(!done)complete()});
-      }catch{complete()}
+      scene.classList.add('is-enlarged');
       clearTimeout(splashTimer);
-      splashTimer=setTimeout(complete,ms+300);
+      splashTimer=setTimeout(complete,230);
     };
-    // The brand has time to breathe before it becomes Sayvi's living glass.
-    splashTimer=setTimeout(morph,1450*speed);
+    // Short still loading screen, then a single 200 ms scale. No flight,
+    // rotation, mist, fade-to-black, or second logo.
+    splashTimer=setTimeout(enlarge,1200*speed);
   }
 
   function runOpening({waitForNarration=false}={}){
