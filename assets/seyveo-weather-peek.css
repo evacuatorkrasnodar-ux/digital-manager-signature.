@@ -52,9 +52,6 @@
 .sv-weather-peek .sv-weather-peek-details::after{content:"›";font-size:22px;line-height:.5;margin-left:11px;color:#65707c;font-weight:400}
 .sv-weather-peek .sv-weather-peek-details:active{background:rgba(232,235,240,.75)}
 .sv-weather-peek .sv-weather-peek-details:focus-visible{outline:2px solid #5b677a;outline-offset:2px}
-.sv-weather-peek .sv-weather-peek-source{
- margin:9px 0 0;text-align:center;color:#939aa3;font:400 10px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
-}
 .sv-weather-peek .sv-weather-peek-empty-copy{font-size:12px;color:#78818b;line-height:1.5}
 :root[data-theme="dark"] .sv-weather-peek{
  color:#F5F6F8;background:rgba(47,49,54,.94);border-color:rgba(255,255,255,.16);
@@ -298,9 +295,6 @@
 }
 .sv-weather-peek[data-origin="home"] .sv-weather-peek-low{
  font-size:10px;
-}
-.sv-weather-peek[data-origin="home"] .sv-weather-peek-source{
- font-size:9px!important;
 }
 :root[data-theme="dark"] .sv-weather-peek[data-origin="home"]{
  box-shadow:0 20px 44px rgba(0,0,0,.32),0 5px 14px rgba(0,0,0,.22),
