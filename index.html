@@ -5651,11 +5651,15 @@ window.addEventListener('load',()=>{
  document.getElementById('svNoteFormatMenu')?.addEventListener('click',e=>{
   const btn=e.target.closest('[data-note-format]');if(!btn)return;
   const kind=btn.dataset.noteFormat;
+  if(kind==='marker'||kind==='marker-underline'){
+   if(!window.SEYVEO_NOTE_MARKER?.open(kind))status('Не удалось открыть палитру маркера.');
+   return;
+  }
   const rich=window.SEYVEO_NOTE_RICH;
   const ok=rich?.format(kind);
   document.getElementById('svNoteFormatMenu').hidden=true;
   dlg.querySelector('[data-note-tool="heading"]')?.setAttribute('aria-expanded','false');
-  if(!ok)status(kind.startsWith('marker')?'Выдели слово или фразу, затем нажми маркер.':'Не удалось применить форматирование.');
+  if(!ok)status('Не удалось применить форматирование.');
  });
  document.getElementById('svNoteNewStandalone')?.addEventListener('click',()=>{
   window.SEYVEO_NOTES_EDITOR?.newNote();
@@ -5708,7 +5712,7 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=4"></script><script src="assets/seyveo-note-attachments.js?v=9"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=42"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=17"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=4"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
+</script><script src="assets/seyveo-note-richtext.js?v=5"></script><script src="assets/seyveo-note-attachments.js?v=9"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=42"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=17"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=4"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=10">
 <script src="assets/seyveo-dock-active-glass.js?v=4"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=2">
@@ -5758,7 +5762,7 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-note-voice.css?v=6">
 <link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=40">
 <link rel="stylesheet" href="assets/seyveo-universal-dock-inset.css?v=1">
-<link rel="stylesheet" href="assets/seyveo-notebook-context-actions.css?v=17">
+<link rel="stylesheet" href="assets/seyveo-notebook-context-actions.css?v=18">
 <link rel="stylesheet" href="assets/seyveo-paper-actions-compact.css?v=3">
 <script src="assets/seyveo-paper-actions-compact.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-paper-tool-picker.css?v=3">
