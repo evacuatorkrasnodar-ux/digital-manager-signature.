@@ -139,7 +139,7 @@
       button.id='svSayviHomeWeather';
       button.className='sv-sayvi-home-weather';
       button.hidden=true;
-      button.setAttribute('aria-label','Спросить Сэйви подробный прогноз погоды');
+      button.setAttribute('aria-label','Показать прогноз на неделю');
       const mark=document.createElement('span');
       mark.className='sv-sayvi-home-weather-mark';
       mark.setAttribute('aria-hidden','true');
@@ -225,7 +225,7 @@
           label.textContent=city+' · '+(forecastUnavailable?'Прогноз пока недоступен':'Обновляем прогноз');
           showFace(false);
           clearTimeout(homeWeekTimer);
-          button.title='Обновить прогноз погоды';
+          button.title='Обновить погоду';
           button.setAttribute('aria-label','Обновить прогноз погоды');
           return;
         }
@@ -237,16 +237,16 @@
         // One clean line on iPhone: the icon carries the condition visually.
         // Full conditions remain available in accessibility text and the chat.
         label.textContent=current.city+' · '+temperature(today.max)+' / '+temperature(today.min);
-        button.title='Открыть прогноз Сэйви';
+        button.title='Нажмите для прогноза на неделю';
         button.setAttribute('aria-label',
           'Погода: '+current.city+', '+temperature(today.max)+' / '+temperature(today.min)+
-          ', '+condition(today.code)+'. Открыть карточку прогноза');
+          ', '+condition(today.code)+'. Нажмите для прогноза на неделю');
         renderWeekFace();
         if(weekShowing)showFace(true);
         scheduleWeatherRotation();
       };
-      // TODAY and WEEK share one fixed Home weather slot. Rotates without
-      // user input; tapping either state still opens the existing popup.
+      // TODAY and WEEK share one fixed Home weather slot. Tapping reveals
+      // WEEK right here. The one-day popup in Tasks remains independent.
       const shortWeekDay=date=>new Intl.DateTimeFormat('ru-RU',{
         timeZone:'Europe/Moscow',weekday:'short'
       }).format(new Date(date+'T12:00:00Z')).replace('.','');
@@ -296,15 +296,15 @@
         weekFace.setAttribute('aria-hidden',weekShowing?'false':'true');
         if(weekShowing){
           button.setAttribute('aria-label',weekFace.dataset.voiceLabel+
-            '. Открыть карточку прогноза');
-          button.title='Погода на неделю · открыть карточку';
+            '. Нажмите для погоды на сегодня');
+          button.title='Нажмите для погоды на сегодня';
         }else{
           const today=current?.days[0];
           if(today){
             button.setAttribute('aria-label','Погода: '+current.city+', '+
               temperature(today.max)+' / '+temperature(today.min)+
-              ', '+condition(today.code)+'. Открыть карточку прогноза');
-            button.title='Погода сегодня · открыть карточку';
+              ', '+condition(today.code)+'. Нажмите для прогноза на неделю');
+            button.title='Нажмите для прогноза на неделю';
           }
         }
         schedulePlace();
@@ -316,9 +316,9 @@
           if(document.hidden){showFace(false);return;}
           showFace(!weekShowing);
           scheduleWeatherRotation();
-        },5000);
+        },weekShowing?7000:14000);
       }
-      // Popup remains unchanged on tap, with its own weekly mini-strip.
+      // Compatibility hooks for the legacy popup; Home tap no longer opens it.
       startHomeWeek=()=>{
         homeWeekActive=true;
         clearTimeout(homeWeekTimer);
@@ -351,10 +351,11 @@
       document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
       button.addEventListener('click',()=>{
         const forecast=getBrief();
-        const today=forecast?.days[0]?.date||dateKey();
-        if(window.SEYVEO_WEATHER_PEEK?.open)
-          window.SEYVEO_WEATHER_PEEK.open({anchor:button,date:today,origin:'home'});
-        else if(!openStation())window.SAYVI_WEATHER?.refresh?.();
+        if(!forecast){window.SAYVI_WEATHER?.refresh?.();return;}
+        current=forecast;
+        renderWeekFace();
+        showFace(!weekShowing);
+        scheduleWeatherRotation();
       });
     }
   }
