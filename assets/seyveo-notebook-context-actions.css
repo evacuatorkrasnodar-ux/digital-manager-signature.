@@ -492,3 +492,98 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
   scroll-padding-inline:8px!important;
  }
 }
+
+/* Notebook text marker · compact on-demand palette.
+   One existing four-color chooser is portalled out of the formatting menu.
+   The toolbar and the Apple-like pearl dock remain untouched. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] > #svNoteMarkerPalette[hidden]{
+ display:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] > #svNoteMarkerPalette.sv-note-marker-palette:not([hidden]){
+ position:absolute!important;z-index:91!important;
+ left:var(--sv-note-marker-left,16px)!important;
+ right:auto!important;top:auto!important;
+ bottom:calc(83px + env(safe-area-inset-bottom,0px))!important;
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ width:216px!important;min-width:0!important;max-width:calc(100vw - 24px)!important;
+ height:auto!important;min-height:0!important;
+ margin:0!important;padding:10px 11px 11px!important;gap:7px!important;
+ border:1px solid rgba(137,148,163,.19)!important;
+ border-radius:17px!important;outline:0!important;
+ background:rgba(250,251,253,.975)!important;
+ color:#252b33!important;
+ box-shadow:0 12px 30px rgba(25,35,47,.13),inset 0 1px 0 rgba(255,255,255,.9)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(105%)!important;
+ backdrop-filter:blur(12px) saturate(105%)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-caption{
+ display:block!important;
+ color:inherit!important;font:500 12px/17px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+ letter-spacing:-.01em!important;margin:0 1px!important;padding:0!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ box-sizing:border-box!important;align-items:center!important;justify-items:stretch!important;
+ width:100%!important;min-width:0!important;
+ gap:6px!important;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ position:relative!important;width:100%!important;min-width:0!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ margin:0!important;padding:0!important;
+ border:1px solid rgba(134,144,157,.12)!important;border-radius:11px!important;
+ background:rgba(173,183,196,.075)!important;
+ box-shadow:none!important;outline:0!important;
+ cursor:pointer!important;touch-action:manipulation!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button::before{
+ content:""!important;display:block!important;width:25px!important;height:12px!important;
+ border:0!important;border-radius:3px!important;
+ background:var(--sv-marker-swatch)!important;
+ transform:rotate(-5deg)!important;opacity:.97!important;
+ pointer-events:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette[data-sv-marker-mode="underline"] .sv-note-marker-colors > button::before{
+ height:5px!important;transform:rotate(-3deg)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button[data-sv-marker-tone="lemon"]{--sv-marker-swatch:#f1d55e}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button[data-sv-marker-tone="mint"]{--sv-marker-swatch:#84cda8}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button[data-sv-marker-tone="sky"]{--sv-marker-swatch:#9ec9ee}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button[data-sv-marker-tone="rose"]{--sv-marker-swatch:#edb1c2}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button[aria-pressed="true"]{
+ border-color:rgba(83,94,108,.35)!important;
+ background:rgba(155,165,177,.15)!important;
+ box-shadow:inset 0 0 0 .6px rgba(83,94,108,.16)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button:focus-visible{
+ outline:2px solid #4787c3!important;outline-offset:2px!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette.sv-note-marker-palette:not([hidden]){
+ background:rgba(43,46,52,.97)!important;
+ color:#f1f2f5!important;border-color:rgba(255,255,255,.15)!important;
+ box-shadow:0 12px 30px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button{
+ background:rgba(240,243,249,.07)!important;border-color:rgba(255,255,255,.1)!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteMarkerPalette .sv-note-marker-colors > button[aria-pressed="true"]{
+ background:rgba(235,239,245,.15)!important;border-color:rgba(255,255,255,.35)!important;
+}
