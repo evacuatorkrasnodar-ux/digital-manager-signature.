@@ -185,45 +185,79 @@
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanSignature{
  visibility:visible!important;
 }
-/* The text first advances towards the viewer with the sphere. Only in the
-   final 24% does it take its separate trajectory into the app header. */
+/* Director's cut: lettering advances towards the viewer *with* the sphere,
+   then rests naturally in the open area under it. No flight to the header. */
 @keyframes svLaunchNameFlight{
- 0%{opacity:0;transform:translate3d(0,11px,0) scale(.92)}
- 15%{opacity:1;transform:translate3d(0,0,0) scale(.985)}
- 55%{opacity:1;transform:translate3d(0,0,0) scale(1.055)}
- 76%{
-  opacity:1;transform:translate3d(0,0,0) scale(1.135);
-  animation-timing-function:cubic-bezier(.32,.03,.26,1);
+ 0%{opacity:0;transform:translate3d(0,18px,0) scale(.78)}
+ 18%{opacity:1;transform:translate3d(0,11px,0) scale(.87)}
+ 68%{opacity:1;transform:translate3d(0,1px,0) scale(1.01)}
+ 88%{
+  opacity:1;transform:translate3d(0,-1px,0) scale(1.045);
+  animation-timing-function:cubic-bezier(.19,.55,.31,1);
  }
- 100%{
-  opacity:1;
-  transform:translate3d(var(--sv-launch-text-dx,0px),var(--sv-launch-text-dy,0px),0)
-   scale(var(--sv-launch-text-sx,.35),var(--sv-launch-text-sy,.35));
- }
+ 100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
 }
 @keyframes svLaunchDescriptorFlight{
- 0%,21%{opacity:0;transform:translate3d(0,7px,0) scale(.94)}
- 37%{opacity:1;transform:translate3d(0,0,0) scale(.985)}
- 70%{opacity:1;transform:translate3d(0,0,0) scale(1.055)}
- 76%{
-  opacity:1;transform:translate3d(0,0,0) scale(1.12);
-  animation-timing-function:cubic-bezier(.32,.03,.26,1);
+ 0%,19%{opacity:0;transform:translate3d(0,16px,0) scale(.82)}
+ 40%{opacity:1;transform:translate3d(0,9px,0) scale(.93)}
+ 77%{opacity:1;transform:translate3d(0,0,0) scale(1.015)}
+ 89%{
+  opacity:1;transform:translate3d(0,-1px,0) scale(1.035);
+  animation-timing-function:cubic-bezier(.19,.55,.31,1);
  }
- 100%{
-  opacity:var(--sv-launch-text-end-opacity,1);
-  transform:translate3d(var(--sv-launch-text-dx,0px),var(--sv-launch-text-dy,0px),0)
-   scale(var(--sv-launch-text-sx,.3),var(--sv-launch-text-sy,.3));
- }
+ 100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
 }
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanName,
+#svLaunchClean[data-stage="landed"] .svLaunchCleanName,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanName{
  animation:svLaunchNameFlight 3300ms linear both!important;
 }
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanDescriptor,
+#svLaunchClean[data-stage="landed"] .svLaunchCleanDescriptor,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanDescriptor{
  animation:svLaunchDescriptorFlight 3300ms linear both!important;
 }
+/* A deliberate resting beat for the brand, followed by the real greeting.
+   Only signature opacity fades, so its metallic gradient stays sharp. */
+@keyframes svLaunchSignatureOut{
+ 0%{opacity:1;transform:translate3d(-50%,0,0)}
+ 100%{opacity:0;transform:translate3d(-50%,-7px,0)}
+}
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanSignature{
+ animation:svLaunchSignatureOut 410ms cubic-bezier(.35,0,.25,1) both!important;
+}
+#svLaunchClean[data-stage="landed"] .svLaunchCleanSignature{
+ visibility:visible!important;
+}
+#svLaunchClean[data-stage="landed"] .svLaunchCleanMark,
+#svLaunchClean[data-stage="landed"] .svLaunchCleanMark::before,
+#svLaunchClean[data-stage="landed"] .svLaunchCleanMark::after{
+ visibility:visible!important;
+}
+/* Keep the motion at its final frame throughout the brand's landing hold. */
+#svLaunchClean[data-stage="landed"] .svLaunchCleanMark{
+ animation:svLaunchApproach 3300ms linear both!important;
+}
+#svLaunchClean[data-stage="landed"] .svLaunchCleanMark::before{
+ animation:svLaunchMarkOut 3300ms linear both!important;
+}
+#svLaunchClean[data-stage="landed"] .svLaunchCleanMark::after{
+ animation:svLaunchHomeIn 3300ms linear both!important;
+}
+/* The final text transition is a true hand-off, not a second wordmark.
+   The Home greeting stays in the DOM, but is held transparent only during
+   this opening. When the green velvet lifts, Sayvi greets the user. */
+:root.sv-launch-greeting-hold #homePage #stage > .message{opacity:0!important}
+@keyframes svLaunchGreetingEnter{
+ from{opacity:0;transform:translate3d(0,10px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+:root.sv-launch-greeting-enter #homePage #stage > .message{
+ animation:svLaunchGreetingEnter 750ms cubic-bezier(.22,1,.36,1) both!important;
+}
 @media(prefers-reduced-motion:reduce){
  #svLaunchClean .svLaunchCleanName,
- #svLaunchClean .svLaunchCleanDescriptor{animation:none!important}
+ #svLaunchClean .svLaunchCleanDescriptor,
+ #svLaunchClean[data-stage="reveal"] .svLaunchCleanSignature{animation:none!important}
+ :root.sv-launch-greeting-enter #homePage #stage > .message{animation:none!important;opacity:1!important}
 }
