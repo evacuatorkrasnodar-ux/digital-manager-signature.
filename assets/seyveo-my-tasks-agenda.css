@@ -976,3 +976,33 @@ html.sv-agenda-scroll-active .app{
   font-size:10px!important;
  }
 }
+
+/* SWITCHED WEATHER MODE · only with Sayvi card (not a permanent second layer).
+   Days, task dots and hit targets never change size or position.
+   The preview owns data-sv-weather-mode, and clearing it restores task dots. */
+html:not([data-sv-weather-mode="true"]) #tasksPage #svTasksDateNav
+ .sv-agenda-day > .sv-agenda-day-weather{
+ display:none!important;
+}
+html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
+ .sv-agenda-day > .sv-agenda-day-weather{
+ display:inline-flex!important;
+ animation:sv-weather-day-reveal .22s ease-out both!important;
+}
+html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
+ .sv-agenda-day .sv-agenda-marks{
+ visibility:hidden!important;
+ opacity:0!important;
+}
+html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
+ .sv-agenda-day[data-has-tasks="true"] .sv-agenda-weekday::before{
+ visibility:hidden!important;
+}
+@keyframes sv-weather-day-reveal{
+ from{opacity:0;filter:blur(2px)}
+ to{opacity:.93;filter:blur(0)}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
+  .sv-agenda-day > .sv-agenda-day-weather{animation:none!important}
+}
