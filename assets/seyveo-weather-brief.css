@@ -273,3 +273,35 @@
  opacity:1!important;
  pointer-events:auto!important;
 }
+
+/* HOME WEEK ICONS · AGENDA BLUE. The previous SVGs used browser-default
+   solid black fill; match the thin cool-blue weather icons in Tasks. */
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol{
+ display:inline-flex!important;align-items:center!important;
+ justify-content:center!important;
+ color:#92a9c0!important;
+}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol svg{
+ display:block!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.55!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol svg :is(path,circle,ellipse,rect,line){
+ fill:none!important;stroke:currentColor!important;
+}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="sun"]{color:#d4ae71!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="cloud"]{color:#99acc1!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="rain"]{color:#7fadd1!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="snow"]{color:#a1bfda!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-name{color:#95a3b4!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-pair{color:#647b92!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-night{color:#99acc3!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day + .sv-home-weather-day{
+ border-left-color:rgba(140,161,182,.13)!important;
+}
+:root[data-theme="dark"] #homePage #svSayviHomeWeather .sv-home-weather-day-pair{color:#cbd6e2!important}
+:root[data-theme="dark"] #homePage #svSayviHomeWeather .sv-home-weather-day-night,
+:root[data-theme="dark"] #homePage #svSayviHomeWeather .sv-home-weather-day-name{
+ color:#a6b8c9!important;
+}
