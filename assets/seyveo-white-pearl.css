@@ -18,14 +18,16 @@
  /* White-pearl reflection without old silver interior staining. Two
     soft ambient shadows lift existing surfaces off the white paper; one
     delicate perimeter keeps the edge visible without a second ring. */
+ /* White-on-white sculpted elevation: soft far ambience plus a defined
+    near shadow. Same EXACT glass, rim, blur and 60/44px geometry. */
  --sv-white-pearl-circle-shadow:
-   0 6px 18px rgba(45,56,75,.075),
-   0 2px 5px rgba(45,56,75,.055),
+   0 11px 27px rgba(42,52,72,.11),
+   0 3px 8px rgba(42,52,72,.07),
    0 0 0 .4px rgba(164,173,187,.16),
    inset 0 1px 1px rgba(255,255,255,.85);
  --sv-white-pearl-dock-shadow:
-   0 5px 16px rgba(45,56,75,.055),
-   0 1.5px 4px rgba(45,56,75,.04),
+   0 9px 26px rgba(42,52,72,.09),
+   0 2.5px 7px rgba(42,52,72,.06),
    0 0 0 .4px rgba(164,173,187,.14),
    inset 0 1px 1px rgba(255,255,255,.75);
  --sv-white-pearl-press-fill:
