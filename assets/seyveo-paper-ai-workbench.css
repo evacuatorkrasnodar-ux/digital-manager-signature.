@@ -146,3 +146,34 @@ html body dialog#svPaperAskSayvi.sv-paper-ai-workbench::backdrop{
  #svPaperAskSayvi .sv-pa-quick-grid{gap:6px}
  #svPaperAskSayvi .sv-pa-quick-grid button{padding:8px;gap:6px;font-size:12px!important}
 }
+
+/* Creative roadmap: honest, low-contrast status chips without extra chrome. */
+#svPaperAskSayvi .sv-pa-quick-divider{
+ grid-column:1/-1;display:block;
+ padding:10px 1px 3px;margin:1px 0 0;
+ border-top:1px solid #ebeef2;color:#757c87;
+ font-size:11.5px;font-weight:560;line-height:17px;
+ letter-spacing:.005em;
+}
+#svPaperAskSayvi .sv-pa-quick-grid button.sv-pa-planned{
+ min-height:53px!important;
+ background:#fbfbfc!important;
+ border-color:#e9ebee!important;
+}
+#svPaperAskSayvi .sv-pa-quick-grid button.sv-pa-planned > span{
+ min-width:0;display:flex;flex-direction:column;gap:1px;
+ text-align:left;line-height:17px!important;
+}
+#svPaperAskSayvi .sv-pa-quick-grid button.sv-pa-planned small{
+ display:block;color:#858d98;font-weight:400;
+ font-size:10.5px;line-height:14px;
+}
+#svPaperAskSayvi .sv-pa-quick-grid button.sv-pa-planned:active{
+ background:#f3f4f6!important;
+}
+#svPaperAskSayvi .sv-pa-quick-grid button.sv-pa-planned svg{
+ stroke:#626b76;
+}
+#svPaperAskSayvi .sv-pa-quick-grid .sv-pa-quick-wide{
+ grid-column:1/-1;
+}
