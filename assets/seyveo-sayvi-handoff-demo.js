@@ -69,7 +69,7 @@
   let greetingTicker=0;
   let startGreeting=()=>{};
   let welcomeSpeech='';
-  if(showCinema&&message){
+  if(showCinema&&message&&voiceRequested){
     // The opening greeting is complete, instantly readable, and restrained.
     // Sayvi's approved orbital entrance and voice remain unchanged.
     welcomeSpeech='Привет! Рада тебя видеть!';
@@ -653,6 +653,72 @@
     });
   }
 
+  // Public launch: only the owner's original jade/platinum logo.
+  // Settle the REAL Home first, so its final orb coordinates are authoritative.
+  function runPureLogo(){
+    if(done)return;
+    const scene=document.createElement('div');
+    scene.className='sv-pure-launch';
+    scene.id='svPureLaunch';
+    scene.setAttribute('role','img');
+    scene.setAttribute('aria-label','Загрузка SEYVEO');
+    const logo=document.createElement('div');
+    logo.className='sv-pure-launch-logo';
+    const artwork=document.createElement('img');
+    artwork.src='assets/seyveo-launch-original.svg?v=1';
+    artwork.alt='';artwork.width=440;artwork.height=440;artwork.draggable=false;
+    logo.append(artwork);
+    scene.append(logo);
+    // This guard also disables the old studio wordmark drawn inside the orb.
+    root.classList.add('sv-pure-launch-completed');
+    document.body.append(scene);
+    const born=performance.now();
+    finish({stayHome:true});
+
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(!scene.isConnected)return;
+      const target=orb.getBoundingClientRect();
+      const windowWidth=document.documentElement.clientWidth||window.innerWidth;
+      const finalSize=target.width>80?target.width:Math.min(windowWidth*.78,315);
+      const x=target.width>80?target.left+target.width/2:windowWidth/2;
+      const y=target.height>80?target.top+target.height/2:window.innerHeight*.42;
+      const firstSize=finalSize*.73;
+      scene.style.setProperty('--sv-pure-x',x+'px');
+      scene.style.setProperty('--sv-pure-y',y+'px');
+      scene.style.setProperty('--sv-pure-size',firstSize+'px');
+      // Never exceed the exact rendered size of Sayvi's Home sphere.
+      scene.style.setProperty('--sv-pure-scale',String(finalSize/firstSize));
+      let started=false;
+      let endTimer=0;
+      const remove=()=>{clearTimeout(endTimer);scene.remove()};
+      const approach=()=>{
+        if(started||!scene.isConnected)return;
+        started=true;
+        scene.classList.add('is-approaching');
+        endTimer=setTimeout(remove,560);
+      };
+      const playWhenReady=()=>{
+        if(started||!scene.isConnected)return;
+        setTimeout(approach,Math.max(0,1050-(performance.now()-born)));
+      };
+      const loadReady=document.readyState==='complete'
+        ?Promise.resolve()
+        :new Promise(resolve=>{
+          window.addEventListener('load',resolve,{once:true});
+          setTimeout(resolve,1700);
+        });
+      Promise.all([loadReady,
+        typeof artwork.decode==='function'?artwork.decode().catch(()=>{}):Promise.resolve()
+      ]).then(playWhenReady).catch(playWhenReady);
+      // Safety watchdog: no permanent white loading screen on old Safari.
+      setTimeout(approach,2750);
+      window.addEventListener('pagehide',remove,{once:true});
+      scene.addEventListener('pointerdown',event=>{
+        event.preventDefault();event.stopPropagation();
+      },{passive:false});
+    }));
+  }
+
   // No automatic spoken welcome: the public launch is intentionally silent.
   // An explicitly requested private preview (?sayvi-voice=1) remains separate.
 
@@ -678,7 +744,7 @@
       prepareDock();
       root.classList.remove('sv-cinema-boot');
       showPrivateFileVoicePreview();
-    }else runOpening();
+    }else runPureLogo();
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
