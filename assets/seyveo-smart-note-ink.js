@@ -41,7 +41,7 @@
  bar.insertBefore(sayviBtn,check);
  bar.insertBefore(paperBtn,check);
  bar.insertBefore(voiceBtn,check);
- bar.insertBefore(eraserBtn,check);
+ // Eraser belongs to the separate handwriting rail; never insert it into the text capsule.
  bar.insertBefore(tableBtn,bar.querySelector('[data-note-tool="heading"]'));
  // Popovers must live outside the horizontally clipped scroller. Keep the
  // original nodes and their delegated handlers, never clone a working menu.
