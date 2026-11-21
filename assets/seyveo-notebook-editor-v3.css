@@ -574,7 +574,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
  touch-action:manipulation!important;padding:0!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
- .sv-note-bottom .sv-note-tools-compact>button:not([hidden]):not(:is([data-sv-smart-tool="text"],[data-note-tool="draw"],[data-note-tool="attachment"],[data-sv-smart-tool="sayvi"])){
+ .sv-note-bottom .sv-note-tools-compact:not([data-sv-unified-tools="true"])>button:not([hidden]):not(:is([data-sv-smart-tool="text"],[data-note-tool="draw"],[data-note-tool="attachment"],[data-sv-smart-tool="sayvi"])){
  display:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
@@ -589,7 +589,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
    devices, leaving a stray black glyph below the capsule. Paper stays in
    the contextual ink toolbar and the keyboard accessory. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button[data-sv-smart-tool="paper"]:not([hidden]){
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact:not([data-sv-unified-tools="true"]) > button[data-sv-smart-tool="paper"]:not([hidden]){
  display:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
