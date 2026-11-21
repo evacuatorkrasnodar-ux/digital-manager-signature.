@@ -1,4 +1,5 @@
-/* SEYVEO startup · one isolated, original logo. No app-layer transforms. */
+/* SEYVEO opening shot. The approved sphere is the only visual element.
+   The entire scene is isolated from Home, so its real orb is never transformed. */
 #svLaunchClean{
  all:initial!important;
  position:fixed!important;inset:0!important;
@@ -10,9 +11,16 @@
  border-radius:0!important;outline:0!important;
  overflow:hidden!important;isolation:isolate!important;
  background:#fff!important;z-index:2147483647!important;
+ opacity:1!important;
+ transition:opacity 460ms cubic-bezier(.22,1,.36,1)!important;
  -webkit-tap-highlight-color:transparent!important;
 }
-#svLaunchClean::backdrop{background:#fff!important}
+/* The full-screen dialog already covers the viewport; a white modal backdrop
+   would otherwise make the closing dissolve flash white instead of showing Home. */
+#svLaunchClean::backdrop{background:transparent!important}
+#svLaunchClean[data-stage="reveal"]{
+ opacity:0!important;pointer-events:none!important;
+}
 #svLaunchClean .svLaunchCleanMark{
  all:initial!important;
  position:absolute!important;display:block!important;
@@ -26,14 +34,22 @@
  transform-origin:center center!important;
  backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
  will-change:transform!important;
- transition:transform 740ms cubic-bezier(.7,.04,1,1)!important;
  visibility:hidden!important;
 }
+/* A genuine accelerating camera approach, with no extra glows, logos,
+   blur or copies of the sphere. The graphic remains exactly the approved PNG. */
+@keyframes svLaunchCleanApproach{
+ from{transform:translate3d(-50%,-50%,0) scale(1)}
+ to{transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,7))}
+}
 #svLaunchClean[data-stage="ready"] .svLaunchCleanMark,
-#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark{visibility:visible!important}
-#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark{
- transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,1.35))!important;
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{visibility:visible!important}
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
+ animation:svLaunchCleanApproach 3250ms cubic-bezier(.56,0,.95,.48) both!important;
 }
 @media(prefers-reduced-motion:reduce){
- #svLaunchClean .svLaunchCleanMark{transition:none!important}
+ #svLaunchClean{transition:none!important}
+ #svLaunchClean .svLaunchCleanMark{animation:none!important}
 }
