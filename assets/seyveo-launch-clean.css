@@ -34,22 +34,19 @@
  transform-origin:center center!important;
  backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
  will-change:transform!important;
+ transition:transform 3250ms cubic-bezier(.56,0,.95,.48)!important;
  visibility:hidden!important;
 }
-/* A genuine accelerating camera approach, with no extra glows, logos,
-   blur or copies of the sphere. The graphic remains exactly the approved PNG. */
-@keyframes svLaunchCleanApproach{
- from{transform:translate3d(-50%,-50%,0) scale(1)}
- to{transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,7))}
-}
+/* A continuously accelerating camera approach, with no extra glows,
+   blur, logos, or copies of the original sphere. */
 #svLaunchClean[data-stage="ready"] .svLaunchCleanMark,
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{visibility:visible!important}
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
- animation:svLaunchCleanApproach 3250ms cubic-bezier(.56,0,.95,.48) both!important;
+ transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,7))!important;
 }
 @media(prefers-reduced-motion:reduce){
  #svLaunchClean{transition:none!important}
- #svLaunchClean .svLaunchCleanMark{animation:none!important}
+ #svLaunchClean .svLaunchCleanMark{transition:none!important}
 }
