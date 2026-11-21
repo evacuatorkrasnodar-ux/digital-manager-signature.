@@ -99,7 +99,6 @@ html:root body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="hea
 }
 
 @media(prefers-reduced-motion:reduce){
- html:root body dialog#noteReviewDialog[open] #svNoteNewStandalone::before,
  html:root body dialog#calendarSpaceDialog[data-space="health"] .sv-health-dock-tab::before{
   transition:none!important;
  }
