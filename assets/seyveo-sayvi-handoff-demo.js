@@ -38,10 +38,9 @@
   const standaloneLaunch=matchMedia('(display-mode: standalone)').matches
     ||navigator.standalone===true;
   const atHome=!location.hash||location.hash==='#home';
-  const showCinema=atHome&&!noIntro&&(replay||voiceRequested||pageReload||
-    standaloneLaunch||!alreadySeen||
-    (typeof document!=='undefined'&&
-      document.documentElement.classList.contains('sv-broadcast-onboarding')));
+  // Retired the legacy multi-step public intro. The new independent splash
+  // owns startup; explicit private voice preview remains available.
+  const showCinema=atHome&&!noIntro&&voiceRequested;
   const root=document.documentElement;
   root.classList.add('sv-sayvi-handoff-demo');
   const home=document.getElementById('homePage');
@@ -69,7 +68,7 @@
   let greetingTicker=0;
   let startGreeting=()=>{};
   let welcomeSpeech='';
-  if(showCinema&&message&&voiceRequested){
+  if(showCinema&&message){
     // The opening greeting is complete, instantly readable, and restrained.
     // Sayvi's approved orbital entrance and voice remain unchanged.
     welcomeSpeech='Привет! Рада тебя видеть!';
@@ -653,91 +652,6 @@
     });
   }
 
-  // Public launch: only the owner's original jade/platinum logo.
-  // Settle the REAL Home first, so its final orb coordinates are authoritative.
-  function runPureLogo(){
-    if(done)return;
-    // One logo, exactly in the position of the final Home sphere. It stays
-    // fully hidden until the image is downloaded and decoded. An incomplete
-    // PNG must NEVER paint its top half on a white splash screen.
-    const scene=document.createElement('div');
-    scene.className='sv-pure-launch';
-    scene.id='svPureLaunch';
-    scene.setAttribute('role','img');
-    scene.setAttribute('aria-label','Загрузка SEYVEO');
-    const logo=document.createElement('div');
-    logo.className='sv-pure-launch-logo';
-    const artwork=document.createElement('img');
-    artwork.src='assets/seyveo-circular-interlace-approved-color.png?v=2';
-    artwork.alt='';
-    artwork.width=1254;artwork.height=1254;artwork.draggable=false;
-    artwork.loading='eager';artwork.decoding='sync';
-    logo.append(artwork);scene.append(logo);
-    // Attach to the root, not BODY. On iOS a transformed/clipped BODY can
-    // create a short fixed-position containing block and slice the sphere.
-    root.classList.add('sv-pure-launch-completed');
-    document.documentElement.appendChild(scene);
-    finish({stayHome:true});
-
-    let removed=false,ready=false,started=false;
-    let zoomTimer=0,doneTimer=0,watchdogTimer=0;
-    const cleanup=()=>{
-      if(removed)return;
-      removed=true;
-      clearTimeout(zoomTimer);clearTimeout(doneTimer);clearTimeout(watchdogTimer);
-      scene.remove();
-    };
-    // Fail open to the functioning Home, never leave a permanent white sheet.
-    watchdogTimer=setTimeout(cleanup,8500);
-    window.addEventListener('pagehide',cleanup,{once:true});
-    scene.addEventListener('pointerdown',event=>{
-      event.preventDefault();event.stopPropagation();
-    },{passive:false});
-
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      if(removed)return;
-      const rect=orb.getBoundingClientRect();
-      const vw=document.documentElement.clientWidth||window.innerWidth;
-      const vh=window.innerHeight;
-      const diameter=rect.width>80?rect.width:Math.min(vw*.78,315);
-      const cx=rect.width>80?rect.left+rect.width/2:vw/2;
-      const cy=rect.height>80?rect.top+rect.height/2:vh*.42;
-      const initial=diameter*.73;
-      scene.style.setProperty('--sv-pure-x',cx+'px');
-      scene.style.setProperty('--sv-pure-y',cy+'px');
-      scene.style.setProperty('--sv-pure-size',initial+'px');
-      // Grow only until the precise visible size of the real Sayvi orb.
-      scene.style.setProperty('--sv-pure-scale',String(diameter/initial));
-
-      const approach=()=>{
-        if(removed||started)return;
-        started=true;
-        scene.classList.add('is-approaching');
-        doneTimer=setTimeout(cleanup,940);
-      };
-      const showWholeImage=()=>{
-        if(removed||ready||!artwork.naturalWidth)return;
-        ready=true;
-        scene.classList.add('is-ready');
-        // Two full seconds with the WHOLE original sphere on screen.
-        zoomTimer=setTimeout(approach,2300);
-      };
-      const decodeComplete=()=>{
-        if(removed||ready)return;
-        if(typeof artwork.decode==='function')
-          artwork.decode().then(showWholeImage).catch(()=>{
-            if(artwork.complete&&artwork.naturalWidth)showWholeImage();
-          });
-        else showWholeImage();
-      };
-      if(artwork.complete&&artwork.naturalWidth)decodeComplete();
-      else {
-        artwork.addEventListener('load',decodeComplete,{once:true});
-        artwork.addEventListener('error',cleanup,{once:true});
-      }
-    }));
-  }
-
   // No automatic spoken welcome: the public launch is intentionally silent.
   // An explicitly requested private preview (?sayvi-voice=1) remains separate.
 
@@ -763,7 +677,7 @@
       prepareDock();
       root.classList.remove('sv-cinema-boot');
       showPrivateFileVoicePreview();
-    }else runPureLogo();
+    }else runOpening();
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
