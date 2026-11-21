@@ -262,3 +262,91 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
  opacity:.30!important;pointer-events:none!important;
  background:transparent!important;box-shadow:none!important;border:0!important;
 }
+
+/* Notebook typography pass 2026-11-21:
+   A focused keyboard must not revive duplicate editor icons. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-tools-compact > :is(
+  [data-sv-smart-tool="eraser"],
+  [data-sv-smart-tool="table"],
+  [data-sv-smart-tool="paper"],
+  [data-note-tool="heading"],
+  [data-note-tool="checklist"]
+ ){
+ display:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking
+ .sv-note-tools-compact > [data-sv-smart-tool="voice"]{
+ display:none!important;
+}
+/* Aa owns the secondary text functions; existing controls receive their
+   clicks by delegation, so nothing in the notebook becomes a dummy item. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ > #svNoteTopMenu.sv-note-top-menu:not([hidden]){
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ justify-content:stretch!important;align-items:stretch!important;
+ width:min(238px,calc(100vw - 36px))!important;
+ min-width:0!important;max-width:calc(100vw - 36px)!important;
+ height:auto!important;min-height:0!important;
+ max-height:min(350px,calc(100dvh - 135px))!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ padding:9px!important;gap:3px!important;
+ border-radius:16px!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteTopMenu.sv-note-top-menu > button[data-sv-note-secondary]{
+ grid-column:1/-1!important;justify-self:stretch!important;
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ min-height:37px!important;height:37px!important;
+ border:0!important;border-radius:10px!important;
+ margin:0!important;padding:0 11px!important;
+ background:transparent!important;color:var(--note-ink)!important;
+ text-align:left!important;
+ font:500 13px/19px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteTopMenu.sv-note-top-menu > button[data-sv-note-secondary="checklist"]{
+ border-top:1px solid rgba(132,141,151,.14)!important;
+ border-radius:0!important;
+ margin-top:4px!important;padding-top:3px!important;height:43px!important;
+}
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteTopMenu.sv-note-top-menu > button[data-sv-note-secondary]:active{
+ background:rgba(130,140,155,.10)!important;
+}
+/* "My Handwriting" lives below pen variants and thickness in the handwritten
+   note, never underneath the Notebook's three main launch tiles. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker .sv-ink-personalization{
+ display:flex!important;flex-direction:column!important;
+ align-items:stretch!important;gap:7px!important;
+ margin:10px 0 0!important;padding:11px 0 0!important;
+ border-top:1px solid rgba(132,141,151,.16)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker .sv-ink-personalization > strong{
+ color:var(--note-ink)!important;opacity:.7!important;
+ font:500 12px/18px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker .sv-ink-personalization > button{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ justify-content:flex-start!important;gap:9px!important;
+ min-height:39px!important;width:100%!important;margin:0!important;
+ padding:8px 12px!important;border:1px solid rgba(132,141,151,.15)!important;
+ border-radius:11px!important;background:rgba(140,151,164,.06)!important;
+ color:var(--note-ink)!important;box-shadow:none!important;
+ font:500 13px/19px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker .sv-ink-personalization > button svg{
+ flex:none!important;width:18px!important;height:18px!important;
+ fill:none!important;stroke:currentColor!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker:not([hidden]){
+ max-height:min(65dvh,410px)!important;overflow-y:auto!important;
+}
