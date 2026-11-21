@@ -127,6 +127,9 @@
       fog?'<path d="M6 20.5h12"/>':'');
     return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+body+'</svg>';
   };
+  // These callbacks are wired by the temporary Home preview only.
+  let startHomeWeek=()=>{};
+  let stopHomeWeek=()=>{};
   const home=document.getElementById('homePage');
   if(home){
     const cluster=home.querySelector('#orbCluster');
@@ -151,6 +154,9 @@
       else cluster.insertAdjacentElement('afterend',button);
       let current=null;
       let forecastUnavailable=false;
+      let homeWeekActive=false;
+      let homeWeekTimer=0;
+      let homeWeekIndex=0;
       // Weather sits between the painted globe and the bottom shortcut rail.
       // Coordinates are measured in the actual page, then converted to the
       // positioned stage. A raw 50dvh offset previously pushed this element
@@ -194,6 +200,13 @@
       if(homeOrb)resizeObserver.observe(homeOrb);
       const sync=()=>{
         current=getBrief();
+        if(homeWeekActive){
+          // The feed may refresh while the preview runs; keep the current
+          // animated day intact and render the new data on the next tick.
+          button.hidden=false;
+          schedulePlace();
+          return;
+        }
         const today=current?.days[0];
         // The Home weather row must not vanish when the feed is loading or
         // temporarily offline. Never invent temperatures for this fallback.
@@ -220,6 +233,64 @@
         button.setAttribute('aria-label',
           'Погода: '+current.city+', '+temperature(today.max)+' / '+temperature(today.min)+
           ', '+condition(today.code)+'. Спросить Сэйви подробный прогноз');
+      };
+      // The ordinary row is a stable one-line weather summary. While the
+      // sphere-slot card is showing, only this same row cycles through the
+      // next seven VERIFIED days. Every tick updates text and its matching
+      // weather pictogram; it never touches tasks or any Home shortcuts.
+      const weekName=date=>{
+        const timestamp=new Date(date+'T12:00:00Z');
+        return new Intl.DateTimeFormat('ru-RU',{
+          timeZone:'Europe/Moscow',weekday:'short',day:'numeric'
+        }).format(timestamp).replace('.','');
+      };
+      const renderWeek=()=>{
+        if(!homeWeekActive)return;
+        const forecast=getBrief();
+        const days=forecast?.days.slice(0,7)||[];
+        if(!days.length){
+          homeWeekActive=false;
+          sync();
+          return;
+        }
+        const day=days[homeWeekIndex%days.length];
+        homeWeekIndex=(homeWeekIndex+1)%days.length;
+        mark.dataset.weatherKind=day.code===0?'sun':
+          day.code>=51&&day.code<=67||day.code>=80&&day.code<=82?'rain':
+          day.code>=71&&day.code<=77||day.code>=85&&day.code<=86?'snow':
+          day.code>=95?'storm':day.code===45||day.code===48?'fog':'cloud';
+        mark.innerHTML=weatherGlyph(day.code);
+        const textValue=weekName(day.date)+' · '+temperature(day.max)+' днём / '+
+          temperature(day.min)+' ночью';
+        label.textContent=textValue;
+        button.title='Неделя · '+forecast.city+' · '+condition(day.code);
+        button.setAttribute('aria-label','Погода '+weekName(day.date)+
+          ': днём '+temperature(day.max)+', ночью '+temperature(day.min)+
+          ', '+condition(day.code)+'. Нажми, чтобы закрыть карточку Сэйви');
+        // Restart a soft cross-fade without moving the original button.
+        label.classList.remove('sv-home-weather-week-show');
+        mark.classList.remove('sv-home-weather-week-show');
+        void label.offsetWidth;
+        label.classList.add('sv-home-weather-week-show');
+        mark.classList.add('sv-home-weather-week-show');
+        clearTimeout(homeWeekTimer);
+        homeWeekTimer=setTimeout(renderWeek,2850);
+      };
+      startHomeWeek=()=>{
+        clearTimeout(homeWeekTimer);
+        homeWeekActive=true;
+        homeWeekIndex=0;
+        button.classList.add('sv-home-weather-week-active');
+        renderWeek();
+      };
+      stopHomeWeek=()=>{
+        clearTimeout(homeWeekTimer);
+        homeWeekTimer=0;
+        homeWeekActive=false;
+        button.classList.remove('sv-home-weather-week-active');
+        label.classList.remove('sv-home-weather-week-show');
+        mark.classList.remove('sv-home-weather-week-show');
+        sync();
       };
       sync();
       window.addEventListener('seyveo:weather-updated',()=>{
@@ -474,7 +545,7 @@
     return true;
   };
   window.SEYVEO_WEATHER_BRIEF=Object.freeze({
-    openStation,openDiscussion,
+    openStation,openDiscussion,startHomeWeek:()=>startHomeWeek(),stopHomeWeek:()=>stopHomeWeek(),
     isMessage:message=>typeof message==='string'&&message.startsWith(PREFIX),
     render:draw,
     acceptHandoff:append=>{
