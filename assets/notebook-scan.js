@@ -9,7 +9,17 @@ const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanTe
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
 const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
-const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText');
+const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText'),
+ manualButton=$('noteScanManual');
+function setStep(step){
+ // Three actual work stages, not transparent overlays or duplicate controls.
+ dialog.dataset.step=step;
+ if(manualButton)manualButton.hidden=true;
+}
+function offerManual(){
+ // Only offer manual entry when OCR couldn't find text or failed.
+ if(manualButton)manualButton.hidden=false;
+}
 // Show only usable actions. OCR result remains editable, including manual text.
 function syncActions(){
  if(toPaperButton)toPaperButton.disabled=!selected||running;
@@ -71,7 +81,8 @@ function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}}
 function reset(){
  selected=null;consented=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
- text.value='';text.wrap='soft';button.disabled=true;syncActions();message('Фото остаётся на устройстве. Проверьте текст перед сохранением.');
+ text.value='';text.wrap='soft';button.disabled=true;
+ setStep('pick');syncActions();message('');
 }
 function open(){if(dialog.open)return;intoOpenNote=false;reset();dialog.showModal()}
 function scanIntoNote(){
@@ -90,7 +101,9 @@ function select(file){
  }
  session++;selected=file;clearURL();localURL=URL.createObjectURL(file);preview.src=localURL;
  if(consentBox)consentBox.hidden=true;
- preview.hidden=false;button.disabled=running;syncActions();message('Фото готово. Нажмите «Распознать» или перепишите текст вручную.');
+ text.value='';setStep('photo');
+ preview.hidden=false;button.disabled=running;syncActions();
+ message('Фото остаётся на устройстве. Проверьте результат распознавания.');
 }
 function loadEngine(){
  if(window.Tesseract?.createWorker)return Promise.resolve(window.Tesseract);
@@ -140,12 +153,21 @@ async function recognize(){
   const raw=retainLines?textInOriginalLines(result?.data):String(result?.data?.text||'');
   const clean=cleanPhoneHeader(raw);
   const found=clean.value;
-  if(!found){message('Текст не обнаружен. Попробуйте другое фото или перепишите вручную.');return}
+  if(!found){
+   message('Текст не найден. Можно выбрать другое фото или ввести текст вручную.');
+   offerManual();
+   return;
+  }
   text.value=found.slice(0,8000);
-  syncActions();
-  message(clean.removed?'Убрана похожая на панель телефона строка. Проверьте текст и переносы.':'Текст распознан. Проверьте строки и возможные ошибки.');
+  setStep('edit');syncActions();
+  message(clean.removed?
+   'Возможно, удалена строка панели телефона. Проверьте результат перед сохранением.':
+   'Проверьте текст и исправьте возможные ошибки перед сохранением.');
  }catch(error){
-  if(token===session&&dialog.open)message((error?.message||'Не удалось распознать текст.')+' Можно набрать его вручную.');
+  if(token===session&&dialog.open){
+   message((error?.message||'Не удалось распознать текст.')+' Можно ввести текст вручную.');
+   offerManual();
+  }
  }finally{
   if(worker)try{await worker.terminate()}catch{}
   running=false;if(token===session){button.disabled=!selected;syncActions();}
@@ -187,6 +209,11 @@ for(const id of ['noteScanCamera','noteScanGallery']){
 // Actual newlines and the user's "preserve lines" OCR choice stay untouched.
 keepLines?.addEventListener('change',()=>{text.wrap='soft'});
 text.addEventListener('input',syncActions);
+manualButton?.addEventListener('click',()=>{
+ if(!selected||running)return;
+ setStep('edit');syncActions();
+ message('Введите текст вручную и сохраните его в Блокнот.');
+});
 button.addEventListener('click',()=>{
  if(running||!selected)return;
  if(!consented){
