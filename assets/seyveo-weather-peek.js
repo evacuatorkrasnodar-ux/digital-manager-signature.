@@ -199,6 +199,46 @@
    (timeWindow?', возможное время '+timeWindow:'')+'.');
   parent.append(section);
  }
+ function addWeekMini(parent,date){
+  // Forecast in the already existing popup; no new page, modal or button.
+  const week=document.createElement('section');
+  week.className='sv-weather-peek-week';
+  const header=document.createElement('div');
+  header.className='sv-weather-peek-week-head';
+  add('sv-weather-peek-week-title','Прогноз на неделю',header,'h3');
+  add('sv-weather-peek-week-hint','день / ночь',header);
+  week.append(header);
+  const strip=document.createElement('div');
+  strip.className='sv-weather-peek-week-strip';
+  const aria=[];let available=0;
+  for(let i=0;i<7;i++){
+   const key=nextDate(date,i),day=getDay(key);
+   const tile=document.createElement('span');
+   tile.className='sv-weather-peek-week-day';
+   if(i===0)tile.dataset.today='true';
+   const name=new Intl.DateTimeFormat('ru-RU',{
+    weekday:'short',timeZone:'Europe/Moscow'
+   }).format(new Date(key+'T12:00:00Z')).replace('.','');
+   add('sv-weather-peek-week-name',name,tile);
+   if(day){
+    available++;
+    const picture=add('sv-weather-peek-week-glyph','',tile);
+    picture.innerHTML=icon(day.code);
+    add('sv-weather-peek-week-high',Math.round(day.max)+'°',tile);
+    add('sv-weather-peek-week-low',Math.round(day.min)+'°',tile);
+    aria.push(name+': '+temp(day.max)+' / '+temp(day.min)+', '+condition(day.code));
+   }else{
+    add('sv-weather-peek-week-empty','—',tile);
+    aria.push(name+': нет данных');
+   }
+   strip.append(tile);
+  }
+  if(!available)return;
+  week.setAttribute('role','img');
+  week.setAttribute('aria-label','Погода на неделю: '+aria.join('; '));
+  week.append(strip);
+  parent.append(week);
+ }
  function open({anchor,date,origin}={}){
   if(!(anchor instanceof Element)||!anchor.isConnected||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date||''))return;
   if(origin==='agenda'&&!anchor.closest('.sv-agenda-section-heading[data-today="true"]'))return;
@@ -235,6 +275,7 @@
    add('sv-weather-peek-low','↑ '+temp(day.max)+'   ↓ '+temp(day.min),info);
    main.append(info);
    panel.append(main);
+   addWeekMini(panel,date);
    addRainTimeline(panel,date,src);
    // The Kp rings are readings, NOT controls and NOT a health-risk
    // percentage. Their numbers are the validated NOAA planetary index.
