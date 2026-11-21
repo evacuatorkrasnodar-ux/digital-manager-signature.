@@ -244,17 +244,6 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  color:var(--note-ink)!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{
- box-sizing:border-box!important;display:grid!important;place-items:center!important;
- position:absolute!important;z-index:1!important;
- left:var(--note-right)!important;top:0!important;right:auto!important;
- width:60px!important;min-width:60px!important;max-width:60px!important;
- height:60px!important;min-height:60px!important;max-height:60px!important;
- padding:0!important;margin:0!important;transform:none!important;
- border:0!important;border-radius:50%!important;outline:0!important;
- box-shadow:none!important;background:transparent!important;color:var(--note-ink)!important;
-}
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row svg{
  display:block!important;width:22px!important;height:22px!important;
  fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
@@ -293,9 +282,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
   left:14px!important;width:calc(100vw - 28px)!important;
   height:44px!important;min-height:44px!important;max-height:44px!important;
  }
- html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
-  .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-draw-standalone{display:none!important}
-}
+ }
 
 /* Popovers stay functional; no persistent decoration on the writing canvas. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
@@ -1057,9 +1044,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
  transform:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]) > svg,
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone > svg{
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]) > svg{
  box-sizing:border-box!important;display:block!important;
  width:25px!important;min-width:25px!important;max-width:25px!important;
  height:25px!important;min-height:25px!important;max-height:25px!important;
@@ -1069,19 +1054,8 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
  stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;filter:none!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone{
- display:grid!important;place-items:center!important;
- width:60px!important;min-width:60px!important;max-width:60px!important;
- height:60px!important;min-height:60px!important;max-height:60px!important;
- padding:0!important;margin:0!important;
- color:var(--note-ink)!important;opacity:1!important;
- transform:none!important;
-}
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]),
-html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock > #svNoteNewStandalone.sv-note-draw-standalone{
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact > button:not([hidden]){
  color:#27313a!important;
 }
 /* The Sayvi SVG uses just 63% of its square viewBox. A larger mask box
