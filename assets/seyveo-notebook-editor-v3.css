@@ -41,7 +41,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]{
  margin:0!important;
  /* The body now begins directly beneath the 44px navigation: the editable
     note name lives in its centered header slot, not in a second text row. */
- padding:max(84px,calc(env(safe-area-inset-top,0px) + 56px)) 20px max(10px,env(safe-area-inset-bottom,0px))!important;
+ padding:max(84px,calc(env(safe-area-inset-top,0px) + 56px)) 0 0!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;
  background:var(--note-page,#fff)!important;background-image:none!important;
@@ -113,7 +113,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] for
  box-sizing:border-box!important;display:flex!important;flex-direction:column!important;flex:1 1 auto!important;
  min-width:0!important;min-height:0!important;
  gap:0!important;margin:0!important;
- padding:0 0 calc(70px + env(safe-area-inset-bottom,0px))!important;
+ padding:0!important;
  border:0!important;outline:0!important;box-shadow:none!important;
  background:transparent!important;
 }
@@ -146,7 +146,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  flex:1 1 0!important;width:100%!important;min-width:0!important;
  height:auto!important;min-height:64px!important;max-height:none!important;
  resize:none!important;overflow-y:auto!important;
- margin:0!important;padding:5px 4px!important;
+ margin:0!important;padding:5px max(12px,env(safe-area-inset-right,0px)) calc(76px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;background:transparent!important;
  color:var(--note-ink)!important;
@@ -170,7 +170,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
    behind the capsule. Only the two control capsules paint a material. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-bottom{
  box-sizing:border-box!important;position:absolute!important;display:block!important;
- z-index:30!important;left:-20px!important;right:-20px!important;bottom:0!important;
+ z-index:30!important;left:0!important;right:0!important;bottom:0!important;
  width:100vw!important;max-width:none!important;flex:none!important;
  height:60px!important;min-height:60px!important;
  margin:0!important;padding:0!important;
@@ -699,7 +699,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  display:block!important;box-sizing:border-box!important;flex:1 1 0!important;
  width:100%!important;min-width:0!important;min-height:64px!important;
  height:auto!important;max-height:none!important;overflow-y:auto!important;
- margin:0!important;padding:5px 4px!important;
+ margin:0!important;padding:5px max(12px,env(safe-area-inset-right,0px)) calc(76px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))!important;
  border:0!important;border-radius:0!important;outline:0!important;
  box-shadow:none!important;background:transparent!important;
  color:var(--note-ink)!important;
@@ -723,6 +723,31 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  width:100%!important;max-height:min(35dvh,260px)!important;
  margin:10px 0 0!important;padding:0 0 12px!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
+}
+/* The document is full bleed. Only the typography has 12px readability
+   gutters; the scrollable editing surface extends BEHIND both floating docks.
+   The last line can still clear the 60px floating controls on scroll. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
+ scroll-padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+ -webkit-overflow-scrolling:touch;
+}
+/* Attachments remain in document flow with an unobstructed last row.
+   They do not create a page-wide extra background or an invisible frame. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ form#noteReviewForm.sv-note-editor:has(#svNoteAttachments:not([hidden])){
+ padding-bottom:calc(70px + env(safe-area-inset-bottom,0px))!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ form#noteReviewForm.sv-note-editor:has(#svNoteAttachments:not([hidden]))
+ :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
+ padding-bottom:5px!important;
+ scroll-padding-bottom:5px!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ form#noteReviewForm.sv-note-editor #svNoteAttachments.sv-note-attachments:not([hidden]){
+ padding-left:max(12px,env(safe-area-inset-left,0px))!important;
+ padding-right:max(12px,env(safe-area-inset-right,0px))!important;
 }
 /* Paper is now a continuous page-wide plane, not a background clipped to
    the text field. Its first rule begins BELOW the hint; it runs beneath the
