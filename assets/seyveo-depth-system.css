@@ -96,7 +96,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-
 /* Navigation circles: secondary depth, keeping pressed inset material.
    Save/Done's approved gold is not recolored. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- button#noteReviewBack.sv-note-back-arrow:not(:active),
+ button#noteReviewBack.sv-note-back-arrow,
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  button#svNoteDone.sv-note-nav-circle:not(:active){
  box-shadow:var(--sv-depth-circle)!important;
@@ -144,12 +144,8 @@ html body :is(
  ):not([hidden]){
  box-shadow:var(--sv-depth-menu)!important;
 }
-/* Pressed buttons preserve their own inset feedback, never gain a second
-   external halo while the finger is down. */
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- button#noteReviewBack.sv-note-back-arrow:active{
- box-shadow:var(--sv-depth-pressed)!important;
-}
+/* Navigation back arrows retain their raised shadow while pressed.
+   Do not reintroduce the retired inset appearance in this depth layer. */
 @media(prefers-reduced-transparency:reduce){
  /* Accessibility: remove blur by the existing rules; keep an edge/shadow
     as visual separation without relying on transparency. */
