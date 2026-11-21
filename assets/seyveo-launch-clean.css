@@ -1,0 +1,39 @@
+/* SEYVEO startup · one isolated, original logo. No app-layer transforms. */
+#svLaunchClean{
+ all:initial!important;
+ position:fixed!important;inset:0!important;
+ display:block!important;box-sizing:border-box!important;
+ width:100vw!important;height:100vh!important;height:100dvh!important;
+ min-width:0!important;min-height:0!important;
+ max-width:none!important;max-height:none!important;
+ margin:0!important;padding:0!important;border:0!important;
+ border-radius:0!important;outline:0!important;
+ overflow:hidden!important;isolation:isolate!important;
+ background:#fff!important;z-index:2147483647!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+#svLaunchClean::backdrop{background:#fff!important}
+#svLaunchClean .svLaunchCleanMark{
+ all:initial!important;
+ position:absolute!important;display:block!important;
+ left:var(--sv-launch-x,50%)!important;top:var(--sv-launch-y,45%)!important;
+ width:var(--sv-launch-d,175px)!important;
+ height:var(--sv-launch-d,175px)!important;
+ box-sizing:border-box!important;overflow:visible!important;
+ background-size:contain!important;background-position:center!important;
+ background-repeat:no-repeat!important;
+ transform:translate3d(-50%,-50%,0) scale(1)!important;
+ transform-origin:center center!important;
+ backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
+ will-change:transform!important;
+ transition:transform 740ms cubic-bezier(.7,.04,1,1)!important;
+ visibility:hidden!important;
+}
+#svLaunchClean[data-stage="ready"] .svLaunchCleanMark,
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark{visibility:visible!important}
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark{
+ transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,1.35))!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #svLaunchClean .svLaunchCleanMark{transition:none!important}
+}
