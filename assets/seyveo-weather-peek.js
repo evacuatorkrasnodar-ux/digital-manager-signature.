@@ -5,9 +5,16 @@
 (()=>{
  'use strict';
  const MAX_AGE=36*60*60*1000;
- const HIDE_AFTER=10000;
+ const HIDE_AFTER=30000;
  const getSource=()=>window.SAYVI_WEATHER;
- let panel=null,activeAnchor=null,activeDate='',timer=0,requestedRefresh=false;
+ let panel=null,activeAnchor=null,activeDate='',timer=0,requestedRefresh=false,agendaMode=false;
+ function resetTimer(){clearTimeout(timer);if(panel)timer=setTimeout(()=>close(),HIDE_AFTER);}
+ function setCalendarWeatherMode(on){
+  agendaMode=!!on;
+  if(agendaMode)document.documentElement.dataset.svWeatherMode='true';
+  else delete document.documentElement.dataset.svWeatherMode;
+  window.SAYVI_WEATHER?.syncRail?.();
+ }
  const condition=code=>{
   if(code===0)return 'Ясно';
   if(code===1||code===2)return 'Переменная облачность';
@@ -52,6 +59,7 @@
   clearTimeout(timer);timer=0;
   if(activeAnchor)activeAnchor.setAttribute('aria-expanded','false');
   activeAnchor=null;activeDate='';requestedRefresh=false;
+  setCalendarWeatherMode(false);
   if(!panel)return;
   const old=panel;panel=null;
   if(immediate){old.remove();return;}
@@ -62,16 +70,19 @@
   if(!panel||!activeAnchor||!activeAnchor.isConnected){close(true);return;}
   const rect=activeAnchor.getBoundingClientRect();
   const bounds=panel.getBoundingClientRect();
-  const topSafe=Math.max(12,Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-top)'))||12);
+  const viewport=window.visualViewport;
+  const viewTop=viewport?.offsetTop||0;
+  const viewHeight=viewport?.height||window.innerHeight;
+  const viewWidth=viewport?.width||window.innerWidth;
+  const viewLeft=viewport?.offsetLeft||0;
+  const topSafe=Math.max(viewTop+12,viewTop+(agendaMode?rect.bottom-viewTop+12:12));
   const dock=document.querySelector('body > footer.dock.sv-shared-dock');
-  const dockTop=dock&&!dock.hidden?dock.getBoundingClientRect().top:window.innerHeight-75;
-  const maxBottom=Math.min(window.innerHeight-14,dockTop-13);
-  const below=rect.bottom+11;
-  const above=rect.top-bounds.height-11;
-  const y=(below+bounds.height<=maxBottom)?below:
-   (above>=topSafe?above:Math.max(topSafe,maxBottom-bounds.height));
-  const x=Math.max(12,Math.min(window.innerWidth-bounds.width-12,
-   rect.left+rect.width/2-bounds.width/2));
+  const dockTop=dock&&!dock.hidden?dock.getBoundingClientRect().top:viewTop+viewHeight-72;
+  const maxBottom=Math.min(viewTop+viewHeight-12,dockTop-12);
+  /* Optical centre of usable iPhone space, without covering the day rail or dock. */
+  const desiredTop=viewTop+(viewHeight-bounds.height)/2;
+  const y=Math.max(topSafe,Math.min(desiredTop,Math.max(topSafe,maxBottom-bounds.height)));
+  const x=viewLeft+Math.max(12,(viewWidth-bounds.width)/2);
   panel.style.top=Math.round(y)+'px';
   panel.style.left=Math.round(x)+'px';
  }
@@ -87,6 +98,7 @@
   if(panel&&activeAnchor===anchor&&activeDate===date){close();return;}
   close(true);
   activeAnchor=anchor;activeDate=date;
+  setCalendarWeatherMode(origin==='agenda');
   anchor.setAttribute('aria-expanded','true');
   const src=getSource(),day=getDay(date),city=src?.getLocation?.()?.name||'Ваш город';
   panel=document.createElement('aside');
@@ -136,8 +148,8 @@
   if(day)add('sv-weather-peek-source','Open-Meteo · прогноз по дням'+(updated?' · '+stamp(updated)+' МСК':''),panel,'p');
   document.body.append(panel);
   position();
-  timer=setTimeout(()=>close(),HIDE_AFTER);
-  panel.addEventListener('pointerdown',()=>{clearTimeout(timer);timer=setTimeout(()=>close(),HIDE_AFTER);},{passive:true});
+  resetTimer();
+  panel.addEventListener('pointerdown',resetTimer,{passive:true});
   if(!day&&!requestedRefresh){requestedRefresh=true;src?.refresh?.();}
  }
  window.SEYVEO_WEATHER_PEEK=Object.freeze({open,close:()=>close()});
@@ -145,7 +157,15 @@
   if(panel&&!panel.contains(event.target)&&!activeAnchor?.contains(event.target))close();
  },true);
  document.addEventListener('keydown',event=>{if(event.key==='Escape')close();});
- document.addEventListener('scroll',()=>{if(panel)close();},{capture:true,passive:true});
+ document.addEventListener('scroll',event=>{
+  if(!panel)return;
+  if(agendaMode&&event.target?.closest?.('#svTasksDateNav')){resetTimer();return;}
+  if(agendaMode&&event.target?.matches?.('#svTasksDateNav .sv-agenda-week')){resetTimer();return;}
+  close();
+ },{capture:true,passive:true});
+ document.addEventListener('pointerdown',event=>{
+  if(agendaMode&&event.target?.closest?.('#svTasksDateNav'))resetTimer();
+ },{capture:true,passive:true});
  window.addEventListener('resize',()=>{if(panel)position();},{passive:true});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)close(true);});
  window.addEventListener('seyveo:route-changed',()=>close(true));
