@@ -231,3 +231,29 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
  .sv-smart-ink-tools:not([hidden]){
  box-shadow:var(--sv-depth-dock)!important;
 }
+
+/* Notebook text accessory polish v5: the typing capsule is pearl glass,
+   not an opaque white tray. The last partial tool remains a swipe hint but
+   receives a quiet edge fade rather than a hard-cut half glyph.
+   No changes to editor scroll, tool widths, click handlers or geometry. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+ background:rgba(225,229,234,.48)!important;
+ -webkit-backdrop-filter:blur(6px) saturate(108%)!important;
+ backdrop-filter:blur(6px) saturate(108%)!important;
+ border:.7px solid rgba(157,168,180,.18)!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact{
+ /* iOS Safari uses the prefixed mask. It fades only the accessory's
+    last 14px and never prevents touch-scrolling the full toolbar. */
+ -webkit-mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 17px),transparent 100%)!important;
+ mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 17px),transparent 100%)!important;
+ scroll-padding-inline:10px!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact{
+ -webkit-mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 17px),transparent 100%)!important;
+ mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 17px),transparent 100%)!important;
+ scroll-padding-inline:10px!important;
+}
