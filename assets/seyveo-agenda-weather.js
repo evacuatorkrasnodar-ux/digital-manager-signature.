@@ -166,12 +166,43 @@
   return '<svg viewBox="0 0 26 26" width="23" height="23" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">'+pieces[kind]+'</svg>';
  }
  function temperature(value){return Math.round(value)+'°';}
- /* One very small weather sign for each of the next ten calendar dates.
-    These are actual day buttons in the existing 105-day horizontal rail:
-    never duplicate cards, displace dates, or replace the task dots. */
+ /* Each calendar day has separate day and night readings. Prefer
+    actual hourly Moscow-time temperatures: day 08:00–19:59 of its date,
+    night 20:00–06:59 on the following date. When one half is not covered
+    by the ten-day feed, fall back to validated daily high/low and expose
+    that distinction to VoiceOver instead of inventing a nighttime value. */
+ function dayNightTemperatures(date,day,station){
+  const hourly=station?.hourly;
+  if(!Array.isArray(hourly?.time)||!Array.isArray(hourly?.temperature_2m))
+   return {high:day.max,low:day.min,precise:false};
+  const timestamp=Date.parse(date+'T12:00:00Z');
+  if(!Number.isFinite(timestamp))return {high:day.max,low:day.min,precise:false};
+  const following=new Date(timestamp+86400000).toISOString().slice(0,10);
+  const daytime=[],nighttime=[];
+  for(let i=0;i<hourly.time.length;i++){
+   const time=hourly.time[i],value=hourly.temperature_2m[i];
+   if(typeof time!=='string'||!Number.isFinite(value))continue;
+   const key=time.slice(0,10),hour=Number(time.slice(11,13));
+   if(key===date&&hour>=8&&hour<20)daytime.push(value);
+   if((key===date&&hour>=20)||(key===following&&hour<7))nighttime.push(value);
+  }
+  if(!daytime.length||!nighttime.length)
+   return {high:day.max,low:day.min,precise:false};
+  return {high:Math.max(...daytime),low:Math.min(...nighttime),precise:true};
+ }
+ function nightSVG(){
+  return '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" '+
+   'focusable="false" xmlns="http://www.w3.org/2000/svg" fill="none" '+
+   'stroke="currentColor" stroke-width="1.7" stroke-linecap="round" '+
+   'stroke-linejoin="round"><path d="M20.3 15.8A8.5 8.5 0 0 1 8.2 3.7 '+
+   '8.7 8.7 0 1 0 20.3 15.8Z"/></svg>';
+ }
+ /* Use the actual 105-day scroller, never clones or a second calendar rail.
+    Forecast appears only with the shared 30-second preview, replacing marks. */
  function paintDayRail(){
   const rail=document.querySelector('#tasksPage #svTasksDateNav .sv-agenda-week');
   if(!rail)return;
+  const station=getStationDataSafe();
   const now=new Date(),wanted=new Set();
   for(let i=0;i<10;i++){
    const date=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i,12);
@@ -180,36 +211,46 @@
   }
   rail.querySelectorAll('.sv-agenda-day[data-day]').forEach(button=>{
    const key=button.dataset.day;
-   const item=wanted.has(key)?days.get(key):null;
+   const day=wanted.has(key)?days.get(key):null;
    let badge=button.querySelector('.sv-agenda-day-weather');
-   if(!item||!Number.isFinite(item.max)||!Number.isFinite(item.code)){
+   if(!day||!Number.isFinite(day.max)||!Number.isFinite(day.min)||!Number.isFinite(day.code)){
     badge?.remove();
-    if(button.dataset.svWeatherBaseLabel){
+    if(button.dataset.svWeatherBaseLabel!==undefined){
      button.setAttribute('aria-label',button.dataset.svWeatherBaseLabel);
      delete button.dataset.svWeatherBaseLabel;
     }
     return;
    }
-   const [kind,label]=condition(item.code);
+   const [kind,label]=condition(day.code);
+   const values=dayNightTemperatures(key,day,station);
    if(!badge){
     badge=document.createElement('span');
     badge.className='sv-agenda-day-weather';
     badge.setAttribute('aria-hidden','true');
     button.append(badge);
    }
-   const symbol=document.createElement('span');
-   symbol.className='sv-agenda-day-weather-icon';
-   symbol.innerHTML=iconSVG(kind);
-   const degrees=document.createElement('small');
-   degrees.className='sv-agenda-day-weather-temp';
-   degrees.textContent=temperature(item.max);
-   badge.replaceChildren(symbol,degrees);
-   if(!button.dataset.svWeatherBaseLabel)
+   const row=(cls,svg,value)=>{
+    const line=document.createElement('span');line.className='sv-agenda-weather-half '+cls;
+    const pic=document.createElement('span');pic.className='sv-agenda-weather-half-icon';
+    pic.innerHTML=svg;
+    const number=document.createElement('small');number.className='sv-agenda-weather-half-value';
+    number.textContent=temperature(value);
+    line.append(pic,number);return line;
+   };
+   badge.replaceChildren(
+    row('sv-agenda-weather-half-day',iconSVG(kind),values.high),
+    row('sv-agenda-weather-half-night',nightSVG(),values.low)
+   );
+   if(button.dataset.svWeatherBaseLabel===undefined)
     button.dataset.svWeatherBaseLabel=button.getAttribute('aria-label')||'';
    button.setAttribute('aria-label',button.dataset.svWeatherBaseLabel+
     (document.documentElement.dataset.svWeatherMode==='true'?
-     '. Погода: '+label+', максимум '+temperature(item.max)+', минимум '+temperature(item.min):''));
+     '. '+label+', '+(values.precise?'днём ':'максимум ')+temperature(values.high)+
+     ', '+(values.precise?'ночью ':'минимум ')+temperature(values.low):''));
   });
+ }
+ function getStationDataSafe(){
+  return station&&updatedAt&&Date.now()-updatedAt<STALE_MS?station:null;
  }
  function paint(){
   const list=document.querySelector('#tasksPage #personalTaskList');
