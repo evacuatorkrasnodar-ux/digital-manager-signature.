@@ -155,6 +155,51 @@
   return '<svg viewBox="0 0 26 26" width="23" height="23" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">'+pieces[kind]+'</svg>';
  }
  function temperature(value){return Math.round(value)+'°';}
+ /* One very small weather sign for each of the next ten calendar dates.
+    These are actual day buttons in the existing 105-day horizontal rail:
+    never duplicate cards, displace dates, or replace the task dots. */
+ function paintDayRail(){
+  const rail=document.querySelector('#tasksPage #svTasksDateNav .sv-agenda-week');
+  if(!rail)return;
+  const now=new Date(),wanted=new Set();
+  for(let i=0;i<10;i++){
+   const date=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i,12);
+   wanted.add([date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),
+    String(date.getDate()).padStart(2,'0')].join('-'));
+  }
+  rail.querySelectorAll('.sv-agenda-day[data-day]').forEach(button=>{
+   const key=button.dataset.day;
+   const item=wanted.has(key)?days.get(key):null;
+   let badge=button.querySelector('.sv-agenda-day-weather');
+   if(!item||!Number.isFinite(item.max)||!Number.isFinite(item.code)){
+    badge?.remove();
+    if(button.dataset.svWeatherBaseLabel){
+     button.setAttribute('aria-label',button.dataset.svWeatherBaseLabel);
+     delete button.dataset.svWeatherBaseLabel;
+    }
+    return;
+   }
+   const [kind,label]=condition(item.code);
+   if(!badge){
+    badge=document.createElement('span');
+    badge.className='sv-agenda-day-weather';
+    badge.setAttribute('aria-hidden','true');
+    button.append(badge);
+   }
+   const symbol=document.createElement('span');
+   symbol.className='sv-agenda-day-weather-icon';
+   symbol.innerHTML=iconSVG(kind);
+   const degrees=document.createElement('small');
+   degrees.className='sv-agenda-day-weather-temp';
+   degrees.textContent=temperature(item.max);
+   badge.replaceChildren(symbol,degrees);
+   if(!button.dataset.svWeatherBaseLabel)
+    button.dataset.svWeatherBaseLabel=button.getAttribute('aria-label')||'';
+   button.setAttribute('aria-label',button.dataset.svWeatherBaseLabel+
+    '. Погода: '+label+', максимум '+temperature(item.max)+
+    ', минимум '+temperature(item.min));
+  });
+ }
  function paint(){
   const list=document.querySelector('#tasksPage #personalTaskList');
   if(!list)return;
@@ -189,6 +234,7 @@
    }
   });
   list.querySelectorAll('.sv-agenda-weather-source').forEach(credit=>credit.remove());
+  paintDayRail();
  }
  function parseForecast(json){
   const data=json?.daily;
