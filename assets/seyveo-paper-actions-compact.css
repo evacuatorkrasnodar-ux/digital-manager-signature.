@@ -41,3 +41,65 @@
  #notePaperDialog .sv-paper-photo-hint{gap:6px;padding:4px 5px 4px 9px}
  #notePaperDialog .sv-paper-photo-hint span{max-width:128px;font-size:10px}
 }
+
+/* Undo + Redo share the top-right position; the centre tool capsule keeps
+   its original dimensions and stays visually centred on iPhone. */
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history{
+ display:flex!important;flex-direction:row!important;
+ align-items:center!important;justify-content:center!important;
+ gap:1px!important;
+ box-sizing:border-box!important;
+ position:absolute!important;z-index:11!important;
+ top:50%!important;right:max(5px,env(safe-area-inset-right,0px))!important;
+ left:auto!important;bottom:auto!important;
+ transform:translateY(-50%)!important;
+ width:68px!important;min-width:68px!important;height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 32px!important;width:32px!important;min-width:32px!important;
+ max-width:32px!important;height:40px!important;min-height:40px!important;
+ max-height:40px!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#f3f5f7!important;opacity:1!important;
+ cursor:pointer!important;touch-action:manipulation!important;
+}
+html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface > .sv-paper-top > .sv-paper-history > button{
+ color:#292e36!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button > svg{
+ display:block!important;position:static!important;
+ width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button:disabled{
+ cursor:default!important;pointer-events:none!important;
+ opacity:.34!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button:disabled svg{
+ opacity:1!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button:not(:disabled):active{
+ background:rgba(127,136,148,.11)!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button:focus-visible{
+ outline:2px solid #2385e6!important;outline-offset:1px!important;
+}
+@media(max-width:355px){
+ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history{
+  width:56px!important;min-width:56px!important;gap:0!important;
+  right:max(2px,env(safe-area-inset-right,0px))!important;
+ }
+ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history > button{
+  flex:0 0 27px!important;width:27px!important;min-width:27px!important;
+  max-width:27px!important;
+ }
+}
