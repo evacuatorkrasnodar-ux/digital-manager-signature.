@@ -123,22 +123,22 @@
  #svLaunchClean[data-stage="reveal"]{animation:none!important;opacity:0!important}
 }
 
-/* Signature lockup. A quiet, calibrated reveal below the landing orb.
-   Letter spacing is CSS-only: the actual brand stays SEYVEO. */
+/* SEYVEO signature: platinum + a whisper of emerald in brushed-metal light.
+   The same two rendered texts travel from the hero into the *real* Home header.
+   No duplicated wordmark or image, and no movement of Home's actual UI. */
 #svLaunchClean .svLaunchCleanSignature{
  all:initial;
  position:absolute!important;
  left:var(--sv-launch-x,50%)!important;
  top:var(--sv-launch-word-y,75%)!important;
  width:min(90vw,390px)!important;
- display:flex!important;flex-direction:column!important;
- align-items:center!important;justify-content:center!important;
+ display:flex!important;
+ flex-direction:column!important;align-items:center!important;justify-content:center!important;
  gap:11px!important;
  transform:translate3d(-50%,0,0)!important;
  text-align:center!important;white-space:nowrap!important;
  pointer-events:none!important;user-select:none!important;
  -webkit-user-select:none!important;
- color:#e7f0ea!important;
  visibility:hidden!important;
 }
 #svLaunchClean .svLaunchCleanName,
@@ -146,11 +146,16 @@
  display:block!important;
  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI",Arial,sans-serif!important;
  font-style:normal!important;
- text-rendering:optimizeLegibility!important;
+ text-rendering:geometricPrecision!important;
  -webkit-font-smoothing:antialiased!important;
  white-space:nowrap!important;
+ transform-origin:center center!important;
+ backface-visibility:hidden!important;
+ -webkit-backface-visibility:hidden!important;
+ will-change:transform,opacity!important;
  opacity:0;
- will-change:opacity,transform;
+ /* Fallback if a browser cannot clip a background to text. */
+ color:#e5ecea!important;
 }
 #svLaunchClean .svLaunchCleanName{
  font-size:clamp(27px,7.7vw,38px)!important;
@@ -158,8 +163,11 @@
  font-weight:300!important;
  letter-spacing:.22em!important;
  padding-left:.22em!important;
- color:#f1f5f0!important;
- text-shadow:0 1px 12px rgba(9,19,15,.19)!important;
+ background:linear-gradient(166deg,#ffffff 0%,#e6f0ee 16%,#a8bfba 34%,#fcffff 51%,#95afa8 72%,#f1f5f1 100%)!important;
+ background-clip:text!important;
+ -webkit-background-clip:text!important;
+ -webkit-text-fill-color:transparent!important;
+ filter:drop-shadow(0 1px 3px rgba(1,12,8,.28));
 }
 #svLaunchClean .svLaunchCleanDescriptor{
  font-size:clamp(9px,2.25vw,11px)!important;
@@ -167,28 +175,53 @@
  font-weight:500!important;
  letter-spacing:.28em!important;
  padding-left:.28em!important;
- color:#c0cec5!important;
+ background:linear-gradient(150deg,#cdded5 0%,#eff6f1 39%,#9eb9ac 68%,#e6eee8 100%)!important;
+ background-clip:text!important;
+ -webkit-background-clip:text!important;
+ -webkit-text-fill-color:transparent!important;
 }
 #svLaunchClean[data-stage="ready"] .svLaunchCleanSignature,
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanSignature,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanSignature{
  visibility:visible!important;
 }
-@keyframes svLaunchNameReveal{
- 0%{opacity:0;transform:translate3d(0,11px,0)}
- 100%{opacity:1;transform:translate3d(0,0,0)}
+/* The text first advances towards the viewer with the sphere. Only in the
+   final 24% does it take its separate trajectory into the app header. */
+@keyframes svLaunchNameFlight{
+ 0%{opacity:0;transform:translate3d(0,11px,0) scale(.92)}
+ 15%{opacity:1;transform:translate3d(0,0,0) scale(.985)}
+ 55%{opacity:1;transform:translate3d(0,0,0) scale(1.055)}
+ 76%{
+  opacity:1;transform:translate3d(0,0,0) scale(1.135);
+  animation-timing-function:cubic-bezier(.32,.03,.26,1);
+ }
+ 100%{
+  opacity:1;
+  transform:translate3d(var(--sv-launch-text-dx,0px),var(--sv-launch-text-dy,0px),0)
+   scale(var(--sv-launch-text-sx,.35),var(--sv-launch-text-sy,.35));
+ }
 }
-@keyframes svLaunchDescriptorReveal{
- 0%{opacity:0;transform:translate3d(0,8px,0)}
- 100%{opacity:1;transform:translate3d(0,0,0)}
+@keyframes svLaunchDescriptorFlight{
+ 0%,21%{opacity:0;transform:translate3d(0,7px,0) scale(.94)}
+ 37%{opacity:1;transform:translate3d(0,0,0) scale(.985)}
+ 70%{opacity:1;transform:translate3d(0,0,0) scale(1.055)}
+ 76%{
+  opacity:1;transform:translate3d(0,0,0) scale(1.12);
+  animation-timing-function:cubic-bezier(.32,.03,.26,1);
+ }
+ 100%{
+  opacity:var(--sv-launch-text-end-opacity,1);
+  transform:translate3d(var(--sv-launch-text-dx,0px),var(--sv-launch-text-dy,0px),0)
+   scale(var(--sv-launch-text-sx,.3),var(--sv-launch-text-sy,.3));
+ }
 }
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanName,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanName{
- animation:svLaunchNameReveal 1150ms cubic-bezier(.22,1,.36,1) 350ms both!important;
+ animation:svLaunchNameFlight 3300ms linear both!important;
 }
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanDescriptor,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanDescriptor{
- animation:svLaunchDescriptorReveal 1300ms cubic-bezier(.22,1,.36,1) 730ms both!important;
+ animation:svLaunchDescriptorFlight 3300ms linear both!important;
 }
 @media(prefers-reduced-motion:reduce){
  #svLaunchClean .svLaunchCleanName,
