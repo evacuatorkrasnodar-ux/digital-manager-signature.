@@ -52,8 +52,8 @@ html body #svcpWorkChatScreen[data-view="room"] .svcp-room-identity{
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvatar{
  position:relative!important;
  display:grid!important;place-items:center!important;
- flex:0 0 52px!important;width:52px!important;height:52px!important;
- min-width:52px!important;min-height:52px!important;
+ flex:0 0 56px!important;width:56px!important;height:56px!important;
+ min-width:56px!important;min-height:56px!important;
  margin:0!important;padding:0!important;
  z-index:1!important;overflow:hidden!important;
  border:1px solid rgba(187,198,210,.45)!important;border-radius:50%!important;
@@ -79,11 +79,41 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversat
 /* Apple-style contact identity: the round avatar partly tucks behind the
    translucent name pill. Keep group and avatarless assistant headings intact. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([data-room-kind="groups"]):not([data-room-id="dm-sayvi"]) #svcpConversationHeading{
- margin-top:-11px!important;
+ margin-top:-19px!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-room-identity::before,
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-room-identity::after{
  content:none!important;display:none!important;
+}
+/* Preserve the older-messages action without placing its text over the avatar.
+   This action floats just below the identity, instead of occupying the top row
+   where an Apple-style chat header should remain visually clear. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpLoadOlder:not([hidden]){
+ position:absolute!important;
+ top:calc(133px + env(safe-area-inset-top,0px))!important;
+ left:50%!important;right:auto!important;
+ transform:translateX(-50%)!important;
+ z-index:16!important;
+ box-sizing:border-box!important;
+ width:max-content!important;max-width:calc(100% - 32px)!important;
+ height:30px!important;min-height:30px!important;
+ margin:0!important;padding:5px 12px!important;
+ border:1px solid rgba(255,255,255,.82)!important;
+ border-radius:999px!important;
+ background:rgba(255,255,255,.74)!important;
+ box-shadow:0 4px 14px rgba(31,45,62,.07)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(110%)!important;
+ backdrop-filter:blur(12px) saturate(110%)!important;
+ color:#77828e!important;font-size:11px!important;
+ white-space:nowrap!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpLoadOlder[hidden]{
+ display:none!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpLoadOlder:not([hidden]){
+ background:rgba(35,43,50,.82)!important;
+ border-color:rgba(230,240,250,.14)!important;
+ color:#d3dbe4!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversationHeading .svcp-room-name-pill{
  display:flex!important;align-items:center!important;justify-content:center!important;
