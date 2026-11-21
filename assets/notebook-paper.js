@@ -3,7 +3,7 @@
 (function(){
 'use strict';
 const W=840,H=1188,MAX_PAGE_HEIGHT=2600,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000,MAX_PHOTO=155000,MAX_TEXTS=24,MAX_TEXT_LENGTH=500;
-const tools=['pen','pencil','brush','spray','oil','watercolor','eraser','lasso','line','arrow','rect','circle','triangle','diamond'],patterns=['blank','lines','dots','grid'];
+const tools=['pen','pencil','brush','spray','oil','watercolor','marker','calligraphy','eraser','lasso','line','arrow','rect','circle','triangle','diamond'],patterns=['blank','lines','dots','grid'];
 const SHAPE_TOOLS=new Set(['line','arrow','rect','circle','triangle','diamond']);
 const COLORS=['#171e29','#556174','#27609b','#c54a51','#258463','#7954a3','#f6f7fb','#8e99aa','#aa5c22','#e73b39','#ff7a27','#ffb525','#2fb35f','#0c9999','#14b4cd','#3b77df','#6650d2','#983cde','#bd397b'];
 const HEX_RE=/^#[0-9a-fA-F]{6}$/;
@@ -22,9 +22,9 @@ const iosFingerInk=/iPhone|iPod/i.test(navigator.userAgent||'');
 let data={pattern:'blank',background:'dark',height:H,strokes:[],texts:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false,sayviHandoffBusy=false;
 let hiddenTextIndex=-1;
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
-let brushSizes={pen:5,pencil:3,brush:18,spray:48,oil:25,watercolor:30,eraser:36};
-const brushOpacity={brush:.8,spray:.56,oil:.94,watercolor:.54};
-const ART_TOOLS=new Set(['brush','spray','oil','watercolor']);
+let brushSizes={pen:5,pencil:3,brush:18,spray:48,oil:25,watercolor:30,marker:14,calligraphy:12,eraser:36};
+const brushOpacity={brush:.8,spray:.56,oil:.94,watercolor:.54,marker:.72,calligraphy:.98};
+const ART_TOOLS=new Set(['brush','spray','oil','watercolor','marker','calligraphy']);
 const sizeLimit=tool=>tool==='eraser'?80:tool==='spray'?90:ART_TOOLS.has(tool)?72:28;
 let undoStack=[],redoStack=[],lastInkMotionAt=0;
 const HISTORY_LIMIT=32;
@@ -997,6 +997,8 @@ function open(note=null){
   spray:recent.find(s=>s.tool==='spray'&&Number.isFinite(s.width))?.width||48,
   oil:recent.find(s=>s.tool==='oil'&&Number.isFinite(s.width))?.width||25,
   watercolor:recent.find(s=>s.tool==='watercolor'&&Number.isFinite(s.width))?.width||30,
+  marker:recent.find(s=>s.tool==='marker'&&Number.isFinite(s.width))?.width||14,
+  calligraphy:recent.find(s=>s.tool==='calligraphy'&&Number.isFinite(s.width))?.width||12,
   eraser:recent.find(s=>s.tool==='eraser'&&Number.isFinite(s.width))?.width||36
  };
  for(const tool of ART_TOOLS){
