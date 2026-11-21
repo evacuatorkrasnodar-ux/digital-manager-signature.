@@ -1333,3 +1333,31 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  > #svNoteFormatMenu .sv-note-marker-colors > button:focus-visible{
  outline:2px solid #4787c3!important;outline-offset:2px!important;
 }
+
+/* Notebook text visibility regression guard · 21 Nov 2026.
+   Rich formatting switches the source textarea to [hidden]. Earlier
+   high-specificity display:block!important on #noteReviewText overrode
+   that native hidden attribute, leaving TWO flex editors visible and the
+   actual typing surface obscured. Respect the editor's JS mode switch.
+   Preserve text contents, selection, autosave and handwriting layers. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ form#noteReviewForm.sv-note-editor > textarea#noteReviewText[hidden],
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ form#noteReviewForm.sv-note-editor > #svNoteRichEditor.sv-note-rich-editor[hidden]{
+ display:none!important;
+ flex:0 0 0!important;
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ form#noteReviewForm.sv-note-editor > textarea#noteReviewText:not([hidden]),
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ form#noteReviewForm.sv-note-editor > #svNoteRichEditor.sv-note-rich-editor:not([hidden]){
+ display:block!important;
+ visibility:visible!important;
+ opacity:1!important;
+ color:var(--note-ink,#121418)!important;
+ -webkit-text-fill-color:var(--note-ink,#121418)!important;
+ caret-color:var(--note-ink,#121418)!important;
+ pointer-events:auto!important;
+}
