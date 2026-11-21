@@ -29,6 +29,15 @@
   document.body.append(splash);
  }
  splash.hidden=false;
+ // Match the browser's safe-area/status-bar tone to the velvet opening.
+ // Restore the saved app theme color as soon as the opening is dismissed.
+ const themeMeta=document.querySelector('meta[name="theme-color"]');
+ const root=document.documentElement;
+ if(themeMeta){
+  if(!root.dataset.svLaunchPreviousThemeColor)
+   root.dataset.svLaunchPreviousThemeColor=themeMeta.getAttribute('content')||'';
+  themeMeta.setAttribute('content','#10271f');
+ }
  const mark=splash.querySelector('.svLaunchCleanMark');
  if(!mark){splash.remove();document.documentElement.classList.remove('sv-cinema-boot');return}
  let finished=false,opening=false,phaseTimer=0,landingTimer=0,cleanupTimer=0,watchdog=0;
@@ -38,7 +47,10 @@
   clearTimeout(phaseTimer);clearTimeout(landingTimer);
   clearTimeout(cleanupTimer);clearTimeout(watchdog);
   splash.remove();
-  document.documentElement.classList.remove('sv-cinema-boot');
+  if(themeMeta&&root.dataset.svLaunchPreviousThemeColor)
+   themeMeta.setAttribute('content',root.dataset.svLaunchPreviousThemeColor);
+  delete root.dataset.svLaunchPreviousThemeColor;
+  root.classList.remove('sv-cinema-boot');
  };
  const reveal=()=>{
   if(finished||opening)return;
