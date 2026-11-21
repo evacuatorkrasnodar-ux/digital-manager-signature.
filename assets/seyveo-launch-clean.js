@@ -1,5 +1,5 @@
-/* SEYVEO · Clean launch controller. Only the original approved sphere
-   at the Home sphere's coordinates; one short zoom, no second layers. */
+/* SEYVEO · Cinematic launch. One approved sphere, placed at the actual Home
+   orb coordinates. Calm hold, continuous acceleration, then Home reveal. */
 (()=>{
  'use strict';
  const params=new URLSearchParams(location.search);
@@ -38,7 +38,7 @@
  };
  window.addEventListener('pagehide',close,{once:true});
  splash.addEventListener('cancel',event=>{event.preventDefault();close()});
- watchdog=setTimeout(close,8000);
+ watchdog=setTimeout(close,15000);
 
  const source='assets/seyveo-circular-interlace-color-clean.png?v=clean-2';
  const img=new Image();
@@ -63,11 +63,14 @@
    const diameter=valid?rect.width:Math.min(w*.76,300);
    const x=valid?rect.left+rect.width/2:w/2;
    const y=valid?rect.top+rect.height/2:h*.42;
-   const firstSize=diameter*.75;
+   const firstSize=diameter*.9;
    splash.style.setProperty('--sv-launch-x',x+'px');
    splash.style.setProperty('--sv-launch-y',y+'px');
    splash.style.setProperty('--sv-launch-d',firstSize+'px');
-   splash.style.setProperty('--sv-launch-scale',String(diameter/firstSize));
+   // The final frame rushes past the camera; enough coverage for even the
+   // farthest screen corner. This never changes the Home sphere's own size.
+   const coverDiameter=Math.hypot(w,h)*1.55;
+   splash.style.setProperty('--sv-launch-scale',String(Math.max(6.4,coverDiameter/firstSize)));
    // Paint the complete decoded asset as one background. No progressive
    // half-PNG painting or globally styled IMG element.
    // Override the isolated element reset; otherwise its important "all"
@@ -78,11 +81,15 @@
     if(closed)return;
     if(matchMedia('(prefers-reduced-motion: reduce)').matches){close();return}
     splash.dataset.stage='zoom';
-    endTimer=setTimeout(close,800);
+    endTimer=setTimeout(()=>{
+     if(closed)return;
+     splash.dataset.stage='reveal';
+     endTimer=setTimeout(close,510);
+    },3250);
    };
-   // The image is visible and still for a beat, then zoom only to
-   // the Home sphere's final diameter, never beyond the screen.
-   endTimer=setTimeout(animate,1600);
+   // Give the emblem a calm, readable hold. Then accelerate towards the
+   // viewer instead of a tiny 1.3x zoom; dissolve only after the rush finishes.
+   endTimer=setTimeout(animate,1250);
   }));
  }).catch(close);
 })();
