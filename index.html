@@ -3093,7 +3093,7 @@ document.addEventListener('seyveo:silk-touch',()=>playFeedback('select'));
 
 /* Orb glyphs are now defined only once in assets/orb-language.js. */
 // The opening sphere itself is the emblem: use a quiet wordmark inside it.
-const BRAND_LOCKUP_HTML='';
+const BRAND_LOCKUP_HTML='<span class="brand-lockup"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
 const BRAND_STORE_KEY='dm-seyveo-signature-v2';
 const BRAND_MAX_DAILY=1,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=5400;
 let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
@@ -3149,8 +3149,6 @@ function transientNotice(key,type){
   if(type)window.SEYVEO_ORB_LANGUAGE?.show(type,4200);
 }
 function showBrandSignature(reason='ambient'){
-  // The studio signature lives on the launch screen only, never over Sayvi.
-  return false;
   if(document.hidden||$('homePage').hidden)return false;
   const progress=brandProgress(),now=Date.now();
   // Opening the app ALWAYS presents its approved logo, even after the ambient daily quota.
@@ -5724,8 +5722,7 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-my-broadcast.css?v=5">
 <script src="assets/seyveo-my-broadcast.js?v=9"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=81">
-<link rel="stylesheet" href="assets/seyveo-launch-scene.css?v=20261121-rush5">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=20261121-pure-logo6"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=44"><script src="assets/seyveo-review-cards.js?v=25"></script>
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=103"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=44"><script src="assets/seyveo-review-cards.js?v=25"></script>
 <link rel="stylesheet" href="assets/seyveo-progressive-discovery.css?v=2">
 <script src="assets/seyveo-progressive-discovery.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-home-status-light.css?v=2">
