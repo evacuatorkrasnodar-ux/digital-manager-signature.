@@ -1,7 +1,7 @@
 {
   "latitude": 45.027065,
   "longitude": 38.95273,
-  "generationtime_ms": 0.8261203765869141,
+  "generationtime_ms": 0.8298158645629883,
   "utc_offset_seconds": 10800,
   "timezone": "Europe/Moscow",
   "timezone_abbreviation": "GMT+3",
@@ -1701,5 +1701,5 @@
       12.8
     ]
   },
-  "fetched_at": "2026-11-21T05:47:15.126Z"
+  "fetched_at": "2026-11-21T05:47:51.846Z"
 }
