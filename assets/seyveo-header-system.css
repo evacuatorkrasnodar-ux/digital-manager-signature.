@@ -15,17 +15,11 @@
  --sv-nav-double-width:92px;
  --sv-nav-triple-width:134px;
  --sv-nav-icon-size:20px;
- /* Exact Home action finish: transparent body, hairline white rim.
-    Keep the tiny inset reflections; never build a second grey outline. */
- --sv-nav-pearl-border:.7px solid rgba(255,255,255,.28);
- --sv-nav-pearl-bg:transparent;
- --sv-nav-pearl-shadow:
-   0 0 0 .45px rgba(164,170,184,.16),
-   inset 0 1px 1px rgba(75,82,96,.055),
-   inset 0 -1px 0 rgba(255,255,255,.18),
-   inset .6px 0 .7px rgba(255,255,255,.16),
-   inset -.6px 0 .8px rgba(75,82,96,.055),
-   0 1px 2px rgba(82,88,103,.045);
+ /* Canonical button material is defined in seyveo-white-pearl.css.
+    Geometry stays here; no second white-theme shadow or border values. */
+ --sv-nav-pearl-border:var(--sv-white-pearl-edge);
+ --sv-nav-pearl-bg:var(--sv-white-pearl-surface);
+ --sv-nav-pearl-shadow:var(--sv-white-pearl-circle-shadow);
  --sv-header-row:62px;
  --sv-header-slot:44px;
  --sv-header-gap:8px;
@@ -37,19 +31,13 @@
  --sv-header-back-weight:1.45;
  --sv-header-action-icon:20px;
  --sv-header-action-weight:1.85;
- --sv-header-surface:#F2F1F6;
+ --sv-header-surface:#fff;
  --sv-header-ink:#1C1C1E;
  --sv-header-icon-ink:#0B0B0D;
- --sv-header-circle:transparent;
- --sv-header-circle-border:.7px solid rgba(255,255,255,.28);
- --sv-header-circle-shadow:
-    0 0 0 .45px rgba(164,170,184,.16),
-    inset 0 1px 1px rgba(75,82,96,.055),
-    inset 0 -1px 0 rgba(255,255,255,.18),
-    inset .6px 0 .7px rgba(255,255,255,.16),
-    inset -.6px 0 .8px rgba(75,82,96,.055),
-    0 1px 2px rgba(82,88,103,.045);
- --sv-header-circle-filter:blur(12px) saturate(108%);
+ --sv-header-circle:var(--sv-white-pearl-surface);
+ --sv-header-circle-border:var(--sv-white-pearl-edge);
+ --sv-header-circle-shadow:var(--sv-white-pearl-circle-shadow);
+ --sv-header-circle-filter:var(--sv-white-pearl-blur);
  --sv-header-segment:#EDEDED;
 }
 :root[data-theme="dark"]{
