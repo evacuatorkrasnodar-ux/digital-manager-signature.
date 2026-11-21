@@ -269,7 +269,6 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-tools-compact > :is(
   [data-sv-smart-tool="eraser"],
   [data-sv-smart-tool="table"],
-  [data-sv-smart-tool="paper"],
   [data-note-tool="heading"],
   [data-note-tool="checklist"]
  ){
