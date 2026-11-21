@@ -7,7 +7,7 @@
  const MAX_AGE=36*60*60*1000;
  const HIDE_AFTER=30000;
  const getSource=()=>window.SAYVI_WEATHER;
- let panel=null,activeAnchor=null,activeDate='',timer=0,requestedRefresh=false,agendaMode=false;
+ let panel=null,activeAnchor=null,activeDate='',timer=0,requestedRefresh=false,agendaMode=false,homeMode=false;
  function resetTimer(){clearTimeout(timer);if(panel)timer=setTimeout(()=>close(),HIDE_AFTER);}
  function setCalendarWeatherMode(on){
   agendaMode=!!on;
@@ -60,6 +60,11 @@
   if(activeAnchor)activeAnchor.setAttribute('aria-expanded','false');
   activeAnchor=null;activeDate='';requestedRefresh=false;
   setCalendarWeatherMode(false);
+  if(homeMode){
+   homeMode=false;
+   window.SEYVEO_WEATHER_BRIEF?.stopHomeWeek?.();
+   document.documentElement.classList.remove('sv-home-weather-preview');
+  }
   if(!panel)return;
   const old=panel;panel=null;
   if(immediate){old.remove();return;}
@@ -79,9 +84,28 @@
   const dock=document.querySelector('body > footer.dock.sv-shared-dock');
   const dockTop=dock&&!dock.hidden?dock.getBoundingClientRect().top:viewTop+viewHeight-72;
   const maxBottom=Math.min(viewTop+viewHeight-12,dockTop-12);
-  /* Optical centre of usable iPhone space, without covering the day rail or dock. */
-  const desiredTop=viewTop+(viewHeight-bounds.height)/2;
-  const y=Math.max(topSafe,Math.min(desiredTop,Math.max(topSafe,maxBottom-bounds.height)));
+  /* Home is a different placement from Agenda. Align the compact card
+     with the centre of the actual Sayvi sphere, never below or over the
+     shortcuts. The sphere itself fades, but its geometry stays reserved. */
+  let y;
+  if(homeMode){
+   const sphere=document.querySelector('#homePage #orb');
+   const sphereRect=sphere?.getBoundingClientRect();
+   const stageRect=document.querySelector('#homePage #stage')?.getBoundingClientRect();
+   const sphereMiddle=sphereRect?.height>36?
+    sphereRect.top+sphereRect.height/2:
+    (stageRect?.top||viewTop)+Math.min(210,viewHeight*.31);
+   const favorites=document.querySelector('#svHomeFavorites');
+   const favoritesRect=favorites&&!favorites.hidden?favorites.getBoundingClientRect():null;
+   const bottomLimit=Math.min(maxBottom,favoritesRect?.top?favoritesRect.top-14:maxBottom);
+   const allowedTop=viewTop+Math.max(42,Math.min(68,viewHeight*.09));
+   const upper=Math.max(allowedTop,bottomLimit-bounds.height);
+   y=Math.max(allowedTop,Math.min(sphereMiddle-bounds.height/2,upper));
+  }else{
+   /* Agenda keeps its own central placement below the date rail. */
+   const desiredTop=viewTop+(viewHeight-bounds.height)/2;
+   y=Math.max(topSafe,Math.min(desiredTop,Math.max(topSafe,maxBottom-bounds.height)));
+  }
   const x=viewLeft+Math.max(12,(viewWidth-bounds.width)/2);
   panel.style.top=Math.round(y)+'px';
   panel.style.left=Math.round(x)+'px';
@@ -98,11 +122,17 @@
   if(panel&&activeAnchor===anchor&&activeDate===date){close();return;}
   close(true);
   activeAnchor=anchor;activeDate=date;
+  homeMode=origin==='home'&&!!anchor.closest('#homePage');
   setCalendarWeatherMode(origin==='agenda');
+  if(homeMode){
+   document.documentElement.classList.add('sv-home-weather-preview');
+   window.SEYVEO_WEATHER_BRIEF?.startHomeWeek?.();
+  }
   anchor.setAttribute('aria-expanded','true');
   const src=getSource(),day=getDay(date),city=src?.getLocation?.()?.name||'Ваш город';
   panel=document.createElement('aside');
   panel.className='sv-weather-peek';
+  panel.dataset.origin=homeMode?'home':'agenda';
   panel.setAttribute('role','dialog');
   panel.setAttribute('aria-modal','false');
   panel.setAttribute('aria-label','Краткий прогноз Сэйви');
@@ -210,7 +240,7 @@
  window.addEventListener('seyveo:weather-updated',()=>{
   if(panel&&activeAnchor&&activeDate&&panel.dataset.weatherReady!=='true'){
    const anchor=activeAnchor,date=activeDate;
-   if(getDay(date))open({anchor,date,origin:agendaMode?'agenda':'home'});
+   if(getDay(date))open({anchor,date,origin:agendaMode?'agenda':homeMode?'home':'agenda'});
   }
  });
 })();
