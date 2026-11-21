@@ -641,15 +641,8 @@ html.sv-agenda-scroll-active .app{
  overflow:hidden!important;
  padding-bottom:0!important;
 }
-/* The old workspace layout added a 7px frame on either side of Work screens.
-   The calendar and separators reach the actual viewport edge; controls keep
-   their own local insets. Home and all other pages stay untouched. */
-@media(max-width:699px){
- html.sv-agenda-scroll-active .app.sv-dock-width-workspace:has(> #svWorkShell[data-shared-work="true"]){
-  padding-left:0!important;
-  padding-right:0!important;
- }
-}
+/* The consistent mobile Work viewport gutters now belong to the shared
+   tab component (seyveo-work-topbar.css), not agenda-only scroll rules. */
 #svWorkShell[data-agenda-scroll="true"]{
  flex:1 1 auto!important;
  min-height:0!important;
