@@ -257,3 +257,53 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
  mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 17px),transparent 100%)!important;
  scroll-padding-inline:10px!important;
 }
+
+/* Notebook material parity v6 · use the same pearl-glass recipe as the
+   approved iPhone keyboard accessory (rgba 225/229/234, 0.48; blur 6px).
+   Paint ONLY the existing left dock, separate right action circle and
+   contextual vertical handwriting rail; do not create a full-width footer
+   layer or apply opacity to buttons, text, or the canvas. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ .sv-smart-ink-tools:not([hidden]){
+ background:rgba(225,229,234,.48)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:blur(6px) saturate(108%)!important;
+ backdrop-filter:blur(6px) saturate(108%)!important;
+ border:.7px solid rgba(157,168,180,.18)!important;
+ /* Elevation stays soft; one pearl hairline, not a second frame. */
+ box-shadow:
+  0 5px 16px rgba(34,45,59,.095),
+  0 1.5px 4px rgba(34,45,59,.045),
+  inset 0 0 0 .6px rgba(153,165,177,.18),
+  inset 0 1px 1px rgba(255,255,255,.31)!important;
+}
+/* Dark mode keeps the same optical hierarchy, not a pale white surface. */
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after,
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ .sv-smart-ink-tools:not([hidden]){
+ background:rgba(91,97,106,.36)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:blur(6px) saturate(108%)!important;
+ backdrop-filter:blur(6px) saturate(108%)!important;
+ border:.7px solid rgba(255,255,255,.11)!important;
+ box-shadow:var(--sv-depth-dock)!important;
+}
+/* A system-wide reduced-transparency preference takes precedence. */
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+  .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after,
+ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+  .sv-smart-ink-tools:not([hidden]){
+  background:#edf0f3!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
