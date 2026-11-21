@@ -2789,6 +2789,14 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <button type="button" data-note-format="bold"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h7a4 4 0 0 1 0 8H7V4Zm0 8h8a4 4 0 0 1 0 8H7v-8Z"/></svg><span>Жирный</span></button>
 <button type="button" data-note-format="italic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4h10M4 20h10M15 4 9 20"/></svg><span>Курсив</span></button>
 <button type="button" data-note-format="underline"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v9a5 5 0 0 0 10 0V4M5 21h14"/></svg><span>Подчеркнуть</span></button>
+<button type="button" data-note-format="marker" title="Выделить выбранные слова цветом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 8.8-9a2 2 0 0 1 2.8 0l2.3 2.3a2 2 0 0 1 0 2.8L11 20H6v-5Z"/><path d="m12 9 5 5M3 22h17" /></svg><span>Выделить маркером</span></button>
+<button type="button" data-note-format="marker-underline" title="Подчеркнуть выбранные слова мягким маркером"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 11 6-6 4 4-6 6-4 1zM15 9l3 3M3 21c5-1 12-1 18 0"/></svg><span>Маркер-подчёркивание</span></button>
+<div class="sv-note-marker-colors" role="group" aria-label="Цвет текстового маркера">
+ <button type="button" data-sv-marker-tone="lemon" aria-label="Жёлтый маркер" aria-pressed="true" title="Жёлтый"></button>
+ <button type="button" data-sv-marker-tone="mint" aria-label="Мятный маркер" aria-pressed="false" title="Мятный"></button>
+ <button type="button" data-sv-marker-tone="sky" aria-label="Голубой маркер" aria-pressed="false" title="Голубой"></button>
+ <button type="button" data-sv-marker-tone="rose" aria-label="Розовый маркер" aria-pressed="false" title="Розовый"></button>
+</div>
 </div>
 <input id="svNotePhotoInput" type="file" accept="image/*" hidden>
 <input id="svNoteCameraInput" type="file" accept="image/*" capture="environment" hidden>
@@ -5647,7 +5655,7 @@ window.addEventListener('load',()=>{
   const ok=rich?.format(kind);
   document.getElementById('svNoteFormatMenu').hidden=true;
   dlg.querySelector('[data-note-tool="heading"]')?.setAttribute('aria-expanded','false');
-  if(!ok)status('Не удалось применить форматирование.');
+  if(!ok)status(kind.startsWith('marker')?'Выдели слово или фразу, затем нажми маркер.':'Не удалось применить форматирование.');
  });
  document.getElementById('svNoteNewStandalone')?.addEventListener('click',()=>{
   window.SEYVEO_NOTES_EDITOR?.newNote();
@@ -5700,7 +5708,7 @@ window.addEventListener('load',()=>{
  if(action==='voice'){const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){status('Диктовка недоступна в этом браузере.');return}const rec=new Rec();rec.lang='ru-RU';rec.interimResults=false;btn.setAttribute('aria-pressed','true');rec.onresult=(ev)=>insert(ev.results[0][0].transcript+' ');rec.onerror=()=>status('Не удалось распознать речь.');rec.onend=()=>btn.setAttribute('aria-pressed','false');try{rec.start()}catch{status('Микрофон недоступен.')}}
  });
 })();
-</script><script src="assets/seyveo-note-richtext.js?v=3"></script><script src="assets/seyveo-note-attachments.js?v=9"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=42"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=17"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=4"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
+</script><script src="assets/seyveo-note-richtext.js?v=4"></script><script src="assets/seyveo-note-attachments.js?v=9"></script><script src="assets/seyveo-note-menu-dismiss.js?v=5"></script><script src="assets/seyveo-chat-jump.js?v=2"></script><link rel="stylesheet" href="assets/seyveo-paper-outline.css?v=12"><link rel="stylesheet" href="assets/seyveo-home-dock-preview.css?v=42"><link rel="stylesheet" href="assets/seyveo-unified-white-canvas.css?v=4"><link rel="stylesheet" href="assets/seyveo-header-system.css?v=21"><link rel="stylesheet" href="assets/seyveo-notebook-page.css?v=17"><link rel="stylesheet" href="assets/seyveo-notebook-list-clean-v4.css?v=4"><link rel="stylesheet" href="assets/seyveo-task-editor-v3.css?v=57"><link rel="stylesheet" href="assets/seyveo-task-map-sheet.css?v=4"><link rel="stylesheet" href="assets/seyveo-saved-places.css?v=3"><link rel="stylesheet" href="assets/seyveo-meeting-place-picker.css?v=2"><script src="assets/sayvi-session-files.js?v=1"></script><script src="assets/seyveo-sayvi-paper-bridge.js?v=3"></script><script src="assets/seyveo-frame-inspector.js?v=1"></script>
 <link rel="stylesheet" href="assets/seyveo-dock-active-glass.css?v=10">
 <script src="assets/seyveo-dock-active-glass.js?v=4"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-mini-copy.css?v=2">
