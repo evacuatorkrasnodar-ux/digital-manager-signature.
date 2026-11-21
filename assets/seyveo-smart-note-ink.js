@@ -56,10 +56,10 @@
  const undoQuick=create('undo','Отменить ввод',icon('<path d="M9 8 5 12l4 4M5 12h8a6 6 0 0 1 6 6"/>'));
  const copyQuick=create('copy','Копировать текст',icon('<rect x="8.5" y="8.5" width="11" height="11" rx="1.8"/><path d="M15.5 8.5V6.1a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.4a2 2 0 0 0 2 2h2.5"/>'));
  const clearQuick=create('clear','Очистить печатный текст',icon('<path d="m4.5 14.5 9-9a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.1 20H8L4.5 16.5a1.5 1.5 0 0 1 0-2Z"/><path d="M11.1 20h9"/>'));
- // The first four are always the familiar Aa / pen / attachment / Sayvi.
+ // Primary order: Aa / pen / attachments / checklist / Sayvi.
  // A short swipe reveals list, real existing table insertion, formatting,
  // templates, voice, undo, copy, and protected clear.
- const ribbon=[textBtn,draw,attach,sayviBtn,check,tableBtn,formatButton,paperBtn,voiceBtn,undoQuick,copyQuick,clearQuick];
+ const ribbon=[textBtn,draw,attach,check,sayviBtn,tableBtn,formatButton,paperBtn,voiceBtn,undoQuick,copyQuick,clearQuick];
  for(const button of ribbon)if(button)bar.append(button);
  bar.setAttribute('aria-label','Прокручиваемые инструменты заметки');
  bar.dataset.svUnifiedTools='true';
