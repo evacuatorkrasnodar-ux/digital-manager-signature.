@@ -7,14 +7,15 @@
  const pen=dock?.querySelector('[data-paper-tool="pen"]');
  const engine=window.SEYVEO_PAPER;
  if(!dialog||!pen||!engine?.selectTool)return;
- const names={pen:'Ручка',pencil:'Карандаш',brush:'Кисть',spray:'Аэрограф',oil:'Масло'};
+ const names={pen:'Ручка',pencil:'Карандаш',brush:'Кисть',spray:'Аэрограф',oil:'Масло',watercolor:'Акварель'};
  const glyphs={
   pen:'<path d="M4 18c3-3 4-8 7-7s2 5 6 3"/><path d="m16 7 3-3 2 2-3 3-3 1z"/>',
   pencil:'<path d="m4 20 4-1 12-12-3-3L5 16l-1 4zM14 7l3 3"/>',
   brush:'<path d="M15 4 20 9 11 18l-4-4 8-10Z"/><path d="M7 14c-4 1-4 4-4 7 3 0 7-1 8-4"/>',
   spray:'<path d="M4 5h8v5H4zM7 10v4h4v6H5v-6"/><path d="M13 5h3M15 9h1M18 6h1M20 10h1M18 14h1M14 17h1"/>',
   // Oil paint: broad, recognisable flat paintbrush, never a thin syringe.
-  oil:'<path d="M17.8 2.8a2.5 2.5 0 0 1 3.4 3.4l-7.6 7.6-3.4-3.4 7.6-7.6Z"/><path d="M10.2 10.4 7.8 12.8l3.4 3.4 2.4-2.4"/><path d="M7.8 12.8C4.5 13.1 3 16 3 21c4.8-.3 7.6-1.9 8.2-4.8"/><path d="M6 16.9c.8-.1 1.4-.5 1.9-1.1"/>'
+  oil:'<path d="M17.8 2.8a2.5 2.5 0 0 1 3.4 3.4l-7.6 7.6-3.4-3.4 7.6-7.6Z"/><path d="M10.2 10.4 7.8 12.8l3.4 3.4 2.4-2.4"/><path d="M7.8 12.8C4.5 13.1 3 16 3 21c4.8-.3 7.6-1.9 8.2-4.8"/><path d="M6 16.9c.8-.1 1.4-.5 1.9-1.1"/>',
+  watercolor:'<path d="M12 2.8C9.8 6.4 5.1 11.1 5.1 15.2a6.9 6.9 0 0 0 13.8 0c0-4.1-4.7-8.8-6.9-12.4Z"/><path d="M8.3 16c.2 1.7 1.5 2.8 3.2 3.1"/><path d="M10.2 9.6c.5-.7 1.1-1.4 1.8-2.2"/>'
  };
  const svg=tool=>'<svg viewBox="0 0 24 24" class="sv-newdock-glyph" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+glyphs[tool]+'</svg>';
  // The current settings pane contained a duplicate pen/pencil selector.
@@ -43,7 +44,7 @@
  // The art tools get hidden state anchors so the proven engine's currentTool()
  // reads one active DOM node, including after eraser or shape selection.
  const hidden=document.createElement('div');hidden.hidden=true;
- for(const kind of ['brush','spray','oil']){
+ for(const kind of ['brush','spray','oil','watercolor']){
   const btn=document.createElement('button');
   btn.type='button';btn.hidden=true;btn.dataset.paperTool=kind;
   btn.setAttribute('aria-pressed','false');
@@ -58,7 +59,7 @@
  pen.setAttribute('aria-controls',picker.id);
  pen.setAttribute('aria-expanded','false');
  const selected=()=>engine.currentTool?.()||'pen';
- const ART=new Set(['brush','spray','oil']);
+ const ART=new Set(['brush','spray','oil','watercolor']);
  let lastPaint='pen';
  function sync(){
   const current=selected();
