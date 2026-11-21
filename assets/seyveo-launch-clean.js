@@ -40,7 +40,7 @@
  splash.addEventListener('cancel',event=>{event.preventDefault();close()});
  watchdog=setTimeout(close,8000);
 
- const source='assets/seyveo-circular-interlace-approved-color.png?v=clean-1';
+ const source='assets/seyveo-circular-interlace-color-clean.png?v=clean-2';
  const img=new Image();
  img.decoding='async';
  img.src=source;
