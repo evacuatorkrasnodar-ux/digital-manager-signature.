@@ -184,15 +184,9 @@ html:root[data-theme="light"] body dialog#noteReviewDialog[open]
  box-shadow:var(--sv-note-gold-shadow)!important;
 }
 
-/* Buttons in the header share the same tactile microstep. The separate
-   Home Search button owns a special open state — it is not changed here. */
+/* Action buttons retain the approved press state. Navigation and
+   header circles stay raised, neutral white and never turn blue. */
 html:root[data-theme="light"] body :is(
- .sv-header-material-circle,
- #noteReviewBack,
- #noteReadBack,
- #noteScanBack,
- #assistantChatHistoryBack,
- #sayviTopActions .sv-top-action,
  #calendarPage #calendarAdd,
  #calendarPage .calendar-header-add,
  #tasksPage .svcp-manager-task-create,
@@ -372,4 +366,59 @@ html:root[data-theme="light"] body #svWorkShell[data-active="personal"]
  color:var(--sv-white-pearl-ink)!important;
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
  backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+
+/* SEYVEO WHITE PEARL · FLAT HEADER NAVIGATION · 21 Nov 2026.
+   Back / return / header circles never show blue, inset press, or scale.
+   Keep one approved floating glass surface. Leave the New Note, Home dock,
+   coloured Done buttons and creative tools exactly as designed. */
+html:root[data-theme="light"] body :is(
+ .sv-header-material-circle,
+ .sv-continuity-titlebar > button:is(.seyveo-picture-back,.life-back,.sv-deep-back,.manage-theme-back),
+ #sayviSurfaceBack,
+ #noteReviewBack,
+ #noteReadBack,
+ #noteScanBack,
+ #assistantChatHistoryBack,
+ #sayviTopActions .sv-top-action,
+ dialog[open] button:is(.sv-nav-back,.sv-nav-arrow)
+):not(:disabled):is(:active,:focus-visible){
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:50%!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ color:var(--sv-white-pearl-ink)!important;
+ filter:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html:root[data-theme="light"] body :is(
+ .sv-header-material-circle,
+ .sv-continuity-titlebar > button:is(.seyveo-picture-back,.life-back,.sv-deep-back,.manage-theme-back),
+ #sayviSurfaceBack,
+ #noteReviewBack,
+ #noteReadBack,
+ #noteScanBack,
+ #assistantChatHistoryBack,
+ #sayviTopActions .sv-top-action,
+ dialog[open] button:is(.sv-nav-back,.sv-nav-arrow)
+):not(:disabled):active{
+ transform:none!important;
+ transition:none!important;
+}
+html:root[data-theme="light"] body :is(
+ .sv-header-material-circle,
+ .sv-continuity-titlebar > button:is(.seyveo-picture-back,.life-back,.sv-deep-back,.manage-theme-back),
+ #sayviSurfaceBack,
+ #noteReviewBack,
+ #noteReadBack,
+ #noteScanBack,
+ #assistantChatHistoryBack,
+ #sayviTopActions .sv-top-action,
+ dialog[open] button:is(.sv-nav-back,.sv-nav-arrow)
+):focus-visible{
+ outline:2px solid rgba(55,65,76,.62)!important;
+ outline-offset:3px!important;
 }
