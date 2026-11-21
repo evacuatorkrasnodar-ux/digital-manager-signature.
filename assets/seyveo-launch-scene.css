@@ -25,7 +25,7 @@
 }
 .sv-launch-caption{
  position:absolute;left:var(--sv-launch-x,50vw);
- top:calc(var(--sv-launch-y,42vh) + var(--sv-launch-size,195px)/2 + 19px);
+ top:calc(var(--sv-launch-y,42vh) + var(--sv-launch-half-size,97.5px) + 19px);
  transform:translateX(-50%);white-space:nowrap;
  font:520 23px/1.1 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
  letter-spacing:.24em;padding-left:.24em;text-align:center;color:#485d62;
