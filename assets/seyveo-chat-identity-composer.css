@@ -62,6 +62,30 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvata
  box-shadow:0 3px 11px rgba(40,50,64,.08),inset 0 1px 0 rgba(255,255,255,.96)!important;
  font-size:25px!important;font-weight:580!important;
 }
+/* Apple photo/monogram placement: the glass title overlaps the lower part
+   of the circle. Keep the *whole* initial visible in the uncovered upper part.
+   Real photo avatars (if supplied by the profile) retain their full-bleed crop. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:not([data-room-kind="groups"]):not([data-room-id="dm-sayvi"])
+ #svcpRoomAvatar:not(:has(img,picture)){
+ box-sizing:border-box!important;
+ padding:0 0 18px!important;
+ line-height:1!important;
+ font-size:22px!important;
+ background:radial-gradient(circle at 34% 18%,#F5FBFF 0%,#E4F0FA 51%,#D0E2F0 100%)!important;
+ color:#243746!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:not([data-room-kind="groups"]):not([data-room-id="dm-sayvi"])
+ #svcpConversationHeading .svcp-room-name-pill{
+ position:relative!important;
+ z-index:2!important;
+ background:rgba(255,255,255,.72)!important;
+ border-color:rgba(255,255,255,.9)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(112%)!important;
+ backdrop-filter:blur(14px) saturate(112%)!important;
+ box-shadow:0 4px 15px rgba(30,40,55,.105),inset 0 1px 0 rgba(255,255,255,.96)!important;
+}
 html body #svcpWorkChatScreen[data-view="room"] #svcpRoomAvatar .sv-sayvi-symbol{
  width:30px!important;height:30px!important;color:#13191e!important;
 }
