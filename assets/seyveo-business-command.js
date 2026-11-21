@@ -2446,16 +2446,9 @@ function renderChat(){
      helper.setAttribute('aria-label','Сэйви поможет выполнить это задание');
      bubble.append(helper);
     }
-    // Sayvi recognition suggestions are a small contextual star UNDER
-    // the relevant message, not a bulky prompt inside its bubble.
-    // The manager must tap and confirm before any recognition is awarded.
-    // One quiet row of actions is always available UNDER the message.
-    // No ellipsis, dropdown or long-press-only controls.
-    // Exactly three quick actions are visible. Other operations remain
-    // available on long press, desktop right-click, or keyboard menu key.
-    const menu=el('div','svcp-message-inline-actions');
-    menu.setAttribute('role','group');
-    menu.setAttribute('aria-label','Основные действия с сообщением');
+    // All primary actions live in the existing contextual menu.
+    // No repeated button rails under messages. Long press/right click/
+    // keyboard context action exposes Reply, Bookmark and Assign.
     function svcpActionIcon(title,kind,callback,className){
      const control=btn('',callback,className+' svcp-icon-action svcp-action-'+kind);
      control.setAttribute('aria-label',title);
@@ -2478,9 +2471,6 @@ function renderChat(){
      control.appendChild(svg);
      return control;
     }
-    menu.append(svcpActionIcon('Ответить','reply',()=>{
-     closeMessageMenus();startReply(msg);
-    },'svcp-message-menu-item'));
     // Keep bookmark independent of staff-recognition awards.
     const starControl=svcpActionIcon(msg.starred?'Убрать из избранного':'В избранное','star',()=>{
      const updated=state.chat.map((item,i)=>i===index?{...item,starred:!item.starred}:item);
@@ -2495,17 +2485,10 @@ function renderChat(){
     },'svcp-message-menu-item');
     starControl.classList.toggle('is-saved',!!msg.starred);
     starControl.setAttribute('aria-pressed',String(!!msg.starred));
-    menu.append(starControl);
     const canAssign=!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena';
-    // The same one-row actions are docked below every media attachment.
-    // Document-only messages also remain eligible for manager assignments.
+    // Document-only messages remain eligible for manager assignments.
     if(canAssign&&bubble.classList.contains('svcp-document-only'))
      bubble.classList.add('svcp-document-assignable');
-    if(canAssign){
-     menu.append(svcpActionIcon('Поручить','task',()=>{
-      closeMessageMenus();prepareTask(msg,index);
-     },'svcp-message-menu-item'));
-    }
     // Context-only actions. Edit and deletion permissions are preserved.
     const secondary=[];
     secondary.push({title:'Копировать',kind:'copy',run:async()=>{
@@ -2549,17 +2532,14 @@ function renderChat(){
       if(awardRecognitionSuggestion(recognitionProposal.sourceKey))renderChat();
      }});
     }
-    // Single standalone emoji: no visible action rail. The same actions stay
-    // available through the long-press / right-click / keyboard context menu.
-    if(emojiOnly||bubble.classList.contains('svcp-document-only')){
-     secondary.unshift(
-      {title:'Ответить',kind:'reply',run:()=>{closeMessageMenus();startReply(msg)}},
-      {title:msg.starred?'Убрать из избранного':'В избранное',kind:'star',
-       run:()=>starControl.click()}
-     );
-     if(canAssign)secondary.splice(2,0,
-      {title:'Поручить',kind:'task',run:()=>{closeMessageMenus();prepareTask(msg,index)}});
-    }
+    // Primary actions are on demand for every message, including media.
+    secondary.unshift(
+     {title:'Ответить',kind:'reply',run:()=>{closeMessageMenus();startReply(msg)}},
+     {title:msg.starred?'Убрать из избранного':'В избранное',kind:'star',
+      run:()=>starControl.click()}
+    );
+    if(canAssign)secondary.splice(2,0,
+     {title:'Поручить',kind:'task',run:()=>{closeMessageMenus();prepareTask(msg,index)}});
     const openContextActions=()=>{
      const screen=$('svcpWorkChatScreen');
      if(!screen||!bubble.isConnected||!secondary.length)return;
@@ -2638,11 +2618,8 @@ function renderChat(){
      event.preventDefault();
      if(!$('svcpWorkChatScreen')?.querySelector('.svcp-message-context-menu'))openContextActions();
     });
-    // Do not mount or reserve layout space for the three-action row on emojis.
-    if(!emojiOnly){
-     bubble.classList.add('svcp-has-inline-actions');
-     bubble.append(menu);
-    }
+    // No inline action DOM or svcp-has-inline-actions class: the
+    // conversation scrolls without 39px rails between short messages.
    }
    // Every message gets one clock in its bottom corner. File cards and
    // sticker-like emoji already have a dedicated overlay and keep it.
