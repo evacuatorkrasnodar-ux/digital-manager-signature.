@@ -349,6 +349,12 @@
   const chosen=INK_COLORS.find(([value])=>value===penColor);
   nativeColorPicker.setAttribute('aria-label','Цвет пера: '+(chosen?.[1]||'Свой цвет'));
   inkWidthBtn.setAttribute('aria-label',INK_STYLES[inkStyle]+' · выбор инструмента и толщины');
+  const icons={
+   pen:'<path d="M4 18c3-3 5-8 7-7 2 0 .4 5 5 3"/><path d="m16 7 3-3 2 2-3 3-3 1z"/>',
+   marker:'<path d="m5 17 10-12 4 3-10 12H5v-3Z"/><path d="m12 8 4 4"/>',
+   calligraphy:'<path d="M4 20c4-2 6-6 10-10l6-7 2 2-6 7C12 16 9 19 4 20Z"/><path d="m14 10 4 3"/>'
+  };
+  inkWidthBtn.innerHTML=icon(icons[inkStyle]);
   syncInkPicker();
  }
  function geometry(){
@@ -650,9 +656,10 @@
   }
   return next;
  };
+ const isWritingStroke=s=>INK_STYLE_NAMES.has(s.tool);
  const inkBounds=list=>{
   const box={minX:Infinity,minY:Infinity,maxX:-Infinity,maxY:-Infinity};
-  for(const s of list)if(s.tool==='pen')for(const p of s.points){
+  for(const s of list)if(isWritingStroke(s))for(const p of s.points){
    box.minX=Math.min(box.minX,p[0]);box.maxX=Math.max(box.maxX,p[0]);
    box.minY=Math.min(box.minY,p[1]);box.maxY=Math.max(box.maxY,p[1]);
   }
@@ -665,7 +672,7 @@
   const scale=Math.min((canvas.width-24)/Math.max(1,maxX-minX),(canvas.height-24)/Math.max(1,maxY-minY),3);
   c.clearRect(0,0,canvas.width,canvas.height);c.fillStyle='#fff';c.fillRect(0,0,canvas.width,canvas.height);
   c.save();c.translate(12,12);c.scale(scale,scale);c.translate(-minX,-minY);
-  for(const s of list){if(s.tool!=='pen'||!s.points.length)continue;
+  for(const s of list){if(!isWritingStroke(s)||!s.points.length)continue;
    c.beginPath();c.moveTo(s.points[0][0],s.points[0][1]);
    for(const p of s.points.slice(1))c.lineTo(p[0],p[1]);
    c.strokeStyle=validColor(s.color)||'#1a2630';c.lineWidth=s.width||5;c.lineCap='round';c.lineJoin='round';c.stroke();
@@ -686,7 +693,7 @@
   return ocrLoader;
  }
  function inkPng(){
-  const pen=strokes.filter(s=>s.tool==='pen'&&s.points.length);
+  const pen=strokes.filter(s=>isWritingStroke(s)&&s.points.length);
   if(!pen.length)throw Error('Сначала напиши что-нибудь от руки.');
   const box=inkBounds(pen);
   const minX=Math.max(0,box.minX-32),maxX=Math.min(W,box.maxX+32);
@@ -715,14 +722,14 @@
   return out.toDataURL('image/png');
  }
  async function recognizeInk(){
-  if(!strokes.some(s=>s.tool==='pen'&&s.points.length))throw Error('Сначала напиши что-нибудь от руки.');
+  if(!strokes.some(s=>isWritingStroke(s)&&s.points.length))throw Error('Сначала напиши что-нибудь от руки.');
   sayviStatus.textContent='Читаю рукопись на этом устройстве…';
   if(!strokes.some(s=>s.tool==='eraser')&&typeof navigator.createHandwritingRecognizer==='function'&&typeof window.HandwritingStroke==='function'){
    let recognizer;
    try{
     recognizer=await navigator.createHandwritingRecognizer({languages:['ru']});
     const drawing=recognizer.startDrawing({recognitionType:'text',alternatives:2});
-    for(const s of strokes.filter(s=>s.tool==='pen')){
+    for(const s of strokes.filter(isWritingStroke)){
      const stroke=new window.HandwritingStroke();
      s.points.forEach((p,i)=>stroke.addPoint({x:p[0],y:p[1],t:i*12}));drawing.addStroke(stroke);
     }
@@ -781,8 +788,8 @@
     if(formatted===original)throw Error('Текст уже оформлен аккуратно.');
     previewText(formatted,'format',original);
    }else if(action==='smooth'){
-    if(!strokes.some(s=>s.tool==='pen'&&s.points.length>=5))throw Error('Для выравнивания нужны несколько рукописных штрихов.');
-    const proposed=strokes.map(s=>s.tool==='pen'?{...s,points:smoothPoints(s.points)}:{...s,points:s.points.map(p=>p.slice())});
+    if(!strokes.some(s=>isWritingStroke(s)&&s.points.length>=5))throw Error('Для выравнивания нужны несколько рукописных штрихов.');
+    const proposed=strokes.map(s=>isWritingStroke(s)?{...s,points:smoothPoints(s.points)}:{...s,points:s.points.map(p=>p.slice())});
     sayviProposal={kind:'smooth',source:JSON.stringify(strokes),strokes:proposed};
     previewSmoothedInk(proposed);sayviInkPreview.hidden=false;
     sayviApply.hidden=false;sayviApply.textContent='Применить выравнивание';
