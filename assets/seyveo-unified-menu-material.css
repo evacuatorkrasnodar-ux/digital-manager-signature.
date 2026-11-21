@@ -28,6 +28,34 @@
  --sv-menu-item-selected-border:rgba(255,255,255,.18);
  --sv-menu-rule:rgba(255,255,255,.14);
 }
+/* Reusable opt-in primitives for every new menu. Existing menus are
+ * explicitly listed below; don't style every <dialog> or generic .panel. */
+html:root body .sv-menu-surface{
+ box-sizing:border-box;
+ border:var(--sv-menu-border);
+ border-radius:var(--sv-menu-radius);
+ background:var(--sv-menu-bg);
+ color:var(--sv-menu-text);
+ box-shadow:var(--sv-menu-shadow);
+ -webkit-backdrop-filter:none;
+ backdrop-filter:none;
+}
+html:root body .sv-menu-surface .sv-menu-choice{
+ display:flex;align-items:center;gap:8px;
+ min-height:40px;padding:8px 11px;
+ border:1px solid var(--sv-menu-item-border);
+ border-radius:11px;
+ background:var(--sv-menu-item);
+ color:var(--sv-menu-text);
+ font:500 13px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+}
+html:root body .sv-menu-surface .sv-menu-choice[aria-pressed="true"]{
+ background:var(--sv-menu-item-selected);
+ border-color:var(--sv-menu-item-selected-border);
+}
+html:root body .sv-menu-surface .sv-menu-choice:focus-visible{
+ outline:2px solid #397bc6;outline-offset:2px;
+}
 /* Stable mini-menu surfaces in Work Chat, Tasks and Notebook.
  * Layout, popup position and intrinsic grids are intentionally untouched.
  */
