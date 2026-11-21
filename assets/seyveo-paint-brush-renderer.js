@@ -160,36 +160,59 @@
   if(!points?.length)return;
   const opacity=alphaOf(s),pigment=grad(ctx,s),base=colorOf(s);
   ctx.save();ctx.globalCompositeOperation='source-over';
+  ctx.lineJoin='round';ctx.lineCap='round';
   if(points.length===1){
    const p=points[0],radius=Math.max(.7,widthOf(s,p)/2);
-   for(const [factor,alpha] of [[1.2,.075],[1,.18],[.7,.28]]){
+   for(const [factor,alpha] of [[1.24,.085],[1.05,.16],[.76,.24]]){
     ctx.beginPath();ctx.arc(p[0],p[1],radius*factor,0,Math.PI*2);
     ctx.fillStyle=pigment;ctx.globalAlpha=opacity*alpha;ctx.fill();
    }
    ctx.restore();return;
   }
-  const geo=geometry(s,points);
-  // Broad transparent wash with fuzzy fringe; each pass is continuous so the
-  // stroke does not turn into a chain of separate round-ended sections.
-  for(const [scale,alpha] of [[1.18,.07],[1.06,.13],[.95,.21],[.77,.25]]){
-   outline(ctx,geo,scale);
-   ctx.fillStyle=pigment;ctx.globalAlpha=opacity*alpha;ctx.fill();
+  // A watercolor wash is a single uninterrupted rounded stroke, not a
+  // closed polygonal ribbon: sharp closed-path ends caused the triangular
+  // cuts and square paint tails observed on iPhone.
+  const average=points.reduce((sum,p)=>sum+widthOf(s,p),0)/points.length;
+  const width=cap(average,1,90);
+  const washPasses=[[1.32,.09],[1.15,.14],[.98,.22],[.75,.18]];
+  for(const [spread,alpha] of washPasses){
+   ctx.beginPath();traceSmooth(ctx,points);
+   ctx.lineWidth=Math.max(.7,width*spread);
+   ctx.strokeStyle=pigment;ctx.globalAlpha=opacity*alpha;ctx.stroke();
   }
-  // A subtle pigment tide along both edges, especially after pressure turns.
-  hairline(ctx,geo,-.84,blend(base,0,.19),opacity*.19);
-  hairline(ctx,geo,.84,blend(base,0,.16),opacity*.16);
-  // Restrained deterministic granulation: at most 45 tiny flecks per stroke,
-  // no random animation, noise image readback, or large intermediate canvases.
-  const stride=Math.max(2,Math.ceil(geo.length/45));
-  ctx.fillStyle=base;ctx.globalAlpha=opacity*.055;
+  // Fine surface tension at the edges: slight pigment pooling, avoiding
+  // a harsh dark outline. Each edge follows the entire smoothed centreline.
+  const geo=geometry(s,points);
+  for(const side of [-1,1]){
+   const edge=geo.map(p=>[
+    p.x+p.nx*width*.46*side,p.y+p.ny*width*.46*side
+   ]);
+   ctx.beginPath();traceSmooth(ctx,edge);
+   ctx.strokeStyle=blend(base,0,.15);
+   ctx.lineWidth=Math.max(.5,Math.min(1.4,width*.035));
+   ctx.globalAlpha=opacity*.075;ctx.stroke();
+  }
+  // Soft endpoint blooms blend naturally into the rounded wash. Use a
+  // radial alpha ramp, never a hard filled circle or a polygon cap.
+  for(const p of [points[0],points[points.length-1]]){
+   const radius=width*.72;
+   const bloom=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],radius);
+   bloom.addColorStop(0,rgba(base,.075));
+   bloom.addColorStop(.55,rgba(base,.04));
+   bloom.addColorStop(1,rgba(base,0));
+   ctx.fillStyle=bloom;ctx.globalAlpha=opacity;
+   ctx.fillRect(p[0]-radius,p[1]-radius,radius*2,radius*2);
+  }
+  // A few faint pigment flecks suggest paper grain without frame-to-frame
+  // noise, network textures, or large offscreen images on older phones.
+  const stride=Math.max(3,Math.ceil(geo.length/38));
+  ctx.fillStyle=base;ctx.globalAlpha=opacity*.045;
   for(let i=0;i<geo.length;i+=stride){
-   const p=geo[i];
-   const jitter=Math.sin((i+1)*12.9898+points.length*.31);
-   const side=Math.sin((i+1)*6.173);
-   const x=p.x+p.nx*p.radius*side*.65+jitter*.9;
-   const y=p.y+p.ny*p.radius*side*.65+Math.cos(i*3.23)*.9;
-   const radius=Math.max(.35,Math.min(1.2,p.radius*.07));
-   ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
+   const p=geo[i],side=Math.sin((i+1)*6.173);
+   const x=p.x+p.nx*width*.3*side;
+   const y=p.y+p.ny*width*.3*side;
+   ctx.beginPath();
+   ctx.arc(x,y,Math.max(.3,Math.min(.9,width*.025)),0,Math.PI*2);ctx.fill();
   }
   ctx.restore();
  }
@@ -200,7 +223,9 @@
    ctx.beginPath();ctx.arc(a[0],a[1],Math.max(.6,width/2),0,Math.PI*2);
    ctx.fillStyle=paint;ctx.globalAlpha=opacity*.35;ctx.fill();return;
   }
-  for(const [scale,alpha] of [[1.17,.085],[1.0,.18],[.8,.22]])
+  // While dragging use softly feathered segments with round caps;
+  // release replays a single continuous wash for seamless ends.
+  for(const [scale,alpha] of [[1.32,.09],[1.15,.14],[.98,.22],[.75,.18]])
    line(ctx,a,b,width*scale,paint,opacity*alpha);
  }
  function segment(ctx,s,a,b,dot=false){
