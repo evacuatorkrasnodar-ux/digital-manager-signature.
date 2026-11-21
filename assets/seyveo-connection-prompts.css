@@ -99,9 +99,40 @@ html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-connect.sv-connect-
  stroke:#D1D9DF!important;stroke-width:1.7!important;
  fill:none!important;
 }
-/* Pulse has its own content-width and bottom dock: don't change either. */
+/* Pulse keeps its own content width and dock. The white version
+   uses the approved pearl surface on the EXISTING connection action.
+   Dark theme remains graphite; no new cards or duplicate listeners. */
 html body #picturePage > .sv-connect-prompt{
  margin:8px 0 13px;
+}
+html[data-theme="light"] body #picturePage > .sv-connect-prompt{
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ border-radius:18px!important;
+ color:#21262e!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 8px 20px rgba(42,52,72,.09))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+}
+html[data-theme="light"] body #picturePage > .sv-connect-prompt .sv-connect-prompt-icon{
+ background:rgba(227,234,241,.66)!important;
+ color:#333e4a!important;
+}
+html[data-theme="light"] body #picturePage > .sv-connect-prompt .sv-connect-prompt-title{
+ color:#20262d!important;
+}
+html[data-theme="light"] body #picturePage > .sv-connect-prompt .sv-connect-prompt-caption{
+ color:#66707b!important;
+}
+html[data-theme="light"] body #picturePage > .sv-connect-prompt .sv-connect-prompt-arrow{
+ color:#5d6773!important;
+}
+html[data-theme="light"] body #picturePage > .sv-connect-prompt:active{
+ background:rgba(226,234,243,.54)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow,inset 0 1px 3px rgba(31,42,58,.16))!important;
+}
+html[data-theme="light"] body #picturePage > .sv-connect-prompt:focus-visible{
+ outline:2px solid #65758a!important;
 }
 /* For music, only when the sources panel has actually been opened. */
 html body #sayviMusicSourcesPanel > .sv-connect-prompt{
