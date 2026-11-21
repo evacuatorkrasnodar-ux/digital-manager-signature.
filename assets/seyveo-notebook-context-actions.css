@@ -109,13 +109,13 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
  .sv-smart-ink-tools:not([hidden]){
  position:absolute!important;z-index:72!important;
- top:calc(50% - 117px)!important;bottom:auto!important;
+ top:calc(50% - 137px)!important;bottom:auto!important;
  right:max(14px,env(safe-area-inset-right,0px))!important;left:auto!important;
  transform:none!important;
  display:flex!important;flex-direction:column!important;
  justify-content:space-evenly!important;align-items:center!important;gap:2px!important;
  width:42px!important;min-width:42px!important;max-width:42px!important;
- height:234px!important;min-height:234px!important;max-height:234px!important;
+ height:274px!important;min-height:274px!important;max-height:274px!important;
  padding:6px 4px!important;
  opacity:1!important;transition:opacity .18s ease!important;
 }
@@ -231,7 +231,7 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
   .sv-smart-ink-tools:not([hidden]){
   top:auto!important;bottom:calc(74px + env(safe-area-inset-bottom,0px))!important;
   left:50%!important;right:auto!important;transform:translateX(-50%)!important;
-  flex-direction:row!important;width:264px!important;min-width:0!important;max-width:calc(100vw - 32px)!important;
+  flex-direction:row!important;width:300px!important;min-width:0!important;max-width:calc(100vw - 32px)!important;
   height:44px!important;min-height:44px!important;max-height:44px!important;padding:3px 8px!important;
  }
  html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
@@ -253,4 +253,12 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
 @media(prefers-reduced-motion:reduce){
  html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
   :is(.sv-smart-ink-tools,.sv-note-bottom,.sv-note-nav-actions,#noteReviewBack,#svNoteTitle){transition:none!important}
+}
+
+/* Seven-element vertical rail: Redo is the last control below Voice.
+   Disabled arrows remain recognizable, but do not intercept touches. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > button:is([data-sv-ink-tool="undo"],[data-sv-ink-tool="redo"]):disabled{
+ opacity:.30!important;pointer-events:none!important;
+ background:transparent!important;box-shadow:none!important;border:0!important;
 }
