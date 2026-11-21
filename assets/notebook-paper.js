@@ -742,11 +742,12 @@ function finishStroke(e,addEndpoint=true){
   if(liveMid&&liveTail)drawLivePart('end',liveMid,liveTail);
  }
  const snapped=addEndpoint&&pending.tool==='pen'&&Date.now()-lastInkMotionAt>=520?snapFreehandShape(pending):null;
+ const artStroke=ART_TOOLS.has(pending.tool);
  data.strokes.push(snapped||pending);
  rememberUndo({type:'add',count:1});
  pending=null;pointerID=null;liveTail=null;liveMid=null;changed=true;
  dialog.classList.remove('sv-paper-inking');
- render(Boolean(snapped)||ART_TOOLS.has((snapped||pending)?.tool)); // Art brushes replay once for accurate saved preview.
+ render(Boolean(snapped)||artStroke); // Replay textured strokes once for accurate saved preview.
 }
 canvas.addEventListener('pointerdown',down);
 canvas.addEventListener('pointermove',move);
