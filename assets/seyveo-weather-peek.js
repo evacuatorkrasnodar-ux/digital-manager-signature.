@@ -106,6 +106,7 @@
   panel.setAttribute('role','dialog');
   panel.setAttribute('aria-modal','false');
   panel.setAttribute('aria-label','Краткий прогноз Сэйви');
+  panel.dataset.weatherReady=day?'true':'false';
   const eyebrow=add('sv-weather-peek-eyebrow','СЭЙВИ · ПОГОДА',panel);
   eyebrow.setAttribute('aria-hidden','true');
   const main=document.createElement('div');main.className='sv-weather-peek-main';
@@ -119,22 +120,48 @@
    add('sv-weather-peek-low','Днём до '+temp(day.max)+' · ночью до '+temp(day.min),info);
    main.append(info);
    panel.append(main);
-   const health=document.createElement('div');health.className='sv-weather-peek-health';
-   const heart=add('sv-weather-peek-heart','♡',health);heart.setAttribute('aria-hidden','true');
-   const copy=document.createElement('div');
-   add('sv-weather-peek-health-title','Самочувствие',copy,'strong');
-   add('sv-weather-peek-health-copy','Перемены погоды иногда влияют на метеочувствительных людей. Ориентируйтесь на самочувствие.',copy);
-   health.append(copy);panel.append(health);
+   const health=document.createElement('section');health.className='sv-weather-peek-health';
+   const healthToggle=document.createElement('button');
+   healthToggle.type='button';healthToggle.className='sv-weather-peek-health-toggle';
+   healthToggle.setAttribute('aria-expanded','false');
+   healthToggle.setAttribute('aria-label','Самочувствие: атмосферное давление и геомагнитная активность');
+   const heart=add('sv-weather-peek-heart','♡',healthToggle);heart.setAttribute('aria-hidden','true');
+   const healthTitle=document.createElement('span');healthTitle.className='sv-weather-peek-health-summary';
+   add('sv-weather-peek-health-title','Самочувствие',healthTitle,'strong');
+   const kp=src?.getGeomagnetic?.(date);
+   add('sv-weather-peek-health-copy',kp?'Геомагнитная активность Kp '+kp.kp.toFixed(1)+' / 9 · детали':'Давление и магнитная активность · детали',healthTitle);
+   healthToggle.append(healthTitle);
+   add('sv-weather-peek-health-chevron','⌄',healthToggle).setAttribute('aria-hidden','true');
+   const more=document.createElement('div');more.className='sv-weather-peek-health-more';more.hidden=true;
+   const station=src?.getStationData?.();
+   const pressure=station?.current?.pressure_msl;
+   add('sv-weather-peek-health-detail','Атмосферное давление · '+(Number.isFinite(pressure)?Math.round(pressure)+' гПа':'Нет свежих данных'),more,'p');
+   for(let index=0;index<3;index++){
+    const key=nextDate(date,index),geo=src?.getGeomagnetic?.(key);
+    const label=index===0?'Сегодня':weekday(key);
+    const textValue=geo?('Kp '+geo.kp.toFixed(1)+'/9 · '+(geo.kp>=5?'геомагнитная буря':geo.kp>=4?'повышенная активность':'спокойно')):'прогноз пока недоступен';
+    add('sv-weather-peek-health-detail',label+' · '+textValue,more,'p');
+   }
+   add('sv-weather-peek-health-caption','Kp — индекс NOAA от 0 до 9, не процент риска для здоровья. Прогноз магнитной активности обычно доступен лишь на 3 дня.',more,'p');
+   add('sv-weather-peek-health-caption','Атмосферное давление не равно артериальному. По погоде нельзя предсказать симптомы конкретного человека.',more,'p');
+   healthToggle.addEventListener('click',()=>{
+    more.hidden=!more.hidden;
+    healthToggle.setAttribute('aria-expanded',String(!more.hidden));
+    requestAnimationFrame(position);
+    resetTimer();
+   });
+   health.append(healthToggle,more);panel.append(health);
   }else{
    add('sv-weather-peek-city',city,main,'strong');
    add('sv-weather-peek-condition','Прогноз обновляется',main);
    panel.append(main);
    add('sv-weather-peek-empty-copy','Сэйви покажет данные после обновления прогноза.',panel,'p');
   }
+  const actions=document.createElement('div');actions.className='sv-weather-peek-actions';
   const details=document.createElement('button');
   details.type='button';
   details.className='sv-weather-peek-details';
-  details.textContent='Подробнее у Сэйви';
+  details.textContent='Метеостанция';
   details.setAttribute('aria-label','Открыть подробную метеостанцию в чате Сэйви');
   details.addEventListener('click',event=>{
    event.preventDefault();event.stopPropagation();
@@ -143,7 +170,16 @@
    else if(!didOpen)window.location.assign('sayvi-chat-new.html');
    close(true);
   });
-  panel.append(details);
+  actions.append(details);
+  const discuss=document.createElement('button');
+  discuss.type='button';discuss.className='sv-weather-peek-discuss';
+  discuss.textContent='Обсудить с Сэйви';
+  discuss.addEventListener('click',event=>{
+   event.preventDefault();event.stopPropagation();
+   if(!window.SEYVEO_WEATHER_BRIEF?.openDiscussion?.())window.SEYVEO_WEATHER_BRIEF?.openStation?.();
+   close(true);
+  });
+  actions.append(discuss);panel.append(actions);
   const updated=Number(src?.getUpdatedAt?.())||0;
   if(day)add('sv-weather-peek-source','Open-Meteo · прогноз по дням'+(updated?' · '+stamp(updated)+' МСК':''),panel,'p');
   document.body.append(panel);
@@ -154,13 +190,15 @@
  }
  window.SEYVEO_WEATHER_PEEK=Object.freeze({open,close:()=>close()});
  document.addEventListener('pointerdown',event=>{
-  if(panel&&!panel.contains(event.target)&&!activeAnchor?.contains(event.target))close();
+  if(!panel||panel.contains(event.target)||activeAnchor?.contains(event.target))return;
+  if(agendaMode&&event.target?.closest?.('#svTasksDateNav')){resetTimer();return;}
+  close();
  },true);
  document.addEventListener('keydown',event=>{if(event.key==='Escape')close();});
  document.addEventListener('scroll',event=>{
   if(!panel)return;
+  if(panel.contains(event.target)){resetTimer();return;}
   if(agendaMode&&event.target?.closest?.('#svTasksDateNav')){resetTimer();return;}
-  if(agendaMode&&event.target?.matches?.('#svTasksDateNav .sv-agenda-week')){resetTimer();return;}
   close();
  },{capture:true,passive:true});
  document.addEventListener('pointerdown',event=>{
@@ -170,9 +208,9 @@
  document.addEventListener('visibilitychange',()=>{if(document.hidden)close(true);});
  window.addEventListener('seyveo:route-changed',()=>close(true));
  window.addEventListener('seyveo:weather-updated',()=>{
-  if(panel&&activeAnchor&&activeDate&&!panel.querySelector('.sv-weather-peek-stats')){
+  if(panel&&activeAnchor&&activeDate&&panel.dataset.weatherReady!=='true'){
    const anchor=activeAnchor,date=activeDate;
-   if(getDay(date))open({anchor,date,origin:'refresh'});
+   if(getDay(date))open({anchor,date,origin:agendaMode?'agenda':'home'});
   }
  });
 })();
