@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/seyveo-weather.yml'
       - 'assets/seyveo-agenda-weather.js'
+      - 'scripts/refresh-seyveo-weather.mjs'
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
