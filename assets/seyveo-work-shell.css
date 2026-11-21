@@ -702,10 +702,6 @@ html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button:foc
  width:28px!important;height:28px!important;flex:0 0 28px!important;
  color:inherit!important;
 }
-#svWorkShell[data-active="business"] #svCabinetContinueWithSayvi .sv-cabinet-sayvi-emblem{
- display:block!important;width:25px!important;height:25px!important;flex:none!important;
- overflow:visible!important;
-}
 #svWorkShell[data-active="business"] #tasksPage .svcp-manager-row,
 #svWorkShell[data-active="business"] #tasksPage .svcp-manager-staff > summary{
  min-height:57px!important;
