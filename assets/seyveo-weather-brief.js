@@ -58,6 +58,56 @@
     const brief={city,days,updatedAt};
     return validBrief(brief)&&days[0]?.date===dateKey()?brief:null;
   };
+
+  /* Snapshot is produced by GitHub Actions from the same-origin Open-Meteo
+     feed. Keep only the next 12 sampled two-hour points in chat history:
+     no guessed hourly observations and no huge private session payloads. */
+  const stationSummary=()=>{
+    const raw=window.SAYVI_WEATHER?.getStationData?.();
+    if(!raw||!Array.isArray(raw.hourly?.time))return null;
+    const hourly=raw.hourly;
+    const pieces=new Intl.DateTimeFormat('en-GB',{
+      timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+    }).formatToParts(new Date());
+    const part=x=>pieces.find(p=>p.type===x)?.value||'';
+    const localNow=part('year')+'-'+part('month')+'-'+part('day')+'T'+part('hour')+':'+part('minute');
+    const start=Math.max(0,hourly.time.findIndex(t=>t>=localNow));
+    const hours=[];
+    for(let i=start;i<hourly.time.length&&hours.length<13;i+=2){
+      if(typeof hourly.time[i]!=='string'||!Number.isFinite(hourly.temperature_2m?.[i]))continue;
+      const point={time:hourly.time[i],temperature:hourly.temperature_2m[i]};
+      for(const [property,key] of Object.entries({
+        humidity:'relative_humidity_2m',precipitationProbability:'precipitation_probability',
+        code:'weather_code',wind:'wind_speed_10m',windDirection:'wind_direction_10m',
+        pressure:'pressure_msl',uv:'uv_index'
+      }))if(Number.isFinite(hourly[key]?.[i]))point[property]=hourly[key][i];
+      hours.push(point);
+    }
+    const daily=[];
+    for(let i=0;i<Math.min(7,raw.daily?.time?.length||0);i++){
+      const entry={date:raw.daily.time[i]};
+      for(const [property,key] of Object.entries({
+        rain:'precipitation_sum',rainChance:'precipitation_probability_max',
+        uv:'uv_index_max',wind:'wind_speed_10m_max',
+        feelsMax:'apparent_temperature_max',feelsMin:'apparent_temperature_min'
+      }))if(Number.isFinite(raw.daily[key]?.[i]))entry[property]=raw.daily[key][i];
+      for(const [property,key] of Object.entries({sunrise:'sunrise',sunset:'sunset'}))
+        if(typeof raw.daily[key]?.[i]==='string')entry[property]=raw.daily[key][i];
+      daily.push(entry);
+    }
+    return {current:{...raw.current},hours,daily};
+  };
+  const openStation=()=>{
+    const brief=getBrief();
+    if(!brief)return false;
+    const payload={...brief,station:stationSummary(),at:Date.now()};
+    try{sessionStorage.setItem(HANDOFF_KEY,JSON.stringify(payload));}
+    catch{return false;}
+    if(window.SEYVEO_CONVERSATION?.open)window.SEYVEO_CONVERSATION.open();
+    else window.location.assign('sayvi-chat-new.html');
+    return true;
+  };
   const weatherGlyph=code=>{
     const cloud='<path d="M5.4 17.3h12.3a3.5 3.5 0 0 0 .2-7 5.8 5.8 0 0 0-11.2-.7 3.9 3.9 0 0 0-1.3 7.7Z"/>';
     const sun='<circle cx="12" cy="12" r="4.1"/><path d="M12 2.4v2.1M12 19.5v2.1M2.4 12h2.1M19.5 12h2.1M5.2 5.2l1.5 1.5M17.3 17.3l1.5 1.5M18.8 5.2l-1.5 1.5M6.7 17.3l-1.5 1.5"/>';
@@ -183,17 +233,11 @@
       window.addEventListener('seyveo:home-sayvi-arrived',schedulePlace);
       document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
       button.addEventListener('click',()=>{
-        current=getBrief();
-        if(!current){
-          forecastUnavailable=false;
-          sync();
-          window.SAYVI_WEATHER?.refresh?.();
-          return;
-        }
-        try{sessionStorage.setItem(HANDOFF_KEY,JSON.stringify({...current,at:Date.now()}));}
-        catch{return;}
-        if(window.SEYVEO_CONVERSATION?.open)window.SEYVEO_CONVERSATION.open();
-        else window.location.assign('sayvi-chat-new.html');
+        const forecast=getBrief();
+        const today=forecast?.days[0]?.date||dateKey();
+        if(window.SEYVEO_WEATHER_PEEK?.open)
+          window.SEYVEO_WEATHER_PEEK.open({anchor:button,date:today,origin:'home'});
+        else if(!openStation())window.SAYVI_WEATHER?.refresh?.();
       });
     }
   }
@@ -289,6 +333,7 @@
     return true;
   };
   window.SEYVEO_WEATHER_BRIEF=Object.freeze({
+    openStation,
     isMessage:message=>typeof message==='string'&&message.startsWith(PREFIX),
     render:draw,
     acceptHandoff:append=>{
@@ -302,8 +347,8 @@
       }catch{return;}
       if(!handoff||!validBrief(handoff)||!Number.isFinite(handoff.at)||
          Date.now()-handoff.at>MAX_HANDOFF_AGE||Date.now()<handoff.at-5000)return;
-      const {city,days,updatedAt}=handoff;
-      append(PREFIX+JSON.stringify({city,days,updatedAt}));
+      const {city,days,updatedAt,station}=handoff;
+      append(PREFIX+JSON.stringify({city,days,updatedAt,station}));
     }
   });
 })();
