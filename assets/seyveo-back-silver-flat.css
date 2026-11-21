@@ -4,13 +4,13 @@
 :root{
   --sv-back-flat:#38383A;
   --sv-back-flat-ink:#EEF2F4;
-  --sv-back-flat-pressed:#48484B;
+  --sv-back-flat-pressed:var(--sv-back-flat);
 }
 :root[data-theme="light"]{
   /* Geometry unchanged: ONLY White Pearl owns the button material. */
   --sv-back-flat:var(--sv-white-pearl-surface);
   --sv-back-flat-ink:var(--sv-white-pearl-ink);
-  --sv-back-flat-pressed:var(--sv-white-pearl-press-fill);
+  --sv-back-flat-pressed:var(--sv-white-pearl-surface);
   --sv-back-button-shadow:var(--sv-white-pearl-circle-shadow);
   --sv-back-button-blur:var(--sv-white-pearl-blur);
   --sv-back-button-edge:var(--sv-white-pearl-edge);
@@ -43,7 +43,9 @@ html body dialog[open] button:is(
   #calendarEventCancel,#svCabinetCancel
 ):active,
 html body dialog#noteReviewDialog.note-review-dialog[open] button#noteReviewBack.sv-note-back-arrow:active{
-  background:var(--sv-back-flat-pressed)!important;
+  background:var(--sv-back-flat)!important;
+  box-shadow:var(--sv-back-button-shadow,none)!important;
+  transform:none!important;
   opacity:1!important;
 }
 html body dialog[open] button:is(
@@ -74,7 +76,9 @@ html body #sayviSurfacePage #sayviSurfaceBack{
   backdrop-filter:var(--sv-back-button-blur,none)!important;
 }
 html body #sayviSurfacePage #sayviSurfaceBack:active{
-  background:var(--sv-back-flat-pressed)!important;
+  background:var(--sv-back-flat)!important;
+  box-shadow:var(--sv-back-button-shadow,none)!important;
+  transform:none!important;
 }
 html body #sayviSurfacePage #sayviSurfaceBack svg{
   stroke:currentColor!important;
@@ -96,7 +100,9 @@ html body #sayviTopActions a#sayviBack.sv-top-action{
   filter:none!important;
 }
 html body #sayviTopActions a#sayviBack.sv-top-action:active{
-  background:var(--sv-back-flat-pressed)!important;
+  background:var(--sv-back-flat)!important;
+  box-shadow:var(--sv-back-button-shadow,none)!important;
+  transform:none!important;
 }
 html body #sayviTopActions a#sayviBack.sv-top-action svg{
   fill:none!important;
@@ -146,10 +152,11 @@ html body dialog:is(#onboardDialog,#seyveoAccountDemo,#seyveoQrCardDialog,#seyve
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 :root[data-theme="light"] .sv-header-material-circle:active{
- opacity:1!important;
- transform:scale(var(--sv-white-pearl-press-scale))!important;
- background:var(--sv-white-pearl-press-fill)!important;
- box-shadow:var(--sv-white-pearl-press-shadow)!important;
+  opacity:1!important;
+  transform:none!important;
+  background:var(--sv-white-pearl-surface)!important;
+  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+  color:var(--sv-white-pearl-ink)!important;
 }
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme="light"] .sv-header-material-circle{
