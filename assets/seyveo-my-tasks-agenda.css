@@ -915,23 +915,23 @@ html.sv-agenda-scroll-active .app{
 #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather{cursor:pointer!important;-webkit-tap-highlight-color:transparent;}
 #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather:focus-visible{outline:2px solid #6e8299;outline-offset:3px;border-radius:5px}
 
-/* SEYVEO · 10-DAY DAY-TILE WEATHER · 21 Nov 2026.
-   A delicate, non-interactive 18px icon and high temperature for the next
-   ten days, INSIDE the existing calendar day. The date, selected circle,
-   task markers, horizontal swipe and dock geometry are unchanged. */
+/* SEYVEO · TEMPORARY 10-DAY / DAY & NIGHT · minimal iPhone forecast.
+   One actual date tile: day above night, tiny weather sign plus degrees.
+   Original 5–6 visible dates, today circle, tasks and swipe are untouched. */
 #tasksPage #svTasksDateNav .sv-agenda-day > .sv-agenda-day-weather{
  position:absolute!important;
  left:50%!important;
- bottom:3px!important;
+ bottom:4px!important;
  z-index:1!important;
- display:inline-flex!important;
+ display:flex!important;
+ flex-direction:column!important;
  align-items:center!important;
  justify-content:center!important;
- gap:2px!important;
- width:max-content!important;
- max-width:calc(100% - 4px)!important;
- height:19px!important;
- min-height:19px!important;
+ gap:1px!important;
+ width:calc(100% - 6px)!important;
+ max-width:74px!important;
+ height:38px!important;
+ min-height:38px!important;
  padding:0!important;
  margin:0!important;
  border:0!important;
@@ -940,43 +940,67 @@ html.sv-agenda-scroll-active .app{
  transform:translateX(-50%)!important;
  pointer-events:none!important;
  white-space:nowrap!important;
- opacity:.93!important;
+ opacity:.95!important;
 }
-#tasksPage #svTasksDateNav .sv-agenda-day-weather-icon{
+#tasksPage #svTasksDateNav .sv-agenda-weather-half{
+ box-sizing:border-box!important;
+ display:flex!important;
+ justify-content:center!important;
+ align-items:center!important;
  flex:0 0 18px!important;
- display:grid!important;
- place-items:center!important;
- width:18px!important;
+ gap:3px!important;
+ width:100%!important;
  height:18px!important;
- padding:0!important;
- margin:0!important;
+ min-height:18px!important;
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
 }
-#tasksPage #svTasksDateNav .sv-agenda-day-weather-icon svg{
- display:block!important;
- width:18px!important;
- height:18px!important;
- max-width:none!important;
+#tasksPage #svTasksDateNav .sv-agenda-weather-half-icon{
+ display:grid!important;place-items:center!important;
+ flex:0 0 16px!important;
+ width:16px!important;height:16px!important;
+ color:#93A1B2!important;
+}
+#tasksPage #svTasksDateNav .sv-agenda-weather-half-day .sv-agenda-weather-half-icon svg{
+ display:block!important;width:16px!important;height:16px!important;
  overflow:visible!important;
 }
-#tasksPage #svTasksDateNav .sv-agenda-day-weather-temp{
- display:block!important;
- flex:none!important;
- margin:0!important;
- padding:0!important;
- color:#7D8590!important;
- font:500 10.5px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+#tasksPage #svTasksDateNav .sv-agenda-weather-half-night .sv-agenda-weather-half-icon{
+ color:#8995A9!important;
+}
+#tasksPage #svTasksDateNav .sv-agenda-weather-half-night .sv-agenda-weather-half-icon svg{
+ display:block!important;width:14px!important;height:14px!important;
+}
+#tasksPage #svTasksDateNav .sv-agenda-weather-half-value{
+ box-sizing:border-box!important;display:block!important;
+ flex:0 0 28px!important;max-width:28px!important;
+ color:#77818E!important;
+ margin:0!important;padding:0!important;
+ font:540 10.5px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
  letter-spacing:-.025em!important;
  font-variant-numeric:tabular-nums!important;
+ text-align:left!important;
 }
-:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day-weather-temp{
- color:#B5BBC5!important;
+#tasksPage #svTasksDateNav .sv-agenda-weather-half-night .sv-agenda-weather-half-value{
+ color:#A0A7B2!important;
+ font-weight:460!important;
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-weather-half-value{
+ color:#D5DBE3!important;
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav
+ .sv-agenda-weather-half-night .sv-agenda-weather-half-value{
+ color:#A7B1C0!important;
 }
 @media(max-width:380px){
- #tasksPage #svTasksDateNav .sv-agenda-day-weather-temp{
+ #tasksPage #svTasksDateNav .sv-agenda-weather-half{
+  gap:2px!important;
+ }
+ #tasksPage #svTasksDateNav .sv-agenda-weather-half-value{
   font-size:10px!important;
  }
 }
-
 /* SWITCHED WEATHER MODE · only with Sayvi card (not a permanent second layer).
    Days, task dots and hit targets never change size or position.
    The preview owns data-sv-weather-mode, and clearing it restores task dots. */
@@ -986,7 +1010,7 @@ html:not([data-sv-weather-mode="true"]) #tasksPage #svTasksDateNav
 }
 html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
  .sv-agenda-day > .sv-agenda-day-weather{
- display:inline-flex!important;
+ display:flex!important;
  animation:sv-weather-day-reveal .22s ease-out both!important;
 }
 html[data-sv-weather-mode="true"] #tasksPage #svTasksDateNav
