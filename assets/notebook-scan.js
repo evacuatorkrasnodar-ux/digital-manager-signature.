@@ -9,6 +9,12 @@ const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanTe
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false,intoOpenNote=false;
 const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
+const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText');
+// Show only usable actions. OCR result remains editable, including manual text.
+function syncActions(){
+ if(toPaperButton)toPaperButton.disabled=!selected||running;
+ if(toTextButton)toTextButton.disabled=!text.value.trim()||running;
+}
 /* Preserve OCR's real line breaks. Reject ONLY short, symbol-heavy phone
    status-bar garbage at the very start; never guess the meaning of a poem. */
 function cleanPhoneHeader(value){
@@ -65,7 +71,7 @@ function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}}
 function reset(){
  selected=null;consented=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
- text.value='';text.wrap='soft';button.disabled=true;message('Фото остаётся на устройстве. Проверьте текст перед сохранением.');
+ text.value='';text.wrap='soft';button.disabled=true;syncActions();message('Фото остаётся на устройстве. Проверьте текст перед сохранением.');
 }
 function open(){if(dialog.open)return;intoOpenNote=false;reset();dialog.showModal()}
 function scanIntoNote(){
@@ -84,7 +90,7 @@ function select(file){
  }
  session++;selected=file;clearURL();localURL=URL.createObjectURL(file);preview.src=localURL;
  if(consentBox)consentBox.hidden=true;
- preview.hidden=false;button.disabled=running;message('Фото готово. Нажмите «Распознать» или перепишите текст вручную.');
+ preview.hidden=false;button.disabled=running;syncActions();message('Фото готово. Нажмите «Распознать» или перепишите текст вручную.');
 }
 function loadEngine(){
  if(window.Tesseract?.createWorker)return Promise.resolve(window.Tesseract);
@@ -104,7 +110,7 @@ function loadEngine(){
 async function recognize(){
  if(running||!selected)return;
  const file=selected,token=++session,retainLines=keepLines?.checked!==false;
- running=true;button.disabled=true;
+ running=true;button.disabled=true;syncActions();
  let worker=null;
  try{
   message('Подключаю распознавание… Это может занять время на iPhone.');
@@ -136,12 +142,13 @@ async function recognize(){
   const found=clean.value;
   if(!found){message('Текст не обнаружен. Попробуйте другое фото или перепишите вручную.');return}
   text.value=found.slice(0,8000);
+  syncActions();
   message(clean.removed?'Убрана похожая на панель телефона строка. Проверьте текст и переносы.':'Текст распознан. Проверьте строки и возможные ошибки.');
  }catch(error){
   if(token===session&&dialog.open)message((error?.message||'Не удалось распознать текст.')+' Можно набрать его вручную.');
  }finally{
   if(worker)try{await worker.terminate()}catch{}
-  running=false;if(token===session)button.disabled=!selected;
+  running=false;if(token===session){button.disabled=!selected;syncActions();}
  }
 }
 function cancel(){dialog.close()}
@@ -179,6 +186,7 @@ for(const id of ['noteScanCamera','noteScanGallery']){
 // Soft wrapping only changes how long lines LOOK on a narrow iPhone screen.
 // Actual newlines and the user's "preserve lines" OCR choice stay untouched.
 keepLines?.addEventListener('change',()=>{text.wrap='soft'});
+text.addEventListener('input',syncActions);
 button.addEventListener('click',()=>{
  if(running||!selected)return;
  if(!consented){
