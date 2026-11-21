@@ -1,74 +1,109 @@
-/* SEYVEO · cinematic opening, isolated from the actual Home layout.
-   One unchanged original logo; no duplicate sphere, no global transforms. */
+/* SEYVEO · cinematic one-sphere handoff.
+   Home remains untouched. The approved mark resolves into the *real*
+   Home sphere art with identical coordinates and final diameter. */
 #svLaunchClean[hidden]{display:none!important}
 #svLaunchClean{
  all:initial;
+ display:block!important;
  position:fixed!important;inset:0!important;
  z-index:2147483647!important;
- display:block!important;
  box-sizing:border-box!important;
  width:100vw!important;height:100vh!important;height:100dvh!important;
- max-width:none!important;max-height:none!important;
+ min-width:0!important;min-height:0!important;
  margin:0!important;padding:0!important;border:0!important;
  border-radius:0!important;outline:0!important;
- overflow:hidden!important;isolation:isolate!important;
- background:radial-gradient(ellipse 56% 43% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(215,228,237,.12),rgba(255,255,255,0) 90%),#fff!important;
+ isolation:isolate!important;overflow:hidden!important;
+ background:radial-gradient(ellipse 58% 45% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(215,228,237,.10),transparent 95%),#fff!important;
  opacity:1;
- -webkit-tap-highlight-color:transparent!important;
  pointer-events:auto!important;
  overscroll-behavior:contain!important;touch-action:none!important;
+ -webkit-tap-highlight-color:transparent!important;
 }
 :root[data-theme="dark"] #svLaunchClean{
- background:radial-gradient(ellipse 56% 43% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(145,166,182,.085),transparent 90%),var(--bg,#11161b)!important;
+ background:radial-gradient(ellipse 58% 45% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(145,166,182,.07),transparent 95%),var(--bg,#11161b)!important;
 }
 #svLaunchClean .svLaunchCleanMark{
  all:initial;
- position:absolute!important;display:block!important;
- left:var(--sv-launch-x,50%)!important;
- top:var(--sv-launch-y,44%)!important;
- width:var(--sv-launch-d,175px)!important;
- height:var(--sv-launch-d,175px)!important;
- box-sizing:border-box!important;
- background-image:url("./seyveo-circular-interlace-color-clean.png?v=clean-2")!important;
- background-size:contain!important;background-position:center!important;
- background-repeat:no-repeat!important;
+ display:block!important;position:absolute!important;
+ left:var(--sv-launch-x,50%)!important;top:var(--sv-launch-y,44%)!important;
+ width:var(--sv-launch-d,150px)!important;
+ height:var(--sv-launch-d,150px)!important;
  transform:translate3d(-50%,-50%,0) scale(1);
  transform-origin:center center!important;
  backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
- will-change:transform,opacity!important;
+ will-change:transform!important;
  visibility:hidden!important;
+ pointer-events:none!important;
 }
-/* Every interval has its own pacing: breathe -> pick up speed -> settle.
-   The end scale is computed from the real Home orb, never the viewport. */
-@keyframes svLaunchCameraIn{
- 0%  {transform:translate3d(-50%,-50%,0) scale(1);animation-timing-function:cubic-bezier(.34,0,.58,.32)}
- 24% {transform:translate3d(-50%,-50%,0) scale(1.055);animation-timing-function:cubic-bezier(.32,.18,.46,.8)}
- 53% {transform:translate3d(-50%,-50%,0) scale(1.29);animation-timing-function:cubic-bezier(.31,.19,.51,.95)}
- 77% {transform:translate3d(-50%,-50%,0) scale(1.65);animation-timing-function:cubic-bezier(.17,.53,.22,1)}
- 100%{transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,1.8181818))}
+#svLaunchClean .svLaunchCleanMark::before,
+#svLaunchClean .svLaunchCleanMark::after{
+ content:"";position:absolute;display:block;
+ inset:0;
+ background-position:center;background-repeat:no-repeat;
+ backface-visibility:hidden;-webkit-backface-visibility:hidden;
+ will-change:opacity;
+}
+/* The logo PNG has much larger transparent margins than the Home SVG.
+   Its ink is enlarged inside the same frame, matching visible round silhouettes
+   without changing the landing position or the actual Home dimensions. */
+#svLaunchClean .svLaunchCleanMark::before{
+ background-image:url("./seyveo-circular-interlace-color-clean.png?v=clean-2");
+ background-size:123% 123%;
+ opacity:1;
+}
+#svLaunchClean .svLaunchCleanMark::after{
+ background-image:var(--sv-launch-home-image,url("./plasma-signature-light.svg?v=24"));
+ background-size:100% 100%;
+ opacity:0;
+}
+/* A single smooth, physically accelerating lens curve. No intermediate
+   keyframe velocities to cause small jerks. High speed at the last frame. */
+@keyframes svLaunchApproach{
+ from{transform:translate3d(-50%,-50%,0) scale(1)}
+ to  {transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,2.22))}
+}
+@keyframes svLaunchMarkOut{
+ 0%,76% {opacity:1}
+ 91% {opacity:.68}
+ 100% {opacity:0}
+}
+@keyframes svLaunchHomeIn{
+ 0%,76% {opacity:0}
+ 91% {opacity:.32}
+ 100% {opacity:1}
 }
 #svLaunchClean[data-stage="ready"] .svLaunchCleanMark,
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
  visibility:visible!important;
 }
-#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark{
- animation:svLaunchCameraIn 3000ms linear both!important;
-}
-/* Don't blend two different spheres together. At the matching final size,
-   the original emblem leaves FIRST; only then the Home itself appears. */
-@keyframes svLaunchMarkExit{to{opacity:0}}
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
- animation:svLaunchCameraIn 3000ms linear both,
-           svLaunchMarkExit 185ms ease-out both!important;
+ animation:svLaunchApproach 3300ms cubic-bezier(.58,.035,.89,.48) both!important;
 }
-@keyframes svLaunchDissolve{to{opacity:0}}
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark::before,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanMark::before{
+ animation:svLaunchMarkOut 3300ms linear both!important;
+}
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark::after,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanMark::after{
+ animation:svLaunchHomeIn 3300ms linear both!important;
+}
+/* The overlay dissolves immediately after the fast approach ends.
+   At this point its orb art is pixel-aligned with the underlying Home orb. */
+@keyframes svLaunchSceneOpen{to{opacity:0}}
 #svLaunchClean[data-stage="reveal"]{
- animation:svLaunchDissolve 650ms cubic-bezier(.22,.62,.32,1) 185ms forwards!important;
+ animation:svLaunchSceneOpen 560ms cubic-bezier(.18,.58,.35,1) forwards!important;
  pointer-events:none!important;
 }
 @media(prefers-reduced-motion:reduce){
  #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
- #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{animation:none!important}
+ #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark,
+ #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark::before,
+ #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark::after,
+ #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark::before,
+ #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark::after{
+  animation:none!important;
+ }
  #svLaunchClean[data-stage="reveal"]{animation:none!important;opacity:0!important}
 }
