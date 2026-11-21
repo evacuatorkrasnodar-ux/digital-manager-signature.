@@ -1860,6 +1860,7 @@ function syncChatAccount(){
  editingMessageIndex=null;
 }
 function showInbox(){
+ closeCallPreview();
  stopWorkTypingLocal();
  syncChatAccount();
  cancelVoice();editingMessageIndex=null;
@@ -1884,6 +1885,7 @@ function showInbox(){
  renderDirectory();
 }
 function openRoom(roomId){
+ closeCallPreview();
  stopWorkTypingLocal();
  syncChatAccount();
  cancelVoice();editingMessageIndex=null;
@@ -1931,6 +1933,12 @@ function openRoom(roomId){
 function updatePerspective(){
  const current=roomDetails();
  const allowed=current.kind==='groups'||current.id==='dm-elena';
+ // Calls have a useful local device preview, but no remote signaling yet.
+ // Hide them in team/group and assistant conversations to avoid false calls.
+ const personalPeer=current.kind==='personal'&&current.person!=='sayvi';
+ for(const id of ['svcpAudioCall','svcpVideoCall']){
+  const button=$(id);if(button)button.hidden=!personalPeer;
+ }
  const button=$('svcpElenaPerspective');
  button.hidden=employeePreviewActive()||!allowed;
  button.textContent=state.viewpoint==='elena'?'Вернуться к руководителю':'Взгляд Елены';
@@ -1962,6 +1970,91 @@ function toggleRoomInformation(){
 }
 $('svcpRoomInfoToggle')?.addEventListener('click',toggleRoomInformation);
 $('svcpConversationHeading')?.addEventListener('click',toggleRoomInformation);
+/* SEYVEO call controls — device verification only.
+ * No contacts, delivery, signal server or remote audio are pretended.
+ * Camera/microphone permissions are requested only after a separate tap.
+ * Tracks are released on every close, route change and app exit. */
+const svcpCallDialog=$('svcpCallDialog');
+const svcpCallVideo=$('svcpCallLocalVideo');
+let svcpCallMode='audio';
+let svcpLocalCallStream=null;
+let svcpCallRequest=0;
+function stopLocalCallPreview(){
+ ++svcpCallRequest;
+ if(svcpLocalCallStream){
+  svcpLocalCallStream.getTracks().forEach(track=>track.stop());
+  svcpLocalCallStream=null;
+ }
+ if(svcpCallVideo){
+  svcpCallVideo.pause();
+  svcpCallVideo.srcObject=null;
+  svcpCallVideo.hidden=true;
+ }
+}
+function closeCallPreview(){
+ if(svcpCallDialog?.open)svcpCallDialog.close();
+ stopLocalCallPreview();
+}
+function openCallPreview(mode){
+ const room=roomDetails();
+ if(room.kind!=='personal'||room.person==='sayvi')return;
+ if(!svcpCallDialog||typeof svcpCallDialog.showModal!=='function'){
+  setStatus('Проверка звонков недоступна в этом браузере.');
+  return;
+ }
+ closeCallPreview();
+ svcpCallMode=mode==='video'?'video':'audio';
+ const contact=$('svcpConversationTitle')?.textContent||room.label;
+ $('svcpCallTitle').textContent=(svcpCallMode==='video'?'Видеозвонок':'Аудиозвонок')+' · '+contact;
+ $('svcpCallDescription').textContent='Проверка '+(svcpCallMode==='video'?'камеры и микрофона':'микрофона')+' на вашем устройстве. Связь с собеседником ещё не подключена.';
+ $('svcpCallStatus').textContent='Пока демо: нажатие не звонит сотруднику и ничего не передаёт.';
+ $('svcpCallTestDevices').textContent=svcpCallMode==='video'?'Проверить камеру и микрофон':'Проверить микрофон';
+ svcpCallDialog.showModal();
+}
+async function testLocalCallDevices(){
+ if(!svcpCallDialog?.open)return;
+ const status=$('svcpCallStatus');
+ if(!navigator.mediaDevices?.getUserMedia){
+  if(status)status.textContent='Проверка устройств недоступна. Откройте SEYVEO по HTTPS и разрешите доступ в браузере.';
+  return;
+ }
+ stopLocalCallPreview();
+ const request=svcpCallRequest;
+ if(status)status.textContent='Запрашиваем разрешение на этом устройстве…';
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia(
+   svcpCallMode==='video'
+    ?{audio:{echoCancellation:true},video:{facingMode:'user'}}
+    :{audio:{echoCancellation:true},video:false}
+  );
+  if(request!==svcpCallRequest||!svcpCallDialog.open){
+   stream.getTracks().forEach(track=>track.stop());
+   return;
+  }
+  svcpLocalCallStream=stream;
+  if(svcpCallMode==='video'&&svcpCallVideo){
+   svcpCallVideo.srcObject=stream;
+   svcpCallVideo.hidden=false;
+   try{await svcpCallVideo.play()}catch(_error){}
+  }
+  if(status)status.textContent=svcpCallMode==='video'
+   ?'Камера и микрофон работают локально. Видео видите только вы; удалённого соединения пока нет.'
+   :'Микрофон включён только для проверки на этом устройстве. Звонок другому человеку не начался.';
+ }catch(error){
+  if(request!==svcpCallRequest||!svcpCallDialog.open)return;
+  if(status)status.textContent=error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'
+   ?'Доступ запрещён. Разрешите камеру и/или микрофон в настройках браузера.'
+   :'Не удалось проверить устройство. Проверьте разрешения и наличие камеры/микрофона.';
+ }
+}
+$('svcpAudioCall')?.addEventListener('click',()=>openCallPreview('audio'));
+$('svcpVideoCall')?.addEventListener('click',()=>openCallPreview('video'));
+$('svcpCallTestDevices')?.addEventListener('click',testLocalCallDevices);
+$('svcpCallClose')?.addEventListener('click',closeCallPreview);
+$('svcpCallEnd')?.addEventListener('click',closeCallPreview);
+svcpCallDialog?.addEventListener('close',stopLocalCallPreview);
+window.addEventListener('seyveo:work-chat-closing',closeCallPreview);
+
 $('svcpConversationBack')?.addEventListener('click',showInbox);
 $('svcpConversationSearch')?.addEventListener('click',()=>{
  showInbox();
