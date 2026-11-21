@@ -255,8 +255,7 @@
      menu.hidden=true;settingsButton.setAttribute('aria-expanded','false');
      syncUnified();
     });
-    patternGridAppend();
-    function patternGridAppend(){paperGrid.append(button);}
+    paperGrid.append(button);
     patternShortcuts.push(button);
    }
    paperSection.append(paperGrid);
