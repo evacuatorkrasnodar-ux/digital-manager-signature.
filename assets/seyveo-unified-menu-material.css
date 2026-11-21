@@ -28,11 +28,10 @@
  --sv-menu-item-selected-border:rgba(255,255,255,.18);
  --sv-menu-rule:rgba(255,255,255,.14);
 }
-/* Stable mini-menu surfaces in Calendar, Work Chat, Tasks and Notebook.
+/* Stable mini-menu surfaces in Work Chat, Tasks and Notebook.
  * Layout, popup position and intrinsic grids are intentionally untouched.
  */
 html:root body :is(
- #calendarCreateMenu.cal-create-menu,
  #svcpAttachMenu.svcp-attach-menu,
  #svcpReactionPicker.svcp-reaction-picker,
  #svcpWorkHistoryMenu.svcp-work-history-menu,
@@ -178,12 +177,12 @@ html:root body dialog#personalTaskDialog.sv-task-editor-v3
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
-/* Calendar and Work Chat dropdown choices: preserve their grids, icons,
+/* Work Chat dropdown choices: preserve their grids, icons,
  * selection logic and existing button sizes, but align hover/press feel. */
-html:root body :is(#calendarCreateMenu,#svcpAttachMenu,#svcpWorkHistoryMenu) > button{
+html:root body :is(#svcpAttachMenu,#svcpWorkHistoryMenu) > button{
  color:var(--sv-menu-text)!important;
 }
-html:root body :is(#calendarCreateMenu,#svcpAttachMenu,#svcpWorkHistoryMenu) > button:active{
+html:root body :is(#svcpAttachMenu,#svcpWorkHistoryMenu) > button:active{
  background:var(--sv-menu-item-selected)!important;
 }
 /* Mail account-management popup has a distinct historically forced dark
@@ -229,13 +228,65 @@ html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"
 /* Subtle focus ring, no thick square browser selection halos. */
 html:root body :is(
  #svSmartInkPicker,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,
- #notePaperSettingsMenu,#svPaperBrushPicker,#calendarCreateMenu,#svcpAttachMenu
+ #notePaperSettingsMenu,#svPaperBrushPicker,#svcpAttachMenu
  ) :is(button,input,select):focus-visible{
  outline:2px solid #397bc6!important;
  outline-offset:2px!important;
 }
 @media (prefers-reduced-motion:reduce){
- html:root body :is(#svSmartInkPicker,#svNoteTopMenu,#svPaperBrushPicker,#calendarCreateMenu) *{
+ html:root body :is(#svSmartInkPicker,#svNoteTopMenu,#svPaperBrushPicker,#svcpAttachMenu) *{
   transition:none!important;
  }
+}
+
+/* Work Chat's history menus were forced to #38383A even on white screens.
+ * They have separate nested IDs and need higher specificity than general
+ * tokens, and a calm destructive-action red on white surfaces. */
+html:root body #svcpWorkChatScreen
+ :is(#svcpWorkHistoryMenu.svcp-work-history-menu,.svcp-work-history-row-menu){
+ background:var(--sv-menu-bg)!important;
+ color:var(--sv-menu-text)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html:root body #svcpWorkChatScreen #svcpWorkHistory
+ #svcpWorkHistoryMenu.svcp-work-history-menu{
+ background:var(--sv-menu-bg)!important;
+ color:var(--sv-menu-text)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+}
+html:root body #svcpWorkChatScreen
+ :is(#svcpWorkHistoryMenu.svcp-work-history-menu,.svcp-work-history-row-menu) button,
+html:root body #svcpWorkChatScreen #svcpWorkHistory
+ #svcpWorkHistoryMenu.svcp-work-history-menu button{
+ color:var(--sv-menu-text)!important;
+ background:transparent!important;
+}
+html:root body #svcpWorkChatScreen
+ :is(#svcpWorkHistoryMenu.svcp-work-history-menu,.svcp-work-history-row-menu) button:active{
+ background:var(--sv-menu-item-selected)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen
+ .svcp-work-history-row-menu button:last-child{
+ color:#b8323a!important;
+}
+html:root[data-theme="dark"] body #svcpWorkChatScreen
+ .svcp-work-history-row-menu button:last-child{
+ color:#ffb0b0!important;
+}
+html:root body #svcpWorkChatScreen #svcpAttachMenu.svcp-attach-menu:not([hidden]){
+ background:var(--sv-menu-bg)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html:root body #svcpWorkChatScreen #svcpAttachMenu.svcp-attach-menu > button{
+ color:var(--sv-menu-text)!important;
 }
