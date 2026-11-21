@@ -1,0 +1,247 @@
+/* SEYVEO WHITE PEARL · approved unified LIGHT theme · 2026-11-21
+   ONE source for colour / rim / translucency / shadow / press feel.
+   Reference: the rebuilt 60px "New Note" circular button.
+   Change materials on EXISTING elements only; no new frames, overlays,
+   page sheets, gesture surfaces, or pseudo icons. Dark and semantic
+   gold/danger/ink-colour actions are intentionally excluded.
+   Source: docs/SEYVEO-WHITE-PEARL-STANDARD.md */
+
+:root[data-theme="light"]{
+ /* Canonical design tokens — tune them HERE, not in screen styles. */
+ --sv-white-pearl-surface:rgba(255,255,255,.92);
+ --sv-white-pearl-solid:#fff;
+ --sv-white-pearl-edge:.75px solid rgba(255,255,255,.97);
+ --sv-white-pearl-blur:blur(9px) saturate(106%);
+ --sv-white-pearl-ink:#0b0b0d;
+ --sv-white-pearl-circle-shadow:
+   0 3px 10px rgba(48,56,72,.095),
+   0 1px 2px rgba(48,56,72,.045),
+   0 0 0 .5px rgba(146,158,173,.17),
+   inset 0 1px 1px rgba(255,255,255,.9);
+ --sv-white-pearl-dock-shadow:
+   0 3px 10px rgba(48,56,72,.060),
+   0 1px 2px rgba(48,56,72,.030),
+   0 0 0 .5px rgba(146,158,173,.14),
+   inset 0 1px 1px rgba(255,255,255,.82);
+ --sv-white-pearl-press-fill:
+   radial-gradient(ellipse 110% 95% at 50% 5%,rgba(10,132,255,.12),rgba(10,132,255,.045) 72%);
+ --sv-white-pearl-press-shadow:
+   inset 0 1.8px 2.7px rgba(31,42,58,.16),
+   inset 0 -1px 1px rgba(255,255,255,.38);
+ --sv-white-pearl-press-scale:.992;
+ --sv-white-pearl-press-time:135ms;
+ --sv-white-pearl-radius-circle:50%;
+ --sv-white-pearl-radius-capsule:999px;
+
+ /* Compatibility names used by existing feature CSS. No second palette. */
+ --sv-dock-pearl-bg:var(--sv-white-pearl-surface);
+ --sv-dock-pearl-border:var(--sv-white-pearl-edge);
+ --sv-dock-pearl-blur:var(--sv-white-pearl-blur);
+ --sv-dock-pearl-shadow:var(--sv-white-pearl-dock-shadow);
+ --sv-dock-glass-finish:var(--sv-white-pearl-surface);
+ --sv-dock-glass-filter:var(--sv-white-pearl-blur);
+ --sv-dock-glass-edge:var(--sv-white-pearl-edge);
+ --sv-dock-glass-relief:var(--sv-white-pearl-dock-shadow);
+ --sv-depth-dock:var(--sv-white-pearl-dock-shadow);
+ --sv-depth-circle:var(--sv-white-pearl-circle-shadow);
+ --sv-nav-pearl-bg:var(--sv-white-pearl-surface);
+ --sv-nav-pearl-border:var(--sv-white-pearl-edge);
+ --sv-nav-pearl-shadow:var(--sv-white-pearl-circle-shadow);
+ --sv-header-circle:var(--sv-white-pearl-surface);
+ --sv-header-circle-border:var(--sv-white-pearl-edge);
+ --sv-header-circle-shadow:var(--sv-white-pearl-circle-shadow);
+ --sv-header-circle-filter:var(--sv-white-pearl-blur);
+ --sv-header-surface:#fff;
+ --sv-back-flat:var(--sv-white-pearl-surface);
+ --sv-back-flat-pressed:rgba(248,250,254,.94);
+ --sv-back-flat-ink:var(--sv-white-pearl-ink);
+}
+/* A true white fallback when accessibility requests no transparency. */
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme="light"]{
+  --sv-white-pearl-surface:#fff;
+  --sv-white-pearl-blur:none;
+ }
+}
+
+/* MAIN DOCK — only the two pre-existing capsule shapes. Not the
+   transparent full-width footer grid, icons, or selected date counters. */
+html:root[data-theme="light"] body > footer.dock.sv-shared-dock::before,
+html:root[data-theme="light"] body > footer.dock.sv-shared-dock::after,
+html:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::before,
+html:root[data-theme="light"] body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock::after{
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:var(--sv-white-pearl-radius-capsule)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+}
+
+/* NOTEBOOK: thin text capsule, side ink tool capsule. The obsolete
+   second note-circle pseudo remains absent; it is NEVER revived. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ .sv-smart-ink-tools:not([hidden]),
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
+ .sv-paper-top #svPaperNewDock{
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:var(--sv-white-pearl-radius-capsule)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+}
+/* Rebuilt New Note button: SAME material and one true 60px shadow.
+   No small separate pressed circle, no nested halo. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-note-home-dock-row
+ > .sv-note-home-new-dock::before{
+ border:var(--sv-white-pearl-edge)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+}
+
+/* HEALTH DOCK — real surfaces, not disabled pseudo backgrounds. */
+html:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > footer.dock.sv-shared-dock > :is(.sv-health-dock-actions,#navManage){
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:var(--sv-white-pearl-radius-capsule)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+}
+/* CHATS, BROWSER, MUSIC — existing outer capsules ONLY.
+   Their send, mic, album art and message backgrounds are unchanged. */
+html:root[data-theme="light"] body #svcpWorkChatScreen #svcpChatForm,
+html:root[data-theme="light"] body #sayviComposer::before,
+html:root[data-theme="light"] body .seyveo-browser .seyveo-browser-bar,
+html:root[data-theme="light"] body #sayviMusicMini:not([hidden]){
+ border:var(--sv-white-pearl-edge)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+}
+/* Separate composer plus is circular, not part of the input capsule. */
+html:root[data-theme="light"] body #sayviComposer > button#sayviPlus{
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:var(--sv-white-pearl-radius-circle)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+}
+
+/* INDIVIDUAL ROUND BUTTONS: exact matching pearl skin. Never target the
+   gold Done button, colored statuses, destructive controls, or tool ribbons. */
+html:root[data-theme="light"] body :is(
+ .sv-header-material-circle,
+ .sv-continuity-titlebar > button:is(.seyveo-picture-back,.life-back,.sv-deep-back,.manage-theme-back),
+ #sayviSurfaceBack,
+ #noteReviewBack,
+ #noteReadBack,
+ #noteScanBack,
+ #assistantChatHistoryBack,
+ #sayviTopActions .sv-top-action,
+ #calendarPage #calendarAdd,
+ #calendarPage .calendar-header-add,
+ #calendarPage .cal-actions .cal-day-fab,
+ #tasksPage .svcp-manager-task-create,
+ #tasksPage .sv-cabinet-plus,
+ #tasksPage .personal-tasks-add,
+ #tasksPage #personalAddTasks
+):not(:disabled):not([hidden]):not([aria-hidden="true"]){
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:var(--sv-white-pearl-radius-circle)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ color:var(--sv-white-pearl-ink)!important;
+}
+/* The GOLD Done/checkmark remains golden: depth only, NOT recoloring. */
+html:root[data-theme="light"] body dialog#noteReviewDialog[open]
+ #svNoteDone.sv-note-nav-circle:not(:active){
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+}
+
+/* Buttons in the header share the same tactile microstep. The separate
+   Home Search button owns a special open state — it is not changed here. */
+html:root[data-theme="light"] body :is(
+ .sv-header-material-circle,
+ #noteReviewBack,
+ #noteReadBack,
+ #noteScanBack,
+ #assistantChatHistoryBack,
+ #sayviTopActions .sv-top-action,
+ #calendarPage #calendarAdd,
+ #calendarPage .calendar-header-add,
+ #tasksPage .svcp-manager-task-create,
+ #tasksPage .personal-tasks-add,
+ #tasksPage #personalAddTasks
+):not(:disabled):active{
+ transform:scale(var(--sv-white-pearl-press-scale))!important;
+ background:var(--sv-white-pearl-press-fill)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow)!important;
+ transition:transform var(--sv-white-pearl-press-time) ease-out,
+            box-shadow var(--sv-white-pearl-press-time) ease-out!important;
+}
+/* One press recipe for New Note (independent right-side round button). */
+html:root[data-theme="light"] body dialog#noteReviewDialog[open]
+ .sv-note-home-new-dock > #svNoteHomeNew:active{
+ background:var(--sv-white-pearl-press-fill)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow)!important;
+ transform:translateY(.2px) scale(var(--sv-white-pearl-press-scale))!important;
+}
+
+/* Flat *inner* tool buttons: no old inset discs inside narrow capsules.
+   Keep native ink color sample, focus ring and all pointer/touch handlers. */
+html:root[data-theme="light"] body dialog#noteReviewDialog[open]
+ .sv-note-tools-compact[data-sv-unified-tools="true"] > button:is([aria-pressed="true"],[aria-expanded="true"],:active),
+html:root[data-theme="light"] body dialog#noteReviewDialog[open]
+ .sv-smart-ink-tools > button:is([aria-pressed="true"],[aria-expanded="true"],:active),
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open]
+ #svPaperNewDock > button.sv-newdock-button:is([data-sv-active="true"],:active){
+ border:0!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+
+/* Opt-in future controls. Add one class to existing elements; don't copy
+   palette values into individual screens and don't add decorative wrappers. */
+html:root[data-theme="light"] body .sv-white-pearl-circle{
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:50%!important;
+ background:var(--sv-white-pearl-surface)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+html:root[data-theme="light"] body .sv-white-pearl-capsule{
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:999px!important;
+ background:var(--sv-white-pearl-surface)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html:root[data-theme="light"] body .sv-white-pearl-circle,
+ html:root[data-theme="light"] body .sv-white-pearl-capsule{
+  transition:none!important;
+ }
+}
