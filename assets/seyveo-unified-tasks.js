@@ -1150,7 +1150,17 @@
   guideHost.append(action);
   if(status)status.textContent='';
  }
- function render(){if(!draft)return;renderCatalog();if(activeGoal)renderGuide();if(status)status.textContent=''}
+ function render(){
+  if(!draft)return;
+  // The bulk action must remain useful when every instrument is selected.
+  // Only the current draft changes; the saved cabinet updates on Save.
+  if(resetButton){
+   const allSelected=DEFAULT.every(id=>draft.includes(id));
+   resetButton.textContent=allSelected?'Очистить':'Выбрать все';
+   resetButton.setAttribute('aria-label',allSelected?'Очистить выбор инструментов':'Выбрать все инструменты');
+  }
+  renderCatalog();if(activeGoal)renderGuide();if(status)status.textContent='';
+ }
  function open(){
   // This client check is for demo UI only. It is NOT a security boundary.
   if(!window.SEYVEO_PREVIEW?.isManager?.())return;
@@ -1187,7 +1197,11 @@
   catalogHost.querySelector('[data-cabinet-action="guide"][data-cabinet-id="'+id+'"]')?.focus({preventScroll:true});
  });
  saveButton?.addEventListener('click',save);
- resetButton?.addEventListener('click',()=>{if(!draft)return;draft=DEFAULT.slice();search.value='';hideGoal();render()});
+ resetButton?.addEventListener('click',()=>{
+  if(!draft)return;
+  draft=DEFAULT.every(id=>draft.includes(id))?[]:DEFAULT.slice();
+  search.value='';hideGoal();render();
+ });
  search.addEventListener('input',renderCatalog);
  catalogHost.addEventListener('click',event=>{
   const b=event.target.closest('[data-cabinet-action]');
