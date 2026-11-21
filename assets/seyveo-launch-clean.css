@@ -17,6 +17,9 @@
  -webkit-tap-highlight-color:transparent!important;
  pointer-events:auto!important;
 }
+:root[data-theme="dark"] #svLaunchClean{
+ background:radial-gradient(ellipse 56% 43% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(145,166,182,.085),transparent 90%),var(--bg,#11161b)!important;
+}
 #svLaunchClean .svLaunchCleanMark{
  all:initial!important;
  position:absolute!important;display:block!important;
