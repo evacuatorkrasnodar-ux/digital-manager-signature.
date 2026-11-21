@@ -205,35 +205,61 @@
  color:#F1F3F5;
 }
 
-/* HOME DAY/NIGHT 7-DAY WHISPER — only during Sayvi's compact forecast.
-   The original row keeps its x/y position and hit target; each real day
-   gently replaces the previous copy without creating a second widget. */
-#homePage #svSayviHomeWeather.sv-home-weather-week-active{
- display:inline-flex!important;
- flex-wrap:nowrap!important;
- justify-content:center!important;
- align-items:center!important;
- max-width:calc(100vw - 22px)!important;
- white-space:nowrap!important;
- gap:6px!important;
- color:#45535E!important;
+/* Home weather: TODAY / seven days in the SAME quiet slot.
+   Always reserve 52px to avoid a jump at each automatic change. */
+#homePage #svSayviHomeWeather:not([hidden]){
+ box-sizing:border-box!important;
+ width:min(344px,calc(100vw - 22px))!important;
+ min-height:52px!important;height:52px!important;
+ padding:3px 5px!important;overflow:hidden!important;
+ margin-top:8px!important;margin-bottom:4px!important;
+ align-items:center!important;justify-content:center!important;
 }
-#homePage #svSayviHomeWeather.sv-home-weather-week-active > span:last-child{
- font-size:clamp(12px,3.4vw,14px)!important;
- font-weight:470!important;
- letter-spacing:-.015em!important;
- font-variant-numeric:tabular-nums!important;
+#homePage #svSayviHomeWeather .sv-home-weather-today-face{
+ display:flex;align-items:center;justify-content:center;
+ gap:8px;white-space:nowrap;max-width:100%;
+ animation:sv-home-weather-swap .35s ease-out both;
 }
-#homePage #svSayviHomeWeather .sv-home-weather-week-show{
- animation:sv-weather-home-day-in .42s cubic-bezier(.2,.78,.2,1) both;
+#homePage #svSayviHomeWeather .sv-home-weather-week-face{display:none}
+#homePage #svSayviHomeWeather.sv-home-weather-week-active .sv-home-weather-today-face{display:none}
+#homePage #svSayviHomeWeather.sv-home-weather-week-active .sv-home-weather-week-face{
+ display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+ align-items:center;justify-content:center;width:100%;min-width:0;
+ animation:sv-home-weather-swap .35s ease-out both;
 }
-@keyframes sv-weather-home-day-in{
- from{opacity:.18;transform:translateY(4px);filter:blur(1px)}
- to{opacity:1;transform:translateY(0);filter:blur(0)}
+#homePage #svSayviHomeWeather .sv-home-weather-day{
+ min-width:0;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:2px;line-height:1;
 }
-:root[data-theme="dark"] #homePage #svSayviHomeWeather.sv-home-weather-week-active{
- color:#d2dbe2!important;
+#homePage #svSayviHomeWeather .sv-home-weather-day + .sv-home-weather-day{
+ border-left:1px solid rgba(134,151,168,.14);
 }
+#homePage #svSayviHomeWeather .sv-home-weather-day-name{
+ color:#919da8;font-size:9px;font-weight:510;
+ text-transform:lowercase;white-space:nowrap;
+}
+#homePage #svSayviHomeWeather .sv-home-weather-day-pair{
+ display:flex;justify-content:center;align-items:center;
+ gap:2px;white-space:nowrap;color:#4b5863;
+ font-size:clamp(10px,2.8vw,11.5px);font-weight:520;
+ font-variant-numeric:tabular-nums;
+}
+#homePage #svSayviHomeWeather .sv-home-weather-day-night{color:#9ba7b3;font-weight:440}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol,
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol svg{
+ width:12px!important;height:12px!important;flex:0 0 12px!important;
+}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol{color:#9aabbc!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="sun"]{color:#daa34b!important}
+#homePage #svSayviHomeWeather .sv-home-weather-day-symbol[data-weather-kind="rain"]{color:#669dc6!important}
+@keyframes sv-home-weather-swap{
+ from{opacity:.06;transform:translateY(3px)}
+ to{opacity:1;transform:translateY(0)}
+}
+:root[data-theme="dark"] #homePage #svSayviHomeWeather .sv-home-weather-day-pair{color:#d8e1e9}
+:root[data-theme="dark"] #homePage #svSayviHomeWeather .sv-home-weather-day-night,
+:root[data-theme="dark"] #homePage #svSayviHomeWeather .sv-home-weather-day-name{color:#a9b7c6}
 @media(prefers-reduced-motion:reduce){
- #homePage #svSayviHomeWeather .sv-home-weather-week-show{animation:none!important}
+ #homePage #svSayviHomeWeather .sv-home-weather-today-face,
+ #homePage #svSayviHomeWeather .sv-home-weather-week-face{animation:none!important}
 }
