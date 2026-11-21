@@ -131,3 +131,26 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  :root{--sv-depth-dock:0 3px 10px rgba(36,46,61,.12),0 0 0 .7px rgba(146,158,173,.22)}
  :root[data-theme="dark"]{--sv-depth-dock:0 3px 10px rgba(0,0,0,.28),0 0 0 .7px rgba(255,255,255,.14)}
 }
+
+/* The light dock variable was historically declared on :root[data-theme],
+   which outranks bare :root. Explicitly unify that inherited material. */
+:root[data-theme="light"]{
+ --sv-dock-pearl-shadow:var(--sv-depth-dock);
+ --sv-menu-shadow:var(--sv-depth-menu);
+}
+/* Calendar, Mail and Work Chat menus sit above their parent controls. */
+html body #calendarPage #calendarCreateMenu:not([hidden]),
+html body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-message-menu:not([hidden]),
+html body #svcpWorkChatScreen :is(.svcp-message-context-menu,.svcp-work-history-row-menu):not([hidden]){
+ box-shadow:var(--sv-depth-menu)!important;
+}
+html body #sayviComposer{
+ box-shadow:var(--sv-depth-dock)!important;
+}
+html body #sayviTopActions .sv-top-action:not(:active){
+ box-shadow:var(--sv-depth-circle)!important;
+}
+html body #sayviMessages .sv-reply-action-menu:not([hidden]),
+html body .sv-history-menu:not([hidden]){
+ box-shadow:var(--sv-depth-menu)!important;
+}
