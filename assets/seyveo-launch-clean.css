@@ -48,13 +48,19 @@
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
  visibility:visible!important;
 }
-#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
-#svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanMark{
  animation:svLaunchCameraIn 3000ms linear both!important;
+}
+/* Don't blend two different spheres together. At the matching final size,
+   the original emblem leaves FIRST; only then the Home itself appears. */
+@keyframes svLaunchMarkExit{to{opacity:0}}
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
+ animation:svLaunchCameraIn 3000ms linear both,
+           svLaunchMarkExit 185ms ease-out both!important;
 }
 @keyframes svLaunchDissolve{to{opacity:0}}
 #svLaunchClean[data-stage="reveal"]{
- animation:svLaunchDissolve 760ms cubic-bezier(.22,.62,.32,1) forwards!important;
+ animation:svLaunchDissolve 650ms cubic-bezier(.22,.62,.32,1) 185ms forwards!important;
  pointer-events:none!important;
 }
 @media(prefers-reduced-motion:reduce){
