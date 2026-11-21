@@ -287,3 +287,38 @@ html:root[data-theme="light"] body #homePage #seyveoLivingMoment .lm-field .lm-a
  background:var(--sv-white-pearl-press-fill)!important;
  box-shadow:var(--sv-white-pearl-press-shadow)!important;
 }
+
+/* HEALTH HEADER ACTIONS: the already existing 44px Back and Add circles
+   keep their places/handlers. The old #E3E4E9 fallback is now pure white. */
+html:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > :is(button.seyveo-dialog-close.sv-nav-arrow,button.sv-health-header-add:not([hidden])){
+ border:var(--sv-white-pearl-edge)!important;
+ border-radius:50%!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ color:var(--sv-white-pearl-ink)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+  > :is(button.seyveo-dialog-close.sv-nav-arrow,button.sv-health-header-add:not([hidden])){
+  background:#fff!important;-webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
+
+/* Work task creation may have a 3-ID old graphite rule. Keep its existing
+   rectangular shape but replace that dark background in WHITE theme only.
+   This is a real text button, never force it to a 60px round icon. */
+html:root[data-theme="light"] body #svWorkShell[data-active="personal"]
+ #tasksPage #svcpTaskList .svcp-manager-task-create{
+ border:var(--sv-white-pearl-edge)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ color:var(--sv-white-pearl-ink)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
