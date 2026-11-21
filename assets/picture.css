@@ -1031,15 +1031,111 @@ html body #picturePage #pictureBusiness > .sv-pulse-periods > button[aria-presse
 html body #picturePage #pictureBusiness > .sv-pulse-periods > button:focus-visible{
  outline:2px solid #f4f4f5!important;outline-offset:-2px!important;
 }
+/* Pulse · approved white finish. Keep ONE light-theme owner here and
+   leave the original graphite styling untouched for the dark theme.
+   No added DOM shells, no cloned controls or JS changes. */
+html[data-theme="light"] body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusiness::before{
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 8px 20px rgba(42,52,72,.11))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+}
+html[data-theme="light"] body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusiness svg{
+ stroke:var(--sv-white-pearl-ink,#0b0b0d)!important;
+}
+html[data-theme="light"] body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusiness:active::before{
+ background:rgba(220,228,237,.40)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow,inset 0 1px 3px rgba(31,42,58,.16))!important;
+}
+html[data-theme="light"] body #picturePage .picture-head .sv-continuity-titlebar #pictureBackToBusiness:focus-visible{
+ outline:2px solid #4b5765!important;
+}
 html[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods{
- background:#E9E9EB!important;
+ background:rgba(226,232,239,.46)!important;
+ border:.75px solid rgba(203,210,220,.45)!important;
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.8)!important;
+ -webkit-backdrop-filter:blur(8px) saturate(104%)!important;
+ backdrop-filter:blur(8px) saturate(104%)!important;
 }
 html[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods > button{
- color:#54565c!important;
+ color:#525b67!important;
 }
 html[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods > button[aria-pressed="true"]{
- color:white!important;background:#38383A!important;
+ background:rgba(255,255,255,.94)!important;
+ color:#181b20!important;
+ font-weight:620!important;
+ box-shadow:0 1px 5px rgba(35,45,60,.10),inset 0 1px 1px #fff!important;
 }
+html[data-theme="light"] body #picturePage #pictureBusiness > .sv-pulse-periods > button:focus-visible{
+ outline:2px solid #65758a!important;
+}
+html[data-theme="light"] body #picturePage #pictureQuickInsight.picture-sayvi:not([hidden]){
+ background:rgba(255,255,255,.96)!important;
+ border:1px solid rgba(212,218,226,.80)!important;
+ border-radius:19px!important;
+ box-shadow:0 7px 21px rgba(43,53,71,.075),0 1px 3px rgba(43,53,71,.045)!important;
+ color:#16191d!important;
+}
+html[data-theme="light"] body #picturePage .picture-sayvi-symbol{
+ background:transparent!important;
+ border:0!important;
+ color:#191d23!important;
+}
+html[data-theme="light"] body #picturePage .picture-sayvi-symbol .sv-sayvi-symbol{
+ color:#171b20!important;
+ background-color:currentColor!important;
+ width:20px!important;height:20px!important;
+}
+html[data-theme="light"] body #picturePage .picture-sayvi-heading strong{
+ color:#1b1d22!important;
+ font-weight:630!important;
+}
+html[data-theme="light"] body #picturePage .picture-sayvi-context{
+ color:#656d78!important;
+}
+html[data-theme="light"] body #picturePage #pictureSummary.picture-sayvi-headline{
+ color:#252a31!important;
+ font-weight:550!important;
+}
+html[data-theme="light"] body #picturePage .picture-sayvi-details{
+ border-top-color:rgba(40,50,62,.12)!important;
+}
+html[data-theme="light"] body #picturePage .picture-sayvi-detail{
+ color:#535c67!important;
+ border-bottom-color:rgba(40,50,62,.085)!important;
+}
+html[data-theme="light"] body #picturePage .picture-sayvi-actions button{
+ color:#2c333d!important;
+}
+html[data-theme="light"] body #picturePage #pictureSayviDiscuss{
+ background:rgba(226,232,239,.62)!important;
+ border:.75px solid rgba(192,202,213,.48)!important;
+ border-radius:12px!important;
+ color:#24292f!important;
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.7)!important;
+}
+html[data-theme="light"] body #picturePage .picture-sayvi-actions button:active{
+ background:rgba(213,222,232,.85)!important;
+}
+html[data-theme="light"] body #picturePage .picture-sayvi-actions button:focus-visible{
+ outline:2px solid #65758a!important;
+}
+html[data-theme="light"] body #picturePage .picture-split-inline{
+ background:#f6f7f9!important;
+ color:#242a32!important;
+ border:1px solid rgba(210,217,225,.65)!important;
+}
+html[data-theme="light"] body #picturePage .picture-split-inline-row + .picture-split-inline-row{
+ border-top-color:rgba(40,50,62,.10)!important;
+}
+html[data-theme="light"] body #picturePage .picture-split-inline-row > span{color:#626b75!important}
+html[data-theme="light"] body #picturePage .picture-split-inline-row > strong{color:#21262b!important}
+html[data-theme="light"] body #picturePage #pictureDataTools #pictureConnectSources{
+ background:rgba(230,235,241,.82)!important;
+ color:#252a31!important;
+}
+
 @media(max-width:350px){
  html body #picturePage #pictureBusiness > .sv-pulse-periods > button{font-size:11px!important}
 }
