@@ -588,24 +588,28 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
  background:rgba(235,239,245,.15)!important;border-color:rgba(255,255,255,.35)!important;
 }
 
-/* Notebook selection parity v19 · same 46px inset on Aa and handwriting.
-   The pen-mode circle previously inherited a separate 52px resting-tool rule.
-   Reuse the exact shared pearl inset in either mode without changing icons. */
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+/* Notebook selected-disc parity v20.
+   Aa and pen use the very same button geometry/inset material as
+   Attachments and Sayvi. No separate small circle or extra painted layer. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact[data-sv-unified-tools="true"]
- > :is(button[data-sv-smart-tool="text"],button[data-note-tool="draw"]){
- box-sizing:border-box!important;position:relative!important;
+ > button:not([hidden]):not([aria-hidden="true"]){
+ box-sizing:border-box!important;
+ position:relative!important;
  flex:0 0 46px!important;
  width:46px!important;min-width:46px!important;max-width:46px!important;
  height:46px!important;min-height:46px!important;max-height:46px!important;
  aspect-ratio:1/1!important;
- place-items:center!important;align-self:center!important;
- padding:0!important;margin:0!important;border-radius:50%!important;
+ align-self:center!important;justify-self:center!important;
+ display:grid!important;place-items:center!important;
+ padding:0!important;margin:0!important;
+ border-radius:50%!important;
  transform:none!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact[data-sv-unified-tools="true"]
- > :is(button[data-sv-smart-tool="text"],button[data-note-tool="draw"])[aria-pressed="true"]{
+ > button:not([hidden]):not([aria-hidden="true"]):is([aria-pressed="true"],[aria-expanded="true"],:active){
+ box-sizing:border-box!important;
  border:var(--sv-inset-rim)!important;
  border-radius:50%!important;
  background:var(--sv-inset-fill)!important;
