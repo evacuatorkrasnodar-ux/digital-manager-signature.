@@ -1910,7 +1910,15 @@ function openRoom(roomId){
   conversation.dataset.roomId=selected.id;
  }
  state.viewpoint=employeePreviewActive()?'elena':'manager';
- const avatar=$('svcpRoomAvatar');if(avatar)avatar.textContent=state.viewpoint==='elena'&&selected.id==='dm-elena'?'Р':selected.mark;
+ const avatar=$('svcpRoomAvatar');
+ if(avatar){
+  avatar.replaceChildren();
+  if(selected.id==='dm-sayvi'){
+   avatar.append(el('span','sv-sayvi-symbol'));
+  }else{
+   avatar.textContent=state.viewpoint==='elena'&&selected.id==='dm-elena'?'Р':selected.mark;
+  }
+ }
  const roomName=$('svcpRoomInfoName');if(roomName)roomName.textContent=
   state.viewpoint==='elena'&&selected.id==='dm-elena'?'Руководитель':selected.label;
  const roomDescription=$('svcpRoomInfoDescription');
