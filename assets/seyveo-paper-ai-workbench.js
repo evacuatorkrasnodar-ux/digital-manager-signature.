@@ -22,6 +22,7 @@
    <div class="sv-pa-quick-grid" role="group" aria-label="Творческие действия с рисунком">
     <button type="button" data-pa-quick="smooth"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16c3-7 5 4 9-3s6-5 9-8M3 20h18"/></svg><span>Выровнять линии</span></button>
     <button type="button" data-pa-quick="shape"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15c1-8 10-12 14-3s-5 10-10 4M5 5h4M5 5v4M15 19h4v-4"/></svg><span>Узнать фигуру</span></button>
+    <div class="sv-pa-quick-divider" role="note">Будущие возможности Сэйви</div>
     <button type="button" data-pa-quick="draw" data-pa-prompt="Нарисуй " class="sv-pa-planned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.9 6.1L20 11l-6.1 1.9L12 19l-1.9-6.1L4 11l6.1-1.9L12 3Z"/></svg><span>Нарисовать <small>ИИ на ПК</small></span></button>
     <button type="button" data-pa-quick="extend" data-pa-prompt="Дорисуй мой набросок: " class="sv-pa-planned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17c4-5 7-2 11-7M18 6v6m-3-3h6"/></svg><span>Дорисовать <small>В планах</small></span></button>
     <button type="button" data-pa-quick="colorize" data-pa-prompt="Раскрась мой рисунок: " class="sv-pa-planned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17 15 5l4 4-10 10H5v-2Zm8-8 3 3M19 16c0 2-1 3-2 3s-2-1-2-3c0-1 2-3 2-3s2 2 2 3Z"/></svg><span>Раскрасить <small>В планах</small></span></button>
@@ -151,7 +152,7 @@
     if(step.id==='draw'&&localReady){
      button.textContent='Создать на ПК';
      button.addEventListener('click',()=>drawDraft(result.request));
-    }else{button.textContent='Нужна ИИ-модель';button.disabled=true}
+    }else{button.textContent=step.id==='draw'?'Нет модели':'В разработке';button.disabled=true}
    }else{
     const target=document.getElementById(step.target);
     button.textContent=target?'Открыть':'Недоступно';button.disabled=!target;
