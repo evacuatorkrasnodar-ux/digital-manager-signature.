@@ -44,7 +44,7 @@
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{visibility:visible!important}
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
- transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,7))!important;
+ transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-scale,1.81818182))!important;
 }
 @media(prefers-reduced-motion:reduce){
  #svLaunchClean{transition:none!important}
