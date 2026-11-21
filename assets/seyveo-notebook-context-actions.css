@@ -588,55 +588,20 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
  background:rgba(235,239,245,.15)!important;border-color:rgba(255,255,255,.35)!important;
 }
 
-/* SEYVEO Notebook · slim tool capsules, flat icons · v22.
-   Narrow rails are not individual buttons: the pearl capsule is the only
-   surface. Remove both background insets and the v21 52px pseudo-discs.
-   Keep original touch targets, scrolling, native color swatch, and handlers. */
-
-/* Horizontal notebook rail (with or without the on-screen keyboard). */
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock
- > .sv-note-tools-compact[data-sv-unified-tools="true"] > button,
+/* SEYVEO Notebook narrow toolbars · v23 safe correction.
+   Only cancel selected/pressed insets. Preserve each button's original
+   geometry, icon pseudo-elements, transforms, native color picker and touch.
+   The thin pearl capsule remains the only background surface. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock
  > .sv-note-tools-compact[data-sv-unified-tools="true"] > button:is([aria-pressed="true"],[aria-expanded="true"],:active){
- -webkit-appearance:none!important;appearance:none!important;
- border:0!important;background:transparent!important;background-image:none!important;
- box-shadow:none!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;border:0!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- filter:none!important;transform:none!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock
- > .sv-note-tools-compact[data-sv-unified-tools="true"] > button::before,
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock
- > .sv-note-tools-compact[data-sv-unified-tools="true"] > button::after{
- content:none!important;display:none!important;opacity:0!important;
- background:none!important;box-shadow:none!important;
-}
-
-/* Narrow vertical rail for pen / eraser / thickness / paper / voice.
-   Preserve the colored ink-preview circle: it is a functional color sample,
-   NOT a recessed button. */
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-smart-ink-tools > button,
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-ink-tools > button:is([aria-pressed="true"],[aria-expanded="true"],:active){
- -webkit-appearance:none!important;appearance:none!important;
- border:0!important;background:transparent!important;background-image:none!important;
- box-shadow:none!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;border:0!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- filter:none!important;transform:none!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-smart-ink-tools > button::before,
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-smart-ink-tools > button::after{
- content:none!important;display:none!important;opacity:0!important;
- background:none!important;box-shadow:none!important;
-}
-/* Active tool remains legible through its full-strength glyph. */
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- :is(.sv-smart-ink-tools > button,.sv-note-tools-compact[data-sv-unified-tools="true"] > button)
- [aria-hidden="true"]{pointer-events:none!important}
