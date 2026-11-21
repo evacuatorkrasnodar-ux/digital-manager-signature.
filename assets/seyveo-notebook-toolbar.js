@@ -98,7 +98,22 @@
  const pencilChoice=document.createElement('button');
  pencilChoice.type='button';pencilChoice.dataset.svToolChoice='pencil';pencilChoice.textContent='Карандаш';
  inkChoices.append(penChoice,pencilChoice);
- settingsMenu.append(inkHeading,inkChoices,actionHeading,redo,photo,duplicate,removePhoto,clear);
+ // Undo and Redo share one slim header group, using the existing
+ // history engine and the original redo button (no duplicate handler).
+ settingsMenu.append(inkHeading,inkChoices,actionHeading,photo,duplicate,removePhoto,clear);
+ const undoButton=$('notePaperUndo');
+ if(undoButton?.parentElement){
+  const history=document.createElement('div');
+  history.className='sv-paper-history';
+  history.setAttribute('role','group');
+  history.setAttribute('aria-label','История рисунка');
+  undoButton.parentElement.insertBefore(history,undoButton);
+  redo.className='sv-paper-undo sv-paper-redo';
+  redo.innerHTML=icon('<path d="m14 8 4 4-4 4"/><path d="M18 12H8a4 4 0 1 0 0 8"/>');
+  redo.setAttribute('aria-label','Повторить отменённое действие');
+  redo.title='Повторить';
+  history.append(undoButton,redo);
+ }
  const backgroundButtons=[...settingsMenu.querySelectorAll('[data-paper-background]')];
  const syncBackground=()=>{
   const value=window.SEYVEO_PAPER?.getBackground?.();
