@@ -1,0 +1,241 @@
+/* SEYVEO · unified reading-menu material (2026-11-21)
+ * Applies to explicit, proven popup/menu surfaces only.
+ * Never styles docks, text canvases, full-screen dialogs or native pickers.
+ * Source of truth: docs/SEYVEO-MENU-DESIGN-STANDARD.md
+ */
+:root{
+ --sv-menu-bg:#fcfcfd;
+ --sv-menu-text:#252a33;
+ --sv-menu-secondary:#747b86;
+ --sv-menu-border:1px solid rgba(130,139,150,.20);
+ --sv-menu-shadow:0 12px 34px rgba(25,33,45,.16),inset 0 1px 0 #fff;
+ --sv-menu-item:#f3f4f6;
+ --sv-menu-item-border:#e9ebef;
+ --sv-menu-item-selected:#e6e9ed;
+ --sv-menu-item-selected-border:#d8dde4;
+ --sv-menu-rule:rgba(130,139,150,.16);
+ --sv-menu-radius:20px;
+}
+:root[data-theme="dark"]{
+ --sv-menu-bg:#292b30;
+ --sv-menu-text:#f3f3f6;
+ --sv-menu-secondary:#b8bdc6;
+ --sv-menu-border:1px solid rgba(255,255,255,.14);
+ --sv-menu-shadow:0 14px 34px rgba(0,0,0,.35);
+ --sv-menu-item:#373a41;
+ --sv-menu-item-border:rgba(255,255,255,.10);
+ --sv-menu-item-selected:#4b4f58;
+ --sv-menu-item-selected-border:rgba(255,255,255,.18);
+ --sv-menu-rule:rgba(255,255,255,.14);
+}
+/* Stable mini-menu surfaces in Calendar, Work Chat, Tasks and Notebook.
+ * Layout, popup position and intrinsic grids are intentionally untouched.
+ */
+html:root body :is(
+ #calendarCreateMenu.cal-create-menu,
+ #svcpAttachMenu.svcp-attach-menu,
+ #svcpReactionPicker.svcp-reaction-picker,
+ #svcpWorkHistoryMenu.svcp-work-history-menu,
+ #svNewTaskCameraMenu.sv-new-task-camera-menu,
+ #svNewTaskCalendarPopover.sv-new-task-calendar-popover,
+ #svSmartInkPicker.sv-smart-ink-picker,
+ #svSmartVoiceMenu.sv-smart-voice-menu,
+ #svSmartNotePaperPanel.sv-smart-paper-panel,
+ #svNoteTopMenu.sv-note-top-menu,
+ #svNoteAttachmentMenu.sv-note-attachment-menu,
+ #svNoteFormatMenu.sv-note-format-menu,
+ #notePaperSettingsMenu.sv-newdock-settings-panel,
+ #notePaperPatternMenu.paper-pattern-menu,
+ #notePaperColorMenu.paper-color-menu,
+ #svPaperBrushPicker.sv-paper-brush-picker
+ ){
+ box-sizing:border-box!important;
+ background:var(--sv-menu-bg)!important;
+ background-image:none!important;
+ color:var(--sv-menu-text)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ opacity:1!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+/* Consistent legible user-facing popovers in the Note Editor. Explicit
+ * specificity beats historical 2026 glass theme overrides.
+ */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svSmartInkPicker.sv-smart-ink-picker,
+     #svSmartVoiceMenu.sv-smart-voice-menu,
+     #svSmartNotePaperPanel.sv-smart-paper-panel,
+     #svNoteTopMenu.sv-note-top-menu,
+     #svNoteAttachmentMenu.sv-note-attachment-menu,
+     #svNoteFormatMenu.sv-note-format-menu):not([hidden]){
+ background:var(--sv-menu-bg)!important;
+ background-image:none!important;
+ color:var(--sv-menu-text)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ opacity:1!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svSmartInkPicker,#svSmartVoiceMenu,#svSmartNotePaperPanel,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu)
+ :is(strong,label,summary){
+ color:var(--sv-menu-text)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svSmartInkPicker,#svSmartVoiceMenu,#svSmartNotePaperPanel,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu)
+ :is(.sv-smart-ink-style-options button,.sv-smart-ink-width-options button,.sv-ink-personalization button){
+ color:var(--sv-menu-text)!important;
+ background:var(--sv-menu-item)!important;
+ border:1px solid var(--sv-menu-item-border)!important;
+ border-radius:11px!important;
+ box-shadow:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker :is(.sv-smart-ink-style-options button,.sv-smart-ink-width-options button)[aria-pressed="true"]{
+ background:var(--sv-menu-item-selected)!important;
+ border-color:var(--sv-menu-item-selected-border)!important;
+ box-shadow:inset 0 1px 2px rgba(35,45,55,.06)!important;
+}
+/* Keep compact Aa and attachment actions exactly where the handlers put them;
+ * only unify their finish. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu) > button{
+ color:var(--sv-menu-text)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu) > button:active{
+ background:var(--sv-menu-item-selected)!important;
+}
+/* Paper's local palette variables were hard-coded to graphite. Point them
+ * at the shared menu tokens so tool labels and pressed states match the
+ * current app theme, without altering painting canvases or the dock. */
+html:root body #notePaperDialog.sv-paper-studio[open]{
+ --sv-menu-surface:var(--sv-menu-bg);
+ --sv-menu-tile:var(--sv-menu-item);
+ --sv-menu-selected:var(--sv-menu-item-selected);
+ --sv-menu-ink:var(--sv-menu-text);
+ --sv-menu-muted:var(--sv-menu-secondary);
+ --sv-menu-rule:var(--sv-menu-rule-color,rgba(130,139,150,.16));
+}
+html:root[data-theme="dark"] body #notePaperDialog.sv-paper-studio[open]{
+ --sv-menu-rule-color:rgba(255,255,255,.14);
+}
+html:root:not([data-theme="dark"]) body #notePaperDialog.sv-paper-studio[open]{
+ --sv-menu-rule-color:rgba(130,139,150,.16);
+}
+html:root body #notePaperDialog.sv-paper-studio[open]
+ :is(#notePaperPatternMenu.paper-pattern-menu,
+     #notePaperSettingsMenu.sv-newdock-settings-panel,
+     #notePaperColorMenu.paper-color-menu,
+     #svPaperBrushPicker.sv-paper-brush-picker):not([hidden]){
+ background:var(--sv-menu-bg)!important;
+ background-image:none!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ color:var(--sv-menu-text)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ opacity:1!important;
+}
+html:root body #notePaperDialog.sv-paper-studio[open]
+ :is(#notePaperPatternMenu,#notePaperSettingsMenu,#notePaperColorMenu,#svPaperBrushPicker)
+ :is(.sv-polish-menu-heading,.sv-newdock-menu-title,.sv-paper-menu-head strong,.sv-gradient-head strong,.sv-brush-picker-title){
+ color:var(--sv-menu-text)!important;
+}
+html:root body #notePaperDialog.sv-paper-studio[open]
+ :is(#notePaperPatternMenu,#notePaperSettingsMenu,#notePaperColorMenu,#svPaperBrushPicker)
+ :is(.sv-paper-menu-section-label,.sv-gradient-section-caption,.sv-brush-picker-group,.sv-brush-opacity label){
+ color:var(--sv-menu-secondary)!important;
+}
+html:root body #notePaperDialog.sv-paper-studio[open]
+ :is(#notePaperPatternMenu,#notePaperSettingsMenu,#svPaperBrushPicker)
+ :is(.sv-paper-layouts button,.sv-paper-shape-grid button,.sv-newdock-menu-action,.sv-brush-picker-grid button){
+ color:var(--sv-menu-text)!important;
+ background:var(--sv-menu-item)!important;
+ border:1px solid var(--sv-menu-item-border)!important;
+ box-shadow:none!important;
+}
+html:root body #notePaperDialog.sv-paper-studio[open]
+ :is(#notePaperPatternMenu,#notePaperSettingsMenu,#svPaperBrushPicker)
+ :is(.sv-paper-layouts button,.sv-paper-shape-grid button,.sv-brush-picker-grid button)[aria-pressed="true"]{
+ background:var(--sv-menu-item-selected)!important;
+ border-color:var(--sv-menu-item-selected-border)!important;
+}
+/* Task editor was still using semi-transparent milky overlays above text. */
+html:root body dialog#personalTaskDialog.sv-task-editor-v3
+ :is(#svNewTaskCameraMenu.sv-new-task-camera-menu,
+     #svNewTaskCalendarPopover.sv-new-task-calendar-popover):not([hidden]){
+ background:var(--sv-menu-bg)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius)!important;
+ color:var(--sv-menu-text)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+/* Calendar and Work Chat dropdown choices: preserve their grids, icons,
+ * selection logic and existing button sizes, but align hover/press feel. */
+html:root body :is(#calendarCreateMenu,#svcpAttachMenu,#svcpWorkHistoryMenu) > button{
+ color:var(--sv-menu-text)!important;
+}
+html:root body :is(#calendarCreateMenu,#svcpAttachMenu,#svcpWorkHistoryMenu) > button:active{
+ background:var(--sv-menu-item-selected)!important;
+}
+/* Mail account-management popup has a distinct historically forced dark
+ * material. Scope light-mode overrides to this single popup and its direct
+ * text controls, without touching Mail's full page or admission forms. */
+html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-gate-menu{
+ background:var(--sv-menu-bg)!important;
+ background-image:none!important;
+ color:var(--sv-menu-text)!important;
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"]
+ :is(.sv-mail-gate-menu-heading strong,.sv-mail-gate-trusted-details,
+     .sv-mail-gate-trusted-details summary,.sv-mail-gate-mode-body strong,
+     .sv-mail-gate-mode-body small){
+ color:var(--sv-menu-text)!important;
+}
+html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"]
+ .sv-mail-top-actions :is(.sv-mail-gate-accounts,.sv-mail-gate-account,.sv-mail-gate-mode,.sv-mail-gate-menu-close){
+ background:var(--sv-menu-item)!important;
+ color:var(--sv-menu-text)!important;
+}
+html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"]
+ .sv-mail-top-actions :is(.sv-mail-gate-account,.sv-mail-gate-mode)[aria-pressed="true"]{
+ background:var(--sv-menu-item-selected)!important;
+ color:var(--sv-menu-text)!important;
+}
+html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"]
+ .sv-mail-gate-trusted-details .sv-mail-gate-form input{
+ background:var(--sv-menu-item)!important;
+ color:var(--sv-menu-text)!important;
+ border:1px solid var(--sv-menu-item-border)!important;
+}
+html:root:not([data-theme="dark"]) body #sayviSurfacePage[data-sv-subject="mail"]
+ .sv-mail-gate-trusted-details :is(.sv-mail-gate-form button,.sv-mail-gate-chip){
+ background:var(--sv-menu-item-selected)!important;
+ color:var(--sv-menu-text)!important;
+}
+/* Subtle focus ring, no thick square browser selection halos. */
+html:root body :is(
+ #svSmartInkPicker,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,
+ #notePaperSettingsMenu,#svPaperBrushPicker,#calendarCreateMenu,#svcpAttachMenu
+ ) :is(button,input,select):focus-visible{
+ outline:2px solid #397bc6!important;
+ outline-offset:2px!important;
+}
+@media (prefers-reduced-motion:reduce){
+ html:root body :is(#svSmartInkPicker,#svNoteTopMenu,#svPaperBrushPicker,#calendarCreateMenu) *{
+  transition:none!important;
+ }
+}
