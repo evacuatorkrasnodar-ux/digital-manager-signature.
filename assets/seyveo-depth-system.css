@@ -334,3 +334,125 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
  border:1px solid rgba(255,255,255,.14)!important;
  box-shadow:var(--sv-depth-menu)!important;
 }
+
+
+/* SEYVEO · shared floating-dock material v8 · 2026-11-21
+   Approved reference: translucent matte-silver Aa dock in Notebook.
+   This is the SAME glass on existing dock surfaces across the product.
+   IMPORTANT: never apply it to full-width page footers, popover reading
+   menus, task counters, inner icons, text, or the drawing canvas.
+   Their layout/animations/gestures remain owned by existing styles. */
+:root[data-theme="light"]{
+ --sv-dock-glass-finish:rgba(225,229,234,.48);
+ --sv-dock-glass-filter:blur(6px) saturate(108%);
+ --sv-dock-glass-edge:.7px solid rgba(157,168,180,.18);
+ --sv-dock-glass-relief:
+   0 5px 16px rgba(34,45,59,.095),
+   0 1.5px 4px rgba(34,45,59,.045),
+   inset 0 0 0 .6px rgba(153,165,177,.18),
+   inset 0 1px 1px rgba(255,255,255,.31);
+}
+:root[data-theme="dark"]{
+ --sv-dock-glass-finish:rgba(91,97,106,.36);
+ --sv-dock-glass-filter:blur(6px) saturate(108%);
+ --sv-dock-glass-edge:.7px solid rgba(255,255,255,.11);
+ --sv-dock-glass-relief:
+   0 5px 17px rgba(0,0,0,.27),
+   0 1px 4px rgba(0,0,0,.15),
+   inset 0 0 0 .6px rgba(255,255,255,.11),
+   inset 0 1px 1px rgba(255,255,255,.07);
+}
+/* Root navigation: only the TWO capsule backgrounds. The footer is an
+   invisible positioning grid and MUST NEVER become a filled rectangle. */
+html:root[data-theme] :is(
+ body > footer.dock.sv-shared-dock,
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
+)::before,
+html:root[data-theme] :is(
+ body > footer.dock.sv-shared-dock,
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
+)::after{
+ background:var(--sv-dock-glass-finish)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-dock-glass-filter)!important;
+ backdrop-filter:var(--sv-dock-glass-filter)!important;
+ border:var(--sv-dock-glass-edge)!important;
+ box-shadow:var(--sv-dock-glass-relief)!important;
+}
+/* Health's dock has TWO real background surfaces, not pseudos. */
+html:root[data-theme] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > footer.dock.sv-shared-dock > :is(.sv-health-dock-actions,#navManage){
+ background:var(--sv-dock-glass-finish)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-dock-glass-filter)!important;
+ backdrop-filter:var(--sv-dock-glass-filter)!important;
+ border:var(--sv-dock-glass-edge)!important;
+ box-shadow:var(--sv-dock-glass-relief)!important;
+}
+/* Notebook: compact writing dock, its standalone circle and the side ink
+   rail all use this material already. The typing accessory keeps it too. */
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after,
+html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ .sv-smart-ink-tools:not([hidden]){
+ background:var(--sv-dock-glass-finish)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-dock-glass-filter)!important;
+ backdrop-filter:var(--sv-dock-glass-filter)!important;
+ border:var(--sv-dock-glass-edge)!important;
+ box-shadow:var(--sv-dock-glass-relief)!important;
+}
+/* Drawing studio's already existing top tool capsule. */
+html:root[data-theme] body dialog#notePaperDialog.sv-paper-studio[open]
+ .sv-paper-top #svPaperNewDock{
+ background:var(--sv-dock-glass-finish)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-dock-glass-filter)!important;
+ backdrop-filter:var(--sv-dock-glass-filter)!important;
+ border:var(--sv-dock-glass-edge)!important;
+ box-shadow:var(--sv-dock-glass-relief)!important;
+}
+/* Work-chat composer is one real shell; do not color its child controls. */
+html:root[data-theme] body #svcpWorkChatScreen #svcpChatForm{
+ background:var(--sv-dock-glass-finish)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-dock-glass-filter)!important;
+ backdrop-filter:var(--sv-dock-glass-filter)!important;
+ border:var(--sv-dock-glass-edge)!important;
+ box-shadow:var(--sv-dock-glass-relief)!important;
+}
+/* Sayvi chat: the two approved shells are a pseudo-backed composer and
+   its separate + circle, never the full-width bottom staging area. */
+html:root[data-theme] body #sayviComposer::before,
+html:root[data-theme] body #sayviComposer > button#sayviPlus{
+ background:var(--sv-dock-glass-finish)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-dock-glass-filter)!important;
+ backdrop-filter:var(--sv-dock-glass-filter)!important;
+ border:var(--sv-dock-glass-edge)!important;
+ box-shadow:var(--sv-dock-glass-relief)!important;
+}
+/* Browser address capsule and Music mini player use the same satin
+   glass, while website content and album artwork remain untouched. */
+html:root[data-theme] body .seyveo-browser .seyveo-browser-bar,
+html:root[data-theme] body #sayviMusicMini:not([hidden]){
+ background:var(--sv-dock-glass-finish)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--sv-dock-glass-filter)!important;
+ backdrop-filter:var(--sv-dock-glass-filter)!important;
+ border:var(--sv-dock-glass-edge)!important;
+ box-shadow:var(--sv-dock-glass-relief)!important;
+}
+/* Reduced transparency wins over every optical style above. */
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"]{
+  --sv-dock-glass-finish:#edf0f3;
+  --sv-dock-glass-filter:none;
+ }
+ html:root[data-theme="dark"]{
+  --sv-dock-glass-finish:#353940;
+  --sv-dock-glass-filter:none;
+ }
+}
