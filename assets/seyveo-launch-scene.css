@@ -1,57 +1,49 @@
-/* SEYVEO · minimal app launch. One static logo, one short enlargement,
-   then reveal the real Home. Nothing else animates or shifts position. */
+/* SEYVEO PWA launch: ONE still shot, ONE accelerating camera rush.
+   No fog, rotations, flyovers, scale-down, logo animation or duplicate splash. */
 .sv-launch-scene{
- position:fixed;inset:0;z-index:2147482500;isolation:isolate;
- overflow:hidden;overscroll-behavior:contain;
- background:#fff;color:#43595f;pointer-events:auto;
+ position:fixed;inset:0;z-index:2147482500;
+ overflow:hidden;isolation:isolate;background:#fff;
+ color:#43595f;pointer-events:auto;overscroll-behavior:contain;
  -webkit-tap-highlight-color:transparent;
 }
-.sv-launch-backdrop{
- position:absolute;inset:0;background:#fff;
-}
 .sv-launch-brand{
- position:absolute;
- left:var(--sv-launch-x,50vw);top:var(--sv-launch-y,42vh);
- width:var(--sv-launch-size,195px);height:var(--sv-launch-size,195px);
- display:grid;place-items:center;
- transform:translate(-50%,-50%) scale(1);
- transform-origin:center center;
- transition:transform 200ms cubic-bezier(.3,.7,.2,1);
- backface-visibility:hidden;-webkit-backface-visibility:hidden;
+ position:absolute;left:var(--sv-launch-x,50vw);top:var(--sv-launch-y,42vh);
+ width:var(--sv-launch-size,190px);height:var(--sv-launch-size,190px);
+ display:block;transform:translate3d(-50%,-50%,0) scale(1);
+ transform-origin:center center;backface-visibility:hidden;
+ -webkit-backface-visibility:hidden;will-change:transform;
+ transition:transform 620ms cubic-bezier(.72,.02,1,1);
 }
 .sv-launch-brand img{
  display:block;width:100%;height:100%;object-fit:contain;
- user-select:none;-webkit-user-select:none;pointer-events:none;
+ pointer-events:none;user-select:none;-webkit-user-select:none;
 }
 .sv-launch-caption{
  position:absolute;left:var(--sv-launch-x,50vw);
- top:calc(var(--sv-launch-y,42vh) + var(--sv-launch-half-size,97.5px) + 19px);
- transform:translateX(-50%);white-space:nowrap;
- font:520 23px/1.1 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
- letter-spacing:.24em;padding-left:.24em;text-align:center;color:#485d62;
+ top:calc(var(--sv-launch-y,42vh) + var(--sv-launch-half-size,95px) + 18px);
+ transform:translateX(-50%);
+ font:520 23px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:.24em;padding-left:.24em;text-align:center;white-space:nowrap;
+ color:#485d62;
 }
 .sv-launch-specialty{
- position:absolute;
- left:50%;bottom:calc(48px + env(safe-area-inset-bottom,0px));
- transform:translateX(-50%);width:100%;text-align:center;
- font:480 10px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
- letter-spacing:.18em;white-space:nowrap;color:#849397;
+ position:absolute;left:50%;
+ bottom:calc(46px + env(safe-area-inset-bottom,0px));
+ width:100%;transform:translateX(-50%);
+ text-align:center;white-space:nowrap;
+ font:480 10px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:.18em;color:#849397;
 }
-.sv-launch-scene.is-enlarged .sv-launch-brand{
- transform:translate(-50%,-50%) scale(var(--sv-launch-scale,1.4));
+.sv-launch-scene.is-rushing .sv-launch-brand{
+ transform:translate3d(-50%,-50%,0) scale(var(--sv-launch-rush,9));
 }
-.sv-launch-scene.is-enlarged :is(.sv-launch-caption,.sv-launch-specialty){
+.sv-launch-scene.is-rushing :is(.sv-launch-caption,.sv-launch-specialty){
  visibility:hidden;
 }
-:root.sv-launch-splash-running body #homePage,
-:root.sv-launch-splash-running body #homeHeader,
-:root.sv-launch-splash-running body > footer.dock{
+:root.sv-launch-splash-running body :is(#homePage,#homeHeader,footer.dock){
  pointer-events:none!important;
 }
-:root[data-theme="dark"] .sv-launch-scene,
-:root[data-theme="dark"] .sv-launch-backdrop{background:#151a1d}
+:root[data-theme="dark"] .sv-launch-scene{background:#151a1d}
 :root[data-theme="dark"] .sv-launch-caption{color:#e4edee}
 :root[data-theme="dark"] .sv-launch-specialty{color:#a4b2b6}
-@media(prefers-reduced-motion:reduce){
- .sv-launch-brand{transition:none!important}
-}
+@media(prefers-reduced-motion:reduce){.sv-launch-brand{transition:none!important}}
