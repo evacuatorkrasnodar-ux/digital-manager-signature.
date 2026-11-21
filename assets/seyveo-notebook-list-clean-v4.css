@@ -263,3 +263,101 @@ html[data-theme="dark"] #svWorkShell[data-active="notes"] #notesList .sv-nb4-mor
  margin:0!important;padding:4px 0!important;
  color:var(--secondary)!important;font-size:11px!important;
 }
+
+/* NOTEBOOK UNDER-HEADER SCROLL · 21 Nov 2026.
+   Apple-style single scroller: the permanent Work header, creation icons and
+   tab capsule NEVER move, while rows travel behind them and softly disappear.
+   Expand the REAL notes scroller under the chrome by the exact height of
+   Work's two-row header plus its segmented tabs. No cloned header, footer
+   sheet, scroll listeners, fixed page overlays or changes to note gestures. */
+html:has(#svWorkShell[data-active="notes"] > #notesDialog[open]),
+html:has(#svWorkShell[data-active="notes"] > #notesDialog[open]) body{
+ height:100%!important;
+ max-height:100dvh!important;
+ overflow:hidden!important;
+ overscroll-behavior:none!important;
+}
+html body .app:has(> #svWorkShell[data-active="notes"] > #notesDialog[open]){
+ box-sizing:border-box!important;
+ height:100dvh!important;
+ min-height:0!important;
+ max-height:100dvh!important;
+ overflow:hidden!important;
+ padding-bottom:0!important;
+}
+html body #svWorkShell[data-active="notes"]:has(> #notesDialog[open]){
+ --sv-nb-underlap:calc(var(--sv-header-row,62px) + 65px);
+ --sv-nb-fade-ink:#fff;
+ flex:1 1 auto!important;
+ min-height:0!important;
+ overflow:hidden!important;
+}
+html body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]{
+ flex:1 1 auto!important;
+ min-height:0!important;
+ height:auto!important;
+ padding-bottom:0!important;
+ overflow:visible!important;
+}
+/* The notes start at the SAME visual position when scrollTop=0.
+   Only the scrollport extends 127px upward behind the fixed controls. */
+html body #svWorkShell[data-active="notes"] #notesDialog
+ > #notesList.sv-note-clean-list:not(.is-empty){
+ box-sizing:border-box!important;
+ flex:1 1 auto!important;
+ min-height:0!important;
+ margin-top:calc(0px - var(--sv-nb-underlap))!important;
+ padding-top:var(--sv-nb-underlap)!important;
+ padding-bottom:calc(116px + env(safe-area-inset-bottom,0px))!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ -webkit-overflow-scrolling:touch!important;
+ overscroll-behavior-y:contain!important;
+ scroll-behavior:auto!important;
+ scroll-padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));
+ scrollbar-width:none!important;
+}
+html body #svWorkShell[data-active="notes"] #notesList.sv-note-clean-list::-webkit-scrollbar{
+ display:none!important;
+}
+/* White atmosphere, not a hard cutoff. This optical veil lives on the
+   EXISTING Notebook section; it does not affect swipe surfaces or popovers.
+   Positioned between moving rows and the already-mounted Work controls. */
+html body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]:has(> #notesList:not(.is-empty))::before{
+ content:""!important;
+ display:block!important;
+ box-sizing:border-box!important;
+ position:absolute!important;
+ top:calc(0px - var(--sv-nb-underlap))!important;
+ left:0!important;right:0!important;
+ height:calc(var(--sv-nb-underlap) + 12px)!important;
+ border:0!important;
+ background:linear-gradient(to bottom,
+   var(--sv-nb-fade-ink) 0%,
+   rgba(255,255,255,.97) 34%,
+   rgba(255,255,255,.78) 65%,
+   rgba(255,255,255,0) 100%)!important;
+ box-shadow:none!important;
+ pointer-events:none!important;
+ z-index:3!important;
+}
+html body #svWorkShell[data-active="notes"] > seyveo-work-head{
+ position:relative!important;
+ z-index:7!important;
+}
+html body #svWorkShell[data-active="notes"] > #svWorkTabs{
+ z-index:8!important;
+}
+html body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]){
+ z-index:9!important;
+}
+html[data-theme="dark"] body #svWorkShell[data-active="notes"]{
+ --sv-nb-fade-ink:var(--bg,#17181b);
+}
+html[data-theme="dark"] body #svWorkShell[data-active="notes"] > #notesDialog.sv-notebook-content[open]:has(> #notesList:not(.is-empty))::before{
+ background:linear-gradient(to bottom,
+   var(--sv-nb-fade-ink) 0%,
+   rgba(23,24,27,.97) 34%,
+   rgba(23,24,27,.78) 65%,
+   rgba(23,24,27,0) 100%)!important;
+}
