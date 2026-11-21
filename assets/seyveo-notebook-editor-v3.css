@@ -1246,3 +1246,31 @@ html:root body #noteReviewDialog[open] #svSmartInkPicker [data-sv-ink-picker="wi
  margin-top:5px!important;padding-top:11px!important;
  border-top:1px solid rgba(142,153,164,.14)!important;
 }
+
+/* iPhone edge-to-edge note v39. The standalone iOS home-indicator region
+   belongs to the SAME white sheet, not to a new dock/footer panel.
+   Lift the already-existing pearl capsules into the safe area: their full
+   lower shadows can fade normally instead of being clipped at the dialog edge.
+   No extra pseudo-element, backdrop, full-width border or content frame. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]{
+ background:var(--note-page,#fff)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-note-keyboard-open)
+ .sv-note-bottom{
+ bottom:max(8px,env(safe-area-inset-bottom,0px))!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;outline:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom{
+ bottom:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock{
+ background:transparent!important;background-image:none!important;
+ border:0!important;outline:0!important;box-shadow:none!important;
+}
+/* The dock and stand-alone action are the ONLY painted, elevated pieces.
+   Keep the existing ::before/::after pearl materials and their depth. */
