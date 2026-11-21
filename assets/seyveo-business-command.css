@@ -2530,7 +2530,8 @@ html:root[data-theme="light"] body #svCabinetDialog[open] :is(button,input):focu
  }
 }
 @media(prefers-reduced-transparency:reduce){
- html:root[data-theme="light"] body #svCabinetDialog[open] :is(.sv-cabinet-search,.sv-cabinet-dismiss,.sv-cabinet-footer button,.sv-cabinet-goal-mark::before){
+ html:root[data-theme="light"] body #svCabinetDialog[open] :is(.sv-cabinet-search,.sv-cabinet-dismiss,.sv-cabinet-footer button),
+ html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-goal-mark::before{
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
