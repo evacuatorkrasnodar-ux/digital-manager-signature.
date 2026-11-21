@@ -58,7 +58,8 @@
    ['checklist','Список',check],
    ['table','Таблица',tableBtn],
    ['format','Оформление',bar.querySelector('[data-note-tool="heading"]')],
-   ['paper','Бумага',paperBtn]
+   ['paper','Бумага',paperBtn],
+   ['photo','Добавить фото',document.getElementById('svNotePhotoInput')]
   ];
   for(const [kind,label,target] of secondary){
    if(!target)continue;
@@ -66,6 +67,11 @@
    item.type='button';item.className='sv-note-secondary-action';
    item.dataset.svNoteSecondary=kind;
    item.textContent=label;
+   if(kind==='photo'){
+    // The existing photo input and attachments module persist the image.
+    // This is an action, not a decorative or duplicate file menu.
+    item.innerHTML=icon('<rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9" r="1.6"/><path d="m5 17 4.5-5 3.2 3.2 2.3-2.5L19 17"/>')+'<span>'+label+'</span>';
+   }
    item.addEventListener('click',event=>{
     event.preventDefault();event.stopPropagation();
     window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
