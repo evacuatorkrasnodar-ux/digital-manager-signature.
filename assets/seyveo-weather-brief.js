@@ -165,7 +165,6 @@
       let current=null;
       let forecastUnavailable=false;
       let homeWeekActive=false;
-      let homeWeekTimer=0;
       let weekShowing=false;
       // Weather sits between the painted globe and the bottom shortcut rail.
       // Coordinates are measured in the actual page, then converted to the
@@ -231,7 +230,6 @@
           mark.innerHTML=weatherGlyph(2);
           label.textContent=city+' · '+(forecastUnavailable?'Прогноз пока недоступен':'Обновляем прогноз');
           showFace(false);
-          clearTimeout(homeWeekTimer);
           button.title='Обновить погоду';
           button.setAttribute('aria-label','Обновить прогноз погоды');
           return;
@@ -249,8 +247,8 @@
           'Погода: '+current.city+', '+temperature(today.max)+' / '+temperature(today.min)+
           ', '+condition(today.code)+'. Нажмите для прогноза на неделю');
         renderWeekFace();
-        if(weekShowing)showFace(true);
-        scheduleWeatherRotation();
+        // The seven-day face is explicit-only. Never rotate it in automatically.
+        showFace(false);
       };
       // TODAY and WEEK share one fixed Home weather slot. Tapping reveals
       // WEEK right here. The one-day popup in Tasks remains independent.
@@ -316,19 +314,11 @@
         }
         schedulePlace();
       }
-      function scheduleWeatherRotation(){
-        clearTimeout(homeWeekTimer);
-        if(homeWeekActive||!current||weekFace.childElementCount<2)return;
-        homeWeekTimer=setTimeout(()=>{
-          if(document.hidden){showFace(false);return;}
-          showFace(!weekShowing);
-          scheduleWeatherRotation();
-        },weekShowing?7000:14000);
-      }
+      // Do not automatically interrupt the Home screen with a weekly strip.
+      // Only an explicit tap on the compact weather row invokes startHomeWeek.
       // Compatibility hooks for the legacy popup; Home tap no longer opens it.
       startHomeWeek=()=>{
         homeWeekActive=true;
-        clearTimeout(homeWeekTimer);
         current=getBrief()||current;
         renderWeekFace();
         showFace(true);
@@ -385,8 +375,8 @@
         const forecast=getBrief();
         if(!forecast){window.SAYVI_WEATHER?.refresh?.();return;}
         current=forecast;
-        // Home keeps its automatic quiet TODAY / WEEK alternation, but a
-        // deliberate tap opens the existing one-day pearl weather card.
+        // A deliberate tap opens the existing pearl forecast card and
+        // its seven-day row; no automatic weather alternation.
         const date=forecast.days[0].date;
         if(window.SEYVEO_WEATHER_PEEK?.open)
           window.SEYVEO_WEATHER_PEEK.open({anchor:button,date,origin:'home'});
