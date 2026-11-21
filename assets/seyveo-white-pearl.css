@@ -8,10 +8,11 @@
 
 :root[data-theme="light"]{
  /* Canonical design tokens — tune them HERE, not in screen styles. */
- --sv-white-pearl-surface:rgba(255,255,255,.92);
+ /* Original New Note frost: text gently shows through the real pearl surface. */
+ --sv-white-pearl-surface:rgba(255,255,255,.68);
  --sv-white-pearl-solid:#fff;
  --sv-white-pearl-edge:.75px solid rgba(255,255,255,.97);
- --sv-white-pearl-blur:blur(9px) saturate(106%);
+ --sv-white-pearl-blur:blur(5px) saturate(106%);
  --sv-white-pearl-ink:#0b0b0d;
  --sv-white-pearl-circle-shadow:
    0 3px 10px rgba(48,56,72,.095),
