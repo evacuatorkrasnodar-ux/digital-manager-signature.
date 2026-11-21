@@ -914,3 +914,65 @@ html.sv-agenda-scroll-active .app{
 /* Today's weather is a quiet, accessible tap target. Other dates stay informational. */
 #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather{cursor:pointer!important;-webkit-tap-highlight-color:transparent;}
 #tasksPage #personalTaskList .sv-agenda-section-heading[data-today="true"] .sv-agenda-weather:focus-visible{outline:2px solid #6e8299;outline-offset:3px;border-radius:5px}
+
+/* SEYVEO · 10-DAY DAY-TILE WEATHER · 21 Nov 2026.
+   A delicate, non-interactive 18px icon and high temperature for the next
+   ten days, INSIDE the existing calendar day. The date, selected circle,
+   task markers, horizontal swipe and dock geometry are unchanged. */
+#tasksPage #svTasksDateNav .sv-agenda-day > .sv-agenda-day-weather{
+ position:absolute!important;
+ left:50%!important;
+ bottom:3px!important;
+ z-index:1!important;
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:2px!important;
+ width:max-content!important;
+ max-width:calc(100% - 4px)!important;
+ height:19px!important;
+ min-height:19px!important;
+ padding:0!important;
+ margin:0!important;
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ transform:translateX(-50%)!important;
+ pointer-events:none!important;
+ white-space:nowrap!important;
+ opacity:.93!important;
+}
+#tasksPage #svTasksDateNav .sv-agenda-day-weather-icon{
+ flex:0 0 18px!important;
+ display:grid!important;
+ place-items:center!important;
+ width:18px!important;
+ height:18px!important;
+ padding:0!important;
+ margin:0!important;
+}
+#tasksPage #svTasksDateNav .sv-agenda-day-weather-icon svg{
+ display:block!important;
+ width:18px!important;
+ height:18px!important;
+ max-width:none!important;
+ overflow:visible!important;
+}
+#tasksPage #svTasksDateNav .sv-agenda-day-weather-temp{
+ display:block!important;
+ flex:none!important;
+ margin:0!important;
+ padding:0!important;
+ color:#7D8590!important;
+ font:500 10.5px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.025em!important;
+ font-variant-numeric:tabular-nums!important;
+}
+:root[data-theme="dark"] #tasksPage #svTasksDateNav .sv-agenda-day-weather-temp{
+ color:#B5BBC5!important;
+}
+@media(max-width:380px){
+ #tasksPage #svTasksDateNav .sv-agenda-day-weather-temp{
+  font-size:10px!important;
+ }
+}
