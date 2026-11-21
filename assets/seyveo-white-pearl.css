@@ -223,11 +223,12 @@ html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open]
  backdrop-filter:none!important;
 }
 
-/* NOTEBOOK TEXT CAPSULE · rebuilt single White Pearl surface.
-   The accessory is the same frost, edge and full dock shadow as the
-   approved New Note control. No painted footer, scrolling layer, or
-   ghost ::after; keyboard tool actions and horizontal swipe stay intact.
-   Lift the rail inside the viewport so iOS does not crop its shadow. */
+/* NOTEBOOK TEXT CAPSULE · one floating Pearl glass shell (21 Nov).
+   The real editor scrolls behind it; the parent form and footer carry
+   NO painted rectangle. The single existing ::before is ultra-clear
+   pearl frost with the approved rim/depth. Keep iOS touch/swipe intact. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ form#noteReviewForm.sv-note-editor,
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
  .sv-note-bottom,
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
@@ -253,10 +254,11 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
  border:var(--sv-white-pearl-edge)!important;
  border-radius:var(--sv-white-pearl-radius-capsule)!important;
  outline:0!important;
- background:var(--sv-white-pearl-surface)!important;
+ /* Ultra-clear frost: text beneath remains visible, not a solid white rail. */
+ background:rgba(255,255,255,.12)!important;
  background-image:none!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
- backdrop-filter:var(--sv-white-pearl-blur)!important;
+ -webkit-backdrop-filter:blur(5px) saturate(106%)!important;
+ backdrop-filter:blur(5px) saturate(106%)!important;
  box-shadow:var(--sv-white-pearl-dock-shadow)!important;
  pointer-events:none!important;
 }
