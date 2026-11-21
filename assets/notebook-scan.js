@@ -14,6 +14,11 @@ const toPaperButton=$('noteScanToPaper'),toTextButton=$('noteScanToText'),
 function setStep(step){
  // Three actual work stages, not transparent overlays or duplicate controls.
  dialog.dataset.step=step;
+ delete dialog.dataset.scanError;
+ const guidance=dialog.querySelector(':scope > p:first-of-type');
+ if(guidance)guidance.textContent=step==='photo'
+  ?'Проверьте снимок, затем распознайте текст.'
+  :'Снимите страницу — Сэйви поможет превратить её в текст.';
  if(manualButton)manualButton.hidden=true;
 }
 function offerManual(){
@@ -97,6 +102,7 @@ function scanIntoNote(){
 function select(file){
  if(!file)return;
  if(!file.type.startsWith('image/')||file.type==='image/svg+xml'||file.size>15*1024*1024){
+  dialog.dataset.scanError='true';
   message('Выберите обычную фотографию до 15 МБ.');return;
  }
  session++;selected=file;clearURL();localURL=URL.createObjectURL(file);preview.src=localURL;
@@ -123,7 +129,9 @@ function loadEngine(){
 async function recognize(){
  if(running||!selected)return;
  const file=selected,token=++session,retainLines=keepLines?.checked!==false;
- running=true;button.disabled=true;syncActions();
+ running=true;button.disabled=true;
+ if(manualButton)manualButton.hidden=true;
+ syncActions();
  let worker=null;
  try{
   message('Подключаю распознавание… Это может занять время на iPhone.');
@@ -170,7 +178,7 @@ async function recognize(){
   }
  }finally{
   if(worker)try{await worker.terminate()}catch{}
-  running=false;if(token===session){button.disabled=!selected;syncActions();}
+  running=false;button.disabled=!selected;syncActions();
  }
 }
 function cancel(){dialog.close()}
