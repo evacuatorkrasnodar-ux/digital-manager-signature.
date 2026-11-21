@@ -103,3 +103,40 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-his
   max-width:27px!important;
  }
 }
+
+/* Paper top row: true grid-centred controls · 21 Nov 2026.
+   The earlier history cluster used absolute top:50% of the padded header,
+   which differs from the CSS grid content midpoint by half the iPhone
+   safe-area top padding. Put ALL THREE groups in one grid row so Back,
+   five-tool glass capsule and Undo/Redo share the exact same centre line.
+   No changes to tool behaviour, canvas, header height or safe areas. */
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #notePaperBack{
+ grid-column:1!important;
+ grid-row:1!important;
+ align-self:center!important;
+ justify-self:center!important;
+ top:auto!important;
+ bottom:auto!important;
+ transform:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > #svPaperNewDock{
+ grid-column:2!important;
+ grid-row:1!important;
+ align-self:center!important;
+ justify-self:center!important;
+ top:auto!important;
+ bottom:auto!important;
+ transform:none!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top > .sv-paper-history{
+ position:relative!important;
+ grid-column:3!important;
+ grid-row:1!important;
+ align-self:center!important;
+ justify-self:end!important;
+ top:auto!important;
+ right:auto!important;
+ bottom:auto!important;
+ left:auto!important;
+ transform:none!important;
+}
