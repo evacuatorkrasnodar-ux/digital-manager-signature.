@@ -1,0 +1,98 @@
+/* SEYVEO Paper · brush picker, no extra top-dock buttons.
+   Explicit theme follows the paper editor, never the OS appearance. */
+html body #notePaperDialog.sv-paper-studio[open] .sv-paper-brush-picker:not([hidden]){
+ box-sizing:border-box!important;display:block!important;
+ position:fixed!important;
+ top:calc(65px + env(safe-area-inset-top,0px))!important;
+ left:50%!important;right:auto!important;bottom:auto!important;
+ transform:translateX(-50%)!important;
+ width:min(318px,calc(100vw - 30px))!important;max-width:calc(100vw - 30px)!important;
+ max-height:min(540px,calc(100dvh - 130px))!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ padding:14px!important;margin:0!important;
+ border:1px solid rgba(46,51,60,.11)!important;border-radius:19px!important;
+ background:rgba(252,252,253,.985)!important;color:#262a32!important;
+ box-shadow:0 15px 36px rgba(20,24,31,.13),inset 0 1px 0 rgba(255,255,255,.95)!important;
+ z-index:22000!important;isolation:isolate;
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+}
+#notePaperDialog .sv-paper-brush-picker[hidden]{display:none!important}
+#notePaperDialog .sv-brush-picker-title{
+ font-size:13px!important;line-height:19px!important;
+ font-weight:600!important;color:#383c44!important;
+ margin:0 0 12px!important;padding:0 2px!important;
+}
+#notePaperDialog .sv-brush-picker-grid{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:8px!important;width:100%!important;margin:0!important;padding:0!important;
+}
+#notePaperDialog .sv-brush-picker-grid button{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ justify-content:flex-start!important;gap:9px!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ min-height:47px!important;height:auto!important;padding:10px 11px!important;margin:0!important;
+ border:1px solid #e8e9ed!important;border-radius:12px!important;
+ background:#f7f8fa!important;color:#242a32!important;
+ box-shadow:none!important;
+ font:500 13px/19px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+ text-align:left!important;cursor:pointer!important;
+}
+#notePaperDialog .sv-brush-picker-grid button[data-sv-tool-choice="oil"]{
+ grid-column:1/-1!important;
+}
+#notePaperDialog .sv-brush-picker-grid button[aria-pressed="true"]{
+ background:#e8eaed!important;border-color:#d9dce1!important;
+ box-shadow:inset 0 1px 2px rgba(30,35,40,.05)!important;
+}
+#notePaperDialog .sv-brush-picker-grid button svg{
+ flex:0 0 20px!important;width:20px!important;height:20px!important;
+ display:block!important;color:inherit!important;
+}
+#notePaperDialog .sv-brush-picker-grid button span{min-width:0!important;white-space:nowrap!important}
+#notePaperDialog .sv-brush-opacity[hidden]{display:none!important}
+#notePaperDialog .sv-brush-opacity{
+ display:block!important;margin:12px 2px 0!important;padding:10px 1px 2px!important;
+ border-top:1px solid #eceef1!important;
+}
+#notePaperDialog .sv-brush-opacity label{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:10px!important;
+ color:#535a65!important;font:500 12px/18px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+}
+#notePaperDialog .sv-brush-opacity output{font-variant-numeric:tabular-nums;color:#292f37!important}
+#notePaperDialog .sv-brush-opacity input[type="range"]{
+ display:block!important;-webkit-appearance:auto!important;appearance:auto!important;
+ width:100%!important;height:25px!important;margin:7px 0 0!important;
+ padding:0!important;accent-color:#38383a!important;
+ position:static!important;transform:none!important;opacity:1!important;
+}
+#notePaperDialog .sv-brush-picker-grid button:focus-visible,
+#notePaperDialog .sv-brush-opacity input:focus-visible{
+ outline:2px solid #297ce4!important;outline-offset:2px!important;
+}
+html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .sv-paper-brush-picker:not([hidden]){
+ background:rgba(42,43,47,.97)!important;border-color:rgba(255,255,255,.15)!important;
+ color:#f5f5f7!important;box-shadow:0 12px 30px rgba(0,0,0,.24)!important;
+}
+#notePaperDialog:not(.sv-paper-light-surface) .sv-brush-picker-title,
+#notePaperDialog:not(.sv-paper-light-surface) .sv-brush-opacity label,
+#notePaperDialog:not(.sv-paper-light-surface) .sv-brush-opacity output{color:#eff0f3!important}
+#notePaperDialog:not(.sv-paper-light-surface) .sv-brush-picker-grid button{
+ background:rgba(75,76,81,.88)!important;border-color:rgba(255,255,255,.10)!important;
+ color:#fff!important;
+}
+#notePaperDialog:not(.sv-paper-light-surface) .sv-brush-picker-grid button[aria-pressed="true"]{
+ background:rgba(121,123,129,.55)!important;border-color:rgba(255,255,255,.20)!important;
+}
+#notePaperDialog:not(.sv-paper-light-surface) .sv-brush-opacity{border-top-color:rgba(255,255,255,.14)!important}
+@media(max-width:365px){
+ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-brush-picker:not([hidden]){
+  padding:11px!important;width:calc(100vw - 22px)!important;
+ }
+ #notePaperDialog .sv-brush-picker-grid{gap:6px!important}
+ #notePaperDialog .sv-brush-picker-grid button{
+  min-height:44px!important;font-size:12px!important;gap:7px!important;padding:8px!important;
+ }
+}
