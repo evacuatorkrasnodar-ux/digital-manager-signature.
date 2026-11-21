@@ -265,7 +265,7 @@
     container.setAttribute('aria-label','Прогноз погоды от Сэйви');
     const eyebrow=document.createElement('div');
     eyebrow.className='sv-sayvi-weather-kicker';
-    eyebrow.textContent='МОЙ ПРОГНОЗ';
+    eyebrow.textContent='МЕТЕОСТАНЦИЯ СЭЙВИ';
     const heading=document.createElement('h3');
     heading.textContent=data.city;
     const lead=document.createElement('p');
@@ -280,6 +280,116 @@
     low.textContent='минимум '+temperature(first.min);
     main.append(high,low);
     container.append(eyebrow,heading,lead,main);
+
+    /* The advanced panels are grounded in the separately validated hourly
+       Open-Meteo snapshot. Old cached daily-only forecasts still show the
+       weekly chart below, never invented wind/pressure/humidity figures. */
+    const station=data.station;
+    const current=station?.current;
+    const hours=Array.isArray(station?.hours)?
+      station.hours.filter(p=>p&&typeof p.time==='string'&&Number.isFinite(p.temperature)).slice(0,13):[];
+    const daysExtra=Array.isArray(station?.daily)?station.daily:[];
+    if(current&&Number.isFinite(current.temperature_2m)&&hours.length>=3){
+      const now=document.createElement('div');
+      now.className='sv-sayvi-station-now';
+      const nowHead=document.createElement('div');
+      nowHead.className='sv-sayvi-station-row-head';
+      const nowTitle=document.createElement('h4');
+      nowTitle.textContent='Сейчас';
+      const currentTime=document.createElement('span');
+      currentTime.textContent=typeof current.time==='string'?current.time.slice(11,16)+' МСК':'';
+      nowHead.append(nowTitle,currentTime);
+      const nowReading=document.createElement('div');
+      nowReading.className='sv-sayvi-station-current';
+      const tempNow=document.createElement('strong');
+      tempNow.textContent=temperature(current.temperature_2m);
+      const caption=document.createElement('span');
+      caption.textContent=Number.isFinite(current.apparent_temperature)?
+       'Ощущается как '+temperature(current.apparent_temperature):condition(current.weather_code);
+      nowReading.append(tempNow,caption);
+      now.append(nowHead,nowReading);
+      const metrics=document.createElement('div');metrics.className='sv-sayvi-station-metrics';
+      const metric=(name,value,unit='')=>{
+        if(!Number.isFinite(value))return;
+        const tile=document.createElement('div');tile.className='sv-sayvi-station-metric';
+        const label=document.createElement('span');label.textContent=name;
+        const num=document.createElement('strong');num.textContent=String(Math.round(value))+unit;
+        tile.append(label,num);metrics.append(tile);
+      };
+      metric('Влажность',current.relative_humidity_2m,'%');
+      metric('Ветер',current.wind_speed_10m,' км/ч');
+      metric('Давление',current.pressure_msl,' гПа');
+      metric('Облачность',current.cloud_cover,'%');
+      const todayExtra=daysExtra.find(d=>d?.date===first.date);
+      metric('Вероятность осадков',todayExtra?.rainChance,'%');
+      metric('УФ · максимум',todayExtra?.uv,'');
+      if(metrics.childElementCount)now.append(metrics);
+      container.append(now);
+      const hourly=document.createElement('section');hourly.className='sv-sayvi-station-hourly';
+      const hourlyTitle=document.createElement('h4');hourlyTitle.textContent='Ближайшие 24 часа';
+      hourly.append(hourlyTitle);
+      const hourlyScroll=document.createElement('div');hourlyScroll.className='sv-sayvi-station-hours';
+      hours.forEach(point=>{
+        const cell=document.createElement('div');cell.className='sv-sayvi-station-hour';
+        const time=document.createElement('span');time.textContent=point.time.slice(11,16);
+        const temperatureNow=document.createElement('strong');temperatureNow.textContent=temperature(point.temperature);
+        const chance=document.createElement('small');
+        chance.textContent=Number.isFinite(point.precipitationProbability)?'Осадки '+Math.round(point.precipitationProbability)+'%':'';
+        cell.append(time,temperatureNow,chance);hourlyScroll.append(cell);
+      });
+      hourly.append(hourlyScroll);
+      const nums=hours.map(p=>p.temperature);
+      const min=Math.min(...nums)-2,max=Math.max(...nums)+2;
+      const scale=Math.max(1,max-min);
+      const chart=svgElement('svg',{viewBox:'0 0 360 116',role:'img',
+       'aria-label':'Температура в течение ближайших суток'});
+      const xy=hours.map((p,i)=>[20+i*320/(hours.length-1),86-(p.temperature-min)/scale*59]);
+      const line=xy.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+      const shade=line+' L'+xy.at(-1)[0].toFixed(1)+' 95 L20 95 Z';
+      chart.append(svgElement('path',{d:shade,class:'sv-sayvi-station-hourly-fill'}));
+      chart.append(svgElement('path',{d:line,class:'sv-sayvi-station-hourly-line'}));
+      xy.forEach(([x,y],i)=>{if(i%3===0||i===xy.length-1){
+        chart.append(svgElement('circle',{cx:x,cy:y,r:2.9,class:'sv-sayvi-station-hourly-dot'}));
+        chart.append(svgElement('text',{x,y:111,'text-anchor':'middle',
+         class:'sv-sayvi-station-hourly-label'},hours[i].time.slice(11,16)));
+      }});
+      hourly.append(chart);
+      container.append(hourly);
+      if(todayExtra){
+        const sun=document.createElement('div');sun.className='sv-sayvi-station-sun';
+        const sunCell=(label,value)=>{
+          if(typeof value!=='string'||value.length<16)return;
+          const cell=document.createElement('div');
+          const caption=document.createElement('span');caption.textContent=label;
+          const time=document.createElement('strong');time.textContent=value.slice(11,16);
+          cell.append(caption,time);sun.append(cell);
+        };
+        sunCell('Восход',todayExtra.sunrise);
+        sunCell('Закат',todayExtra.sunset);
+        if(sun.childElementCount)container.append(sun);
+      }
+      const health=document.createElement('section');
+      health.className='sv-sayvi-station-health';
+      const healthTitle=document.createElement('h4');healthTitle.textContent='Самочувствие и погода';
+      const healthText=document.createElement('p');
+      const pressureValues=hours.map(p=>p.pressure).filter(Number.isFinite);
+      const pressureSpread=pressureValues.length>2?Math.max(...pressureValues)-Math.min(...pressureValues):0;
+      if(pressureSpread>=5){
+        healthText.textContent='В прогнозе заметны колебания атмосферного давления. Если вы метеочувствительны, обращайте внимание на самочувствие. Прогноз не предсказывает симптомы или артериальное давление.';
+      }else{
+        healthText.textContent='Погода может влиять на ощущение комфорта, но по прогнозу нельзя предсказать симптомы или артериальное давление конкретного человека.';
+      }
+      health.append(healthTitle,healthText);container.append(health);
+    }else{
+      const notice=document.createElement('p');
+      notice.className='sv-sayvi-station-pending';
+      notice.textContent='Почасовые измерения метеостанции обновляются. Ниже — доступный проверенный прогноз по дням.';
+      container.append(notice);
+    }
+    const weekLabel=document.createElement('h4');weekLabel.className='sv-sayvi-station-week-title';
+    weekLabel.textContent='Прогноз на 7 дней';
+    container.append(weekLabel);
+
     if(data.days.length>1){
       const chart=document.createElement('div');
       chart.className='sv-sayvi-weather-chart';
