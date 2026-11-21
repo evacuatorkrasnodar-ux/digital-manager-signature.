@@ -13,15 +13,19 @@
  margin:0!important;padding:0!important;border:0!important;
  border-radius:0!important;outline:0!important;
  isolation:isolate!important;overflow:hidden!important;
- background:radial-gradient(ellipse 58% 45% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(215,228,237,.10),transparent 95%),#fff!important;
+ /* Match the approved PWA icon's deep pine velvet: soft directional sheen,
+    dark edges and no separate tile/card behind the moving sphere. */
+ background:
+  radial-gradient(ellipse 44% 34% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(145,191,168,.105),transparent 88%),
+  radial-gradient(ellipse 90% 67% at 27% 9%,rgba(67,113,90,.18),transparent 72%),
+  radial-gradient(ellipse 85% 75% at 100% 100%,rgba(1,11,8,.42),transparent 78%),
+  linear-gradient(138deg,#142e24 0%,#10271f 35%,#0c2119 71%,#091913 100%)!important;
  opacity:1;
  pointer-events:auto!important;
  overscroll-behavior:contain!important;touch-action:none!important;
  -webkit-tap-highlight-color:transparent!important;
 }
-:root[data-theme="dark"] #svLaunchClean{
- background:radial-gradient(ellipse 58% 45% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(145,166,182,.07),transparent 95%),var(--bg,#11161b)!important;
-}
+/* The launch velvet is a brand identity material in both app themes. */
 #svLaunchClean .svLaunchCleanMark{
  all:initial;
  display:block!important;position:absolute!important;
@@ -134,7 +138,7 @@
  text-align:center!important;white-space:nowrap!important;
  pointer-events:none!important;user-select:none!important;
  -webkit-user-select:none!important;
- color:#283039!important;
+ color:#e7f0ea!important;
  visibility:hidden!important;
 }
 #svLaunchClean .svLaunchCleanName,
@@ -154,7 +158,8 @@
  font-weight:300!important;
  letter-spacing:.22em!important;
  padding-left:.22em!important;
- color:#242a30!important;
+ color:#f1f5f0!important;
+ text-shadow:0 1px 12px rgba(9,19,15,.19)!important;
 }
 #svLaunchClean .svLaunchCleanDescriptor{
  font-size:clamp(9px,2.25vw,11px)!important;
@@ -162,10 +167,8 @@
  font-weight:500!important;
  letter-spacing:.28em!important;
  padding-left:.28em!important;
- color:#59646e!important;
+ color:#c0cec5!important;
 }
-:root[data-theme="dark"] #svLaunchClean .svLaunchCleanName{color:#f2f6fa!important}
-:root[data-theme="dark"] #svLaunchClean .svLaunchCleanDescriptor{color:#b5c0c9!important}
 #svLaunchClean[data-stage="ready"] .svLaunchCleanSignature,
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanSignature,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanSignature{
