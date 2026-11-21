@@ -16,19 +16,18 @@
  const modal=document.createElement('dialog');modal.id='svPaperAskSayvi';modal.className='sv-paper-ai-workbench';
  modal.setAttribute('aria-labelledby','svPaperAskSayviTitle');
  modal.innerHTML=`<header class="sv-pa-head"><h2 id="svPaperAskSayviTitle">Сэйви · рисование</h2><button type="button" data-pa-close>Готово</button></header>
-  <p class="sv-pa-intro">Чем помочь с рисунком?</p>
-  <section class="sv-pa-quick-section" aria-label="Готовые действия">
-   <div class="sv-pa-quick-title">Готовые действия</div>
-   <div class="sv-pa-quick-grid" role="group" aria-label="Выберите действие с рисунком">
+  <p class="sv-pa-intro">Помогу довести набросок до аккуратного рисунка.</p>
+  <section class="sv-pa-quick-section" aria-label="Помощь с рисунком">
+   <div class="sv-pa-quick-title">Творческие действия</div>
+   <div class="sv-pa-quick-grid" role="group" aria-label="Творческие действия с рисунком">
     <button type="button" data-pa-quick="smooth"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16c3-7 5 4 9-3s6-5 9-8M3 20h18"/></svg><span>Выровнять линии</span></button>
-    <button type="button" data-pa-quick="recognize"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H5v5M16 4h3v5M5 15v4h3M19 15v4h-3M8 12h8M8 15h6"/></svg><span>Прочитать рукопись</span></button>
-    <button type="button" data-pa-quick="text"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M12 6v14M8 20h8"/></svg><span>Добавить текст</span></button>
-    <button type="button" data-pa-quick="photo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.3"/><path d="m5 17 4.5-4.5 3.2 3L16 12l3 4"/></svg><span data-pa-photo-label>Добавить фото</span></button>
+    <button type="button" data-pa-quick="shape"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15c1-8 10-12 14-3s-5 10-10 4M5 5h4M5 5v4M15 19h4v-4"/></svg><span>Узнать фигуру</span></button>
+    <button type="button" data-pa-quick="draw" class="sv-pa-quick-wide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.9 6.1L20 11l-6.1 1.9L12 19l-1.9-6.1L4 11l6.1-1.9L12 3ZM19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8L19 17Z"/></svg><span>Нарисовать по описанию <small>Нужна ИИ-модель на ПК</small></span></button>
    </div>
   </section>
   <div class="sv-pa-custom">
-   <label class="sv-pa-field-label" for="svPaperAskSayviRequest">Своя просьба</label>
-   <textarea id="svPaperAskSayviRequest" data-pa-request aria-label="Что Сэйви должна сделать с листом" placeholder="Например: нарисуй домик или сделай линии ровнее" maxlength="600" rows="3"></textarea>
+   <label class="sv-pa-field-label" for="svPaperAskSayviRequest">Что ты хочешь создать или исправить?</label>
+   <textarea id="svPaperAskSayviRequest" data-pa-request aria-label="Что Сэйви должна сделать с листом" placeholder="Например: нарисуй дерево, поправь контуры домика" maxlength="600" rows="3"></textarea>
    <button type="button" class="sv-pa-plan" data-pa-plan>Подобрать действие</button>
   </div>
   <div data-pa-steps class="sv-pa-steps" role="status" aria-live="polite"></div>
@@ -56,8 +55,6 @@
   if(!dialog.open)return;
   menu.hidden=true;document.getElementById('notePaperSettings')?.setAttribute('aria-expanded','false');
   results.replaceChildren();clearPreview();
-  const photoLabel=modal.querySelector('[data-pa-photo-label]');
-  if(photoLabel)photoLabel.textContent=paper?.hasPhoto?.()?'Настроить фото':'Добавить фото';
   if(!modal.open)modal.showModal();
  }
  sayvi.addEventListener('click',event=>{
@@ -65,26 +62,37 @@
   event.preventDefault();event.stopImmediatePropagation();
   show();
  },true);
- // Presets open the proven editor directly. No fake AI request or extra tap.
- // Programmatic actions intentionally keep the same handlers and preview
- // confirmation as the original Drawing tools.
- const quickTargets={
-  smooth:'notePaperSmoothInk',
-  recognize:'notePaperRecognizeOpen',
-  text:'notePaperTextAction'
- };
+ // Creative actions use the real preview-based stroke engine.
+ // The shape helper currently supports only a few recognisable figures,
+ // not arbitrary image recognition.
+ const smoothAction=document.getElementById('notePaperSmoothInk');
  modal.querySelectorAll('[data-pa-quick]').forEach(button=>button.addEventListener('click',()=>{
   if(busy||!dialog.open)return;
   const kind=button.dataset.paQuick;
-  const id=kind==='photo'
-   ?paper?.hasPhoto?.()?'notePaperEditPhoto':'notePaperAddPhoto'
-   :quickTargets[kind];
-  const target=id&&document.getElementById(id);
-  if(!target||target.disabled){
-   results.textContent='Этот инструмент сейчас недоступен. Исходный лист не изменён.';
+  if(kind==='draw'){
+   field.value='Нарисуй ';
+   results.textContent='Опиши, что нарисовать. Создание эскиза доступно только с подключённой ИИ-моделью на локальном ПК.';
+   field.focus({preventScroll:true});
+   field.setSelectionRange(field.value.length,field.value.length);
    return;
   }
-  modal.close();target.click();
+  if(!smoothAction||smoothAction.disabled){
+   results.textContent='Инструмент выравнивания сейчас недоступен. Рисунок не изменён.';
+   return;
+  }
+  if(!paper?.getEditableStrokes?.([])?.some(stroke=>
+    (stroke.tool==='pen'||stroke.tool==='pencil')&&stroke.points?.length>=5)){
+   results.textContent='Сначала нарисуй несколько штрихов, затем Сэйви поможет их исправить или определить фигуру.';
+   return;
+  }
+  modal.close();
+  smoothAction.click();
+  if(kind==='shape'&&dialog.classList.contains('sv-paper-smooth-mode')){
+   // Open the existing "Это…" hint; its suggestion remains subject to
+   // the original before/after preview and the user's Apply confirmation.
+   const suggest=dialog.querySelector('.sv-paper-smooth-bar [aria-label^="Подсказать Сэйви"], .sv-paper-smooth-bar [aria-label^="Сэйви предполагает"]');
+   suggest?.click();
+  }
  }));
  modal.querySelector('[data-pa-chat]').addEventListener('click',()=>{
   if(busy)return;
@@ -124,7 +132,7 @@
   results.replaceChildren();clearPreview();
   const result=engine.plan(field.value);
   if(!result.request){results.textContent='Напиши просьбу — например, «прочитай и выровняй».';return}
-  if(result.unmatched){results.textContent='Пока не могу надёжно выбрать действие. Попробуй «выровнять», «распознать рукопись», «мой почерк» или «нарисуй». Ничего не изменено.';return}
+  if(result.unmatched){results.textContent='Пока не могу подобрать подходящее действие. Попробуй «выровняй линии», «нарисуй» или «сделай красиво». Рисунок не изменён.';return}
   const localStatus=await localModelStatus();
   const localReady=localStatus.enabled;
   for(const step of result.steps){
