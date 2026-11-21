@@ -665,11 +665,18 @@
   if(!button||nav.hidden)return;
   const target=button.dataset.svWorkTab;
   if(button.hidden)return;
+  // Update the selected button immediately on touch, before route handoff.
+  // No cloned tab rail or interim loading panel.
+  for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
+   tab.setAttribute('aria-pressed',String(tab.dataset.svWorkTab===target));
+  }
   if(target==='notes'){
    // The Notebook landing is the single home for creation tiles and saved notes.
    const api=window.SEYVEO_NOTES_API;
    if(typeof api?.openNotes==='function')api.openNotes();
    else {const dialog=document.getElementById('notesDialog');if(dialog&&!dialog.open)dialog.show();}
+   resetWorkScroll();
+   sync();
    return;
   }
   if(target===activeSection())return;
@@ -728,6 +735,7 @@
  const observer=new MutationObserver(sync);
  observer.observe(tasks,{attributes:true,attributeFilter:['hidden','data-work-view','class']});
  observer.observe(calendar,{attributes:true,attributeFilter:['hidden']});
+ if(notesPage)observer.observe(notesPage,{attributes:true,attributeFilter:['open']});
  observer.observe(oldTasks,{attributes:true,attributeFilter:['data-manager']});
  observer.observe(oldCalendar,{attributes:true,attributeFilter:['hidden']});
  observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
