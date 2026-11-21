@@ -2123,22 +2123,22 @@ svg.sv-paper-signature .sv-paper-icon-core{
    Five intentional top tools; photographic/duplicate actions remain
    accessible inside Settings. These rules do not touch canvas mechanics. */
 #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
- --sv-nd-size:38px!important;--sv-nd-gap:5px!important;
- display:grid!important;
- grid-template-columns:repeat(5,var(--sv-nd-size))!important;
- grid-template-rows:var(--sv-nd-size)!important;
+ --sv-nd-size:38px!important;--sv-nd-gap:3px!important;
+ display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
  justify-content:center!important;align-items:center!important;
- column-gap:var(--sv-nd-gap)!important;row-gap:0!important;
+ gap:var(--sv-nd-gap)!important;
+ grid-template-columns:none!important;grid-template-rows:none!important;
  box-sizing:border-box!important;
- width:226px!important;min-width:0!important;max-width:100%!important;
+ width:max-content!important;min-width:0!important;max-width:100%!important;
  height:46px!important;min-height:46px!important;max-height:46px!important;
- padding:3px 7px!important;margin:0 auto!important;
+ padding:3px 6px!important;margin:0 auto!important;
  border:0!important;border-radius:16px!important;
  background:#38383A!important;background-image:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  box-shadow:none!important;isolation:isolate!important;overflow:hidden!important;
 }
 #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button{
+ flex:0 0 var(--sv-nd-size)!important;
  width:var(--sv-nd-size)!important;height:var(--sv-nd-size)!important;
  min-width:var(--sv-nd-size)!important;min-height:var(--sv-nd-size)!important;
  max-width:var(--sv-nd-size)!important;max-height:var(--sv-nd-size)!important;
@@ -2156,6 +2156,15 @@ svg.sv-paper-signature .sv-paper-icon-core{
  width:21px!important;height:21px!important;
  min-width:21px!important;min-height:21px!important;
  max-width:21px!important;max-height:21px!important;
+}
+/* Optical balance: the dense SEYVEO mark is smaller than the open line glyphs. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > #notePaperSayvi > img.sv-newdock-potok{
+ display:block!important;object-fit:contain!important;
+ width:19px!important;height:19px!important;
+ min-width:19px!important;min-height:19px!important;
+ max-width:19px!important;max-height:19px!important;
+ margin:0 auto!important;padding:0!important;
+ transform:none!important;
 }
 /* Flat, short-width menu instead of the old large blurred sheet. */
 #notePaperDialog.sv-paper-studio[open] #notePaperSettingsMenu.sv-newdock-settings-panel:not([hidden]){
@@ -2205,7 +2214,7 @@ svg.sv-paper-signature .sv-paper-icon-core{
 @media(max-width:370px){
  #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
   --sv-nd-size:36px!important;--sv-nd-gap:3px!important;
-  width:208px!important;height:44px!important;min-height:44px!important;max-height:44px!important;
+  width:max-content!important;height:44px!important;min-height:44px!important;max-height:44px!important;
   padding:4px 6px!important;
  }
  #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock > button.sv-newdock-button > svg.sv-newdock-glyph{
