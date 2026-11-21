@@ -381,3 +381,84 @@ html:root[data-theme] body #sayviMusicMini:not([hidden]){
   --sv-dock-glass-filter:none;
  }
 }
+
+/* INK STUDIO · graphite restore v2 · 21 Nov 2026.
+   The drawing PAPER background, not the global app theme, owns the material.
+   On a dark sheet the generic pearl tokens (which can be WHITE when the app
+   theme is light) must NOT wash the tool rail grey. Restore the approved
+   deep-graphite tone, one soft floating shadow and delicate tactile recess.
+   Only the existing dock, its real buttons and the save circle are painted.
+   White paper, header arrows, canvas, menus and gestures remain untouched. */
+html:root[data-theme] body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface)
+ > .sv-paper-top #svPaperNewDock{
+ border:.75px solid rgba(255,255,255,.18)!important;
+ border-radius:999px!important;
+ background:#38383A!important;
+ background-image:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.01) 45%,rgba(0,0,0,.08))!important;
+ -webkit-backdrop-filter:blur(7px) saturate(105%)!important;
+ backdrop-filter:blur(7px) saturate(105%)!important;
+ box-shadow:
+   0 11px 27px rgba(0,0,0,.33),
+   0 3px 9px rgba(0,0,0,.20),
+   0 0 0 .45px rgba(255,255,255,.13),
+   inset 0 1px 1px rgba(255,255,255,.19)!important;
+}
+html:root[data-theme] body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface)
+ > .sv-paper-top #svPaperNewDock > button.sv-newdock-button{
+ border:0!important;
+ border-radius:50%!important;
+ color:#F3F4F6!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html:root[data-theme] body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface)
+ > .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]{
+ border-radius:50%!important;
+ background:rgba(12,14,19,.37)!important;
+ box-shadow:
+   inset 0 2.5px 4px rgba(0,0,0,.40),
+   inset 0 -1px 1px rgba(255,255,255,.13),
+   0 0 0 .5px rgba(255,255,255,.10)!important;
+ color:#FFF!important;
+}
+html:root[data-theme] body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface)
+ > .sv-paper-top #svPaperNewDock > button.sv-newdock-button:not([data-sv-active="true"]):not(:disabled):active{
+ border-radius:50%!important;
+ background:rgba(12,14,19,.26)!important;
+ box-shadow:inset 0 2px 3px rgba(0,0,0,.26),inset 0 -1px 1px rgba(255,255,255,.09)!important;
+}
+html:root[data-theme] body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface)
+ > .sv-paper-top #svPaperNewDock > button.sv-newdock-button[data-sv-active="true"]:active{
+ background:rgba(12,14,19,.45)!important;
+ box-shadow:inset 0 3px 5px rgba(0,0,0,.48),inset 0 -1px 1px rgba(255,255,255,.10)!important;
+}
+/* Restored graphite Save: the old clip-path cropped its OUTSIDE shadow.
+   The button remains an exact circle via border-radius; no square layer,
+   blur behind the palette, white ring or new pseudo-elements. */
+html:root[data-theme] body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface)
+ > #notePaperSave.sv-ink-confirm{
+ -webkit-clip-path:none!important;
+ clip-path:none!important;
+ border:.75px solid rgba(255,255,255,.16)!important;
+ border-radius:50%!important;
+ background:#38383A!important;
+ background-image:linear-gradient(160deg,rgba(255,255,255,.075),transparent 55%)!important;
+ color:#F4F5F7!important;
+ box-shadow:
+   0 11px 25px rgba(0,0,0,.34),
+   0 3px 8px rgba(0,0,0,.22),
+   0 0 0 .5px rgba(255,255,255,.11),
+   inset 0 1px 1px rgba(255,255,255,.13)!important;
+}
+html:root[data-theme] body dialog#notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface)
+ > #notePaperSave.sv-ink-confirm:active{
+ background:#343439!important;
+ background-image:none!important;
+ box-shadow:
+  inset 0 2.8px 4px rgba(0,0,0,.42),
+  inset 0 -1px 1px rgba(255,255,255,.12),
+  0 3px 10px rgba(0,0,0,.19)!important;
+}
