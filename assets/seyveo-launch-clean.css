@@ -123,8 +123,9 @@
  #svLaunchClean[data-stage="reveal"]{animation:none!important;opacity:0!important}
 }
 
-/* The logo stays absolutely still while ONLY the sphere approaches.
-   Official wordmark: gently lit platinum with a restrained pine reflection. */
+/* SEYVEO director's cut: the two lines remain attached to the camera shot.
+   The sphere accelerates harder; the lettering comes forward more gently and
+   dissolves before the true Home sphere lands. No second logo or headline. */
 #svLaunchClean .svLaunchCleanSignature{
  all:initial;
  position:absolute!important;
@@ -134,10 +135,14 @@
  display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:center!important;
  gap:10px!important;
- transform:translate3d(-50%,0,0)!important;
+ transform-origin:50% 0%!important;
+ transform:translate3d(-50%,0,0) scale(.82);
+ opacity:0;
  white-space:nowrap!important;text-align:center!important;
  pointer-events:none!important;user-select:none!important;
  -webkit-user-select:none!important;
+ backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
+ will-change:transform,opacity!important;
  visibility:hidden!important;
 }
 #svLaunchClean .svLaunchCleanName,
@@ -148,8 +153,7 @@
  white-space:nowrap!important;
  -webkit-font-smoothing:antialiased!important;
  text-rendering:geometricPrecision!important;
- opacity:0;
- /* No transforms on letters: they remain fixed during the entire camera zoom. */
+ opacity:1;
 }
 #svLaunchClean .svLaunchCleanName{
  font-size:clamp(28px,7.9vw,39px)!important;
@@ -174,23 +178,50 @@
  background-clip:text!important;-webkit-background-clip:text!important;
  -webkit-text-fill-color:transparent!important;
 }
+
 #svLaunchClean[data-stage="ready"] .svLaunchCleanSignature,
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanSignature,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanSignature{
  visibility:visible!important;
 }
-@keyframes svLaunchTypeIn{from{opacity:0}to{opacity:1}}
-#svLaunchClean[data-stage="ready"] .svLaunchCleanName,
-#svLaunchClean[data-stage="zoom"] .svLaunchCleanName,
-#svLaunchClean[data-stage="reveal"] .svLaunchCleanName{
- animation:svLaunchTypeIn var(--sv-launch-title-ms,950ms) cubic-bezier(.22,1,.36,1) 120ms both!important;
+@keyframes svLaunchSignatureAppear{
+ from{opacity:0;transform:translate3d(-50%,7px,0) scale(.82)}
+ to{opacity:1;transform:translate3d(-50%,0,0) scale(.82)}
 }
-#svLaunchClean[data-stage="ready"] .svLaunchCleanDescriptor,
-#svLaunchClean[data-stage="zoom"] .svLaunchCleanDescriptor,
-#svLaunchClean[data-stage="reveal"] .svLaunchCleanDescriptor{
- animation:svLaunchTypeIn var(--sv-launch-subtitle-ms,1050ms) cubic-bezier(.22,1,.36,1) 260ms both!important;
+#svLaunchClean[data-stage="ready"] .svLaunchCleanSignature{
+ animation:svLaunchSignatureAppear var(--sv-launch-type-enter-ms,380ms) cubic-bezier(.22,1,.36,1) both!important;
+}
+/* Progress values are relative to the sphere's exact landing coordinate.
+   69%: lettering begins to fade (~2.45s in the full 3.75s sequence);
+   90%: it is gone (~3.06s); only the sphere completes the Home handoff. */
+@keyframes svLaunchSignatureTravel{
+ 0%{
+  opacity:1;transform:translate3d(-50%,0,0) scale(.82);
+  animation-timing-function:cubic-bezier(.55,0,.82,.30);
+ }
+ 35%{
+  opacity:1;transform:translate3d(-50%,var(--sv-launch-text-d35,0px),0) scale(.91);
+  animation-timing-function:cubic-bezier(.43,.03,.76,.36);
+ }
+ 69%{
+  opacity:1;transform:translate3d(-50%,var(--sv-launch-text-d69,0px),0) scale(1.09);
+  animation-timing-function:cubic-bezier(.28,.17,.77,.52);
+ }
+ 83%{
+  opacity:.35;transform:translate3d(-50%,var(--sv-launch-text-d83,0px),0) scale(1.14);
+  animation-timing-function:cubic-bezier(.24,.22,.63,.82);
+ }
+ 90%{
+  opacity:0;transform:translate3d(-50%,var(--sv-launch-text-d90,0px),0) scale(1.16);
+ }
+ 100%{
+  opacity:0;transform:translate3d(-50%,var(--sv-launch-text-travel,0px),0) scale(1.16);
+ }
+}
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanSignature,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanSignature{
+ animation:svLaunchSignatureTravel var(--sv-launch-flight-ms,2900ms) linear both!important;
 }
 @media(prefers-reduced-motion:reduce){
- #svLaunchClean .svLaunchCleanName,
- #svLaunchClean .svLaunchCleanDescriptor{animation:none!important;opacity:1!important}
+ #svLaunchClean .svLaunchCleanSignature{animation:none!important;opacity:1!important}
 }
