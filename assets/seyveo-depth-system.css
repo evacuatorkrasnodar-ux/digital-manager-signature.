@@ -1,0 +1,133 @@
+/* SEYVEO · depth system v1 · 2026-11-21
+   One coherent optical elevation system.
+   IMPORTANT: shadow on an EXISTING surface, never a new wrapper/pseudo layer.
+   No geometry, pointer events, icon strokes, transforms, canvas or animation changes.
+   Opaque reading menus remain opaque. Dock controls remain visually flat. */
+:root{
+ --sv-depth-dock:
+   0 4px 16px rgba(36,46,61,.075),
+   0 1px 3px rgba(36,46,61,.045),
+   0 0 0 .45px rgba(146,158,173,.17),
+   inset 0 1px 0 rgba(255,255,255,.30);
+ --sv-depth-circle:
+   0 3px 10px rgba(38,47,61,.09),
+   0 1px 2px rgba(38,47,61,.04),
+   inset 0 1px 0 rgba(255,255,255,.24);
+ --sv-depth-card:
+   0 6px 20px rgba(38,47,61,.055),
+   0 1px 4px rgba(38,47,61,.035);
+ --sv-depth-menu:
+   0 12px 34px rgba(25,33,45,.16),
+   0 3px 10px rgba(25,33,45,.055),
+   inset 0 1px 0 rgba(255,255,255,.8);
+ --sv-depth-pressed:inset 0 2px 5px rgba(38,47,61,.10);
+ /* Adopted by the existing shared dock and opaque dropdown systems. */
+ --sv-dock-pearl-shadow:var(--sv-depth-dock);
+ --sv-menu-shadow:var(--sv-depth-menu);
+}
+:root[data-theme="dark"]{
+ --sv-depth-dock:
+   0 5px 18px rgba(0,0,0,.26),
+   0 1px 3px rgba(0,0,0,.17),
+   0 0 0 .55px rgba(255,255,255,.11),
+   inset 0 1px 0 rgba(255,255,255,.09);
+ --sv-depth-circle:
+   0 3px 11px rgba(0,0,0,.25),
+   0 0 0 .5px rgba(255,255,255,.08),
+   inset 0 1px 0 rgba(255,255,255,.07);
+ --sv-depth-card:
+   0 6px 18px rgba(0,0,0,.21),
+   0 0 0 .5px rgba(255,255,255,.07);
+ --sv-depth-menu:
+   0 14px 34px rgba(0,0,0,.36),
+   0 3px 11px rgba(0,0,0,.19),
+   inset 0 1px 0 rgba(255,255,255,.08);
+ --sv-depth-pressed:inset 0 2px 5px rgba(0,0,0,.30);
+}
+/* The Home dock consists of TWO capsule pseudos; shadowing the footer
+   itself would create an unwanted full-width floating rectangle. */
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock,
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
+)::before,
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock,
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
+)::after{
+ box-shadow:var(--sv-depth-dock)!important;
+}
+/* The Notebook's two existing 60px dock surfaces, not their individual icons.
+   Do not blur or shadow the whole full-screen writing canvas. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ box-shadow:var(--sv-depth-dock)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ .sv-smart-ink-tools:not([hidden]){
+ box-shadow:var(--sv-depth-dock)!important;
+}
+/* Navigation circles: secondary depth, keeping pressed inset material.
+   Save/Done's approved gold is not recolored. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#noteReviewBack.sv-note-back-arrow:not(:active),
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#svNoteDone.sv-note-nav-circle:not(:active){
+ box-shadow:var(--sv-depth-circle)!important;
+}
+/* Painting studio: the real five-tool capsule only. */
+html body dialog#notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPaperNewDock{
+ box-shadow:var(--sv-depth-dock)!important;
+}
+/* Chat input: use the existing one-piece capsule, never its separate emoji,
+   send, mic and attachment buttons. Leave glass transparency unchanged. */
+html body #svcpWorkChatScreen #svcpChatForm{
+ box-shadow:var(--sv-depth-dock)!important;
+}
+/* Health uses an intentional two-part custom dock; its pseudo layers
+   are disabled. Shadow the two real surfaces, not the transparent footer. */
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > footer.dock.sv-shared-dock > .sv-health-dock-actions{
+ box-shadow:var(--sv-depth-dock)!important;
+}
+/* Low-elevation content cards. Never touch nested buttons, list rows,
+   full-screen sheets or the home orb. */
+html body #sayviSurfacePage[data-sv-subject="contract"]
+ :is(.sv-doc-folder-card,.sv-doc-recent-card,.sv-doc-flow-card):not([hidden]),
+html body #homePage #seyveoLivingMoment .lm-field.sv-living-card-26,
+html body #svWorkShell #svWorkNotebook .note-item:not([hidden]){
+ box-shadow:var(--sv-depth-card)!important;
+}
+/* Opaque menus remain the highest floating reading layer, not glass.
+   The material itself is defined by seyveo-unified-menu-material.css. */
+html body :is(
+ #svSmartInkPicker.sv-smart-ink-picker,
+ #svSmartVoiceMenu.sv-smart-voice-menu,
+ #svSmartNotePaperPanel.sv-smart-paper-panel,
+ #svNoteTopMenu.sv-note-top-menu,
+ #svNoteAttachmentMenu.sv-note-attachment-menu,
+ #svNoteFormatMenu.sv-note-format-menu,
+ #notePaperSettingsMenu.sv-newdock-settings-panel,
+ #notePaperPatternMenu.paper-pattern-menu,
+ #notePaperColorMenu.paper-color-menu,
+ #svPaperBrushPicker.sv-paper-brush-picker,
+ #svcpAttachMenu.svcp-attach-menu,
+ #svcpWorkHistoryMenu.svcp-work-history-menu,
+ #svNewTaskCameraMenu.sv-new-task-camera-menu,
+ #svNewTaskCalendarPopover.sv-new-task-calendar-popover
+ ):not([hidden]){
+ box-shadow:var(--sv-depth-menu)!important;
+}
+/* Pressed buttons preserve their own inset feedback, never gain a second
+   external halo while the finger is down. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#noteReviewBack.sv-note-back-arrow:active{
+ box-shadow:var(--sv-depth-pressed)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ /* Accessibility: remove blur by the existing rules; keep an edge/shadow
+    as visual separation without relying on transparency. */
+ :root{--sv-depth-dock:0 3px 10px rgba(36,46,61,.12),0 0 0 .7px rgba(146,158,173,.22)}
+ :root[data-theme="dark"]{--sv-depth-dock:0 3px 10px rgba(0,0,0,.28),0 0 0 .7px rgba(255,255,255,.14)}
+}
