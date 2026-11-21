@@ -6,24 +6,20 @@
  const panel=document.querySelector('#notePaperSettingsMenu [data-sv-menu-panel="actions"]');
  if(!dialog||!panel)return;
 
- // The gradient editor is still fully functional; only its former square
- // shortcut was removed from the bottom color rail.
+ // Drawing relies on the existing native color palette. Keep the older
+ // custom gradient trigger wired for legacy callers, but never show it as
+ // an additional visible control.
  const gradient=document.getElementById('notePaperColorTrigger');
  if(gradient){
-  gradient.classList.add('sv-newdock-menu-action');
-  gradient.classList.remove('sv-newdock-gradient-action');
-  gradient.setAttribute('aria-label','Градиенты кисти');
-  gradient.title='Градиенты кисти';
-  gradient.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M5.4 17.3 17.4 5.6M7.2 6.8l9.9 10M4 12h16"/></svg><span>Градиенты</span>';
+  gradient.dataset.svRetired='true';gradient.hidden=true;
+  gradient.style.setProperty('display','none','important');
  }
 
  // This is the complete everyday Drawing menu, ordered by actual workflow.
  // The original nodes keep all of their listeners and tool state.
  const actions=[
-  gradient,
   document.getElementById('notePaperTextAction'),
   document.getElementById('notePaperAddPhoto'),
-  document.getElementById('notePaperSmoothInk'),
   panel.querySelector('[data-paper-tool="lasso"]')||
    document.querySelector('#notePaperSettingsMenu [data-paper-tool="lasso"]'),
   document.getElementById('notePaperClearSheet')
@@ -33,7 +29,9 @@
  // The recognition engine remains callable from Sayvi; the standard Notebook
  // already has handwriting OCR with preview and explicit Apply.
  // Copying is contextual to a selected region, not an always-visible row.
- for(const id of ['notePaperRecognizeOpen','notePaperDuplicate','notePaperRedo']){
+ // Smoothing is exposed by the single Sayvi control at the top.
+ // Leave its executable node available for Sayvi's explicit action routing.
+ for(const id of ['notePaperSmoothInk','notePaperRecognizeOpen','notePaperDuplicate','notePaperRedo']){
   const node=document.getElementById(id);
   if(!node)continue;
   node.dataset.svRetired='true';node.hidden=true;
