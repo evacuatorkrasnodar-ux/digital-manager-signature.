@@ -263,3 +263,17 @@ html[data-theme="dark"] body #noteScanDialog .paper-scan-consent-actions button:
   padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))!important;
  }
 }
+
+/* Photo-to-text empty actions: no misleading active dark button before data. */
+html body #noteScanDialog .paper-scan-actions button:disabled,
+html body #noteScanDialog .paper-scan-actions #noteScanToText:disabled{
+ background:#f1f1f3!important;color:#96989f!important;
+ border:1px solid rgba(60,60,67,.04)!important;
+ opacity:1!important;box-shadow:none!important;
+ cursor:default!important;
+}
+html[data-theme="dark"] body #noteScanDialog .paper-scan-actions button:disabled,
+html[data-theme="dark"] body #noteScanDialog .paper-scan-actions #noteScanToText:disabled{
+ background:#29292d!important;color:#94949e!important;
+ border-color:#29292d!important;
+}
