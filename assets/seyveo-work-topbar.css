@@ -2,7 +2,15 @@
    Old Work header styling removed; rebuilt header lives in its own
    encapsulated component, seyveo-work-header.js. */
 
-/* Segmented navigation below the new Work header. */
+/* Segmented navigation below the new Work header.
+   One stable edge-to-edge Work viewport across Tasks / Notebook / Cabinet.
+   Scope this to the shared Work shell; Home and other workspaces are untouched. */
+@media(max-width:699px){
+ html body .app.sv-dock-width-workspace:has(> #svWorkShell[data-shared-work="true"]){
+  padding-left:0!important;
+  padding-right:0!important;
+ }
+}
 #svWorkShell[data-shared-work="true"] #svWorkTabs {
   box-sizing:border-box!important;
   order:1!important;
@@ -74,15 +82,23 @@
   font:560 15px/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;
   letter-spacing:-.01em!important;
   white-space:nowrap!important;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transform:none!important;
+  transition:color 200ms ease,box-shadow 200ms cubic-bezier(.22,1,.36,1),
+             background-color 200ms ease!important;
 }
 :root[data-theme="light"] #svWorkShell[data-shared-work="true"] #svWorkTabs > button:not([hidden]){
-  color:#17181C!important;
+  color:#575C65!important;
 }
 :root[data-theme="light"] #svWorkShell[data-shared-work="true"] #svWorkTabs > button[aria-pressed="true"]:not([hidden]){
-  background:#FFFFFF!important;color:#0C0D10!important;
+  /* White Pearl active surface: the selected real button has gentle depth,
+     while the track, click area, radius and text metrics never change. */
+  background:var(--sv-white-pearl-press-fill)!important;
+  color:var(--sv-white-pearl-ink,#0B0B0D)!important;
   border:0!important;
-  font-weight:590!important;
-  box-shadow:none!important;
+  font-weight:560!important;
+  box-shadow:var(--sv-white-pearl-press-shadow)!important;
 }
 :root[data-theme="dark"] #svWorkShell[data-shared-work="true"] #svWorkTabs > button:not([hidden]){
   color:#C6C6CA!important;
@@ -97,4 +113,7 @@
   #svWorkShell[data-shared-work="true"] #svWorkTabs > button:not([hidden]){
     font-size:13px!important;
   }
+}
+@media(prefers-reduced-motion:reduce){
+ #svWorkShell[data-shared-work="true"] #svWorkTabs > button{transition:none!important}
 }
