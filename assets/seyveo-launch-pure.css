@@ -1,0 +1,26 @@
+/* SEYVEO: one original logo, exactly at the live orb centre.
+   One short zoom, capped at the live orb size. No text, smoke or other layers. */
+.sv-pure-launch{
+ position:fixed;inset:0;z-index:2147483000;
+ overflow:hidden;overscroll-behavior:contain;
+ background:#fff;pointer-events:auto;
+}
+.sv-pure-launch-logo{
+ position:absolute;left:var(--sv-pure-x,50%);top:var(--sv-pure-y,45%);
+ width:var(--sv-pure-size,200px);height:var(--sv-pure-size,200px);
+ transform:translate3d(-50%,-50%,0) scale(1);
+ transform-origin:center center;will-change:transform;
+ transition:transform .52s cubic-bezier(.72,.05,1,1);
+ backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.sv-pure-launch-logo img{
+ width:100%;height:100%;display:block;object-fit:contain;
+ pointer-events:none;-webkit-user-select:none;user-select:none;
+}
+.sv-pure-launch.is-approaching .sv-pure-launch-logo{
+ transform:translate3d(-50%,-50%,0) scale(var(--sv-pure-scale,1.3));
+}
+:root[data-theme="dark"] .sv-pure-launch{background:#11161b}
+@media(prefers-reduced-motion:reduce){
+ .sv-pure-launch-logo{transition:none}
+}
