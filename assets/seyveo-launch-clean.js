@@ -14,6 +14,13 @@
  const eligible=(!location.hash||location.hash==='#home')
   &&params.get('sayvi-intro')!=='0'
   &&(preview||standalone||navigation?.type==='reload'||!seen);
+ // A full first shot establishes the brand; repeat openings continue the
+ // iOS icon's natural motion without forcing the whole long intro every time.
+ // Explicit ?sayvi-intro=1 always plays the full director's cut.
+ const quick=seen&&!preview;
+ const holdMs=quick?360:880;
+ const flightMs=quick?1700:3300;
+ const fadeMs=quick?410:560;
  let splash=document.getElementById('svLaunchClean');
  if(!eligible){
   splash?.remove();
@@ -29,6 +36,10 @@
   document.body.append(splash);
  }
  splash.hidden=false;
+ splash.style.setProperty('--sv-launch-flight-ms',flightMs+'ms');
+ splash.style.setProperty('--sv-launch-fade-ms',fadeMs+'ms');
+ splash.style.setProperty('--sv-launch-title-ms',(quick?460:950)+'ms');
+ splash.style.setProperty('--sv-launch-subtitle-ms',(quick?550:1050)+'ms');
  // Match the browser's safe-area/status-bar tone to the velvet opening.
  // Restore the saved app theme color as soon as the opening is dismissed.
  const themeMeta=document.querySelector('meta[name="theme-color"]');
@@ -59,7 +70,7 @@
   // One uninterrupted final handoff: the moving emblem has become
   // the real Home orb, and only the velvet curtain dissolves.
   splash.dataset.stage='reveal';
-  cleanupTimer=setTimeout(close,690);
+  cleanupTimer=setTimeout(close,fadeMs+130);
  };
  mark.addEventListener('animationend',event=>{
   if(event.target===mark&&event.animationName==='svLaunchApproach')reveal();
@@ -144,9 +155,9 @@
     splash.dataset.stage='zoom';
     // Safari fallback only. Normal landing is driven by animationend to
     // preserve the final frame even if the device drops frames under load.
-    landingTimer=setTimeout(reveal,3460);
+    landingTimer=setTimeout(reveal,flightMs+160);
    };
-   phaseTimer=setTimeout(start,880);
+   phaseTimer=setTimeout(start,holdMs);
   }));
  }).catch(close);
 })();
