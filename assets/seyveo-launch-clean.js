@@ -63,14 +63,13 @@
    const diameter=valid?rect.width:Math.min(w*.76,300);
    const x=valid?rect.left+rect.width/2:w/2;
    const y=valid?rect.top+rect.height/2:h*.42;
-   const firstSize=diameter*.9;
+   const firstSize=diameter*.55;
    splash.style.setProperty('--sv-launch-x',x+'px');
    splash.style.setProperty('--sv-launch-y',y+'px');
    splash.style.setProperty('--sv-launch-d',firstSize+'px');
-   // The final frame rushes past the camera; enough coverage for even the
-   // farthest screen corner. This never changes the Home sphere's own size.
-   const coverDiameter=Math.hypot(w,h)*1.55;
-   splash.style.setProperty('--sv-launch-scale',String(Math.max(6.4,coverDiameter/firstSize)));
+   // Stop EXACTLY at the actual Home sphere diameter. Never fill the viewport;
+   // the last frame must be aligned with the resting Sayvi orb underneath.
+   splash.style.setProperty('--sv-launch-scale',String(diameter/firstSize));
    // Paint the complete decoded asset as one background. No progressive
    // half-PNG painting or globally styled IMG element.
    // Override the isolated element reset; otherwise its important "all"
@@ -87,8 +86,8 @@
      endTimer=setTimeout(close,510);
     },3250);
    };
-   // Give the emblem a calm, readable hold. Then accelerate towards the
-   // viewer instead of a tiny 1.3x zoom; dissolve only after the rush finishes.
+   // Hold the emblem, then approach the actual Home sphere size with
+   // accelerating motion. The final size is never larger than Sayvi on Home.
    endTimer=setTimeout(animate,1250);
   }));
  }).catch(close);
