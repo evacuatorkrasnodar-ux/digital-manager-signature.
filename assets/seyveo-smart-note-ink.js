@@ -49,38 +49,32 @@
   const menu=document.getElementById(id);if(menu)dlg.append(menu);
  }
  bar.setAttribute('aria-label','Основные инструменты заметки');
- // The keyboard previously exposed every legacy button in a long, clipped
- // ribbon. Keep only mode, attachment, Sayvi and voice in sight; route
- // secondary actions through Aa, using their existing real handlers.
+ // One continuous horizontal tool ribbon; keep the original control nodes
+ // so camera, notes, formatting, paper and handwriting keep their real handlers.
  const textActions=document.getElementById('svNoteTopMenu');
- if(textActions){
-  const secondary=[
-   ['checklist','Список',check],
-   ['table','Таблица',tableBtn],
-   ['format','Оформление',bar.querySelector('[data-note-tool="heading"]')],
-   ['paper','Бумага',paperBtn],
-   ['photo','Добавить фото',document.getElementById('svNotePhotoInput')]
-  ];
-  for(const [kind,label,target] of secondary){
-   if(!target)continue;
-   const item=document.createElement('button');
-   item.type='button';item.className='sv-note-secondary-action';
-   item.dataset.svNoteSecondary=kind;
-   item.textContent=label;
-   if(kind==='photo'){
-    // The existing photo input and attachments module persist the image.
-    // This is an action, not a decorative or duplicate file menu.
-    item.innerHTML=icon('<rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9" r="1.6"/><path d="m5 17 4.5-5 3.2 3.2 2.3-2.5L19 17"/>')+'<span>'+label+'</span>';
-   }
-   item.addEventListener('click',event=>{
-    event.preventDefault();event.stopPropagation();
-    window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
-    // The existing delegated button handles history, editing and menus.
-    target.click();
-   });
-   textActions.append(item);
-  }
+ const formatButton=bar.querySelector('[data-note-tool="heading"]');
+ const undoQuick=create('undo','Отменить ввод',icon('<path d="M9 8 5 12l4 4M5 12h8a6 6 0 0 1 6 6"/>'));
+ const copyQuick=create('copy','Копировать текст',icon('<rect x="8.5" y="8.5" width="11" height="11" rx="1.8"/><path d="M15.5 8.5V6.1a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.4a2 2 0 0 0 2 2h2.5"/>'));
+ const clearQuick=create('clear','Очистить печатный текст',icon('<path d="m4.5 14.5 9-9a2 2 0 0 1 2.8 0l3 3a2 2 0 0 1 0 2.8L11.1 20H8L4.5 16.5a1.5 1.5 0 0 1 0-2Z"/><path d="M11.1 20h9"/>'));
+ // The first four are always the familiar Aa / pen / attachment / Sayvi.
+ // A short swipe reveals list, real existing table insertion, formatting,
+ // templates, voice, undo, copy, and protected clear.
+ const ribbon=[textBtn,draw,attach,sayviBtn,check,tableBtn,formatButton,paperBtn,voiceBtn,undoQuick,copyQuick,clearQuick];
+ for(const button of ribbon)if(button)bar.append(button);
+ bar.setAttribute('aria-label','Прокручиваемые инструменты заметки');
+ bar.dataset.svUnifiedTools='true';
+ // The former Aa popover remains only as a hidden compatibility host.
+ // Reuse its verified undo/copy/clear handlers, without duplicate menus.
+ textActions?.querySelectorAll('[data-sv-note-secondary]')?.forEach(button=>button.remove());
+ for(const button of [undoQuick,copyQuick,clearQuick]){
+  button.addEventListener('click',()=>{
+   window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
+   if(button.dataset.svSmartTool==='undo'){window.SEYVEO_NOTE_TEXT_UNDO?.();return}
+   textActions?.querySelector('[data-sv-note-menu="'+button.dataset.svSmartTool+'"]')?.click();
+  });
  }
+ textBtn.removeAttribute('aria-controls');
+ textBtn.setAttribute('aria-expanded','false');
 
  // Sayvi is an in-note set of editing tools, not a chat or navigation link.
  // Every proposal has a preview and requires a separate Apply tap.
@@ -685,7 +679,9 @@
  textBtn.addEventListener('click',()=>{
   if(mode!=='text'){setMode('text',true);return}
   closePaper();closeInkPicker();closeVoiceMenu();
-  window.SEYVEO_NOTE_TEXT_ACTIONS?.toggle?.();
+  window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
+  const editing=rich&&!rich.hidden?rich:textarea;
+  editing?.focus({preventScroll:true});
  });
  eraserBtn.addEventListener('click',()=>setMode('eraser'));
  sayviBtn.addEventListener('click',()=>{
