@@ -296,6 +296,13 @@ html body #noteScanDialog[data-step="pick"] > p:first-of-type{
 html body #noteScanDialog[data-step="pick"] .paper-scan-inputs{
  margin-bottom:0!important;
 }
+/* File validation errors are the only status displayed before a photo exists. */
+html body #noteScanDialog[data-step="pick"][data-scan-error="true"] #noteScanStatus{
+ display:block!important;
+ margin:12px 0!important;
+ text-align:center!important;
+ color:#99664a!important;
+}
 /* The selected photo is the working content, not an extra floating card. */
 html body #noteScanDialog[data-step="photo"] :is(
  .paper-scan-caption,#noteScanText,.paper-scan-actions){
