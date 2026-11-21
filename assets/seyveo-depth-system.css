@@ -307,3 +307,30 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* Notebook Aa reading popover · opaque on top of both text and ink.
+   The old high-specificity notebook rule used the pearl GLASS dock
+   material. Text behind it was visible as blurry horizontal stripes.
+   Do not change any other docks or floating drawing controls. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ > #svNoteTopMenu.sv-note-top-menu:not([hidden]){
+ background:#fcfcfd!important;
+ background-color:#fcfcfd!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;opacity:1!important;
+ isolation:isolate!important;
+ border:1px solid rgba(130,139,150,.20)!important;
+ box-shadow:var(--sv-depth-menu)!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ > #svNoteTopMenu.sv-note-top-menu:not([hidden]){
+ background:#292b30!important;
+ background-color:#292b30!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;opacity:1!important;
+ isolation:isolate!important;
+ border:1px solid rgba(255,255,255,.14)!important;
+ box-shadow:var(--sv-depth-menu)!important;
+}
