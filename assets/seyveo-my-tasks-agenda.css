@@ -151,9 +151,10 @@
 }
 #tasksPage #svTasksDateNav .sv-agenda-week-step:first-child{left:-25px}
 #tasksPage #svTasksDateNav .sv-agenda-week-step:last-child{right:-25px}
+/* Quiet three-pixel drag hint: preserve the rail's occupied height. */
 #tasksPage #svTasksDateNav .sv-agenda-handle{
- position:relative;z-index:2;width:40px;height:5px;margin:-9px auto 4px;
- border-radius:4px;background:#8F939B;
+ position:relative;z-index:2;width:30px;height:3px;margin:-8px auto 5px;
+ border-radius:999px;background:#BCC1C9;
 }
 #tasksPage #personalTaskList.personal-tasks-list{
  box-sizing:border-box!important;display:block!important;
@@ -384,6 +385,12 @@
 @media(max-width:767px){
  #tasksPage #svTasksDateNav .sv-agenda-week{
   padding:0;
+ }
+ /* Fade only the peek at the next date; no extra DOM layer or touch overlay.
+    Preserve full-day snapping, day-width, click targets and native momentum. */
+ :root[data-theme="light"] #tasksPage #svTasksDateNav .sv-agenda-week{
+  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 24px),transparent 100%);
+  mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 24px),transparent 100%);
  }
  #tasksPage #svTasksDateNav .sv-agenda-day{
   flex:0 0 18.5%;width:18.5%;
