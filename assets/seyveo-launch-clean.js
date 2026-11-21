@@ -25,7 +25,7 @@
   splash.id='svLaunchClean';
   splash.setAttribute('role','status');
   splash.setAttribute('aria-label','Загрузка SEYVEO');
-  splash.innerHTML='<div class="svLaunchCleanMark" aria-hidden="true"></div>';
+  splash.innerHTML='<div class="svLaunchCleanMark" aria-hidden="true"></div><div class="svLaunchCleanSignature" aria-hidden="true"><span class="svLaunchCleanName">SEYVEO</span><span class="svLaunchCleanDescriptor">IT · AI · AUTOMATION</span></div>';
   document.body.append(splash);
  }
  splash.hidden=false;
@@ -110,6 +110,10 @@
    const initialDiameter=diameter*.45;
    splash.style.setProperty('--sv-launch-x',x+'px');
    splash.style.setProperty('--sv-launch-y',y+'px');
+   // The signature is optically anchored below the full-sized landing sphere,
+   // not to the growing element, so it stays calm while the camera approaches.
+   const signatureY=Math.min(height-105,y+diameter*.5+Math.max(24,Math.min(42,height*.033)));
+   splash.style.setProperty('--sv-launch-word-y',signatureY+'px');
    splash.style.setProperty('--sv-launch-d',initialDiameter+'px');
    const finalScale=diameter/initialDiameter;
    splash.style.setProperty('--sv-launch-scale',String(finalScale));
