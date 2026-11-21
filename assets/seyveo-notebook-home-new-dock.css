@@ -37,7 +37,9 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  box-shadow:var(--sv-dock-pearl-shadow,0 0 0 .45px rgba(164,170,184,.16),
    inset 0 1px 1px rgba(75,82,96,.055),inset 0 -1px 0 rgba(255,255,255,.18),
    inset .6px 0 .7px rgba(255,255,255,.16),inset -.6px 0 .8px rgba(75,82,96,.055),
-   0 1px 2px rgba(82,88,103,.045))!important;
+   0 1px 2px rgba(82,88,103,.045)),
+   0 3px 10px rgba(48,56,72,.095),
+   0 1px 2px rgba(48,56,72,.045)!important;
  pointer-events:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
