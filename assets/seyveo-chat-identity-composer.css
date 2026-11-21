@@ -482,3 +482,12 @@ html body #svcpWorkChatScreen .svcp-call-dialog-actions > button:active{
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* Contrast-correct monogram in graphite mode, without changing its raised
+   baseline; contact photos retain the original image surface. */
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:not([data-room-kind="groups"]):not([data-room-id="dm-sayvi"])
+ #svcpRoomAvatar:not(:has(img,picture)){
+ background:linear-gradient(155deg,#44515A,#28343D)!important;
+ color:#F7F9FA!important;
+}
