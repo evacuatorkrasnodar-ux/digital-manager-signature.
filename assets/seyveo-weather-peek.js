@@ -127,69 +127,76 @@
   return part('year')+'-'+part('month')+'-'+part('day');
  }
  function addRainTimeline(parent,date,source){
+  // Compact, human-readable rain forecast. Only real hourly probabilities
+  // from our existing verified feed; never infer observed rain or exact onset.
   const section=document.createElement('section');
   section.className='sv-weather-peek-rain';
   const header=document.createElement('div');
   header.className='sv-weather-peek-rain-heading';
   add('sv-weather-peek-rain-title','Дождь · '+(date===moscowDate()?'сегодня':weekday(date)),header,'h3');
-  const summary=add('sv-weather-peek-rain-summary','',header);
+  const state=add('sv-weather-peek-rain-state','',header,'strong');
   section.append(header);
   const hourly=source?.getStationData?.()?.hourly;
-  const hourlyChances=Array(24).fill(null);
+  const chances=Array(24).fill(null);
   if(Array.isArray(hourly?.time)&&Array.isArray(hourly?.precipitation_probability)){
    for(let i=0;i<hourly.time.length;i++){
     const time=hourly.time[i],chance=hourly.precipitation_probability[i];
     if(typeof time!=='string'||!time.startsWith(date+'T')||
      !Number.isFinite(chance)||chance<0||chance>100)continue;
     const hour=Number(time.slice(11,13));
-    if(Number.isInteger(hour)&&hour>=0&&hour<24)hourlyChances[hour]=Math.round(chance);
+    if(Number.isInteger(hour)&&hour>=0&&hour<24)chances[hour]=Math.round(chance);
    }
   }
-  if(!hourlyChances.some(chance=>chance!==null)){
-   summary.textContent='Нет почасовых данных';
-   section.setAttribute('aria-label','Почасовой прогноз дождя недоступен');
-   parent.append(section);return;
-  }
-  const pieces=new Intl.DateTimeFormat('en-GB',{
+  const now=new Intl.DateTimeFormat('en-GB',{
    timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit',
    hour:'2-digit',hourCycle:'h23'
   }).formatToParts(new Date());
-  const piece=type=>pieces.find(x=>x.type===type)?.value||'';
+  const piece=type=>now.find(part=>part.type===type)?.value||'';
   const today=piece('year')+'-'+piece('month')+'-'+piece('day');
-  const startHour=date===today?Math.min(23,Math.max(0,Number(piece('hour'))||0)):0;
-  const upcoming=hourlyChances.map((value,hour)=>({value,hour}))
-   .filter(point=>point.hour>=startHour&&point.value!==null);
-  const maximum=upcoming.length?Math.max(...upcoming.map(point=>point.value)):null;
-  const onset=upcoming.find(point=>point.value>=30);
-  let forecast;
-  if(onset){
-   let end=onset.hour+1;
-   while(end<24&&hourlyChances[end]!==null&&hourlyChances[end]>=30)end++;
-   const likely=hourlyChances.slice(onset.hour,end).some(value=>value>=50);
-   const startLabel=String(onset.hour).padStart(2,'0')+':00';
-   const endLabel=String(end).padStart(2,'0')+':00';
-   forecast=(likely?'Вероятен ':'Возможен ')+startLabel+'–'+endLabel;
-  }else forecast=maximum===null?'Нет новых часов':'Маловероятен';
-  summary.textContent=forecast+(maximum===null?'':' · до '+maximum+'%');
-  section.setAttribute('role','img');
-  section.setAttribute('aria-label','Шанс дождя по часам: '+forecast+
-   (maximum===null?'':', до '+maximum+' процентов')+'.');
-  const strip=document.createElement('div');
-  strip.className='sv-weather-peek-rain-bars';
-  strip.setAttribute('aria-hidden','true');
-  hourlyChances.forEach((chance,hour)=>{
-   const bar=document.createElement('span');bar.className='sv-weather-peek-rain-bar';
-   if(chance===null)bar.classList.add('is-unavailable');
-   else if(chance>=50)bar.classList.add('is-likely');
-   else if(chance>=30)bar.classList.add('is-possible');
-   if(date===today&&hour<startHour)bar.classList.add('is-past');
-   bar.style.setProperty('--sv-rain-height',Math.max(2,(chance||0)*.27)+'px');
-   strip.append(bar);
-  });
-  section.append(strip);
-  const ticks=document.createElement('div');ticks.className='sv-weather-peek-rain-hours';
-  ['00','06','12','18','24'].forEach(hour=>add('sv-weather-peek-rain-hour',hour,ticks));
-  section.append(ticks);
+  const currentHour=date===today?Math.min(23,Math.max(0,Number(piece('hour'))||0)):0;
+  const future=chances.map((chance,hour)=>({chance,hour}))
+   .filter(point=>point.hour>=currentHour&&point.chance!==null);
+  if(!future.length){
+   state.textContent='Нет данных';
+   state.dataset.level='unknown';
+   section.setAttribute('aria-label','Нет доступного почасового прогноза осадков');
+   parent.append(section);return;
+  }
+  const maximum=Math.max(...future.map(point=>point.chance));
+  const isPossible=maximum>=30;
+  state.textContent=maximum>=50?'Вероятен':isPossible?'Возможен':'Маловероятен';
+  state.dataset.level=maximum>=50?'likely':isPossible?'possible':'quiet';
+  const detail=document.createElement('div');
+  detail.className='sv-weather-peek-rain-detail';
+  const text=document.createElement('span');
+  text.className='sv-weather-peek-rain-detail-label';
+  const glyph=document.createElement('span');
+  glyph.className='sv-weather-peek-rain-detail-icon';
+  glyph.setAttribute('aria-hidden','true');
+  glyph.innerHTML=icon(isPossible?61:2);
+  text.append(glyph);
+  const detailLabel=document.createElement('span');
+  detailLabel.textContent=isPossible?'Когда возможен':'Вероятность осадков';
+  text.append(detailLabel);
+  detail.append(text);
+  const detailValue=add('sv-weather-peek-rain-detail-value','',detail,'strong');
+  let timeWindow='';
+  if(isPossible){
+   const onset=future.find(point=>point.chance>=30);
+   if(onset){
+    let end=onset.hour+1;
+    while(end<24&&chances[end]!==null&&chances[end]>=30)end++;
+    const startLabel=String(onset.hour).padStart(2,'0')+':00';
+    const endLabel=String(end).padStart(2,'0')+':00';
+    timeWindow=startLabel+'–'+endLabel;
+   }
+   detailValue.textContent=timeWindow;
+   // Percentage only when actual rain is forecast, on the same title row.
+   state.textContent+=' · до '+maximum+'%';
+  }else detailValue.textContent='до '+maximum+'%';
+  section.append(detail);
+  section.setAttribute('aria-label','Осадки: '+state.textContent+
+   (timeWindow?', возможное время '+timeWindow:'')+'.');
   parent.append(section);
  }
  function open({anchor,date,origin}={}){
