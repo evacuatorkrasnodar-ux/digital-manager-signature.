@@ -69,7 +69,7 @@
   let greetingTicker=0;
   let startGreeting=()=>{};
   let welcomeSpeech='';
-  if(showCinema&&message&&voiceRequested){
+  if(showCinema&&message){
     // The opening greeting is complete, instantly readable, and restrained.
     // Sayvi's approved orbital entrance and voice remain unchanged.
     welcomeSpeech='Привет! Рада тебя видеть!';
@@ -102,8 +102,6 @@
 
   let done=false;
   let animation=null;
-  let splashScene=null;
-  let splashTimer=0;
   let introTimer=0;
   let safetyTimer=0;
   let dockTimer=0;
@@ -292,9 +290,6 @@
     const keepHomeSphere=!spark&&(stayHome||!shouldDockHome())&&
       (!location.hash||location.hash==='#home')&&!home.hidden;
     done=true;
-    clearTimeout(splashTimer);splashTimer=0;
-    splashScene?.remove();splashScene=null;
-    root.classList.remove('sv-launch-splash-running','sv-launch-splash-morphing');
     voiceButton?.remove();
     voiceButton=null;
     voiceFileInput?.remove();
@@ -413,73 +408,6 @@
         animation.finished.then(()=>finish({spark:true})).catch(()=>{});
       }catch{finish();}
     });
-  }
-
-  // The entire public launch: a static brand mark while the app loads,
-  // then ONE accelerating scale toward the viewer. Never animate #orb itself.
-  function runBrandSplash(){
-    if(done)return;
-    const scene=document.createElement('div');
-    scene.id='svLaunchIntro';
-    scene.className='sv-launch-scene';
-    scene.setAttribute('role','img');
-    scene.setAttribute('aria-label','SEYVEO — загрузка приложения');
-    const sphere=document.createElement('div');
-    sphere.className='sv-launch-brand';
-    const image=document.createElement('img');
-    image.src='assets/seyveo-launch-sphere.svg?v=3';
-    image.alt='';image.width=440;image.height=440;image.draggable=false;
-    sphere.append(image);
-    const name=document.createElement('div');
-    name.className='sv-launch-caption';
-    name.textContent='SEYVEO';
-    const specialty=document.createElement('div');
-    specialty.className='sv-launch-specialty';
-    specialty.textContent='IT · AI · AUTOMATION';
-    scene.append(sphere,name,specialty);
-    document.body.append(scene);
-    splashScene=scene;
-
-    const rect=orb.getBoundingClientRect();
-    const width=document.documentElement.clientWidth||window.innerWidth;
-    const height=window.innerHeight;
-    const cx=rect.width?rect.left+rect.width/2:width/2;
-    const cy=rect.height?rect.top+rect.height/2:height*.42;
-    const diameter=rect.width||Math.min(width*.78,300);
-    const size=Math.min(210,Math.max(150,diameter*.68));
-    // Grow beyond the viewport, so the close-up itself hides the cut.
-    const rushScale=Math.max(8.5,Math.min(16,Math.hypot(width,height)/(size*.8)));
-    scene.style.setProperty('--sv-launch-x',cx+'px');
-    scene.style.setProperty('--sv-launch-y',cy+'px');
-    scene.style.setProperty('--sv-launch-size',size+'px');
-    scene.style.setProperty('--sv-launch-half-size',size/2+'px');
-    scene.style.setProperty('--sv-launch-rush',String(rushScale));
-    root.classList.add('sv-launch-splash-running');
-    root.classList.remove('sv-cinema-boot');
-
-    let started=false;
-    const complete=()=>{if(!done)finish({stayHome:true})};
-    const rush=()=>{
-      if(started||done||!scene.isConnected)return;
-      started=true;
-      scene.classList.add('is-rushing');
-      // One compositor transform only. Fallback if iOS drops transitionend.
-      splashTimer=setTimeout(complete,700);
-    };
-    // Keep the logo still for the minimum beat while resources load.
-    // Never trap the user on a slow network; the app still continues.
-    const born=performance.now();
-    let ready=document.readyState==='complete';
-    const proceed=()=>{
-      if(done||started)return;
-      clearTimeout(splashTimer);
-      splashTimer=setTimeout(rush,Math.max(0,1500-(performance.now()-born)));
-    };
-    if(ready)proceed();
-    else{
-      window.addEventListener('load',()=>{ready=true;proceed()},{once:true});
-      splashTimer=setTimeout(()=>{ready=true;proceed()},3200);
-    }
   }
 
   function runOpening({waitForNarration=false}={}){
@@ -750,7 +678,7 @@
       prepareDock();
       root.classList.remove('sv-cinema-boot');
       showPrivateFileVoicePreview();
-    }else runBrandSplash();
+    }else runOpening();
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
