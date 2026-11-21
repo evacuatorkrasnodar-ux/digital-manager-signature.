@@ -206,4 +206,115 @@
   if(!paper?.hidden){hidePanel(menu,settingsTrigger);hidePanel(colorMenu,colorTrigger)}
  });
 
+}
+ // One compact, always-visible workspace menu instead of separate Settings,
+ // Paper and Shapes popovers. Existing engine buttons remain wired and are
+ // invoked by their visual shortcuts; drawing, history and saving are untouched.
+ if(menu&&paper){
+  const drawingPane=menu.querySelector('.sv-polish-menu-pane[data-sv-menu-panel="drawing"]');
+  const actionsPane=menu.querySelector('.sv-polish-menu-pane[data-sv-menu-panel="actions"]');
+  const settingsButton=document.getElementById('notePaperSettings');
+  const legacyPaperButton=document.getElementById('notePaperPatternTrigger');
+  const oldTabs=menu.querySelector('.sv-polish-segments');
+  const patternSelect=document.getElementById('notePaperPattern');
+  if(drawingPane&&actionsPane&&settingsButton&&legacyPaperButton&&patternSelect){
+   menu.classList.add('sv-unified-workspace-menu');
+   const menuHeading=menu.querySelector('.sv-polish-menu-heading');
+   if(menuHeading)menuHeading.textContent='Лист и инструменты';
+   // No nested "Основное / Действия" tabs or orphan "Перо" row.
+   oldTabs?.remove();
+   for(const pane of [drawingPane,actionsPane]){
+    pane.hidden=false;
+    pane.removeAttribute('role');
+    pane.removeAttribute('aria-labelledby');
+   }
+   const frame=menu.querySelector('.sv-polish-menu-frames');
+   frame?.classList.add('sv-unified-workspace-frames');
+   const makeSection=(title,className)=>{
+    const section=document.createElement('section');
+    section.className='sv-unified-workspace-section '+className;
+    const label=document.createElement('div');
+    label.className='sv-unified-workspace-label';
+    label.textContent=title;
+    section.append(label);
+    return section;
+   };
+   const paperSection=makeSection('Бумага','sv-unified-paper');
+   const paperGrid=document.createElement('div');
+   paperGrid.className='sv-unified-pattern-grid';
+   paperGrid.setAttribute('role','group');paperGrid.setAttribute('aria-label','Тип бумаги');
+   const patternShortcuts=[];
+   for(const original of paper.querySelectorAll('[data-paper-pattern]')){
+    const button=document.createElement('button');
+    button.type='button';button.className='sv-unified-pattern-choice';
+    button.dataset.svPatternChoice=original.dataset.paperPattern;
+    button.innerHTML=original.innerHTML;
+    button.setAttribute('aria-label',original.title||original.textContent.trim());
+    button.addEventListener('click',()=>{
+     original.click();
+     menu.hidden=true;settingsButton.setAttribute('aria-expanded','false');
+     syncUnified();
+    });
+    patternGridAppend();
+    function patternGridAppend(){paperGrid.append(button);}
+    patternShortcuts.push(button);
+   }
+   paperSection.append(paperGrid);
+   drawingPane.prepend(paperSection);
+   const oldLabel=[...drawingPane.children].find(node=>
+     node.classList?.contains('sv-newdock-menu-title')&&node.textContent.trim()==='Фон');
+   if(oldLabel)oldLabel.textContent='Фон листа';
+   const shapesSection=makeSection('Фигуры','sv-unified-shapes');
+   const shapesGrid=document.createElement('div');
+   shapesGrid.className='sv-unified-shapes-grid';
+   shapesGrid.setAttribute('role','group');shapesGrid.setAttribute('aria-label','Инструменты фигур');
+   const shapeShortcuts=[];
+   for(const original of paper.querySelectorAll('.sv-paper-menu-section-shapes [data-paper-tool]')){
+    const button=document.createElement('button');
+    button.type='button';button.className='sv-unified-shape-choice';
+    button.dataset.svShapeChoice=original.dataset.paperTool;
+    button.innerHTML=original.innerHTML;
+    const label=original.getAttribute('title')||original.getAttribute('aria-label')||original.textContent.trim();
+    button.setAttribute('aria-label',label);
+    button.title=label;
+    button.addEventListener('click',()=>{
+     if(window.SEYVEO_PAPER?.selectTool?.(original.dataset.paperTool)){
+      menu.hidden=true;settingsButton.setAttribute('aria-expanded','false');
+      syncUnified();
+     }
+    });
+    shapesGrid.append(button);shapeShortcuts.push(button);
+   }
+   shapesSection.append(shapesGrid);
+   drawingPane.append(shapesSection);
+   // Keep the original actions and destructive confirmation in a single
+   // readable section, with the engine's existing event listeners.
+   const actionLabel=actionsPane.querySelector('.sv-newdock-actions-heading');
+   if(actionLabel)actionLabel.textContent='Действия';
+   const syncUnified=()=>{
+    const pattern=patternSelect.value;
+    const tool=window.SEYVEO_PAPER?.currentTool?.();
+    for(const button of patternShortcuts)
+     button.setAttribute('aria-pressed',String(button.dataset.svPatternChoice===pattern));
+    for(const button of shapeShortcuts)
+     button.setAttribute('aria-pressed',String(button.dataset.svShapeChoice===tool));
+   };
+   settingsButton.setAttribute('aria-label','Лист и инструменты');
+   settingsButton.title='Лист и инструменты';
+   settingsButton.addEventListener('click',()=>{if(!menu.hidden)syncUnified();});
+   dialog.addEventListener('sv-paper-tool-change',syncUnified);
+   patternSelect.addEventListener('change',syncUnified);
+   // The old trigger remains mounted (the drawing engine keeps a reference),
+   // but no longer occupies a fifth slot in the compact top toolbar.
+   dialog.append(legacyPaperButton);
+   legacyPaperButton.hidden=true;
+   legacyPaperButton.tabIndex=-1;
+   legacyPaperButton.setAttribute('aria-hidden','true');
+   legacyPaperButton.style.setProperty('display','none','important');
+   // The old Paper panel is retained for the original actions only.
+   paper.hidden=true;
+   syncUnified();
+  }
+ }
+
 })();
