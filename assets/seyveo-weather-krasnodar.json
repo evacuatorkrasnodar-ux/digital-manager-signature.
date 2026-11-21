@@ -1,7 +1,7 @@
 {
   "latitude": 45.027065,
   "longitude": 38.95273,
-  "generationtime_ms": 1.372694969177246,
+  "generationtime_ms": 1.1292695999145508,
   "utc_offset_seconds": 10800,
   "timezone": "Europe/Moscow",
   "timezone_abbreviation": "GMT+3",
@@ -2387,7 +2387,7 @@
   },
   "geomagnetic": {
     "source": "NOAA SWPC",
-    "fetched_at": "2026-11-21T06:11:27.901Z",
+    "fetched_at": "2026-11-21T06:12:02.037Z",
     "days": [
       {
         "date": "2026-11-14",
@@ -2446,5 +2446,5 @@
       }
     ]
   },
-  "fetched_at": "2026-11-21T06:11:27.901Z"
+  "fetched_at": "2026-11-21T06:12:02.037Z"
 }
