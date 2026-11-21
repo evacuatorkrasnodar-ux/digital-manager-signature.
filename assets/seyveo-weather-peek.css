@@ -189,12 +189,52 @@
  font-size:10px!important;font-weight:480!important;
  line-height:1.1!important;white-space:nowrap!important;
 }
-.sv-weather-peek .sv-weather-peek-source{
- margin:8px 0 0!important;
- text-align:center!important;
- color:#9BA5B0!important;
- font-size:9px!important;
- line-height:1.2!important;
+/* Level caption: a quiet dot + word, legible even without colours.
+   These levels describe magnetic-field activity only, NOT human health. */
+.sv-weather-peek .sv-weather-peek-geo-status{
+ box-sizing:border-box!important;
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:4px!important;
+ max-width:100%!important;
+ min-height:14px!important;
+ font:500 9.4px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ white-space:nowrap!important;
+ letter-spacing:-.015em!important;
+ color:#658D7D!important;
+}
+.sv-weather-peek .sv-weather-peek-geo-status-dot{
+ flex:0 0 5px!important;
+ display:inline-block!important;
+ width:5px!important;
+ height:5px!important;
+ border-radius:50%!important;
+ background:currentColor!important;
+ box-shadow:none!important;
+}
+.sv-weather-peek .sv-weather-peek-geo-status[data-level="active"]{
+ color:#BA9254!important;
+}
+.sv-weather-peek .sv-weather-peek-geo-status[data-level="storm"]{
+ color:#CA736D!important;
+}
+.sv-weather-peek .sv-weather-peek-geo-status[data-level="unknown"]{
+ color:#9EA8B3!important;
+}
+.sv-weather-peek .sv-weather-peek-geo-status-label{
+ display:inline!important;
+ overflow:visible!important;
+ text-overflow:clip!important;
+}
+:root[data-theme="dark"] .sv-weather-peek .sv-weather-peek-geo-status[data-level="quiet"]{color:#A8C9BC!important}
+:root[data-theme="dark"] .sv-weather-peek .sv-weather-peek-geo-status[data-level="active"]{color:#E3BE84!important}
+:root[data-theme="dark"] .sv-weather-peek .sv-weather-peek-geo-status[data-level="storm"]{color:#E5A49F!important}
+:root[data-theme="dark"] .sv-weather-peek .sv-weather-peek-geo-status[data-level="unknown"]{color:#ACB7C5!important}
+@media(max-width:355px){
+ .sv-weather-peek .sv-weather-peek-geo-status{
+  gap:3px!important;font-size:9px!important;
+ }
 }
 :root[data-theme="dark"] .sv-weather-peek .sv-weather-peek-geo-core{
  background:rgba(47,49,54,.98)!important;
