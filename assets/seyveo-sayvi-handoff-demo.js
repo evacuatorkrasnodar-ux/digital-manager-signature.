@@ -102,6 +102,9 @@
 
   let done=false;
   let animation=null;
+  let splashScene=null;
+  let splashMotion=null;
+  let splashTimer=0;
   let introTimer=0;
   let safetyTimer=0;
   let dockTimer=0;
@@ -290,6 +293,10 @@
     const keepHomeSphere=!spark&&(stayHome||!shouldDockHome())&&
       (!location.hash||location.hash==='#home')&&!home.hidden;
     done=true;
+    clearTimeout(splashTimer);splashTimer=0;
+    splashMotion?.cancel();splashMotion=null;
+    splashScene?.remove();splashScene=null;
+    root.classList.remove('sv-launch-splash-running','sv-launch-splash-morphing');
     voiceButton?.remove();
     voiceButton=null;
     voiceFileInput?.remove();
@@ -408,6 +415,74 @@
         animation.finished.then(()=>finish({spark:true})).catch(()=>{});
       }catch{finish();}
     });
+  }
+
+  function runBrandSplash(){
+    if(done)return;
+    // A separate first-launch brand sphere. Never replace the original
+    // #orb node or its working touch/voice handlers.
+    const scene=document.createElement('div');
+    scene.id='svLaunchIntro';
+    scene.className='sv-launch-scene';
+    scene.setAttribute('role','img');
+    scene.setAttribute('aria-label','SEYVEO — IT, AI, Automation. Запуск приложения.');
+    const backdrop=document.createElement('div');
+    backdrop.className='sv-launch-backdrop';
+    backdrop.setAttribute('aria-hidden','true');
+    const sphere=document.createElement('div');
+    sphere.className='sv-launch-brand';
+    const image=document.createElement('img');
+    image.src='assets/seyveo-launch-sphere.svg?v=1';
+    image.alt='';
+    image.width=440;image.height=440;image.draggable=false;
+    sphere.append(image);
+    const caption=document.createElement('div');
+    caption.className='sv-launch-caption';
+    const name=document.createElement('span');
+    name.className='sv-launch-word';
+    name.textContent='SEYVEO';
+    const specialty=document.createElement('span');
+    specialty.className='sv-launch-specialty';
+    specialty.textContent='IT · AI · AUTOMATION';
+    caption.append(name,specialty);
+    scene.append(backdrop,sphere,caption);
+    document.body.append(scene);
+    splashScene=scene;
+    root.classList.add('sv-launch-splash-running');
+    // Once the real logo is painted, allow the Home to settle in place
+    // beneath the white scene. The bootstrap watchdog is only a fallback.
+    root.classList.remove('sv-cinema-boot');
+    window.dispatchEvent(new Event('seyveo:cinema-opening'));
+    let settled=false;
+    const complete=()=>{
+      if(settled||done)return;
+      settled=true;
+      finish({stayHome:true});
+    };
+    const morph=()=>{
+      if(done||!scene.isConnected)return;
+      const from=sphere.getBoundingClientRect();
+      const target=orb.getBoundingClientRect();
+      if(!from.width||!target.width){complete();return;}
+      const dx=(target.left+target.width/2)-(from.left+from.width/2);
+      const dy=(target.top+target.height/2)-(from.top+from.height/2);
+      const scale=target.width/from.width;
+      root.classList.add('sv-launch-splash-morphing');
+      scene.classList.add('is-morphing');
+      const ms=1320*speed;
+      try{
+        splashMotion=sphere.animate([
+          {offset:0,transform:'translate(-50%,-50%) scale(1)',opacity:1},
+          {offset:.68,transform:`translate(calc(-50% + ${dx*.68}px),calc(-50% + ${dy*.68}px)) scale(${1+(scale-1)*.68})`,opacity:1},
+          {offset:1,transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(${scale})`,opacity:0}
+        ],{duration:ms,easing:'cubic-bezier(.24,.72,.18,1)',fill:'forwards'});
+        splashMotion.finished.then(complete).catch(()=>{if(!done)complete()});
+      }catch{complete()}
+      clearTimeout(splashTimer);
+      splashTimer=setTimeout(complete,ms+300);
+    };
+    // The brand has time to breathe before it becomes Sayvi's living glass.
+    splashTimer=setTimeout(morph,1450*speed);
   }
 
   function runOpening({waitForNarration=false}={}){
@@ -678,7 +753,7 @@
       prepareDock();
       root.classList.remove('sv-cinema-boot');
       showPrivateFileVoicePreview();
-    }else runOpening();
+    }else runBrandSplash();
   };
   // The script is at the end of <body>; do not wait for slow images or audio.
   // A pending window.load was able to postpone the old preview indefinitely.
