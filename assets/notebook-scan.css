@@ -328,9 +328,10 @@ html body #noteScanDialog #noteScanManual{
 }
 html[data-theme="dark"] body #noteScanDialog #noteScanManual{color:#e2e4e8!important}
 /* Once text exists, switch to a genuine full-height editor. */
+html body #noteScanDialog[data-step="edit"] > p:first-of-type{display:none!important}
 html body #noteScanDialog[data-step="edit"] :is(
- >p:first-of-type,.paper-scan-inputs,.paper-scan-preview,
- .paper-scan-line-mode,#noteScanRecognize,#noteScanConsent,#noteScanManual){
+ .paper-scan-inputs,.paper-scan-preview,.paper-scan-line-mode,
+ #noteScanRecognize,#noteScanConsent,#noteScanManual){
  display:none!important;
 }
 html body #noteScanDialog[data-step="edit"] .paper-scan-caption{
