@@ -1,0 +1,58 @@
+/* SEYVEO launch · the approved brand sphere becomes the live Sayvi sphere.
+   A single overlay over the existing Home; no duplicate page or dock. */
+.sv-launch-scene{
+  position:fixed;inset:0;z-index:2147482500;
+  display:block;overflow:hidden;overscroll-behavior:contain;
+  color:#293a42;pointer-events:auto;isolation:isolate;
+  -webkit-tap-highlight-color:transparent;
+}
+.sv-launch-backdrop{
+  position:absolute;inset:0;background:#fff;
+  transition:opacity .85s cubic-bezier(.19,.8,.25,1);
+  will-change:opacity;
+}
+.sv-launch-brand{
+  position:absolute;top:45.5%;left:50%;
+  width:min(76vw,345px,43dvh);height:auto;aspect-ratio:1;
+  transform:translate(-50%,-50%);transform-origin:center center;
+  display:grid;place-items:center;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  will-change:transform,opacity;
+}
+.sv-launch-brand img{
+  width:100%;height:100%;display:block;object-fit:contain;
+  user-select:none;-webkit-user-select:none;pointer-events:none;
+  filter:drop-shadow(0 6px 18px rgba(38,75,76,.07));
+}
+.sv-launch-caption{
+  position:absolute;top:calc(45.5% + min(38vw,172.5px,21.5dvh) + 7px);
+  left:50%;width:calc(100vw - 36px);max-width:390px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  text-align:center;transform:translateX(-50%);
+  transition:opacity .38s ease,transform .48s ease;
+}
+.sv-launch-word{
+  font:520 clamp(21px,6vw,28px)/1.1 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
+  letter-spacing:.24em;padding-left:.24em;color:#485e64;
+}
+.sv-launch-specialty{
+  font:460 10px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  color:#8e9b9e;letter-spacing:.17em;
+}
+.sv-launch-scene.is-morphing .sv-launch-caption{
+  opacity:0;transform:translate(-50%,-14px);
+}
+.sv-launch-scene.is-morphing .sv-launch-backdrop{
+  opacity:0;transition-delay:.22s;
+}
+:root.sv-launch-splash-running:not(.sv-launch-splash-morphing) body #homePage,
+:root.sv-launch-splash-running:not(.sv-launch-splash-morphing) body #homeHeader,
+:root.sv-launch-splash-running:not(.sv-launch-splash-morphing) body > footer.dock{
+  opacity:0!important;pointer-events:none!important;
+}
+:root[data-theme="dark"] .sv-launch-backdrop{background:#13191d}
+:root[data-theme="dark"] .sv-launch-word{color:#edf5f5}
+:root[data-theme="dark"] .sv-launch-specialty{color:#a0b4bb}
+@media(prefers-reduced-motion:reduce){
+ .sv-launch-backdrop,.sv-launch-caption{transition:none!important}
+}
