@@ -406,3 +406,58 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
  #svSmartInkPicker.sv-smart-ink-picker strong{
  color:#f3f3f6!important;
 }
+
+/* SEYVEO Notebook 2026-11-21 · one swipeable row, no duplicated Aa menu.
+   This only changes the TEXT-mode toolbar. Ink mode keeps its own rail. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact[data-sv-unified-tools="true"]{
+ display:flex!important;grid-template-columns:none!important;
+ align-items:center!important;justify-content:flex-start!important;
+ justify-items:initial!important;flex-wrap:nowrap!important;gap:2px!important;
+ box-sizing:border-box!important;overflow-x:auto!important;overflow-y:hidden!important;
+ overscroll-behavior-x:contain!important;scroll-snap-type:x proximity!important;
+ scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;
+ touch-action:pan-x!important;padding:0 7px!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"]::-webkit-scrollbar{
+ display:none!important;width:0!important;height:0!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button:not([hidden]):not([aria-hidden="true"]){
+ box-sizing:border-box!important;position:relative!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 50px!important;width:50px!important;min-width:50px!important;max-width:50px!important;
+ height:48px!important;min-height:48px!important;max-height:48px!important;
+ justify-self:auto!important;margin:0!important;padding:0!important;
+ border:0!important;outline:0!important;background:transparent!important;
+ box-shadow:none!important;border-radius:50%!important;
+ color:var(--note-ink)!important;scroll-snap-align:start!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button[hidden],
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button[data-sv-smart-tool="eraser"]{
+ display:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button svg{
+ width:21px!important;height:21px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button:active{
+ background:rgba(128,142,157,.10)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteTopMenu.sv-note-top-menu{
+ display:none!important;pointer-events:none!important;
+}
+@media(max-width:699px){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+  .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button:not([hidden]):not([aria-hidden="true"]){
+  flex:0 0 48px!important;width:48px!important;min-width:48px!important;max-width:48px!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+ }
+}
