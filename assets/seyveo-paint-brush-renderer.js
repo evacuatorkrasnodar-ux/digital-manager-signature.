@@ -155,6 +155,36 @@
  // Watercolor is a light, translucent 2D wash with pigment pooling at the
  // edges and gentle granulation. It is not a physical wet-fluid simulation.
  // A single saved vector stroke is replayed identically for Undo and PNG.
+ // Small deterministic grain tile; built once per pigment and reused by
+ // Canvas patterns. This suggests porous watercolor paper without doing
+ // expensive full-canvas image-processing on an older mobile phone.
+ const washTiles=new Map(),washPatterns=new WeakMap();
+ function washGrain(ctx,color){
+  let tile=washTiles.get(color);
+  if(!tile){
+   tile=document.createElement('canvas');tile.width=48;tile.height=48;
+   const ink=tile.getContext('2d');
+   if(!ink||!ink.createImageData||!ink.putImageData)return null;
+   const bitmap=ink.createImageData(48,48);
+   const [r,g,b]=rgb(color);
+   let seed=0x31415926;
+   for(let y=0;y<48;y++)for(let x=0;x<48;x++){
+    seed=(Math.imul(seed,1664525)+1013904223)>>>0;
+    const fine=((seed>>>8)&65535)/65535;
+    const coarse=(Math.sin(x*.72+y*.25)*Math.cos(y*.59-x*.14)+1)*.5;
+    const opacity=cap(.16+fine*.61+coarse*.23,0,1);
+    const at=(y*48+x)*4;
+    bitmap.data[at]=r;bitmap.data[at+1]=g;bitmap.data[at+2]=b;
+    bitmap.data[at+3]=Math.round(opacity*255);
+   }
+   ink.putImageData(bitmap,0,0);washTiles.set(color,tile);
+   if(washTiles.size>32){const first=washTiles.keys().next().value;washTiles.delete(first)}
+  }
+  let patterns=washPatterns.get(ctx);
+  if(!patterns){patterns=new Map();washPatterns.set(ctx,patterns)}
+  if(!patterns.has(color))patterns.set(color,ctx.createPattern(tile,'repeat'));
+  return patterns.get(color);
+ }
  function watercolorStroke(ctx,s){
   const points=s.points;
   if(!points?.length)return;
@@ -179,6 +209,14 @@
    ctx.beginPath();traceSmooth(ctx,points);
    ctx.lineWidth=Math.max(.7,width*spread);
    ctx.strokeStyle=pigment;ctx.globalAlpha=opacity*alpha;ctx.stroke();
+  }
+  // Pigment settles unevenly in the paper grain. Keep the patch inside
+  // the broad wet wash, and retain the same look after save/reopen/PNG.
+  const grain=washGrain(ctx,base);
+  if(grain){
+   ctx.beginPath();traceSmooth(ctx,points);
+   ctx.lineWidth=Math.max(.7,width*.86);
+   ctx.strokeStyle=grain;ctx.globalAlpha=opacity*.23;ctx.stroke();
   }
   // Fine surface tension at the edges: slight pigment pooling, avoiding
   // a harsh dark outline. Each edge follows the entire smoothed centreline.
@@ -206,7 +244,7 @@
   // A few faint pigment flecks suggest paper grain without frame-to-frame
   // noise, network textures, or large offscreen images on older phones.
   const stride=Math.max(3,Math.ceil(geo.length/38));
-  ctx.fillStyle=base;ctx.globalAlpha=opacity*.045;
+  ctx.fillStyle=base;ctx.globalAlpha=opacity*.10;
   for(let i=0;i<geo.length;i+=stride){
    const p=geo[i],side=Math.sin((i+1)*6.173);
    const x=p.x+p.nx*width*.3*side;
