@@ -92,7 +92,7 @@
      phaseTimer=setTimeout(()=>{
       if(finished)return;
       splash.dataset.stage='reveal';
-      finishTimer=setTimeout(close,820);
+      finishTimer=setTimeout(close,900);
      },130);
     },3000);
    },1120);
