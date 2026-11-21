@@ -69,7 +69,7 @@
   let greetingTicker=0;
   let startGreeting=()=>{};
   let welcomeSpeech='';
-  if(showCinema&&message){
+  if(showCinema&&message&&voiceRequested){
     // The opening greeting is complete, instantly readable, and restrained.
     // Sayvi's approved orbital entrance and voice remain unchanged.
     welcomeSpeech='Привет! Рада тебя видеть!';
@@ -103,7 +103,6 @@
   let done=false;
   let animation=null;
   let splashScene=null;
-  let splashMotion=null;
   let splashTimer=0;
   let introTimer=0;
   let safetyTimer=0;
@@ -294,7 +293,6 @@
       (!location.hash||location.hash==='#home')&&!home.hidden;
     done=true;
     clearTimeout(splashTimer);splashTimer=0;
-    splashMotion?.cancel();splashMotion=null;
     splashScene?.remove();splashScene=null;
     root.classList.remove('sv-launch-splash-running','sv-launch-splash-morphing');
     voiceButton?.remove();
@@ -417,62 +415,71 @@
     });
   }
 
+  // The entire public launch: a static brand mark while the app loads,
+  // then ONE accelerating scale toward the viewer. Never animate #orb itself.
   function runBrandSplash(){
     if(done)return;
-    // Minimal Home-screen launch: the user's logo is already aligned to
-    // Sayvi's final location. One short enlargement, then reveal the app.
     const scene=document.createElement('div');
     scene.id='svLaunchIntro';
     scene.className='sv-launch-scene';
     scene.setAttribute('role','img');
-    scene.setAttribute('aria-label','Загрузка SEYVEO');
-    const backdrop=document.createElement('div');
-    backdrop.className='sv-launch-backdrop';
-    backdrop.setAttribute('aria-hidden','true');
+    scene.setAttribute('aria-label','SEYVEO — загрузка приложения');
     const sphere=document.createElement('div');
     sphere.className='sv-launch-brand';
     const image=document.createElement('img');
     image.src='assets/seyveo-launch-sphere.svg?v=2';
     image.alt='';image.width=440;image.height=440;image.draggable=false;
     sphere.append(image);
-    const caption=document.createElement('div');
-    caption.className='sv-launch-caption';
-    caption.textContent='SEYVEO';
+    const name=document.createElement('div');
+    name.className='sv-launch-caption';
+    name.textContent='SEYVEO';
     const specialty=document.createElement('div');
     specialty.className='sv-launch-specialty';
     specialty.textContent='IT · AI · AUTOMATION';
-    scene.append(backdrop,sphere,caption,specialty);
+    scene.append(sphere,name,specialty);
     document.body.append(scene);
     splashScene=scene;
-    root.classList.add('sv-launch-splash-running');
-    root.classList.remove('sv-cinema-boot');
-    const orbRect=orb.getBoundingClientRect();
-    const viewportWidth=document.documentElement.clientWidth||window.innerWidth;
-    const cx=orbRect.width?orbRect.left+orbRect.width/2:viewportWidth/2;
-    const cy=orbRect.height?orbRect.top+orbRect.height/2:window.innerHeight*.42;
-    const targetSize=orbRect.width||Math.min(viewportWidth*.78,300);
-    const startSize=Math.min(220,Math.max(146,targetSize*.69));
+
+    const rect=orb.getBoundingClientRect();
+    const width=document.documentElement.clientWidth||window.innerWidth;
+    const height=window.innerHeight;
+    const cx=rect.width?rect.left+rect.width/2:width/2;
+    const cy=rect.height?rect.top+rect.height/2:height*.42;
+    const diameter=rect.width||Math.min(width*.78,300);
+    const size=Math.min(210,Math.max(150,diameter*.68));
+    // Grow beyond the viewport, so the close-up itself hides the cut.
+    const rushScale=Math.max(8.5,Math.min(16,Math.hypot(width,height)/(size*.8)));
     scene.style.setProperty('--sv-launch-x',cx+'px');
     scene.style.setProperty('--sv-launch-y',cy+'px');
-    scene.style.setProperty('--sv-launch-size',startSize+'px');
-    scene.style.setProperty('--sv-launch-half-size',(startSize/2)+'px');
-    scene.style.setProperty('--sv-launch-scale',String(targetSize/startSize));
-    window.dispatchEvent(new Event('seyveo:cinema-opening'));
-    let settled=false;
-    const complete=()=>{
-      if(settled||done)return;
-      settled=true;
-      finish({stayHome:true});
+    scene.style.setProperty('--sv-launch-size',size+'px');
+    scene.style.setProperty('--sv-launch-half-size',size/2+'px');
+    scene.style.setProperty('--sv-launch-rush',String(rushScale));
+    root.classList.add('sv-launch-splash-running');
+    root.classList.remove('sv-cinema-boot');
+
+    let started=false;
+    const complete=()=>{if(!done)finish({stayHome:true})};
+    const rush=()=>{
+      if(started||done||!scene.isConnected)return;
+      started=true;
+      scene.classList.add('is-rushing');
+      // One compositor transform only. Fallback if iOS drops transitionend.
+      splashTimer=setTimeout(complete,700);
     };
-    const enlarge=()=>{
-      if(done||!scene.isConnected)return;
-      scene.classList.add('is-enlarged');
+    // Keep the logo still for the minimum beat while resources load.
+    // Never trap the user on a slow network; the app still continues.
+    const born=performance.now();
+    let ready=document.readyState==='complete';
+    const proceed=()=>{
+      if(done||started)return;
       clearTimeout(splashTimer);
-      splashTimer=setTimeout(complete,230);
+      splashTimer=setTimeout(rush,Math.max(0,1500-(performance.now()-born)));
     };
-    // Short still loading screen, then a single 200 ms scale. No flight,
-    // rotation, mist, fade-to-black, or second logo.
-    splashTimer=setTimeout(enlarge,1200*speed);
+    if(ready)proceed();
+    else{
+      window.addEventListener('load',()=>{ready=true;proceed()},{once:true});
+      splashTimer=setTimeout(()=>{ready=true;proceed()},3200);
+    }
   }
 
   function runOpening({waitForNarration=false}={}){
