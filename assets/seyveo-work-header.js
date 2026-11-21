@@ -67,8 +67,7 @@
  }
  :host([data-work-tabs="true"]) .bar{
   grid-template-rows:44px minmax(0,1fr);
- }
- :host([data-agenda="true"]) .bar{
+  /* Stable first-row alignment across all three Work destinations. */
   padding-left:calc(var(--gutter-l) + 4px);
  }
  :host([data-agenda="true"]) .month{grid-row:2;align-self:center}
