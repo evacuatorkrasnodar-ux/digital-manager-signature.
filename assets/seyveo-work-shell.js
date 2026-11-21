@@ -124,12 +124,12 @@
    justify-self:end;align-self:center;
    box-sizing:border-box;display:flex;align-items:center;justify-content:center;
    gap:0;width:var(--sv-nav-triple-width,134px);height:var(--sv-nav-capsule-height,44px);padding:0 4px;
-   border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));
+   border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.97));
    border-radius:999px;
-   background:var(--sv-card-action-neutral-bg,transparent);
-   box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16));
-   -webkit-backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
-   backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
+   background:var(--sv-white-pearl-surface,rgba(255,255,255,.92));
+   box-shadow:var(--sv-white-pearl-dock-shadow,0 3px 10px rgba(48,56,72,.060),0 1px 2px rgba(48,56,72,.030));
+   -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(9px) saturate(106%));
+   backdrop-filter:var(--sv-white-pearl-blur,blur(9px) saturate(106%));
   }
   :host([data-task-tools="true"]) .sv-history-dual .control{
    display:grid!important;flex:0 0 var(--sv-nav-capsule-cell,42px)!important;
