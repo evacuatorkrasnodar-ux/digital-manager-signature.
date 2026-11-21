@@ -3,21 +3,9 @@
  * Existing route and touch handlers remain intact. Dark theme / Health
  * keep their independent styles. No extra overlays or duplicate icons.
  */
-:root[data-theme="light"]{
- --seyveo-dock-height:60px;
- /* Shared matte-silver finish for the approved Home dock and Work
-    action/segmented capsules; component dimensions remain independent. */
- --sv-dock-pearl-border:.7px solid rgba(255,255,255,.28);
- --sv-dock-pearl-bg:rgba(190,193,202,.10);
- --sv-dock-pearl-blur:blur(4px) saturate(100%);
- --sv-dock-pearl-shadow:
-   0 0 0 .45px rgba(164,170,184,.16),
-   inset 0 1px 1px rgba(75,82,96,.055),
-   inset 0 -1px 0 rgba(255,255,255,.18),
-   inset .6px 0 .7px rgba(255,255,255,.16),
-   inset -.6px 0 .8px rgba(75,82,96,.055),
-   0 1px 2px rgba(82,88,103,.045);
-}
+/* Pearl material moved to seyveo-white-pearl.css. This sheet owns
+   ONLY home dock geometry, hit targets, and SVG details. */
+:root[data-theme="light"]{--seyveo-dock-height:60px}
 :root[data-theme="light"] :is(
  body > footer.dock.sv-shared-dock,
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
