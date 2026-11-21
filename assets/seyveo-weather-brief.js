@@ -355,6 +355,20 @@
       window.addEventListener('load',sync,{once:true});
       window.addEventListener('seyveo:route-changed',sync);
       window.addEventListener('seyveo:home-sayvi-arrived',schedulePlace);
+      // Home can show the full Sayvi sphere before a legacy handoff class
+      // finishes in Safari. After the arrival, permit the forecast line even
+      // when that optional flag was missed; never interrupt a live flight.
+      const revealWeatherSafely=()=>{
+        if(home.hidden||document.documentElement.classList.contains('sv-music-ambient'))return;
+        document.documentElement.classList.add('sv-home-weather-available');
+        button.hidden=false;
+        schedulePlace();
+      };
+      window.addEventListener('seyveo:home-sayvi-arrived',revealWeatherSafely);
+      window.addEventListener('seyveo:route-changed',()=>{
+        if(!home.hidden)requestAnimationFrame(revealWeatherSafely);
+      });
+      setTimeout(revealWeatherSafely,3400);
       // The Home intro changes its root classes independently from the data
       // feed; recalculate the row when the handoff becomes visible.
       let homeRootFrame=0;
