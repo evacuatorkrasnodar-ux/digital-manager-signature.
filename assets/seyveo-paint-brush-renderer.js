@@ -296,27 +296,56 @@
  // different thicknesses depending on the writing direction; stylus pressure
  // adjusts the nib size, while fingers retain predictable broad lettering.
  const nibAngle=Math.PI*48/180,nibX=Math.cos(nibAngle),nibY=Math.sin(nibAngle);
- const nibHalf=(s,p)=>{
+ // Smooth only the displayed geometry, retaining original ink coordinates in
+ // saved notes. A light three-point filter removes jitter without rounding
+ // away intentional letter corners.
+ function smoothWritingPoints(points){
+  if(points.length<3)return points;
+  return points.map((p,i)=>{
+   if(i===0||i===points.length-1)return p;
+   const a=points[i-1],b=points[i+1];
+   const da=Math.hypot(p[0]-a[0],p[1]-a[1]);
+   const db=Math.hypot(b[0]-p[0],b[1]-p[1]);
+   if(Math.max(da,db)>48)return p;
+   return [(.14*a[0]+.72*p[0]+.14*b[0]),
+    (.14*a[1]+.72*p[1]+.14*b[1]),
+    .18*(a[2]??50)+.64*(p[2]??50)+.18*(b[2]??50),
+    p[3]??0];
+  });
+ }
+ const nibHalf=(s,p,edge=1)=>{
   const width=cap(Number(s.width)||11,1,70);
   const force=s.pressureSensitive?cap((p?.[2]??50)/100,0,1):.5;
-  const radius=width*(s.pressureSensitive?.33+.84*force:.73)/2;
+  // Finger use is steady; Pencil pressure varies gently rather than creating
+  // sudden needle-like tips or discontinuous broad-nib polygons.
+  const strength=s.pressureSensitive?.58+.58*force:.88;
+  const radius=width*strength*.5*edge;
   return[nibX*radius,nibY*radius];
  };
+ function paintNibDot(ctx,s,p){
+  const h=nibHalf(s,p);
+  ctx.beginPath();ctx.moveTo(p[0]-h[0],p[1]-h[1]);
+  ctx.lineTo(p[0]+h[0],p[1]+h[1]);
+  ctx.lineWidth=Math.max(1.1,(Number(s.width)||11)*.14);
+  ctx.lineCap='round';ctx.strokeStyle=grad(ctx,s);ctx.stroke();
+ }
  function calligraphyStroke(ctx,s){
-  const pts=s.points;if(!pts?.length)return;
+  const source=s.points;if(!source?.length)return;
+  const pts=smoothWritingPoints(source),opacity=alphaOf(s);
   ctx.save();ctx.globalCompositeOperation='source-over';
-  ctx.fillStyle=grad(ctx,s);ctx.globalAlpha=alphaOf(s);
-  if(pts.length===1){
-   const p=pts[0],half=nibHalf(s,p);
-   ctx.beginPath();ctx.moveTo(p[0]-half[0],p[1]-half[1]);
-   ctx.lineTo(p[0]+half[0],p[1]+half[1]);
-   ctx.lineWidth=Math.max(1,(Number(s.width)||11)*.09);
-   ctx.lineCap='round';ctx.strokeStyle=grad(ctx,s);ctx.stroke();ctx.restore();return;
-  }
-  const sideA=pts.map(p=>{const h=nibHalf(s,p);return[p[0]+h[0],p[1]+h[1]]});
-  const sideB=pts.map(p=>{const h=nibHalf(s,p);return[p[0]-h[0],p[1]-h[1]]}).reverse();
+  ctx.fillStyle=ctx.strokeStyle=grad(ctx,s);
+  ctx.globalAlpha=opacity;
+  ctx.lineJoin='round';ctx.lineCap='round';
+  if(pts.length===1){paintNibDot(ctx,s,pts[0]);ctx.restore();return;}
+  // One continuous smooth ink silhouette avoids joined trapezoid seams.
+  // Gently narrowed, rounded endpoints prevent the squared-off tails seen
+  // on iPhone, and a fine spine stays legible on near-parallel nib strokes.
+  const last=pts.length-1;
+  const halfs=pts.map((p,i)=>nibHalf(s,p,i===0?.64:i===last?.66:1));
+  const sideA=pts.map((p,i)=>[p[0]+halfs[i][0],p[1]+halfs[i][1]]);
+  const sideB=pts.map((p,i)=>[p[0]-halfs[i][0],p[1]-halfs[i][1]]).reverse();
   ctx.beginPath();traceSmooth(ctx,sideA);
-  ctx.lineTo(sideB[0][0],sideB[0][1]);
+  ctx.quadraticCurveTo(pts[last][0],pts[last][1],sideB[0][0],sideB[0][1]);
   if(sideB.length>1){
    for(let i=1;i<sideB.length-1;i++){
     const p=sideB[i],q=sideB[i+1];
@@ -324,16 +353,28 @@
    }
    const end=sideB[sideB.length-1];ctx.lineTo(end[0],end[1]);
   }
-  ctx.closePath();ctx.fill();ctx.restore();
+  ctx.quadraticCurveTo(pts[0][0],pts[0][1],sideA[0][0],sideA[0][1]);
+  ctx.closePath();ctx.fill();
+  // A narrow constant-width core maintains smooth thin upstrokes even when
+  // the fixed chisel nib is nearly parallel to the travel direction.
+  ctx.beginPath();traceSmooth(ctx,pts);
+  ctx.lineWidth=Math.max(.8,Math.min(2.35,(Number(s.width)||11)*.15));
+  ctx.stroke();
+  ctx.restore();
  }
  function calligraphyLive(ctx,s,a,b,dot=false){
+  ctx.fillStyle=ctx.strokeStyle=grad(ctx,s);ctx.globalAlpha=alphaOf(s);
+  ctx.lineJoin='round';ctx.lineCap='round';
+  if(dot){paintNibDot(ctx,s,a);return;}
   const ha=nibHalf(s,a),hb=nibHalf(s,b);
-  ctx.fillStyle=grad(ctx,s);ctx.globalAlpha=alphaOf(s);
   ctx.beginPath();
   ctx.moveTo(a[0]+ha[0],a[1]+ha[1]);
   ctx.lineTo(b[0]+hb[0],b[1]+hb[1]);
   ctx.lineTo(b[0]-hb[0],b[1]-hb[1]);
   ctx.lineTo(a[0]-ha[0],a[1]-ha[1]);ctx.closePath();ctx.fill();
+  ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);
+  ctx.lineWidth=Math.max(.8,Math.min(2.35,(Number(s.width)||11)*.15));
+  ctx.stroke();
  }
  function segment(ctx,s,a,b,dot=false){
   if(!KINDS.has(s?.tool)||!a||!b)return false;
