@@ -39,6 +39,41 @@ if(!payload?.current||!Number.isFinite(payload.current.temperature_2m)||
  !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(payload.current.time||''))
  throw new Error('Invalid current meteorological response');
 
+/* NOAA SWPC predicts planetary geomagnetic Kp about three days ahead.
+   This is a SPACE WEATHER INDEX (0–9), not a percentage of health effects.
+   A NOAA outage must never break the terrestrial weather forecast. */
+try{
+ const response=await fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json',{
+  signal:AbortSignal.timeout(12000)
+ });
+ if(!response.ok)throw Error('NOAA Kp '+response.status);
+ const rows=await response.json();
+ if(!Array.isArray(rows))throw Error('Invalid NOAA Kp array');
+ const fmt=new Intl.DateTimeFormat('en-GB',{
+  timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'
+ });
+ const daily=new Map();
+ for(const row of rows){
+  if(typeof row?.time_tag!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(row.time_tag))continue;
+  if(!['observed','estimated','predicted'].includes(row.observed))continue;
+  const kp=Number(row.kp);
+  if(!Number.isFinite(kp)||kp<0||kp>9)continue;
+  const timestamp=Date.parse(row.time_tag+'Z');
+  if(!Number.isFinite(timestamp))continue;
+  const parts=fmt.formatToParts(new Date(timestamp));
+  const part=type=>parts.find(p=>p.type===type)?.value||'';
+  const date=part('year')+'-'+part('month')+'-'+part('day');
+  const current=daily.get(date);
+  if(!current||kp>current.kp)daily.set(date,{date,kp,status:row.observed});
+ }
+ if(daily.size)payload.geomagnetic={
+  source:'NOAA SWPC',fetched_at:new Date().toISOString(),
+  days:[...daily.values()].sort((a,b)=>a.date.localeCompare(b.date))
+ };
+}catch(error){
+ console.warn('Space-weather feed unavailable; skip Kp rather than invent values:',error.message);
+}
+
 payload.fetched_at=new Date().toISOString();
 const path=new URL('../assets/seyveo-weather-krasnodar.json',import.meta.url);
 await writeFile(path,JSON.stringify(payload,null,2)+'\n','utf8');
