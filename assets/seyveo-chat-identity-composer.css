@@ -281,6 +281,41 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpAttachFile:
  background:rgba(224,233,242,.73)!important;
  box-shadow:inset 0 1px 4px rgba(28,39,51,.12)!important;
 }
+/* The old dark/engraved capsule used white text and centered the mic via
+   top:50%. Match the NEW light pearl's dark ink and real bottom-right slot. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field #svcpChatInput{
+ color:#242a32!important;
+ -webkit-text-fill-color:#242a32!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field #svcpChatInput::placeholder{
+ color:#A4A9B1!important;opacity:1!important;
+ -webkit-text-fill-color:#A4A9B1!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+ position:absolute!important;
+ right:8px!important;left:auto!important;
+ top:auto!important;bottom:6px!important;
+ transform:none!important;translate:none!important;
+ display:grid!important;place-items:center!important;
+ width:42px!important;min-width:42px!important;max-width:42px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ color:#566371!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send) svg{
+ position:static!important;transform:none!important;
+ width:21px!important;height:21px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline:not(.svcp-has-attachment) > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle){
+ grid-row:2!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-has-attachment > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle){
+ grid-row:3!important;
+}
+/* Rounded upper corners preserve enough volume for the expanding editor. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline::before{
+ border-radius:24px!important;
+}
 /* Long text / files: keep established two-row or three-row composition logic.
    The pearly face may grow upward but never changes the textarea hierarchy. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline #svcpChatInput{
