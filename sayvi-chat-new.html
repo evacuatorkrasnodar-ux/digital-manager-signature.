@@ -5005,6 +5005,20 @@ html body #sayviComposer.sayvi-compose-expanded > button#sayviPlus{
  // A tap on the weather beneath the Home sphere opens a real, saved
  // graphic in Sayvi's conversation. It never sends a fake AI request.
  try{window.SEYVEO_WEATHER_BRIEF?.acceptHandoff(text=>append('assistant','weather-'+Date.now(),text))}catch{}
+ // The "Обсудить с Сэйви" path opens the SAME meteorological station,
+ // but leaves a clear, unsent question in the composer for the user to edit.
+ try{
+  const key='seyveo.sayvi.weather-discuss.v1';
+  const raw=sessionStorage.getItem(key);
+  if(raw){
+   sessionStorage.removeItem(key);
+   const stamp=Number(JSON.parse(raw)?.at);
+   if(Number.isFinite(stamp)&&Date.now()-stamp<3*60*1000&&Date.now()>=stamp-5000&&!input.value.trim()){
+    input.value='Сэйви, давай обсудим прогноз погоды и самочувствие на ближайшие дни. Что действительно важно учесть?';
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+   }
+  }
+ }catch{};
  // One-time handoff from Documents: text-only task, never a decrypted file.
  // Do not auto-send; the user decides whether to attach a document and send.
  try{
