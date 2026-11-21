@@ -30,13 +30,13 @@ const requiredHourly=['time','temperature_2m','relative_humidity_2m','precipitat
  'weather_code','wind_speed_10m','wind_direction_10m','pressure_msl','uv_index'];
 if(!requiredHourly.every(key=>Array.isArray(hourly?.[key])&&hourly[key].length===hourly.time?.length)
  ||hourly.time.length<24||hourly.time.some((time,i)=>
-  !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(time)||
+  !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(time)||
   !Number.isFinite(hourly.temperature_2m[i])||
   !Number.isFinite(hourly.weather_code[i])))
  throw new Error('Invalid hourly meteorological response');
 if(!payload?.current||!Number.isFinite(payload.current.temperature_2m)||
  !Number.isFinite(payload.current.weather_code)||
- !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(payload.current.time||''))
+ !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(payload.current.time||''))
  throw new Error('Invalid current meteorological response');
 
 payload.fetched_at=new Date().toISOString();
