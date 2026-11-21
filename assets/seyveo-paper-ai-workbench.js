@@ -15,14 +15,26 @@
 
  const modal=document.createElement('dialog');modal.id='svPaperAskSayvi';modal.className='sv-paper-ai-workbench';
  modal.setAttribute('aria-labelledby','svPaperAskSayviTitle');
- modal.innerHTML=`<div class="sv-pa-head"><h2 id="svPaperAskSayviTitle">Сэйви · мастерская</h2><button type="button" data-pa-close>Готово</button></div>
-  <p class="sv-pa-intro">Расскажи, что сделать с листом. Я покажу доступные инструменты и честно отмечу, что ещё требует ИИ-модели.</p>
-  <textarea data-pa-request aria-label="Что Сэйви должна сделать с листом" placeholder="Например: сделай линии ровнее, прочитай рукопись и проверь ошибки" maxlength="600" rows="3"></textarea>
-  <button type="button" class="sv-pa-plan" data-pa-plan>Разобрать просьбу</button>
-  <button type="button" class="sv-pa-chat" data-pa-chat>Перейти в чат с Сэйви</button>
+ modal.innerHTML=`<header class="sv-pa-head"><h2 id="svPaperAskSayviTitle">Сэйви · рисование</h2><button type="button" data-pa-close>Готово</button></header>
+  <p class="sv-pa-intro">Чем помочь с рисунком?</p>
+  <section class="sv-pa-quick-section" aria-label="Готовые действия">
+   <div class="sv-pa-quick-title">Готовые действия</div>
+   <div class="sv-pa-quick-grid" role="group" aria-label="Выберите действие с рисунком">
+    <button type="button" data-pa-quick="smooth"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16c3-7 5 4 9-3s6-5 9-8M3 20h18"/></svg><span>Выровнять линии</span></button>
+    <button type="button" data-pa-quick="recognize"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H5v5M16 4h3v5M5 15v4h3M19 15v4h-3M8 12h8M8 15h6"/></svg><span>Прочитать рукопись</span></button>
+    <button type="button" data-pa-quick="text"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M12 6v14M8 20h8"/></svg><span>Добавить текст</span></button>
+    <button type="button" data-pa-quick="photo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.3"/><path d="m5 17 4.5-4.5 3.2 3L16 12l3 4"/></svg><span data-pa-photo-label>Добавить фото</span></button>
+   </div>
+  </section>
+  <div class="sv-pa-custom">
+   <label class="sv-pa-field-label" for="svPaperAskSayviRequest">Своя просьба</label>
+   <textarea id="svPaperAskSayviRequest" data-pa-request aria-label="Что Сэйви должна сделать с листом" placeholder="Например: нарисуй домик или сделай линии ровнее" maxlength="600" rows="3"></textarea>
+   <button type="button" class="sv-pa-plan" data-pa-plan>Подобрать действие</button>
+  </div>
   <div data-pa-steps class="sv-pa-steps" role="status" aria-live="polite"></div>
   <div data-pa-preview class="sv-pa-preview" hidden><p data-pa-preview-title>Эскиз Сэйви · предварительный просмотр</p><canvas width="840" height="1188" aria-label="Предложенный моделью эскиз"></canvas><div class="sv-pa-preview-actions"><button type="button" data-pa-cancel>Отмена</button><button type="button" data-pa-apply>На лист</button></div></div>
-  <p class="sv-pa-foot">Действия запускаются только по твоему нажатию. В локальной версии ПК команда «Создать» передаёт текст просьбы локальной модели; рисунок и личные образцы не отправляются. На публичном сайте модель не подключена.</p>`;
+  <button type="button" class="sv-pa-chat" data-pa-chat><span>Открыть чат с Сэйви</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+  <details class="sv-pa-foot"><summary>Как работает Сэйви</summary><p>Действия выполняются только по твоему выбору; исходный рисунок не изменяется без подтверждения. Создание рисунков по описанию доступно только при подключённой локальной модели на ПК. В этом режиме модели передаётся текст просьбы, а не рисунок или личные образцы.</p></details>`;
  document.body.append(modal);
  const field=modal.querySelector('[data-pa-request]');
  const results=modal.querySelector('[data-pa-steps]');
@@ -43,13 +55,37 @@
  function show(){
   if(!dialog.open)return;
   menu.hidden=true;document.getElementById('notePaperSettings')?.setAttribute('aria-expanded','false');
-  results.replaceChildren();clearPreview();if(!modal.open)modal.showModal();
+  results.replaceChildren();clearPreview();
+  const photoLabel=modal.querySelector('[data-pa-photo-label]');
+  if(photoLabel)photoLabel.textContent=paper?.hasPhoto?.()?'Настроить фото':'Добавить фото';
+  if(!modal.open)modal.showModal();
  }
  sayvi.addEventListener('click',event=>{
   if(!dialog.open)return;
   event.preventDefault();event.stopImmediatePropagation();
   show();
  },true);
+ // Presets open the proven editor directly. No fake AI request or extra tap.
+ // Programmatic actions intentionally keep the same handlers and preview
+ // confirmation as the original Drawing tools.
+ const quickTargets={
+  smooth:'notePaperSmoothInk',
+  recognize:'notePaperRecognizeOpen',
+  text:'notePaperTextAction'
+ };
+ modal.querySelectorAll('[data-pa-quick]').forEach(button=>button.addEventListener('click',()=>{
+  if(busy||!dialog.open)return;
+  const kind=button.dataset.paQuick;
+  const id=kind==='photo'
+   ?paper?.hasPhoto?.()?'notePaperEditPhoto':'notePaperAddPhoto'
+   :quickTargets[kind];
+  const target=id&&document.getElementById(id);
+  if(!target||target.disabled){
+   results.textContent='Этот инструмент сейчас недоступен. Исходный лист не изменён.';
+   return;
+  }
+  modal.close();target.click();
+ }));
  modal.querySelector('[data-pa-chat]').addEventListener('click',()=>{
   if(busy)return;
   modal.close();
