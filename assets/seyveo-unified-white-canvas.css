@@ -73,3 +73,37 @@ html.sv-space-active:root[data-theme="light"]:has(#lifePage:not([hidden])) body 
 }
 /* The Health page is the source of truth; do not override its internal
  * surfaces, status colors, scrolling content or approved translucent dock. */
+
+
+/* Cabinet routes share the SAME #FFFFFF as Home; the root canvas is not a
+   second grey sheet. Keep content cards, real document pages, composer,
+   translucent controls and dark themes completely separate. */
+html:root[data-theme="light"] body #svcpWorkChatScreen,
+html:root[data-theme="light"] body dialog#seyveoCompanyDialog[open],
+html:root[data-theme="light"] body dialog#seyveoQrCardDialog[open]{
+ background-color:var(--sv-unified-white-canvas,#FFFFFF)!important;
+ background-image:none!important;
+ background-repeat:no-repeat!important;
+}
+/* The Business/Work main content lives on body white, with no inset panel. */
+html:root[data-theme="light"] body :is(
+ #svWorkShell,#tasksPage,#picturePage,#sayviSurfacePage
+){
+ background-color:transparent!important;
+ background-image:none!important;
+}
+/* On narrow screens these are full-page Cabinet destinations (not tiny
+   popovers). The older HDR stage must not tint or gradient their white canvas.
+   Menus, photographs, charts, and inner paper are not selected here. */
+@media(max-width:720px){
+ html:root[data-theme="light"] body dialog:is(
+  #svCabinetDialog,#manageConnectionsDialog,#manageDataDialog,
+  #seyveoCompanyDialog,#seyveoQrCardDialog,#seyveoContactsDialog,
+  #seyveoPulseDialog,#pictureBreakdownDialog
+ )[open]{
+  background-color:var(--sv-unified-white-canvas,#FFFFFF)!important;
+  background-image:none!important;
+  background-repeat:no-repeat!important;
+  background-size:auto!important;
+ }
+}
