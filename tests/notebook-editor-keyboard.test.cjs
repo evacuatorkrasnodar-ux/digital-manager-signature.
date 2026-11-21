@@ -147,11 +147,11 @@ test('keyboard state follows viewport shrink and recovers without focus-only jum
  const focusedField={matches:()=>true},document={activeElement:null};
  const dlg={open:true,contains:el=>el===focusedField,
   classList:{toggle:(name,enabled)=>enabled?flags.add(name):flags.delete(name),contains:name=>name==='sv-smart-inking'&&penMode},
-  style:{setProperty:(key,val)=>props[key]=val}};
+  style:{setProperty:(key,val)=>props[key]=val,removeProperty:key=>delete props[key]}};
  const viewport={height:844},window={visualViewport:viewport,innerHeight:844};
  const sync=vm.runInNewContext(viewportScript.slice(start,end)+'\nsync',{dlg,document,window,Math});
  sync();
- assert.equal(props['--sv-note-height'],'844px');
+ assert.equal(props['--sv-note-height'],undefined,'idle note fills full viewport without a cropped CSS height');
  assert.equal(flags.size,0);
  document.activeElement=focusedField;
  sync();
