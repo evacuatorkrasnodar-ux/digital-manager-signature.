@@ -185,3 +185,22 @@
  .sv-sayvi-station-hour{flex-basis:73px;min-width:73px}
 }
 @media(prefers-reduced-motion:reduce){.sv-sayvi-station-hours{scroll-behavior:auto}}
+
+/* NOAA Kp · separate data-only detail inside Sayvi station. */
+.sv-sayvi-station-health .sv-sayvi-station-geo-title{
+ margin:14px 0 8px!important;font-size:12.5px!important;font-weight:610!important;
+ color:#485460;
+}
+.sv-sayvi-station-health .sv-sayvi-station-geo-row{
+ display:flex;justify-content:space-between;gap:14px;align-items:center;
+ padding:7px 0;border-top:1px solid rgba(127,140,155,.11);
+ font-size:11.5px;line-height:1.4;
+}
+.sv-sayvi-station-health .sv-sayvi-station-geo-row span{color:#7D8692}
+.sv-sayvi-station-health .sv-sayvi-station-geo-row strong{
+ font-weight:570;color:#313C48;white-space:nowrap;
+}
+:root[data-theme="dark"] .sv-sayvi-station-health .sv-sayvi-station-geo-title,
+:root[data-theme="dark"] .sv-sayvi-station-health .sv-sayvi-station-geo-row strong{
+ color:#F1F3F5;
+}
