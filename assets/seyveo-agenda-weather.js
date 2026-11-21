@@ -12,6 +12,7 @@
  const DEFAULT_LOCATION=Object.freeze({name:'Краснодар',latitude:45.0355,longitude:38.9753});
  let location=readLocation();
  let days=new Map();
+ let station=null;
  let updatedAt=0;
  let lastAttemptAt=0;
  let inFlight=null;
@@ -82,6 +83,17 @@
   catch(_){return DEFAULT_LOCATION;}
  }
  function locationId(loc){return loc.latitude.toFixed(4)+','+loc.longitude.toFixed(4);}
+ function validStation(value){
+  const current=value?.current,hourly=value?.hourly;
+  return current&&Number.isFinite(current.temperature_2m)&&
+   typeof current.time==='string'&&
+   Array.isArray(hourly?.time)&&hourly.time.length>=24&&
+   Array.isArray(hourly.temperature_2m)&&
+   hourly.temperature_2m.length===hourly.time.length&&
+   Array.isArray(hourly.weather_code)&&
+   hourly.weather_code.length===hourly.time.length&&
+   typeof hourly.time[0]==='string';
+ }
  function readCache(){
   try{
    const cached=JSON.parse(localStorage.getItem(CACHE_KEY));
@@ -89,11 +101,12 @@
       !Number.isFinite(cached.updatedAt)||Date.now()-cached.updatedAt>STALE_MS)return;
    days=new Map(cached.days.filter(pair=>Array.isArray(pair)&&/^\d{4}-\d{2}-\d{2}$/.test(pair[0])&&
     Number.isFinite(pair[1]?.max)&&Number.isFinite(pair[1]?.min)&&Number.isFinite(pair[1]?.code)));
+   station=validStation(cached.station)?cached.station:null;
    updatedAt=cached.updatedAt;
   }catch(_){/* storage disabled or outdated */}
  }
  function saveCache(){
-  try{localStorage.setItem(CACHE_KEY,JSON.stringify({location:locationId(location),updatedAt,days:[...days]}));}
+  try{localStorage.setItem(CACHE_KEY,JSON.stringify({location:locationId(location),updatedAt,days:[...days],station}));}
   catch(_){/* weather still works without storage */}
  }
  function condition(code){
@@ -159,7 +172,8 @@
     next.set(date,{max,min,code});
   }
   if(!next.size)throw Error('Empty daily forecast');
-  return next;
+  const details={current:json?.current||null,hourly:json?.hourly||null,daily:json?.daily||null};
+  return {days:next,station:validStation(details)?details:null};
  }
  async function refresh(force=false){
   if(inFlight)return inFlight;
@@ -192,10 +206,10 @@
      throw Error('Weather feed is out of date');
     const fresh=parseForecast(payload);
     if(locationId(activeLocation)!==locationId(location))return;
-    days=fresh;updatedAt=fetchedAt;saveCache();paint();
+    days=fresh.days;station=fresh.station;updatedAt=fetchedAt;saveCache();paint();
     window.dispatchEvent(new Event('seyveo:weather-updated'));
    }catch(error){
-    if(!updatedAt||Date.now()-updatedAt>STALE_MS){days.clear();updatedAt=0;}
+    if(!updatedAt||Date.now()-updatedAt>STALE_MS){days.clear();station=null;updatedAt=0;}
     paint();
     window.dispatchEvent(new Event('seyveo:weather-updated'));
     console.debug('SEYVEO weather refresh pending:',error?.message||String(error));
@@ -206,7 +220,7 @@
  function setLocation(input){
   const next=validLocation(input);
   if(!next)return Promise.reject(new TypeError('Use a city name, latitude and longitude'));
-  location=next;days.clear();updatedAt=0;lastAttemptAt=0;
+  location=next;days.clear();station=null;updatedAt=0;lastAttemptAt=0;
   try{localStorage.setItem(LOCATION_KEY,JSON.stringify(next));}catch(_){}
   paint();
   return inFlight?inFlight.then(()=>refresh(true)):refresh(true);
@@ -232,7 +246,8 @@
   refresh:()=>refresh(true),setLocation,
   getLocation:()=>({...location}),
   getUpdatedAt:()=>updatedAt,
-  getForecast:date=>days.has(date)?{...days.get(date)}:null
+  getForecast:date=>days.has(date)?{...days.get(date)}:null,
+  getStationData:()=>station&&updatedAt&&Date.now()-updatedAt<STALE_MS?JSON.parse(JSON.stringify(station)):null
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
  else init();
