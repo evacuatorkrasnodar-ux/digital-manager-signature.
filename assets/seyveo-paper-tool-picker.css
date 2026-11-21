@@ -39,8 +39,10 @@ html body #notePaperDialog.sv-paper-studio[open] .sv-paper-brush-picker:not([hid
  font:500 13px/19px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
  text-align:left!important;cursor:pointer!important;
 }
-#notePaperDialog .sv-brush-picker-grid button[data-sv-tool-choice="oil"]{
- grid-column:1/-1!important;
+/* Six equal-sized choices: three symmetric rows of two. */
+#notePaperDialog .sv-brush-picker-grid button[data-sv-tool-choice="oil"],
+#notePaperDialog .sv-brush-picker-grid button[data-sv-tool-choice="watercolor"]{
+ grid-column:auto!important;
 }
 #notePaperDialog .sv-brush-picker-grid button[aria-pressed="true"]{
  background:#e8eaed!important;border-color:#d9dce1!important;
