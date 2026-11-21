@@ -588,91 +588,55 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
  background:rgba(235,239,245,.15)!important;border-color:rgba(255,255,255,.35)!important;
 }
 
-/* Notebook inset-disc v21: actual 52px circles independent of the
-   46px swipe slots. This fixes the visually smaller first Aa circle on iOS.
-   The same disc is used for Aa, pen, Files, Checklist and Sayvi. */
+/* SEYVEO Notebook · slim tool capsules, flat icons · v22.
+   Narrow rails are not individual buttons: the pearl capsule is the only
+   surface. Remove both background insets and the v21 52px pseudo-discs.
+   Keep original touch targets, scrolling, native color swatch, and handlers. */
+
+/* Horizontal notebook rail (with or without the on-screen keyboard). */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock
- > .sv-note-tools-compact[data-sv-unified-tools="true"]
- > :is(button[data-sv-smart-tool="text"],
-       button[data-note-tool="draw"],
-       button[data-note-tool="attachment"],
-       button[data-note-tool="checklist"],
-       button[data-sv-smart-tool="sayvi"]){
- position:relative!important;
- box-sizing:border-box!important;
- flex:0 0 46px!important;
- width:46px!important;min-width:46px!important;max-width:46px!important;
- height:46px!important;min-height:46px!important;max-height:46px!important;
- padding:0!important;margin:0!important;
- border-radius:50%!important;
- overflow:visible!important;
- display:grid!important;place-items:center!important;
- isolation:isolate!important;
+ > .sv-note-tools-compact[data-sv-unified-tools="true"] > button,
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock
+ > .sv-note-tools-compact[data-sv-unified-tools="true"] > button:is([aria-pressed="true"],[aria-expanded="true"],:active){
  -webkit-appearance:none!important;appearance:none!important;
+ border:0!important;background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;transform:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock
- > .sv-note-tools-compact[data-sv-unified-tools="true"]
- > :is(button[data-sv-smart-tool="text"],
-       button[data-note-tool="draw"],
-       button[data-note-tool="attachment"],
-       button[data-note-tool="checklist"],
-       button[data-sv-smart-tool="sayvi"]):is([aria-pressed="true"],[aria-expanded="true"],:active){
- background:transparent!important;
- background-image:none!important;
- border:0!important;box-shadow:none!important;
-}
+ > .sv-note-tools-compact[data-sv-unified-tools="true"] > button::before,
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock
- > .sv-note-tools-compact[data-sv-unified-tools="true"]
- > :is(button[data-sv-smart-tool="text"],
-       button[data-note-tool="draw"],
-       button[data-note-tool="attachment"],
-       button[data-note-tool="checklist"],
-       button[data-sv-smart-tool="sayvi"])::before{
- content:""!important;
- box-sizing:border-box!important;
- display:block!important;
- position:absolute!important;
- z-index:-1!important;
- top:50%!important;left:50%!important;
- width:52px!important;min-width:52px!important;max-width:52px!important;
- height:52px!important;min-height:52px!important;max-height:52px!important;
- border:var(--sv-inset-rim)!important;
- border-radius:50%!important;
- background:var(--sv-inset-fill)!important;
- box-shadow:var(--sv-inset-depth)!important;
- -webkit-backdrop-filter:var(--sv-inset-blur)!important;
- backdrop-filter:var(--sv-inset-blur)!important;
- transform:translate(-50%,-50%)!important;
- opacity:0!important;
- pointer-events:none!important;
- transition:opacity .15s ease!important;
+ > .sv-note-tools-compact[data-sv-unified-tools="true"] > button::after{
+ content:none!important;display:none!important;opacity:0!important;
+ background:none!important;box-shadow:none!important;
+}
+
+/* Narrow vertical rail for pen / eraser / thickness / paper / voice.
+   Preserve the colored ink-preview circle: it is a functional color sample,
+   NOT a recessed button. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > button,
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-smart-ink-tools > button:is([aria-pressed="true"],[aria-expanded="true"],:active){
+ -webkit-appearance:none!important;appearance:none!important;
+ border:0!important;background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;transform:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock
- > .sv-note-tools-compact[data-sv-unified-tools="true"]
- > :is(button[data-sv-smart-tool="text"],
-       button[data-note-tool="draw"],
-       button[data-note-tool="attachment"],
-       button[data-note-tool="checklist"],
-       button[data-sv-smart-tool="sayvi"]):is([aria-pressed="true"],[aria-expanded="true"],:active)::before{
- opacity:1!important;
-}
+ .sv-smart-ink-tools > button::before,
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock
- > .sv-note-tools-compact[data-sv-unified-tools="true"]
- > :is(button[data-sv-smart-tool="text"],
-       button[data-note-tool="draw"],
-       button[data-note-tool="attachment"],
-       button[data-note-tool="checklist"],
-       button[data-sv-smart-tool="sayvi"]) > :is(svg,span){
- position:relative!important;z-index:1!important;
+ .sv-smart-ink-tools > button::after{
+ content:none!important;display:none!important;opacity:0!important;
+ background:none!important;box-shadow:none!important;
 }
-@media(prefers-reduced-motion:reduce){
- html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
-  .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button::before{
-  transition:none!important;
- }
-}
+/* Active tool remains legible through its full-strength glyph. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(.sv-smart-ink-tools > button,.sv-note-tools-compact[data-sv-unified-tools="true"] > button)
+ [aria-hidden="true"]{pointer-events:none!important}
