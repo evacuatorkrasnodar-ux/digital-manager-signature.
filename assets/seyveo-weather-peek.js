@@ -116,6 +116,82 @@
   parent.append(el);
   return el;
  }
+
+ // Use only validated Open-Meteo hourly precipitation probabilities.
+ // The strip shows forecast chances, not observed rain or a guarantee.
+ function moscowDate(){
+  const parts=new Intl.DateTimeFormat('en-GB',{
+   timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit'
+  }).formatToParts(new Date());
+  const part=type=>parts.find(x=>x.type===type)?.value||'';
+  return part('year')+'-'+part('month')+'-'+part('day');
+ }
+ function addRainTimeline(parent,date,source){
+  const section=document.createElement('section');
+  section.className='sv-weather-peek-rain';
+  const header=document.createElement('div');
+  header.className='sv-weather-peek-rain-heading';
+  add('sv-weather-peek-rain-title','Дождь · '+(date===moscowDate()?'сегодня':weekday(date)),header,'h3');
+  const summary=add('sv-weather-peek-rain-summary','',header);
+  section.append(header);
+  const hourly=source?.getStationData?.()?.hourly;
+  const hourlyChances=Array(24).fill(null);
+  if(Array.isArray(hourly?.time)&&Array.isArray(hourly?.precipitation_probability)){
+   for(let i=0;i<hourly.time.length;i++){
+    const time=hourly.time[i],chance=hourly.precipitation_probability[i];
+    if(typeof time!=='string'||!time.startsWith(date+'T')||
+     !Number.isFinite(chance)||chance<0||chance>100)continue;
+    const hour=Number(time.slice(11,13));
+    if(Number.isInteger(hour)&&hour>=0&&hour<24)hourlyChances[hour]=Math.round(chance);
+   }
+  }
+  if(!hourlyChances.some(chance=>chance!==null)){
+   summary.textContent='Нет почасовых данных';
+   section.setAttribute('aria-label','Почасовой прогноз дождя недоступен');
+   parent.append(section);return;
+  }
+  const pieces=new Intl.DateTimeFormat('en-GB',{
+   timeZone:'Europe/Moscow',year:'numeric',month:'2-digit',day:'2-digit',
+   hour:'2-digit',hourCycle:'h23'
+  }).formatToParts(new Date());
+  const piece=type=>pieces.find(x=>x.type===type)?.value||'';
+  const today=piece('year')+'-'+piece('month')+'-'+piece('day');
+  const startHour=date===today?Math.min(23,Math.max(0,Number(piece('hour'))||0)):0;
+  const upcoming=hourlyChances.map((value,hour)=>({value,hour}))
+   .filter(point=>point.hour>=startHour&&point.value!==null);
+  const maximum=upcoming.length?Math.max(...upcoming.map(point=>point.value)):null;
+  const onset=upcoming.find(point=>point.value>=30);
+  let forecast;
+  if(onset){
+   let end=onset.hour+1;
+   while(end<24&&hourlyChances[end]!==null&&hourlyChances[end]>=30)end++;
+   const likely=hourlyChances.slice(onset.hour,end).some(value=>value>=50);
+   const startLabel=String(onset.hour).padStart(2,'0')+':00';
+   const endLabel=String(end).padStart(2,'0')+':00';
+   forecast=(likely?'Вероятен ':'Возможен ')+startLabel+'–'+endLabel;
+  }else forecast=maximum===null?'Нет новых часов':'Маловероятен';
+  summary.textContent=forecast+(maximum===null?'':' · до '+maximum+'%');
+  section.setAttribute('role','img');
+  section.setAttribute('aria-label','Шанс дождя по часам: '+forecast+
+   (maximum===null?'':', до '+maximum+' процентов')+'.');
+  const strip=document.createElement('div');
+  strip.className='sv-weather-peek-rain-bars';
+  strip.setAttribute('aria-hidden','true');
+  hourlyChances.forEach((chance,hour)=>{
+   const bar=document.createElement('span');bar.className='sv-weather-peek-rain-bar';
+   if(chance===null)bar.classList.add('is-unavailable');
+   else if(chance>=50)bar.classList.add('is-likely');
+   else if(chance>=30)bar.classList.add('is-possible');
+   if(date===today&&hour<startHour)bar.classList.add('is-past');
+   bar.style.setProperty('--sv-rain-height',Math.max(2,(chance||0)*.27)+'px');
+   strip.append(bar);
+  });
+  section.append(strip);
+  const ticks=document.createElement('div');ticks.className='sv-weather-peek-rain-hours';
+  ['00','06','12','18','24'].forEach(hour=>add('sv-weather-peek-rain-hour',hour,ticks));
+  section.append(ticks);
+  parent.append(section);
+ }
  function open({anchor,date,origin}={}){
   if(!(anchor instanceof Element)||!anchor.isConnected||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date||''))return;
   if(origin==='agenda'&&!anchor.closest('.sv-agenda-section-heading[data-today="true"]'))return;
@@ -152,6 +228,7 @@
    add('sv-weather-peek-low','↑ '+temp(day.max)+'   ↓ '+temp(day.min),info);
    main.append(info);
    panel.append(main);
+   addRainTimeline(panel,date,src);
    // The Kp rings are readings, NOT controls and NOT a health-risk
    // percentage. Their numbers are the validated NOAA planetary index.
    const geo=document.createElement('section');
