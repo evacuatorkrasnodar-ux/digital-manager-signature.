@@ -1,7 +1,7 @@
 /* SEYVEO Notebook · standalone New Note dock rebuilt from the Home dock.
    Home source of truth: seyveo-home-dock-preview.css (60px pearl shell,
    separately centered icon), seyveo-dock-active-glass.css (135ms .992 press).
-   This is a NEW component, not an override of svNoteNewStandalone.
+   This is a new component, not an override of the removed button.
    Only the right-side circular dock is replaced; the tool rail is unchanged. */
 
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
