@@ -3,7 +3,7 @@
 (function(){
 'use strict';
 const W=840,H=1188,MAX_PAGE_HEIGHT=2600,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000,MAX_PHOTO=155000,MAX_TEXTS=24,MAX_TEXT_LENGTH=500;
-const tools=['pen','pencil','eraser','lasso','line','arrow','rect','circle','triangle','diamond'],patterns=['blank','lines','dots','grid'];
+const tools=['pen','pencil','brush','spray','oil','eraser','lasso','line','arrow','rect','circle','triangle','diamond'],patterns=['blank','lines','dots','grid'];
 const SHAPE_TOOLS=new Set(['line','arrow','rect','circle','triangle','diamond']);
 const COLORS=['#171e29','#556174','#27609b','#c54a51','#258463','#7954a3','#f6f7fb','#8e99aa','#aa5c22','#e73b39','#ff7a27','#ffb525','#2fb35f','#0c9999','#14b4cd','#3b77df','#6650d2','#983cde','#bd397b'];
 const HEX_RE=/^#[0-9a-fA-F]{6}$/;
@@ -22,7 +22,10 @@ const iosFingerInk=/iPhone|iPod/i.test(navigator.userAgent||'');
 let data={pattern:'blank',background:'dark',height:H,strokes:[],texts:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false,sayviHandoffBusy=false;
 let hiddenTextIndex=-1;
 let activeColor='#f6f7fb',activeGradient=null,brushSize=5;
-let brushSizes={pen:5,pencil:3,eraser:36};
+let brushSizes={pen:5,pencil:3,brush:18,spray:48,oil:25,eraser:36};
+const brushOpacity={brush:.8,spray:.56,oil:.94};
+const ART_TOOLS=new Set(['brush','spray','oil']);
+const sizeLimit=tool=>tool==='eraser'?80:tool==='spray'?90:ART_TOOLS.has(tool)?72:28;
 let undoStack=[],redoStack=[],lastInkMotionAt=0;
 const HISTORY_LIMIT=32;
 function updateHistoryControls(){
@@ -134,7 +137,7 @@ function normalize(obj){
  texts:(Array.isArray(p.texts)?p.texts:[]).slice(0,MAX_TEXTS).map(item=>normalizeTextObject(item,height)).filter(Boolean),
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
- .map(stroke=>({tool:stroke.tool,color:validInkColor(stroke.color)?stroke.color.toLowerCase():undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(stroke.tool==='eraser'?80:28,stroke.width)):undefined,...(stroke.pressureSensitive===true?{pressureSensitive:true}:{}),...(stroke.tool==='pencil'&&['graphite2','graphite3'].includes(stroke.brushProfile)?{brushProfile:stroke.brushProfile}:{}),points:stroke.points.slice(0,MAX_POINTS)
+ .map(stroke=>({tool:stroke.tool,color:validInkColor(stroke.color)?stroke.color.toLowerCase():undefined,gradient:validGradient(stroke.gradient)?stroke.gradient.map(c=>c.toLowerCase()):undefined,width:Number.isFinite(stroke.width)?Math.max(1,Math.min(sizeLimit(stroke.tool),stroke.width)):undefined,...(ART_TOOLS.has(stroke.tool)&&Number.isFinite(stroke.opacity)?{opacity:Math.max(.1,Math.min(1,stroke.opacity))}:{}),...(stroke.pressureSensitive===true?{pressureSensitive:true}:{}),...(stroke.tool==='pencil'&&['graphite2','graphite3'].includes(stroke.brushProfile)?{brushProfile:stroke.brushProfile}:{}),points:stroke.points.slice(0,MAX_POINTS)
  .filter(point=>Array.isArray(point)&&point.length>=2&&Number.isFinite(Number(point[0]))&&Number.isFinite(Number(point[1])))
  .map(point=>{
   const values=[inkCoord(point[0],W),inkCoord(point[1],height),clamp(point.length>2?point[2]:50,100)];
@@ -240,6 +243,7 @@ function paintGraphite(ctx,s){
 }
 function paintStroke(ctx,s){
  if(!s.points.length)return;
+ if(ART_TOOLS.has(s.tool)&&window.SEYVEO_PAINT_BRUSHES?.stroke?.(ctx,s))return;
  if(s.tool==='pencil'&&s.brushProfile==='graphite3'){
   paintGraphite(ctx,s);return;
  }
@@ -521,10 +525,10 @@ dialog.addEventListener('pointerdown',event=>{
  if(event.target===canvas&&status.textContent)report('');
 },{passive:true});
 function currentTool(){return document.querySelector('[data-paper-tool][aria-pressed=true]')?.dataset.paperTool||'pen'}
-const brushGroup=name=>name==='eraser'?'eraser':name==='pencil'?'pencil':'pen';
+const brushGroup=name=>name==='eraser'?'eraser':name==='pencil'?'pencil':ART_TOOLS.has(name)?name:'pen';
 function syncBrushControl(){
  if(!brushControl)return;
- brushControl.max=String(currentTool()==='eraser'?80:28);
+ brushControl.max=String(sizeLimit(currentTool()));
  brushControl.value=String(brushSize);
  brushControl.setAttribute('aria-valuetext',String(brushSize));
  // The floating number/knob is owned by the toolbar component; emit one
@@ -541,6 +545,7 @@ function selectTool(name,keepSize=false){
  document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.paperTool===name)));
  syncBrushControl();
  canvas.style.cursor=name==='eraser'?'none':'';
+ dialog.dispatchEvent(new CustomEvent('sv-paper-tool-change',{detail:{tool:name}}));
 }
 function snapFreehandShape(stroke){
  if(stroke.tool!=='pen'||stroke.points.length<9)return null;
@@ -588,6 +593,9 @@ function drawLivePart(kind,from,to,control=null,dot=false){
  ctx.save();ctx.setTransform(canvas.width/W,0,0,canvas.height/(data.height||H),0,0);
  if(pending.tool==='pencil'&&pending.brushProfile==='graphite3'){
   graphiteSegment(ctx,pending,from,to,control,dot);
+  ctx.restore();return;
+ }
+ if(ART_TOOLS.has(pending.tool)&&window.SEYVEO_PAINT_BRUSHES?.segment?.(ctx,pending,from,to,dot)){
   ctx.restore();return;
  }
  const erase=pending.tool==='eraser';
@@ -678,7 +686,7 @@ function down(e){
  if(e.pointerType==='touch'&&(Date.now()<penTime||Math.max(e.width||0,e.height||0)>27))return;
  if(data.strokes.length>=MAX_STROKES){report('Лист заполнен. Начните следующий.');return}
  e.preventDefault();pointerID=e.pointerId;
- pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,pressureSensitive:e.pointerType==='pen',...(currentTool()==='pencil'?{brushProfile:'graphite3'}:{}),points:[point(e)]};
+ pending={tool:currentTool(),color:activeColor,gradient:activeGradient?[...activeGradient]:undefined,width:brushSize,pressureSensitive:e.pointerType==='pen',...(ART_TOOLS.has(currentTool())?{opacity:brushOpacity[currentTool()]}:{}),...(currentTool()==='pencil'?{brushProfile:'graphite3'}:{}),points:[point(e)]};
  liveTail=pending.points[0];liveMid=null;
  lastInkMotionAt=Date.now();
  if(SHAPE_TOOLS.has(pending.tool)&&shapeSnapshotCtx){
@@ -738,7 +746,7 @@ function finishStroke(e,addEndpoint=true){
  rememberUndo({type:'add',count:1});
  pending=null;pointerID=null;liveTail=null;liveMid=null;changed=true;
  dialog.classList.remove('sv-paper-inking');
- render(Boolean(snapped)); // Snap redraws the one finished freehand line/figure.
+ render(Boolean(snapped)||ART_TOOLS.has((snapped||pending)?.tool)); // Art brushes replay once for accurate saved preview.
 }
 canvas.addEventListener('pointerdown',down);
 canvas.addEventListener('pointermove',move);
@@ -927,7 +935,7 @@ $('noteGradientApply')?.addEventListener('click',()=>{
 });
 updateGradientEditor();
 if(brushControl)brushControl.addEventListener('input',()=>{
- brushSize=Math.max(1,Math.min(currentTool()==='eraser'?80:28,Number(brushControl.value)||5));
+ brushSize=Math.max(1,Math.min(sizeLimit(currentTool()),Number(brushControl.value)||5));
  brushSizes[brushGroup(currentTool())]=brushSize;
  brushControl.setAttribute('aria-valuetext',String(brushSize));
 });
@@ -982,10 +990,17 @@ function open(note=null){
  // thin handwriting nib. Existing notes restore their last saved sizes.
  const recent=data.strokes.slice().reverse();
  brushSizes={
-  pen:recent.find(s=>s.tool!=='eraser'&&s.tool!=='pencil'&&Number.isFinite(s.width))?.width||5,
+  pen:recent.find(s=>s.tool==='pen'&&Number.isFinite(s.width))?.width||5,
   pencil:recent.find(s=>s.tool==='pencil'&&Number.isFinite(s.width))?.width||3,
+  brush:recent.find(s=>s.tool==='brush'&&Number.isFinite(s.width))?.width||18,
+  spray:recent.find(s=>s.tool==='spray'&&Number.isFinite(s.width))?.width||48,
+  oil:recent.find(s=>s.tool==='oil'&&Number.isFinite(s.width))?.width||25,
   eraser:recent.find(s=>s.tool==='eraser'&&Number.isFinite(s.width))?.width||36
  };
+ for(const tool of ART_TOOLS){
+  const saved=recent.find(s=>s.tool===tool&&Number.isFinite(s.opacity));
+  if(saved)brushOpacity[tool]=Math.max(.1,Math.min(1,saved.opacity));
+ }
  brushSize=brushSizes.pen;
  if(extras)extras.hidden=true;if(moreButton)moreButton.setAttribute('aria-expanded','false');
  syncColorMenu();
@@ -1108,6 +1123,13 @@ $('notePaperRemovePhoto')?.addEventListener('click',()=>{
 });
 window.SEYVEO_PAPER=Object.freeze({
  announce:message=>report(message),
+ selectTool:tool=>{if(!tools.includes(tool)||pending)return false;selectTool(tool);return true;},
+ currentTool:()=>currentTool(),
+ getBrushOpacity:tool=>ART_TOOLS.has(tool)?brushOpacity[tool]:1,
+ setBrushOpacity:(tool,value)=>{
+  if(!ART_TOOLS.has(tool)||!Number.isFinite(Number(value)))return false;
+  brushOpacity[tool]=Math.max(.1,Math.min(1,Number(value)));return true;
+ },
  // Chat handoff: export from the same approved tablet, without creating
  // a second editor or silently saving a Notebook record.
  hasChatContent:()=>Boolean(data.strokes.length||data.photo||data.texts?.length),
