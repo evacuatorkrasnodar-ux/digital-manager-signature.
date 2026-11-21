@@ -203,9 +203,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  margin:0!important;padding:0!important;transform:none!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
  content:""!important;display:block!important;position:absolute!important;
  top:0!important;bottom:auto!important;height:60px!important;
  border:0!important;border-radius:999px!important;outline:0!important;
@@ -218,10 +216,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
  left:var(--note-left)!important;right:auto!important;width:var(--note-width)!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
- left:var(--note-right)!important;right:auto!important;width:60px!important;
-}
+
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
  box-sizing:border-box!important;position:absolute!important;z-index:1!important;
@@ -275,8 +270,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
   left:14px!important;width:calc(100vw - 28px)!important;
   top:1px!important;height:42px!important;
  }
- html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
-  .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{display:none!important}
+
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
   .sv-note-bottom .sv-note-tool-row.sv-shared-dock>.sv-note-tools-compact{
   left:14px!important;width:calc(100vw - 28px)!important;
@@ -437,9 +431,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-
    Both the scroll capsule and its separate new-note circle use the original
    pearl edge and inset highlights. No extra frame is added to the page. */
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
-html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
  border:var(--sv-dock-pearl-border)!important;
  background:var(--sv-dock-pearl-bg)!important;
  box-shadow:var(--sv-dock-pearl-shadow)!important;
