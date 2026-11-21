@@ -245,3 +245,45 @@ html:root[data-theme="light"] body .sv-white-pearl-capsule{
   transition:none!important;
  }
 }
+
+/* WORKSPACE TOOL BUTTONS AND SEGMENTS: preserve all layouts, functionality,
+   and the stronger gold/semantic send actions. Ordinary light actions
+   inherit exactly the same white pearl circle skin. */
+html:root[data-theme="light"] body #svWorkShell #svWorkNotebook
+ :is(.sv-note-tool,.note-more-options button,.note-more-button,.sv-note-first-action),
+html:root[data-theme="light"] body #lifePage.svmail-active .svmail
+ :is(.svmail-primary,.svmail-pill),
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"]
+ :is(.sv-doc-head-icon,.sv-doc-shelf-add,.sv-doc-tool-scan,.sv-doc-tool-grid .sv-doc-tool-button),
+html:root[data-theme="light"] body #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):not([hidden]){
+ border:var(--sv-white-pearl-edge)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ color:var(--sv-white-pearl-ink)!important;
+}
+/* Segmented/grouped containers: one light rounded capsule only;
+   no extra insets on each internal icon. */
+html:root[data-theme="light"] body #svWorkShell #svWorkTabs,
+html:root[data-theme="light"] body #calendarPage :is(.cal-scope,#managerCalendarTabs),
+html:root[data-theme="light"] body #tasksPage #unifiedTasksTabs{
+ border:var(--sv-white-pearl-edge)!important;
+ background:var(--sv-white-pearl-surface)!important;
+ background-image:none!important;
+ border-radius:var(--sv-white-pearl-radius-capsule)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+}
+html:root[data-theme="light"] body #svWorkShell #svWorkNotebook
+ :is(.sv-note-tool,.note-more-options button,.note-more-button,.sv-note-first-action):active,
+html:root[data-theme="light"] body #lifePage.svmail-active .svmail
+ :is(.svmail-primary,.svmail-pill):active,
+html:root[data-theme="light"] body #homePage #seyveoLivingMoment .lm-field .lm-actions
+ .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):active{
+ background:var(--sv-white-pearl-press-fill)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow)!important;
+}
