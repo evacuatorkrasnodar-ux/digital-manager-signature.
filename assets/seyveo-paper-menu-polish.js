@@ -206,7 +206,6 @@
   if(!paper?.hidden){hidePanel(menu,settingsTrigger);hidePanel(colorMenu,colorTrigger)}
  });
 
-}
  // One compact, always-visible workspace menu instead of separate Settings,
  // Paper and Shapes popovers. Existing engine buttons remain wired and are
  // invoked by their visual shortcuts; drawing, history and saving are untouched.
