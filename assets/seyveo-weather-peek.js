@@ -116,14 +116,6 @@
   parent.append(el);
   return el;
  }
- const actionSvg=kind=>{
-  const paths={
-   heart:'<path d="M20.8 4.6a5.4 5.4 0 0 0-7.7 0L12 5.7l-1.1-1.1a5.4 5.4 0 0 0-7.7 7.7L12 21l8.8-8.7a5.4 5.4 0 0 0 0-7.7Z"/>',
-   station:'<path d="M4 19V12m5 7V8m5 11v-5m5 5V4"/><path d="M2.5 21h19M3.5 8.5l5-3.2 5 5 6-6"/>',
-   chat:'<path d="M20 11.5a8 8 0 0 1-8.5 8L5 21l1.7-5.3a8 8 0 1 1 13.3-4.2Z"/><path d="M8 11.5h8m-8 3h5"/>'
-  };
-  return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">'+(paths[kind]||'')+'</svg>';
- };
  function open({anchor,date,origin}={}){
   if(!(anchor instanceof Element)||!anchor.isConnected||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date||''))return;
   if(origin==='agenda'&&!anchor.closest('.sv-agenda-section-heading[data-today="true"]'))return;
@@ -141,14 +133,15 @@
   panel=document.createElement('aside');
   panel.className='sv-weather-peek';
   panel.dataset.origin=homeMode?'home':'agenda';
-  panel.setAttribute('role','dialog');
-  panel.setAttribute('aria-modal','false');
-  panel.setAttribute('aria-label','Краткий прогноз Сэйви');
+  // No nested action buttons: the whole minimal forecast card is a
+  // single accessible entry point to Sayvi's detailed meteo station.
+  panel.setAttribute('role','button');
+  panel.setAttribute('tabindex','0');
+  panel.setAttribute('aria-label','Открыть подробный прогноз погоды от Сэйви');
   panel.dataset.weatherReady=day?'true':'false';
   const eyebrow=add('sv-weather-peek-eyebrow','СЭЙВИ · ПОГОДА',panel);
   eyebrow.setAttribute('aria-hidden','true');
   const main=document.createElement('div');main.className='sv-weather-peek-main';
-  let healthToggle=null,healthPanel=null;
   if(day){
    const glyph=add('sv-weather-peek-glyph','',main);glyph.innerHTML=icon(day.code);
    const tempLine=add('sv-weather-peek-high',temp(day.max),main,'strong');
@@ -159,123 +152,68 @@
    add('sv-weather-peek-low','↑ '+temp(day.max)+'   ↓ '+temp(day.min),info);
    main.append(info);
    panel.append(main);
-   /* Three circular actions are the default resting interface.
-      Wellness text is opt-in and never expands until the heart is tapped. */
-   healthPanel=document.createElement('section');
-   healthPanel.id='svWeatherPeekWellness';
-   healthPanel.className='sv-weather-peek-health';
-   healthPanel.hidden=true;
-   const more=document.createElement('div');
-   more.className='sv-weather-peek-health-more';
+   // The Kp rings are readings, NOT controls and NOT a health-risk
+   // percentage. Their numbers are the validated NOAA planetary index.
+   const geo=document.createElement('section');
+   geo.className='sv-weather-peek-geo';
+   geo.setAttribute('aria-label','Геомагнитная активность по дням');
    const heading=document.createElement('div');
    heading.className='sv-weather-peek-geo-heading';
-   add('sv-weather-peek-health-title','Геомагнитная активность',heading,'h3');
+   add('sv-weather-peek-geo-title','Магнитная активность',heading,'h3');
    add('sv-weather-peek-geo-scale','Kp · 0–9',heading);
-   more.append(heading);
-   const meters=document.createElement('div');
-   meters.className='sv-weather-peek-geo-grid';
+   geo.append(heading);
+   const meters=document.createElement('div');meters.className='sv-weather-peek-geo-grid';
    for(let index=0;index<3;index++){
-    const key=nextDate(date,index);
-    const record=src?.getGeomagnetic?.(key);
-    const value=Number.isFinite(record?.kp)?record.kp:null;
-    const level=value===null?'unknown':value>=5?'storm':value>=4?'active':'quiet';
-    const label=index===0?'Сегодня':index===1?'Завтра':weekday(key);
-    const status=value===null?'нет прогноза':level==='storm'?'геомагнитная буря':
-     level==='active'?'повышенная активность':'спокойная активность';
-    const figure=document.createElement('div');
-    figure.className='sv-weather-peek-geo-figure';
-    figure.setAttribute('role','img');
-    figure.setAttribute('aria-label',label+': '+
-     (value===null?'прогноз Kp отсутствует':'Kp '+value.toFixed(1)+' из 9, '+status));
-    const dial=document.createElement('div');
-    dial.className='sv-weather-peek-geo-meter';
-    dial.dataset.level=level;
-    dial.style.setProperty('--sv-geo-fill',
-     (value===null?0:Math.min(100,Math.max(0,value/9*100))).toFixed(1)+'%');
-    const core=document.createElement('div');
-    core.className='sv-weather-peek-geo-core';
-    add('sv-weather-peek-geo-number',value===null?'—':value.toFixed(1),core,'strong');
-    dial.append(core);
-    add('sv-weather-peek-geo-day',label,figure);
-    figure.prepend(dial);meters.append(figure);
+    const key=nextDate(date,index),reading=src?.getGeomagnetic?.(key);
+    const kp=Number.isFinite(reading?.kp)?reading.kp:null;
+    const level=kp===null?'unknown':kp>=5?'storm':kp>=4?'active':'quiet';
+    const name=index===0?'Сегодня':index===1?'Завтра':weekday(key);
+    const status=kp===null?'нет прогноза':kp>=5?'геомагнитная буря':
+     kp>=4?'повышенная активность':'спокойная активность';
+    const item=document.createElement('div');
+    item.className='sv-weather-peek-geo-figure';
+    item.setAttribute('role','img');
+    item.setAttribute('aria-label',name+': '+(kp===null?'нет прогноза Kp':
+     'Kp '+kp.toFixed(1)+' из 9, '+status));
+    const ring=document.createElement('span');
+    ring.className='sv-weather-peek-geo-meter';
+    ring.dataset.level=level;
+    ring.style.setProperty('--sv-geo-fill',
+     (kp===null?0:Math.max(0,Math.min(100,kp/9*100))).toFixed(1)+'%');
+    const core=document.createElement('span');core.className='sv-weather-peek-geo-core';
+    add('sv-weather-peek-geo-number',kp===null?'—':kp.toFixed(1),core,'strong');
+    ring.append(core);
+    item.append(ring);
+    add('sv-weather-peek-geo-day',name,item);
+    meters.append(item);
    }
-   more.append(meters);
-   const station=src?.getStationData?.();
-   const pressure=station?.current?.pressure_msl;
-   const humidity=station?.current?.relative_humidity_2m;
-   const metrics=document.createElement('div');
-   metrics.className='sv-weather-peek-geo-metrics';
-   const metric=(name,val,unit)=>{
-    const cell=document.createElement('div');
-    cell.className='sv-weather-peek-geo-metric';
-    add('sv-weather-peek-geo-metric-label',name,cell);
-    const reading=document.createElement('div');
-    reading.className='sv-weather-peek-geo-metric-reading';
-    add('sv-weather-peek-geo-metric-value',
-     Number.isFinite(val)?String(Math.round(val)):'—',reading,'strong');
-    if(Number.isFinite(val))add('sv-weather-peek-geo-metric-unit',unit,reading);
-    cell.append(reading);metrics.append(cell);
-   };
-   metric('Давление',pressure,'гПа');
-   metric('Влажность',humidity,'%');
-   more.append(metrics);
-   const context=add('sv-weather-peek-geo-source',
-    'NOAA · Kp не оценивает влияние на здоровье',more,'p');
-   context.setAttribute('title',
-    'Магнитная активность Kp не измеряет артериальное давление и не предсказывает симптомы. Атмосферное давление — другое измерение.');
-   healthPanel.append(more);
-   healthToggle=document.createElement('button');
-   healthToggle.type='button';
-   healthToggle.className='sv-weather-peek-health-toggle sv-weather-peek-round';
-   healthToggle.innerHTML=actionSvg('heart');
-   healthToggle.setAttribute('aria-label','Самочувствие: давление и магнитные бури');
-   healthToggle.setAttribute('title','Самочувствие');
-   healthToggle.setAttribute('aria-controls',healthPanel.id);
-   healthToggle.setAttribute('aria-expanded','false');
-   healthToggle.addEventListener('click',()=>{
-    healthPanel.hidden=!healthPanel.hidden;
-    healthToggle.setAttribute('aria-expanded',String(!healthPanel.hidden));
-    requestAnimationFrame(position);
-    resetTimer();
-   });
+   geo.append(meters);
+   panel.append(geo);
   }else{
    add('sv-weather-peek-city',city,main,'strong');
    add('sv-weather-peek-condition','Прогноз обновляется',main);
    panel.append(main);
    add('sv-weather-peek-empty-copy','Сэйви покажет данные после обновления прогноза.',panel,'p');
   }
-  const actions=document.createElement('div');actions.className='sv-weather-peek-actions';
-  actions.setAttribute('role','group');
-  actions.setAttribute('aria-label','Действия с прогнозом');
-  if(healthToggle)actions.append(healthToggle);
-  const details=document.createElement('button');
-  details.type='button';
-  details.className='sv-weather-peek-details sv-weather-peek-round';
-  details.innerHTML=actionSvg('station');
-  details.title='Метеостанция';
-  details.setAttribute('aria-label','Открыть подробную метеостанцию в чате Сэйви');
-  details.addEventListener('click',event=>{
-   event.preventDefault();event.stopPropagation();
-   const didOpen=window.SEYVEO_WEATHER_BRIEF?.openStation?.();
-   if(!didOpen&&window.SEYVEO_CONVERSATION?.open)window.SEYVEO_CONVERSATION.open();
-   else if(!didOpen)window.location.assign('sayvi-chat-new.html');
+  const openDetails=()=>{
+   if(!panel)return;
+   // Route to the already implemented full station in Sayvi chat. An
+   // unavailable feed opens the chat rather than inventing forecast data.
+   const opened=window.SEYVEO_WEATHER_BRIEF?.openStation?.();
+   if(!opened){
+    if(window.SEYVEO_CONVERSATION?.open)window.SEYVEO_CONVERSATION.open();
+    else window.location.assign('sayvi-chat-new.html');
+   }
    close(true);
-  });
-  actions.append(details);
-  const discuss=document.createElement('button');
-  discuss.type='button';discuss.className='sv-weather-peek-discuss sv-weather-peek-round';
-  discuss.innerHTML=actionSvg('chat');
-  discuss.title='Обсудить с Сэйви';
-  discuss.setAttribute('aria-label','Обсудить погоду с Сэйви в чате');
-  discuss.addEventListener('click',event=>{
+  };
+  panel.addEventListener('click',openDetails);
+  panel.addEventListener('keydown',event=>{
+   if(event.key!=='Enter'&&event.key!==' ')return;
    event.preventDefault();event.stopPropagation();
-   if(!window.SEYVEO_WEATHER_BRIEF?.openDiscussion?.())window.SEYVEO_WEATHER_BRIEF?.openStation?.();
-   close(true);
+   openDetails();
   });
-  actions.append(discuss);panel.append(actions);
-  if(healthPanel)panel.append(healthPanel);
   const updated=Number(src?.getUpdatedAt?.())||0;
-  if(day)add('sv-weather-peek-source','Open-Meteo'+(updated?' · '+stamp(updated)+' МСК':''),panel,'p');
+  if(day)add('sv-weather-peek-source','Open-Meteo · NOAA SWPC',panel,'p');
   document.body.append(panel);
   position();
   resetTimer();
