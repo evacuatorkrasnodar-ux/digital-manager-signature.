@@ -695,11 +695,11 @@
         if(started||!scene.isConnected)return;
         started=true;
         scene.classList.add('is-approaching');
-        endTimer=setTimeout(remove,560);
+        endTimer=setTimeout(remove,900);
       };
       const playWhenReady=()=>{
         if(started||!scene.isConnected)return;
-        setTimeout(approach,Math.max(0,1050-(performance.now()-born)));
+        setTimeout(approach,Math.max(0,2600-(performance.now()-born)));
       };
       const loadReady=document.readyState==='complete'
         ?Promise.resolve()
@@ -711,7 +711,7 @@
         typeof artwork.decode==='function'?artwork.decode().catch(()=>{}):Promise.resolve()
       ]).then(playWhenReady).catch(playWhenReady);
       // Safety watchdog: no permanent white loading screen on old Safari.
-      setTimeout(approach,2750);
+      setTimeout(approach,5200);
       window.addEventListener('pagehide',remove,{once:true});
       scene.addEventListener('pointerdown',event=>{
         event.preventDefault();event.stopPropagation();
