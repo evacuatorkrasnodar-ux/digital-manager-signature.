@@ -22,7 +22,13 @@
    <div class="sv-pa-quick-grid" role="group" aria-label="Творческие действия с рисунком">
     <button type="button" data-pa-quick="smooth"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16c3-7 5 4 9-3s6-5 9-8M3 20h18"/></svg><span>Выровнять линии</span></button>
     <button type="button" data-pa-quick="shape"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15c1-8 10-12 14-3s-5 10-10 4M5 5h4M5 5v4M15 19h4v-4"/></svg><span>Узнать фигуру</span></button>
-    <button type="button" data-pa-quick="draw" class="sv-pa-quick-wide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.9 6.1L20 11l-6.1 1.9L12 19l-1.9-6.1L4 11l6.1-1.9L12 3ZM19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8L19 17Z"/></svg><span>Нарисовать по описанию <small>Нужна ИИ-модель на ПК</small></span></button>
+    <button type="button" data-pa-quick="draw" data-pa-prompt="Нарисуй " class="sv-pa-planned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.9 6.1L20 11l-6.1 1.9L12 19l-1.9-6.1L4 11l6.1-1.9L12 3Z"/></svg><span>Нарисовать <small>ИИ на ПК</small></span></button>
+    <button type="button" data-pa-quick="extend" data-pa-prompt="Дорисуй мой набросок: " class="sv-pa-planned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17c4-5 7-2 11-7M18 6v6m-3-3h6"/></svg><span>Дорисовать <small>В планах</small></span></button>
+    <button type="button" data-pa-quick="colorize" data-pa-prompt="Раскрась мой рисунок: " class="sv-pa-planned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17 15 5l4 4-10 10H5v-2Zm8-8 3 3M19 16c0 2-1 3-2 3s-2-1-2-3c0-1 2-3 2-3s2 2 2 3Z"/></svg><span>Раскрасить <small>В планах</small></span></button>
+    <button type="button" data-pa-quick="style" data-pa-prompt="Преобразуй мой рисунок в стиль: " class="sv-pa-planned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c0-2-2-2-4-2h-1c-2 0-2-2-2-3 0-2-1-4-2-4Z"/><circle cx="7" cy="12" r="1"/><circle cx="11" cy="7" r="1"/><circle cx="16" cy="14" r="1"/></svg><span>Изменить стиль <small>В планах</small></span></button>
+    <button type="button" data-pa-quick="erase" data-pa-prompt="Удали лишний объект с моего рисунка: " class="sv-pa-planned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 14 9-9 5 5-9 9H7l-2-2v-3Zm7 5h8"/></svg><span>Убрать лишнее <small>В планах</small></span></button>
+    <button type="button" data-pa-quick="enhance" data-pa-prompt="Сделай мой рисунок более красивым и выразительным: " class="sv-pa-planned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3L12 3Z"/></svg><span>Улучшить рисунок <small>В планах</small></span></button>
+    <button type="button" data-pa-quick="understand" data-pa-prompt="Что изображено на моём рисунке? " class="sv-pa-planned sv-pa-quick-wide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="2.4"/></svg><span>Понять рисунок <small>В планах</small></span></button>
    </div>
   </section>
   <div class="sv-pa-custom">
@@ -69,9 +75,11 @@
  modal.querySelectorAll('[data-pa-quick]').forEach(button=>button.addEventListener('click',()=>{
   if(busy||!dialog.open)return;
   const kind=button.dataset.paQuick;
-  if(kind==='draw'){
-   field.value='Нарисуй ';
-   results.textContent='Опиши, что нарисовать. Создание эскиза доступно только с подключённой ИИ-моделью на локальном ПК.';
+  if(button.dataset.paPrompt){
+   field.value=button.dataset.paPrompt;
+   results.textContent=kind==='draw'
+    ?'Опиши, что нарисовать. На локальном ПК создание эскиза доступно с подключённой моделью.'
+    :'Возможность добавлена в план Сэйви, но пока не выполняется. Можно уточнить просьбу — Сэйви покажет её статус.';
    field.focus({preventScroll:true});
    field.setSelectionRange(field.value.length,field.value.length);
    return;
@@ -132,7 +140,7 @@
   results.replaceChildren();clearPreview();
   const result=engine.plan(field.value);
   if(!result.request){results.textContent='Напиши просьбу — например, «прочитай и выровняй».';return}
-  if(result.unmatched){results.textContent='Пока не могу подобрать подходящее действие. Попробуй «выровняй линии», «нарисуй» или «сделай красиво». Рисунок не изменён.';return}
+  if(result.unmatched){results.textContent='Пока не могу подобрать действие. Уточни, что хочешь нарисовать или изменить; исходный рисунок не затронут.';return}
   const localStatus=await localModelStatus();
   const localReady=localStatus.enabled;
   for(const step of result.steps){
