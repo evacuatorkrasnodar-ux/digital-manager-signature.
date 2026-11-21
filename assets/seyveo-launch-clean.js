@@ -51,11 +51,13 @@
  const mark=splash.querySelector('.svLaunchCleanMark');
  if(!mark){splash.remove();document.documentElement.classList.remove('sv-cinema-boot');return}
  let finished=false,opening=false,phaseTimer=0,landingTimer=0,cleanupTimer=0,watchdog=0;
+ let flightFrame=0,entryFrame=0;
  const close=()=>{
   if(finished)return;
   finished=true;
   clearTimeout(phaseTimer);clearTimeout(landingTimer);
   clearTimeout(cleanupTimer);clearTimeout(watchdog);
+  cancelAnimationFrame(flightFrame);cancelAnimationFrame(entryFrame);
   splash.remove();
   if(themeMeta&&root.dataset.svLaunchPreviousThemeColor)
    themeMeta.setAttribute('content',root.dataset.svLaunchPreviousThemeColor);
@@ -71,9 +73,6 @@
   splash.dataset.stage='reveal';
   cleanupTimer=setTimeout(close,fadeMs+130);
  };
- mark.addEventListener('animationend',event=>{
-  if(event.target===mark&&event.animationName==='svLaunchApproach')reveal();
- });
  splash.addEventListener('animationend',event=>{
   if(event.target===splash&&event.animationName==='svLaunchSceneOpen')close();
  });
@@ -132,34 +131,75 @@
    const initialDiameter=diameter*.45;
    splash.style.setProperty('--sv-launch-x',x+'px');
    splash.style.setProperty('--sv-launch-y',y+'px');
-   // Start the two-line platinum signature just BELOW the small logo.
-   // It follows the orb down/forward on a gentler camera path, but is fully
-   // gone before the original brand mark resolves into the real Home sphere.
-   const initialGap=Math.max(12,Math.min(19,height*.021));
-   const initialWordY=Math.min(height-108,y+initialDiameter*.5+initialGap);
-   const landingWordY=Math.min(height-103,y+diameter*.5+Math.max(16,Math.min(26,height*.027)));
-   const travel=Math.max(0,landingWordY-initialWordY);
+   // The source artwork has transparent margins. Use its VISIBLE radius
+   // (~40% of its frame), never the frame's outer 50% as the text anchor.
+   // This keeps the title optically close to the sphere throughout the shot.
+   const initialGap=Math.max(11,Math.min(16,height*.016));
+   const initialWordY=Math.min(height-96,y+initialDiameter*.40+initialGap);
    splash.style.setProperty('--sv-launch-word-y',initialWordY.toFixed(1)+'px');
-   splash.style.setProperty('--sv-launch-text-travel',travel.toFixed(1)+'px');
-   splash.style.setProperty('--sv-launch-text-d35',(travel*.15).toFixed(1)+'px');
-   splash.style.setProperty('--sv-launch-text-d69',(travel*.53).toFixed(1)+'px');
-   splash.style.setProperty('--sv-launch-text-d83',(travel*.84).toFixed(1)+'px');
-   splash.style.setProperty('--sv-launch-text-d90',(travel*.96).toFixed(1)+'px');
    splash.style.setProperty('--sv-launch-d',initialDiameter+'px');
    const finalScale=diameter/initialDiameter;
-   splash.style.setProperty('--sv-launch-scale',String(finalScale));
-   splash.style.setProperty('--sv-launch-near-scale',
-    String(1+(finalScale-1)*.973));
+   // One RAF clock drives both the sphere and the subtitle. The Home orb
+   // itself is never animated, repositioned, or recreated.
+   const signature=splash.querySelector('.svLaunchCleanSignature');
+   const ease=t=>{
+    const v=Math.max(0,Math.min(1,t));
+    return v*v*v*(v*(v*6-15)+10);
+   };
+   const paint=t=>{
+    const progress=Math.max(0,Math.min(1,t));
+    const eased=ease(progress);
+    const scale=1+(finalScale-1)*eased;
+    mark.style.setProperty('--sv-orb-scale',scale.toFixed(6));
+    // This follows the orb's exact current screen-space bottom instead of
+    // independently interpolating a distant text destination.
+    const textShift=initialDiameter*.40*(scale-1);
+    signature?.style.setProperty('--sv-text-shift',textShift.toFixed(2)+'px');
+    signature?.style.setProperty('--sv-text-scale',(.85+.26*eased).toFixed(5));
+    const fade=progress<=.69?1:progress>=.9?0:1-ease((progress-.69)/.21);
+    signature?.style.setProperty('--sv-text-opacity',fade.toFixed(4));
+    const morph=progress<=.76?0:ease((progress-.76)/.24);
+    mark.style.setProperty('--sv-logo-opacity',(1-morph).toFixed(4));
+    mark.style.setProperty('--sv-real-orb-opacity',morph.toFixed(4));
+   };
+   splash.dataset.motion='single-frame';
+   mark.style.setProperty('--sv-orb-scale','1');
+   mark.style.setProperty('--sv-logo-opacity','1');
+   mark.style.setProperty('--sv-real-orb-opacity','0');
+   signature?.style.setProperty('--sv-text-shift','0px');
+   signature?.style.setProperty('--sv-text-scale','.85');
+   signature?.style.setProperty('--sv-text-opacity','0');
    splash.dataset.stage='ready';
    document.documentElement.classList.remove('sv-cinema-boot');
    try{localStorage.setItem(key,day)}catch{}
+   const textFadeMs=quick?190:370;
+   let entryStart=null;
+   const enter=now=>{
+    if(finished||opening||splash.dataset.stage!=='ready')return;
+    if(entryStart===null)entryStart=now;
+    const progress=Math.min(1,(now-entryStart)/textFadeMs);
+    signature?.style.setProperty('--sv-text-opacity',ease(progress).toFixed(4));
+    if(progress<1)entryFrame=requestAnimationFrame(enter);
+   };
+   entryFrame=requestAnimationFrame(enter);
    const start=()=>{
     if(finished)return;
     if(matchMedia('(prefers-reduced-motion: reduce)').matches){close();return}
+    cancelAnimationFrame(entryFrame);
     splash.dataset.stage='zoom';
-    // Safari fallback only. Normal landing is driven by animationend to
-    // preserve the final frame even if the device drops frames under load.
-    landingTimer=setTimeout(reveal,flightMs+160);
+    let firstFrame=null;
+    const run=now=>{
+     if(finished||opening)return;
+     if(firstFrame===null)firstFrame=now;
+     const progress=Math.min(1,(now-firstFrame)/flightMs);
+     paint(progress);
+     if(progress<1)flightFrame=requestAnimationFrame(run);
+     else reveal();
+    };
+    flightFrame=requestAnimationFrame(run);
+    // Only a catastrophic Safari rendering stall uses this guard. Land on
+    // the exact final pixel before opening, never cut to the real orb early.
+    landingTimer=setTimeout(()=>{if(!opening){paint(1);reveal()}},flightMs+750);
    };
    phaseTimer=setTimeout(start,holdMs);
   }));
