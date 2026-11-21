@@ -170,10 +170,11 @@ html:root[data-theme="light"] body :is(
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
  color:var(--sv-white-pearl-ink)!important;
 }
-/* The GOLD Done/checkmark remains golden: depth only, NOT recoloring. */
+/* Solid GOLD Done shares the White Pearl press geometry but must not inherit
+   the WHITE rim and optical halo. Use the feature's single warm shadow. */
 html:root[data-theme="light"] body dialog#noteReviewDialog[open]
  #svNoteDone.sv-note-nav-circle:not(:active){
- box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ box-shadow:var(--sv-note-gold-shadow)!important;
 }
 
 /* Buttons in the header share the same tactile microstep. The separate
