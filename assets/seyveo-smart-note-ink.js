@@ -113,7 +113,7 @@
  inkTools.setAttribute('role','toolbar');inkTools.setAttribute('aria-label','Инструменты рукописного ввода');
  inkTools.innerHTML=`<button type="button" data-sv-ink-tool="undo" aria-label="Отменить штрих" title="Отменить штрих">${icon('<path d="m9.5 8-4.6 4 4.6 4M4.9 12h9c4.5 0 6.5 3.5 5.5 7.2"/>')}</button>
   <button type="button" data-sv-ink-tool="eraser" aria-label="Ластик. Удержать, чтобы удалить все штрихи" title="Ластик · удержать для очистки">${icon('<path d="m5 14.5 8.3-8.3a2.1 2.1 0 0 1 3 0l2.3 2.3a2.1 2.1 0 0 1 0 3l-7.3 7.3H8.8zM9.4 10l6.1 6.1M12.4 18.8H20"/>')}</button>
-  <button type="button" data-sv-ink-tool="width" aria-label="Толщина пера" aria-expanded="false">${icon('<path d="M5 6.5h7" stroke-width="1.2"/><path d="M5 12h11" stroke-width="1.6"/><path d="M5 17.5h15" stroke-width="2"/>')}</button>
+  <button type="button" data-sv-ink-tool="width" aria-label="Инструмент письма и толщина" aria-expanded="false">${icon('<path d="M5 6.5h7" stroke-width="1.2"/><path d="M5 12h11" stroke-width="1.6"/><path d="M5 17.5h15" stroke-width="2"/>')}</button>
   <label data-sv-ink-tool="color" class="sv-smart-ink-native-label" title="Цвет пера"><span class="sv-smart-ink-color-preview" aria-hidden="true"></span><input type="color" value="#171e29" class="sv-smart-ink-native-color" aria-label="Выбрать цвет пера"></label>
   <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>')}</button>
   <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>`;
@@ -138,6 +138,10 @@
   ['#d4514d','Красный'],['#8a65b3','Фиолетовый']
  ];
  const INK_WIDTHS=[3,5,9];
+ const INK_STYLES={pen:'Ручка',marker:'Маркер',calligraphy:'Каллиграфия'};
+ const INK_STYLE_NAMES=new Set(Object.keys(INK_STYLES));
+ let inkStyle='pen';
+ let inkWidths={pen:5,marker:9,calligraphy:9};
 
  const validColor=value=>/^#[0-9a-f]{6}$/i.test(String(value||''))?String(value).toLowerCase():null;
  let penColor='#171e29',penWidth=5;
@@ -145,7 +149,12 @@
  inkPicker.id='svSmartInkPicker';inkPicker.className='sv-smart-ink-picker';inkPicker.hidden=true;
  inkPicker.setAttribute('role','group');inkPicker.setAttribute('aria-label','Параметры пера');
 
- inkPicker.innerHTML=`<div data-sv-ink-picker="width" hidden>
+ inkPicker.innerHTML=`<div data-sv-ink-picker="styles" hidden>
+  <strong>Перо для заметки</strong>
+  <div class="sv-smart-ink-style-options">
+   ${Object.entries(INK_STYLES).map(([tool,label])=>`<button type="button" data-sv-pen-style="${tool}" aria-pressed="false">${label}</button>`).join('')}
+  </div></div>
+  <div data-sv-ink-picker="width" hidden>
   <strong>Толщина линии</strong><div class="sv-smart-ink-width-options">${INK_WIDTHS.map(width=>`<button type="button" data-sv-pen-width="${width}" aria-label="${width===3?'Тонкая':width===5?'Средняя':'Широкая'} линия"><i style="height:${width===3?1:width===5?2:3.5}px"></i></button>`).join('')}</div></div>`;
  dlg.append(inkPicker);
  // Native color input sits DIRECTLY over the rainbow ring:
@@ -157,6 +166,8 @@
  };
  const syncInkPicker=()=>{
   inkColorBtn.style.setProperty('--sv-ink-color',penColor);
+  inkPicker.querySelectorAll('[data-sv-pen-style]').forEach(button=>
+   button.setAttribute('aria-pressed',String(button.dataset.svPenStyle===inkStyle)));
   inkPicker.querySelectorAll('[data-sv-pen-width]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.svPenWidth)===penWidth)));
   nativeColorPicker.value=penColor;
  };
@@ -201,11 +212,20 @@
   syncInkPicker();
  };
  inkWidthBtn.addEventListener('click',()=>toggleInkPicker('width'));
+ inkPicker.querySelectorAll('[data-sv-pen-style]').forEach(button=>button.addEventListener('click',()=>{
+  const next=button.dataset.svPenStyle;
+  if(!INK_STYLE_NAMES.has(next)||active)return;
+  inkWidths[inkStyle]=penWidth;
+  inkStyle=next;penWidth=inkWidths[next]||5;
+  if(mode==='eraser')setMode('pen');
+  syncButtons();
+  if(strokes.length)save();
+ }));
  nativeColorPicker.addEventListener('pointerdown',()=>{closePaper();closeInkPicker();closeVoiceMenu();});
  inkPicker.querySelectorAll('[data-sv-pen-width]').forEach(button=>button.addEventListener('click',()=>{
   const next=Number(button.dataset.svPenWidth);
   if(!INK_WIDTHS.includes(next))return;
-  penWidth=next;setMode('pen');syncInkPicker();
+  penWidth=next;inkWidths[inkStyle]=next;setMode('pen');syncInkPicker();
   if(strokes.length)save();
  }));
  function selectInkColor(value,persist=true){
@@ -328,7 +348,7 @@
   inkEraser.setAttribute('aria-pressed',String(mode==='eraser'));
   const chosen=INK_COLORS.find(([value])=>value===penColor);
   nativeColorPicker.setAttribute('aria-label','Цвет пера: '+(chosen?.[1]||'Свой цвет'));
-  inkWidthBtn.setAttribute('aria-label','Толщина пера: '+(penWidth===3?'тонкая':penWidth===5?'средняя':'широкая'));
+  inkWidthBtn.setAttribute('aria-label',INK_STYLES[inkStyle]+' · выбор инструмента и толщины');
   syncInkPicker();
  }
  function geometry(){
@@ -381,6 +401,8 @@
  function drawStroke(s){
   if(!s?.points?.length)return;
   ctx.save();
+  if((s.tool==='marker'||s.tool==='calligraphy')
+     &&window.SEYVEO_PAINT_BRUSHES?.stroke?.(ctx,s)){ctx.restore();return;}
   ctx.globalCompositeOperation=s.tool==='eraser'?'destination-out':'source-over';
   ctx.lineWidth=s.width||5;ctx.lineCap='round';ctx.lineJoin='round';
   ctx.strokeStyle=ctx.fillStyle=validColor(s.color)||'#171e29';
@@ -428,9 +450,14 @@
   const api=window.SEYVEO_NOTES_API,editor=window.SEYVEO_NOTES_EDITOR;
   const id=editor?.ensureRecord?.();if(!id||!api)return false;
   const list=api.getNotes(),old=list.find(n=>n.id===id);if(!old)return false;
-  const inlineInk={version:2,width:W,pageHeight:Math.ceil(inkPageHeight),strokes:strokes.map(s=>({tool:s.tool,width:s.width,color:validColor(s.color)||'#171e29',points:s.points.map(p=>p.slice())}))};
+  const inlineInk={version:2,width:W,pageHeight:Math.ceil(inkPageHeight),strokes:strokes.map(s=>({
+   tool:s.tool,width:s.width,color:validColor(s.color)||'#171e29',
+   ...(Number.isFinite(s.opacity)?{opacity:s.opacity}:{}),
+   ...(s.pressureSensitive===true?{pressureSensitive:true}:{}),
+   points:s.points.map(p=>p.slice())}))};
   if(JSON.stringify(inlineInk).length>BYTE_LIMIT){report('Слишком много рукописного текста на этом листе.');return false}
-  const next=list.map(n=>n.id===id?{...n,inlineInk,inkPenColor:penColor,inkPenWidth:penWidth,updatedAt:Date.now()}:n);
+  const next=list.map(n=>n.id===id?{...n,inlineInk,inkPenColor:penColor,inkPenWidth:penWidth,
+   inkPenStyle:inkStyle,inkPenWidths:{...inkWidths},updatedAt:Date.now()}:n);
   if(!api.putNotes(next)){report('Не удалось сохранить рукопись.');return false}
   noteId=id;return true;
  }
@@ -479,7 +506,11 @@
   closePaper();closeInkPicker();closeVoiceMenu();if(!sayviPanel.hidden)closeSayvi();
   clearTimeout(inkToolsRevealTimer);
   dlg.classList.add('sv-ink-stroking');inkTools.setAttribute('aria-hidden','true');
-  active={tool:mode,width:mode==='eraser'?35:penWidth,color:penColor,points:[point(event)]};
+  active={tool:mode==='eraser'?'eraser':inkStyle,
+   width:mode==='eraser'?35:penWidth,color:penColor,
+   ...(mode!=='eraser'&&inkStyle==='marker'?{opacity:.72}:{}),
+   ...(mode!=='eraser'&&inkStyle==='calligraphy'?{opacity:.98,pressureSensitive:event.pointerType==='pen'}:{}),
+   points:[point(event)]};
   try{inkSafeArea.setPointerCapture(event.pointerId)}catch{}
   render();
  });
@@ -547,10 +578,21 @@
   const note=id?window.SEYVEO_NOTES_API?.getNotes()?.find(n=>n.id===id):null;
   paperStyle=normalizePaper(note?.notePaperStyle);syncPaper();
   penColor=validColor(note?.inkPenColor)||'#171e29';
-  penWidth=INK_WIDTHS.includes(Number(note?.inkPenWidth))?Number(note.inkPenWidth):5;
+  inkStyle=INK_STYLE_NAMES.has(note?.inkPenStyle)?note.inkPenStyle:'pen';
+  inkWidths={pen:5,marker:9,calligraphy:9};
+  if(note?.inkPenWidths&&typeof note.inkPenWidths==='object')
+   for(const tool of INK_STYLE_NAMES){
+    const savedWidth=Number(note.inkPenWidths[tool]);
+    if(INK_WIDTHS.includes(savedWidth))inkWidths[tool]=savedWidth;
+   }
+  penWidth=INK_WIDTHS.includes(Number(note?.inkPenWidth))?Number(note.inkPenWidth):inkWidths[inkStyle];
+  inkWidths[inkStyle]=penWidth;
   strokes=Array.isArray(note?.inlineInk?.strokes)?note.inlineInk.strokes.slice(0,STROKE_LIMIT)
-   .map(s=>({tool:s.tool==='eraser'?'eraser':'pen',width:Number(s.width)||5,
+   .map(s=>({tool:s.tool==='eraser'?'eraser':INK_STYLE_NAMES.has(s.tool)?s.tool:'pen',
+    width:Number.isFinite(Number(s.width))?Math.max(1,Math.min(70,Number(s.width))):5,
     color:validColor(s.color)||'#171e29',
+    ...(Number.isFinite(Number(s.opacity))?{opacity:Math.max(.1,Math.min(1,Number(s.opacity)))}:{}),
+    ...(s.pressureSensitive===true?{pressureSensitive:true}:{}),
     points:Array.isArray(s.points)?s.points.slice(0,POINT_LIMIT).map(p=>p.slice(0,3)):[]})):[];
   if(strokes.length&&Number(note?.inlineInk?.version||1)<2)strokes=migrateLegacyInk(strokes);
   const lastPointY=strokes.reduce((max,stroke)=>Math.max(max,...stroke.points.map(point=>Number(point[1])||0)),0);
