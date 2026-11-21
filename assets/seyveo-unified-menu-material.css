@@ -71,6 +71,7 @@ html:root body :is(
  #svNoteTopMenu.sv-note-top-menu,
  #svNoteAttachmentMenu.sv-note-attachment-menu,
  #svNoteFormatMenu.sv-note-format-menu,
+ #svNoteMarkerPalette.sv-note-marker-palette,
  #notePaperSettingsMenu.sv-newdock-settings-panel,
  #notePaperPatternMenu.paper-pattern-menu,
  #notePaperColorMenu.paper-color-menu,
@@ -96,7 +97,8 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
      #svSmartNotePaperPanel.sv-smart-paper-panel,
      #svNoteTopMenu.sv-note-top-menu,
      #svNoteAttachmentMenu.sv-note-attachment-menu,
-     #svNoteFormatMenu.sv-note-format-menu):not([hidden]){
+     #svNoteFormatMenu.sv-note-format-menu,
+     #svNoteMarkerPalette.sv-note-marker-palette):not([hidden]){
  background:var(--sv-menu-bg)!important;
  background-image:none!important;
  color:var(--sv-menu-text)!important;
@@ -108,7 +110,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  opacity:1!important;
 }
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- :is(#svSmartInkPicker,#svSmartVoiceMenu,#svSmartNotePaperPanel,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu)
+ :is(#svSmartInkPicker,#svSmartVoiceMenu,#svSmartNotePaperPanel,#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,#svNoteMarkerPalette)
  :is(strong,label,summary){
  color:var(--sv-menu-text)!important;
 }
@@ -137,6 +139,125 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  :is(#svNoteTopMenu,#svNoteAttachmentMenu,#svNoteFormatMenu) > button:active{
  background:var(--sv-menu-item-selected)!important;
 }
+/* Notebook popup optical audit, 21 Nov 2026.
+ * These are REAL existing menus, not extra plates. Every reading surface
+ * stays opaque, with the SAME design tokens; only the dock is translucent.
+ * All rules apply to both themes unless a light-mode press is intentional. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svSmartInkPicker.sv-smart-ink-picker,
+     #svSmartNotePaperPanel.sv-smart-paper-panel,
+     #svSmartVoiceMenu.sv-smart-voice-menu,
+     #svNoteAttachmentMenu.sv-note-attachment-menu,
+     #svNoteFormatMenu.sv-note-format-menu,
+     #svNoteMarkerPalette.sv-note-marker-palette):not([hidden]){
+ border:var(--sv-menu-border)!important;
+ border-radius:var(--sv-menu-radius)!important;
+ background:var(--sv-menu-bg)!important;
+ color:var(--sv-menu-text)!important;
+ box-shadow:var(--sv-menu-shadow)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ opacity:1!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svSmartInkPicker,#svSmartNotePaperPanel,#svSmartVoiceMenu,#svNoteMarkerPalette)
+ > strong,
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker [data-sv-ink-picker] > strong{
+ color:var(--sv-menu-text)!important;
+ font:560 13px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.012em!important;
+}
+/* Pen's third label (Каллиграфия) must fit on narrow 320px phones.
+ * Keep 3 equal 38px buttons and the existing 236px popover. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker .sv-smart-ink-style-options{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:5px!important;min-width:0!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker .sv-smart-ink-style-options > button{
+ min-width:0!important;
+ padding:5px 1px!important;
+ font:500 10px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.045em!important;
+ text-align:center!important;white-space:nowrap!important;
+ overflow:visible!important;
+}
+/* All pen choices, including thickness and My Handwriting, have the same
+ * soft neutral inset. Preserve the selected tool state and actual handlers. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker :is(.sv-smart-ink-style-options button,.sv-smart-ink-width-options button,.sv-ink-personalization button){
+ background:var(--sv-menu-item)!important;
+ border:1px solid var(--sv-menu-item-border)!important;
+ border-radius:11px!important;
+ box-shadow:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker :is(.sv-smart-ink-style-options button,.sv-smart-ink-width-options button)[aria-pressed="true"]{
+ background:var(--sv-menu-item-selected)!important;
+ border-color:var(--sv-menu-item-selected-border)!important;
+ box-shadow:inset 0 1px 2px rgba(35,45,55,.06)!important;
+}
+/* Paper: the chosen thumbnail gets a fine selection outline, rather than
+ * a large grey block that makes "Чистый" look like a different material. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartNotePaperPanel .sv-smart-paper-options > button{
+ background:transparent!important;
+ border:0!important;border-radius:11px!important;
+ box-shadow:none!important;
+ color:var(--sv-menu-text)!important;
+ font:500 11px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartNotePaperPanel .sv-smart-paper-options > button[aria-pressed="true"]{
+ background:transparent!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartNotePaperPanel .sv-smart-paper-options > button[aria-pressed="true"] .sv-smart-paper-swatch{
+ border-color:rgba(111,123,140,.34)!important;
+ box-shadow:0 0 0 1.5px rgba(101,119,141,.20),0 2px 6px rgba(37,50,63,.06)!important;
+}
+/* The two attachment rows and format/voice commands share 42px baselines
+ * and one laser icon stroke. Only real user interaction paints a highlight. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu) > button{
+ box-sizing:border-box!important;
+ min-height:42px!important;
+ border:0!important;border-radius:11px!important;
+ color:var(--sv-menu-text)!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ font:500 13px/1.25 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu) > button > svg{
+ width:20px!important;height:20px!important;
+ stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu) > button:active{
+ background:var(--sv-menu-item-selected)!important;
+}
+@media(hover:none){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+  :is(#svNoteAttachmentMenu,#svNoteFormatMenu,#svSmartVoiceMenu) > button:hover:not(:active){
+  background:transparent!important;
+ }
+}
+/* Native accessibility focus without a persistent focus/hover plate. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svSmartInkPicker,#svSmartNotePaperPanel,#svSmartVoiceMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,#svNoteMarkerPalette)
+ button:focus-visible{
+ outline:2px solid #397bc6!important;outline-offset:2px!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ :is(#svSmartInkPicker,#svSmartNotePaperPanel,#svSmartVoiceMenu,#svNoteAttachmentMenu,#svNoteFormatMenu,#svNoteMarkerPalette) button{
+ transition:none!important;
+ }
+}
+
 /* Paper's local palette variables were hard-coded to graphite. Point them
  * at the shared menu tokens so tool labels and pressed states match the
  * current app theme, without altering painting canvases or the dock. */
