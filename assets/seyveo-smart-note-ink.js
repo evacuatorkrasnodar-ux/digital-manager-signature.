@@ -159,6 +159,22 @@
   <div data-sv-ink-picker="width" hidden>
   <strong>Толщина линии</strong><div class="sv-smart-ink-width-options">${INK_WIDTHS.map(width=>`<button type="button" data-sv-pen-width="${width}" aria-label="${width===3?'Тонкая':width===5?'Средняя':'Широкая'} линия"><i style="height:${width===3?1:width===5?2:3.5}px"></i></button>`).join('')}</div></div>`;
  dlg.append(inkPicker);
+ // Personal handwriting is a writing preset/training feature, not a fourth
+ // "Create" tile. Move its existing wired button from the Notebook landing
+ // into the handwritten pen selector (no new handler or duplicate control).
+ const handwritingButton=document.getElementById('notePaperMyHandwriting');
+ const handwritingRow=handwritingButton?.closest('.sv-note-personal-ink-row');
+ if(handwritingButton){
+  handwritingRow?.remove();
+  const handwritingSection=document.createElement('div');
+  handwritingSection.className='sv-ink-personalization';
+  const heading=document.createElement('strong');
+  heading.textContent='Персонализация';
+  handwritingButton.classList.add('sv-smart-ink-handwriting-link');
+  handwritingButton.title='Обучить Сэйви моему почерку';
+  handwritingSection.append(heading,handwritingButton);
+  inkPicker.append(handwritingSection);
+ }
  // Native color input sits DIRECTLY over the rainbow ring:
  // the browser receives a real touch instead of synthetic showPicker()/click().
  const nativeColorPicker=inkColorBtn.querySelector('input[type="color"]');
