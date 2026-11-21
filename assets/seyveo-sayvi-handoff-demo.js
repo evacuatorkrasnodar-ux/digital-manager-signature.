@@ -455,6 +455,7 @@
     scene.style.setProperty('--sv-launch-x',cx+'px');
     scene.style.setProperty('--sv-launch-y',cy+'px');
     scene.style.setProperty('--sv-launch-size',startSize+'px');
+    scene.style.setProperty('--sv-launch-half-size',(startSize/2)+'px');
     scene.style.setProperty('--sv-launch-scale',String(targetSize/startSize));
     window.dispatchEvent(new Event('seyveo:cinema-opening'));
     let settled=false;
