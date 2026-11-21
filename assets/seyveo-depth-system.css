@@ -188,3 +188,46 @@ html body .seyveo-browser .seyveo-browser-continue-card{
 }
 /* The Search button stays flush with its own pre-existing circular
    glass surface. Its active/recessed state and SVG remain untouched. */
+
+/* Notebook studio depth correction v4.
+   Earlier notebook-context-actions rules have :root[data-theme] specificity,
+   so the generic v1 depth rules were not winning even though loaded last.
+   Match that specificity and add elevation only to ACTUAL existing shells.
+   No new pseudo surfaces, changes to geometry, or touch-hit overlays. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ box-shadow:
+  0 5px 16px rgba(34,45,59,.095),
+  0 1.5px 4px rgba(34,45,59,.045),
+  inset 0 0 0 .6px rgba(153,165,177,.18),
+  inset 0 1px 1px rgba(255,255,255,.31)!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ .sv-smart-ink-tools:not([hidden]){
+ box-shadow:
+  0 5px 16px rgba(34,45,59,.095),
+  0 1.5px 4px rgba(34,45,59,.045),
+  inset 0 0 0 .6px rgba(153,165,177,.18),
+  inset 0 1px 1px rgba(255,255,255,.31)!important;
+}
+/* Keep a consistent light lift on the real Back/Done circles, with
+   the existing gold and pressed-state rules in full control. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#noteReviewBack.sv-note-back-arrow:not(:active),
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ button#svNoteDone.sv-note-nav-circle:not(:active){
+ box-shadow:
+  0 3px 10px rgba(39,49,62,.075),
+  0 1px 2px rgba(39,49,62,.03),
+  inset 0 0 0 .55px rgba(153,165,177,.12)!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before,
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after,
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-smart-inking:not(.sv-note-keyboard-open)
+ .sv-smart-ink-tools:not([hidden]){
+ box-shadow:var(--sv-depth-dock)!important;
+}
