@@ -5,14 +5,19 @@
    Opaque reading menus remain opaque. Dock controls remain visually flat. */
 :root{
  /* WHITE material now sourced ONLY from seyveo-white-pearl.css. */
- --sv-depth-dock:var(--sv-white-pearl-dock-shadow);
- --sv-depth-circle:var(--sv-white-pearl-circle-shadow);
+ /* Fallbacks keep the isolated Sayvi chat's shadows visible even though
+    it does not import the full White Pearl stylesheet. Shadow values ONLY. */
+ --sv-depth-dock:var(--sv-white-pearl-dock-shadow,
+   0 9px 26px rgba(42,52,72,.09),0 2.5px 7px rgba(42,52,72,.06));
+ --sv-depth-circle:var(--sv-white-pearl-circle-shadow,
+   0 11px 27px rgba(42,52,72,.11),0 3px 8px rgba(42,52,72,.07));
  --sv-depth-card:
    0 6px 20px rgba(38,47,61,.055),
    0 1px 4px rgba(38,47,61,.035);
  --sv-depth-menu:
-   0 12px 34px rgba(25,33,45,.16),
-   0 3px 10px rgba(25,33,45,.055),
+   0 17px 42px rgba(25,33,45,.15),
+   0 5px 14px rgba(25,33,45,.08),
+   0 1px 3px rgba(25,33,45,.035),
    inset 0 1px 0 rgba(255,255,255,.8);
  --sv-depth-pressed:inset 0 2px 5px rgba(38,47,61,.10);
  /* Adopted by the existing shared dock and opaque dropdown systems. */
@@ -37,6 +42,32 @@
    0 3px 11px rgba(0,0,0,.19),
    inset 0 1px 0 rgba(255,255,255,.08);
  --sv-depth-pressed:inset 0 2px 5px rgba(0,0,0,.30);
+}
+/* More vivid depth, same material. The following existing tab capsules and
+   icon-only floating actions now use the exact shared shadow tokens.
+   No borders, backgrounds, pseudo-elements, sizes or handlers are altered. */
+html:root[data-theme="light"] body #svWorkShell #svWorkTabs:not([hidden]),
+html:root[data-theme="light"] body #calendarPage :is(.cal-scope,#managerCalendarTabs):not([hidden]),
+html:root[data-theme="light"] body #tasksPage #unifiedTasksTabs:not([hidden]),
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-switch:not([hidden]){
+ box-shadow:var(--sv-depth-dock)!important;
+}
+html:root[data-theme="light"] body .sv-header-material-circle:not(:active):not([hidden]),
+html:root[data-theme="light"] body #calendarPage :is(#calendarAdd,.calendar-header-add,.cal-actions .cal-day-fab):not(:active):not([hidden]),
+html:root[data-theme="light"] body #tasksPage :is(#personalAddTasks,.personal-tasks-add,.svcp-manager-task-create,.sv-cabinet-plus):not(:active):not([hidden]),
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] :is(.sv-doc-head-icon,.sv-doc-shelf-add,.sv-doc-tool-scan,.sv-doc-tool-grid .sv-doc-tool-button):not(:active):not([hidden]),
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-icon-button:not(:active):not([hidden]),
+html:root[data-theme="light"] body #svcpWorkChatScreen .svcp-work-chat-header > #svcpWorkHistoryTop:not(:active):not([hidden]){
+ box-shadow:var(--sv-depth-circle)!important;
+}
+/* Opaque menu panels float slightly above the lighter white-pearl controls.
+   Do not blur menu contents or coat the menu's individual rows. */
+html:root[data-theme="light"] body #homeWorldPopover:not([hidden]),
+html:root[data-theme="light"] body #seyveoCleanManageMenu:not([hidden]),
+html:root[data-theme="light"] body #svWorkShell #svWorkCreateChoices:not([hidden]),
+html:root[data-theme="light"] body #sayviSurfacePage[data-sv-subject="contract"] .sv-doc-head-options:not([hidden]),
+html:root[data-theme="light"] body .sv-task-context-menu:not([hidden]){
+ box-shadow:var(--sv-depth-menu)!important;
 }
 /* The Home dock consists of TWO capsule pseudos; shadowing the footer
    itself would create an unwanted full-width floating rectangle. */
