@@ -1,9 +1,9 @@
-/* SEYVEO Painting · deterministic Canvas 2D brush / airbrush / oil / watercolor strokes.
+/* SEYVEO Painting · deterministic Canvas 2D brush / airbrush / oil / watercolor / marker / calligraphy strokes.
  * No remote textures, no random per-frame output, no offscreen full-canvas
  * layers. Stroke geometry is saved by the existing Paper engine. */
 (function(root){
  'use strict';
- const KINDS=new Set(['brush','spray','oil','watercolor']);
+ const KINDS=new Set(['brush','spray','oil','watercolor','marker','calligraphy']);
  const stamps=new Map();
  const cap=(value,lo,hi)=>Math.max(lo,Math.min(hi,value));
  const colorOf=s=>/^#[0-9a-f]{6}$/i.test(s?.color||'')?s.color:'#171e29';
@@ -14,7 +14,7 @@
  const blend=(hex,target,t)=>{
   const c=rgb(hex);return 'rgb('+c.map(v=>Math.round(v+(target-v)*t)).join(',')+')';
  };
- const alphaOf=s=>cap(Number.isFinite(s?.opacity)?s.opacity:(s.tool==='spray'?.48:s.tool==='oil'?.94:s.tool==='watercolor'?.54:.8),.1,1);
+ const alphaOf=s=>cap(Number.isFinite(s?.opacity)?s.opacity:(s.tool==='spray'?.48:s.tool==='oil'?.94:s.tool==='watercolor'?.54:s.tool==='marker'?.72:s.tool==='calligraphy'?.98:.8),.1,1);
  const widthOf=(s,p)=>{
   const base=cap(Number(s.width)||15,1,90);
   const press=s.pressureSensitive?cap((p?.[2]??50)/100,0,1):.5;
@@ -266,12 +266,83 @@
   for(const [scale,alpha] of [[1.32,.09],[1.15,.14],[.98,.22],[.75,.18]])
    line(ctx,a,b,width*scale,paint,opacity*alpha);
  }
+ // Marker: a solid felt-tip body with slight translucent shoulder.
+ // Whole-stroke replay avoids dark sampling knots after the finger is lifted.
+ function markerStroke(ctx,s){
+  const pts=s.points;if(!pts?.length)return;
+  const width=cap(Number(s.width)||16,1,90),opacity=alphaOf(s);
+  ctx.save();ctx.globalCompositeOperation='source-over';
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.strokeStyle=ctx.fillStyle=grad(ctx,s);
+  if(pts.length===1){
+   ctx.beginPath();ctx.arc(pts[0][0],pts[0][1],width/2,0,Math.PI*2);
+   ctx.globalAlpha=opacity*.82;ctx.fill();ctx.restore();return;
+  }
+  ctx.beginPath();traceSmooth(ctx,pts);
+  ctx.lineWidth=width*1.08;ctx.globalAlpha=opacity*.16;ctx.stroke();
+  ctx.beginPath();traceSmooth(ctx,pts);
+  ctx.lineWidth=width*.94;ctx.globalAlpha=opacity*.86;ctx.stroke();
+  ctx.restore();
+ }
+ function markerLive(ctx,s,a,b,dot=false){
+  const width=cap(Number(s.width)||16,1,90);
+  ctx.fillStyle=ctx.strokeStyle=grad(ctx,s);ctx.globalAlpha=alphaOf(s)*.82;
+  ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.beginPath();
+  if(dot){ctx.arc(a[0],a[1],width/2,0,Math.PI*2);ctx.fill();}
+  else{ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+ }
+ // Fixed 48-degree chisel nib. The broad edge is angled and produces
+ // different thicknesses depending on the writing direction; stylus pressure
+ // adjusts the nib size, while fingers retain predictable broad lettering.
+ const nibAngle=Math.PI*48/180,nibX=Math.cos(nibAngle),nibY=Math.sin(nibAngle);
+ const nibHalf=(s,p)=>{
+  const width=cap(Number(s.width)||11,1,70);
+  const force=s.pressureSensitive?cap((p?.[2]??50)/100,0,1):.5;
+  const radius=width*(s.pressureSensitive?.33+.84*force:.73)/2;
+  return[nibX*radius,nibY*radius];
+ };
+ function calligraphyStroke(ctx,s){
+  const pts=s.points;if(!pts?.length)return;
+  ctx.save();ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle=grad(ctx,s);ctx.globalAlpha=alphaOf(s);
+  if(pts.length===1){
+   const p=pts[0],half=nibHalf(s,p);
+   ctx.beginPath();ctx.moveTo(p[0]-half[0],p[1]-half[1]);
+   ctx.lineTo(p[0]+half[0],p[1]+half[1]);
+   ctx.lineWidth=Math.max(1,(Number(s.width)||11)*.09);
+   ctx.lineCap='round';ctx.strokeStyle=grad(ctx,s);ctx.stroke();ctx.restore();return;
+  }
+  const sideA=pts.map(p=>{const h=nibHalf(s,p);return[p[0]+h[0],p[1]+h[1]]});
+  const sideB=pts.map(p=>{const h=nibHalf(s,p);return[p[0]-h[0],p[1]-h[1]]}).reverse();
+  ctx.beginPath();traceSmooth(ctx,sideA);
+  ctx.lineTo(sideB[0][0],sideB[0][1]);
+  if(sideB.length>1){
+   for(let i=1;i<sideB.length-1;i++){
+    const p=sideB[i],q=sideB[i+1];
+    ctx.quadraticCurveTo(p[0],p[1],(p[0]+q[0])/2,(p[1]+q[1])/2);
+   }
+   const end=sideB[sideB.length-1];ctx.lineTo(end[0],end[1]);
+  }
+  ctx.closePath();ctx.fill();ctx.restore();
+ }
+ function calligraphyLive(ctx,s,a,b,dot=false){
+  const ha=nibHalf(s,a),hb=nibHalf(s,b);
+  ctx.fillStyle=grad(ctx,s);ctx.globalAlpha=alphaOf(s);
+  ctx.beginPath();
+  ctx.moveTo(a[0]+ha[0],a[1]+ha[1]);
+  ctx.lineTo(b[0]+hb[0],b[1]+hb[1]);
+  ctx.lineTo(b[0]-hb[0],b[1]-hb[1]);
+  ctx.lineTo(a[0]-ha[0],a[1]-ha[1]);ctx.closePath();ctx.fill();
+ }
  function segment(ctx,s,a,b,dot=false){
   if(!KINDS.has(s?.tool)||!a||!b)return false;
   ctx.save();ctx.globalCompositeOperation='source-over';
   if(s.tool==='brush')dot?oilLive(ctx,s,a,a,true):brush(ctx,s,a,b);
   else if(s.tool==='spray')spray(ctx,s,a,b,dot);
   else if(s.tool==='watercolor')watercolorLive(ctx,s,a,b,dot);
+  else if(s.tool==='marker')markerLive(ctx,s,a,b,dot);
+  else if(s.tool==='calligraphy')calligraphyLive(ctx,s,a,b,dot);
   else oilLive(ctx,s,a,b,dot);
   ctx.restore();return true;
  }
@@ -280,6 +351,8 @@
   const pts=s.points;
   if(s.tool==='oil'){oilStroke(ctx,s);return true;}
   if(s.tool==='watercolor'){watercolorStroke(ctx,s);return true;}
+  if(s.tool==='marker'){markerStroke(ctx,s);return true;}
+  if(s.tool==='calligraphy'){calligraphyStroke(ctx,s);return true;}
   if(pts.length===1){segment(ctx,s,pts[0],pts[0],true);return true;}
   for(let i=1;i<pts.length;i++)segment(ctx,s,pts[i-1],pts[i]);
   return true;
