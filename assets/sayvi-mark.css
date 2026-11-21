@@ -1,6 +1,8 @@
-/* SEYVEO Sayvi — one quiet monochrome pearl-light mark for assistant only.
-   This is an icon drawn with the same geometry as the approved chat button.
-   Recognition stars, favorite/bookmark stars and other symbols are separate. */
+/* SEYVEO / Sayvi — canonical approved circular S silhouette.
+   ONE icon source: seyveo-circular-interlace-mono.svg.
+   The same mask is used for every small Sayvi icon in both themes.
+   No independent spark, four-point star, or duplicate SVG is permitted.
+   Other semantic stars, bookmarks and the animated home sphere are distinct. */
 .sv-sayvi-symbol,
 .sv-sayvi-label::before,
 .svcp-task-sayvi::before,
@@ -15,8 +17,8 @@
   display:inline-block;
   flex:0 0 auto;
   background-color:currentColor;
-  -webkit-mask:url("./sayvi-mark.svg?v=1") center / contain no-repeat;
-  mask:url("./sayvi-mark.svg?v=1") center / contain no-repeat;
+  -webkit-mask:url("./seyveo-circular-interlace-mono.svg?v=1") center / contain no-repeat;
+  mask:url("./seyveo-circular-interlace-mono.svg?v=1") center / contain no-repeat;
   pointer-events:none;
 }
 .sv-sayvi-symbol {
