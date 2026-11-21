@@ -125,7 +125,7 @@
       (wet?'<path d="m8 19.5-.8 1.8m4.8-1.8-.8 1.8m4.8-1.8-.8 1.8"/>':
       snow?'<path d="M8 19.5v2m4-2v2m4-2v2"/>':
       fog?'<path d="M6 20.5h12"/>':'');
-    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+body+'</svg>';
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+body+'</svg>';
   };
   // These callbacks are wired by the temporary Home preview only.
   let startHomeWeek=()=>{};
@@ -257,7 +257,7 @@
       const shortWeekDay=date=>new Intl.DateTimeFormat('ru-RU',{
         timeZone:'Europe/Moscow',weekday:'short'
       }).format(new Date(date+'T12:00:00Z')).replace('.','');
-      const moonSVG='<svg viewBox="0 0 24 24" aria-hidden="true">'+
+      const moonSVG='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round">'+
         '<path d="M20 15.5A8.4 8.4 0 0 1 8.5 4 8.6 8.6 0 1 0 20 15.5Z"/></svg>';
       function renderWeekFace(){
         const days=current?.days.slice(0,7)||[];
