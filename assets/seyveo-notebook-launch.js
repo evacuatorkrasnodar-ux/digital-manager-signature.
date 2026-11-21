@@ -19,11 +19,16 @@
  const legacyInkTile=document.getElementById('noteModePaper');
  noteTile?.querySelector('.paper-choice-copy strong')?.replaceChildren(document.createTextNode('Заметка'));
  noteTile?.querySelector('.paper-choice-copy small')?.replaceChildren(document.createTextNode('Текст и от руки'));
+ // Distinguish an OCR scanner from the paperclip inside a note:
+ // the former extracts text, while the latter adds a photo or a file.
+ const scanTile=document.getElementById('noteModeScan');
+ scanTile?.querySelector('.paper-choice-copy strong')?.replaceChildren(document.createTextNode('Сканировать'));
+ scanTile?.querySelector('.paper-choice-copy small')?.replaceChildren(document.createTextNode('Фото → текст'));
  if(legacyInkTile)legacyInkTile.hidden=true;
  const destinations={
   noteModeText:{label:'Заметка',run:()=>window.SEYVEO_NOTES_API?.reviewText?.('')},
   noteModePaper:{label:'От руки',run:()=>window.SEYVEO_HANDWRITING?.open?.()},
-  noteModeScan:{label:'Фото → текст',run:()=>window.SEYVEO_NOTE_SCANNER?.open?.()},
+  noteModeScan:{label:'Сканировать',run:()=>window.SEYVEO_NOTE_SCANNER?.open?.()},
   noteModeDraw:{label:'Рисовать',run:()=>window.SEYVEO_PAPER?.open?.()}
  };
  function report(message){
