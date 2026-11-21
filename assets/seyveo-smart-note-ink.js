@@ -41,8 +41,8 @@
  bar.insertBefore(sayviBtn,check);
  bar.insertBefore(voiceBtn,check);
  bar.insertBefore(eraserBtn,check);
+ bar.insertBefore(paperBtn,check);
  bar.insertBefore(tableBtn,bar.querySelector('[data-note-tool="heading"]'));
- bar.insertBefore(paperBtn,bar.querySelector('[data-note-tool="heading"]'));
  // Popovers must live outside the horizontally clipped scroller. Keep the
  // original nodes and their delegated handlers, never clone a working menu.
  for(const id of ['svNoteAttachmentMenu','svNoteFormatMenu']){
@@ -113,7 +113,7 @@
 
  // Paper is an actual note property. The background is never part of the
  // saved vector strokes, so changing the template cannot erase handwriting.
- const PAPER_STYLES=new Set(['plain','lined','grid']);
+ const PAPER_STYLES=new Set(['plain','lined','dots','grid']);
  const normalizePaper=value=>PAPER_STYLES.has(value)?value:'plain';
  // The paper pattern is a single full-width sheet behind every control.
  // It is independent of the inset text field and drawing hit region, so
@@ -129,6 +129,7 @@
  paperPanel.innerHTML=`<strong>Стиль бумаги</strong><div class="sv-smart-paper-options">
   <button type="button" data-sv-paper-choice="plain" aria-label="Чистый белый лист"><span class="sv-smart-paper-swatch" aria-hidden="true"></span><span>Чистый</span></button>
   <button type="button" data-sv-paper-choice="lined" aria-label="Бумага в линейку"><span class="sv-smart-paper-swatch" aria-hidden="true"></span><span>Линейка</span></button>
+  <button type="button" data-sv-paper-choice="dots" aria-label="Бумага в точку"><span class="sv-smart-paper-swatch" aria-hidden="true"></span><span>Точки</span></button>
   <button type="button" data-sv-paper-choice="grid" aria-label="Бумага в клетку"><span class="sv-smart-paper-swatch" aria-hidden="true"></span><span>Клетка</span></button>
  </div>`;
  dlg.append(paperPanel);
