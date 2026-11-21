@@ -25,20 +25,8 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
  :is(button#noteReviewBack.sv-note-back-arrow,button#svNoteDone.sv-note-nav-circle)::after{
  content:none!important;display:none!important;
 }
-/* Dark mode retains its existing graphite pressed state. */
-html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- button#noteReviewBack.sv-note-back-arrow:active{
- border:var(--sv-inset-rim)!important;background:var(--sv-inset-fill)!important;
- box-shadow:var(--sv-inset-depth)!important;
-}
-/* Light buttons use the same White Pearl micro-press as the Home dock. */
-html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- button#noteReviewBack.sv-note-back-arrow:active{
- border:var(--sv-white-pearl-edge)!important;
- background:var(--sv-white-pearl-press-fill)!important;
- box-shadow:var(--sv-white-pearl-press-shadow)!important;
- transform:scale(var(--sv-white-pearl-press-scale))!important;
-}
+/* Back is a navigation control, not a pressable toggle. Its white/dark
+   resting material remains unchanged while the user touches it. */
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  button#svNoteDone.sv-note-nav-circle:active{
  background:#c69c09!important;
@@ -67,12 +55,12 @@ html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-rev
 }
 html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  :is(button#noteReviewBack,button#svNoteDone):focus-visible{
- outline:2px solid #087df1!important;outline-offset:2px!important;
+ outline:2px solid rgba(55,65,76,.62)!important;outline-offset:3px!important;
 }
 /* Use the existing 44px circles; no added pseudo-layers or halo.
    The approved lower New Note button defines the Pearl shadow and rim. */
 html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- button#noteReviewBack.sv-note-back-arrow:not(:active){
+ button#noteReviewBack.sv-note-back-arrow{
  border:var(--sv-white-pearl-edge)!important;
  background:var(--sv-white-pearl-surface)!important;
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
