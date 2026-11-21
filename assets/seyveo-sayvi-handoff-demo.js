@@ -657,6 +657,9 @@
   // Settle the REAL Home first, so its final orb coordinates are authoritative.
   function runPureLogo(){
     if(done)return;
+    // One logo, exactly in the position of the final Home sphere. It stays
+    // fully hidden until the image is downloaded and decoded. An incomplete
+    // PNG must NEVER paint its top half on a white splash screen.
     const scene=document.createElement('div');
     scene.className='sv-pure-launch';
     scene.id='svPureLaunch';
@@ -665,57 +668,73 @@
     const logo=document.createElement('div');
     logo.className='sv-pure-launch-logo';
     const artwork=document.createElement('img');
-    artwork.src='assets/seyveo-circular-interlace-approved-color.png?v=1';
-    artwork.alt='';artwork.width=1254;artwork.height=1254;artwork.draggable=false;
-    logo.append(artwork);
-    scene.append(logo);
-    // This guard also disables the old studio wordmark drawn inside the orb.
+    artwork.src='assets/seyveo-circular-interlace-approved-color.png?v=2';
+    artwork.alt='';
+    artwork.width=1254;artwork.height=1254;artwork.draggable=false;
+    artwork.loading='eager';artwork.decoding='sync';
+    logo.append(artwork);scene.append(logo);
+    // Attach to the root, not BODY. On iOS a transformed/clipped BODY can
+    // create a short fixed-position containing block and slice the sphere.
     root.classList.add('sv-pure-launch-completed');
-    document.body.append(scene);
-    const born=performance.now();
+    document.documentElement.appendChild(scene);
     finish({stayHome:true});
 
+    let removed=false,ready=false,started=false;
+    let zoomTimer=0,doneTimer=0,watchdogTimer=0;
+    const cleanup=()=>{
+      if(removed)return;
+      removed=true;
+      clearTimeout(zoomTimer);clearTimeout(doneTimer);clearTimeout(watchdogTimer);
+      scene.remove();
+    };
+    // Fail open to the functioning Home, never leave a permanent white sheet.
+    watchdogTimer=setTimeout(cleanup,8500);
+    window.addEventListener('pagehide',cleanup,{once:true});
+    scene.addEventListener('pointerdown',event=>{
+      event.preventDefault();event.stopPropagation();
+    },{passive:false});
+
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      if(!scene.isConnected)return;
-      const target=orb.getBoundingClientRect();
-      const windowWidth=document.documentElement.clientWidth||window.innerWidth;
-      const finalSize=target.width>80?target.width:Math.min(windowWidth*.78,315);
-      const x=target.width>80?target.left+target.width/2:windowWidth/2;
-      const y=target.height>80?target.top+target.height/2:window.innerHeight*.42;
-      const firstSize=finalSize*.73;
-      scene.style.setProperty('--sv-pure-x',x+'px');
-      scene.style.setProperty('--sv-pure-y',y+'px');
-      scene.style.setProperty('--sv-pure-size',firstSize+'px');
-      // Never exceed the exact rendered size of Sayvi's Home sphere.
-      scene.style.setProperty('--sv-pure-scale',String(finalSize/firstSize));
-      let started=false;
-      let endTimer=0;
-      const remove=()=>{clearTimeout(endTimer);scene.remove()};
+      if(removed)return;
+      const rect=orb.getBoundingClientRect();
+      const vw=document.documentElement.clientWidth||window.innerWidth;
+      const vh=window.innerHeight;
+      const diameter=rect.width>80?rect.width:Math.min(vw*.78,315);
+      const cx=rect.width>80?rect.left+rect.width/2:vw/2;
+      const cy=rect.height>80?rect.top+rect.height/2:vh*.42;
+      const initial=diameter*.73;
+      scene.style.setProperty('--sv-pure-x',cx+'px');
+      scene.style.setProperty('--sv-pure-y',cy+'px');
+      scene.style.setProperty('--sv-pure-size',initial+'px');
+      // Grow only until the precise visible size of the real Sayvi orb.
+      scene.style.setProperty('--sv-pure-scale',String(diameter/initial));
+
       const approach=()=>{
-        if(started||!scene.isConnected)return;
+        if(removed||started)return;
         started=true;
         scene.classList.add('is-approaching');
-        endTimer=setTimeout(remove,900);
+        doneTimer=setTimeout(cleanup,940);
       };
-      const playWhenReady=()=>{
-        if(started||!scene.isConnected)return;
-        setTimeout(approach,Math.max(0,2600-(performance.now()-born)));
+      const showWholeImage=()=>{
+        if(removed||ready||!artwork.naturalWidth)return;
+        ready=true;
+        scene.classList.add('is-ready');
+        // Two full seconds with the WHOLE original sphere on screen.
+        zoomTimer=setTimeout(approach,2300);
       };
-      const loadReady=document.readyState==='complete'
-        ?Promise.resolve()
-        :new Promise(resolve=>{
-          window.addEventListener('load',resolve,{once:true});
-          setTimeout(resolve,1700);
-        });
-      Promise.all([loadReady,
-        typeof artwork.decode==='function'?artwork.decode().catch(()=>{}):Promise.resolve()
-      ]).then(playWhenReady).catch(playWhenReady);
-      // Safety watchdog: no permanent white loading screen on old Safari.
-      setTimeout(approach,5200);
-      window.addEventListener('pagehide',remove,{once:true});
-      scene.addEventListener('pointerdown',event=>{
-        event.preventDefault();event.stopPropagation();
-      },{passive:false});
+      const decodeComplete=()=>{
+        if(removed||ready)return;
+        if(typeof artwork.decode==='function')
+          artwork.decode().then(showWholeImage).catch(()=>{
+            if(artwork.complete&&artwork.naturalWidth)showWholeImage();
+          });
+        else showWholeImage();
+      };
+      if(artwork.complete&&artwork.naturalWidth)decodeComplete();
+      else {
+        artwork.addEventListener('load',decodeComplete,{once:true});
+        artwork.addEventListener('error',cleanup,{once:true});
+      }
     }));
   }
 
