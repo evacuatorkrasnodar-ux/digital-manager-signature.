@@ -482,3 +482,25 @@ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-pap
   transition:none!important;
  }
 }
+
+/* DRAWING · CLEAR PALETTE LANE.
+   The violet/blue haze in iOS was not a separate material: colorful swatches
+   were scrolling directly behind the translucent Save circle. Reserve a
+   genuine unpainted lane at the right, instead of using an opaque curtain,
+   white overlay, masking band, or a second surface. All colors remain
+   reachable by horizontal swiping INSIDE the shortened palette strip. */
+html:root[data-theme="light"] body #notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
+ > footer.sv-paper-bottom > .sv-paper-palette > .sv-paper-swatches{
+ box-sizing:border-box!important;
+ flex:0 0 calc(100% - 68px)!important;
+ width:calc(100% - 68px)!important;
+ max-width:calc(100% - 68px)!important;
+ min-width:0!important;
+ margin-right:68px!important;
+ padding-right:3px!important;
+ overflow-x:auto!important;
+ -webkit-mask-image:none!important;
+ mask-image:none!important;
+}
+/* Hide color only behind the button, not behind the glass.
+   The circle still reads exactly the shared White Pearl token set. */
