@@ -70,7 +70,9 @@
    splash.style.setProperty('--sv-launch-scale',String(diameter/firstSize));
    // Paint the complete decoded asset as one background. No progressive
    // half-PNG painting or globally styled IMG element.
-   mark.style.backgroundImage='url("'+img.src+'")';
+   // Override the isolated element reset; otherwise its important "all"
+   // rule erases a normal inline background image (blank splash).
+   mark.style.setProperty('background-image','url("'+img.src+'")','important');
    splash.dataset.stage='ready';
    const animate=()=>{
     if(closed)return;
