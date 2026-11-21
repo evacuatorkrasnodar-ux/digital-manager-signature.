@@ -266,7 +266,14 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 @media(max-width:699px){
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
   form#noteReviewForm.sv-note-editor{
-  padding-bottom:calc(54px + env(safe-area-inset-bottom,0px))!important;
+  /* The text scroller, not a hidden footer block, owns the last-line clearance. */
+  padding-bottom:0!important;
+ }
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+  form#noteReviewForm.sv-note-editor:not(:has(#svNoteAttachments:not([hidden])))
+  :is(textarea#noteReviewText,.sv-note-rich-editor:not([hidden])){
+  padding-bottom:calc(57px + env(safe-area-inset-bottom,0px))!important;
+  scroll-padding-bottom:calc(57px + env(safe-area-inset-bottom,0px))!important;
  }
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
   .sv-note-bottom{flex-basis:44px!important;height:44px!important;min-height:44px!important}
