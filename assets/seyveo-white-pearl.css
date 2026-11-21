@@ -229,6 +229,48 @@ html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open]
  backdrop-filter:none!important;
 }
 
+/* NOTEBOOK KEYBOARD ACCESSORY · single 42px floating surface.
+ * The accessory spans almost the viewport, so the regular 26px floating
+ * shadow paints a visible full-width haze behind the capsule on iPhone.
+ * Remove any painted parent/background. Keep ONE existing ::before as real
+ * White Pearl glass with a contained, optically clean shadow.
+ * No size, keyboard anchoring, swipe, mask, icon, or press-state changes. */
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact{
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;outline:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom::before,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom::after,
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::after{
+ content:none!important;display:none!important;
+ background:none!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
+ .sv-note-bottom .sv-note-tool-row.sv-shared-dock::before{
+ /* Same 18% white frost and 4px blur from the canonical tokens.
+    Only this wide accessory receives shorter ambient depth. */
+ background:var(--sv-white-pearl-surface)!important;
+ border:var(--sv-white-pearl-edge)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:
+  0 2px 7px rgba(42,52,72,.052),
+  0 0 0 .35px rgba(164,173,187,.13),
+  inset 0 1px 1px rgba(255,255,255,.75)!important;
+}
+
 /* Opt-in future controls. Add one class to existing elements; don't copy
    palette values into individual screens and don't add decorative wrappers. */
 html:root[data-theme="light"] body .sv-white-pearl-circle{
