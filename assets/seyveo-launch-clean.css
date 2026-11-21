@@ -1,6 +1,6 @@
-/* SEYVEO · cinematic one-sphere handoff.
-   Home remains untouched. The approved mark resolves into the *real*
-   Home sphere art with identical coordinates and final diameter. */
+/* SEYVEO · iOS icon-to-Home continuity. The approved icon material opens
+   into the same silver-green emblem, which resolves to the real Sayvi orb.
+   No fake system animation, second square button, or Home transforms. */
 #svLaunchClean[hidden]{display:none!important}
 #svLaunchClean{
  all:initial;
@@ -19,7 +19,7 @@
   radial-gradient(ellipse 44% 34% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(145,191,168,.105),transparent 88%),
   radial-gradient(ellipse 90% 67% at 27% 9%,rgba(67,113,90,.18),transparent 72%),
   radial-gradient(ellipse 85% 75% at 100% 100%,rgba(1,11,8,.42),transparent 78%),
-  linear-gradient(138deg,#142e24 0%,#10271f 35%,#0c2119 71%,#091913 100%)!important;
+  linear-gradient(138deg,#132d23 0%,#10271f 35%,#0e221b 71%,#091913 100%)!important;
  opacity:1;
  pointer-events:auto!important;
  overscroll-behavior:contain!important;touch-action:none!important;
@@ -94,21 +94,21 @@
 }
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark{
- animation:svLaunchApproach 3300ms linear both!important;
+ animation:svLaunchApproach var(--sv-launch-flight-ms,3300ms) linear both!important;
 }
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark::before,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark::before{
- animation:svLaunchMarkOut 3300ms linear both!important;
+ animation:svLaunchMarkOut var(--sv-launch-flight-ms,3300ms) linear both!important;
 }
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanMark::after,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanMark::after{
- animation:svLaunchHomeIn 3300ms linear both!important;
+ animation:svLaunchHomeIn var(--sv-launch-flight-ms,3300ms) linear both!important;
 }
 /* The overlay dissolves immediately after the fast approach ends.
    At this point its orb art is pixel-aligned with the underlying Home orb. */
 @keyframes svLaunchSceneOpen{to{opacity:0}}
 #svLaunchClean[data-stage="reveal"]{
- animation:svLaunchSceneOpen 560ms cubic-bezier(.18,.58,.35,1) forwards!important;
+ animation:svLaunchSceneOpen var(--sv-launch-fade-ms,560ms) cubic-bezier(.18,.58,.35,1) forwards!important;
  pointer-events:none!important;
 }
 @media(prefers-reduced-motion:reduce){
@@ -183,12 +183,12 @@
 #svLaunchClean[data-stage="ready"] .svLaunchCleanName,
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanName,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanName{
- animation:svLaunchTypeIn 950ms cubic-bezier(.22,1,.36,1) 120ms both!important;
+ animation:svLaunchTypeIn var(--sv-launch-title-ms,950ms) cubic-bezier(.22,1,.36,1) 120ms both!important;
 }
 #svLaunchClean[data-stage="ready"] .svLaunchCleanDescriptor,
 #svLaunchClean[data-stage="zoom"] .svLaunchCleanDescriptor,
 #svLaunchClean[data-stage="reveal"] .svLaunchCleanDescriptor{
- animation:svLaunchTypeIn 1050ms cubic-bezier(.22,1,.36,1) 260ms both!important;
+ animation:svLaunchTypeIn var(--sv-launch-subtitle-ms,1050ms) cubic-bezier(.22,1,.36,1) 260ms both!important;
 }
 @media(prefers-reduced-motion:reduce){
  #svLaunchClean .svLaunchCleanName,
