@@ -5262,6 +5262,8 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();
 // launch cover previously started the logo animation before it was visible.
 let homeLaunchLogoShown=false;
 function presentHomeLaunchLogo(){
+ // Launch logo is already on its own screen; never overlay it on Sayvi.
+ if(document.documentElement.classList.contains('sv-pure-launch-completed'))return;
  if(homeLaunchLogoShown)return;
  requestAnimationFrame(()=>requestAnimationFrame(()=>{
   const root=document.documentElement,orb=$('orb');
@@ -5722,7 +5724,8 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-my-broadcast.css?v=5">
 <script src="assets/seyveo-my-broadcast.js?v=9"></script>
 <link rel="stylesheet" href="assets/seyveo-sayvi-handoff-demo.css?v=81">
-<script src="assets/seyveo-sayvi-handoff-demo.js?v=103"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=44"><script src="assets/seyveo-review-cards.js?v=25"></script>
+<link rel="stylesheet" href="assets/seyveo-launch-pure.css?v=1">
+<script src="assets/seyveo-sayvi-handoff-demo.js?v=pure-launch-1"></script><link rel="stylesheet" href="assets/seyveo-review-cards.css?v=44"><script src="assets/seyveo-review-cards.js?v=25"></script>
 <link rel="stylesheet" href="assets/seyveo-progressive-discovery.css?v=2">
 <script src="assets/seyveo-progressive-discovery.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-home-status-light.css?v=2">
