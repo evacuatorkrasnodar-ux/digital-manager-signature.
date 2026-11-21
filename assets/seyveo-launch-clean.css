@@ -123,9 +123,8 @@
  #svLaunchClean[data-stage="reveal"]{animation:none!important;opacity:0!important}
 }
 
-/* SEYVEO director's cut: the two lines remain attached to the camera shot.
-   The sphere accelerates harder; the lettering comes forward more gently and
-   dissolves before the true Home sphere lands. No second logo or headline. */
+/* SEYVEO director's cut: the logo and wordmark share ONE animation clock.
+   The genuine Home orb is the only element that survives the handoff. */
 #svLaunchClean .svLaunchCleanSignature{
  all:initial;
  position:absolute!important;
@@ -165,7 +164,7 @@
  background:linear-gradient(158deg,#ffffff 0%,#e6f0ed 20%,#a3bcb4 39%,#f7fcf9 54%,#9cb7ac 77%,#e7f0ea 100%)!important;
  background-clip:text!important;-webkit-background-clip:text!important;
  -webkit-text-fill-color:transparent!important;
- filter:drop-shadow(0 1px 3px rgba(3,13,10,.26));
+ text-shadow:0 1px 3px rgba(3,13,10,.24)!important;
 }
 #svLaunchClean .svLaunchCleanDescriptor{
  font-size:clamp(9px,2.3vw,11px)!important;
@@ -224,4 +223,39 @@
 }
 @media(prefers-reduced-motion:reduce){
  #svLaunchClean .svLaunchCleanSignature{animation:none!important;opacity:1!important}
+}
+
+/* Single-timeline handoff.
+   All transforms and fades come from one requestAnimationFrame timestamp.
+   This overrides the legacy multi-segment CSS animations that could jump at
+   keyframe velocity boundaries, or drift relative to each other on iOS. */
+#svLaunchClean[data-motion="single-frame"] .svLaunchCleanMark{
+ animation:none!important;
+ transform:translate3d(-50%,-50%,0) scale(var(--sv-orb-scale,1))!important;
+}
+#svLaunchClean[data-motion="single-frame"] .svLaunchCleanMark::before{
+ animation:none!important;
+ opacity:var(--sv-logo-opacity,1)!important;
+}
+#svLaunchClean[data-motion="single-frame"] .svLaunchCleanMark::after{
+ animation:none!important;
+ opacity:var(--sv-real-orb-opacity,0)!important;
+}
+#svLaunchClean[data-motion="single-frame"] .svLaunchCleanSignature{
+ animation:none!important;
+ transform:translate3d(-50%,var(--sv-text-shift,0px),0)
+  scale(var(--sv-text-scale,.85))!important;
+ opacity:var(--sv-text-opacity,1)!important;
+}
+/* No filter animation or position tween on either lockup component. */
+#svLaunchClean[data-motion="single-frame"] .svLaunchCleanName,
+#svLaunchClean[data-motion="single-frame"] .svLaunchCleanDescriptor{
+ opacity:1!important;
+ animation:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #svLaunchClean[data-motion="single-frame"] .svLaunchCleanMark,
+ #svLaunchClean[data-motion="single-frame"] .svLaunchCleanSignature{
+  animation:none!important;
+ }
 }
