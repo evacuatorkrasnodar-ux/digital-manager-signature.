@@ -2774,7 +2774,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <textarea id="noteReviewText" maxlength="8000" rows="4" required placeholder="Что нужно запомнить?" spellcheck="true" autocorrect="on" autocapitalize="sentences"></textarea>
 <small id="noteReviewStatus" role="status" aria-live="polite" hidden></small>
 <div class="sv-note-bottom">
-<div class="sv-note-tool-row sv-shared-dock">
+<div class="sv-note-tool-row sv-shared-dock sv-note-home-dock-row">
 <div class="sv-note-tools sv-note-tools-compact" role="toolbar" aria-label="Инструменты заметки">
 <button type="button" data-note-tool="checklist" title="Контрольный список" aria-label="Список с галочками"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.6" cy="7" r="2.65"/><path d="m4.4 7 0.9.9 1.7-1.85M11.2 7h9.1"/><circle cx="5.6" cy="17" r="2.65"/><path d="M11.2 17h9.1"/></svg></button>
 <button type="button" data-note-tool="attachment" title="Фото и файлы" aria-label="Фото и файлы" aria-expanded="false" aria-controls="svNoteAttachmentMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8.1 12.4 6.3-6.3a3.15 3.15 0 0 1 4.45 4.45l-8.9 8.9a5 5 0 0 1-7.05-7.05l9.1-9.1"/></svg></button>
@@ -2804,9 +2804,11 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <button type="button" data-note-tool="camera" hidden tabindex="-1" aria-hidden="true"></button>
 <button type="button" data-note-tool="voice" hidden tabindex="-1" aria-hidden="true"></button>
 </div>
-<button id="svNoteNewStandalone" class="sv-note-draw-standalone" type="button" title="Новая заметка" aria-label="Создать новую заметку">
-<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></svg>
+<div class="sv-note-home-new-dock" role="group" aria-label="Создание заметки">
+<button id="svNoteHomeNew" class="sv-note-home-new-button" type="button" title="Новая заметка" aria-label="Создать новую заметку">
+<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13.3 4H6.4A3.4 3.4 0 0 0 3 7.4v10.2A3.4 3.4 0 0 0 6.4 21h10.2a3.4 3.4 0 0 0 3.4-3.4v-6.8"/><path d="m12 12.1 7.2-7.2a1.8 1.8 0 0 1 2.5 2.5l-7.2 7.2-3.5 1z"/></svg>
 </button>
+</div>
 </div>
 <button id="noteReviewCancel" type="button" hidden aria-hidden="true" tabindex="-1">Отмена</button>
 </div>
@@ -5661,7 +5663,7 @@ window.addEventListener('load',()=>{
   dlg.querySelector('[data-note-tool="heading"]')?.setAttribute('aria-expanded','false');
   if(!ok)status('Не удалось применить форматирование.');
  });
- document.getElementById('svNoteNewStandalone')?.addEventListener('click',()=>{
+ document.getElementById('svNoteHomeNew')?.addEventListener('click',()=>{
   window.SEYVEO_NOTES_EDITOR?.newNote();
  });
  document.getElementById('svNoteAttachmentMenu')?.addEventListener('click',event=>{
@@ -5761,7 +5763,7 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-note-voice.js?v=3"></script>
 <link rel="stylesheet" href="assets/seyveo-note-voice.css?v=6">
 <link rel="stylesheet" href="assets/seyveo-notebook-editor-v3.css?v=42">
-<link rel="stylesheet" href="assets/seyveo-universal-dock-inset.css?v=3">
+<link rel="stylesheet" href="assets/seyveo-universal-dock-inset.css?v=4">
 <link rel="stylesheet" href="assets/seyveo-notebook-context-actions.css?v=24">
 <link rel="stylesheet" href="assets/seyveo-paper-actions-compact.css?v=3">
 <script src="assets/seyveo-paper-actions-compact.js?v=3"></script>
@@ -5769,4 +5771,5 @@ window.addEventListener('load',()=>{
 <script src="assets/seyveo-paper-tool-picker.js?v=5"></script>
 <link rel="stylesheet" href="assets/seyveo-unified-menu-material.css?v=3">
 <link rel="stylesheet" href="assets/seyveo-depth-system.css?v=8">
+<link rel="stylesheet" href="assets/seyveo-notebook-home-new-dock.css?v=1">
 </body></html>
