@@ -49,9 +49,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  --svcp-room-bubble-text:#F6F6F7;
 }
 :root[data-theme="light"] #svcpWorkChatScreen{
- --svcp-room-self:#E3E3E5;
- --svcp-room-other:#F1F1F3;
- --svcp-room-bubble-text:#25262A;
+ --svcp-room-self:#36A6F7;
+ --svcp-room-other:#EBECEF;
+ --svcp-room-bubble-text:#24262B;
 }
 #svcpWorkChatScreen [hidden]{display:none!important}
 #svcpWorkChatScreen button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
@@ -289,7 +289,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
 }
 #svcpWorkChatScreen #svcpMessages{
  flex:1 1 auto!important;min-height:0!important;max-height:none!important;height:0!important;
- width:100%;display:flex;flex-direction:column;gap:7px;overflow-x:hidden;overflow-y:auto!important;
+ width:100%;display:flex;flex-direction:column;gap:9px;overflow-x:hidden;overflow-y:auto!important;
  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
  padding:16px max(16px,env(safe-area-inset-right,0px))
   calc(80px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
@@ -297,22 +297,22 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  scroll-padding-bottom:18px
 }
 #svcpWorkChatScreen .svcp-chat-day{
- align-self:center;flex:0 0 auto;margin:9px 0 5px;padding:3px 7px;border-radius:0;
+ align-self:center;flex:0 0 auto;margin:13px 0 6px;padding:3px 7px;border-radius:0;
  background:transparent!important;border:0;box-shadow:none;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  font-size:11px;font-weight:550;color:#B8BEC4
 }
 #svcpWorkChatScreen .svcp-bubble{
  position:relative;align-self:flex-start;max-width:min(88%,410px);min-width:0;
- border:0!important;border-radius:16px 16px 16px 6px!important;
+ border:0!important;border-radius:19px 19px 19px 6px!important;
  background:var(--svcp-room-other,#2F3337)!important;
  color:var(--svcp-room-bubble-text,#F6F6F7)!important;
- padding:9px 12px!important;overflow-wrap:anywhere;
+ padding:10px 13px!important;overflow-wrap:anywhere;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  box-shadow:none!important
 }
 #svcpWorkChatScreen .svcp-bubble.is-self{
- align-self:flex-end;border-radius:16px 16px 6px 16px!important;
+ align-self:flex-end;border-radius:19px 19px 6px 19px!important;
  border:0!important;background:var(--svcp-room-self,#38383A)!important
 }
 #svcpWorkChatScreen .svcp-bubble.is-sayvi{
@@ -345,7 +345,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  font-size:10px!important;color:var(--secondary);margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap
 }
 #svcpWorkChatScreen .svcp-message-text{
- font-size:15px!important;line-height:1.43!important;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal
+ font-size:16px!important;line-height:1.43!important;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal
 }
 #svcpWorkChatScreen :is(.svcp-message-edited,.svcp-bubble-saved){
  display:block;margin:6px 0 0;font-size:11px;color:var(--secondary);line-height:1.35
@@ -4212,63 +4212,9 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] .svcp-
 }
 
 
-/* SEYVEO messages: three visible actions only — Reply, Bookmark, Assign.
-   The other actions live in a deliberate flat-graphite long-press menu. */
-#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.svcp-has-inline-actions{
- margin-bottom:39px!important;
- -webkit-touch-callout:none!important;
-}
-#svcpWorkChatScreen[data-view="room"] .svcp-bubble .svcp-message-inline-actions{
- position:absolute!important;top:calc(100% + 1px)!important;bottom:auto!important;
- left:0!important;right:auto!important;z-index:4!important;
- box-sizing:border-box!important;
- display:flex!important;align-items:center!important;justify-content:flex-start!important;
- gap:4px!important;width:max-content!important;max-width:calc(100vw - 28px)!important;
- height:40px!important;min-height:40px!important;
- margin:0!important;padding:0!important;
- border:0!important;border-radius:0!important;
- background:transparent!important;background-image:none!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- overflow:visible!important;
-}
-#svcpWorkChatScreen[data-view="room"] .svcp-bubble.is-self .svcp-message-inline-actions{
- left:auto!important;right:0!important;
-}
-#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-icon-action{
- box-sizing:border-box!important;display:grid!important;place-items:center!important;
- flex:0 0 40px!important;width:40px!important;min-width:40px!important;
- height:40px!important;min-height:40px!important;
- margin:0!important;padding:10px!important;
- border:0!important;border-radius:11px!important;
- background:transparent!important;background-image:none!important;
- color:var(--secondary)!important;box-shadow:none!important;
- cursor:pointer!important;-webkit-tap-highlight-color:transparent!important;
-}
-#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-icon-action svg{
- box-sizing:border-box!important;display:block!important;width:20px!important;height:20px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;filter:none!important;
-}
-#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-action-star.is-saved{
- color:#F1F1F3!important;
-}
-#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-action-star.is-saved svg{
- fill:currentColor!important;
-}
-#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-icon-action:is(:active,:focus-visible){
- background:rgba(180,185,192,.13)!important;
-}
-#svcpWorkChatScreen[data-view="room"] .svcp-message-inline-actions .svcp-icon-action:focus-visible{
- outline:2px solid currentColor!important;outline-offset:-2px!important;
-}
-#svcpWorkChatScreen[data-view="room"] .svcp-bubble.svcp-has-inline-actions{
- overflow:visible!important;
-}
-#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-bubble.svcp-has-inline-actions:focus-visible{
- outline:1px solid rgba(211,213,219,.55)!important;
- outline-offset:2px!important;
-}
-
+/* Messages are now clean by construction: no three-button action rail,
+   no 39px bottom reserve. The existing accessible context menu below owns
+   Reply, Bookmark, Assign, Copy, and manager-only edit/delete. */
 /* One compact keyboard-, pointer- and touch-accessible context menu.
    It is attached to the fullscreen chat, not to a clipped message bubble. */
 #svcpWorkChatScreen .svcp-message-context-menu{
@@ -4424,9 +4370,9 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] .svcp-
 #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversationBack{
  box-sizing:border-box!important;
  display:grid!important;place-items:center!important;
- flex:0 0 40px!important;
- width:40px!important;min-width:40px!important;max-width:40px!important;
- height:40px!important;min-height:40px!important;max-height:40px!important;
+ flex:0 0 44px!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:50%!important;
  background:#38383A!important;color:#F6F6F7!important;
@@ -4435,6 +4381,33 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] .svcp-
 #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversationHeading{
  min-width:0!important;
  padding-inline:0!important;
+}
+/* Work-chat message contrast follows the requested iMessage-like visual:
+   outgoing blue, incoming quiet silver, readable local-only timestamp.
+   Content, local-delivery disclosure and dark theme are untouched. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-self:not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only){
+ color:#fff!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-self:not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only) .svcp-message-text{
+ color:#fff!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-self > .svcp-message-stamp,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-self > .svcp-message-stamp > .svcp-time,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble.is-self .svcp-message-local-check{
+ color:rgba(255,255,255,.85)!important;
+ text-shadow:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversationBack{
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ color:var(--sv-white-pearl-ink,#0b0b0d)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 8px 20px rgba(42,52,72,.11))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversationBack:active{
+ background:rgba(226,233,240,.45)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow,inset 0 2px 3px rgba(31,42,58,.16))!important;
 }
 /* Animate just the title bar opacity; never transform the scrolling chat,
    which creates a containing block and unstable compositing on Safari. */
