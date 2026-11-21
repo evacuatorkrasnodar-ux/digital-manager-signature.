@@ -4254,8 +4254,27 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] .svcp-
 #svcpWorkChatScreen .svcp-message-context-menu > .svcp-action-delete{
  color:#FFCBCB!important;
 }
-:root[data-theme="light"] #svcpWorkChatScreen .svcp-message-context-menu{
- background:#38383A!important;
+/* Same white reading-menu material as the rest of SEYVEO.
+   The dark theme retains its existing graphite context actions. */
+html:root[data-theme="light"] body #svcpWorkChatScreen .svcp-message-context-menu{
+ background:var(--sv-menu-bg,#FCFCFD)!important;
+ color:var(--sv-menu-text,#252A33)!important;
+ border:var(--sv-menu-border,1px solid rgba(130,139,150,.20))!important;
+ border-radius:var(--sv-menu-radius,20px)!important;
+ box-shadow:var(--sv-menu-shadow,0 12px 34px rgba(25,33,45,.16))!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen .svcp-message-context-menu > .svcp-message-context-action{
+ color:var(--sv-menu-text,#252A33)!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen .svcp-message-context-menu > .svcp-message-context-action:is(:active,:focus-visible){
+ background:var(--sv-menu-item-selected,#E6E9ED)!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen .svcp-message-context-menu > .svcp-action-delete{
+ color:#B6313D!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble:not(.svcp-file-only){
+ /* iOS: a long press opens the action menu instead of text-callout chrome. */
+ -webkit-touch-callout:none!important;
 }
 /* SEYVEO 2026-11-09: Sayvi is accessed from the composer, never duplicated in the room header. */
 #svcpWorkChatScreen[data-view="room"] .svcp-conversation-bar > #svcpCallSayvi{
