@@ -72,6 +72,26 @@
   });
  }
 
+ function enableTodayPeek(badge,heading){
+  if(badge.dataset.svTodayWeatherReady)return;
+  badge.dataset.svTodayWeatherReady='1';
+  badge.setAttribute('role','button');
+  badge.setAttribute('tabindex','0');
+  badge.setAttribute('aria-haspopup','dialog');
+  badge.setAttribute('aria-expanded','false');
+  const activate=()=>{
+   if(heading.dataset.today!=='true')return;
+   window.SEYVEO_WEATHER_PEEK?.open?.({
+    anchor:badge,date:heading.dataset.weatherDate,origin:'agenda'
+   });
+  };
+  badge.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();activate();});
+  badge.addEventListener('keydown',event=>{
+   if(event.key==='Enter'||event.key===' '){
+    event.preventDefault();event.stopPropagation();activate();
+   }
+  });
+ }
  function validLocation(input){
   if(!input||typeof input.name!=='string'||!input.name.trim()||
     !Number.isFinite(input.latitude)||!Number.isFinite(input.longitude)||
@@ -155,9 +175,18 @@
    badge.hidden=false;
    const tooltip='Прогноз для '+location.name+': '+description+', '+temperature(item.max)+' / '+temperature(item.min)+
     (lastUpdate?' · обновлено '+lastUpdate:'')+' · данные: Open-Meteo (CC BY 4.0)';
-   if(touchWeather?.matches){badge.removeAttribute('title');enableMobileSource(badge);}
-   else badge.title=tooltip;
-   badge.setAttribute('aria-label',tooltip);
+   if(heading.dataset.today==='true'){
+    badge.removeAttribute('title');
+    enableTodayPeek(badge,heading);
+    badge.setAttribute('aria-label','Показать карточку погоды от Сэйви. '+tooltip);
+   }else{
+    badge.title=tooltip;
+    badge.setAttribute('aria-label',tooltip);
+    badge.removeAttribute('role');
+    badge.removeAttribute('tabindex');
+    badge.removeAttribute('aria-haspopup');
+    badge.removeAttribute('aria-expanded');
+   }
   });
   list.querySelectorAll('.sv-agenda-weather-source').forEach(credit=>credit.remove());
  }
