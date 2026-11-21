@@ -185,6 +185,18 @@
     ring.append(core);
     item.append(ring);
     add('sv-weather-peek-geo-day',name,item);
+    // Discreet daily status describes GEOMAGNETIC ACTIVITY, never wellbeing.
+    const state=document.createElement('span');
+    state.className='sv-weather-peek-geo-status';
+    state.dataset.level=level;
+    const dot=document.createElement('span');
+    dot.className='sv-weather-peek-geo-status-dot';
+    dot.setAttribute('aria-hidden','true');
+    state.append(dot);
+    add('sv-weather-peek-geo-status-label',
+     level==='quiet'?'Спокойно':level==='active'?'Повышена':
+     level==='storm'?'Буря':'Нет данных',state);
+    item.append(state);
     meters.append(item);
    }
    geo.append(meters);
@@ -212,8 +224,8 @@
    event.preventDefault();event.stopPropagation();
    openDetails();
   });
-  const updated=Number(src?.getUpdatedAt?.())||0;
-  if(day)add('sv-weather-peek-source','Open-Meteo · NOAA SWPC',panel,'p');
+  // Keep source credits inside the detailed Sayvi station, not on
+  // this small glanceable weather preview.
   document.body.append(panel);
   position();
   resetTimer();
