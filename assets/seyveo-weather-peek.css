@@ -19,7 +19,7 @@
 .sv-weather-peek.sv-weather-peek-leaving{animation:sv-weather-peek-out .2s ease-in both;pointer-events:none}
 @keyframes sv-weather-peek-out{to{opacity:0;transform:translateY(5px) scale(.99)}}
 .sv-weather-peek .sv-weather-peek-eyebrow{
- display:block;color:#9299a4;letter-spacing:.09em;font:600 10px/1.4 inherit;
+ display:block;color:#9299a4;letter-spacing:.09em;font-size:10px;font-weight:600;line-height:1.4;
  margin-bottom:11px;
 }
 .sv-weather-peek .sv-weather-peek-main{
