@@ -122,3 +122,75 @@
  }
  #svLaunchClean[data-stage="reveal"]{animation:none!important;opacity:0!important}
 }
+
+/* The logo stays absolutely still while ONLY the sphere approaches.
+   Official wordmark: gently lit platinum with a restrained pine reflection. */
+#svLaunchClean .svLaunchCleanSignature{
+ all:initial;
+ position:absolute!important;
+ left:var(--sv-launch-x,50%)!important;
+ top:var(--sv-launch-word-y,75%)!important;
+ width:min(92vw,390px)!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:10px!important;
+ transform:translate3d(-50%,0,0)!important;
+ white-space:nowrap!important;text-align:center!important;
+ pointer-events:none!important;user-select:none!important;
+ -webkit-user-select:none!important;
+ visibility:hidden!important;
+}
+#svLaunchClean .svLaunchCleanName,
+#svLaunchClean .svLaunchCleanDescriptor{
+ display:block!important;
+ font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI",Arial,sans-serif!important;
+ font-style:normal!important;
+ white-space:nowrap!important;
+ -webkit-font-smoothing:antialiased!important;
+ text-rendering:geometricPrecision!important;
+ opacity:0;
+ /* No transforms on letters: they remain fixed during the entire camera zoom. */
+}
+#svLaunchClean .svLaunchCleanName{
+ font-size:clamp(28px,7.9vw,39px)!important;
+ line-height:1.1!important;
+ font-weight:300!important;
+ letter-spacing:.22em!important;
+ padding-left:.22em!important;
+ color:#e8f1ed!important;
+ background:linear-gradient(158deg,#ffffff 0%,#e6f0ed 20%,#a3bcb4 39%,#f7fcf9 54%,#9cb7ac 77%,#e7f0ea 100%)!important;
+ background-clip:text!important;-webkit-background-clip:text!important;
+ -webkit-text-fill-color:transparent!important;
+ filter:drop-shadow(0 1px 3px rgba(3,13,10,.26));
+}
+#svLaunchClean .svLaunchCleanDescriptor{
+ font-size:clamp(9px,2.3vw,11px)!important;
+ line-height:1.25!important;
+ font-weight:500!important;
+ letter-spacing:.28em!important;
+ padding-left:.28em!important;
+ color:#c9dacf!important;
+ background:linear-gradient(158deg,#c6dacf 0%,#f1f6f2 39%,#9fb8ad 69%,#e6f1e9 100%)!important;
+ background-clip:text!important;-webkit-background-clip:text!important;
+ -webkit-text-fill-color:transparent!important;
+}
+#svLaunchClean[data-stage="ready"] .svLaunchCleanSignature,
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanSignature,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanSignature{
+ visibility:visible!important;
+}
+@keyframes svLaunchTypeIn{from{opacity:0}to{opacity:1}}
+#svLaunchClean[data-stage="ready"] .svLaunchCleanName,
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanName,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanName{
+ animation:svLaunchTypeIn 950ms cubic-bezier(.22,1,.36,1) 120ms both!important;
+}
+#svLaunchClean[data-stage="ready"] .svLaunchCleanDescriptor,
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanDescriptor,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanDescriptor{
+ animation:svLaunchTypeIn 1050ms cubic-bezier(.22,1,.36,1) 260ms both!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #svLaunchClean .svLaunchCleanName,
+ #svLaunchClean .svLaunchCleanDescriptor{animation:none!important;opacity:1!important}
+}
