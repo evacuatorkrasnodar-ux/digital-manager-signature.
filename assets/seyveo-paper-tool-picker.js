@@ -12,7 +12,9 @@
   pen:'<path d="M4 18c3-3 4-8 7-7s2 5 6 3"/><path d="m16 7 3-3 2 2-3 3-3 1z"/>',
   pencil:'<path d="m4 20 4-1 12-12-3-3L5 16l-1 4zM14 7l3 3"/>',
   brush:'<path d="M15 4 20 9 11 18l-4-4 8-10Z"/><path d="M7 14c-4 1-4 4-4 7 3 0 7-1 8-4"/>',
-  spray:'<path d="M4 5h8v5H4zM7 10v4h4v6H5v-6"/><path d="M13 5h3M15 9h1M18 6h1M20 10h1M18 14h1M14 17h1"/>',
+  // Fine-art gravity-feed airbrush: needle, barrel, cup and finger trigger.
+  // Distinct from a spray-paint aerosol can or a general-purpose sprayer.
+  spray:'<path d="M2.7 13h3.4l1.1-1.2h11.3l2.7 1.2-2.7 1.2H7.2L6.1 13"/><path d="M12.4 11.8V8.7h4.3v3.1M13.2 8.7V6.2h2.7v2.5M14.2 6.2V4.7"/><path d="M10.4 11.8V9.9h1.7M15.3 14.2l-.9 4.8h-3.1l-.5-4.8"/>',
   // Oil paint: broad, recognisable flat paintbrush, never a thin syringe.
   oil:'<path d="M17.8 2.8a2.5 2.5 0 0 1 3.4 3.4l-7.6 7.6-3.4-3.4 7.6-7.6Z"/><path d="M10.2 10.4 7.8 12.8l3.4 3.4 2.4-2.4"/><path d="M7.8 12.8C4.5 13.1 3 16 3 21c4.8-.3 7.6-1.9 8.2-4.8"/><path d="M6 16.9c.8-.1 1.4-.5 1.9-1.1"/>',
   watercolor:'<path d="M12 2.8C9.8 6.4 5.1 11.1 5.1 15.2a6.9 6.9 0 0 0 13.8 0c0-4.1-4.7-8.8-6.9-12.4Z"/><path d="M8.3 16c.2 1.7 1.5 2.8 3.2 3.1"/><path d="M10.2 9.6c.5-.7 1.1-1.4 1.8-2.2"/>'
