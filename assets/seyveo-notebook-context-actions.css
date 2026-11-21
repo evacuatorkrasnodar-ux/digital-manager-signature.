@@ -350,3 +350,60 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  #svSmartInkPicker:not([hidden]){
  max-height:min(65dvh,410px)!important;overflow-y:auto!important;
 }
+
+/* Pen settings are a *reading* surface, not pearl glass.
+   Keep strokes visible on the canvas, never through labels and settings.
+   This panel alone is opaque; the approved floating dock stays translucent. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker:not([hidden]){
+ background:#fcfcfd!important;
+ background-image:none!important;
+ border:1px solid rgba(130,139,150,.20)!important;
+ color:#252a33!important;
+ opacity:1!important;
+ isolation:isolate!important;
+ box-shadow:0 12px 34px rgba(25,33,45,.16),inset 0 1px 0 #fff!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker :is(.sv-smart-ink-style-options button,.sv-smart-ink-width-options button){
+ background:#f3f4f6!important;
+ border:1px solid #e9ebef!important;
+ color:#292f38!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker :is(.sv-smart-ink-style-options button,.sv-smart-ink-width-options button)[aria-pressed="true"]{
+ background:#e6e9ed!important;border-color:#d8dde4!important;
+ box-shadow:inset 0 1px 2px rgba(40,50,62,.055)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker strong{
+ color:#343b45!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker .sv-ink-personalization > button{
+ color:#292f38!important;background:#f3f4f6!important;
+ border:1px solid #e9ebef!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker:not([hidden]){
+ background:#292b30!important;color:#f3f3f6!important;
+ border-color:rgba(255,255,255,.14)!important;
+ box-shadow:0 14px 34px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.07)!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker :is(.sv-smart-ink-style-options button,.sv-smart-ink-width-options button),
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker .sv-ink-personalization > button{
+ background:#373a41!important;border-color:rgba(255,255,255,.10)!important;
+ color:#f0f0f3!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker :is(.sv-smart-ink-style-options button,.sv-smart-ink-width-options button)[aria-pressed="true"]{
+ background:#4b4f58!important;border-color:rgba(255,255,255,.18)!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ #svSmartInkPicker.sv-smart-ink-picker strong{
+ color:#f3f3f6!important;
+}
