@@ -107,11 +107,11 @@
   display:grid;place-items:center;
   padding:0;margin:0;
   border-radius:50%;
-  border:var(--sv-header-circle-border,1.75px solid rgba(255,255,255,.94));
-  background:var(--sv-header-circle,rgba(190,193,202,.43));
-  -webkit-backdrop-filter:var(--sv-header-circle-filter,blur(12px) saturate(108%));
-  backdrop-filter:var(--sv-header-circle-filter,blur(12px) saturate(108%));
-  box-shadow:var(--sv-header-circle-shadow,0 0 0 .7px rgba(164,170,184,.30));
+  border:var(--sv-header-circle-border,var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.97)));
+  background:var(--sv-header-circle,var(--sv-white-pearl-surface,rgba(255,255,255,.92)));
+  -webkit-backdrop-filter:var(--sv-header-circle-filter,var(--sv-white-pearl-blur,blur(9px) saturate(106%)));
+  backdrop-filter:var(--sv-header-circle-filter,var(--sv-white-pearl-blur,blur(9px) saturate(106%)));
+  box-shadow:var(--sv-header-circle-shadow,var(--sv-white-pearl-circle-shadow,0 3px 10px rgba(48,56,72,.095),0 1px 2px rgba(48,56,72,.045)));
   color:var(--sv-header-icon-ink,#0B0B0D);
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
@@ -131,11 +131,11 @@
     with a visible hairline rim on the pure-white header. No extra pseudo layers. */
  :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back{
   width:var(--sv-nav-single-size,44px);height:var(--sv-nav-single-size,44px);min-width:var(--sv-nav-single-size,44px);min-height:var(--sv-nav-single-size,44px);
-  border:var(--sv-card-action-outline,.7px solid rgba(255,255,255,.28));border-radius:50%;
-  background:var(--sv-card-action-neutral-bg,transparent);
-  box-shadow:var(--sv-card-action-shadow,0 0 0 .45px rgba(164,170,184,.16));
-  -webkit-backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
-  backdrop-filter:var(--sv-card-action-blur,blur(12px) saturate(108%));
+  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.97));border-radius:50%;
+  background:var(--sv-white-pearl-surface,rgba(255,255,255,.92));
+  box-shadow:var(--sv-white-pearl-circle-shadow,0 3px 10px rgba(48,56,72,.095),0 1px 2px rgba(48,56,72,.045));
+  -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(9px) saturate(106%));
+  backdrop-filter:var(--sv-white-pearl-blur,blur(9px) saturate(106%));
  }
  :host([data-task-selecting="true"][data-theme="light"]) .sv-canonical-back svg{
   width:var(--sv-nav-icon-size,20px);height:var(--sv-nav-icon-size,20px);stroke-width:1.6;stroke:#0B0B0D;
@@ -144,6 +144,12 @@
 
  .action svg{width:var(--sv-header-action-icon,22px);height:var(--sv-header-action-icon,22px);stroke-width:var(--sv-header-action-weight,1.85)}
  .control:active{opacity:.72}
+ :host(:not([data-theme="dark"])) .control:active{
+  opacity:1;
+  transform:scale(var(--sv-white-pearl-press-scale,.992));
+  background:var(--sv-white-pearl-press-fill,rgba(10,132,255,.06));
+  box-shadow:var(--sv-white-pearl-press-shadow,inset 0 1.8px 2.7px rgba(31,42,58,.16),inset 0 -1px 1px rgba(255,255,255,.38));
+ }
  .control:focus-visible{outline:2px solid currentColor;outline-offset:2px}
  :host([data-theme="dark"]){color:var(--sv-header-ink,#F6F6F8)}
  :host([data-theme="dark"]) .bar{
@@ -156,7 +162,7 @@
  }
  @media(prefers-reduced-transparency:reduce){
   :host(:not([data-theme="dark"])) .control{
-   background:#E3E4E9;
+   background:var(--sv-white-pearl-solid,#fff);
    -webkit-backdrop-filter:none;backdrop-filter:none
   }
  }
