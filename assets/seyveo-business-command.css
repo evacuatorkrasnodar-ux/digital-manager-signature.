@@ -2404,6 +2404,137 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 }
 
 
+/* Cabinet goal chooser · approved SEYVEO white-pearl finish.
+   Change EXISTING dialog/controls only. Dark theme and selection logic
+   keep their own current styles; no extra backdrop panels or glyphs. */
+html:root[data-theme="light"] body #svCabinetDialog[open].sv-cabinet-dialog{
+ background:#fff!important;
+ color:#17191d!important;
+ border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-dialog-head{
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-rows:54px auto!important;
+ column-gap:4px!important;
+ margin:0 0 15px!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-dialog-head h2{
+ grid-column:2!important;grid-row:1!important;
+ text-align:center!important;
+ font-size:clamp(20px,5.7vw,24px)!important;
+ font-weight:610!important;
+ letter-spacing:-.034em!important;
+ white-space:nowrap!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-dialog-head p{
+ grid-column:1 / -1!important;grid-row:2!important;
+ text-align:center!important;
+ color:#666d78!important;
+ margin:1px 0 0!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-dismiss{
+ justify-self:start!important;align-self:center!important;
+ width:44px!important;height:44px!important;
+ margin:0!important;padding:0!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ border-radius:50%!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ color:var(--sv-white-pearl-ink,#0b0b0d)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 8px 18px rgba(42,52,72,.10))!important;
+ opacity:1!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-dismiss svg{
+ width:19px!important;height:19px!important;
+ stroke-width:1.65!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-dismiss:active{
+ background:rgba(226,233,240,.45)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow,inset 0 2px 3px rgba(31,42,58,.16))!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-search{
+ min-height:46px!important;
+ border:1px solid rgba(189,199,210,.43)!important;
+ border-radius:18px!important;
+ background:rgba(255,255,255,.38)!important;
+ box-shadow:0 3px 12px rgba(47,60,77,.045),inset 0 1px 1px rgba(255,255,255,.85)!important;
+ -webkit-backdrop-filter:blur(7px) saturate(105%)!important;
+ backdrop-filter:blur(7px) saturate(105%)!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-search:focus-within{
+ outline:2px solid #7d94ad!important;outline-offset:1px!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-goal-row{
+ border-bottom:1px solid rgba(37,48,60,.085)!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-goal-mark{
+ color:#20262e!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-goal-mark::before{
+ border:1px solid rgba(173,183,194,.40)!important;
+ background:rgba(255,255,255,.34)!important;
+ box-shadow:0 2px 5px rgba(38,51,68,.055),inset 0 1px rgba(255,255,255,.90)!important;
+ -webkit-backdrop-filter:blur(4px) saturate(104%)!important;
+ backdrop-filter:blur(4px) saturate(104%)!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-goal-mark.is-selected::before{
+ border-color:rgba(155,168,182,.55)!important;
+ background:rgba(233,239,246,.69)!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-goal-mark:active::before{
+ background:rgba(211,222,235,.79)!important;
+ box-shadow:inset 0 1.5px 3px rgba(35,45,60,.14)!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-footer{
+ border-top:1px solid rgba(37,48,60,.09)!important;
+ padding-top:10px!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-footer button,
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-guide-action{
+ min-height:44px!important;
+ padding:8px 16px!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ border-radius:999px!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ color:#20262e!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 18px rgba(42,52,72,.09))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ font-size:12px!important;font-weight:560!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-footer button:active,
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-guide-action:active{
+ background:rgba(221,230,239,.46)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow,inset 0 2px 3px rgba(31,42,58,.16))!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-source{
+ background:rgba(255,255,255,.36)!important;
+ border:1px solid rgba(185,196,209,.4)!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] .sv-cabinet-source.is-current{
+ background:rgba(229,236,244,.68)!important;
+}
+html:root[data-theme="light"] body #svCabinetDialog[open] :is(button,input):focus-visible{
+ outline-color:#647b94!important;
+}
+@media(max-width:720px){
+ html:root[data-theme="light"] body #svCabinetDialog[open].sv-cabinet-dialog{
+  inset:0!important;
+  width:100%!important;height:100dvh!important;
+  max-height:100dvh!important;
+  margin:0!important;border-radius:0!important;
+ }
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svCabinetDialog[open] :is(.sv-cabinet-search,.sv-cabinet-dismiss,.sv-cabinet-footer button,.sv-cabinet-goal-mark::before){
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+
 /* SEYVEO · EMPLOYEES | Unified flat graphite workspace · 2026-11-10.
    Three live sections reuse existing team, schedule and recruiting handlers.
    Styles belong to the existing business stylesheet, not another glass layer. */
