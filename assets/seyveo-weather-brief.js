@@ -146,7 +146,13 @@
       mark.dataset.weatherKind='sun';
       mark.innerHTML=weatherGlyph(0);
       const label=document.createElement('span');
-      button.append(mark,label);
+      const todayFace=document.createElement('span');
+      todayFace.className='sv-home-weather-today-face';
+      todayFace.append(mark,label);
+      const weekFace=document.createElement('span');
+      weekFace.className='sv-home-weather-week-face';
+      weekFace.setAttribute('aria-hidden','true');
+      button.append(todayFace,weekFace);
       // Weather belongs below the Home greeting, never on the top status
       // line. The restored voice-cinema Home has no old weather slot.
       const message=home.querySelector('#stage > .message');
@@ -156,7 +162,7 @@
       let forecastUnavailable=false;
       let homeWeekActive=false;
       let homeWeekTimer=0;
-      let homeWeekIndex=0;
+      let weekShowing=false;
       // Weather sits between the painted globe and the bottom shortcut rail.
       // Coordinates are measured in the actual page, then converted to the
       // positioned stage. A raw 50dvh offset previously pushed this element
@@ -201,8 +207,8 @@
       const sync=()=>{
         current=getBrief();
         if(homeWeekActive){
-          // The feed may refresh while the preview runs; keep the current
-          // animated day intact and render the new data on the next tick.
+          renderWeekFace();
+          showFace(true);
           button.hidden=false;
           schedulePlace();
           return;
@@ -217,6 +223,8 @@
           mark.dataset.weatherKind='cloud';
           mark.innerHTML=weatherGlyph(2);
           label.textContent=city+' · '+(forecastUnavailable?'Прогноз пока недоступен':'Обновляем прогноз');
+          showFace(false);
+          clearTimeout(homeWeekTimer);
           button.title='Обновить прогноз погоды';
           button.setAttribute('aria-label','Обновить прогноз погоды');
           return;
@@ -232,88 +240,95 @@
         button.title='Открыть прогноз Сэйви';
         button.setAttribute('aria-label',
           'Погода: '+current.city+', '+temperature(today.max)+' / '+temperature(today.min)+
-          ', '+condition(today.code)+'. Спросить Сэйви подробный прогноз');
+          ', '+condition(today.code)+'. Открыть карточку прогноза');
+        renderWeekFace();
+        if(weekShowing)showFace(true);
+        scheduleWeatherRotation();
       };
-      // The ordinary row is a stable one-line weather summary. While the
-      // sphere-slot card is showing, only this same row cycles through the
-      // next seven VERIFIED days. Every tick updates text and its matching
-      // weather pictogram; it never touches tasks or any Home shortcuts.
-      const weekName=date=>{
-        const timestamp=new Date(date+'T12:00:00Z');
-        return new Intl.DateTimeFormat('ru-RU',{
-          timeZone:'Europe/Moscow',weekday:'short',day:'numeric'
-        }).format(timestamp).replace('.','');
-      };
-      // Day/night values use the actual hourly Moscow-time forecast where
-      // available: daytime maximum (08:00–19:59), following-night minimum
-      // (20:00–06:59). When hourly data is absent we explicitly show the
-      // daily maximum/minimum, never label them as separate observations.
-      const realDayNight=(date,day)=>{
-        const hourly=window.SAYVI_WEATHER?.getStationData?.()?.hourly;
-        if(!Array.isArray(hourly?.time)||!Array.isArray(hourly?.temperature_2m))
-          return {max:day.max,min:day.min,separated:false};
-        const following=new Date(Date.parse(date+'T12:00:00Z')+86400000)
-          .toISOString().slice(0,10);
-        const daylight=[],night=[];
-        for(let i=0;i<hourly.time.length;i++){
-          const timestamp=hourly.time[i],value=hourly.temperature_2m[i];
-          if(typeof timestamp!=='string'||!Number.isFinite(value))continue;
-          const key=timestamp.slice(0,10),hour=Number(timestamp.slice(11,13));
-          if(key===date&&hour>=8&&hour<20)daylight.push(value);
-          if((key===date&&hour>=20)||(key===following&&hour<7))night.push(value);
+      // TODAY and WEEK share one fixed Home weather slot. Rotates without
+      // user input; tapping either state still opens the existing popup.
+      const shortWeekDay=date=>new Intl.DateTimeFormat('ru-RU',{
+        timeZone:'Europe/Moscow',weekday:'short'
+      }).format(new Date(date+'T12:00:00Z')).replace('.','');
+      const moonSVG='<svg viewBox="0 0 24 24" aria-hidden="true">'+
+        '<path d="M20 15.5A8.4 8.4 0 0 1 8.5 4 8.6 8.6 0 1 0 20 15.5Z"/></svg>';
+      function renderWeekFace(){
+        const days=current?.days.slice(0,7)||[];
+        if(days.length<2){weekFace.replaceChildren();return;}
+        const fragment=document.createDocumentFragment();
+        days.forEach(day=>{
+          const item=document.createElement('span');
+          item.className='sv-home-weather-day';
+          const name=document.createElement('span');
+          name.className='sv-home-weather-day-name';
+          name.textContent=shortWeekDay(day.date);
+          const high=document.createElement('span');
+          high.className='sv-home-weather-day-pair';
+          const picture=document.createElement('span');
+          picture.className='sv-home-weather-day-symbol';
+          picture.innerHTML=weatherGlyph(day.code);
+          picture.dataset.weatherKind=day.code===0?'sun':
+            day.code>=51&&day.code<=67||day.code>=80&&day.code<=82?'rain':
+            day.code>=71&&day.code<=77||day.code>=85&&day.code<=86?'snow':'cloud';
+          const number=document.createElement('span');
+          number.textContent=Math.round(day.max)+'°';
+          high.append(picture,number);
+          const low=document.createElement('span');
+          low.className='sv-home-weather-day-pair sv-home-weather-day-night';
+          const moon=document.createElement('span');
+          moon.className='sv-home-weather-day-symbol';
+          moon.innerHTML=moonSVG;
+          const lowNumber=document.createElement('span');
+          lowNumber.textContent=Math.round(day.min)+'°';
+          low.append(moon,lowNumber);
+          item.append(name,high,low);
+          fragment.append(item);
+        });
+        weekFace.replaceChildren(fragment);
+        weekFace.dataset.voiceLabel='Прогноз на неделю: '+days.map(day=>
+          shortWeekDay(day.date)+' '+temperature(day.max)+' / '+temperature(day.min)+
+          ', '+condition(day.code)).join('; ');
+      }
+      function showFace(week){
+        weekShowing=!!week&&weekFace.childElementCount>=2;
+        button.classList.toggle('sv-home-weather-week-active',weekShowing);
+        todayFace.setAttribute('aria-hidden',weekShowing?'true':'false');
+        weekFace.setAttribute('aria-hidden',weekShowing?'false':'true');
+        if(weekShowing){
+          button.setAttribute('aria-label',weekFace.dataset.voiceLabel+
+            '. Открыть карточку прогноза');
+          button.title='Погода на неделю · открыть карточку';
+        }else{
+          const today=current?.days[0];
+          if(today){
+            button.setAttribute('aria-label','Погода: '+current.city+', '+
+              temperature(today.max)+' / '+temperature(today.min)+
+              ', '+condition(today.code)+'. Открыть карточку прогноза');
+            button.title='Погода сегодня · открыть карточку';
+          }
         }
-        if(!daylight.length||!night.length)
-          return {max:day.max,min:day.min,separated:false};
-        return {max:Math.max(...daylight),min:Math.min(...night),separated:true};
-      };
-      const renderWeek=()=>{
-        if(!homeWeekActive)return;
-        const forecast=getBrief();
-        const days=forecast?.days.slice(0,7)||[];
-        if(!days.length){
-          homeWeekActive=false;
-          sync();
-          return;
-        }
-        const day=days[homeWeekIndex%days.length];
-        homeWeekIndex=(homeWeekIndex+1)%days.length;
-        mark.dataset.weatherKind=day.code===0?'sun':
-          day.code>=51&&day.code<=67||day.code>=80&&day.code<=82?'rain':
-          day.code>=71&&day.code<=77||day.code>=85&&day.code<=86?'snow':
-          day.code>=95?'storm':day.code===45||day.code===48?'fog':'cloud';
-        mark.innerHTML=weatherGlyph(day.code);
-        const values=realDayNight(day.date,day);
-        const valuesLabel=values.separated?
-          temperature(values.max)+' днём / '+temperature(values.min)+' ночью':
-          'макс '+temperature(values.max)+' / мин '+temperature(values.min);
-        label.textContent=weekName(day.date)+' · '+valuesLabel;
-        button.title='Неделя · '+forecast.city+' · '+condition(day.code);
-        button.setAttribute('aria-label','Погода '+weekName(day.date)+
-          ': '+valuesLabel+', '+condition(day.code)+
-          '. Нажми, чтобы закрыть карточку Сэйви');
-        // Restart a soft cross-fade without moving the original button.
-        label.classList.remove('sv-home-weather-week-show');
-        mark.classList.remove('sv-home-weather-week-show');
-        void label.offsetWidth;
-        label.classList.add('sv-home-weather-week-show');
-        mark.classList.add('sv-home-weather-week-show');
+        schedulePlace();
+      }
+      function scheduleWeatherRotation(){
         clearTimeout(homeWeekTimer);
-        homeWeekTimer=setTimeout(renderWeek,2850);
-      };
+        if(homeWeekActive||!current||weekFace.childElementCount<2)return;
+        homeWeekTimer=setTimeout(()=>{
+          if(document.hidden){showFace(false);return;}
+          showFace(!weekShowing);
+          scheduleWeatherRotation();
+        },5000);
+      }
+      // Popup remains unchanged on tap, with its own weekly mini-strip.
       startHomeWeek=()=>{
-        clearTimeout(homeWeekTimer);
         homeWeekActive=true;
-        homeWeekIndex=0;
-        button.classList.add('sv-home-weather-week-active');
-        renderWeek();
+        clearTimeout(homeWeekTimer);
+        current=getBrief()||current;
+        renderWeekFace();
+        showFace(true);
       };
       stopHomeWeek=()=>{
-        clearTimeout(homeWeekTimer);
-        homeWeekTimer=0;
         homeWeekActive=false;
-        button.classList.remove('sv-home-weather-week-active');
-        label.classList.remove('sv-home-weather-week-show');
-        mark.classList.remove('sv-home-weather-week-show');
+        showFace(false);
         sync();
       };
       sync();
