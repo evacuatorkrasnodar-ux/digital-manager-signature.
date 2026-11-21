@@ -490,7 +490,7 @@ html body #seyveoQrCardDialog[open] #seyveoQrStatus{
 
 /* Keep light mode legible without introducing glass or bright accent buttons. */
 :root[data-theme="light"] body #seyveoCompanyDialog[open]{
- --sv-company-surface:var(--bg,#F6F6F8);
+ --sv-company-surface:var(--sv-unified-white-canvas,#FFFFFF);
  --sv-company-field:#F0F0F2;
  --sv-company-line:rgba(37,40,44,.13);
  --sv-company-quiet:#656A71;
