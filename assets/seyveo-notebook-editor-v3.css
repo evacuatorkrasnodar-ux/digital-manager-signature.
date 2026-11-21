@@ -1274,3 +1274,97 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 }
 /* The dock and stand-alone action are the ONLY painted, elevated pieces.
    Keep the existing ::before/::after pearl materials and their depth. */
+
+
+/* Note text marker v1 (21 Nov 2026).
+   This is TYPOGRAPHIC markup, not an ink canvas stroke. Only selections
+   receive the effect. The closed tone vocabulary is sanitized in richtext.js.
+   Identical colors in the editable page and the read-only note. */
+html:root body :is(
+ dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-rich-editor,
+ dialog#noteReadDialog.notes-dialog[open] #noteReadContent
+) [data-sv-marker]{
+ -webkit-box-decoration-break:clone;
+ box-decoration-break:clone;
+ border-radius:2px;
+ color:inherit;
+}
+html:root body :is(
+ dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-rich-editor,
+ dialog#noteReadDialog.notes-dialog[open] #noteReadContent
+) [data-sv-marker-tone="lemon"]{--sv-note-marker-pigment:rgba(248,205,48,.43)}
+html:root body :is(
+ dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-rich-editor,
+ dialog#noteReadDialog.notes-dialog[open] #noteReadContent
+) [data-sv-marker-tone="mint"]{--sv-note-marker-pigment:rgba(94,194,146,.36)}
+html:root body :is(
+ dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-rich-editor,
+ dialog#noteReadDialog.notes-dialog[open] #noteReadContent
+) [data-sv-marker-tone="sky"]{--sv-note-marker-pigment:rgba(89,165,232,.34)}
+html:root body :is(
+ dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-rich-editor,
+ dialog#noteReadDialog.notes-dialog[open] #noteReadContent
+) [data-sv-marker-tone="rose"]{--sv-note-marker-pigment:rgba(237,122,151,.34)}
+html:root body :is(
+ dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-rich-editor,
+ dialog#noteReadDialog.notes-dialog[open] #noteReadContent
+) [data-sv-marker="highlight"]{
+ background-image:linear-gradient(to bottom,
+  transparent 9%,var(--sv-note-marker-pigment) 15%,
+  var(--sv-note-marker-pigment) 88%,transparent 96%)!important;
+ background-color:transparent!important;
+}
+html:root body :is(
+ dialog#noteReviewDialog.notes-dialog.note-review-dialog[open] .sv-note-rich-editor,
+ dialog#noteReadDialog.notes-dialog[open] #noteReadContent
+) [data-sv-marker="underline"]{
+ background-image:linear-gradient(to bottom,
+  transparent 76%,var(--sv-note-marker-pigment) 78%,
+  var(--sv-note-marker-pigment) 94%,transparent 98%)!important;
+ background-color:transparent!important;
+}
+/* Four physical highlighter inks in the existing Aa > Formatting menu.
+   The row is not a second dock and introduces no modal overlay. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu .sv-note-marker-colors{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:7px!important;padding:6px 10px 4px!important;margin:2px 0 0!important;
+ width:100%!important;
+ border-top:1px solid rgba(144,152,163,.16)!important;
+ background:transparent!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu .sv-note-marker-colors > button{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;position:relative!important;
+ min-width:0!important;width:100%!important;height:35px!important;min-height:35px!important;
+ border:1px solid rgba(133,144,157,.14)!important;border-radius:11px!important;
+ background:var(--sv-menu-item,rgba(185,194,204,.11))!important;
+ box-shadow:none!important;cursor:pointer!important;
+ display:grid!important;place-items:center!important;padding:0!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu .sv-note-marker-colors > button::before{
+ content:""!important;display:block!important;
+ width:23px!important;height:12px!important;border-radius:3px!important;
+ background:var(--swatch)!important;transform:rotate(-4deg)!important;
+ opacity:.95!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu .sv-note-marker-colors > button[data-sv-marker-tone="lemon"]{--swatch:#f1d55e}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu .sv-note-marker-colors > button[data-sv-marker-tone="mint"]{--swatch:#84cda8}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu .sv-note-marker-colors > button[data-sv-marker-tone="sky"]{--swatch:#9ec9ee}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu .sv-note-marker-colors > button[data-sv-marker-tone="rose"]{--swatch:#edb1c2}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu .sv-note-marker-colors > button[aria-pressed="true"]{
+ border-color:rgba(103,113,128,.38)!important;
+ box-shadow:inset 0 0 0 1px rgba(103,113,128,.20)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ > #svNoteFormatMenu .sv-note-marker-colors > button:focus-visible{
+ outline:2px solid #4787c3!important;outline-offset:2px!important;
+}
