@@ -138,14 +138,18 @@
       button.type='button';
       button.id='svSayviHomeWeather';
       button.className='sv-sayvi-home-weather';
-      button.hidden=true;
-      button.setAttribute('aria-label','Показать прогноз на неделю');
+      // Show a useful placeholder immediately, even before the forecast cache
+      // hydrates. A hidden initial node could stay invisible after an early
+      // Safari/PWA initialization exception.
+      button.hidden=false;
+      button.setAttribute('aria-label','Показать прогноз погоды');
       const mark=document.createElement('span');
       mark.className='sv-sayvi-home-weather-mark';
       mark.setAttribute('aria-hidden','true');
       mark.dataset.weatherKind='sun';
       mark.innerHTML=weatherGlyph(0);
       const label=document.createElement('span');
+      label.textContent='Погода · обновляем прогноз';
       const todayFace=document.createElement('span');
       todayFace.className='sv-home-weather-today-face';
       todayFace.append(mark,label);
@@ -200,10 +204,13 @@
         placeFrame=requestAnimationFrame(positionHomeWeather);
       };
       window.addEventListener('resize',schedulePlace,{passive:true});
-      const resizeObserver=new ResizeObserver(schedulePlace);
-      resizeObserver.observe(button);
-      const homeOrb=document.getElementById('orb');
-      if(homeOrb)resizeObserver.observe(homeOrb);
+      // ResizeObserver can be absent or delayed on old embedded Safari.
+      if(typeof ResizeObserver==='function'){
+        const resizeObserver=new ResizeObserver(schedulePlace);
+        resizeObserver.observe(button);
+        const homeOrb=document.getElementById('orb');
+        if(homeOrb)resizeObserver.observe(homeOrb);
+      }
       const sync=()=>{
         current=getBrief();
         if(homeWeekActive){
@@ -348,14 +355,28 @@
       window.addEventListener('load',sync,{once:true});
       window.addEventListener('seyveo:route-changed',sync);
       window.addEventListener('seyveo:home-sayvi-arrived',schedulePlace);
+      // The Home intro changes its root classes independently from the data
+      // feed; recalculate the row when the handoff becomes visible.
+      let homeRootFrame=0;
+      new MutationObserver(()=>{
+        if(homeRootFrame)return;
+        homeRootFrame=requestAnimationFrame(()=>{
+          homeRootFrame=0;
+          if(home.hidden)return;
+          schedulePlace();
+        });
+      }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
       document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
       button.addEventListener('click',()=>{
         const forecast=getBrief();
         if(!forecast){window.SAYVI_WEATHER?.refresh?.();return;}
         current=forecast;
-        renderWeekFace();
-        showFace(!weekShowing);
-        scheduleWeatherRotation();
+        // Home keeps its automatic quiet TODAY / WEEK alternation, but a
+        // deliberate tap opens the existing one-day pearl weather card.
+        const date=forecast.days[0].date;
+        if(window.SEYVEO_WEATHER_PEEK?.open)
+          window.SEYVEO_WEATHER_PEEK.open({anchor:button,date,origin:'home'});
+        else showFace(!weekShowing);
       });
     }
   }
