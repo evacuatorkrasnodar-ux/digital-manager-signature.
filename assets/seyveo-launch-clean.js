@@ -132,6 +132,30 @@
    splash.style.setProperty('--sv-launch-near-scale',
     String(1+(finalScale-1)*.973));
    splash.dataset.stage='ready';
+   // Measure the actual header wordmark and its small strapline. The launch
+   // lettering lands at their live screen coordinates, not hardcoded guesses.
+   const mapTextIntoHeader=(fromSelector,toSelector)=>{
+    const from=splash.querySelector(fromSelector);
+    const to=document.querySelector(toSelector);
+    if(!from)return;
+    const start=from.getBoundingClientRect();
+    const end=to?.getBoundingClientRect();
+    const canLand=!!(to&&end&&end.width>0&&end.height>0
+     &&getComputedStyle(to).display!=='none'
+     &&start.width>0&&start.height>0);
+    if(!canLand){
+     from.style.setProperty('--sv-launch-text-end-opacity','0');
+     return;
+    }
+    const dx=(end.left+end.width*.5)-(start.left+start.width*.5);
+    const dy=(end.top+end.height*.5)-(start.top+start.height*.5);
+    from.style.setProperty('--sv-launch-text-dx',dx.toFixed(2)+'px');
+    from.style.setProperty('--sv-launch-text-dy',dy.toFixed(2)+'px');
+    from.style.setProperty('--sv-launch-text-sx',(end.width/start.width).toFixed(5));
+    from.style.setProperty('--sv-launch-text-sy',(end.height/start.height).toFixed(5));
+   };
+   mapTextIntoHeader('.svLaunchCleanName','#homeBrandTrigger .seyveo-brand-name');
+   mapTextIntoHeader('.svLaunchCleanDescriptor','#homeBrandTrigger .seyveo-brand-specialty');
    document.documentElement.classList.remove('sv-cinema-boot');
    try{localStorage.setItem(key,day)}catch{}
    const start=()=>{
