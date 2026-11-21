@@ -97,7 +97,14 @@
   const right=geo.map(p=>[p.x+p.nx*(-p.radius*scale+shift)+x,
                           p.y+p.ny*(-p.radius*scale+shift)+y]).reverse();
   ctx.beginPath();traceSmooth(ctx,left);
-  for(const p of right)ctx.lineTo(p[0],p[1]);
+  if(right.length){
+   ctx.lineTo(right[0][0],right[0][1]);
+   for(let i=1;i<right.length-1;i++){
+    const p=right[i],q=right[i+1];
+    ctx.quadraticCurveTo(p[0],p[1],(p[0]+q[0])/2,(p[1]+q[1])/2);
+   }
+   if(right.length>1){const end=right[right.length-1];ctx.lineTo(end[0],end[1]);}
+  }
   ctx.closePath();
  }
  function hairline(ctx,geo,fraction,style,alpha){
@@ -148,7 +155,7 @@
  function segment(ctx,s,a,b,dot=false){
   if(!KINDS.has(s?.tool)||!a||!b)return false;
   ctx.save();ctx.globalCompositeOperation='source-over';
-  if(s.tool==='brush')dot?oil(ctx,{...s,tool:'oil'},a,a,true):brush(ctx,s,a,b);
+  if(s.tool==='brush')dot?oilLive(ctx,s,a,a,true):brush(ctx,s,a,b);
   else if(s.tool==='spray')spray(ctx,s,a,b,dot);
   else oilLive(ctx,s,a,b,dot);
   ctx.restore();return true;
