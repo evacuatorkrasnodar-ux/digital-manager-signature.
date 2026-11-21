@@ -1,9 +1,9 @@
-/* SEYVEO Painting · deterministic Canvas 2D brush / airbrush / oil strokes.
+/* SEYVEO Painting · deterministic Canvas 2D brush / airbrush / oil / watercolor strokes.
  * No remote textures, no random per-frame output, no offscreen full-canvas
  * layers. Stroke geometry is saved by the existing Paper engine. */
 (function(root){
  'use strict';
- const KINDS=new Set(['brush','spray','oil']);
+ const KINDS=new Set(['brush','spray','oil','watercolor']);
  const stamps=new Map();
  const cap=(value,lo,hi)=>Math.max(lo,Math.min(hi,value));
  const colorOf=s=>/^#[0-9a-f]{6}$/i.test(s?.color||'')?s.color:'#171e29';
@@ -14,7 +14,7 @@
  const blend=(hex,target,t)=>{
   const c=rgb(hex);return 'rgb('+c.map(v=>Math.round(v+(target-v)*t)).join(',')+')';
  };
- const alphaOf=s=>cap(Number.isFinite(s?.opacity)?s.opacity:(s.tool==='spray'?.48:s.tool==='oil'?.94:.8),.1,1);
+ const alphaOf=s=>cap(Number.isFinite(s?.opacity)?s.opacity:(s.tool==='spray'?.48:s.tool==='oil'?.94:s.tool==='watercolor'?.54:.8),.1,1);
  const widthOf=(s,p)=>{
   const base=cap(Number(s.width)||15,1,90);
   const press=s.pressureSensitive?cap((p?.[2]??50)/100,0,1):.5;
@@ -152,11 +152,63 @@
   if(dot){ctx.arc(a[0],a[1],Math.max(.5,width/2),0,Math.PI*2);ctx.fill();}
   else{ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
  }
+ // Watercolor is a light, translucent 2D wash with pigment pooling at the
+ // edges and gentle granulation. It is not a physical wet-fluid simulation.
+ // A single saved vector stroke is replayed identically for Undo and PNG.
+ function watercolorStroke(ctx,s){
+  const points=s.points;
+  if(!points?.length)return;
+  const opacity=alphaOf(s),pigment=grad(ctx,s),base=colorOf(s);
+  ctx.save();ctx.globalCompositeOperation='source-over';
+  if(points.length===1){
+   const p=points[0],radius=Math.max(.7,widthOf(s,p)/2);
+   for(const [factor,alpha] of [[1.2,.075],[1,.18],[.7,.28]]){
+    ctx.beginPath();ctx.arc(p[0],p[1],radius*factor,0,Math.PI*2);
+    ctx.fillStyle=pigment;ctx.globalAlpha=opacity*alpha;ctx.fill();
+   }
+   ctx.restore();return;
+  }
+  const geo=geometry(s,points);
+  // Broad transparent wash with fuzzy fringe; each pass is continuous so the
+  // stroke does not turn into a chain of separate round-ended sections.
+  for(const [scale,alpha] of [[1.18,.07],[1.06,.13],[.95,.21],[.77,.25]]){
+   outline(ctx,geo,scale);
+   ctx.fillStyle=pigment;ctx.globalAlpha=opacity*alpha;ctx.fill();
+  }
+  // A subtle pigment tide along both edges, especially after pressure turns.
+  hairline(ctx,geo,-.84,blend(base,0,.19),opacity*.19);
+  hairline(ctx,geo,.84,blend(base,0,.16),opacity*.16);
+  // Restrained deterministic granulation: at most 45 tiny flecks per stroke,
+  // no random animation, noise image readback, or large intermediate canvases.
+  const stride=Math.max(2,Math.ceil(geo.length/45));
+  ctx.fillStyle=base;ctx.globalAlpha=opacity*.055;
+  for(let i=0;i<geo.length;i+=stride){
+   const p=geo[i];
+   const jitter=Math.sin((i+1)*12.9898+points.length*.31);
+   const side=Math.sin((i+1)*6.173);
+   const x=p.x+p.nx*p.radius*side*.65+jitter*.9;
+   const y=p.y+p.ny*p.radius*side*.65+Math.cos(i*3.23)*.9;
+   const radius=Math.max(.35,Math.min(1.2,p.radius*.07));
+   ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+ }
+ function watercolorLive(ctx,s,a,b,dot=false){
+  const width=(widthOf(s,a)+widthOf(s,b))/2;
+  const opacity=alphaOf(s),paint=grad(ctx,s);
+  if(dot){
+   ctx.beginPath();ctx.arc(a[0],a[1],Math.max(.6,width/2),0,Math.PI*2);
+   ctx.fillStyle=paint;ctx.globalAlpha=opacity*.35;ctx.fill();return;
+  }
+  for(const [scale,alpha] of [[1.17,.085],[1.0,.18],[.8,.22]])
+   line(ctx,a,b,width*scale,paint,opacity*alpha);
+ }
  function segment(ctx,s,a,b,dot=false){
   if(!KINDS.has(s?.tool)||!a||!b)return false;
   ctx.save();ctx.globalCompositeOperation='source-over';
   if(s.tool==='brush')dot?oilLive(ctx,s,a,a,true):brush(ctx,s,a,b);
   else if(s.tool==='spray')spray(ctx,s,a,b,dot);
+  else if(s.tool==='watercolor')watercolorLive(ctx,s,a,b,dot);
   else oilLive(ctx,s,a,b,dot);
   ctx.restore();return true;
  }
@@ -164,6 +216,7 @@
   if(!KINDS.has(s?.tool)||!Array.isArray(s.points)||!s.points.length)return false;
   const pts=s.points;
   if(s.tool==='oil'){oilStroke(ctx,s);return true;}
+  if(s.tool==='watercolor'){watercolorStroke(ctx,s);return true;}
   if(pts.length===1){segment(ctx,s,pts[0],pts[0],true);return true;}
   for(let i=1;i<pts.length;i++)segment(ctx,s,pts[i-1],pts[i]);
   return true;
