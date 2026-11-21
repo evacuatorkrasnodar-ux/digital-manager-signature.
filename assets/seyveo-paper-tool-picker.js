@@ -7,7 +7,7 @@
  const pen=dock?.querySelector('[data-paper-tool="pen"]');
  const engine=window.SEYVEO_PAPER;
  if(!dialog||!pen||!engine?.selectTool)return;
- const names={pen:'Ручка',pencil:'Карандаш',brush:'Кисть',spray:'Аэрограф',oil:'Масло',watercolor:'Акварель'};
+ const names={pen:'Ручка',pencil:'Карандаш',brush:'Кисть',spray:'Аэрограф',oil:'Масло',watercolor:'Акварель',marker:'Маркер',calligraphy:'Каллиграфия'};
  const glyphs={
   pen:'<path d="M4 18c3-3 4-8 7-7s2 5 6 3"/><path d="m16 7 3-3 2 2-3 3-3 1z"/>',
   pencil:'<path d="m4 20 4-1 12-12-3-3L5 16l-1 4zM14 7l3 3"/>',
@@ -17,7 +17,9 @@
   spray:'<path d="M2.7 13h3.4l1.1-1.2h11.3l2.7 1.2-2.7 1.2H7.2L6.1 13"/><path d="M12.4 11.8V8.7h4.3v3.1M13.2 8.7V6.2h2.7v2.5M14.2 6.2V4.7"/><path d="M10.4 11.8V9.9h1.7M15.3 14.2l-.9 4.8h-3.1l-.5-4.8"/>',
   // Oil paint: broad, recognisable flat paintbrush, never a thin syringe.
   oil:'<path d="M17.8 2.8a2.5 2.5 0 0 1 3.4 3.4l-7.6 7.6-3.4-3.4 7.6-7.6Z"/><path d="M10.2 10.4 7.8 12.8l3.4 3.4 2.4-2.4"/><path d="M7.8 12.8C4.5 13.1 3 16 3 21c4.8-.3 7.6-1.9 8.2-4.8"/><path d="M6 16.9c.8-.1 1.4-.5 1.9-1.1"/>',
-  watercolor:'<path d="M12 2.8C9.8 6.4 5.1 11.1 5.1 15.2a6.9 6.9 0 0 0 13.8 0c0-4.1-4.7-8.8-6.9-12.4Z"/><path d="M8.3 16c.2 1.7 1.5 2.8 3.2 3.1"/><path d="M10.2 9.6c.5-.7 1.1-1.4 1.8-2.2"/>'
+  watercolor:'<path d="M12 2.8C9.8 6.4 5.1 11.1 5.1 15.2a6.9 6.9 0 0 0 13.8 0c0-4.1-4.7-8.8-6.9-12.4Z"/><path d="M8.3 16c.2 1.7 1.5 2.8 3.2 3.1"/><path d="M10.2 9.6c.5-.7 1.1-1.4 1.8-2.2"/>',
+  marker:'<path d="m5 16.5 9.5-11a2.4 2.4 0 0 1 3.4-.2l1.4 1.3a2.4 2.4 0 0 1 .2 3.4l-9.5 11-5-4.5Z"/><path d="m5 16.5-1.5 4 6.5.5M12.8 7.5l4.3 3.8"/>',
+  calligraphy:'<path d="M4 19.5c5-1.8 5.4-5 8-9.5l6.7-6.5 2.2 2.2-6.7 6.5c-4.2 2.8-7.5 4.5-10.2 7.3Z"/><path d="M5.5 17.2 8 19M15 9l3.2 3.2"/>'
  };
  const svg=tool=>'<svg viewBox="0 0 24 24" class="sv-newdock-glyph" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+glyphs[tool]+'</svg>';
  // The current settings pane contained a duplicate pen/pencil selector.
@@ -35,6 +37,10 @@
  const existing=new Map([...(oldChoices?.querySelectorAll('[data-sv-tool-choice]')||[])]
   .map(node=>[node.dataset.svToolChoice,node]));
  for(const kind of Object.keys(names)){
+  if(kind==='pen'||kind==='marker'){
+   const heading=document.createElement('div');heading.className='sv-brush-picker-group';
+   heading.textContent=kind==='pen'?'Рисование':'Письмо';tools.append(heading);
+  }
   const btn=existing.get(kind)||document.createElement('button');
   btn.type='button';btn.dataset.svToolChoice=kind;
   btn.setAttribute('aria-label',names[kind]);
@@ -46,7 +52,7 @@
  // The art tools get hidden state anchors so the proven engine's currentTool()
  // reads one active DOM node, including after eraser or shape selection.
  const hidden=document.createElement('div');hidden.hidden=true;
- for(const kind of ['brush','spray','oil','watercolor']){
+ for(const kind of ['brush','spray','oil','watercolor','marker','calligraphy']){
   const btn=document.createElement('button');
   btn.type='button';btn.hidden=true;btn.dataset.paperTool=kind;
   btn.setAttribute('aria-pressed','false');
@@ -61,7 +67,7 @@
  pen.setAttribute('aria-controls',picker.id);
  pen.setAttribute('aria-expanded','false');
  const selected=()=>engine.currentTool?.()||'pen';
- const ART=new Set(['brush','spray','oil','watercolor']);
+ const ART=new Set(['brush','spray','oil','watercolor','marker','calligraphy']);
  let lastPaint='pen';
  function sync(){
   const current=selected();
