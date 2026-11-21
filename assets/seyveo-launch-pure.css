@@ -1,26 +1,38 @@
-/* SEYVEO: one original logo, exactly at the live orb centre.
-   One short zoom, capped at the live orb size. No text, smoke or other layers. */
+/* SEYVEO: single original logo, exactly at Sayvi's final centre.
+   Fully decode before the first visible pixel; never clip in iOS Safari. */
 .sv-pure-launch{
- position:fixed;inset:0;z-index:2147483000;
- overflow:hidden;overscroll-behavior:contain;
- background:#fff;pointer-events:auto;
+ position:fixed!important;inset:0!important;
+ width:100vw!important;height:100vh!important;height:100dvh!important;
+ z-index:2147483647!important;display:block!important;
+ overflow:visible!important;background:#fff!important;
+ isolation:isolate;pointer-events:auto!important;
+ overscroll-behavior:contain;
 }
 .sv-pure-launch-logo{
- position:absolute;left:var(--sv-pure-x,50%);top:var(--sv-pure-y,45%);
- width:var(--sv-pure-size,200px);height:var(--sv-pure-size,200px);
+ position:fixed!important;
+ left:var(--sv-pure-x,50%)!important;top:var(--sv-pure-y,45%)!important;
+ width:var(--sv-pure-size,200px)!important;
+ height:var(--sv-pure-size,200px)!important;
  transform:translate3d(-50%,-50%,0) scale(1);
  transform-origin:center center;will-change:transform;
  transition:transform .84s cubic-bezier(.68,.02,1,1);
  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+ overflow:visible!important;
 }
 .sv-pure-launch-logo img{
- width:100%;height:100%;display:block;object-fit:contain;
- pointer-events:none;-webkit-user-select:none;user-select:none;
+ display:block!important;width:100%!important;height:100%!important;
+ object-fit:contain!important;
+ visibility:hidden!important;
+ pointer-events:none!important;
+ -webkit-user-select:none!important;user-select:none!important;
+}
+.sv-pure-launch.is-ready .sv-pure-launch-logo img{
+ visibility:visible!important;
 }
 .sv-pure-launch.is-approaching .sv-pure-launch-logo{
  transform:translate3d(-50%,-50%,0) scale(var(--sv-pure-scale,1.3));
 }
-:root[data-theme="dark"] .sv-pure-launch{background:#11161b}
+:root[data-theme="dark"] .sv-pure-launch{background:#11161b!important}
 @media(prefers-reduced-motion:reduce){
- .sv-pure-launch-logo{transition:none}
+ .sv-pure-launch-logo{transition:none!important}
 }
