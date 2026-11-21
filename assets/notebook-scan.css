@@ -277,3 +277,83 @@ html[data-theme="dark"] body #noteScanDialog .paper-scan-actions #noteScanToText
  background:#29292d!important;color:#94949e!important;
  border-color:#29292d!important;
 }
+
+/* SEYVEO SCAN STEPS v1 · only reveal controls when they become useful.
+   No hidden overlays, placeholder output sheet, or permanently grey footer. */
+html body #noteScanDialog[data-step="pick"] :is(
+ .paper-scan-preview,.paper-scan-line-mode,#noteScanRecognize,
+ #noteScanConsent,#noteScanManual,.paper-scan-caption,#noteScanText,
+ #noteScanStatus,.paper-scan-actions){
+ display:none!important;
+}
+html body #noteScanDialog[data-step="pick"] > p:first-of-type{
+ margin-top:clamp(62px,13dvh,140px)!important;
+ margin-bottom:20px!important;
+ text-align:center!important;
+ font-size:13px!important;
+ line-height:1.45!important;
+}
+html body #noteScanDialog[data-step="pick"] .paper-scan-inputs{
+ margin-bottom:0!important;
+}
+/* The selected photo is the working content, not an extra floating card. */
+html body #noteScanDialog[data-step="photo"] :is(
+ .paper-scan-caption,#noteScanText,.paper-scan-actions){
+ display:none!important;
+}
+html body #noteScanDialog[data-step="photo"] .paper-scan-preview{
+ max-height:min(34dvh,310px)!important;
+ border-radius:11px!important;
+ margin:2px 0 14px!important;
+}
+html body #noteScanDialog[data-step="photo"] .paper-scan-line-mode{
+ margin-bottom:14px!important;
+}
+html body #noteScanDialog[data-step="photo"] #noteScanStatus{
+ font-size:11.5px!important;
+ padding-top:5px!important;
+}
+/* OCR error recovery only: one small textual action, not another large dock. */
+html body #noteScanDialog #noteScanManual[hidden]{display:none!important}
+html body #noteScanDialog #noteScanManual{
+ appearance:none!important;-webkit-appearance:none!important;
+ align-self:center!important;min-height:42px!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ padding:0 14px!important;margin:8px auto 10px!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;color:#333438!important;
+ font:550 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-decoration:underline!important;text-underline-offset:3px!important;
+ cursor:pointer!important;box-shadow:none!important;
+}
+html[data-theme="dark"] body #noteScanDialog #noteScanManual{color:#e2e4e8!important}
+/* Once text exists, switch to a genuine full-height editor. */
+html body #noteScanDialog[data-step="edit"] :is(
+ >p:first-of-type,.paper-scan-inputs,.paper-scan-preview,
+ .paper-scan-line-mode,#noteScanRecognize,#noteScanConsent,#noteScanManual){
+ display:none!important;
+}
+html body #noteScanDialog[data-step="edit"] .paper-scan-caption{
+ margin:15px 0 8px!important;
+ font-size:13px!important;
+}
+html body #noteScanDialog[data-step="edit"] #noteScanText{
+ flex:1 1 auto!important;min-height:180px!important;
+ padding-top:7px!important;
+}
+html body #noteScanDialog[data-step="edit"] .paper-scan-actions{
+ display:grid!important;
+ margin-top:5px!important;
+}
+/* The same clean, consistent back control as elsewhere in the app. */
+html body dialog#noteScanDialog.paper-scan-dialog[open] > #noteScanBack{
+ box-shadow:0 5px 15px rgba(24,32,39,.08),0 1px 3px rgba(24,32,39,.04)!important;
+}
+@media(max-height:680px){
+ html body #noteScanDialog[data-step="pick"] > p:first-of-type{
+  margin-top:clamp(28px,8dvh,80px)!important;
+ }
+ html body #noteScanDialog[data-step="photo"] .paper-scan-preview{
+  max-height:min(28dvh,220px)!important;
+ }
+}
