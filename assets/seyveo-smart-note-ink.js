@@ -116,10 +116,12 @@
   <button type="button" data-sv-ink-tool="width" aria-label="Инструмент письма и толщина" aria-expanded="false">${icon('<path d="M5 6.5h7" stroke-width="1.2"/><path d="M5 12h11" stroke-width="1.6"/><path d="M5 17.5h15" stroke-width="2"/>')}</button>
   <label data-sv-ink-tool="color" class="sv-smart-ink-native-label" title="Цвет пера"><span class="sv-smart-ink-color-preview" aria-hidden="true"></span><input type="color" value="#171e29" class="sv-smart-ink-native-color" aria-label="Выбрать цвет пера"></label>
   <button type="button" data-sv-ink-tool="paper" aria-label="Стиль бумаги">${icon('<rect x="5.7" y="3.7" width="12.6" height="16.6" rx="1.4"/><path d="M8.5 9h7M8.5 12.8h7M8.5 16.5H14"/>')}</button>
-  <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>`;
+  <button type="button" data-sv-ink-tool="voice" aria-label="Голос — диктовка или запись" aria-controls="svSmartVoiceMenu" aria-expanded="false">${micGlyph}</button>
+  <button type="button" data-sv-ink-tool="redo" aria-label="Повторить отменённый штрих" title="Повторить штрих" disabled>${icon('<path d="m14.5 8 4.6 4-4.6 4M19.1 12h-9c-4.5 0-6.5 3.5-5.5 7.2"/>')}</button>`;
  dlg.append(inkTools);
  const inkEraser=inkTools.querySelector('[data-sv-ink-tool="eraser"]');
  const inkUndoBtn=inkTools.querySelector('[data-sv-ink-tool="undo"]');
+ const inkRedoBtn=inkTools.querySelector('[data-sv-ink-tool="redo"]');
  const inkPaperBtn=inkTools.querySelector('[data-sv-ink-tool="paper"]');
  inkPaperBtn.setAttribute('aria-controls','svSmartNotePaperPanel');
  inkPaperBtn.setAttribute('aria-expanded','false');
@@ -289,6 +291,7 @@
   setMode(mode==='eraser'?'pen':'eraser');
  });
  inkUndoBtn.addEventListener('click',()=>travelHistory());
+ inkRedoBtn.addEventListener('click',()=>travelHistory(true));
  document.addEventListener('pointerdown',event=>{
   if(!dlg.open||voiceMenu.hidden||voiceMenu.contains(event.target)||voiceBtn.contains(event.target)||inkVoiceBtn.contains(event.target))return;
   closeVoiceMenu();
@@ -321,6 +324,11 @@
  inkSafeArea.setAttribute('aria-hidden','true');dlg.append(inkSafeArea);
  const ctx=ink.getContext('2d');if(!ctx)return;
  let strokes=[],redo=[],mode='text',active=null,pointerId=null,noteId='';
+ const syncInkHistory=()=>{
+  // One source of truth for undo/redo, including Sayvi smoothing proposals.
+  inkUndoBtn.disabled=!strokes.length&&!smoothUndo;
+  inkRedoBtn.disabled=!redo.length&&!smoothRedo;
+ };
  // A single note owns an expandable vertical sheet. Stored Y coordinates
  // are document coordinates, while this canvas is only its visible window.
  let inkScrollY=0,inkPageHeight=0;
@@ -432,6 +440,7 @@
   ctx.setTransform(scale,0,0,scale,0,-inkScrollY*scale);
   strokes.forEach(drawStroke);if(active)drawStroke(active);
   ctx.restore();ctx.setTransform(1,0,0,1,0,0);
+  syncInkHistory();
  }
  function point(event){
   const g=geometry();if(!g)return [0,0,50];
