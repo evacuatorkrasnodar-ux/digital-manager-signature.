@@ -191,6 +191,12 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="groups"] #svcpRoomAvatar{
  display:none!important;
 }
+/* The Apple reference keeps the name capsule narrow and lightly overlapping
+   the portrait, rather than using the previous over-wide 116px label. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([data-room-kind="groups"]) #svcpConversationHeading .svcp-room-name-pill{
+ min-width:90px!important;min-height:35px!important;
+ padding:4px 12px!important;
+}
 /* Original search / award actions have their existing JS but do not duplicate
    the centered identity in the iMessage-style room header. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation :is(#svcpConversationSearch,#svcpRecognizeOpen,#svcpRoomInfoToggle)[hidden]{
