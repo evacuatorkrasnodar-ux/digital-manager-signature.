@@ -250,9 +250,11 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 @media(max-width:699px){
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
   form#noteReviewForm.sv-note-editor{
-  /* Reserve the 44px keyboard rail plus a small 8px reading gap.
-     Text remains in the original scrollable form; there is no extra footer. */
-  padding-bottom:52px!important;
+  /* The keyboard rail floats ABOVE the real writing canvas.
+     Do not reserve an opaque 52px footer strip in the form: doing so
+     prevented writing from ever appearing behind the frosted capsule.
+     Bottom padding on the text scroller preserves last-line access. */
+  padding-bottom:0!important;
  }
  html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-note-keyboard-open
   form#noteReviewForm.sv-note-editor:not(:has(#svNoteAttachments:not([hidden])))
