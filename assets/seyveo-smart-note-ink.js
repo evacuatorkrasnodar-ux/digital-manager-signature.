@@ -48,7 +48,33 @@
  for(const id of ['svNoteAttachmentMenu','svNoteFormatMenu']){
   const menu=document.getElementById(id);if(menu)dlg.append(menu);
  }
- bar.setAttribute('aria-label','Листаемые инструменты умной заметки');
+ bar.setAttribute('aria-label','Основные инструменты заметки');
+ // The keyboard previously exposed every legacy button in a long, clipped
+ // ribbon. Keep only mode, attachment, Sayvi and voice in sight; route
+ // secondary actions through Aa, using their existing real handlers.
+ const textActions=document.getElementById('svNoteTopMenu');
+ if(textActions){
+  const secondary=[
+   ['checklist','Список',check],
+   ['table','Таблица',tableBtn],
+   ['format','Оформление',bar.querySelector('[data-note-tool="heading"]')],
+   ['paper','Бумага',paperBtn]
+  ];
+  for(const [kind,label,target] of secondary){
+   if(!target)continue;
+   const item=document.createElement('button');
+   item.type='button';item.className='sv-note-secondary-action';
+   item.dataset.svNoteSecondary=kind;
+   item.textContent=label;
+   item.addEventListener('click',event=>{
+    event.preventDefault();event.stopPropagation();
+    window.SEYVEO_NOTE_TEXT_ACTIONS?.close?.();
+    // The existing delegated button handles history, editing and menus.
+    target.click();
+   });
+   textActions.append(item);
+  }
+ }
 
  // Sayvi is an in-note set of editing tools, not a chat or navigation link.
  // Every proposal has a preview and requires a separate Apply tap.
