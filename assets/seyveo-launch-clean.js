@@ -111,7 +111,10 @@
    splash.style.setProperty('--sv-launch-x',x+'px');
    splash.style.setProperty('--sv-launch-y',y+'px');
    splash.style.setProperty('--sv-launch-d',initialDiameter+'px');
-   splash.style.setProperty('--sv-launch-scale',String(diameter/initialDiameter));
+   const finalScale=diameter/initialDiameter;
+   splash.style.setProperty('--sv-launch-scale',String(finalScale));
+   splash.style.setProperty('--sv-launch-near-scale',
+    String(1+(finalScale-1)*.973));
    splash.dataset.stage='ready';
    document.documentElement.classList.remove('sv-cinema-boot');
    try{localStorage.setItem(key,day)}catch{}
