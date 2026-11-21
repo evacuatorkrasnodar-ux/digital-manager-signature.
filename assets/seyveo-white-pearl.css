@@ -7,35 +7,27 @@
    Source: docs/SEYVEO-WHITE-PEARL-STANDARD.md */
 
 :root[data-theme="light"]{
- /* Exact historical New Note reference (commits 8b4ca3d / 3753982).
-    Real 10% silver-pearl glass; DO NOT replace with opaque white.
-    Geometry still belongs to each existing button, not these tokens. */
- --sv-white-pearl-surface:rgba(190,193,202,.10);
+ /* Approved WHITE translucent New Note finish (21 Nov 2026, after the
+    older silver Home dock). White light passes through; no grey pigment,
+    no solid 68–92% white fill. Preserve the existing real glass geometry. */
+ --sv-white-pearl-surface:rgba(255,255,255,.18);
  --sv-white-pearl-solid:#fff;
- --sv-white-pearl-edge:.7px solid rgba(255,255,255,.28);
- --sv-white-pearl-blur:blur(4px) saturate(100%);
+ --sv-white-pearl-edge:.75px solid rgba(255,255,255,.88);
+ --sv-white-pearl-blur:blur(4px) saturate(104%);
  --sv-white-pearl-ink:#0b0b0d;
- /* Authentic pearl reflections retained. A two-stage AMBIENT lift gives
-    the floating dock/circle a readable silhouette on white paper while
-    preserving the 10% see-through material. No fake duplicate halo/rim. */
+ /* White-pearl reflection without old silver interior staining. Two
+    soft ambient shadows lift existing surfaces off the white paper; one
+    delicate perimeter keeps the edge visible without a second ring. */
  --sv-white-pearl-circle-shadow:
-   0 6px 18px rgba(48,56,72,.095),
-   0 2px 5px rgba(48,56,72,.075),
-   0 0 0 .45px rgba(164,170,184,.16),
-   inset 0 1px 1px rgba(75,82,96,.055),
-   inset 0 -1px 0 rgba(255,255,255,.18),
-   inset .6px 0 .7px rgba(255,255,255,.16),
-   inset -.6px 0 .8px rgba(75,82,96,.055),
-   0 1px 2px rgba(82,88,103,.045);
+   0 6px 18px rgba(45,56,75,.075),
+   0 2px 5px rgba(45,56,75,.055),
+   0 0 0 .4px rgba(164,173,187,.16),
+   inset 0 1px 1px rgba(255,255,255,.85);
  --sv-white-pearl-dock-shadow:
-   0 5px 16px rgba(48,56,72,.075),
-   0 1.5px 4px rgba(48,56,72,.058),
-   0 0 0 .45px rgba(164,170,184,.16),
-   inset 0 1px 1px rgba(75,82,96,.055),
-   inset 0 -1px 0 rgba(255,255,255,.18),
-   inset .6px 0 .7px rgba(255,255,255,.16),
-   inset -.6px 0 .8px rgba(75,82,96,.055),
-   0 1px 2px rgba(82,88,103,.045);
+   0 5px 16px rgba(45,56,75,.055),
+   0 1.5px 4px rgba(45,56,75,.04),
+   0 0 0 .4px rgba(164,173,187,.14),
+   inset 0 1px 1px rgba(255,255,255,.75);
  --sv-white-pearl-press-fill:
    radial-gradient(ellipse 110% 95% at 50% 5%,rgba(10,132,255,.12),rgba(10,132,255,.045) 72%);
  --sv-white-pearl-press-shadow:
