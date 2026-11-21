@@ -169,3 +169,22 @@ html body .seyveo-browser .seyveo-browser-continue-card{
  > footer.dock.sv-shared-dock > #navManage:not(:active){
  box-shadow:var(--sv-depth-circle)!important;
 }
+
+/* Home optical polish v3 — the two ORIGINAL 60px floating surfaces.
+   The approved Tasks number/peach glow and pressed state belong to
+   seyveo-review-cards.css and are intentionally NOT modified here.
+   Keep exactly the same shape, offset, glass blur, color and hit targets. */
+:root[data-theme="light"] body:has(#homePage:not([hidden]))
+ > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::before,
+:root[data-theme="light"] body:has(#homePage:not([hidden]))
+ > footer.dock.sv-shared-dock:not(.seyveo-browser-dock):not(.seyveo-music-dock)::after{
+ /* Same pearlescent edge and lower-light for capsule and standalone Search. */
+ box-shadow:
+   0 5px 17px rgba(39,50,65,.092),
+   0 2px 5px rgba(39,50,65,.041),
+   0 0 0 .55px rgba(147,159,174,.20),
+   inset 0 1px 0 rgba(255,255,255,.33),
+   inset 0 -1px 0 rgba(105,115,129,.038)!important;
+}
+/* The Search button stays flush with its own pre-existing circular
+   glass surface. Its active/recessed state and SVG remain untouched. */
