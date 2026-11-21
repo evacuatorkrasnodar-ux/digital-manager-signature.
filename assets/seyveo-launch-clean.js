@@ -25,7 +25,7 @@
   splash.id='svLaunchClean';
   splash.setAttribute('role','status');
   splash.setAttribute('aria-label','Загрузка SEYVEO');
-  splash.innerHTML='<div class="svLaunchCleanMark" aria-hidden="true"></div>';
+  splash.innerHTML='<div class="svLaunchCleanMark" aria-hidden="true"></div><div class="svLaunchCleanSignature" aria-hidden="true"><span class="svLaunchCleanName">SEYVEO</span><span class="svLaunchCleanDescriptor">IT · AI · AUTOMATION</span></div>';
   document.body.append(splash);
  }
  splash.hidden=false;
@@ -122,6 +122,14 @@
    const initialDiameter=diameter*.45;
    splash.style.setProperty('--sv-launch-x',x+'px');
    splash.style.setProperty('--sv-launch-y',y+'px');
+   // Static, independently positioned typesetting: the mark flies towards
+   // the viewer, the wordmark stays anchored below its final sphere.
+   const greeting=document.querySelector('#stage > .message');
+   const greetingBox=greeting?.getBoundingClientRect();
+   const titleY=greetingBox&&greetingBox.height>0
+    ?greetingBox.top+8:y+diameter*.5+25;
+   const wordY=Math.max(y+diameter*.5+10,Math.min(height-98,titleY));
+   splash.style.setProperty('--sv-launch-word-y',wordY.toFixed(1)+'px');
    splash.style.setProperty('--sv-launch-d',initialDiameter+'px');
    const finalScale=diameter/initialDiameter;
    splash.style.setProperty('--sv-launch-scale',String(finalScale));
