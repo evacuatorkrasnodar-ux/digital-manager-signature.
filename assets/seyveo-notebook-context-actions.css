@@ -266,7 +266,7 @@ html:root[data-theme] body dialog#noteReviewDialog.notes-dialog.note-review-dial
 /* Notebook typography pass 2026-11-21:
    A focused keyboard must not revive duplicate editor icons. */
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-note-tools-compact > :is(
+ .sv-note-tools-compact:not([data-sv-unified-tools="true"]) > :is(
   [data-sv-smart-tool="eraser"],
   [data-sv-smart-tool="table"],
   [data-note-tool="heading"],
@@ -408,8 +408,8 @@ html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-revi
 }
 
 /* SEYVEO Notebook 2026-11-21 · one swipeable row, no duplicated Aa menu.
-   This only changes the TEXT-mode toolbar. Ink mode keeps its own rail. */
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+   Keep the five primary controls stable in both text and ink modes. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact[data-sv-unified-tools="true"]{
  display:flex!important;grid-template-columns:none!important;
  align-items:center!important;justify-content:flex-start!important;
@@ -419,11 +419,11 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
  scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;
  touch-action:pan-x!important;padding:0 7px!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"]::-webkit-scrollbar{
  display:none!important;width:0!important;height:0!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button:not([hidden]):not([aria-hidden="true"]){
  box-sizing:border-box!important;position:relative!important;
  display:grid!important;place-items:center!important;
@@ -434,19 +434,19 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
  box-shadow:none!important;border-radius:50%!important;
  color:var(--note-ink)!important;scroll-snap-align:start!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button[hidden],
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button[data-sv-smart-tool="eraser"]{
  display:none!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button svg{
  width:21px!important;height:21px!important;
  fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button:active{
  background:rgba(128,142,157,.10)!important;
 }
@@ -455,7 +455,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  display:none!important;pointer-events:none!important;
 }
 @media(max-width:699px){
- html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
   .sv-note-bottom .sv-note-tools-compact[data-sv-unified-tools="true"] > button:not([hidden]):not([aria-hidden="true"]){
   flex:0 0 48px!important;width:48px!important;min-width:48px!important;max-width:48px!important;
   height:44px!important;min-height:44px!important;max-height:44px!important;
@@ -465,14 +465,14 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 /* Notebook dock symmetry v16 · geometry only.
    Five 46px tool slots with equal 9px side insets in the 248px pearl rail.
    Subsequent actions remain horizontally scrollable. */
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact[data-sv-unified-tools="true"]{
  justify-content:flex-start!important;
  gap:0!important;
  padding-inline:9px!important;
  scroll-padding-inline:9px!important;
 }
-html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact[data-sv-unified-tools="true"] > button:not([hidden]):not([aria-hidden="true"]){
  flex:0 0 46px!important;
  width:46px!important;min-width:46px!important;max-width:46px!important;
@@ -486,7 +486,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not
 /* When a narrower screen cannot show all five slots, preserve the same
    physical touch areas and let the ribbon scroll rather than squeezing icons. */
 @media(max-width:359px){
- html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]:not(.sv-smart-inking)
+ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
   .sv-note-bottom .sv-note-tool-row.sv-shared-dock > .sv-note-tools-compact[data-sv-unified-tools="true"]{
   padding-inline:8px!important;
   scroll-padding-inline:8px!important;
