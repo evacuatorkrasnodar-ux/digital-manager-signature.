@@ -1,0 +1,65 @@
+/* SEYVEO / Sayvi weather peek · white Apple-like material.
+   A temporary ONE-piece card, not another Home task card or full-width sheet. */
+.sv-weather-peek{
+ box-sizing:border-box;position:fixed;z-index:2147482100;
+ width:min(365px,calc(100vw - 24px));max-height:min(450px,calc(100dvh - 105px));
+ overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ padding:16px 17px 11px;
+ border:.75px solid rgba(255,255,255,.9);border-radius:27px;
+ background:rgba(252,253,255,.94);color:#17191e;
+ -webkit-backdrop-filter:blur(15px) saturate(112%);backdrop-filter:blur(15px) saturate(112%);
+ box-shadow:0 22px 53px rgba(24,32,45,.15),0 5px 14px rgba(24,32,45,.08),inset 0 1px 0 #fff;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+ animation:sv-weather-peek-in .24s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes sv-weather-peek-in{
+ from{opacity:0;transform:translateY(8px) scale(.985)}
+ to{opacity:1;transform:translateY(0) scale(1)}
+}
+.sv-weather-peek.sv-weather-peek-leaving{animation:sv-weather-peek-out .2s ease-in both;pointer-events:none}
+@keyframes sv-weather-peek-out{to{opacity:0;transform:translateY(5px) scale(.99)}}
+.sv-weather-peek .sv-weather-peek-eyebrow{
+ display:block;color:#9299a4;letter-spacing:.09em;font:600 10px/1.4 inherit;
+ margin-bottom:11px;
+}
+.sv-weather-peek .sv-weather-peek-main{
+ display:flex;align-items:center;gap:9px;min-height:71px;
+ padding-bottom:13px;
+}
+.sv-weather-peek .sv-weather-peek-glyph{flex:none;display:grid;place-items:center;width:34px;height:34px;color:#bf9239}
+.sv-weather-peek .sv-weather-peek-glyph svg{display:block;width:32px;height:32px}
+.sv-weather-peek .sv-weather-peek-high{font-size:46px;font-weight:350;line-height:1;letter-spacing:-.055em;white-space:nowrap}
+.sv-weather-peek .sv-weather-peek-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px;padding-left:11px;border-left:1px solid rgba(94,109,130,.22)}
+.sv-weather-peek .sv-weather-peek-city{display:block;font-size:15px;font-weight:620;line-height:1.25}
+.sv-weather-peek .sv-weather-peek-condition{display:block;font-size:12.5px;color:#606b77;line-height:1.25}
+.sv-weather-peek .sv-weather-peek-low{display:block;font-size:11px;color:#7c8490;line-height:1.25}
+.sv-weather-peek .sv-weather-peek-health{
+ display:flex;align-items:flex-start;gap:12px;padding:11px 0 12px;
+ border-top:1px solid rgba(112,124,140,.12);
+}
+.sv-weather-peek .sv-weather-peek-heart{flex:none;color:#dd766b;font-size:27px;font-weight:300;line-height:1}
+.sv-weather-peek .sv-weather-peek-health-title{display:block;font-size:13.5px;line-height:1.35;font-weight:590}
+.sv-weather-peek .sv-weather-peek-health-copy{display:block;font-size:11.5px;line-height:1.42;color:#757d87;margin-top:2px}
+.sv-weather-peek .sv-weather-peek-details{
+ box-sizing:border-box;appearance:none;-webkit-appearance:none;
+ width:100%;min-height:43px;display:flex;align-items:center;justify-content:center;
+ border:1px solid rgba(183,191,204,.23);border-radius:999px;
+ background:rgba(255,255,255,.85);color:#20242a;
+ box-shadow:0 2px 7px rgba(43,52,68,.06),inset 0 1px 1px #fff;
+ font:590 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ -webkit-tap-highlight-color:transparent;cursor:pointer;
+}
+.sv-weather-peek .sv-weather-peek-details::after{content:"›";font-size:22px;line-height:.5;margin-left:11px;color:#65707c;font-weight:400}
+.sv-weather-peek .sv-weather-peek-details:active{background:rgba(232,235,240,.75)}
+.sv-weather-peek .sv-weather-peek-details:focus-visible{outline:2px solid #5b677a;outline-offset:2px}
+.sv-weather-peek .sv-weather-peek-source{
+ margin:9px 0 0;text-align:center;color:#939aa3;font:400 10px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+.sv-weather-peek .sv-weather-peek-empty-copy{font-size:12px;color:#78818b;line-height:1.5}
+:root[data-theme="dark"] .sv-weather-peek{
+ color:#F5F6F8;background:rgba(47,49,54,.94);border-color:rgba(255,255,255,.16);
+ box-shadow:0 22px 50px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2),inset 0 1px 1px rgba(255,255,255,.1);
+}
+:root[data-theme="dark"] .sv-weather-peek :is(.sv-weather-peek-condition,.sv-weather-peek-low,.sv-weather-peek-health-copy){color:#B7BDC7}
+:root[data-theme="dark"] .sv-weather-peek .sv-weather-peek-details{color:#F4F5F7;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);box-shadow:none}
+@media(prefers-reduced-motion:reduce){.sv-weather-peek,.sv-weather-peek.sv-weather-peek-leaving{animation:none}}
