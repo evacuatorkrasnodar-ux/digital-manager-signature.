@@ -2,7 +2,7 @@
    One unchanged original logo; no duplicate sphere, no global transforms. */
 #svLaunchClean[hidden]{display:none!important}
 #svLaunchClean{
- all:initial!important;
+ all:initial;
  position:fixed!important;inset:0!important;
  z-index:2147483647!important;
  display:block!important;
@@ -13,15 +13,16 @@
  border-radius:0!important;outline:0!important;
  overflow:hidden!important;isolation:isolate!important;
  background:radial-gradient(ellipse 56% 43% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(215,228,237,.12),rgba(255,255,255,0) 90%),#fff!important;
- opacity:1!important;
+ opacity:1;
  -webkit-tap-highlight-color:transparent!important;
  pointer-events:auto!important;
+ overscroll-behavior:contain!important;touch-action:none!important;
 }
 :root[data-theme="dark"] #svLaunchClean{
  background:radial-gradient(ellipse 56% 43% at var(--sv-launch-x,50%) var(--sv-launch-y,44%),rgba(145,166,182,.085),transparent 90%),var(--bg,#11161b)!important;
 }
 #svLaunchClean .svLaunchCleanMark{
- all:initial!important;
+ all:initial;
  position:absolute!important;display:block!important;
  left:var(--sv-launch-x,50%)!important;
  top:var(--sv-launch-y,44%)!important;
@@ -31,7 +32,7 @@
  background-image:url("./seyveo-circular-interlace-color-clean.png?v=clean-2")!important;
  background-size:contain!important;background-position:center!important;
  background-repeat:no-repeat!important;
- transform:translate3d(-50%,-50%,0) scale(1)!important;
+ transform:translate3d(-50%,-50%,0) scale(1);
  transform-origin:center center!important;
  backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;
  will-change:transform,opacity!important;
