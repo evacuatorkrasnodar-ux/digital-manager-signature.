@@ -98,3 +98,20 @@ html body #notePaperDialog.sv-paper-studio[open]:not(.sv-paper-light-surface) .s
   min-height:44px!important;font-size:12px!important;gap:7px!important;padding:8px!important;
  }
 }
+
+/* Two calm groups, one unchanged compact drawing popover. */
+#notePaperDialog .sv-brush-picker-grid .sv-brush-picker-group{
+ grid-column:1/-1!important;
+ display:block!important;
+ margin:4px 1px 0!important;
+ padding:0 1px 2px!important;
+ font:500 11.5px/17px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif!important;
+ color:#7b808a!important;
+}
+#notePaperDialog .sv-brush-picker-grid .sv-brush-picker-group:not(:first-child){
+ border-top:1px solid rgba(130,139,152,.16)!important;
+ padding-top:10px!important;margin-top:3px!important;
+}
+#notePaperDialog:not(.sv-paper-light-surface) .sv-brush-picker-grid .sv-brush-picker-group{
+ color:#c1c4ca!important;
+}
