@@ -5,7 +5,7 @@
 (()=>{
  'use strict';
  const MAX_AGE=36*60*60*1000;
- const HIDE_AFTER=7000;
+ const HIDE_AFTER=10000;
  const getSource=()=>window.SAYVI_WEATHER;
  let panel=null,activeAnchor=null,activeDate='',timer=0,requestedRefresh=false;
  const condition=code=>{
@@ -88,56 +88,57 @@
   close(true);
   activeAnchor=anchor;activeDate=date;
   anchor.setAttribute('aria-expanded','true');
-  const src=getSource();
-  const day=getDay(date),city=src?.getLocation?.()?.name||'Ваш город';
+  const src=getSource(),day=getDay(date),city=src?.getLocation?.()?.name||'Ваш город';
   panel=document.createElement('aside');
   panel.className='sv-weather-peek';
-  panel.setAttribute('role','status');
-  panel.setAttribute('aria-live','polite');
-  panel.setAttribute('aria-label','Сэйви: прогноз погоды');
-  const head=document.createElement('div');head.className='sv-weather-peek-head';
-  const avatar=add('sv-weather-peek-avatar','S',head);
-  avatar.setAttribute('aria-hidden','true');
-  const titles=document.createElement('div');titles.className='sv-weather-peek-titles';
-  add('sv-weather-peek-eyebrow','СЭЙВИ · ПОГОДА',titles);
-  add('sv-weather-peek-city',city,titles,'strong');
-  head.append(titles);panel.append(head);
+  panel.setAttribute('role','dialog');
+  panel.setAttribute('aria-modal','false');
+  panel.setAttribute('aria-label','Краткий прогноз Сэйви');
+  const eyebrow=add('sv-weather-peek-eyebrow','СЭЙВИ · ПОГОДА',panel);
+  eyebrow.setAttribute('aria-hidden','true');
+  const main=document.createElement('div');main.className='sv-weather-peek-main';
   if(day){
-   const main=document.createElement('div');main.className='sv-weather-peek-main';
-   const glyph=document.createElement('span');glyph.className='sv-weather-peek-glyph';
-   glyph.innerHTML=icon(day.code);
-   main.append(glyph);
-   const stats=document.createElement('div');stats.className='sv-weather-peek-stats';
-   add('sv-weather-peek-condition',condition(day.code),stats);
-   add('sv-weather-peek-high',temp(day.max),stats);
-   add('sv-weather-peek-low','минимум '+temp(day.min),stats);
-   main.append(stats);panel.append(main);
-   const forecast=document.createElement('div');forecast.className='sv-weather-peek-next';
-   for(let offset=1;offset<=2;offset++){
-    const key=nextDate(date,offset),value=getDay(key);
-    if(!value)continue;
-    const cell=document.createElement('div');cell.className='sv-weather-peek-day';
-    add('sv-weather-peek-day-name',weekday(key),cell);
-    const symbol=add('sv-weather-peek-day-icon','',cell);symbol.innerHTML=icon(value.code);
-    add('sv-weather-peek-day-value',temp(value.max)+' / '+temp(value.min),cell);
-    forecast.append(cell);
-   }
-   if(forecast.childElementCount){panel.append(forecast);}
-   const updated=Number(src?.getUpdatedAt?.())||0;
-   add('sv-weather-peek-source','Прогноз по дням · Open-Meteo'+(updated?' · '+stamp(updated)+' МСК':''),panel,'p');
+   const glyph=add('sv-weather-peek-glyph','',main);glyph.innerHTML=icon(day.code);
+   const tempLine=add('sv-weather-peek-high',temp(day.max),main,'strong');
+   tempLine.title='Максимальная температура за день';
+   const info=document.createElement('div');info.className='sv-weather-peek-info';
+   add('sv-weather-peek-city',city,info,'strong');
+   add('sv-weather-peek-condition',condition(day.code),info);
+   add('sv-weather-peek-low','Днём до '+temp(day.max)+' · ночью до '+temp(day.min),info);
+   main.append(info);
+   panel.append(main);
+   const health=document.createElement('div');health.className='sv-weather-peek-health';
+   const heart=add('sv-weather-peek-heart','♡',health);heart.setAttribute('aria-hidden','true');
+   const copy=document.createElement('div');
+   add('sv-weather-peek-health-title','Самочувствие',copy,'strong');
+   add('sv-weather-peek-health-copy','Перемены погоды иногда влияют на метеочувствительных людей. Ориентируйтесь на самочувствие.',copy);
+   health.append(copy);panel.append(health);
   }else{
-   const blank=document.createElement('div');blank.className='sv-weather-peek-empty';
-   add('sv-weather-peek-condition','Прогноз обновляется',blank,'strong');
-   add('sv-weather-peek-empty-copy','Сэйви покажет погоду, когда поступят свежие данные.',blank,'p');
-   panel.append(blank);
+   add('sv-weather-peek-city',city,main,'strong');
+   add('sv-weather-peek-condition','Прогноз обновляется',main);
+   panel.append(main);
+   add('sv-weather-peek-empty-copy','Сэйви покажет данные после обновления прогноза.',panel,'p');
   }
+  const details=document.createElement('button');
+  details.type='button';
+  details.className='sv-weather-peek-details';
+  details.textContent='Подробнее у Сэйви';
+  details.setAttribute('aria-label','Открыть подробную метеостанцию в чате Сэйви');
+  details.addEventListener('click',event=>{
+   event.preventDefault();event.stopPropagation();
+   const didOpen=window.SEYVEO_WEATHER_BRIEF?.openStation?.();
+   if(!didOpen&&window.SEYVEO_CONVERSATION?.open)window.SEYVEO_CONVERSATION.open();
+   else if(!didOpen)window.location.assign('sayvi-chat-new.html');
+   close(true);
+  });
+  panel.append(details);
+  const updated=Number(src?.getUpdatedAt?.())||0;
+  if(day)add('sv-weather-peek-source','Open-Meteo · прогноз по дням'+(updated?' · '+stamp(updated)+' МСК':''),panel,'p');
   document.body.append(panel);
   position();
   timer=setTimeout(()=>close(),HIDE_AFTER);
-  if(!day&&!requestedRefresh){
-   requestedRefresh=true;
-   src?.refresh?.();
-  }
+  panel.addEventListener('pointerdown',()=>{clearTimeout(timer);timer=setTimeout(()=>close(),HIDE_AFTER);},{passive:true});
+  if(!day&&!requestedRefresh){requestedRefresh=true;src?.refresh?.();}
  }
  window.SEYVEO_WEATHER_PEEK=Object.freeze({open,close:()=>close()});
  document.addEventListener('pointerdown',event=>{
