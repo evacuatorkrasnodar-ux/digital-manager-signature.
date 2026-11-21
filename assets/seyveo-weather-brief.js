@@ -3,6 +3,7 @@
 (() => {
   'use strict';
   const HANDOFF_KEY='seyveo.sayvi.weather-handoff.v1';
+  const DISCUSS_KEY='seyveo.sayvi.weather-discuss.v1';
   const PREFIX='⟦SEYVEO-WEATHER-1⟧';
   const MAX_AGE=36*60*60*1000;
   const MAX_HANDOFF_AGE=3*60*1000;
@@ -26,7 +27,7 @@
     day.max>=day.min&&day.max<70&&day.min> -90;
   const validBrief=item=>item&&typeof item.city==='string'&&item.city.length>0&&
     item.city.length<=80&&Array.isArray(item.days)&&item.days.length>0&&
-    item.days.length<=7&&item.days.every(validDay)&&Number.isFinite(item.updatedAt)&&
+    item.days.length<=10&&item.days.every(validDay)&&Number.isFinite(item.updatedAt)&&
     Date.now()-item.updatedAt<MAX_AGE&&Date.now()>=item.updatedAt-5*60*1000;
   const dateKey=()=>{
     const parts=new Intl.DateTimeFormat('en-GB',{
@@ -38,7 +39,7 @@
   const nextDays=()=>{
     const first=dateKey();
     const epoch=Date.parse(first+'T12:00:00Z');
-    return Array.from({length:7},(_,index)=>new Date(epoch+index*86400000).toISOString().slice(0,10));
+    return Array.from({length:10},(_,index)=>new Date(epoch+index*86400000).toISOString().slice(0,10));
   };
   const getBrief=()=>{
     const source=window.SAYVI_WEATHER;
@@ -85,7 +86,7 @@
       hours.push(point);
     }
     const daily=[];
-    for(let i=0;i<Math.min(7,raw.daily?.time?.length||0);i++){
+    for(let i=0;i<Math.min(10,raw.daily?.time?.length||0);i++){
       const entry={date:raw.daily.time[i]};
       for(const [property,key] of Object.entries({
         rain:'precipitation_sum',rainChance:'precipitation_probability_max',
@@ -101,12 +102,18 @@
   const openStation=()=>{
     const brief=getBrief();
     if(!brief)return false;
-    const payload={...brief,station:stationSummary(),at:Date.now()};
+    const payload={...brief,station:stationSummary(),
+      geomagnetic:window.SAYVI_WEATHER?.getGeomagneticDays?.()||[],at:Date.now()};
     try{sessionStorage.setItem(HANDOFF_KEY,JSON.stringify(payload));}
     catch{return false;}
     if(window.SEYVEO_CONVERSATION?.open)window.SEYVEO_CONVERSATION.open();
     else window.location.assign('sayvi-chat-new.html');
     return true;
+  };
+  const openDiscussion=()=>{
+    try{sessionStorage.setItem(DISCUSS_KEY,JSON.stringify({at:Date.now()}));}
+    catch{}
+    return openStation();
   };
   const weatherGlyph=code=>{
     const cloud='<path d="M5.4 17.3h12.3a3.5 3.5 0 0 0 .2-7 5.8 5.8 0 0 0-11.2-.7 3.9 3.9 0 0 0-1.3 7.7Z"/>';
@@ -379,7 +386,31 @@
       }else{
         healthText.textContent='Погода может влиять на ощущение комфорта, но по прогнозу нельзя предсказать симптомы или артериальное давление конкретного человека.';
       }
-      health.append(healthTitle,healthText);container.append(health);
+      health.append(healthTitle,healthText);
+      const geoEntries=(Array.isArray(data.geomagnetic)?data.geomagnetic:[])
+       .filter(row=>row&&/^\d{4}-\d{2}-\d{2}$/.test(row.date)&&
+        Number.isFinite(row.kp)&&row.kp>=0&&row.kp<=9).slice(0,4);
+      if(geoEntries.length){
+        const geoTitle=document.createElement('h4');
+        geoTitle.textContent='Геомагнитная активность · NOAA';
+        geoTitle.className='sv-sayvi-station-geo-title';
+        health.append(geoTitle);
+        geoEntries.forEach(item=>{
+          const row=document.createElement('div');row.className='sv-sayvi-station-geo-row';
+          const date=document.createElement('span');date.textContent=fullDay(item.date);
+          const index=document.createElement('strong');
+          index.textContent='Kp '+item.kp.toFixed(1)+'/9'+(item.kp>=5?' · буря':'');
+          row.append(date,index);health.append(row);
+        });
+        const help=document.createElement('p');
+        help.textContent='Kp измеряет активность магнитного поля Земли, не процент риска для здоровья. NOAA обычно прогнозирует лишь около 3 дней.';
+        health.append(help);
+      }else{
+        const wait=document.createElement('p');
+        wait.textContent='Прогноз магнитной активности NOAA пока недоступен.';
+        health.append(wait);
+      }
+      container.append(health);
     }else{
       const notice=document.createElement('p');
       notice.className='sv-sayvi-station-pending';
@@ -387,14 +418,14 @@
       container.append(notice);
     }
     const weekLabel=document.createElement('h4');weekLabel.className='sv-sayvi-station-week-title';
-    weekLabel.textContent='Прогноз на 7 дней';
+    weekLabel.textContent='Прогноз на '+data.days.length+' дней';
     container.append(weekLabel);
 
     if(data.days.length>1){
       const chart=document.createElement('div');
       chart.className='sv-sayvi-weather-chart';
       const svg=svgElement('svg',{viewBox:'0 0 360 176',role:'img',
-        'aria-label':'Максимальная и минимальная температура на семь дней'});
+        'aria-label':'Максимальная и минимальная температура по дням'});
       const nums=data.days.flatMap(day=>[day.max,day.min]);
       const floor=Math.floor(Math.min(...nums)-3);
       const ceiling=Math.ceil(Math.max(...nums)+3);
@@ -443,7 +474,7 @@
     return true;
   };
   window.SEYVEO_WEATHER_BRIEF=Object.freeze({
-    openStation,
+    openStation,openDiscussion,
     isMessage:message=>typeof message==='string'&&message.startsWith(PREFIX),
     render:draw,
     acceptHandoff:append=>{
@@ -457,8 +488,8 @@
       }catch{return;}
       if(!handoff||!validBrief(handoff)||!Number.isFinite(handoff.at)||
          Date.now()-handoff.at>MAX_HANDOFF_AGE||Date.now()<handoff.at-5000)return;
-      const {city,days,updatedAt,station}=handoff;
-      append(PREFIX+JSON.stringify({city,days,updatedAt,station}));
+      const {city,days,updatedAt,station,geomagnetic}=handoff;
+      append(PREFIX+JSON.stringify({city,days,updatedAt,station,geomagnetic}));
     }
   });
 })();
