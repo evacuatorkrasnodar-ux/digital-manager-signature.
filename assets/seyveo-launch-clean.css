@@ -118,3 +118,76 @@
  }
  #svLaunchClean[data-stage="reveal"]{animation:none!important;opacity:0!important}
 }
+
+/* Signature lockup. A quiet, calibrated reveal below the landing orb.
+   Letter spacing is CSS-only: the actual brand stays SEYVEO. */
+#svLaunchClean .svLaunchCleanSignature{
+ all:initial;
+ position:absolute!important;
+ left:var(--sv-launch-x,50%)!important;
+ top:var(--sv-launch-word-y,75%)!important;
+ width:min(90vw,390px)!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:11px!important;
+ transform:translate3d(-50%,0,0)!important;
+ text-align:center!important;white-space:nowrap!important;
+ pointer-events:none!important;user-select:none!important;
+ -webkit-user-select:none!important;
+ color:#283039!important;
+ visibility:hidden!important;
+}
+#svLaunchClean .svLaunchCleanName,
+#svLaunchClean .svLaunchCleanDescriptor{
+ display:block!important;
+ font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI",Arial,sans-serif!important;
+ font-style:normal!important;
+ text-rendering:optimizeLegibility!important;
+ -webkit-font-smoothing:antialiased!important;
+ white-space:nowrap!important;
+ opacity:0;
+ will-change:opacity,transform;
+}
+#svLaunchClean .svLaunchCleanName{
+ font-size:clamp(27px,7.7vw,38px)!important;
+ line-height:1.08!important;
+ font-weight:300!important;
+ letter-spacing:.22em!important;
+ padding-left:.22em!important;
+ color:#242a30!important;
+}
+#svLaunchClean .svLaunchCleanDescriptor{
+ font-size:clamp(9px,2.25vw,11px)!important;
+ line-height:1.25!important;
+ font-weight:500!important;
+ letter-spacing:.28em!important;
+ padding-left:.28em!important;
+ color:#59646e!important;
+}
+:root[data-theme="dark"] #svLaunchClean .svLaunchCleanName{color:#f2f6fa!important}
+:root[data-theme="dark"] #svLaunchClean .svLaunchCleanDescriptor{color:#b5c0c9!important}
+#svLaunchClean[data-stage="ready"] .svLaunchCleanSignature,
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanSignature,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanSignature{
+ visibility:visible!important;
+}
+@keyframes svLaunchNameReveal{
+ 0%{opacity:0;transform:translate3d(0,11px,0)}
+ 100%{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes svLaunchDescriptorReveal{
+ 0%{opacity:0;transform:translate3d(0,8px,0)}
+ 100%{opacity:1;transform:translate3d(0,0,0)}
+}
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanName,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanName{
+ animation:svLaunchNameReveal 1150ms cubic-bezier(.22,1,.36,1) 350ms both!important;
+}
+#svLaunchClean[data-stage="zoom"] .svLaunchCleanDescriptor,
+#svLaunchClean[data-stage="reveal"] .svLaunchCleanDescriptor{
+ animation:svLaunchDescriptorReveal 1300ms cubic-bezier(.22,1,.36,1) 730ms both!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #svLaunchClean .svLaunchCleanName,
+ #svLaunchClean .svLaunchCleanDescriptor{animation:none!important}
+}
