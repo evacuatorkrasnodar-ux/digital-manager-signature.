@@ -41,19 +41,21 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversat
 html body #svcpWorkChatScreen[data-view="room"] .svcp-room-identity{
  box-sizing:border-box!important;
  position:absolute!important;
- left:50%!important;top:calc(0px + env(safe-area-inset-top,0px))!important;
+ left:50%!important;top:calc(23px + env(safe-area-inset-top,0px))!important;
  transform:translateX(-50%)!important;
  width:min(195px,53vw)!important;
  height:130px!important;
  display:flex!important;align-items:center!important;flex-direction:column!important;
+ background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
  z-index:3!important;pointer-events:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvatar{
  position:relative!important;
  display:grid!important;place-items:center!important;
- flex:0 0 58px!important;width:58px!important;height:58px!important;
- min-width:58px!important;min-height:58px!important;
+ flex:0 0 52px!important;width:52px!important;height:52px!important;
+ min-width:52px!important;min-height:52px!important;
  margin:0!important;padding:0!important;
+ z-index:1!important;overflow:hidden!important;
  border:1px solid rgba(187,198,210,.45)!important;border-radius:50%!important;
  background:radial-gradient(circle at 31% 20%,rgba(255,255,255,.92),rgba(228,233,240,.9) 65%,rgba(202,214,224,.7))!important;
  color:#2b3643!important;
@@ -66,13 +68,22 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpRoomAvatar .sv-sayvi-symbol
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversationHeading{
  display:flex!important;align-items:center!important;flex-direction:column!important;
  justify-content:flex-start!important;
- flex:0 0 auto!important;position:relative!important;
+ flex:0 0 auto!important;position:relative!important;z-index:2!important;
  width:100%!important;min-width:0!important;max-width:100%!important;
  margin:0!important;padding:0!important;
  min-height:59px!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  text-align:center!important;pointer-events:auto!important;
  color:var(--text)!important;
+}
+/* Apple-style contact identity: the round avatar partly tucks behind the
+   translucent name pill. Keep group and avatarless assistant headings intact. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([data-room-kind="groups"]):not([data-room-id="dm-sayvi"]) #svcpConversationHeading{
+ margin-top:-11px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-room-identity::before,
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-room-identity::after{
+ content:none!important;display:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversationHeading .svcp-room-name-pill{
  display:flex!important;align-items:center!important;justify-content:center!important;
