@@ -154,24 +154,79 @@
   sync();
   return true;
  }
+ // Reuse the existing four real swatches, but reveal them only when the
+ // person taps "Marker" or "Marker underline". No second color picker.
  const markerMenu=document.getElementById('svNoteFormatMenu');
+ const markerColors=markerMenu?.querySelector('.sv-note-marker-colors');
+ let markerMode='highlight';
+ const palette=document.createElement('div');
+ palette.id='svNoteMarkerPalette';
+ palette.className='sv-note-marker-palette';
+ palette.setAttribute('role','group');
+ palette.setAttribute('aria-label','Выбрать цвет текстового маркера');
+ palette.hidden=true;
+ const paletteCaption=document.createElement('span');
+ paletteCaption.className='sv-note-marker-caption';
+ paletteCaption.textContent='Цвет маркера';
+ if(markerColors)palette.append(paletteCaption,markerColors);
+ dialog.append(palette);
  const updateToneButtons=()=>{
-  markerMenu?.querySelectorAll('[data-sv-marker-tone]').forEach(button=>
+  markerColors?.querySelectorAll('[data-sv-marker-tone]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.svMarkerTone===markerTone)));
  };
- markerMenu?.addEventListener('click',event=>{
+ const closePalette=()=>{palette.hidden=true;};
+ const openPalette=kind=>{
+  if(!markerColors||!['marker','marker-underline'].includes(kind))return false;
+  if(active)remember();
+  else plainSelection={start:textarea.selectionStart,end:textarea.selectionEnd};
+  markerMode=kind==='marker'?'highlight':'underline';
+  palette.dataset.svMarkerMode=markerMode;
+  paletteCaption.textContent=markerMode==='underline'?'Цвет подчёркивания':'Цвет маркера';
+  updateToneButtons();
+  const anchor=dialog.querySelector('[data-note-tool="heading"]')?.getBoundingClientRect();
+  const bounds=dialog.getBoundingClientRect();
+  const width=216;
+  const center=anchor?.width?anchor.left-bounds.left+anchor.width/2:bounds.width/2;
+  const left=Math.max(12,Math.min(Math.max(12,bounds.width-width-12),center-width/2));
+  palette.style.setProperty('--sv-note-marker-left',Math.round(left)+'px');
+  markerMenu.hidden=true;
+  dialog.querySelector('[data-note-tool="heading"]')?.setAttribute('aria-expanded','false');
+  palette.hidden=false;
+  return true;
+ };
+ markerColors?.addEventListener('click',event=>{
   const button=event.target.closest('button[data-sv-marker-tone]');
-  if(!button||!markerMenu.contains(button))return;
+  if(!button||!markerColors.contains(button))return;
   if(!MARKER_TONES.has(button.dataset.svMarkerTone))return;
   markerTone=button.dataset.svMarkerTone;
   updateToneButtons();
+  const ok=markSelection(markerMode);
+  closePalette();
+  const status=document.getElementById('noteReviewStatus');
+  if(status){
+   status.hidden=Boolean(ok);
+   status.textContent=ok?'':'Выдели слово или фразу, затем выбери цвет маркера.';
+  }
  });
- // Desktop and iOS: clicking formatting controls must not steal the saved
- // text selection from the native editor.
+ // Keep iOS/desktop text selection when choosing the swatch.
  markerMenu?.addEventListener('mousedown',event=>{
   if(event.target.closest('button'))event.preventDefault();
  });
+ palette.addEventListener('mousedown',event=>{
+  if(event.target.closest('button'))event.preventDefault();
+ });
+ document.addEventListener('pointerdown',event=>{
+  if(!dialog.open||palette.hidden||palette.contains(event.target))return;
+  closePalette();
+ },true);
+ dialog.addEventListener('keydown',event=>{
+  if(event.key!=='Escape'||palette.hidden)return;
+  event.preventDefault();event.stopPropagation();closePalette();
+ },true);
+ dialog.addEventListener('close',closePalette);
+ dialog.addEventListener('seyveo:smart-note-open',closePalette);
  updateToneButtons();
+ window.SEYVEO_NOTE_MARKER=Object.freeze({open:openPalette,close:closePalette});
  function applyFormat(kind){
   if(kind==='marker')return markSelection('highlight');
   if(kind==='marker-underline')return markSelection('underline');
