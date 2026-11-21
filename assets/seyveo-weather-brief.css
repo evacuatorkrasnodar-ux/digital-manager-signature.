@@ -263,3 +263,13 @@
  #homePage #svSayviHomeWeather .sv-home-weather-today-face,
  #homePage #svSayviHomeWeather .sv-home-weather-week-face{animation:none!important}
 }
+/* Safari Home recovery: optional handoff state must never permanently hide
+   the weather line after the main sphere has arrived. Preserve the deliberate
+   temporary intro flight, route-exit and music ambient concealment. */
+:root.sv-home-weather-available:not(.sv-home-empty-arriving):not(.sv-home-empty-route-exit):not(.sv-music-ambient)
+ #homePage #svSayviHomeWeather:not([hidden]){
+ display:inline-flex!important;
+ visibility:visible!important;
+ opacity:1!important;
+ pointer-events:auto!important;
+}
