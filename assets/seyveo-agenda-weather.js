@@ -196,8 +196,8 @@
    if(!button.dataset.svWeatherBaseLabel)
     button.dataset.svWeatherBaseLabel=button.getAttribute('aria-label')||'';
    button.setAttribute('aria-label',button.dataset.svWeatherBaseLabel+
-    '. Погода: '+label+', максимум '+temperature(item.max)+
-    ', минимум '+temperature(item.min));
+    (document.documentElement.dataset.svWeatherMode==='true'?
+     '. Погода: '+label+', максимум '+temperature(item.max)+', минимум '+temperature(item.min):''));
   });
  }
  function paint(){
@@ -322,6 +322,7 @@
   getLocation:()=>({...location}),
   getUpdatedAt:()=>updatedAt,
   getForecast:date=>days.has(date)?{...days.get(date)}:null,
+  syncRail:paintDayRail,
   getStationData:()=>station&&updatedAt&&Date.now()-updatedAt<STALE_MS?JSON.parse(JSON.stringify(station)):null
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
