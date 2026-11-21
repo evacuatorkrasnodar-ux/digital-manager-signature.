@@ -55,7 +55,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvata
  flex:0 0 56px!important;width:56px!important;height:56px!important;
  min-width:56px!important;min-height:56px!important;
  margin:0!important;padding:0!important;
- z-index:1!important;overflow:hidden!important;
+ z-index:4!important;overflow:hidden!important;
  border:1px solid rgba(187,198,210,.45)!important;border-radius:50%!important;
  background:radial-gradient(circle at 31% 20%,rgba(255,255,255,.92),rgba(228,233,240,.9) 65%,rgba(202,214,224,.7))!important;
  color:#2b3643!important;
@@ -103,7 +103,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversat
 /* Apple-style contact identity: the round avatar partly tucks behind the
    translucent name pill. Keep group and avatarless assistant headings intact. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([data-room-kind="groups"]):not([data-room-id="dm-sayvi"]) #svcpConversationHeading{
- margin-top:-19px!important;
+ margin-top:-8px!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-room-identity::before,
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-room-identity::after{
