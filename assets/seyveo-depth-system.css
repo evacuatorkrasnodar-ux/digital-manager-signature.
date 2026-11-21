@@ -154,3 +154,18 @@ html body #sayviMessages .sv-reply-action-menu:not([hidden]),
 html body .sv-history-menu:not([hidden]){
  box-shadow:var(--sv-depth-menu)!important;
 }
+
+/* Distinct service surfaces use the same quiet elevation, with no new
+   decorative underlays or shadows on the transport/shortcut icons. */
+html body #sayviMusicMini:not([hidden]),
+html body .seyveo-browser .seyveo-browser-bar{
+ box-shadow:var(--sv-depth-dock)!important;
+}
+html body .seyveo-browser .seyveo-browser-continue-card{
+ box-shadow:var(--sv-depth-card)!important;
+}
+/* Health has a separate search circle outside its main capsule. */
+:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > footer.dock.sv-shared-dock > #navManage:not(:active){
+ box-shadow:var(--sv-depth-circle)!important;
+}
