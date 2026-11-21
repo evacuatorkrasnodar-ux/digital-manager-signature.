@@ -997,7 +997,7 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open].sv-
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-paper-panel>strong{font:600 14px/1.2 -apple-system,BlinkMacSystemFont,sans-serif!important}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
- .sv-smart-paper-options{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+ .sv-smart-paper-options{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important}
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  .sv-smart-paper-options>button{
  box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:7px!important;
@@ -1021,6 +1021,23 @@ html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
 html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
  [data-sv-paper-choice="grid"] .sv-smart-paper-swatch{
  background-image:linear-gradient(to right,rgba(126,146,166,.24) 1px,transparent 1px),linear-gradient(to bottom,rgba(126,146,166,.24) 1px,transparent 1px)!important;
+ background-size:18px 18px!important;
+}
+
+/* The fourth notebook paper template: evenly spaced quiet dots. */
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="dots"]
+ > #svNotePaperSheet.sv-note-paper-sheet{
+ background-image:radial-gradient(circle,rgba(126,146,166,.29) .8px,transparent .9px)!important;
+ background-size:24px 24px!important;
+ background-position:0 var(--sv-note-paper-scroll,0px)!important;
+}
+html:root[data-theme="dark"] body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open][data-sv-paper-style="dots"]
+ > #svNotePaperSheet.sv-note-paper-sheet{
+ background-image:radial-gradient(circle,rgba(205,214,226,.28) .8px,transparent .9px)!important;
+}
+html:root body dialog#noteReviewDialog.notes-dialog.note-review-dialog[open]
+ [data-sv-paper-choice="dots"] .sv-smart-paper-swatch{
+ background-image:radial-gradient(circle,rgba(126,146,166,.37) .8px,transparent .9px)!important;
  background-size:18px 18px!important;
 }
 
