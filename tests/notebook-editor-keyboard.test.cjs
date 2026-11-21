@@ -95,15 +95,15 @@ test('Notebook replaces the old New Note circle with an independent Home dock su
  assert.match(editor,/id="svNoteHomeNew" class="sv-note-home-new-button"/);
  assert.doesNotMatch(editor,/id="svNoteNewStandalone"|class="sv-note-draw-standalone"/);
  assert.match(newHomeDock,/\.sv-note-home-new-dock::before\{/);
- assert.match(newHomeDock,/background:var\(--sv-dock-pearl-bg/);
- assert.match(newHomeDock,/border:var\(--sv-dock-pearl-border/);
+ assert.ok(newHomeDock.includes('background:var(--sv-white-pearl-surface'),'new note background belongs to White Pearl');
+ assert.ok(newHomeDock.includes('border:var(--sv-white-pearl-edge'),'new note rim belongs to White Pearl');
  assert.match(newHomeDock,/width:60px!important;min-width:60px!important;max-width:60px!important;/);
  assert.match(newHomeDock,/transform:translateY\(\.2px\) scale\(\.992\)!important;/);
  assert.doesNotMatch(newHomeDock,/52px|svNoteNewStandalone/);
  assert.match(css,/--note-width:clamp\(176px,calc\(100vw - var\(--note-left\) - var\(--note-left\) - 80px\),248px\);/);
  assert.match(css,/--note-left:max\(clamp\(14px,5vw,22px\),calc\(50vw - 175px\)\);/);
  assert.match(css,/--note-right:calc\(100vw - var\(--note-left\) - 60px\);/);
- assert.ok(home.includes('--sv-dock-pearl-bg:'));
+ assert.ok(fs.readFileSync(path.join(root,'assets/seyveo-white-pearl.css'),'utf8').includes('--sv-dock-pearl-bg:var(--sv-white-pearl-surface)'));
  assert.match(css,/--note-pill:var\(--sv-dock-pearl-bg,/);
  for(const width of [320,337,375,390,454]){
   const left=Math.max(Math.max(14,Math.min(width*.05,22)),width/2-175);
@@ -115,7 +115,7 @@ test('Notebook replaces the old New Note circle with an independent Home dock su
 test('software keyboard switches dock to one narrow 42px full-width capsule',()=>{
  assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom\{/);
  assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::before\{[\s\S]*?left:14px!important;width:calc\(100vw - 28px\)!important;[\s\S]*?height:42px!important;/);
- assert.match(css,/\.sv-note-keyboard-open\s+\.sv-note-bottom \.sv-note-tool-row\.sv-shared-dock::after\{display:none!important\}/);
+ assert.ok(newHomeDock.includes('sv-note-home-dock-row::after{'),'former right pseudo shell disabled by new button dock');
  assert.match(newHomeDock,/\.sv-note-keyboard-open[\s\S]*?\.sv-note-home-new-dock\{display:none!important\}/);
  assert.match(css,/\.sv-smart-ink-tools\[hidden\],[\s\S]*?:not\(\.sv-smart-inking\)[\s\S]*?\.sv-note-keyboard-open\s+\.sv-smart-ink-tools\{display:none!important\}/);
 });
