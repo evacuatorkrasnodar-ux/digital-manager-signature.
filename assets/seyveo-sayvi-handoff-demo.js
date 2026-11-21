@@ -432,7 +432,7 @@
     const sphere=document.createElement('div');
     sphere.className='sv-launch-brand';
     const image=document.createElement('img');
-    image.src='assets/seyveo-launch-sphere.svg?v=1';
+    image.src='assets/seyveo-launch-sphere.svg?v=2';
     image.alt='';
     image.width=440;image.height=440;image.draggable=false;
     sphere.append(image);
