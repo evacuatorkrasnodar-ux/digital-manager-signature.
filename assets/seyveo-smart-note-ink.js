@@ -208,6 +208,8 @@
   inkPicker.hidden=true;
   inkWidthBtn.setAttribute('aria-expanded','false');inkColorBtn.setAttribute('aria-expanded','false');
  };
+ // The training dialog is modal; do not leave its parent pen menu expanded.
+ handwritingButton?.addEventListener('click',closeInkPicker);
  const syncInkPicker=()=>{
   inkColorBtn.style.setProperty('--sv-ink-color',penColor);
   inkPicker.querySelectorAll('[data-sv-pen-style]').forEach(button=>
