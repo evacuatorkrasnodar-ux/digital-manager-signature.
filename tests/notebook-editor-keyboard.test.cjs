@@ -57,7 +57,7 @@ test('top navigation keeps Back, an editable centered note title and golden Done
 });
 
 test('note body starts immediately beneath navigation, even on a notched iPhone',()=>{
- assert.match(css,/padding:max\(84px,calc\(env\(safe-area-inset-top,0px\) \+ 56px\)\) 20px max\(10px,env\(safe-area-inset-bottom,0px\)\)!important/);
+ assert.ok(css.includes('padding:max(84px,calc(env(safe-area-inset-top,0px) + 56px)) 0 0!important;'),'note canvas begins below the navigation without side frame');
  assert.doesNotMatch(css,/clamp\(76px,20vh,140px\)/);
  for(const safeTop of [0,20,44,60]){
   const navBottom=Math.max(26,safeTop)+44;
