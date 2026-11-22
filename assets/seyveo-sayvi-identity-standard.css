@@ -5,7 +5,7 @@
  * Scoped overrides are needed because earlier pages hard-coded 17/20/25/36px.
  * This stylesheet is loaded last to be the single avatar-material authority. */
 :root{
- --sv-sayvi-mark-image:url("./seyveo-sayvi-avatar-crisp.png?v=1");
+ --sv-sayvi-mark-image:url("./seyveo-sayvi-original-avatar.webp?v=1");
  --sv-sayvi-avatar-size:44px;
  --sv-sayvi-inline-size:22px;
 }
