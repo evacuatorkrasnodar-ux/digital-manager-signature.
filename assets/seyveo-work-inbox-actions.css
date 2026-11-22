@@ -664,7 +664,7 @@ html body #svcpWorkChatScreen .sv-inbox-participant-list .sv-inbox-contact-avata
  font:600 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
 }
 html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar.is-sayvi{
- background:#EDF4F0 url("./seyveo-sayvi-chat-jade-platinum.png?v=1") center/90% 90% no-repeat!important;
+ background:#EDF4F0 url("./seyveo-sayvi-avatar-crisp.png?v=1") center/100% 100% no-repeat!important;
  color:transparent!important;font-size:0!important
 }
 html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-row > span:not(.sv-inbox-contact-avatar){
