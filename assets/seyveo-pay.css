@@ -181,7 +181,7 @@ html[data-theme="dark"] #seyveoPayDialog .syp-view-switch > button[aria-pressed=
 /* v9 · Wallet is an inline, seamless SEYVEO Work page.
    One existing #svWorkTabs navigation (not a cloned tab strip), one dock.
    The original card, QR, cards/history and Finance controllers are kept. */
-html body #svWorkShell[data-active="wallet"] > :not(#svWorkTabs):not(#seyveoPayDialog):not(seyveo-work-head){
+html body #svWorkShell[data-active="wallet"] > :not(#svWorkTabs):not(#seyveoPayDialog):not(seyveo-work-head):not(.syp-view-switch){
  display:none!important;
 }
 html body #svWorkShell[data-active="wallet"]{
@@ -323,4 +323,79 @@ html body #svWorkShell > #seyveoPayDialog[open] .syp-note{
 html body #svWorkShell[data-active="wallet"] > #svWorkTabs:not([hidden]){
  margin-top:4px!important;
  margin-bottom:5px!important;
+}
+
+/* v12 · Card and Finances occupy the SAME free header row as Notebook's
+   action icons: above the permanent navigation capsule, never inside
+   wallet content. These are the original functioning buttons, not copies. */
+html body #svWorkShell > .syp-view-switch{
+ display:none!important;
+}
+html body #svWorkShell[data-active="wallet"] > .syp-view-switch{
+ box-sizing:border-box!important;
+ display:grid!important;
+ position:absolute!important;
+ z-index:10!important;
+ top:6px!important;left:50%!important;right:auto!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ align-items:start!important;justify-content:center!important;
+ gap:6px!important;
+ width:min(300px,calc(100% - 40px))!important;
+ height:72px!important;min-height:72px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:translateX(-50%)!important;
+}
+html body #svWorkShell[data-active="wallet"] > .syp-view-switch > button{
+ appearance:none!important;-webkit-appearance:none!important;
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:flex-start!important;
+ gap:5px!important;
+ width:100%!important;min-width:0!important;
+ height:72px!important;min-height:72px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ color:var(--secondary,#727780)!important;
+ font:530 12px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.015em!important;text-align:center!important;
+ transform:none!important;transition:none!important;
+ cursor:pointer!important;touch-action:manipulation!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body #svWorkShell[data-active="wallet"] > .syp-view-switch .syp-view-icon{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ color:var(--text,#191D21)!important;
+}
+html body #svWorkShell[data-active="wallet"] > .syp-view-switch .syp-view-icon svg{
+ display:block!important;
+ width:30px!important;height:30px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.6!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ filter:none!important;pointer-events:none!important;
+}
+html body #svWorkShell[data-active="wallet"] > .syp-view-switch > button[aria-pressed="true"]{
+ color:var(--text,#171A1E)!important;font-weight:640!important;
+ background:transparent!important;box-shadow:none!important;
+}
+html body #svWorkShell[data-active="wallet"] > .syp-view-switch > button:active{
+ background:transparent!important;opacity:.73!important;transform:none!important;
+}
+html body #svWorkShell[data-active="wallet"] > .syp-view-switch > button:focus-visible{
+ outline:2px solid #0A84FF!important;outline-offset:2px!important;border-radius:8px!important;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-active="wallet"] > .syp-view-switch .syp-view-icon{
+ color:var(--text,#f3f7fa)!important;
 }
