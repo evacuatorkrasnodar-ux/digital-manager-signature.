@@ -582,7 +582,7 @@ function syncProfile(){
  // Keep the actual avatar and per-room preferences unchanged.
  updateHeaderAvatar();
 }
-$('svcpRoomInfo .sv-inbox-profile-settings')?.remove();
+document.querySelector('#svcpRoomInfo .sv-inbox-profile-settings')?.remove();
 $('svcpConversationHeading')?.addEventListener('click',()=>requestAnimationFrame(syncProfile));
 function closeSwipe(){if(swipeOpen){swipeOpen.classList.remove('is-swiped');swipeOpen=null}}
 function attachRow(row){
