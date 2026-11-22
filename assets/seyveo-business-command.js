@@ -1586,7 +1586,7 @@ function renderDirectory(){
   row.dataset.svcpRoomKind=room.kind;
   row.dataset.svcpRoomPerson=room.person||'';
   row.setAttribute('aria-label',(room.kind==='personal'?'Открыть личный чат: ':'Открыть чат: ')+name+(person&&!managerDialog?', '+person:''));
-  const avatar=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),managerDialog?'Р':room.mark);
+  const avatar=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi sv-sayvi-avatar':''),room.person==='sayvi'?'':managerDialog?'Р':room.mark);
   avatar.setAttribute('aria-hidden','true');
   const body=el('span','svcp-directory-item-body');
   const headline=el('span','svcp-directory-item-head');
