@@ -2424,6 +2424,9 @@ window.addEventListener('seyveo:work-chat-closing',closeCallPreview);
 window.addEventListener('seyveo:work-chat-closing',()=>closeRoomInformation(false));
 
 $('svcpConversationBack')?.addEventListener('click',showInbox);
+ // The old chat header is hidden intentionally, but the conversation must
+ // still have a reachable way back to the message directory on iPhone.
+ $('svcpConversationStandaloneBack')?.addEventListener('click',showInbox);
 $('svcpConversationSearch')?.addEventListener('click',()=>{
  showInbox();
  $('svcpHistorySearch')?.focus({preventScroll:true});
