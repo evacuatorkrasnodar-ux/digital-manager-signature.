@@ -84,6 +84,44 @@ function suggestionView(){
  },'svf-action is-strong'));
  wrap.append(make('p',null,'Пока это подсказка по словам, без подключения ИИ и без чтения чужих переписок.'));
 }
+
+/* Family polls use the same UI as Work, but persist only in this tab.
+   The only voter is "Вы"; no relatives are connected or impersonated. */
+function renderFamilyPoll(msg,index){
+ const Polls=window.SEYVEO_CHAT_POLLS;
+ if(!Polls?.validPoll?.(msg.poll))return null;
+ let view;
+ view=Polls.render({
+  poll:msg.poll,currentUser:'me',names:{me:'Вы'},canClose:true,
+  onUpdate:next=>{
+   if(!messages[index]?.poll||messages[index].poll.id!==msg.poll.id)return;
+   const updated=messages.map((entry,i)=>i===index?{...entry,poll:next}:entry);
+   if(!persist(MSG_KEY,updated))return;
+   messages=updated;msg.poll=next;
+   const replacement=renderFamilyPoll(msg,index);
+   if(replacement&&view.isConnected){view.replaceWith(replacement);view=replacement;}
+   status(next.closed?'Опрос завершён в этой вкладке.':'Голос сохранён локально. Родные пока его не видят.');
+  }
+ });
+ return view;
+}
+let familyPollEditor=null;
+function openFamilyPollEditor(){
+ const Polls=window.SEYVEO_CHAT_POLLS;if(!Polls)return;
+ familyPollEditor=Polls.openEditor({
+  mount:dialog,heading:'Семейный опрос',
+  description:'Опрос увидите только вы в этой вкладке. Голоса родных появятся после подключения семьи.',
+  onCreate:poll=>{
+   const next=messages.concat({text:poll.question,at:Date.now(),poll:{...poll,creator:'me'}}).slice(-MAX_MSG);
+   if(!persist(MSG_KEY,next))return false;
+   messages=next;
+   pendingSuggestion=null;renderMessages();
+   status('Семейный опрос сохранён только в этой вкладке.');
+   return true;
+  }
+ });
+}
+
 function renderMessages(){
  const thread=$('svfMessages');thread.replaceChildren();
  if(!messages.length){
@@ -93,11 +131,14 @@ function renderMessages(){
    make('span',null,'Здесь появится ваш общий чат. Сейчас можно попробовать его внешний вид и умные подсказки без отправки сообщений.'));
   thread.append(empty);
  }else{
-  for(const msg of messages){
+  for(const [index,msg] of messages.entries()){
    const value=msg.text.slice(0,1150),bubble=make('div','svf-msg');
    const emojiOnly=/^[\p{Extended_Pictographic}\uFE0F\u200D\u{1F3FB}-\u{1F3FF}]{1,14}$/u.test(value.trim());
-   if(emojiOnly)bubble.classList.add('svf-emoji-only');
-   bubble.append(make('span','svf-message-text',value));
+   if(emojiOnly&&!msg.poll)bubble.classList.add('svf-emoji-only');
+   if(msg.poll&&window.SEYVEO_CHAT_POLLS?.validPoll?.(msg.poll)){
+    bubble.classList.add('is-poll');
+    const card=renderFamilyPoll(msg,index);if(card)bubble.append(card);
+   }else bubble.append(make('span','svf-message-text',value));
    const when=new Date(msg.at);
    if(Number.isFinite(when.getTime())){
     const stamp=make('span','svf-message-stamp');
@@ -133,7 +174,26 @@ function discardFile(){
  const preview=$('svfAttachment');preview.hidden=true;preview.replaceChildren();
 }
 const fileInput=$('svfFile');
-$('svfAttachButton').addEventListener('click',()=>fileInput.click());
+const familyAttachMenu=$('svfAttachMenu');
+function closeFamilyAttachMenu(){
+ if(familyAttachMenu)familyAttachMenu.hidden=true;
+ $('svfAttachButton')?.setAttribute('aria-expanded','false');
+}
+$('svfAttachButton').addEventListener('click',event=>{
+ event.stopPropagation();
+ if(!familyAttachMenu)return fileInput.click();
+ const open=familyAttachMenu.hidden;
+ familyAttachMenu.hidden=!open;
+ $('svfAttachButton').setAttribute('aria-expanded',String(open));
+});
+$('svfAttachChooseFile')?.addEventListener('click',()=>{closeFamilyAttachMenu();fileInput.click();});
+$('svfAttachChoosePoll')?.addEventListener('click',()=>{closeFamilyAttachMenu();openFamilyPollEditor();});
+document.addEventListener('pointerdown',event=>{
+ if(familyAttachMenu?.hidden)return;
+ if(familyAttachMenu?.contains(event.target)||$('svfAttachButton')?.contains(event.target))return;
+ closeFamilyAttachMenu();
+});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeFamilyAttachMenu()});
 fileInput.addEventListener('change',()=>{
  discardFile();
  const file=fileInput.files?.[0];if(!file)return;
@@ -178,7 +238,7 @@ for(const tab of dialog.querySelectorAll('[data-svf-tab]')){
 }
 $('svfClose').addEventListener('click',close);
 dialog.addEventListener('click',event=>{if(event.target===dialog)close()});
-dialog.addEventListener('close',()=>{fileInput.value='';discardFile()});
+dialog.addEventListener('close',()=>{fileInput.value='';discardFile();closeFamilyAttachMenu();familyPollEditor?.close?.();familyPollEditor=null;});
 window.addEventListener('seyveo:family-open',open);
 window.SEYVEO_FAMILY_CHAT=Object.freeze({open});
 changeTab('chat');
