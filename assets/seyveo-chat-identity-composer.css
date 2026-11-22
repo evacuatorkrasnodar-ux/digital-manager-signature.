@@ -1096,3 +1096,71 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc circle{
  fill:#0A84FF!important;stroke:none!important;stroke-width:0!important;
 }
+
+/* v32 · Dark graphite Plus and mic, equal optical weight and balanced insets.
+   Compact Work Chat only: keep the Plus 44px pearl touch target and Sayvi
+   artwork unchanged. Right mic now matches Send's 16px inner inset so the
+   voice/send switch never shifts; glyphs share 22px/1.6px canonical ink. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) > button#svcpAttachFile.svcp-plus-pearl-rebuilt,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:hover,:focus,:active,[aria-pressed="true"]){
+ color:#24282e!important;opacity:1!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg{
+ display:block!important;position:static!important;
+ box-sizing:content-box!important;
+ width:22px!important;height:22px!important;
+ min-width:22px!important;min-height:22px!important;
+ margin:0!important;padding:0!important;
+ color:#24282e!important;stroke:#24282e!important;
+ stroke-width:1.6!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;transition:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg path{
+ stroke:#24282e!important;stroke-width:1.6!important;
+}
+/* The mic and the Send have the same right-hand target center. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button#svcpVoiceRecord{
+ box-sizing:border-box!important;
+ position:absolute!important;display:grid!important;place-items:center!important;
+ top:50%!important;bottom:auto!important;right:16px!important;left:auto!important;
+ width:38px!important;min-width:38px!important;max-width:38px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ padding:0!important;margin:0!important;
+ color:#24282e!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ opacity:1!important;filter:none!important;
+ transform:translateY(-50%)!important;translate:none!important;
+ transition:none!important;animation:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button#svcpVoiceRecord svg{
+ display:block!important;position:static!important;
+ box-sizing:content-box!important;
+ width:22px!important;height:22px!important;
+ min-width:22px!important;min-height:22px!important;
+ margin:0!important;padding:0!important;
+ color:#24282e!important;stroke:#24282e!important;
+ stroke-width:1.6!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;transition:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button#svcpVoiceRecord svg :is(rect,path){
+ fill:none!important;stroke:#24282e!important;stroke-width:1.6!important;
+}
+/* Keep both glyphs stable when pressed; never draw duplicate press faces. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button#svcpVoiceRecord:is(:hover,:focus,:active){
+ color:#24282e!important;
+ background:transparent!important;box-shadow:none!important;
+ filter:none!important;transform:translateY(-50%)!important;
+}
