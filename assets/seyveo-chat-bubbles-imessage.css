@@ -15,11 +15,11 @@
  flex:0 0 auto!important;
  width:max-content!important;
  min-width:0!important;
- max-width:min(82%,350px)!important;
+ max-width:min(80%,340px)!important;
  min-height:0!important;
  height:auto!important;
  margin:5px 0 0!important;
- padding:8px 13px 20px!important;
+ padding:9px 13px 20px!important;
  border:0!important;
  border-radius:22px 22px 22px 8px!important;
  box-shadow:none!important;
@@ -34,16 +34,16 @@
  overflow:visible!important;
 }
 
-/* Incoming and Sayvi use the blue translucent iMessage glass visible over
-   the user's sky wallpaper. Both are the SAME incoming material. */
+/* Incoming and Sayvi share one light frosted iMessage surface.
+   Ink, sender labels and times are charcoal, not white on white. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
  > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi):not(.is-poll):not(.is-task):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
  align-self:flex-start!important;
- background:rgba(37,111,171,.76)!important;
+ background:rgba(239,244,249,.95)!important;
  background-image:none!important;
  border-radius:22px 22px 22px 8px!important;
- color:#FFFFFF!important;
+ color:#26323D!important;
 }
 
 /* Own messages use one crisp iMessage blue and a mirrored radius. */
@@ -75,6 +75,13 @@
  word-break:normal!important;
 }
 
+/* Keep outgoing white. Only incoming ordinary TEXT turns use dark ink. */
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi) > .svcp-message-text{
+ color:#26323D!important;-webkit-text-fill-color:#26323D!important;
+}
+
 /* First incoming text in a group shows its author.
    Subsequent consecutive messages avoid repeating "Сэйви" over and over.
    Accessibility is preserved on each article and metadata is NOT deleted. */
@@ -91,8 +98,8 @@
  > article.svcp-bubble.svcp-imessage-text > .svcp-bubble-meta > .svcp-sender{
  display:block!important;
  margin:0!important;padding:0!important;
- color:rgba(255,255,255,.97)!important;
- -webkit-text-fill-color:rgba(255,255,255,.97)!important;
+ color:#3A4652!important;
+ -webkit-text-fill-color:#3A4652!important;
  font:600 11.5px/14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  letter-spacing:0!important;
 }
@@ -132,7 +139,7 @@
  position:absolute!important;z-index:0!important;
  left:-5px!important;right:auto!important;bottom:0!important;top:auto!important;
  width:12px!important;height:13px!important;
- background:rgba(37,111,171,.76)!important;
+ background:rgba(239,244,249,.95)!important;
  border:0!important;
  border-radius:0 0 0 100%!important;
  clip-path:none!important;
@@ -177,6 +184,15 @@
  -webkit-text-fill-color:inherit!important;
  margin:0!important;padding:0!important;text-shadow:none!important;
 }
+/* The inbound clock is subdued slate on a light bubble. The original
+   white outgoing stamp/check continues unchanged. */
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi).svcp-bottom-stamp
+ > .svcp-message-stamp{
+ color:rgba(58,74,89,.68)!important;
+}
+
 /* Very short replies keep a compact chip, but reserve a corner for time. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
@@ -196,6 +212,6 @@
  :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
   #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
   > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi){
-  background:rgb(34,107,166)!important;
+  background:rgb(239,244,249)!important;
  }
 }
