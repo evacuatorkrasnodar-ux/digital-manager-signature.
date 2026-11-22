@@ -1134,6 +1134,31 @@ function measuredComposeHeight(value,width){
    When JS reparents it to the expanded form, retain the same viewport center.
    No guessed pixel nudge, duplicate button, or change to Plus/capsule geometry. */
 let svcpShortSendAnchor=null;
+let svcpShortPlusAnchor=null;
+function svcpPositionExpandedPlus(form,expanded){
+ const plus=$('svcpAttachFile');
+ if(!plus)return;
+ if(!expanded){
+  plus.style.removeProperty('left');
+  plus.style.removeProperty('bottom');
+  return;
+ }
+ const anchor=svcpShortPlusAnchor;
+ if(!anchor||Math.abs(window.innerWidth-anchor.viewportWidth)>1)return;
+ // The compact Plus uses relative grid positioning while the expanded one
+ // uses absolute positioning. Preserve its actual center, not the guessed
+ // left:6px/bottom:3px shared by the two very different CSS layouts.
+ const frame=form.getBoundingClientRect();
+ const button=plus.getBoundingClientRect();
+ const width=button.width||44;
+ const height=button.height||44;
+ const left=anchor.x-frame.left-width/2;
+ if(Number.isFinite(left))plus.style.setProperty('left',left.toFixed(2)+'px','important');
+ if(Math.abs(frame.bottom-anchor.formBottom)<4){
+  const bottom=frame.bottom-anchor.y-height/2;
+  if(Number.isFinite(bottom))plus.style.setProperty('bottom',bottom.toFixed(2)+'px','important');
+ }else plus.style.removeProperty('bottom');
+}
 function svcpPositionExpandedSend(form,expanded){
  const send=svcpComposerSend;
  if(!send)return;
@@ -1160,16 +1185,30 @@ function resizeWorkComposer(){
  const input=$('svcpChatInput'),form=$('svcpChatForm');
  if(!input||!form)return;
  const send=svcpComposerSend;
- if(!form.classList.contains('svcp-compose-multiline')&&send){
-  const button=send.getBoundingClientRect();
+ if(!form.classList.contains('svcp-compose-multiline')){
   const frame=form.getBoundingClientRect();
-  if(button.width>25&&button.height>25){
-   svcpShortSendAnchor={
-    x:button.left+button.width/2,
-    y:button.top+button.height/2,
-    formBottom:frame.bottom,
-    viewportWidth:window.innerWidth
-   };
+  if(send){
+   const button=send.getBoundingClientRect();
+   if(button.width>25&&button.height>25){
+    svcpShortSendAnchor={
+     x:button.left+button.width/2,
+     y:button.top+button.height/2,
+     formBottom:frame.bottom,
+     viewportWidth:window.innerWidth
+    };
+   }
+  }
+  const plus=$('svcpAttachFile');
+  if(plus){
+   const button=plus.getBoundingClientRect();
+   if(button.width>25&&button.height>25){
+    svcpShortPlusAnchor={
+     x:button.left+button.width/2,
+     y:button.top+button.height/2,
+     formBottom:frame.bottom,
+     viewportWidth:window.innerWidth
+    };
+   }
   }
  }
  const value=input.value;
@@ -1180,6 +1219,7 @@ function resizeWorkComposer(){
   form.classList.remove('svcp-compose-multiline');
   svcpPlaceComposerActions(false);
   svcpPositionExpandedSend(form,false);
+  svcpPositionExpandedPlus(form,false);
   form.style.setProperty('--svcp-editor-height','40px');
   form.style.setProperty('--svcp-compose-height','56px');
   form.style.setProperty('height','56px','important');
@@ -1220,6 +1260,7 @@ function resizeWorkComposer(){
  input.style.setProperty('height',editorHeight+'px','important');
  input.style.setProperty('overflow-y',wraps&&expandedHeight+16>144?'auto':'hidden','important');
  svcpPositionExpandedSend(form,wraps);
+ svcpPositionExpandedPlus(form,wraps);
 }
 
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
