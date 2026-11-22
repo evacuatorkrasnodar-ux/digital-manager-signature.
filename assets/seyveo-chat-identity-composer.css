@@ -41,7 +41,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversat
 html body #svcpWorkChatScreen[data-view="room"] .svcp-room-identity{
  box-sizing:border-box!important;
  position:absolute!important;
- left:50%!important;top:calc(15px + env(safe-area-inset-top,0px))!important;
+ left:50%!important;top:calc(env(safe-area-inset-top,0px) - 4px)!important;
  transform:translateX(-50%)!important;
  width:min(195px,53vw)!important;
  height:130px!important;
@@ -60,6 +60,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvata
  background:radial-gradient(circle at 31% 20%,rgba(255,255,255,.92),rgba(228,233,240,.9) 65%,rgba(202,214,224,.7))!important;
  color:#2b3643!important;
  box-shadow:0 3px 11px rgba(40,50,64,.08),inset 0 1px 0 rgba(255,255,255,.96)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(112%)!important;
+ backdrop-filter:blur(12px) saturate(112%)!important;
  font-size:25px!important;font-weight:580!important;
 }
 /* Apple photo/monogram placement: the glass title overlaps the lower part
@@ -210,7 +212,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind
  min-height:calc(98px + env(safe-area-inset-top,0px))!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="groups"] .svcp-room-identity{
- top:calc(13px + env(safe-area-inset-top,0px))!important;height:79px!important;
+ top:calc(2px + env(safe-area-inset-top,0px))!important;height:79px!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="groups"] #svcpRoomAvatar{
  display:none!important;
