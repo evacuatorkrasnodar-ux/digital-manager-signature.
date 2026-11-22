@@ -125,10 +125,13 @@ html body #svcpWorkChatScreen[data-view="room"]
  width:56px!important;min-width:56px!important;max-width:56px!important;
  height:56px!important;min-height:56px!important;max-height:56px!important;
  margin:0!important;padding:0!important;
- border:0!important;border-radius:50%!important;
- background:#126CA8 var(--sv-sayvi-mark-image)
+ border:1px solid rgba(255,255,255,.38)!important;border-radius:50%!important;
+ background:rgba(18,108,168,.42) var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
- box-shadow:none!important;filter:none!important;
+ box-shadow:0 3px 11px rgba(24,62,91,.12),inset 0 1px rgba(255,255,255,.26)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(112%)!important;
+ backdrop-filter:blur(14px) saturate(112%)!important;
+ filter:none!important;
  font-size:0!important;color:transparent!important;
  overflow:hidden!important;
 }
@@ -158,11 +161,14 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  .svcp-room-identity #svcpRoomAvatar{
  border:1px solid rgba(221,241,255,.37)!important;
- background-color:#126CA8!important;
+ background-color:rgba(18,108,168,.42)!important;
  background-image:var(--sv-sayvi-mark-image)!important;
  background-position:center!important;background-size:contain!important;
  background-repeat:no-repeat!important;
- box-shadow:none!important;filter:none!important;
+ box-shadow:0 3px 11px rgba(24,62,91,.12),inset 0 1px rgba(255,255,255,.26)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(112%)!important;
+ backdrop-filter:blur(14px) saturate(112%)!important;
+ filter:none!important;
 }
 
 /* v8 · Chat identity: compact Apple reference title for the Sayvi profile.
@@ -183,11 +189,12 @@ html body #svcpWorkChatScreen[data-view="room"]
  min-height:28px!important;max-height:28px!important;
  padding:3px 9px!important;
  margin:0 auto!important;
- border:0!important;border-radius:999px!important;
- background:rgba(5,102,190,.89)!important;
+ border:1px solid rgba(255,255,255,.34)!important;border-radius:999px!important;
+ background:rgba(5,102,190,.55)!important;
  background-image:none!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:0 4px 13px rgba(17,55,92,.12),inset 0 1px rgba(255,255,255,.18)!important;
+ -webkit-backdrop-filter:blur(15px) saturate(115%)!important;
+ backdrop-filter:blur(15px) saturate(115%)!important;
  filter:none!important;
  transform:none!important;
  white-space:nowrap!important;
@@ -230,5 +237,5 @@ html body #svcpWorkChatScreen[data-view="room"]
    stay connected with their previous 8px overlap and no extra markup. */
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] .svcp-conversation-bar > .svcp-room-identity{
- top:calc(10px + env(safe-area-inset-top,0px))!important;
+ top:calc(env(safe-area-inset-top,0px) - 4px)!important;
 }
