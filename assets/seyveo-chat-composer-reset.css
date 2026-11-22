@@ -102,24 +102,22 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile > svg{
  stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;filter:none!important;
 }
-/* Canonical round jade/platinum SEYVEO mark, transparent natural image.
-   No CSS oval, fill color, artificial round mask or duplicate ornament. */
+/* Compact Sayvi control: one centered 44px tap target.
+   No offset, second background, rim, clipping or animated geometry. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage{
  grid-column:2!important;grid-row:1!important;
- /* Optical inset: the same tap target, 5px farther inside the glass. */
- left:5px!important;
+ left:auto!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpPolishMessage{
  grid-row:2!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  box-sizing:border-box!important;display:block!important;
- /* The uploaded art occupies ~63% of its transparent square canvas.
-    56px renders its visible contour at ~36px, identical to the header.
-    A 2.8% optical x correction cancels the source's slight oval. */
- width:56px!important;height:56px!important;
- min-width:56px!important;max-width:56px!important;
- min-height:56px!important;max-height:56px!important;
+ /* The source includes its own transparent padding. Keep the image INSIDE
+    the 44px action slot so it never protrudes below the dock or text row. */
+ width:44px!important;height:44px!important;
+ min-width:44px!important;max-width:44px!important;
+ min-height:44px!important;max-height:44px!important;
  aspect-ratio:1/1!important;
  margin:0!important;padding:0!important;
  object-fit:contain!important;object-position:center center!important;
