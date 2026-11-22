@@ -2064,6 +2064,10 @@ function svcpClearRoomProfileMedia(){
 function closeRoomInformation(restoreFocus=true){
  const panel=$('svcpRoomInfo');if(!panel||panel.hidden)return;
  panel.hidden=true;
+ panel.dataset.screen='profile';
+ const search=$('svcpRoomScopedSearch');if(search)search.hidden=true;
+ const input=$('svcpRoomScopedSearchInput');if(input)input.value='';
+ $('svcpRoomScopedSearchResults')?.replaceChildren();
  svcpClearRoomProfileMedia();
  $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','false');
  $('svcpConversationHeading')?.setAttribute('aria-expanded','false');
@@ -2148,9 +2152,106 @@ function renderRoomProfile(){
   }
  }
 }
+/* Room-scoped search. Everything is taken from the active conversation,
+   its saved attachments, and work assignments for that employee. */
+function svcpRenderRoomScopedSearch(){
+ const results=$('svcpRoomScopedSearchResults'),input=$('svcpRoomScopedSearchInput');
+ if(!results||!input)return;
+ results.replaceChildren();
+ const query=input.value.trim().toLocaleLowerCase('ru-RU');
+ if(!query){
+  results.append(el('p','svcp-room-scoped-search-hint','Введите слово, название файла или поручения'));
+  return;
+ }
+ const room=roomDetails();
+ const person=room.person&&Object.prototype.hasOwnProperty.call(STAFF,room.person)?room.person:null;
+ const includes=value=>String(value||'').toLocaleLowerCase('ru-RU').includes(query);
+ const messages=state.chat.map((msg,index)=>({msg,index}))
+  .filter(({msg})=>msg?.room===room.id&&typeof msg.text==='string'&&includes(msg.text))
+  .slice(-40).reverse();
+ const files=state.chat.map((msg,index)=>({msg,index}))
+  .filter(({msg})=>{
+   if(msg?.room!==room.id||!msg.mediaId||msg.mediaPurpose==='voice')return false;
+   const kind=svcpFileKind(msg.mediaName,msg.mediaType);
+   const keywords=kind.kind==='image'?' фото изображение ':kind.kind==='video'?' видео ': ' файл документ ';
+   return includes([msg.mediaName,kind.label,msg.text,keywords].join(' '));
+  })
+  .slice(-30).reverse();
+ const tasks=state.tasks.filter(task=>task&&typeof task.text==='string'&&
+  (person?task.assigneeId===person:room.kind==='groups'&&task.room===room.id)&&includes(task.text))
+  .slice(-30).reverse();
+ function section(label,items,makeRow){
+  if(!items.length)return;
+  const section=el('section','svcp-room-scoped-search-group');
+  const heading=el('div','svcp-room-scoped-search-group-head');
+  heading.append(el('strong',null,label),el('span',null,String(items.length)));
+  section.append(heading);
+  items.forEach(item=>section.append(makeRow(item)));
+  results.append(section);
+ }
+ function row(label,detail,tag,onClick){
+  const button=el('button','svcp-room-scoped-search-result');
+  button.type='button';
+  const mark=el('span','svcp-room-scoped-search-kind',tag);
+  const content=el('span','svcp-room-scoped-search-result-content');
+  content.append(el('strong',null,String(label||'').slice(0,160)));
+  if(detail)content.append(el('small',null,String(detail).slice(0,170)));
+  button.append(mark,content,el('span','svcp-room-scoped-search-chevron','›'));
+  button.addEventListener('click',onClick);
+  return button;
+ }
+ section('Сообщения',messages,({msg,index})=>{
+  const excerpt=String(msg.text||'').trim()||'Сообщение';
+  const when=Number.isFinite(Number(msg.at))&&Number(msg.at)>0
+   ?new Date(Number(msg.at)).toLocaleDateString('ru-RU',{day:'numeric',month:'short'}):'';
+  return row(excerpt,when,'✉',()=>{
+   closeRoomInformation(false);
+   focusSearchIndex=index;renderChat();
+  });
+ });
+ section('Файлы и фото',files,({msg,index})=>{
+  const meta=svcpFileKind(msg.mediaName,msg.mediaType);
+  return row(msg.mediaName||meta.label,meta.label,meta.mark,()=>{
+   closeRoomInformation(false);
+   focusSearchIndex=index;renderChat();
+  });
+ });
+ section('Поручения',tasks,task=>
+  row(task.text,task.done?'Выполнено':'В работе','✓',()=>{
+   closeRoomInformation(false);
+   openTaskDiscussion(task);
+  })
+ );
+ if(!messages.length&&!files.length&&!tasks.length)
+  results.append(el('p','svcp-room-scoped-search-hint','В этой переписке ничего не найдено'));
+}
+function svcpOpenRoomScopedSearch(){
+ const panel=$('svcpRoomInfo'),search=$('svcpRoomScopedSearch');
+ if(!panel||panel.hidden||!search)return;
+ const name=$('svcpConversationTitle')?.textContent?.trim()||roomDetails().label;
+ const subtitle=$('svcpRoomScopedSearchSubtitle');
+ if(subtitle)subtitle.textContent='Переписка · '+name;
+ panel.dataset.screen='search';
+ search.hidden=false;
+ const input=$('svcpRoomScopedSearchInput');
+ if(input)input.value='';
+ svcpRenderRoomScopedSearch();
+ input?.focus({preventScroll:true});
+}
+function svcpBackFromRoomScopedSearch(){
+ const panel=$('svcpRoomInfo'),search=$('svcpRoomScopedSearch');
+ if(!panel||panel.hidden)return;
+ panel.dataset.screen='profile';
+ if(search)search.hidden=true;
+ $('svcpRoomProfileSearch')?.focus({preventScroll:true});
+}
+$('svcpRoomScopedSearchInput')?.addEventListener('input',svcpRenderRoomScopedSearch);
+$('svcpRoomScopedSearchBack')?.addEventListener('click',svcpBackFromRoomScopedSearch);
 function toggleRoomInformation(){
  const panel=$('svcpRoomInfo');if(!panel)return;
  if(!panel.hidden){closeRoomInformation();return}
+ panel.dataset.screen='profile';
+ $('svcpRoomScopedSearch').hidden=true;
  renderRoomProfile();
  panel.hidden=false;
  $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','true');
@@ -2168,10 +2269,7 @@ $('svcpRoomProfileAudio')?.addEventListener('click',()=>{
 $('svcpRoomProfileVideo')?.addEventListener('click',()=>{
  closeRoomInformation(false);openCallPreview('video');
 });
-$('svcpRoomProfileSearch')?.addEventListener('click',()=>{
- closeRoomInformation(false);
- $('svcpConversationSearch')?.click();
-});
+$('svcpRoomProfileSearch')?.addEventListener('click',svcpOpenRoomScopedSearch);
 /* Create a new assignment directly from a manager's contact card, using
    the existing validated task draft and preselected staff recipient.
    Reply/emoji/copy/assign-from-message remain on message long press. */
@@ -2192,7 +2290,12 @@ $('svcpRoomProfileAssign')?.addEventListener('click',()=>{
  title?.focus({preventScroll:true});
 });
 $('svcpRoomInfo')?.addEventListener('keydown',event=>{
- if(event.key==='Escape'){event.preventDefault();closeRoomInformation();return}
+ if(event.key==='Escape'){
+  event.preventDefault();
+  if($('svcpRoomInfo')?.dataset.screen==='search')svcpBackFromRoomScopedSearch();
+  else closeRoomInformation();
+  return;
+ }
  if(event.key!=='Tab')return;
  const panel=$('svcpRoomInfo');
  const controls=[...panel.querySelectorAll('button:not([hidden]):not(:disabled)')]
