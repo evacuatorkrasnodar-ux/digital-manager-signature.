@@ -234,50 +234,67 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  > .svcp-minimal-identity-header #svcpRoomAvatar::after{
  content:none!important;display:none!important;
 }
-/* Real standalone Back button is #svcpConversationStandaloneBack, not the
-   hidden legacy #svcpConversationBack. Match Andre's flat cobalt circle. */
+/* Sayvi header / iMessage geometry + SEYVEO translucent pearl.
+   Restore the actual live Back control and name pill to the same frosted
+   material used by our app; keep the original Sayvi bitmap and dimensions. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack{
- background:#0B4FC1!important;
+ box-sizing:border-box!important;
+ border:1px solid rgba(255,255,255,.52)!important;
+ border-radius:50%!important;
+ background:rgba(244,249,255,.24)!important;
  background-image:none!important;
- color:#FFFFFF!important;
- border:0!important;outline:0!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:#172D43!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.42),
+  0 3px 10px rgba(26,67,116,.08)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
+ backdrop-filter:blur(18px) saturate(112%)!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack svg{
- color:#FFFFFF!important;stroke:#FFFFFF!important;
+ color:#172D43!important;stroke:#172D43!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack:active{
- background:#073C99!important;transform:none!important;
+ background:rgba(231,243,253,.34)!important;
+ box-shadow:inset 0 2px 4px rgba(17,57,100,.12)!important;
+ transform:none!important;
 }
-/* Andre's compact dark-blue name pill with white label and chevron.
-   Preserve the existing 28px height, avatar overlap and click handler. */
+/* Original Apple reference: round portrait sits clearly ABOVE the label.
+   No moving of the 56px source image into the label, and no top cropping. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
+ margin-top:-3px!important;
+}
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
- background:#0B68D0!important;background-image:none!important;
- border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ background:rgba(235,247,255,.23)!important;
+ background-image:none!important;
+ border:1px solid rgba(255,255,255,.48)!important;
+ border-radius:999px!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.30),
+  0 2px 7px rgba(18,70,119,.07)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(110%)!important;
+ backdrop-filter:blur(18px) saturate(110%)!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading
  .svcp-room-name-pill strong#svcpConversationTitle{
- color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+ color:#123651!important;-webkit-text-fill-color:#123651!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill svg{
- color:#FFFFFF!important;stroke:#FFFFFF!important;
+ color:#123651!important;stroke:#123651!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading #svcpConversationDetail{
- color:rgba(255,255,255,.83)!important;
+ color:rgba(20,53,79,.87)!important;
 }
