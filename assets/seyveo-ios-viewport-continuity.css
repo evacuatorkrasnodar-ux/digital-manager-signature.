@@ -29,15 +29,13 @@
   background-size:100% 100%!important;
   background-repeat:no-repeat!important;
  }
- /* Reserve the header's real height inside the message scroller.
-    The transparent Apple-style identity ends below the avatar/name label.
-    Messages begin below it and scrolling content fades BEFORE overlapping
-    the avatar. No fixed opaque header or duplicated surface. */
+ /* Header removed: messages start directly after the iPhone safe area
+    and an independent 44px Back control. No old 154px blank area or fade. */
  html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
-  padding-top:calc(154px + env(safe-area-inset-top,0px))!important;
-  scroll-padding-top:calc(154px + env(safe-area-inset-top,0px))!important;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0px,transparent 134px,#000 157px)!important;
-  mask-image:linear-gradient(to bottom,transparent 0px,transparent 134px,#000 157px)!important;
+  padding-top:calc(58px + env(safe-area-inset-top,0px))!important;
+  scroll-padding-top:calc(58px + env(safe-area-inset-top,0px))!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
  }
  /* Scenic wallpaper continuity through iOS Home-indicator region.
     These match the existing opt-in chat wallpapers, not other app themes. */
