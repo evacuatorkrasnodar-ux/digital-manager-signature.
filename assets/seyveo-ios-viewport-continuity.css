@@ -234,22 +234,22 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  > .svcp-minimal-identity-header #svcpRoomAvatar::after{
  content:none!important;display:none!important;
 }
-/* Recessed Sayvi header glass: the blue rim stays more visible than the
-   inset surface. Existing cobalt RGB and alpha remain unchanged. Applied to
-   Back and Name only, never the original Sayvi avatar. */
+/* SEYVEO standard White Pearl material recolored cobalt.
+   Keep exactly our approved button shadows, 4px pearl blur and 0.75px rim.
+   ONLY the original white pigment and white rim become blue; no custom
+   concave glass/extra rings. Do not touch portrait, sizes or coordinates. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack{
  box-sizing:border-box!important;
- border:1.5px solid rgba(5,55,143,.90)!important;
- border-radius:50%!important;
- background:rgba(11,79,193,.53)!important;
+ border:.75px solid rgba(5,55,143,.84)!important;
+ border-radius:var(--sv-white-pearl-radius-circle,50%)!important;
+ background:rgba(11,79,193,.30)!important;
  background-image:none!important;
  color:#FFFFFF!important;
- box-shadow:inset 0 2px 6px rgba(5,41,107,.30),
-  inset 0 -1px 1px rgba(227,245,255,.11)!important;
- -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
- backdrop-filter:blur(18px) saturate(112%)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
@@ -264,9 +264,9 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack:active{
- background:rgba(7,60,153,.69)!important;
- box-shadow:inset 0 2px 4px rgba(9,37,88,.18)!important;
- transform:none!important;
+ background:rgba(7,60,153,.42)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow)!important;
+ transform:scale(var(--sv-white-pearl-press-scale,.992))!important;
 }
 /* Original Apple reference: round portrait sits clearly ABOVE the label.
    No moving of the 56px source image into the label, and no top cropping. */
@@ -278,14 +278,13 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
- background:rgba(11,104,208,.51)!important;
+ background:rgba(11,104,208,.30)!important;
  background-image:none!important;
- border:1.5px solid rgba(6,64,153,.92)!important;
- border-radius:999px!important;
- box-shadow:inset 0 2px 5px rgba(5,48,117,.28),
-  inset 0 -1px 1px rgba(218,243,255,.11)!important;
- -webkit-backdrop-filter:blur(18px) saturate(110%)!important;
- backdrop-filter:blur(18px) saturate(110%)!important;
+ border:.75px solid rgba(6,64,153,.84)!important;
+ border-radius:var(--sv-white-pearl-radius-capsule,999px)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
