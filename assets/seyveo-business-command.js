@@ -2801,7 +2801,6 @@ function openWorkPollEditor(){
  }
  Polls.openEditor({
   mount,heading:'Новый опрос',
-  description:'Опрос сохранится только в этом браузере. Другие сотрудники его пока не увидят.',
   onCreate:poll=>{
    const role=state.viewpoint==='elena'?'demo-elena':'self';
    const creator=state.viewpoint==='elena'?'elena':'manager';
@@ -2809,7 +2808,7 @@ function openWorkPollEditor(){
     poll:{...poll,creator}};
    if(!commitChatMessages([item]))return false;
    renderChat();renderDirectory();
-   setStatus('Опрос создан локально. Другим участникам он пока не доставлен.');
+   setStatus('Опрос создан.');
    return true;
   }
  });
@@ -2831,7 +2830,7 @@ function renderWorkPoll(msg,index){
    msg.poll=next;
    const replacement=renderWorkPoll(msg,index);
    if(replacement&&view.isConnected){view.replaceWith(replacement);view=replacement;}
-   setStatus(next.closed?'Опрос завершён локально.':'Голос сохранён только в этом браузере.');
+   setStatus(next.closed?'Опрос завершён.':'Голос учтён.');
   }
  });
  return view;
