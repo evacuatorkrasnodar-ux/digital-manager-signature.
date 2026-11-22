@@ -5,9 +5,10 @@
    Bottom 6px follows the accessible iOS PWA viewport; its system-owned
    Home-indicator area is never counted twice. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
- /* Reference-inspired deep teal glass. The panel remains translucent. */
- --svcp-clean-blue:rgba(16,120,186,.66);
- --svcp-clean-line:rgba(219,248,255,.69);
+ /* Same approved blue hue; only alpha is lowered for true transparent glass.
+    The slightly deeper blue rim stays visible over the sky wallpaper. */
+ --svcp-clean-blue:rgba(16,120,186,.32);
+ --svcp-clean-line:rgba(6,87,151,.75);
  all:unset!important;
  display:block!important;
  box-sizing:border-box!important;
@@ -48,15 +49,14 @@ html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
  margin:0!important;padding:0!important;
  border:1px solid var(--svcp-clean-line)!important;
  border-radius:25px!important;
- /* Single, darker translucent blue-teal glass skin, with the visible
-    pearlescent hairline and real backdrop blur of the Apple reference. */
+ /* Preserve the SAME 16/120/186 blue, but let the actual conversation
+    visibly show through in both compact and expanded form. Single blue rim. */
  background:var(--svcp-clean-blue)!important;
  background-image:none!important;
  -webkit-backdrop-filter:blur(22px) saturate(120%)!important;
  backdrop-filter:blur(22px) saturate(120%)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.42),
-  0 0 0 .5px rgba(9,89,151,.28),
-  0 5px 15px rgba(10,74,123,.14)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.26),
+  0 4px 13px rgba(10,74,123,.10)!important;
  transform:none!important;transition:none!important;
  pointer-events:none!important;
 }
@@ -103,10 +103,16 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
   0 0 0 .5px rgba(9,89,151,.28)!important;
  color:white!important;
 }
+/* Expanded panel: PLUS is only the white + glyph; never a floating circle.
+   The 44px touch target remains, and the same button/handler is preserved. */
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpAttachFile{
  bottom:6px!important;
  border:0!important;
- background:transparent!important;
+ border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile svg{
  display:block!important;width:22px!important;height:22px!important;
