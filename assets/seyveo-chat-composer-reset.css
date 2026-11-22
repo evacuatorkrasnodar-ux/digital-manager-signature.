@@ -4,12 +4,21 @@
    ONE bottom baseline. No decorative button skins or visual duplicates.
    Bottom 6px follows the accessible iOS PWA viewport; its system-owned
    Home-indicator area is never counted twice. */
+/* ONE blue glass material for the SKY conversation's existing outer shells:
+   composer, compact Plus, Back and contact-name capsule. Slightly darker than
+   the last preview; same color, alpha, rim and blur for each shell.
+   This rule only declares tokens and changes no DOM or click behavior. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]{
+ --svcp-conversation-blue-glass:rgba(5,123,195,.68);
+ --svcp-conversation-blue-rim:rgba(9,100,171,.57);
+ --svcp-conversation-blue-blur:blur(16px) saturate(115%);
+}
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
- /* Apple iMessage sky reference: clean turquoise-blue frosted capsule and
-    a brighter, flatter standalone Plus. Only the live composer is styled. */
- --svcp-clean-blue:rgba(6,134,204,.62);
- --svcp-clean-plus:rgba(0,149,214,.85);
- --svcp-clean-line:rgba(12,119,190,.55);
+ /* Same exact blue material on ALL chat shells. The brighter Plus
+    override was the source of the mismatch, so it is removed. */
+ --svcp-clean-blue:var(--svcp-conversation-blue-glass,rgba(6,134,204,.62));
+ --svcp-clean-line:var(--svcp-conversation-blue-rim,rgba(12,119,190,.55));
  all:unset!important;
  display:block!important;
  box-sizing:border-box!important;
@@ -53,8 +62,8 @@ html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
  border-radius:25px!important;
  background:var(--svcp-clean-blue)!important;
  background-image:none!important;
- -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
- backdrop-filter:blur(16px) saturate(115%)!important;
+ -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
+ backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
  box-shadow:none!important;
  transform:none!important;transition:none!important;
  pointer-events:none!important;
@@ -94,12 +103,11 @@ html body #svcpWorkChatScreen #svcpChatFormReset > :is(#svcpAttachFile,#svcpPoli
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
  left:0!important;right:auto!important;bottom:4px!important;top:auto!important;
  border-radius:50%!important;
- /* Same glass and border as the companion capsule; only the approved
-    Apple-style brighter blue tint differs. No separate raised shell. */
+ /* Exact same glass, blue fill and rim as the input capsule. */
  border:1px solid var(--svcp-clean-line)!important;
- background:var(--svcp-clean-plus)!important;
- -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
- backdrop-filter:blur(16px) saturate(115%)!important;
+ background:var(--svcp-clean-blue)!important;
+ -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
+ backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
  box-shadow:none!important;
  color:white!important;
 }
