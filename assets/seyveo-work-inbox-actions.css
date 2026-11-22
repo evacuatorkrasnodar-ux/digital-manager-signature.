@@ -1165,7 +1165,7 @@ html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-direct
 /* The actual Sayvi PNG has its own transparent breathing room.
    Scale the artwork *inside* the same 38px circle, without shrinking it. */
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-person="sayvi"] .svcp-directory-avatar.is-sayvi{
- background:#EDF3F0 url("./seyveo-sayvi-chat-jade-platinum.png?v=1") center center / 128% auto no-repeat!important;
+ background:#EDF3F0 url("./seyveo-sayvi-avatar-crisp.png?v=1") center center / 100% 100% no-repeat!important;
  color:transparent!important;font-size:0!important;
  border:1px solid rgba(119,154,145,.18)!important;
  box-shadow:0 1px 3px rgba(45,76,64,.08)!important
@@ -1230,7 +1230,7 @@ html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-row[data-s
  background:linear-gradient(150deg,#8B8D9C,#696D80)!important
 }
 html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar.is-sayvi{
- background:#EDF3F0 url("./seyveo-sayvi-chat-jade-platinum.png?v=1") center center / 128% auto no-repeat!important;
+ background:#EDF3F0 url("./seyveo-sayvi-avatar-crisp.png?v=1") center center / 100% 100% no-repeat!important;
  color:transparent!important;
  box-shadow:inset 0 0 0 1px rgba(119,154,145,.15)!important
 }
@@ -1243,3 +1243,7 @@ html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar.is-
 :root[data-theme="dark"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-preview{
  color:#A4AAB1!important
 }
+
+/* Logo artwork already tightly cropped in this source file:
+   let the 38px circular avatar show the full original symbol.
+   This is not a second decorative badge; the tappable chat row is unchanged. */
