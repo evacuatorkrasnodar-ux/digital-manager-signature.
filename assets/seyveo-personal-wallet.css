@@ -17,15 +17,10 @@ html[data-theme="dark"] #seyveoPayDialog{
  --sw-pearl-shadow:var(--sv-depth-circle,0 4px 13px rgba(0,0,0,.22));
  --sw-press:rgba(230,240,250,.12);
 }
-#seyveoPayDialog .syp-shell:has(.sw-screen:not([hidden])),
-#seyveoPayDialog .syp-top:has(+ .sw-screen:not([hidden])){background:var(--sw-bg);color:var(--sw-ink)}
+#seyveoPayDialog .syp-shell:has(.sw-screen:not([hidden])){background:var(--sw-bg);color:var(--sw-ink)}
 #seyveoPayDialog .sw-screen{
  color:var(--sw-ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Arial,sans-serif;
  padding:0 0 calc(20px + env(safe-area-inset-bottom));
-}
-#seyveoPayDialog .sw-seyveo-card{
- display:flex;width:100%;margin:4px 0 16px;flex:none;
- box-shadow:inset 0 1px 0 var(--syp-sheen),0 8px 22px rgba(30,45,55,.11);
 }
 #seyveoPayDialog .sw-summary{
  margin:0 0 20px;padding:16px 17px;
