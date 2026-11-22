@@ -493,14 +493,14 @@ html body #svcpWorkChatScreen .svcp-call-dialog-actions > button:active{
 }
 
 /* SEYVEO · iMessage composer final single-line polish · 2026-11-22. */
-/* The form itself must be invisible: one 50px pill and one separate 44px Plus.
+/* The form itself must be invisible: one slim 44px pill and one separate 44px Plus.
    No full-width glass slab, second input border, or colored dock halo.
    Extended/attachment editors retain their existing layouts and callbacks. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline){
  --svcp-chat-input-left:48px!important;
  width:min(430px,calc(100% - 12px))!important;
  max-width:calc(100% - 12px)!important;
- height:56px!important;min-height:56px!important;max-height:56px!important;
+ height:50px!important;min-height:50px!important;max-height:50px!important;
  padding:0!important;column-gap:4px!important;
  background:transparent!important;background-image:none!important;
  border:0!important;border-radius:0!important;outline:0!important;
@@ -532,14 +532,14 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-
  width:44px!important;min-width:44px!important;max-width:44px!important;
  height:44px!important;min-height:44px!important;max-height:44px!important;
  padding:0!important;margin:0!important;
- border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ border:var(--sv-dock-pearl-border,.75px solid rgba(255,255,255,.88))!important;
  border-radius:50%!important;
- background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ background:var(--sv-dock-pearl-bg,rgba(255,255,255,.18))!important;
  background-image:none!important;
- box-shadow:var(--sv-white-pearl-circle-shadow,0 11px 27px rgba(42,52,72,.11))!important;
+ box-shadow:var(--sv-dock-pearl-shadow,0 9px 26px rgba(42,52,72,.09))!important;
  color:var(--sv-white-pearl-ink,#0b0b0d)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(104%))!important;
  transform:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) > #svcpAttachFile svg{
