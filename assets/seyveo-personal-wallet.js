@@ -26,6 +26,13 @@ screen.innerHTML=`<div class="sw-summary">
  <div class="sw-block"><div class="sw-title-row"><h3>История</h3><span id="swCount"></span></div><div id="swHistory"></div></div>
  <p class="sw-privacy">Личные записи хранятся только в этом браузере. Это не банковский баланс. Если очистить данные сайта, записи могут исчезнуть.</p>`;
 dialog.querySelector('.syp-shell').appendChild(screen);
+// Restore the original SEYVEO card, without cloning it or its demo actions.
+// The card is a visual preview only; all real wallet entries remain below it.
+const originalCard=dialog.querySelector('[data-syp-screen="home"] > .syp-card');
+if(originalCard){
+ originalCard.classList.add('sw-seyveo-card');
+ screen.insertBefore(originalCard,screen.firstChild);
+}
 dialog.querySelector('.syp-title').textContent='Кошелёк';
 dialog.querySelector('.syp-kicker').textContent='SEYVEO · МОИ ФИНАНСЫ';
 dialog.querySelector('.syp-desc').textContent='Личные доходы и расходы';
