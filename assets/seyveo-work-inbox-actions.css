@@ -343,89 +343,62 @@ html body #svcpWorkChatScreen .sv-inbox-sheet-body > .sv-inbox-hint:first-child{
  color:#A8ABB2!important
 }
 
-/* v4 · Original SEYVEO app themes live directly in Messages settings.
-   Pure presentation: the existing global theme controller remains authoritative. */
-html body #svcpWorkChatScreen .sv-inbox-theme-grid{
- display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
- gap:7px!important;margin:4px 0 12px!important;padding:0!important;
- border:0!important;background:transparent!important
+
+/* Chat wallpaper settings use the existing conversation previews.
+   The six global application themes remain in Management only. */
+html body #svcpWorkChatScreen .sv-inbox-wallpaper-grid{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:9px!important;
+ margin:4px 0 17px!important;
+ padding:0!important
 }
-html body #svcpWorkChatScreen .sv-inbox-theme-grid > .sv-inbox-theme-card{
- position:relative!important;display:flex!important;flex-direction:column!important;
- justify-content:flex-start!important;align-items:center!important;gap:3px!important;
- box-sizing:border-box!important;min-width:0!important;width:100%!important;
- min-height:105px!important;margin:0!important;padding:10px 5px 9px!important;
- border:1px solid rgba(174,183,195,.15)!important;border-radius:15px!important;
- color:var(--sv-inbox-panel-ink,#16181D)!important;background:rgba(147,153,166,.035)!important;
- box-shadow:none!important;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- -webkit-tap-highlight-color:transparent!important;touch-action:manipulation
+html body #svcpWorkChatScreen .sv-inbox-wallpaper-card{
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:flex-start!important;gap:5px!important;
+ position:relative!important;box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;min-height:120px!important;
+ padding:7px 6px 9px!important;margin:0!important;
+ border:1px solid rgba(157,168,185,.16)!important;
+ border-radius:17px!important;
+ background:rgba(170,180,195,.04)!important;
+ color:var(--sv-inbox-panel-ink,#17191D)!important;box-shadow:none!important
 }
-html body #svcpWorkChatScreen .sv-inbox-theme-card:active{
- background:rgba(140,150,166,.095)!important
-}
-html body #svcpWorkChatScreen .sv-inbox-theme-card[aria-pressed="true"]{
- border-color:rgba(10,132,255,.62)!important;
+html body #svcpWorkChatScreen .sv-inbox-wallpaper-card[aria-pressed="true"]{
+ border-color:rgba(10,132,255,.52)!important;
  background:rgba(10,132,255,.055)!important;
- box-shadow:inset 0 0 0 .5px rgba(10,132,255,.17)!important
+ box-shadow:inset 0 0 0 .5px rgba(10,132,255,.12)!important
 }
-html body #svcpWorkChatScreen .sv-inbox-theme-card > strong{
- display:block!important;max-width:100%!important;margin:1px 0 0!important;
- font:600 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+html body #svcpWorkChatScreen .sv-inbox-wallpaper-card > .sv-chat-theme-preview{
+ flex:none!important;width:100%!important;height:66px!important;min-height:66px!important;
+ border-radius:12px!important
+}
+html body #svcpWorkChatScreen .sv-inbox-wallpaper-card > strong{
+ display:block!important;max-width:100%!important;overflow:hidden!important;
+ text-overflow:ellipsis!important;white-space:nowrap!important;
+ font:600 12.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  color:inherit!important
 }
-html body #svcpWorkChatScreen .sv-inbox-theme-card > small{
- display:block!important;max-width:100%!important;margin:0!important;
- font:400 9px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- color:#888D95!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important
+html body #svcpWorkChatScreen .sv-inbox-wallpaper-card > small{
+ display:block!important;max-width:100%!important;overflow:hidden!important;
+ text-overflow:ellipsis!important;white-space:nowrap!important;
+ color:#8A8F99!important;font-size:10px!important;line-height:1.2!important
 }
-html body #svcpWorkChatScreen .sv-inbox-theme-card .sv-inbox-theme-art{
- display:block!important;box-sizing:border-box!important;
- width:41px!important;height:41px!important;flex:none!important;
- border:1px solid rgba(103,111,123,.14)!important;
- border-radius:50%!important;
- box-shadow:inset 0 1px 2px rgba(255,255,255,.33),0 2px 5px rgba(33,41,54,.075)!important
+html body #svcpWorkChatScreen .sv-inbox-wallpaper-check{
+ display:none!important;place-items:center!important;position:absolute!important;
+ right:9px!important;top:10px!important;
+ width:18px!important;height:18px!important;border-radius:50%!important;
+ color:#fff!important;background:#0A84FF!important
 }
-html body #svcpWorkChatScreen .sv-inbox-theme-card .sv-inbox-theme-art--light{
- background:linear-gradient(145deg,#fff 0%,#f6f8fb 43%,#dfe7ef 100%)!important
-}
-html body #svcpWorkChatScreen .sv-inbox-theme-card .sv-inbox-theme-art--graphite{
- background:linear-gradient(145deg,#687885 0%,#28353f 48%,#10161e 100%)!important
-}
-html body #svcpWorkChatScreen .sv-inbox-theme-card .sv-inbox-theme-art--dark{
- background:linear-gradient(145deg,#4c7566 0%,#203c31 48%,#0d1915 100%)!important
-}
-html body #svcpWorkChatScreen .sv-inbox-theme-card .sv-inbox-theme-art--sapphire{
- background:linear-gradient(145deg,#657eaa,#263852 51%,#111b2b)!important
-}
-html body #svcpWorkChatScreen .sv-inbox-theme-card .sv-inbox-theme-art--plum{
- background:linear-gradient(145deg,#846c6d,#3c3035 55%,#171318)!important
-}
-html body #svcpWorkChatScreen .sv-inbox-theme-card .sv-inbox-theme-art--auto{
- background:linear-gradient(90deg,#202831 0 50%,#f0f2f5 50% 100%)!important
-}
-html body #svcpWorkChatScreen .sv-inbox-theme-selected{
- position:absolute!important;right:7px!important;top:7px!important;
- display:none!important;place-items:center!important;
- width:17px!important;height:17px!important;border-radius:50%!important;
- background:#0A84FF!important;color:white!important
-}
-html body #svcpWorkChatScreen .sv-inbox-theme-card[aria-pressed="true"] .sv-inbox-theme-selected{
+html body #svcpWorkChatScreen .sv-inbox-wallpaper-card[aria-pressed="true"] .sv-inbox-wallpaper-check{
  display:grid!important
 }
-html body #svcpWorkChatScreen .sv-inbox-theme-selected svg{
+html body #svcpWorkChatScreen .sv-inbox-wallpaper-check svg{
  width:12px!important;height:12px!important;fill:none!important;
- stroke:currentColor!important;stroke-width:2.4!important
-}
-:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-theme-card > small{
- color:#ADB2BC!important
+ stroke:currentColor!important;stroke-width:2!important
 }
 @media(max-width:340px){
- html body #svcpWorkChatScreen .sv-inbox-theme-grid{gap:5px!important}
- html body #svcpWorkChatScreen .sv-inbox-theme-grid > .sv-inbox-theme-card{
-  min-height:98px!important;padding:8px 3px!important
- }
- html body #svcpWorkChatScreen .sv-inbox-theme-card .sv-inbox-theme-art{
-  width:36px!important;height:36px!important
- }
+ html body #svcpWorkChatScreen .sv-inbox-wallpaper-grid{gap:6px!important}
+ html body #svcpWorkChatScreen .sv-inbox-wallpaper-card{padding:6px 4px!important;min-height:110px!important}
+ html body #svcpWorkChatScreen .sv-inbox-wallpaper-card > .sv-chat-theme-preview{height:57px!important;min-height:57px!important}
 }
