@@ -584,6 +584,8 @@ function syncProfile(){
  const st=roomState(r);
  toggle.querySelector('.sv-inbox-mute-text').textContent=st.muted?'Включить уведомления':'Без звука';
  toggle.setAttribute('aria-pressed',String(!!st.muted));
+ const avatarAction=$('svcpRoomProfileMute')?.parentElement?.querySelector('.sv-inbox-profile-avatar');
+ if(avatarAction)avatarAction.hidden=r==='dm-sayvi';
  updateHeaderAvatar();
 }
 const profileView=$('svcpRoomProfileViewSection');
@@ -593,7 +595,12 @@ if(profileView?.parentNode&&!$('svcpRoomProfileMute')){
   const id=$('svcpConversation')?.dataset.roomId;if(id)updateRoom(id,'muted',!roomState(id).muted)
  },'sv-inbox-profile-mute');control.id='svcpRoomProfileMute';
  control.querySelector('span').className='sv-inbox-mute-text';
- section.append(control);profileView.parentNode.insertBefore(section,profileView);
+ const avatarAction=button('Аватар чата','users',()=>{
+  const id=$('svcpConversation')?.dataset.roomId;
+  if(id&&id!=='dm-sayvi')openSheet('room-avatar',id);
+ },'sv-inbox-profile-avatar');
+ section.append(control,avatarAction);
+ profileView.parentNode.insertBefore(section,profileView);
  $('svcpConversationHeading')?.addEventListener('click',()=>requestAnimationFrame(syncProfile));
 }
 function closeSwipe(){if(swipeOpen){swipeOpen.classList.remove('is-swiped');swipeOpen=null}}
