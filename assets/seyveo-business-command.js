@@ -1127,16 +1127,10 @@ if(svcpComposerHost&&svcpSelectedTray&&svcpSelectedTray.parentNode!==svcpCompose
 // relative to the text field (and older rules swapped it with Send). Put
 // the SAME live controls in the composer's action row while expanded.
 // Moving the existing nodes preserves their actual recording/send handlers.
-const svcpComposerField=svcpComposerHost?.querySelector('.svcp-chat-compose-field');
-const svcpComposerMic=$('svcpVoiceRecord');
 const svcpComposerSend=svcpComposerHost?.querySelector('#svcpChatSendFlat');
+// Both buttons remain permanent form children; never reparent on wrapping.
 function svcpPlaceComposerActions(expanded){
- if(!svcpComposerHost||!svcpComposerField)return;
- const parent=expanded?svcpComposerHost:svcpComposerField;
- for(const node of [svcpComposerMic,svcpComposerSend]){
-  if(node&&node.parentNode!==parent)parent.append(node);
- }
- svcpComposerHost.classList.toggle('svcp-voice-on-toolbar',expanded);
+ svcpComposerHost?.classList.toggle('svcp-voice-on-toolbar',expanded);
 }
 
 /* One real, cancellable presentation of the existing LOCAL Sayvi suggestion.
@@ -1225,7 +1219,6 @@ function measuredComposeHeight(value,width){
 /* Remember where the ONE actual Send button sat in the short composer.
    When JS reparents it to the expanded form, retain the same viewport center.
    No guessed pixel nudge, duplicate button, or change to Plus/capsule geometry. */
-let svcpShortSendAnchor=null;
 let svcpShortPlusAnchor=null;
 function svcpPositionExpandedPlus(form,expanded){
  const plus=$('svcpAttachFile');
@@ -1262,51 +1255,12 @@ function svcpPositionExpandedPlus(form,expanded){
   if(Number.isFinite(bottom))plus.style.setProperty('bottom',bottom.toFixed(2)+'px','important');
  }else plus.style.removeProperty('bottom');
 }
-function svcpPositionExpandedSend(form,expanded){
- const send=svcpComposerSend;
- if(!send)return;
- if(!expanded){
-  send.style.removeProperty('right');
-  send.style.removeProperty('bottom');
-  send.style.removeProperty('top');
-  return;
- }
- // Reuse the compact button's visible centre when the editor grows upwards.
- // Clamp to the dock's bottom action row: a stale anchor can never move Send
- // outside the capsule after a Safari keyboard/viewport resize.
- const frame=form.getBoundingClientRect();
- const anchor=svcpShortSendAnchor;
- const size=send.getBoundingClientRect().height||36;
- let bottom=10,right=10;
- if(anchor&&Math.abs(window.innerWidth-anchor.viewportWidth)<2){
-  const candidateBottom=frame.bottom-anchor.y-size/2;
-  const candidateRight=frame.right-anchor.x-size/2;
-  if(Number.isFinite(candidateBottom)&&candidateBottom>=6&&candidateBottom<=17)
-   bottom=candidateBottom;
-  if(Number.isFinite(candidateRight)&&candidateRight>=6&&candidateRight<=22)
-   right=candidateRight;
- }
- send.style.setProperty('right',right.toFixed(2)+'px','important');
- send.style.setProperty('bottom',bottom.toFixed(2)+'px','important');
- send.style.setProperty('top','auto','important');
-}
 function resizeWorkComposer(){
  const input=$('svcpChatInput'),form=$('svcpChatForm');
  if(!input||!form)return;
- const send=svcpComposerSend;
+
  if(!form.classList.contains('svcp-compose-multiline')){
   const frame=form.getBoundingClientRect();
-  if(send){
-   const button=send.getBoundingClientRect();
-   if(button.width>25&&button.height>25){
-    svcpShortSendAnchor={
-     x:button.left+button.width/2,
-     y:button.top+button.height/2,
-     formBottom:frame.bottom,
-     viewportWidth:window.innerWidth
-    };
-   }
-  }
   const plus=$('svcpAttachFile');
   if(plus){
    const button=plus.getBoundingClientRect();
@@ -1327,7 +1281,6 @@ function resizeWorkComposer(){
  if(!value&&!state.files.length&&!state.file&&!state.scanCode){
   form.classList.remove('svcp-compose-multiline');
   svcpPlaceComposerActions(false);
-  svcpPositionExpandedSend(form,false);
   svcpPositionExpandedPlus(form,false);
   form.style.setProperty('--svcp-editor-height','40px');
   form.style.setProperty('--svcp-compose-height','56px');
@@ -1371,7 +1324,6 @@ function resizeWorkComposer(){
  form.style.setProperty('height',targetHeight+'px','important');
  input.style.setProperty('height',editorHeight+'px','important');
  input.style.setProperty('overflow-y',wraps&&expandedHeight+textPadding>144?'auto':'hidden','important');
- svcpPositionExpandedSend(form,wraps);
  svcpPositionExpandedPlus(form,wraps);
 }
 
