@@ -117,8 +117,9 @@ function openEditor({mount,onCreate,heading='Новый опрос'}){
  if(window.matchMedia?.('(pointer:fine)').matches)question.focus({preventScroll:true});
  return {close,element:overlay};
 }
-function render({poll,currentUser='me',names={},canClose=false,onUpdate}){
+function render({poll,currentUser='me',names={},canClose=false,outgoing=true,onUpdate}){
  const shell=make('section','sv-poll-card');
+ shell.classList.add(outgoing?'is-own-poll':'is-incoming-poll');
  if(!validPoll(poll)){
   shell.append(make('span','sv-poll-error','Опрос недоступен'));return shell;
  }
