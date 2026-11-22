@@ -17,14 +17,14 @@
 }
 /* Expose wallpapers through a single existing room canvas. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
- background:var(--sv-chat-sky-wallpaper)!important;
- background-attachment:local!important;
- background-size:cover!important;
+ background:linear-gradient(to bottom,transparent 0%,transparent 85%,#AFDAE7 100%),var(--sv-chat-sky-wallpaper)!important;
+ background-attachment:local,local!important;
+ background-size:100% 100%,cover!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="evening"]{
- background:var(--sv-chat-evening-wallpaper)!important;
- background-attachment:local!important;
- background-size:cover!important;
+ background:linear-gradient(to bottom,transparent 0%,transparent 85%,#EDBCB5 100%),var(--sv-chat-evening-wallpaper)!important;
+ background-attachment:local,local!important;
+ background-size:100% 100%,cover!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"])
  #svcpMessages{
