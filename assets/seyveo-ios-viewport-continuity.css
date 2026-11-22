@@ -189,8 +189,9 @@ html body #svcpWorkChatScreen[data-view="room"]
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"]
  > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
- /* Sayvi's round dark face must NEVER sit behind its name capsule. */
- margin:1px 0 0!important;
+ /* Match Andre's contact header: let the blue label tuck gently over
+    the bottom of Sayvi's round avatar, without moving the avatar itself. */
+ margin:-14px 0 0!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
@@ -226,19 +227,19 @@ html body #svcpWorkChatScreen[data-view="room"]
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
  #svcpConversationHeading .svcp-room-name-pill svg{
- /* Reproduce Andre's rounded right chevron: blue-ice, no dark inner glyph. */
- display:block!important;flex:0 0 15px!important;
- width:15px!important;height:15px!important;
- min-width:15px!important;min-height:15px!important;
+ /* Andre reference: a SMALL, crisp ice-blue chevron, never charcoal. */
+ display:block!important;flex:0 0 13px!important;
+ width:13px!important;height:13px!important;
+ min-width:13px!important;min-height:13px!important;
  margin:0!important;padding:0!important;
- stroke:#91D0F5!important;color:#91D0F5!important;stroke-width:2.45!important;
+ stroke:#9AD8FC!important;color:#9AD8FC!important;stroke-width:2.15!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
  fill:none!important;opacity:1!important;filter:none!important;transform:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
  #svcpConversationHeading .svcp-room-name-pill svg path{
- fill:none!important;stroke:inherit!important;stroke-width:inherit!important;
+ fill:none!important;stroke:#9AD8FC!important;stroke-width:2.15!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
