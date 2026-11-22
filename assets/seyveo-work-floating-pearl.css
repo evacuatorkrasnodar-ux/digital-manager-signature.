@@ -1,7 +1,7 @@
-/* SEYVEO Work · slim pearl segmented navigation, 22 Nov 2026.
+/* SEYVEO Work · precisely aligned slim segmented navigation, 22 Nov 2026.
    Same visual family as Wallet's Card / Finances switch, only thinner.
    Four Business tabs, three ONE tabs, two Employee tabs. One live DOM
-   and one moving selection. Keep each native tap target 44px tall. */
+   and one moving selection. Keep touch area 44px without distorting the visual geometry. */
 @media(max-width:699px){
  html body .app.sv-dock-width-workspace:has(> #svWorkShell[data-shared-work="true"]){
   padding-left:0!important;padding-right:0!important;
@@ -44,13 +44,12 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs::before,
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs::after{
  content:none!important;display:none!important;
 }
-/* Selection follows the real buttons; no duplicate button background.
-   A flat 32px highlight sits inside a 38px capsule; outer 44px touch targets
-   remain available for accessibility and comfortable tapping. */
+/* Selection and text share the exact same vertical 34px center inside
+   a 38px capsule. Invisible 44px tap areas preserve usability. */
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection{
  position:absolute!important;z-index:0!important;pointer-events:none!important;
  box-sizing:border-box!important;top:2px!important;left:0!important;
- width:80px;height:32px!important;min-height:32px!important;
+ width:80px;height:34px!important;min-height:34px!important;
  margin:0!important;padding:0!important;
  border:1px solid rgba(205,215,226,.42)!important;
  border-radius:999px!important;
@@ -68,7 +67,8 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-wor
  box-sizing:border-box!important;
  align-items:center!important;justify-content:center!important;
  width:100%!important;min-width:0!important;
- height:44px!important;min-height:44px!important;
+ height:34px!important;min-height:34px!important;
+ align-self:center!important;
  margin:0!important;padding:0 2px!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;box-shadow:none!important;
@@ -79,6 +79,18 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-wor
  white-space:nowrap!important;text-align:center!important;
  touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;
  transform:none!important;transition:color 170ms ease!important;
+}
+/* The visible tab is 34px, with an invisible 44px click surface.
+   No painted pseudo-rings or secondary button surfaces. */
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:not([hidden])::before{
+ content:none!important;display:none!important;
+}
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:not([hidden])::after{
+ content:""!important;display:block!important;
+ position:absolute!important;inset:-5px 0!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ transform:none!important;pointer-events:auto!important;
 }
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][aria-pressed="true"]:not([hidden]){
  color:#1A2028!important;font-weight:640!important;
