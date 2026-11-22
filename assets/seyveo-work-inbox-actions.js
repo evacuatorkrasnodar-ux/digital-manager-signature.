@@ -425,7 +425,13 @@ function settingToggle(key,label,help){
 }
 function showSettings(){
  sectionHeading('Профиль');
- menuLink('Моё имя и фото','Фото, эмодзи или монограмма на этом устройстве','users',()=>openSubSheet('my-avatar','settings'));
+ const profileRow=menuLink('Моё имя и фото','Фото, эмодзи или монограмма на этом устройстве','users',()=>openSubSheet('my-avatar','settings'));
+ profileRow.querySelector(':scope > svg')?.remove();
+ const profileAvatar=node('span','sv-inbox-avatar-settings-preview');
+ paintAvatar(profileAvatar,prefs.myProfile?.avatar||{
+  kind:'monogram',initials:String(prefs.myProfile?.name||'Я').slice(0,1),color:AVATAR_COLORS[0]
+ });
+ profileRow.prepend(profileAvatar);
  sectionHeading('Темы чатов');
  body.append(makeChatWallpapers());
  sectionHeading('Сообщения');
