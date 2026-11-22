@@ -1326,64 +1326,60 @@ html body #svcpWorkChatScreen[data-view="room"]
  content:none!important;display:none!important;
 }
 
-/* v35 · Identical compact/expanded outer width, glass edge & button anchors.
-   Previous expanded glass had right:0 while the compact glass had right:10px.
-   Additionally, compact Plus used a grid-relative left position but expanded
-   Plus was absolutely positioned. That geometry difference caused the jump.
-   Only the writing area's height may change when entering multiline mode. */
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat:not(:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden]))) #svcpChatForm,
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat:not(:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden]))) #svcpChatForm:focus-within,
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat:not(:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden]))) #svcpChatForm.svcp-compose-multiline,
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat:not(:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden]))) #svcpChatForm.svcp-compose-multiline:focus-within{
+/* v37 · Single transparent composer surface (regression fix).
+   v35/v36 force-positioned the ENTIRE form absolutely and globally matched
+   focus; that competed with the existing room layout and exposed overlapping
+   inner/outer panels. Restore the original form positioning from its owner.
+   Match only multiline WIDTH and the existing glass's right inset. The
+   composer is drawn exclusively by ::before; all inner fields stay clear.
+   Keep the approved v34 Plus/Send bottom anchors and shorter growth. */
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm.svcp-compose-multiline,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm.svcp-compose-multiline:focus-within{
  box-sizing:border-box!important;
- position:absolute!important;
- left:50%!important;right:auto!important;
  width:min(430px,calc(100% - 12px))!important;
- min-width:0!important;
  max-width:calc(100% - 12px)!important;
- margin:0!important;
- transform:translateX(-50%)!important;
- translate:none!important;scale:1!important;
+ min-width:0!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  transition:none!important;animation:none!important;
 }
-/* The right glass margin stays 10px in BOTH modes, including focus.
-   Expanded mode still wraps under the Plus but never grows horizontally. */
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm::before,
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:focus-within::before{
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm.svcp-compose-multiline::before,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm.svcp-compose-multiline:focus-within::before{
+ content:""!important;display:block!important;
  box-sizing:border-box!important;
  right:10px!important;width:auto!important;
- transform:none!important;translate:none!important;scale:1!important;
+ background:var(--sv-liquid-nav-material,rgba(255,255,255,.72))!important;
+ background-image:none!important;
+ transform:none!important;translate:none!important;
  transition:none!important;animation:none!important;
 }
-/* Absolute Plus in BOTH modes: exact same 44px frame at left:6/bottom:3.
-   Its tap target keeps the prior White Pearl or expanded icon-only material. */
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm > button#svcpAttachFile.svcp-plus-pearl-rebuilt,
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:hover,:focus,:active,:focus-visible),
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:has(#svcpAttachMenu:not([hidden])) > button#svcpAttachFile.svcp-plus-pearl-rebuilt{
- box-sizing:border-box!important;
- position:absolute!important;
- left:6px!important;right:auto!important;
- top:auto!important;bottom:3px!important;
- grid-column:auto!important;grid-row:auto!important;
- width:44px!important;min-width:44px!important;max-width:44px!important;
- height:44px!important;min-height:44px!important;max-height:44px!important;
- margin:0!important;padding:0!important;
- transform:none!important;translate:none!important;scale:1!important;
- transition:none!important;animation:none!important;
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm.svcp-compose-multiline::after{
+ content:none!important;display:none!important;
 }
-/* Compact Send sits 6px above form bottom, matching expanded Send exactly.
-   Its SVG remains a single 34px flat circle, and the 16px right margin stays. */
 html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send,
+ #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field,
 html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus,:focus-visible){
- position:absolute!important;
+ #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field:focus-within,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > #svcpChatInput,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > #svcpChatInput:focus{
+ background:transparent!important;background-image:none!important;
+ border:0!important;outline:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;
+}
+/* Keep compact Send's center on the expanded bottom-row baseline.
+   Don't move its containing form or restyle the mic. */
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send{
  top:auto!important;bottom:6px!important;
  right:16px!important;left:auto!important;
- width:38px!important;min-width:38px!important;max-width:38px!important;
- height:38px!important;min-height:38px!important;max-height:38px!important;
- margin:0!important;padding:0!important;
- transform:none!important;translate:none!important;scale:1!important;
- transition:none!important;animation:none!important;
+ transform:none!important;
 }
-/* Keep the real microphone's compact geometry intact. */
