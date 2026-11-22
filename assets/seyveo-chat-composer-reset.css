@@ -1,67 +1,53 @@
-/* SEYVEO Work Chat / composer reset 2026-11-22.
-   This is a NEW component, not an override of the old #svcpChatForm.
-   Old form/class rules are disconnected from the live DOM. Two states,
-   ONE bottom baseline. No decorative button skins or visual duplicates.
-   Bottom 6px follows the accessible iOS PWA viewport; its system-owned
-   Home-indicator area is never counted twice. */
-/* ONE blue glass material for the SKY conversation's existing outer shells:
-   composer, compact Plus, Back and contact-name capsule. Slightly darker than
-   the last preview; same color, alpha, rim and blur for each shell.
-   This rule only declares tokens and changes no DOM or click behavior. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"]{
+/* SEYVEO Work Chat · canonical composer, rebuilt 22 Nov 2026.
+   One stylesheet owns the live #svcpChatFormReset. No older overlay skins,
+   duplicate pseudo-buttons, top/left coordinates or animated icon positions.
+   JS retains all handlers and only supplies text/attachment heights. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
  --svcp-conversation-blue-glass:rgba(5,123,195,.68);
  --svcp-conversation-blue-rim:rgba(9,100,171,.57);
  --svcp-conversation-blue-blur:blur(16px) saturate(115%);
 }
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
- /* Same exact blue material on ALL chat shells. The brighter Plus
-    override was the source of the mismatch, so it is removed. */
+html body #svcpWorkChatScreen #svcpChatFormReset{
+ all:unset!important;
  --svcp-clean-blue:var(--svcp-conversation-blue-glass,rgba(6,134,204,.62));
  --svcp-clean-line:var(--svcp-conversation-blue-rim,rgba(12,119,190,.55));
- all:unset!important;
- display:block!important;
  box-sizing:border-box!important;
- position:absolute!important;
- inset:auto 0 6px 0!important;
- z-index:15!important;
- isolation:isolate!important;
+ position:absolute!important;inset:auto 0 6px 0!important;
+ z-index:15!important;isolation:isolate!important;
+ display:grid!important;
+ grid-template-columns:44px 44px minmax(0,1fr) 44px!important;
+ grid-template-rows:56px!important;
+ column-gap:8px!important;row-gap:0!important;
+ justify-items:center!important;align-items:center!important;
  width:min(430px,calc(100% - 20px))!important;
- max-width:calc(100% - 20px)!important;
- min-width:0!important;
- height:var(--svcp-compose-height,52px)!important;
- min-height:52px!important;
- max-height:none!important;
- margin:0 auto!important;
- padding:0!important;
- overflow:visible!important;
- border:0!important;
- outline:0!important;
- background:none!important;
- box-shadow:none!important;
- transform:none!important;
- transition:none!important;
+ max-width:calc(100% - 20px)!important;min-width:0!important;
+ height:var(--svcp-compose-height,56px)!important;
+ min-height:56px!important;max-height:none!important;
+ margin:0 auto!important;padding:0!important;
+ border:0!important;outline:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;overflow:visible!important;
+ transform:none!important;translate:none!important;
+ transition:none!important;animation:none!important;
  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
  -webkit-tap-highlight-color:transparent!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline{
+ grid-template-rows:minmax(0,1fr) 56px!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset::before,
 html body #svcpWorkChatScreen #svcpChatFormReset::after{
  content:none!important;display:none!important;
 }
-/* One panel; compact mode leaves a real gap for the separate Plus.
-   Expanded mode simply extends this SAME panel behind the growing text. */
+/* One continuous matte blue surface. The separate Plus exists only in
+   compact mode; expanded mode grows upwards without moving the control row. */
 html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
- box-sizing:border-box!important;
- display:block!important;
- position:absolute!important;
- left:54px!important;right:0!important;top:5px!important;bottom:5px!important;
- z-index:0!important;
- margin:0!important;padding:0!important;
- /* One flat frosted surface, no convex/recessed paint or thick dark ring. */
+ box-sizing:border-box!important;display:block!important;
+ position:absolute!important;z-index:0!important;
+ inset:5px 0 5px 54px!important;
  border:1px solid var(--svcp-clean-line)!important;
  border-radius:25px!important;
- background:var(--svcp-clean-blue)!important;
- background-image:none!important;
+ background:var(--svcp-clean-blue)!important;background-image:none!important;
  -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
  backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
  box-shadow:none!important;
@@ -69,210 +55,173 @@ html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
  pointer-events:none!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > .svcp-clean-surface{
- left:0!important;right:0!important;top:0!important;bottom:0!important;
- border-radius:24px!important;
+ inset:0!important;border-radius:24px!important;
 }
-/* Every button gets its own fixed 44px hit target, no transform or layers. */
+/* Original four real buttons: the GRID, not viewport arithmetic, owns
+   their vertical centering. Identical first and second row baselines. */
 html body #svcpWorkChatScreen #svcpChatFormReset > :is(#svcpAttachFile,#svcpPolishMessage,#svcpVoiceRecord,#svcpChatSendFlat){
- all:unset!important;
- box-sizing:border-box!important;
- position:absolute!important;
- z-index:3!important;
- display:grid!important;
- place-items:center!important;
+ all:unset!important;box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ position:relative!important;top:auto!important;right:auto!important;
+ bottom:auto!important;left:auto!important;z-index:3!important;
  width:44px!important;height:44px!important;
- min-width:44px!important;min-height:44px!important;
- max-width:44px!important;max-height:44px!important;
+ min-width:44px!important;max-width:44px!important;
+ min-height:44px!important;max-height:44px!important;
  margin:0!important;padding:0!important;
  border:0!important;outline:0!important;
- -webkit-appearance:none!important;appearance:none!important;
- background:none!important;background-image:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
  box-shadow:none!important;text-shadow:none!important;
- filter:none!important;
- transform:none!important;translate:none!important;scale:1!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;transform:none!important;translate:none!important;scale:1!important;
  transition:none!important;animation:none!important;
  cursor:pointer!important;touch-action:manipulation!important;
+ -webkit-appearance:none!important;appearance:none!important;
  -webkit-tap-highlight-color:transparent!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > :is(#svcpAttachFile,#svcpPolishMessage,#svcpVoiceRecord,#svcpChatSendFlat)::before,
 html body #svcpWorkChatScreen #svcpChatFormReset > :is(#svcpAttachFile,#svcpPolishMessage,#svcpVoiceRecord,#svcpChatSendFlat)::after{
  content:none!important;display:none!important;
 }
-/* Plus is separate only in the short mode. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
- left:0!important;right:auto!important;bottom:auto!important;top:calc(50% - 22px)!important;
- border-radius:50%!important;
- /* Exact same glass, blue fill and rim as the input capsule. */
+ grid-column:1!important;grid-row:1!important;
  border:1px solid var(--svcp-clean-line)!important;
  background:var(--svcp-clean-blue)!important;
  -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
  backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
- box-shadow:none!important;
- color:white!important;
+ color:#fff!important;
 }
-/* Expanded panel: PLUS is only the white + glyph; never a floating circle.
-   The 44px touch target remains, and the same button/handler is preserved. */
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpAttachFile{
- top:auto!important;bottom:4px!important;
- border:0!important;
- border-radius:0!important;
- background:transparent!important;background-image:none!important;
- box-shadow:none!important;
+ grid-row:2!important;
+ background:transparent!important;border:0!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- filter:none!important;
 }
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile svg{
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile > svg{
  display:block!important;width:22px!important;height:22px!important;
- stroke:#fff!important;stroke-width:1.6!important;
- fill:none!important;stroke-linecap:round!important;
+ fill:none!important;stroke:#fff!important;stroke-width:1.6!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;filter:none!important;
 }
-/* Actual original Sayvi image, not a generated CSS replacement. */
+/* Exactly the approved full-color Sayvi image on one 1:1 BLUE circular
+   surface; no egg, stretched SVG, second emblem or oval photo backing. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage{
- left:54px!important;right:auto!important;bottom:auto!important;top:calc(50% - 22px)!important;
- border-radius:50%!important;color:#fff!important;
+ grid-column:2!important;grid-row:1!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpPolishMessage{
- left:54px!important;top:auto!important;bottom:4px!important;
+ grid-row:2!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
- display:block!important;
- box-sizing:border-box!important;
- width:36px!important;height:36px!important;
- min-width:36px!important;max-width:36px!important;
- min-height:36px!important;max-height:36px!important;
- aspect-ratio:1 / 1!important;
- margin:auto!important;padding:0!important;
- object-fit:contain!important;object-position:center!important;
- /* Use the same original WebP as the header avatar, on ONE circular
-    blue face. The art itself is transparent and otherwise looks egg-shaped.
-    No extra span, pseudo-circle, rim or surrounding button skin. */
- background-color:#0959BC!important;background-image:none!important;
+ box-sizing:border-box!important;display:block!important;
+ width:38px!important;height:38px!important;
+ min-width:38px!important;max-width:38px!important;
+ min-height:38px!important;max-height:38px!important;
+ aspect-ratio:1/1!important;
+ margin:0!important;padding:0!important;
+ object-fit:contain!important;object-position:center center!important;
+ background:#0959bc!important;background-image:none!important;
  border:0!important;border-radius:50%!important;
- clip-path:none!important;
+ clip-path:circle(50% at 50% 50%)!important;
  overflow:hidden!important;box-shadow:none!important;
  filter:none!important;opacity:1!important;
- transform:none!important;animation:none!important;
+ transform:none!important;translate:none!important;
+ animation:none!important;transition:none!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > span{
  display:none!important;
 }
-/* Short-line text remains in its own fixed slot.
-   Wrapped text uses full width ABOVE the action row; never behind Send. */
+/* Text is separate from the fixed row. Compact has one 40px line;
+   multiline is a single writing area above the buttons and attachment row. */
 html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-editor{
- box-sizing:border-box!important;
- position:absolute!important;
- left:101px!important;right:52px!important;top:calc(50% - 20px)!important;bottom:auto!important;
- z-index:2!important;
- display:block!important;min-width:0!important;
- background:transparent!important;border:0!important;box-shadow:none!important;
+ box-sizing:border-box!important;display:block!important;
+ position:absolute!important;z-index:2!important;
+ left:104px!important;right:52px!important;
+ top:8px!important;bottom:auto!important;
+ min-width:0!important;height:40px!important;
+ margin:0!important;padding:0!important;
+ background:none!important;border:0!important;box-shadow:none!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-editor #svcpChatInput{
- all:unset!important;
- display:block!important;
- box-sizing:border-box!important;
+ all:unset!important;box-sizing:border-box!important;display:block!important;
  width:100%!important;height:40px!important;
- min-width:0!important;min-height:40px!important;
- max-height:144px!important;
- margin:0!important;padding:8px 0 8px 0!important;
- overflow-x:hidden!important;overflow-y:hidden!important;
- resize:none!important;
- border:0!important;outline:0!important;border-radius:0!important;
+ min-width:0!important;min-height:0!important;max-height:144px!important;
+ margin:0!important;padding:8px 0!important;
+ border:0!important;border-radius:0!important;outline:0!important;
  background:transparent!important;box-shadow:none!important;
+ resize:none!important;overflow-x:hidden!important;overflow-y:hidden!important;
  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
- font-weight:400!important;font-size:16px!important;line-height:24px!important;
- color:white!important;-webkit-text-fill-color:white!important;
- caret-color:white!important;
+ font-size:16px!important;font-weight:400!important;line-height:24px!important;
  letter-spacing:normal!important;text-align:left!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important;
  white-space:pre-wrap!important;overflow-wrap:anywhere!important;
- transition:none!important;transform:none!important;
+ transform:none!important;transition:none!important;
 }
-html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-editor #svcpChatInput::placeholder{
- color:rgba(184,231,247,.90)!important;-webkit-text-fill-color:rgba(184,231,247,.90)!important;opacity:1!important;
+html body #svcpWorkChatScreen #svcpChatFormReset #svcpChatInput::placeholder{
+ color:rgba(184,231,247,.90)!important;-webkit-text-fill-color:rgba(184,231,247,.90)!important;
+ opacity:1!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > .svcp-clean-editor{
  left:12px!important;right:12px!important;
- top:calc(5px + var(--svcp-attachment-row-height,0px))!important;
- bottom:auto!important;
+ top:calc(1px + var(--svcp-attachment-row-height,0px))!important;
  height:var(--svcp-editor-height,44px)!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > .svcp-clean-editor #svcpChatInput{
- width:100%!important;
  height:var(--svcp-editor-height,44px)!important;
- min-height:0!important;max-height:144px!important;
- padding:4px 0!important;
- overflow-y:auto!important;
+ padding:4px 0!important;overflow-y:auto!important;
 }
-html body #svcpWorkChatScreen #svcpChatFormReset #svcpChatInput::-webkit-scrollbar{display:none!important;}
-/* Send never leaves the right-bottom slot when the editor grows upwards. */
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat{
- right:6px!important;left:auto!important;bottom:auto!important;top:calc(50% - 22px)!important;
- z-index:5!important;
-}
-/* Expanded composer keeps actions along its anchored bottom toolbar,
-   while compact actions share one true vertical centre. */
-html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpChatSendFlat{
- top:auto!important;bottom:4px!important;
-}
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat > svg{
- display:block!important;
- box-sizing:border-box!important;
- width:44px!important;height:44px!important;
- min-width:44px!important;max-width:44px!important;
- min-height:44px!important;max-height:44px!important;
- margin:auto!important;padding:0!important;
- overflow:visible!important;fill:none!important;
- transform:none!important;filter:none!important;
-}
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat .svcp-flat-face{
- fill:var(--sv-chat-outgoing,#0A84FF)!important;stroke:none!important;
-}
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat .svcp-flat-arrow{
- fill:none!important;stroke:white!important;stroke-width:1.75!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
-}
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat .svcp-flat-stop{
- display:none!important;fill:white!important;stroke:none!important;
-}
-html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] > #svcpChatSendFlat .svcp-flat-arrow{
- display:none!important;
-}
-html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] > #svcpChatSendFlat .svcp-flat-stop{
- display:block!important;
-}
-html body #svcpWorkChatScreen #svcpChatFormReset[data-has-content="false"]:not([data-sayvi-responding="true"]) > #svcpChatSendFlat,
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat[hidden]{
- display:none!important;visibility:hidden!important;pointer-events:none!important;
-}
-/* Mic takes Send's exact same slot when idle; beside it when expanded. */
+html body #svcpWorkChatScreen #svcpChatFormReset #svcpChatInput::-webkit-scrollbar{display:none!important}
+/* Mic and Send occupy ONE right-hand slot when compact; in multiline
+   the microphone moves to the adjacent CELL, never to a new baseline. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpVoiceRecord{
- right:6px!important;left:auto!important;bottom:auto!important;top:calc(50% - 22px)!important;
+ grid-column:4!important;grid-row:1!important;
  color:rgba(210,241,253,.92)!important;z-index:4!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpVoiceRecord{
- right:56px!important;top:auto!important;bottom:4px!important;
+ grid-column:3!important;grid-row:2!important;justify-self:end!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset:not(.svcp-compose-multiline)[data-has-content="true"] > #svcpVoiceRecord,
 html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] > #svcpVoiceRecord{
  display:none!important;visibility:hidden!important;pointer-events:none!important;
 }
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpVoiceRecord svg{
- display:block!important;position:static!important;
- width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;
- margin:auto!important;fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpVoiceRecord > svg{
+ display:block!important;width:22px!important;height:22px!important;
+ margin:auto!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.6!important;stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;filter:none!important;
 }
-/* Legacy functionality preserved: file chooser/camera remain real elements,
-   but never add an extra visual row or shift the composer. */
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpCameraToggle,
-html body #svcpWorkChatScreen #svcpChatFormReset > :is(#svcpFile,#svcpCameraPhoto){
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat{
+ grid-column:4!important;grid-row:1!important;z-index:5!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpChatSendFlat{
+ grid-row:2!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat > svg{
+ display:block!important;width:44px!important;height:44px!important;
+ min-width:44px!important;max-width:44px!important;
+ min-height:44px!important;max-height:44px!important;
+ padding:0!important;margin:0!important;
+ overflow:visible!important;fill:none!important;transform:none!important;filter:none!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat .svcp-flat-face{
+ fill:var(--sv-chat-outgoing,#0A84FF)!important;stroke:none!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat .svcp-flat-arrow{
+ fill:none!important;stroke:#fff!important;stroke-width:1.75!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat .svcp-flat-stop{
+ display:none!important;fill:#fff!important;stroke:none!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] > #svcpChatSendFlat .svcp-flat-arrow{display:none!important}
+html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] > #svcpChatSendFlat .svcp-flat-stop{display:block!important}
+html body #svcpWorkChatScreen #svcpChatFormReset[data-has-content="false"]:not([data-sayvi-responding="true"]) > #svcpChatSendFlat,
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat[hidden]{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+/* Keep existing camera, file upload, menu and preview behavior. No clones. */
+html body #svcpWorkChatScreen #svcpChatFormReset > :is(#svcpCameraToggle,#svcpFile,#svcpCameraPhoto){
  display:none!important;
 }
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu[hidden]{
- display:none!important;
-}
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu[hidden]{display:none!important}
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu:not([hidden]){
  position:absolute!important;z-index:20!important;
  bottom:calc(100% + 8px)!important;left:0!important;
@@ -298,13 +247,12 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachmentPreview:not([h
  max-height:var(--svcp-attachment-row-height,100px)!important;
  overflow:auto!important;
 }
-/* A real one-line dock stays independent from the keyboard focus state. */
-html body #svcpWorkChatScreen #svcpChatFormReset:focus-within,
-html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline:focus-within{
+html body #svcpWorkChatScreen #svcpChatFormReset:focus-within{
  transform:none!important;outline:0!important;
 }
 @media(prefers-reduced-transparency:reduce){
- html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
+ html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface,
+ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
@@ -314,24 +262,4 @@ html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline:focus-wi
  html body #svcpWorkChatScreen #svcpChatFormReset *::after{
   animation:none!important;transition:none!important;
  }
-}
-
-/* v12 · stable toolbar anchors and unmodified Sayvi artwork.
-   Every existing icon uses the same bottom baseline in both phases; the
-   expanding text panel can grow upward without moving Plus/Sayvi/Send. */
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile,
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage,
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpVoiceRecord,
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat{
- top:auto!important;bottom:4px!important;
- transition:none!important;animation:none!important;
- transform:none!important;translate:none!important;
-}
-html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
- width:36px!important;height:36px!important;
- min-width:36px!important;max-width:36px!important;
- min-height:36px!important;max-height:36px!important;
- object-fit:contain!important;object-position:center!important;
- background:transparent!important;border:0!important;border-radius:0!important;
- clip-path:none!important;filter:none!important;transform:none!important;
 }
