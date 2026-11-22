@@ -92,7 +92,7 @@ function makeContactRow(r,fn){
  const row=button(r.label,'chevron',fn,'sv-inbox-contact-row');
  row.dataset.svcpRoomPerson=r.person||'';
  const avatar=node('span','sv-inbox-contact-avatar',r.id==='dm-sayvi'?'':r.label.slice(0,1));
- if(r.id==='dm-sayvi')avatar.classList.add('is-sayvi');
+ if(r.id==='dm-sayvi')avatar.classList.add('is-sayvi','sv-sayvi-avatar');
  avatar.setAttribute('aria-hidden','true');
  row.prepend(avatar);
  const copy=row.querySelector('span:not(.sv-inbox-contact-avatar)');
