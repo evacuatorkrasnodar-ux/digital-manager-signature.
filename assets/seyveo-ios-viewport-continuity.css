@@ -149,16 +149,15 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  min-width:56px!important;max-width:56px!important;
  min-height:56px!important;max-height:56px!important;
  padding:0!important;margin:0!important;
- border:0!important;outline:0!important;border-radius:0!important;
- /* Same 56px transparent artwork as the bottom control. The original
-    visible outline is ~2.8% taller than wide, so correct ONLY its optical
-    geometry without changing the hue, opacity, source, or button surface. */
- background:transparent var(--sv-sayvi-mark-image)
+ border:0!important;outline:0!important;border-radius:50%!important;
+ /* SEYVEO avatar standard: quiet matte petrol-graphite circle.
+    The supplied jade/platinum S remains unmodified and centered. */
+ background:#19373D var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
  box-shadow:none!important;text-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  filter:none!important;opacity:1!important;transform:none!important;
- -webkit-mask:none!important;mask:none!important;overflow:visible!important;
+ -webkit-mask:none!important;mask:none!important;overflow:hidden!important;
 }
 /* The chat renderer appends a legacy S span. The supplied image is the
    only visible mark, so the old inner glyph must never paint over it. */
