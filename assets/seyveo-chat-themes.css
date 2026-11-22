@@ -393,3 +393,172 @@ html:root[data-theme="dark"] body :is(#svcpWorkChatScreen,#seyveoFamilyDialog)
  -webkit-text-fill-color:#FFFFFF!important;
  text-shadow:none!important;
 }
+
+
+/* v3 · Sky/Evening controls share their wallpaper tint with the composer.
+   Visual paint only. Preserve the canonical 44px tap targets, original
+   microphone/attachment handlers and the single 60px input geometry. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
+ :is(#svcpConversationBack,.svcp-call-actions .svcp-call-button){
+ background:linear-gradient(145deg,rgba(10,91,177,.65),rgba(0,106,194,.45))!important;
+ background-image:linear-gradient(145deg,rgba(10,91,177,.65),rgba(0,106,194,.45))!important;
+ color:#FFFFFF!important;
+ border:1px solid rgba(236,249,255,.61)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 3px 12px rgba(18,79,139,.12)!important;
+ -webkit-backdrop-filter:blur(15px) saturate(125%)!important;
+ backdrop-filter:blur(15px) saturate(125%)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
+ :is(#svcpConversationBack,.svcp-call-actions .svcp-call-button) svg{
+ stroke:#FFFFFF!important;
+ color:#FFFFFF!important;
+ fill:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
+ :is(#svcpConversationBack,.svcp-call-actions .svcp-call-button):active{
+ background:rgba(6,80,157,.72)!important;
+ box-shadow:inset 0 2px 5px rgba(5,46,93,.25)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpConversationHeading .svcp-room-name-pill{
+ background:rgba(225,245,255,.77)!important;
+ border:1px solid rgba(255,255,255,.54)!important;
+ color:#1C527F!important;
+ box-shadow:0 2px 8px rgba(5,81,144,.08),inset 0 1px 0 rgba(255,255,255,.62)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(118%)!important;
+ backdrop-filter:blur(18px) saturate(118%)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpConversationHeading .svcp-room-name-pill :is(strong,svg){
+ color:#184A71!important;
+ stroke:#184A71!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm::before{
+ background:linear-gradient(145deg,rgba(26,117,185,.42),rgba(25,124,190,.29))!important;
+ border:1px solid rgba(235,251,255,.54)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.17),0 4px 16px rgba(18,71,124,.11)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(135%)!important;
+ backdrop-filter:blur(22px) saturate(135%)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm #svcpChatInput{
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ caret-color:#FFFFFF!important;
+ text-shadow:0 1px 2px rgba(18,83,142,.12)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm #svcpChatInput::placeholder{
+ color:rgba(246,252,255,.88)!important;
+ -webkit-text-fill-color:rgba(246,252,255,.88)!important;
+ opacity:1!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt{
+ background:linear-gradient(145deg,rgba(12,96,178,.58),rgba(39,133,197,.40))!important;
+ border:1px solid rgba(235,250,255,.65)!important;
+ color:#FFFFFF!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 3px 10px rgba(14,82,141,.11)!important;
+ -webkit-backdrop-filter:blur(15px) saturate(120%)!important;
+ backdrop-filter:blur(15px) saturate(120%)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg path{
+ stroke:#FFFFFF!important;
+ color:#FFFFFF!important;
+ fill:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ :is(#svcpVoiceRecord,.svcp-chat-send){
+ color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ :is(#svcpVoiceRecord,.svcp-chat-send) svg :is(path,rect,line,polyline,circle){
+ stroke:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm .svcp-chat-send:not([hidden]){
+ background:rgba(0,109,209,.68)!important;
+ color:#FFFFFF!important;
+}
+/* Sunset theme uses the same materials with dusk rather than cyan pigment. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"]
+ :is(#svcpConversationBack,.svcp-call-actions .svcp-call-button){
+ background:linear-gradient(145deg,rgba(56,63,139,.72),rgba(92,85,166,.44))!important;
+ color:#FFFFFF!important;
+ border:1px solid rgba(245,239,255,.55)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 3px 12px rgba(41,37,97,.10)!important;
+ -webkit-backdrop-filter:blur(15px)!important;
+ backdrop-filter:blur(15px)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"]
+ :is(#svcpConversationBack,.svcp-call-actions .svcp-call-button) svg{
+ color:#FFFFFF!important;stroke:#FFFFFF!important;fill:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"] #svcpChatForm::before{
+ background:linear-gradient(155deg,rgba(83,81,163,.46),rgba(110,95,171,.37))!important;
+ border:1px solid rgba(255,243,255,.47)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 4px 15px rgba(49,47,111,.11)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(115%)!important;
+ backdrop-filter:blur(22px) saturate(115%)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"] #svcpChatForm
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt{
+ background:rgba(83,83,162,.47)!important;
+ border:1px solid rgba(255,245,255,.57)!important;
+ color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"] #svcpChatForm #svcpChatInput{
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ caret-color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"] #svcpChatForm #svcpChatInput::placeholder{
+ color:rgba(255,249,255,.80)!important;
+ -webkit-text-fill-color:rgba(255,249,255,.80)!important;
+ opacity:1!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"] #svcpChatForm
+ :is(#svcpVoiceRecord,.svcp-chat-send),
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"] #svcpChatForm
+ :is(#svcpVoiceRecord,.svcp-chat-send) svg{
+ color:#FFFFFF!important;
+ stroke:#FFFFFF!important;
+}
+/* The selected poll question is a bubble, not floating dark text.
+   The existing vote choices remain orange and cream on sky. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > .svcp-bubble.is-poll .sv-poll-card.is-own-poll .sv-poll-title-row > .sv-poll-question{
+ background:#087DE9!important;
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ text-shadow:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > .svcp-bubble.is-poll .sv-poll-card.is-incoming-poll .sv-poll-title-row > .sv-poll-question{
+ background:rgba(31,109,174,.93)!important;
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ text-shadow:none!important;
+}
