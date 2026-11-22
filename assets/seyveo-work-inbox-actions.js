@@ -47,7 +47,7 @@ function safeAvatar(spec){
  const color=AVATAR_COLORS.includes(spec.color)?spec.color:AVATAR_COLORS[0];
  const initials=[...String(spec.initials||'Я')].slice(0,2).join('').toLocaleUpperCase('ru-RU');
  const emoji=[...String(spec.emoji||'😊')].slice(0,2).join('');
- const image=typeof spec.image==='string'&&/^data:image\\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(spec.image)&&spec.image.length<320000?spec.image:'';
+ const image=typeof spec.image==='string'&&spec.image.startsWith('data:image/jpeg;base64,')&&/^[A-Za-z0-9+/=]+$/.test(spec.image.slice('data:image/jpeg;base64,'.length))&&spec.image.length<320000?spec.image:'';
  return {kind:kind==='photo'&&!image?'monogram':kind,color,initials,emoji,image};
 }
 function paintAvatar(element,source){
