@@ -223,3 +223,12 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading .svcp-room-name-pill::after{
  content:none!important;display:none!important;
 }
+
+/* v9 · Raise the entire Sayvi header identity to the top action-button level.
+   Back button starts at 10px + safe area; the 56px avatar must start there too.
+   Move the existing group only: avatar, compact 28px name capsule, and subtitle
+   stay connected with their previous 8px overlap and no extra markup. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] .svcp-conversation-bar > .svcp-room-identity{
+ top:calc(10px + env(safe-area-inset-top,0px))!important;
+}
