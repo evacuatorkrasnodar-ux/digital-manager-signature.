@@ -42,7 +42,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat:
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline #svcpChatSendFlat,
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline #svcpChatSendFlat:is(:hover,:active,:focus,:focus-visible){
- top:auto!important;right:10px!important;bottom:8px!important;left:auto!important;
+ top:auto!important;right:10px!important;bottom:10px!important;left:auto!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat::before,
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat::after{
