@@ -5669,8 +5669,12 @@ html body .svcp-doc-overlay :is(.svcp-doc-sayvi-input,.svcp-doc-sayvi-submit):di
 /* Work Chat · real expanded toolbar, not icons hung below the text field.
    Both original buttons are reparented into the same composer by JS. This
    overrides legacy data-has-content rules that hid the microphone. */
+/* Keep the expanded and compact composer in the SAME positioned frame.
+   Moving from absolute to relative here was the actual sideways jump.
+   Reply/attachment preview positioning is still handled by its higher-
+   specificity :has(...) layout rule earlier in this stylesheet. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar{
- position:relative!important;
+ position:absolute!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar > :is(#svcpVoiceRecord,.svcp-chat-send){
  box-sizing:border-box!important;
