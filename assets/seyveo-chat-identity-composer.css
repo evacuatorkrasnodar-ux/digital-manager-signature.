@@ -1035,7 +1035,7 @@ html body #svcpWorkChatScreen[data-view="room"]
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc path{
  fill:none!important;stroke:currentColor!important;
- stroke-width:1.55!important;stroke-linecap:round!important;
+ stroke-width:1.2!important;stroke-linecap:round!important;
  stroke-linejoin:round!important;
 }
 
