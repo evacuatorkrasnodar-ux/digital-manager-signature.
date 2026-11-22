@@ -1423,3 +1423,72 @@ html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
  margin:0!important;
  transform:none!important;translate:none!important;
 }
+
+
+/* v42 · Work Chat optical cleanup (2026-11-22).
+   Only the original Plus, Sayvi image and Send SVG are used.
+   No shadow, press overlay or extra circular face. */
+/* Sayvi's source image has transparent margins; 33 CSS px makes the visible
+   emblem approximately as tall as the 22px microphone, within the same tap box. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > #svcpPolishMessage
+ > img.sv-sayvi-minimal-mark.svcp-sayvi-chat-jade-icon{
+ display:block!important;
+ width:33px!important;min-width:33px!important;max-width:33px!important;
+ height:33px!important;min-height:33px!important;max-height:33px!important;
+ flex:0 0 33px!important;
+ margin:0 auto!important;padding:0!important;
+ object-fit:contain!important;object-position:center!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ filter:none!important;transform:none!important;opacity:1!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > #svcpPolishMessage{
+ display:grid!important;place-items:center!important;
+ background:transparent!important;box-shadow:none!important;border:0!important;
+}
+/* 44px tap target remains: expanded Plus is purely a single SVG plus. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > #svcpAttachFile,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > #svcpAttachFile:is(:active,:focus,:hover,:focus-visible,[aria-expanded="true"]){
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > #svcpAttachFile::before,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > #svcpAttachFile::after{
+ content:none!important;display:none!important;
+}
+/* Flat send disc: its SVG circle supplies all blue, never the outer button. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-send:is(:hover,:focus,:focus-visible,:active){
+ -webkit-appearance:none!important;appearance:none!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;filter:none!important;text-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm .svcp-chat-send::before,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm .svcp-chat-send::after{
+ content:none!important;display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-send svg.svcp-send-arrow-disc,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-send svg.svcp-send-arrow-disc :is(circle,path){
+ background:none!important;box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ opacity:1!important;transform:none!important;transition:none!important;animation:none!important;
+}
