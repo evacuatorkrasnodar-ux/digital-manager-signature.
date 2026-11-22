@@ -124,53 +124,39 @@ function menuLink(label,help,icon,fn){
  const chev=node('span','sv-inbox-link-chevron');chev.innerHTML=svg('chevron');row.append(chev);
  body.append(row);return row;
 }
-/* The approved SEYVEO themes used to live in Management.
-   Their ORIGINAL choice buttons remain the sole controller of app appearance.
-   This compact selector only forwards a user click to those existing buttons. */
-const SEYVEO_THEMES=[
- {id:'light',label:'Белая',detail:'White Velvet'},
- {id:'graphite',label:'Графит',detail:'Classic Graphite'},
- {id:'dark',label:'Изумруд',detail:'Emerald Royale'},
- {id:'sapphire',label:'Сапфир',detail:'Midnight Sapphire'},
- {id:'plum',label:'Медь',detail:'Copper Dune'},
- {id:'auto',label:'Авто',detail:'По устройству'}
+/* Chat wallpapers only. App-wide White/Dark themes stay in Management. */
+const CHAT_WALLPAPERS=[
+ {id:'pearl',label:'Обычная',detail:'Без оформления'},
+ {id:'sky',label:'Небо',detail:'Голубой'},
+ {id:'evening',label:'Вечер',detail:'Лавандовый'}
 ];
-function currentAppTheme(){
- try{
-  const stored=JSON.parse(localStorage.getItem('dm-signature-living-v2')||'null');
-  if(stored&&typeof stored.theme==='string')return stored.theme;
- }catch{}
- return 'light';
-}
-function renderThemeSelection(host){
- const selected=currentAppTheme();
- host.querySelectorAll('[data-sv-theme-select]').forEach(control=>{
-  const active=control.dataset.svThemeSelect===selected;
-  control.setAttribute('aria-pressed',String(active));
- });
-}
-function makeThemeOptions(){
- const group=node('div','sv-inbox-theme-grid');
+function makeChatWallpapers(){
+ const group=node('div','sv-inbox-wallpaper-grid');
  group.setAttribute('role','group');
- group.setAttribute('aria-label','Фирменные темы SEYVEO');
- for(const t of SEYVEO_THEMES){
-  const b=node('button','sv-inbox-theme-card');b.type='button';
-  b.dataset.svThemeSelect=t.id;
+ group.setAttribute('aria-label','Оформление рабочих переписок');
+ for(const t of CHAT_WALLPAPERS){
+  const b=node('button','sv-inbox-wallpaper-card');b.type='button';
+  b.dataset.svWallpaperSelect=t.id;
+  const preview=node('span','sv-chat-theme-preview sv-chat-theme-preview-'+t.id);
+  preview.setAttribute('aria-hidden','true');
+  preview.append(node('i','sv-chat-theme-sample-in'),node('i','sv-chat-theme-sample-out'));
+  const title=node('strong',null,t.label);
+  const note=node('small',null,t.detail);
+  const mark=node('span','sv-inbox-wallpaper-check');mark.innerHTML=svg('check');mark.setAttribute('aria-hidden','true');
+  b.append(preview,title,note,mark);
   b.setAttribute('aria-label',t.label+' — '+t.detail);
-  const swatch=node('span','sv-inbox-theme-art sv-inbox-theme-art--'+t.id);
-  swatch.setAttribute('aria-hidden','true');
-  const name=node('strong',null,t.label),detail=node('small',null,t.detail);
-  const indicator=node('span','sv-inbox-theme-selected');indicator.innerHTML=svg('check');indicator.setAttribute('aria-hidden','true');
-  b.append(swatch,name,detail,indicator);
   b.addEventListener('click',()=>{
-   const original=document.querySelector('#manageThemeScreen [data-theme-choice="'+t.id+'"]');
-   if(!original)return;
-   original.click(); // Existing controller saves theme, palette, browser chrome & sphere.
-   renderThemeSelection(group);
+   const ok=window.SEYVEO_CHAT_THEMES?.setWorkDefault?.(t.id);
+   if(ok){
+    group.querySelectorAll('[data-sv-wallpaper-select]').forEach(option=>
+     option.setAttribute('aria-pressed',String(option.dataset.svWallpaperSelect===t.id)));
+   }
   });
   group.append(b);
  }
- renderThemeSelection(group);
+ const selected=window.SEYVEO_CHAT_THEMES?.getWorkDefault?.()||'pearl';
+ group.querySelectorAll('[data-sv-wallpaper-select]').forEach(option=>
+  option.setAttribute('aria-pressed',String(option.dataset.svWallpaperSelect===selected)));
  return group;
 }
 function sectionHeading(textValue){body.append(node('h3','sv-inbox-section-heading',textValue))}
@@ -188,15 +174,15 @@ function settingToggle(key,label,help){
  row.append(copy,control);body.append(row);return control;
 }
 function showSettings(){
- sectionHeading('Темы SEYVEO');
- body.append(makeThemeOptions());
+ sectionHeading('Темы чатов');
+ body.append(makeChatWallpapers());
  sectionHeading('Сообщения');
  menuLink('Уведомления','Непрочитанные и тихие чаты','bell',()=>openSubSheet('notifications','settings'));
  sectionHeading('Список чатов');
- settingToggle('compact','Компактный список','Уменьшить высоту строк');
- settingToggle('previews','Текст последнего сообщения','Показывать под именем собеседника');
+ settingToggle('compact','Компактный список','Больше разговоров на экране');
+ settingToggle('previews','Последнее сообщение','Показывать под именем');
  sectionHeading('История');
- menuLink('История разговоров','Сообщения и поручения, не архив','clock',()=>{closeSheet();history.click()});
+ menuLink('История разговоров','Сообщения и поручения','clock',()=>{closeSheet();history.click()});
 }
 function showNotifications(){
  sectionHeading('На этом устройстве');
