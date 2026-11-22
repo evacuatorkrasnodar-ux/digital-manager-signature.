@@ -1129,7 +1129,7 @@ if(svcpComposerHost&&svcpSelectedTray&&svcpSelectedTray.parentNode!==svcpCompose
 // Moving the existing nodes preserves their actual recording/send handlers.
 const svcpComposerField=svcpComposerHost?.querySelector('.svcp-chat-compose-field');
 const svcpComposerMic=$('svcpVoiceRecord');
-const svcpComposerSend=svcpComposerHost?.querySelector('.svcp-chat-send');
+const svcpComposerSend=svcpComposerHost?.querySelector('#svcpChatSendFlat');
 function svcpPlaceComposerActions(expanded){
  if(!svcpComposerHost||!svcpComposerField)return;
  const parent=expanded?svcpComposerHost:svcpComposerField;
