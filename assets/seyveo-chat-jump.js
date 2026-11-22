@@ -14,7 +14,7 @@
   button.setAttribute('aria-label','Перейти к последнему сообщению');
   button.title='Вниз к новым сообщениям';
   button.hidden=true;
-  button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4.5v14m0 0-6-6m6 6 6-6"/></svg>';
+  button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5.5v12m0 0-4.5-4.5m4.5 4.5 4.5-4.5"/></svg>';
   surface.append(button);
 
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)');
