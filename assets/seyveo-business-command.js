@@ -1271,12 +1271,23 @@ function svcpPositionExpandedSend(form,expanded){
   send.style.removeProperty('top');
   return;
  }
- // The short-mode anchor can belong to a different containing block: when
- // the Send is moved into the expanded form it puts the icon below the dock.
- // Its expanded position must be measured from the expanded FORM itself.
- // 36px flat send circle + 8px bottom => the same toolbar baseline as Mic.
- send.style.setProperty('right','10px','important');
- send.style.setProperty('bottom','8px','important');
+ // Reuse the compact button's visible centre when the editor grows upwards.
+ // Clamp to the dock's bottom action row: a stale anchor can never move Send
+ // outside the capsule after a Safari keyboard/viewport resize.
+ const frame=form.getBoundingClientRect();
+ const anchor=svcpShortSendAnchor;
+ const size=send.getBoundingClientRect().height||36;
+ let bottom=10,right=10;
+ if(anchor&&Math.abs(window.innerWidth-anchor.viewportWidth)<2){
+  const candidateBottom=frame.bottom-anchor.y-size/2;
+  const candidateRight=frame.right-anchor.x-size/2;
+  if(Number.isFinite(candidateBottom)&&candidateBottom>=6&&candidateBottom<=17)
+   bottom=candidateBottom;
+  if(Number.isFinite(candidateRight)&&candidateRight>=6&&candidateRight<=22)
+   right=candidateRight;
+ }
+ send.style.setProperty('right',right.toFixed(2)+'px','important');
+ send.style.setProperty('bottom',bottom.toFixed(2)+'px','important');
  send.style.setProperty('top','auto','important');
 }
 function resizeWorkComposer(){
