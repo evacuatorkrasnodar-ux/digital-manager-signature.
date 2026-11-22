@@ -1130,9 +1130,48 @@ function measuredComposeHeight(value,width){
  svcpComposeMeasure.textContent=(value||'')+'\u200b';
  return Math.ceil(svcpComposeMeasure.getBoundingClientRect().height);
 }
+/* Remember where the ONE actual Send button sat in the short composer.
+   When JS reparents it to the expanded form, retain the same viewport center.
+   No guessed pixel nudge, duplicate button, or change to Plus/capsule geometry. */
+let svcpShortSendAnchor=null;
+function svcpPositionExpandedSend(form,expanded){
+ const send=svcpComposerSend;
+ if(!send)return;
+ if(!expanded){
+  send.style.removeProperty('right');
+  send.style.removeProperty('bottom');
+  return;
+ }
+ const anchor=svcpShortSendAnchor;
+ if(!anchor||Math.abs(window.innerWidth-anchor.viewportWidth)>1)return;
+ const frame=form.getBoundingClientRect();
+ const target=send.getBoundingClientRect();
+ const width=target.width||38;
+ const height=target.height||38;
+ const right=frame.right-anchor.x-width/2;
+ if(Number.isFinite(right))send.style.setProperty('right',right.toFixed(2)+'px','important');
+ // Only match the vertical anchor if the keyboard has not moved the dock.
+ if(Math.abs(frame.bottom-anchor.formBottom)<4){
+  const bottom=frame.bottom-anchor.y-height/2;
+  if(Number.isFinite(bottom))send.style.setProperty('bottom',bottom.toFixed(2)+'px','important');
+ }else send.style.removeProperty('bottom');
+}
 function resizeWorkComposer(){
  const input=$('svcpChatInput'),form=$('svcpChatForm');
  if(!input||!form)return;
+ const send=svcpComposerSend;
+ if(!form.classList.contains('svcp-compose-multiline')&&send){
+  const button=send.getBoundingClientRect();
+  const frame=form.getBoundingClientRect();
+  if(button.width>25&&button.height>25){
+   svcpShortSendAnchor={
+    x:button.left+button.width/2,
+    y:button.top+button.height/2,
+    formBottom:frame.bottom,
+    viewportWidth:window.innerWidth
+   };
+  }
+ }
  const value=input.value;
  const withAttachment=!!(state.files.length||state.file||state.scanCode);
  form.classList.toggle('svcp-has-attachment',withAttachment);
@@ -1140,6 +1179,7 @@ function resizeWorkComposer(){
  if(!value&&!state.files.length&&!state.file&&!state.scanCode){
   form.classList.remove('svcp-compose-multiline');
   svcpPlaceComposerActions(false);
+  svcpPositionExpandedSend(form,false);
   form.style.setProperty('--svcp-editor-height','40px');
   form.style.setProperty('--svcp-compose-height','56px');
   form.style.setProperty('height','56px','important');
@@ -1179,6 +1219,7 @@ function resizeWorkComposer(){
  form.style.setProperty('height',targetHeight+'px','important');
  input.style.setProperty('height',editorHeight+'px','important');
  input.style.setProperty('overflow-y',wraps&&expandedHeight+16>144?'auto':'hidden','important');
+ svcpPositionExpandedSend(form,wraps);
 }
 
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
