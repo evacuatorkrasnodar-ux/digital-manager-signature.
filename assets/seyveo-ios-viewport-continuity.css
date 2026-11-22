@@ -17,16 +17,17 @@
   background-size:100% 100%!important;
   background-repeat:no-repeat!important;
  }
- /* A fixed chat must stay inside the REAL PWA content viewport.
-    Earlier safe-area height additions moved the absolute composer below
-    the native viewport clipping edge (the screenshot shows only its top).
-    Restore one original content height. The html/body background alone
-    paints the home-indicator area; it must not resize the chat's layout. */
- html body #svcpWorkChatScreen:not([hidden]){
-  box-sizing:border-box!important;
-  height:var(--svcp-visible-height,100dvh)!important;
-  max-height:var(--svcp-visible-height,100dvh)!important;
-  padding:0!important;
+ /* The actual fixed chat height and top are owned once by
+    seyveo-work-chat-screen.css, driven by unified-tasks.js. Avoid a second
+    fullscreen height override here. Paint the HTML/BODY canvas in exactly
+    the same material as the chat so the native iPhone home-indicator inset
+    does not reveal a separate white strip after a rotation or cold start. */
+ html.svcp-work-chat-active,
+ html.svcp-work-chat-active body{
+  background-color:var(--bg,#f9fafb)!important;
+  background-image:var(--sv-life-viewport-gradient,none)!important;
+  background-size:100% 100%!important;
+  background-repeat:no-repeat!important;
  }
  /* Reserve the header's real height inside the message scroller.
     The transparent Apple-style identity ends below the avatar/name label.
