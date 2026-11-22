@@ -140,7 +140,9 @@ html body #svcpWorkChatScreen[data-view="room"]
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] .svcp-room-identity #svcpConversationHeading{
- margin-top:-8px!important;
+ /* Bring the matte portrait down into the name capsule, as in iMessage.
+    Shift ONLY the existing label, not the 56px avatar or the header actions. */
+ margin-top:-14px!important;
 }
 /* Consistent identity in Sayvi's room information panel too. */
 html body #svcpWorkChatScreen[data-view="room"]
@@ -187,12 +189,13 @@ html body #svcpWorkChatScreen[data-view="room"]
  min-height:28px!important;max-height:28px!important;
  padding:3px 9px!important;
  margin:0 auto!important;
- border:1px solid rgba(255,255,255,.34)!important;border-radius:999px!important;
- background:rgba(5,102,190,.55)!important;
+ border:1px solid rgba(255,255,255,.28)!important;border-radius:999px!important;
+ /* Translucent matte blue continues the frosted avatar into the name. */
+ background:rgba(5,102,190,.34)!important;
  background-image:none!important;
- box-shadow:0 4px 13px rgba(17,55,92,.12),inset 0 1px rgba(255,255,255,.18)!important;
- -webkit-backdrop-filter:blur(15px) saturate(115%)!important;
- backdrop-filter:blur(15px) saturate(115%)!important;
+ box-shadow:0 3px 10px rgba(17,55,92,.07),inset 0 1px rgba(255,255,255,.16)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
+ backdrop-filter:blur(18px) saturate(112%)!important;
  filter:none!important;
  transform:none!important;
  white-space:nowrap!important;
