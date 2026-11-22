@@ -30,6 +30,13 @@
   max-height:none!important;
   padding:0!important;
  }
+ /* Header is intentionally transparent and floats over the thread.
+    Fade only scrolled message content beneath the avatar/name instead
+    of adding a second opaque header panel or moving chat messages. */
+ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0px,transparent 94px,#000 128px)!important;
+  mask-image:linear-gradient(to bottom,transparent 0px,transparent 94px,#000 128px)!important;
+ }
  /* Scenic wallpaper continuity through iOS Home-indicator region.
     These match the existing opt-in chat wallpapers, not other app themes. */
  html.svcp-work-chat-active:has(#svcpConversation[data-chat-wallpaper="sky"]),
