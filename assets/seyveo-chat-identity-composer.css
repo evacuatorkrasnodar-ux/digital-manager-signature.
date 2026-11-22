@@ -1409,3 +1409,18 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  stroke:#0D1014!important;stroke-width:1.85!important;
  fill:none!important;opacity:1!important;
 }
+
+/* v40 · Lower only the multiline typing baseline by 6px.
+   Keep padding total at 16px (14 + 2) so JS-measured editor height,
+   line wrapping, lower toolbar and all button anchors remain identical.
+   No change to short composer or attachment editor. */
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm.svcp-compose-multiline:not(.svcp-has-attachment) .svcp-chat-compose-field > textarea#svcpChatInput,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
+ #svcpChatForm.svcp-compose-multiline:not(.svcp-has-attachment) .svcp-chat-compose-field > textarea#svcpChatInput:focus{
+ box-sizing:border-box!important;
+ padding:14px 12px 2px!important;
+ line-height:24px!important;
+ margin:0!important;
+ transform:none!important;translate:none!important;
+}
