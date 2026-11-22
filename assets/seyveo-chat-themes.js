@@ -35,7 +35,7 @@ function store(key,value){
  try{localStorage.setItem(KEY,JSON.stringify(next));return true}
  catch{return false}
 }
-function display(parent,key,active){
+function display(parent,active){
  parent.querySelectorAll('[data-chat-wallpaper]').forEach(btn=>{
   const is=btn.dataset.chatWallpaper===active;
   btn.setAttribute('aria-pressed',String(is));
@@ -61,7 +61,7 @@ function createChoices(parent,onChange,active){
   button.append(sample,label);
   button.addEventListener('click',()=>{
    if(onChange(item.id)===false)return;
-   display(parent,key,item.id);
+   display(parent,item.id);
   });
   choices.append(button);
  });
@@ -77,7 +77,7 @@ function applyRoom(roomId){
  const theme=chosen('work:'+roomId);
  conversation.dataset.chatWallpaper=theme;
  const profile=id('svcpRoomChatThemeSection');
- if(profile)display(profile,'work:'+roomId,theme);
+ if(profile)display(profile,theme);
 }
 function syncRoom(roomId){
  applyRoom(roomId);
@@ -107,7 +107,7 @@ function applyFamily(){
  if(!panel)return;
  const theme=chosen('family:main');
  panel.dataset.chatWallpaper=theme;
- if(familySheet)display(familySheet,'family:main',theme);
+ if(familySheet)display(familySheet,theme);
 }
 let familySheet=null;
 let familyTrigger=null;
@@ -151,7 +151,7 @@ function buildFamily(){
   familySheet.hidden=!next;
   familyTrigger.setAttribute('aria-expanded',String(next));
   if(next){
-   display(familySheet,'family:main',chosen('family:main'));
+   display(familySheet,chosen('family:main'));
    back.focus({preventScroll:true});
   }
  });
