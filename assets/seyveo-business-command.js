@@ -9,6 +9,32 @@ const root=$('seyveoBusinessCommandPage');
 if(!root)return;
 const chatRoot=$('svcpChats');
 const CHAT_KEY='seyveo-business-command-chat-demo-v1';
+/* One-time reset of TRAINING-ONLY local chat data.
+   The user explicitly approved erasing the entire educational dialogue.
+   Do not touch tasks, employee profiles, calendar or business records. */
+const TRAINING_CHAT_RESET_KEY='seyveo-workchat-training-reset-2026-11-22-v1';
+try{
+ if(localStorage.getItem(TRAINING_CHAT_RESET_KEY)!=='done'){
+  localStorage.removeItem(CHAT_KEY);
+  if('indexedDB' in window){
+   try{
+    const req=indexedDB.open('seyveo-workchat-media-v1',1);
+    req.onsuccess=()=>{
+     const db=req.result;
+     if(!db.objectStoreNames.contains('files')){db.close();return;}
+     try{
+      const tx=db.transaction('files','readwrite');
+      tx.objectStore('files').clear();
+      tx.oncomplete=()=>db.close();
+      tx.onerror=()=>db.close();
+     }catch{db.close()}
+    };
+   }catch{}
+  }
+  localStorage.setItem(TRAINING_CHAT_RESET_KEY,'done');
+ }
+}catch{}
+
 const TASK_KEY='seyveo-business-command-tasks-demo-v1';
 const RECOGNITION_KEY='seyveo-peer-recognition-demo-v1';
 const RECOGNITION_TYPES=Object.freeze({
