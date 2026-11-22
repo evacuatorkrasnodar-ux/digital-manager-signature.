@@ -1020,7 +1020,11 @@ html body #svcpWorkChatScreen[data-view="room"]
 /* v28 · Flat send, refined thin arrow; move the compact control 6px inward.
    Preserve the microphone's existing centering and every composer/dock size. */
 html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send{
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:not(#svcpVoiceRecord),
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:not(#svcpVoiceRecord),
+html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:not(#svcpVoiceRecord){
  right:16px!important;left:auto!important;
  box-shadow:none!important;background-image:none!important;
 }
