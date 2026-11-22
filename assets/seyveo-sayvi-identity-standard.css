@@ -114,8 +114,8 @@ html body #svcpWorkChatScreen .sv-inbox-people-list
   center center / contain no-repeat!important;
  box-shadow:none!important;
 }
-/* Direct Sayvi chat: keep the ORIGINAL S inside one solid BLUE CIRCLE.
-   No outline, glass overlay or shadow. 56px avatar, original name overlap. */
+/* Direct Sayvi chat: ORIGINAL S on a transparent, frosted circular backdrop.
+   Keep the Apple-like 56px avatar and name overlap, without an outer ring or shadow. */
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] .svcp-room-identity #svcpRoomAvatar{
  box-sizing:border-box!important;
@@ -125,11 +125,11 @@ html body #svcpWorkChatScreen[data-view="room"]
  height:56px!important;min-height:56px!important;max-height:56px!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:50%!important;outline:0!important;
- background:#176FAF var(--sv-sayvi-mark-image)
+ background:rgba(18,108,168,.42) var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
  box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
+ -webkit-backdrop-filter:blur(14px) saturate(112%)!important;
+ backdrop-filter:blur(14px) saturate(112%)!important;
  filter:none!important;
  font-size:0!important;color:transparent!important;
  overflow:hidden!important;
@@ -153,19 +153,19 @@ html body #svcpWorkChatScreen[data-view="room"]
 }
 
 
-/* Sky wallpaper uses the SAME flat circular blue photo background.
-   Never restore a hairline stroke, halo or backdrop blur for this theme. */
+/* Sky wallpaper keeps the same translucent frosted circular image surface.
+   No hairline stroke, rim, or outside halo in either wallpaper mode. */
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  .svcp-room-identity #svcpRoomAvatar{
  border:0!important;outline:0!important;
- background-color:#176FAF!important;
+ background-color:rgba(18,108,168,.42)!important;
  background-image:var(--sv-sayvi-mark-image)!important;
  background-position:center!important;background-size:contain!important;
  background-repeat:no-repeat!important;
  box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
+ -webkit-backdrop-filter:blur(14px) saturate(112%)!important;
+ backdrop-filter:blur(14px) saturate(112%)!important;
  filter:none!important;
 }
 
