@@ -1,0 +1,300 @@
+/* SEYVEO Chat Wallpapers · independent per-room presets
+   White is the default; SKY / EVENING are opt-in only.
+   This file is loaded last, after chat and poll semantic color rules.
+   Only conversation paint changes; no document, tasks or dock geometry. */
+:root{
+ --sv-chat-sky-wallpaper:
+  radial-gradient(ellipse 74% 20% at 16% 89%,rgba(255,255,255,.66) 0%,rgba(255,255,255,.0) 100%),
+  radial-gradient(ellipse 45% 12% at 84% 66%,rgba(247,252,255,.48) 0%,rgba(255,255,255,0) 100%),
+  radial-gradient(ellipse 56% 15% at 22% 40%,rgba(241,249,255,.55) 0%,rgba(255,255,255,0) 98%),
+  radial-gradient(ellipse 40% 13% at 75% 17%,rgba(244,250,255,.24) 0%,rgba(255,255,255,0) 100%),
+  linear-gradient(160deg,#257FDB 0%,#4AA4EA 39%,#7FC4E9 71%,#AFDAE7 100%);
+ --sv-chat-evening-wallpaper:
+  radial-gradient(ellipse 70% 27% at 13% 87%,rgba(255,213,221,.42),transparent 95%),
+  radial-gradient(ellipse 53% 16% at 80% 62%,rgba(223,204,255,.36),transparent 95%),
+  radial-gradient(ellipse 58% 28% at 25% 26%,rgba(178,191,255,.27),transparent 100%),
+  linear-gradient(170deg,#364E93 0%,#6D83B8 42%,#A99DBE 74%,#EDBCB5 100%);
+}
+/* Expose wallpapers through a single existing room canvas. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
+ background:var(--sv-chat-sky-wallpaper)!important;
+ background-attachment:local!important;
+ background-size:cover!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="evening"]{
+ background:var(--sv-chat-evening-wallpaper)!important;
+ background-attachment:local!important;
+ background-size:cover!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"])
+ #svcpMessages{
+ background:transparent!important;
+ background-image:none!important;
+}
+/* Sky palette: incoming blue translucent / outgoing bright blue.
+   Only ordinary textual bubbles; special files, tasks, Sayvi and polls
+   keep their independent surface and behavior. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > .svcp-bubble.is-other:not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
+ background:rgba(31,109,174,.88)!important;
+ background-image:none!important;
+ color:#FFFFFF!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > .svcp-bubble.is-self:not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
+ background:#087DE9!important;
+ background-image:none!important;
+ color:#FFFFFF!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="evening"] #svcpMessages
+ > .svcp-bubble.is-other:not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
+ background:rgba(57,70,111,.90)!important;
+ background-image:none!important;
+ color:#FFFFFF!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="evening"] #svcpMessages
+ > .svcp-bubble.is-self:not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
+ background:#6360C9!important;
+ background-image:none!important;
+ color:#FFFFFF!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+/* Recolor text and stamps without moving them or interfering with short lines. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"]) #svcpMessages
+ > .svcp-bubble:is(.is-self,.is-other):not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(:has(.svcp-file-card))
+ > .svcp-message-text{
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ text-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"]) #svcpMessages
+ > .svcp-bubble:is(.is-self,.is-other):not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(:has(.svcp-file-card))
+ > .svcp-message-stamp,
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"]) #svcpMessages
+ > .svcp-bubble:is(.is-self,.is-other):not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(:has(.svcp-file-card))
+ > .svcp-message-stamp > .svcp-time,
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"]) #svcpMessages
+ > .svcp-bubble:is(.is-self,.is-other):not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(:has(.svcp-file-card))
+ .svcp-message-local-check{
+ color:rgba(255,255,255,.90)!important;
+ -webkit-text-fill-color:rgba(255,255,255,.90)!important;
+ text-shadow:none!important;
+ opacity:1!important;
+}
+/* Keep date separators, feedback and controls readable on scenic backgrounds. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"])
+ :is(.svcp-chat-day,.svcp-load-older){
+ color:#FFFFFF!important;
+ text-shadow:0 1px 5px rgba(25,55,94,.32)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="evening"]
+ :is(.svcp-conversation-back,.svcp-conversation-info,.svcp-room-avatar){
+ color:#FFFFFF!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="evening"]
+ #svcpConversationHeading .svcp-room-name-pill{
+ color:#FFFFFF!important;
+}
+/* The pearl editor and existing input are retained; scenic colors show through
+   around them without forcing an extra header/footer translucent rectangle. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"]) #svcpChatForm{
+ background:transparent!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"])
+ .sv-poll-question{
+ color:#183A54!important;
+ text-shadow:0 1px 2px rgba(255,255,255,.55)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="evening"]
+ .sv-poll-question{
+ color:#FFFFFF!important;
+ text-shadow:0 1px 5px rgba(28,35,80,.40)!important;
+}
+/* Family wallpaper is opt-in, scoped to its chat tab; plans stay unchanged. */
+html body #seyveoFamilyDialog[data-chat-wallpaper="sky"] .svf-panel[data-svf-panel="chat"]{
+ background:var(--sv-chat-sky-wallpaper)!important;
+}
+html body #seyveoFamilyDialog[data-chat-wallpaper="evening"] .svf-panel[data-svf-panel="chat"]{
+ background:var(--sv-chat-evening-wallpaper)!important;
+}
+html body #seyveoFamilyDialog:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"])
+ .svf-panel[data-svf-panel="chat"] .svf-thread{
+ background:transparent!important;
+}
+html body #seyveoFamilyDialog[data-chat-wallpaper="sky"] .svf-thread > .svf-msg:not(.is-poll):not(.svf-emoji-only){
+ background:#087DE9!important;
+ color:#FFFFFF!important;
+}
+html body #seyveoFamilyDialog[data-chat-wallpaper="evening"] .svf-thread > .svf-msg:not(.is-poll):not(.svf-emoji-only){
+ background:#6360C9!important;
+ color:#FFFFFF!important;
+}
+html body #seyveoFamilyDialog:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"])
+ .svf-thread > .svf-msg:not(.is-poll):not(.svf-emoji-only) :is(.svf-message-text,.svf-message-stamp,.svf-message-time,.svf-message-local-check){
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ text-shadow:none!important;
+}
+html body #seyveoFamilyDialog:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="evening"])
+ .sv-poll-question{
+ color:#FFFFFF!important;
+ text-shadow:0 1px 3px rgba(21,54,88,.35)!important;
+}
+/* Room profile UI: 3 compact previews, no scrolling horizontal rail. */
+.sv-chat-theme-section{
+ padding-block:12px!important;
+}
+.sv-chat-theme-choices{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:10px!important;
+ width:100%!important;
+ min-width:0!important;
+ margin:10px 0 0!important;
+ padding:0!important;
+}
+.sv-chat-theme-option{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:center!important;
+ gap:6px!important;
+ box-sizing:border-box!important;
+ min-width:0!important;
+ min-height:93px!important;
+ margin:0!important;
+ padding:4px!important;
+ background:transparent!important;
+ color:var(--text,#25272A)!important;
+ border:1px solid transparent!important;
+ border-radius:17px!important;
+ box-shadow:none!important;
+}
+.sv-chat-theme-option[aria-pressed="true"]{
+ border-color:rgba(79,134,182,.38)!important;
+ background:rgba(139,171,205,.075)!important;
+}
+.sv-chat-theme-preview{
+ position:relative!important;
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ height:58px!important;
+ min-height:58px!important;
+ margin:0!important;
+ border:1px solid rgba(125,140,156,.10)!important;
+ border-radius:13px!important;
+ overflow:hidden!important;
+}
+.sv-chat-theme-preview-pearl{background:#FFF!important}
+.sv-chat-theme-preview-sky{background:var(--sv-chat-sky-wallpaper)!important}
+.sv-chat-theme-preview-evening{background:var(--sv-chat-evening-wallpaper)!important}
+.sv-chat-theme-preview i{
+ position:absolute!important;
+ display:block!important;
+ height:10px!important;
+ min-height:10px!important;
+ width:55%!important;
+ border-radius:999px!important;
+ box-shadow:none!important;
+}
+.sv-chat-theme-preview .sv-chat-theme-sample-in{top:16px!important;left:8px!important}
+.sv-chat-theme-preview .sv-chat-theme-sample-out{top:31px!important;right:8px!important}
+.sv-chat-theme-preview-pearl .sv-chat-theme-sample-in{background:#E9E9EB!important}
+.sv-chat-theme-preview-pearl .sv-chat-theme-sample-out{background:#0A84FF!important}
+.sv-chat-theme-preview-sky .sv-chat-theme-sample-in{background:rgba(31,109,174,.92)!important}
+.sv-chat-theme-preview-sky .sv-chat-theme-sample-out{background:#087DE9!important}
+.sv-chat-theme-preview-evening .sv-chat-theme-sample-in{background:rgba(57,70,111,.90)!important}
+.sv-chat-theme-preview-evening .sv-chat-theme-sample-out{background:#6360C9!important}
+.sv-chat-theme-option-name{
+ font:550 12px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:inherit!important;
+ text-align:center!important;
+}
+.sv-chat-theme-current{
+ margin:7px 1px 3px!important;
+ font:500 12px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--secondary,#66717C)!important;
+ text-align:center!important;
+}
+.sv-chat-theme-auto{
+ margin:0 2px!important;
+ padding:0!important;
+ font:400 11px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:var(--secondary,#7A858E)!important;
+ text-align:center!important;
+}
+/* One 44px button in Family header, without shifting the existing back icon. */
+#seyveoFamilyDialog .svf-overline{position:relative!important}
+#seyveoFamilyDialog .sv-chat-family-trigger{
+ box-sizing:border-box!important;
+ display:grid!important;
+ place-items:center!important;
+ flex:0 0 44px!important;
+ width:44px!important;
+ height:44px!important;
+ min-height:44px!important;
+ min-width:44px!important;
+ margin-left:auto!important;
+ padding:0!important;
+ border:1px solid rgba(175,188,199,.28)!important;
+ border-radius:50%!important;
+ background:rgba(255,255,255,.20)!important;
+ color:var(--text,#25272A)!important;
+ box-shadow:0 3px 12px rgba(24,38,52,.055)!important;
+}
+#seyveoFamilyDialog .sv-chat-family-trigger span{
+ display:block!important;
+ font-size:21px!important;
+ font-weight:450!important;
+ line-height:1!important;
+}
+#seyveoFamilyDialog .svf-shell{position:relative!important}
+#seyveoFamilyDialog .sv-chat-family-sheet[hidden]{display:none!important}
+#seyveoFamilyDialog .sv-chat-family-sheet{
+ position:absolute!important;
+ z-index:100!important;
+ inset:0!important;
+ display:flex!important;
+ flex-direction:column!important;
+ gap:12px!important;
+ box-sizing:border-box!important;
+ padding:16px!important;
+ background:var(--bg,#FFFFFF)!important;
+ color:var(--text,#242B32)!important;
+ overflow:auto!important;
+ border:0!important;
+}
+#seyveoFamilyDialog .sv-chat-family-sheet-head{
+ display:grid!important;
+ grid-template-columns:70px 1fr 70px!important;
+ align-items:center!important;
+ min-height:44px!important;
+}
+#seyveoFamilyDialog .sv-chat-family-sheet-head strong{
+ text-align:center!important;
+ font-size:15px!important;
+ font-weight:600!important;
+}
+#seyveoFamilyDialog .sv-chat-family-close{
+ min-height:44px!important;
+ border:0!important;
+ background:transparent!important;
+ text-align:left!important;
+ color:var(--text,#23282D)!important;
+ font-size:13px!important;
+}
+@media(max-width:365px){
+ .sv-chat-theme-choices{gap:5px!important}
+ .sv-chat-theme-option{padding:3px!important}
+ .sv-chat-theme-option-name{font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .sv-chat-theme-option{transition:none!important}
+}
