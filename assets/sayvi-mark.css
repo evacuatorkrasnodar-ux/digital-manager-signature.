@@ -16,7 +16,7 @@
   display:inline-block;
   flex:0 0 auto;
   background-color:transparent!important;
-  background-image:url("./seyveo-sayvi-chat-jade-platinum.png?v=1")!important;
+  background-image:var(--sv-sayvi-mark-image, url("./seyveo-sayvi-avatar-crisp.png?v=1"))!important;
   background-position:center!important;
   background-size:contain!important;
   background-repeat:no-repeat!important;
