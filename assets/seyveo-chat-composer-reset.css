@@ -101,7 +101,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset > :is(#svcpAttachFile,#svcpPoli
 }
 /* Plus is separate only in the short mode. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
- left:0!important;right:auto!important;bottom:4px!important;top:auto!important;
+ left:0!important;right:auto!important;bottom:auto!important;top:calc(50% - 22px)!important;
  border-radius:50%!important;
  /* Exact same glass, blue fill and rim as the input capsule. */
  border:1px solid var(--svcp-clean-line)!important;
@@ -114,7 +114,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
 /* Expanded panel: PLUS is only the white + glyph; never a floating circle.
    The 44px touch target remains, and the same button/handler is preserved. */
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpAttachFile{
- bottom:4px!important;
+ top:auto!important;bottom:4px!important;
  border:0!important;
  border-radius:0!important;
  background:transparent!important;background-image:none!important;
@@ -130,11 +130,11 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile svg{
 }
 /* Actual original Sayvi image, not a generated CSS replacement. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage{
- left:54px!important;right:auto!important;bottom:4px!important;top:auto!important;
+ left:54px!important;right:auto!important;bottom:auto!important;top:calc(50% - 22px)!important;
  border-radius:50%!important;color:#fff!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpPolishMessage{
- left:54px!important;bottom:4px!important;
+ left:54px!important;top:auto!important;bottom:4px!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  display:block!important;
@@ -145,12 +145,13 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  aspect-ratio:1 / 1!important;
  margin:auto!important;padding:0!important;
  object-fit:contain!important;object-position:center!important;
- /* The original 256px WebP is already a complete circular jade/platinum
-    portrait. Never paint a second circle or clip its soft native edges. */
- background:transparent!important;
- border:0!important;border-radius:0!important;
+ /* Use the same original WebP as the header avatar, on ONE circular
+    blue face. The art itself is transparent and otherwise looks egg-shaped.
+    No extra span, pseudo-circle, rim or surrounding button skin. */
+ background-color:#0959BC!important;background-image:none!important;
+ border:0!important;border-radius:50%!important;
  clip-path:none!important;
- overflow:visible!important;box-shadow:none!important;
+ overflow:hidden!important;box-shadow:none!important;
  filter:none!important;opacity:1!important;
  transform:none!important;animation:none!important;
 }
@@ -162,7 +163,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > span{
 html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-editor{
  box-sizing:border-box!important;
  position:absolute!important;
- left:101px!important;right:52px!important;top:6px!important;bottom:6px!important;
+ left:101px!important;right:52px!important;top:calc(50% - 20px)!important;bottom:auto!important;
  z-index:2!important;
  display:block!important;min-width:0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
@@ -206,8 +207,13 @@ html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > .svcp-
 html body #svcpWorkChatScreen #svcpChatFormReset #svcpChatInput::-webkit-scrollbar{display:none!important;}
 /* Send never leaves the right-bottom slot when the editor grows upwards. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat{
- right:6px!important;left:auto!important;bottom:4px!important;top:auto!important;
+ right:6px!important;left:auto!important;bottom:auto!important;top:calc(50% - 22px)!important;
  z-index:5!important;
+}
+/* Expanded composer keeps actions along its anchored bottom toolbar,
+   while compact actions share one true vertical centre. */
+html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpChatSendFlat{
+ top:auto!important;bottom:4px!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat > svg{
  display:block!important;
@@ -241,11 +247,11 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat[hidden]{
 }
 /* Mic takes Send's exact same slot when idle; beside it when expanded. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpVoiceRecord{
- right:6px!important;left:auto!important;bottom:4px!important;top:auto!important;
+ right:6px!important;left:auto!important;bottom:auto!important;top:calc(50% - 22px)!important;
  color:rgba(210,241,253,.92)!important;z-index:4!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpVoiceRecord{
- right:56px!important;
+ right:56px!important;top:auto!important;bottom:4px!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset:not(.svcp-compose-multiline)[data-has-content="true"] > #svcpVoiceRecord,
 html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] > #svcpVoiceRecord{
