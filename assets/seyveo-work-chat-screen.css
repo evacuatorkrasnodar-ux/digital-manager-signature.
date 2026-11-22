@@ -6838,3 +6838,79 @@ html body #svcpWorkChatScreen[data-view="room"]
  > .svcp-bubble.is-self.is-short-text.svcp-short-continuation{
  border-top-right-radius:9px!important;
 }
+
+/* v256 · Sayvi bilingual / corrected text inside ONE conversation bubble.
+   Original above a quiet hairline, result below. No dividing lines elsewhere.
+   Preserve the existing bottom-right timestamp and interaction gestures. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.svcp-has-sayvi-comparison:not(.svcp-file-only):not(.is-task){
+ box-sizing:border-box!important;
+ width:max-content!important;
+ min-width:min(190px,70%)!important;
+ max-width:min(90%,410px)!important;
+ padding:10px 12px 27px!important;
+ overflow-wrap:anywhere!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble .svcp-sayvi-comparison{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:stretch!important;
+ gap:0!important;
+ width:100%!important;
+ min-width:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:none!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble .svcp-sayvi-source{
+ display:block!important;
+ margin:0!important;
+ padding:0 0 9px!important;
+ font:400 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:inherit!important;
+ opacity:.65!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble .svcp-sayvi-divider{
+ display:block!important;
+ flex:0 0 1px!important;
+ width:100%!important;
+ height:1px!important;
+ margin:0 0 9px!important;
+ padding:0!important;
+ border:0!important;
+ background:currentColor!important;
+ opacity:.12!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble .svcp-sayvi-result{
+ display:block!important;
+ margin:0!important;
+ padding:0!important;
+ font:450 16px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:inherit!important;
+ -webkit-text-fill-color:currentColor!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble .svcp-sayvi-comparison-kind{
+ display:block!important;
+ margin:5px 0 0!important;
+ padding:0!important;
+ font:450 10px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:inherit!important;
+ opacity:.52!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] .svcp-message-context-menu{
+ max-height:min(70dvh,400px)!important;
+ overflow-y:auto!important;
+ overscroll-behavior:contain!important;
+ -webkit-overflow-scrolling:touch!important;
+}
