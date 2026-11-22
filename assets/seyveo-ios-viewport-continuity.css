@@ -177,13 +177,17 @@ html body #svcpWorkChatScreen[data-view="room"]
  position:relative!important;top:auto!important;left:auto!important;
  display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:center!important;
- margin:-2px 0 0!important;padding:0!important;
+ margin:-15px 0 0!important;padding:0!important;
  min-width:0!important;width:auto!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:none!important;pointer-events:auto!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
+ #svcpConversationHeading .svcp-room-name-pill,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header .svcp-room-identity
  #svcpConversationHeading .svcp-room-name-pill{
  display:inline-flex!important;align-items:center!important;justify-content:center!important;
  gap:4px!important;box-sizing:border-box!important;
@@ -191,10 +195,12 @@ html body #svcpWorkChatScreen[data-view="room"]
  height:28px!important;min-height:28px!important;max-height:28px!important;
  margin:0 auto!important;padding:3px 10px!important;
  border:0!important;border-radius:999px!important;
- background:rgba(2,97,199,.86)!important;
+ /* Match the previous deep-blue name capsule, not the pale/white style. */
+ background:#0863BF!important;background-color:#0863BF!important;
+ background-image:none!important;
  box-shadow:none!important;filter:none!important;
- -webkit-backdrop-filter:blur(14px) saturate(104%)!important;
- backdrop-filter:blur(14px) saturate(104%)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
