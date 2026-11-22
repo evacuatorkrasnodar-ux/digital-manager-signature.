@@ -663,8 +663,8 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
    layout height, no cover over the message composer, and no duplicate bar.
    Unlike the old opaque "fade" this uses real backdrop blur. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation{
- --sv-chat-frost-top:rgba(255,255,255,.76);
- --sv-chat-frost-mid:rgba(249,251,254,.57);
+ --sv-chat-frost-top:rgba(245,249,253,.66);
+ --sv-chat-frost-mid:rgba(235,242,248,.37);
  --sv-chat-frost-control:rgba(255,255,255,.58);
  --sv-chat-frost-edge:rgba(173,185,201,.35);
  --sv-chat-frost-ink:#1A1E24;
@@ -701,44 +701,40 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  --sv-chat-frost-pressed:rgba(67,78,129,.31);
  --sv-chat-frost-name:rgba(240,238,254,.73);
 }
-/* A single background layer ends below the avatar and softly dissipates.
-   Leave the absolute header at 0px layout height; messages can scroll beneath. */
+/* SEYVEO chat header · SINGLE frosted material owner.
+   One real element in the existing floating header replaces the previous
+   conflicting pseudo-elements. The conversation/wallpaper remains visible
+   through the matte glass, with a gentle fade below the contact identity.
+   The header is zero-height for layout; this absolutely positioned layer
+   draws only the material without intercepting taps or moving messages. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  > .svcp-conversation-bar{
  isolation:isolate!important;
  background:transparent!important;background-image:none!important;
- box-shadow:none!important;
- overflow:visible!important;
+ box-shadow:none!important;overflow:visible!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
- > .svcp-conversation-bar::before{
- content:""!important;
+ > .svcp-conversation-bar > .svcp-chat-header-frost{
  display:block!important;
  box-sizing:border-box!important;
  position:absolute!important;
  inset:0 0 auto 0!important;
  width:100%!important;
- height:calc(124px + env(safe-area-inset-top,0px))!important;
- border:0!important;border-radius:0!important;
- background:linear-gradient(
-  to bottom,
+ height:calc(145px + env(safe-area-inset-top,0px))!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ background:linear-gradient(180deg,
   var(--sv-chat-frost-top) 0%,
-  var(--sv-chat-frost-mid) 72%,
-  transparent 100%
- )!important;
- background-image:linear-gradient(to bottom,var(--sv-chat-frost-top) 0%,var(--sv-chat-frost-mid) 72%,transparent 100%)!important;
- -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
- backdrop-filter:blur(18px) saturate(112%)!important;
- -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 63%,transparent 100%)!important;
- mask-image:linear-gradient(to bottom,#000 0%,#000 63%,transparent 100%)!important;
- box-shadow:none!important;
+  var(--sv-chat-frost-mid) 64%,
+  transparent 100%)!important;
+ -webkit-backdrop-filter:blur(23px) saturate(110%)!important;
+ backdrop-filter:blur(23px) saturate(110%)!important;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 61%,transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 61%,transparent 100%)!important;
+ box-shadow:none!important;filter:none!important;
  pointer-events:none!important;
  z-index:0!important;
  transform:none!important;animation:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
- > .svcp-conversation-bar::after{
- content:none!important;display:none!important;
 }
 /* Non-convex, 44px glass controls with the same thin single outline. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
@@ -774,7 +770,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 /* Accessibility: don't blur content when reduced-transparency is requested. */
 @media(prefers-reduced-transparency:reduce){
  html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
- > .svcp-conversation-bar::before{
+ > .svcp-conversation-bar > .svcp-chat-header-frost{
   background:var(--sv-chat-frost-top)!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
@@ -799,8 +795,9 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  !important;
  background-size:cover!important;
  background-attachment:local!important;
- --sv-chat-frost-top:rgba(23,116,202,.63);
- --sv-chat-frost-mid:rgba(62,158,224,.40);
+ /* Frost remains clear on Sky; the wallpaper supplies blue, not a painted header. */
+ --sv-chat-frost-top:rgba(246,251,255,.46);
+ --sv-chat-frost-mid:rgba(230,245,254,.24);
  --sv-chat-frost-control:rgba(9,100,184,.65);
  --sv-chat-frost-edge:rgba(7,91,164,.67);
  --sv-chat-frost-ink:#FFFFFF;
