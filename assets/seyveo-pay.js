@@ -9,12 +9,16 @@ const home=dialog.querySelector('[data-syp-screen="home"]');
 if(!shell||!home)return;
 const q=selector=>dialog.querySelector(selector);
 const intro=q('.syp-top .syp-desc'),kicker=q('.syp-top .syp-kicker'),title=q('.syp-top .syp-title');
-let launchButton=null,stream=null,frame=0,detector=null,scanActive=false,cameraToken=0,viewToken=0;
+let launchButton=null,stream=null,frame=0,detector=null,scanActive=false,cameraToken=0,viewToken=0,skipCloseFocus=false;
 const tabs=document.createElement('nav');
 tabs.className='syp-view-switch';
 tabs.setAttribute('role','group');
 tabs.setAttribute('aria-label','Раздел кошелька');
-tabs.innerHTML='<button type="button" data-syp-tab="card" aria-pressed="true" aria-controls="sypCardHome">Карта</button><button type="button" data-syp-tab="finances" aria-pressed="false" aria-controls="sypBudgetScreen">Финансы</button>';
+// Small notebook-style icon choices, not another thick segmented capsule.
+const cardIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 10h17M7 15h4"/></svg>';
+const financesIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V11M10 20V6M16 20V14M22 20V3"/><path d="M2.5 20.5h20"/></svg>';
+tabs.innerHTML='<button type="button" data-syp-tab="card" aria-pressed="true" aria-controls="sypCardHome"><span class="syp-view-icon">'+cardIcon+'</span><span>Карта</span></button>'+
+ '<button type="button" data-syp-tab="finances" aria-pressed="false" aria-controls="sypBudgetScreen"><span class="syp-view-icon">'+financesIcon+'</span><span>Финансы</span></button>';
 home.id='sypCardHome';
 home.before(tabs);
 const financeCss=document.createElement('link');
@@ -79,20 +83,32 @@ async function select(tab){
  dialog.scrollTop=0;
 }
 function open(tab='card'){
- // Showing a modal is synchronous to preserve the user's tap/keyboard activation.
  if(!dialog.open){
   launchButton=document.activeElement;
-  if(typeof dialog.showModal==='function')dialog.showModal();
-  else dialog.setAttribute('open','');
+  // The Wallet is a normal in-flow Work page, not a top-layer modal.
+  // Open the work route first when invoked from elsewhere in the app.
+  const work=document.getElementById('svWorkShell');
+  if(work?.contains(dialog)){
+   const tasks=document.getElementById('tasksPage');
+   const calendar=document.getElementById('calendarPage');
+   if(tasks?.hidden&&calendar?.hidden)window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
+   if(typeof dialog.show==='function')dialog.show();
+   else dialog.setAttribute('open','');
+  }else if(typeof dialog.showModal==='function'){
+   dialog.showModal();
+  }else dialog.setAttribute('open','');
  }
+ window.SEYVEO_WORK_SHELL?.sync?.();
  return select(tab==='finances'?'finances':'card');
 }
-function close(){
+function close(switchingSection=false){
  ++viewToken;
  stopCamera();
- if(typeof dialog.close==='function')dialog.close();
+ skipCloseFocus=!!switchingSection;
+ if(typeof dialog.close==='function'&&dialog.open)dialog.close();
  else dialog.removeAttribute('open');
- launchButton?.focus?.({preventScroll:true});
+ if(!switchingSection)launchButton?.focus?.({preventScroll:true});
+ window.SEYVEO_WORK_SHELL?.sync?.();
 }
 dialog.addEventListener('click',event=>{
  const tab=event.target.closest('[data-syp-tab]');
@@ -121,11 +137,16 @@ document.addEventListener('click',event=>{
   event.preventDefault();event.stopImmediatePropagation();void open();
  }
 },true);
-dialog.addEventListener('click',event=>{if(event.target===dialog)close();});
+// No backdrop dismissal: this is an inline page with the shared navigation.
 dialog.addEventListener('close',()=>{
  ++viewToken;
  stopCamera();
- launchButton?.focus?.({preventScroll:true});
+ if(!skipCloseFocus)launchButton?.focus?.({preventScroll:true});
+ skipCloseFocus=false;
+ window.SEYVEO_WORK_SHELL?.sync?.();
+});
+window.addEventListener('hashchange',()=>{
+ if(dialog.open&&location.hash&&location.hash!=='#tasks')close(true);
 });
 async function startCamera(){
  if(stream||!dialog.open||q('[data-syp-screen="scan"]')?.hidden)return;
