@@ -152,7 +152,9 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  border:0!important;outline:0!important;border-radius:50%!important;
  /* SEYVEO avatar standard: quiet matte petrol-graphite circle.
     The supplied jade/platinum S remains unmodified and centered. */
- background:#19373D var(--sv-sayvi-mark-image)
+ /* Same matte graphite-green hue; transparency ONLY on the circle background.
+    The original S artwork stays fully opaque (opacity:1). */
+ background:rgba(25,55,61,.60) var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
  box-shadow:none!important;text-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
