@@ -93,3 +93,110 @@
     margin-top:2px!important;
   }
 }
+
+/* SEYVEO MINIMAL FROSTED CHAT IDENTITY · one material layer, no old bar.
+   2026-11-22. The live avatar/title were moved into their own lightweight
+   element, while the former .svcp-conversation-bar remains hidden for JS
+   handlers. Only this ::before creates the glass material; everything
+   else is transparent. Designed for iPhone Safari/PWA and rotation. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header{
+ position:absolute!important;
+ inset:0 0 auto 0!important;
+ width:100%!important;
+ height:calc(136px + env(safe-area-inset-top,0px))!important;
+ min-height:0!important;
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:center!important;
+ box-sizing:border-box!important;
+ padding:calc(4px + env(safe-area-inset-top,0px))
+  max(12px,env(safe-area-inset-right,0px)) 0
+  max(12px,env(safe-area-inset-left,0px))!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;box-shadow:none!important;
+ isolation:isolate!important;
+ overflow:visible!important;
+ z-index:30!important;
+ pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header::before{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ inset:0 0 auto 0!important;
+ width:100%!important;
+ height:100%!important;
+ border:0!important;border-radius:0!important;
+ background:linear-gradient(180deg,
+  rgba(244,250,255,.38) 0%,
+  rgba(242,248,253,.24) 53%,
+  rgba(242,248,253,0) 100%)!important;
+ -webkit-backdrop-filter:blur(19px) saturate(109%)!important;
+ backdrop-filter:blur(19px) saturate(109%)!important;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 58%,transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 58%,transparent 100%)!important;
+ box-shadow:none!important;
+ pointer-events:none!important;
+ z-index:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity{
+ position:relative!important;
+ top:0!important;left:auto!important;
+ transform:none!important;
+ width:min(195px,53vw)!important;
+ height:auto!important;min-height:0!important;
+ margin:0!important;padding:0!important;
+ background:transparent!important;
+ border:0!important;box-shadow:none!important;
+ z-index:2!important;
+ pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header #svcpRoomAvatar{
+ position:relative!important;top:0!important;
+ width:56px!important;height:56px!important;
+ min-width:56px!important;min-height:56px!important;
+ max-width:56px!important;max-height:56px!important;
+ border:0!important;outline:0!important;border-radius:50%!important;
+ box-shadow:none!important;filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"]
+ > .svcp-minimal-identity-header #svcpRoomAvatar{
+ /* The existing canonical S asset is used; no second emblem or painted rim. */
+ background:rgba(247,251,255,.34) var(--sv-sayvi-mark-image)
+  center center / contain no-repeat!important;
+ -webkit-backdrop-filter:blur(12px) saturate(107%)!important;
+ backdrop-filter:blur(12px) saturate(107%)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header #svcpConversationHeading{
+ pointer-events:auto!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
+ border-radius:999px!important;
+ -webkit-backdrop-filter:blur(14px) saturate(106%)!important;
+ backdrop-filter:blur(14px) saturate(106%)!important;
+}
+html[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header::before{
+ background:linear-gradient(180deg,
+  rgba(43,51,62,.40) 0%,
+  rgba(43,51,62,.24) 53%,
+  transparent 100%)!important;
+}
+html[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header #svcpRoomAvatar{
+ background-color:rgba(88,102,117,.32)!important;
+}
+/* Messages scroll behind the frosted header but start below the name
+   and subtitle. No old 154px reserve or opaque empty strip. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
+ padding-top:calc(119px + env(safe-area-inset-top,0px))!important;
+ scroll-padding-top:calc(119px + env(safe-area-inset-top,0px))!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
+}
