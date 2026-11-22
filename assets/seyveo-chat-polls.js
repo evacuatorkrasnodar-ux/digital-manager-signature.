@@ -67,7 +67,7 @@ function openEditor({mount,onCreate,heading='Новый опрос',description=
    input.setAttribute('aria-label',input.placeholder);
    row.querySelector('button').hidden=inputs.children.length<=2;
   });
-  addChoice.disabled=inputs.children.length>=8;
+  if(addChoice)addChoice.disabled=inputs.children.length>=8;
  }
  const addChoice=button('＋ Добавить вариант',()=>addInput(),'sv-poll-editor-add');
  addInput();addInput();
