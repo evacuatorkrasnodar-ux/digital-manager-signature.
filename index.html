@@ -1345,15 +1345,19 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
         Keep the legacy action nodes hidden for their existing JS handlers.
         A single independent Back action is the only navigation affordance. -->
    <button type="button" id="svcpConversationStandaloneBack" aria-label="К списку сообщений"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+   <!-- One floating matte-glass material and the SAME live avatar/name nodes,
+        moved from the removed header. No duplicate avatar or title IDs. -->
+   <div class="svcp-minimal-identity-header">
+     <div class="svcp-room-identity">
+      <span id="svcpRoomAvatar" class="svcp-room-avatar" aria-hidden="true">◎</span>
+      <button type="button" id="svcpConversationHeading" class="svcp-conversation-info" aria-label="Информация о чате" aria-controls="svcpRoomInfo" aria-expanded="false">
+       <span class="svcp-room-name-pill"><strong id="svcpConversationTitle">Общий чат</strong><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7"/></svg></span>
+       <small id="svcpConversationDetail">Рабочая группа</small>
+      </button>
+     </div>
+   </div>
    <div class="svcp-conversation-bar" hidden aria-hidden="true" inert>
     <button type="button" id="svcpConversationBack" class="svcp-conversation-back" aria-label="К списку рабочих чатов"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
-    <div class="svcp-room-identity">
-     <span id="svcpRoomAvatar" class="svcp-room-avatar" aria-hidden="true">◎</span>
-     <button type="button" id="svcpConversationHeading" class="svcp-conversation-info" aria-label="Информация о чате" aria-controls="svcpRoomInfo" aria-expanded="false">
-      <span class="svcp-room-name-pill"><strong id="svcpConversationTitle">Общий чат</strong><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7"/></svg></span>
-      <small id="svcpConversationDetail">Рабочая группа</small>
-     </button>
-    </div>
     <div class="svcp-call-actions" role="group" aria-label="Аудио и видео">
      <button type="button" id="svcpAudioCall" class="svcp-call-button" aria-label="Аудиозвонок: проверка микрофона" title="Аудиозвонок · пока демо"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 3.8 9.6 7c.4.5.5 1.1.2 1.6l-1.6 2.1c1.2 2.5 2.8 4.1 5.3 5.3l2.1-1.6c.5-.3 1.1-.2 1.6.2l3 2.8c.7.7.6 1.8-.1 2.5-1.3 1.2-3.3 1.3-5.4.5-5.2-1.9-8.8-5.5-10.7-10.7-.8-2.1-.7-4.1.5-5.4.7-.7 1.8-.8 2.5-.1Z"/></svg></button>
      <button type="button" id="svcpVideoCall" class="svcp-call-button" aria-label="Видеозвонок: проверка камеры" title="Видеозвонок · пока демо"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="3"/><path d="m16 10 5-3v10l-5-3"/></svg></button>
