@@ -1243,7 +1243,9 @@ function resizeWorkComposer(){
  const formWidth=form.getBoundingClientRect().width||Math.max(240,window.innerWidth-12);
  // The writing dock no longer reserves space for "Поручить".
  // Keep enough room for the send icon, without stealing emoji/input width.
- const shortWidth=Math.max(60,formWidth-101-52);
+ /* Match the live 111px editor inset and 52px send slot exactly. A small
+    Safari font/layout cushion prevents a last character wrapping in compact. */
+ const shortWidth=Math.max(60,formWidth-111-52-10);
  const hasNewline=value.includes('\n');
  const textHeight=measuredComposeHeight(value,shortWidth);
  // The chosen file opens the full writing surface, even before any text.
