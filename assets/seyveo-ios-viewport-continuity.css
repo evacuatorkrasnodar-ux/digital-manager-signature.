@@ -195,10 +195,8 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  height:28px!important;min-height:28px!important;max-height:28px!important;
  margin:0 auto!important;padding:3px 10px!important;
  border:0!important;border-radius:999px!important;
- /* Match the previous deep-blue name capsule, not the pale/white style. */
- /* Same cool water-glass family as the chat controls; the darker tint
-    keeps the white name legible without creating an opaque blue sticker. */
- background:rgba(12,102,191,.56)!important;
+ /* Keep the original deep-blue #0863BF hue; only transparency is adjusted. */
+ background:rgba(8,99,191,.76)!important;
  background-image:none!important;
  border:1px solid var(--svcp-conversation-blue-rim,rgba(230,247,255,.34))!important;
  box-shadow:none!important;filter:none!important;
@@ -243,7 +241,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  width:44px!important;height:44px!important;
  border:1px solid var(--svcp-conversation-blue-rim,rgba(230,247,255,.34))!important;
  border-radius:50%!important;
- background:rgba(12,96,179,.42)!important;color:#fff!important;
+ background:rgba(13,73,186,.78)!important;color:#fff!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(12px) saturate(114%))!important;
  backdrop-filter:var(--svcp-conversation-blue-blur,blur(12px) saturate(114%))!important;
