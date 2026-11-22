@@ -7026,3 +7026,50 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpPolishMessage
  flex:0 0 20px!important;
  object-fit:contain!important;
 }
+
+/* v261 · 2026-11-22 · expanded Sayvi room composer.
+   Preserve the 44px accessible buttons and the existing JS grid layout. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > #svcpAttachFile,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > #svcpAttachFile:is(:hover,:focus,:focus-visible,:active){
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+ filter:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ transform:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > #svcpAttachFile::before,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > #svcpAttachFile::after{
+ content:none!important;display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > #svcpAttachFile svg{
+ display:block!important;width:20px!important;height:20px!important;
+ margin:auto!important;transform:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpPolishMessage{
+ display:grid!important;place-items:center!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpPolishMessage :is(img.sv-sayvi-minimal-mark,svg.sv-sayvi-minimal-mark){
+ display:block!important;width:20px!important;height:20px!important;
+ min-width:20px!important;min-height:20px!important;
+ max-width:20px!important;max-height:20px!important;
+ flex:0 0 20px!important;margin:0 auto!important;
+ object-fit:contain!important;transform:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline #svcpChatInput{
+ box-sizing:border-box!important;
+ padding-top:12px!important;padding-bottom:12px!important;
+ line-height:1.35!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] .svcp-room-name-pill::before{
+ content:""!important;display:inline-block!important;
+ flex:0 0 28px!important;width:28px!important;height:28px!important;
+ margin-right:7px!important;border-radius:50%!important;
+ background:rgba(255,255,255,.15) url("./seyveo-sayvi-original-avatar.webp?v=1") center / 21px 21px no-repeat!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 7px rgba(12,45,85,.10)!important;
+ vertical-align:middle!important;
+}
