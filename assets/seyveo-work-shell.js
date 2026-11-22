@@ -599,7 +599,13 @@
     ? (name==='personal'?'Мои дела':name==='employee'?'Моя работа':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Блокнот')
     : name==='personal'?'Мои дела':name==='notes'?'Блокнот':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Моя работа';
   }
-  heading.hidden=!visible||active==='wallet';
+  // Keep the exact same header footprint as Tasks/Notebook/Cabinet so
+  // Wallet's shared capsule starts at the identical vertical coordinate.
+  // Hide the header visually, but never collapse its layout height.
+  heading.hidden=!visible;
+  heading.style.visibility=active==='wallet'?'hidden':'';
+  heading.style.pointerEvents=active==='wallet'?'none':'';
+  heading.setAttribute('aria-hidden',String(active==='wallet'));
   heading.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
