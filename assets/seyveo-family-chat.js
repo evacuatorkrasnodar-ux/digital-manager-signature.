@@ -100,7 +100,7 @@ function renderFamilyPoll(msg,index){
    messages=updated;msg.poll=next;
    const replacement=renderFamilyPoll(msg,index);
    if(replacement&&view.isConnected){view.replaceWith(replacement);view=replacement;}
-   status(next.closed?'Опрос завершён в этой вкладке.':'Голос сохранён локально. Родные пока его не видят.');
+   status(next.closed?'Опрос завершён.':'Голос учтён.');
   }
  });
  return view;
@@ -110,13 +110,12 @@ function openFamilyPollEditor(){
  const Polls=window.SEYVEO_CHAT_POLLS;if(!Polls)return;
  familyPollEditor=Polls.openEditor({
   mount:dialog,heading:'Семейный опрос',
-  description:'Опрос увидите только вы в этой вкладке. Голоса родных появятся после подключения семьи.',
   onCreate:poll=>{
    const next=messages.concat({text:poll.question,at:Date.now(),poll:{...poll,creator:'me'}}).slice(-MAX_MSG);
    if(!persist(MSG_KEY,next))return false;
    messages=next;
    pendingSuggestion=null;renderMessages();
-   status('Семейный опрос сохранён только в этой вкладке.');
+   status('Опрос создан.');
    return true;
   }
  });
