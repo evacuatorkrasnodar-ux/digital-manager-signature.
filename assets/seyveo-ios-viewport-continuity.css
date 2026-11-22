@@ -116,34 +116,28 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  margin:0!important;
  background:transparent!important;
  border:0!important;box-shadow:none!important;
- isolation:auto!important;
+ isolation:isolate!important;
  overflow:visible!important;
  z-index:30!important;
  pointer-events:none!important;
 }
-/* Single full-bleed Apple-style frosted veil. The screen-wide width prevents
-   the inner chat container from exposing a sharp vertical edge in iOS Safari.
-   No isolated backdrop root, opaque plate or extra glass pseudo-element. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  > .svcp-minimal-identity-header::before{
  content:""!important;
  display:block!important;
  position:absolute!important;
- inset:auto!important;
- top:0!important;left:50%!important;right:auto!important;
- width:100vw!important;width:100dvw!important;
- max-width:none!important;
+ inset:0 0 auto 0!important;
+ width:100%!important;
  height:100%!important;
- transform:translateX(-50%)!important;
  border:0!important;border-radius:0!important;
- /* Pure frosted glass, no painted tint and no grayscale processing.
-    Only the underlying conversation is blurred, like Apple's translucent UI. */
- background:transparent!important;
- background-image:none!important;
- -webkit-backdrop-filter:blur(8px)!important;
- backdrop-filter:blur(8px)!important;
- -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,rgba(0,0,0,.68) 66%,transparent 100%)!important;
- mask-image:linear-gradient(to bottom,#000 0%,#000 35%,rgba(0,0,0,.68) 66%,transparent 100%)!important;
+ background:linear-gradient(180deg,
+  rgba(244,250,255,.38) 0%,
+  rgba(242,248,253,.24) 53%,
+  rgba(242,248,253,0) 100%)!important;
+ -webkit-backdrop-filter:blur(19px) saturate(109%)!important;
+ backdrop-filter:blur(19px) saturate(109%)!important;
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 58%,transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 58%,transparent 100%)!important;
  box-shadow:none!important;
  pointer-events:none!important;
  z-index:0!important;
@@ -188,33 +182,21 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  -webkit-backdrop-filter:blur(14px) saturate(106%)!important;
  backdrop-filter:blur(14px) saturate(106%)!important;
 }
-/* Both light and dark palettes use the same unpainted frosted glass.
-   The real chat wallpaper determines the color seen through the header. */
 html[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  > .svcp-minimal-identity-header::before{
- background:transparent!important;
- background-image:none!important;
+ background:linear-gradient(180deg,
+  rgba(43,51,62,.40) 0%,
+  rgba(43,51,62,.24) 53%,
+  transparent 100%)!important;
 }
 html[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header #svcpRoomAvatar{
  background-color:rgba(88,102,117,.32)!important;
 }
-/* Apple-style translucent header: faint messages still read through neutral
-   frosted glass. Restore the existing 119px conversation inset instead of
-   leaving a new blue blank strip; do not change the chat wallpaper itself. */
+/* Messages scroll behind the frosted header but start below the name
+   and subtitle. No old 154px reserve or opaque empty strip. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
  padding-top:calc(119px + env(safe-area-inset-top,0px))!important;
  scroll-padding-top:calc(119px + env(safe-area-inset-top,0px))!important;
- -webkit-mask-image:linear-gradient(to bottom,
-  rgba(0,0,0,.16) 0px,
-  rgba(0,0,0,.16) calc(52px + env(safe-area-inset-top,0px)),
-  rgba(0,0,0,.38) calc(82px + env(safe-area-inset-top,0px)),
-  rgba(0,0,0,.68) calc(106px + env(safe-area-inset-top,0px)),
-  #000 calc(136px + env(safe-area-inset-top,0px)))!important;
- mask-image:linear-gradient(to bottom,
-  rgba(0,0,0,.16) 0px,
-  rgba(0,0,0,.16) calc(52px + env(safe-area-inset-top,0px)),
-  rgba(0,0,0,.38) calc(82px + env(safe-area-inset-top,0px)),
-  rgba(0,0,0,.68) calc(106px + env(safe-area-inset-top,0px)),
-  #000 calc(136px + env(safe-area-inset-top,0px)))!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
 }
