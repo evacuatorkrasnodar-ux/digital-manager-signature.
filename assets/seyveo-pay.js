@@ -88,6 +88,11 @@ async function select(tab){
  dialog.scrollTop=0;
 }
 function open(tab='card'){
+ // Recover from either script load order: the live wallet actions always
+ // belong to the shared header, never to the dialog body.
+ const mountedWork=document.getElementById('svWorkShell');
+ if(mountedWork?.contains(dialog)&&tabs.parentElement!==mountedWork)
+  mountedWork.append(tabs);
  if(!dialog.open){
   launchButton=document.activeElement;
   // The Wallet is a normal in-flow Work page, not a top-layer modal.
