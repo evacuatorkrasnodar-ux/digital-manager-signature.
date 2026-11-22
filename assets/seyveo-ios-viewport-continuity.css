@@ -154,7 +154,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
     visible outline is ~2.8% taller than wide, so correct ONLY its optical
     geometry without changing the hue, opacity, source, or button surface. */
  background:transparent var(--sv-sayvi-mark-image)
-  center center / 102.8% 100% no-repeat!important;
+  center center / contain no-repeat!important;
  box-shadow:none!important;text-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  filter:none!important;opacity:1!important;transform:none!important;
