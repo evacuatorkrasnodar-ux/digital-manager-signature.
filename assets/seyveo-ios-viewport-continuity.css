@@ -1,0 +1,57 @@
+/* SEYVEO · iPhone PWA viewport continuity (2026-11-22).
+   The bottom home-indicator safe area belongs to the application's canvas,
+   not an exposed white page underneath a 100dvh fullscreen screen.
+   Use only paint and safe-area padding; don't move docks or change handlers. */
+@media(max-width:720px){
+ html{
+  min-height:100%!important;
+  background-color:var(--bg,#f9fafb)!important;
+  background-image:var(--sv-life-viewport-gradient,none)!important;
+  background-size:100% 100%!important;
+  background-repeat:no-repeat!important;
+ }
+ html body{
+  min-height:100dvh!important;
+  background-color:var(--bg,#f9fafb)!important;
+  background-image:var(--sv-life-viewport-gradient,none)!important;
+  background-size:100% 100%!important;
+  background-repeat:no-repeat!important;
+ }
+ /* iOS PWA can exclude its 34pt bottom safe area from dynamic viewport height.
+    Extend the paint to the physical edge while retaining the exact same
+    *content* height: the added height is consumed by padding-bottom. */
+ html body #svcpWorkChatScreen:not([hidden]){
+  box-sizing:border-box!important;
+  height:calc(var(--svcp-visible-height,100dvh) + env(safe-area-inset-bottom,0px))!important;
+  max-height:none!important;
+  padding-bottom:env(safe-area-inset-bottom,0px)!important;
+ }
+ /* Scenic wallpaper continuity through iOS Home-indicator region.
+    These match the existing opt-in chat wallpapers, not other app themes. */
+ html.svcp-work-chat-active:has(#svcpConversation[data-chat-wallpaper="sky"]),
+ html.svcp-work-chat-active:has(#svcpConversation[data-chat-wallpaper="sky"]) body{
+  background-color:#AFDAE7!important;
+  background-image:var(--sv-chat-sky-wallpaper)!important;
+  background-size:100% 100%!important;
+  background-repeat:no-repeat!important;
+ }
+ html.svcp-work-chat-active:has(#svcpConversation[data-chat-wallpaper="evening"]),
+ html.svcp-work-chat-active:has(#svcpConversation[data-chat-wallpaper="evening"]) body{
+  background-color:#EDBCB5!important;
+  background-image:var(--sv-chat-evening-wallpaper)!important;
+  background-size:100% 100%!important;
+  background-repeat:no-repeat!important;
+ }
+ html body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]){
+  background-color:#AFDAE7!important;
+  background-image:var(--sv-chat-sky-wallpaper)!important;
+  background-size:100% 100%!important;
+  background-repeat:no-repeat!important;
+ }
+ html body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="evening"]){
+  background-color:#EDBCB5!important;
+  background-image:var(--sv-chat-evening-wallpaper)!important;
+  background-size:100% 100%!important;
+  background-repeat:no-repeat!important;
+ }
+}
