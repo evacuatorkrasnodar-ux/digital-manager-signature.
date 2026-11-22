@@ -963,43 +963,56 @@ html body #svcpWorkChatScreen[data-view="room"]
  margin:0!important;transform:none!important;translate:none!important;
 }
 
-/* v26 · compact send arrow gets a proper Apple-like circular face. */
-/* Keep a 38px tap target exactly where the microphone was. The 3px
-   transparent rim leaves a perfectly centered 32px action circle around
-   the upward arrow; no extra dock, layout change or press translation. */
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send,
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus),
-:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send,
-:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus){
+/* v27 · visible send circle in BOTH compact and expanded composers.
+   Previous selector only matched compact + explicit theme, so the circle
+   disappeared when the editor changed mode or the theme attribute differed.
+   Keep existing placement/behavior; paint one reliable, centered blue circle. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus,:focus-visible){
  box-sizing:border-box!important;
- display:grid!important;place-items:center!important;
+ display:grid!important;
+ place-items:center!important;
  width:38px!important;min-width:38px!important;max-width:38px!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
- position:absolute!important;
- top:50%!important;bottom:auto!important;
- left:auto!important;right:10px!important;
  padding:0!important;margin:0!important;
- border:3px solid transparent!important;
+ border:0!important;outline:0!important;
  border-radius:50%!important;
- background:#0A84FF!important;
- background-image:none!important;
- background-clip:padding-box!important;
+ background:#0A84FF!important;background-image:none!important;
+ background-color:#0A84FF!important;
+ background-clip:border-box!important;
  color:#FFFFFF!important;
- box-shadow:none!important;
- filter:none!important;opacity:1!important;
- transform:translateY(-50%)!important;
- translate:none!important;scale:1!important;
+ box-shadow:0 2px 7px rgba(10,132,255,.2)!important;
+ opacity:1!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  animation:none!important;transition:none!important;
- -webkit-tap-highlight-color:transparent!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send svg{
- display:block!important;position:static!important;
- width:19px!important;height:19px!important;
- stroke:#FFFFFF!important;stroke-width:1.9!important;
- margin:0!important;transform:none!important;filter:none!important;
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg{
+ display:block!important;
+ position:static!important;
+ width:20px!important;height:20px!important;
+ min-width:20px!important;min-height:20px!important;
+ margin:0!important;padding:0!important;
+ color:#fff!important;stroke:#fff!important;
+ stroke-width:1.9!important;fill:none!important;
+ transform:none!important;filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send > span{
+ display:none!important;
+}
+/* Respect the JS-driven send/mic visibility. Never show a send circle while
+   the draft is empty, even if earlier styles force display:grid. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm[data-has-content="false"] .svcp-chat-compose-field > button.svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send[hidden]{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:focus-visible{
+ outline:2px solid rgba(10,132,255,.58)!important;
+ outline-offset:3px!important;
 }
