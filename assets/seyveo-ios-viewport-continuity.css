@@ -154,7 +154,8 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
     The supplied jade/platinum S remains unmodified and centered. */
  /* Same matte graphite-green hue; transparency ONLY on the circle background.
     The original S artwork stays fully opaque (opacity:1). */
- background:rgba(25,55,61,.60) var(--sv-sayvi-mark-image)
+ /* Matte graphite-teal circle stays fully opaque and never shows through the name pill. */
+ background:#19373D var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
  box-shadow:none!important;text-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
@@ -179,7 +180,8 @@ html body #svcpWorkChatScreen[data-view="room"]
  position:relative!important;top:auto!important;left:auto!important;
  display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:center!important;
- margin:-15px 0 0!important;padding:0!important;
+ /* The name sits BELOW the complete 56px avatar, not across its dark circle. */
+ margin:1px 0 0!important;padding:0!important;
  min-width:0!important;width:auto!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:none!important;pointer-events:auto!important;
@@ -212,17 +214,26 @@ html body #svcpWorkChatScreen[data-view="room"]
  color:#fff!important;-webkit-text-fill-color:#fff!important;
  font-size:16px!important;line-height:20px!important;letter-spacing:-.02em!important;
  font-weight:600!important;margin:0!important;padding:0!important;
+ vertical-align:middle!important;text-align:center!important;
  text-shadow:none!important;transform:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
  #svcpConversationHeading .svcp-room-name-pill svg{
- display:block!important;flex:0 0 14px!important;
- width:14px!important;height:14px!important;
+ /* Reproduce Andre's rounded right chevron: blue-ice, no dark inner glyph. */
+ display:block!important;flex:0 0 15px!important;
+ width:15px!important;height:15px!important;
+ min-width:15px!important;min-height:15px!important;
  margin:0!important;padding:0!important;
- stroke:#cdeaff!important;color:#cdeaff!important;stroke-width:2!important;
+ stroke:#91D0F5!important;color:#91D0F5!important;stroke-width:2.45!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
- fill:none!important;transform:none!important;
+ fill:none!important;opacity:1!important;filter:none!important;transform:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
+ #svcpConversationHeading .svcp-room-name-pill svg path{
+ fill:none!important;stroke:inherit!important;stroke-width:inherit!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
