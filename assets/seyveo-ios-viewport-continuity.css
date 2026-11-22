@@ -67,3 +67,27 @@
   background-repeat:no-repeat!important;
  }
 }
+
+/* SEYVEO Work top alignment — keep the chat's safe-area contract.
+   Only the shared Work viewport is affected: Home, chat and the 60px dock
+   keep their existing geometry. A single safe-area inset, with no extra
+   8px app lift or 6px header spacer, places all four Work destinations
+   on the same top axis. Keep native notch clearance on iPhone X. */
+@media (max-width:699px) {
+  html body .app:has(> #svWorkShell[data-shared-work="true"]) {
+    padding-top:env(safe-area-inset-top,0px)!important;
+  }
+  html body #svWorkShell[data-shared-work="true"] > seyveo-work-head {
+    --gutter-t:0px;
+  }
+  /* Notebook and Wallet reuse genuine controls anchored in the header slot.
+     They follow the very same zero-offset baseline as the Cabinet buttons. */
+  html body #svWorkShell[data-active="notes"] > #svNotebookCreateTiles:not([hidden]),
+  html body #svWorkShell[data-active="wallet"] > .syp-view-switch {
+    top:0!important;
+  }
+  /* Small breathing room below the complete header, not a second spacer. */
+  html body #svWorkShell[data-shared-work="true"] > #svWorkTabs:not([hidden]) {
+    margin-top:2px!important;
+  }
+}
