@@ -1583,6 +1583,8 @@ function renderDirectory(){
   const last=latest.get(room.id);
   const name=managerDialog?'Руководитель':room.label;
   const row=el('button','svcp-directory-item');row.type='button';row.dataset.svcpRoomId=room.id;
+  row.dataset.svcpRoomKind=room.kind;
+  row.dataset.svcpRoomPerson=room.person||'';
   row.setAttribute('aria-label',(room.kind==='personal'?'Открыть личный чат: ':'Открыть чат: ')+name+(person&&!managerDialog?', '+person:''));
   const avatar=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),managerDialog?'Р':room.mark);
   avatar.setAttribute('aria-hidden','true');
