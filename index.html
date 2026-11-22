@@ -1341,7 +1341,11 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <div id="svcpConversationList" class="svcp-conversation-list" aria-live="polite"></div>
   </div>
   <div id="svcpConversation" hidden>
-   <div class="svcp-conversation-bar">
+   <!-- The conversation header is intentionally absent from the visual layout.
+        Keep the legacy action nodes hidden for their existing JS handlers.
+        A single independent Back action is the only navigation affordance. -->
+   <button type="button" id="svcpConversationStandaloneBack" aria-label="К списку сообщений"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+   <div class="svcp-conversation-bar" hidden aria-hidden="true" inert>
     <button type="button" id="svcpConversationBack" class="svcp-conversation-back" aria-label="К списку рабочих чатов"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
     <div class="svcp-room-identity">
      <span id="svcpRoomAvatar" class="svcp-room-avatar" aria-hidden="true">◎</span>
