@@ -66,9 +66,18 @@
   height:calc(var(--sv-header-row,54px) + var(--gutter-t) + 18px);
  }
  :host([data-work-tabs="true"]) .bar{
-  grid-template-rows:44px minmax(0,1fr);
-  /* Stable first-row alignment across all three Work destinations. */
+  grid-template-rows:var(--sv-apple-nav-row,44px) minmax(0,1fr);
+  /* Stable first-row alignment across all Work destinations. */
   padding-left:calc(var(--gutter-l) + 4px);
+ }
+ /* Full Calendar and History have no second row: align their 44px
+    Back/Add controls with Work and the standalone app screens. */
+ :host(:not([data-work-tabs="true"])){
+  min-height:var(--sv-apple-nav-row,44px);
+  height:var(--sv-apple-nav-row,44px);
+ }
+ :host(:not([data-work-tabs="true"])) .bar{
+  grid-template-rows:var(--sv-apple-nav-row,44px);
  }
  :host([data-agenda="true"]) .month{grid-row:2;align-self:center}
  :host([data-agenda="true"]) .calendar-jump{align-self:center}
