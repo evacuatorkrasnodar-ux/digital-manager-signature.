@@ -28,6 +28,22 @@ const ROOMS=[
  {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочий помощник',mark:'',person:'sayvi',section:'assistant'}
 ];
+/* Locally created staff groups; no external message delivery. */
+const LOCAL_GROUPS_KEY='seyveo-workchat-local-groups-v1';
+function readLocalGroups(){
+ try{
+  const value=JSON.parse(localStorage.getItem(LOCAL_GROUPS_KEY)||'[]');
+  return Array.isArray(value)?value.filter(item=>
+   item&&typeof item.id==='string'&&/^local-group-[a-z0-9-]+$/.test(item.id)&&
+   typeof item.label==='string'&&item.label.trim().length<=55&&
+   Array.isArray(item.members)&&item.members.every(id=>['elena','anna','mikhail'].includes(id))).slice(0,30):[];
+ }catch{return []}
+}
+const localGroups=readLocalGroups();
+for(const group of localGroups)ROOMS.push({
+ id:group.id,label:group.label,kind:'groups',hint:'Рабочая группа',
+ mark:'◉',section:'custom',members:group.members
+});
 const state={tab:'chats',room:'general',viewpoint:'manager',file:null,files:[],previewUrls:[],objectUrl:null,filePurpose:'file',scanCode:'',replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='',historyWindow=35;
 // Demo document requests appear as messages in the existing documents room.
@@ -1407,7 +1423,10 @@ function privateAssignmentRecipient(){
   Object.prototype.hasOwnProperty.call(STAFF,room.person)?room.person:'';
 }
 function employeePreviewActive(){return window.SEYVEO_PREVIEW?.isEmployee?.()===true}
-function employeeAllowedRoom(roomId){return ['general','team','docs','dm-elena','dm-sayvi'].includes(roomId)}
+function employeeAllowedRoom(roomId){
+ return ['general','team','docs','dm-elena','dm-sayvi'].includes(roomId)||
+  ROOMS.some(room=>room.id===roomId&&room.kind==='groups'&&Array.isArray(room.members)&&room.members.includes('elena'));
+}
 /* SEYVEO Work Chat typing presence: actual local typing, never simulated activity. */
 const workTypingPeers=new Map();
 const workTypingSource='work-'+Math.random().toString(36).slice(2);
@@ -1563,7 +1582,7 @@ function renderDirectory(){
   const person=room.person&&roleLabels[room.person];
   const last=latest.get(room.id);
   const name=managerDialog?'Руководитель':room.label;
-  const row=el('button','svcp-directory-item');row.type='button';
+  const row=el('button','svcp-directory-item');row.type='button';row.dataset.svcpRoomId=room.id;
   row.setAttribute('aria-label',(room.kind==='personal'?'Открыть личный чат: ':'Открыть чат: ')+name+(person&&!managerDialog?', '+person:''));
   const avatar=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),managerDialog?'Р':room.mark);
   avatar.setAttribute('aria-hidden','true');
@@ -4099,6 +4118,27 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
 syncComposerActions();
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
+ listRooms:()=>ROOMS.map(({id,label,kind,hint,person,members})=>({id,label,kind,hint,person,members})),
+ createLocalGroup:(name,members)=>{
+  if(employeePreviewActive()||state.viewpoint!=='manager')return null;
+  const title=String(name||'').trim().slice(0,55);
+  const participants=Array.isArray(members)?[...new Set(members)].filter(id=>['elena','anna','mikhail'].includes(id)):[];
+  if(!title||!participants.length||localGroups.length>=30)return null;
+  const id='local-group-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
+  const record={id,label:title,members:participants};
+  try{localStorage.setItem(LOCAL_GROUPS_KEY,JSON.stringify([...localGroups,record]))}catch{return null}
+  localGroups.push(record);
+  ROOMS.push({id,label:title,kind:'groups',hint:'Рабочая группа',mark:'◉',section:'custom',members:participants});
+  renderDirectory();return id;
+ },
+ clearLocalRoom:id=>{
+  if(employeePreviewActive()||state.viewpoint!=='manager'||!ROOMS.some(r=>r.id===id))return false;
+  const next=state.chat.filter(item=>item?.room!==id);
+  if(!save(CHAT_KEY,next))return false;
+  state.chat=next;renderDirectory();
+  if(state.room===id&&!$('svcpConversation')?.hidden)renderChat();
+  return true;
+ },
  resetChatForRoleChange:()=>{
   // The mode picker has already updated SEYVEO_PREVIEW when called.
   lastChatAccount=null;
