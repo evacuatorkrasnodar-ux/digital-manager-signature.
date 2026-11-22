@@ -26,8 +26,25 @@ function load(){
  }catch{return {}}
 }
 function chosen(key){
- const val=load()[key];
- return allowed.includes(val)?val:'pearl';
+ const data=load();
+ const own=data[key];
+ if(allowed.includes(own))return own;
+ // Chat settings have one default wallpaper; explicit room themes may override it.
+ if(key.startsWith('work:')&&key!=='work:default'&&allowed.includes(data['work:default']))
+  return data['work:default'];
+ return 'pearl';
+}
+function setWorkDefault(value){
+ if(!allowed.includes(value))return false;
+ const data=load();
+ // A new all-chat selection replaces earlier room-specific wallpaper choices.
+ for(const key of Object.keys(data))if(key.startsWith('work:'))delete data[key];
+ data['work:default']=value;
+ try{localStorage.setItem(KEY,JSON.stringify(data))}catch{return false}
+ const room=id('svcpConversation')?.dataset.roomId;
+ if(room)applyRoom(room);
+ window.dispatchEvent(new CustomEvent('seyveo:chat-wallpaper-default-changed',{detail:{value}}));
+ return true;
 }
 function store(key,value){
  if(!allowed.includes(value))return false;
@@ -170,5 +187,9 @@ function init(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
 else init();
-window.SEYVEO_CHAT_THEMES=Object.freeze({applyRoom,syncRoom,applyFamily});
+window.SEYVEO_CHAT_THEMES=Object.freeze({
+ applyRoom,syncRoom,applyFamily,
+ getWorkDefault:()=>chosen('work:default'),
+ setWorkDefault,
+});
 })();
