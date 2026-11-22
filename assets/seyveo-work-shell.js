@@ -50,28 +50,9 @@
   button.setAttribute('aria-pressed','false');
   nav.append(button);
  }
- // One floating pearl lens. It is a visual indicator only, not a button.
- // Existing navigation buttons remain the sole click targets.
- const pearl=document.createElement('span');
- pearl.className='sv-work-pearl-selection';
- pearl.setAttribute('aria-hidden','true');
- nav.prepend(pearl);
+ // Active tab draws its own flat white background; no floating duplicate.
+ // The old moving lens caused subpixel offsets on Safari.
  shell.prepend(nav);
- function syncPearl(instant=false){
-  if(nav.hidden||!nav.isConnected)return;
-  const selected=nav.querySelector('[data-sv-work-tab][aria-pressed="true"]:not([hidden])');
-  if(!selected)return;
-  // Both the lens and the labels share one offset-parent coordinate system.
-  // Avoid fractional viewport rectangles that drift on iPhone Safari.
-  if(!nav.offsetWidth||!selected.offsetWidth)return;
-  const left=selected.offsetLeft+2;
-  const width=Math.max(0,selected.offsetWidth-4);
-  if(instant||!pearl.dataset.ready)pearl.classList.add('sv-work-pearl-initial');
-  pearl.style.width=width+'px';
-  pearl.style.transform='translate3d('+left+'px,0,0)';
-  if(!pearl.dataset.ready)pearl.dataset.ready='1';
-  requestAnimationFrame(()=>pearl.classList.remove('sv-work-pearl-initial'));
- }
  // Mount one isolated, newly written header. Its controls live inside
  // Shadow DOM, so old app styles cannot remove Back's circular material.
  const workHeader=window.SEYVEO_WORK_HEADER?.create();
@@ -691,7 +672,6 @@
   for(const button of nav.querySelectorAll('[data-sv-work-tab]')){
    button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===selectedWorkTab));
   }
-  requestAnimationFrame(()=>syncPearl());
  }
  nav.addEventListener('click',event=>{
   const button=event.target.closest('[data-sv-work-tab]');
@@ -703,7 +683,6 @@
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
    tab.setAttribute('aria-pressed',String(tab.dataset.svWorkTab===target));
   }
-  syncPearl();
   if(target==='wallet'){
    // Route to the existing local expense/receipt/card wallet, not a mock screen.
    // The Pay module owns the modal and bank integration limitations.
@@ -796,10 +775,6 @@
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  // The Wallet is an existing modal; closing it restores the previous Work tab.
  document.getElementById('seyveoPayDialog')?.addEventListener('close',()=>requestAnimationFrame(sync));
- window.addEventListener('resize',()=>requestAnimationFrame(()=>syncPearl(true)),{passive:true});
- if(typeof ResizeObserver==='function'){
-  new ResizeObserver(()=>syncPearl(true)).observe(nav);
- }
  sync();
  // Reveal once every deferred Work/agenda initializer has run.
  // The route's old markup must never be painted as the first frame.
