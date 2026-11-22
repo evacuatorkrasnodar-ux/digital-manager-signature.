@@ -134,25 +134,25 @@ html[data-theme="dark"] #seyveoPayDialog .syp-view-switch > button[aria-pressed=
 .syp-cardseal{width:34px;height:34px;flex:none;display:grid;place-items:center;position:relative}
 .syp-cardseal:before,.syp-cardseal:after{content:"";position:absolute;width:21px;height:21px;border-radius:50%;border:1px solid var(--syp-metal);opacity:.8}
 .syp-cardseal:before{transform:translateX(-6px)}.syp-cardseal:after{transform:translateX(6px)}
-.syp-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:13px 0 12px}
+.syp-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0 10px}
 .syp-action{
- appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
- box-sizing:border-box;min-height:66px;padding:8px 4px;border-radius:12px;
+ appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ box-sizing:border-box;min-height:62px;padding:7px 3px;border-radius:13px;
  border:0;background:var(--sv-ui-quiet-surface);
- color:var(--text);font:inherit;font-size:11.5px;font-weight:530;line-height:1.2;cursor:pointer;
+ color:var(--text);font:inherit;font-size:12px;font-weight:540;line-height:1.2;cursor:pointer;
  -webkit-tap-highlight-color:transparent;
 }
-.syp-action svg{display:block;width:24px;height:24px;stroke:var(--seyveo-emerald);stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;fill:none}
-.syp-action:active{background:var(--card2);transform:scale(.985)}
+.syp-action svg{display:block;width:22px;height:22px;stroke:var(--seyveo-emerald);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.syp-action:active{background:var(--card2);transform:none}
 .syp-panel{
  box-sizing:border-box;border:1px solid var(--line);border-radius:16px;
- padding:14px;background:linear-gradient(125deg,var(--seyveo-specular),transparent 74%),var(--card);
- margin:12px 0 0;
+ padding:11px 13px;background:var(--card);
+ margin:10px 0 0;
 }
-.syp-panel h3{margin:0 0 7px;font-size:13px;font-weight:650;line-height:1.35;color:var(--text)}
+.syp-panel h3{margin:0 0 5px;font-size:12.5px;font-weight:640;line-height:1.35;color:var(--text)}
 .syp-panel h3 .syp-spark{color:var(--seyveo-emerald);margin-right:5px}
-.syp-panel p{font-size:12px;line-height:1.55;margin:0;color:var(--secondary)}
-.syp-note{margin:12px 2px 0;color:var(--secondary);font-size:10.5px;line-height:1.5;opacity:.87}
+.syp-panel p{font-size:12.5px;line-height:1.45;margin:0;color:var(--secondary)}
+.syp-note{margin:10px 1px 0;color:var(--secondary);font-size:11px;line-height:1.45;opacity:.82}
 .syp-btn{
  appearance:none;border:1px solid var(--seyveo-emerald-deep);
  background:var(--card2);color:var(--text);font:inherit;font-size:13px;font-weight:550;
@@ -173,7 +173,7 @@ html[data-theme="dark"] #seyveoPayDialog .syp-view-switch > button[aria-pressed=
  .syp-dialog{width:calc(100vw - 10px)}.syp-shell{padding:16px 15px}
  .syp-card{padding:15px 16px;min-height:166px}
  .syp-cardbrand{font-size:18px}.syp-number{font-size:18px}
- .syp-action{font-size:10.5px;min-height:71px}
+ .syp-action{font-size:11px;min-height:62px}
 }
 @media(prefers-reduced-motion:reduce){.syp-screen{animation:none}.syp-action:active{transform:none}}
 
@@ -316,6 +316,44 @@ html body #svWorkShell > #seyveoPayDialog[open] .syp-note{
  }
 }
 
+/* Wallet home: small, balanced actions and lightweight assistant text.
+   These selectors affect no other Work screens or Wallet's QR scanner. */
+html body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open]
+ .syp-screen[data-syp-screen="home"] .syp-actions{
+ gap:7px!important;margin:10px 0 10px!important;
+}
+html body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open]
+ .syp-screen[data-syp-screen="home"] .syp-actions > .syp-action{
+ min-height:62px!important;gap:5px!important;padding:7px 3px!important;
+ border-radius:13px!important;
+ font-size:12px!important;font-weight:550!important;line-height:1.2!important;
+ background:var(--sv-ui-quiet-surface,rgba(240,243,244,.64))!important;
+ box-shadow:none!important;filter:none!important;transform:none!important;
+}
+html body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open]
+ .syp-screen[data-syp-screen="home"] .syp-actions > .syp-action svg{
+ width:22px!important;height:22px!important;
+}
+html body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open]
+ .syp-screen[data-syp-screen="home"] > .syp-panel{
+ padding:11px 13px!important;margin-top:10px!important;
+ border-radius:15px!important;background:var(--card)!important;
+ background-image:none!important;box-shadow:none!important;
+}
+html body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open]
+ .syp-screen[data-syp-screen="home"] > .syp-panel h3{
+ font-size:12.5px!important;line-height:1.35!important;margin:0 0 5px!important;
+}
+html body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open]
+ .syp-screen[data-syp-screen="home"] > .syp-panel p{
+ font-size:12.5px!important;line-height:1.45!important;margin:0!important;
+}
+html body #svWorkShell[data-active="wallet"] > #seyveoPayDialog[open]
+ .syp-screen[data-syp-screen="home"] > .syp-note{
+ font-size:11px!important;line-height:1.4!important;
+ margin:12px 1px 0!important;
+}
+
 /* v11 · Wallet uses the exact same permanent Work header footprint as
    My Tasks. Its contents are invisible, but its native height remains.
    Keep the original 4px / 5px capsule margins for pixel-matched alignment.
@@ -340,7 +378,7 @@ html body #svWorkShell[data-active="wallet"] > .syp-view-switch{
  grid-template-columns:repeat(2,minmax(0,1fr))!important;
  align-items:start!important;justify-content:center!important;
  gap:6px!important;
- width:min(300px,calc(100% - 40px))!important;
+ width:min(232px,calc(100% - 40px))!important;
  height:72px!important;min-height:72px!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;
