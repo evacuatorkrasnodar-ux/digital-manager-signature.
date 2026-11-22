@@ -100,24 +100,9 @@ function syncRoom(roomId){
  applyRoom(roomId);
 }
 function buildWork(){
- const scroll=document.querySelector('#svcpRoomInfo .svcp-room-profile-scroll');
- if(!scroll||id('svcpRoomChatThemeSection'))return;
- const section=node('section','svcp-room-profile-section sv-chat-theme-section');
- section.id='svcpRoomChatThemeSection';
- section.setAttribute('aria-label','Оформление переписки');
- const heading=node('div','svcp-room-profile-section-head');
- heading.append(node('strong',null,'Оформление'));
- section.append(heading);
- createChoices(section,value=>{
-  const roomId=id('svcpConversation')?.dataset.roomId;
-  if(!roomId)return false;
-  const ok=store('work:'+roomId,value);
-  if(!ok)return false;
-  applyRoom(roomId);
-  return true;
- },'pearl');
- const view=id('svcpRoomProfileViewSection');
- scroll.insertBefore(section,view||null);
+ // The wallpaper selector belongs to Chat Settings, not the Info sheet.
+ // Remove any previously injected duplicate; keep existing saved preferences.
+ id('svcpRoomChatThemeSection')?.remove();
 }
 function applyFamily(){
  const panel=id('seyveoFamilyDialog');
