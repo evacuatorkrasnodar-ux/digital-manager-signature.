@@ -130,12 +130,16 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  width:100%!important;
  height:100%!important;
  border:0!important;border-radius:0!important;
+ /* The same original glass, but its whole blur+paint layer is only
+    48% visible. This allows actual wallpaper and message shapes to read
+    through instead of becoming an opaque pale smear behind Sayvi. */
+ opacity:.48!important;
  background:linear-gradient(180deg,
-  rgba(244,250,255,.38) 0%,
-  rgba(242,248,253,.24) 53%,
-  rgba(242,248,253,0) 100%)!important;
- -webkit-backdrop-filter:blur(19px) saturate(109%)!important;
- backdrop-filter:blur(19px) saturate(109%)!important;
+  rgba(255,255,255,.24) 0%,
+  rgba(255,255,255,.10) 53%,
+  rgba(255,255,255,0) 100%)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(106%)!important;
+ backdrop-filter:blur(14px) saturate(106%)!important;
  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 58%,transparent 100%)!important;
  mask-image:linear-gradient(to bottom,#000 0%,#000 58%,transparent 100%)!important;
  box-shadow:none!important;
