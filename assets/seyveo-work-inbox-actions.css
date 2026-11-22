@@ -203,3 +203,9 @@ html body #svcpWorkChatScreen.sv-inbox-no-preview .svcp-directory-preview{displa
 @media(prefers-reduced-motion:reduce){
  html body #svcpWorkChatScreen .sv-inbox-row-shell > button.svcp-directory-item{transition:none}
 }
+
+/* The legacy history rule has two ID selectors and !important. Override it
+   explicitly so only the new overflow action occupies the header slot. */
+html body #svcpWorkChatScreen .svcp-work-chat-header > #svcpWorkHistoryTop.sv-inbox-history-proxy{
+ display:none!important;
+}
