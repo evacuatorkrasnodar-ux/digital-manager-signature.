@@ -1168,7 +1168,9 @@ function resizeWorkComposer(){
  const viewport=window.visualViewport?.height||window.innerHeight;
  const editorLimit=Math.max(110,Math.floor(viewport*.62)-editorHeight-66);
  const attachRow=withAttachment?Math.min(12+rowCount*105,editorLimit):0;
- const targetHeight=wraps?editorHeight+55+attachRow:56;
+ // A smaller text-only expansion grows UP without moving the bottom toolbar.
+ // 3px top + 42px toolbar + 4px bottom = 49px; attachment layout stays unchanged.
+ const targetHeight=wraps?editorHeight+(withAttachment?55:49)+attachRow:56;
  form.classList.toggle('svcp-compose-multiline',wraps);
  svcpPlaceComposerActions(wraps);
  form.style.setProperty('--svcp-editor-height',editorHeight+'px');
