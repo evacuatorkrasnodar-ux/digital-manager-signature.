@@ -26,7 +26,14 @@
  if(notesPage)shell.append(notesPage);
  // Wallet lives in the same Work shell: one genuine navigation capsule.
  const walletDialog=document.getElementById('seyveoPayDialog');
- if(walletDialog)shell.append(walletDialog);
+ if(walletDialog){
+  shell.append(walletDialog);
+  // Pay controller executes earlier than this Work shell. Its two genuine
+  // Card / Finances controls initially live in the dialog; reparent them
+  // to the free top header area once this shell exists, just like Notebook.
+  const walletChoices=walletDialog.querySelector('.syp-view-switch');
+  if(walletChoices)shell.append(walletChoices);
+ }
  // Reuse the three real Notebook launch buttons in the spare top header area.
  // Their original listeners continue to open the editors and save real notes.
  const notebookChoices=document.getElementById('svNotebookCreateTiles');
