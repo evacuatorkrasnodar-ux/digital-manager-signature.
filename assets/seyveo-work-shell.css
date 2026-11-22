@@ -697,9 +697,25 @@ html body #svWorkShell[data-active="business"] #svWorkCreateChoices > button:foc
  padding:6px 5px!important;
  gap:10px!important;
 }
-#svWorkShell[data-active="business"] #svCabinetContinueWithSayvi .sv-cabinet-resume-spark{
- display:inline-flex!important;align-items:center!important;justify-content:center!important;
- width:28px!important;height:28px!important;flex:0 0 28px!important;
+/* Cabinet list: Sayvi must match the 18px line icons in the rows below.
+   Keep the shared 28px layout slot for identical text alignment, but paint
+   the actual SEYVEO mark at 18px without extra ring, fill, or effects. */
+html body #svWorkShell[data-active="business"] #svCabinetContinueWithSayvi
+ .sv-cabinet-resume-spark.sv-sayvi-symbol{
+ box-sizing:border-box!important;
+ display:inline-grid!important;place-items:center!important;
+ flex:0 0 28px!important;
+ width:28px!important;min-width:28px!important;max-width:28px!important;
+ height:28px!important;min-height:28px!important;max-height:28px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background-color:transparent!important;
+ background-image:var(--sv-sayvi-mark-image)!important;
+ background-position:center center!important;
+ background-size:18px 18px!important;
+ background-repeat:no-repeat!important;
+ box-shadow:none!important;filter:none!important;
+ transform:none!important;
  color:inherit!important;
 }
 #svWorkShell[data-active="business"] #tasksPage .svcp-manager-row,
