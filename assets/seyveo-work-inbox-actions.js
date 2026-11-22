@@ -79,11 +79,7 @@ function openSheet(type,id='',nested=false){
  else if(type==='invite')showInvite();
  else if(type==='group')showGroupForm();
  else if(type==='settings')showSettings();
- else if(type==='display')showDisplay();
- else if(type==='appearance')showAppearance();
- else if(type==='wallpapers')showWallpapers();
  else if(type==='notifications')showNotifications();
- else if(type==='data')showData();
  else if(type==='archives')showArchives();
  else if(type==='room')showRoomActions(id);
  back.focus({preventScroll:true});
@@ -128,21 +124,61 @@ function menuLink(label,help,icon,fn){
  const chev=node('span','sv-inbox-link-chevron');chev.innerHTML=svg('chevron');row.append(chev);
  body.append(row);return row;
 }
-function showSettings(){
- sectionHeading('Основное');
- menuLink('Тема','Светлая, тёмная или системная','sliders',()=>openSubSheet('appearance','settings'));
- menuLink('Уведомления','Режим непрочитанных, тихие чаты','bell',()=>openSubSheet('notifications','settings'));
- menuLink('Отображение','Плотность списка и предпросмотр сообщений','sliders',()=>openSubSheet('display','settings'));
- sectionHeading('Хранение');
- menuLink('История и данные','История разговоров — отдельно от архива','clock',()=>openSubSheet('data','settings'));
+/* The approved SEYVEO themes used to live in Management.
+   Their ORIGINAL choice buttons remain the sole controller of app appearance.
+   This compact selector only forwards a user click to those existing buttons. */
+const SEYVEO_THEMES=[
+ {id:'light',label:'Белая',detail:'White Velvet'},
+ {id:'graphite',label:'Графит',detail:'Classic Graphite'},
+ {id:'dark',label:'Изумруд',detail:'Emerald Royale'},
+ {id:'sapphire',label:'Сапфир',detail:'Midnight Sapphire'},
+ {id:'plum',label:'Медь',detail:'Copper Dune'},
+ {id:'auto',label:'Авто',detail:'По устройству'}
+];
+function currentAppTheme(){
+ try{
+  const stored=JSON.parse(localStorage.getItem('dm-signature-living-v2')||'null');
+  if(stored&&typeof stored.theme==='string')return stored.theme;
+ }catch{}
+ return 'light';
 }
-function showDisplay(){
- const items=[
-  ['compact','Компактный список','Больше переписок на экране'],
-  ['previews','Показывать текст последнего сообщения','Одна строка под именем']
- ];
- for(const [key,label,help] of items)settingToggle(key,label,help);
- body.append(node('p','sv-inbox-hint','Настройки списка сохраняются на этом устройстве.'));
+function renderThemeSelection(host){
+ const selected=currentAppTheme();
+ host.querySelectorAll('[data-sv-theme-select]').forEach(control=>{
+  const active=control.dataset.svThemeSelect===selected;
+  control.setAttribute('aria-pressed',String(active));
+ });
+}
+function makeThemeOptions(){
+ const group=node('div','sv-inbox-theme-grid');
+ group.setAttribute('role','group');
+ group.setAttribute('aria-label','Фирменные темы SEYVEO');
+ for(const t of SEYVEO_THEMES){
+  const b=node('button','sv-inbox-theme-card');b.type='button';
+  b.dataset.svThemeSelect=t.id;
+  b.setAttribute('aria-label',t.label+' — '+t.detail);
+  const swatch=node('span','sv-inbox-theme-art sv-inbox-theme-art--'+t.id);
+  swatch.setAttribute('aria-hidden','true');
+  const name=node('strong',null,t.label),detail=node('small',null,t.detail);
+  const indicator=node('span','sv-inbox-theme-selected');indicator.innerHTML=svg('check');indicator.setAttribute('aria-hidden','true');
+  b.append(swatch,name,detail,indicator);
+  b.addEventListener('click',()=>{
+   const original=document.querySelector('#manageThemeScreen [data-theme-choice="'+t.id+'"]');
+   if(!original)return;
+   original.click(); // Existing controller saves theme, palette, browser chrome & sphere.
+   renderThemeSelection(group);
+  });
+  group.append(b);
+ }
+ renderThemeSelection(group);
+ return group;
+}
+function sectionHeading(textValue){body.append(node('h3','sv-inbox-section-heading',textValue))}
+function menuLink(label,help,icon,fn){
+ const row=button(label,icon,fn,'sv-inbox-setting-link');
+ if(help){const labelNode=row.querySelector('span');if(labelNode)labelNode.append(node('small',null,help))}
+ const chev=node('span','sv-inbox-link-chevron');chev.innerHTML=svg('chevron');row.append(chev);
+ body.append(row);return row;
 }
 function settingToggle(key,label,help){
  const row=node('label','sv-inbox-toggle-row'),copy=node('span');
@@ -151,34 +187,16 @@ function settingToggle(key,label,help){
  control.addEventListener('change',()=>{prefs[key]=control.checked;savePrefs();decorateRows()});
  row.append(copy,control);body.append(row);return control;
 }
-function showAppearance(){
- body.append(node('p','sv-inbox-hint','Тема меняет оформление всего SEYVEO. Для отдельной переписки фон можно выбрать в карточке собеседника.'));
- const options=[['light','Светлая','Белоснежный White Pearl'],['graphite','Тёмная','Графитовая тема'],['auto','Системная','Как на устройстве']];
- let saved='light';try{saved=JSON.parse(localStorage.getItem('dm-signature-living-v2')||'{}')?.theme||'light'}catch{}
- for(const [value,label,hint] of options){
-  const row=button(label,'',()=>{
-   const choice=document.querySelector('[data-theme-choice="'+value+'"]');
-   if(!choice){return}
-   choice.click();
-   for(const el of body.querySelectorAll('.sv-inbox-choice-row'))el.setAttribute('aria-pressed',String(el.dataset.themeValue===value));
-  },'sv-inbox-choice-row');
-  row.dataset.themeValue=value;row.setAttribute('aria-pressed',String(saved===value));
-  const copy=row.querySelector('span');copy.append(node('small',null,hint));
-  const indicator=node('span','sv-inbox-choice-indicator');indicator.innerHTML=svg('check');row.append(indicator);
-  body.append(row);
- }
- sectionHeading('Оформление отдельных чатов');
- menuLink('Фон переписки','Белый, Небо или Вечер — для выбранного чата','sliders',()=>openSubSheet('wallpapers','appearance'));
-}
-function showWallpapers(){
- body.append(node('p','sv-inbox-hint','Выберите разговор. Откроется существующая карточка чата с настройками его фона.'));
- const rooms=allRooms().filter(r=>!employee()||r.kind==='groups'||r.id==='dm-elena'||r.id==='dm-sayvi');
- for(const r of rooms){
-  menuLink(r.label,r.kind==='groups'?'Группа':r.hint?.split(' · ')[0]||'Личный чат','sliders',()=>{
-   openChat(r.id);
-   requestAnimationFrame(()=>{const heading=$('svcpConversationHeading');if(heading&&$('svcpConversation')?.dataset.roomId===r.id)heading.click()});
-  });
- }
+function showSettings(){
+ sectionHeading('Темы SEYVEO');
+ body.append(makeThemeOptions());
+ sectionHeading('Сообщения');
+ menuLink('Уведомления','Непрочитанные и тихие чаты','bell',()=>openSubSheet('notifications','settings'));
+ sectionHeading('Список чатов');
+ settingToggle('compact','Компактный список','Уменьшить высоту строк');
+ settingToggle('previews','Текст последнего сообщения','Показывать под именем собеседника');
+ sectionHeading('История');
+ menuLink('История разговоров','Сообщения и поручения, не архив','clock',()=>{closeSheet();history.click()});
 }
 function showNotifications(){
  sectionHeading('На этом устройстве');
