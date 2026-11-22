@@ -234,23 +234,21 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  > .svcp-minimal-identity-header #svcpRoomAvatar::after{
  content:none!important;display:none!important;
 }
-/* SEYVEO standard White Pearl material recolored cobalt.
-   Keep exactly our approved button shadows, 4px pearl blur and 0.75px rim.
-   The approved 18% surface alpha is identical to the white original.
-   ONLY the original white pigment and white rim become blue; no custom
-   concave glass/extra rings. Do not touch portrait, sizes or coordinates. */
+/* Chat header Back + Sayvi name use the SAME slightly darkened blue glass
+   token as the active bottom composer and compact Plus. No extra relief,
+   rings or independent color skins. Preserve avatar and interactions. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack{
  box-sizing:border-box!important;
- border:.75px solid rgba(5,55,143,.84)!important;
+ border:1px solid var(--svcp-conversation-blue-rim,rgba(9,100,171,.57))!important;
  border-radius:var(--sv-white-pearl-radius-circle,50%)!important;
- background:rgba(11,79,193,.18)!important;
+ background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
  background-image:none!important;
  color:#FFFFFF!important;
- box-shadow:var(--sv-white-pearl-circle-shadow)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
+ backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
@@ -265,9 +263,9 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack:active{
- /* Taps are functional but visually stationary: not a dock control. */
- background:rgba(11,79,193,.18)!important;
- box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ /* Match the normal material; non-dock buttons never visibly depress. */
+ background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
+ box-shadow:none!important;
  transform:none!important;
  transition:none!important;
 }
@@ -281,13 +279,13 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
- background:rgba(11,104,208,.18)!important;
+ background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
  background-image:none!important;
- border:.75px solid rgba(6,64,153,.84)!important;
+ border:1px solid var(--svcp-conversation-blue-rim,rgba(9,100,171,.57))!important;
  border-radius:var(--sv-white-pearl-radius-capsule,999px)!important;
- box-shadow:var(--sv-white-pearl-dock-shadow)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
+ backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
