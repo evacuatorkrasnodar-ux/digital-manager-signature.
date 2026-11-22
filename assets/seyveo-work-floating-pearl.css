@@ -1,37 +1,32 @@
-/* SEYVEO · Floating Pearl 2 — true Apple-like minimal navigation.
-   NO outer capsule. A single lightweight pearl follows the active tab.
-   Business: 4 sections; personal: 3; staff workspace: 2.
-   Real button targets are 44px high. The indicator itself is only 34px.
-   This stylesheet supersedes the legacy Work segmented navigation. */
+/* SEYVEO Work · slim pearl segmented navigation, 22 Nov 2026.
+   Same visual family as Wallet's Card / Finances switch, only thinner.
+   Four Business tabs, three ONE tabs, two Employee tabs. One live DOM
+   and one moving selection. Keep each native tap target 44px tall. */
 @media(max-width:699px){
  html body .app.sv-dock-width-workspace:has(> #svWorkShell[data-shared-work="true"]){
   padding-left:0!important;padding-right:0!important;
  }
 }
-html body #svWorkShell[data-shared-work="true"] #svWorkTabs{
+/* This stylesheet owns the capsule, superseding older global work-tab
+   and White Pearl selectors without altering those other controls. */
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]),
+html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]),
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]){
  box-sizing:border-box!important;
  order:1!important;
- position:relative!important;
- isolation:isolate!important;
- display:grid!important;
- align-items:center!important;
- align-self:center!important;
+ position:relative!important;isolation:isolate!important;
+ display:grid!important;align-items:center!important;align-self:center!important;
  grid-template-columns:repeat(4,minmax(0,1fr))!important;
- width:calc(100% - 24px)!important;
- max-width:404px!important;
- min-width:0!important;
- height:44px!important;min-height:44px!important;
- margin:4px auto 5px!important;
- padding:0 1px!important;
- gap:0!important;
- border:0!important;border-radius:0!important;
- background:transparent!important;background-image:none!important;
+ width:calc(100% - 24px)!important;max-width:404px!important;min-width:0!important;
+ height:38px!important;min-height:38px!important;
+ margin:4px auto 5px!important;padding:0 3px!important;gap:0!important;
+ border:1px solid rgba(170,186,199,.26)!important;
+ border-radius:999px!important;
+ background:rgba(238,242,246,.52)!important;background-image:none!important;
  box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ -webkit-backdrop-filter:blur(10px) saturate(105%)!important;
+ backdrop-filter:blur(10px) saturate(105%)!important;
  transform:none!important;overflow:visible!important;
-}
-html body #svWorkShell[data-shared-work="true"] #svWorkTabs[data-business="true"]{
- grid-template-columns:repeat(4,minmax(0,1fr))!important;
 }
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs[data-one="true"]{
  grid-template-columns:repeat(3,minmax(0,1fr))!important;
@@ -45,91 +40,72 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs[hidden],
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][hidden]{
  display:none!important;
 }
-/* Defeat the original White Pearl / depth-system selectors that painted a
-   full-width frosted bar even after the floating variant was introduced. */
-html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]),
-html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]){
- border:0!important;border-radius:0!important;
- background:transparent!important;background-image:none!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs::before,
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs::after{
  content:none!important;display:none!important;
 }
-/* The pearl is not clickable and does not affect layout. */
+/* Selection follows the real buttons; no duplicate button background.
+   A 32px highlight sits inside a 38px capsule; outer 44px touch targets
+   remain available for accessibility and comfortable tapping. */
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection{
- position:absolute!important;
- z-index:0!important;pointer-events:none!important;
- box-sizing:border-box!important;
- top:5px!important;left:0!important;
- width:80px;
- height:34px!important;min-height:34px!important;
- padding:0!important;margin:0!important;
- border:1px solid transparent!important;
+ position:absolute!important;z-index:0!important;pointer-events:none!important;
+ box-sizing:border-box!important;top:2px!important;left:0!important;
+ width:80px;height:32px!important;min-height:32px!important;
+ margin:0!important;padding:0!important;
+ border:1px solid rgba(205,215,226,.42)!important;
  border-radius:999px!important;
- background:
-  linear-gradient(145deg,rgba(255,255,255,.94),rgba(244,247,251,.86)) padding-box,
-  linear-gradient(130deg,rgba(255,255,255,.96),rgba(173,199,218,.53),rgba(247,254,255,.9)) border-box!important;
- box-shadow:
-  inset 0 1px 0 rgba(255,255,255,.93),
-  0 2px 6px rgba(45,66,88,.09)!important;
- -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
- backdrop-filter:blur(12px) saturate(108%)!important;
- transform:translate3d(0,0,0);
+ background:rgba(255,255,255,.90)!important;background-image:none!important;
+ box-shadow:0 1px 3px rgba(41,58,80,.055)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  will-change:transform,width;
- transition:
-  transform 190ms cubic-bezier(.22,.82,.24,1),
-  width 190ms cubic-bezier(.22,.82,.24,1)!important;
+ transition:transform 190ms cubic-bezier(.22,.82,.24,1),width 190ms cubic-bezier(.22,.82,.24,1)!important;
 }
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection.sv-work-pearl-initial{
  transition:none!important;
 }
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:not([hidden]){
- display:flex!important;
- position:relative!important;z-index:1!important;
+ display:flex!important;position:relative!important;z-index:1!important;
  box-sizing:border-box!important;
  align-items:center!important;justify-content:center!important;
  width:100%!important;min-width:0!important;
  height:44px!important;min-height:44px!important;
  margin:0!important;padding:0 2px!important;
  border:0!important;border-radius:0!important;
- background:transparent!important;background-image:none!important;
- box-shadow:none!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- color:#737780!important;
- font:500 13px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
- letter-spacing:-.018em!important;
+ color:#747B86!important;
+ font:530 12.5px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.015em!important;
  white-space:nowrap!important;text-align:center!important;
- touch-action:manipulation!important;
- -webkit-tap-highlight-color:transparent!important;
- transform:none!important;
- transition:color 170ms ease!important;
+ touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;
+ transform:none!important;transition:color 170ms ease!important;
 }
 html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][aria-pressed="true"]:not([hidden]){
- color:#171A1F!important;font-weight:640!important;
- background:transparent!important;box-shadow:none!important;
- border:0!important;
+ color:#1A2028!important;font-weight:640!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]){
+ border-color:rgba(214,230,241,.15)!important;
+ background:rgba(223,234,245,.085)!important;
+ box-shadow:none!important;
 }
 html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:not([hidden]){
- color:#B8BDC6!important;background:transparent!important;box-shadow:none!important;
+ color:#BDC4CD!important;background:transparent!important;box-shadow:none!important;
 }
 html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][aria-pressed="true"]:not([hidden]){
- color:#FAFBFC!important;background:transparent!important;box-shadow:none!important;font-weight:640!important;
+ color:#F8FAFC!important;background:transparent!important;box-shadow:none!important;font-weight:640!important;
 }
 html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection{
- background:
-  linear-gradient(145deg,rgba(101,109,118,.72),rgba(55,62,70,.8)) padding-box,
-  linear-gradient(130deg,rgba(215,225,237,.5),rgba(110,126,140,.42),rgba(213,225,236,.48)) border-box!important;
- box-shadow:inset 0 1px 0 rgba(247,252,255,.12),0 2px 7px rgba(0,0,0,.16)!important;
+ border-color:rgba(216,230,242,.17)!important;
+ background:rgba(213,227,240,.16)!important;
+ box-shadow:none!important;
 }
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:focus-visible{
  outline:2px solid #0A84FF!important;outline-offset:-2px!important;border-radius:18px!important;
 }
 @media(max-width:355px){
  html body #svWorkShell[data-shared-work="true"] #svWorkTabs[data-business="true"] > button[data-sv-work-tab]:not([hidden]){
-  font-size:11.8px!important;letter-spacing:-.028em!important;
+  font-size:11.5px!important;letter-spacing:-.025em!important;
  }
 }
 @media(prefers-reduced-motion:reduce){
