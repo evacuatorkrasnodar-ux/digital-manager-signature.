@@ -176,3 +176,142 @@ html[data-theme="dark"] #seyveoPayDialog .syp-view-switch > button[aria-pressed=
  .syp-action{font-size:10.5px;min-height:71px}
 }
 @media(prefers-reduced-motion:reduce){.syp-screen{animation:none}.syp-action:active{transform:none}}
+
+
+/* v9 · Wallet is an inline, seamless SEYVEO Work page.
+   One existing #svWorkTabs navigation (not a cloned tab strip), one dock.
+   The original card, QR, cards/history and Finance controllers are kept. */
+html body #svWorkShell[data-active="wallet"] > :not(#svWorkTabs):not(#seyveoPayDialog){
+ display:none!important;
+}
+html body #svWorkShell[data-active="wallet"]{
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ border:0!important;
+ min-width:0!important;
+ overflow:visible!important;
+}
+/* Neutralize the former modal geometry without affecting other dialogs. */
+html body #svWorkShell > dialog#seyveoPayDialog[open]{
+ display:block!important;
+ position:relative!important;
+ inset:auto!important;
+ top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ order:2!important;z-index:auto!important;
+ box-sizing:border-box!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ min-height:0!important;height:auto!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ overflow:visible!important;
+ overscroll-behavior:auto!important;
+ color:var(--text)!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open]::backdrop{
+ display:none!important;
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open] > .syp-shell{
+ box-sizing:border-box!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ min-height:0!important;
+ padding:0 18px calc(104px + env(safe-area-inset-bottom,0px))!important;
+ margin:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--text)!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open] .syp-top{
+ display:none!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open] .syp-screen{
+ animation:none!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open] .syp-card{
+ margin:0!important;
+}
+/* Two top-level Notebook-like icon choices, no chunky inner capsule. */
+html body #svWorkShell > #seyveoPayDialog[open] .syp-view-switch{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:flex-start!important;justify-content:center!important;
+ gap:33px!important;width:100%!important;min-width:0!important;
+ margin:2px auto 15px!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open] .syp-view-switch > button{
+ appearance:none!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:flex-start!important;
+ flex:0 0 80px!important;
+ box-sizing:border-box!important;
+ width:80px!important;height:70px!important;min-height:70px!important;
+ margin:0!important;padding:0!important;gap:6px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--secondary,#767b83)!important;
+ font:520 12px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.01em!important;
+ cursor:pointer;transform:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open] .syp-view-switch .syp-view-icon{
+ display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;
+ box-sizing:border-box!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ border:1px solid rgba(174,185,197,.25)!important;
+ border-radius:50%!important;
+ background:rgba(243,246,249,.50)!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--text,#191D21)!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open] .syp-view-switch .syp-view-icon svg{
+ display:block!important;
+ width:22px!important;height:22px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ filter:none!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open] .syp-view-switch > button[aria-pressed="true"]{
+ color:var(--text,#171A1E)!important;font-weight:650!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #svWorkShell > #seyveoPayDialog[open] .syp-view-switch > button[aria-pressed="true"] > .syp-view-icon{
+ border-color:rgba(152,172,187,.34)!important;
+ background:rgba(255,255,255,.76)!important;
+ box-shadow:none!important;
+}
+html:root[data-theme="dark"] body #svWorkShell > #seyveoPayDialog[open] .syp-view-switch .syp-view-icon{
+ border-color:rgba(211,228,240,.15)!important;
+ background:rgba(217,231,242,.075)!important;
+ color:var(--text,#f3f7fa)!important;
+}
+html:root[data-theme="dark"] body #svWorkShell > #seyveoPayDialog[open] .syp-view-switch > button[aria-pressed="true"] > .syp-view-icon{
+ border-color:rgba(221,235,244,.26)!important;
+ background:rgba(215,230,241,.15)!important;
+}
+/* Avoid edges under the permanent dock when scrolling the full page. */
+html body #svWorkShell > #seyveoPayDialog[open] .syp-note{
+ margin-top:15px!important;
+}
+@media(max-width:360px){
+ html body #svWorkShell > #seyveoPayDialog[open] > .syp-shell{
+  padding-left:14px!important;padding-right:14px!important;
+ }
+ html body #svWorkShell > #seyveoPayDialog[open] .syp-view-switch{
+  gap:22px!important;
+ }
+}
