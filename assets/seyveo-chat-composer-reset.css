@@ -5,8 +5,9 @@
    Bottom 6px follows the accessible iOS PWA viewport; its system-owned
    Home-indicator area is never counted twice. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
- --svcp-clean-blue:rgba(40,143,207,.24);
- --svcp-clean-line:rgba(241,251,255,.42);
+ /* Reference-inspired deep teal glass. The panel remains translucent. */
+ --svcp-clean-blue:rgba(16,120,186,.66);
+ --svcp-clean-line:rgba(219,248,255,.69);
  all:unset!important;
  display:block!important;
  box-sizing:border-box!important;
@@ -47,14 +48,15 @@ html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
  margin:0!important;padding:0!important;
  border:1px solid var(--svcp-clean-line)!important;
  border-radius:25px!important;
- /* Actual active composer: translucent blue glass, NOT the old .94 blue plate.
-    The conversation and message shapes must blur THROUGH this single surface. */
+ /* Single, darker translucent blue-teal glass skin, with the visible
+    pearlescent hairline and real backdrop blur of the Apple reference. */
  background:var(--svcp-clean-blue)!important;
  background-image:none!important;
- -webkit-backdrop-filter:blur(22px) saturate(118%)!important;
- backdrop-filter:blur(22px) saturate(118%)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.28),
-  0 5px 17px rgba(12,70,121,.12)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(120%)!important;
+ backdrop-filter:blur(22px) saturate(120%)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.42),
+  0 0 0 .5px rgba(9,89,151,.28),
+  0 5px 15px rgba(10,74,123,.14)!important;
  transform:none!important;transition:none!important;
  pointer-events:none!important;
 }
@@ -95,9 +97,10 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
  border-radius:50%!important;
  border:1px solid var(--svcp-clean-line)!important;
  background:var(--svcp-clean-blue)!important;
- -webkit-backdrop-filter:blur(18px) saturate(115%)!important;
- backdrop-filter:blur(18px) saturate(115%)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.27)!important;
+ -webkit-backdrop-filter:blur(20px) saturate(118%)!important;
+ backdrop-filter:blur(20px) saturate(118%)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.42),
+  0 0 0 .5px rgba(9,89,151,.28)!important;
  color:white!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpAttachFile{
@@ -122,18 +125,18 @@ html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpP
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  display:block!important;
  box-sizing:border-box!important;
- width:33px!important;height:33px!important;
- min-width:33px!important;max-width:33px!important;
- min-height:33px!important;max-height:33px!important;
+ width:36px!important;height:36px!important;
+ min-width:36px!important;max-width:36px!important;
+ min-height:36px!important;max-height:36px!important;
  aspect-ratio:1 / 1!important;
  margin:auto!important;padding:0!important;
  object-fit:contain!important;object-position:center!important;
- /* Keep the original Sayvi image unwarped. A real circular canvas
-    replaces the transparent oval-looking silhouette of the bare artwork. */
- background:rgba(9,91,174,.44)!important;
- border:0!important;border-radius:50%!important;
- clip-path:circle(50% at 50% 50%)!important;
- overflow:hidden!important;box-shadow:none!important;
+ /* The original 256px WebP is already a complete circular jade/platinum
+    portrait. Never paint a second circle or clip its soft native edges. */
+ background:transparent!important;
+ border:0!important;border-radius:0!important;
+ clip-path:none!important;
+ overflow:visible!important;box-shadow:none!important;
  filter:none!important;opacity:1!important;
  transform:none!important;animation:none!important;
 }
