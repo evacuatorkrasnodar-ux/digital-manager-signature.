@@ -136,14 +136,12 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  height:100%!important;
  transform:translateX(-50%)!important;
  border:0!important;border-radius:0!important;
- /* Neutral, colorless Apple-style matte: never tint the header cyan.
-    Desaturate ONLY the pixels seen through this layer, not the chat wallpaper. */
- background:linear-gradient(180deg,
-  rgba(255,255,255,.10) 0%,
-  rgba(255,255,255,.055) 52%,
-  transparent 100%)!important;
- -webkit-backdrop-filter:blur(16px) saturate(0%) brightness(1.12)!important;
- backdrop-filter:blur(16px) saturate(0%) brightness(1.12)!important;
+ /* Pure frosted glass, no painted tint and no grayscale processing.
+    Only the underlying conversation is blurred, like Apple's translucent UI. */
+ background:transparent!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:blur(12px)!important;
+ backdrop-filter:blur(12px)!important;
  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,rgba(0,0,0,.68) 66%,transparent 100%)!important;
  mask-image:linear-gradient(to bottom,#000 0%,#000 35%,rgba(0,0,0,.68) 66%,transparent 100%)!important;
  box-shadow:none!important;
@@ -190,12 +188,12 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  -webkit-backdrop-filter:blur(14px) saturate(106%)!important;
  backdrop-filter:blur(14px) saturate(106%)!important;
 }
+/* Both light and dark palettes use the same unpainted frosted glass.
+   The real chat wallpaper determines the color seen through the header. */
 html[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  > .svcp-minimal-identity-header::before{
- background:linear-gradient(180deg,
-  rgba(43,51,62,.40) 0%,
-  rgba(43,51,62,.24) 53%,
-  transparent 100%)!important;
+ background:transparent!important;
+ background-image:none!important;
 }
 html[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header #svcpRoomAvatar{
