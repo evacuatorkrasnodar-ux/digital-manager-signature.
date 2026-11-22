@@ -963,140 +963,6 @@ html body #svcpWorkChatScreen[data-view="room"]
  margin:0!important;transform:none!important;translate:none!important;
 }
 
-/* v27 · visible send circle in BOTH compact and expanded composers.
-   Previous selector only matched compact + explicit theme, so the circle
-   disappeared when the editor changed mode or the theme attribute differed.
-   Keep existing placement/behavior; paint one reliable, centered blue circle. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus,:focus-visible){
- box-sizing:border-box!important;
- display:grid!important;
- place-items:center!important;
- width:38px!important;min-width:38px!important;max-width:38px!important;
- height:38px!important;min-height:38px!important;max-height:38px!important;
- padding:0!important;margin:0!important;
- border:0!important;outline:0!important;
- border-radius:50%!important;
- background:#0A84FF!important;background-image:none!important;
- background-color:#0A84FF!important;
- background-clip:border-box!important;
- color:#FFFFFF!important;
- box-shadow:none!important;text-shadow:none!important;
- opacity:1!important;filter:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- animation:none!important;transition:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg{
- display:block!important;
- position:static!important;
- width:19px!important;height:19px!important;
- min-width:19px!important;min-height:19px!important;
- margin:0!important;padding:0!important;
- color:#fff!important;stroke:#fff!important;
- stroke-width:1.55!important;fill:none!important;
- transform:none!important;filter:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send > span{
- display:none!important;
-}
-/* Respect the JS-driven send/mic visibility. Never show a send circle while
-   the draft is empty, even if earlier styles force display:grid. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm[data-has-content="false"] .svcp-chat-compose-field > button.svcp-chat-send,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send[hidden]{
- display:none!important;visibility:hidden!important;pointer-events:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:focus-visible{
- outline:2px solid rgba(10,132,255,.58)!important;
- outline-offset:3px!important;
-}
-
-/* v28 · Flat send, refined thin arrow; move the compact control 6px inward.
-   Preserve the microphone's existing centering and every composer/dock size. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:not(#svcpVoiceRecord),
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:not(#svcpVoiceRecord),
-html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:not(#svcpVoiceRecord){
- right:16px!important;left:auto!important;
- box-shadow:none!important;background-image:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus){
- box-shadow:none!important;filter:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc path{
- fill:none!important;stroke:currentColor!important;
- stroke-width:1.2!important;stroke-linecap:round!important;
- stroke-linejoin:round!important;
-}
-
-/* v29 · One flat blue SVG disc, never an extra button background.
-   The drawing itself owns the circle; hover and active cannot create depth.
-   Keep the inward 16px send offset and original microphone placement. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus,:focus-visible){
- background:transparent!important;background-image:none!important;
- box-shadow:none!important;border:0!important;
- transform:none!important;filter:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc{
- display:block!important;width:34px!important;height:34px!important;
- min-width:34px!important;min-height:34px!important;
- flex:none!important;overflow:visible!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc circle{
- fill:#0A84FF!important;stroke:none!important;
-}
-
-/* v31 · Send button is ONE flat vector circle; no secondary paint layers.
-   Keep the original blue, 34px artwork, thin arrow and right:16px placement. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus,:focus-visible){
- -webkit-appearance:none!important;appearance:none!important;
- background:transparent!important;background-color:transparent!important;
- background-image:none!important;background-clip:border-box!important;
- border:0!important;box-shadow:none!important;text-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- filter:none!important;opacity:1!important;mix-blend-mode:normal!important;
- -webkit-mask-image:none!important;mask-image:none!important;
- animation:none!important;transition:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send::before,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send::after{
- content:none!important;display:none!important;
- background:none!important;border:0!important;box-shadow:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc :is(circle,path){
- background:none!important;box-shadow:none!important;
- filter:none!important;opacity:1!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- mix-blend-mode:normal!important;animation:none!important;transition:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc circle{
- fill:#0A84FF!important;stroke:none!important;stroke-width:0!important;
-}
-
 /* v32 · Dark graphite Plus and mic, equal optical weight and balanced insets.
    Compact Work Chat only: keep the Plus 44px pearl touch target and Sayvi
    artwork unchanged. Right mic now matches Send's 16px inner inset so the
@@ -1466,29 +1332,95 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpChatForm.svcp-compose-multiline > #svcpAttachFile::after{
  content:none!important;display:none!important;
 }
-/* Flat send disc: its SVG circle supplies all blue, never the outer button. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-send,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-send:is(:hover,:focus,:focus-visible,:active){
- -webkit-appearance:none!important;appearance:none!important;
+/* Work Chat Send · canonical flat SVG, 22 November 2026.
+   The 44px tap area has one 34px painted vector circle, no second face.
+   Both modes have exactly the same bottom/right anchor inside the same form. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpChatSendFlat,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpChatSendFlat:is(:hover,:active,:focus,:focus-visible){
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ position:absolute!important;top:auto!important;left:auto!important;right:6px!important;bottom:6px!important;
+ grid-column:auto!important;grid-row:auto!important;align-self:auto!important;justify-self:auto!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;outline:0!important;
  background:transparent!important;background-image:none!important;
- border:0!important;border-radius:0!important;
- box-shadow:none!important;filter:none!important;text-shadow:none!important;
+ box-shadow:none!important;text-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ -webkit-appearance:none!important;appearance:none!important;
+ filter:none!important;opacity:1!important;mix-blend-mode:normal!important;
  transform:none!important;translate:none!important;scale:1!important;
  transition:none!important;animation:none!important;
- -webkit-tap-highlight-color:transparent!important;
+ -webkit-tap-highlight-color:transparent!important;z-index:60!important;
 }
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm .svcp-chat-send::before,
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm .svcp-chat-send::after{
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpChatSendFlat::before,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpChatSendFlat::after{
  content:none!important;display:none!important;
 }
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-send svg.svcp-send-arrow-disc,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm .svcp-chat-send svg.svcp-send-arrow-disc :is(circle,path){
- background:none!important;box-shadow:none!important;filter:none!important;
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpChatSendFlat > svg.svcp-flat-send-symbol{
+ display:block!important;position:static!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;overflow:visible!important;
+ transform:none!important;transition:none!important;animation:none!important;
+ filter:none!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpChatSendFlat .svcp-flat-face{
+ fill:var(--sv-chat-outgoing,#0A84FF)!important;stroke:none!important;stroke-width:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpChatSendFlat .svcp-flat-arrow{
+ display:block!important;fill:none!important;stroke:#fff!important;
+ stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpChatSendFlat .svcp-flat-stop{
+ display:none!important;fill:#fff!important;stroke:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] > #svcpChatSendFlat .svcp-flat-arrow{
+ display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] > #svcpChatSendFlat .svcp-flat-stop{
+ display:block!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-has-content="false"]:not([data-sayvi-responding="true"]) > #svcpChatSendFlat{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpChatSendFlat:disabled{
+ opacity:.52!important;cursor:default!important;
+}
+/* One stable microphone: same bottom/right slot when compact, adjacent left
+   when expanded. Only the visibility changes, not the Send coordinates. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpVoiceRecord,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpVoiceRecord:is(:hover,:active,:focus,:focus-visible){
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ position:absolute!important;top:auto!important;left:auto!important;right:6px!important;bottom:6px!important;
+ grid-column:auto!important;grid-row:auto!important;align-self:auto!important;justify-self:auto!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;outline:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- opacity:1!important;transform:none!important;transition:none!important;animation:none!important;
+ color:var(--text,#20262C)!important;filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;z-index:59!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpVoiceRecord svg{
+ display:block!important;position:static!important;
+ width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;
+ margin:auto!important;transform:none!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar > button#svcpVoiceRecord{
+ right:58px!important;bottom:6px!important;top:auto!important;
+ display:grid!important;transform:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):is([data-has-content="true"],[data-sayvi-responding="true"]) > #svcpVoiceRecord{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+/* Fix only the shared width; the existing matte capsule and upward-growth
+   calculations remain unchanged. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
+ width:min(430px,calc(100% - 12px))!important;
+ max-width:calc(100% - 12px)!important;margin-inline:auto!important;
 }
