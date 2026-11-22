@@ -275,3 +275,29 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
  scroll-padding-top:calc(119px + env(safe-area-inset-top,0px))!important;
  -webkit-mask-image:none!important;mask-image:none!important;
 }
+
+/* Pearl/Sayvi identity as in the approved WHITE screenshot.
+   Geometry and avatar image are unchanged; Sky retains the blue name pill. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
+ background:rgba(249,249,251,.88)!important;
+ background-color:rgba(249,249,251,.88)!important;
+ border:.75px solid rgba(225,228,232,.72)!important;
+ box-shadow:0 2px 12px rgba(43,49,60,.10)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(105%)!important;
+ backdrop-filter:blur(12px) saturate(105%)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill strong#svcpConversationTitle{
+ color:#20262D!important;-webkit-text-fill-color:#20262D!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill svg,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill svg path{
+ color:#77818D!important;stroke:#77818D!important;
+}
