@@ -21,6 +21,10 @@
  --sv-nav-pearl-bg:var(--sv-white-pearl-surface);
  --sv-nav-pearl-shadow:var(--sv-white-pearl-circle-shadow);
  --sv-header-row:62px;
+ /* Native top layout contract: clear the notch, keep a single 44px axis. */
+ --sv-apple-nav-row:44px;
+ --sv-apple-top-gap:8px;
+ --sv-apple-top-inset:calc(env(safe-area-inset-top,0px) + var(--sv-apple-top-gap));
  --sv-header-slot:44px;
  --sv-header-gap:8px;
  --sv-header-title-size:20px;
@@ -67,11 +71,11 @@ html[data-theme="light"] body :is(#lifePage,#picturePage,#managePage,#sayviSurfa
  box-sizing:border-box!important;
  display:grid!important;
  grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
- grid-template-rows:var(--sv-header-row)!important;
+ grid-template-rows:var(--sv-apple-nav-row)!important;
  gap:var(--sv-header-gap)!important;
  align-items:center!important;
- width:100%!important;height:var(--sv-header-row)!important;
- min-height:var(--sv-header-row)!important;
+ width:100%!important;height:var(--sv-apple-nav-row)!important;
+ min-height:var(--sv-apple-nav-row)!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;
  background:var(--sv-header-surface)!important;
@@ -153,15 +157,15 @@ html[data-theme="light"].sv-space-active body #lifePage#lifePage:not([hidden]) >
    header without creating a second top bar, and preserve its search action. */
 html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] .sv-deep-top{
  box-sizing:border-box!important;
- height:var(--sv-header-row)!important;min-height:var(--sv-header-row)!important;
+ height:var(--sv-apple-nav-row)!important;min-height:var(--sv-apple-nav-row)!important;
  margin:0 0 10px!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
 html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] .sv-deep-top .sv-continuity-titlebar{
  grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
- grid-template-rows:var(--sv-header-row)!important;
- width:100%!important;height:var(--sv-header-row)!important;
- min-height:var(--sv-header-row)!important;
+ grid-template-rows:var(--sv-apple-nav-row)!important;
+ width:100%!important;height:var(--sv-apple-nav-row)!important;
+ min-height:var(--sv-apple-nav-row)!important;
 }
 html[data-theme="light"] body #sayviSurfacePage[data-sv-subject] #sayviSurfaceBack{
  display:grid!important;place-items:center!important;
@@ -240,7 +244,7 @@ html[data-theme="light"] body dialog#noteReviewDialog.note-review-dialog[open]
 html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  > #calendarSpaceTitleHeading{
  box-sizing:border-box!important;
- height:var(--sv-header-row)!important;min-height:var(--sv-header-row)!important;
+ height:var(--sv-apple-nav-row)!important;min-height:var(--sv-apple-nav-row)!important;
  width:calc(100% + 28px)!important;
  margin:0 -14px 12px!important;padding:0 65px!important;
  background:var(--sv-header-surface)!important;background-image:none!important;
@@ -251,7 +255,7 @@ html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][
 }
 html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
  > :is(button.seyveo-dialog-close.sv-nav-arrow,button.sv-health-header-add:not([hidden])){
- top:calc(23px + env(safe-area-inset-top,0px))!important;
+ top:var(--sv-apple-top-inset)!important;
  width:var(--sv-header-slot)!important;min-width:var(--sv-header-slot)!important;max-width:var(--sv-header-slot)!important;
  height:var(--sv-header-slot)!important;min-height:var(--sv-header-slot)!important;max-height:var(--sv-header-slot)!important;
  padding:0!important;margin:0!important;
@@ -278,8 +282,8 @@ html[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][
 html[data-theme="light"] body #notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
  box-sizing:border-box!important;
  grid-template-columns:var(--sv-header-slot) minmax(0,1fr) var(--sv-header-slot)!important;
- min-height:calc(var(--sv-header-row) + env(safe-area-inset-top,0px))!important;
- padding:calc(12px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px))
+ min-height:calc(var(--sv-apple-nav-row) + var(--sv-apple-top-inset))!important;
+ padding:var(--sv-apple-top-inset) max(14px,env(safe-area-inset-right,0px))
   8px max(14px,env(safe-area-inset-left,0px))!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
