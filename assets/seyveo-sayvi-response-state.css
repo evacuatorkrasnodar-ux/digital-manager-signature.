@@ -1,6 +1,6 @@
 /* SEYVEO · One Sayvi response visual language · 22 Nov 2026.
    Only active reply states animate. No extra circle, pressed effect or fake UI.
-   Work Chat uses its existing Send button; Sayvi Chat uses its existing Stop. */
+   Work Chat uses one isolated Send/Stop control; Sayvi Chat keeps its real Stop. */
 
 /* Work Chat: keep the supplied artwork large enough to match the real mic.
    Original WebP has transparent margins; 33px optical envelope ≈ 21px glyph. */
@@ -13,39 +13,77 @@ html body #svcpWorkChatScreen[data-view="room"]
  filter:none!important;transform:none!important;
 }
 
-/* Work Chat's EXISTING send button becomes a real Stop while the reply
-   is being revealed. The blue 36px button is the ONLY circular surface; SVG has arrow / stop only. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm[data-sayvi-responding="true"] .svcp-chat-send,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm[data-sayvi-responding="true"] .svcp-chat-send:is(:active,:hover,:focus,:focus-visible){
- display:grid!important;visibility:visible!important;pointer-events:auto!important;
- place-items:center!important;
- background:transparent!important;background-image:none!important;
- border:0!important;box-shadow:none!important;
- filter:none!important;
+
+/* v4 · REBUILT from scratch. The old .svcp-chat-send and SVG-circle
+   styling are intentionally disconnected. This ONE button owns the whole
+   opaque blue round face. No borders, extra circles, gradients or halos. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat:is(:hover,:active,:focus,:focus-visible){
+ box-sizing:border-box!important;
+ -webkit-appearance:none!important;appearance:none!important;
+ display:grid!important;place-items:center!important;
+ position:absolute!important;
+ z-index:13!important;
+ top:auto!important;right:16px!important;bottom:7px!important;left:auto!important;
+ width:36px!important;min-width:36px!important;max-width:36px!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;outline:0!important;border-radius:50%!important;
+ background:#2C67C5!important;background-color:#2C67C5!important;
+ background-image:none!important;background-clip:border-box!important;
+ box-shadow:none!important;text-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;opacity:1!important;mix-blend-mode:normal!important;
  transform:none!important;translate:none!important;scale:1!important;
- animation:none!important;transition:none!important;
+ transition:none!important;animation:none!important;
+ overflow:hidden!important;isolation:isolate!important;
  -webkit-tap-highlight-color:transparent!important;
- opacity:1!important;
+ color:#fff!important;
 }
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm[data-sayvi-responding="true"] #svcpVoiceRecord{
- display:none!important;visibility:hidden!important;pointer-events:none!important;
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline #svcpChatSendFlat,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline #svcpChatSendFlat:is(:hover,:active,:focus,:focus-visible){
+ top:auto!important;right:10px!important;bottom:8px!important;left:auto!important;
 }
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm[data-sayvi-responding="true"] .svcp-chat-send .svcp-send-arrow-disc path{
- display:none!important;
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat::before,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat::after{
+ content:none!important;display:none!important;
 }
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm[data-sayvi-responding="true"] .svcp-chat-send .svcp-send-arrow-disc rect.svcp-stop-square{
- display:block!important;
- fill:#fff!important;
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat svg.svcp-flat-send-symbol{
+ display:block!important;box-sizing:border-box!important;
+ width:23px!important;min-width:23px!important;max-width:23px!important;
+ height:23px!important;min-height:23px!important;max-height:23px!important;
+ background:none!important;fill:none!important;
+ border:0!important;box-shadow:none!important;filter:none!important;
+ transform:none!important;overflow:visible!important;
  stroke:none!important;
 }
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpChatForm:not([data-sayvi-responding="true"]) .svcp-chat-send .svcp-send-arrow-disc rect.svcp-stop-square{
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat .svcp-flat-arrow{
+ display:block!important;
+ fill:none!important;stroke:#fff!important;stroke-width:1.5px!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat .svcp-flat-stop{
+ display:none!important;fill:#fff!important;stroke:none!important;
+}
+/* The same control switches to a white 10px stop square while the local
+   Sayvi demo answer is revealing text; the click handler cancels it. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] #svcpChatSendFlat .svcp-flat-arrow{
+ display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] #svcpChatSendFlat .svcp-flat-stop{
+ display:block!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] #svcpVoiceRecord{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+/* The idle composer has only the microphone: Send is hidden unless there
+   is a draft, attachment, or the assistant is currently responding. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not([data-sayvi-responding="true"])[data-has-content="false"] #svcpChatSendFlat,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat[hidden]{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat .svcp-flat-send-label{
  display:none!important;
 }
 
@@ -122,58 +160,3 @@ html body .turn[data-role="assistant"].is-streaming .bubble{
 }
 
 
-/* v2 · Single-layer reference Send, identical in both compact and expanded modes.
-   Never draw a second SVG circle or a translucent rim. The original button owns
-   the sole solid #2C67C5 face, including all mouse/touch/pressed states. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send,
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send:is(:hover,:active,:focus,:focus-visible){
- box-sizing:border-box!important;
- -webkit-appearance:none!important;appearance:none!important;
- display:grid!important;place-items:center!important;
- width:36px!important;min-width:36px!important;max-width:36px!important;
- height:36px!important;min-height:36px!important;max-height:36px!important;
- padding:0!important;margin:0!important;
- border:0!important;border-radius:50%!important;
- background:#2C67C5!important;background-color:#2C67C5!important;
- background-image:none!important;background-clip:padding-box!important;
- box-shadow:none!important;text-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- filter:none!important;mix-blend-mode:normal!important;
- opacity:1!important;
- transform:none!important;translate:none!important;scale:1!important;
- transition:none!important;animation:none!important;
- -webkit-tap-highlight-color:transparent!important;
- overflow:hidden!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send::before,
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send::after{
- content:none!important;display:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send svg.svcp-send-arrow-disc{
- box-sizing:border-box!important;display:block!important;
- width:24px!important;min-width:24px!important;max-width:24px!important;
- height:24px!important;min-height:24px!important;max-height:24px!important;
- background:none!important;border:0!important;box-shadow:none!important;
- filter:none!important;transform:none!important;overflow:visible!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send svg.svcp-send-arrow-disc path{
- fill:none!important;stroke:#fff!important;stroke-width:1.4!important;
- stroke-linejoin:round!important;stroke-linecap:round!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not([data-sayvi-responding="true"]) button.svcp-chat-send rect.svcp-stop-square{
- display:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] button.svcp-chat-send rect.svcp-stop-square{
- display:block!important;
-}
-
-/* Hidden idle Send must stay hidden even though active Send has a solid face.
-   Keep the mic visible unless the draft is nonempty or Sayvi is responding. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not([data-sayvi-responding="true"])[data-has-content="false"] button.svcp-chat-send,
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send[hidden]{
- display:none!important;visibility:hidden!important;pointer-events:none!important;
-}
-/* iOS tap/focus must never leave an apparent pearl or halo on the blue face. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send:focus:not(:focus-visible){
- outline:0!important;outline-offset:0!important;
-}
