@@ -125,7 +125,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  height:56px!important;min-height:56px!important;max-height:56px!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:50%!important;outline:0!important;
- background:rgba(18,108,168,.42) var(--sv-sayvi-mark-image)
+ background:rgba(248,251,253,.46) var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:blur(14px) saturate(112%)!important;
@@ -161,7 +161,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  .svcp-room-identity #svcpRoomAvatar{
  border:0!important;outline:0!important;
- background-color:rgba(18,108,168,.42)!important;
+ background-color:rgba(248,251,253,.46)!important;
  background-image:var(--sv-sayvi-mark-image)!important;
  background-position:center!important;background-size:contain!important;
  background-repeat:no-repeat!important;
@@ -189,9 +189,9 @@ html body #svcpWorkChatScreen[data-view="room"]
  min-height:28px!important;max-height:28px!important;
  padding:3px 9px!important;
  margin:0 auto!important;
- border:1px solid rgba(255,255,255,.28)!important;border-radius:999px!important;
+ border:0!important;border-radius:999px!important;
  /* Translucent matte blue continues the frosted avatar into the name. */
- background:rgba(5,102,190,.34)!important;
+ background:rgba(248,251,253,.54)!important;
  background-image:none!important;
  box-shadow:0 3px 10px rgba(17,55,92,.07),inset 0 1px rgba(255,255,255,.16)!important;
  -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
@@ -206,8 +206,8 @@ html body #svcpWorkChatScreen[data-view="room"]
  display:block!important;
  width:auto!important;max-width:none!important;min-width:0!important;
  margin:0!important;padding:0!important;
- color:#FFFFFF!important;
- -webkit-text-fill-color:#FFFFFF!important;
+ color:#152535!important;
+ -webkit-text-fill-color:#152535!important;
  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
  font-size:16px!important;font-weight:650!important;
  line-height:19px!important;letter-spacing:-.025em!important;
@@ -220,7 +220,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  width:10px!important;min-width:10px!important;max-width:10px!important;
  height:10px!important;min-height:10px!important;max-height:10px!important;
  margin:0!important;padding:0!important;
- fill:none!important;stroke:#FFFFFF!important;
+ fill:none!important;stroke:#24374A!important;
  stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;
  opacity:.93!important;filter:none!important;transform:none!important;
 }
