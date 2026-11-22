@@ -14,7 +14,7 @@ html body #svcpWorkChatScreen[data-view="room"]
 }
 
 /* Work Chat's EXISTING send button becomes a real Stop while the reply
-   is being revealed. Preserve the 34px solid blue SVG disc, no extra face. */
+   is being revealed. The blue 36px button is the ONLY circular surface; SVG has arrow / stop only. */
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpChatForm[data-sayvi-responding="true"] .svcp-chat-send,
 html body #svcpWorkChatScreen[data-view="room"]
@@ -119,4 +119,50 @@ html body .turn[data-role="assistant"].is-streaming .bubble{
  html body #svcpWorkChatScreen .svcp-sayvi-drafting .svcp-message-text::after{
   animation:none!important;opacity:.6!important;
  }
+}
+
+
+/* v2 · Single-layer reference Send, identical in both compact and expanded modes.
+   Never draw a second SVG circle or a translucent rim. The original button owns
+   the sole solid #2C67C5 face, including all mouse/touch/pressed states. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send:is(:hover,:active,:focus,:focus-visible){
+ box-sizing:border-box!important;
+ -webkit-appearance:none!important;appearance:none!important;
+ display:grid!important;place-items:center!important;
+ width:36px!important;min-width:36px!important;max-width:36px!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#2C67C5!important;background-color:#2C67C5!important;
+ background-image:none!important;background-clip:padding-box!important;
+ box-shadow:none!important;text-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;mix-blend-mode:normal!important;
+ opacity:1!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send::before,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send::after{
+ content:none!important;display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send svg.svcp-send-arrow-disc{
+ box-sizing:border-box!important;display:block!important;
+ width:20px!important;min-width:20px!important;max-width:20px!important;
+ height:20px!important;min-height:20px!important;max-height:20px!important;
+ background:none!important;border:0!important;box-shadow:none!important;
+ filter:none!important;transform:none!important;overflow:visible!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send svg.svcp-send-arrow-disc path{
+ fill:none!important;stroke:#fff!important;stroke-width:1.55!important;
+ stroke-linejoin:round!important;stroke-linecap:round!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not([data-sayvi-responding="true"]) button.svcp-chat-send rect.svcp-stop-square{
+ display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] button.svcp-chat-send rect.svcp-stop-square{
+ display:block!important;
 }
