@@ -9,11 +9,11 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
  display:block!important;
  box-sizing:border-box!important;
  position:absolute!important;
- inset:auto 0 0 0!important;
+ inset:auto 0 max(10px,calc(env(safe-area-inset-bottom,0px) - 14px)) 0!important;
  z-index:15!important;
  isolation:isolate!important;
- width:min(430px,calc(100% - 12px))!important;
- max-width:calc(100% - 12px)!important;
+ width:min(430px,calc(100% - 20px))!important;
+ max-width:calc(100% - 20px)!important;
  min-width:0!important;
  height:var(--svcp-compose-height,56px)!important;
  min-height:56px!important;
@@ -93,7 +93,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
  color:white!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpAttachFile{
- bottom:3px!important;
+ bottom:6px!important;
  border:0!important;
  background:transparent!important;
 }
@@ -109,7 +109,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage{
  border-radius:50%!important;color:#fff!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpPolishMessage{
- left:39px!important;bottom:3px!important;
+ left:54px!important;bottom:6px!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  display:block!important;
@@ -175,7 +175,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > .svcp-
 html body #svcpWorkChatScreen #svcpChatFormReset #svcpChatInput::-webkit-scrollbar{display:none!important;}
 /* Send never leaves the right-bottom slot when the editor grows upwards. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat{
- right:0!important;left:auto!important;bottom:3px!important;top:auto!important;
+ right:6px!important;left:auto!important;bottom:6px!important;top:auto!important;
  z-index:5!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat > svg{
@@ -210,11 +210,11 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat[hidden]{
 }
 /* Mic takes Send's exact same slot when idle; beside it when expanded. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpVoiceRecord{
- right:0!important;left:auto!important;bottom:3px!important;top:auto!important;
+ right:6px!important;left:auto!important;bottom:6px!important;top:auto!important;
  color:white!important;z-index:4!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpVoiceRecord{
- right:55px!important;
+ right:56px!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset:not(.svcp-compose-multiline)[data-has-content="true"] > #svcpVoiceRecord,
 html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] > #svcpVoiceRecord{
