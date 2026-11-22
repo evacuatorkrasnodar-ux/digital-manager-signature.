@@ -71,36 +71,32 @@ html body #picturePage #pictureQuickInsight .picture-sayvi-symbol .sv-sayvi-symb
  display:none!important;
  background:none!important;
 }
-/* Chat list: original artwork at the standard 44px control size. */
+/* Messages directory: match the 38px avatar directly above it.
+   The 44px button standard remains unchanged everywhere else. */
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory
  .svcp-directory-item[data-svcp-room-person="sayvi"] .svcp-directory-avatar.sv-sayvi-avatar{
- flex:0 0 var(--sv-sayvi-avatar-size)!important;
- width:var(--sv-sayvi-avatar-size)!important;
- min-width:var(--sv-sayvi-avatar-size)!important;
- max-width:var(--sv-sayvi-avatar-size)!important;
- height:var(--sv-sayvi-avatar-size)!important;
- min-height:var(--sv-sayvi-avatar-size)!important;
- max-height:var(--sv-sayvi-avatar-size)!important;
- border:0!important;
+ flex:0 0 38px!important;
+ width:38px!important;min-width:38px!important;max-width:38px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
  background:transparent var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
- box-shadow:none!important;
- color:transparent!important;
+ box-shadow:none!important;filter:none!important;
+ overflow:hidden!important;color:transparent!important;
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory
- .svcp-directory-item[data-svcp-room-person="sayvi"] .svcp-directory-avatar.sv-sayvi-avatar::before{
+ .svcp-directory-item[data-svcp-room-person="sayvi"] .svcp-directory-avatar.sv-sayvi-avatar::before,
+html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory
+ .svcp-directory-item[data-svcp-room-person="sayvi"] .svcp-directory-avatar.sv-sayvi-avatar::after{
  content:none!important;display:none!important;
 }
-/* The assistant avatar does not collapse when Compact List is enabled. */
+/* Compact list: match all the other 34px conversation avatars. */
 html body #svcpWorkChatScreen.sv-inbox-compact[data-view="inbox"] #svcpChatDirectory
  .svcp-directory-item[data-svcp-room-person="sayvi"] .svcp-directory-avatar.sv-sayvi-avatar{
- flex-basis:var(--sv-sayvi-avatar-size)!important;
- width:var(--sv-sayvi-avatar-size)!important;
- min-width:var(--sv-sayvi-avatar-size)!important;
- max-width:var(--sv-sayvi-avatar-size)!important;
- height:var(--sv-sayvi-avatar-size)!important;
- min-height:var(--sv-sayvi-avatar-size)!important;
- max-height:var(--sv-sayvi-avatar-size)!important;
+ flex:0 0 34px!important;
+ width:34px!important;min-width:34px!important;max-width:34px!important;
+ height:34px!important;min-height:34px!important;max-height:34px!important;
 }
 /* New Message → contacts uses precisely the same canonical avatar. */
 html body #svcpWorkChatScreen .sv-inbox-people-list
