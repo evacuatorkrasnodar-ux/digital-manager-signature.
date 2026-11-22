@@ -150,8 +150,11 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  min-height:56px!important;max-height:56px!important;
  padding:0!important;margin:0!important;
  border:0!important;outline:0!important;border-radius:0!important;
+ /* Same 56px transparent artwork as the bottom control. The original
+    visible outline is ~2.8% taller than wide, so correct ONLY its optical
+    geometry without changing the hue, opacity, source, or button surface. */
  background:transparent var(--sv-sayvi-mark-image)
-  center center / contain no-repeat!important;
+  center center / 102.8% 100% no-repeat!important;
  box-shadow:none!important;text-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  filter:none!important;opacity:1!important;transform:none!important;
