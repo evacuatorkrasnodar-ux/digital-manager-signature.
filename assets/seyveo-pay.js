@@ -63,6 +63,8 @@ async function select(tab){
   dialog.scrollTop=0;
   return;
  }
+ // Never leave the QR camera running when switching to Finances.
+ stopCamera();
  const loaded=await ready;
  if(token!==viewToken||!dialog.open)return;
  if(!loaded){
