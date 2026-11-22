@@ -491,28 +491,46 @@
   if(!button||!['navHome','navTasks','navPicture','navManage','assistantButton'].includes(button.id))return;
   closeWorkChat({restoreFocus:false});
  },true);
+ // One owner for chat input sizing: business-command.js. Do not compete
+ // with its 40px textarea and 56px composer on every viewport event.
  const chatViewport=window.visualViewport;
- const workComposer=$('svcpChatInput');
- const composerMinHeight=46;
- function resizeWorkComposer(){
-  if(page.dataset.workChatOpen!=='true'||!workComposer)return;
-  const viewHeight=window.visualViewport?.height||window.innerHeight||700;
-  const limit=Math.max(76,Math.min(138,Math.floor(viewHeight*.30)));
-  workComposer.style.setProperty('height',composerMinHeight+'px','important');
-  // Do not let a long placeholder create a second empty line on Safari.
-  const natural=workComposer.value?Math.max(composerMinHeight,workComposer.scrollHeight||composerMinHeight):composerMinHeight;
-  const actual=Math.min(limit,natural);
-  workComposer.style.setProperty('height',actual+'px','important');
-  workComposer.style.setProperty('overflow-y',natural>limit?'auto':'hidden','important');
- }
+ let workChatViewportFrame=0;
+ let workChatViewportWidth=0;
+ const workChatViewportSettleTimers=[];
  function updateWorkChatViewport(){
   if(page.dataset.workChatOpen!=='true'||!employeeChatScreen)return;
-  const viewport=window.visualViewport;
-  const height=Math.max(160,Math.round(viewport?.height||window.innerHeight));
-  const top=Math.max(0,Math.round(viewport?.offsetTop||0));
-  employeeChatScreen.style.setProperty('--svcp-visible-height',height+'px');
-  employeeChatScreen.style.setProperty('--svcp-visible-top',top+'px');
-  resizeWorkComposer();
+  if(workChatViewportFrame)return;
+  workChatViewportFrame=requestAnimationFrame(()=>{
+   workChatViewportFrame=0;
+   if(page.dataset.workChatOpen!=='true'||!employeeChatScreen)return;
+   const viewport=window.visualViewport;
+   const rawHeight=viewport?.height||window.innerHeight||document.documentElement.clientHeight;
+   const rawWidth=viewport?.width||window.innerWidth;
+   const rawTop=viewport?.offsetTop||0;
+   if(!Number.isFinite(rawHeight)||rawHeight<160)return;
+   const height=Math.round(rawHeight);
+   const top=Math.max(0,Math.round(rawTop));
+   const width=Math.max(1,Math.round(rawWidth));
+   if(employeeChatScreen.style.getPropertyValue('--svcp-visible-height')!==height+'px')
+    employeeChatScreen.style.setProperty('--svcp-visible-height',height+'px');
+   if(employeeChatScreen.style.getPropertyValue('--svcp-visible-top')!==top+'px')
+    employeeChatScreen.style.setProperty('--svcp-visible-top',top+'px');
+   // Re-measure the genuine composer only on width/orientation changes.
+   if(workChatViewportWidth!==width){
+    workChatViewportWidth=width;
+    window.dispatchEvent(new Event('seyveo:work-chat-viewport-width'));
+   }
+  });
+ }
+ // iPhone Safari may keep the old landscape/portrait viewport for a few
+ // frames. Sample the final geometry after its native rotation animation.
+ function settleWorkChatViewport(){
+  workChatViewportSettleTimers.forEach(clearTimeout);
+  workChatViewportSettleTimers.length=0;
+  updateWorkChatViewport();
+  requestAnimationFrame(updateWorkChatViewport);
+  for(const delay of [90,260,550])
+   workChatViewportSettleTimers.push(setTimeout(updateWorkChatViewport,delay));
  }
  function closeWorkChat({restoreFocus=true}={}){
   if(page.dataset.workChatOpen!=='true')return;
@@ -528,6 +546,10 @@
   employeeChatScreen.hidden=true;
   restoreWorkChatDock();
   document.documentElement.classList.remove('svcp-work-chat-active');
+  workChatViewportSettleTimers.forEach(clearTimeout);
+  workChatViewportSettleTimers.length=0;
+  if(workChatViewportFrame)cancelAnimationFrame(workChatViewportFrame);
+  workChatViewportFrame=0;workChatViewportWidth=0;
   employeeChatScreen.style.removeProperty('--svcp-visible-height');
   employeeChatScreen.style.removeProperty('--svcp-visible-top');
   const heading=page.querySelector('.tasks-heading');
@@ -560,7 +582,7 @@
   if(headingTitle)headingTitle.textContent='Сообщения';
   // Null opens the complete existing directory. Staff and management share one engine.
   window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId,employeeMode?'elena':'manager');
-  updateWorkChatViewport();
+  settleWorkChatViewport();
   requestAnimationFrame(()=>{
    if(page.dataset.workChatOpen!=='true')return;
    updateWorkChatViewport();
@@ -572,12 +594,14 @@
   });
  }
  chatTop?.addEventListener('click',()=>closeWorkChat());
- workComposer?.addEventListener('input',resizeWorkComposer);
- workComposer?.addEventListener('focus',resizeWorkComposer);
- window.addEventListener('seyveo:work-chat-sent',resizeWorkComposer);
  chatViewport?.addEventListener('resize',updateWorkChatViewport);
  chatViewport?.addEventListener('scroll',updateWorkChatViewport);
- window.addEventListener('resize',updateWorkChatViewport);
+ window.addEventListener('resize',settleWorkChatViewport,{passive:true});
+ window.addEventListener('orientationchange',settleWorkChatViewport,{passive:true});
+ window.addEventListener('pageshow',settleWorkChatViewport,{passive:true});
+ document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden)settleWorkChatViewport();
+ });
  document.addEventListener('keydown',event=>{
   if(page.dataset.workChatOpen!=='true')return;
   if(event.key==='Escape'){
