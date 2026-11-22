@@ -234,16 +234,16 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  > .svcp-minimal-identity-header #svcpRoomAvatar::after{
  content:none!important;display:none!important;
 }
-/* Chat header Back + Sayvi name use the SAME slightly darkened blue glass
-   token as the active bottom composer and compact Plus. No extra relief,
-   rings or independent color skins. Preserve avatar and interactions. */
+/* Andre/iMessage header color pass: slightly deeper cobalt Back and blue
+   name capsule, with the original light azure name-chevron. Preserve the
+   existing thin rim, blur, 44px hit area, portrait and no press effects. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack{
  box-sizing:border-box!important;
  border:1px solid var(--svcp-conversation-blue-rim,rgba(9,100,171,.57))!important;
  border-radius:var(--sv-white-pearl-radius-circle,50%)!important;
- background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
+ background:rgba(13,73,186,.90)!important;
  background-image:none!important;
  color:#FFFFFF!important;
  box-shadow:none!important;
@@ -263,8 +263,8 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack:active{
- /* Match the normal material; non-dock buttons never visibly depress. */
- background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
+ /* Identical rest and active color: no visual press on non-dock Back. */
+ background:rgba(13,73,186,.90)!important;
  box-shadow:none!important;
  transform:none!important;
  transition:none!important;
@@ -279,7 +279,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
- background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
+ background:rgba(0,99,199,.86)!important;
  background-image:none!important;
  border:1px solid var(--svcp-conversation-blue-rim,rgba(9,100,171,.57))!important;
  border-radius:var(--sv-white-pearl-radius-capsule,999px)!important;
@@ -302,8 +302,9 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  width:12px!important;min-width:12px!important;max-width:12px!important;
  height:12px!important;min-height:12px!important;max-height:12px!important;
  margin:0!important;padding:0!important;
- color:#FFFFFF!important;stroke:#FFFFFF!important;
- stroke-width:1.8!important;stroke-linecap:round!important;
+ /* Andre reference: colored, legible cyan chevron — not solid white. */
+ color:#4AB4FD!important;stroke:#4AB4FD!important;
+ stroke-width:2.2!important;stroke-linecap:round!important;
  stroke-linejoin:round!important;
  opacity:1!important;fill:none!important;
 }
