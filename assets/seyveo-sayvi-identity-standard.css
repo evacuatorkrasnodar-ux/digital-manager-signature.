@@ -49,21 +49,24 @@ html body .sv-sayvi-avatar{
 /* The older ::before emblem duplicated the background and made it tiny. */
 html body .sv-sayvi-avatar::before,
 html body .sv-sayvi-avatar::after{content:none!important;display:none!important}
-/* Business insight card: show the exact same flat mark as in Messages. */
+/* Business insight: Sayvi is a small 22px inline icon, not a 44px
+   profile photo. Use the same quiet scale as other feature glyphs. */
 html body #picturePage #pictureQuickInsight .picture-sayvi-heading{
- min-height:var(--sv-sayvi-avatar-size)!important;
+ min-height:24px!important;
  align-items:center!important;
- gap:11px!important;
+ gap:9px!important;
 }
 html body #picturePage #pictureQuickInsight .picture-sayvi-symbol.sv-sayvi-avatar{
- flex:0 0 var(--sv-sayvi-avatar-size)!important;
- width:var(--sv-sayvi-avatar-size)!important;
- height:var(--sv-sayvi-avatar-size)!important;
- min-width:var(--sv-sayvi-avatar-size)!important;
- min-height:var(--sv-sayvi-avatar-size)!important;
+ display:block!important;
+ flex:0 0 22px!important;
+ width:22px!important;min-width:22px!important;max-width:22px!important;
+ height:22px!important;min-height:22px!important;max-height:22px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
  background:transparent var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
- border:0!important;
+ box-shadow:none!important;filter:none!important;
+ transform:none!important;
  color:transparent!important;
 }
 /* The original nested span was only an image holder; do not draw it again. */
