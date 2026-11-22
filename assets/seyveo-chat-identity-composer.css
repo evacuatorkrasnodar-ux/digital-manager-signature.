@@ -962,3 +962,44 @@ html body #svcpWorkChatScreen[data-view="room"]
  width:21px!important;height:21px!important;
  margin:0!important;transform:none!important;translate:none!important;
 }
+
+/* v26 · compact send arrow gets a proper Apple-like circular face. */
+/* Keep a 38px tap target exactly where the microphone was. The 3px
+   transparent rim leaves a perfectly centered 32px action circle around
+   the upward arrow; no extra dock, layout change or press translation. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus),
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send,
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus){
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ width:38px!important;min-width:38px!important;max-width:38px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ position:absolute!important;
+ top:50%!important;bottom:auto!important;
+ left:auto!important;right:10px!important;
+ padding:0!important;margin:0!important;
+ border:3px solid transparent!important;
+ border-radius:50%!important;
+ background:#0A84FF!important;
+ background-image:none!important;
+ background-clip:padding-box!important;
+ color:#FFFFFF!important;
+ box-shadow:none!important;
+ filter:none!important;opacity:1!important;
+ transform:translateY(-50%)!important;
+ translate:none!important;scale:1!important;
+ animation:none!important;transition:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send svg{
+ display:block!important;position:static!important;
+ width:19px!important;height:19px!important;
+ stroke:#FFFFFF!important;stroke-width:1.9!important;
+ margin:0!important;transform:none!important;filter:none!important;
+}
