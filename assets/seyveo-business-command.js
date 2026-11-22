@@ -1268,21 +1268,16 @@ function svcpPositionExpandedSend(form,expanded){
  if(!expanded){
   send.style.removeProperty('right');
   send.style.removeProperty('bottom');
+  send.style.removeProperty('top');
   return;
  }
- const anchor=svcpShortSendAnchor;
- if(!anchor||Math.abs(window.innerWidth-anchor.viewportWidth)>1)return;
- const frame=form.getBoundingClientRect();
- const target=send.getBoundingClientRect();
- const width=target.width||38;
- const height=target.height||38;
- const right=frame.right-anchor.x-width/2;
- if(Number.isFinite(right))send.style.setProperty('right',right.toFixed(2)+'px','important');
- // Only match the vertical anchor if the keyboard has not moved the dock.
- if(Math.abs(frame.bottom-anchor.formBottom)<4){
-  const bottom=frame.bottom-anchor.y-height/2;
-  if(Number.isFinite(bottom))send.style.setProperty('bottom',bottom.toFixed(2)+'px','important');
- }else send.style.removeProperty('bottom');
+ // The short-mode anchor can belong to a different containing block: when
+ // the Send is moved into the expanded form it puts the icon below the dock.
+ // Its expanded position must be measured from the expanded FORM itself.
+ // 36px flat send circle + 8px bottom => the same toolbar baseline as Mic.
+ send.style.setProperty('right','10px','important');
+ send.style.setProperty('bottom','8px','important');
+ send.style.setProperty('top','auto','important');
 }
 function resizeWorkComposer(){
  const input=$('svcpChatInput'),form=$('svcpChatForm');
