@@ -164,3 +164,62 @@ html body #svcpWorkChatScreen[data-view="room"]
  background-repeat:no-repeat!important;
  box-shadow:none!important;filter:none!important;
 }
+
+/* v8 · Chat identity: compact Apple reference title for the Sayvi profile.
+   Original reference: ~28px tall name pill, 16px medium/semibold text,
+   10px fine chevron. Keep the existing 56px portrait and name interaction. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading .svcp-room-name-pill{
+ box-sizing:border-box!important;
+ display:inline-flex!important;
+ flex:0 0 auto!important;
+ justify-content:center!important;
+ align-items:center!important;
+ gap:4px!important;
+ width:max-content!important;
+ max-width:calc(100% - 8px)!important;
+ min-width:0!important;
+ height:28px!important;
+ min-height:28px!important;max-height:28px!important;
+ padding:3px 9px!important;
+ margin:0 auto!important;
+ border:0!important;border-radius:999px!important;
+ background:rgba(5,102,190,.89)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;
+ transform:none!important;
+ white-space:nowrap!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading
+ .svcp-room-name-pill strong#svcpConversationTitle{
+ display:block!important;
+ width:auto!important;max-width:none!important;min-width:0!important;
+ margin:0!important;padding:0!important;
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ font-size:16px!important;font-weight:650!important;
+ line-height:19px!important;letter-spacing:-.025em!important;
+ text-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading .svcp-room-name-pill svg{
+ display:block!important;
+ flex:0 0 10px!important;
+ width:10px!important;min-width:10px!important;max-width:10px!important;
+ height:10px!important;min-height:10px!important;max-height:10px!important;
+ margin:0!important;padding:0!important;
+ fill:none!important;stroke:#FFFFFF!important;
+ stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:.93!important;filter:none!important;transform:none!important;
+}
+/* Don't create the accidental second avatar inside the name pill again. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading .svcp-room-name-pill::before,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading .svcp-room-name-pill::after{
+ content:none!important;display:none!important;
+}
