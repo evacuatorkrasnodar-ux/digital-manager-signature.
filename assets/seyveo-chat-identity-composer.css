@@ -55,18 +55,23 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvata
  flex:0 0 56px!important;width:56px!important;height:56px!important;
  min-width:56px!important;min-height:56px!important;
  margin:0!important;padding:0!important;
+ /* Move only the portrait, not the title pill or the action buttons. */
+ top:-6px!important;
  z-index:4!important;overflow:hidden!important;
- border:1px solid rgba(187,198,210,.45)!important;border-radius:50%!important;
- background:radial-gradient(circle at 31% 20%,rgba(255,255,255,.92),rgba(228,233,240,.9) 65%,rgba(202,214,224,.7))!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
  color:#2b3643!important;
- box-shadow:0 3px 11px rgba(40,50,64,.08),inset 0 1px 0 rgba(255,255,255,.96)!important;
- -webkit-backdrop-filter:blur(12px) saturate(112%)!important;
- backdrop-filter:blur(12px) saturate(112%)!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
  font-size:25px!important;font-weight:580!important;
 }
-/* Apple photo/monogram placement: the glass title overlaps the lower part
-   of the circle. Keep the *whole* initial visible in the uncovered upper part.
-   Real photo avatars (if supplied by the profile) retain their full-bleed crop. */
+/* Apple photo/monogram placement: the title gently overlaps the avatar.
+   Never draw a second pearl rim around a photo or Sayvi's own illustration.
+   Text monograms use one flat color, without radial light or glass shadow. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvatar :is(img,picture){
+ border:0!important;box-shadow:none!important;background:transparent!important;
+}
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation:not([data-room-kind="groups"]):not([data-room-id="dm-sayvi"])
  #svcpRoomAvatar:not(:has(img,picture)){
@@ -74,7 +79,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  padding:0!important;
  line-height:1!important;
  font-size:22px!important;
- background:radial-gradient(circle at 34% 18%,#F5FBFF 0%,#E4F0FA 51%,#D0E2F0 100%)!important;
+ background:#E4EFF9!important;background-image:none!important;
  color:#243746!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
@@ -420,7 +425,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multi
  color:#F3F6FA!important;
 }
 :root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvatar{
- background:linear-gradient(155deg,#44515A,#28343D)!important;color:#F7F9FA!important;
+ background:#35414B!important;background-image:none!important;color:#F7F9FA!important;
 }
 :root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatInput::placeholder{
  color:#929FA9!important;
@@ -494,7 +499,7 @@ html body #svcpWorkChatScreen .svcp-call-dialog-actions > button:active{
 :root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation:not([data-room-kind="groups"]):not([data-room-id="dm-sayvi"])
  #svcpRoomAvatar:not(:has(img,picture)){
- background:linear-gradient(155deg,#44515A,#28343D)!important;
+ background:#35414B!important;background-image:none!important;
  color:#F7F9FA!important;
 }
 
