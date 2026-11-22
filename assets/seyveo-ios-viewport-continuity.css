@@ -234,33 +234,33 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  > .svcp-minimal-identity-header #svcpRoomAvatar::after{
  content:none!important;display:none!important;
 }
-/* Sayvi header / iMessage geometry + SEYVEO translucent pearl.
-   Restore the actual live Back control and name pill to the same frosted
-   material used by our app; keep the original Sayvi bitmap and dimensions. */
+/* Sayvi header: keep the APPROVED cobalt colors, change their opacity only.
+   Back & name have the same blue tone as before; both retain real backdrop blur.
+   Do not move, recolor or add layers to the original Sayvi bitmap. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack{
  box-sizing:border-box!important;
- border:1px solid rgba(255,255,255,.52)!important;
+ border:1px solid rgba(215,237,255,.32)!important;
  border-radius:50%!important;
- background:rgba(244,249,255,.24)!important;
+ background:rgba(11,79,193,.78)!important;
  background-image:none!important;
- color:#172D43!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.42),
-  0 3px 10px rgba(26,67,116,.08)!important;
+ color:#FFFFFF!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.23),
+  0 3px 10px rgba(5,49,122,.13)!important;
  -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
  backdrop-filter:blur(18px) saturate(112%)!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack svg{
- color:#172D43!important;stroke:#172D43!important;
+ color:#FFFFFF!important;stroke:#FFFFFF!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack:active{
- background:rgba(231,243,253,.34)!important;
- box-shadow:inset 0 2px 4px rgba(17,57,100,.12)!important;
+ background:rgba(7,60,153,.84)!important;
+ box-shadow:inset 0 2px 4px rgba(9,37,88,.18)!important;
  transform:none!important;
 }
 /* Original Apple reference: round portrait sits clearly ABOVE the label.
@@ -273,12 +273,12 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
- background:rgba(235,247,255,.23)!important;
+ background:rgba(11,104,208,.75)!important;
  background-image:none!important;
- border:1px solid rgba(255,255,255,.48)!important;
+ border:1px solid rgba(213,236,255,.30)!important;
  border-radius:999px!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.30),
-  0 2px 7px rgba(18,70,119,.07)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.24),
+  0 2px 7px rgba(7,53,114,.12)!important;
  -webkit-backdrop-filter:blur(18px) saturate(110%)!important;
  backdrop-filter:blur(18px) saturate(110%)!important;
 }
@@ -286,15 +286,15 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading
  .svcp-room-name-pill strong#svcpConversationTitle{
- color:#123651!important;-webkit-text-fill-color:#123651!important;
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill svg{
- color:#123651!important;stroke:#123651!important;
+ color:#FFFFFF!important;stroke:#FFFFFF!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading #svcpConversationDetail{
- color:rgba(20,53,79,.87)!important;
+ color:rgba(255,255,255,.88)!important;
 }
