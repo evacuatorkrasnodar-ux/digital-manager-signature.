@@ -1352,7 +1352,7 @@ html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
  #svcpChatForm.svcp-compose-multiline:focus-within::before{
  content:""!important;display:block!important;
  box-sizing:border-box!important;
- right:10px!important;width:auto!important;
+ left:6px!important;right:6px!important;width:auto!important;
  background:var(--sv-liquid-nav-material,rgba(255,255,255,.72))!important;
  background-image:none!important;
  transform:none!important;translate:none!important;
