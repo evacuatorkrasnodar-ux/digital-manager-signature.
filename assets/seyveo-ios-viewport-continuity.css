@@ -140,8 +140,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
     Only the underlying conversation is blurred, like Apple's translucent UI. */
  background:transparent!important;
  background-image:none!important;
- -webkit-backdrop-filter:blur(12px)!important;
- backdrop-filter:blur(12px)!important;
+ -webkit-backdrop-filter:blur(8px)!important;
+ backdrop-filter:blur(8px)!important;
  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,rgba(0,0,0,.68) 66%,transparent 100%)!important;
  mask-image:linear-gradient(to bottom,#000 0%,#000 35%,rgba(0,0,0,.68) 66%,transparent 100%)!important;
  box-shadow:none!important;
