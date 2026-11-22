@@ -1498,9 +1498,11 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
     <input id="svcpCameraPhoto" type="file" accept="image/*" capture="environment" hidden>
     <div class="svcp-chat-compose-field">
      <textarea id="svcpChatInput" class="svcp-compose-input sv-input-field" inputmode="text" rows="1" maxlength="1000" aria-label="Текст сообщения" placeholder="Сообщение…" spellcheck="true"></textarea>
-     <button id="svcpVoiceRecord" type="button" class="svcp-voice-record" aria-label="Записать голосовое сообщение" aria-controls="svcpVoiceCapture" aria-expanded="false" title="Голосовое сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 18v3M8.5 21h7"/></svg></button>
-     <button id="svcpChatSendFlat" class="svcp-flat-send-btn" type="submit" aria-label="Отправить сообщение" title="Отправить сообщение"><svg class="svcp-flat-send-symbol" viewBox="0 0 24 24" width="23" height="23" aria-hidden="true" focusable="false"><path class="svcp-flat-arrow" d="M12 18.5V5.8M7.1 10.7 12 5.8l4.9 4.9"/><rect class="svcp-flat-stop" x="7" y="7" width="10" height="10" rx="1.5"/></svg><span class="svcp-flat-send-label">В чат</span></button>
+     
+     
     </div>
+     <button id="svcpVoiceRecord" type="button" class="svcp-voice-record" aria-label="Записать голосовое сообщение" aria-controls="svcpVoiceCapture" aria-expanded="false" title="Голосовое сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 18v3M8.5 21h7"/></svg></button>
+     <button id="svcpChatSendFlat" class="svcp-flat-send-btn" type="submit" aria-label="Отправить сообщение" title="Отправить сообщение"><svg class="svcp-flat-send-symbol" viewBox="0 0 44 44" width="44" height="44" aria-hidden="true" focusable="false"><circle class="svcp-flat-face" cx="22" cy="22" r="17"/><path class="svcp-flat-arrow" d="M22 29V15M16.5 20.5 22 15l5.5 5.5"/><rect class="svcp-flat-stop" x="17.5" y="17.5" width="9" height="9" rx="1.5"/></svg></button>
    </form>
   </div>
   <p class="svcp-status" id="svcpChatStatus" role="status" aria-live="polite">Локальное демо · без доставки на другие устройства</p>
