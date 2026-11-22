@@ -114,9 +114,12 @@ html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpP
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  box-sizing:border-box!important;display:block!important;
- width:42px!important;height:42px!important;
- min-width:42px!important;max-width:42px!important;
- min-height:42px!important;max-height:42px!important;
+ /* The uploaded art occupies ~63% of its transparent square canvas.
+    56px renders its visible contour at ~36px, identical to the header.
+    A 2.8% optical x correction cancels the source's slight oval. */
+ width:56px!important;height:56px!important;
+ min-width:56px!important;max-width:56px!important;
+ min-height:56px!important;max-height:56px!important;
  aspect-ratio:1/1!important;
  margin:0!important;padding:0!important;
  object-fit:contain!important;object-position:center center!important;
@@ -125,7 +128,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  clip-path:none!important;
  overflow:visible!important;box-shadow:none!important;
  filter:none!important;opacity:1!important;
- transform:none!important;translate:none!important;
+ transform:scaleX(1.028)!important;transform-origin:center!important;translate:none!important;
  animation:none!important;transition:none!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > span{
