@@ -208,3 +208,76 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
  scroll-padding-top:calc(119px + env(safe-area-inset-top,0px))!important;
  -webkit-mask-image:none!important;mask-image:none!important;
 }
+
+/* SAYVI CONTACT HEADER — portrait and button colors from the Andre reference.
+   Scope ONLY to the light-theme blue Sayvi conversation. Keep the shared
+   frosted header, position, proportions, other people and other chat themes.
+   Use the original, unaltered Sayvi WebP as the portrait, never a redraw. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header #svcpRoomAvatar{
+ box-sizing:border-box!important;
+ border:0!important;outline:0!important;border-radius:50%!important;
+ background:#0959BC var(--sv-sayvi-mark-image)
+  center center / contain no-repeat!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ filter:none!important;opacity:1!important;
+ overflow:hidden!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header #svcpRoomAvatar::before,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header #svcpRoomAvatar::after{
+ content:none!important;display:none!important;
+}
+/* Real standalone Back button is #svcpConversationStandaloneBack, not the
+   hidden legacy #svcpConversationBack. Match Andre's flat cobalt circle. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > #svcpConversationStandaloneBack{
+ background:#0B4FC1!important;
+ background-image:none!important;
+ color:#FFFFFF!important;
+ border:0!important;outline:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > #svcpConversationStandaloneBack svg{
+ color:#FFFFFF!important;stroke:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > #svcpConversationStandaloneBack:active{
+ background:#073C99!important;transform:none!important;
+}
+/* Andre's compact dark-blue name pill with white label and chevron.
+   Preserve the existing 28px height, avatar overlap and click handler. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
+ background:#0B68D0!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header #svcpConversationHeading
+ .svcp-room-name-pill strong#svcpConversationTitle{
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill svg{
+ color:#FFFFFF!important;stroke:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header #svcpConversationHeading #svcpConversationDetail{
+ color:rgba(255,255,255,.83)!important;
+}
