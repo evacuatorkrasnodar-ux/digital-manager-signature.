@@ -363,3 +363,25 @@ html[data-theme] body #notePaperDialog.sv-paper-studio[open] .sv-paper-top #svPa
  color:inherit!important;
  stroke:currentColor!important;
 }
+
+/* Dark theme geometry parity: surfaces, colors and shadows stay unchanged. */
+html[data-theme="dark"] body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar{
+ grid-template-rows:var(--sv-apple-nav-row)!important;
+ height:var(--sv-apple-nav-row)!important;
+ min-height:var(--sv-apple-nav-row)!important;
+}
+html[data-theme="dark"] body #sayviSurfacePage[data-sv-subject] .sv-deep-top,
+html[data-theme="dark"] body #sayviSurfacePage[data-sv-subject] .sv-deep-top .sv-continuity-titlebar{
+ height:var(--sv-apple-nav-row)!important;
+ min-height:var(--sv-apple-nav-row)!important;
+}
+html[data-theme="dark"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > :is(button.seyveo-dialog-close.sv-nav-arrow,button.sv-health-header-add:not([hidden])){
+ top:var(--sv-apple-top-inset)!important;
+}
+html[data-theme="dark"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
+ > #calendarSpaceTitleHeading{
+ height:var(--sv-apple-nav-row)!important;
+ min-height:var(--sv-apple-nav-row)!important;
+}
