@@ -70,6 +70,23 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  opacity:1!important;
  text-shadow:none!important;
 }
+/* In the white Pearl conversation Sayvi's ordinary text is INCOMING.
+   Do not use the generic self-message background for assistant replies.
+   Match the silver received bubbles in the owner's reference screenshot. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages
+ > .svcp-bubble.is-sayvi:not(.is-poll):not(.is-task):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(:has(.svcp-file-card)):not(:has(.svcp-voice-wave)){
+ background:var(--sv-chat-incoming,#E9E9EB)!important;
+ background-image:none!important;
+ color:var(--sv-chat-incoming-ink,#242427)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpMessages
+ > .svcp-bubble.is-sayvi:not(.is-poll):not(.is-task):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(:has(.svcp-file-card))
+ > .svcp-message-text{
+ color:var(--sv-chat-incoming-ink,#242427)!important;
+ -webkit-text-fill-color:var(--sv-chat-incoming-ink,#242427)!important;
+}
 /* Family preview is outgoing-only. Do not alter family poll or emoji styles. */
 html:root:not([data-theme="dark"]) body #seyveoFamilyDialog .svf-thread > .svf-msg:not(.is-poll):not(.svf-emoji-only){
  background:var(--sv-chat-outgoing)!important;
