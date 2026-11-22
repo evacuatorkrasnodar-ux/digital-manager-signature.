@@ -6988,3 +6988,41 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
  color:#F3F5F7!important;
  box-shadow:none!important;
 }
+
+/* v260 · Sayvi avatar and expanded composer optical cleanup, 22 Nov 2026.
+   Keep native hit targets and existing attachment / voice functionality. */
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] .svcp-room-identity img,
+#svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] .svcp-room-identity .svcp-header-sayvi-mark{
+ background-color:rgba(255,255,255,.14)!important;
+ border-radius:50%!important;
+ background-clip:padding-box!important;
+}
+/* The expanded dock itself is already the backdrop: no extra blue disc behind +. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile{
+ background:transparent!important;
+ background-image:none!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ transform:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile:is(:active,:focus,:focus-visible){
+ background:transparent!important;
+ box-shadow:none!important;
+ outline:none!important;
+ transform:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile::before,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile::after{
+ content:none!important;display:none!important;
+}
+/* The actual original Sayvi artwork, optically matched to the microphone glyph. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpPolishMessage img.sv-sayvi-minimal-mark,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark{
+ width:20px!important;height:20px!important;
+ min-width:20px!important;max-width:20px!important;
+ min-height:20px!important;max-height:20px!important;
+ flex:0 0 20px!important;
+ object-fit:contain!important;
+}
