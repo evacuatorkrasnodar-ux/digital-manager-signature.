@@ -265,9 +265,11 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack:active{
- background:rgba(7,60,153,.18)!important;
- box-shadow:var(--sv-white-pearl-press-shadow)!important;
- transform:scale(var(--sv-white-pearl-press-scale,.992))!important;
+ /* Taps are functional but visually stationary: not a dock control. */
+ background:rgba(11,79,193,.18)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ transform:none!important;
+ transition:none!important;
 }
 /* Original Apple reference: round portrait sits clearly ABOVE the label.
    No moving of the 56px source image into the label, and no top cropping. */
