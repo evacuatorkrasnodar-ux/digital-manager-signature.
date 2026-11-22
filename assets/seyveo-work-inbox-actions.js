@@ -74,6 +74,7 @@ function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
  title.textContent=viewTitle(type);body.replaceChildren();overlay.hidden=false;
+ overlay.classList.toggle('sv-inbox-sheet-notifications',type==='notifications');
  if(type==='new')showContacts(type);
  else if(type==='staff')showStaff();
  else if(type==='invite')showInvite();
@@ -185,20 +186,43 @@ function showSettings(){
  menuLink('История разговоров','Сообщения и поручения','clock',()=>{closeSheet();history.click()});
 }
 function showNotifications(){
- sectionHeading('На этом устройстве');
- settingToggle('showUnread','Отмечать непрочитанные','Показывать выделение чатов, отмеченных непрочитанными');
- sectionHeading('Тихие переписки');
- body.append(node('p','sv-inbox-hint','Ниже можно отключать звук в отдельных чатах. Настройка сохраняется локально.'));
+ /* Compact iOS-like grouped settings. Labels and controls are connected;
+    only existing local chat preferences are persisted. */
+ function section(caption){
+  const heading=node('h3','sv-inbox-notification-caption',caption);
+  const group=node('div','sv-inbox-notification-group');
+  body.append(heading,group);return group;
+ }
+ function iosSwitch(checked,label,handle){
+  const control=node('input','sv-inbox-ios-switch');
+  control.type='checkbox';
+  control.checked=!!checked;
+  control.setAttribute('aria-label',label);
+  control.addEventListener('change',()=>handle(control.checked));
+  return control;
+ }
+ const display=section('В списке сообщений');
+ const unread=node('label','sv-inbox-ios-row sv-inbox-ios-unread');
+ const unreadCopy=node('span','sv-inbox-ios-copy');
+ unreadCopy.append(node('strong',null,'Непрочитанные'),node('small',null,'Выделять в списке чатов'));
+ unread.append(unreadCopy,iosSwitch(prefs.showUnread!==false,'Выделять непрочитанные',checked=>{
+  prefs.showUnread=checked;savePrefs();decorateRows();
+ }));
+ display.append(unread);
+ const quiet=section('Без звука');
  const allowed=allRooms().filter(r=>r.kind==='personal'&&r.person!=='sayvi'&&(!employee()||r.id==='dm-elena'));
  for(const r of allowed){
-  const current=roomState(r.id),item=node('label','sv-inbox-toggle-row');
-  const copy=node('span');copy.append(node('strong',null,r.label),node('small',null,'Без звука для этого чата'));
-  const input=node('input');input.type='checkbox';input.checked=!!current.muted;
-  input.setAttribute('aria-label','Без звука: '+r.label);
-  input.addEventListener('change',()=>updateRoom(r.id,'muted',input.checked));
-  item.append(copy,input);body.append(item);
+  const item=node('label','sv-inbox-ios-row sv-inbox-ios-person');
+  const avatar=node('span','sv-inbox-ios-avatar',r.label.slice(0,1));
+  avatar.setAttribute('aria-hidden','true');
+  const copy=node('span','sv-inbox-ios-copy');
+  copy.append(node('strong',null,r.label));
+  const control=iosSwitch(roomState(r.id).muted,'Без звука: '+r.label,checked=>updateRoom(r.id,'muted',checked));
+  item.append(avatar,copy,control);quiet.append(item);
  }
- body.append(node('p','sv-inbox-hint','Реальные входящие сообщения, фоновые уведомления и звуки появятся после подключения защищённой доставки. Сейчас настройки касаются интерфейса и локальных переписок.'));
+ if(!allowed.length){
+  quiet.append(node('p','sv-inbox-ios-empty','Нет доступных личных чатов'));
+ }
 }
 function showData(){
  sectionHeading('Разные функции');
