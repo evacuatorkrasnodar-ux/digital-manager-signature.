@@ -315,3 +315,23 @@ html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline:focus-wi
   animation:none!important;transition:none!important;
  }
 }
+
+/* v12 · stable toolbar anchors and unmodified Sayvi artwork.
+   Every existing icon uses the same bottom baseline in both phases; the
+   expanding text panel can grow upward without moving Plus/Sayvi/Send. */
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile,
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage,
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpVoiceRecord,
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat{
+ top:auto!important;bottom:4px!important;
+ transition:none!important;animation:none!important;
+ transform:none!important;translate:none!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
+ width:36px!important;height:36px!important;
+ min-width:36px!important;max-width:36px!important;
+ min-height:36px!important;max-height:36px!important;
+ object-fit:contain!important;object-position:center!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ clip-path:none!important;filter:none!important;transform:none!important;
+}
