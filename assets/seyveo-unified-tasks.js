@@ -606,7 +606,7 @@
   if(page.dataset.workChatOpen!=='true')return;
   if(event.key==='Escape'){
    event.preventDefault();
-   if(!$('svcpConversation')?.hidden)$('svcpConversationBack')?.click();
+   if(!$('svcpConversation')?.hidden)$('svcpConversationStandaloneBack')?.click();
    else closeWorkChat();
    return;
   }
