@@ -2056,15 +2056,133 @@ function updatePerspective(){
  window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:state.viewpoint==='elena'?'employee':'manager'}}));
  updateWorkTypingIndicator();
 }
+/* Apple-like staff/group information sheet. This replaces the old gray
+   in-flow technical row. Data and actions stay inside the existing chat model. */
+let svcpRoomProfileUrls=[];
+function svcpClearRoomProfileMedia(){
+ for(const url of svcpRoomProfileUrls)URL.revokeObjectURL(url);
+ svcpRoomProfileUrls=[];
+}
+function closeRoomInformation(restoreFocus=true){
+ const panel=$('svcpRoomInfo');if(!panel||panel.hidden)return;
+ panel.hidden=true;
+ svcpClearRoomProfileMedia();
+ $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','false');
+ $('svcpConversationHeading')?.setAttribute('aria-expanded','false');
+ if(restoreFocus&&!$('svcpConversation')?.hidden)
+  $('svcpConversationHeading')?.focus({preventScroll:true});
+}
+function renderRoomProfile(){
+ const room=roomDetails();
+ const name=$('svcpConversationTitle')?.textContent?.trim()||room.label;
+ const role=$('svcpConversationDetail')?.textContent?.trim()||
+  (room.kind==='personal'?room.hint.split(' · ')[0]:'Рабочая группа');
+ const person=room.person&&Object.prototype.hasOwnProperty.call(STAFF,room.person)?room.person:null;
+ const avatar=$('svcpRoomProfileAvatar');
+ if(avatar){
+  avatar.textContent=room.id==='dm-sayvi'?'S':(name.slice(0,1).toUpperCase()||'•');
+  avatar.classList.toggle('is-group',room.kind!=='personal');
+ }
+ const nameNode=$('svcpRoomInfoName');if(nameNode)nameNode.textContent=name;
+ const roleNode=$('svcpRoomInfoDescription');if(roleNode)roleNode.textContent=role;
+ const callable=room.kind==='personal'&&room.person!=='sayvi';
+ for(const id of ['svcpRoomProfileAudio','svcpRoomProfileVideo']){
+  const action=$(id);if(action)action.hidden=!callable;
+ }
+ const perspective=$('svcpElenaPerspective'),view=$('svcpRoomProfileViewSection');
+ if(view)view.hidden=!perspective||perspective.hidden;
+ // Files and photos point to original messages, never duplicate their data.
+ svcpClearRoomProfileMedia();
+ const files=state.chat.map((msg,index)=>({msg,index}))
+  .filter(({msg})=>msg?.room===room.id&&!!msg.mediaId&&msg.mediaPurpose!=='voice');
+ const mediaCount=$('svcpRoomProfileMediaCount');
+ if(mediaCount)mediaCount.textContent=files.length?String(files.length):'';
+ const media=$('svcpRoomProfileMedia');
+ if(media){
+  media.replaceChildren();
+  if(!files.length)media.append(el('p','svcp-room-profile-empty','Здесь появятся фотографии и файлы из переписки'));
+  for(const {msg,index} of files.slice(-6).reverse()){
+   const meta=svcpFileKind(msg.mediaName,msg.mediaType);
+   const row=el('button','svcp-room-profile-item');row.type='button';
+   const preview=el('span','svcp-room-profile-filetype svcp-room-profile-filetype-'+meta.kind,meta.mark);
+   const copy=el('span','svcp-room-profile-item-copy');
+   copy.append(el('strong',null,String(msg.mediaName||meta.label).slice(0,90)));
+   copy.append(el('small',null,meta.label));
+   row.append(preview,copy,el('span','svcp-room-profile-chevron','›'));
+   row.addEventListener('click',()=>{
+    closeRoomInformation(false);
+    focusSearchIndex=index;
+    renderChat();
+   });
+   media.append(row);
+   if(meta.kind==='image'){
+    loadMediaLocally(msg.mediaId).then(record=>{
+     if(!row.isConnected||$('svcpRoomInfo')?.hidden||!record?.blob||!String(record.type||'').startsWith('image/'))return;
+     const url=URL.createObjectURL(record.blob);
+     svcpRoomProfileUrls.push(url);
+     const img=el('img','svcp-room-profile-thumb');
+     img.src=url;img.alt='';
+     preview.replaceChildren(img);
+    }).catch(()=>{});
+   }
+  }
+ }
+ // One task list per peer: real saved task records, not dummy labels.
+ const tasks=state.tasks.filter(task=>task&&typeof task.text==='string'&&
+  (person?task.assigneeId===person:room.kind==='groups'&&task.room===room.id));
+ const taskCount=$('svcpRoomProfileTasksCount');
+ if(taskCount)taskCount.textContent=tasks.length?String(tasks.length):'';
+ const taskList=$('svcpRoomProfileTasks');
+ if(taskList){
+  taskList.replaceChildren();
+  if(!tasks.length)taskList.append(el('p','svcp-room-profile-empty','Поручения появятся здесь'));
+  for(const task of tasks.slice(-5).reverse()){
+   const row=el('button','svcp-room-profile-item');row.type='button';
+   const mark=el('span','svcp-room-profile-filetype svcp-room-profile-filetype-task','✓');
+   const copy=el('span','svcp-room-profile-item-copy');
+   copy.append(el('strong',null,String(task.text).slice(0,110)));
+   copy.append(el('small',null,task.done?'Выполнено':'В работе'));
+   row.append(mark,copy,el('span','svcp-room-profile-chevron','›'));
+   row.addEventListener('click',()=>{closeRoomInformation(false);openTaskDiscussion(task);});
+   taskList.append(row);
+  }
+ }
+}
 function toggleRoomInformation(){
  const panel=$('svcpRoomInfo');if(!panel)return;
- panel.hidden=!panel.hidden;
- const expanded=String(!panel.hidden);
- $('svcpRoomInfoToggle')?.setAttribute('aria-expanded',expanded);
- $('svcpConversationHeading')?.setAttribute('aria-expanded',expanded);
+ if(!panel.hidden){closeRoomInformation();return}
+ renderRoomProfile();
+ panel.hidden=false;
+ $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','true');
+ $('svcpConversationHeading')?.setAttribute('aria-expanded','true');
+ panel.querySelector('.svcp-room-profile-scroll')?.scrollTo(0,0);
+ $('svcpRoomProfileClose')?.focus({preventScroll:true});
 }
 $('svcpRoomInfoToggle')?.addEventListener('click',toggleRoomInformation);
 $('svcpConversationHeading')?.addEventListener('click',toggleRoomInformation);
+$('svcpRoomProfileClose')?.addEventListener('click',()=>closeRoomInformation());
+$('svcpRoomProfileBackdrop')?.addEventListener('click',()=>closeRoomInformation());
+$('svcpRoomProfileAudio')?.addEventListener('click',()=>{
+ closeRoomInformation(false);openCallPreview('audio');
+});
+$('svcpRoomProfileVideo')?.addEventListener('click',()=>{
+ closeRoomInformation(false);openCallPreview('video');
+});
+$('svcpRoomProfileSearch')?.addEventListener('click',()=>{
+ closeRoomInformation(false);
+ $('svcpConversationSearch')?.click();
+});
+$('svcpRoomInfo')?.addEventListener('keydown',event=>{
+ if(event.key==='Escape'){event.preventDefault();closeRoomInformation();return}
+ if(event.key!=='Tab')return;
+ const panel=$('svcpRoomInfo');
+ const controls=[...panel.querySelectorAll('button:not([hidden]):not(:disabled)')]
+  .filter(button=>!button.closest('[hidden]')&&button.getClientRects().length);
+ if(!controls.length)return;
+ const first=controls[0],last=controls[controls.length-1];
+ if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+ else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+});
 /* SEYVEO call controls — device verification only.
  * No contacts, delivery, signal server or remote audio are pretended.
  * Camera/microphone permissions are requested only after a separate tap.
@@ -2157,6 +2275,7 @@ $('svcpConversationSearch')?.addEventListener('click',()=>{
 });
 $('svcpElenaPerspective')?.addEventListener('click',()=>{
  if(employeePreviewActive())return;
+ closeRoomInformation(false);
  stopWorkTypingLocal();
  state.viewpoint=state.viewpoint==='elena'?'manager':'elena';
  clearReply();cancelTaskDraft();updatePerspective();renderChat();
