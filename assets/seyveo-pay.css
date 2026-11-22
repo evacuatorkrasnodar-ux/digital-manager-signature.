@@ -41,6 +41,46 @@
  color:var(--text);font:inherit;
 }
 .syp-top{display:flex;align-items:flex-start;justify-content:flex-start;gap:9px}
+/* Card / Finances: one restrained Apple-style two-button switch.
+   Exact 44px touch targets, flat material, no nested cards or overlays. */
+#seyveoPayDialog .syp-view-switch{
+ box-sizing:border-box;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:3px;align-items:center;width:100%;min-width:0;
+ margin:0 0 18px;padding:3px;
+ border:1px solid rgba(174,187,200,.30);border-radius:999px;
+ background:rgba(238,242,246,.56);
+ -webkit-backdrop-filter:blur(10px) saturate(105%);
+ backdrop-filter:blur(10px) saturate(105%);
+ box-shadow:none;
+}
+#seyveoPayDialog .syp-view-switch > button{
+ display:grid;place-items:center;box-sizing:border-box;min-width:0;
+ height:44px;min-height:44px;margin:0;padding:0 8px;
+ border:1px solid transparent;border-radius:999px;
+ background:transparent;box-shadow:none;
+ color:#68717D;font:570 14px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:-.015em;cursor:pointer;transform:none;
+ -webkit-tap-highlight-color:transparent;
+}
+#seyveoPayDialog .syp-view-switch > button[aria-pressed="true"]{
+ border-color:rgba(202,214,224,.42);background:rgba(255,255,255,.90);
+ box-shadow:0 1px 3px rgba(41,58,80,.055);
+ color:#18212A;font-weight:650;
+}
+#seyveoPayDialog .syp-view-switch > button:focus-visible{
+ outline:2px solid #0A84FF;outline-offset:2px;
+}
+html[data-theme="dark"] #seyveoPayDialog .syp-view-switch{
+ background:rgba(220,236,247,.08);border-color:rgba(214,231,242,.13);
+}
+html[data-theme="dark"] #seyveoPayDialog .syp-view-switch > button{
+ color:rgba(232,238,243,.70);
+}
+html[data-theme="dark"] #seyveoPayDialog .syp-view-switch > button[aria-pressed="true"]{
+ color:#F8FAFC;background:rgba(218,231,244,.16);
+ border-color:rgba(222,235,247,.19);box-shadow:none;
+}
+
 .syp-top > .syp-x.sv-nav-arrow{order:-1;flex:0 0 44px!important;align-self:flex-start;margin-left:-6px!important}
 .syp-top > div{flex:1;min-width:0}
 .syp-top>div{min-width:0}
