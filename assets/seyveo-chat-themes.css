@@ -298,3 +298,98 @@ html body #seyveoFamilyDialog:is([data-chat-wallpaper="sky"],[data-chat-wallpape
 @media(prefers-reduced-motion:reduce){
  .sv-chat-theme-option{transition:none!important}
 }
+
+
+/* v2 · Poll question as a speaker-colored bubble, while choices stay orange.
+   Inspired by the conversational hierarchy of iMessage, without duplicating
+   the question as a second message or changing poll votes and permissions. */
+html body :is(#svcpWorkChatScreen,#seyveoFamilyDialog) .sv-poll-title-row{
+ height:auto!important;
+ min-height:44px!important;
+ max-width:100%!important;
+ gap:3px!important;
+ margin-bottom:7px!important;
+}
+html body :is(#svcpWorkChatScreen,#seyveoFamilyDialog) .sv-poll-title-row > .sv-poll-question{
+ display:block!important;
+ box-sizing:border-box!important;
+ flex:0 1 auto!important;
+ max-width:100%!important;
+ width:max-content!important;
+ min-width:0!important;
+ height:auto!important;
+ min-height:36px!important;
+ padding:8px 12px!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:17px 17px 5px 17px!important;
+ background:#0A84FF!important;
+ background-image:none!important;
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ font:500 14px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:0!important;
+ text-align:left!important;
+ text-shadow:none!important;
+ overflow-wrap:anywhere!important;
+ box-shadow:none!important;
+}
+/* On the default white backdrop, a poll FROM the other person is grey. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) #svcpMessages
+ > .svcp-bubble.is-other.is-poll .sv-poll-title-row > .sv-poll-question{
+ background:#E9E9EB!important;
+ color:#25272B!important;
+ -webkit-text-fill-color:#25272B!important;
+ border-radius:17px 17px 17px 5px!important;
+}
+/* Keep the outgoing question firmly blue in white mode, even when earlier
+   poll styles tried to force a dark neutral heading. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) #svcpMessages
+ > .svcp-bubble.is-self.is-poll .sv-poll-title-row > .sv-poll-question,
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"])
+ .svf-msg.is-poll .sv-poll-title-row > .sv-poll-question{
+ background:#0A84FF!important;
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+}
+/* Theme-adjusted question bubble pairs. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > .svcp-bubble.is-self.is-poll .sv-poll-title-row > .sv-poll-question,
+html body #seyveoFamilyDialog[data-chat-wallpaper="sky"]
+ .svf-msg.is-poll .sv-poll-title-row > .sv-poll-question{
+ background:#087DE9!important;
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ text-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > .svcp-bubble.is-other.is-poll .sv-poll-title-row > .sv-poll-question{
+ background:rgba(31,109,174,.94)!important;
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ border-radius:17px 17px 17px 5px!important;
+ text-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="evening"] #svcpMessages
+ > .svcp-bubble.is-self.is-poll .sv-poll-title-row > .sv-poll-question,
+html body #seyveoFamilyDialog[data-chat-wallpaper="evening"]
+ .svf-msg.is-poll .sv-poll-title-row > .sv-poll-question{
+ background:#6360C9!important;
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ text-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="evening"] #svcpMessages
+ > .svcp-bubble.is-other.is-poll .sv-poll-title-row > .sv-poll-question{
+ background:rgba(57,70,111,.94)!important;
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ border-radius:17px 17px 17px 5px!important;
+ text-shadow:none!important;
+}
+html:root[data-theme="dark"] body :is(#svcpWorkChatScreen,#seyveoFamilyDialog)
+ .sv-poll-title-row > .sv-poll-question{
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+ text-shadow:none!important;
+}
