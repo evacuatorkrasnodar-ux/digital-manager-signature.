@@ -4384,11 +4384,8 @@ html:root[data-theme="light"] body #svcpWorkChatScreen .svcp-message-context-men
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
-#svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-conversation-bar::before,
-#svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-conversation-bar::after{
- content:none!important;
- display:none!important;
-}
+/* The chat header's old pseudo-elements were deleted, not overridden.
+   The only frosted surface is the real .svcp-chat-header-frost node. */
 #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvatar{
  display:none!important;
 }
