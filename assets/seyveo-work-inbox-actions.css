@@ -561,3 +561,311 @@ html body #svcpWorkChatScreen .sv-inbox-ios-empty{
   transition:none!important
  }
 }
+
+
+/* v6 · One polished family of iOS-like sheets:
+   Settings, New Group, People and New Message.
+   Only presentation changes; existing handlers and stored values stay intact. */
+html body #svcpWorkChatScreen .sv-inbox-overlay:is(
+ [data-sv-inbox-screen="settings"],
+ [data-sv-inbox-screen="group"],
+ [data-sv-inbox-screen="staff"],
+ [data-sv-inbox-screen="new"]
+) .sv-inbox-sheet-panel{
+ --sv-inbox-sheet-base:#F6F6F8;
+ --sv-inbox-sheet-card:#FFF;
+ --sv-inbox-sheet-primary:#16181D;
+ --sv-inbox-sheet-muted:#92959E;
+ --sv-inbox-sheet-rule:rgba(54,61,73,.085);
+ background:var(--sv-inbox-sheet-base)!important;
+ color:var(--sv-inbox-sheet-primary)!important;
+ border-color:rgba(160,167,178,.11)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay:is(
+ [data-sv-inbox-screen="settings"],
+ [data-sv-inbox-screen="group"],
+ [data-sv-inbox-screen="staff"],
+ [data-sv-inbox-screen="new"]
+) .sv-inbox-sheet-grab{background:#D5D6DA!important}
+html body #svcpWorkChatScreen .sv-inbox-overlay:is(
+ [data-sv-inbox-screen="settings"],
+ [data-sv-inbox-screen="group"],
+ [data-sv-inbox-screen="staff"],
+ [data-sv-inbox-screen="new"]
+) .sv-inbox-sheet-head{
+ background:var(--sv-inbox-sheet-card)!important;
+ color:var(--sv-inbox-sheet-primary)!important;
+ border-bottom:1px solid var(--sv-inbox-sheet-rule)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay:is(
+ [data-sv-inbox-screen="settings"],
+ [data-sv-inbox-screen="group"],
+ [data-sv-inbox-screen="staff"],
+ [data-sv-inbox-screen="new"]
+) .sv-inbox-sheet-body{
+ box-sizing:border-box!important;
+ padding:11px 15px 20px!important;
+ background:var(--sv-inbox-sheet-base)!important;
+ overflow-x:hidden!important;
+ overscroll-behavior:contain
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay:is(
+ [data-sv-inbox-screen="settings"],
+ [data-sv-inbox-screen="group"],
+ [data-sv-inbox-screen="staff"],
+ [data-sv-inbox-screen="new"]
+) .sv-inbox-section-heading{
+ margin:16px 3px 7px!important;
+ color:#737780!important;
+ font:500 12px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:0!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay:is(
+ [data-sv-inbox-screen="settings"],
+ [data-sv-inbox-screen="group"],
+ [data-sv-inbox-screen="staff"],
+ [data-sv-inbox-screen="new"]
+) .sv-inbox-section-heading:first-child{margin-top:6px!important}
+/* Staff and new-message rows: one white inset list with hairline separators. */
+html body #svcpWorkChatScreen .sv-inbox-people-list{
+ display:flex!important;flex-direction:column!important;
+ box-sizing:border-box!important;overflow:hidden!important;
+ width:100%!important;margin:2px 0 11px!important;padding:0!important;
+ background:var(--sv-inbox-sheet-card,#fff)!important;
+ border:1px solid rgba(40,48,60,.035)!important;
+ border-radius:15px!important;
+ box-shadow:0 1px 2px rgba(30,40,55,.022)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-people-list > .sv-inbox-contact-row{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;gap:11px!important;
+ flex:0 0 auto!important;width:100%!important;min-height:57px!important;
+ margin:0!important;padding:9px 12px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;color:var(--sv-inbox-sheet-primary)!important;
+ text-align:left!important;
+ -webkit-tap-highlight-color:transparent!important
+}
+html body #svcpWorkChatScreen .sv-inbox-people-list > .sv-inbox-contact-row + .sv-inbox-contact-row{
+ border-top:1px solid var(--sv-inbox-sheet-rule)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-people-list > .sv-inbox-contact-row:active{
+ background:rgba(121,133,151,.065)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar,
+html body #svcpWorkChatScreen .sv-inbox-participant-list .sv-inbox-contact-avatar{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ flex:0 0 36px!important;
+ width:36px!important;height:36px!important;
+ min-width:36px!important;min-height:36px!important;
+ border:0!important;border-radius:50%!important;
+ background:#393A3D!important;color:#FFFFFF!important;
+ font:600 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar.is-sayvi{
+ background:#EDF4F0 url("./seyveo-sayvi-chat-jade-platinum.png?v=1") center/90% 90% no-repeat!important;
+ color:transparent!important;font-size:0!important
+}
+html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-row > span:not(.sv-inbox-contact-avatar){
+ display:flex!important;flex:1 1 auto!important;
+ flex-direction:column!important;min-width:0!important;gap:3px!important;
+ color:inherit!important;font-size:14px!important;
+ font-weight:570!important;line-height:1.3!important
+}
+html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-row small{
+ margin:0!important;color:var(--sv-inbox-sheet-muted,#92959E)!important;
+ font:400 11px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-row > svg{
+ flex:0 0 15px!important;order:3!important;
+ width:15px!important;height:15px!important;
+ color:#AFB3BC!important;opacity:1!important
+}
+/* Group form, selection circles and one compact primary action. */
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="group"] .sv-inbox-group-form{
+ display:flex!important;flex-direction:column!important;
+ gap:0!important;margin:0!important;padding:0!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="group"] .sv-inbox-field-label{
+ display:flex!important;flex-direction:column!important;
+ gap:7px!important;margin:7px 3px 0!important;
+ color:#737780!important;font:500 12px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="group"] .sv-inbox-text-input{
+ box-sizing:border-box!important;display:block!important;
+ width:100%!important;height:47px!important;margin:0!important;
+ padding:0 14px!important;outline-offset:2px!important;
+ border:1px solid rgba(111,123,140,.10)!important;border-radius:13px!important;
+ background:#FFF!important;color:#15181C!important;
+ font:400 16px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ box-shadow:none!important
+}
+html body #svcpWorkChatScreen .sv-inbox-form-caption{
+ margin:21px 4px 7px!important;color:#737780!important;
+ font:500 12px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-list{
+ display:flex!important;flex-direction:column!important;
+ box-sizing:border-box!important;width:100%!important;overflow:hidden!important;
+ margin:0!important;padding:0!important;
+ border:1px solid rgba(40,48,60,.035)!important;border-radius:14px!important;
+ background:#fff!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-row{
+ display:flex!important;align-items:center!important;gap:12px!important;
+ position:relative!important;box-sizing:border-box!important;
+ min-height:56px!important;width:100%!important;margin:0!important;
+ padding:9px 12px!important;cursor:pointer!important;color:#17191D!important;
+ background:transparent!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-row + .sv-inbox-participant-row{
+ border-top:1px solid rgba(60,60,67,.09)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-row:active{
+ background:rgba(120,135,155,.06)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-copy{
+ display:flex!important;flex:1 1 auto!important;min-width:0!important;
+ flex-direction:column!important;gap:3px!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-copy strong{
+ color:inherit!important;
+ font:560 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-copy small{
+ color:#90949D!important;font:400 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-row input.sv-inbox-participant-check{
+ appearance:none!important;-webkit-appearance:none!important;
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;flex:0 0 23px!important;
+ width:23px!important;height:23px!important;
+ min-width:23px!important;min-height:23px!important;
+ margin:0!important;padding:0!important;
+ border:1.5px solid #C2C8D1!important;border-radius:50%!important;
+ background:#FFF!important;box-shadow:none!important;
+ cursor:pointer!important;transition:background-color .15s,border-color .15s!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-row input.sv-inbox-participant-check:checked{
+ border-color:#0A84FF!important;background:#0A84FF!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-row input.sv-inbox-participant-check:checked::after{
+ content:""!important;display:block!important;
+ width:10px!important;height:6px!important;
+ border-left:2px solid white!important;border-bottom:2px solid white!important;
+ transform:translateY(-1px) rotate(-45deg)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-row input.sv-inbox-participant-check:focus-visible{
+ outline:2px solid #0A84FF!important;outline-offset:3px!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="group"] .sv-inbox-submit{
+ display:grid!important;place-items:center!important;
+ width:100%!important;min-height:46px!important;height:46px!important;
+ margin:18px 0 4px!important;padding:0 16px!important;
+ border:0!important;border-radius:14px!important;
+ background:#0A84FF!important;color:#fff!important;
+ font:600 15px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ box-shadow:none!important
+}
+html body #svcpWorkChatScreen .sv-inbox-inline-status{
+ margin:8px 3px 0!important;color:#C24646!important;
+ font:500 12px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+/* White list controls in settings, iOS switches instead of blue square ticks. */
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-toggle-row.sv-inbox-settings-toggle{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ box-sizing:border-box!important;
+ width:100%!important;min-height:61px!important;
+ gap:12px!important;margin:0!important;padding:11px 13px!important;
+ border:0!important;background:#FFF!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle + .sv-inbox-settings-toggle{
+ border-top:1px solid rgba(60,60,67,.095)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle:has(+ .sv-inbox-settings-toggle){
+ border-radius:13px 13px 0 0!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle:last-of-type{
+ border-radius:0 0 13px 13px!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle > span{
+ display:flex!important;flex:1 1 auto!important;min-width:0!important;
+ flex-direction:column!important;gap:3px!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle strong{
+ color:#181A1E!important;
+ font:550 14px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle small{
+ color:#91959D!important;
+ font:400 11px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] input.sv-inbox-settings-switch[type="checkbox"]{
+ -webkit-appearance:none!important;appearance:none!important;
+ display:block!important;position:relative!important;flex:0 0 50px!important;
+ box-sizing:border-box!important;
+ width:50px!important;min-width:50px!important;max-width:50px!important;
+ height:30px!important;min-height:30px!important;max-height:30px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:999px!important;
+ background:#E9E9EB!important;
+ box-shadow:inset 0 0 0 1px rgba(65,65,74,.045)!important;
+ cursor:pointer!important;transition:background-color .18s ease!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] input.sv-inbox-settings-switch[type="checkbox"]::before{
+ content:""!important;display:block!important;
+ position:absolute!important;top:2px!important;left:2px!important;
+ width:26px!important;height:26px!important;
+ border:0!important;border-radius:50%!important;
+ background:#FFF!important;
+ box-shadow:0 1px 3px rgba(0,0,0,.17),0 1px 1px rgba(0,0,0,.08)!important;
+ transform:translateX(0)!important;transition:transform .18s ease!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] input.sv-inbox-settings-switch[type="checkbox"]:checked{
+ background:#34C759!important;box-shadow:none!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] input.sv-inbox-settings-switch[type="checkbox"]:checked::before{
+ transform:translateX(20px)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] input.sv-inbox-settings-switch[type="checkbox"]:focus-visible{
+ outline:2px solid #0A84FF!important;outline-offset:3px!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-setting-link{
+ min-height:54px!important;box-sizing:border-box!important;
+ padding:9px 13px!important;margin:0!important;
+ border:0!important;border-radius:13px!important;
+ background:#FFF!important;color:#181A1E!important
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-setting-link > svg{
+ color:#868C97!important
+}
+/* Keep the sheet readable when the global app uses a dark palette. */
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay:is(
+ [data-sv-inbox-screen="settings"],
+ [data-sv-inbox-screen="group"],
+ [data-sv-inbox-screen="staff"],
+ [data-sv-inbox-screen="new"]
+) .sv-inbox-sheet-panel{
+ --sv-inbox-sheet-base:#1C1C1E;
+ --sv-inbox-sheet-card:#2C2C2E;
+ --sv-inbox-sheet-primary:#F4F4F6;
+ --sv-inbox-sheet-muted:#A7AAB1;
+ --sv-inbox-sheet-rule:rgba(255,255,255,.11)
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay:is(
+ [data-sv-inbox-screen="settings"],
+ [data-sv-inbox-screen="group"],
+ [data-sv-inbox-screen="staff"],
+ [data-sv-inbox-screen="new"]
+) .sv-inbox-section-heading{color:#A8ABB4!important}
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="group"] .sv-inbox-participant-list,
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle,
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-setting-link{
+ background:var(--sv-inbox-sheet-card)!important;color:var(--sv-inbox-sheet-primary)!important
+}
+@media(prefers-reduced-motion:reduce){
+ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] input.sv-inbox-settings-switch,
+ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] input.sv-inbox-settings-switch::before,
+ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="group"] input.sv-inbox-participant-check{transition:none!important}
+}
