@@ -1247,3 +1247,81 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  fill:none!important;stroke:#20262C!important;stroke-width:1.65!important;
 }
 /* Keep the multiline mic at the existing fixed toolbar slot; no nudges. */
+
+/* v34 · One stable footer baseline between compact and expanded composer.
+   The compact Plus, Send and Sayvi keep their already approved layout.
+   On multiline, anchor the existing Plus and Send directly to the SAME
+   form corners instead of moving into another grid area/offset.
+   No extra controls, canvas, transitions or circular paint layers. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline:not(.svcp-has-attachment){
+ box-sizing:border-box!important;
+ padding:3px 7px 4px!important;
+ grid-template-rows:var(--svcp-editor-height,44px) 42px!important;
+ align-content:start!important;
+ row-gap:0!important;
+ transition:none!important;animation:none!important;
+}
+/* Form is 6px from viewport edge in both modes. The compact Plus uses
+   left:6px/44px with a 3px lower gap; duplicate those ABSOLUTE coordinates
+   only in the expanded form, immune to grid-row and padding changes. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile.svcp-plus-pearl-rebuilt,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:hover,:focus,:active,:focus-visible),
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline:has(#svcpAttachMenu:not([hidden])) > button#svcpAttachFile.svcp-plus-pearl-rebuilt{
+ box-sizing:border-box!important;
+ position:absolute!important;
+ top:auto!important;bottom:3px!important;left:6px!important;right:auto!important;
+ grid-row:auto!important;grid-column:auto!important;
+ justify-self:auto!important;align-self:auto!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+/* Send is reparented by JS while expanded. Compact: right:16px and
+   center=25px above the form bottom. Expanded: bottom:6px + 19px =25px.
+   This also keeps the 34px SVG disc as the ONLY blue circle. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar > button.svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar > button.svcp-chat-send:is(:hover,:focus,:active,:focus-visible){
+ box-sizing:border-box!important;
+ position:absolute!important;
+ top:auto!important;bottom:6px!important;right:16px!important;left:auto!important;
+ grid-row:auto!important;grid-column:auto!important;
+ width:38px!important;min-width:38px!important;max-width:38px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ padding:0!important;margin:0!important;
+ display:grid!important;place-items:center!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;text-shadow:none!important;
+ filter:none!important;opacity:1!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+/* Hidden Send must remain hidden without a message. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar[data-has-content="false"] > button.svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar > button.svcp-chat-send[hidden]{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+/* Keep a real 9px gap between the mic's 40px target and the moved Send. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar > button#svcpVoiceRecord{
+ right:63px!important;
+ bottom:6px!important;top:auto!important;
+ transform:none!important;transition:none!important;
+}
+/* Neutralize any remaining inherited visual press/slide effects. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar > button.svcp-chat-send::before,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar > button.svcp-chat-send::after{
+ content:none!important;display:none!important;
+}
