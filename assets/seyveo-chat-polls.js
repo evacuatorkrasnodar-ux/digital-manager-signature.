@@ -19,7 +19,7 @@ const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9);
 const validPoll=p=>p&&Array.isArray(p.options)&&p.options.length>=2&&
  typeof p.question==='string'&&p.question.trim().length>0;
 const cleanChoices=choices=>(choices||[]).map(textValue).filter(Boolean);
-function openEditor({mount,onCreate,heading='Новый опрос',description='Опрос сохранится только здесь'}){
+function openEditor({mount,onCreate,heading='Новый опрос'}){
  if(!mount||typeof onCreate!=='function')return;
  mount.querySelector('.sv-poll-overlay')?.remove();
  const overlay=make('div','sv-poll-overlay');
@@ -29,13 +29,10 @@ function openEditor({mount,onCreate,heading='Новый опрос',description=
  form.setAttribute('role','dialog');
  form.setAttribute('aria-modal','true');
  form.setAttribute('aria-label',heading);
- form.setAttribute('aria-describedby','svPollDescription');
  const top=make('div','sv-poll-editor-head');
  const cancel=button('Отмена',close,'sv-poll-editor-cancel');
  const title=make('strong',null,heading);
  top.append(cancel,title,make('span'));
- const intro=make('p','sv-poll-editor-intro',description);
- intro.id='svPollDescription';
  const label=make('label','sv-poll-editor-label','Вопрос');
  const question=make('input','sv-poll-editor-input');
  question.type='text';question.maxLength=140;question.required=true;
@@ -78,7 +75,7 @@ function openEditor({mount,onCreate,heading='Новый опрос',description=
  const footer=make('div','sv-poll-editor-footer');
  const submit=make('button','sv-poll-editor-submit','Создать опрос');submit.type='submit';
  footer.append(submit);
- form.append(top,intro,label,optionsLabel,inputs,addChoice,multi,error,footer);
+ form.append(top,label,optionsLabel,inputs,addChoice,multi,error,footer);
  overlay.append(shade,form);mount.append(overlay);
  const previousFocus=document.activeElement;
  let closed=false;
@@ -207,7 +204,7 @@ function render({poll,currentUser='me',names={},canClose=false,onUpdate}){
   },'sv-poll-close');
   foot.append(close);
  }
- shell.append(foot,make('small','sv-poll-local-note','Локальный опрос · без доставки другим участникам'));
+ shell.append(foot);
  return shell;
 }
 window.SEYVEO_CHAT_POLLS=Object.freeze({openEditor,render,validPoll});
