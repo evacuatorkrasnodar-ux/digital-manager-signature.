@@ -151,13 +151,13 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-s
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send svg.svcp-send-arrow-disc{
  box-sizing:border-box!important;display:block!important;
- width:20px!important;min-width:20px!important;max-width:20px!important;
- height:20px!important;min-height:20px!important;max-height:20px!important;
+ width:24px!important;min-width:24px!important;max-width:24px!important;
+ height:24px!important;min-height:24px!important;max-height:24px!important;
  background:none!important;border:0!important;box-shadow:none!important;
  filter:none!important;transform:none!important;overflow:visible!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send svg.svcp-send-arrow-disc path{
- fill:none!important;stroke:#fff!important;stroke-width:1.55!important;
+ fill:none!important;stroke:#fff!important;stroke-width:1.4!important;
  stroke-linejoin:round!important;stroke-linecap:round!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not([data-sayvi-responding="true"]) button.svcp-chat-send rect.svcp-stop-square{
@@ -165,4 +165,15 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not([data-sayvi-re
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] button.svcp-chat-send rect.svcp-stop-square{
  display:block!important;
+}
+
+/* Hidden idle Send must stay hidden even though active Send has a solid face.
+   Keep the mic visible unless the draft is nonempty or Sayvi is responding. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not([data-sayvi-responding="true"])[data-has-content="false"] button.svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send[hidden]{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+/* iOS tap/focus must never leave an apparent pearl or halo on the blue face. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm button.svcp-chat-send:focus:not(:focus-visible){
+ outline:0!important;outline-offset:0!important;
 }
