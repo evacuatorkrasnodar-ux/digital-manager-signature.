@@ -856,3 +856,32 @@ html body #svcpWorkChatScreen[data-view="room"]
  > button#svcpAttachFile.svcp-plus-pearl-rebuilt:focus-visible{
  outline:2px solid currentColor!important;outline-offset:2px!important;
 }
+
+/* v19: supplied Sayvi jade-platinum emblem and balanced iMessage capsule length. */
+/* Keep the new colour art in the existing Sayvi button: no monochrome
+   filter, badge circle or additional button surface. The square asset has
+   transparent edges, so 29px gives a crisp 20-24px visible sphere. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm
+ > #svcpPolishMessage img.sv-sayvi-minimal-mark.svcp-sayvi-chat-jade-icon,
+html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm
+ > #svcpPolishMessage img.sv-sayvi-minimal-mark.svcp-sayvi-chat-jade-icon{
+ display:block!important;
+ width:29px!important;min-width:29px!important;max-width:29px!important;
+ height:29px!important;min-height:29px!important;max-height:29px!important;
+ flex:0 0 29px!important;object-fit:contain!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ filter:none!important;opacity:1!important;
+ transform:none!important;mix-blend-mode:normal!important;
+}
+/* The former capsule's shadow almost touched the right screen border.
+   Trim the *glass pane*, not the overall composer or Plus placement,
+   retaining an Apple-like breathing space at the right. */
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:not(.svcp-compose-multiline)::before,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:not(.svcp-compose-multiline):focus-within::before,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:not(.svcp-compose-multiline):has(#svcpAttachMenu:not([hidden]))::before{
+ left:48px!important;
+ right:10px!important;
+ width:auto!important;
+}
