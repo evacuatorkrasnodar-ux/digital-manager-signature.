@@ -808,3 +808,51 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-
  opacity:1!important;filter:none!important;animation:none!important;
  transition:none!important;
 }
+
+/* Expanded work-chat composer: icon-only Plus, no overlaid button face (v18). */
+/* Only the taller writing layout. Keep the existing clickable control,
+   grid slot and attach-menu handler; remove the circle, glass and press
+   layers that currently overlap the expansion's pearl dock. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:hover,:focus,:active,:focus-visible){
+ -webkit-appearance:none!important;appearance:none!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ text-shadow:none!important;filter:none!important;opacity:1!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ animation:none!important;transition:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+ color:var(--text,#16191d)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt::before,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt::after{
+ content:none!important;display:none!important;
+ background:none!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg{
+ position:static!important;
+ display:block!important;flex:none!important;
+ width:22px!important;height:22px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.6!important;
+ transform:none!important;filter:none!important;opacity:1!important;
+ animation:none!important;transition:none!important;
+}
+/* Preserve keyboard focus visibility without a circular paint layer. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt:focus-visible{
+ outline:2px solid currentColor!important;outline-offset:2px!important;
+}
