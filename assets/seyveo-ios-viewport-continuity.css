@@ -136,13 +136,13 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  height:100%!important;
  transform:translateX(-50%)!important;
  border:0!important;border-radius:0!important;
+ /* Extremely low pigment: wallpaper should remain visible, even in blue rooms. */
  background:linear-gradient(180deg,
-  rgba(255,255,255,.27) 0%,
-  rgba(255,255,255,.17) 35%,
-  rgba(255,255,255,.055) 69%,
-  rgba(255,255,255,0) 100%)!important;
- -webkit-backdrop-filter:blur(20px) saturate(103%)!important;
- backdrop-filter:blur(20px) saturate(103%)!important;
+  rgba(245,249,253,.075) 0%,
+  rgba(245,249,253,.035) 55%,
+  transparent 100%)!important;
+ -webkit-backdrop-filter:blur(9px) saturate(105%)!important;
+ backdrop-filter:blur(9px) saturate(105%)!important;
  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,rgba(0,0,0,.68) 66%,transparent 100%)!important;
  mask-image:linear-gradient(to bottom,#000 0%,#000 35%,rgba(0,0,0,.68) 66%,transparent 100%)!important;
  box-shadow:none!important;
@@ -200,10 +200,24 @@ html[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header #svcpRoomAvatar{
  background-color:rgba(88,102,117,.32)!important;
 }
-/* Messages scroll behind the frosted header but start below the name
-   and subtitle. No old 154px reserve or opaque empty strip. */
+/* Apple-style translucent header: the unread message underneath used
+   to turn into an opaque white smear when blurred. Fade MESSAGE PIXELS at the
+   top of their scrolling viewport instead of painting extra white over them.
+   The blue/white conversation wallpaper stays fully visible. Text is fully
+   legible from the first normal message row below the 136px title area. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
- padding-top:calc(119px + env(safe-area-inset-top,0px))!important;
- scroll-padding-top:calc(119px + env(safe-area-inset-top,0px))!important;
- -webkit-mask-image:none!important;mask-image:none!important;
+ padding-top:calc(150px + env(safe-area-inset-top,0px))!important;
+ scroll-padding-top:calc(150px + env(safe-area-inset-top,0px))!important;
+ -webkit-mask-image:linear-gradient(to bottom,
+  transparent 0px,
+  transparent calc(58px + env(safe-area-inset-top,0px)),
+  rgba(0,0,0,.04) calc(90px + env(safe-area-inset-top,0px)),
+  rgba(0,0,0,.24) calc(125px + env(safe-area-inset-top,0px)),
+  #000 calc(150px + env(safe-area-inset-top,0px)))!important;
+ mask-image:linear-gradient(to bottom,
+  transparent 0px,
+  transparent calc(58px + env(safe-area-inset-top,0px)),
+  rgba(0,0,0,.04) calc(90px + env(safe-area-inset-top,0px)),
+  rgba(0,0,0,.24) calc(125px + env(safe-area-inset-top,0px)),
+  #000 calc(150px + env(safe-area-inset-top,0px)))!important;
 }
