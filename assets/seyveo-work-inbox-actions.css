@@ -209,3 +209,30 @@ html body #svcpWorkChatScreen.sv-inbox-no-preview .svcp-directory-preview{displa
 html body #svcpWorkChatScreen .svcp-work-chat-header > #svcpWorkHistoryTop.sv-inbox-history-proxy{
  display:none!important;
 }
+
+/* v2 · fix: the trailing actions are not part of the resting inbox.
+   The transparent original row let the rail bleed through at all times. */
+html body #svcpWorkChatScreen .sv-inbox-row-shell:not(.is-swiped) > .sv-inbox-row-quick{
+ display:none!important;
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-row-shell.is-swiped > .sv-inbox-row-quick{
+ display:flex!important;
+ visibility:visible!important;
+ pointer-events:auto!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-row-shell > button.svcp-directory-item{
+ box-sizing:border-box!important;
+ width:100%!important;min-width:100%!important;max-width:100%!important;
+ flex:0 0 auto!important;
+ margin:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-row-shell{
+ box-sizing:border-box!important;
+ width:100%!important;max-width:100%!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-row-shell:not(.is-swiped) > button.svcp-directory-item{
+ transform:none!important;
+}
