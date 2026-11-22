@@ -2711,6 +2711,69 @@ function openGuide(bubble,msg){
  bubble.append(panel);refresh();
  panel.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
+
+// SEYVEO · Apple-style two-level Sayvi text inside the SAME message bubble.
+// Original messages are never overwritten, translated or sent automatically.
+function persistSayviComparison(index,kind,result){
+ const source=state.chat[index];
+ if(!source||typeof source.text!=='string'||!result||result.trim()===source.text.trim())return false;
+ const comparison={kind,source:source.text,result:result.trim()};
+ const updated=state.chat.map((item,i)=>i===index?{...item,sayviComparison:comparison}:item);
+ if(!save(CHAT_KEY,updated))return false;
+ state.chat=updated;
+ renderChat();
+ const next=Array.from($('svcpMessages')?.querySelectorAll('.svcp-bubble[data-chat-index]')||[])
+  .find(node=>Number(node.dataset.chatIndex)===index);
+ next?.scrollIntoView({block:'nearest',behavior:'smooth'});
+ return true;
+}
+async function translateSayviMessage(index){
+ const source=state.chat[index];
+ const TranslatorEngine=window.Translator;
+ if(!source||typeof source.text!=='string')return;
+ if(!TranslatorEngine||typeof TranslatorEngine.create!=='function'){
+  setStatus('На этом устройстве перевод пока недоступен. Для него нужен подключённый движок перевода.');
+  return;
+ }
+ const guessed=/[а-яё]/iu.test(source.text)?'ru':'en';
+ const answer=window.prompt('Язык оригинала: ru — русский, en — английский, es — испанский',guessed);
+ if(answer===null)return;
+ const from=answer.trim().toLowerCase();
+ if(!['ru','en','es'].includes(from)){setStatus('Выбери язык: ru, en или es.');return;}
+ const to=from==='ru'?'en':'ru';
+ let translator;
+ try{
+  setStatus('Сэйви · проверяю локальный перевод…');
+  const settings={sourceLanguage:from,targetLanguage:to};
+  if(typeof TranslatorEngine.availability==='function'){
+   const availability=await TranslatorEngine.availability(settings);
+   if(availability==='unavailable'){
+    setStatus('Языковая пара недоступна в браузере. Исходное сообщение не изменено.');
+    return;
+   }
+  }
+  translator=await TranslatorEngine.create(settings);
+  const result=await translator.translate(source.text);
+  if(state.chat[index]?.text!==source.text)return;
+  if(persistSayviComparison(index,'translation',String(result||'')))
+   setStatus('Перевод показан под оригиналом · только на этом устройстве.');
+  else setStatus('Перевод совпадает с оригиналом или его не удалось сохранить.');
+ }catch(error){
+  console.debug('Sayvi browser translation unavailable:',error);
+  setStatus('Браузерный перевод сейчас недоступен. Оригинал сохранён без изменений.');
+ }finally{
+  try{translator?.destroy?.()}catch{}
+ }
+}
+function compareSayviMessage(index){
+ const msg=state.chat[index];
+ if(!msg||typeof msg.text!=='string')return;
+ const fixed=polishDraftLocally(msg.text);
+ if(!fixed||fixed===msg.text.trim()){setStatus('Сэйви не нашла простых ошибок оформления (локальное демо).');return;}
+ if(persistSayviComparison(index,'correction',fixed))
+  setStatus('Исправленный вариант под оригиналом · исходное сообщение не изменено.');
+}
+
 function isGuideRequest(msg){
  return msg.role!=='recognition'&&msg.role!=='sayvi'&&typeof msg.text==='string'
   && /помоги|помочь|нужно|пожалуйста|проверь|сделай|закрой|открой|распечатай|подготовь|исправь|посмотри|разберись|поручаю|задани|смену|отч[её]т/u.test(msg.text.toLocaleLowerCase('ru-RU'));
@@ -2760,7 +2823,10 @@ function renderChat(){
    // The time, bookmark, reply and assignment actions remain accessible.
    const emojiOnly=!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&
     !msg.demoReaction&&/^[\p{Extended_Pictographic}\uFE0F\u200D\u{1F3FB}-\u{1F3FF}]{1,14}$/u.test(String(msg.text||'').trim());
-   const shortText=!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&!emojiOnly&&
+   const hasSayviComparison=!!(msg.sayviComparison&&msg.sayviComparison.source===msg.text&&
+    ['translation','correction'].includes(msg.sayviComparison.kind)&&
+    typeof msg.sayviComparison.result==='string'&&msg.sayviComparison.result.trim());
+   const shortText=!hasSayviComparison&&!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&!emojiOnly&&
     !msg.documentFlowId&&String(msg.text||'').trim().length>0&&
     String(msg.text||'').trim().length<=5&&!String(msg.text||'').includes('\n');
    const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(shortText?' is-short-text':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
@@ -2802,7 +2868,20 @@ function renderChat(){
       bubble.classList.add('svcp-task-inline-label');
      }else bubble.append(label);
     }
-    if(taskText)bubble.append(el('span','svcp-message-text',taskText));
+    if(taskText){
+     if(hasSayviComparison&&!msg.taskId&&!msg.mediaId){
+      bubble.classList.add('svcp-has-sayvi-comparison');
+      const comparison=el('div','svcp-sayvi-comparison');
+      comparison.setAttribute('aria-label',msg.sayviComparison.kind==='translation'?'Оригинал и перевод':'Оригинал и исправленный вариант');
+      const source=el('div','svcp-sayvi-source',msg.text);
+      const separator=el('div','svcp-sayvi-divider');
+      separator.setAttribute('aria-hidden','true');
+      const result=el('div','svcp-message-text svcp-sayvi-result',msg.sayviComparison.result);
+      const kind=el('small','svcp-sayvi-comparison-kind',msg.sayviComparison.kind==='translation'?'Перевод':'Исправлено Сэйви · демо');
+      comparison.append(source,separator,result,kind);
+      bubble.append(comparison);
+     }else bubble.append(el('span','svcp-message-text',taskText));
+    }
     // A file without a caption should be a single card, never a card inside
     // another painted message bubble. Keep quotes and tasks unchanged.
     if(msg.mediaId&&!msg.replyTo&&!msg.taskId&&!msg.documentFlowId&&!taskText){
@@ -2857,7 +2936,9 @@ function renderChat(){
       reply:"<path d=\"M9 10 4 14l5 4\"/><path d=\"M4 14h9a7 7 0 0 1 7 7\"/>",reaction:"<path d=\"M12 20s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 10c0 5.5-8 10-8 10Z\"/>",
       star:"<path d=\"M6 4.5h12v16l-6-4-6 4Z\"/>",award:"<path d=\"m12 2.8 2.85 5.77 6.37.93-4.61 4.5 1.09 6.35L12 17.35l-5.7 3 1.09-6.35-4.61-4.5 6.37-.93Z\"/>",copy:"<rect x=\"8\" y=\"8\" width=\"11\" height=\"12\" rx=\"2\"/><path d=\"M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2\"/>",
       edit:"<path d=\"M12.7 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-5.7\"/><path d=\"m10.2 15.5-3.1.7.7-3.1L17.2 3.7a2.2 2.2 0 0 1 3.1 3.1l-9.4 9.4-3.1.7\"/><path d=\"m16.3 4.6 3.1 3.1\"/>",delete:"<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6\"/>",
-      task:"<rect x=\"4\" y=\"5\" width=\"16\" height=\"15\" rx=\"2\"/><path d=\"M8 10h8M8 14h5\"/><path d=\"M17 17v5m-2.5-2.5h5\"/>"
+      task:"<rect x=\"4\" y=\"5\" width=\"16\" height=\"15\" rx=\"2\"/><path d=\"M8 10h8M8 14h5\"/><path d=\"M17 17v5m-2.5-2.5h5\"/>",
+      polish:"<path d=\"m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z\"/><path d=\"m19 17 .7 1.8L21.5 19.5l-1.8.7L19 22l-.7-1.8-1.8-.7 1.8-.7L19 17Z\"/>",
+      translate:"<path d=\"M3 6h12M9 3v3m3 0c-.5 5-3 8.5-7 11m1-8c1.1 2.5 3.1 4.5 6 6\"/><path d=\"m13 21 4-10 4 10m-6.8-3.2h5.6\"/>"
      };
      svg.innerHTML=parts[kind]||'';
      control.appendChild(svg);
@@ -2888,6 +2969,19 @@ function renderChat(){
      try{await navigator.clipboard.writeText(msg.text);setStatus('Сообщение скопировано')}
      catch{setStatus('Не удалось скопировать. Выдели текст сообщения вручную.')}
     }});
+    if(!msg.mediaId&&!msg.taskId&&!isRecognition&&msg.text.trim()){
+     secondary.push({title:'Сэйви · исправить',kind:'polish',run:()=>{
+      closeMessageMenus();compareSayviMessage(index);
+     }});
+     secondary.push({title:'Перевести',kind:'translate',run:()=>{
+      closeMessageMenus();void translateSayviMessage(index);
+     }});
+     if(hasSayviComparison)secondary.push({title:'Скрыть вариант Сэйви',kind:'polish',run:()=>{
+      closeMessageMenus();
+      const updated=state.chat.map((item,i)=>i===index?{...item,sayviComparison:null}:item);
+      if(save(CHAT_KEY,updated)){state.chat=updated;renderChat();}
+     }});
+    }
     if(isOwn&&!msg.mediaId&&!msg.taskId&&Date.now()-Number(msg.at)>=0&&Date.now()-Number(msg.at)<=15*60*1000){
      secondary.push({title:'Редактировать',kind:'edit',run:()=>{
       closeMessageMenus();clearReply();
