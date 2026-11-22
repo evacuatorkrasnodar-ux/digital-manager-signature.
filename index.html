@@ -80,7 +80,7 @@ body{-webkit-font-smoothing:antialiased}
 .app{max-width:530px;margin:auto;min-height:100dvh;display:flex;flex-direction:column;padding:calc(24px + env(safe-area-inset-top, 0px)) max(20px,calc(12px + env(safe-area-inset-right, 0px))) calc(148px + env(safe-area-inset-bottom, 0px)) max(20px,calc(12px + env(safe-area-inset-left, 0px)));background-image:var(--seyveo-hdr-stage);background-repeat:no-repeat}
 /* Preserve display-cutout space in iOS PWA and supported Android browser views.
    Portrait keeps our original 20px sides; landscape reserves the camera/notch edge. */
-@media(max-width:649px){.app{padding-top:calc(16px + env(safe-area-inset-top, 0px))}}
+@media(max-width:649px){.app{padding-top:calc(8px + env(safe-area-inset-top, 0px))}}
 button{font:inherit;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
 button:focus-visible{outline:2px solid var(--text);outline-offset:3px}
 .top{display:flex;align-items:center;gap:12px}
