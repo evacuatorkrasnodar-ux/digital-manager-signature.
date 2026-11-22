@@ -2705,8 +2705,13 @@ function openGuide(bubble,msg){
  },'svcp-guide-question');
  const close=btn('×',()=>panel.remove(),'svcp-guide-close');
  close.setAttribute('aria-label','Закрыть помощь Сэйви');
+ const correct=btn('Исправить текст',()=>{
+  const index=Number(bubble.dataset.chatIndex);
+  if(!Number.isInteger(index))return;
+  compareSayviMessage(index);
+ },'svcp-guide-correct');
  function refresh(){progress.textContent='Шаг '+(step+1)+' из '+steps.length;instruction.textContent=steps[step];next.textContent=step===steps.length-1?'Завершить':'Дальше';}
- controls.append(question,next);
+ controls.append(question,correct,next);
  panel.append(title,close,description,progress,instruction,controls);
  bubble.append(panel);refresh();
  panel.scrollIntoView({block:'nearest',behavior:'smooth'});
