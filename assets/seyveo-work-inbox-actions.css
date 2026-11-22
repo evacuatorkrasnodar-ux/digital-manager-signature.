@@ -869,3 +869,226 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"]
  html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] input.sv-inbox-settings-switch::before,
  html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="group"] input.sv-inbox-participant-check{transition:none!important}
 }
+
+
+/* SEYVEO · Work History / refined White Pearl.
+   Single history engine stays intact: search, selection, open and delete.
+   Matches the Messages 44px circular header and quiet Apple-like list. */
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory{
+ --sv-history-ink:#17191D;
+ --sv-history-muted:#878E99;
+ --sv-history-divider:rgba(44,52,66,.075);
+ color:var(--sv-history-ink)!important;
+ background:#FFFFFF!important;
+ padding:calc(12px + env(safe-area-inset-top,0px))
+  max(12px,env(safe-area-inset-right,0px))
+  calc(28px + env(safe-area-inset-bottom,0px))
+  max(12px,env(safe-area-inset-left,0px))!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-shell{
+ width:100%!important;max-width:600px!important;
+ margin:0 auto!important;padding:0!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head{
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ column-gap:0!important;align-items:center!important;
+ width:100%!important;min-height:50px!important;height:50px!important;
+ margin:0 0 10px!important;padding:0 0 3px!important;
+ border:0!important;background:transparent!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > strong{
+ grid-column:2!important;justify-self:center!important;
+ width:auto!important;max-width:100%!important;
+ margin:0!important;padding:0!important;
+ text-align:center!important;
+ color:var(--sv-history-ink)!important;
+ font:650 18px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.025em!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > :is(#svcpWorkHistoryBack,#svcpWorkHistoryMenuButton){
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;align-self:center!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:10px!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(204,211,219,.48))!important;
+ border-radius:50%!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.89))!important;
+ background-image:none!important;
+ color:var(--sv-white-pearl-ink,#17191D)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 20px rgba(30,40,58,.10))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(12px))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(12px))!important;
+ -webkit-tap-highlight-color:transparent!important;
+ touch-action:manipulation!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > #svcpWorkHistoryBack{
+ grid-column:1!important;justify-self:start!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > #svcpWorkHistoryMenuButton{
+ grid-column:3!important;justify-self:end!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > :is(#svcpWorkHistoryBack,#svcpWorkHistoryMenuButton):active{
+ background:rgba(230,235,242,.72)!important;
+ box-shadow:var(--sv-white-pearl-press-shadow,inset 0 2px 3px rgba(31,42,58,.12))!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head button svg{
+ display:block!important;position:static!important;
+ width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.7!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-head > #svcpWorkHistoryMenuButton svg{
+ width:19px!important;height:19px!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list{
+ margin:0!important;padding:0!important;
+ display:flex!important;flex-direction:column!important;gap:0!important;
+ width:100%!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-history-day{
+ display:block!important;box-sizing:border-box!important;
+ padding:15px 4px 5px!important;
+ margin:0!important;
+ color:#8A909A!important;
+ font:570 11px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:.01em!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-history-day:first-child{
+ padding-top:5px!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-row{
+ display:flex!important;align-items:center!important;
+ width:100%!important;min-height:67px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;
+ border-bottom:1px solid var(--sv-history-divider)!important;
+ border-radius:0!important;
+ background:transparent!important;
+ overflow:visible!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-row:active{
+ background:rgba(138,157,175,.05)!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-open{
+ display:flex!important;align-items:center!important;
+ flex:1 1 auto!important;min-width:0!important;
+ width:auto!important;min-height:66px!important;
+ box-sizing:border-box!important;
+ padding:8px 2px!important;margin:0!important;gap:11px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ text-align:left!important;color:var(--sv-history-ink)!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-avatar{
+ display:grid!important;place-items:center!important;
+ flex:0 0 38px!important;width:38px!important;min-width:38px!important;
+ height:38px!important;min-height:38px!important;
+ border:0!important;border-radius:50%!important;
+ background:#38393C!important;color:white!important;
+ font:590 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-avatar.is-task{
+ background:#EFF2F5!important;color:#383A3E!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-content{
+ display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+ gap:2px!important;min-width:0!important;overflow:hidden!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-heading{
+ display:flex!important;align-items:baseline!important;
+ justify-content:space-between!important;gap:7px!important;
+ min-width:0!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-heading strong{
+ display:block!important;flex:1 1 auto!important;
+ min-width:0!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+ color:var(--sv-history-ink)!important;
+ font:610 13.5px/1.32 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.012em!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-heading small{
+ display:block!important;flex:0 0 auto!important;
+ color:#979DA6!important;
+ font:400 11px/1.32 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-text{
+ color:#666D77!important;
+ font:400 12px/1.32 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-type{
+ color:#A0A5AD!important;
+ font:400 10.5px/1.28 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;
+}
+/* Keep per-row actions reachable, but let the conversation itself dominate. */
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-more{
+ display:grid!important;place-items:center!important;
+ flex:0 0 38px!important;
+ width:38px!important;min-width:38px!important;height:44px!important;
+ margin:0 0 0 2px!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;color:#9BA1AB!important;
+ box-shadow:none!important;
+ font:600 17px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-more:active{
+ background:#EEF1F5!important;color:#333A42!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-check{
+ flex:0 0 21px!important;width:21px!important;height:21px!important;
+ border:1.5px solid #9AABBE!important;border-radius:50%!important;
+ background:transparent!important;color:#fff!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-row.is-selected .svcp-work-history-check{
+ background:#0A84FF!important;border-color:#0A84FF!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-list .svcp-work-history-row.is-selected{
+ background:rgba(10,132,255,.045)!important;
+}
+/* Menus are crisp, white and compact; keep existing selection/delete actions. */
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory :is(.svcp-work-history-menu,.svcp-work-history-row-menu){
+ background:#FFFFFF!important;color:#1B1D22!important;
+ border:1px solid rgba(150,161,174,.17)!important;
+ border-radius:16px!important;padding:6px!important;
+ box-shadow:0 11px 36px rgba(30,43,61,.13)!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-menu{
+ top:54px!important;right:0!important;width:190px!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-row-menu{
+ right:4px!important;top:50px!important;width:154px!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory :is(.svcp-work-history-menu,.svcp-work-history-row-menu) button{
+ min-height:42px!important;
+ padding:10px 10px!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;color:#1C1D20!important;
+ font:540 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory :is(.svcp-work-history-menu,.svcp-work-history-row-menu) button:active{
+ background:#F1F3F6!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-row-menu button:last-child{
+ color:#E04F4F!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-search{
+ margin:6px 0 12px!important;
+ border:1px solid rgba(75,87,99,.08)!important;
+ border-radius:13px!important;
+ background:#F3F5F7!important;color:#6F7782!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-search input{
+ background:transparent!important;color:#1E2228!important;
+ font-size:15px!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen #svcpWorkHistory .svcp-work-history-selection{
+ margin:7px 0!important;min-height:44px!important;
+ border-bottom:1px solid var(--sv-history-divider)!important;
+}
