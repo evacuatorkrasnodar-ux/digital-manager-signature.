@@ -299,3 +299,23 @@
  background:#282E35!important;border-color:rgba(255,255,255,.12)!important;
 }
 :root[data-theme="dark"] #seyveoFamilyDialog .svf-attach-menu > button{color:#F3F5F7!important}
+
+/* Specificity guard: older light-theme chat rules paint EVERY outgoing
+   message; poll cards must be independent and white in both viewpoints. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-self.is-poll:not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only),
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-other.is-poll:not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only){
+ background:transparent!important;background-image:none!important;
+ color:#26313B!important;border:0!important;box-shadow:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-poll.is-self > .svcp-message-stamp,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-poll.is-self > .svcp-message-stamp > .svcp-time,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-poll.is-other > .svcp-message-stamp,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-poll.is-other > .svcp-message-stamp > .svcp-time{
+ color:#87929D!important;text-shadow:none!important;opacity:1!important;
+}
