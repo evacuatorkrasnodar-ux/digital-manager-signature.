@@ -2087,6 +2087,8 @@ function renderRoomProfile(){
  for(const id of ['svcpRoomProfileAudio','svcpRoomProfileVideo']){
   const action=$(id);if(action)action.hidden=!callable;
  }
+ const assign=$('svcpRoomProfileAssign');
+ if(assign)assign.hidden=employeePreviewActive()||state.viewpoint!=='manager'||!person;
  const perspective=$('svcpElenaPerspective'),view=$('svcpRoomProfileViewSection');
  if(view)view.hidden=!perspective||perspective.hidden;
  // Files and photos point to original messages, never duplicate their data.
@@ -2169,6 +2171,25 @@ $('svcpRoomProfileVideo')?.addEventListener('click',()=>{
 $('svcpRoomProfileSearch')?.addEventListener('click',()=>{
  closeRoomInformation(false);
  $('svcpConversationSearch')?.click();
+});
+/* Create a new assignment directly from a manager's contact card, using
+   the existing validated task draft and preselected staff recipient.
+   Reply/emoji/copy/assign-from-message remain on message long press. */
+$('svcpRoomProfileAssign')?.addEventListener('click',()=>{
+ const room=roomDetails();
+ if(employeePreviewActive()||state.viewpoint!=='manager'||
+    !Object.prototype.hasOwnProperty.call(STAFF,room.person||''))return;
+ closeRoomInformation(false);
+ cancelTaskDraft();
+ state.draftSource={room:room.id,assigneeId:room.person};
+ setTaskRecipient(room.person);
+ closeTaskRecipientPicker();
+ const title=$('svcpChatTaskTitle');
+ if(title){title.value='';title.placeholder='Что поручить '+STAFF[room.person]+'?'}
+ svcpShowDraftAttachment();
+ const draft=$('svcpChatTaskDraft');
+ if(draft)draft.hidden=false;
+ title?.focus({preventScroll:true});
 });
 $('svcpRoomInfo')?.addEventListener('keydown',event=>{
  if(event.key==='Escape'){event.preventDefault();closeRoomInformation();return}
