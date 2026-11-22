@@ -1038,3 +1038,25 @@ html body #svcpWorkChatScreen[data-view="room"]
  stroke-width:1.55!important;stroke-linecap:round!important;
  stroke-linejoin:round!important;
 }
+
+/* v29 · One flat blue SVG disc, never an extra button background.
+   The drawing itself owns the circle; hover and active cannot create depth.
+   Keep the inward 16px send offset and original microphone placement. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus,:focus-visible){
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;border:0!important;
+ transform:none!important;filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc{
+ display:block!important;width:34px!important;height:34px!important;
+ min-width:34px!important;min-height:34px!important;
+ flex:none!important;overflow:visible!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc circle{
+ fill:#0A84FF!important;stroke:none!important;
+}
