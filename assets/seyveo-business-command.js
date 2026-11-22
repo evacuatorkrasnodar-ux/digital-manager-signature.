@@ -1103,7 +1103,7 @@ window.addEventListener('seyveo:work-chat-closing',()=>{
 });
 let svcpSayviDemoReply=null;
 function syncComposerActions(){
- const form=$('svcpChatForm');if(!form)return;
+ const form=$('svcpChatFormReset');if(!form)return;
  const text=$('svcpChatInput')?.value.trim()||'';
  form.dataset.hasContent=String(!!(text||state.files.length||state.file||state.scanCode||svcpSayviDemoReply));
  // "Поручить" belongs to the manager's action menu on a sent message,
@@ -1118,7 +1118,7 @@ $('svcpChatInput')?.addEventListener('input',syncComposerActions);
  * invisible mirror measures both available widths without touching the dock. */
 // Sayvi pattern: selected file is row one of the SAME editor, never a
 // floating sibling. Move the existing preview node, preserving its handlers.
-const svcpComposerHost=$('svcpChatForm');
+const svcpComposerHost=$('svcpChatFormReset');
 const svcpSelectedTray=$('svcpAttachmentPreview');
 if(svcpComposerHost&&svcpSelectedTray&&svcpSelectedTray.parentNode!==svcpComposerHost){
  svcpComposerHost.prepend(svcpSelectedTray);
@@ -1141,7 +1141,7 @@ function finishSvcpSayviDemoReply(stopped=false,discard=false){
  if(!job)return;
  svcpSayviDemoReply=null;
  if(job.timer!==null)clearTimeout(job.timer);
- const form=$('svcpChatForm'),send=svcpComposerSend;
+ const form=$('svcpChatFormReset'),send=svcpComposerSend;
  if(form){delete form.dataset.sayviResponding;}
  if(send){
   send.type='submit';
@@ -1166,7 +1166,7 @@ function startSvcpSayviDemoReply(advice,room){
  if(svcpSayviDemoReply)finishSvcpSayviDemoReply(true,true);
  const full=String(advice?.text||'').trim();
  if(!full)return;
- const thread=$('svcpMessages'),form=$('svcpChatForm');
+ const thread=$('svcpMessages'),form=$('svcpChatFormReset');
  if(!thread||!form)return;
  const bubble=el('article','svcp-bubble is-sayvi svcp-sayvi-drafting');
  bubble.setAttribute('aria-label','Сэйви печатает локальную подсказку');
@@ -1216,64 +1216,12 @@ function measuredComposeHeight(value,width){
  svcpComposeMeasure.textContent=(value||'')+'\u200b';
  return Math.ceil(svcpComposeMeasure.getBoundingClientRect().height);
 }
-/* Remember where the ONE actual Send button sat in the short composer.
-   When JS reparents it to the expanded form, retain the same viewport center.
-   No guessed pixel nudge, duplicate button, or change to Plus/capsule geometry. */
-let svcpShortPlusAnchor=null;
-function svcpPositionExpandedPlus(form,expanded){
- const plus=$('svcpAttachFile');
- if(!plus)return;
- // An iPhone's expanded input paints + using legacy themed focus/press rules.
- // Make the one existing hit target visually transparent at the DOM level:
- // inline !important wins even against old late-loading theme styles.
- const faceProperties=['background','border','border-radius','box-shadow',
-  '-webkit-backdrop-filter','backdrop-filter','filter','text-shadow'];
- if(!expanded){
-  for(const name of faceProperties)plus.style.removeProperty(name);
-  plus.style.removeProperty('left');
-  plus.style.removeProperty('bottom');
-  return;
- }
- for(const [name,value] of [
-  ['background','transparent'],['border','0'],['border-radius','0'],
-  ['box-shadow','none'],['-webkit-backdrop-filter','none'],
-  ['backdrop-filter','none'],['filter','none'],['text-shadow','none']
- ])plus.style.setProperty(name,value,'important');
- const anchor=svcpShortPlusAnchor;
- if(!anchor||Math.abs(window.innerWidth-anchor.viewportWidth)>1)return;
- // The compact Plus uses relative grid positioning while the expanded one
- // uses absolute positioning. Preserve its actual center, not the guessed
- // left:6px/bottom:3px shared by the two very different CSS layouts.
- const frame=form.getBoundingClientRect();
- const button=plus.getBoundingClientRect();
- const width=button.width||44;
- const height=button.height||44;
- const left=anchor.x-frame.left-width/2;
- if(Number.isFinite(left))plus.style.setProperty('left',left.toFixed(2)+'px','important');
- if(Math.abs(frame.bottom-anchor.formBottom)<4){
-  const bottom=frame.bottom-anchor.y-height/2;
-  if(Number.isFinite(bottom))plus.style.setProperty('bottom',bottom.toFixed(2)+'px','important');
- }else plus.style.removeProperty('bottom');
-}
+/* The clean composer has permanent, form-relative button positions.
+   No DOM measuring, viewport anchoring, inline styling or repositioning. */
 function resizeWorkComposer(){
- const input=$('svcpChatInput'),form=$('svcpChatForm');
+ const input=$('svcpChatInput'),form=$('svcpChatFormReset');
  if(!input||!form)return;
 
- if(!form.classList.contains('svcp-compose-multiline')){
-  const frame=form.getBoundingClientRect();
-  const plus=$('svcpAttachFile');
-  if(plus){
-   const button=plus.getBoundingClientRect();
-   if(button.width>25&&button.height>25){
-    svcpShortPlusAnchor={
-     x:button.left+button.width/2,
-     y:button.top+button.height/2,
-     formBottom:frame.bottom,
-     viewportWidth:window.innerWidth
-    };
-   }
-  }
- }
  const value=input.value;
  const withAttachment=!!(state.files.length||state.file||state.scanCode);
  form.classList.toggle('svcp-has-attachment',withAttachment);
@@ -1281,7 +1229,6 @@ function resizeWorkComposer(){
  if(!value&&!state.files.length&&!state.file&&!state.scanCode){
   form.classList.remove('svcp-compose-multiline');
   svcpPlaceComposerActions(false);
-  svcpPositionExpandedPlus(form,false);
   form.style.setProperty('--svcp-editor-height','40px');
   form.style.setProperty('--svcp-compose-height','56px');
   form.style.setProperty('height','56px','important');
@@ -1296,14 +1243,14 @@ function resizeWorkComposer(){
  const formWidth=form.getBoundingClientRect().width||Math.max(240,window.innerWidth-12);
  // The writing dock no longer reserves space for "Поручить".
  // Keep enough room for the send icon, without stealing emoji/input width.
- const shortWidth=formWidth-132-15-54;
+ const shortWidth=Math.max(60,formWidth-101-52);
  const hasNewline=value.includes('\n');
  const textHeight=measuredComposeHeight(value,shortWidth);
  // The chosen file opens the full writing surface, even before any text.
  const wraps=withAttachment||!!value&&(hasNewline||textHeight>24);
  // In multiline the text occupies the full width. Tool buttons use the
  // separate 42px bottom row. No second background/capsule is introduced.
- const expandedHeight=measuredComposeHeight(value,formWidth-32);
+ const expandedHeight=measuredComposeHeight(value,formWidth-24);
  // Single-line wraps need only 24px of text plus 10px breathing room.
  // Keep attachment padding and maximum multi-line height unchanged.
  const textPadding=withAttachment?16:10;
@@ -1324,14 +1271,13 @@ function resizeWorkComposer(){
  form.style.setProperty('height',targetHeight+'px','important');
  input.style.setProperty('height',editorHeight+'px','important');
  input.style.setProperty('overflow-y',wraps&&expandedHeight+textPadding>144?'auto':'hidden','important');
- svcpPositionExpandedPlus(form,wraps);
 }
 
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
 
 /* Read-only size observer: the floating preview knows the composer height.
    It never changes the composer itself and cannot create a layout feedback loop. */
-const svcpComposerFrame=$('svcpChatForm');
+const svcpComposerFrame=$('svcpChatFormReset');
 if(svcpComposerFrame&&typeof ResizeObserver==='function'){
  const svcpComposerSizer=new ResizeObserver(entries=>{
   const host=svcpComposerFrame.closest('.svcp-chat');
@@ -3696,7 +3642,7 @@ $('svcpFile')?.addEventListener('change',()=>{
 function btn(text,action,cls){
  const button=el('button',cls,text);button.type='button';button.addEventListener('click',action);return button;
 }
-$('svcpChatForm')?.addEventListener('submit',async event=>{
+$('svcpChatFormReset')?.addEventListener('submit',async event=>{
  event.preventDefault();
  if(cameraBusy)return;
  const input=$('svcpChatInput'),txt=input?.value.trim()||'';
@@ -3716,7 +3662,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
  const callSayvi=state.room==='dm-sayvi'||/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
  let localSayviAdvice=null;
  cameraBusy=true;
- const sendButton=$('svcpChatForm')?.querySelector('[type="submit"]');
+ const sendButton=$('svcpChatFormReset')?.querySelector('[type="submit"]');
  if(sendButton)sendButton.disabled=true;
  try{
   const saved=[];
@@ -3766,7 +3712,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
 });
 $('svcpChatInput')?.addEventListener('keydown',event=>{
  if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){
-  event.preventDefault();$('svcpChatForm')?.requestSubmit();
+  event.preventDefault();$('svcpChatFormReset')?.requestSubmit();
  }
 });
 function renderTasks(){
