@@ -685,8 +685,10 @@
   add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
   add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistorySearch')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
   shell.dataset.active=active;
+  // Select Wallet throughout its modal session; restore the prior tab on close.
+  const selectedWorkTab=document.getElementById('seyveoPayDialog')?.open?'wallet':active;
   for(const button of nav.querySelectorAll('[data-sv-work-tab]')){
-   button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===active));
+   button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===selectedWorkTab));
   }
   requestAnimationFrame(()=>syncPearl());
  }
