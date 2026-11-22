@@ -65,3 +65,28 @@ main > .sv-chat-jump,
 #svcpWorkChatScreen[data-view="room"] .svcp-chat:has(#svcpAttachmentPreview:not([hidden])) > #svcpScrollBottom{
  display:none!important;
 }
+
+/* SEYVEO v5 · pearl scroll-to-latest control in Work Chat. */
+/* Keep the exact jump position, size, tap target and show/hide behavior.
+   Only replace the graphite fill with the approved light pearl material. */
+:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ .svcp-chat > #svcpScrollBottom,
+:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ .svcp-chat > #svcpScrollBottom:is(:hover,:active,:focus){
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ background:var(--sv-dock-pearl-bg,rgba(255,255,255,.72))!important;
+ background-image:none!important;
+ color:#36414c!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 5px 15px rgba(42,52,72,.11))!important;
+ -webkit-backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(104%))!important;
+ opacity:1!important;filter:none!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ .svcp-chat > #svcpScrollBottom svg{
+ stroke:#36414c!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ .svcp-chat > #svcpScrollBottom:focus-visible{
+ outline:2px solid #75899f!important;
+}
