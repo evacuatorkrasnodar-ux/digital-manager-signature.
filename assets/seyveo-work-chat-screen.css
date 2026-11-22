@@ -6914,3 +6914,30 @@ html body #svcpWorkChatScreen[data-view="room"] .svcp-message-context-menu{
  overscroll-behavior:contain!important;
  -webkit-overflow-scrolling:touch!important;
 }
+
+/* v257 · Fit the extra Sayvi correction action on narrow iPhones. */
+html body #svcpWorkChatScreen .svcp-guide-controls{
+ display:flex!important;
+ flex-wrap:wrap!important;
+ align-items:center!important;
+ gap:6px!important;
+}
+html body #svcpWorkChatScreen .svcp-guide-controls > :is(.svcp-guide-correct,.svcp-guide-next,.svcp-guide-question){
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ flex:0 1 auto!important;
+ min-height:36px!important;
+ padding:6px 10px!important;
+ border:0!important;
+ border-radius:999px!important;
+ background:rgba(255,255,255,.10)!important;
+ color:inherit!important;
+ font-size:12px!important;
+ line-height:1.25!important;
+ white-space:nowrap!important;
+}
+:root[data-theme="light"] body #svcpWorkChatScreen .svcp-guide-controls > .svcp-guide-correct{
+ background:#E2EEE8!important;
+ color:#25463D!important;
+}
