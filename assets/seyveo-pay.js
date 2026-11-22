@@ -91,7 +91,11 @@ function open(tab='card'){
   if(work?.contains(dialog)){
    const tasks=document.getElementById('tasksPage');
    const calendar=document.getElementById('calendarPage');
-   if(tasks?.hidden&&calendar?.hidden)window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
+   if(tasks?.hidden&&calendar?.hidden){
+    if(typeof window.SEYVEO_UNIFIED_TASKS?.openPersonal==='function')
+     window.SEYVEO_UNIFIED_TASKS.openPersonal();
+    else if(location.hash!=='#tasks')location.hash='#tasks';
+   }
    if(typeof dialog.show==='function')dialog.show();
    else dialog.setAttribute('open','');
   }else if(typeof dialog.showModal==='function'){
