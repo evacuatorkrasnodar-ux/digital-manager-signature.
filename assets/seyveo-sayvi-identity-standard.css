@@ -1,15 +1,13 @@
 /* SEYVEO — canonical Sayvi identity, 22 Nov 2026.
  * Exactly one approved jade/platinum artwork, with two intentional sizes:
- * 42px for avatar surfaces; 22px for inline decorative marks.
+ * 44px for avatar surfaces; 22px for inline decorative marks.
  * No forced monochrome masks, dark square or secondary inset emblem.
  * Scoped overrides are needed because earlier pages hard-coded 17/20/25/36px.
  * This stylesheet is loaded last to be the single avatar-material authority. */
 :root{
  --sv-sayvi-mark-image:url("./seyveo-sayvi-avatar-crisp.png?v=1");
- --sv-sayvi-avatar-size:42px;
+ --sv-sayvi-avatar-size:44px;
  --sv-sayvi-inline-size:22px;
- --sv-sayvi-avatar-surface:#EDF3F0;
- --sv-sayvi-avatar-rim:rgba(127,160,149,.24);
 }
 /* Small marks used in prose and inline controls keep their button layout. */
 html body .sv-sayvi-symbol:not(.sv-sayvi-avatar){
@@ -21,7 +19,7 @@ html body .sv-sayvi-symbol:not(.sv-sayvi-avatar){
  -webkit-mask:none!important;
  mask:none!important;
 }
-/* Shared material for actual assistant avatars. */
+/* Flat 44px assistant artwork. No added frame, circle, shadow or halo. */
 html body .sv-sayvi-avatar{
  box-sizing:border-box!important;
  display:grid!important;
@@ -35,23 +33,24 @@ html body .sv-sayvi-avatar{
  max-height:var(--sv-sayvi-avatar-size)!important;
  padding:0!important;
  margin:0!important;
- border:1px solid var(--sv-sayvi-avatar-rim)!important;
- border-radius:50%!important;
- background:var(--sv-sayvi-avatar-surface) var(--sv-sayvi-mark-image)
+ border:0!important;
+ border-radius:0!important;
+ background:transparent var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
- box-shadow:0 1px 3px rgba(40,73,62,.08)!important;
+ box-shadow:none!important;
+ filter:none!important;
+ box-shadow:none!important;
  color:transparent!important;
  font-size:0!important;
  line-height:0!important;
- overflow:hidden!important;
+ overflow:visible!important;
  -webkit-mask:none!important;
  mask:none!important;
 }
 /* The older ::before emblem duplicated the background and made it tiny. */
 html body .sv-sayvi-avatar::before,
 html body .sv-sayvi-avatar::after{content:none!important;display:none!important}
-/* Business insight card: replace the 25px dark square and 17px monochrome logo.
- * Avatar is now the same 42px circular source as in the Messages list. */
+/* Business insight card: show the exact same flat mark as in Messages. */
 html body #picturePage #pictureQuickInsight .picture-sayvi-heading{
  min-height:var(--sv-sayvi-avatar-size)!important;
  align-items:center!important;
@@ -63,9 +62,9 @@ html body #picturePage #pictureQuickInsight .picture-sayvi-symbol.sv-sayvi-avata
  height:var(--sv-sayvi-avatar-size)!important;
  min-width:var(--sv-sayvi-avatar-size)!important;
  min-height:var(--sv-sayvi-avatar-size)!important;
- background:var(--sv-sayvi-avatar-surface) var(--sv-sayvi-mark-image)
+ background:transparent var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
- border:1px solid var(--sv-sayvi-avatar-rim)!important;
+ border:0!important;
  color:transparent!important;
 }
 /* The original nested span was only an image holder; do not draw it again. */
@@ -73,7 +72,7 @@ html body #picturePage #pictureQuickInsight .picture-sayvi-symbol .sv-sayvi-symb
  display:none!important;
  background:none!important;
 }
-/* Chat list: full-size visible Sayvi, not a tiny symbol inside a circle. */
+/* Chat list: original artwork at the standard 44px control size. */
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory
  .svcp-directory-item[data-svcp-room-person="sayvi"] .svcp-directory-avatar.sv-sayvi-avatar{
  flex:0 0 var(--sv-sayvi-avatar-size)!important;
@@ -83,10 +82,10 @@ html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory
  height:var(--sv-sayvi-avatar-size)!important;
  min-height:var(--sv-sayvi-avatar-size)!important;
  max-height:var(--sv-sayvi-avatar-size)!important;
- border:1px solid var(--sv-sayvi-avatar-rim)!important;
- background:var(--sv-sayvi-avatar-surface) var(--sv-sayvi-mark-image)
+ border:0!important;
+ background:transparent var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
- box-shadow:0 1px 3px rgba(40,73,62,.08)!important;
+ box-shadow:none!important;
  color:transparent!important;
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory
@@ -112,19 +111,14 @@ html body #svcpWorkChatScreen .sv-inbox-people-list
  height:var(--sv-sayvi-avatar-size)!important;
  min-width:var(--sv-sayvi-avatar-size)!important;
  min-height:var(--sv-sayvi-avatar-size)!important;
- border:1px solid var(--sv-sayvi-avatar-rim)!important;
- background:var(--sv-sayvi-avatar-surface) var(--sv-sayvi-mark-image)
+ border:0!important;
+ background:transparent var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
- box-shadow:0 1px 3px rgba(40,73,62,.08)!important;
+ box-shadow:none!important;
 }
-/* Chat room heading is a larger avatar context, not an inline symbol. */
+/* Chat room heading uses the same approved artwork without extra decoration. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpRoomAvatar .sv-sayvi-symbol{
  background-image:var(--sv-sayvi-mark-image)!important;
  background-color:transparent!important;
  background-size:contain!important;
-}
-/* Keep the rim and the original colours in every app theme. */
-:root[data-theme="dark"]{
- --sv-sayvi-avatar-surface:#263B36;
- --sv-sayvi-avatar-rim:rgba(205,231,223,.24);
 }
