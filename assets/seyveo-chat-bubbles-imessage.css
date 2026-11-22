@@ -38,7 +38,7 @@
    the user's sky wallpaper. Both are the SAME incoming material. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
- > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi){
+ > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi):not(.is-poll):not(.is-task):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
  align-self:flex-start!important;
  background:rgba(37,111,171,.76)!important;
  background-image:none!important;
@@ -49,7 +49,7 @@
 /* Own messages use one crisp iMessage blue and a mirrored radius. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
- > article.svcp-bubble.svcp-imessage-text.is-self{
+ > article.svcp-bubble.svcp-imessage-text.is-self:not(.is-poll):not(.is-task):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
  align-self:flex-end!important;
  background:rgba(0,132,255,.96)!important;
  background-image:none!important;
