@@ -1,0 +1,205 @@
+/* SEYVEO · inbox controls v1 · Apple-like spacing, White Pearl material. */
+/* The former history button remains mounted for the existing history handler,
+   but History now belongs in the overflow menu. */
+html body #svcpWorkChatScreen .sv-inbox-history-proxy{display:none!important}
+html body #svcpWorkChatScreen[data-view="inbox"] .sv-inbox-options-button{
+ grid-column:3;display:grid!important;place-items:center!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ margin:0;padding:0!important;box-sizing:border-box;border-radius:50%!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(190,198,212,.36))!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.88))!important;
+ color:var(--text,#151515)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 21px rgba(32,42,58,.10))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(12px))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(12px))!important;
+ cursor:pointer;touch-action:manipulation
+}
+html body #svcpWorkChatScreen .sv-inbox-options-button svg{
+ width:20px;height:20px;stroke-width:1.75;fill:none;stroke:currentColor;
+ stroke-linecap:round;stroke-linejoin:round
+}
+html body #svcpWorkChatScreen .sv-inbox-options-button:active{
+ box-shadow:var(--sv-white-pearl-press-shadow,inset 0 2px 4px rgba(28,36,50,.13))!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] .sv-inbox-options-button{display:none!important}
+#svcpWorkChatScreen{--sv-inbox-panel-bg:#FFF;--sv-inbox-panel-ink:#191A1D;--sv-inbox-divider:rgba(28,36,50,.085)}
+:root[data-theme="dark"] #svcpWorkChatScreen{
+ --sv-inbox-panel-bg:#24262A;--sv-inbox-panel-ink:#F7F7FA;--sv-inbox-divider:rgba(255,255,255,.13)
+}
+html body #svcpWorkChatScreen .sv-inbox-popover{
+ position:absolute!important;top:calc(78px + env(safe-area-inset-top,0px));right:max(10px,env(safe-area-inset-right,0px));
+ z-index:570!important;width:min(277px,calc(100vw - 24px));padding:7px;box-sizing:border-box;
+ border:1px solid rgba(180,189,200,.24);border-radius:19px;
+ background:var(--sv-inbox-panel-bg)!important;color:var(--sv-inbox-panel-ink);
+ box-shadow:0 15px 45px rgba(22,30,47,.16),0 2px 7px rgba(22,30,47,.04);
+ -webkit-backdrop-filter:blur(24px) saturate(110%);backdrop-filter:blur(24px) saturate(110%);
+}
+html body #svcpWorkChatScreen .sv-inbox-menu-row{
+ display:flex!important;align-items:center;justify-content:flex-start;
+ gap:11px;width:100%;min-height:46px;padding:9px 11px;
+ border:0!important;border-bottom:1px solid var(--sv-inbox-divider)!important;border-radius:0!important;
+ background:transparent!important;color:inherit!important;box-shadow:none!important;
+ font:500 14px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left;cursor:pointer
+}
+html body #svcpWorkChatScreen .sv-inbox-menu-row:last-child{border-bottom:0!important}
+html body #svcpWorkChatScreen .sv-inbox-menu-row:active{background:rgba(147,156,176,.10)!important;border-radius:11px!important}
+html body #svcpWorkChatScreen :is(.sv-inbox-menu-row,.sv-inbox-action-row,.sv-inbox-contact-row,.sv-inbox-profile-mute,.sv-inbox-restore) svg{
+ flex:none;width:19px;height:19px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.6
+}
+html body #svcpWorkChatScreen .sv-inbox-menu-row svg{opacity:.76}
+html body #svcpWorkChatScreen .sv-inbox-overlay{
+ position:absolute!important;inset:0!important;z-index:590!important;
+ display:flex;align-items:flex-end;justify-content:center;
+ background:transparent!important;isolation:isolate
+}
+html body #svcpWorkChatScreen .sv-inbox-sheet-backdrop{
+ position:absolute;inset:0;border:0!important;background:rgba(17,24,35,.24)!important;
+ width:100%;height:100%;border-radius:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)
+}
+html body #svcpWorkChatScreen .sv-inbox-sheet-panel{
+ position:relative;z-index:1;display:flex;flex-direction:column;
+ box-sizing:border-box;width:min(100%,460px);height:auto;max-height:min(78dvh,740px);
+ margin:0;padding:7px 0 max(14px,env(safe-area-inset-bottom,0px));
+ overflow:hidden;border:1px solid rgba(190,196,204,.28);border-bottom:0;
+ border-radius:27px 27px 0 0;background:var(--sv-inbox-panel-bg)!important;color:var(--sv-inbox-panel-ink)!important;
+ box-shadow:0 -11px 34px rgba(28,36,52,.12);font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif
+}
+html body #svcpWorkChatScreen .sv-inbox-sheet-grab{
+ flex:0 0 4px;width:36px;height:4px;margin:3px auto 9px;border-radius:100px;background:#D6D8DC
+}
+html body #svcpWorkChatScreen .sv-inbox-sheet-head{
+ display:grid;flex:none;grid-template-columns:44px minmax(0,1fr) 44px;
+ align-items:center;padding:0 14px;height:50px;box-sizing:border-box;border-bottom:1px solid var(--sv-inbox-divider)
+}
+html body #svcpWorkChatScreen .sv-inbox-sheet-head strong{
+ grid-column:2;text-align:center;font-size:16px;font-weight:620;letter-spacing:-.025em;line-height:1.2;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+html body #svcpWorkChatScreen .sv-inbox-sheet-back{
+ display:grid;place-items:center;width:44px;height:44px;min-width:44px;
+ border:0!important;border-radius:50%!important;background:transparent!important;
+ color:inherit!important;padding:0!important;box-shadow:none!important
+}
+html body #svcpWorkChatScreen .sv-inbox-sheet-back span{display:none}
+html body #svcpWorkChatScreen .sv-inbox-sheet-back svg{width:19px;height:19px;stroke-width:1.7}
+html body #svcpWorkChatScreen .sv-inbox-sheet-body{
+ flex:1 1 auto;min-height:0;overflow-y:auto;padding:10px 18px 20px;-webkit-overflow-scrolling:touch;
+ scrollbar-width:none;overscroll-behavior:contain
+}
+html body #svcpWorkChatScreen .sv-inbox-hint{
+ color:#7D8088;font-size:12px;line-height:1.5;margin:10px 3px 15px
+}
+html body #svcpWorkChatScreen :is(.sv-inbox-contact-row,.sv-inbox-action-row){
+ display:flex;align-items:center;gap:11px;width:100%;min-height:52px;
+ padding:9px 3px;border:0!important;border-bottom:1px solid var(--sv-inbox-divider)!important;
+ border-radius:0!important;background:transparent!important;color:inherit!important;
+ box-shadow:none!important;text-align:left;
+ font:500 14px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen :is(.sv-inbox-contact-row,.sv-inbox-action-row):active{background:rgba(145,158,175,.08)!important}
+html body #svcpWorkChatScreen .sv-inbox-contact-row>svg{margin-left:auto;order:3;width:15px;height:15px;opacity:.5}
+html body #svcpWorkChatScreen .sv-inbox-contact-row>span:not(.sv-inbox-contact-avatar){
+ display:flex;flex-direction:column;flex:1;gap:3px
+}
+html body #svcpWorkChatScreen .sv-inbox-contact-row small{display:block;font-size:11px;font-weight:400;color:#898D94}
+html body #svcpWorkChatScreen .sv-inbox-contact-avatar{
+ display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;
+ background:#38383A;color:#fff;font-size:18px;font-weight:580
+}
+html body #svcpWorkChatScreen .sv-inbox-contact-avatar.is-sayvi{
+ background:#EBF2EE;color:#314B3D
+}
+html body #svcpWorkChatScreen .sv-inbox-group-form{display:flex;flex-direction:column;gap:10px}
+html body #svcpWorkChatScreen .sv-inbox-field-label{display:grid;gap:7px;font-size:12px;color:#6C7078}
+html body #svcpWorkChatScreen .sv-inbox-text-input{
+ display:block;width:100%;height:45px;padding:0 12px;border:1px solid #E2E4E8!important;
+ border-radius:13px;background:#F7F8FA!important;color:#181A1E!important;
+ box-sizing:border-box;font-size:16px!important;font-family:inherit
+}
+html body #svcpWorkChatScreen .sv-inbox-check-row{
+ display:flex;align-items:center;gap:11px;min-height:44px;padding:5px 0;
+ border-bottom:1px solid var(--sv-inbox-divider);font-size:14px;cursor:pointer
+}
+html body #svcpWorkChatScreen .sv-inbox-check-row input{width:19px;height:19px;accent-color:#0A84FF}
+html body #svcpWorkChatScreen .sv-inbox-submit{
+ display:grid;place-items:center;width:100%;height:45px;border:0!important;border-radius:14px!important;
+ background:#0A84FF!important;color:#fff!important;box-shadow:none!important;
+ font:600 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+}
+html body #svcpWorkChatScreen .sv-inbox-toggle-row{
+ display:flex;align-items:center;justify-content:space-between;gap:15px;
+ min-height:66px;border-bottom:1px solid var(--sv-inbox-divider);font-size:14px
+}
+html body #svcpWorkChatScreen .sv-inbox-toggle-row>span{display:grid;gap:5px}
+html body #svcpWorkChatScreen .sv-inbox-toggle-row strong{font-size:14px;font-weight:550}
+html body #svcpWorkChatScreen .sv-inbox-toggle-row small{font-size:11px;color:#8B9099}
+html body #svcpWorkChatScreen .sv-inbox-toggle-row input{
+ appearance:auto;-webkit-appearance:auto;width:20px;height:20px;accent-color:#0A84FF
+}
+html body #svcpWorkChatScreen .sv-inbox-action-row.is-destructive{color:#E04B4B!important}
+html body #svcpWorkChatScreen .sv-inbox-archive-row{
+ display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--sv-inbox-divider)
+}
+html body #svcpWorkChatScreen .sv-inbox-archive-row>.sv-inbox-contact-row{min-width:0;flex:1;border:0!important}
+html body #svcpWorkChatScreen .sv-inbox-restore{
+ display:flex;align-items:center;gap:5px;flex:none;padding:9px 7px;border:0!important;
+ background:transparent!important;color:#0A84FF!important;font-size:12px!important;box-shadow:none!important
+}
+html body #svcpWorkChatScreen .sv-inbox-restore svg{width:15px;height:15px}
+html body #svcpWorkChatScreen .sv-inbox-profile-settings{padding-top:2px!important;padding-bottom:2px!important}
+html body #svcpWorkChatScreen .sv-inbox-profile-mute{
+ display:flex;align-items:center;gap:12px;width:100%;min-height:48px;text-align:left;
+ padding:10px 5px;border:0!important;background:transparent!important;
+ color:inherit!important;box-shadow:none!important;font-size:14px!important
+}
+html body #svcpWorkChatScreen .sv-inbox-profile-mute svg{width:19px;height:19px}
+/* Swipe rail wraps the original button; room click handlers and labels remain. */
+html body #svcpWorkChatScreen #svcpConversationList{
+ display:flex!important;flex-direction:column;align-items:stretch;
+}
+html body #svcpWorkChatScreen .sv-inbox-row-shell{
+ display:block;position:relative;overflow:hidden;flex:none;order:0;width:100%;
+ min-height:59px;isolation:isolate
+}
+html body #svcpWorkChatScreen .sv-inbox-row-shell.is-archived{display:none!important}
+html body #svcpWorkChatScreen .sv-inbox-row-quick{
+ position:absolute;inset:0 0 0 auto;display:flex;width:140px;height:100%;z-index:0
+}
+html body #svcpWorkChatScreen .sv-inbox-row-quick button{
+ display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;
+ width:70px;height:100%;border:0!important;border-radius:0!important;
+ color:#fff!important;background:#7A818A!important;font-size:10px!important;
+ box-shadow:none!important;padding:4px 0!important
+}
+html body #svcpWorkChatScreen .sv-inbox-row-quick .sv-inbox-quick-archive{background:#0A84FF!important}
+html body #svcpWorkChatScreen .sv-inbox-row-quick svg{
+ width:19px;height:19px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round
+}
+html body #svcpWorkChatScreen .sv-inbox-row-shell > button.svcp-directory-item{
+ position:relative!important;z-index:1!important;
+ transform:translateX(0);transition:transform .18s ease;
+ touch-action:pan-y;cursor:pointer
+}
+html body #svcpWorkChatScreen .sv-inbox-row-shell.is-swiped > button.svcp-directory-item{transform:translateX(-140px)}
+html body #svcpWorkChatScreen .sv-inbox-row-shell.is-unread .svcp-directory-name{font-weight:720!important}
+html body #svcpWorkChatScreen .sv-inbox-row-shell.is-unread .svcp-directory-avatar{
+ border:2px solid #0A84FF!important
+}
+html body #svcpWorkChatScreen .sv-inbox-row-badges{display:inline-flex;gap:3px;margin-left:5px}
+html body #svcpWorkChatScreen .sv-inbox-mini-pin{color:#0A84FF;font-size:12px;line-height:1}
+html body #svcpWorkChatScreen .sv-inbox-mini-mute{color:#979BA2;font-size:15px;line-height:1}
+html body #svcpWorkChatScreen.sv-inbox-compact .sv-inbox-row-shell{
+ min-height:50px!important
+}
+html body #svcpWorkChatScreen.sv-inbox-compact .svcp-directory-item{
+ min-height:50px!important;padding-top:4px!important;padding-bottom:4px!important
+}
+html body #svcpWorkChatScreen.sv-inbox-compact .svcp-directory-avatar{
+ width:34px!important;height:34px!important;min-width:34px!important;flex-basis:34px!important;font-size:16px!important
+}
+html body #svcpWorkChatScreen.sv-inbox-no-preview .svcp-directory-preview{display:none!important}
+@media(prefers-reduced-motion:reduce){
+ html body #svcpWorkChatScreen .sv-inbox-row-shell > button.svcp-directory-item{transition:none}
+}
