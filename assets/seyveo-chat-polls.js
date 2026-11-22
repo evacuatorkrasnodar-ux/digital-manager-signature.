@@ -122,17 +122,15 @@ function render({poll,currentUser='me',names={},canClose=false,onUpdate}){
  if(!validPoll(poll)){
   shell.append(make('span','sv-poll-error','Опрос недоступен'));return shell;
  }
- shell.setAttribute('aria-label','Опрос: '+poll.question);
- const header=make('div','sv-poll-card-head');
- header.append(make('span','sv-poll-eyebrow','ОПРОС'),make('span','sv-poll-mode',poll.closed?'Завершён':poll.multiple?'Несколько ответов':'Один ответ'));
+ shell.setAttribute('aria-label','Опрос: '+poll.question+
+  (poll.closed?' · завершён':'')+(poll.multiple?' · несколько ответов':' · один ответ'));
  const title=make('strong','sv-poll-question',poll.question);
  const options=make('div','sv-poll-choices');
- shell.append(header,title,options);
+ shell.append(title,options);
  const setPoll=next=>{if(typeof onUpdate==='function')onUpdate(next)};
  const active=String(currentUser||'me');
  const allVoters=new Set();
  for(const option of poll.options)for(const v of Array.isArray(option.voters)?option.voters:[])allVoters.add(v);
- const total=allVoters.size;
  poll.options.slice(0,8).forEach((opt,i)=>{
   if(!opt||typeof opt.text!=='string')return;
   const voters=Array.isArray(opt.voters)?Array.from(new Set(opt.voters.map(String))):[];
@@ -161,18 +159,15 @@ function render({poll,currentUser='me',names={},canClose=false,onUpdate}){
    avatar.title=person;avatars.append(avatar);
   });
   if(voters.length>3)avatars.append(make('span','sv-poll-voter-more','+'+(voters.length-3)));
-  const tally=make('span','sv-poll-choice-count',voters.length?String(voters.length):'');
   const circle=make('span','sv-poll-choice-circle',selected?'✓':'');
   circle.setAttribute('aria-hidden','true');
-  side.append(avatars,tally,circle);
+  side.append(avatars,circle);
   row.append(name,side);
   options.append(row);
  });
  const foot=make('div','sv-poll-card-footer');
- const sum=make('span','sv-poll-summary',total?total+' '+(total===1?'участник':'участников'):'Пока нет голосов');
- foot.append(sum);
  if(!poll.closed&&poll.options.length<8){
-  const add=button('＋ Добавить вариант',()=>{
+  const add=button('Добавить вариант',()=>{
    if(add.parentNode?.querySelector('.sv-poll-add-row'))return;
    const wrap=make('form','sv-poll-add-row');
    const field=make('input');field.type='text';field.maxLength=100;
