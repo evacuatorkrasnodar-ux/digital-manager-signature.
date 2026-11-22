@@ -20,7 +20,12 @@ const financesIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V1
 tabs.innerHTML='<button type="button" data-syp-tab="card" aria-pressed="true" aria-controls="sypCardHome"><span class="syp-view-icon">'+cardIcon+'</span><span>Карта</span></button>'+
  '<button type="button" data-syp-tab="finances" aria-pressed="false" aria-controls="sypBudgetScreen"><span class="syp-view-icon">'+financesIcon+'</span><span>Финансы</span></button>';
 home.id='sypCardHome';
-home.before(tabs);
+// Reuse Notebook's free header area above the permanent Work capsule.
+// Move the real controls, not a nonfunctional copy. The delegated click
+// listener below therefore belongs to tabs instead of the dialog.
+const workShell=document.getElementById('svWorkShell');
+if(workShell?.contains(dialog))workShell.append(tabs);
+else home.before(tabs);
 const financeCss=document.createElement('link');
 financeCss.rel='stylesheet';
 financeCss.href='assets/seyveo-personal-wallet.css?v=4';
@@ -114,12 +119,11 @@ function close(switchingSection=false){
  if(!switchingSection)launchButton?.focus?.({preventScroll:true});
  window.SEYVEO_WORK_SHELL?.sync?.();
 }
-dialog.addEventListener('click',event=>{
+tabs.addEventListener('click',event=>{
  const tab=event.target.closest('[data-syp-tab]');
- if(tab&&tabs.contains(tab)){
-  void select(tab.dataset.sypTab);
-  return;
- }
+ if(tab&&tabs.contains(tab))void select(tab.dataset.sypTab);
+});
+dialog.addEventListener('click',event=>{
  const button=event.target.closest('[data-syp]');
  if(!button)return;
  const action=button.dataset.syp;
