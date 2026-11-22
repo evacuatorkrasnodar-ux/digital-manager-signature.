@@ -125,9 +125,46 @@ function render({poll,currentUser='me',names={},canClose=false,onUpdate}){
  shell.setAttribute('aria-label','Опрос: '+poll.question+
   (poll.closed?' · завершён':'')+(poll.multiple?' · несколько ответов':' · один ответ'));
  const title=make('strong','sv-poll-question',poll.question);
- const options=make('div','sv-poll-choices');
- shell.append(title,options);
+ const titleRow=make('div','sv-poll-title-row');
+ titleRow.append(title);
  const setPoll=next=>{if(typeof onUpdate==='function')onUpdate(next)};
+ if(canClose&&!poll.closed){
+  const actions=make('div','sv-poll-actions');
+  const more=button('⋯',()=>{
+   const opening=popup.hidden;
+   popup.hidden=!opening;
+   more.setAttribute('aria-expanded',String(opening));
+   if(opening)finish.focus({preventScroll:true});
+  },'sv-poll-more');
+  more.setAttribute('aria-label','Действия опроса');
+  more.setAttribute('aria-haspopup','menu');
+  more.setAttribute('aria-expanded','false');
+  const popup=make('div','sv-poll-action-menu');
+  popup.hidden=true;popup.setAttribute('role','menu');
+  const finish=button('Завершить опрос',()=>{
+   popup.hidden=true;
+   more.setAttribute('aria-expanded','false');
+   if(window.confirm('Завершить опрос? После этого голоса нельзя изменить.'))
+    setPoll({...poll,closed:true});
+  },'sv-poll-action-finish');
+  finish.setAttribute('role','menuitem');
+  popup.append(finish);
+  actions.append(more,popup);
+  actions.addEventListener('focusout',event=>{
+   if(!actions.contains(event.relatedTarget)){
+    popup.hidden=true;more.setAttribute('aria-expanded','false');
+   }
+  });
+  actions.addEventListener('keydown',event=>{
+   if(event.key==='Escape'){
+    event.preventDefault();popup.hidden=true;
+    more.setAttribute('aria-expanded','false');more.focus({preventScroll:true});
+   }
+  });
+  titleRow.append(actions);
+ }else if(poll.closed)titleRow.append(make('small','sv-poll-finished','Завершён'));
+ const options=make('div','sv-poll-choices');
+ shell.append(titleRow,options);
  const active=String(currentUser||'me');
  const allVoters=new Set();
  for(const option of poll.options)for(const v of Array.isArray(option.voters)?option.voters:[])allVoters.add(v);
@@ -191,13 +228,6 @@ function render({poll,currentUser='me',names={},canClose=false,onUpdate}){
    field.focus({preventScroll:true});
   },'sv-poll-add-choice');
   foot.append(add);
- }
- if(canClose&&!poll.closed){
-  const close=button('Завершить',()=>{
-   if(window.confirm('Завершить опрос? После этого голоса нельзя изменить.'))
-    setPoll({...poll,closed:true});
-  },'sv-poll-close');
-  foot.append(close);
  }
  shell.append(foot);
  return shell;
