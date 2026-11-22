@@ -1,0 +1,122 @@
+/* SEYVEO · One Sayvi response visual language · 22 Nov 2026.
+   Only active reply states animate. No extra circle, pressed effect or fake UI.
+   Work Chat uses its existing Send button; Sayvi Chat uses its existing Stop. */
+
+/* Work Chat: keep the supplied artwork large enough to match the real mic.
+   Original WebP has transparent margins; 33px optical envelope ≈ 21px glyph. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm > #svcpPolishMessage > img.sv-sayvi-minimal-mark.svcp-sayvi-chat-jade-icon {
+ width:33px!important;min-width:33px!important;max-width:33px!important;
+ height:33px!important;min-height:33px!important;max-height:33px!important;
+ flex:0 0 33px!important;object-fit:contain!important;
+ margin:0 auto!important;padding:0!important;
+ filter:none!important;transform:none!important;
+}
+
+/* Work Chat's EXISTING send button becomes a real Stop while the reply
+   is being revealed. Preserve the 34px solid blue SVG disc, no extra face. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm[data-sayvi-responding="true"] .svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm[data-sayvi-responding="true"] .svcp-chat-send:is(:active,:hover,:focus,:focus-visible){
+ display:grid!important;visibility:visible!important;pointer-events:auto!important;
+ place-items:center!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ animation:none!important;transition:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+ opacity:1!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm[data-sayvi-responding="true"] #svcpVoiceRecord{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm[data-sayvi-responding="true"] .svcp-chat-send .svcp-send-arrow-disc path{
+ display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm[data-sayvi-responding="true"] .svcp-chat-send .svcp-send-arrow-disc rect.svcp-stop-square{
+ display:block!important;
+ fill:#fff!important;
+ stroke:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not([data-sayvi-responding="true"]) .svcp-chat-send .svcp-send-arrow-disc rect.svcp-stop-square{
+ display:none!important;
+}
+
+/* One subtle light sweep across the name while the assistant is writing. */
+@keyframes svcp-sayvi-name-shine{
+ 0%,100%{text-shadow:0 0 0 transparent;opacity:.86}
+ 45%{text-shadow:0 0 5px rgba(255,255,255,.74),0 0 12px rgba(72,183,255,.57);opacity:1}
+}
+@keyframes svcp-sayvi-letters-glow{
+ 0%,100%{text-shadow:0 0 0 transparent}
+ 45%{text-shadow:0 0 3px rgba(76,183,249,.51)}
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversationTitle.svcp-sayvi-responding,
+html body #svcpWorkChatScreen[data-view="room"]
+ .svcp-sayvi-drafting .svcp-sender{
+ animation:svcp-sayvi-name-shine 1.9s ease-in-out infinite!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ .svcp-sayvi-drafting .svcp-message-text{
+ animation:svcp-sayvi-letters-glow 1.9s ease-in-out infinite!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ .svcp-sayvi-drafting .svcp-message-text::after{
+ content:"";display:inline-block;width:1.5px;height:.95em;
+ margin-left:3px;vertical-align:-.13em;border-radius:2px;
+ background:currentColor;opacity:.6;
+ animation:svcp-sayvi-caret-blink .85s steps(2,end) infinite;
+}
+@keyframes svcp-sayvi-caret-blink{50%{opacity:0}}
+
+/* Main Sayvi Chat: the existing AbortController-backed Stop is the same
+   flat ChatGPT-like blue disc and smaller white square, with NO raised rim. */
+html body #sayviComposer #sayviField > #sayviStopReply:not([hidden]),
+html body #sayviComposer #sayviField > #sayviStopReply:not([hidden]):is(:hover,:active,:focus,:focus-visible){
+ width:42px!important;min-width:42px!important;
+ height:42px!important;min-height:42px!important;
+ display:grid!important;place-items:center!important;
+ background:#2D6DCE!important;background-image:none!important;
+ border:0!important;border-radius:50%!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:none!important;filter:none!important;animation:none!important;
+ color:#fff!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body #sayviComposer #sayviField > #sayviStopReply .sv-stop-symbol{
+ display:block!important;
+ width:10px!important;height:10px!important;
+ border-radius:2px!important;
+ background:#fff!important;box-shadow:none!important;
+}
+/* Existing pending and streamed-response states receive a gentle letter glow.
+   Animated only for actual in-progress answers; archived text stays static. */
+html body .sayvi-thinking .sayvi-thinking-label,
+html body .turn[data-role="assistant"].is-streaming .speaker{
+ animation:sayvi-active-name-light 2.25s ease-in-out infinite!important;
+}
+html body .turn[data-role="assistant"].is-streaming .bubble{
+ animation:svcp-sayvi-letters-glow 1.9s ease-in-out infinite!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html body #svcpWorkChatScreen .svcp-sayvi-drafting .svcp-sender,
+ html body #svcpWorkChatScreen .svcp-sayvi-drafting .svcp-message-text,
+ html body #svcpConversationTitle.svcp-sayvi-responding,
+ html body .sayvi-thinking .sayvi-thinking-label,
+ html body .turn[data-role="assistant"].is-streaming .speaker,
+ html body .turn[data-role="assistant"].is-streaming .bubble{
+  animation:none!important;
+ }
+ html body #svcpWorkChatScreen .svcp-sayvi-drafting .svcp-message-text::after{
+  animation:none!important;opacity:.6!important;
+ }
+}
