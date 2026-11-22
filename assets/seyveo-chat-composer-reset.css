@@ -4,6 +4,9 @@
    JS retains all handlers and only supplies text/attachment heights. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
  --svcp-conversation-blue-glass:rgba(5,123,195,.68);
+ /* The taller capsule needs less blue pigment to reveal the wallpaper
+    as clearly as the compact composer, with the same blur and rim. */
+ --svcp-conversation-blue-glass-expanded:rgba(5,123,195,.44);
  --svcp-conversation-blue-rim:rgba(9,100,171,.57);
  --svcp-conversation-blue-blur:blur(16px) saturate(115%);
 }
@@ -56,6 +59,11 @@ html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > .svcp-clean-surface{
  inset:0!important;border-radius:24px!important;
+ /* Same genuine matte-glass treatment as compact, never solid blue. */
+ background:var(--svcp-conversation-blue-glass-expanded,rgba(6,134,204,.44))!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
+ backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
 }
 /* Original four real buttons: the GRID, not viewport arithmetic, owns
    their vertical centering. Identical first and second row baselines. */
@@ -181,7 +189,9 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpVoiceRecord{
  color:rgba(210,241,253,.92)!important;z-index:4!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpVoiceRecord{
- grid-column:3!important;grid-row:2!important;justify-self:end!important;
+ /* Same 44px target and row as Sayvi, anchored symmetrically on the right. */
+ grid-column:3!important;grid-row:2!important;
+ justify-self:end!important;align-self:center!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset:not(.svcp-compose-multiline)[data-has-content="true"] > #svcpVoiceRecord,
 html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] > #svcpVoiceRecord{
@@ -192,6 +202,11 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpVoiceRecord > svg{
  margin:auto!important;fill:none!important;stroke:currentColor!important;
  stroke-width:1.6!important;stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;filter:none!important;
+}
+/* Mirrored optical inset: Sayvi illustration is +3px, so the mic artwork
+   is -3px only while expanded. Hitbox, plus, send, focus do not shift. */
+html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpVoiceRecord > svg{
+ transform:translateX(-3px)!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpChatSendFlat{
  grid-column:4!important;grid-row:1!important;z-index:5!important;
