@@ -195,13 +195,13 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  height:28px!important;min-height:28px!important;max-height:28px!important;
  margin:0 auto!important;padding:3px 10px!important;
  border:0!important;border-radius:999px!important;
- /* Keep the original deep-blue #0863BF hue; only transparency is adjusted. */
- background:rgba(8,99,191,.76)!important;
+ /* Restore ORIGINAL #0863BF hue and pure flat material; only 14% alpha. */
+ background:rgba(8,99,191,.86)!important;
  background-image:none!important;
- border:1px solid var(--svcp-conversation-blue-rim,rgba(230,247,255,.34))!important;
+ border:0!important;
  box-shadow:none!important;filter:none!important;
- -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(12px) saturate(114%))!important;
- backdrop-filter:var(--svcp-conversation-blue-blur,blur(12px) saturate(114%))!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
@@ -239,12 +239,11 @@ html body #svcpWorkChatScreen[data-view="room"]
  > #svcpConversationStandaloneBack{
  box-sizing:border-box!important;
  width:44px!important;height:44px!important;
- border:1px solid var(--svcp-conversation-blue-rim,rgba(230,247,255,.34))!important;
- border-radius:50%!important;
- background:rgba(13,73,186,.78)!important;color:#fff!important;
+ border:0!important;border-radius:50%!important;
+ /* Original Back cobalt, only 14% transparent. No pale ring. */
+ background:rgba(13,73,186,.86)!important;color:#fff!important;
  box-shadow:none!important;
- -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(12px) saturate(114%))!important;
- backdrop-filter:var(--svcp-conversation-blue-blur,blur(12px) saturate(114%))!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  transform:none!important;transition:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
