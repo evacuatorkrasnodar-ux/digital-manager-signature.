@@ -1,145 +1,140 @@
-/* SEYVEO · Floating Pearl work navigation · version 1
-   No full-width segmented track: only the selected section owns a pearl pill.
-   Existing Work navigation buttons and routing are preserved.
-   Business: 4 tabs. Personal: 3 tabs. Employee preview: 2 tabs. */
-#svWorkShell[data-shared-work="true"] #svWorkTabs{
- --sv-float-pearl-height:40px;
- --sv-float-pearl-ink:#202329;
+/* SEYVEO · Floating Pearl 2 — true Apple-like minimal navigation.
+   NO outer capsule. A single lightweight pearl follows the active tab.
+   Business: 4 sections; personal: 3; staff workspace: 2.
+   Real button targets are 44px high. The indicator itself is only 34px.
+   This stylesheet supersedes the legacy Work segmented navigation. */
+@media(max-width:699px){
+ html body .app.sv-dock-width-workspace:has(> #svWorkShell[data-shared-work="true"]){
+  padding-left:0!important;padding-right:0!important;
+ }
+}
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs{
  box-sizing:border-box!important;
+ order:1!important;
  position:relative!important;
  isolation:isolate!important;
  display:grid!important;
  align-items:center!important;
- justify-content:stretch!important;
- order:1!important;
- grid-template-columns:repeat(4,minmax(0,1fr))!important;
  align-self:center!important;
- width:calc(100% - 16px)!important;
- max-width:480px!important;
- height:48px!important;min-height:48px!important;
- gap:0!important;padding:2px!important;
- margin:5px auto 8px!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ width:calc(100% - 24px)!important;
+ max-width:404px!important;
+ min-width:0!important;
+ height:44px!important;min-height:44px!important;
+ margin:4px auto 5px!important;
+ padding:0 1px!important;
+ gap:0!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- transform:none!important;
- overflow:visible!important;
+ transform:none!important;overflow:visible!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs[data-one="true"]{
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs[data-business="true"]{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs[data-one="true"]{
  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ max-width:380px!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs[data-employee="true"]{
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs[data-employee="true"]{
  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ max-width:300px!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs[hidden],
-#svWorkShell[data-shared-work="true"] #svWorkTabs > button[hidden]{
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs[hidden],
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][hidden]{
  display:none!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs::before,
-#svWorkShell[data-shared-work="true"] #svWorkTabs::after{
- display:none!important;content:none!important;
+/* Defeat the original White Pearl / depth-system selectors that painted a
+   full-width frosted bar even after the floating variant was introduced. */
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]),
+html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs:not([hidden]){
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection{
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs::before,
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs::after{
+ content:none!important;display:none!important;
+}
+/* The pearl is not clickable and does not affect layout. */
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection{
  position:absolute!important;
- z-index:0!important;
- pointer-events:none!important;
+ z-index:0!important;pointer-events:none!important;
  box-sizing:border-box!important;
- left:0!important;
- top:4px!important;
- height:var(--sv-float-pearl-height)!important;
- min-height:var(--sv-float-pearl-height)!important;
- width:90px;
+ top:5px!important;left:0!important;
+ width:80px;
+ height:34px!important;min-height:34px!important;
  padding:0!important;margin:0!important;
  border:1px solid transparent!important;
  border-radius:999px!important;
  background:
-  linear-gradient(155deg,rgba(255,255,255,.94),rgba(247,250,254,.82) 61%,rgba(237,242,248,.78)) padding-box,
-  linear-gradient(135deg,rgba(255,255,255,.98),rgba(183,204,226,.62) 55%,rgba(248,254,255,.95)) border-box!important;
- -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
- backdrop-filter:blur(18px) saturate(112%)!important;
+  linear-gradient(145deg,rgba(255,255,255,.94),rgba(244,247,251,.86)) padding-box,
+  linear-gradient(130deg,rgba(255,255,255,.96),rgba(173,199,218,.53),rgba(247,254,255,.9)) border-box!important;
  box-shadow:
-  inset 0 1px 0 rgba(255,255,255,.95),
-  inset 0 -1px 0 rgba(149,171,199,.095),
-  0 4px 13px rgba(45,64,85,.095),
-  0 1px 3px rgba(52,72,94,.045)!important;
+  inset 0 1px 0 rgba(255,255,255,.93),
+  0 2px 6px rgba(45,66,88,.09)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(108%)!important;
+ backdrop-filter:blur(12px) saturate(108%)!important;
  transform:translate3d(0,0,0);
  will-change:transform,width;
  transition:
-  transform 210ms cubic-bezier(.22,.85,.25,1),
-  width 210ms cubic-bezier(.22,.85,.25,1)!important;
+  transform 190ms cubic-bezier(.22,.82,.24,1),
+  width 190ms cubic-bezier(.22,.82,.24,1)!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection.sv-work-pearl-initial{
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection.sv-work-pearl-initial{
  transition:none!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]{
- box-sizing:border-box!important;
- position:relative!important;
- z-index:1!important;
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:not([hidden]){
  display:flex!important;
- align-items:center!important;
- justify-content:center!important;
+ position:relative!important;z-index:1!important;
+ box-sizing:border-box!important;
+ align-items:center!important;justify-content:center!important;
  width:100%!important;min-width:0!important;
  height:44px!important;min-height:44px!important;
- margin:0!important;
- padding:0 3px!important;
- border:0!important;border-radius:999px!important;
+ margin:0!important;padding:0 2px!important;
+ border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- color:#737984!important;
- font:500 14px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
- letter-spacing:-.025em!important;
- text-align:center!important;
- white-space:nowrap!important;
- cursor:pointer!important;
+ color:#737780!important;
+ font:500 13px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.018em!important;
+ white-space:nowrap!important;text-align:center!important;
  touch-action:manipulation!important;
+ -webkit-tap-highlight-color:transparent!important;
  transform:none!important;
- transition:color 180ms ease!important;
+ transition:color 170ms ease!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][aria-pressed="true"]{
- color:#191D24!important;
- font-weight:650!important;
+html:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][aria-pressed="true"]:not([hidden]){
+ color:#171A1F!important;font-weight:640!important;
+ background:transparent!important;box-shadow:none!important;
  border:0!important;
- background:transparent!important;
- box-shadow:none!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:active{
- transform:none!important;opacity:.72!important;
+html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:not([hidden]){
+ color:#B8BDC6!important;background:transparent!important;box-shadow:none!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:focus-visible{
- outline:2px solid #0A84FF!important;outline-offset:0!important;
+html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][aria-pressed="true"]:not([hidden]){
+ color:#FAFBFC!important;background:transparent!important;box-shadow:none!important;font-weight:640!important;
 }
-/* Dark surfaces receive a silver graphite rim; the unselected track is still invisible. */
-:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs,
-:root[data-theme="light"] body #svWorkShell[data-shared-work="true"] #svWorkTabs{
- background:transparent!important;background-image:none!important;
- border:0!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection{
+html:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection{
  background:
-  linear-gradient(155deg,rgba(104,110,119,.66),rgba(62,67,74,.84)) padding-box,
-  linear-gradient(135deg,rgba(223,230,238,.54),rgba(114,124,138,.52),rgba(217,224,234,.37)) border-box!important;
- box-shadow:
-  inset 0 1px 0 rgba(235,242,250,.13),
-  0 3px 13px rgba(0,0,0,.19)!important;
+  linear-gradient(145deg,rgba(101,109,118,.72),rgba(55,62,70,.8)) padding-box,
+  linear-gradient(130deg,rgba(215,225,237,.5),rgba(110,126,140,.42),rgba(213,225,236,.48)) border-box!important;
+ box-shadow:inset 0 1px 0 rgba(247,252,255,.12),0 2px 7px rgba(0,0,0,.16)!important;
 }
-:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]{
- color:#BAC0C9!important;
-}
-:root[data-theme="dark"] body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab][aria-pressed="true"]{
- color:#FFFFFF!important;
+html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]:focus-visible{
+ outline:2px solid #0A84FF!important;outline-offset:-2px!important;border-radius:18px!important;
 }
 @media(max-width:355px){
- #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]{
-  font-size:12px!important;letter-spacing:-.035em!important;
+ html body #svWorkShell[data-shared-work="true"] #svWorkTabs[data-business="true"] > button[data-sv-work-tab]:not([hidden]){
+  font-size:11.8px!important;letter-spacing:-.028em!important;
  }
 }
 @media(prefers-reduced-motion:reduce){
- #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection,
- #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]{
+ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection,
+ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > button[data-sv-work-tab]{
   transition:none!important;
  }
 }
