@@ -1101,10 +1101,11 @@ window.addEventListener('seyveo:work-chat-closing',()=>{
  const el=$('svcpChatStatus');if(el)el.dataset.show='false';
  $('svcpWorkChatScreen')?.classList.remove('svcp-sayvi-good-news');
 });
+let svcpSayviDemoReply=null;
 function syncComposerActions(){
  const form=$('svcpChatForm');if(!form)return;
  const text=$('svcpChatInput')?.value.trim()||'';
- form.dataset.hasContent=String(!!(text||state.files.length||state.file||state.scanCode));
+ form.dataset.hasContent=String(!!(text||state.files.length||state.file||state.scanCode||svcpSayviDemoReply));
  // "Поручить" belongs to the manager's action menu on a sent message,
  // not the cramped writing dock. Preserve the original task review workflow.
  const task=$('svcpComposerDirectTask');
@@ -1137,6 +1138,81 @@ function svcpPlaceComposerActions(expanded){
  }
  svcpComposerHost.classList.toggle('svcp-voice-on-toolbar',expanded);
 }
+
+/* One real, cancellable presentation of the existing LOCAL Sayvi suggestion.
+   This does not simulate a network/AI request: suggestFromChat already computes
+   the demo response; we reveal only that saved text progressively. */
+function finishSvcpSayviDemoReply(stopped=false,discard=false){
+ const job=svcpSayviDemoReply;
+ if(!job)return;
+ svcpSayviDemoReply=null;
+ if(job.timer!==null)clearTimeout(job.timer);
+ const form=$('svcpChatForm'),send=svcpComposerSend;
+ if(form){delete form.dataset.sayviResponding;}
+ if(send){
+  send.type='submit';
+  send.setAttribute('aria-label','Отправить сообщение');
+  send.title='Отправить сообщение';
+ }
+ $('svcpConversationTitle')?.classList.remove('svcp-sayvi-responding');
+ if(!discard){
+  const shown=stopped?job.letters.slice(0,job.position).join('').trim():job.full;
+  if(shown){
+   commitChatMessages([{room:job.room,role:'sayvi',at:Date.now(),
+    text:shown+(stopped?' …':''),
+    ...(stopped?{}:(job.task?{suggestTask:job.task}:{}))}]);
+  }
+  if(state.room===job.room)renderChat();
+  renderDirectory();
+  setStatus(stopped?'Ответ Сэйви остановлен.':'Сэйви завершила локальную подсказку.');
+ }else job.bubble?.remove();
+ syncComposerActions();
+}
+function startSvcpSayviDemoReply(advice,room){
+ if(svcpSayviDemoReply)finishSvcpSayviDemoReply(true,true);
+ const full=String(advice?.text||'').trim();
+ if(!full)return;
+ const thread=$('svcpMessages'),form=$('svcpChatForm');
+ if(!thread||!form)return;
+ const bubble=el('article','svcp-bubble is-sayvi svcp-sayvi-drafting');
+ bubble.setAttribute('aria-label','Сэйви печатает локальную подсказку');
+ const meta=el('div','svcp-bubble-meta');
+ meta.append(el('strong','svcp-sender','Сэйви'));
+ const content=el('span','svcp-message-text');
+ bubble.append(meta,content);
+ thread.append(bubble);
+ const job={room,full,task:advice?.task,letters:Array.from(full),
+  position:0,timer:null,bubble,content};
+ svcpSayviDemoReply=job;
+ form.dataset.sayviResponding='true';
+ if(svcpComposerSend){
+  svcpComposerSend.disabled=false;
+  svcpComposerSend.type='button';
+  svcpComposerSend.setAttribute('aria-label','Остановить ответ Сэйви');
+  svcpComposerSend.title='Остановить ответ Сэйви';
+ }
+ $('svcpConversationTitle')?.classList.toggle('svcp-sayvi-responding',room==='dm-sayvi');
+ syncComposerActions();
+ setStatus('Сэйви печатает локальную подсказку…');
+ const tick=()=>{
+  if(svcpSayviDemoReply!==job)return;
+  if(state.room!==room||$('svcpConversation')?.hidden){
+   finishSvcpSayviDemoReply(true,true);return;
+  }
+  job.position=Math.min(job.letters.length,job.position+Math.max(1,Math.ceil(job.letters.length/125)));
+  job.content.textContent=job.letters.slice(0,job.position).join('');
+  thread.scrollTop=thread.scrollHeight;
+  if(job.position>=job.letters.length){finishSvcpSayviDemoReply(false);return}
+  job.timer=setTimeout(tick,34);
+ };
+ job.timer=setTimeout(tick,90);
+}
+svcpComposerSend?.addEventListener('click',event=>{
+ if(!svcpSayviDemoReply)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ finishSvcpSayviDemoReply(true);
+},true);
+
 const svcpComposeMeasure=document.createElement('div');
 svcpComposeMeasure.setAttribute('aria-hidden','true');
 svcpComposeMeasure.style.cssText='position:fixed;left:-10000px;top:0;display:block;visibility:hidden;pointer-events:none;box-sizing:border-box;padding:0;margin:0;border:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:24px;font-size:16px;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;';
@@ -1983,6 +2059,7 @@ function syncChatAccount(){
  editingMessageIndex=null;
 }
 function showInbox(){
+ finishSvcpSayviDemoReply(true,true);
  closeCallPreview();
  stopWorkTypingLocal();
  syncChatAccount();
@@ -2007,6 +2084,7 @@ function showInbox(){
  renderDirectory();
 }
 function openRoom(roomId){
+ finishSvcpSayviDemoReply(true,true);
  closeCallPreview();
  stopWorkTypingLocal();
  syncChatAccount();
@@ -3678,6 +3756,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
  const queued=state.files.slice(),file=queued[0]?.file||null,barcode=state.scanCode;
  if(!txt&&!queued.length&&!barcode){setStatus('Напишите сообщение или добавьте файл.');return}
  const callSayvi=state.room==='dm-sayvi'||/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
+ let localSayviAdvice=null;
  cameraBusy=true;
  const sendButton=$('svcpChatForm')?.querySelector('[type="submit"]');
  if(sendButton)sendButton.disabled=true;
@@ -3709,9 +3788,8 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
     messages.push({room,role:'sayvi',at:Date.now()+saved.length+1,
      text:'Файлы сохранены локально. Анализ вложений и доставка другим участникам пока недоступны.'});
    }else{
-    const advice=suggestFromChat(txt);
-    messages.push({room,role:'sayvi',text:advice.text,at:Date.now()+1,
-     ...(advice.task?{suggestTask:advice.task}:{})});
+    // Only the existing local demo suggestion is animated; no simulated AI thinking.
+    localSayviAdvice=suggestFromChat(txt);
    }
   }
   if(!commitChatMessages(messages))return;
@@ -3719,7 +3797,8 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   input.value='';cleanupPreview();clearReply();cancelTaskDraft();syncComposerActions();resizeWorkComposer();
   window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();
-  setStatus(saved.length?'Файлы сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
+  if(localSayviAdvice)startSvcpSayviDemoReply(localSayviAdvice,room);
+  else setStatus(saved.length?'Файлы сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
    barcode?'Код записан локально, но не проверен по каталогу магазина.':
    callSayvi?'Сэйви ответила шаблонной подсказкой, не настоящим ИИ.':'Сообщение сохранено локально, без доставки на другие устройства.');
  }finally{
