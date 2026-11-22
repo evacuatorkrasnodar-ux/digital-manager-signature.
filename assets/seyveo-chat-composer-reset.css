@@ -128,7 +128,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  clip-path:none!important;
  overflow:visible!important;box-shadow:none!important;
  filter:none!important;opacity:1!important;
- transform:scaleX(1.028)!important;transform-origin:center!important;translate:none!important;
+ transform:none!important;translate:none!important;
  animation:none!important;transition:none!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > span{
