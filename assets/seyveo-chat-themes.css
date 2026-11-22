@@ -901,3 +901,97 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){
  color:#FFFFFF!important;filter:none!important;box-shadow:none!important;
 }
+
+
+/* v8 · SKY / attachment menu and Plus: one static button face.
+   Tap/open must never whiten, press, animate, scale or shift the Plus.
+   This only changes the visual states; the attachment click handlers remain. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:hover,:focus,:focus-visible,:active,[aria-expanded="true"],[aria-pressed="true"]),
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm:has(#svcpAttachMenu:not([hidden]))
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt{
+ background:rgba(7,121,188,.72)!important;
+ background-image:none!important;
+ border:1px solid rgba(4,100,179,.73)!important;
+ box-shadow:none!important;
+ filter:none!important;
+ color:#FFFFFF!important;
+ -webkit-backdrop-filter:blur(15px) saturate(109%)!important;
+ backdrop-filter:blur(15px) saturate(109%)!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ animation:none!important;transition:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+/* The long two-row dock already has a blue backing: only a + glyph remains. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm.svcp-compose-multiline
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm.svcp-compose-multiline
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:hover,:focus,:focus-visible,:active,[aria-expanded="true"],[aria-pressed="true"]),
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm.svcp-compose-multiline:has(#svcpAttachMenu:not([hidden]))
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt{
+ background:transparent!important;background-image:none!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt:focus:not(:focus-visible){
+ outline:0!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt::before,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt::after{
+ content:none!important;display:none!important;
+}
+/* Sky attachment sheet: match the blue dock instead of the unrelated white popover. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ #svcpAttachMenu:not([hidden]){
+ box-sizing:border-box!important;
+ border:1px solid rgba(191,234,255,.53)!important;
+ border-radius:17px!important;
+ background:rgba(18,126,189,.94)!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:blur(19px) saturate(113%)!important;
+ backdrop-filter:blur(19px) saturate(113%)!important;
+ box-shadow:0 8px 22px rgba(10,71,116,.16),inset 0 1px 0 rgba(255,255,255,.14)!important;
+ color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ #svcpAttachMenu:not([hidden]) > button{
+ background:transparent!important;
+ border:0!important;box-shadow:none!important;
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ #svcpAttachMenu:not([hidden]) > button:is(:hover,:active,:focus-visible){
+ background:rgba(235,248,255,.15)!important;
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm
+ #svcpAttachMenu:not([hidden]) > button > span{
+ color:#FFFFFF!important;
+}
+/* Keep menu readable for users who disable transparent effects. */
+@media(prefers-reduced-transparency:reduce){
+ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm #svcpAttachMenu:not([hidden]){
+  background:#167ebd!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
