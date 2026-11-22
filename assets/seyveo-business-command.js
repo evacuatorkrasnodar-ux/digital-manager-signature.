@@ -1242,7 +1242,10 @@ function resizeWorkComposer(){
  // In multiline the text occupies the full width. Tool buttons use the
  // separate 42px bottom row. No second background/capsule is introduced.
  const expandedHeight=measuredComposeHeight(value,formWidth-32);
- const editorHeight=wraps?Math.min(144,Math.max(44,expandedHeight+16)):base;
+ // Single-line wraps need only 24px of text plus 10px breathing room.
+ // Keep attachment padding and maximum multi-line height unchanged.
+ const textPadding=withAttachment?16:10;
+ const editorHeight=wraps?Math.min(144,Math.max(withAttachment?44:34,expandedHeight+textPadding)):base;
  // Same three logical rows as Sayvi: attachment, editor, toolbar.
  const rowCount=Math.ceil((state.files.length+(state.scanCode?1:0))/3);
  const viewport=window.visualViewport?.height||window.innerHeight;
@@ -1258,7 +1261,7 @@ function resizeWorkComposer(){
  form.style.setProperty('--svcp-compose-height',targetHeight+'px');
  form.style.setProperty('height',targetHeight+'px','important');
  input.style.setProperty('height',editorHeight+'px','important');
- input.style.setProperty('overflow-y',wraps&&expandedHeight+16>144?'auto':'hidden','important');
+ input.style.setProperty('overflow-y',wraps&&expandedHeight+textPadding>144?'auto':'hidden','important');
  svcpPositionExpandedSend(form,wraps);
  svcpPositionExpandedPlus(form,wraps);
 }
