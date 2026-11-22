@@ -180,11 +180,17 @@ html body #svcpWorkChatScreen[data-view="room"]
  position:relative!important;top:auto!important;left:auto!important;
  display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:center!important;
- /* The name sits BELOW the complete 56px avatar, not across its dark circle. */
- margin:1px 0 0!important;padding:0!important;
+ /* Original overlap for other iMessage-style contacts (e.g. Andre). */
+ margin:-15px 0 0!important;padding:0!important;
  min-width:0!important;width:auto!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:none!important;pointer-events:auto!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"]
+ > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
+ /* Sayvi's round dark face must NEVER sit behind its name capsule. */
+ margin:1px 0 0!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
