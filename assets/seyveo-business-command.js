@@ -2919,6 +2919,7 @@ function renderChat(){
  }else{
   let lastDay='';
   let previousShort=null;
+  let previousTextGroup=null; // Presentation grouping only; data unchanged.
   for(const {msg,index} of visible){
    if(Number.isFinite(Number(msg.at))&&msg.at){
     const date=new Date(msg.at);
@@ -2931,6 +2932,7 @@ function renderChat(){
       :date.toLocaleDateString('ru-RU',{day:'numeric',month:'long',...(date.getFullYear()===today.getFullYear()?{}:{year:'numeric'})});
      thread.append(el('div','svcp-chat-day',label));
      previousShort=null; // Never group messages across calendar day separators.
+     previousTextGroup=null;
     }
    }
    const isSayvi=msg.role==='sayvi',isRecognition=msg.role==='recognition';
@@ -2947,6 +2949,25 @@ function renderChat(){
     !msg.documentFlowId&&String(msg.text||'').trim().length>0&&
     String(msg.text||'').trim().length<=5&&!String(msg.text||'').includes('\n');
    const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(shortText?' is-short-text':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
+   // Adjacent ordinary text messages from the same speaker, within 20 min,
+   // appear as a group. Preserve every message, original time and action.
+   const plainTextForGroup=!msg.poll&&!msg.mediaId&&!msg.taskId&&!msg.replyTo&&
+    !isRecognition&&!emojiOnly&&!hasSayviComparison&&!msg.documentFlowId&&
+    String(msg.text||'').trim().length>0;
+   const groupClock=Number(msg.at);
+   const groupGap=previousTextGroup?groupClock-previousTextGroup.at:NaN;
+   const followsTextGroup=plainTextForGroup&&previousTextGroup?.role===msg.role&&
+    Number.isFinite(groupClock)&&Number.isFinite(groupGap)&&
+    groupGap>=0&&groupGap<=20*60*1000;
+   if(plainTextForGroup){
+    bubble.classList.add('svcp-imessage-text');
+    if(followsTextGroup){
+     bubble.classList.add('svcp-imessage-follow');
+     previousTextGroup.node.classList.add('svcp-imessage-leads');
+    }else bubble.classList.add('svcp-imessage-first');
+   }
+   previousTextGroup=plainTextForGroup&&Number.isFinite(groupClock)
+    ?{node:bubble,role:msg.role,at:groupClock}:null;
    // Visually group only adjacent short messages from the same sender, within 20 min.
    // This does not merge, alter, hide or delete any message or its timestamp.
    const shortAt=Number(msg.at);
