@@ -1338,7 +1338,7 @@ html body #svcpWorkChatScreen[data-view="room"]
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpChatSendFlat,
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpChatSendFlat:is(:hover,:active,:focus,:focus-visible){
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- position:absolute!important;top:auto!important;left:auto!important;right:6px!important;bottom:6px!important;
+ position:absolute!important;top:auto!important;left:auto!important;right:0!important;bottom:3px!important;
  grid-column:auto!important;grid-row:auto!important;align-self:auto!important;justify-self:auto!important;
  width:44px!important;min-width:44px!important;max-width:44px!important;
  height:44px!important;min-height:44px!important;max-height:44px!important;
@@ -1392,7 +1392,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpChatSendFla
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpVoiceRecord,
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpVoiceRecord:is(:hover,:active,:focus,:focus-visible){
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- position:absolute!important;top:auto!important;left:auto!important;right:6px!important;bottom:6px!important;
+ position:absolute!important;top:auto!important;left:auto!important;right:0!important;bottom:3px!important;
  grid-column:auto!important;grid-row:auto!important;align-self:auto!important;justify-self:auto!important;
  width:44px!important;min-width:44px!important;max-width:44px!important;
  height:44px!important;min-height:44px!important;max-height:44px!important;
@@ -1412,7 +1412,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm > button#svcpVoice
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline.svcp-voice-on-toolbar > button#svcpVoiceRecord{
- right:58px!important;bottom:6px!important;top:auto!important;
+ right:52px!important;bottom:3px!important;top:auto!important;
  display:grid!important;transform:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):is([data-has-content="true"],[data-sayvi-responding="true"]) > #svcpVoiceRecord{
