@@ -1383,3 +1383,29 @@ html body #svcpWorkChatScreen[data-view="room"] .svcp-chat
  right:16px!important;left:auto!important;
  transform:none!important;
 }
+
+/* v39 · One high-contrast graphite Plus in BOTH short and expanded modes.
+   The actual position on expansion is synchronized by business-command.js;
+   no transform, shadow or second face is introduced by this colour polish. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm > button#svcpAttachFile.svcp-plus-pearl-rebuilt,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:hover,:active,:focus,:focus-visible){
+ color:#0D1014!important;opacity:1!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg{
+ display:block!important;
+ width:22px!important;height:22px!important;
+ min-width:22px!important;min-height:22px!important;
+ color:#0D1014!important;stroke:#0D1014!important;
+ stroke-width:1.85!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;transition:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg path{
+ stroke:#0D1014!important;stroke-width:1.85!important;
+ fill:none!important;opacity:1!important;
+}
