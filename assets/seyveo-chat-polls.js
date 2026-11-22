@@ -116,7 +116,8 @@ function openEditor({mount,onCreate,heading='Новый опрос',description=
    else error.textContent='Не получилось сохранить опрос на этом устройстве.';
   }catch(err){console.warn('SEYVEO local poll creation failed',err);error.textContent='Не получилось сохранить опрос.';}
  });
- question.focus({preventScroll:true});
+ // On touch phones, do not summon the keyboard before the user taps a field.
+ if(window.matchMedia?.('(pointer:fine)').matches)question.focus({preventScroll:true});
  return {close,element:overlay};
 }
 function render({poll,currentUser='me',names={},canClose=false,onUpdate}){
