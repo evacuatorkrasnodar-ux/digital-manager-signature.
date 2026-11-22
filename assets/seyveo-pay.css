@@ -181,7 +181,7 @@ html[data-theme="dark"] #seyveoPayDialog .syp-view-switch > button[aria-pressed=
 /* v9 · Wallet is an inline, seamless SEYVEO Work page.
    One existing #svWorkTabs navigation (not a cloned tab strip), one dock.
    The original card, QR, cards/history and Finance controllers are kept. */
-html body #svWorkShell[data-active="wallet"] > :not(#svWorkTabs):not(#seyveoPayDialog){
+html body #svWorkShell[data-active="wallet"] > :not(#svWorkTabs):not(#seyveoPayDialog):not(seyveo-work-head){
  display:none!important;
 }
 html body #svWorkShell[data-active="wallet"]{
@@ -316,10 +316,11 @@ html body #svWorkShell > #seyveoPayDialog[open] .syp-note{
  }
 }
 
-/* v10 · Wallet top navigation sits lower in the seamless page, with an
-   intentional white breathing space above it. The shared Work tabs are
-   not moved on other pages; no new panel or visual effect is introduced. */
+/* v11 · Wallet uses the exact same permanent Work header footprint as
+   My Tasks. Its contents are invisible, but its native height remains.
+   Keep the original 4px / 5px capsule margins for pixel-matched alignment.
+   No artificial spacer, transform, shadow or second navigation. */
 html body #svWorkShell[data-active="wallet"] > #svWorkTabs:not([hidden]){
- margin-top:16px!important;
- margin-bottom:7px!important;
+ margin-top:4px!important;
+ margin-bottom:5px!important;
 }
