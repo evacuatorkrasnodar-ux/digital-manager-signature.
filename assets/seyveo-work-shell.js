@@ -567,7 +567,9 @@
   // Old tabs are deliberately hidden, so this shared bar must show it.
   const employeePreview=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
   const managerPreview=window.SEYVEO_PREVIEW?.isManager?.()===true;
-  const employeeMode=employeePreview&&!managerPreview;
+  // UI preview role, not a subscription/authorization check.
+  const managerMode=managerPreview||active==='business';
+  const employeeMode=employeePreview&&!managerMode;
   // The same three-position shell also belongs to ONE.
   // Preview roles are an interface demo, not verified company authorization.
   const visible=!!notesPage?.open||!tasks.hidden||!calendar.hidden;
@@ -591,19 +593,25 @@
   // controls that belong to the tabs/dock or to My Tasks, respectively.
   reviewCards.hidden=history||calendarOnly||active==='notes';
   nav.dataset.employee=String(employeeMode);
-  nav.dataset.one=String(!managerPreview&&!employeeMode);
-  nav.dataset.business=String(managerPreview&&!employeeMode);
+  nav.dataset.one=String(!managerMode&&!employeeMode);
+  nav.dataset.business=String(managerMode&&!employeeMode);
   nav.dataset.wallet='true';
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
    const name=tab.dataset.svWorkTab;
-   tab.hidden=employeeMode
-    ? (name==='business'||name==='notes'||name==='wallet')
-    : managerPreview
-     ? name==='employee'
-     : name==='business'||name==='employee';
+   // Manager (Business): 4; personal (ONE): 3; employee view: 2.
+   // The last mode never turns «Моя работа» into «Кошелёк».
+   const hide=employeeMode
+    ? !['personal','employee'].includes(name)
+    : managerMode
+      ? !['personal','notes','wallet','business'].includes(name)
+      : !['personal','notes','wallet'].includes(name);
+   tab.hidden=hide;
+   // Older CSS has display:flex!important. Preserve hidden semantics even
+   // if a previously cached stylesheet arrives after this component.
+   tab.style.setProperty('display',hide?'none':'flex','important');
    tab.textContent=employeeMode
-    ? (name==='personal'?'Дела':name==='employee'?'Работа':name==='calendar'?'Календарь':'Блокнот')
-    : (name==='personal'?'Мои дела':name==='calendar'?'Календарь':name==='notes'?'Блокнот':name==='business'?'Кабинет':'Моя работа');
+    ? (name==='personal'?'Мои дела':name==='employee'?'Моя работа':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Блокнот')
+    : name==='personal'?'Мои дела':name==='notes'?'Блокнот':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Моя работа';
   }
   heading.hidden=!visible;
   heading.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
@@ -616,7 +624,7 @@
   searchTasks.setAttribute('aria-label',nested?'Поиск по делам':'История и все дела');
   searchTasks.setAttribute('aria-expanded',String(nested&&searchOpen));
   nav.dataset.taskFilters=String(nested);
-  nav.setAttribute('aria-label',nested?'Фильтры дел':managerPreview?'Мои дела, Блокнот, Кошелёк и Кабинет':employeeMode?'Дела и Работа':'Мои дела, Блокнот и Кошелёк');
+  nav.setAttribute('aria-label',nested?'Фильтры дел':managerMode?'Мои дела, Блокнот, Кошелёк и Кабинет':employeeMode?'Мои дела и Моя работа':'Мои дела, Блокнот и Кошелёк');
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
@@ -802,7 +810,7 @@
   document.addEventListener('DOMContentLoaded',finishFirstPaint,{once:true});
  else finishFirstPaint();
  window.SEYVEO_WORK_SHELL=Object.freeze({
-  version:28,sync,
+  version:29,sync,
   isNotesInline:()=>true
  });
 })();
