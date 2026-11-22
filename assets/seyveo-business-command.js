@@ -1997,6 +1997,7 @@ function openRoom(roomId){
  if(conversation){
   conversation.dataset.roomKind=selected.kind;
   conversation.dataset.roomId=selected.id;
+  window.SEYVEO_CHAT_THEMES?.applyRoom(selected.id);
  }
  state.viewpoint=employeePreviewActive()?'elena':'manager';
  const avatar=$('svcpRoomAvatar');
@@ -2080,6 +2081,7 @@ function closeRoomInformation(restoreFocus=true){
 }
 function renderRoomProfile(){
  const room=roomDetails();
+ window.SEYVEO_CHAT_THEMES?.syncRoom(room.id);
  const name=$('svcpConversationTitle')?.textContent?.trim()||room.label;
  const role=$('svcpConversationDetail')?.textContent?.trim()||
   (room.kind==='personal'?room.hint.split(' · ')[0]:'Рабочая группа');
