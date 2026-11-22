@@ -881,7 +881,7 @@ html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] #svcpCha
 html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:not(.svcp-compose-multiline)::before,
 html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:not(.svcp-compose-multiline):focus-within::before,
 html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:not(.svcp-compose-multiline):has(#svcpAttachMenu:not([hidden]))::before{
- left:48px!important;
+ left:58px!important;
  right:10px!important;
  width:auto!important;
 }
