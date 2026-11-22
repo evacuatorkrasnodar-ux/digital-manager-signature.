@@ -17,25 +17,26 @@
   background-size:100% 100%!important;
   background-repeat:no-repeat!important;
  }
- /* iOS installed PWA: the reported working viewport excludes the
-    home-indicator region. The old fix added bottom *padding* inside the
-    flex screen, clipping the live composer exactly at that boundary.
-    Extend the actual flex workspace instead. No bottom padding and no
-    visual overlay; composer retains its own safe-area-aware bottom inset.
-    A second safe-area increment corrects the shorter iOS PWA viewport. */
+ /* A fixed chat must stay inside the REAL PWA content viewport.
+    Earlier safe-area height additions moved the absolute composer below
+    the native viewport clipping edge (the screenshot shows only its top).
+    Restore one original content height. The html/body background alone
+    paints the home-indicator area; it must not resize the chat's layout. */
  html body #svcpWorkChatScreen:not([hidden]){
   box-sizing:border-box!important;
-  height:calc(var(--svcp-visible-height,100dvh) + env(safe-area-inset-bottom,0px) + env(safe-area-inset-bottom,0px))!important;
-  min-height:0!important;
-  max-height:none!important;
+  height:var(--svcp-visible-height,100dvh)!important;
+  max-height:var(--svcp-visible-height,100dvh)!important;
   padding:0!important;
  }
- /* Header is intentionally transparent and floats over the thread.
-    Fade only scrolled message content beneath the avatar/name instead
-    of adding a second opaque header panel or moving chat messages. */
+ /* Reserve the header's real height inside the message scroller.
+    The transparent Apple-style identity ends below the avatar/name label.
+    Messages begin below it and scrolling content fades BEFORE overlapping
+    the avatar. No fixed opaque header or duplicated surface. */
  html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0px,transparent 94px,#000 128px)!important;
-  mask-image:linear-gradient(to bottom,transparent 0px,transparent 94px,#000 128px)!important;
+  padding-top:calc(154px + env(safe-area-inset-top,0px))!important;
+  scroll-padding-top:calc(154px + env(safe-area-inset-top,0px))!important;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0px,transparent 134px,#000 157px)!important;
+  mask-image:linear-gradient(to bottom,transparent 0px,transparent 134px,#000 157px)!important;
  }
  /* Scenic wallpaper continuity through iOS Home-indicator region.
     These match the existing opt-in chat wallpapers, not other app themes. */
