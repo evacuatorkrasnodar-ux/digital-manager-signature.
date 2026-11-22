@@ -24,6 +24,8 @@ const icons={
  bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',
  check:'<path d="m4 12 5 5L20 6"/>',
  trash:'<path d="M4 6h16M9 6V4h6v2M6 6l1 15h10l1-15M10 10v7M14 10v7"/>',
+ messages:'<path d="M20 11.6c0 4.3-3.6 7.3-8.2 7.3a10.5 10.5 0 0 1-3.2-.5L4 20l1.3-3.7A7.3 7.3 0 0 1 4 11.6C4 7.4 7.5 4 12 4s8 3.4 8 7.6Z"/><path d="M8.5 11.4h7"/>',
+ file:'<path d="M13 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V9l-6-6Z"/><path d="M13 3v6h6M8.5 13h7M8.5 16.5h7"/>',
  back:'<path d="m15 5-7 7 7 7"/>',
  chevron:'<path d="m9 5 7 7-7 7"/>'
 };
@@ -88,6 +90,7 @@ function openSheet(type,id='',nested=false){
 }
 function makeContactRow(r,fn){
  const row=button(r.label,'chevron',fn,'sv-inbox-contact-row');
+ row.dataset.svcpRoomPerson=r.person||'';
  const avatar=node('span','sv-inbox-contact-avatar',r.id==='dm-sayvi'?'':r.label.slice(0,1));
  if(r.id==='dm-sayvi')avatar.classList.add('is-sayvi');
  avatar.setAttribute('aria-hidden','true');
@@ -406,6 +409,12 @@ function decorateRows(){
    wrap.style.order=st.pinned?'-1':'0';
    const row=wrap.querySelector('.svcp-directory-item');
    if(!row)continue;
+   const avatar=row.querySelector('.svcp-directory-avatar');
+   if(avatar&&row.dataset.svcpRoomKind==='groups'&&!avatar.dataset.svInboxGlyph){
+    const id=wrap.dataset.roomId;
+    avatar.innerHTML=svg(id==='general'?'messages':id==='docs'?'file':'users');
+    avatar.dataset.svInboxGlyph='true';
+   }
    // No tiny dots in the time column: mute/pin state is accessible from
    // the conversation actions and preserved in its local settings.
    row.querySelector('.sv-inbox-row-badges')?.remove();
