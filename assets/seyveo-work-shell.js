@@ -61,10 +61,11 @@
   if(nav.hidden||!nav.isConnected)return;
   const selected=nav.querySelector('[data-sv-work-tab][aria-pressed="true"]:not([hidden])');
   if(!selected)return;
-  const bar=nav.getBoundingClientRect(),tab=selected.getBoundingClientRect();
-  if(!bar.width||!tab.width)return;
-  const left=Math.max(0,tab.left-bar.left+2);
-  const width=Math.max(40,tab.width-4);
+  // Both the lens and the labels share one offset-parent coordinate system.
+  // Avoid fractional viewport rectangles that drift on iPhone Safari.
+  if(!nav.offsetWidth||!selected.offsetWidth)return;
+  const left=selected.offsetLeft+2;
+  const width=Math.max(0,selected.offsetWidth-4);
   if(instant||!pearl.dataset.ready)pearl.classList.add('sv-work-pearl-initial');
   pearl.style.width=width+'px';
   pearl.style.transform='translate3d('+left+'px,0,0)';
