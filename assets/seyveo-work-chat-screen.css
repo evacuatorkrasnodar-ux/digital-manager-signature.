@@ -7097,7 +7097,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
 }
 /* Quiet name and timestamps; do not add a tall extra metadata row. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
- > .svcp-bubble:is(.is-self,.is-other,.is-sayvi):not(.is-poll):not(.is-task):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only)
+ > .svcp-bubble:is(.is-self,.is-other,.is-sayvi):not(.is-poll):not(.is-task):not(.is-emoji-only):not(.is-short-text):not(.svcp-file-only):not(.svcp-document-only)
  > .svcp-bubble-meta{
  min-height:14px!important;
  height:auto!important;
