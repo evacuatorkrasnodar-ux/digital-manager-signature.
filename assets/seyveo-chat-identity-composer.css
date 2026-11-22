@@ -908,7 +908,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  transform:none!important;image-rendering:auto!important;
 }
 
-/* v22 · SEYVEO iMessage composer · Sayvi & microphone optical alignment. */
+/* v24 · restore 36px Sayvi art, shift icon right 4px, balance microphone inset. */
 /* Only the compact one-line editor. Keep the existing 38px interactive areas
    for accessible touch, and do not move the dock, Plus, or pearl capsule. */
 html body #svcpWorkChatScreen[data-view="room"]
@@ -918,7 +918,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  width:38px!important;min-width:38px!important;max-width:38px!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
  padding:0!important;margin:0!important;
- left:0!important;right:auto!important;
+ left:4px!important;right:auto!important;
  justify-self:center!important;align-self:center!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:none!important;transition:none!important;
@@ -930,12 +930,12 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpChatForm:not(.svcp-compose-multiline)
  > #svcpPolishMessage > img.sv-sayvi-minimal-mark.svcp-sayvi-chat-jade-icon{
  display:block!important;
- width:31px!important;min-width:31px!important;max-width:31px!important;
- height:31px!important;min-height:31px!important;max-height:31px!important;
- flex:0 0 31px!important;
+ width:36px!important;min-width:36px!important;max-width:36px!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ flex:0 0 36px!important;
  padding:0!important;margin:0!important;
  object-fit:contain!important;object-position:center!important;
- filter:contrast(1.06) saturate(1.04)!important;opacity:1!important;
+ filter:contrast(1.09) saturate(1.07)!important;opacity:1!important;
  transform:none!important;transition:none!important;
 }
 /* Center the mic glyph in a stable 38px tappable target. */
@@ -947,7 +947,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  width:38px!important;min-width:38px!important;max-width:38px!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
  top:50%!important;bottom:auto!important;
- left:auto!important;right:10px!important;
+ left:auto!important;right:13px!important;
  padding:0!important;margin:0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:translateY(-50%)!important;translate:none!important;
