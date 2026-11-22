@@ -1274,6 +1274,18 @@ function resizeWorkComposer(){
 }
 
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
+// The shell owns screen geometry; this component alone owns editor geometry.
+// A real orientation-width change reflows the original capsule and text, not
+// a second 46px textarea sizing rule in the navigation controller.
+let svcpViewportReflowFrame=0;
+window.addEventListener('seyveo:work-chat-viewport-width',()=>{
+ if(svcpViewportReflowFrame)cancelAnimationFrame(svcpViewportReflowFrame);
+ svcpViewportReflowFrame=requestAnimationFrame(()=>{
+  svcpViewportReflowFrame=0;
+  const screen=$('svcpWorkChatScreen');
+  if(screen&&!screen.hidden&&screen.dataset.view==='room')resizeWorkComposer();
+ });
+});
 
 /* Read-only size observer: the floating preview knows the composer height.
    It never changes the composer itself and cannot create a layout feedback loop. */
