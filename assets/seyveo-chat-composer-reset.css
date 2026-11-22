@@ -3,16 +3,16 @@
    duplicate pseudo-buttons, top/left coordinates or animated icon positions.
    JS retains all handlers and only supplies text/attachment heights. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
- /* One translucent water-glass material across compact/expanded views. */
- --svcp-conversation-blue-glass:rgba(86,170,225,.26);
- --svcp-conversation-blue-glass-expanded:rgba(86,170,225,.22);
- --svcp-conversation-blue-rim:rgba(180,220,245,.18);
- --svcp-conversation-blue-blur:blur(18px) saturate(130%);
+ /* Apple-like low-opacity water glass shared by dock, arrow, Back and menus. */
+ --svcp-conversation-blue-glass:rgba(127,201,238,.19);
+ --svcp-conversation-blue-glass-expanded:rgba(127,201,238,.17);
+ --svcp-conversation-blue-rim:rgba(230,247,255,.34);
+ --svcp-conversation-blue-blur:blur(12px) saturate(114%);
 }
 html body #svcpWorkChatScreen #svcpChatFormReset{
  all:unset!important;
- --svcp-clean-blue:var(--svcp-conversation-blue-glass,rgba(86,170,225,.26));
- --svcp-clean-line:var(--svcp-conversation-blue-rim,rgba(180,220,245,.18));
+ --svcp-clean-blue:var(--svcp-conversation-blue-glass,rgba(127,201,238,.19));
+ --svcp-clean-line:var(--svcp-conversation-blue-rim,rgba(230,247,255,.34));
  box-sizing:border-box!important;
  position:absolute!important;inset:auto 0 6px 0!important;
  z-index:15!important;isolation:isolate!important;
@@ -59,7 +59,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > .svcp-clean-surface{
  inset:0!important;border-radius:24px!important;
  /* Same genuine matte-glass treatment as compact, never solid blue. */
- background:var(--svcp-conversation-blue-glass-expanded,rgba(86,170,225,.22))!important;
+ background:var(--svcp-conversation-blue-glass-expanded,rgba(127,201,238,.17))!important;
  background-image:none!important;
  -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
  backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
@@ -242,22 +242,43 @@ html body #svcpWorkChatScreen #svcpChatFormReset > :is(#svcpCameraToggle,#svcpFi
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu[hidden]{display:none!important}
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu:not([hidden]){
+ /* One small floating matte-water sheet, not an opaque white card. */
+ box-sizing:border-box!important;
  position:absolute!important;z-index:20!important;
- bottom:calc(100% + 8px)!important;left:0!important;
- display:grid!important;grid-template-columns:1fr!important;
- gap:2px!important;width:196px!important;max-width:calc(100% - 12px)!important;
- padding:6px!important;margin:0!important;
- border:1px solid rgba(85,149,177,.22)!important;border-radius:16px!important;
- background:rgba(240,249,253,.96)!important;color:#193443!important;
- box-shadow:0 8px 24px rgba(9,56,86,.10)!important;
- -webkit-backdrop-filter:blur(18px)!important;backdrop-filter:blur(18px)!important;
+ bottom:calc(100% + 10px)!important;left:0!important;right:auto!important;
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ gap:0!important;width:196px!important;max-width:calc(100% - 12px)!important;
+ margin:0!important;padding:5px!important;
+ border:1px solid rgba(229,248,255,.46)!important;border-radius:19px!important;
+ background:rgba(226,244,252,.78)!important;background-image:none!important;
+ color:#17394E!important;
+ box-shadow:0 5px 17px rgba(18,74,118,.075)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
+ backdrop-filter:blur(18px) saturate(112%)!important;
+ transform:none!important;transition:none!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu:not([hidden]) button{
- display:block!important;width:100%!important;min-height:40px!important;
- border:0!important;border-radius:11px!important;background:transparent!important;
- color:inherit!important;text-align:left!important;
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ justify-content:flex-start!important;gap:11px!important;
+ width:100%!important;height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0 10px!important;
+ border:0!important;border-radius:12px!important;background:transparent!important;
+ color:#17394E!important;text-align:left!important;
  font:500 14px/20px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- padding:8px 10px!important;box-shadow:none!important;
+ box-shadow:none!important;transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu:not([hidden]) button + button{
+ border-top:1px solid rgba(34,105,151,.10)!important;border-radius:0 0 12px 12px!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu:not([hidden]) button :is(svg,span){
+ display:grid!important;place-items:center!important;flex:0 0 21px!important;
+ width:21px!important;height:21px!important;
+ margin:0!important;padding:0!important;
+ color:#245C7C!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.6!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachMenu:not([hidden]) button:active{
+ background:rgba(113,182,216,.16)!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachmentPreview:not([hidden]){
  position:absolute!important;z-index:4!important;
