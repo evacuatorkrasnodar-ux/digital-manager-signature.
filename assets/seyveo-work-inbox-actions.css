@@ -1247,3 +1247,189 @@ html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar.is-
 /* Logo artwork already tightly cropped in this source file:
    let the 38px circular avatar show the full original symbol.
    This is not a second decorative badge; the tappable chat row is unchanged. */
+
+/* Messages · local Apple-style avatar editor, no bevels, shadows or clones.
+   Same bottom sheet as existing chat settings; all minimum taps are 44px. */
+html body #svcpWorkChatScreen .sv-inbox-avatar-custom{
+ box-sizing:border-box!important;
+ border:0!important;border-radius:50%!important;
+ background-color:var(--sv-avatar-color,#536f84)!important;
+ background-image:var(--sv-avatar-image,none)!important;
+ background-position:center!important;background-repeat:no-repeat!important;
+ background-size:cover!important;
+ color:#fff!important;
+ -webkit-mask:none!important;mask:none!important;
+ box-shadow:none!important;filter:none!important;
+ text-shadow:none!important;overflow:hidden!important;
+ display:grid!important;place-items:center!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif!important;
+ font-weight:620!important;line-height:1!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-custom[data-sv-avatar-kind="emoji"]{
+ font-size:21px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-custom[data-sv-avatar-kind="photo"]{
+ font-size:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
+ font-size:16px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-settings-preview{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 36px!important;width:36px!important;height:36px!important;
+ padding:0!important;margin:0!important;
+ border-radius:50%!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-setting-link > .sv-inbox-avatar-settings-preview{
+ flex:0 0 36px!important;
+ width:36px!important;min-width:36px!important;height:36px!important;
+ font-size:15px!important;color:#fff!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-editor{
+ display:flex;flex-direction:column;gap:14px;
+ margin:0;padding:3px 0 18px;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-preview-wrap{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ gap:9px;margin:0;padding:9px 0 7px;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-preview{
+ box-sizing:border-box!important;
+ width:90px!important;height:90px!important;
+ min-width:90px!important;min-height:90px!important;
+ display:grid!important;place-items:center!important;
+ border:0!important;border-radius:50%!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-preview[data-sv-avatar-kind="monogram"]{
+ font-size:35px!important;letter-spacing:-.045em!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-preview[data-sv-avatar-kind="emoji"]{
+ font-size:43px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-preview[data-sv-avatar-kind="photo"]{
+ font-size:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-subtitle{
+ margin:0!important;max-width:100%;font-size:12px!important;line-height:1.4;
+ text-align:center;color:#80858F!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-field{
+ display:flex;flex-direction:column;gap:7px;
+ font-size:12px;font-weight:530;color:var(--sv-inbox-panel-ink,#1C2026);
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-field > .sv-inbox-text-input{
+ width:100%!important;margin:0!important;
+ min-height:44px!important;height:44px!important;
+ border-radius:12px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-methods{
+ box-sizing:border-box;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;
+ width:100%;margin:0;padding:3px;
+ border:1px solid rgba(174,185,198,.22);border-radius:15px;
+ background:rgba(165,177,193,.10);
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-method{
+ appearance:none;-webkit-appearance:none;
+ display:grid;place-items:center;
+ min-width:0!important;min-height:44px!important;height:44px!important;
+ margin:0!important;padding:0 5px!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;background-image:none!important;
+ color:var(--sv-inbox-panel-ink,#1A1E24)!important;
+ box-shadow:none!important;
+ font:560 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ cursor:pointer!important;transform:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-method[aria-pressed="true"]{
+ background:var(--sv-inbox-panel-bg,#fff)!important;
+ border:1px solid rgba(160,172,188,.23)!important;
+ box-shadow:none!important;font-weight:650!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-customization{
+ min-height:0;display:block;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-mode[hidden],
+html body #svcpWorkChatScreen .sv-inbox-avatar-palette[hidden]{display:none!important}
+html body #svcpWorkChatScreen .sv-inbox-avatar-emoji-grid{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-emoji{
+ display:grid!important;place-items:center!important;
+ min-width:0!important;width:100%!important;height:52px!important;min-height:52px!important;
+ padding:0!important;margin:0!important;
+ border:1px solid rgba(150,160,176,.16)!important;border-radius:13px!important;
+ background:rgba(163,176,192,.07)!important;
+ box-shadow:none!important;font-size:26px!important;
+ cursor:pointer!important;transform:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-emoji[aria-pressed="true"]{
+ border-color:#0A84FF!important;background:rgba(10,132,255,.08)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-photo-select{
+ display:flex;align-items:center;justify-content:center;
+ box-sizing:border-box;width:100%;height:44px;min-height:44px;
+ border:1px solid rgba(160,170,183,.25);border-radius:12px;
+ background:rgba(158,173,190,.09);color:var(--sv-inbox-panel-ink,#181A1D);
+ font-size:13px;font-weight:550;cursor:pointer;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-photo-select > input[type="file"]{
+ position:absolute!important;width:1px!important;height:1px!important;
+ opacity:0!important;overflow:hidden!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-palette{
+ display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;
+ margin:0;padding:3px 2px;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-swatch{
+ appearance:none;-webkit-appearance:none;
+ box-sizing:border-box;display:block;
+ width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;
+ margin:0!important;padding:0!important;
+ border:3px solid var(--sv-inbox-panel-bg,#fff)!important;border-radius:50%!important;
+ outline:1px solid transparent;outline-offset:1px;
+ background:var(--sv-avatar-swatch,#536f84)!important;
+ box-shadow:none!important;cursor:pointer!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-swatch[aria-pressed="true"]{
+ outline:2px solid #0A84FF!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-status{
+ margin:0!important;color:#C94939;font-size:12px;line-height:1.35;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-status:empty{display:none!important}
+html body #svcpWorkChatScreen .sv-inbox-avatar-editor > .sv-inbox-hint{
+ margin:0!important;font-size:11px!important;line-height:1.45!important;
+ text-align:center;color:#858991!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-actions{
+ display:grid;grid-template-columns:1fr 1.5fr;gap:9px;
+ margin:2px 0 0;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-actions > button{
+ display:grid;place-items:center;min-width:0;min-height:44px;height:44px;
+ margin:0;padding:0 10px;border:0;border-radius:13px;
+ background:rgba(153,167,184,.12);color:var(--sv-inbox-panel-ink,#191B20);
+ box-shadow:none;font:600 14px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-actions > .sv-inbox-submit{
+ background:#0A84FF!important;color:white!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-avatar-actions > button[disabled]{
+ opacity:.45!important;cursor:default!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-avatar-methods{
+ background:rgba(214,230,244,.08);
+ border-color:rgba(214,230,244,.12);
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-avatar-emoji,
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-avatar-photo-select{
+ background:rgba(215,229,243,.07)!important;
+ border-color:rgba(215,229,243,.13)!important;
+}
+@media(max-width:359px){
+ html body #svcpWorkChatScreen .sv-inbox-avatar-palette{gap:8px}
+ html body #svcpWorkChatScreen .sv-inbox-avatar-swatch{width:33px!important;min-width:33px!important;height:33px!important;min-height:33px!important}
+}
