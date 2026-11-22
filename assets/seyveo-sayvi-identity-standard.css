@@ -149,3 +149,18 @@ html body #svcpWorkChatScreen[data-view="room"]
  box-shadow:none!important;filter:none!important;
  color:transparent!important;font-size:0!important;
 }
+
+
+/* Sayvi's uploaded source image on the sky theme: a subtle round photo
+   surface behind the actual artwork, without painting a second emblem.
+   Keep the 56px iMessage identity footprint and translucent title overlap. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+ .svcp-room-identity #svcpRoomAvatar{
+ border:1px solid rgba(221,241,255,.37)!important;
+ background-color:rgba(10,105,183,.27)!important;
+ background-image:var(--sv-sayvi-mark-image)!important;
+ background-position:center!important;background-size:contain!important;
+ background-repeat:no-repeat!important;
+ box-shadow:none!important;filter:none!important;
+}
