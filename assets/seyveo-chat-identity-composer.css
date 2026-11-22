@@ -885,3 +885,25 @@ html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:not(.sv
  right:10px!important;
  width:auto!important;
 }
+
+/* v20 · Sayvi artwork optical size, compact composer only. */
+/* The source PNG contains a wide transparent surround; at 29 CSS pixels
+   the actual jade/platinum orb is only about 20px. Enlarge the art inside
+   its existing 38px tap target, without changing button position, text,
+   glass capsule length, microphone or expanded-editor layout. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline)
+ > #svcpPolishMessage > img.sv-sayvi-minimal-mark.svcp-sayvi-chat-jade-icon,
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline)
+ > #svcpPolishMessage > img.sv-sayvi-minimal-mark.svcp-sayvi-chat-jade-icon{
+ display:block!important;
+ width:36px!important;min-width:36px!important;max-width:36px!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ flex:0 0 36px!important;
+ margin:0!important;padding:0!important;
+ object-fit:contain!important;object-position:center center!important;
+ filter:contrast(1.09) saturate(1.07)!important;
+ opacity:1!important;
+ transform:none!important;image-rendering:auto!important;
+}
