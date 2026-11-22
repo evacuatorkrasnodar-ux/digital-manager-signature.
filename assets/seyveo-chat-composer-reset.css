@@ -126,7 +126,8 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  clip-path:none!important;
  overflow:visible!important;box-shadow:none!important;
  filter:none!important;opacity:1!important;
- transform:none!important;translate:none!important;
+ /* 3px optical inset in the same 44px tap target; touch geometry stays fixed. */
+ transform:translateX(3px)!important;translate:none!important;
  animation:none!important;transition:none!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > span{
