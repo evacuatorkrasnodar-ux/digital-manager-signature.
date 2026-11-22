@@ -18,8 +18,8 @@
   order:0;
   align-self:stretch;
   width:100%;max-width:100%;
-  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t));
-  height:calc(var(--sv-header-row,62px) + var(--gutter-t));
+  min-height:calc(var(--sv-header-row,54px) + var(--gutter-t));
+  height:calc(var(--sv-header-row,54px) + var(--gutter-t));
   margin:0;
   color:var(--sv-header-ink,#1C1C1E);
   background:transparent;
@@ -62,8 +62,8 @@
     Switching Tasks / Notebook / Cabinet must never move the capsule.
     Back and Plus remain on the same first-row axis in every tab. */
  :host([data-work-tabs="true"]){
-  min-height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 18px);
-  height:calc(var(--sv-header-row,62px) + var(--gutter-t) + 18px);
+  min-height:calc(var(--sv-header-row,54px) + var(--gutter-t) + 18px);
+  height:calc(var(--sv-header-row,54px) + var(--gutter-t) + 18px);
  }
  :host([data-work-tabs="true"]) .bar{
   grid-template-rows:44px minmax(0,1fr);
