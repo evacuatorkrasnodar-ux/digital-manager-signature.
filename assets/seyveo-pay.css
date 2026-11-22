@@ -315,3 +315,11 @@ html body #svWorkShell > #seyveoPayDialog[open] .syp-note{
   gap:22px!important;
  }
 }
+
+/* v10 · Wallet top navigation sits lower in the seamless page, with an
+   intentional white breathing space above it. The shared Work tabs are
+   not moved on other pages; no new panel or visual effect is introduced. */
+html body #svWorkShell[data-active="wallet"] > #svWorkTabs:not([hidden]){
+ margin-top:16px!important;
+ margin-bottom:7px!important;
+}
