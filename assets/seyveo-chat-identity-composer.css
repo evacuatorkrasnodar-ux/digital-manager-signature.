@@ -41,7 +41,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversat
 html body #svcpWorkChatScreen[data-view="room"] .svcp-room-identity{
  box-sizing:border-box!important;
  position:absolute!important;
- left:50%!important;top:calc(env(safe-area-inset-top,0px) - 4px)!important;
+ left:50%!important;top:max(0px,calc(env(safe-area-inset-top,0px) - 4px))!important;
  transform:translateX(-50%)!important;
  width:min(195px,53vw)!important;
  height:130px!important;
