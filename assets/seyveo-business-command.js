@@ -2738,6 +2738,7 @@ function renderChat(){
   thread.append(el('p','svcp-note','Здесь пока нет сообщений. Начните разговор.'));
  }else{
   let lastDay='';
+  let previousShort=null;
   for(const {msg,index} of visible){
    if(Number.isFinite(Number(msg.at))&&msg.at){
     const date=new Date(msg.at);
@@ -2749,6 +2750,7 @@ function renderChat(){
      const label=dateKey===today.toDateString()?'Сегодня':dateKey===yesterday.toDateString()?'Вчера'
       :date.toLocaleDateString('ru-RU',{day:'numeric',month:'long',...(date.getFullYear()===today.getFullYear()?{}:{year:'numeric'})});
      thread.append(el('div','svcp-chat-day',label));
+     previousShort=null; // Never group messages across calendar day separators.
     }
    }
    const isSayvi=msg.role==='sayvi',isRecognition=msg.role==='recognition';
@@ -2762,6 +2764,16 @@ function renderChat(){
     !msg.documentFlowId&&String(msg.text||'').trim().length>0&&
     String(msg.text||'').trim().length<=5&&!String(msg.text||'').includes('\n');
    const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(shortText?' is-short-text':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
+   // Visually group only adjacent short messages from the same sender, within 20 min.
+   // This does not merge, alter, hide or delete any message or its timestamp.
+   const shortAt=Number(msg.at);
+   const shortDelta=previousShort?shortAt-previousShort.at:NaN;
+   const continuesShort=shortText&&!isSayvi&&previousShort?.role===msg.role&&
+    Number.isFinite(shortAt)&&Number.isFinite(shortDelta)&&shortDelta>=0&&shortDelta<=20*60*1000;
+   if(continuesShort){
+    bubble.classList.add('svcp-short-continuation');
+    previousShort.node.classList.add('svcp-short-leading');
+   }
    bubble.dataset.chatIndex=String(index);
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
@@ -3022,6 +3034,8 @@ function renderChat(){
     }
    }
    thread.append(bubble);
+   previousShort=shortText&&!isSayvi&&Number.isFinite(shortAt)
+    ?{node:bubble,role:msg.role,at:shortAt}:null;
   }
  }
  if(focusSearchIndex!==null){
