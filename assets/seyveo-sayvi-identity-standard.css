@@ -126,7 +126,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  height:56px!important;min-height:56px!important;max-height:56px!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:50%!important;
- background:transparent var(--sv-sayvi-mark-image)
+ background:#126CA8 var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
  box-shadow:none!important;filter:none!important;
  font-size:0!important;color:transparent!important;
@@ -158,7 +158,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  .svcp-room-identity #svcpRoomAvatar{
  border:1px solid rgba(221,241,255,.37)!important;
- background-color:rgba(10,105,183,.27)!important;
+ background-color:#126CA8!important;
  background-image:var(--sv-sayvi-mark-image)!important;
  background-position:center!important;background-size:contain!important;
  background-repeat:no-repeat!important;
