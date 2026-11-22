@@ -184,21 +184,6 @@ html:root[data-theme="light"] body dialog#noteReviewDialog[open]
  box-shadow:var(--sv-note-gold-shadow)!important;
 }
 
-/* Action buttons retain the approved press state. Navigation and
-   header circles stay raised, neutral white and never turn blue. */
-html:root[data-theme="light"] body :is(
- #calendarPage #calendarAdd,
- #calendarPage .calendar-header-add,
- #tasksPage .svcp-manager-task-create,
- #tasksPage .personal-tasks-add,
- #tasksPage #personalAddTasks
-):not(:disabled):active{
- transform:scale(var(--sv-white-pearl-press-scale))!important;
- background:var(--sv-white-pearl-press-fill)!important;
- box-shadow:var(--sv-white-pearl-press-shadow)!important;
- transition:transform var(--sv-white-pearl-press-time) ease-out,
-            box-shadow var(--sv-white-pearl-press-time) ease-out!important;
-}
 /* One press recipe for New Note (independent right-side round button). */
 html:root[data-theme="light"] body dialog#noteReviewDialog[open]
  .sv-note-home-new-dock > #svNoteHomeNew:active{
@@ -210,9 +195,9 @@ html:root[data-theme="light"] body dialog#noteReviewDialog[open]
 /* Flat *inner* tool buttons: no old inset discs inside narrow capsules.
    Keep native ink color sample, focus ring and all pointer/touch handlers. */
 html:root[data-theme="light"] body dialog#noteReviewDialog[open]
- .sv-note-tools-compact[data-sv-unified-tools="true"] > button:is([aria-pressed="true"],[aria-expanded="true"],:active),
+ .sv-note-tools-compact[data-sv-unified-tools="true"] > button:is([aria-pressed="true"],[aria-expanded="true"]),
 html:root[data-theme="light"] body dialog#noteReviewDialog[open]
- .sv-smart-ink-tools > button:is([aria-pressed="true"],[aria-expanded="true"],:active),
+ .sv-smart-ink-tools > button:is([aria-pressed="true"],[aria-expanded="true"]),
 html:root[data-theme="light"] body #notePaperDialog.sv-paper-light-surface[open]
  #svPaperNewDock > button.sv-newdock-button:is([data-sv-active="true"],:active){
  border:0!important;
@@ -325,16 +310,6 @@ html:root[data-theme="light"] body #tasksPage #unifiedTasksTabs{
  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
  backdrop-filter:var(--sv-white-pearl-blur)!important;
 }
-html:root[data-theme="light"] body #svWorkShell #svWorkNotebook
- :is(.sv-note-tool,.note-more-options button,.note-more-button,.sv-note-first-action):active,
-html:root[data-theme="light"] body #lifePage.svmail-active .svmail
- :is(.svmail-primary,.svmail-pill):active,
-html:root[data-theme="light"] body #homePage #seyveoLivingMoment .lm-field .lm-actions
- .lm-polymer.sv-card-icon-button:is([data-sv-card-icon="sayvi"],[data-sv-card-icon="edit"],[data-sv-card-icon="navigate"]):active{
- background:var(--sv-white-pearl-press-fill)!important;
- box-shadow:var(--sv-white-pearl-press-shadow)!important;
-}
-
 /* HEALTH HEADER ACTIONS: the already existing 44px Back and Add circles
    keep their places/handlers. The old #E3E4E9 fallback is now pure white. */
 html:root[data-theme="light"] body dialog#calendarSpaceDialog.cal-space-dialog[open][data-space="health"]
@@ -384,7 +359,7 @@ html:root[data-theme="light"] body :is(
  #assistantChatHistoryBack,
  #sayviTopActions .sv-top-action,
  dialog[open] button:is(.sv-nav-back,.sv-nav-arrow)
-):not(:disabled):is(:active,:focus-visible){
+):not(:disabled):focus-visible{
  background:var(--sv-white-pearl-surface)!important;
  background-image:none!important;
  border:var(--sv-white-pearl-edge)!important;
@@ -446,8 +421,7 @@ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-pap
  outline:0!important;
  transform:scale(1)!important;
  transform-origin:center center!important;
- transition:background 135ms ease-out,box-shadow 135ms ease-out,
-   transform 135ms ease-out!important;
+ transition:none!important;
  -webkit-tap-highlight-color:transparent!important;
 }
 html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
@@ -457,12 +431,13 @@ html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-pap
  stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;filter:none!important;
 }
-html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]:not(.sv-paper-inking)
+/* No press skin for non-dock Save: keep the exact rest material. */
+html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
  > #notePaperSave.sv-ink-confirm:active{
- border:var(--sv-white-pearl-edge)!important;
- background:var(--sv-white-pearl-press-fill)!important;
- box-shadow:var(--sv-white-pearl-press-shadow)!important;
- transform:translateY(.2px) scale(var(--sv-white-pearl-press-scale,.992))!important;
+ background:var(--sv-white-pearl-surface)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ transform:scale(1)!important;
+ transition:none!important;
 }
 html:root[data-theme="light"] body dialog#notePaperDialog.sv-paper-studio.sv-paper-light-surface[open]
  > #notePaperSave.sv-ink-confirm:focus-visible{
@@ -523,8 +498,7 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[o
  :is(#personalTaskCancel,#personalTaskSave,#svNewTaskCameraButton){
  border-radius:50%!important;
  -webkit-tap-highlight-color:transparent!important;
- transition:transform 135ms ease-out,background 135ms ease-out,
-  box-shadow 135ms ease-out!important;
+ transition:none!important;
 }
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open]
  .sv-new-task-quick-actions{
@@ -543,16 +517,17 @@ html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[o
  :is(#personalTaskCancel,#svNewTaskCameraButton) svg{
  stroke:var(--sv-white-pearl-ink)!important;
 }
+/* These are ordinary actions, not dock buttons: no touch distortion. */
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open]
  :is(#personalTaskCancel,#personalTaskSave,#svNewTaskCameraButton):not(:disabled):active{
- background:var(--sv-white-pearl-press-fill)!important;
- box-shadow:var(--sv-white-pearl-press-shadow)!important;
- transform:translateY(.2px) scale(var(--sv-white-pearl-press-scale,.992))!important;
+ background:var(--sv-white-pearl-surface)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ transform:none!important;transition:none!important;
 }
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open]
  .sv-new-task-quick-actions :is(#svNewTaskVoice,#svNewTaskCalendarButton):active{
- background:var(--sv-white-pearl-press-fill)!important;
- transform:scale(.992)!important;
+ background:transparent!important;
+ transform:none!important;transition:none!important;
 }
 html:root[data-theme="light"] body dialog#personalTaskDialog.sv-task-editor-v3[open]
  .sv-new-task-main .sv-task-title-capsule{
