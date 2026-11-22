@@ -222,24 +222,25 @@ html body #svcpWorkChatScreen[data-view="room"]
  font-size:16px!important;line-height:20px!important;letter-spacing:-.02em!important;
  font-weight:600!important;margin:0!important;padding:0!important;
  vertical-align:middle!important;text-align:center!important;
- text-shadow:none!important;transform:none!important;
+ /* SF glyphs sit optically low inside 28px name pill on iOS. */
+ text-shadow:none!important;transform:translateY(-1.5px)!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
  #svcpConversationHeading .svcp-room-name-pill svg{
- /* Andre reference: a SMALL, crisp ice-blue chevron, never charcoal. */
+ /* Andre reference: short but visibly bold ice-blue chevron. */
  display:block!important;flex:0 0 13px!important;
  width:13px!important;height:13px!important;
  min-width:13px!important;min-height:13px!important;
  margin:0!important;padding:0!important;
- stroke:#9AD8FC!important;color:#9AD8FC!important;stroke-width:2.15!important;
+ stroke:#9FDBFF!important;color:#9FDBFF!important;stroke-width:3!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
- fill:none!important;opacity:1!important;filter:none!important;transform:none!important;
+ fill:none!important;opacity:1!important;filter:none!important;transform:translateY(-.5px)!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
  #svcpConversationHeading .svcp-room-name-pill svg path{
- fill:none!important;stroke:#9AD8FC!important;stroke-width:2.15!important;
+ fill:none!important;stroke:#9FDBFF!important;stroke-width:3!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
