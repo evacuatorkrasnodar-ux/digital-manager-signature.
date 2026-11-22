@@ -102,8 +102,8 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile > svg{
  stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;filter:none!important;
 }
-/* Exactly the approved full-color Sayvi image on one 1:1 BLUE circular
-   surface; no egg, stretched SVG, second emblem or oval photo backing. */
+/* Approved original full-color Sayvi asset with its own alpha. NO colored backing,
+   clipping circle, mask, synthetic oval or second emblem. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage{
  grid-column:2!important;grid-row:1!important;
 }
@@ -118,10 +118,10 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  aspect-ratio:1/1!important;
  margin:0!important;padding:0!important;
  object-fit:contain!important;object-position:center center!important;
- background:#0959bc!important;background-image:none!important;
- border:0!important;border-radius:50%!important;
- clip-path:circle(50% at 50% 50%)!important;
- overflow:hidden!important;box-shadow:none!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;
+ clip-path:none!important;
+ overflow:visible!important;box-shadow:none!important;
  filter:none!important;opacity:1!important;
  transform:none!important;translate:none!important;
  animation:none!important;transition:none!important;
