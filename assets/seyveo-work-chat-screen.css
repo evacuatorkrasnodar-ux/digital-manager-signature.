@@ -6435,3 +6435,15 @@ html body #svcpWorkChatScreen #svcpRoomInfo button:focus-visible{
 :root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo button#svcpElenaPerspective:not([hidden]){
  color:#F3F5F7!important;
 }
+
+/* v252 · The manager's fourth contact action; keep all four light & equal. */
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:8px!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button#svcpRoomProfileAssign{
+ color:#222831!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button#svcpRoomProfileAssign[hidden]{
+ display:none!important;
+}
