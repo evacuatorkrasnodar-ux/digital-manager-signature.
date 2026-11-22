@@ -5,8 +5,8 @@
    Bottom 6px follows the accessible iOS PWA viewport; its system-owned
    Home-indicator area is never counted twice. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
- --svcp-clean-blue:rgba(51,155,210,.94);
- --svcp-clean-line:rgba(17,114,182,.47);
+ --svcp-clean-blue:rgba(40,143,207,.24);
+ --svcp-clean-line:rgba(241,251,255,.42);
  all:unset!important;
  display:block!important;
  box-sizing:border-box!important;
@@ -47,11 +47,14 @@ html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
  margin:0!important;padding:0!important;
  border:1px solid var(--svcp-clean-line)!important;
  border-radius:25px!important;
+ /* Actual active composer: translucent blue glass, NOT the old .94 blue plate.
+    The conversation and message shapes must blur THROUGH this single surface. */
  background:var(--svcp-clean-blue)!important;
  background-image:none!important;
- -webkit-backdrop-filter:blur(16px) saturate(108%)!important;
- backdrop-filter:blur(16px) saturate(108%)!important;
- box-shadow:none!important;
+ -webkit-backdrop-filter:blur(22px) saturate(118%)!important;
+ backdrop-filter:blur(22px) saturate(118%)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.28),
+  0 5px 17px rgba(12,70,121,.12)!important;
  transform:none!important;transition:none!important;
  pointer-events:none!important;
 }
@@ -92,6 +95,9 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
  border-radius:50%!important;
  border:1px solid var(--svcp-clean-line)!important;
  background:var(--svcp-clean-blue)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(115%)!important;
+ backdrop-filter:blur(18px) saturate(115%)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.27)!important;
  color:white!important;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpAttachFile{
@@ -119,9 +125,15 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  width:33px!important;height:33px!important;
  min-width:33px!important;max-width:33px!important;
  min-height:33px!important;max-height:33px!important;
+ aspect-ratio:1 / 1!important;
  margin:auto!important;padding:0!important;
  object-fit:contain!important;object-position:center!important;
- background:none!important;border:0!important;box-shadow:none!important;
+ /* Keep the original Sayvi image unwarped. A real circular canvas
+    replaces the transparent oval-looking silhouette of the bare artwork. */
+ background:rgba(9,91,174,.44)!important;
+ border:0!important;border-radius:50%!important;
+ clip-path:circle(50% at 50% 50%)!important;
+ overflow:hidden!important;box-shadow:none!important;
  filter:none!important;opacity:1!important;
  transform:none!important;animation:none!important;
 }
