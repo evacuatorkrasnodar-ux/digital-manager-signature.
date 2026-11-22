@@ -3,21 +3,12 @@
    duplicate pseudo-buttons, top/left coordinates or animated icon positions.
    JS retains all handlers and only supplies text/attachment heights. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
- --svcp-conversation-blue-glass:rgba(5,123,195,.76);
+ --svcp-conversation-blue-glass:rgba(5,123,195,.68);
  /* The taller capsule needs less blue pigment to reveal the wallpaper
     as clearly as the compact composer, with the same blur and rim. */
- --svcp-conversation-blue-glass-expanded:rgba(5,123,195,.54);
+ --svcp-conversation-blue-glass-expanded:rgba(5,123,195,.44);
  --svcp-conversation-blue-rim:rgba(9,100,171,.57);
  --svcp-conversation-blue-blur:blur(16px) saturate(115%);
-}
-/* White chat remains White Pearl, just a little less see-through.
-   No dimensions or button/icon geometry change across themes. */
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="pearl"]{
- --svcp-conversation-blue-glass:rgba(255,255,255,.34);
- --svcp-conversation-blue-glass-expanded:rgba(255,255,255,.32);
- --svcp-conversation-blue-rim:rgba(255,255,255,.89);
- --svcp-conversation-blue-blur:var(--sv-white-pearl-blur,blur(4px) saturate(104%));
 }
 html body #svcpWorkChatScreen #svcpChatFormReset{
  all:unset!important;
@@ -325,35 +316,4 @@ html body #svcpWorkChatScreen #svcpChatFormReset:focus-within{
  html body #svcpWorkChatScreen #svcpChatFormReset *::after{
   animation:none!important;transition:none!important;
  }
-}
-
-/* Light-room controls follow their current theme, without shifting their
-   fixed 44px grid cells when tapped or when attachment menu opens. */
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachFile{
- color:var(--sv-white-pearl-ink,#0b0b0d)!important;
-}
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachFile svg,
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachFile svg path{
- color:var(--sv-white-pearl-ink,#0b0b0d)!important;
- stroke:var(--sv-white-pearl-ink,#0b0b0d)!important;
-}
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset #svcpChatInput{
- color:#262A30!important;-webkit-text-fill-color:#262A30!important;
- caret-color:#0A84FF!important;
-}
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset #svcpChatInput::placeholder{
- color:#858B94!important;-webkit-text-fill-color:#858B94!important;
-}
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){
- color:#23282E!important;-webkit-text-fill-color:#23282E!important;
-}
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button{
- color:#23282E!important;-webkit-text-fill-color:#23282E!important;
 }
