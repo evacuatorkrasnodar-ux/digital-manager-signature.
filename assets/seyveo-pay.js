@@ -16,4 +16,6 @@ document.addEventListener('click',ev=>{
 },true);
 dialog.addEventListener('click',ev=>{if(ev.target.closest('[data-syp="close"]'))close();else if(ev.target===dialog)close();});
 dialog.addEventListener('close',()=>launchButton?.focus?.());
+// Reuse the existing locally stored wallet from the permanent Work navigation.
+window.SEYVEO_PAY=Object.freeze({open,close});
 })();
