@@ -6712,41 +6712,41 @@ html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-chevron{
  border-color:rgba(255,255,255,.08)!important;
 }
 
-/* v255 · Warm incoming / sage outgoing + inline clocks for tiny text. */
+/* v258 · Silver incoming / cool pearl blue outgoing; no green chat fill. */
 /* Only chat text bubbles change color; documents, photos, emoji, Sayvi,
    tasks-with-special-surfaces, header and input dock retain their materials. */
 :root[data-theme="light"] #svcpWorkChatScreen[data-view="room"]{
- --svcp-room-other:#F0EFED;
- --svcp-room-self:#DDEEE5;
- --svcp-room-bubble-text:#222A29;
+ --svcp-room-other:#F1F2F4;
+ --svcp-room-self:#E8EFF7;
+ --svcp-room-bubble-text:#222831;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpMessages > .svcp-bubble.is-other:not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only){
- background:#F0EFED!important;
+ background:#F1F2F4!important;
  color:#252A2D!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpMessages > .svcp-bubble.is-self:not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only){
- background:#DDEEE5!important;
- color:#1D2C28!important;
+ background:#E8EFF7!important;
+ color:#222831!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpMessages > .svcp-bubble:is(.is-self,.is-other):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only) > .svcp-message-text{
- color:#202927!important;
- -webkit-text-fill-color:#202927!important;
+ color:#222831!important;
+ -webkit-text-fill-color:#222831!important;
  text-shadow:none!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpMessages > .svcp-bubble:is(.is-self,.is-other):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only) > .svcp-message-stamp,
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpMessages > .svcp-bubble:is(.is-self,.is-other):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only) > .svcp-message-stamp > .svcp-time{
- color:#6C7774!important;
+ color:#76808B!important;
  opacity:1!important;
  text-shadow:none!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpMessages > .svcp-bubble.is-self .svcp-message-local-check{
- color:#6C8880!important;
+ color:#748BA0!important;
  text-shadow:none!important;
 }
 
@@ -6940,4 +6940,51 @@ html body #svcpWorkChatScreen .svcp-guide-controls > :is(.svcp-guide-correct,.sv
 :root[data-theme="light"] body #svcpWorkChatScreen .svcp-guide-controls > .svcp-guide-correct{
  background:#E2EEE8!important;
  color:#25463D!important;
+}
+
+/* v258 · Larger approved jade/platinum Sayvi sign in the message helper. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble .svcp-guide-launch{
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:5px!important;
+ width:max-content!important;
+ min-height:38px!important;
+ padding:3px 12px 3px 6px!important;
+ margin:6px 0 2px!important;
+ border:1px solid rgba(111,126,143,.10)!important;
+ border-radius:999px!important;
+ background:#E6E9EC!important;
+ color:#262D35!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.60)!important;
+ font-size:12px!important;
+ font-weight:600!important;
+ line-height:1.15!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble .svcp-guide-launch::before{
+ display:block!important;
+ flex:0 0 29px!important;
+ width:29px!important;
+ height:29px!important;
+ min-width:29px!important;
+ min-height:29px!important;
+ margin:0!important;
+ padding:0!important;
+ vertical-align:middle!important;
+ background-image:url("./seyveo-sayvi-chat-jade-platinum.png?v=1")!important;
+ background-size:contain!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ -webkit-mask:none!important;
+ mask:none!important;
+ filter:none!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble .svcp-guide-launch{
+ background:rgba(245,247,250,.13)!important;
+ border-color:rgba(255,255,255,.12)!important;
+ color:#F3F5F7!important;
+ box-shadow:none!important;
 }
