@@ -215,12 +215,15 @@ html body #svcpWorkChatScreen[data-view="room"]
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
  #svcpConversationHeading .svcp-room-name-pill svg{
- display:block!important;flex:0 0 14px!important;
- width:14px!important;height:14px!important;
+ /* Andre-style right chevron: compact, crisp, dark-blue on the blue name pill. */
+ display:block!important;flex:0 0 13px!important;
+ width:13px!important;height:13px!important;
+ min-width:13px!important;min-height:13px!important;
+ max-width:13px!important;max-height:13px!important;
  margin:0!important;padding:0!important;
- stroke:#cdeaff!important;color:#cdeaff!important;stroke-width:2!important;
+ stroke:#153D66!important;color:#153D66!important;stroke-width:1.9!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
- fill:none!important;transform:none!important;
+ fill:none!important;opacity:1!important;filter:none!important;transform:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] > .svcp-minimal-identity-header
