@@ -2822,6 +2822,7 @@ function renderWorkPoll(msg,index){
  let view;
  view=Polls.render({
   poll:msg.poll,currentUser:voter,canClose:msg.poll.creator===voter,
+  outgoing:state.viewpoint==='elena'?msg.role==='demo-elena':msg.role==='self',
   names:{manager:'Руководитель',elena:'Елена'},
   onUpdate:next=>{
    const existing=state.chat[index];
