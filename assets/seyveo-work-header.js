@@ -6,8 +6,8 @@
  'use strict';
  const styles=String.raw`
  :host {
-  --gutter-l:14px;
-  --gutter-r:14px;
+  --gutter-l:max(14px,env(safe-area-inset-left,0px));
+  --gutter-r:max(14px,env(safe-area-inset-right,0px));
   /* The Work shell clips overflow for its scrolling content. A 50px
      control in a 42px row protrudes 4px upward. Keep the pearl rim
      and shadow entirely inside the shell instead of clipping them. */
@@ -32,7 +32,7 @@
  /* No negative viewport gutters or translated header stage: the Work shell
     keeps the header in normal flow on both mobile and desktop. */
  @media(max-width:380px){
-  :host { --gutter-l:8px;--gutter-r:8px; }
+  :host { --gutter-l:max(8px,env(safe-area-inset-left,0px));--gutter-r:max(8px,env(safe-area-inset-right,0px)); }
  }
  :host([hidden]){display:none!important}
  *,*::before,*::after{box-sizing:border-box}
