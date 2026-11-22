@@ -1154,11 +1154,22 @@ let svcpShortPlusAnchor=null;
 function svcpPositionExpandedPlus(form,expanded){
  const plus=$('svcpAttachFile');
  if(!plus)return;
+ // An iPhone's expanded input paints + using legacy themed focus/press rules.
+ // Make the one existing hit target visually transparent at the DOM level:
+ // inline !important wins even against old late-loading theme styles.
+ const faceProperties=['background','border','border-radius','box-shadow',
+  '-webkit-backdrop-filter','backdrop-filter','filter','text-shadow'];
  if(!expanded){
+  for(const name of faceProperties)plus.style.removeProperty(name);
   plus.style.removeProperty('left');
   plus.style.removeProperty('bottom');
   return;
  }
+ for(const [name,value] of [
+  ['background','transparent'],['border','0'],['border-radius','0'],
+  ['box-shadow','none'],['-webkit-backdrop-filter','none'],
+  ['backdrop-filter','none'],['filter','none'],['text-shadow','none']
+ ])plus.style.setProperty(name,value,'important');
  const anchor=svcpShortPlusAnchor;
  if(!anchor||Math.abs(window.innerWidth-anchor.viewportWidth)>1)return;
  // The compact Plus uses relative grid positioning while the expanded one
