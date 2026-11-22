@@ -10,7 +10,8 @@ const KEY='seyveo-workchat-inbox-layout-v1';
 const defaults={compact:false,previews:true,showUnread:true,rooms:{}};
 let prefs;
 try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');prefs={...defaults,...(raw&&typeof raw==='object'?raw:{}),rooms:(raw&&typeof raw.rooms==='object'&&!Array.isArray(raw.rooms)?raw.rooms:{})}}catch{prefs={...defaults}}
-let sheetType='',activeRoom='',sheetParent='',holdTimer=null,swipeOpen=null,processing=false;
+let sheetType='',activeRoom='',holdTimer=null,swipeOpen=null,processing=false;
+const sheetStack=[];
 const icons={
  dots:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',
  pen:'<path d="M12 5.5H5.5A2.5 2.5 0 0 0 3 8v10.5A2.5 2.5 0 0 0 5.5 21h11A2.5 2.5 0 0 0 19 18.5V12M13 9l7-7 2 2-7 7-4 1z"/>',
@@ -58,7 +59,7 @@ const overlay=node('section','sv-inbox-overlay');overlay.id='svcpInboxSheet';ove
 const backdrop=node('button','sv-inbox-sheet-backdrop');backdrop.type='button';backdrop.setAttribute('aria-label','Закрыть меню чатов');
 const panel=node('div','sv-inbox-sheet-panel');
 const top=node('header','sv-inbox-sheet-head');
-const back=button('','back',()=>{if(sheetParent){const parent=sheetParent;sheetParent='';openSheet(parent)}else closeSheet()},'sv-inbox-sheet-back');
+const back=button('','back',()=>{const previous=sheetStack.pop();if(previous)openSheet(previous.type,previous.id,true);else closeSheet()},'sv-inbox-sheet-back');
 back.setAttribute('aria-label','Назад к сообщениям');
 const title=node('strong');title.id='svInboxSheetTitle';
 top.append(back,title,node('span'));
@@ -66,10 +67,11 @@ const body=node('div','sv-inbox-sheet-body');
 panel.append(node('span','sv-inbox-sheet-grab'),top,body);
 overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
-function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetParent=''}
-function openSubSheet(type,parent){openSheet(type);sheetParent=parent}
+function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
+function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
 function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',display:'Отображение',notifications:'Уведомления',appearance:'Тема',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
-function openSheet(type,id=''){
+function openSheet(type,id='',nested=false){
+ if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
  title.textContent=viewTitle(type);body.replaceChildren();overlay.hidden=false;
  if(type==='new')showContacts(type);
