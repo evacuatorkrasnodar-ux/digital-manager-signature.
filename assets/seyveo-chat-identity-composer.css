@@ -1331,10 +1331,10 @@ html body #svcpWorkChatScreen[data-view="room"]
    Additionally, compact Plus used a grid-relative left position but expanded
    Plus was absolutely positioned. That geometry difference caused the jump.
    Only the writing area's height may change when entering multiline mode. */
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm,
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm:focus-within,
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm.svcp-compose-multiline,
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm.svcp-compose-multiline:focus-within{
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat:not(:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden]))) #svcpChatForm,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat:not(:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden]))) #svcpChatForm:focus-within,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat:not(:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden]))) #svcpChatForm.svcp-compose-multiline,
+html body #svcpWorkChatScreen[data-view="room"] .svcp-chat:not(:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden]))) #svcpChatForm.svcp-compose-multiline:focus-within{
  box-sizing:border-box!important;
  position:absolute!important;
  left:50%!important;right:auto!important;
