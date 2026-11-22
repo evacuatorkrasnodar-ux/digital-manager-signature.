@@ -8,7 +8,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
  /* Same approved blue hue; only alpha is lowered for true transparent glass.
     The slightly deeper blue rim stays visible over the sky wallpaper. */
  --svcp-clean-blue:rgba(16,120,186,.32);
- --svcp-clean-line:rgba(6,87,151,.75);
+ --svcp-clean-line:rgba(5,77,139,.88);
  all:unset!important;
  display:block!important;
  box-sizing:border-box!important;
@@ -47,16 +47,16 @@ html body #svcpWorkChatScreen #svcpChatFormReset > .svcp-clean-surface{
  left:54px!important;right:0!important;top:5px!important;bottom:5px!important;
  z-index:0!important;
  margin:0!important;padding:0!important;
- border:1px solid var(--svcp-clean-line)!important;
+ /* Recessed glass: the darker blue rim is the raised edge, while the
+    center is optically inset. No exterior drop shadow or convex highlight. */
+ border:1.5px solid var(--svcp-clean-line)!important;
  border-radius:25px!important;
- /* Preserve the SAME 16/120/186 blue, but let the actual conversation
-    visibly show through in both compact and expanded form. Single blue rim. */
  background:var(--svcp-clean-blue)!important;
  background-image:none!important;
  -webkit-backdrop-filter:blur(22px) saturate(120%)!important;
  backdrop-filter:blur(22px) saturate(120%)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.26),
-  0 4px 13px rgba(10,74,123,.10)!important;
+ box-shadow:inset 0 2px 6px rgba(4,52,108,.30),
+  inset 0 -1px 1px rgba(209,242,255,.13)!important;
  transform:none!important;transition:none!important;
  pointer-events:none!important;
 }
@@ -95,12 +95,12 @@ html body #svcpWorkChatScreen #svcpChatFormReset > :is(#svcpAttachFile,#svcpPoli
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile{
  left:0!important;right:auto!important;bottom:6px!important;top:auto!important;
  border-radius:50%!important;
- border:1px solid var(--svcp-clean-line)!important;
+ border:1.5px solid var(--svcp-clean-line)!important;
  background:var(--svcp-clean-blue)!important;
  -webkit-backdrop-filter:blur(20px) saturate(118%)!important;
  backdrop-filter:blur(20px) saturate(118%)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.42),
-  0 0 0 .5px rgba(9,89,151,.28)!important;
+ box-shadow:inset 0 2px 5px rgba(4,52,108,.28),
+  inset 0 -1px 1px rgba(209,242,255,.12)!important;
  color:white!important;
 }
 /* Expanded panel: PLUS is only the white + glyph; never a floating circle.
