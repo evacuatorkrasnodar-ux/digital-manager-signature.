@@ -234,16 +234,16 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  > .svcp-minimal-identity-header #svcpRoomAvatar::after{
  content:none!important;display:none!important;
 }
-/* Sayvi header: keep the APPROVED cobalt colors, change their opacity only.
-   Back & name have the same blue tone as before; both retain real backdrop blur.
-   Do not move, recolor or add layers to the original Sayvi bitmap. */
+/* Sayvi's approved deep-blue material: same RGB, now genuinely translucent;
+   1px outline is a slightly darker blue from the same family, on BACK + NAME
+   ONLY. Never draw a rim on the avatar or recolor the image itself. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack{
  box-sizing:border-box!important;
- border:1px solid rgba(215,237,255,.32)!important;
+ border:1px solid rgba(6,57,150,.70)!important;
  border-radius:50%!important;
- background:rgba(11,79,193,.78)!important;
+ background:rgba(11,79,193,.53)!important;
  background-image:none!important;
  color:#FFFFFF!important;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.23),
@@ -254,12 +254,17 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack svg{
+ width:25px!important;height:25px!important;
+ min-width:25px!important;min-height:25px!important;
  color:#FFFFFF!important;stroke:#FFFFFF!important;
+ stroke-width:1.85!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ fill:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack:active{
- background:rgba(7,60,153,.84)!important;
+ background:rgba(7,60,153,.69)!important;
  box-shadow:inset 0 2px 4px rgba(9,37,88,.18)!important;
  transform:none!important;
 }
@@ -273,9 +278,9 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
- background:rgba(11,104,208,.75)!important;
+ background:rgba(11,104,208,.51)!important;
  background-image:none!important;
- border:1px solid rgba(213,236,255,.30)!important;
+ border:1px solid rgba(8,71,167,.72)!important;
  border-radius:999px!important;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),
   0 2px 7px rgba(7,53,114,.12)!important;
@@ -291,7 +296,16 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill svg{
+ /* Restore iMessage's clearly drawn but delicate right-chevron. */
+ display:block!important;
+ flex:0 0 12px!important;
+ width:12px!important;min-width:12px!important;max-width:12px!important;
+ height:12px!important;min-height:12px!important;max-height:12px!important;
+ margin:0!important;padding:0!important;
  color:#FFFFFF!important;stroke:#FFFFFF!important;
+ stroke-width:1.8!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ opacity:1!important;fill:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
