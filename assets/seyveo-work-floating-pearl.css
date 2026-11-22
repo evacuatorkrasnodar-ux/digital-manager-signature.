@@ -45,7 +45,7 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs::after{
  content:none!important;display:none!important;
 }
 /* Selection follows the real buttons; no duplicate button background.
-   A 32px highlight sits inside a 38px capsule; outer 44px touch targets
+   A flat 32px highlight sits inside a 38px capsule; outer 44px touch targets
    remain available for accessibility and comfortable tapping. */
 html body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-selection{
  position:absolute!important;z-index:0!important;pointer-events:none!important;
@@ -54,8 +54,8 @@ html body #svWorkShell[data-shared-work="true"] #svWorkTabs > .sv-work-pearl-sel
  margin:0!important;padding:0!important;
  border:1px solid rgba(205,215,226,.42)!important;
  border-radius:999px!important;
- background:rgba(255,255,255,.90)!important;background-image:none!important;
- box-shadow:0 1px 3px rgba(41,58,80,.055)!important;
+ background:rgba(255,255,255,.80)!important;background-image:none!important;
+ box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  will-change:transform,width;
  transition:transform 190ms cubic-bezier(.22,.82,.24,1),width 190ms cubic-bezier(.22,.82,.24,1)!important;
