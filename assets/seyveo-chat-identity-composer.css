@@ -1164,3 +1164,86 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  background:transparent!important;box-shadow:none!important;
  filter:none!important;transform:translateY(-50%)!important;
 }
+
+/* v33 · Expanded Work Chat toolbar: true dark Plus + mic, same 22px glyph.
+   The mic is MOVED by JS to a direct #svcpChatForm child when the composer
+   expands (.svcp-voice-on-toolbar). Earlier compact/field-only selectors did
+   not match that element and its graphite stroke became faint light gray.
+   Scope to the approved light/white theme and preserve all grid positions,
+   attachment menu handlers, pearl capsule and flat blue Send button. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile.svcp-plus-pearl-rebuilt,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:hover,:focus,:active,:focus-visible){
+ display:grid!important;place-items:center!important;
+ color:#20262C!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;text-shadow:none!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg{
+ display:block!important;position:static!important;
+ box-sizing:content-box!important;
+ width:22px!important;height:22px!important;
+ min-width:22px!important;min-height:22px!important;
+ flex:none!important;margin:0!important;padding:0!important;
+ color:#20262C!important;stroke:#20262C!important;
+ stroke-width:1.65!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;transition:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg path{
+ fill:none!important;stroke:#20262C!important;stroke-width:1.65!important;
+}
+/* Covers both toolbar placement (direct child after JS reparenting) and the
+   native textarea-field position before/without reparenting. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpVoiceRecord,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > button#svcpVoiceRecord{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ padding:0!important;margin:0!important;
+ color:#20262C!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;text-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ opacity:1!important;filter:none!important;
+ transition:none!important;animation:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpVoiceRecord:is(:hover,:focus,:active),
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > button#svcpVoiceRecord:is(:hover,:focus,:active){
+ background:transparent!important;background-image:none!important;
+ color:#20262C!important;border:0!important;box-shadow:none!important;
+ opacity:1!important;filter:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpVoiceRecord svg,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > button#svcpVoiceRecord svg{
+ box-sizing:content-box!important;
+ display:block!important;position:static!important;
+ width:22px!important;height:22px!important;
+ min-width:22px!important;min-height:22px!important;
+ flex:none!important;margin:0 auto!important;padding:0!important;
+ color:#20262C!important;stroke:#20262C!important;
+ stroke-width:1.65!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline > button#svcpVoiceRecord svg :is(rect,path),
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > button#svcpVoiceRecord svg :is(rect,path){
+ fill:none!important;stroke:#20262C!important;stroke-width:1.65!important;
+}
+/* Keep the multiline mic at the existing fixed toolbar slot; no nudges. */
