@@ -75,6 +75,7 @@ function openSheet(type,id='',nested=false){
  closeMenu();sheetType=type;activeRoom=id;
  title.textContent=viewTitle(type);body.replaceChildren();overlay.hidden=false;
  overlay.classList.toggle('sv-inbox-sheet-notifications',type==='notifications');
+ overlay.dataset.svInboxScreen=type;
  if(type==='new')showContacts(type);
  else if(type==='staff')showStaff();
  else if(type==='invite')showInvite();
@@ -85,35 +86,72 @@ function openSheet(type,id='',nested=false){
  else if(type==='room')showRoomActions(id);
  back.focus({preventScroll:true});
 }
-function showContacts(type){
+function makeContactRow(r,fn){
+ const row=button(r.label,'chevron',fn,'sv-inbox-contact-row');
+ const avatar=node('span','sv-inbox-contact-avatar',r.id==='dm-sayvi'?'':r.label.slice(0,1));
+ if(r.id==='dm-sayvi')avatar.classList.add('is-sayvi');
+ avatar.setAttribute('aria-hidden','true');
+ row.prepend(avatar);
+ const copy=row.querySelector('span:not(.sv-inbox-contact-avatar)');
+ if(copy&&r.hint){
+  const role=r.hint.split(' · ')[0].trim();
+  if(role)copy.append(node('small',null,role));
+ }
+ return row;
+}
+function showContacts(){
  const names=allRooms().filter(r=>r.kind==='personal'&&(!employee()||['dm-elena','dm-sayvi'].includes(r.id)));
- if(type==='new')body.append(node('p','sv-inbox-hint','Выберите собеседника'));
- names.forEach(r=>{
-  const b=button(r.label,'chevron',()=>openChat(r.id),'sv-inbox-contact-row');
-  const ico=node('span','sv-inbox-contact-avatar',r.label.slice(0,1));if(r.id==='dm-sayvi')ico.classList.add('is-sayvi');
-  b.prepend(ico);
-  if(r.hint)b.querySelector('span:not(.sv-inbox-contact-avatar)')?.append(node('small',null,r.hint.split(' · ')[0]));
-  body.append(b);
- });
+ const list=node('div','sv-inbox-people-list');
+ for(const r of names)list.append(makeContactRow(r,()=>openChat(r.id)));
+ body.append(list);
 }
 function showGroupForm(){
- if(employee()){body.append(node('p','sv-inbox-hint','Создание рабочих групп доступно руководителю.'));return}
+ if(employee()){
+  body.append(node('p','sv-inbox-hint','Создавать рабочие группы может руководитель.'));
+  return;
+ }
  const form=node('form','sv-inbox-group-form');
- const label=node('label','sv-inbox-field-label','Название группы');
- const input=node('input','sv-inbox-text-input');input.required=true;input.maxLength=55;input.placeholder='Например, Новая смена';input.setAttribute('aria-label','Название новой группы');
- label.append(input);form.append(label,node('p','sv-inbox-hint','Участники группы'));
- const people=[['elena','Елена · кассир'],['anna','Анна · старший продавец'],['mikhail','Михаил · продавец']];
- people.forEach(([id,name])=>{
-  const line=node('label','sv-inbox-check-row');const check=node('input');check.type='checkbox';check.name='participant';check.value=id;
-  if(id==='elena')check.checked=true;line.append(check,node('span',null,name));form.append(line);
- });
- const submit=node('button','sv-inbox-submit','Создать группу');submit.type='submit';form.append(submit);
- const foot=node('p','sv-inbox-hint','Группа и сообщения сохраняются только в этом браузере.');form.append(foot);
- form.addEventListener('submit',e=>{
-  e.preventDefault();const name=input.value.trim(),members=[...form.querySelectorAll('input[name="participant"]:checked')].map(c=>c.value);
-  if(!name||!members.length){input.focus();return}
+ const label=node('label','sv-inbox-field-label','Название');
+ const input=node('input','sv-inbox-text-input');
+ input.required=true;input.maxLength=55;input.placeholder='Название группы';input.setAttribute('aria-label','Название новой группы');
+ label.append(input);form.append(label);
+ const heading=node('h3','sv-inbox-form-caption','Участники');
+ form.append(heading);
+ const list=node('div','sv-inbox-participant-list');
+ const people=[
+  {id:'elena',name:'Елена',role:'Кассир'},
+  {id:'anna',name:'Анна',role:'Старший продавец'},
+  {id:'mikhail',name:'Михаил',role:'Продавец'}
+ ];
+ for(const p of people){
+  const line=node('label','sv-inbox-participant-row');
+  const avatar=node('span','sv-inbox-contact-avatar',p.name.charAt(0));
+  avatar.setAttribute('aria-hidden','true');
+  const copy=node('span','sv-inbox-participant-copy');
+  copy.append(node('strong',null,p.name),node('small',null,p.role));
+  const check=node('input','sv-inbox-participant-check');
+  check.type='checkbox';check.name='participant';check.value=p.id;
+  check.setAttribute('aria-label','Добавить: '+p.name);
+  if(p.id==='elena')check.checked=true;
+  line.append(avatar,copy,check);list.append(line);
+ }
+ form.append(list);
+ const status=node('p','sv-inbox-inline-status');status.setAttribute('role','status');
+ status.hidden=true;form.append(status);
+ const submit=node('button','sv-inbox-submit','Создать группу');
+ submit.type='submit';form.append(submit);
+ form.addEventListener('submit',event=>{
+  event.preventDefault();
+  if(!form.reportValidity())return;
+  const name=input.value.trim();
+  const members=[...form.querySelectorAll('input[name="participant"]:checked')].map(item=>item.value);
+  if(!name||!members.length){
+   status.textContent='Выберите хотя бы одного участника';
+   status.hidden=false;return;
+  }
   const id=window.SEYVEO_BUSINESS_COMMAND?.createLocalGroup?.(name,members);
-  if(id)openChat(id);else body.append(node('p','sv-inbox-hint','Не удалось сохранить группу. Проверьте локальное хранилище.'));
+  if(id)openChat(id);
+  else{status.textContent='Не удалось создать группу';status.hidden=false}
  });
  body.append(form);
 }
@@ -168,9 +206,12 @@ function menuLink(label,help,icon,fn){
  body.append(row);return row;
 }
 function settingToggle(key,label,help){
- const row=node('label','sv-inbox-toggle-row'),copy=node('span');
- copy.append(node('strong',null,label),node('small',null,help));
- const control=node('input');control.type='checkbox';control.checked=!!prefs[key];control.setAttribute('aria-label',label);
+ const row=node('label','sv-inbox-toggle-row sv-inbox-settings-toggle');
+ const copy=node('span');copy.append(node('strong',null,label));
+ if(help)copy.append(node('small',null,help));
+ const control=node('input','sv-inbox-settings-switch');
+ control.type='checkbox';control.checked=!!prefs[key];
+ control.setAttribute('role','switch');control.setAttribute('aria-label',label);
  control.addEventListener('change',()=>{prefs[key]=control.checked;savePrefs();decorateRows()});
  row.append(copy,control);body.append(row);return control;
 }
@@ -180,8 +221,8 @@ function showSettings(){
  sectionHeading('Сообщения');
  menuLink('Уведомления','Непрочитанные и тихие чаты','bell',()=>openSubSheet('notifications','settings'));
  sectionHeading('Список чатов');
- settingToggle('compact','Компактный список','Больше разговоров на экране');
- settingToggle('previews','Последнее сообщение','Показывать под именем');
+ settingToggle('compact','Компактный список','Больше чатов на экране');
+ settingToggle('previews','Предпросмотр','Текст последнего сообщения');
  sectionHeading('История');
  menuLink('История разговоров','Сообщения и поручения','clock',()=>{closeSheet();history.click()});
 }
@@ -235,18 +276,14 @@ function showData(){
 }
 function showStaff(){
  const names=allRooms().filter(r=>r.kind==='personal'&&r.person!=='sayvi'&&(!employee()||r.id==='dm-elena'));
- sectionHeading('Рабочая команда');
- for(const r of names){
-  const item=button(r.label,'chevron',()=>openChat(r.id),'sv-inbox-contact-row');
-  const avatar=node('span','sv-inbox-contact-avatar',r.label.slice(0,1));item.prepend(avatar);
-  const copy=item.querySelector('span:not(.sv-inbox-contact-avatar)');
-  if(copy&&r.hint)copy.append(node('small',null,r.hint.split(' · ')[0]));
-  body.append(item);
- }
+ sectionHeading('Команда');
+ const list=node('div','sv-inbox-people-list');
+ for(const r of names)list.append(makeContactRow(r,()=>openChat(r.id)));
+ body.append(list);
  if(!employee()){
   sectionHeading('Управление');
-  menuLink('Подключить сотрудника','Подготовка приглашения и объяснение доступа','users',()=>openSubSheet('invite','staff'));
-  menuLink('Карточки сотрудников','Открыть действующий раздел «Сотрудники»','users',()=>{
+  menuLink('Подключить сотрудника','Подготовить приглашение','users',()=>openSubSheet('invite','staff'));
+  menuLink('Карточки сотрудников','История и достижения','users',()=>{
    closeSheet();
    window.SEYVEO_UNIFIED_TASKS?.openPeople?.('team');
   });
