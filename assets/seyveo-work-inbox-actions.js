@@ -69,7 +69,7 @@ overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
 function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
-function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',display:'Отображение',notifications:'Уведомления',appearance:'Тема',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
+function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
@@ -81,6 +81,7 @@ function openSheet(type,id='',nested=false){
  else if(type==='settings')showSettings();
  else if(type==='display')showDisplay();
  else if(type==='appearance')showAppearance();
+ else if(type==='wallpapers')showWallpapers();
  else if(type==='notifications')showNotifications();
  else if(type==='data')showData();
  else if(type==='archives')showArchives();
@@ -165,6 +166,18 @@ function showAppearance(){
   const copy=row.querySelector('span');copy.append(node('small',null,hint));
   const indicator=node('span','sv-inbox-choice-indicator');indicator.innerHTML=svg('check');row.append(indicator);
   body.append(row);
+ }
+ sectionHeading('Оформление отдельных чатов');
+ menuLink('Фон переписки','Белый, Небо или Вечер — для выбранного чата','sliders',()=>openSubSheet('wallpapers','appearance'));
+}
+function showWallpapers(){
+ body.append(node('p','sv-inbox-hint','Выберите разговор. Откроется существующая карточка чата с настройками его фона.'));
+ const rooms=allRooms().filter(r=>!employee()||r.kind==='groups'||r.id==='dm-elena'||r.id==='dm-sayvi');
+ for(const r of rooms){
+  menuLink(r.label,r.kind==='groups'?'Группа':r.hint?.split(' · ')[0]||'Личный чат','sliders',()=>{
+   openChat(r.id);
+   requestAnimationFrame(()=>{const heading=$('svcpConversationHeading');if(heading&&$('svcpConversation')?.dataset.roomId===r.id)heading.click()});
+  });
  }
 }
 function showNotifications(){
