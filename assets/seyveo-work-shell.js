@@ -24,6 +24,9 @@
  // Only Notebook CONTENT mounts into Work; its old screen chrome is gone.
  const notesPage=document.getElementById('notesDialog');
  if(notesPage)shell.append(notesPage);
+ // Wallet lives in the same Work shell: one genuine navigation capsule.
+ const walletDialog=document.getElementById('seyveoPayDialog');
+ if(walletDialog)shell.append(walletDialog);
  // Reuse the three real Notebook launch buttons in the spare top header area.
  // Their original listeners continue to open the editors and save real notes.
  const notebookChoices=document.getElementById('svNotebookCreateTiles');
@@ -535,6 +538,7 @@
  }
  const oldTab=(parent,attribute,name)=>parent.querySelector('['+attribute+'="'+name+'"]');
  function activeSection(){
+  if(walletDialog?.open)return 'wallet';
   if(notesPage?.open)return 'notes';
   if(!calendar.hidden)return 'calendar';
   return tasks.dataset.workView==='business'?'business':tasks.dataset.workView==='employee'?'employee':'personal';
@@ -554,8 +558,8 @@
   const employeeMode=employeePreview&&!managerMode;
   // The same three-position shell also belongs to ONE.
   // Preview roles are an interface demo, not verified company authorization.
-  const visible=!!notesPage?.open||!tasks.hidden||!calendar.hidden;
-  const history=visible&&!notesPage?.open&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
+  const visible=!!walletDialog?.open||!!notesPage?.open||!tasks.hidden||!calendar.hidden;
+  const history=visible&&!walletDialog?.open&&!notesPage?.open&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
   parkCalendarMenu(visible&&!history&&active==='calendar');
   if(active!=='business'||!managerPreview||history)closeBusinessCreate();
   if(active!=='calendar'||history){
@@ -573,7 +577,7 @@
   heading.dataset.history=String(history);
   // Notebook is a top-level tab: its Back and card-review shortcuts repeat
   // controls that belong to the tabs/dock or to My Tasks, respectively.
-  reviewCards.hidden=history||calendarOnly||active==='notes';
+  reviewCards.hidden=history||calendarOnly||active==='notes'||active==='wallet';
   nav.dataset.employee=String(employeeMode);
   nav.dataset.one=String(!managerMode&&!employeeMode);
   nav.dataset.business=String(managerMode&&!employeeMode);
@@ -595,7 +599,7 @@
     ? (name==='personal'?'Мои дела':name==='employee'?'Моя работа':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Блокнот')
     : name==='personal'?'Мои дела':name==='notes'?'Блокнот':name==='wallet'?'Кошелёк':name==='business'?'Кабинет':'Моя работа';
   }
-  heading.hidden=!visible;
+  heading.hidden=!visible||active==='wallet';
   heading.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
@@ -612,7 +616,7 @@
   title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // Top-level sections are named in the permanent tab capsule below.
   // Keep titles for nested «Все дела», «История», and the employee workspace.
-  title.hidden=!history&&!nested&&['personal','notes','business'].includes(active);
+  title.hidden=!history&&!nested&&['personal','notes','business','wallet'].includes(active);
   heading.dataset.calendarPeriod=String(active==='calendar'&&!history&&!nested);
   if(active==='calendar'&&!history&&!nested)syncCalendarPeriod();
   const showMonth=active==='personal'&&!history&&!nested&&visible;
@@ -646,7 +650,7 @@
   }
   // In the personal landing use the same approved circle for History.
   // Every nested view (including History) retains the real Back arrow.
-  back.hidden=(active==='personal'&&!history&&!nested)||active==='notes';
+  back.hidden=(active==='personal'&&!history&&!nested)||active==='notes'||active==='wallet';
   if(back.dataset.svHeaderIcon!=='back'){back.innerHTML=backIcon;back.dataset.svHeaderIcon='back'}
   back.setAttribute('aria-label',history||nested?'Вернуться к моим делам':'Вернуться назад');
   back.title='';
@@ -655,7 +659,7 @@
   // including History. Do not write inline visual overrides here.
   // The employee home has contextual controls inside its own dashboard.
   // Do not show an empty + action in the shared header.
-  add.hidden=active==='employee'||active==='notes';
+  add.hidden=active==='employee'||active==='notes'||active==='wallet';
   const nextIcon=history?'search':'add';
   if(add.dataset.svHeaderIcon!==nextIcon){
    add.innerHTML=history?searchIcon:plusIcon;
@@ -667,8 +671,8 @@
   add.setAttribute('aria-controls',history?'sahHistorySearch':active==='calendar'?'calendarCreateMenu':active==='business'?'svWorkCreateChoices':'');
   add.setAttribute('aria-expanded',history?String(document.getElementById('sahHistorySearch')?.hidden===false):active==='calendar'?String(calendarAdd?.getAttribute('aria-expanded')==='true'):active==='business'?String(!businessCreate.hidden):'false');
   shell.dataset.active=active;
-  // Select Wallet throughout its modal session; restore the prior tab on close.
-  const selectedWorkTab=document.getElementById('seyveoPayDialog')?.open?'wallet':active;
+  // Wallet is a full Work section, not a modal overlay.
+  const selectedWorkTab=active;
   for(const button of nav.querySelectorAll('[data-sv-work-tab]')){
    button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===selectedWorkTab));
   }
@@ -684,7 +688,8 @@
    tab.setAttribute('aria-pressed',String(tab.dataset.svWorkTab===target));
   }
   if(target==='wallet'){
-   // Route to the existing local expense/receipt/card wallet, not a mock screen.
+   // Enter the actual Wallet, preserving its QR and finance controllers.
+   if(notesPage?.open)notesPage.close();
    // The Pay module owns the modal and bank integration limitations.
    if(typeof window.SEYVEO_PAY?.open==='function'){
     Promise.resolve(window.SEYVEO_PAY.open()).then(()=>{
@@ -697,6 +702,8 @@
    }
    return;
   }
+  // Close Wallet before navigating to any other tab.
+  if(walletDialog?.open)window.SEYVEO_PAY?.close?.(true);
   if(target==='notes'){
    // The Notebook landing is the single home for creation tiles and saved notes.
    const api=window.SEYVEO_NOTES_API;
@@ -763,6 +770,7 @@
  observer.observe(tasks,{attributes:true,attributeFilter:['hidden','data-work-view','class']});
  observer.observe(calendar,{attributes:true,attributeFilter:['hidden']});
  if(notesPage)observer.observe(notesPage,{attributes:true,attributeFilter:['open']});
+ if(walletDialog)observer.observe(walletDialog,{attributes:true,attributeFilter:['open']});
  observer.observe(oldTasks,{attributes:true,attributeFilter:['data-manager']});
  observer.observe(oldCalendar,{attributes:true,attributeFilter:['hidden']});
  observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
@@ -773,8 +781,8 @@
  window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
- // The Wallet is an existing modal; closing it restores the previous Work tab.
- document.getElementById('seyveoPayDialog')?.addEventListener('close',()=>requestAnimationFrame(sync));
+ // Wallet is inline; the same bar stays mounted across every tab.
+ walletDialog?.addEventListener('close',()=>requestAnimationFrame(sync));
  sync();
  // Reveal once every deferred Work/agenda initializer has run.
  // The route's old markup must never be painted as the first frame.
