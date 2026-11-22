@@ -299,6 +299,9 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  font-weight:600!important;
  line-height:20px!important;
  letter-spacing:-.02em!important;
+ /* Optical baseline correction: Cyrillic glyphs sat 1px lower than the
+    accompanying chevron. Move only the word, not the pill or the arrow. */
+ position:relative!important;top:-1px!important;
  text-shadow:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
