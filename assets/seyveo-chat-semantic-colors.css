@@ -1,0 +1,116 @@
+/* SEYVEO · 2026-11-22
+   Semantic color roles in chats: incoming silver, outgoing blue,
+   selected poll choice orange, other poll choices cream.
+   Last-loaded adapter: preserves special surfaces, tasks, files,
+   assistant replies, emoji, completed polls and the glass composer. */
+:root{
+ --sv-chat-incoming:#E9E9EB;
+ --sv-chat-incoming-ink:#242427;
+ --sv-chat-outgoing:#0A84FF;
+ --sv-chat-outgoing-ink:#FFFFFF;
+ --sv-chat-selected:#FFB65D;
+ --sv-chat-unselected:#FFF1DF;
+ --sv-chat-unselected-ink:#C9802D;
+}
+/* Plain messages only. :has() prevents file cards and voice cards
+   from being repainted even when they contain a caption. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-other:not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)):not(:has(.svcp-voice-wave)){
+ background:var(--sv-chat-incoming)!important;
+ background-image:none!important;
+ color:var(--sv-chat-incoming-ink)!important;
+ box-shadow:none!important;
+ border:0!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-self:not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)):not(:has(.svcp-voice-wave)){
+ background:var(--sv-chat-outgoing)!important;
+ background-image:none!important;
+ color:var(--sv-chat-outgoing-ink)!important;
+ box-shadow:none!important;
+ border:0!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-other:not(.is-poll):not(.is-task):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(:has(.svcp-file-card))
+ > .svcp-message-text{
+ color:var(--sv-chat-incoming-ink)!important;
+ -webkit-text-fill-color:var(--sv-chat-incoming-ink)!important;
+ text-shadow:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-self:not(.is-poll):not(.is-task):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(:has(.svcp-file-card))
+ > .svcp-message-text{
+ color:var(--sv-chat-outgoing-ink)!important;
+ -webkit-text-fill-color:var(--sv-chat-outgoing-ink)!important;
+ text-shadow:none!important;
+}
+/* Timestamps must follow the bubble they sit inside; don't move them.
+   The check mark means locally saved, not delivered to another device. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-self:not(.is-poll):not(.is-task):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only):not(:has(.svcp-file-card))
+ > .svcp-message-stamp,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-self:not(.is-poll):not(.is-task):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only):not(:has(.svcp-file-card))
+ > .svcp-message-stamp > .svcp-time,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-self:not(.is-poll):not(.is-task):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only):not(:has(.svcp-file-card))
+ .svcp-message-local-check{
+ color:rgba(255,255,255,.86)!important;
+ -webkit-text-fill-color:rgba(255,255,255,.86)!important;
+ opacity:1!important;
+ text-shadow:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-other:not(.is-poll):not(.is-task):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only):not(:has(.svcp-file-card))
+ > .svcp-message-stamp,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-other:not(.is-poll):not(.is-task):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only):not(:has(.svcp-file-card))
+ > .svcp-message-stamp > .svcp-time{
+ color:#73767E!important;
+ opacity:1!important;
+ text-shadow:none!important;
+}
+/* Family preview is outgoing-only. Do not alter family poll or emoji styles. */
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog .svf-thread > .svf-msg:not(.is-poll):not(.svf-emoji-only){
+ background:var(--sv-chat-outgoing)!important;
+ border:0!important;
+ color:var(--sv-chat-outgoing-ink)!important;
+ box-shadow:none!important;
+}
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog .svf-thread > .svf-msg:not(.is-poll):not(.svf-emoji-only) > .svf-message-text{
+ color:#FFFFFF!important;
+ -webkit-text-fill-color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog .svf-thread > .svf-msg:not(.is-poll):not(.svf-emoji-only) > .svf-message-stamp,
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog .svf-thread > .svf-msg:not(.is-poll):not(.svf-emoji-only) .svf-message-time,
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog .svf-thread > .svf-msg:not(.is-poll):not(.svf-emoji-only) .svf-message-local-check{
+ color:rgba(255,255,255,.86)!important;
+ opacity:1!important;
+ text-shadow:none!important;
+}
+/* Poll choices use their own semantic colors, irrespective of sender.
+   Respect their compact geometry and actual-voter avatars. */
+html:root:not([data-theme="dark"]) body :is(#svcpWorkChatScreen,#seyveoFamilyDialog)
+ .sv-poll-choice:not(.is-selected){
+ background:var(--sv-chat-unselected)!important;
+ border:0!important;
+ color:var(--sv-chat-unselected-ink)!important;
+ box-shadow:none!important;
+}
+html:root:not([data-theme="dark"]) body :is(#svcpWorkChatScreen,#seyveoFamilyDialog)
+ .sv-poll-choice.is-selected{
+ background:var(--sv-chat-selected)!important;
+ border:0!important;
+ color:#FFFFFF!important;
+ box-shadow:none!important;
+}
+html:root:not([data-theme="dark"]) body :is(#svcpWorkChatScreen,#seyveoFamilyDialog)
+ .sv-poll-choice:focus-visible{
+ outline:2px solid #0A84FF!important;
+ outline-offset:2px!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html body :is(#svcpWorkChatScreen,#seyveoFamilyDialog) .sv-poll-choice{
+  transition:none!important;
+ }
+}
