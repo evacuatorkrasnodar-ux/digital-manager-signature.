@@ -37,6 +37,208 @@ function roomInfo(id){return allRooms().find(r=>r.id===id)}
 function roomState(id){return prefs.rooms[id]||{}}
 function savePrefs(){try{localStorage.setItem(KEY,JSON.stringify(prefs))}catch{/* no persistence in private mode */}}
 function updateRoom(id,prop,value){prefs.rooms[id]={...roomState(id),[prop]:value};savePrefs();decorateRows();syncProfile()}
+/* Local avatar editing: Apple-style photo, monogram and emoji.
+   No upload, no claim of changing colleagues' accounts or the SEYVEO assistant. */
+const AVATAR_COLORS=['#536f84','#4f8574','#7d78a1','#b27788','#be8a54','#606b79'];
+const AVATAR_EMOJIS=['😊','😎','🌿','✨','💼','🐱','❤️','🎨'];
+function safeAvatar(spec){
+ if(!spec||typeof spec!=='object')return null;
+ const kind=['monogram','emoji','photo'].includes(spec.kind)?spec.kind:'monogram';
+ const color=AVATAR_COLORS.includes(spec.color)?spec.color:AVATAR_COLORS[0];
+ const initials=[...String(spec.initials||'Я')].slice(0,2).join('').toLocaleUpperCase('ru-RU');
+ const emoji=[...String(spec.emoji||'😊')].slice(0,2).join('');
+ const image=typeof spec.image==='string'&&/^data:image\\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(spec.image)&&spec.image.length<320000?spec.image:'';
+ return {kind:kind==='photo'&&!image?'monogram':kind,color,initials,emoji,image};
+}
+function paintAvatar(element,source){
+ const spec=safeAvatar(source);
+ if(!element||!spec)return;
+ element.classList.add('sv-inbox-avatar-custom');
+ element.dataset.svAvatarKind=spec.kind;
+ element.style.setProperty('--sv-avatar-color',spec.color);
+ element.style.setProperty('--sv-avatar-image',spec.kind==='photo'?'url("'+spec.image+'")':'none');
+ element.textContent=spec.kind==='monogram'?(spec.initials||'Я'):spec.kind==='emoji'?spec.emoji:'';
+}
+function clearAvatarStyle(element){
+ element.classList.remove('sv-inbox-avatar-custom');
+ delete element.dataset.svAvatarKind;
+ element.style.removeProperty('--sv-avatar-color');
+ element.style.removeProperty('--sv-avatar-image');
+}
+function restoreAvatar(element,id,row){
+ clearAvatarStyle(element);
+ const info=roomInfo(id);
+ if((row?.dataset?.svcpRoomKind||info?.kind)==='groups'){
+  element.innerHTML=svg(id==='general'?'messages':id==='docs'?'file':'users');
+ }else element.textContent=String(info?.mark||info?.label?.slice(0,1)||'•');
+}
+function updateHeaderAvatar(){
+ const conversation=$('svcpConversation'),target=$('svcpRoomAvatar');
+ const id=conversation?.dataset.roomId;
+ if(!target||!id||id==='dm-sayvi')return;
+ const spec=roomState(id).avatar;
+ if(spec)paintAvatar(target,spec);
+ else if(target.classList.contains('sv-inbox-avatar-custom'))restoreAvatar(target,id);
+}
+function showAvatarEditor(id){
+ const self=id==='self',info=self?null:roomInfo(id);
+ if(!self&&(!info||info.person==='sayvi')){
+  body.append(node('p','sv-inbox-hint','Фирменный значок Сэйви не изменяется.'));return;
+ }
+ const old=self?prefs.myProfile?.avatar:roomState(id).avatar;
+ let draft=safeAvatar(old)||{
+  kind:'monogram',color:AVATAR_COLORS[0],
+  initials:String(self?(prefs.myProfile?.name||'Я'):(info?.label||'?')).trim().slice(0,1).toLocaleUpperCase('ru-RU'),
+  emoji:'😊',image:''
+ };
+ const form=node('form','sv-inbox-avatar-editor');
+ const previewWrap=node('div','sv-inbox-avatar-preview-wrap');
+ const preview=node('span','sv-inbox-avatar-preview');
+ preview.setAttribute('aria-hidden','true');
+ const subtitle=node('p','sv-inbox-avatar-subtitle',self?'Ваш профиль':'Только для вас · '+info.label);
+ previewWrap.append(preview,subtitle);
+ form.append(previewWrap);
+ let displayName=null,monogramInput=null;
+ if(self){
+  const nameLabel=node('label','sv-inbox-avatar-field');
+  nameLabel.append(node('span',null,'Имя'));
+  displayName=node('input','sv-inbox-text-input');
+  displayName.type='text';displayName.maxLength=50;
+  displayName.autocomplete='nickname';
+  displayName.placeholder='Ваше имя';
+  displayName.value=typeof prefs.myProfile?.name==='string'?prefs.myProfile.name:'';
+  nameLabel.append(displayName);form.append(nameLabel);
+ }
+ const methods=node('div','sv-inbox-avatar-methods');
+ methods.setAttribute('role','group');methods.setAttribute('aria-label','Тип аватара');
+ const methodButtons=[];
+ const panels=node('div','sv-inbox-avatar-customization');
+ const monoPanel=node('div','sv-inbox-avatar-mode');
+ const monoLabel=node('label','sv-inbox-avatar-field');
+ monoLabel.append(node('span',null,'Буквы на аватаре'));
+ monogramInput=node('input','sv-inbox-text-input');
+ monogramInput.type='text';monogramInput.maxLength=2;
+ monogramInput.placeholder='Р';
+ monogramInput.value=draft.initials||'';
+ monoLabel.append(monogramInput);monoPanel.append(monoLabel);
+ const emojiPanel=node('div','sv-inbox-avatar-mode');
+ const emojiGrid=node('div','sv-inbox-avatar-emoji-grid');
+ emojiGrid.setAttribute('role','group');emojiGrid.setAttribute('aria-label','Выберите эмодзи');
+ const emojiButtons=[];
+ for(const emoji of AVATAR_EMOJIS){
+  const b=node('button','sv-inbox-avatar-emoji',emoji);b.type='button';
+  b.setAttribute('aria-label','Эмодзи '+emoji);
+  b.addEventListener('click',()=>{draft.kind='emoji';draft.emoji=emoji;draw()});
+  emojiButtons.push(b);emojiGrid.append(b);
+ }
+ emojiPanel.append(emojiGrid);
+ const photoPanel=node('div','sv-inbox-avatar-mode');
+ const photoLabel=node('label','sv-inbox-avatar-photo-select');
+ photoLabel.append(node('span',null,'Выбрать фото из галереи'));
+ const fileInput=node('input');
+ fileInput.type='file';fileInput.accept='image/*';
+ fileInput.setAttribute('aria-label','Загрузить фотографию аватара');
+ photoLabel.append(fileInput);photoPanel.append(photoLabel);
+ const monoButton=node('button','sv-inbox-avatar-method','Буквы');
+ const emojiButton=node('button','sv-inbox-avatar-method','Эмодзи');
+ const photoButton=node('button','sv-inbox-avatar-method','Фото');
+ for(const [kind,b] of [['monogram',monoButton],['emoji',emojiButton],['photo',photoButton]]){
+  b.type='button';b.addEventListener('click',()=>{
+   if(kind==='photo'&&!draft.image){fileInput.click();return}
+   draft.kind=kind;draw();
+  });
+  b.dataset.avatarMethod=kind;
+  methodButtons.push(b);methods.append(b);
+ }
+ form.append(methods);
+ panels.append(monoPanel,emojiPanel,photoPanel);
+ form.append(panels);
+ const palette=node('div','sv-inbox-avatar-palette');
+ palette.setAttribute('role','group');palette.setAttribute('aria-label','Цвет фона');
+ const swatches=[];
+ for(const color of AVATAR_COLORS){
+  const swatch=node('button','sv-inbox-avatar-swatch');swatch.type='button';
+  swatch.style.setProperty('--sv-avatar-swatch',color);
+  swatch.setAttribute('aria-label','Цвет '+color);
+  swatch.addEventListener('click',()=>{draft.color=color;draw()});
+  swatches.push(swatch);palette.append(swatch);
+ }
+ form.append(palette);
+ const status=node('p','sv-inbox-avatar-status');
+ status.setAttribute('role','status');
+ const privacy=node('p','sv-inbox-hint','Фото и оформление хранятся только в этом браузере. Коллегам они не отправляются.');
+ const actions=node('div','sv-inbox-avatar-actions');
+ const reset=node('button','sv-inbox-avatar-reset','Сбросить');reset.type='button';
+ const save=node('button','sv-inbox-submit','Сохранить');save.type='submit';
+ actions.append(reset,save);
+ form.append(status,privacy,actions);
+ function draw(){
+  const normalized=safeAvatar(draft);
+  if(normalized){draft=normalized;paintAvatar(preview,draft)}
+  for(const button of methodButtons)
+   button.setAttribute('aria-pressed',String(button.dataset.avatarMethod===draft.kind));
+  for(const b of emojiButtons)b.setAttribute('aria-pressed',String(b.textContent===draft.emoji));
+  for(let i=0;i<swatches.length;i++)
+   swatches[i].setAttribute('aria-pressed',String(AVATAR_COLORS[i]===draft.color));
+  monoPanel.hidden=draft.kind!=='monogram';
+  emojiPanel.hidden=draft.kind!=='emoji';
+  photoPanel.hidden=draft.kind!=='photo';
+  palette.hidden=draft.kind==='photo';
+ }
+ monogramInput.addEventListener('input',()=>{
+  draft.kind='monogram';draft.initials=[...monogramInput.value.trim()].slice(0,2).join('').toLocaleUpperCase('ru-RU');draw();
+ });
+ fileInput.addEventListener('change',()=>{
+  const file=fileInput.files?.[0];if(!file)return;
+  if(!file.type.startsWith('image/')||file.size>8*1024*1024){
+   status.textContent='Выберите изображение размером до 8 МБ.';fileInput.value='';return;
+  }
+  status.textContent='Подготавливаю фото…';save.disabled=true;
+  const url=URL.createObjectURL(file),photo=new Image();
+  const cleanup=()=>{URL.revokeObjectURL(url);fileInput.value='';save.disabled=false};
+  photo.onload=()=>{
+   try{
+    const canvas=document.createElement('canvas');canvas.width=256;canvas.height=256;
+    const ctx=canvas.getContext('2d');if(!ctx)throw new Error('canvas');
+    const w=photo.naturalWidth,h=photo.naturalHeight;
+    if(!w||!h)throw new Error('image');
+    const side=Math.min(w,h);
+    ctx.drawImage(photo,(w-side)/2,(h-side)/2,side,side,0,0,256,256);
+    const data=canvas.toDataURL('image/jpeg',.77);
+    if(data.length>320000)throw new Error('size');
+    draft.image=data;draft.kind='photo';status.textContent='';draw();
+   }catch{status.textContent='Не удалось подготовить фото. Попробуйте другое изображение.'}
+   cleanup();
+  };
+  photo.onerror=()=>{status.textContent='Формат фото не поддерживается этим браузером.';cleanup()};
+  photo.src=url;
+ });
+ function persist(next){
+  const previous=JSON.stringify(prefs);
+  if(self)prefs.myProfile={name:displayName.value.trim().slice(0,50),avatar:next};
+  else prefs.rooms[id]={...roomState(id),avatar:next};
+  try{localStorage.setItem(KEY,JSON.stringify(prefs));return true}
+  catch{
+   try{prefs=JSON.parse(previous)}catch{}
+   status.textContent='Не удалось сохранить: локальное хранилище заполнено.';
+   return false;
+  }
+ }
+ reset.addEventListener('click',()=>{
+  if(!persist(null))return;
+  if(self)delete prefs.myProfile;
+  else delete prefs.rooms[id].avatar;
+  savePrefs();decorateRows();closeSheet();
+ });
+ form.addEventListener('submit',event=>{
+  event.preventDefault();
+  if(save.disabled)return;
+  if(draft.kind==='photo'&&!draft.image){status.textContent='Сначала выберите фотографию.';return}
+  if(!persist(safeAvatar(draft)))return;
+  decorateRows();closeSheet();
+ });
+ draw();body.append(form);
+}
 function employee(){return window.SEYVEO_PREVIEW?.isEmployee?.()===true}
 function openChat(id){closeSheet();closeMenu();window.SEYVEO_BUSINESS_COMMAND?.showChat?.(id)}
 const menuButton=node('button','sv-inbox-options-button');
