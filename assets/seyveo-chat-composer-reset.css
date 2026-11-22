@@ -102,8 +102,8 @@ html body #svcpWorkChatScreen #svcpChatFormReset > #svcpAttachFile > svg{
  stroke-linecap:round!important;stroke-linejoin:round!important;
  transform:none!important;filter:none!important;
 }
-/* Approved original full-color Sayvi asset with its own alpha. NO colored backing,
-   clipping circle, mask, synthetic oval or second emblem. */
+/* Canonical round jade/platinum SEYVEO mark, transparent natural image.
+   No CSS oval, fill color, artificial round mask or duplicate ornament. */
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage{
  grid-column:2!important;grid-row:1!important;
  /* Optical inset: the same tap target, 5px farther inside the glass. */
@@ -114,10 +114,10 @@ html body #svcpWorkChatScreen #svcpChatFormReset.svcp-compose-multiline > #svcpP
 }
 html body #svcpWorkChatScreen #svcpChatFormReset > #svcpPolishMessage > img{
  box-sizing:border-box!important;display:block!important;
- width:38px!important;height:auto!important;
- min-width:38px!important;max-width:38px!important;
- min-height:0!important;max-height:38px!important;
- aspect-ratio:auto!important;
+ width:42px!important;height:42px!important;
+ min-width:42px!important;max-width:42px!important;
+ min-height:42px!important;max-height:42px!important;
+ aspect-ratio:1/1!important;
  margin:0!important;padding:0!important;
  object-fit:contain!important;object-position:center center!important;
  background:transparent!important;background-image:none!important;
