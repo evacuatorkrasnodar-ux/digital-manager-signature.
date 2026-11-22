@@ -14,77 +14,14 @@ html body #svcpWorkChatScreen[data-view="room"]
 }
 
 
-/* v4 · REBUILT from scratch. The old .svcp-chat-send and SVG-circle
-   styling are intentionally disconnected. This ONE button owns the whole
-   opaque blue round face matching the outgoing chat bubbles. No borders, extra circles, gradients or halos. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat,
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat:is(:hover,:active,:focus,:focus-visible){
- box-sizing:border-box!important;
- -webkit-appearance:none!important;appearance:none!important;
- display:grid!important;place-items:center!important;
- position:absolute!important;
- z-index:13!important;
- top:auto!important;right:16px!important;bottom:7px!important;left:auto!important;
- width:36px!important;min-width:36px!important;max-width:36px!important;
- height:36px!important;min-height:36px!important;max-height:36px!important;
- padding:0!important;margin:0!important;
- border:0!important;outline:0!important;border-radius:50%!important;
- background:var(--sv-chat-outgoing,#0A84FF)!important;background-color:var(--sv-chat-outgoing,#0A84FF)!important;
- background-image:none!important;background-clip:border-box!important;
- box-shadow:none!important;text-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- filter:none!important;opacity:1!important;mix-blend-mode:normal!important;
- transform:none!important;translate:none!important;scale:1!important;
- transition:none!important;animation:none!important;
- overflow:hidden!important;isolation:isolate!important;
- -webkit-tap-highlight-color:transparent!important;
- color:#fff!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline #svcpChatSendFlat,
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline #svcpChatSendFlat:is(:hover,:active,:focus,:focus-visible){
- top:auto!important;right:10px!important;bottom:10px!important;left:auto!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat::before,
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat::after{
- content:none!important;display:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat svg.svcp-flat-send-symbol{
- display:block!important;box-sizing:border-box!important;
- width:23px!important;min-width:23px!important;max-width:23px!important;
- height:23px!important;min-height:23px!important;max-height:23px!important;
- background:none!important;fill:none!important;
- border:0!important;box-shadow:none!important;filter:none!important;
- transform:none!important;overflow:visible!important;
- stroke:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat .svcp-flat-arrow{
- display:block!important;
- fill:none!important;stroke:#fff!important;stroke-width:1.5px!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
- filter:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat .svcp-flat-stop{
- display:none!important;fill:#fff!important;stroke:none!important;
-}
-/* The same control switches to a white 10px stop square while the local
-   Sayvi demo answer is revealing text; the click handler cancels it. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] #svcpChatSendFlat .svcp-flat-arrow{
- display:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] #svcpChatSendFlat .svcp-flat-stop{
- display:block!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-sayvi-responding="true"] #svcpVoiceRecord{
+/* Work Chat Send / Stop deliberately has NO styles here.
+   The one flat 34px vector circle in a 44px tap target, its arrow,
+   and the identical compact/expanded anchor are defined exclusively in
+   seyveo-chat-identity-composer.css. Do not duplicate them in a later file.
+   The live Sayvi reply only needs to hide the microphone while stopping. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm[data-sayvi-responding="true"] > #svcpVoiceRecord{
  display:none!important;visibility:hidden!important;pointer-events:none!important;
-}
-/* The idle composer has only the microphone: Send is hidden unless there
-   is a draft, attachment, or the assistant is currently responding. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not([data-sayvi-responding="true"])[data-has-content="false"] #svcpChatSendFlat,
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat[hidden]{
- display:none!important;visibility:hidden!important;pointer-events:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpChatSendFlat .svcp-flat-send-label{
- display:none!important;
 }
 
 /* One subtle light sweep across the name while the assistant is writing. */
