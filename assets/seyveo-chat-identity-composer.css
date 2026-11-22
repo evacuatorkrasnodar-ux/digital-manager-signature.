@@ -23,7 +23,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-conver
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversationBack{
  position:absolute!important;
- top:calc(10px + env(safe-area-inset-top,0px))!important;
+ top:calc(2px + env(safe-area-inset-top,0px))!important;
  left:max(10px,env(safe-area-inset-left,0px))!important;
  display:grid!important;place-items:center!important;
  width:44px!important;min-width:44px!important;max-width:44px!important;
@@ -41,7 +41,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpConversat
 html body #svcpWorkChatScreen[data-view="room"] .svcp-room-identity{
  box-sizing:border-box!important;
  position:absolute!important;
- left:50%!important;top:calc(23px + env(safe-area-inset-top,0px))!important;
+ left:50%!important;top:calc(15px + env(safe-area-inset-top,0px))!important;
  transform:translateX(-50%)!important;
  width:min(195px,53vw)!important;
  height:130px!important;
@@ -114,7 +114,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-room-ide
    where an Apple-style chat header should remain visually clear. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpLoadOlder:not([hidden]){
  position:absolute!important;
- top:calc(133px + env(safe-area-inset-top,0px))!important;
+ top:calc(125px + env(safe-area-inset-top,0px))!important;
  left:50%!important;right:auto!important;
  transform:translateX(-50%)!important;
  z-index:16!important;
@@ -172,7 +172,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversationHeading #svcpCo
 }
 html body #svcpWorkChatScreen[data-view="room"] .svcp-call-actions{
  position:absolute!important;
- top:calc(10px + env(safe-area-inset-top,0px))!important;
+ top:calc(2px + env(safe-area-inset-top,0px))!important;
  right:max(10px,env(safe-area-inset-right,0px))!important;
  display:flex!important;gap:7px!important;align-items:center!important;
  z-index:21!important;pointer-events:auto!important;
