@@ -74,9 +74,12 @@
    keep their existing geometry. A single safe-area inset, with no extra
    8px app lift or 6px header spacer, places all four Work destinations
    on the same top axis. Keep native notch clearance on iPhone X. */
-@media (max-width:699px) {
-  html body .app:has(> #svWorkShell[data-shared-work="true"]) {
-    padding-top:env(safe-area-inset-top,0px)!important;
+@media (max-width:720px), (orientation:landscape) and (max-height:540px) {
+  /* One safe-area offset for all actual page routes, excluding the Home
+     sphere stage and the independent fullscreen chat viewport. */
+  html body .app:has(> #svWorkShell[data-shared-work="true"]),
+  html body .app:has(> :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage):not([hidden])) {
+    padding-top:var(--sv-apple-top-inset,calc(8px + env(safe-area-inset-top,0px)))!important;
   }
   html body #svWorkShell[data-shared-work="true"] > seyveo-work-head {
     --gutter-t:0px;
