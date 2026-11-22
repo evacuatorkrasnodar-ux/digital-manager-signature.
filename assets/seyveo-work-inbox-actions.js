@@ -406,11 +406,9 @@ function decorateRows(){
    wrap.style.order=st.pinned?'-1':'0';
    const row=wrap.querySelector('.svcp-directory-item');
    if(!row)continue;
-   let badges=row.querySelector('.sv-inbox-row-badges');
-   if(!badges){badges=node('span','sv-inbox-row-badges');row.querySelector('.svcp-directory-item-head')?.append(badges)}
-   badges.replaceChildren();
-   if(st.pinned)badges.append(node('span','sv-inbox-mini-pin','•'));
-   if(st.muted)badges.append(node('span','sv-inbox-mini-mute','◦'));
+   // No tiny dots in the time column: mute/pin state is accessible from
+   // the conversation actions and preserved in its local settings.
+   row.querySelector('.sv-inbox-row-badges')?.remove();
    row.setAttribute('aria-label',(roomInfo(wrap.dataset.roomId)?.label||'Чат')+(st.unread?', не прочитан':'')+(st.muted?', без звука':''));
   }
  }finally{processing=false}
