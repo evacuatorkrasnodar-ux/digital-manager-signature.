@@ -198,6 +198,7 @@ function showNotifications(){
   control.type='checkbox';
   control.checked=!!checked;
   control.setAttribute('aria-label',label);
+  control.setAttribute('role','switch');
   control.addEventListener('change',()=>handle(control.checked));
   return control;
  }
