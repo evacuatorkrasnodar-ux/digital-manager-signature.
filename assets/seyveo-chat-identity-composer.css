@@ -621,6 +621,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCh
  transform:none!important;
  -webkit-tap-highlight-color:transparent;
  isolation:isolate!important;
+ transition:none!important;translate:none!important;scale:1!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline)
  > button#svcpAttachFile.svcp-plus-pearl-rebuilt svg{
@@ -637,7 +638,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCh
  > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:active,[aria-pressed="true"]){
  background:var(--sv-white-pearl-press-fill,rgba(10,132,255,.045))!important;
  box-shadow:var(--sv-white-pearl-press-shadow,inset 0 2px 4px rgba(32,42,58,.13))!important;
- transform:scale(.992)!important;opacity:1!important;
+ transform:none!important;translate:none!important;scale:1!important;opacity:1!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline)
  > button#svcpAttachFile.svcp-plus-pearl-rebuilt:focus-visible{
@@ -658,4 +659,68 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm
  color:#F3F5F8!important;
  -webkit-backdrop-filter:blur(4px) saturate(104%)!important;
  backdrop-filter:blur(4px) saturate(104%)!important;
+}
+
+/* SEYVEO · stable attachment Plus and pearl popover · v16. */
+/* Press and open menu never change a 44px control's frame or grid placement. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline)
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt:is(:hover,:focus,:focus-visible,:active),
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):has(#svcpAttachMenu:not([hidden]))
+ > button#svcpAttachFile.svcp-plus-pearl-rebuilt{
+ position:relative!important;
+ left:6px!important;right:auto!important;
+ top:auto!important;bottom:auto!important;
+ grid-column:1!important;grid-row:1!important;
+ align-self:center!important;justify-self:start!important;
+ margin:0!important;padding:0!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;opacity:1!important;
+}
+/* Prevent the old form's focus padding from moving the left grid track. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):focus-within{
+ padding:0!important;
+}
+/* The attachment sheet is a floating, readable pearl menu rather than the
+   obsolete solid graphite popover; no additional sheet behind the composer. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm #svcpAttachMenu:not([hidden]){
+ box-sizing:border-box!important;
+ position:absolute!important;
+ left:2px!important;right:auto!important;
+ bottom:calc(100% + 9px)!important;
+ transform:none!important;
+ width:152px!important;min-width:0!important;
+ max-width:calc(100vw - 24px)!important;
+ padding:5px!important;gap:2px!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ border-radius:17px!important;
+ background:rgba(255,255,255,.86)!important;background-image:none!important;
+ -webkit-backdrop-filter:blur(20px) saturate(112%)!important;
+ backdrop-filter:blur(20px) saturate(112%)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 9px 26px rgba(42,52,72,.09))!important;
+ color:#17191e!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm #svcpAttachMenu:not([hidden]) > button{
+ display:flex!important;align-items:center!important;
+ min-height:40px!important;height:40px!important;
+ margin:0!important;padding:0 11px!important;
+ border:0!important;border-radius:11px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#1c222b!important;
+ font-size:13px!important;font-weight:520!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm #svcpAttachMenu:not([hidden]) > button:is(:hover,:active,:focus-visible){
+ background:rgba(215,226,237,.48)!important;
+ color:#141920!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+  #svcpChatForm #svcpAttachMenu:not([hidden]){
+   background:#fff!important;
+   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
 }
