@@ -73,8 +73,9 @@
  /* Full Calendar and History have no second row: align their 44px
     Back/Add controls with Work and the standalone app screens. */
  :host(:not([data-work-tabs="true"])){
-  min-height:var(--sv-apple-nav-row,44px);
-  height:var(--sv-apple-nav-row,44px);
+  /* Desktop retains its 6px shadow clearance; iPhone uses 0px. */
+  min-height:calc(var(--sv-apple-nav-row,44px) + var(--gutter-t));
+  height:calc(var(--sv-apple-nav-row,44px) + var(--gutter-t));
  }
  :host(:not([data-work-tabs="true"])) .bar{
   grid-template-rows:var(--sv-apple-nav-row,44px);
