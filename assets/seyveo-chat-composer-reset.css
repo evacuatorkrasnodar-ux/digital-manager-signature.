@@ -1,7 +1,9 @@
 /* SEYVEO Work Chat / composer reset 2026-11-22.
    This is a NEW component, not an override of the old #svcpChatForm.
    Old form/class rules are disconnected from the live DOM. Two states,
-   ONE bottom baseline. No decorative button skins or visual duplicates. */
+   ONE bottom baseline. No decorative button skins or visual duplicates.
+   Bottom 6px follows the accessible iOS PWA viewport; its system-owned
+   Home-indicator area is never counted twice. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
  --svcp-clean-blue:rgba(51,155,210,.94);
  --svcp-clean-line:rgba(17,114,182,.47);
@@ -9,7 +11,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
  display:block!important;
  box-sizing:border-box!important;
  position:absolute!important;
- inset:auto 0 max(10px,calc(env(safe-area-inset-bottom,0px) - 14px)) 0!important;
+ inset:auto 0 6px 0!important;
  z-index:15!important;
  isolation:isolate!important;
  width:min(430px,calc(100% - 20px))!important;
