@@ -93,7 +93,7 @@
   mount({
    listId:'svcpMessages',
    container:()=>document.getElementById('svcpMessages')?.closest('.svcp-chat'),
-   composerId:'svcpChatForm',
+   composerId:'svcpChatFormReset',
    buttonId:'svcpScrollBottom',
    available:()=>!!workScreen&&!workScreen.hidden&&
     workScreen.contains(document.getElementById('svcpMessages'))&&
