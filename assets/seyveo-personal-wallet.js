@@ -26,16 +26,9 @@ screen.innerHTML=`<div class="sw-summary">
  <div class="sw-block"><div class="sw-title-row"><h3>История</h3><span id="swCount"></span></div><div id="swHistory"></div></div>
  <p class="sw-privacy">Личные записи хранятся только в этом браузере. Это не банковский баланс. Если очистить данные сайта, записи могут исчезнуть.</p>`;
 dialog.querySelector('.syp-shell').appendChild(screen);
-// Restore the original SEYVEO card, without cloning it or its demo actions.
-// The card is a visual preview only; all real wallet entries remain below it.
-const originalCard=dialog.querySelector('[data-syp-screen="home"] > .syp-card');
-if(originalCard){
- originalCard.classList.add('sw-seyveo-card');
- screen.insertBefore(originalCard,screen.firstChild);
-}
-dialog.querySelector('.syp-title').textContent='Кошелёк';
-dialog.querySelector('.syp-kicker').textContent='SEYVEO · МОИ ФИНАНСЫ';
-dialog.querySelector('.syp-desc').textContent='Личные доходы и расходы';
+// The original SEYVEO PAY card and its QR/buttons stay in the "Карта" screen.
+// This new node owns ONLY income/expense records; do not move card markup here.
+screen.id='sypBudgetScreen';
 const $=id=>screen.querySelector('#'+id);
 const rub=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n)+' ₽';
 const monthText=d=>new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(d);
@@ -165,5 +158,13 @@ $('swCamera').addEventListener('change',ev=>{const file=ev.target.files?.[0];if(
 $('swPhoto').addEventListener('change',ev=>{const file=ev.target.files?.[0];if(file)void scanReceipt(file);});
 dialog.addEventListener('close',discardReceipt);
 render();
-window.SEYVEO_WALLET={open:()=>{if(!dialog.open)dialog.showModal();dialog.querySelectorAll('.syp-screen').forEach(el=>el.hidden=el!==screen);render();},importReceipt:scanReceipt,getSummary:()=>({entries:entries.length,balance:entries.reduce((a,x)=>a+(x.kind==='income'?x.amount:-x.amount),0)})};
+window.SEYVEO_WALLET=Object.freeze({
+ open:()=>window.SEYVEO_PAY?.open?.('finances'),
+ render,
+ importReceipt:async file=>{
+  await window.SEYVEO_PAY?.open?.('finances');
+  return scanReceipt(file);
+ },
+ getSummary:()=>({entries:entries.length,balance:entries.reduce((a,x)=>a+(x.kind==='income'?x.amount:-x.amount),0)})
+});
 })();
