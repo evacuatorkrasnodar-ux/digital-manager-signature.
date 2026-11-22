@@ -1953,9 +1953,8 @@ function showInbox(){
  cancelVoice();editingMessageIndex=null;
  const container=$('svcpWorkChatScreen');
  if(container)container.dataset.view='inbox';
- const info=$('svcpRoomInfo');if(info)info.hidden=true;
- $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','false');
- $('svcpConversationHeading')?.setAttribute('aria-expanded','false');
+ // Restore any contact-card resources before leaving or switching rooms.
+ closeRoomInformation(false);
  closeRecognition();
  closeComposerEmoji();
  setCameraTray(false);
@@ -1978,9 +1977,8 @@ function openRoom(roomId){
  cancelVoice();editingMessageIndex=null;
  const container=$('svcpWorkChatScreen');
  if(container)container.dataset.view='room';
- const info=$('svcpRoomInfo');if(info)info.hidden=true;
- $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','false');
- $('svcpConversationHeading')?.setAttribute('aria-expanded','false');
+ // Restore any contact-card resources before leaving or switching rooms.
+ closeRoomInformation(false);
  closeRecognition();
  closeComposerEmoji();
  setCameraTray(false);
@@ -2267,6 +2265,7 @@ $('svcpCallClose')?.addEventListener('click',closeCallPreview);
 $('svcpCallEnd')?.addEventListener('click',closeCallPreview);
 svcpCallDialog?.addEventListener('close',stopLocalCallPreview);
 window.addEventListener('seyveo:work-chat-closing',closeCallPreview);
+window.addEventListener('seyveo:work-chat-closing',()=>closeRoomInformation(false));
 
 $('svcpConversationBack')?.addEventListener('click',showInbox);
 $('svcpConversationSearch')?.addEventListener('click',()=>{
