@@ -1,92 +1,112 @@
-/* SEYVEO · one scroll-to-latest control for Sayvi and Work Messenger.
-   Floating, flat, fixed to the real composer; no change to chat layouts. */
+/* SEYVEO · scroll to latest in Sayvi and Work Chat.
+   One subtle, 44px floating navigation circle with our approved White Pearl
+   material. The action is intentionally static on touch (not a dock button).
+   All show/hide and scroll-to-latest behavior stays in seyveo-chat-jump.js. */
 #sayviComposer ~ .sv-chat-jump,
 main > .sv-chat-jump,
 #svcpWorkChatScreen .svcp-chat > .sv-chat-jump{
  position:absolute!important;
  z-index:8!important;
- left:50%!important;
- right:auto!important;
- transform:translateX(-50%)!important;
+ left:auto!important;
+ right:16px!important;
+ transform:none!important;
  display:grid!important;
  place-items:center!important;
  box-sizing:border-box!important;
- width:42px!important;height:42px!important;
- min-width:42px!important;min-height:42px!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
  margin:0!important;padding:0!important;
- border:0!important;border-radius:50%!important;
- background:#38383A!important;background-image:none!important;
- color:#F6F7F8!important;
- box-shadow:0 3px 11px rgba(0,0,0,.12)!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- cursor:pointer;
- -webkit-tap-highlight-color:transparent;
- touch-action:manipulation;
+ border:.75px solid rgba(255,255,255,.88)!important;
+ border-radius:50%!important;
+ background:rgba(255,255,255,.18)!important;
+ background-image:none!important;
+ color:#263947!important;
+ box-shadow:0 11px 27px rgba(42,52,72,.11),
+            0 3px 8px rgba(42,52,72,.07),
+            0 0 0 .4px rgba(164,173,187,.16),
+            inset 0 1px 1px rgba(255,255,255,.85)!important;
+ -webkit-backdrop-filter:blur(4px) saturate(104%)!important;
+ backdrop-filter:blur(4px) saturate(104%)!important;
+ transition:none!important;
+ cursor:pointer!important;
+ -webkit-tap-highlight-color:transparent!important;
+ touch-action:manipulation!important;
 }
-/* Work Chat composer is an absolute bottom dock. Use its height, not its
-   top viewport coordinate; this avoids the arrow jumping under the header. */
+/* The Work composer grows upward, so measure its actual height; don't
+   position relative to the phone's shifting visual viewport. */
 #svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpScrollBottom{
  position:absolute!important;
  top:auto!important;
  bottom:calc(var(--seyveo-dock-bottom,7px) + var(--svcp-jump-composer-height,56px) + 16px)!important;
- left:50%!important;right:auto!important;
- transform:translateX(-50%)!important;
+ left:auto!important;right:16px!important;
+ transform:none!important;
  z-index:9!important;
 }
-
-/* Explicit IDs outrank the visible floating-button rule (which has
-   #svcpWorkChatScreen plus two classes). Without this, display:grid!important
-   keeps the Work Chat arrow visible even while JS sets button.hidden=true. */
+/* JS uses the hidden attribute; never force the jump button visible. */
 #sayviScrollBottom[hidden],
 #svcpScrollBottom[hidden],
 .sv-chat-jump[hidden],
 #svcpWorkChatScreen .svcp-chat > #svcpScrollBottom[hidden]{
  display:none!important;
 }
+/* Smaller and more deliberate Apple-style down arrow; pure SVG, not a
+   font glyph that changes weight or baseline across iOS and Android. */
 .sv-chat-jump svg{
- display:block!important;flex:none;
- width:20px!important;height:20px!important;
+ display:block!important;
+ flex:none!important;
+ width:19px!important;height:19px!important;
+ margin:0!important;
  fill:none!important;stroke:currentColor!important;
- stroke-width:1.65!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
+ stroke-width:1.8!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ transform:none!important;filter:none!important;
 }
-.sv-chat-jump:active{background:#4A4A4C!important}
+/* No press/hover effect outside docks. Keyboard focus remains accessible. */
+.sv-chat-jump:is(:active,:hover){
+ transform:none!important;
+ filter:none!important;
+ transition:none!important;
+}
 .sv-chat-jump:focus-visible{
- outline:2px solid #F6F7F8!important;
+ outline:2px solid #75899f!important;
  outline-offset:3px!important;
 }
 @media(prefers-reduced-motion:reduce){
  .sv-chat-jump{transition:none!important}
 }
-
-
-/* Attachment selection uses the space above the Work Chat composer.
-   Do not place the scroll arrow on top of the pending PDF/photo card. */
+/* Do not cover a pending photo, PDF, or other attached preview. */
 #svcpWorkChatScreen[data-view="room"] .svcp-chat:has(#svcpAttachmentPreview:not([hidden])) > #svcpScrollBottom{
  display:none!important;
 }
-
-/* SEYVEO v5 · pearl scroll-to-latest control in Work Chat. */
-/* Keep the exact jump position, size, tap target and show/hide behavior.
-   Only replace the graphite fill with the approved light pearl material. */
+/* Light mode: use canonical White Pearl tokens; do not invent another
+   convex shell or pressed ring. These selectors also cover active/hover
+   so older theme rules cannot flash a different surface on tap. */
+:root[data-theme="light"] body #sayviScrollBottom.sv-chat-jump,
+:root[data-theme="light"] body #sayviScrollBottom.sv-chat-jump:is(:active,:hover),
 :root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  .svcp-chat > #svcpScrollBottom,
 :root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- .svcp-chat > #svcpScrollBottom:is(:hover,:active,:focus){
+ .svcp-chat > #svcpScrollBottom:is(:active,:hover){
  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
- background:var(--sv-dock-pearl-bg,rgba(255,255,255,.72))!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
  background-image:none!important;
- color:#36414c!important;
- box-shadow:var(--sv-white-pearl-circle-shadow,0 5px 15px rgba(42,52,72,.11))!important;
- -webkit-backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(104%))!important;
- backdrop-filter:var(--sv-dock-pearl-blur,blur(4px) saturate(104%))!important;
+ color:#263947!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 3px 9px rgba(42,52,72,.1))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
  opacity:1!important;filter:none!important;
 }
-:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- .svcp-chat > #svcpScrollBottom svg{
- stroke:#36414c!important;
-}
-:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- .svcp-chat > #svcpScrollBottom:focus-visible{
- outline:2px solid #75899f!important;
+/* The blue-sky Work Chat keeps the exact composer tint and blue rim,
+   instead of a contrasting pale-white floating button. */
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] .svcp-chat > #svcpScrollBottom,
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] .svcp-chat > #svcpScrollBottom:is(:active,:hover){
+ background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
+ border:1px solid var(--svcp-conversation-blue-rim,rgba(9,100,171,.57))!important;
+ box-shadow:none!important;
+ color:#fff!important;
+ -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
+ backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
 }
