@@ -7059,3 +7059,59 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multi
  padding-top:12px!important;padding-bottom:12px!important;
  line-height:1.35!important;
 }
+
+
+/* v263 · 2026-11-22 · iMessage-like compact but readable message typography.
+   Ordinary text bubbles only: preserve attachment/file/voice/poll/task cards,
+   emoji, action gestures, local timestamps and the assistant's live glow.
+   One 16px optical size with a 21px line, not tiny text or tall 1.43 leading. */
+/* Bubble surfaces: avoid the old overly generous outer padding. */
+/* Actual ordinary conversation bubbles, excluding special-purpose layouts. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble:is(.is-self,.is-other,.is-sayvi):not(.is-poll):not(.is-task):not(.is-emoji-only):not(.is-short-text):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(.svcp-has-sayvi-comparison):not(:has(.svcp-file-card)):not(:has(.svcp-voice-wave)){
+ box-sizing:border-box!important;
+ padding:7px 11px 11px!important;
+ min-height:0!important;
+ border-radius:18px 18px 18px 6px!important;
+ box-shadow:none!important;
+}
+/* Sent bubbles use the matching right-side tail. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-self:not(.is-poll):not(.is-task):not(.is-emoji-only):not(.is-short-text):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(.svcp-has-sayvi-comparison):not(:has(.svcp-file-card)):not(:has(.svcp-voice-wave)){
+ border-radius:18px 18px 6px 18px!important;
+}
+/* 16px remains comfortably legible on a 375px iPhone; tighter Apple rhythm. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble:is(.is-self,.is-other,.is-sayvi):not(.is-poll):not(.is-task):not(.is-emoji-only):not(.is-short-text):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-has-sayvi-comparison)
+ > .svcp-message-text{
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ font-size:16px!important;
+ font-weight:400!important;
+ line-height:21px!important;
+ letter-spacing:-.012em!important;
+ margin:0!important;
+ padding:0!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:break-word!important;
+ word-break:normal!important;
+}
+/* Quiet name and timestamps; do not add a tall extra metadata row. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble:is(.is-self,.is-other,.is-sayvi):not(.is-poll):not(.is-task):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only)
+ > .svcp-bubble-meta{
+ min-height:14px!important;
+ height:auto!important;
+ margin:0 0 2px!important;
+ padding:0!important;
+ line-height:14px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.is-sayvi > .svcp-bubble-meta .svcp-sender{
+ font-size:11px!important;line-height:14px!important;font-weight:600!important;
+}
+/* Keep the existing clock at the bottom-right, below the last text baseline. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages
+ > .svcp-bubble.svcp-bottom-stamp:not(.is-short-text):not(.is-emoji-only):not(.is-poll):not(.is-task):not(.svcp-file-only):not(.svcp-document-only)
+ > .svcp-message-stamp{
+ bottom:3px!important;right:8px!important;
+}
