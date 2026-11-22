@@ -983,7 +983,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  background-color:#0A84FF!important;
  background-clip:border-box!important;
  color:#FFFFFF!important;
- box-shadow:0 2px 7px rgba(10,132,255,.2)!important;
+ box-shadow:none!important;text-shadow:none!important;
  opacity:1!important;filter:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  animation:none!important;transition:none!important;
@@ -992,11 +992,11 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg{
  display:block!important;
  position:static!important;
- width:20px!important;height:20px!important;
- min-width:20px!important;min-height:20px!important;
+ width:19px!important;height:19px!important;
+ min-width:19px!important;min-height:19px!important;
  margin:0!important;padding:0!important;
  color:#fff!important;stroke:#fff!important;
- stroke-width:1.9!important;fill:none!important;
+ stroke-width:1.55!important;fill:none!important;
  transform:none!important;filter:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
@@ -1015,4 +1015,22 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:focus-visible{
  outline:2px solid rgba(10,132,255,.58)!important;
  outline-offset:3px!important;
+}
+
+/* v28 · Flat send, refined thin arrow; move the compact control 6px inward.
+   Preserve the microphone's existing centering and every composer/dock size. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > button.svcp-chat-send{
+ right:16px!important;left:auto!important;
+ box-shadow:none!important;background-image:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus){
+ box-shadow:none!important;filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc path{
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.55!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;
 }
