@@ -236,3 +236,109 @@ html body #svcpWorkChatScreen .sv-inbox-row-shell{
 html body #svcpWorkChatScreen .sv-inbox-row-shell:not(.is-swiped) > button.svcp-directory-item{
  transform:none!important;
 }
+
+
+/* v3 · shared White Pearl hierarchy for Messages/Settings/Staff.
+   All controls use the single existing bottom sheet and no duplicate dock. */
+html body #svcpWorkChatScreen .sv-inbox-section-heading{
+ margin:19px 2px 7px!important;padding:0!important;
+ color:var(--sv-inbox-panel-ink,#17191B)!important;
+ font:600 12px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.005em!important;text-align:left!important
+}
+html body #svcpWorkChatScreen .sv-inbox-section-heading:first-child{margin-top:6px!important}
+html body #svcpWorkChatScreen .sv-inbox-setting-link,
+html body #svcpWorkChatScreen .sv-inbox-choice-row{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ gap:12px!important;box-sizing:border-box!important;
+ width:100%!important;min-height:58px!important;
+ margin:0!important;padding:8px 4px!important;
+ border:0!important;border-bottom:1px solid var(--sv-inbox-divider)!important;
+ border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ color:var(--sv-inbox-panel-ink,#17191B)!important;
+ text-align:left!important;
+ box-shadow:none!important;
+ font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ cursor:pointer;
+ -webkit-tap-highlight-color:transparent
+}
+html body #svcpWorkChatScreen .sv-inbox-setting-link:active,
+html body #svcpWorkChatScreen .sv-inbox-choice-row:active{
+ background:rgba(110,120,135,.055)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-setting-link > svg{
+ flex:0 0 19px!important;width:19px!important;height:19px!important;
+ color:#696E78!important;fill:none!important;stroke:currentColor!important;
+ stroke-width:1.65!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-setting-link > span:not(.sv-inbox-link-chevron),
+html body #svcpWorkChatScreen .sv-inbox-choice-row > span:not(.sv-inbox-choice-indicator){
+ display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+ min-width:0!important;gap:4px!important;
+ color:inherit!important;font-size:14px!important;font-weight:550!important;
+ line-height:1.3!important
+}
+html body #svcpWorkChatScreen .sv-inbox-setting-link small,
+html body #svcpWorkChatScreen .sv-inbox-choice-row small{
+ display:block!important;color:#858B94!important;font-size:11px!important;
+ font-weight:400!important;line-height:1.32!important;
+ white-space:normal!important
+}
+html body #svcpWorkChatScreen .sv-inbox-link-chevron{
+ margin-left:auto!important;flex:0 0 16px!important;color:#A2A5AC!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-link-chevron svg{
+ display:block!important;width:16px!important;height:16px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.5!important
+}
+html body #svcpWorkChatScreen .sv-inbox-choice-row{
+ padding:13px 6px!important;min-height:64px!important
+}
+html body #svcpWorkChatScreen .sv-inbox-choice-indicator{
+ display:none!important;flex:0 0 19px!important;
+ margin-left:auto!important;color:#0A84FF!important
+}
+html body #svcpWorkChatScreen .sv-inbox-choice-row[aria-pressed="true"] .sv-inbox-choice-indicator{
+ display:grid!important;place-items:center!important
+}
+html body #svcpWorkChatScreen .sv-inbox-choice-indicator svg{
+ width:19px!important;height:19px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:2!important
+}
+html body #svcpWorkChatScreen .sv-inbox-invite-result{
+ margin:10px 0 7px!important;padding:13px 12px!important;
+ background:rgba(135,147,160,.075)!important;border:1px solid var(--sv-inbox-divider)!important;
+ border-radius:15px!important;color:var(--sv-inbox-panel-ink)!important
+}
+html body #svcpWorkChatScreen .sv-inbox-invite-result strong{
+ display:block;font-size:13px;font-weight:600;margin-bottom:9px
+}
+html body #svcpWorkChatScreen .sv-inbox-invite-copy{
+ margin:0 0 12px!important;white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;font-size:13px!important;line-height:1.5!important
+}
+html body #svcpWorkChatScreen .sv-inbox-invite-copy-action{
+ display:flex!important;align-items:center!important;gap:8px!important;
+ margin:0!important;padding:10px 12px!important;min-height:44px!important;
+ border:1px solid rgba(114,122,136,.18)!important;border-radius:12px!important;
+ background:var(--sv-inbox-panel-bg)!important;color:var(--sv-inbox-panel-ink)!important;
+ box-shadow:none!important;font-size:12px!important;font-weight:600!important
+}
+html body #svcpWorkChatScreen .sv-inbox-invite-copy-action svg{
+ width:16px!important;height:16px!important;fill:none!important;stroke:currentColor!important
+}
+html body #svcpWorkChatScreen .sv-inbox-sheet-body > .sv-inbox-hint:first-child{
+ margin-top:4px!important
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-section-heading,
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-setting-link,
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-choice-row{
+ color:#F5F5F6!important
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-setting-link > svg{
+ color:#C7CBD1!important
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen :is(.sv-inbox-setting-link,.sv-inbox-choice-row) small{
+ color:#A8ABB2!important
+}
