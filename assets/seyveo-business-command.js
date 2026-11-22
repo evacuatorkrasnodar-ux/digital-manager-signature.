@@ -1306,6 +1306,10 @@ $('svcpAttachChooseCamera')?.addEventListener('click',()=>{
  closeWorkAttachMenu();
  $('svcpCameraToggle')?.click();
 });
+$('svcpAttachChoosePoll')?.addEventListener('click',()=>{
+ closeWorkAttachMenu();
+ openWorkPollEditor();
+});
 document.addEventListener('pointerdown',event=>{
  if(svcpAttachMenu?.hidden)return;
  if(svcpAttachMenu?.contains(event.target)||$('svcpAttachFile')?.contains(event.target))return;
@@ -2784,6 +2788,55 @@ function isGuideRequest(msg){
   && /помоги|помочь|нужно|пожалуйста|проверь|сделай|закрой|открой|распечатай|подготовь|исправь|посмотри|разберись|поручаю|задани|смену|отч[её]т/u.test(msg.text.toLocaleLowerCase('ru-RU'));
 }
 
+
+/* Poll messages belong to the existing chat, local storage and viewpoint
+   selection. Actual votes only; never generate colleagues' votes. */
+function openWorkPollEditor(){
+ const Polls=window.SEYVEO_CHAT_POLLS;
+ const mount=$('svcpWorkChatScreen');
+ if(!Polls||!mount||mount.hidden||mount.dataset.view!=='room')return;
+ if(state.room==='dm-sayvi'){
+  setStatus('Опросы создаются в разговорах с людьми, не в чате Сэйви.');
+  return;
+ }
+ Polls.openEditor({
+  mount,heading:'Новый опрос',
+  description:'Опрос сохранится только в этом браузере. Другие сотрудники его пока не увидят.',
+  onCreate:poll=>{
+   const role=state.viewpoint==='elena'?'demo-elena':'self';
+   const creator=state.viewpoint==='elena'?'elena':'manager';
+   const item={room:state.room,role,at:Date.now(),text:poll.question,
+    poll:{...poll,creator}};
+   if(!commitChatMessages([item]))return false;
+   renderChat();renderDirectory();
+   setStatus('Опрос создан локально. Другим участникам он пока не доставлен.');
+   return true;
+  }
+ });
+}
+function renderWorkPoll(msg,index){
+ const Polls=window.SEYVEO_CHAT_POLLS;
+ if(!Polls?.validPoll?.(msg.poll))return null;
+ const voter=state.viewpoint==='elena'?'elena':'manager';
+ let view;
+ view=Polls.render({
+  poll:msg.poll,currentUser:voter,canClose:msg.poll.creator===voter,
+  names:{manager:'Руководитель',elena:'Елена'},
+  onUpdate:next=>{
+   const existing=state.chat[index];
+   if(!existing?.poll||existing.poll.id!==msg.poll.id)return;
+   const updated=state.chat.map((entry,i)=>i===index?{...entry,poll:next}:entry);
+   if(!save(CHAT_KEY,updated))return;
+   state.chat=updated;
+   msg.poll=next;
+   const replacement=renderWorkPoll(msg,index);
+   if(replacement&&view.isConnected){view.replaceWith(replacement);view=replacement;}
+   setStatus(next.closed?'Опрос завершён локально.':'Голос сохранён только в этом браузере.');
+  }
+ });
+ return view;
+}
+
 function renderChat(){
  closeRecognition();
  closeMessageMenus();
@@ -2826,12 +2879,12 @@ function renderChat(){
    const mentioned=state.viewpoint==='elena'&&roomDetails().kind==='groups'&&msg.text.toLocaleLowerCase('ru-RU').includes('@елена');
    // Short emoji-only messages use a compact bubble, not the 104px text minimum.
    // The time, bookmark, reply and assignment actions remain accessible.
-   const emojiOnly=!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&
+   const emojiOnly=!msg.poll&&!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&
     !msg.demoReaction&&/^[\p{Extended_Pictographic}\uFE0F\u200D\u{1F3FB}-\u{1F3FF}]{1,14}$/u.test(String(msg.text||'').trim());
    const hasSayviComparison=!!(msg.sayviComparison&&msg.sayviComparison.source===msg.text&&
     ['translation','correction'].includes(msg.sayviComparison.kind)&&
     typeof msg.sayviComparison.result==='string'&&msg.sayviComparison.result.trim());
-   const shortText=!hasSayviComparison&&!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&!emojiOnly&&
+   const shortText=!msg.poll&&!hasSayviComparison&&!msg.mediaId&&!msg.taskId&&!msg.replyTo&&!isRecognition&&!emojiOnly&&
     !msg.documentFlowId&&String(msg.text||'').trim().length>0&&
     String(msg.text||'').trim().length<=5&&!String(msg.text||'').includes('\n');
    const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(emojiOnly?' is-emoji-only':'')+(shortText?' is-short-text':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
@@ -2874,7 +2927,11 @@ function renderChat(){
      }else bubble.append(label);
     }
     if(taskText){
-     if(hasSayviComparison&&!msg.taskId&&!msg.mediaId){
+     if(msg.poll&&window.SEYVEO_CHAT_POLLS?.validPoll?.(msg.poll)){
+      bubble.classList.add('is-poll');
+      const pollView=renderWorkPoll(msg,index);
+      if(pollView)bubble.append(pollView);
+     }else if(hasSayviComparison&&!msg.taskId&&!msg.mediaId){
       bubble.classList.add('svcp-has-sayvi-comparison');
       const comparison=el('div','svcp-sayvi-comparison');
       comparison.setAttribute('aria-label',msg.sayviComparison.kind==='translation'?'Оригинал и перевод':'Оригинал и исправленный вариант');
@@ -2917,7 +2974,7 @@ function renderChat(){
    }
    if(mentioned)bubble.append(el('small','svcp-mention-notice','Упоминание Елены · уведомление не отправлено'));
    if(!isRecognition){
-    if(state.viewpoint==='elena'&&!isOwn&&isGuideRequest(msg)){
+    if(state.viewpoint==='elena'&&!isOwn&&!msg.poll&&isGuideRequest(msg)){
      const helper=btn('Сэйви, помоги',()=>openGuide(bubble,msg),'svcp-guide-launch');
      helper.setAttribute('aria-label','Сэйви поможет выполнить это задание');
      bubble.append(helper);
@@ -2963,7 +3020,7 @@ function renderChat(){
     },'svcp-message-menu-item');
     starControl.classList.toggle('is-saved',!!msg.starred);
     starControl.setAttribute('aria-pressed',String(!!msg.starred));
-    const canAssign=!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena';
+    const canAssign=!msg.poll&&!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena';
     // Document-only messages remain eligible for manager assignments.
     if(canAssign&&bubble.classList.contains('svcp-document-only'))
      bubble.classList.add('svcp-document-assignable');
@@ -2974,7 +3031,7 @@ function renderChat(){
      try{await navigator.clipboard.writeText(msg.text);setStatus('Сообщение скопировано')}
      catch{setStatus('Не удалось скопировать. Выдели текст сообщения вручную.')}
     }});
-    if(!msg.mediaId&&!msg.taskId&&!isRecognition&&msg.text.trim()){
+    if(!msg.poll&&!msg.mediaId&&!msg.taskId&&!isRecognition&&msg.text.trim()){
      secondary.push({title:'Сэйви · исправить',kind:'polish',run:()=>{
       closeMessageMenus();compareSayviMessage(index);
      }});
@@ -2987,7 +3044,7 @@ function renderChat(){
       if(save(CHAT_KEY,updated)){state.chat=updated;renderChat();}
      }});
     }
-    if(isOwn&&!msg.mediaId&&!msg.taskId&&Date.now()-Number(msg.at)>=0&&Date.now()-Number(msg.at)<=15*60*1000){
+    if(isOwn&&!msg.poll&&!msg.mediaId&&!msg.taskId&&Date.now()-Number(msg.at)>=0&&Date.now()-Number(msg.at)<=15*60*1000){
      secondary.push({title:'Редактировать',kind:'edit',run:()=>{
       closeMessageMenus();clearReply();
       editingMessageIndex=index;
