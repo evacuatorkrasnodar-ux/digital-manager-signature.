@@ -359,16 +359,20 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCh
  color:#A4A9B1!important;opacity:1!important;
  -webkit-text-fill-color:#A4A9B1!important;
 }
+/* The old light-mode rule overrode the later mic centering with a
+   42×44 target and bottom:6. Match the actual 38px touch target instead. */
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+ box-sizing:border-box!important;
  position:absolute!important;
- right:8px!important;left:auto!important;
- top:auto!important;bottom:6px!important;
- transform:none!important;translate:none!important;
+ right:10px!important;left:auto!important;
+ top:50%!important;bottom:auto!important;
+ transform:translateY(-50%)!important;translate:none!important;
  display:grid!important;place-items:center!important;
- width:42px!important;min-width:42px!important;max-width:42px!important;
- height:44px!important;min-height:44px!important;max-height:44px!important;
+ width:38px!important;min-width:38px!important;max-width:38px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ padding:0!important;margin:0!important;
  color:#566371!important;
- background:transparent!important;box-shadow:none!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send) svg{
  position:static!important;transform:none!important;
@@ -908,7 +912,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  transform:none!important;image-rendering:auto!important;
 }
 
-/* v24 · restore 36px Sayvi art, shift icon right 4px, balance microphone inset. */
+/* v25 · Sayvi +3px right; mic old conflicting offsets removed and centered. */
 /* Only the compact one-line editor. Keep the existing 38px interactive areas
    for accessible touch, and do not move the dock, Plus, or pearl capsule. */
 html body #svcpWorkChatScreen[data-view="room"]
@@ -918,7 +922,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  width:38px!important;min-width:38px!important;max-width:38px!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
  padding:0!important;margin:0!important;
- left:4px!important;right:auto!important;
+ left:7px!important;right:auto!important;
  justify-self:center!important;align-self:center!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:none!important;transition:none!important;
@@ -947,7 +951,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  width:38px!important;min-width:38px!important;max-width:38px!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
  top:50%!important;bottom:auto!important;
- left:auto!important;right:13px!important;
+ left:auto!important;right:10px!important;
  padding:0!important;margin:0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:translateY(-50%)!important;translate:none!important;
