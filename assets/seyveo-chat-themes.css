@@ -701,45 +701,9 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  --sv-chat-frost-pressed:rgba(67,78,129,.31);
  --sv-chat-frost-name:rgba(240,238,254,.73);
 }
-/* A single background layer ends below the avatar and softly dissipates.
-   Leave the absolute header at 0px layout height; messages can scroll beneath. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
- > .svcp-conversation-bar{
- isolation:isolate!important;
- background:transparent!important;background-image:none!important;
- box-shadow:none!important;
- overflow:visible!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
- > .svcp-conversation-bar::before{
- content:""!important;
- display:block!important;
- box-sizing:border-box!important;
- position:absolute!important;
- inset:0 0 auto 0!important;
- width:100%!important;
- height:calc(124px + env(safe-area-inset-top,0px))!important;
- border:0!important;border-radius:0!important;
- background:linear-gradient(
-  to bottom,
-  var(--sv-chat-frost-top) 0%,
-  var(--sv-chat-frost-mid) 72%,
-  transparent 100%
- )!important;
- background-image:linear-gradient(to bottom,var(--sv-chat-frost-top) 0%,var(--sv-chat-frost-mid) 72%,transparent 100%)!important;
- -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
- backdrop-filter:blur(18px) saturate(112%)!important;
- -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 63%,transparent 100%)!important;
- mask-image:linear-gradient(to bottom,#000 0%,#000 63%,transparent 100%)!important;
- box-shadow:none!important;
- pointer-events:none!important;
- z-index:0!important;
- transform:none!important;animation:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
- > .svcp-conversation-bar::after{
- content:none!important;display:none!important;
-}
+/* The entire conversation header is hidden intentionally.
+   Its previous frosted pseudo-element and fade were removed, not replaced.
+   Only the separate Back action remains above the messages. */
 /* Non-convex, 44px glass controls with the same thin single outline. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  :is(#svcpConversationBack,.svcp-call-actions .svcp-call-button){
@@ -773,11 +737,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 }
 /* Accessibility: don't blur content when reduced-transparency is requested. */
 @media(prefers-reduced-transparency:reduce){
- html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
- > .svcp-conversation-bar::before{
-  background:var(--sv-chat-frost-top)!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- }
+
  html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
  :is(#svcpConversationBack,.svcp-call-actions .svcp-call-button,#svcpConversationHeading .svcp-room-name-pill){
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
