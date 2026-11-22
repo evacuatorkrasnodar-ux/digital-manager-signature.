@@ -91,7 +91,10 @@ function createChoices(parent,onChange,active){
 function applyRoom(roomId){
  const conversation=id('svcpConversation');
  if(!conversation||!roomId)return;
- const theme=chosen('work:'+roomId);
+ // The direct Sayvi conversation uses the approved white/pearl backdrop.
+ // Other chats retain their explicitly chosen wallpaper; a previous Sky
+ // selection must not turn Sayvi's otherwise matte header bright blue.
+ const theme=roomId==='dm-sayvi'?'pearl':chosen('work:'+roomId);
  conversation.dataset.chatWallpaper=theme;
  const profile=id('svcpRoomChatThemeSection');
  if(profile)display(profile,theme);
