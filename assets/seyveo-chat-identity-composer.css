@@ -1060,3 +1060,39 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc circle{
  fill:#0A84FF!important;stroke:none!important;
 }
+
+/* v31 · Send button is ONE flat vector circle; no secondary paint layers.
+   Keep the original blue, 34px artwork, thin arrow and right:16px placement. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send:is(:hover,:active,:focus,:focus-visible){
+ -webkit-appearance:none!important;appearance:none!important;
+ background:transparent!important;background-color:transparent!important;
+ background-image:none!important;background-clip:border-box!important;
+ border:0!important;box-shadow:none!important;text-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;opacity:1!important;mix-blend-mode:normal!important;
+ -webkit-mask-image:none!important;mask-image:none!important;
+ animation:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send::before,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send::after{
+ content:none!important;display:none!important;
+ background:none!important;border:0!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc,
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc :is(circle,path){
+ background:none!important;box-shadow:none!important;
+ filter:none!important;opacity:1!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ mix-blend-mode:normal!important;animation:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpChatForm .svcp-chat-compose-field > button.svcp-chat-send svg.svcp-send-arrow-disc circle{
+ fill:#0A84FF!important;stroke:none!important;stroke-width:0!important;
+}
