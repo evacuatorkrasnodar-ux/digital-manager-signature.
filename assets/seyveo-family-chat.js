@@ -92,7 +92,7 @@ function renderFamilyPoll(msg,index){
  if(!Polls?.validPoll?.(msg.poll))return null;
  let view;
  view=Polls.render({
-  poll:msg.poll,currentUser:'me',names:{me:'Вы'},canClose:true,
+  poll:msg.poll,currentUser:'me',names:{me:'Вы'},canClose:true,outgoing:true,
   onUpdate:next=>{
    if(!messages[index]?.poll||messages[index].poll.id!==msg.poll.id)return;
    const updated=messages.map((entry,i)=>i===index?{...entry,poll:next}:entry);
