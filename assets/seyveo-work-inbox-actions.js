@@ -46,7 +46,7 @@ menuButton.innerHTML=svg('dots');
 history.hidden=true;history.setAttribute('tabindex','-1');history.setAttribute('aria-hidden','true');history.classList.add('sv-inbox-history-proxy');
 header.append(menuButton);
 const menu=node('div','sv-inbox-popover');menu.id='svcpInboxMenu';menu.hidden=true;menu.setAttribute('role','menu');menu.setAttribute('aria-label','Действия с сообщениями');
-const menuItems=[['Новый чат','pen','new'],['Новая группа','group','group'],['Сотрудники','users','staff'],['Настройки сообщений','sliders','settings'],['Архив','archive','archives']];
+const menuItems=[['Новый чат','pen','new'],['Новая группа','group','group'],['Сотрудники','users','staff'],['Имя и фото','users','my-avatar'],['Настройки сообщений','sliders','settings'],['Архив','archive','archives']];
 for(const [label,icon,action] of menuItems){const b=button(label,icon,()=>chooseAction(action),'sv-inbox-menu-row');b.setAttribute('role','menuitem');menu.append(b)}
 screen.append(menu);
 function closeMenu(){menu.hidden=true;menuButton.setAttribute('aria-expanded','false')}
@@ -71,7 +71,7 @@ overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
 function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
-function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
+function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
@@ -83,6 +83,8 @@ function openSheet(type,id='',nested=false){
  else if(type==='invite')showInvite();
  else if(type==='group')showGroupForm();
  else if(type==='settings')showSettings();
+ else if(type==='my-avatar')showAvatarEditor('self');
+ else if(type==='room-avatar')showAvatarEditor(id);
  else if(type==='notifications')showNotifications();
  else if(type==='archives')showArchives();
  else if(type==='room')showRoomActions(id);
@@ -95,6 +97,7 @@ function makeContactRow(r,fn){
  if(r.id==='dm-sayvi')avatar.classList.add('is-sayvi','sv-sayvi-avatar');
  avatar.setAttribute('aria-hidden','true');
  row.prepend(avatar);
+ if(r.person!=='sayvi')paintAvatar(avatar,roomState(r.id).avatar);
  const copy=row.querySelector('span:not(.sv-inbox-contact-avatar)');
  if(copy&&r.hint){
   const role=r.hint.split(' · ')[0].trim();
@@ -219,6 +222,8 @@ function settingToggle(key,label,help){
  row.append(copy,control);body.append(row);return control;
 }
 function showSettings(){
+ sectionHeading('Профиль');
+ menuLink('Моё имя и фото','Фото, эмодзи или монограмма на этом устройстве','users',()=>openSubSheet('my-avatar','settings'));
  sectionHeading('Темы чатов');
  body.append(makeChatWallpapers());
  sectionHeading('Сообщения');
@@ -260,6 +265,7 @@ function showNotifications(){
   const item=node('label','sv-inbox-ios-row sv-inbox-ios-person');
   const avatar=node('span','sv-inbox-ios-avatar',r.label.slice(0,1));
   avatar.setAttribute('aria-hidden','true');
+  paintAvatar(avatar,roomState(r.id).avatar);
   const copy=node('span','sv-inbox-ios-copy');
   copy.append(node('strong',null,r.label));
   const control=iosSwitch(roomState(r.id).muted,'Без звука: '+r.label,checked=>updateRoom(r.id,'muted',checked));
@@ -342,6 +348,9 @@ function showRoomActions(id){
   [st.archived?'Вернуть из архива':'В архив','archive',()=>updateRoom(id,'archived',!st.archived)]
  ];
  for(const [label,icon,fn] of actions){body.append(button(label,icon,()=>{fn();closeSheet()},'sv-inbox-action-row'))}
+ if(r.person!=='sayvi')body.append(button('Изменить аватар','users',()=>{
+  sheetStack.push({type:'room',id});openSheet('room-avatar',id,true);
+ },'sv-inbox-action-row'));
  if(!employee()){
   const del=button('Очистить переписку','trash',()=>{
    if(!window.confirm('Удалить сообщения этой переписки из локального хранилища? Отменить нельзя.'))return;
@@ -358,6 +367,7 @@ function syncProfile(){
  const st=roomState(r);
  toggle.querySelector('.sv-inbox-mute-text').textContent=st.muted?'Включить уведомления':'Без звука';
  toggle.setAttribute('aria-pressed',String(!!st.muted));
+ updateHeaderAvatar();
 }
 const profileView=$('svcpRoomProfileViewSection');
 if(profileView?.parentNode&&!$('svcpRoomProfileMute')){
@@ -415,11 +425,16 @@ function decorateRows(){
     avatar.innerHTML=svg(id==='general'?'messages':id==='docs'?'file':'users');
     avatar.dataset.svInboxGlyph='true';
    }
+   if(avatar&&wrap.dataset.roomId!=='dm-sayvi'){
+    if(st.avatar)paintAvatar(avatar,st.avatar);
+    else if(avatar.classList.contains('sv-inbox-avatar-custom'))restoreAvatar(avatar,wrap.dataset.roomId,row);
+   }
    // No tiny dots in the time column: mute/pin state is accessible from
    // the conversation actions and preserved in its local settings.
    row.querySelector('.sv-inbox-row-badges')?.remove();
    row.setAttribute('aria-label',(roomInfo(wrap.dataset.roomId)?.label||'Чат')+(st.unread?', не прочитан':'')+(st.muted?', без звука':''));
   }
+  updateHeaderAvatar();
  }finally{processing=false}
 }
 let scheduled=false;
@@ -428,6 +443,8 @@ const observer=new MutationObserver(()=>{
  requestAnimationFrame(()=>{scheduled=false;decorateRows()});
 });
 observer.observe(list,{childList:true});
+const conversation=$('svcpConversation');
+if(conversation)new MutationObserver(updateHeaderAvatar).observe(conversation,{attributes:true,attributeFilter:['data-room-id']});
 decorateRows();
 document.addEventListener('pointerdown',e=>{
  if(!menu.hidden&&!menu.contains(e.target)&&!menuButton.contains(e.target))closeMenu();
