@@ -1,8 +1,7 @@
-/* SEYVEO / Sayvi — canonical approved circular S silhouette.
-   ONE icon source: seyveo-circular-interlace-mono.svg.
-   The same mask is used for every small Sayvi icon in both themes.
-   No independent spark, four-point star, or duplicate SVG is permitted.
-   Other semantic stars, bookmarks and the animated home sphere are distinct. */
+/* SEYVEO / Sayvi — canonical small assistant icon (22 Nov 2026).
+   Match the approved jade/platinum Sayvi icon already used in Work Chat's
+   composer. Keep a single shared UI adapter for Sayvi across both themes.
+   This does NOT replace the Home sphere, PWA/browser logos or semantic icons. */
 .sv-sayvi-symbol,
 .sv-sayvi-label::before,
 .svcp-task-sayvi::before,
@@ -16,9 +15,14 @@
 .sv-fan-hero-orb::before {
   display:inline-block;
   flex:0 0 auto;
-  background-color:currentColor;
-  -webkit-mask:url("./seyveo-circular-interlace-mono.svg?v=1") center / contain no-repeat;
-  mask:url("./seyveo-circular-interlace-mono.svg?v=1") center / contain no-repeat;
+  background-color:transparent!important;
+  background-image:url("./seyveo-sayvi-chat-jade-platinum.png?v=1")!important;
+  background-position:center!important;
+  background-size:contain!important;
+  background-repeat:no-repeat!important;
+  -webkit-mask:none!important;
+  mask:none!important;
+  filter:none!important;
   pointer-events:none;
 }
 .sv-sayvi-symbol {
@@ -57,10 +61,6 @@
 .sv-home-living-mark.sv-sayvi-symbol {
   width:1.12em;height:1.12em;
   font-size:inherit;
-}
-:root[data-theme="light"] .sv-sayvi-symbol,
-:root[data-theme="light"] .sv-sayvi-label::before{
-  color:var(--text);
 }
 @media(prefers-reduced-motion:reduce){
   .sv-sayvi-symbol,.sv-sayvi-label::before{animation:none!important}
