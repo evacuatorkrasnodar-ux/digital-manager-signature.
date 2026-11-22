@@ -237,5 +237,5 @@ html body #svcpWorkChatScreen[data-view="room"]
    stay connected with their previous 8px overlap and no extra markup. */
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] .svcp-conversation-bar > .svcp-room-identity{
- top:calc(env(safe-area-inset-top,0px) - 4px)!important;
+ top:max(0px,calc(env(safe-area-inset-top,0px) - 4px))!important;
 }
