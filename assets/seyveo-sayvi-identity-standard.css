@@ -114,129 +114,14 @@ html body #svcpWorkChatScreen .sv-inbox-people-list
   center center / contain no-repeat!important;
  box-shadow:none!important;
 }
-/* Direct Sayvi chat: the exact uploaded matte transparent artwork.
-   One image, no synthetic blue face, bloom, gloss, or extra circular shell. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"] .svcp-room-identity #svcpRoomAvatar{
- box-sizing:border-box!important;
- display:grid!important;place-items:center!important;
- flex:0 0 56px!important;
- width:56px!important;min-width:56px!important;max-width:56px!important;
- height:56px!important;min-height:56px!important;max-height:56px!important;
- margin:0!important;padding:0!important;
- border:0!important;border-radius:50%!important;outline:0!important;
- background:transparent var(--sv-sayvi-mark-image)
-  center center / contain no-repeat!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- filter:none!important;
- font-size:0!important;color:transparent!important;
- overflow:hidden!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"] #svcpRoomAvatar > .sv-sayvi-symbol{
- display:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"] .svcp-room-identity #svcpConversationHeading{
- /* Bring the matte portrait down into the name capsule, as in iMessage.
-    Shift ONLY the existing label, not the 56px avatar or the header actions. */
- margin-top:-14px!important;
-}
-/* Consistent identity in Sayvi's room information panel too. */
+/* Sayvi conversation header and label are now owned ONLY by
+   seyveo-ios-viewport-continuity.css. Do not redefine them here. */
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"] #svcpRoomProfileAvatar{
  border:0!important;border-radius:50%!important;
  background:transparent var(--sv-sayvi-mark-image)
   center center / contain no-repeat!important;
  box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  color:transparent!important;font-size:0!important;
-}
-
-
-/* Sky wallpaper keeps the same translucent frosted circular image surface.
-   No hairline stroke, rim, or outside halo in either wallpaper mode. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
- .svcp-room-identity #svcpRoomAvatar{
- border:0!important;outline:0!important;
- background-color:transparent!important;
- background-image:var(--sv-sayvi-mark-image)!important;
- background-position:center!important;background-size:contain!important;
- background-repeat:no-repeat!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- filter:none!important;
-}
-
-/* v8 · Chat identity: compact Apple reference title for the Sayvi profile.
-   Original reference: ~28px tall name pill, 16px medium/semibold text,
-   10px fine chevron. Keep the existing 56px portrait and name interaction. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading .svcp-room-name-pill{
- box-sizing:border-box!important;
- display:inline-flex!important;
- flex:0 0 auto!important;
- justify-content:center!important;
- align-items:center!important;
- gap:4px!important;
- width:max-content!important;
- max-width:calc(100% - 8px)!important;
- min-width:0!important;
- height:28px!important;
- min-height:28px!important;max-height:28px!important;
- padding:3px 9px!important;
- margin:0 auto!important;
- border:0!important;border-radius:999px!important;
- /* Translucent matte blue continues the frosted avatar into the name. */
- background:rgba(248,251,253,.54)!important;
- background-image:none!important;
- box-shadow:0 3px 10px rgba(17,55,92,.07),inset 0 1px rgba(255,255,255,.16)!important;
- -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
- backdrop-filter:blur(18px) saturate(112%)!important;
- filter:none!important;
- transform:none!important;
- white-space:nowrap!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading
- .svcp-room-name-pill strong#svcpConversationTitle{
- display:block!important;
- width:auto!important;max-width:none!important;min-width:0!important;
- margin:0!important;padding:0!important;
- color:#152535!important;
- -webkit-text-fill-color:#152535!important;
- font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
- font-size:16px!important;font-weight:650!important;
- line-height:19px!important;letter-spacing:-.025em!important;
- text-shadow:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading .svcp-room-name-pill svg{
- display:block!important;
- flex:0 0 10px!important;
- width:10px!important;min-width:10px!important;max-width:10px!important;
- height:10px!important;min-height:10px!important;max-height:10px!important;
- margin:0!important;padding:0!important;
- fill:none!important;stroke:#24374A!important;
- stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;
- opacity:.93!important;filter:none!important;transform:none!important;
-}
-/* Don't create the accidental second avatar inside the name pill again. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading .svcp-room-name-pill::before,
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"] #svcpConversationHeading .svcp-room-name-pill::after{
- content:none!important;display:none!important;
-}
-
-/* v9 · Raise the entire Sayvi header identity to the top action-button level.
-   Back button starts at 10px + safe area; the 56px avatar must start there too.
-   Move the existing group only: avatar, compact 28px name capsule, and subtitle
-   stay connected with their previous 8px overlap and no extra markup. */
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"] .svcp-conversation-bar > .svcp-room-identity{
- top:max(0px,calc(env(safe-area-inset-top,0px) - 4px))!important;
 }
