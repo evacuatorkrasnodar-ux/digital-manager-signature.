@@ -114,9 +114,38 @@ html body #svcpWorkChatScreen .sv-inbox-people-list
   center center / contain no-repeat!important;
  box-shadow:none!important;
 }
-/* Chat room heading uses the same approved artwork without extra decoration. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpRoomAvatar .sv-sayvi-symbol{
- background-image:var(--sv-sayvi-mark-image)!important;
- background-color:transparent!important;
- background-size:contain!important;
+/* Direct Sayvi chat: restore the missing profile portrait above the
+   name, exactly in the 56px avatar position used by other personal chats.
+   The brand artwork itself is the avatar, not a second ring or tiny symbol. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] .svcp-room-identity #svcpRoomAvatar{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 56px!important;
+ width:56px!important;min-width:56px!important;max-width:56px!important;
+ height:56px!important;min-height:56px!important;max-height:56px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent var(--sv-sayvi-mark-image)
+  center center / contain no-repeat!important;
+ box-shadow:none!important;filter:none!important;
+ font-size:0!important;color:transparent!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] #svcpRoomAvatar > .sv-sayvi-symbol{
+ display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] .svcp-room-identity #svcpConversationHeading{
+ margin-top:-8px!important;
+}
+/* Consistent identity in Sayvi's room information panel too. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-id="dm-sayvi"] #svcpRoomProfileAvatar{
+ border:0!important;border-radius:50%!important;
+ background:transparent var(--sv-sayvi-mark-image)
+  center center / contain no-repeat!important;
+ box-shadow:none!important;filter:none!important;
+ color:transparent!important;font-size:0!important;
 }
