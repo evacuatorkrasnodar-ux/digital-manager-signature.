@@ -291,22 +291,31 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading
  .svcp-room-name-pill strong#svcpConversationTitle{
+ /* Andre reference: slightly larger SF face but less heavy than the old 650.
+    Keep pill height and existing interaction unchanged. */
  color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ font-size:17px!important;
+ font-weight:600!important;
+ line-height:20px!important;
+ letter-spacing:-.02em!important;
+ text-shadow:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill svg{
- /* Restore iMessage's clearly drawn but delicate right-chevron. */
+ /* Andre's taller, rounded iMessage chevron: soft icy blue, not a tiny
+    sharp tick. The source SVG path and JS handlers remain untouched. */
  display:block!important;
- flex:0 0 12px!important;
- width:12px!important;min-width:12px!important;max-width:12px!important;
- height:12px!important;min-height:12px!important;max-height:12px!important;
+ flex:0 0 16px!important;
+ width:16px!important;min-width:16px!important;max-width:16px!important;
+ height:16px!important;min-height:16px!important;max-height:16px!important;
  margin:0!important;padding:0!important;
- /* Andre reference: colored, legible cyan chevron — not solid white. */
- color:#4AB4FD!important;stroke:#4AB4FD!important;
- stroke-width:2.2!important;stroke-linecap:round!important;
- stroke-linejoin:round!important;
- opacity:1!important;fill:none!important;
+ color:#8EC7EA!important;stroke:#8EC7EA!important;
+ stroke-width:2.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:.95!important;fill:none!important;
+ filter:none!important;transform:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
