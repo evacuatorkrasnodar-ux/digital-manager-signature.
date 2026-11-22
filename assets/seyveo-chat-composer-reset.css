@@ -10,6 +10,16 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wall
  --svcp-conversation-blue-rim:rgba(9,100,171,.57);
  --svcp-conversation-blue-blur:blur(16px) saturate(115%);
 }
+/* PEARL wallpaper — original white iMessage-like composer.
+   The room's Sky values above continue to apply only to Sky.
+   This preset reuses the SAME existing layout, grid and click handlers. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]{
+ --svcp-conversation-blue-glass:rgba(255,255,255,.84);
+ --svcp-conversation-blue-glass-expanded:rgba(255,255,255,.85);
+ --svcp-conversation-blue-rim:rgba(230,232,236,.78);
+ --svcp-conversation-blue-blur:blur(15px) saturate(107%);
+}
 html body #svcpWorkChatScreen #svcpChatFormReset{
  all:unset!important;
  --svcp-clean-blue:var(--svcp-conversation-blue-glass,rgba(6,134,204,.62));
@@ -316,4 +326,51 @@ html body #svcpWorkChatScreen #svcpChatFormReset:focus-within{
  html body #svcpWorkChatScreen #svcpChatFormReset *::after{
   animation:none!important;transition:none!important;
  }
+}
+
+/* White chat's real buttons/icons and attachment menu use neutral ink.
+   Leave Sky's white icons/blue glass and every geometric rule untouched. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > .svcp-clean-surface{
+ box-shadow:0 4px 17px rgba(43,49,60,.105)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachFile{
+ color:#252A31!important;
+ box-shadow:0 4px 15px rgba(43,49,60,.085)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset.svcp-compose-multiline > #svcpAttachFile{
+ box-shadow:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachFile > svg{
+ stroke:#252A31!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset #svcpChatInput{
+ color:#323942!important;-webkit-text-fill-color:#323942!important;
+ caret-color:#0A84FF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset #svcpChatInput::placeholder{
+ color:#8C949E!important;-webkit-text-fill-color:#8C949E!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpVoiceRecord{
+ color:#58636D!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){
+ color:#252A31!important;-webkit-text-fill-color:#252A31!important;
+ box-shadow:0 10px 22px rgba(43,49,60,.13)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button{
+ color:#252A31!important;-webkit-text-fill-color:#252A31!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button:is(:hover,:active,:focus-visible){
+ background:rgba(225,229,234,.60)!important;
+ color:#252A31!important;-webkit-text-fill-color:#252A31!important;
 }
