@@ -65,3 +65,20 @@
 @media(prefers-reduced-motion:reduce){
   .sv-sayvi-symbol,.sv-sayvi-label::before{animation:none!important}
 }
+
+/* v5 · In the compact manager helper, don't shrink the approved color icon
+   to the text's 12px font size. The button's own geometry remains intact. */
+#svcpWorkHomePreview button.svcp-home-sayvi-help > .sv-sayvi-symbol{
+ display:inline-block!important;
+ flex:0 0 27px!important;
+ width:27px!important;
+ height:27px!important;
+ min-width:27px!important;
+ min-height:27px!important;
+ font-size:27px!important;
+ line-height:1!important;
+ margin:0!important;
+ background-size:contain!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+}
