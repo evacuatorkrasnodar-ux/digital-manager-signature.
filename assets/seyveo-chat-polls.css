@@ -262,3 +262,40 @@
  .sv-poll-choice{font-size:13px!important;padding-inline:10px!important}
 }
 @media(prefers-reduced-motion:reduce){.sv-poll-choice{transition:none!important}}
+
+/* Family composer uses its existing 44px Plus; its menu is absolutely
+   positioned so opening polls never stretches or displaces the input dock. */
+#seyveoFamilyDialog .svf-compose{position:relative!important;overflow:visible!important}
+#seyveoFamilyDialog .svf-attach-menu[hidden]{display:none!important}
+#seyveoFamilyDialog .svf-attach-menu{
+ position:absolute!important;left:2px!important;bottom:calc(100% + 8px)!important;
+ z-index:60!important;display:flex!important;flex-direction:column!important;
+ box-sizing:border-box!important;width:175px!important;max-width:calc(100vw - 30px)!important;
+ gap:3px!important;margin:0!important;padding:6px!important;
+ border:1px solid rgba(215,220,228,.75)!important;border-radius:18px!important;
+ background:rgba(255,255,255,.97)!important;
+ -webkit-backdrop-filter:blur(16px)!important;backdrop-filter:blur(16px)!important;
+ box-shadow:0 12px 30px rgba(24,33,44,.11)!important;
+}
+#seyveoFamilyDialog .svf-attach-menu > button{
+ display:flex!important;align-items:center!important;gap:10px!important;
+ width:100%!important;min-height:42px!important;
+ margin:0!important;padding:6px 9px!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#25303A!important;text-align:left!important;
+ font-size:13px!important;font-weight:550!important;
+}
+#seyveoFamilyDialog .svf-attach-menu > button:active{background:#F1F3F6!important}
+#seyveoFamilyDialog .svf-attach-menu > button > span{
+ display:grid!important;place-items:center!important;
+ width:22px!important;height:22px!important;
+ color:#CA884B!important;font-size:17px!important;
+}
+#seyveoFamilyDialog #svfAttachButton[aria-expanded="true"]{
+ background:rgba(228,232,237,.55)!important;
+}
+:root[data-theme="dark"] #seyveoFamilyDialog .svf-attach-menu{
+ background:#282E35!important;border-color:rgba(255,255,255,.12)!important;
+}
+:root[data-theme="dark"] #seyveoFamilyDialog .svf-attach-menu > button{color:#F3F5F7!important}
