@@ -584,3 +584,18 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCh
  border-color:rgba(239,246,252,.16)!important;
  color:#F3F5F8!important;
 }
+
+/* SEYVEO · Work Chat composer: Apple geometry, SEYVEO pearl finish, clean lower edge. */
+/* Keep the whole conversation live and scrollable, but gently fade messages
+   BEFORE they pass behind the low-opacity White Pearl editor. This removes
+   the bright blue smear under the mic without tinting or replacing the shared
+   dock material. The mask affects only message paint, not touch/scroll logic. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 110px),transparent calc(100% - 67px))!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 110px),transparent calc(100% - 67px))!important;
+}
+/* Match the reference's optical spacing: the 44px Plus sits a few pixels
+   away from the left screen edge; no second slab surrounds the input. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) > #svcpAttachFile{
+ left:6px!important;
+}
