@@ -1341,9 +1341,9 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <div id="svcpConversationList" class="svcp-conversation-list" aria-live="polite"></div>
   </div>
   <div id="svcpConversation" hidden>
-   <!-- The conversation header is intentionally absent from the visual layout.
-        Keep the legacy action nodes hidden for their existing JS handlers.
-        A single independent Back action is the only navigation affordance. -->
+   <!-- The former button-heavy header stays hidden for existing JS handlers.
+        Only Back plus the original live avatar/title are visible over one
+        transparent matte-glass layer. No duplicate identity nodes. -->
    <button type="button" id="svcpConversationStandaloneBack" aria-label="К списку сообщений"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
    <!-- One floating matte-glass material and the SAME live avatar/name nodes,
         moved from the removed header. No duplicate avatar or title IDs. -->
@@ -5880,5 +5880,5 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-white-pearl.css?v=14"><link rel="stylesheet" href="assets/seyveo-work-floating-pearl.css?v=5">
 <link rel="stylesheet" href="assets/seyveo-chat-identity-composer.css?v=48"><link rel="stylesheet" href="assets/seyveo-chat-polls.css?v=7"><link rel="stylesheet" href="assets/seyveo-chat-semantic-colors.css?v=1"><link rel="stylesheet" href="assets/seyveo-chat-themes.css?v=12"><link rel="stylesheet" href="assets/seyveo-work-inbox-actions.css?v=11">
 <link rel="stylesheet" href="assets/seyveo-sayvi-identity-standard.css?v=14">
-<link rel="stylesheet" href="assets/seyveo-sayvi-response-state.css?v=7"><link rel="stylesheet" href="assets/seyveo-chat-composer-reset.css?v=3"><link rel="stylesheet" href="assets/seyveo-ios-viewport-continuity.css?v=7">
+<link rel="stylesheet" href="assets/seyveo-sayvi-response-state.css?v=7"><link rel="stylesheet" href="assets/seyveo-chat-composer-reset.css?v=3"><link rel="stylesheet" href="assets/seyveo-ios-viewport-continuity.css?v=8">
 </body></html>
