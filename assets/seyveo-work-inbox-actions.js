@@ -75,7 +75,11 @@ function restoreAvatar(element,id,row){
 function updateHeaderAvatar(){
  const conversation=$('svcpConversation'),target=$('svcpRoomAvatar');
  const id=conversation?.dataset.roomId;
- if(!target||!id||id==='dm-sayvi')return;
+ if(!target||!id)return;
+ if(id==='dm-sayvi'){
+  if(target.classList.contains('sv-inbox-avatar-custom'))clearAvatarStyle(target);
+  return;
+ }
  const spec=roomState(id).avatar;
  if(spec)paintAvatar(target,spec);
  else if(target.classList.contains('sv-inbox-avatar-custom'))restoreAvatar(target,id);
@@ -144,8 +148,8 @@ function showAvatarEditor(id){
  const photoButton=node('button','sv-inbox-avatar-method','Фото');
  for(const [kind,b] of [['monogram',monoButton],['emoji',emojiButton],['photo',photoButton]]){
   b.type='button';b.addEventListener('click',()=>{
-   if(kind==='photo'&&!draft.image){fileInput.click();return}
    draft.kind=kind;draw();
+   if(kind==='photo'&&!draft.image)fileInput.click();
   });
   b.dataset.avatarMethod=kind;
   methodButtons.push(b);methods.append(b);
@@ -174,7 +178,7 @@ function showAvatarEditor(id){
  form.append(status,privacy,actions);
  function draw(){
   const normalized=safeAvatar(draft);
-  if(normalized){draft=normalized;paintAvatar(preview,draft)}
+  if(normalized)paintAvatar(preview,normalized);
   for(const button of methodButtons)
    button.setAttribute('aria-pressed',String(button.dataset.avatarMethod===draft.kind));
   for(const b of emojiButtons)b.setAttribute('aria-pressed',String(b.textContent===draft.emoji));
@@ -213,10 +217,17 @@ function showAvatarEditor(id){
   photo.onerror=()=>{status.textContent='Формат фото не поддерживается этим браузером.';cleanup()};
   photo.src=url;
  });
- function persist(next){
+ function persist(next,resetting=false){
   const previous=JSON.stringify(prefs);
-  if(self)prefs.myProfile={name:displayName.value.trim().slice(0,50),avatar:next};
-  else prefs.rooms[id]={...roomState(id),avatar:next};
+  if(self){
+   if(resetting)delete prefs.myProfile;
+   else prefs.myProfile={name:displayName.value.trim().slice(0,50),avatar:next};
+  }else{
+   const nextRoom={...roomState(id)};
+   if(resetting)delete nextRoom.avatar;
+   else nextRoom.avatar=next;
+   prefs.rooms[id]=nextRoom;
+  }
   try{localStorage.setItem(KEY,JSON.stringify(prefs));return true}
   catch{
    try{prefs=JSON.parse(previous)}catch{}
@@ -225,10 +236,8 @@ function showAvatarEditor(id){
   }
  }
  reset.addEventListener('click',()=>{
-  if(!persist(null))return;
-  if(self)delete prefs.myProfile;
-  else delete prefs.rooms[id].avatar;
-  savePrefs();decorateRows();closeSheet();
+  if(!persist(null,true))return;
+  decorateRows();closeSheet();
  });
  form.addEventListener('submit',event=>{
   event.preventDefault();
