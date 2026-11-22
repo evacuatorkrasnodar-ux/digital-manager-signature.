@@ -236,6 +236,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 }
 /* SEYVEO standard White Pearl material recolored cobalt.
    Keep exactly our approved button shadows, 4px pearl blur and 0.75px rim.
+   The approved 18% surface alpha is identical to the white original.
    ONLY the original white pigment and white rim become blue; no custom
    concave glass/extra rings. Do not touch portrait, sizes or coordinates. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
@@ -244,7 +245,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  box-sizing:border-box!important;
  border:.75px solid rgba(5,55,143,.84)!important;
  border-radius:var(--sv-white-pearl-radius-circle,50%)!important;
- background:rgba(11,79,193,.30)!important;
+ background:rgba(11,79,193,.18)!important;
  background-image:none!important;
  color:#FFFFFF!important;
  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
@@ -264,7 +265,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack:active{
- background:rgba(7,60,153,.42)!important;
+ background:rgba(7,60,153,.18)!important;
  box-shadow:var(--sv-white-pearl-press-shadow)!important;
  transform:scale(var(--sv-white-pearl-press-scale,.992))!important;
 }
@@ -278,7 +279,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
- background:rgba(11,104,208,.30)!important;
+ background:rgba(11,104,208,.18)!important;
  background-image:none!important;
  border:.75px solid rgba(6,64,153,.84)!important;
  border-radius:var(--sv-white-pearl-radius-capsule,999px)!important;
