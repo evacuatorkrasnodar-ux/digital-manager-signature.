@@ -103,14 +103,10 @@ main > .sv-chat-jump,
  #svcpConversation[data-chat-wallpaper="sky"] .svcp-chat > #svcpScrollBottom,
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] .svcp-chat > #svcpScrollBottom:is(:active,:hover){
- /* Same transparent water-glass as the chat dock, plus and Back.
-    The scroll handler and its dynamic position remain unchanged. */
- background:var(--svcp-conversation-blue-glass,rgba(127,201,238,.19))!important;
- background-image:none!important;
- border:1px solid var(--svcp-conversation-blue-rim,rgba(230,247,255,.34))!important;
+ background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
+ border:1px solid var(--svcp-conversation-blue-rim,rgba(9,100,171,.57))!important;
  box-shadow:none!important;
- color:#F7FCFF!important;
- -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(12px) saturate(114%))!important;
- backdrop-filter:var(--svcp-conversation-blue-blur,blur(12px) saturate(114%))!important;
- transform:none!important;transition:none!important;
+ color:#fff!important;
+ -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
+ backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
 }
