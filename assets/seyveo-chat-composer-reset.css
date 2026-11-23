@@ -16,8 +16,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wall
    This preset reuses the SAME existing layout, grid and click handlers. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]{
- --svcp-conversation-blue-glass:rgba(244,242,239,.93);
- --svcp-conversation-blue-glass-expanded:rgba(244,242,239,.95);
+ --svcp-conversation-blue-glass:rgba(249,247,244,.83);
+ --svcp-conversation-blue-glass-expanded:rgba(249,247,244,.86);
  --svcp-conversation-blue-rim:rgba(255,255,255,.99);
  --svcp-conversation-blue-blur:blur(16px) saturate(100%);
   --sv-chat-outgoing:#3DAEFE;
