@@ -1,394 +1,425 @@
-/* SEYVEO · WORK MESSENGER · clean rebuild · 24 November 2026
-   One fixed screen, one natural flex scroll area, one in-flow composer.
-   The real engine, saved chat history, room identities, calls, polls,
-   files, search and task handlers remain mounted and unchanged.
-   Do not restore legacy absolutely-positioned form or fake scroll spacers.
-   The room wallpaper is owned only by seyveo-chat-themes.css. */
-
+/* SEYVEO Messenger rebuilt 2026-11-23. Visual foundation + one canonical layout. */
+/* The fullscreen messenger alone clips its own scroll surface.
+   Keep the app scrolling model unchanged across Cabinet -> Chats: Safari
+   otherwise rebuilds the underlying scroll layer on every switch. */
 html.svcp-work-chat-active #svcpWorkChatScreen{overscroll-behavior:contain}
-html.svcp-work-chat-active #svcpWorkChatScreen>footer.dock{display:none!important}
-html body #svcpWorkChatScreen[hidden],
-html body #svcpWorkChatScreen [hidden]{display:none!important}
-html body #svcpWorkChatScreen{
- --svcp-room-self:#38383a;
- --svcp-room-other:#e9ebee;
- --svcp-room-bubble-text:#24262b;
- --svcp-smoke-glass:rgba(184,195,201,.20);
- --svcp-smoke-pressed:rgba(110,125,143,.12);
- --svcp-nav-back-y:calc(12px + env(safe-area-inset-top,0px));
- --svcp-nav-back-x:max(12px,env(safe-area-inset-left,0px));
- box-sizing:border-box!important;position:fixed!important;
- top:var(--svcp-visible-top,0px)!important;
- left:0!important;right:0!important;bottom:auto!important;
- width:100%!important;max-width:100%!important;
- height:var(--svcp-visible-height,100dvh)!important;
- max-height:var(--svcp-visible-height,100dvh)!important;
- display:flex!important;flex-direction:column!important;
- min-height:0!important;overflow:hidden!important;
- z-index:4000!important;padding:0!important;margin:0!important;
- isolation:isolate!important;
- color:var(--text)!important;font-family:inherit!important;
- background-color:var(--bg,#fff)!important;
- background-image:var(--sv-life-viewport-gradient,none)!important;
+/* Messenger inbox is a focused subpage without dock. The original dock
+   remains mounted for Home/other screens and the room keeps its composer. */
+html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!important}
+#svcpWorkChatScreen[hidden]{display:none!important}
+#svcpWorkChatScreen{
+ /* One shared palette: the dock is translucent, inner controls are lighter. */
+ --svcp-dock-glass:radial-gradient(ellipse 92% 88% at 50% -28%,rgba(248,251,255,.23) 0%,rgba(229,239,251,.07) 48%,transparent 83%),radial-gradient(ellipse 63% 100% at 1% 5%,rgba(224,237,252,.10) 0%,transparent 78%),radial-gradient(ellipse 72% 72% at 96% 7%,rgba(212,228,244,.075) 0%,transparent 78%),linear-gradient(180deg,rgba(89,99,116,.43) 0%,rgba(60,69,84,.39) 48%,rgba(37,45,58,.53) 100%);
+ --svcp-dock-edge:rgba(241,249,252,.19);
+ --svcp-dock-topline:rgba(254,255,255,.37);
+ --svcp-dock-action:rgba(204,222,235,.095);
+ --svcp-dock-input:rgba(188,207,225,.105);
+ --svcp-smoke-glass:rgba(184,195,201,.19);
+ --svcp-smoke-input:rgba(184,195,201,.25);
+ --svcp-smoke-pressed:rgba(218,235,245,.20);
+ --svcp-smoke-fallback:#2a353d;
+ position:fixed!important;z-index:4000!important;
+ inset:auto 0 auto 0!important;top:var(--svcp-visible-top,0px)!important;
+ width:100vw!important;max-width:100vw!important;
+ height:var(--svcp-visible-height,100dvh)!important;max-height:var(--svcp-visible-height,100dvh)!important;
+ padding:0!important;margin:0!important;overflow:hidden!important;
+ display:flex!important;flex-direction:column!important;isolation:isolate;
+ /* The Home viewport is the sole backdrop reference across SEYVEO themes.
+    No chat-specific glow or second pigment layer. */
+ font-family:inherit;color:var(--text);
+ background:var(--sv-life-viewport-gradient,var(--bg))!important;
  background-repeat:no-repeat!important;background-size:100% 100%!important;
 }
-html[data-theme="dark"] body #svcpWorkChatScreen{
- --svcp-room-other:#2f3337;--svcp-room-bubble-text:#f6f6f7;
- --svcp-smoke-glass:rgba(220,232,245,.10);
- --svcp-smoke-pressed:rgba(220,232,245,.16);
+:root[data-theme="light"] #svcpWorkChatScreen{
+ --svcp-dock-glass:radial-gradient(ellipse 105% 85% at 18% -28%,rgba(255,255,255,.24),transparent 78%),linear-gradient(155deg,rgba(250,252,255,.39) 0%,rgba(234,239,248,.30) 55%,rgba(224,232,243,.33) 100%);
+ --svcp-dock-edge:rgba(255,255,255,.56);
+ --svcp-dock-topline:rgba(255,255,255,.68);
+ --svcp-dock-action:rgba(251,253,255,.49);
+ --svcp-dock-input:rgba(248,251,255,.63);
+ --svcp-smoke-glass:rgba(99,121,133,.22);
+ --svcp-smoke-input:rgba(99,121,133,.22);
+ --svcp-smoke-pressed:rgba(99,121,133,.31);
+ --svcp-smoke-fallback:#e6eef0;
 }
-html body #svcpWorkChatScreen::before,
-html body #svcpWorkChatScreen::after{content:none!important;display:none!important}
-#svcpWorkChatScreen button{
- touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+#svcpWorkChatScreen{
+ --svcp-room-self:#38383A;
+ --svcp-room-other:#2F3337;
+ --svcp-room-bubble-text:#F6F6F7;
 }
-#svcpWorkChatScreen :is(button,[role="button"]):is(:hover,:active,:focus){
- transform:none!important;translate:none!important;scale:1!important;
+:root[data-theme="light"] #svcpWorkChatScreen{
+ --svcp-room-self:#36A6F7;
+ --svcp-room-other:#EBECEF;
+ --svcp-room-bubble-text:#24262B;
 }
-#svcpWorkChatScreen :is(button,[role="button"]):focus-visible{
- outline:2px solid #0a84ff!important;outline-offset:2px!important;
+#svcpWorkChatScreen [hidden]{display:none!important}
+#svcpWorkChatScreen button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#svcpWorkChatScreen :is(button,textarea,input):focus-visible{outline:2px solid var(--secondary);outline-offset:2px}
+/* A single stable 54px title row. The inset accounts for the home page's
+   upper breathing room, so opening Messenger does not pull the heading up. */
+#svcpWorkChatScreen .svcp-work-chat-header{
+ box-sizing:border-box;flex:0 0 auto;display:grid;
+ grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;column-gap:6px;
+ min-height:calc(82px + env(safe-area-inset-top,0px));
+ padding:calc(20px + env(safe-area-inset-top,0px)) max(9px,env(safe-area-inset-right,0px))
+  8px max(9px,env(safe-area-inset-left,0px));
+ border-bottom:1px solid color-mix(in srgb,var(--soft-line) 35%,transparent);
+ background:transparent
 }
-
-/* The real Back is reparented to this fixed screen by unified-tasks.js.
-   The second Back remains an invisible event delegate, never a second icon. */
-html body #svcpWorkChatScreen>#svcpWorkChatBack{
- box-sizing:border-box!important;position:absolute!important;
- inset:var(--svcp-nav-back-y) auto auto var(--svcp-nav-back-x)!important;
- display:grid!important;place-items:center!important;
- width:44px!important;height:44px!important;
- min-width:44px!important;min-height:44px!important;
- max-width:44px!important;max-height:44px!important;
- z-index:110!important;margin:0!important;padding:0!important;
- border:.75px solid rgba(255,255,255,.88)!important;
- border-radius:50%!important;background:rgba(255,255,255,.96)!important;
- background-image:none!important;color:#161b20!important;
- box-shadow:0 5px 15px rgba(42,52,72,.12)!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- transition:none!important;animation:none!important;
+#svcpWorkChatScreen[data-view="room"]>.svcp-work-chat-header{display:none!important}
+#svcpWorkChatScreen .svcp-work-chat-back{
+ display:grid;place-items:center;grid-column:1;
+ width:44px;height:44px;min-width:44px;min-height:44px;box-sizing:border-box;
+ border:0;border-radius:50%;background:transparent;color:var(--text);padding:0;cursor:pointer
 }
-html body #svcpWorkChatScreen>#svcpWorkChatBack svg{
- width:19px!important;height:19px!important;display:block!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
- stroke-linejoin:round!important;stroke-linecap:round!important;
+#svcpWorkChatScreen .svcp-work-chat-back svg{
+ width:19px;height:19px;fill:none;stroke:currentColor;
+ stroke-width:1.55;stroke-linejoin:round;stroke-linecap:round
 }
-html[data-theme="dark"] body #svcpWorkChatScreen>#svcpWorkChatBack{
- color:#f6f7f8!important;background:rgba(48,55,64,.88)!important;
- border-color:rgba(215,225,236,.18)!important;
+#svcpWorkChatScreen .svcp-work-chat-heading{
+ grid-column:2;display:grid;align-content:center;gap:3px;min-width:0
 }
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"])>#svcpWorkChatBack{
- background:rgba(11,84,174,.68)!important;
- color:#fff!important;border:1px solid rgba(3,70,151,.32)!important;
- box-shadow:0 3px 10px rgba(5,53,111,.11)!important;
+#svcpWorkChatScreen .svcp-work-chat-heading h1{
+ margin:0;padding:0;min-width:0;font-size:var(--sv-page-title-size,clamp(25px,7vw,28px));
+ font-weight:620;line-height:1.12;color:var(--text);letter-spacing:-.042em;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis
 }
-html body #svcpWorkChatScreen>#svcpConversationStandaloneBack{
- display:none!important;visibility:hidden!important;pointer-events:none!important;
+#svcpWorkChatScreen .svcp-work-chat-heading small{
+ font-size:11px;color:var(--secondary);line-height:1.3
 }
-
-/* Inbox title and measured Cabinet-tab alignment */
-html body #svcpWorkChatScreen>.svcp-work-chat-header{
- box-sizing:border-box!important;display:grid!important;
- grid-template-columns:44px minmax(0,1fr) 44px!important;
- flex:0 0 auto!important;align-items:center!important;
- height:calc(var(--svcp-inbox-tabs-top,calc(82px + env(safe-area-inset-top,0px))) - 4px)!important;
- min-height:54px!important;max-height:172px!important;
- margin:0!important;padding:calc(7px + env(safe-area-inset-top,0px)) 12px 0!important;
- background:transparent!important;border:0!important;box-shadow:none!important;
+#svcpWorkChatScreen .svcp-work-chat-trailing{
+ grid-column:3;width:44px;height:44px;pointer-events:none
 }
-html body #svcpWorkChatScreen[data-view="room"]>.svcp-work-chat-header{
- display:none!important;
+#svcpWorkChatScreen #svcpWorkChatCanvas{display:flex;min-width:0;min-height:0;flex:1 1 auto;overflow:hidden}
+#svcpWorkChatScreen #unifiedTasksChatHost,
+#svcpWorkChatScreen #svcpChats{
+ display:flex!important;flex:1 1 auto;flex-direction:column;min-width:0;min-height:0;
+ width:100%!important;max-width:100%!important;overflow:hidden!important;
+ margin:0!important;padding:0!important;border:0!important;
 }
-html body #svcpWorkChatScreen .svcp-work-chat-heading{
- grid-column:2!important;display:grid!important;align-content:center!important;
- text-align:center!important;min-width:0!important;
+/* Inbox: filter bar remains steady; only conversations scroll. */
+#svcpWorkChatScreen #svcpChatDirectory{
+ display:flex;flex:1 1 auto;min-height:0;flex-direction:column;overflow:hidden;
+ width:100%;background:transparent
 }
-html body #svcpWorkChatScreen .svcp-work-chat-heading h1{
- margin:0!important;padding:0!important;
- font:650 20px/1.16 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- letter-spacing:-.035em!important;color:var(--text)!important;
- white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+#svcpWorkChatScreen .svcp-directory-head{display:none}
+#svcpWorkChatScreen .svcp-search-field{
+ flex:0 0 auto;min-height:44px;margin:10px 13px 7px;padding:0 12px;
+ border:1px solid color-mix(in srgb,var(--text) 7%,transparent);border-radius:16px;
+ background:color-mix(in srgb,var(--card2) 16%,transparent);color:var(--secondary);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%);
+ box-shadow:none
 }
-html body #svcpWorkChatScreen .svcp-work-chat-heading small{display:none!important}
-html body #svcpWorkChatScreen .svcp-work-history-top{
- grid-column:3;justify-self:end;width:44px;height:44px;
- display:grid;place-items:center;border:0;border-radius:50%;
- background:transparent;color:var(--text);
+#svcpWorkChatScreen #svcpHistorySearch{
+ font-size:16px!important;min-width:0;line-height:1.4
 }
-html body #svcpWorkChatScreen .svcp-work-history-top svg{
- display:block;width:19px;height:19px;fill:none;stroke:currentColor;
- stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;
+#svcpWorkChatScreen .svcp-chat-filters{
+ display:flex;flex:0 0 auto;gap:6px;overflow-x:auto;padding:2px 12px 6px;scrollbar-width:none;
+ border-bottom:1px solid color-mix(in srgb,var(--soft-line) 35%,transparent)
 }
-
-/* Every ancestor lets the actual message list shrink and scroll.
-   No fixed height/ghost padding under the composer. */
-html body #svcpWorkChatScreen #svcpWorkChatCanvas,
-html body #svcpWorkChatScreen #unifiedTasksChatHost,
-html body #svcpWorkChatScreen #svcpChats{
- box-sizing:border-box!important;
- display:flex!important;flex:1 1 0px!important;flex-direction:column!important;
- min-height:0!important;min-width:0!important;
- width:100%!important;max-width:100%!important;
- overflow:hidden!important;margin:0!important;padding:0!important;
- border:0!important;border-radius:0!important;box-shadow:none!important;
- background:transparent!important;background-image:none!important;
+#svcpWorkChatScreen .svcp-chat-filters::-webkit-scrollbar{display:none}
+#svcpWorkChatScreen .svcp-chat-filters button{
+ min-height:36px;flex:none;border:1px solid transparent;border-radius:999px;padding:6px 11px;
+ color:var(--secondary);background:transparent;font:inherit;font-size:12.5px;font-weight:550;cursor:pointer
 }
-html body #svcpWorkChatScreen #svcpChatDirectory[hidden],
-html body #svcpWorkChatScreen #svcpConversation[hidden],
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatDirectory,
-html body #svcpWorkChatScreen:not([data-view="room"]) #svcpConversation{
- display:none!important;visibility:hidden!important;pointer-events:none!important;
+#svcpWorkChatScreen .svcp-chat-filters button[aria-pressed="true"]{
+ color:var(--text);border-color:transparent;
+ background:var(--sv-ui-selected-surface,color-mix(in srgb,var(--text) 7%,transparent));
+ box-shadow:none
 }
-
-/* INBOX */
-html body #svcpWorkChatScreen #svcpChatDirectory{
- box-sizing:border-box!important;display:flex!important;
- flex:1 1 0px!important;flex-direction:column!important;
- min-height:0!important;width:100%!important;
- overflow:hidden!important;background:transparent!important;
+#svcpWorkChatScreen #svcpConversationList{
+ display:block;flex:1 1 auto;min-height:0;width:100%;overflow-x:hidden;overflow-y:auto;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+ border:0!important;border-radius:0!important;background:none!important;padding:0 0 max(14px,env(safe-area-inset-bottom,0px))
 }
-html body #svcpWorkChatScreen .svcp-directory-head{display:none!important}
-html body #svcpWorkChatScreen #svcpChatDirectory #svcpChatFilters{
- box-sizing:border-box!important;
- order:0!important;display:grid!important;
- grid-template-columns:repeat(4,minmax(0,1fr))!important;
- flex:0 0 38px!important;align-self:center!important;align-items:center!important;
- width:var(--svcp-inbox-tabs-width,calc(100% - 24px))!important;
- max-width:404px!important;height:38px!important;min-height:38px!important;
- margin:4px auto 5px!important;padding:2px 3px!important;gap:0!important;
- border:1px solid rgba(158,167,181,.23)!important;
- border-radius:999px!important;
- background:rgba(177,185,195,.22)!important;
- box-shadow:inset 0 1px 2px rgba(79,92,112,.045)!important;
- overflow:visible!important;
+#svcpWorkChatScreen .svcp-directory-section{
+ padding:16px 18px 5px;font-size:11px;line-height:1.4;font-weight:620;
+ letter-spacing:.075em;text-transform:uppercase;color:var(--secondary);border:0
 }
-html body #svcpWorkChatScreen #svcpChatFilters>button{
- box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:100%!important;min-width:0!important;height:32px!important;min-height:32px!important;
- margin:0!important;padding:0 2px!important;
- border:0!important;border-radius:999px!important;
- background:transparent!important;box-shadow:none!important;
- color:#555a64!important;
- font:530 12.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+#svcpWorkChatScreen .svcp-directory-item{
+ display:flex;align-items:center;gap:11px;width:100%;min-height:59px;padding:7px 15px;
+ border:0!important;border-bottom:1px solid color-mix(in srgb,var(--soft-line) 30%,transparent)!important;
+ background:transparent!important;border-radius:0;color:var(--text);box-shadow:none!important
 }
-html body #svcpWorkChatScreen #svcpChatFilters>button[aria-pressed="true"]{
- background:rgba(255,255,255,.94)!important;color:#1a2028!important;
- border:1px solid rgba(194,200,209,.62)!important;font-weight:640!important;
- box-shadow:0 1px 4px rgba(55,67,82,.11)!important;
+#svcpWorkChatScreen .svcp-directory-item:active{background:var(--svcp-smoke-pressed)!important}
+#svcpWorkChatScreen .svcp-directory-avatar{
+ width:39px;height:39px;min-width:39px;flex:0 0 39px;display:grid;place-items:center;
+ border:1px solid color-mix(in srgb,var(--soft-line) 30%,transparent);border-radius:50%;
+ background:color-mix(in srgb,var(--card2) 24%,transparent);color:var(--secondary);
+ font-size:17px;font-weight:590
 }
-html[data-theme="dark"] body #svcpWorkChatScreen #svcpChatFilters{
- background:rgba(223,234,245,.085)!important;border-color:rgba(214,230,241,.15)!important;
+#svcpWorkChatScreen .svcp-directory-avatar.is-sayvi{
+ font-size:25px;color:var(--secondary)
 }
-html[data-theme="dark"] body #svcpWorkChatScreen #svcpChatFilters>button{
- color:#bdc4cd!important;
+#svcpWorkChatScreen .svcp-directory-item-body{
+ display:flex;flex:1 1 auto;min-width:0;flex-direction:column;gap:2px;overflow:hidden
 }
-html[data-theme="dark"] body #svcpWorkChatScreen #svcpChatFilters>button[aria-pressed="true"]{
- background:rgba(213,227,240,.16)!important;color:#f8fafc!important;
+#svcpWorkChatScreen .svcp-directory-item-body strong{
+ font-size:14px!important;line-height:1.25;font-weight:590;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis
 }
-html body #svcpWorkChatScreen #svcpDirectorySearchBar:not([hidden]){
- box-sizing:border-box!important;order:1!important;display:flex!important;align-items:center!important;
- flex:0 0 44px!important;min-height:44px!important;
- margin:7px 13px 8px!important;padding:0 12px!important;
- border:1px solid rgba(170,186,199,.26)!important;border-radius:16px!important;
- background:rgba(248,250,253,.56)!important;box-shadow:none!important;
+#svcpWorkChatScreen .svcp-directory-preview{
+ font-size:11.5px!important;line-height:1.3;color:var(--secondary);
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
-html body #svcpWorkChatScreen #svcpHistorySearch{min-width:0!important;font-size:16px!important}
-html body #svcpWorkChatScreen #svcpConversationList{
- box-sizing:border-box!important;order:2!important;display:block!important;
- flex:1 1 0px!important;min-height:0!important;width:100%!important;
- padding:0 12px max(16px,env(safe-area-inset-bottom,0px))!important;
- margin:0!important;overflow-x:hidden!important;overflow-y:auto!important;
- overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;
- touch-action:pan-y!important;scrollbar-width:none!important;
- border:0!important;background:transparent!important;
+#svcpWorkChatScreen .svcp-directory-role{
+ font-size:11.5px!important;color:var(--secondary);font-weight:470
 }
-html body #svcpWorkChatScreen #svcpConversationList::-webkit-scrollbar{display:none}
-html body #svcpWorkChatScreen .svcp-directory-item{
- display:flex;align-items:center;gap:11px;width:100%;min-height:59px;
- padding:7px 15px;border:0!important;
- border-bottom:1px solid color-mix(in srgb,var(--soft-line) 30%,transparent)!important;
- border-radius:0!important;background:transparent!important;
- color:var(--text);box-shadow:none!important;
+#svcpWorkChatScreen .svcp-directory-time{
+ font-size:11px!important;color:var(--secondary);font-variant-numeric:tabular-nums
 }
-html body #svcpWorkChatScreen .svcp-directory-avatar{
- display:grid;place-items:center;flex:0 0 39px;
- width:39px;height:39px;border-radius:50%;overflow:hidden;
+#svcpWorkChatScreen .svcp-directory-chevron{font-size:17px;opacity:.58;color:var(--secondary)}
+#svcpWorkChatScreen :is(.svcp-search-result,.svcp-search-results-heading,.svcp-search-empty){
+ margin:0 16px;max-width:calc(100% - 32px)
 }
-html body #svcpWorkChatScreen .svcp-directory-item-body{
- flex:1 1 auto;display:flex;flex-direction:column;min-width:0;gap:2px;overflow:hidden;
+#svcpWorkChatScreen .svcp-search-result{padding:13px 4px!important;min-height:57px;border-bottom:1px solid var(--soft-line)}
+#svcpWorkChatScreen .svcp-search-result strong{font-size:14px}
+#svcpWorkChatScreen .svcp-search-result span{font-size:13px}
+/* Room: native chat shell with one header and no nested chat cards. */
+#svcpWorkChatScreen #svcpConversation{
+ position:relative;
+ display:flex!important;flex:1 1 auto;min-height:0;flex-direction:column;overflow:hidden!important;
+ width:100%;padding:0!important;margin:0!important
 }
-html body #svcpWorkChatScreen .svcp-directory-item-body strong{
- font-size:14px!important;line-height:1.25!important;font-weight:600!important;
- white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+#svcpWorkChatScreen .svcp-conversation-bar{
+ min-height:54px;flex:0 0 auto;display:flex;align-items:center;gap:5px;
+ margin:0!important;
+ padding:calc(6px + env(safe-area-inset-top,0px))
+  max(14px,env(safe-area-inset-right,0px))
+  6px max(14px,env(safe-area-inset-left,0px));
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important
 }
-html body #svcpWorkChatScreen .svcp-directory-preview{
- font-size:12px!important;line-height:1.3!important;
- color:var(--secondary)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-html body #svcpWorkChatScreen .svcp-directory-time{
- font-size:11px!important;color:var(--secondary)!important;
- font-variant-numeric:tabular-nums;
-}
-
-/* ROOM: the room itself is the only wallpaper canvas. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation{
- box-sizing:border-box!important;position:relative!important;
- display:flex!important;flex:1 1 0px!important;flex-direction:column!important;
- width:100%!important;height:auto!important;min-height:0!important;
- margin:0!important;padding:0!important;
- overflow:hidden!important;border:0!important;border-radius:0!important;
+#svcpWorkChatScreen .svcp-conversation-back{
+ box-sizing:border-box;display:grid;place-items:center;
+ flex:0 0 40px;width:40px;min-width:40px;height:40px;min-height:40px;
+ margin:0;padding:0;
+ border:0!important;border-radius:50%!important;
+ background:#38383A!important;color:#F6F6F7!important;
  box-shadow:none!important;
 }
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:not([data-chat-wallpaper]){
- background:var(--sv-life-viewport-gradient,var(--bg))!important;
+#svcpWorkChatScreen .svcp-conversation-back svg{
+ width:19px;height:19px;fill:none;stroke:currentColor;
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round
 }
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation>.svcp-conversation-bar{
- display:none!important;
+#svcpWorkChatScreen .svcp-room-avatar{
+ flex:0 0 32px;width:32px;min-width:32px;height:32px;
+ display:grid;place-items:center;border-radius:50%;
+ border:0!important;background:#38383A!important;
+ color:#F6F6F7!important;font-size:16px;font-weight:590
 }
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation>.svcp-chat{
- box-sizing:border-box!important;position:relative!important;
- display:flex!important;flex:1 1 0px!important;flex-direction:column!important;
- min-height:0!important;min-width:0!important;width:100%!important;
- margin:0!important;padding:0!important;
- overflow:hidden!important;border:0!important;border-radius:0!important;
- background:transparent!important;background-image:none!important;box-shadow:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation>.svcp-chat::before,
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation>.svcp-chat::after{
- content:none!important;display:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat-intro{
- box-sizing:border-box!important;display:flex;flex:0 0 auto!important;
- min-height:0!important;max-height:46px!important;
- padding:3px 12px!important;margin:0!important;
- overflow-x:auto!important;overflow-y:hidden!important;
- background:transparent!important;border:0!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat-assist{
- display:flex;align-items:center;gap:6px;flex:0 0 auto;width:max-content;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat-assist button{
- min-height:36px!important;flex:none;border-radius:999px!important;
- padding:6px 10px!important;font-size:11.5px!important;
- background:transparent!important;box-shadow:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpLoadOlder{
- flex:0 0 auto!important;min-height:35px!important;
- background:transparent!important;border:0!important;color:var(--secondary);
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
+/* All rooms now share the one visible 56px avatar in seyveo-chat-header-v2.css. */
+#svcpWorkChatScreen .svcp-conversation-info{flex:1 1 auto;min-width:0;display:grid;gap:3px}
+
+/* Chat information lives on the title instead of a redundant ⓘ icon. */
+#svcpWorkChatScreen[data-view="room"] #svcpConversationHeading.svcp-conversation-info{
  box-sizing:border-box!important;
- display:flex!important;flex:1 1 0px!important;flex-direction:column!important;
- height:auto!important;min-height:0!important;max-height:none!important;
- min-width:0!important;width:100%!important;gap:8px!important;
- margin:0!important;
- padding:calc(136px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px))
-  12px max(14px,env(safe-area-inset-left,0px))!important;
- overflow-y:auto!important;overflow-x:hidden!important;
- overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;
- touch-action:pan-y!important;scrollbar-width:none!important;
+ display:grid!important;align-content:center!important;
+ flex:1 1 auto!important;min-width:0!important;min-height:40px!important;
+ margin:0!important;padding:0 4px!important;
+ border:0!important;border-radius:8px!important;
  background:transparent!important;background-image:none!important;
- -webkit-mask-image:none!important;mask-image:none!important;
- scroll-padding-top:calc(136px + env(safe-area-inset-top,0px))!important;
- scroll-padding-bottom:12px!important;
+ box-shadow:none!important;
+ color:var(--text)!important;font-family:inherit!important;
+ text-align:left!important;cursor:pointer!important;
 }
-html body #svcpWorkChatScreen #svcpMessages::-webkit-scrollbar{display:none}
-html body #svcpWorkChatScreen #svcpMessages::after{
- content:none!important;display:none!important;
+#svcpWorkChatScreen[data-view="room"] #svcpConversationHeading:focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
 }
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset{
- /* Normal flex item, not an absolute overlay: all available height
-    now belongs to messages above the actual composer. */
- box-sizing:border-box!important;position:relative!important;
- inset:auto!important;top:auto!important;right:auto!important;
- bottom:auto!important;left:auto!important;
- flex:0 0 auto!important;align-self:center!important;
- margin:0 auto max(6px,env(safe-area-inset-bottom,0px))!important;
- z-index:15!important;
- background:transparent!important;background-image:none!important;
- box-shadow:none!important;-webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatFormReset>.svcp-clean-surface{
- pointer-events:none!important;
-}
-/* Context cards consume their real height, never masquerade as a footer. */
-html body #svcpWorkChatScreen[data-view="room"] .svcp-chat>
- :is(#svcpReplyPreview,#svcpReactionPicker,#svcpChatTaskDraft,#svcpTaskDiscussionQuick,#svcpCameraTray,#svcpVoiceCapture):not([hidden]){
- flex:0 0 auto!important;min-height:0!important;max-height:40dvh!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpChatStatus{
- position:absolute!important;width:1px!important;height:1px!important;
- padding:0!important;margin:-1px!important;overflow:hidden!important;
- white-space:nowrap!important;clip-path:inset(50%)!important;border:0!important;
-}
-html body #svcpWorkChatScreen :is(#svcpOpenTasks,#svcpPreviewOnHome){
+#svcpWorkChatScreen[data-view="room"] #svcpRoomInfoToggle{
  display:none!important;
 }
 
-/* Default conversational cards; semantic bubbles / avatars are owned
-   by seyveo-chat-bubbles-imessage.css and seyveo-chat-header-v2.css. */
-html body #svcpWorkChatScreen .svcp-bubble{
- box-sizing:border-box!important;position:relative;
- flex:0 0 auto;align-self:flex-start;
- width:max-content;max-width:min(88%,410px);min-width:0;
- padding:9px 12px;border:0;border-radius:18px 18px 18px 6px;
- background:var(--svcp-room-other);color:var(--svcp-room-bubble-text);
- overflow-wrap:anywhere;
+#svcpWorkChatScreen .svcp-conversation-info strong{
+ font-size:14.5px!important;line-height:1.24;font-weight:640;
+ letter-spacing:-.014em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
-html body #svcpWorkChatScreen .svcp-bubble.is-self{
- align-self:flex-end;border-radius:18px 18px 6px 18px;
- background:var(--svcp-room-self);color:#fff;
+#svcpWorkChatScreen .svcp-conversation-info small{
+ font-size:11px!important;line-height:1.3;color:var(--secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
-html body #svcpWorkChatScreen .svcp-chat-day{
- align-self:center;flex:0 0 auto;
- padding:4px 7px;margin:10px 0 5px;
- background:transparent!important;border:0!important;box-shadow:none!important;
- font:550 11px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+#svcpWorkChatScreen :is(.svcp-conversation-search,.svcp-room-info-toggle){
+ box-sizing:border-box;display:grid;place-items:center;
+ min-width:40px;width:40px;height:40px;flex:0 0 40px;
+ background:#38383A!important;border:0!important;
+ color:#F6F6F7!important;border-radius:50%!important;
+ padding:9px;box-shadow:none!important
+}
+#svcpWorkChatScreen :is(.svcp-conversation-search,.svcp-room-info-toggle) svg{
+ width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round
+}
+/* Profile appears ONLY as its standalone sheet, never as an in-flow row. */
+#svcpWorkChatScreen .svcp-chat{
+ position:relative!important;
+ flex:1 1 auto;display:flex;min-height:0;flex-direction:column;overflow:hidden!important;
+ width:100%;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important
+}
+#svcpWorkChatScreen .svcp-chat-intro{
+ flex:0 0 auto;display:flex;min-height:0;padding:3px 12px!important;margin:0!important;
+ background:transparent;border-bottom:0;overflow-x:auto;overflow-y:hidden;
+ scrollbar-width:none
+}
+#svcpWorkChatScreen .svcp-chat-title{display:none!important}
+#svcpWorkChatScreen .svcp-chat-assist{
+ display:flex;gap:6px;flex:0 0 auto;align-items:center;flex-wrap:nowrap!important;
+ width:max-content!important;max-width:none!important;margin:0
+}
+#svcpWorkChatScreen .svcp-chat-assist button{
+ flex:none;min-height:44px!important;padding:6px 10px!important;font-size:11.5px!important;
+ border-radius:999px!important;background:transparent!important;box-shadow:none!important
+}
+#svcpWorkChatScreen #svcpLoadOlder{
+ flex:0 0 auto;min-height:35px;border:0;border-bottom:1px solid var(--soft-line);
+ background:transparent;color:var(--secondary);font-size:12px
+}
+#svcpWorkChatScreen #svcpMessages{
+ flex:1 1 auto!important;min-height:0!important;max-height:none!important;height:0!important;
+ width:100%;display:flex;flex-direction:column;gap:9px;overflow-x:hidden;overflow-y:auto!important;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+ padding:16px max(16px,env(safe-area-inset-right,0px))
+  calc(112px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
+ background:transparent!important;background-image:none!important;
+ scroll-padding-bottom:96px
+}
+#svcpWorkChatScreen .svcp-chat-day{
+ align-self:center;flex:0 0 auto;margin:13px 0 6px;padding:3px 7px;border-radius:0;
+ background:transparent!important;border:0;box-shadow:none;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font-size:11px;font-weight:550;color:#B8BEC4
+}
+#svcpWorkChatScreen .svcp-bubble{
+ position:relative;align-self:flex-start;max-width:min(88%,410px);min-width:0;
+ border:0!important;border-radius:19px 19px 19px 6px!important;
+ background:var(--svcp-room-other,#2F3337)!important;
+ color:var(--svcp-room-bubble-text,#F6F6F7)!important;
+ padding:10px 13px!important;overflow-wrap:anywhere;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important
+}
+#svcpWorkChatScreen .svcp-bubble.is-self{
+ align-self:flex-end;border-radius:19px 19px 6px 19px!important;
+ border:0!important;background:var(--svcp-room-self,#38383A)!important
+}
+#svcpWorkChatScreen .svcp-bubble.is-sayvi{
+ border:0!important;background:var(--svcp-room-self,#38383A)!important
+}
+/* Tasks remain in the chat flow; a tiny semantic label replaces the pin emoji. */
+#svcpWorkChatScreen .svcp-bubble.is-task{
+ border-left:0!important; /* The "Поручение" label identifies the type without a second border. */
+}
+#svcpWorkChatScreen .svcp-task-message-label{
+ display:block;margin:1px 0 5px;
+ font-size:10px;line-height:1.1;font-weight:600;letter-spacing:.045em;
  color:var(--secondary);
 }
-html body #svcpWorkChatScreen .svcp-message-text{
- font-size:16px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;
+#svcpWorkChatScreen .svcp-bubble.is-task .svcp-message-text{
+ display:block;font-weight:450;
 }
-html body #svcpWorkChatScreen .svcp-bubble-meta{
- display:flex;gap:6px;align-items:baseline;margin-bottom:3px;
+#svcpWorkChatScreen .svcp-bubble-meta{
+ display:flex;align-items:baseline;gap:7px;margin:0 0 3px
 }
-html body #svcpWorkChatScreen .svcp-bubble-meta .svcp-sender{
- font-size:11px;font-weight:600;
+#svcpWorkChatScreen .svcp-bubble .svcp-sender{
+ display:block;font-size:11px!important;font-weight:590;margin:0;color:var(--text)
 }
-html body #svcpWorkChatScreen .svcp-message-menu{
- max-height:40dvh;overflow-y:auto;overscroll-behavior:contain;
- border-radius:16px;border:1px solid var(--soft-line);
- background:var(--card);box-shadow:0 7px 22px rgba(0,0,0,.08);
+/* The title already identifies each participant in a one-to-one chat.
+   Keep names in group chats and all message aria-labels for accessibility. */
+#svcpWorkChatScreen #svcpConversation[data-room-kind="personal"] .svcp-bubble:not(.is-sayvi) .svcp-sender{
+ display:none!important
 }
-html body #svcpWorkChatScreen .svcp-message-menu-item{min-height:44px}
-html body #svcpWorkChatScreen .svcp-note{
- align-self:center;padding:16px 18px;margin:auto;
- font-size:13px;color:var(--secondary);text-align:center;
+#svcpWorkChatScreen .svcp-bubble .svcp-time{
+ font-size:10px!important;color:var(--secondary);margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap
 }
-html body #svcpWorkChatScreen #svcpReplyPreview:not([hidden]){
- box-sizing:border-box;align-self:center;width:min(430px,calc(100% - 20px));
- display:flex;gap:8px;align-items:center;margin:0 auto 7px!important;
- padding:7px 12px;border-radius:18px;
+#svcpWorkChatScreen .svcp-message-text{
+ font-size:16px!important;line-height:1.43!important;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal
+}
+#svcpWorkChatScreen :is(.svcp-message-edited,.svcp-bubble-saved){
+ display:block;margin:6px 0 0;font-size:11px;color:var(--secondary);line-height:1.35
+}
+#svcpWorkChatScreen .svcp-bubble-saved{color:var(--seyveo-emerald)}
+#svcpWorkChatScreen .svcp-quote{
+ border-left:2px solid color-mix(in srgb,var(--text) 29%,transparent);padding:5px 8px;
+ border-radius:0 7px 7px 0;background:color-mix(in srgb,var(--text) 5%,transparent);
+ font-size:11px;line-height:1.4
+}
+#svcpWorkChatScreen .svcp-message-actions{min-height:0}
+#svcpWorkChatScreen .svcp-message-menu{
+ max-width:min(280px,76vw);max-height:37dvh;overflow-y:auto;overscroll-behavior:contain;
+ background:var(--card);border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:14px;box-shadow:none;z-index:4
+}
+#svcpWorkChatScreen .svcp-message-menu-item{
+ min-height:42px;font-size:13px;padding:10px 13px;border-bottom:1px solid var(--soft-line)
+}
+#svcpWorkChatScreen .svcp-note{
+ margin:auto;padding:16px 26px;color:var(--secondary);font-size:13px;line-height:1.5;text-align:center
+}
+#svcpWorkChatScreen :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpReactionPicker,#svcpChatTaskDraft,#svcpTaskDiscussionQuick,#svcpCameraTray,#svcpComposerEmojiStrip,#svcpVoiceCapture){
+ flex:0 0 auto;max-height:28dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain
+}
+#svcpWorkChatScreen :is(#svcpCameraTray,#svcpChatTaskDraft,#svcpVoiceCapture){max-height:38dvh}
+#svcpWorkChatScreen :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpTaskDiscussionQuick){
+ box-sizing:border-box;padding:8px 12px;
  background:var(--svcp-smoke-glass);
+ border:0;border-radius:20px;
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ box-shadow:none
 }
-html body #svcpWorkChatScreen #svcpReplyPreview .svcp-reply-text{
- flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
- font-size:12px;
+/* Separate stacked reply, attachment and input surfaces without losing any action. */
+#svcpWorkChatScreen #svcpReplyPreview:not([hidden]){
+ width:min(430px,calc(100% - 14px));max-width:100%;
+ min-height:49px;margin:0 auto 9px!important;padding:9px 13px!important;
+ display:flex;align-items:center;gap:9px;border-radius:19px!important
 }
-html body #svcpWorkChatScreen #svcpAttachmentPreview:not([hidden]){
- box-sizing:border-box;max-width:100%;
- border-radius:18px;
+#svcpWorkChatScreen #svcpReplyPreview .svcp-reply-text{
+ flex:1;min-width:0;font-size:12px;line-height:1.35;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
-html body #svcpWorkChatScreen .svcp-chat-media-image{
- display:block;max-width:100%;height:auto;max-height:46dvh;
- border:0;border-radius:13px;object-fit:contain;
+#svcpWorkChatScreen #svcpReplyPreview .svcp-preview-close{
+ min-width:44px;min-height:44px;display:grid;place-items:center;flex:0 0 44px;
+ margin:-5px -9px -5px 0;border:0;background:transparent;color:var(--text)
 }
-html body #svcpWorkChatScreen .svcp-media-slot{min-width:0;max-width:100%}
-html body #svcpWorkChatScreen .svcp-task-message-label{
- display:block;margin-bottom:5px;
- font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--secondary);
+#svcpWorkChatScreen .svcp-chat:has(:is(#svcpReplyPreview,#svcpAttachmentPreview):not([hidden])) #svcpChatForm{
+ margin-top:1px!important;margin-bottom:max(7px,var(--seyveo-dock-bottom,7px))!important
 }
-
-/* Feature-only styles retained without any viewport or footer geometry. */
+/* Work chat media and outgoing attachment: one subtle glass language. */
+#svcpWorkChatScreen #svcpAttachmentPreview:not([hidden]){
+ width:min(430px,calc(100% - 14px));max-width:100%;margin:0 auto 9px;
+ display:flex;align-items:center;flex-wrap:nowrap;gap:9px;overflow:hidden;
+ max-height:90px;min-height:65px;padding:8px 10px
+}
+#svcpWorkChatScreen #svcpAttachmentPreview :is(.svcp-selected-photo,.svcp-selected-video){
+ width:52px;height:52px;max-width:52px;min-width:52px;flex:0 0 52px;
+ object-fit:cover;border-radius:12px;border:0;background:var(--card2)
+}
+#svcpWorkChatScreen #svcpAttachmentPreview .svcp-selected-info{
+ flex:1 1 auto;min-width:0;display:grid;gap:3px
+}
+#svcpWorkChatScreen #svcpAttachmentPreview .svcp-selected-info strong{
+ font-size:12px;font-weight:590;color:var(--text)
+}
+#svcpWorkChatScreen #svcpAttachmentPreview .svcp-selected-info small{
+ font-size:10.5px;line-height:1.3;color:var(--secondary);
+ overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+ overflow-wrap:anywhere
+}
+#svcpWorkChatScreen #svcpAttachmentPreview .svcp-selected-remove{
+ flex:0 0 auto;min-height:44px;padding:0 5px!important;border:0!important;
+ border-radius:12px!important;background:transparent!important;
+ color:var(--secondary)!important;font-size:12px!important
+}
+#svcpWorkChatScreen #svcpAttachmentPreview .svcp-selected-remove:active{color:var(--text)!important}
+#svcpWorkChatScreen .svcp-bubble:has(.svcp-chat-media-image){max-width:min(92%,430px)}
+#svcpWorkChatScreen .svcp-chat-media-image{
+ display:block;object-fit:contain;width:100%;height:auto;max-height:min(48dvh,360px);
+ border-radius:13px;border:0;background:color-mix(in srgb,var(--card2) 70%,transparent)
+}
+#svcpWorkChatScreen .svcp-media-slot:not(.svcp-voice-message){
+ display:grid;gap:5px;width:100%;max-width:100%;margin:7px 0 3px
+}
+#svcpWorkChatScreen .svcp-chat-media-local{
+ font-size:10px;line-height:1.35;color:var(--secondary)
+}
 
 /* One compact + menu: emoji selection replaces its contents in place,
    never spawning a second ribbon over the conversation or composer. */
@@ -458,7 +489,267 @@ html body #svcpWorkChatScreen .svcp-task-message-label{
 #svcpWorkChatScreen #svcpCameraTray #svcpComposerEmojiStrip > .svcp-composer-emoji-back:active{
  background:color-mix(in srgb,var(--card2) 45%,transparent);
 }
+/* SEYVEO Input: shared quiet-glass shell with its original work-chat actions. */
+#svcpWorkChatScreen #svcpChatForm{
+ display:grid!important;grid-template-columns:44px 44px 44px 44px minmax(0,1fr) auto 44px!important;grid-template-rows:minmax(44px,auto) 44px!important;
+ column-gap:7px!important;row-gap:2px!important;align-items:center!important;min-height:100px!important;
+ width:min(430px,calc(100% - 16px))!important;max-width:100%!important;
+ padding:4px 10px 4px!important;
+ margin:0 auto!important;position:absolute!important;inset:auto 0 0 0!important;
+ z-index:5!important;transform:none!important;
+ border:1px solid var(--svcp-dock-edge)!important;
+ border-radius:30px!important;
+ background:var(--svcp-dock-glass)!important;
+ -webkit-backdrop-filter:blur(24px) saturate(112%)!important;
+ backdrop-filter:blur(24px) saturate(112%)!important;
+ box-shadow:0 8px 24px rgba(12,25,30,.09),inset 0 1px 0 var(--svcp-dock-topline)!important
+}
+#svcpWorkChatScreen:focus-within #svcpChatForm{padding-bottom:0!important}
+/* When an attachment/reply tray opens, keep it in ordinary layout instead of overlapping controls. */
+#svcpWorkChatScreen .svcp-chat:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])) #svcpChatForm{
+ position:relative!important;inset:auto!important;flex:0 0 auto!important
+}
+#svcpWorkChatScreen .svcp-chat:has(#svcpVoiceCapture:not([hidden])) #svcpMessages{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}
 
+/* A native installed app, unlike Safari, needs its own home-indicator inset. */
+@media(display-mode:standalone){
+ #svcpWorkChatScreen #svcpChatForm{padding-bottom:calc(5px + env(safe-area-inset-bottom,0px))!important}
+}
+#svcpWorkChatScreen #svcpChatForm #svcpAttachFile{
+ grid-column:1!important;grid-row:2!important;display:grid!important;place-items:center!important;
+ height:44px!important;width:44px!important;min-width:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;background:var(--svcp-dock-action)!important;border:0!important;border-radius:50%!important;
+ -webkit-backdrop-filter:blur(18px) saturate(105%)!important;
+ backdrop-filter:blur(18px) saturate(105%)!important;box-shadow:none!important;color:var(--text)!important
+}
+/* Essential writing actions are inside the SAME tall composer, never in the text row. */
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
+ grid-row:2!important;display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;
+ background:var(--svcp-dock-action)!important;box-shadow:none!important;
+ color:var(--text)!important;cursor:pointer!important;
+ -webkit-backdrop-filter:blur(18px) saturate(105%)!important;
+ backdrop-filter:blur(18px) saturate(105%)!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{grid-column:3!important}
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{grid-column:4!important}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle) svg{
+ width:21px!important;height:21px!important;display:block!important;
+}
+/* Sayvi Core v2 — drawn for a true 44px button, not scaled down 3D art.
+   Two broad silver ribbons form an asymmetric S around a luminous pearl.
+   Only the pearl breathes: the logo itself never rotates or bounces. */
+#svcpWorkChatScreen{
+ --sv-sayvi-upper-from:#71868d;
+ --sv-sayvi-upper-mid:#c2d0d2;
+ --sv-sayvi-upper-to:#f0f6f5;
+ --sv-sayvi-lower-from:#b7c8c9;
+ --sv-sayvi-lower-mid:#718b8b;
+ --sv-sayvi-lower-to:#51666c;
+ --sv-sayvi-pearl-light:#f9fffc;
+ --sv-sayvi-pearl-mid:#bbdacf;
+ --sv-sayvi-pearl-deep:#587d76;
+ --sv-sayvi-awake-color:#59b58a;
+ --sv-sayvi-halo:rgba(87,171,134,.23);
+ --sv-sayvi-glint:rgba(255,255,255,.68);
+}
+:root[data-theme="light"] #svcpWorkChatScreen{
+ --sv-sayvi-upper-from:#465963;
+ --sv-sayvi-upper-mid:#778e96;
+ --sv-sayvi-upper-to:#d3dfe1;
+ --sv-sayvi-lower-from:#507968;
+ --sv-sayvi-lower-mid:#91a7a8;
+ --sv-sayvi-lower-to:#40565f;
+ --sv-sayvi-pearl-light:#f7fffc;
+ --sv-sayvi-pearl-mid:#bad8cd;
+ --sv-sayvi-pearl-deep:#447d6e;
+ --sv-sayvi-awake-color:#51ae85;
+ --sv-sayvi-halo:rgba(77,156,116,.23);
+ --sv-sayvi-glint:rgba(255,255,255,.55);
+}
+#svcpWorkChatScreen #svcpPolishMessage svg.sv-sayvi-core-mark{
+ display:block!important;width:31px!important;height:31px!important;
+ flex:0 0 31px!important;max-width:none!important;
+ overflow:visible;fill:none!important;stroke:none!important;
+ filter:drop-shadow(0 1px 1px rgba(18,39,40,.15));
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-upper{
+ fill:url(#svcpSayviCoreUpperGradient)!important;stroke:none!important;
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-lower{
+ fill:url(#svcpSayviCoreLowerGradient)!important;stroke:none!important;
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-upper-from{stop-color:var(--sv-sayvi-upper-from)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-upper-mid{stop-color:var(--sv-sayvi-upper-mid)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-upper-to{stop-color:var(--sv-sayvi-upper-to)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-lower-from{stop-color:var(--sv-sayvi-lower-from)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-lower-mid{stop-color:var(--sv-sayvi-lower-mid)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-lower-to{stop-color:var(--sv-sayvi-lower-to)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-pearl-light{stop-color:var(--sv-sayvi-pearl-light)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-pearl-mid{stop-color:var(--sv-sayvi-pearl-mid)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-pearl-deep{stop-color:var(--sv-sayvi-pearl-deep)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-glint{
+ fill:none!important;stroke:var(--sv-sayvi-glint)!important;
+ stroke-width:.7!important;stroke-linecap:round;opacity:.65;
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-halo{
+ fill:var(--sv-sayvi-halo)!important;stroke:none!important;opacity:.12;
+ transform-box:fill-box;transform-origin:center;
+ animation:sv-sayvi-core-halo 5.6s ease-in-out infinite;
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-seed{
+ fill:url(#svcpSayviCorePearlGradient)!important;stroke:none!important;
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-awake{
+ fill:var(--sv-sayvi-awake-color)!important;stroke:none!important;
+ opacity:0;animation:sv-sayvi-core-breathe 5.6s ease-in-out infinite;
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-shine{
+ fill:rgba(255,255,255,.68)!important;stroke:none!important;opacity:.8;
+}
+@keyframes sv-sayvi-core-breathe{
+ 0%,15%,100%{opacity:0}
+ 48%,56%{opacity:.30}
+}
+@keyframes sv-sayvi-core-halo{
+ 0%,12%,100%{opacity:.12;transform:scale(.91)}
+ 48%,56%{opacity:.56;transform:scale(1.18)}
+}
+@media(prefers-reduced-motion:reduce){
+ #svcpWorkChatScreen #svcpPolishMessage :is(.sv-sayvi-core-halo,.sv-sayvi-core-awake){
+  animation:none!important
+ }
+ #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-awake{opacity:0!important}
+ #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-halo{opacity:.12!important;transform:none!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-halo{opacity:0!important;animation:none!important}
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle svg{
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle) span{display:none!important}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle):active{
+ background:var(--svcp-smoke-pressed)!important
+}
+#svcpWorkChatScreen #svcpAttachFile svg{width:var(--sv-input-icon-size,20px);height:var(--sv-input-icon-size,20px);stroke-width:var(--sv-input-icon-stroke,1.35)}
+#svcpWorkChatScreen #svcpChatForm #svcpCameraToggle{
+ grid-column:2!important;grid-row:2!important;display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;
+ background:var(--svcp-dock-action)!important;box-shadow:none!important;color:var(--text)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(105%)!important;
+ backdrop-filter:blur(18px) saturate(105%)!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpCameraToggle svg{
+ display:block!important;width:21px!important;height:21px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.5!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#svcpWorkChatScreen .svcp-chat-compose-field{
+ display:contents!important
+}
+#svcpWorkChatScreen .svcp-chat-compose-field:focus-within{border:0!important;box-shadow:none!important;}
+/* These tools live in the existing attachment ribbon, leaving the input text full width. */
+#svcpWorkChatScreen #svcpCameraTray > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
+ display:inline-flex!important;flex:0 0 auto!important;
+ align-items:center!important;justify-content:center!important;
+ gap:5px!important;min-width:0!important;width:100%!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:7px 10px!important;
+ border:0!important;border-radius:13px!important;
+ background:transparent!important;box-shadow:none!important;
+ font:inherit!important;font-size:12px!important;line-height:1.2!important;
+ color:var(--text)!important;
+}
+#svcpWorkChatScreen #svcpCameraTray #svcpPolishMessage svg{
+ display:block;width:19px;height:19px;flex:0 0 19px;fill:currentColor;
+}
+#svcpWorkChatScreen #svcpCameraTray #svcpComposerEmojiToggle svg{
+ display:block;width:19px;height:19px;flex:0 0 19px;
+ fill:none;stroke:currentColor;stroke-width:var(--sv-input-icon-stroke,1.35);
+}
+#svcpWorkChatScreen #svcpCameraTray > :is(#svcpPolishMessage,#svcpComposerEmojiToggle) > span{
+ font-size:12px!important;color:var(--text)!important;
+}
+#svcpWorkChatScreen #svcpChatInput{
+ grid-column:1/-1!important;grid-row:1!important;min-width:0!important;width:100%!important;
+ height:44px!important;min-height:44px!important;max-height:144px!important;
+ transition:height .18s ease-out!important;
+ padding:10px 15px!important;margin:0!important;box-sizing:border-box!important;
+ background:var(--svcp-dock-input)!important;border:0!important;border-radius:22px!important;
+ outline:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:blur(18px) saturate(105%)!important;
+ backdrop-filter:blur(18px) saturate(105%)!important;
+ color:var(--text)!important;font-size:var(--sv-input-type,16px)!important;
+ line-height:var(--sv-input-leading,24px)!important;
+ resize:none!important;overflow-y:auto!important;overscroll-behavior:contain!important;
+ scrollbar-width:none!important
+}
+#svcpWorkChatScreen #svcpChatInput::-webkit-scrollbar{display:none}
+#svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord,
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
+ grid-column:7!important;grid-row:2!important;align-self:center!important;justify-self:center!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;box-shadow:none!important
+}
+#svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord{
+ order:2!important;flex:0 0 44px!important;display:grid!important;place-items:center!important;background:transparent!important;color:var(--text)!important
+}
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
+ order:2!important;flex:0 0 44px!important;display:none!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;height:44px!important;
+ border-radius:50%!important;
+ background:var(--svcp-dock-action)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(105%)!important;
+ backdrop-filter:blur(18px) saturate(105%)!important;
+ color:var(--text)!important
+}
+#svcpWorkChatScreen #svcpChatForm[data-has-content="true"] #svcpVoiceRecord{display:none!important}
+#svcpWorkChatScreen #svcpChatForm[data-has-content="true"] .svcp-chat-send{display:grid!important}
+#svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send) svg{width:var(--sv-input-icon-size,20px);height:var(--sv-input-icon-size,20px);fill:none;stroke:currentColor;stroke-width:var(--sv-input-icon-stroke,1.35)}
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-send span{display:none!important}
+/* The manager's assignment action is contextual, not a fourth input column.
+   It floats just above the real composer and never steals typing width.
+   The existing button and its handler remain the only assignment action. */
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign{
+ grid-template-columns:44px 44px 44px 44px minmax(0,1fr) auto 44px!important;
+ grid-template-rows:minmax(44px,auto) 44px!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
+ position:static!important;z-index:auto!important;
+ top:auto!important;right:auto!important;left:auto!important;bottom:auto!important;
+ grid-column:6!important;grid-row:2!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:4px!important;width:auto!important;min-width:76px!important;max-width:98px!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:7px 13px!important;
+ border:0!important;
+ border-radius:14px!important;
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--text)!important;font:inherit!important;
+ font-size:12px!important;font-weight:575!important;line-height:1.2!important;
+ box-shadow:none!important;
+ white-space:nowrap!important;touch-action:manipulation!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask svg{
+ display:block!important;flex:0 0 19px!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask span{
+ display:inline!important;font-size:12px!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign .svcp-chat-send{
+ grid-column:7!important;grid-row:2!important;
+ width:44px!important;min-width:44px!important;border-radius:50%!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:focus-visible,
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-send:focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
 /* Voice note uses the composer strip, not an old modal/audio form. */
 #svcpWorkChatScreen #svcpVoiceCapture:not([hidden]){
  display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:56px;
@@ -470,7 +761,7 @@ html body #svcpWorkChatScreen .svcp-task-message-label{
  backdrop-filter:blur(16px) saturate(105%);
  max-height:82px!important;overflow:hidden!important
 }
-#svcpWorkChatScreen #svcpVoiceCapture:not([hidden]) + #svcpChatFormReset{display:none!important}
+#svcpWorkChatScreen #svcpVoiceCapture:not([hidden]) + #svcpChatForm{display:none!important}
 #svcpWorkChatScreen .svcp-voice-live{
  display:flex;align-items:center;gap:7px;min-width:0;height:52px;grid-column:1;grid-row:1
 }
@@ -575,8 +866,368 @@ html body #svcpWorkChatScreen .svcp-task-message-label{
 }
 #svcpWorkChatScreen :is(#svcpOpenTasks,#svcpPreviewOnHome){display:none!important}
 
+/* SEYVEO Messenger 2 · one canonical visual system, no pressed surfaces.
+   No legacy multi-thousand-line overrides are loaded on this page. */
+#svcpWorkChatScreen[hidden],#svcpWorkChatScreen [hidden]{display:none!important}
+#svcpWorkChatScreen:not([data-view="room"]) #svcpConversation{display:none!important}
+#svcpWorkChatScreen[data-view="room"] #svcpChatDirectory{display:none!important}
+#svcpWorkChatScreen{
+ --svcp-room-self:#38383a;
+ --svcp-room-other:#e9ebee;
+ --svcp-room-bubble-text:#24262b;
+ background:var(--sv-life-viewport-gradient,var(--bg))!important;
+}
+html[data-theme="dark"] #svcpWorkChatScreen{
+ --svcp-room-self:#38383a;--svcp-room-other:#2f3337;
+ --svcp-room-bubble-text:#f6f6f7;
+}
+#svcpWorkChatScreen .svcp-work-chat-header{
+ height:calc(54px + env(safe-area-inset-top,0px))!important;
+ min-height:calc(54px + env(safe-area-inset-top,0px))!important;
+ padding:env(safe-area-inset-top,0px) max(12px,env(safe-area-inset-right,0px))
+  0 max(12px,env(safe-area-inset-left,0px))!important;
+ border:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] > .svcp-work-chat-header{display:none!important}
+#svcpWorkChatScreen #svcpChatDirectory{
+ display:flex!important;min-height:0!important;flex-direction:column!important;
+ background:transparent!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-directory-head{display:none!important}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters{
+ order:0!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-self:center!important;flex:0 0 38px!important;
+ width:calc(100% - 24px)!important;max-width:404px!important;height:38px!important;
+ margin:4px auto 5px!important;padding:2px 3px!important;gap:0!important;
+ overflow:visible!important;border:1px solid rgba(170,186,199,.26)!important;
+ border-radius:999px!important;background:rgba(238,242,246,.52)!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button{
+ display:grid!important;place-items:center!important;min-width:0!important;
+ height:32px!important;min-height:32px!important;width:100%!important;
+ padding:0 2px!important;margin:0!important;border:0!important;
+ border-radius:999px!important;background:transparent!important;color:#747b86!important;
+ font:530 12.5px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button[aria-pressed="true"]{
+ background:rgba(255,255,255,.88)!important;color:#1a2028!important;font-weight:640!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory .svcp-search-field{
+ order:1!important;flex:0 0 44px!important;display:flex!important;align-items:center!important;
+ margin:7px 13px 8px!important;padding:0 12px!important;
+ border-radius:16px!important;background:rgba(248,250,253,.56)!important;
+ border:1px solid rgba(170,186,199,.26)!important;box-shadow:none!important;
+}
+#svcpWorkChatScreen #svcpChatDirectory #svcpConversationList{
+ order:2!important;flex:1 1 auto!important;min-height:0!important;
+ overflow-y:auto!important;padding:0 12px max(16px,env(safe-area-inset-bottom,0px))!important;
+}
+#svcpWorkChatScreen #svcpConversation{
+ display:flex!important;flex-direction:column!important;flex:1 1 auto!important;
+ min-height:0!important;overflow:hidden!important;
+}
+#svcpWorkChatScreen #svcpChatForm{
+ box-shadow:0 5px 22px rgba(24,34,45,.08)!important;
+ transform:none!important;
+}
+#svcpWorkChatScreen #svcpMessages{
+ flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;
+}
+#svcpWorkChatScreen :is(.svcp-directory-item,.svcp-bubble,.svcp-message-menu,.svcp-search-result){
+ transform:none!important;
+}
+#svcpWorkChatScreen :is(button,[role="button"]){
+ -webkit-tap-highlight-color:transparent!important;
+ animation:none!important;transition:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ filter:none!important;
+}
+#svcpWorkChatScreen :is(button,[role="button"]):is(:active,:hover,:focus){
+ transform:none!important;translate:none!important;scale:1!important;
+ filter:none!important;
+}
+#svcpWorkChatScreen :is(button,[role="button"])::before,
+#svcpWorkChatScreen :is(button,[role="button"])::after{
+ transition:none!important;animation:none!important;transform:none!important;
+}
+#svcpWorkChatScreen .svcp-directory-item:is(:active,:hover){
+ background:transparent!important;box-shadow:none!important;
+}
+#svcpWorkChatScreen .svcp-chat-filters > button:active{
+ box-shadow:none!important;transform:none!important;
+}
+#svcpWorkChatScreen :is(button,[role="button"]):focus-visible{
+ outline:2px solid #0a84ff!important;outline-offset:2px!important;
+}
+html[data-theme="dark"] #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters{
+ background:rgba(223,234,245,.085)!important;border-color:rgba(214,230,241,.15)!important;
+}
+html[data-theme="dark"] #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button{
+ color:#bdc4cd!important;background:transparent!important;
+}
+html[data-theme="dark"] #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button[aria-pressed="true"]{
+ color:#f8fafc!important;background:rgba(213,227,240,.16)!important;
+}
+@media(max-width:355px){
+ #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button{font-size:11.5px!important}
+}
 
-/* Employee information/search sheet, kept with its existing handlers. */
+/* Canonical room navigation and paint exclusion.
+   Explicit IDs outrank the layout display:flex rules above: one pane only. */
+html body #svcpWorkChatScreen #svcpChatDirectory[hidden],
+html body #svcpWorkChatScreen #svcpConversation[hidden],
+html body #svcpWorkChatScreen[hidden]{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatDirectory,
+html body #svcpWorkChatScreen:not([data-view="room"]) #svcpConversation{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > #svcpConversationStandaloneBack{
+ box-sizing:border-box!important;position:absolute!important;
+ z-index:60!important;
+ top:calc(22px + env(safe-area-inset-top,0px))!important;
+ left:max(14px,env(safe-area-inset-left,0px))!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;border-radius:50%!important;
+ border:0!important;color:#fff!important;background:rgba(10,76,163,.78)!important;
+ box-shadow:0 3px 11px rgba(5,53,111,.14)!important;
+ -webkit-backdrop-filter:blur(10px) saturate(108%)!important;
+ backdrop-filter:blur(10px) saturate(108%)!important;
+ opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > #svcpConversationStandaloneBack svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > #svcpConversationStandaloneBack:is(:active,:hover,:focus){
+ transform:none!important;translate:none!important;scale:1!important;
+ filter:none!important;transition:none!important;
+}
+
+/* Room Back matches inbox Back · 2026-11-23.
+   A single coordinate system for both screens: prevents the 17px vertical
+   jump when opening a room. Both controls stay in their own 44px tap slots. */
+html body #svcpWorkChatScreen{
+ --svcp-shared-back-top:calc(5px + env(safe-area-inset-top,0px));
+ --svcp-shared-back-left:max(12px,env(safe-area-inset-left,0px));
+}
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header{
+ position:relative!important;
+}
+html:root body #svcpWorkChatScreen[data-view="inbox"]
+ > .svcp-work-chat-header > #svcpWorkChatBack{
+ position:absolute!important;
+ top:var(--svcp-shared-back-top)!important;
+ left:var(--svcp-shared-back-left)!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;
+ display:grid!important;place-items:center!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack:is(:active,:hover,:focus),
+html:root body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:not([data-chat-wallpaper]) > #svcpConversationStandaloneBack{
+ position:absolute!important;
+ top:calc(27px + env(safe-area-inset-top,0px))!important;
+ left:max(20px,env(safe-area-inset-left,0px))!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+ display:grid!important;place-items:center!important;
+ border-radius:50%!important;
+ background:#fff!important;
+ background-image:none!important;
+ border:.75px solid rgba(255,255,255,.88)!important;
+ color:#161b20!important;
+ box-shadow:0 7px 19px rgba(42,52,72,.13)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ filter:none!important;transition:none!important;animation:none!important;
+ opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html:root body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation > #svcpConversationStandaloneBack svg{
+ width:19px!important;height:19px!important;
+ fill:none!important;stroke:#161b20!important;stroke-width:1.55!important;
+ transform:none!important;transition:none!important;
+}
+/* Align real call controls with Back in staff conversations, never shift
+   the header avatar or the existing call handlers. */
+html:root body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation > .svcp-call-actions{
+ top:var(--svcp-shared-back-top)!important;
+ right:max(12px,env(safe-area-inset-right,0px))!important;
+}
+html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation > #svcpConversationStandaloneBack,
+html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack:is(:active,:hover,:focus){
+ background:rgba(48,55,64,.72)!important;
+ color:#f6f7f8!important;
+ border-color:rgba(215,225,236,.18)!important;
+ box-shadow:0 6px 17px rgba(0,0,0,.17)!important;
+}
+
+/* Messenger filter top edge is driven by the ACTUAL shared Work tabs rectangle.
+   The fullscreen Messenger shares no ancestors with Work; the measured screen
+   position is the single geometry authority. Room headers remain independent. */
+html body #svcpWorkChatScreen[data-view="inbox"]{
+ --svcp-inbox-work-inset:var(--sv-apple-top-inset,calc(8px + env(safe-area-inset-top,0px)));
+ /* Default follows Work's 74px real header + 4px tab margin.
+    The controller replaces this with #svWorkTabs.getBoundingClientRect()
+    BEFORE the inbox is shown, avoiding all Safari navigation jumps. */
+ --svcp-inbox-tabs-top:calc(var(--svcp-inbox-work-inset) + 78px);
+}
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header{
+ box-sizing:border-box!important;
+ height:calc(var(--svcp-inbox-tabs-top) - 4px)!important;
+ min-height:calc(var(--svcp-inbox-tabs-top) - 4px)!important;
+ max-height:calc(var(--svcp-inbox-tabs-top) - 4px)!important;
+ padding:var(--svcp-inbox-work-inset) max(12px,env(safe-area-inset-right,0px))
+  0 max(12px,env(safe-area-inset-left,0px))!important;
+ margin:0!important;
+}
+html:root body #svcpWorkChatScreen[data-view="inbox"]
+ > .svcp-work-chat-header > #svcpWorkChatBack{
+ top:calc(5px + var(--svcp-inbox-work-inset))!important;
+}
+html body #svcpWorkChatScreen[data-view="inbox"]
+ #svcpChatDirectory > #svcpChatFilters{
+ box-sizing:border-box!important;
+ width:var(--svcp-inbox-tabs-width,calc(100% - 24px))!important;
+ max-width:404px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ margin:4px auto 5px!important;padding:2px 3px!important;
+ border-radius:999px!important;transform:none!important;transition:none!important;
+}
+
+/* One common Back material for Inbox and every Room wallpaper.
+   The same near-white opaque pearl face must not inherit the blue backdrop.
+   Keep all geometry and handlers unchanged. No depressed touch effect. */
+html:root body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > #svcpWorkChatBack,
+html:root body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > #svcpWorkChatBack:is(:active,:hover,:focus),
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack:is(:active,:hover,:focus){
+ background:rgba(255,255,255,.96)!important;
+ background-image:none!important;
+ color:#161b20!important;
+ border:.75px solid rgba(255,255,255,.88)!important;
+ box-shadow:0 7px 19px rgba(42,52,72,.13)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ animation:none!important;transition:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack svg{
+ stroke:#161b20!important;fill:none!important;
+}
+
+/* Messenger Back · one real button, one coordinate system.
+   #svcpWorkChatBack now lives directly under the fixed screen for BOTH
+   inbox and room. No header-relative / scroll-relative coordinate math.
+   The original room Back stays hidden only as a click-handler delegate. */
+html:root body #svcpWorkChatScreen{
+ --svcp-nav-back-y:calc(12px + env(safe-area-inset-top,0px));
+ --svcp-nav-back-x:max(12px,env(safe-area-inset-left,0px));
+}
+html:root body #svcpWorkChatScreen > #svcpWorkChatBack,
+html:root body #svcpWorkChatScreen > #svcpWorkChatBack:is(:hover,:focus,:active){
+ appearance:none!important;-webkit-appearance:none!important;
+ box-sizing:border-box!important;
+ position:absolute!important;
+ top:var(--svcp-nav-back-y)!important;
+ left:var(--svcp-nav-back-x)!important;
+ right:auto!important;bottom:auto!important;
+ inset:var(--svcp-nav-back-y) auto auto var(--svcp-nav-back-x)!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ padding:0!important;margin:0!important;
+ z-index:110!important;
+ border-radius:50%!important;
+ background:rgba(255,255,255,.96)!important;background-image:none!important;
+ border:.75px solid rgba(255,255,255,.88)!important;
+ color:#161b20!important;
+ box-shadow:0 7px 19px rgba(42,52,72,.13)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ filter:none!important;transition:none!important;animation:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html:root body #svcpWorkChatScreen > #svcpWorkChatBack svg{
+ display:block!important;
+ width:19px!important;height:19px!important;
+ fill:none!important;stroke:#161b20!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ transform:none!important;filter:none!important;transition:none!important;
+}
+html:root body #svcpWorkChatScreen > #svcpConversationStandaloneBack,
+html:root body #svcpWorkChatScreen[data-view="room"] > #svcpConversationStandaloneBack,
+html:root body #svcpWorkChatScreen[data-view="inbox"] > #svcpConversationStandaloneBack{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html:root[data-theme="dark"] body #svcpWorkChatScreen > #svcpWorkChatBack,
+html:root[data-theme="dark"] body #svcpWorkChatScreen > #svcpWorkChatBack:is(:hover,:focus,:active){
+ background:rgba(48,55,64,.88)!important;
+ border-color:rgba(215,225,236,.18)!important;
+ color:#f6f7f8!important;
+ box-shadow:0 6px 17px rgba(0,0,0,.17)!important;
+}
+html:root[data-theme="dark"] body #svcpWorkChatScreen > #svcpWorkChatBack svg{
+ stroke:#f6f7f8!important;
+}
+
+/* SKY CHAT · one shared gentle depth system for every existing/future room.
+   Selects the wallpaper, not a person, role, group, or room ID. The floating
+   Back is outside #svcpConversation so give it the same shared tokens.
+   Do not touch geometry, animation, handlers, white or dark themes. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]){
+ --sv-chat-blue-surface:rgba(11,84,174,.68);
+ --sv-chat-blue-edge:1px solid rgba(3,70,151,.32);
+ --sv-chat-blue-circle-shadow:0 3px 10px rgba(5,53,111,.11);
+ --sv-chat-blue-dock-shadow:0 5px 14px rgba(6,62,122,.10);
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack:is(:active,:hover,:focus){
+ background:var(--sv-chat-blue-surface)!important;
+ background-image:none!important;
+ border:var(--sv-chat-blue-edge)!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow)!important;
+ color:#fff!important;
+ -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
+ backdrop-filter:blur(13px) saturate(110%)!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack svg{
+ stroke:#fff!important;fill:none!important;
+}
+/* The blue composer is elevated by ::before. Prevent a second grey shadow
+   on the form itself. Message bubbles stay clean/flat. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] .svcp-bubble{
+ box-shadow:none!important;
+}
+
 /* RESTORED CONTACT SHEET ONLY · precise scoped rules, not the legacy CSS. */
 /* v251 · SEYVEO contact info sheet.
    One clean overlay instead of an in-flow gray technical info row.
@@ -1308,6 +1959,3 @@ html body #svcpWorkChatScreen[data-view="room"]
   border-bottom:1px solid rgba(255,255,255,.94)!important;
  }
 }
-
-
-/* End of canonical messenger. No document/body wallpaper repaint. */
