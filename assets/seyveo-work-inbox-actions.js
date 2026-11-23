@@ -7,9 +7,13 @@ const screen=$('svcpWorkChatScreen'),list=$('svcpConversationList'),header=scree
 const history=$('svcpWorkHistoryTop');
 if(!screen||!list||!header||!history)return;
 const KEY='seyveo-workchat-inbox-layout-v1';
-const defaults={compact:false,previews:true,showUnread:true,rooms:{}};
+const defaults={compact:true,previews:true,showUnread:true,rooms:{}};
 let prefs;
 try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');prefs={...defaults,...(raw&&typeof raw==='object'?raw:{}),rooms:(raw&&typeof raw.rooms==='object'&&!Array.isArray(raw.rooms)?raw.rooms:{})}}catch{prefs={...defaults}}
+// iMessage-like single-line preview and compact rows are the fixed SEYVEO default.
+// Override stale persisted switches left by older versions of the app.
+prefs.compact=true;
+prefs.previews=true;
 let sheetType='',activeRoom='',holdTimer=null,swipeOpen=null,processing=false;
 const sheetStack=[];
 const icons={
@@ -559,9 +563,6 @@ function showSettings(){
  body.append(makeChatWallpapers());
  sectionHeading('Сообщения');
  menuLink('Уведомления','Непрочитанные и тихие чаты','bell',()=>openSubSheet('notifications','settings'));
- sectionHeading('Список чатов');
- settingToggle('compact','Компактные чаты','Больше чатов на экране');
- settingToggle('previews','Предпросмотр','Текст последнего сообщения');
  // Quiet discovery for the owner only; never mix personal content with work data.
  if(!employee()){
   const invite=node('button','sv-inbox-one-promo');
@@ -777,8 +778,8 @@ function attachRow(row){
 function decorateRows(){
  if(processing)return;processing=true;
  try{
-  screen.classList.toggle('sv-inbox-compact',!!prefs.compact);
-  screen.classList.toggle('sv-inbox-no-preview',!prefs.previews);
+  screen.classList.add('sv-inbox-compact');
+  screen.classList.remove('sv-inbox-no-preview');
   const rows=[...list.querySelectorAll(':scope > .svcp-directory-item')];
   for(const row of rows)attachRow(row);
   for(const wrap of list.querySelectorAll(':scope > .sv-inbox-row-shell')){
