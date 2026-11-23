@@ -7,7 +7,7 @@ const screen=$('svcpWorkChatScreen'),list=$('svcpConversationList'),header=scree
 const history=$('svcpWorkHistoryTop');
 if(!screen||!list||!header||!history)return;
 const KEY='seyveo-workchat-inbox-layout-v1';
-const defaults={compact:true,previews:true,showUnread:true,rooms:{}};
+const defaults={compact:true,previews:true,showUnread:true,soundEnabled:true,rooms:{}};
 let prefs;
 try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');prefs={...defaults,...(raw&&typeof raw==='object'?raw:{}),rooms:(raw&&typeof raw.rooms==='object'&&!Array.isArray(raw.rooms)?raw.rooms:{})}}catch{prefs={...defaults}}
 // iMessage-like single-line preview and compact rows are the fixed SEYVEO default.
@@ -470,7 +470,7 @@ overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
 function closeSheet(){panel.querySelector(':scope > .sv-avatar-floating-actions')?.remove();overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
-function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники','team-structure':'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
+function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники','team-structure':'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления','muted-chats':'Чаты без звука',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
@@ -485,7 +485,7 @@ function openSheet(type,id='',nested=false){
  }
  panel.querySelector(':scope > .sv-avatar-floating-actions')?.remove();
  overlay.hidden=false;
- overlay.classList.toggle('sv-inbox-sheet-notifications',type==='notifications');
+ overlay.classList.toggle('sv-inbox-sheet-notifications',type==='notifications'||type==='muted-chats');
  overlay.dataset.svInboxScreen=type;
  if(type==='new')showContacts(type);
  else if(type==='staff')showStaff();
@@ -498,6 +498,7 @@ function openSheet(type,id='',nested=false){
  else if(type==='one')showOneInfo();
  else if(type==='room-avatar')showRoomActions(id);
  else if(type==='notifications')showNotifications();
+ else if(type==='muted-chats')showMutedChats();
  else if(type==='archives')showArchives();
  else if(type==='room')showRoomActions(id);
  back.focus({preventScroll:true});
@@ -725,46 +726,91 @@ function showOneInfo(){
  // The shared header back button already returns to Settings.
  body.append(info);
 }
+function notificationSection(caption){
+ const heading=node('h3','sv-inbox-notification-caption',caption);
+ const group=node('div','sv-inbox-notification-group');
+ body.append(heading,group);return group;
+}
+function notificationSwitch(checked,label,handle){
+ const control=node('input','sv-inbox-ios-switch');
+ control.type='checkbox';control.checked=!!checked;
+ control.setAttribute('aria-label',label);control.setAttribute('role','switch');
+ control.addEventListener('change',()=>handle(control.checked));
+ return control;
+}
+function notificationSetting(label,description,checked,handler){
+ const row=node('label','sv-inbox-ios-row sv-inbox-ios-unread');
+ const copy=node('span','sv-inbox-ios-copy');
+ copy.append(node('strong',null,label),node('small',null,description));
+ row.append(copy,notificationSwitch(checked,label,handler));
+ return row;
+}
 function showNotifications(){
- /* Compact iOS-like grouped settings. Labels and controls are connected;
-    only existing local chat preferences are persisted. */
- function section(caption){
-  const heading=node('h3','sv-inbox-notification-caption',caption);
-  const group=node('div','sv-inbox-notification-group');
-  body.append(heading,group);return group;
+ const general=notificationSection('Сообщения');
+ general.append(notificationSetting(
+  'Выделять непрочитанные','Подсветка чатов с новыми сообщениями',
+  prefs.showUnread!==false,checked=>{
+   prefs.showUnread=checked;savePrefs();decorateRows();
+  }));
+ general.append(notificationSetting(
+  'Звук сообщений','Общее правило для всех чатов',
+  prefs.soundEnabled!==false,checked=>{
+   prefs.soundEnabled=checked;savePrefs();
+   window.dispatchEvent(new CustomEvent('seyveo:chat-sound-setting-changed',
+    {detail:{enabled:checked}}));
+  }));
+ const exclusions=notificationSection('Исключения');
+ const mutedCount=()=>allRooms().filter(r=>roomState(r.id).muted===true).length;
+ const row=button('Чаты без звука','bell',
+  ()=>openSubSheet('muted-chats','notifications'),'sv-inbox-ios-row sv-inbox-muted-link');
+ const icon=row.querySelector(':scope > svg');
+ icon?.setAttribute('aria-hidden','true');
+ const text=row.querySelector(':scope > span');
+ const counter=node('small','sv-inbox-muted-count');
+ counter.textContent=mutedCount()+' '+(mutedCount()===1?'чат':'чатов');
+ text?.append(counter);
+ const chevron=node('span','sv-inbox-muted-chevron');
+ chevron.innerHTML=svg('chevron');chevron.setAttribute('aria-hidden','true');
+ row.append(chevron);exclusions.append(row);
+}
+function showMutedChats(){
+ const lookup=node('div','sv-inbox-muted-search-wrap');
+ const lens=node('span','sv-inbox-muted-search-icon');
+ lens.innerHTML=svg('search');lens.setAttribute('aria-hidden','true');
+ const search=node('input','sv-inbox-muted-search');
+ search.type='search';search.placeholder='Поиск по чатам';search.autocomplete='off';
+ search.setAttribute('aria-label','Поиск среди чатов без звука');
+ lookup.append(lens,search);body.append(lookup);
+ const group=notificationSection('Отключён звук');
+ const summary=node('p','sv-inbox-muted-summary');
+ body.append(summary);
+ function repaint(){
+  const query=search.value.trim().toLocaleLowerCase('ru-RU');
+  const muted=allRooms().filter(r=>roomState(r.id).muted===true);
+  const visible=muted.filter(r=>String(r.label||'').toLocaleLowerCase('ru-RU').includes(query));
+  group.replaceChildren();
+  for(const r of visible){
+   const row=node('div','sv-inbox-ios-row sv-inbox-muted-person');
+   const avatar=node('span','sv-inbox-ios-avatar',(r.label||'?').slice(0,1));
+   avatar.setAttribute('aria-hidden','true');
+   const copy=node('span','sv-inbox-ios-copy');
+   copy.append(node('strong',null,r.label));
+   const enable=button('Включить звук',null,()=>{
+    updateRoom(r.id,'muted',false);repaint();
+   },'sv-inbox-muted-unmute');
+   enable.setAttribute('aria-label','Включить звук для '+r.label);
+   row.append(avatar,copy,enable);group.append(row);
+  }
+  if(!visible.length){
+   group.append(node('p','sv-inbox-ios-empty',
+    muted.length===0?'Все чаты со звуком': 'Ничего не найдено'));
+  }
+  const n=muted.length;
+  summary.textContent=n===0?'Чтобы отключить звук, откройте действия нужного чата.':
+   'Отключён звук: '+n+'. Управлять звуком можно также в действиях чата.';
  }
- function iosSwitch(checked,label,handle){
-  const control=node('input','sv-inbox-ios-switch');
-  control.type='checkbox';
-  control.checked=!!checked;
-  control.setAttribute('aria-label',label);
-  control.setAttribute('role','switch');
-  control.addEventListener('change',()=>handle(control.checked));
-  return control;
- }
- const display=section('В списке сообщений');
- const unread=node('label','sv-inbox-ios-row sv-inbox-ios-unread');
- const unreadCopy=node('span','sv-inbox-ios-copy');
- unreadCopy.append(node('strong',null,'Выделять непрочитанные'),node('small',null,'Подсветка чатов с новыми сообщениями'));
- unread.append(unreadCopy,iosSwitch(prefs.showUnread!==false,'Выделять непрочитанные',checked=>{
-  prefs.showUnread=checked;savePrefs();decorateRows();
- }));
- display.append(unread);
- const quiet=section('Отключить звук для чатов');
- const allowed=allRooms().filter(r=>r.kind==='personal'&&r.person!=='sayvi'&&(!employee()||r.id==='dm-elena'));
- for(const r of allowed){
-  const item=node('label','sv-inbox-ios-row sv-inbox-ios-person');
-  const avatar=node('span','sv-inbox-ios-avatar',r.label.slice(0,1));
-  avatar.setAttribute('aria-hidden','true');
-  // No contact-specific portrait overrides.
-  const copy=node('span','sv-inbox-ios-copy');
-  copy.append(node('strong',null,r.label));
-  const control=iosSwitch(roomState(r.id).muted,'Отключить звук для чата '+r.label,checked=>updateRoom(r.id,'muted',checked));
-  item.append(avatar,copy,control);quiet.append(item);
- }
- if(!allowed.length){
-  quiet.append(node('p','sv-inbox-ios-empty','Нет доступных личных чатов'));
- }
+ search.addEventListener('input',repaint);
+ repaint();
 }
 function showData(){
  sectionHeading('Разные функции');
