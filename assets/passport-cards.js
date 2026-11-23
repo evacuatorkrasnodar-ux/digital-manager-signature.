@@ -496,7 +496,13 @@ const OPTIONS=[
  ['grapes','Виноград','Фрукты','🍇'],
  ['strawberry','Клубника','Фрукты','🍓'],
  ['peach','Персик','Фрукты','🍑'],
- ['apple','Яблоко','Фрукты','🍎']
+ ['apple','Яблоко','Фрукты','🍎'],
+ ['3d-0','Космонавт','3D · Космос'],['3d-1','Супергерой','3D · Герои'],
+ ['3d-2','Путешественница','3D · Космос'],['3d-3','Робот','3D · Космос'],
+ ['3d-4','Лисёнок','3D · Мультики'],['3d-5','Девочка','3D · Мультики'],
+ ['3d-6','Виноград','3D · Фрукты'],['3d-7','Клубника','3D · Фрукты'],
+ ['3d-8','Персик','3D · Фрукты'],['3d-9','Яблоко','3D · Фрукты'],
+ ['3d-10','В очках','3D · Мультики'],['3d-11','Сердечки','3D · Мультики']
 ];
 const valid=new Set(OPTIONS.map(item=>item[0]));
 const renamed={onyx:'monogram',silver:'monogram',orbit:'monogram',prism:'monogram',line:'monogram',velvet:'monogram',silhouette:'monogram'};
@@ -526,6 +532,9 @@ function read(){
    const id=renamed[obj.id]||obj.id;
    if(valid.has(id))return {kind:'preset',id};
   }
+  if(obj?.kind==='emoji'&&typeof obj.emoji==='string'&&[...obj.emoji].length<=10){
+   return {kind:'emoji',emoji:obj.emoji};
+  }
   if(obj?.kind==='photo'&&typeof obj.data==='string'&&obj.data.length<320000
      &&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(obj.data))return obj;
  }catch{}
@@ -534,11 +543,21 @@ function read(){
 let choice=read();
 function paintAvatar(node,data){
  if(!node)return;
- node.className='seyveo-avatar seyveo-avatar--'+(data.kind==='photo'?'photo':data.id)
+ node.className='seyveo-avatar seyveo-avatar--'+(data.kind==='photo'?'photo':data.kind==='emoji'?'emoji':data.id)
    +(node.id==='seyveoOwnerAvatarPreview'?' seyveo-owner-avatar':'');
  node.replaceChildren();
  if(data.kind==='photo'){
   const img=document.createElement('img');img.alt='';img.src=data.data;node.append(img);
+ }else if(data.kind==='emoji'){
+  const glyph=document.createElement('span');
+  glyph.className='seyveo-avatar-glyph';glyph.textContent=data.emoji;
+  node.classList.add('seyveo-avatar--emoji');node.append(glyph);
+ }else if(/^3d-(?:[0-9]|1[01])$/.test(data.id||'')){
+  const index=Number(data.id.slice(3));
+  const art=document.createElement('span');
+  art.className='seyveo-avatar-3d';
+  art.style.backgroundPosition=((index%4)*100/3)+'% '+(Math.floor(index/4)*50)+'%';
+  node.append(art);
  }else if(data.id==='monogram'){
   const mark=document.createElement('span');mark.className='seyveo-avatar-initials';
   mark.textContent=getInitials();node.append(mark);
@@ -598,6 +617,10 @@ function openOwnerAvatar(){
 entry.addEventListener('click',openOwnerAvatar);
 $('seyveoOwnerAvatarOpen')?.addEventListener('click',openOwnerAvatar);
 $('seyveoOwnerAvatarFromBusiness')?.addEventListener('click',openOwnerAvatar);
+window.addEventListener('seyveo:avatar-changed',()=>{
+  choice=read();
+  paint();
+});
 $('seyveoAvatarPickPhoto')?.addEventListener('click',()=>file.click());
 $('seyveoAvatarClose')?.addEventListener('click',()=>picker.close());
 $('seyveoAvatarReset')?.addEventListener('click',()=>{
