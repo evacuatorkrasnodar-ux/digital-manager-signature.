@@ -1025,3 +1025,72 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > #svcpConvers
  transform:none!important;translate:none!important;scale:1!important;
  filter:none!important;transition:none!important;
 }
+
+/* Room Back matches inbox Back · 2026-11-23.
+   A single coordinate system for both screens: prevents the 17px vertical
+   jump when opening a room. Both controls stay in their own 44px tap slots. */
+html body #svcpWorkChatScreen{
+ --svcp-shared-back-top:calc(5px + env(safe-area-inset-top,0px));
+ --svcp-shared-back-left:max(12px,env(safe-area-inset-left,0px));
+}
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header{
+ position:relative!important;
+}
+html:root body #svcpWorkChatScreen[data-view="inbox"]
+ > .svcp-work-chat-header > #svcpWorkChatBack{
+ position:absolute!important;
+ top:var(--svcp-shared-back-top)!important;
+ left:var(--svcp-shared-back-left)!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;
+ display:grid!important;place-items:center!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+html:root body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation > #svcpConversationStandaloneBack,
+html:root body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack:is(:active,:hover,:focus){
+ position:absolute!important;
+ top:var(--svcp-shared-back-top)!important;
+ left:var(--svcp-shared-back-left)!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+ display:grid!important;place-items:center!important;
+ border-radius:50%!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.65))!important;
+ background-image:none!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ color:var(--sv-white-pearl-ink,#0b0b0d)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ filter:none!important;transition:none!important;animation:none!important;
+ opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html:root body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation > #svcpConversationStandaloneBack svg{
+ width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ transform:none!important;transition:none!important;
+}
+/* Align real call controls with Back in staff conversations, never shift
+   the header avatar or the existing call handlers. */
+html:root body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation > .svcp-call-actions{
+ top:var(--svcp-shared-back-top)!important;
+ right:max(12px,env(safe-area-inset-right,0px))!important;
+}
+html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation > #svcpConversationStandaloneBack,
+html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper] > #svcpConversationStandaloneBack:is(:active,:hover,:focus){
+ background:rgba(48,55,64,.72)!important;
+ color:#f6f7f8!important;
+ border-color:rgba(215,225,236,.18)!important;
+ box-shadow:0 6px 17px rgba(0,0,0,.17)!important;
+}
