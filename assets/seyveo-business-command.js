@@ -50,6 +50,9 @@ const ROOMS=[
  {id:'dm-elena',label:'Елена',kind:'personal',hint:'Кассир · личный рабочий чат',mark:'Е',person:'elena',section:'people',roleGroup:'Касса'},
  {id:'dm-anna',label:'Анна',kind:'personal',hint:'Старший продавец · личный рабочий чат',mark:'А',person:'anna',section:'people',roleGroup:'Торговый зал'},
  {id:'dm-mikhail',label:'Михаил',kind:'personal',hint:'Продавец · личный рабочий чат',mark:'М',person:'mikhail',section:'people',roleGroup:'Торговый зал'},
+ // Separate peer conversations; manager↔employee conversation IDs are never reused.
+ {id:'staff-elena-anna',label:'Анна',kind:'personal',hint:'Коллега · локальное демо',mark:'А',person:'anna',section:'staff-direct',participants:['elena','anna']},
+ {id:'staff-elena-mikhail',label:'Михаил',kind:'personal',hint:'Коллега · локальное демо',mark:'М',person:'mikhail',section:'staff-direct',participants:['elena','mikhail']},
  {id:'team',label:'Смена и команда',kind:'groups',hint:'Обсуждение смен и задач · дополнительная группа',mark:'▦',section:'extra'},
  {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочий помощник',mark:'',person:'sayvi',section:'assistant'}
@@ -1697,7 +1700,15 @@ function privateAssignmentRecipient(){
 function employeePreviewActive(){return window.SEYVEO_PREVIEW?.isEmployee?.()===true}
 function employeeAllowedRoom(roomId){
  return ['general','team','docs','dm-elena','dm-sayvi'].includes(roomId)||
-  ROOMS.some(room=>room.id===roomId&&room.kind==='groups'&&Array.isArray(room.members)&&room.members.includes('elena'));
+  ROOMS.some(room=>room.id===roomId&&(
+   (room.section==='staff-direct'&&room.participants?.includes('elena'))||
+   (room.kind==='groups'&&Array.isArray(room.members)&&room.members.includes('elena'))
+  ));
+}
+// UI isolation for local demo ONLY. Actual confidentiality requires authenticated server ACLs.
+function chatRoomVisible(roomId){
+ const room=ROOMS.find(item=>item.id===roomId);
+ return !!room&&(employeePreviewActive()?employeeAllowedRoom(roomId):room.section!=='staff-direct');
 }
 /* SEYVEO Work Chat typing presence: actual local typing, never simulated activity. */
 const workTypingPeers=new Map();
@@ -1715,7 +1726,7 @@ function workTypingIdentity(){
 }
 function workTypingBaseDetail(){
  const current=roomDetails();
- return state.viewpoint==='elena'?'Просмотр от лица Елены · демо'
+ return state.viewpoint==='elena'?(current.section==='staff-direct'?'Рабочий чат коллег · локальное демо':'Просмотр от лица Елены · демо')
   :current.kind==='personal'?(current.hint.split(' · ')[0]||'Личный чат'):'Рабочая группа';
 }
 function updateWorkTypingIndicator(){
@@ -1800,7 +1811,7 @@ function senderName(msg){
  if(msg.role==='recognition')return '✦ Знак признания · демо';
  if(msg.role==='sayvi')return 'Сэйви';
  if(msg.role==='demo-elena')return 'Елена · учебный пример';
- return roomDetails().kind==='personal'?'Руководитель':'Вы';
+ return roomDetails().section==='staff-direct'?roomDetails().label:(roomDetails().kind==='personal'?'Руководитель':'Вы');
 }
 function renderDirectory(){
  const list=$('svcpConversationList');if(!list)return;
@@ -1812,7 +1823,7 @@ function renderDirectory(){
  if(chatFilter==='saved'){
   const savedMessages=state.chat.map((msg,index)=>({msg,index}))
    .filter(({msg})=>msg?.starred&&typeof msg.text==='string'&&
-    ROOMS.some(room=>room.id===msg.room)&&(!employeePreviewActive()||employeeAllowedRoom(msg.room)))
+    chatRoomVisible(msg.room))
    .reverse();
   if(!savedMessages.length){
    list.append(el('p','svcp-search-empty','Здесь будут отмеченные тобой сообщения. Звёздочку можно поставить в меню сообщения.'));
@@ -1846,7 +1857,7 @@ function renderDirectory(){
   return date.toLocaleDateString('ru-RU',{day:'numeric',month:'short',...(date.getFullYear()===now.getFullYear()?{}:{year:'2-digit'})});
  }
  const visibleRooms=ROOMS.filter(room=>
-  (!employeePreviewActive()||employeeAllowedRoom(room.id))&&
+  chatRoomVisible(room.id)&&
   (chatFilter!=='people'||room.kind==='personal')&&
   (chatFilter!=='groups'||room.kind==='groups'))
   .sort((a,b)=>(Number(latest.get(b.id)?.at)||0)-(Number(latest.get(a.id)?.at)||0));
@@ -2003,8 +2014,7 @@ document.addEventListener('pointerdown',event=>{
 /* Group by room or assignee, so forty files in a conversation are one row. */
 function workHistoryEntries(query=''){
  const q=query.trim().toLocaleLowerCase('ru-RU');
- const allowed=room=>ROOMS.some(r=>r.id===room)&&
-  (!employeePreviewActive()||employeeAllowedRoom(room));
+ const allowed=room=>chatRoomVisible(room);
  const entries=[];
  for(const room of ROOMS){
   if(!allowed(room.id))continue;
@@ -2155,13 +2165,13 @@ function renderHistorySearch(){
  list.replaceChildren();
  const chatHits=state.chat.map((item,index)=>({item,index}))
   .filter(({item})=>item&&typeof item.text==='string'&&
-   (!employeePreviewActive()||employeeAllowedRoom(item.room))&&ROOMS.some(room=>room.id===item.room)&&
+   chatRoomVisible(item.room)&&
    (item.text.toLocaleLowerCase('ru-RU').includes(query)||
     (ROOMS.find(room=>room.id===item.room)?.label||'').toLocaleLowerCase('ru-RU').includes(query)))
   .reverse().slice(0,30);
  const roleLabels={elena:'Кассир',anna:'Старший продавец',mikhail:'Продавец'};
  const roomHits=ROOMS.filter(room=>{
-  if(employeePreviewActive()&&!employeeAllowedRoom(room.id))return false;
+  if(!chatRoomVisible(room.id))return false;
   const name=employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label;
   const role=employeePreviewActive()&&room.id==='dm-elena'?'руководитель':roleLabels[room.person]||room.hint;
   return (name+' '+role).toLocaleLowerCase('ru-RU').includes(query);
@@ -2283,7 +2293,7 @@ function openRoom(roomId){
  // Validate before exposing a room route. Invalid or restricted deep links
  // previously left the last conversation view active for one Safari frame.
  const selected=ROOMS.find(x=>x.id===roomId);
- if(!selected||(employeePreviewActive()&&!employeeAllowedRoom(selected.id))){
+ if(!selected||!chatRoomVisible(selected.id)){
   showInbox();
   return;
  }
@@ -2370,12 +2380,12 @@ function updatePerspective(){
  refreshVisiblePeerAvatars();
  // Calls have a useful local device preview, but no remote signaling yet.
  // Hide them in team/group and assistant conversations to avoid false calls.
- const personalPeer=current.kind==='personal'&&current.person!=='sayvi';
+ const personalPeer=current.kind==='personal'&&current.person!=='sayvi'&&current.section!=='staff-direct';
  for(const id of ['svcpAudioCall','svcpVideoCall']){
   const button=$(id);if(button)button.hidden=!personalPeer;
  }
  $('svcpConversationDetail').textContent=state.viewpoint==='elena'
-  ?'Просмотр от лица Елены · демо'
+  ?(current.section==='staff-direct'?'Рабочий чат коллег · локальное демо':'Просмотр от лица Елены · демо')
   :current.kind==='personal'?(current.hint.split(' · ')[0]||'Личный чат'):'Рабочая группа';
  $('svcpMentionElena').hidden=true; // No hard-coded employee shortcut in group chat headers; @mentions belong in the composer.
  const chips=chatRoot.querySelector('.svcp-rooms');if(chips)chips.hidden=current.kind!=='groups';
@@ -4478,7 +4488,7 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
 syncComposerActions();
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
- listRooms:()=>ROOMS.map(({id,label,kind,hint,person,members})=>({id,label,kind,hint,person,members})),
+ listRooms:()=>ROOMS.filter(room=>chatRoomVisible(room.id)).map(({id,label,kind,hint,person,members,section})=>({id,label,kind,hint,person,members,section})),
  createLocalGroup:(name,members)=>{
   if(employeePreviewActive()||state.viewpoint!=='manager')return null;
   const title=String(name||'').trim().slice(0,55);
@@ -4508,7 +4518,7 @@ window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  showChat:(roomId=null,viewpoint='manager')=>{
   chatsFromTasks=true;
   if(roomId&&ROOMS.some(x=>x.id===roomId)){
-   if(employeePreviewActive()&&!employeeAllowedRoom(roomId)){showInbox();return}
+   if(!chatRoomVisible(roomId)){showInbox();return}
    openRoom(roomId);
    if(employeePreviewActive()&&roomId==='dm-elena'){
     state.viewpoint='elena';updatePerspective();renderChat();
