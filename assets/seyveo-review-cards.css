@@ -2,8 +2,8 @@
 #homePage > :is(#seyveoLivingMoment,#dynamic,#svcpWorkHomePreview,#workTimeline,#svSmartStartHome,.sv-sayvi-handoff-today){display:none!important}
 #homePage #stage ~ :is(#seyveoLivingMoment,#dynamic,#svcpWorkHomePreview,#workTimeline,#svSmartStartHome,.sv-sayvi-handoff-today){display:none!important}
 .sv-review-header svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-/* Same first-row origin as Cabinet: app safe area + 8px, Work bar + 6px. */
-.sv-review-room{box-sizing:border-box;position:fixed;inset:0;z-index:1800;overflow-y:auto;overscroll-behavior:contain;overflow-anchor:none;background:#fff;border:0;border-radius:0;box-shadow:none;padding:calc(env(safe-area-inset-top,0px) + 14px) max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 32px) max(8px,env(safe-area-inset-left,0px))}
+/* Same first-row origin as Cabinet: app safe area + 8px, Work bar + 14px. */
+.sv-review-room{box-sizing:border-box;position:fixed;inset:0;z-index:1800;overflow-y:auto;overscroll-behavior:contain;overflow-anchor:none;background:#fff;border:0;border-radius:0;box-shadow:none;padding:calc(env(safe-area-inset-top,0px) + 22px) max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 32px) max(8px,env(safe-area-inset-left,0px))}
 .sv-review-room[hidden]{display:none!important}
 /* Review is a full page, not a modal sheet layered over a live workspace. */
 :root.sv-review-open body{overflow:hidden!important}
