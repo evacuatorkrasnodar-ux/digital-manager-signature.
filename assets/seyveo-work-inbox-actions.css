@@ -2016,3 +2016,16 @@ html body #svcpWorkChatScreen.svcp-history-screen-open > #svcpWorkHistory:not([h
  box-sizing:border-box!important;width:100%!important;min-height:100%!important;
  margin:0!important;
 }
+
+
+/* Search owns the results while open: the inbox category capsule controls
+   the normal chat directory only, and must not imply it filters search hits. */
+html body #svcpWorkChatScreen.svcp-directory-search-open[data-view="inbox"] #svcpChatFilters{
+ display:none!important;
+}
+html body #svcpWorkChatScreen.svcp-directory-search-open[data-view="inbox"] #svcpConversationList{
+ padding-top:4px!important;
+}
+html body #svcpWorkChatScreen.svcp-directory-search-open[data-view="inbox"] .svcp-search-results-heading{
+ margin-top:11px!important;
+}
