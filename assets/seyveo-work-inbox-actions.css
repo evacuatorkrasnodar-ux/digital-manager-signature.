@@ -1834,3 +1834,32 @@ html body #svcpWorkChatScreen .sv-inbox-one-detail-mark{
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="one"] .sv-inbox-one-detail{
  padding-top:16px!important;
 }
+
+/* 2026-11-23 · Compact searchable notification exceptions for large teams. */
+html body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tabs{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:3px!important;margin:0 0 10px!important;padding:3px!important;
+ border-radius:12px!important;background:var(--sv-inbox-ios-card,#fff)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tab{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-width:0!important;min-height:40px!important;margin:0!important;padding:7px 8px!important;
+ border:0!important;border-radius:9px!important;background:transparent!important;
+ box-shadow:none!important;transform:none!important;
+ color:var(--sv-inbox-ios-hint,#8D9199)!important;
+ font:550 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-tab[aria-pressed="true"]{
+ background:var(--sv-inbox-ios-bg,#F6F6F8)!important;
+ color:var(--sv-inbox-ios-text,#17191C)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-person .sv-inbox-ios-copy{
+ overflow:hidden!important;text-overflow:ellipsis!important;min-width:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-person .sv-inbox-ios-copy strong{
+ display:block!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ white-space:nowrap!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay.sv-inbox-sheet-notifications .sv-inbox-muted-unmute{
+ min-height:40px!important;white-space:nowrap!important;
+}
