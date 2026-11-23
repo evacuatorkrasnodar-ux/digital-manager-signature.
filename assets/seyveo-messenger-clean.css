@@ -1827,3 +1827,135 @@ html body #svcpWorkChatScreen #svcpRoomInfo button:is(:active,:hover,:focus){
  transform:none!important;translate:none!important;scale:1!important;
  transition:none!important;animation:none!important;
 }
+
+
+/* Manager contact sheet · compact Apple-style presentation for every employee */
+/* The manager opens this same component from every present/future employee
+   conversation. No person-specific selectors and no cloned controls.
+   Content, rather than a fixed 700px panel, determines the sheet height. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-sheet{
+ height:auto!important;
+ min-height:0!important;
+ max-height:calc(100dvh - 16px)!important;
+ border-radius:26px 26px 0 0!important;
+ box-shadow:0 -9px 28px rgba(20,30,45,.11)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-scroll{
+ flex:0 1 auto!important;
+ min-height:0!important;
+ max-height:calc(100dvh - 88px)!important;
+ padding:0 20px max(18px,env(safe-area-inset-bottom,0px))!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"] .svcp-room-profile-grab{
+ width:34px!important;height:4px!important;
+ margin:8px 0 3px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"] .svcp-room-profile-header{
+ height:44px!important;min-height:44px!important;flex:0 0 44px!important;
+ padding:0 16px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"] .svcp-room-profile-header > strong{
+ font-size:16px!important;font-weight:620!important;
+ letter-spacing:-.025em!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-hero{
+ padding:4px 0 8px!important;
+ gap:3px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ #svcpRoomProfileAvatar{
+ box-sizing:border-box!important;
+ width:64px!important;height:64px!important;
+ min-width:64px!important;min-height:64px!important;
+ max-width:64px!important;max-height:64px!important;
+ margin:0 0 4px!important;
+ border-radius:50%!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ #svcpRoomInfoName{
+ font-size:21px!important;line-height:1.2!important;
+ letter-spacing:-.03em!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ #svcpRoomInfoDescription{
+ font-size:12.5px!important;line-height:1.35!important;
+ margin:1px 0 0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-actions{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:7px!important;
+ margin:9px 0 13px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-actions > button:not([hidden]){
+ height:63px!important;min-height:63px!important;
+ gap:5px!important;
+ padding:7px 2px!important;
+ border-radius:15px!important;
+ box-shadow:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ animation:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-actions > button svg{
+ width:20px!important;height:20px!important;
+ stroke-width:1.55!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-actions > button span{
+ font-size:11px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-section{
+ padding:11px 0 12px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-section-head{
+ margin:0 0 4px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-section-head > strong{
+ font-size:14.5px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-empty{
+ padding:5px 0 2px!important;
+ margin:0!important;
+ font-size:12px!important;
+ line-height:1.45!important;
+}
+/* Search needs the original tall layout for scrolling results and keyboard.
+   Do not turn the search panel into the compact profile sheet. */
+@media (min-width:650px){
+ html body #svcpWorkChatScreen[data-view="room"]
+ #svcpRoomInfo[data-viewer="manager"][data-screen="profile"]
+ .svcp-room-profile-sheet{
+  height:auto!important;
+  border-radius:26px!important;
+  margin-bottom:15px!important;
+  border-bottom:1px solid rgba(255,255,255,.94)!important;
+ }
+}
