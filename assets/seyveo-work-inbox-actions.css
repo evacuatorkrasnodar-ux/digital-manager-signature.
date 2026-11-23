@@ -839,8 +839,8 @@ html body #svcpWorkChatScreen .sv-inbox-participant-list .sv-inbox-contact-avata
  width:36px!important;height:36px!important;
  min-width:36px!important;min-height:36px!important;
  border:0!important;border-radius:50%!important;
- background:#393A3D!important;color:#FFFFFF!important;
- font:600 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
+ background:#EEF1F4!important;color:#566878!important;
+ font:650 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important
 }
 html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar.is-sayvi{
  background:#EDF4F0 url("./seyveo-sayvi-avatar-crisp.png?v=1") center/100% 100% no-repeat!important;
@@ -1308,33 +1308,33 @@ html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .sv-inbox-ro
  height:38px!important;min-height:38px!important;max-height:38px!important;
  padding:0!important;margin:0!important;
  border:0!important;border-radius:50%!important;
- color:#FAFCFE!important;
- background:linear-gradient(148deg,#82909B,#64727D)!important;
- box-shadow:0 1px 3px rgba(32,47,60,.095)!important;
+ color:#566878!important;
+ background:#EEF1F4!important;
+ box-shadow:none!important;
  font:600 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  letter-spacing:0!important;
  overflow:hidden!important
 }
 /* People share a neutral graphite family, with small distinguishing undertones. */
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-person="elena"] .svcp-directory-avatar{
- background:linear-gradient(150deg,#8596A3,#667A89)!important
+ background:#EEF1F4!important
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-person="anna"] .svcp-directory-avatar{
- background:linear-gradient(150deg,#84988E,#617A70)!important
+ background:#EEF1F4!important
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-person="mikhail"] .svcp-directory-avatar{
- background:linear-gradient(150deg,#8B8D9C,#696D80)!important
+ background:#EEF1F4!important
 }
 /* Groups are not people: soft pearl-tinted circles with thin outline artwork. */
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-kind="groups"] .svcp-directory-avatar{
  background:#E9EEF3!important;color:#5F7285!important;
- box-shadow:inset 0 0 0 1px rgba(99,123,145,.08)!important;
+ box-shadow:none!important;
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-id="team"] .svcp-directory-avatar{
- background:#E9F0EC!important;color:#5F7D70!important
+ background:#EEF1F4!important;color:#566878!important
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-id="docs"] .svcp-directory-avatar{
- background:#F0ECF2!important;color:#786B83!important
+ background:#EEF1F4!important;color:#566878!important
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-avatar svg{
  display:block!important;width:19px!important;height:19px!important;
@@ -1396,17 +1396,17 @@ html body #svcpWorkChatScreen[data-view="inbox"].sv-inbox-compact #svcpChatDirec
 }
 /* Related contact chooser screens reuse the exact same people palette. */
 html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar{
- background:linear-gradient(150deg,#82909B,#657380)!important;
- color:#FFF!important
+ background:#EEF1F4!important;
+ color:#566878!important
 }
 html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-row[data-svcp-room-person="elena"] .sv-inbox-contact-avatar{
- background:linear-gradient(150deg,#8596A3,#667A89)!important
+ background:#EEF1F4!important
 }
 html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-row[data-svcp-room-person="anna"] .sv-inbox-contact-avatar{
- background:linear-gradient(150deg,#84988E,#617A70)!important
+ background:#EEF1F4!important
 }
 html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-row[data-svcp-room-person="mikhail"] .sv-inbox-contact-avatar{
- background:linear-gradient(150deg,#8B8D9C,#696D80)!important
+ background:#EEF1F4!important
 }
 html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar.is-sayvi{
  background:#EDF3F0 url("./seyveo-sayvi-avatar-crisp.png?v=1") center center / 100% 100% no-repeat!important;
@@ -1452,6 +1452,10 @@ html body #svcpWorkChatScreen .sv-inbox-avatar-custom[data-sv-avatar-kind="photo
 }
 html body #svcpWorkChatScreen .sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
  font-size:16px!important;
+ background-color:#EEF1F4!important;background-image:none!important;
+ color:#566878!important;-webkit-text-fill-color:#566878!important;
+ font-weight:650!important;border:0!important;
+ box-shadow:none!important;text-shadow:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-avatar-settings-preview{
  box-sizing:border-box!important;
