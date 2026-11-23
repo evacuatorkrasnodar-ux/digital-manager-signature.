@@ -71,7 +71,22 @@ const AVATAR_3D=[
  ['Персик','Фрукты'],['Яблоко','Фрукты'],['В очках','Мультики'],['Сердечки','Мультики']
 ];
 /* Additional gallery slots 12–75 are additive; previous 0–11 stay stable. */
-const AVATAR_COLLECTION_64=["Кудрявый","Нежная улыбка","В очках","Подмигивание","Космонавт 2","Путешественница 2","В наушниках","Оранжевая шапка","Дедушка","Бабушка","Юноша в очках","Кепка","С бородой","Солнечная улыбка","Меломан","Мир","Девушка","Деловой","Очки и пучок","Строитель","Медик","Доктор","Шеф-повар","Пилот","Хаски","Кот","Лис","Корги","Панда","Коала","Енот","Сова","Тигрёнок","Кролик","Оленёнок","Ёжик","Пингвин","Тюлень","Выдра","Бобр","Слонёнок","Жираф","Лев","Корова","Ягнёнок","Черепаха","Хамелеон","Попугай","Яблоко 2","Банан","Клубника 2","Арбуз","Ананас","Авокадо","Морковка","Вишня","Робот 2","Галактика","Робот с сердцами","Пришелец","Монстрик","Деревце","Кот-робот","Пёс-космонавт"];
+/* Portrait names match the artwork, in fixed visual atlas order 0–63.
+   Saved avatar indexes (0–75) are preserved for backward compatibility. */
+const AVATAR_COLLECTION_64=["Кудрявый","Рыжеволосая","В очках","Меломанка","Пилот","Юный космонавт","В кепке","Музыкант","Врач","Дедушка","Учёная","Роботик","Художница","Герой","Ниндзя","Эльфийка","Путешественник","Волшебник","Принцесса","Непоседа","Геймерша","Юноша в очках","Бизнес-леди","Седовласый","Снежная девочка","Лыжник","Спасатель","Цветочная фея","Шеф-повар","Девушка","Строитель","Пожарный","В наушниках","Весельчак","С зайчиком","В бейсболке","Седая леди","Бабушка","Дедушка в кепке","Цветочная девочка","Хаски","Котик","Панда","Лис","Кролик","Дракончик","Енот","Сова","Робот","Ледяная фея","Лесовичок","Пчёлка","Кот-космонавт","Пёсик","Пингвин","Зелёный дракон","Кибергероиня","Юный маг","Ангел","Страж","Фиолетовая фея","Воин","Пират","Снежная королева"];
+const AVATAR_CATEGORY_TABS=[['all','Все'],['people','Люди'],['animals','Животные'],['fantasy','Герои'],['fruits','Фрукты'],['emotion','Эмоции']];
+function avatarCategory(index){
+ if(index<12){
+  if(index>=6&&index<=9)return 'fruits';
+  if(index>=10)return 'emotion';
+  if(index===4)return 'animals';
+  return index===1||index===3?'fantasy':'people';
+ }
+ const tile=index-12;
+ if(tile<=39)return 'people';
+ if(tile<=47||tile===52||tile===53||tile===54)return 'animals';
+ return 'fantasy';
+}
 const OWNER_AVATAR_KEY='seyveo-owner-avatar-v1',STAFF_AVATAR_KEY='seyveo-self-identity-avatar-v1';
 function atlasMark(index){
  const m=node('span','sv-atlas-thumb');
@@ -192,28 +207,34 @@ function showAvatarEditor(id){
  monogramInput.value=draft.initials||'';
  monoLabel.append(monogramInput);monoPanel.append(monoLabel);
  const atlasPanel=node('div','sv-inbox-avatar-mode sv-atlas-mode');
+ const atlasFilters=node('div','sv-atlas-filters');
+ atlasFilters.setAttribute('role','group');
+ atlasFilters.setAttribute('aria-label','Категории аватаров');
  const atlasGrid=node('div','sv-atlas-grid');
- atlasPanel.append(atlasGrid);
+ atlasPanel.append(atlasFilters,atlasGrid);
+ let activeAvatarCategory='all';
+ const avatarFilterButtons=[];
  function build3D(){
   atlasGrid.replaceChildren();
-  // Single continuous gallery, without nested category navigation.
-  AVATAR_3D.forEach(([title,group],index)=>{
-    const b=node('button','sv-atlas-choice');b.type='button';
-   b.setAttribute('aria-label',title);
-   b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===index));
-   b.append(atlasMark(index),node('small',null,title));
-   b.addEventListener('click',()=>{activeAvatarTab='atlas';draft.kind='atlas';draft.index=index;draw()});
-   atlasGrid.append(b);
-  });
-  AVATAR_COLLECTION_64.forEach((title,offset)=>{
-   const index=offset+12;
+  for(let index=0;index<76;index++){
+   if(activeAvatarCategory!=='all'&&avatarCategory(index)!==activeAvatarCategory)continue;
+   const title=index<12?AVATAR_3D[index][0]:AVATAR_COLLECTION_64[index-12];
    const b=node('button','sv-atlas-choice');b.type='button';
+   b.dataset.avatarIndex=String(index);
    b.setAttribute('aria-label',title);
    b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===index));
    b.append(atlasMark(index),node('small',null,title));
    b.addEventListener('click',()=>{activeAvatarTab='atlas';draft.kind='atlas';draft.index=index;draw()});
    atlasGrid.append(b);
-  });
+  }
+ }
+ for(const [category,label] of AVATAR_CATEGORY_TABS){
+  const button=node('button','sv-atlas-filter',label);
+  button.type='button';
+  button.dataset.avatarCategory=category;
+  button.addEventListener('click',()=>{if(activeAvatarCategory===category)return;activeAvatarCategory=category;build3D();draw()});
+  avatarFilterButtons.push(button);
+  atlasFilters.append(button);
  }
  const photoPanel=node('div','sv-inbox-avatar-mode');
  const photoLabel=node('label','sv-inbox-avatar-photo-select');
@@ -262,7 +283,11 @@ function showAvatarEditor(id){
    button.setAttribute('aria-pressed',String(button.dataset.avatarMethod===activeAvatarTab));
   for(let i=0;i<swatches.length;i++)
    swatches[i].setAttribute('aria-pressed',String(AVATAR_COLORS[i]===draft.color));
-  build3D();
+  if(!atlasGrid.childElementCount)build3D();
+  for(const button of avatarFilterButtons)
+   button.setAttribute('aria-pressed',String(button.dataset.avatarCategory===activeAvatarCategory));
+  for(const choice of atlasGrid.children)
+   choice.setAttribute('aria-pressed',String(draft.kind==='atlas'&&Number(choice.dataset.avatarIndex)===draft.index));
   atlasPanel.hidden=activeAvatarTab!=='atlas';
   monoPanel.hidden=activeAvatarTab!=='monogram';
   photoPanel.hidden=activeAvatarTab!=='photo';
