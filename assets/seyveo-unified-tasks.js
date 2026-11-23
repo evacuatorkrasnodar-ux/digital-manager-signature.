@@ -24,6 +24,12 @@
  tasks.hidden=false;
  chatHost.appendChild(chats);
  chats.hidden=false;
+ // The messenger is a dedicated fullscreen destination, never an inline
+ // Cabinet card. Mount its live subtree ONCE: moving it on every navigation
+ // invalidates Safari's composited layers and produces screen flashes.
+ if(employeeChatCanvas&&chatHost.parentElement!==employeeChatCanvas)
+  employeeChatCanvas.appendChild(chatHost);
+ chatHost.hidden=true;
  if(people&&peopleHost){peopleHost.appendChild(people);people.hidden=false}
  // Reparent the ONE existing shift widget; never duplicate its controls or ledger.
  const shiftFold=$('seyveoShiftToggle')?.closest('details.seyveo-hr-fold');
@@ -470,18 +476,9 @@
  }
  // Reuse the real chat component, message history and camera; never clone a thread.
  let chatReturnFocus=null;
- // Only one existing dock. Reparent it while the chat directory is visible,
- // then return it to its exact original location when leaving the screen.
+ // Keep the real dock fixed in its original DOM location. The fullscreen
+ // messenger covers it visually; no parent changes or compositor rebuilds.
  const sharedDock=document.querySelector('footer.dock');
- const dockMarker=sharedDock?document.createComment('SEYVEO work chat dock origin'):null;
- if(sharedDock&&dockMarker)sharedDock.parentNode.insertBefore(dockMarker,sharedDock);
- function attachWorkChatDock(){
-  if(!sharedDock||!employeeChatScreen)return;
-  if(sharedDock.parentElement!==employeeChatScreen)employeeChatScreen.appendChild(sharedDock);
- }
- function restoreWorkChatDock(){
-  if(sharedDock&&dockMarker?.parentNode)dockMarker.parentNode.insertBefore(sharedDock,dockMarker.nextSibling);
- }
  const chatTop=$('svcpWorkChatBack');
  // Dock destination buttons must close the chat shell before the normal
  // existing route handlers run; no duplicate nav or route implementation.
@@ -563,8 +560,8 @@
   // the surface and the previous conversation are completely unpaintable.
   window.SEYVEO_BUSINESS_COMMAND?.showChat?.(null);
   chatHost.hidden=true;
-  if(chatHost.parentElement!==board)board.insertBefore(chatHost,taskHost);
-  restoreWorkChatDock();
+  // The chat subtree stays mounted in its own fullscreen canvas.
+  // Do not move either the composer or the dock on exit.
   employeeChatScreen.style.removeProperty('visibility');
   workChatViewportSettleTimers.forEach(clearTimeout);
   workChatViewportSettleTimers.length=0;
@@ -603,9 +600,7 @@
   }
   if(directory)directory.hidden=false;
   employeeChatScreen.hidden=false;
-  attachWorkChatDock();
   page.dataset.workChatOpen='true';
-  employeeChatCanvas.appendChild(chatHost);
   chatHost.hidden=false;chats.hidden=false;
   document.documentElement.classList.add('svcp-work-chat-active');
   const heading=page.querySelector('.tasks-heading');
@@ -629,16 +624,10 @@
    if(Number.isFinite(top))
     employeeChatScreen.style.setProperty('--svcp-visible-top',Math.max(0,Math.round(top))+'px');
   }finally{
-   // Safari must commit the fully reset inbox DOM before revealing the
-   // fullscreen composited layer. Unhiding in the same JS task can briefly
-   // replay the cached wallpaper of the previously opened Sayvi room.
-   requestAnimationFrame(()=>{
-    if(transition!==workChatTransition||page.dataset.workChatOpen!=='true')return;
-    requestAnimationFrame(()=>{
-     if(transition!==workChatTransition||page.dataset.workChatOpen!=='true')return;
-     employeeChatScreen.style.removeProperty('visibility');
-    });
-   });
+   // All room/inbox state and the initial viewport are ready synchronously.
+   // Reveal in this same task: no artificial 2-frame blank screen.
+   if(transition===workChatTransition&&page.dataset.workChatOpen==='true')
+    employeeChatScreen.style.removeProperty('visibility');
   }
   settleWorkChatViewport();
   requestAnimationFrame(()=>{
@@ -722,9 +711,8 @@
   }else $('navHome')?.click();
  });
  function restoreManagerChat(){
-  // Keep chats ahead of the manager's task list, without a duplicate DOM.
-  if(chatHost.parentElement!==board)board.insertBefore(chatHost,taskHost);
-  if(chats.parentElement!==chatHost)chatHost.appendChild(chats);
+  // Only hide the messenger. Its live DOM stays mounted and preserves all
+  // history, listeners, local state and compositor geometry across routes.
   chatHost.hidden=true;chats.hidden=false;
  }
  function showBoard(){
