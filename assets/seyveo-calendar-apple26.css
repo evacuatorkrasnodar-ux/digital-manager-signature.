@@ -866,15 +866,12 @@ html:not([data-theme]) body #calendarPage > #calendarCreateMenu:not([hidden]){
  box-sizing:border-box!important;width:min(236px,calc(100vw - 28px))!important;
  max-width:calc(100vw - 28px)!important;height:auto!important;
  margin:0!important;padding:6px!important;gap:0!important;
- border:.7px solid rgba(255,255,255,.28)!important;border-radius:19px!important;
- background:rgba(190,193,202,.10)!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge)!important;border-radius:19px!important;
+ background:var(--sv-white-pearl-surface)!important;background-image:none!important;
  color:#191C21!important;
- -webkit-backdrop-filter:blur(4px) saturate(1)!important;
- backdrop-filter:blur(4px) saturate(1)!important;
- box-shadow:0 0 0 .45px rgba(164,170,184,.16),
-  inset 0 1px 1px rgba(75,82,96,.055),inset 0 -1px 0 rgba(255,255,255,.18),
-  inset .6px 0 .7px rgba(255,255,255,.16),inset -.6px 0 .8px rgba(75,82,96,.055),
-  0 1px 2px rgba(82,88,103,.043)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+ backdrop-filter:var(--sv-white-pearl-blur)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
  overflow:hidden!important;transform:none!important;
 }
 html body #svWorkShell > #calendarCreateMenu #calendarViewModes,
@@ -927,7 +924,7 @@ html body #calendarPage > #calendarCreateMenu #calendarViewModes > button[aria-p
 /* Exact dock material: avoid the older opaque selected-row override. */
 html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"],
 html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu #calendarViewModes > button[aria-pressed="true"]{
- background:rgba(190,193,202,.12)!important;color:#17191D!important;
+ background:rgba(255,255,255,.72)!important;color:#17191D!important;
 }
 
 
@@ -1064,7 +1061,7 @@ html body #calendarPage > #calendarCreateMenu #calendarMonthModes > button{
 }
 html:root[data-theme="light"] body #svWorkShell > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"],
 html:root[data-theme="light"] body #calendarPage > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"]{
- background:rgba(190,193,202,.12)!important;color:#17191D!important;
+ background:rgba(255,255,255,.72)!important;color:#17191D!important;
 }
 html body #svWorkShell > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"]::after,
 html body #calendarPage > #calendarCreateMenu #calendarMonthModes > button[aria-pressed="true"]::after{
