@@ -260,8 +260,8 @@ html body #svcpWorkChatScreen[data-view="room"]
  color:rgba(255,255,255,.88)!important;line-height:15px!important;
  font-size:11px!important;text-align:center!important;white-space:nowrap!important;
 }
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack{
  box-sizing:border-box!important;
  width:44px!important;height:44px!important;
@@ -270,8 +270,8 @@ html body #svcpWorkChatScreen[data-view="room"]
  box-shadow:none!important;-webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;transform:none!important;transition:none!important;
 }
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="sky"]
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
  > #svcpConversationStandaloneBack svg{
  width:19px!important;height:19px!important;
  fill:none!important;stroke:#fff!important;stroke-width:1.55!important;
