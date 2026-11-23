@@ -2666,9 +2666,6 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
  color:#465466!important;
 }
-#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle):active{
- opacity:.79!important;
-}
 #svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle):focus-visible{
  outline:2px solid var(--seyveo-engrave-active)!important;
  outline-offset:2px!important;
