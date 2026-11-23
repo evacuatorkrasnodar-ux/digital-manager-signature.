@@ -115,7 +115,7 @@ function safeAvatar(spec){
  const atlasValid=spec.kind==='atlas'&&Number.isInteger(spec.index)&&
   spec.index>=0&&spec.index<AVATAR_3D.length;
  return {kind:spec.kind==='photo'&&image?'photo':atlasValid?'atlas':'monogram',
-  initials:initials||'Я',color:AVATAR_COLORS[0],image,index:atlasValid?spec.index:0};
+  initials:initials||'Я',color:AVATAR_COLORS.includes(spec.color)?spec.color:automaticAvatarColor(initials),image,index:atlasValid?spec.index:0};
 }
 function paintAvatar(element,source){
  const spec=safeAvatar(source);
