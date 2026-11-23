@@ -982,6 +982,6 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 }
 /* Defensive fallback for older rendered demo DOM; groups remain unchanged. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] #svcpMessages
- > .svcp-bubble :is(.svcp-manager-message-avatar,.svcp-sender){
+ > .svcp-bubble:not(.is-sayvi) :is(.svcp-manager-message-avatar,.svcp-sender){
  display:none!important;
 }
