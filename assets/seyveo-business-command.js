@@ -4504,6 +4504,12 @@ syncComposerActions();
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
  listRooms:()=>ROOMS.filter(room=>chatRoomVisible(room.id)).map(({id,label,kind,hint,person,members,section})=>({id,label,kind,hint,person,members,section})),
+ // Reuse the very same portrait renderer as the main conversation directory.
+ paintContactAvatar:(target,roomId)=>{
+  const room=ROOMS.find(item=>item.id===roomId);
+  if(!room||!chatRoomVisible(roomId))return false;
+  return fillWorkPortrait(target,room,employeePreviewActive()&&room.id==='dm-elena');
+ },
  createLocalGroup:(name,members)=>{
   if(employeePreviewActive()||state.viewpoint!=='manager')return null;
   const title=String(name||'').trim().slice(0,55);
