@@ -1914,6 +1914,7 @@ function workHistoryVisible(){return $('svcpWorkHistory')?.hidden===false}
 function canManageWorkHistory(){return !employeePreviewActive()&&state.viewpoint==='manager'}
 function closeWorkHistory(){
  const panel=$('svcpWorkHistory');if(panel)panel.hidden=true;
+ $('svcpWorkChatScreen')?.classList.remove('svcp-history-screen-open');
  $('svcpWorkHistoryTop')?.setAttribute('aria-expanded','false');
  $('svcpWorkHistoryMenu').hidden=true;
  $('svcpWorkHistoryMenuButton').setAttribute('aria-expanded','false');
@@ -1925,6 +1926,7 @@ function closeWorkHistory(){
 function openWorkHistory(){
  syncChatAccount();
  const panel=$('svcpWorkHistory');if(!panel)return;
+ $('svcpWorkChatScreen')?.classList.add('svcp-history-screen-open');
  panel.hidden=false;
  $('svcpWorkHistoryTop').setAttribute('aria-expanded','true');
  workHistorySelecting=false;workHistorySelected.clear();
@@ -2256,6 +2258,7 @@ function syncChatAccount(){
  editingMessageIndex=null;
 }
 function showInbox(){
+ closeWorkHistory();
  // First operation: atomically retire the previous room's composited layer
  // BEFORE any cleanup callback, input reset or list rendering can run.
  // A cached Sayvi/sky wallpaper must not flash behind the Messages inbox.
@@ -2290,6 +2293,7 @@ function showInbox(){
  renderDirectory();
 }
 function openRoom(roomId){
+ closeWorkHistory();
  // Validate before exposing a room route. Invalid or restricted deep links
  // previously left the last conversation view active for one Safari frame.
  const selected=ROOMS.find(x=>x.id===roomId);
