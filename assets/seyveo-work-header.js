@@ -181,6 +181,12 @@
 :host([data-agenda="true"]) .sv-history-dual{
  grid-column:2;grid-row:1;justify-self:end;width:134px;
 }
+/* Same right-hand action order as Cabinet: History · Cards · Plus.
+   CSS-only reorder keeps original listeners, 42px slots and stable capsule. */
+:host([data-agenda="true"]) .sv-history-dual .sv-history-search{order:1}
+:host([data-agenda="true"]) .sv-history-dual .sv-review-cards-control{order:2}
+:host([data-agenda="true"]) .sv-history-dual .action{order:3}
+
 /* Root sections are named in the segmented tab bar. Nested/history
    screens retain the original first-row heading. */
 :host([data-work-tabs="true"]:not([data-agenda="true"])) .title:not([hidden]){
