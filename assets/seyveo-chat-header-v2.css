@@ -162,7 +162,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
  background:rgba(239,239,241,.80)!important;
  border:1px solid rgba(216,218,222,.65)!important;
- box-shadow:0 3px 12px rgba(64,70,80,.10),inset 0 1px 0 rgba(255,255,255,.95)!important;
+ box-shadow:0 1px 5px rgba(64,70,80,.05)!important;
  -webkit-backdrop-filter:blur(16px) saturate(100%)!important;
  backdrop-filter:blur(16px) saturate(100%)!important;
 }
@@ -311,7 +311,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  background:rgba(239,239,241,.80)!important;
  background-image:none!important;
  border:1px solid rgba(216,218,222,.65)!important;
- box-shadow:0 4px 15px rgba(64,70,80,.115),inset 0 1px 0 rgba(255,255,255,.95)!important;
+ box-shadow:0 1px 5px rgba(64,70,80,.055)!important;
  color:var(--sv-white-pearl-ink,#0b0b0d)!important;
  -webkit-backdrop-filter:blur(16px) saturate(100%)!important;
  backdrop-filter:blur(16px) saturate(100%)!important;
@@ -416,7 +416,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]
  > .svcp-call-actions > .svcp-call-button:not([hidden]){
- box-shadow:0 4px 15px rgba(64,70,80,.115),inset 0 1px 0 rgba(255,255,255,.95)!important;
+ box-shadow:0 1px 5px rgba(64,70,80,.055)!important;
 }
 
 
