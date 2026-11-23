@@ -97,17 +97,20 @@ main > .sv-chat-jump,
  backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
  opacity:1!important;filter:none!important;
 }
-/* The blue-sky Work Chat keeps the exact composer tint and blue rim,
-   instead of a contrasting pale-white floating button. */
+/* Sky Work Chat: floating latest-message button has the SAME blue
+   material as the room Back button. The former .42 opacity disappeared
+   into the conversation; keep the 44px target and white 19px arrow. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] .svcp-chat > #svcpScrollBottom,
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] .svcp-chat > #svcpScrollBottom:is(:active,:hover){
- /* Preserve the exact blue RGB; only lower its opacity to reveal messages. */
- background:rgba(5,123,195,.42)!important;
- border:1px solid rgba(9,100,171,.38)!important;
- box-shadow:none!important;
+ background:rgba(13,73,186,.68)!important;
+ background-image:none!important;
+ border:0!important;
+ box-shadow:0 3px 10px rgba(9,49,117,.14)!important;
  color:#fff!important;
- -webkit-backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
- backdrop-filter:var(--svcp-conversation-blue-blur,blur(16px) saturate(115%))!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;
 }
