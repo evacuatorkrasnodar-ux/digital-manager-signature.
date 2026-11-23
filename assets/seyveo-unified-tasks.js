@@ -494,6 +494,16 @@
  // messenger covers it visually; no parent changes or compositor rebuilds.
  const sharedDock=document.querySelector('footer.dock');
  const chatTop=$('svcpWorkChatBack');
+ // There is exactly ONE visible Back button for the directory and all rooms.
+ // Move the existing inbox button out of its header grid (which has different
+ // padding from a room) to the same fixed screen root for both routes.
+ // Preserve the original chat-engine room Back as an invisible event delegate.
+ if(chatTop&&employeeChatScreen&&chatTop.parentElement!==employeeChatScreen)
+  employeeChatScreen.appendChild(chatTop);
+ if(roomBack){
+  roomBack.setAttribute('aria-hidden','true');
+  roomBack.tabIndex=-1;
+ }
  // Dock destination buttons must close the chat shell before the normal
  // existing route handlers run; no duplicate nav or route implementation.
  sharedDock?.addEventListener('click',event=>{
@@ -677,7 +687,25 @@
     if(toggle?.getAttribute('aria-expanded')!=='true')toggle?.click();
   }
  }
- chatTop?.addEventListener('click',()=>closeWorkChat());
+ // Same physical button and position on both screens: only its action
+ // changes. The original hidden room Back retains the chat engine listener.
+ chatTop?.addEventListener('click',()=>{
+  if(employeeChatScreen?.dataset.view==='room'){
+   roomBack?.click();
+   return;
+  }
+  closeWorkChat();
+ });
+ const updateSharedChatBackLabel=()=>{
+  if(!chatTop)return;
+  chatTop.setAttribute('aria-label',employeeChatScreen?.dataset.view==='room'
+   ?'К списку сообщений':'Вернуться в кабинет');
+ };
+ if(employeeChatScreen){
+  new MutationObserver(updateSharedChatBackLabel).observe(
+   employeeChatScreen,{attributes:true,attributeFilter:['data-view']});
+  updateSharedChatBackLabel();
+ }
  chatViewport?.addEventListener('resize',updateWorkChatViewport);
  chatViewport?.addEventListener('scroll',updateWorkChatViewport);
  window.addEventListener('resize',settleWorkChatViewport,{passive:true});
