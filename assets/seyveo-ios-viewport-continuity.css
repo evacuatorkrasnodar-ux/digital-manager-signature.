@@ -293,7 +293,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  background:rgba(249,249,251,.88)!important;
  background-color:rgba(249,249,251,.88)!important;
  border:.75px solid rgba(225,228,232,.72)!important;
- box-shadow:0 2px 12px rgba(43,49,60,.10)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
  -webkit-backdrop-filter:blur(12px) saturate(105%)!important;
  backdrop-filter:blur(12px) saturate(105%)!important;
 }
@@ -309,4 +309,18 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"][data-chat-wallpaper="pearl"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill svg path{
  color:#77818D!important;stroke:#77818D!important;
+}
+
+/* White Pearl shadow continuity: Inbox, room Back, and name pill now
+   take the SAME approved circle/capsule shadow tokens. Keep existing
+   surface, rim, sizing, text placement and click handlers untouched. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > #svcpConversationStandaloneBack{
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
 }
