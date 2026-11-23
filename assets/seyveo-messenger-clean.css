@@ -2001,17 +2001,34 @@ html:root[data-theme="light"] body #svcpWorkChatScreen #svcpChatDirectory .svcp-
  box-shadow:0 1px 4px rgba(55,67,82,.11),inset 0 1px 0 rgba(255,255,255,.86)!important;
 }
 
-/* Sky room: one continuous wallpaper owned by the full chat screen.
-   Inner conversation and native scroll surface have no separately painted
-   lower panel. No generic pseudo-element suppression on chat controls. */
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]:not([hidden])){
- background:
+/* One real sky background for iPhone Safari/PWA.
+   OLD ISSUE: the document canvas used --sv-chat-sky-wallpaper while the
+   fullscreen chat used another gradient; their junction under the composer
+   looked like a second opaque footer. One source, same paint on both layers.
+   The original round + and .svcp-clean-surface are untouched. */
+:root{
+ --svcp-sky-chat-wallpaper:
   radial-gradient(ellipse 72% 13% at 80% 89%,rgba(255,255,255,.25) 0%,rgba(237,250,255,.14) 47%,transparent 100%),
   radial-gradient(ellipse 65% 17% at 20% 70%,rgba(246,252,255,.36) 0%,rgba(230,247,255,.17) 55%,transparent 100%),
   radial-gradient(ellipse 70% 16% at 82% 53%,rgba(250,253,255,.17) 0%,transparent 100%),
   radial-gradient(ellipse 60% 13% at 17% 33%,rgba(230,248,255,.12) 0%,transparent 100%),
-  linear-gradient(164deg,#0F75D2 0%,#238FDF 43%,#59B4E8 71%,#A4D9ED 100%)!important;
+  linear-gradient(164deg,#0F75D2 0%,#238FDF 43%,#59B4E8 71%,#A4D9ED 100%);
+}
+html:root:not([data-theme="dark"]).svcp-work-chat-active:has(
+ #svcpWorkChatScreen:not([hidden])[data-view="room"]
+ #svcpConversation:not([hidden])[data-chat-wallpaper="sky"]
+),
+html:root:not([data-theme="dark"]).svcp-work-chat-active:has(
+ #svcpWorkChatScreen:not([hidden])[data-view="room"]
+ #svcpConversation:not([hidden])[data-chat-wallpaper="sky"]
+) body,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(
+ #svcpConversation:not([hidden])[data-chat-wallpaper="sky"]
+){
+ background-color:#A4D9ED!important;
+ background-image:var(--svcp-sky-chat-wallpaper)!important;
  background-size:100% 100%!important;
+ background-position:0 0!important;
  background-repeat:no-repeat!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
@@ -2020,5 +2037,8 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] > .svcp-chat,
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages{
- background:transparent!important;background-image:none!important;
+ background:transparent!important;
+ background-image:none!important;
 }
+/* Do not apply wallpaper to the composer itself: its existing controls
+   alone own their rounded blue backgrounds. */
