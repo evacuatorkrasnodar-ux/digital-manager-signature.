@@ -160,7 +160,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
    Previously the weaker pearl text selector lost to the default white-on-blue
    rule: the name became invisible on a white capsule. No geometry changes. */
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
- background:rgba(244,242,239,.93)!important;
+ background:rgba(242,241,240,.93)!important;
  border:1px solid rgba(255,255,255,.99)!important;
  box-shadow:0 3px 12px rgba(82,69,57,.10),inset 0 1px 0 rgba(255,255,255,.82)!important;
  -webkit-backdrop-filter:blur(16px) saturate(100%)!important;
@@ -308,7 +308,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
  -webkit-filter:none!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > .svcp-call-button:not([hidden]){
- background:rgba(244,242,239,.93)!important;
+ background:rgba(242,241,240,.93)!important;
  background-image:none!important;
  border:1px solid rgba(255,255,255,.99)!important;
  box-shadow:0 4px 15px rgba(82,69,57,.115),inset 0 1px 0 rgba(255,255,255,.86)!important;
