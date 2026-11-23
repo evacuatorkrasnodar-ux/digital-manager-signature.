@@ -3,22 +3,24 @@
    duplicate pseudo-buttons, top/left coordinates or animated icon positions.
    JS retains all handlers and only supplies text/attachment heights. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"]{
- --svcp-conversation-blue-glass:rgba(5,123,195,.68);
+ --svcp-conversation-blue-glass:rgba(28,144,198,.72);
  /* The taller capsule needs less blue pigment to reveal the wallpaper
     as clearly as the compact composer, with the same blur and rim. */
- --svcp-conversation-blue-glass-expanded:rgba(5,123,195,.44);
- --svcp-conversation-blue-rim:rgba(9,100,171,.57);
- --svcp-conversation-blue-blur:blur(16px) saturate(115%);
+ --svcp-conversation-blue-glass-expanded:rgba(28,144,198,.64);
+ --svcp-conversation-blue-rim:rgba(129,212,246,.42);
+ --svcp-conversation-blue-blur:blur(17px) saturate(108%);
+  --sv-chat-outgoing:#008FFF;
 }
 /* PEARL wallpaper — original white iMessage-like composer.
    The room's Sky values above continue to apply only to Sky.
    This preset reuses the SAME existing layout, grid and click handlers. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]{
- --svcp-conversation-blue-glass:rgba(255,255,255,.84);
- --svcp-conversation-blue-glass-expanded:rgba(255,255,255,.85);
- --svcp-conversation-blue-rim:rgba(230,232,236,.78);
+ --svcp-conversation-blue-glass:rgba(244,244,246,.88);
+ --svcp-conversation-blue-glass-expanded:rgba(244,244,246,.91);
+ --svcp-conversation-blue-rim:rgba(255,255,255,.90);
  --svcp-conversation-blue-blur:blur(15px) saturate(107%);
+  --sv-chat-outgoing:#3DAEFE;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset{
  all:unset!important;
