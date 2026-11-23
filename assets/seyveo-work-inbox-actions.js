@@ -419,9 +419,12 @@ function openSheet(type,id='',nested=false){
 function makeContactRow(r,fn){
  const row=button(r.label,'chevron',fn,'sv-inbox-contact-row');
  row.dataset.svcpRoomPerson=r.person||'';
- const avatar=node('span','sv-inbox-contact-avatar',r.id==='dm-sayvi'?'':r.label.slice(0,1));
- if(r.id==='dm-sayvi')avatar.classList.add('is-sayvi','sv-sayvi-avatar');
+ const avatar=node('span','sv-inbox-contact-avatar svcp-directory-avatar');
  avatar.setAttribute('aria-hidden','true');
+ // Reuse the real person portrait from the chat directory; no letter placeholders.
+ const painted=window.SEYVEO_BUSINESS_COMMAND?.paintContactAvatar?.(avatar,r.id)===true;
+ if(!painted&&r.id==='dm-sayvi')avatar.classList.add('is-sayvi','sv-sayvi-avatar');
+ if(!painted&&r.kind==='groups')avatar.innerHTML=svg(r.id==='general'?'messages':r.id==='docs'?'file':'users');
  row.prepend(avatar);
  // Contact picture is supplied by the contact's own identity.
  const copy=row.querySelector('span:not(.sv-inbox-contact-avatar)');
@@ -481,7 +484,7 @@ function showColleagueInvite(id){
 }
 function showContacts(){
  if(employee()){showEmployeeDirectory();return}
- const names=allRooms().filter(r=>r.kind==='personal');
+ const names=allRooms().filter(r=>r.kind==='personal'&&r.person&&r.person!=='sayvi');
  const list=node('div','sv-inbox-people-list');
  for(const r of names)list.append(makeContactRow(r,()=>openChat(r.id)));
  body.append(list);
