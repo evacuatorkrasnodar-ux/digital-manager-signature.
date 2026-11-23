@@ -80,8 +80,28 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
  border:0!important;border-radius:50%!important;overflow:hidden!important;box-shadow:none!important;
  font-size:35px!important;
 }
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-hero>small{
- color:var(--secondary,#737b84)!important;font:450 12px/1.4 -apple-system,system-ui,sans-serif!important;
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:5px!important;max-width:calc(100% - 24px)!important;
+ min-height:30px!important;padding:3px 10px 3px 12px!important;
+ margin:0!important;border:0!important;border-radius:999px!important;
+ background:var(--svav-bg,#fff)!important;background-image:none!important;
+ box-shadow:0 2px 9px rgba(25,38,52,.09)!important;
+ color:var(--svav-ink,#1b2027)!important;
+ pointer-events:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity-name{
+ display:block!important;min-width:0!important;overflow:hidden!important;
+ white-space:nowrap!important;text-overflow:ellipsis!important;
+ font:650 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity-chevron{
+ display:grid!important;place-items:center!important;flex:none!important;
+ width:13px!important;height:15px!important;color:#7c899a!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity-chevron svg{
+ display:block!important;width:12px!important;height:12px!important;
+ stroke:currentColor!important;stroke-width:1.7!important;fill:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-field{
  display:flex!important;flex-direction:column!important;gap:7px!important;
