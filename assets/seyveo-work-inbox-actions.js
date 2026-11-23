@@ -64,7 +64,7 @@ function updateRoom(id,prop,value){
 /* Local avatar editing: Apple-style photo, monogram and emoji.
    No upload, no claim of changing colleagues' accounts or the SEYVEO assistant. */
 const AVATAR_COLORS=['#536f84','#4f8574','#7d78a1','#b27788','#be8a54','#606b79'];
-const AVATAR_EMOJIS=['😊','😎','🌿','✨','🐱','🦊','❤️','🎨','🍇','🍓','🍎','🍑'];
+// Old flat emoji picker removed; stored legacy choices remain readable until changed.
 const AVATAR_3D=[
  ['Космонавт','Космос'],['Супергерой','Герои'],['Путешественница','Космос'],['Робот','Космос'],
  ['Лисёнок','Мультики'],['Девочка','Мультики'],['Виноград','Фрукты'],['Клубника','Фрукты'],
@@ -152,7 +152,7 @@ function showAvatarEditor(id){
   initials:String(self?(prefs.myProfile?.name||'Я'):(info?.label||'?')).trim().slice(0,1).toLocaleUpperCase('ru-RU'),
   emoji:'😊',image:''
  };
- let activeAvatarTab='atlas';
+ let activeAvatarTab=old?.kind==='photo'?'photo':old?.kind==='monogram'?'monogram':'atlas';
  const form=node('form','sv-inbox-avatar-editor');
  const previewWrap=node('div','sv-inbox-avatar-preview-wrap');
  const preview=node('span','sv-inbox-avatar-preview');
@@ -185,17 +185,6 @@ function showAvatarEditor(id){
  monogramInput.placeholder='Р';
  monogramInput.value=draft.initials||'';
  monoLabel.append(monogramInput);monoPanel.append(monoLabel);
- const emojiPanel=node('div','sv-inbox-avatar-mode');
- const emojiGrid=node('div','sv-inbox-avatar-emoji-grid');
- emojiGrid.setAttribute('role','group');emojiGrid.setAttribute('aria-label','Выберите эмодзи');
- const emojiButtons=[];
- for(const emoji of AVATAR_EMOJIS){
-  const b=node('button','sv-inbox-avatar-emoji',emoji);b.type='button';
-  b.setAttribute('aria-label','Эмодзи '+emoji);
-  b.addEventListener('click',()=>{activeAvatarTab='emoji';draft.kind='emoji';draft.emoji=emoji;draw()});
-  emojiButtons.push(b);emojiGrid.append(b);
- }
- emojiPanel.append(emojiGrid);
  const atlasPanel=node('div','sv-inbox-avatar-mode sv-atlas-mode');
  const filters=node('div','sv-atlas-filters'),atlasGrid=node('div','sv-atlas-grid');
  atlasPanel.append(filters,atlasGrid);
@@ -226,9 +215,8 @@ function showAvatarEditor(id){
  photoLabel.append(fileInput);photoPanel.append(photoLabel);
  const atlasButton=node('button','sv-inbox-avatar-method','3D');
  const monoButton=node('button','sv-inbox-avatar-method','Буквы');
- const emojiButton=node('button','sv-inbox-avatar-method','Эмодзи');
  const photoButton=node('button','sv-inbox-avatar-method','Фото');
- for(const [kind,b] of [['atlas',atlasButton],['emoji',emojiButton],['monogram',monoButton],['photo',photoButton]]){
+ for(const [kind,b] of [['atlas',atlasButton],['monogram',monoButton],['photo',photoButton]]){
   b.type='button';b.addEventListener('click',()=>{
    activeAvatarTab=kind;if(kind!=='atlas')draft.kind=kind;draw();
    if(kind==='photo'&&!draft.image)fileInput.click();
@@ -237,7 +225,7 @@ function showAvatarEditor(id){
   methodButtons.push(b);methods.append(b);
  }
  form.append(methods);
- panels.append(atlasPanel,monoPanel,emojiPanel,photoPanel);
+ panels.append(atlasPanel,monoPanel,photoPanel);
  form.append(panels);
  const palette=node('div','sv-inbox-avatar-palette');
  palette.setAttribute('role','group');palette.setAttribute('aria-label','Цвет фона');
@@ -263,13 +251,11 @@ function showAvatarEditor(id){
   if(normalized)paintAvatar(preview,normalized);
   for(const button of methodButtons)
    button.setAttribute('aria-pressed',String(button.dataset.avatarMethod===activeAvatarTab));
-  for(const b of emojiButtons)b.setAttribute('aria-pressed',String(b.textContent===draft.emoji));
   for(let i=0;i<swatches.length;i++)
    swatches[i].setAttribute('aria-pressed',String(AVATAR_COLORS[i]===draft.color));
   build3D();
   atlasPanel.hidden=activeAvatarTab!=='atlas';
   monoPanel.hidden=activeAvatarTab!=='monogram';
-  emojiPanel.hidden=activeAvatarTab!=='emoji';
   photoPanel.hidden=activeAvatarTab!=='photo';
   palette.hidden=activeAvatarTab!=='monogram';
  }
