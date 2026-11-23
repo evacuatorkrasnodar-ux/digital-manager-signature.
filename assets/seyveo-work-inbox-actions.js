@@ -160,8 +160,12 @@ function showAvatarEditor(){
  const hero=node('div','sv-new-avatar-hero');
  const preview=node('span','sv-new-avatar-preview');
  preview.setAttribute('aria-hidden','true');
- const subtitle=node('small',null,'Ваш профиль');
- hero.append(preview,subtitle);
+ const identity=node('span','sv-new-avatar-identity');
+ const identityName=node('strong','sv-new-avatar-identity-name');
+ const identityChevron=node('span','sv-new-avatar-identity-chevron');
+ identityChevron.innerHTML=svg('chevron');identityChevron.setAttribute('aria-hidden','true');
+ identity.append(identityName,identityChevron);
+ hero.append(preview,identity);
  const nameLabel=node('label','sv-new-avatar-field');
  nameLabel.append(node('span',null,'Имя'));
  const nameInput=node('input','sv-new-avatar-name');
@@ -214,9 +218,7 @@ function showAvatarEditor(){
   swatches.append(button);
  }
  mono.append(swatches);
- nameInput.addEventListener('input',()=>{
-  if(draft.kind==='monogram')paint();
- });
+ nameInput.addEventListener('input',()=>paint());
  const photo=node('div','sv-new-avatar-photo');
  const photoLabel=node('label','sv-new-avatar-photo-pick');
  photoLabel.append(node('span',null,'Выбрать фотографию'));
@@ -251,6 +253,7 @@ function showAvatarEditor(){
  const save=node('button','sv-avatar-action-save','Сохранить');save.type='submit';save.setAttribute('form',editor.id);
  actions.append(reset,save);
  function paint(){
+  identityName.textContent=nameInput.value.trim()||'Ваше имя';
   if(draft.kind==='monogram')draft.initials=initialsFromName();
   paintAvatar(preview,draft);
   for(const b of btns)b.setAttribute('aria-pressed',String(b.dataset.mode===tab));
