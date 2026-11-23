@@ -90,12 +90,25 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
  background:var(--svav-bg,#fff)!important;background-image:none!important;
  box-shadow:0 2px 9px rgba(25,38,52,.09)!important;
  color:var(--svav-ink,#1b2027)!important;
- pointer-events:none!important;
+ pointer-events:auto!important;cursor:text!important;
 }
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity-name{
- display:block!important;min-width:0!important;overflow:hidden!important;
- white-space:nowrap!important;text-overflow:ellipsis!important;
- font:650 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-inline-name{
+ box-sizing:content-box!important;display:block!important;
+ flex:0 1 auto!important;min-width:50px!important;max-width:min(210px,58vw)!important;
+ width:8ch;height:23px!important;min-height:23px!important;
+ margin:0!important;padding:0!important;border:0!important;outline:0!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+ color:var(--svav-ink,#1b2027)!important;-webkit-text-fill-color:var(--svav-ink,#1b2027)!important;
+ font:650 14px/23px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:center!important;text-overflow:ellipsis!important;
+ -webkit-appearance:none!important;appearance:none!important;
+ pointer-events:auto!important;touch-action:manipulation!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-inline-name::placeholder{
+ color:var(--secondary,#8b939b)!important;opacity:1!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity:focus-within{
+ box-shadow:0 2px 9px rgba(25,38,52,.09),0 0 0 2px rgba(10,132,255,.18)!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity-chevron{
  display:grid!important;place-items:center!important;flex:none!important;
@@ -104,17 +117,6 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-identity-chevron svg{
  display:block!important;width:12px!important;height:12px!important;
  stroke:currentColor!important;stroke-width:1.7!important;fill:none!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-field{
- display:flex!important;flex-direction:column!important;gap:7px!important;
- color:var(--svav-ink)!important;font:550 13px/1.4 -apple-system,system-ui,sans-serif!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-name{
- box-sizing:border-box!important;display:block!important;width:100%!important;min-height:44px!important;
- height:44px!important;margin:0!important;padding:0 12px!important;
- border:0!important;border-radius:12px!important;outline:0!important;
- background:var(--svav-soft)!important;color:var(--svav-ink)!important;
- box-shadow:none!important;font:450 15px/1.2 -apple-system,system-ui,sans-serif!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs{
  box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
