@@ -2146,3 +2146,74 @@ html body #svcpWorkChatScreen .sv-inbox-one-detail-mark{
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="one"] .sv-inbox-one-detail{
  padding-top:16px!important;
 }
+
+
+/* Profile editor: same SEYVEO sheet, stable header, scrollable content and 3 modes.
+   The former flat emoji tab is retired without touching persisted avatars. */
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-panel{
+ box-sizing:border-box!important;
+ width:min(100%,460px)!important;
+ max-height:min(90dvh,850px)!important;
+ padding-bottom:max(8px,env(safe-area-inset-bottom,0px))!important;
+ background:var(--sv-inbox-panel-bg,#fff)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-head{
+ position:relative!important;z-index:2!important;
+ flex:0 0 60px!important;
+ border-bottom:1px solid rgba(80,90,105,.07)!important;
+ background:var(--sv-inbox-panel-bg,#fff)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-body{
+ display:block!important;flex:1 1 auto!important;min-height:0!important;
+ box-sizing:border-box!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ padding:8px 17px 10px!important;
+ overscroll-behavior:contain!important;
+ -webkit-overflow-scrolling:touch!important;
+ scroll-padding-top:8px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-editor{
+ gap:12px!important;padding:0 0 6px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-preview-wrap{
+ padding:6px 0 3px!important;gap:6px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-preview{
+ width:80px!important;height:80px!important;min-width:80px!important;min-height:80px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-methods{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ width:100%!important;min-height:48px!important;gap:3px!important;
+ padding:4px!important;margin:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-method{
+ display:grid!important;place-items:center!important;
+ height:40px!important;min-height:40px!important;padding:0 5px!important;
+ transform:none!important;scale:1!important;transition:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-method:is(:active,:hover){
+ transform:none!important;scale:1!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-filters{
+ padding:2px 0 8px!important;gap:6px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-grid{
+ gap:7px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-choice{
+ min-height:83px!important;padding:6px 2px!important;
+ transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-actions{
+ position:sticky!important;bottom:0!important;z-index:3!important;
+ display:grid!important;grid-template-columns:1fr 1.5fr!important;
+ gap:9px!important;padding:8px 0 2px!important;
+ margin:0!important;background:var(--sv-inbox-panel-bg,#fff)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-actions > button{
+ height:44px!important;min-height:44px!important;
+ border-radius:13px!important;transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-actions > button:active{
+ transform:none!important;
+}
