@@ -177,7 +177,7 @@ html body #svcpWorkChatScreen .svcp-room-profile-avatar .svcp-native-avatar{font
 #svcpWorkChatScreen .svcp-atlas-avatar{
  display:block!important;width:100%!important;height:100%!important;
  border:0!important;border-radius:50%!important;
- background-image:url('./seyveo-3d-avatars-atlas.webp')!important;
+ background-image:url('./seyveo-avatar-3d-atlas.webp')!important;
  background-repeat:no-repeat!important;
  background-size:400% 300%!important;
  box-shadow:none!important;overflow:hidden!important;
