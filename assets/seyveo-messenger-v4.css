@@ -547,6 +547,15 @@ html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] .
 html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"] .svcp-flat-stop{
  display:block!important;fill:#FFF!important;
 }
+/* Only one right-hand composer action is visible at once.
+   The existing JS sets data-has-content; it never toggles hidden itself. */
+html body #svcpWorkChatScreen #svcpChatFormReset[data-has-content="false"]:not([data-sayvi-responding="true"])>#svcpChatSendFlat{
+ display:none!important;
+}
+html body #svcpWorkChatScreen #svcpChatFormReset[data-has-content="true"]>#svcpVoiceRecord,
+html body #svcpWorkChatScreen #svcpChatFormReset[data-sayvi-responding="true"]>#svcpVoiceRecord{
+ display:none!important;
+}
 html body #svcpWorkChatScreen #svcpChatFormReset>#svcpChatSendFlat[hidden],
 html body #svcpWorkChatScreen #svcpChatFormReset>:is(#svcpCameraToggle,#svcpFile,#svcpCameraPhoto){display:none!important}
 html body #svcpWorkChatScreen #svcpChatFormReset>#svcpAttachMenu:not([hidden]){
