@@ -1309,7 +1309,7 @@ html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .sv-inbox-ro
  padding:0!important;margin:0!important;
  border:0!important;border-radius:50%!important;
  color:#566878!important;
- background:#EEF1F4!important;
+ background:var(--sv-avatar-auto-bg,#EEF1F4)!important;
  box-shadow:none!important;
  font:600 16px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  letter-spacing:0!important;
@@ -1317,13 +1317,13 @@ html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .sv-inbox-ro
 }
 /* People share a neutral graphite family, with small distinguishing undertones. */
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-person="elena"] .svcp-directory-avatar{
- background:#EEF1F4!important
+ background:var(--sv-avatar-auto-bg,#EEF1F4)!important
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-person="anna"] .svcp-directory-avatar{
- background:#EEF1F4!important
+ background:var(--sv-avatar-auto-bg,#EEF1F4)!important
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-person="mikhail"] .svcp-directory-avatar{
- background:#EEF1F4!important
+ background:var(--sv-avatar-auto-bg,#EEF1F4)!important
 }
 /* Groups are not people: soft pearl-tinted circles with thin outline artwork. */
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-directory-item[data-svcp-room-kind="groups"] .svcp-directory-avatar{
@@ -1452,7 +1452,7 @@ html body #svcpWorkChatScreen .sv-inbox-avatar-custom[data-sv-avatar-kind="photo
 }
 html body #svcpWorkChatScreen .sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
  font-size:16px!important;
- background-color:#EEF1F4!important;background-image:none!important;
+ background-color:var(--sv-avatar-color,#EEF1F4)!important;background-image:none!important;
  color:#566878!important;-webkit-text-fill-color:#566878!important;
  font-weight:650!important;border:0!important;
  box-shadow:none!important;text-shadow:none!important;
