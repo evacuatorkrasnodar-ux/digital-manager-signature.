@@ -25,7 +25,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset{
  --svcp-clean-blue:var(--svcp-conversation-blue-glass,rgba(6,134,204,.62));
  --svcp-clean-line:var(--svcp-conversation-blue-rim,rgba(12,119,190,.55));
  box-sizing:border-box!important;
- position:relative!important;inset:auto!important;flex:0 0 auto!important;
+ position:absolute!important;inset:auto 0 6px 0!important;
  z-index:15!important;isolation:isolate!important;
  display:grid!important;
  grid-template-columns:44px 44px minmax(0,1fr) 44px!important;
@@ -36,7 +36,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset{
  max-width:calc(100% - 20px)!important;min-width:0!important;
  height:var(--svcp-compose-height,56px)!important;
  min-height:56px!important;max-height:none!important;
- margin:0 auto max(6px,env(safe-area-inset-bottom,0px))!important;padding:0!important;
+ margin:0 auto!important;padding:0!important;
  border:0!important;outline:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;overflow:visible!important;
@@ -373,40 +373,4 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]) > button:is(:hover,:active,:focus-visible){
  background:rgba(225,229,234,.60)!important;
  color:#252A31!important;-webkit-text-fill-color:#252A31!important;
-}
-
-/* 24 Nov 2026 · Sky chat: remove the extra bottom/backdrop layer.
-   Safari can rasterize a blurred absolute composer as a rectangular slab
-   even though the visible pill is rounded. Paint ONLY the round Plus and
-   the pill, with no large filter plane; align the dock nearer the bottom.
-   Text input, button sizes, expanded layout, and event handlers unchanged. */
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset{
- bottom:auto!important;
- isolation:auto!important;
- background:transparent!important;
- background-image:none!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
-}
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > .svcp-clean-surface{
- background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
- background-image:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- box-shadow:none!important;
- clip-path:inset(0 round 25px)!important;
-}
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset.svcp-compose-multiline > .svcp-clean-surface{
- background:var(--svcp-conversation-blue-glass-expanded,rgba(5,123,195,.44))!important;
- clip-path:inset(0 round 24px)!important;
-}
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachFile{
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- clip-path:circle(50%)!important;
 }
