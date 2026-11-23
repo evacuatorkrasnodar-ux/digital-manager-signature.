@@ -385,3 +385,31 @@ html[data-theme="dark"] body dialog#calendarSpaceDialog.cal-space-dialog[open][d
  height:var(--sv-apple-nav-row)!important;
  min-height:var(--sv-apple-nav-row)!important;
 }
+
+
+/* 2026-11-23 · Stable navigation geometry.
+   Neutralize legacy press/hover transforms on actual page HEADER controls,
+   not the dock, cards, toggles, canvas or keyboard controls. */
+html body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > button,
+html body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > :is(.sv-header-actions,.sv-continuity-actions) > button{
+ box-sizing:border-box!important;
+ flex-shrink:0!important;align-self:center!important;
+ transform:none!important;translate:none!important;scale:none!important;
+ animation:none!important;transition:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > button:is(:active,:hover,:focus),
+html body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > :is(.sv-header-actions,.sv-continuity-actions) > button:is(:active,:hover,:focus){
+ transform:none!important;translate:none!important;scale:none!important;
+ filter:none!important;animation:none!important;transition:none!important;
+}
+html body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > button:is(:active,:hover)::before,
+html body :is(#lifePage,#picturePage,#managePage,#sayviSurfacePage)
+ .sv-continuity-titlebar > button:is(:active,:hover)::after{
+ box-shadow:none!important;transform:none!important;
+}
