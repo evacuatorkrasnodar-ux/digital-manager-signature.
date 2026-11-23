@@ -91,9 +91,7 @@
  if(calendarPeriodLabel){
   new MutationObserver(syncCalendarPeriod).observe(calendarPeriodLabel,{childList:true,characterData:true,subtree:true});
  }
- const calendarHeaderStyle=document.createElement('style');
- calendarHeaderStyle.textContent=':host([data-calendar-period="true"]) .title{display:flex;align-items:center;justify-content:center;gap:5px;font-size:19px;font-weight:620;letter-spacing:-.025em;overflow:visible}.sv-zodiac-symbol{display:inline-grid;place-items:center;flex:none;width:39px;height:39px;font-size:27px;line-height:1;filter:drop-shadow(0 2px 4px rgba(172,98,56,.12))}.sv-zodiac-symbol svg{display:block;width:39px;height:39px;overflow:visible;animation:horseBreathe 4.8s ease-in-out infinite}.horse-heat{animation:horseGlow 4.8s ease-in-out infinite}.horse-spark{animation:horseSpark 4.8s ease-in-out infinite}@keyframes horseBreathe{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-1.3px) rotate(1.3deg)}}@keyframes horseGlow{0%,100%{opacity:.2}50%{opacity:.75}}@keyframes horseSpark{0%,100%{opacity:.15}45%{opacity:.78}65%{opacity:.35}}@media(prefers-reduced-motion:reduce){.sv-zodiac-symbol svg,.horse-heat,.horse-spark{animation:none!important}}';
- heading.shadowRoot?.append(calendarHeaderStyle);
+ // The calendar year and zodiac are styled in the single Work Header stylesheet.
  const plusIcon=workHeader.icons.plus;
  const searchIcon=workHeader.icons.search;
  // The landing uses the three-action capsule. In nested All Tasks, Search
@@ -121,95 +119,8 @@
  if(historyBar){
   historyBar.append(historyGroup);
   historyGroup.append(searchTasks,selectHistory,add,reviewCards);
-  const design=document.createElement('style');
-  design.textContent=`
-  /* Both task actions occupy the SAME 62px header grid row as the title.
-     No per-button top offsets: one native grid baseline on every screen. */
-  .sv-history-dual{display:contents}
-  .sv-history-select,.sv-history-search{display:none}
-  :host([data-task-tools="true"]) .bar{position:relative}
-  /* The old header Select button is retired on every Tasks stage.
-     The canonical Back occupies the left slot in All Tasks. */
-  :host([data-task-tools="true"]) .sv-history-dual{
-   position:relative;z-index:2;
-   grid-column:3;grid-row:1;
-   justify-self:end;align-self:center;
-   box-sizing:border-box;display:flex;align-items:center;justify-content:center;
-   gap:0;width:var(--sv-nav-triple-width,134px);height:var(--sv-nav-capsule-height,44px);padding:0 4px;
-   border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.97));
-   border-radius:999px;
-   background:var(--sv-white-pearl-surface,rgba(255,255,255,.92));
-   box-shadow:var(--sv-white-pearl-dock-shadow,0 3px 10px rgba(48,56,72,.060),0 1px 2px rgba(48,56,72,.030));
-   -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(9px) saturate(106%));
-   backdrop-filter:var(--sv-white-pearl-blur,blur(9px) saturate(106%));
-  }
-  :host([data-task-tools="true"]) .sv-history-dual .control{
-   display:grid!important;flex:0 0 var(--sv-nav-capsule-cell,42px)!important;
-   width:var(--sv-nav-capsule-cell,42px)!important;height:var(--sv-nav-capsule-cell,42px)!important;min-width:var(--sv-nav-capsule-cell,42px)!important;
-   min-height:var(--sv-nav-capsule-cell,42px)!important;margin:0!important;padding:0!important;
-   border:0!important;border-radius:999px!important;
-   background:transparent!important;box-shadow:none!important;
-   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-   color:var(--sv-header-icon-ink,#0B0B0D)!important;
-  }
-  /* The landing calendar shows three controls; the fourth, hidden
-     Select control previously inherited display:grid!important above and
-     overflowed the capsule, clipping Add at the right screen edge. */
-  :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-history-select{
-   display:none!important;
-  }
-  :host([data-task-tools="true"]) .sv-history-select svg{
-   width:20px!important;height:20px!important;
-   fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
-  }
-  :host([data-task-tools="true"]) .sv-history-dual .control svg{
-   width:20px;height:20px;stroke-width:1.6;
-  }
-  :host([data-task-tools="true"]) .sv-history-search{
-   display:grid!important;position:relative;
-  }
-  :host([data-task-tools="true"]) .sv-review-cards-control{display:grid!important}
-  :host([data-history="true"]) .sv-review-cards-control{display:none!important}
-  :host([data-task-tools="true"]) .sv-history-dual .sv-review-cards-control{position:relative!important;overflow:visible!important}
-  :host([data-task-tools="true"]) .sv-review-cards-badge:not([hidden]){position:absolute;top:4px;right:1px;display:grid;place-items:center;min-width:14px;height:14px;box-sizing:border-box;padding:0 3px;border-radius:999px;background:#D6534A;color:white;border:1.5px solid #fff;font:600 9px/1 -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 2px rgba(0,0,0,.08);pointer-events:none}
-  :host([data-task-tools="true"][data-task-selecting="false"]) .sv-history-dual .sv-review-cards-control{border-radius:999px!important;background:transparent!important;color:#1C1C1E!important;}
-  /* No internal dividers or individually raised button surfaces. */
-  :host([data-task-tools="true"]) .sv-history-dual .control::after{content:none!important;display:none!important}
-  :host([data-task-tools="true"]) .sv-history-dual .control:active{
-   background:transparent!important;opacity:.65;
-  }
-  :host([data-task-tools="true"]) .sv-history-select[aria-pressed="true"]{
-   background:transparent!important;
-  }
-  /* All Tasks: a single 44px magnifier, aligned with the 44px Back circle.
-     The bottom capsule owns selection. The 60px global dock is untouched. */
-  :host([data-task-selecting="true"]) .sv-history-dual{
-   display:flex!important;width:var(--sv-nav-single-size,44px)!important;height:var(--sv-nav-single-size,44px)!important;padding:0 1px!important;
-  }
-  :host([data-task-selecting="true"]) .sv-history-dual .control{
-   flex:0 0 var(--sv-nav-capsule-cell,42px)!important;width:var(--sv-nav-capsule-cell,42px)!important;min-width:var(--sv-nav-capsule-cell,42px)!important;
-   height:var(--sv-nav-capsule-cell,42px)!important;min-height:var(--sv-nav-capsule-cell,42px)!important;
-  }
-  :host([data-task-selecting="true"]) .sv-history-dual .control svg{
-   width:20px!important;height:20px!important;stroke-width:1.6!important;
-  }
-  :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select{display:none!important}
-  :host([data-task-selecting="true"]) .sv-history-dual .control:not(.sv-history-search){display:none!important}
-  /* Selection is conveyed by the icon, not a second grey pill inside
-     the already finished pearl capsule. */
-  :host([data-task-selecting="true"]) .sv-history-dual .sv-history-select[aria-pressed="true"]{background:transparent!important}
-  :host([data-task-selecting="true"]) .sv-history-select[aria-pressed="true"] svg{stroke-width:1.6!important}
-  /* All Tasks has only the standard Back in the shared header.
-     Select and Select All are below the list, never over the Back. */
-  :host([data-task-tools="true"][data-theme="dark"]) .sv-history-select,
-  :host([data-task-tools="true"][data-theme="dark"]) .sv-history-dual{
-   background:var(--sv-header-circle,#38383A)!important;
-   border:var(--sv-header-circle-border,1px solid rgba(255,255,255,.14))!important;
-   box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-  }
-  `;
-  heading.shadowRoot.append(design);
  }
+ // The private Work Header stylesheet owns all geometry and pointer states.
  selectHistory.addEventListener('click',event=>{
   event.stopPropagation();
   window.SEYVEO_TASK_INLINE?.select();
