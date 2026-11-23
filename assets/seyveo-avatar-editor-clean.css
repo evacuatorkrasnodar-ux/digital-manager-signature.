@@ -179,10 +179,10 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-status:empty{display:none!important}
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-footer{
  box-sizing:border-box!important;display:grid!important;grid-template-columns:1fr 1.5fr!important;
- position:static!important;flex:0 0 auto!important;gap:9px!important;width:100%!important;
- margin:4px 0 0!important;padding:8px 0 12px!important;
+ position:relative!important;flex:0 0 auto!important;gap:9px!important;width:100%!important;
+ margin:0!important;padding:8px 16px calc(12px + env(safe-area-inset-bottom,0px))!important;
  border:0!important;outline:0!important;
- background:none!important;box-shadow:none!important;
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-footer>button{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
