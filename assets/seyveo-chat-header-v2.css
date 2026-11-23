@@ -160,11 +160,11 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpCo
    Previously the weaker pearl text selector lost to the default white-on-blue
    rule: the name became invisible on a white capsule. No geometry changes. */
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
- background:rgba(255,255,255,.88)!important;
- border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
- box-shadow:var(--sv-white-pearl-dock-shadow,0 6px 19px rgba(42,52,72,.08))!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ background:rgba(244,242,239,.93)!important;
+ border:1px solid rgba(255,255,255,.99)!important;
+ box-shadow:0 3px 12px rgba(82,69,57,.10),inset 0 1px 0 rgba(255,255,255,.82)!important;
+ -webkit-backdrop-filter:blur(16px) saturate(100%)!important;
+ backdrop-filter:blur(16px) saturate(100%)!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > #svcpConversationTitle{
  color:#20262D!important;-webkit-text-fill-color:#20262D!important;
@@ -304,17 +304,17 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > #svcpConvers
    at rest, focus, hover and touch. */
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions{
  overflow:visible!important;
- filter:drop-shadow(0 5px 7px rgba(42,52,72,.16))!important;
- -webkit-filter:drop-shadow(0 5px 7px rgba(42,52,72,.16))!important;
+ filter:none!important;
+ -webkit-filter:none!important;
 }
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-call-actions > .svcp-call-button:not([hidden]){
- background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ background:rgba(244,242,239,.93)!important;
  background-image:none!important;
- border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
- box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+ border:1px solid rgba(255,255,255,.99)!important;
+ box-shadow:0 4px 15px rgba(82,69,57,.115),inset 0 1px 0 rgba(255,255,255,.86)!important;
  color:var(--sv-white-pearl-ink,#0b0b0d)!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ -webkit-backdrop-filter:blur(16px) saturate(100%)!important;
+ backdrop-filter:blur(16px) saturate(100%)!important;
  transform:none!important;transition:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
@@ -416,7 +416,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]
  > .svcp-call-actions > .svcp-call-button:not([hidden]){
- box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+ box-shadow:0 4px 15px rgba(82,69,57,.115),inset 0 1px 0 rgba(255,255,255,.86)!important;
 }
 
 
