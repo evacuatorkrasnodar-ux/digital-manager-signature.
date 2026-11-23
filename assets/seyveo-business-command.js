@@ -79,7 +79,7 @@ function selfAvatarRecords(){
 }
 function selfAvatarFor(person){
  const raw=selfAvatarRecords()[person];
- if(raw&&raw.kind==='atlas'&&Number.isInteger(raw.index)&&raw.index>=0&&raw.index<12)
+ if(raw&&raw.kind==='atlas'&&Number.isInteger(raw.index)&&raw.index>=0&&raw.index<76)
   return {kind:'atlas',index:raw.index};
  if(raw&&raw.kind==='photo'&&typeof raw.data==='string'&&raw.data.length<320000
     &&PHOTO_DATA_PATTERN.test(raw.data))return {kind:'photo',data:raw.data};
@@ -101,9 +101,9 @@ function ownerAvatarPreview(){
    &&PHOTO_DATA_PATTERN.test(own.data))return {kind:'photo',data:own.data};
   // The Messages editor writes the owner's chosen 3D artwork as preset 3d-N.
   // Read that exact same profile value in Elena's view, never a hard-coded emoji.
-  if(own?.kind==='preset'&&/^3d-(?:[0-9]|1[01])$/.test(own.id||''))
+  if(own?.kind==='preset'&&/^3d-\d{1,2}$/.test(own.id||'')&&Number(own.id.slice(3))<76)
    return {kind:'atlas',index:Number(own.id.slice(3))};
-  if(own?.kind==='atlas'&&Number.isInteger(own.index)&&own.index>=0&&own.index<12)
+  if(own?.kind==='atlas'&&Number.isInteger(own.index)&&own.index>=0&&own.index<76)
    return {kind:'atlas',index:own.index};
   if(own?.kind==='emoji'&&typeof own.emoji==='string'&&[...own.emoji].length<=10)
    return {kind:'emoji',emoji:own.emoji};
@@ -124,7 +124,13 @@ function drawPortrait(node,photo,letter){
   if(photo?.kind==='atlas'){
    target.textContent='';
    target.classList.add('svcp-atlas-avatar');
-   target.style.backgroundPosition=((photo.index%4)*100/3)+'% '+(Math.floor(photo.index/4)*50)+'%';
+   if(photo.index>=12&&photo.index<76){
+    const tile=photo.index-12;
+    target.classList.add('svcp-collection-avatar');
+    target.style.backgroundPosition=((tile%8)*100/7)+'% '+(Math.floor(tile/8)*100/7)+'%';
+   }else{
+    target.style.backgroundPosition=((photo.index%4)*100/3)+'% '+(Math.floor(photo.index/4)*50)+'%';
+   }
   }else{
    target.textContent=photo?.kind==='monogram'?letter:
      (photo?.emoji||CHAT_AVATAR_OPTIONS.find(([id])=>id===photo?.id)?.[1]||'😊');
