@@ -2161,28 +2161,38 @@ $('svcpChatFilters')?.addEventListener('click',event=>{
  renderDirectory();
 });
 /* Search existing local chat history and team assignments, no new archive page. */
+/* One unified Messages search: chat titles, old message text, attachments
+   and accessible tasks. Archived chats remain searchable. The archive flag
+   affects the default directory only, never these results. */
 function renderHistorySearch(){
  const query=historyQuery.trim().toLocaleLowerCase('ru-RU'),list=$('svcpConversationList');
  if(!query||!list)return false;
  list.replaceChildren();
- const chatHits=state.chat.map((item,index)=>({item,index}))
-  .filter(({item})=>item&&typeof item.text==='string'&&
-   chatRoomVisible(item.room)&&
-   (item.text.toLocaleLowerCase('ru-RU').includes(query)||
-    (ROOMS.find(room=>room.id===item.room)?.label||'').toLocaleLowerCase('ru-RU').includes(query)))
-  .reverse().slice(0,30);
  const roleLabels={elena:'Кассир',anna:'Старший продавец',mikhail:'Продавец'};
- const roomHits=ROOMS.filter(room=>{
-  if(!chatRoomVisible(room.id))return false;
-  const name=employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label;
-  const role=employeePreviewActive()&&room.id==='dm-elena'?'руководитель':roleLabels[room.person]||room.hint;
-  return (name+' '+role).toLocaleLowerCase('ru-RU').includes(query);
- });
+ const roomName=room=>employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label;
+ const roomRole=room=>employeePreviewActive()&&room.id==='dm-elena'?'Личный рабочий чат':roleLabels[room.person]||room.hint||'';
+ const roomHits=ROOMS.filter(room=>
+  chatRoomVisible(room.id)&&
+  [roomName(room),roomRole(room)].join(' ').toLocaleLowerCase('ru-RU').includes(query));
+ const messageHits=state.chat.map((item,index)=>({item,index}))
+  .filter(({item})=>item&&chatRoomVisible(item.room)&&
+   [String(item.text||''),ROOMS.find(room=>room.id===item.room)?.label||'']
+    .join(' ').toLocaleLowerCase('ru-RU').includes(query))
+  .reverse().slice(0,40);
+ const fileHits=state.chat.map((item,index)=>({item,index}))
+  .filter(({item})=>item&&item.mediaId&&chatRoomVisible(item.room)&&
+   [String(item.mediaName||''),String(item.text||''),
+    ROOMS.find(room=>room.id===item.room)?.label||'']
+    .join(' ').toLocaleLowerCase('ru-RU').includes(query))
+  .reverse().slice(0,30);
  const taskHits=state.tasks.map((item,index)=>({item,index}))
   .filter(({item})=>item&&typeof item.text==='string'&&
-   (!employeePreviewActive()||item.assigneeId==='elena')&&item.text.toLocaleLowerCase('ru-RU').includes(query))
+   (!employeePreviewActive()||item.assigneeId==='elena')&&
+   [item.text,String(item.attachmentName||''),String(item.mediaName||'')]
+    .join(' ').toLocaleLowerCase('ru-RU').includes(query))
   .reverse().slice(0,30);
  function heading(textValue,count){
+  if(!count)return;
   const h=el('div','svcp-search-results-heading');
   h.append(el('strong',null,textValue),el('small',null,String(count)));
   list.append(h);
@@ -2194,22 +2204,24 @@ function renderHistorySearch(){
   row.addEventListener('click',click);
   list.append(row);
  }
- if(roomHits.length){
-  heading('Чаты',roomHits.length);
-  for(const room of roomHits){
-   const name=employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label;
-   const role=employeePreviewActive()&&room.id==='dm-elena'?'Личный рабочий чат':roleLabels[room.person]||room.hint;
-   resultRow(name,role,()=>openRoom(room.id));
-  }
+ function openMatchingMessage(item,index){
+  openRoom(item.room);
+  focusSearchIndex=index;
+  renderChat();
  }
- heading('Сообщения',chatHits.length);
- for(const {item,index} of chatHits){
+ heading('Чаты',roomHits.length);
+ for(const room of roomHits)resultRow(roomName(room),roomRole(room),()=>openRoom(room.id));
+ heading('Сообщения',messageHits.length);
+ for(const {item,index} of messageHits){
   const room=ROOMS.find(x=>x.id===item.room);
-  resultRow(room?.label||'Чат',item.text.slice(0,150),()=>{
-   openRoom(item.room);
-   focusSearchIndex=index;
-   renderChat();
-  });
+  resultRow(room?roomName(room):'Чат',String(item.text||'Сообщение').slice(0,150),
+   ()=>openMatchingMessage(item,index));
+ }
+ heading('Файлы',fileHits.length);
+ for(const {item,index} of fileHits){
+  const room=ROOMS.find(x=>x.id===item.room);
+  resultRow(item.mediaName||'Вложение',(room?roomName(room)+' · ':'')+String(item.text||'Файл').slice(0,110),
+   ()=>openMatchingMessage(item,index));
  }
  heading('Поручения',taskHits.length);
  for(const {item,index} of taskHits){
@@ -2222,9 +2234,8 @@ function renderHistorySearch(){
    requestAnimationFrame(()=>focusTask(index));
   });
  }
- if(!roomHits.length&&!chatHits.length&&!taskHits.length){
-  list.append(el('p','svcp-search-empty','Ничего не найдено. Попробуйте имя, должность или слово из сообщения.'));
- }
+ if(!roomHits.length&&!messageHits.length&&!fileHits.length&&!taskHits.length)
+  list.append(el('p','svcp-search-empty','Ничего не найдено. Попробуйте имя, слово из сообщения или название файла.'));
  return true;
 }
 $('svcpHistorySearch')?.addEventListener('input',event=>{
