@@ -72,13 +72,6 @@ const AVATAR_3D=[
 ];
 /* Rebuilt in small reviewed batches: only verified original portraits are selectable.
    Saved removed indices are left in storage but gracefully show monogram until changed. */
-const AVATAR_CATEGORY_TABS=[['all','Все'],['people','Люди'],['animals','Животные'],['fantasy','Герои'],['fruits','Фрукты'],['emotion','Эмоции']];
-function avatarCategory(index){
- if(index>=6&&index<=9)return 'fruits';
- if(index>=10)return 'emotion';
- if(index===4)return 'animals';
- return index===1||index===3?'fantasy':'people';
-}
 const OWNER_AVATAR_KEY='seyveo-owner-avatar-v1',STAFF_AVATAR_KEY='seyveo-self-identity-avatar-v1';
 function atlasMark(index){
  const m=node('span','sv-atlas-thumb');
@@ -150,206 +143,6 @@ function updateHeaderAvatar(){
  }
  // Other people's avatars are not editable from the manager's browser.
 }
-function showAvatarEditor(id){
- if(id!=='self')return;
- const self=true,info=null;
- if(!self&&(!info||info.person==='sayvi')){
-  body.append(node('p','sv-inbox-hint','Фирменный значок Сэйви не изменяется.'));return;
- }
- const old=readActualSelfAvatar();
- let draft=safeAvatar(old)||{
-  kind:'monogram',color:AVATAR_COLORS[0],
-  initials:String(self?(prefs.myProfile?.name||'Я'):(info?.label||'?')).trim().slice(0,1).toLocaleUpperCase('ru-RU'),
-  emoji:'😊',image:''
- };
- let activeAvatarTab=old?.kind==='photo'?'photo':old?.kind==='monogram'?'monogram':'atlas';
- const form=node('form','sv-inbox-avatar-editor');
- form.id='svcpAvatarEditorForm';
- const previewWrap=node('div','sv-inbox-avatar-preview-wrap');
- const preview=node('span','sv-inbox-avatar-preview');
- preview.setAttribute('aria-hidden','true');
- const subtitle=node('p','sv-inbox-avatar-subtitle',self?'Ваш профиль':'Только для вас · '+info.label);
- previewWrap.append(preview,subtitle);
- form.append(previewWrap);
- let displayName=null,monogramInput=null;
- if(self){
-  const nameLabel=node('label','sv-inbox-avatar-field');
-  nameLabel.append(node('span',null,'Имя'));
-  displayName=node('input','sv-inbox-text-input');
-  displayName.type='text';displayName.maxLength=50;
-  displayName.autocomplete='nickname';
-  displayName.placeholder='Ваше имя';
-  const employeeSelf=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
-  displayName.value=employeeSelf?'Елена':typeof prefs.myProfile?.name==='string'?prefs.myProfile.name:'';
-  if(employeeSelf){displayName.readOnly=true;displayName.setAttribute('aria-label','Елена · учебный профиль')}
-  nameLabel.append(displayName);form.append(nameLabel);
- }
- const methods=node('div','sv-inbox-avatar-methods');
- methods.setAttribute('role','group');methods.setAttribute('aria-label','Тип аватара');
- const methodButtons=[];
- const panels=node('div','sv-inbox-avatar-customization');
- const monoPanel=node('div','sv-inbox-avatar-mode');
- const monoLabel=node('label','sv-inbox-avatar-field');
- monoLabel.append(node('span',null,'Буквы на аватаре'));
- monogramInput=node('input','sv-inbox-text-input');
- monogramInput.type='text';monogramInput.maxLength=2;
- monogramInput.placeholder='Р';
- monogramInput.value=draft.initials||'';
- monoLabel.append(monogramInput);monoPanel.append(monoLabel);
- const atlasPanel=node('div','sv-inbox-avatar-mode sv-atlas-mode');
- const atlasFilters=node('div','sv-atlas-filters');
- atlasFilters.setAttribute('role','group');
- atlasFilters.setAttribute('aria-label','Категории аватаров');
- const atlasGrid=node('div','sv-atlas-grid');
- atlasPanel.append(atlasFilters,atlasGrid);
- let activeAvatarCategory='all';
- const avatarFilterButtons=[];
- function build3D(){
-  atlasGrid.replaceChildren();
-  for(let index=0;index<AVATAR_3D.length;index++){
-   if(activeAvatarCategory!=='all'&&avatarCategory(index)!==activeAvatarCategory)continue;
-   const title=AVATAR_3D[index][0];
-   const b=node('button','sv-atlas-choice');b.type='button';
-   b.dataset.avatarIndex=String(index);
-   b.setAttribute('aria-label',title);
-   b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===index));
-   b.append(atlasMark(index),node('small',null,title));
-   b.addEventListener('click',()=>{activeAvatarTab='atlas';draft.kind='atlas';draft.index=index;draw()});
-   atlasGrid.append(b);
-  }
- }
- for(const [category,label] of AVATAR_CATEGORY_TABS){
-  const button=node('button','sv-atlas-filter',label);
-  button.type='button';
-  button.dataset.avatarCategory=category;
-  button.addEventListener('click',()=>{if(activeAvatarCategory===category)return;activeAvatarCategory=category;build3D();draw()});
-  avatarFilterButtons.push(button);
-  atlasFilters.append(button);
- }
- const photoPanel=node('div','sv-inbox-avatar-mode');
- const photoLabel=node('label','sv-inbox-avatar-photo-select');
- photoLabel.append(node('span',null,'Выбрать фото из галереи'));
- const fileInput=node('input');
- fileInput.type='file';fileInput.accept='image/*';
- fileInput.setAttribute('aria-label','Загрузить фотографию аватара');
- photoLabel.append(fileInput);photoPanel.append(photoLabel);
- const atlasButton=node('button','sv-inbox-avatar-method','Аватары');
- const monoButton=node('button','sv-inbox-avatar-method','Буквы');
- const photoButton=node('button','sv-inbox-avatar-method','Фото');
- for(const [kind,b] of [['atlas',atlasButton],['monogram',monoButton],['photo',photoButton]]){
-  b.type='button';b.addEventListener('click',()=>{
-   activeAvatarTab=kind;if(kind!=='atlas')draft.kind=kind;draw();
-   if(kind==='photo'&&!draft.image)fileInput.click();
-  });
-  b.dataset.avatarMethod=kind;
-  methodButtons.push(b);methods.append(b);
- }
- form.append(methods);
- panels.append(atlasPanel,monoPanel,photoPanel);
- form.append(panels);
- const palette=node('div','sv-inbox-avatar-palette');
- palette.setAttribute('role','group');palette.setAttribute('aria-label','Цвет фона');
- const swatches=[];
- for(const color of AVATAR_COLORS){
-  const swatch=node('button','sv-inbox-avatar-swatch');swatch.type='button';
-  swatch.style.setProperty('--sv-avatar-swatch',color);
-  swatch.setAttribute('aria-label','Цвет '+color);
-  swatch.addEventListener('click',()=>{draft.color=color;draw()});
-  swatches.push(swatch);palette.append(swatch);
- }
- form.append(palette);
- const status=node('p','sv-inbox-avatar-status');
- status.setAttribute('role','status');
- const privacy=node('p','sv-inbox-hint','Каждый меняет только свой аватар. Пока выбор хранится на этом устройстве и не синхронизируется с телефонами коллег.');
- const actions=node('div','sv-inbox-avatar-actions');
- const reset=node('button','sv-inbox-avatar-reset','Сбросить');reset.type='button';
- const save=node('button','sv-inbox-submit','Сохранить');save.type='submit';
- actions.append(reset,save);
- actions.setAttribute('aria-label','Действия с аватаром');
- save.setAttribute('form',form.id);
- form.append(status,privacy);
- function draw(){
-  const normalized=safeAvatar(draft);
-  if(normalized)paintAvatar(preview,normalized);
-  for(const button of methodButtons)
-   button.setAttribute('aria-pressed',String(button.dataset.avatarMethod===activeAvatarTab));
-  for(let i=0;i<swatches.length;i++)
-   swatches[i].setAttribute('aria-pressed',String(AVATAR_COLORS[i]===draft.color));
-  if(!atlasGrid.childElementCount)build3D();
-  for(const button of avatarFilterButtons)
-   button.setAttribute('aria-pressed',String(button.dataset.avatarCategory===activeAvatarCategory));
-  for(const choice of atlasGrid.children)
-   choice.setAttribute('aria-pressed',String(draft.kind==='atlas'&&Number(choice.dataset.avatarIndex)===draft.index));
-  atlasPanel.hidden=activeAvatarTab!=='atlas';
-  monoPanel.hidden=activeAvatarTab!=='monogram';
-  photoPanel.hidden=activeAvatarTab!=='photo';
-  palette.hidden=activeAvatarTab!=='monogram';
- }
- monogramInput.addEventListener('input',()=>{
-  activeAvatarTab='monogram';draft.kind='monogram';draft.initials=[...monogramInput.value.trim()].slice(0,2).join('').toLocaleUpperCase('ru-RU');draw();
- });
- fileInput.addEventListener('change',()=>{
-  const file=fileInput.files?.[0];if(!file)return;
-  if(!file.type.startsWith('image/')||file.size>8*1024*1024){
-   status.textContent='Выберите изображение размером до 8 МБ.';fileInput.value='';return;
-  }
-  status.textContent='Подготавливаю фото…';save.disabled=true;
-  const url=URL.createObjectURL(file),photo=new Image();
-  const cleanup=()=>{URL.revokeObjectURL(url);fileInput.value='';save.disabled=false};
-  photo.onload=()=>{
-   try{
-    const canvas=document.createElement('canvas');canvas.width=256;canvas.height=256;
-    const ctx=canvas.getContext('2d');if(!ctx)throw new Error('canvas');
-    const w=photo.naturalWidth,h=photo.naturalHeight;
-    if(!w||!h)throw new Error('image');
-    const side=Math.min(w,h);
-    ctx.drawImage(photo,(w-side)/2,(h-side)/2,side,side,0,0,256,256);
-    const data=canvas.toDataURL('image/jpeg',.77);
-    if(data.length>320000)throw new Error('size');
-    activeAvatarTab='photo';draft.image=data;draft.kind='photo';status.textContent='';draw();
-   }catch{status.textContent='Не удалось подготовить фото. Попробуйте другое изображение.'}
-   cleanup();
-  };
-  photo.onerror=()=>{status.textContent='Формат фото не поддерживается этим браузером.';cleanup()};
-  photo.src=url;
- });
- function persist(next,resetting=false){
-  const staff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
-  const actual=resetting?{kind:'monogram'}:next;
-  let payload;
-  if(actual.kind==='atlas')payload=staff?{kind:'atlas',index:actual.index}:{kind:'preset',id:'3d-'+actual.index};
-  else if(actual.kind==='photo')payload={kind:'photo',data:actual.image};
-  else if(actual.kind==='emoji')payload={kind:'emoji',emoji:actual.emoji};
-  else payload=staff?{kind:'monogram'}:{kind:'preset',id:'monogram'};
-  try{
-   if(staff){
-    const raw=JSON.parse(localStorage.getItem(STAFF_AVATAR_KEY)||'{}');
-    const records=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
-    records.elena=payload;localStorage.setItem(STAFF_AVATAR_KEY,JSON.stringify(records));
-   }else localStorage.setItem(OWNER_AVATAR_KEY,JSON.stringify(payload));
-   if(staff)prefs.employeeProfile={...prefs.employeeProfile,name:'Елена',avatar:next};
-   else prefs.myProfile={...prefs.myProfile,name:displayName.value.trim().slice(0,50),avatar:next};
-   localStorage.setItem(KEY,JSON.stringify(prefs));
-  }catch{status.textContent='Не удалось сохранить. Проверьте свободное место.';return false}
-  window.dispatchEvent(new Event('seyveo:avatar-changed'));
-  window.dispatchEvent(new CustomEvent('seyveo:self-avatar-updated',{detail:{person:staff?'elena':'manager'}}));
-  return true;
- }
- reset.addEventListener('click',()=>{
-  if(!persist(null,true))return;
-  decorateRows();closeSheet();
- });
- form.addEventListener('submit',event=>{
-  event.preventDefault();
-  if(save.disabled)return;
-  if(draft.kind==='photo'&&!draft.image){status.textContent='Сначала выберите фотографию.';return}
-  if(!persist(safeAvatar(draft)))return;
-  decorateRows();closeSheet();
- });
- draw();body.append(form);
- // Footer is outside scrollable body, so it cannot cover avatar cards.
- panel.append(actions);
-}
 function employee(){return window.SEYVEO_PREVIEW?.isEmployee?.()===true}
 function openChat(id){closeSheet();closeMenu();window.SEYVEO_BUSINESS_COMMAND?.showChat?.(id)}
 const menuButton=node('button','sv-inbox-options-button');
@@ -409,12 +202,11 @@ overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
 function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
-function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники','team-structure':'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
+function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники','team-structure':'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
  title.textContent=viewTitle(type);body.replaceChildren();
- panel.querySelector(':scope > .sv-inbox-avatar-actions')?.remove();
  overlay.hidden=false;
  overlay.classList.toggle('sv-inbox-sheet-notifications',type==='notifications');
  overlay.dataset.svInboxScreen=type;
@@ -426,7 +218,6 @@ function openSheet(type,id='',nested=false){
  else if(type==='group')showGroupForm();
  else if(type==='settings')showSettings();
  else if(type==='one')showOneInfo();
- else if(type==='my-avatar')showAvatarEditor('self');
  else if(type==='room-avatar')showRoomActions(id);
  else if(type==='notifications')showNotifications();
  else if(type==='archives')showArchives();
@@ -620,11 +411,6 @@ function settingToggle(key,label,help){
 }
 function showSettings(){
  sectionHeading('Профиль');
- const profileRow=menuLink('Моё имя и фото','Фото, эмодзи или монограмма на этом устройстве','users',()=>openSubSheet('my-avatar','settings'));
- profileRow.querySelector(':scope > svg')?.remove();
- const profileAvatar=node('span','sv-inbox-avatar-settings-preview');
- paintAvatar(profileAvatar,readActualSelfAvatar());
- profileRow.prepend(profileAvatar);
  sectionHeading('Темы чатов');
  body.append(makeChatWallpapers());
  sectionHeading('Сообщения');
