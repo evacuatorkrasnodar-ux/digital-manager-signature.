@@ -2,15 +2,16 @@
 #homePage > :is(#seyveoLivingMoment,#dynamic,#svcpWorkHomePreview,#workTimeline,#svSmartStartHome,.sv-sayvi-handoff-today){display:none!important}
 #homePage #stage ~ :is(#seyveoLivingMoment,#dynamic,#svcpWorkHomePreview,#workTimeline,#svSmartStartHome,.sv-sayvi-handoff-today){display:none!important}
 .sv-review-header svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.sv-review-room{box-sizing:border-box;position:fixed;inset:0;z-index:1800;overflow-y:auto;overscroll-behavior:contain;background:#fff;border:0;border-radius:0;box-shadow:none;padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 32px)}
+/* Same first-row origin as Cabinet: app safe area + 8px, Work bar + 6px. */
+.sv-review-room{box-sizing:border-box;position:fixed;inset:0;z-index:1800;overflow-y:auto;overscroll-behavior:contain;overflow-anchor:none;background:#fff;border:0;border-radius:0;box-shadow:none;padding:calc(env(safe-area-inset-top,0px) + 14px) max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 32px) max(8px,env(safe-area-inset-left,0px))}
 .sv-review-room[hidden]{display:none!important}
 /* Review is a full page, not a modal sheet layered over a live workspace. */
 :root.sv-review-open body{overflow:hidden!important}
 :root.sv-review-open body > .app,
 :root.sv-review-open body > footer.dock.sv-shared-dock{visibility:hidden!important;pointer-events:none!important}
-.sv-review-header{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:78px minmax(0,1fr) 78px;align-items:center;min-height:52px;margin:-5px 0 16px;background:#fff}
+.sv-review-header{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:60px minmax(0,1fr) 60px;grid-template-rows:44px;align-items:center;min-height:44px;height:44px;margin:0 0 12px;padding:0;background:#fff;overflow-anchor:none}
 .sv-review-header h2{margin:0;text-align:center;font:600 18px/1.3 -apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;color:#121215}
-.sv-review-header button{display:grid;place-items:center;width:44px;height:44px;border:1px solid #e8e9ed;border-radius:50%;background:#fff;color:#151518}
+.sv-review-header button{display:grid;place-items:center;justify-self:start;align-self:center;width:44px;min-width:44px;max-width:44px;height:44px;min-height:44px;max-height:44px;margin:0;padding:0;border:1px solid #e8e9ed;border-radius:50%;background:#fff;color:#151518;transform:none;translate:none;scale:1;filter:none;transition:none;animation:none;-webkit-tap-highlight-color:transparent}
 .sv-review-header #svReviewProgress{font-size:11.5px;letter-spacing:-.01em;color:#626A74;text-align:right;white-space:nowrap}
 .sv-review-content{box-sizing:border-box;display:grid;align-content:start;gap:14px;width:100%;max-width:540px;margin:0 auto;padding:22px 0 clamp(32px,8dvh,72px)}
 .sv-review-content > [hidden]{display:none!important}
@@ -350,27 +351,27 @@
 /* SEYVEO REVIEW READING POLISH 21.11
    A single editorial reading surface: one featured decision followed by a
    quiet two-row queue. No nested cards, new buttons, or altered handlers. */
-:root[data-theme="light"] body #svReviewRoom.sv-review-room .sv-review-header > #svReviewBack{
+/* One resting pearl face for touch, pointer and keyboard navigation.
+   No legacy pressed shadow, scale or position change. */
+:root[data-theme="light"] body #svReviewRoom.sv-review-room .sv-review-header > #svReviewBack,
+:root[data-theme="light"] body #svReviewRoom.sv-review-room .sv-review-header > #svReviewBack:is(:active,:hover,:focus){
  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
  border-radius:50%!important;
  background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
  background-image:none!important;
- box-shadow:var(--sv-white-pearl-circle-shadow,0 6px 18px rgba(42,52,72,.08))!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(4px))!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
  color:var(--sv-white-pearl-ink,#0b0b0d)!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ filter:none!important;transition:none!important;animation:none!important;
  -webkit-tap-highlight-color:transparent!important;
- transition:transform 135ms ease-out,box-shadow 135ms ease-out!important;
-}
-:root[data-theme="light"] body #svReviewRoom.sv-review-room .sv-review-header > #svReviewBack:active{
- background:var(--sv-white-pearl-press-fill,rgba(235,240,246,.32))!important;
- box-shadow:var(--sv-white-pearl-press-shadow,inset 0 2px 3px rgba(31,42,58,.12))!important;
- transform:scale(var(--sv-white-pearl-press-scale,.992))!important;
 }
 #svReviewRoom .sv-review-header{
- grid-template-columns:72px minmax(0,1fr) 72px;
- min-height:54px;
- margin-bottom:12px;
+ grid-template-columns:60px minmax(0,1fr) 60px;
+ grid-template-rows:44px;
+ height:44px;min-height:44px;max-height:44px;
+ margin:0 0 12px;
 }
 #svReviewRoom .sv-review-header h2{
  font-size:19px;line-height:1.25;font-weight:590;letter-spacing:-.023em;
@@ -482,7 +483,7 @@
 }
 @media(max-width:355px){
  #svReviewRoom .sv-review-header{
-  grid-template-columns:58px minmax(0,1fr) 58px;
+  grid-template-columns:50px minmax(0,1fr) 50px;
  }
  #svReviewRoom .sv-review-header h2{font-size:17px}
  #svReviewRoom #seyveoLivingMoment .lm-field:not([data-lm-composing="true"]) .lm-actions{
