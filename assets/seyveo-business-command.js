@@ -78,6 +78,10 @@ function selfAvatarFor(person){
  const raw=selfAvatarRecords()[person];
  if(raw?.kind==='photo'&&typeof raw.data==='string'&&raw.data.length<320000&&
     PHOTO_DATA_PATTERN.test(raw.data))return {kind:'photo',data:raw.data};
+ // Older artistic presets remain in storage, but never become default faces.
+ // Only an artwork freshly selected by the profile owner is shown in chats.
+ if(raw?.kind==='atlas'&&raw.customChosen===true&&Number.isInteger(raw.index)&&
+    raw.index>=0&&raw.index<12)return {kind:'atlas',index:raw.index};
  return {kind:'monogram'};
 }
 function activeSelfAvatarPerson(){
@@ -89,24 +93,34 @@ function ownerAvatarPreview(){
   const own=JSON.parse(localStorage.getItem('seyveo-owner-avatar-v1')||'null');
   if(own?.kind==='photo'&&typeof own.data==='string'&&own.data.length<320000
     &&PHOTO_DATA_PATTERN.test(own.data))return {kind:'photo',data:own.data};
+  if(own?.kind==='preset'&&own.customChosen===true&&/^3d-\d{1,2}$/.test(own.id||'')){
+   const index=Number(own.id.slice(3));
+   if(index>=0&&index<12)return {kind:'atlas',index};
+  }
  }catch{}
  return {kind:'monogram'};
 }
-/* Shared personal portrait: real user photo, otherwise native iOS-like initial.
-   Sayvi uses its separate SEYVEO symbol and never goes through this helper. */
+/* Native flat initials are the default; explicit avatar artwork/photo may
+   replace the initial. Sayvi always keeps the dedicated SEYVEO symbol. */
 function drawPortrait(node,photo,letter){
  if(!node)return;
  node.replaceChildren();
  node.classList.remove('svcp-atlas-avatar','svcp-collection-avatar');
  const isPhoto=photo?.kind==='photo'&&typeof photo.data==='string';
+ const isAtlas=photo?.kind==='atlas'&&Number.isInteger(photo.index)&&photo.index>=0&&photo.index<12;
  const target=document.createElement(isPhoto?'img':'span');
- target.className=isPhoto?'svcp-native-avatar-photo':'svcp-native-avatar svcp-native-initial';
+ target.className=isPhoto?'svcp-native-avatar-photo':isAtlas
+  ?'svcp-native-avatar svcp-atlas-avatar':'svcp-native-avatar svcp-native-initial';
  target.setAttribute('aria-hidden','true');
  if(isPhoto){target.src=photo.data;target.alt='';target.draggable=false;}
- else target.textContent=String(letter||'•').trim().slice(0,2).toLocaleUpperCase('ru-RU');
+ else if(isAtlas){
+  target.textContent='';
+  target.style.backgroundPosition=((photo.index%4)*100/3)+'% '+(Math.floor(photo.index/4)*50)+'%';
+ }else target.textContent=String(letter||'•').trim().slice(0,2).toLocaleUpperCase('ru-RU');
  node.append(target);
  node.classList.add('svcp-native-avatar-host');
  node.classList.toggle('svcp-native-photo-host',isPhoto);
+ node.classList.toggle('svcp-native-atlas-host',isAtlas);
 }
 /* One small line icon for rooms that represent a group or documents. */
 function paintWorkGroupIcon(node,roomId){
