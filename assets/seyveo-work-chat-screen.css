@@ -7149,3 +7149,20 @@ html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > .svcp-sear
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory > #svcpConversationList{
  order:2!important;
 }
+
+/* 2026-11-23 · iPhone Safari: keep final message above floating composer.
+   A real flex child is needed: bottom padding on an overflow-y flex column
+   is not consistently included in the scroll range on older WebKit.
+   This reserves scrollable space, not visible extra screen height. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages{
+ scroll-padding-bottom:calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 20px + env(safe-area-inset-bottom,0px))!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpMessages::after{
+ content:""!important;
+ display:block!important;
+ flex:0 0 calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 22px + env(safe-area-inset-bottom,0px))!important;
+ height:calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,8px) + 22px + env(safe-area-inset-bottom,0px))!important;
+ min-height:0!important;
+ width:1px!important;
+ pointer-events:none!important;
+}
