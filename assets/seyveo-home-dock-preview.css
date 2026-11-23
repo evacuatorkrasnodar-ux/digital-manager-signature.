@@ -80,6 +80,16 @@
  align-self:center!important;
  justify-self:center!important;
 }
+/* Optical center: all four INNER dock buttons were visually 2px high
+   relative to the 60px pearl capsule. Keep the shell, hit targets, active
+   indicator, press logic and separate Search circle unchanged. */
+:root[data-theme="light"] :is(
+ body > footer.dock.sv-shared-dock,
+ body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
+) > :is(#navHome,#navTasks,#navPicture,#assistantButton){
+ top:2px!important;
+}
+
 :root[data-theme="light"] :is(
  body > footer.dock.sv-shared-dock,
  body dialog.seyveo-dock-host[open]:not([data-space="health"]) > footer.dock.sv-shared-dock
