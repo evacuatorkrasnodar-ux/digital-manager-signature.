@@ -1,13 +1,27 @@
 /* SEYVEO · unified Apple-inspired text bubbles, 22 November 2026.
-   Scope: light Sky wallpaper in Work/Sayvi conversation.
+   Scope: identical bubble geometry in Sky and Pearl Work/Sayvi rooms.
    Only ordinary text turns receive .svcp-imessage-text from the renderer.
    Attachments, polls, voice, documents, task cards and emoji remain untouched.
    This one final source owns text bubble materials, grouping and timestamps. */
 
+/* Geometry shared; Sky keeps original tints, Pearl keeps semantic colors. */
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]{
+ --svcp-imsg-in-bg:rgba(239,244,249,.95);
+ --svcp-imsg-out-bg:rgba(0,132,255,.96);
+ --svcp-imsg-in-ink:#26323D;
+}
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]{
+ --svcp-imsg-in-bg:var(--sv-chat-incoming,#E9E9EB);
+ --svcp-imsg-out-bg:var(--sv-chat-outgoing,#0A84FF);
+ --svcp-imsg-in-ink:var(--sv-chat-incoming-ink,#242427);
+}
+
 /* A dense conversational rhythm, but comfortable 44px interaction targets
    and the independent bottom composer are left exactly as they were. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text{
  box-sizing:border-box!important;
  position:relative!important;
@@ -37,21 +51,21 @@
 /* Incoming and Sayvi share one light frosted iMessage surface.
    Ink, sender labels and times are charcoal, not white on white. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi):not(.is-poll):not(.is-task):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
  align-self:flex-start!important;
- background:rgba(239,244,249,.95)!important;
+ background:var(--svcp-imsg-in-bg,rgba(239,244,249,.95))!important;
  background-image:none!important;
  border-radius:13px 21px 21px 21px!important;
- color:#26323D!important;
+ color:var(--svcp-imsg-in-ink,#26323D)!important;
 }
 
 /* Own messages use one crisp iMessage blue and a mirrored radius. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text.is-self:not(.is-poll):not(.is-task):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
  align-self:flex-end!important;
- background:rgba(0,132,255,.96)!important;
+ background:var(--svcp-imsg-out-bg,rgba(0,132,255,.96))!important;
  background-image:none!important;
  border-radius:21px 13px 21px 21px!important;
  color:#FFFFFF!important;
@@ -61,7 +75,7 @@
 
 /* Text shares identical padding, SF typography, wrapping and line rhythm. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text > .svcp-message-text{
  display:block!important;
  margin:0!important;padding:0!important;
@@ -77,16 +91,16 @@
 
 /* Keep outgoing white. Only incoming ordinary TEXT turns use dark ink. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi) > .svcp-message-text{
- color:#26323D!important;-webkit-text-fill-color:#26323D!important;
+ color:var(--svcp-imsg-in-ink,#26323D)!important;-webkit-text-fill-color:var(--svcp-imsg-in-ink,#26323D)!important;
 }
 
 /* First incoming text in a group shows its author.
    Subsequent consecutive messages avoid repeating "Сэйви" over and over.
    Accessibility is preserved on each article and metadata is NOT deleted. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text > .svcp-bubble-meta{
  box-sizing:border-box!important;
  display:flex!important;align-items:center!important;justify-content:flex-start!important;
@@ -94,7 +108,7 @@
  padding:0!important;margin:0 0 4px!important;gap:4px!important;
 }
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text > .svcp-bubble-meta > .svcp-sender{
  display:block!important;
  margin:0!important;padding:0!important;
@@ -104,7 +118,7 @@
  letter-spacing:0!important;
 }
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text:is(.is-self,.svcp-imessage-follow)
  > .svcp-bubble-meta{
  display:none!important;
@@ -113,17 +127,17 @@
 
 /* Group rhythm: 2px within a same-author sequence; clear gap between turns. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text.svcp-imessage-follow{
  margin-top:3px!important;
 }
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text.svcp-imessage-leads{
  border-top-left-radius:13px!important;
 }
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text.is-self.svcp-imessage-leads{
  border-top-left-radius:21px!important;
  border-top-right-radius:13px!important;
@@ -135,7 +149,7 @@
    tighter upper shoulder facing the sender. No pseudo-hook or cutout.
    Keep grouping, tap handlers, timestamps and existing color palette. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text::after{
  content:none!important;display:none!important;
  width:0!important;height:0!important;
@@ -147,7 +161,7 @@
 /* Real per-message time stays at the lower right inside its own bubble,
    without covering long words or being mistaken for a delivery receipt. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text.svcp-bottom-stamp > .svcp-message-stamp{
  display:flex!important;position:absolute!important;
  right:9px!important;bottom:4px!important;top:auto!important;left:auto!important;
@@ -160,7 +174,7 @@
  background:none!important;pointer-events:none!important;
 }
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text.svcp-bottom-stamp
  > .svcp-message-stamp > :is(.svcp-time,.svcp-message-local-check){
  font:500 10px/12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
@@ -171,7 +185,7 @@
 /* The inbound clock is subdued slate on a light bubble. The original
    white outgoing stamp/check continues unchanged. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi).svcp-bottom-stamp
  > .svcp-message-stamp{
  color:rgba(58,74,89,.68)!important;
@@ -179,13 +193,13 @@
 
 /* Very short replies keep a compact chip, but reserve a corner for time. */
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text.is-short-text{
  min-width:65px!important;
  padding:8px 11px 19px!important;
 }
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
  > article.svcp-bubble.svcp-imessage-text.is-short-text > .svcp-message-text{
  font-size:15.5px!important;line-height:1.34!important;
 }
@@ -194,7 +208,7 @@
    reduced-motion settings: no animations or handlers on bubble artwork. */
 @media (prefers-reduced-transparency:reduce){
  :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
-  #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+  #svcpConversation:is([data-chat-wallpaper="sky"],[data-chat-wallpaper="pearl"]) #svcpMessages
   > article.svcp-bubble.svcp-imessage-text:is(.is-other,.is-sayvi){
   background:rgb(239,244,249)!important;
  }
