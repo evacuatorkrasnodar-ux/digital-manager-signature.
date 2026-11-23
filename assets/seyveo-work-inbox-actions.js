@@ -158,7 +158,7 @@ function showAvatarEditor(id){
   initials:String(self?(prefs.myProfile?.name||'Я'):(info?.label||'?')).trim().slice(0,1).toLocaleUpperCase('ru-RU'),
   emoji:'😊',image:''
  };
- let activeAvatarTab=old?.kind==='photo'?'photo':old?.kind==='monogram'?'monogram':old?.kind==='atlas'&&(old.index===10||old.index===11)?'emoji':'atlas';
+ let activeAvatarTab=old?.kind==='photo'?'photo':old?.kind==='monogram'?'monogram':'atlas';
  const form=node('form','sv-inbox-avatar-editor');
  const previewWrap=node('div','sv-inbox-avatar-preview-wrap');
  const preview=node('span','sv-inbox-avatar-preview');
@@ -198,9 +198,7 @@ function showAvatarEditor(id){
   atlasGrid.replaceChildren();
   // Single continuous gallery, without nested category navigation.
   AVATAR_3D.forEach(([title,group],index)=>{
-   // Emoji-style portraits live in the separate Emotions tab.
-   if(index===10||index===11)return;
-   const b=node('button','sv-atlas-choice');b.type='button';
+    const b=node('button','sv-atlas-choice');b.type='button';
    b.setAttribute('aria-label',title);
    b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===index));
    b.append(atlasMark(index),node('small',null,title));
@@ -217,22 +215,6 @@ function showAvatarEditor(id){
    atlasGrid.append(b);
   });
  }
- // 3D emoji-style portraits use their original atlas slots (10,11).
- // Never shift indexes: previously saved avatars retain their appearance.
- const emojiPanel=node('div','sv-inbox-avatar-mode sv-inbox-3d-emoji-mode');
- const emojiGrid=node('div','sv-atlas-grid sv-inbox-3d-emoji-grid');
- for(const index of [10,11]){
-  const entry=AVATAR_3D[index];if(!entry)continue;
-  const b=node('button','sv-atlas-choice');b.type='button';
-  b.setAttribute('aria-label',entry[0]);
-  const thumb=atlasMark(index);thumb.dataset.atlasIndex=String(index);
-  b.append(thumb,node('small',null,entry[0]));
-  b.addEventListener('click',()=>{
-   activeAvatarTab='emoji';draft.kind='atlas';draft.index=index;draw();
-  });
-  emojiGrid.append(b);
- }
- emojiPanel.append(emojiGrid);
  const photoPanel=node('div','sv-inbox-avatar-mode');
  const photoLabel=node('label','sv-inbox-avatar-photo-select');
  photoLabel.append(node('span',null,'Выбрать фото из галереи'));
@@ -241,10 +223,9 @@ function showAvatarEditor(id){
  fileInput.setAttribute('aria-label','Загрузить фотографию аватара');
  photoLabel.append(fileInput);photoPanel.append(photoLabel);
  const atlasButton=node('button','sv-inbox-avatar-method','Аватары');
- const emojiButton=node('button','sv-inbox-avatar-method','Эмоции');
  const monoButton=node('button','sv-inbox-avatar-method','Буквы');
  const photoButton=node('button','sv-inbox-avatar-method','Фото');
- for(const [kind,b] of [['atlas',atlasButton],['emoji',emojiButton],['monogram',monoButton],['photo',photoButton]]){
+ for(const [kind,b] of [['atlas',atlasButton],['monogram',monoButton],['photo',photoButton]]){
   b.type='button';b.addEventListener('click',()=>{
    activeAvatarTab=kind;if(kind!=='atlas'&&kind!=='emoji')draft.kind=kind;draw();
    if(kind==='photo'&&!draft.image)fileInput.click();
@@ -253,7 +234,7 @@ function showAvatarEditor(id){
   methodButtons.push(b);methods.append(b);
  }
  form.append(methods);
- panels.append(atlasPanel,emojiPanel,monoPanel,photoPanel);
+ panels.append(atlasPanel,monoPanel,photoPanel);
  form.append(panels);
  const palette=node('div','sv-inbox-avatar-palette');
  palette.setAttribute('role','group');palette.setAttribute('aria-label','Цвет фона');
@@ -282,12 +263,8 @@ function showAvatarEditor(id){
   for(let i=0;i<swatches.length;i++)
    swatches[i].setAttribute('aria-pressed',String(AVATAR_COLORS[i]===draft.color));
   build3D();
-  for(const choice of emojiGrid.querySelectorAll('.sv-atlas-choice')){
-   const idx=choice.querySelector('.sv-atlas-thumb')?.dataset.atlasIndex;
-   choice.setAttribute('aria-pressed',String(draft.kind==='atlas'&&Number(idx)===draft.index));
-  }
   atlasPanel.hidden=activeAvatarTab!=='atlas';
-  emojiPanel.hidden=activeAvatarTab!=='emoji';
+  emojiPanel.hidden=true;
   monoPanel.hidden=activeAvatarTab!=='monogram';
   photoPanel.hidden=activeAvatarTab!=='photo';
   palette.hidden=activeAvatarTab!=='monogram';
