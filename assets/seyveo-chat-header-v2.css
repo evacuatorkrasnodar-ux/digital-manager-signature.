@@ -221,26 +221,27 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  )!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
- background:rgba(10,102,185,.66)!important;
- border:var(--sv-chat-blue-edge,1px solid rgba(200,236,253,.52))!important;
- box-shadow:var(--sv-chat-blue-dock-shadow,0 6px 18px rgba(6,62,122,.15))!important;
- -webkit-backdrop-filter:blur(13px) saturate(113%)!important;
- backdrop-filter:blur(13px) saturate(113%)!important;
+ background:var(--sv-chat-blue-surface,rgba(11,84,174,.68))!important;
+ background-image:none!important;
+ border:var(--sv-chat-blue-edge,1px solid rgba(3,70,151,.32))!important;
+ box-shadow:var(--sv-chat-blue-dock-shadow,0 5px 15px rgba(6,62,122,.13))!important;
+ -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
+ backdrop-filter:blur(13px) saturate(110%)!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack,
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack:is(:hover,:focus,:active){
- background:rgba(11,84,174,.68)!important;background-image:none!important;
- border:var(--sv-chat-blue-edge,1px solid rgba(200,236,253,.52))!important;
- box-shadow:var(--sv-chat-blue-circle-shadow,0 5px 15px rgba(5,53,111,.16))!important;
+ background:var(--sv-chat-blue-surface,rgba(11,84,174,.68))!important;background-image:none!important;
+ border:var(--sv-chat-blue-edge,1px solid rgba(3,70,151,.32))!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow,0 3px 11px rgba(5,53,111,.14))!important;
  -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
  backdrop-filter:blur(13px) saturate(110%)!important;
  color:#fff!important;transform:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]),
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-call-actions > .svcp-call-button:not([hidden]):is(:hover,:focus,:active){
- background:rgba(11,84,174,.68)!important;background-image:none!important;
- border:var(--sv-chat-blue-edge,1px solid rgba(200,236,253,.52))!important;
- box-shadow:var(--sv-chat-blue-circle-shadow,0 5px 15px rgba(5,53,111,.16))!important;
+ background:var(--sv-chat-blue-surface,rgba(11,84,174,.68))!important;background-image:none!important;
+ border:var(--sv-chat-blue-edge,1px solid rgba(3,70,151,.32))!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow,0 3px 11px rgba(5,53,111,.14))!important;
  -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
  backdrop-filter:blur(13px) saturate(110%)!important;
  color:#fff!important;transform:none!important;
