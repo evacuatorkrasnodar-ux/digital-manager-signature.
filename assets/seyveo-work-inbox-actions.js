@@ -186,20 +186,14 @@ function showAvatarEditor(id){
  monogramInput.value=draft.initials||'';
  monoLabel.append(monogramInput);monoPanel.append(monoLabel);
  const atlasPanel=node('div','sv-inbox-avatar-mode sv-atlas-mode');
- const filters=node('div','sv-atlas-filters'),atlasGrid=node('div','sv-atlas-grid');
- atlasPanel.append(filters,atlasGrid);
- let filter='Все';
+ const atlasGrid=node('div','sv-atlas-grid');
+ atlasPanel.append(atlasGrid);
  function build3D(){
-  filters.replaceChildren();atlasGrid.replaceChildren();
-  for(const group of ['Все','Герои','Космос','Мультики','Фрукты']){
-   const b=node('button','sv-atlas-filter',group);b.type='button';
-   b.setAttribute('aria-pressed',String(filter===group));
-   b.addEventListener('click',()=>{filter=group;build3D()});filters.append(b);
-  }
+  atlasGrid.replaceChildren();
+  // Single continuous gallery, without nested category navigation.
   AVATAR_3D.forEach(([title,group],index)=>{
-   // Emoji-style slots are shown under their own 3D Emoji tab.
+   // Emoji-style portraits live in the separate Emotions tab.
    if(index===10||index===11)return;
-   if(filter!=='Все'&&filter!==group)return;
    const b=node('button','sv-atlas-choice');b.type='button';
    b.setAttribute('aria-label',title);
    b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===index));
@@ -231,8 +225,8 @@ function showAvatarEditor(id){
  fileInput.type='file';fileInput.accept='image/*';
  fileInput.setAttribute('aria-label','Загрузить фотографию аватара');
  photoLabel.append(fileInput);photoPanel.append(photoLabel);
- const atlasButton=node('button','sv-inbox-avatar-method','3D');
- const emojiButton=node('button','sv-inbox-avatar-method','Эмодзи');
+ const atlasButton=node('button','sv-inbox-avatar-method','Персонажи');
+ const emojiButton=node('button','sv-inbox-avatar-method','Эмоции');
  const monoButton=node('button','sv-inbox-avatar-method','Буквы');
  const photoButton=node('button','sv-inbox-avatar-method','Фото');
  for(const [kind,b] of [['atlas',atlasButton],['emoji',emojiButton],['monogram',monoButton],['photo',photoButton]]){
