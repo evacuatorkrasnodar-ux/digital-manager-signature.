@@ -2287,6 +2287,12 @@ function openRoom(roomId){
  const avatar=$('svcpRoomAvatar');
  if(avatar){
   avatar.replaceChildren();
+  // Switching rooms must never retain a previous person's image classes,
+  // background tokens or size. The shared stylesheet owns the frame.
+  avatar.classList.remove('svcp-native-avatar-host','sv-inbox-avatar-custom','is-group');
+  delete avatar.dataset.svAvatarKind;
+  avatar.style.removeProperty('--sv-avatar-color');
+  avatar.style.removeProperty('--sv-avatar-image');
   if(selected.id==='dm-sayvi'){
    avatar.append(el('span','sv-sayvi-symbol'));
   }else if(!fillWorkPortrait(avatar,selected,state.viewpoint==='elena'&&selected.id==='dm-elena')){
@@ -2375,6 +2381,10 @@ function renderRoomProfile(){
  const avatar=$('svcpRoomProfileAvatar');
  if(avatar){
   avatar.replaceChildren();
+  avatar.classList.remove('svcp-native-avatar-host','sv-inbox-avatar-custom');
+  delete avatar.dataset.svAvatarKind;
+  avatar.style.removeProperty('--sv-avatar-color');
+  avatar.style.removeProperty('--sv-avatar-image');
   if(!fillWorkPortrait(avatar,room,state.viewpoint==='elena'&&room.id==='dm-elena'))avatar.textContent=room.id==='dm-sayvi'?'S':(name.slice(0,1).toUpperCase()||'•');
   avatar.classList.toggle('is-group',room.kind!=='personal');
  }
