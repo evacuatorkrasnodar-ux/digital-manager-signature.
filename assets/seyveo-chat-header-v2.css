@@ -325,3 +325,89 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
  :is(.svcp-sender,.svcp-time,.svcp-message-stamp){
  color:#536779!important;-webkit-text-fill-color:#536779!important;opacity:1!important;
 }
+
+/* GROUP CHAT · 30px real sender portrait in the side gutter · 2026-11-23 */
+/* Group bubbles remain the actual clickable/message nodes. Portrait is a
+   noninteractive child painted OUTSIDE the rounded bubble: no cropped halves,
+   no extra row or menu target. No portraits in personal or Sayvi threads. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"] #svcpMessages{
+ padding-left:max(46px,env(safe-area-inset-left,0px))!important;
+ padding-right:max(46px,env(safe-area-inset-right,0px))!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"] #svcpMessages
+ > .svcp-bubble.svcp-has-group-avatar{
+ position:relative!important;
+ overflow:visible!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"] #svcpMessages
+ > .svcp-bubble.svcp-has-group-avatar > .svcp-group-message-avatar{
+ box-sizing:border-box!important;position:absolute!important;
+ display:grid!important;place-items:center!important;
+ width:30px!important;height:30px!important;
+ min-width:30px!important;min-height:30px!important;
+ max-width:30px!important;max-height:30px!important;
+ bottom:2px!important;top:auto!important;
+ left:-39px!important;right:auto!important;
+ margin:0!important;padding:0!important;flex:none!important;
+ overflow:hidden!important;border:0!important;border-radius:50%!important;
+ background:#E9F1F8!important;color:#24374A!important;
+ font:600 17px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ box-shadow:0 1px 4px rgba(12,37,64,.10)!important;
+ z-index:2!important;pointer-events:none!important;
+ opacity:1!important;transform:none!important;filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"] #svcpMessages
+ > .svcp-bubble.is-self.svcp-has-group-avatar > .svcp-group-message-avatar{
+ left:auto!important;right:-39px!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"] #svcpMessages
+ > .svcp-bubble.svcp-has-group-avatar > .svcp-group-message-avatar > :is(.svcp-native-avatar,.svcp-native-avatar-photo){
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;
+ border:0!important;border-radius:50%!important;
+ margin:0!important;padding:0!important;box-shadow:none!important;
+ font-size:22px!important;line-height:1!important;
+ background-color:transparent!important;opacity:1!important;
+ object-fit:cover!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"] #svcpMessages
+ > .svcp-bubble.svcp-has-group-avatar > .svcp-group-message-avatar > .svcp-atlas-avatar{
+ background-image:url("./seyveo-avatar-3d-atlas.webp")!important;
+ background-size:400% 300%!important;
+ background-repeat:no-repeat!important;
+ background-color:transparent!important;
+ /* The person's saved sprite position stays INLINE from drawPortrait(). */
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"] #svcpMessages
+ > .svcp-bubble.svcp-has-group-avatar.svcp-imessage-leads > .svcp-group-message-avatar{
+ display:none!important; /* show one avatar at the END of each text run */
+}
+/* White and blue rooms share exact avatar geometry. No white ring in sky. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"][data-chat-wallpaper="sky"] #svcpMessages
+ > .svcp-bubble.svcp-has-group-avatar > .svcp-group-message-avatar{
+ border:0!important;
+}
+/* The two new call controls and Back use the existing global WHITE PEARL
+   elevation tokens. Keep ONE subtle shadow for every white chat header. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > :is(#svcpConversationStandaloneBack,.svcp-call-actions) {
+ --svcp-pearl-header-circle-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13));
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > #svcpConversationStandaloneBack,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > .svcp-call-actions > .svcp-call-button:not([hidden]){
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+}
