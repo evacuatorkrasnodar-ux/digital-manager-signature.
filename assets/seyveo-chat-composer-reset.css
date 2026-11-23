@@ -374,3 +374,39 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  background:rgba(225,229,234,.60)!important;
  color:#252A31!important;-webkit-text-fill-color:#252A31!important;
 }
+
+/* 24 Nov 2026 · Sky chat: remove the extra bottom/backdrop layer.
+   Safari can rasterize a blurred absolute composer as a rectangular slab
+   even though the visible pill is rounded. Paint ONLY the round Plus and
+   the pill, with no large filter plane; align the dock nearer the bottom.
+   Text input, button sizes, expanded layout, and event handlers unchanged. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset{
+ bottom:0!important;
+ isolation:auto!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > .svcp-clean-surface{
+ background:var(--svcp-conversation-blue-glass,rgba(5,123,195,.68))!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+ clip-path:inset(0 round 25px)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset.svcp-compose-multiline > .svcp-clean-surface{
+ background:var(--svcp-conversation-blue-glass-expanded,rgba(5,123,195,.44))!important;
+ clip-path:inset(0 round 24px)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset > #svcpAttachFile{
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ clip-path:circle(50%)!important;
+}
