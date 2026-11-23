@@ -528,6 +528,9 @@
   shell.dataset.sharedWork=String(visible);
   shell.dataset.history=String(history);
   heading.dataset.taskTools=String(active==='personal'&&!history);
+  // Cabinet is a top-level Work tab. Its existing Review and Plus controls
+  // share one right capsule, matching the Tasks capsule's 44px button axis.
+  heading.dataset.businessTools=String(active==='business'&&!history);
   if(active!=='personal')window.SEYVEO_TASK_INLINE?.close();
   const nested=active==='personal'&&!history&&!!toolMode;
   searchTasks.innerHTML=nested?searchIcon:historyIcon;
@@ -540,7 +543,7 @@
   title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
   // Top-level sections are named in the permanent tab capsule below.
   // Keep titles for nested «Все дела», «История», and the employee workspace.
-  title.hidden=!history&&!nested&&['personal','notes','business','wallet'].includes(active);
+  title.hidden=!history&&!nested&&['personal','notes','wallet'].includes(active);
   heading.dataset.calendarPeriod=String(active==='calendar'&&!history&&!nested);
   if(active==='calendar'&&!history&&!nested)syncCalendarPeriod();
   const showMonth=active==='personal'&&!history&&!nested&&visible;
@@ -574,7 +577,9 @@
   }
   // In the personal landing use the same approved circle for History.
   // Every nested view (including History) retains the real Back arrow.
-  back.hidden=(active==='personal'&&!history&&!nested)||active==='notes'||active==='wallet';
+  // Root Work destinations have no fake Back. Keep real Back for nested
+  // Tasks/History and Calendar, but never in Cabinet or employee root.
+  back.hidden=(active==='personal'&&!history&&!nested)||active==='notes'||active==='wallet'||active==='business'||active==='employee';
   if(back.dataset.svHeaderIcon!=='back'){back.innerHTML=backIcon;back.dataset.svHeaderIcon='back'}
   back.setAttribute('aria-label',history||nested?'Вернуться к моим делам':'Вернуться назад');
   back.title='';
