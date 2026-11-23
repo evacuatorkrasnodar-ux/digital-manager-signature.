@@ -14,6 +14,7 @@ let sheetType='',activeRoom='',holdTimer=null,swipeOpen=null,processing=false;
 const sheetStack=[];
 const icons={
  dots:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',
+ search:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.2 4.2"/>',
  pen:'<path d="M12 5.5H5.5A2.5 2.5 0 0 0 3 8v10.5A2.5 2.5 0 0 0 5.5 21h11A2.5 2.5 0 0 0 19 18.5V12M13 9l7-7 2 2-7 7-4 1z"/>',
  users:'<circle cx="9" cy="8" r="3"/><path d="M3.5 20v-2a5.5 5.5 0 0 1 11 0v2M17 5.8a3 3 0 0 1 0 5.5M17 14a4.5 4.5 0 0 1 3.5 4.5V20"/>',
  groupAdd:'<circle cx="8" cy="8" r="3"/><path d="M2.5 20v-1.5a5.5 5.5 0 0 1 11 0V20M17 5.5v7M13.5 9h7"/>',
@@ -321,7 +322,32 @@ menuButton.type='button';menuButton.id='svcpInboxOptionsTop';
 menuButton.setAttribute('aria-label','Настройки и действия с чатами');menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-controls','svcpInboxMenu');
 menuButton.innerHTML=svg('dots');
 history.hidden=true;history.setAttribute('tabindex','-1');history.setAttribute('aria-hidden','true');history.classList.add('sv-inbox-history-proxy');
-header.append(menuButton);
+// One 92px material capsule on the same 44px axis as Cabinet and My Tasks.
+// Reuse the genuine message search input and existing menu handlers.
+const headerActions=node('div','sv-inbox-header-actions');
+headerActions.setAttribute('role','group');
+headerActions.setAttribute('aria-label','Поиск и меню сообщений');
+const searchButton=node('button','sv-inbox-header-search');
+searchButton.type='button';searchButton.id='svcpInboxSearchTop';
+searchButton.setAttribute('aria-label','Поиск по сообщениям');
+searchButton.setAttribute('aria-controls','svcpHistorySearch');
+searchButton.setAttribute('aria-expanded','false');
+searchButton.innerHTML=svg('search');
+headerActions.append(searchButton,menuButton);
+header.append(headerActions);
+searchButton.addEventListener('click',()=>{
+ const opening=!screen.classList.contains('svcp-directory-search-open');
+ screen.classList.toggle('svcp-directory-search-open',opening);
+ searchButton.setAttribute('aria-expanded',String(opening));
+ const input=$('svcpHistorySearch');
+ if(opening){
+  requestAnimationFrame(()=>input?.focus({preventScroll:true}));
+ }else if(input){
+  input.value='';
+  input.dispatchEvent(new Event('input',{bubbles:true}));
+  input.blur();
+ }
+});
 const menu=node('div','sv-inbox-popover');menu.id='svcpInboxMenu';menu.hidden=true;menu.setAttribute('role','menu');menu.setAttribute('aria-label','Действия с сообщениями');
 const menuItems=[['Новый чат','pen','new'],['Новая группа','groupAdd','group'],['Сотрудники','users','staff'],['Настройки сообщений','sliders','settings'],['Архив','archive','archives']];
 for(const [label,icon,action] of menuItems){const b=button(label,icon,()=>chooseAction(action),'sv-inbox-menu-row');b.setAttribute('role','menuitem');menu.append(b)}
