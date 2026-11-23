@@ -375,7 +375,7 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"]
  .sv-inbox-avatar-settings-preview.sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
  box-sizing:border-box!important;
  border:0!important;outline:0!important;border-radius:50%!important;
- background:#EEF1F4!important;background-image:none!important;
+ background:var(--sv-avatar-color,#EEF1F4)!important;background-image:none!important;
  color:#566878!important;-webkit-text-fill-color:#566878!important;
  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
  font-weight:650!important;
