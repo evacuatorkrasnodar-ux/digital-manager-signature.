@@ -1,10 +1,13 @@
-/* SEYVEO chat identity · rebuild 2026-11-23.
-   One immutable header geometry for assistant, employees, manager and groups.
-   Only the profile picture source changes; all JS IDs remain unchanged. */
+/* SEYVEO unified chat identity · Sayvi is the approved visual reference.
+   This ONE shared header applies to EVERY room, not only dm-sayvi.
+   Keep the same avatar diameter, circle/capsule layering, optical centering,
+   and name spacing for the manager, all employees, Sayvi and all groups.
+   The person's saved artwork is independent of these geometry rules. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2{
  box-sizing:border-box!important;position:absolute!important;
  inset:0 0 auto 0!important;display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:flex-start!important;
+ --svcp-header-avatar:56px;--svcp-header-label:28px;--svcp-header-overlap:-5px;
  height:calc(122px + env(safe-area-inset-top,0px))!important;
  padding:calc(2px + env(safe-area-inset-top,0px)) 12px 0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
@@ -22,15 +25,16 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 > .svcp-identity-v2-stack > #svcpRoomAvatar{
  box-sizing:border-box!important;position:relative!important;inset:auto!important;
  display:grid!important;place-items:center!important;
- flex:0 0 56px!important;width:56px!important;height:56px!important;
- min-width:56px!important;min-height:56px!important;
- max-width:56px!important;max-height:56px!important;
+ flex:0 0 var(--svcp-header-avatar)!important;
+ width:var(--svcp-header-avatar)!important;height:var(--svcp-header-avatar)!important;
+ min-width:var(--svcp-header-avatar)!important;min-height:var(--svcp-header-avatar)!important;
+ max-width:var(--svcp-header-avatar)!important;max-height:var(--svcp-header-avatar)!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:50%!important;
  overflow:hidden!important;background:#E4EFF9!important;background-image:none!important;
  color:#263C50!important;font:600 24px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  opacity:1!important;box-shadow:none!important;filter:none!important;
- z-index:5!important; /* The portrait stays IN FRONT of the name capsule. */
+ z-index:5!important;order:0!important; /* The portrait stays IN FRONT of the name capsule. */
  transform:none!important;transition:none!important;animation:none!important;
 }
 /* The image, not a second opaque circle, paints the saved selected portrait. */
@@ -64,9 +68,11 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] > .svcp-identity-v2 #svcpRoomAvatar > .sv-sayvi-symbol{
  display:none!important;visibility:hidden!important;
 }
-/* Group avatar always occupies the SAME 56px circle. */
+/* GROUPS ONLY change the displayed glyph and its color.
+   Never shift, hide or resize the circle or its shared name capsule. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="groups"] > .svcp-identity-v2 #svcpRoomAvatar{
- display:grid!important;background:#186AB2!important;color:#FFF!important;font-size:26px!important;
+ display:grid!important;background:#186AB2!important;color:#FFF!important;
+ font-size:26px!important;opacity:1!important;
 }
 /* Single name position: 5px behind the lower rim of the avatar, never over the face. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 .svcp-identity-v2-stack > #svcpConversationHeading{
@@ -75,8 +81,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  justify-content:flex-start!important;flex:0 0 auto!important;
  width:auto!important;min-width:0!important;max-width:100%!important;
  height:auto!important;min-height:0!important;gap:0!important;
- margin:-5px 0 0!important;padding:0!important;
- z-index:2!important; /* The capsule sits BEHIND the raised avatar. */
+ margin:var(--svcp-header-overlap) 0 0!important;padding:0!important;
+ z-index:2!important;order:1!important; /* The capsule sits BEHIND the avatar. */
  border:0!important;border-radius:0!important;background:transparent!important;
  box-shadow:none!important;pointer-events:auto!important;
  text-align:center!important;transform:none!important;transition:none!important;
@@ -84,9 +90,10 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
  box-sizing:border-box!important;position:relative!important;
  display:inline-flex!important;align-items:center!important;justify-content:center!important;
- flex:0 0 28px!important;width:max-content!important;min-width:0!important;
+ flex:0 0 var(--svcp-header-label)!important;width:max-content!important;min-width:0!important;
  max-width:min(242px,calc(100vw - 122px))!important;
- height:28px!important;min-height:28px!important;max-height:28px!important;
+ height:var(--svcp-header-label)!important;min-height:var(--svcp-header-label)!important;
+ max-height:var(--svcp-header-label)!important;
  gap:4px!important;margin:0 auto!important;padding:3px 10px!important;
  border:0!important;border-radius:999px!important;
  background:rgba(8,99,191,.82)!important;background-image:none!important;
