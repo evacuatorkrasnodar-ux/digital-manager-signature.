@@ -364,7 +364,7 @@ overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
 function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
-function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
+function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
@@ -373,6 +373,7 @@ function openSheet(type,id='',nested=false){
  overlay.dataset.svInboxScreen=type;
  if(type==='new')showContacts(type);
  else if(type==='staff')showStaff();
+ else if(type==='colleague')showColleagueInvite(id);
  else if(type==='invite')showInvite();
  else if(type==='group')showGroupForm();
  else if(type==='settings')showSettings();
@@ -399,8 +400,56 @@ function makeContactRow(r,fn){
  }
  return row;
 }
+/* Employee directory: only open existing, authorised work rooms.
+   Other colleagues are discoverable for a voluntary personal invitation,
+   not by exposing their manager-only demo conversations. */
+function colleagueRecords(){
+ return allRooms().filter(r=>r.kind==='personal'&&r.person&&r.person!=='sayvi');
+}
+function showEmployeeDirectory(){
+ sectionHeading('Рабочие чаты');
+ const groups=node('div','sv-inbox-people-list');
+ for(const r of allRooms().filter(r=>r.id==='general'||r.id==='team'||r.id==='docs')){
+  groups.append(makeContactRow(r,()=>openChat(r.id)));
+ }
+ body.append(groups);
+ sectionHeading('Коллеги');
+ const hint=node('p','sv-inbox-colleague-note','Личный разговор с коллегой — только по взаимному согласию, отдельно от рабочих сообщений.');
+ body.append(hint);
+ const list=node('div','sv-inbox-people-list');
+ const colleagues=colleagueRecords().filter(r=>r.person!=='elena');
+ for(const r of colleagues){
+  const row=makeContactRow(r,()=>{sheetStack.push({type:sheetType,id:activeRoom});openSheet('colleague',r.id,true)});
+  row.setAttribute('aria-label',r.label+' — личное приглашение');
+  list.append(row);
+ }
+ if(!colleagues.length)list.append(node('p','sv-inbox-hint','Пока нет доступных коллег.'));
+ body.append(list);
+}
+function showColleagueInvite(id){
+ const colleague=colleagueRecords().find(r=>r.id===id);
+ if(!colleague){body.append(node('p','sv-inbox-hint','Коллега не найден.'));return}
+ const panel=node('div','sv-inbox-colleague-detail');
+ const avatar=node('span','sv-inbox-colleague-avatar',colleague.label.slice(0,1));
+ avatar.setAttribute('aria-hidden','true');
+ panel.append(avatar,node('strong',null,colleague.label),
+   node('p',null,'Для личного общения вне работы можно пригласить коллегу в SEYVEO One. Личная переписка будет отдельной от рабочего пространства.'));
+ const note=node('p','sv-inbox-colleague-note',
+  'Приглашения и доставка личных сообщений пока не подключены. Сейчас можно только подготовить текст приглашения.');
+ panel.append(note);
+ const text='Привет! Давай общаться вне работы в SEYVEO One. Когда личные чаты станут доступны, я пришлю приглашение. Это добровольно и отдельно от рабочего чата.';
+ const copy=node('button','sv-inbox-colleague-copy','Скопировать приглашение');
+ copy.type='button';
+ copy.addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(text);copy.textContent='Текст скопирован'}
+  catch{copy.textContent='Не удалось скопировать'}
+ });
+ panel.append(copy);
+ body.append(panel);
+}
 function showContacts(){
- const names=allRooms().filter(r=>r.kind==='personal'&&(!employee()||['dm-elena','dm-sayvi'].includes(r.id)));
+ if(employee()){showEmployeeDirectory();return}
+ const names=allRooms().filter(r=>r.kind==='personal');
  const list=node('div','sv-inbox-people-list');
  for(const r of names)list.append(makeContactRow(r,()=>openChat(r.id)));
  body.append(list);
@@ -611,6 +660,7 @@ function showData(){
  body.append(node('p','sv-inbox-hint','Архив не удаляет сообщения. История содержит разговоры и поручения, включая неархивные.'));
 }
 function showStaff(){
+ if(employee()){showEmployeeDirectory();return}
  const names=allRooms().filter(r=>r.kind==='personal'&&r.person!=='sayvi'&&(!employee()||r.id==='dm-elena'));
  sectionHeading('Команда');
  const list=node('div','sv-inbox-people-list');
