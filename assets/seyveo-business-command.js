@@ -3608,11 +3608,28 @@ function renderChat(){
     ?{node:bubble,role:msg.role,at:shortAt}:null;
   }
  }
+ /* Real last flex child: iOS Safari does not reliably count padding or
+    ::after inside a vertically scrollable flex list. This element remains
+    part of the SAME transparent #svcpMessages scrollport, not a footer. */
+ const scrollClearance=el('div','svcp-scroll-clearance');
+ scrollClearance.id='svcpChatScrollClearance';
+ scrollClearance.setAttribute('aria-hidden','true');
+ thread.append(scrollClearance);
  if(focusSearchIndex!==null){
   const target=thread.querySelector('.svcp-bubble.is-search-hit');
   thread.scrollTop=target?Math.max(0,target.offsetTop-thread.offsetTop-24):thread.scrollHeight;
   focusSearchIndex=null;
- }else thread.scrollTop=thread.scrollHeight;
+ }else{
+  thread.scrollTop=thread.scrollHeight;
+  // Safari's scroll range is finalized on the next layout frame. Only do
+  // this while the thread is still at its newly-rendered end; never steal
+  // a deliberate user scroll afterwards.
+  requestAnimationFrame(()=>{
+   if(!thread.isConnected||!scrollClearance.isConnected)return;
+   const end=thread.scrollHeight-thread.clientHeight;
+   if(end>thread.scrollTop+1)thread.scrollTop=end;
+  });
+ }
 }
 $('svcpLoadOlder')?.addEventListener('click',()=>{
  historyWindow=Math.min(500,historyWindow+35);
