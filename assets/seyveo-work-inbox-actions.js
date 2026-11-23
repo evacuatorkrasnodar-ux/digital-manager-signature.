@@ -197,6 +197,8 @@ function showAvatarEditor(id){
    b.addEventListener('click',()=>{filter=group;build3D()});filters.append(b);
   }
   AVATAR_3D.forEach(([title,group],index)=>{
+   // Retire the two older emoji-like presets; keep stable atlas indexes for saved choices.
+   if(index===10||index===11)return;
    if(filter!=='Все'&&filter!==group)return;
    const b=node('button','sv-atlas-choice');b.type='button';
    b.setAttribute('aria-label',title);
