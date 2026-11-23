@@ -541,9 +541,10 @@
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
-  // Top-level sections are named in the permanent tab capsule below.
-  // Keep titles for nested «Все дела», «История», and the employee workspace.
-  title.hidden=!history&&!nested&&['personal','notes','wallet'].includes(active);
+  // All Work root destinations now reserve one unified two-tier header:
+  // the first row owns 44px controls, the second names the destination.
+  // My Tasks shows the month there instead; Wallet has its own headings.
+  title.hidden=!history&&!nested&&['personal','wallet'].includes(active);
   heading.dataset.calendarPeriod=String(active==='calendar'&&!history&&!nested);
   if(active==='calendar'&&!history&&!nested)syncCalendarPeriod();
   const showMonth=active==='personal'&&!history&&!nested&&visible;
