@@ -1464,3 +1464,98 @@ html body #svcpWorkChatScreen #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-ava
 html body #svcpWorkChatScreen #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="emoji"]{
  font-size:26px!important;
 }
+
+/* SEYVEO · ORIGINAL 3D AVATARS · 23 Nov 2026
+   Local 640x480 WebP atlas, 12 independent square pieces. */
+#svcpWorkChatScreen .sv-atlas-thumb,
+#svcpWorkChatScreen .sv-inbox-avatar-settings-preview>.sv-atlas-thumb{
+ display:block!important;flex:none;
+ width:100%!important;height:100%!important;
+ background-image:url('./seyveo-3d-avatars-atlas.webp')!important;
+ background-repeat:no-repeat!important;
+ background-size:400% 300%!important;
+ border-radius:50%!important;overflow:hidden!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen .sv-inbox-avatar-custom[data-sv-avatar-kind="atlas"]{
+ overflow:hidden!important;padding:0!important;border-radius:50%!important;
+ border:0!important;background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen .sv-inbox-avatar-settings-preview.sv-inbox-avatar-custom[data-sv-avatar-kind="atlas"]{
+ background:transparent!important;border:0!important;
+}
+#svcpWorkChatScreen .sv-inbox-avatar-preview.sv-inbox-avatar-custom[data-sv-avatar-kind="atlas"]{
+ overflow:hidden!important;padding:0!important;
+ background:transparent!important;
+}
+#svcpWorkChatScreen .sv-inbox-avatar-methods{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ padding:4px!important;gap:3px!important;
+}
+#svcpWorkChatScreen .sv-inbox-avatar-method{
+ min-width:0!important;padding:9px 4px!important;font-size:12px!important;
+ white-space:nowrap!important;
+}
+#svcpWorkChatScreen .sv-atlas-mode{width:100%!important}
+#svcpWorkChatScreen .sv-atlas-filters{
+ display:flex!important;align-items:center!important;gap:7px!important;
+ overflow-x:auto!important;max-width:100%!important;
+ padding:3px 0 12px!important;scrollbar-width:none!important;
+ -webkit-overflow-scrolling:touch;
+}
+#svcpWorkChatScreen .sv-atlas-filters::-webkit-scrollbar{display:none}
+#svcpWorkChatScreen .sv-atlas-filter{
+ display:grid;place-items:center;flex:none!important;
+ width:max-content!important;min-width:44px!important;min-height:34px!important;
+ padding:6px 12px!important;border:1px solid rgba(155,168,185,.16)!important;
+ border-radius:999px!important;background:rgba(154,171,193,.085)!important;
+ color:var(--sv-inbox-panel-ink,#222)!important;font:550 11px/1.2 -apple-system,system-ui,sans-serif!important;
+ box-shadow:none!important;white-space:nowrap!important;
+}
+#svcpWorkChatScreen .sv-atlas-filter[aria-pressed="true"]{
+ background:#0A84FF!important;border-color:#0A84FF!important;color:#fff!important;
+}
+#svcpWorkChatScreen .sv-atlas-grid{
+ display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:8px!important;width:100%!important;
+ padding:1px 0 5px!important;
+}
+#svcpWorkChatScreen .sv-atlas-choice{
+ display:flex!important;align-items:center!important;flex-direction:column!important;
+ justify-content:center!important;gap:6px!important;
+ box-sizing:border-box!important;min-width:0!important;
+ padding:8px 3px 7px!important;min-height:94px!important;
+ border:1px solid rgba(150,162,180,.18)!important;border-radius:15px!important;
+ background:rgba(166,177,195,.075)!important;color:var(--sv-inbox-panel-ink,#222)!important;
+ box-shadow:none!important;
+ cursor:pointer!important;
+}
+#svcpWorkChatScreen .sv-atlas-choice[aria-pressed="true"]{
+ border-color:#0A84FF!important;background:rgba(10,132,255,.095)!important;
+ box-shadow:0 0 0 1px rgba(10,132,255,.13)!important;
+}
+#svcpWorkChatScreen .sv-atlas-choice .sv-atlas-thumb{
+ width:min(100%,64px)!important;height:auto!important;
+ aspect-ratio:1!important;
+ border-radius:50%!important;
+}
+#svcpWorkChatScreen .sv-atlas-choice small{
+ font:500 9.5px/1.13 -apple-system,system-ui,sans-serif!important;
+ color:var(--sv-inbox-panel-ink,#222)!important;
+ max-width:100%!important;min-width:0!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ text-align:center!important;
+}
+#svcpWorkChatScreen .sv-inbox-avatar-settings-preview{
+ overflow:hidden!important;border-radius:50%!important;
+}
+#svcpWorkChatScreen .sv-inbox-avatar-emoji-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#svcpWorkChatScreen .sv-inbox-avatar-emoji{font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif!important}
+@media(max-width:375px){
+ #svcpWorkChatScreen .sv-atlas-grid{gap:5px!important}
+ #svcpWorkChatScreen .sv-atlas-choice{padding:6px 2px!important;min-height:82px!important}
+ #svcpWorkChatScreen .sv-atlas-choice .sv-atlas-thumb{width:min(100%,56px)!important}
+ #svcpWorkChatScreen .sv-atlas-choice small{font-size:8.5px!important}
+}
