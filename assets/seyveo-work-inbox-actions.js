@@ -526,7 +526,7 @@ function showSettings(){
  sectionHeading('Сообщения');
  menuLink('Уведомления','Непрочитанные и тихие чаты','bell',()=>openSubSheet('notifications','settings'));
  sectionHeading('Список чатов');
- settingToggle('compact','Компактный список','Больше чатов на экране');
+ settingToggle('compact','Компактные чаты','Больше чатов на экране');
  settingToggle('previews','Предпросмотр','Текст последнего сообщения');
  sectionHeading('История');
  menuLink('История разговоров','Сообщения и поручения','clock',()=>{closeSheet();history.click()});
