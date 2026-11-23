@@ -1,0 +1,159 @@
+/* SEYVEO chat identity · rebuild 2026-11-23.
+   One immutable header geometry for assistant, employees, manager and groups.
+   Only the profile picture source changes; all JS IDs remain unchanged. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2{
+ box-sizing:border-box!important;position:absolute!important;
+ inset:0 0 auto 0!important;display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:flex-start!important;
+ height:calc(122px + env(safe-area-inset-top,0px))!important;
+ padding:calc(2px + env(safe-area-inset-top,0px)) 12px 0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ overflow:visible!important;pointer-events:none!important;z-index:30!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 > .svcp-identity-v2-stack{
+ box-sizing:border-box!important;position:relative!important;inset:auto!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:flex-start!important;gap:0!important;
+ width:min(260px,66vw)!important;height:auto!important;min-height:0!important;
+ margin:0!important;padding:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;transform:none!important;
+}
+/* Fixed 56px circle for every person and group, independent of avatar shape. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 > .svcp-identity-v2-stack > #svcpRoomAvatar{
+ box-sizing:border-box!important;position:relative!important;inset:auto!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 56px!important;width:56px!important;height:56px!important;
+ min-width:56px!important;min-height:56px!important;
+ max-width:56px!important;max-height:56px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ overflow:hidden!important;background:#E4EFF9!important;background-image:none!important;
+ color:#263C50!important;font:600 24px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ opacity:1!important;box-shadow:none!important;filter:none!important;
+ transform:none!important;transition:none!important;animation:none!important;
+}
+/* The image, not a second opaque circle, paints the saved selected portrait. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpRoomAvatar:has(>.svcp-atlas-avatar),
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpRoomAvatar:has(>.svcp-native-avatar-photo){
+ background:transparent!important;background-image:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpRoomAvatar > .svcp-atlas-avatar{
+ box-sizing:border-box!important;display:block!important;
+ width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ border:0!important;border-radius:50%!important;
+ background-image:url("./seyveo-avatar-3d-atlas.webp")!important;
+ background-repeat:no-repeat!important;background-size:400% 300%!important;
+ background-color:transparent!important;opacity:1!important;filter:none!important;
+}
+/* Preserve the avatar's inline background-position (selected 3D sprite). */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpRoomAvatar > .svcp-native-avatar-photo{
+ display:block!important;width:100%!important;height:100%!important;
+ border:0!important;border-radius:50%!important;object-fit:cover!important;opacity:1!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpRoomAvatar > .svcp-native-avatar:not(.svcp-atlas-avatar){
+ display:grid!important;place-items:center!important;width:100%!important;height:100%!important;
+ border-radius:50%!important;background:#E4EFF9!important;font-size:40px!important;
+ font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif!important;
+ opacity:1!important;
+}
+/* Sayvi's original approved image, no redraw or secondary border. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] > .svcp-identity-v2 #svcpRoomAvatar{
+ background:#19373D var(--sv-sayvi-mark-image) center/contain no-repeat!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="dm-sayvi"] > .svcp-identity-v2 #svcpRoomAvatar > .sv-sayvi-symbol{
+ display:none!important;visibility:hidden!important;
+}
+/* Group avatar always occupies the SAME 56px circle. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="groups"] > .svcp-identity-v2 #svcpRoomAvatar{
+ display:grid!important;background:#186AB2!important;color:#FFF!important;font-size:26px!important;
+}
+/* Exact same capsule vertical position, -14px overlap, 28px height. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 .svcp-identity-v2-stack > #svcpConversationHeading{
+ box-sizing:border-box!important;position:relative!important;inset:auto!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:flex-start!important;flex:0 0 auto!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;
+ height:auto!important;min-height:0!important;gap:0!important;
+ margin:-14px 0 0!important;padding:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;pointer-events:auto!important;
+ text-align:center!important;transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
+ box-sizing:border-box!important;position:relative!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 28px!important;width:max-content!important;min-width:0!important;
+ max-width:min(242px,calc(100vw - 122px))!important;
+ height:28px!important;min-height:28px!important;max-height:28px!important;
+ gap:4px!important;margin:0 auto!important;padding:3px 10px!important;
+ border:0!important;border-radius:999px!important;
+ background:rgba(8,99,191,.82)!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;transform:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > #svcpConversationTitle{
+ display:block!important;min-width:0!important;max-width:100%!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ font:600 16px/20px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.02em!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+ margin:0!important;padding:0!important;transform:translateY(-1px)!important;
+ opacity:1!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > svg{
+ display:block!important;flex:0 0 13px!important;width:13px!important;height:13px!important;
+ fill:none!important;stroke:#9FDBFF!important;stroke-width:3!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ transform:translateY(-.5px)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 #svcpConversationHeading > #svcpConversationDetail{
+ display:block!important;position:relative!important;min-width:0!important;
+ max-width:min(242px,calc(100vw - 122px))!important;
+ margin:6px 0 0!important;padding:0!important;
+ font:400 11px/15px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:rgba(255,255,255,.90)!important;white-space:nowrap!important;
+ text-align:center!important;overflow:hidden!important;text-overflow:ellipsis!important;opacity:1!important;
+}
+/* White and blue themes never share foreground colors. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill{
+ background:rgba(249,249,251,.95)!important;
+ border:1px solid rgba(222,229,236,.82)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 3px 11px rgba(39,49,66,.08))!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationTitle{
+ color:#20262D!important;-webkit-text-fill-color:#20262D!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading svg{
+ stroke:#77818D!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationDetail{
+ color:#777F89!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpMessages{
+ padding-top:calc(122px + env(safe-area-inset-top,0px))!important;
+ scroll-padding-top:calc(122px + env(safe-area-inset-top,0px))!important;
+}
+/* Old hidden header actions remain available to existing internal handlers. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-conversation-bar{
+ display:none!important;visibility:hidden!important;height:0!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack{
+ background:rgba(13,73,186,.84)!important;color:#fff!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack svg{
+ stroke:#fff!important;
+}
+/* Contrast: pale incoming blue, dark solid text. Other media unaffected. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.is-other:not(.is-task):not(.is-poll):not(.is-recognition):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only){
+ background:rgba(241,247,253,.98)!important;color:#243647!important;opacity:1!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.is-other:not(.is-task):not(.is-poll):not(.is-recognition):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only)
+ .svcp-message-text{
+ color:#243647!important;-webkit-text-fill-color:#243647!important;opacity:1!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.is-other:not(.is-task):not(.is-poll):not(.is-recognition):not(.svcp-file-only):not(.svcp-document-only):not(.is-emoji-only)
+ :is(.svcp-sender,.svcp-time,.svcp-message-stamp){
+ color:#536779!important;-webkit-text-fill-color:#536779!important;opacity:1!important;
+}
