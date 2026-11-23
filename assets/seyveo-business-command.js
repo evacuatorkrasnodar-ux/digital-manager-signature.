@@ -55,66 +55,175 @@ const ROOMS=[
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочий помощник',mark:'',person:'sayvi',section:'assistant'}
 ];
 
-/* Contact pictures: use the device's native Color Emoji, Apple's on iOS. */
-const CHAT_AVATAR_STORAGE='seyveo-work-chat-avatars-v1';
+/* Each person controls their own identity, never a contact's chat profile.
+   Currently only employee "elena" has a separate LOCAL demo session.
+   New staff members must be wired to authenticated accounts before enabling writes.
+   Do not carry forward manager-selected avatars saved by the old chat picker. */
 const CHAT_AVATAR_OPTIONS=[
  ['red','👩🏻‍🦰','Рыжая'],['dark','👩🏽','Брюнетка'],
  ['senior','👩🏼‍🦳','Седая'],['man','👨🏻‍🦱','Мужчина'],
  ['smile','😊','Улыбка'],['grapes','🍇','Виноград'],
  ['strawberry','🍓','Клубника'],['apple','🍎','Яблоко']
 ];
-const CHAT_AVATAR_DEFAULTS={'dm-elena':'red','dm-anna':'dark','dm-mikhail':'man'};
-function chatAvatarSaved(){
- try{const obj=JSON.parse(localStorage.getItem(CHAT_AVATAR_STORAGE)||'{}');
-  return obj&&typeof obj==='object'&&!Array.isArray(obj)?obj:{}}
- catch{return {}}
+const CHAT_AVATAR_DEFAULTS={elena:'red',anna:'dark',mikhail:'man'};
+const SELF_AVATAR_KEY='seyveo-self-identity-avatar-v1';
+const PHOTO_DATA_PATTERN=/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/;
+function selfAvatarRecords(){
+ try{
+  const stored=JSON.parse(localStorage.getItem(SELF_AVATAR_KEY)||'{}');
+  return stored&&typeof stored==='object'&&!Array.isArray(stored)?stored:{};
+ }catch{return {}}
 }
-function chatAvatarChoice(roomId){
- const id=chatAvatarSaved()[roomId]||CHAT_AVATAR_DEFAULTS[roomId]||'smile';
- return CHAT_AVATAR_OPTIONS.find(item=>item[0]===id)||CHAT_AVATAR_OPTIONS[0];
+function selfAvatarFor(person){
+ const raw=selfAvatarRecords()[person];
+ if(raw&&raw.kind==='photo'&&typeof raw.data==='string'&&raw.data.length<320000
+    &&PHOTO_DATA_PATTERN.test(raw.data))return {kind:'photo',data:raw.data};
+ if(raw&&raw.kind==='monogram')return {kind:'monogram'};
+ if(raw&&raw.kind==='emoji'&&CHAT_AVATAR_OPTIONS.some(([id])=>id===raw.id))
+  return {kind:'emoji',id:raw.id};
+ return {kind:'emoji',id:CHAT_AVATAR_DEFAULTS[person]||'smile'};
+}
+function activeSelfAvatarPerson(){
+ return window.SEYVEO_PREVIEW?.isEmployee?.()===true?'elena':null;
+}
+function avatarCharacter(person){return ({elena:'Е',anna:'А',mikhail:'М'})[person]||'•'}
+function drawPortrait(node,photo,letter){
+ node.replaceChildren();
+ const target=document.createElement(photo?.kind==='photo'?'img':'span');
+ target.className=photo?.kind==='photo'?'svcp-native-avatar-photo':'svcp-native-avatar';
+ target.setAttribute('aria-hidden','true');
+ if(photo?.kind==='photo'){
+  target.src=photo.data;target.alt='';target.draggable=false;
+ }else{
+  target.textContent=photo?.kind==='monogram'?letter:
+    (CHAT_AVATAR_OPTIONS.find(([id])=>id===photo?.id)?.[1]||'😊');
+ }
+ node.append(target);
+ node.classList.add('svcp-native-avatar-host');
 }
 function fillWorkPortrait(node,room,managerPreview=false){
  if(!node||!room||room.kind!=='personal'||room.person==='sayvi')return false;
- const picture=document.createElement('span');
- picture.className='svcp-native-avatar';
- picture.setAttribute('aria-hidden','true');
- picture.textContent=managerPreview?'👨🏻‍💼':chatAvatarChoice(room.id)[1];
- node.replaceChildren(picture);
- node.classList.add('svcp-native-avatar-host');
+ // In Elena's own view, this chat is with the manager, not with herself.
+ if(managerPreview)drawPortrait(node,{kind:'emoji',id:'manager'},'Р');
+ else drawPortrait(node,selfAvatarFor(room.person),avatarCharacter(room.person));
+ if(managerPreview)node.firstElementChild.textContent='👨🏻‍💼';
  return true;
 }
-function renderChatAvatarChoices(room){
- const edit=$('svcpRoomAvatarEdit'),panel=$('svcpRoomAvatarPicker'),grid=$('svcpRoomAvatarChoices');
- if(!edit||!panel||!grid)return;
- const eligible=room?.kind==='personal'&&room.person!=='sayvi'&&!employeePreviewActive();
- edit.hidden=!eligible;panel.hidden=true;edit.setAttribute('aria-expanded','false');
- grid.replaceChildren();
- if(!eligible)return;
- const active=chatAvatarChoice(room.id)[0];
- for(const [id,glyph,name] of CHAT_AVATAR_OPTIONS){
+let selfAvatarDraft=null;
+const selfAvatarDialog=$('svcpSelfAvatarDialog');
+function paintSelfAvatarPreview(node,person,avatar){
+ if(!node)return;
+ drawPortrait(node,avatar,avatarCharacter(person));
+}
+function refreshOwnAvatarEntrypoints(){
+ const employee=!!activeSelfAvatarPerson();
+ const entry=$('svcpSelfAvatarOpen');
+ if(entry)entry.hidden=false; // Manager opens their own existing personal profile.
+ const label=$('svcpSelfAvatarLabel');
+ if(label)label.textContent=employee?'Мой профиль · Елена':'Мой профиль';
+ const photo=employee?selfAvatarFor('elena'):null;
+ const mini=$('svcpSelfAvatarMini');
+ if(mini)paintSelfAvatarPreview(mini,employee?'elena':'manager',photo||{kind:'monogram'});
+ const work=$('svcpEmployeeAvatarOpen');
+ if(work)work.hidden=!employee;
+ const workMini=$('svcpEmployeeOwnAvatar');
+ if(workMini&&employee)paintSelfAvatarPreview(workMini,'elena',photo);
+}
+function paintSelfAvatarStudio(){
+ const person=activeSelfAvatarPerson();
+ if(!person||!selfAvatarDraft)return;
+ paintSelfAvatarPreview($('svcpSelfAvatarHero'),person,selfAvatarDraft);
+ const gallery=$('svcpSelfAvatarChoices');if(!gallery)return;
+ gallery.replaceChildren();
+ const choiceList=[['letter','Е','Буква'],...CHAT_AVATAR_OPTIONS];
+ for(const [id,glyph,name] of choiceList){
   const button=document.createElement('button');button.type='button';
-  button.className='svcp-room-avatar-choice';button.dataset.avatarId=id;
-  button.setAttribute('aria-label',name);
-  button.setAttribute('aria-pressed',String(active===id));
-  const picture=document.createElement('span');picture.textContent=glyph;picture.setAttribute('aria-hidden','true');
-  const label=document.createElement('small');label.textContent=name;
-  button.append(picture,label);
+  button.className='svcp-own-avatar-choice';
+  const selected=id==='letter'?selfAvatarDraft.kind==='monogram':selfAvatarDraft.kind==='emoji'&&selfAvatarDraft.id===id;
+  button.setAttribute('aria-pressed',String(selected));
+  button.setAttribute('aria-label','Выбрать '+name.toLowerCase());
+  const face=document.createElement('span');face.className='svcp-own-avatar-glyph';
+  face.textContent=glyph;face.setAttribute('aria-hidden','true');
+  const caption=document.createElement('small');caption.textContent=name;
+  button.append(face,caption);
   button.addEventListener('click',()=>{
-   try{const selected=chatAvatarSaved();selected[room.id]=id;
-    localStorage.setItem(CHAT_AVATAR_STORAGE,JSON.stringify(selected));
-   }catch{return}
-   fillWorkPortrait($('svcpRoomAvatar'),room,false);
-   fillWorkPortrait($('svcpRoomProfileAvatar'),room,false);
-   renderDirectory();
-   grid.querySelectorAll('button').forEach(item=>item.setAttribute('aria-pressed',String(item.dataset.avatarId===id)));
+   selfAvatarDraft=id==='letter'?{kind:'monogram'}:{kind:'emoji',id};
+   const status=$('svcpSelfAvatarStatus');if(status)status.textContent='';
+   paintSelfAvatarStudio();
   });
-  grid.append(button);
+  gallery.append(button);
  }
 }
-$('svcpRoomAvatarEdit')?.addEventListener('click',()=>{
- const panel=$('svcpRoomAvatarPicker'),control=$('svcpRoomAvatarEdit');
- if(!panel||!control)return;
- panel.hidden=!panel.hidden;control.setAttribute('aria-expanded',String(!panel.hidden));
+function openOwnAvatarStudio(){
+ const person=activeSelfAvatarPerson();
+ if(!person||!selfAvatarDialog)return;
+ selfAvatarDraft=selfAvatarFor(person);
+ const status=$('svcpSelfAvatarStatus');if(status)status.textContent='';
+ paintSelfAvatarStudio();
+ if(!selfAvatarDialog.open)selfAvatarDialog.showModal();
+}
+function openCurrentUserProfile(){
+ if(activeSelfAvatarPerson()){openOwnAvatarStudio();return}
+ // Use the owner's own established "Моё имя и фото", never another person's card.
+ $('seyveoCompanyAvatarEdit')?.click();
+}
+$('svcpSelfAvatarOpen')?.addEventListener('click',openCurrentUserProfile);
+$('svcpEmployeeAvatarOpen')?.addEventListener('click',openOwnAvatarStudio);
+$('svcpSelfAvatarClose')?.addEventListener('click',()=>selfAvatarDialog?.close());
+$('svcpSelfAvatarReset')?.addEventListener('click',()=>{selfAvatarDraft={kind:'monogram'};paintSelfAvatarStudio()});
+$('svcpSelfAvatarSave')?.addEventListener('click',()=>{
+ const person=activeSelfAvatarPerson();
+ const status=$('svcpSelfAvatarStatus');
+ if(!person||!selfAvatarDraft)return;
+ try{
+  const records=selfAvatarRecords();
+  records[person]=selfAvatarDraft;
+  localStorage.setItem(SELF_AVATAR_KEY,JSON.stringify(records));
+ }catch{if(status)status.textContent='Не удалось сохранить. Проверьте память устройства.';return}
+ selfAvatarDialog?.close();
+ refreshOwnAvatarEntrypoints();
+ renderDirectory();
+ if(state.viewpoint==='manager'&&roomDetails().person===person)
+  fillWorkPortrait($('svcpRoomAvatar'),roomDetails(),false);
+ window.dispatchEvent(new CustomEvent('seyveo:self-avatar-updated',{detail:{person}}));
+});
+$('svcpSelfAvatarPhoto')?.addEventListener('click',()=>$('svcpSelfAvatarFile')?.click());
+$('svcpSelfAvatarFile')?.addEventListener('change',event=>{
+ const file=event.target.files?.[0];event.target.value='';
+ const status=$('svcpSelfAvatarStatus');
+ if(!activeSelfAvatarPerson()||!selfAvatarDialog?.open||!file)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>6*1024*1024){
+  if(status)status.textContent='Нужно фото JPG, PNG или WebP до 6 МБ.';return;
+ }
+ const reader=new FileReader();
+ reader.onerror=()=>{if(status)status.textContent='Не удалось открыть фотографию.'};
+ reader.onload=()=>{
+  const img=new Image();
+  img.onerror=()=>{if(status)status.textContent='Не удалось обработать изображение.'};
+  img.onload=()=>{
+   try{
+    const side=Math.min(img.naturalWidth,img.naturalHeight);
+    if(!side)throw Error('empty image');
+    const canvas=document.createElement('canvas');canvas.width=256;canvas.height=256;
+    const ctx=canvas.getContext('2d');if(!ctx)throw Error('no context');
+    ctx.drawImage(img,(img.naturalWidth-side)/2,(img.naturalHeight-side)/2,side,side,0,0,256,256);
+    const data=canvas.toDataURL('image/jpeg',.8);
+    if(data.length>=320000)throw Error('image too large');
+    selfAvatarDraft={kind:'photo',data};
+    if(status)status.textContent='Фото готово. Нажмите «Сохранить».';
+    paintSelfAvatarStudio();
+   }catch{if(status)status.textContent='Не получилось подготовить фото. Выберите другое.'}
+  };
+  img.src=String(reader.result||'');
+ };
+ reader.readAsDataURL(file);
+});
+window.addEventListener('seyveo:work-role-preview',()=>{
+ if(!activeSelfAvatarPerson()&&selfAvatarDialog?.open)selfAvatarDialog.close();
+ refreshOwnAvatarEntrypoints();
+});
+window.addEventListener('storage',event=>{
+ if(event.key===SELF_AVATAR_KEY){refreshOwnAvatarEntrypoints();renderDirectory()}
 });
 
 /* Locally created staff groups; no external message delivery. */
@@ -1626,6 +1735,7 @@ function senderName(msg){
 }
 function renderDirectory(){
  const list=$('svcpConversationList');if(!list)return;
+ refreshOwnAvatarEntrypoints();
  if(renderHistorySearch())return
  list.replaceChildren();
  $('svcpChatFilters')?.querySelectorAll('[data-svcp-chat-filter]').forEach(button=>
@@ -2089,6 +2199,7 @@ function showInbox(){
  clearReply();cancelTaskDraft();cleanupPreview();
  const composer=$('svcpChatInput');if(composer)composer.value='';
  syncComposerActions();
+ refreshOwnAvatarEntrypoints();
  renderDirectory();
 }
 function openRoom(roomId){
@@ -2210,7 +2321,6 @@ function renderRoomProfile(){
   if(!fillWorkPortrait(avatar,room,state.viewpoint==='elena'&&room.id==='dm-elena'))avatar.textContent=room.id==='dm-sayvi'?'S':(name.slice(0,1).toUpperCase()||'•');
   avatar.classList.toggle('is-group',room.kind!=='personal');
  }
- renderChatAvatarChoices(room);
  const nameNode=$('svcpRoomInfoName');if(nameNode)nameNode.textContent=name;
  const roleNode=$('svcpRoomInfoDescription');if(roleNode)roleNode.textContent=role;
  const callable=room.kind==='personal'&&room.person!=='sayvi';
