@@ -247,17 +247,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
 #svcpWorkChatScreen :is(.svcp-conversation-search,.svcp-room-info-toggle) svg{
  width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round
 }
-#svcpWorkChatScreen #svcpRoomInfo{
- flex:0 0 auto;padding:13px 17px;border-bottom:1px solid var(--soft-line);
- background:var(--card);max-height:23dvh;overflow-y:auto;display:grid;gap:7px
-}
-#svcpWorkChatScreen #svcpRoomInfo strong{font-size:14px;font-weight:610}
-#svcpWorkChatScreen #svcpRoomInfo p{font-size:13px;margin:0;line-height:1.45;color:var(--text)}
-#svcpWorkChatScreen #svcpRoomInfo small{font-size:11px;line-height:1.45;color:var(--secondary)}
-#svcpWorkChatScreen #svcpRoomInfo button{
- justify-self:start;padding:8px 12px;border:1px solid var(--soft-line);border-radius:11px;
- background:transparent;color:var(--text);font:inherit;font-size:13px
-}
+/* Profile appears ONLY as its standalone sheet, never as an in-flow row. */
 #svcpWorkChatScreen .svcp-chat{
  position:relative!important;
  flex:1 1 auto;display:flex;min-height:0;flex-direction:column;overflow:hidden!important;
@@ -1236,4 +1226,604 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] .svcp-bubble{
  box-shadow:none!important;
+}
+
+/* RESTORED CONTACT SHEET ONLY · precise scoped rules, not the legacy CSS. */
+/* v251 · SEYVEO contact info sheet.
+   One clean overlay instead of an in-flow gray technical info row.
+   The existing conversation/header/composer never move when it opens. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpRoomInfo[hidden]{
+ display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpRoomInfo:not([hidden]){
+ position:fixed!important;
+ z-index:2000!important;
+ inset:0!important;
+ display:flex!important;
+ align-items:flex-end!important;
+ justify-content:center!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ max-width:none!important;
+ height:100%!important;
+ min-height:0!important;
+ max-height:none!important;
+ margin:0!important;padding:0!important;
+ overflow:hidden!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-backdrop{
+ position:absolute!important;
+ z-index:0!important;
+ inset:0!important;
+ box-sizing:border-box!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ padding:0!important;margin:0!important;
+ background:rgba(19,27,35,.20)!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(6px)!important;
+ backdrop-filter:blur(6px)!important;
+ cursor:default!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-sheet{
+ position:relative!important;
+ z-index:1!important;
+ display:flex!important;flex-direction:column!important;
+ box-sizing:border-box!important;
+ width:min(100%,460px)!important;
+ min-width:0!important;max-width:460px!important;
+ height:min(700px,calc(100dvh - 16px))!important;
+ min-height:0!important;max-height:calc(100dvh - 16px)!important;
+ margin:0 auto!important;padding:0!important;
+ overflow:hidden!important;
+ background:#fff!important;color:#16191D!important;
+ border:1px solid rgba(255,255,255,.94)!important;
+ border-bottom:0!important;border-radius:28px 28px 0 0!important;
+ box-shadow:0 -12px 40px rgba(20,30,45,.13)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-grab{
+ flex:none!important;
+ align-self:center!important;
+ width:35px!important;height:4px!important;
+ min-height:4px!important;
+ margin:9px 0 4px!important;padding:0!important;
+ border-radius:99px!important;background:#D8DCE1!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-header{
+ box-sizing:border-box!important;
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ align-items:center!important;
+ flex:0 0 48px!important;
+ height:48px!important;min-height:48px!important;
+ gap:0!important;
+ padding:0 16px!important;margin:0!important;
+ border:0!important;
+ background:transparent!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-header > strong{
+ text-align:center!important;
+ font:600 16px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ letter-spacing:-.02em!important;color:#16191D!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button.svcp-room-profile-close{
+ display:grid!important;place-items:center!important;
+ justify-self:start!important;
+ box-sizing:border-box!important;
+ width:40px!important;height:40px!important;
+ min-width:40px!important;min-height:40px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:#F5F6F8!important;
+ box-shadow:none!important;
+ color:#22262C!important;
+ -webkit-appearance:none!important;appearance:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-close svg{
+ display:block!important;
+ width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.65!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-scroll{
+ box-sizing:border-box!important;
+ display:block!important;flex:1 1 auto!important;
+ min-height:0!important;width:100%!important;
+ padding:0 22px max(24px,env(safe-area-inset-bottom,0px))!important;
+ margin:0!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior:contain!important;
+ -webkit-overflow-scrolling:touch!important;
+ scrollbar-width:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-scroll::-webkit-scrollbar{display:none!important}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-hero{
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ padding:14px 0 13px!important;margin:0!important;
+ gap:4px!important;
+ background:transparent!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo #svcpRoomProfileAvatar{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ width:76px!important;height:76px!important;
+ min-width:76px!important;min-height:76px!important;
+ margin:0 0 9px!important;padding:0!important;
+ border-radius:50%!important;
+ border:1px solid rgba(63,119,159,.07)!important;
+ background:#E8F4FD!important;
+ color:#263847!important;
+ font:500 32px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo #svcpRoomProfileAvatar.is-group{
+ background:#F0F3F6!important;color:#37414A!important;
+ font-size:29px!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo #svcpRoomInfoName{
+ display:block!important;max-width:100%!important;
+ color:#171A20!important;
+ font:650 25px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif!important;
+ letter-spacing:-.035em!important;text-align:center!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo #svcpRoomInfoDescription{
+ display:block!important;
+ margin:2px 0 0!important;
+ color:#77808A!important;
+ font:400 13px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:center!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:9px!important;
+ margin:9px 0 24px!important;padding:0!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:7px!important;
+ min-width:0!important;width:100%!important;
+ height:69px!important;min-height:69px!important;
+ margin:0!important;padding:9px 3px!important;
+ color:#262C33!important;
+ background:#F7F8FA!important;
+ border:1px solid rgba(31,42,55,.035)!important;
+ border-radius:17px!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button[hidden]{display:none!important}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button svg{
+ display:block!important;flex:none!important;
+ width:22px!important;height:22px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.6!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button span{
+ font:500 11.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:inherit!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-section{
+ display:block!important;
+ margin:0!important;padding:16px 0 18px!important;
+ border-top:1px solid #EEF0F3!important;
+ background:transparent!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-section[hidden]{display:none!important}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-section-head{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:12px!important;
+ margin:0 0 8px!important;padding:0!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-section-head > strong{
+ font:600 15px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#262A30!important;letter-spacing:-.015em!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-section-head > span{
+ color:#89919B!important;
+ font:500 12px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-items{
+ display:block!important;
+ width:100%!important;margin:0!important;padding:0!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-empty{
+ margin:0!important;padding:8px 0 10px!important;
+ font:400 12.5px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#959DA7!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button.svcp-room-profile-item{
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 18px!important;
+ align-items:center!important;
+ box-sizing:border-box!important;
+ gap:11px!important;
+ width:100%!important;min-height:56px!important;
+ margin:0!important;padding:6px 0!important;
+ border:0!important;border-bottom:1px solid #F0F1F3!important;
+ border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ text-align:left!important;
+ color:#252B32!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-items > :last-child{
+ border-bottom:0!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-filetype{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;height:44px!important;
+ padding:0!important;margin:0!important;
+ border-radius:11px!important;
+ background:#F1F4F8!important;
+ font:650 11px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#536578!important;
+ letter-spacing:.02em!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-filetype-image{
+ background:#E9F4FB!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-filetype-task{
+ background:#EEF4FB!important;color:#2D85C9!important;font-size:20px!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-thumb{
+ display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-item-copy{
+ display:flex!important;flex-direction:column!important;
+ min-width:0!important;gap:4px!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-item-copy strong{
+ display:block!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ color:#272C33!important;
+ font:500 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-item-copy small{
+ display:block!important;color:#939BA5!important;
+ font:400 11px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-chevron{
+ color:#ABB3BB!important;
+ font:400 24px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:right!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button#svcpElenaPerspective:not([hidden]){
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ width:100%!important;min-height:44px!important;
+ margin:0!important;padding:9px 0!important;
+ background:transparent!important;
+ color:#272C33!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ font:500 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button#svcpElenaPerspective::after{
+ content:"›";font:400 24px/1 system-ui,sans-serif!important;color:#A5ADB6!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button:focus-visible{
+ outline:2px solid #4B95E8!important;outline-offset:2px!important;
+}
+@media(min-width:650px){
+ html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-sheet{
+  height:min(700px,calc(100dvh - 30px))!important;
+  border-radius:28px!important;
+  border-bottom:1px solid rgba(255,255,255,.94)!important;
+  margin-bottom:15px!important;
+ }
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-sheet{
+ background:#191C20!important;color:#F5F5F7!important;
+ border-color:rgba(255,255,255,.12)!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo :is(
+ .svcp-room-profile-header > strong,#svcpRoomInfoName,
+ .svcp-room-profile-section-head > strong,.svcp-room-profile-item-copy strong
+){color:#F3F5F7!important}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo :is(
+ .svcp-room-profile-actions > button,button.svcp-room-profile-close
+){background:#282D33!important;color:#F3F5F7!important;border-color:transparent!important}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-section{
+ border-top-color:rgba(255,255,255,.10)!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo button.svcp-room-profile-item{
+ border-bottom-color:rgba(255,255,255,.07)!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo button#svcpElenaPerspective:not([hidden]){
+ color:#F3F5F7!important;
+}
+
+/* v252 · The manager's fourth contact action; keep all four light & equal. */
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:8px!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button#svcpRoomProfileAssign{
+ color:#222831!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button#svcpRoomProfileAssign[hidden]{
+ display:none!important;
+}
+
+/* v253 · Compact employee info hero, unified back control, corrected handset.
+   Only the contact sheet; conversation header and composer are untouched. */
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-grab{
+ width:34px!important;height:4px!important;
+ margin:7px 0 2px!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-header{
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ flex:0 0 44px!important;
+ height:44px!important;min-height:44px!important;
+ padding:0 15px!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-header > strong{
+ font-size:15.5px!important;
+ font-weight:600!important;letter-spacing:-.02em!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button#svcpRoomProfileClose{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ border-radius:50%!important;
+ background:rgba(255,255,255,.96)!important;
+ border:1px solid rgba(35,45,55,.055)!important;
+ color:#1E252C!important;
+ box-shadow:0 3px 10px rgba(37,48,60,.045)!important;
+ padding:0!important;margin:0!important;
+ transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button#svcpRoomProfileClose svg{
+ display:block!important;
+ width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.65!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ transform:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-hero{
+ padding:8px 0 9px!important;
+ gap:3px!important;margin:0!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo #svcpRoomProfileAvatar{
+ width:66px!important;height:66px!important;
+ min-width:66px!important;min-height:66px!important;
+ margin:0 0 5px!important;
+ font-size:27px!important;
+ background:#E7F3FC!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo #svcpRoomInfoName{
+ font-size:22px!important;line-height:1.14!important;
+ letter-spacing:-.03em!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo #svcpRoomInfoDescription{
+ margin:2px 0 0!important;
+ font-size:12px!important;line-height:1.35!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions{
+ margin:7px 0 19px!important;
+ gap:7px!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button{
+ height:66px!important;min-height:66px!important;
+ gap:6px!important;
+ padding:8px 2px!important;
+ border-radius:16px!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-actions > button svg{
+ width:21px!important;height:21px!important;
+ fill:none!important;
+ stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo #svcpRoomProfileAudio svg{
+ width:20px!important;height:20px!important;
+ stroke-width:1.55!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-profile-section{
+ padding:13px 0 15px!important;
+}
+
+/* v254 · Search only inside the open conversation.
+   It reuses the employee info sheet and never navigates to global search. */
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search[hidden]{
+ display:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo[data-screen="search"] .svcp-room-profile-header,
+html body #svcpWorkChatScreen #svcpRoomInfo[data-screen="search"] .svcp-room-profile-scroll{
+ display:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search:not([hidden]){
+ box-sizing:border-box!important;
+ display:flex!important;flex:1 1 auto!important;
+ flex-direction:column!important;
+ min-height:0!important;min-width:0!important;
+ width:100%!important;
+ margin:0!important;padding:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-header{
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ flex:0 0 48px!important;
+ min-height:48px!important;
+ align-items:center!important;
+ padding:0 15px!important;
+ gap:0!important;margin:0!important;
+ background:transparent!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-header > strong{
+ color:#1E252C!important;
+ font:600 16px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:center!important;letter-spacing:-.02em!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button#svcpRoomScopedSearchBack{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+ border:1px solid rgba(35,45,55,.055)!important;
+ border-radius:50%!important;background:rgba(255,255,255,.96)!important;
+ color:#1E252C!important;box-shadow:0 3px 10px rgba(37,48,60,.045)!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button#svcpRoomScopedSearchBack svg{
+ width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.65!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-subtitle{
+ display:block!important;flex:none!important;
+ margin:2px 20px 14px!important;padding:0!important;
+ color:#78828D!important;
+ text-align:center!important;
+ font:400 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-field{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;
+ flex:0 0 46px!important;
+ min-height:46px!important;
+ width:calc(100% - 40px)!important;
+ margin:0 20px 12px!important;padding:0 13px!important;
+ gap:10px!important;
+ background:#F4F6F8!important;
+ border:1px solid #EDF0F3!important;border-radius:15px!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-field svg{
+ display:block!important;flex:0 0 19px!important;
+ width:19px!important;height:19px!important;
+ color:#646D77!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.7!important;stroke-linejoin:round!important;stroke-linecap:round!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo input#svcpRoomScopedSearchInput{
+ display:block!important;flex:1 1 auto!important;
+ box-sizing:border-box!important;min-width:0!important;
+ height:42px!important;min-height:42px!important;max-height:42px!important;
+ margin:0!important;padding:0!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;outline:none!important;
+ box-shadow:none!important;
+ color:#20252B!important;-webkit-text-fill-color:#20252B!important;
+ font:400 15px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo input#svcpRoomScopedSearchInput::placeholder{
+ color:#949DA7!important;-webkit-text-fill-color:#949DA7!important;opacity:1!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-field:focus-within{
+ border-color:rgba(10,132,255,.38)!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-results{
+ box-sizing:border-box!important;display:block!important;
+ flex:1 1 auto!important;min-height:0!important;width:100%!important;
+ padding:5px 20px max(24px,env(safe-area-inset-bottom,0px))!important;
+ margin:0!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ -webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;
+ scrollbar-width:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-results::-webkit-scrollbar{
+ display:none!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-hint{
+ margin:0!important;padding:24px 10px!important;
+ text-align:center!important;
+ color:#9099A3!important;
+ font:400 13px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-group{
+ margin:0!important;padding:7px 0 11px!important;
+ border-top:1px solid #EEF0F3!important;background:transparent!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-group-head{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ padding:8px 0!important;gap:12px!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-group-head strong{
+ color:#20262D!important;
+ font:600 15px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-group-head span{
+ color:#929AA3!important;
+ font:500 12px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button.svcp-room-scoped-search-result{
+ box-sizing:border-box!important;
+ display:grid!important;grid-template-columns:42px minmax(0,1fr) 16px!important;
+ align-items:center!important;gap:11px!important;
+ width:100%!important;min-height:60px!important;
+ padding:7px 0!important;margin:0!important;
+ border:0!important;border-bottom:1px solid #EEF0F3!important;
+ border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#252B33!important;text-align:left!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo button.svcp-room-scoped-search-result:last-child{
+ border-bottom:0!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-kind{
+ display:grid!important;place-items:center!important;
+ width:42px!important;height:42px!important;
+ border-radius:11px!important;
+ background:#F1F5F9!important;color:#576B7F!important;
+ font:600 12px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ overflow:hidden!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-result-content{
+ display:flex!important;flex-direction:column!important;min-width:0!important;
+ gap:4px!important;overflow:hidden!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-result-content strong{
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ font:500 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ color:#252B33!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-result-content small{
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ color:#8D969F!important;
+ font:400 11.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-chevron{
+ color:#A7B0B9!important;
+ font:400 23px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:right!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-header > strong,
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-group-head strong,
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-result-content strong{
+ color:#F3F5F7!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-field{
+ background:#282D33!important;border-color:#39404A!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo input#svcpRoomScopedSearchInput{
+ color:#F3F5F7!important;-webkit-text-fill-color:#F3F5F7!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo .svcp-room-scoped-search-group,
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpRoomInfo button.svcp-room-scoped-search-result{
+ border-color:rgba(255,255,255,.08)!important;
+}
+
+
+/* Keep all profile actions stationary and flat on touch; consistent 44px back. */
+html body #svcpWorkChatScreen #svcpRoomInfo button:is(:active,:hover,:focus){
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
 }
