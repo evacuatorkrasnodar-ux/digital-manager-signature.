@@ -67,7 +67,7 @@ function updateRoom(id,prop,value){
 }
 /* Local avatar editing: Apple-style photo, monogram and emoji.
    No upload, no claim of changing colleagues' accounts or the SEYVEO assistant. */
-const AVATAR_COLORS=['#536f84','#4f8574','#7d78a1','#b27788','#be8a54','#606b79'];
+const AVATAR_COLORS=['#EDF1F5'];
 function automaticAvatarColor(name){
  const value=String(name||'').trim().toLocaleLowerCase('ru-RU');
  let hash=0;
@@ -94,31 +94,20 @@ function readActualSelfAvatar(){
   const isStaff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
   const record=JSON.parse(localStorage.getItem(isStaff?STAFF_AVATAR_KEY:OWNER_AVATAR_KEY)||'null');
   const item=isStaff?record?.elena:record;
-  if(item?.kind==='atlas'&&Number.isInteger(item.index)&&item.index>=0&&item.index<12)return {kind:'atlas',index:item.index};
-  if(item?.kind==='preset'&&/^3d-\d{1,2}$/.test(item.id||'')&&Number(item.id.slice(3))<12)return {kind:'atlas',index:Number(item.id.slice(3))};
   if(item?.kind==='photo'&&typeof item.data==='string'&&item.data.length<320000&&
-     /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(item.data))
+    /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(item.data))
    return {kind:'photo',image:item.data};
-  if(item?.kind==='emoji'){
-   const aliases={red:'👩🏻‍🦰',dark:'👩🏽',senior:'👩🏼‍🦳',man:'👨🏻‍🦱',smile:'😊',grapes:'🍇',strawberry:'🍓',apple:'🍎'};
-   return {kind:'emoji',emoji:item.emoji||aliases[item.id]||'😊'};
-  }
-  if(item?.kind==='preset'){
-   const preset={'woman-red':'👩🏻‍🦰','woman-brunette':'👩🏽','woman-silver':'👩🏼‍🦳','man-curly':'👨🏻‍🦱',smile:'😊',cool:'😎',grapes:'🍇',strawberry:'🍓',peach:'🍑',apple:'🍎'};
-   if(preset[item.id])return {kind:'emoji',emoji:preset[item.id]};
-  }
-  if(item?.kind==='monogram'||item?.kind==='preset'&&item.id==='monogram')return {kind:'monogram',color:AVATAR_COLORS[0],initials:isStaff?'Е':'Я'};
  }catch{}
  return {kind:'monogram',color:AVATAR_COLORS[0],initials:window.SEYVEO_PREVIEW?.isEmployee?.()===true?'Е':'Я'};
 }
 function safeAvatar(spec){
  if(!spec||typeof spec!=='object')return null;
- const kind=['monogram','emoji','photo','atlas'].includes(spec.kind)?spec.kind:'monogram';
- const color=AVATAR_COLORS.includes(spec.color)?spec.color:AVATAR_COLORS[0];
+ const image=typeof spec.image==='string'&&
+  /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(spec.image)&&spec.image.length<320000
+  ?spec.image:'';
  const initials=[...String(spec.initials||'Я')].slice(0,2).join('').toLocaleUpperCase('ru-RU');
- const emoji=[...String(spec.emoji||'😊')].slice(0,2).join('');
- const image=typeof spec.image==='string'&&spec.image.startsWith('data:image/jpeg;base64,')&&/^[A-Za-z0-9+/=]+$/.test(spec.image.slice('data:image/jpeg;base64,'.length))&&spec.image.length<320000?spec.image:'';
- return {kind:(kind==='atlas'&&(!Number.isInteger(spec.index)||spec.index<0||spec.index>=12))||kind==='photo'&&!image?'monogram':kind,color,initials,emoji,image,index:Number.isInteger(spec.index)&&spec.index>=0&&spec.index<12?spec.index:0};
+ return {kind:spec.kind==='photo'&&image?'photo':'monogram',
+  initials:initials||'Я',color:AVATAR_COLORS[0],image};
 }
 function paintAvatar(element,source){
  const spec=safeAvatar(source);
@@ -159,7 +148,7 @@ function showAvatarEditor(){
  const staff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
  const initial=readActualSelfAvatar();
  let draft=safeAvatar(initial)||{kind:'monogram',initials:staff?'Е':'Я',color:AVATAR_COLORS[0]};
- let tab=draft.kind==='photo'?'photo':'atlas';
+ let tab=draft.kind==='photo'?'photo':'initial';
  const editor=node('form','sv-new-avatar-editor');
  editor.id='svNewAvatarForm';
  editor.noValidate=true;
@@ -184,30 +173,27 @@ function showAvatarEditor(){
  const tabs=node('div','sv-new-avatar-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Способ оформления');
  const views=node('div','sv-new-avatar-views');
  const gallery=node('div','sv-new-avatar-grid');
- const options=[['atlas','Аватары'],['photo','Фото']];
+ const options=[['initial','Буква'],['photo','Фото']];
  const btns=[];
  for(const [mode,label] of options){
   const btn=node('button','sv-new-avatar-tab',label);btn.type='button';
   btn.addEventListener('click',()=>{
    tab=mode;
-    paint();
+   if(mode==='initial')draft={kind:'monogram',initials:initialsFromName(),color:AVATAR_COLORS[0]};
+   paint();
   });
   btn.dataset.mode=mode;tabs.append(btn);btns.push(btn);
  }
- for(let i=0;i<AVATAR_3D.length;i++){
-  const button=node('button','sv-new-avatar-choice');button.type='button';
-  button.dataset.index=String(i);button.setAttribute('aria-label',AVATAR_3D[i][0]);
-  const portrait=node('span','sv-atlas-thumb');
-  portrait.style.backgroundPosition=`${(i%4)*100/3}% ${Math.floor(i/4)*50}%`;
-  portrait.setAttribute('aria-hidden','true');
-  button.append(portrait,node('small',null,AVATAR_3D[i][0]));
-  button.addEventListener('click',()=>{
-   if(draft.kind==='atlas'&&draft.index===i){draft.kind='monogram';draft.image='';}
-   else{draft.kind='atlas';draft.index=i;}
-   tab='atlas';paint();
-  });
-  gallery.append(button);
- }
+ const letterChoice=node('button','sv-new-avatar-choice');
+ letterChoice.type='button';letterChoice.dataset.index='initial';
+ letterChoice.setAttribute('aria-label','Стандартная буква на сером фоне');
+ const letterMark=node('span','sv-native-letter-choice',staff?'Е':'Я');
+ letterChoice.append(letterMark,node('small',null,'Стандартный'));
+ letterChoice.addEventListener('click',()=>{
+  draft={kind:'monogram',initials:initialsFromName(),color:AVATAR_COLORS[0]};
+  tab='initial';paint();
+ });
+ gallery.append(letterChoice);
  const initialsFromName=()=>{
   const words=String(nameInput.value||'').trim().split(/\s+/u).filter(Boolean);
   return words.slice(0,2).map(word=>[...word][0]).join('').toLocaleUpperCase('ru-RU')||'Я';
@@ -363,11 +349,12 @@ function showAvatarEditor(){
   }
   paintAvatar(preview,draft);
   for(const b of btns)b.setAttribute('aria-pressed',String(b.dataset.mode===tab));
-  gallery.hidden=tab!=='atlas';photo.hidden=tab!=='photo';
+  gallery.hidden=tab!=='initial';photo.hidden=tab!=='photo';
+  letterMark.textContent=initialsFromName();
   // Never show photo effects before a photo has been taken or chosen.
   filterBar.hidden=!photoSource;
   cropEditor.hidden=!photoSource;
-  for(const b of gallery.children)b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===Number(b.dataset.index)));
+  letterChoice.setAttribute('aria-pressed',String(draft.kind==='monogram'));
   for(const b of filterButtons)b.setAttribute('aria-pressed',String(b.dataset.photoMode===photoMode));
  }
  function persist(clear=false){
@@ -377,7 +364,6 @@ function showAvatarEditor(){
   }
   const chosen=clear?{kind:'monogram',initials:initialsFromName(),color:automaticAvatarColor(nameInput.value)}:safeAvatar(draft);
   const payload=clear?staff?{kind:'monogram'}:{kind:'preset',id:'monogram'}:
-   chosen.kind==='atlas'?(staff?{kind:'atlas',index:chosen.index}:{kind:'preset',id:'3d-'+chosen.index}):
    chosen.kind==='photo'?{kind:'photo',data:chosen.image}:{kind:'monogram'};
   try{
    if(staff){
@@ -398,7 +384,7 @@ function showAvatarEditor(){
  reset.addEventListener('click',()=>{
   // No artwork selected: generate a personal letter avatar from the name.
   draft={kind:'monogram',initials:initialsFromName(),color:automaticAvatarColor(nameInput.value)};
-  tab='atlas';paint();
+  tab='initial';paint();
   persist(true);
  });
  editor.addEventListener('submit',event=>{
