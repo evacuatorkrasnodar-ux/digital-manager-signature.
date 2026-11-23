@@ -42,7 +42,7 @@
  html.svcp-work-chat-active:has(#svcpWorkChatScreen:not([hidden])[data-view="room"] #svcpConversation:not([hidden])[data-chat-wallpaper="sky"]),
  html.svcp-work-chat-active:has(#svcpWorkChatScreen:not([hidden])[data-view="room"] #svcpConversation:not([hidden])[data-chat-wallpaper="sky"]) body{
   background-color:#AFDAE7!important;
-  background-image:var(--sv-chat-sky-wallpaper)!important;
+  background-image:var(--svcp-sky-chat-wallpaper,var(--sv-chat-sky-wallpaper))!important;
   background-size:100% 100%!important;
   background-repeat:no-repeat!important;
  }
@@ -55,7 +55,7 @@
  }
  html body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]){
   background-color:#AFDAE7!important;
-  background-image:var(--sv-chat-sky-wallpaper)!important;
+  background-image:var(--svcp-sky-chat-wallpaper,var(--sv-chat-sky-wallpaper))!important;
   background-size:100% 100%!important;
   background-repeat:no-repeat!important;
  }
