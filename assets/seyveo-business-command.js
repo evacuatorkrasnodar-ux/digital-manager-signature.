@@ -102,6 +102,12 @@ function ownerAvatarPreview(){
 }
 /* Native flat initials are the default; explicit avatar artwork/photo may
    replace the initial. Sayvi always keeps the dedicated SEYVEO symbol. */
+const AVATAR_AUTO_TINTS=['#E9EFF5','#E9F2EF','#EEEAF4','#F3EDE6','#E8F1F4','#F1EBF0'];
+function nativeAvatarTint(name){
+ const label=String(name||'').trim().toLocaleLowerCase('ru-RU');
+ let hash=0;for(const ch of label)hash=(hash*31+ch.codePointAt(0))>>>0;
+ return AVATAR_AUTO_TINTS[hash%AVATAR_AUTO_TINTS.length];
+}
 function drawPortrait(node,photo,letter){
  if(!node)return;
  node.replaceChildren();
@@ -121,6 +127,8 @@ function drawPortrait(node,photo,letter){
  node.classList.add('svcp-native-avatar-host');
  node.classList.toggle('svcp-native-photo-host',isPhoto);
  node.classList.toggle('svcp-native-atlas-host',isAtlas);
+ if(!isPhoto&&!isAtlas)node.style.setProperty('--sv-avatar-auto-bg',nativeAvatarTint(letter));
+ else node.style.removeProperty('--sv-avatar-auto-bg');
 }
 /* One small line icon for rooms that represent a group or documents. */
 function paintWorkGroupIcon(node,roomId){
