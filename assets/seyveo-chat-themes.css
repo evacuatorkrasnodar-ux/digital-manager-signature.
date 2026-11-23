@@ -770,12 +770,10 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
     Shared sapphire glass; blue seam, no white outline or pearl shine. */
  --sv-chat-blue-surface:rgba(11,84,174,.68);
  --sv-chat-blue-edge:1px solid rgba(3,70,151,.32);
- --sv-chat-blue-dock-shadow:
-  0 5px 15px rgba(6,62,122,.13),
-  0 2px 5px rgba(6,62,122,.075);
- --sv-chat-blue-circle-shadow:
-  0 3px 11px rgba(5,53,111,.14),
-  0 1px 4px rgba(5,53,111,.065);
+ /* One restrained sapphire elevation standard for ALL sky conversations,
+    regardless of user, group, account or future room ID. */
+ --sv-chat-blue-dock-shadow:0 5px 14px rgba(6,62,122,.10);
+ --sv-chat-blue-circle-shadow:0 3px 10px rgba(5,53,111,.11);
 }
 /* Recovered the original v6 frosted header from commit 8ea8faa.
    Sky wallpaper and composer colors remain intact; no second header skin. */
@@ -984,4 +982,24 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="personal"] #svcpMessages
  > .svcp-bubble:not(.is-sayvi) :is(.svcp-manager-message-avatar,.svcp-sender){
  display:none!important;
+}
+
+/* The family chat is another dynamic conversation, not an exception.
+   Apply the same subtle depth only when its SKY wallpaper is selected.
+   Ordinary message bubbles stay flat for clarity. */
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog[data-chat-wallpaper="sky"]
+ :is(.svf-iconbutton,.svf-upload,.sv-chat-family-trigger),
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog[data-chat-wallpaper="sky"]
+ :is(.svf-iconbutton,.svf-upload,.sv-chat-family-trigger):is(:active,:focus,:hover){
+ box-shadow:0 3px 10px rgba(5,53,111,.11)!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog[data-chat-wallpaper="sky"]
+ :is(.svf-compose,.svf-composer-wrap){
+ box-shadow:0 5px 14px rgba(6,62,122,.10)!important;
+}
+html:root:not([data-theme="dark"]) body #seyveoFamilyDialog[data-chat-wallpaper="sky"]
+ .svf-thread > .svf-msg{
+ box-shadow:none!important;
 }
