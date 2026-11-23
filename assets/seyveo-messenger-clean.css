@@ -2053,8 +2053,3 @@ html body #svcpWorkChatScreen .sv-native-letter-choice{
  width:58px!important;height:58px!important;margin:0 auto!important;
  font-size:25px!important;
 }
-/* Transparent legacy frames must not paint over a photo or Sayvi. */
-html body #svcpWorkChatScreen .svcp-directory-avatar.is-sayvi,
-html body #svcpWorkChatScreen #svcpConversation[data-room-id="dm-sayvi"] #svcpRoomAvatar{
- background-image:initial;
-}
