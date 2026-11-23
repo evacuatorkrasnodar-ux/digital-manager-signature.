@@ -138,8 +138,19 @@ function fillWorkPortrait(node,room,managerPreview=false){
  else drawPortrait(node,selfAvatarFor(room.person),avatarCharacter(room.person));
  return true;
 }
+/* Refresh visible group portraits in place when a person updates their avatar.
+   Never regenerate or reorder messages, or move the chat scroll position. */
+function refreshVisibleGroupAvatars(){
+ const conversation=$('svcpConversation');
+ if(conversation?.hidden||conversation?.dataset.roomKind!=='groups')return;
+ for(const node of $('svcpMessages')?.querySelectorAll('.svcp-group-message-avatar[data-group-person]')||[]){
+  if(node.dataset.groupPerson==='manager')drawPortrait(node,ownerAvatarPreview(),'Р');
+  else if(node.dataset.groupPerson==='elena')drawPortrait(node,selfAvatarFor('elena'),'Е');
+ }
+}
 function refreshVisiblePeerAvatars(){
  const room=roomDetails();
+ if(room?.kind==='groups'){refreshVisibleGroupAvatars();return;}
  if(!room||room.kind!=='personal'||room.person==='sayvi'||$('svcpConversation')?.hidden)return;
  const managerPeer=state.viewpoint==='elena'&&room.id==='dm-elena';
  fillWorkPortrait($('svcpRoomAvatar'),room,managerPeer);
@@ -278,7 +289,10 @@ window.addEventListener('seyveo:work-role-preview',()=>{
  refreshOwnAvatarEntrypoints();
 });
 window.addEventListener('storage',event=>{
- if(event.key===SELF_AVATAR_KEY){refreshOwnAvatarEntrypoints();renderDirectory()}
+ if(event.key===SELF_AVATAR_KEY){
+  refreshOwnAvatarEntrypoints();renderDirectory();
+  refreshVisiblePeerAvatars();
+ }
 });
 
 /* Locally created staff groups; no external message delivery. */
@@ -3517,6 +3531,22 @@ function renderChat(){
      }
      bubble.append(stamp);
      bubble.classList.add('svcp-bottom-stamp');
+    }
+   }
+   /* Small sender portrait belongs to the GROUP only.
+      Keep the bubble as a direct child of #svcpMessages, retaining every
+      gesture, clock, quote, file and context-menu handler. The avatar is
+      absolutely placed in the dedicated chat gutter, outside the bubble. */
+   if(roomDetails().kind==='groups'&&!isSayvi&&!isRecognition){
+    const person=msg.role==='self'?'manager':msg.role==='demo-elena'?'elena':null;
+    if(person){
+     const portrait=el('span','svcp-group-message-avatar');
+     portrait.dataset.groupPerson=person;
+     portrait.setAttribute('aria-hidden','true');
+     drawPortrait(portrait,person==='manager'?ownerAvatarPreview():selfAvatarFor('elena'),
+      person==='manager'?'Р':'Е');
+     bubble.classList.add('svcp-has-group-avatar');
+     bubble.append(portrait);
     }
    }
    thread.append(bubble);
