@@ -981,3 +981,45 @@ html[data-theme="dark"] #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filter
 @media(max-width:355px){
  #svcpWorkChatScreen #svcpChatDirectory .svcp-chat-filters > button{font-size:11.5px!important}
 }
+
+/* Canonical room navigation and paint exclusion.
+   Explicit IDs outrank the layout display:flex rules above: one pane only. */
+html body #svcpWorkChatScreen #svcpChatDirectory[hidden],
+html body #svcpWorkChatScreen #svcpConversation[hidden],
+html body #svcpWorkChatScreen[hidden]{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpChatDirectory,
+html body #svcpWorkChatScreen:not([data-view="room"]) #svcpConversation{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > #svcpConversationStandaloneBack{
+ box-sizing:border-box!important;position:absolute!important;
+ z-index:60!important;
+ top:calc(22px + env(safe-area-inset-top,0px))!important;
+ left:max(14px,env(safe-area-inset-left,0px))!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;border-radius:50%!important;
+ border:0!important;color:#fff!important;background:rgba(10,76,163,.78)!important;
+ box-shadow:0 3px 11px rgba(5,53,111,.14)!important;
+ -webkit-backdrop-filter:blur(10px) saturate(108%)!important;
+ backdrop-filter:blur(10px) saturate(108%)!important;
+ opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > #svcpConversationStandaloneBack svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"] > #svcpConversationStandaloneBack{
+ background:rgba(255,255,255,.62)!important;color:#1a2028!important;
+ box-shadow:0 3px 11px rgba(42,52,72,.09)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > #svcpConversationStandaloneBack:is(:active,:hover,:focus){
+ transform:none!important;translate:none!important;scale:1!important;
+ filter:none!important;transition:none!important;
+}
