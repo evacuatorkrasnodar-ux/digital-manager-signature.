@@ -585,6 +585,7 @@
  }
  function openWorkChat(roomId=null,{camera=false}={}){
   if((!isEmployee()&&!isManager())||!employeeChatScreen||!employeeChatCanvas)return;
+  const transition=++workChatTransition;
   const employeeMode=isEmployee();
   if(employeeMode&&page.dataset.employeeMode!=='true')select('employee');
   if(!employeeMode&&business.hidden)select('business');
@@ -596,7 +597,10 @@
   employeeChatScreen.dataset.view='inbox';
   const directory=$('svcpChatDirectory');
   const previousRoom=$('svcpConversation');
-  if(previousRoom)previousRoom.hidden=true;
+  if(previousRoom){
+   previousRoom.hidden=true;
+   previousRoom.style.setProperty('display','none','important');
+  }
   if(directory)directory.hidden=false;
   employeeChatScreen.hidden=false;
   attachWorkChatDock();
@@ -629,8 +633,10 @@
   }
   settleWorkChatViewport();
   requestAnimationFrame(()=>{
-   if(page.dataset.workChatOpen!=='true')return;
+   if(transition!==workChatTransition||page.dataset.workChatOpen!=='true')return;
    updateWorkChatViewport();
+   // Focus the entry Back control only for this opening, never a stale
+   // previously scheduled frame after leaving a Sayvi conversation.
    chatTop?.focus({preventScroll:true});
    if(camera){
     const toggle=$('svcpCameraToggle');
