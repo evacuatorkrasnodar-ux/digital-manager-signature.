@@ -18,18 +18,18 @@
  background:transparent;border:0;box-shadow:none;filter:none;
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
 }
-:host([data-work-tabs="true"]){height:112px;min-height:112px}
+:host([data-work-tabs="true"]){height:90px;min-height:90px}
 :host([hidden]){display:none!important}
 *,*::before,*::after{box-sizing:border-box}
 .bar{
  display:grid;grid-template-columns:44px 44px minmax(0,1fr) 44px;
- grid-template-rows:44px;column-gap:8px;row-gap:8px;
+ grid-template-rows:44px;column-gap:8px;row-gap:2px;
  align-items:center;align-content:start;
  width:100%;height:100%;margin:0;
  padding:var(--work-top) var(--work-right) 0 var(--work-left);
  background:#fff;border:0;border-radius:0;box-shadow:none;overflow:visible;
 }
-:host([data-work-tabs="true"]) .bar{grid-template-rows:44px 34px}
+:host([data-work-tabs="true"]) .bar{grid-template-rows:44px 28px}
 :host(:not([data-work-tabs="true"])) .bar{grid-template-rows:44px}
 .title{
  grid-column:2/4;grid-row:1;align-self:center;min-width:0;max-width:100%;
@@ -185,12 +185,13 @@
  line-height:1.1;
  transform:none;transition:none;
 }
-/* Same two-tier header for Work root sections: title and month occupy
-   an identical second line, keeping the tabs on one physical baseline. */
+/* Root Work sections are already named in the tab capsule: the second row
+   is intentionally reserved for the calendar MONTH only. Nested/history
+   destinations keep their compact, original first-row heading. */
 :host([data-work-tabs="true"]:not([data-agenda="true"])) .title:not([hidden]){
- grid-column:1/-1;grid-row:2;justify-self:stretch;align-self:center;
- font-size:26px;line-height:1.1;font-weight:640;letter-spacing:-.032em;
- text-align:left;padding:0;
+ grid-column:2/4;grid-row:1;justify-self:stretch;align-self:center;
+ font-size:20px;line-height:1.2;font-weight:590;letter-spacing:-.02em;
+ text-align:center;padding:0;
 }
 .month-name{display:block;color:inherit;font-weight:620}
 .month-year{
