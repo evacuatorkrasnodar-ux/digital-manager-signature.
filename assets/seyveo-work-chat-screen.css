@@ -210,10 +210,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  border:0!important;background:#38383A!important;
  color:#F6F6F7!important;font-size:16px;font-weight:590
 }
-/* Group identity is already conveyed by the title. Give long group names their full width. */
-#svcpWorkChatScreen #svcpConversation[data-room-kind="groups"] #svcpRoomAvatar{
- display:none!important
-}
+/* All rooms now share the one visible 56px avatar in seyveo-chat-header-v2.css. */
 #svcpWorkChatScreen .svcp-conversation-info{flex:1 1 auto;min-width:0;display:grid;gap:3px}
 
 /* Chat information lives on the title instead of a redundant ⓘ icon. */
