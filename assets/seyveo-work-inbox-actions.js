@@ -199,12 +199,13 @@ function showAvatarEditor(){
   gallery.append(button);
  }
  const mono=node('div','sv-new-avatar-monogram');
- const monoLabel=node('label','sv-new-avatar-field');
- monoLabel.append(node('span',null,'Буквы на аватаре'));
- const letters=node('input','sv-new-avatar-name');
- letters.type='text';letters.maxLength=2;letters.placeholder='Р';
- letters.value=draft.initials||String(nameInput.value||'Я').slice(0,1);
- monoLabel.append(letters);mono.append(monoLabel);
+ const monoCaption=node('span','sv-new-avatar-color-caption','Цвет аватара');
+ mono.append(monoCaption);
+ const initialsFromName=()=>{
+  const words=String(nameInput.value||'').trim().split(/\s+/u).filter(Boolean);
+  const initials=words.slice(0,2).map(word=>[...word][0]).join('').toLocaleUpperCase('ru-RU');
+  return initials||'Я';
+ };
  const swatches=node('div','sv-new-avatar-colors');
  for(const color of AVATAR_COLORS){
   const button=node('button','sv-new-avatar-color');button.type='button';
@@ -213,7 +214,9 @@ function showAvatarEditor(){
   swatches.append(button);
  }
  mono.append(swatches);
- letters.addEventListener('input',()=>{draft.kind='monogram';draft.initials=[...letters.value.trim()].slice(0,2).join('').toLocaleUpperCase('ru-RU');paint()});
+ nameInput.addEventListener('input',()=>{
+  if(draft.kind==='monogram')paint();
+ });
  const photo=node('div','sv-new-avatar-photo');
  const photoLabel=node('label','sv-new-avatar-photo-pick');
  photoLabel.append(node('span',null,'Выбрать фотографию'));
@@ -247,6 +250,7 @@ function showAvatarEditor(){
  const save=node('button','sv-new-avatar-save','Сохранить');save.type='submit';save.setAttribute('form',editor.id);
  footer.append(reset,save);
  function paint(){
+  if(draft.kind==='monogram')draft.initials=initialsFromName();
   paintAvatar(preview,draft);
   for(const b of btns)b.setAttribute('aria-pressed',String(b.dataset.mode===tab));
   gallery.hidden=tab!=='atlas';mono.hidden=tab!=='monogram';photo.hidden=tab!=='photo';
@@ -254,7 +258,8 @@ function showAvatarEditor(){
   for(const b of swatches.children)b.setAttribute('aria-pressed',String(draft.color===b.dataset.color&&draft.kind==='monogram'));
  }
  function persist(clear=false){
-  const chosen=clear?{kind:'monogram',initials:staff?'Е':'Я',color:AVATAR_COLORS[0]}:safeAvatar(draft);
+  if(draft.kind==='monogram')draft.initials=initialsFromName();
+  const chosen=clear?{kind:'monogram',initials:initialsFromName(),color:AVATAR_COLORS[0]}:safeAvatar(draft);
   const payload=clear?staff?{kind:'monogram'}:{kind:'preset',id:'monogram'}:
    chosen.kind==='atlas'?(staff?{kind:'atlas',index:chosen.index}:{kind:'preset',id:'3d-'+chosen.index}):
    chosen.kind==='photo'?{kind:'photo',data:chosen.image}:{kind:'monogram'};
