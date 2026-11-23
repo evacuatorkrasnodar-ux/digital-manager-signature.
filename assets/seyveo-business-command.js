@@ -86,7 +86,18 @@ function selfAvatarFor(person){
 function activeSelfAvatarPerson(){
  return window.SEYVEO_PREVIEW?.isEmployee?.()===true?'elena':null;
 }
-function avatarCharacter(person){return ({elena:'Е',anna:'А',mikhail:'М'})[person]||'•'}
+function avatarCharacter(person){return ({elena:'Е',anna:'А',mikhail:'М',manager:'Р'})[person]||'•'}
+function ownerAvatarPreview(){
+ try{
+  const own=JSON.parse(localStorage.getItem('seyveo-owner-avatar-v1')||'null');
+  if(own?.kind==='photo'&&typeof own.data==='string'&&own.data.length<320000
+   &&PHOTO_DATA_PATTERN.test(own.data))return {kind:'photo',data:own.data};
+  const mapped={'woman-red':'red','woman-brunette':'dark','woman-silver':'senior',
+   'man-curly':'man',smile:'smile',grapes:'grapes',strawberry:'strawberry',apple:'apple'};
+  if(own?.kind==='preset'&&mapped[own.id])return {kind:'emoji',id:mapped[own.id]};
+ }catch{}
+ return {kind:'monogram'};
+}
 function drawPortrait(node,photo,letter){
  node.replaceChildren();
  const target=document.createElement(photo?.kind==='photo'?'img':'span');
@@ -121,9 +132,9 @@ function refreshOwnAvatarEntrypoints(){
  if(entry)entry.hidden=false; // Manager opens their own existing personal profile.
  const label=$('svcpSelfAvatarLabel');
  if(label)label.textContent=employee?'Мой профиль · Елена':'Мой профиль';
- const photo=employee?selfAvatarFor('elena'):null;
+ const photo=employee?selfAvatarFor('elena'):ownerAvatarPreview();
  const mini=$('svcpSelfAvatarMini');
- if(mini)paintSelfAvatarPreview(mini,employee?'elena':'manager',photo||{kind:'monogram'});
+ if(mini)paintSelfAvatarPreview(mini,employee?'elena':'manager',photo);
  const work=$('svcpEmployeeAvatarOpen');
  if(work)work.hidden=!employee;
  const workMini=$('svcpEmployeeOwnAvatar');
@@ -218,6 +229,7 @@ $('svcpSelfAvatarFile')?.addEventListener('change',event=>{
  };
  reader.readAsDataURL(file);
 });
+window.addEventListener('seyveo:avatar-changed',refreshOwnAvatarEntrypoints);
 window.addEventListener('seyveo:work-role-preview',()=>{
  if(!activeSelfAvatarPerson()&&selfAvatarDialog?.open)selfAvatarDialog.close();
  refreshOwnAvatarEntrypoints();
