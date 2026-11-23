@@ -66,7 +66,7 @@ function updateRoom(id,prop,value){
  if(prop==='unread')syncLocalChatBadge();
 }
 /* Local avatar editing: Apple-style photo, monogram and emoji.
-   No upload, no claim of changing colleagues' accounts or the SEYVEO assistant. */
+   The default is a flat initial; profile owners may explicitly choose artwork. */
 const AVATAR_COLORS=['#EDF1F5'];
 function automaticAvatarColor(name){
  const value=String(name||'').trim().toLocaleLowerCase('ru-RU');
@@ -74,7 +74,7 @@ function automaticAvatarColor(name){
  for(const letter of value)hash=(hash*31+letter.codePointAt(0))>>>0;
  return AVATAR_COLORS[hash%AVATAR_COLORS.length];
 }
-// Old flat emoji picker removed; stored legacy choices remain readable until changed.
+// 12 original portrait tiles are offered as options, never assigned as defaults.
 const AVATAR_3D=[
  ['Космонавт','Космос'],['Супергерой','Герои'],['Путешественница','Космос'],['Робот','Космос'],
  ['Лисёнок','Мультики'],['Девочка','Мультики'],['Виноград','Фрукты'],['Клубника','Фрукты'],
@@ -95,8 +95,14 @@ function readActualSelfAvatar(){
   const record=JSON.parse(localStorage.getItem(isStaff?STAFF_AVATAR_KEY:OWNER_AVATAR_KEY)||'null');
   const item=isStaff?record?.elena:record;
   if(item?.kind==='photo'&&typeof item.data==='string'&&item.data.length<320000&&
-    /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(item.data))
+   /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(item.data))
    return {kind:'photo',image:item.data};
+  if(item?.kind==='atlas'&&Number.isInteger(item.index)&&item.index>=0&&item.index<AVATAR_3D.length)
+   return {kind:'atlas',index:item.index};
+  if(item?.kind==='preset'&&/^3d-\d{1,2}$/.test(item.id||'')){
+   const index=Number(item.id.slice(3));
+   if(index<AVATAR_3D.length)return {kind:'atlas',index};
+  }
  }catch{}
  return {kind:'monogram',color:AVATAR_COLORS[0],initials:window.SEYVEO_PREVIEW?.isEmployee?.()===true?'Е':'Я'};
 }
@@ -106,8 +112,10 @@ function safeAvatar(spec){
   /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(spec.image)&&spec.image.length<320000
   ?spec.image:'';
  const initials=[...String(spec.initials||'Я')].slice(0,2).join('').toLocaleUpperCase('ru-RU');
- return {kind:spec.kind==='photo'&&image?'photo':'monogram',
-  initials:initials||'Я',color:AVATAR_COLORS[0],image};
+ const atlasValid=spec.kind==='atlas'&&Number.isInteger(spec.index)&&
+  spec.index>=0&&spec.index<AVATAR_3D.length;
+ return {kind:spec.kind==='photo'&&image?'photo':atlasValid?'atlas':'monogram',
+  initials:initials||'Я',color:AVATAR_COLORS[0],image,index:atlasValid?spec.index:0};
 }
 function paintAvatar(element,source){
  const spec=safeAvatar(source);
@@ -148,7 +156,7 @@ function showAvatarEditor(){
  const staff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
  const initial=readActualSelfAvatar();
  let draft=safeAvatar(initial)||{kind:'monogram',initials:staff?'Е':'Я',color:AVATAR_COLORS[0]};
- let tab=draft.kind==='photo'?'photo':'initial';
+ let tab=draft.kind==='photo'?'photo':draft.kind==='atlas'?'atlas':'initial';
  const editor=node('form','sv-new-avatar-editor');
  editor.id='svNewAvatarForm';
  editor.noValidate=true;
@@ -173,7 +181,8 @@ function showAvatarEditor(){
  const tabs=node('div','sv-new-avatar-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Способ оформления');
  const views=node('div','sv-new-avatar-views');
  const gallery=node('div','sv-new-avatar-grid');
- const options=[['initial','Буква'],['photo','Фото']];
+ const initialGallery=node('div','sv-new-avatar-grid sv-new-avatar-initial-grid');
+ const options=[['initial','Буква'],['atlas','Аватары'],['photo','Фото']];
  const btns=[];
  for(const [mode,label] of options){
   const btn=node('button','sv-new-avatar-tab',label);btn.type='button';
@@ -193,7 +202,18 @@ function showAvatarEditor(){
   draft={kind:'monogram',initials:initialsFromName(),color:AVATAR_COLORS[0]};
   tab='initial';paint();
  });
- gallery.append(letterChoice);
+ initialGallery.append(letterChoice);
+ for(let i=0;i<AVATAR_3D.length;i++){
+  const choice=node('button','sv-new-avatar-choice');choice.type='button';
+  choice.dataset.index=String(i);
+  choice.setAttribute('aria-label','Выбрать аватар '+AVATAR_3D[i][0]);
+  choice.append(atlasMark(i),node('small',null,AVATAR_3D[i][0]));
+  choice.addEventListener('click',()=>{
+   draft={kind:'atlas',index:i,initials:initialsFromName(),color:AVATAR_COLORS[0]};
+   tab='atlas';paint();
+  });
+  gallery.append(choice);
+ }
  const initialsFromName=()=>{
   const words=String(nameInput.value||'').trim().split(/\s+/u).filter(Boolean);
   return words.slice(0,2).map(word=>[...word][0]).join('').toLocaleUpperCase('ru-RU')||'Я';
@@ -334,7 +354,7 @@ function showAvatarEditor(){
   };
   existing.src=draft.image;
  }
- views.append(gallery,photo);
+ views.append(initialGallery,gallery,photo);
  editor.append(hero,tabs,views,status);
  // Fresh floating actions: no footer strip, backing card, or inherited button styles.
  const actions=node('div','sv-avatar-floating-actions');
@@ -349,12 +369,14 @@ function showAvatarEditor(){
   }
   paintAvatar(preview,draft);
   for(const b of btns)b.setAttribute('aria-pressed',String(b.dataset.mode===tab));
-  gallery.hidden=tab!=='initial';photo.hidden=tab!=='photo';
+  initialGallery.hidden=tab!=='initial';gallery.hidden=tab!=='atlas';photo.hidden=tab!=='photo';
   letterMark.textContent=initialsFromName();
   // Never show photo effects before a photo has been taken or chosen.
   filterBar.hidden=!photoSource;
   cropEditor.hidden=!photoSource;
   letterChoice.setAttribute('aria-pressed',String(draft.kind==='monogram'));
+   for(const choice of gallery.children)
+    choice.setAttribute('aria-pressed',String(draft.kind==='atlas'&&Number(choice.dataset.index)===draft.index));
   for(const b of filterButtons)b.setAttribute('aria-pressed',String(b.dataset.photoMode===photoMode));
  }
  function persist(clear=false){
@@ -364,6 +386,9 @@ function showAvatarEditor(){
   }
   const chosen=clear?{kind:'monogram',initials:initialsFromName(),color:automaticAvatarColor(nameInput.value)}:safeAvatar(draft);
   const payload=clear?staff?{kind:'monogram'}:{kind:'preset',id:'monogram'}:
+   chosen.kind==='atlas'
+    ?(staff?{kind:'atlas',index:chosen.index,customChosen:true}
+      :{kind:'preset',id:'3d-'+chosen.index,customChosen:true}):
    chosen.kind==='photo'?{kind:'photo',data:chosen.image}:{kind:'monogram'};
   try{
    if(staff){
