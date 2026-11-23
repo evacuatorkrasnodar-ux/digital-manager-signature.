@@ -23,7 +23,7 @@
  --sv-header-row:62px;
  /* Native top layout contract: clear the notch, keep a single 44px axis. */
  --sv-apple-nav-row:44px;
- --sv-apple-top-gap:8px;
+ --sv-apple-top-gap:14px;
  --sv-apple-top-inset:calc(env(safe-area-inset-top,0px) + var(--sv-apple-top-gap));
  --sv-header-slot:44px;
  --sv-header-gap:8px;
