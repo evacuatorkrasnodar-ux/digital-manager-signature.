@@ -1960,13 +1960,10 @@ html body #svcpWorkChatScreen[data-view="room"]
  }
 }
 
-/* SEYVEO chat scroll-end · native iPhone WebKit.
-   Root cause: padding-bottom on a flex-column overflow container does not
-   consistently enter Safari's effective scroll range. A transparent ::after
-   FLEX ITEM does, so the last bubble (including the poll's Add option
-   control) can scroll fully above the absolute message composer.
-   Crucially this is INSIDE the existing scrollport, not an external
-   margin/second footer. The full-bleed wallpaper stays continuous. */
+/* SEYVEO · work chat scroll end, native Safari / PWA.
+   Use a REAL last DOM flex child after the bubbles, not a CSS pseudo-element
+   or margin outside the scrollport. The last poll button / last bubble may
+   be scrolled above the floating 56px composer. No background layer. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpMessages{
  box-sizing:border-box!important;
  display:flex!important;
@@ -1986,25 +1983,35 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #sv
  background:transparent!important;
  background-image:none!important;
 }
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpMessages::after{
- content:""!important;
+/* Existing JS appends this element AFTER the last real message at renderChat.
+   resizeWorkComposer / ResizeObserver already update the inherited height
+   when the capsule grows to two rows. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpMessages > #svcpChatScrollClearance{
  display:block!important;
- flex:0 0 calc(var(--svcp-current-compose-height,56px) + 22px + env(safe-area-inset-bottom,0px))!important;
- height:calc(var(--svcp-current-compose-height,56px) + 22px + env(safe-area-inset-bottom,0px))!important;
+ position:static!important;
+ box-sizing:border-box!important;
+ flex:0 0 calc(var(--svcp-current-compose-height,56px) + 28px + env(safe-area-inset-bottom,0px))!important;
+ height:calc(var(--svcp-current-compose-height,56px) + 28px + env(safe-area-inset-bottom,0px))!important;
  min-height:0!important;
  width:1px!important;
- background:transparent!important;
+ max-width:1px!important;
+ padding:0!important;
+ margin:0!important;
  border:0!important;
+ background:transparent!important;
+ background-image:none!important;
  box-shadow:none!important;
  pointer-events:none!important;
 }
-/* Reply and attachment previews need extra scroll distance, but only
-   while the preview is actually visible. No fixed backplate is created. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat:has(
  :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])
-) #svcpMessages::after{
+) #svcpMessages > #svcpChatScrollClearance{
  flex-basis:calc(var(--svcp-current-compose-height,56px) + 110px + env(safe-area-inset-bottom,0px))!important;
  height:calc(var(--svcp-current-compose-height,56px) + 110px + env(safe-area-inset-bottom,0px))!important;
+}
+/* Retired pseudo spacers MUST NOT reappear via older stylesheets. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpMessages::after{
+ content:none!important;display:none!important;
 }
 
 /* 24 Nov 2026 · Match approved Home segmented capsule in Messages filters. */
