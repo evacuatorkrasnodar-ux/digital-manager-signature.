@@ -2246,13 +2246,21 @@ function syncChatAccount(){
  editingMessageIndex=null;
 }
 function showInbox(){
+ // First operation: atomically retire the previous room's composited layer
+ // BEFORE any cleanup callback, input reset or list rendering can run.
+ // A cached Sayvi/sky wallpaper must not flash behind the Messages inbox.
+ const container=$('svcpWorkChatScreen');
+ const oldRoom=$('svcpConversation');
+ if(container)container.dataset.view='inbox';
+ if(oldRoom){
+  oldRoom.hidden=true;
+  oldRoom.style.setProperty('display','none','important');
+ }
  finishSvcpSayviDemoReply(true,true);
  closeCallPreview();
  stopWorkTypingLocal();
  syncChatAccount();
  cancelVoice();editingMessageIndex=null;
- const container=$('svcpWorkChatScreen');
- if(container)container.dataset.view='inbox';
  // Restore any contact-card resources before leaving or switching rooms.
  closeRoomInformation(false);
  closeRecognition();
@@ -2272,13 +2280,24 @@ function showInbox(){
  renderDirectory();
 }
 function openRoom(roomId){
+ // Validate before exposing a room route. Invalid or restricted deep links
+ // previously left the last conversation view active for one Safari frame.
+ const selected=ROOMS.find(x=>x.id===roomId);
+ if(!selected||(employeePreviewActive()&&!employeeAllowedRoom(selected.id))){
+  showInbox();
+  return;
+ }
+ const container=$('svcpWorkChatScreen');
+ const conversation=$('svcpConversation');
+ if(conversation){
+  conversation.hidden=true;
+  conversation.style.setProperty('display','none','important');
+ }
  finishSvcpSayviDemoReply(true,true);
  closeCallPreview();
  stopWorkTypingLocal();
  syncChatAccount();
  cancelVoice();editingMessageIndex=null;
- const container=$('svcpWorkChatScreen');
- if(container)container.dataset.view='room';
  // Restore any contact-card resources before leaving or switching rooms.
  closeRoomInformation(false);
  closeRecognition();
@@ -2286,8 +2305,6 @@ function openRoom(roomId){
  setCameraTray(false);
  historyWindow=35;
  $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
- const selected=ROOMS.find(x=>x.id===roomId);if(!selected)return;
- if(employeePreviewActive()&&!employeeAllowedRoom(selected.id))return;
  state.room=selected.id;
  // Single-person chats do not repeat sender names inside every bubble.
  // Group author labels remain visible. Aria labels still retain identity.
@@ -2320,8 +2337,14 @@ function openRoom(roomId){
  if(roomDescription)roomDescription.textContent=selected.kind==='personal'
   ?(selected.hint.split(' · ')[0]||'Личный чат')
   :selected.hint;
+ // Reveal only the freshly prepared room, never the previously cached
+ // Sayvi room. The direct inline paint guard overrides legacy display rules.
  $('svcpChatDirectory').hidden=true;
- $('svcpConversation').hidden=false;
+ if(conversation){
+  conversation.style.removeProperty('display');
+  conversation.hidden=false;
+ }
+ if(container)container.dataset.view='room';
  $('svcpConversationTitle').textContent=employeePreviewActive()&&selected.id==='dm-elena'
  ?'Руководитель':selected.label;
  clearReply();cancelTaskDraft();cleanupPreview();
