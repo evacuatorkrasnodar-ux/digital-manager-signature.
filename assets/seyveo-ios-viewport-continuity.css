@@ -186,15 +186,15 @@ html body #svcpWorkChatScreen[data-view="room"]
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:none!important;pointer-events:auto!important;
 }
-/* Group chats have no header portrait. Keep their title at the
-   Back-button level, and let PERSONAL chats tuck over their real avatar. */
+/* Keep the OLD layout for untouched themes. Only Sky/Pearl
+   personal chats gain a real avatar and the Sayvi-style overlap. */
 html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="groups"]
+ #svcpConversation:not([data-room-id="dm-sayvi"])
  > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
  margin:16px 0 0!important;
 }
-html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"]):is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
  > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
  margin:-14px 0 0!important;
 }
@@ -333,7 +333,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
    personal rooms show an existing real/customized avatar or monogram;
    groups keep no avatar. Never recolor one theme with the other. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"]):is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
  > .svcp-minimal-identity-header .svcp-room-identity #svcpRoomAvatar{
  display:grid!important;place-items:center!important;
  box-sizing:border-box!important;position:relative!important;
@@ -346,14 +346,14 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  font-size:22px!important;line-height:1!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"]):is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
  > .svcp-minimal-identity-header .svcp-room-identity
  #svcpRoomAvatar:not(.sv-inbox-avatar-custom){
  background:#E4EFF9!important;background-image:none!important;
  color:#243746!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])[data-chat-wallpaper="sky"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"]):is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])[data-chat-wallpaper="sky"]
  > .svcp-minimal-identity-header .svcp-room-identity
  #svcpRoomAvatar:not(.sv-inbox-avatar-custom){
  background:rgba(18,84,169,.88)!important;background-image:none!important;
@@ -363,7 +363,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
    fallback avatar rule. The profile editor writes these existing tokens;
    never draw a generic circle over someone's saved photograph. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"]):is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
  > .svcp-minimal-identity-header .svcp-room-identity
  #svcpRoomAvatar.sv-inbox-avatar-custom{
  background-color:var(--sv-avatar-color,#536f84)!important;
@@ -373,19 +373,19 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  color:#FFFFFF!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"]):is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
  > .svcp-minimal-identity-header .svcp-room-identity
  #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="photo"]{
  font-size:0!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"]):is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
  > .svcp-minimal-identity-header .svcp-room-identity
  #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="emoji"]{
  font-size:26px!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"]):is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
  > .svcp-minimal-identity-header .svcp-room-identity
  #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
  font-size:21px!important;
@@ -393,7 +393,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 /* A GROUP with an explicitly saved avatar deserves the same portrait
    position as a person. Groups without one retain the earlier low title. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="groups"]
+ #svcpConversation[data-room-kind="groups"]:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
  > .svcp-minimal-identity-header .svcp-room-identity #svcpRoomAvatar.sv-inbox-avatar-custom{
  display:grid!important;place-items:center!important;
  box-sizing:border-box!important;position:relative!important;
@@ -409,7 +409,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  overflow:hidden!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-room-kind="groups"]:has(#svcpRoomAvatar.sv-inbox-avatar-custom)
+ #svcpConversation[data-room-kind="groups"]:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"]):has(#svcpRoomAvatar.sv-inbox-avatar-custom)
  > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
  margin:-14px 0 0!important;
 }
