@@ -68,6 +68,12 @@ function updateRoom(id,prop,value){
 /* Local avatar editing: Apple-style photo, monogram and emoji.
    No upload, no claim of changing colleagues' accounts or the SEYVEO assistant. */
 const AVATAR_COLORS=['#536f84','#4f8574','#7d78a1','#b27788','#be8a54','#606b79'];
+function automaticAvatarColor(name){
+ const value=String(name||'').trim().toLocaleLowerCase('ru-RU');
+ let hash=0;
+ for(const letter of value)hash=(hash*31+letter.codePointAt(0))>>>0;
+ return AVATAR_COLORS[hash%AVATAR_COLORS.length];
+}
 // Old flat emoji picker removed; stored legacy choices remain readable until changed.
 const AVATAR_3D=[
  ['Космонавт','Космос'],['Супергерой','Герои'],['Путешественница','Космос'],['Робот','Космос'],
@@ -153,7 +159,7 @@ function showAvatarEditor(){
  const staff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
  const initial=readActualSelfAvatar();
  let draft=safeAvatar(initial)||{kind:'monogram',initials:staff?'Е':'Я',color:AVATAR_COLORS[0]};
- let tab=draft.kind==='photo'?'photo':draft.kind==='monogram'?'monogram':'atlas';
+ let tab=draft.kind==='photo'?'photo':'atlas';
  const editor=node('form','sv-new-avatar-editor');
  editor.id='svNewAvatarForm';
  editor.noValidate=true;
@@ -176,19 +182,13 @@ function showAvatarEditor(){
  const tabs=node('div','sv-new-avatar-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Способ оформления');
  const views=node('div','sv-new-avatar-views');
  const gallery=node('div','sv-new-avatar-grid');
- const options=[
-  ['atlas','Аватары'],
-  ['monogram','Буквы'],
-  ['photo','Фото']
- ];
+ const options=[['atlas','Аватары'],['photo','Фото']];
  const btns=[];
  for(const [mode,label] of options){
   const btn=node('button','sv-new-avatar-tab',label);btn.type='button';
   btn.addEventListener('click',()=>{
    tab=mode;
-   if(mode==='monogram')draft.kind='monogram';
-   if(mode==='photo'&&draft.kind!=='photo'){ /* Wait for the chosen file; preserve existing selection. */ }
-   paint();
+    paint();
   });
   btn.dataset.mode=mode;tabs.append(btn);btns.push(btn);
  }
@@ -199,25 +199,17 @@ function showAvatarEditor(){
   portrait.style.backgroundPosition=`${(i%4)*100/3}% ${Math.floor(i/4)*50}%`;
   portrait.setAttribute('aria-hidden','true');
   button.append(portrait,node('small',null,AVATAR_3D[i][0]));
-  button.addEventListener('click',()=>{draft.kind='atlas';draft.index=i;tab='atlas';paint()});
+  button.addEventListener('click',()=>{
+   if(draft.kind==='atlas'&&draft.index===i){draft.kind='monogram';draft.image='';}
+   else{draft.kind='atlas';draft.index=i;}
+   tab='atlas';paint();
+  });
   gallery.append(button);
  }
- const mono=node('div','sv-new-avatar-monogram');
- const monoCaption=node('span','sv-new-avatar-color-caption','Цвет аватара');
- mono.append(monoCaption);
  const initialsFromName=()=>{
   const words=String(nameInput.value||'').trim().split(/\s+/u).filter(Boolean);
-  const initials=words.slice(0,2).map(word=>[...word][0]).join('').toLocaleUpperCase('ru-RU');
-  return initials||'Я';
+  return words.slice(0,2).map(word=>[...word][0]).join('').toLocaleUpperCase('ru-RU')||'Я';
  };
- const swatches=node('div','sv-new-avatar-colors');
- for(const color of AVATAR_COLORS){
-  const button=node('button','sv-new-avatar-color');button.type='button';
-  button.style.backgroundColor=color;button.dataset.color=color;button.setAttribute('aria-label','Цвет фона');
-  button.addEventListener('click',()=>{draft.color=color;draft.kind='monogram';paint()});
-  swatches.append(button);
- }
- mono.append(swatches);
  nameInput.addEventListener('input',()=>paint());
  const photo=node('div','sv-new-avatar-photo');
  const photoChoices=node('div','sv-new-avatar-photo-choices');
@@ -303,7 +295,7 @@ function showAvatarEditor(){
   existing.onload=()=>{if(!photoSource)photoSource=existing};
   existing.src=draft.image;
  }
- views.append(gallery,mono,photo);
+ views.append(gallery,photo);
  editor.append(hero,nameLabel,tabs,views,status);
  // Fresh floating actions: no footer strip, backing card, or inherited button styles.
  const actions=node('div','sv-avatar-floating-actions');
@@ -312,17 +304,22 @@ function showAvatarEditor(){
  actions.append(reset,save);
  function paint(){
   identityName.textContent=nameInput.value.trim()||'Ваше имя';
-  if(draft.kind==='monogram')draft.initials=initialsFromName();
+  if(draft.kind==='monogram'){
+   draft.initials=initialsFromName();
+   draft.color=automaticAvatarColor(nameInput.value);
+  }
   paintAvatar(preview,draft);
   for(const b of btns)b.setAttribute('aria-pressed',String(b.dataset.mode===tab));
-  gallery.hidden=tab!=='atlas';mono.hidden=tab!=='monogram';photo.hidden=tab!=='photo';
+  gallery.hidden=tab!=='atlas';photo.hidden=tab!=='photo';
   for(const b of gallery.children)b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===Number(b.dataset.index)));
-  for(const b of swatches.children)b.setAttribute('aria-pressed',String(draft.color===b.dataset.color&&draft.kind==='monogram'));
   for(const b of filterButtons)b.setAttribute('aria-pressed',String(b.dataset.photoMode===photoMode));
  }
  function persist(clear=false){
-  if(draft.kind==='monogram')draft.initials=initialsFromName();
-  const chosen=clear?{kind:'monogram',initials:initialsFromName(),color:AVATAR_COLORS[0]}:safeAvatar(draft);
+  if(draft.kind==='monogram'){
+   draft.initials=initialsFromName();
+   draft.color=automaticAvatarColor(nameInput.value);
+  }
+  const chosen=clear?{kind:'monogram',initials:initialsFromName(),color:automaticAvatarColor(nameInput.value)}:safeAvatar(draft);
   const payload=clear?staff?{kind:'monogram'}:{kind:'preset',id:'monogram'}:
    chosen.kind==='atlas'?(staff?{kind:'atlas',index:chosen.index}:{kind:'preset',id:'3d-'+chosen.index}):
    chosen.kind==='photo'?{kind:'photo',data:chosen.image}:{kind:'monogram'};
@@ -342,7 +339,12 @@ function showAvatarEditor(){
   window.dispatchEvent(new CustomEvent('seyveo:self-avatar-updated',{detail:{person:staff?'elena':'manager'}}));
   decorateRows();closeSheet();
  }
- reset.addEventListener('click',()=>persist(true));
+ reset.addEventListener('click',()=>{
+  // No artwork selected: generate a personal letter avatar from the name.
+  draft={kind:'monogram',initials:initialsFromName(),color:automaticAvatarColor(nameInput.value)};
+  tab='atlas';paint();
+  persist(true);
+ });
  editor.addEventListener('submit',event=>{
   event.preventDefault();
   if(draft.kind==='photo'&&!draft.image){status.textContent='Выберите фотографию.';return}
