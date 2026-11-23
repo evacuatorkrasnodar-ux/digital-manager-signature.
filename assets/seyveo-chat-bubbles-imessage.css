@@ -213,3 +213,66 @@
   background:rgb(239,244,249)!important;
  }
 }
+
+/* 23 Nov 2026 · Correct owner identity from employee viewpoint.
+   Only the received manager messages in Elena's direct conversation get an
+   avatar gutter. All message actions, timestamps and grouping stay intact. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ #svcpMessages > article.svcp-bubble.svcp-manager-peer-bubble{
+ margin-left:42px!important;
+ max-width:min(calc(80% - 42px),310px)!important;
+ overflow:visible!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ #svcpMessages > article.svcp-bubble.svcp-manager-peer-bubble > .svcp-manager-message-avatar{
+ box-sizing:border-box!important;position:absolute!important;display:grid!important;
+ place-items:center!important;left:-40px!important;top:2px!important;
+ width:32px!important;height:32px!important;min-width:32px!important;
+ border:0!important;border-radius:50%!important;overflow:hidden!important;
+ background:#E9F1F8!important;box-shadow:0 1px 3px rgba(19,39,60,.12)!important;
+ pointer-events:none!important;
+}
+html body #svcpWorkChatScreen #svcpMessages .svcp-manager-message-avatar > .svcp-native-avatar{
+ display:grid!important;place-items:center!important;width:100%!important;height:100%!important;
+ border-radius:50%!important;overflow:hidden!important;font-size:24px!important;
+ font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif!important;
+}
+html body #svcpWorkChatScreen #svcpMessages .svcp-manager-message-avatar > .svcp-native-avatar.svcp-atlas-avatar{
+ display:block!important;background-color:transparent!important;font-size:0!important;
+}
+html body #svcpWorkChatScreen #svcpMessages .svcp-manager-message-avatar > .svcp-native-avatar-photo{
+ display:block!important;width:100%!important;height:100%!important;
+ border-radius:50%!important;object-fit:cover!important;
+}
+/* Sky: incoming iMessage bubbles are pale blue. Their ink MUST be dark,
+   not the white used by genuinely blue outgoing bubbles. Keep Sky wallpaper. */
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.svcp-imessage-text.is-other:not(.is-task):not(.is-poll):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only){
+ background:rgba(238,247,255,.96)!important;color:#203345!important;
+}
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.svcp-imessage-text.is-other:not(.is-task):not(.is-poll):not(.is-emoji-only)
+ > .svcp-message-text{
+ color:#203345!important;-webkit-text-fill-color:#203345!important;
+ opacity:1!important;filter:none!important;text-shadow:none!important;
+}
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.svcp-imessage-text.is-other:not(.is-task):not(.is-poll):not(.is-emoji-only)
+ > .svcp-bubble-meta > .svcp-sender{
+ color:#263C50!important;-webkit-text-fill-color:#263C50!important;
+ opacity:1!important;
+}
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.svcp-imessage-text.is-other:not(.is-task):not(.is-poll):not(.is-emoji-only).svcp-bottom-stamp
+ > .svcp-message-stamp,
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
+ > article.svcp-bubble.svcp-imessage-text.is-other:not(.is-task):not(.is-poll):not(.is-emoji-only).svcp-bottom-stamp
+ > .svcp-message-stamp > .svcp-time{
+ color:#56687B!important;-webkit-text-fill-color:#56687B!important;
+ opacity:1!important;filter:none!important;text-shadow:none!important;
+}
