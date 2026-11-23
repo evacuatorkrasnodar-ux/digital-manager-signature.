@@ -7,7 +7,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  box-sizing:border-box!important;position:absolute!important;
  inset:0 0 auto 0!important;display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:flex-start!important;
- --svcp-header-avatar:56px;--svcp-header-label:28px;--svcp-header-overlap:-9px;
+ --svcp-header-avatar:56px;--svcp-header-label:28px;--svcp-header-overlap:-5px;
  height:calc(136px + env(safe-area-inset-top,0px))!important;
  padding:calc(16px + env(safe-area-inset-top,0px)) 12px 0!important;
  background:transparent!important;border:0!important;box-shadow:none!important;
