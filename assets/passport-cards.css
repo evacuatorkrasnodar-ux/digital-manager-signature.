@@ -936,3 +936,78 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
  #seyveoStudioDialog.seyveo-passport-modal{padding:19px 15px}
  #seyveoStudioDialog .seyveo-passport-row strong{font-size:12px}
 }
+
+/* SEYVEO · portrait picker, November 2026
+   Rounded Apple-style selections; Apple Color Emoji is provided by iOS itself,
+   without shipping proprietary Apple emoji or reproducing Memoji artwork. */
+#seyveoAvatarDialog .seyveo-avatar-gallery{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:7px;margin:15px 0 14px;
+}
+#seyveoAvatarDialog .seyveo-avatar-choice{
+ appearance:none;min-width:0;min-height:85px;padding:8px 2px 7px;gap:6px;
+ border:1px solid rgba(141,155,174,.17);border-radius:14px;
+ background:rgba(155,169,184,.055);box-shadow:none;
+ transition:background-color .15s,border-color .15s;
+}
+#seyveoAvatarDialog .seyveo-avatar-choice[aria-pressed=true]{
+ border-color:#438eff!important;background:rgba(67,142,255,.085)!important;
+ box-shadow:0 0 0 1px rgba(67,142,255,.1)!important;
+}
+#seyveoAvatarDialog .seyveo-avatar-choice .seyveo-avatar,
+#seyveoAvatarDialog .seyveo-avatar-hero .seyveo-avatar,
+#seyveoOwnerAvatarPreview{
+ overflow:hidden;border:0!important;border-radius:50%!important;
+ box-shadow:none!important;display:grid;place-items:center;
+}
+#seyveoAvatarDialog .seyveo-avatar-choice .seyveo-avatar{
+ width:52px;height:52px;min-width:52px;min-height:52px;
+}
+#seyveoAvatarDialog .seyveo-avatar-choice .seyveo-avatar::before,
+#seyveoAvatarDialog .seyveo-avatar-choice .seyveo-avatar::after,
+#seyveoAvatarDialog .seyveo-avatar-hero .seyveo-avatar::before,
+#seyveoAvatarDialog .seyveo-avatar-hero .seyveo-avatar::after,
+#seyveoOwnerAvatarPreview.seyveo-avatar--emoji::before,
+#seyveoOwnerAvatarPreview.seyveo-avatar--emoji::after{
+ content:none!important;display:none!important;
+}
+.seyveo-avatar.seyveo-avatar--emoji{
+ display:grid;place-items:center;border:0;
+ background:linear-gradient(145deg,#f4f7fa,#e7eef5);
+}
+.seyveo-avatar--woman-red{background:#f8e7e8!important}
+.seyveo-avatar--woman-brunette{background:#f4e8db!important}
+.seyveo-avatar--woman-silver{background:#e6f0f9!important}
+.seyveo-avatar--man-curly{background:#efe8fa!important}
+.seyveo-avatar--grapes{background:#f2eafa!important}
+.seyveo-avatar--strawberry{background:#e8f6ec!important}
+.seyveo-avatar--apple{background:#e8f2f9!important}
+.seyveo-avatar--peach{background:#fff0e5!important}
+.seyveo-avatar-glyph{
+ display:flex;align-items:center;justify-content:center;
+ width:100%;height:100%;line-height:1;font-size:39px;
+ font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+ font-weight:400;white-space:nowrap;font-variant-emoji:emoji;
+ -webkit-font-smoothing:antialiased;
+}
+#seyveoAvatarDialog .seyveo-avatar-hero .seyveo-avatar-glyph{font-size:46px}
+#seyveoOwnerAvatarPreview .seyveo-avatar-glyph{font-size:29px}
+#seyveoAvatarDialog .seyveo-avatar-choice small{
+ font-size:10px;font-weight:500;line-height:1.1;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ max-width:100%;
+}
+:root[data-theme=light] #seyveoAvatarDialog .seyveo-avatar-choice{
+ background:#f7f8fa;border-color:#e7e9ee;
+}
+:root[data-theme=light] #seyveoAvatarDialog .seyveo-avatar-choice[aria-pressed=true]{
+ border-color:#438eff!important;background:#eef6ff!important;
+}
+@media(max-width:355px){
+ #seyveoAvatarDialog .seyveo-avatar-gallery{gap:5px}
+ #seyveoAvatarDialog .seyveo-avatar-choice{min-height:78px;padding:6px 1px}
+ #seyveoAvatarDialog .seyveo-avatar-choice .seyveo-avatar{
+  width:46px;height:46px;min-width:46px;min-height:46px;
+ }
+ #seyveoAvatarDialog .seyveo-avatar-choice .seyveo-avatar-glyph{font-size:35px}
+}

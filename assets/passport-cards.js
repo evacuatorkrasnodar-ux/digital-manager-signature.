@@ -478,13 +478,28 @@ const $=id=>document.getElementById(id);
 const picker=$('seyveoAvatarDialog'),gallery=$('seyveoAvatarGallery'),file=$('seyveoAvatarFile');
 const status=$('seyveoAvatarStatus'),entry=$('seyveoCompanyAvatarEdit');
 if(!picker||!gallery||!file||!entry)return;
+const avatarIntro=$('seyveoAvatarIntro');
+if(avatarIntro)avatarIntro.textContent='Выберите качественный эмодзи или своё фото. Изображение хранится только на устройстве.';
+const avatarTitle=$('seyveoAvatarTitle');
+if(avatarTitle)avatarTitle.textContent='Моё имя и фото';
 const KEY='seyveo-owner-avatar-v1';
+/* Native colour emoji render with Apple's own artwork on iOS.
+   No downloaded Apple Memoji assets, blurred screenshots, or external image calls. */
 const OPTIONS=[
  ['monogram','Буква','Первая буква имени'],
- ['silhouette','Силуэт','Нейтральный образ без фото']
+ ['woman-red','Рыжая','Образ с рыжими волосами','👩🏻‍🦰'],
+ ['woman-brunette','Брюнетка','Образ с тёмными волосами','👩🏽'],
+ ['woman-silver','Седая','Образ с седыми волосами','👩🏼‍🦳'],
+ ['man-curly','Мужчина','Образ с кудрявыми волосами','👨🏻‍🦱'],
+ ['smile','Улыбка','Эмодзи','😊'],
+ ['cool','В очках','Эмодзи','😎'],
+ ['grapes','Виноград','Фрукты','🍇'],
+ ['strawberry','Клубника','Фрукты','🍓'],
+ ['peach','Персик','Фрукты','🍑'],
+ ['apple','Яблоко','Фрукты','🍎']
 ];
 const valid=new Set(OPTIONS.map(item=>item[0]));
-const renamed={onyx:'silhouette',silver:'silhouette',orbit:'silhouette',prism:'silhouette',line:'silhouette',velvet:'silhouette'};
+const renamed={onyx:'monogram',silver:'monogram',orbit:'monogram',prism:'monogram',line:'monogram',velvet:'monogram',silhouette:'monogram'};
 /* One alphabetic character for every person or business, including Cyrillic.
    Displayed identity is the source of truth; never use two-letter initials. */
 function initial(name){
@@ -527,6 +542,16 @@ function paintAvatar(node,data){
  }else if(data.id==='monogram'){
   const mark=document.createElement('span');mark.className='seyveo-avatar-initials';
   mark.textContent=getInitials();node.append(mark);
+ }else{
+  const preset=OPTIONS.find(([id])=>id===data.id);
+  if(preset?.[3]){
+   const glyph=document.createElement('span');
+   glyph.className='seyveo-avatar-glyph';
+   glyph.setAttribute('aria-hidden','true');
+   glyph.textContent=preset[3];
+   node.classList.add('seyveo-avatar--emoji');
+   node.append(glyph);
+  }
  }
 }
 function paint(){
