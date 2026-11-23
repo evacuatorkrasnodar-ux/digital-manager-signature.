@@ -25,7 +25,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset{
  --svcp-clean-blue:var(--svcp-conversation-blue-glass,rgba(6,134,204,.62));
  --svcp-clean-line:var(--svcp-conversation-blue-rim,rgba(12,119,190,.55));
  box-sizing:border-box!important;
- position:absolute!important;inset:auto 0 6px 0!important;
+ position:relative!important;inset:auto!important;flex:0 0 auto!important;
  z-index:15!important;isolation:isolate!important;
  display:grid!important;
  grid-template-columns:44px 44px minmax(0,1fr) 44px!important;
@@ -36,7 +36,7 @@ html body #svcpWorkChatScreen #svcpChatFormReset{
  max-width:calc(100% - 20px)!important;min-width:0!important;
  height:var(--svcp-compose-height,56px)!important;
  min-height:56px!important;max-height:none!important;
- margin:0 auto!important;padding:0!important;
+ margin:0 auto max(6px,env(safe-area-inset-bottom,0px))!important;padding:0!important;
  border:0!important;outline:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
  box-shadow:none!important;overflow:visible!important;
@@ -382,7 +382,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
    Text input, button sizes, expanded layout, and event handlers unchanged. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset{
- bottom:0!important;
+ bottom:auto!important;
  isolation:auto!important;
  background:transparent!important;
  background-image:none!important;
