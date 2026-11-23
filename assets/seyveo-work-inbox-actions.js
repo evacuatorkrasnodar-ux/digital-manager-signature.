@@ -774,40 +774,57 @@ function showNotifications(){
  row.append(chevron);exclusions.append(row);
 }
 function showMutedChats(){
+ // Compact exceptions manager: 100+ rooms remain discoverable through search.
+ // By default show only muted rooms; search and "Все чаты" cover all real rooms.
+ let scope='muted';
  const lookup=node('div','sv-inbox-muted-search-wrap');
  const lens=node('span','sv-inbox-muted-search-icon');
  lens.innerHTML=svg('search');lens.setAttribute('aria-hidden','true');
  const search=node('input','sv-inbox-muted-search');
- search.type='search';search.placeholder='Поиск по чатам';search.autocomplete='off';
- search.setAttribute('aria-label','Поиск среди чатов без звука');
+ search.type='search';search.placeholder='Найти чат';search.autocomplete='off';
+ search.setAttribute('aria-label','Поиск по всем чатам');
  lookup.append(lens,search);body.append(lookup);
- const group=notificationSection('Отключён звук');
+ const tabs=node('div','sv-inbox-muted-tabs');
+ tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Фильтр чатов');
+ const mutedTab=button('Без звука',null,()=>setScope('muted'),'sv-inbox-muted-tab');
+ const allTab=button('Все чаты',null,()=>setScope('all'),'sv-inbox-muted-tab');
+ tabs.append(mutedTab,allTab);body.append(tabs);
+ const group=notificationSection('Чаты');
  const summary=node('p','sv-inbox-muted-summary');
- body.append(summary);
+ summary.setAttribute('role','status');body.append(summary);
+ function setScope(next){scope=next;repaint()}
  function repaint(){
   const query=search.value.trim().toLocaleLowerCase('ru-RU');
-  const muted=allRooms().filter(r=>roomState(r.id).muted===true);
-  const visible=muted.filter(r=>String(r.label||'').toLocaleLowerCase('ru-RU').includes(query));
+  mutedTab.setAttribute('aria-pressed',String(scope==='muted'));
+  allTab.setAttribute('aria-pressed',String(scope==='all'));
+  const rooms=allRooms().filter(r=>r&&r.id&&r.label);
+  const muted=rooms.filter(r=>roomState(r.id).muted===true);
+  const candidates=query?rooms:(scope==='muted'?muted:rooms);
+  const visible=candidates.filter(r=>String(r.label).toLocaleLowerCase('ru-RU').includes(query))
+   .sort((a,b)=>Number(roomState(b.id).muted===true)-Number(roomState(a.id).muted===true)
+    ||String(a.label).localeCompare(String(b.label),'ru-RU'));
   group.replaceChildren();
   for(const r of visible){
+   const isMuted=roomState(r.id).muted===true;
    const row=node('div','sv-inbox-ios-row sv-inbox-muted-person');
    const avatar=node('span','sv-inbox-ios-avatar',(r.label||'?').slice(0,1));
    avatar.setAttribute('aria-hidden','true');
    const copy=node('span','sv-inbox-ios-copy');
    copy.append(node('strong',null,r.label));
-   const enable=button('Включить звук',null,()=>{
-    updateRoom(r.id,'muted',false);repaint();
+   const toggle=button(isMuted?'Включить звук':'Без звука',null,()=>{
+    updateRoom(r.id,'muted',!isMuted);
+    repaint();
    },'sv-inbox-muted-unmute');
-   enable.setAttribute('aria-label','Включить звук для '+r.label);
-   row.append(avatar,copy,enable);group.append(row);
+   toggle.setAttribute('aria-label',(isMuted?'Включить звук для ':'Отключить звук для ')+r.label);
+   toggle.setAttribute('aria-pressed',String(isMuted));
+   row.append(avatar,copy,toggle);group.append(row);
   }
   if(!visible.length){
    group.append(node('p','sv-inbox-ios-empty',
-    muted.length===0?'Все чаты со звуком': 'Ничего не найдено'));
+    query?'Ничего не найдено':scope==='muted'?'Все чаты со звуком':'Чатов пока нет'));
   }
   const n=muted.length;
-  summary.textContent=n===0?'Чтобы отключить звук, откройте действия нужного чата.':
-   'Отключён звук: '+n+'. Управлять звуком можно также в действиях чата.';
+  summary.textContent='Без звука: '+n+' из '+rooms.length+'. Изменения сохраняются для каждого чата.';
  }
  search.addEventListener('input',repaint);
  repaint();
