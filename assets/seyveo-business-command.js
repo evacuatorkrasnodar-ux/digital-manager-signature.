@@ -2281,6 +2281,7 @@ function openRoom(roomId){
  if(conversation){
   conversation.dataset.roomKind=selected.kind;
   conversation.dataset.roomId=selected.id;
+  conversation.dataset.identityStandard='sayvi';
   window.SEYVEO_CHAT_THEMES?.applyRoom(selected.id);
  }
  state.viewpoint=employeePreviewActive()?'elena':'manager';
