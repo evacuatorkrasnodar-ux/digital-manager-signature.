@@ -2000,3 +2000,19 @@ html body #svcpWorkChatScreen #svcpDirectorySearchBar > button{
 :root[data-theme="dark"] body #svcpWorkChatScreen #svcpDirectorySearchBar > button{
  color:#86baf8!important;
 }
+
+
+/* History is a separate Messages view, never a second list underneath inbox.
+   Preserve the original history engine and its menus. */
+html body #svcpWorkChatScreen #svcpWorkHistory[hidden]{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html body #svcpWorkChatScreen.svcp-history-screen-open > .svcp-work-chat-header,
+html body #svcpWorkChatScreen.svcp-history-screen-open > #svcpWorkChatCanvas{
+ display:none!important;
+}
+html body #svcpWorkChatScreen.svcp-history-screen-open > #svcpWorkHistory:not([hidden]){
+ display:block!important;position:relative!important;
+ box-sizing:border-box!important;width:100%!important;min-height:100%!important;
+ margin:0!important;
+}
