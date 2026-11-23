@@ -225,7 +225,7 @@ function showAvatarEditor(id){
  fileInput.type='file';fileInput.accept='image/*';
  fileInput.setAttribute('aria-label','Загрузить фотографию аватара');
  photoLabel.append(fileInput);photoPanel.append(photoLabel);
- const atlasButton=node('button','sv-inbox-avatar-method','Персонажи');
+ const atlasButton=node('button','sv-inbox-avatar-method','Аватары');
  const emojiButton=node('button','sv-inbox-avatar-method','Эмоции');
  const monoButton=node('button','sv-inbox-avatar-method','Буквы');
  const photoButton=node('button','sv-inbox-avatar-method','Фото');
