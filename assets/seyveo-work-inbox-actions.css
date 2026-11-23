@@ -2041,3 +2041,77 @@ html body #svcpWorkChatScreen .sv-inbox-people-list .sv-inbox-contact-avatar.svc
  width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
  border-radius:50%!important;object-fit:cover!important;overflow:hidden!important;
 }
+
+
+/* SEYVEO SHEET STANDARD · one header for every Messages sub-menu.
+   No grab stripe, no duplicate border, one fixed 44px pearl back button.
+   CSS is scoped to inbox overlays and never changes chat actions. */
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-grab{
+ display:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-panel{
+ padding-top:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head{
+ box-sizing:border-box!important;display:grid!important;flex:none!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ align-items:center!important;column-gap:4px!important;
+ height:60px!important;min-height:60px!important;max-height:60px!important;
+ padding:8px 15px!important;margin:0!important;
+ border-bottom:0!important;
+ background:var(--sv-inbox-sheet-base,var(--sv-inbox-ios-bg,#f6f6f8))!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head > strong{
+ grid-column:2!important;align-self:center!important;justify-self:center!important;
+ font:620 16px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.02em!important;text-align:center!important;
+ margin:0!important;transform:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head > .sv-inbox-sheet-back,
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head > .sv-inbox-sheet-back:is(:active,:hover,:focus-visible){
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ grid-column:1!important;align-self:center!important;justify-self:start!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.92))!important;
+ border-radius:50%!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.72))!important;
+ background-image:none!important;
+ color:var(--sv-white-pearl-ink,#16191d)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 5px 17px rgba(38,46,64,.09))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(8px) saturate(115%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(8px) saturate(115%))!important;
+ transform:none!important;scale:1!important;transition:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head > .sv-inbox-sheet-back svg{
+ box-sizing:border-box!important;display:block!important;
+ width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ margin:0!important;transform:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="new"] .sv-inbox-sheet-body{
+ padding-top:8px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="new"] .sv-inbox-people-list{
+ margin-top:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="new"] .sv-inbox-contact-row{
+ min-height:58px!important;padding:8px 12px!important;
+ transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="new"] .sv-inbox-people-list .sv-inbox-contact-avatar{
+ overflow:hidden!important;isolation:isolate!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="new"] .sv-inbox-contact-row > svg{
+ width:16px!important;height:16px!important;
+ stroke-width:1.45!important;opacity:.6!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head > .sv-inbox-sheet-back,
+:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head > .sv-inbox-sheet-back:is(:active,:hover,:focus-visible){
+ border:1px solid rgba(255,255,255,.12)!important;
+ background:#38383a!important;color:#f6f6f8!important;
+ box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
