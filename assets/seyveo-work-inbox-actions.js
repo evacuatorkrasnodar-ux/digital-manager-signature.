@@ -287,7 +287,8 @@ function showAvatarEditor(){
  });
  paint();
  body.append(editor);
- editor.append(footer);
+ // Fixed at the bottom of the sheet, outside the only scrollable content area.
+ panel.append(footer);
 }
 function employee(){return window.SEYVEO_PREVIEW?.isEmployee?.()===true}
 function openChat(id){closeSheet();closeMenu();window.SEYVEO_BUSINESS_COMMAND?.showChat?.(id)}
@@ -346,13 +347,14 @@ const body=node('div','sv-inbox-sheet-body');
 panel.append(top,body);
 overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
-function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
+function closeSheet(){panel.querySelector(':scope > .sv-new-avatar-footer')?.remove();overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
 function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники','team-structure':'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
  title.textContent=viewTitle(type);body.replaceChildren();
+ panel.querySelector(':scope > .sv-new-avatar-footer')?.remove();
  overlay.hidden=false;
  overlay.classList.toggle('sv-inbox-sheet-notifications',type==='notifications');
  overlay.dataset.svInboxScreen=type;
