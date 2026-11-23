@@ -541,10 +541,10 @@
   heading.dataset.taskSelecting=String(nested);
   heading.dataset.selectionActive=String(selectionActive);
   title.textContent=history?'История':nested?'Все дела':active==='notes'?'Блокнот':active==='calendar'?'Календарь':active==='business'?'Кабинет':active==='employee'?'Моя работа':'Мои дела';
-  // Work tabs already name Notebook, My Tasks, Wallet and Cabinet. Do not
-  // duplicate their labels above the segmented capsule; retain the
-  // shared header footprint so buttons stay at the same coordinates.
-  title.hidden=!history&&!nested&&['personal','notes','wallet','business'].includes(active);
+  // Every top-level Work section is already named inside the permanent
+  // segmented capsule. Never display a duplicate page title above it.
+  // Keep titles for nested All Tasks/History and the standalone Calendar.
+  title.hidden=!history&&!nested&&!nav.hidden;
   heading.dataset.calendarPeriod=String(active==='calendar'&&!history&&!nested);
   if(active==='calendar'&&!history&&!nested)syncCalendarPeriod();
   const showMonth=active==='personal'&&!history&&!nested&&visible;
