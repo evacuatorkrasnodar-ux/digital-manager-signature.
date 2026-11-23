@@ -390,6 +390,29 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
  font-size:21px!important;
 }
+/* A GROUP with an explicitly saved avatar deserves the same portrait
+   position as a person. Groups without one retain the earlier low title. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"]
+ > .svcp-minimal-identity-header .svcp-room-identity #svcpRoomAvatar.sv-inbox-avatar-custom{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;position:relative!important;
+ flex:0 0 56px!important;width:56px!important;height:56px!important;
+ min-width:56px!important;max-width:56px!important;
+ min-height:56px!important;max-height:56px!important;
+ top:auto!important;left:auto!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;box-shadow:none!important;
+ background-color:var(--sv-avatar-color,#536f84)!important;
+ background-image:var(--sv-avatar-image,none)!important;
+ background-position:center!important;background-size:cover!important;
+ background-repeat:no-repeat!important;color:#FFFFFF!important;
+ overflow:hidden!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="groups"]:has(#svcpRoomAvatar.sv-inbox-avatar-custom)
+ > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
+ margin:-14px 0 0!important;
+}
 /* The existing named capsule is the canonical compact 28px Sayvi style.
    Long contact/group names ellipsize; no second frame or replacement DOM. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
