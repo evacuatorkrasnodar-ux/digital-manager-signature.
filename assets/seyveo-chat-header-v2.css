@@ -400,11 +400,6 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
    elevation tokens. Keep ONE subtle shadow for every white chat header. */
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]
- > :is(#svcpConversationStandaloneBack,.svcp-call-actions) {
- --svcp-pearl-header-circle-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13));
-}
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="pearl"]
  > #svcpConversationStandaloneBack,
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]
