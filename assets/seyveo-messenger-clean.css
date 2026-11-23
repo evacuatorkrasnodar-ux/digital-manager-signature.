@@ -1960,16 +1960,15 @@ html body #svcpWorkChatScreen[data-view="room"]
  }
 }
 
-/* SEYVEO · native iPhone chat scroll, structural layout.
-   The prior scrollport filled the area BEHIND the absolute composer.
-   Padding, ::after and a JS spacer kept failing on iPhone. The flex
-   parent's transparent bottom padding now reduces the ACTUAL scrollport
-   height above the floating composer. The whole chat still paints ONE
-   wallpaper: there is no separate footer/backplate or outer margin. */
+/* SEYVEO · chat viewport ends above floating composer (iPhone Safari).
+   Do NOT pad/margin the chat parent: it exposes an unwanted lower strip.
+   Instead cap the real scroll list height in its existing flex column.
+   The one full-screen wallpaper remains visible and uninterrupted. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-chat{
  box-sizing:border-box!important;
  min-height:0!important;
- padding:0 0 calc(var(--svcp-current-compose-height,56px) + 16px + env(safe-area-inset-bottom,0px))!important;
+ padding:0!important;
+ margin:0!important;
  background:transparent!important;
  background-image:none!important;
 }
@@ -1980,7 +1979,8 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-chat >
  flex:1 1 0px!important;
  height:0!important;
  min-height:0!important;
- max-height:none!important;
+ /* Reserve the actual dock height WITHOUT allocating a painted footer. */
+ max-height:calc(100% - var(--svcp-current-compose-height,56px) - 16px - env(safe-area-inset-bottom,0px))!important;
  overflow-y:auto!important;
  overflow-x:hidden!important;
  -webkit-overflow-scrolling:touch!important;
