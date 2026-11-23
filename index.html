@@ -1329,6 +1329,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <section id="svcpChats" class="svcp-panel" data-svcp-panel="chats" role="region" aria-label="Рабочие чаты">
   <div id="svcpChatDirectory">
    <div class="svcp-directory-head"><div class="svcp-directory-heading"><strong>Все разговоры</strong><small>Личные сообщения, группы и Сэйви</small></div></div>
+   <button type="button" id="svcpSelfAvatarOpen" class="svcp-own-avatar-entry" aria-label="Открыть мой профиль и выбрать свой аватар"><span id="svcpSelfAvatarMini" class="svcp-own-avatar-mini" aria-hidden="true">Р</span><strong id="svcpSelfAvatarLabel">Мой профиль</strong><span class="svcp-own-avatar-chevron" aria-hidden="true">›</span></button>
    <label class="svcp-search-field" for="svcpHistorySearch">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg>
     <input id="svcpHistorySearch" type="search" autocomplete="off" maxlength="110" placeholder="Имя, должность, сообщение…" aria-label="Поиск по сотрудникам, чатам, сообщениям и поручениям">
@@ -1395,8 +1396,6 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
        <strong id="svcpRoomInfoName">Рабочий чат</strong>
        <p id="svcpRoomInfoDescription">Рабочая переписка</p>
       </div>
-      <button id="svcpRoomAvatarEdit" type="button" class="svcp-room-avatar-edit" hidden aria-expanded="false" aria-controls="svcpRoomAvatarPicker">Выбрать аватар</button>
-      <section id="svcpRoomAvatarPicker" class="svcp-room-avatar-picker" hidden aria-label="Выбрать аватар собеседника"><p>Аватар для этого чата</p><div id="svcpRoomAvatarChoices" class="svcp-room-avatar-choices" role="group" aria-label="Варианты аватаров"></div></section>
       <div class="svcp-room-profile-actions" role="group" aria-label="Действия с чатом">
        <button type="button" id="svcpRoomProfileAudio" aria-label="Звонок"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.35 1.9.69 2.78a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.3-1.26a2 2 0 0 1 2.11-.45c.88.34 1.82.57 2.78.69A2 2 0 0 1 22 16.92Z"/></svg><span>Звонок</span></button>
        <button type="button" id="svcpRoomProfileVideo" aria-label="Видео"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="3"/><path d="m16 10 5-3v10l-5-3"/></svg><span>Видео</span></button>
@@ -1814,6 +1813,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <div class="svcp-work-identity-text"><strong>Елена</strong><small>Кассир · Учебный кабинет</small>
     <span id="svcpWorkDuty" class="svcp-work-duty" data-active="false"><i aria-hidden="true"></i><span id="svcpWorkDutyText">Не на смене</span></span>
    </div>
+   <button type="button" id="svcpEmployeeAvatarOpen" class="svcp-employee-own-avatar-button" aria-label="Мой профиль: выбрать свой аватар"><span id="svcpEmployeeOwnAvatar" class="svcp-employee-own-avatar" aria-hidden="true">Е</span></button>
   </div>
   <section id="svcpEmployeeSchedule" class="svcp-employee-schedule" aria-labelledby="svcpScheduleTitle">
    <div class="svcp-schedule-top">
@@ -5641,7 +5641,7 @@ syncManager();render();
 <section class="syp-screen" data-syp-screen="scan" hidden><div class="syp-panel"><h3>QR · сканирование</h3><p>Распознаём текст QR на устройстве. Платежи не выполняются и не отправляются в банк.</p><video id="sypCamera" class="syp-video" autoplay playsinline muted hidden></video><div id="sypScanStatus" class="syp-status" aria-live="polite"></div><button type="button" class="syp-btn" data-syp="camera">Включить камеру</button></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
 <section class="syp-screen" data-syp-screen="cards" hidden><div class="syp-list"><div class="syp-listrow">✦ SEYVEO · демонстрационная карта •••• 4582</div><div class="syp-panel"><h3>Добавление банковской карты</h3><p>Появится только после подключения сертифицированного платёжного партнёра. Банковские реквизиты в демо не запрашиваются.</p></div></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
 <section class="syp-screen" data-syp-screen="history" hidden><div class="syp-panel"><h3>История покупок</h3><p>Здесь появятся подтверждённые операции и доступные чеки после официального подключения банков. Сейчас операций нет.</p></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
-</div></dialog><script src="assets/seyveo-pay.js?v=10"></script><script src="assets/seyveo-chat-polls.js?v=6"></script><script src="assets/seyveo-chat-themes.js?v=6"></script><script src="assets/seyveo-family-chat.js?v=6"></script><script src="assets/seyveo-business-command.js?v=218"></script><script src="assets/seyveo-work-inbox-actions.js?v=13"></script><script src="assets/seyveo-unified-tasks.js?v=74"></script><script src="assets/seyveo-employee-schedule.js?v=2"></script><script src="assets/seyveo-dock-continuity.js?v=4"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=33"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=22"></script>
+</div></dialog><script src="assets/seyveo-pay.js?v=10"></script><script src="assets/seyveo-chat-polls.js?v=6"></script><script src="assets/seyveo-chat-themes.js?v=6"></script><script src="assets/seyveo-family-chat.js?v=6"></script><script src="assets/seyveo-business-command.js?v=219"></script><script src="assets/seyveo-work-inbox-actions.js?v=13"></script><script src="assets/seyveo-unified-tasks.js?v=74"></script><script src="assets/seyveo-employee-schedule.js?v=2"></script><script src="assets/seyveo-dock-continuity.js?v=4"></script><script src="assets/seyveo-global-search.js?v=13"></script><script src="assets/seyveo-card-preferences.js?v=2"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=33"></script><script src="assets/seyveo-fan-workshop.js?v=11"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=4"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=22"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
 <dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><link rel="stylesheet" href="assets/seyveo-offline-manager.css?v=5"><link rel="stylesheet" href="assets/seyveo-silver-flat-surfaces.css?v=5"><link rel="stylesheet" href="assets/seyveo-mail-guard.css?v=6"><link rel="stylesheet" href="assets/seyveo-smart-contacts.css?v=4"><link rel="stylesheet" href="assets/seyveo-mail-drafts-clean.css?v=2"><link rel="stylesheet" href="assets/seyveo-mail-bulk-clean.css?v=5"><link rel="stylesheet" href="assets/seyveo-notebook-home-scene.css?v=10"><link rel="stylesheet" href="assets/seyveo-home-work-actions-flat.css?v=71"><link rel="stylesheet" href="assets/seyveo-documents-graphite-flat.css?v=10"><link rel="stylesheet" href="assets/seyveo-header-search-flat.css?v=2"><link rel="stylesheet" href="assets/seyveo-phonebook.css?v=3"><link rel="stylesheet" href="assets/seyveo-health-graphite-flat.css?v=82"><link rel="stylesheet" href="assets/seyveo-medical-passport.css?v=10"><script src="assets/seyveo-offline-manager.js?v=2" defer></script>
 
@@ -5898,5 +5898,26 @@ window.addEventListener('load',()=>{
 <link rel="stylesheet" href="assets/seyveo-sayvi-identity-standard.css?v=20">
 <link rel="stylesheet" href="assets/seyveo-sayvi-response-state.css?v=7"><link rel="stylesheet" href="assets/seyveo-chat-composer-reset.css?v=23"><link rel="stylesheet" href="assets/seyveo-ios-viewport-continuity.css?v=49">
 <link rel="stylesheet" href="assets/seyveo-chat-bubbles-imessage.css?v=6">
-<link rel="stylesheet" href="assets/seyveo-emoji-avatars.css?v=2">
+<dialog id="svcpSelfAvatarDialog" class="svcp-self-avatar-dialog" aria-labelledby="svcpSelfAvatarTitle">
+ <header class="svcp-self-avatar-header">
+  <button id="svcpSelfAvatarClose" type="button" aria-label="Вернуться к работе"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+  <h2 id="svcpSelfAvatarTitle">Мой профиль</h2>
+  <span aria-hidden="true"></span>
+ </header>
+ <div class="svcp-self-avatar-body">
+  <div id="svcpSelfAvatarHero" class="svcp-self-avatar-hero" aria-hidden="true">Е</div>
+  <strong>Елена</strong><small>Кассир · Учебный профиль</small>
+  <h3>Выбрать свой аватар</h3>
+  <div id="svcpSelfAvatarChoices" class="svcp-self-avatar-choices" role="group" aria-label="Аватары для моего профиля"></div>
+  <div class="svcp-self-avatar-actions">
+   <button id="svcpSelfAvatarPhoto" type="button">Своё фото</button>
+   <input id="svcpSelfAvatarFile" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+   <button id="svcpSelfAvatarReset" type="button">Буква имени</button>
+  </div>
+  <p class="svcp-self-avatar-hint">В демоверсии выбор хранится только на этом устройстве. Другие люди не могут изменять ваш аватар из чата.</p>
+  <p id="svcpSelfAvatarStatus" role="status" aria-live="polite"></p>
+  <button id="svcpSelfAvatarSave" type="button" class="svcp-self-avatar-save">Сохранить</button>
+ </div>
+</dialog>
+<link rel="stylesheet" href="assets/seyveo-emoji-avatars.css?v=3">
 </body></html>
