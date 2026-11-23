@@ -497,6 +497,21 @@
  // One owner for chat input sizing: business-command.js. Do not compete
  // with its 40px textarea and 56px composer on every viewport event.
  const chatViewport=window.visualViewport;
+ // Keep the Messenger's four-way filter exactly on top of the permanent
+ // Work navigation capsule's coordinates. The two screens live in different
+ // DOM roots, so guessing 5/12/21px margins can never guarantee continuity.
+ // Read the already-laid-out Work tabs BEFORE making Messenger visible.
+ const workTabs=$('svWorkTabs');
+ function alignWorkChatFilters(){
+  if(!employeeChatScreen||!workTabs||workTabs.hidden)return;
+  const rect=workTabs.getBoundingClientRect();
+  const overlayTop=window.visualViewport?.offsetTop||0;
+  const top=rect.top-overlayTop;
+  if(!Number.isFinite(top)||!Number.isFinite(rect.width)||
+     rect.width<100||top<45||top>300)return;
+  employeeChatScreen.style.setProperty('--svcp-inbox-tabs-top',top.toFixed(2)+'px');
+  employeeChatScreen.style.setProperty('--svcp-inbox-tabs-width',rect.width.toFixed(2)+'px');
+ }
  let workChatViewportFrame=0;
  let workChatViewportWidth=0;
  const workChatViewportSettleTimers=[];
@@ -518,6 +533,9 @@
     employeeChatScreen.style.setProperty('--svcp-visible-height',height+'px');
    if(employeeChatScreen.style.getPropertyValue('--svcp-visible-top')!==top+'px')
     employeeChatScreen.style.setProperty('--svcp-visible-top',top+'px');
+   // Re-read the actual Work capsule after rotation or visual-viewport
+   // changes, keeping the inbox at the same x/y when the device reflows.
+   if(employeeChatScreen.dataset.view==='inbox')alignWorkChatFilters();
    // Re-measure the genuine composer only on width/orientation changes.
    if(workChatViewportWidth!==width){
     workChatViewportWidth=width;
@@ -605,6 +623,9 @@
    previousRoom.style.setProperty('display','none','important');
   }
   if(directory)directory.hidden=false;
+  // Lock the inset and width to the ACTUAL Cabinet capsule before the
+  // fullscreen layer's first visible paint; no intermediate jump.
+  alignWorkChatFilters();
   // Prepare everything offscreen, then publish the finished inbox/room
   // in a single paint. Do not expose the shell during DOM and theme updates.
   page.dataset.workChatOpen='true';
