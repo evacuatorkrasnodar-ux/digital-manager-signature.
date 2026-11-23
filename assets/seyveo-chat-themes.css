@@ -36,7 +36,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-
    keep their independent surface and behavior. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
  > .svcp-bubble.is-other:not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
- background:rgba(31,109,174,.88)!important;
+ background:rgba(39,115,185,.91)!important;
  background-image:none!important;
  color:#FFFFFF!important;
  border:0!important;
@@ -44,7 +44,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wall
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages
  > .svcp-bubble.is-self:not(.is-poll):not(.is-task):not(.is-sayvi):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)){
- background:#087DE9!important;
+ background:#008FFF!important;
  background-image:none!important;
  color:#FFFFFF!important;
  border:0!important;
@@ -208,8 +208,8 @@ html body #seyveoFamilyDialog:is([data-chat-wallpaper="sky"],[data-chat-wallpape
 .sv-chat-theme-preview .sv-chat-theme-sample-out{top:31px!important;right:8px!important}
 .sv-chat-theme-preview-pearl .sv-chat-theme-sample-in{background:#E9E9EB!important}
 .sv-chat-theme-preview-pearl .sv-chat-theme-sample-out{background:#0A84FF!important}
-.sv-chat-theme-preview-sky .sv-chat-theme-sample-in{background:rgba(31,109,174,.92)!important}
-.sv-chat-theme-preview-sky .sv-chat-theme-sample-out{background:#087DE9!important}
+.sv-chat-theme-preview-sky .sv-chat-theme-sample-in{background:rgba(39,115,185,.91)!important}
+.sv-chat-theme-preview-sky .sv-chat-theme-sample-out{background:#008FFF!important}
 .sv-chat-theme-preview-evening .sv-chat-theme-sample-in{background:rgba(57,70,111,.90)!important}
 .sv-chat-theme-preview-evening .sv-chat-theme-sample-out{background:#6360C9!important}
 .sv-chat-theme-option-name{
@@ -933,20 +933,20 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-kind="personal"][data-chat-wallpaper="sky"] #svcpMessages
  > .svcp-bubble.is-other:not(.is-sayvi):not(.is-task):not(.is-poll):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)):not(:has(.svcp-voice-wave)){
- background:#EDF4FA!important;background-image:none!important;
- color:#263B4A!important;border:0!important;box-shadow:none!important;
+ background:rgba(39,115,185,.91)!important;background-image:none!important;
+ color:#FFFFFF!important;border:0!important;box-shadow:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-kind="personal"][data-chat-wallpaper="sky"] #svcpMessages
  > .svcp-bubble.is-self:not(.is-sayvi):not(.is-task):not(.is-poll):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only):not(.svcp-media-actions-contained):not(:has(.svcp-file-card)):not(:has(.svcp-voice-wave)){
- background:#087FE8!important;background-image:none!important;
+ background:#008FFF!important;background-image:none!important;
  color:#FFFFFF!important;border:0!important;box-shadow:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-kind="personal"][data-chat-wallpaper="sky"] #svcpMessages
  > .svcp-bubble.is-other:not(.is-sayvi):not(.is-task):not(.is-poll):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only)
  > .svcp-message-text{
- color:#263B4A!important;-webkit-text-fill-color:#263B4A!important;
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
  text-shadow:none!important;opacity:1!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
@@ -961,7 +961,7 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-kind="personal"][data-chat-wallpaper="sky"] #svcpMessages
  > .svcp-bubble.is-other:not(.is-sayvi):not(.is-task):not(.is-poll):not(.is-recognition):not(.is-emoji-only):not(.svcp-file-only):not(.svcp-document-only)
  :is(.svcp-message-stamp,.svcp-message-stamp > .svcp-time){
- color:#627A8B!important;-webkit-text-fill-color:#627A8B!important;
+ color:rgba(255,255,255,.89)!important;-webkit-text-fill-color:rgba(255,255,255,.89)!important;
  opacity:1!important;text-shadow:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
