@@ -39,7 +39,30 @@ function allRooms(){return window.SEYVEO_BUSINESS_COMMAND?.listRooms?.()||[]}
 function roomInfo(id){return allRooms().find(r=>r.id===id)}
 function roomState(id){return prefs.rooms[id]||{}}
 function savePrefs(){try{localStorage.setItem(KEY,JSON.stringify(prefs))}catch{/* no persistence in private mode */}}
-function updateRoom(id,prop,value){prefs.rooms[id]={...roomState(id),[prop]:value};savePrefs();decorateRows();syncProfile()}
+/* Installed PWA badge · count locally marked unread CONVERSATIONS, not remote
+   messages. Incoming message tracking and background delivery need auth + server.
+   No invented counts, no permission prompts, and no separate app icons. */
+let badgeRevision=0;
+function syncLocalChatBadge(){
+ const revision=++badgeRevision;
+ const installed=window.matchMedia?.('(display-mode: standalone)')?.matches===true||
+  navigator.standalone===true;
+ if(!installed)return;
+ const rooms=allRooms();
+ const count=rooms.reduce((total,room)=>total+(roomState(room.id).unread===true?1:0),0);
+ // The browser/OS decides whether and where badges are displayed.
+ try{
+  if(count>0&&typeof navigator.setAppBadge==='function'){
+   Promise.resolve(navigator.setAppBadge(count)).catch(()=>{});
+  }else if(count===0&&typeof navigator.clearAppBadge==='function'){
+   Promise.resolve(navigator.clearAppBadge()).catch(()=>{});
+  }
+ }catch{/* Unsupported or permission-restricted browser: no artificial badge. */}
+}
+function updateRoom(id,prop,value){
+ prefs.rooms[id]={...roomState(id),[prop]:value};savePrefs();decorateRows();syncProfile();
+ if(prop==='unread')syncLocalChatBadge();
+}
 /* Local avatar editing: Apple-style photo, monogram and emoji.
    No upload, no claim of changing colleagues' accounts or the SEYVEO assistant. */
 const AVATAR_COLORS=['#536f84','#4f8574','#7d78a1','#b27788','#be8a54','#606b79'];
@@ -801,7 +824,7 @@ function attachRow(row){
  row.addEventListener('touchcancel',()=>{clearTimeout(holdTimer);start=null},{passive:true});
  row.addEventListener('contextmenu',e=>{e.preventDefault();openSheet('room',id)});
  row.addEventListener('click',e=>{if(blocked){e.preventDefault();e.stopImmediatePropagation();blocked=false;return}if(swipeOpen){e.preventDefault();e.stopImmediatePropagation();closeSwipe();return}
-  if(roomState(id).unread){prefs.rooms[id]={...roomState(id),unread:false};savePrefs()}
+  if(roomState(id).unread){prefs.rooms[id]={...roomState(id),unread:false};savePrefs();syncLocalChatBadge()}
  },true);
 }
 function decorateRows(){
@@ -859,5 +882,8 @@ screen.addEventListener('click',e=>{
  if(e.target.closest('#svcpWorkChatBack,#svcpConversationBack,#svcpConversationList .svcp-directory-item'))closeMenu();
 });
 window.addEventListener('seyveo:work-chat-closing',()=>{closeMenu();closeSheet();closeSwipe()});
-window.addEventListener('seyveo:work-role-preview',()=>{closeMenu();closeSheet();closeSwipe();requestAnimationFrame(decorateRows)});
+window.addEventListener('seyveo:work-role-preview',()=>{closeMenu();closeSheet();closeSwipe();requestAnimationFrame(decorateRows);syncLocalChatBadge()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncLocalChatBadge()});
+window.addEventListener('pageshow',syncLocalChatBadge);
+syncLocalChatBadge();
 })();
