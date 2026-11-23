@@ -2041,7 +2041,7 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]
  .sv-native-letter-choice{
  border:0!important;
- border-radius:50%!important;background:#EEF1F4!important;
+ border-radius:50%!important;background:var(--sv-avatar-color,#EEF1F4)!important;
  background-image:none!important;color:#566878!important;
  -webkit-text-fill-color:#566878!important;
  box-shadow:none!important;text-shadow:none!important;
