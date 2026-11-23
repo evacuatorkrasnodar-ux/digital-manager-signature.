@@ -94,6 +94,9 @@
   // Keep the page, header and dock coordinates fixed throughout the reveal.
   room.classList.add('sv-review-entering');
   room.hidden=false;
+  // A previous review can retain its old scroll offset while hidden.
+  // Reset before paint so the fixed navigation never appears to jump.
+  room.scrollTop=0;
   clearTimeout(entranceTimer);
   entranceTimer=setTimeout(()=>{
    room.classList.remove('sv-review-entering');
