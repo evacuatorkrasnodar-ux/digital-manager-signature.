@@ -1365,184 +1365,6 @@ html body #svcpWorkChatScreen .sv-inbox-setting-link > .sv-inbox-avatar-settings
  width:36px!important;min-width:36px!important;height:36px!important;
  font-size:15px!important;color:#fff!important;
 }
-html body #svcpWorkChatScreen .sv-inbox-avatar-editor{
- display:flex;flex-direction:column;gap:14px;
- margin:0;padding:3px 0 18px;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-preview-wrap{
- display:flex;flex-direction:column;align-items:center;justify-content:center;
- gap:9px;margin:0;padding:9px 0 7px;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-preview{
- box-sizing:border-box!important;
- width:90px!important;height:90px!important;
- min-width:90px!important;min-height:90px!important;
- display:grid!important;place-items:center!important;
- border:0!important;border-radius:50%!important;
- box-shadow:none!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-preview[data-sv-avatar-kind="monogram"]{
- font-size:35px!important;letter-spacing:-.045em!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-preview[data-sv-avatar-kind="emoji"]{
- font-size:43px!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-preview[data-sv-avatar-kind="photo"]{
- font-size:0!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-subtitle{
- margin:0!important;max-width:100%;font-size:12px!important;line-height:1.4;
- text-align:center;color:#80858F!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-field{
- display:flex;flex-direction:column;gap:7px;
- font-size:12px;font-weight:530;color:var(--sv-inbox-panel-ink,#1C2026);
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-field > .sv-inbox-text-input{
- width:100%!important;margin:0!important;
- min-height:44px!important;height:44px!important;
- border-radius:12px!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-methods{
- box-sizing:border-box;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;
- width:100%;margin:0;padding:3px;
- border:1px solid rgba(174,185,198,.22);border-radius:15px;
- background:rgba(165,177,193,.10);
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-method{
- appearance:none;-webkit-appearance:none;
- display:grid;place-items:center;
- min-width:0!important;min-height:44px!important;height:44px!important;
- margin:0!important;padding:0 5px!important;
- border:0!important;border-radius:12px!important;
- background:transparent!important;background-image:none!important;
- color:var(--sv-inbox-panel-ink,#1A1E24)!important;
- box-shadow:none!important;
- font:560 13px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- cursor:pointer!important;transform:none!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-method[aria-pressed="true"]{
- background:var(--sv-inbox-panel-bg,#fff)!important;
- border:1px solid rgba(160,172,188,.23)!important;
- box-shadow:none!important;font-weight:650!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-customization{
- min-height:0;display:block;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-mode[hidden],
-html body #svcpWorkChatScreen .sv-inbox-avatar-palette[hidden]{display:none!important}
-html body #svcpWorkChatScreen .sv-inbox-avatar-emoji-grid{
- display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-emoji{
- display:grid!important;place-items:center!important;
- min-width:0!important;width:100%!important;height:52px!important;min-height:52px!important;
- padding:0!important;margin:0!important;
- border:1px solid rgba(150,160,176,.16)!important;border-radius:13px!important;
- background:rgba(163,176,192,.07)!important;
- box-shadow:none!important;font-size:26px!important;
- cursor:pointer!important;transform:none!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-emoji[aria-pressed="true"]{
- border-color:#0A84FF!important;background:rgba(10,132,255,.08)!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-photo-select{
- display:flex;align-items:center;justify-content:center;
- box-sizing:border-box;width:100%;height:44px;min-height:44px;
- border:1px solid rgba(160,170,183,.25);border-radius:12px;
- background:rgba(158,173,190,.09);color:var(--sv-inbox-panel-ink,#181A1D);
- font-size:13px;font-weight:550;cursor:pointer;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-photo-select > input[type="file"]{
- position:absolute!important;width:1px!important;height:1px!important;
- opacity:0!important;overflow:hidden!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-palette{
- display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;
- margin:0;padding:3px 2px;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-swatch{
- appearance:none;-webkit-appearance:none;
- box-sizing:border-box;display:block;
- width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;
- margin:0!important;padding:0!important;
- border:3px solid var(--sv-inbox-panel-bg,#fff)!important;border-radius:50%!important;
- outline:1px solid transparent;outline-offset:1px;
- background:var(--sv-avatar-swatch,#536f84)!important;
- box-shadow:none!important;cursor:pointer!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-swatch[aria-pressed="true"]{
- outline:2px solid #0A84FF!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-status{
- margin:0!important;color:#C94939;font-size:12px;line-height:1.35;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-status:empty{display:none!important}
-html body #svcpWorkChatScreen .sv-inbox-avatar-editor > .sv-inbox-hint{
- margin:0!important;font-size:11px!important;line-height:1.45!important;
- text-align:center;color:#858991!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-actions{
- display:grid;grid-template-columns:1fr 1.5fr;gap:9px;
- margin:2px 0 0;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-actions > button{
- display:grid;place-items:center;min-width:0;min-height:44px;height:44px;
- margin:0;padding:0 10px;border:0;border-radius:13px;
- background:rgba(153,167,184,.12);color:var(--sv-inbox-panel-ink,#191B20);
- box-shadow:none;font:600 14px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-actions > .sv-inbox-submit{
- background:#0A84FF!important;color:white!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-avatar-actions > button[disabled]{
- opacity:.45!important;cursor:default!important;
-}
-:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-avatar-methods{
- background:rgba(214,230,244,.08);
- border-color:rgba(214,230,244,.12);
-}
-:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-avatar-emoji,
-:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-avatar-photo-select{
- background:rgba(215,229,243,.07)!important;
- border-color:rgba(215,229,243,.13)!important;
-}
-@media(max-width:359px){
- html body #svcpWorkChatScreen .sv-inbox-avatar-palette{gap:8px}
- html body #svcpWorkChatScreen .sv-inbox-avatar-swatch{width:33px!important;min-width:33px!important;height:33px!important;min-height:33px!important}
-}
-
-/* Keep compact profile icon aligned with ordinary Messages rows. */
-html body #svcpWorkChatScreen .sv-inbox-setting-link > .sv-inbox-avatar-settings-preview{
- display:grid!important;place-items:center!important;
- flex:0 0 36px!important;min-width:36px!important;max-width:36px!important;
- height:36px!important;min-height:36px!important;max-height:36px!important;
- padding:0!important;margin:0!important;
- border-radius:50%!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-profile-avatar{
- box-sizing:border-box!important;
- display:flex!important;align-items:center!important;gap:12px!important;
- width:100%!important;min-height:48px!important;
- margin:0!important;padding:10px 5px!important;
- border:0!important;border-top:1px solid var(--sv-inbox-divider)!important;
- border-radius:0!important;background:transparent!important;
- box-shadow:none!important;color:inherit!important;
- font:500 14px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
- text-align:left!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-profile-avatar[hidden]{display:none!important}
-html body #svcpWorkChatScreen .sv-inbox-profile-avatar svg{
- flex:0 0 19px!important;width:19px!important;height:19px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;
-}
-html body #svcpWorkChatScreen #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
- font-size:21px!important;
-}
-html body #svcpWorkChatScreen #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="emoji"]{
- font-size:26px!important;
-}
-
 /* SEYVEO · ORIGINAL 3D AVATARS · 23 Nov 2026
    Local 640x480 WebP atlas, 12 independent square pieces. */
 #svcpWorkChatScreen .sv-atlas-thumb,
@@ -1575,241 +1397,6 @@ html body #svcpWorkChatScreen #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-ava
  min-width:0!important;padding:9px 4px!important;font-size:12px!important;
  white-space:nowrap!important;
 }
-#svcpWorkChatScreen .sv-atlas-mode{width:100%!important}
-#svcpWorkChatScreen .sv-atlas-filters{
- display:flex!important;align-items:center!important;gap:7px!important;
- overflow-x:auto!important;max-width:100%!important;
- padding:3px 0 12px!important;scrollbar-width:none!important;
- -webkit-overflow-scrolling:touch;
-}
-#svcpWorkChatScreen .sv-atlas-filters::-webkit-scrollbar{display:none}
-#svcpWorkChatScreen .sv-atlas-filter{
- display:grid;place-items:center;flex:none!important;
- width:max-content!important;min-width:44px!important;min-height:34px!important;
- padding:6px 12px!important;border:1px solid rgba(155,168,185,.16)!important;
- border-radius:999px!important;background:rgba(154,171,193,.085)!important;
- color:var(--sv-inbox-panel-ink,#222)!important;font:550 11px/1.2 -apple-system,system-ui,sans-serif!important;
- box-shadow:none!important;white-space:nowrap!important;
-}
-#svcpWorkChatScreen .sv-atlas-filter[aria-pressed="true"]{
- background:#0A84FF!important;border-color:#0A84FF!important;color:#fff!important;
-}
-#svcpWorkChatScreen .sv-atlas-grid{
- display:grid!important;
- grid-template-columns:repeat(4,minmax(0,1fr))!important;
- gap:8px!important;width:100%!important;
- padding:1px 0 5px!important;
-}
-#svcpWorkChatScreen .sv-atlas-choice{
- display:flex!important;align-items:center!important;flex-direction:column!important;
- justify-content:center!important;gap:6px!important;
- box-sizing:border-box!important;min-width:0!important;
- padding:8px 3px 7px!important;min-height:94px!important;
- border:1px solid rgba(150,162,180,.18)!important;border-radius:15px!important;
- background:rgba(166,177,195,.075)!important;color:var(--sv-inbox-panel-ink,#222)!important;
- box-shadow:none!important;
- cursor:pointer!important;
-}
-#svcpWorkChatScreen .sv-atlas-choice[aria-pressed="true"]{
- border-color:#0A84FF!important;background:rgba(10,132,255,.095)!important;
- box-shadow:0 0 0 1px rgba(10,132,255,.13)!important;
-}
-#svcpWorkChatScreen .sv-atlas-choice .sv-atlas-thumb{
- width:min(100%,64px)!important;height:auto!important;
- aspect-ratio:1!important;
- border-radius:50%!important;
-}
-#svcpWorkChatScreen .sv-atlas-choice small{
- font:500 9.5px/1.13 -apple-system,system-ui,sans-serif!important;
- color:var(--sv-inbox-panel-ink,#222)!important;
- max-width:100%!important;min-width:0!important;
- overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
- text-align:center!important;
-}
-#svcpWorkChatScreen .sv-inbox-avatar-settings-preview{
- overflow:hidden!important;border-radius:50%!important;
-}
-#svcpWorkChatScreen .sv-inbox-avatar-emoji-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-#svcpWorkChatScreen .sv-inbox-avatar-emoji{font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif!important}
-@media(max-width:375px){
- #svcpWorkChatScreen .sv-atlas-grid{gap:5px!important}
- #svcpWorkChatScreen .sv-atlas-choice{padding:6px 2px!important;min-height:82px!important}
- #svcpWorkChatScreen .sv-atlas-choice .sv-atlas-thumb{width:min(100%,56px)!important}
- #svcpWorkChatScreen .sv-atlas-choice small{font-size:8.5px!important}
-}
-
-
-/* 2026-11-23 · SEYVEO Messages settings / compact Apple-like finish.
-   One existing sheet, no duplicate controls; preferences and click handlers remain. */
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-sheet-panel{
-  --sv-inbox-settings-surface:var(--sv-inbox-sheet-card,#fff);
-  --sv-inbox-settings-ink:var(--sv-inbox-sheet-primary,#181a1e);
-  --sv-inbox-settings-muted:var(--sv-inbox-sheet-muted,#7b808b);
-  max-height:min(85dvh,780px)!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-sheet-head{
-  grid-template-columns:44px minmax(0,1fr) 44px!important;
-  height:52px!important;min-height:52px!important;
-  padding:0 16px!important;gap:4px!important;
-  background:var(--sv-inbox-sheet-base)!important;
-  border-bottom:0!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-sheet-back{
-  box-sizing:border-box!important;display:grid!important;place-items:center!important;
-  width:44px!important;min-width:44px!important;max-width:44px!important;
-  height:44px!important;min-height:44px!important;max-height:44px!important;
-  margin:0!important;padding:0!important;
-  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
-  border-radius:50%!important;
-  background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
-  background-image:none!important;
-  color:var(--sv-white-pearl-ink,#0b0b0d)!important;
-  box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.11))!important;
-  -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
-  backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
-  transform:none!important;scale:1!important;filter:none!important;
-  transition:none!important;-webkit-tap-highlight-color:transparent!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-sheet-back:is(:active,:hover){
-  background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
-  box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.11))!important;
-  transform:none!important;scale:1!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-sheet-back svg{
-  display:block!important;width:22px!important;height:22px!important;
-  fill:none!important;stroke:currentColor!important;stroke-width:1.45!important;
-  stroke-linecap:round!important;stroke-linejoin:round!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-sheet-head strong{
-  font-size:16px!important;font-weight:610!important;line-height:1.2!important;
-  letter-spacing:-.025em!important;text-align:center!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-sheet-body{
-  padding:2px 16px max(18px,env(safe-area-inset-bottom,0px))!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-section-heading{
-  margin:12px 3px 5px!important;
-  color:var(--sv-inbox-settings-muted)!important;
-  font:500 11.5px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
-  letter-spacing:0!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-section-heading:first-child{
-  margin-top:7px!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-setting-link{
-  min-height:53px!important;
-  padding:8px 12px!important;gap:10px!important;
-  border:0!important;border-radius:13px!important;
-  background:var(--sv-inbox-settings-surface)!important;
-  color:var(--sv-inbox-settings-ink)!important;
-  box-shadow:none!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-setting-link > span:not(.sv-inbox-link-chevron){
-  gap:3px!important;font-size:14px!important;line-height:1.23!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-setting-link small{
-  font-size:10.5px!important;line-height:1.3!important;
-  color:var(--sv-inbox-settings-muted)!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-link-chevron svg{
-  width:14px!important;height:14px!important;stroke-width:1.45!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-wallpaper-grid{
-  gap:8px!important;margin:2px 0 9px!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-wallpaper-card{
-  min-height:103px!important;padding:5px 5px 7px!important;gap:4px!important;
-  border:1px solid rgba(157,168,185,.12)!important;border-radius:15px!important;
-  background:transparent!important;box-shadow:none!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-wallpaper-card[aria-pressed="true"]{
-  border:1px solid rgba(10,132,255,.44)!important;
-  background:rgba(10,132,255,.04)!important;box-shadow:none!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-wallpaper-card > .sv-chat-theme-preview{
-  height:57px!important;min-height:57px!important;border-radius:10px!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-wallpaper-card > strong{
-  font-size:12px!important;font-weight:570!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-wallpaper-card > small{
-  font-size:9.5px!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-wallpaper-check{
-  top:7px!important;right:7px!important;width:16px!important;height:16px!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle{
-  min-height:54px!important;padding:8px 12px!important;
-  background:var(--sv-inbox-settings-surface)!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle strong{
-  color:var(--sv-inbox-settings-ink)!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-settings-toggle small{
-  color:var(--sv-inbox-settings-muted)!important;
-}
-:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-sheet-back{
-  border:1px solid rgba(255,255,255,.14)!important;background:#38383a!important;
-  box-shadow:none!important;color:#f6f6f8!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-sheet-back:is(:active,:hover){
-  background:#38383a!important;box-shadow:none!important;
-}
-@media(max-width:350px){
- html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-wallpaper-grid{gap:5px!important}
- html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-wallpaper-card{padding:4px 3px 6px!important}
-}
-
-
-/* 2026-11-23 · Notifications sheet: shared SEYVEO Pearl return control.
-   Only visual refinement; native switch state and mute handlers are untouched. */
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="notifications"] .sv-inbox-sheet-head{
-  height:52px!important;min-height:52px!important;
-  grid-template-columns:44px minmax(0,1fr) 44px!important;
-  padding:0 16px!important;gap:4px!important;
-  border-bottom:0!important;background:var(--sv-inbox-ios-bg,#f5f5f7)!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="notifications"] .sv-inbox-sheet-back{
-  box-sizing:border-box!important;display:grid!important;place-items:center!important;
-  width:44px!important;min-width:44px!important;max-width:44px!important;
-  height:44px!important;min-height:44px!important;max-height:44px!important;
-  margin:0!important;padding:0!important;
-  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
-  border-radius:50%!important;
-  background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
-  background-image:none!important;
-  color:var(--sv-white-pearl-ink,#0b0b0d)!important;
-  box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.11))!important;
-  -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
-  backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
-  transform:none!important;scale:1!important;transition:none!important;
-  -webkit-tap-highlight-color:transparent!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="notifications"] .sv-inbox-sheet-back:is(:hover,:active){
-  background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
-  box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.11))!important;
-  transform:none!important;scale:1!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="notifications"] .sv-inbox-sheet-back svg{
-  width:22px!important;height:22px!important;stroke-width:1.45!important;
-  fill:none!important;stroke:currentColor!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="notifications"] .sv-inbox-sheet-body{
-  padding:6px 15px 20px!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="notifications"] .sv-inbox-notification-caption{
-  margin:12px 3px 6px!important;color:var(--sv-inbox-ios-hint,#7d818b)!important;
-  font-size:11.5px!important;
-}
-:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="notifications"] .sv-inbox-sheet-back,
-:root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="notifications"] .sv-inbox-sheet-back:is(:hover,:active){
-  border:1px solid rgba(255,255,255,.14)!important;
-  background:#38383a!important;box-shadow:none!important;
-  color:#f6f6f8!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-
-
 /* SEYVEO One · subtle subscription discovery, never inside conversation content. */
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"] .sv-inbox-one-promo{
   box-sizing:border-box!important;display:flex!important;align-items:center!important;
@@ -2148,105 +1735,195 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="one"] .sv-
 }
 
 
-/* Profile editor: same SEYVEO sheet, stable header, scrollable content and 3 modes.
-   The former flat emoji tab is retired without touching persisted avatars. */
+
+/* SEYVEO / AVATAR SCREEN REBUILD 2026-11-23.
+   One clean layer. Isolated from all other chat sheets.
+   Original 12-piece image atlas retained; defective 64-piece atlas removed. */
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]{
+ --av-ink:var(--sv-inbox-panel-ink,#18212b);
+ --av-surface:var(--sv-inbox-panel-bg,#fff);
+ --av-subtle:rgba(112,135,160,.10);
+ --av-border:rgba(115,139,163,.13);
+}
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-panel{
- box-sizing:border-box!important;
- width:min(100%,460px)!important;
- max-height:min(90dvh,850px)!important;
- padding-bottom:max(8px,env(safe-area-inset-bottom,0px))!important;
- background:var(--sv-inbox-panel-bg,#fff)!important;
+ box-sizing:border-box!important;width:min(100%,460px)!important;
+ max-height:min(92dvh,850px)!important;
+ background:var(--av-surface)!important;background-image:none!important;
+ border:0!important;border-radius:24px 24px 0 0!important;
+ padding:0 0 env(safe-area-inset-bottom,0px)!important;
+ box-shadow:0 -12px 40px rgba(15,33,51,.11)!important;overflow:hidden!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-head{
- position:relative!important;z-index:2!important;
- flex:0 0 60px!important;
- border-bottom:1px solid rgba(80,90,105,.07)!important;
- background:var(--sv-inbox-panel-bg,#fff)!important;
+ box-sizing:border-box!important;position:relative!important;
+ flex:0 0 56px!important;min-height:56px!important;height:56px!important;
+ padding:6px 16px!important;margin:0!important;
+ background:var(--av-surface)!important;background-image:none!important;
+ border:0!important;border-bottom:1px solid var(--av-border)!important;
+ box-shadow:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-head>strong{
+ color:var(--av-ink)!important;font:640 16px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.025em!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-body{
  display:block!important;flex:1 1 auto!important;min-height:0!important;
- box-sizing:border-box!important;
+ padding:12px 16px 16px!important;margin:0!important;
  overflow-y:auto!important;overflow-x:hidden!important;
- padding:8px 17px 10px!important;
- overscroll-behavior:contain!important;
+ background:var(--av-surface)!important;background-image:none!important;
+ box-shadow:none!important;overscroll-behavior:contain!important;
  -webkit-overflow-scrolling:touch!important;
- scroll-padding-top:8px!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-editor{
- gap:12px!important;padding:0 0 6px!important;
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ gap:13px!important;width:100%!important;margin:0!important;padding:0 0 8px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-preview-wrap{
- padding:6px 0 3px!important;gap:6px!important;
+ display:flex!important;align-items:center!important;flex-direction:column!important;
+ gap:5px!important;padding:0 0 3px!important;margin:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-preview{
- width:80px!important;height:80px!important;min-width:80px!important;min-height:80px!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:80px!important;min-width:80px!important;height:80px!important;min-height:80px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;
+ overflow:hidden!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-subtitle{
+ margin:0!important;font-size:12px!important;line-height:1.4!important;
+ text-align:center!important;color:var(--secondary,#737d86)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-field{
+ display:flex!important;flex-direction:column!important;gap:6px!important;
+ font:550 12px/1.4 -apple-system,system-ui,sans-serif!important;color:var(--av-ink)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-field .sv-inbox-text-input{
+ box-sizing:border-box!important;width:100%!important;height:44px!important;min-height:44px!important;
+ padding:0 12px!important;margin:0!important;border:1px solid var(--av-border)!important;
+ border-radius:12px!important;background:var(--av-subtle)!important;color:var(--av-ink)!important;
+ box-shadow:none!important;font-size:15px!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-methods{
- display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
- width:100%!important;min-height:48px!important;gap:3px!important;
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:3px!important;width:100%!important;min-height:48px!important;
  padding:4px!important;margin:0!important;
+ background:var(--av-subtle)!important;background-image:none!important;
+ border:0!important;border-radius:15px!important;box-shadow:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-method{
- display:grid!important;place-items:center!important;
- height:40px!important;min-height:40px!important;padding:0 5px!important;
- transform:none!important;scale:1!important;transition:none!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:100%!important;min-width:0!important;min-height:40px!important;height:40px!important;
+ padding:0 5px!important;margin:0!important;border:0!important;border-radius:11px!important;
+ color:var(--av-ink)!important;background:transparent!important;
+ box-shadow:none!important;outline:0!important;
+ font:580 13px/1.2 -apple-system,system-ui,sans-serif!important;
+ transform:none!important;transition:none!important;
 }
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-method:is(:active,:hover){
- transform:none!important;scale:1!important;
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-method[aria-pressed="true"]{
+ background:var(--av-surface)!important;box-shadow:0 1px 4px rgba(31,49,65,.10)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-customization{
+ box-sizing:border-box!important;display:block!important;min-height:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-mode[hidden],
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-palette[hidden]{
+ display:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-mode{
+ width:100%!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-filters{
- padding:2px 0 8px!important;gap:6px!important;
+ display:flex!important;align-items:center!important;gap:6px!important;
+ overflow-x:auto!important;scrollbar-width:none!important;
+ max-width:100%!important;margin:0 0 10px!important;padding:0 0 3px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-filters::-webkit-scrollbar{display:none!important}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-filter{
+ display:grid!important;place-items:center!important;flex:none!important;
+ min-width:44px!important;min-height:34px!important;margin:0!important;padding:6px 12px!important;
+ border:0!important;border-radius:18px!important;box-shadow:none!important;
+ background:var(--av-subtle)!important;color:var(--av-ink)!important;
+ font:550 11px/1.15 -apple-system,system-ui,sans-serif!important;
+ transform:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-filter[aria-pressed="true"]{
+ background:#0a84ff!important;color:white!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-grid{
- gap:7px!important;
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important;
+ width:100%!important;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-choice{
- min-height:83px!important;padding:6px 2px!important;
- transform:none!important;transition:none!important;
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;gap:5px!important;
+ min-width:0!important;min-height:82px!important;padding:7px 3px!important;margin:0!important;
+ border:0!important;border-radius:15px!important;box-shadow:none!important;
+ background:var(--av-subtle)!important;color:var(--av-ink)!important;
+ transform:none!important;transition:none!important;overflow:hidden!important;
 }
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-choice[aria-pressed="true"]{
+ background:rgba(10,132,255,.10)!important;outline:2px solid #0a84ff!important;outline-offset:-2px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-choice>.sv-atlas-thumb{
+ box-sizing:border-box!important;display:block!important;flex:0 0 auto!important;
+ width:min(100%,60px)!important;max-width:60px!important;height:auto!important;
+ aspect-ratio:1!important;padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;overflow:hidden!important;box-shadow:none!important;
+ background-color:transparent!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-choice>small{
+ display:block!important;box-sizing:border-box!important;max-width:100%!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ color:var(--av-ink)!important;text-align:center!important;
+ font:520 10px/1.2 -apple-system,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-palette{
+ display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:10px!important;
+ background:transparent!important;border:0!important;padding:2px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-swatch{
+ flex:0 0 36px!important;width:36px!important;height:36px!important;
+ border:3px solid var(--av-surface)!important;border-radius:50%!important;
+ background:var(--sv-avatar-swatch,#536f84)!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-photo-select{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-height:44px!important;padding:8px!important;
+ background:var(--av-subtle)!important;color:var(--av-ink)!important;
+ border:0!important;border-radius:12px!important;box-shadow:none!important;
+ font-size:13px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-photo-select>input[type="file"]{
+ position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;overflow:hidden!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-status,
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-editor>.sv-inbox-hint{
+ margin:0!important;font:450 11px/1.45 -apple-system,system-ui,sans-serif!important;
+ color:var(--secondary,#737d86)!important;text-align:center!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-status:empty{display:none!important}
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-actions{
- position:sticky!important;bottom:0!important;z-index:3!important;
- display:grid!important;grid-template-columns:1fr 1.5fr!important;
- gap:9px!important;padding:8px 0 2px!important;
- margin:0!important;background:var(--sv-inbox-panel-bg,#fff)!important;
+ position:sticky!important;bottom:0!important;z-index:2!important;
+ display:grid!important;grid-template-columns:1fr 1.5fr!important;gap:9px!important;
+ width:100%!important;margin:0!important;padding:9px 0 3px!important;
+ background:var(--av-surface)!important;border:0!important;box-shadow:none!important;
 }
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-actions > button{
- height:44px!important;min-height:44px!important;
- border-radius:13px!important;transform:none!important;transition:none!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-actions > button:active{
- transform:none!important;
-}
-
-
-/* Distinct 3D Emoji shelf: uses existing high-quality atlas portraits, not
-   OS-dependent flat emoji glyphs. 3D catalog and saved indices stay intact. */
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-methods{
- grid-template-columns:repeat(3,minmax(0,1fr))!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-3d-emoji-mode{
- width:100%!important;min-height:0!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-3d-emoji-grid{
- display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
- gap:7px!important;margin:0!important;padding:4px 0 9px!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-3d-emoji-grid .sv-atlas-choice{
- min-height:84px!important;min-width:0!important;
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-actions>button{
+ min-width:0!important;min-height:44px!important;height:44px!important;
+ padding:0 10px!important;margin:0!important;
+ border:0!important;border-radius:13px!important;
+ background:var(--av-subtle)!important;color:var(--av-ink)!important;box-shadow:none!important;
+ font:600 14px/1.15 -apple-system,system-ui,sans-serif!important;
  transform:none!important;transition:none!important;
 }
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-3d-emoji-grid .sv-atlas-choice:active{
- transform:none!important;
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-actions>.sv-inbox-submit{
+ background:#0a84ff!important;color:white!important;
 }
-
-
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-choice{
- min-width:0!important;
- overflow:hidden!important;
-}
-html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-choice small{
- max-width:100%!important;
- white-space:nowrap!important;
- overflow:hidden!important;
- text-overflow:ellipsis!important;
+@media(max-width:370px){
+ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-grid{gap:5px!important}
+ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-atlas-choice{padding:6px 2px!important}
 }
