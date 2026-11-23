@@ -130,6 +130,7 @@ function showAvatarEditor(id){
   initials:String(self?(prefs.myProfile?.name||'Я'):(info?.label||'?')).trim().slice(0,1).toLocaleUpperCase('ru-RU'),
   emoji:'😊',image:''
  };
+ let activeAvatarTab='atlas';
  const form=node('form','sv-inbox-avatar-editor');
  const previewWrap=node('div','sv-inbox-avatar-preview-wrap');
  const preview=node('span','sv-inbox-avatar-preview');
@@ -169,7 +170,7 @@ function showAvatarEditor(id){
  for(const emoji of AVATAR_EMOJIS){
   const b=node('button','sv-inbox-avatar-emoji',emoji);b.type='button';
   b.setAttribute('aria-label','Эмодзи '+emoji);
-  b.addEventListener('click',()=>{draft.kind='emoji';draft.emoji=emoji;draw()});
+  b.addEventListener('click',()=>{activeAvatarTab='emoji';draft.kind='emoji';draft.emoji=emoji;draw()});
   emojiButtons.push(b);emojiGrid.append(b);
  }
  emojiPanel.append(emojiGrid);
@@ -190,7 +191,7 @@ function showAvatarEditor(id){
    b.setAttribute('aria-label',title);
    b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===index));
    b.append(atlasMark(index),node('small',null,title));
-   b.addEventListener('click',()=>{draft.kind='atlas';draft.index=index;draw()});
+   b.addEventListener('click',()=>{activeAvatarTab='atlas';draft.kind='atlas';draft.index=index;draw()});
    atlasGrid.append(b);
   });
  }
@@ -207,7 +208,7 @@ function showAvatarEditor(id){
  const photoButton=node('button','sv-inbox-avatar-method','Фото');
  for(const [kind,b] of [['atlas',atlasButton],['emoji',emojiButton],['monogram',monoButton],['photo',photoButton]]){
   b.type='button';b.addEventListener('click',()=>{
-   draft.kind=kind;draw();
+   activeAvatarTab=kind;if(kind!=='atlas')draft.kind=kind;draw();
    if(kind==='photo'&&!draft.image)fileInput.click();
   });
   b.dataset.avatarMethod=kind;
@@ -239,19 +240,19 @@ function showAvatarEditor(id){
   const normalized=safeAvatar(draft);
   if(normalized)paintAvatar(preview,normalized);
   for(const button of methodButtons)
-   button.setAttribute('aria-pressed',String(button.dataset.avatarMethod===draft.kind));
+   button.setAttribute('aria-pressed',String(button.dataset.avatarMethod===activeAvatarTab));
   for(const b of emojiButtons)b.setAttribute('aria-pressed',String(b.textContent===draft.emoji));
   for(let i=0;i<swatches.length;i++)
    swatches[i].setAttribute('aria-pressed',String(AVATAR_COLORS[i]===draft.color));
   build3D();
-  atlasPanel.hidden=draft.kind!=='atlas';
-  monoPanel.hidden=draft.kind!=='monogram';
-  emojiPanel.hidden=draft.kind!=='emoji';
-  photoPanel.hidden=draft.kind!=='photo';
-  palette.hidden=draft.kind!=='monogram';
+  atlasPanel.hidden=activeAvatarTab!=='atlas';
+  monoPanel.hidden=activeAvatarTab!=='monogram';
+  emojiPanel.hidden=activeAvatarTab!=='emoji';
+  photoPanel.hidden=activeAvatarTab!=='photo';
+  palette.hidden=activeAvatarTab!=='monogram';
  }
  monogramInput.addEventListener('input',()=>{
-  draft.kind='monogram';draft.initials=[...monogramInput.value.trim()].slice(0,2).join('').toLocaleUpperCase('ru-RU');draw();
+  activeAvatarTab='monogram';draft.kind='monogram';draft.initials=[...monogramInput.value.trim()].slice(0,2).join('').toLocaleUpperCase('ru-RU');draw();
  });
  fileInput.addEventListener('change',()=>{
   const file=fileInput.files?.[0];if(!file)return;
@@ -271,7 +272,7 @@ function showAvatarEditor(id){
     ctx.drawImage(photo,(w-side)/2,(h-side)/2,side,side,0,0,256,256);
     const data=canvas.toDataURL('image/jpeg',.77);
     if(data.length>320000)throw new Error('size');
-    draft.image=data;draft.kind='photo';status.textContent='';draw();
+    activeAvatarTab='photo';draft.image=data;draft.kind='photo';status.textContent='';draw();
    }catch{status.textContent='Не удалось подготовить фото. Попробуйте другое изображение.'}
    cleanup();
   };
