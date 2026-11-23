@@ -194,6 +194,10 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
  position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;
  overflow:hidden!important;pointer-events:none!important;
 }
+/* Effects are contextual: no presets until there is an actual photo. */
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-photo-filters[hidden]{
+ display:none!important;
+}
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-photo-filters{
  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
  gap:3px!important;padding:4px!important;margin:0!important;
