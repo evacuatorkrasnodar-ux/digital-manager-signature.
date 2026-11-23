@@ -20,15 +20,17 @@
     delicate perimeter keeps the edge visible without a second ring. */
  /* White-on-white sculpted elevation: soft far ambience plus a defined
     near shadow. Same EXACT glass, rim, blur and 60/44px geometry. */
+ /* Soft defined elevation: shared by all WHITE PEARL controls, including
+    the newer Call buttons. Visible on white without thick grey rings. */
  --sv-white-pearl-circle-shadow:
-   0 6px 17px rgba(42,52,72,.095),
-   0 2px 5px rgba(42,52,72,.065),
-   0 0 0 .4px rgba(164,173,187,.13),
+   0 7px 19px rgba(42,52,72,.13),
+   0 2px 6px rgba(42,52,72,.085),
+   0 0 0 .4px rgba(164,173,187,.16),
    inset 0 1px 1px rgba(255,255,255,.88);
  --sv-white-pearl-dock-shadow:
-   0 6px 19px rgba(42,52,72,.078),
-   0 2px 6px rgba(42,52,72,.055),
-   0 0 0 .4px rgba(164,173,187,.12),
+   0 7px 21px rgba(42,52,72,.105),
+   0 2px 7px rgba(42,52,72,.07),
+   0 0 0 .4px rgba(164,173,187,.14),
    inset 0 1px 1px rgba(255,255,255,.80);
  --sv-white-pearl-press-fill:
    radial-gradient(ellipse 110% 95% at 50% 5%,rgba(10,132,255,.12),rgba(10,132,255,.045) 72%);
