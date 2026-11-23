@@ -3224,17 +3224,14 @@ function renderChat(){
    }
    bubble.dataset.chatIndex=String(index);
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
-   // A manager's message seen by Elena uses the very same selected personal
-   // portrait as her chat header. Only incoming manager messages receive it.
-   if(state.viewpoint==='elena'&&state.room==='dm-elena'&&msg.role==='self'){
-    const peerAvatar=el('span','svcp-manager-message-avatar');
-    peerAvatar.setAttribute('aria-hidden','true');
-    drawPortrait(peerAvatar,ownerAvatarPreview(),'Р');
-    bubble.classList.add('svcp-manager-peer-bubble');
-    bubble.append(peerAvatar);
-   }
+   // The shared header already owns the personal portrait. Do not create
+   // an avatar for each message: it was clipped into white half-circles on iPhone.
+   // In group rooms sender names are necessary, but personal names repeat
+   // the header unnecessarily. Sayvi's own assistant label is retained.
    const meta=el('div','svcp-bubble-meta');
-   meta.append(el('strong','svcp-sender',senderName(msg)),el('time','svcp-time',formatTime(msg.at)));
+   if(roomDetails().kind==='groups'||isSayvi)
+    meta.append(el('strong','svcp-sender',senderName(msg)));
+   meta.append(el('time','svcp-time',formatTime(msg.at)));
  if(isOwn)meta.querySelector('.svcp-time').title='Сохранено в этом браузере · не подтверждение доставки';
    bubble.append(meta);
    if(msg.replyTo&&typeof msg.replyTo.text==='string'){
