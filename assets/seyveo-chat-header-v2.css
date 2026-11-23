@@ -122,20 +122,42 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  color:rgba(255,255,255,.90)!important;white-space:nowrap!important;
  text-align:center!important;overflow:hidden!important;text-overflow:ellipsis!important;opacity:1!important;
 }
-/* White and blue themes never share foreground colors. */
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill{
- background:rgba(249,249,251,.95)!important;
- border:1px solid rgba(222,229,236,.82)!important;
- box-shadow:var(--sv-white-pearl-dock-shadow,0 3px 11px rgba(39,49,66,.08))!important;
+/* WHITE PEARL · exact same specificity and ancestry as the shared title.
+   Previously the weaker pearl text selector lost to the default white-on-blue
+   rule: the name became invisible on a white capsule. No geometry changes. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
+ background:rgba(255,255,255,.88)!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 6px 19px rgba(42,52,72,.08))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
 }
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationTitle{
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > #svcpConversationTitle{
  color:#20262D!important;-webkit-text-fill-color:#20262D!important;
+ text-shadow:none!important;opacity:1!important;
 }
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading svg{
- stroke:#77818D!important;
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading > .svcp-identity-v2-pill > svg{
+ stroke:#637080!important;
 }
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationDetail{
- color:#777F89!important;
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2 #svcpConversationHeading > #svcpConversationDetail{
+ color:#626E7A!important;
+}
+/* The 44px Back remains in its original position and keeps its click handler.
+   Use the same White Pearl radius/rim/shadow as the composer Plus, not the
+   older standalone 2px shadow or a second ring. Blue/dark rooms untouched. */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > #svcpConversationStandaloneBack,
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > #svcpConversationStandaloneBack:is(:active,:focus,:hover){
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ background-image:none!important;
+ color:var(--sv-white-pearl-ink,#0b0b0d)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 6px 17px rgba(42,52,72,.095))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ transform:none!important;transition:none!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > #svcpConversationStandaloneBack svg{
+ stroke:currentColor!important;stroke-width:1.65!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpMessages{
  padding-top:calc(122px + env(safe-area-inset-top,0px))!important;
