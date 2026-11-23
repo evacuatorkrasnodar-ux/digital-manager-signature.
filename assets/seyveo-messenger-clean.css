@@ -2000,3 +2000,34 @@ html:root[data-theme="light"] body #svcpWorkChatScreen #svcpChatDirectory .svcp-
  border-radius:999px!important;
  box-shadow:0 1px 4px rgba(55,67,82,.11),inset 0 1px 0 rgba(255,255,255,.86)!important;
 }
+
+/* 24 Nov 2026 · SINGLE SKY WALLPAPER, NO FOOTER UNDERLAY.
+   The Sky gradient was painted on #svcpConversation only, while the scroll
+   viewport's reserved composer area exposed the DIFFERENT outer screen
+   background. Put the one wallpaper on the fullscreen screen; the room,
+   messages, scroll clearance, and composer host must paint nothing behind
+   the actual blue capsule. This fixes the horizontal color seam without
+   moving the input or changing its controls. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]:not([hidden])){
+ background:
+  radial-gradient(ellipse 72% 13% at 80% 89%,rgba(255,255,255,.25) 0%,rgba(237,250,255,.14) 47%,transparent 100%),
+  radial-gradient(ellipse 65% 17% at 20% 70%,rgba(246,252,255,.36) 0%,rgba(230,247,255,.17) 55%,transparent 100%),
+  radial-gradient(ellipse 70% 16% at 82% 53%,rgba(250,253,255,.17) 0%,transparent 100%),
+  radial-gradient(ellipse 60% 13% at 17% 33%,rgba(230,248,255,.12) 0%,transparent 100%),
+  linear-gradient(164deg,#0F75D2 0%,#238FDF 43%,#59B4E8 71%,#A4D9ED 100%)!important;
+ background-size:100% 100%!important;
+ background-repeat:no-repeat!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"],
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] > .svcp-chat,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages{
+ background:transparent!important;
+ background-image:none!important;
+ background-color:transparent!important;
+ box-shadow:none!important;
+}
+/* Only the original round Plus and the single #svcpChatFormReset
+   .svcp-clean-surface may render blue under the toolbar. */
