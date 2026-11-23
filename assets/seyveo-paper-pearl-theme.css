@@ -108,26 +108,27 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#not
  color:#787d85!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) .sv-polish-segments{
- background:#ededef!important;border:1px solid rgba(34,38,45,.045)!important;
- box-shadow:none!important;
+ background:var(--sv-white-pearl-surface)!important;border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) button.sv-polish-segment{
  color:#626773!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface :is(#notePaperPatternMenu,#notePaperColorMenu,#notePaperSettingsMenu) button.sv-polish-segment[aria-selected="true"]{
- background:#fff!important;color:#22252b!important;
- box-shadow:0 1px 3px rgba(36,40,50,.11)!important;
+ background:rgba(255,255,255,.96)!important;color:#22252b!important;
+ box-shadow:0 1px 3px rgba(82,69,57,.075)!important;
 }
 /* Choice rows: pale inline segmented controls, not stacked grey tiles. */
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-backgrounds{
- background:#ededef!important;
+ background:var(--sv-white-pearl-surface)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-newdock-backgrounds > button{
  color:#616671!important;background:transparent!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-newdock-backgrounds > button[aria-pressed="true"]{
- background:#fff!important;color:#24262b!important;
- box-shadow:0 1px 3px rgba(35,39,49,.09)!important;
+ background:rgba(255,255,255,.96)!important;color:#24262b!important;
+ box-shadow:0 1px 3px rgba(82,69,57,.075)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="actions"] > button{
  background:transparent!important;color:#343840!important;
@@ -138,11 +139,13 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePap
 
 /* Paper and shapes are light material with a single selected state. */
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid) > button{
- background:#f0f1f3!important;color:#343840!important;
- border:1px solid rgba(55,63,78,.07)!important;
+ background:var(--sv-white-pearl-surface)!important;color:#343840!important;
+ border:var(--sv-white-pearl-edge)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;backdrop-filter:var(--sv-white-pearl-blur)!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperPatternMenu :is(.sv-paper-layouts,.sv-paper-shape-grid) > button[aria-pressed="true"]{
- background:#e1e4e9!important;border-color:#bfc5ce!important;
+ background:rgba(255,255,255,.96)!important;border-color:rgba(255,255,255,.99)!important;
 }
 
 /* Precision editors: light readable values, untouched saturation/hue canvas. */
@@ -181,8 +184,8 @@ html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePap
  box-shadow:none!important;
 }
 html body #notePaperDialog.sv-paper-studio[open].sv-paper-light-surface #notePaperSettingsMenu .sv-polish-menu-pane[data-sv-menu-panel="drawing"] > .sv-newdock-backgrounds > button[aria-pressed="true"]{
- background:#fff!important;color:#24262b!important;
- box-shadow:0 1px 3px rgba(35,39,49,.09)!important;
+ background:rgba(255,255,255,.96)!important;color:#24262b!important;
+ box-shadow:0 1px 3px rgba(82,69,57,.075)!important;
 }
 
 /* Studio light · unified with the actual Home dock and Calendar controls.
