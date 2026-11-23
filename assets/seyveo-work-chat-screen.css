@@ -5682,16 +5682,22 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multi
 }
 
 
-/* Work Chat · Sayvi-style compact history across messages and tasks. */
+/* Inbox filters use the SAME flat four-way capsule metrics as Work tabs.
+   No late override of gap or font size: one source of geometry above. */
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters{
  grid-template-columns:repeat(4,minmax(0,1fr))!important;
- column-gap:2px!important;
+ column-gap:0!important;
 }
 html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters > [data-svcp-chat-filter]{
  box-sizing:border-box!important;
  min-width:0!important;padding-inline:2px!important;
- font-size:clamp(10px,2.7vw,12px)!important;
+ font-size:12.5px!important;
  white-space:nowrap!important;
+}
+@media(max-width:355px){
+ html body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters > [data-svcp-chat-filter]{
+  font-size:11.5px!important;letter-spacing:-.025em!important;
+ }
 }
 html body #svcpWorkChatScreen .svcp-history-caption{
  padding:11px 14px 7px!important;margin:0!important;
