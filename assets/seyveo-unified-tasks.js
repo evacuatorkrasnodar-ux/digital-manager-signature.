@@ -566,6 +566,10 @@
   if(employeeMode&&page.dataset.employeeMode!=='true')select('employee');
   if(!employeeMode&&business.hidden)select('business');
   if(page.dataset.workChatOpen!=='true')chatReturnFocus=document.activeElement;
+  // Keep the fullscreen chat compositor invisible while we move its live
+  // DOM and select inbox/room. This prevents the previously mounted view from
+  // flashing for one frame when entering from Cabinet.
+  employeeChatScreen.style.setProperty('visibility','hidden','important');
   employeeChatScreen.hidden=false;
   attachWorkChatDock();
   page.dataset.workChatOpen='true';
@@ -581,7 +585,20 @@
   const headingTitle=$('svcpWorkChatTitle');
   if(headingTitle)headingTitle.textContent='Сообщения';
   // Null opens the complete existing directory. Staff and management share one engine.
-  window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId,employeeMode?'elena':'manager');
+  try{
+   window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId,employeeMode?'elena':'manager');
+   // Apply the current visual viewport before the first visible paint, not
+   // only in a later animation frame (iOS Safari can otherwise shift the top).
+   const viewport=window.visualViewport;
+   const height=viewport?.height||window.innerHeight||document.documentElement.clientHeight;
+   const top=viewport?.offsetTop||0;
+   if(Number.isFinite(height)&&height>=160)
+    employeeChatScreen.style.setProperty('--svcp-visible-height',Math.round(height)+'px');
+   if(Number.isFinite(top))
+    employeeChatScreen.style.setProperty('--svcp-visible-top',Math.max(0,Math.round(top))+'px');
+  }finally{
+   employeeChatScreen.style.removeProperty('visibility');
+  }
   settleWorkChatViewport();
   requestAnimationFrame(()=>{
    if(page.dataset.workChatOpen!=='true')return;
