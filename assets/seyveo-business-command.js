@@ -2414,6 +2414,12 @@ function closeRoomInformation(restoreFocus=true){
 }
 function renderRoomProfile(){
  const room=roomDetails();
+ // The manager's employee contact sheet has a compact, content-sized
+ // layout shared by every current and newly created employee conversation.
+ // Other viewpoints keep their existing profile presentation.
+ const profilePanel=$('svcpRoomInfo');
+ if(profilePanel)profilePanel.dataset.viewer=
+  state.viewpoint==='manager'&&!employeePreviewActive()?'manager':'member';
  window.SEYVEO_CHAT_THEMES?.syncRoom(room.id);
  const name=$('svcpConversationTitle')?.textContent?.trim()||room.label;
  const role=$('svcpConversationDetail')?.textContent?.trim()||
