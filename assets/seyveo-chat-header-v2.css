@@ -30,6 +30,7 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  overflow:hidden!important;background:#E4EFF9!important;background-image:none!important;
  color:#263C50!important;font:600 24px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  opacity:1!important;box-shadow:none!important;filter:none!important;
+ z-index:5!important; /* The portrait stays IN FRONT of the name capsule. */
  transform:none!important;transition:none!important;animation:none!important;
 }
 /* The image, not a second opaque circle, paints the saved selected portrait. */
@@ -67,14 +68,15 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-id="
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-room-kind="groups"] > .svcp-identity-v2 #svcpRoomAvatar{
  display:grid!important;background:#186AB2!important;color:#FFF!important;font-size:26px!important;
 }
-/* Exact same capsule vertical position, -14px overlap, 28px height. */
+/* Single name position: 5px behind the lower rim of the avatar, never over the face. */
 html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2 .svcp-identity-v2-stack > #svcpConversationHeading{
  box-sizing:border-box!important;position:relative!important;inset:auto!important;
  display:flex!important;flex-direction:column!important;align-items:center!important;
  justify-content:flex-start!important;flex:0 0 auto!important;
  width:auto!important;min-width:0!important;max-width:100%!important;
  height:auto!important;min-height:0!important;gap:0!important;
- margin:-14px 0 0!important;padding:0!important;
+ margin:-5px 0 0!important;padding:0!important;
+ z-index:2!important; /* The capsule sits BEHIND the raised avatar. */
  border:0!important;border-radius:0!important;background:transparent!important;
  box-shadow:none!important;pointer-events:auto!important;
  text-align:center!important;transform:none!important;transition:none!important;
