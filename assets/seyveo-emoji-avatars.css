@@ -170,3 +170,29 @@ html body #svcpWorkChatScreen .svcp-room-profile-avatar .svcp-native-avatar{font
  #svcpSelfAvatarDialog .svcp-own-avatar-choice{padding:7px 2px}
  #svcpSelfAvatarDialog .svcp-own-avatar-glyph{width:38px;height:38px;font-size:29px}
 }
+
+
+/* One original 3D catalogue powers owner and employee portraits; no image substitutions. */
+.seyveo-avatar-3d,
+#svcpWorkChatScreen .svcp-atlas-avatar{
+ display:block!important;width:100%!important;height:100%!important;
+ border:0!important;border-radius:50%!important;
+ background-image:url('./seyveo-3d-avatars-atlas.webp')!important;
+ background-repeat:no-repeat!important;
+ background-size:400% 300%!important;
+ box-shadow:none!important;overflow:hidden!important;
+}
+.seyveo-avatar:has(>.seyveo-avatar-3d),
+#svcpWorkChatScreen .svcp-native-avatar-host:has(.svcp-atlas-avatar){
+ overflow:hidden!important;border:0!important;border-radius:50%!important;
+ box-shadow:none!important;padding:0!important;
+ background:transparent!important;
+}
+#svcpWorkChatScreen .svcp-native-avatar.svcp-atlas-avatar{
+ background-color:transparent!important;font-size:0!important;
+}
+#svcpWorkChatScreen .svcp-directory-avatar .svcp-atlas-avatar,
+#svcpWorkChatScreen .svcp-room-profile-avatar .svcp-atlas-avatar{
+ background-color:transparent!important;
+}
+.seyveo-avatar-choice .seyveo-avatar-3d{width:100%!important;height:100%!important}
