@@ -359,6 +359,37 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  background:rgba(18,84,169,.88)!important;background-image:none!important;
  color:#FFFFFF!important;
 }
+/* User-selected portrait/emoji/monogram must outrank the old generic
+   fallback avatar rule. The profile editor writes these existing tokens;
+   never draw a generic circle over someone's saved photograph. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpRoomAvatar.sv-inbox-avatar-custom{
+ background-color:var(--sv-avatar-color,#536f84)!important;
+ background-image:var(--sv-avatar-image,none)!important;
+ background-position:center!important;background-size:cover!important;
+ background-repeat:no-repeat!important;
+ color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="photo"]{
+ font-size:0!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="emoji"]{
+ font-size:26px!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
+ font-size:21px!important;
+}
 /* The existing named capsule is the canonical compact 28px Sayvi style.
    Long contact/group names ellipsize; no second frame or replacement DOM. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
