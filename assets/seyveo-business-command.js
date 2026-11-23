@@ -2335,19 +2335,14 @@ function openRoom(roomId){
 }
 function updatePerspective(){
  const current=roomDetails();
- // Switching "Взгляд Елены" must repaint the contact portrait as well as bubbles.
+ // A task or authorized employee preview can change perspective; refresh visible identity.
  refreshVisiblePeerAvatars();
- const allowed=current.kind==='groups'||current.id==='dm-elena';
  // Calls have a useful local device preview, but no remote signaling yet.
  // Hide them in team/group and assistant conversations to avoid false calls.
  const personalPeer=current.kind==='personal'&&current.person!=='sayvi';
  for(const id of ['svcpAudioCall','svcpVideoCall']){
   const button=$(id);if(button)button.hidden=!personalPeer;
  }
- const button=$('svcpElenaPerspective');
- button.hidden=employeePreviewActive()||!allowed;
- button.textContent=state.viewpoint==='elena'?'Вернуться к руководителю':'Взгляд Елены';
- button.setAttribute('aria-pressed',String(state.viewpoint==='elena'));
  $('svcpConversationDetail').textContent=state.viewpoint==='elena'
   ?'Просмотр от лица Елены · демо'
   :current.kind==='personal'?(current.hint.split(' · ')[0]||'Личный чат'):'Рабочая группа';
@@ -2411,8 +2406,6 @@ function renderRoomProfile(){
  }
  const assign=$('svcpRoomProfileAssign');
  if(assign)assign.hidden=employeePreviewActive()||state.viewpoint!=='manager'||!person;
- const perspective=$('svcpElenaPerspective'),view=$('svcpRoomProfileViewSection');
- if(view)view.hidden=!perspective||perspective.hidden;
  // Files and photos point to original messages, never duplicate their data.
  svcpClearRoomProfileMedia();
  const files=state.chat.map((msg,index)=>({msg,index}))
@@ -2716,13 +2709,6 @@ $('svcpConversationBack')?.addEventListener('click',showInbox);
 $('svcpConversationSearch')?.addEventListener('click',()=>{
  showInbox();
  $('svcpHistorySearch')?.focus({preventScroll:true});
-});
-$('svcpElenaPerspective')?.addEventListener('click',()=>{
- if(employeePreviewActive())return;
- closeRoomInformation(false);
- stopWorkTypingLocal();
- state.viewpoint=state.viewpoint==='elena'?'manager':'elena';
- clearReply();cancelTaskDraft();updatePerspective();renderChat();
 });
 $('svcpMentionElena')?.addEventListener('click',()=>{
  const input=$('svcpChatInput');if(!input)return;
@@ -4303,9 +4289,6 @@ function openTaskDiscussion(task){
  if(person==='elena'){
   state.viewpoint='elena';
   updatePerspective();renderChat();
-  // In an assignment discussion the employee identity is already explicit.
-  // Keep a single easy way back rather than two cramped header controls.
-  $('svcpElenaPerspective').hidden=true;
  }
  const message={room:roomId,role:'self',text:task.text};
  startReply(message);
