@@ -186,6 +186,15 @@ html body #svcpWorkChatScreen[data-view="room"]
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:none!important;pointer-events:auto!important;
 }
+/* A room without a visible avatar has no 56px portrait above its
+   name. The inherited -15px overlap pushed the title off-screen.
+   Put its existing name pill on the same centerline as the Back button;
+   retain the 6px subtitle gap and the original theme materials. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
+ margin:16px 0 0!important;
+}
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"]
  > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
