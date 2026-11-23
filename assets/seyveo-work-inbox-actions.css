@@ -1568,7 +1568,7 @@ html body #svcpWorkChatScreen #svcpRoomAvatar.sv-inbox-avatar-custom[data-sv-ava
  background:transparent!important;
 }
 #svcpWorkChatScreen .sv-inbox-avatar-methods{
- display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
  padding:4px!important;gap:3px!important;
 }
 #svcpWorkChatScreen .sv-inbox-avatar-method{
@@ -2222,7 +2222,7 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
 /* Distinct 3D Emoji shelf: uses existing high-quality atlas portraits, not
    OS-dependent flat emoji glyphs. 3D catalog and saved indices stay intact. */
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-avatar-methods{
- grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-3d-emoji-mode{
  width:100%!important;min-height:0!important;
@@ -2244,7 +2244,7 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
    sprite. Saved legacy indices 0–11 remain mapped to their original art. */
 html body #svcpWorkChatScreen .sv-atlas-thumb.sv-atlas-collection-64,
 html body #svcpWorkChatScreen .sv-inbox-avatar-custom .sv-atlas-thumb.sv-atlas-collection-64{
- background-image:url('./seyveo-avatars-64.jpg?v=1')!important;
+ background-image:url('./seyveo-avatars-64-hq.webp?v=2')!important;
  background-repeat:no-repeat!important;
  background-size:800% 800%!important;
  background-color:transparent!important;
@@ -2252,7 +2252,7 @@ html body #svcpWorkChatScreen .sv-inbox-avatar-custom .sv-atlas-thumb.sv-atlas-c
 }
 html body #svcpWorkChatScreen .svcp-native-avatar.svcp-atlas-avatar.svcp-collection-avatar,
 html body #svcpWorkChatScreen .svcp-atlas-avatar.svcp-collection-avatar{
- background-image:url('./seyveo-avatars-64.jpg?v=1')!important;
+ background-image:url('./seyveo-avatars-64-hq.webp?v=2')!important;
  background-repeat:no-repeat!important;
  background-size:800% 800%!important;
  background-color:transparent!important;
