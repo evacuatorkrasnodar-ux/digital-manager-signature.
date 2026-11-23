@@ -164,6 +164,7 @@ function showAvatarEditor(id){
  };
  let activeAvatarTab=old?.kind==='photo'?'photo':old?.kind==='monogram'?'monogram':'atlas';
  const form=node('form','sv-inbox-avatar-editor');
+ form.id='svcpAvatarEditorForm';
  const previewWrap=node('div','sv-inbox-avatar-preview-wrap');
  const preview=node('span','sv-inbox-avatar-preview');
  preview.setAttribute('aria-hidden','true');
@@ -264,7 +265,9 @@ function showAvatarEditor(id){
  const reset=node('button','sv-inbox-avatar-reset','Сбросить');reset.type='button';
  const save=node('button','sv-inbox-submit','Сохранить');save.type='submit';
  actions.append(reset,save);
- form.append(status,privacy,actions);
+ actions.setAttribute('aria-label','Действия с аватаром');
+ save.setAttribute('form',form.id);
+ form.append(status,privacy);
  function draw(){
   const normalized=safeAvatar(draft);
   if(normalized)paintAvatar(preview,normalized);
@@ -344,6 +347,8 @@ function showAvatarEditor(id){
   decorateRows();closeSheet();
  });
  draw();body.append(form);
+ // Footer is outside scrollable body, so it cannot cover avatar cards.
+ panel.append(actions);
 }
 function employee(){return window.SEYVEO_PREVIEW?.isEmployee?.()===true}
 function openChat(id){closeSheet();closeMenu();window.SEYVEO_BUSINESS_COMMAND?.showChat?.(id)}
@@ -408,7 +413,9 @@ function viewTitle(type){return {new:'Новое сообщение',staff:'Со
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
- title.textContent=viewTitle(type);body.replaceChildren();overlay.hidden=false;
+ title.textContent=viewTitle(type);body.replaceChildren();
+ panel.querySelector(':scope > .sv-inbox-avatar-actions')?.remove();
+ overlay.hidden=false;
  overlay.classList.toggle('sv-inbox-sheet-notifications',type==='notifications');
  overlay.dataset.svInboxScreen=type;
  if(type==='new')showContacts(type);
