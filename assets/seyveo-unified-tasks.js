@@ -23,6 +23,14 @@
  // once. Its live chat subtree, IDs and event listeners stay unchanged.
  if(employeeChatScreen&&employeeChatScreen.parentElement!==document.body)
   document.body.appendChild(employeeChatScreen);
+ // Both Back controls must share the SAME coordinate origin. The room
+ // button previously lived inside #svcpConversation (a flex/scroll layer),
+ // so absolute top/left measured against a different box and visibly
+ // jumped when going from the inbox to Sayvi. Mount it at the screen root
+ // ONCE, preserving the same button and all business-command listeners.
+ const roomBack=$('svcpConversationStandaloneBack');
+ if(roomBack&&employeeChatScreen&&roomBack.parentElement!==employeeChatScreen)
+  employeeChatScreen.appendChild(roomBack);
  // The single avatar remains a static identity indicator in the heading.
  // The single live task list belongs under "Мои дела", never in Cabinet.
  // Reparent rather than clone to retain history, storage and action handlers.
