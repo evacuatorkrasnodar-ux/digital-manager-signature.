@@ -112,6 +112,35 @@
 :host([data-task-tools="true"]) .sv-history-dual .sv-review-cards-control{display:grid}
 :host([data-task-tools="true"]) .sv-history-dual .sv-history-select{display:none!important}
 :host([data-history="true"]) .sv-review-cards-control{display:none!important}
+/* Cabinet's two existing actions occupy the same pearl capsule as
+   My Tasks; no new controls or old left-side Back button. */
+:host([data-business-tools="true"]) .sv-history-dual{
+ grid-column:3/5;grid-row:1;justify-self:end;align-self:center;
+ display:flex;align-items:center;justify-content:center;
+ width:92px;height:44px;margin:0;padding:0 4px;gap:0;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88));
+ border-radius:999px;background:var(--sv-white-pearl-surface,rgba(255,255,255,.18));
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 7px 21px rgba(42,52,72,.105));
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%));
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%));
+}
+:host([data-business-tools="true"]) .sv-history-dual :is(.sv-history-search,.sv-history-select){
+ display:none!important;
+}
+:host([data-business-tools="true"]) .sv-history-dual :is(.sv-review-cards-control,.action),
+:host([data-business-tools="true"]) .sv-history-dual :is(.sv-review-cards-control,.action):is(:active,:hover,:focus){
+ display:grid;flex:0 0 42px;width:42px;min-width:42px;max-width:42px;
+ height:42px;min-height:42px;max-height:42px;
+ margin:0;padding:0;border:0;border-radius:50%;
+ background:transparent;background-image:none;box-shadow:none;
+ -webkit-backdrop-filter:none;backdrop-filter:none;
+ opacity:1;filter:none;transform:none;translate:none;scale:1;
+ transition:none;animation:none;
+}
+:host([data-business-tools="true"]) .sv-history-dual .sv-review-cards-control{order:1}
+:host([data-business-tools="true"]) .sv-history-dual .action{order:2}
+:host([data-business-tools="true"]) .title{pointer-events:none}
+
 :host([data-task-selecting="true"]) .sv-history-dual{
  width:44px;height:44px;padding:0 1px;
 }
@@ -172,6 +201,15 @@
  background:var(--sv-header-circle,#38383A);
  color:var(--sv-header-icon-ink,#F6F6F8);
  box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;opacity:1;
+}
+:host([data-theme="dark"][data-business-tools="true"]) .sv-history-dual{
+ background:var(--sv-header-circle,#38383A);
+ border:var(--sv-header-circle-border,1px solid rgba(255,255,255,.14));
+ box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
+}
+:host([data-theme="dark"][data-business-tools="true"]) .sv-history-dual :is(.sv-review-cards-control,.action),
+:host([data-theme="dark"][data-business-tools="true"]) .sv-history-dual :is(.sv-review-cards-control,.action):is(:hover,:focus,:active){
+ border:0;background:transparent;box-shadow:none;
 }
 :host([data-theme="dark"][data-task-tools="true"]) .sv-history-dual{
  background:var(--sv-header-circle,#38383A);
