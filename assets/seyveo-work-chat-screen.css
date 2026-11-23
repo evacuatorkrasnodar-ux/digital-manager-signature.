@@ -3933,35 +3933,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  --sv-msg-base:#29292B;
  --sv-msg-accent:#38383A;
 }
-/* Apple top-axis contract: 8px below the physical safe area, then 44px
-   Back / title / More. The old 80px/17px header placed the whole inbox
-   ~20px below every other SEYVEO page. This is the actual header, no spacer. */
-#svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header{
- box-sizing:border-box!important;
- grid-template-columns:44px minmax(0,1fr) 44px!important;
- grid-template-rows:44px!important;
- align-items:center!important;column-gap:6px!important;
- min-height:calc(60px + env(safe-area-inset-top,0px))!important;
- height:calc(60px + env(safe-area-inset-top,0px))!important;
- padding:calc(8px + env(safe-area-inset-top,0px))
-  max(14px,env(safe-area-inset-right,0px)) 8px
-  max(14px,env(safe-area-inset-left,0px))!important;
- margin:0!important;flex:0 0 auto!important;
- border:0!important;background:transparent!important;
- box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
-#svcpWorkChatScreen[data-view="inbox"] .svcp-work-chat-heading{
- align-content:center!important;gap:0!important;
-}
-#svcpWorkChatScreen[data-view="inbox"] .svcp-work-chat-heading h1{
- font-size:25px!important;line-height:1.16!important;font-weight:630!important;
- letter-spacing:-.035em!important;text-align:center!important;
-}
-#svcpWorkChatScreen[data-view="inbox"] .svcp-work-chat-heading small{
- position:absolute!important;width:1px!important;height:1px!important;
- padding:0!important;margin:-1px!important;overflow:hidden!important;
- clip-path:inset(50%)!important;white-space:nowrap!important;
-}
+/* remove duplicated inbox header geometry/title: governed by the original Messages inbox action component. */
 #svcpWorkChatScreen[data-view="inbox"] .svcp-work-chat-back,
 #svcpWorkChatScreen[data-view="inbox"] .svcp-directory-search-toggle{
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
@@ -4125,9 +4097,6 @@ html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!import
  --sv-msg-accent:#38383A;
  --sv-msg-muted:#66707a;
 }
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header{
- background:transparent!important;
-}
 html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters{
  background:rgba(226,234,242,.46)!important;
  border:.75px solid rgba(203,211,222,.38)!important;
@@ -4152,33 +4121,7 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] #svcpC
  background:rgba(246,248,251,.93)!important;
  border:.75px solid rgba(190,202,214,.50)!important;
 }
-/* History uses the same real white-pearl button as Back, not a second
-   graphite language. The original history action keeps its handler. */
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] .svcp-work-chat-header > #svcpWorkHistoryTop{
- width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
- padding:9px!important;
- border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
- background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
- color:var(--sv-white-pearl-ink,#0b0b0d)!important;
- box-shadow:var(--sv-white-pearl-circle-shadow,0 8px 20px rgba(42,52,72,.11))!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
-}
-/* Light inbox back: 44px approved white-pearl circle, not the old graphite.
-   Other nav actions and conversation room remain unchanged. */
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="inbox"] .svcp-work-chat-back{
- box-sizing:border-box!important;
- width:44px!important;min-width:44px!important;
- height:44px!important;min-height:44px!important;
- border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
- border-radius:50%!important;
- background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
- background-image:none!important;color:var(--sv-white-pearl-ink,#0b0b0d)!important;
- box-shadow:var(--sv-white-pearl-circle-shadow,0 8px 20px rgba(42,52,72,.11))!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
-}
-
+/* remove obsolete white header/history skins: governed by the original Messages inbox action component. */
 @media(max-width:355px){
  #svcpWorkChatScreen[data-view="inbox"] #svcpChatDirectory .svcp-chat-filters button{
   font-size:11px!important;
@@ -5781,22 +5724,7 @@ html body #svcpWorkChatScreen .svcp-work-history-delete:focus-visible{
 }
 
 
-/* SEYVEO Work Chat history · same navigation and hierarchy as Sayvi history.
-   One clock in the existing upper-right header; no fifth tab in the inbox. */
-html body #svcpWorkChatScreen .svcp-work-chat-header > #svcpWorkHistoryTop{
- display:grid!important;place-items:center!important;
- flex:0 0 44px!important;width:44px!important;height:44px!important;
- min-width:44px!important;min-height:44px!important;
- margin:0!important;padding:9px!important;
- border:0!important;border-radius:50%!important;
- background:transparent!important;color:var(--text)!important;
- box-shadow:none!important;
-}
-html body #svcpWorkChatScreen .svcp-work-chat-header > #svcpWorkHistoryTop svg{
- width:22px!important;height:22px!important;fill:none!important;
- stroke:currentColor!important;stroke-width:1.6!important;
- stroke-linecap:round!important;stroke-linejoin:round!important;
-}
+/* remove obsolete hidden history header button decoration: governed by the original Messages inbox action component. */
 html body #svcpWorkChatScreen #svcpWorkHistory[hidden],
 html body #svcpWorkChatScreen #svcpWorkHistory [hidden]{display:none!important}
 html body #svcpWorkChatScreen #svcpWorkHistory{
