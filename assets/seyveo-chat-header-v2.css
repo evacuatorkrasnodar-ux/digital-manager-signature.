@@ -122,6 +122,14 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  color:rgba(255,255,255,.90)!important;white-space:nowrap!important;
  text-align:center!important;overflow:hidden!important;text-overflow:ellipsis!important;opacity:1!important;
 }
+/* White-room frosted header: scrolling messages recede behind the avatar
+   rather than remaining sharply legible through the identity. The fade lives
+   on the EXISTING header (no extra sheet, pseudo-overlay or hit target). */
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2{
+ background:linear-gradient(180deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.65) 62%,rgba(255,255,255,0) 100%)!important;
+ -webkit-backdrop-filter:blur(9px) saturate(106%)!important;
+ backdrop-filter:blur(9px) saturate(106%)!important;
+}
 /* WHITE PEARL · exact same specificity and ancestry as the shared title.
    Previously the weaker pearl text selector lost to the default white-on-blue
    rule: the name became invisible on a white capsule. No geometry changes. */
