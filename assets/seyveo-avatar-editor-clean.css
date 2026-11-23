@@ -5,6 +5,26 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
  --svav-soft:rgba(140,155,174,.105);
  --svav-hair:rgba(127,142,161,.13);
 }
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]{
+ pointer-events:auto!important;touch-action:auto!important;
+ z-index:1000!important;isolation:isolate!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-backdrop{
+ pointer-events:none!important;display:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-panel{
+ pointer-events:auto!important;position:relative!important;z-index:1!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] :is(.sv-inbox-sheet-body,.sv-new-avatar-editor,.sv-new-avatar-views,.sv-new-avatar-grid,.sv-new-avatar-tabs,.sv-new-avatar-footer){
+ pointer-events:auto!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] :is(.sv-inbox-sheet-back,.sv-new-avatar-tab,.sv-new-avatar-choice,.sv-new-avatar-color,.sv-new-avatar-reset,.sv-new-avatar-save,.sv-new-avatar-photo-pick){
+ pointer-events:auto!important;touch-action:manipulation!important;
+ -webkit-tap-highlight-color:transparent!important;cursor:pointer!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-body{
+ touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important;
+}
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-panel{
  box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
  width:100%!important;max-width:100%!important;
