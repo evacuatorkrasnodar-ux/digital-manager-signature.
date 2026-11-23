@@ -342,6 +342,7 @@ function toggleDirectorySearch(forceOpen){
  }
 }
 $('svcpDirectorySearchClose')?.addEventListener('click',()=>toggleDirectorySearch(false));
+window.addEventListener('seyveo:messages-open-search',()=>toggleDirectorySearch(true));
 $('svcpHistorySearch')?.addEventListener('keydown',event=>{
  if(event.key==='Escape'){event.preventDefault();toggleDirectorySearch(false)}
 });
@@ -588,8 +589,6 @@ function showSettings(){
  sectionHeading('Список чатов');
  settingToggle('compact','Компактные чаты','Больше чатов на экране');
  settingToggle('previews','Предпросмотр','Текст последнего сообщения');
- sectionHeading('История');
- menuLink('История разговоров','Сообщения и поручения','clock',()=>{closeSheet();history.click()});
  // Quiet discovery for the owner only; never mix personal content with work data.
  if(!employee()){
   const invite=node('button','sv-inbox-one-promo');
@@ -664,10 +663,7 @@ function showNotifications(){
 function showData(){
  sectionHeading('Разные функции');
  menuLink('Архив','Скрытые из основного списка чаты; сообщения сохранены','archive',()=>openSubSheet('archives','data'));
- menuLink('История разговоров','Поиск и управление локальной историей сообщений и поручений','clock',()=>{
-  closeSheet();history.click();
- });
- body.append(node('p','sv-inbox-hint','Архив не удаляет сообщения. История содержит разговоры и поручения, включая неархивные.'));
+ body.append(node('p','sv-inbox-hint','Для поиска старой переписки используйте лупу в Сообщениях. Архив скрывает чат из списка, но не удаляет сообщения.'));
 }
 function showTeamStructure(){
  // Read live local demo rooms. Do not invent branches, users or server-side permissions.
@@ -746,7 +742,7 @@ function showInvite(){
  body.append(form,result);
 }
 function showArchives(){
- const archived=allRooms().filter(r=>roomState(r.id).archived&&(!employee()||['general','team','docs','dm-elena','dm-sayvi'].includes(r.id)||r.members?.includes('elena')));
+ const archived=allRooms().filter(r=>roomState(r.id).archived);
  if(!archived.length){body.append(node('p','sv-inbox-hint','В архиве пока нет переписок.'));return}
  archived.forEach(r=>{
   const row=node('div','sv-inbox-archive-row');
