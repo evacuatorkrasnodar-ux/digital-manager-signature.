@@ -186,14 +186,17 @@ html body #svcpWorkChatScreen[data-view="room"]
  background:transparent!important;border:0!important;box-shadow:none!important;
  transform:none!important;pointer-events:auto!important;
 }
-/* A room without a visible avatar has no 56px portrait above its
-   name. The inherited -15px overlap pushed the title off-screen.
-   Put its existing name pill on the same centerline as the Back button;
-   retain the 6px subtitle gap and the original theme materials. */
+/* Group chats have no header portrait. Keep their title at the
+   Back-button level, and let PERSONAL chats tuck over their real avatar. */
 html body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation:not([data-room-id="dm-sayvi"])
+ #svcpConversation[data-room-kind="groups"]
  > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
  margin:16px 0 0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header .svcp-room-identity #svcpConversationHeading{
+ margin:-14px 0 0!important;
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-room-id="dm-sayvi"]
@@ -323,4 +326,149 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]
  > .svcp-minimal-identity-header #svcpConversationHeading .svcp-room-name-pill{
  box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+}
+
+/* Unified Sayvi chat header · White Pearl and Sky.
+   Every current/new Work Chat shares this SAME markup. Non-Sayvi
+   personal rooms show an existing real/customized avatar or monogram;
+   groups keep no avatar. Never recolor one theme with the other. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header .svcp-room-identity #svcpRoomAvatar{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;position:relative!important;
+ flex:0 0 56px!important;width:56px!important;height:56px!important;
+ min-width:56px!important;min-height:56px!important;
+ max-width:56px!important;max-height:56px!important;
+ top:auto!important;left:auto!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ box-shadow:none!important;overflow:hidden!important;
+ font-size:22px!important;line-height:1!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpRoomAvatar:not(.sv-inbox-avatar-custom){
+ background:#E4EFF9!important;background-image:none!important;
+ color:#243746!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-room-kind="personal"]:not([data-room-id="dm-sayvi"])[data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpRoomAvatar:not(.sv-inbox-avatar-custom){
+ background:rgba(18,84,169,.88)!important;background-image:none!important;
+ color:#FFFFFF!important;
+}
+/* The existing named capsule is the canonical compact 28px Sayvi style.
+   Long contact/group names ellipsize; no second frame or replacement DOM. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:4px!important;box-sizing:border-box!important;
+ width:max-content!important;min-width:0!important;
+ max-width:min(242px,calc(100vw - 122px))!important;
+ height:28px!important;min-height:28px!important;max-height:28px!important;
+ margin:0 auto!important;padding:3px 10px!important;
+ border-radius:999px!important;filter:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill strong#svcpConversationTitle{
+ display:block!important;position:static!important;
+ flex:0 1 auto!important;min-width:0!important;max-width:100%!important;
+ margin:0!important;padding:0!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ font-size:16px!important;line-height:20px!important;font-weight:600!important;
+ letter-spacing:-.02em!important;text-align:center!important;
+ transform:translateY(-1.5px)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill svg{
+ flex:0 0 13px!important;display:block!important;
+ width:13px!important;height:13px!important;
+ min-width:13px!important;min-height:13px!important;
+ margin:0!important;padding:0!important;
+ fill:none!important;stroke-width:3!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ transform:translateY(-.5px)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"])
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading #svcpConversationDetail{
+ display:block!important;position:static!important;
+ min-width:0!important;max-width:242px!important;
+ margin:6px 0 0!important;padding:0!important;
+ font-size:11px!important;line-height:15px!important;
+ text-align:center!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+}
+/* Blue and white palettes are STRICTLY separate; keep Sayvi references. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill{
+ background:rgba(8,99,191,.72)!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill strong#svcpConversationTitle{
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill svg,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill svg path{
+ color:#9FDBFF!important;stroke:#9FDBFF!important;stroke-width:3!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading #svcpConversationDetail{
+ color:rgba(255,255,255,.88)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill{
+ background:rgba(249,249,251,.88)!important;background-image:none!important;
+ border:.75px solid rgba(225,228,232,.72)!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(105%)!important;
+ backdrop-filter:blur(12px) saturate(105%)!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill strong#svcpConversationTitle{
+ color:#20262D!important;-webkit-text-fill-color:#20262D!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill svg,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill svg path{
+ color:#77818D!important;stroke:#77818D!important;stroke-width:3!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="pearl"]
+ > .svcp-minimal-identity-header .svcp-room-identity
+ #svcpConversationHeading #svcpConversationDetail{
+ color:#777F89!important;
 }
