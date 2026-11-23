@@ -67,7 +67,7 @@
  // Shadow DOM, so old app styles cannot remove Back's circular material.
  const workHeader=window.SEYVEO_WORK_HEADER?.create();
  if(!workHeader)throw new Error('SEYVEO Work header module is missing');
- const {host:heading,back,title,month,calendarJump,add}=workHeader;
+ const {host:heading,back,title,month,add}=workHeader;
  // The current calendar period occupies the center of the shared header,
  // aligned between Back and Add; the month grid retains its original structure.
  const calendarPeriodLabel=document.getElementById('calendarPeriodTitle');
@@ -137,15 +137,14 @@
  back.dataset.svHeaderIcon='back';
  add.dataset.svHeaderIcon='add';
  shell.prepend(heading);
- // Keep the full Calendar on its clearly labelled control. The month heading
- // in the agenda behaves like the native Today shortcut instead.
- calendarJump.addEventListener('click',()=>{
+ // The visible month is the ONLY calendar entrance in My Tasks. No
+ // second title row or redundant "Все календари" button.
+ month.setAttribute('aria-label','Открыть календарь');
+ month.addEventListener('click',()=>{
   location.hash='#calendar';
   resetWorkScroll();
   requestAnimationFrame(sync);
  });
- month.setAttribute('aria-label','Вернуться к сегодняшнему дню');
- month.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:agenda-go-today')));
  document.addEventListener('seyveo:agenda-month-changed',event=>{
   const detail=event.detail||{};
   if(detail.month)month.querySelector('.month-name').textContent=detail.month;
@@ -549,7 +548,6 @@
   if(active==='calendar'&&!history&&!nested)syncCalendarPeriod();
   const showMonth=active==='personal'&&!history&&!nested&&visible;
   month.hidden=!showMonth;
-  calendarJump.hidden=!showMonth;
   heading.dataset.agenda=String(showMonth);
   // Both the agenda and «Все дела» use a fixed shell with a native inner
   // scroll area. Only the agenda has the month and seven-day strip.
