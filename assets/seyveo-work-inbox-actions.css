@@ -2115,3 +2115,34 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="new"] .sv-
  background:#38383a!important;color:#f6f6f8!important;
  box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
+
+
+/* All four Messages sheets share one pearl header — no old drag bar. */
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-panel > .sv-inbox-sheet-grab{
+ display:none!important;height:0!important;margin:0!important;padding:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-panel > .sv-inbox-sheet-head{
+ border-bottom:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay .sv-inbox-sheet-head > .sv-inbox-sheet-back:is(:active,:hover){
+ transform:none!important;scale:1!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-list .sv-inbox-contact-avatar.svcp-native-avatar-host{
+ overflow:hidden!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;padding:0!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-participant-list .sv-inbox-contact-avatar.svcp-native-avatar-host > :is(img,span){
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;width:100%!important;height:100%!important;
+ border-radius:50%!important;object-fit:cover!important;overflow:hidden!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-one-mark,
+html body #svcpWorkChatScreen .sv-inbox-one-detail-mark{
+ font-size:0!important;color:transparent!important;
+ background-color:#15392f!important;
+ background-image:url("./seyveo-pwa-circular-s-192.png?v=1")!important;
+ background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="one"] .sv-inbox-one-detail{
+ padding-top:16px!important;
+}
