@@ -116,16 +116,15 @@ function updateHeaderAvatar(){
   if(target.classList.contains('sv-inbox-avatar-custom'))clearAvatarStyle(target);
   return;
  }
- const spec=roomState(id).avatar;
- if(spec)paintAvatar(target,spec);
- else if(target.classList.contains('sv-inbox-avatar-custom'))restoreAvatar(target,id);
+ // Other people's avatars are not editable from the manager's browser.
 }
 function showAvatarEditor(id){
- const self=id==='self',info=self?null:roomInfo(id);
+ if(id!=='self')return;
+ const self=true,info=null;
  if(!self&&(!info||info.person==='sayvi')){
   body.append(node('p','sv-inbox-hint','Фирменный значок Сэйви не изменяется.'));return;
  }
- const old=self?prefs.myProfile?.avatar:roomState(id).avatar;
+ const old=readActualSelfAvatar();
  let draft=safeAvatar(old)||{
   kind:'monogram',color:AVATAR_COLORS[0],
   initials:String(self?(prefs.myProfile?.name||'Я'):(info?.label||'?')).trim().slice(0,1).toLocaleUpperCase('ru-RU'),
@@ -172,6 +171,27 @@ function showAvatarEditor(id){
   emojiButtons.push(b);emojiGrid.append(b);
  }
  emojiPanel.append(emojiGrid);
+ const atlasPanel=node('div','sv-inbox-avatar-mode sv-atlas-mode');
+ const filters=node('div','sv-atlas-filters'),atlasGrid=node('div','sv-atlas-grid');
+ atlasPanel.append(filters,atlasGrid);
+ let filter='Все';
+ function build3D(){
+  filters.replaceChildren();atlasGrid.replaceChildren();
+  for(const group of ['Все','Герои','Космос','Мультики','Фрукты']){
+   const b=node('button','sv-atlas-filter',group);b.type='button';
+   b.setAttribute('aria-pressed',String(filter===group));
+   b.addEventListener('click',()=>{filter=group;build3D()});filters.append(b);
+  }
+  AVATAR_3D.forEach(([title,group],index)=>{
+   if(filter!=='Все'&&filter!==group)return;
+   const b=node('button','sv-atlas-choice');b.type='button';
+   b.setAttribute('aria-label',title);
+   b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===index));
+   b.append(atlasMark(index),node('small',null,title));
+   b.addEventListener('click',()=>{draft.kind='atlas';draft.index=index;draw()});
+   atlasGrid.append(b);
+  });
+ }
  const photoPanel=node('div','sv-inbox-avatar-mode');
  const photoLabel=node('label','sv-inbox-avatar-photo-select');
  photoLabel.append(node('span',null,'Выбрать фото из галереи'));
@@ -179,10 +199,11 @@ function showAvatarEditor(id){
  fileInput.type='file';fileInput.accept='image/*';
  fileInput.setAttribute('aria-label','Загрузить фотографию аватара');
  photoLabel.append(fileInput);photoPanel.append(photoLabel);
+ const atlasButton=node('button','sv-inbox-avatar-method','3D');
  const monoButton=node('button','sv-inbox-avatar-method','Буквы');
  const emojiButton=node('button','sv-inbox-avatar-method','Эмодзи');
  const photoButton=node('button','sv-inbox-avatar-method','Фото');
- for(const [kind,b] of [['monogram',monoButton],['emoji',emojiButton],['photo',photoButton]]){
+ for(const [kind,b] of [['atlas',atlasButton],['emoji',emojiButton],['monogram',monoButton],['photo',photoButton]]){
   b.type='button';b.addEventListener('click',()=>{
    draft.kind=kind;draw();
    if(kind==='photo'&&!draft.image)fileInput.click();
@@ -191,7 +212,7 @@ function showAvatarEditor(id){
   methodButtons.push(b);methods.append(b);
  }
  form.append(methods);
- panels.append(monoPanel,emojiPanel,photoPanel);
+ panels.append(atlasPanel,monoPanel,emojiPanel,photoPanel);
  form.append(panels);
  const palette=node('div','sv-inbox-avatar-palette');
  palette.setAttribute('role','group');palette.setAttribute('aria-label','Цвет фона');
@@ -206,7 +227,7 @@ function showAvatarEditor(id){
  form.append(palette);
  const status=node('p','sv-inbox-avatar-status');
  status.setAttribute('role','status');
- const privacy=node('p','sv-inbox-hint','Фото и оформление хранятся только в этом браузере. Коллегам они не отправляются.');
+ const privacy=node('p','sv-inbox-hint','Каждый меняет только свой аватар. Пока выбор хранится на этом устройстве и не синхронизируется с телефонами коллег.');
  const actions=node('div','sv-inbox-avatar-actions');
  const reset=node('button','sv-inbox-avatar-reset','Сбросить');reset.type='button';
  const save=node('button','sv-inbox-submit','Сохранить');save.type='submit';
@@ -220,10 +241,12 @@ function showAvatarEditor(id){
   for(const b of emojiButtons)b.setAttribute('aria-pressed',String(b.textContent===draft.emoji));
   for(let i=0;i<swatches.length;i++)
    swatches[i].setAttribute('aria-pressed',String(AVATAR_COLORS[i]===draft.color));
+  build3D();
+  atlasPanel.hidden=draft.kind!=='atlas';
   monoPanel.hidden=draft.kind!=='monogram';
   emojiPanel.hidden=draft.kind!=='emoji';
   photoPanel.hidden=draft.kind!=='photo';
-  palette.hidden=draft.kind==='photo';
+  palette.hidden=draft.kind!=='monogram';
  }
  monogramInput.addEventListener('input',()=>{
   draft.kind='monogram';draft.initials=[...monogramInput.value.trim()].slice(0,2).join('').toLocaleUpperCase('ru-RU');draw();
@@ -254,22 +277,25 @@ function showAvatarEditor(id){
   photo.src=url;
  });
  function persist(next,resetting=false){
-  const previous=JSON.stringify(prefs);
-  if(self){
-   if(resetting)delete prefs.myProfile;
-   else prefs.myProfile={name:displayName.value.trim().slice(0,50),avatar:next};
-  }else{
-   const nextRoom={...roomState(id)};
-   if(resetting)delete nextRoom.avatar;
-   else nextRoom.avatar=next;
-   prefs.rooms[id]=nextRoom;
-  }
-  try{localStorage.setItem(KEY,JSON.stringify(prefs));return true}
-  catch{
-   try{prefs=JSON.parse(previous)}catch{}
-   status.textContent='Не удалось сохранить: локальное хранилище заполнено.';
-   return false;
-  }
+  const staff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
+  const actual=resetting?{kind:'monogram'}:next;
+  let payload;
+  if(actual.kind==='atlas')payload=staff?{kind:'atlas',index:actual.index}:{kind:'preset',id:'3d-'+actual.index};
+  else if(actual.kind==='photo')payload={kind:'photo',data:actual.image};
+  else if(actual.kind==='emoji')payload={kind:'emoji',emoji:actual.emoji};
+  else payload=staff?{kind:'monogram'}:{kind:'preset',id:'monogram'};
+  try{
+   if(staff){
+    const raw=JSON.parse(localStorage.getItem(STAFF_AVATAR_KEY)||'{}');
+    const records=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
+    records.elena=payload;localStorage.setItem(STAFF_AVATAR_KEY,JSON.stringify(records));
+   }else localStorage.setItem(OWNER_AVATAR_KEY,JSON.stringify(payload));
+   prefs.myProfile={...prefs.myProfile,name:displayName.value.trim().slice(0,50),avatar:next};
+   localStorage.setItem(KEY,JSON.stringify(prefs));
+  }catch{status.textContent='Не удалось сохранить. Проверьте свободное место.';return false}
+  window.dispatchEvent(new Event('seyveo:avatar-changed'));
+  window.dispatchEvent(new CustomEvent('seyveo:self-avatar-updated',{detail:{person:staff?'elena':'manager'}}));
+  return true;
  }
  reset.addEventListener('click',()=>{
   if(!persist(null,true))return;
@@ -344,7 +370,7 @@ function makeContactRow(r,fn){
  if(r.id==='dm-sayvi')avatar.classList.add('is-sayvi','sv-sayvi-avatar');
  avatar.setAttribute('aria-hidden','true');
  row.prepend(avatar);
- if(r.person!=='sayvi')paintAvatar(avatar,roomState(r.id).avatar);
+ // Contact picture is supplied by the contact's own identity.
  const copy=row.querySelector('span:not(.sv-inbox-contact-avatar)');
  if(copy&&r.hint){
   const role=r.hint.split(' · ')[0].trim();
@@ -516,7 +542,7 @@ function showNotifications(){
   const item=node('label','sv-inbox-ios-row sv-inbox-ios-person');
   const avatar=node('span','sv-inbox-ios-avatar',r.label.slice(0,1));
   avatar.setAttribute('aria-hidden','true');
-  paintAvatar(avatar,roomState(r.id).avatar);
+  // No contact-specific portrait overrides.
   const copy=node('span','sv-inbox-ios-copy');
   copy.append(node('strong',null,r.label));
   const control=iosSwitch(roomState(r.id).muted,'Без звука: '+r.label,checked=>updateRoom(r.id,'muted',checked));
