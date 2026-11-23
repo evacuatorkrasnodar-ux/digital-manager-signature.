@@ -97,9 +97,9 @@ function readActualSelfAvatar(){
   if(item?.kind==='photo'&&typeof item.data==='string'&&item.data.length<320000&&
    /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(item.data))
    return {kind:'photo',image:item.data};
-  if(item?.kind==='atlas'&&Number.isInteger(item.index)&&item.index>=0&&item.index<AVATAR_3D.length)
+  if(item?.kind==='atlas'&&item.customChosen===true&&Number.isInteger(item.index)&&item.index>=0&&item.index<AVATAR_3D.length)
    return {kind:'atlas',index:item.index};
-  if(item?.kind==='preset'&&/^3d-\d{1,2}$/.test(item.id||'')){
+  if(item?.kind==='preset'&&item.customChosen===true&&/^3d-\d{1,2}$/.test(item.id||'')){
    const index=Number(item.id.slice(3));
    if(index<AVATAR_3D.length)return {kind:'atlas',index};
   }
