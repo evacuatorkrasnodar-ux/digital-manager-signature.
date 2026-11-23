@@ -145,7 +145,9 @@ function showAvatarEditor(id){
   displayName.type='text';displayName.maxLength=50;
   displayName.autocomplete='nickname';
   displayName.placeholder='Ваше имя';
-  displayName.value=typeof prefs.myProfile?.name==='string'?prefs.myProfile.name:'';
+  const employeeSelf=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
+  displayName.value=employeeSelf?'Елена':typeof prefs.myProfile?.name==='string'?prefs.myProfile.name:'';
+  if(employeeSelf){displayName.readOnly=true;displayName.setAttribute('aria-label','Елена · учебный профиль')}
   nameLabel.append(displayName);form.append(nameLabel);
  }
  const methods=node('div','sv-inbox-avatar-methods');
@@ -290,7 +292,8 @@ function showAvatarEditor(id){
     const records=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
     records.elena=payload;localStorage.setItem(STAFF_AVATAR_KEY,JSON.stringify(records));
    }else localStorage.setItem(OWNER_AVATAR_KEY,JSON.stringify(payload));
-   prefs.myProfile={...prefs.myProfile,name:displayName.value.trim().slice(0,50),avatar:next};
+   if(staff)prefs.employeeProfile={...prefs.employeeProfile,name:'Елена',avatar:next};
+   else prefs.myProfile={...prefs.myProfile,name:displayName.value.trim().slice(0,50),avatar:next};
    localStorage.setItem(KEY,JSON.stringify(prefs));
   }catch{status.textContent='Не удалось сохранить. Проверьте свободное место.';return false}
   window.dispatchEvent(new Event('seyveo:avatar-changed'));
