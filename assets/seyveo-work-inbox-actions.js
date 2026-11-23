@@ -227,6 +227,7 @@ function showAvatarEditor(){
  const galleryInput=makePhotoPicker('Из галереи',false);
  photo.append(photoChoices);
  const filterBar=node('div','sv-new-avatar-photo-filters');
+ filterBar.hidden=true;
  filterBar.setAttribute('role','group');filterBar.setAttribute('aria-label','Обработка фотографии');
  const filterButtons=[];
  let photoMode='auto',photoSource=null,photoRevision=0;
@@ -236,7 +237,7 @@ function showAvatarEditor(){
   ['portrait','Портрет']
  ];
  const status=node('p','sv-new-avatar-status');status.setAttribute('role','status');
- const photoHint=node('small','sv-new-avatar-photo-hint','Выберите снимок — он появится в круглом аватаре. Обработка выполняется на устройстве.');
+ const photoHint=node('small','sv-new-avatar-photo-hint','После снимка фото автоматически улучшится. Затем можно выбрать другой вариант обработки.');
  function repaintPhoto(){
   if(!photoSource)return;
   const revision=++photoRevision;
@@ -256,6 +257,7 @@ function showAvatarEditor(){
    if(data.length>=320000)throw new Error('size');
    if(revision!==photoRevision)return;
    draft.kind='photo';draft.image=data;tab='photo';
+   photoHint.textContent='Фото готово · Обработка на устройстве';
    status.textContent='';paint();
   }catch{status.textContent='Не удалось обработать фотографию.'}
  }
@@ -292,7 +294,7 @@ function showAvatarEditor(){
  if(draft.kind==='photo'&&draft.image){
   photoMode='original';
   const existing=new Image();
-  existing.onload=()=>{if(!photoSource)photoSource=existing};
+  existing.onload=()=>{if(!photoSource){photoSource=existing;photoHint.textContent='Выберите обработку или замените фотографию.';paint()}};
   existing.src=draft.image;
  }
  views.append(gallery,photo);
@@ -311,6 +313,8 @@ function showAvatarEditor(){
   paintAvatar(preview,draft);
   for(const b of btns)b.setAttribute('aria-pressed',String(b.dataset.mode===tab));
   gallery.hidden=tab!=='atlas';photo.hidden=tab!=='photo';
+  // Never show photo effects before a photo has been taken or chosen.
+  filterBar.hidden=!photoSource;
   for(const b of gallery.children)b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===Number(b.dataset.index)));
   for(const b of filterButtons)b.setAttribute('aria-pressed',String(b.dataset.photoMode===photoMode));
  }
