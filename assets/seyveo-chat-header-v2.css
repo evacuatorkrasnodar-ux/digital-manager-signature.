@@ -418,3 +418,42 @@ html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
  > .svcp-call-actions > .svcp-call-button:not([hidden]){
  box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
 }
+
+
+/* 2026-11-23 · Shared room controls: one fixed baseline for white/sky
+   and every employee, manager, group and Sayvi identity. Keep wallpaper
+   colors and real handlers; discard transient pressed motion/halo. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > :is(#svcpConversationStandaloneBack,.svcp-call-actions) {
+ --svcp-room-control-top:calc(14px + env(safe-area-inset-top,0px));
+ top:var(--svcp-room-control-top)!important;
+ transform:none!important;translate:none!important;scale:none!important;
+ transition:none!important;animation:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > #svcpConversationStandaloneBack,
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-call-actions > .svcp-call-button:not([hidden]){
+ box-sizing:border-box!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ margin:0!important;padding:0!important;
+ display:grid!important;place-items:center!important;flex-shrink:0!important;
+ border-radius:50%!important;
+ transform:none!important;translate:none!important;scale:none!important;
+ transition:none!important;animation:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > #svcpConversationStandaloneBack:is(:active,:hover,:focus),
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-call-actions > .svcp-call-button:not([hidden]):is(:active,:hover,:focus){
+ transform:none!important;translate:none!important;scale:none!important;
+ transition:none!important;animation:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > :is(#svcpConversationStandaloneBack,.svcp-call-actions) button::before,
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > :is(#svcpConversationStandaloneBack,.svcp-call-actions) button::after{
+ transform:none!important;animation:none!important;
+}
