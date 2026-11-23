@@ -551,12 +551,12 @@ function showNotifications(){
  const display=section('В списке сообщений');
  const unread=node('label','sv-inbox-ios-row sv-inbox-ios-unread');
  const unreadCopy=node('span','sv-inbox-ios-copy');
- unreadCopy.append(node('strong',null,'Непрочитанные'),node('small',null,'Выделять в списке чатов'));
+ unreadCopy.append(node('strong',null,'Выделять непрочитанные'),node('small',null,'Подсветка чатов с новыми сообщениями'));
  unread.append(unreadCopy,iosSwitch(prefs.showUnread!==false,'Выделять непрочитанные',checked=>{
   prefs.showUnread=checked;savePrefs();decorateRows();
  }));
  display.append(unread);
- const quiet=section('Без звука');
+ const quiet=section('Отключить звук для чатов');
  const allowed=allRooms().filter(r=>r.kind==='personal'&&r.person!=='sayvi'&&(!employee()||r.id==='dm-elena'));
  for(const r of allowed){
   const item=node('label','sv-inbox-ios-row sv-inbox-ios-person');
@@ -565,7 +565,7 @@ function showNotifications(){
   // No contact-specific portrait overrides.
   const copy=node('span','sv-inbox-ios-copy');
   copy.append(node('strong',null,r.label));
-  const control=iosSwitch(roomState(r.id).muted,'Без звука: '+r.label,checked=>updateRoom(r.id,'muted',checked));
+  const control=iosSwitch(roomState(r.id).muted,'Отключить звук для чата '+r.label,checked=>updateRoom(r.id,'muted',checked));
   item.append(avatar,copy,control);quiet.append(item);
  }
  if(!allowed.length){
