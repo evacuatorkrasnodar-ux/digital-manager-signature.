@@ -186,13 +186,8 @@ html:root[data-theme="light"] body dialog#noteReviewDialog[open]
  box-shadow:var(--sv-note-gold-shadow)!important;
 }
 
-/* One press recipe for New Note (independent right-side round button). */
-html:root[data-theme="light"] body dialog#noteReviewDialog[open]
- .sv-note-home-new-dock > #svNoteHomeNew:active{
- background:var(--sv-white-pearl-press-fill)!important;
- box-shadow:var(--sv-white-pearl-press-shadow)!important;
- transform:translateY(.2px) scale(var(--sv-white-pearl-press-scale))!important;
-}
+/* New Note remains a stationary White Pearl circle in ALL pointer states.
+   Old :active inset shadow and translate/scale intentionally removed. */
 
 /* Flat *inner* tool buttons: no old inset discs inside narrow capsules.
    Keep native ink color sample, focus ring and all pointer/touch handlers. */
