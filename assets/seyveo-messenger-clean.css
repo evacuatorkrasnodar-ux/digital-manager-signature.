@@ -1202,3 +1202,28 @@ html:root[data-theme="dark"] body #svcpWorkChatScreen > #svcpWorkChatBack:is(:ho
 html:root[data-theme="dark"] body #svcpWorkChatScreen > #svcpWorkChatBack svg{
  stroke:#f6f7f8!important;
 }
+
+/* SKY CHAT · same sapphire glass and shadow as Elena's 44px call buttons. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack:is(:active,:hover,:focus){
+ background:var(--sv-chat-blue-surface,rgba(11,84,174,.68))!important;
+ background-image:none!important;
+ border:var(--sv-chat-blue-edge,1px solid rgba(3,70,151,.32))!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow,0 3px 11px rgba(5,53,111,.14),0 1px 4px rgba(5,53,111,.065))!important;
+ color:#fff!important;
+ -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
+ backdrop-filter:blur(13px) saturate(110%)!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack svg{
+ stroke:#fff!important;fill:none!important;
+}
+/* The two call controls, +, title pill and composer ::before already
+   share sapphire shadow tokens in the theme sheets. Keep the message
+   bubbles flat, and avoid a second grey shadow on the composer wrapper. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm{
+ box-shadow:none!important;
+}
