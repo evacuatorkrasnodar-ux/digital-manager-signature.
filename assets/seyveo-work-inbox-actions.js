@@ -510,8 +510,10 @@ function showGroupForm(){
  ];
  for(const p of people){
   const line=node('label','sv-inbox-participant-row');
-  const avatar=node('span','sv-inbox-contact-avatar',p.name.charAt(0));
+  const avatar=node('span','sv-inbox-contact-avatar svcp-directory-avatar');
   avatar.setAttribute('aria-hidden','true');
+  // Same person-owned avatar used by the main chat list. No temporary letters.
+  window.SEYVEO_BUSINESS_COMMAND?.paintContactAvatar?.(avatar,'dm-'+p.id);
   const copy=node('span','sv-inbox-participant-copy');
   copy.append(node('strong',null,p.name),node('small',null,p.role));
   const check=node('input','sv-inbox-participant-check');
@@ -619,7 +621,7 @@ function showSettings(){
   const invite=node('button','sv-inbox-one-promo');
   invite.type='button';
   invite.setAttribute('aria-label','О SEYVEO One: личные и семейные чаты');
-  const emblem=node('span','sv-inbox-one-mark','S');emblem.setAttribute('aria-hidden','true');
+  const emblem=node('span','sv-inbox-one-mark');emblem.setAttribute('aria-hidden','true');
   const info=node('span','sv-inbox-one-copy');
   info.append(node('strong',null,'Личное общение · SEYVEO One'),
               node('small',null,'Семья и друзья — отдельно от работы'));
@@ -632,16 +634,13 @@ function showSettings(){
 }
 function showOneInfo(){
  const info=node('div','sv-inbox-one-detail');
- const mark=node('span','sv-inbox-one-detail-mark','S');mark.setAttribute('aria-hidden','true');
+ const mark=node('span','sv-inbox-one-detail-mark');mark.setAttribute('aria-hidden','true');
  info.append(mark,node('strong',null,'SEYVEO One'),
   node('p',null,'Для разговоров с семьёй и друзьями — отдельное личное пространство, не связанное с рабочими чатами.'));
  const benefits=node('p','sv-inbox-one-detail-note',
   'Семейные чаты входят в предложение SEYVEO One. Доступ и условия подписки уточняются при подключении.');
  info.append(benefits);
- const backToSettings=node('button','sv-inbox-one-return','Вернуться к настройкам');
- backToSettings.type='button';
- backToSettings.addEventListener('click',()=>{const previous=sheetStack.pop();openSheet(previous?.type||'settings',previous?.id||'',true)});
- info.append(backToSettings);
+ // The shared header back button already returns to Settings.
  body.append(info);
 }
 function showNotifications(){
