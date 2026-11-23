@@ -2244,7 +2244,7 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
    sprite. Saved legacy indices 0–11 remain mapped to their original art. */
 html body #svcpWorkChatScreen .sv-atlas-thumb.sv-atlas-collection-64,
 html body #svcpWorkChatScreen .sv-inbox-avatar-custom .sv-atlas-thumb.sv-atlas-collection-64{
- background-image:url('./seyveo-avatars-64-hq.webp?v=2')!important;
+ background-image:url('./seyveo-avatars-64-fixed.webp?v=1')!important;
  background-repeat:no-repeat!important;
  background-size:800% 800%!important;
  background-color:transparent!important;
@@ -2252,7 +2252,7 @@ html body #svcpWorkChatScreen .sv-inbox-avatar-custom .sv-atlas-thumb.sv-atlas-c
 }
 html body #svcpWorkChatScreen .svcp-native-avatar.svcp-atlas-avatar.svcp-collection-avatar,
 html body #svcpWorkChatScreen .svcp-atlas-avatar.svcp-collection-avatar{
- background-image:url('./seyveo-avatars-64-hq.webp?v=2')!important;
+ background-image:url('./seyveo-avatars-64-fixed.webp?v=1')!important;
  background-repeat:no-repeat!important;
  background-size:800% 800%!important;
  background-color:transparent!important;
