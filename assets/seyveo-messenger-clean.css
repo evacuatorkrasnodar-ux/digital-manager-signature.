@@ -1,6 +1,8 @@
 /* SEYVEO Messenger rebuilt 2026-11-23. Visual foundation + one canonical layout. */
-html.svcp-work-chat-active,html.svcp-work-chat-active body{overflow:hidden!important;overscroll-behavior:none}
-html.svcp-work-chat-active .app{overflow:hidden!important}
+/* The fullscreen messenger alone clips its own scroll surface.
+   Keep the app scrolling model unchanged across Cabinet -> Chats: Safari
+   otherwise rebuilds the underlying scroll layer on every switch. */
+html.svcp-work-chat-active #svcpWorkChatScreen{overscroll-behavior:contain}
 /* Messenger inbox is a focused subpage without dock. The original dock
    remains mounted for Home/other screens and the room keeps its composer. */
 html.svcp-work-chat-active #svcpWorkChatScreen > footer.dock{display:none!important}
