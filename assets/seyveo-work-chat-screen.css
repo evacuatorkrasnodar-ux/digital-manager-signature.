@@ -7137,7 +7137,7 @@ html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation > #svcpConversationStandaloneBack{
  position:absolute!important;
  top:calc(8px + env(safe-area-inset-top,0px))!important;
- left:max(10px,env(safe-area-inset-left,0px))!important;
+ left:max(14px,env(safe-area-inset-left,0px))!important;
  z-index:35!important;display:grid!important;place-items:center!important;
  box-sizing:border-box!important;
  width:44px!important;min-width:44px!important;max-width:44px!important;
@@ -7152,9 +7152,9 @@ html body #svcpWorkChatScreen[data-view="room"]
 }
 html body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation > #svcpConversationStandaloneBack svg{
- width:20px!important;height:20px!important;
+ width:19px!important;height:19px!important;
  fill:none!important;stroke:currentColor!important;
- stroke-width:1.7!important;stroke-linecap:round!important;
+ stroke-width:1.55!important;stroke-linecap:round!important;
  stroke-linejoin:round!important;
 }
 html[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
