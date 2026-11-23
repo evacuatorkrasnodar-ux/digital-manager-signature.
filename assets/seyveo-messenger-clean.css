@@ -1203,13 +1203,22 @@ html:root[data-theme="dark"] body #svcpWorkChatScreen > #svcpWorkChatBack svg{
  stroke:#f6f7f8!important;
 }
 
-/* SKY CHAT · same sapphire glass and shadow as Elena's 44px call buttons. */
+/* SKY CHAT · one shared gentle depth system for every existing/future room.
+   Selects the wallpaper, not a person, role, group, or room ID. The floating
+   Back is outside #svcpConversation so give it the same shared tokens.
+   Do not touch geometry, animation, handlers, white or dark themes. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]){
+ --sv-chat-blue-surface:rgba(11,84,174,.68);
+ --sv-chat-blue-edge:1px solid rgba(3,70,151,.32);
+ --sv-chat-blue-circle-shadow:0 3px 10px rgba(5,53,111,.11);
+ --sv-chat-blue-dock-shadow:0 5px 14px rgba(6,62,122,.10);
+}
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack,
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack:is(:active,:hover,:focus){
- background:var(--sv-chat-blue-surface,rgba(11,84,174,.68))!important;
+ background:var(--sv-chat-blue-surface)!important;
  background-image:none!important;
- border:var(--sv-chat-blue-edge,1px solid rgba(3,70,151,.32))!important;
- box-shadow:var(--sv-chat-blue-circle-shadow,0 3px 11px rgba(5,53,111,.14),0 1px 4px rgba(5,53,111,.065))!important;
+ border:var(--sv-chat-blue-edge)!important;
+ box-shadow:var(--sv-chat-blue-circle-shadow)!important;
  color:#fff!important;
  -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
  backdrop-filter:blur(13px) saturate(110%)!important;
@@ -1220,10 +1229,11 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:ha
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]) > #svcpWorkChatBack svg{
  stroke:#fff!important;fill:none!important;
 }
-/* The two call controls, +, title pill and composer ::before already
-   share sapphire shadow tokens in the theme sheets. Keep the message
-   bubbles flat, and avoid a second grey shadow on the composer wrapper. */
+/* The blue composer is elevated by ::before. Prevent a second grey shadow
+   on the form itself. Message bubbles stay clean/flat. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm{
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] .svcp-bubble{
  box-shadow:none!important;
 }
