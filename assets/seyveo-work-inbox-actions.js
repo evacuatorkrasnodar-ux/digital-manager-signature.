@@ -322,23 +322,12 @@ menuButton.type='button';menuButton.id='svcpInboxOptionsTop';
 menuButton.setAttribute('aria-label','Настройки и действия с чатами');menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-controls','svcpInboxMenu');
 menuButton.innerHTML=svg('dots');
 history.hidden=true;history.setAttribute('tabindex','-1');history.setAttribute('aria-hidden','true');history.classList.add('sv-inbox-history-proxy');
-// One 92px material capsule on the same 44px axis as Cabinet and My Tasks.
-// Reuse the genuine message search input and existing menu handlers.
-const headerActions=node('div','sv-inbox-header-actions');
-headerActions.setAttribute('role','group');
-headerActions.setAttribute('aria-label','Поиск и меню сообщений');
-const searchButton=node('button','sv-inbox-header-search');
-searchButton.type='button';searchButton.id='svcpInboxSearchTop';
-searchButton.setAttribute('aria-label','Поиск по сообщениям');
-searchButton.setAttribute('aria-controls','svcpHistorySearch');
-searchButton.setAttribute('aria-expanded','false');
-searchButton.innerHTML=svg('search');
-headerActions.append(searchButton,menuButton);
-header.append(headerActions);
-searchButton.addEventListener('click',()=>{
+// A single 44px round menu button. The long pill belongs below,
+// to the four existing inbox filters, not to search/menu in this header.
+header.append(menuButton);
+function toggleDirectorySearch(){
  const opening=!screen.classList.contains('svcp-directory-search-open');
  screen.classList.toggle('svcp-directory-search-open',opening);
- searchButton.setAttribute('aria-expanded',String(opening));
  const input=$('svcpHistorySearch');
  if(opening){
   requestAnimationFrame(()=>input?.focus({preventScroll:true}));
@@ -347,9 +336,9 @@ searchButton.addEventListener('click',()=>{
   input.dispatchEvent(new Event('input',{bubbles:true}));
   input.blur();
  }
-});
+}
 const menu=node('div','sv-inbox-popover');menu.id='svcpInboxMenu';menu.hidden=true;menu.setAttribute('role','menu');menu.setAttribute('aria-label','Действия с сообщениями');
-const menuItems=[['Новый чат','pen','new'],['Новая группа','groupAdd','group'],['Сотрудники','users','staff'],['Настройки сообщений','sliders','settings'],['Архив','archive','archives']];
+const menuItems=[['Поиск сообщений','search','search'],['Новый чат','pen','new'],['Новая группа','groupAdd','group'],['Сотрудники','users','staff'],['Настройки сообщений','sliders','settings'],['Архив','archive','archives']];
 for(const [label,icon,action] of menuItems){const b=button(label,icon,()=>chooseAction(action),'sv-inbox-menu-row');b.setAttribute('role','menuitem');menu.append(b)}
 screen.append(menu);
 function closeMenu(){menu.hidden=true;menuButton.setAttribute('aria-expanded','false')}
@@ -357,6 +346,7 @@ function openMenu(){closeSheet();menu.hidden=false;menuButton.setAttribute('aria
 menuButton.addEventListener('click',()=>menu.hidden?openMenu():closeMenu());
 function chooseAction(action){
  closeMenu();
+ if(action==='search'){toggleDirectorySearch();return}
  if(action==='history'){history.click();return}
  openSheet(action);
 }
