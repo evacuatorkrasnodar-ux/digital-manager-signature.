@@ -62,13 +62,10 @@ const ROOMS=[
    Currently only employee "elena" has a separate LOCAL demo session.
    New staff members must be wired to authenticated accounts before enabling writes.
    Do not carry forward manager-selected avatars saved by the old chat picker. */
-const CHAT_AVATAR_OPTIONS=[
- ['red','👩🏻‍🦰','Рыжая'],['dark','👩🏽','Брюнетка'],
- ['senior','👩🏼‍🦳','Седая'],['man','👨🏻‍🦱','Мужчина'],
- ['smile','😊','Улыбка'],['grapes','🍇','Виноград'],
- ['strawberry','🍓','Клубника'],['apple','🍎','Яблоко']
-];
-const CHAT_AVATAR_DEFAULTS={elena:'red',anna:'dark',mikhail:'man'};
+/* Work chat identity standard: only personal photos or neutral initials.
+   Retired illustrated presets are ignored in chats, not erased from storage. */
+const CHAT_AVATAR_OPTIONS=[];
+const CHAT_AVATAR_DEFAULTS={};
 const SELF_AVATAR_KEY='seyveo-self-identity-avatar-v1';
 const PHOTO_DATA_PATTERN=/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/;
 function selfAvatarRecords(){
@@ -79,16 +76,9 @@ function selfAvatarRecords(){
 }
 function selfAvatarFor(person){
  const raw=selfAvatarRecords()[person];
- if(raw&&raw.kind==='atlas'&&Number.isInteger(raw.index)&&raw.index>=0&&raw.index<76)
-  return {kind:'atlas',index:raw.index};
- if(raw&&raw.kind==='photo'&&typeof raw.data==='string'&&raw.data.length<320000
-    &&PHOTO_DATA_PATTERN.test(raw.data))return {kind:'photo',data:raw.data};
- if(raw&&raw.kind==='monogram')return {kind:'monogram'};
- if(raw&&raw.kind==='emoji'&&typeof raw.emoji==='string'&&[...raw.emoji].length<=10)
-  return {kind:'emoji',emoji:raw.emoji};
- if(raw&&raw.kind==='emoji'&&CHAT_AVATAR_OPTIONS.some(([id])=>id===raw.id))
-  return {kind:'emoji',id:raw.id};
- return {kind:'emoji',id:CHAT_AVATAR_DEFAULTS[person]||'smile'};
+ if(raw?.kind==='photo'&&typeof raw.data==='string'&&raw.data.length<320000&&
+    PHOTO_DATA_PATTERN.test(raw.data))return {kind:'photo',data:raw.data};
+ return {kind:'monogram'};
 }
 function activeSelfAvatarPerson(){
  return window.SEYVEO_PREVIEW?.isEmployee?.()===true?'elena':null;
@@ -98,51 +88,42 @@ function ownerAvatarPreview(){
  try{
   const own=JSON.parse(localStorage.getItem('seyveo-owner-avatar-v1')||'null');
   if(own?.kind==='photo'&&typeof own.data==='string'&&own.data.length<320000
-   &&PHOTO_DATA_PATTERN.test(own.data))return {kind:'photo',data:own.data};
-  // The Messages editor writes the owner's chosen 3D artwork as preset 3d-N.
-  // Read that exact same profile value in Elena's view, never a hard-coded emoji.
-  if(own?.kind==='preset'&&/^3d-\d{1,2}$/.test(own.id||'')&&Number(own.id.slice(3))<76)
-   return {kind:'atlas',index:Number(own.id.slice(3))};
-  if(own?.kind==='atlas'&&Number.isInteger(own.index)&&own.index>=0&&own.index<76)
-   return {kind:'atlas',index:own.index};
-  if(own?.kind==='emoji'&&typeof own.emoji==='string'&&[...own.emoji].length<=10)
-   return {kind:'emoji',emoji:own.emoji};
-  const mapped={'woman-red':'red','woman-brunette':'dark','woman-silver':'senior',
-   'man-curly':'man',smile:'smile',grapes:'grapes',strawberry:'strawberry',apple:'apple'};
-  if(own?.kind==='preset'&&mapped[own.id])return {kind:'emoji',id:mapped[own.id]};
+    &&PHOTO_DATA_PATTERN.test(own.data))return {kind:'photo',data:own.data};
  }catch{}
  return {kind:'monogram'};
 }
+/* Shared personal portrait: real user photo, otherwise native iOS-like initial.
+   Sayvi uses its separate SEYVEO symbol and never goes through this helper. */
 function drawPortrait(node,photo,letter){
+ if(!node)return;
  node.replaceChildren();
- const target=document.createElement(photo?.kind==='photo'?'img':'span');
- target.className=photo?.kind==='photo'?'svcp-native-avatar-photo':'svcp-native-avatar';
+ node.classList.remove('svcp-atlas-avatar','svcp-collection-avatar');
+ const isPhoto=photo?.kind==='photo'&&typeof photo.data==='string';
+ const target=document.createElement(isPhoto?'img':'span');
+ target.className=isPhoto?'svcp-native-avatar-photo':'svcp-native-avatar svcp-native-initial';
  target.setAttribute('aria-hidden','true');
- if(photo?.kind==='photo'){
-  target.src=photo.data;target.alt='';target.draggable=false;
- }else{
-  if(photo?.kind==='atlas'){
-   target.textContent='';
-   target.classList.add('svcp-atlas-avatar');
-   if(photo.index>=12&&photo.index<76){
-    const tile=photo.index-12;
-    target.classList.add('svcp-collection-avatar');
-    target.style.backgroundPosition=((tile%8)*100/7)+'% '+(Math.floor(tile/8)*100/7)+'%';
-   }else{
-    target.style.backgroundPosition=((photo.index%4)*100/3)+'% '+(Math.floor(photo.index/4)*50)+'%';
-   }
-  }else{
-   target.textContent=photo?.kind==='monogram'?letter:
-     (photo?.emoji||CHAT_AVATAR_OPTIONS.find(([id])=>id===photo?.id)?.[1]||'😊');
-  }
- }
+ if(isPhoto){target.src=photo.data;target.alt='';target.draggable=false;}
+ else target.textContent=String(letter||'•').trim().slice(0,2).toLocaleUpperCase('ru-RU');
  node.append(target);
  node.classList.add('svcp-native-avatar-host');
+ node.classList.toggle('svcp-native-photo-host',isPhoto);
+}
+/* One small line icon for rooms that represent a group or documents. */
+function paintWorkGroupIcon(node,roomId){
+ if(!node)return;
+ const path=roomId==='docs'
+  ?'<path d="M8 3.5h6l4 4V20H8a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z"/><path d="M14 3.5V8h4M9 12h6M9 15.5h6"/>'
+  :roomId==='general'
+   ?'<path d="M5 6.5h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H11l-5 3v-3H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z"/><path d="M8 11h8"/>'
+   :'<circle cx="9" cy="8" r="3"/><path d="M3.5 20v-2a5.5 5.5 0 0 1 11 0v2M17 5.5a3 3 0 0 1 0 5.5M16.5 14a5 5 0 0 1 4 5v1"/>';
+ node.replaceChildren();
+ node.innerHTML='<svg class="svcp-native-room-glyph" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>';
+ node.classList.remove('svcp-native-avatar-host','svcp-native-photo-host');
+ node.classList.add('svcp-native-room-icon');
 }
 function fillWorkPortrait(node,room,managerPreview=false){
  if(!node||!room||room.kind!=='personal'||room.person==='sayvi')return false;
- // The visible peer in Elena's direct chat is the manager. Read their OWN
- // Messages settings, including the original 3D atlas, rather than Elena's icon.
+ // Personal portrait always follows the same native initial/photo standard.
  if(managerPreview)drawPortrait(node,ownerAvatarPreview(),'Р');
  else drawPortrait(node,selfAvatarFor(room.person),avatarCharacter(room.person));
  return true;
@@ -197,7 +178,7 @@ function paintSelfAvatarStudio(){
  paintSelfAvatarPreview($('svcpSelfAvatarHero'),person,selfAvatarDraft);
  const gallery=$('svcpSelfAvatarChoices');if(!gallery)return;
  gallery.replaceChildren();
- const choiceList=[['letter','Е','Буква'],...CHAT_AVATAR_OPTIONS];
+ const choiceList=[['letter',avatarCharacter(person),'Буква']];
  for(const [id,glyph,name] of choiceList){
   const button=document.createElement('button');button.type='button';
   button.className='svcp-own-avatar-choice';
@@ -2360,7 +2341,7 @@ function openRoom(roomId){
   if(selected.id==='dm-sayvi'){
    avatar.append(el('span','sv-sayvi-symbol'));
   }else if(!fillWorkPortrait(avatar,selected,state.viewpoint==='elena'&&selected.id==='dm-elena')){
-   avatar.textContent=state.viewpoint==='elena'&&selected.id==='dm-elena'?'Р':selected.mark;
+   paintWorkGroupIcon(avatar,selected.id);
   }
  }
  const roomName=$('svcpRoomInfoName');if(roomName)roomName.textContent=
@@ -2463,7 +2444,10 @@ function renderRoomProfile(){
   delete avatar.dataset.svAvatarKind;
   avatar.style.removeProperty('--sv-avatar-color');
   avatar.style.removeProperty('--sv-avatar-image');
-  if(!fillWorkPortrait(avatar,room,state.viewpoint==='elena'&&room.id==='dm-elena'))avatar.textContent=room.id==='dm-sayvi'?'S':(name.slice(0,1).toUpperCase()||'•');
+  if(!fillWorkPortrait(avatar,room,state.viewpoint==='elena'&&room.id==='dm-elena')){
+   if(room.id==='dm-sayvi')avatar.append(el('span','sv-sayvi-symbol'));
+   else paintWorkGroupIcon(avatar,room.id);
+  }
   avatar.classList.toggle('is-group',room.kind!=='personal');
  }
  const nameNode=$('svcpRoomInfoName');if(nameNode)nameNode.textContent=name;
