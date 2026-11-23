@@ -631,18 +631,12 @@
     employeeChatScreen.style.removeProperty('visibility');
    }
   }
-  settleWorkChatViewport();
-  requestAnimationFrame(()=>{
-   if(transition!==workChatTransition||page.dataset.workChatOpen!=='true')return;
-   updateWorkChatViewport();
-   // Focus the entry Back control only for this opening, never a stale
-   // previously scheduled frame after leaving a Sayvi conversation.
-   chatTop?.focus({preventScroll:true});
-   if(camera){
+  // Initial viewport was measured synchronously. Do not trigger repeated
+  // Safari viewport recomposition or move focus during the opening frames.
+  if(camera){
     const toggle=$('svcpCameraToggle');
     if(toggle?.getAttribute('aria-expanded')!=='true')toggle?.click();
-   }
-  });
+  }
  }
  chatTop?.addEventListener('click',()=>closeWorkChat());
  chatViewport?.addEventListener('resize',updateWorkChatViewport);
@@ -782,8 +776,8 @@
    return;
   }
   if(!isManager()){select('personal');return}
-  // Always update the heading and hide the personal/business selector first.
-  select('business');
+  // Do not close/reopen an already active messenger just to sync Cabinet.
+  if(page.dataset.workView!=='business'&&page.dataset.workChatOpen!=='true')select('business');
   openWorkChat(roomId||null);
  }
  function routePending(){
