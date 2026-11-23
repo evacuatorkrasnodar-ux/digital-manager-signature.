@@ -1979,7 +1979,7 @@ html body #svcpWorkChatScreen .svcp-group-message-avatar.svcp-native-avatar-host
  display:grid!important;place-items:center!important;
  border:0!important;
  border-radius:50%!important;
- background:#EEF1F4!important;background-image:none!important;
+ background:var(--sv-avatar-auto-bg,#EEF1F4)!important;background-image:none!important;
  color:#566878!important;
  box-shadow:none!important;filter:none!important;text-shadow:none!important;
  overflow:hidden!important;
