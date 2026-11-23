@@ -261,10 +261,23 @@ html body #seyveoContactsDialog :is(button,a,input):focus-visible{
  }
  #seyveoContactsDialog .sv-phonebook-toolbar{padding-left:52px}
 }
-:root[data-theme="light"] #seyveoContactsDialog .sv-phonebook-avatar,
-:root[data-theme="light"] #seyveoContactsDialog #seyveoContactAdd,
-:root[data-theme="light"] #seyveoContactsDialog #seyveoContactSave{
+/* Contact avatars retain their identity colour. Actual header and form
+   action buttons use the shared Pearl face in the white theme. */
+:root[data-theme="light"] #seyveoContactsDialog .sv-phonebook-avatar{
   background:#38383A!important;color:#F5F5F6!important;
+}
+html:root[data-theme="light"] body #seyveoContactsDialog :is(
+ #seyveoContactAdd,#seyveoContactSave
+),
+html:root[data-theme="light"] body #seyveoContactsDialog[open] > #seyveoContactsClose{
+  border:var(--sv-white-pearl-edge)!important;
+  background:var(--sv-white-pearl-surface)!important;
+  background-image:none!important;
+  box-shadow:var(--sv-white-pearl-circle-shadow)!important;
+  -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
+  backdrop-filter:var(--sv-white-pearl-blur)!important;
+  color:var(--sv-white-pearl-ink)!important;
+  transform:none!important;
 }
 
 /* Hidden state outranks the legacy list/form declarations, even with !important. */
