@@ -1977,10 +1977,10 @@ html body #svcpWorkChatScreen #svcpRoomProfileAvatar.svcp-native-avatar-host:not
 html body #svcpWorkChatScreen .svcp-group-message-avatar.svcp-native-avatar-host:not(:has(.svcp-native-avatar-photo)){
  box-sizing:border-box!important;
  display:grid!important;place-items:center!important;
- border:1px solid rgba(79,97,115,.08)!important;
+ border:0!important;
  border-radius:50%!important;
  background:#EEF1F4!important;background-image:none!important;
- color:#7B8794!important;
+ color:#566878!important;
  box-shadow:none!important;filter:none!important;text-shadow:none!important;
  overflow:hidden!important;
 }
@@ -2009,9 +2009,9 @@ html body #svcpWorkChatScreen .sv-inbox-contact-avatar
  width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
  padding:0!important;border:0!important;border-radius:50%!important;
  background:transparent!important;background-image:none!important;
- color:#7B8794!important;-webkit-text-fill-color:#7B8794!important;
+ color:#566878!important;-webkit-text-fill-color:#566878!important;
  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
- font-weight:600!important;font-size:17px!important;line-height:1!important;
+ font-weight:650!important;font-size:18px!important;line-height:1!important;
  letter-spacing:0!important;text-shadow:none!important;box-shadow:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] #svcpRoomAvatar
@@ -2024,7 +2024,7 @@ html body #svcpWorkChatScreen #svcpChatDirectory
 html body #svcpWorkChatScreen .sv-inbox-contact-avatar > svg{
  display:block!important;width:20px!important;height:20px!important;
  min-width:20px!important;min-height:20px!important;
- stroke:#7B8794!important;fill:none!important;
+ stroke:#627486!important;fill:none!important;
  stroke-width:1.65!important;stroke-linecap:round!important;
  stroke-linejoin:round!important;filter:none!important;
 }
@@ -2040,10 +2040,10 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
  .sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"],
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]
  .sv-native-letter-choice{
- border:1px solid rgba(79,97,115,.08)!important;
+ border:0!important;
  border-radius:50%!important;background:#EEF1F4!important;
- background-image:none!important;color:#7B8794!important;
- -webkit-text-fill-color:#7B8794!important;
+ background-image:none!important;color:#566878!important;
+ -webkit-text-fill-color:#566878!important;
  box-shadow:none!important;text-shadow:none!important;
  font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
  font-weight:600!important;
@@ -2052,4 +2052,19 @@ html body #svcpWorkChatScreen .sv-native-letter-choice{
  display:grid!important;place-items:center!important;
  width:58px!important;height:58px!important;margin:0 auto!important;
  font-size:25px!important;
+}
+
+/* A selected real photo or profile artwork fills the circle. Neither gets a
+   second plate, ring or drop shadow. The assistant avatar is excluded. */
+html body #svcpWorkChatScreen .svcp-native-atlas-host:not(.is-sayvi),
+html body #svcpWorkChatScreen .svcp-directory-item > .svcp-directory-avatar.svcp-native-atlas-host:not(.is-sayvi),
+html body #svcpWorkChatScreen #svcpRoomAvatar.svcp-native-atlas-host,
+html body #svcpWorkChatScreen #svcpRoomProfileAvatar.svcp-native-atlas-host{
+ border:0!important;background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+}
+html body #svcpWorkChatScreen .svcp-native-avatar-host > .svcp-native-avatar.svcp-atlas-avatar{
+ display:block!important;width:100%!important;height:100%!important;
+ border:0!important;background-color:transparent!important;
+ border-radius:50%!important;box-shadow:none!important;
 }
