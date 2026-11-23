@@ -413,18 +413,19 @@ function showEmployeeDirectory(){
   groups.append(makeContactRow(r,()=>openChat(r.id)));
  }
  body.append(groups);
- sectionHeading('Коллеги');
- const hint=node('p','sv-inbox-colleague-note','Личный разговор с коллегой — только по взаимному согласию, отдельно от рабочих сообщений.');
- body.append(hint);
+ sectionHeading('Написать коллеге');
  const list=node('div','sv-inbox-people-list');
- const colleagues=colleagueRecords().filter(r=>r.person!=='elena');
+ // These IDs are distinct from the manager's private conversations with employees.
+ const colleagues=allRooms().filter(r=>r.section==='staff-direct');
  for(const r of colleagues){
-  const row=makeContactRow(r,()=>{sheetStack.push({type:sheetType,id:activeRoom});openSheet('colleague',r.id,true)});
-  row.setAttribute('aria-label',r.label+' — личное приглашение');
+  const row=makeContactRow(r,()=>openChat(r.id));
+  row.setAttribute('aria-label','Открыть рабочий личный чат с '+r.label);
   list.append(row);
  }
- if(!colleagues.length)list.append(node('p','sv-inbox-hint','Пока нет доступных коллег.'));
+ if(!colleagues.length)list.append(node('p','sv-inbox-hint','Коллеги пока не подключены.'));
  body.append(list);
+ body.append(node('p','sv-inbox-colleague-note',
+  'В демо сообщения сохраняются только в этом браузере. Для переписки между телефонами потребуется подключение мессенджера.'));
 }
 function showColleagueInvite(id){
  const colleague=colleagueRecords().find(r=>r.id===id);
