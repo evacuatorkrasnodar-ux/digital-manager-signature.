@@ -3608,20 +3608,11 @@ function renderChat(){
     ?{node:bubble,role:msg.role,at:shortAt}:null;
   }
  }
- /* The list ends physically ABOVE the floating composer via its flex
-    parent's bottom padding; no fake message or pseudo spacer is needed. */
  if(focusSearchIndex!==null){
   const target=thread.querySelector('.svcp-bubble.is-search-hit');
   thread.scrollTop=target?Math.max(0,target.offsetTop-thread.offsetTop-24):thread.scrollHeight;
   focusSearchIndex=null;
- }else{
-  thread.scrollTop=thread.scrollHeight;
-  requestAnimationFrame(()=>{
-   if(!thread.isConnected)return;
-   // Re-measure after actual layout, when WebKit has settled the viewport.
-   thread.scrollTop=thread.scrollHeight;
-  });
- }
+ }else thread.scrollTop=thread.scrollHeight;
 }
 $('svcpLoadOlder')?.addEventListener('click',()=>{
  historyWindow=Math.min(500,historyWindow+35);
