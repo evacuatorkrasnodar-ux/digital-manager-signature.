@@ -126,13 +126,35 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identi
  color:rgba(255,255,255,.90)!important;white-space:nowrap!important;
  text-align:center!important;overflow:hidden!important;text-overflow:ellipsis!important;opacity:1!important;
 }
-/* White-room frosted header: scrolling messages recede behind the avatar
-   rather than remaining sharply legible through the identity. The fade lives
-   on the EXISTING header (no extra sheet, pseudo-overlay or hit target). */
-html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2{
- background:linear-gradient(180deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.65) 62%,rgba(255,255,255,0) 100%)!important;
- -webkit-backdrop-filter:blur(9px) saturate(106%)!important;
- backdrop-filter:blur(9px) saturate(106%)!important;
+/* ONE existing header with a feathered frosted finish. The old blur was
+   on the rectangular parent itself: even with a transparent gradient its
+   BACKDROP FILTER stopped abruptly along the 128px lower edge on iOS.
+   Place the blur on the header's own noninteractive ::before, masked down
+   to zero. No added DOM, movement, shadow-strip, or second clickable panel. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-identity-v2{
+ isolation:isolate!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"]) > .svcp-identity-v2{
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation:is([data-chat-wallpaper="pearl"],[data-chat-wallpaper="sky"]) > .svcp-identity-v2::before{
+ content:""!important;display:block!important;
+ box-sizing:border-box!important;position:absolute!important;
+ left:0!important;right:0!important;top:0!important;bottom:-24px!important;
+ z-index:-1!important;pointer-events:none!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:blur(13px) saturate(110%)!important;
+ backdrop-filter:blur(13px) saturate(110%)!important;
+ /* Retain full glass through the name, then dissolve the blur and tint
+    together below it. Never mask the avatar, text or controls themselves. */
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 58%,rgba(0,0,0,.64) 75%,rgba(0,0,0,.18) 90%,transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 58%,rgba(0,0,0,.64) 75%,rgba(0,0,0,.18) 90%,transparent 100%)!important;
+ -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
+}
+html:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="pearl"] > .svcp-identity-v2::before{
+ background:linear-gradient(180deg,rgba(255,255,255,.79) 0%,rgba(255,255,255,.68) 51%,rgba(255,255,255,.35) 79%,rgba(255,255,255,0) 100%)!important;
 }
 /* WHITE PEARL · exact same specificity and ancestry as the shared title.
    Previously the weaker pearl text selector lost to the default white-on-blue
@@ -185,19 +207,10 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > #svcpConversationStandaloneBack svg{
  stroke:#fff!important;
 }
-/* SKY · restore one genuine translucent frosted title bar, not a second
-   overlay. The existing avatar, title and real Back/Call buttons stay put.
-   Blue light and messages show through softly, with no opaque rectangle. */
-html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2{
- background:linear-gradient(
-  180deg,
-  rgba(171,223,247,.29) 0%,
-  rgba(144,208,240,.18) 61%,
-  rgba(144,208,240,0) 100%
- )!important;
- -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
- backdrop-filter:blur(16px) saturate(115%)!important;
- border:0!important;box-shadow:none!important;
+/* SKY shares the same fade, blur and start/end coordinates as WHITE,
+   but keeps the cool blue reflection of its wallpaper. */
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2::before{
+ background:linear-gradient(180deg,rgba(171,223,247,.33) 0%,rgba(144,208,240,.23) 51%,rgba(144,208,240,.11) 79%,transparent 100%)!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
  background:rgba(10,102,185,.66)!important;
