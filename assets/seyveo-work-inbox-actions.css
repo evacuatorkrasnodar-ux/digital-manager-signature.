@@ -1961,3 +1961,42 @@ html body #svcpWorkChatScreen .sv-inbox-structure-node small{
 :root[data-theme="dark"] body #svcpWorkChatScreen .sv-inbox-structure-node strong{
  color:#f2f2f5!important;
 }
+
+
+/* Messages search · a real, visible field bound to the existing search logic. */
+html body #svcpWorkChatScreen[data-view="inbox"] #svcpDirectorySearchBar[hidden]{
+ display:none!important;
+}
+html body #svcpWorkChatScreen[data-view="inbox"] #svcpDirectorySearchBar:not([hidden]){
+ display:flex!important;align-items:center!important;gap:9px!important;
+ box-sizing:border-box!important;width:calc(100% - 24px)!important;min-height:44px!important;
+ margin:1px 12px 10px!important;padding:0 10px!important;
+ border:1px solid rgba(135,148,161,.15)!important;border-radius:14px!important;
+ background:rgba(255,255,255,.78)!important;
+ box-shadow:0 3px 13px rgba(37,47,64,.055)!important;
+ color:var(--sv-inbox-panel-ink,#17191b)!important;
+}
+html body #svcpWorkChatScreen #svcpDirectorySearchBar > svg{
+ flex:0 0 18px!important;width:18px!important;height:18px!important;
+ fill:none!important;stroke:#838995!important;stroke-width:1.7!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svcpWorkChatScreen #svcpDirectorySearchBar > input{
+ box-sizing:border-box!important;flex:1 1 auto!important;min-width:0!important;width:100%!important;
+ height:42px!important;margin:0!important;padding:0!important;border:0!important;
+ background:transparent!important;box-shadow:none!important;outline:0!important;
+ color:inherit!important;font:400 14px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ -webkit-appearance:none!important;appearance:none!important;
+}
+html body #svcpWorkChatScreen #svcpDirectorySearchBar > button{
+ flex:0 0 auto!important;min-height:40px!important;padding:0 3px!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+ color:#3974b4!important;font:500 13px/1.3 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ transform:none!important;transition:none!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="inbox"] #svcpDirectorySearchBar:not([hidden]){
+ background:rgba(50,52,56,.85)!important;border-color:rgba(255,255,255,.12)!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen #svcpDirectorySearchBar > button{
+ color:#86baf8!important;
+}
