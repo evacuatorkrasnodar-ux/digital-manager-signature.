@@ -67,7 +67,7 @@ function updateRoom(id,prop,value){
 }
 /* Local avatar editing: Apple-style photo, monogram and emoji.
    The default is a flat initial; profile owners may explicitly choose artwork. */
-const AVATAR_COLORS=['#EDF1F5'];
+const AVATAR_COLORS=['#E9EFF5','#E9F2EF','#EEEAF4','#F3EDE6','#E8F1F4','#F1EBF0'];
 function automaticAvatarColor(name){
  const value=String(name||'').trim().toLocaleLowerCase('ru-RU');
  let hash=0;
@@ -156,7 +156,7 @@ function showAvatarEditor(){
  const staff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
  const initial=readActualSelfAvatar();
  let draft=safeAvatar(initial)||{kind:'monogram',initials:staff?'Е':'Я',color:AVATAR_COLORS[0]};
- let tab=draft.kind==='photo'?'photo':draft.kind==='atlas'?'atlas':'initial';
+ let tab=draft.kind==='photo'?'photo':'atlas';
  const editor=node('form','sv-new-avatar-editor');
  editor.id='svNewAvatarForm';
  editor.noValidate=true;
@@ -181,28 +181,16 @@ function showAvatarEditor(){
  const tabs=node('div','sv-new-avatar-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Способ оформления');
  const views=node('div','sv-new-avatar-views');
  const gallery=node('div','sv-new-avatar-grid');
- const initialGallery=node('div','sv-new-avatar-grid sv-new-avatar-initial-grid');
- const options=[['initial','Буква'],['atlas','Аватары'],['photo','Фото']];
+ const options=[['atlas','Аватары'],['photo','Фото']];
  const btns=[];
  for(const [mode,label] of options){
   const btn=node('button','sv-new-avatar-tab',label);btn.type='button';
   btn.addEventListener('click',()=>{
    tab=mode;
-   if(mode==='initial')draft={kind:'monogram',initials:initialsFromName(),color:AVATAR_COLORS[0]};
    paint();
   });
   btn.dataset.mode=mode;tabs.append(btn);btns.push(btn);
  }
- const letterChoice=node('button','sv-new-avatar-choice');
- letterChoice.type='button';letterChoice.dataset.index='initial';
- letterChoice.setAttribute('aria-label','Стандартная буква на сером фоне');
- const letterMark=node('span','sv-native-letter-choice',staff?'Е':'Я');
- letterChoice.append(letterMark,node('small',null,'Стандартный'));
- letterChoice.addEventListener('click',()=>{
-  draft={kind:'monogram',initials:initialsFromName(),color:AVATAR_COLORS[0]};
-  tab='initial';paint();
- });
- initialGallery.append(letterChoice);
  for(let i=0;i<AVATAR_3D.length;i++){
   const choice=node('button','sv-new-avatar-choice');choice.type='button';
   choice.dataset.index=String(i);
@@ -354,7 +342,7 @@ function showAvatarEditor(){
   };
   existing.src=draft.image;
  }
- views.append(initialGallery,gallery,photo);
+ views.append(gallery,photo);
  editor.append(hero,tabs,views,status);
  // Fresh floating actions: no footer strip, backing card, or inherited button styles.
  const actions=node('div','sv-avatar-floating-actions');
@@ -369,12 +357,10 @@ function showAvatarEditor(){
   }
   paintAvatar(preview,draft);
   for(const b of btns)b.setAttribute('aria-pressed',String(b.dataset.mode===tab));
-  initialGallery.hidden=tab!=='initial';gallery.hidden=tab!=='atlas';photo.hidden=tab!=='photo';
-  letterMark.textContent=initialsFromName();
+  gallery.hidden=tab!=='atlas';photo.hidden=tab!=='photo';
   // Never show photo effects before a photo has been taken or chosen.
   filterBar.hidden=!photoSource;
   cropEditor.hidden=!photoSource;
-  letterChoice.setAttribute('aria-pressed',String(draft.kind==='monogram'));
    for(const choice of gallery.children)
     choice.setAttribute('aria-pressed',String(draft.kind==='atlas'&&Number(choice.dataset.index)===draft.index));
   for(const b of filterButtons)b.setAttribute('aria-pressed',String(b.dataset.photoMode===photoMode));
@@ -409,7 +395,7 @@ function showAvatarEditor(){
  reset.addEventListener('click',()=>{
   // No artwork selected: generate a personal letter avatar from the name.
   draft={kind:'monogram',initials:initialsFromName(),color:automaticAvatarColor(nameInput.value)};
-  tab='initial';paint();
+  tab='atlas';paint();
   persist(true);
  });
  editor.addEventListener('submit',event=>{
