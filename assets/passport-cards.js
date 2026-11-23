@@ -557,7 +557,7 @@ function paintAvatar(node,data){
 function paint(){
  // The company emblem in the Home header is a permanent brand image.
   // Personal portrait choices stay local to the owner preview and dialog.
-  for(const id of ['seyveoOwnerAvatarPreview','seyveoAvatarHero']){
+  for(const id of ['seyveoOwnerAvatarPreview','seyveoOwnerAvatarBusinessPreview','seyveoAvatarHero']){
   paintAvatar($(id),choice);
  }
  const selected=choice.kind==='photo'?['Фото','Ваше изображение']:
@@ -591,11 +591,13 @@ gallery.addEventListener('click',event=>{
 });
 function openOwnerAvatar(){
  const world=$('homeWorldPopover');if(world)world.hidden=true;
+  const passport=$('homePassportPopover');if(passport)passport.hidden=true;
  const trigger=$('homeWorldTrigger');if(trigger)trigger.setAttribute('aria-expanded','false');
  status.textContent='';paint();if(!picker.open)picker.showModal();
 }
 entry.addEventListener('click',openOwnerAvatar);
 $('seyveoOwnerAvatarOpen')?.addEventListener('click',openOwnerAvatar);
+$('seyveoOwnerAvatarFromBusiness')?.addEventListener('click',openOwnerAvatar);
 $('seyveoAvatarPickPhoto')?.addEventListener('click',()=>file.click());
 $('seyveoAvatarClose')?.addEventListener('click',()=>picker.close());
 $('seyveoAvatarReset')?.addEventListener('click',()=>{
