@@ -526,3 +526,128 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversationHeading #svcpConversationDetail{
  color:#777F89!important;
 }
+
+/* SEYVEO · ONE fixed header geometry for Sayvi, people and groups.
+   Sayvi is the approved reference; do not position portraits by role,
+   wallpaper, selected photo, or a message's content. This is the sole
+   geometric authority for the live chat identity header (23 Nov 2026).
+   The Sayvi emblem itself remains the original approved image. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header{
+ --svcp-identity-avatar-size:56px;
+ --svcp-identity-avatar-lift:-6px;
+ --svcp-identity-pill-overlap:-14px;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity{
+ position:relative!important;
+ top:auto!important;left:auto!important;transform:none!important;
+ display:flex!important;flex-direction:column!important;
+ justify-content:flex-start!important;align-items:center!important;
+ width:min(220px,56vw)!important;min-height:0!important;height:auto!important;
+ padding:0!important;margin:0!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity #svcpRoomAvatar{
+ box-sizing:border-box!important;position:relative!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 var(--svcp-identity-avatar-size)!important;
+ width:var(--svcp-identity-avatar-size)!important;
+ min-width:var(--svcp-identity-avatar-size)!important;
+ max-width:var(--svcp-identity-avatar-size)!important;
+ height:var(--svcp-identity-avatar-size)!important;
+ min-height:var(--svcp-identity-avatar-size)!important;
+ max-height:var(--svcp-identity-avatar-size)!important;
+ top:var(--svcp-identity-avatar-lift)!important;
+ left:auto!important;right:auto!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ overflow:hidden!important;box-shadow:none!important;
+ opacity:1!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ transform:none!important;transition:none!important;animation:none!important;
+}
+/* Contact and group circles are physically opaque. Photos and 3D atlas
+   portraits draw inside the same fixed 56px round clipping boundary. */
+html body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header > .svcp-room-identity #svcpRoomAvatar{
+ background:#E4EFF9!important;background-image:none!important;
+ color:#233A50!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"]:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header > .svcp-room-identity #svcpRoomAvatar{
+ background:#176CB2!important;background-image:none!important;color:#FFF!important;
+}
+html:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation:not([data-room-id="dm-sayvi"])
+ > .svcp-minimal-identity-header > .svcp-room-identity #svcpRoomAvatar{
+ background:#35414B!important;background-image:none!important;color:#F7F9FA!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity #svcpRoomAvatar
+ > :is(.svcp-native-avatar,.svcp-native-avatar-photo,.svcp-atlas-avatar,img){
+ box-sizing:border-box!important;display:block!important;
+ width:100%!important;height:100%!important;
+ margin:0!important;padding:0!important;border:0!important;
+ border-radius:50%!important;overflow:hidden!important;
+ opacity:1!important;filter:none!important;
+ box-shadow:none!important;transform:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity #svcpRoomAvatar img{
+ object-fit:cover!important;
+}
+/* Name always starts at the same Y coordinate, including group and dark
+   rooms. Neither a long title nor an avatar switch changes its vertical slot. */
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity #svcpConversationHeading{
+ position:relative!important;top:auto!important;left:auto!important;
+ box-sizing:border-box!important;display:flex!important;
+ align-items:center!important;justify-content:flex-start!important;
+ flex-direction:column!important;
+ width:auto!important;min-height:0!important;height:auto!important;
+ margin:var(--svcp-identity-pill-overlap) 0 0!important;
+ padding:0!important;transform:none!important;transition:none!important;
+ pointer-events:auto!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill{
+ box-sizing:border-box!important;position:relative!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:max-content!important;min-width:0!important;
+ max-width:min(242px,calc(100vw - 122px))!important;
+ height:28px!important;min-height:28px!important;max-height:28px!important;
+ margin:0 auto!important;padding:3px 10px!important;gap:4px!important;
+ border-radius:999px!important;
+ transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill strong#svcpConversationTitle{
+ display:block!important;min-width:0!important;max-width:100%!important;
+ font-size:16px!important;line-height:20px!important;font-weight:600!important;
+ margin:0!important;padding:0!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+ transform:translateY(-1.5px)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity
+ #svcpConversationHeading .svcp-room-name-pill svg{
+ width:13px!important;height:13px!important;
+ min-width:13px!important;min-height:13px!important;
+ flex:0 0 13px!important;
+ margin:0!important;padding:0!important;
+ transform:translateY(-.5px)!important;
+}
+html body #svcpWorkChatScreen[data-view="room"] #svcpConversation
+ > .svcp-minimal-identity-header > .svcp-room-identity
+ #svcpConversationHeading #svcpConversationDetail{
+ margin:6px 0 0!important;padding:0!important;
+ min-height:15px!important;line-height:15px!important;
+ font-size:11px!important;white-space:nowrap!important;
+ max-width:242px!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ transform:none!important;
+}
