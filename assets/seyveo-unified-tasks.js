@@ -532,32 +532,40 @@
   for(const delay of [90,260,550])
    workChatViewportSettleTimers.push(setTimeout(updateWorkChatViewport,delay));
  }
+ // Each open/close operation invalidates delayed focus/viewport work from
+ // the preceding route. In particular, a Sayvi room must never revive as
+ // Cabinet returns or as a new Messages directory mounts.
+ let workChatTransition=0;
  function closeWorkChat({restoreFocus=true}={}){
   if(page.dataset.workChatOpen!=='true')return;
+  const transition=++workChatTransition;
+  // Critical: hide BEFORE blur, event listeners, wallpaper changes, dock
+  // reparenting or returning the chat DOM to Cabinet. Safari otherwise
+  // composites one stale blue room frame on the way out.
+  employeeChatScreen.style.setProperty('visibility','hidden','important');
+  employeeChatScreen.hidden=true;
+  page.dataset.workChatOpen='false';
+  document.documentElement.classList.remove('svcp-work-chat-active');
+  employeeChatScreen.dataset.view='inbox';
+  const previousRoom=$('svcpConversation');
+  const directory=$('svcpChatDirectory');
+  if(previousRoom){
+   previousRoom.hidden=true;
+   previousRoom.style.setProperty('display','none','important');
+  }
+  if(directory)directory.hidden=false;
   window.dispatchEvent(new Event('seyveo:work-chat-closing'));
   const composer=$('svcpChatInput');if(composer){
    composer.blur();composer.rows=1;
    composer.style.removeProperty('height');composer.style.removeProperty('overflow-y')
   }
-  // Close the painted surface FIRST, before moving its live chat back
-  // into Cabinet. A room may have its own blue wallpaper; it must never
-  // remain the next entry's initial state.
-  employeeChatScreen.style.setProperty('visibility','hidden','important');
-  employeeChatScreen.hidden=true;
-  employeeChatScreen.dataset.view='inbox';
-  const previousRoom=$('svcpConversation');
-  const directory=$('svcpChatDirectory');
-  if(previousRoom)previousRoom.hidden=true;
-  if(directory)directory.hidden=false;
-  // Reuse the real controller, preserving messages/history while resetting
-  // the display state and dismissing an old conversation or call overlay.
+  // Reuse one chat engine and retain all messages, but reset its view while
+  // the surface and the previous conversation are completely unpaintable.
   window.SEYVEO_BUSINESS_COMMAND?.showChat?.(null);
-  if(chatHost.parentElement!==board)board.insertBefore(chatHost,taskHost);
   chatHost.hidden=true;
-  page.dataset.workChatOpen='false';
+  if(chatHost.parentElement!==board)board.insertBefore(chatHost,taskHost);
   restoreWorkChatDock();
   employeeChatScreen.style.removeProperty('visibility');
-  document.documentElement.classList.remove('svcp-work-chat-active');
   workChatViewportSettleTimers.forEach(clearTimeout);
   workChatViewportSettleTimers.length=0;
   if(workChatViewportFrame)cancelAnimationFrame(workChatViewportFrame);
@@ -570,7 +578,10 @@
   if(business)business.inert=false;
   const previous=chatReturnFocus;chatReturnFocus=null;
   if(restoreFocus&&previous?.isConnected&&!previous.hidden)
-   requestAnimationFrame(()=>previous.focus({preventScroll:true}));
+   requestAnimationFrame(()=>{
+    if(transition!==workChatTransition||page.dataset.workChatOpen==='true')return;
+    previous.focus({preventScroll:true});
+   });
  }
  function openWorkChat(roomId=null,{camera=false}={}){
   if((!isEmployee()&&!isManager())||!employeeChatScreen||!employeeChatCanvas)return;
