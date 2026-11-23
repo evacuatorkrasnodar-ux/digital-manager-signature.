@@ -996,7 +996,7 @@ html:root:not([data-theme="dark"]) body #seyveoFamilyDialog[data-chat-wallpaper=
  transition:none!important;animation:none!important;
 }
 html:root:not([data-theme="dark"]) body #seyveoFamilyDialog[data-chat-wallpaper="sky"]
- :is(.svf-compose,.svf-composer-wrap){
+ .svf-compose{
  box-shadow:0 5px 14px rgba(6,62,122,.10)!important;
 }
 html:root:not([data-theme="dark"]) body #seyveoFamilyDialog[data-chat-wallpaper="sky"]
