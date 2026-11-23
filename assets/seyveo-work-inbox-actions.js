@@ -389,7 +389,8 @@ back.setAttribute('aria-label','Назад к сообщениям');
 const title=node('strong');title.id='svInboxSheetTitle';
 top.append(back,title,node('span'));
 const body=node('div','sv-inbox-sheet-body');
-panel.append(node('span','sv-inbox-sheet-grab'),top,body);
+// Shared SEYVEO sheet header starts at the top; no decorative drag bar.
+panel.append(top,body);
 overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
 function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
