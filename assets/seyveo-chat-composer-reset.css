@@ -360,7 +360,8 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpVoiceRecord{
- color:#58636D!important;
+ /* Same quiet grey as the "Сообщение…" placeholder, in every input state. */
+ color:#8C949E!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachMenu.svcp-attach-menu:not([hidden]){
