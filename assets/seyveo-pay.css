@@ -379,7 +379,7 @@ html body #svWorkShell[data-active="wallet"] > .syp-view-switch{
  align-items:start!important;justify-content:center!important;
  gap:6px!important;
  width:min(232px,calc(100% - 40px))!important;
- height:72px!important;min-height:72px!important;
+ height:66px!important;min-height:66px!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
@@ -392,9 +392,9 @@ html body #svWorkShell[data-active="wallet"] > .syp-view-switch > button{
  box-sizing:border-box!important;
  display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:flex-start!important;
- gap:5px!important;
+ gap:3px!important;
  width:100%!important;min-width:0!important;
- height:72px!important;min-height:72px!important;
+ height:66px!important;min-height:66px!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;background-image:none!important;
