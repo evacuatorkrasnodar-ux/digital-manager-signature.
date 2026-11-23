@@ -159,7 +159,8 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-choice[aria-pressed="true"]{
  background:rgba(10,132,255,.09)!important;
- outline:2px solid #0a84ff!important;outline-offset:-2px!important;
+ outline:none!important;
+ box-shadow:none!important;
 }
 html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-choice>.sv-atlas-thumb{
  box-sizing:border-box!important;display:block!important;flex:0 0 auto!important;
@@ -362,4 +363,36 @@ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"]
  background-image:url('./seyveo-avatar-3d-atlas.webp')!important;
  background-size:400% 300%!important;background-repeat:no-repeat!important;
  box-shadow:none!important;
+}
+
+/* FLAT AVATAR IDENTITY · no frame, bevel or convex shadow on initials.
+   The selected option receives a quiet fill instead of an outlined card. */
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]
+ .sv-new-avatar-preview.sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"],
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]
+ .sv-native-letter-choice,
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="settings"]
+ .sv-inbox-avatar-settings-preview.sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
+ box-sizing:border-box!important;
+ border:0!important;outline:0!important;border-radius:50%!important;
+ background:#EEF1F4!important;background-image:none!important;
+ color:#566878!important;-webkit-text-fill-color:#566878!important;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ font-weight:650!important;
+ box-shadow:none!important;filter:none!important;text-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]
+ .sv-new-avatar-preview.sv-inbox-avatar-custom[data-sv-avatar-kind="monogram"]{
+ font-size:36px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]
+ .sv-native-letter-choice{font-size:25px!important;}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]
+ .sv-new-avatar-choice:not(:focus-visible){
+ outline:0!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]
+ .sv-new-avatar-choice > .sv-atlas-thumb{
+ border:0!important;box-shadow:none!important;
 }
