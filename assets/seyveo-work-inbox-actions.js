@@ -325,18 +325,26 @@ history.hidden=true;history.setAttribute('tabindex','-1');history.setAttribute('
 // A single 44px round menu button. The long pill belongs below,
 // to the four existing inbox filters, not to search/menu in this header.
 header.append(menuButton);
-function toggleDirectorySearch(){
- const opening=!screen.classList.contains('svcp-directory-search-open');
- screen.classList.toggle('svcp-directory-search-open',opening);
+function toggleDirectorySearch(forceOpen){
  const input=$('svcpHistorySearch');
+ const bar=$('svcpDirectorySearchBar');
+ if(!input||!bar)return;
+ const opening=typeof forceOpen==='boolean'?forceOpen:bar.hidden;
+ bar.hidden=!opening;
+ screen.classList.toggle('svcp-directory-search-open',opening);
  if(opening){
-  requestAnimationFrame(()=>input?.focus({preventScroll:true}));
- }else if(input){
+  // User gesture opens a real visible search field; do not focus a hidden input.
+  requestAnimationFrame(()=>input.focus({preventScroll:true}));
+ }else{
   input.value='';
   input.dispatchEvent(new Event('input',{bubbles:true}));
   input.blur();
  }
 }
+$('svcpDirectorySearchClose')?.addEventListener('click',()=>toggleDirectorySearch(false));
+$('svcpHistorySearch')?.addEventListener('keydown',event=>{
+ if(event.key==='Escape'){event.preventDefault();toggleDirectorySearch(false)}
+});
 const menu=node('div','sv-inbox-popover');menu.id='svcpInboxMenu';menu.hidden=true;menu.setAttribute('role','menu');menu.setAttribute('aria-label','Действия с сообщениями');
 const menuItems=[['Поиск сообщений','search','search'],['Новый чат','pen','new'],['Новая группа','groupAdd','group'],['Сотрудники','users','staff'],['Настройки сообщений','sliders','settings'],['Архив','archive','archives']];
 for(const [label,icon,action] of menuItems){const b=button(label,icon,()=>chooseAction(action),'sv-inbox-menu-row');b.setAttribute('role','menuitem');menu.append(b)}
