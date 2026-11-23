@@ -42,9 +42,7 @@ function savePrefs(){try{localStorage.setItem(KEY,JSON.stringify(prefs))}catch{/
 /* Installed PWA badge · count locally marked unread CONVERSATIONS, not remote
    messages. Incoming message tracking and background delivery need auth + server.
    No invented counts, no permission prompts, and no separate app icons. */
-let badgeRevision=0;
 function syncLocalChatBadge(){
- const revision=++badgeRevision;
  const installed=window.matchMedia?.('(display-mode: standalone)')?.matches===true||
   navigator.standalone===true;
  if(!installed)return;
