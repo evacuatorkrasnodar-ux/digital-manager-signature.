@@ -18,7 +18,7 @@ main > .sv-chat-jump,
  margin:0!important;padding:0!important;
  border:.75px solid rgba(255,255,255,.88)!important;
  border-radius:50%!important;
- background:rgba(255,255,255,.18)!important;
+ background:rgba(255,255,255,.84)!important;
  background-image:none!important;
  color:#263947!important;
  box-shadow:0 11px 27px rgba(42,52,72,.11),
@@ -79,17 +79,17 @@ main > .sv-chat-jump,
 #svcpWorkChatScreen[data-view="room"] .svcp-chat:has(#svcpAttachmentPreview:not([hidden])) > #svcpScrollBottom{
  display:none!important;
 }
-/* Light mode: use canonical White Pearl tokens; do not invent another
-   convex shell or pressed ring. These selectors also cover active/hover
-   so older theme rules cannot flash a different surface on tap. */
-:root[data-theme="light"] body #sayviScrollBottom.sv-chat-jump,
-:root[data-theme="light"] body #sayviScrollBottom.sv-chat-jump:is(:active,:hover),
-:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+/* White Pearl / standalone Sayvi: a legible MILKY-WHITE floating action,
+   retaining the approved circular geometry and soft pearl outline.
+   The older 18% white nearly vanished on bright message backgrounds. */
+:root:not([data-theme="dark"]) body #sayviScrollBottom.sv-chat-jump,
+:root:not([data-theme="dark"]) body #sayviScrollBottom.sv-chat-jump:is(:active,:hover),
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  .svcp-chat > #svcpScrollBottom,
-:root[data-theme="light"] body #svcpWorkChatScreen[data-view="room"]
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  .svcp-chat > #svcpScrollBottom:is(:active,:hover){
  border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
- background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ background:rgba(255,255,255,.86)!important;
  background-image:none!important;
  color:#263947!important;
  box-shadow:var(--sv-white-pearl-circle-shadow,0 3px 9px rgba(42,52,72,.1))!important;
@@ -104,7 +104,7 @@ main > .sv-chat-jump,
  #svcpConversation[data-chat-wallpaper="sky"] .svcp-chat > #svcpScrollBottom,
 :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] .svcp-chat > #svcpScrollBottom:is(:active,:hover){
- background:rgba(13,73,186,.68)!important;
+ background:rgba(13,73,186,.90)!important;
  background-image:none!important;
  border:0!important;
  box-shadow:0 3px 10px rgba(9,49,117,.14)!important;
@@ -113,4 +113,55 @@ main > .sv-chat-jump,
  backdrop-filter:none!important;
  opacity:1!important;filter:none!important;
  transform:none!important;
+}
+
+/* Evening wallpaper: a visible violet-indigo action, not a faint white
+   coin over warm clouds. Same size, positioning and scroll handler. */
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"] .svcp-chat > #svcpScrollBottom,
+:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="evening"] .svcp-chat > #svcpScrollBottom:is(:active,:hover){
+ background:rgba(71,80,132,.90)!important;
+ background-image:none!important;
+ border:1px solid rgba(221,228,249,.48)!important;
+ color:#fff!important;
+ box-shadow:0 3px 12px rgba(34,38,88,.20)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ opacity:1!important;filter:none!important;transform:none!important;
+}
+/* Dark: both Sayvi's standalone conversation and every work-chat
+   wallpaper use an opaque charcoal control with a white arrow. */
+:root[data-theme="dark"] body #sayviScrollBottom.sv-chat-jump,
+:root[data-theme="dark"] body #sayviScrollBottom.sv-chat-jump:is(:active,:hover),
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ .svcp-chat > #svcpScrollBottom,
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"]
+ .svcp-chat > #svcpScrollBottom:is(:active,:hover){
+ background:rgba(41,50,64,.94)!important;
+ background-image:none!important;
+ border:1px solid rgba(225,235,248,.23)!important;
+ color:#F6F8FC!important;
+ box-shadow:0 5px 16px rgba(0,0,0,.23)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ opacity:1!important;filter:none!important;transform:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ :root:not([data-theme="dark"]) body #sayviScrollBottom.sv-chat-jump,
+ :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+  #svcpConversation:not([data-chat-wallpaper="sky"]):not([data-chat-wallpaper="evening"]) .svcp-chat > #svcpScrollBottom{
+  background:#FFFFFF!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+  #svcpConversation[data-chat-wallpaper="sky"] .svcp-chat > #svcpScrollBottom{
+  background:#124EA8!important;
+ }
+ :root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+  #svcpConversation[data-chat-wallpaper="evening"] .svcp-chat > #svcpScrollBottom{
+  background:#475084!important;
+ }
+ :root[data-theme="dark"] body #sayviScrollBottom.sv-chat-jump,
+ :root[data-theme="dark"] body #svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpScrollBottom{
+  background:#293240!important;
+ }
 }
