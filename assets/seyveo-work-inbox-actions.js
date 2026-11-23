@@ -70,40 +70,29 @@ const AVATAR_3D=[
  ['Лисёнок','Мультики'],['Девочка','Мультики'],['Виноград','Фрукты'],['Клубника','Фрукты'],
  ['Персик','Фрукты'],['Яблоко','Фрукты'],['В очках','Мультики'],['Сердечки','Мультики']
 ];
-/* Additional gallery slots 12–75 are additive; previous 0–11 stay stable. */
-/* Portrait names match the artwork, in fixed visual atlas order 0–63.
-   Saved avatar indexes (0–75) are preserved for backward compatibility. */
-const AVATAR_COLLECTION_64=["Кудрявый","Рыжеволосая","В очках","Меломанка","Пилот","Юный космонавт","В кепке","Музыкант","Врач","Дедушка","Учёная","Роботик","Художница","Герой","Ниндзя","Эльфийка","Путешественник","Волшебник","Принцесса","Непоседа","Геймерша","Юноша в очках","Бизнес-леди","Седовласый","Снежная девочка","Лыжник","Спасатель","Цветочная фея","Шеф-повар","Девушка","Строитель","Пожарный","В наушниках","Весельчак","С зайчиком","В бейсболке","Седая леди","Бабушка","Дедушка в кепке","Цветочная девочка","Хаски","Котик","Панда","Лис","Кролик","Дракончик","Енот","Сова","Робот","Ледяная фея","Лесовичок","Пчёлка","Кот-космонавт","Пёсик","Пингвин","Зелёный дракон","Кибергероиня","Юный маг","Ангел","Страж","Фиолетовая фея","Воин","Пират","Снежная королева"];
+/* Rebuilt in small reviewed batches: only verified original portraits are selectable.
+   Saved removed indices are left in storage but gracefully show monogram until changed. */
 const AVATAR_CATEGORY_TABS=[['all','Все'],['people','Люди'],['animals','Животные'],['fantasy','Герои'],['fruits','Фрукты'],['emotion','Эмоции']];
 function avatarCategory(index){
- if(index<12){
-  if(index>=6&&index<=9)return 'fruits';
-  if(index>=10)return 'emotion';
-  if(index===4)return 'animals';
-  return index===1||index===3?'fantasy':'people';
- }
- const tile=index-12;
- if(tile<=39)return 'people';
- if(tile<=47||tile===52||tile===53||tile===54)return 'animals';
- return 'fantasy';
+ if(index>=6&&index<=9)return 'fruits';
+ if(index>=10)return 'emotion';
+ if(index===4)return 'animals';
+ return index===1||index===3?'fantasy':'people';
 }
 const OWNER_AVATAR_KEY='seyveo-owner-avatar-v1',STAFF_AVATAR_KEY='seyveo-self-identity-avatar-v1';
 function atlasMark(index){
  const m=node('span','sv-atlas-thumb');
- if(index>=12&&index<76){
-  const tile=index-12;
-  m.classList.add('sv-atlas-collection-64');
-  m.style.backgroundPosition=`${(tile%8)*100/7}% ${Math.floor(tile/8)*100/7}%`;
- }else m.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*50}%`;
- m.setAttribute('aria-hidden','true');return m;
+ m.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*50}%`;
+ m.setAttribute('aria-hidden','true');
+ return m;
 }
 function readActualSelfAvatar(){
  try{
   const isStaff=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
   const record=JSON.parse(localStorage.getItem(isStaff?STAFF_AVATAR_KEY:OWNER_AVATAR_KEY)||'null');
   const item=isStaff?record?.elena:record;
-  if(item?.kind==='atlas'&&Number.isInteger(item.index)&&item.index>=0&&item.index<76)return {kind:'atlas',index:item.index};
-  if(item?.kind==='preset'&&/^3d-\d{1,2}$/.test(item.id||'')&&Number(item.id.slice(3))<76)return {kind:'atlas',index:Number(item.id.slice(3))};
+  if(item?.kind==='atlas'&&Number.isInteger(item.index)&&item.index>=0&&item.index<12)return {kind:'atlas',index:item.index};
+  if(item?.kind==='preset'&&/^3d-\d{1,2}$/.test(item.id||'')&&Number(item.id.slice(3))<12)return {kind:'atlas',index:Number(item.id.slice(3))};
   if(item?.kind==='photo'&&typeof item.data==='string'&&item.data.length<320000&&
      /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(item.data))
    return {kind:'photo',image:item.data};
@@ -126,7 +115,7 @@ function safeAvatar(spec){
  const initials=[...String(spec.initials||'Я')].slice(0,2).join('').toLocaleUpperCase('ru-RU');
  const emoji=[...String(spec.emoji||'😊')].slice(0,2).join('');
  const image=typeof spec.image==='string'&&spec.image.startsWith('data:image/jpeg;base64,')&&/^[A-Za-z0-9+/=]+$/.test(spec.image.slice('data:image/jpeg;base64,'.length))&&spec.image.length<320000?spec.image:'';
- return {kind:kind==='photo'&&!image?'monogram':kind,color,initials,emoji,image,index:Number.isInteger(spec.index)&&spec.index>=0&&spec.index<76?spec.index:0};
+ return {kind:(kind==='atlas'&&(!Number.isInteger(spec.index)||spec.index<0||spec.index>=12))||kind==='photo'&&!image?'monogram':kind,color,initials,emoji,image,index:Number.isInteger(spec.index)&&spec.index>=0&&spec.index<12?spec.index:0};
 }
 function paintAvatar(element,source){
  const spec=safeAvatar(source);
@@ -216,9 +205,9 @@ function showAvatarEditor(id){
  const avatarFilterButtons=[];
  function build3D(){
   atlasGrid.replaceChildren();
-  for(let index=0;index<76;index++){
+  for(let index=0;index<AVATAR_3D.length;index++){
    if(activeAvatarCategory!=='all'&&avatarCategory(index)!==activeAvatarCategory)continue;
-   const title=index<12?AVATAR_3D[index][0]:AVATAR_COLLECTION_64[index-12];
+   const title=AVATAR_3D[index][0];
    const b=node('button','sv-atlas-choice');b.type='button';
    b.dataset.avatarIndex=String(index);
    b.setAttribute('aria-label',title);
