@@ -364,7 +364,7 @@ overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
 function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
-function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
+function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
@@ -376,6 +376,7 @@ function openSheet(type,id='',nested=false){
  else if(type==='invite')showInvite();
  else if(type==='group')showGroupForm();
  else if(type==='settings')showSettings();
+ else if(type==='one')showOneInfo();
  else if(type==='my-avatar')showAvatarEditor('self');
  else if(type==='room-avatar')showRoomActions(id);
  else if(type==='notifications')showNotifications();
@@ -530,6 +531,35 @@ function showSettings(){
  settingToggle('previews','Предпросмотр','Текст последнего сообщения');
  sectionHeading('История');
  menuLink('История разговоров','Сообщения и поручения','clock',()=>{closeSheet();history.click()});
+ // Quiet discovery for the owner only; never mix personal content with work data.
+ if(!employee()){
+  const invite=node('button','sv-inbox-one-promo');
+  invite.type='button';
+  invite.setAttribute('aria-label','О SEYVEO One: личные и семейные чаты');
+  const emblem=node('span','sv-inbox-one-mark','S');emblem.setAttribute('aria-hidden','true');
+  const info=node('span','sv-inbox-one-copy');
+  info.append(node('strong',null,'Личное общение · SEYVEO One'),
+              node('small',null,'Семья и друзья — отдельно от работы'));
+  const chevron=node('span','sv-inbox-one-chevron');chevron.innerHTML=svg('chevron');
+  chevron.setAttribute('aria-hidden','true');
+  invite.append(emblem,info,chevron);
+  invite.addEventListener('click',()=>openSubSheet('one','settings'));
+  body.append(invite);
+ }
+}
+function showOneInfo(){
+ const info=node('div','sv-inbox-one-detail');
+ const mark=node('span','sv-inbox-one-detail-mark','S');mark.setAttribute('aria-hidden','true');
+ info.append(mark,node('strong',null,'SEYVEO One'),
+  node('p',null,'Для разговоров с семьёй и друзьями — отдельное личное пространство, не связанное с рабочими чатами.'));
+ const benefits=node('p','sv-inbox-one-detail-note',
+  'Семейные чаты входят в предложение SEYVEO One. Доступ и условия подписки уточняются при подключении.');
+ info.append(benefits);
+ const backToSettings=node('button','sv-inbox-one-return','Вернуться к настройкам');
+ backToSettings.type='button';
+ backToSettings.addEventListener('click',()=>{const previous=sheetStack.pop();openSheet(previous?.type||'settings',previous?.id||'',true)});
+ info.append(backToSettings);
+ body.append(info);
 }
 function showNotifications(){
  /* Compact iOS-like grouped settings. Labels and controls are connected;
