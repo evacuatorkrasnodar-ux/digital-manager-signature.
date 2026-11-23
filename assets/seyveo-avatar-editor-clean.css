@@ -1,0 +1,177 @@
+/* SEYVEO Avatar Editor v1. New isolated screen, no reused legacy avatar layout. */
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"]{
+ --svav-bg:var(--sv-inbox-panel-bg,#fff);
+ --svav-ink:var(--sv-inbox-panel-ink,#1b2027);
+ --svav-soft:rgba(140,155,174,.105);
+ --svav-hair:rgba(127,142,161,.13);
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-panel{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ width:100%!important;max-width:100%!important;
+ max-height:100%!important;height:100%!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:var(--svav-bg)!important;background-image:none!important;
+ box-shadow:none!important;overflow:hidden!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-head{
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:44px 1fr 44px!important;
+ align-items:center!important;flex:0 0 58px!important;min-height:58px!important;
+ height:58px!important;margin:0!important;padding:6px 14px!important;
+ border:0!important;border-bottom:1px solid var(--svav-hair)!important;
+ border-radius:0!important;background:var(--svav-bg)!important;
+ background-image:none!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-head>strong{
+ color:var(--svav-ink)!important;text-align:center!important;
+ font:650 16px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-back{
+ position:static!important;grid-column:1!important;
+ width:44px!important;height:44px!important;min-height:44px!important;
+ border:0!important;border-radius:50%!important;
+ box-shadow:0 3px 12px rgba(31,48,67,.10)!important;
+ transform:none!important;translate:none!important;
+ background:var(--svav-bg)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-body{
+ box-sizing:border-box!important;display:block!important;flex:1 1 auto!important;min-height:0!important;
+ width:100%!important;margin:0!important;padding:16px 16px 24px!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ overscroll-behavior:contain!important;
+ background:var(--svav-bg)!important;background-image:none!important;box-shadow:none!important;
+ scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-inbox-sheet-body::-webkit-scrollbar{display:none!important}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-editor{
+ display:flex!important;flex-direction:column!important;gap:16px!important;
+ box-sizing:border-box!important;width:100%!important;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-hero{
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ gap:8px!important;margin:0!important;padding:0 0 2px!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-preview{
+ display:grid!important;place-items:center!important;width:88px!important;height:88px!important;
+ min-width:88px!important;min-height:88px!important;padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;overflow:hidden!important;box-shadow:none!important;
+ font-size:35px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-hero>small{
+ color:var(--secondary,#737b84)!important;font:450 12px/1.4 -apple-system,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-field{
+ display:flex!important;flex-direction:column!important;gap:7px!important;
+ color:var(--svav-ink)!important;font:550 13px/1.4 -apple-system,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-name{
+ box-sizing:border-box!important;display:block!important;width:100%!important;min-height:44px!important;
+ height:44px!important;margin:0!important;padding:0 12px!important;
+ border:0!important;border-radius:12px!important;outline:0!important;
+ background:var(--svav-soft)!important;color:var(--svav-ink)!important;
+ box-shadow:none!important;font:450 15px/1.2 -apple-system,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tabs{
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:3px!important;width:100%!important;min-height:48px!important;
+ margin:0!important;padding:4px!important;border:0!important;border-radius:15px!important;
+ background:var(--svav-soft)!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tab{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ width:100%!important;min-width:0!important;min-height:40px!important;height:40px!important;
+ margin:0!important;padding:0 6px!important;border:0!important;border-radius:11px!important;
+ background:transparent!important;box-shadow:none!important;color:var(--svav-ink)!important;
+ font:590 13px/1.2 -apple-system,system-ui,sans-serif!important;
+ transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-tab[aria-pressed="true"]{
+ background:var(--svav-bg)!important;box-shadow:0 1px 4px rgba(28,42,60,.08)!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-views{
+ display:block!important;width:100%!important;min-height:0!important;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-views>[hidden]{display:none!important}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-grid{
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:9px!important;width:100%!important;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-choice{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ justify-content:center!important;align-items:center!important;gap:6px!important;
+ min-width:0!important;min-height:85px!important;margin:0!important;padding:6px 2px!important;
+ border:0!important;border-radius:14px!important;
+ background:var(--svav-soft)!important;box-shadow:none!important;
+ color:var(--svav-ink)!important;overflow:hidden!important;
+ transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-choice[aria-pressed="true"]{
+ background:rgba(10,132,255,.09)!important;
+ outline:2px solid #0a84ff!important;outline-offset:-2px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-choice>.sv-atlas-thumb{
+ box-sizing:border-box!important;display:block!important;flex:0 0 auto!important;
+ width:min(100%,60px)!important;max-width:60px!important;height:auto!important;aspect-ratio:1!important;
+ border:0!important;border-radius:50%!important;overflow:hidden!important;
+ background-image:url('./seyveo-avatar-3d-atlas.webp')!important;
+ background-repeat:no-repeat!important;background-size:400% 300%!important;
+ box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-choice>small{
+ display:block!important;max-width:100%!important;overflow:hidden!important;
+ white-space:nowrap!important;text-overflow:ellipsis!important;text-align:center!important;
+ color:var(--svav-ink)!important;font:500 10px/1.2 -apple-system,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-monogram{
+ display:flex!important;flex-direction:column!important;gap:16px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-colors{
+ display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:13px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-color{
+ box-sizing:border-box!important;display:block!important;flex:0 0 36px!important;
+ width:36px!important;height:36px!important;border:3px solid var(--svav-bg)!important;
+ border-radius:50%!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-color[aria-pressed="true"]{
+ outline:2px solid #0a84ff!important;outline-offset:1px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-photo-pick{
+ display:grid!important;place-items:center!important;min-height:48px!important;
+ border:0!important;border-radius:13px!important;background:var(--svav-soft)!important;
+ color:var(--svav-ink)!important;font:550 13px/1.3 -apple-system,system-ui,sans-serif!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-photo-pick>input{
+ position:absolute!important;opacity:0!important;width:1px!important;height:1px!important;overflow:hidden!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-status{
+ margin:0!important;color:#bb483b!important;font-size:12px!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-status:empty{display:none!important}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-footer{
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:1fr 1.5fr!important;
+ flex:0 0 auto!important;gap:9px!important;width:100%!important;
+ margin:0!important;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))!important;
+ border:0!important;border-top:1px solid var(--svav-hair)!important;
+ background:var(--svav-bg)!important;box-shadow:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-footer>button{
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ height:44px!important;min-height:44px!important;padding:0 10px!important;margin:0!important;
+ border:0!important;border-radius:12px!important;box-shadow:none!important;
+ background:var(--svav-soft)!important;color:var(--svav-ink)!important;
+ font:600 14px/1.2 -apple-system,system-ui,sans-serif!important;
+ transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-footer>.sv-new-avatar-save{
+ background:#0a84ff!important;color:white!important;
+}
+@media(max-width:370px){
+ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-grid{gap:5px!important}
+ html body #svcpWorkChatScreen .sv-inbox-overlay[data-sv-inbox-screen="my-avatar"] .sv-new-avatar-choice{padding:5px 1px!important}
+}
