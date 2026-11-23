@@ -2292,6 +2292,7 @@ function openRoom(roomId){
  if(pendingConversation){
   pendingConversation.hidden=true;
   pendingConversation.style.setProperty('display','none','important');
+  pendingConversation.style.setProperty('visibility','hidden','important');
  }
  finishSvcpSayviDemoReply(true,true);
  closeCallPreview();
@@ -2354,7 +2355,14 @@ function openRoom(roomId){
  $('svcpPreviewOnHome').hidden=true;
  $('svcpReturnToTasks').hidden=true;
  $('svcpTaskDiscussionQuick').hidden=true;
- updatePerspective();renderChat();
+ // Compose the avatar, role, messages and input while the room is still
+ // visually hidden. Remove the visibility gate only after rendering finishes,
+ // so switching back from Sayvi cannot show a stale intermediate room frame.
+ try{
+  updatePerspective();renderChat();
+ }finally{
+  if(conversation)conversation.style.removeProperty('visibility');
+ }
 }
 function updatePerspective(){
  const current=roomDetails();
