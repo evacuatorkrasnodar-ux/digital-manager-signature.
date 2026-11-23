@@ -1,25 +1,97 @@
-/* SEYVEO · inbox controls v1 · Apple-like spacing, White Pearl material. */
-/* The former history button remains mounted for the existing history handler,
-   but History now belongs in the overflow menu. */
+/* SEYVEO Messages Inbox · one true 44px header, one no-press pearl material.
+   Actual menu button is created by seyveo-work-inbox-actions.js and is NOT
+   #svcpWorkHistoryTop. That old History button remains hidden as a functional
+   delegate, without occupying a grid cell. No extra pseudo-glass overlay. */
 html body #svcpWorkChatScreen .sv-inbox-history-proxy{display:none!important}
-html body #svcpWorkChatScreen[data-view="inbox"] .sv-inbox-options-button{
- grid-column:3;display:grid!important;place-items:center!important;
- width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
- margin:0;padding:0!important;box-sizing:border-box;border-radius:50%!important;
- border:var(--sv-white-pearl-edge,1px solid rgba(190,198,212,.36))!important;
- background:var(--sv-white-pearl-surface,rgba(255,255,255,.88))!important;
- color:var(--text,#151515)!important;
- box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 21px rgba(32,42,58,.10))!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(12px))!important;
- backdrop-filter:var(--sv-white-pearl-blur,blur(12px))!important;
- cursor:pointer;touch-action:manipulation
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-rows:44px!important;
+ align-items:center!important;column-gap:8px!important;
+ width:100%!important;
+ height:calc(60px + env(safe-area-inset-top,0px))!important;
+ min-height:calc(60px + env(safe-area-inset-top,0px))!important;
+ max-height:calc(60px + env(safe-area-inset-top,0px))!important;
+ padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px))!important;
+ margin:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ overflow:visible!important;transition:none!important;
 }
-html body #svcpWorkChatScreen .sv-inbox-options-button svg{
- width:20px;height:20px;stroke-width:1.75;fill:none;stroke:currentColor;
- stroke-linecap:round;stroke-linejoin:round
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > .svcp-work-chat-heading{
+ box-sizing:border-box!important;grid-column:2!important;grid-row:1!important;
+ min-width:0!important;min-height:44px!important;max-height:44px!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ justify-self:stretch!important;align-self:center!important;
+ margin:0!important;padding:0!important;gap:0!important;
+ transform:none!important;transition:none!important;
 }
-html body #svcpWorkChatScreen .sv-inbox-options-button:active{
- box-shadow:var(--sv-white-pearl-press-shadow,inset 0 2px 4px rgba(28,36,50,.13))!important;
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header .svcp-work-chat-heading > #svcpWorkChatTitle{
+ margin:0!important;padding:0!important;
+ font:630 25px/1.16 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:-.035em!important;text-align:center!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ transform:none!important;
+}
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > #svcpWorkChatBack,
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > #svcpInboxOptionsTop{
+ box-sizing:border-box!important;appearance:none!important;-webkit-appearance:none!important;
+ display:grid!important;place-items:center!important;grid-row:1!important;
+ justify-self:center!important;align-self:center!important;
+ flex:none!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ padding:0!important;margin:0!important;
+ border-radius:50%!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ background-image:none!important;
+ color:var(--sv-white-pearl-ink,#0B0B0D)!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(4px) saturate(104%))!important;
+ opacity:1!important;filter:none!important;
+ transform:none!important;translate:none!important;scale:1!important;
+ transition:none!important;animation:none!important;
+ touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;
+ cursor:pointer!important;
+}
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > #svcpWorkChatBack{
+ grid-column:1!important;justify-self:start!important;
+}
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > #svcpInboxOptionsTop{
+ grid-column:3!important;justify-self:end!important;
+}
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > :is(#svcpWorkChatBack,#svcpInboxOptionsTop):is(:hover,:focus,:active,[aria-expanded="true"]){
+ /* EXACTLY the resting appearance: no tap dip, light halo, jump or shadow swap. */
+ background:var(--sv-white-pearl-surface,rgba(255,255,255,.18))!important;
+ background-image:none!important;
+ border:var(--sv-white-pearl-edge,.75px solid rgba(255,255,255,.88))!important;
+ box-shadow:var(--sv-white-pearl-circle-shadow,0 7px 19px rgba(42,52,72,.13))!important;
+ color:var(--sv-white-pearl-ink,#0B0B0D)!important;
+ opacity:1!important;filter:none!important;transform:none!important;
+ translate:none!important;scale:1!important;transition:none!important;animation:none!important;
+}
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > :is(#svcpWorkChatBack,#svcpInboxOptionsTop) svg{
+ display:block!important;flex:none!important;
+ width:19px!important;height:19px!important;margin:0!important;padding:0!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:1!important;filter:none!important;transform:none!important;transition:none!important;
+}
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > #svcpInboxOptionsTop svg{
+ width:20px!important;height:20px!important;
+}
+/* Keyboard focus stays discoverable without a persistent touch 'pressed' ring. */
+html body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > :is(#svcpWorkChatBack,#svcpInboxOptionsTop):focus-visible{
+ outline:2px solid currentColor!important;outline-offset:2px!important;
+}
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > :is(#svcpWorkChatBack,#svcpInboxOptionsTop),
+:root[data-theme="dark"] body #svcpWorkChatScreen[data-view="inbox"] > .svcp-work-chat-header > :is(#svcpWorkChatBack,#svcpInboxOptionsTop):is(:hover,:focus,:active,[aria-expanded="true"]){
+ background:#38383A!important;border:1px solid rgba(255,255,255,.14)!important;
+ box-shadow:none!important;color:#F6F6F8!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html body #svcpWorkChatScreen[data-view="room"] .sv-inbox-options-button{display:none!important}
 #svcpWorkChatScreen{--sv-inbox-panel-bg:#FFF;--sv-inbox-panel-ink:#191A1D;--sv-inbox-divider:rgba(28,36,50,.085)}
@@ -27,7 +99,7 @@ html body #svcpWorkChatScreen[data-view="room"] .sv-inbox-options-button{display
  --sv-inbox-panel-bg:#24262A;--sv-inbox-panel-ink:#F7F7FA;--sv-inbox-divider:rgba(255,255,255,.13)
 }
 html body #svcpWorkChatScreen .sv-inbox-popover{
- position:absolute!important;top:calc(78px + env(safe-area-inset-top,0px));right:max(10px,env(safe-area-inset-right,0px));
+ position:absolute!important;top:calc(64px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));
  z-index:570!important;width:min(277px,calc(100vw - 24px));padding:7px;box-sizing:border-box;
  border:1px solid rgba(180,189,200,.24);border-radius:19px;
  background:var(--sv-inbox-panel-bg)!important;color:var(--sv-inbox-panel-ink);
