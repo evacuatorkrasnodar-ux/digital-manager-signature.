@@ -21,15 +21,15 @@
  /* White-on-white sculpted elevation: soft far ambience plus a defined
     near shadow. Same EXACT glass, rim, blur and 60/44px geometry. */
  --sv-white-pearl-circle-shadow:
-   0 11px 27px rgba(42,52,72,.11),
-   0 3px 8px rgba(42,52,72,.07),
-   0 0 0 .4px rgba(164,173,187,.16),
-   inset 0 1px 1px rgba(255,255,255,.85);
+   0 6px 17px rgba(42,52,72,.095),
+   0 2px 5px rgba(42,52,72,.065),
+   0 0 0 .4px rgba(164,173,187,.13),
+   inset 0 1px 1px rgba(255,255,255,.88);
  --sv-white-pearl-dock-shadow:
-   0 9px 26px rgba(42,52,72,.09),
-   0 2.5px 7px rgba(42,52,72,.06),
-   0 0 0 .4px rgba(164,173,187,.14),
-   inset 0 1px 1px rgba(255,255,255,.75);
+   0 6px 19px rgba(42,52,72,.078),
+   0 2px 6px rgba(42,52,72,.055),
+   0 0 0 .4px rgba(164,173,187,.12),
+   inset 0 1px 1px rgba(255,255,255,.80);
  --sv-white-pearl-press-fill:
    radial-gradient(ellipse 110% 95% at 50% 5%,rgba(10,132,255,.12),rgba(10,132,255,.045) 72%);
  --sv-white-pearl-press-shadow:
