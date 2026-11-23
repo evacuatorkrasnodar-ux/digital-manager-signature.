@@ -2001,13 +2001,9 @@ html:root[data-theme="light"] body #svcpWorkChatScreen #svcpChatDirectory .svcp-
  box-shadow:0 1px 4px rgba(55,67,82,.11),inset 0 1px 0 rgba(255,255,255,.86)!important;
 }
 
-/* 24 Nov 2026 · SINGLE SKY WALLPAPER, NO FOOTER UNDERLAY.
-   The Sky gradient was painted on #svcpConversation only, while the scroll
-   viewport's reserved composer area exposed the DIFFERENT outer screen
-   background. Put the one wallpaper on the fullscreen screen; the room,
-   messages, scroll clearance, and composer host must paint nothing behind
-   the actual blue capsule. This fixes the horizontal color seam without
-   moving the input or changing its controls. */
+/* Sky room: one continuous wallpaper owned by the full chat screen.
+   Inner conversation and native scroll surface have no separately painted
+   lower panel. No generic pseudo-element suppression on chat controls. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]:has(#svcpConversation[data-chat-wallpaper="sky"]:not([hidden])){
  background:
   radial-gradient(ellipse 72% 13% at 80% 89%,rgba(255,255,255,.25) 0%,rgba(237,250,255,.14) 47%,transparent 100%),
@@ -2024,43 +2020,5 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] > .svcp-chat,
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages{
- background:transparent!important;
- background-image:none!important;
- background-color:transparent!important;
- box-shadow:none!important;
-}
-/* Only the original round Plus and the single #svcpChatFormReset
-   .svcp-clean-surface may render blue under the toolbar. */
-
-/* 24 Nov · Remove obsolete bottom BACKPLATE, keep only actual composer glass.
-   Background owner: fixed #svcpWorkChatScreen. None of the nested shell
-   wrappers, footer or chat form may paint their own rectangular backdrop.
-   Deliberately leave .svcp-clean-surface and #svcpAttachFile untouched. */
-html body #svcpWorkChatScreen[data-view="room"] :is(
- #svcpWorkChatCanvas,#unifiedTasksChatHost,#svcpChats,
- #svcpConversation[data-chat-wallpaper="sky"],
- #svcpConversation[data-chat-wallpaper="sky"] > .svcp-chat,
- #svcpConversation[data-chat-wallpaper="sky"] #svcpMessages,
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset
-){
- background:transparent!important;
- background-image:none!important;
- background-color:transparent!important;
- border-color:transparent!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] :is(
- #svcpWorkChatCanvas,#unifiedTasksChatHost,#svcpChats,
- #svcpConversation[data-chat-wallpaper="sky"] > .svcp-chat,
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset
-)::before,
-html body #svcpWorkChatScreen[data-view="room"] :is(
- #svcpWorkChatCanvas,#unifiedTasksChatHost,#svcpChats,
- #svcpConversation[data-chat-wallpaper="sky"] > .svcp-chat,
- #svcpConversation[data-chat-wallpaper="sky"] #svcpChatFormReset
-)::after{
- content:none!important;
- display:none!important;
+ background:transparent!important;background-image:none!important;
 }
