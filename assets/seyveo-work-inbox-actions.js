@@ -220,31 +220,89 @@ function showAvatarEditor(){
  mono.append(swatches);
  nameInput.addEventListener('input',()=>paint());
  const photo=node('div','sv-new-avatar-photo');
- const photoLabel=node('label','sv-new-avatar-photo-pick');
- photoLabel.append(node('span',null,'Выбрать фотографию'));
- const photoInput=node('input');
- photoInput.type='file';photoInput.accept='image/jpeg,image/png,image/webp';photoInput.setAttribute('aria-label','Выбрать фото');
- photoLabel.append(photoInput);photo.append(photoLabel);
+ const photoChoices=node('div','sv-new-avatar-photo-choices');
+ const makePhotoPicker=(label,camera)=>{
+  const picker=node('label','sv-new-avatar-photo-pick');
+  picker.append(node('span',null,label));
+  const input=node('input');
+  input.type='file';input.accept='image/*';
+  if(camera)input.setAttribute('capture','user');
+  input.setAttribute('aria-label',label);
+  picker.append(input);photoChoices.append(picker);
+  return input;
+ };
+ const cameraInput=makePhotoPicker('Сделать фото',true);
+ const galleryInput=makePhotoPicker('Из галереи',false);
+ photo.append(photoChoices);
+ const filterBar=node('div','sv-new-avatar-photo-filters');
+ filterBar.setAttribute('role','group');filterBar.setAttribute('aria-label','Обработка фотографии');
+ const filterButtons=[];
+ let photoMode='auto',photoSource=null,photoRevision=0;
+ const looks=[
+  ['original','Оригинал'],
+  ['auto','Авто'],
+  ['portrait','Портрет']
+ ];
  const status=node('p','sv-new-avatar-status');status.setAttribute('role','status');
- photoInput.addEventListener('change',()=>{
-  const file=photoInput.files?.[0];if(!file)return;
-  if(!file.type.startsWith('image/')||file.size>8*1024*1024){status.textContent='Выберите фото до 8 МБ.';photoInput.value='';return}
+ const photoHint=node('small','sv-new-avatar-photo-hint','Выберите снимок — он появится в круглом аватаре. Обработка выполняется на устройстве.');
+ function repaintPhoto(){
+  if(!photoSource)return;
+  const revision=++photoRevision;
+  try{
+   const canvas=document.createElement('canvas');canvas.width=256;canvas.height=256;
+   const ctx=canvas.getContext('2d');if(!ctx)throw new Error('canvas');
+   const w=photoSource.naturalWidth||photoSource.width;
+   const h=photoSource.naturalHeight||photoSource.height;
+   const side=Math.min(w,h);
+   if(!side)throw new Error('dimensions');
+   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+   ctx.filter=photoMode==='portrait'?'brightness(1.06) contrast(1.04) saturate(1.06)':
+    photoMode==='auto'?'brightness(1.035) contrast(1.065) saturate(1.12)':'none';
+   ctx.drawImage(photoSource,(w-side)/2,(h-side)/2,side,side,0,0,256,256);
+   ctx.filter='none';
+   const data=canvas.toDataURL('image/jpeg',.84);
+   if(data.length>=320000)throw new Error('size');
+   if(revision!==photoRevision)return;
+   draft.kind='photo';draft.image=data;tab='photo';
+   status.textContent='';paint();
+  }catch{status.textContent='Не удалось обработать фотографию.'}
+ }
+ for(const [mode,label] of looks){
+  const filter=node('button','sv-new-avatar-photo-filter',label);
+  filter.type='button';filter.dataset.photoMode=mode;
+  filter.addEventListener('click',()=>{
+   photoMode=mode;
+   if(photoSource)repaintPhoto();
+   else paint();
+  });
+  filterBar.append(filter);filterButtons.push(filter);
+ }
+ photo.append(filterBar,photoHint);
+ function receivePhoto(input){
+  const file=input.files?.[0];if(!file)return;
+  input.value='';
+  if(!file.type.startsWith('image/')||file.size>8*1024*1024){
+   status.textContent='Выберите фотографию размером до 8 МБ.';return;
+  }
   const url=URL.createObjectURL(file),picture=new Image();
+  status.textContent='Подготавливаю снимок…';
   picture.onload=()=>{
-   try{
-    const canvas=document.createElement('canvas');canvas.width=256;canvas.height=256;
-    const ctx=canvas.getContext('2d'),side=Math.min(picture.naturalWidth,picture.naturalHeight);
-    if(!ctx||!side)throw new Error('picture');
-    ctx.drawImage(picture,(picture.naturalWidth-side)/2,(picture.naturalHeight-side)/2,side,side,0,0,256,256);
-    const data=canvas.toDataURL('image/jpeg',.78);
-    if(data.length>=320000)throw new Error('size');
-    draft.kind='photo';draft.image=data;tab='photo';status.textContent='';paint();
-   }catch{status.textContent='Не удалось обработать фотографию.'}
-   URL.revokeObjectURL(url);photoInput.value='';
+   photoSource=picture;photoMode='auto';repaintPhoto();URL.revokeObjectURL(url);
   };
-  picture.onerror=()=>{status.textContent='Не удалось открыть фото.';URL.revokeObjectURL(url);photoInput.value=''};
+  picture.onerror=()=>{
+   status.textContent='Не удалось открыть снимок.';URL.revokeObjectURL(url);
+  };
   picture.src=url;
- });
+ }
+ cameraInput.addEventListener('change',()=>receivePhoto(cameraInput));
+ galleryInput.addEventListener('change',()=>receivePhoto(galleryInput));
+ // A previously saved image may already be processed; don't alter it until the user chooses a filter.
+ if(draft.kind==='photo'&&draft.image){
+  photoMode='original';
+  const existing=new Image();
+  existing.onload=()=>{if(!photoSource)photoSource=existing};
+  existing.src=draft.image;
+ }
  views.append(gallery,mono,photo);
  editor.append(hero,nameLabel,tabs,views,status);
  // Fresh floating actions: no footer strip, backing card, or inherited button styles.
@@ -260,6 +318,7 @@ function showAvatarEditor(){
   gallery.hidden=tab!=='atlas';mono.hidden=tab!=='monogram';photo.hidden=tab!=='photo';
   for(const b of gallery.children)b.setAttribute('aria-pressed',String(draft.kind==='atlas'&&draft.index===Number(b.dataset.index)));
   for(const b of swatches.children)b.setAttribute('aria-pressed',String(draft.color===b.dataset.color&&draft.kind==='monogram'));
+  for(const b of filterButtons)b.setAttribute('aria-pressed',String(b.dataset.photoMode===photoMode));
  }
  function persist(clear=false){
   if(draft.kind==='monogram')draft.initials=initialsFromName();
