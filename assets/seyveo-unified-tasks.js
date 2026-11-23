@@ -513,17 +513,8 @@
      rect.width<100||top<45||top>300)return;
   employeeChatScreen.style.setProperty('--svcp-inbox-tabs-top',top.toFixed(2)+'px');
   employeeChatScreen.style.setProperty('--svcp-inbox-tabs-width',rect.width.toFixed(2)+'px');
-  // The Back button belongs to the permanent 44px header axis, NOT to
-  // the filter capsule height. Read the actual Cabinet header action so
-  // changing the filter offset cannot push the Back circle down.
-  const header=$('svWorkShell')?.querySelector('seyveo-work-head');
-  const headerAction=header?.shadowRoot?.querySelector('.sv-history-dual .action');
-  const backAxis=headerAction?.getBoundingClientRect();
-  if(backAxis&&backAxis.height>=40&&backAxis.height<=46&&
-     Number.isFinite(backAxis.top)&&backAxis.top>=0&&backAxis.top<200){
-   employeeChatScreen.style.setProperty('--svcp-messenger-back-top',
-    Math.max(0,backAxis.top-overlayTop).toFixed(2)+'px');
-  }
+  // Back buttons stay on the Messenger's own header axis. Their position
+  // must never inherit a Cabinet or filter measurement.
  }
  let workChatViewportFrame=0;
  let workChatViewportWidth=0;
