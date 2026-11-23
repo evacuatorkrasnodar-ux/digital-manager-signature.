@@ -866,12 +866,12 @@ html:not([data-theme]) body #calendarPage > #calendarCreateMenu:not([hidden]){
  box-sizing:border-box!important;width:min(236px,calc(100vw - 28px))!important;
  max-width:calc(100vw - 28px)!important;height:auto!important;
  margin:0!important;padding:6px!important;gap:0!important;
- border:var(--sv-white-pearl-edge)!important;border-radius:19px!important;
- background:var(--sv-white-pearl-surface)!important;background-image:none!important;
+ border:var(--sv-white-pearl-edge,1px solid rgba(255,255,255,.99))!important;border-radius:19px!important;
+ background:var(--sv-white-pearl-surface,rgba(242,241,240,.93))!important;background-image:none!important;
  color:#191C21!important;
- -webkit-backdrop-filter:var(--sv-white-pearl-blur)!important;
- backdrop-filter:var(--sv-white-pearl-blur)!important;
- box-shadow:var(--sv-white-pearl-dock-shadow)!important;
+ -webkit-backdrop-filter:var(--sv-white-pearl-blur,blur(16px) saturate(100%))!important;
+ backdrop-filter:var(--sv-white-pearl-blur,blur(16px) saturate(100%))!important;
+ box-shadow:var(--sv-white-pearl-dock-shadow,0 5px 17px rgba(82,69,57,.105),0 1px 3px rgba(65,53,44,.035),inset 0 1px 0 rgba(255,255,255,.82))!important;
  overflow:hidden!important;transform:none!important;
 }
 html body #svWorkShell > #calendarCreateMenu #calendarViewModes,
