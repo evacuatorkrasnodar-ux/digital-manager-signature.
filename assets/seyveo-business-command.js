@@ -96,6 +96,14 @@ function ownerAvatarPreview(){
   const own=JSON.parse(localStorage.getItem('seyveo-owner-avatar-v1')||'null');
   if(own?.kind==='photo'&&typeof own.data==='string'&&own.data.length<320000
    &&PHOTO_DATA_PATTERN.test(own.data))return {kind:'photo',data:own.data};
+  // The Messages editor writes the owner's chosen 3D artwork as preset 3d-N.
+  // Read that exact same profile value in Elena's view, never a hard-coded emoji.
+  if(own?.kind==='preset'&&/^3d-(?:[0-9]|1[01])$/.test(own.id||''))
+   return {kind:'atlas',index:Number(own.id.slice(3))};
+  if(own?.kind==='atlas'&&Number.isInteger(own.index)&&own.index>=0&&own.index<12)
+   return {kind:'atlas',index:own.index};
+  if(own?.kind==='emoji'&&typeof own.emoji==='string'&&[...own.emoji].length<=10)
+   return {kind:'emoji',emoji:own.emoji};
   const mapped={'woman-red':'red','woman-brunette':'dark','woman-silver':'senior',
    'man-curly':'man',smile:'smile',grapes:'grapes',strawberry:'strawberry',apple:'apple'};
   if(own?.kind==='preset'&&mapped[own.id])return {kind:'emoji',id:mapped[own.id]};
@@ -124,11 +132,24 @@ function drawPortrait(node,photo,letter){
 }
 function fillWorkPortrait(node,room,managerPreview=false){
  if(!node||!room||room.kind!=='personal'||room.person==='sayvi')return false;
- // In Elena's own view, this chat is with the manager, not with herself.
- if(managerPreview)drawPortrait(node,{kind:'emoji',id:'manager'},'Р');
+ // The visible peer in Elena's direct chat is the manager. Read their OWN
+ // Messages settings, including the original 3D atlas, rather than Elena's icon.
+ if(managerPreview)drawPortrait(node,ownerAvatarPreview(),'Р');
  else drawPortrait(node,selfAvatarFor(room.person),avatarCharacter(room.person));
- if(managerPreview)node.firstElementChild.textContent='👨🏻‍💼';
  return true;
+}
+function refreshVisiblePeerAvatars(){
+ const room=roomDetails();
+ if(!room||room.kind!=='personal'||room.person==='sayvi'||$('svcpConversation')?.hidden)return;
+ const managerPeer=state.viewpoint==='elena'&&room.id==='dm-elena';
+ fillWorkPortrait($('svcpRoomAvatar'),room,managerPeer);
+ if(!$('svcpRoomInfo')?.hidden)
+  fillWorkPortrait($('svcpRoomProfileAvatar'),room,managerPeer);
+ // Update existing messages in place; never reset chat scroll or conversation data.
+ if(managerPeer){
+  for(const avatar of $('svcpMessages')?.querySelectorAll('.svcp-manager-message-avatar')||[])
+   drawPortrait(avatar,ownerAvatarPreview(),'Р');
+ }
 }
 let selfAvatarDraft=null;
 const selfAvatarDialog=$('svcpSelfAvatarDialog');
@@ -239,9 +260,13 @@ $('svcpSelfAvatarFile')?.addEventListener('change',event=>{
  };
  reader.readAsDataURL(file);
 });
-window.addEventListener('seyveo:avatar-changed',refreshOwnAvatarEntrypoints);
+window.addEventListener('seyveo:avatar-changed',()=>{
+ refreshOwnAvatarEntrypoints();
+ refreshVisiblePeerAvatars();
+});
 window.addEventListener('seyveo:self-avatar-updated',event=>{
  refreshOwnAvatarEntrypoints();
+ refreshVisiblePeerAvatars();
  renderDirectory();
  const room=roomDetails(),display=$('svcpRoomAvatar');
  if(display&&!$('svcpConversation')?.hidden&&room?.person===event.detail?.person)
@@ -2289,6 +2314,8 @@ function openRoom(roomId){
 }
 function updatePerspective(){
  const current=roomDetails();
+ // Switching "Взгляд Елены" must repaint the contact portrait as well as bubbles.
+ refreshVisiblePeerAvatars();
  const allowed=current.kind==='groups'||current.id==='dm-elena';
  // Calls have a useful local device preview, but no remote signaling yet.
  // Hide them in team/group and assistant conversations to avoid false calls.
@@ -3186,6 +3213,15 @@ function renderChat(){
    }
    bubble.dataset.chatIndex=String(index);
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
+   // A manager's message seen by Elena uses the very same selected personal
+   // portrait as her chat header. Only incoming manager messages receive it.
+   if(state.viewpoint==='elena'&&state.room==='dm-elena'&&msg.role==='self'){
+    const peerAvatar=el('span','svcp-manager-message-avatar');
+    peerAvatar.setAttribute('aria-hidden','true');
+    drawPortrait(peerAvatar,ownerAvatarPreview(),'Р');
+    bubble.classList.add('svcp-manager-peer-bubble');
+    bubble.append(peerAvatar);
+   }
    const meta=el('div','svcp-bubble-meta');
    meta.append(el('strong','svcp-sender',senderName(msg)),el('time','svcp-time',formatTime(msg.at)));
  if(isOwn)meta.querySelector('.svcp-time').title='Сохранено в этом браузере · не подтверждение доставки';
