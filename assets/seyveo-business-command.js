@@ -54,6 +54,69 @@ const ROOMS=[
  {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочий помощник',mark:'',person:'sayvi',section:'assistant'}
 ];
+
+/* Contact pictures: use the device's native Color Emoji, Apple's on iOS. */
+const CHAT_AVATAR_STORAGE='seyveo-work-chat-avatars-v1';
+const CHAT_AVATAR_OPTIONS=[
+ ['red','👩🏻‍🦰','Рыжая'],['dark','👩🏽','Брюнетка'],
+ ['senior','👩🏼‍🦳','Седая'],['man','👨🏻‍🦱','Мужчина'],
+ ['smile','😊','Улыбка'],['grapes','🍇','Виноград'],
+ ['strawberry','🍓','Клубника'],['apple','🍎','Яблоко']
+];
+const CHAT_AVATAR_DEFAULTS={'dm-elena':'red','dm-anna':'dark','dm-mikhail':'man'};
+function chatAvatarSaved(){
+ try{const obj=JSON.parse(localStorage.getItem(CHAT_AVATAR_STORAGE)||'{}');
+  return obj&&typeof obj==='object'&&!Array.isArray(obj)?obj:{}}
+ catch{return {}}
+}
+function chatAvatarChoice(roomId){
+ const id=chatAvatarSaved()[roomId]||CHAT_AVATAR_DEFAULTS[roomId]||'smile';
+ return CHAT_AVATAR_OPTIONS.find(item=>item[0]===id)||CHAT_AVATAR_OPTIONS[0];
+}
+function fillWorkPortrait(node,room,managerPreview=false){
+ if(!node||!room||room.kind!=='personal'||room.person==='sayvi')return false;
+ const picture=document.createElement('span');
+ picture.className='svcp-native-avatar';
+ picture.setAttribute('aria-hidden','true');
+ picture.textContent=managerPreview?'👨🏻‍💼':chatAvatarChoice(room.id)[1];
+ node.replaceChildren(picture);
+ node.classList.add('svcp-native-avatar-host');
+ return true;
+}
+function renderChatAvatarChoices(room){
+ const edit=$('svcpRoomAvatarEdit'),panel=$('svcpRoomAvatarPicker'),grid=$('svcpRoomAvatarChoices');
+ if(!edit||!panel||!grid)return;
+ const eligible=room?.kind==='personal'&&room.person!=='sayvi'&&!employeePreviewActive();
+ edit.hidden=!eligible;panel.hidden=true;edit.setAttribute('aria-expanded','false');
+ grid.replaceChildren();
+ if(!eligible)return;
+ const active=chatAvatarChoice(room.id)[0];
+ for(const [id,glyph,name] of CHAT_AVATAR_OPTIONS){
+  const button=document.createElement('button');button.type='button';
+  button.className='svcp-room-avatar-choice';button.dataset.avatarId=id;
+  button.setAttribute('aria-label',name);
+  button.setAttribute('aria-pressed',String(active===id));
+  const picture=document.createElement('span');picture.textContent=glyph;picture.setAttribute('aria-hidden','true');
+  const label=document.createElement('small');label.textContent=name;
+  button.append(picture,label);
+  button.addEventListener('click',()=>{
+   try{const selected=chatAvatarSaved();selected[room.id]=id;
+    localStorage.setItem(CHAT_AVATAR_STORAGE,JSON.stringify(selected));
+   }catch{return}
+   fillWorkPortrait($('svcpRoomAvatar'),room,false);
+   fillWorkPortrait($('svcpRoomProfileAvatar'),room,false);
+   renderDirectory();
+   grid.querySelectorAll('button').forEach(item=>item.setAttribute('aria-pressed',String(item.dataset.avatarId===id)));
+  });
+  grid.append(button);
+ }
+}
+$('svcpRoomAvatarEdit')?.addEventListener('click',()=>{
+ const panel=$('svcpRoomAvatarPicker'),control=$('svcpRoomAvatarEdit');
+ if(!panel||!control)return;
+ panel.hidden=!panel.hidden;control.setAttribute('aria-expanded',String(!panel.hidden));
+});
+
 /* Locally created staff groups; no external message delivery. */
 const LOCAL_GROUPS_KEY='seyveo-workchat-local-groups-v1';
 function readLocalGroups(){
@@ -1619,6 +1682,7 @@ function renderDirectory(){
   row.setAttribute('aria-label',(room.kind==='personal'?'Открыть личный чат: ':'Открыть чат: ')+name+(person&&!managerDialog?', '+person:''));
   const avatar=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi sv-sayvi-avatar':''),room.person==='sayvi'?'':managerDialog?'Р':room.mark);
   avatar.setAttribute('aria-hidden','true');
+  fillWorkPortrait(avatar,room,managerDialog);
   const body=el('span','svcp-directory-item-body');
   const headline=el('span','svcp-directory-item-head');
   headline.append(el('strong','svcp-directory-name',name));
@@ -2059,7 +2123,7 @@ function openRoom(roomId){
   avatar.replaceChildren();
   if(selected.id==='dm-sayvi'){
    avatar.append(el('span','sv-sayvi-symbol'));
-  }else{
+  }else if(!fillWorkPortrait(avatar,selected,state.viewpoint==='elena'&&selected.id==='dm-elena')){
    avatar.textContent=state.viewpoint==='elena'&&selected.id==='dm-elena'?'Р':selected.mark;
   }
  }
@@ -2142,9 +2206,11 @@ function renderRoomProfile(){
  const person=room.person&&Object.prototype.hasOwnProperty.call(STAFF,room.person)?room.person:null;
  const avatar=$('svcpRoomProfileAvatar');
  if(avatar){
-  avatar.textContent=room.id==='dm-sayvi'?'S':(name.slice(0,1).toUpperCase()||'•');
+  avatar.replaceChildren();
+  if(!fillWorkPortrait(avatar,room,state.viewpoint==='elena'&&room.id==='dm-elena'))avatar.textContent=room.id==='dm-sayvi'?'S':(name.slice(0,1).toUpperCase()||'•');
   avatar.classList.toggle('is-group',room.kind!=='personal');
  }
+ renderChatAvatarChoices(room);
  const nameNode=$('svcpRoomInfoName');if(nameNode)nameNode.textContent=name;
  const roleNode=$('svcpRoomInfoDescription');if(roleNode)roleNode.textContent=role;
  const callable=room.kind==='personal'&&room.person!=='sayvi';
