@@ -18,18 +18,18 @@
  background:transparent;border:0;box-shadow:none;filter:none;
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
 }
-:host([data-work-tabs="true"]){height:90px;min-height:90px}
+:host([data-work-tabs="true"]){height:74px;min-height:74px}
 :host([hidden]){display:none!important}
 *,*::before,*::after{box-sizing:border-box}
 .bar{
  display:grid;grid-template-columns:44px 44px minmax(0,1fr) 44px;
- grid-template-rows:44px;column-gap:8px;row-gap:2px;
+ grid-template-rows:44px;column-gap:8px;row-gap:0;
  align-items:center;align-content:start;
  width:100%;height:100%;margin:0;
  padding:var(--work-top) var(--work-right) 0 var(--work-left);
  background:#fff;border:0;border-radius:0;box-shadow:none;overflow:visible;
 }
-:host([data-work-tabs="true"]) .bar{grid-template-rows:44px 28px}
+:host([data-work-tabs="true"]) .bar{grid-template-rows:44px}
 :host(:not([data-work-tabs="true"])) .bar{grid-template-rows:44px}
 .title{
  grid-column:2/4;grid-row:1;align-self:center;min-width:0;max-width:100%;
@@ -87,8 +87,8 @@
  font:600 9px/1 -apple-system,BlinkMacSystemFont,sans-serif;
  box-shadow:0 1px 2px rgba(0,0,0,.08);pointer-events:none;
 }
-/* In Cabinet Back, Review and Plus share one grid row.
-   In My Tasks the SAME actions sit in one capsule at upper right. */
+/* One fixed 44px button axis: the same controls and tap sizes stay in
+   place for Calendar, Cabinet and the other root Work sections. */
 .sv-history-dual{display:contents}
 .sv-history-search,.sv-history-select{display:none}
 :host([data-task-tools="true"]) .sv-history-dual{
@@ -151,26 +151,8 @@
 :host([data-task-selecting="true"]) .sv-history-dual .sv-history-search{
  display:grid;flex:0 0 42px;width:42px;height:42px;
 }
-.calendar-jump{
- /* Room for the full label: do not wrap "Все календари" into 2 lines. */
- grid-column:1/4;grid-row:1;justify-self:start;align-self:center;
- display:inline-flex;align-items:center;gap:7px;
- width:max-content;max-width:calc(100vw - 172px);min-width:0;
- appearance:none;border:0;background:transparent;padding:0;margin:0;
- color:#A83D27;font:560 14.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
- letter-spacing:-.012em;white-space:nowrap;
- cursor:pointer;-webkit-tap-highlight-color:transparent;
-}
-.calendar-jump span{white-space:nowrap}
-.calendar-jump svg{flex:none}
-.calendar-jump svg{
- display:block;width:23px;height:22px;fill:none;stroke:currentColor;
- stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
-}
-.calendar-jump[hidden],.month[hidden]{display:none!important}
-.calendar-jump:focus-visible,.month:focus-visible{
- outline:2px solid currentColor;outline-offset:3px;border-radius:3px;
-}
+.month[hidden]{display:none!important}
+.month:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:3px}
 .month{
  grid-column:1/4;grid-row:1;justify-self:start;align-self:center;
  display:flex;align-items:baseline;gap:5px;max-width:100%;min-width:0;
@@ -179,15 +161,28 @@
  font:600 clamp(28px,7.3vw,32px)/1.12 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  letter-spacing:-.032em;white-space:nowrap;-webkit-tap-highlight-color:transparent;
 }
+/* Compact Work agenda: one shared row, no extra "All calendars" line.
+   The month itself opens Calendar, alongside the original three 42px actions.
+   Keep the 134px three-action capsule; narrower would shrink the touch areas. */
+:host([data-agenda="true"]) .bar{
+ grid-template-columns:minmax(0,1fr) 134px;
+ grid-template-rows:44px;column-gap:8px;
+}
 :host([data-agenda="true"]) .month{
- grid-column:1/4;grid-row:2;align-self:center;
- font-size:clamp(27px,7.2vw,30px);
- line-height:1.1;
+ grid-column:1;grid-row:1;justify-self:start;align-self:center;
+ min-width:0;max-width:100%;overflow:hidden;
+ font-size:clamp(21px,6.2vw,26px);
+ line-height:1.12;font-weight:620;
  transform:none;transition:none;
 }
-/* Root Work sections are already named in the tab capsule: the second row
-   is intentionally reserved for the calendar MONTH only. Nested/history
-   destinations keep their compact, original first-row heading. */
+:host([data-agenda="true"]) .month-name{
+ min-width:0;overflow:hidden;text-overflow:ellipsis;
+}
+:host([data-agenda="true"]) .sv-history-dual{
+ grid-column:2;grid-row:1;justify-self:end;width:134px;
+}
+/* Root sections are named in the segmented tab bar. Nested/history
+   screens retain the original first-row heading. */
 :host([data-work-tabs="true"]:not([data-agenda="true"])) .title:not([hidden]){
  grid-column:2/4;grid-row:1;justify-self:stretch;align-self:center;
  font-size:20px;line-height:1.2;font-weight:590;letter-spacing:-.02em;
@@ -255,14 +250,13 @@
  function create(){
   const host=document.createElement('seyveo-work-head');
   const shadow=host.attachShadow({mode:'open'});
-  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back sv-canonical-back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="calendar-jump" type="button" aria-label="Открыть все календари" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Все календари</span></button><button class="month" type="button" aria-label="Открыть календарь" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
+  shadow.innerHTML='<style>'+styles+'</style><header class="bar"><button class="control back sv-canonical-back" type="button" aria-label="Вернуться назад">'+BACK+'</button><button class="month" type="button" aria-label="Открыть календарь" hidden><span class="month-name">Ноябрь</span><span class="month-year">2026</span></button><h1 class="title">Мои дела</h1><button class="control action" type="button" aria-label="Добавить дело">'+PLUS+'</button></header>';
   const back=shadow.querySelector('.back');
   const title=shadow.querySelector('.title');
   const month=shadow.querySelector('.month');
-  const calendarJump=shadow.querySelector('.calendar-jump');
   const add=shadow.querySelector('.action');
   host.dataset.theme=document.documentElement.dataset.theme==='dark'?'dark':'light';
-  return {host,back,title,month,calendarJump,add,icons:{plus:PLUS,search:SEARCH}};
+  return {host,back,title,month,add,icons:{plus:PLUS,search:SEARCH}};
  }
  window.SEYVEO_WORK_HEADER=Object.freeze({create});
 })();
