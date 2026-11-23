@@ -374,27 +374,3 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  background:rgba(225,229,234,.60)!important;
  color:#252A31!important;-webkit-text-fill-color:#252A31!important;
 }
-
-/* 24 Nov 2026 · Single floating composer, no secondary footer canvas.
-   Keep the blue capsule and Plus as the only painted bottom controls.
-   The chat wallpaper remains the full-bleed background behind them. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation > .svcp-chat,
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpChatFormReset{
- background:transparent!important;
- background-image:none!important;
- border-color:transparent!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
-}
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpChatFormReset::before,
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat #svcpChatFormReset::after{
- content:none!important;
- display:none!important;
-}
-/* Do not paint a second rectangular floor underneath the floating pill. */
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat::before,
-html body #svcpWorkChatScreen[data-view="room"] #svcpConversation .svcp-chat::after{
- content:none!important;
- display:none!important;
-}
