@@ -422,19 +422,23 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  background:rgba(6,80,157,.72)!important;
  box-shadow:inset 0 2px 5px rgba(5,46,93,.25)!important;
 }
+/* All Sky rooms use the already-approved Sayvi blue capsule
+   without changing name width, font size, padding or header placement. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpConversationHeading .svcp-room-name-pill{
- background:rgba(225,245,255,.77)!important;
- border:1px solid rgba(255,255,255,.54)!important;
- color:#1C527F!important;
- box-shadow:0 2px 8px rgba(5,81,144,.08),inset 0 1px 0 rgba(255,255,255,.62)!important;
- -webkit-backdrop-filter:blur(18px) saturate(118%)!important;
- backdrop-filter:blur(18px) saturate(118%)!important;
+ background:rgba(8,99,191,.72)!important;background-color:rgba(8,99,191,.72)!important;
+ border:0!important;color:#FFFFFF!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
- #svcpConversation[data-chat-wallpaper="sky"] #svcpConversationHeading .svcp-room-name-pill :is(strong,svg){
- color:#184A71!important;
- stroke:#184A71!important;
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpConversationHeading .svcp-room-name-pill strong{
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpConversationHeading .svcp-room-name-pill svg,
+html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
+ #svcpConversation[data-chat-wallpaper="sky"] #svcpConversationHeading .svcp-room-name-pill svg path{
+ color:#9FDBFF!important;stroke:#9FDBFF!important;stroke-width:3!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpChatForm::before{
@@ -596,11 +600,11 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  box-shadow:none!important;
  transform:none!important;
 }
-/* Elena's name remains easy to read; just one blue border, no relief. */
+/* Sky capsule stays exactly the Sayvi blue even after flat-material rules. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="sky"] #svcpConversationHeading .svcp-room-name-pill{
- border:1px solid var(--sv-sky-flat-rim)!important;
- background:rgba(225,245,255,.77)!important;
+ border:0!important;
+ background:rgba(8,99,191,.72)!important;
  background-image:none!important;
  box-shadow:none!important;
  filter:none!important;
