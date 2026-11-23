@@ -210,7 +210,15 @@ html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #s
 /* SKY shares the same fade, blur and start/end coordinates as WHITE,
    but keeps the cool blue reflection of its wallpaper. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2::before{
- background:linear-gradient(180deg,rgba(171,223,247,.33) 0%,rgba(144,208,240,.23) 51%,rgba(144,208,240,.11) 79%,transparent 100%)!important;
+ /* The visible frosted glass begins at the TOP edge beside Back/avatar,
+    not in a bright stripe below the avatar. Same fade length as White. */
+ background:linear-gradient(180deg,
+  rgba(213,239,252,.56) 0%,
+  rgba(193,231,249,.49) 28%,
+  rgba(170,218,246,.36) 52%,
+  rgba(157,213,245,.16) 78%,
+  rgba(157,213,245,0) 100%
+ )!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wallpaper="sky"] > .svcp-identity-v2 .svcp-identity-v2-stack #svcpConversationHeading > .svcp-identity-v2-pill{
  background:rgba(10,102,185,.66)!important;
