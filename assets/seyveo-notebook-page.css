@@ -176,7 +176,7 @@
  grid-template-columns:repeat(3,minmax(0,1fr))!important;
  gap:6px!important;
  width:min(420px,calc(100% - 20px))!important;
- height:72px!important;
+ height:66px!important;
  margin:0!important;
  padding:0!important;
  border:0!important;
@@ -198,7 +198,7 @@
  width:100%!important;
  min-width:0!important;
  min-height:72px!important;
- height:72px!important;
+ height:66px!important;
  margin:0!important;
  padding:0!important;
  border:0!important;
