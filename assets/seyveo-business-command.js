@@ -125,7 +125,13 @@ function fillWorkPortrait(node,room,managerPreview=false){
  if(!node||!room||room.kind!=='personal'||room.person==='sayvi')return false;
  // Personal portrait always follows the same native initial/photo standard.
  if(managerPreview)drawPortrait(node,ownerAvatarPreview(),'Р');
- else drawPortrait(node,selfAvatarFor(room.person),avatarCharacter(room.person));
+ else{
+  const known=avatarCharacter(room.person);
+  const initial=known==='•'
+   ?([...String(room.label||room.person||'•').trim()][0]||'•').toLocaleUpperCase('ru-RU')
+   :known;
+  drawPortrait(node,selfAvatarFor(room.person),initial);
+ }
  return true;
 }
 /* Refresh visible group portraits in place when a person updates their avatar.
