@@ -589,7 +589,13 @@ gallery.addEventListener('click',event=>{
   status.textContent='Образ выбран и сохранён на этом устройстве.';
  }
 });
-entry.addEventListener('click',()=>{status.textContent='';paint();picker.showModal()});
+function openOwnerAvatar(){
+ const world=$('homeWorldPopover');if(world)world.hidden=true;
+ const trigger=$('homeWorldTrigger');if(trigger)trigger.setAttribute('aria-expanded','false');
+ status.textContent='';paint();if(!picker.open)picker.showModal();
+}
+entry.addEventListener('click',openOwnerAvatar);
+$('seyveoOwnerAvatarOpen')?.addEventListener('click',openOwnerAvatar);
 $('seyveoAvatarPickPhoto')?.addEventListener('click',()=>file.click());
 $('seyveoAvatarClose')?.addEventListener('click',()=>picker.close());
 $('seyveoAvatarReset')?.addEventListener('click',()=>{
