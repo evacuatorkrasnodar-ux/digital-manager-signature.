@@ -29,26 +29,6 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation #svcpRoomAvata
 html body #svcpWorkChatScreen[data-view="room"] #svcpRoomAvatar .svcp-native-avatar{font-size:40px!important}
 html body #svcpWorkChatScreen .svcp-room-profile-avatar.svcp-native-avatar-host{border-radius:50%!important;overflow:hidden!important}
 html body #svcpWorkChatScreen .svcp-room-profile-avatar .svcp-native-avatar{font-size:54px!important}
-#svcpWorkChatScreen .svcp-room-avatar-edit{
- display:block;width:max-content;max-width:calc(100% - 28px);min-height:38px;margin:0 auto 10px;padding:7px 17px;
- border-radius:999px;border:1px solid rgba(132,147,163,.19);background:rgba(158,179,201,.1);
- color:var(--text);font:inherit;font-size:12px;font-weight:530}
-#svcpWorkChatScreen .svcp-room-avatar-edit[hidden],#svcpWorkChatScreen .svcp-room-avatar-picker[hidden]{display:none!important}
-#svcpWorkChatScreen .svcp-room-avatar-picker{width:100%;padding:8px 12px 13px;box-sizing:border-box}
-#svcpWorkChatScreen .svcp-room-avatar-picker p{margin:0 0 10px;font-size:11px;color:var(--secondary);text-align:center}
-#svcpWorkChatScreen .svcp-room-avatar-choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
-#svcpWorkChatScreen .svcp-room-avatar-choice{
- display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
- min-width:0;min-height:78px;padding:8px 2px 6px;cursor:pointer;
- border:1px solid rgba(134,150,169,.16);border-radius:15px;
- background:rgba(148,160,176,.06);color:var(--text);font:inherit}
-#svcpWorkChatScreen .svcp-room-avatar-choice[aria-pressed="true"]{border-color:#368bfd!important;background:rgba(54,139,253,.10)!important}
-#svcpWorkChatScreen .svcp-room-avatar-choice>span{
- display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#e9f0f9;
- font-size:32px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
-#svcpWorkChatScreen .svcp-room-avatar-choice small{font-size:9px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-@media(max-width:360px){#svcpWorkChatScreen .svcp-room-avatar-choices{gap:4px}}
-
 /* The owner's actual header opens the company popover; make photo settings reachable there too. */
 #homeHeader #homePassportPopover[data-side="studio"] .seyveo-owner-business-avatar-entry{display:none!important}
 #homeHeader #homePassportPopover[data-side="company"] .seyveo-owner-business-avatar-entry{
