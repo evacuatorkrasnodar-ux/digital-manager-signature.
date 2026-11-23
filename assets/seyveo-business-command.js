@@ -2288,10 +2288,10 @@ function openRoom(roomId){
   return;
  }
  const container=$('svcpWorkChatScreen');
- const conversation=$('svcpConversation');
- if(conversation){
-  conversation.hidden=true;
-  conversation.style.setProperty('display','none','important');
+ const pendingConversation=$('svcpConversation');
+ if(pendingConversation){
+  pendingConversation.hidden=true;
+  pendingConversation.style.setProperty('display','none','important');
  }
  finishSvcpSayviDemoReply(true,true);
  closeCallPreview();
