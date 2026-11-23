@@ -364,7 +364,7 @@ overlay.append(backdrop,panel);screen.append(overlay);
 backdrop.addEventListener('click',()=>closeSheet());
 function closeSheet(){overlay.hidden=true;sheetType='';activeRoom='';sheetStack.length=0}
 function openSubSheet(type,parent){sheetStack.push({type:parent||sheetType,id:activeRoom});openSheet(type,'',true)}
-function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
+function viewTitle(type){return {new:'Новое сообщение',staff:'Сотрудники',team-structure:'Структура чатов',invite:'Подключить сотрудника',group:'Новая группа',settings:'Настройки сообщений',colleague:'Личное приглашение',one:'SEYVEO One','my-avatar':'Моё имя и фото','room-avatar':'Аватар чата',display:'Отображение',notifications:'Уведомления',appearance:'Тема',wallpapers:'Фон переписок',data:'История и данные',archives:'Архив',room:'Действия с чатом'}[type]||'Сообщения'}
 function openSheet(type,id='',nested=false){
  if(!nested)sheetStack.length=0;
  closeMenu();sheetType=type;activeRoom=id;
@@ -373,6 +373,7 @@ function openSheet(type,id='',nested=false){
  overlay.dataset.svInboxScreen=type;
  if(type==='new')showContacts(type);
  else if(type==='staff')showStaff();
+ else if(type==='team-structure')showTeamStructure();
  else if(type==='colleague')showColleagueInvite(id);
  else if(type==='invite')showInvite();
  else if(type==='group')showGroupForm();
@@ -660,6 +661,37 @@ function showData(){
  });
  body.append(node('p','sv-inbox-hint','Архив не удаляет сообщения. История содержит разговоры и поручения, включая неархивные.'));
 }
+function showTeamStructure(){
+ // Read live local demo rooms. Do not invent branches, users or server-side permissions.
+ const intro=node('p','sv-inbox-structure-intro',
+  'Текущая демонстрация · одна команда. Филиалы, назначение управляющих и сводки директора пока в планах.');
+ body.append(intro);
+ const tree=node('div','sv-inbox-structure-tree');
+ const company=node('div','sv-inbox-structure-node');
+ company.append(node('strong',null,'Компания'),node('small',null,'Руководитель · управление рабочими группами'));
+ tree.append(company);
+ const branch=node('div','sv-inbox-structure-node sv-inbox-structure-node-child');
+ branch.append(node('strong',null,'Команда · демо'),node('small',null,'Елена, Анна и Михаил · учебные сотрудники'));
+ tree.append(branch);
+ body.append(tree);
+ sectionHeading('Групповые чаты команды');
+ const groups=node('div','sv-inbox-people-list');
+ const available=allRooms().filter(r=>r.kind==='groups');
+ for(const r of available){
+  const link=makeContactRow(r,()=>openChat(r.id));
+  link.setAttribute('aria-label','Открыть рабочий групповой чат '+r.label);
+  groups.append(link);
+ }
+ if(!available.length)groups.append(node('p','sv-inbox-hint','Группы ещё не созданы.'));
+ body.append(groups);
+ if(!employee()){
+  sectionHeading('Состав групп');
+  menuLink('Создать рабочую группу','Добавлять участников может руководитель','groupAdd',
+   ()=>openSubSheet('group','team-structure'));
+ }
+ body.append(node('p','sv-inbox-structure-foot',
+  'Сотрудники общаются и голосуют в своих группах. Директору в будущем показываем важные события и результаты, а не все сообщения.'));
+}
 function showStaff(){
  if(employee()){showEmployeeDirectory();return}
  const names=allRooms().filter(r=>r.kind==='personal'&&r.person!=='sayvi'&&(!employee()||r.id==='dm-elena'));
@@ -669,6 +701,7 @@ function showStaff(){
  body.append(list);
  if(!employee()){
   sectionHeading('Управление');
+  menuLink('Структура рабочих чатов','Команда, группы и права участников','users',()=>openSubSheet('team-structure','staff'));
   menuLink('Подключить сотрудника','Подготовить приглашение','users',()=>openSubSheet('invite','staff'));
   menuLink('Карточки сотрудников','История и достижения','users',()=>{
    closeSheet();
