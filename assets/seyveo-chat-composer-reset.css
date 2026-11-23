@@ -16,10 +16,10 @@ html body #svcpWorkChatScreen[data-view="room"] #svcpConversation[data-chat-wall
    This preset reuses the SAME existing layout, grid and click handlers. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"]{
- --svcp-conversation-blue-glass:rgba(244,244,246,.88);
- --svcp-conversation-blue-glass-expanded:rgba(244,244,246,.91);
- --svcp-conversation-blue-rim:rgba(255,255,255,.90);
- --svcp-conversation-blue-blur:blur(15px) saturate(107%);
+ --svcp-conversation-blue-glass:rgba(244,242,239,.93);
+ --svcp-conversation-blue-glass-expanded:rgba(244,242,239,.95);
+ --svcp-conversation-blue-rim:rgba(255,255,255,.99);
+ --svcp-conversation-blue-blur:blur(16px) saturate(100%);
   --sv-chat-outgoing:#3DAEFE;
 }
 html body #svcpWorkChatScreen #svcpChatFormReset{
@@ -334,12 +334,12 @@ html body #svcpWorkChatScreen #svcpChatFormReset:focus-within{
    Leave Sky's white icons/blue glass and every geometric rule untouched. */
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > .svcp-clean-surface{
- box-shadow:0 4px 17px rgba(43,49,60,.105)!important;
+ box-shadow:0 5px 17px rgba(82,69,57,.105),0 1px 3px rgba(65,53,44,.035),inset 0 1px 0 rgba(255,255,255,.82)!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset > #svcpAttachFile{
  color:#252A31!important;
- box-shadow:0 4px 15px rgba(43,49,60,.085)!important;
+ box-shadow:0 4px 15px rgba(82,69,57,.115),inset 0 1px 0 rgba(255,255,255,.86)!important;
 }
 html:root:not([data-theme="dark"]) body #svcpWorkChatScreen[data-view="room"]
  #svcpConversation[data-chat-wallpaper="pearl"] #svcpChatFormReset.svcp-compose-multiline > #svcpAttachFile{
