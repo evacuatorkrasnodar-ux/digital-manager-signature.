@@ -501,8 +501,10 @@
  // Work navigation capsule's coordinates. The two screens live in different
  // DOM roots, so guessing 5/12/21px margins can never guarantee continuity.
  // Read the already-laid-out Work tabs BEFORE making Messenger visible.
- const workTabs=$('svWorkTabs');
  function alignWorkChatFilters(){
+  // Work Shell is initialized AFTER this script, so resolve its live
+  // nav at navigation time rather than caching a null startup reference.
+  const workTabs=$('svWorkTabs');
   if(!employeeChatScreen||!workTabs||workTabs.hidden)return;
   const rect=workTabs.getBoundingClientRect();
   const overlayTop=window.visualViewport?.offsetTop||0;
