@@ -166,19 +166,21 @@ function showAvatarEditor(){
  const hero=node('div','sv-new-avatar-hero');
  const preview=node('span','sv-new-avatar-preview');
  preview.setAttribute('aria-hidden','true');
- const identity=node('span','sv-new-avatar-identity');
- const identityName=node('strong','sv-new-avatar-identity-name');
- const identityChevron=node('span','sv-new-avatar-identity-chevron');
- identityChevron.innerHTML=svg('chevron');identityChevron.setAttribute('aria-hidden','true');
- identity.append(identityName,identityChevron);
- hero.append(preview,identity);
- const nameLabel=node('label','sv-new-avatar-field');
- nameLabel.append(node('span',null,'Имя'));
- const nameInput=node('input','sv-new-avatar-name');
+ const identity=node('label','sv-new-avatar-identity');
+ identity.setAttribute('aria-label','Имя профиля — нажмите для изменения');
+ const nameInput=node('input','sv-new-avatar-inline-name');
  nameInput.type='text';nameInput.maxLength=50;nameInput.placeholder='Ваше имя';nameInput.autocomplete='nickname';
+ nameInput.setAttribute('aria-label','Имя профиля');
  nameInput.value=staff?'Елена':String(prefs.myProfile?.name||'');
  if(staff)nameInput.readOnly=true;
- nameLabel.append(nameInput);
+ const identityChevron=node('span','sv-new-avatar-identity-chevron');
+ identityChevron.innerHTML=svg('chevron');identityChevron.setAttribute('aria-hidden','true');
+ identity.append(nameInput,identityChevron);
+ hero.append(preview,identity);
+ function sizeInlineName(){
+  const value=nameInput.value||nameInput.placeholder;
+  nameInput.style.width=Math.max(6,Math.min(23,[...value].length+1))+'ch';
+ }
  const tabs=node('div','sv-new-avatar-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Способ оформления');
  const views=node('div','sv-new-avatar-views');
  const gallery=node('div','sv-new-avatar-grid');
@@ -298,14 +300,14 @@ function showAvatarEditor(){
   existing.src=draft.image;
  }
  views.append(gallery,photo);
- editor.append(hero,nameLabel,tabs,views,status);
+ editor.append(hero,tabs,views,status);
  // Fresh floating actions: no footer strip, backing card, or inherited button styles.
  const actions=node('div','sv-avatar-floating-actions');
  const reset=node('button','sv-avatar-action-reset','Сбросить');reset.type='button';
  const save=node('button','sv-avatar-action-save','Сохранить');save.type='submit';save.setAttribute('form',editor.id);
  actions.append(reset,save);
  function paint(){
-  identityName.textContent=nameInput.value.trim()||'Ваше имя';
+  sizeInlineName();
   if(draft.kind==='monogram'){
    draft.initials=initialsFromName();
    draft.color=automaticAvatarColor(nameInput.value);
