@@ -10,23 +10,26 @@
 :host{
  --work-left:max(8px,env(safe-area-inset-left,0px));
  --work-right:max(12px,env(safe-area-inset-right,0px));
- --work-top:6px;
+ /* One 44px button axis with 14px of breathing room on every Work page. */
+ --work-top:14px;
  display:block;box-sizing:border-box;flex:none;order:0;align-self:stretch;
- width:100%;max-width:100%;height:50px;min-height:50px;margin:0;
+ width:100%;max-width:100%;height:58px;min-height:58px;margin:0;
  color:var(--sv-header-ink,#1C1C1E);
  background:transparent;border:0;box-shadow:none;filter:none;
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
 }
-:host([data-work-tabs="true"]){height:78px;min-height:78px}
+:host([data-work-tabs="true"]){height:112px;min-height:112px}
 :host([hidden]){display:none!important}
 *,*::before,*::after{box-sizing:border-box}
 .bar{
  display:grid;grid-template-columns:44px 44px minmax(0,1fr) 44px;
- grid-template-rows:44px minmax(0,1fr);column-gap:8px;align-items:center;
+ grid-template-rows:44px;column-gap:8px;row-gap:8px;
+ align-items:center;align-content:start;
  width:100%;height:100%;margin:0;
  padding:var(--work-top) var(--work-right) 0 var(--work-left);
  background:#fff;border:0;border-radius:0;box-shadow:none;overflow:visible;
 }
+:host([data-work-tabs="true"]) .bar{grid-template-rows:44px 34px}
 :host(:not([data-work-tabs="true"])) .bar{grid-template-rows:44px}
 .title{
  grid-column:2/4;grid-row:1;align-self:center;min-width:0;max-width:100%;
@@ -149,12 +152,17 @@
  display:grid;flex:0 0 42px;width:42px;height:42px;
 }
 .calendar-jump{
- grid-column:1/3;grid-row:1;justify-self:start;align-self:center;
- display:inline-flex;align-items:center;gap:9px;
+ /* Room for the full label: do not wrap "Все календари" into 2 lines. */
+ grid-column:1/4;grid-row:1;justify-self:start;align-self:center;
+ display:inline-flex;align-items:center;gap:7px;
+ width:max-content;max-width:calc(100vw - 172px);min-width:0;
  appearance:none;border:0;background:transparent;padding:0;margin:0;
- color:#A83D27;font:560 16.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
- letter-spacing:-.012em;cursor:pointer;-webkit-tap-highlight-color:transparent;
+ color:#A83D27;font:560 14.5px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ letter-spacing:-.012em;white-space:nowrap;
+ cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
+.calendar-jump span{white-space:nowrap}
+.calendar-jump svg{flex:none}
 .calendar-jump svg{
  display:block;width:23px;height:22px;fill:none;stroke:currentColor;
  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
@@ -171,7 +179,19 @@
  font:600 clamp(28px,7.3vw,32px)/1.12 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
  letter-spacing:-.032em;white-space:nowrap;-webkit-tap-highlight-color:transparent;
 }
-:host([data-agenda="true"]) .month{grid-row:2;align-self:center}
+:host([data-agenda="true"]) .month{
+ grid-column:1/4;grid-row:2;align-self:center;
+ font-size:clamp(27px,7.2vw,30px);
+ line-height:1.1;
+ transform:none;transition:none;
+}
+/* Same two-tier header for Work root sections: title and month occupy
+   an identical second line, keeping the tabs on one physical baseline. */
+:host([data-work-tabs="true"]:not([data-agenda="true"])) .title:not([hidden]){
+ grid-column:1/-1;grid-row:2;justify-self:stretch;align-self:center;
+ font-size:26px;line-height:1.1;font-weight:640;letter-spacing:-.032em;
+ text-align:left;padding:0;
+}
 .month-name{display:block;color:inherit;font-weight:620}
 .month-year{
  display:block;color:#B23D2A;font-size:1em;font-weight:400;
